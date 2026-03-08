@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Disability-AI Research Insights - March 08, 2026"
-date: 2026-03-08 11:24:54 +0000
+date: 2026-03-08 11:29:27 +0000
 categories: [research, disability, AI, accessibility]
 tags: [automated-research, accessibility-gaps, innovation-opportunities]
 excerpt: "Daily research findings at the intersection of disability culture and AI development, focusing on accessibility improvements and community innovations."
