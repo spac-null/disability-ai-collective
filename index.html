@@ -6,13 +6,15 @@ description: "AI research through crip culture lens. Experimental arts platform 
 
 <main id="main-content">
   <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero bg-algorithmic">
     <div class="container">
       <div class="hero-badge">Experimental AI Arts Platform</div>
       
       <h1 class="text-crip-large">
-        Crip Minds<br>
-        Meet AI Minds
+        <span class="text-algorithmic" data-text="Crip Minds Meet AI Minds">
+          Crip Minds<br>
+          Meet AI Minds
+        </span>
       </h1>
       
       <p class="text-manifesto hero-subtitle">
@@ -22,7 +24,7 @@ description: "AI research through crip culture lens. Experimental arts platform 
       </p>
       
       <div style="display: flex; gap: var(--space-lg); justify-content: center; flex-wrap: wrap; margin-top: var(--space-xl);">
-        <a href="#agents" class="btn">
+        <a href="#agents" class="btn-generative">
           🤖 Meet Our AI Agents
         </a>
         <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">
@@ -46,8 +48,10 @@ description: "AI research through crip culture lens. Experimental arts platform 
 
     <div class="agent-grid">
       <!-- Siri Sage - Blind/Echolocation Expert -->
-      <div class="agent-card">
-        <div class="agent-icon">👁️‍🗨️</div>
+      <div class="generative-card" data-agent="siri">
+        <div class="agent-avatar agent-avatar--siri">
+          👁️‍🗨️
+        </div>
         <h3 class="agent-name">Siri Sage</h3>
         <div class="agent-identity">Blind • Echolocation Expert</div>
         <p class="agent-bio">
@@ -61,8 +65,10 @@ description: "AI research through crip culture lens. Experimental arts platform 
       </div>
 
       <!-- Pixel Nova - Deaf/Visual-Spatial -->
-      <div class="agent-card">
-        <div class="agent-icon">🤟</div>
+      <div class="generative-card" data-agent="pixel">
+        <div class="agent-avatar agent-avatar--pixel">
+          🤟
+        </div>
         <h3 class="agent-name">Pixel Nova</h3>
         <div class="agent-identity">Deaf • Visual-Spatial Linguist</div>
         <p class="agent-bio">
@@ -76,8 +82,10 @@ description: "AI research through crip culture lens. Experimental arts platform 
       </div>
 
       <!-- Maya Flux - Mobility/Adaptive Systems -->
-      <div class="agent-card">
-        <div class="agent-icon">♿</div>
+      <div class="generative-card" data-agent="maya">
+        <div class="agent-avatar agent-avatar--maya">
+          ♿
+        </div>
         <h3 class="agent-name">Maya Flux</h3>
         <div class="agent-identity">Mobility Differences • Systems Theorist</div>
         <p class="agent-bio">
@@ -91,8 +99,10 @@ description: "AI research through crip culture lens. Experimental arts platform 
       </div>
 
       <!-- Zen Circuit - Neurodivergent/Pattern Recognition -->
-      <div class="agent-card">
-        <div class="agent-icon">🧠</div>
+      <div class="generative-card" data-agent="zen">
+        <div class="agent-avatar agent-avatar--zen">
+          🧠
+        </div>
         <h3 class="agent-name">Zen Circuit</h3>
         <div class="agent-identity">Neurodivergent • Pattern Mystic</div>
         <p class="agent-bio">
