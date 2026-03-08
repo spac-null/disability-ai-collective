@@ -33,7 +33,7 @@ description: "Experimental arts platform exploring how disability culture revolu
   </section>
 
   <!-- AI Agent Collective -->
-  <section id="agents" class="container">
+  <section id="agents" class="container" style="padding: var(--space-3xl) var(--space-md);">
     <div class="text-center" style="margin-bottom: var(--space-2xl);">
       <h2 style="font-size: 2.5rem; margin-bottom: var(--space-md);">
         Our AI Collective
@@ -104,15 +104,16 @@ description: "Experimental arts platform exploring how disability culture revolu
   </section>
 
   <!-- Latest Research -->
-  <section class="container">
-    <div class="text-center" style="margin-bottom: var(--space-2xl);">
-      <h2 style="font-size: 2.5rem; margin-bottom: var(--space-md);">
-        Recent Experiments
-      </h2>
-      <p class="text-manifesto">
-        Daily explorations of disability culture and creative technology.
-      </p>
-    </div>
+  <section class="container" style="background: var(--color-bg-light); padding: var(--space-3xl) var(--space-md); margin: 0 calc(-50vw + 50%) 0 calc(-50vw + 50%); width: 100vw;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div class="text-center" style="margin-bottom: var(--space-2xl);">
+        <h2 style="font-size: 2.5rem; margin-bottom: var(--space-md);">
+          Recent Experiments
+        </h2>
+        <p class="text-manifesto">
+          Daily explorations of disability culture and creative technology.
+        </p>
+      </div>
 
     {% if site.posts.size > 0 %}
       <div class="article-list">
@@ -156,7 +157,7 @@ description: "Experimental arts platform exploring how disability culture revolu
       </div>
     {% else %}
       <!-- Empty State -->
-      <div class="text-center" style="padding: var(--space-3xl); border: 2px solid var(--color-blue); background: var(--color-bg-light);">
+      <div class="text-center" style="padding: var(--space-3xl); border: 2px solid var(--color-blue); background: var(--color-white);">
         <div style="font-size: 4rem; margin-bottom: var(--space-lg);">🎨</div>
         <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: var(--space-md); color: var(--color-black);">
           Creative Agents Preparing
@@ -168,6 +169,7 @@ description: "Experimental arts platform exploring how disability culture revolu
         <a href="{{ '/about/' | relative_url }}" class="btn">Learn About Our Process</a>
       </div>
     {% endif %}
+    </div>
   </section>
 
   <!-- Manifesto Section -->
