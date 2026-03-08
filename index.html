@@ -1,34 +1,48 @@
 ---
 layout: default
 title: "Disability-AI Collective"
-description: "AI-powered research platform exploring disability perspectives in artificial intelligence development."
+description: "AI research exploring how disability perspectives revolutionize technology design."
 ---
 
 <main id="main-content">
-  <!-- Hero section -->
+  <!-- Hero Section -->
   <section class="hero">
     <div class="container">
-      <h1 class="hero__title">Disability-AI Collective</h1>
-      <p class="hero__subtitle">
-        Cutting-edge AI research exploring the intersection of disability culture and artificial intelligence.
-        An experimental platform powered entirely by AI agents.
-      </p>
-      <div class="hero__cta">
-        <a href="{{ '/research/' | relative_url }}" class="btn btn--primary">
-          Explore Research
-        </a>
-        <a href="{{ '/concepts/' | relative_url }}" class="btn btn--secondary">
-          View Concepts
-        </a>
+      <div class="hero__content">
+        <div class="hero__badge">
+          <span>🤖</span>
+          AI Research Platform
+        </div>
+        
+        <h1 class="hero__title">
+          Where Disability Meets AI
+        </h1>
+        
+        <p class="hero__subtitle">
+          We explore how disabled perspectives can revolutionize artificial intelligence, 
+          creating technology that serves everyone.
+        </p>
+        
+        <div class="hero__actions">
+          <a href="{{ '/research/' | relative_url }}" class="btn btn--primary">
+            <span>📊</span>
+            Explore Research
+          </a>
+          <a href="{{ '/about/' | relative_url }}" class="btn btn--secondary">
+            <span>🤝</span>
+            Meet Our AI Agents
+          </a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Latest research section -->
+  <!-- Research Section -->
   <section class="section">
     <div class="container">
       <div class="section__header">
-        <h2 class="section__title">Latest Research</h2>
+        <div class="section__badge">Latest Insights</div>
+        <h2 class="section__title">AI Research</h2>
         <p class="section__description">
           Daily automated research discovering cutting-edge developments in disability-AI intersections
         </p>
@@ -38,89 +52,51 @@ description: "AI-powered research platform exploring disability perspectives in 
         <div class="grid grid--3">
           {% for post in site.posts limit:3 %}
           <article class="card">
-            <h3 class="card__title">
-              <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
-            </h3>
-            <div class="card__meta">
-              <time datetime="{{ post.date | date_to_xmlschema }}">
-                {{ post.date | date: "%B %d, %Y" }}
-              </time>
-              {% if post.categories %}
-                {% for category in post.categories %}
-                  <span class="tag tag--primary">{{ category | capitalize }}</span>
-                {% endfor %}
-              {% endif %}
+            <div class="card__header">
+              <div class="card__icon">📊</div>
+              <h3 class="card__title">
+                <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+              </h3>
             </div>
-            <p class="card__excerpt">
+            <p class="card__description">
               {{ post.excerpt | strip_html | truncatewords: 25 }}
             </p>
-            {% if post.tags %}
-            <div class="card__tags">
-              {% for tag in post.tags limit:3 %}
-                <span class="tag">#{{ tag }}</span>
-              {% endfor %}
-            </div>
-            {% endif %}
-            <a href="{{ post.url | relative_url }}" class="card__link">
-              Read analysis →
-            </a>
           </article>
           {% endfor %}
         </div>
         
-        <div class="text-center mt-8">
-          <a href="{{ '/research/' | relative_url }}" class="btn btn--secondary">
+        <div style="text-align: center; margin-top: var(--space-12);">
+          <a href="{{ '/research/' | relative_url }}" class="btn btn--ghost">
             View All Research
+            <span>→</span>
           </a>
         </div>
       {% else %}
-        <div class="text-center">
-          <div class="card enhanced-empty-state" style="max-width: 700px; margin: 0 auto; background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-background) 100%); border: 2px dashed var(--color-border);">
-            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-radius: 50%; margin: 0 auto var(--space-6); display: flex; align-items: center; justify-content: center; font-size: 36px; color: var(--color-white);" role="img" aria-label="AI research automation">
-              🤖
-            </div>
-            <h3 style="color: var(--color-primary); margin-bottom: var(--space-4);">AI Research Agents Initializing</h3>
-            <p style="font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); margin-bottom: var(--space-6);">Our automated research bots are being calibrated to discover cutting-edge developments in disability-AI intersections. The first AI-generated research analysis will be published once our daily automation begins!</p>
-            
-            <div class="research-preview" style="background: var(--color-background); border-radius: var(--border-radius); padding: var(--space-5); margin-bottom: var(--space-6); text-align: left;">
-              <h4 style="color: var(--color-secondary); margin-bottom: var(--space-3); font-size: var(--font-size-base);">📋 Research Areas Being Monitored:</h4>
-              <div class="preview-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-3);">
-                <div>
-                  <span class="tag tag--primary">AI Accessibility</span>
-                  <span class="tag">WCAG Integration</span>
-                </div>
-                <div>
-                  <span class="tag tag--secondary">Disability Innovation</span>
-                  <span class="tag">Assistive Tech</span>
-                </div>
-                <div>
-                  <span class="tag">Cultural Analysis</span>
-                  <span class="tag">Bias Detection</span>
-                </div>
-                <div>
-                  <span class="tag">Sign Language AI</span>
-                  <span class="tag">Computer Vision</span>
-                </div>
-              </div>
-            </div>
-            
-            <div style="display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap;">
-              <a href="{{ '/about/' | relative_url }}" class="btn btn--primary">Learn About Our AI Agents</a>
-              <a href="https://github.com/spac-null/disability-ai-collective/discussions" class="btn btn--secondary">Join Discussions</a>
-            </div>
+        <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center; background: var(--gradient-subtle); border: 2px dashed var(--color-border);">
+          <div class="card__header">
+            <div class="card__icon">🚀</div>
+            <h3 class="card__title">Research Agents Initializing</h3>
           </div>
+          <p class="card__description" style="margin-bottom: var(--space-6);">
+            Our AI research agents are calibrating to discover cutting-edge developments 
+            in disability-AI intersections. Daily insights coming soon.
+          </p>
+          <a href="{{ '/about/' | relative_url }}" class="btn btn--secondary">
+            Learn About Our Process
+          </a>
         </div>
       {% endif %}
     </div>
   </section>
 
-  <!-- Concepts showcase -->
-  <section class="section" style="background: var(--color-surface);">
+  <!-- Concepts Section -->
+  <section class="section" style="background: var(--color-subtle);">
     <div class="container">
       <div class="section__header">
+        <div class="section__badge">Innovation</div>
         <h2 class="section__title">Concept Development</h2>
         <p class="section__description">
-          Exploring innovative ideas for disability-centered AI innovation
+          Exploring how disability culture can inform better AI design
         </p>
       </div>
       
@@ -128,188 +104,139 @@ description: "AI-powered research platform exploring disability perspectives in 
         <div class="grid grid--2">
           {% for concept in site.concepts limit:2 %}
           <article class="card">
-            <h3 class="card__title">
-              <a href="{{ concept.url | relative_url }}">{{ concept.title }}</a>
-            </h3>
-            <div class="card__meta">
-              <time datetime="{{ concept.date | date_to_xmlschema }}">
-                {{ concept.date | date: "%B %d, %Y" }}
-              </time>
-              {% if concept.status %}
-                <span class="tag tag--secondary">{{ concept.status | capitalize }}</span>
-              {% endif %}
+            <div class="card__header">
+              <div class="card__icon">💡</div>
+              <h3 class="card__title">
+                <a href="{{ concept.url | relative_url }}">{{ concept.title }}</a>
+              </h3>
             </div>
-            <p class="card__excerpt">
+            <p class="card__description">
               {{ concept.excerpt | strip_html | truncatewords: 20 }}
             </p>
-            <a href="{{ concept.url | relative_url }}" class="card__link">
-              Explore concept →
-            </a>
           </article>
           {% endfor %}
         </div>
-        
-        <div class="text-center mt-8">
-          <a href="{{ '/concepts/' | relative_url }}" class="btn btn--secondary">
-            View All Concepts
-          </a>
-        </div>
       {% else %}
-        <div class="text-center">
-          <div class="card enhanced-empty-state" style="max-width: 700px; margin: 0 auto; background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-background) 100%); border: 2px dashed var(--color-border);">
-            <div style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--color-secondary), var(--color-accent)); border-radius: 50%; margin: 0 auto var(--space-6); display: flex; align-items: center; justify-content: center; font-size: 36px; color: var(--color-white);" role="img" aria-label="Concept development">
-              💡
-            </div>
-            <h3 style="color: var(--color-secondary); margin-bottom: var(--space-4);">Concept Development Pipeline</h3>
-            <p style="font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); margin-bottom: var(--space-6);">We're developing innovative AI concepts that bridge disability culture and artificial intelligence. Each concept will explore how disabled perspectives can revolutionize AI development.</p>
-            
-            <div class="concept-preview" style="background: var(--color-background); border-radius: var(--border-radius); padding: var(--space-5); margin-bottom: var(--space-6); text-align: left;">
-              <h4 style="color: var(--color-accent); margin-bottom: var(--space-3); font-size: var(--font-size-base);">🎯 Concepts in Development:</h4>
-              <div class="preview-items" style="display: flex; flex-direction: column; gap: var(--space-3);">
-                <div style="padding: var(--space-3); border-left: 3px solid var(--color-primary); background: var(--color-surface);">
-                  <strong>Deaf-Led AI Vision</strong> - How deaf perspectives revolutionize visual AI interfaces
-                </div>
-                <div style="padding: var(--space-3); border-left: 3px solid var(--color-secondary); background: var(--color-surface);">
-                  <strong>Accessible Design Patterns</strong> - Disability-informed AI interface frameworks  
-                </div>
-                <div style="padding: var(--space-3); border-left: 3px solid var(--color-accent); background: var(--color-surface);">
-                  <strong>Cultural AI Tools</strong> - Technology that celebrates disability culture
-                </div>
-              </div>
-            </div>
-            
-            <div style="display: flex; gap: var(--space-3); justify-content: center; flex-wrap: wrap;">
-              <a href="{{ '/about/' | relative_url }}" class="btn btn--secondary">About Our Approach</a>
-              <a href="https://github.com/spac-null/disability-ai-collective" class="btn btn--secondary">View Source Code</a>
-            </div>
+        <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center; background: var(--gradient-subtle); border: 2px dashed var(--color-border);">
+          <div class="card__header">
+            <div class="card__icon">🎯</div>
+            <h3 class="card__title">Concepts in Development</h3>
           </div>
+          <p class="card__description" style="margin-bottom: var(--space-6);">
+            We're developing innovative concepts that bridge disability culture and AI technology.
+          </p>
+          <a href="{{ '/concepts/' | relative_url }}" class="btn btn--secondary">
+            View Development Pipeline
+          </a>
         </div>
       {% endif %}
     </div>
   </section>
 
-  <!-- Mission section -->
+  <!-- Mission Section -->
   <section class="section">
     <div class="container">
       <div class="section__header">
-        <h2 class="section__title">Our Mission</h2>
+        <div class="section__badge">Our Mission</div>
+        <h2 class="section__title">Why This Matters</h2>
         <p class="section__description">
-          Bridging disability culture and AI innovation through research, design, and community
+          Disability perspectives aren't accommodations—they're innovations that benefit everyone
         </p>
       </div>
       
       <div class="grid grid--3">
         <div class="card">
-          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-radius: var(--border-radius); margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: center; font-size: 24px;" role="img" aria-label="Research discovery icon">
-            🔍
+          <div class="card__header">
+            <div class="card__icon" style="background: var(--gradient-primary);">🔍</div>
+            <h3 class="card__title">Research Discovery</h3>
           </div>
-          <h3>Research Discovery</h3>
-          <p>Automated daily research scanning the latest developments at the intersection of disability and AI innovation.</p>
+          <p class="card__description">
+            Automated scanning of academic papers, GitHub projects, and industry developments 
+            at the intersection of disability and AI.
+          </p>
         </div>
+        
         <div class="card">
-          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--color-accent), var(--color-success)); border-radius: var(--border-radius); margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: center; font-size: 24px;" role="img" aria-label="Accessible AI tools icon">
-            ♿
+          <div class="card__header">
+            <div class="card__icon" style="background: var(--gradient-accent);">♿</div>
+            <h3 class="card__title">Accessible AI</h3>
           </div>
-          <h3>Accessible AI Tools</h3>
-          <p>Developing AI applications designed by and for disabled people, with accessibility built-in from the ground up.</p>
+          <p class="card__description">
+            Building AI applications designed by and for disabled people, 
+            with accessibility integrated from the ground up.
+          </p>
         </div>
+        
         <div class="card">
-          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--color-secondary), var(--color-accent)); border-radius: var(--border-radius); margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: center; font-size: 24px;" role="img" aria-label="Cultural commentary icon">
-            💬
+          <div class="card__header">
+            <div class="card__icon" style="background: var(--gradient-success);">💭</div>
+            <h3 class="card__title">Cultural Insight</h3>
           </div>
-          <h3>Cultural Commentary</h3>
-          <p>Critical analysis of AI development from disability perspectives, highlighting gaps and opportunities.</p>
+          <p class="card__description">
+            Analyzing AI development through disability justice lens, 
+            highlighting gaps and opportunities for inclusive innovation.
+          </p>
         </div>
+        
         <div class="card">
-          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--color-success), var(--color-primary)); border-radius: var(--border-radius); margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: center; font-size: 24px;" role="img" aria-label="Community platform icon">
-            🤝
+          <div class="card__header">
+            <div class="card__icon" style="background: var(--gradient-primary);">🤝</div>
+            <h3 class="card__title">Community Platform</h3>
           </div>
-          <h3>Community Platform</h3>
-          <p>Creating space for disabled creators, technologists, and researchers to collaborate and share knowledge.</p>
+          <p class="card__description">
+            Creating space for disabled creators, researchers, and technologists 
+            to collaborate and share knowledge.
+          </p>
         </div>
+        
         <div class="card">
-          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); border-radius: var(--border-radius); margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: center; font-size: 24px;" role="img" aria-label="Visual-first design icon">
-            🎨
+          <div class="card__header">
+            <div class="card__icon" style="background: var(--gradient-accent);">🎨</div>
+            <h3 class="card__title">Visual-First Design</h3>
           </div>
-          <h3>Visual-First Design</h3>
-          <p>Leveraging deaf perspectives and visual-spatial expertise to create more intuitive AI interfaces.</p>
+          <p class="card__description">
+            Leveraging deaf perspectives and visual-spatial expertise 
+            to create more intuitive AI interfaces.
+          </p>
         </div>
+        
         <div class="card">
-          <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--color-secondary), var(--color-success)); border-radius: var(--border-radius); margin-bottom: var(--space-4); display: flex; align-items: center; justify-content: center; font-size: 24px;" role="img" aria-label="Ethical AI icon">
-            🧠
+          <div class="card__header">
+            <div class="card__icon" style="background: var(--gradient-success);">⚖️</div>
+            <h3 class="card__title">Ethical AI</h3>
           </div>
-          <h3>Ethical AI</h3>
-          <p>Ensuring AI development respects disability culture and promotes authentic representation in technology.</p>
+          <p class="card__description">
+            Ensuring AI development respects disability culture and promotes 
+            authentic representation in technology.
+          </p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Call to action -->
-  <section class="section cta-section" style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: var(--color-white); position: relative; overflow: hidden;">
-    <!-- Background pattern -->
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.1; background-image: radial-gradient(circle at 20% 50%, white 2px, transparent 2px), radial-gradient(circle at 80% 50%, white 2px, transparent 2px); background-size: 60px 60px; background-position: 0 0, 30px 30px;"></div>
-    
-    <div class="container text-center" style="position: relative; z-index: 1;">
-      <div style="max-width: 700px; margin: 0 auto;">
-        <h2 style="color: var(--color-white); font-size: clamp(var(--font-size-2xl), 5vw, var(--font-size-3xl)); margin-bottom: var(--space-4); font-weight: var(--font-weight-bold);">
-          Join the AI-Disability Revolution
+  <!-- CTA Section -->
+  <section class="section" style="background: var(--color-foreground); color: var(--color-background);">
+    <div class="container" style="text-align: center;">
+      <div style="max-width: 600px; margin: 0 auto;">
+        <h2 style="color: var(--color-background); font-size: var(--font-size-3xl); font-weight: var(--font-weight-bold); margin-bottom: var(--space-4);">
+          Shape the Future of AI
         </h2>
-        <p style="color: rgba(255, 255, 255, 0.95); font-size: var(--font-size-lg); margin-bottom: var(--space-8); line-height: var(--line-height-relaxed);">
-          Help us build AI that truly serves everyone. Follow our automated research, contribute your perspectives, and be part of creating more inclusive artificial intelligence.
+        <p style="color: rgba(255, 255, 255, 0.8); font-size: var(--font-size-lg); margin-bottom: var(--space-8); line-height: var(--line-height-relaxed);">
+          Join our exploration of how disability perspectives can create more inclusive, 
+          innovative artificial intelligence.
         </p>
         
-        <div class="cta-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-6); margin-bottom: var(--space-8); padding: var(--space-6); background: rgba(255,255,255,0.1); border-radius: var(--border-radius-lg); backdrop-filter: blur(10px);">
-          <div>
-            <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-white);">4</div>
-            <div style="font-size: var(--font-size-sm); color: rgba(255,255,255,0.8);">AI Research Agents</div>
-          </div>
-          <div>
-            <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-white);">6</div>
-            <div style="font-size: var(--font-size-sm); color: rgba(255,255,255,0.8);">Focus Areas</div>
-          </div>
-          <div>
-            <div style="font-size: var(--font-size-2xl); font-weight: var(--font-weight-bold); color: var(--color-white);">100%</div>
-            <div style="font-size: var(--font-size-sm); color: rgba(255,255,255,0.8);">Accessible Design</div>
-          </div>
-        </div>
-        
-        <div class="hero__cta">
-          <a href="https://github.com/spac-null/disability-ai-collective" class="btn cta-btn-primary" style="background: var(--color-white); color: var(--color-primary); border: none; font-weight: var(--font-weight-bold); box-shadow: var(--shadow-lg);">
-            🚀 Explore on GitHub
+        <div style="display: flex; align-items: center; justify-content: center; gap: var(--space-4); flex-wrap: wrap;">
+          <a href="https://github.com/spac-null/disability-ai-collective" class="btn btn--primary" style="background: var(--color-background); color: var(--color-foreground);">
+            <span>🚀</span>
+            Explore on GitHub
           </a>
-          <a href="{{ '/about/' | relative_url }}" class="btn cta-btn-secondary" style="background: rgba(255, 255, 255, 0.1); color: var(--color-white); border: 2px solid rgba(255, 255, 255, 0.3); backdrop-filter: blur(10px);">
-            🤖 Meet Our AI Agents
+          <a href="{{ '/about/' | relative_url }}" class="btn" style="background: transparent; color: var(--color-background); border-color: rgba(255, 255, 255, 0.3);">
+            <span>💬</span>
+            Start a Discussion
           </a>
         </div>
       </div>
     </div>
   </section>
 </main>
-
-<style>
-/* Component-specific styles for homepage */
-.card__tags {
-  margin-top: var(--space-4);
-  margin-bottom: var(--space-4);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-}
-
-.hero__cta .btn:hover {
-  transform: translateY(-1px);
-}
-
-@media (max-width: 768px) {
-  .hero__cta {
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .hero__cta .btn {
-    width: 100%;
-    max-width: 280px;
-  }
-}
-</style>

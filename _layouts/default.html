@@ -10,9 +10,6 @@
     <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
     <meta name="author" content="{{ site.author }}">
     
-    <!-- Accessibility enhancements -->
-    <meta name="color-scheme" content="light dark">
-    
     <!-- Open Graph / Social sharing -->
     <meta property="og:title" content="{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}">
     <meta property="og:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
@@ -27,7 +24,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- OpenDyslexic font for accessibility -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -59,8 +56,9 @@
             <!-- Main navigation -->
             <nav id="navigation" class="site-nav">
                 <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Toggle navigation menu">
-                    <span aria-hidden="true">☰</span>
-                    <span class="sr-only">Menu</span>
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
                 </button>
                 
                 <ul id="site-nav-menu" class="site-nav__menu">
@@ -83,35 +81,35 @@
     <footer id="footer" class="site-footer">
         <div class="container">
             <div class="site-footer__content">
-                <div>
+                <div class="site-footer__section">
                     <h3>Disability-AI Collective</h3>
-                    <p>
-                        Bridging disability culture and AI innovation through automated research, 
-                        accessible design, and community engagement.
+                    <p style="color: rgba(255, 255, 255, 0.6); font-size: var(--font-size-sm); line-height: var(--line-height-relaxed); max-width: 300px;">
+                        AI research exploring how disability perspectives revolutionize technology design. 
+                        An experimental platform powered by artificial intelligence agents.
                     </p>
                 </div>
                 
-                <div>
-                    <h3>Quick Links</h3>
+                <div class="site-footer__section">
+                    <h3>Research</h3>
                     <ul class="site-footer__links">
-                        <li><a href="{{ '/about/' | relative_url }}">About</a></li>
+                        <li><a href="{{ '/research/' | relative_url }}">Latest Articles</a></li>
+                        <li><a href="{{ '/concepts/' | relative_url }}">Concept Development</a></li>
+                        <li><a href="{{ '/about/' | relative_url }}">Our AI Agents</a></li>
                         <li><a href="{{ '/accessibility/' | relative_url }}">Accessibility</a></li>
-                        <li><a href="{{ '/contact/' | relative_url }}">Contact</a></li>
-                        <li><a href="{{ '/feed.xml' | relative_url }}">RSS Feed</a></li>
                     </ul>
                 </div>
                 
-                <div>
+                <div class="site-footer__section">
                     <h3>Connect</h3>
                     <ul class="site-footer__links">
                         <li>
-                            <a href="https://github.com/spac-null/disability-ai-collective">GitHub</a>
+                            <a href="https://github.com/spac-null/disability-ai-collective" target="_blank" rel="noopener">GitHub</a>
                         </li>
                         <li>
-                            <a href="#" rel="me">Mastodon</a>
+                            <a href="https://github.com/spac-null/disability-ai-collective/discussions" target="_blank" rel="noopener">Discussions</a>
                         </li>
                         <li>
-                            <a href="#" rel="me">Bluesky</a>
+                            <a href="{{ '/feed.xml' | relative_url }}">RSS Feed</a>
                         </li>
                     </ul>
                 </div>
