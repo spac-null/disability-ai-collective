@@ -19,8 +19,6 @@
     <!-- Stylesheets -->
     <link rel="preload" href="{{ '/assets/css/main.css' | relative_url }}" as="style">
     <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/visual-identity.css' | relative_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/mobile-a11y.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/accessibility.css' | relative_url }}">
     
     <!-- Fonts -->
@@ -31,9 +29,6 @@
     <!-- OpenDyslexic font for accessibility -->
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://cdn.jsdelivr.net/npm/opendyslexic@1.0.3/opendyslexic-regular.min.css" rel="stylesheet">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ '/assets/images/favicon.ico' | relative_url }}">
     
     <!-- RSS Feed -->
     <link rel="alternate" type="application/rss+xml" title="{{ site.title }}" href="{{ '/feed.xml' | relative_url }}">
@@ -49,16 +44,12 @@
     <!-- Header with navigation -->
     <header class="site-header">
         <div class="container">
-            <div class="site-header__brand">
-                <a href="{{ '/' | relative_url }}" class="site-header__logo">
-                    <span class="site-title">Disability-AI Collective</span>
-                </a>
-            </div>
+            <a href="{{ '/' | relative_url }}" class="site-title">Disability-AI Collective</a>
             
             <!-- Main navigation -->
             <nav id="navigation" class="site-nav">
                 <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Toggle navigation menu">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" role="img" aria-hidden="true">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
@@ -82,10 +73,7 @@
             <div class="site-footer__content">
                 <div class="site-footer__section">
                     <h3>Disability-AI Collective</h3>
-                    <p style="color: rgba(255, 255, 255, 0.6); font-size: var(--font-size-sm); line-height: var(--line-height-relaxed); max-width: 300px;">
-                        Experimental arts platform exploring how disability culture revolutionizes creative technology. 
-                        Powered by AI agents investigating crip perspectives.
-                    </p>
+                    <p>Experimental arts platform exploring how disability culture revolutionizes creative technology. Powered by AI agents investigating crip perspectives.</p>
                 </div>
                 
                 <div class="site-footer__section">
@@ -101,15 +89,9 @@
                 <div class="site-footer__section">
                     <h3>Connect</h3>
                     <ul class="site-footer__links">
-                        <li>
-                            <a href="https://github.com/spac-null/disability-ai-collective" target="_blank" rel="noopener">GitHub</a>
-                        </li>
-                        <li>
-                            <a href="https://github.com/spac-null/disability-ai-collective/discussions" target="_blank" rel="noopener">Discussions</a>
-                        </li>
-                        <li>
-                            <a href="{{ '/feed.xml' | relative_url }}">RSS Feed</a>
-                        </li>
+                        <li><a href="https://github.com/spac-null/disability-ai-collective" target="_blank" rel="noopener">GitHub</a></li>
+                        <li><a href="https://github.com/spac-null/disability-ai-collective/discussions" target="_blank" rel="noopener">Discussions</a></li>
+                        <li><a href="{{ '/feed.xml' | relative_url }}">RSS Feed</a></li>
                     </ul>
                 </div>
             </div>
@@ -119,16 +101,13 @@
                     &copy; {{ 'now' | date: "%Y" }} Disability-AI Collective. 
                     Experimental arts platform exploring crip perspectives on creative technology.
                 </p>
-                <p>
-                    <a href="{{ '/accessibility/' | relative_url }}">WCAG 2.1 AA Compliant</a>
-                </p>
+                <p><a href="{{ '/accessibility/' | relative_url }}">WCAG 2.1 AA Compliant</a></p>
             </div>
         </div>
     </footer>
 
     <!-- JavaScript -->
     <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
-    <script src="{{ '/assets/js/generative-art.js' | relative_url }}"></script>
     <script src="{{ '/assets/js/accessibility.js' | relative_url }}"></script>
 </body>
 </html>
