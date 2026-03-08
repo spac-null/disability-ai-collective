@@ -3,10 +3,10 @@
 
 # Site settings
 title: "Disability-AI Collective"
-description: "Cutting-edge research at the intersection of disability culture and artificial intelligence."
+description: "AI-powered research exploring disability perspectives in artificial intelligence. An experimental platform using automated agents to advance accessible AI development."
 baseurl: "/disability-ai-collective"
 url: "https://spac-null.github.io/disability-ai-collective"
-author: "Disability-AI Collective"
+author: "AI Research Collective"
 email: "contact@disability-ai-collective.org"
 
 # Build settings
