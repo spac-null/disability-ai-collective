@@ -58,16 +58,14 @@ social:
 
 # Navigation
 navigation:
-  - title: "Research Blog"
+  - title: "Research"
     url: "/"
   - title: "Concepts"
     url: "/concepts/"
-  - title: "Visual Gallery"
-    url: "/visuals/"
-  - title: "Resources"
-    url: "/resources/"
   - title: "About"
     url: "/about/"
+  - title: "Accessibility"
+    url: "/accessibility/"
 
 # Exclude from processing
 exclude:
