@@ -25,7 +25,7 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
         </p>
       </div>
       
-      <div class="grid grid--2">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
         <div style="padding: var(--space-lg); background: var(--color-bg-light); border-radius: 8px;">
           <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">Accessibility-First Design</h3>
           <p style="margin-bottom: var(--space-md);">
@@ -63,7 +63,14 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
         </p>
       </div>
       
-      <div class="grid grid--2">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); margin-bottom: var(--space-xl);">
+        <style>
+          @media (max-width: 768px) {
+            .responsive-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+        </style>
         <div style="border: 2px solid var(--color-blue); padding: var(--space-lg); border-radius: 8px;">
           <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">✅ What We Provide</h3>
           <ul style="line-height: 1.6; color: var(--color-gray);">
