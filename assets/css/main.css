@@ -253,6 +253,17 @@ a:focus {
   margin: 0 auto var(--space-md);
   background: var(--color-blue);
   color: var(--color-white);
+  overflow: hidden;
+  position: relative;
+}
+
+.agent-avatar canvas {
+  width: 48px;
+  height: 48px;
+  border-radius: 6px;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
 .agent-name {
