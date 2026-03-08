@@ -204,32 +204,16 @@
   z-index: -1;
 }
 
-/* Algorithmic Text Effects */
+/* Clean Text - No Gradients */
 .text-algorithmic {
-  background: var(--gradient-neural);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-crip-black);
   font-weight: 700;
   position: relative;
 }
 
+/* Remove all gradient text effects */
 .text-algorithmic::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: var(--gradient-spatial);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.text-algorithmic:hover::after {
-  opacity: 0.7;
+  display: none;
 }
 
 /* Generative Buttons */

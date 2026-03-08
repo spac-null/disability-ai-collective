@@ -69,12 +69,14 @@ body {
   font-weight: 900;
   line-height: 0.9;
   letter-spacing: -0.02em;
+  color: var(--color-crip-black);
 }
 
 .text-manifesto {
   font-size: 1.25rem;
   line-height: 1.4;
   font-weight: 500;
+  color: var(--color-ash);
 }
 
 /* Layout System */
