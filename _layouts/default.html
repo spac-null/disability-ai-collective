@@ -119,10 +119,10 @@
                 <div class="site-footer__section">
                     <h3 class="site-footer__title">Quick Links</h3>
                     <ul class="site-footer__links">
-                        <li><a href="/about/">About</a></li>
-                        <li><a href="/accessibility/">Accessibility</a></li>
-                        <li><a href="/contact/">Contact</a></li>
-                        <li><a href="/feed.xml">RSS Feed</a></li>
+                        <li><a href="{{ '/about/' | relative_url }}">About</a></li>
+                        <li><a href="{{ '/accessibility/' | relative_url }}">Accessibility</a></li>
+                        <li><a href="{{ '/contact/' | relative_url }}">Contact</a></li>
+                        <li><a href="{{ '/feed.xml' | relative_url }}">RSS Feed</a></li>
                     </ul>
                 </div>
                 
@@ -149,7 +149,7 @@
                     Built with accessibility first by disabled people, for disabled people.
                 </p>
                 <p class="site-footer__accessibility">
-                    <a href="/accessibility/" class="site-footer__accessibility-link">
+                    <a href="{{ '/accessibility/' | relative_url }}" class="site-footer__accessibility-link">
                         WCAG 2.1 AA Compliant
                     </a>
                 </p>
