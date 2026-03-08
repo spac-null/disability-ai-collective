@@ -1,9 +1,49 @@
-/* RSS Feed Generation */
-/* Add to _config.yml */
+# Site Configuration
+title: "Disability-AI Collective"
+description: "Experimental arts platform exploring how disability culture revolutionizes creative technology."
+author: "Disability-AI Collective"
+url: "https://spac-null.github.io"
+baseurl: "/disability-ai-collective"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:year/:month/:day/:title/
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /:year/:month/:day/:title/
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# RSS Feed Configuration
 feed:
   path: feed.xml
   template: feed.xml
   limit: 20
-  description: "Daily AI research exploring disability perspectives"
+  description: "Daily insights exploring disability culture and creative technology"
   author: "Disability-AI Collective"
-  categories: [AI, Accessibility, Disability, Technology, Research]
+  categories: [Art, Technology, Disability, Design, Accessibility]
+
+# Exclude from processing
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+
+# Site defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "AI Collective"
