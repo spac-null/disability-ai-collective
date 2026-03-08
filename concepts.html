@@ -66,12 +66,82 @@ permalink: /concepts/
           {% endfor %}
         </div>
       {% else %}
-        <div class="placeholder">
-          <div style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--color-secondary), var(--color-accent)); border-radius: 50%; margin: 0 auto var(--space-6); display: flex; align-items: center; justify-content: center; font-size: 48px; color: var(--color-white);" role="img" aria-label="Concept development icon">
-            💡
+        <div class="enhanced-empty-state text-center">
+          <div class="empty-state-container" style="max-width: 800px; margin: 0 auto; background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-background) 100%); padding: var(--space-8); border-radius: var(--border-radius-lg); border: 2px dashed var(--color-border);">
+            <div style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--color-secondary), var(--color-accent)); border-radius: 50%; margin: 0 auto var(--space-6); display: flex; align-items: center; justify-content: center; font-size: 48px; color: var(--color-white); position: relative;" role="img" aria-label="Concept development">
+              💡
+              <div style="position: absolute; top: -5px; right: -5px; width: 30px; height: 30px; background: var(--color-success); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">🎨</div>
+            </div>
+            
+            <h2 style="color: var(--color-secondary); margin-bottom: var(--space-4);">AI Concept Development Lab</h2>
+            <p style="font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); margin-bottom: var(--space-6); color: var(--color-text-muted);">
+              We're developing innovative concepts that explore how disability perspectives can revolutionize artificial intelligence. 
+              Each concept represents a unique intersection of disability culture and AI innovation.
+            </p>
+            
+            <div class="concept-pipeline" style="background: var(--color-background); border-radius: var(--border-radius); padding: var(--space-6); margin-bottom: var(--space-6); border-left: 4px solid var(--color-secondary);">
+              <h3 style="color: var(--color-accent); margin-bottom: var(--space-4); font-size: var(--font-size-xl);">🚀 Concepts in Development:</h3>
+              
+              <div class="concept-stages" style="display: flex; flex-direction: column; gap: var(--space-4);">
+                <div class="concept-stage" style="display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; padding: var(--space-4); background: var(--color-surface); border-radius: var(--border-radius);">
+                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">🤟</div>
+                  <div>
+                    <h4 style="color: var(--color-primary); margin-bottom: var(--space-1);">Deaf-Led AI Vision</h4>
+                    <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">How deaf perspectives and visual-spatial thinking can revolutionize AI interface design and interaction patterns</p>
+                  </div>
+                </div>
+                
+                <div class="concept-stage" style="display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; padding: var(--space-4); background: var(--color-surface); border-radius: var(--border-radius);">
+                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--color-secondary), var(--color-accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">🎯</div>
+                  <div>
+                    <h4 style="color: var(--color-secondary); margin-bottom: var(--space-1);">Accessible Design Patterns</h4>
+                    <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">Disability-informed frameworks for building AI interfaces that work for diverse cognitive and sensory needs</p>
+                  </div>
+                </div>
+                
+                <div class="concept-stage" style="display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; padding: var(--space-4); background: var(--color-surface); border-radius: var(--border-radius);">
+                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--color-accent), var(--color-success)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">🏛️</div>
+                  <div>
+                    <h4 style="color: var(--color-accent); margin-bottom: var(--space-1);">Cultural AI Tools</h4>
+                    <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">Technology that celebrates and amplifies disability culture rather than trying to "fix" or normalize differences</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="development-process" style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: white; padding: var(--space-5); border-radius: var(--border-radius); margin-bottom: var(--space-6);">
+              <h4 style="color: white; margin-bottom: var(--space-3); font-size: var(--font-size-lg);">🔬 Our Development Process</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4);">
+                <div style="text-align: center;">
+                  <div style="font-size: var(--font-size-2xl);">💭</div>
+                  <strong>Research</strong><br>
+                  <small>Literature review & community input</small>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: var(--font-size-2xl);">🛠️</div>
+                  <strong>Prototype</strong><br>
+                  <small>Build minimal viable concepts</small>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: var(--font-size-2xl);">🧪</div>
+                  <strong>Test</strong><br>
+                  <small>Accessibility & usability validation</small>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: var(--font-size-2xl);">🚀</div>
+                  <strong>Share</strong><br>
+                  <small>Open source & documentation</small>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap;">
+              <a href="{{ '/about/' | relative_url }}" class="btn btn--primary">About Our Approach</a>
+              <a href="https://github.com/spac-null/disability-ai-collective" class="btn btn--secondary">View Source Code</a>
+              <a href="https://github.com/spac-null/disability-ai-collective/discussions" class="btn btn--secondary">Suggest Concepts</a>
+            </div>
           </div>
-          <h2>Concepts Coming Soon</h2>
-          <p>We're developing innovative concepts that bridge disability culture and AI technology. Check back soon for our first concepts!</p>
+        </div>
           
           <div class="placeholder-info">
             <h3>What to Expect</h3>

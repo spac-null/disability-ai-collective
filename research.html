@@ -94,12 +94,66 @@ permalink: /research/
         {% endif %}
         
       {% else %}
-        <div class="placeholder">
-          <div style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-radius: 50%; margin: 0 auto var(--space-6); display: flex; align-items: center; justify-content: center; font-size: 48px; color: var(--color-white);" role="img" aria-label="Research automation icon">
-            🔬
+        <div class="enhanced-empty-state text-center">
+          <div class="empty-state-container" style="max-width: 800px; margin: 0 auto; background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-background) 100%); padding: var(--space-8); border-radius: var(--border-radius-lg); border: 2px dashed var(--color-border);">
+            <div style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-radius: 50%; margin: 0 auto var(--space-6); display: flex; align-items: center; justify-content: center; font-size: 48px; color: var(--color-white); position: relative;" role="img" aria-label="AI research automation">
+              🤖
+              <div style="position: absolute; top: -5px; right: -5px; width: 30px; height: 30px; background: var(--color-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">⚡</div>
+            </div>
+            
+            <h2 style="color: var(--color-primary); margin-bottom: var(--space-4);">AI Research System Initializing</h2>
+            <p style="font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); margin-bottom: var(--space-6); color: var(--color-text-muted);">
+              Our AI research agents are being programmed to automatically scan and analyze the latest developments in disability-AI intersections. 
+              Once activated, they'll publish daily insights and discoveries.
+            </p>
+            
+            <div class="research-timeline" style="background: var(--color-background); border-radius: var(--border-radius); padding: var(--space-6); margin-bottom: var(--space-6); border-left: 4px solid var(--color-primary);">
+              <h3 style="color: var(--color-secondary); margin-bottom: var(--space-4); font-size: var(--font-size-xl);">🎯 What Our AI Will Research:</h3>
+              
+              <div class="research-areas" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-4);">
+                <div class="research-area" style="padding: var(--space-4); background: var(--color-surface); border-radius: var(--border-radius); border-left: 3px solid var(--color-primary);">
+                  <h4 style="color: var(--color-primary); margin-bottom: var(--space-2); font-size: var(--font-size-base);">🧠 AI Accessibility</h4>
+                  <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">Screen reader optimization, voice interfaces, cognitive accessibility patterns</p>
+                </div>
+                
+                <div class="research-area" style="padding: var(--space-4); background: var(--color-surface); border-radius: var(--border-radius); border-left: 3px solid var(--color-secondary);">
+                  <h4 style="color: var(--color-secondary); margin-bottom: var(--space-2); font-size: var(--font-size-base);">♿ Disability Innovation</h4>
+                  <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">Assistive technology breakthroughs, disability-led startups, adaptive interfaces</p>
+                </div>
+                
+                <div class="research-area" style="padding: var(--space-4); background: var(--color-surface); border-radius: var(--border-radius); border-left: 3px solid var(--color-accent);">
+                  <h4 style="color: var(--color-accent); margin-bottom: var(--space-2); font-size: var(--font-size-base);">📚 Academic Papers</h4>
+                  <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">Latest research from universities, disability studies, HCI conferences</p>
+                </div>
+                
+                <div class="research-area" style="padding: var(--space-4); background: var(--color-surface); border-radius: var(--border-radius); border-left: 3px solid var(--color-success);">
+                  <h4 style="color: var(--color-success); margin-bottom: var(--space-2); font-size: var(--font-size-base);">🏢 Industry News</h4>
+                  <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">Corporate accessibility initiatives, AI product launches, policy updates</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="automation-schedule" style="background: linear-gradient(135deg, var(--color-accent), var(--color-warning)); color: white; padding: var(--space-5); border-radius: var(--border-radius); margin-bottom: var(--space-6);">
+              <h4 style="color: white; margin-bottom: var(--space-3); font-size: var(--font-size-lg);">⏰ Research Schedule</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-4);">
+                <div>
+                  <strong>Morning Research (8:00 UTC)</strong><br>
+                  <small>Daily scan of academic papers & GitHub projects</small>
+                </div>
+                <div>
+                  <strong>Evening Analysis (20:00 UTC)</strong><br>
+                  <small>Processing findings into accessible summaries</small>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap;">
+              <a href="{{ '/about/' | relative_url }}" class="btn btn--primary">Learn About Our AI Agents</a>
+              <a href="https://github.com/spac-null/disability-ai-collective" class="btn btn--secondary">View Source Code</a>
+              <a href="https://github.com/spac-null/disability-ai-collective/discussions" class="btn btn--secondary">Join Discussions</a>
+            </div>
           </div>
-          <h2>Research Coming Soon</h2>
-          <p>Our automated research bots are preparing to discover cutting-edge developments in disability-AI intersections. The first research posts will be published once our daily automation begins!</p>
+        </div>
           
           <div class="placeholder-info">
             <h3>What Our Research Covers</h3>
