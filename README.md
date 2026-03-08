@@ -24,7 +24,14 @@ This repository is powered by automated research bots that:
 
 ## 🌐 Website
 
-Live site: [disability-ai-collective.github.io](https://disability-ai-collective.github.io)
+Live site: [spac-null.github.io/disabilityAI](https://spac-null.github.io/disabilityAI)
+
+**To deploy:**
+1. Push this repository to GitHub
+2. Go to Settings → Pages
+3. Select "Deploy from a branch"
+4. Choose "main" branch and "/ (root)" folder
+5. Save - site will be live in a few minutes!
 
 ## 📁 Repository Structure
 

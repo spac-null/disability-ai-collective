@@ -1,6 +1,45 @@
-requests>=2.28.0
-beautifulsoup4>=4.11.0
-python-dateutil>=2.8.0
-gitpython>=3.1.0
-markdown>=3.4.0
-pyyaml>=6.0
+# Disability-AI Collective - Production Dependencies
+# Pinned versions for reproducibility
+# Generated: 2026-03-08
+
+# Core web and data libraries
+requests==2.31.0
+beautifulsoup4==4.12.3
+python-dateutil==2.8.2
+
+# Git automation
+gitpython==3.1.41
+
+# Markdown and content processing
+markdown==3.6
+pyyaml==6.0.1
+
+# Scheduling and automation
+schedule==1.2.2
+apscheduler==3.11.2
+
+# Logging
+loguru==0.7.3
+
+# Templating
+jinja2==3.1.4
+
+# Optional: Web scraping enhancements
+# lxml==5.2.2
+# selenium==4.19.0
+
+# Optional: Data analysis
+# pandas==2.2.2
+# numpy==1.26.4
+
+# Optional: Visualization
+# matplotlib==3.8.4
+
+# Optional: AI/ML integration
+# openai==1.23.2
+# anthropic==0.25.4
+
+# Development dependencies (not required for production)
+# pytest==8.1.1
+# black==24.3.0
+# flake8==7.0.0
