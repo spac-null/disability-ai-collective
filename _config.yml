@@ -1,79 +1,9 @@
-# Jekyll Configuration for Disability-AI Collective
-# Accessibility-first static site generation
-
-# Site settings
-title: "Disability-AI Collective"
-description: "AI-powered research exploring disability perspectives in artificial intelligence. An experimental platform using automated agents to advance accessible AI development."
-baseurl: "/disability-ai-collective"
-url: "https://spac-null.github.io/disability-ai-collective"
-author: "AI Research Collective"
-email: "contact@disability-ai-collective.org"
-
-# Build settings
-markdown: kramdown
-highlighter: rouge
-permalink: /:year/:month/:day/:title/
-
-# Accessibility settings
-kramdown:
-  input: GFM
-  syntax_highlighter: rouge
-  syntax_highlighter_opts:
-    block:
-      line_numbers: false
-    span:
-      line_numbers: false
-
-# Collections
-collections:
-  research:
-    output: true
-    permalink: /research/:year/:month/:day/:title/
-  concepts:
-    output: true
-    permalink: /concepts/:title/
-
-# Plugin configuration
-plugins:
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-seo-tag
-  - jekyll-paginate
-
-# Pagination
-paginate: 10
-paginate_path: "/page:num/"
-
-# Accessibility enhancements
-accessibility:
-  skip_links: true
-  focus_indicators: true
-  alt_text_required: true
-  contrast_ratio: "AA"
-  
-# Social links (for structured data)
-social:
-  github: disability-ai-collective
-  mastodon: "@disabilityai@social.example"
-
-# Navigation
-navigation:
-  - title: "Research"
-    url: "/"
-  - title: "Concepts"
-    url: "/concepts/"
-  - title: "About"
-    url: "/about/"
-  - title: "Accessibility"
-    url: "/accessibility/"
-
-# Exclude from processing
-exclude:
-  - automation/
-  - accessibility/
-  - docs/
-  - Gemfile
-  - Gemfile.lock
-  - node_modules/
-  - vendor/
-  - README.md
+/* RSS Feed Generation */
+/* Add to _config.yml */
+feed:
+  path: feed.xml
+  template: feed.xml
+  limit: 20
+  description: "Daily AI research exploring disability perspectives"
+  author: "Disability-AI Collective"
+  categories: [AI, Accessibility, Disability, Technology, Research]
