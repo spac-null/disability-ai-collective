@@ -25,6 +25,24 @@
   }
 }
 
+/* Dark Theme Support */
+.dark-theme input,
+.dark-theme textarea,
+.dark-theme select {
+  background: var(--color-bg-light);
+  color: var(--color-black);
+  border-color: var(--color-border);
+}
+
+.dark-theme ::placeholder {
+  color: var(--color-light-gray);
+}
+
+.dark-theme code {
+  background: var(--color-bg-light);
+  color: var(--color-black);
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -73,7 +91,8 @@ input[type="submit"] {
   
   .site-header,
   .site-footer,
-  .btn {
+  .btn,
+  .accessibility-toggle {
     display: none !important;
   }
   

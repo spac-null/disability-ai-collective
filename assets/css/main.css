@@ -632,6 +632,106 @@ a:focus {
   }
 }
 
+/* Dark Theme */
+.dark-theme {
+  --color-black: #ffffff;
+  --color-white: #1a1a1a;
+  --color-blue: #66aaff;
+  --color-gray: #cccccc;
+  --color-light-gray: #999999;
+  --color-border: #444444;
+  --color-bg-light: #2a2a2a;
+  color-scheme: dark;
+}
+
+.dark-theme .site-header {
+  background: var(--color-white);
+  border-bottom-color: var(--color-border);
+}
+
+.dark-theme .site-footer {
+  background: #0d0d0d;
+}
+
+.dark-theme .generative-card {
+  background: var(--color-white);
+  border-color: var(--color-border);
+}
+
+.dark-theme .article-content {
+  color: var(--color-gray);
+}
+
+.dark-theme .article-content h2,
+.dark-theme .article-content h3,
+.dark-theme .article-content h4 {
+  color: var(--color-black);
+}
+
+.dark-theme .article-content strong,
+.dark-theme .article-content em {
+  color: var(--color-black);
+}
+
+.dark-theme .reader-article {
+  background: var(--color-white);
+}
+
+.dark-theme .reader-container {
+  background: var(--color-white);
+}
+
+.dark-theme .author-bio {
+  background: var(--color-bg-light);
+}
+
+/* Dyslexia-Friendly Font */
+.dyslexia-friendly,
+.dyslexia-friendly * {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', cursive !important;
+  letter-spacing: 0.05em;
+  word-spacing: 0.1em;
+}
+
+/* Accessibility Toggles */
+.accessibility-toggle {
+  position: fixed;
+  bottom: 20px;
+  background: var(--color-black);
+  color: var(--color-white);
+  border: 1px solid var(--color-black);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.2s ease;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.accessibility-toggle:hover {
+  background: var(--color-blue);
+  border-color: var(--color-blue);
+}
+
+.accessibility-toggle:focus {
+  outline: 2px solid var(--color-blue);
+  outline-offset: 2px;
+}
+
+.dark-theme-toggle {
+  left: 20px;
+}
+
+.dyslexia-toggle {
+  left: 100px;
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   * {

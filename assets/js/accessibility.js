@@ -1,94 +1,97 @@
-/* ACCESSIBILITY FEATURES */
+/* ACCESSIBILITY FEATURES - DARK THEME & ACCESSIBILITY TOGGLES */
 
-// High Contrast Toggle
+// Dark Theme Toggle (replaces "High Contrast")
 document.addEventListener('DOMContentLoaded', function() {
-  function createContrastToggle() {
+  function createDarkThemeToggle() {
     const toggle = document.createElement('button');
-    toggle.textContent = 'High Contrast';
-    toggle.className = 'contrast-toggle';
-    toggle.setAttribute('aria-label', 'Toggle high contrast mode');
-    toggle.style.cssText = `
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background: var(--color-black);
-      color: var(--color-white);
-      border: 1px solid var(--color-black);
-      padding: 8px 12px;
-      border-radius: 4px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      z-index: 1000;
-    `;
+    toggle.className = 'accessibility-toggle dark-theme-toggle';
+    toggle.setAttribute('aria-label', 'Toggle dark theme');
     
-    const isHighContrast = localStorage.getItem('high-contrast') === 'true';
-    if (isHighContrast) {
-      document.body.style.filter = 'contrast(2)';
-      toggle.textContent = 'Normal Contrast';
+    // Check saved preference
+    const isDarkTheme = localStorage.getItem('dark-theme') === 'true' || 
+                       window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (isDarkTheme) {
+      document.documentElement.classList.add('dark-theme');
+      toggle.innerHTML = '☀️ Light';
+      toggle.setAttribute('aria-pressed', 'true');
+    } else {
+      toggle.innerHTML = '🌙 Dark';
+      toggle.setAttribute('aria-pressed', 'false');
     }
     
     toggle.addEventListener('click', function() {
-      const currentlyHighContrast = document.body.style.filter === 'contrast(2)';
+      const currentlyDark = document.documentElement.classList.contains('dark-theme');
       
-      if (currentlyHighContrast) {
-        document.body.style.filter = '';
-        toggle.textContent = 'High Contrast';
-        localStorage.setItem('high-contrast', 'false');
+      if (currentlyDark) {
+        document.documentElement.classList.remove('dark-theme');
+        toggle.innerHTML = '🌙 Dark';
+        toggle.setAttribute('aria-pressed', 'false');
+        localStorage.setItem('dark-theme', 'false');
       } else {
-        document.body.style.filter = 'contrast(2)';
-        toggle.textContent = 'Normal Contrast';
-        localStorage.setItem('high-contrast', 'true');
+        document.documentElement.classList.add('dark-theme');
+        toggle.innerHTML = '☀️ Light';
+        toggle.setAttribute('aria-pressed', 'true');
+        localStorage.setItem('dark-theme', 'true');
       }
+      
+      // Announce change to screen readers
+      announceToScreenReader(`Switched to ${currentlyDark ? 'light' : 'dark'} theme`);
     });
     
     document.body.appendChild(toggle);
   }
   
-  createContrastToggle();
-});
-
-// Dyslexia-Friendly Font Toggle
-document.addEventListener('DOMContentLoaded', function() {
-  const savedFont = localStorage.getItem('dyslexia-font');
-  
-  if (savedFont === 'true') {
-    document.body.classList.add('dyslexia-friendly');
-  }
-  
-  // Add toggle to accessibility page if it exists
-  const accessibilityPage = document.body.querySelector('main h1');
-  if (accessibilityPage && accessibilityPage.textContent.includes('Accessibility')) {
+  // Dyslexia-Friendly Font Toggle
+  function createDyslexiaToggle() {
     const toggle = document.createElement('button');
-    toggle.textContent = 'Toggle Dyslexia Font';
-    toggle.className = 'btn btn--outline';
-    toggle.style.marginTop = '20px';
+    toggle.className = 'accessibility-toggle dyslexia-toggle';
+    toggle.setAttribute('aria-label', 'Toggle dyslexia-friendly font');
+    
+    const isDyslexiaFont = localStorage.getItem('dyslexia-font') === 'true';
+    
+    if (isDyslexiaFont) {
+      document.documentElement.classList.add('dyslexia-friendly');
+      toggle.innerHTML = '📖 Normal';
+      toggle.setAttribute('aria-pressed', 'true');
+    } else {
+      toggle.innerHTML = '🔤 Dyslexia';
+      toggle.setAttribute('aria-pressed', 'false');
+    }
     
     toggle.addEventListener('click', function() {
-      const isActive = document.body.classList.contains('dyslexia-friendly');
+      const currentlyDyslexia = document.documentElement.classList.contains('dyslexia-friendly');
       
-      if (isActive) {
-        document.body.classList.remove('dyslexia-friendly');
+      if (currentlyDyslexia) {
+        document.documentElement.classList.remove('dyslexia-friendly');
+        toggle.innerHTML = '🔤 Dyslexia';
+        toggle.setAttribute('aria-pressed', 'false');
         localStorage.setItem('dyslexia-font', 'false');
       } else {
-        document.body.classList.add('dyslexia-friendly');
+        document.documentElement.classList.add('dyslexia-friendly');
+        toggle.innerHTML = '📖 Normal';
+        toggle.setAttribute('aria-pressed', 'true');
         localStorage.setItem('dyslexia-font', 'true');
       }
+      
+      announceToScreenReader(`Switched to ${currentlyDyslexia ? 'normal' : 'dyslexia-friendly'} font`);
     });
     
-    accessibilityPage.parentNode.appendChild(toggle);
+    document.body.appendChild(toggle);
   }
+  
+  // Create both toggles
+  createDarkThemeToggle();
+  createDyslexiaToggle();
 });
 
-// Announce page changes to screen readers
-document.addEventListener('DOMContentLoaded', function() {
-  const pageTitle = document.title;
-  
-  // Create announcement for screen readers
+// Screen reader announcements
+function announceToScreenReader(message) {
   const announcement = document.createElement('div');
   announcement.setAttribute('aria-live', 'polite');
+  announcement.setAttribute('aria-atomic', 'true');
   announcement.className = 'visually-hidden';
-  announcement.textContent = `Page loaded: ${pageTitle}`;
+  announcement.textContent = message;
   
   document.body.appendChild(announcement);
   
@@ -98,4 +101,32 @@ document.addEventListener('DOMContentLoaded', function() {
       document.body.removeChild(announcement);
     }
   }, 2000);
+}
+
+// Page change announcements for screen readers
+document.addEventListener('DOMContentLoaded', function() {
+  const pageTitle = document.title;
+  announceToScreenReader(`Page loaded: ${pageTitle}`);
+});
+
+// Respect system preferences
+document.addEventListener('DOMContentLoaded', function() {
+  // Auto-apply dark theme if user prefers it and hasn't set preference
+  if (localStorage.getItem('dark-theme') === null) {
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.add('dark-theme');
+      localStorage.setItem('dark-theme', 'true');
+    }
+  }
+  
+  // Listen for system theme changes
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+    if (localStorage.getItem('dark-theme') === null) {
+      if (e.matches) {
+        document.documentElement.classList.add('dark-theme');
+      } else {
+        document.documentElement.classList.remove('dark-theme');
+      }
+    }
+  });
 });
