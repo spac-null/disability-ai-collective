@@ -1,15 +1,9 @@
-/* Accessibility-specific enhancements */
-/* Focus indicators, screen reader support, keyboard navigation */
+/* ACCESSIBILITY ENHANCEMENTS */
 
-/* =============================================================================
-   FOCUS MANAGEMENT
-   ========================================================================== */
-
-/* Enhanced focus styles for better visibility */
+/* Focus Management */
 *:focus {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-blue);
   outline-offset: 2px;
-  border-radius: var(--border-radius-sm);
 }
 
 *:focus:not(:focus-visible) {
@@ -17,39 +11,21 @@
 }
 
 *:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-blue);
   outline-offset: 2px;
 }
 
-/* =============================================================================
-   HIGH CONTRAST MODE
-   ========================================================================== */
-
+/* High Contrast Mode */
 @media (prefers-contrast: high) {
   :root {
-    --color-background: #000000;
-    --color-text: #ffffff;
-    --color-primary: #ffff00;
-    --color-secondary: #00ff00;
-    --color-accent: #ff00ff;
-    --color-border: #ffffff;
+    --color-black: #000000;
+    --color-white: #ffffff;
+    --color-blue: #0000ff;
+    --color-gray: #000000;
   }
 }
 
-.high-contrast-mode {
-  --color-background: #000000 !important;
-  --color-text: #ffffff !important;
-  --color-primary: #ffff00 !important;
-  --color-secondary: #00ff00 !important;
-  --color-accent: #ff00ff !important;
-  --color-border: #ffffff !important;
-  --color-surface: #333333 !important;
-}
-
-/* =============================================================================
-   REDUCED MOTION
-   ========================================================================== */
-
+/* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -61,36 +37,11 @@
   }
 }
 
-.reduced-motion {
-  --transition-all: none !important;
-  --transition-colors: none !important;
-}
-
-/* =============================================================================
-   KEYBOARD NAVIGATION
-   ========================================================================== */
-
-/* Enhanced focus for interactive elements */
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 1px var(--color-background);
-}
-
-/* =============================================================================
-   TOUCH AND MOBILE ACCESSIBILITY
-   ========================================================================== */
-
-/* Minimum touch target sizes */
+/* Touch Targets */
 button,
 a,
 input[type="button"],
-input[type="submit"],
-input[type="reset"] {
+input[type="submit"] {
   min-width: 44px;
   min-height: 44px;
   touch-action: manipulation;
@@ -98,64 +49,21 @@ input[type="reset"] {
 
 @media (max-width: 768px) {
   .btn,
-  .site-nav__link {
-    min-width: 48px;
+  .site-nav__menu a {
     min-height: 48px;
-    padding: var(--space-3) var(--space-4);
+    padding: var(--space-md) var(--space-lg);
   }
 }
 
-/* =============================================================================
-   DYSLEXIA-FRIENDLY FEATURES
-   ========================================================================== */
-
+/* Dyslexia-Friendly Option */
 .dyslexia-friendly {
-  font-family: 'OpenDyslexic', 'Comic Sans MS', cursive, var(--font-family);
-  letter-spacing: 0.12em;
+  font-family: 'OpenDyslexic', sans-serif;
+  letter-spacing: 0.1em;
   word-spacing: 0.16em;
-  line-height: 1.8 !important;
+  line-height: 1.8;
 }
 
-.large-font {
-  font-size: 1.2em !important;
-}
-
-/* =============================================================================
-   COLOR BLINDNESS SUPPORT
-   ========================================================================== */
-
-.success::before {
-  content: "✓ ";
-  font-weight: bold;
-}
-
-.warning::before {
-  content: "⚠ ";
-  font-weight: bold;
-}
-
-.error::before {
-  content: "✗ ";
-  font-weight: bold;
-}
-
-/* =============================================================================
-   SIMPLIFIED LAYOUT MODE
-   ========================================================================== */
-
-.simplified-mode .card {
-  box-shadow: none !important;
-  border: 2px solid var(--color-border) !important;
-}
-
-.simplified-mode .hero {
-  background: var(--color-background) !important;
-}
-
-/* =============================================================================
-   PRINT ACCESSIBILITY
-   ========================================================================== */
-
+/* Print Styles */
 @media print {
   * {
     background: transparent !important;
@@ -163,9 +71,10 @@ input[type="reset"] {
     box-shadow: none !important;
   }
   
-  a,
-  a:visited {
-    text-decoration: underline;
+  .site-header,
+  .site-footer,
+  .btn {
+    display: none !important;
   }
   
   a[href]:after {
@@ -174,24 +83,7 @@ input[type="reset"] {
     color: #666;
   }
   
-  a[href^="#"]:after,
-  a[href^="/"]:after {
+  a[href^="#"]:after {
     content: "";
-  }
-}
-
-/* =============================================================================
-   BROWSER-SPECIFIC FIXES
-   ========================================================================== */
-
-@-moz-document url-prefix() {
-  button::-moz-focus-inner {
-    border: 0;
-  }
-}
-
-@media screen and (-ms-high-contrast: active) {
-  .card {
-    border: 2px solid;
   }
 }
