@@ -23,7 +23,7 @@
       const newState = !isOpen;
       
       this.setAttribute('aria-expanded', newState.toString());
-      menu.style.display = newState ? 'flex' : 'none';
+      menu.classList.toggle('is-open', newState);
       
       if (newState) {
         const firstLink = menu.querySelector('a');
@@ -35,7 +35,7 @@
     document.addEventListener('click', function(event) {
       if (!toggle.contains(event.target) && !menu.contains(event.target)) {
         toggle.setAttribute('aria-expanded', 'false');
-        menu.style.display = 'none';
+        menu.classList.remove('is-open');
       }
     });
     
@@ -43,7 +43,7 @@
     document.addEventListener('keydown', function(event) {
       if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
         toggle.setAttribute('aria-expanded', 'false');
-        menu.style.display = 'none';
+        menu.classList.remove('is-open');
         toggle.focus();
       }
     });

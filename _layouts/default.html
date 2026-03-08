@@ -20,6 +20,7 @@
     <meta property="og:url" content="{{ site.url }}{{ page.url }}">
     
     <!-- Stylesheets -->
+    <link rel="preload" href="{{ '/assets/css/main.css' | relative_url }}" as="style">
     <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/accessibility.css' | relative_url }}">
     
@@ -57,8 +58,8 @@
             
             <!-- Main navigation -->
             <nav id="navigation" class="site-nav">
-                <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav-menu" style="display: none;">
-                    <span>☰</span>
+                <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Toggle navigation menu">
+                    <span aria-hidden="true">☰</span>
                     <span class="sr-only">Menu</span>
                 </button>
                 
