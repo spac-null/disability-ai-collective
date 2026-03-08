@@ -1,64 +1,63 @@
 ---
 layout: default
-title: "Concepts - Disability-AI Collective"
-description: "Explore our evolving concepts for disability-centered AI innovation."
+title: "Creative Concepts - Disability-AI Collective"
+description: "Explore our evolving concepts for disability-centered creative technology innovation."
 permalink: /concepts/
 ---
 
 <main id="main-content">
   <!-- Page header -->
-  <section class="page-header">
+  <section class="page-header" style="padding: var(--space-3xl) 0 var(--space-2xl) 0; background: var(--color-paper);">
     <div class="container">
-      <h1 class="page-title">Concept Development</h1>
-      <p class="page-description">
-        Exploring innovative ideas at the intersection of disability culture and artificial intelligence. 
-        These concepts represent our ongoing research and development efforts.
+      <h1 class="text-crip-large" style="margin-bottom: var(--space-lg);">Creative Concepts</h1>
+      <p class="text-manifesto" style="max-width: 700px; color: var(--color-ash);">
+        Exploring innovative ideas at the intersection of disability culture and creative technology. 
+        These concepts represent our ongoing experimental arts development.
       </p>
     </div>
   </section>
 
   <!-- Concepts list -->
-  <section class="concepts-listing">
+  <section style="padding: var(--space-3xl) 0;">
     <div class="container">
       {% if site.concepts.size > 0 %}
-        <div class="concepts-grid">
+        <div class="grid grid--2">
           {% for concept in site.concepts %}
-          <article class="concept-card">
-            <header class="concept-card__header">
-              <h2 class="concept-card__title">
-                <a href="{{ concept.url | relative_url }}">{{ concept.title }}</a>
+          <article class="generative-card">
+            <header>
+              <h2>
+                <a href="{{ concept.url | relative_url }}" style="color: var(--color-crip-black); text-decoration: none;">{{ concept.title }}</a>
               </h2>
               
-              <div class="concept-card__meta">
+              <div style="font-size: var(--font-size-sm); color: var(--color-smoke); margin-bottom: var(--space-md);">
                 <time datetime="{{ concept.date | date_to_xmlschema }}">
                   {{ concept.date | date: "%B %d, %Y" }}
                 </time>
                 
                 {% if concept.status %}
-                <span class="status-badge status-badge--{{ concept.status }}">
+                <span class="status-badge status-badge--{{ concept.status }}" style="margin-left: var(--space-md);">
                   {{ concept.status | capitalize }}
                 </span>
                 {% endif %}
               </div>
             </header>
             
-            <div class="concept-card__content">
+            <div>
               {% if concept.excerpt %}
-                <p class="concept-card__excerpt">{{ concept.excerpt | strip_html | truncatewords: 30 }}</p>
+                <p style="color: var(--color-ash); margin-bottom: var(--space-md);">{{ concept.excerpt | strip_html | truncatewords: 30 }}</p>
               {% endif %}
               
               {% if concept.tags %}
-              <div class="concept-card__tags" aria-label="Tags">
+              <div style="margin-bottom: var(--space-md);">
                 {% for tag in concept.tags %}
-                  <span class="concept-tag">#{{ tag }}</span>
+                  <span style="background: var(--color-access-blue); color: white; padding: var(--space-xs) var(--space-sm); border-radius: var(--space-xs); font-size: var(--font-size-xs); margin-right: var(--space-xs);">#{{ tag }}</span>
                 {% endfor %}
               </div>
               {% endif %}
             </div>
             
-            <footer class="concept-card__footer">
-              <a href="{{ concept.url | relative_url }}" class="concept-card__link" 
-                 aria-label="Read full concept: {{ concept.title }}">
+            <footer>
+              <a href="{{ concept.url | relative_url }}" class="btn btn--outline" style="margin-top: var(--space-md);">
                 Explore Concept →
               </a>
             </footer>
@@ -66,256 +65,81 @@ permalink: /concepts/
           {% endfor %}
         </div>
       {% else %}
-        <div class="enhanced-empty-state text-center">
-          <div class="empty-state-container" style="max-width: 800px; margin: 0 auto; background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-background) 100%); padding: var(--space-8); border-radius: var(--border-radius-lg); border: 2px dashed var(--color-border);">
-            <div style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--color-secondary), var(--color-accent)); border-radius: 50%; margin: 0 auto var(--space-6); display: flex; align-items: center; justify-content: center; font-size: 48px; color: var(--color-white); position: relative;" role="img" aria-label="Concept development">
-              💡
-              <div style="position: absolute; top: -5px; right: -5px; width: 30px; height: 30px; background: var(--color-success); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px;">🎨</div>
-            </div>
+        <div style="text-align: center; max-width: 800px; margin: 0 auto; padding: var(--space-3xl); border: var(--border-experimental); background: var(--color-paper); border-radius: 12px;">
+          <div style="font-size: 4rem; margin-bottom: var(--space-lg);">💡</div>
+          
+          <h2 style="color: var(--color-crip-black); margin-bottom: var(--space-lg); font-size: 2rem; font-weight: 800;">
+            Creative Technology Lab
+          </h2>
+          
+          <p style="font-size: var(--font-size-lg); line-height: 1.6; margin-bottom: var(--space-xl); color: var(--color-ash);">
+            We're developing innovative concepts that explore how disability perspectives can revolutionize creative technology. 
+            Each concept represents a unique intersection of crip culture and artistic innovation.
+          </p>
+          
+          <div style="background: var(--color-crip-white); border-radius: 8px; padding: var(--space-xl); margin-bottom: var(--space-xl); border-left: 4px solid var(--color-access-blue); text-align: left;">
+            <h3 style="color: var(--color-access-blue); margin-bottom: var(--space-lg); font-size: 1.5rem; text-align: center;">🚀 Concepts in Development</h3>
             
-            <h2 style="color: var(--color-secondary); margin-bottom: var(--space-4);">AI Concept Development Lab</h2>
-            <p style="font-size: var(--font-size-lg); line-height: var(--line-height-relaxed); margin-bottom: var(--space-6); color: var(--color-text-muted);">
-              We're developing innovative concepts that explore how disability perspectives can revolutionize artificial intelligence. 
-              Each concept represents a unique intersection of disability culture and AI innovation.
-            </p>
-            
-            <div class="concept-pipeline" style="background: var(--color-background); border-radius: var(--border-radius); padding: var(--space-6); margin-bottom: var(--space-6); border-left: 4px solid var(--color-secondary);">
-              <h3 style="color: var(--color-accent); margin-bottom: var(--space-4); font-size: var(--font-size-xl);">🚀 Concepts in Development:</h3>
+            <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+              <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--color-paper); border-radius: 8px;">
+                <div style="width: 50px; height: 50px; background: var(--gradient-spatial); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">🤟</div>
+                <div>
+                  <h4 style="color: var(--color-crip-black); margin-bottom: var(--space-xs); font-weight: 600;">Deaf-Led Creative Vision</h4>
+                  <p style="font-size: var(--font-size-sm); color: var(--color-ash);">How deaf visual-spatial thinking revolutionizes digital art creation and interactive design</p>
+                </div>
+              </div>
               
-              <div class="concept-stages" style="display: flex; flex-direction: column; gap: var(--space-4);">
-                <div class="concept-stage" style="display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; padding: var(--space-4); background: var(--color-surface); border-radius: var(--border-radius);">
-                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">🤟</div>
-                  <div>
-                    <h4 style="color: var(--color-primary); margin-bottom: var(--space-1);">Deaf-Led AI Vision</h4>
-                    <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">How deaf perspectives and visual-spatial thinking can revolutionize AI interface design and interaction patterns</p>
-                  </div>
-                </div>
-                
-                <div class="concept-stage" style="display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; padding: var(--space-4); background: var(--color-surface); border-radius: var(--border-radius);">
-                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--color-secondary), var(--color-accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">🎯</div>
-                  <div>
-                    <h4 style="color: var(--color-secondary); margin-bottom: var(--space-1);">Accessible Design Patterns</h4>
-                    <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">Disability-informed frameworks for building AI interfaces that work for diverse cognitive and sensory needs</p>
-                  </div>
-                </div>
-                
-                <div class="concept-stage" style="display: grid; grid-template-columns: auto 1fr; gap: var(--space-4); align-items: center; padding: var(--space-4); background: var(--color-surface); border-radius: var(--border-radius);">
-                  <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--color-accent), var(--color-success)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">🏛️</div>
-                  <div>
-                    <h4 style="color: var(--color-accent); margin-bottom: var(--space-1);">Cultural AI Tools</h4>
-                    <p style="font-size: var(--font-size-sm); color: var(--color-text-muted);">Technology that celebrates and amplifies disability culture rather than trying to "fix" or normalize differences</p>
-                  </div>
+              <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--color-paper); border-radius: 8px;">
+                <div style="width: 50px; height: 50px; background: var(--gradient-pattern); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">🎨</div>
+                <div>
+                  <h4 style="color: var(--color-crip-black); margin-bottom: var(--space-xs); font-weight: 600;">Accessible Creative Patterns</h4>
+                  <p style="font-size: var(--font-size-sm); color: var(--color-ash);">Disability-informed frameworks for building creative tools that work for diverse minds</p>
                 </div>
               </div>
-            </div>
-            
-            <div class="development-process" style="background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); color: white; padding: var(--space-5); border-radius: var(--border-radius); margin-bottom: var(--space-6);">
-              <h4 style="color: white; margin-bottom: var(--space-3); font-size: var(--font-size-lg);">🔬 Our Development Process</h4>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-4);">
-                <div style="text-align: center;">
-                  <div style="font-size: var(--font-size-2xl);">💭</div>
-                  <strong>Research</strong><br>
-                  <small>Literature review & community input</small>
-                </div>
-                <div style="text-align: center;">
-                  <div style="font-size: var(--font-size-2xl);">🛠️</div>
-                  <strong>Prototype</strong><br>
-                  <small>Build minimal viable concepts</small>
-                </div>
-                <div style="text-align: center;">
-                  <div style="font-size: var(--font-size-2xl);">🧪</div>
-                  <strong>Test</strong><br>
-                  <small>Accessibility & usability validation</small>
-                </div>
-                <div style="text-align: center;">
-                  <div style="font-size: var(--font-size-2xl);">🚀</div>
-                  <strong>Share</strong><br>
-                  <small>Open source & documentation</small>
+              
+              <div style="display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md); background: var(--color-paper); border-radius: 8px;">
+                <div style="width: 50px; height: 50px; background: var(--gradient-neural); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">🏛️</div>
+                <div>
+                  <h4 style="color: var(--color-crip-black); margin-bottom: var(--space-xs); font-weight: 600;">Cultural Creative Tools</h4>
+                  <p style="font-size: var(--font-size-sm); color: var(--color-ash);">Technology that celebrates and amplifies disability culture rather than normalizing differences</p>
                 </div>
               </div>
-            </div>
-            
-            <div style="display: flex; gap: var(--space-4); justify-content: center; flex-wrap: wrap;">
-              <a href="{{ '/about/' | relative_url }}" class="btn btn--primary">About Our Approach</a>
-              <a href="https://github.com/spac-null/disability-ai-collective" class="btn btn--secondary">View Source Code</a>
-              <a href="https://github.com/spac-null/disability-ai-collective/discussions" class="btn btn--secondary">Suggest Concepts</a>
             </div>
           </div>
-        </div>
           
-          <div class="placeholder-info">
-            <h3>What to Expect</h3>
-            <ul>
-              <li><strong>Deaf-Led AI Vision</strong> - How deaf perspectives can revolutionize AI development</li>
-              <li><strong>Accessible Design Patterns</strong> - Disability-informed AI interface design</li>
-              <li><strong>Cultural AI Tools</strong> - Technology that celebrates disability culture</li>
-              <li><strong>Community-Driven Research</strong> - Participatory development methods</li>
-            </ul>
+          <div style="background: var(--color-crip-black); color: var(--color-crip-white); padding: var(--space-xl); border-radius: 8px; margin-bottom: var(--space-xl);">
+            <h4 style="color: white; margin-bottom: var(--space-md); font-size: 1.25rem; font-weight: 600;">🔬 Our Creative Process</h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: var(--space-lg);">
+              <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: var(--space-xs);">💭</div>
+                <strong style="display: block; margin-bottom: var(--space-xs);">Research</strong>
+                <small>Community input & cultural analysis</small>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: var(--space-xs);">🛠️</div>
+                <strong style="display: block; margin-bottom: var(--space-xs);">Prototype</strong>
+                <small>Build experimental concepts</small>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: var(--space-xs);">🧪</div>
+                <strong style="display: block; margin-bottom: var(--space-xs);">Test</strong>
+                <small>Accessibility & usability validation</small>
+              </div>
+              <div style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: var(--space-xs);">🚀</div>
+                <strong style="display: block; margin-bottom: var(--space-xs);">Share</strong>
+                <small>Open source & documentation</small>
+              </div>
+            </div>
+          </div>
+          
+          <div style="display: flex; gap: var(--space-lg); justify-content: center; flex-wrap: wrap;">
+            <a href="{{ '/about/' | relative_url }}" class="btn">About Our Approach</a>
+            <a href="https://github.com/spac-null/disability-ai-collective" class="btn btn--outline">View Source Code</a>
+            <a href="https://github.com/spac-null/disability-ai-collective/discussions" class="btn btn--outline">Suggest Concepts</a>
           </div>
         </div>
       {% endif %}
     </div>
   </section>
 </main>
-
-<style>
-.page-header {
-  padding: var(--space-3xl) 0 var(--space-2xl) 0;
-  background: var(--color-light);
-  border-bottom: var(--border-width) solid var(--color-border);
-}
-
-.page-title {
-  font-size: clamp(var(--font-size-h2), 6vw, var(--font-size-h1));
-  color: var(--color-primary);
-  margin-bottom: var(--space-lg);
-}
-
-.page-description {
-  font-size: var(--font-size-lg);
-  color: var(--color-muted);
-  max-width: 70ch;
-  line-height: var(--line-height-base);
-}
-
-.concepts-listing {
-  padding: var(--space-3xl) 0;
-}
-
-.concepts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: var(--space-xl);
-}
-
-.concept-card {
-  background: var(--color-background);
-  border: var(--border-width) solid var(--color-border);
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  transition: all var(--transition-normal);
-  height: fit-content;
-}
-
-.concept-card:hover {
-  box-shadow: var(--shadow-lg);
-  border-color: var(--color-accent);
-  transform: translateY(-4px);
-}
-
-.concept-card__header {
-  padding: var(--space-xl) var(--space-xl) var(--space-lg) var(--space-xl);
-}
-
-.concept-card__title {
-  margin-bottom: var(--space-md);
-  font-size: var(--font-size-h4);
-  line-height: var(--line-height-heading);
-}
-
-.concept-card__title a {
-  color: var(--color-text);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-.concept-card__title a:hover {
-  color: var(--color-primary);
-}
-
-.concept-card__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  font-size: var(--font-size-sm);
-  color: var(--color-muted);
-}
-
-.concept-card__content {
-  padding: 0 var(--space-xl) var(--space-lg) var(--space-xl);
-}
-
-.concept-card__excerpt {
-  color: var(--color-text);
-  line-height: var(--line-height-base);
-  margin-bottom: var(--space-md);
-}
-
-.concept-card__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-xs);
-}
-
-.concept-tag {
-  background: var(--color-secondary);
-  color: var(--color-background);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: calc(var(--border-radius) / 2);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-}
-
-.concept-card__footer {
-  padding: var(--space-lg) var(--space-xl) var(--space-xl) var(--space-xl);
-  background: var(--color-light);
-}
-
-.concept-card__link {
-  display: inline-flex;
-  align-items: center;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-primary);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-.concept-card__link:hover {
-  color: var(--color-secondary);
-}
-
-.placeholder {
-  text-align: center;
-  padding: var(--space-4xl) var(--space-xl);
-  background: var(--color-light);
-  border-radius: var(--border-radius);
-}
-
-.placeholder h2 {
-  color: var(--color-primary);
-  margin-bottom: var(--space-lg);
-}
-
-.placeholder-info {
-  margin-top: var(--space-2xl);
-  text-align: left;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.placeholder-info h3 {
-  color: var(--color-secondary);
-  margin-bottom: var(--space-md);
-}
-
-.placeholder-info ul {
-  padding-left: var(--space-lg);
-}
-
-.placeholder-info li {
-  margin-bottom: var(--space-sm);
-}
-
-@media (max-width: 768px) {
-  .concepts-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .concept-card__meta {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-sm);
-  }
-}
-</style>
