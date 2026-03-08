@@ -19,7 +19,7 @@
     <!-- Stylesheets -->
     <link rel="preload" href="{{ '/assets/css/main.css' | relative_url }}" as="style">
     <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
-    <link rel="stylesheet" href="{{ '/assets/css/components.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/mobile-a11y.css' | relative_url }}">
     <link rel="stylesheet" href="{{ '/assets/css/accessibility.css' | relative_url }}">
     
     <!-- Fonts -->
@@ -57,19 +57,16 @@
             <!-- Main navigation -->
             <nav id="navigation" class="site-nav">
                 <button class="site-nav__toggle" aria-expanded="false" aria-controls="site-nav-menu" aria-label="Toggle navigation menu">
-                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" role="img" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
                 </button>
                 
                 <ul id="site-nav-menu" class="site-nav__menu">
-                    {% for item in site.navigation %}
-                    <li>
-                        <a href="{{ item.url | relative_url }}" class="site-nav__link{% if page.url == item.url %} site-nav__link--active{% endif %}">
-                            {{ item.title }}
-                        </a>
-                    </li>
-                    {% endfor %}
+                    <li><a href="{{ '/' | relative_url }}">Collective</a></li>
+                    <li><a href="{{ '/research/' | relative_url }}">Research</a></li>
+                    <li><a href="{{ '/about/' | relative_url }}">About</a></li>
+                    <li><a href="{{ '/accessibility/' | relative_url }}">Accessibility</a></li>
                 </ul>
             </nav>
         </div>

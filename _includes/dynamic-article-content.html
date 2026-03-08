@@ -1,0 +1,8 @@
+<!-- Dynamic Article Content -->
+{% if page.title == "The Echolocation Revolution" %}
+  {% include articles/echolocation-revolution.html %}
+{% elsif page.title == "Hands Think Faster Than Words" %}
+  {% include articles/hands-think-faster-than-words.html %}
+{% else %}
+  {{ content }}
+{% endif %}
