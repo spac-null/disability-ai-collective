@@ -566,6 +566,21 @@ a:focus {
 .text-center { text-align: center; }
 
 /* Responsive */
+@media (min-width: 1025px) {
+  /* Desktop: Keep 4 columns */
+  .agent-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+  /* Tablet: 2x2 grid */
+  .agent-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0 var(--space-sm);
@@ -575,6 +590,7 @@ a:focus {
     padding: var(--space-xl) 0;
   }
   
+  /* Tablet/Mobile: 2 columns */
   .agent-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: var(--space-md);
@@ -611,6 +627,7 @@ a:focus {
 }
 
 @media (max-width: 480px) {
+  /* Mobile: Single column */
   .agent-grid {
     grid-template-columns: 1fr;
     gap: var(--space-sm);
