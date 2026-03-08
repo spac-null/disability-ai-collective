@@ -1,0 +1,470 @@
+---
+layout: default
+---
+
+<main id="main-content">
+  <article class="concept" itemscope itemtype="https://schema.org/Article">
+    <!-- Concept header -->
+    <header class="concept-header">
+      <div class="container">
+        <h1 class="concept-title" itemprop="name headline">{{ page.title }}</h1>
+        
+        <div class="concept-meta">
+          <time class="concept-date" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+            {{ page.date | date: "%B %d, %Y" }}
+          </time>
+          
+          {% if page.categories %}
+          <div class="concept-categories" aria-label="Categories">
+            {% for category in page.categories %}
+              <span class="concept-category">{{ category | capitalize }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+          
+          {% if page.tags %}
+          <div class="concept-tags" aria-label="Tags">
+            {% for tag in page.tags %}
+              <span class="concept-tag">#{{ tag }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+          
+          <div class="concept-status">
+            <span class="status-badge status-badge--{{ page.status | default: 'draft' }}">
+              {{ page.status | default: 'Draft' | capitalize }}
+            </span>
+          </div>
+        </div>
+        
+        {% if page.excerpt %}
+        <div class="concept-excerpt" itemprop="description">
+          {{ page.excerpt }}
+        </div>
+        {% endif %}
+      </div>
+    </header>
+
+    <!-- Concept content -->
+    <div class="concept-content" itemprop="articleBody">
+      <div class="container">
+        {{ content }}
+      </div>
+    </div>
+
+    <!-- Concept footer -->
+    <footer class="concept-footer">
+      <div class="container">
+        <!-- Development status -->
+        <div class="concept-development">
+          <h3 class="concept-development-title">Development Status</h3>
+          <div class="development-progress">
+            <div class="progress-item {% if page.research_complete %}progress-item--complete{% endif %}">
+              <span class="progress-icon" aria-hidden="true">🔍</span>
+              <span class="progress-text">Research Phase</span>
+            </div>
+            <div class="progress-item {% if page.prototype_complete %}progress-item--complete{% endif %}">
+              <span class="progress-icon" aria-hidden="true">🛠️</span>
+              <span class="progress-text">Prototype Phase</span>
+            </div>
+            <div class="progress-item {% if page.testing_complete %}progress-item--complete{% endif %}">
+              <span class="progress-icon" aria-hidden="true">🧪</span>
+              <span class="progress-text">Testing Phase</span>
+            </div>
+            <div class="progress-item {% if page.implementation_complete %}progress-item--complete{% endif %}">
+              <span class="progress-icon" aria-hidden="true">🚀</span>
+              <span class="progress-text">Implementation</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Related concepts -->
+        {% if page.related_concepts %}
+        <div class="related-concepts">
+          <h3 class="related-concepts-title">Related Concepts</h3>
+          <ul class="related-list">
+            {% for concept in page.related_concepts %}
+            <li class="related-item">
+              <a href="{{ concept.url | relative_url }}" class="related-link">
+                {{ concept.title }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        
+        <!-- Feedback section -->
+        <div class="concept-feedback">
+          <h3 class="concept-feedback-title">Community Input</h3>
+          <p>This concept is part of our ongoing research. We welcome feedback from the disability community:</p>
+          <div class="feedback-buttons">
+            <a href="mailto:feedback@disability-ai-collective.org?subject=Feedback on {{ page.title | url_encode }}" 
+               class="feedback-btn feedback-btn--email">
+              <span aria-hidden="true">📧</span>
+              Email Feedback
+            </a>
+            <a href="https://github.com/spac-null/disability-ai-collective/discussions" 
+               class="feedback-btn feedback-btn--github" 
+               target="_blank" rel="noopener">
+              <span aria-hidden="true">💬</span>
+              GitHub Discussions
+            </a>
+            <a href="#" class="feedback-btn feedback-btn--accessibility">
+              <span aria-hidden="true">♿</span>
+              Accessibility Review
+            </a>
+          </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="concept-navigation" aria-label="Concept navigation">
+          <a href="/concepts/" class="nav-link nav-link--back">
+            <span class="nav-direction">← Back to</span>
+            <span class="nav-title">All Concepts</span>
+          </a>
+          
+          {% for concept in site.concepts %}
+            {% if concept.title != page.title %}
+              {% if forloop.first %}
+          <a class="nav-link nav-link--random" href="{{ concept.url | relative_url }}">
+            <span class="nav-direction">Explore</span>
+            <span class="nav-title">{{ concept.title }}</span>
+          </a>
+              {% break %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </nav>
+      </div>
+    </footer>
+  </article>
+</main>
+
+<style>
+/* Concept-specific styles */
+.concept-header {
+  padding: var(--space-3xl) 0 var(--space-2xl) 0;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  color: var(--color-background);
+  position: relative;
+}
+
+.concept-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}
+
+.concept-header .container {
+  position: relative;
+  z-index: 1;
+}
+
+.concept-title {
+  font-size: clamp(var(--font-size-h3), 6vw, var(--font-size-h1));
+  color: var(--color-background);
+  margin-bottom: var(--space-lg);
+  line-height: var(--line-height-heading);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.concept-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: var(--font-size-sm);
+}
+
+.concept-date {
+  font-weight: var(--font-weight-medium);
+}
+
+.concept-category,
+.concept-tag {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--color-background);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: calc(var(--border-radius) / 2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  backdrop-filter: blur(10px);
+}
+
+.status-badge {
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: calc(var(--border-radius) / 2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.status-badge--draft {
+  background: var(--color-warning);
+  color: var(--color-background);
+}
+
+.status-badge--research {
+  background: var(--color-secondary);
+  color: var(--color-background);
+}
+
+.status-badge--prototype {
+  background: var(--color-accent);
+  color: var(--color-background);
+}
+
+.status-badge--active {
+  background: var(--color-success);
+  color: var(--color-background);
+}
+
+.concept-excerpt {
+  font-size: var(--font-size-lg);
+  color: rgba(255, 255, 255, 0.9);
+  font-style: italic;
+  max-width: 70ch;
+  line-height: var(--line-height-base);
+}
+
+.concept-content {
+  padding: var(--space-3xl) 0;
+  line-height: var(--line-height-base);
+}
+
+.concept-content h2,
+.concept-content h3,
+.concept-content h4 {
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-md);
+  color: var(--color-primary);
+}
+
+.concept-content p {
+  margin-bottom: var(--space-md);
+  max-width: 70ch;
+}
+
+.concept-content ul,
+.concept-content ol {
+  margin-bottom: var(--space-md);
+  padding-left: var(--space-xl);
+  max-width: 65ch;
+}
+
+.concept-content li {
+  margin-bottom: var(--space-sm);
+}
+
+.concept-content blockquote {
+  border-left: 4px solid var(--color-accent);
+  padding-left: var(--space-lg);
+  margin: var(--space-xl) 0;
+  font-style: italic;
+  color: var(--color-muted);
+  background: var(--color-light);
+  padding: var(--space-lg);
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+.concept-footer {
+  background: var(--color-light);
+  padding: var(--space-3xl) 0;
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.concept-development,
+.related-concepts,
+.concept-feedback {
+  margin-bottom: var(--space-2xl);
+}
+
+.concept-development-title,
+.related-concepts-title,
+.concept-feedback-title {
+  font-size: var(--font-size-h5);
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+}
+
+.development-progress {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+.progress-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  opacity: 0.6;
+  transition: all var(--transition-fast);
+}
+
+.progress-item--complete {
+  opacity: 1;
+  border-color: var(--color-success);
+  background: var(--color-success);
+  color: var(--color-background);
+}
+
+.progress-icon {
+  font-size: 18px;
+  filter: grayscale(100%);
+}
+
+.progress-item--complete .progress-icon {
+  filter: none;
+}
+
+.progress-text {
+  font-weight: var(--font-weight-medium);
+}
+
+.related-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-md);
+}
+
+.related-item {
+  margin: 0;
+}
+
+.related-link {
+  display: block;
+  padding: var(--space-md);
+  background: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+}
+
+.related-link:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-background);
+}
+
+.feedback-buttons {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.feedback-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  background: var(--color-background);
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+  transition: all var(--transition-fast);
+}
+
+.feedback-btn--email:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-background);
+}
+
+.feedback-btn--github:hover {
+  border-color: var(--color-secondary);
+  background: var(--color-secondary);
+  color: var(--color-background);
+}
+
+.feedback-btn--accessibility:hover {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-background);
+}
+
+.concept-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  margin-top: var(--space-2xl);
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  flex: 1;
+  max-width: calc(50% - var(--space-sm));
+  padding: var(--space-lg);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  background: var(--color-background);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.nav-link:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-link--random {
+  text-align: right;
+}
+
+.nav-direction {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+  margin-bottom: var(--space-xs);
+}
+
+.nav-title {
+  display: block;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+@media (max-width: 768px) {
+  .concept-navigation {
+    flex-direction: column;
+  }
+  
+  .nav-link {
+    max-width: 100%;
+  }
+  
+  .nav-link--random {
+    text-align: left;
+  }
+  
+  .feedback-buttons {
+    flex-direction: column;
+  }
+  
+  .development-progress {
+    grid-template-columns: 1fr;
+  }
+  
+  .related-list {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

@@ -1,0 +1,248 @@
+---
+layout: default
+title: "Concepts - Disability-AI Collective"
+description: "Explore our evolving concepts for disability-centered AI innovation."
+permalink: /concepts/
+---
+
+<main id="main-content">
+  <!-- Page header -->
+  <section class="page-header">
+    <div class="container">
+      <h1 class="page-title">Concept Development</h1>
+      <p class="page-description">
+        Exploring innovative ideas at the intersection of disability culture and artificial intelligence. 
+        These concepts represent our ongoing research and development efforts.
+      </p>
+    </div>
+  </section>
+
+  <!-- Concepts list -->
+  <section class="concepts-listing">
+    <div class="container">
+      {% if site.concepts.size > 0 %}
+        <div class="concepts-grid">
+          {% for concept in site.concepts %}
+          <article class="concept-card">
+            <header class="concept-card__header">
+              <h2 class="concept-card__title">
+                <a href="{{ concept.url | relative_url }}">{{ concept.title }}</a>
+              </h2>
+              
+              <div class="concept-card__meta">
+                <time datetime="{{ concept.date | date_to_xmlschema }}">
+                  {{ concept.date | date: "%B %d, %Y" }}
+                </time>
+                
+                {% if concept.status %}
+                <span class="status-badge status-badge--{{ concept.status }}">
+                  {{ concept.status | capitalize }}
+                </span>
+                {% endif %}
+              </div>
+            </header>
+            
+            <div class="concept-card__content">
+              {% if concept.excerpt %}
+                <p class="concept-card__excerpt">{{ concept.excerpt | strip_html | truncatewords: 30 }}</p>
+              {% endif %}
+              
+              {% if concept.tags %}
+              <div class="concept-card__tags" aria-label="Tags">
+                {% for tag in concept.tags %}
+                  <span class="concept-tag">#{{ tag }}</span>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+            
+            <footer class="concept-card__footer">
+              <a href="{{ concept.url | relative_url }}" class="concept-card__link" 
+                 aria-label="Read full concept: {{ concept.title }}">
+                Explore Concept →
+              </a>
+            </footer>
+          </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="placeholder">
+          <h2>Concepts Coming Soon</h2>
+          <p>We're developing innovative concepts that bridge disability culture and AI technology. Check back soon for our first concepts!</p>
+          
+          <div class="placeholder-info">
+            <h3>What to Expect</h3>
+            <ul>
+              <li><strong>Deaf-Led AI Vision</strong> - How deaf perspectives can revolutionize AI development</li>
+              <li><strong>Accessible Design Patterns</strong> - Disability-informed AI interface design</li>
+              <li><strong>Cultural AI Tools</strong> - Technology that celebrates disability culture</li>
+              <li><strong>Community-Driven Research</strong> - Participatory development methods</li>
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+</main>
+
+<style>
+.page-header {
+  padding: var(--space-3xl) 0 var(--space-2xl) 0;
+  background: var(--color-light);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.page-title {
+  font-size: clamp(var(--font-size-h2), 6vw, var(--font-size-h1));
+  color: var(--color-primary);
+  margin-bottom: var(--space-lg);
+}
+
+.page-description {
+  font-size: var(--font-size-lg);
+  color: var(--color-muted);
+  max-width: 70ch;
+  line-height: var(--line-height-base);
+}
+
+.concepts-listing {
+  padding: var(--space-3xl) 0;
+}
+
+.concepts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: var(--space-xl);
+}
+
+.concept-card {
+  background: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+  height: fit-content;
+}
+
+.concept-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: var(--color-accent);
+  transform: translateY(-4px);
+}
+
+.concept-card__header {
+  padding: var(--space-xl) var(--space-xl) var(--space-lg) var(--space-xl);
+}
+
+.concept-card__title {
+  margin-bottom: var(--space-md);
+  font-size: var(--font-size-h4);
+  line-height: var(--line-height-heading);
+}
+
+.concept-card__title a {
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.concept-card__title a:hover {
+  color: var(--color-primary);
+}
+
+.concept-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+}
+
+.concept-card__content {
+  padding: 0 var(--space-xl) var(--space-lg) var(--space-xl);
+}
+
+.concept-card__excerpt {
+  color: var(--color-text);
+  line-height: var(--line-height-base);
+  margin-bottom: var(--space-md);
+}
+
+.concept-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.concept-tag {
+  background: var(--color-secondary);
+  color: var(--color-background);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: calc(var(--border-radius) / 2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.concept-card__footer {
+  padding: var(--space-lg) var(--space-xl) var(--space-xl) var(--space-xl);
+  background: var(--color-light);
+}
+
+.concept-card__link {
+  display: inline-flex;
+  align-items: center;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.concept-card__link:hover {
+  color: var(--color-secondary);
+}
+
+.placeholder {
+  text-align: center;
+  padding: var(--space-4xl) var(--space-xl);
+  background: var(--color-light);
+  border-radius: var(--border-radius);
+}
+
+.placeholder h2 {
+  color: var(--color-primary);
+  margin-bottom: var(--space-lg);
+}
+
+.placeholder-info {
+  margin-top: var(--space-2xl);
+  text-align: left;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.placeholder-info h3 {
+  color: var(--color-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.placeholder-info ul {
+  padding-left: var(--space-lg);
+}
+
+.placeholder-info li {
+  margin-bottom: var(--space-sm);
+}
+
+@media (max-width: 768px) {
+  .concepts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .concept-card__meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+}
+</style>

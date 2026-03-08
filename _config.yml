@@ -4,8 +4,8 @@
 # Site settings
 title: "Disability-AI Collective"
 description: "Cutting-edge research at the intersection of disability culture and artificial intelligence."
-baseurl: ""
-url: "https://disability-ai-collective.github.io"
+baseurl: "/disability-ai-collective"
+url: "https://spac-null.github.io/disability-ai-collective"
 author: "Disability-AI Collective"
 email: "contact@disability-ai-collective.org"
 

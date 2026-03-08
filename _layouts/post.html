@@ -1,0 +1,370 @@
+---
+layout: default
+---
+
+<main id="main-content">
+  <article class="post" itemscope itemtype="https://schema.org/BlogPosting">
+    <!-- Post header -->
+    <header class="post-header">
+      <div class="container">
+        <h1 class="post-title" itemprop="name headline">{{ page.title }}</h1>
+        
+        <div class="post-meta">
+          <time class="post-date" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+            {{ page.date | date: "%B %d, %Y" }}
+          </time>
+          
+          {% if page.author %}
+          <span class="post-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+            by <span itemprop="name">{{ page.author }}</span>
+          </span>
+          {% endif %}
+          
+          {% if page.categories %}
+          <div class="post-categories" aria-label="Categories">
+            {% for category in page.categories %}
+              <span class="post-category">{{ category | capitalize }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+          
+          {% if page.tags %}
+          <div class="post-tags" aria-label="Tags">
+            {% for tag in page.tags %}
+              <span class="post-tag">#{{ tag }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        
+        {% if page.excerpt %}
+        <div class="post-excerpt" itemprop="description">
+          {{ page.excerpt }}
+        </div>
+        {% endif %}
+      </div>
+    </header>
+
+    <!-- Post content -->
+    <div class="post-content" itemprop="articleBody">
+      <div class="container">
+        {{ content }}
+      </div>
+    </div>
+
+    <!-- Post footer -->
+    <footer class="post-footer">
+      <div class="container">
+        <!-- Accessibility features -->
+        <div class="post-accessibility">
+          <h3 class="post-accessibility-title">Accessibility</h3>
+          <p>This post is available in multiple formats:</p>
+          <ul class="accessibility-formats">
+            <li><a href="#" class="format-link">Large print version</a></li>
+            <li><a href="#" class="format-link">Audio description available</a></li>
+            <li><a href="#" class="format-link">Sign language interpretation</a></li>
+          </ul>
+        </div>
+        
+        <!-- Share buttons -->
+        <div class="post-share">
+          <h3 class="post-share-title">Share this post</h3>
+          <div class="share-buttons">
+            <a href="https://twitter.com/intent/tweet?text={{ page.title | url_encode }}&url={{ site.url }}{{ page.url }}" 
+               class="share-btn share-btn--twitter" 
+               aria-label="Share on Twitter"
+               target="_blank" rel="noopener">
+              <span aria-hidden="true">🐦</span>
+              Twitter
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ site.url }}{{ page.url }}" 
+               class="share-btn share-btn--linkedin" 
+               aria-label="Share on LinkedIn"
+               target="_blank" rel="noopener">
+              <span aria-hidden="true">💼</span>
+              LinkedIn
+            </a>
+            <button class="share-btn share-btn--copy" onclick="copyToClipboard('{{ site.url }}{{ page.url }}')" aria-label="Copy link">
+              <span aria-hidden="true">📋</span>
+              Copy Link
+            </button>
+          </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="post-navigation" aria-label="Post navigation">
+          {% if page.previous.url %}
+          <a class="nav-link nav-link--prev" href="{{ page.previous.url | relative_url }}" rel="prev">
+            <span class="nav-direction">← Previous</span>
+            <span class="nav-title">{{ page.previous.title }}</span>
+          </a>
+          {% endif %}
+          
+          {% if page.next.url %}
+          <a class="nav-link nav-link--next" href="{{ page.next.url | relative_url }}" rel="next">
+            <span class="nav-direction">Next →</span>
+            <span class="nav-title">{{ page.next.title }}</span>
+          </a>
+          {% endif %}
+        </nav>
+      </div>
+    </footer>
+  </article>
+</main>
+
+<style>
+/* Post-specific styles */
+.post-header {
+  padding: var(--space-3xl) 0 var(--space-2xl) 0;
+  background: var(--color-light);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.post-title {
+  font-size: clamp(var(--font-size-h3), 6vw, var(--font-size-h1));
+  color: var(--color-primary);
+  margin-bottom: var(--space-lg);
+  line-height: var(--line-height-heading);
+}
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  color: var(--color-muted);
+  font-size: var(--font-size-sm);
+}
+
+.post-date {
+  font-weight: var(--font-weight-medium);
+}
+
+.post-category,
+.post-tag {
+  background: var(--color-accent);
+  color: var(--color-background);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: calc(var(--border-radius) / 2);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.post-tag {
+  background: var(--color-secondary);
+}
+
+.post-excerpt {
+  font-size: var(--font-size-lg);
+  color: var(--color-muted);
+  font-style: italic;
+  max-width: 70ch;
+}
+
+.post-content {
+  padding: var(--space-3xl) 0;
+  line-height: var(--line-height-base);
+}
+
+.post-content h2,
+.post-content h3,
+.post-content h4 {
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-md);
+}
+
+.post-content p {
+  margin-bottom: var(--space-md);
+  max-width: 70ch;
+}
+
+.post-content ul,
+.post-content ol {
+  margin-bottom: var(--space-md);
+  padding-left: var(--space-xl);
+}
+
+.post-content li {
+  margin-bottom: var(--space-sm);
+}
+
+.post-content blockquote {
+  border-left: 4px solid var(--color-primary);
+  padding-left: var(--space-lg);
+  margin: var(--space-xl) 0;
+  font-style: italic;
+  color: var(--color-muted);
+}
+
+.post-content code {
+  background: var(--color-light);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: calc(var(--border-radius) / 2);
+  font-family: var(--font-family-mono);
+  font-size: 0.9em;
+}
+
+.post-content pre {
+  background: var(--color-light);
+  padding: var(--space-lg);
+  border-radius: var(--border-radius);
+  overflow-x: auto;
+  margin: var(--space-xl) 0;
+}
+
+.post-content pre code {
+  background: none;
+  padding: 0;
+}
+
+.post-footer {
+  background: var(--color-light);
+  padding: var(--space-3xl) 0;
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.post-accessibility,
+.post-share {
+  margin-bottom: var(--space-2xl);
+}
+
+.post-accessibility-title,
+.post-share-title {
+  font-size: var(--font-size-h5);
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+}
+
+.accessibility-formats {
+  list-style: none;
+  padding: 0;
+}
+
+.accessibility-formats li {
+  margin-bottom: var(--space-sm);
+}
+
+.format-link {
+  display: inline-block;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--color-background);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.format-link:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-background);
+}
+
+.share-buttons {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  background: var(--color-background);
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.share-btn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-background);
+}
+
+.post-navigation {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  margin-top: var(--space-2xl);
+}
+
+.nav-link {
+  flex: 1;
+  max-width: 50%;
+  padding: var(--space-lg);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius);
+  background: var(--color-background);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.nav-link:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-link--next {
+  text-align: right;
+}
+
+.nav-direction {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+  margin-bottom: var(--space-xs);
+}
+
+.nav-title {
+  display: block;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+@media (max-width: 768px) {
+  .post-navigation {
+    flex-direction: column;
+  }
+  
+  .nav-link {
+    max-width: 100%;
+  }
+  
+  .nav-link--next {
+    text-align: left;
+  }
+  
+  .share-buttons {
+    flex-direction: column;
+  }
+  
+  .share-btn {
+    justify-content: center;
+  }
+}
+</style>
+
+<script>
+function copyToClipboard(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      // Create announcement for screen readers
+      const announcement = document.createElement('div');
+      announcement.setAttribute('aria-live', 'polite');
+      announcement.className = 'sr-only';
+      announcement.textContent = 'Link copied to clipboard';
+      document.body.appendChild(announcement);
+      
+      setTimeout(() => {
+        document.body.removeChild(announcement);
+      }, 1000);
+    });
+  }
+}
+</script>
