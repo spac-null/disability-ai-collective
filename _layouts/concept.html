@@ -97,29 +97,29 @@ layout: default
         <!-- Feedback section -->
         <div class="concept-feedback">
           <h3 class="concept-feedback-title">Community Input</h3>
-          <p>This concept is part of our ongoing research. We welcome feedback from the disability community:</p>
+          <p>This concept is part of our experimental arts platform. We welcome feedback from the disability community:</p>
           <div class="feedback-buttons">
-            <a href="mailto:feedback@disability-ai-collective.org?subject=Feedback on {{ page.title | url_encode }}" 
-               class="feedback-btn feedback-btn--email">
-              <span aria-hidden="true">📧</span>
-              Email Feedback
-            </a>
             <a href="https://github.com/spac-null/disability-ai-collective/discussions" 
                class="feedback-btn feedback-btn--github" 
                target="_blank" rel="noopener">
               <span aria-hidden="true">💬</span>
               GitHub Discussions
             </a>
-            <a href="#" class="feedback-btn feedback-btn--accessibility">
+            <a href="https://github.com/spac-null/disability-ai-collective/issues" 
+               class="feedback-btn feedback-btn--email">
+              <span aria-hidden="true">📧</span>
+              Report Issues
+            </a>
+            <a href="{{ '/accessibility/' | relative_url }}" class="feedback-btn feedback-btn--accessibility">
               <span aria-hidden="true">♿</span>
-              Accessibility Review
+              Accessibility Info
             </a>
           </div>
         </div>
         
         <!-- Navigation -->
         <nav class="concept-navigation" aria-label="Concept navigation">
-          <a href="/concepts/" class="nav-link nav-link--back">
+          <a href="{{ '/concepts/' | relative_url }}" class="nav-link nav-link--back">
             <span class="nav-direction">← Back to</span>
             <span class="nav-title">All Concepts</span>
           </a>
