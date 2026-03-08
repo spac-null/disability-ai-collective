@@ -5,125 +5,229 @@ description: "Cutting-edge research at the intersection of disability culture an
 ---
 
 <main id="main-content">
-  <!-- Skip to main content link for screen readers -->
-  <a href="#main-content" class="sr-only sr-only-focusable">Skip to main content</a>
-
   <!-- Hero section -->
-  <section class="hero" aria-labelledby="hero-heading">
+  <section class="hero">
     <div class="container">
-      <h1 id="hero-heading" class="hero__title">
-        Disability-AI Collective
-      </h1>
+      <h1 class="hero__title">Disability-AI Collective</h1>
       <p class="hero__subtitle">
         Cutting-edge research at the intersection of disability culture and artificial intelligence.
+        Founded and led by proudly profoundly deaf researchers.
       </p>
-      <p class="hero__description">
-        Founded and led by proudly profoundly deaf researchers, we explore how disability perspectives can revolutionize AI development.
-      </p>
+      <div class="hero__cta">
+        <a href="{{ '/research/' | relative_url }}" class="btn btn--primary">
+          Explore Research
+        </a>
+        <a href="{{ '/concepts/' | relative_url }}" class="btn btn--secondary">
+          View Concepts
+        </a>
+      </div>
     </div>
   </section>
 
   <!-- Latest research section -->
-  <section class="latest-research" aria-labelledby="research-heading">
+  <section class="section">
     <div class="container">
-      <h2 id="research-heading">Latest Research</h2>
-      
-      {% for post in site.posts limit:3 %}
-      <article class="research-card">
-        <h3 class="research-card__title">
-          <a href="{{ post.url | relative_url }}" class="research-card__link">
-            {{ post.title }}
-          </a>
-        </h3>
-        <p class="research-card__meta">
-          <time datetime="{{ post.date | date_to_xmlschema }}">
-            {{ post.date | date: "%B %d, %Y" }}
-          </time>
-          {% if post.tags %}
-          <span aria-label="Tags">
-            {% for tag in post.tags %}
-              <span class="tag">#{{ tag }}</span>
-            {% endfor %}
-          </span>
-          {% endif %}
+      <div class="section__header">
+        <h2 class="section__title">Latest Research</h2>
+        <p class="section__description">
+          Daily automated research discovering cutting-edge developments in disability-AI intersections
         </p>
-        <p class="research-card__excerpt">
-          {{ post.excerpt | strip_html | truncate: 200 }}
-        </p>
-        <a href="{{ post.url | relative_url }}" class="research-card__read-more" aria-label="Read full article: {{ post.title }}">
-          Read more
-        </a>
-      </article>
-      {% endfor %}
-      
-      {% if site.posts.size == 0 %}
-      <div class="placeholder">
-        <h3>Research Coming Soon</h3>
-        <p>Our automated research bots are getting ready to discover cutting-edge developments in disability-AI intersections. Check back soon!</p>
       </div>
+      
+      {% if site.posts.size > 0 %}
+        <div class="grid grid--3">
+          {% for post in site.posts limit:3 %}
+          <article class="card">
+            <h3 class="card__title">
+              <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+            </h3>
+            <div class="card__meta">
+              <time datetime="{{ post.date | date_to_xmlschema }}">
+                {{ post.date | date: "%B %d, %Y" }}
+              </time>
+              {% if post.categories %}
+                {% for category in post.categories %}
+                  <span class="tag tag--primary">{{ category | capitalize }}</span>
+                {% endfor %}
+              {% endif %}
+            </div>
+            <p class="card__excerpt">
+              {{ post.excerpt | strip_html | truncatewords: 25 }}
+            </p>
+            {% if post.tags %}
+            <div class="card__tags">
+              {% for tag in post.tags limit:3 %}
+                <span class="tag">#{{ tag }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+            <a href="{{ post.url | relative_url }}" class="card__link">
+              Read analysis →
+            </a>
+          </article>
+          {% endfor %}
+        </div>
+        
+        <div class="text-center mt-8">
+          <a href="{{ '/research/' | relative_url }}" class="btn btn--secondary">
+            View All Research
+          </a>
+        </div>
+      {% else %}
+        <div class="text-center">
+          <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h3>Research Coming Soon</h3>
+            <p>Our automated research bots are preparing to discover cutting-edge developments in disability-AI intersections. Check back soon for daily insights!</p>
+            <div class="mt-4">
+              <span class="tag">AI Accessibility</span>
+              <span class="tag">Disability Innovation</span>
+              <span class="tag">Cultural Analysis</span>
+            </div>
+          </div>
+        </div>
       {% endif %}
     </div>
   </section>
 
   <!-- Concepts showcase -->
-  <section class="concepts-showcase" aria-labelledby="concepts-heading">
+  <section class="section" style="background: var(--color-surface);">
     <div class="container">
-      <h2 id="concepts-heading">Concept Development</h2>
-      <p>Explore our evolving ideas for disability-centered AI innovation.</p>
-      
-      {% for concept in site.concepts limit:2 %}
-      <article class="concept-card">
-        <h3 class="concept-card__title">
-          <a href="{{ concept.url | relative_url }}">{{ concept.title }}</a>
-        </h3>
-        <p class="concept-card__description">
-          {{ concept.excerpt | strip_html | truncate: 150 }}
+      <div class="section__header">
+        <h2 class="section__title">Concept Development</h2>
+        <p class="section__description">
+          Exploring innovative ideas for disability-centered AI innovation
         </p>
-      </article>
-      {% endfor %}
+      </div>
       
-      <a href="{{ '/concepts/' | relative_url }}" class="btn btn--secondary" aria-label="View all concept development work">
-        View All Concepts
-      </a>
+      {% if site.concepts.size > 0 %}
+        <div class="grid grid--2">
+          {% for concept in site.concepts limit:2 %}
+          <article class="card">
+            <h3 class="card__title">
+              <a href="{{ concept.url | relative_url }}">{{ concept.title }}</a>
+            </h3>
+            <div class="card__meta">
+              <time datetime="{{ concept.date | date_to_xmlschema }}">
+                {{ concept.date | date: "%B %d, %Y" }}
+              </time>
+              {% if concept.status %}
+                <span class="tag tag--secondary">{{ concept.status | capitalize }}</span>
+              {% endif %}
+            </div>
+            <p class="card__excerpt">
+              {{ concept.excerpt | strip_html | truncatewords: 20 }}
+            </p>
+            <a href="{{ concept.url | relative_url }}" class="card__link">
+              Explore concept →
+            </a>
+          </article>
+          {% endfor %}
+        </div>
+        
+        <div class="text-center mt-8">
+          <a href="{{ '/concepts/' | relative_url }}" class="btn btn--secondary">
+            View All Concepts
+          </a>
+        </div>
+      {% else %}
+        <div class="text-center">
+          <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <h3>Concepts Coming Soon</h3>
+            <p>We're developing innovative concepts that bridge disability culture and AI technology.</p>
+            <div class="mt-4">
+              <span class="tag">Deaf-Led AI</span>
+              <span class="tag">Accessible Design</span>
+              <span class="tag">Cultural Tools</span>
+            </div>
+          </div>
+        </div>
+      {% endif %}
     </div>
   </section>
 
   <!-- Mission section -->
-  <section class="mission" aria-labelledby="mission-heading">
+  <section class="section">
     <div class="container">
-      <h2 id="mission-heading">Our Mission</h2>
-      <div class="mission__grid">
-        <div class="mission__item">
-          <h3>Accessible AI Tools</h3>
-          <p>Developing AI applications designed by and for disabled people, ensuring accessibility is built-in from the ground up.</p>
+      <div class="section__header">
+        <h2 class="section__title">Our Mission</h2>
+        <p class="section__description">
+          Bridging disability culture and AI innovation through research, design, and community
+        </p>
+      </div>
+      
+      <div class="grid grid--3">
+        <div class="card">
+          <h3>🔍 Research Discovery</h3>
+          <p>Automated daily research scanning the latest developments at the intersection of disability and AI innovation.</p>
         </div>
-        <div class="mission__item">
-          <h3>Research Discovery</h3>
-          <p>Automated daily research discovering cutting-edge developments at the intersection of disability and AI innovation.</p>
+        <div class="card">
+          <h3>♿ Accessible AI Tools</h3>
+          <p>Developing AI applications designed by and for disabled people, with accessibility built-in from the ground up.</p>
         </div>
-        <div class="mission__item">
-          <h3>Cultural Commentary</h3>
-          <p>Critical analysis of AI development from disability perspective, highlighting gaps and opportunities.</p>
+        <div class="card">
+          <h3>💬 Cultural Commentary</h3>
+          <p>Critical analysis of AI development from disability perspectives, highlighting gaps and opportunities.</p>
         </div>
-        <div class="mission__item">
-          <h3>Community Platform</h3>
+        <div class="card">
+          <h3>🤝 Community Platform</h3>
           <p>Creating space for disabled creators, technologists, and researchers to collaborate and share knowledge.</p>
+        </div>
+        <div class="card">
+          <h3>🎨 Visual-First Design</h3>
+          <p>Leveraging deaf perspectives and visual-spatial expertise to create more intuitive AI interfaces.</p>
+        </div>
+        <div class="card">
+          <h3>🧠 Ethical AI</h3>
+          <p>Ensuring AI development respects disability culture and promotes authentic representation in technology.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Accessibility statement -->
-  <section class="accessibility-statement" aria-labelledby="a11y-heading">
-    <div class="container">
-      <h2 id="a11y-heading">Accessibility Commitment</h2>
-      <p>
-        This platform is built with <strong>accessibility first</strong>. We maintain WCAG 2.1 AA compliance 
-        and continuously test with screen readers, keyboard navigation, and assistive technologies.
+  <!-- Call to action -->
+  <section class="section" style="background: var(--color-primary); color: var(--color-white);">
+    <div class="container text-center">
+      <h2 style="color: var(--color-white); font-size: var(--font-size-3xl); margin-bottom: var(--space-4);">
+        Join the Movement
+      </h2>
+      <p style="color: rgba(255, 255, 255, 0.9); font-size: var(--font-size-lg); margin-bottom: var(--space-8); max-width: 600px; margin-left: auto; margin-right: auto;">
+        Help us build AI that truly serves everyone. Follow our research, contribute your perspectives, and be part of the change.
       </p>
-      <p>
-        <a href="{{ '/accessibility/' | relative_url }}" class="btn btn--outline">Learn about our accessibility features</a>
-      </p>
+      <div class="hero__cta">
+        <a href="https://github.com/spac-null/disability-ai-collective" class="btn" style="background: var(--color-white); color: var(--color-primary);">
+          GitHub Repository
+        </a>
+        <a href="{{ '/about/' | relative_url }}" class="btn" style="background: rgba(255, 255, 255, 0.1); color: var(--color-white); border: 1px solid rgba(255, 255, 255, 0.3);">
+          Learn More
+        </a>
+      </div>
     </div>
   </section>
 </main>
+
+<style>
+/* Component-specific styles for homepage */
+.card__tags {
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.hero__cta .btn:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .hero__cta {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .hero__cta .btn {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+</style>

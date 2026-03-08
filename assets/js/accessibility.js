@@ -1,512 +1,259 @@
-// Accessibility controls and enhancements
+// Accessibility controls for Disability-AI Collective
 // User-controlled accessibility features
 
 (function() {
   'use strict';
   
-  // =============================================================================
-  // ACCESSIBILITY PREFERENCES
-  // =============================================================================
-  
-  const AccessibilityControls = {
-    // Storage keys for user preferences
-    STORAGE_KEYS: {
-      HIGH_CONTRAST: 'disability-ai-high-contrast',
-      LARGE_FONT: 'disability-ai-large-font',
-      REDUCED_MOTION: 'disability-ai-reduced-motion',
-      DYSLEXIA_FRIENDLY: 'disability-ai-dyslexia-friendly'
+  const AccessibilityPanel = {
+    init() {
+      this.createPanel();
+      this.loadPreferences();
+      this.bindEvents();
     },
     
-    // Initialize accessibility controls
-    init: function() {
-      this.createControlsPanel();
-      this.loadUserPreferences();
-      this.initHighContrastToggle();
-      this.initFontSizeToggle();
-      this.initDyslexiaToggle();
-      this.initReducedMotionToggle();
-      this.initKeyboardShortcuts();
-    },
-    
-    // Create accessibility controls panel
-    createControlsPanel: function() {
-      const existingControls = document.querySelector('.accessibility-controls-panel');
-      if (existingControls) return;
+    createPanel() {
+      // Create floating accessibility button
+      const button = document.createElement('button');
+      button.className = 'a11y-toggle';
+      button.innerHTML = '♿';
+      button.setAttribute('aria-label', 'Accessibility Options');
+      button.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: var(--shadow-lg);
+        transition: var(--transition-all);
+      `;
       
+      // Create panel
       const panel = document.createElement('div');
-      panel.className = 'accessibility-controls-panel';
-      panel.setAttribute('role', 'region');
-      panel.setAttribute('aria-label', 'Accessibility Controls');
+      panel.className = 'a11y-panel';
+      panel.style.cssText = `
+        position: fixed;
+        bottom: 85px;
+        right: 20px;
+        background: var(--color-background);
+        border: 1px solid var(--color-border);
+        border-radius: var(--border-radius-lg);
+        padding: var(--space-6);
+        box-shadow: var(--shadow-xl);
+        z-index: 1000;
+        min-width: 280px;
+        display: none;
+      `;
       
       panel.innerHTML = `
-        <button class="a11y-panel-toggle" aria-expanded="false" aria-controls="a11y-panel-content">
-          <span class="a11y-panel-toggle__icon" aria-hidden="true">♿</span>
-          <span class="a11y-panel-toggle__text">Accessibility</span>
-        </button>
-        <div id="a11y-panel-content" class="a11y-panel-content" hidden>
-          <h3 class="a11y-panel-title">Accessibility Options</h3>
-          <div class="a11y-controls-grid">
-            <button id="contrast-toggle" class="a11y-control-btn" aria-pressed="false">
-              <span class="a11y-control-icon" aria-hidden="true">🔆</span>
-              <span class="a11y-control-text">High Contrast</span>
-            </button>
-            <button id="font-size-toggle" class="a11y-control-btn" aria-pressed="false">
-              <span class="a11y-control-icon" aria-hidden="true">🔍</span>
-              <span class="a11y-control-text">Large Font</span>
-            </button>
-            <button id="dyslexia-toggle" class="a11y-control-btn" aria-pressed="false">
-              <span class="a11y-control-icon" aria-hidden="true">📖</span>
-              <span class="a11y-control-text">Dyslexia Friendly</span>
-            </button>
-            <button id="motion-toggle" class="a11y-control-btn" aria-pressed="false">
-              <span class="a11y-control-icon" aria-hidden="true">⏸️</span>
-              <span class="a11y-control-text">Reduce Motion</span>
-            </button>
-          </div>
-          <button class="a11y-reset-btn">Reset All Settings</button>
+        <h3 style="margin-bottom: var(--space-4); font-size: var(--font-size-lg);">Accessibility</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); margin-bottom: var(--space-4);">
+          <button class="a11y-btn" data-feature="contrast">
+            <span>🔆</span><br>High Contrast
+          </button>
+          <button class="a11y-btn" data-feature="font-size">
+            <span>🔍</span><br>Large Font
+          </button>
+          <button class="a11y-btn" data-feature="dyslexia">
+            <span>📖</span><br>Dyslexia Font
+          </button>
+          <button class="a11y-btn" data-feature="motion">
+            <span>⏸️</span><br>Reduce Motion
+          </button>
         </div>
+        <button class="a11y-reset" style="width: 100%; padding: var(--space-2); background: var(--color-gray-500); color: white; border: none; border-radius: var(--border-radius); cursor: pointer;">
+          Reset All
+        </button>
       `;
       
-      document.body.appendChild(panel);
-      this.initPanelToggle();
-      this.addPanelStyles();
-    },
-    
-    // Add CSS for accessibility panel
-    addPanelStyles: function() {
-      const existingStyles = document.getElementById('a11y-panel-styles');
-      if (existingStyles) return;
-      
-      const styles = document.createElement('style');
-      styles.id = 'a11y-panel-styles';
-      styles.textContent = `
-        .accessibility-controls-panel {
-          position: fixed;
-          top: 50%;
-          right: 20px;
-          transform: translateY(-50%);
-          z-index: 1000;
-        }
-        
-        .a11y-panel-toggle {
-          background: var(--color-primary);
-          color: var(--color-background);
-          border: none;
-          border-radius: 50%;
-          width: 60px;
-          height: 60px;
+      // Add styles for buttons
+      const style = document.createElement('style');
+      style.textContent = `
+        .a11y-btn {
+          padding: var(--space-3);
+          border: 1px solid var(--color-border);
+          border-radius: var(--border-radius);
+          background: var(--color-surface);
           cursor: pointer;
-          box-shadow: var(--shadow-lg);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 2px;
-          transition: all var(--transition-fast);
+          text-align: center;
+          font-size: var(--font-size-xs);
+          line-height: 1.2;
+          transition: var(--transition-colors);
         }
-        
-        .a11y-panel-toggle:hover {
-          background: var(--color-secondary);
+        .a11y-btn:hover {
+          border-color: var(--color-primary);
+        }
+        .a11y-btn.active {
+          background: var(--color-primary);
+          color: white;
+          border-color: var(--color-primary);
+        }
+        .a11y-btn span {
+          display: block;
+          font-size: 18px;
+          margin-bottom: var(--space-1);
+        }
+        .a11y-toggle:hover {
           transform: scale(1.05);
         }
-        
-        .a11y-panel-toggle:focus {
-          outline: 3px solid var(--color-accent);
-          outline-offset: 2px;
-        }
-        
-        .a11y-panel-toggle__icon {
-          font-size: 20px;
-          line-height: 1;
-        }
-        
-        .a11y-panel-toggle__text {
-          font-size: 10px;
-          font-weight: 500;
-          line-height: 1;
-        }
-        
-        .a11y-panel-content {
-          position: absolute;
-          right: 70px;
-          top: 0;
-          background: var(--color-background);
-          border: 2px solid var(--color-primary);
-          border-radius: var(--border-radius);
-          box-shadow: var(--shadow-lg);
-          padding: var(--space-lg);
-          min-width: 250px;
-        }
-        
-        .a11y-panel-title {
-          margin: 0 0 var(--space-md) 0;
-          font-size: var(--font-size-h5);
-          color: var(--color-primary);
-        }
-        
-        .a11y-controls-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: var(--space-sm);
-          margin-bottom: var(--space-lg);
-        }
-        
-        .a11y-control-btn {
-          background: var(--color-light);
-          border: 2px solid var(--color-border);
-          border-radius: var(--border-radius);
-          padding: var(--space-sm);
-          cursor: pointer;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: var(--space-xs);
-          transition: all var(--transition-fast);
-        }
-        
-        .a11y-control-btn:hover {
-          border-color: var(--color-primary);
-          background: var(--color-background);
-        }
-        
-        .a11y-control-btn:focus {
-          outline: 3px solid var(--color-accent);
-          outline-offset: 2px;
-        }
-        
-        .a11y-control-btn[aria-pressed="true"] {
-          background: var(--color-primary);
-          color: var(--color-background);
-          border-color: var(--color-primary);
-        }
-        
-        .a11y-control-icon {
-          font-size: 18px;
-        }
-        
-        .a11y-control-text {
-          font-size: 12px;
-          font-weight: 500;
-          text-align: center;
-          line-height: 1.2;
-        }
-        
-        .a11y-reset-btn {
-          background: var(--color-muted);
-          color: var(--color-background);
-          border: none;
-          border-radius: var(--border-radius);
-          padding: var(--space-sm) var(--space-md);
-          font-size: 14px;
-          cursor: pointer;
-          width: 100%;
-          transition: background var(--transition-fast);
-        }
-        
-        .a11y-reset-btn:hover {
-          background: var(--color-text);
-        }
-        
-        .a11y-reset-btn:focus {
-          outline: 3px solid var(--color-accent);
-          outline-offset: 2px;
-        }
-        
-        @media (max-width: 768px) {
-          .accessibility-controls-panel {
-            right: 10px;
-          }
-          
-          .a11y-panel-content {
-            right: 0;
-            left: -200px;
-            width: 250px;
-          }
-        }
       `;
       
-      document.head.appendChild(styles);
+      document.head.appendChild(style);
+      document.body.appendChild(button);
+      document.body.appendChild(panel);
+      
+      this.button = button;
+      this.panel = panel;
     },
     
-    // Initialize panel toggle
-    initPanelToggle: function() {
-      const toggle = document.querySelector('.a11y-panel-toggle');
-      const panel = document.getElementById('a11y-panel-content');
-      
-      if (!toggle || !panel) return;
-      
-      toggle.addEventListener('click', function() {
-        const isOpen = toggle.getAttribute('aria-expanded') === 'true';
-        const newState = !isOpen;
+    bindEvents() {
+      // Toggle panel
+      this.button.addEventListener('click', () => {
+        const isVisible = this.panel.style.display === 'block';
+        this.panel.style.display = isVisible ? 'none' : 'block';
         
-        toggle.setAttribute('aria-expanded', newState.toString());
-        panel.hidden = !newState;
-        
-        if (newState) {
-          // Focus first button in panel
-          const firstButton = panel.querySelector('.a11y-control-btn');
-          if (firstButton) firstButton.focus();
+        if (!isVisible) {
+          this.panel.querySelector('.a11y-btn').focus();
         }
       });
       
       // Close panel when clicking outside
-      document.addEventListener('click', function(event) {
-        if (!toggle.contains(event.target) && !panel.contains(event.target)) {
-          toggle.setAttribute('aria-expanded', 'false');
-          panel.hidden = true;
+      document.addEventListener('click', (e) => {
+        if (!this.button.contains(e.target) && !this.panel.contains(e.target)) {
+          this.panel.style.display = 'none';
         }
       });
       
-      // Close panel on escape
-      document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && !panel.hidden) {
-          toggle.setAttribute('aria-expanded', 'false');
-          panel.hidden = true;
-          toggle.focus();
-        }
+      // Feature toggles
+      this.panel.querySelectorAll('.a11y-btn[data-feature]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const feature = e.currentTarget.dataset.feature;
+          this.toggleFeature(feature);
+        });
       });
       
-      // Reset button functionality
-      const resetBtn = panel.querySelector('.a11y-reset-btn');
-      if (resetBtn) {
-        resetBtn.addEventListener('click', () => this.resetAllSettings());
-      }
-    },
-    
-    // High contrast toggle
-    initHighContrastToggle: function() {
-      const toggle = document.getElementById('contrast-toggle');
-      if (!toggle) return;
-      
-      toggle.addEventListener('click', () => {
-        const isEnabled = document.body.classList.contains('high-contrast-mode');
-        this.toggleHighContrast(!isEnabled);
+      // Reset button
+      this.panel.querySelector('.a11y-reset').addEventListener('click', () => {
+        this.resetAll();
       });
-    },
-    
-    toggleHighContrast: function(enable) {
-      const toggle = document.getElementById('contrast-toggle');
       
-      if (enable) {
-        document.body.classList.add('high-contrast-mode');
-        if (toggle) toggle.setAttribute('aria-pressed', 'true');
-        localStorage.setItem(this.STORAGE_KEYS.HIGH_CONTRAST, 'true');
-        this.announceChange('High contrast mode enabled');
-      } else {
-        document.body.classList.remove('high-contrast-mode');
-        if (toggle) toggle.setAttribute('aria-pressed', 'false');
-        localStorage.removeItem(this.STORAGE_KEYS.HIGH_CONTRAST);
-        this.announceChange('High contrast mode disabled');
-      }
-    },
-    
-    // Font size toggle
-    initFontSizeToggle: function() {
-      const toggle = document.getElementById('font-size-toggle');
-      if (!toggle) return;
-      
-      toggle.addEventListener('click', () => {
-        const isEnabled = document.body.classList.contains('large-font');
-        this.toggleLargeFont(!isEnabled);
-      });
-    },
-    
-    toggleLargeFont: function(enable) {
-      const toggle = document.getElementById('font-size-toggle');
-      
-      if (enable) {
-        document.body.classList.add('large-font');
-        if (toggle) toggle.setAttribute('aria-pressed', 'true');
-        localStorage.setItem(this.STORAGE_KEYS.LARGE_FONT, 'true');
-        this.announceChange('Large font mode enabled');
-      } else {
-        document.body.classList.remove('large-font');
-        if (toggle) toggle.setAttribute('aria-pressed', 'false');
-        localStorage.removeItem(this.STORAGE_KEYS.LARGE_FONT);
-        this.announceChange('Large font mode disabled');
-      }
-    },
-    
-    // Dyslexia-friendly toggle
-    initDyslexiaToggle: function() {
-      const toggle = document.getElementById('dyslexia-toggle');
-      if (!toggle) return;
-      
-      toggle.addEventListener('click', () => {
-        const isEnabled = document.body.classList.contains('dyslexia-friendly');
-        this.toggleDyslexiaFriendly(!isEnabled);
-      });
-    },
-    
-    toggleDyslexiaFriendly: function(enable) {
-      const toggle = document.getElementById('dyslexia-toggle');
-      
-      if (enable) {
-        document.body.classList.add('dyslexia-friendly');
-        if (toggle) toggle.setAttribute('aria-pressed', 'true');
-        localStorage.setItem(this.STORAGE_KEYS.DYSLEXIA_FRIENDLY, 'true');
-        this.announceChange('Dyslexia-friendly mode enabled');
-      } else {
-        document.body.classList.remove('dyslexia-friendly');
-        if (toggle) toggle.setAttribute('aria-pressed', 'false');
-        localStorage.removeItem(this.STORAGE_KEYS.DYSLEXIA_FRIENDLY);
-        this.announceChange('Dyslexia-friendly mode disabled');
-      }
-    },
-    
-    // Reduced motion toggle
-    initReducedMotionToggle: function() {
-      const toggle = document.getElementById('motion-toggle');
-      if (!toggle) return;
-      
-      toggle.addEventListener('click', () => {
-        const isEnabled = document.body.classList.contains('reduced-motion');
-        this.toggleReducedMotion(!isEnabled);
-      });
-    },
-    
-    toggleReducedMotion: function(enable) {
-      const toggle = document.getElementById('motion-toggle');
-      
-      if (enable) {
-        document.body.classList.add('reduced-motion');
-        if (toggle) toggle.setAttribute('aria-pressed', 'true');
-        localStorage.setItem(this.STORAGE_KEYS.REDUCED_MOTION, 'true');
-        this.announceChange('Reduced motion mode enabled');
-      } else {
-        document.body.classList.remove('reduced-motion');
-        if (toggle) toggle.setAttribute('aria-pressed', 'false');
-        localStorage.removeItem(this.STORAGE_KEYS.REDUCED_MOTION);
-        this.announceChange('Reduced motion mode disabled');
-      }
-    },
-    
-    // Keyboard shortcuts for accessibility features
-    initKeyboardShortcuts: function() {
-      document.addEventListener('keydown', (event) => {
-        // Ctrl + Alt combinations for accessibility
-        if (event.ctrlKey && event.altKey) {
-          switch (event.key) {
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.ctrlKey && e.altKey) {
+          switch (e.key) {
             case 'c':
-              event.preventDefault();
-              const contrastEnabled = document.body.classList.contains('high-contrast-mode');
-              this.toggleHighContrast(!contrastEnabled);
+              e.preventDefault();
+              this.toggleFeature('contrast');
               break;
             case 'f':
-              event.preventDefault();
-              const fontEnabled = document.body.classList.contains('large-font');
-              this.toggleLargeFont(!fontEnabled);
+              e.preventDefault();
+              this.toggleFeature('font-size');
               break;
             case 'd':
-              event.preventDefault();
-              const dyslexiaEnabled = document.body.classList.contains('dyslexia-friendly');
-              this.toggleDyslexiaFriendly(!dyslexiaEnabled);
+              e.preventDefault();
+              this.toggleFeature('dyslexia');
               break;
             case 'm':
-              event.preventDefault();
-              const motionEnabled = document.body.classList.contains('reduced-motion');
-              this.toggleReducedMotion(!motionEnabled);
-              break;
-            case 'a':
-              event.preventDefault();
-              const panelToggle = document.querySelector('.a11y-panel-toggle');
-              if (panelToggle) panelToggle.click();
+              e.preventDefault();
+              this.toggleFeature('motion');
               break;
           }
         }
       });
     },
     
-    // Load user preferences from localStorage
-    loadUserPreferences: function() {
-      // High contrast
-      if (localStorage.getItem(this.STORAGE_KEYS.HIGH_CONTRAST)) {
-        this.toggleHighContrast(true);
+    toggleFeature(feature) {
+      const btn = this.panel.querySelector(`[data-feature="${feature}"]`);
+      const isActive = document.body.classList.contains(`a11y-${feature}`);
+      
+      if (isActive) {
+        document.body.classList.remove(`a11y-${feature}`);
+        btn.classList.remove('active');
+        localStorage.removeItem(`a11y-${feature}`);
+      } else {
+        document.body.classList.add(`a11y-${feature}`);
+        btn.classList.add('active');
+        localStorage.setItem(`a11y-${feature}`, 'true');
       }
       
-      // Large font
-      if (localStorage.getItem(this.STORAGE_KEYS.LARGE_FONT)) {
-        this.toggleLargeFont(true);
-      }
-      
-      // Dyslexia-friendly
-      if (localStorage.getItem(this.STORAGE_KEYS.DYSLEXIA_FRIENDLY)) {
-        this.toggleDyslexiaFriendly(true);
-      }
-      
-      // Reduced motion
-      if (localStorage.getItem(this.STORAGE_KEYS.REDUCED_MOTION)) {
-        this.toggleReducedMotion(true);
-      }
+      this.announce(`${feature} ${isActive ? 'disabled' : 'enabled'}`);
     },
     
-    // Reset all accessibility settings
-    resetAllSettings: function() {
-      this.toggleHighContrast(false);
-      this.toggleLargeFont(false);
-      this.toggleDyslexiaFriendly(false);
-      this.toggleReducedMotion(false);
-      this.announceChange('All accessibility settings reset');
+    resetAll() {
+      ['contrast', 'font-size', 'dyslexia', 'motion'].forEach(feature => {
+        document.body.classList.remove(`a11y-${feature}`);
+        const btn = this.panel.querySelector(`[data-feature="${feature}"]`);
+        if (btn) btn.classList.remove('active');
+        localStorage.removeItem(`a11y-${feature}`);
+      });
+      this.announce('All accessibility settings reset');
     },
     
-    // Announce changes to screen readers
-    announceChange: function(message) {
+    loadPreferences() {
+      ['contrast', 'font-size', 'dyslexia', 'motion'].forEach(feature => {
+        if (localStorage.getItem(`a11y-${feature}`)) {
+          document.body.classList.add(`a11y-${feature}`);
+          const btn = this.panel.querySelector(`[data-feature="${feature}"]`);
+          if (btn) btn.classList.add('active');
+        }
+      });
+    },
+    
+    announce(message) {
       const announcement = document.createElement('div');
       announcement.setAttribute('aria-live', 'polite');
-      announcement.setAttribute('aria-atomic', 'true');
       announcement.className = 'sr-only';
       announcement.textContent = message;
-      
       document.body.appendChild(announcement);
       
-      // Remove after screen reader processes it
       setTimeout(() => {
-        if (document.body.contains(announcement)) {
-          document.body.removeChild(announcement);
-        }
+        document.body.removeChild(announcement);
       }, 1000);
     }
   };
   
-  // =============================================================================
-  // INITIALIZATION
-  // =============================================================================
-  
-  function init() {
-    // Initialize accessibility controls
-    AccessibilityControls.init();
-    
-    // Respect user's system preferences
-    if (window.matchMedia('(prefers-contrast: high)').matches) {
-      AccessibilityControls.toggleHighContrast(true);
+  // Add accessibility CSS
+  const accessibilityStyles = document.createElement('style');
+  accessibilityStyles.textContent = `
+    .a11y-contrast {
+      --color-background: #000000 !important;
+      --color-text: #ffffff !important;
+      --color-primary: #ffff00 !important;
+      --color-secondary: #00ff00 !important;
+      --color-border: #ffffff !important;
+      --color-surface: #333333 !important;
     }
     
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      AccessibilityControls.toggleReducedMotion(true);
+    .a11y-font-size {
+      font-size: 1.2em !important;
     }
     
-    // Listen for changes in system preferences
-    const contrastQuery = window.matchMedia('(prefers-contrast: high)');
-    contrastQuery.addEventListener('change', (event) => {
-      if (event.matches) {
-        AccessibilityControls.toggleHighContrast(true);
-      }
-    });
+    .a11y-dyslexia {
+      font-family: 'OpenDyslexic', 'Comic Sans MS', cursive !important;
+      letter-spacing: 0.12em !important;
+      word-spacing: 0.16em !important;
+      line-height: 1.8 !important;
+    }
     
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    motionQuery.addEventListener('change', (event) => {
-      AccessibilityControls.toggleReducedMotion(event.matches);
-    });
-  }
+    .a11y-motion * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  `;
+  document.head.appendChild(accessibilityStyles);
   
   // Initialize when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => AccessibilityPanel.init());
   } else {
-    init();
+    AccessibilityPanel.init();
   }
-  
-  // Export for external use
-  window.AccessibilityControls = AccessibilityControls;
   
 })();
