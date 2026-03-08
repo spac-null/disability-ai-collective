@@ -259,10 +259,26 @@ a:focus-visible {
   font-size: clamp(var(--font-size-4xl), 8vw, var(--font-size-6xl));
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-6);
+  color: var(--color-primary); /* Solid fallback for accessibility */
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* High contrast mode removes gradient */
+@media (prefers-contrast: high) {
+  .hero__title {
+    background: none;
+    -webkit-text-fill-color: var(--color-primary);
+    color: var(--color-primary);
+  }
+}
+
+.high-contrast-mode .hero__title {
+  background: none !important;
+  -webkit-text-fill-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
 }
 
 .hero__subtitle {

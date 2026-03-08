@@ -110,7 +110,7 @@ input[type="reset"] {
    ========================================================================== */
 
 .dyslexia-friendly {
-  font-family: 'OpenDyslexic', var(--font-family);
+  font-family: 'OpenDyslexic', 'Comic Sans MS', cursive, var(--font-family);
   letter-spacing: 0.12em;
   word-spacing: 0.16em;
   line-height: 1.8 !important;
