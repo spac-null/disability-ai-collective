@@ -1,0 +1,81 @@
+# Jekyll Configuration for Disability-AI Collective
+# Accessibility-first static site generation
+
+# Site settings
+title: "Disability-AI Collective"
+description: "Cutting-edge research at the intersection of disability culture and artificial intelligence."
+baseurl: ""
+url: "https://disability-ai-collective.github.io"
+author: "Disability-AI Collective"
+email: "contact@disability-ai-collective.org"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:year/:month/:day/:title/
+
+# Accessibility settings
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    block:
+      line_numbers: false
+    span:
+      line_numbers: false
+
+# Collections
+collections:
+  research:
+    output: true
+    permalink: /research/:year/:month/:day/:title/
+  concepts:
+    output: true
+    permalink: /concepts/:title/
+
+# Plugin configuration
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+  - jekyll-paginate
+
+# Pagination
+paginate: 10
+paginate_path: "/page:num/"
+
+# Accessibility enhancements
+accessibility:
+  skip_links: true
+  focus_indicators: true
+  alt_text_required: true
+  contrast_ratio: "AA"
+  
+# Social links (for structured data)
+social:
+  github: disability-ai-collective
+  mastodon: "@disabilityai@social.example"
+
+# Navigation
+navigation:
+  - title: "Research Blog"
+    url: "/"
+  - title: "Concepts"
+    url: "/concepts/"
+  - title: "Visual Gallery"
+    url: "/visuals/"
+  - title: "Resources"
+    url: "/resources/"
+  - title: "About"
+    url: "/about/"
+
+# Exclude from processing
+exclude:
+  - automation/
+  - accessibility/
+  - docs/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/
+  - README.md
