@@ -106,43 +106,43 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
       </div>
       
       <div class="grid grid--2 gap-8">
-        <div>
-          <h3 class="text-h4 mb-4 text-brand">Screen Readers</h3>
-          <p class="text-body text-secondary mb-4">Tested and optimized for:</p>
-          <ul class="list-disc pl-5 text-body text-secondary mb-8">
-            <li class="mb-2"><strong>NVDA</strong> (Windows)</li>
-            <li class="mb-2"><strong>JAWS</strong> (Windows)</li>
-            <li class="mb-2"><strong>VoiceOver</strong> (macOS/iOS)</li>
-            <li class="mb-2"><strong>TalkBack</strong> (Android)</li>
-            <li><strong>Orca</strong> (Linux)</li>
-          </ul>
-          
-          <h3 class="text-h4 mb-4 text-brand">Voice Control</h3>
-          <ul class="list-disc pl-5 text-body text-secondary">
-            <li class="mb-2">Dragon NaturallySpeaking</li>
-            <li class="mb-2">Voice Control (macOS)</li>
-            <li class="mb-2">Windows Speech Recognition</li>
-            <li>Voice Access (Android)</li>
-          </ul>
-        </div>
+        <details class="details-panel">
+          <summary>Screen Readers and Voice Control</summary>
+          <div class="details-panel__content text-body text-secondary">
+            <p class="mb-4">Tested and optimized for:</p>
+            <ul class="list-disc pl-5 mb-6">
+              <li class="mb-2"><strong>NVDA</strong> (Windows)</li>
+              <li class="mb-2"><strong>JAWS</strong> (Windows)</li>
+              <li class="mb-2"><strong>VoiceOver</strong> (macOS/iOS)</li>
+              <li class="mb-2"><strong>TalkBack</strong> (Android)</li>
+              <li><strong>Orca</strong> (Linux)</li>
+            </ul>
+            <ul class="list-disc pl-5">
+              <li class="mb-2">Dragon NaturallySpeaking</li>
+              <li class="mb-2">Voice Control (macOS)</li>
+              <li class="mb-2">Windows Speech Recognition</li>
+              <li>Voice Access (Android)</li>
+            </ul>
+          </div>
+        </details>
         
-        <div>
-          <h3 class="text-h4 mb-4 text-brand">Keyboard Shortcuts</h3>
-          <ul class="list-disc pl-5 text-body text-secondary mb-8">
-            <li class="mb-2"><strong>Tab/Shift+Tab</strong> - Navigate interactive elements</li>
-            <li class="mb-2"><strong>Enter/Space</strong> - Activate buttons and links</li>
-            <li class="mb-2"><strong>Escape</strong> - Close menus and dialogs</li>
-            <li><strong>Arrow keys</strong> - Navigate within components</li>
-          </ul>
-          
-          <h3 class="text-h4 mb-4 text-brand">Alternative Input</h3>
-          <ul class="list-disc pl-5 text-body text-secondary">
-            <li class="mb-2">Switch navigation devices</li>
-            <li class="mb-2">Eye tracking systems</li>
-            <li class="mb-2">Head pointer devices</li>
-            <li>Single-button input</li>
-          </ul>
-        </div>
+        <details class="details-panel">
+          <summary>Keyboard and Alternative Input</summary>
+          <div class="details-panel__content text-body text-secondary">
+            <ul class="list-disc pl-5 mb-6">
+              <li class="mb-2"><strong>Tab/Shift+Tab</strong> - Navigate interactive elements</li>
+              <li class="mb-2"><strong>Enter/Space</strong> - Activate buttons and links</li>
+              <li class="mb-2"><strong>Escape</strong> - Close menus and dialogs</li>
+              <li><strong>Arrow keys</strong> - Navigate within components</li>
+            </ul>
+            <ul class="list-disc pl-5">
+              <li class="mb-2">Switch navigation devices</li>
+              <li class="mb-2">Eye tracking systems</li>
+              <li class="mb-2">Head pointer devices</li>
+              <li>Single-button input</li>
+            </ul>
+          </div>
+        </details>
       </div>
     </div>
   </section>
@@ -192,33 +192,35 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
       </div>
       
       <div class="grid grid--2 gap-8">
-        <div>
+        <div class="card p-8">
           <h3 class="text-h4 mb-4 text-brand">How to Contact Us</h3>
           <p class="text-body text-secondary mb-4">
             We'll respond within 48 hours and work on fixes immediately.
           </p>
           
           <p class="text-body font-semibold mb-2">Email:</p>
-          <p class="text-body mb-4"><a href="mailto:email@jaschablume.nl" class="text-brand">email@jaschablume.nl</a></p>
+          <p class="text-body mb-0"><a href="mailto:email@jaschablume.nl" class="text-brand">email@jaschablume.nl</a></p>
         </div>
         
-        <div>
-          <h3 class="text-h4 mb-4 text-brand">What to Include</h3>
-          <ul class="list-disc pl-5 text-body text-secondary mb-8">
-            <li class="mb-2">URL of the page with the issue</li>
-            <li class="mb-2">Description of what you were trying to do</li>
-            <li class="mb-2">What assistive technology you're using</li>
-            <li class="mb-2">Your browser and operating system</li>
-            <li>Any error messages you received</li>
-          </ul>
-          
-          <h3 class="text-h4 mb-4 text-brand mt-8">Our Response Time</h3>
-          <ul class="list-disc pl-5 text-body text-secondary">
-            <li class="mb-2"><strong>Acknowledge:</strong> Within 24 hours</li>
-            <li class="mb-2"><strong>Critical fixes:</strong> Within 48 hours</li>
-            <li class="mb-2"><strong>Full resolution:</strong> Within 1 week</li>
-          </ul>
-        </div>
+        <details class="details-panel">
+          <summary>What to Include in Your Report</summary>
+          <div class="details-panel__content text-body text-secondary">
+            <ul class="list-disc pl-5 mb-6">
+              <li class="mb-2">URL of the page with the issue</li>
+              <li class="mb-2">Description of what you were trying to do</li>
+              <li class="mb-2">What assistive technology you're using</li>
+              <li class="mb-2">Your browser and operating system</li>
+              <li>Any error messages you received</li>
+            </ul>
+
+            <p class="font-semibold mb-2">Response Timeline</p>
+            <ul class="list-disc pl-5">
+              <li class="mb-2"><strong>Acknowledge:</strong> Within 24 hours</li>
+              <li class="mb-2"><strong>Critical fixes:</strong> Within 48 hours</li>
+              <li><strong>Full resolution:</strong> Within 1 week</li>
+            </ul>
+          </div>
+        </details>
       </div>
     </div>
   </section>
