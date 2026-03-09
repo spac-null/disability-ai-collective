@@ -448,6 +448,65 @@ a:hover {
   text-decoration: underline;
 }
 
+@media (max-width: 768px) {
+  body {
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .text-display-lg {
+    font-size: clamp(2.6rem, 10.5vw, 3.4rem);
+    line-height: 1.05;
+  }
+
+  .text-display-md {
+    font-size: clamp(2rem, 7.4vw, 2.7rem);
+    line-height: 1.12;
+  }
+
+  .text-h1,
+  h1,
+  .h1 {
+    font-size: clamp(2rem, 7vw, 2.4rem);
+  }
+
+  .text-h2,
+  h2,
+  .h2 {
+    font-size: clamp(1.55rem, 5.4vw, 1.95rem);
+    line-height: 1.28;
+  }
+
+  .text-h3,
+  h3,
+  .h3 {
+    font-size: clamp(1.3rem, 4.6vw, 1.55rem);
+    line-height: 1.32;
+  }
+
+  .text-h4,
+  h4,
+  .h4 {
+    font-size: clamp(1.125rem, 4.2vw, 1.3rem);
+  }
+
+  .text-lead {
+    font-size: clamp(1.02rem, 3.8vw, 1.16rem);
+    line-height: 1.6;
+  }
+
+  p {
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-relaxed);
+  }
+
+  .prose p,
+  .prose li {
+    font-size: var(--font-size-md);
+    line-height: 1.72;
+  }
+}
+
 /* ========================================
    LAYOUT SYSTEM
 ========================================= */
@@ -858,7 +917,12 @@ a:hover {
   border: none;
   color: var(--color-text-primary);
   cursor: pointer;
+  min-height: 44px;
+  min-width: 44px;
   padding: var(--space-2);
+  border-radius: 8px;
+  align-items: center;
+  justify-content: center;
 }
 
 .site-nav__menu {
@@ -892,7 +956,7 @@ a:hover {
 /* Mobile navigation */
 @media (max-width: 768px) {
   .site-nav__toggle {
-    display: block;
+    display: inline-flex;
   }
   
   .site-nav__menu {
@@ -915,7 +979,9 @@ a:hover {
   }
   
   .site-nav__menu a {
-    display: block;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
     padding: var(--space-3) var(--space-page-gutter);
   }
 }
