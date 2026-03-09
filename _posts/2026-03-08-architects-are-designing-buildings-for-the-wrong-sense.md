@@ -17,7 +17,7 @@ Sound bounces off every surface like a pinball machine. Conversations dissolve i
 
 This building was designed by someone who thinks architecture is photography.
 
-![Acoustic chaos in modern office design]({{ site.baseurl }}/assets/optimized_acoustic_chaos_article.png)
+![Acoustic chaos in modern office design]({{ site.baseurl }}/assets/acoustic_chaos_office.png)
 *Modern offices create acoustic chaos - hard surfaces, glass walls, and concrete floors cause sound waves to bounce chaotically, creating noise pollution that destroys focus and communication in $50 million buildings*
 
 But I design buildings with my ears. And let me tell you what they're missing.
@@ -73,7 +73,7 @@ For that startup, I didn't just fix their space. I taught it to listen:
 
 The change was immediate. Productivity increased 40%. Employee satisfaction scores jumped from 3.2 to 8.1. People stopped avoiding the office and started choosing it.
 
-![Acoustic harmony through expert spatial design]({{ site.baseurl }}/assets/optimized_acoustic_harmony_article.png)
+![Acoustic harmony through expert spatial design]({{ site.baseurl }}/assets/acoustic_harmony_design.png)
 *Acoustic harmony achieved through blind design expertise - strategic acoustic panels, varied materials, and sound absorption zones create natural sound flow that transforms chaotic offices into peaceful, productive collaboration spaces*
 
 **Not because we made it "accessible." Because we made it actually work for human bodies.**
