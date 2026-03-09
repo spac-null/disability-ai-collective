@@ -1,0 +1,162 @@
+/* Layout - Footer - Disability-AI Collective */
+
+.site-footer {
+  background-color: var(--color-text-primary);
+  color: var(--color-surface);
+  padding: var(--space-8) 0 var(--space-5) 0;
+  margin-top: var(--space-8);
+  transition: background-color var(--transition-base) var(--easing-standard),
+              color var(--transition-base) var(--easing-standard);
+}
+
+.site-footer__content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-7);
+  margin-bottom: var(--space-7);
+}
+
+.site-footer__section h3 {
+  color: var(--color-surface);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-4);
+  transition: color var(--transition-fast) var(--easing-standard);
+}
+
+.site-footer__section p {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  max-width: 300px;
+  transition: color var(--transition-fast) var(--easing-standard);
+}
+
+.site-footer__links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.site-footer__links a {
+  color: var(--color-text-tertiary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  transition: color var(--transition-fast) var(--easing-standard);
+}
+
+.site-footer__links a:hover {
+  color: var(--color-surface);
+  text-decoration: underline;
+}
+
+.site-footer__links a:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+.site-footer__bottom {
+  border-top: 1px solid var(--color-border-strong);
+  padding-top: var(--space-5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  transition: border-color var(--transition-base) var(--easing-standard);
+}
+
+.site-footer__copyright {
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-sm);
+  transition: color var(--transition-fast) var(--easing-standard);
+}
+
+.site-footer__bottom a {
+  color: var(--color-text-tertiary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  transition: color var(--transition-fast) var(--easing-standard);
+}
+
+.site-footer__bottom a:hover {
+  color: var(--color-surface);
+  text-decoration: underline;
+}
+
+.site-footer__bottom a:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-sm);
+}
+
+/* ===== RESPONSIVE FOOTER ===== */
+@media (max-width: var(--breakpoint-md)) {
+  .site-footer {
+    padding: var(--space-6) 0 var(--space-4) 0;
+    margin-top: var(--space-6);
+  }
+  
+  .site-footer__content {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    margin-bottom: var(--space-5);
+  }
+  
+  .site-footer__section h3 {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--space-3);
+  }
+  
+  .site-footer__section p,
+  .site-footer__links a,
+  .site-footer__copyright,
+  .site-footer__bottom a {
+    font-size: var(--font-size-xs);
+  }
+  
+  .site-footer__bottom {
+    flex-direction: column;
+    text-align: center;
+    padding-top: var(--space-4);
+  }
+}
+
+/* ===== DARK THEME ADJUSTMENTS ===== */
+[data-theme="dark"] .site-footer,
+.dark-theme .site-footer {
+  background-color: var(--color-neutral-900);
+  color: var(--color-neutral-50);
+}
+
+[data-theme="dark"] .site-footer__section h3,
+.dark-theme .site-footer__section h3 {
+  color: var(--color-neutral-50);
+}
+
+[data-theme="dark"] .site-footer__section p,
+[data-theme="dark"] .site-footer__links a,
+[data-theme="dark"] .site-footer__copyright,
+[data-theme="dark"] .site-footer__bottom a,
+.dark-theme .site-footer__section p,
+.dark-theme .site-footer__links a,
+.dark-theme .site-footer__copyright,
+.dark-theme .site-footer__bottom a {
+  color: var(--color-neutral-300);
+}
+
+[data-theme="dark"] .site-footer__links a:hover,
+[data-theme="dark"] .site-footer__bottom a:hover,
+.dark-theme .site-footer__links a:hover,
+.dark-theme .site-footer__bottom a:hover {
+  color: var(--color-neutral-50);
+}
+
+[data-theme="dark"] .site-footer__bottom,
+.dark-theme .site-footer__bottom {
+  border-top-color: var(--color-border);
+}

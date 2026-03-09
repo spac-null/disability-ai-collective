@@ -1,0 +1,126 @@
+/* Component - Buttons - Disability-AI Collective */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-5);
+  background-color: var(--color-primary);
+  color: var(--color-surface);
+  text-decoration: none;
+  font-weight: var(--font-weight-semibold);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-base);
+  transition: all var(--transition-base) var(--easing-standard);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  min-height: 44px; /* Ensure sufficient touch target */
+  outline: none; /* Handled by :focus-visible */
+}
+
+.btn:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-surface);
+  text-decoration: none;
+  transform: translateY(-1px); /* Subtle lift effect */
+}
+
+.btn:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+  border-radius: var(--radius-base);
+}
+
+.btn:active {
+  transform: translateY(0);
+  background-color: var(--color-primary-active);
+  border-color: var(--color-primary-active);
+}
+
+/* Secondary Button */
+.btn--secondary {
+  background-color: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.btn--secondary:hover {
+  background-color: var(--color-secondary-hover);
+  border-color: var(--color-secondary-hover);
+}
+
+.btn--secondary:active {
+  background-color: var(--color-secondary-active);
+  border-color: var(--color-secondary-active);
+}
+
+/* Outline Button */
+.btn--outline {
+  background-color: transparent;
+  color: var(--color-text-primary);
+  border-color: var(--color-text-primary);
+}
+
+.btn--outline:hover {
+  background-color: var(--color-text-primary);
+  color: var(--color-surface);
+}
+
+.btn--outline:active {
+  background-color: var(--color-neutral-800);
+  border-color: var(--color-neutral-800);
+  color: var(--color-surface);
+}
+
+/* Generative Button (Primary Action for Hero) */
+.btn-generative {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-surface);
+  padding: var(--space-4) var(--space-6); /* Slightly larger */
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-generative:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-generative:active {
+  background-color: var(--color-primary-active);
+  border-color: var(--color-primary-active);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Sizes */
+.btn--lg {
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--font-size-md);
+}
+
+.btn--sm {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-xs);
+  min-height: 36px;
+}
+
+/* Full width on mobile */
+@media (max-width: var(--breakpoint-sm)) {
+  .btn {
+    width: 100%;
+    margin-bottom: var(--space-3);
+  }
+
+  .btn:last-child {
+    margin-bottom: 0;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+  }
+}

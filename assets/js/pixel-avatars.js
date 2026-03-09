@@ -117,26 +117,29 @@ class UrbitAvatarGenerator {
   }
 
   getAgentPalette(agentName) {
+    // Access CSS variables from the document's root
+    const getCssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
     const palettes = {
       'Siri Sage': {
-        bg: '#0D1B2A',
-        fg: '#7FB3D3'
+        bg: getCssVar('--color-neutral-900'), // Dark background
+        fg: getCssVar('--color-primary-300')  // Primary color for pattern
       },
       'Pixel Nova': {
-        bg: '#1B263B',
-        fg: '#FFD166'
+        bg: getCssVar('--color-neutral-800'),
+        fg: getCssVar('--color-secondary-300')
       },
       'Maya Flux': {
-        bg: '#2D1B69',
-        fg: '#F72585'
+        bg: getCssVar('--color-primary-800'),
+        fg: getCssVar('--color-error-300') // Using error for a vibrant, distinct color
       },
       'Zen Circuit': {
-        bg: '#14213D',
-        fg: '#A663CC'
+        bg: getCssVar('--color-secondary-900'),
+        fg: getCssVar('--color-info-300') // Using info for another distinct color
       }
     };
     
-    return palettes[agentName] || { bg: '#2c3e50', fg: '#3498db' };
+    return palettes[agentName] || { bg: getCssVar('--color-neutral-700'), fg: getCssVar('--color-primary-500') };
   }
 
   seededRandom(seed) {

@@ -5,47 +5,50 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
 ---
 
 <main id="main-content">
+  <!-- Skip link for accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
   <!-- Page Header -->
-  <section style="padding: var(--space-3xl) 0 var(--space-2xl); background: var(--color-bg-light);">
-    <div class="container text-center">
-      <h1 style="margin-bottom: var(--space-lg);">Accessibility Statement</h1>
-      <p style="font-size: 1.25rem; color: var(--color-gray); max-width: 700px; margin: 0 auto; line-height: 1.5;">
+  <section class="section section--secondary text-center">
+    <div class="container">
+      <h1 class="text-h1 mb-4">Accessibility Statement</h1>
+      <p class="text-lead text-secondary max-w-2xl mx-auto">
         Accessibility isn't an afterthought—it's fundamental to who we are and how we build technology.
       </p>
     </div>
   </section>
 
   <!-- Our Commitment -->
-  <section style="padding: var(--space-3xl) 0;">
+  <section class="section section--primary">
     <div class="container">
-      <div style="text-align: center; margin-bottom: var(--space-2xl);">
-        <h2 style="margin-bottom: var(--space-md);">Our Commitment</h2>
-        <p style="color: var(--color-gray); max-width: 600px; margin: 0 auto;">
+      <div class="text-center mb-16">
+        <h2 class="text-h2 mb-4">Our Commitment</h2>
+        <p class="text-lead text-secondary max-w-2xl mx-auto">
           As an experimental arts platform led by disability culture, accessibility guides every design decision.
         </p>
       </div>
       
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
-        <div style="padding: var(--space-lg); background: var(--color-bg-light); border-radius: 8px;">
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">Accessibility-First Design</h3>
-          <p style="margin-bottom: var(--space-md);">
+      <div class="grid grid--2 gap-8">
+        <div class="card p-8">
+          <h3 class="text-h4 mb-4 text-brand">Accessibility-First Design</h3>
+          <p class="text-body text-secondary mb-6">
             We don't retrofit accessibility—we design with disabled users as primary stakeholders from day one.
           </p>
           
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md); margin-top: var(--space-lg);">Community Accountability</h3>
-          <p>
+          <h3 class="text-h4 mb-4 text-brand mt-8">Community Accountability</h3>
+          <p class="text-body text-secondary">
             We're accountable to disabled communities first. Our practices are reviewed by disabled users representing diverse disabilities and assistive technologies.
           </p>
         </div>
         
-        <div style="padding: var(--space-lg); background: var(--color-bg-light); border-radius: 8px;">
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">Continuous Improvement</h3>
-          <p style="margin-bottom: var(--space-md);">
+        <div class="card p-8">
+          <h3 class="text-h4 mb-4 text-brand">Continuous Improvement</h3>
+          <p class="text-body text-secondary mb-6">
             Digital accessibility is an ongoing practice, not a checklist. We regularly test with real users and update based on feedback.
           </p>
           
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md); margin-top: var(--space-lg);">Open Source</h3>
-          <p>
+          <h3 class="text-h4 mb-4 text-brand mt-8">Open Source</h3>
+          <p class="text-body text-secondary">
             Our accessibility patterns and code are open source so other organizations can benefit from disability-led design practices.
           </p>
         </div>
@@ -54,47 +57,40 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
   </section>
 
   <!-- WCAG Compliance -->
-  <section style="padding: var(--space-3xl) 0; background: var(--color-white);">
+  <section class="section section--secondary">
     <div class="container">
-      <div style="text-align: center; margin-bottom: var(--space-2xl);">
-        <h2 style="margin-bottom: var(--space-md);">WCAG 2.1 AA Compliance</h2>
-        <p style="color: var(--color-gray); max-width: 600px; margin: 0 auto;">
+      <div class="text-center mb-16">
+        <h2 class="text-h2 mb-4">WCAG 2.1 AA Compliance</h2>
+        <p class="text-lead text-secondary max-w-2xl mx-auto">
           We meet or exceed WCAG 2.1 Level AA standards with ongoing testing and community verification.
         </p>
       </div>
       
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); margin-bottom: var(--space-xl);">
-        <style>
-          @media (max-width: 768px) {
-            .responsive-grid {
-              grid-template-columns: 1fr !important;
-            }
-          }
-        </style>
-        <div style="border: 2px solid var(--color-blue); padding: var(--space-lg); border-radius: 8px;">
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">✅ What We Provide</h3>
-          <ul style="line-height: 1.6; color: var(--color-gray);">
-            <li>4.5:1 minimum color contrast (we exceed this)</li>
-            <li>Text resizes to 200% without losing functionality</li>
-            <li>All images have descriptive alt text</li>
-            <li>Keyboard navigation for all interactive elements</li>
-            <li>Skip links for efficient navigation</li>
-            <li>High contrast and dyslexia-friendly options</li>
-            <li>Screen reader optimized structure</li>
+      <div class="grid grid--2 gap-8 mb-16">
+        <div class="card card--brand p-8">
+          <h3 class="text-h4 mb-4 text-brand">✅ What We Provide</h3>
+          <ul class="list-disc pl-5 text-body text-secondary">
+            <li class="mb-2">4.5:1 minimum color contrast (we exceed this)</li>
+            <li class="mb-2">Text resizes to 200% without losing functionality</li>
+            <li class="mb-2">All images have descriptive alt text</li>
+            <li class="mb-2">Keyboard navigation for all interactive elements</li>
+            <li class="mb-2">Skip links for efficient navigation</li>
+            <li class="mb-2">High contrast and dyslexia-friendly options</li>
+            <li class="mb-2">Screen reader optimized structure</li>
             <li>48px minimum touch targets on mobile</li>
           </ul>
         </div>
         
-        <div style="border: 2px solid var(--color-blue); padding: var(--space-lg); border-radius: 8px;">
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">🔄 How We Test</h3>
-          <ul style="line-height: 1.6; color: var(--color-gray);">
-            <li>Automated testing with accessibility tools</li>
-            <li>Manual testing with screen readers</li>
-            <li>Keyboard-only navigation testing</li>
-            <li>User testing with disabled community members</li>
-            <li>Regular accessibility audits</li>
-            <li>Real-world assistive technology testing</li>
-            <li>Color contrast verification</li>
+        <div class="card card--brand p-8">
+          <h3 class="text-h4 mb-4 text-brand">🔄 How We Test</h3>
+          <ul class="list-disc pl-5 text-body text-secondary">
+            <li class="mb-2">Automated testing with accessibility tools</li>
+            <li class="mb-2">Manual testing with screen readers</li>
+            <li class="mb-2">Keyboard-only navigation testing</li>
+            <li class="mb-2">User testing with disabled community members</li>
+            <li class="mb-2">Regular accessibility audits</li>
+            <li class="mb-2">Real-world assistive technology testing</li>
+            <li class="mb-2">Color contrast verification</li>
             <li>Mobile accessibility validation</li>
           </ul>
         </div>
@@ -103,50 +99,50 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
   </section>
 
   <!-- Assistive Technology -->
-  <section style="padding: var(--space-3xl) 0; background: var(--color-bg-light);">
+  <section class="section section--primary">
     <div class="container">
-      <div style="text-align: center; margin-bottom: var(--space-2xl);">
-        <h2 style="margin-bottom: var(--space-md);">Assistive Technology Support</h2>
-        <p style="color: var(--color-gray); max-width: 600px; margin: 0 auto;">
+      <div class="text-center mb-16">
+        <h2 class="text-h2 mb-4">Assistive Technology Support</h2>
+        <p class="text-lead text-secondary max-w-2xl mx-auto">
           Our site works with the assistive technologies you rely on.
         </p>
       </div>
       
-      <div class="grid grid--2">
+      <div class="grid grid--2 gap-8">
         <div>
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">Screen Readers</h3>
-          <p style="color: var(--color-gray); margin-bottom: var(--space-sm);">Tested and optimized for:</p>
-          <ul style="line-height: 1.6; color: var(--color-gray); margin-bottom: var(--space-lg);">
-            <li><strong>NVDA</strong> (Windows)</li>
-            <li><strong>JAWS</strong> (Windows)</li>
-            <li><strong>VoiceOver</strong> (macOS/iOS)</li>
-            <li><strong>TalkBack</strong> (Android)</li>
+          <h3 class="text-h4 mb-4 text-brand">Screen Readers</h3>
+          <p class="text-body text-secondary mb-4">Tested and optimized for:</p>
+          <ul class="list-disc pl-5 text-body text-secondary mb-8">
+            <li class="mb-2"><strong>NVDA</strong> (Windows)</li>
+            <li class="mb-2"><strong>JAWS</strong> (Windows)</li>
+            <li class="mb-2"><strong>VoiceOver</strong> (macOS/iOS)</li>
+            <li class="mb-2"><strong>TalkBack</strong> (Android)</li>
             <li><strong>Orca</strong> (Linux)</li>
           </ul>
           
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">Voice Control</h3>
-          <ul style="line-height: 1.6; color: var(--color-gray);">
-            <li>Dragon NaturallySpeaking</li>
-            <li>Voice Control (macOS)</li>
-            <li>Windows Speech Recognition</li>
+          <h3 class="text-h4 mb-4 text-brand">Voice Control</h3>
+          <ul class="list-disc pl-5 text-body text-secondary">
+            <li class="mb-2">Dragon NaturallySpeaking</li>
+            <li class="mb-2">Voice Control (macOS)</li>
+            <li class="mb-2">Windows Speech Recognition</li>
             <li>Voice Access (Android)</li>
           </ul>
         </div>
         
         <div>
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">Keyboard Shortcuts</h3>
-          <ul style="line-height: 1.6; color: var(--color-gray); margin-bottom: var(--space-lg);">
-            <li><strong>Tab/Shift+Tab</strong> - Navigate interactive elements</li>
-            <li><strong>Enter/Space</strong> - Activate buttons and links</li>
-            <li><strong>Escape</strong> - Close menus and dialogs</li>
+          <h3 class="text-h4 mb-4 text-brand">Keyboard Shortcuts</h3>
+          <ul class="list-disc pl-5 text-body text-secondary mb-8">
+            <li class="mb-2"><strong>Tab/Shift+Tab</strong> - Navigate interactive elements</li>
+            <li class="mb-2"><strong>Enter/Space</strong> - Activate buttons and links</li>
+            <li class="mb-2"><strong>Escape</strong> - Close menus and dialogs</li>
             <li><strong>Arrow keys</strong> - Navigate within components</li>
           </ul>
           
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">Alternative Input</h3>
-          <ul style="line-height: 1.6; color: var(--color-gray);">
-            <li>Switch navigation devices</li>
-            <li>Eye tracking systems</li>
-            <li>Head pointer devices</li>
+          <h3 class="text-h4 mb-4 text-brand">Alternative Input</h3>
+          <ul class="list-disc pl-5 text-body text-secondary">
+            <li class="mb-2">Switch navigation devices</li>
+            <li class="mb-2">Eye tracking systems</li>
+            <li class="mb-2">Head pointer devices</li>
             <li>Single-button input</li>
           </ul>
         </div>
@@ -155,32 +151,32 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
   </section>
 
   <!-- Accessibility Features -->
-  <section style="padding: var(--space-3xl) 0;">
+  <section class="section section--secondary">
     <div class="container">
-      <div style="text-align: center; margin-bottom: var(--space-2xl);">
-        <h2 style="margin-bottom: var(--space-md);">Accessibility Features</h2>
-        <p style="color: var(--color-gray); max-width: 600px; margin: 0 auto;">
+      <div class="text-center mb-16">
+        <h2 class="text-h2 mb-4">Accessibility Features</h2>
+        <p class="text-lead text-secondary max-w-2xl mx-auto">
           Look for the accessibility toggles in the bottom-left corner of your screen.
         </p>
       </div>
       
-      <div class="grid grid--2">
-        <div style="background: var(--color-black); color: var(--color-white); padding: var(--space-lg); border-radius: 8px;">
-          <h3 style="color: var(--color-white); margin-bottom: var(--space-md);">🔆 High Contrast Mode</h3>
-          <p style="margin-bottom: var(--space-md);">
+      <div class="grid grid--2 gap-8">
+        <div class="card bg-foundation-gray-900 text-inverse p-8">
+          <h3 class="text-h4 mb-4 text-inverse">🔆 High Contrast Mode</h3>
+          <p class="text-body text-inverse mb-4">
             Switches to enhanced contrast with bright colors for better visibility.
           </p>
-          <p style="font-size: 0.875rem; color: rgba(255,255,255,0.8);">
+          <p class="text-small text-muted">
             Automatically activates if your system uses high contrast mode.
           </p>
         </div>
         
-        <div style="border: 2px solid var(--color-blue); padding: var(--space-lg); border-radius: 8px;">
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">📖 Dyslexia-Friendly Font</h3>
-          <p style="margin-bottom: var(--space-md); color: var(--color-gray);">
+        <div class="card card--brand p-8">
+          <h3 class="text-h4 mb-4 text-brand">📖 Dyslexia-Friendly Font</h3>
+          <p class="text-body text-secondary mb-4">
             Switches to OpenDyslexic font with improved letter spacing for easier reading.
           </p>
-          <p style="font-size: 0.875rem; color: var(--color-light-gray);">
+          <p class="text-small text-muted">
             Designed to reduce reading errors and improve comprehension.
           </p>
         </div>
@@ -189,41 +185,41 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
   </section>
 
   <!-- Report Issues -->
-  <section style="padding: var(--space-3xl) 0; background: var(--color-bg-light);">
+  <section class="section section--primary">
     <div class="container">
-      <div style="text-align: center; margin-bottom: var(--space-2xl);">
-        <h2 style="margin-bottom: var(--space-md);">Report Accessibility Issues</h2>
-        <p style="color: var(--color-gray); max-width: 600px; margin: 0 auto;">
+      <div class="text-center mb-16">
+        <h2 class="text-h2 mb-4">Report Accessibility Issues</h2>
+        <p class="text-lead text-secondary max-w-2xl mx-auto">
           Found an accessibility barrier? We want to hear from you and fix it quickly.
         </p>
       </div>
       
-      <div class="grid grid--2">
+      <div class="grid grid--2 gap-8">
         <div>
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">How to Contact Us</h3>
-          <p style="color: var(--color-gray); margin-bottom: var(--space-md);">
+          <h3 class="text-h4 mb-4 text-brand">How to Contact Us</h3>
+          <p class="text-body text-secondary mb-4">
             We'll respond within 48 hours and work on fixes immediately.
           </p>
           
-          <p style="margin-bottom: var(--space-sm);"><strong>Email:</strong></p>
-          <p style="margin-bottom: var(--space-md);"><a href="mailto:email@jaschablume.nl">email@jaschablume.nl</a></p>
+          <p class="text-body font-semibold mb-2">Email:</p>
+          <p class="text-body mb-4"><a href="mailto:email@jaschablume.nl" class="text-brand">email@jaschablume.nl</a></p>
         </div>
         
         <div>
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md);">What to Include</h3>
-          <ul style="line-height: 1.6; color: var(--color-gray);">
-            <li>URL of the page with the issue</li>
-            <li>Description of what you were trying to do</li>
-            <li>What assistive technology you're using</li>
-            <li>Your browser and operating system</li>
+          <h3 class="text-h4 mb-4 text-brand">What to Include</h3>
+          <ul class="list-disc pl-5 text-body text-secondary mb-8">
+            <li class="mb-2">URL of the page with the issue</li>
+            <li class="mb-2">Description of what you were trying to do</li>
+            <li class="mb-2">What assistive technology you're using</li>
+            <li class="mb-2">Your browser and operating system</li>
             <li>Any error messages you received</li>
           </ul>
           
-          <h3 style="color: var(--color-blue); margin-bottom: var(--space-md); margin-top: var(--space-lg);">Our Response Time</h3>
-          <ul style="line-height: 1.6; color: var(--color-gray);">
-            <li><strong>Acknowledge:</strong> Within 24 hours</li>
-            <li><strong>Critical fixes:</strong> Within 48 hours</li>
-            <li><strong>Full resolution:</strong> Within 1 week</li>
+          <h3 class="text-h4 mb-4 text-brand mt-8">Our Response Time</h3>
+          <ul class="list-disc pl-5 text-body text-secondary">
+            <li class="mb-2"><strong>Acknowledge:</strong> Within 24 hours</li>
+            <li class="mb-2"><strong>Critical fixes:</strong> Within 48 hours</li>
+            <li class="mb-2"><strong>Full resolution:</strong> Within 1 week</li>
           </ul>
         </div>
       </div>
@@ -231,31 +227,31 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
   </section>
 
   <!-- Standards -->
-  <section style="padding: var(--space-3xl) 0;">
+  <section class="section section--secondary">
     <div class="container text-center">
-      <h2 style="margin-bottom: var(--space-lg);">Standards We Follow</h2>
+      <h2 class="text-h2 mb-8">Standards We Follow</h2>
       
-      <div style="display: flex; justify-content: center; gap: var(--space-lg); flex-wrap: wrap; margin-bottom: var(--space-xl);">
-        <div style="padding: var(--space-md); border: 1px solid var(--color-border); border-radius: 8px;">
+      <div class="flex justify-center gap-8 flex-wrap mb-8">
+        <div class="px-6 py-4 border border-border-primary rounded-lg text-body font-semibold">
           <strong>WCAG 2.1 Level AA</strong>
         </div>
-        <div style="padding: var(--space-md); border: 1px solid var(--color-border); border-radius: 8px;">
+        <div class="px-6 py-4 border border-border-primary rounded-lg text-body font-semibold">
           <strong>Section 508</strong>
         </div>
-        <div style="padding: var(--space-md); border: 1px solid var(--color-border); border-radius: 8px;">
+        <div class="px-6 py-4 border border-border-primary rounded-lg text-body font-semibold">
           <strong>ADA Title III</strong>
         </div>
       </div>
       
-      <p style="color: var(--color-gray); margin-bottom: var(--space-xl);">
+      <p class="text-body text-muted mb-12">
         Last updated: March 8, 2026. We review and update our accessibility practices quarterly.
       </p>
       
-      <div style="display: flex; justify-content: center; gap: var(--space-md); flex-wrap: wrap;">
-        <a href="https://www.w3.org/WAI/WCAG21/quickref/" class="btn btn--outline" target="_blank">
+      <div class="flex justify-center gap-4 flex-wrap">
+        <a href="https://www.w3.org/WAI/WCAG21/quickref/" class="btn btn--secondary" target="_blank">
           WCAG Guidelines
         </a>
-        <a href="mailto:email@jaschablume.nl" class="btn">
+        <a href="mailto:email@jaschablume.nl" class="btn btn--primary">
           Contact Us
         </a>
       </div>

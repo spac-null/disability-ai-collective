@@ -1,0 +1,380 @@
+/* Main Stylesheet - Disability-AI Collective */
+
+/* ===== BASE STYLES ===== */
+@import "./base/reset.css";
+@import "./base/variables.css";
+@import "./base/typography.css";
+@import "./base/utilities.css";
+
+/* ===== LAYOUT STYLES ===== */
+@import "./layouts/grid.css";
+@import "./layouts/header.css";
+@import "./layouts/footer.css";
+
+/* ===== COMPONENT STYLES ===== */
+@import "./components/cards.css";
+@import "./components/buttons.css";
+/* @import "./components/cards.css"; */
+/* @import "./components/forms.css"; */
+/* @import "./components/status-badges.css"; */
+
+/* General body styles that depend on variables */
+body {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  transition: background-color var(--transition-base) var(--easing-standard),
+              color var(--transition-base) var(--easing-standard);
+}
+
+/* Container for overall page layout */
+.page-container {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-8);
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+
+/* Page Header styles */
+.page-header {
+  text-align: center;
+  padding: var(--space-8) 0 var(--space-7) 0;
+  background-color: var(--color-surface-alt);
+  margin-bottom: var(--space-8);
+  transition: background-color var(--transition-base) var(--easing-standard);
+}
+
+.page-header .container {
+  max-width: var(--container-max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+.page-header h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.page-description {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+  max-width: 70ch;
+  margin: var(--space-4) auto 0;
+  line-height: var(--line-height-base);
+}
+
+/* Content Section */
+.content-section {
+  max-width: 800px;
+  margin: 0 auto var(--space-8);
+}
+
+.content-text {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text-primary);
+}
+
+.content-text p {
+  margin-bottom: var(--space-4);
+}
+
+.content-text h2,
+.content-text h3,
+.content-text h4,
+.content-text h5,
+.content-text h6 {
+  margin-top: var(--space-7);
+  margin-bottom: var(--space-4);
+  color: var(--color-text-primary);
+}
+
+.emphasis-text {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.highlight-box {
+  border-left: 4px solid var(--color-primary);
+  padding-left: var(--space-5);
+  margin-bottom: var(--space-7);
+  background-color: var(--color-surface-alt);
+  padding: var(--space-4);
+  border-radius: var(--radius-base);
+}
+
+.info-box {
+  background-color: var(--color-info-50);
+  border-left: 4px solid var(--color-info-500);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-6);
+  color: var(--color-text-primary);
+}
+
+.info-box h3 {
+  color: var(--color-info-900);
+  margin-bottom: var(--space-3);
+}
+
+.info-box p {
+  color: var(--color-text-secondary);
+}
+
+.dark-box {
+  background-color: var(--color-text-primary);
+  color: var(--color-surface);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-6);
+}
+
+.dark-box h3 {
+  color: var(--color-surface);
+  margin-bottom: var(--space-3);
+}
+
+.dark-box ul {
+  line-height: var(--line-height-base);
+  padding-left: var(--space-5);
+  color: var(--color-text-tertiary);
+}
+
+.dark-box li {
+  margin-bottom: var(--space-2);
+}
+
+.tech-box {
+  background-color: var(--color-surface-alt);
+  border: var(--border-experimental);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  text-align: left;
+  margin-bottom: var(--space-6);
+}
+
+.cta-section {
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-7);
+  margin-top: var(--space-8);
+  transition: border-color var(--transition-base) var(--easing-standard);
+}
+
+.cta-section h2 {
+  font-size: var(--font-size-2xl);
+  margin-bottom: var(--space-5);
+  color: var(--color-text-primary);
+}
+
+.cta-section p {
+  font-size: var(--font-size-md);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
+  max-width: 70ch;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: var(--line-height-base);
+}
+
+.cta-buttons {
+  display: flex;
+  gap: var(--space-4);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: var(--space-8);
+  border: var(--border-experimental);
+  background-color: var(--color-surface-alt);
+  border-radius: var(--radius-xl);
+  color: var(--color-text-primary);
+}
+
+.empty-state-icon {
+  font-size: var(--font-size-4xl);
+  margin-bottom: var(--space-5);
+  color: var(--color-primary);
+}
+
+.empty-state-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-extrabold);
+  margin-bottom: var(--space-4);
+  color: var(--color-text-primary);
+}
+
+.empty-state-description {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
+  max-width: 60ch;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: var(--line-height-base);
+}
+
+/* Dark theme adjustments for general elements */
+[data-theme="dark"] .page-header,
+.dark-theme .page-header {
+  background-color: var(--color-surface-elevated);
+}
+
+[data-theme="dark"] .highlight-box,
+.dark-theme .highlight-box {
+  background-color: var(--color-surface-elevated);
+  border-left-color: var(--color-primary-300);
+}
+
+[data-theme="dark"] .dark-box,
+.dark-theme .dark-box {
+  background-color: var(--color-text-primary);
+  color: var(--color-surface);
+}
+
+[data-theme="dark"] .dark-box h3,
+.dark-theme .dark-box h3 {
+  color: var(--color-surface);
+}
+
+[data-theme="dark"] .tech-box,
+.dark-theme .tech-box {
+  background-color: var(--color-surface-elevated);
+  border-color: var(--border-experimental);
+}
+
+[data-theme="dark"] .cta-section,
+.dark-theme .cta-section {
+  border-top-color: var(--color-border);
+}
+
+[data-theme="dark"] .empty-state,
+.dark-theme .empty-state {
+  background-color: var(--color-surface-elevated);
+  border-color: var(--border-experimental);
+}
+
+/* Responsive adjustments for general elements */
+@media (max-width: var(--breakpoint-md)) {
+  .page-container {
+    padding-top: var(--space-6);
+    padding-bottom: var(--space-6);
+  }
+  
+  .page-header {
+    padding: var(--space-6) 0 var(--space-5) 0;
+    margin-bottom: var(--space-6);
+  }
+  
+  .page-header h1 {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .page-description {
+    font-size: var(--font-size-sm);
+  }
+  
+  .content-section {
+    margin-bottom: var(--space-6);
+  }
+  
+  .info-box,
+  .dark-box,
+  .tech-box {
+    padding: var(--space-4);
+    margin-bottom: var(--space-5);
+  }
+  
+  .cta-section {
+    padding-top: var(--space-6);
+    margin-top: var(--space-7);
+  }
+  
+  .cta-section h2 {
+    font-size: var(--font-size-xl);
+  }
+  
+  .cta-section p {
+    font-size: var(--font-size-sm);
+  }
+  
+  .empty-state {
+    padding: var(--space-6);
+  }
+  
+  .empty-state-icon {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .empty-state-title {
+    font-size: var(--font-size-lg);
+  }
+  
+  .empty-state-description {
+    font-size: var(--font-size-sm);
+  }
+}
+
+@media (max-width: var(--breakpoint-sm)) {
+  .page-container {
+    padding-top: var(--space-5);
+    padding-bottom: var(--space-5);
+  }
+  
+  .page-header {
+    padding: var(--space-5) 0 var(--space-4) 0;
+    margin-bottom: var(--space-5);
+  }
+  
+  .page-header h1 {
+    font-size: var(--font-size-xl);
+  }
+  
+  .page-description {
+    font-size: var(--font-size-xs);
+  }
+  
+  .content-section {
+    margin-bottom: var(--space-5);
+  }
+  
+  .info-box,
+  .dark-box,
+  .tech-box {
+    padding: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  
+  .cta-section {
+    padding-top: var(--space-5);
+    margin-top: var(--space-6);
+  }
+  
+  .cta-section h2 {
+    font-size: var(--font-size-lg);
+  }
+  
+  .cta-section p {
+    font-size: var(--font-size-xs);
+  }
+  
+  .empty-state {
+    padding: var(--space-5);
+  }
+  
+  .empty-state-icon {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .empty-state-title {
+    font-size: var(--font-size-md);
+  }
+  
+  .empty-state-description {
+    font-size: var(--font-size-xs);
+  }
+}

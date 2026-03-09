@@ -1,0 +1,166 @@
+/* Layout - Header - Disability-AI Collective */
+
+.site-header {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-4) 0;
+  position: sticky;
+  top: 0;
+  z-index: var(--z-index-sticky);
+  transition: background-color var(--transition-base) var(--easing-standard),
+              border-color var(--transition-base) var(--easing-standard);
+}
+
+.site-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.site-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  transition: color var(--transition-fast) var(--easing-standard);
+}
+
+.site-title:hover {
+  color: var(--color-primary-hover);
+}
+
+/* ===== NAVIGATION ===== */
+.site-nav {
+  display: flex;
+  align-items: center;
+}
+
+.site-nav__toggle {
+  display: none; /* Hidden by default on desktop */
+  background: none;
+  border: 1px solid var(--color-border);
+  padding: var(--space-2);
+  border-radius: var(--radius-base);
+  cursor: pointer;
+  transition: all var(--transition-fast) var(--easing-standard);
+  color: var(--color-text-primary);
+}
+
+.site-nav__toggle:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.site-nav__toggle:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.site-nav__menu {
+  display: flex;
+  gap: var(--space-6);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-nav__menu a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-base);
+  transition: all var(--transition-fast) var(--easing-standard);
+}
+
+.site-nav__menu a:hover {
+  color: var(--color-primary-hover);
+  background-color: var(--color-surface-alt);
+}
+
+.site-nav__menu a:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ===== MOBILE NAVIGATION ===== */
+@media (max-width: var(--breakpoint-md)) {
+  .site-header {
+    padding: var(--space-3) 0;
+  }
+
+  .site-nav__toggle {
+    display: block;
+    min-width: 40px; /* Adjust touch target for mobile */
+    min-height: 40px;
+  }
+  
+  .site-nav__menu {
+    display: none;
+    position: absolute;
+    top: 100%; /* Position below the header */
+    left: 0;
+    right: 0;
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    flex-direction: column;
+    gap: var(--space-0); /* No gap for stacked menu items */
+    padding: var(--space-4);
+    box-shadow: var(--shadow-md);
+    z-index: var(--z-index-dropdown); /* Ensure menu is above other content */
+    border-radius: var(--radius-none);
+  }
+  
+  .site-nav__menu.is-open {
+    display: flex;
+  }
+  
+  .site-nav__menu a {
+    padding: var(--space-3);
+    width: 100%;
+    border-radius: var(--radius-sm);
+    text-align: left;
+    margin-bottom: var(--space-1); /* Small space between menu items */
+  }
+
+  .site-nav__menu a:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Add subtle animation for menu toggle */
+  .site-nav__menu {
+    transform: translateY(-10px);
+    opacity: 0;
+    transition: transform var(--transition-base) var(--easing-decelerate),
+                opacity var(--transition-base) var(--easing-decelerate);
+  }
+
+  .site-nav__menu.is-open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: var(--breakpoint-sm)) {
+  .site-title {
+    font-size: var(--font-size-md);
+  }
+}
+
+/* Dark theme adjustments for header */
+[data-theme="dark"] .site-nav__toggle,
+.dark-theme .site-nav__toggle {
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+[data-theme="dark"] .site-nav__toggle:hover,
+.dark-theme .site-nav__toggle:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+[data-theme="dark"] .site-nav__menu a:hover,
+.dark-theme .site-nav__menu a:hover {
+  background-color: var(--color-surface-elevated);
+}

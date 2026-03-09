@@ -188,15 +188,20 @@ layout: default
   font-size: 1.0625rem;
   line-height: 1.65;
   color: #333333;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Paragraphs - Proper Editorial Spacing */
+/* Paragraphs - Perfect Editorial Spacing */
 .reader-content p {
   margin-bottom: 1.25rem;
   text-align: left;
   -webkit-hyphens: auto;
   hyphens: auto;
   word-break: break-word;
+  orphans: 3;
+  widows: 3;
 }
 
 .reader-content p:last-child {
@@ -208,6 +213,8 @@ layout: default
   font-size: 1.125rem;
   line-height: 1.6;
   margin-bottom: 1.5rem;
+  color: #1a1a1a;
+  font-weight: 400;
 }
 
 /* Headlines - Perfect Editorial Hierarchy */
@@ -220,6 +227,7 @@ layout: default
   margin-top: 2.5rem;
   margin-bottom: 0.75rem;
   letter-spacing: -0.01em;
+  break-after: avoid;
 }
 
 .reader-content h3 {
@@ -231,6 +239,7 @@ layout: default
   margin-top: 2rem;
   margin-bottom: 0.5rem;
   letter-spacing: -0.005em;
+  break-after: avoid;
 }
 
 .reader-content h4 {
@@ -241,6 +250,7 @@ layout: default
   color: #1a1a1a;
   margin-top: 1.75rem;
   margin-bottom: 0.5rem;
+  break-after: avoid;
 }
 
 /* Text Emphasis */
@@ -257,14 +267,15 @@ layout: default
 /* Lists - Clean and Readable */
 .reader-content ul,
 .reader-content ol {
-  margin: 1.25rem 0;
-  padding-left: 1.5rem;
+  margin: 1.25rem 0 1.25rem 1.5rem;
+  padding-left: 0;
 }
 
 .reader-content li {
   margin-bottom: 0.375rem;
   line-height: 1.6;
   color: #333333;
+  padding-left: 0.25rem;
 }
 
 .reader-content li:last-child {
@@ -274,7 +285,7 @@ layout: default
 /* Nested lists */
 .reader-content li ul,
 .reader-content li ol {
-  margin: 0.375rem 0;
+  margin: 0.375rem 0 0.375rem 1.5rem;
 }
 
 /* Blockquotes - Editorial Style */
@@ -285,6 +296,7 @@ layout: default
   font-style: italic;
   color: #1a1a1a;
   font-size: 1.0625rem;
+  quotes: "“" "”" "‘" "’";
 }
 
 .reader-content blockquote p {
@@ -293,6 +305,15 @@ layout: default
 
 .reader-content blockquote p:last-child {
   margin-bottom: 0;
+}
+
+.reader-content blockquote::before {
+  content: open-quote;
+  font-size: 2em;
+  line-height: 0.1em;
+  margin-right: 0.25em;
+  vertical-align: -0.4em;
+  color: #0066cc;
 }
 
 /* Horizontal Rules - Section Breaks */
@@ -312,6 +333,7 @@ layout: default
   text-decoration: none;
   border-bottom: 1px solid rgba(0, 102, 204, 0.3);
   transition: border-bottom-color 0.15s ease;
+  word-break: break-word;
 }
 
 .reader-content a:hover {
@@ -326,6 +348,63 @@ layout: default
   font-family: 'SF Mono', Monaco, Consolas, monospace;
   font-size: 0.9em;
   color: #333333;
+}
+
+.reader-content pre {
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+}
+
+.reader-content pre code {
+  background: transparent;
+  padding: 0;
+  font-size: 0.875em;
+  line-height: 1.4;
+}
+
+/* Images */
+.reader-content img {
+  max-width: 100%;
+  height: auto;
+  margin: 1.5rem auto;
+  display: block;
+  border-radius: 4px;
+}
+
+.reader-content figure {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.reader-content figcaption {
+  font-size: 0.875rem;
+  color: #666666;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Tables */
+.reader-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9375rem;
+}
+
+.reader-content th,
+.reader-content td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e0e0e0;
+  text-align: left;
+}
+
+.reader-content th {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
 /* Article Footer */

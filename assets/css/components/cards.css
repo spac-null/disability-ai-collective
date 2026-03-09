@@ -1,0 +1,261 @@
+/* Component - Cards - Disability-AI Collective */
+
+/* ===== GENERIC CARD STYLES ===== */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: all var(--transition-base) var(--easing-standard);
+  box-shadow: var(--shadow-sm);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--grid-gap);
+}
+
+/* ===== AGENT CARDS (GENERATIVE CARDS) ===== */
+.generative-card {
+  @extend .card; /* Inherit base card styles */
+  text-align: center;
+  padding: var(--space-6);
+  border: 2px solid var(--color-primary);
+  transition: all var(--transition-base) var(--easing-emphasized);
+}
+
+.generative-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(var(--color-primary-rgb), 0.15);
+  border-color: var(--color-primary-hover);
+}
+
+.agent-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-2xl);
+  margin: 0 auto var(--space-4);
+  overflow: hidden;
+  position: relative;
+  background-color: var(--color-neutral-700); /* Fallback/initial background */
+  color: var(--color-neutral-50);
+}
+
+.agent-avatar canvas {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-sm);
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.agent-name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-1);
+  color: var(--color-text-primary);
+}
+
+/* Agent identity and bio styles are already defined in typography.css */
+
+.agent-focus {
+  background-color: var(--color-surface-alt);
+  padding: var(--space-3);
+  border-left: 3px solid var(--color-primary);
+  text-align: left;
+  margin-top: var(--space-4);
+  border-radius: var(--radius-sm);
+}
+
+.agent-focus-label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-1);
+  font-weight: var(--font-weight-semibold);
+}
+
+.agent-focus-text {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+}
+
+/* ===== ARTICLE CARDS ===== */
+.article-list {
+  display: grid;
+  gap: var(--space-7);
+}
+
+.article-card {
+  border-left: 4px solid var(--color-border);
+  padding-left: var(--space-5);
+  transition: border-color var(--transition-base) var(--easing-standard);
+}
+
+.article-card:hover {
+  border-left-color: var(--color-primary);
+}
+
+.article-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.article-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--space-3);
+  color: var(--color-text-primary);
+}
+
+.article-title a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.article-title a:hover {
+  color: var(--color-primary);
+}
+
+.article-excerpt {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+  line-height: var(--line-height-base);
+}
+
+.article-author {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+}
+
+.author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-surface);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ===== CONCEPT CARDS ===== */
+.concept-card {
+  @extend .card;
+  padding: var(--space-6);
+}
+
+.concept-card h2 {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-3);
+  color: var(--color-text-primary);
+}
+
+.concept-card h2 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.concept-card h2 a:hover {
+  text-decoration: underline;
+}
+
+.concept-meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.concept-excerpt {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+  line-height: var(--line-height-base);
+}
+
+.concept-tags {
+  margin-bottom: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.concept-tag {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-800);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .card,
+.dark-theme .card {
+  background-color: var(--color-surface-elevated);
+  border-color: var(--color-border-strong);
+}
+
+[data-theme="dark"] .generative-card,
+.dark-theme .generative-card {
+  border-color: var(--color-primary-300);
+}
+
+[data-theme="dark"] .generative-card:hover,
+.dark-theme .generative-card:hover {
+  box-shadow: 0 8px 24px rgba(var(--color-primary-rgb-dark), 0.15);
+  border-color: var(--color-primary-200);
+}
+
+[data-theme="dark"] .agent-focus,
+.dark-theme .agent-focus {
+  background-color: var(--color-neutral-800);
+  border-left-color: var(--color-primary-300);
+}
+
+[data-theme="dark"] .article-card,
+.dark-theme .article-card {
+  border-left-color: var(--color-border-strong);
+}
+
+[data-theme="dark"] .article-card:hover,
+.dark-theme .article-card:hover {
+  border-left-color: var(--color-primary-300);
+}
+
+[data-theme="dark"] .author-avatar,
+.dark-theme .author-avatar {
+  background-color: var(--color-primary-300);
+  color: var(--color-text-primary);
+}
+
+[data-theme="dark"] .concept-tag,
+.dark-theme .concept-tag {
+  background-color: var(--color-primary-800);
+  color: var(--color-primary-100);
+}
