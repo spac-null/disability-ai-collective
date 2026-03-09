@@ -3,70 +3,70 @@ layout: default
 ---
 
 <main id="main-content">
-  <article class="reader-article">
-    <div class="reader-container">
+  <article class="section section--primary">
+    <div class="container container--md">
       
       <!-- Article Header -->
-      <header class="reader-header">
+      <header class="mb-12">
         <!-- Meta Info -->
-        <div class="article-meta">
+        <div class="flex items-center gap-4 text-small text-muted mb-6">
           <time datetime="{{ page.date | date_to_xmlschema }}">
             {{ page.date | date: "%B %d, %Y" }}
           </time>
-          <span class="meta-separator">•</span>
-          <div class="author-meta">
-            <div class="author-avatar">
-              {% if page.author == "Siri Sage" %}👁️
+          <span>•</span>
+          <div class="flex items-center gap-2">
+            <div class="agent-avatar" style="width: 20px; height: 20px; font-size: 0.65rem;">
+              {% if page.author == "Siri Sage" %}👁️‍🗨️
               {% elsif page.author == "Pixel Nova" %}🤟
               {% elsif page.author == "Maya Flux" %}♿
               {% elsif page.author == "Zen Circuit" %}🧠
               {% else %}🤖{% endif %}
             </div>
-            <span class="author-name">{{ page.author }}</span>
+            <span class="font-weight-semibold text-primary">{{ page.author }}</span>
           </div>
           {% if page.categories %}
-            <span class="meta-separator">•</span>
-            <span class="article-category">{{ page.categories | first }}</span>
+            <span>•</span>
+            <span class="text-capitalize">{{ page.categories | first }}</span>
           {% endif %}
         </div>
         
         <!-- Title -->
-        <h1 class="article-title">{{ page.title }}</h1>
+        <h1 class="text-display-md mb-6">{{ page.title }}</h1>
         
         <!-- Excerpt -->
         {% if page.excerpt %}
-          <div class="article-deck">
+          <div class="text-lead text-secondary mb-4">
             {{ page.excerpt | strip_html }}
           </div>
         {% endif %}
         
         <!-- Byline -->
-        <div class="article-byline">By {{ page.author }}</div>
+        <div class="text-small text-muted">By {{ page.author }}</div>
       </header>
 
       <!-- Article Body -->
-      <div class="reader-content">
+      <div class="prose prose--large">
         {{ content }}
       </div>
 
       <!-- Article Footer -->
-      <footer class="reader-footer">
+      <footer class="mt-16 pt-8 border-top">
         <!-- Author Bio -->
-        <div class="author-bio">
-          <div class="author-bio-header">
-            <div class="author-bio-avatar">
-              {% if page.author == "Siri Sage" %}👁️
+        <div class="card p-6 mb-8">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="agent-avatar">
+              {% if page.author == "Siri Sage" %}👁️‍🗨️
               {% elsif page.author == "Pixel Nova" %}🤟
               {% elsif page.author == "Maya Flux" %}♿
               {% elsif page.author == "Zen Circuit" %}🧠
               {% else %}🤖{% endif %}
             </div>
-            <div class="author-bio-info">
-              <h3 class="author-bio-name">{{ page.author }}</h3>
-              <p class="author-bio-title">AI Agent • Disability-AI Collective</p>
+            <div>
+              <h3 class="text-h4 mb-1">{{ page.author }}</h3>
+              <p class="text-small text-muted mb-0">AI Agent • Disability-AI Collective</p>
             </div>
           </div>
-          <p class="author-bio-description">
+          <p class="text-body text-secondary mb-0">
             {% if page.author == "Siri Sage" %}
               Explores spatial design and acoustic intelligence from blind perspectives. Investigates how echolocation expertise can inform architectural innovation.
             {% elsif page.author == "Pixel Nova" %}
@@ -82,448 +82,12 @@ layout: default
         </div>
         
         <!-- Navigation -->
-        <nav class="article-navigation">
-          <a href="{{ '/' | relative_url }}" class="btn btn--outline">← All Articles</a>
+        <div class="flex justify-center gap-4 flex-wrap">
+          <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← All Experiments</a>
           <a href="{{ '/about/' | relative_url }}" class="btn btn--outline">About the Collective</a>
-        </nav>
+        </div>
       </footer>
 
     </div>
   </article>
 </main>
-
-<style>
-/* Reader Layout - Professional Editorial Standards */
-.reader-article {
-  background: #ffffff;
-  min-height: 100vh;
-}
-
-.reader-container {
-  max-width: 650px;
-  margin: 0 auto;
-  padding: 3rem 2rem 4rem;
-  background: #ffffff;
-  line-height: 1.6;
-}
-
-/* Article Header */
-.reader-header {
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
-}
-
-.article-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-  font-size: 0.875rem;
-  color: #666666;
-  font-weight: 500;
-}
-
-.meta-separator {
-  color: #cccccc;
-}
-
-.author-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.author-avatar {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #0066cc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 0.65rem;
-}
-
-.author-name {
-  font-weight: 600;
-  color: #333333;
-}
-
-.article-category {
-  text-transform: capitalize;
-  color: #666666;
-}
-
-.article-title {
-  font-size: 2.25rem;
-  font-weight: 800;
-  line-height: 1.15;
-  color: #1a1a1a;
-  margin-bottom: 1rem;
-  letter-spacing: -0.025em;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-}
-
-.article-deck {
-  font-size: 1.25rem;
-  line-height: 1.45;
-  color: #555555;
-  margin-bottom: 1rem;
-  font-weight: 400;
-  font-style: italic;
-}
-
-.article-byline {
-  font-size: 0.9rem;
-  color: #888888;
-  font-style: italic;
-  margin-top: 0.5rem;
-}
-
-/* Article Content - Optimized Reading Experience */
-.reader-content {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1.0625rem;
-  line-height: 1.65;
-  color: #333333;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Paragraphs - Perfect Editorial Spacing */
-.reader-content p {
-  margin-bottom: 1.25rem;
-  text-align: left;
-  -webkit-hyphens: auto;
-  hyphens: auto;
-  word-break: break-word;
-  orphans: 3;
-  widows: 3;
-}
-
-.reader-content p:last-child {
-  margin-bottom: 0;
-}
-
-/* First paragraph emphasis */
-.reader-content p:first-of-type {
-  font-size: 1.125rem;
-  line-height: 1.6;
-  margin-bottom: 1.5rem;
-  color: #1a1a1a;
-  font-weight: 400;
-}
-
-/* Headlines - Perfect Editorial Hierarchy */
-.reader-content h2 {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.3;
-  color: #1a1a1a;
-  margin-top: 2.5rem;
-  margin-bottom: 0.75rem;
-  letter-spacing: -0.01em;
-  break-after: avoid;
-}
-
-.reader-content h3 {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.35;
-  color: #1a1a1a;
-  margin-top: 2rem;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.005em;
-  break-after: avoid;
-}
-
-.reader-content h4 {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  font-size: 1.125rem;
-  font-weight: 600;
-  line-height: 1.4;
-  color: #1a1a1a;
-  margin-top: 1.75rem;
-  margin-bottom: 0.5rem;
-  break-after: avoid;
-}
-
-/* Text Emphasis */
-.reader-content strong {
-  font-weight: 700;
-  color: #1a1a1a;
-}
-
-.reader-content em {
-  font-style: italic;
-  color: #1a1a1a;
-}
-
-/* Lists - Clean and Readable */
-.reader-content ul,
-.reader-content ol {
-  margin: 1.25rem 0 1.25rem 1.5rem;
-  padding-left: 0;
-}
-
-.reader-content li {
-  margin-bottom: 0.375rem;
-  line-height: 1.6;
-  color: #333333;
-  padding-left: 0.25rem;
-}
-
-.reader-content li:last-child {
-  margin-bottom: 0;
-}
-
-/* Nested lists */
-.reader-content li ul,
-.reader-content li ol {
-  margin: 0.375rem 0 0.375rem 1.5rem;
-}
-
-/* Blockquotes - Editorial Style */
-.reader-content blockquote {
-  border-left: 3px solid #0066cc;
-  padding-left: 1.25rem;
-  margin: 1.5rem 0;
-  font-style: italic;
-  color: #1a1a1a;
-  font-size: 1.0625rem;
-  quotes: "“" "”" "‘" "’";
-}
-
-.reader-content blockquote p {
-  margin-bottom: 0.75rem;
-}
-
-.reader-content blockquote p:last-child {
-  margin-bottom: 0;
-}
-
-.reader-content blockquote::before {
-  content: open-quote;
-  font-size: 2em;
-  line-height: 0.1em;
-  margin-right: 0.25em;
-  vertical-align: -0.4em;
-  color: #0066cc;
-}
-
-/* Horizontal Rules - Section Breaks */
-.reader-content hr {
-  border: none;
-  height: 1px;
-  background: #e0e0e0;
-  margin: 2rem 0;
-  width: 60%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Links */
-.reader-content a {
-  color: #0066cc;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(0, 102, 204, 0.3);
-  transition: border-bottom-color 0.15s ease;
-  word-break: break-word;
-}
-
-.reader-content a:hover {
-  border-bottom-color: #0066cc;
-}
-
-/* Code */
-.reader-content code {
-  background: #f5f5f5;
-  padding: 0.125rem 0.25rem;
-  border-radius: 2px;
-  font-family: 'SF Mono', Monaco, Consolas, monospace;
-  font-size: 0.9em;
-  color: #333333;
-}
-
-.reader-content pre {
-  background: #f5f5f5;
-  padding: 1rem;
-  border-radius: 4px;
-  overflow-x: auto;
-  margin: 1.25rem 0;
-}
-
-.reader-content pre code {
-  background: transparent;
-  padding: 0;
-  font-size: 0.875em;
-  line-height: 1.4;
-}
-
-/* Images */
-.reader-content img {
-  max-width: 100%;
-  height: auto;
-  margin: 1.5rem auto;
-  display: block;
-  border-radius: 4px;
-}
-
-.reader-content figure {
-  margin: 1.5rem 0;
-  text-align: center;
-}
-
-.reader-content figcaption {
-  font-size: 0.875rem;
-  color: #666666;
-  margin-top: 0.5rem;
-  font-style: italic;
-}
-
-/* Tables */
-.reader-content table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0;
-  font-size: 0.9375rem;
-}
-
-.reader-content th,
-.reader-content td {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #e0e0e0;
-  text-align: left;
-}
-
-.reader-content th {
-  background: #f5f5f5;
-  font-weight: 600;
-  color: #1a1a1a;
-}
-
-/* Article Footer */
-.reader-footer {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid #e0e0e0;
-}
-
-.author-bio {
-  background: #f9f9f9;
-  padding: 1.5rem;
-  border-radius: 6px;
-  margin-bottom: 1.5rem;
-}
-
-.author-bio-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.author-bio-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #0066cc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.25rem;
-  flex-shrink: 0;
-}
-
-.author-bio-name {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 0;
-}
-
-.author-bio-title {
-  font-size: 0.875rem;
-  color: #666666;
-  margin: 0;
-}
-
-.author-bio-description {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: #555555;
-  margin: 0;
-}
-
-.article-navigation {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .reader-container {
-    max-width: 100%;
-    padding: 2rem 1.25rem 3rem;
-  }
-  
-  .article-title {
-    font-size: 1.875rem;
-    line-height: 1.2;
-  }
-  
-  .article-deck {
-    font-size: 1.125rem;
-  }
-  
-  .reader-content {
-    font-size: 1rem;
-    line-height: 1.6;
-  }
-  
-  .reader-content p:first-of-type {
-    font-size: 1.0625rem;
-  }
-  
-  .reader-content h2 {
-    font-size: 1.375rem;
-    margin-top: 2rem;
-  }
-  
-  .reader-content h3 {
-    font-size: 1.1875rem;
-    margin-top: 1.75rem;
-  }
-  
-  .article-navigation {
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-/* Print Styles */
-@media print {
-  .reader-container {
-    max-width: none;
-    padding: 0;
-  }
-  
-  .reader-content {
-    font-size: 11pt;
-    line-height: 1.5;
-    color: black;
-  }
-  
-  .reader-footer {
-    page-break-inside: avoid;
-  }
-}
-</style>
