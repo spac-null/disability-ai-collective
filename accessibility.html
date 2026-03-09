@@ -4,7 +4,7 @@ title: "Accessibility"
 description: "Our commitment to digital accessibility, WCAG compliance, and inclusive design practices."
 ---
 
-<main id="main-content">
+<main id="main-content" class="accessibility-page">
   <!-- Page Header -->
   <section class="section section--secondary text-center">
     <div class="container">
@@ -71,10 +71,11 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
       </div>
       
       <div class="grid grid--2 gap-8 mb-16">
-        <div class="card card--brand p-8">
+        <div class="card card--brand p-8 accessibility-card">
           <img class="card__media card__media--sm mb-6" src="{{ '/assets/optimal_accessibility_800x450.png' | relative_url }}" alt="WCAG compliance visual emphasizing accessible route clarity" loading="lazy" decoding="async">
-          <h3 class="text-h4 mb-4 text-brand">✅ What We Provide</h3>
-          <ul class="list-disc pl-5 text-body text-secondary">
+          <p class="accessibility-card__eyebrow">Coverage</p>
+          <h3 class="text-h4 mb-4 text-brand accessibility-card__title">What We Provide</h3>
+          <ul class="list-disc pl-5 text-body text-secondary accessibility-list">
             <li class="mb-2">4.5:1 minimum color contrast (we exceed this)</li>
             <li class="mb-2">Text resizes to 200% without losing functionality</li>
             <li class="mb-2">All images have descriptive alt text</li>
@@ -86,10 +87,11 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
           </ul>
         </div>
         
-        <div class="card card--brand p-8">
+        <div class="card card--brand p-8 accessibility-card">
           <img class="card__media card__media--sm mb-6" src="{{ '/assets/accessibility_navigation_inline.png' | relative_url }}" alt="Accessibility testing visual with route and contrast checks" loading="lazy" decoding="async">
-          <h3 class="text-h4 mb-4 text-brand">🔄 How We Test</h3>
-          <ul class="list-disc pl-5 text-body text-secondary">
+          <p class="accessibility-card__eyebrow">Validation</p>
+          <h3 class="text-h4 mb-4 text-brand accessibility-card__title">How We Test</h3>
+          <ul class="list-disc pl-5 text-body text-secondary accessibility-list">
             <li class="mb-2">Automated testing with accessibility tools</li>
             <li class="mb-2">Manual testing with screen readers</li>
             <li class="mb-2">Keyboard-only navigation testing</li>
@@ -167,9 +169,9 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
       </div>
       
       <div class="grid grid--2 gap-8">
-        <div class="card bg-foundation-gray-900 text-inverse p-8">
+        <div class="card bg-foundation-gray-900 text-inverse p-8 accessibility-card accessibility-feature-card">
           <img class="card__media card__media--sm mb-6 mobile-optional-media" src="{{ '/assets/realistic_office_acoustic_scene.png' | relative_url }}" alt="High contrast mode visual shown in an office scene" loading="lazy" decoding="async">
-          <h3 class="text-h4 mb-4 text-inverse">🔆 High Contrast Mode</h3>
+          <h3 class="text-h4 mb-4 text-inverse accessibility-card__title">High Contrast Mode</h3>
           <p class="text-body text-inverse mb-4">
             Switches to enhanced contrast with bright colors for better visibility.
           </p>
@@ -178,9 +180,9 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
           </p>
         </div>
         
-        <div class="card card--brand p-8">
+        <div class="card card--brand p-8 accessibility-card accessibility-feature-card">
           <img class="card__media card__media--sm mb-6 mobile-optional-media" src="{{ '/assets/realistic_street_accessibility_scene.png' | relative_url }}" alt="Dyslexia-friendly reading and navigation visual in a street scene" loading="lazy" decoding="async">
-          <h3 class="text-h4 mb-4 text-brand">📖 Dyslexia-Friendly Font</h3>
+          <h3 class="text-h4 mb-4 text-brand accessibility-card__title">Dyslexia-Friendly Font</h3>
           <p class="text-body text-secondary mb-4">
             Switches to OpenDyslexic font with improved letter spacing for easier reading.
           </p>
@@ -243,14 +245,14 @@ description: "Our commitment to digital accessibility, WCAG compliance, and incl
       <h2 class="text-h2 mb-8">Standards We Follow</h2>
       <img class="card__media card__media--lg rounded-lg mb-8 mobile-optional-media" src="{{ '/assets/refined_accessibility_pathways.png' | relative_url }}" alt="Standards visual showing multiple accessible routes converging" loading="lazy" decoding="async">
       
-      <div class="flex justify-center gap-8 flex-wrap mb-8">
-        <div class="px-6 py-4 border border-border-primary rounded-lg text-body font-semibold">
+      <div class="flex justify-center gap-8 flex-wrap mb-8 accessibility-standards-grid">
+        <div class="px-6 py-4 border border-border-primary rounded-lg text-body font-semibold accessibility-standard-pill">
           <strong>WCAG 2.1 Level AA</strong>
         </div>
-        <div class="px-6 py-4 border border-border-primary rounded-lg text-body font-semibold">
+        <div class="px-6 py-4 border border-border-primary rounded-lg text-body font-semibold accessibility-standard-pill">
           <strong>Section 508</strong>
         </div>
-        <div class="px-6 py-4 border border-border-primary rounded-lg text-body font-semibold">
+        <div class="px-6 py-4 border border-border-primary rounded-lg text-body font-semibold accessibility-standard-pill">
           <strong>ADA Title III</strong>
         </div>
       </div>

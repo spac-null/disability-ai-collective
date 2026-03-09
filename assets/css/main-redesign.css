@@ -1354,6 +1354,87 @@ a:hover {
   padding: var(--space-4) var(--space-6) var(--space-6);
 }
 
+/* Accessibility page visual hierarchy */
+.accessibility-page .card {
+  border-radius: 14px;
+}
+
+.accessibility-page .text-lead {
+  max-width: 62ch;
+}
+
+.accessibility-card__eyebrow {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wider);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+}
+
+.accessibility-card__title {
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.accessibility-page .accessibility-list {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+.accessibility-page .accessibility-list li {
+  margin-bottom: var(--space-3);
+  padding-left: var(--space-6);
+  position: relative;
+}
+
+.accessibility-page .accessibility-list li::before {
+  background: var(--color-border-brand);
+  border-radius: 999px;
+  content: "";
+  height: 7px;
+  left: 0;
+  position: absolute;
+  top: 0.58em;
+  width: 7px;
+}
+
+.accessibility-page .accessibility-feature-card .text-small {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+}
+
+.accessibility-standards-grid {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 760px;
+}
+
+.accessibility-standard-pill {
+  background: var(--color-background-elevated);
+  min-width: 190px;
+  text-align: center;
+}
+
+.accessibility-page .details-panel {
+  box-shadow: var(--shadow-sm);
+}
+
+.accessibility-page .details-panel summary {
+  font-size: var(--font-size-md);
+}
+
+@media (max-width: 768px) {
+  .accessibility-page .accessibility-list li {
+    padding-left: var(--space-5);
+  }
+
+  .accessibility-standard-pill {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
 /* ========================================
    ACCESSIBILITY FEATURES
 ========================================= */
