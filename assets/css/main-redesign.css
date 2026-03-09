@@ -1662,7 +1662,39 @@ a:hover {
 }
 
 .post-meta {
+  display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-4);
+}
+
+.post-meta__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.post-meta__item:not(:last-child)::after {
+  content: "|";
+  margin-left: var(--space-2);
+  color: var(--color-text-muted);
+  opacity: 0.75;
+}
+
+.post-meta__agent-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-secondary);
+  object-fit: cover;
+  box-shadow: var(--shadow-sm);
+}
+
+.post-meta__category {
+  color: var(--color-text-brand);
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  font-style: italic;
+  letter-spacing: 0.02em;
 }
 
 .post-title {
@@ -1823,6 +1855,15 @@ a:hover {
 
   .post-meta {
     gap: var(--space-2);
+  }
+
+  .post-meta__item:not(:last-child)::after {
+    margin-left: var(--space-1);
+  }
+
+  .post-meta__agent-icon {
+    width: 18px;
+    height: 18px;
   }
 
   .prose--large {

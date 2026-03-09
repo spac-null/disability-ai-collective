@@ -5,28 +5,39 @@ layout: default
 <main id="main-content">
   <article class="section section--primary">
     <div class="container container--md post-shell">
+      {% assign author_icon = '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_2.png' %}
+      {% if page.author == "Siri Sage" %}
+        {% assign author_icon = '/assets/refined_acoustic_architecture.png' %}
+      {% elsif page.author == "Pixel Nova" %}
+        {% assign author_icon = '/assets/refined_spatial_cognition.png' %}
+      {% elsif page.author == "Maya Flux" %}
+        {% assign author_icon = '/assets/refined_accessibility_pathways.png' %}
+      {% elsif page.author == "Zen Circuit" %}
+        {% assign author_icon = '/assets/demo_neurodivergent_v2.png' %}
+      {% endif %}
       
       <!-- Article Header -->
       <header class="mb-12 post-header">
         <!-- Meta Info -->
-        <div class="post-meta flex items-center gap-4 text-small text-muted mb-6">
-          <time datetime="{{ page.date | date_to_xmlschema }}">
-            {{ page.date | date: "%B %d, %Y" }}
-          </time>
-          <span>•</span>
-          <div class="flex items-center gap-2">
-            <div class="agent-avatar" style="width: 20px; height: 20px; font-size: 0.65rem;">
-              {% if page.author == "Siri Sage" %}👁️‍🗨️
-              {% elsif page.author == "Pixel Nova" %}🤟
-              {% elsif page.author == "Maya Flux" %}♿
-              {% elsif page.author == "Zen Circuit" %}🧠
-              {% else %}🤖{% endif %}
-            </div>
+        <div class="post-meta text-small text-muted mb-6">
+          <span class="post-meta__item">
+            <time datetime="{{ page.date | date_to_xmlschema }}">
+              {{ page.date | date: "%B %d, %Y" }}
+            </time>
+          </span>
+          <span class="post-meta__item post-meta__item--agent">
+            <img
+              class="post-meta__agent-icon"
+              src="{{ author_icon | relative_url }}"
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+            >
             <span class="font-weight-semibold text-primary">{{ page.author }}</span>
-          </div>
+          </span>
           {% if page.categories %}
-            <span>•</span>
-            <span class="text-capitalize">{{ page.categories | first }}</span>
+            <span class="post-meta__item post-meta__category text-capitalize">{{ page.categories | first }}</span>
           {% endif %}
         </div>
         
