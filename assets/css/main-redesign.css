@@ -2175,32 +2175,6 @@ a:hover {
   text-align: center;
 }
 
-.concept-article .post-content {
-  max-width: 44ch;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.concept-article .prose > h2 {
-  border-top: 1px solid var(--color-border-secondary);
-  margin-top: var(--space-20);
-  padding-top: var(--space-8);
-}
-
-.concept-article .prose > h2:first-of-type {
-  border-top: 0;
-  margin-top: var(--space-10);
-  padding-top: 0;
-}
-
-.concept-article .prose h3 {
-  margin-top: var(--space-10);
-}
-
-.concept-article .prose li {
-  margin-bottom: var(--space-3);
-}
-
 @media (max-width: 768px) {
   .post-header {
     padding-bottom: var(--space-6);
@@ -2269,10 +2243,6 @@ a:hover {
     margin-right: auto;
   }
 
-  .concept-article .prose > h2 {
-    margin-top: var(--space-16);
-    padding-top: var(--space-6);
-  }
 }
 
 /* Layout for markdown-first pages that don't define section wrappers */

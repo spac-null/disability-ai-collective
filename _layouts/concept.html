@@ -3,49 +3,49 @@ layout: default
 ---
 
 <main id="main-content">
-  <article class="concept-article" itemscope itemtype="https://schema.org/Article">
-    <header class="section section--secondary text-center">
-      <div class="container container--md">
-        <h1 class="text-h1 mb-4" itemprop="name headline">{{ page.title }}</h1>
-
-        <div class="text-caption article-card__meta justify-center mb-4" aria-label="Concept metadata">
-          <time class="article-card__date" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
-            {{ page.date | date: "%B %d, %Y" }}
-          </time>
+  <article class="section section--primary concept-article" itemscope itemtype="https://schema.org/Article">
+    <div class="container container--md post-shell">
+      <header class="mb-12 post-header">
+        <div class="post-meta text-small text-muted mb-6" aria-label="Concept metadata">
+          <span class="post-meta__item">
+            <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+              {{ page.date | date: "%B %d, %Y" }}
+            </time>
+          </span>
           {% if page.categories and page.categories.size > 0 %}
-            <span class="article-card__sep" aria-hidden="true">|</span>
-            <span class="article-card__topic">{{ page.categories | first | replace: '-', ' ' | capitalize }}</span>
+            <span class="post-meta__item post-meta__category">{{ page.categories | first | replace: '-', ' ' | capitalize }}</span>
           {% endif %}
-          <span class="article-card__sep" aria-hidden="true">|</span>
-          <span class="article-card__author-name">{{ page.status | default: 'Draft' | capitalize }}</span>
+          <span class="post-meta__item">{{ page.status | default: 'Draft' | capitalize }}</span>
         </div>
 
+        <h1 class="text-display-md mb-6 post-title" itemprop="name headline">{{ page.title }}</h1>
+
+        {% if page.excerpt %}
+        <div class="post-excerpt text-lead text-secondary mb-4" itemprop="description">
+          {{ page.excerpt }}
+        </div>
+        {% endif %}
+
+        <div class="text-small text-muted post-byline">Crip Minds Concept Lab</div>
+
         {% if page.tags %}
-        <div class="flex justify-center flex-wrap gap-2 mb-6" aria-label="Concept tags">
+        <div class="flex flex-wrap gap-2 mt-6" aria-label="Concept tags">
           {% for tag in page.tags %}
             <span class="text-small bg-background-muted px-3 py-1 rounded-full">#{{ tag }}</span>
           {% endfor %}
         </div>
         {% endif %}
 
-        {% if page.excerpt %}
-        <p class="text-lead text-secondary max-w-2xl mx-auto mb-0" itemprop="description">
-          {{ page.excerpt }}
-        </p>
-        {% endif %}
-
         {% if page.section_links and page.section_links.size > 0 %}
-        <nav class="flex flex-wrap justify-center gap-3 mt-8" aria-label="On this concept page">
+        <nav class="flex flex-wrap gap-3 mt-8" aria-label="On this concept page">
           {% for link in page.section_links %}
             <a href="#{{ link.anchor }}" class="btn btn--outline btn--sm">{{ link.label }}</a>
           {% endfor %}
         </nav>
         {% endif %}
-      </div>
-    </header>
+      </header>
 
-    <section class="section section--primary">
-      <div class="container container--md">
+      <section>
         {% if page.hero_image %}
         <figure class="card card--elevated p-4 mb-8">
           <img
@@ -65,13 +65,11 @@ layout: default
         <div class="prose prose--large post-content" itemprop="articleBody">
           {{ content }}
         </div>
-      </div>
-    </section>
+      </section>
 
-    <footer class="section section--secondary">
-      <div class="container container--md">
+      <footer class="mt-16 pt-8 border-top">
         <div class="grid grid--2 gap-8 mb-8">
-          <div class="card p-8">
+          <div class="card p-6">
             <h2 class="text-h3 mb-6">Development Status</h2>
             <ul class="list-disc pl-5 text-body text-secondary mb-0">
               <li class="mb-2"><strong>Research Phase:</strong> {% if page.research_complete %}Complete{% else %}In progress{% endif %}</li>
@@ -81,7 +79,7 @@ layout: default
             </ul>
           </div>
 
-          <div class="card p-8">
+          <div class="card p-6">
             <h2 class="text-h3 mb-4">Community Input</h2>
             <p class="text-body text-secondary mb-6">
               This concept is part of our editorial arts platform. We welcome feedback from the disability community.
@@ -95,7 +93,7 @@ layout: default
         </div>
 
         {% if page.related_concepts %}
-        <div class="card p-8 mb-8">
+        <div class="card p-6 mb-8">
           <h2 class="text-h3 mb-4">Related Concepts</h2>
           <div class="flex flex-wrap gap-3">
             {% for concept in page.related_concepts %}
@@ -114,7 +112,7 @@ layout: default
             {% endif %}
           {% endfor %}
         </nav>
-      </div>
-    </footer>
+      </footer>
+    </div>
   </article>
 </main>
