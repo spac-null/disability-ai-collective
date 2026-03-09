@@ -20,13 +20,6 @@ function announceToScreenReader(message) {
   }, 2000);
 }
 
-function hasSavedThemePreference() {
-  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-  const legacyTheme = localStorage.getItem(LEGACY_THEME_STORAGE_KEY);
-
-  return savedTheme === 'dark' || savedTheme === 'light' || legacyTheme === 'true' || legacyTheme === 'false';
-}
-
 function getInitialTheme() {
   const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
   if (savedTheme === 'dark' || savedTheme === 'light') {
@@ -38,7 +31,7 @@ function getInitialTheme() {
     return legacyTheme === 'true' ? 'dark' : 'light';
   }
 
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'light';
 }
 
 function applyTheme(theme) {
@@ -62,7 +55,8 @@ function createFallbackThemeToggle() {
 
   const updateToggleLabel = function(theme) {
     const isDark = theme === 'dark';
-    toggle.innerHTML = isDark ? '☀️ Light' : '🌙 Dark';
+    toggle.textContent = isDark ? 'Light Theme' : 'Dark Theme';
+    toggle.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
     toggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
   };
 
@@ -79,15 +73,6 @@ function createFallbackThemeToggle() {
     updateToggleLabel(nextTheme);
     announceToScreenReader(`Switched to ${nextTheme} theme`);
   });
-
-  const prefersDarkQuery = window.matchMedia('(prefers-color-scheme: dark)');
-  if (!hasSavedThemePreference()) {
-    prefersDarkQuery.addEventListener('change', function(event) {
-      const nextTheme = event.matches ? 'dark' : 'light';
-      applyTheme(nextTheme);
-      updateToggleLabel(nextTheme);
-    });
-  }
 
   document.body.appendChild(toggle);
 }

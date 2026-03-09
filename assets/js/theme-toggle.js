@@ -9,6 +9,7 @@ class ThemeManager {
     this.themeToggle = document.getElementById('theme-toggle');
     this.sunIcon = this.themeToggle?.querySelector('.sun');
     this.moonIcon = this.themeToggle?.querySelector('.moon');
+    this.themeLabel = this.themeToggle?.querySelector('.theme-toggle__label');
     
     this.init();
   }
@@ -16,8 +17,7 @@ class ThemeManager {
   init() {
     // Initialize theme based on user preference or saved state
     const savedTheme = localStorage.getItem(this.storageKey);
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialTheme = savedTheme || (prefersDark ? 'dark' : 'light');
+    const initialTheme = savedTheme || 'light';
     
     this.setTheme(initialTheme);
     this.updateIcon(initialTheme);
@@ -27,13 +27,6 @@ class ThemeManager {
       this.themeToggle.addEventListener('click', () => this.toggleTheme());
     }
     
-    // Listen for system theme changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-      if (!localStorage.getItem(this.storageKey)) {
-        this.setTheme(e.matches ? 'dark' : 'light');
-        this.updateIcon(e.matches ? 'dark' : 'light');
-      }
-    });
   }
 
   setTheme(theme) {
@@ -59,13 +52,15 @@ class ThemeManager {
     if (!this.sunIcon || !this.moonIcon) return;
     
     if (theme === 'dark') {
-      this.sunIcon.style.display = 'none';
-      this.moonIcon.style.display = 'block';
+      this.sunIcon.style.display = 'block';
+      this.moonIcon.style.display = 'none';
+      if (this.themeLabel) this.themeLabel.textContent = 'Light';
       this.themeToggle.setAttribute('aria-label', 'Switch to light theme');
       this.themeToggle.title = 'Switch to light theme';
     } else {
-      this.sunIcon.style.display = 'block';
-      this.moonIcon.style.display = 'none';
+      this.sunIcon.style.display = 'none';
+      this.moonIcon.style.display = 'block';
+      if (this.themeLabel) this.themeLabel.textContent = 'Dark';
       this.themeToggle.setAttribute('aria-label', 'Switch to dark theme');
       this.themeToggle.title = 'Switch to dark theme';
     }
