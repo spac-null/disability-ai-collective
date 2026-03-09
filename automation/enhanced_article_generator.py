@@ -210,33 +210,52 @@ def generate_sample_article():
     generator = ArticleWithArt(workspace)
     
     # Sample article content (this would normally come from your article generation AI)
-    sample_title = "The Revolution You Can't See: How Blind Spatial Designers Are Redefining Architecture"
+    sample_title = "The Acoustic Illiteracy of Modern Architecture: How Blind Designers Reveal Systemic Design Failures"
     sample_author = "Siri Sage"
-    sample_content = """I just walked through a $50 million office building where no one can have a conversation. The architect called it 'award-winning design.' I call it acoustic torture.
+    sample_content = """## Research Question
+How do blind spatial designers perceive and evaluate architectural spaces differently, and what can this teach us about designing buildings that work for human senses rather than just visual aesthetics?
 
-## The Problem With Visual Architecture
+## Methodology & Data Sources
+This analysis is based on:
+- 6 months of acoustic testing in 25 commercial buildings
+- Interviews with 18 blind architects and spatial designers  
+- Sound measurement data from 120 different room configurations
+- Analysis of 350 user complaints about workplace acoustics
 
-Most architects never learn to read buildings with their ears. They're trained to think in "sight lines" and "visual flow." But sight lines don't help when you're trying to focus in an open office.
+## Key Findings
 
-I learned to read buildings the way musicians read sheet music. Buildings aren't just visual objects. They're acoustic instruments that either harmonize with human life or create chaos.
+### 1. Acoustic Intelligence Gap
+Blind designers identified acoustic problems in buildings 85% faster than sighted architects (average detection time: 2.3 minutes vs. 15.7 minutes). This suggests that conventional architectural training neglects acoustic literacy.
 
-## What Blind Design Actually Looks Like
+### 2. Material Misapplication
+In our sample of 25 buildings, 92% used materials for visual appeal without considering their acoustic properties. Concrete was used decoratively in 18 buildings despite its high sound reflection coefficient (0.95), creating echo chambers in collaborative spaces.
 
-When I design spaces, I start with echolocation mapping. I'm reading the acoustic personality of a space. How does it want sound to move? Where does it create intimacy versus openness?
+### 3. Systemic Design Failure
+The $50 million office building example isn't an isolated case. Across our study, buildings costing over $10 million had 40% more acoustic complaints than buildings under $1 million. This inverse relationship between budget and acoustic quality reveals a systemic prioritization of visual aesthetics over sensory functionality.
 
-This isn't accommodation design. This is sensory expertise that most architects never develop.
+## Systemic Implications
+Architectural education focuses on visual design principles while treating acoustics as a technical specialty. This creates professionals who can design Instagram-perfect spaces but can't predict whether people will be able to have conversations in them.
 
-## The Secret Language of Materials
+The problem isn't individual architects—it's an industry-wide neglect of multi-sensory design literacy. We're training architects to create photographs, not habitats.
 
-Every material speaks. Concrete shouts. Wood whispers. Glass reflects. Fabric absorbs.
+## Actionable Recommendations
 
-But architects often choose materials for visual impact, ignoring their acoustic personalities.
+### 5-Step Acoustic Design Audit:
+1. **Pre-occupancy acoustic testing:** Measure reverberation times in all spaces (target: < 0.8 seconds for offices)
+2. **Material acoustic profiling:** Document sound absorption coefficients for all surface materials
+3. **Speech intelligibility verification:** Test whether conversations remain clear at 15-foot distances
+4. **Noise source mapping:** Identify and mitigate equipment noise before occupancy
+5. **User feedback integration:** Create channels for ongoing acoustic feedback from diverse users
 
-## Why This Matters Beyond Disability
+### Design Education Reform:
+- Integrate acoustic literacy into core architecture curriculum
+- Require multi-sensory design studios in professional training
+- Develop standardized acoustic performance metrics for building certification
 
-The building industry talks about "universal design" like it's charity work. But acoustic design isn't accommodation. It's competitive advantage.
-
-The future belongs to architects who understand that buildings are instruments, not sculptures."""
+## Community Questions
+1. What acoustic design challenges have you encountered in your work?
+2. Have you measured the impact of material choices on workplace productivity?
+3. What tools or methods have you found most effective for acoustic testing?"""
     
     # Analyze the content
     analysis = generator.analyze_article_content(sample_content)
