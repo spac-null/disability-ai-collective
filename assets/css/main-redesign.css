@@ -198,7 +198,7 @@
 @media (max-width: 480px) {
   :root {
     --space-section-gap: var(--space-20);
-    --space-page-gutter: var(--space-4);
+    --space-page-gutter: var(--space-6);
   }
 }
 
@@ -1613,6 +1613,10 @@ a:hover {
   text-transform: uppercase;
 }
 
+.post-shell {
+  max-width: 860px;
+}
+
 /* Prose styling for article content */
 .prose {
   color: var(--color-text-secondary);
@@ -1770,6 +1774,19 @@ a:hover {
 
   .prose p {
     margin-bottom: var(--space-6);
+  }
+}
+
+@media (max-width: 640px) {
+  .post-shell {
+    padding-left: clamp(16px, 4.5vw, 22px);
+    padding-right: clamp(16px, 4.5vw, 22px);
+  }
+
+  .post-content {
+    max-width: 42ch;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
