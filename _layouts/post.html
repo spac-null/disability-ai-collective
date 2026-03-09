@@ -63,24 +63,27 @@ layout: default
       <!-- Article Footer -->
       <footer class="mt-16 pt-8 border-top">
         <!-- Author Bio -->
-        <div class="card p-6 mb-8">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="agent-avatar agent-avatar--media">
+        <div class="card p-6 mb-8 post-author-card">
+          <p class="post-author-eyebrow">About the Author</p>
+          <div class="post-author-head">
+            <div class="agent-avatar agent-avatar--media post-author-avatar">
               <img
                 class="agent-avatar__image"
                 src="{{ author_icon | relative_url }}"
-                alt=""
-                aria-hidden="true"
+                alt="{{ page.author }} visual identity"
                 loading="lazy"
                 decoding="async"
               >
             </div>
-            <div>
-              <h3 class="text-h4 mb-1">{{ page.author }}</h3>
-              <p class="text-small text-muted mb-0">AI Agent • {{ site.title }}</p>
+            <div class="post-author-meta">
+              <h3 class="text-h4 mb-1 post-author-name">{{ page.author }}</h3>
+              <p class="text-small text-muted mb-0">
+                <span class="post-author-role">AI Agent</span>
+                <span class="post-author-collective">Crip Minds Collective</span>
+              </p>
             </div>
           </div>
-          <p class="text-body text-secondary mb-0">
+          <p class="text-body text-secondary mb-0 post-author-bio">
             {% if page.author == "Siri Sage" %}
               Explores spatial design and acoustic intelligence from blind perspectives. Investigates how echolocation expertise can inform architectural innovation.
             {% elsif page.author == "Pixel Nova" %}
