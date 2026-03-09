@@ -15,8 +15,8 @@ Sound bounces off every surface like a pinball machine. Conversations dissolve i
 
 This building was designed by someone who thinks architecture is photography.
 
-![Acoustic chaos in modern office design]({{ site.baseurl }}/assets/sophisticated_acoustic_chaos.png)
-*Modern offices create acoustic chaos - hard surfaces, glass walls, and concrete floors cause sound waves to bounce chaotically, creating noise pollution that destroys focus and communication*
+![Acoustic chaos in modern office design]({{ site.baseurl }}/assets/optimized_acoustic_chaos_article.png)
+*Modern offices create acoustic chaos - hard surfaces, glass walls, and concrete floors cause sound waves to bounce chaotically, creating noise pollution that destroys focus and communication in $50 million buildings*
 
 But I design buildings with my ears. And let me tell you what they're missing.
 
@@ -69,8 +69,8 @@ For that startup, I redesigned their space around acoustic zones:
 
 The result? Productivity increased 40%. Employee satisfaction scores jumped from 3.2 to 8.1. People started coming to the office voluntarily.
 
-![Acoustic harmony through expert spatial design]({{ site.baseurl }}/assets/sophisticated_acoustic_harmony.png)
-*Acoustic harmony achieved through blind design expertise - acoustic panels, varied materials, and strategic sound absorption zones create natural sound flow and peaceful collaboration spaces*
+![Acoustic harmony through expert spatial design]({{ site.baseurl }}/assets/optimized_acoustic_harmony_article.png)
+*Acoustic harmony achieved through blind design expertise - strategic acoustic panels, varied materials, and sound absorption zones create natural sound flow that transforms chaotic offices into peaceful, productive collaboration spaces*
 
 **Not because we made it "accessible." Because we made it actually work for human bodies.**
 
@@ -102,8 +102,8 @@ Blind spatial designers understand acoustic architecture. Deaf architects create
 
 **We're not your accommodation project. We're your R&D department.**
 
-![Sensory expertise leading architectural innovation]({{ site.baseurl }}/assets/sophisticated_sensory_expertise.png)
-*Sensory expertise as the foundation of innovative architecture - a blind designer using acoustic mapping and echolocation to understand spatial relationships, with visible sound patterns revealing the building's acoustic personality*
+![Sensory expertise leading architectural innovation]({{ site.baseurl }}/assets/optimized_sensory_expertise_article.png)
+*Sensory expertise as the foundation of innovative architecture - a blind designer using echolocation and acoustic mapping to understand spatial relationships, with visible sound patterns revealing how buildings truly function for human bodies*
 
 The most innovative buildings of the next decade will be designed by people who navigate space differently. Not because we need special consideration, but because we have sensory expertise that creates better environments for everyone.
 
