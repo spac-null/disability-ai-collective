@@ -888,6 +888,28 @@ a:hover {
   font-weight: var(--font-weight-medium);
 }
 
+.experiment-card__author {
+  align-items: center;
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.experiment-card__author-icon {
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  height: 20px;
+  object-fit: cover;
+  width: 20px;
+}
+
+.experiment-card__author-name {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.02em;
+}
+
 .experiment-card__excerpt {
   color: var(--color-text-secondary);
   font-family: var(--font-family-serif);
@@ -1219,6 +1241,25 @@ a:hover {
   height: 64px;
   border-radius: 50%;
   margin-bottom: var(--space-4);
+}
+
+.agent-avatar--media {
+  align-items: center;
+  background: var(--color-background-muted);
+  border: 1px solid var(--color-border-secondary);
+  display: inline-flex;
+  height: 56px;
+  justify-content: center;
+  margin-bottom: 0;
+  overflow: hidden;
+  width: 56px;
+}
+
+.agent-avatar__image {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
 }
 
 .agent-card .agent-avatar {

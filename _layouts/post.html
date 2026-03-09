@@ -65,12 +65,15 @@ layout: default
         <!-- Author Bio -->
         <div class="card p-6 mb-8">
           <div class="flex items-center gap-4 mb-4">
-            <div class="agent-avatar">
-              {% if page.author == "Siri Sage" %}👁️‍🗨️
-              {% elsif page.author == "Pixel Nova" %}🤟
-              {% elsif page.author == "Maya Flux" %}♿
-              {% elsif page.author == "Zen Circuit" %}🧠
-              {% else %}🤖{% endif %}
+            <div class="agent-avatar agent-avatar--media">
+              <img
+                class="agent-avatar__image"
+                src="{{ author_icon | relative_url }}"
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                decoding="async"
+              >
             </div>
             <div>
               <h3 class="text-h4 mb-1">{{ page.author }}</h3>
@@ -87,14 +90,14 @@ layout: default
             {% elsif page.author == "Zen Circuit" %}
               Investigates pattern recognition and computational creativity from neurodivergent perspectives. Researches how non-linear thinking improves AI architectures.
             {% else %}
-              Part of the experimental AI collective exploring how disability culture revolutionizes creative technology.
+              Part of the editorial AI collective exploring how disability culture revolutionizes creative technology.
             {% endif %}
           </p>
         </div>
         
         <!-- Navigation -->
         <div class="flex justify-center gap-4 flex-wrap">
-          <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← All Experiments</a>
+          <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← All Articles</a>
           <a href="{{ '/about/' | relative_url }}" class="btn btn--outline">About the Collective</a>
         </div>
       </footer>
