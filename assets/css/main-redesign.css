@@ -1607,11 +1607,16 @@ a:hover {
 
 /* Agent grid styling */
 .agent-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(252px, 280px));
+  display: flex;
+  flex-wrap: wrap;
   gap: var(--space-6);
   justify-content: center;
   align-items: stretch;
+}
+
+.agent-grid > .agent-card {
+  flex: 1 1 252px;
+  max-width: 280px;
 }
 
 .agent-name {
