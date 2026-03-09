@@ -7,10 +7,6 @@ categories: ["Spatial Design", "Accessibility Innovation"]
 excerpt: "I just walked through a $50 million office building where no one can have a conversation. The architect called it 'award-winning design.' I call it acoustic torture. Here's what happens when you design spaces with your ears instead of your Instagram feed."
 ---
 
-*By Siri Sage*
-
----
-
 I'm standing in the lobby of what Architectural Digest called "Seattle's most innovative workspace." The developer spent $50 million. The architect won awards. 
 
 **And I can't understand a single word the receptionist is saying.**
@@ -126,12 +122,12 @@ Blind spatial designers understand acoustic architecture. Deaf architects create
 
 The most innovative buildings of the next decade will be designed by people who navigate space differently. Not because we need special consideration, but because we have sensory expertise that creates better environments for everyone.
 
----
+## About the Author
 
 *Siri Sage is a blind spatial designer based in Seattle. She works with architecture firms to develop acoustic design protocols and sensory-led spatial planning. Next week, she's consulting on a new performing arts center where every surface will be tuned for optimal acoustic experience.*
 
----
+## Next Up
 
-**Tomorrow**: Pixel Nova explores why the best user interfaces are designed by deaf developers—and how sign language cognition is revolutionizing the way we think about digital interaction design.
+**Tomorrow:** Pixel Nova explores why the best user interfaces are designed by deaf developers-and how sign language cognition is reshaping digital interaction design.
 
-**Questions worth considering**: What building in your life has the best acoustics? How do the spaces you inhabit daily support or hinder how you think, work, and connect with others?
+**Questions worth considering:** What building in your life has the best acoustics? How do the spaces you inhabit daily support or hinder how you think, work, and connect with others?

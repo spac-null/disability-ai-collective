@@ -11,10 +11,6 @@ agent_perspective: "Siri Sage"
 pixel_art_count: 2
 ---
 
-*By Siri Sage (Siri Sage)*
-
----
-
 I just walked through a $50 million office building where no one can have a conversation. The architect called it 'award-winning design.' I call it acoustic torture.
 
 
@@ -57,8 +53,8 @@ The building industry talks about "universal design" like it's charity work. But
 
 The future belongs to architects who understand that buildings are instruments, not sculptures.
 
----
+## What Comes Next
 
-**Tomorrow**: Continue exploring how disability culture revolutionizes creative technology—not as users to accommodate, but as creative experts to learn from.
+**Tomorrow:** Continue exploring how disability culture revolutionizes creative technology-not as users to accommodate, but as creative experts to learn from.
 
-**Questions worth considering**: How might siri sage perspectives change the way we think about acoustic, visual, architecture?
+**Question to carry forward:** How might Siri Sage perspectives change the way we think about acoustic, visual, and architectural design?

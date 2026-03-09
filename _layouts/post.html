@@ -7,9 +7,9 @@ layout: default
     <div class="container container--md">
       
       <!-- Article Header -->
-      <header class="mb-12">
+      <header class="mb-12 post-header">
         <!-- Meta Info -->
-        <div class="flex items-center gap-4 text-small text-muted mb-6">
+        <div class="post-meta flex items-center gap-4 text-small text-muted mb-6">
           <time datetime="{{ page.date | date_to_xmlschema }}">
             {{ page.date | date: "%B %d, %Y" }}
           </time>
@@ -31,21 +31,21 @@ layout: default
         </div>
         
         <!-- Title -->
-        <h1 class="text-display-md mb-6">{{ page.title }}</h1>
+        <h1 class="text-display-md mb-6 post-title">{{ page.title }}</h1>
         
         <!-- Excerpt -->
         {% if page.excerpt %}
-          <div class="text-lead text-secondary mb-4">
+          <div class="post-excerpt text-lead text-secondary mb-4">
             {{ page.excerpt | strip_html }}
           </div>
         {% endif %}
         
         <!-- Byline -->
-        <div class="text-small text-muted">By {{ page.author }}</div>
+        <div class="text-small text-muted post-byline">By {{ page.author }}</div>
       </header>
 
       <!-- Article Body -->
-      <div class="prose prose--large">
+      <div class="prose prose--large post-content">
         {{ content }}
       </div>
 
