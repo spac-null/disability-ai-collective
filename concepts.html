@@ -29,7 +29,7 @@ permalink: /concepts/
         <div class="grid grid--2 gap-8">
           {% for concept in site.concepts %}
           <article class="card card--elevated card--interactive">
-            {% capture concept_preview_image %}{% cycle 'concept-preview-images': '/assets/enhanced_pixel_art_acoustic.png', '/assets/enhanced_pixel_art_spatial.png', '/assets/accessibility_navigation_inline.png' %}{% endcapture %}
+            {% capture concept_preview_image %}{% cycle 'concept-preview-images': '/assets/enhanced_pixel_art_acoustic.png', '/assets/enhanced_pixel_art_spatial.png', '/assets/expert_transit_universal_design.png' %}{% endcapture %}
             <img class="card__media" src="{{ concept_preview_image | strip | relative_url }}" alt="Concept preview visual for {{ concept.title }}" loading="lazy" decoding="async">
             <div class="card__header">
               <h2 class="text-h4 mb-2">

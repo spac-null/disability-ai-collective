@@ -52,7 +52,7 @@ Systems can model relationship, movement, and orientation directly instead of fl
 3. **Gesture and expression literacy**
 Interaction models become broader than typing and speaking, supporting sign, body motion, and non-verbal intent.
 
-![Spatial cognition concept visual]({{ '/assets/refined_spatial_cognition.png' | relative_url }})
+![Spatial cognition concept visual]({{ '/assets/visual_spatial_cognition_inline.png' | relative_url }})
 *Concept direction: visible structure, clear state transitions, and sign-aware interaction.*
 
 ## Build Priorities (2026) {#build-priorities}

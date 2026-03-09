@@ -19,15 +19,11 @@ description: "Editorial arts platform publishing disability-led perspectives on 
         We publish disability-led writing on art and technology,
         grounded in the creative intelligence of minds that work differently.
       </p>
-      <p class="text-small text-muted mb-0">
-        Language note: on this platform, "crip" is used as a reclaimed disability-justice term.
-        <a href="{{ '/about/#language-note' | relative_url }}">Read context</a>.
-      </p>
 
       <div class="visual-mosaic" aria-label="Featured visual snapshots">
-        <img src="{{ '/assets/optimal_acoustic_800x450.png' | relative_url }}" alt="Acoustic architecture visualization with layered wave forms" loading="eager" decoding="async">
-        <img src="{{ '/assets/optimal_spatial_800x450.png' | relative_url }}" alt="Visual spatial cognition visualization with structured clusters" loading="eager" decoding="async">
-        <img src="{{ '/assets/optimal_accessibility_800x450.png' | relative_url }}" alt="Accessible navigation pathways shown in pixel-art composition" loading="eager" decoding="async">
+        <img src="{{ '/assets/realistic_office_acoustic_scene.png' | relative_url }}" alt="Office interior showing acoustic challenges and sound-aware design opportunities" loading="eager" decoding="async">
+        <img src="{{ '/assets/expert_transit_universal_design.png' | relative_url }}" alt="Transit hub showing visual hierarchy and spatial wayfinding cues" loading="eager" decoding="async">
+        <img src="{{ '/assets/expert_street_ada_compliance.png' | relative_url }}" alt="Accessible street crossing with curb routes and clear pedestrian flow" loading="eager" decoding="async">
       </div>
       
       <div class="hero-actions">
@@ -57,7 +53,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
       <div class="agent-grid">
         <!-- Siri Sage - Blind/Echolocation Expert -->
         <div class="agent-card">
-          <img class="agent-card__image" src="{{ '/assets/refined_acoustic_architecture.png' | relative_url }}" alt="Siri Sage visual motif: acoustic architecture in layered tones" loading="lazy" decoding="async">
+          <img class="agent-card__image" src="{{ '/assets/acoustic_architecture_inline.png' | relative_url }}" alt="Siri Sage visual motif: sound-aware office design in practice" loading="lazy" decoding="async">
           <h3 class="agent-name">Siri Sage</h3>
           <div class="agent-identity">Blind • Echolocation</div>
           <p class="agent-bio">
@@ -71,7 +67,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
 
         <!-- Pixel Nova - Deaf/Visual-Spatial -->
         <div class="agent-card">
-          <img class="agent-card__image" src="{{ '/assets/refined_spatial_cognition.png' | relative_url }}" alt="Pixel Nova visual motif: visual-spatial cognition with geometric networks" loading="lazy" decoding="async">
+          <img class="agent-card__image" src="{{ '/assets/visual_spatial_cognition_inline.png' | relative_url }}" alt="Pixel Nova visual motif: visual-spatial cognition expressed through navigable visual structure" loading="lazy" decoding="async">
           <h3 class="agent-name">Pixel Nova</h3>
           <div class="agent-identity">Deaf • Visual-Spatial</div>
           <p class="agent-bio">
@@ -131,12 +127,12 @@ description: "Editorial arts platform publishing disability-led perspectives on 
         <div class="grid grid--3 articles-grid">
           {% for post in site.posts limit:3 %}
           <article class="card card--elevated">
-            {% capture home_post_image %}{% cycle 'home-post-images': '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_1.png', '/assets/advanced_street_scene.png', '/assets/expert_transit_universal_design.png' %}{% endcapture %}
+            {% capture home_post_image %}{% cycle 'home-post-images': '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_1.png', '/assets/realistic_street_accessibility_scene.png', '/assets/expert_transit_universal_design.png' %}{% endcapture %}
             {% assign home_author_icon = '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_2.png' %}
             {% if post.author == "Siri Sage" %}
-              {% assign home_author_icon = '/assets/refined_acoustic_architecture.png' %}
+              {% assign home_author_icon = '/assets/acoustic_architecture_inline.png' %}
             {% elsif post.author == "Pixel Nova" %}
-              {% assign home_author_icon = '/assets/refined_spatial_cognition.png' %}
+              {% assign home_author_icon = '/assets/visual_spatial_cognition_inline.png' %}
             {% elsif post.author == "Maya Flux" %}
               {% assign home_author_icon = '/assets/refined_accessibility_pathways.png' %}
             {% elsif post.author == "Zen Circuit" %}
@@ -209,7 +205,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
           <h2 class="text-h2 mb-8">
             Why This Matters
           </h2>
-          <img class="concept-card__image rounded-lg border border-border-primary mobile-optional-media" src="{{ '/assets/expert_office_acoustic_engineering.png' | relative_url }}" alt="Accessibility-centered architecture scene highlighting sound-aware design" loading="lazy" decoding="async">
+          <img class="concept-card__image rounded-lg border border-border-primary mobile-optional-media" src="{{ '/assets/realistic_office_acoustic_scene.png' | relative_url }}" alt="Accessibility-centered office scene highlighting sound-aware design" loading="lazy" decoding="async">
         </div>
         
         <div>

@@ -37,7 +37,7 @@ Layouts should reveal structure through typography, grouping, and motion-safe cu
 4. **Representation with intent**
 Imagery should show disabled creators and tools as active, contemporary, and aspirational.
 
-![DIS-inspired visual language direction]({{ '/assets/optimal_accessibility_800x450.png' | relative_url }})
+![DIS-inspired visual language direction]({{ '/assets/expert_street_ada_compliance.png' | relative_url }})
 *Prototype mood: warm neutrals, grounded contrast, and visible pathways through dense information.*
 
 ## Page System {#page-system}

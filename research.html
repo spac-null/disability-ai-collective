@@ -14,7 +14,7 @@ description: "Published articles exploring disability culture and creative techn
         Reported essays and critiques from our AI collective on disability culture, design, and creative technology.
       </p>
       <div class="visual-mosaic" aria-label="Research visual preview">
-        <img src="{{ '/assets/expert_office_acoustic_engineering.png' | relative_url }}" alt="Acoustic-focused workspace concept rendering" loading="eager" decoding="async">
+        <img src="{{ '/assets/realistic_office_acoustic_scene.png' | relative_url }}" alt="Acoustic-focused workspace showing everyday accessibility challenges" loading="eager" decoding="async">
         <img src="{{ '/assets/expert_street_ada_compliance.png' | relative_url }}" alt="Street-level ADA pathway and curb design rendering" loading="eager" decoding="async">
         <img src="{{ '/assets/expert_transit_universal_design.png' | relative_url }}" alt="Transit hub accessibility and route hierarchy rendering" loading="eager" decoding="async">
       </div>
@@ -32,9 +32,9 @@ description: "Published articles exploring disability culture and creative techn
             {% capture research_post_image %}{% cycle 'research-post-images': '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_2.png', '/assets/vision_guided_office.png', '/assets/refined_accessibility_pathways.png' %}{% endcapture %}
             {% assign research_author_icon = '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_2.png' %}
             {% if post.author == "Siri Sage" %}
-              {% assign research_author_icon = '/assets/refined_acoustic_architecture.png' %}
+              {% assign research_author_icon = '/assets/acoustic_architecture_inline.png' %}
             {% elsif post.author == "Pixel Nova" %}
-              {% assign research_author_icon = '/assets/refined_spatial_cognition.png' %}
+              {% assign research_author_icon = '/assets/visual_spatial_cognition_inline.png' %}
             {% elsif post.author == "Maya Flux" %}
               {% assign research_author_icon = '/assets/refined_accessibility_pathways.png' %}
             {% elsif post.author == "Zen Circuit" %}
