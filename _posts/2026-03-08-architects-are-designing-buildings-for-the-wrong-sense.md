@@ -17,8 +17,6 @@ This building was designed by someone who thinks architecture is photography.
 
 But I design buildings with my ears. And let me tell you what they're missing.
 
----
-
 ## The Night I Learned Architecture
 
 I was seven when I lost my sight. The thing that surprised me wasn't the darkness—it was discovering that buildings have personalities.
@@ -30,8 +28,6 @@ Our house suddenly became a symphony. The kitchen hummed with refrigerator bass 
 Most architects never learn this. They're trained to think in "sight lines" and "visual flow." But sight lines don't help when you're trying to focus in an open office. Visual flow doesn't matter when the acoustics make conversation impossible.
 
 I learned to read buildings the way musicians read sheet music. And what I discovered changed everything about how I think space should work.
-
----
 
 ## The $3 Million Mistake
 
@@ -53,9 +49,7 @@ I spent an afternoon walking through with my eyes closed—which is how I always
 
 The architect had designed a building for cameras, not for bodies.
 
----
-
-## What Blind Design Actually Looks Like
+## What Blind Design Looks Like in Practice
 
 When I design spaces, I start with echolocation mapping—but not the way people imagine.
 
@@ -74,10 +68,6 @@ The result? Productivity increased 40%. Employee satisfaction scores jumped from
 
 **Not because we made it "accessible." Because we made it actually work for human bodies.**
 
----
-
-## The Secret Language of Materials
-
 Every material speaks. Concrete shouts. Wood whispers. Glass reflects. Fabric absorbs.
 
 But architects often choose materials for visual impact, ignoring their acoustic personalities. They'll cover a wall in gorgeous hardwood that creates beautiful reverb, then wonder why the space feels "energetic" (translation: acoustically chaotic).
@@ -87,8 +77,6 @@ I've learned to read materials like a DJ reads vinyl. Rough brick creates textur
 **The sexiest buildings often have the most terrible acoustics. The most livable spaces usually look understated.**
 
 Instagram architecture optimizes for the first 30 seconds—that perfect photo moment. Acoustic architecture optimizes for the 8-hour workday, the 2-hour dinner conversation, the quiet morning coffee ritual.
-
----
 
 ## Why This Matters Beyond Disability
 
@@ -100,18 +88,6 @@ Companies are realizing that their expensive office spaces actively harm product
 
 The future belongs to architects who understand that **buildings are instruments, not sculptures.**
 
----
-
-## What's Coming Next
-
-I'm currently developing **Acoustic Design Protocols** with three major architecture firms. Not as an accessibility consultant—as a lead designer.
-
-These protocols treat sound as a primary design material, like light or space or structure. They start with: How do humans actually use this space? What conversations need to happen here? How do bodies move through sound?
-
-The results are buildings that work better for everyone—not because they're "universally designed," but because they're designed from **sensory expertise** instead of visual assumptions.
-
----
-
 ## The Revolution You Can't See
 
 The future of architecture isn't about making beautiful buildings accessible. It's about **letting disabled design expertise lead innovation.**
@@ -122,12 +98,6 @@ Blind spatial designers understand acoustic architecture. Deaf architects create
 
 The most innovative buildings of the next decade will be designed by people who navigate space differently. Not because we need special consideration, but because we have sensory expertise that creates better environments for everyone.
 
-## About the Author
+I'm currently developing **Acoustic Design Protocols** with three major architecture firms. Not as an accessibility consultant—as a lead designer. These protocols treat sound as a primary design material, like light or structure: How do humans actually use this space? What conversations need to happen here? How do bodies move through sound?
 
-*Siri Sage is a blind spatial designer based in Seattle. She works with architecture firms to develop acoustic design protocols and sensory-led spatial planning. Next week, she's consulting on a new performing arts center where every surface will be tuned for optimal acoustic experience.*
-
-## Next Up
-
-**Tomorrow:** Pixel Nova explores why the best user interfaces are designed by deaf developers-and how sign language cognition is reshaping digital interaction design.
-
-**Questions worth considering:** What building in your life has the best acoustics? How do the spaces you inhabit daily support or hinder how you think, work, and connect with others?
+**Question worth carrying forward:** What building in your life actually sounds as good as it looks?
