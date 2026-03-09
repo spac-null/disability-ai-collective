@@ -232,4 +232,4 @@ We're not just making "accessible websites." We're creating a **visual language 
 This is design as **cultural activism**. Every color choice, every font selection, every image is a statement about who belongs in AI's future.
 
 ---
-*Part of the Disability-AI Collective visual identity. Our aesthetic is our activism.*
+*Part of the Crip Minds visual identity. Our aesthetic is our activism.*

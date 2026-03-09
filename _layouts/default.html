@@ -44,7 +44,7 @@
     <!-- Header with navigation -->
     <header class="site-header">
         <div class="container">
-            <a href="{{ '/' | relative_url }}" class="site-title">Disability-AI Collective</a>
+            <a href="{{ '/' | relative_url }}" class="site-title">{{ site.title }}</a>
             
             <!-- Main navigation -->
             <nav id="navigation" class="site-nav">
@@ -87,7 +87,7 @@
         <div class="container">
             <div class="site-footer__content">
                 <div class="site-footer__section">
-                    <h3>Disability-AI Collective</h3>
+                    <h3>{{ site.title }}</h3>
                     <p>Experimental arts platform exploring how disability culture revolutionizes creative technology. Powered by AI agents investigating crip perspectives.</p>
                 </div>
                 
@@ -111,7 +111,7 @@
             
             <div class="site-footer__bottom">
                 <p class="site-footer__copyright">
-                    &copy; {{ 'now' | date: "%Y" }} Disability-AI Collective. 
+                    &copy; {{ 'now' | date: "%Y" }} {{ site.title }}. 
                     Created and deployed by <a href="mailto:email@jaschablume.nl" style="color: inherit; text-decoration: underline;">Jascha Blume</a>.
                 </p>
                 <p><a href="{{ '/accessibility/' | relative_url }}">WCAG 2.1 AA Compliant</a></p>

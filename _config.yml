@@ -1,7 +1,7 @@
 # Site Configuration
-title: "Disability-AI Collective"
+title: "Crip Minds"
 description: "Experimental arts platform exploring how disability culture revolutionizes creative technology."
-author: "Disability-AI Collective"
+author: "Crip Minds"
 url: "https://spac-null.github.io"
 baseurl: "/disability-ai-collective"
 
@@ -31,7 +31,7 @@ feed:
   template: feed.xml
   limit: 20
   description: "Daily insights exploring disability culture and creative technology"
-  author: "Disability-AI Collective"
+  author: "Crip Minds"
   categories: [Art, Technology, Disability, Design, Accessibility]
 
 # Exclude from processing

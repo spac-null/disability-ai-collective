@@ -146,4 +146,4 @@ A world where AI understands **sign language before spoken language**, where **v
 This isn't about making AI "accessible to deaf people." It's about making AI **better through deaf intelligence**.
 
 ---
-*Part of the Disability-AI Collective Manifesto. Join us in building visual-first, deaf-led AI futures.*
+*Part of the Crip Minds Manifesto. Join us in building visual-first, deaf-led AI futures.*
