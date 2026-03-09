@@ -10,12 +10,12 @@ import struct
 import zlib
 
 class SophisticatedArtGenerator:
-    def __init__(self, width=600, height=400):
+    def __init__(self, width=800, height=450):
         self.width = width
         self.height = height
-        self.pixel_size = 2  # Smaller pixels for more detail
-        self.grid_width = width // self.pixel_size
-        self.grid_height = height // self.pixel_size
+        self.pixel_size = 1  # No scaling - direct pixel mapping
+        self.grid_width = width
+        self.grid_height = height
         
         # Sophisticated color palette (RGB)
         self.palette = [
@@ -212,17 +212,15 @@ class SophisticatedArtGenerator:
     
     def _grid_to_png(self, grid, filename):
         """Convert color grid to PNG"""
-        # Scale up to final size
+        # Direct pixel mapping (no scaling)
         pixels = []
         for grid_y in range(self.grid_height):
-            for _ in range(self.pixel_size):
-                row = []
-                for grid_x in range(self.grid_width):
-                    color_idx = grid[grid_y][grid_x]
-                    color = self.palette[color_idx % len(self.palette)]
-                    for _ in range(self.pixel_size):
-                        row.extend(color)  # RGB values
-                pixels.append(row)
+            row = []
+            for grid_x in range(self.grid_width):
+                color_idx = grid[grid_y][grid_x]
+                color = self.palette[color_idx % len(self.palette)]
+                row.extend(color)  # RGB values
+            pixels.append(row)
         
         # Create PNG
         png_data = self._create_png_rgb(pixels)
@@ -270,7 +268,7 @@ def main():
     print("No childish patterns - serious, sophisticated aesthetic")
     print("=" * 50)
     
-    generator = SophisticatedArtGenerator(600, 400)
+    generator = SophisticatedArtGenerator(800, 450)
     
     # Set seed for reproducibility
     random.seed(424242)
