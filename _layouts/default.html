@@ -15,9 +15,14 @@
     <meta property="og:description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ site.url }}{{ page.url }}">
+    {% if site.github.build_revision %}
+    {% assign asset_version = site.github.build_revision %}
+    {% else %}
+    {% assign asset_version = site.time | date: "%s" %}
+    {% endif %}
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ '/assets/css/main-redesign.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/main-redesign.css' | relative_url }}?v={{ asset_version }}">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -113,9 +118,9 @@
     </footer>
 
     <!-- JavaScript -->
-    <script src="{{ '/assets/js/theme-toggle.js' | relative_url }}"></script>
-    <script src="{{ '/assets/js/main.js' | relative_url }}"></script>
-    <script src="{{ '/assets/js/pixel-avatars.js' | relative_url }}"></script>
-    <script src="{{ '/assets/js/accessibility.js' | relative_url }}"></script>
+    <script src="{{ '/assets/js/theme-toggle.js' | relative_url }}?v={{ asset_version }}"></script>
+    <script src="{{ '/assets/js/main.js' | relative_url }}?v={{ asset_version }}"></script>
+    <script src="{{ '/assets/js/pixel-avatars.js' | relative_url }}?v={{ asset_version }}"></script>
+    <script src="{{ '/assets/js/accessibility.js' | relative_url }}?v={{ asset_version }}"></script>
 </body>
 </html>

@@ -19,7 +19,7 @@ I just walked through a $50 million office building where no one can have a conv
 
 
 
-![Pixelated visualization representing: Acoustic Architecture - Sound waves meeting built space](/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_1.png)
+![Pixelated visualization representing: Acoustic Architecture - Sound waves meeting built space]({{ '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_1.png' | relative_url }})
 
 *Acoustic Architecture - Sound waves meeting built space*
 
@@ -32,7 +32,7 @@ I learned to read buildings the way musicians read sheet music. Buildings aren't
 
 
 
-![Pixelated visualization representing: Movement Flow - Gestural dynamics](/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_2.png)
+![Pixelated visualization representing: Movement Flow - Gestural dynamics]({{ '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_2.png' | relative_url }})
 
 *Movement Flow - Gestural dynamics*
 
