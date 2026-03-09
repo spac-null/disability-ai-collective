@@ -29,16 +29,16 @@ description: "Published articles exploring disability culture and creative techn
         <div class="grid grid--3 gap-8 articles-grid">
           {% for post in site.posts %}
           <article class="card card--elevated">
-            {% capture research_post_image %}{% cycle 'research-post-images': '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_2.png', '/assets/vision_guided_office.png', '/assets/refined_accessibility_pathways.png' %}{% endcapture %}
+            {% capture research_post_image %}{% cycle 'research-post-images': '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_2.png', '/assets/vision_guided_office.png', '/assets/maya_flux_style_matched.png' %}{% endcapture %}
             {% assign research_author_icon = '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_2.png' %}
             {% if post.author == "Siri Sage" %}
-              {% assign research_author_icon = '/assets/acoustic_architecture_inline.png' %}
+              {% assign research_author_icon = '/assets/siri_sage_style_matched.png' %}
             {% elsif post.author == "Pixel Nova" %}
-              {% assign research_author_icon = '/assets/visual_spatial_cognition_inline.png' %}
+              {% assign research_author_icon = '/assets/pixel_nova_style_matched.png' %}
             {% elsif post.author == "Maya Flux" %}
-              {% assign research_author_icon = '/assets/refined_accessibility_pathways.png' %}
+              {% assign research_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% elsif post.author == "Zen Circuit" %}
-              {% assign research_author_icon = '/assets/demo_neurodivergent_v2.png' %}
+              {% assign research_author_icon = '/assets/zen_circuit_style_matched.png' %}
             {% endif %}
             <img class="card__media" src="{{ research_post_image | strip | relative_url }}" alt="Article preview visual for {{ post.title }}" loading="lazy" decoding="async">
             <div class="card__header">
