@@ -131,12 +131,13 @@ description: "Experimental arts platform exploring how disability culture revolu
             {% capture home_post_image %}{% cycle 'home-post-images': '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_1.png', '/assets/advanced_street_scene.png', '/assets/expert_transit_universal_design.png' %}{% endcapture %}
             <img class="card__media" src="{{ home_post_image | strip | relative_url }}" alt="Preview visual for {{ post.title }}" loading="lazy" decoding="async">
             <div class="card__header">
-              <div class="text-caption mb-2">
-                <time datetime="{{ post.date | date_to_xmlschema }}">
+              <div class="text-caption mb-2 experiment-card__meta">
+                <time class="experiment-card__date" datetime="{{ post.date | date_to_xmlschema }}">
                   {{ post.date | date: "%B %d, %Y" }}
                 </time>
                 {% if post.categories %}
-                  • {{ post.categories | first | capitalize }}
+                  <span class="experiment-card__sep" aria-hidden="true">|</span>
+                  <span class="experiment-card__topic">{{ post.categories | first | capitalize }}</span>
                 {% endif %}
               </div>
               
@@ -146,7 +147,7 @@ description: "Experimental arts platform exploring how disability culture revolu
             </div>
             
             <div class="card__body">
-              <p class="text-body mb-6">
+              <p class="text-body mb-6 experiment-card__excerpt">
                 {{ post.excerpt | strip_html | truncatewords: 35 }}
               </p>
               
