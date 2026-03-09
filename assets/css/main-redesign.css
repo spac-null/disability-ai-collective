@@ -830,6 +830,7 @@ a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 .site-title {
@@ -906,6 +907,7 @@ a:hover {
     gap: 0;
     padding: var(--space-4) 0;
     display: none;
+    z-index: 20;
   }
   
   .site-nav__menu.is-open {
