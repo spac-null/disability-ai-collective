@@ -3,133 +3,90 @@ layout: default
 ---
 
 <main id="main-content">
-  <article class="concept" itemscope itemtype="https://schema.org/Article">
-    <!-- Concept header -->
-    <header class="concept-header">
-      <div class="container">
-        <h1 class="concept-title" itemprop="name headline">{{ page.title }}</h1>
-        
-        <div class="concept-meta">
-          <time class="concept-date" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+  <article itemscope itemtype="https://schema.org/Article">
+    <header class="section section--secondary text-center">
+      <div class="container container--md">
+        <h1 class="text-h1 mb-4" itemprop="name headline">{{ page.title }}</h1>
+
+        <div class="text-caption article-card__meta justify-center mb-4" aria-label="Concept metadata">
+          <time class="article-card__date" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
             {{ page.date | date: "%B %d, %Y" }}
           </time>
-          
-          {% if page.categories %}
-          <div class="concept-categories" aria-label="Categories">
-            {% for category in page.categories %}
-              <span class="concept-category">{{ category | capitalize }}</span>
-            {% endfor %}
-          </div>
+          {% if page.categories and page.categories.size > 0 %}
+            <span class="article-card__sep" aria-hidden="true">|</span>
+            <span class="article-card__topic">{{ page.categories | first | replace: '-', ' ' | capitalize }}</span>
           {% endif %}
-          
-          {% if page.tags %}
-          <div class="concept-tags" aria-label="Tags">
-            {% for tag in page.tags %}
-              <span class="concept-tag">#{{ tag }}</span>
-            {% endfor %}
-          </div>
-          {% endif %}
-          
-          <div class="concept-status">
-            <span class="status-badge status-badge--{{ page.status | default: 'draft' }}">
-              {{ page.status | default: 'Draft' | capitalize }}
-            </span>
-          </div>
+          <span class="article-card__sep" aria-hidden="true">|</span>
+          <span class="article-card__author-name">{{ page.status | default: 'Draft' | capitalize }}</span>
         </div>
-        
+
+        {% if page.tags %}
+        <div class="flex justify-center flex-wrap gap-2 mb-6" aria-label="Concept tags">
+          {% for tag in page.tags %}
+            <span class="text-small bg-background-muted px-3 py-1 rounded-full">#{{ tag }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+
         {% if page.excerpt %}
-        <div class="concept-excerpt" itemprop="description">
+        <p class="text-lead text-secondary max-w-2xl mx-auto mb-0" itemprop="description">
           {{ page.excerpt }}
-        </div>
+        </p>
         {% endif %}
       </div>
     </header>
 
-    <!-- Concept content -->
-    <div class="concept-content" itemprop="articleBody">
-      <div class="container">
-        {{ content }}
+    <section class="section section--primary">
+      <div class="container container--md">
+        <div class="prose prose--large post-content" itemprop="articleBody">
+          {{ content }}
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Concept footer -->
-    <footer class="concept-footer">
-      <div class="container">
-        <!-- Development status -->
-        <div class="concept-development">
-          <h3 class="concept-development-title">Development Status</h3>
-          <div class="development-progress">
-            <div class="progress-item {% if page.research_complete %}progress-item--complete{% endif %}">
-              <span class="progress-icon" aria-hidden="true">01</span>
-              <span class="progress-text">Research Phase</span>
-            </div>
-            <div class="progress-item {% if page.prototype_complete %}progress-item--complete{% endif %}">
-              <span class="progress-icon" aria-hidden="true">02</span>
-              <span class="progress-text">Prototype Phase</span>
-            </div>
-            <div class="progress-item {% if page.testing_complete %}progress-item--complete{% endif %}">
-              <span class="progress-icon" aria-hidden="true">03</span>
-              <span class="progress-text">Testing Phase</span>
-            </div>
-            <div class="progress-item {% if page.implementation_complete %}progress-item--complete{% endif %}">
-              <span class="progress-icon" aria-hidden="true">04</span>
-              <span class="progress-text">Implementation</span>
+    <footer class="section section--secondary">
+      <div class="container container--md">
+        <div class="grid grid--2 gap-8 mb-8">
+          <div class="card p-8">
+            <h2 class="text-h3 mb-6">Development Status</h2>
+            <ul class="list-disc pl-5 text-body text-secondary mb-0">
+              <li class="mb-2"><strong>Research Phase:</strong> {% if page.research_complete %}Complete{% else %}In progress{% endif %}</li>
+              <li class="mb-2"><strong>Prototype Phase:</strong> {% if page.prototype_complete %}Complete{% else %}In progress{% endif %}</li>
+              <li class="mb-2"><strong>Testing Phase:</strong> {% if page.testing_complete %}Complete{% else %}In progress{% endif %}</li>
+              <li><strong>Implementation:</strong> {% if page.implementation_complete %}Complete{% else %}In progress{% endif %}</li>
+            </ul>
+          </div>
+
+          <div class="card p-8">
+            <h2 class="text-h3 mb-4">Community Input</h2>
+            <p class="text-body text-secondary mb-6">
+              This concept is part of our editorial arts platform. We welcome feedback from the disability community.
+            </p>
+            <div class="flex flex-wrap gap-4">
+              <a href="https://github.com/spac-null/disability-ai-collective/discussions" class="btn btn--secondary" target="_blank" rel="noopener">GitHub Discussions</a>
+              <a href="https://github.com/spac-null/disability-ai-collective/issues" class="btn btn--secondary" target="_blank" rel="noopener">Report Issues</a>
+              <a href="{{ '/accessibility/' | relative_url }}" class="btn btn--secondary">Accessibility Info</a>
             </div>
           </div>
         </div>
-        
-        <!-- Related concepts -->
+
         {% if page.related_concepts %}
-        <div class="related-concepts">
-          <h3 class="related-concepts-title">Related Concepts</h3>
-          <ul class="related-list">
+        <div class="card p-8 mb-8">
+          <h2 class="text-h3 mb-4">Related Concepts</h2>
+          <div class="flex flex-wrap gap-3">
             {% for concept in page.related_concepts %}
-            <li class="related-item">
-              <a href="{{ concept.url | relative_url }}" class="related-link">
-                {{ concept.title }}
-              </a>
-            </li>
+              <a href="{{ concept.url | relative_url }}" class="btn btn--outline">{{ concept.title }}</a>
             {% endfor %}
-          </ul>
+          </div>
         </div>
         {% endif %}
-        
-        <!-- Feedback section -->
-        <div class="concept-feedback">
-          <h3 class="concept-feedback-title">Community Input</h3>
-          <p>This concept is part of our editorial arts platform. We welcome feedback from the disability community:</p>
-          <div class="feedback-buttons">
-            <a href="https://github.com/spac-null/disability-ai-collective/discussions" 
-               class="feedback-btn feedback-btn--github" 
-               target="_blank" rel="noopener">
-              GitHub Discussions
-            </a>
-            <a href="https://github.com/spac-null/disability-ai-collective/issues" 
-               class="feedback-btn feedback-btn--email">
-              Report Issues
-            </a>
-            <a href="{{ '/accessibility/' | relative_url }}" class="feedback-btn feedback-btn--accessibility">
-              Accessibility Info
-            </a>
-          </div>
-        </div>
-        
-        <!-- Navigation -->
-        <nav class="concept-navigation" aria-label="Concept navigation">
-          <a href="{{ '/concepts/' | relative_url }}" class="nav-link nav-link--back">
-            <span class="nav-direction">← Back to</span>
-            <span class="nav-title">All Concepts</span>
-          </a>
-          
+
+        <nav aria-label="Concept navigation" class="flex justify-center gap-4 flex-wrap">
+          <a href="{{ '/concepts/' | relative_url }}" class="btn btn--outline">← Back to Concept Lab</a>
           {% for concept in site.concepts %}
             {% if concept.title != page.title %}
-              {% if forloop.first %}
-          <a class="nav-link nav-link--random" href="{{ concept.url | relative_url }}">
-            <span class="nav-direction">Explore</span>
-            <span class="nav-title">{{ concept.title }}</span>
-          </a>
+              <a href="{{ concept.url | relative_url }}" class="btn btn--outline">Explore Another Concept</a>
               {% break %}
-              {% endif %}
             {% endif %}
           {% endfor %}
         </nav>
@@ -137,304 +94,3 @@ layout: default
     </footer>
   </article>
 </main>
-
-<style>
-/* Concept-specific styles */
-.concept-header {
-  padding: var(--space-3xl) 0 var(--space-2xl) 0;
-  background: linear-gradient(135deg, var(--color-access-blue) 0%, var(--color-blue) 100%);
-  color: var(--color-white);
-  position: relative;
-}
-
-.concept-header::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.1);
-  pointer-events: none;
-}
-
-.concept-header .container {
-  position: relative;
-  z-index: 1;
-}
-
-.concept-title {
-  font-size: clamp(1.5rem, 6vw, 3.5rem);
-  color: var(--color-white);
-  margin-bottom: var(--space-lg);
-  line-height: 1.2;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.concept-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
-  color: rgba(255, 255, 255, 0.9);
-  font-size: var(--font-size-sm);
-}
-
-.concept-date {
-  font-weight: 500;
-}
-
-.concept-category,
-.concept-tag {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--color-white);
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: 4px;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  backdrop-filter: blur(10px);
-}
-
-.concept-excerpt {
-  font-size: var(--font-size-lg);
-  color: rgba(255, 255, 255, 0.9);
-  font-style: italic;
-  max-width: 70ch;
-  line-height: 1.6;
-}
-
-.concept-content {
-  padding: var(--space-3xl) 0;
-  line-height: 1.6;
-}
-
-.concept-content h2,
-.concept-content h3,
-.concept-content h4 {
-  margin-top: var(--space-2xl);
-  margin-bottom: var(--space-md);
-  color: var(--color-blue);
-}
-
-.concept-content p {
-  margin-bottom: var(--space-md);
-  max-width: 70ch;
-  color: var(--color-gray);
-}
-
-.concept-content ul,
-.concept-content ol {
-  margin-bottom: var(--space-md);
-  padding-left: var(--space-xl);
-  max-width: 65ch;
-  color: var(--color-gray);
-}
-
-.concept-content li {
-  margin-bottom: var(--space-sm);
-  line-height: 1.6;
-}
-
-.concept-content blockquote {
-  border-left: 4px solid var(--color-access-blue);
-  padding-left: var(--space-lg);
-  margin: var(--space-xl) 0;
-  font-style: italic;
-  color: var(--color-gray);
-  background: var(--color-paper);
-  padding: var(--space-lg);
-  border-radius: 0 4px 4px 0;
-}
-
-.concept-footer {
-  background: var(--color-paper);
-  padding: var(--space-3xl) 0;
-  border-top: 1px solid var(--color-border);
-}
-
-.concept-development,
-.related-concepts,
-.concept-feedback {
-  margin-bottom: var(--space-2xl);
-}
-
-.concept-development-title,
-.related-concepts-title,
-.concept-feedback-title {
-  font-size: 1.125rem;
-  color: var(--color-access-blue);
-  margin-bottom: var(--space-md);
-  font-weight: 700;
-}
-
-.development-progress {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-md);
-}
-
-.progress-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md);
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  opacity: 0.6;
-  transition: all 0.2s ease;
-}
-
-.progress-item--complete {
-  opacity: 1;
-  border-color: #4caf50;
-  background: #e8f5e9;
-  color: var(--color-black);
-}
-
-.progress-icon {
-  font-size: 18px;
-  filter: grayscale(100%);
-}
-
-.progress-item--complete .progress-icon {
-  filter: none;
-}
-
-.progress-text {
-  font-weight: 500;
-  color: var(--color-gray);
-}
-
-.progress-item--complete .progress-text {
-  color: var(--color-black);
-}
-
-.related-list {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-md);
-}
-
-.related-item {
-  margin: 0;
-}
-
-.related-link {
-  display: block;
-  padding: var(--space-md);
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  text-decoration: none;
-  color: var(--color-black);
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.related-link:hover {
-  border-color: var(--color-access-blue);
-  background: var(--color-access-blue);
-  color: var(--color-white);
-}
-
-.feedback-buttons {
-  display: flex;
-  gap: var(--space-md);
-  flex-wrap: wrap;
-}
-
-.feedback-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-lg);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background: var(--color-white);
-  text-decoration: none;
-  color: var(--color-black);
-  font-weight: 500;
-  transition: all 0.2s ease;
-  min-height: 44px;
-}
-
-.feedback-btn:hover {
-  border-color: var(--color-access-blue);
-  background: var(--color-access-blue);
-  color: var(--color-white);
-}
-
-.concept-navigation {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-lg);
-  margin-top: var(--space-2xl);
-  flex-wrap: wrap;
-}
-
-.nav-link {
-  flex: 1;
-  max-width: calc(50% - var(--space-sm));
-  padding: var(--space-lg);
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background: var(--color-white);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  min-height: 44px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.nav-link:hover {
-  border-color: var(--color-access-blue);
-  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.15);
-}
-
-.nav-link--random {
-  text-align: right;
-}
-
-.nav-direction {
-  display: block;
-  font-size: var(--font-size-sm);
-  color: var(--color-light-gray);
-  margin-bottom: var(--space-xs);
-}
-
-.nav-title {
-  display: block;
-  font-weight: 500;
-  color: var(--color-black);
-}
-
-@media (max-width: 768px) {
-  .concept-navigation {
-    flex-direction: column;
-  }
-  
-  .nav-link {
-    max-width: 100%;
-  }
-  
-  .nav-link--random {
-    text-align: left;
-  }
-  
-  .feedback-buttons {
-    flex-direction: column;
-  }
-  
-  .development-progress {
-    grid-template-columns: 1fr;
-  }
-  
-  .related-list {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
