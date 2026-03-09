@@ -3,55 +3,76 @@ layout: default
 title: Article-Optimized Pixel Art
 ---
 
-# 📄 Article-Optimized Pixel Art
+<main id="main-content">
+  <section class="section section--secondary text-center">
+    <div class="container">
+      <h1 class="text-h1 mb-4">Article-Optimized Pixel Art</h1>
+      <p class="text-lead text-secondary max-w-2xl mx-auto">
+        A production-ready image set tuned for readability, rhythm, and performance inside long-form articles.
+      </p>
+    </div>
+  </section>
 
-## Inline Article Images (600x300)
-*Perfect size for embedding within article content*
+  <section class="section section--primary">
+    <div class="container">
+      <div class="text-center mb-16">
+        <h2 class="text-h2 mb-4">Inline Set (600x300)</h2>
+        <p class="text-body text-secondary max-w-2xl mx-auto">
+          Balanced dimensions for narrative flow: expressive visuals without overwhelming text blocks.
+        </p>
+      </div>
 
-### 1. Acoustic Architecture - Inline
-![Acoustic architecture optimized for article inline display]({{ '/assets/acoustic_architecture_inline.png' | relative_url }})
-*600x300 pixels - Ideal for embedding within article text*
+      <div class="concept-showcase">
+        <article class="concept-card">
+          <img class="concept-card__image" src="{{ '/assets/acoustic_architecture_inline.png' | relative_url }}" alt="Acoustic architecture optimized for article inline display">
+          <div class="concept-card__content">
+            <h3 class="text-h4 mb-3">Acoustic Architecture</h3>
+            <p class="text-body">Inline composition optimized for clarity in dense article layouts.</p>
+          </div>
+        </article>
 
-### 2. Visual-Spatial Cognition - Inline  
-![Visual-spatial cognition optimized for article inline display]({{ '/assets/visual_spatial_cognition_inline.png' | relative_url }})
-*600x300 pixels - Perfect balance of detail and page layout*
+        <article class="concept-card">
+          <img class="concept-card__image" src="{{ '/assets/visual_spatial_cognition_inline.png' | relative_url }}" alt="Visual-spatial cognition optimized for article inline display">
+          <div class="concept-card__content">
+            <h3 class="text-h4 mb-3">Visual-Spatial Cognition</h3>
+            <p class="text-body">Detail-preserving visual tuned for medium-width reading columns.</p>
+          </div>
+        </article>
 
-### 3. Accessibility Navigation - Inline
-![Accessibility navigation optimized for article inline display]({{ '/assets/accessibility_navigation_inline.png' | relative_url }})
-*600x300 pixels - Clear pathways visible at article-reading size*
+        <article class="concept-card">
+          <img class="concept-card__image" src="{{ '/assets/accessibility_navigation_inline.png' | relative_url }}" alt="Accessibility navigation optimized for article inline display">
+          <div class="concept-card__content">
+            <h3 class="text-h4 mb-3">Accessibility Navigation</h3>
+            <p class="text-body">High-legibility pathways and landmarks at article-reading size.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
 
-## 📊 Size Optimization Guide
-
-### **🖼️ Hero Images (1200x400)**
-- Article headers and featured images
-- High impact, wide aspect ratio
-- 6px pixel size for clarity at distance
-
-### **📄 Inline Images (600x300)** ⭐ **RECOMMENDED FOR ARTICLES**
-- Perfect for embedding within article content
-- 2:1 aspect ratio fits well in text flow
-- 4px pixel size maintains detail without overwhelming text
-- Responsive on mobile devices
-
-### **🔍 Thumbnails (300x200)**
-- Article preview cards
-- Social media previews
-- Quick recognition at small sizes
-
-### **📱 Mobile Optimized (400x300)**
-- Dedicated mobile layouts
-- Fast loading on slower connections
-- 4:3 aspect ratio works well on phone screens
-
-## Integration Notes
-
-The **600x300 inline size** is specifically optimized for:
-- ✅ **Article readability** - doesn't overpower text
-- ✅ **Mobile responsive** - scales well on all devices  
-- ✅ **Loading speed** - optimal file size vs. detail balance
-- ✅ **Visual impact** - sufficient detail to convey themes
-- ✅ **Accessibility** - high contrast remains clear at this size
-
----
-
-*These optimizations ensure pixel art enhances rather than dominates the reading experience.*
+  <section class="section section--secondary">
+    <div class="container container--md">
+      <div class="card p-8">
+        <h2 class="text-h3 mb-6">Size System</h2>
+        <div class="grid grid--2 gap-8">
+          <div>
+            <h3 class="text-h4 mb-3">Hero (1200x400)</h3>
+            <ul class="list-disc pl-5 text-body text-secondary">
+              <li class="mb-2">Article headers and featured visuals</li>
+              <li class="mb-2">Wide impact composition</li>
+              <li>6px pixel block scale for long-range clarity</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-h4 mb-3">Inline (600x300)</h3>
+            <ul class="list-disc pl-5 text-body text-secondary">
+              <li class="mb-2">Default for article body integration</li>
+              <li class="mb-2">2:1 aspect ratio tuned for text flow</li>
+              <li>4px pixel block scale for detail/performance balance</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
