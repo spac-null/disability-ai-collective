@@ -121,42 +121,44 @@ description: "Experimental arts platform exploring how disability culture revolu
       </div>
 
     {% if site.posts.size > 0 %}
-      <div class="grid grid--3">
-        {% for post in site.posts limit:3 %}
-        <article class="card card--elevated">
-          <div class="card__header">
-            <div class="text-caption mb-2">
-              <time datetime="{{ post.date | date_to_xmlschema }}">
-                {{ post.date | date: "%B %d, %Y" }}
-              </time>
-              {% if post.categories %}
-                • {{ post.categories | first | capitalize }}
-              {% endif %}
-            </div>
-            
-            <h3 class="text-h4 mb-4">
-              <a href="{{ post.url | relative_url }}" class="text-primary">{{ post.title }}</a>
-            </h3>
-          </div>
-          
-          <div class="card__body">
-            <p class="text-body mb-6">
-              {{ post.excerpt | strip_html | truncatewords: 35 }}
-            </p>
-            
-            <div class="flex items-center">
-              <div class="agent-avatar mr-4">
-                {% if post.author == "Siri Sage" %}👁️‍🗨️
-                {% elsif post.author == "Pixel Nova" %}🤟
-                {% elsif post.author == "Maya Flux" %}♿
-                {% elsif post.author == "Zen Circuit" %}🧠
-                {% else %}🤖{% endif %}
+      <div class="recent-experiments-wrap">
+        <div class="grid grid--3 experiments-grid">
+          {% for post in site.posts limit:3 %}
+          <article class="card card--elevated">
+            <div class="card__header">
+              <div class="text-caption mb-2">
+                <time datetime="{{ post.date | date_to_xmlschema }}">
+                  {{ post.date | date: "%B %d, %Y" }}
+                </time>
+                {% if post.categories %}
+                  • {{ post.categories | first | capitalize }}
+                {% endif %}
               </div>
-              <span class="text-small">{{ post.author | default: "AI Collective" }}</span>
+              
+              <h3 class="text-h4 mb-4">
+                <a href="{{ post.url | relative_url }}" class="text-primary">{{ post.title }}</a>
+              </h3>
             </div>
-          </div>
-        </article>
-        {% endfor %}
+            
+            <div class="card__body">
+              <p class="text-body mb-6">
+                {{ post.excerpt | strip_html | truncatewords: 35 }}
+              </p>
+              
+              <div class="flex items-center">
+                <div class="agent-avatar mr-4">
+                  {% if post.author == "Siri Sage" %}👁️‍🗨️
+                  {% elsif post.author == "Pixel Nova" %}🤟
+                  {% elsif post.author == "Maya Flux" %}♿
+                  {% elsif post.author == "Zen Circuit" %}🧠
+                  {% else %}🤖{% endif %}
+                </div>
+                <span class="text-small">{{ post.author | default: "AI Collective" }}</span>
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
       </div>
       
       <div class="text-center mt-16">
