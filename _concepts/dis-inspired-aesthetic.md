@@ -7,8 +7,6 @@ tags: [dis-art, aesthetic, visual-design, disability-culture]
 excerpt: "Translating DIS.art's disability culture aesthetic into AI research visual language."
 ---
 
-# DIS-inspired Aesthetic: Disability Culture as Visual Language
-
 ## What DIS.art Teaches Us About Visual Design
 
 DIS.art transforms disability from medical model to **cultural aesthetic**. Their visual language shows us:

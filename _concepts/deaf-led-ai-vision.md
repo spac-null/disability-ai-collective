@@ -7,8 +7,6 @@ tags: [deaf-led, visual-intelligence, spatial-reasoning, disability-innovation]
 excerpt: "How deaf visual-spatial intelligence transforms AI development beyond auditory bias."
 ---
 
-# Deaf-Led AI: A Visual-Spatial Revolution
-
 ## The Auditory Bias in AI
 
 Current AI systems are built by hearing developers for a hearing world. This creates an **auditory bias** that permeates everything:
