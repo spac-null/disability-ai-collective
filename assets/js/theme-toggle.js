@@ -46,11 +46,11 @@ class ThemeManager {
     // Update meta theme-color for mobile browsers
     const metaThemeColor = document.querySelector('meta[name="theme-color"]');
     if (metaThemeColor) {
-      metaThemeColor.content = theme === 'dark' ? '#111827' : '#ffffff';
+      metaThemeColor.content = theme === 'dark' ? '#2b2b2f' : '#fef9f2';
     } else {
       const meta = document.createElement('meta');
       meta.name = 'theme-color';
-      meta.content = theme === 'dark' ? '#111827' : '#ffffff';
+      meta.content = theme === 'dark' ? '#2b2b2f' : '#fef9f2';
       document.head.appendChild(meta);
     }
   }
