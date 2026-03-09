@@ -1391,23 +1391,37 @@ a:hover {
   }
 
   .card__media {
-    height: 144px;
+    height: 116px;
+  }
+
+  .card__media--sm {
+    height: 90px;
   }
 
   .card__media--lg {
-    height: 170px;
+    height: 140px;
   }
 
   .agent-card__image {
-    height: 124px;
+    height: 96px;
   }
 
   .visual-mosaic {
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    gap: var(--space-3);
+    margin-top: var(--space-6);
+    overflow-x: auto;
+    padding-bottom: var(--space-1);
   }
 
   .visual-mosaic img {
-    height: 112px;
+    flex: 0 0 48%;
+    height: 96px;
+    max-width: 180px;
+  }
+
+  .mobile-optional-media {
+    display: none;
   }
 
   .p-8 {
