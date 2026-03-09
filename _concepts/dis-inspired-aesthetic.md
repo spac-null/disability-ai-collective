@@ -5,229 +5,89 @@ date: 2026-03-08
 categories: [design, disability-culture, visual-language]
 tags: [dis-art, aesthetic, visual-design, disability-culture]
 excerpt: "Translating DIS.art's disability culture aesthetic into AI research visual language."
+status: working draft
+hero_image: /assets/refined_accessibility_pathways.png
+hero_alt: "Stylized visual system showing accessible pathways, high contrast layers, and disability-led interface motifs"
+hero_caption: "Visual language is policy: what we style as normal decides who feels invited."
+section_links:
+  - label: Aesthetic Principles
+    anchor: aesthetic-principles
+  - label: Page System
+    anchor: page-system
+  - label: Publishing Rules
+    anchor: publishing-rules
+  - label: Delivery Plan
+    anchor: delivery-plan
+related_concepts:
+  - title: Deaf-Led AI: A Visual-Spatial Revolution
+    url: /concepts/deaf-led-ai-vision/
 ---
 
-## What DIS.art Teaches Us About Visual Design
+DIS.art reframes disability from a compliance requirement into a cultural engine. For Crip Minds, that means our visual language should communicate confidence, clarity, and collective authorship at first glance.
 
-DIS.art transforms disability from medical model to **cultural aesthetic**. Their visual language shows us:
+## Aesthetic Principles {#aesthetic-principles}
+We use four principles to keep design coherent across pages:
 
-### Key Aesthetic Principles:
-1. **Disability as culture**, not deficit
-2. **Accessibility as beautiful design**
-3. **Different ways of knowing** as visual richness
-4. **Community identity** through visual symbols
-5. **Future visions** that include disabled bodies
+1. **Culture over correction**
+Design must center disability identity and perspective, not the language of fixing or normalizing.
+2. **Accessibility as visual quality**
+Readable hierarchy, generous spacing, and clear interaction states are baseline aesthetics, not fallback modes.
+3. **Multi-sensory orientation**
+Layouts should reveal structure through typography, grouping, and motion-safe cues.
+4. **Representation with intent**
+Imagery should show disabled creators and tools as active, contemporary, and aspirational.
 
-### Visual Elements to Emulate:
-- **Bold, unapologetic imagery** of disabled bodies
-- **Accessibility tools as fashion statements**
-- **Medical equipment reimagined** as art objects
-- **Sign language as visual poetry**
-- **Assistive technology** as desirable objects
+![DIS-inspired visual language direction](/assets/optimal_accessibility_800x450.png)
+*Prototype mood: warm neutrals, grounded contrast, and visible pathways through dense information.*
 
-## Our Disability-AI Visual Language
+## Page System {#page-system}
+A world-class reading flow needs predictable rhythm from top to bottom:
 
-### Color Palette:
-- **High contrast** for visual accessibility
-- **Bold, saturated colors** that command attention
-- **Color combinations** tested for various color blindness types
-- **Consistent contrast ratios** (minimum 4.5:1 for normal text)
+- **Entry zone**
+Clear headline, concise excerpt, and quick-jump links for orientation.
+- **Reading zone**
+Long-form text constrained for comfort, with strong h2 anchors and fewer micro-headings.
+- **Action zone**
+Community links, next steps, and related concepts in consistent card formats.
 
-### Typography:
-- **Large, readable fonts** as default
-- **Dyslexia-friendly typefaces** (OpenDyslexic, Lexend)
-- **Clear hierarchy** through size and weight, not just color
-- **Adequate line spacing** (minimum 1.5x font size)
+## Publishing Rules {#publishing-rules}
+To prevent clumsy pages, every concept draft follows these editorial constraints:
 
-### Imagery:
-- **Disabled creators featured prominently**
-- **Assistive technology shown** as integrated, not separate
-- **Sign language visuals** as central, not marginal
-- **Diverse disability representation** (not just wheelchair symbols)
+- Use **one strong h2 per major idea** instead of stacked mini headers.
+- Keep lists focused: default to **3-5 items**, not exhaustive catalogs.
+- Pair abstract statements with **one concrete example** immediately after.
+- Include at least **one meaningful image** in each long article.
+- Avoid decorative icon clutter; hierarchy should come from typography and spacing.
 
-### Layout:
-- **Flexible, responsive designs** that adapt to assistive tech
-- **Clear visual flow** for screen readers
-- **Consistent navigation** across all pages
-- **White space used strategically** for cognitive accessibility
+<details class="details-panel">
+  <summary>Implementation checklist</summary>
+  <div class="details-panel__content">
+    <ul>
+      <li>Contrast: body text and UI controls must meet WCAG 2.1 AA at minimum.</li>
+      <li>Typography: preserve readable line height and avoid over-condensed paragraph widths.</li>
+      <li>Metadata: use date, author/topic, and status in a consistent order across all templates.</li>
+      <li>Imagery: every hero and card image needs descriptive alt text tied to article intent.</li>
+      <li>Mobile: keep side gutters comfortable and ensure navigation controls remain reliable.</li>
+    </ul>
+  </div>
+</details>
 
-## Applying DIS Aesthetic to AI Research
+## Delivery Plan {#delivery-plan}
+The design direction is only credible if the delivery is measurable.
 
-### Research Visualizations:
-Instead of dry charts and graphs, we create:
+### Phase 1: Alignment (now)
+- Normalize template structure across concept pages.
+- Remove legacy wording that conflicts with Crip Minds identity.
+- Apply consistent text hierarchy and card rhythm.
 
-#### 1. **Accessibility Impact Maps**
-- **Visual representations** of how AI affects different disabilities
-- **Color-coded accessibility scores** across AI systems
-- **Timeline visualizations** of disability inclusion progress
-- **Network diagrams** of disability-AI innovation connections
+### Phase 2: Editorial quality (next 30 days)
+- Build an image library mapped to each concept and article theme.
+- Introduce short narrative summaries for every long section.
+- Audit mobile reading comfort on all key pages and breakpoints.
 
-#### 2. **Disability Culture Infographics**
-- **Visual histories** of disability innovation
-- **Cultural timelines** of deaf, blind, neurodiverse contributions
-- **Demographic visualizations** that center disability diversity
-- **Artistic representations** of disability-AI intersections
+### Phase 3: Community calibration (next 90 days)
+- Review language and representation with disabled contributors.
+- Publish a concise Crip Minds style guide for collaborators.
+- Track readability and navigation feedback in public issue threads.
 
-#### 3. **AI Ethics Visualizations**
-- **Bias detection maps** showing where AI fails disabled users
-- **Inclusion metrics** visualized through disability lens
-- **Ethical decision trees** for AI development
-- **Community impact assessments** as visual narratives
-
-### Website Design Principles:
-
-#### Homepage:
-- **Hero image**: Deaf developer working on AI with sign language visualization
-- **Tagline**: "Disability-centered AI research that shapes accessible futures"
-- **Navigation**: Clear, large buttons with icon + text
-- **Color scheme**: High contrast, disability pride colors
-
-#### Research Pages:
-- **Visual abstracts** for each research project
-- **Accessibility scores** displayed prominently
-- **Community feedback** integrated visually
-- **Interactive elements** with multiple access methods
-
-#### Blog/Content:
-- **Featured images** by disabled artists
-- **Alt text as poetry** - descriptive, engaging, not just functional
-- **Transcripts designed** as parallel content, not afterthought
-- **Sign language videos** embedded where relevant
-
-## Creating DIS-inspired Content
-
-### Content Guidelines:
-1. **Center disabled voices** - quotes, images, perspectives
-2. **Show, don't just tell** - visual examples of concepts
-3. **Make accessibility visible** - show how it works, don't just say it exists
-4. **Celebrate disability culture** - pride, community, innovation
-
-### Visual Content Types:
-
-#### 1. **Disability-AI Concept Art**
-- AI tools imagined through disability lens
-- Future assistive technology visualizations
-- Disability-centered AI interface mockups
-
-#### 2. **Research Process Visuals**
-- How disability community input shapes AI development
-- Visual documentation of participatory design
-- Timeline of disability-AI collaboration
-
-#### 3. **Community Spotlight Visuals**
-- Portraits of disabled AI researchers
-- Visual stories of disability innovation
-- Cultural artifacts of disability-AI intersection
-
-## Technical Implementation
-
-### CSS/Design System:
-```css
-/* Disability-AI Design Tokens */
-:root {
-  /* High contrast colors */
-  --color-primary: #000000;
-  --color-secondary: #FFFFFF;
-  --color-accent: #FF6B35; /* Orange for high visibility */
-  
-  /* Accessibility-focused spacing */
-  --spacing-large: 2rem; /* For touch targets */
-  --spacing-text: 1.5rem; /* Line height minimum */
-  
-  /* Dyslexia-friendly fonts */
-  --font-body: 'Lexend', sans-serif;
-  --font-heading: 'OpenDyslexic', serif;
-}
-
-/* Focus styles for keyboard navigation */
-:focus {
-  outline: 3px solid var(--color-accent);
-  outline-offset: 2px;
-}
-
-/* Reduced motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
-}
-```
-
-### Image Optimization:
-- **Always include descriptive alt text**
-- **SVG preferred** for scalability and accessibility
-- **Color contrast checked** in all images
-- **Text alternatives** for complex visuals
-
-### Interactive Elements:
-- **Keyboard navigable** all controls
-- **Screen reader announcements** for dynamic content
-- **Multiple input methods** supported (mouse, keyboard, touch, voice)
-- **Clear focus indicators** for all interactive elements
-
-## The DIS.art Difference
-
-What makes our aesthetic different from "accessible design":
-
-### Traditional Accessible Design:
-- **Compliance-focused** - meeting minimum standards
-- **Medical model** - fixing "problems"
-- **Add-on approach** - accessibility added later
-- **Uniform solutions** - one size fits all
-
-### DIS-inspired Design:
-- **Culture-focused** - celebrating disability identity
-- **Social model** - removing barriers, not fixing people
-- **Integrated approach** - accessibility from concept
-- **Diverse solutions** - multiple ways to engage
-
-## Implementation Roadmap
-
-### Phase 1: Foundation (Now)
-- Establish color palette and typography
-- Create basic design system
-- Develop content guidelines
-- Build accessible templates
-
-### Phase 2: Content Creation (Next 30 days)
-- Produce DIS-inspired visual content
-- Document disability-AI research visually
-- Create community spotlight features
-- Develop interactive visualizations
-
-### Phase 3: Community Integration (Next 90 days)
-- Open design system to community contributions
-- Host disability-AI design workshops
-- Create design resource library
-- Establish visual style guide
-
-## Measuring Success
-
-### Visual Accessibility Metrics:
-- **Color contrast compliance** (100% WCAG AA minimum)
-- **Text readability scores** across disabilities
-- **Navigation efficiency** for assistive tech users
-- **Cognitive load measurements** for neurodiverse users
-
-### Cultural Impact Metrics:
-- **Disabled creator representation** in visuals
-- **Community feedback** on design choices
-- **Cultural authenticity** ratings from disability community
-- **Innovation recognition** for disability-centered design
-
-## The Vision
-
-We're not just making "accessible websites." We're creating a **visual language for disability-centered AI** that:
-
-1. **Celebrates disability culture** through design
-2. **Makes accessibility beautiful** and desirable
-3. **Centers disabled perspectives** in every visual choice
-4. **Transforms how AI research looks and feels**
-5. **Inspires new generations** of disabled designers and developers
-
-This is design as **cultural activism**. Every color choice, every font selection, every image is a statement about who belongs in AI's future.
-
----
-*Part of the Crip Minds visual identity. Our aesthetic is our activism.*
+Success metric: when readers can scan quickly, understand structure instantly, and still feel a strong cultural voice without visual noise.

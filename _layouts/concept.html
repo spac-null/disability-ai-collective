@@ -3,7 +3,7 @@ layout: default
 ---
 
 <main id="main-content">
-  <article itemscope itemtype="https://schema.org/Article">
+  <article class="concept-article" itemscope itemtype="https://schema.org/Article">
     <header class="section section--secondary text-center">
       <div class="container container--md">
         <h1 class="text-h1 mb-4" itemprop="name headline">{{ page.title }}</h1>
@@ -33,11 +33,35 @@ layout: default
           {{ page.excerpt }}
         </p>
         {% endif %}
+
+        {% if page.section_links and page.section_links.size > 0 %}
+        <nav class="flex flex-wrap justify-center gap-3 mt-8" aria-label="On this concept page">
+          {% for link in page.section_links %}
+            <a href="#{{ link.anchor }}" class="btn btn--outline btn--sm">{{ link.label }}</a>
+          {% endfor %}
+        </nav>
+        {% endif %}
       </div>
     </header>
 
     <section class="section section--primary">
       <div class="container container--md">
+        {% if page.hero_image %}
+        <figure class="card card--elevated p-4 mb-8">
+          <img
+            class="card__media card__media--lg"
+            src="{{ page.hero_image | relative_url }}"
+            alt="{{ page.hero_alt | default: page.title }}"
+            loading="lazy"
+            decoding="async"
+            itemprop="image"
+          >
+          {% if page.hero_caption %}
+          <figcaption class="text-small text-muted text-center mt-4 mb-0">{{ page.hero_caption }}</figcaption>
+          {% endif %}
+        </figure>
+        {% endif %}
+
         <div class="prose prose--large post-content" itemprop="articleBody">
           {{ content }}
         </div>
@@ -85,7 +109,7 @@ layout: default
           <a href="{{ '/concepts/' | relative_url }}" class="btn btn--outline">← Back to Concept Lab</a>
           {% for concept in site.concepts %}
             {% if concept.title != page.title %}
-              <a href="{{ concept.url | relative_url }}" class="btn btn--outline">Explore Another Concept</a>
+              <a href="{{ concept.url | relative_url }}" class="btn btn--outline">Next Concept: {{ concept.title }}</a>
               {% break %}
             {% endif %}
           {% endfor %}
