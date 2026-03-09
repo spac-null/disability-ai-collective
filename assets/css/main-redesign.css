@@ -540,28 +540,28 @@ a:hover {
 .grid--3 { grid-template-columns: repeat(3, 1fr); }
 .grid--4 { grid-template-columns: repeat(4, 1fr); }
 
-.recent-experiments-wrap {
+.recent-articles-wrap {
   max-width: 1140px;
   margin: 0 auto;
 }
 
-.recent-experiments-wrap .experiments-grid {
+.recent-articles-wrap .articles-grid {
   grid-template-columns: repeat(auto-fit, minmax(300px, 360px));
   justify-content: center;
 }
 
-.recent-experiments-wrap .experiments-grid > .card:only-child {
+.recent-articles-wrap .articles-grid > .card:only-child {
   justify-self: center;
   max-width: 560px;
   width: 100%;
 }
 
-.experiments-grid {
+.articles-grid {
   grid-template-columns: repeat(auto-fit, minmax(280px, 360px));
   justify-content: center;
 }
 
-.experiments-grid > .card {
+.articles-grid > .card {
   width: 100%;
   height: 100%;
 }
@@ -573,8 +573,8 @@ a:hover {
     grid-template-columns: 1fr;
   }
 
-  .experiments-grid,
-  .recent-experiments-wrap .experiments-grid {
+  .articles-grid,
+  .recent-articles-wrap .articles-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -842,22 +842,22 @@ a:hover {
   height: 220px;
 }
 
-/* Editorial treatment for experiment cards */
-.experiments-grid .card__header {
+/* Editorial treatment for article cards */
+.articles-grid .card__header {
   padding-bottom: var(--space-3);
 }
 
-.experiments-grid .card__header .text-h4 {
+.articles-grid .card__header .text-h4 {
   line-height: 1.34;
   margin-bottom: var(--space-3);
 }
 
-.experiments-grid .card__header .text-h4 a {
+.articles-grid .card__header .text-h4 a {
   text-decoration: none;
   text-wrap: balance;
 }
 
-.experiment-card__meta {
+.article-card__meta {
   align-items: center;
   color: var(--color-text-muted);
   display: flex;
@@ -868,19 +868,19 @@ a:hover {
   text-transform: none;
 }
 
-.experiment-card__date {
+.article-card__date {
   color: var(--color-text-muted);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
 }
 
-.experiment-card__sep {
+.article-card__sep {
   color: var(--color-border-brand);
   font-size: 0.7rem;
   opacity: 0.9;
 }
 
-.experiment-card__topic {
+.article-card__topic {
   color: var(--color-text-brand);
   font-family: var(--font-family-script), var(--font-family-serif);
   font-size: var(--font-size-sm);
@@ -888,13 +888,13 @@ a:hover {
   font-weight: var(--font-weight-medium);
 }
 
-.experiment-card__author {
+.article-card__author {
   align-items: center;
   display: inline-flex;
   gap: var(--space-2);
 }
 
-.experiment-card__author-icon {
+.article-card__author-icon {
   border: 1px solid var(--color-border-secondary);
   border-radius: 999px;
   box-shadow: var(--shadow-sm);
@@ -903,14 +903,14 @@ a:hover {
   width: 20px;
 }
 
-.experiment-card__author-name {
+.article-card__author-name {
   color: var(--color-text-secondary);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   letter-spacing: 0.02em;
 }
 
-.experiment-card__excerpt {
+.article-card__excerpt {
   color: var(--color-text-secondary);
   font-family: var(--font-family-serif);
   font-size: clamp(1.02rem, 1.3vw, 1.12rem);
@@ -919,7 +919,7 @@ a:hover {
   line-height: 1.62;
 }
 
-.experiments-grid .card__body > .flex.items-center {
+.articles-grid .card__body > .flex.items-center {
   border-top: 1px solid var(--color-border-secondary);
   padding-top: var(--space-4);
 }
@@ -2226,7 +2226,7 @@ a:hover {
     margin-bottom: var(--space-6);
   }
 
-  .experiment-card__topic {
+  .article-card__topic {
     font-family: var(--font-family-serif);
   }
 }

@@ -123,8 +123,8 @@ description: "Editorial arts platform publishing disability-led perspectives on 
       </div>
 
     {% if site.posts.size > 0 %}
-      <div class="recent-experiments-wrap">
-        <div class="grid grid--3 experiments-grid">
+      <div class="recent-articles-wrap">
+        <div class="grid grid--3 articles-grid">
           {% for post in site.posts limit:3 %}
           <article class="card card--elevated">
             {% capture home_post_image %}{% cycle 'home-post-images': '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_1.png', '/assets/advanced_street_scene.png', '/assets/expert_transit_universal_design.png' %}{% endcapture %}
@@ -140,25 +140,25 @@ description: "Editorial arts platform publishing disability-led perspectives on 
             {% endif %}
             <img class="card__media" src="{{ home_post_image | strip | relative_url }}" alt="Preview visual for {{ post.title }}" loading="lazy" decoding="async">
             <div class="card__header">
-              <div class="text-caption mb-2 experiment-card__meta">
-                <time class="experiment-card__date" datetime="{{ post.date | date_to_xmlschema }}">
+              <div class="text-caption mb-2 article-card__meta">
+                <time class="article-card__date" datetime="{{ post.date | date_to_xmlschema }}">
                   {{ post.date | date: "%B %d, %Y" }}
                 </time>
-                <span class="experiment-card__sep" aria-hidden="true">|</span>
-                <span class="experiment-card__author">
+                <span class="article-card__sep" aria-hidden="true">|</span>
+                <span class="article-card__author">
                   <img
-                    class="experiment-card__author-icon"
+                    class="article-card__author-icon"
                     src="{{ home_author_icon | relative_url }}"
                     alt=""
                     aria-hidden="true"
                     loading="lazy"
                     decoding="async"
                   >
-                  <span class="experiment-card__author-name">{{ post.author | default: "AI Collective" }}</span>
+                  <span class="article-card__author-name">{{ post.author | default: "AI Collective" }}</span>
                 </span>
                 {% if post.categories %}
-                  <span class="experiment-card__sep" aria-hidden="true">|</span>
-                  <span class="experiment-card__topic">{{ post.categories | first | capitalize }}</span>
+                  <span class="article-card__sep" aria-hidden="true">|</span>
+                  <span class="article-card__topic">{{ post.categories | first | capitalize }}</span>
                 {% endif %}
               </div>
               
@@ -168,7 +168,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
             </div>
             
             <div class="card__body">
-              <p class="text-body mb-6 experiment-card__excerpt">
+              <p class="text-body mb-6 article-card__excerpt">
                 {{ post.excerpt | strip_html | truncatewords: 35 }}
               </p>
             </div>
