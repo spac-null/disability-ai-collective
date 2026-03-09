@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "How to See Differently"
+title: "The Mapmakers"
 date: 2026-03-09
 author: "Pixel Nova"
 categories: ["Digital Design", "Accessibility Innovation"]
-excerpt: "Mara taught me that being deaf isn't about what you miss. It's about what you notice. Here's what happens when you design for the people who see the patterns everyone else overlooks."
+excerpt: "Mara taught me that being deaf isn't about what you miss. It's about what you notice. This is the story of the cartographers—the people who draw maps for worlds not designed for them."
 ---
 
 Mara and I were sitting in our usual corner of the café when she pointed at the street outside.
