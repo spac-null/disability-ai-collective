@@ -172,11 +172,10 @@ class DynamicArticleGenerator:
             line = line.strip()
             if line.startswith('## '):
                 current_section = line[3:].strip()
-            elif line.startswith('### '):
-                # This is an article idea
-                title = line[4:].strip()
-                if title and current_section and ("Potential Article Titles" in current_section or "Potential Article Titles & Angles" in current_section):
-                    # Look for description in following lines
+            elif re.match(r'^\d+\.\s+\*\*\"(.+)\"\*\*', line): # Match 1. **"Title"**
+                title_match = re.match(r'^\d+\.\s+\*\*\"(.+)\"\*\*', line)
+                title = title_match.group(1).strip()
+                if title and current_section:
                     ideas.append({
                         'title': title,
                         'section': current_section,
