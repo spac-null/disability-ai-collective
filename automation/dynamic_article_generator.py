@@ -15,7 +15,6 @@ import re
 from datetime import datetime, timedelta
 from pathlib import Path
 import subprocess
-import markdown
 
 class DynamicArticleGenerator:
     def __init__(self):
@@ -176,7 +175,7 @@ class DynamicArticleGenerator:
             elif line.startswith('### '):
                 # This is an article idea
                 title = line[4:].strip()
-                if title and current_section and "Potential Article Titles" in current_section:
+                if title and current_section and ("Potential Article Titles" in current_section or "Potential Article Titles & Angles" in current_section):
                     # Look for description in following lines
                     ideas.append({
                         'title': title,
