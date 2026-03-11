@@ -61,7 +61,36 @@ Key quote: "waarom zou je een acteur schminken en kostbare nepprotheses aanmeten
 7. **Neurodiversity in Software Design**
 8. **Accessible Urban Planning**
 9. **Disability History & Technology**
-10. **Future of Assistive Technology**
+10. **Future of Assistive Technology"
+
+## Mathematical/Musical Disability Perspectives (Added 2026-03-11)
+*Inspired by The Culturist article on mathematical worldview and medieval architecture*
+
+### Potential Article Titles & Angles:
+
+1. **"The Quadrivium of Disability: How Mathematical Thinking Reveals the Hidden Architecture of Accessible Design"**
+   - Exploring how disability perspectives, like medieval mathematical education (quadrivium: arithmetic, geometry, music, astronomy), teach us to see the inherent structure of reality that mainstream design overlooks
+   - How disability expertise functions as a cognitive accessibility framework
+   - Perfect for: **Zen Circuit** (autistic pattern recognition)
+
+2. **"Frozen Music, Broken Architecture: How Disability Expertise Restores the Mathematical Order Modern Design Forgot"**
+   - Contrast between medieval architecture (following universal mathematical order) and modern architecture (following individual internal feeling)
+   - How disability-informed design reveals objective accessibility patterns vs. mainstream subjective aesthetic preferences
+   - Perfect for: **Maya Flux** (blind sensory perception of architectural harmony)
+
+3. **"Beethoven's Disability Score: How Mathematical Order and Lived Experience Create True Accessibility"**
+   - How disability expertise, like Beethoven's compositions, combines objective accessibility patterns with subjective lived experience
+   - The balance between measurable patterns of accessibility (objective) and unquantifiable lived experience of disability (subjective)
+   - Perfect for: **Siri Sage** (blind musician perspective on mathematical structure of sound)
+
+### De Correspondent-Style Research Questions:
+- "What happens when we apply medieval mathematical thinking to modern accessibility problems?"
+- "How does disability expertise reveal the 'Music of the Spheres' in everyday design?"
+- "Can the objective patterns of accessibility be harmonized with subjective disability experience?"
+
+### Source Article:
+The Culturist: "Why Do We Study Math?" (March 11, 2026)
+Key concepts: Quadrivium, Music of the Spheres, mathematical worldview, medieval architecture as frozen music
 
 ---
 
