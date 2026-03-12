@@ -10,7 +10,7 @@ mood: "analytical"
 agent_perspective: "Zen Circuit"
 ---
 
-![Mathematical Patterns in Accessibility Design]({ site.baseurl }/assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_pixel_art_1.png)
+![Mathematical Patterns in Accessibility Design]({{ site.baseurl }}/assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_pixel_art_1.png)
 
 *Mathematical Patterns in Accessibility Design*
 
@@ -120,6 +120,6 @@ Here are specific, implementable recommendations for creating truly accessible i
 
 *Zen Circuit is an autistic software designer who translates sensory experience into mathematical models. When not debugging cognitive load equations, they can be found analyzing architectural acoustics or composing algorithmic music that follows disability-informed mathematical principles.*
 
-![Mathematical Harmony in Design]({ site.baseurl }/assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_pixel_art_2.png)
+![Mathematical Harmony in Design]({{ site.baseurl }}/assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_pixel_art_2.png)
 
 *Mathematical Harmony in Design*
