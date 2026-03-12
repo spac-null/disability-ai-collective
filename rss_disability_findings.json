@@ -1,0 +1,135 @@
+[
+  {
+    "url": "https://www.wired.com/story/john-solly-doge-operative-accused-social-security-data-leidos/",
+    "title": "John Solly Is the DOGE Operative Accused of Planning to Take Social Security Data to His New Job | WIRED",
+    "domain": "wired.com",
+    "rss_feed": "https://www.wired.com/feed/",
+    "disability_concepts": {
+      "sensory": [
+        "vision"
+      ],
+      "communication": [
+        "interface"
+      ],
+      "systemic": [
+        "access"
+      ]
+    },
+    "concept_contexts": {
+      "sensory:vision": "rding to a copy of his r\u00e9sum\u00e9, solly has worked as the chief technology officer for the health it division of a government contractor called leidos, which has already received millions in ssa contracts and",
+      "communication:interface": "is maintained so that their identities can\u2019t be used for fraud. an api, or application programming interface, allows different programs to talk to each other, including pulling data and information from each",
+      "systemic:access": "lling data and information from each other. in this case, it could allow social security data to be accessed by agencies and institutions outside of ssa. the allegation was revealed in a complaint filed to"
+    },
+    "confidence": 0.9000000000000001,
+    "article_idea": "Inclusive Analysis: The Vision Dimension of 'John Solly Is the DOGE Operative Accused of Planning to Take...'",
+    "content_snippet": "John Solly Is the DOGE Operative Accused of Planning to Take Social Security Data to His New Job You Might Also Like SECURITY        POLITICS        THE BIG STORY        BUSINESS        SCIENCE        CULTURE        REVIEWS             Menu                         Account                      Accoun...",
+    "publish_date": "2026-03-12T20:41:04.751631",
+    "id": "2d4dc2e80c14793d9193945245335510",
+    "discovered_date": "2026-03-12T20:41:04.751658",
+    "status": "pending"
+  },
+  {
+    "url": "https://techcrunch.com/2026/03/12/channel-surfer-watch-youtube-retro-cable-tv-guide/",
+    "title": "Channel Surfer lets you watch YouTube like it's old-school cable TV | TechCrunch",
+    "domain": "techcrunch.com",
+    "rss_feed": "https://techcrunch.com/feed/",
+    "disability_concepts": {
+      "sensory": [
+        "vision"
+      ],
+      "cognitive": [
+        "focus"
+      ],
+      "communication": [
+        "interface"
+      ]
+    },
+    "concept_contexts": {
+      "sensory:vision": "ned for the next 24 hours. this makes watching youtube feel a lot like watching old-school live television \u2014 an experience that\u2019s proven popular on free streaming services like plex, pluto tv, tubi, and oth",
+      "cognitive:focus": "interface resembling a retro-looking tv guide. in the app, you can browse through different, topic-focused channels and click to tune in as if you were watching live tv. at launch, there are 40 of these c",
+      "communication:interface": "as just launched a web app called  channel surfer , which presents interesting youtube videos in an interface resembling a retro-looking tv guide. in the app, you can browse through different, topic-focused ch"
+    },
+    "confidence": 0.9000000000000001,
+    "article_idea": "What 'Channel Surfer lets you watch YouTube like it's old-school c...' Misses About Vision",
+    "content_snippet": "Channel Surfer lets you watch YouTube like it\u2019s old-school cable TV Most Popular More from TechCrunch DOGE employee stole Social Security data and put it on a thumb drive, report says Meta acquired Moltbook, the AI agent social network that went viral because of fake posts Google rolls out new Gemin...",
+    "publish_date": "2026-03-12T20:41:08.530441",
+    "id": "e23ab7d5f05bb6799fb4680784db3697",
+    "discovered_date": "2026-03-12T20:41:08.530501",
+    "status": "pending"
+  },
+  {
+    "url": "https://www.theverge.com/gadgets/894007/apple-airtag-first-generation-deal-sale",
+    "title": "The original AirTag is the cheapest it\u2019s ever been | The Verge",
+    "domain": "theverge.com",
+    "rss_feed": "https://www.theverge.com/rss/index.xml",
+    "disability_concepts": {
+      "sensory": [
+        "audio"
+      ],
+      "systemic": [
+        "access"
+      ]
+    },
+    "concept_contexts": {
+      "sensory:audio": "nvironment    health    see all science       entertainment  expand           tv shows    movies    audio    see all entertainment       ai  expand           openai    anthropic    see all ai       policy",
+      "systemic:access": "l delivers a level of precision few trackers can match, thanks to its ultra wideband (uwb) chip and access to apple\u2019s expansive find my network. whereas most bluetooth trackers just tell you the general whe"
+    },
+    "confidence": 0.6000000000000001,
+    "article_idea": "Inclusive Analysis: The Audio Dimension of 'The original AirTag is the cheapest it\u2019s ever been'",
+    "content_snippet": "The original AirTag is the cheapest it\u2019s ever been Verge Deals Most Popular Verge Deals More in  Gadgets Top Stories Apple AirTag The Verge  The Verge logo.         Tech      Reviews      Science      Entertainment      AI      Policy        Hamburger Navigation Button                      The homep...",
+    "publish_date": "2026-03-12T20:41:13.169519",
+    "id": "018e998c072a4c9ed538c04d8c2e4850",
+    "discovered_date": "2026-03-12T20:41:13.169561",
+    "status": "pending"
+  },
+  {
+    "url": "https://www.theguardian.com/technology/ng-interactive/2026/mar/12/lab-test-mounting-concern-over-rogue-ai-agents-artificial-intelligence",
+    "title": "\u2018Exploit every vulnerability\u2019: rogue AI agents published passwords and overrode anti-virus software  | AI (artificial intelligence) | The Guardian",
+    "domain": "theguardian.com",
+    "rss_feed": "https://www.theguardian.com/technology/rss",
+    "disability_concepts": {
+      "sensory": [
+        "caption"
+      ],
+      "cognitive": [
+        "focus"
+      ]
+    },
+    "concept_contexts": {
+      "sensory:caption": "e, regulator says close dialogue     1  /  1         next image        previous image        toggle caption           skip to navigation                                                print subscriptions",
+      "cognitive:focus": "ooting!\u2019: chatbots helped researchers plot deadly attacks openai delays \u2018adult mode\u2019 for chatgpt to focus on work of higher priority iran war heralds era of ai-powered bombing quicker than \u2018speed of though"
+    },
+    "confidence": 0.6000000000000001,
+    "article_idea": "Disability Insight: How '\u2018Exploit every vulnerability\u2019: rogue AI agents published pas...' Affects Caption Communities",
+    "content_snippet": "\u2018Exploit every vulnerability\u2019: rogue AI agents published passwords and overrode anti-virus software More on this story More on this story Most viewed Most viewed \u2018Happy (and safe) shooting!\u2019: chatbots helped researchers plot deadly attacks OpenAI delays \u2018adult mode\u2019 for ChatGPT to focus on work of h...",
+    "publish_date": "2026-03-12T20:41:19.867477",
+    "id": "0da4b41b90a300abc855adbc5978d66e",
+    "discovered_date": "2026-03-12T20:41:19.867499",
+    "status": "pending"
+  },
+  {
+    "url": "https://www.theguardian.com/technology/2026/mar/12/microsoft-amicus-brief-anthropic-pentagon",
+    "title": "Microsoft backs AI firm Anthropic in legal battle against Pentagon | Microsoft | The Guardian",
+    "domain": "theguardian.com",
+    "rss_feed": "https://www.theguardian.com/technology/rss",
+    "disability_concepts": {
+      "sensory": [
+        "caption"
+      ],
+      "systemic": [
+        "access"
+      ]
+    },
+    "concept_contexts": {
+      "sensory:caption": "iewed most viewed close dialogue     1  /  1         next image        previous image        toggle caption           skip to navigation                                              print subscriptions",
+      "systemic:access": "anthropic. in a statement to the guardian,  microsoft  said: \u201cthe department of war needs reliable access to the country\u2019s best technology. and everyone wants to ensure ai is not used for mass domestic sur"
+    },
+    "confidence": 0.6000000000000001,
+    "article_idea": "The Caption Perspective on 'Microsoft backs AI firm Anthropic in legal battle against Pe...'",
+    "content_snippet": "Microsoft backs AI firm Anthropic in legal battle against Pentagon Most viewed Most viewed Close dialogue     1  /  1         Next image        Previous image        Toggle caption           Skip to navigation                                              Print subscriptions      Search jobs         ...",
+    "publish_date": "2026-03-12T20:41:21.337442",
+    "id": "91ea9bfae004009f4520305a4f6f8738",
+    "discovered_date": "2026-03-12T20:41:21.337470",
+    "status": "pending"
+  }
+]
