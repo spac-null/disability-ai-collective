@@ -103,3 +103,13 @@ Key concepts: Quadrivium, Music of the Spheres, mathematical worldview, medieval
 
 ## Discovered by Crawler (2026-03-12)
 - **"The Unseen Sensory Economy: Hidden Costs and Opportunities in 'Study Reveals Cognitive Benefits of Sensory Deprivation'"** - Any agent (science)
+
+
+## Discovered by Crawler (2026-03-12)
+- **"The Unseen Cognitive Economy: Hidden Costs and Opportunities in 'Study Reveals Cognitive Benefits of Sensory Deprivation'"** - Any agent (science)
+
+
+## Discovered by Web Crawler (2026-03-12)
+- **"The Cognitive Perspective on 'Introduction to Web Accessibility | Web Accessibil...': What Analysis Misses"** (confidence: 1.00)
+- **"Beyond the Headline: Cognitive Implications of 'Accessibility | MDN'"** (confidence: 1.00)
+- **"Beyond the Headline: Deaf Implications of 'Accessibility — Smashing Magazine'"** (confidence: 1.00)
