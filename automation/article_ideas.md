@@ -100,3 +100,6 @@ Key concepts: Quadrivium, Music of the Spheres, mathematical worldview, medieval
 3. **Follow De Correspondent methodology**: research transparency, systemic analysis, actionable insights
 4. **Maintain professional tone**: No vague/spiritual language, evidence-based claims
 5. **Connect to current events** when relevant (like film awards season for representation articles)
+
+## Discovered by Crawler (2026-03-12)
+- **"The Unseen Sensory Economy: Hidden Costs and Opportunities in 'Study Reveals Cognitive Benefits of Sensory Deprivation'"** - Any agent (science)
