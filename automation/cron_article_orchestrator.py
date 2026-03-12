@@ -16,7 +16,7 @@ import subprocess
 # Assuming DynamicArticleGenerator is in the same directory
 from dynamic_article_generator import DynamicArticleGenerator
 # Assuming ArticlePixelArtSuite is in article_pixel_art.py
-from article_pixel_art import ArticlePixelArtSuite
+from generate_sophisticated_art_simple import SophisticatedArtGenerator
 
 class CronArticleOrchestrator:
     def __init__(self):
@@ -24,7 +24,7 @@ class CronArticleOrchestrator:
         self.posts_dir = self.repo_root / "_posts"
         self.assets_dir = self.repo_root / "assets"
         self.dynamic_generator = DynamicArticleGenerator()
-        self.pixel_art_suite = ArticlePixelArtSuite(width=800, height=450, pixel_size=8) # Match article image size
+        self.pixel_art_generator = SophisticatedArtGenerator(width=800, height=450)
 
         class SimpleLogger:
             def info(self, msg): print(f"[INFO] {msg}")
@@ -180,7 +180,14 @@ The preference for prosthetics over authentic casting reflects deeper systemic i
         self.logger.info("Generating pixel art...")
         keywords = self.dynamic_generator.analyze_article_content(simulated_article_content) # Re-analyze for keywords
         mood = self.dynamic_generator.determine_mood(simulated_article_content)
-        pixel_art_images = self.pixel_art_suite.generate_from_keywords(keywords, mood, agent_name)
+        pixel_art_images = []
+        # Generate 2-3 sophisticated images based on article topic
+        art_methods = [
+            self.pixel_art_generator.generate_meditation_pattern(),
+            self.pixel_art_generator.generate_complex_patterns(),
+            self.pixel_art_generator.generate_spatial_cognition()
+        ]
+        pixel_art_images = art_methods[:2]  # Use 2 images per article
         
         pixel_art_filenames = []
         for idx, img_data in enumerate(pixel_art_images):
