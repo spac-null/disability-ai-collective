@@ -51,19 +51,20 @@ def run_crawler():
             has_network = False
     
     if not has_network:
-        print("\nRunning MOCK crawler (simulated data)...")
+        print("\nRunning REAL DATA crawler (accessible sources only)...")
         try:
-            from disability_discovery_crawler_mock import MockDisabilityCrawler
-            crawler = MockDisabilityCrawler()
-            findings = crawler.run_crawl()
+            from disability_discovery_crawler_real import RealDataDisabilityCrawler
+            crawler = RealDataDisabilityCrawler()
+            findings = crawler.run()
             
-            # Also update the cron job that this was a mock run
+            # Update the cron job that this was a real data run
             with open('crawler_last_run.txt', 'w') as f:
-                f.write(f"MOCK_RUN|{datetime.now().isoformat()}|{len(findings)}")
+                f.write(f"REAL_DATA_RUN|{datetime.now().isoformat()}|{len(findings)}")
             
-            return len(findings)
+            return len(findings) if findings else 0
         except Exception as e:
-            print(f"✗ Mock crawler failed: {e}")
+            print(f"✗ Real data crawler failed: {e}")
+            print("  Note: Even without external RSS feeds, we can still use GitHub/HN data")
             return 0
 
 def main():
