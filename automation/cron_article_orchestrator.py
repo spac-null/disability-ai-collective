@@ -183,9 +183,9 @@ The preference for prosthetics over authentic casting reflects deeper systemic i
         pixel_art_images = []
         # Generate 2-3 sophisticated images based on article topic
         art_methods = [
-            self.pixel_art_generator.generate_meditation_pattern(),
-            self.pixel_art_generator.generate_complex_patterns(),
-            self.pixel_art_generator.generate_spatial_cognition()
+            self.pixel_art_generator.generate_acoustic_chaos(),
+            self.pixel_art_generator.generate_acoustic_harmony(),
+            self.pixel_art_generator.generate_sensory_expertise()
         ]
         pixel_art_images = art_methods[:2]  # Use 2 images per article
         
