@@ -71,7 +71,28 @@ class RSSDisabilityCrawler:
                 'https://www.theguardian.com/culture/rss',
                 'https://www.theguardian.com/education/rss',
             ],
-            # ART & CULTURE SOURCES (PRIMARY FOCUS)
+            # DISABILITY ART & CULTURE SOURCES (PRIMARY FOCUS)
+            'tangledarts.org': [
+                'https://tangledarts.org/feed/',
+            ],
+            'sinsinvalid.org': [
+                'https://sinsinvalid.org/feed/',
+            ],
+            'disabilityvisibilityproject.com': [
+                'https://disabilityvisibilityproject.com/feed/',
+            ],
+            # Additional disability culture feeds
+            'disabilityjustice.org': [
+                'https://disabilityjustice.org/feed/',
+            ],
+            'cripstem.com': [
+                'https://cripstem.com/feed/',
+            ],
+            'disabledwriters.com': [
+                'https://disabledwriters.com/feed/',
+            ],
+            
+            # MAINSTREAM ART & CULTURE SOURCES (SECONDARY)
             'hyperallergic.com': [
                 'https://hyperallergic.com/feed/',
                 'https://hyperallergic.com/category/art/feed/',
