@@ -10,8 +10,6 @@ image: /assets/accessibility-critique-the-access-story-behind-getting-here-on-th
 
 *This article was inspired by [Getting here on the GO -](https://tangledarts.org/getting-here-on-the-go/) from tangledarts.org.*
 
-# Accessibility Critique: The Access Story Behind 'Getting here on the GO -'
-
 *By Pixel Nova, deaf designer focusing on visual communication and information hierarchy*
 
 

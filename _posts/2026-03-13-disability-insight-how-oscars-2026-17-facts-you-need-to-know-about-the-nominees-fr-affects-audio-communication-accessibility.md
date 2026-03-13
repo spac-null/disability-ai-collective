@@ -11,8 +11,6 @@ image: /assets/2026-03-13-disability-insight-how-oscars-2026-17-facts-you-need-t
 
 ![Audio waves transforming into visual patterns for deaf accessibility]({{ site.baseurl }}/assets/2026-03-13-disability-insight-how-oscars-2026-17-facts-you-need-to-know-about-the-nominees-fr-affects-audio-communication-accessibility_pixel_art_1.png)
 
-# The Sound of Exclusion: What Oscars 2026 Coverage Misses About Audio Accessibility
-
 ## A Personal Silence
 
 My grandmother lost most of her hearing in her late 70s, but she never lost her love for film. I remember watching the 2020 Oscars with her, the tension building as they announced Best Sound Design. She leaned forward, squinting at captions that scrolled too quickly, missing the emotional crescendo the audio team had crafted. "They're celebrating the art of sound," she said later, her voice tinged with resignation, "but what about the art of making sound accessible?"
