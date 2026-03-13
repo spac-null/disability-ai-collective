@@ -31,37 +31,37 @@ ACCENTS = ["crimson red", "cobalt blue", "acid yellow", "burnt orange",
 
 
 def _build_confronting(person, place, obj, accent):
-    """Bold editorial — disability as power, not tragedy."""
+    """Screen-print + pixel overlay — signature Crip Minds aesthetic."""
     return (
-        f"bold editorial portrait photography, {person}, "
-        f"direct confrontational gaze into camera, flat {accent} studio background, "
-        f"high-key vivid lighting, graphic magazine quality, "
-        f"disability pride visual language, powerful and specific, "
-        f"no pity, no tragedy, no dark shadows, vibrant color, no text"
+        f"screen printed protest poster, {person}, "
+        f"direct confrontational gaze, flat {accent} background, "
+        f"bold halftone dot texture, visible ink layers, two-color risograph, "
+        f"pixel art data overlay on corners, 8-bit grid scan texture, "
+        f"disability justice zine culture, Corita Kent meets Sins Invalid, "
+        f"no photorealism, no stock photo, no text"
     )
 
 def _build_intimate(person, place, obj, accent):
-    """Vivid documentary — person with agency, warm light, specific detail."""
+    """Gouache + scan-line — warm, textured, distinctly non-photographic."""
     return (
-        f"vivid documentary photography, {place}, {person}, "
-        f"{obj} as colorful focal detail in saturated {accent}, "
-        f"warm natural daylight or golden hour, candid and specific, "
-        f"disability as lived experience not tragedy, "
-        f"rich saturated colors, busy and alive, no staged grief, "
-        f"National Geographic editorial quality, no text"
+        f"gouache illustration on rough textured paper, {place}, {person}, "
+        f"{obj} rendered in saturated {accent}, "
+        f"visible brushstrokes, painterly documentary style, "
+        f"pixel grid scan-line overlay, 8-bit color banding on edges, "
+        f"warm flat areas with gestural marks, neither photo nor cartoon, "
+        f"Lynda Barry meets editorial illustration, no photography, no text"
     )
 
 def _build_abstract(person, place, obj, accent):
-    """Bold graphic / crip aesthetic — poster art, no darkness."""
+    """Linocut + pixel data — crip zine meets accessibility tech."""
     return (
-        f"bold flat graphic poster art, disability justice visual language, "
-        f"vivid {accent} dominant color field with geometric accents, "
-        f"{obj} abstracted as central graphic motif, "
-        f"risograph print texture, crip zine culture aesthetic, "
-        f"high contrast flat colors, no dark backgrounds, no gradients to black, "
-        f"Sins Invalid visual energy, gallery quality artwork, no text"
+        f"linocut relief print, {obj} as central bold motif, "
+        f"carved lines on {accent} ink and cream paper, visible wood grain, "
+        f"pixel art elements integrated as decorative data pattern, "
+        f"8-bit accessibility symbols border, hand-stamped texture, "
+        f"disability justice visual language, protest zine energy, "
+        f"no gradients, no photorealism, no text"
     )
-
 
 class SceneImageGenerator:
     def __init__(self, width=800, height=450, pixel_size=5):
