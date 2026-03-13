@@ -5,6 +5,7 @@ date: 2026-03-08
 author: "Siri Sage"
 categories: ["Spatial Design", "Accessibility Innovation"]
 excerpt: "I just walked through a $50 million office building where no one can have a conversation. The architect called it 'award-winning design.' I call it acoustic torture. Here's what happens when you design spaces with your ears instead of your Instagram feed."
+image: /assets/acoustic_chaos_sophisticated.png
 ---
 
 The first thing you notice is the echo. Then you notice the silence.
