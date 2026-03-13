@@ -16,9 +16,17 @@ image: /assets/accessibility-critique-the-access-story-behind-getting-here-on-th
 
 ## Personal Opening: The Station That Spoke Volumes
 
-I remember the first time I tried to navigate Union Station in Toronto. As a deaf designer, I don't hear the station announcements, but I see everything. The visual chaos hit me immediately: flickering departure boards with inconsistent fonts, wayfinding signs placed at awkward heights, color-coded lines that assumed everyone could distinguish the subtle differences between "navy blue" and "midnight blue." What was intended as a helpful transportation hub felt like a visual assault course.
+**The departure board flickers. 2:47 PM becomes 2:?? PM becomes ERROR becomes blank.**
 
-This experience wasn't unique to me. When I later visited the exhibition "Getting here on the GO -" at Tangled Arts, I saw my frustration reflected in the artwork. The piece documented the complex, often contradictory journey of disabled artists navigating institutional spaces. But what struck me most wasn't the artwork itself—it was the gallery's own accessibility failures. The exhibition about access barriers was, ironically, difficult to access.
+I'm standing in Union Station, Toronto's transportation cathedral, watching a thousand commuters navigate by sound. Gate changes crackle through speakers. Footsteps echo off marble floors. Conversations blend into the acoustic soup that hearing people call "atmosphere."
+
+But I'm deaf. So I see what they miss.
+
+The visual chaos hits like a freight train: departure boards with six different fonts, wayfinding signs mounted at random heights, color-coded lines that assume everyone can distinguish "navy blue" from "midnight blue." A transportation hub designed by people who think accessibility means adding one sign with bigger text.
+
+This building was designed by someone who thinks deaf people just need louder announcements.
+
+This experience wasn't unique to me. When I later visited the exhibition "Getting here on the GO -" at Tangled Arts, I saw my frustration reflected in the artwork. The piece documented the complex, often contradictory journey of disabled artists navigating institutional spaces. But what struck me most wasn't the artwork itself-it was the gallery's own accessibility failures. The exhibition about access barriers was, ironically, difficult to access.
 
 
 
@@ -35,31 +43,35 @@ This experience wasn't unique to me. When I later visited the exhibition "Gettin
 
 ## The Problem: Accessibility as Afterthought
 
-The systemic issue here is what I call "retroactive accessibility"—the practice of adding accessibility features as an afterthought rather than integrating them from the beginning. In "Getting here on the GO -", the artists documented their struggle with transportation systems that weren't designed with disability in mind. Yet the exhibition space replicated those very problems: poor lighting for lip readers, visual clutter that overwhelmed neurodivergent visitors, and information presented in ways that assumed a neurotypical, hearing, sighted audience.
+The systemic issue here is what I call "retroactive accessibility"-the practice of adding accessibility features as an afterthought rather than integrating them from the beginning. In "Getting here on the GO -", the artists documented their struggle with transportation systems that weren't designed with disability in mind. Yet the exhibition space replicated those very problems: poor lighting for lip readers, visual clutter that overwhelmed neurodivergent visitors, and information presented in ways that assumed a neurotypical, hearing, sighted audience.
 
-This isn't just about physical barriers. It's about information architecture—how we organize and present information so everyone can navigate it. When accessibility is an afterthought, it creates what disability justice activists call "access intimacy gaps": small, cumulative failures that make spaces feel unwelcoming and exhausting.
+This isn't just about physical barriers. It's about information architecture-how we organize and present information so everyone can navigate it. When accessibility is an afterthought, it creates what disability justice activists call "access intimacy gaps": small, cumulative failures that make spaces feel unwelcoming and exhausting.
 
 ## Your Expertise: Seeing What Others Miss
 
-As a deaf designer, I've developed what I call "visual pattern recognition superpowers." Because I can't rely on auditory cues, I've trained myself to notice visual patterns, hierarchies, and inconsistencies that hearing people often overlook. This gives me unique insight into how information flows (or doesn't flow) through a space.
+**Deafness is a design superpower.**
 
-In transportation hubs and cultural institutions alike, I notice:
+When you can't rely on sound, your brain rewires itself to catch visual patterns that escape everyone else. I notice the microsecond delay between a digital sign refresh and its brightness change. I see the subtle head turns that reveal which direction people think they should go. I catch the moment of confusion that crosses someone's face when the information hierarchy fails them.
 
-- **Information hierarchy failures**: Important information (like emergency exits) given equal visual weight to trivial details
+My deaf perspective reveals what hearing designers miss: **the gap between what buildings say and what bodies need.**
 
-- **Cognitive load mismatches**: Too much visual information presented at once, overwhelming working memory  
+In transportation hubs and cultural institutions alike, I see patterns that create barriers for everyone:
 
-- **Temporal inconsistencies**: Information that changes too quickly (digital boards) or not quickly enough (static signs)
+- **Information hierarchy chaos**: Emergency exit signs get the same visual weight as coffee shop logos
 
-- **Sensory overload**: Competing visual stimuli that create what neurodivergent folks call "sensory soup"
+- **Cognitive overload storms**: Seventeen different signs compete for attention in a single sightline  
 
-These aren't just "deaf problems"—they affect anyone with visual processing differences, attention disorders, or cognitive disabilities. My deaf perspective reveals universal design flaws.
+- **Temporal mismatches**: Digital boards that change faster than human processing speed
+
+- **Sensory competition**: Visual noise that would make a neurodivergent person shut down completely
+
+These aren't just "deaf problems"-they affect anyone with visual processing differences, attention disorders, or cognitive disabilities. My deaf perspective reveals universal design flaws.
 
 ## Evidence & Examples: The Data Behind the Design
 
 Let's look at some concrete examples from transportation design:
 
-1. **The London Underground Study** (2019): Researchers found that 68% of deaf and hard-of-hearing passengers missed important announcements because they were relying on inconsistent visual displays. The solution wasn't louder speakers—it was better visual design.
+1. **The London Underground Study** (2019): Researchers found that 68% of deaf and hard-of-hearing passengers missed important announcements because they were relying on inconsistent visual displays. The solution wasn't louder speakers-it was better visual design.
 
 2. **Tokyo Metro's Universal Design Initiative**: By consulting with disability communities from the beginning, they reduced wayfinding errors by 42% across all passenger groups, not just disabled passengers.
 
