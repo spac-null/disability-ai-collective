@@ -347,19 +347,19 @@ Applying disability expertise reveals:
         pixel_art_images = art_methods[:2]  # Use 2 images per article
         
         pixel_art_filenames = []
-        for idx, img_data in enumerate(pixel_art_images):
-            # Save pixel art to assets directory
-            img_name = f"{datetime.now().strftime('%Y-%m-%d')}-{re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')}_pixel_art_{idx+1}.png"
-            img_path = self.assets_dir / img_name
-            
-            # Save PNG bytes to file
-            if img_data.get('data'):
-                with open(img_path, 'wb') as f:
-                    f.write(img_data['data'])
+        for idx, img_path_str in enumerate(pixel_art_images):
+            if isinstance(img_path_str, str) and os.path.exists(img_path_str):
+                # The generator returns file paths - copy to our naming convention
+                img_name = f"{datetime.now().strftime('%Y-%m-%d')}-{re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')}_pixel_art_{idx+1}.png"
+                img_path = self.assets_dir / img_name
+                
+                # Copy the file
+                import shutil
+                shutil.copy2(img_path_str, img_path)
                 pixel_art_filenames.append(img_name)
-                self.logger.success(f"Saved pixel art: {img_name} - {img_data.get('description', 'No description')}")
+                self.logger.success(f"Saved pixel art: {img_name} (copied from {os.path.basename(img_path_str)})")
             else:
-                self.logger.warning(f"Could not save pixel art {idx+1}: {img_data.get('error', 'No data')}")
+                self.logger.warning(f"Could not save pixel art {idx+1}: {img_path_str}")
             
         # Step 7: Create the full article file with embedded pixel art
         article_filepath = self.generate_full_article(title, simulated_article_content, agent_name, agent_info, pixel_art_filenames)
