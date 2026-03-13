@@ -1,135 +1,369 @@
 [
   {
-    "url": "https://www.wired.com/story/john-solly-doge-operative-accused-social-security-data-leidos/",
-    "title": "John Solly Is the DOGE Operative Accused of Planning to Take Social Security Data to His New Job | WIRED",
-    "domain": "wired.com",
-    "rss_feed": "https://www.wired.com/feed/",
+    "url": "https://www.theguardian.com/world/2026/mar/12/dismay-as-ancient-heritage-sites-across-iran-damaged-in-us-israel-bombing",
+    "title": "Dismay as ancient heritage sites across Iran damaged in US-Israel bombing | US-Israel war on Iran | The Guardian",
+    "domain": "theguardian.com",
+    "rss_feed": "https://www.theguardian.com/artanddesign/rss",
+    "disability_concepts": {
+      "sensory": [
+        "caption",
+        "music"
+      ],
+      "art": [
+        "film"
+      ]
+    },
+    "concept_contexts": {
+      "sensory:caption": "run on autopilot close dialogue     1  /  4         next image        previous image        toggle caption           skip to navigation                                              print subscriptions",
+      "sensory:music": "on    tennis    cycling    f1    golf    us sports          culture    view all culture    books    music    tv & radio    art & design    film    games    classical    stage          lifestyle    view all",
+      "art:film": "us sports          culture    view all culture    books    music    tv & radio    art & design    film    games    classical    stage          lifestyle    view all lifestyle    fashion    food    recip"
+    },
+    "confidence": 0.7000000000000001,
+    "article_idea": "What 'Dismay as ancient heritage sites across Iran damaged in US-I...' Misses About Caption",
+    "content_snippet": "Dismay as ancient heritage sites across Iran damaged in US-Israel bombing More on this story More on this story Most viewed Most viewed Middle East war creating \u2018largest supply disruption in the history of oil markets\u2019 In linking Iran to Russia, Healey could be laying ground for hard choices ahead T...",
+    "publish_date": "2026-03-13T09:56:04.901126",
+    "id": "a459d28b56d757ff067994355edd9a4c",
+    "discovered_date": "2026-03-13T09:56:04.901152",
+    "status": "pending"
+  },
+  {
+    "url": "https://tangledarts.org/getting-here-on-the-go/",
+    "title": "Getting here on the GO -",
+    "domain": "tangledarts.org",
+    "rss_feed": "https://tangledarts.org/feed/",
+    "disability_concepts": {
+      "systemic": [
+        "access"
+      ],
+      "design": [
+        "form"
+      ],
+      "art": [
+        "artist",
+        "performance",
+        "exhibition",
+        "gallery"
+      ]
+    },
+    "concept_contexts": {
+      "systemic:access": "site uses cookies in order to improve your online experience (including saving your settings in the accessibility toolbar). please accept cookies for optimal performance. accept               decline '',",
+      "design:form": "(including saving your settings in the accessibility toolbar). please accept cookies for optimal performance. accept               decline '', \t\t\t\t\t\t\t\t\t\t'items_wrap'     => '%3$s', \t\t\t\t\t\t\t\t\t\t//'show_toggl",
+      "art:artist": "oggle-duration=\"250\" aria-expanded=\"false\"> show sub menu          \t   history     \t   team     \t   artists     \t   partners     \t   annual reports     \t   support us            what\u2019s on   .sub-menu\" data-",
+      "art:performance": "ce (including saving your settings in the accessibility toolbar). please accept cookies for optimal performance. accept               decline '', \t\t\t\t\t\t\t\t\t\t'items_wrap'     => '%3$s', \t\t\t\t\t\t\t\t\t\t//'show_toggles'",
+      "art:exhibition": "gle-type=\"slidetoggle\" data-toggle-duration=\"250\" aria-expanded=\"false\"> show sub menu          \t   exhibition     \t   event     \t   snug     \t   exhibition coming soon     \t   crip times podcast     \t   partne",
+      "art:gallery": "walk to 401 richmond, or 15 minutes on the ttc. phone \u00a0\u00a0  647-725-5064 subscribe to our newsletter gallery hours  wednesday to saturday 12pm to 5pm (est) location  401 richmond st w suite 124, toronto on m5"
+    },
+    "confidence": 1.0,
+    "article_idea": "Accessibility Critique: The Access Story Behind 'Getting here on the GO -'",
+    "content_snippet": "Getting here This website uses cookies in order to improve your online experience (including saving your settings in the Accessibility toolbar). Please accept cookies for optimal performance. Accept \n             Decline '',\n\t\t\t\t\t\t\t\t\t\t'items_wrap'     => '%3$s',\n\t\t\t\t\t\t\t\t\t\t//'show_toggles'   => true,...",
+    "publish_date": "2026-03-13T09:56:07.006777",
+    "id": "6b912243374ce28faf92139a35dc090e",
+    "discovered_date": "2026-03-13T09:56:07.006834",
+    "status": "pending"
+  },
+  {
+    "url": "https://sinsinvalid.org/support-disability-justice-campaign-update/",
+    "title": "Support Disability Justice! (Campaign Update) | Sins Invalid",
+    "domain": "sinsinvalid.org",
+    "rss_feed": "https://sinsinvalid.org/feed/",
+    "disability_concepts": {
+      "physical": [
+        "dance",
+        "movement"
+      ],
+      "systemic": [
+        "access"
+      ],
+      "art": [
+        "film"
+      ]
+    },
+    "concept_contexts": {
+      "physical:dance": "sins invalid is a fiscally sponsored project of   dancers\u2019 group. we\u2019ve raised nearly $2,000, but still have $4,500 to go and only 24 days left!support col",
+      "physical:movement": "still have $4,500 to go and only 24 days left!support collective access and the disability justice movement by helping sins invalid founder patty berne get to the vancouver queer film festival! see our indie",
+      "systemic:access": "p. we\u2019ve raised nearly $2,000, but still have $4,500 to go and only 24 days left!support collective access and the disability justice movement by helping sins invalid founder patty berne get to the vancouve",
+      "art:film": "disability justice movement by helping sins invalid founder patty berne get to the vancouver queer film festival! see our indiegogo page:  https://www.indiegogo.com/projects/support-disability-justice#ho"
+    },
+    "confidence": 1.0,
+    "article_idea": "What 'Support Disability Justice! (Campaign Update)' Misses About Dance",
+    "content_snippet": "Sins Invalid is a fiscally sponsored project of   Dancers\u2019 Group. We\u2019ve raised nearly $2,000, but still have $4,500 to go and only 24 days left!Support collective access and the disability justice movement by helping Sins Invalid founder Patty Berne get to the Vancouver Queer Film Festival! See our ...",
+    "publish_date": "2026-03-13T09:56:10.698898",
+    "id": "ab0d86596062c77b25e3d46ccbbe607c",
+    "discovered_date": "2026-03-13T09:56:10.698916",
+    "status": "pending"
+  },
+  {
+    "url": "https://disabilityvisibilityproject.com/2025/10/15/graphic-with-a-white-background-with-text-that-reads-the-state-of-critical-race-disability-studies-a-white-paper-report-from-the-disabled-scholars-of-color-collective/",
+    "title": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective \u2013 Disability Visibility Project",
+    "domain": "disabilityvisibilityproject.com",
+    "rss_feed": "https://disabilityvisibilityproject.com/feed/",
+    "disability_concepts": {
+      "sensory": [
+        "vision",
+        "color"
+      ],
+      "systemic": [
+        "access",
+        "visibility"
+      ],
+      "design": [
+        "accessible",
+        "form"
+      ],
+      "culture": [
+        "identity",
+        "community"
+      ]
+    },
+    "concept_contexts": {
+      "sensory:vision": "of color in san francisco, california over labor day weekend 2025. this gathering was originally envisioned and proposed by alice wong to dr. sami schalk to assess the state of race in the field of disabil",
+      "sensory:color": "the state of critical race disability studies a white paper report from the disabled scholars of color collective alice wong\t\t\t\t view all post navigation recent posts follow blog via email recent commen",
+      "systemic:access": "n person)   \t  storycorps connect (remote)   \t  oral histories with the storycorps app   \t  note on accessibility         dvp interviews a-z    \t  dvp interviews a-h (last name)   \t  dvp interviews i-n (las",
+      "systemic:visibility": "low blog via email recent comments recent posts follow blog via email discover more from disability visibility project works cited share this: skip to content   \t   \t\t    \t\t\t   \t\t\t\t      menu \t\t\t\t      about",
+      "design:accessible": "he gathering aimed to bring together disabled scholars of color working in disability studies in an accessible, pleasure-forward space to (re)build community within critical race disability studies as a sub-fie",
+      "design:form": "of critical race disability studies and to provide a vision for the future of the field that can inform our future work as a collective and the work of critical race disability studies more broadly. dr.",
+      "culture:identity": "mi schalk to assess the state of race in the field of disability studies as both research topic and identity. the gathering aimed to bring together disabled scholars of color working in disability studies in",
+      "culture:community": "gy   \t  disability visibility anthology for young people   \t  resistance and hope anthology         community as home \u2013 portraits     podcast     hire me!     ada 30 in color     donate     online store"
+    },
+    "confidence": 1.0,
+    "article_idea": "Disability Insight: How 'The State of Critical Race Disability Studies A White Paper ...' Affects Vision Communities",
+    "content_snippet": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective Alice Wong\t\t\t\t View All Post navigation Recent Posts Follow Blog via Email Recent Comments Recent Posts Follow Blog via Email Discover more from Disability Visibility Project Works Cited...",
+    "publish_date": "2026-03-13T09:56:11.962407",
+    "id": "20ec51cc3d3bad5837a50d86d68de086",
+    "discovered_date": "2026-03-13T09:56:11.962462",
+    "status": "pending"
+  },
+  {
+    "url": "https://hyperallergic.com/brian-eno-and-200-artists-urge-british-museum-to-stop-erasing-palestine/",
+    "title": "Brian Eno and 200+ Artists Urge British Museum to \u201cStop Erasing Palestine\u201d",
+    "domain": "hyperallergic.com",
+    "rss_feed": "https://hyperallergic.com/feed/",
+    "disability_concepts": {
+      "sensory": [
+        "visual",
+        "sound",
+        "music"
+      ],
+      "art": [
+        "artist",
+        "film",
+        "museum"
+      ],
+      "culture": [
+        "community"
+      ]
+    },
+    "concept_contexts": {
+      "sensory:visual": "pro-israel group. a  letter  addressed to the museum's board of trustees and signed by musician and visual artist brian eno, among others, also criticizes the museum's previous connections to the israeli em",
+      "sensory:sound": "actices and new media at the museum of craft and design olafur eliasson: a symphony of disappearing sounds for the great salt lake interdimensional timelines: hartford art school exhibits liz nielsen\u2019s pho",
+      "sensory:music": "ssure from a pro-israel group. a  letter  addressed to the museum's board of trustees and signed by musician and visual artist brian eno, among others, also criticizes the museum's previous connections to",
+      "art:artist": "brian eno and 200+ artists urge british museum to \u201cstop erasing palestine\u201d subscribe to our newsletter merging craft practice",
+      "art:film": "-podcast                                       -books                                       -film                                       -crosswords                                       -comics",
+      "art:museum": "brian eno and 200+ artists urge british museum to \u201cstop erasing palestine\u201d subscribe to our newsletter merging craft practices and new media at th",
+      "culture:community": "opinion                                       reviews                                       community                                       more                                       -guides"
+    },
+    "confidence": 1.0,
+    "article_idea": "The Visual Perspective on 'Brian Eno and 200+ Artists Urge British Museum to \u201cStop Eras...'",
+    "content_snippet": "Brian Eno and 200+ Artists Urge British Museum to \u201cStop Erasing Palestine\u201d Subscribe to our newsletter Merging Craft Practices and New Media at the Museum of Craft and Design Olafur Eliasson: A symphony of disappearing sounds for the Great Salt Lake Interdimensional Timelines: Hartford Art School Ex...",
+    "publish_date": "2026-03-13T09:56:13.822864",
+    "id": "4851dfa871b702404f5f25f49140f5a3",
+    "discovered_date": "2026-03-13T09:56:13.822918",
+    "status": "pending"
+  },
+  {
+    "url": "https://www.artnews.com/art-in-america/aia-reviews/cindy-sherman-office-killer-blu-ray-review-1234777215/",
+    "title": "Cindy Sherman's Horror Movie Flop Is Back. Is the World Ready?",
+    "domain": "artnews.com",
+    "rss_feed": "https://www.artnews.com/feed/",
+    "disability_concepts": {
+      "design": [
+        "form"
+      ],
+      "art": [
+        "artist",
+        "film",
+        "photography"
+      ]
+    },
+    "concept_contexts": {
+      "design:form": "\u2019s 1997 horror movie flop is coming to blu-ray. is the world finally ready for it? related articles former moma director glenn lowry says leon black is a \u2018solid trustee\u2019 amid epstein\u00a0controversy alex gree",
+      "art:artist": "s a \u2018solid trustee\u2019 amid epstein\u00a0controversy alex greenberger falling apart: a conversation between artists miranda july and cindy sherman failed climate protest at mus\u00e9e d'orsay, cindy sherman joins icp bo",
+      "art:film": "y   \talex greenberger senior editor, artnews photographer\u00a0 cindy sherman \u00a0has made just one feature film to date\u2014 office killer, \u00a0a 1997 box-office flop that was unloved by critics, such as the\u00a0 new york",
+      "art:photography": "e most exclusive resort in the united states betty catroux to be honored at international center of photography infinity awards dealing with the devil: hurley, asu achieve a most remarkable end \u2018i love boosters\u2019"
+    },
+    "confidence": 0.8,
+    "article_idea": "Accessibility Critique: The Form Story Behind 'Cindy Sherman's Horror Movie Flop Is Back. Is the World Read...'",
+    "content_snippet": "Cindy Sherman\u2019s 1997 Horror Movie Flop Is Coming to Blu-Ray. Is the World Finally Ready for It? Related Articles Former MoMA Director Glenn Lowry Says Leon Black Is a \u2018Solid Trustee\u2019 Amid Epstein\u00a0Controversy Alex Greenberger Falling Apart: A Conversation Between Artists Miranda July and Cindy Sherma...",
+    "publish_date": "2026-03-13T09:56:17.317019",
+    "id": "05efc050cfcdaf0039c6475f23cefa16",
+    "discovered_date": "2026-03-13T09:56:17.317042",
+    "status": "pending"
+  },
+  {
+    "url": "https://www.artforum.com/news/researchers-link-two-works-to-michelangelo-1234745276/",
+    "title": "New Evidence Ties Two Works to the Michelangelo",
+    "domain": "artforum.com",
+    "rss_feed": "https://www.artforum.com/feed/",
+    "disability_concepts": {
+      "sensory": [
+        "hearing",
+        "vision",
+        "music"
+      ],
+      "design": [
+        "form"
+      ],
+      "art": [
+        "artist",
+        "painting",
+        "film"
+      ]
+    },
+    "concept_contexts": {
+      "sensory:hearing": "to exclude russia      read more                                  us supreme court declines appeal hearing for case on copyrighting ai artwork      read more                                    march 12, 202",
+      "sensory:vision": "fashion          film          music          performing arts          technology          television                features         arrow icon                                 spotlights          clos",
+      "sensory:music": "the checklist          architecture          design          fashion          film          music          performing arts          technology          television                features         ar",
+      "design:form": "ist          architecture          design          fashion          film          music          performing arts          technology          television                features         arrow icon",
+      "art:artist": "spotlights          close-ups          interviews          1000 words          portfolios          artists\u2019 projects          dossier                reviews         arrow icon",
+      "art:painting": "gium (kik-irpa) announced that they had used scientific analysis to\u00a0 connect \u00a0a centuries-old piet\u00e0 painting to the italian master  michelangelo . in addition, an independent italian researcher published a\u00a0 p",
+      "art:film": "top ten          the checklist          architecture          design          fashion          film          music          performing arts          technology          television                feat"
+    },
+    "confidence": 1.0,
+    "article_idea": "Disability Insight: How 'New Evidence Ties Two Works to the Michelangelo' Affects Hearing Communities",
+    "content_snippet": "Researchers Link Two Unattributed Works To Michelangelo Most Popular You may also like Subscribe                Open Menu           Close             News          Columns          Features          Previews          Reviews          Video          Current Issue          Archive          artguide   ...",
+    "publish_date": "2026-03-13T09:56:18.813719",
+    "id": "621d625fc3386ce18b28880a67925d95",
+    "discovered_date": "2026-03-13T09:56:18.813751",
+    "status": "pending"
+  },
+  {
+    "url": "https://www.dezeen.com/2026/03/13/quartz-ring-identity-verification-modem-retinaa/",
+    "title": "Quartz ring proves its wearer is human in the age of AI",
+    "domain": "dezeen.com",
+    "rss_feed": "https://www.dezeen.com/feed/",
+    "disability_concepts": {
+      "physical": [
+        "stairs"
+      ],
+      "sensory": [
+        "tactile"
+      ],
+      "design": [
+        "form"
+      ],
+      "art": [
+        "exhibition",
+        "gallery"
+      ]
+    },
+    "concept_contexts": {
+      "physical:stairs": "r prize relevance shigeru ban concert hall shigeru ban concert hall budget macbook budget macbook upstairs at ronnie's upstairs at ronnie's robot phone robot phone magazine     awards     jobs     events gu",
+      "sensory:tactile": "t popular   jobs featured   jobs refine your search: delavegacanolasso finishes home in madrid with tactile material palette anastasiia tempynska transforms former embassy into \"gallery-like\" kyiv showroom j",
+      "design:form": ": delavegacanolasso finishes home in madrid with tactile material palette anastasiia tempynska transforms former embassy into \"gallery-like\" kyiv showroom jihyun kim uses gloop glaze to create \"gravity-de",
+      "art:exhibition": "concrete home in slovenia casa wabi mushroom pavilion casa wabi mushroom pavilion maggie's centres exhibition maggie's centres exhibition apple's head of design interview apple's head of design interview pritz",
+      "art:gallery": "s home in madrid with tactile material palette anastasiia tempynska transforms former embassy into \"gallery-like\" kyiv showroom jihyun kim uses gloop glaze to create \"gravity-defying\" salty fairy ring cerami"
+    },
+    "confidence": 1.0,
+    "article_idea": "What 'Quartz ring proves its wearer is human in the age of AI' Misses About Stairs",
+    "content_snippet": "Dezeen Magazine \n\t\t \n\t\t\t dezeen-logo \n\t\t\t  \n\t\t\t  \n\t\t \n\t\t \n\t\t\t dezeen-logo Quartz ring proves its wearer is human in the age of AI Search results: Eight actually interesting uses of AI from 2025 Subscribe to our newsletters Top design stories Most   popular Most   recent Popular   jobs Featured   job...",
+    "publish_date": "2026-03-13T09:56:20.179233",
+    "id": "7d4cbba62dacfe052ab6619d2866eba3",
+    "discovered_date": "2026-03-13T09:56:20.179258",
+    "status": "pending"
+  },
+  {
+    "url": "https://www.designboom.com/art/red-balloons-flowing-fabric-wedding-playground-sukipartners-china/",
+    "title": "red balloons lift flowing fabric into a wedding playground by suki+partners in china",
+    "domain": "designboom.com",
+    "rss_feed": "https://www.designboom.com/feed/",
     "disability_concepts": {
       "sensory": [
         "vision"
       ],
-      "communication": [
-        "interface"
+      "design": [
+        "form"
       ],
-      "systemic": [
-        "access"
+      "art": [
+        "artist",
+        "sculpture",
+        "performance",
+        "installation"
       ]
     },
     "concept_contexts": {
-      "sensory:vision": "rding to a copy of his r\u00e9sum\u00e9, solly has worked as the chief technology officer for the health it division of a government contractor called leidos, which has already received millions in ssa contracts and",
-      "communication:interface": "is maintained so that their identities can\u2019t be used for fraud. an api, or application programming interface, allows different programs to talk to each other, including pulling data and information from each",
-      "systemic:access": "lling data and information from each other. in this case, it could allow social security data to be accessed by agencies and institutions outside of ssa. the allegation was revealed in a complaint filed to"
+      "sensory:vision": "onnections: +700                                      publish my work  promote my project  share my vision      popular now art!                   see the ocean\u2019s psychedelic sea slugs reimagined as tiny wo",
+      "design:form": "red balloons lift flowing pink fabric above wedding lawn in china to form floating playground suki+partners transforms a wedding lawn into a \u2018playground\u2019 lifting the lawn in",
+      "art:artist": "show jr's california works from prison yards to border wall inside the surrealist universe of late artist pedro friedeberg, creator of the iconic hand chair teapots, fish, and trucks: inside ghana's extrao",
+      "art:sculpture": "signboom will always be there for you see the ocean\u2019s psychedelic sea slugs reimagined as tiny wool sculptures 'horizons' at perrotin la to show jr's california works from prison yards to border wall inside th",
+      "art:performance": "down toward the ground. the upper surface of the cloth becomes a platform for the wedding ceremony, performances, and informal gatherings, while the shaded area below offers a place for cooling and rest. support",
+      "art:installation": "wedding lawn into a \u2018playground\u2019 lifting the lawn into three dimensions balloons   (66) interactive installation   (543) textile and fabric art   (88) designboom will always be there for you see the ocean\u2019s psych"
+    },
+    "confidence": 1.0,
+    "article_idea": "The Vision Perspective on 'red balloons lift flowing fabric into a wedding playground b...'",
+    "content_snippet": "red balloons lift flowing pink fabric above wedding lawn in china to form floating playground suki+partners transforms a wedding lawn into a \u2018playground\u2019 lifting the lawn into three dimensions balloons   (66) interactive installation   (543) textile and fabric art   (88) designboom will always be th...",
+    "publish_date": "2026-03-13T09:56:21.843661",
+    "id": "bddc5f7b3349a805974d7f16fa010e35",
+    "discovered_date": "2026-03-13T09:56:21.843714",
+    "status": "pending"
+  },
+  {
+    "url": "https://www.creativeboom.com/inspiration/from-seoul-to-switzerlands-southern-alps-korean-video-art-in-motion/",
+    "title": "From Seoul to Switzerland's Southern Alps: Korean video art in motion | Creative Boom",
+    "domain": "creativeboom.com",
+    "rss_feed": "https://www.creativeboom.com/feed/",
+    "disability_concepts": {
+      "systemic": [
+        "representation"
+      ],
+      "design": [
+        "form"
+      ],
+      "culture": [
+        "community"
+      ]
+    },
+    "concept_contexts": {
+      "systemic:representation": "ken right now (and why it isn't) cultural diversity: the illustrators who are proving just how much representation matters the spark: chris wilson on confidence, chaos and keeping your creativity alive from trauma",
+      "design:form": "from seoul to switzerland's southern alps: korean video art in motion further information 24 planet-friendly product swaps that creatives actually stick with i love freelancing, but wh",
+      "culture:community": "podcast                                                                                community                                                                                topics"
     },
     "confidence": 0.9000000000000001,
-    "article_idea": "Inclusive Analysis: The Vision Dimension of 'John Solly Is the DOGE Operative Accused of Planning to Take...'",
-    "content_snippet": "John Solly Is the DOGE Operative Accused of Planning to Take Social Security Data to His New Job You Might Also Like SECURITY        POLITICS        THE BIG STORY        BUSINESS        SCIENCE        CULTURE        REVIEWS             Menu                         Account                      Accoun...",
-    "publish_date": "2026-03-12T20:41:04.751631",
-    "id": "2d4dc2e80c14793d9193945245335510",
-    "discovered_date": "2026-03-12T20:41:04.751658",
+    "article_idea": "Accessibility Critique: The Representation Story Behind 'From Seoul to Switzerland's Southern Alps: Korean video art ...'",
+    "content_snippet": "From Seoul to Switzerland's Southern Alps: Korean video art in motion Further Information 24 planet-friendly product swaps that creatives actually stick with I love freelancing, but what about my pension? Is social media over for creatives? Or have we just woken up to what it is? 50 fonts that will ...",
+    "publish_date": "2026-03-13T09:56:23.937353",
+    "id": "09acd5598381bec5143fe7d77e62bd2f",
+    "discovered_date": "2026-03-13T09:56:23.937367",
     "status": "pending"
   },
   {
-    "url": "https://techcrunch.com/2026/03/12/channel-surfer-watch-youtube-retro-cable-tv-guide/",
-    "title": "Channel Surfer lets you watch YouTube like it's old-school cable TV | TechCrunch",
-    "domain": "techcrunch.com",
-    "rss_feed": "https://techcrunch.com/feed/",
+    "url": "https://www.bbc.com/news/articles/c1je21lgn5zo?at_medium=RSS&at_campaign=rss",
+    "title": "Oscars 2026: 17 facts you need to know about the nominees from Hamnet to Sinners",
+    "domain": "bbc.com",
+    "rss_feed": "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml",
     "disability_concepts": {
       "sensory": [
-        "vision"
-      ],
-      "cognitive": [
-        "focus"
+        "audio",
+        "music"
       ],
       "communication": [
-        "interface"
-      ]
-    },
-    "concept_contexts": {
-      "sensory:vision": "ned for the next 24 hours. this makes watching youtube feel a lot like watching old-school live television \u2014 an experience that\u2019s proven popular on free streaming services like plex, pluto tv, tubi, and oth",
-      "cognitive:focus": "interface resembling a retro-looking tv guide. in the app, you can browse through different, topic-focused channels and click to tune in as if you were watching live tv. at launch, there are 40 of these c",
-      "communication:interface": "as just launched a web app called  channel surfer , which presents interesting youtube videos in an interface resembling a retro-looking tv guide. in the app, you can browse through different, topic-focused ch"
-    },
-    "confidence": 0.9000000000000001,
-    "article_idea": "What 'Channel Surfer lets you watch YouTube like it's old-school c...' Misses About Vision",
-    "content_snippet": "Channel Surfer lets you watch YouTube like it\u2019s old-school cable TV Most Popular More from TechCrunch DOGE employee stole Social Security data and put it on a thumb drive, report says Meta acquired Moltbook, the AI agent social network that went viral because of fake posts Google rolls out new Gemin...",
-    "publish_date": "2026-03-12T20:41:08.530441",
-    "id": "e23ab7d5f05bb6799fb4680784db3697",
-    "discovered_date": "2026-03-12T20:41:08.530501",
-    "status": "pending"
-  },
-  {
-    "url": "https://www.theverge.com/gadgets/894007/apple-airtag-first-generation-deal-sale",
-    "title": "The original AirTag is the cheapest it\u2019s ever been | The Verge",
-    "domain": "theverge.com",
-    "rss_feed": "https://www.theverge.com/rss/index.xml",
-    "disability_concepts": {
-      "sensory": [
-        "audio"
+        "language"
       ],
-      "systemic": [
-        "access"
+      "art": [
+        "film"
       ]
     },
     "concept_contexts": {
-      "sensory:audio": "nvironment    health    see all science       entertainment  expand           tv shows    movies    audio    see all entertainment       ai  expand           openai    anthropic    see all ai       policy",
-      "systemic:access": "l delivers a level of precision few trackers can match, thanks to its ultra wideband (uwb) chip and access to apple\u2019s expansive find my network. whereas most bluetooth trackers just tell you the general whe"
+      "sensory:audio": "sport      business      technology      health      culture      arts      travel      earth      audio      video      live                  home      news     us & canada      uk     uk politics      e",
+      "sensory:music": "hnology     artificial intelligence      ai v the mind       health      culture     film & tv      music      art & design      style      books      entertainment news       arts     arts in motion",
+      "communication:language": "y in london how to make a killing and vladimir star on embracing slow living the bbc is in multiple languages british broadcasting corporation                   home      news      sport      business      te",
+      "art:film": "otted in the oscars class photo oscars 2026: nominees list in full how to watch the oscar-nominated films michael b jordan upends oscars race as sinners wins big at actor awards watch: what's on the menu"
     },
-    "confidence": 0.6000000000000001,
-    "article_idea": "Inclusive Analysis: The Audio Dimension of 'The original AirTag is the cheapest it\u2019s ever been'",
-    "content_snippet": "The original AirTag is the cheapest it\u2019s ever been Verge Deals Most Popular Verge Deals More in  Gadgets Top Stories Apple AirTag The Verge  The Verge logo.         Tech      Reviews      Science      Entertainment      AI      Policy        Hamburger Navigation Button                      The homep...",
-    "publish_date": "2026-03-12T20:41:13.169519",
-    "id": "018e998c072a4c9ed538c04d8c2e4850",
-    "discovered_date": "2026-03-12T20:41:13.169561",
-    "status": "pending"
-  },
-  {
-    "url": "https://www.theguardian.com/technology/ng-interactive/2026/mar/12/lab-test-mounting-concern-over-rogue-ai-agents-artificial-intelligence",
-    "title": "\u2018Exploit every vulnerability\u2019: rogue AI agents published passwords and overrode anti-virus software  | AI (artificial intelligence) | The Guardian",
-    "domain": "theguardian.com",
-    "rss_feed": "https://www.theguardian.com/technology/rss",
-    "disability_concepts": {
-      "sensory": [
-        "caption"
-      ],
-      "cognitive": [
-        "focus"
-      ]
-    },
-    "concept_contexts": {
-      "sensory:caption": "e, regulator says close dialogue     1  /  1         next image        previous image        toggle caption           skip to navigation                                                print subscriptions",
-      "cognitive:focus": "ooting!\u2019: chatbots helped researchers plot deadly attacks openai delays \u2018adult mode\u2019 for chatgpt to focus on work of higher priority iran war heralds era of ai-powered bombing quicker than \u2018speed of though"
-    },
-    "confidence": 0.6000000000000001,
-    "article_idea": "Disability Insight: How '\u2018Exploit every vulnerability\u2019: rogue AI agents published pas...' Affects Caption Communities",
-    "content_snippet": "\u2018Exploit every vulnerability\u2019: rogue AI agents published passwords and overrode anti-virus software More on this story More on this story Most viewed Most viewed \u2018Happy (and safe) shooting!\u2019: chatbots helped researchers plot deadly attacks OpenAI delays \u2018adult mode\u2019 for ChatGPT to focus on work of h...",
-    "publish_date": "2026-03-12T20:41:19.867477",
-    "id": "0da4b41b90a300abc855adbc5978d66e",
-    "discovered_date": "2026-03-12T20:41:19.867499",
-    "status": "pending"
-  },
-  {
-    "url": "https://www.theguardian.com/technology/2026/mar/12/microsoft-amicus-brief-anthropic-pentagon",
-    "title": "Microsoft backs AI firm Anthropic in legal battle against Pentagon | Microsoft | The Guardian",
-    "domain": "theguardian.com",
-    "rss_feed": "https://www.theguardian.com/technology/rss",
-    "disability_concepts": {
-      "sensory": [
-        "caption"
-      ],
-      "systemic": [
-        "access"
-      ]
-    },
-    "concept_contexts": {
-      "sensory:caption": "iewed most viewed close dialogue     1  /  1         next image        previous image        toggle caption           skip to navigation                                              print subscriptions",
-      "systemic:access": "anthropic. in a statement to the guardian,  microsoft  said: \u201cthe department of war needs reliable access to the country\u2019s best technology. and everyone wants to ensure ai is not used for mass domestic sur"
-    },
-    "confidence": 0.6000000000000001,
-    "article_idea": "The Caption Perspective on 'Microsoft backs AI firm Anthropic in legal battle against Pe...'",
-    "content_snippet": "Microsoft backs AI firm Anthropic in legal battle against Pentagon Most viewed Most viewed Close dialogue     1  /  1         Next image        Previous image        Toggle caption           Skip to navigation                                              Print subscriptions      Search jobs         ...",
-    "publish_date": "2026-03-12T20:41:21.337442",
-    "id": "91ea9bfae004009f4520305a4f6f8738",
-    "discovered_date": "2026-03-12T20:41:21.337470",
+    "confidence": 1.0,
+    "article_idea": "Disability Insight: How 'Oscars 2026: 17 facts you need to know about the nominees fr...' Affects Audio Communities",
+    "content_snippet": "Winners, Sinners and record breakers: 17 fun facts about this year's Oscars Eight surprise takeaways from the Oscar nominations 12 things we spotted in the Oscars class photo Oscars 2026: Nominees list in full How to watch the Oscar-nominated films Michael B Jordan upends Oscars race as Sinners wins...",
+    "publish_date": "2026-03-13T09:56:26.223582",
+    "id": "e0bb878be45715ccc883e61da438110c",
+    "discovered_date": "2026-03-13T09:56:26.223633",
     "status": "pending"
   }
 ]

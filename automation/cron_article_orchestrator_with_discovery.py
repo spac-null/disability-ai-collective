@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
-Enhanced Cron Job Article Orchestrator with RSS Discovery - V2
-- Outputs structured metadata and prompts for full automation
-- No article creation - just topic selection and prompt generation
+QUICK FIX: Cron Job Article Orchestrator - Minimal version to avoid hanging
 """
 
 import os
@@ -13,21 +11,12 @@ import random
 import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
-import subprocess
-import time
 
-# Assuming DynamicArticleGenerator is in the same directory
-from dynamic_article_generator import DynamicArticleGenerator
-
-class CronArticleOrchestratorWithDiscoveryV2:
+class QuickFixOrchestrator:
     def __init__(self):
         self.repo_root = Path(__file__).parent.parent
         self.posts_dir = self.repo_root / "_posts"
-        self.assets_dir = self.repo_root / "assets"
-        self.dynamic_generator = DynamicArticleGenerator()
-        
-        # RSS discovery database
-        self.discovery_db = self.repo_root / "rss_disability_findings.db"
+        self.discovery_db = self.repo_root / "disability_findings.db"
         
         class SimpleLogger:
             def info(self, msg): print(f"[INFO] {msg}")
@@ -37,151 +26,91 @@ class CronArticleOrchestratorWithDiscoveryV2:
         
         self.logger = SimpleLogger()
         
-        self.logger.info("Cron Article Orchestrator with Discovery V2 initialized")
+        # Simple agents data (avoid importing DynamicArticleGenerator)
+        self.agents = {
+            "Pixel Nova": {"categories": ["art", "design", "visual"], "perspective": "visual", "mood": "creative"},
+            "Siri Sage": {"categories": ["culture", "social", "communication"], "perspective": "social", "mood": "analytical"},
+            "Maya Flux": {"categories": ["flow", "movement", "systems"], "perspective": "dynamic", "mood": "fluid"},
+            "Zen Circuit": {"categories": ["technology", "systems", "patterns"], "perspective": "technical", "mood": "precise"}
+        }
+        
+        self.logger.info("QuickFix Orchestrator initialized")
 
     def check_for_existing_article_today(self):
-        """Check if an article for today already exists."""
+        """Quick check for today's article"""
         today_str = datetime.now().strftime('%Y-%m-%d')
         for file in self.posts_dir.glob(f"{today_str}-*.md"):
             if file.is_file():
-                self.logger.warning(f"Article for today already exists: {file.name}")
                 return True
         return False
 
-    def run_rss_discovery(self):
-        """Run RSS discovery crawler if not already run today."""
-        # Check if discovery was already run today
-        if self.discovery_db.exists():
+    def get_todays_best_discovery(self):
+        """Get today's best discovery without complex logic"""
+        if not self.discovery_db.exists():
+            return None
+        
+        try:
             conn = sqlite3.connect(self.discovery_db)
             cursor = conn.cursor()
-            try:
-                cursor.execute("SELECT MAX(timestamp) FROM findings")
-                result = cursor.fetchone()
-                if result and result[0]:
-                    last_run = datetime.fromisoformat(result[0].replace('Z', '+00:00'))
-                    if last_run.date() == datetime.now().date():
-                        self.logger.info("RSS discovery already run today")
-                        return True
-            except sqlite3.OperationalError:
-                pass  # Table might not exist yet
-            finally:
-                conn.close()
-        
-        # Run discovery
-        self.logger.info("Running RSS discovery crawler...")
-        try:
-            result = subprocess.run(
-                [sys.executable, str(self.repo_root / "rss_disability_crawler.py")],
-                capture_output=True,
-                text=True,
-                timeout=300
-            )
-            if result.returncode == 0:
-                self.logger.success("RSS discovery completed successfully")
-                return True
-            else:
-                self.logger.error(f"RSS discovery failed: {result.stderr}")
-                return False
-        except subprocess.TimeoutExpired:
-            self.logger.error("RSS discovery timed out")
-            return False
-        except Exception as e:
-            self.logger.error(f"RSS discovery error: {e}")
-            return False
-
-    def get_fresh_discovery_topics(self):
-        """Get fresh discovery topics from today's RSS crawl."""
-        if not self.discovery_db.exists():
-            return []
-        
-        conn = sqlite3.connect(self.discovery_db)
-        cursor = conn.cursor()
-        
-        try:
-            # Get topics from today
+            
+            # Get today's best RSS finding
             today_start = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
             cursor.execute(
-                "SELECT title, angle, confidence, url, domain FROM findings WHERE timestamp >= ? ORDER BY confidence DESC LIMIT 10",
+                "SELECT title, angle, confidence, url, domain FROM findings WHERE source_type = 'rss' AND discovered_date >= ? ORDER BY confidence DESC LIMIT 1",
                 (today_start.isoformat(),)
             )
-            topics = []
-            for row in cursor.fetchall():
-                topics.append({
-                    'original_title': row[0],
-                    'angle': row[1],
-                    'confidence': row[2],
-                    'url': row[3],
-                    'domain': row[4]
-                })
-            return topics
-        except sqlite3.OperationalError as e:
-            self.logger.warning(f"Could not query discovery DB: {e}")
-            return []
-        finally:
+            
+            result = cursor.fetchone()
             conn.close()
+            
+            if result:
+                return {
+                    'original_title': result[0],
+                    'angle': result[1],
+                    'confidence': result[2],
+                    'url': result[3],
+                    'domain': result[4]
+                }
+            
+        except Exception as e:
+            self.logger.warning(f"Database query error: {e}")
+        
+        return None
 
-    def extract_image_prompts(self, title, agent_info):
-        """Extract image prompt hints from title and agent info."""
-        # Simple keyword extraction for image generation
-        keywords = []
+    def generate_simple_topic(self):
+        """Generate a simple topic if no discovery available"""
+        topics = [
+            "The Visual Language of Accessibility: How Color Contrast Speaks Louder Than Words",
+            "Silent Interfaces: What Hearing-Centric Design Misses About Vibration and Haptics",
+            "Neurodiverse Navigation: Why Standard Wayfinding Fails Creative Minds",
+            "The Prosthetics Paradox: When Technology Creates New Barriers Instead of Removing Old Ones"
+        ]
         
-        # Extract from title
-        title_lower = title.lower()
-        if any(word in title_lower for word in ['blind', 'vision', 'see', 'visual']):
-            keywords.append('visual impairment')
-            keywords.append('alternative perception')
-        if any(word in title_lower for word in ['deaf', 'hearing', 'sound', 'audio']):
-            keywords.append('hearing impairment')
-            keywords.append('sound visualization')
-        if any(word in title_lower for word in ['wheelchair', 'mobility', 'access', 'barrier']):
-            keywords.append('mobility access')
-            keywords.append('architectural barriers')
-        if any(word in title_lower for word in ['neurodiverse', 'cognitive', 'thinking', 'pattern']):
-            keywords.append('cognitive diversity')
-            keywords.append('pattern recognition')
+        agents = list(self.agents.keys())
+        agent = random.choice(agents)
         
-        # Add agent-specific themes
-        agent_name = agent_info.get('name', '')
-        if 'Pixel' in agent_name:
-            keywords.extend(['visual art', 'digital aesthetics', 'color theory'])
-        elif 'Zen' in agent_name:
-            keywords.extend(['technology', 'circuitry', 'digital systems'])
-        elif 'Siri' in agent_name:
-            keywords.extend(['social interaction', 'communication', 'cultural symbols'])
-        elif 'Maya' in agent_name:
-            keywords.extend(['flow', 'movement', 'dynamic systems'])
-        
-        return {
-            "keywords": list(set(keywords)),
-            "mood": agent_info.get('mood', 'analytical'),
-            "style": "sophisticated pixel art, disability perspective, abstract representation"
-        }
+        return random.choice(topics), agent, self.agents[agent]
 
     def run(self):
-        """Main execution method - outputs structured metadata for full automation."""
-        self.logger.info("🚀 Starting Cron Job Article Orchestration with Discovery V2...")
+        """Main execution - minimal logic to avoid hanging"""
+        self.logger.info("🚀 QuickFix Orchestrator running...")
 
+        # Check for existing article
         if self.check_for_existing_article_today():
             return json.dumps({
                 "status": "error",
-                "message": "Article for today already exists. No new article generated."
+                "message": "Article for today already exists."
             })
         
-        # Step 1: Run RSS discovery for fresh topics
-        discovery_success = self.run_rss_discovery()
+        # Get today's best discovery
+        discovery = self.get_todays_best_discovery()
         
-        # Step 2: Get fresh discovery topics
-        discovery_topics = self.get_fresh_discovery_topics()
-        
-        # Step 3: Select topic - prioritize discovery topics if available
-        if discovery_topics:
-            self.logger.info("Using fresh discovery topic")
-            # Pick the highest confidence topic
-            best_topic = max(discovery_topics, key=lambda x: x['confidence'])
-            title = best_topic['angle']
-            domain = best_topic['domain']
+        if discovery:
+            self.logger.info(f"Using discovery: {discovery['angle'][:60]}...")
+            title = discovery['angle']
+            domain = discovery['domain']
             
-            # Map domain to agent (simplified logic)
+            # Simple agent mapping
             if 'art' in domain.lower() or 'design' in domain.lower():
                 agent_name = "Pixel Nova"
             elif 'tech' in domain.lower() or 'science' in domain.lower():
@@ -191,20 +120,36 @@ class CronArticleOrchestratorWithDiscoveryV2:
             else:
                 agent_name = "Maya Flux"
                 
-            agent_info = self.dynamic_generator.agents.get(agent_name, self.dynamic_generator.agents["Pixel Nova"])
-            source_note = f"\n\n*This article was inspired by [{best_topic['original_title']}]({best_topic['url']}) from {domain}.*"
+            agent_info = self.agents.get(agent_name, self.agents["Pixel Nova"])
+            source_note = f"\n\n*This article was inspired by [{discovery['original_title']}]({discovery['url']}) from {domain}.*"
             
         else:
-            # Fall back to dynamic generator
-            self.logger.info("No fresh discovery topics, using dynamic generator")
-            title, agent_name, agent_info = self.dynamic_generator.select_topic_and_agent()
+            # Fallback to generated topic
+            self.logger.info("No discovery found, using generated topic")
+            title, agent_name, agent_info = self.generate_simple_topic()
             source_note = ""
-            self.logger.info(f"Selected generated topic: '{title}' by {agent_name}")
         
-        # Step 4: Generate article prompt
-        prompt = self.dynamic_generator.generate_article_prompt(title, agent_info)
-        
-        # Step 5: Create structured output for automation
+        # Generate prompt
+        prompt = f"""Write a 1200-1500 word article in the style of De Correspondent about:
+
+**{title}**
+
+Author: {agent_name}
+Perspective: {agent_info['perspective']}
+Mood: {agent_info['mood']}
+
+Write a narrative, evidence-based article that:
+1. Starts with a personal story or observation
+2. Presents research and data
+3. Includes community voices or perspectives
+4. Challenges conventional thinking
+5. Ends with actionable insights or questions
+
+Focus on the intersection of disability and {agent_info['categories'][0]}. Use accessible language and avoid jargon.
+
+Format the article in Markdown with appropriate headings, paragraphs, and emphasis."""
+
+        # Create output
         today = datetime.now().strftime('%Y-%m-%d')
         slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
         filename = f"{today}-{slug}.md"
@@ -220,17 +165,21 @@ class CronArticleOrchestratorWithDiscoveryV2:
                 "agent_categories": agent_info.get('categories', ['disability', 'analysis']),
                 "agent_perspective": agent_info.get('perspective', 'analytical'),
                 "source_note": source_note.strip() if source_note else "",
-                "discovery_source": discovery_topics[0] if discovery_topics else None
+                "discovery_source": discovery if discovery else None
             },
             "prompt": prompt,
-            "image_prompt_hints": self.extract_image_prompts(title, agent_info)
+            "image_prompt_hints": {
+                "keywords": ["disability", agent_info['categories'][0], "accessibility"],
+                "mood": agent_info.get('mood', 'analytical'),
+                "style": "sophisticated pixel art, abstract representation"
+            }
         }
         
-        self.logger.success(f"Generated metadata for article: '{title}' by {agent_name}")
+        self.logger.success(f"Generated metadata for: '{title}' by {agent_name}")
         return json.dumps(output, indent=2)
 
 def main():
-    orchestrator = CronArticleOrchestratorWithDiscoveryV2()
+    orchestrator = QuickFixOrchestrator()
     result = orchestrator.run()
     print(result)
 

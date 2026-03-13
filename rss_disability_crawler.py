@@ -16,6 +16,7 @@ from typing import Dict, List, Optional
 import html
 import random
 import time
+import socket # Added for timeout handling
 
 class RSSDisabilityCrawler:
     """
@@ -24,7 +25,7 @@ class RSSDisabilityCrawler:
     """
     
     def __init__(self):
-        self.db_path = "rss_disability_findings.db"
+        self.db_path = "disability_findings.db"  # Unified database
         self.findings = []
         self.visited_urls = set()
         self.init_database()
@@ -186,25 +187,29 @@ class RSSDisabilityCrawler:
         ]
     
     def init_database(self):
-        """Initialize SQLite database"""
+        """Initialize unified SQLite database"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
+        # Create unified findings table (same as in init_unified_database.py)
         cursor.execute('''
-        CREATE TABLE IF NOT EXISTS rss_findings (
+        CREATE TABLE IF NOT EXISTS findings (
             id TEXT PRIMARY KEY,
             url TEXT NOT NULL,
             title TEXT NOT NULL,
-            domain TEXT NOT NULL,
-            rss_feed TEXT NOT NULL,
-            disability_concepts TEXT NOT NULL,
-            concept_contexts TEXT NOT NULL,
+            angle TEXT NOT NULL,
             confidence REAL NOT NULL,
-            article_idea TEXT NOT NULL,
-            discovered_date TEXT NOT NULL,
+            domain TEXT NOT NULL,
+            source_type TEXT NOT NULL,  -- 'rss', 'web_crawl', 'api', 'manual'
+            source_details TEXT NOT NULL,  -- JSON with source-specific info
+            disability_concepts TEXT NOT NULL,  -- JSON array
             content_snippet TEXT NOT NULL,
+            discovered_date TEXT NOT NULL,
             publish_date TEXT,
-            status TEXT DEFAULT 'pending'
+            status TEXT DEFAULT 'pending',
+            processed_date TEXT,
+            used_for_article BOOLEAN DEFAULT 0,
+            article_id TEXT
         )
         ''')
         
@@ -217,7 +222,7 @@ class RSSDisabilityCrawler:
     
     def fetch_rss_feed(self, rss_url: str) -> Optional[List[Dict]]:
         """Fetch and parse RSS feed"""
-        print(f"  Fetching RSS: {rss_url}")
+        print(f"  [RSS Fetch] Attempting to fetch: {rss_url}")
         
         try:
             headers = {
@@ -228,8 +233,10 @@ class RSSDisabilityCrawler:
             req = urllib.request.Request(rss_url, headers=headers)
             
             with urllib.request.urlopen(req, timeout=15) as response:
+                print(f"  [RSS Fetch] Received HTTP status: {response.status} for {rss_url}")
                 if response.status == 200:
                     content = response.read().decode('utf-8', errors='ignore')
+                    print(f"  [RSS Parse] Parsing content from: {rss_url}")
                     
                     # Parse RSS/Atom
                     articles = []
@@ -253,19 +260,31 @@ class RSSDisabilityCrawler:
                                 if article:
                                     articles.append(article)
                         
-                        print(f"    Found {len(articles)} articles")
+                        print(f"  [RSS Parse] Found {len(articles)} articles from {rss_url}")
                         return articles
                         
-                    except ET.ParseError:
-                        # Try simple regex parsing
+                    except ET.ParseError as pe:
+                        print(f"  [RSS Parse] XML ParseError for {rss_url}: {pe}. Trying regex fallback.")
                         return self._parse_rss_with_regex(content)
+                    except Exception as e:
+                        print(f"  [RSS Parse] Unexpected error during XML parsing for {rss_url}: {e}")
+                        return []
                         
                 else:
-                    print(f"    HTTP {response.status}")
+                    print(f"  [RSS Fetch] HTTP {response.status} for {rss_url}")
                     return []
                     
+        except urllib.error.HTTPError as he:
+            print(f"  [RSS Fetch] HTTP Error for {rss_url}: {he.code} {he.reason}")
+            return []
+        except urllib.error.URLError as ue:
+            print(f"  [RSS Fetch] URL Error for {rss_url}: {ue.reason}")
+            return []
+        except socket.timeout:
+            print(f"  [RSS Fetch] Timeout for {rss_url}")
+            return []
         except Exception as e:
-            print(f"    RSS fetch error: {e}")
+            print(f"  [RSS Fetch] General error for {rss_url}: {e}")
             return []
     
     def _parse_rss_item(self, item) -> Optional[Dict]:
@@ -526,28 +545,45 @@ class RSSDisabilityCrawler:
         finding['discovered_date'] = datetime.now().isoformat()
         finding['status'] = 'pending'
         
-        # Save to database
+        # Save to unified database
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
+        # Convert to unified format
+        # Extract angle from article_idea or generate from title
+        angle = finding.get('article_idea', '')
+        if not angle:
+            angle = f"Disability perspective on: {finding['title'][:50]}..."
+        
+        # Convert disability concepts to JSON array
+        disability_concepts_list = []
+        for concept_type, keywords in finding.get('disability_concepts', {}).items():
+            disability_concepts_list.extend(keywords)
+        
+        # Prepare source details JSON
+        source_details = {
+            'rss_feed': finding.get('rss_feed', ''),
+            'concept_contexts': finding.get('concept_contexts', {})
+        }
+        
         cursor.execute('''
-        INSERT OR REPLACE INTO rss_findings 
-        (id, url, title, domain, rss_feed, disability_concepts, 
-         concept_contexts, confidence, article_idea, discovered_date, 
-         content_snippet, publish_date, status)
+        INSERT OR REPLACE INTO findings 
+        (id, url, title, angle, confidence, domain, source_type, 
+         source_details, disability_concepts, content_snippet, 
+         discovered_date, publish_date, status)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             finding['id'],
             finding['url'],
             finding['title'],
-            finding['domain'],
-            finding['rss_feed'],
-            json.dumps(finding['disability_concepts']),
-            json.dumps(finding['concept_contexts']),
+            angle,
             finding['confidence'],
-            finding['article_idea'],
-            finding['discovered_date'],
+            finding['domain'],
+            'rss',  # source_type
+            json.dumps(source_details),
+            json.dumps(list(set(disability_concepts_list))),
             finding['content_snippet'],
+            finding['discovered_date'],
             finding.get('publish_date', ''),
             finding['status']
         ))
@@ -578,12 +614,14 @@ class RSSDisabilityCrawler:
             
             # Try each feed until we get articles
             for rss_feed in feeds[:2]:  # Try first 2 feeds
+                print(f"[Crawler Run] Attempting to fetch RSS feed: {rss_feed}")
                 articles = self.fetch_rss_feed(rss_feed)
                 
                 if not articles:
+                    print(f"[Crawler Run] No articles from {rss_feed}, trying next feed.")
                     continue
                 
-                print(f"  Analyzing {len(articles)} articles from RSS feed")
+                print(f"  Analyzing {len(articles)} articles from RSS feed {rss_feed}")
                 
                 # Process articles
                 for article in articles[:max_articles_per_feed]:
@@ -592,12 +630,14 @@ class RSSDisabilityCrawler:
                     
                     # Skip if no URL
                     if not url:
+                        print(f"[Crawler Run] Skipping article with no URL: {title}")
                         continue
                     
                     # Fetch webpage
+                    print(f"[Crawler Run] Attempting to fetch webpage: {url}")
                     html_content = self.fetch_webpage(url)
                     if not html_content:
-                        continue
+                        print(f"[Crawler Run] No HTML content from {url}, skipping.")
                     
                     # Extract text
                     extracted = self.extract_text_from_html(html_content)
