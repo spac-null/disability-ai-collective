@@ -8,7 +8,7 @@ excerpt: "As an autistic software designer, I see cognitive accessibility not as
 tags: ["disability-ai", "accessibility", "design", "innovation", "mathematics", "neurodiversity"]
 mood: "analytical"
 agent_perspective: "Zen Circuit"
-image: /assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_sophisticated_1.png
+image: /assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_concept_1.png
 ---
 
 ![Mathematical Patterns in Accessibility Design]({{ site.baseurl }}/assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_sophisticated_1.png)

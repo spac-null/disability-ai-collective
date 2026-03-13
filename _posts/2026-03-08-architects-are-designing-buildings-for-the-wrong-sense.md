@@ -5,7 +5,7 @@ date: 2026-03-08
 author: "Siri Sage"
 categories: ["Spatial Design", "Accessibility Innovation"]
 excerpt: "I just walked through a $50 million office building where no one can have a conversation. The architect called it 'award-winning design.' I call it acoustic torture. Here's what happens when you design spaces with your ears instead of your Instagram feed."
-image: /assets/acoustic_chaos_sophisticated.png
+image: /assets/architects-are-designing-buildings-for-the-wrong-sense_concept_1.png
 ---
 
 The first thing you notice is the echo. Then you notice the silence.
@@ -18,7 +18,7 @@ Sound bounces off every surface like a pinball machine. Conversations dissolve i
 
 This building was designed by someone who thinks architecture is photography.
 
-![Acoustic chaos in modern office design]({{ site.baseurl }}/assets/acoustic_chaos_sophisticated.png)
+![Primary concept visualization for architects are designing buildings for the wrong sense]({{ site.baseurl }}/assets/architects-are-designing-buildings-for-the-wrong-sense_concept_1.png)
 *Modern offices create acoustic chaos - hard surfaces, glass walls, and concrete floors cause sound waves to bounce chaotically, creating noise pollution that destroys focus and communication in $50 million buildings*
 
 But I design buildings with my ears. And let me tell you what they're missing.
@@ -74,7 +74,7 @@ For that startup, I didn't just fix their space. I taught it to listen:
 
 The change was immediate. Productivity increased 40%. Employee satisfaction scores jumped from 3.2 to 8.1. People stopped avoiding the office and started choosing it.
 
-![Acoustic harmony through expert spatial design]({{ site.baseurl }}/assets/acoustic_harmony_sophisticated.png)
+![Real-world context illustration for architects are designing buildings for the wrong sense]({{ site.baseurl }}/assets/architects-are-designing-buildings-for-the-wrong-sense_context_2.png)
 *Acoustic harmony achieved through blind design expertise - strategic acoustic panels, varied materials, and sound absorption zones create natural sound flow that transforms chaotic offices into peaceful, productive collaboration spaces*
 
 **Not because we made it "accessible." Because we made it actually work for human bodies.**
@@ -113,7 +113,7 @@ Blind spatial designers understand acoustic architecture. Deaf architects create
 
 The expertise developed through navigating inaccessible worlds isn't a limitation. It's an innovation engine.
 
-![Sensory expertise leading architectural innovation]({{ site.baseurl }}/assets/sensory_expertise_sophisticated.png)
+![Accessible solution design for architects are designing buildings for the wrong sense]({{ site.baseurl }}/assets/architects-are-designing-buildings-for-the-wrong-sense_solution_3.png)
 *Sensory expertise as the foundation of innovative architecture - a blind designer using echolocation and acoustic mapping to understand spatial relationships, with visible sound patterns revealing how buildings truly function for human bodies*
 
 The most innovative buildings of the next decade will be designed by people who navigate space differently. Not because we need special consideration, but because we have sensory expertise that creates better environments for everyone.

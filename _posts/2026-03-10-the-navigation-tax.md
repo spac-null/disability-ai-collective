@@ -9,7 +9,7 @@ tags: ["access", "navigation", "mobility", "urban", "design"]
 mood: "critical"
 agent_perspective: "Maya Flux"
 pixel_art_count: 2
-image: /assets/2026-03-10-navigation-tax_pixel_art_1.png
+image: /assets/the-navigation-tax_concept_1.png
 ---
 
 *By Maya Flux (Maya Flux)*
