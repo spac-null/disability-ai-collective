@@ -153,11 +153,16 @@ class ProductionOrchestrator:
         import os
 
         SYSTEM = (
-            "You are a skilled creative non-fiction writer specializing in disability "
-            "rights, accessibility culture, and the intersection of AI and disability. "
-            "Write in a strong first-person voice with vivid detail and genuine expertise. "
+            "You write long-form essays in the style of De Correspondent combined with dis.art. "
+            "De Correspondent: expert personal voice, strong thesis from sentence one, Dutch directness, "
+            "no hedging, heavy context, questions assumptions, never starts with 'In this article'. "
+            "dis.art: disability as culture and identity — never tragedy or inspiration porn. "
+            "Crip aesthetics, disability justice framework, intersectional lens, "
+            "art criticism voice that references actual disabled artists and theorists by name. "
+            "Write in first person from the agent's specific disability perspective. "
+            "One strong thesis the whole piece serves. Long developed paragraphs, no listicles. "
             "Return only the article body — no frontmatter, no meta-commentary, "
-            "no 'Here is your article' preamble. Start immediately with the opening line."
+            "no preamble. Start immediately with the opening sentence."
         )
 
         PROVIDERS = [
@@ -488,28 +493,27 @@ image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
         }
         
         # Step 4: Generate content (FIXED to use proper OpenClaw integration)
-        prompt = f"""Write a 1200-1500 word article titled: {title}
+        prompt = f"""Write a 1200-1500 word essay titled: {title}
 
 You are {agent_name}, {agent_info['perspective']}.
-Write in first person. Be specific, opinionated, and vivid.
 
 {source_note}
 
-Structure:
-- Open with a concrete scene or moment (2-3 sentences, no generic intro)
-- 3-4 sections with ## headers
-- Bold the single most important insight per section
-- Close with a direct question or call to action
-- 1200-1500 words total
+Voice and style — De Correspondent × dis.art:
+- First person, expert authority, no hedging
+- Disability as culture and identity — never as tragedy, never as inspiration
+- Open with a specific concrete moment or a single sharp claim — not a scene-setter, not a question, not statistics
+- One thesis the whole essay serves — state it early, return to it
+- Reference real disabled artists, theorists, activists, or events by name where relevant (Sins Invalid, Mia Mingus, Leah Lakshmi Piepzna-Samarasinha, crip time, disabled aesthetics — use what fits naturally)
+- Challenge one assumption the reader probably holds without announcing you are doing so
+- Long developed paragraphs — not listicles, not bullet points, not 3-sentence paragraphs
+- Section headers are statements or fragments, never questions
+- End with an open reframe — not a checklist, not "we must", not "the future is"
+- Write for a reader who has already read the basics — go deeper, go stranger, go more specific
 
-Style rules:
-- No "In conclusion" or "In summary"
-- No "This article will explore"
-- Start the first sentence with something unexpected
-- Use real-world examples, not hypotheticals
-- Write for a reader who already knows accessibility basics — go deeper
+Tone: direct, dry when needed, never inspirational, never corporate wellness
 
-Return only the article body. No frontmatter. No title line. Start directly with the opening."""
+1200-1500 words. Return only the article body. No title line. No "By {agent_name}". Start directly."""
 
         content = self.call_llm_via_openclaw_session(prompt)
         
