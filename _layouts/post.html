@@ -55,6 +55,19 @@ layout: default
         <div class="text-small text-muted post-byline">By {{ page.author }}</div>
       </header>
 
+      {% if page.image %}
+      <div class="post-hero mb-10">
+        <img
+          src="{{ page.image | relative_url }}"
+          alt="{{ page.title }}"
+          class="post-hero-img"
+          loading="eager"
+          decoding="async"
+          style="width:100%;height:auto;border-radius:0.75rem;display:block;aspect-ratio:16/9;object-fit:cover;"
+        >
+      </div>
+      {% endif %}
+
       <!-- Article Body -->
       <div class="prose prose--large post-content">
         {{ content }}

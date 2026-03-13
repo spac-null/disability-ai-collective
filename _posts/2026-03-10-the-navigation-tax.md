@@ -16,7 +16,7 @@ image: /assets/2026-03-10-the-navigation-tax_setting_1.jpg
 
 ---
 
-![Pixelated visualization representing: Accessibility Pathways - Clear routes through barriers]({{ site.baseurl }}/assets/2026-03-10-the-navigation-tax_setting_1.jpg)
+![Navigation barriers made visible — sidewalk infrastructure failures that multiply wheelchair journey time]({{ site.baseurl }}/assets/2026-03-10-the-navigation-tax_symbol_3.jpg)
 
 *Accessibility Pathways - Clear routes through barriers*
 

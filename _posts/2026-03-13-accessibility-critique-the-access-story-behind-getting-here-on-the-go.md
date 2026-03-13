@@ -10,8 +10,6 @@ image: /assets/2026-03-13-accessibility-critique-the-access-story-behind-getting
 
 *This article was inspired by [Getting here on the GO -](https://tangledarts.org/getting-here-on-the-go/) from tangledarts.org.*
 
-*By Pixel Nova, deaf designer focusing on visual communication and information hierarchy*
-
 
 
 ## Personal Opening: The Station That Spoke Volumes
@@ -30,16 +28,8 @@ This experience wasn't unique to me. When I later visited the exhibition "Gettin
 
 
 
-## Visual Exploration
-
-![Primary concept visualization for accessibility critique the access story behind getting here on the go]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg)
-
-*Transportation space acoustic patterns and visual noise from a deaf design perspective*
-
-* * *
-
-![Real-world context illustration for accessibility critique the access story behind getting here on the go]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_moment_2.jpg)
-
+![Union Station seen through deaf eyes — competing visual hierarchies, inconsistent signage, and information overload in a space designed for hearing navigation]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg)
+*Union Station, Toronto: a transportation cathedral that speaks fluently in sound and stumbles in silence. Six fonts, three inconsistent colour systems, and departure boards that flicker faster than human processing speed.*
 
 ## The Problem: Accessibility as Afterthought
 
@@ -66,6 +56,9 @@ In transportation hubs and cultural institutions alike, I see patterns that crea
 - **Sensory competition**: Visual noise that would make a neurodivergent person shut down completely
 
 These aren't just "deaf problems"-they affect anyone with visual processing differences, attention disorders, or cognitive disabilities. My deaf perspective reveals universal design flaws.
+
+![Deaf designer reading the visual grammar of a transit space — catching the microsecond delay in digital sign refresh, the subtle head turns marking where information fails]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_moment_2.jpg)
+*Deaf spatial fluency: the gap between what the building says and what bodies need, made visible through trained observation.*
 
 ## Evidence & Examples: The Data Behind the Design
 
@@ -94,7 +87,7 @@ This creates a vicious cycle: inaccessible design leads to disabled people avoid
 
 Based on my experience as a deaf designer, here are specific recommendations:
 
-![Accessible solution design for accessibility critique the access story behind getting here on the go]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_symbol_3.jpg)
+![Universal design in practice — visual information hierarchy creating clear wayfinding that serves deaf, neurodivergent, and all users equally]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_symbol_3.jpg)
 
 *Accessible design creating visual-spatial harmony in transportation environments*
 
@@ -120,6 +113,10 @@ Based on my experience as a deaf designer, here are specific recommendations:
    - Include disability perspectives from the earliest brainstorming sessions
    - Create ongoing feedback loops, not one-time consultations
 
+The station hasn't changed. But the way I see it has. Every misaligned sign, every flickering board, every colour system designed without contrast testing — these aren't small failures. They're a cumulative argument about who public space is built for. Deaf designers don't ask for special consideration. We ask that the expertise developed through navigating inaccessible worlds be treated as what it is: hard-won knowledge that makes spaces better for everyone.
+
+The question isn't whether to include disability perspectives in design. The question is how long we can afford to keep excluding them.
+
 ## Community Questions
 
 1. **For designers and architects**: What's one assumption about "normal" users that you've had to unlearn when designing for disability inclusion?
@@ -128,6 +125,3 @@ Based on my experience as a deaf designer, here are specific recommendations:
 
 3. **For everyone**: How can we move beyond compliance-based accessibility (checking boxes) to justice-based accessibility (creating belonging)?
 
----
-
-*Pixel Nova is a deaf designer specializing in visual communication and information hierarchy. They believe disability expertise is a design superpower, not a limitation, and that accessible design creates better experiences for everyone.*

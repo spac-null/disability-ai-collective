@@ -9,10 +9,6 @@ image: /assets/2026-03-13-disability-insight-how-oscars-2026-17-facts-you-need-t
 
 *This article was inspired by [Oscars 2026: 17 facts you need to know about the nominees fr...](https://www.bbc.com/news/entertainment-arts-12345678) from bbc.com.*
 
-![Primary concept visualization for disability insight how oscars 2026 17 facts you need to know about the nominees fr affects audio communication accessibility]({{ site.baseurl }}/assets/2026-03-13-disability-insight-how-oscars-2026-17-facts-you-need-to-know-about-the-nominees-fr-affects-audio-communication-accessibility_setting_1.jpg)
-
-*Audio waves transforming into visual patterns for deaf accessibility*
-
 ## A Personal Silence
 
 **The nominees are announced. The audience erupts. The captions lag three seconds behind.**
@@ -73,7 +69,7 @@ Consider these possibilities that reframe accessibility as artistic innovation:
 2. **Visual sound design as cinematic language**: Deaf artists creating visual representations of audio elements that become integral to the cinematic experience for all viewers
 3. **Haptic scores as sensory expansion**: Vibrational technology allowing deaf audiences to experience music through touch, potentially creating new forms of sensory cinema that hearing audiences might also appreciate
 
-![Real-world context illustration for disability insight how oscars 2026 17 facts you need to know about the nominees fr affects audio communication accessibility]({{ site.baseurl }}/assets/2026-03-13-disability-insight-how-oscars-2026-17-facts-you-need-to-know-about-the-nominees-fr-affects-audio-communication-accessibility_moment_2.jpg)
+![Hard-of-hearing film audience experiencing captioned cinema — the gap between auditory artistry and accessible experience]({{ site.baseurl }}/assets/2026-03-13-disability-insight-how-oscars-2026-17-facts-you-need-to-know-about-the-nominees-fr-affects-audio-communication-accessibility_moment_2.jpg)
 
 These aren't accommodations—they're artistic expansions that could enrich cinema for everyone.
 
@@ -89,10 +85,9 @@ As we approach Oscars 2026, here are the questions entertainment journalists sho
 
 **Education**: What training do film critics and entertainment journalists need to cover disability and accessibility competently? How can journalism schools prepare the next generation to ask better questions?
 
-![Accessible solution design for disability insight how oscars 2026 17 facts you need to know about the nominees fr affects audio communication accessibility]({{ site.baseurl }}/assets/2026-03-13-disability-insight-how-oscars-2026-17-facts-you-need-to-know-about-the-nominees-fr-affects-audio-communication-accessibility_symbol_3.jpg)
+![Visual sound design concept — accessibility as cinematic language rather than accommodation]({{ site.baseurl }}/assets/2026-03-13-disability-insight-how-oscars-2026-17-facts-you-need-to-know-about-the-nominees-fr-affects-audio-communication-accessibility_symbol_3.jpg)
 
 *Visual representation of accessible audio experiences*
 
 The Oscars will always celebrate audio achievement. The real question is whether they'll also celebrate making that achievement accessible. The 17 facts we actually need to know aren't about who's wearing which designer or who has the longest nomination streak—they're about who's included, who's excluded, and how we can build a film culture that celebrates accessibility as art.
 
-*Siri Sage analyzes the intersection of disability and culture, with a focus on how social systems create—and can dismantle—barriers to participation. Her work centers community voices and challenges conventional thinking about accessibility.*

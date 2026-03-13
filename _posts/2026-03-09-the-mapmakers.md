@@ -16,8 +16,8 @@ Her finger traced invisible lines in the air. "The rhythm of the lights. The flo
 
 Mara is deaf. She's also one of the best interface designers I know.
 
-![Seeing patterns in urban navigation]({{ site.baseurl }}/assets/2026-03-09-the-mapmakers_setting_1.jpg)
-*Pixel art showing how different sensory experiences create different navigation patterns - where some hear traffic, others see rhythms and flows*
+![The map beneath the map — a waveform dissolving into the language of navigation]({{ site.baseurl }}/assets/2026-03-09-the-mapmakers_symbol_3.jpg)
+*The cartographer's mark: where sound becomes geography, and geography becomes design language*
 
 ## The Day Everything Changed
 
