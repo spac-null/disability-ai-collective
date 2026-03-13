@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """
-DYNAMIC AI IMAGE GENERATOR
+GALLERY-QUALITY AI IMAGE GENERATOR
 
 Architecture:
-  1. Qwen extracts 3 distinct visual concepts from article (setting, moment, symbol)
-  2. Builds rich pixel-art prompts with disability-culture framing
-  3. Pollinations.ai FLUX generates actual AI images (non-deterministic, seed=-1)
-  4. Gradient PNG fallback if network unavailable
+  1. Extract visual subjects from article frontmatter (pure Python, no LLM)
+  2. Build art-direction prompts using curated dis.art-inspired templates
+  3. Pollinations.ai FLUX generates images (seed=-1, non-deterministic)
+  4. Gradient fallback if network unavailable
 
-No hardcoded scene types. Fully context-aware.
-Requires: POLLINATIONS_API_KEY env var (sk_... from https://enter.pollinations.ai)
+Aesthetic: dis.art — confronting, intimate, uncanny. Never literal. Never stock photo.
+Three fixed modes per article: CONFRONTING (chiaroscuro) / INTIMATE (cinematic) / ABSTRACT (macro)
+Requires: POLLINATIONS_API_KEY env var
 """
 
 import json
@@ -24,6 +25,37 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+# ── Accent color palette ───────────────────────────────────────────────────────
+ACCENTS = ["crimson red", "cobalt blue", "acid yellow", "burnt orange",
+           "emerald green", "deep violet", "teal", "chalk white", "rose gold"]
+
+
+def _build_confronting(person, place, obj, accent):
+    """Theatrical chiaroscuro — arrests the viewer in a gallery."""
+    return (
+        f"theatrical portrait photography, {person}, extreme chiaroscuro, "
+        f"single cold shaft of light from above, deep shadow on one side, "
+        f"skin and texture hyperreal, {accent} accent, high contrast, "
+        f"cinematic grain, gallery quality, pure dark background, no text"
+    )
+
+def _build_intimate(person, place, obj, accent):
+    """Warm cinematic still — pulls you into the frame."""
+    return (
+        f"35mm film photography, {place}, {person}, "
+        f"warm window light, {obj} in saturated {accent} against desaturated surroundings, "
+        f"intimate and melancholic, shallow depth of field, quiet drama, muted palette"
+    )
+
+def _build_abstract(person, place, obj, accent):
+    """Hyper-realistic macro CGI — stops time, uncanny."""
+    return (
+        f"hyper-realistic macro CGI render, extreme close-up of {obj}, "
+        f"razor-sharp detail, uncanny stillness, shallow depth of field, "
+        f"iridescent {accent} rim light, pure black background, "
+        f"photographic fidelity, gallery quality, no text"
+    )
+
 
 class SceneImageGenerator:
     def __init__(self, width=800, height=450, pixel_size=5):
@@ -32,123 +64,131 @@ class SceneImageGenerator:
         self.pixel_size = max(1, min(10, pixel_size))
         self.gw = width // pixel_size
         self.gh = height // pixel_size
-        self.qwen_url = "http://vision-gateway:8080/v1/chat/completions"
         self.pollinations_key = os.environ.get("POLLINATIONS_API_KEY", "")
         self.pollinations_base = "https://gen.pollinations.ai"
 
-    # ── Qwen ──────────────────────────────────────────────────────────────────
+    # ── Subject extraction (pure Python) ─────────────────────────────────────
 
-    def _qwen_text(self, prompt, timeout=60):
-        payload = json.dumps({
-            "model": "qwen3.5:9b", "stream": False,
-            "messages": [{"role": "user", "content": "/no_think " + prompt}],
-        }).encode()
-        try:
-            req = urllib.request.Request(
-                self.qwen_url, data=payload,
-                headers={"Content-Type": "application/json"}, method="POST")
-            with urllib.request.urlopen(req, timeout=timeout) as r:
-                raw = json.loads(r.read())["choices"][0]["message"]["content"]
-                return re.sub(r'<think>.*?</think>', '', raw, flags=re.DOTALL).strip()
-        except Exception as e:
-            logger.warning("Qwen call failed: %s", e)
-            return None
+    def _extract_subjects(self, content, title):
+        """Extract visual subjects from article frontmatter. No LLM needed."""
+        import re as _re
+
+        # Parse frontmatter
+        fm_match = _re.search(r'^---\n(.*?)\n---', content, _re.DOTALL)
+        excerpt = ""
+        categories = []
+        if fm_match:
+            fm = fm_match.group(1)
+            exc_m = _re.search(r'^excerpt:\s*["\']?(.*?)["\']?\s*$', fm, _re.MULTILINE)
+            if exc_m:
+                excerpt = exc_m.group(1).strip('"\'')
+            cats_m = _re.search(r'^categories:\s*\[(.*?)\]', fm, _re.MULTILINE)
+            if cats_m:
+                categories = [c.strip(' "\'') for c in cats_m.group(1).split(',')]
+
+        # Use title first — most reliable signal, then corpus for broader match
+        title_lower = title.lower()
+        corpus = (title + ' ' + ' '.join(categories) + ' ' + excerpt).lower()
+
+        # Specific objects from excerpt (skip overly generic ones)
+        obj_words = _re.findall(
+            r'\b(hearing aid|cochlear implant|TTY|ASL interpreter|'
+            r'rollator|prosthetic|brace|exoskeleton|'
+            r'braille display|white cane|screen reader|magnifier|AAC device|'
+            r'mechanical keyboard|blueprint|architectural model|circuit board|film reel)\b',
+            excerpt.lower()
+        )
+        found_obj = obj_words[0] if obj_words else None
+
+        # Topic detection — title signals take priority over corpus
+        if any(w in title_lower for w in ['prosthetic', 'casting disabled', 'disabled actor', 'beats hollywood']):
+            person = "figure in profile, outstretched arm mid-reach toward a single light source"
+            place = "film set, theatrical lighting grid overhead, cables pooling on dark floor"
+            obj = found_obj or "articulated prosthetic hand, finger joints extended, close detail"
+
+        elif any(w in title_lower for w in ['beethoven', 'mathematical order']):
+            person = "figure bent over ergonomic desk, silhouette lit by cold monitor glow"
+            place = "sparse low-lit room, single monitor, wires taped to desk, late night"
+            obj = found_obj or "single mechanical key lifted from keyboard, backlit from below"
+
+        elif any(w in title_lower for w in ['navigation tax', 'wheelchair users pay', 'wheelchair user']):
+            person = "hands gripping wheel rim from low angle, knuckles and veins in side light"
+            place = "rain-slicked urban sidewalk at dusk, amber puddle reflections"
+            obj = found_obj or "worn wheelchair tire cross-section, rubber tread and spoke"
+
+        elif any(w in title_lower for w in ['oscar', 'oscars', 'sound of exclusion', 'exclusion']):
+            person = "lone figure in empty cinema row, projection light on one side of face"
+            place = "empty multiplex theater, rows of vacant seats, screen light beyond"
+            obj = found_obj or "35mm film reel, half-unspooled, iridescent celluloid"
+
+        elif any(w in title_lower for w in ['architect', 'building', 'wrong sense', 'acoustic']):
+            person = "lone figure casting sharp shadow across polished concrete atrium floor"
+            place = "cavernous open-plan office atrium, glass ceiling, empty, late hour"
+            obj = found_obj or "architectural scale model fragment, exposed balsa wood and glue"
+
+        elif any(w in title_lower for w in ['mapmaker', 'map', 'cartograph']):
+            person = "hands tracing a careful line on large drafting paper, light pressure"
+            place = "sparse studio table, scattered notebooks, diffuse north window light"
+            obj = found_obj or "hand-drawn topographic map fragment, ink contours visible"
+
+        elif any(w in title_lower for w in ['access story', 'transportation', 'transit', 'deaf culture']):
+            person = "two hands mid-ASL sign, backlit silhouette, wrists and fingers close"
+            place = "empty transit corridor, harsh fluorescent overhead strip light"
+            obj = found_obj or "vintage TTY terminal on steel desk, handset resting"
+
+        elif any(w in corpus for w in ['deaf', 'hearing loss', 'asl', 'sign language', 'tty', 'caption']):
+            person = "two hands mid-ASL sign, backlit silhouette, wrists and fingers close"
+            place = "empty transit corridor, harsh fluorescent overhead strip light"
+            obj = found_obj or "vintage TTY terminal on steel desk, handset resting"
+
+        elif any(w in corpus for w in ['autistic', 'neurodiv', 'adhd', 'sensory', 'cognitive', 'interface design']):
+            person = "figure bent over ergonomic desk, silhouette lit by cold monitor glow"
+            place = "sparse low-lit room, single monitor, wires taped to desk, late night"
+            obj = found_obj or "single mechanical key lifted from keyboard, backlit from below"
+
+        elif any(w in corpus for w in ['blind', 'low vision', 'braille', 'screen reader']):
+            person = "fingertip pressed to embossed surface, slight pressure visible in skin"
+            place = "sunlit wood desk, scattered tactile materials, warm afternoon light"
+            obj = found_obj or "braille cell with six raised dots, close detail, warm light"
+
+        elif any(w in corpus for w in ['film', 'cinema', 'culture', 'crip', 'art', 'media']):
+            person = "performer under single harsh spotlight, empty audience chairs behind"
+            place = "empty black-box theater, one spot lit on stage, rest in darkness"
+            obj = found_obj or "vintage condenser microphone, stand and cable, close detail"
+
+        elif any(w in corpus for w in ['wheelchair', 'mobility', 'ramp', 'curb']):
+            person = "hands gripping wheel rim from low angle, knuckles and veins in side light"
+            place = "rain-slicked urban sidewalk at dusk, amber puddle reflections"
+            obj = found_obj or "worn wheelchair tire cross-section, rubber tread and spoke"
+
+        else:
+            person = "figure partially silhouetted in doorframe, bright light behind them"
+            place = "sparse modernist interior, single chair, late afternoon light"
+            obj = found_obj or "single worn wooden chair, center frame, raking side light"
+
+        logger.info("Subjects — person: %r  place: %r  obj: %r", person, place, obj)
+        return person, place, obj
 
     # ── Prompt generation ─────────────────────────────────────────────────────
 
     def _generate_prompts(self, content, title):
-        """Ask Qwen to produce 3 distinct image prompts from article content."""
-        excerpt = content[:400]
-        prompt = f"""You are visual director for a disability rights art publication.
-
-Article title: {title}
-Article excerpt: {excerpt}
-
-Generate 3 VISUALLY DISTINCT pixel art image prompts for this article:
-1. SETTING - the physical environment/place the article is about
-2. MOMENT - a specific human action or interaction from the article
-3. SYMBOL - a close-up detail, metaphor, or symbolic element from the article
-
-Rules: start with "16-bit pixel art," | disabled protagonists | vivid colors | no tragedy | concrete
-
-Return ONLY valid JSON:
-{{"setting": "16-bit pixel art, ...", "moment": "16-bit pixel art, ...", "symbol": "16-bit pixel art, ..."}}"""
-
-        for attempt in range(2):
-            raw = self._qwen_text(prompt, timeout=90)
-            if not raw:
-                logger.warning("Qwen attempt %d: no response", attempt + 1)
-                continue
-            m = re.search(r'\{[^{}]*"setting"[^{}]*\}', raw, re.DOTALL)
-            if m:
-                try:
-                    data = json.loads(m.group())
-                    setting = data.get('setting', '')
-                    moment = data.get('moment', '')
-                    symbol = data.get('symbol', '')
-                    if setting and moment and symbol:
-                        logger.info("Qwen prompts OK (attempt %d)", attempt + 1)
-                        return [setting, moment, symbol]
-                except json.JSONDecodeError:
-                    pass
-            logger.warning("Qwen attempt %d: bad JSON", attempt + 1)
-
-        logger.warning("All Qwen attempts failed, using keyword fallback")
-        return self._fallback_prompts(title)
-
-    def _fallback_prompts(self, title):
-        """Keyword-derived fallback prompts when Qwen unavailable."""
-        t = title.lower()
-        base = "16-bit pixel art,"
-        if any(w in t for w in ['deaf', 'hearing', 'asl', 'sign language']):
-            return [
-                f"{base} deaf community center with sign language class in session, vivid colors, isometric view",
-                f"{base} person at video relay service terminal signing expressively, warm lighting",
-                f"{base} two hands forming ASL sign close-up, pixel art, jewel tones",
-            ]
-        if any(w in t for w in ['wheelchair', 'mobility', 'ramp', 'accessible']):
-            return [
-                f"{base} accessible urban street with curb cuts and tactile paving, sunny day, city skyline",
-                f"{base} wheelchair user navigating accessible building entrance with confidence, vivid colors",
-                f"{base} accessibility ramp close-up with crip pride sticker, bright colors, pixel art",
-            ]
-        if any(w in t for w in ['blind', 'vision', 'braille', 'screen reader']):
-            return [
-                f"{base} inclusive tech workspace with braille displays and adaptive monitors, modern office",
-                f"{base} blind programmer at ergonomic desk using screen reader, focused expression, pixel art",
-                f"{base} braille cell close-up with glowing blue dots, dark background, pixel art",
-            ]
-        if any(w in t for w in ['ai', 'tech', 'digital', 'algorithm', 'software']):
-            return [
-                f"{base} inclusive tech lab with diverse disabled engineers, accessible workstations, pixel art",
-                f"{base} disabled AI researcher presenting at conference, sign language interpreter visible",
-                f"{base} neural network diagram with accessibility nodes highlighted, blue and purple palette",
-            ]
-        if any(w in t for w in ['art', 'film', 'culture', 'crip', 'disability justice']):
-            return [
-                f"{base} disability arts festival outdoor stage with diverse crip crowd, golden hour light",
-                f"{base} disabled artist performing with AAC device, spotlight, pixel art audience",
-                f"{base} crip pride banner in rainbow colors over city skyline, pixel art",
-            ]
-        # generic
+        """Build 3 gallery-quality prompts from article subjects + dis.art templates."""
+        accent = ACCENTS[abs(hash(title)) % len(ACCENTS)]
+        person, place, obj = self._extract_subjects(content, title)
         return [
-            f"{base} accessible urban plaza with diverse disabled community gathering, vivid colors, isometric",
-            f"{base} disabled activist speaking at open microphone, diverse crowd, warm evening light",
-            f"{base} accessibility symbol redesigned as community mural on city wall, bright pixel art",
+            _build_confronting(person, place, obj, accent),
+            _build_intimate(person, place, obj, accent),
+            _build_abstract(person, place, obj, accent),
         ]
 
     # ── Pollinations.ai ───────────────────────────────────────────────────────
 
     def _fetch_pollinations(self, prompt, timeout=60):
-        """Fetch image from pollinations.ai. Returns JPEG bytes.
-        Uses POLLINATIONS_API_KEY env var for auth.
-        seed=-1 → non-deterministic (different image each call).
-        model=zimage → Z-Image Turbo (fast, 2x upscaling, free tier).
-        """
+        """Fetch image from Pollinations FLUX. Returns JPEG bytes."""
         encoded = urllib.parse.quote(prompt, safe='')
         params = (
             f"?width={self.width}&height={self.height}"
-            f"&model=zimage&seed=-1&enhance=true&nologo=true"
+            f"&model=flux&seed=-1&nologo=true"
         )
         if self.pollinations_key:
             params += f"&key={urllib.parse.quote(self.pollinations_key, safe='')}"
@@ -160,13 +200,13 @@ Return ONLY valid JSON:
         with urllib.request.urlopen(req, timeout=timeout) as r:
             data = r.read()
         if len(data) < 1000:
-            raise ValueError(f"Suspicious response: {len(data)} bytes — check API key or model")
+            raise ValueError(f"Suspicious response: {len(data)} bytes")
         return data
 
     # ── Main generation ───────────────────────────────────────────────────────
 
     def generate_content_aware_images(self, content, title, slug, num_images=3, validate=False):
-        """Generate num_images context-aware images via pollinations.ai FLUX."""
+        """Generate num_images gallery-quality images via Pollinations FLUX."""
         images = []
         labels = ['setting', 'moment', 'symbol']
 
@@ -179,7 +219,7 @@ Return ONLY valid JSON:
 
             for i, prompt in enumerate(prompts):
                 label = labels[i] if i < len(labels) else f"scene{i+1}"
-                logger.info("Image %d/%d [%s]: %s...", i+1, num_images, label, prompt[:80])
+                logger.info("Image %d/%d [%s]: %s...", i+1, num_images, label, prompt[:100])
                 try:
                     img_data = self._fetch_pollinations(prompt)
                     filename = f"{slug}_{label}_{i+1}.jpg"
@@ -187,19 +227,19 @@ Return ONLY valid JSON:
                         'data': img_data,
                         'filename': filename,
                         'description': f"{label.title()} — {title}",
-                        'score': 8,
+                        'score': 9,
                         'scene': label,
                         'prompt': prompt,
                     })
                     logger.info("  OK %s (%d bytes)", filename, len(img_data))
                 except Exception as e:
-                    logger.warning("  Pollinations failed (%s) — pixel fallback", e)
+                    logger.warning("  Pollinations failed (%s) — gradient fallback", e)
                     img_data = self._pixel_fallback(i)
                     images.append({
                         'data': img_data,
                         'filename': f"{slug}_{label}_{i+1}.png",
                         'description': f"{label.title()} — {title}",
-                        'score': 3,
+                        'score': 2,
                         'scene': label,
                     })
 
@@ -217,14 +257,13 @@ Return ONLY valid JSON:
 
         return images
 
-    # ── Pixel fallback ────────────────────────────────────────────────────────
+    # ── Gradient fallback ─────────────────────────────────────────────────────
 
     def _pixel_fallback(self, index=0):
-        """Gradient fallback when pollinations.ai is unavailable."""
         palettes = [
-            [(30, 50, 110), (70, 110, 190), (150, 190, 230)],
-            [(50, 90, 50),  (90, 150, 70),  (170, 210, 130)],
-            [(90, 40, 110), (150, 70, 170), (210, 150, 230)],
+            [(15, 15, 30), (40, 40, 80), (80, 80, 140)],
+            [(30, 15, 15), (80, 40, 40), (140, 80, 80)],
+            [(15, 30, 15), (40, 80, 40), (80, 140, 80)],
         ]
         colors = palettes[index % len(palettes)]
         grid = [[(0, 0, 0)] * self.gw for _ in range(self.gh)]
@@ -239,7 +278,7 @@ Return ONLY valid JSON:
         return self._grid_to_png(grid)
 
     def _emergency_png(self):
-        grid = [[(20, 20, 40)] * self.gw for _ in range(self.gh)]
+        grid = [[(10, 10, 20)] * self.gw for _ in range(self.gh)]
         return self._grid_to_png(grid)
 
     def _grid_to_png(self, grid):
@@ -279,11 +318,13 @@ def generate_article_images(content, title, slug, num_images=3):
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(levelname)s %(message)s')
-    content = "I'm standing at Union Station. The departure board flickers. I'm deaf and this hub ignores deaf users. No visual alerts, no captions on the screens, no tactile indicators at the platform edge."
-    title = "The Station That Forgot Deaf Users"
+    from pathlib import Path as P
+    content = P('_posts/2026-03-08-architects-are-designing-buildings-for-the-wrong-sense.md').read_text()
+    title = "Architects Are Designing Buildings for the Wrong Sense"
     gen = SceneImageGenerator()
-    imgs = gen.generate_content_aware_images(content, title, "test-station", 3)
+    imgs = gen.generate_content_aware_images(content, title, "test-architects", 3)
     for img in imgs:
-        p = Path(f"/tmp/{img['filename']}")
+        p = P(f"/tmp/{img['filename']}")
         p.write_bytes(img['data'])
-        logger.info("  %s  %d bytes  scene:%s  score:%s", img['filename'], len(img['data']), img.get('scene'), img.get('score'))
+        print(f"  {img['filename']}  {len(img['data'])} bytes")
+        print(f"  prompt: {img.get('prompt','n/a')[:140]}\n")
