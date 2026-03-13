@@ -12,6 +12,7 @@ Architecture:
   - Qwen vision validation with /no_think for fast feedback
 """
 
+import logging
 import math
 import random
 import struct
@@ -22,6 +23,9 @@ import base64
 import hashlib
 import urllib.request
 from pathlib import Path
+
+
+logger = logging.getLogger(__name__)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -68,7 +72,7 @@ class SceneImageGenerator:
     def __init__(self, width=800, height=450, pixel_size=5):
         self.width = width
         self.height = height
-        self.pixel_size = pixel_size
+        self.pixel_size = max(1, min(10, pixel_size))
         self.gw = width // pixel_size   # grid width  (160 @ px5)
         self.gh = height // pixel_size  # grid height  (90 @ px5)
         self.qwen_url = "http://vision-gateway:8080/v1/chat/completions"
@@ -768,21 +772,32 @@ Score JSON only: {{"score": 1-10, "issue": "main problem", "fix": "one specific 
         seed = self._article_seed(slug) + image_index * 1000
         random.seed(seed + hash(scene_type) + (id(params) % 10000))
 
+        params = dict(params)
+        params.setdefault('time', 'day')
+        params.setdefault('ground', 'concrete')
+        params.setdefault('building_style', 'modern')
+
         # image_index=0: primary view, 1: different angle/time, 2: solution view
         if image_index == 1:
-            # Slightly shift perspective — different time of day
-            params = dict(params)
             params['time'] = {'day': 'evening', 'evening': 'night',
                               'night': 'day', 'overcast': 'day'}.get(
-                params.get('time', 'day'), 'day')
+                params['time'], 'day')
         elif image_index == 2:
-            # Solution image — force accessible version
             a11y = 'barrier_free' if a11y in ('missing_ramp', 'broken_elevator',
                                               'no_captions', 'narrow_path') else a11y
 
         grid = self._blank()
-        renderer = getattr(self, self.SCENE_MAP.get(scene_type, '_scene_urban_street'))
-        renderer(grid, params, a11y)
+        renderer_name = self.SCENE_MAP.get(scene_type, '_scene_urban_street')
+        renderer = getattr(self, renderer_name)
+        try:
+            renderer(grid, params, a11y)
+        except Exception as exc:
+            logger.warning("Scene %s failed (%s), falling back to urban_street", scene_type, exc)
+            grid = self._blank()
+            try:
+                self._scene_urban_street(grid, params, a11y)
+            except Exception as exc2:
+                logger.warning("Fallback urban_street also failed (%s), using blank grid", exc2)
 
         # Apply article tint DNA to whole image
         art_seed = self._article_seed(slug)
@@ -799,50 +814,107 @@ Score JSON only: {{"score": 1-10, "issue": "main problem", "fix": "one specific 
     # Main entry point
     # ──────────────────────────────────────────────────────────────────────────
 
-    def generate_content_aware_images(self, content, title, slug, num_images=3):
-        # Get Qwen direction
-        direction = self.get_scene_direction(content, title)
+    def generate_content_aware_images(self, content, title, slug, num_images=3, validate=True):
+        """Generate num_images scene-based PNG images. Always returns a list; never raises.
 
-        if direction:
-            scene_type = direction.get('scene', 'urban_street')
-            params = {
-                'time': direction.get('time', 'day'),
-                'ground': direction.get('ground', 'concrete'),
-                'building_style': direction.get('building_style', 'modern'),
-            }
-            a11y = direction.get('accessibility_element', 'missing_ramp')
-            captions = direction.get('captions', [])
-        else:
-            # Fallback — infer from content
-            scene_type = self._infer_scene(content + ' ' + title)
-            params = {'time': 'day', 'ground': 'concrete', 'building_style': 'modern'}
-            a11y = 'missing_ramp'
-            captions = []
+        Args:
+            validate: When True, Qwen vision-scores each image and re-renders if score<6.
+                      Set False for automated cron runs to skip the 20-90s validation overhead.
+        """
+        _fallback_params = {'time': 'day', 'ground': 'concrete', 'building_style': 'modern'}
+        _fallback_scene = 'urban_street'
 
-        images = []
-        for i in range(min(num_images, 3)):
-            png_data = self._render_scene(scene_type, params, a11y, i, slug)
+        try:
+            direction = self.get_scene_direction(content, title)
 
-            # Optional Qwen vision validation (score < 6 → re-render once)
-            eval_r = self.validate_image(png_data, scene_type, title)
-            if eval_r.get('score', 7) < 6:
-                random.seed(self._article_seed(slug) + i * 1000 + 9999)
-                png_data = self._render_scene(scene_type, params, a11y, i, slug + '_v2')
+            if direction:
+                scene_type = direction.get('scene', _fallback_scene)
+                params = {
+                    'time': direction.get('time', 'day'),
+                    'ground': direction.get('ground', 'concrete'),
+                    'building_style': direction.get('building_style', 'modern'),
+                }
+                a11y = direction.get('accessibility_element', 'missing_ramp')
+                captions = direction.get('captions', [])
+            else:
+                scene_type = self._infer_scene(content + ' ' + title)
+                params = dict(_fallback_params)
+                a11y = 'missing_ramp'
+                captions = []
 
-            caption = captions[i] if i < len(captions) else \
-                f"{'Concept' if i==0 else 'Context' if i==1 else 'Solution'}: " \
-                f"{scene_type.replace('_', ' ')} — disability accessibility perspective"
+            images = []
+            for i in range(min(num_images, 3)):
+                try:
+                    png_data = self._render_scene(scene_type, params, a11y, i, slug)
 
-            suffix = ['concept', 'context', 'solution'][i]
-            images.append({
-                'data': png_data,
-                'filename': f"{slug}_{suffix}_{i+1}.png",
-                'description': caption,
-                'score': eval_r.get('score', 7),
-                'scene': scene_type,
-            })
+                    if validate:
+                        eval_r = self.validate_image(png_data, scene_type, title)
+                        if eval_r.get('score', 7) < 6:
+                            random.seed(self._article_seed(slug) + i * 1000 + 9999)
+                            png_data = self._render_scene(scene_type, params, a11y, i, slug + '_v2')
+                    else:
+                        eval_r = {'score': 7, 'issue': '', 'fix': ''}
 
-        return images
+                    caption = captions[i] if i < len(captions) else \
+                        f"{'Concept' if i==0 else 'Context' if i==1 else 'Solution'}: " \
+                        f"{scene_type.replace('_', ' ')} — disability accessibility perspective"
+
+                    suffix = ['concept', 'context', 'solution'][i]
+                    images.append({
+                        'data': png_data,
+                        'filename': f"{slug}_{suffix}_{i+1}.png",
+                        'description': caption,
+                        'score': eval_r.get('score', 7),
+                        'scene': scene_type,
+                    })
+                except Exception as exc:
+                    logger.warning("Image %d generation failed (%s), using emergency render", i, exc)
+                    try:
+                        png_data = self._render_scene(_fallback_scene, _fallback_params,
+                                                      'missing_ramp', i, slug + f'_emer{i}')
+                    except Exception:
+                        png_data = self._emergency_png()
+                    suffix = ['concept', 'context', 'solution'][i]
+                    images.append({
+                        'data': png_data,
+                        'filename': f"{slug}_{suffix}_{i+1}.png",
+                        'description': f"Scene {i+1} — {title}",
+                        'score': 5,
+                        'scene': _fallback_scene,
+                    })
+
+            # Pad to requested count if any images are still missing
+            while len(images) < min(num_images, 3):
+                i = len(images)
+                try:
+                    png_data = self._render_scene(_fallback_scene, _fallback_params,
+                                                  'missing_ramp', i, slug + f'_pad{i}')
+                except Exception:
+                    png_data = self._emergency_png()
+                suffix = ['concept', 'context', 'solution'][i]
+                images.append({
+                    'data': png_data,
+                    'filename': f"{slug}_{suffix}_{i+1}.png",
+                    'description': f"Scene {i+1} — {title}",
+                    'score': 5,
+                    'scene': _fallback_scene,
+                })
+
+            return images
+
+        except Exception as exc:
+            logger.error("generate_content_aware_images catastrophic failure (%s)", exc)
+            images = []
+            for i in range(min(num_images, 3)):
+                suffix = ['concept', 'context', 'solution'][i]
+                images.append({
+                    'data': self._emergency_png(),
+                    'filename': f"{slug}_{suffix}_{i+1}.png",
+                    'description': f"Scene {i+1} — {title}",
+                    'score': 5,
+                    'scene': 'urban_street',
+                })
+            return images
 
     def _infer_scene(self, text):
         text = text.lower()
@@ -866,6 +938,11 @@ Score JSON only: {{"score": 1-10, "issue": "main problem", "fix": "one specific 
     # PNG encoding
     # ──────────────────────────────────────────────────────────────────────────
 
+    def _emergency_png(self):
+        """Minimal valid 1x1 black PNG for catastrophic fallback."""
+        grid = self._blank((0, 0, 0))
+        return self._grid_to_png(grid)
+
     def _grid_to_png(self, grid):
         """Scale grid cells to pixel_size and encode as PNG."""
         raw = b''
@@ -873,8 +950,13 @@ Score JSON only: {{"score": 1-10, "issue": "main problem", "fix": "one specific 
             for _ in range(self.pixel_size):  # repeat each row pixel_size times
                 raw += b'\x00'  # filter byte
                 for gx in range(self.gw):
-                    color = grid[gy][gx]
-                    raw += bytes(color) * self.pixel_size  # repeat each column
+                    cell = grid[gy][gx]
+                    if not isinstance(cell, (tuple, list)) or len(cell) < 3:
+                        cell = (0, 0, 0)
+                    r = max(0, min(255, int(cell[0])))
+                    g = max(0, min(255, int(cell[1])))
+                    b = max(0, min(255, int(cell[2])))
+                    raw += bytes([r, g, b]) * self.pixel_size  # repeat each column
         compressed = zlib.compress(raw)
 
         width = self.gw * self.pixel_size
@@ -908,14 +990,16 @@ if __name__ == "__main__":
     content = "I'm standing at Union Station. The departure board flickers. I'm deaf and this hub ignores deaf users. No visual alerts, no captions on the screens, no tactile indicators at the platform edge."
     title = "The Station That Forgot Deaf Users"
     gen = SceneImageGenerator()
-    print("Querying Qwen for scene direction...", file=sys.stderr)
+    logger.info("Querying Qwen for scene direction...")
     direction = gen.get_scene_direction(content, title)
-    print("Direction:", direction, file=sys.stderr)
-    print("Rendering scenes...", file=sys.stderr)
+    logger.info("Direction: %s", direction)
+    logger.info("Rendering scenes...")
     imgs = gen.generate_content_aware_images(content, title, "test-station", 3)
+    logging.basicConfig(level=logging.INFO, format='%(levelname)s %(message)s')
     for img in imgs:
         p = Path(f"/tmp/{img['filename']}")
         p.write_bytes(img['data'])
         valid = img['data'][:4] == b'\x89PNG'
-        print(f"  {img['filename']}  {len(img['data'])} bytes  PNG:{valid}  scene:{img['scene']}  score:{img.get('score','?')}", file=sys.stderr)
-        print(f"  Caption: {img['description']}", file=sys.stderr)
+        logger.info("  %s  %d bytes  PNG:%s  scene:%s  score:%s",
+                    img['filename'], len(img['data']), valid, img['scene'], img.get('score','?'))
+        logger.info("  Caption: %s", img['description'])

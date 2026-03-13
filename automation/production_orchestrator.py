@@ -189,7 +189,24 @@ The future belongs to designers and technologists who recognize that disability 
         return fallback_content
 
     def generate_images(self, content, slug, num_images=3):
-        """Generate scene-based pixel art images using SceneImageGenerator."""
+        """Generate scene-based pixel art images for an article.
+
+        Pipeline:
+          1. Imports SceneImageGenerator (scene_image_generator.py)
+          2. Calls generate_content_aware_images() with validate=False (fast mode,
+             skips Qwen vision scoring to avoid 20-90s per-image overhead in cron runs)
+          3. Writes each PNG to assets/ directory
+          4. Falls back to SophisticatedArtGenerator if SceneImageGenerator fails
+          5. Returns list of filename strings (placeholders if both generators fail)
+
+        Args:
+            content:    Article text used to extract title for Qwen scene direction
+            slug:       Article slug, used as filename prefix
+            num_images: Number of images to generate (default 3)
+
+        Returns:
+            List of filename strings (relative to assets/).
+        """
         try:
             sys.path.append(str(self.repo_root))
             from scene_image_generator import SceneImageGenerator
@@ -202,7 +219,7 @@ The future belongs to designers and technologists who recognize that disability 
 
             self.logger.info("Generating scene-based pixel art images...")
 
-            images = generator.generate_content_aware_images(content, title, slug, num_images)
+            images = generator.generate_content_aware_images(content, title, slug, num_images, validate=False)
             
             for img in images:
                 filepath = self.assets_dir / img['filename']
