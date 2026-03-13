@@ -38,7 +38,7 @@ This experience wasn't unique to me. When I later visited the exhibition "Gettin
 
 * * *
 
-![Disability co-design process: Building accessibility into foundations from the beginning](/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_pixel_art_3.png)
+![Disability co-design process: Building accessibility into foundations from the beginning]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_pixel_art_3.png)
 
 
 ## The Problem: Accessibility as Afterthought

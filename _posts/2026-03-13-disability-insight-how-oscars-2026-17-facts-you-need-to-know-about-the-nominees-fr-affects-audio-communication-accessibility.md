@@ -13,8 +13,6 @@ image: /assets/disability-insight-how-oscars-2026-17-facts-you-need-to-know-abou
 
 *Audio waves transforming into visual patterns for deaf accessibility*
 
-![Audio waves transforming into visual patterns for deaf accessibility]({{ site.baseurl }}/assets/2026-03-13-disability-insight-how-oscars-2026-17-facts-you-need-to-know-about-the-nominees-fr-affects-audio-communication-accessibility_pixel_art_1.png)
-
 ## A Personal Silence
 
 **The nominees are announced. The audience erupts. The captions lag three seconds behind.**
@@ -75,7 +73,7 @@ Consider these possibilities that reframe accessibility as artistic innovation:
 2. **Visual sound design as cinematic language**: Deaf artists creating visual representations of audio elements that become integral to the cinematic experience for all viewers
 3. **Haptic scores as sensory expansion**: Vibrational technology allowing deaf audiences to experience music through touch, potentially creating new forms of sensory cinema that hearing audiences might also appreciate
 
-![Oscars ceremony with visual sound representations for sensory inclusion]({{ site.baseurl }}/assets/2026-03-13-disability-insight-how-oscars-2026-17-facts-you-need-to-know-about-the-nominees-fr-affects-audio-communication-accessibility_pixel_art_2.png)
+![Oscars ceremony with visual sound representations for sensory inclusion]({{ site.baseurl }}/assets/disability-insight-how-oscars-2026-17-facts-you-need-to-know-about-the-nominees-fr-affects-audio-communication-accessibility_pixel_art_2.png)
 
 These aren't accommodations—they're artistic expansions that could enrich cinema for everyone.
 
