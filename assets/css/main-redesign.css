@@ -2307,3 +2307,230 @@ a:hover {
   margin-top: var(--space-12);
   margin-bottom: var(--space-12);
 }
+
+
+/* ============================================================
+   EDITORIAL ARTICLE REDESIGN — Magazine / Wired-level layout
+   ============================================================ */
+
+/* Post shell: slightly wider, centred reading column */
+.post-shell {
+  max-width: 900px !important;
+}
+
+/* ── Hero: full-bleed, tall, razor-edged ── */
+.post-hero {
+  margin-left: calc(-1 * var(--space-4));
+  margin-right: calc(-1 * var(--space-4));
+  margin-bottom: var(--space-9);
+  overflow: hidden;
+}
+
+.post-hero-img {
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+  display: block;
+  border-radius: 0 !important;
+  height: auto;
+}
+
+/* ── Category label ── */
+.post-category-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-brand, #0066cc);
+  border-bottom: 2px solid currentColor;
+  display: inline-block;
+  padding-bottom: 2px;
+  margin-bottom: var(--space-5);
+}
+
+/* ── Title: bold editorial scale ── */
+.post-title {
+  font-size: clamp(2.1rem, 5.5vw, 3.5rem) !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.03em !important;
+  text-wrap: balance;
+  max-width: 18ch;
+  margin-bottom: var(--space-5) !important;
+  color: var(--color-text-primary);
+}
+
+/* ── Dek / standfirst ── */
+.post-excerpt {
+  font-size: clamp(1.05rem, 2vw, 1.25rem) !important;
+  line-height: 1.6 !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  font-family: var(--font-family-base, sans-serif) !important;
+  color: var(--color-text-secondary) !important;
+  max-width: 54ch;
+  border-left: 3px solid var(--color-text-brand, #0066cc) !important;
+  padding-left: var(--space-5) !important;
+  margin-left: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* ── Meta bar: after dek, with top rule ── */
+.post-header {
+  border-bottom: none !important;
+  padding-bottom: 0 !important;
+}
+
+.post-meta {
+  margin-top: var(--space-5) !important;
+  padding-top: var(--space-4) !important;
+  border-top: 1px solid var(--color-border) !important;
+  font-size: 0.8rem !important;
+  gap: var(--space-3) var(--space-5) !important;
+}
+
+.post-meta__reading-time {
+  color: var(--color-text-muted, #9ca3af);
+  font-size: 0.8rem;
+}
+
+/* ── Prose: body text ── */
+.prose--large {
+  font-size: 1.1rem !important;
+  line-height: 1.78 !important;
+}
+
+/* First paragraph — larger, sans-serif lead-in */
+.prose > p:first-of-type {
+  font-size: clamp(1.15rem, 2.2vw, 1.32rem) !important;
+  line-height: 1.65 !important;
+  font-weight: 400 !important;
+  color: var(--color-text-primary) !important;
+  font-family: var(--font-family-base, sans-serif) !important;
+}
+
+/* Drop cap on first paragraph */
+.prose > p:first-of-type::first-letter {
+  float: left;
+  font-size: 4rem;
+  line-height: 0.82;
+  font-weight: 900;
+  margin-right: 0.08em;
+  margin-top: 0.08em;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base, sans-serif);
+}
+
+/* ── Section breaks: H2 ── */
+.prose h2 {
+  font-size: clamp(1.45rem, 2.8vw, 1.9rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.025em;
+  border-top: 2px solid var(--color-border, #e5e7eb) !important;
+  padding-top: var(--space-8) !important;
+  margin-top: var(--space-10) !important;
+  margin-bottom: var(--space-4) !important;
+  color: var(--color-text-primary);
+}
+
+.prose h2:first-of-type {
+  border-top: none !important;
+  padding-top: 0 !important;
+  margin-top: var(--space-8) !important;
+}
+
+.prose h3 {
+  font-size: clamp(1.1rem, 1.9vw, 1.35rem) !important;
+  font-weight: 700 !important;
+  margin-top: 2rem !important;
+  margin-bottom: 0.5rem !important;
+  color: var(--color-text-primary);
+}
+
+/* ── Pull quote: blockquote ── */
+.prose blockquote {
+  margin: var(--space-10) calc(-1 * var(--space-6)) !important;
+  padding: var(--space-6) var(--space-8) !important;
+  border-left: none !important;
+  border-top: 3px solid var(--color-text-primary) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+}
+
+.prose blockquote p {
+  font-size: clamp(1.25rem, 2.3vw, 1.55rem) !important;
+  font-style: italic !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+  color: var(--color-text-primary) !important;
+  max-width: none !important;
+  margin-bottom: 0 !important;
+}
+
+/* ── Body images: full-width, proper caption ── */
+.prose img {
+  width: 100% !important;
+  max-width: none !important;
+  border-radius: 4px !important;
+  margin: var(--space-8) 0 0 !important;
+  display: block !important;
+}
+
+/* Caption: <p><em>text</em></p> after image paragraph */
+.prose p > em:only-child {
+  display: block !important;
+  font-style: normal !important;
+  font-size: 0.8125rem !important;
+  color: var(--color-text-muted, #6b7280) !important;
+  margin-top: var(--space-2) !important;
+  margin-bottom: var(--space-8) !important;
+  padding-left: var(--space-3) !important;
+  border-left: 2px solid var(--color-border) !important;
+  text-align: left !important;
+}
+
+/* ── Post footer ── */
+.post-footer {
+  margin-top: var(--space-10);
+  padding-top: var(--space-8);
+  border-top: 2px solid var(--color-border);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .post-hero {
+    margin-left: calc(-1 * var(--space-4));
+    margin-right: calc(-1 * var(--space-4));
+  }
+
+  .post-hero-img {
+    aspect-ratio: 16 / 9;
+  }
+
+  .post-title {
+    max-width: none;
+  }
+
+  .prose blockquote {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: var(--space-5) !important;
+    padding-right: var(--space-5) !important;
+  }
+
+  .prose > p:first-of-type::first-letter {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .post-hero-img {
+    aspect-ratio: 4 / 3;
+  }
+
+  .prose blockquote {
+    padding-left: var(--space-4) !important;
+    padding-right: var(--space-4) !important;
+  }
+}

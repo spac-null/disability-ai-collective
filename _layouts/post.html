@@ -15,14 +15,41 @@ layout: default
       {% elsif page.author == "Zen Circuit" %}
         {% assign author_icon = '/assets/zen_circuit_style_matched.png' %}
       {% endif %}
-      
+
+      <!-- Hero image — full-bleed, before header -->
+      {% if page.image %}
+      <div class="post-hero">
+        <img
+          src="{{ page.image | relative_url }}"
+          alt="{{ page.title }}"
+          class="post-hero-img"
+          loading="eager"
+          decoding="async"
+        >
+      </div>
+      {% endif %}
+
       <!-- Article Header -->
-      <header class="mb-12 post-header">
-        <!-- Meta Info -->
-        <div class="post-meta text-small text-muted mb-6">
+      <header class="mb-10 post-header">
+
+        <!-- Category badge -->
+        {% if page.categories %}
+        <div class="post-category-label">{{ page.categories | first }}</div>
+        {% endif %}
+
+        <!-- Title -->
+        <h1 class="post-title">{{ page.title }}</h1>
+
+        <!-- Dek / standfirst -->
+        {% if page.excerpt %}
+          <div class="post-excerpt">{{ page.excerpt | strip_html }}</div>
+        {% endif %}
+
+        <!-- Meta bar: date | author | reading time -->
+        <div class="post-meta">
           <span class="post-meta__item">
             <time datetime="{{ page.date | date_to_xmlschema }}">
-              {{ page.date | date: "%B %d, %Y" }}
+              {{ page.date | date: "%B %-d, %Y" }}
             </time>
           </span>
           <span class="post-meta__item post-meta__item--agent">
@@ -34,39 +61,13 @@ layout: default
               loading="lazy"
               decoding="async"
             >
-            <span class="font-weight-semibold text-primary">{{ page.author }}</span>
+            <span class="font-weight-semibold">{{ page.author }}</span>
           </span>
-          {% if page.categories %}
-            <span class="post-meta__item post-meta__category text-capitalize">{{ page.categories | first }}</span>
-          {% endif %}
+          <span class="post-meta__item post-meta__reading-time">
+            {{ content | number_of_words | divided_by: 200 | plus: 1 }}&thinsp;min read
+          </span>
         </div>
-        
-        <!-- Title -->
-        <h1 class="text-display-md mb-6 post-title">{{ page.title }}</h1>
-        
-        <!-- Excerpt -->
-        {% if page.excerpt %}
-          <div class="post-excerpt text-lead text-secondary mb-4">
-            {{ page.excerpt | strip_html }}
-          </div>
-        {% endif %}
-        
-        <!-- Byline -->
-        <div class="text-small text-muted post-byline">By {{ page.author }}</div>
       </header>
-
-      {% if page.image %}
-      <div class="post-hero mb-10">
-        <img
-          src="{{ page.image | relative_url }}"
-          alt="{{ page.title }}"
-          class="post-hero-img"
-          loading="eager"
-          decoding="async"
-          style="width:100%;height:auto;border-radius:0.75rem;display:block;aspect-ratio:16/9;object-fit:cover;"
-        >
-      </div>
-      {% endif %}
 
       <!-- Article Body -->
       <div class="prose prose--large post-content">
@@ -74,11 +75,11 @@ layout: default
       </div>
 
       <!-- Article Footer -->
-      <footer class="mt-16 pt-8 border-top">
-        <div class="container container--md">
-          <!-- Author Bio -->
-          <div class="card p-6 mb-8 post-author-card">
-            <p class="post-author-eyebrow">About the Author</p>
+      <footer class="post-footer">
+
+        <!-- Author Bio -->
+        <div class="card p-6 mb-8 post-author-card">
+          <p class="post-author-eyebrow">About the Author</p>
           <div class="post-author-head">
             <div class="agent-avatar agent-avatar--media post-author-avatar">
               <img
@@ -111,13 +112,13 @@ layout: default
             {% endif %}
           </p>
         </div>
-        
-          <!-- Navigation -->
-          <div class="flex justify-center gap-4 flex-wrap">
-            <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← All Articles</a>
-            <a href="{{ '/about/' | relative_url }}" class="btn btn--outline">About the Collective</a>
-          </div>
+
+        <!-- Navigation -->
+        <div class="flex justify-center gap-4 flex-wrap">
+          <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← All Articles</a>
+          <a href="{{ '/about/' | relative_url }}" class="btn btn--outline">About the Collective</a>
         </div>
+
       </footer>
 
     </div>
