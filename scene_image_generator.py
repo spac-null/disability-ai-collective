@@ -42,14 +42,15 @@ def _build_confronting(person, place, obj, accent):
     )
 
 def _build_intimate(person, place, obj, accent):
-    """Gouache + scan-line — warm, textured, distinctly non-photographic."""
+    """Risograph two-color — misregistered layers, person-centric print."""
     return (
-        f"gouache illustration on rough textured paper, {place}, {person}, "
-        f"{obj} rendered in saturated {accent}, "
-        f"visible brushstrokes, painterly documentary style, "
-        f"pixel grid scan-line overlay, 8-bit color banding on edges, "
-        f"warm flat areas with gestural marks, neither photo nor cartoon, "
-        f"Lynda Barry meets editorial illustration, no photography, no text"
+        f"risograph two-color print, {person}, "
+        f"misregistered ink layers in {accent} and cream white, "
+        f"visible halftone grain, warm press texture on newsprint stock, "
+        f"person as central composition, figure fills frame with cropped edges, "
+        f"pixel art registration marks at corners, 8-bit color halftone banding, "
+        f"disability justice zine energy, Interference Archive meets Sins Invalid, "
+        f"no gradients, no photorealism, no photography, no text"
     )
 
 def _build_abstract(person, place, obj, accent):

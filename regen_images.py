@@ -20,11 +20,27 @@ sys.path.insert(0, str(WORKSPACE))
 
 from scene_image_generator import SceneImageGenerator
 
+# Auto-load API key if not set
+if not os.environ.get("POLLINATIONS_API_KEY"):
+    secrets_path = "/srv/secrets/openclaw.env"
+    try:
+        with open(secrets_path) as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith("POLLINATIONS_API_KEY=") and not line.startswith("#"):
+                    os.environ["POLLINATIONS_API_KEY"] = line.split("=", 1)[1].strip().strip('"').strip("'")
+                    logger.info("Loaded POLLINATIONS_API_KEY from %s", secrets_path)
+                    break
+    except Exception as e:
+        logger.warning("Could not load API key from %s: %s", secrets_path, e)
+
+
 def extract_title(content):
-    m = re.search(r'^title:\s*["\']([^"\']+)["\']', content, re.MULTILINE)
-    if m:
-        return m.group(1)
-    m = re.search(r'^title:\s*(.+)', content, re.MULTILINE)
+    m = re.search(r'''(?m)^title:\s*"([^"]+)"''', content)
+    if not m:
+        m = re.search(r"""(?m)^title:\s+'([^']+)'""", content)
+    if not m:
+        m = re.search(r'''(?m)^title:\s*(.+)''', content)
     if m:
         return m.group(1).strip()
     return "Article"
