@@ -35,54 +35,126 @@ class RSSDisabilityCrawler:
                 'https://www.wired.com/feed/',
                 'https://www.wired.com/feed/category/ideas/latest/',
                 'https://www.wired.com/feed/category/design/latest/',
+                'https://www.wired.com/feed/category/business/latest/',
             ],
             'techcrunch.com': [
                 'https://techcrunch.com/feed/',
                 'https://techcrunch.com/category/artificial-intelligence/feed/',
+                'https://techcrunch.com/category/startups/feed/',
+                'https://techcrunch.com/category/security/feed/',
             ],
             'theverge.com': [
                 'https://www.theverge.com/rss/index.xml',
                 'https://www.theverge.com/tech/rss/index.xml',
                 'https://www.theverge.com/design/rss/index.xml',
+                'https://www.theverge.com/science/rss/index.xml',
             ],
             'fastcompany.com': [
                 'https://www.fastcompany.com/feed',
                 'https://www.fastcompany.com/work-life/feed',
+                'https://www.fastcompany.com/innovation/feed',
             ],
             'bloomberg.com': [
                 'https://www.bloomberg.com/feeds/podcasts/odd_lots.xml',  # Podcast feed
                 'https://www.bloomberg.com/technology/rss/',
+                'https://www.bloomberg.com/opinion/rss/',
             ],
             'nature.com': [
                 'https://www.nature.com/nature.rss',
                 'https://www.nature.com/articles.rss',
+                'https://www.nature.com/news.rss',
             ],
             'theguardian.com': [
                 'https://www.theguardian.com/technology/rss',
                 'https://www.theguardian.com/science/rss',
                 'https://www.theguardian.com/society/rss',
+                'https://www.theguardian.com/culture/rss',
+                'https://www.theguardian.com/education/rss',
+            ],
+            # ART & CULTURE SOURCES (PRIMARY FOCUS)
+            'hyperallergic.com': [
+                'https://hyperallergic.com/feed/',
+                'https://hyperallergic.com/category/art/feed/',
+                'https://hyperallergic.com/category/culture/feed/',
+            ],
+            'artsy.net': [
+                'https://www.artsy.net/rss/news',
+                'https://www.artsy.net/rss/features',
+            ],
+            'artnews.com': [
+                'https://www.artnews.com/feed/',
+                'https://www.artnews.com/category/art-news/feed/',
+            ],
+            'artforum.com': [
+                'https://www.artforum.com/feed/',
+                'https://www.artforum.com/news/feed/',
+            ],
+            'dezeen.com': [
+                'https://www.dezeen.com/feed/',
+                'https://www.dezeen.com/architecture/feed/',
+                'https://www.dezeen.com/design/feed/',
+            ],
+            'designboom.com': [
+                'https://www.designboom.com/feed/',
+                'https://www.designboom.com/architecture/feed/',
+            ],
+            'creativeboom.com': [
+                'https://www.creativeboom.com/feed/',
+                'https://www.creativeboom.com/illustration/feed/',
+            ],
+            # CULTURE & SOCIETY
+            'nytimes.com': [
+                'https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml',
+                'https://rss.nytimes.com/services/xml/rss/nyt/Design.xml',
+                'https://rss.nytimes.com/services/xml/rss/nyt/Fashion.xml',
+                'https://rss.nytimes.com/services/xml/rss/nyt/Theater.xml',
+            ],
+            'theguardian.com': [
+                'https://www.theguardian.com/artanddesign/rss',
+                'https://www.theguardian.com/culture/rss',
+                'https://www.theguardian.com/stage/rss',
+                'https://www.theguardian.com/film/rss',
+                'https://www.theguardian.com/music/rss',
+            ],
+            'bbc.com': [
+                'https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml',
+                'https://feeds.bbci.co.uk/news/culture/rss.xml',
+            ],
+            # TECHNOLOGY FOR ART/CREATIVITY (secondary)
+            'techcrunch.com': [
+                'https://techcrunch.com/category/creativity/feed/',
+            ],
+            'wired.com': [
+                'https://www.wired.com/feed/category/culture/latest/',
+                'https://www.wired.com/feed/category/design/latest/',
             ],
         }
         
         # Disability concepts to look for in article bodies
         self.disability_concepts = {
             # Physical accessibility
-            'physical': ['wheelchair', 'mobility', 'prosthetic', 'ramp', 'elevator', 'stairs'],
+            'physical': ['wheelchair', 'mobility', 'prosthetic', 'ramp', 'elevator', 'stairs', 'dance', 'movement', 'gesture'],
             
             # Sensory accessibility  
-            'sensory': ['deaf', 'blind', 'hearing', 'vision', 'caption', 'audio', 'visual'],
+            'sensory': ['deaf', 'blind', 'hearing', 'vision', 'caption', 'audio', 'visual', 'tactile', 'haptic', 'texture', 'color', 'sound', 'music'],
             
             # Cognitive/neurodiversity
-            'cognitive': ['neurodiverse', 'autistic', 'ADHD', 'dyslexia', 'cognitive', 'focus'],
+            'cognitive': ['neurodiverse', 'autistic', 'ADHD', 'dyslexia', 'cognitive', 'focus', 'pattern', 'rhythm', 'composition', 'improvisation'],
             
             # Communication
-            'communication': ['speech', 'language', 'communication', 'interface', 'interaction'],
+            'communication': ['speech', 'language', 'communication', 'interface', 'interaction', 'expression', 'narrative', 'storytelling', 'metaphor'],
             
             # Systemic barriers
-            'systemic': ['barrier', 'access', 'inclusion', 'exclusion', 'marginalized', 'equity'],
+            'systemic': ['barrier', 'access', 'inclusion', 'exclusion', 'marginalized', 'equity', 'representation', 'voice', 'agency', 'visibility'],
             
             # Design approaches
-            'design': ['universal design', 'inclusive design', 'accessible', 'accommodation'],
+            'design': ['universal design', 'inclusive design', 'accessible', 'accommodation', 'aesthetic', 'form', 'function', 'beauty', 'ugliness'],
+            
+            # Art & Creativity
+            'art': ['artist', 'painting', 'sculpture', 'performance', 'theater', 'film', 'photography', 'installation', 'exhibition', 'gallery', 'museum', 'curator'],
+            
+            # Cultural expression
+            'culture': ['identity', 'community', 'tradition', 'innovation', 'subculture', 'mainstream', 'marginal', 'radical', 'conservative', 'progressive'],
         }
         
         # User agents
