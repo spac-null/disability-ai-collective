@@ -189,40 +189,66 @@ The future belongs to designers and technologists who recognize that disability 
         return fallback_content
 
     def generate_images(self, content, slug, num_images=3):
-        """Generate sophisticated images for article using the professional generator."""
+        """Generate intelligent, content-aware images using the unified generator."""
         try:
-            # Import the sophisticated generator
+            # Import the intelligent generator
             sys.path.append(str(self.repo_root))
-            from generate_sophisticated_art_simple import SophisticatedArtGenerator
+            from intelligent_image_generator import IntelligentImageGenerator
             
-            generator = SophisticatedArtGenerator(width=600, height=400)  # Optimized size
+            # Extract title from content for analysis
+            title_match = re.search(r'title: "([^"]+)"', content)
+            title = title_match.group(1) if title_match else "Article"
+            
+            generator = IntelligentImageGenerator(width=800, height=450)  # Full quality
             image_filenames = []
             
-            # Generate sophisticated images based on content themes
-            for i in range(num_images):
-                # Create different sophisticated patterns for each image
-                if i == 0:
-                    png_data = generator.generate_acoustic_chaos()
-                elif i == 1:
-                    png_data = generator.generate_visual_hierarchy()
-                else:
-                    png_data = generator.generate_accessibility_flow()
-                
-                filename = f"{slug}_sophisticated_{i+1}.png"
-                filepath = self.assets_dir / filename
+            self.logger.info(f"Analyzing content for intelligent image generation...")
+            
+            # Generate content-aware images
+            images = generator.generate_content_aware_images(content, title, slug, num_images)
+            
+            for img in images:
+                filepath = self.assets_dir / img['filename']
                 
                 with open(filepath, 'wb') as f:
-                    f.write(png_data)
+                    f.write(img['data'])
                 
-                image_filenames.append(filename)
-                self.logger.info(f"Generated sophisticated image: {filename} ({len(png_data)} bytes)")
+                image_filenames.append(img['filename'])
+                self.logger.info(f"Generated intelligent image: {img['filename']} - {img['description']}")
             
             return image_filenames
             
         except Exception as e:
-            self.logger.error(f"Image generation failed: {e}")
-            # Return placeholder filenames - article can still be created
-            return [f"{slug}_placeholder_{i+1}.png" for i in range(num_images)]
+            self.logger.error(f"Intelligent image generation failed: {e}")
+            # Fallback to simple sophisticated generator
+            try:
+                from generate_sophisticated_art_simple import SophisticatedArtGenerator
+                
+                generator = SophisticatedArtGenerator(width=800, height=450)
+                image_filenames = []
+                
+                for i in range(num_images):
+                    if i == 0:
+                        png_data = generator.generate_acoustic_chaos()
+                    elif i == 1:
+                        png_data = generator.generate_visual_hierarchy()
+                    else:
+                        png_data = generator.generate_accessibility_flow()
+                    
+                    filename = f"{slug}_fallback_{i+1}.png"
+                    filepath = self.assets_dir / filename
+                    
+                    with open(filepath, 'wb') as f:
+                        f.write(png_data)
+                    
+                    image_filenames.append(filename)
+                
+                self.logger.warning("Used fallback image generator")
+                return image_filenames
+                
+            except Exception as e2:
+                self.logger.error(f"Fallback image generation also failed: {e2}")
+                return [f"{slug}_placeholder_{i+1}.png" for i in range(num_images)]
 
     def create_article_file(self, metadata, content, image_filenames):
         """Create properly formatted article file."""
