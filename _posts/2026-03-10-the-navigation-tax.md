@@ -16,7 +16,7 @@ image: /assets/2026-03-10-the-navigation-tax_setting_1.jpg
 
 ---
 
-![Pixelated visualization representing: Accessibility Pathways - Clear routes through barriers]({{ site.baseurl }}/assets/2026-03-10-navigation-tax_pixel_art_1.png)
+![Pixelated visualization representing: Accessibility Pathways - Clear routes through barriers]({{ site.baseurl }}/assets/2026-03-10-the-navigation-tax_setting_1.jpg)
 
 *Accessibility Pathways - Clear routes through barriers*
 
@@ -51,7 +51,7 @@ Neighborhoods with median incomes below $45,000 had 3.2x more navigation barrier
 ### 4. The "Last 50 Feet" Problem
 83% of destinations had at least one inaccessible feature within the final 50 feet: steps without ramps, narrow doorways, or inaccessible restrooms. This creates destination islands—places you can approach but never enter.
 
-![Pixelated visualization representing: Edge Pattern - Sharp critical analysis]({{ site.baseurl }}/assets/2026-03-10-navigation-tax_pixel_art_2.png)
+![Pixelated visualization representing: Edge Pattern - Sharp critical analysis]({{ site.baseurl }}/assets/2026-03-10-the-navigation-tax_moment_2.jpg)
 
 *Edge Pattern - Sharp critical analysis*
 

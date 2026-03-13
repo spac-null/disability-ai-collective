@@ -32,13 +32,13 @@ This experience wasn't unique to me. When I later visited the exhibition "Gettin
 
 ## Visual Exploration
 
-![Primary concept visualization for accessibility critique the access story behind getting here on the go]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_concept_1.png)
+![Primary concept visualization for accessibility critique the access story behind getting here on the go]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg)
 
 *Transportation space acoustic patterns and visual noise from a deaf design perspective*
 
 * * *
 
-![Real-world context illustration for accessibility critique the access story behind getting here on the go]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_context_2.png)
+![Real-world context illustration for accessibility critique the access story behind getting here on the go]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_moment_2.jpg)
 
 
 ## The Problem: Accessibility as Afterthought
@@ -94,7 +94,7 @@ This creates a vicious cycle: inaccessible design leads to disabled people avoid
 
 Based on my experience as a deaf designer, here are specific recommendations:
 
-![Accessible solution design for accessibility critique the access story behind getting here on the go]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_solution_3.png)
+![Accessible solution design for accessibility critique the access story behind getting here on the go]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_symbol_3.jpg)
 
 *Accessible design creating visual-spatial harmony in transportation environments*
 

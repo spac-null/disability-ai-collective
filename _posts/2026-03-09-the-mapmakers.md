@@ -16,7 +16,7 @@ Her finger traced invisible lines in the air. "The rhythm of the lights. The flo
 
 Mara is deaf. She's also one of the best interface designers I know.
 
-![Seeing patterns in urban navigation]({{ site.baseurl }}/assets/accessibility_navigation_inline.png)
+![Seeing patterns in urban navigation]({{ site.baseurl }}/assets/2026-03-09-the-mapmakers_setting_1.jpg)
 *Pixel art showing how different sensory experiences create different navigation patterns - where some hear traffic, others see rhythms and flows*
 
 ## The Day Everything Changed
@@ -39,7 +39,7 @@ Growing up deaf taught Mara to be a cartographer. When the world isn't designed 
 
 Where most designers see pixels, Mara sees relationships. Where they see beauty, she sees flow. Where they see features, she sees pathways.
 
-![Visual hierarchy and scanning patterns]({{ site.baseurl }}/assets/visual_spatial_cognition_inline.png)
+![Visual hierarchy and scanning patterns]({{ site.baseurl }}/assets/2026-03-09-the-mapmakers_moment_2.jpg)
 *Pixel art demonstrating visual hierarchy - how the eye naturally scans and prioritizes information based on contrast and placement*
 
 The animations that delighted the design team made Mara's head hurt. The floating elements that felt "playful" to some felt disorienting to her. It wasn't that the design was bad—it was designed for the wrong kind of seeing.
