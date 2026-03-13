@@ -162,10 +162,19 @@ class ProductionOrchestrator:
 
         PROVIDERS = [
             {
-                "name":      "ChatGPT (CLIProxy)",
+                "name":      "GPT-5.2 (CLIProxy)",
                 "url":       "http://172.19.0.1:8317/v1",
                 "key":       os.environ.get("ANTHROPIC_API_KEY", ""),
-                "model":     "gpt-5",
+                "model":     "gpt-5.2",
+                "max_tokens": 3500,
+                "timeout":   120,
+                "no_think":  False,
+            },
+            {
+                "name":      "GPT-5.1 (CLIProxy)",
+                "url":       "http://172.19.0.1:8317/v1",
+                "key":       os.environ.get("ANTHROPIC_API_KEY", ""),
+                "model":     "gpt-5.1",
                 "max_tokens": 3500,
                 "timeout":   120,
                 "no_think":  False,
@@ -180,10 +189,10 @@ class ProductionOrchestrator:
                 "no_think":  False,
             },
             {
-                "name":      "Gemini 2.5 Flash",
+                "name":      "Gemini 2.5 Pro",
                 "url":       "https://generativelanguage.googleapis.com/v1beta/openai",
                 "key":       os.environ.get("GEMINI_API_KEY", ""),
-                "model":     "gemini-2.5-flash",
+                "model":     "gemini-2.5-pro",
                 "max_tokens": 3500,
                 "timeout":   120,
                 "no_think":  False,
