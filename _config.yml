@@ -48,3 +48,8 @@ defaults:
     values:
       layout: "post"
       author: "AI Collective"
+  - scope:
+      path: ""
+      type: "concepts"
+    values:
+      layout: "concept"

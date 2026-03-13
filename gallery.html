@@ -1,174 +1,143 @@
 ---
 layout: default
-title: Pixel Art Gallery
+title: Visual Gallery
+description: "Pixel art scenes generated for each article — 8 real-world scene types, Qwen-guided, built layer by layer."
 ---
 
 <main id="main-content">
+
   <section class="section section--secondary text-center">
     <div class="container">
-      <h1 class="text-h1 mb-4">Disability-Centered Pixel Art Gallery</h1>
+      <h1 class="text-h1 mb-4">Visual Gallery</h1>
       <p class="text-lead text-secondary max-w-2xl mx-auto">
-        Visual translations of disability expertise, accessibility concepts, and inclusive design principles.
+        Each article gets three pixel art images. Qwen reads the article, picks the scene type,
+        time of day, and accessibility element. Python builds it layer by layer — sky, buildings,
+        people, barriers, solutions. Same palette tint binds all three images in an article together.
       </p>
     </div>
   </section>
 
+  <!-- Scene Generator Showcase — primary content -->
   <section class="section section--primary">
     <div class="container">
       <div class="text-center mb-16">
-        <h2 class="text-h2 mb-4">Article Visual Assets</h2>
+        <h2 class="text-h2 mb-4">8 Scene Types</h2>
         <p class="text-body text-secondary max-w-2xl mx-auto">
-          High-quality pixel art visuals featured in our published articles and research.
-        </p>
-      </div>
-
-      <div class="concept-showcase">
-        <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/acoustic_architecture_inline.png' | relative_url }}" alt="Acoustic architecture visualization showing sound wave patterns in built environments">
-          <div class="concept-card__content">
-            <h3 class="text-h4 mb-3">Acoustic Architecture</h3>
-            <p class="text-body">Sound-aware design visualization showing how acoustic patterns interact with architectural spaces.</p>
-          </div>
-        </article>
-
-        <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/visual_spatial_cognition_inline.png' | relative_url }}" alt="Visual-spatial cognition patterns showing navigable visual structures">
-          <div class="concept-card__content">
-            <h3 class="text-h4 mb-3">Visual-Spatial Cognition</h3>
-            <p class="text-body">Deaf visual expertise expressed through clear, navigable visual hierarchies and spatial relationships.</p>
-          </div>
-        </article>
-
-        <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/refined_accessibility_pathways.png' | relative_url }}" alt="Accessibility pathways showing multiple accessible routes and navigation flows">
-          <div class="concept-card__content">
-            <h3 class="text-h4 mb-3">Accessibility Pathways</h3>
-            <p class="text-body">Adaptive navigation systems showing how multiple accessible routes can coexist and connect.</p>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--secondary">
-    <div class="container container--md">
-      <div class="card p-8">
-        <h2 class="text-h3 mb-6">Technical Profile</h2>
-        <ul class="list-disc pl-5 text-body text-secondary">
-          <li class="mb-2"><strong>Resolution:</strong> 800x450 pixels</li>
-          <li class="mb-2"><strong>Pixel Size:</strong> 4x4 blocks</li>
-          <li class="mb-2"><strong>Generation:</strong> Procedural algorithms informed by article themes</li>
-          <li class="mb-2"><strong>Format:</strong> PNG with transparency support</li>
-          <li><strong>Accessibility:</strong> High-contrast visual logic across themes</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--primary">
-    <div class="container">
-      <div class="text-center mb-16">
-        <h2 class="text-h2 mb-4">Accessibility Scenes</h2>
-        <p class="text-body text-secondary max-w-2xl mx-auto">
-          Stylized pixel art interpretations of real-world accessibility challenges and solutions.
-        </p>
-      </div>
-
-      <div class="concept-showcase">
-        <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/realistic_office_acoustic_scene_sophisticated.png' | relative_url }}" alt="Stylized office scene showing acoustic design considerations">
-          <div class="concept-card__content">
-            <h3 class="text-h4 mb-3">Acoustic Office Design</h3>
-            <p class="text-body">Pixel art interpretation of workspace acoustics with sound-absorbing surfaces and strategic layout.</p>
-          </div>
-        </article>
-
-        <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/realistic_street_accessibility_scene_sophisticated.png' | relative_url }}" alt="Urban accessibility scene showing curb cuts, tactile paving, and clear pathways">
-          <div class="concept-card__content">
-            <h3 class="text-h4 mb-3">Urban Accessibility</h3>
-            <p class="text-body">Street scene highlighting accessible infrastructure like curb cuts, tactile paving, and clear navigation.</p>
-          </div>
-        </article>
-
-        <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/realistic_subway_accessibility_scene_sophisticated.png' | relative_url }}" alt="Transit accessibility showing elevator access, clear signage, and multiple route options">
-          <div class="concept-card__content">
-            <h3 class="text-h4 mb-3">Transit Accessibility</h3>
-            <p class="text-body">Public transportation environment with elevator access, clear wayfinding, and inclusive design elements.</p>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--primary">
-    <div class="container">
-      <div class="text-center mb-16">
-        <h2 class="text-h2 mb-4">Generator Showcase</h2>
-        <p class="text-body text-secondary max-w-2xl mx-auto">
-          8 real-world scene types from our AI-guided scene renderer. Qwen 3.5 reads the article
-          and selects the scene, time of day, and accessibility element. Python builds it
-          layer-by-layer. Same palette tint applied across all 3 images per article (artistic DNA).
+          The generator picks from these eight real-world environments.
+          Each scene renders accessibility barriers or design solutions in context.
         </p>
       </div>
       <div class="concept-showcase">
         <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/gallery_scene_transit_hub.png' | relative_url }}" alt="Transit Hub scene">
+          <img class="concept-card__image" src="{{ '/assets/gallery_scene_transit_hub.png' | relative_url }}" alt="Transit Hub: station platform with tram, information boards, and accessibility warnings">
           <div class="concept-card__content">
             <h3 class="text-h4 mb-3">Transit Hub</h3>
-            <p class="text-body">Station platform with trams, information boards, and platform edge accessibility indicators.</p>
+            <p class="text-body">Platform scene — trams, information boards, tactile edge strips, platform gap design.</p>
           </div>
         </article>
         <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/gallery_scene_urban_street.png' | relative_url }}" alt="Urban Street scene">
+          <img class="concept-card__image" src="{{ '/assets/gallery_scene_urban_street.png' | relative_url }}" alt="Urban Street: city buildings, road, kerb cuts, vehicles, pedestrians">
           <div class="concept-card__content">
             <h3 class="text-h4 mb-3">Urban Street</h3>
-            <p class="text-body">City streetscape with buildings, trees, cars, and kerb-cut accessibility features.</p>
+            <p class="text-body">City street — buildings, road markings, kerb cuts, tree canopy, mobility device users.</p>
           </div>
         </article>
         <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/gallery_scene_office_interior.png' | relative_url }}" alt="Office Interior scene">
+          <img class="concept-card__image" src="{{ '/assets/gallery_scene_office_interior.png' | relative_url }}" alt="Office Interior: open plan with acoustic panels, desks, monitors, natural light">
           <div class="concept-card__content">
             <h3 class="text-h4 mb-3">Office Interior</h3>
-            <p class="text-body">Open-plan workspace with acoustic treatment panels, desk clusters, and natural light.</p>
+            <p class="text-body">Open plan workspace — acoustic panels, desk layout, monitors, window light and shadow.</p>
           </div>
         </article>
         <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/gallery_scene_theater.png' | relative_url }}" alt="Theater scene">
+          <img class="concept-card__image" src="{{ '/assets/gallery_scene_theater.png' | relative_url }}" alt="Theater: screen with caption bar, seating rows, side aisle lighting, wheelchair spaces">
           <div class="concept-card__content">
             <h3 class="text-h4 mb-3">Theater</h3>
-            <p class="text-body">Cinema/theater with screen, red velvet seating, caption bar, and wheelchair spaces.</p>
+            <p class="text-body">Cinema or theater — screen, caption bar, seating rows, aisle lighting, wheelchair positions.</p>
           </div>
         </article>
         <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/gallery_scene_campus.png' | relative_url }}" alt="Campus scene">
+          <img class="concept-card__image" src="{{ '/assets/gallery_scene_campus.png' | relative_url }}" alt="Campus: buildings, plaza paths, trees, ramp vs step entrances">
           <div class="concept-card__content">
             <h3 class="text-h4 mb-3">Campus</h3>
-            <p class="text-body">University plaza with building facades, trees, and ramped vs stepped entrances.</p>
+            <p class="text-body">University plaza — buildings, green space, paths, ramp vs stair entrances at every building.</p>
           </div>
         </article>
         <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/gallery_scene_library.png' | relative_url }}" alt="Library scene">
+          <img class="concept-card__image" src="{{ '/assets/gallery_scene_library.png' | relative_url }}" alt="Library: shelves with color-coded books, reading tables, window light">
           <div class="concept-card__content">
             <h3 class="text-h4 mb-3">Library</h3>
-            <p class="text-body">Library reading room with colour-coded book spines, tables, and natural light.</p>
+            <p class="text-body">Reading room — colour-coded shelves, natural light through tall windows, reading tables.</p>
           </div>
         </article>
         <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/gallery_scene_open_air.png' | relative_url }}" alt="Open Air scene">
+          <img class="concept-card__image" src="{{ '/assets/gallery_scene_open_air.png' | relative_url }}" alt="Open Air: hills, trees, sun, accessible path width varies by accessibility element">
           <div class="concept-card__content">
             <h3 class="text-h4 mb-3">Open Air</h3>
-            <p class="text-body">Outdoor landscape with rolling hills, trees, sun, clouds, and accessible pathway.</p>
+            <p class="text-body">Outdoor landscape — hills, trees, sun and clouds. Path width reflects the article's accessibility element.</p>
           </div>
         </article>
         <article class="concept-card">
-          <img class="concept-card__image" src="{{ '/assets/gallery_scene_data_center.png' | relative_url }}" alt="Data Center scene">
+          <img class="concept-card__image" src="{{ '/assets/gallery_scene_data_center.png' | relative_url }}" alt="Data Center: server racks, LED indicators, horizontal data flow lines">
           <div class="concept-card__content">
             <h3 class="text-h4 mb-3">Data Center</h3>
-            <p class="text-body">Tech environment with server racks, LED indicators, and data flow visualisation.</p>
+            <p class="text-body">Tech environment — server racks, LED status indicators, data flow lines. Used for digital rights and AI articles.</p>
           </div>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Accessibility Scenes — legacy realistic renders -->
+  <section class="section section--secondary">
+    <div class="container">
+      <div class="text-center mb-16">
+        <h2 class="text-h2 mb-4">Accessibility Scenarios</h2>
+        <p class="text-body text-secondary max-w-2xl mx-auto">
+          Three early renders showing accessibility barriers and solutions in real-world environments.
+        </p>
+      </div>
+      <div class="concept-showcase">
+        <article class="concept-card">
+          <img class="concept-card__image" src="{{ '/assets/realistic_office_acoustic_scene_sophisticated.png' | relative_url }}" alt="Office scene: acoustic treatment panels, desk layout, ceiling grid">
+          <div class="concept-card__content">
+            <h3 class="text-h4 mb-3">Acoustic Office</h3>
+            <p class="text-body">Workspace with acoustic treatment — sound-absorbing panels, desk spacing, and ceiling design that reduces noise impact for Deaf and autistic workers.</p>
+          </div>
+        </article>
+        <article class="concept-card">
+          <img class="concept-card__image" src="{{ '/assets/realistic_street_accessibility_scene_sophisticated.png' | relative_url }}" alt="Street scene: kerb cuts, tactile paving strips, clear pedestrian routing">
+          <div class="concept-card__content">
+            <h3 class="text-h4 mb-3">Street Infrastructure</h3>
+            <p class="text-body">Accessible street — flush kerb cuts, tactile guidance strips, clear sightlines, and continuous footpath without obstruction.</p>
+          </div>
+        </article>
+        <article class="concept-card">
+          <img class="concept-card__image" src="{{ '/assets/realistic_subway_accessibility_scene_sophisticated.png' | relative_url }}" alt="Transit station: elevator access, multiple route options, clear wayfinding">
+          <div class="concept-card__content">
+            <h3 class="text-h4 mb-3">Transit Station</h3>
+            <p class="text-body">Station with working lift, gap bridging, tactile platform edge, and wayfinding that does not rely exclusively on audio.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works — brief technical note -->
+  <section class="section section--primary">
+    <div class="container container--md">
+      <div class="card p-8">
+        <h2 class="text-h3 mb-4">How the Generator Works</h2>
+        <div class="text-body text-secondary">
+          <p class="mb-4">Each article triggers three images. The pipeline runs at publication time:</p>
+          <ol class="list-disc pl-5 mb-4">
+            <li class="mb-2"><strong>Scene direction:</strong> Qwen 3.5 reads the article excerpt and picks scene type, time of day, and accessibility element.</li>
+            <li class="mb-2"><strong>Rendering:</strong> Python builds the scene layer by layer — sky gradient, background buildings, midground, foreground elements, accessibility indicators.</li>
+            <li class="mb-2"><strong>Artistic DNA:</strong> A palette tint derived from the article slug hash is applied to all three images, making them visually cohesive per article.</li>
+            <li><strong>Variation:</strong> Image 1 = primary view. Image 2 = shifted time of day. Image 3 = solution view (forced to accessible state).</li>
+          </ol>
+          <p class="mb-0"><strong>Output:</strong> 800 × 450px PNG, 5px pixel grid (160 × 90 logical cells).</p>
+        </div>
       </div>
     </div>
   </section>

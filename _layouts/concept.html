@@ -3,116 +3,84 @@ layout: default
 ---
 
 <main id="main-content">
-  <article class="section section--primary concept-article" itemscope itemtype="https://schema.org/Article">
+  <article class="section section--primary">
     <div class="container container--md post-shell">
+
       <header class="mb-12 post-header">
-        <div class="post-meta text-small text-muted mb-6" aria-label="Concept metadata">
+        <div class="post-meta text-small text-muted mb-6">
           <span class="post-meta__item">
-            <time datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
-              {{ page.date | date: "%B %d, %Y" }}
-            </time>
+            <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
           </span>
-          {% if page.categories and page.categories.size > 0 %}
-            <span class="post-meta__item post-meta__category">{{ page.categories | first | replace: '-', ' ' | capitalize }}</span>
+          {% if page.status %}
+            <span class="post-meta__item">
+              <span class="px-3 py-1 rounded-full bg-background-muted text-small text-muted">{{ page.status | capitalize }}</span>
+            </span>
           {% endif %}
-          <span class="post-meta__item">{{ page.status | default: 'Draft' | capitalize }}</span>
+          {% if page.categories %}
+            <span class="post-meta__item text-capitalize">{{ page.categories | first }}</span>
+          {% endif %}
         </div>
 
-        <h1 class="text-display-md mb-6 post-title" itemprop="name headline">{{ page.title }}</h1>
+        <h1 class="text-display-md mb-6 post-title">{{ page.title }}</h1>
 
         {% if page.excerpt %}
-        <div class="post-excerpt text-lead text-secondary mb-4" itemprop="description">
-          {{ page.excerpt }}
-        </div>
+          <p class="text-lead text-secondary mb-6">{{ page.excerpt }}</p>
         {% endif %}
 
-        <div class="text-small text-muted post-byline">Crip Minds Concept Lab</div>
-
-        {% if page.tags %}
-        <div class="flex flex-wrap gap-2 mt-6" aria-label="Concept tags">
-          {% for tag in page.tags %}
-            <span class="text-small bg-background-muted px-3 py-1 rounded-full">#{{ tag }}</span>
-          {% endfor %}
-        </div>
+        {% if page.hero_image %}
+          <figure class="mb-8">
+            <img class="rounded-lg border border-border-primary" src="{{ page.hero_image | relative_url }}"
+                 alt="{{ page.hero_alt }}" loading="eager" decoding="async" style="width:100%">
+            {% if page.hero_caption %}
+              <figcaption class="text-caption text-muted mt-3 text-center">{{ page.hero_caption }}</figcaption>
+            {% endif %}
+          </figure>
         {% endif %}
 
-        {% if page.section_links and page.section_links.size > 0 %}
-        <nav class="flex flex-wrap gap-3 mt-8" aria-label="On this concept page">
-          {% for link in page.section_links %}
-            <a href="#{{ link.anchor }}" class="btn btn--outline btn--sm">{{ link.label }}</a>
-          {% endfor %}
-        </nav>
+        {% if page.section_links %}
+          <nav class="card p-6 mb-8" aria-label="Concept sections">
+            <p class="text-small text-muted mb-3 font-semibold">In this concept</p>
+            <ul class="flex flex-wrap gap-4 list-none pl-0 mb-0">
+              {% for link in page.section_links %}
+                <li><a href="#{{ link.anchor }}" class="text-brand text-small">{{ link.label }}</a></li>
+              {% endfor %}
+            </ul>
+          </nav>
         {% endif %}
       </header>
 
-      <section>
-        {% if page.hero_image %}
-        <figure class="card card--elevated p-4 mb-8">
-          <img
-            class="card__media card__media--lg"
-            src="{{ page.hero_image | relative_url }}"
-            alt="{{ page.hero_alt | default: page.title }}"
-            loading="lazy"
-            decoding="async"
-            itemprop="image"
-          >
-          {% if page.hero_caption %}
-          <figcaption class="text-small text-muted text-center mt-4 mb-0">{{ page.hero_caption }}</figcaption>
-          {% endif %}
-        </figure>
-        {% endif %}
-
-        <div class="prose prose--large post-content" itemprop="articleBody">
-          {{ content }}
-        </div>
-      </section>
+      <div class="prose prose--large post-content">
+        {{ content }}
+      </div>
 
       <footer class="mt-16 pt-8 border-top">
-        <div class="grid grid--2 gap-8 mb-8">
-          <div class="card p-6">
-            <h2 class="text-h3 mb-6">Development Status</h2>
-            <ul class="list-disc pl-5 text-body text-secondary mb-0">
-              <li class="mb-2"><strong>Research Phase:</strong> {% if page.research_complete %}Complete{% else %}In progress{% endif %}</li>
-              <li class="mb-2"><strong>Prototype Phase:</strong> {% if page.prototype_complete %}Complete{% else %}In progress{% endif %}</li>
-              <li class="mb-2"><strong>Testing Phase:</strong> {% if page.testing_complete %}Complete{% else %}In progress{% endif %}</li>
-              <li><strong>Implementation:</strong> {% if page.implementation_complete %}Complete{% else %}In progress{% endif %}</li>
-            </ul>
-          </div>
-
-          <div class="card p-6">
-            <h2 class="text-h3 mb-4">Community Input</h2>
-            <p class="text-body text-secondary mb-6">
-              This concept is part of our editorial arts platform. We welcome feedback from the disability community.
-            </p>
-            <div class="flex flex-wrap gap-4">
-              <a href="https://github.com/spac-null/disability-ai-collective/discussions" class="btn btn--secondary" target="_blank" rel="noopener">GitHub Discussions</a>
-              <a href="https://github.com/spac-null/disability-ai-collective/issues" class="btn btn--secondary" target="_blank" rel="noopener">Report Issues</a>
-              <a href="{{ '/accessibility/' | relative_url }}" class="btn btn--secondary">Accessibility Info</a>
+        <div class="container container--md">
+          {% if page.related_concepts %}
+            <div class="mb-10">
+              <h3 class="text-h5 text-muted mb-4">Related Concepts</h3>
+              <div class="flex flex-wrap gap-4">
+                {% for rc in page.related_concepts %}
+                  <a href="{{ rc.url | relative_url }}" class="btn btn--outline">{{ rc.title }}</a>
+                {% endfor %}
+              </div>
             </div>
+          {% endif %}
+
+          {% if page.tags %}
+            <div class="flex flex-wrap gap-2 mb-10">
+              {% for tag in page.tags %}
+                <span class="text-small bg-background-muted px-3 py-1 rounded-full">#{{ tag }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <div class="flex justify-center gap-4 flex-wrap">
+            <a href="{{ '/concepts/' | relative_url }}" class="btn btn--outline">← All Concepts</a>
+            <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">Articles</a>
           </div>
         </div>
-
-        {% if page.related_concepts %}
-        <div class="card p-6 mb-8">
-          <h2 class="text-h3 mb-4">Related Concepts</h2>
-          <div class="flex flex-wrap gap-3">
-            {% for concept in page.related_concepts %}
-              <a href="{{ concept.url | relative_url }}" class="btn btn--outline">{{ concept.title }}</a>
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
-
-        <nav aria-label="Concept navigation" class="flex justify-center gap-4 flex-wrap">
-          <a href="{{ '/concepts/' | relative_url }}" class="btn btn--outline">← Back to Concept Lab</a>
-          {% for concept in site.concepts %}
-            {% if concept.title != page.title %}
-              <a href="{{ concept.url | relative_url }}" class="btn btn--outline">Next Concept: {{ concept.title }}</a>
-              {% break %}
-            {% endif %}
-          {% endfor %}
-        </nav>
       </footer>
+
     </div>
   </article>
 </main>
