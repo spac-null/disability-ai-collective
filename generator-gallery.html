@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Generator Gallery — Disability AI Collective</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #0e0e14; color: #ddd; margin: 0; padding: 2rem; }
+  h1 { color: #7ec8e3; font-size: 1.8rem; border-bottom: 2px solid #333; padding-bottom: 0.5rem; }
+  .generator { margin: 2.5rem 0; background: #161620; border-radius: 8px; padding: 1.5rem; border: 1px solid #2a2a40; }
+  .generator h2 { color: #a0d8a0; font-size: 1.1rem; margin: 0 0 0.4rem 0; }
+  .generator .desc { color: #888; font-size: 0.8rem; margin: 0 0 1.2rem 0; }
+  .generator.error h2 { color: #d08080; }
+  .error-msg { color: #c07070; font-size: 0.8rem; font-family: monospace; background: #1a1010; padding: 0.5rem; border-radius: 4px; }
+  .images { display: flex; flex-wrap: wrap; gap: 1rem; }
+  .image-item { flex: 0 0 auto; }
+  .image-item img { display: block; width: 320px; height: auto; border-radius: 4px; border: 1px solid #2a2a40; }
+  .image-item .label { font-size: 0.75rem; color: #888; margin-top: 0.3rem; text-align: center; }
+  .badge { display: inline-block; background: #1a3a1a; color: #6c6; font-size: 0.7rem; padding: 0.1rem 0.5rem; border-radius: 10px; margin-left: 0.5rem; }
+  .badge.new { background: #1a2a3a; color: #6af; }
+</style>
+</head>
+<body>
+<h1>Image Generator Gallery <span style="font-size:0.9rem;color:#666">— disability-ai-collective</span></h1>
+<p style="color:#666;font-size:0.85rem">All generators tested with same article theme: <em>deaf users at a transit hub, missing captions</em></p>
+
+<div class="generator">
+<h2>SceneImageGenerator (v3 — 8 real-world scenes)<span class="badge new">ACTIVE</span></h2>
+<p class="desc">NEW — scene composition renderer, pixel_size=5, Qwen direction</p>
+<div class="images">
+<div class="image-item">
+  <img src="assets/gallery_scene_transit_hub.png" alt="Transit Hub" loading="lazy">
+  <div class="label">Transit Hub</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_scene_urban_street.png" alt="Urban Street" loading="lazy">
+  <div class="label">Urban Street</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_scene_office_interior.png" alt="Office Interior" loading="lazy">
+  <div class="label">Office Interior</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_scene_theater.png" alt="Theater" loading="lazy">
+  <div class="label">Theater</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_scene_campus.png" alt="Campus" loading="lazy">
+  <div class="label">Campus</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_scene_library.png" alt="Library" loading="lazy">
+  <div class="label">Library</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_scene_open_air.png" alt="Open Air" loading="lazy">
+  <div class="label">Open Air</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_scene_data_center.png" alt="Data Center" loading="lazy">
+  <div class="label">Data Center</div>
+</div>
+</div>
+</div>
+<div class="generator">
+<h2>IntelligentImageGenerator (abstract wave patterns)</h2>
+<p class="desc">Fixed PNG encoding, Qwen direction+validation loop, 18 stub methods implemented</p>
+<div class="images">
+<div class="image-item">
+  <img src="assets/gallery_abstract_architectural.png" alt="Architectural" loading="lazy">
+  <div class="label">Architectural</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_abstract_navigation.png" alt="Navigation" loading="lazy">
+  <div class="label">Navigation</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_abstract_technology.png" alt="Technology" loading="lazy">
+  <div class="label">Technology</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_abstract_cultural.png" alt="Cultural" loading="lazy">
+  <div class="label">Cultural</div>
+</div>
+</div>
+</div>
+<div class="generator">
+<h2>SophisticatedArtGenerator (original)</h2>
+<p class="desc">Original generator — acoustic wave patterns</p>
+<div class="images">
+<div class="image-item">
+  <img src="assets/gallery_sophisticated_acoustic_chaos.png" alt="Acoustic Chaos" loading="lazy">
+  <div class="label">Acoustic Chaos</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_sophisticated_acoustic_harmony.png" alt="Acoustic Harmony" loading="lazy">
+  <div class="label">Acoustic Harmony</div>
+</div>
+<div class="image-item">
+  <img src="assets/gallery_sophisticated_sensory_expertise.png" alt="Sensory Expertise" loading="lazy">
+  <div class="label">Sensory Expertise</div>
+</div>
+</div>
+</div>
+<div class="generator error">
+<h2>RealWorldAwarePixelArt (older real-world)</h2>
+<p class="desc">Original real-world scene renderer — basis for SceneImageGenerator</p>
+<div class="error-msg">Error: Original real-world scene renderer — basis for SceneImageGenerator</div>
+</div>
+<div class="generator error">
+<h2>VisionGuidedGenerator</h2>
+<p class="desc">cannot import name 'VisionGuidedGenerator' from 'vision_guided_generator' (/home/node/.openclaw/workspaces/ops/vision_guided_generator.py)</p>
+<div class="error-msg">Error: cannot import name 'VisionGuidedGenerator' from 'vision_guided_generator' (/home/node/.openclaw/workspaces/ops/vision_guided_generator.py)</div>
+</div>
+<div class="generator">
+<h2>NextGenPixelArtEngine (ImageMagick: Version: ImageMagick 6.9.11-60 Q16 x86_64 2021-01-)</h2>
+<p class="desc">ImageMagick gradient + shapes + pixelate scale trick</p>
+<div class="images">
+<div class="image-item">
+  <img src="assets/gallery_imagemagick_test.png" alt="ImageMagick City Scene" loading="lazy">
+  <div class="label">ImageMagick City Scene</div>
+</div>
+</div>
+</div>
+</body></html>

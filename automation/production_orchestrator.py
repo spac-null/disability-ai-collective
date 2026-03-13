@@ -189,22 +189,19 @@ The future belongs to designers and technologists who recognize that disability 
         return fallback_content
 
     def generate_images(self, content, slug, num_images=3):
-        """Generate intelligent, content-aware images using the unified generator."""
+        """Generate scene-based pixel art images using SceneImageGenerator."""
         try:
-            # Import the intelligent generator
             sys.path.append(str(self.repo_root))
-            from intelligent_image_generator import IntelligentImageGenerator
-            
-            # Extract title from content for analysis
+            from scene_image_generator import SceneImageGenerator
+
             title_match = re.search(r'title: "([^"]+)"', content)
             title = title_match.group(1) if title_match else "Article"
-            
-            generator = IntelligentImageGenerator(width=800, height=450)  # Full quality
+
+            generator = SceneImageGenerator(width=800, height=450, pixel_size=5)
             image_filenames = []
-            
-            self.logger.info(f"Analyzing content for intelligent image generation...")
-            
-            # Generate content-aware images
+
+            self.logger.info("Generating scene-based pixel art images...")
+
             images = generator.generate_content_aware_images(content, title, slug, num_images)
             
             for img in images:
