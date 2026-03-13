@@ -10,7 +10,7 @@ import struct
 import zlib
 
 class SophisticatedArtGenerator:
-    def __init__(self, width=800, height=450):
+    def __init__(self, width=600, height=400):  # Reduced from 800x450 for smaller files
         self.width = width
         self.height = height
         self.pixel_size = 1  # No scaling - direct pixel mapping
@@ -211,7 +211,7 @@ class SophisticatedArtGenerator:
         return self._grid_to_png(grid, "sensory_expertise_sophisticated.png")
     
     def _grid_to_png(self, grid, filename):
-        """Convert color grid to PNG"""
+        """Convert color grid to PNG data"""
         # Direct pixel mapping (no scaling)
         pixels = []
         for grid_y in range(self.grid_height):
@@ -222,14 +222,9 @@ class SophisticatedArtGenerator:
                 row.extend(color)  # RGB values
             pixels.append(row)
         
-        # Create PNG
+        # Create PNG data and return it (don't save to file here)
         png_data = self._create_png_rgb(pixels)
-        
-        path = f"/home/node/.openclaw/workspaces/ops/disability-ai-collective/assets/{filename}"
-        with open(path, 'wb') as f:
-            f.write(png_data)
-        
-        return path
+        return png_data
     
     def _create_png_rgb(self, pixels):
         """Create RGB PNG file"""

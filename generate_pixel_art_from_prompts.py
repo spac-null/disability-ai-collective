@@ -14,7 +14,7 @@ import zlib
 from pathlib import Path
 
 class SophisticatedArtGenerator:
-    def __init__(self, width=800, height=450):
+    def __init__(self, width=600, height=400):  # Optimized size for smaller files
         self.width = width
         self.height = height
         self.pixel_size = 1

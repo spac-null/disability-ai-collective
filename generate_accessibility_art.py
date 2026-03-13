@@ -10,7 +10,7 @@ import struct
 import zlib
 
 class AccessibilityArtGenerator:
-    def __init__(self, width=800, height=450):
+    def __init__(self, width=600, height=400):  # Optimized for smaller file sizes
         self.width = width
         self.height = height
         self.pixel_size = 1  # No scaling - direct pixel mapping
