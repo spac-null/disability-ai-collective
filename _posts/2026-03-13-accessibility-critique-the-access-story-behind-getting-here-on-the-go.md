@@ -24,6 +24,10 @@ This experience wasn't unique to me. When I later visited the exhibition "Gettin
 
 ## Visual Exploration
 
+![Visual accessibility analysis of transportation spaces showing deaf design perspective]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_pixel_art_1.png)
+
+*Visual accessibility analysis of transportation spaces from a deaf design perspective*
+
 ![Primary visualization: Visual chaos in transportation hubs from a deaf designer's perspective](/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_pixel_art_1.png)
 
 * * *
@@ -46,9 +50,13 @@ This isn't just about physical barriers. It's about information architecture—h
 As a deaf designer, I've developed what I call "visual pattern recognition superpowers." Because I can't rely on auditory cues, I've trained myself to notice visual patterns, hierarchies, and inconsistencies that hearing people often overlook. This gives me unique insight into how information flows (or doesn't flow) through a space.
 
 In transportation hubs and cultural institutions alike, I notice:
+
 - **Information hierarchy failures**: Important information (like emergency exits) given equal visual weight to trivial details
-- **Cognitive load mismatches**: Too much visual information presented at once, overwhelming working memory
+
+- **Cognitive load mismatches**: Too much visual information presented at once, overwhelming working memory  
+
 - **Temporal inconsistencies**: Information that changes too quickly (digital boards) or not quickly enough (static signs)
+
 - **Sensory overload**: Competing visual stimuli that create what neurodivergent folks call "sensory soup"
 
 These aren't just "deaf problems"—they affect anyone with visual processing differences, attention disorders, or cognitive disabilities. My deaf perspective reveals universal design flaws.
