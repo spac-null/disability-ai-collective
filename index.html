@@ -127,7 +127,6 @@ description: "Editorial arts platform publishing disability-led perspectives on 
         <div class="grid grid--3 articles-grid">
           {% for post in site.posts limit:3 %}
           <article class="card card--elevated">
-            {% capture home_post_image %}{% cycle 'home-post-images': '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_1.png', '/assets/realistic_street_accessibility_scene.png', '/assets/expert_transit_universal_design.png' %}{% endcapture %}
             {% assign home_author_icon = '/assets/2026-03-09-the-revolution-you-can-t-see-how-blind-spatial-designers-are-redefining-architecture_pixel_art_2.png' %}
             {% if post.author == "Siri Sage" %}
               {% assign home_author_icon = '/assets/siri_sage_style_matched.png' %}
@@ -138,6 +137,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
             {% elsif post.author == "Zen Circuit" %}
               {% assign home_author_icon = '/assets/zen_circuit_style_matched.png' %}
             {% endif %}
+            {% assign home_post_image = post.image | default: home_author_icon %}
             <img class="card__media" src="{{ home_post_image | strip | relative_url }}" alt="Preview visual for {{ post.title }}" loading="lazy" decoding="async">
             <div class="card__header">
               <div class="text-caption mb-2 article-card__meta">
