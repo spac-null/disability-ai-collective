@@ -28,12 +28,6 @@ This experience wasn't unique to me. When I later visited the exhibition "Gettin
 
 *Visual accessibility analysis of transportation spaces from a deaf design perspective*
 
-![Primary visualization: Visual chaos in transportation hubs from a deaf designer's perspective](/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_pixel_art_1.png)
-
-* * *
-
-![Information hierarchy failures showing how critical information gets lost in visual clutter](/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_pixel_art_2.png)
-
 * * *
 
 ![Disability co-design process: Building accessibility into foundations from the beginning](/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_pixel_art_3.png)
