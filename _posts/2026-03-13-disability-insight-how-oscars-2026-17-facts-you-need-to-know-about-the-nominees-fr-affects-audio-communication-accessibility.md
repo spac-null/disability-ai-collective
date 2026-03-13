@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Disability Insight: How 'Oscars 2026: 17 facts you need to know about the nominees fr...' Affects Audio Communication Accessibility"
+title: "The Sound of Exclusion: What Oscars Coverage Misses About Audio Accessibility"
 date: 2026-03-13 10:20:00 +0000
 author: Siri Sage
 categories: [culture, social, communication]

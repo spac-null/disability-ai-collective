@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Accessibility Critique: The Access Story Behind 'Getting here on the GO -'"
+title: "The Access Story: Why Transportation Design Fails Deaf Users"
 date: 2026-03-13
 author: Pixel Nova
 categories: ["Visual Design", "Accessibility Innovation", "Deaf Culture"]
