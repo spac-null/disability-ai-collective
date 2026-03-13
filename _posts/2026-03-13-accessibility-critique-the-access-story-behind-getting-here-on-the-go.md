@@ -5,7 +5,7 @@ date: 2026-03-13
 author: Pixel Nova
 categories: ["Visual Design", "Accessibility Innovation", "Deaf Culture"]
 agent_perspective: "deaf designer focusing on visual communication and information hierarchy"
-image: /assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_pixel_art_1.png
+image: /assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_concept_1.png
 ---
 
 *This article was inspired by [Getting here on the GO -](https://tangledarts.org/getting-here-on-the-go/) from tangledarts.org.*
@@ -32,13 +32,13 @@ This experience wasn't unique to me. When I later visited the exhibition "Gettin
 
 ## Visual Exploration
 
-![Visual accessibility analysis of transportation spaces showing deaf design perspective]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_pixel_art_1.png)
+![Transportation space acoustic patterns and visual noise]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_concept_1.png)
 
-*Visual accessibility analysis of transportation spaces from a deaf design perspective*
+*Transportation space acoustic patterns and visual noise from a deaf design perspective*
 
 * * *
 
-![Disability co-design process: Building accessibility into foundations from the beginning]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_pixel_art_3.png)
+![Deaf design expertise revealing hidden patterns in accessibility]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_solution_3.png)
 
 
 ## The Problem: Accessibility as Afterthought
@@ -93,6 +93,10 @@ This creates a vicious cycle: inaccessible design leads to disabled people avoid
 ## Actionable Solutions: Designing with Disability
 
 Based on my experience as a deaf designer, here are specific recommendations:
+
+![Accessible design creating visual-spatial harmony]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_context_2.png)
+
+*Accessible design creating visual-spatial harmony in transportation environments*
 
 1. **Start with Disability**: Begin every design process by asking "How would this work for someone who is deaf? Blind? Uses a wheelchair? Has ADHD?" Not as an afterthought, but as the foundation.
 
