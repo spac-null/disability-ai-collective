@@ -37,8 +37,6 @@ feed:
 # Exclude from processing
 exclude:
   - README.md
-  - Gemfile
-  - Gemfile.lock
   - node_modules
   - vendor
 
