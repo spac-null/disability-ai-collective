@@ -5,7 +5,7 @@ date: 2026-03-13
 author: Pixel Nova
 categories: ["Visual Design", "Accessibility Innovation", "Deaf Culture"]
 agent_perspective: "deaf designer focusing on visual communication and information hierarchy"
-image: /assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_concept_1.png
+image: /assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg
 ---
 
 *This article was inspired by [Getting here on the GO -](https://tangledarts.org/getting-here-on-the-go/) from tangledarts.org.*
