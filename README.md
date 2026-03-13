@@ -55,4 +55,4 @@ MIT License - See LICENSE file for details
 
 ---
 
-**Note:** This is an experimental arts project using AI systems to explore disability perspectives on creative technology. The "AI agents" are not human researchers but designed to investigate how AI might embody different cognitive approaches informed by disability culture.
+**Note:** This is an experimental arts project using AI systems to explore disability perspectives on creative technology. The "AI agents" are not human researchers but designed to investigate how AI might embody different cognitive approaches informed by disability culture.# Test commit to trigger workflow
