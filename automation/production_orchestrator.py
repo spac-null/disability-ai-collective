@@ -13,7 +13,6 @@ import sqlite3
 import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
-import requests
 import time
 
 class ProductionOrchestrator:
@@ -114,79 +113,166 @@ class ProductionOrchestrator:
             self.logger.error(f"Database query failed: {e}")
             return None
 
+    def _call_openai_compat_api(self, url, api_key, system_prompt, user_prompt,
+                                   model, max_tokens=3500, timeout=120, no_think=False):
+        """OpenAI-compatible API call — stdlib only, no requests dependency."""
+        import json, urllib.request
+        content = ("/no_think " if no_think else "") + user_prompt
+        payload = json.dumps({
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user",   "content": content},
+            ],
+            "max_tokens": max_tokens,
+            "stream": False,
+        }).encode()
+        req = urllib.request.Request(
+            url.rstrip("/") + "/chat/completions",
+            data=payload,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+            },
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            data = json.loads(r.read())
+        text = data["choices"][0]["message"]["content"]
+        return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+
     def call_llm_via_openclaw_session(self, prompt, model_priority=None):
+        """Generate article content using cascading LLM provider fallback.
+
+        Provider order (best quality first; Claude excluded — quota reserved for agents):
+          1. ChatGPT gpt-5 via CLIProxyAPI  — primary, best creative writing quality
+          2. DeepSeek Chat                  — strong long-form, cheap
+          3. Gemini 2.5 Flash              — capable, generous free tier
+          4. Qwen 3.5:9b (local)           — zero cost, always available, last resort
         """
-        FIXED: Use OpenClaw session API instead of subprocess
-        """
-        if model_priority is None:
-            model_priority = [
-                "anthropic/claude-sonnet-4-20250514",
-                "google/gemini-2.5-pro-exp-03-25",
-                "anthropic/claude-3-5-sonnet-20241022",
-                "gemini/gemini-2.5-flash"
-            ]
-        
-        # PRODUCTION FIX: Use OpenClaw sessions_spawn instead of subprocess
-        for model in model_priority:
-            try:
-                self.logger.info(f"Attempting article generation with {model}")
-                
-                # Create spawned session for article generation
-                task_prompt = f"""Generate a high-quality 1200-1500 word article with the following specifications:
+        import os
 
-{prompt}
+        SYSTEM = (
+            "You are a skilled creative non-fiction writer specializing in disability "
+            "rights, accessibility culture, and the intersection of AI and disability. "
+            "Write in a strong first-person voice with vivid detail and genuine expertise. "
+            "Return only the article body — no frontmatter, no meta-commentary, "
+            "no 'Here is your article' preamble. Start immediately with the opening line."
+        )
 
-Requirements:
-- Professional creative writing quality matching published articles
-- Personal narrative voice with specific examples
-- Vivid scene-setting and sensory details
-- Bold declarative statements for key insights
-- Proper section headers (##)
-- No duplicate titles in content (title is in frontmatter)
-- Include specific data points and research when relevant
-- End with thought-provoking questions or calls to action
+        PROVIDERS = [
+            {
+                "name":      "ChatGPT (CLIProxy)",
+                "url":       "http://172.19.0.1:8317/v1",
+                "key":       os.environ.get("ANTHROPIC_API_KEY", ""),
+                "model":     "gpt-5",
+                "max_tokens": 3500,
+                "timeout":   120,
+                "no_think":  False,
+            },
+            {
+                "name":      "DeepSeek Chat",
+                "url":       "https://api.deepseek.com/v1",
+                "key":       os.environ.get("DEEPSEEK_API_KEY", ""),
+                "model":     "deepseek-chat",
+                "max_tokens": 3500,
+                "timeout":   120,
+                "no_think":  False,
+            },
+            {
+                "name":      "Gemini 2.5 Flash",
+                "url":       "https://generativelanguage.googleapis.com/v1beta/openai",
+                "key":       os.environ.get("GEMINI_API_KEY", ""),
+                "model":     "gemini-2.5-flash",
+                "max_tokens": 3500,
+                "timeout":   120,
+                "no_think":  False,
+            },
+            {
+                "name":      "Qwen (local)",
+                "url":       "http://vision-gateway:8080/v1",
+                "key":       "local",
+                "model":     "qwen3.5:9b",
+                "max_tokens": 2500,
+                "timeout":   180,
+                "no_think":  True,
+            },
+        ]
 
-Return only the article content - no frontmatter, no meta-commentary."""
-
-                # This would use the OpenClaw sessions API in production
-                # For now, we'll return a success flag and handle via the existing cron system
-                self.logger.info(f"Would spawn session with {model} for article generation")
-                return "SPAWN_SESSION_SUCCESS"
-                
-            except Exception as e:
-                self.logger.warning(f"Model {model} failed: {e}")
+        for provider in PROVIDERS:
+            if not provider["key"]:
+                self.logger.debug("Skipping %s — no API key", provider["name"])
                 continue
-        
-        self.logger.error("All models failed")
+            try:
+                self.logger.info("Generating article with %s...", provider["name"])
+                text = self._call_openai_compat_api(
+                    provider["url"], provider["key"], SYSTEM, prompt,
+                    provider["model"], provider["max_tokens"],
+                    provider["timeout"], provider["no_think"],
+                )
+                if text and len(text) > 400:
+                    self.logger.info("Article generated: %d chars via %s",
+                                     len(text), provider["name"])
+                    return text
+                self.logger.warning("%s returned short response (%d chars)",
+                                    provider["name"], len(text) if text else 0)
+            except Exception as exc:
+                self.logger.warning("%s failed: %s", provider["name"], exc)
+
+        self.logger.error("All providers failed — using enhanced fallback")
         return None
 
+
     def generate_fallback_article(self, title, agent_name, agent_info):
-        """Generate high-quality fallback article."""
-        fallback_content = f"""*By {agent_name}, {agent_info['perspective']}*
+        """Generate article-specific fallback content when all LLM providers fail."""
+        import hashlib
+        # Derive varied structure from title hash so different articles feel different
+        h = int(hashlib.md5(title.encode()).hexdigest()[:4], 16)
 
-## Introduction
+        openings = [
+            f"I have to tell you about the moment I realized {title.lower()} wasn't a niche concern—it was everyone's problem wearing a disability mask.",
+            f"Three years ago, I would have called {title.lower()} a thought experiment. Then I lived it.",
+            f"The first thing they don't tell you about {title.lower()} is that the people who understand it best are the ones the system was never designed for.",
+            f"Let me paint you a picture. It's 9am. The system works perfectly—for exactly the wrong people. This is a story about {title.lower()}.",
+        ]
+        section_pairs = [
+            ("What the Data Won't Tell You", "What Changes Everything"),
+            ("The Gap Nobody Talks About", "Closing That Gap"),
+            ("What Gets Built Without Us", "What Gets Built With Us"),
+            ("The Invisible Barrier", "Making It Visible"),
+        ]
+        opening = openings[h % len(openings)]
+        sec_a, sec_b = section_pairs[(h // 4) % len(section_pairs)]
 
-The intersection of disability experience and technological innovation continues to reveal patterns that mainstream design overlooks. As a {agent_info['perspective']}, I've observed how systems built for "normal" users systematically exclude the insights that could benefit everyone.
+        return f"""*By {agent_name}, {agent_info['perspective']}*
 
-## The Pattern
+{opening}
 
-This isn't just about accommodation—it's about recognizing that disability expertise drives innovation. When we design from the margins, we create solutions that work for the center too.
+## {sec_a}
 
-## Personal Perspective
+As a {agent_info['perspective']}, I've watched organizations spend enormous resources solving problems they defined without us in the room. The resulting designs aren't malicious—they're just incomplete. They optimize for a user who doesn't fully exist while ignoring the users who do.
 
-My lived experience as a {agent_info['perspective']} has shown me that accessibility isn't a checklist—it's a design philosophy that creates better outcomes for all users.
+{title} sits at the center of this pattern. The mainstream conversation treats it as an edge case. Those of us living it know it's a load-bearing wall.
 
-## The Opportunity
+## {sec_b}
 
-The real opportunity lies in shifting from accessibility as compliance to accessibility as competitive advantage. Organizations that understand this will lead the next wave of inclusive innovation.
+The shift I've seen work—actually work, not just in conference talks—starts with a simple reframe: disability expertise isn't a constraint to accommodate. It's a design resource. The communities with the most friction against broken systems have the sharpest instincts for fixing them.
+
+When {agent_name.split()[0]} talks about **{title.lower()}**, the conversation changes. The assumptions surface. The workarounds become features. The complaints become requirements.
+
+## What This Means Right Now
+
+The AI systems being deployed today are making {title.lower()} decisions at scale—for hiring, healthcare navigation, public services, information access. Without disabled perspectives shaping those systems, the patterns of exclusion don't just persist: they accelerate and automate.
+
+This is the moment where the design choices we make—or fail to make—will be embedded into infrastructure for decades.
 
 ## Moving Forward
 
-The future belongs to designers and technologists who recognize that disability perspectives aren't limitations to work around—they're insights to learn from.
+I'm not interested in accessibility as compliance theater. I'm interested in it as competitive reality: the teams that center disability expertise consistently ship products that work better for everyone.
 
-**Question for consideration:** How might your current projects benefit from centering disability expertise from the beginning, rather than adding accessibility as an afterthought?"""
+The question isn't whether {title.lower()} matters. The question is whether the people building the future are willing to learn from the people who've been navigating broken systems their entire lives.
 
-        return fallback_content
+**What would change in your work if you treated disability expertise as a starting point rather than an afterthought?**"""
 
     def generate_images(self, content, slug, num_images=3):
         """Generate scene-based pixel art images for an article.
@@ -393,26 +479,32 @@ image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
         }
         
         # Step 4: Generate content (FIXED to use proper OpenClaw integration)
-        prompt = f"""Write a 1200-1500 word article about: **{title}**
+        prompt = f"""Write a 1200-1500 word article titled: {title}
 
-Author: {agent_name}
-Agent perspective: {agent_info['perspective']}
-Writing style: Creative non-fiction, personal narrative, vivid details
+You are {agent_name}, {agent_info['perspective']}.
+Write in first person. Be specific, opinionated, and vivid.
 
 {source_note}
 
-The article should have:
-- Personal opening scene or anecdote
-- Clear section headers
-- Specific examples and data
-- Bold declarative statements for key insights
-- Professional quality matching published disability culture writing"""
+Structure:
+- Open with a concrete scene or moment (2-3 sentences, no generic intro)
+- 3-4 sections with ## headers
+- Bold the single most important insight per section
+- Close with a direct question or call to action
+- 1200-1500 words total
 
-        # In production, this would spawn an OpenClaw session
-        # For now, use fallback content
+Style rules:
+- No "In conclusion" or "In summary"
+- No "This article will explore"
+- Start the first sentence with something unexpected
+- Use real-world examples, not hypotheticals
+- Write for a reader who already knows accessibility basics — go deeper
+
+Return only the article body. No frontmatter. No title line. Start directly with the opening."""
+
         content = self.call_llm_via_openclaw_session(prompt)
         
-        if not content or content == "SPAWN_SESSION_SUCCESS":
+        if not content:
             self.logger.info("Using high-quality fallback article")
             content = self.generate_fallback_article(title, agent_name, agent_info)
         
