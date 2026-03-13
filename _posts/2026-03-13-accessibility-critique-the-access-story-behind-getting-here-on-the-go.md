@@ -5,7 +5,7 @@ date: 2026-03-13
 author: Pixel Nova
 categories: ["Visual Design", "Accessibility Innovation", "Deaf Culture"]
 agent_perspective: "deaf designer focusing on visual communication and information hierarchy"
-image: /assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg
+image: /assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg
 ---
 
 *This article was inspired by [Getting here on the GO -](https://tangledarts.org/getting-here-on-the-go/) from tangledarts.org.*
@@ -28,7 +28,7 @@ This experience wasn't unique to me. When I later visited the exhibition "Gettin
 
 
 
-![Union Station seen through deaf eyes — competing visual hierarchies, inconsistent signage, and information overload in a space designed for hearing navigation]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg)
+![Union Station seen through deaf eyes — competing visual hierarchies, inconsistent signage, and information overload in a space designed for hearing navigation]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg)
 *Union Station, Toronto: a transportation cathedral that speaks fluently in sound and stumbles in silence. Six fonts, three inconsistent colour systems, and departure boards that flicker faster than human processing speed.*
 
 ## The Problem: Accessibility as Afterthought
@@ -57,7 +57,7 @@ In transportation hubs and cultural institutions alike, I see patterns that crea
 
 These aren't just "deaf problems"-they affect anyone with visual processing differences, attention disorders, or cognitive disabilities. My deaf perspective reveals universal design flaws.
 
-![Deaf designer reading the visual grammar of a transit space — catching the microsecond delay in digital sign refresh, the subtle head turns marking where information fails]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_moment_2.jpg)
+![Deaf designer reading the visual grammar of a transit space — catching the microsecond delay in digital sign refresh, the subtle head turns marking where information fails]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_moment_2.jpg)
 *Deaf spatial fluency: the gap between what the building says and what bodies need, made visible through trained observation.*
 
 ## Evidence & Examples: The Data Behind the Design
@@ -87,7 +87,7 @@ This creates a vicious cycle: inaccessible design leads to disabled people avoid
 
 Based on my experience as a deaf designer, here are specific recommendations:
 
-![Universal design in practice — visual information hierarchy creating clear wayfinding that serves deaf, neurodivergent, and all users equally]({{ site.baseurl }}/assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_symbol_3.jpg)
+![Universal design in practice — visual information hierarchy creating clear wayfinding that serves deaf, neurodivergent, and all users equally]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_symbol_3.jpg)
 
 *Accessible design creating visual-spatial harmony in transportation environments*
 

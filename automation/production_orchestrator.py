@@ -66,13 +66,13 @@ class ProductionOrchestrator:
         return logging.getLogger(__name__)
 
     def check_for_existing_article_today(self):
-        """Check if today's article already exists."""
+        """Check if today's article already exists. Returns filename or None."""
         today_str = datetime.now().strftime('%Y-%m-%d')
         for file in self.posts_dir.glob(f"{today_str}-*.md"):
             if file.is_file():
-                self.logger.info(f"Article already exists for today: {file.name}")
-                return True
-        return False
+                self.logger.info(f"Skipping — already have article for today: {file.name}")
+                return file.name
+        return None
 
     def get_discovery_from_database(self):
         """Get the best unused discovery from database."""
@@ -438,10 +438,12 @@ image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
         self.logger.info("Starting production automation")
         
         # Step 1: Check if article already exists today
-        if self.check_for_existing_article_today():
+        existing = self.check_for_existing_article_today()
+        if existing:
+            self.logger.info(f"Skipping production run — article already published today: {existing}")
             return {
                 "status": "skipped",
-                "message": "Article already exists for today"
+                "message": f"Article already exists for today: {existing}"
             }
         
         # Step 2: Get discovery or generate topic
@@ -477,13 +479,51 @@ image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
         
         agent_info = self.agents[agent_name]
         
-        # Step 3: Prepare metadata
+        # Step 3: Generate content — prompt asks LLM for its own title
+        prompt = (
+            f"You are {agent_name}, {agent_info['perspective']}.\n\n"
+            f"Angle/inspiration: {title}\n"
+            f"{source_note}\n\n"
+            "Voice and style — De Correspondent × dis.art:\n"
+            "- First person, expert authority, no hedging\n"
+            "- Disability as culture and identity — never as tragedy, never as inspiration\n"
+            "- Open with a specific concrete moment or a single sharp claim — not a scene-setter, not a question, not statistics\n"
+            "- One thesis the whole essay serves — state it early, return to it\n"
+            "- Reference real disabled artists, theorists, activists, or events by name where relevant (Sins Invalid, Mia Mingus, Leah Lakshmi Piepzna-Samarasinha, crip time, disabled aesthetics — use what fits naturally)\n"
+            "- Challenge one assumption the reader probably holds without announcing you are doing so\n"
+            "- Long developed paragraphs — not listicles, not bullet points, not 3-sentence paragraphs\n"
+            "- Section headers are statements or fragments, never questions\n"
+            "- End with an open reframe — not a checklist, not \"we must\", not \"the future is\"\n"
+            "- Write for a reader who has already read the basics — go deeper, go stranger, go more specific\n\n"
+            "Tone: direct, dry when needed, never inspirational, never corporate wellness\n\n"
+            "Return format — EXACTLY as follows:\n"
+            f"TITLE: [your sharp essay title, not the angle above]\n\n"
+            f"[essay body, 1200-1500 words, starting directly — no H1 heading, no \"By {agent_name}\"]"
+        )
+
+        raw_content = self.call_llm_via_openclaw_session(prompt)
+
+        if not raw_content:
+            self.logger.info("Using high-quality fallback article")
+            raw_content = self.generate_fallback_article(title, agent_name, agent_info)
+
+        # Parse TITLE: prefix from content
+        extracted_title = title  # fallback to angle
+        content = raw_content
+        if raw_content and raw_content.lstrip().startswith('TITLE:'):
+            first_newline = raw_content.find('\n')
+            if first_newline > 0:
+                extracted_title = raw_content[:first_newline][6:].strip().strip('"'')
+                content = raw_content[first_newline:].lstrip('\n')
+                self.logger.info(f"LLM title: {extracted_title}")
+
+        # Step 4: Prepare metadata using LLM title for slug
         today = datetime.now().strftime('%Y-%m-%d')
-        slug = re.sub(r'[^a-z0-9]+', '-', title.lower()).strip('-')
+        slug = re.sub(r'[^a-z0-9]+', '-', extracted_title.lower()).strip('-')
         filename = f"{today}-{slug}.md"
-        
+
         metadata = {
-            'title': title,
+            'title': extracted_title,
             'date': today,
             'author': agent_name,
             'filename': filename,
@@ -491,42 +531,13 @@ image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
             'agent_perspective': agent_info['perspective'],
             'source_note': source_note
         }
-        
-        # Step 4: Generate content (FIXED to use proper OpenClaw integration)
-        prompt = f"""Write a 1200-1500 word essay titled: {title}
 
-You are {agent_name}, {agent_info['perspective']}.
-
-{source_note}
-
-Voice and style — De Correspondent × dis.art:
-- First person, expert authority, no hedging
-- Disability as culture and identity — never as tragedy, never as inspiration
-- Open with a specific concrete moment or a single sharp claim — not a scene-setter, not a question, not statistics
-- One thesis the whole essay serves — state it early, return to it
-- Reference real disabled artists, theorists, activists, or events by name where relevant (Sins Invalid, Mia Mingus, Leah Lakshmi Piepzna-Samarasinha, crip time, disabled aesthetics — use what fits naturally)
-- Challenge one assumption the reader probably holds without announcing you are doing so
-- Long developed paragraphs — not listicles, not bullet points, not 3-sentence paragraphs
-- Section headers are statements or fragments, never questions
-- End with an open reframe — not a checklist, not "we must", not "the future is"
-- Write for a reader who has already read the basics — go deeper, go stranger, go more specific
-
-Tone: direct, dry when needed, never inspirational, never corporate wellness
-
-1200-1500 words. Return only the article body. No title line. No "By {agent_name}". Start directly."""
-
-        content = self.call_llm_via_openclaw_session(prompt)
-        
-        if not content:
-            self.logger.info("Using high-quality fallback article")
-            content = self.generate_fallback_article(title, agent_name, agent_info)
-        
         # Step 5: Generate images (placeholder)
         image_filenames = self.generate_images(content, slug)
-        
+
         # Step 6: Create article file
         article_file = self.create_article_file(metadata, content, image_filenames)
-        
+
         # Step 7: Commit to git (PRODUCTION DECISION)
         # In production, we might want to review before auto-committing
         # For daily automation, auto-commit is acceptable

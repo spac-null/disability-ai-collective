@@ -465,6 +465,40 @@ class RSSDisabilityCrawler:
         if not found_concepts:
             return None
         
+        # Direct disability keywords — must appear in title OR text (not just navigation)
+        DIRECT_DISABILITY_KEYWORDS = [
+            'deaf', 'blind', 'disability', 'disabled', 'wheelchair', 'prosthetic',
+            'autistic', 'neurodivergent', 'accessibility', 'hearing loss',
+            'visual impairment', 'mobility impairment', 'crip', 'sign language',
+            'assistive tech', 'assistive technology', 'aac device', 'braille',
+        ]
+
+        # Check for at least 1 direct disability keyword in title or text
+        has_direct_keyword = any(kw in title_lower or kw in text_lower for kw in DIRECT_DISABILITY_KEYWORDS)
+        if not has_direct_keyword:
+            return None
+
+        # Boilerplate/navigation patterns — reject if keyword only appears in nav context
+        NAV_PATTERNS = [
+            r'(nav|navigation|menu|sidebar|footer|header|breadcrumb)[^.]{0,200}(deaf|blind|disability|disabled|wheelchair)',
+            r'(deaf|blind|disability|disabled|wheelchair)[^.]{0,200}(nav|navigation|menu|sidebar|footer)',
+        ]
+        direct_in_body = False
+        for kw in DIRECT_DISABILITY_KEYWORDS:
+            if kw in title_lower:
+                direct_in_body = True
+                break
+            if kw in text_lower:
+                # Check it's not only in nav/boilerplate context
+                kw_pos = text_lower.find(kw)
+                context_window = text_lower[max(0, kw_pos - 150):min(len(text_lower), kw_pos + 150)]
+                nav_words = ['navigation', 'sidebar', 'footer', 'menu', 'breadcrumb', 'related articles', 'see also']
+                if not any(nw in context_window for nw in nav_words):
+                    direct_in_body = True
+                    break
+        if not direct_in_body:
+            return None
+
         # Calculate confidence
         concept_count = len(found_concepts)
         total_keywords = sum(len(keywords) for keywords in found_concepts.values())
@@ -481,10 +515,14 @@ class RSSDisabilityCrawler:
         if title_concepts > 0:
             base_confidence *= 1.3
         
+        # Boost if direct disability keyword in title
+        if any(kw in title_lower for kw in DIRECT_DISABILITY_KEYWORDS):
+            base_confidence = max(base_confidence, 0.7)
+        
         # Generate article idea
         article_idea = self._generate_article_idea(title, found_concepts, domain)
         
-        if article_idea and base_confidence > 0.4:
+        if article_idea and base_confidence > 0.6:
             return {
                 'url': url,
                 'title': title,

@@ -31,29 +31,35 @@ ACCENTS = ["crimson red", "cobalt blue", "acid yellow", "burnt orange",
 
 
 def _build_confronting(person, place, obj, accent):
-    """Theatrical chiaroscuro — arrests the viewer in a gallery."""
+    """Bold editorial — disability as power, not tragedy."""
     return (
-        f"theatrical portrait photography, {person}, extreme chiaroscuro, "
-        f"single cold shaft of light from above, deep shadow on one side, "
-        f"skin and texture hyperreal, {accent} accent, high contrast, "
-        f"cinematic grain, gallery quality, pure dark background, no text"
+        f"bold editorial portrait photography, {person}, "
+        f"direct confrontational gaze into camera, flat {accent} studio background, "
+        f"high-key vivid lighting, graphic magazine quality, "
+        f"disability pride visual language, powerful and specific, "
+        f"no pity, no tragedy, no dark shadows, vibrant color, no text"
     )
 
 def _build_intimate(person, place, obj, accent):
-    """Warm cinematic still — pulls you into the frame."""
+    """Vivid documentary — person with agency, warm light, specific detail."""
     return (
-        f"35mm film photography, {place}, {person}, "
-        f"warm window light, {obj} in saturated {accent} against desaturated surroundings, "
-        f"intimate and melancholic, shallow depth of field, quiet drama, muted palette"
+        f"vivid documentary photography, {place}, {person}, "
+        f"{obj} as colorful focal detail in saturated {accent}, "
+        f"warm natural daylight or golden hour, candid and specific, "
+        f"disability as lived experience not tragedy, "
+        f"rich saturated colors, busy and alive, no staged grief, "
+        f"National Geographic editorial quality, no text"
     )
 
 def _build_abstract(person, place, obj, accent):
-    """Hyper-realistic macro CGI — stops time, uncanny."""
+    """Bold graphic / crip aesthetic — poster art, no darkness."""
     return (
-        f"hyper-realistic macro CGI render, extreme close-up of {obj}, "
-        f"razor-sharp detail, uncanny stillness, shallow depth of field, "
-        f"iridescent {accent} rim light, pure black background, "
-        f"photographic fidelity, gallery quality, no text"
+        f"bold flat graphic poster art, disability justice visual language, "
+        f"vivid {accent} dominant color field with geometric accents, "
+        f"{obj} abstracted as central graphic motif, "
+        f"risograph print texture, crip zine culture aesthetic, "
+        f"high contrast flat colors, no dark backgrounds, no gradients to black, "
+        f"Sins Invalid visual energy, gallery quality artwork, no text"
     )
 
 

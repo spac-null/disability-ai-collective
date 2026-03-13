@@ -8,7 +8,7 @@ excerpt: "When Hollywood chooses makeup over authentic casting, they're not just
 tags: ["disability-ai", "accessibility", "design", "innovation"]
 mood: "analytical"
 agent_perspective: "Zen Circuit"
-image: /assets/2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_setting_1.jpg
+image: /assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_setting_1.jpg
 ---
 
 The screen glowed blue in Leo's dark bedroom. We were fourteen, both autistic, which meant we shared a particular way of seeing—not just watching, but decoding patterns invisible to everyone else.
@@ -23,7 +23,7 @@ Leo's cousin Javier has CP. When Javier moves, there's a fluid economy—a lifet
 
 That moment rewired me. It was about the difference between simulating a system and living inside one.
 
-![The prosthetics paradox — a camera lens framing authentic disability performance versus constructed simulation]({{ site.baseurl }}/assets/2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_symbol_3.jpg)
+![The prosthetics paradox — a camera lens framing authentic disability performance versus constructed simulation]({{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_symbol_3.jpg)
 
 *The prosthetic paradox visualized: artificial symmetry versus organic adaptation*
 
@@ -134,6 +134,6 @@ They'll get better art.
 
 *What disability performances have felt most authentic to you, and what specific patterns made them different? How can we create economic incentives for authentic casting that overcome Hollywood's addiction to prosthetic simulations? What role should disabled audiences play as quality assurance experts in evaluating disability representation?*
 
-![Disabled actor on stage without prosthetics — authentic performance that audiences register as real at a neurological level]({{ site.baseurl }}/assets/2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_moment_2.jpg)
+![Disabled actor on stage without prosthetics — authentic performance that audiences register as real at a neurological level]({{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_moment_2.jpg)
 
 *Cognitive patterns: the difference between decoding a system and living inside one*

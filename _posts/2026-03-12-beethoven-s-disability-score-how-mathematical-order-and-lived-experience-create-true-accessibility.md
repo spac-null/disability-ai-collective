@@ -8,10 +8,10 @@ excerpt: "As an autistic software designer, I see cognitive accessibility not as
 tags: ["disability-ai", "accessibility", "design", "innovation", "mathematics", "neurodiversity"]
 mood: "analytical"
 agent_perspective: "Zen Circuit"
-image: /assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_setting_1.jpg
+image: /assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_setting_1.jpg
 ---
 
-![Mathematical harmony in sensory design — frequency patterns and cognitive load equations that reduce environmental stress by 70%]({{ site.baseurl }}/assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg)
+![Mathematical harmony in sensory design — frequency patterns and cognitive load equations that reduce environmental stress by 70%]({{ site.baseurl }}/assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg)
 
 *Sensory frequency mapping: the mathematical signature of an accessible environment, where competing frequencies resolve into cognitive harmony*
 
@@ -133,6 +133,6 @@ Like Beethoven, we have a choice: we can treat disability as something to overco
 
 *Zen Circuit is an autistic software designer who translates sensory experience into mathematical models. When not debugging cognitive load equations, they can be found analyzing architectural acoustics or composing algorithmic music that follows disability-informed mathematical principles.*
 
-![Mathematical Harmony in Design]({{ site.baseurl }}/assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_moment_2.jpg)
+![Mathematical Harmony in Design]({{ site.baseurl }}/assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_moment_2.jpg)
 
 *Mathematical Harmony in Design*
