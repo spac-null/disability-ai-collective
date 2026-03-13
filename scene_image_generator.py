@@ -58,7 +58,7 @@ class SceneImageGenerator:
 
     def _generate_prompts(self, content, title):
         """Ask Qwen to produce 3 distinct image prompts from article content."""
-        excerpt = content[:800]
+        excerpt = content[:400]
         prompt = f"""You are visual director for a disability rights art publication.
 
 Article title: {title}
@@ -69,36 +69,31 @@ Generate 3 VISUALLY DISTINCT pixel art image prompts for this article:
 2. MOMENT - a specific human action or interaction from the article
 3. SYMBOL - a close-up detail, metaphor, or symbolic element from the article
 
-Rules for ALL prompts:
-- Start with: "16-bit pixel art,"
-- Include a specific disability/accessibility element naturally (not as tragedy)
-- Disabled people as protagonists with agency, never objects of pity
-- Vivid saturated colors, isometric or side-view perspective
-- No inspiration porn, no tragedy framing
-- Concrete and visual — describe exactly what is visible in the scene
-- Each prompt must be visually different from the others
+Rules: start with "16-bit pixel art," | disabled protagonists | vivid colors | no tragedy | concrete
 
-Return ONLY valid JSON, no explanation:
+Return ONLY valid JSON:
 {{"setting": "16-bit pixel art, ...", "moment": "16-bit pixel art, ...", "symbol": "16-bit pixel art, ..."}}"""
 
-        raw = self._qwen_text(prompt, timeout=90)
-        if not raw:
-            return self._fallback_prompts(title)
+        for attempt in range(2):
+            raw = self._qwen_text(prompt, timeout=90)
+            if not raw:
+                logger.warning("Qwen attempt %d: no response", attempt + 1)
+                continue
+            m = re.search(r'\{[^{}]*"setting"[^{}]*\}', raw, re.DOTALL)
+            if m:
+                try:
+                    data = json.loads(m.group())
+                    setting = data.get('setting', '')
+                    moment = data.get('moment', '')
+                    symbol = data.get('symbol', '')
+                    if setting and moment and symbol:
+                        logger.info("Qwen prompts OK (attempt %d)", attempt + 1)
+                        return [setting, moment, symbol]
+                except json.JSONDecodeError:
+                    pass
+            logger.warning("Qwen attempt %d: bad JSON", attempt + 1)
 
-        m = re.search(r'\{[^{}]*"setting"[^{}]*\}', raw, re.DOTALL)
-        if m:
-            try:
-                data = json.loads(m.group())
-                setting = data.get('setting', '')
-                moment = data.get('moment', '')
-                symbol = data.get('symbol', '')
-                if setting and moment and symbol:
-                    logger.info("Qwen prompts OK")
-                    return [setting, moment, symbol]
-            except json.JSONDecodeError:
-                pass
-
-        logger.warning("Failed to parse Qwen JSON, using keyword fallback")
+        logger.warning("All Qwen attempts failed, using keyword fallback")
         return self._fallback_prompts(title)
 
     def _fallback_prompts(self, title):
