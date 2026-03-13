@@ -51,7 +51,7 @@ Neighborhoods with median incomes below $45,000 had 3.2x more navigation barrier
 ### 4. The "Last 50 Feet" Problem
 83% of destinations had at least one inaccessible feature within the final 50 feet: steps without ramps, narrow doorways, or inaccessible restrooms. This creates destination islands—places you can approach but never enter.
 
-![Pixelated visualization representing: Edge Pattern - Sharp critical analysis]({{ site.baseurl }}/assets/the-navigation-tax_moment_2.jpg)
+![Wheelchair route analysis — extra distance and time wheelchair users navigate around urban barriers]({{ site.baseurl }}/assets/the-navigation-tax_moment_2.jpg)
 
 *Edge Pattern - Sharp critical analysis*
 

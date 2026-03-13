@@ -2534,3 +2534,72 @@ a:hover {
     padding-right: var(--space-4) !important;
   }
 }
+
+/* ============================================================
+   EDITORIAL REFINEMENTS v2 — small fixes & polish
+   ============================================================ */
+
+/* Hide agent byline paragraphs that leaked into article body
+   Pattern: <p><em>By Author (Author)</em></p> */
+.prose > p:first-of-type:has(> em:only-child) {
+  display: none;
+}
+
+/* Drop cap: only when first paragraph is real prose, not em-only */
+.prose > p:first-of-type:has(> em:only-child)::first-letter {
+  float: none;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  margin: 0;
+  color: inherit;
+}
+
+/* Image-only paragraph: no extra bottom margin (caption follows) */
+.prose > p:has(> img:only-child) {
+  margin-bottom: 0 !important;
+}
+
+/* Body images: subtle shadow for depth */
+.prose img {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+
+/* Inline body image pair (image + caption) — treat as a unit */
+.prose p > em:only-child {
+  letter-spacing: 0.01em;
+}
+
+/* Lists: more air between items */
+.prose li {
+  margin-bottom: 0.55em !important;
+  line-height: 1.65 !important;
+}
+
+/* Strong in prose: slightly warmer than neutral */
+.prose strong {
+  letter-spacing: -0.01em;
+}
+
+/* Last paragraph before footer: no extra margin */
+.prose > p:last-of-type {
+  margin-bottom: 0;
+}
+
+/* H3 in prose: left accent rule */
+.prose h3 {
+  padding-left: var(--space-4) !important;
+  border-left: 3px solid var(--color-border, #e5e7eb) !important;
+}
+
+/* Post footer: remove the redundant container wrapper spacing */
+.post-footer .container {
+  padding: 0;
+}
+
+/* Article hero: max height cap on large screens */
+@media (min-width: 1024px) {
+  .post-hero-img {
+    max-height: 480px;
+  }
+}
