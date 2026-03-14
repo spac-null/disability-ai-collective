@@ -20,6 +20,14 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
 REPO     = Path(__file__).parent
+
+# Load secrets (no export needed — read directly)
+_ENV_FILE = Path("/srv/secrets/openclaw.env")
+if _ENV_FILE.exists():
+    for _line in _ENV_FILE.read_text().splitlines():
+        if "=" in _line and not _line.startswith("#"):
+            _k, _, _v = _line.partition("=")
+            os.environ.setdefault(_k.strip(), _v.strip())
 POSTS    = REPO / "_posts"
 ASSETS   = REPO / "assets"
 API_URL  = "http://172.19.0.1:8317/v1/chat/completions"
