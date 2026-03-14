@@ -1,108 +1,58 @@
-# Automation System - Disability-AI Collective
+# Automation — Crip Minds
 
-## Overview
+## Active Scripts
 
-This automation system powers the daily research and development cycles for the Disability-AI Collective. It runs twice daily to discover cutting-edge developments at the intersection of disability culture and artificial intelligence.
+### `production_orchestrator.py`
+Main article pipeline. Self-contained — loads `/srv/secrets/openclaw.env` internally.
 
-## Daily Schedule
-
-- **Morning (8:00 UTC)**: Research discovery cycle
-- **Evening (20:00 UTC)**: Development and accessibility audit cycle
-
-## Scripts
-
-### `research_bot.py`
-Main research automation script (requires external dependencies).
-
-### `test_research_bot.py`
-Simplified research bot for testing without external dependencies.
-
-### `daily_automation.py`
-Orchestrates the daily cycles and handles git operations.
-
-### `simple_check.py`
-Basic accessibility compliance checker.
-
-## Directory Structure
-
-```
-automation/
-├── research_bot.py          # Main research automation
-├── test_research_bot.py     # Simplified test version
-├── daily_automation.py      # Daily orchestration
-└── requirements.txt         # Python dependencies
-
-accessibility/
-├── wcag_check.py           # Full accessibility checker
-└── simple_check.py         # Basic accessibility checker
+**Usage:**
+```python
+# Edit QUEUE at top of file, then:
+python3 production_orchestrator.py
 ```
 
-## How It Works
+**What it does:**
+1. Generates article via Claude Opus 4.6 (CLIProxy at http://172.19.0.1:8317)
+2. Generates 3 images via Pollinations FLUX API
+3. Writes Jekyll post to `_posts/`
+4. Commits + pushes to GitHub (auto-deploys via GH Pages)
 
-1. **Morning Cycle**:
-   - Discovers new disability-AI developments
-   - Creates research logs in `_research/`
-   - Generates blog posts in `_posts/`
-   - Commits changes to git
+**Key settings:**
+- `max_tokens`: 4000 (do NOT lower — causes truncation)
+- Image paths: auto-corrected to `/assets/<slug>_setting_1.jpg`
+- Captions: `*em*` on line after every `![img](url)`
+- Gold standard: `2026-03-08-architects-are-designing-buildings-for-the-wrong-sense.md`
 
-2. **Evening Cycle**:
-   - Runs accessibility audits
-   - Updates website statistics
-   - Generates weekly summaries
-   - Commits changes to git
+### `opus_rewrite.py`
+Rewrites weak articles to De Correspondent quality.
 
-## Setting Up Cron Jobs
-
-To run this automation system on a schedule:
-
+**Usage:**
 ```bash
-# Morning research (8:00 UTC)
-0 8 * * * cd /path/to/disability-ai-collective && python3 automation/daily_automation.py morning
+set -a; source /srv/secrets/openclaw.env; set +a
+python3 opus_rewrite.py
+```
+Add filenames to `TARGETS = []` at top of file.
 
-# Evening development (20:00 UTC)  
-0 20 * * * cd /path/to/disability-ai-collective && python3 automation/daily_automation.py evening
+## Article Front Matter
+```yaml
+---
+layout: post
+title: "Title"
+author: "Siri Sage"        # Must match exactly: Siri Sage / Pixel Nova / Maya Flux / Zen Circuit
+date: 2026-03-14
+categories: [Category]
+excerpt: "One sentence."
+image: /assets/<slug>_setting_1.jpg
+---
 ```
 
-## GitHub Pages Integration
+## Personas
+- **Pixel Nova** — Deaf · Visual Language
+- **Siri Sage** — Blind · Acoustic Culture
+- **Maya Flux** — Mobility · Adaptive Systems
+- **Zen Circuit** — Neurodivergent · Pattern Recognition
 
-Once the repository is pushed to GitHub, enable GitHub Pages in repository settings:
-1. Go to Settings → Pages
-2. Select "Deploy from a branch"
-3. Choose "main" branch and "/ (root)" folder
-4. Save - site will be available at `https://disability-ai-collective.github.io`
-
-## Accessibility Commitment
-
-All automation maintains WCAG 2.1 AA compliance:
-- Screen reader optimized content
-- Proper heading structure
-- Alt text for all images
-- High contrast design
-- Keyboard navigation support
-
-## Testing
-
-Test the system manually:
-
-```bash
-# Test morning cycle
-python3 automation/daily_automation.py morning
-
-# Test evening cycle  
-python3 automation/daily_automation.py evening
-
-# Test full cycle
-python3 automation/daily_automation.py full
-```
-
-## Next Steps
-
-1. **Configure GitHub repository** and enable GitHub Pages
-2. **Set up cron jobs** for daily automation
-3. **Enhance research capabilities** with web scraping
-4. **Add social media integration** for content sharing
-5. **Implement community engagement** features
-
-## Contributing
-
-This automation system is open to contributions from the disability community and accessibility advocates. See our main [CONTRIBUTING.md](../docs/CONTRIBUTING.md) for details.
+## Environment
+- `openclaw.env` has NO export statements — scripts must load file directly
+- Pollinations key: in `/srv/secrets/openclaw.env` as `POLLINATIONS_API_KEY`
+- CLIProxy: `http://172.19.0.1:8317` (gateway IP — host.docker.internal doesn't work on Linux)
