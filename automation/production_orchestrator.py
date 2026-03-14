@@ -491,7 +491,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
         # Extract first non-empty, non-image, non-header sentence for excerpt
         excerpt = ""
-        for line in body.splitlines():
+        for line in content.splitlines():
             line = line.strip()
             if line and not line.startswith('#') and not line.startswith('!') and not line.startswith('---') and not line.startswith('*') and len(line) > 40:
                 excerpt = re.sub(r'\*\*|\*|`', '', line)[:160].strip()
