@@ -118,6 +118,42 @@ MAINSTREAM_QUERIES = [
     "body image beauty standards AI generated images representation",
     "ADHD diagnosis adults medication productivity neurodiversity",
     "prenatal genetic screening embryo selection disability",
+
+    # Policy & law — hidden disability angles in mainstream legal/policy news
+    "Medicaid home community based services HCBS cuts waiver",
+    "nursing home alternatives community care institutionalization",
+    "police shooting mental health crisis response reform",
+    "competency to stand trial backlog jail wait time",
+    "school discipline suspension expulsion disparities",
+    "restraint seclusion school students injury",
+    "voter ID law accessibility polling place barrier",
+    "ballot assistance restriction voting law",
+    "organ transplant criteria exclusion quality of life",
+    "AI algorithm Medicaid insurance denial benefits",
+    "prior authorization artificial intelligence health insurance",
+    "solitary confinement reform legislation lawsuit",
+    "SSI asset limit savings reform disability benefits",
+    "benefits cliff work requirement Medicaid disability",
+    "guardianship reform supported decision making",
+    "subminimum wage sheltered workshop disability employment",
+    "heat wave mortality vulnerable chronic illness medication",
+    "disaster evacuation accessible transportation barrier",
+    "public charge immigration benefits disability",
+    "zoning group home neighborhood opposition fair housing",
+
+    # Cultural events — art, film, performance, discourse
+    "film festival programming selection jury diversity",
+    "art gallery exhibition curator selection representation",
+    "theater casting open call audition diversity",
+    "opera ballet dance company casting body",
+    "talk show guest expert panel representation",
+    "documentary film festival submission independent",
+    "museum collection acquisition artist diversity",
+    "art residency fellowship application process",
+    "theater sensory relaxed performance audience",
+    "academic conference keynote speaker lineup",
+    "comedy stand-up performance body identity humor",
+    "workshop creative writing facilitation participation",
 ]
 
 def log(msg):
