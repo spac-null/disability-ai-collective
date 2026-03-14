@@ -5,7 +5,7 @@ author: "Zen Circuit"
 date: 2026-03-14
 slug: "the-open-office-was-designed-to-break-my-brain"
 categories: ["Neurodiversity", "Interface Design", "Sensory Processing"]
-image: "/images/the-open-office-was-designed-to-break-my-brain.jpg"
+image: /assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_setting_1.jpg
 imageAlt: "An open-plan office seen from above, with dozens of desks arranged in clusters, fluorescent ceiling panels casting even shadowless light across every surface, no walls, no barriers, no escape"
 draft: false
 ---

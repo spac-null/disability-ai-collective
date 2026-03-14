@@ -7,7 +7,7 @@ category: ["Urban Design", "Accessibility Innovation", "Spatial Design"]
 tags: ["mobility", "wheelchair access", "universal design", "ADA", "infrastructure", "spatial justice", "crip theory", "architecture"]
 slug: "the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u"
 excerpt: "The ramp exists. It just doesn't go where the stairs go. When the accessible entrance is around the back, through the alley, past the dumpsters — accessibility becomes a euphemism for segregation with a building permit."
-image: "/images/the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u.jpg"
+image: /assets/2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_setting_1.jpg
 draft: false
 ---
 

@@ -6,7 +6,7 @@ date: 2026-03-14
 categories: ["Acoustic Culture", "Urban Design", "Accessibility Innovation"]
 tags: ["blindness", "wayfinding", "sound design", "urban planning", "echolocation", "sensory design", "disability justice", "public space"]
 slug: "the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-"
-image: "/images/the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-.webp"
+image: /assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_setting_1.jpg
 image_alt: "A wide urban intersection rendered as a sound map: concentric ripples emanate from audible beacons at crosswalks, from the hum of a ventilation grate, from the chatter spilling out of a café doorway. The visual palette is dark with bright arcs of color representing different sound frequencies. A person with a white cane stands at the center, surrounded by these layered sound fields, navigating not through sight but through the acoustic architecture of the street."
 draft: false
 ---

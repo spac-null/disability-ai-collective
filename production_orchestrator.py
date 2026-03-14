@@ -156,6 +156,10 @@ def generate_article(persona_name, angle, categories=None, today=None):
         log.warning(f"  Image generation failed: {e} — continuing without images")
         images = []
 
+    # Force-correct image path (Opus sometimes generates wrong path)
+    correct_image = f"/assets/{slug}_setting_1.jpg"
+    content = re.sub(r'^image:.*$', f'image: {correct_image}', content, flags=re.MULTILINE)
+
     # Save post
     post_path.write_text(content)
     log.info(f"  Saved: {post_path.name}")

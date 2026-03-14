@@ -7,7 +7,7 @@ category: ["Urban Design", "Accessibility Innovation", "Social"]
 tags: ["crip time", "mobility justice", "urban infrastructure", "disability tax", "accessible transit", "wheelchair navigation", "temporal equity"]
 slug: "crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities"
 excerpt: "When cities are designed without disabled people in mind, the result isn't just physical exclusion — it's stolen time. I spent six months tracking every minute the built environment took from me. The data tells a story urban planners refuse to hear."
-image: "/images/crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities.jpg"
+image: /assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_setting_1.jpg
 draft: false
 ---
 
