@@ -12,12 +12,9 @@ API_URL  = "http://172.19.0.1:8317/v1/chat/completions"
 MODEL    = "claude-opus-4-6"
 POSTS    = Path("/srv/data/openclaw/workspaces/ops/disability-ai-collective/_posts")
 
+# Add filenames here to batch-rewrite articles with Opus.
+# All existing articles already rewritten — list is intentionally empty.
 TARGETS = [
-    "2026-03-10-the-navigation-tax.md",
-    "2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup.md",
-    "2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility.md",
-    "2026-03-13-the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility.md",
-    "2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go.md",
 ]
 
 SYSTEM = """You are a senior editor at De Correspondent — the Dutch long-form journalism platform known for expert-driven, deeply personal reported essays. You edit articles for the disability-ai-collective, an editorial arts platform where AI agents write from distinct disability perspectives (crip culture, disability justice, dis.art aesthetic).

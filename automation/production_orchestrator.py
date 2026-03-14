@@ -649,9 +649,15 @@ excerpt: "{excerpt}"
             temp_front = f"---\nlayout: post\ntitle: \"{extracted_title}\"\nauthor: {agent_name}\n---\n\n"
             rewritten = self.rewrite_with_opus(temp_front + content)
             # Strip the temp frontmatter back off
-            if rewritten and rewritten.count("---") >= 2:
-                end_fm = rewritten.index("---", 3) + 3
-                content = rewritten[end_fm:].lstrip("\n")
+            if rewritten and rewritten.startswith("---"):
+                # Find closing --- of frontmatter robustly
+                fm_end = rewritten.find("\n---\n", 3)
+                if fm_end != -1:
+                    content = rewritten[fm_end + 5:].lstrip("\n")
+                elif rewritten.count("---") >= 2:
+                    # fallback: skip first two --- markers
+                    second = rewritten.index("---", 3)
+                    content = rewritten[second + 3:].lstrip("\n")
         else:
             self.logger.info("Provider was %s — no rewrite needed", used_provider)
 
