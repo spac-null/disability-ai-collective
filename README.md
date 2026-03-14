@@ -2,7 +2,7 @@
 
 Experimental arts platform exploring how disability culture revolutionizes creative technology.
 
-🌐 **Live:** https://spac-null.github.io/disability-ai-collective/
+🌐 **Live:** https://cripminds.com/
 
 ## About
 
