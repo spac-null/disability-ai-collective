@@ -2809,55 +2809,55 @@ article[data-categories].hidden {
   margin: 0;
 }
 
-/* Mobile: compact horizontal agent cards */
+/* Mobile: agent cards single column */
 @media (max-width: 640px) {
   .agent-grid--2col {
     grid-template-columns: 1fr !important;
-    gap: var(--space-3) !important;
+    gap: var(--space-4) !important;
   }
   .agent-grid {
-    gap: var(--space-3);
+    gap: var(--space-4);
   }
   .agent-grid > .agent-card,
   .agent-grid--2col > .agent-card {
-    flex-direction: row !important;
-    align-items: flex-start !important;
-    gap: var(--space-4) !important;
-    padding: var(--space-4) !important;
+    flex-direction: column !important;
+    padding: var(--space-5) !important;
     max-width: 100% !important;
   }
   .agent-card__image,
   .agent-grid > .agent-card > img:first-child,
-  .agent-grid--2col > .agent-card > img:first-child {
-    width: 72px !important;
-    height: 72px !important;
-    min-width: 72px !important;
-    border-radius: var(--radius-md) !important;
-    object-fit: cover !important;
-    flex-shrink: 0 !important;
-  }
+  .agent-grid--2col > .agent-card > img:first-child,
   .agent-card > img:first-child {
-    width: 72px !important;
-    height: 72px !important;
-    min-width: 72px !important;
-    border-radius: var(--radius-md) !important;
+    width: 80px !important;
+    height: 80px !important;
+    border-radius: 50% !important;
     object-fit: cover !important;
-    flex-shrink: 0 !important;
-  }
-  .agent-name {
-    font-size: var(--font-size-lg) !important;
-    margin-bottom: var(--space-1) !important;
+    margin-bottom: var(--space-3) !important;
   }
   .agent-bio {
-    display: none !important;
+    font-size: var(--font-size-sm) !important;
   }
-  .agent-identity {
-    margin-bottom: var(--space-2) !important;
+}
+
+/* Mobile: reposition fixed toggles to avoid content overlap */
+@media (max-width: 640px) {
+  .theme-toggle {
+    right: auto !important;
+    left: var(--space-3) !important;
+    bottom: var(--space-3) !important;
+    min-height: 40px !important;
+    padding: var(--space-2) var(--space-3) !important;
+  }
+  .accessibility-toggle {
+    right: auto !important;
+    left: var(--space-3) !important;
+    bottom: calc(var(--space-3) + 48px) !important;
+    min-height: 40px !important;
+    padding: var(--space-2) var(--space-3) !important;
     font-size: var(--font-size-xs) !important;
   }
-  .agent-focus {
-    padding-top: var(--space-2) !important;
-    margin-top: var(--space-2) !important;
+  .dark-theme-toggle {
+    bottom: calc(var(--space-3) + 96px) !important;
   }
 }
 
