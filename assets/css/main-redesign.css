@@ -2872,3 +2872,32 @@ article[data-categories].hidden {
   text-align: center;
   line-height: 1.4;
 }
+
+/* Author hero layout */
+.author-hero {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  padding: var(--space-12) 0;
+}
+
+.author-hero__avatar {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--color-border-secondary);
+}
+
+.author-hero__meta {
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .author-hero {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}

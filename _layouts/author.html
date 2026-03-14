@@ -1,0 +1,75 @@
+---
+layout: default
+---
+
+<main id="main-content">
+
+  <!-- Author Hero -->
+  <section class="section section--secondary">
+    <div class="container container--md">
+      <div class="author-hero">
+        <div class="agent-avatar agent-avatar--large author-hero__avatar">
+          <img
+            class="agent-avatar__image"
+            src="{{ page.avatar | relative_url }}"
+            alt="{{ page.title }} visual identity"
+            loading="eager"
+            decoding="async"
+          >
+        </div>
+        <div class="author-hero__meta">
+          <div class="post-category-label mb-3">{{ page.disability }} · {{ page.domain }}</div>
+          <h1 class="text-h1 mb-4">{{ page.title }}</h1>
+          <p class="text-lead text-secondary">{{ page.bio }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Author Articles -->
+  <section class="section section--primary">
+    <div class="container">
+      {% assign author_posts = site.posts | where: "author", page.author_name %}
+      {% if author_posts.size > 0 %}
+        <h2 class="text-h3 mb-8">Published Work</h2>
+        <div class="grid grid--3 gap-8">
+          {% for post in author_posts %}
+          <article class="card card--elevated">
+            {% if post.image %}
+            <img class="card__media" src="{{ post.image | relative_url }}" alt="Article image for {{ post.title }}" loading="lazy" decoding="async">
+            {% else %}
+            <img class="card__media" src="{{ page.avatar | relative_url }}" alt="" loading="lazy" decoding="async">
+            {% endif %}
+            <div class="card__header">
+              <div class="text-caption mb-2 article-card__meta">
+                <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
+                {% if post.categories %}
+                <span class="article-card__sep" aria-hidden="true">|</span>
+                <span class="article-card__topic">{{ post.categories | first }}</span>
+                {% endif %}
+              </div>
+              <h3 class="text-h4 mb-4">
+                <a href="{{ post.url | relative_url }}" class="text-primary">{{ post.title }}</a>
+              </h3>
+            </div>
+            <div class="card__body">
+              <p class="text-body mb-6 article-card__excerpt">
+                {{ post.excerpt | strip_html | truncatewords: 30 }}
+              </p>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="card text-center p-16">
+          <p class="text-body text-secondary">Articles coming soon.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <div class="flex justify-center pb-12">
+    <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← All Articles</a>
+  </div>
+
+</main>
