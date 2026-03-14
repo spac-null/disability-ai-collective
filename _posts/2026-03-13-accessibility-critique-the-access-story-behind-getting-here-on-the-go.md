@@ -88,8 +88,6 @@ When I redesign information environments, I don't start with what looks good. I 
 
 ![Universal design in practice — visual information hierarchy creating clear wayfinding that serves deaf, neurodivergent, and all users equally]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_symbol_3.jpg)
 
-*Accessible design creating visual-spatial harmony in transportation environments*
-
 **Visual hierarchy that respects cognition.** Emergency information at the top of every perceptual pyramid. Wayfinding second. Service information third. Advertising dead last. Consistent typographic scales so your brain learns the system once and reads it forever. Critical information placed at consistent heights so your eyes know where to look before your conscious mind engages.
 
 **Cognitive breathing room.** The "7±2 rule" — the well-established limit on how many information chunks humans can process simultaneously — should govern every sightline in public space. If you can see seventeen signs from one position, you've built a cognitive assault, not a navigation system. Progressive disclosure: show the essential information first, reveal details on demand.

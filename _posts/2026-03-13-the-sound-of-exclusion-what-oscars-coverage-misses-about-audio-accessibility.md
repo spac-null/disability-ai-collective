@@ -109,8 +109,6 @@ Not a separate "accessible version." The version. The only version. Because if y
 
 ![Visual sound design concept — accessibility as cinematic language rather than accommodation]({{ site.baseurl }}/assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_symbol_3.jpg)
 
-*Visual representation of accessible audio experiences*
-
 ## The Recipe and the Cake
 
 My grandmother won't read this piece. Her relationship with the Oscars ended the way most exclusion stories end—not with protest but with quiet withdrawal. She stopped watching. She found other things to do on Sunday nights. The industry that celebrated sound never noticed it had lost her.

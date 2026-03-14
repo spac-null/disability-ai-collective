@@ -42,8 +42,6 @@ This isn't an inconvenience. This is a parallel city that wheelchair users are f
 
 ![Navigation barriers made visible — sidewalk infrastructure failures that multiply wheelchair journey time]({{ site.baseurl }}/assets/the-navigation-tax_symbol_3.jpg)
 
-*Accessibility Pathways - Clear routes through barriers*
-
 ## The Time You Never Get Back
 
 Distance is one thing. Time is another.
@@ -91,8 +89,6 @@ Eighty-three percent.
 These are destination islands—places you can approach but never enter. Restaurants where you can see the menu but can't reach the table. Shops where you can press your face to the glass but can't cross the threshold. Offices where you got the interview but can't get to the conference room.
 
 ![Wheelchair route analysis — extra distance and time wheelchair users navigate around urban barriers]({{ site.baseurl }}/assets/the-navigation-tax_moment_2.jpg)
-
-*Edge Pattern - Sharp critical analysis*
 
 The Americans with Disabilities Act was signed in 1990. Thirty-six years later, I still can't get into most buildings on the first try. That's not a design challenge. That's a choice.
 

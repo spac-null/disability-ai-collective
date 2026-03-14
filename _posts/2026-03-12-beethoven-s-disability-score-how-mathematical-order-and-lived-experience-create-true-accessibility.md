@@ -12,7 +12,6 @@ image: /assets/beethoven-s-disability-score-how-mathematical-order-and-lived-exp
 ---
 
 ![Mathematical harmony in sensory design — frequency patterns and cognitive load equations that reduce environmental stress by 70%]({{ site.baseurl }}/assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg)
-
 *Sensory frequency mapping: the mathematical signature of an accessible environment, where competing frequencies resolve into cognitive harmony*
 
 The fluorescent lights hit first.
@@ -84,8 +83,6 @@ Here's what mathematical perception shows me that empathy exercises miss:
 **Sensory harmony is measurable.** We audit color contrast down to decimal points. We specify font sizes in pixels. But we completely ignore sensory frequencies — the actual mathematical properties of light, sound, and vibration that different nervous systems process differently. That hospital waiting room proved these frequencies aren't subjective preferences. They're engineering variables. And harmonizing them doesn't just help people like me. It helps everyone.
 
 ![Mathematical Harmony in Design]({{ site.baseurl }}/assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_moment_2.jpg)
-
-*Mathematical Harmony in Design*
 
 ## The Gap Between Passing and Working
 
