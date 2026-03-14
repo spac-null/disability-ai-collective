@@ -71,6 +71,7 @@ DE CORRESPONDENT VOICE RULES (non-negotiable):
 9. 800-1000 words body — substantial but not padded
 10. Author's disability is their EXPERTISE and LENS, never obstacle or tragedy
 11. Crip culture references (Sins Invalid, crip time, disability justice, DeafBlind, Protactile) only when they fit naturally
+12. For each inline image, ALWAYS add an italic caption on the next line: ![alt text](url)\n*alt text*
 
 OUTPUT FORMAT — return ONLY this, no preamble, no commentary:
 ---
