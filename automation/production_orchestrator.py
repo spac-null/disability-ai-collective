@@ -729,12 +729,17 @@ excerpt: "{excerpt}"
                 with ureq.urlopen(blob_req, timeout=30) as r:
                     thumb_blob = json.loads(r.read())["blob"]
                 self.logger.info("Bluesky: thumbnail uploaded (%d bytes)", len(img_bytes))
-            # Extract clean description from body
+            # Extract clean description — skip frontmatter first
             import re as _re
+            _body = body
+            if body.lstrip().startswith("---"):
+                _fm_end = body.find("\n---\n", 3)
+                if _fm_end != -1:
+                    _body = body[_fm_end + 5:]
             desc = ""
-            for line in body.splitlines():
+            for line in _body.splitlines():
                 line = line.strip()
-                if line and not line.startswith("#") and not line.startswith("!") and not line.startswith("-") and len(line) > 40:
+                if line and not line.startswith("#") and not line.startswith("!") and not line.startswith("-") and not line.startswith("*") and len(line) > 40:
                     desc = _re.sub(r"\*\*|\*|`", "", line)[:200]
                     break
             external = {"uri": url, "title": title, "description": desc}
