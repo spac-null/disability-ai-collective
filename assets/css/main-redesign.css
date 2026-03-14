@@ -2179,7 +2179,7 @@ a:hover {
   display: block;
 }
 
-.prose p > em:only-child {
+.post-content p:has(> img) + p > em:only-child {
   color: var(--color-text-muted);
   display: block;
   font-size: var(--font-size-sm);
@@ -2492,7 +2492,7 @@ a:hover {
 }
 
 /* Caption: <p><em>text</em></p> after image paragraph */
-.prose p > em:only-child {
+.post-content p:has(> img) + p > em:only-child {
   display: block !important;
   font-style: normal !important;
   font-size: 0.8125rem !important;
@@ -2580,7 +2580,7 @@ a:hover {
 }
 
 /* Inline body image pair (image + caption) — treat as a unit */
-.prose p > em:only-child {
+.post-content p:has(> img) + p > em:only-child {
   letter-spacing: 0.01em;
 }
 
