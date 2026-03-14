@@ -1,32 +1,5 @@
 [
   {
-    "url": "https://www.theguardian.com/world/2026/mar/12/dismay-as-ancient-heritage-sites-across-iran-damaged-in-us-israel-bombing",
-    "title": "Dismay as ancient heritage sites across Iran damaged in US-Israel bombing | US-Israel war on Iran | The Guardian",
-    "domain": "theguardian.com",
-    "rss_feed": "https://www.theguardian.com/artanddesign/rss",
-    "disability_concepts": {
-      "sensory": [
-        "caption",
-        "music"
-      ],
-      "art": [
-        "film"
-      ]
-    },
-    "concept_contexts": {
-      "sensory:caption": "run on autopilot close dialogue     1  /  4         next image        previous image        toggle caption           skip to navigation                                              print subscriptions",
-      "sensory:music": "on    tennis    cycling    f1    golf    us sports          culture    view all culture    books    music    tv & radio    art & design    film    games    classical    stage          lifestyle    view all",
-      "art:film": "us sports          culture    view all culture    books    music    tv & radio    art & design    film    games    classical    stage          lifestyle    view all lifestyle    fashion    food    recip"
-    },
-    "confidence": 0.7000000000000001,
-    "article_idea": "What 'Dismay as ancient heritage sites across Iran damaged in US-I...' Misses About Caption",
-    "content_snippet": "Dismay as ancient heritage sites across Iran damaged in US-Israel bombing More on this story More on this story Most viewed Most viewed Middle East war creating \u2018largest supply disruption in the history of oil markets\u2019 In linking Iran to Russia, Healey could be laying ground for hard choices ahead T...",
-    "publish_date": "2026-03-13T09:56:04.901126",
-    "id": "a459d28b56d757ff067994355edd9a4c",
-    "discovered_date": "2026-03-13T09:56:04.901152",
-    "status": "pending"
-  },
-  {
     "url": "https://tangledarts.org/getting-here-on-the-go/",
     "title": "Getting here on the GO -",
     "domain": "tangledarts.org",
@@ -54,11 +27,81 @@
       "art:gallery": "walk to 401 richmond, or 15 minutes on the ttc. phone \u00a0\u00a0  647-725-5064 subscribe to our newsletter gallery hours  wednesday to saturday 12pm to 5pm (est) location  401 richmond st w suite 124, toronto on m5"
     },
     "confidence": 1.0,
-    "article_idea": "Accessibility Critique: The Access Story Behind 'Getting here on the GO -'",
+    "article_idea": "What 'Getting here on the GO -' Misses About Access",
     "content_snippet": "Getting here This website uses cookies in order to improve your online experience (including saving your settings in the Accessibility toolbar). Please accept cookies for optimal performance. Accept \n             Decline '',\n\t\t\t\t\t\t\t\t\t\t'items_wrap'     => '%3$s',\n\t\t\t\t\t\t\t\t\t\t//'show_toggles'   => true,...",
-    "publish_date": "2026-03-13T09:56:07.006777",
+    "publish_date": "2026-03-14T08:00:24.079053",
     "id": "6b912243374ce28faf92139a35dc090e",
-    "discovered_date": "2026-03-13T09:56:07.006834",
+    "discovered_date": "2026-03-14T08:00:24.079072",
+    "status": "pending"
+  },
+  {
+    "url": "https://tangledarts.org/getting-here-8/",
+    "title": "Getting here -",
+    "domain": "tangledarts.org",
+    "rss_feed": "https://tangledarts.org/feed/",
+    "disability_concepts": {
+      "systemic": [
+        "access"
+      ],
+      "design": [
+        "form"
+      ],
+      "art": [
+        "artist",
+        "performance",
+        "exhibition",
+        "gallery"
+      ]
+    },
+    "concept_contexts": {
+      "systemic:access": "site uses cookies in order to improve your online experience (including saving your settings in the accessibility toolbar). please accept cookies for optimal performance. accept               decline '',",
+      "design:form": "(including saving your settings in the accessibility toolbar). please accept cookies for optimal performance. accept               decline '', \t\t\t\t\t\t\t\t\t\t'items_wrap'     => '%3$s', \t\t\t\t\t\t\t\t\t\t//'show_toggl",
+      "art:artist": "oggle-duration=\"250\" aria-expanded=\"false\"> show sub menu          \t   history     \t   team     \t   artists     \t   partners     \t   annual reports     \t   support us            what\u2019s on   .sub-menu\" data-",
+      "art:performance": "ce (including saving your settings in the accessibility toolbar). please accept cookies for optimal performance. accept               decline '', \t\t\t\t\t\t\t\t\t\t'items_wrap'     => '%3$s', \t\t\t\t\t\t\t\t\t\t//'show_toggles'",
+      "art:exhibition": "gle-type=\"slidetoggle\" data-toggle-duration=\"250\" aria-expanded=\"false\"> show sub menu          \t   exhibition     \t   event     \t   snug     \t   exhibition coming soon     \t   crip times podcast     \t   partne",
+      "art:gallery": "west is located on the south side of the street. phone \u00a0\u00a0  647-725-5064 subscribe to our newsletter gallery hours  wednesday to saturday 12pm to 5pm (est) location  401 richmond st w suite 124, toronto on m5"
+    },
+    "confidence": 1.0,
+    "article_idea": "What 'Getting here -' Misses About Access",
+    "content_snippet": "Getting here This website uses cookies in order to improve your online experience (including saving your settings in the Accessibility toolbar). Please accept cookies for optimal performance. Accept \n             Decline '',\n\t\t\t\t\t\t\t\t\t\t'items_wrap'     => '%3$s',\n\t\t\t\t\t\t\t\t\t\t//'show_toggles'   => true,...",
+    "publish_date": "2026-03-14T08:00:26.464043",
+    "id": "ac8ffae984bba27ec2ad759b52cfac1a",
+    "discovered_date": "2026-03-14T08:00:26.464058",
+    "status": "pending"
+  },
+  {
+    "url": "https://tangledarts.org/getting-here-walking",
+    "title": "Getting here -",
+    "domain": "tangledarts.org",
+    "rss_feed": "https://tangledarts.org/feed/",
+    "disability_concepts": {
+      "systemic": [
+        "access"
+      ],
+      "design": [
+        "form"
+      ],
+      "art": [
+        "artist",
+        "performance",
+        "exhibition",
+        "gallery"
+      ]
+    },
+    "concept_contexts": {
+      "systemic:access": "site uses cookies in order to improve your online experience (including saving your settings in the accessibility toolbar). please accept cookies for optimal performance. accept               decline '',",
+      "design:form": "(including saving your settings in the accessibility toolbar). please accept cookies for optimal performance. accept               decline '', \t\t\t\t\t\t\t\t\t\t'items_wrap'     => '%3$s', \t\t\t\t\t\t\t\t\t\t//'show_toggl",
+      "art:artist": "oggle-duration=\"250\" aria-expanded=\"false\"> show sub menu          \t   history     \t   team     \t   artists     \t   partners     \t   annual reports     \t   support us            what\u2019s on   .sub-menu\" data-",
+      "art:performance": "ce (including saving your settings in the accessibility toolbar). please accept cookies for optimal performance. accept               decline '', \t\t\t\t\t\t\t\t\t\t'items_wrap'     => '%3$s', \t\t\t\t\t\t\t\t\t\t//'show_toggles'",
+      "art:exhibition": "gle-type=\"slidetoggle\" data-toggle-duration=\"250\" aria-expanded=\"false\"> show sub menu          \t   exhibition     \t   event     \t   snug     \t   exhibition coming soon     \t   crip times podcast     \t   partne",
+      "art:gallery": "ll be at the north-west entrance of 401 richmond phone \u00a0\u00a0  647-725-5064 subscribe to our newsletter gallery hours  wednesday to saturday 12pm to 5pm (est) location  401 richmond st w suite 124, toronto on m5"
+    },
+    "confidence": 1.0,
+    "article_idea": "The Access Perspective on 'Getting here -'",
+    "content_snippet": "Getting here This website uses cookies in order to improve your online experience (including saving your settings in the Accessibility toolbar). Please accept cookies for optimal performance. Accept \n             Decline '',\n\t\t\t\t\t\t\t\t\t\t'items_wrap'     => '%3$s',\n\t\t\t\t\t\t\t\t\t\t//'show_toggles'   => true,...",
+    "publish_date": "2026-03-14T08:00:28.423946",
+    "id": "90f622cb05b1ba2403ae1d3ecf6b4fd0",
+    "discovered_date": "2026-03-14T08:00:28.423962",
     "status": "pending"
   },
   {
@@ -85,11 +128,111 @@
       "art:film": "disability justice movement by helping sins invalid founder patty berne get to the vancouver queer film festival! see our indiegogo page:  https://www.indiegogo.com/projects/support-disability-justice#ho"
     },
     "confidence": 1.0,
-    "article_idea": "What 'Support Disability Justice! (Campaign Update)' Misses About Dance",
+    "article_idea": "Inclusive Analysis: The Dance Dimension of 'Support Disability Justice! (Campaign Update)'",
     "content_snippet": "Sins Invalid is a fiscally sponsored project of   Dancers\u2019 Group. We\u2019ve raised nearly $2,000, but still have $4,500 to go and only 24 days left!Support collective access and the disability justice movement by helping Sins Invalid founder Patty Berne get to the Vancouver Queer Film Festival! See our ...",
-    "publish_date": "2026-03-13T09:56:10.698898",
+    "publish_date": "2026-03-14T08:00:32.833662",
     "id": "ab0d86596062c77b25e3d46ccbbe607c",
-    "discovered_date": "2026-03-13T09:56:10.698916",
+    "discovered_date": "2026-03-14T08:00:32.833677",
+    "status": "pending"
+  },
+  {
+    "url": "https://sinsinvalid.org/the-feministing-five-patty-berne/",
+    "title": "The Feministing Five: Patty Berne | Sins Invalid",
+    "domain": "sinsinvalid.org",
+    "rss_feed": "https://sinsinvalid.org/feed/",
+    "disability_concepts": {
+      "physical": [
+        "dance",
+        "movement"
+      ],
+      "sensory": [
+        "vision",
+        "color",
+        "sound"
+      ],
+      "cognitive": [
+        "focus"
+      ],
+      "systemic": [
+        "marginalized",
+        "voice"
+      ],
+      "design": [
+        "form"
+      ],
+      "art": [
+        "performance",
+        "theater"
+      ],
+      "culture": [
+        "tradition",
+        "marginal"
+      ]
+    },
+    "concept_contexts": {
+      "physical:dance": "sins invalid is a fiscally sponsored project of   dancers\u2019 group. patricia berne is the co-founder and director of  sins invalid , a san francisco theater",
+      "physical:movement": "says. berne, who believes that performance and other forms of cultural work play a crucial role in movement building, has dedicated her life to social justice, a dedication that has taken many forms. current",
+      "sensory:vision": "sins invalid , a san francisco theater company that blends performance and art with the political vision of a more just and equal world. the goal of the company is to challenge and reshape the public\u2019s id",
+      "sensory:color": "ork with different communities; i\u2019ve done work in women\u2019s communities, i\u2019ve done work with women of color, i\u2019ve done work with survivors of violence and in immigrant communities, and queer communities.\u00a0 si",
+      "sensory:sound": "ice to the voiceless and empowering the invisible. when i observed that the mission of sins invalid sounds both challenging and crucial, berne\u2019s matter-of-fact reply was, \u201cit\u2019s challenging, but life is tou",
+      "cognitive:focus": "hape the public\u2019s ideas about people with disabilities and other traditionally marginalized groups. focusing particularly on disability justice, their performances resist the framing of the company members",
+      "systemic:marginalized": "to challenge and reshape the public\u2019s ideas about people with disabilities and other traditionally marginalized groups. focusing particularly on disability justice, their performances resist the framing of the c",
+      "systemic:voice": "s\u2019 bodies as \u201cless-than,\u201d simply by putting those bodies on stage. \u201cit\u2019s the most basic claiming of voice and claiming of space by creating beautiful work with political grounding,\u201d berne says. berne, who",
+      "design:form": "ne is the co-founder and director of  sins invalid , a san francisco theater company that blends performance and art with the political vision of a more just and equal world. the goal of the company is to",
+      "art:performance": "berne is the co-founder and director of  sins invalid , a san francisco theater company that blends performance and art with the political vision of a more just and equal world. the goal of the company is to cha",
+      "art:theater": "dancers\u2019 group. patricia berne is the co-founder and director of  sins invalid , a san francisco theater company that blends performance and art with the political vision of a more just and equal world. t",
+      "culture:tradition": "the company is to challenge and reshape the public\u2019s ideas about people with disabilities and other traditionally marginalized groups. focusing particularly on disability justice, their performances resist the",
+      "culture:marginal": "to challenge and reshape the public\u2019s ideas about people with disabilities and other traditionally marginalized groups. focusing particularly on disability justice, their performances resist the framing of t"
+    },
+    "confidence": 1.0,
+    "article_idea": "Disability Insight: How 'The Feministing Five: Patty Berne' Affects Dance Communities",
+    "content_snippet": "Sins Invalid is a fiscally sponsored project of   Dancers\u2019 Group. Patricia Berne is the Co-Founder and Director of  Sins Invalid , a San Francisco theater company that blends performance and art with the political vision of a more just and equal world. The goal of the company is to challenge and res...",
+    "publish_date": "2026-03-14T08:00:35.695997",
+    "id": "0dbf877e958ff963c95c51ebbbe7f88e",
+    "discovered_date": "2026-03-14T08:00:35.696012",
+    "status": "pending"
+  },
+  {
+    "url": "https://sinsinvalid.org/disability-justice-is-climate-justice/",
+    "title": "Disability Justice is Climate Justice | Sins Invalid",
+    "domain": "sinsinvalid.org",
+    "rss_feed": "https://sinsinvalid.org/feed/",
+    "disability_concepts": {
+      "physical": [
+        "dance",
+        "movement"
+      ],
+      "sensory": [
+        "vision"
+      ],
+      "systemic": [
+        "access",
+        "marginalized"
+      ],
+      "design": [
+        "beauty"
+      ],
+      "culture": [
+        "community",
+        "marginal"
+      ]
+    },
+    "concept_contexts": {
+      "physical:dance": "disability justice is climate justice sins invalid is a fiscally sponsored project of   dancers\u2019 group. disability justice acknowledges that all bodies are valuable, hold beauty, and are deserv",
+      "physical:movement": "n, indigenous, queer, non-binary, trans disabled people must be at the forefront of climate justice movements. disability justice insists we recognize that all of our bodies are integral to any movement towar",
+      "sensory:vision": "witness people believing that some bodies are superior to other bodies, and in this myopic violent vision, believe their lives to be more valuable than others. this typically racialized arrogance is what u",
+      "systemic:access": "refugees over mexican, central american and haitian refugees who wait in detention centers with no access to safe health care. our beloved and complex black, brown, indigenous, fat, queer, non-binary, tran",
+      "systemic:marginalized": "y unity, to ensure a future which includes and embraces us as disabled people. this is why the most marginalized disabled people so deeply understand settler-colonial cis-heteropatriarchal ableist capitalism, as",
+      "design:beauty": "red project of   dancers\u2019 group. disability justice acknowledges that all bodies are valuable, hold beauty, and are deserving of care. this extends to our community bodies, to the bodies of our plant and an",
+      "culture:community": "nowledges that all bodies are valuable, hold beauty, and are deserving of care. this extends to our community bodies, to the bodies of our plant and animal kin, and to our shared planetary body itself, the ear",
+      "culture:marginal": "y unity, to ensure a future which includes and embraces us as disabled people. this is why the most marginalized disabled people so deeply understand settler-colonial cis-heteropatriarchal ableist capitalism,"
+    },
+    "confidence": 1.0,
+    "article_idea": "The Dance Perspective on 'Disability Justice is Climate Justice'",
+    "content_snippet": "Disability Justice is Climate Justice Sins Invalid is a fiscally sponsored project of   Dancers\u2019 Group. Disability Justice acknowledges that all bodies are valuable, hold beauty, and are deserving of care. This extends to our community bodies, to the bodies of our plant and animal kin, and to our sh...",
+    "publish_date": "2026-03-14T08:00:38.587782",
+    "id": "99a7aaf312b01180a395e53f240d3e95",
+    "discovered_date": "2026-03-14T08:00:38.587797",
     "status": "pending"
   },
   {
@@ -126,159 +269,101 @@
       "culture:community": "gy   \t  disability visibility anthology for young people   \t  resistance and hope anthology         community as home \u2013 portraits     podcast     hire me!     ada 30 in color     donate     online store"
     },
     "confidence": 1.0,
-    "article_idea": "Disability Insight: How 'The State of Critical Race Disability Studies A White Paper ...' Affects Vision Communities",
+    "article_idea": "The Vision Perspective on 'The State of Critical Race Disability Studies A White Paper ...'",
     "content_snippet": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective Alice Wong\t\t\t\t View All Post navigation Recent Posts Follow Blog via Email Recent Comments Recent Posts Follow Blog via Email Discover more from Disability Visibility Project Works Cited...",
-    "publish_date": "2026-03-13T09:56:11.962407",
+    "publish_date": "2026-03-14T08:00:40.853317",
     "id": "20ec51cc3d3bad5837a50d86d68de086",
-    "discovered_date": "2026-03-13T09:56:11.962462",
+    "discovered_date": "2026-03-14T08:00:40.853369",
     "status": "pending"
   },
   {
-    "url": "https://hyperallergic.com/brian-eno-and-200-artists-urge-british-museum-to-stop-erasing-palestine/",
-    "title": "Brian Eno and 200+ Artists Urge British Museum to \u201cStop Erasing Palestine\u201d",
-    "domain": "hyperallergic.com",
-    "rss_feed": "https://hyperallergic.com/feed/",
+    "url": "https://disabilityvisibilityproject.com/2025/10/07/two-years-of-genocide-crips-arent-done-sending-esims-to-gaza/",
+    "title": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza \u2013 Disability Visibility Project",
+    "domain": "disabilityvisibilityproject.com",
+    "rss_feed": "https://disabilityvisibilityproject.com/feed/",
     "disability_concepts": {
       "sensory": [
-        "visual",
-        "sound",
-        "music"
+        "color"
+      ],
+      "communication": [
+        "communication"
+      ],
+      "systemic": [
+        "access",
+        "visibility"
       ],
       "art": [
-        "artist",
-        "film",
-        "museum"
+        "film"
       ],
       "culture": [
         "community"
       ]
     },
     "concept_contexts": {
-      "sensory:visual": "pro-israel group. a  letter  addressed to the museum's board of trustees and signed by musician and visual artist brian eno, among others, also criticizes the museum's previous connections to the israeli em",
-      "sensory:sound": "actices and new media at the museum of craft and design olafur eliasson: a symphony of disappearing sounds for the great salt lake interdimensional timelines: hartford art school exhibits liz nielsen\u2019s pho",
-      "sensory:music": "ssure from a pro-israel group. a  letter  addressed to the museum's board of trustees and signed by musician and visual artist brian eno, among others, also criticizes the museum's previous connections to",
-      "art:artist": "brian eno and 200+ artists urge british museum to \u201cstop erasing palestine\u201d subscribe to our newsletter merging craft practice",
-      "art:film": "-podcast                                       -books                                       -film                                       -crosswords                                       -comics",
-      "art:museum": "brian eno and 200+ artists urge british museum to \u201cstop erasing palestine\u201d subscribe to our newsletter merging craft practices and new media at th",
-      "culture:community": "opinion                                       reviews                                       community                                       more                                       -guides"
+      "sensory:color": "nce and hope anthology         community as home \u2013 portraits     podcast     hire me!     ada 30 in color     donate     online store     \t\t\t   \t\t   \t\t   \t\t\t    \t\t\t\t  \t\t\t\t\t   \t\t\t\t\t open menu overlay",
+      "communication:communication": "ome of our esims have been continuously used since last summer. despite the repeated attacks on telecommunication networks and the intermittent dips in public attention on the atrocities in gaza\u2013funded direc",
+      "systemic:access": "n person)   \t  storycorps connect (remote)   \t  oral histories with the storycorps app   \t  note on accessibility         dvp interviews a-z    \t  dvp interviews a-h (last name)   \t  dvp interviews i-n (las",
+      "systemic:visibility": "low blog via email recent comments recent posts follow blog via email discover more from disability visibility project two years of genocide+: crips aren\u2019t done sending esims to gaza share this: skip to content",
+      "art:film": "where people can roam without being bombed, starved, humiliated, displaced, tortured, and forced to film the destruction of their homelands for an uncaring and unmoving world. we live our disabled lives i",
+      "culture:community": "gy   \t  disability visibility anthology for young people   \t  resistance and hope anthology         community as home \u2013 portraits     podcast     hire me!     ada 30 in color     donate     online store"
     },
     "confidence": 1.0,
-    "article_idea": "The Visual Perspective on 'Brian Eno and 200+ Artists Urge British Museum to \u201cStop Eras...'",
-    "content_snippet": "Brian Eno and 200+ Artists Urge British Museum to \u201cStop Erasing Palestine\u201d Subscribe to our newsletter Merging Craft Practices and New Media at the Museum of Craft and Design Olafur Eliasson: A symphony of disappearing sounds for the Great Salt Lake Interdimensional Timelines: Hartford Art School Ex...",
-    "publish_date": "2026-03-13T09:56:13.822864",
-    "id": "4851dfa871b702404f5f25f49140f5a3",
-    "discovered_date": "2026-03-13T09:56:13.822918",
+    "article_idea": "What 'Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to G...' Misses About Color",
+    "content_snippet": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza Alice Wong\t\t\t\t View All Post navigation Recent Posts Follow Blog via Email Recent Comments Recent Posts Follow Blog via Email Discover more from Disability Visibility Project Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Ga...",
+    "publish_date": "2026-03-14T08:00:42.007158",
+    "id": "79d8a227942159238725a9a8b75ee5d6",
+    "discovered_date": "2026-03-14T08:00:42.007211",
     "status": "pending"
   },
   {
-    "url": "https://www.artnews.com/art-in-america/aia-reviews/cindy-sherman-office-killer-blu-ray-review-1234777215/",
-    "title": "Cindy Sherman's Horror Movie Flop Is Back. Is the World Ready?",
-    "domain": "artnews.com",
-    "rss_feed": "https://www.artnews.com/feed/",
-    "disability_concepts": {
-      "design": [
-        "form"
-      ],
-      "art": [
-        "artist",
-        "film",
-        "photography"
-      ]
-    },
-    "concept_contexts": {
-      "design:form": "\u2019s 1997 horror movie flop is coming to blu-ray. is the world finally ready for it? related articles former moma director glenn lowry says leon black is a \u2018solid trustee\u2019 amid epstein\u00a0controversy alex gree",
-      "art:artist": "s a \u2018solid trustee\u2019 amid epstein\u00a0controversy alex greenberger falling apart: a conversation between artists miranda july and cindy sherman failed climate protest at mus\u00e9e d'orsay, cindy sherman joins icp bo",
-      "art:film": "y   \talex greenberger senior editor, artnews photographer\u00a0 cindy sherman \u00a0has made just one feature film to date\u2014 office killer, \u00a0a 1997 box-office flop that was unloved by critics, such as the\u00a0 new york",
-      "art:photography": "e most exclusive resort in the united states betty catroux to be honored at international center of photography infinity awards dealing with the devil: hurley, asu achieve a most remarkable end \u2018i love boosters\u2019"
-    },
-    "confidence": 0.8,
-    "article_idea": "Accessibility Critique: The Form Story Behind 'Cindy Sherman's Horror Movie Flop Is Back. Is the World Read...'",
-    "content_snippet": "Cindy Sherman\u2019s 1997 Horror Movie Flop Is Coming to Blu-Ray. Is the World Finally Ready for It? Related Articles Former MoMA Director Glenn Lowry Says Leon Black Is a \u2018Solid Trustee\u2019 Amid Epstein\u00a0Controversy Alex Greenberger Falling Apart: A Conversation Between Artists Miranda July and Cindy Sherma...",
-    "publish_date": "2026-03-13T09:56:17.317019",
-    "id": "05efc050cfcdaf0039c6475f23cefa16",
-    "discovered_date": "2026-03-13T09:56:17.317042",
-    "status": "pending"
-  },
-  {
-    "url": "https://www.artforum.com/news/researchers-link-two-works-to-michelangelo-1234745276/",
-    "title": "New Evidence Ties Two Works to the Michelangelo",
-    "domain": "artforum.com",
-    "rss_feed": "https://www.artforum.com/feed/",
+    "url": "https://disabilityvisibilityproject.com/2025/09/26/when-coercion-in-care-makes-kilmeades-just-kill-em-thinkable/",
+    "title": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable \u2013 Disability Visibility Project",
+    "domain": "disabilityvisibilityproject.com",
+    "rss_feed": "https://disabilityvisibilityproject.com/feed/",
     "disability_concepts": {
       "sensory": [
-        "hearing",
-        "vision",
-        "music"
+        "color",
+        "sound"
+      ],
+      "systemic": [
+        "access",
+        "visibility"
       ],
       "design": [
         "form"
       ],
-      "art": [
-        "artist",
-        "painting",
-        "film"
+      "culture": [
+        "community"
       ]
     },
     "concept_contexts": {
-      "sensory:hearing": "to exclude russia      read more                                  us supreme court declines appeal hearing for case on copyrighting ai artwork      read more                                    march 12, 202",
-      "sensory:vision": "fashion          film          music          performing arts          technology          television                features         arrow icon                                 spotlights          clos",
-      "sensory:music": "the checklist          architecture          design          fashion          film          music          performing arts          technology          television                features         ar",
-      "design:form": "ist          architecture          design          fashion          film          music          performing arts          technology          television                features         arrow icon",
-      "art:artist": "spotlights          close-ups          interviews          1000 words          portfolios          artists\u2019 projects          dossier                reviews         arrow icon",
-      "art:painting": "gium (kik-irpa) announced that they had used scientific analysis to\u00a0 connect \u00a0a centuries-old piet\u00e0 painting to the italian master  michelangelo . in addition, an independent italian researcher published a\u00a0 p",
-      "art:film": "top ten          the checklist          architecture          design          fashion          film          music          performing arts          technology          television                feat"
+      "sensory:color": "nce and hope anthology         community as home \u2013 portraits     podcast     hire me!     ada 30 in color     donate     online store     \t\t\t   \t\t   \t\t   \t\t\t    \t\t\t\t  \t\t\t\t\t   \t\t\t\t\t open menu overlay",
+      "sensory:sound": "xists as a sobering reminder as to where such thinking and reasoning can lead. kilmeade\u2019s words may sound extreme, but they grow from a soil we already live in. every day in the united states, people label",
+      "systemic:access": "n person)   \t  storycorps connect (remote)   \t  oral histories with the storycorps app   \t  note on accessibility         dvp interviews a-z    \t  dvp interviews a-h (last name)   \t  dvp interviews i-n (las",
+      "systemic:visibility": "low blog via email recent comments recent posts follow blog via email discover more from disability visibility project when coercion in care makes kilm  eade\u2019s \u201cjust kill \u2019em\u201d thinkable share this: skip to cont",
+      "design:form": "story he touched, the fear such words ignite, and the responsibility that comes with a national platform. kilmeade\u2019s comment was meant as provocation. yet it lands in a country where, every day, psychiatr",
+      "culture:community": "gy   \t  disability visibility anthology for young people   \t  resistance and hope anthology         community as home \u2013 portraits     podcast     hire me!     ada 30 in color     donate     online store"
     },
     "confidence": 1.0,
-    "article_idea": "Disability Insight: How 'New Evidence Ties Two Works to the Michelangelo' Affects Hearing Communities",
-    "content_snippet": "Researchers Link Two Unattributed Works To Michelangelo Most Popular You may also like Subscribe                Open Menu           Close             News          Columns          Features          Previews          Reviews          Video          Current Issue          Archive          artguide   ...",
-    "publish_date": "2026-03-13T09:56:18.813719",
-    "id": "621d625fc3386ce18b28880a67925d95",
-    "discovered_date": "2026-03-13T09:56:18.813751",
+    "article_idea": "What 'When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d think...' Misses About Color",
+    "content_snippet": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable Alice Wong\t\t\t\t View All Post navigation Recent Posts Follow Blog via Email Recent Comments Recent Posts Follow Blog via Email Discover more from Disability Visibility Project When coercion in care makes Kilm  eade\u2019s \u201cjust kill \u2019em\u201d thi...",
+    "publish_date": "2026-03-14T08:00:43.096025",
+    "id": "c5dd2ce2d17800665b01048dc83ffe0f",
+    "discovered_date": "2026-03-14T08:00:43.096043",
     "status": "pending"
   },
   {
-    "url": "https://www.dezeen.com/2026/03/13/quartz-ring-identity-verification-modem-retinaa/",
-    "title": "Quartz ring proves its wearer is human in the age of AI",
-    "domain": "dezeen.com",
-    "rss_feed": "https://www.dezeen.com/feed/",
-    "disability_concepts": {
-      "physical": [
-        "stairs"
-      ],
-      "sensory": [
-        "tactile"
-      ],
-      "design": [
-        "form"
-      ],
-      "art": [
-        "exhibition",
-        "gallery"
-      ]
-    },
-    "concept_contexts": {
-      "physical:stairs": "r prize relevance shigeru ban concert hall shigeru ban concert hall budget macbook budget macbook upstairs at ronnie's upstairs at ronnie's robot phone robot phone magazine     awards     jobs     events gu",
-      "sensory:tactile": "t popular   jobs featured   jobs refine your search: delavegacanolasso finishes home in madrid with tactile material palette anastasiia tempynska transforms former embassy into \"gallery-like\" kyiv showroom j",
-      "design:form": ": delavegacanolasso finishes home in madrid with tactile material palette anastasiia tempynska transforms former embassy into \"gallery-like\" kyiv showroom jihyun kim uses gloop glaze to create \"gravity-de",
-      "art:exhibition": "concrete home in slovenia casa wabi mushroom pavilion casa wabi mushroom pavilion maggie's centres exhibition maggie's centres exhibition apple's head of design interview apple's head of design interview pritz",
-      "art:gallery": "s home in madrid with tactile material palette anastasiia tempynska transforms former embassy into \"gallery-like\" kyiv showroom jihyun kim uses gloop glaze to create \"gravity-defying\" salty fairy ring cerami"
-    },
-    "confidence": 1.0,
-    "article_idea": "What 'Quartz ring proves its wearer is human in the age of AI' Misses About Stairs",
-    "content_snippet": "Dezeen Magazine \n\t\t \n\t\t\t dezeen-logo \n\t\t\t  \n\t\t\t  \n\t\t \n\t\t \n\t\t\t dezeen-logo Quartz ring proves its wearer is human in the age of AI Search results: Eight actually interesting uses of AI from 2025 Subscribe to our newsletters Top design stories Most   popular Most   recent Popular   jobs Featured   job...",
-    "publish_date": "2026-03-13T09:56:20.179233",
-    "id": "7d4cbba62dacfe052ab6619d2866eba3",
-    "discovered_date": "2026-03-13T09:56:20.179258",
-    "status": "pending"
-  },
-  {
-    "url": "https://www.designboom.com/art/red-balloons-flowing-fabric-wedding-playground-sukipartners-china/",
-    "title": "red balloons lift flowing fabric into a wedding playground by suki+partners in china",
-    "domain": "designboom.com",
-    "rss_feed": "https://www.designboom.com/feed/",
+    "url": "https://hyperallergic.com/beverly-buchanans-architecture-of-care/",
+    "title": "Beverly Buchanan\u2019s Architecture of Care",
+    "domain": "hyperallergic.com",
+    "rss_feed": "https://hyperallergic.com/feed/",
     "disability_concepts": {
       "sensory": [
-        "vision"
+        "color",
+        "sound"
+      ],
+      "systemic": [
+        "representation"
       ],
       "design": [
         "form"
@@ -286,84 +371,38 @@
       "art": [
         "artist",
         "sculpture",
-        "performance",
-        "installation"
-      ]
-    },
-    "concept_contexts": {
-      "sensory:vision": "onnections: +700                                      publish my work  promote my project  share my vision      popular now art!                   see the ocean\u2019s psychedelic sea slugs reimagined as tiny wo",
-      "design:form": "red balloons lift flowing pink fabric above wedding lawn in china to form floating playground suki+partners transforms a wedding lawn into a \u2018playground\u2019 lifting the lawn in",
-      "art:artist": "show jr's california works from prison yards to border wall inside the surrealist universe of late artist pedro friedeberg, creator of the iconic hand chair teapots, fish, and trucks: inside ghana's extrao",
-      "art:sculpture": "signboom will always be there for you see the ocean\u2019s psychedelic sea slugs reimagined as tiny wool sculptures 'horizons' at perrotin la to show jr's california works from prison yards to border wall inside th",
-      "art:performance": "down toward the ground. the upper surface of the cloth becomes a platform for the wedding ceremony, performances, and informal gatherings, while the shaded area below offers a place for cooling and rest. support",
-      "art:installation": "wedding lawn into a \u2018playground\u2019 lifting the lawn into three dimensions balloons   (66) interactive installation   (543) textile and fabric art   (88) designboom will always be there for you see the ocean\u2019s psych"
-    },
-    "confidence": 1.0,
-    "article_idea": "The Vision Perspective on 'red balloons lift flowing fabric into a wedding playground b...'",
-    "content_snippet": "red balloons lift flowing pink fabric above wedding lawn in china to form floating playground suki+partners transforms a wedding lawn into a \u2018playground\u2019 lifting the lawn into three dimensions balloons   (66) interactive installation   (543) textile and fabric art   (88) designboom will always be th...",
-    "publish_date": "2026-03-13T09:56:21.843661",
-    "id": "bddc5f7b3349a805974d7f16fa010e35",
-    "discovered_date": "2026-03-13T09:56:21.843714",
-    "status": "pending"
-  },
-  {
-    "url": "https://www.creativeboom.com/inspiration/from-seoul-to-switzerlands-southern-alps-korean-video-art-in-motion/",
-    "title": "From Seoul to Switzerland's Southern Alps: Korean video art in motion | Creative Boom",
-    "domain": "creativeboom.com",
-    "rss_feed": "https://www.creativeboom.com/feed/",
-    "disability_concepts": {
-      "systemic": [
-        "representation"
-      ],
-      "design": [
-        "form"
+        "film",
+        "installation",
+        "exhibition",
+        "gallery",
+        "museum"
       ],
       "culture": [
+        "identity",
         "community"
       ]
     },
     "concept_contexts": {
-      "systemic:representation": "ken right now (and why it isn't) cultural diversity: the illustrators who are proving just how much representation matters the spark: chris wilson on confidence, chaos and keeping your creativity alive from trauma",
-      "design:form": "from seoul to switzerland's southern alps: korean video art in motion further information 24 planet-friendly product swaps that creatives actually stick with i love freelancing, but wh",
-      "culture:community": "podcast                                                                                community                                                                                topics"
-    },
-    "confidence": 0.9000000000000001,
-    "article_idea": "Accessibility Critique: The Representation Story Behind 'From Seoul to Switzerland's Southern Alps: Korean video art ...'",
-    "content_snippet": "From Seoul to Switzerland's Southern Alps: Korean video art in motion Further Information 24 planet-friendly product swaps that creatives actually stick with I love freelancing, but what about my pension? Is social media over for creatives? Or have we just woken up to what it is? 50 fonts that will ...",
-    "publish_date": "2026-03-13T09:56:23.937353",
-    "id": "09acd5598381bec5143fe7d77e62bd2f",
-    "discovered_date": "2026-03-13T09:56:23.937367",
-    "status": "pending"
-  },
-  {
-    "url": "https://www.bbc.com/news/articles/c1je21lgn5zo?at_medium=RSS&at_campaign=rss",
-    "title": "Oscars 2026: 17 facts you need to know about the nominees from Hamnet to Sinners",
-    "domain": "bbc.com",
-    "rss_feed": "https://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml",
-    "disability_concepts": {
-      "sensory": [
-        "audio",
-        "music"
-      ],
-      "communication": [
-        "language"
-      ],
-      "art": [
-        "film"
-      ]
-    },
-    "concept_contexts": {
-      "sensory:audio": "sport      business      technology      health      culture      arts      travel      earth      audio      video      live                  home      news     us & canada      uk     uk politics      e",
-      "sensory:music": "hnology     artificial intelligence      ai v the mind       health      culture     film & tv      music      art & design      style      books      entertainment news       arts     arts in motion",
-      "communication:language": "y in london how to make a killing and vladimir star on embracing slow living the bbc is in multiple languages british broadcasting corporation                   home      news      sport      business      te",
-      "art:film": "otted in the oscars class photo oscars 2026: nominees list in full how to watch the oscar-nominated films michael b jordan upends oscars race as sinners wins big at actor awards watch: what's on the menu"
+      "sensory:color": "beverly buchanan at a t-shirt signing in hawthorne drug co (1993), color photograph (photo courtesy the athenaeum in athens, georgia; all other photos megan bickel/   hyper",
+      "sensory:sound": "actices and new media at the museum of craft and design olafur eliasson: a symphony of disappearing sounds for the great salt lake news                                       features",
+      "systemic:representation": "r, healer, disability activist, customer, futurist, and neighbor. she is perhaps best known for her representational sculptures of \u201cshacks,\u201d also known as \u201crow\u201d or \u201cshotgun\" houses. her work as a whole is more diff",
+      "design:form": "beverly buchanan\u2019s architecture of care subscribe to our newsletter haroutiun galentz: the form of colour deepen your creative practice at vermont studio center merging craft practices and new me",
+      "art:artist": "athens, ga. \u2014 beverly buchanan, who died in 2015 at age 74, was an artist, writer, joke-teller, gardener, nurse, pharmacist, doctor, healer, disability activist, customer, f",
+      "art:sculpture": "lity activist, customer, futurist, and neighbor. she is perhaps best known for her representational sculptures of \u201cshacks,\u201d also known as \u201crow\u201d or \u201cshotgun\" houses. her work as a whole is more difficult to cat",
+      "art:film": "-podcast                                       -books                                       -film                                       -crosswords                                       -comics",
+      "art:installation": "ed with medicine bottles, rocks, and other scraps of ephemera from around the artist's home.\u00a0 left: installation view of beverly buchanan, \u201cmedicine woman\u201d (1993), mixed media; right: beverly buchanan, \"shot gun",
+      "art:exhibition": "here in athens, georgia, where she became a beloved community member \u2014 while never receiving a solo exhibition from an institution within the city. that\u2019s changed only recently: there are currently two exhibiti",
+      "art:gallery": "art of home   , at the georgia museum of art through june 28 \u2014 is a small exhibition, taking up one gallery within the museum. it\u2019s here that we\u2019re introduced to \u201cmedicine woman\u201d (1993), a major and canonica",
+      "art:museum": "deepen your creative practice at vermont studio center merging craft practices and new media at the museum of craft and design olafur eliasson: a symphony of disappearing sounds for the great salt lake news",
+      "culture:identity": "erstandings of land, architecture, and placed-based making that probed themes of class, gender, and identity. buchanan lived in north carolina, new york, and florida, but spent a good number of years here in",
+      "culture:community": "opinion                                       reviews                                       community                                       more                                       -guides"
     },
     "confidence": 1.0,
-    "article_idea": "Disability Insight: How 'Oscars 2026: 17 facts you need to know about the nominees fr...' Affects Audio Communities",
-    "content_snippet": "Winners, Sinners and record breakers: 17 fun facts about this year's Oscars Eight surprise takeaways from the Oscar nominations 12 things we spotted in the Oscars class photo Oscars 2026: Nominees list in full How to watch the Oscar-nominated films Michael B Jordan upends Oscars race as Sinners wins...",
-    "publish_date": "2026-03-13T09:56:26.223582",
-    "id": "e0bb878be45715ccc883e61da438110c",
-    "discovered_date": "2026-03-13T09:56:26.223633",
+    "article_idea": "Disability Insight: How 'Beverly Buchanan\u2019s Architecture of Care' Affects Color Communities",
+    "content_snippet": "Beverly Buchanan\u2019s Architecture of Care Subscribe to our newsletter Haroutiun Galentz: The Form of Colour Deepen Your Creative Practice at Vermont Studio Center Merging Craft Practices and New Media at the Museum of Craft and Design Olafur Eliasson: A symphony of disappearing sounds for the Great Sa...",
+    "publish_date": "2026-03-14T08:00:46.164554",
+    "id": "b2540353454899254213f5553acca93b",
+    "discovered_date": "2026-03-14T08:00:46.164608",
     "status": "pending"
   }
 ]
