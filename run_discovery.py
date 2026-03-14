@@ -154,6 +154,43 @@ MAINSTREAM_QUERIES = [
     "academic conference keynote speaker lineup",
     "comedy stand-up performance body identity humor",
     "workshop creative writing facilitation participation",
+
+    # Europe — policy, culture, design
+    "NHS social care funding reform UK community",
+    "EU Accessibility Act digital services compliance 2025",
+    "UK Personal Independence Payment PIP assessment reform",
+    "European mental health deinstitutionalization social care",
+    "UK zero hours contract gig work insecurity",
+    "Cannes Berlin Venice film festival programming selection",
+    "Edinburgh Fringe festival performance casting diversity",
+    "European city urban mobility pedestrian cycling design",
+    "Scandinavia welfare model work life balance reform",
+    "West End theater casting body representation",
+
+    # Latin America — policy, culture, design
+    "Brazil social assistance benefit reform inclusion",
+    "Latin America care economy community informal network",
+    "Colombia Chile Argentina mental health policy reform",
+    "Brazil urban favela city planning infrastructure access",
+    "Latin America film festival documentary social justice",
+    "São Paulo Mexico City urban design transit equity",
+
+    # Asia & Pacific — policy, culture, design
+    "Japan overwork karoshi workplace culture burnout reform",
+    "South Korea workplace mental health burnout productivity",
+    "Australia NDIS disability insurance funding reform",
+    "Japan aging population care workforce shortage",
+    "India urban infrastructure accessible city design",
+    "Busan Tokyo film festival selection programming",
+    "China tech company hiring algorithm screening",
+    "South Korea Japan neurodiversity workplace stigma",
+
+    # Global / non-US international
+    "global south climate disaster vulnerable population evacuation",
+    "universal design international building standard",
+    "WHO mental health global policy community care",
+    "international aid development disability inclusion",
+    "global aging population care workforce crisis",
 ]
 
 def log(msg):
