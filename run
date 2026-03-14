@@ -1,0 +1,8 @@
+#!/bin/bash
+# Wrapper: pre-loads /srv/secrets/openclaw.env then runs any command
+# Usage: ./run python3 production_orchestrator.py
+#        ./run python3 opus_rewrite.py
+set -a
+source /srv/secrets/openclaw.env
+set +a
+exec "$@"

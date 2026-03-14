@@ -13,6 +13,16 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 from pathlib import Path
 
+# Load secrets from env file (no export statements — must parse manually)
+_ENV_FILE = Path("/srv/secrets/openclaw.env")
+if _ENV_FILE.exists():
+    for _line in _ENV_FILE.read_text().splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _k, _, _v = _line.partition("=")
+            os.environ.setdefault(_k.strip(), _v.strip())
+
+
 REPO = Path(__file__).parent
 DB   = REPO / "disability_findings.db"
 LOG  = REPO / "discovery.log"

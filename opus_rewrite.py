@@ -7,6 +7,16 @@ import json, re, urllib.request, time
 from pathlib import Path
 
 import os
+
+# Load secrets from env file (no export statements — must parse manually)
+_ENV_FILE = Path("/srv/secrets/openclaw.env")
+if _ENV_FILE.exists():
+    for _line in _ENV_FILE.read_text().splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _k, _, _v = _line.partition("=")
+            os.environ.setdefault(_k.strip(), _v.strip())
+
 API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
 API_URL  = "http://172.19.0.1:8317/v1/chat/completions"
 MODEL    = "claude-opus-4-6"
