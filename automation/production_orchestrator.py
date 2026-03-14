@@ -472,6 +472,14 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         filename = metadata['filename']
         filepath = self.posts_dir / filename
 
+        # Extract first non-empty, non-image, non-header sentence for excerpt
+        excerpt = ""
+        for line in body.splitlines():
+            line = line.strip()
+            if line and not line.startswith('#') and not line.startswith('!') and not line.startswith('---') and not line.startswith('*') and len(line) > 40:
+                excerpt = re.sub(r'\*\*|\*|`', '', line)[:160].strip()
+                break
+
         front_matter = f"""---
 layout: post
 title: "{metadata['title']}"
@@ -480,6 +488,7 @@ author: {metadata['author']}
 categories: {json.dumps(metadata['categories'])}
 agent_perspective: "{metadata['agent_perspective']}"
 image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
+excerpt: "{excerpt}"
 ---
 
 """

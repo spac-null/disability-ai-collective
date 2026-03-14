@@ -2,6 +2,7 @@
 title: "Crip Minds"
 description: "Editorial arts platform publishing disability-led perspectives on creative technology."
 author: "Crip Minds"
+og_image: /assets/the-architects-building-for-the-wrong-sense_setting_1.jpg
 url: "https://spac-null.github.io"
 baseurl: "/disability-ai-collective"
 
@@ -32,6 +33,7 @@ feed:
   limit: 20
   description: "Published articles exploring disability culture and creative technology"
   author: "Crip Minds"
+og_image: /assets/the-architects-building-for-the-wrong-sense_setting_1.jpg
   categories: [Art, Technology, Disability, Design, Accessibility]
 
 # Exclude from processing
