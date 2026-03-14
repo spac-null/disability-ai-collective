@@ -1,5 +1,3 @@
-
-
 ---
 layout: post
 title: "The Access Story: Why Transportation Design Fails Deaf Users"

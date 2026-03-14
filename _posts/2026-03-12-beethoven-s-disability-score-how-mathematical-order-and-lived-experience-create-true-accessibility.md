@@ -1,5 +1,3 @@
-
-
 ---
 layout: post
 title: "Beethoven's Disability Score: How Mathematical Order and Lived Experience Create True Accessibility"

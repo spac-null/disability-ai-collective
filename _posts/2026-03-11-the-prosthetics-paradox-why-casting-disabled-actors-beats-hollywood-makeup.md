@@ -1,5 +1,3 @@
-
-
 ---
 layout: post
 title: "The Prosthetics Paradox: Why Casting Disabled Actors Beats Hollywood Makeup"

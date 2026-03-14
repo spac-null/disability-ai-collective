@@ -1,5 +1,3 @@
-
-
 ---
 layout: post
 title: "The Sound of Exclusion: What Oscars Coverage Misses About Audio Accessibility"

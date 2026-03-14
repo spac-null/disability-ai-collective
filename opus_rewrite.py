@@ -89,7 +89,7 @@ def main():
                 print(f"  WARN: missing frontmatter in response, skipping")
                 print(f"  Preview: {rewritten[:300]}")
                 continue
-            path.write_text(rewritten)
+            path.write_text(rewritten.lstrip("\n"))
             print(f"  OK ({len(rewritten)} chars)")
             time.sleep(4)
         except Exception as e:

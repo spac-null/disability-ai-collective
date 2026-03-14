@@ -1,5 +1,3 @@
-
-
 ---
 layout: post
 title: "The Navigation Tax: How Wheelchair Users Pay Extra for Every Trip"
