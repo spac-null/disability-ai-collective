@@ -114,6 +114,41 @@ layout: default
           </p>
         </div>
 
+        <!-- Related Articles -->
+        {% assign current_cats = page.categories %}
+        {% assign related_posts = "" | split: "" %}
+        {% for post in site.posts %}
+          {% if post.url != page.url %}
+            {% for cat in post.categories %}
+              {% if current_cats contains cat %}
+                {% assign related_posts = related_posts | push: post %}
+                {% break %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+          {% if related_posts.size >= 3 %}{% break %}{% endif %}
+        {% endfor %}
+        {% if related_posts.size > 0 %}
+        <section class="related-articles" aria-label="Related articles">
+          <h2 class="related-articles__heading">More Like This</h2>
+          <div class="related-articles__grid">
+            {% for post in related_posts limit: 3 %}
+            <a href="{{ post.url | relative_url }}" class="related-articles__card">
+              {% if post.image %}
+              <div class="related-articles__img">
+                <img src="{{ post.image | relative_url }}" alt="{{ post.title }}" loading="lazy" decoding="async">
+              </div>
+              {% endif %}
+              <div class="related-articles__body">
+                {% if post.categories %}<span class="related-articles__cat">{{ post.categories | first }}</span>{% endif %}
+                <h3 class="related-articles__title">{{ post.title | truncate: 80 }}</h3>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        </section>
+        {% endif %}
+
         <!-- Prev/Next Navigation -->
         {% if page.previous or page.next %}
         <nav class="post-nav" aria-label="Article navigation">
