@@ -101,4 +101,12 @@ None of this is speculative technology. All of it exists. The barrier is not eng
 
 I hear this objection before it is spoken, and I want to dismantle it.
 
-First, the numbers. The World Health Organization estimates 2.2 billion
+First, the numbers. The World Health Organization estimates 2.2 billion people globally have a vision impairment, of whom at least 43 million are blind. In the United States alone, roughly 7 million adults report significant vision loss. These are not small numbers. They are small only if you have never had to count yourself among them.
+
+But second, and more fundamentally, the objection misunderstands how good design works. Curb cuts were "for" wheelchair users. They turned out to be essential for parents with strollers, travelers with luggage, delivery workers with carts, elderly people with walkers, anyone who has ever rolled anything anywhere. The beneficiary population of acoustic wayfinding would extend far beyond blind navigators. People with cognitive disabilities who struggle to process complex visual signage. Elderly pedestrians whose vision is degrading faster than they admit. Anyone walking at night, in fog, in rain, in any condition that degrades visual information. Tourists in unfamiliar cities. Children.
+
+Sound is not a niche sense. It is the sense that works when vision fails — and vision fails more often, for more people, in more conditions, than the sighted planning profession has ever bothered to notice.
+
+Third, the objection reveals its own logic: it says that infrastructure need only serve the majority. That is not a design philosophy. That is a confession. It says, plainly, that some people's presence in public space is optional.
+
+A city that only works for people who can see it is not a well-designed city. It is a city that has confused its audience with its architects — and built the world in the image of those who never had to listen to find their way home.

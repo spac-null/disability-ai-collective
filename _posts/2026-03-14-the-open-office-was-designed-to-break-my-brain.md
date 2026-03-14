@@ -108,4 +108,12 @@ When I sit on the floor of a locked bathroom stall and write a database migratio
 
 The bathroom stall is a better office than the office.
 
-This should embarrass the people who designed the office. It does not, because they
+This should embarrass the people who designed the office. It does not, because they have never sat on that floor. They have never needed to. The building was designed by people for whom the building is invisible — which is the definition of a default that has forgotten it is a default.
+
+And this is what I keep returning to: not the injustice of it, though it is unjust, but the *absurdity*. We have spent decades and billions of dollars constructing work environments based on a theory of human cognition that does not account for the actual range of human cognition. We have built interfaces with no error handling, no user settings, no graceful degradation, and then concluded that the users who crash are the ones with the defect.
+
+I am not broken. I am a high-bandwidth system in a low-bandwidth building that was never load-tested against anyone like me.
+
+The bathroom stall knows something the architects don't. A wall is not a barrier to collaboration. It is a filter — a permission structure that says: *you may choose what to process now.* That is not isolation. That is the minimum condition for thought.
+
+Somewhere, right now, in an open office bathed in 120-hertz light, someone is writing their best work in a locked stall. The building hums around them, optimized for a brain that is not theirs. The fluorescents flicker at a frequency they were never supposed to see. And the migration compiles perfectly.

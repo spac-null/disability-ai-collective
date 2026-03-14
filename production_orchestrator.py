@@ -110,7 +110,7 @@ Write the full article following the De Correspondent rules exactly. Return only
 
     payload = json.dumps({
         "model": MODEL,
-        "max_tokens": 3000,
+        "max_tokens": 4000,
         "messages": [{"role": "user", "content": user_msg}],
         "system": SYSTEM,
     }).encode()
