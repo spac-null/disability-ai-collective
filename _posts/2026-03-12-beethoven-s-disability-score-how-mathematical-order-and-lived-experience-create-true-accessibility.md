@@ -57,6 +57,7 @@ My solution wasn't empathy. It was arithmetic. We switched to matte displays run
 Complaints about the "stressful" waiting room dropped significantly.
 
 ![Mathematical harmony in sensory design — frequency patterns and cognitive load equations that reduce environmental stress]({{ site.baseurl }}/assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg)
+*Mathematical harmony in sensory design — frequency patterns and cognitive load equations that reduce environmental stress*
 
 
 Nobody called it an accessibility project. They called it "fixing the vibe." But the fix came from disability expertise — from a brain that can't ignore what most brains politely overlook.
@@ -84,6 +85,7 @@ Here's what mathematical perception shows me that empathy exercises miss:
 **Sensory harmony is measurable.** We audit color contrast down to decimal points. We specify font sizes in pixels. But we completely ignore sensory frequencies — the actual mathematical properties of light, sound, and vibration that different nervous systems process differently. That hospital waiting room proved these frequencies aren't subjective preferences. They're engineering variables. And harmonizing them doesn't just help people like me. It helps everyone.
 
 ![Neurodivergent design in practice — sensory frequency calibration reducing cognitive load in a clinical waiting environment through mathematical harmony]({{ site.baseurl }}/assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_moment_2.jpg)
+*Neurodivergent design in practice — sensory frequency calibration reducing cognitive load in a clinical waiting environment through mathematical harmony*
 
 ## The Gap Between Passing and Working
 

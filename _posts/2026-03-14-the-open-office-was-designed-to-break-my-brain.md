@@ -52,6 +52,9 @@ I want to be precise here, because precision matters and this is often where the
 
 ## The defaults are always someone's defaults
 
+![The sensory audit — 47 simultaneous inputs mapped across a standard open-plan floor]({{ site.baseurl }}/assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_moment_2.jpg)
+*The sensory audit — 47 simultaneous inputs mapped across a standard open-plan floor*
+
 In software design, we talk about "sensible defaults" — the pre-set configurations a system ships with, which work for the assumed typical user. The open office is full of sensible defaults. They are just not *my* sensible defaults.
 
 The default lighting is fluorescent, optimized for even coverage and energy efficiency. For neurotypical visual processing, this registers as "neutral." For mine, it registers as a persistent low-level strobe that I cannot tune out and that degrades my visual processing over the course of hours, producing a specific kind of fatigue that lives behind my eyes and in my jaw, where I have been clenching against it without realizing.
@@ -89,6 +92,9 @@ The same processing that the open office punishes is the processing that makes m
 This is not a paradox. It is a design failure. And it is one that reveals something important about how we think about environment design more broadly: we have confused "the environment most people can tolerate" with "the environment that produces the best work." These are different claims. The open office satisfies the first. It has never been shown to satisfy the second.
 
 ## What a better interface would look like
+
+![The bathroom stall as the only real office — a wall that means something]({{ site.baseurl }}/assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_symbol_3.jpg)
+*The bathroom stall as the only real office — a wall that means something*
 
 I am not going to prescribe a universal office layout, because universal layouts are the problem. But I can describe the design principles that would emerge if you took perceptual diversity seriously as a design constraint rather than an edge case to be accommodated.
 

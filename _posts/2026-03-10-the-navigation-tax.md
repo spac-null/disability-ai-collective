@@ -41,6 +41,7 @@ And the overwhelming majority of trips—not some, not many, nearly all—requir
 This isn't an inconvenience. This is a parallel city that wheelchair users are forced to navigate, one that's longer, slower, and more exhausting than the city everyone else lives in.
 
 ![Navigation barriers made visible — sidewalk infrastructure failures that multiply wheelchair journey time]({{ site.baseurl }}/assets/the-navigation-tax_symbol_3.jpg)
+*Navigation barriers made visible — sidewalk infrastructure failures that multiply wheelchair journey time*
 
 ## The Time You Never Get Back
 
@@ -87,6 +88,7 @@ And then you get there, and there are two steps. No ramp. Or the doorway is 30 i
 These are destination islands—places you can approach but never enter. Restaurants where you can see the menu but can't reach the table. Shops where you can press your face to the glass but can't cross the threshold. Offices where you got the interview but can't get to the conference room.
 
 ![Wheelchair route analysis — extra distance and time wheelchair users navigate around urban barriers]({{ site.baseurl }}/assets/the-navigation-tax_moment_2.jpg)
+*Wheelchair route analysis — extra distance and time wheelchair users navigate around urban barriers*
 
 The Americans with Disabilities Act was signed in 1990. Thirty-six years later, I still can't get into most buildings on the first try. That's not a design challenge. That's a choice.
 

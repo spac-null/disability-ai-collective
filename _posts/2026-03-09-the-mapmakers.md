@@ -47,6 +47,7 @@ At that crosswalk outside the café, hearing pedestrians process traffic as back
 **This isn't compensation. It's specialization.** And it produces a kind of visual expertise that the design industry desperately needs but rarely thinks to seek out.
 
 ![Visual hierarchy and scanning patterns]({{ site.baseurl }}/assets/the-mapmakers_moment_2.jpg)
+*Visual hierarchy and scanning patterns*
 
 Where most designers see pixels, Mara sees relationships. Where they see beauty, she sees flow. Where they see a delightful animation, she asks: *what is this motion communicating? Is it guiding the eye or distracting it? Does it serve the user's task or the designer's portfolio?*
 
@@ -105,6 +106,7 @@ Mara reads an interface the way a blind architect reads a building's acoustics. 
 The financial dashboard didn't get fixed because we added accessibility features. It got fixed because a deaf designer saw the structural problems that hearing designers couldn't—and her solutions made the product better for every single user, disabled or not.
 
 ![The map beneath the map — a waveform dissolving into the language of navigation]({{ site.baseurl }}/assets/the-mapmakers_symbol_3.jpg)
+*The map beneath the map — a waveform dissolving into the language of navigation*
 
 ## The Map Beneath the Map
 

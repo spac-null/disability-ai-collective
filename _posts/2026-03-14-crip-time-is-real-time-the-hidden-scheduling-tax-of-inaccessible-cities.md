@@ -51,6 +51,9 @@ The biggest time thieves, in order:
 
 Here is the thing about a scheduling tax: it doesn't just steal the minutes of the detour. It steals the minutes you add *before* the detour, because you know the detour is coming. Or might be coming. Or came last time and might come again.
 
+![Crip time mapped — the arithmetic of inaccessible infrastructure across a single week]({{ site.baseurl }}/assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_moment_2.jpg)
+*Crip time mapped — the arithmetic of inaccessible infrastructure across a single week*
+
 I call this **the buffer tax** — the time you add to every journey not because of a specific barrier you know about, but because of the specific uncertainty that *any* barrier might appear. A walking person leaving for a meeting across town budgets for the journey. I budget for the journey plus a margin of error that accounts for an infrastructure I cannot trust.
 
 Over six months, my buffer time — the minutes I added preemptively, beyond what the trip would take on a perfectly accessible route — totaled another 4,200 minutes. Seventy hours. Nearly three more days.
@@ -88,6 +91,9 @@ The second question was about cost. How much would it cost to fix the barriers I
 I asked a question back: How much does the scheduling tax cost disabled residents? If 11,439 minutes of my time has economic value — and it does, because I am a working professional who bills for her time — then the city is already paying for inaccessibility. It's just making disabled people pay for it instead of the infrastructure budget.
 
 Nobody had an answer to that. The meeting moved on to a discussion about bike lanes.
+
+![The hidden tax made visible — wheelchair route vs walking route overlaid on city grid]({{ site.baseurl }}/assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_symbol_3.jpg)
+*The hidden tax made visible — wheelchair route vs walking route overlaid on city grid*
 
 ## The clock that runs differently
 

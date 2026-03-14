@@ -2860,3 +2860,15 @@ article[data-categories].hidden {
     margin-top: var(--space-2) !important;
   }
 }
+
+/* Image caption — <em> immediately after inline image paragraph */
+.post-content p:has(> img) + p > em:only-child {
+  display: block;
+  margin-top: calc(-1 * var(--space-10));
+  margin-bottom: var(--space-8);
+  font-size: var(--text-small, 0.85rem);
+  color: var(--color-text-muted);
+  font-style: italic;
+  text-align: center;
+  line-height: 1.4;
+}
