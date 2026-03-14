@@ -144,11 +144,14 @@ class ProductionOrchestrator:
     def call_llm_via_openclaw_session(self, prompt, model_priority=None):
         """Generate article content using cascading LLM provider fallback.
 
-        Provider order (best quality first; Claude excluded — quota reserved for agents):
-          1. ChatGPT gpt-5 via CLIProxyAPI  — primary, best creative writing quality
-          2. DeepSeek Chat                  — strong long-form, cheap
-          3. Gemini 2.5 Flash              — capable, generous free tier
-          4. Qwen 3.5:9b (local)           — zero cost, always available, last resort
+        Provider order:
+          1. Claude Opus 4.6 (CLIProxy)   — primary, best De Correspondent quality
+          2. Claude Sonnet 4.6 (CLIProxy) — strong fallback, same account
+          3. GPT-5.2 (CLIProxy)           — strong long-form fallback
+          4. Gemini 2.5 Pro               — capable, generous free tier
+          5. Qwen 3.5:9b (local)          — zero cost, last resort
+
+        Note: calls CLIProxy directly (HTTP) — OpenClaw never involved.
         """
         import os
 
@@ -167,28 +170,28 @@ class ProductionOrchestrator:
 
         PROVIDERS = [
             {
+                "name":      "Claude Opus 4.6 (CLIProxy)",
+                "url":       "http://172.19.0.1:8317/v1",
+                "key":       os.environ.get("ANTHROPIC_API_KEY", ""),
+                "model":     "claude-opus-4-6",
+                "max_tokens": 3500,
+                "timeout":   180,
+                "no_think":  False,
+            },
+            {
+                "name":      "Claude Sonnet 4.6 (CLIProxy)",
+                "url":       "http://172.19.0.1:8317/v1",
+                "key":       os.environ.get("ANTHROPIC_API_KEY", ""),
+                "model":     "claude-sonnet-4-6",
+                "max_tokens": 3500,
+                "timeout":   120,
+                "no_think":  False,
+            },
+            {
                 "name":      "GPT-5.2 (CLIProxy)",
                 "url":       "http://172.19.0.1:8317/v1",
                 "key":       os.environ.get("ANTHROPIC_API_KEY", ""),
                 "model":     "gpt-5.2",
-                "max_tokens": 3500,
-                "timeout":   120,
-                "no_think":  False,
-            },
-            {
-                "name":      "GPT-5.1 (CLIProxy)",
-                "url":       "http://172.19.0.1:8317/v1",
-                "key":       os.environ.get("ANTHROPIC_API_KEY", ""),
-                "model":     "gpt-5.1",
-                "max_tokens": 3500,
-                "timeout":   120,
-                "no_think":  False,
-            },
-            {
-                "name":      "DeepSeek Chat",
-                "url":       "https://api.deepseek.com/v1",
-                "key":       os.environ.get("DEEPSEEK_API_KEY", ""),
-                "model":     "deepseek-chat",
                 "max_tokens": 3500,
                 "timeout":   120,
                 "no_think":  False,
