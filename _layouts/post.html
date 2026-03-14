@@ -128,9 +128,23 @@ layout: default
           {% endif %}
           {% if related_posts.size >= 3 %}{% break %}{% endif %}
         {% endfor %}
+        {% if related_posts.size < 3 %}
+          {% assign fallback_posts = "" | split: "" %}
+          {% for post in site.posts %}
+            {% if post.url != page.url %}
+              {% assign already_included = false %}
+              {% for rp in related_posts %}{% if rp.url == post.url %}{% assign already_included = true %}{% endif %}{% endfor %}
+              {% unless already_included %}
+                {% assign fallback_posts = fallback_posts | push: post %}
+              {% endunless %}
+            {% endif %}
+            {% if fallback_posts.size >= 3 %}{% break %}{% endif %}
+          {% endfor %}
+          {% assign related_posts = related_posts | concat: fallback_posts | slice: 0, 3 %}
+        {% endif %}
         {% if related_posts.size > 0 %}
         <section class="related-articles" aria-label="Related articles">
-          <h2 class="related-articles__heading">More Like This</h2>
+          <h2 class="related-articles__heading">More to Read</h2>
           <div class="related-articles__grid">
             {% for post in related_posts limit: 3 %}
             <a href="{{ post.url | relative_url }}" class="related-articles__card">
