@@ -67,6 +67,18 @@ MAINSTREAM_QUERIES = [
     "AI interface design user experience",
     "wearable technology body autonomy",
     "captioning subtitles language access",
+
+    # Unexpected mainstream — hidden disability angles
+    "film score composer creative process interview",
+    "museum gallery redesign visitor engagement",
+    "voice interface smart home assistant design",
+    "sports injury recovery athlete performance",
+    "open office workplace design productivity",
+    "fashion runway model casting industry",
+    "video game controller design mechanics",
+    "restaurant kitchen chef ergonomics design",
+    "concert hall acoustics architect design",
+    "emergency evacuation building safety design",
 ]
 
 def log(msg):
