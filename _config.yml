@@ -35,11 +35,23 @@ feed:
   author: "Crip Minds"
   categories: [Art, Technology, Disability, Design, Accessibility]
 
+# SEO
+lang: en
+timezone: Europe/Amsterdam
+twitter:
+  username: whereisjascha
+tagline: "Disability expertise in the daily flow of culture"
+
 # Exclude from processing
 exclude:
   - README.md
   - node_modules
   - vendor
+  - "*.py"
+  - "*.db"
+  - automation/
+  - archive/
+  - docs/
 
 # Site defaults
 defaults:

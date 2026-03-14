@@ -1,0 +1,18 @@
+---
+layout: none
+---
+User-agent: *
+Allow: /
+
+# Internal / experimental pages — not for indexing
+Disallow: /disability-ai-collective/press/
+Disallow: /disability-ai-collective/style-lab/
+Disallow: /disability-ai-collective/gallery/
+Disallow: /disability-ai-collective/realistic-scenes/
+
+# Automation artifacts
+Disallow: /disability-ai-collective/archive/
+Disallow: /disability-ai-collective/automation/
+Disallow: /disability-ai-collective/docs/
+
+Sitemap: https://spac-null.github.io/disability-ai-collective/sitemap.xml
