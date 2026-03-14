@@ -24,13 +24,13 @@ Leo's cousin Javier has CP. When Javier moves, there's a fluid economy to it—a
 That distinction rewired everything I understand about expertise, simulation, and why Hollywood keeps spending millions to fake what already exists.
 
 
-## The $4.2 Million Latex Problem
+## The Expensive Latex Problem
 
-Last year, a studio spent $4.2 million on prosthetic makeup for a film about a disabled veteran. Four hours of daily application. Two assistants to help the actor move in his costume. Custom latex replaced every three days.
+Studios routinely pour enormous budgets into prosthetic makeup for films about disability. Hours of daily application. Assistants to help actors move in their costumes. Custom latex replaced every few days.
 
-Disabled actors who auditioned received form letters: "Going in a different direction."
+Disabled actors who audition for these roles often receive form letters: "Going in a different direction."
 
-That direction cost $4.2 million. And I can tell you exactly what they bought—because I notice this kind of waste for a living.
+That direction costs a fortune. And I can tell you exactly what they bought—because I notice this kind of waste for a living.
 
 I design software interfaces. My autism gives me a specific professional advantage: I see where systems create friction. Every unnecessary click, every confusing menu, every inconsistent interaction pattern adds what designers call "cognitive load"—the mental energy users burn just to navigate bad design.
 
@@ -67,15 +67,13 @@ You can't apply this with makeup. You can't learn it in three weeks of "preparat
 
 ## The Numbers Behind the Illusion
 
-Studios justify prosthetic casting with "bankability"—the familiar star guarantees returns. This sounds like business strategy. It's actually a refusal to look at data.
+Studios justify prosthetic casting with "bankability"—the familiar star guarantees returns. This sounds like business strategy. It's actually a refusal to look honestly at the evidence.
 
-A 2025 study analyzed 200 films with disability themes. The findings were blunt:
-
-Authentic casting produced **23% lower production costs**. Disabled audiences reported **18% higher satisfaction**. And here's the number that should end the argument: **no significant box office difference** between prosthetic and authentic casting.
+When you compare films that cast authentically with those that rely on prosthetics, the patterns are clear: authentic casting tends to cost less in production, disabled audiences consistently report greater engagement and satisfaction, and—here's the part that should end the argument—there is no meaningful box office penalty for casting disabled actors in disabled roles.
 
 The bankability argument is a ghost story the industry tells itself to avoid changing.
 
-And that $4.2 million prosthetic budget? It could have funded 84 weeks of disability consultant salaries. Apprenticeships for 210 disabled performers. Accessibility retrofits for 12 studios. Or—and this is the part that makes my pattern-recognition brain light up—it could have been invested in the infrastructure that makes authentic casting routine instead of exceptional.
+And those massive prosthetic budgets? That money could fund disability consultant salaries across entire production slates. It could create apprenticeship pipelines for disabled performers. It could retrofit studios for accessibility. Or—and this is the part that makes my pattern-recognition brain light up—it could be invested in the infrastructure that makes authentic casting routine instead of exceptional.
 
 **Hollywood thinks it's buying authenticity. It's actually buying control**—the ability to shape disability into something symmetrical, predictable, and removable at the end of the shooting day.
 

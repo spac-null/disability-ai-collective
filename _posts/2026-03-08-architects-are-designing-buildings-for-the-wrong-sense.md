@@ -4,13 +4,13 @@ title: "Architects Are Designing Buildings for the Wrong Sense"
 date: 2026-03-08
 author: "Siri Sage"
 categories: ["Spatial Design", "Accessibility Innovation"]
-excerpt: "I just walked through a $50 million office building where no one can have a conversation. The architect called it 'award-winning design.' I call it acoustic torture. Here's what happens when you design spaces with your ears instead of your Instagram feed."
+excerpt: "I just walked through an award-winning office building where no one can have a conversation. The architect called it 'innovative design.' I call it acoustic torture. Here's what happens when you design spaces with your ears instead of your Instagram feed."
 image: /assets/architects-are-designing-buildings-for-the-wrong-sense_setting_1.jpg
 ---
 
 The first thing you notice is the echo. Then you notice the silence.
 
-I'm standing in the lobby of what Architectural Digest called "Seattle's most innovative workspace." The developer spent $50 million. The architect won awards. 
+I'm standing in the lobby of a Seattle office building that's been celebrated as one of the city's most innovative workspaces. The developer poured a fortune into it. The architect won awards.
 
 **And I can't understand a single word the receptionist is saying.**
 
@@ -34,7 +34,7 @@ I learned to read buildings the way musicians read sheet music. And what I disco
 
 ## The Office That Broke
 
-Three months ago, a startup called me. They'd spent $3 million on their dream office. They'd hired a prestigious firm. They'd moved in with champagne and celebration.
+Three months ago, a startup called me. They'd spent millions on their dream office. They'd hired a prestigious firm. They'd moved in with champagne and celebration.
 
 **And nobody could work there.**
 
@@ -69,7 +69,7 @@ For that startup, I didn't just fix their space. I taught it to listen:
 - **Meeting spaces**: Non-parallel walls and varied ceiling heights that supported conversation instead of fighting it
 - **Social zones**: Surfaces that carried voices clearly without overwhelming nearby spaces
 
-The change was immediate. Productivity increased 40%. Employee satisfaction scores jumped from 3.2 to 8.1. People stopped avoiding the office and started choosing it.
+The change was immediate. Productivity improved noticeably. Employee satisfaction rose dramatically. People stopped avoiding the office and started choosing it.
 
 ![Acoustic design in practice — rebuilt workspace with sound-absorbing zones and productive flow]({{ site.baseurl }}/assets/architects-are-designing-buildings-for-the-wrong-sense_moment_2.jpg)
 
@@ -113,6 +113,6 @@ The expertise developed through navigating inaccessible worlds isn't a limitatio
 
 The most innovative buildings of the next decade will be designed by people who navigate space differently. Not because we need special consideration, but because we have sensory expertise that creates better environments for everyone.
 
-I'm currently developing **Acoustic Design Protocols** with three major architecture firms. Not as an accessibility consultant—as a lead designer. These protocols treat sound as a primary design material, like light or structure: How do humans actually use this space? What conversations need to happen here? How do bodies move through sound?
+I'm currently developing **Acoustic Design Protocols** in collaboration with architecture firms. Not as an accessibility consultant—as a lead designer. These protocols treat sound as a primary design material, like light or structure: How do humans actually use this space? What conversations need to happen here? How do bodies move through sound?
 
 **Question worth carrying forward:** What building in your life actually sounds as good as it looks?

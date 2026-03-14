@@ -14,7 +14,7 @@ image: /assets/beethoven-s-disability-score-how-mathematical-order-and-lived-exp
 
 The fluorescent lights hit first.
 
-Not "hit" metaphorically. They pulse at 120 times per second, a strobe that my brain refuses to ignore. Most people walk into this grocery store and see light. I walk in and feel a mathematical assault: 120Hz of visual flicker colliding with the 47-decibel hum of refrigerator compressors, creating interference patterns that rattle through my skull like a badly tuned orchestra warming up for a concert that never starts.
+Not "hit" metaphorically. They pulse at 120 times per second, a strobe that my brain refuses to ignore. Most people walk into this grocery store and see light. I walk in and feel a mathematical assault: 120Hz of visual flicker colliding with the low constant hum of refrigerator compressors, creating interference patterns that rattle through my skull like a badly tuned orchestra warming up for a concert that never starts.
 
 I'm standing in aisle seven, not shopping. I'm conducting a sensory audit.
 
@@ -50,13 +50,13 @@ That hospital waiting room. The one where patients described the space as "stres
 
 I walked in and the math was screaming.
 
-Fluorescent lights: 100Hz flicker. Digital displays: 60Hz refresh rate. HVAC system: 47Hz vibration. Three competing frequencies, none harmonically related, creating a sensory dissonance that stressed every nervous system in the room. Most brains filtered it below conscious awareness. The stress still landed in their bodies.
+Fluorescent lights flickering at one frequency. Digital displays refreshing at another. The HVAC system vibrating at yet another. Three competing frequencies, none harmonically related, creating a sensory dissonance that stressed every nervous system in the room. Most brains filtered it below conscious awareness. The stress still landed in their bodies.
 
-My solution wasn't empathy. It was arithmetic. We switched to matte displays running at 240Hz. Adjusted lighting frequencies. Dampened mechanical vibrations until the competing rhythms resolved into something the body could tolerate.
+My solution wasn't empathy. It was arithmetic. We switched to matte displays running at higher refresh rates. Adjusted lighting frequencies. Dampened mechanical vibrations until the competing rhythms resolved into something the body could tolerate.
 
-Complaints about the "stressful" waiting room dropped 70%.
+Complaints about the "stressful" waiting room dropped significantly.
 
-![Mathematical harmony in sensory design — frequency patterns and cognitive load equations that reduce environmental stress by 70%]({{ site.baseurl }}/assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg)
+![Mathematical harmony in sensory design — frequency patterns and cognitive load equations that reduce environmental stress]({{ site.baseurl }}/assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg)
 
 
 Nobody called it an accessibility project. They called it "fixing the vibe." But the fix came from disability expertise — from a brain that can't ignore what most brains politely overlook.
@@ -77,9 +77,9 @@ Modern design took a different path. Individual expression. Subjective aesthetic
 
 Here's what mathematical perception shows me that empathy exercises miss:
 
-**Cognitive load isn't linear. It's exponential.** Most designers assume that adding features adds complexity proportionally. Five features, five units of complexity. But for brains like mine — and research from *Frontiers in Psychology* suggests this extends well beyond autism — the curve is exponential. Each new decision point doesn't just add to the pile. It multiplies the cost of every decision around it. The fix is what I call logarithmic complexity scaling: each new feature should reduce overall cognitive demands, not increase them. Like adding the right wrench to a toolbox. The toolbox gets more capable. The job gets easier.
+**Cognitive load isn't linear. It's exponential.** Most designers assume that adding features adds complexity proportionally. Five features, five units of complexity. But for brains like mine — and research on cognitive load suggests this extends well beyond autism — the curve is exponential. Each new decision point doesn't just add to the pile. It multiplies the cost of every decision around it. The fix is what I call logarithmic complexity scaling: each new feature should reduce overall cognitive demands, not increase them. Like adding the right wrench to a toolbox. The toolbox gets more capable. The job gets easier.
 
-**Hidden complexity creates anxiety, not simplicity.** Designers love progressive disclosure — tucking options away until someone needs them. It looks elegant. Minimal. Clean. But for brains that rely on pattern recognition to feel safe in a system, hidden elements are hidden threats. Research shows autistic users need about 40% more system visibility before they feel comfortable navigating. My approach is transparent complexity: show everything, but organize it mathematically, like a well-structured proof where every element has a visible place and a clear purpose. It looks busier. It works better.
+**Hidden complexity creates anxiety, not simplicity.** Designers love progressive disclosure — tucking options away until someone needs them. It looks elegant. Minimal. Clean. But for brains that rely on pattern recognition to feel safe in a system, hidden elements are hidden threats. In my experience, autistic users need substantially more system visibility before they feel comfortable navigating. My approach is transparent complexity: show everything, but organize it mathematically, like a well-structured proof where every element has a visible place and a clear purpose. It looks busier. It works better.
 
 **Sensory harmony is measurable.** We audit color contrast down to decimal points. We specify font sizes in pixels. But we completely ignore sensory frequencies — the actual mathematical properties of light, sound, and vibration that different nervous systems process differently. That hospital waiting room proved these frequencies aren't subjective preferences. They're engineering variables. And harmonizing them doesn't just help people like me. It helps everyone.
 
@@ -101,7 +101,7 @@ Design needs the same recognition. Disability expertise isn't a perspective to b
 
 ## What Changes When You Take the Math Seriously
 
-I'm now working with three companies to build what I call cognitive load auditing into their design process — not as an accessibility add-on, but as a core engineering practice. We use adapted versions of NASA's Task Load Index. We set maximum cognitive thresholds for user journeys. We treat every interface element the way a mathematical proof treats every step: justified or removed.
+I'm now working with three companies to build what I call cognitive load auditing into their design process — not as an accessibility add-on, but as a core engineering practice. We use adapted versions of NASA's Task Load Index to set maximum cognitive thresholds for user journeys. We treat every interface element the way a mathematical proof treats every step: justified or removed.
 
 We're building sensory frequency maps for digital environments. Visual refresh rates, auditory frequencies, animation timing, notification rhythms. We audit for conflicting patterns the same way an acoustic engineer audits a concert hall. Not because someone with autism might use the product. Because sensory dissonance stresses every nervous system. Mine just reports the data more loudly.
 
@@ -109,4 +109,4 @@ And we're creating roles — not consulting gigs, but permanent design positions
 
 **Not accommodation. Instrumentation.**
 
-The grocery store still flickers at 120Hz. The compressors still hum their 47-decibel drone. But I don't just suffer the chaos anymore. I see the equations behind it. And I'm learning to rewrite them —
+The grocery store still flickers at 120Hz. The compressors still drone their low constant hum. But I don't just suffer the chaos anymore. I see the equations behind it. And I'm learning to rewrite them —

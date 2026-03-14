@@ -28,7 +28,7 @@ But I know something they don't. I know what information looks like when it has 
 
 ## The Exhibition That Proved Its Own Point
 
-A few weeks later, I visited "Getting here on the GO —" at Tangled Arts, an exhibition documenting the complex, often absurd journeys disabled artists take just to reach institutional spaces. The artwork traced real routes through Toronto's transit system — the workarounds, the triple-planning, the contingency maps that disabled people carry in their heads before they ever leave home.
+A few weeks later, I visited an exhibition exploring the complex, often absurd journeys disabled artists take just to reach institutional spaces, presented at Tangled Arts in Toronto. The artwork traced real routes through Toronto's transit system — the workarounds, the triple-planning, the contingency maps that disabled people carry in their heads before they ever leave home.
 
 It was brilliant. It was also, ironically, hard to access.
 
@@ -56,15 +56,15 @@ For hearing commuters, this visual chaos is merely annoying — sound fills the 
 
 ## The Numbers Behind the Noise
 
-In 2019, researchers studying the London Underground found that 68% of deaf and hard-of-hearing passengers missed critical service announcements because the visual displays were inconsistent, delayed, or simply absent. The Tube's information system was essentially running two parallel networks — a rich, real-time audio layer and a sparse, unreliable visual one. Deaf passengers were expected to navigate on scraps.
+Deaf and hard-of-hearing passengers on systems like the London Underground routinely miss critical service announcements because visual displays are inconsistent, delayed, or simply absent. The information system in most major transit networks essentially runs two parallel networks — a rich, real-time audio layer and a sparse, unreliable visual one. Deaf passengers are expected to navigate on scraps.
 
 The fix wasn't louder speakers.
 
-Tokyo Metro took a different approach. When they redesigned their wayfinding system, they brought disability communities into the process from day one — not as testers at the end, but as co-designers at the beginning. The result: wayfinding errors dropped 42% across all passenger groups. Not just disabled passengers. Everyone.
+Tokyo Metro took a different approach. When they redesigned their wayfinding system, they brought disability communities into the process from day one — not as testers at the end, but as co-designers at the beginning. The result: wayfinding errors dropped significantly across all passenger groups. Not just disabled passengers. Everyone.
 
-That number deserves to sit with you for a moment. **Forty-two percent fewer errors for everyone.** Because designing for the margins made the center work better.
+That deserves to sit with you for a moment. **Fewer errors for everyone.** Because designing for the margins made the center work better.
 
-The artists in "Getting here on the GO —" documented something the data confirms at scale: disabled people routinely spend two to three times longer planning routes than non-disabled peers. Not because of physical barriers alone, but because the information environment treats them as an edge case in their own city.
+The artists in that Tangled Arts exhibition documented something that disabled people know intimately: disabled people routinely spend two to three times longer planning routes than non-disabled peers. Not because of physical barriers alone, but because the information environment treats them as an edge case in their own city.
 
 ## The Machine That Reproduces Itself
 
@@ -88,7 +88,7 @@ When I redesign information environments, I don't start with what looks good. I 
 
 **Visual hierarchy that respects cognition.** Emergency information at the top of every perceptual pyramid. Wayfinding second. Service information third. Advertising dead last. Consistent typographic scales so your brain learns the system once and reads it forever. Critical information placed at consistent heights so your eyes know where to look before your conscious mind engages.
 
-**Cognitive breathing room.** The "7±2 rule" — the well-established limit on how many information chunks humans can process simultaneously — should govern every sightline in public space. If you can see seventeen signs from one position, you've built a cognitive assault, not a navigation system. Progressive disclosure: show the essential information first, reveal details on demand.
+**Cognitive breathing room.** George Miller's 1956 paper "The Magical Number Seven, Plus or Minus Two" established the well-known limit on how many information chunks humans can process simultaneously — and that limit should govern every sightline in public space. If you can see seventeen signs from one position, you've built a cognitive assault, not a navigation system. Progressive disclosure: show the essential information first, reveal details on demand.
 
 **Multi-sensory redundancy without sensory competition.** Every critical piece of information available in at least two modes — visual and tactile, auditory and visual. But never stacked on top of each other. Flashing lights AND blaring alarms simultaneously don't create redundancy. They create panic.
 
@@ -106,6 +106,6 @@ Deaf designers don't need special consideration. We need something much more rad
 
 The expertise I've developed navigating systems designed to exclude me isn't a workaround. It's a body of knowledge about how humans actually process spatial information — knowledge that makes transit systems work better for commuters with ADHD, for elderly passengers with declining vision, for tourists who don't speak the local language, for parents managing children and luggage and stress.
 
-When Tokyo Metro let disabled communities lead their redesign, errors dropped 42% for everyone. That's not accommodation. That's innovation.
+When Tokyo Metro let disabled communities lead their redesign, errors dropped significantly for everyone. That's not accommodation. That's innovation.
 
 **Question worth carrying forward:** The next time you're in a transit station, close your eyes for thirty seconds. When you open them, notice what you see first. Is it the information you need — or seventeen things competing to distract you from it?

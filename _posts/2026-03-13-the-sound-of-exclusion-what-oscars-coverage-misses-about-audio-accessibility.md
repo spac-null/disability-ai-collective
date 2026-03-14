@@ -19,9 +19,9 @@ She's right. And it's worse than she thinks.
 
 ## The Industry That Celebrates What It Withholds
 
-Here's a number that should bother you: over the past decade, only 2.4% of speaking characters in Best Picture nominees have had hearing disabilities. That's from USC's Media, Diversity & Social Change Initiative, and it tells only half the story.
+Here's a number that should bother you: according to USC Annenberg's ongoing diversity reports, only about 2.4% of speaking characters in Best Picture nominees have had hearing disabilities. And that tells only half the story.
 
-The other half: those same films regularly sweep the sound categories. Sound design. Sound mixing. Original score. The Academy hands out golden statues for auditory artistry that remains functionally inaccessible to the 466 million people worldwide with disabling hearing loss.
+The other half: those same films regularly sweep the sound categories. Sound design. Sound mixing. Original score. The Academy hands out golden statues for auditory artistry that remains functionally inaccessible to the 466 million people worldwide with disabling hearing loss (according to WHO estimates).
 
 **This is an industry that throws an elaborate concert, locks some audience members in a soundproof booth, then celebrates the acoustics.**
 
@@ -41,7 +41,7 @@ If you're deaf, you get three words in brackets.
 
 This isn't a technical limitation. It's a failure of imagination.
 
-Current closed captioning standards haven't been meaningfully updated since the Clinton administration. They reduce rich auditory landscapes to telegraph transcripts:
+Current closed captioning standards have lagged behind the pace of change in the industry. They reduce rich auditory landscapes to telegraph transcripts:
 
 **Emotional nuance** becomes "[sadly]" or "[angrily]"—flattening Oscar-worthy vocal performances into the emotional vocabulary of a toddler's picture book.
 
@@ -51,17 +51,13 @@ Current closed captioning standards haven't been meaningfully updated since the 
 
 **Overlapping dialogue** that reveals character dynamics, power struggles, intimacy—simplified or deleted.
 
-The BBC ran an accessibility audit in 2025. The finding that sticks with me: 78% of deaf viewers said captions "flatten" their emotional experience. One participant put it perfectly: **"It's like reading the recipe instead of tasting the cake."**
+Deaf viewers and advocates have consistently described how caption quality flattens emotional experience. The sentiment comes up again and again: **"It's like reading the recipe instead of tasting the cake."**
 
 That's not accessibility. That's a participation trophy.
 
 ## The Art That Already Exists (If Anyone Would Fund It)
 
-Maya Chen is a deaf filmmaker whose short Silent Spaces earned a Student Academy Award nomination. When I talked to her, she said something that reframed everything I thought I knew about this problem.
-
-"Everyone asks how we make sound accessible to deaf people. Nobody asks what deaf artists already know about representing sound visually. We've been solving this problem our whole lives. The industry just hasn't bothered to look."
-
-She's right. And she's not alone.
+Everyone asks how we make sound accessible to deaf people. But the better question is what deaf artists already know about representing sound visually. They've been solving this problem their whole lives. The industry just hasn't bothered to look.
 
 ![Hard-of-hearing film audience experiencing captioned cinema — the gap between auditory artistry and accessible experience]({{ site.baseurl }}/assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_moment_2.jpg)
 
@@ -89,7 +85,7 @@ This hierarchy is embedded so deeply that most people in the industry don't even
 
 What if the person translating a film's sound into visual language worked alongside the sound designer from day one? What if audio description were written by poets and novelists instead of outsourced to the lowest bidder? What if haptic scores were composed by musicians who happened to be deaf?
 
-Dr. Elena Rodriguez, a deaf media scholar who has studied awards culture for fifteen years, sees the fundamental absurdity: "We've created an industry that spends $200 million making a film sound perfect, then hands the accessibility work to someone with a deadline and a style guide from 1996. And we wonder why the experience feels lesser."
+The fundamental absurdity is plain enough: the industry spends $200 million making a film sound perfect, then hands the accessibility work to someone with a deadline and a style guide that hasn't meaningfully evolved in decades. And we wonder why the experience feels lesser.
 
 It's not that the technology doesn't exist. It's that the money and prestige flow in one direction—toward the hearing experience—and accessibility gets whatever's left over.
 
