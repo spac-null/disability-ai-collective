@@ -91,6 +91,7 @@ class ProductionOrchestrator:
                 FROM findings
                 WHERE used_for_article = 0
                 AND discovered_date > ?
+                AND (angle IS NOT NULL AND angle != '' AND angle NOT LIKE 'NONE%')
                 ORDER BY confidence DESC
                 LIMIT 1
             """, (week_ago,))

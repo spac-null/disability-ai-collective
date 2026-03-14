@@ -148,7 +148,7 @@ def extract_disability_angle(title, snippet, url):
             resp = json.loads(r.read())
         angle = resp["choices"][0]["message"]["content"].strip()
         angle = re.sub(r"<think>.*?</think>", "", angle, flags=re.DOTALL).strip()
-        return None if angle.upper() == "NONE" or len(angle) < 15 else angle
+        return None if angle.upper().startswith("NONE") or len(angle) < 15 else angle
     except Exception as e:
         log(f"  LLM extraction failed: {e}")
         return None
@@ -192,6 +192,8 @@ TEMPLATE_PATTERNS = [
 def _is_template_angle(angle):
     if not angle:
         return True
+    if angle.strip().upper().startswith("NONE"):
+        return True
     import re as _re
     for p in TEMPLATE_PATTERNS:
         if _re.match(p, angle):
@@ -206,7 +208,7 @@ def run_rss_crawler():
         from rss_disability_crawler import RSSDisabilityCrawler
         crawler = RSSDisabilityCrawler()
         crawler.db_path = str(DB)
-        crawler.run()
+        crawler.run_rss_crawl()
         log("RSS crawler done")
     except Exception as e:
         log(f"RSS crawler error: {e}")
