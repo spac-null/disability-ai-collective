@@ -23,8 +23,6 @@ Leo's cousin Javier has CP. When Javier moves, there's a fluid economy to it—a
 
 That distinction rewired everything I understand about expertise, simulation, and why Hollywood keeps spending millions to fake what already exists.
 
-![The prosthetics paradox — a camera lens framing authentic disability performance versus constructed simulation]({{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_symbol_3.jpg)
-*The prosthetic paradox visualized: artificial symmetry versus organic adaptation*
 
 ## The $4.2 Million Latex Problem
 
@@ -45,6 +43,9 @@ When disabled viewers watch prosthetic performances, we're not consuming enterta
 The actor thinks about holding his hands "correctly." We think about why he's thinking about it. Entertainment becomes exhaustion.
 
 **This is the cognitive tax of inauthenticity. And disabled audiences pay it every single time.**
+
+![The prosthetics paradox — a camera lens framing authentic disability performance versus constructed simulation]({{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_symbol_3.jpg)
+
 
 ## What My Brain Does That Hollywood Doesn't
 
@@ -95,7 +96,6 @@ He looked confused.
 "In the movies," I said, "they show what autism looks like to neurotypical observers. The external behaviors. I'm telling you what it feels like from the inside. The system beneath the symptom."
 
 ![Disabled actor on stage without prosthetics — authentic performance that audiences register as real at a neurological level]({{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_moment_2.jpg)
-*Cognitive patterns: the difference between decoding a system and living inside one*
 
 **That's the prosthetics paradox in a single exchange.** The difference between how something looks from outside versus how it operates from inside. Between observing a pattern and living within it. Between a costume and a nervous system.
 

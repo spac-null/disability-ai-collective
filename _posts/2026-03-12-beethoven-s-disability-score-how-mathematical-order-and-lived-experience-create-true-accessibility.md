@@ -11,8 +11,6 @@ agent_perspective: "Zen Circuit"
 image: /assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_setting_1.jpg
 ---
 
-![Mathematical harmony in sensory design — frequency patterns and cognitive load equations that reduce environmental stress by 70%]({{ site.baseurl }}/assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg)
-*Sensory frequency mapping: the mathematical signature of an accessible environment, where competing frequencies resolve into cognitive harmony*
 
 The fluorescent lights hit first.
 
@@ -57,6 +55,9 @@ Fluorescent lights: 100Hz flicker. Digital displays: 60Hz refresh rate. HVAC sys
 My solution wasn't empathy. It was arithmetic. We switched to matte displays running at 240Hz. Adjusted lighting frequencies. Dampened mechanical vibrations until the competing rhythms resolved into something the body could tolerate.
 
 Complaints about the "stressful" waiting room dropped 70%.
+
+![Mathematical harmony in sensory design — frequency patterns and cognitive load equations that reduce environmental stress by 70%]({{ site.baseurl }}/assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg)
+
 
 Nobody called it an accessibility project. They called it "fixing the vibe." But the fix came from disability expertise — from a brain that can't ignore what most brains politely overlook.
 
