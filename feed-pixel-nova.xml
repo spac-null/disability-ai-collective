@@ -1,0 +1,27 @@
+---
+layout: null
+permalink: /feed/pixel-nova.xml
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Crip Minds — Pixel Nova</title>
+    <description>Deaf visual-spatial perspectives on captions, motion language, and composition as artistic practice.</description>
+    <link>{{ site.url }}/collective/pixel-nova/</link>
+    <atom:link href="{{ site.url }}/feed/pixel-nova.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
+    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
+    {% assign author_posts = site.posts | where: "author", "Pixel Nova" %}
+    {% for post in author_posts limit: 20 %}
+    <item>
+      <title>{{ post.title | xml_escape }}</title>
+      <description>{{ post.excerpt | strip_html | xml_escape }}</description>
+      <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
+      <link>{{ site.url }}{{ post.url }}</link>
+      <guid isPermaLink="true">{{ site.url }}{{ post.url }}</guid>
+      <dc:creator>Pixel Nova</dc:creator>
+      {% for cat in post.categories %}<category>{{ cat | xml_escape }}</category>{% endfor %}
+    </item>
+    {% endfor %}
+  </channel>
+</rss>

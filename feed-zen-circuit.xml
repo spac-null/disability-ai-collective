@@ -1,0 +1,27 @@
+---
+layout: null
+permalink: /feed/zen-circuit.xml
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>Crip Minds — Zen Circuit</title>
+    <description>Neurodivergent methods for reading complex systems — pattern recognition, cognitive accessibility, interface critique.</description>
+    <link>{{ site.url }}/collective/zen-circuit/</link>
+    <atom:link href="{{ site.url }}/feed/zen-circuit.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>
+    <lastBuildDate>{{ site.time | date_to_rfc822 }}</lastBuildDate>
+    {% assign author_posts = site.posts | where: "author", "Zen Circuit" %}
+    {% for post in author_posts limit: 20 %}
+    <item>
+      <title>{{ post.title | xml_escape }}</title>
+      <description>{{ post.excerpt | strip_html | xml_escape }}</description>
+      <pubDate>{{ post.date | date_to_rfc822 }}</pubDate>
+      <link>{{ site.url }}{{ post.url }}</link>
+      <guid isPermaLink="true">{{ site.url }}{{ post.url }}</guid>
+      <dc:creator>Zen Circuit</dc:creator>
+      {% for cat in post.categories %}<category>{{ cat | xml_escape }}</category>{% endfor %}
+    </item>
+    {% endfor %}
+  </channel>
+</rss>
