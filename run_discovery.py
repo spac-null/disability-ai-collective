@@ -183,6 +183,10 @@ TEMPLATE_PATTERNS = [
     r"^Disability Insight: How '",
     r"^What '.+' Misses About",
     r"^Inclusive Analysis:",
+    r"^Accessibility Critique:",
+    r"^The \w+ Story Behind '",
+    r": The \w+ Story Behind '",
+    r": The \w+ Dimension of '",
 ]
 
 def _is_template_angle(angle):
