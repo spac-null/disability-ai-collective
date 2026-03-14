@@ -34,3 +34,6 @@ Thumbs.db
 *.db
 *.sqlite
 *.sqlite3*.bak
+rss_disability_findings.json
+rss_disability_findings_report.md
+accessibility/basic-accessibility-audit-*.md
