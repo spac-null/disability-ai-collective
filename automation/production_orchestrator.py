@@ -635,25 +635,31 @@ excerpt: "{excerpt}"
         return review_file, is_clean
 
 
-    def _bsky_hook(self, title, body):
-        """Generate a punchy 1-2 sentence Bluesky hook via Sonnet."""
+    def _bsky_hook(self, title, body, max_chars=160):
+        """Generate a complete punchy hook for Bluesky, fits within max_chars."""
         import os
         try:
-            return self._call_openai_compat_api(
+            raw = self._call_openai_compat_api(
                 url="http://172.19.0.1:8317/v1",
                 api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
                 system_prompt=(
-                    "Write a 1-2 sentence Bluesky hook for this disability arts essay. "
-                    "Direct, opinionated, no hedging — make someone stop scrolling. "
-                    "Do NOT start with the title. No hashtags. Max 160 characters."
+                    f"Write ONE complete sentence (strictly under {max_chars} characters) "
+                    "as a Bluesky hook for this disability arts essay. "
+                    "Direct, opinionated — make someone stop scrolling. "
+                    "Must end with a period. No ellipsis. No open endings. No hashtags. "
+                    "Do NOT start with the article title."
                 ),
                 user_prompt=f"Title: {title}\n\nOpening:\n{body[:600]}",
                 model="claude-sonnet-4-6",
-                max_tokens=80,
+                max_tokens=60,
                 timeout=30,
             )
+            if raw and len(raw) > max_chars:
+                cut = raw[:max_chars].rfind(".")
+                raw = raw[:cut + 1] if cut > max_chars // 2 else raw[:max_chars].rstrip()
+            return raw or body[:max_chars]
         except Exception:
-            return body[:120] + "…"
+            return body[:max_chars]
 
     def post_to_bluesky(self, title, body, article_file, image_filenames=None):
         """Post article to Bluesky after successful commit. Non-blocking."""
@@ -684,13 +690,12 @@ excerpt: "{excerpt}"
             token = session["accessJwt"]
             did   = session["did"]
 
-            # Generate hook
-            hook = self._bsky_hook(title, body)
+            # Calculate available chars for hook before generating
             tags = "#DisabilityJustice #CripMinds #DisabilityArts"
+            overhead = len(f"\n\n{url}\n\n{tags}")
+            max_hook = 300 - overhead
+            hook = self._bsky_hook(title, body, max_chars=max_hook)
             text = f"{hook}\n\n{url}\n\n{tags}"
-            if len(text) > 300:
-                budget = 300 - len(f"…\n\n{url}\n\n{tags}")
-                text = hook[:budget] + f"…\n\n{url}\n\n{tags}"
 
             # Facets (link + hashtags)
             def byte_range(s, sub):
