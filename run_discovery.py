@@ -79,6 +79,18 @@ MAINSTREAM_QUERIES = [
     "restaurant kitchen chef ergonomics design",
     "concert hall acoustics architect design",
     "emergency evacuation building safety design",
+
+    # Cripping Collaboration paper angles (Dronkert 2023)
+    "productivity hustle pace burnout workplace culture",
+    "diversity inclusion program corporate initiative",
+    "independent living self-sufficiency housing",
+    "peer review academic publishing gatekeeping access",
+    "care worker staffing shortage social services",
+    "science fiction film alienation institutional rejection",
+    "asking for help stigma autonomy self-reliance",
+    "diversity advisory board consultation representation",
+    "meeting culture async remote work schedule",
+    "credential degree requirement job hiring screen",
 ]
 
 def log(msg):
