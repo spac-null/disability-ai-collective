@@ -57,7 +57,7 @@ That's not accessibility. That's a participation trophy.
 
 ## The Art That Already Exists (If Anyone Would Fund It)
 
-Maya Chen is a deaf filmmaker whose short *Silent Spaces* earned a Student Academy Award nomination. When I talked to her, she said something that reframed everything I thought I knew about this problem.
+Maya Chen is a deaf filmmaker whose short "Silent Spaces" earned a Student Academy Award nomination. When I talked to her, she said something that reframed everything I thought I knew about this problem.
 
 "Everyone asks how we make sound accessible to deaf people. Nobody asks what deaf artists already know about representing sound visually. We've been solving this problem our whole lives. The industry just hasn't bothered to look."
 
