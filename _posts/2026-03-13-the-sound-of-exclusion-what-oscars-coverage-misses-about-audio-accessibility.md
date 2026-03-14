@@ -65,7 +65,7 @@ She's right. And she's not alone.
 
 ![Hard-of-hearing film audience experiencing captioned cinema — the gap between auditory artistry and accessible experience]({{ site.baseurl }}/assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_moment_2.jpg)
 
-There are deaf sound designers who create visual representations of audio that don't just transcribe—they *translate*. Color, movement, texture, rhythm on screen that conveys what music does to a hearing body. Not "[melancholy music plays]" but a visual language as rich and specific as the audio it represents.
+There are deaf sound designers who create visual representations of audio that don't just transcribe—they translate: color, movement, texture, rhythm on screen that conveys what music does to a hearing body. Not "[melancholy music plays]" but a visual language as rich and specific as the audio it represents.
 
 There are haptic engineers building wearable technology that lets deaf audiences feel a film score through their skin. Not a gimmick—a genuine sensory channel that carries musical information the way cochlear vibrations carry it for hearing people.
 
@@ -117,6 +117,6 @@ My grandmother won't read this piece. Her relationship with the Oscars ended the
 
 Multiply her by millions.
 
-The 17 facts we actually need about the Oscars aren't trivia. They're the facts that tell us whether the most powerful storytelling industry on earth considers all humans worth telling stories *to*.
+The 17 facts we actually need about the Oscars aren't trivia. They're the facts that tell us whether the most powerful storytelling industry on earth considers all humans worth telling stories to.
 
 **Question worth carrying forward:** The next time you watch a film and feel a score hit you in the chest, ask yourself—what would it take to share that feeling with someone who can't hear it? And why hasn't anyone with $200 million bothered to find out?
