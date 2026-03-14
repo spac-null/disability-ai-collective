@@ -1657,6 +1657,14 @@ a:hover {
     padding: var(--space-16) 0;
   }
 
+  /* About page: reduce large top margin/padding on mobile */
+  [style*=margin: 80px auto] {
+    margin-top: 32px !important;
+  }
+  [style*=padding-bottom: 100px] {
+    padding-bottom: 48px !important;
+  }
+
   .card__header,
   .card__body,
   .card__footer,
@@ -1747,10 +1755,15 @@ a:hover {
     padding: var(--space-2) var(--space-3);
     font-size: var(--font-size-xs);
     bottom: calc(var(--space-4) + 52px);
+    right: var(--space-3);
   }
 
   .dark-theme-toggle {
     bottom: calc(var(--space-4) + 100px);
+  }
+
+  .theme-toggle {
+    right: var(--space-3);
   }
 }
 

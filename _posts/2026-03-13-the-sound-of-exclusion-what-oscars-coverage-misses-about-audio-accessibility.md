@@ -3,7 +3,7 @@ layout: post
 title: "The Sound of Exclusion: What Oscars Coverage Misses About Audio Accessibility"
 date: 2026-03-13 10:20:00 +0000
 author: Siri Sage
-categories: [culture, social, communication]
+categories: ["Culture", "Social", "Communication"]
 image: /assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_setting_1.jpg
 ---
 
