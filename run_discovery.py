@@ -178,8 +178,24 @@ def save_finding(url, title, angle, domain, snippet, source_type="google_news"):
     finally:
         conn.close()
 
+TEMPLATE_PATTERNS = [
+    r"^The \w+ Perspective on '",
+    r"^Disability Insight: How '",
+    r"^What '.+' Misses About",
+    r"^Inclusive Analysis:",
+]
+
+def _is_template_angle(angle):
+    if not angle:
+        return True
+    import re as _re
+    for p in TEMPLATE_PATTERNS:
+        if _re.match(p, angle):
+            return True
+    return False
+
 def run_rss_crawler():
-    """Run the existing disability RSS crawler."""
+    """Run the existing disability RSS crawler, then LLM-verify its angles."""
     log("Running RSS disability crawler...")
     try:
         sys.path.insert(0, str(REPO))
@@ -190,6 +206,36 @@ def run_rss_crawler():
         log("RSS crawler done")
     except Exception as e:
         log(f"RSS crawler error: {e}")
+        return
+
+    # LLM verification pass — remove template angles, replace with real ones or delete
+    log("Verifying RSS angles via LLM...")
+    conn = sqlite3.connect(DB)
+    rows = conn.execute(
+        "SELECT id, title, angle, url, content_snippet FROM findings WHERE source_type='rss'"
+    ).fetchall()
+    kept = deleted = 0
+    for finding_id, title, angle, url, snippet in rows:
+        if not _is_template_angle(angle):
+            kept += 1
+            continue
+        real_angle = extract_disability_angle(title, snippet, url)
+        if real_angle:
+            conn.execute(
+                "UPDATE findings SET angle=?, confidence=0.75 WHERE id=?",
+                (real_angle, finding_id)
+            )
+            conn.commit()
+            log(f"  + verified: {title[:50]}")
+            kept += 1
+        else:
+            conn.execute("DELETE FROM findings WHERE id=?", (finding_id,))
+            conn.commit()
+            log(f"  - removed (no disability angle): {title[:50]}")
+            deleted += 1
+        time.sleep(0.5)
+    conn.close()
+    log(f"RSS verification done: {kept} kept, {deleted} removed")
 
 def run_google_news_discovery():
     """Fetch Google News for mainstream queries, extract disability angles via LLM."""
