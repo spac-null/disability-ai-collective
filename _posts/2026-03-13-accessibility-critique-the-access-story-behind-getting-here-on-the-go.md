@@ -25,7 +25,6 @@ This building was designed by people who think information travels through air.
 But I know something they don't. I know what information looks like when it has to survive on surfaces alone. And what I see in this station — in almost every station — is visual bedlam.
 
 ![Union Station seen through deaf eyes — competing visual hierarchies, inconsistent signage, and information overload in a space designed for hearing navigation]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg)
-*Union Station, Toronto: a transportation cathedral that speaks fluently in sound and stumbles in silence. Six fonts, three inconsistent colour systems, and departure boards that flicker faster than human processing speed.*
 
 ## The Exhibition That Proved Its Own Point
 
@@ -54,7 +53,6 @@ Stand in any major transit hub and count the signs visible from a single positio
 For hearing commuters, this visual chaos is merely annoying — sound fills the gaps. For deaf passengers, it's a wall.
 
 ![Deaf designer reading the visual grammar of a transit space — catching the microsecond delay in digital sign refresh, the subtle head turns marking where information fails]({{ site.baseurl }}/assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_moment_2.jpg)
-*Deaf spatial fluency: the gap between what the building says and what bodies need, made visible through trained observation.*
 
 ## The Numbers Behind the Noise
 

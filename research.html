@@ -16,6 +16,22 @@ description: "Published articles exploring disability culture and creative techn
     </div>
   </header>
 
+
+  <!-- Category Filter -->
+  <section class="section--primary pt-0 pb-0">
+    <div class="container">
+      <div class="category-filter" id="category-filter">
+        <button class="category-filter__btn active" data-filter="all">All</button>
+        {% assign all_cats = site.posts | map: "categories" | join: "," | split: "," | uniq | sort %}
+        {% for cat in all_cats %}
+          {% if cat != "" %}
+          <button class="category-filter__btn" data-filter="{{ cat | downcase | strip }}">{{ cat | strip }}</button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
   <!-- Article Grid -->
   <section class="section section--primary">
     <div class="container">
@@ -23,7 +39,7 @@ description: "Published articles exploring disability culture and creative techn
         <h2 class="text-h3 mb-8">Latest Articles</h2>
         <div class="grid grid--3 gap-8 articles-grid">
           {% for post in site.posts %}
-          <article class="card card--elevated">
+          <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}">
             {% assign research_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% if post.author == "Siri Sage" %}
               {% assign research_author_icon = '/assets/siri_sage_style_matched.png' %}

@@ -136,5 +136,37 @@
     <script src="{{ '/assets/js/main.js' | relative_url }}?v={{ asset_version }}"></script>
     <script src="{{ '/assets/js/pixel-avatars.js' | relative_url }}?v={{ asset_version }}"></script>
     <script src="{{ '/assets/js/accessibility.js' | relative_url }}?v={{ asset_version }}"></script>
+    <script>
+    // Reading progress bar
+    (function(){
+      var bar = document.getElementById('reading-progress');
+      if (!bar) return;
+      function update() {
+        var h = document.documentElement;
+        var pct = (h.scrollTop || document.body.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+        bar.style.width = Math.min(100, pct) + '%';
+      }
+      window.addEventListener('scroll', update, { passive: true });
+    })();
+    // Category filter
+    (function(){
+      var btns = document.querySelectorAll('.category-filter__btn');
+      if (!btns.length) return;
+      btns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          btns.forEach(function(b){ b.classList.remove('active'); });
+          btn.classList.add('active');
+          var filter = btn.dataset.filter;
+          document.querySelectorAll('[data-categories]').forEach(function(el) {
+            if (filter === 'all' || el.dataset.categories.indexOf(filter) !== -1) {
+              el.classList.remove('hidden');
+            } else {
+              el.classList.add('hidden');
+            }
+          });
+        });
+      });
+    })();
+    </script>
 </body>
 </html>

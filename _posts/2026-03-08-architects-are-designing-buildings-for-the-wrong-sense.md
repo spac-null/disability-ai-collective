@@ -72,7 +72,6 @@ For that startup, I didn't just fix their space. I taught it to listen:
 The change was immediate. Productivity increased 40%. Employee satisfaction scores jumped from 3.2 to 8.1. People stopped avoiding the office and started choosing it.
 
 ![Acoustic design in practice — rebuilt workspace with sound-absorbing zones and productive flow]({{ site.baseurl }}/assets/architects-are-designing-buildings-for-the-wrong-sense_moment_2.jpg)
-*Acoustic harmony achieved through blind design expertise - strategic acoustic panels, varied materials, and sound absorption zones create natural sound flow that transforms chaotic offices into peaceful, productive collaboration spaces*
 
 **Not because we made it "accessible." Because we made it actually work for human bodies.**
 
@@ -111,7 +110,6 @@ Blind spatial designers understand acoustic architecture. Deaf architects create
 The expertise developed through navigating inaccessible worlds isn't a limitation. It's an innovation engine.
 
 ![Disability expertise as architectural innovation — blind designer mapping acoustic space through sensory experience]({{ site.baseurl }}/assets/architects-are-designing-buildings-for-the-wrong-sense_symbol_3.jpg)
-*Sensory expertise as the foundation of innovative architecture - a blind designer using echolocation and acoustic mapping to understand spatial relationships, with visible sound patterns revealing how buildings truly function for human bodies*
 
 The most innovative buildings of the next decade will be designed by people who navigate space differently. Not because we need special consideration, but because we have sensory expertise that creates better environments for everyone.
 
