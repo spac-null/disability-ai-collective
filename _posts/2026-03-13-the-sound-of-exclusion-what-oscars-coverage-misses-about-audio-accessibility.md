@@ -35,7 +35,7 @@ Not one of those facts will tell you which films actually made their art availab
 
 Let me make this concrete.
 
-Hans Zimmer's score for *Dune* builds to its emotional peak. If you can hear, the bass vibrations hit your sternum. The choir enters in a key that signals ancient ritual. The orchestra and electronics intertwine in a way that tells you—physically, in your body—that the hero is transforming. The music doesn't accompany the scene. It *is* half the scene.
+Hans Zimmer's score for Dune builds to its emotional peak. If you can hear, the bass vibrations hit your sternum. The choir enters in a key that signals ancient ritual. The orchestra and electronics intertwine in a way that tells you—physically, in your body—that the hero is transforming. The music doesn't accompany the scene. It *is* half the scene.
 
 If you're deaf, you get three words in brackets.
 
