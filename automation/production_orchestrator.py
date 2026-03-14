@@ -635,9 +635,29 @@ excerpt: "{excerpt}"
         return review_file, is_clean
 
 
-    def post_to_bluesky(self, title, excerpt, article_file):
+    def _bsky_hook(self, title, body):
+        """Generate a punchy 1-2 sentence Bluesky hook via Sonnet."""
+        import os
+        try:
+            return self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=(
+                    "Write a 1-2 sentence Bluesky hook for this disability arts essay. "
+                    "Direct, opinionated, no hedging — make someone stop scrolling. "
+                    "Do NOT start with the title. No hashtags. Max 160 characters."
+                ),
+                user_prompt=f"Title: {title}\n\nOpening:\n{body[:600]}",
+                model="claude-sonnet-4-6",
+                max_tokens=80,
+                timeout=30,
+            )
+        except Exception:
+            return body[:120] + "…"
+
+    def post_to_bluesky(self, title, body, article_file, image_filenames=None):
         """Post article to Bluesky after successful commit. Non-blocking."""
-        import os, json, urllib.request as ureq
+        import os, json, mimetypes, urllib.request as ureq
         from datetime import datetime, timezone
 
         handle   = os.environ.get("BSKY_HANDLE", "")
@@ -647,59 +667,70 @@ excerpt: "{excerpt}"
             return
 
         try:
-            # Build article URL from slug
-            slug_md = article_file.name            # 2026-03-15-some-title.md
-            date_parts = slug_md[:10]              # 2026-03-15
-            y, m, d = date_parts.split("-")
-            slug = slug_md[11:].replace(".md", "") # some-title
-            url = f"https://spac-null.github.io/disability-ai-collective/{y}/{m}/{d}/{slug}/"
+            # Article URL — use SITE_URL env if set (custom domain), else github.io
+            slug_md    = article_file.name
+            y, m, d    = slug_md[:10].split("-")
+            slug       = slug_md[11:].replace(".md", "")
+            site_url   = os.environ.get("SITE_URL", "https://spac-null.github.io/disability-ai-collective")
+            url        = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
 
             # Auth
             auth_payload = json.dumps({"identifier": handle, "password": password}).encode()
-            auth_req = ureq.Request(
+            with ureq.urlopen(ureq.Request(
                 "https://bsky.social/xrpc/com.atproto.server.createSession",
-                data=auth_payload,
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-            with ureq.urlopen(auth_req, timeout=15) as r:
+                data=auth_payload, headers={"Content-Type": "application/json"}, method="POST",
+            ), timeout=15) as r:
                 session = json.loads(r.read())
             token = session["accessJwt"]
             did   = session["did"]
 
-            # Build post text (300 char limit)
+            # Generate hook
+            hook = self._bsky_hook(title, body)
             tags = "#DisabilityJustice #CripMinds #DisabilityArts"
-            short_excerpt = (excerpt[:120] + "…") if len(excerpt) > 120 else excerpt
-            text = f"{title}\n\n{short_excerpt}\n\n{url}\n\n{tags}"
+            text = f"{hook}\n\n{url}\n\n{tags}"
             if len(text) > 300:
-                # trim excerpt further
-                budget = 300 - len(f"{title}\n\n…\n\n{url}\n\n{tags}")
-                short_excerpt = excerpt[:max(0, budget)] + "…"
-                text = f"{title}\n\n{short_excerpt}\n\n{url}\n\n{tags}"
+                budget = 300 - len(f"…\n\n{url}\n\n{tags}")
+                text = hook[:budget] + f"…\n\n{url}\n\n{tags}"
 
-            # Facets: link + hashtag byte ranges
-            def byte_pos(s, sub):
-                enc = s.encode("utf-8")
-                sub_enc = sub.encode("utf-8")
-                idx = enc.find(sub_enc)
-                return idx, idx + len(sub_enc)
+            # Facets (link + hashtags)
+            def byte_range(s, sub):
+                b, sb = s.encode(), sub.encode()
+                i = b.find(sb)
+                return i, i + len(sb)
 
             facets = []
-            # URL facet
-            url_start, url_end = byte_pos(text, url)
-            if url_start >= 0:
-                facets.append({
-                    "index": {"byteStart": url_start, "byteEnd": url_end},
-                    "features": [{"$type": "app.bsky.richtext.facet#link", "uri": url}],
-                })
-            # Hashtag facets
+            us, ue = byte_range(text, url)
+            if us >= 0:
+                facets.append({"index": {"byteStart": us, "byteEnd": ue},
+                                "features": [{"$type": "app.bsky.richtext.facet#link", "uri": url}]})
             for tag in ["#DisabilityJustice", "#CripMinds", "#DisabilityArts"]:
-                ts, te = byte_pos(text, tag)
+                ts, te = byte_range(text, tag)
                 if ts >= 0:
-                    facets.append({
-                        "index": {"byteStart": ts, "byteEnd": te},
-                        "features": [{"$type": "app.bsky.richtext.facet#tag", "tag": tag[1:]}],
-                    })
+                    facets.append({"index": {"byteStart": ts, "byteEnd": te},
+                                   "features": [{"$type": "app.bsky.richtext.facet#tag", "tag": tag[1:]}]})
+
+            # Upload hero image (_setting_1)
+            embed = None
+            hero = None
+            if image_filenames:
+                hero_name = next((fn for fn in image_filenames if "_setting_1" in fn), image_filenames[0])
+                hero = self.assets_dir / hero_name
+            if hero and hero.exists():
+                img_bytes = hero.read_bytes()
+                mime = mimetypes.guess_type(str(hero))[0] or "image/png"
+                blob_req = ureq.Request(
+                    "https://bsky.social/xrpc/com.atproto.repo.uploadBlob",
+                    data=img_bytes,
+                    headers={"Content-Type": mime, "Authorization": f"Bearer {token}"},
+                    method="POST",
+                )
+                with ureq.urlopen(blob_req, timeout=30) as r:
+                    blob_resp = json.loads(r.read())
+                embed = {
+                    "$type": "app.bsky.embed.images",
+                    "images": [{"image": blob_resp["blob"], "alt": title}],
+                }
+                self.logger.info("Bluesky: image uploaded (%d bytes)", len(img_bytes))
 
             # Post
             record = {
@@ -708,18 +739,15 @@ excerpt: "{excerpt}"
                 "createdAt": datetime.now(timezone.utc).isoformat(),
                 "facets": facets,
             }
-            post_payload = json.dumps({
-                "repo": did,
-                "collection": "app.bsky.feed.post",
-                "record": record,
-            }).encode()
-            post_req = ureq.Request(
+            if embed:
+                record["embed"] = embed
+
+            with ureq.urlopen(ureq.Request(
                 "https://bsky.social/xrpc/com.atproto.repo.createRecord",
-                data=post_payload,
+                data=json.dumps({"repo": did, "collection": "app.bsky.feed.post", "record": record}).encode(),
                 headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
                 method="POST",
-            )
-            with ureq.urlopen(post_req, timeout=15) as r:
+            ), timeout=15) as r:
                 result = json.loads(r.read())
             self.logger.info("Bluesky: posted %s", result.get("uri", "?"))
 
@@ -863,7 +891,7 @@ excerpt: "{excerpt}"
 
         # Step 8: Post to Bluesky (non-blocking)
         if commit_success:
-            self.post_to_bluesky(extracted_title, content[:200], article_file)
+            self.post_to_bluesky(extracted_title, content, article_file, image_filenames)
 
         return {
             "status": "success" if commit_success else "partial",
