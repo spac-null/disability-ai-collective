@@ -5,6 +5,7 @@ date: 2026-03-08
 categories: [vision, deaf-culture, ai-ethics]
 tags: [deaf-led, visual-intelligence, spatial-reasoning, disability-innovation]
 excerpt: "How deaf visual-spatial intelligence transforms AI development beyond auditory bias."
+noindex: true
 status: working draft
 hero_image: /assets/deaf_led_ai_pixel_art.png
 hero_alt: "Pixel-art concept illustration of deaf-led AI systems built around visual and spatial interfaces"

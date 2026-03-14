@@ -5,6 +5,7 @@ date: 2026-03-08
 categories: [design, disability-culture, visual-language]
 tags: [dis-art, aesthetic, visual-design, disability-culture]
 excerpt: "Translating DIS.art's disability culture aesthetic into AI research visual language."
+noindex: true
 status: working draft
 hero_image: /assets/refined_accessibility_pathways.png
 hero_alt: "Stylized visual system showing accessible pathways, high contrast layers, and disability-led interface motifs"
