@@ -728,7 +728,7 @@ excerpt: "{excerpt}"
                     blob_resp = json.loads(r.read())
                 embed = {
                     "$type": "app.bsky.embed.images",
-                    "images": [{"image": blob_resp["blob"], "alt": title}],
+                    "images": [{"image": blob_resp["blob"], "alt": title, "aspectRatio": {"width": 16, "height": 9}}],
                 }
                 self.logger.info("Bluesky: image uploaded (%d bytes)", len(img_bytes))
 
