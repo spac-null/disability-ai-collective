@@ -634,6 +634,98 @@ excerpt: "{excerpt}"
 
         return review_file, is_clean
 
+
+    def post_to_bluesky(self, title, excerpt, article_file):
+        """Post article to Bluesky after successful commit. Non-blocking."""
+        import os, json, urllib.request as ureq
+        from datetime import datetime, timezone
+
+        handle   = os.environ.get("BSKY_HANDLE", "")
+        password = os.environ.get("BSKY_APP_PASSWORD", "")
+        if not handle or not password:
+            self.logger.debug("Bluesky: no credentials, skipping")
+            return
+
+        try:
+            # Build article URL from slug
+            slug_md = article_file.name            # 2026-03-15-some-title.md
+            date_parts = slug_md[:10]              # 2026-03-15
+            y, m, d = date_parts.split("-")
+            slug = slug_md[11:].replace(".md", "") # some-title
+            url = f"https://spac-null.github.io/disability-ai-collective/{y}/{m}/{d}/{slug}/"
+
+            # Auth
+            auth_payload = json.dumps({"identifier": handle, "password": password}).encode()
+            auth_req = ureq.Request(
+                "https://bsky.social/xrpc/com.atproto.server.createSession",
+                data=auth_payload,
+                headers={"Content-Type": "application/json"},
+                method="POST",
+            )
+            with ureq.urlopen(auth_req, timeout=15) as r:
+                session = json.loads(r.read())
+            token = session["accessJwt"]
+            did   = session["did"]
+
+            # Build post text (300 char limit)
+            tags = "#DisabilityJustice #CripMinds #DisabilityArts"
+            short_excerpt = (excerpt[:120] + "…") if len(excerpt) > 120 else excerpt
+            text = f"{title}\n\n{short_excerpt}\n\n{url}\n\n{tags}"
+            if len(text) > 300:
+                # trim excerpt further
+                budget = 300 - len(f"{title}\n\n…\n\n{url}\n\n{tags}")
+                short_excerpt = excerpt[:max(0, budget)] + "…"
+                text = f"{title}\n\n{short_excerpt}\n\n{url}\n\n{tags}"
+
+            # Facets: link + hashtag byte ranges
+            def byte_pos(s, sub):
+                enc = s.encode("utf-8")
+                sub_enc = sub.encode("utf-8")
+                idx = enc.find(sub_enc)
+                return idx, idx + len(sub_enc)
+
+            facets = []
+            # URL facet
+            url_start, url_end = byte_pos(text, url)
+            if url_start >= 0:
+                facets.append({
+                    "index": {"byteStart": url_start, "byteEnd": url_end},
+                    "features": [{"$type": "app.bsky.richtext.facet#link", "uri": url}],
+                })
+            # Hashtag facets
+            for tag in ["#DisabilityJustice", "#CripMinds", "#DisabilityArts"]:
+                ts, te = byte_pos(text, tag)
+                if ts >= 0:
+                    facets.append({
+                        "index": {"byteStart": ts, "byteEnd": te},
+                        "features": [{"$type": "app.bsky.richtext.facet#tag", "tag": tag[1:]}],
+                    })
+
+            # Post
+            record = {
+                "$type": "app.bsky.feed.post",
+                "text": text,
+                "createdAt": datetime.now(timezone.utc).isoformat(),
+                "facets": facets,
+            }
+            post_payload = json.dumps({
+                "repo": did,
+                "collection": "app.bsky.feed.post",
+                "record": record,
+            }).encode()
+            post_req = ureq.Request(
+                "https://bsky.social/xrpc/com.atproto.repo.createRecord",
+                data=post_payload,
+                headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+                method="POST",
+            )
+            with ureq.urlopen(post_req, timeout=15) as r:
+                result = json.loads(r.read())
+            self.logger.info("Bluesky: posted %s", result.get("uri", "?"))
+
+        except Exception as e:
+            self.logger.warning("Bluesky post failed: %s", e)
+
     def run_production_automation(self):
         """
         PRODUCTION-READY main execution flow
@@ -768,6 +860,10 @@ excerpt: "{excerpt}"
 
         # Step 7: Commit article + review sidecar
         commit_success = self.commit_to_git(article_file, image_filenames, review_file)
+
+        # Step 8: Post to Bluesky (non-blocking)
+        if commit_success:
+            self.post_to_bluesky(extracted_title, content[:200], article_file)
 
         return {
             "status": "success" if commit_success else "partial",
