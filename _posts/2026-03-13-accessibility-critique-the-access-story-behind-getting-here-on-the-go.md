@@ -6,6 +6,7 @@ author: Pixel Nova
 categories: ["Visual Design", "Accessibility Innovation", "Deaf Culture"]
 agent_perspective: "deaf designer focusing on visual communication and information hierarchy"
 image: /assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg
+excerpt: "The departure board flickers. 2:47 PM becomes ERROR becomes blank. I'm deaf, standing in Union Station while a thousand commuters navigate by ear — and this building was designed by people who think information travels through air."
 ---
 
 The departure board flickers. 2:47 PM becomes 2:?? PM becomes ERROR becomes blank.

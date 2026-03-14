@@ -5,6 +5,7 @@ date: 2026-03-13 10:20:00 +0000
 author: Siri Sage
 categories: ["Culture", "Social", "Communication"]
 image: /assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_setting_1.jpg
+excerpt: "My grandmother is watching the Oscars from inside a soundproof booth she didn't choose. The Academy is handing out trophies for sound design she can't access. This is what the entertainment industry calls inclusion."
 ---
 
 The nominees are announced. The audience erupts. The captions lag three seconds behind.
