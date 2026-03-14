@@ -367,12 +367,44 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 self.logger.error(f"Fallback image generation also failed: {e2}")
                 return [f"{slug}_placeholder_{i+1}.png" for i in range(num_images)]
 
+    def _insert_images_balanced(self, content, image_filenames):
+        """Insert body images at ~40% and ~75% of article content.
+
+        image_filenames[0] = hero (_setting_1) — already in frontmatter, not repeated.
+        image_filenames[1] = _moment_2 — inserted at ~40%.
+        image_filenames[2] = _symbol_3 — inserted at ~75%.
+        """
+        if len(image_filenames) < 2:
+            return content
+
+        paragraphs = content.split('\n\n')
+        total = len(paragraphs)
+
+        def target_idx(pct):
+            idx = int(total * pct)
+            for offset in range(0, min(5, total - idx)):
+                p = paragraphs[idx + offset].strip()
+                if p and not p.startswith('#') and not p.startswith('!'):
+                    return idx + offset
+            return min(idx, total - 1)
+
+        inserts = []
+        if len(image_filenames) >= 2:
+            inserts.append((target_idx(0.40), image_filenames[1]))
+        if len(image_filenames) >= 3:
+            inserts.append((target_idx(0.75), image_filenames[2]))
+
+        for idx, fname in sorted(inserts, reverse=True):
+            img_tag = f'![]({{{{ site.baseurl }}}}/assets/{fname})'
+            paragraphs.insert(idx + 1, img_tag)
+
+        return '\n\n'.join(paragraphs)
+
     def create_article_file(self, metadata, content, image_filenames):
         """Create properly formatted article file."""
         filename = metadata['filename']
         filepath = self.posts_dir / filename
-        
-        # FIXED: Proper frontmatter format
+
         front_matter = f"""---
 layout: post
 title: "{metadata['title']}"
@@ -384,24 +416,18 @@ image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
 ---
 
 """
-        
-        # Add source note if available
+
         if metadata.get('source_note'):
             front_matter += f"{metadata['source_note']}\n\n"
-        
-        # Add main image with caption
-        if image_filenames:
-            alt_text = f"Visual representation of {metadata['title']}"
-            front_matter += f"![{alt_text}]({{{{ site.baseurl }}}}/assets/{image_filenames[0]})\n\n"
-            front_matter += f"*{alt_text}*\n\n"
-        
-        # Combine content
-        full_content = front_matter + content
-        
-        # Write file
+
+        # Insert body images at balanced positions (hero image[0] is frontmatter only)
+        body = self._insert_images_balanced(content, image_filenames)
+
+        full_content = front_matter + body
+
         with open(filepath, 'w', encoding='utf-8') as f:
             f.write(full_content)
-        
+
         self.logger.info(f"Article file created: {filepath}")
         return filepath
 
