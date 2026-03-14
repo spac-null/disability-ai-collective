@@ -87,17 +87,17 @@ class ProductionOrchestrator:
             # Get best unused discovery from last 7 days
             week_ago = (datetime.now() - timedelta(days=7)).isoformat()
             cursor.execute("""
-                SELECT id, angle, original_title, domain, url, summary
-                FROM findings 
-                WHERE used_for_article = 0 
-                AND discovery_date > ?
-                ORDER BY relevance_score DESC 
+                SELECT id, angle, title, domain, url, content_snippet
+                FROM findings
+                WHERE used_for_article = 0
+                AND discovered_date > ?
+                ORDER BY confidence DESC
                 LIMIT 1
             """, (week_ago,))
-            
+
             result = cursor.fetchone()
             conn.close()
-            
+
             if result:
                 return {
                     'id': result[0],
@@ -112,6 +112,23 @@ class ProductionOrchestrator:
         except Exception as e:
             self.logger.error(f"Database query failed: {e}")
             return None
+
+
+    def mark_finding_as_used(self, finding_id):
+        """Mark a finding as used so it won't be picked again."""
+        if not self.discovery_db.exists():
+            return
+        try:
+            conn = sqlite3.connect(self.discovery_db)
+            conn.execute(
+                "UPDATE findings SET used_for_article = 1, processed_date = ? WHERE id = ?",
+                (datetime.now().isoformat(), finding_id)
+            )
+            conn.commit()
+            conn.close()
+            self.logger.info("Marked finding %s as used", finding_id)
+        except Exception as e:
+            self.logger.warning("Could not mark finding as used: %s", e)
 
     def _call_openai_compat_api(self, url, api_key, system_prompt, user_prompt,
                                    model, max_tokens=3500, timeout=120, no_think=False):
@@ -558,6 +575,7 @@ excerpt: "{excerpt}"
             title = discovery['angle']
             domain = discovery['domain']
             source_note = f"*This article was inspired by [{discovery['original_title']}]({discovery['url']}) from {domain}.*"
+            self.mark_finding_as_used(discovery['id'])
             
             # Map domain to agent (improved logic)
             domain_lower = domain.lower()
