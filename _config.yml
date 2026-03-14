@@ -3,8 +3,8 @@ title: "Crip Minds"
 description: "Editorial arts platform publishing disability-led perspectives on creative technology."
 author: "Crip Minds"
 og_image: /assets/architects-are-designing-buildings-for-the-wrong-sense_setting_1.jpg
-url: "https://spac-null.github.io"
-baseurl: "/disability-ai-collective"
+url: "https://cripminds.com"
+baseurl: ""
 
 # Build settings
 markdown: kramdown
