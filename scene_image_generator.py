@@ -29,40 +29,132 @@ logger = logging.getLogger(__name__)
 ACCENTS = ["crimson red", "cobalt blue", "acid yellow", "burnt orange",
            "emerald green", "deep violet", "teal", "chalk white", "rose gold"]
 
+# ── Sauce catalog: context-matched style library ──────────────────────────────
+# Image 1 = always raw linocut. Images 2+ = scored against article keywords.
+SAUCE_CATALOG = {
+    "punk-pamphlet": {
+        "prompt": (
+            "hand-drawn xerox zine, NYC punk 1977, {person}, "
+            "crude thick black marker drawings and ink sketches on copier paper, "
+            "severe photocopier distortion and roller drag artifacts, "
+            "staple holes fold marks ink bleed smear, maximum grain maximum overexposure, "
+            "pure drawing and print marks absolutely no photography, "
+            "Xerox machine as artistic medium, crip punk rage, no readable text"
+        ),
+        "keywords": ["access", "barrier", "exclusion", "tax", "crip", "justice",
+                     "navigation", "mobility", "ramp", "protest", "broken", "curb"],
+    },
+    "glitch-corrupt": {
+        "prompt": (
+            "digital glitch art, {person}, "
+            "RGB channel split displacement, VHS scan-line artifacts, "
+            "pixel sorting vertical bands, broken codec freeze frame, "
+            "data corruption aesthetic, {accent} channel dominant, "
+            "net art meets crip cyborg theory, no clean edges, no text"
+        ),
+        "keywords": ["ai", "digital", "tech", "interface", "algorithm", "data",
+                     "screen", "app", "software", "code", "caption", "subtitle", "automation"],
+    },
+    "dada-sculpture": {
+        "prompt": (
+            "photograph of Dada assemblage sculpture, {obj} as found-object monument, "
+            "Kurt Schwitters Merzbau energy, wire mesh and torn newspaper and plaster mixed, "
+            "mismatched material textures layered in physical space, rough studio floor, "
+            "harsh single directional light casting deep shadows, "
+            "crip body politics as three-dimensional object, no background, no text"
+        ),
+        "keywords": ["prosthetic", "device", "aid", "wheelchair", "cane", "hearing",
+                     "braille", "tool", "object", "instrument", "body", "physical"],
+    },
+    "pixel-strict": {
+        "prompt": (
+            "strict 8-bit pixel art, {person}, "
+            "ZX Spectrum 16-color limited palette with {accent} dominant, "
+            "large chunky pixel grid, zero anti-aliasing, color clash artifacts, "
+            "demoscene aesthetic, crip tech nostalgia, no gradients, no smooth edges, no text"
+        ),
+        "keywords": ["game", "interface", "computer", "digital", "screen",
+                     "app", "software", "tech", "web", "keyboard"],
+    },
+    "popart-collage": {
+        "prompt": (
+            "paper cut-out collage only, bright colored magazine paper snippets assembled, "
+            "absolutely no photography, pure cut paper shapes and fragments, "
+            "raw scissor and torn edges visible, glue stain halos around pieces, "
+            "flat saturated color paper fragments at wildly competing scales, "
+            "Matisse cut-out scale and flatness meets disability activism poster, "
+            "dense overlapping paper layers, white gaps where paper doesnt meet, no text"
+        ),
+        "keywords": ["film", "cinema", "oscar", "media", "culture", "art",
+                     "visual", "performance", "theater", "show", "casting", "hollywood"],
+    },
+    "dada-collage": {
+        "prompt": (
+            "Dada photomontage collage, {person} fragmented and reassembled, "
+            "torn magazine page textures layered, Hannah Hoch energy, "
+            "mismatched scales and perspectives, paste residue at torn edges, "
+            "{accent} newsprint fragments, crip body politics visual language, "
+            "overlapping cut-and-paste fragments, no clean composition, no text"
+        ),
+        "keywords": ["identity", "culture", "deaf", "blind", "neurodivergent",
+                     "history", "community", "collective", "crip", "sign", "language"],
+    },
+    "mimeograph": {
+        "prompt": (
+            "extreme mimeograph overprint, severely uneven ink roller coverage, "
+            "abstract purple-blue ghost impressions stacked and misaligned, "
+            "ink starvation white patches alternating with over-inked black blobs, "
+            "multiple skewed impressions, crumpled duplicator paper texture, "
+            "illegible smeared forms as abstract texture field, "
+            "maximum print entropy, no clean edges, no text"
+        ),
+        "keywords": ["archive", "history", "movement", "document", "research",
+                     "policy", "report", "study", "score", "beethoven", "mathematical"],
+    },
+    "cyanotype": {
+        "prompt": (
+            "cyanotype composite photogram, multiple overlapping sun-print exposures, "
+            "botanical specimen silhouettes layered with mechanical part shadows, "
+            "full prussian blue to white spectrum with mid-tone halos, "
+            "chemical tide-mark rings and wash lines as compositional elements, "
+            "no single readable subject, Anna Atkins meets Laszlo Moholy-Nagy photogram, "
+            "accidental chemistry as aesthetic, no text"
+        ),
+        "keywords": ["design", "architecture", "blueprint", "space", "building",
+                     "urban", "plan", "system", "map", "acoustic", "sound", "wave"],
+    },
+    "urbit-pixel": {
+        "prompt": (
+            "isometric pixel art, strict modular grid structure, "
+            "repeating geometric tile unit with clear internal logic, "
+            "Urbit sigil symmetry four-fold rotational structure, "
+            "black and white two-tone, hard pixel edges, "
+            "each tile a self-contained geometric module, "
+            "visible grid axis, structured like circuit board or floor plan, "
+            "no organic forms, no figures, no gradients, no text"
+        ),
+        "keywords": ["pattern", "math", "algorithm", "system", "structure",
+                     "neurodivergent", "cognitive", "code", "logic", "wayfinding", "grid"],
+    },
+}
 
-def _build_confronting(person, place, obj, accent):
-    """Screen-print + pixel overlay — signature Crip Minds aesthetic."""
+SAUCE_FALLBACK_ORDER = ["dada-collage", "glitch-corrupt", "punk-pamphlet", "popart-collage"]
+
+def _build_linocut(obj):
+    """Image 1 — always raw linocut, object as central motif."""
     return (
-        f"screen printed protest poster, {person}, "
-        f"direct confrontational gaze, flat {accent} background, "
-        f"bold halftone dot texture, visible ink layers, two-color risograph, "
-        f"pixel art data overlay on corners, 8-bit grid scan texture, "
-        f"disability justice zine culture, Corita Kent meets Sins Invalid, "
-        f"no photorealism, no stock photo, no text"
+        f"raw woodblock linocut relief print, {obj} as bold central motif, "
+        f"deep hand-carved gouge lines, stark black ink on cream paper, "
+        f"visible tool marks and pressure ridges, uneven ink coverage, "
+        f"irregular stamp edges, protest woodcut tradition, "
+        f"no color, no gradients, no photorealism, no text"
     )
 
-def _build_intimate(person, place, obj, accent):
-    """Risograph two-color — misregistered layers, person-centric print."""
-    return (
-        f"risograph two-color print, {person}, "
-        f"misregistered ink layers in {accent} and cream white, "
-        f"visible halftone grain, warm press texture on newsprint stock, "
-        f"person as central composition, figure fills frame with cropped edges, "
-        f"pixel art registration marks at corners, 8-bit color halftone banding, "
-        f"disability justice zine energy, Interference Archive meets Sins Invalid, "
-        f"no gradients, no photorealism, no photography, no text"
-    )
+def _build_sauce(sauce_key, person, obj, accent):
+    """Render a sauce prompt with extracted subjects."""
+    tmpl = SAUCE_CATALOG[sauce_key]["prompt"]
+    return tmpl.format(person=person, obj=obj, accent=accent)
 
-def _build_abstract(person, place, obj, accent):
-    """Linocut + pixel data — crip zine meets accessibility tech."""
-    return (
-        f"linocut relief print, {obj} as central bold motif, "
-        f"carved lines on {accent} ink and cream paper, visible wood grain, "
-        f"pixel art elements integrated as decorative data pattern, "
-        f"8-bit accessibility symbols border, hand-stamped texture, "
-        f"disability justice visual language, protest zine energy, "
-        f"no gradients, no photorealism, no text"
-    )
 
 class SceneImageGenerator:
     def __init__(self, width=800, height=450, pixel_size=5):
@@ -178,17 +270,34 @@ class SceneImageGenerator:
 
     # ── Prompt generation ─────────────────────────────────────────────────────
 
-    def _generate_prompts(self, content, title):
-        """Build 3 gallery-quality prompts from article subjects + dis.art templates."""
+    def _generate_prompts(self, content, title, num_images=3):
+        """Image 1 = raw linocut always. Images 2+ = context-matched sauces."""
         accent = ACCENTS[abs(hash(title)) % len(ACCENTS)]
         person, place, obj = self._extract_subjects(content, title)
-        return [
-            _build_confronting(person, place, obj, accent),
-            _build_intimate(person, place, obj, accent),
-            _build_abstract(person, place, obj, accent),
-        ]
+        prompts = [_build_linocut(obj)]
+        sauces = self._pick_sauces(content, title, n=num_images - 1)
+        for key in sauces:
+            prompts.append(_build_sauce(key, person, obj, accent))
+        return prompts
 
-    # ── Pollinations.ai ───────────────────────────────────────────────────────
+    def _pick_sauces(self, content, title, n=2):
+        """Score each sauce against article corpus, return top-n distinct keys."""
+        corpus = (title + " " + content).lower()
+        scores = {}
+        for key, sauce in SAUCE_CATALOG.items():
+            scores[key] = sum(1 for kw in sauce["keywords"] if kw in corpus)
+        ranked = sorted(scores, key=lambda k: scores[k], reverse=True)
+        # Pick top-n, fall back to SAUCE_FALLBACK_ORDER if ties at 0
+        picked = [k for k in ranked if scores[k] > 0][:n]
+        if len(picked) < n:
+            for k in SAUCE_FALLBACK_ORDER:
+                if k not in picked:
+                    picked.append(k)
+                if len(picked) == n:
+                    break
+        logger.info("Sauce selection (n=%d): %s | scores: %s", n,
+                    picked, {k: scores[k] for k in picked})
+        return picked
 
     def _fetch_pollinations(self, prompt, timeout=60):
         """Fetch image from Pollinations FLUX. Returns JPEG bytes."""
@@ -219,10 +328,7 @@ class SceneImageGenerator:
 
         try:
             logger.info("Generating prompts for: %s", title)
-            prompts = self._generate_prompts(content, title)
-            while len(prompts) < num_images:
-                prompts.append(prompts[-1])
-            prompts = prompts[:num_images]
+            prompts = self._generate_prompts(content, title, num_images=num_images)
 
             for i, prompt in enumerate(prompts):
                 label = labels[i] if i < len(labels) else f"scene{i+1}"
