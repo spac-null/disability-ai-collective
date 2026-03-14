@@ -524,7 +524,7 @@ excerpt: "{excerpt}"
         self.logger.info(f"Article file created: {filepath}")
         return filepath
 
-    def commit_to_git(self, article_file, image_filenames):
+    def commit_to_git(self, article_file, image_filenames, review_file=None):
         """Commit changes to git repository."""
         try:
             # Change to repo directory
@@ -538,6 +538,8 @@ excerpt: "{excerpt}"
                 img_path = self.assets_dir / img
                 if img_path.exists():
                     subprocess.run(['git', 'add', str(img_path)], check=True)
+            if review_file and review_file.exists():
+                subprocess.run(['git', 'add', str(review_file)], check=True)
             
             # Commit
             commit_msg = f"Add new article: {article_file.stem}"
@@ -552,6 +554,84 @@ excerpt: "{excerpt}"
         except subprocess.CalledProcessError as e:
             self.logger.error(f"Git operation failed: {e}")
             return False
+
+
+    def validate_article(self, content, article_file, slug):
+        """Non-blocking citation check. Never delays commit."""
+        import os, json, urllib.request as ureq
+        from datetime import datetime as dt
+
+        SYSTEM = (
+            "You are a fact-checker for a disability arts publication. "
+            "Extract every specific claim that could be independently verified:\n"
+            "- Statistics or percentages with attributed sources\n"
+            "- Named studies, reports, or audits with organisations\n"
+            "- Direct quotes attributed to named people\n"
+            "- Specific events cited as fact\n\n"
+            "For each, one line: [FLAG] <claim> | SOURCE: <source or UNATTRIBUTED>\n"
+            "If nothing to flag, output exactly: CLEAN"
+        )
+
+        review_text = "CLEAN"
+        try:
+            raw = self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=SYSTEM,
+                user_prompt=content,
+                model="claude-sonnet-4-6",
+                max_tokens=600,
+                timeout=60,
+            )
+            review_text = raw or "CLEAN"
+        except Exception as e:
+            self.logger.warning("Citation extraction failed: %s", e)
+            review_text = f"EXTRACTION_FAILED: {e}"
+
+        reviews_dir = self.repo_root / "_reviews"
+        reviews_dir.mkdir(exist_ok=True)
+        review_file = reviews_dir / f"{article_file.stem}-review.md"
+        is_clean = review_text.strip().upper().startswith("CLEAN")
+
+        lines = [
+            f"# Citation Review: {article_file.stem}",
+            f"Generated: {dt.now().strftime('%Y-%m-%d %H:%M')}",
+            f"Status: {'CLEAN' if is_clean else 'FLAGGED'}",
+            "",
+            "## Extracted Citations",
+            review_text,
+            "",
+            "## Notes",
+            "- Article is LIVE — async review only",
+            "- Verify flagged items and correct if inaccurate",
+            "- Delete this file when reviewed",
+        ]
+        review_file.write_text("\n".join(lines))
+        self.logger.info("Review sidecar: %s (%s)", review_file.name, "CLEAN" if is_clean else "FLAGGED")
+
+        if not is_clean:
+            try:
+                token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+                chat_id = os.environ.get("TELEGRAM_CHAT_ID", "")
+                if token and chat_id:
+                    flags = [l for l in review_text.splitlines() if l.startswith("[FLAG]")]
+                    msg = (
+                        "📋 *Citation review* — " + article_file.stem[:50] + "\n"
+                        + f"{len(flags)} item(s) to verify:\n\n"
+                        + "\n".join(f"• {fl[7:90]}" for fl in flags[:5])
+                        + (f"\n_(+{len(flags)-5} more)_" if len(flags) > 5 else "")
+                    )
+                    payload = json.dumps({"chat_id": chat_id, "text": msg, "parse_mode": "Markdown"}).encode()
+                    r = ureq.Request(
+                        f"https://api.telegram.org/bot{token}/sendMessage",
+                        data=payload, headers={"Content-Type": "application/json"}, method="POST",
+                    )
+                    ureq.urlopen(r, timeout=10)
+                    self.logger.info("Telegram: citation flags sent (%d)", len(flags))
+            except Exception as e:
+                self.logger.warning("Telegram notification failed: %s", e)
+
+        return review_file, is_clean
 
     def run_production_automation(self):
         """
@@ -682,17 +762,19 @@ excerpt: "{excerpt}"
         # Step 6: Create article file
         article_file = self.create_article_file(metadata, content, image_filenames)
 
-        # Step 7: Commit to git (PRODUCTION DECISION)
-        # In production, we might want to review before auto-committing
-        # For daily automation, auto-commit is acceptable
-        commit_success = self.commit_to_git(article_file, image_filenames)
-        
+        # Step 6b: Non-blocking citation review
+        review_file, is_clean = self.validate_article(content, article_file, slug)
+
+        # Step 7: Commit article + review sidecar
+        commit_success = self.commit_to_git(article_file, image_filenames, review_file)
+
         return {
             "status": "success" if commit_success else "partial",
             "message": f"Article generated: {title}",
             "file": str(article_file),
             "agent": agent_name,
-            "commit_success": commit_success
+            "commit_success": commit_success,
+            "citations_clean": is_clean,
         }
 
 
