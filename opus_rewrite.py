@@ -6,7 +6,8 @@ Preserves frontmatter + image lines. Rewrites body prose only.
 import json, re, urllib.request, time
 from pathlib import Path
 
-API_KEY  = "sk-NwG04asTudtBlAW1kcBmbsAlKmI5o3u2wtanviIr8Lhnw"
+import os
+API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
 API_URL  = "http://172.19.0.1:8317/v1/chat/completions"
 MODEL    = "claude-opus-4-6"
 POSTS    = Path("/srv/data/openclaw/workspaces/ops/disability-ai-collective/_posts")
