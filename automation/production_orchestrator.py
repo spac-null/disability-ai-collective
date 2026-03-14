@@ -690,32 +690,29 @@ excerpt: "{excerpt}"
             token = session["accessJwt"]
             did   = session["did"]
 
-            # Calculate available chars for hook before generating
+            # URL goes in card embed — text is hook + tags only (lots of breathing room)
             tags = "#DisabilityJustice #CripMinds #DisabilityArts"
-            overhead = len(f"\n\n{url}\n\n{tags}")
+            overhead = len(f"\n\n{tags}")
             max_hook = 300 - overhead
             hook = self._bsky_hook(title, body, max_chars=max_hook)
-            text = f"{hook}\n\n{url}\n\n{tags}"
+            text = f"{hook}\n\n{tags}"
 
-            # Facets (link + hashtags)
+            # Facets — hashtags only (URL is in card embed, not text)
             def byte_range(s, sub):
                 b, sb = s.encode(), sub.encode()
                 i = b.find(sb)
                 return i, i + len(sb)
 
             facets = []
-            us, ue = byte_range(text, url)
-            if us >= 0:
-                facets.append({"index": {"byteStart": us, "byteEnd": ue},
-                                "features": [{"$type": "app.bsky.richtext.facet#link", "uri": url}]})
             for tag in ["#DisabilityJustice", "#CripMinds", "#DisabilityArts"]:
                 ts, te = byte_range(text, tag)
                 if ts >= 0:
                     facets.append({"index": {"byteStart": ts, "byteEnd": te},
                                    "features": [{"$type": "app.bsky.richtext.facet#tag", "tag": tag[1:]}]})
 
-            # Upload hero image (_setting_1)
+            # Build external card embed — article link with thumbnail
             embed = None
+            thumb_blob = None
             hero = None
             if image_filenames:
                 hero_name = next((fn for fn in image_filenames if "_setting_1" in fn), image_filenames[0])
@@ -730,12 +727,20 @@ excerpt: "{excerpt}"
                     method="POST",
                 )
                 with ureq.urlopen(blob_req, timeout=30) as r:
-                    blob_resp = json.loads(r.read())
-                embed = {
-                    "$type": "app.bsky.embed.images",
-                    "images": [{"image": blob_resp["blob"], "alt": title, "aspectRatio": {"width": 16, "height": 9}}],
-                }
-                self.logger.info("Bluesky: image uploaded (%d bytes)", len(img_bytes))
+                    thumb_blob = json.loads(r.read())["blob"]
+                self.logger.info("Bluesky: thumbnail uploaded (%d bytes)", len(img_bytes))
+            # Extract clean description from body
+            import re as _re
+            desc = ""
+            for line in body.splitlines():
+                line = line.strip()
+                if line and not line.startswith("#") and not line.startswith("!") and not line.startswith("-") and len(line) > 40:
+                    desc = _re.sub(r"\*\*|\*|`", "", line)[:200]
+                    break
+            external = {"uri": url, "title": title, "description": desc}
+            if thumb_blob:
+                external["thumb"] = thumb_blob
+            embed = {"$type": "app.bsky.embed.external", "external": external}
 
             # Post
             record = {
