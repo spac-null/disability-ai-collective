@@ -2321,8 +2321,8 @@ a:hover {
 /* ── Hero: full-bleed, tall, razor-edged ── */
 .post-hero {
   margin-top: calc(-1 * var(--space-section-gap));
-  margin-left: calc(-1 * var(--space-4));
-  margin-right: calc(-1 * var(--space-4));
+  margin-left: calc(-1 * var(--space-page-gutter));
+  margin-right: calc(-1 * var(--space-page-gutter));
   margin-bottom: var(--space-9);
   overflow: hidden;
 }
@@ -2501,9 +2501,8 @@ a:hover {
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .post-hero {
-  margin-top: calc(-1 * var(--space-section-gap));
-    margin-left: calc(-1 * var(--space-4));
-    margin-right: calc(-1 * var(--space-4));
+    margin-left: calc(-1 * var(--space-page-gutter));
+    margin-right: calc(-1 * var(--space-page-gutter));
   }
 
   .post-hero-img {
