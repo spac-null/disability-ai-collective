@@ -91,6 +91,33 @@ MAINSTREAM_QUERIES = [
     "diversity advisory board consultation representation",
     "meeting culture async remote work schedule",
     "credential degree requirement job hiring screen",
+
+    # Crip time & work (Kafer, Samuels, McRuer)
+    "long COVID return work fatigue productivity chronic illness",
+    "four day work week flexible schedule productivity",
+    "career gap resume employment non-linear ageism",
+    "gig economy platform workers algorithm rating speed",
+    "workplace wellness program employee health individual responsibility",
+
+    # Care, community, loneliness (Mingus, Piepzna-Samarasinha)
+    "loneliness epidemic social connection community infrastructure",
+    "caregiver burnout unpaid family care labor",
+    "mutual aid community care neighborhood network organizing",
+    "doctor patient relationship healthcare communication trust",
+
+    # Technology & design (Hamraie, Fritsch, AI hiring bias)
+    "AI hiring software video interview bias discrimination",
+    "smart city sensor urban infrastructure technology inclusion",
+    "exoskeleton neural interface paralysis cure technology",
+
+    # Public space & law (Schweik ugly laws)
+    "hostile architecture anti-homeless bench spikes city design",
+    "quality of life policing mental illness public space",
+
+    # Culture & aesthetics (Siebers, Chapman)
+    "body image beauty standards AI generated images representation",
+    "ADHD diagnosis adults medication productivity neurodiversity",
+    "prenatal genetic screening embryo selection disability",
 ]
 
 def log(msg):
