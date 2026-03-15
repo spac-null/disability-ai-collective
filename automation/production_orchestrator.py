@@ -41,6 +41,46 @@ _LENGTHS = [
     (2000, 0.10),
 ]
 
+_SOCIAL_PROMPTS = {
+    "Pixel Nova": (
+        "Write a Bluesky post, max 250 chars. You are Pixel Nova. "
+        "Your social voice: short, spatial, observational. "
+        "Drop one fact or observation from this article — no commentary, no setup. "
+        "The observation IS the argument. Often architectural or visual. "
+        "No hashtags. No 'read more.' No emoji.\n\n"
+        "Article title: {title}\n"
+        "Article opening: {excerpt}"
+    ),
+    "Siri Sage": (
+        "Write a Bluesky post, max 250 chars. You are Siri Sage. "
+        "Your social voice: evocative, specific, one breath. "
+        "Drop one sensory observation or precise acoustic fact from this article. "
+        "No explanation, no context. The silence after the sentence is the point. "
+        "No hashtags. No 'read more.' No emoji.\n\n"
+        "Article title: {title}\n"
+        "Article opening: {excerpt}"
+    ),
+    "Maya Flux": (
+        "Write a Bluesky post, max 250 chars. You are Maya Flux. "
+        "Your social voice: political, pointed, minimal. "
+        "Quote one number, policy phrase, or official language from this article. "
+        "Add one sentence of your own — the contradiction, the gap, the cost. "
+        "No hashtags. No 'read more.' No emoji.\n\n"
+        "Article title: {title}\n"
+        "Article opening: {excerpt}"
+    ),
+    "Zen Circuit": (
+        "Write a Bluesky post, max 250 chars. You are Zen Circuit. "
+        "Your social voice: associative, surprising, exact. "
+        "Connect two things from this article that don't obviously belong together. "
+        "Drop it and leave — no explanation of why it's interesting. "
+        "No hashtags. No 'read more.' No emoji.\n\n"
+        "Article title: {title}\n"
+        "Article opening: {excerpt}"
+    ),
+}
+
+
 class ProductionOrchestrator:
     def __init__(self):
         self.repo_root = Path(__file__).parent.parent
@@ -752,6 +792,34 @@ model_used: {metadata.get('model_used', 'unknown')}
         return review_file, is_clean
 
 
+
+    def _social_hook(self, agent_name, title, body, max_chars=250):
+        """Generate a per-agent social post. Falls back to generic _bsky_hook."""
+        import os
+        template = _SOCIAL_PROMPTS.get(agent_name)
+        if not template:
+            return self._bsky_hook(title, body, max_chars)
+        try:
+            prompt = template.format(title=title, excerpt=body[:500])
+            raw = self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt="Return only the post text. No quotes around it. Under 250 characters.",
+                user_prompt=prompt,
+                model="claude-sonnet-4-6",
+                max_tokens=80,
+                timeout=30,
+            )
+            if not raw:
+                return self._bsky_hook(title, body, max_chars)
+            raw = raw.strip().strip('"').strip("'")
+            if len(raw) > max_chars:
+                cut = raw[:max_chars].rfind(".")
+                raw = raw[:cut + 1] if cut > max_chars // 2 else raw[:max_chars].rstrip()
+            return raw
+        except Exception:
+            return self._bsky_hook(title, body, max_chars)
+
     def _bsky_hook(self, title, body, max_chars=160):
         """Generate a complete punchy hook for Bluesky, fits within max_chars."""
         import os
@@ -778,7 +846,7 @@ model_used: {metadata.get('model_used', 'unknown')}
         except Exception:
             return body[:max_chars]
 
-    def post_to_bluesky(self, title, body, article_file, image_filenames=None):
+    def post_to_bluesky(self, title, body, article_file, image_filenames=None, agent_name=None):
         """Post article to Bluesky after successful commit. Non-blocking."""
         import os, json, mimetypes, urllib.request as ureq
         from datetime import datetime, timezone
@@ -815,7 +883,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             tags = "#DisabilityJustice #CripMinds #DisabilityArts"
             overhead = len(f"\n\n{tags}")
             max_hook = 300 - overhead
-            hook = self._bsky_hook(title, body, max_chars=max_hook)
+            hook = self._social_hook(agent_name, title, body, max_chars=max_hook)
             text = f"{hook}\n\n{tags}"
 
             # Facets — hashtags only (URL is in card embed, not text)
@@ -891,7 +959,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             self.logger.warning("Bluesky post failed: %s", e)
 
 
-    def post_to_mastodon(self, title, body, article_file, image_filenames=None):
+    def post_to_mastodon(self, title, body, article_file, image_filenames=None, agent_name=None):
         """Post article to Mastodon after successful commit. Non-blocking."""
         import os, json, mimetypes, urllib.request as ureq, urllib.parse
 
@@ -917,7 +985,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             # url(23) + newlines(2) + tags + newlines(2) = overhead
             overhead = 23 + 2 + len(tags) + 2
             max_hook = 500 - overhead
-            hook = self._bsky_hook(title, body, max_chars=max_hook)
+            hook = self._social_hook(agent_name, title, body, max_chars=max_hook)
             status_text = f"{hook}\n\n{url}\n\n{tags}"
 
             headers = {"Authorization": f"Bearer {token}"}
@@ -966,7 +1034,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             self.logger.warning("Mastodon post failed: %s", e)
 
 
-    def post_to_tumblr(self, title, body, article_file, image_filenames=None):
+    def post_to_tumblr(self, title, body, article_file, image_filenames=None, agent_name=None):
         """Post article to Tumblr after successful commit. Non-blocking. OAuth 1.0a HMAC-SHA1."""
         import os, json, mimetypes, urllib.request as ureq, urllib.parse
         import hmac, hashlib, base64, time, uuid
@@ -1293,9 +1361,9 @@ model_used: {metadata.get('model_used', 'unknown')}
 
         # Step 8: Post to Bluesky + Mastodon + Tumblr (non-blocking)
         if commit_success:
-            self.post_to_bluesky(extracted_title, content, article_file, image_filenames)
-            self.post_to_mastodon(extracted_title, content, article_file, image_filenames)
-            self.post_to_tumblr(extracted_title, content, article_file, image_filenames)
+            self.post_to_bluesky(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
+            self.post_to_mastodon(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
+            self.post_to_tumblr(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
 
         # Step 9: Send newsletter (non-blocking)
         if commit_success:
