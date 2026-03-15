@@ -28,11 +28,12 @@ if _ENV_FILE.exists():
         if "=" in _line and not _line.startswith("#"):
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
-POSTS    = REPO / "_posts"
-ASSETS   = REPO / "assets"
-API_URL  = "http://172.19.0.1:8317/v1/chat/completions"
-API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
-MODEL    = "claude-opus-4-6"
+POSTS          = REPO / "_posts"
+ASSETS         = REPO / "assets"
+API_URL        = "http://172.19.0.1:8317/v1/chat/completions"
+API_KEY        = os.environ.get("ANTHROPIC_API_KEY", "")
+MODEL          = "claude-opus-4-6"
+FALLBACK_MODEL = "claude-sonnet-4-20250514"
 
 PERSONAS = {
     "Pixel Nova": {
@@ -92,7 +93,9 @@ def slugify(title):
     s = re.sub(r"-+", "-", s).strip("-")
     return s[:80]
 
-def call_opus(persona_name, angle, categories, today):
+def call_opus(persona_name, angle, categories, today, model=None):
+    """Call the API and return (content, actual_model_used)."""
+    model = model or MODEL
     p = PERSONAS[persona_name]
     slug_hint = slugify(angle)
     user_msg = f"""Write a Crip Minds article as {persona_name}.
@@ -109,7 +112,7 @@ SLUG (use for image path): {slug_hint}
 Write the full article following the De Correspondent rules exactly. Return only the frontmatter + body, no preamble."""
 
     payload = json.dumps({
-        "model": MODEL,
+        "model": model,
         "max_tokens": 4000,
         "messages": [{"role": "user", "content": user_msg}],
         "system": SYSTEM,
@@ -122,7 +125,9 @@ Write the full article following the De Correspondent rules exactly. Return only
     )
     with urllib.request.urlopen(req, timeout=180) as r:
         resp = json.loads(r.read())
-    return resp["choices"][0]["message"]["content"].lstrip("\n")
+    content = resp["choices"][0]["message"]["content"].lstrip("\n")
+    actual_model = resp.get("model", model)
+    return content, actual_model
 
 def extract_slug_from_frontmatter(content, today):
     m = re.search(r'^title:\s*["\']?(.+?)["\']?\s*$', content, re.MULTILINE)
@@ -130,11 +135,23 @@ def extract_slug_from_frontmatter(content, today):
     return f"{today}-{slugify(title)}"
 
 def generate_article(persona_name, angle, categories=None, today=None):
+    """Generate one article. Returns (slug, model_used) or None on failure."""
     today = today or str(date.today())
     cats = categories or PERSONAS[persona_name]["categories_default"]
 
     log.info(f"[Opus] Writing: {angle[:60]} ({persona_name})")
-    content = call_opus(persona_name, angle, cats, today)
+    try:
+        content, model_used = call_opus(persona_name, angle, cats, today)
+    except Exception as e:
+        err = str(e).lower()
+        if any(sig in err for sig in ("429", "rate", "overload", "capacity")):
+            log.warning("  Opus rate-limited (%s) — falling back to Sonnet", e)
+            content, model_used = call_opus(persona_name, angle, cats, today, model=FALLBACK_MODEL)
+        else:
+            raise
+
+    if model_used != MODEL:
+        log.warning("  Article written by %s (not Opus) — will be queued for quality rewrite", model_used)
 
     if "---" not in content[:200]:
         log.error(f"  Missing frontmatter, got: {content[:200]}")
@@ -154,22 +171,28 @@ def generate_article(persona_name, angle, categories=None, today=None):
             log.info(f"  Image: {img['filename']} ({len(img['data'])} bytes)")
     except Exception as e:
         log.warning(f"  Image generation failed: {e} — continuing without images")
-        images = []
 
     # Force-correct image path (Opus sometimes generates wrong path)
     correct_image = f"/assets/{slug}_setting_1.jpg"
     content = re.sub(r'^image:.*$', f'image: {correct_image}', content, flags=re.MULTILINE)
 
+    # Inject model tracking field (after image: line)
+    if "model_used:" not in content:
+        content = re.sub(
+            r'^(image:.*)$',
+            rf'\1\nmodel_used: {model_used}',
+            content, flags=re.MULTILINE
+        )
+
     # Save post
     post_path.write_text(content)
-    log.info(f"  Saved: {post_path.name}")
+    log.info(f"  Saved: {post_path.name} [model: {model_used}]")
 
-    return slug
+    return slug, model_used
 
-def git_push(slugs):
-    files = []
-    for slug in slugs:
-        files.append(f"_posts/{slug}.md")
+def git_push(published):
+    """published = [(slug, model_used), ...]"""
+    files = [f"_posts/{slug}.md" for slug, _ in published]
     # Also add any new assets
     result = subprocess.run(
         ["git", "status", "--porcelain", "assets/"],
@@ -179,32 +202,19 @@ def git_push(slugs):
     files += new_assets
 
     subprocess.run(["git", "add"] + files, cwd=REPO, check=True)
-    msg = f"publish: {len(slugs)} new article(s) — {', '.join(s.split('-', 3)[-1][:30] for s in slugs)}"
+
+    def label(slug, model):
+        name = slug.split('-', 3)[-1][:30]
+        return name if model == MODEL else f"{name} [↓{model.split('-')[1]}]"
+
+    msg = f"publish: {len(published)} new article(s) — {', '.join(label(s, m) for s, m in published)}"
     subprocess.run(["git", "commit", "-m", msg], cwd=REPO, check=True)
     subprocess.run(["git", "push", "origin", "main"], cwd=REPO, check=True)
     log.info(f"Pushed: {msg}")
 
 # ── Article queue ──────────────────────────────────────────────────────────────
 # Add briefs here: (persona, angle, [optional categories])
-QUEUE = [
-],
-    },
-    {
-        "persona": "Maya Flux",
-        "angle": "The Accessible Entrance Is Around the Back: On the Architecture of Separate and Unequal",
-        "categories": ["Urban Design", "Accessibility Innovation", "Spatial Design"],
-    },
-    {
-        "persona": "Zen Circuit",
-        "angle": "The Open Office Was Designed to Break My Brain",
-        "categories": ["Neurodiversity", "Interface Design", "Sensory Processing"],
-    },
-    {
-        "persona": "Siri Sage",
-        "angle": "The City Forgot to Sound-Design Its Streets: On Acoustic Wayfinding and Who Gets Left Behind",
-        "categories": ["Acoustic Culture", "Urban Design", "Accessibility Innovation"],
-    },
-]
+QUEUE = []
 
 if __name__ == "__main__":
     if not API_KEY:
@@ -220,9 +230,9 @@ if __name__ == "__main__":
         angle   = item["angle"]
         cats    = item.get("categories", PERSONAS[persona]["categories_default"])
         try:
-            slug = generate_article(persona, angle, cats, today)
-            if slug:
-                published.append(slug)
+            result = generate_article(persona, angle, cats, today)
+            if result:
+                published.append(result)
                 time.sleep(3)
         except Exception as e:
             log.error(f"FAILED {angle[:40]}: {e}")
