@@ -244,12 +244,13 @@ Rewrite the article body to De Correspondent quality. Preserve frontmatter and a
 
 
 def git_commit_rewrites(rewritten_filenames):
-    """Commit rewritten posts locally (no push — ops agent or manual push deploys)."""
+    """Commit and push rewritten posts to origin (GH Pages)."""
     files = [f"_posts/{f}" for f in rewritten_filenames]
     subprocess.run(["git", "add"] + files, cwd=POSTS.parent, check=True)
     msg = f"quality: opus rewrite — {len(rewritten_filenames)} article(s) upgraded"
     subprocess.run(["git", "commit", "-m", msg], cwd=POSTS.parent, check=True)
-    log.info("Committed: %s", msg)
+    subprocess.run(["git", "push", "origin", "main"], cwd=POSTS.parent, check=True)
+    log.info("Committed and pushed: %s", msg)
 
 
 def main():
