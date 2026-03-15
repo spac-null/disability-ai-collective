@@ -409,6 +409,148 @@ def run_google_news_discovery():
     log(f"Google News discovery done — {new_total} new findings")
     return new_total
 
+
+# ── Step 9a: PubMed academic abstract discovery ───────────────────────────────
+
+PUBMED_TERMS = [
+    "disability AND (design OR architecture OR art)",
+    "disability AND (technology OR interface OR digital)",
+    "neurodivergent AND (culture OR identity OR epistemology)",
+    "deaf AND (culture OR language OR visual)",
+    "chronic illness AND (culture OR representation OR narrative)",
+    "crip theory OR disability justice",
+]
+
+def run_pubmed_discovery():
+    """Fetch recent PubMed abstracts on disability + culture/design/tech."""
+    log("Running PubMed discovery...")
+    import urllib.parse
+    new = 0
+    for term in PUBMED_TERMS:
+        try:
+            # Search for PMIDs
+            params = urllib.parse.urlencode({
+                "db": "pubmed", "term": term,
+                "retmax": 5, "retmode": "json", "sort": "date"
+            })
+            url = f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?{params}"
+            req = urllib.request.Request(url, headers={"User-Agent": "CripMinds/1.0"})
+            with urllib.request.urlopen(req, timeout=10) as r:
+                data = json.loads(r.read())
+            pmids = data.get("esearchresult", {}).get("idlist", [])
+            if not pmids:
+                continue
+
+            # Fetch abstracts
+            fetch_url = (
+                "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?"
+                f"db=pubmed&id={','.join(pmids)}&retmode=xml&rettype=abstract"
+            )
+            req2 = urllib.request.Request(fetch_url, headers={"User-Agent": "CripMinds/1.0"})
+            with urllib.request.urlopen(req2, timeout=15) as r:
+                xml_text = r.read().decode("utf-8", errors="replace")
+
+            import xml.etree.ElementTree as ET
+            root = ET.fromstring(xml_text)
+            for article in root.iter("PubmedArticle"):
+                try:
+                    title_el    = article.find(".//ArticleTitle")
+                    abstract_el = article.find(".//AbstractText")
+                    pmid_el     = article.find(".//PMID")
+                    if title_el is None or abstract_el is None or pmid_el is None:
+                        continue
+                    title    = (title_el.text or "").strip()
+                    abstract = (abstract_el.text or "").strip()[:500]
+                    pmid     = pmid_el.text.strip()
+                    url_art  = f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/"
+                    angle    = extract_disability_angle(title, abstract, url_art)
+                    if angle:
+                        saved = save_finding(url_art, title, angle, "pubmed.ncbi.nlm.nih.gov",
+                                             abstract, source_type="academic")
+                        if saved:
+                            new += 1
+                            log(f"  + PubMed: {title[:60]}")
+                except Exception as e:
+                    log(f"  PubMed article parse error: {e}")
+            time.sleep(1)  # rate limit
+        except Exception as e:
+            log(f"  PubMed term '{term[:40]}' failed: {e}")
+    log(f"PubMed discovery done: {new} new findings")
+
+
+# ── Step 9b: Art institution RSS feeds ───────────────────────────────────────
+
+ART_FEEDS = [
+    {"url": "https://vanabbemuseum.nl/en/feed/",             "domain": "vanabbemuseum.nl"},
+    {"url": "https://www.mediamatic.net/en/rss/",            "domain": "mediamatic.net"},
+    {"url": "https://internationaleonline.org/feed/",        "domain": "internationaleonline.org"},
+    {"url": "https://www.puppetmastermagazine.net/feed/",    "domain": "puppetmastermagazine.net"},
+]
+
+def _parse_rss_feed(xml_bytes: bytes) -> list[dict]:
+    """Parse RSS/Atom feed, return list of {title, url, snippet}."""
+    try:
+        root = ET.fromstring(xml_bytes)
+    except Exception:
+        return []
+    items = []
+    # RSS 2.0
+    for item in root.iter("item"):
+        title_el = item.find("title")
+        link_el  = item.find("link")
+        desc_el  = item.find("description")
+        if title_el is None or link_el is None:
+            continue
+        title   = re.sub(r'<[^>]+>', '', title_el.text or "").strip()
+        url_i   = (link_el.text or "").strip()
+        snippet = re.sub(r'<[^>]+>', '', desc_el.text or "")[:300].strip() if desc_el is not None else ""
+        if title and url_i:
+            items.append({"title": title, "url": url_i, "snippet": snippet})
+    # Atom fallback
+    if not items:
+        ns = {"atom": "http://www.w3.org/2005/Atom"}
+        for entry in root.findall("atom:entry", ns):
+            title_el = entry.find("atom:title", ns)
+            link_el  = entry.find("atom:link", ns)
+            summ_el  = entry.find("atom:summary", ns)
+            if title_el is None or link_el is None:
+                continue
+            items.append({
+                "title":   (title_el.text or "").strip(),
+                "url":     link_el.get("href", "").strip(),
+                "snippet": re.sub(r'<[^>]+>', '', summ_el.text or "")[:300].strip() if summ_el is not None else "",
+            })
+    return items
+
+
+def run_art_feeds_discovery():
+    """Fetch art institution RSS feeds and extract disability angles."""
+    log("Running art feeds discovery...")
+    new = 0
+    for feed in ART_FEEDS:
+        try:
+            req = urllib.request.Request(
+                feed["url"],
+                headers={"User-Agent": "CripMinds/1.0", "Accept": "application/rss+xml, text/xml"}
+            )
+            with urllib.request.urlopen(req, timeout=10) as r:
+                xml_bytes = r.read()
+            items = _parse_rss_feed(xml_bytes)
+            log(f"  {feed['domain']}: {len(items)} items")
+            for item in items[:10]:
+                angle = extract_disability_angle(item["title"], item["snippet"], item["url"])
+                if angle:
+                    saved = save_finding(item["url"], item["title"], angle,
+                                         feed["domain"], item["snippet"], source_type="art")
+                    if saved:
+                        new += 1
+                        log(f"  + art: {item['title'][:60]}")
+            time.sleep(1)
+        except Exception as e:
+            log(f"  Art feed {feed['domain']} failed: {e}")
+    log(f"Art feeds discovery done: {new} new findings")
+
+
 def main():
     log("=== Discovery run start ===")
 
@@ -420,6 +562,14 @@ def main():
         run_google_news_discovery()
     else:
         log("WARN: ANTHROPIC_API_KEY not set — skipping Google News LLM extraction")
+
+    # 3. PubMed academic abstracts
+    if API_KEY:
+        run_pubmed_discovery()
+
+    # 4. Art institution RSS feeds
+    if API_KEY:
+        run_art_feeds_discovery()
 
     # Summary
     conn = sqlite3.connect(DB)
