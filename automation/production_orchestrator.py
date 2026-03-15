@@ -25,6 +25,22 @@ if _ENV_FILE.exists():
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
 
+
+# Tonal register and length weights for article variety
+_REGISTERS = [
+    ("wry",        0.30, "Dry, observational. The joke is in the framing, never announced. You find the absurdity in how things are organised and let it sit. The reader laughs a beat late."),
+    ("clinical",   0.25, "Cold precision. No emotion in the delivery — the facts are the argument. Present evidence the way a pathologist presents findings. Let the reader supply the outrage."),
+    ("furious",    0.20, "Controlled anger. Precise. You do not shout — you dissect. Every sentence cuts. The reader feels the weight of what you are describing without you ever raising your voice."),
+    ("melancholic",0.15, "Slow, exact, not sentimental. Write about loss without performing grief. The sadness is in what is missing from the frame, not in what you say about it."),
+    ("ecstatic",   0.10, "Something genuinely surprised you. You are writing from inside that surprise. The energy is in the discovery, not in exclamation. Precise wonder."),
+]
+_LENGTHS = [
+    (800,  0.20),
+    (1200, 0.45),
+    (1600, 0.25),
+    (2000, 0.10),
+]
+
 class ProductionOrchestrator:
     def __init__(self):
         self.repo_root = Path(__file__).parent.parent
@@ -131,6 +147,21 @@ class ProductionOrchestrator:
                 conn.close()
 
 
+
+
+    def _pick_register(self):
+        """Weighted random tone register selection."""
+        names   = [r[0] for r in _REGISTERS]
+        weights = [r[1] for r in _REGISTERS]
+        prompts = {r[0]: r[2] for r in _REGISTERS}
+        chosen  = random.choices(names, weights=weights, k=1)[0]
+        return chosen, prompts[chosen]
+
+    def _pick_length(self):
+        """Weighted random target word count."""
+        lengths = [l[0] for l in _LENGTHS]
+        weights = [l[1] for l in _LENGTHS]
+        return random.choices(lengths, weights=weights, k=1)[0]
 
     def _extract_paragraphs(self, html: str) -> str:
         """Extract body text from HTML. Skip short nav/caption paragraphs."""
@@ -1141,7 +1172,11 @@ model_used: {metadata.get('model_used', 'unknown')}
         if not agent_info:
             self.logger.error("Unknown agent: %s", agent_name)
             return None
-        
+
+        register, register_prompt = self._pick_register()
+        target_words = self._pick_length()
+        self.logger.info("Register: %s | Target words: %d", register, target_words)
+
         # Step 3: Generate content — prompt asks LLM for its own title
         prompt = (
             "Voice and style:\n"
@@ -1156,13 +1191,15 @@ model_used: {metadata.get('model_used', 'unknown')}
             "- Write for a reader who has already read the basics — go deeper, go stranger, go more specific\n"
             "- Tone: direct, dry when needed, never inspirational, never corporate wellness\n\n"
             "ENDING: Your last paragraph is one sentence. It is a concrete image, a paradox, or a reframing that makes the reader sit with something unresolved. Never summarize. Never offer hope. Never call to action. Never conclude. The essay stops mid-thought — but precisely.\n\n"
+            f"REGISTER: {register}. {register_prompt}\n\n"
+            f"LENGTH: ~{target_words} words. Do not pad. Do not rush. Every paragraph earns the next.\n\n"
             f"{agent_info['prompt_block']}\n\n"
             f"{('SOURCE MATERIAL (from the article that inspired this piece — use 2-4 specific facts, names, dates, or quotes as anchors. Do not reproduce its structure or argument — take a different angle):\n---\n' + source_text + '\n---\n\n') if source_text else ''}"
             f"Angle/inspiration: {title}\n"
             f"{source_note}\n\n"
             "Return format — EXACTLY as follows:\n"
             f"TITLE: [your sharp essay title, not the angle above]\n\n"
-            f"[essay body, 1200-1500 words, starting directly — no H1 heading, no \"By {agent_name}\"]"
+            f"[essay body, ~{target_words} words, starting directly — no H1 heading, no \"By {agent_name}\"]"
         )
 
         try:
