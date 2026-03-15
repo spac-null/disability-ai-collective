@@ -983,6 +983,13 @@ body {
   outline-offset: 2px;
 }
 
+.newsletter-msg {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-accent);
+  margin: var(--space-2) 0 0;
+  min-height: 1.2em;
+}
+
 /* ========================================
    UTILITY CLASSES
 ========================================= */

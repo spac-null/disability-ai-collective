@@ -778,6 +778,30 @@ excerpt: "{excerpt}"
         except Exception as e:
             self.logger.warning("Bluesky post failed: %s", e)
 
+    def _send_newsletter(self, title, content, article_file, agent_name):
+        """Send newsletter to subscribers via newsletter-send.py (non-blocking)."""
+        import subprocess, os
+        try:
+            slug_md = article_file.name
+            y, m, d = slug_md[:10].split("-")
+            slug = slug_md[11:].replace(".md", "")
+            site_url = os.environ.get("SITE_URL", "https://cripminds.com")
+            url = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
+
+            # Extract first paragraph as excerpt
+            lines = [l.strip() for l in content.split("
+") if l.strip() and not l.startswith("#") and not l.startswith("!") and not l.startswith("*")]
+            excerpt = lines[0][:280] + ("…" if len(lines[0]) > 280 else "") if lines else ""
+
+            result = subprocess.run(
+                ["python3", "/srv/scripts/ops/newsletter-send.py",
+                 "--title", title, "--url", url, "--excerpt", excerpt, "--author", agent_name],
+                capture_output=True, text=True, timeout=30
+            )
+            self.logger.info("Newsletter: %s", result.stdout.strip() or result.stderr.strip())
+        except Exception as e:
+            self.logger.warning("Newsletter send failed: %s", e)
+
     def run_production_automation(self):
         """
         PRODUCTION-READY main execution flow
@@ -916,6 +940,10 @@ excerpt: "{excerpt}"
         # Step 8: Post to Bluesky (non-blocking)
         if commit_success:
             self.post_to_bluesky(extracted_title, content, article_file, image_filenames)
+
+        # Step 9: Send newsletter (non-blocking)
+        if commit_success:
+            self._send_newsletter(extracted_title, content, article_file, agent_name)
 
         return {
             "status": "success" if commit_success else "partial",

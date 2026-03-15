@@ -197,11 +197,34 @@
                 <div class="site-footer__section">
                     <h3>Subscribe</h3>
                     <p class="newsletter-desc">New essays, delivered to your inbox.</p>
-                    <form class="newsletter-form" action="https://buttondown.email/api/emails/embed-subscribe/cripminds" method="post" target="popupwindow" onsubmit="window.open('https://buttondown.email/cripminds', 'popupwindow')">
+                    <form class="newsletter-form" id="newsletter-form">
                         <label for="bd-email" class="sr-only">Email address</label>
                         <input type="email" name="email" id="bd-email" placeholder="your@email.com" required>
                         <button type="submit">Subscribe</button>
+                        <p class="newsletter-msg" id="newsletter-msg" aria-live="polite"></p>
                     </form>
+                    <script>
+                    document.getElementById("newsletter-form").addEventListener("submit", function(e) {
+                      e.preventDefault();
+                      var email = document.getElementById("bd-email").value;
+                      var msg = document.getElementById("newsletter-msg");
+                      var btn = this.querySelector("button");
+                      btn.disabled = true;
+                      fetch("https://subscribe.cripminds.com/subscribe", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({email: email})
+                      }).then(function(r){ return r.json(); }).then(function(d) {
+                        msg.textContent = d.status === "already_confirmed"
+                          ? "You’re already subscribed."
+                          : "Check your inbox to confirm.";
+                        document.getElementById("bd-email").value = "";
+                      }).catch(function() {
+                        msg.textContent = "Something went wrong. Try again.";
+                        btn.disabled = false;
+                      });
+                    });
+                    </script>
                 </div>
             </div>
             
