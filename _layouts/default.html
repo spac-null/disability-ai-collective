@@ -7,7 +7,7 @@
     
     <!-- SEO and accessibility meta -->
     <title>{% if page.title and page.title != site.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
-    <meta name="description" content="{% if page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
+    <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% elsif page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
     <meta name="author" content="{{ site.author }}">
     {% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% else %}<meta name="robots" content="index, follow">{% endif %}
     <link rel="canonical" href="{{ site.url }}{{ site.baseurl }}{{ page.url }}">
@@ -32,6 +32,7 @@
     {% endif %}
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@cripminds">
     <meta name="twitter:title" content="{% if page.title and page.title != site.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}">
     <meta name="twitter:description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | truncate: 200 }}{% elsif page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
     {% if page.image %}
@@ -80,7 +81,7 @@
         "@type": "ImageObject",
         "url": "{{ site.url }}{{ site.og_image }}"
       },
-      "sameAs": []
+      "sameAs": ["https://bsky.app/profile/cripminds.bsky.social"]
     }
     </script>
     {% if page.layout == "post" %}
