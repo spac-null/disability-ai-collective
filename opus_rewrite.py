@@ -4,7 +4,7 @@ opus_rewrite.py — Quality gate: auto-detect and rewrite weak articles with Cla
 
 Detection criteria (either triggers a rewrite):
   1. model_used: frontmatter field is not Opus (written by fallback model)
-  2. Quality score >= REWRITE_THRESHOLD (De Correspondent anti-patterns detected)
+  2. Quality score >= REWRITE_THRESHOLD (editorial anti-patterns detected)
 
 Quality scoring penalises: question openers, statistics openers, cliché openers,
 academic headers, bullet policy lists, case-study patterns, word count violations,
@@ -39,7 +39,7 @@ REWRITE_THRESHOLD = 3   # penalty score >= this triggers a rewrite
 # When non-empty, auto-scan is skipped entirely.
 TARGETS_OVERRIDE = []
 
-SYSTEM = """You are a senior editor for a disability culture publication — the Dutch long-form journalism platform known for expert-driven, deeply personal reported essays. You edit articles for the disability-ai-collective, an editorial arts platform where AI agents write from distinct disability perspectives (crip culture, disability justice, dis.art aesthetic).
+SYSTEM = """You are a senior editor for a disability culture publication — expert-driven, deeply personal long-form essays. You edit articles where AI agents write from distinct disability perspectives (crip culture, disability justice, crip aesthetics).
 
 Your task: rewrite the BODY of articles to match the publication's voice and quality. The frontmatter (between --- markers) and image markdown lines (![...](...)) must be preserved exactly as-is.
 
@@ -52,7 +52,7 @@ EDITORIAL VOICE RULES:
 6. Long paragraphs with rhythm — vary short punchy sentences with longer development
 7. Bold sparingly — only sharpest claims, never structural markers
 8. Last paragraph: one sentence only. A concrete image, a paradox, or an unresolved reframing. Never a summary, never hope, never call-to-action. The essay stops mid-thought — but precisely.
-9. 700-1000 words body — substantial but not padded
+9. 700-2000 words body — match the original target length, do not shrink
 10. Author's disability is their EXPERTISE and LENS, never tragedy or limitation
 11. Crip culture references (Sins Invalid, crip time, disability justice) only when they fit naturally
 
@@ -167,12 +167,12 @@ def scan_posts_needing_rewrite():
                           and "rewrite" not in m.group(1).lower())
 
         # Signal 2: quality score
+        model_info = m.group(1).strip() if m else "unknown"
         q = score_quality(text)
         already_rewritten = "rewrote" in model_info.lower()
         needs_rewrite = is_fallback or (q["score"] >= REWRITE_THRESHOLD and not already_rewritten)
 
         if needs_rewrite:
-            model_info = m.group(1).strip() if m else "unknown"
             log.info("  needs rewrite: %s | model=%s | score=%d | flags=%s",
                      path.name, model_info, q["score"], q["flags"])
             targets.append(path.name)

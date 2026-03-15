@@ -578,7 +578,7 @@ class ProductionOrchestrator:
             "5. Long paragraphs with rhythm — vary short punchy sentences with longer development\n"
             "6. Bold sparingly — only sharpest claims, never structural markers\n"
             "7. Last paragraph: one sentence only. A concrete image, a paradox, or an unresolved reframing. Never a summary, never hope, never call-to-action. The essay stops mid-thought — but precisely.\n"
-            "8. 700-1000 words body — substantial but not padded\n"
+            "8. 700-2000 words body — match the original target length, do not shrink\n"
             "9. Author\'s disability is their EXPERTISE and LENS, never tragedy or limitation\n"
             "10. Crip culture references only when they fit naturally\n\n"
             "Return ONLY the complete rewritten article (frontmatter preserved + image lines preserved "
