@@ -148,10 +148,19 @@ SAUCE_CATALOG = {
     },
 }
 
-SAUCE_FALLBACK_ORDER = ["dada-collage", "glitch-corrupt", "punk-pamphlet", "popart-collage"]
+SAUCE_FALLBACK_ORDER = ["popart-collage", "glitch-corrupt", "pixel-strict", "dada-collage"]
 
-def _build_linocut(obj):
-    """Image 1 — always raw linocut, object as central motif."""
+def _build_linocut(obj, accent=None):
+    """Image 1 — linocut, alternates B&W and two-color risograph."""
+    import random
+    if accent and random.random() < 0.5:
+        return (
+            f"two-color risograph print, {obj} as bold central motif, "
+            f"misregistered {accent} and black ink layers on off-white paper, "
+            f"halftone dot grain visible, ink overlap creates third color, "
+            f"protest print tradition, uneven ink pressure, "
+            f"visible paper texture, no gradients, no photorealism, no text"
+        )
     return (
         f"raw woodblock linocut relief print, {obj} as bold central motif, "
         f"deep hand-carved gouge lines, stark black ink on cream paper, "
@@ -284,7 +293,7 @@ class SceneImageGenerator:
         """Image 1 = raw linocut always. Images 2+ = context-matched sauces."""
         accent = ACCENTS[abs(hash(title)) % len(ACCENTS)]
         person, place, obj = self._extract_subjects(content, title)
-        prompts = [_build_linocut(obj)]
+        prompts = [_build_linocut(obj, accent=accent)]
         sauces = self._pick_sauces(content, title, n=num_images - 1)
         for key in sauces:
             prompts.append(_build_sauce(key, person, obj, accent))
