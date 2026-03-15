@@ -413,6 +413,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
             generator = SceneImageGenerator(width=800, height=450, pixel_size=5)
             image_filenames = []
+            image_descriptions = []
 
             self.logger.info("Generating scene-based pixel art images...")
 
@@ -425,9 +426,10 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                     f.write(img['data'])
                 
                 image_filenames.append(img['filename'])
-                self.logger.info(f"Generated intelligent image: {img['filename']} - {img['description']}")
+                image_descriptions.append(img.get('alt_text') or img.get('description') or img['filename'].replace('_',' ').rsplit('.',1)[0])
+                self.logger.info(f"Generated intelligent image: {img['filename']} - {img.get('description','')}")
             
-            return image_filenames
+            return image_filenames, image_descriptions
             
         except Exception as e:
             self.logger.error(f"Intelligent image generation failed: {e}")
@@ -454,20 +456,24 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                     
                     image_filenames.append(filename)
                 
+                fallback_descs = ["Halftone pixel art illustration" for _ in image_filenames]
                 self.logger.warning("Used fallback image generator")
-                return image_filenames
+                return image_filenames, fallback_descs
                 
             except Exception as e2:
                 self.logger.error(f"Fallback image generation also failed: {e2}")
-                return [f"{slug}_placeholder_{i+1}.png" for i in range(num_images)]
+                placeholders = [f"{slug}_placeholder_{i+1}.png" for i in range(num_images)]
+                return placeholders, ["Halftone pixel art illustration" for _ in placeholders]
 
-    def _insert_images_balanced(self, content, image_filenames):
+    def _insert_images_balanced(self, content, image_filenames, image_descriptions=None):
         """Insert body images at ~40% and ~75% of article content.
 
         image_filenames[0] = hero (_setting_1) — already in frontmatter, not repeated.
         image_filenames[1] = _moment_2 — inserted at ~40%.
         image_filenames[2] = _symbol_3 — inserted at ~75%.
         """
+        if not image_descriptions:
+            image_descriptions = [''] * len(image_filenames)
         if len(image_filenames) < 2:
             return content
 
@@ -489,12 +495,17 @@ The question isn't whether {title.lower()} matters. The question is whether the 
             inserts.append((target_idx(0.75), image_filenames[2]))
 
         for idx, fname in sorted(inserts, reverse=True):
-            img_tag = f'![]({{{{ site.baseurl }}}}/assets/{fname})'
+            try:
+                fi = image_filenames.index(fname)
+                desc = image_descriptions[fi] if fi < len(image_descriptions) else ''
+            except (ValueError, IndexError):
+                desc = ''
+            img_tag = f'![{desc}]({{{{ site.baseurl }}}}/assets/{fname})'
             paragraphs.insert(idx + 1, img_tag)
 
         return '\n\n'.join(paragraphs)
 
-    def create_article_file(self, metadata, content, image_filenames):
+    def create_article_file(self, metadata, content, image_filenames, image_descriptions=None):
         """Create properly formatted article file."""
         filename = metadata['filename']
         filepath = self.posts_dir / filename
@@ -504,7 +515,8 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         for line in content.splitlines():
             line = line.strip()
             if line and not line.startswith('#') and not line.startswith('!') and not line.startswith('---') and not line.startswith('*') and len(line) > 40:
-                excerpt = re.sub(r'\*\*|\*|`', '', line)[:160].strip()
+                clean = re.sub(r'\*\*|\*|`', '', line).strip()
+                excerpt = clean[:160].rsplit(' ', 1)[0] if len(clean) > 160 else clean
                 break
 
         front_matter = f"""---
@@ -524,7 +536,7 @@ excerpt: "{excerpt}"
             front_matter += f"{metadata['source_note']}\n\n"
 
         # Insert body images at balanced positions (hero image[0] is frontmatter only)
-        body = self._insert_images_balanced(content, image_filenames)
+        body = self._insert_images_balanced(content, image_filenames, image_descriptions)
 
         full_content = front_matter + body
 
@@ -789,8 +801,7 @@ excerpt: "{excerpt}"
             url = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
 
             # Extract first paragraph as excerpt
-            lines = [l.strip() for l in content.split("
-") if l.strip() and not l.startswith("#") and not l.startswith("!") and not l.startswith("*")]
+            lines = [l.strip() for l in content.split("\n") if l.strip() and not l.startswith("#") and not l.startswith("!") and not l.startswith("*")]
             excerpt = lines[0][:280] + ("…" if len(lines[0]) > 280 else "") if lines else ""
 
             result = subprocess.run(
@@ -926,10 +937,10 @@ excerpt: "{excerpt}"
         }
 
         # Step 5: Generate images (placeholder)
-        image_filenames = self.generate_images(content, slug)
+        image_filenames, image_descriptions = self.generate_images(content, slug)
 
         # Step 6: Create article file
-        article_file = self.create_article_file(metadata, content, image_filenames)
+        article_file = self.create_article_file(metadata, content, image_filenames, image_descriptions)
 
         # Step 6b: Non-blocking citation review
         review_file, is_clean = self.validate_article(content, article_file, slug)
