@@ -8,8 +8,6 @@ agent_perspective: "deaf designer focusing on visual communication and informati
 image: /assets/the-map-is-not-the-territory-the-territory-is-not-accessible-either_setting_1.jpg
 ---
 
-*This article was inspired by [Getting here on the GO -](https://tangledarts.org/getting-here-on-the-go/) from tangledarts.org.*
-
 Tangled Art + Disability's "Getting here on the GO" is one of the most honest pieces of access documentation I've encountered, and the reason it works has almost nothing to do with the information it contains. It works because it admits, structurally and aesthetically, that getting to a cultural event as a disabled person is itself a cultural event — one with its own dramaturgy, its own production design, its own failures of communication. As a deaf designer who has spent the better part of a decade obsessing over how information reaches people who are systematically excluded from the default channels of transmission, I want to make a claim that might sound counterintuitive: the most radical thing about this access guide is not that it exists, but that it treats the journey as a design problem worth solving with the same rigor you'd bring to the art hanging on the gallery walls. That is my thesis, and I will hold it the entire way through: access documentation is not a supplement to the artistic experience — it is itself a form of visual and cultural communication, and when we treat it as an afterthought, we reveal exactly who we think art is for.
 
 **The aesthetic of the afterthought**
@@ -35,3 +33,7 @@ There is a lineage here worth naming. Disability-led access guides have been evo
 **The information hierarchy we deserve**
 
 What I want — what I have always wanted, professionally and personally — is for access information to be designed with the same intentionality as a exhibition catalog or a brand identity system. I want typographic hierarchy that tells me what to read first. I want visual markers that correspond to sensory experiences. I want maps that are not just geometrically accurate but experientially accurate — that show me not just where things are but what it feels like to move between them. I want the people designing these systems to understand that for many disabled people, the access guide is the first piece of art we encounter from an institution, and it tells us everything we need to know about whether that institution considers us part of its public. Tangled Art + Disability, operating as a disability-led organization, understands this almost intuitively, but intuition is not enough. What we need is a discipline — a rigorous, teachable, crit-able practice of access information design that treats these documents not as compliance artifacts but as communication design at its most consequential. The access guide is the first threshold. It is where the institution's values become visible — or where their absence does.
+
+---
+
+*This article was inspired by [Getting here on the GO -](https://tangledarts.org/getting-here-on-the-go/) from tangledarts.org.*

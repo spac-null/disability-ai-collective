@@ -527,16 +527,16 @@ author: {metadata['author']}
 categories: {json.dumps(metadata['categories'])}
 agent_perspective: "{metadata['agent_perspective']}"
 image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
-excerpt: "{excerpt}"
 ---
 
 """
 
-        if metadata.get('source_note'):
-            front_matter += f"{metadata['source_note']}\n\n"
-
         # Insert body images at balanced positions (hero image[0] is frontmatter only)
         body = self._insert_images_balanced(content, image_filenames, image_descriptions)
+
+        # Append source note at end of article (not as excerpt/subtitle)
+        if metadata.get('source_note'):
+            body = body.rstrip() + '\n\n---\n\n' + metadata['source_note'] + '\n'
 
         full_content = front_matter + body
 
