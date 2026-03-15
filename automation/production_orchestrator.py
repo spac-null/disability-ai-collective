@@ -790,6 +790,77 @@ image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
         except Exception as e:
             self.logger.warning("Bluesky post failed: %s", e)
 
+
+    def post_to_mastodon(self, title, body, article_file, image_filenames=None):
+        """Post article to Mastodon after successful commit. Non-blocking."""
+        import os, json, mimetypes, urllib.request as ureq, urllib.parse
+
+        token    = os.environ.get("MASTODON_ACCESS_TOKEN", "")
+        instance = os.environ.get("MASTODON_INSTANCE", "").rstrip("/")
+        if not token or not instance:
+            self.logger.debug("Mastodon: no credentials, skipping")
+            return
+
+        try:
+            slug_md  = article_file.name
+            y, m, d  = slug_md[:10].split("-")
+            slug     = slug_md[11:].replace(".md", "")
+            site_url = os.environ.get("SITE_URL", "https://cripminds.com")
+            url      = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
+
+            # Hook — 500 char limit; URL counts as ~23; leave room for tags + spacing
+            tags = "#DisabilityJustice #CripMinds #DisabilityArts #AccessibilityMatters"
+            # url(23) + newlines(2) + tags + newlines(2) = overhead
+            overhead = 23 + 2 + len(tags) + 2
+            max_hook = 500 - overhead
+            hook = self._bsky_hook(title, body, max_chars=max_hook)
+            status_text = f"{hook}\n\n{url}\n\n{tags}"
+
+            headers = {"Authorization": f"Bearer {token}"}
+
+            # Upload hero image as media attachment
+            media_id = None
+            hero = None
+            if image_filenames:
+                hero_name = next((fn for fn in image_filenames if "_setting_1" in fn), image_filenames[0])
+                hero = self.assets_dir / hero_name
+            if hero and hero.exists():
+                img_bytes = hero.read_bytes()
+                mime = mimetypes.guess_type(str(hero))[0] or "image/jpeg"
+                boundary = "----MastodonBoundary"
+                body_parts = (
+                    f"--{boundary}\r\n"
+                    f'Content-Disposition: form-data; name="file"; filename="{hero.name}"\r\n'
+                    f"Content-Type: {mime}\r\n\r\n"
+                ).encode() + img_bytes + f"\r\n--{boundary}--\r\n".encode()
+                media_req = ureq.Request(
+                    f"{instance}/api/v2/media",
+                    data=body_parts,
+                    headers={**headers, "Content-Type": f"multipart/form-data; boundary={boundary}"},
+                    method="POST",
+                )
+                with ureq.urlopen(media_req, timeout=30) as r:
+                    media = json.loads(r.read())
+                media_id = media.get("id")
+                self.logger.info("Mastodon: media uploaded id=%s", media_id)
+
+            # Post status
+            params = {"status": status_text, "visibility": "public"}
+            if media_id:
+                params["media_ids[]"] = media_id
+            post_req = ureq.Request(
+                f"{instance}/api/v1/statuses",
+                data=urllib.parse.urlencode(params).encode(),
+                headers={**headers, "Content-Type": "application/x-www-form-urlencoded"},
+                method="POST",
+            )
+            with ureq.urlopen(post_req, timeout=15) as r:
+                result = json.loads(r.read())
+            self.logger.info("Mastodon: posted %s", result.get("url", "?"))
+
+        except Exception as e:
+            self.logger.warning("Mastodon post failed: %s", e)
+
     def _send_newsletter(self, title, content, article_file, agent_name):
         """Send newsletter to subscribers via newsletter-send.py (non-blocking)."""
         import subprocess, os
@@ -948,9 +1019,10 @@ image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
         # Step 7: Commit article + review sidecar
         commit_success = self.commit_to_git(article_file, image_filenames, review_file)
 
-        # Step 8: Post to Bluesky (non-blocking)
+        # Step 8: Post to Bluesky + Mastodon (non-blocking)
         if commit_success:
             self.post_to_bluesky(extracted_title, content, article_file, image_filenames)
+            self.post_to_mastodon(extracted_title, content, article_file, image_filenames)
 
         # Step 9: Send newsletter (non-blocking)
         if commit_success:
