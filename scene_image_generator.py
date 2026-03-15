@@ -170,9 +170,9 @@ SAUCE_FALLBACK_ORDER = ["popart-collage", "glitch-corrupt", "pixel-strict", "dad
 
 NEAR_BW_STYLES = {"punk-pamphlet", "urbit-pixel", "mimeograph", "dada-sculpture"}
 
-def _build_linocut(obj, accent=None):
+def _build_linocut(obj, accent=None, use_riso=False):
     """Image 1 — linocut, alternates B&W and two-color risograph."""
-    if accent and random.random() < 0.5:
+    if accent and use_riso:
         return (
             f"two-color risograph print, {obj} as bold central motif, "
             f"misregistered {accent} and black ink layers on off-white paper, "
@@ -271,7 +271,8 @@ class SceneImageGenerator:
             place = "sparse studio table, scattered notebooks, diffuse north window light"
             obj = found_obj or "hand-drawn topographic map fragment, ink contours visible"
 
-        elif any(w in title_lower for w in ['access story', 'transportation', 'transit', 'deaf culture']):
+        elif any(w in title_lower for w in ['access story', 'transportation', 'deaf culture'])\
+                or bool(re.search(r'\btransit\b', title_lower)):
             person = "two hands mid-ASL sign, backlit silhouette, wrists and fingers close"
             place = "empty transit corridor, harsh fluorescent overhead strip light"
             obj = found_obj or "vintage TTY terminal on steel desk, handset resting"
@@ -315,7 +316,8 @@ class SceneImageGenerator:
         """Image 1 = raw linocut always. Images 2+ = context-matched sauces."""
         accent = ACCENTS[int(hashlib.md5((title + slug).encode()).hexdigest(), 16) % len(ACCENTS)]
         person, place, obj = self._extract_subjects(content, title)
-        prompts = [_build_linocut(obj, accent=accent)]
+        use_riso = int(hashlib.md5((title + slug + 'riso').encode()).hexdigest(), 16) % 2 == 0
+        prompts = [_build_linocut(obj, accent=accent, use_riso=use_riso)]
         sauces = self._pick_sauces(content, title, n=num_images - 1)
         for key in sauces:
             prompts.append(_build_sauce(key, person, obj, accent, place=place))
@@ -348,8 +350,6 @@ class SceneImageGenerator:
         # Color diversity guard: if both picks are near-B&W, swap last for best color style
         if len(picked) >= 2 and all(p in NEAR_BW_STYLES for p in picked):
             color_ranked = [k for k in ranked if k not in NEAR_BW_STYLES and k not in picked]
-            if not color_ranked:
-                color_ranked = [k for k in SAUCE_FALLBACK_ORDER if k not in NEAR_BW_STYLES and k not in picked]
             if color_ranked:
                 picked[-1] = color_ranked[0]
         logger.info("Sauce selection (n=%d): %s | scores: %s", n,
