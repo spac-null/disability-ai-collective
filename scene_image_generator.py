@@ -16,6 +16,7 @@ Requires: POLLINATIONS_API_KEY env var
 import logging
 import os
 import random
+import hashlib
 import re
 import struct
 import urllib.parse
@@ -208,15 +209,15 @@ class SceneImageGenerator:
     def _extract_subjects(self, content, title):
         """Extract visual subjects from article frontmatter. No LLM needed."""
         # Parse frontmatter
-        fm_match = re.search(r'^---\n(.*?)\n---', content, _re.DOTALL)
+        fm_match = re.search(r'^---\n(.*?)\n---', content, re.DOTALL)
         excerpt = ""
         categories = []
         if fm_match:
             fm = fm_match.group(1)
-            exc_m = re.search(r'^excerpt:\s*["\']?(.*?)["\']?\s*$', fm, _re.MULTILINE)
+            exc_m = re.search(r'^excerpt:\s*["\']?(.*?)["\']?\s*$', fm, re.MULTILINE)
             if exc_m:
                 excerpt = exc_m.group(1).strip('"\'')
-            cats_m = re.search(r'^categories:\s*\[(.*?)\]', fm, _re.MULTILINE)
+            cats_m = re.search(r'^categories:\s*\[(.*?)\]', fm, re.MULTILINE)
             if cats_m:
                 categories = [c.strip(' "\'') for c in cats_m.group(1).split(',')]
 
@@ -250,7 +251,7 @@ class SceneImageGenerator:
             place = "rain-slicked urban sidewalk at dusk, amber puddle reflections"
             obj = found_obj or "worn wheelchair tire cross-section, rubber tread and spoke"
 
-        elif any(w in title_lower for w in ['oscar', 'oscars', 'sound of exclusion', 'exclusion']):
+        elif any(w in title_lower for w in ['oscar', 'oscars', 'sound of exclusion']):
             person = "lone figure in empty cinema row, projection light on one side of face"
             place = "empty multiplex theater, rows of vacant seats, screen light beyond"
             obj = found_obj or "35mm film reel, half-unspooled, iridescent celluloid"
@@ -307,7 +308,7 @@ class SceneImageGenerator:
 
     def _generate_prompts(self, content, title, num_images=3, slug=""):
         """Image 1 = raw linocut always. Images 2+ = context-matched sauces."""
-        accent = ACCENTS[abs(hash(title + slug)) % len(ACCENTS)]
+        accent = ACCENTS[int(hashlib.md5((title + slug).encode()).hexdigest(), 16) % len(ACCENTS)]
         person, place, obj = self._extract_subjects(content, title)
         prompts = [_build_linocut(obj, accent=accent)]
         sauces = self._pick_sauces(content, title, n=num_images - 1)
@@ -337,7 +338,8 @@ class SceneImageGenerator:
         for key, sauce in SAUCE_CATALOG.items():
             scores[key] = sum(
             1 for kw in sauce["keywords"]
-            if (kw in corpus if ' ' in kw else bool(re.search(r'\b' + re.escape(kw) + r'\b', corpus)))
+            if (kw in corpus if ' ' in kw
+                else bool(re.search(r'\b' + re.escape(kw) + r'\b', corpus)))
         )
         ranked = sorted(scores, key=lambda k: scores[k], reverse=True)
         # Pick top-n, fall back to SAUCE_FALLBACK_ORDER if ties at 0
@@ -381,7 +383,7 @@ class SceneImageGenerator:
 
     # ── Main generation ───────────────────────────────────────────────────────
 
-    def generate_content_aware_images(self, content, title, slug, num_images=3, validate=False):
+    def generate_content_aware_images(self, content, title, slug, num_images=3):
         """Generate num_images gallery-quality images via Pollinations FLUX."""
         images = []
         labels = ['setting', 'moment', 'symbol']
