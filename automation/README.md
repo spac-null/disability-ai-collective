@@ -57,11 +57,11 @@ Runs at 07:00 daily. Self-loads openclaw.env.
 
 ### `opus_rewrite.py`
 Quality gate: auto-detects and rewrites weak articles with Claude Opus.
-Runs automatically at **10:30 daily** (after article generation at 09:00).
+Runs automatically at **10:30 daily** (after article generation at 09:00). Only scans last 14 days.
 
 Detection triggers (either fires a rewrite):
 - `model_used:` frontmatter field is not Opus (written by fallback model)
-- Quality score ≥ 2: question opener, academic headers, bullet lists, CTA ending, etc.
+- Quality score ≥ 3: question opener, academic headers, bullet lists, CTA ending, etc.
 
 On rewrite: updates `model_used:` to `claude-opus-4-6 (rewrote <original>)`, commits,
 and **pushes to GH Pages immediately**.
