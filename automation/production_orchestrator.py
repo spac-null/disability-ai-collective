@@ -546,13 +546,17 @@ class ProductionOrchestrator:
         """
         import os
 
-        # Dynamic gold standard: use most recent article in _posts (or fallback to known good)
-        _candidates = sorted(self.posts_dir.glob("*.md"), reverse=True)
-        gold_path = None
-        for _c in _candidates:
-            if _c.stat().st_size > 3000:  # must be a real article, not a stub
-                gold_path = _c
-                break
+        # Curated gold standard with dynamic fallback — avoids voice drift feedback loop
+        _gold_ref = self.posts_dir / "2026-03-08-architects-are-designing-buildings-for-the-wrong-sense.md"
+        if _gold_ref.exists() and _gold_ref.stat().st_size > 3000:
+            gold_path = _gold_ref
+        else:
+            _candidates = sorted(self.posts_dir.glob("*.md"), reverse=True)
+            gold_path = None
+            for _c in _candidates:
+                if _c.stat().st_size > 3000 and _c != _gold_ref:
+                    gold_path = _c
+                    break
         if not gold_path:
             self.logger.warning("No suitable gold standard article found — skipping rewrite")
             return content
@@ -566,7 +570,7 @@ class ProductionOrchestrator:
             "Your task: rewrite the BODY of articles to match the publication's voice and quality. "
             "The frontmatter (between --- markers) and image markdown lines (![...](...)) "
             "must be preserved exactly as-is.\n\n"
-            "DE CORRESPONDENT VOICE RULES:\n"
+            "EDITORIAL VOICE RULES:\n"
             "1. Open with ONE specific concrete moment, scene, or sharp claim — never a question, statistics, or 'In today\'s world'\n"
             "2. First-person throughout — lived expertise, not detached analysis\n"
             "3. NO academic headers: Research Question / Methodology / Key Findings / Recommendations\n"

@@ -33,17 +33,17 @@ API_URL          = "http://172.19.0.1:8317/v1/chat/completions"
 MODEL            = "claude-opus-4-6"
 POSTS            = Path("/srv/data/openclaw/workspaces/ops/disability-ai-collective/_posts")
 GOLD_STANDARD    = POSTS / "2026-03-08-architects-are-designing-buildings-for-the-wrong-sense.md"
-REWRITE_THRESHOLD = 2   # penalty score >= this triggers a rewrite
+REWRITE_THRESHOLD = 3   # penalty score >= this triggers a rewrite
 
 # Manual override: add filenames here to force-rewrite specific articles.
 # When non-empty, auto-scan is skipped entirely.
 TARGETS_OVERRIDE = []
 
-SYSTEM = """You are a senior editor at De Correspondent — the Dutch long-form journalism platform known for expert-driven, deeply personal reported essays. You edit articles for the disability-ai-collective, an editorial arts platform where AI agents write from distinct disability perspectives (crip culture, disability justice, dis.art aesthetic).
+SYSTEM = """You are a senior editor for a disability culture publication — the Dutch long-form journalism platform known for expert-driven, deeply personal reported essays. You edit articles for the disability-ai-collective, an editorial arts platform where AI agents write from distinct disability perspectives (crip culture, disability justice, dis.art aesthetic).
 
-Your task: rewrite the BODY of articles to match De Correspondent quality. The frontmatter (between --- markers) and image markdown lines (![...](...)) must be preserved exactly as-is.
+Your task: rewrite the BODY of articles to match the publication's voice and quality. The frontmatter (between --- markers) and image markdown lines (![...](...)) must be preserved exactly as-is.
 
-DE CORRESPONDENT VOICE RULES:
+EDITORIAL VOICE RULES:
 1. Open with ONE specific concrete moment, scene, or sharp claim — never a question, statistics, or "In today's world"
 2. First-person throughout — lived expertise, not detached analysis
 3. NO academic headers: Research Question / Methodology / Key Findings / Recommendations / Community Questions
@@ -51,7 +51,7 @@ DE CORRESPONDENT VOICE RULES:
 5. NO "Case study: Sarah, a graphic designer..." — use real narrative flow
 6. Long paragraphs with rhythm — vary short punchy sentences with longer development
 7. Bold sparingly — only sharpest claims, never structural markers
-8. End on a resonant question or image, not a call-to-action
+8. Last paragraph: one sentence only. A concrete image, a paradox, or an unresolved reframing. Never a summary, never hope, never call-to-action. The essay stops mid-thought — but precisely.
 9. 700-1000 words body — substantial but not padded
 10. Author's disability is their EXPERTISE and LENS, never tragedy or limitation
 11. Crip culture references (Sins Invalid, crip time, disability justice) only when they fit naturally
@@ -69,7 +69,7 @@ def _extract_body(text):
 
 def score_quality(text):
     """
-    Score De Correspondent anti-patterns in article text.
+    Score editorial anti-patterns in article text.
     Returns {"score": int, "flags": [str]}.
     Higher score = worse quality. Threshold: REWRITE_THRESHOLD.
     """
@@ -168,7 +168,8 @@ def scan_posts_needing_rewrite():
 
         # Signal 2: quality score
         q = score_quality(text)
-        needs_rewrite = is_fallback or q["score"] >= REWRITE_THRESHOLD
+        already_rewritten = "rewrote" in model_info.lower()
+        needs_rewrite = is_fallback or (q["score"] >= REWRITE_THRESHOLD and not already_rewritten)
 
         if needs_rewrite:
             model_info = m.group(1).strip() if m else "unknown"
@@ -211,7 +212,7 @@ def verify_frontmatter_preserved(original, rewritten):
 
 
 def call_opus(article_text, gold_text, filename):
-    user_msg = f"""STYLE REFERENCE (De Correspondent quality — match this voice):
+    user_msg = f"""STYLE REFERENCE (match this voice and quality):
 <gold_standard>
 {gold_text}
 </gold_standard>
@@ -221,7 +222,7 @@ ARTICLE TO REWRITE:
 {article_text}
 </article>
 
-Rewrite the article body to De Correspondent quality. Preserve frontmatter and all image markdown lines exactly."""
+Rewrite the article body to match the publication's voice and quality. Preserve frontmatter and all image markdown lines exactly."""
 
     payload = json.dumps({
         "model": MODEL,
@@ -254,10 +255,19 @@ def git_commit_rewrites(rewritten_filenames):
 
 
 def main():
-    if not GOLD_STANDARD.exists():
-        raise SystemExit(f"Gold standard article not found: {GOLD_STANDARD}")
-
-    gold = GOLD_STANDARD.read_text()
+    if GOLD_STANDARD.exists() and GOLD_STANDARD.stat().st_size > 3000:
+        gold = GOLD_STANDARD.read_text()
+    else:
+        _candidates = sorted(POSTS.glob("*.md"), reverse=True)
+        _fallback = None
+        for _c in _candidates:
+            if _c.stat().st_size > 3000 and _c != GOLD_STANDARD:
+                _fallback = _c
+                break
+        if not _fallback:
+            raise SystemExit("No suitable gold standard article found in _posts/")
+        log.warning("Gold standard missing — using %s as reference", _fallback.name)
+        gold = _fallback.read_text()
     targets = get_targets()
 
     if not targets:
