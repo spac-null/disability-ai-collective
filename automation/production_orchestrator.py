@@ -14,6 +14,7 @@ import subprocess
 from datetime import datetime, timedelta
 from pathlib import Path
 import time
+import urllib.request
 
 # Load secrets from env file (no export statements — must parse manually)
 _ENV_FILE = Path("/srv/secrets/openclaw.env")
@@ -129,6 +130,42 @@ class ProductionOrchestrator:
             if conn:
                 conn.close()
 
+
+
+    def _extract_paragraphs(self, html: str) -> str:
+        """Extract body text from HTML. Skip short nav/caption paragraphs."""
+        paragraphs = re.findall(r'<p[^>]*>(.*?)</p>', html, re.DOTALL | re.IGNORECASE)
+        clean = []
+        for p in paragraphs:
+            text = re.sub(r'<[^>]+>', '', p).strip()
+            text = re.sub(r'\s+', ' ', text)
+            if len(text) > 80:
+                clean.append(text)
+        return "\n\n".join(clean[:10])
+
+    def fetch_source_article(self, url: str, max_chars: int = 3000) -> str | None:
+        """Fetch and extract text from source article URL. Never blocks generation."""
+        if not url or not url.startswith("http"):
+            return None
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+            })
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                if resp.status != 200:
+                    return None
+                content_type = resp.headers.get("Content-Type", "")
+                if "text/html" not in content_type:
+                    return None
+                html = resp.read().decode("utf-8", errors="replace")[:60000]
+            text = self._extract_paragraphs(html)
+            if not text or len(text) < 200:
+                return None
+            self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
+            return text[:max_chars]
+        except Exception as e:
+            self.logger.debug("fetch_source_article failed for %s: %s", url, e)
+            return None
 
     def mark_finding_as_used(self, finding_id):
         """Mark a finding as used so it won't be picked again."""
@@ -1075,6 +1112,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             domain = discovery['domain']
             source_note = f"*This article was inspired by [{discovery['original_title']}]({discovery['url']}) from {domain}.*"
             self.mark_finding_as_used(discovery['id'])
+            source_text = self.fetch_source_article(discovery.get('url', ''))
             
             # Map domain to agent (improved logic)
             domain_lower = domain.lower()
@@ -1098,6 +1136,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             title = random.choice(topics)
             agent_name = random.choice(list(self.agents.keys()))
             source_note = ""
+            source_text = None
         
         agent_info = self.agents.get(agent_name)
         if not agent_info:
@@ -1119,6 +1158,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             "- Tone: direct, dry when needed, never inspirational, never corporate wellness\n\n"
             "ENDING: Your last paragraph is one sentence. It is a concrete image, a paradox, or a reframing that makes the reader sit with something unresolved. Never summarize. Never offer hope. Never call to action. Never conclude. The essay stops mid-thought — but precisely.\n\n"
             f"{agent_info['prompt_block']}\n\n"
+            f"{('SOURCE MATERIAL (from the article that inspired this piece — use 2-4 specific facts, names, dates, or quotes as anchors. Do not reproduce its structure or argument — take a different angle):\n---\n' + source_text + '\n---\n\n') if source_text else ''}"
             f"Angle/inspiration: {title}\n"
             f"{source_note}\n\n"
             "Return format — EXACTLY as follows:\n"
