@@ -80,7 +80,6 @@ title: "<title>"
 date: <YYYY-MM-DD>
 author: <persona name>
 categories: [<categories>]
-excerpt: "<one-sentence excerpt that opens with a scene or sharp claim>"
 image: /assets/<slug>_setting_1.jpg
 ---
 
