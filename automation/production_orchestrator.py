@@ -89,6 +89,7 @@ class ProductionOrchestrator:
             self.logger.warning("Discovery database not found")
             return None
         
+        conn = None
         try:
             conn = sqlite3.connect(self.discovery_db)
             cursor = conn.cursor()
@@ -106,8 +107,6 @@ class ProductionOrchestrator:
             """, (week_ago,))
 
             result = cursor.fetchone()
-            conn.close()
-
             if result:
                 return {
                     'id': result[0],
@@ -122,12 +121,16 @@ class ProductionOrchestrator:
         except Exception as e:
             self.logger.error(f"Database query failed: {e}")
             return None
+        finally:
+            if conn:
+                conn.close()
 
 
     def mark_finding_as_used(self, finding_id):
         """Mark a finding as used so it won't be picked again."""
         if not self.discovery_db.exists():
             return
+        conn = None
         try:
             conn = sqlite3.connect(self.discovery_db)
             conn.execute(
@@ -135,10 +138,12 @@ class ProductionOrchestrator:
                 (datetime.now().isoformat(), finding_id)
             )
             conn.commit()
-            conn.close()
             self.logger.info("Marked finding %s as used", finding_id)
         except Exception as e:
             self.logger.warning("Could not mark finding as used: %s", e)
+        finally:
+            if conn:
+                conn.close()
 
     def _call_openai_compat_api(self, url, api_key, system_prompt, user_prompt,
                                    model, max_tokens=3500, timeout=120, no_think=False,
@@ -170,7 +175,11 @@ class ProductionOrchestrator:
         )
         with urllib.request.urlopen(req, timeout=timeout) as r:
             data = json.loads(r.read())
-        text = re.sub(r"<think>.*?</think>", "", data["choices"][0]["message"]["content"], flags=re.DOTALL).strip()
+        choices = data.get("choices") or []
+        if not choices or not choices[0].get("message") or choices[0]["message"].get("content") is None:
+            raise ValueError(f"Unexpected API response structure: {list(data.keys())}")
+        raw_text = choices[0]["message"]["content"]
+        text = re.sub(r"<think>.*?</think>", "", raw_text, flags=re.DOTALL).strip()
         if return_model:
             return text, data.get("model", model)
         return text
@@ -284,9 +293,15 @@ class ProductionOrchestrator:
         """
         import os
 
-        gold_path = self.posts_dir / "2026-03-08-architects-are-designing-buildings-for-the-wrong-sense.md"
-        if not gold_path.exists():
-            self.logger.warning("Gold standard article not found — skipping rewrite")
+        # Dynamic gold standard: use most recent article in _posts (or fallback to known good)
+        _candidates = sorted(self.posts_dir.glob("*.md"), reverse=True)
+        gold_path = None
+        for _c in _candidates:
+            if _c.stat().st_size > 3000:  # must be a real article, not a stub
+                gold_path = _c
+                break
+        if not gold_path:
+            self.logger.warning("No suitable gold standard article found — skipping rewrite")
             return content
 
         gold = gold_path.read_text()
@@ -333,7 +348,7 @@ class ProductionOrchestrator:
                 max_tokens=2500,
                 timeout=180,
             )
-            if rewritten and "---" in rewritten[:200] and len(rewritten) > 400:
+            if rewritten and rewritten.count("---") >= 2 and len(rewritten) > 400:
                 self.logger.info("Opus rewrite succeeded (%d chars)", len(rewritten))
                 return rewritten.lstrip("\n")
             self.logger.warning("Opus rewrite returned invalid response — keeping original")
@@ -470,8 +485,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 
             except Exception as e2:
                 self.logger.error(f"Fallback image generation also failed: {e2}")
-                placeholders = [f"{slug}_placeholder_{i+1}.png" for i in range(num_images)]
-                return placeholders, ["Halftone pixel art illustration" for _ in placeholders]
+                return [], []  # No phantom filenames — frontmatter uses default.png
 
     def _insert_images_balanced(self, content, image_filenames, image_descriptions=None):
         """Insert body images at ~40% and ~75% of article content.
@@ -529,11 +543,11 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
         front_matter = f"""---
 layout: post
-title: "{metadata['title']}"
+title: {json.dumps(str(metadata['title']))}
 date: {metadata['date']}
-author: {metadata['author']}
-categories: {json.dumps(metadata['categories'])}
-agent_perspective: "{metadata['agent_perspective']}"
+author: {json.dumps(str(metadata['author']))}
+categories: [{', '.join(metadata['categories'])}]
+agent_perspective: {json.dumps(str(metadata['agent_perspective']))}
 image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
 model_used: {metadata.get('model_used', 'unknown')}
 ---
@@ -562,6 +576,8 @@ model_used: {metadata.get('model_used', 'unknown')}
             os.chdir(self.repo_root)
             
             # Add files
+            if not article_file.exists():
+                raise FileNotFoundError(f"Article file missing before commit: {article_file}")
             subprocess.run(['git', 'add', str(article_file)], check=True)
             
             # Add image files (if they exist)
@@ -705,7 +721,11 @@ model_used: {metadata.get('model_used', 'unknown')}
         try:
             # Article URL — use SITE_URL env if set (custom domain), else github.io
             slug_md    = article_file.name
-            y, m, d    = slug_md[:10].split("-")
+            parts = slug_md[:10].split("-")
+            if len(parts) != 3:
+                self.logger.error("Unexpected article filename format: %s", slug_md)
+                return
+            y, m, d = parts
             slug       = slug_md[11:].replace(".md", "")
             site_url   = os.environ.get("SITE_URL", "https://spac-null.github.io/disability-ai-collective")
             url        = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
@@ -812,7 +832,11 @@ model_used: {metadata.get('model_used', 'unknown')}
 
         try:
             slug_md  = article_file.name
-            y, m, d  = slug_md[:10].split("-")
+            parts = slug_md[:10].split("-")
+            if len(parts) != 3:
+                self.logger.error("Unexpected article filename format: %s", slug_md)
+                return
+            y, m, d  = parts
             slug     = slug_md[11:].replace(".md", "")
             site_url = os.environ.get("SITE_URL", "https://cripminds.com")
             url      = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
@@ -896,7 +920,7 @@ model_used: {metadata.get('model_used', 'unknown')}
                 "oauth_token":            at,
                 "oauth_version":          "1.0",
             }
-            all_params = {**oauth, **(params or {}), **(body_params or {})}
+            all_params = {k: v for k, v in {**oauth, **(params or {}), **(body_params or {})}.items() if v is not None}
             sorted_params = "&".join(
                 f"{urllib.parse.quote(k, safe='')}"
                 f"={urllib.parse.quote(str(v), safe='')}"
@@ -919,7 +943,11 @@ model_used: {metadata.get('model_used', 'unknown')}
 
         try:
             slug_md  = article_file.name
-            y, m, d  = slug_md[:10].split("-")
+            parts = slug_md[:10].split("-")
+            if len(parts) != 3:
+                self.logger.error("Unexpected article filename format: %s", slug_md)
+                return
+            y, m, d  = parts
             slug     = slug_md[11:].replace(".md", "")
             site_url = os.environ.get("SITE_URL", "https://cripminds.com")
             url      = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
@@ -945,7 +973,7 @@ model_used: {metadata.get('model_used', 'unknown')}
                 body_bytes = (
                     b"".join([
                         _part("type", "photo"),
-                        _part("caption", f'<p>{hook}</p><p><a href="{url}">{title}</a></p>'),
+                        _part("caption", f'<p>{__import__("html").escape(hook)}</p><p><a href="{url}">{__import__("html").escape(title)}</a></p>'),
                         _part("link", url),
                         _part("tags", tags),
                         _part("native_inline_images", "true"),
@@ -995,7 +1023,11 @@ model_used: {metadata.get('model_used', 'unknown')}
         import subprocess, os
         try:
             slug_md = article_file.name
-            y, m, d = slug_md[:10].split("-")
+            parts = slug_md[:10].split("-")
+            if len(parts) != 3:
+                self.logger.error("Unexpected article filename format: %s", slug_md)
+                return
+            y, m, d = parts
             slug = slug_md[11:].replace(".md", "")
             site_url = os.environ.get("SITE_URL", "https://cripminds.com")
             url = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
@@ -1009,7 +1041,10 @@ model_used: {metadata.get('model_used', 'unknown')}
                  "--title", title, "--url", url, "--excerpt", excerpt, "--author", agent_name],
                 capture_output=True, text=True, timeout=30
             )
-            self.logger.info("Newsletter: %s", result.stdout.strip() or result.stderr.strip())
+            if result.returncode != 0:
+                self.logger.warning("Newsletter send failed (exit %d): %s", result.returncode, result.stderr.strip())
+            else:
+                self.logger.info("Newsletter: %s", result.stdout.strip() or result.stderr.strip())
         except Exception as e:
             self.logger.warning("Newsletter send failed: %s", e)
 
@@ -1060,7 +1095,10 @@ model_used: {metadata.get('model_used', 'unknown')}
             agent_name = random.choice(list(self.agents.keys()))
             source_note = ""
         
-        agent_info = self.agents[agent_name]
+        agent_info = self.agents.get(agent_name)
+        if not agent_info:
+            self.logger.error("Unknown agent: %s", agent_name)
+            return None
         
         # Step 3: Generate content — prompt asks LLM for its own title
         prompt = (
@@ -1084,7 +1122,11 @@ model_used: {metadata.get('model_used', 'unknown')}
             f"[essay body, 1200-1500 words, starting directly — no H1 heading, no \"By {agent_name}\"]"
         )
 
-        raw_content, used_provider, actual_model = self.call_llm_via_openclaw_session(prompt)
+        try:
+            raw_content, used_provider, actual_model = self.call_llm_via_openclaw_session(prompt)
+        except Exception as e:
+            self.logger.error("LLM call raised exception: %s — using fallback", e)
+            raw_content, used_provider, actual_model = None, "fallback", "fallback"
 
         if not raw_content:
             self.logger.info("Using high-quality fallback article")
@@ -1101,11 +1143,16 @@ model_used: {metadata.get('model_used', 'unknown')}
                 extracted_title = raw_content[:first_newline][6:].strip().strip('"')
                 content = raw_content[first_newline:].lstrip('\n')
                 self.logger.info(f"LLM title: {extracted_title}")
+            else:
+                # No newline — strip the TITLE: line to avoid corrupting article body
+                content = raw_content.lstrip()
+                if content.startswith('TITLE:'):
+                    content = ''  # malformed; fallback title already set above
 
         # Step 3b: Rewrite with Opus if generated by a weaker provider.
         # Check both provider name AND actual model from response — catches silent
         # CLIProxy fallbacks where the requested model differs from what was served.
-        opus_providers = {"Claude Opus 4.6 (CLIProxy)", "fallback"}
+        opus_providers = {"Claude Opus 4.6 (CLIProxy)"}
         is_opus = (used_provider in opus_providers
                    and actual_model is not None
                    and "opus" in actual_model.lower())
@@ -1113,7 +1160,7 @@ model_used: {metadata.get('model_used', 'unknown')}
         if not is_opus:
             self.logger.info("Written by %s — running Opus rewrite pass", written_by)
             # Build temporary full article so Opus can see frontmatter context
-            temp_front = f"---\nlayout: post\ntitle: \"{extracted_title}\"\nauthor: {agent_name}\n---\n\n"
+            temp_front = f"---\nlayout: post\ntitle: {json.dumps(str(extracted_title))}\nauthor: {agent_name}\n---\n\n"
             rewritten = self.rewrite_with_opus(temp_front + content)
             # Strip the temp frontmatter back off
             if rewritten and rewritten.startswith("---"):
@@ -1122,9 +1169,11 @@ model_used: {metadata.get('model_used', 'unknown')}
                 if fm_end != -1:
                     content = rewritten[fm_end + 5:].lstrip("\n")
                 elif rewritten.count("---") >= 2:
-                    # fallback: skip first two --- markers
-                    second = rewritten.index("---", 3)
-                    content = rewritten[second + 3:].lstrip("\n")
+                    try:
+                        second = rewritten.index("---", 3)
+                        content = rewritten[second + 3:].lstrip("\n")
+                    except ValueError:
+                        self.logger.warning("Could not parse Opus rewrite frontmatter, keeping original content")
             model_used_label = f"claude-opus-4-6 (rewrote {written_by})"
         else:
             self.logger.info("Written by %s — no rewrite needed", written_by)
@@ -1147,7 +1196,11 @@ model_used: {metadata.get('model_used', 'unknown')}
         }
 
         # Step 5: Generate images (placeholder)
-        image_filenames, image_descriptions = self.generate_images(content, slug)
+        try:
+            image_filenames, image_descriptions = self.generate_images(content, slug)
+        except Exception as e:
+            self.logger.warning('Image generation failed: %s -- continuing without images', e)
+            image_filenames, image_descriptions = [], []
 
         # Step 6: Create article file
         article_file = self.create_article_file(metadata, content, image_filenames, image_descriptions)
