@@ -6,11 +6,11 @@ How the platform finds new article ideas from mainstream journalism.
 
 The pipeline surfaces mainstream news articles where disability expertise reveals a hidden angle — something the original author missed. It does **not** search for disability news directly; it finds stories where disability culture has something to say that nobody said.
 
-**Script:**   
-**Cron:**  (daily at 07:00)  
-**Model:** Claude Sonnet (via CLIProxyAPI on trident)  
-**DB:**   
-**Log:** 
+**Script:** `run_discovery.py`
+**Cron:** `0 7 * * *` (daily at 07:00)
+**Model:** Claude Sonnet (via CLIProxyAPI on trident)
+**DB:** `disability_findings.db`
+**Log:** `discovery.log`
 
 ## How It Works
 

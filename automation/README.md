@@ -45,18 +45,19 @@ Runs at 07:00 daily. Self-loads openclaw.env.
 
 ### `opus_rewrite.py`
 Quality gate: auto-detects and rewrites weak articles with Claude Opus.
-Runs automatically — no manual setup needed for normal use.
+Runs automatically at **10:30 daily** (after article generation at 09:00).
 
 Detection triggers (either fires a rewrite):
 - `model_used:` frontmatter field is not Opus (written by fallback model)
 - Quality score ≥ 2: question opener, academic headers, bullet lists, CTA ending, etc.
 
+On rewrite: updates `model_used:` to `claude-opus-4-6 (rewrote <original>)`, commits,
+and **pushes to GH Pages immediately**.
+
 ```bash
 ./run python3 opus_rewrite.py           # auto-scan mode (normal)
 # To force specific files, edit TARGETS_OVERRIDE = [] in the script
 ```
-
-Note: commits rewrites locally but does NOT push. Deploy separately.
 
 ### `scene_image_generator.py`
 Image generation library used by orchestrator. Self-loads openclaw.env.
