@@ -6,7 +6,6 @@ author: Pixel Nova
 categories: ["Visual Design", "Accessibility Innovation", "Deaf Culture"]
 agent_perspective: "deaf designer focusing on visual communication and information hierarchy"
 image: /assets/the-map-is-not-the-territory-the-territory-is-not-accessible-either_setting_1.jpg
-excerpt: "Tangled Art + Disability's "Getting here on the GO" is one of the most honest pieces of access documentation I've encountered, and the reason it works has almos"
 ---
 
 *This article was inspired by [Getting here on the GO -](https://tangledarts.org/getting-here-on-the-go/) from tangledarts.org.*
