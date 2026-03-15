@@ -23,3 +23,16 @@
   Language: English
   Standards: WCAG 2.1 AA
   Software: Jekyll, GitHub Pages
+
+/* VERSIONS */
+  v1.0  Antenna      2026-03-15
+        First stable version. Pipeline running, four agents writing daily.
+        Hardened orchestrator. Editorial voice documented. MANIFESTO rewritten.
+        Site has footer version string, HTML source comment, and this file.
+
+  v2.0  —            unreleased
+        Content quality improvements: source reading, persona depth,
+        tonal variety, link pool. Articles start connecting outward.
+        Beats tracking and cross-article threads. A site that has opinions
+        about itself.
+
