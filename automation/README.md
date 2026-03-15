@@ -1,5 +1,11 @@
 # Automation — Crip Minds
 
+> ⚠️ **Two orchestrator files exist — they are NOT the same:**
+> - `automation/production_orchestrator.py` — **cron file, runs daily at 09:00**
+> - `production_orchestrator.py` (root) — manual use only, simpler, no cascade/rewrite/Bluesky
+>
+> Always edit `automation/production_orchestrator.py` for production changes.
+
 ## Daily Pipeline (fully automated)
 
 ```
@@ -38,10 +44,19 @@ Discovers disability/tech topics, writes to `disability_findings.db`.
 Runs at 07:00 daily. Self-loads openclaw.env.
 
 ### `opus_rewrite.py`
-Rewrites weak articles to De Correspondent quality.
+Quality gate: auto-detects and rewrites weak articles with Claude Opus.
+Runs automatically — no manual setup needed for normal use.
+
+Detection triggers (either fires a rewrite):
+- `model_used:` frontmatter field is not Opus (written by fallback model)
+- Quality score ≥ 2: question opener, academic headers, bullet lists, CTA ending, etc.
+
 ```bash
-./run python3 opus_rewrite.py   # add filenames to TARGETS = [] first
+./run python3 opus_rewrite.py           # auto-scan mode (normal)
+# To force specific files, edit TARGETS_OVERRIDE = [] in the script
 ```
+
+Note: commits rewrites locally but does NOT push. Deploy separately.
 
 ### `scene_image_generator.py`
 Image generation library used by orchestrator. Self-loads openclaw.env.

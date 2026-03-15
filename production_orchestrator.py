@@ -1,12 +1,20 @@
 #!/usr/bin/env python3
 """
-production_orchestrator.py — Article generation pipeline for Crip Minds.
+production_orchestrator.py — MANUAL USE ONLY. NOT the cron file.
 
-Pipeline per article:
-  1. Write article body via Claude Opus (CLIProxy)
-  2. Generate 3 images via scene_image_generator
-  3. Save _posts/<slug>.md + assets/<slug>_*.jpg
-  4. Git add + commit + push
+⚠️  THE CRON RUNS: automation/production_orchestrator.py
+    This root-level file is a simpler standalone version for one-off manual
+    article generation. It lacks the full provider cascade, inline Opus rewrite,
+    Bluesky posting, and DB integration that the automation version has.
+
+    Before editing anything here, ask: should this change go to
+    automation/production_orchestrator.py instead?
+
+Manual usage (force a specific article):
+  Edit QUEUE = [] below, then:
+  ./run python3 production_orchestrator.py
+
+For the automated daily pipeline see: automation/README.md
 
 Provider: Claude Opus 4.6 via CLIProxy at http://172.19.0.1:8317
 Secrets:  ANTHROPIC_API_KEY from /srv/secrets/openclaw.env
