@@ -62,7 +62,7 @@ SAUCE_CATALOG = {
             "net art meets crip cyborg theory, scene: {place}, no clean edges, no text"
         ),
         "keywords": ["ai", "digital", "tech", "interface", "algorithm", "data",
-                     "screen", "app", "software", "code", "caption", "subtitle", "automation"],
+                     "screen", "app", "software", "code", "caption", "captions", "subtitle", "subtitles", "automation"],
     },
     "dada-sculpture": {
         "prompt": (
@@ -148,7 +148,7 @@ SAUCE_CATALOG = {
             "visible letterform impression depth, ink squeeze at edges, "
             "wood type and metal type mixed sizes, craft print tradition, no text"
         ),
-        "keywords": ["language", "text", "words", "voice", "communication", "AAC", "sign", "caption"],
+        "keywords": ["language", "text", "words", "voice", "communication", "AAC", "sign", "caption", "captions"],
     },
     "urbit-pixel": {
         "prompt": (
@@ -286,12 +286,12 @@ class SceneImageGenerator:
             place = "empty transit corridor, harsh fluorescent overhead strip light"
             obj = found_obj or "vintage TTY terminal on steel desk, handset resting"
 
-        elif self._any_kw(['deaf', 'hearing loss', 'asl', 'sign language', 'tty', 'caption'], corpus):
+        elif self._any_kw(['deaf', 'hearing loss', 'asl', 'sign language', 'tty', 'caption', 'captions'], corpus):
             person = "two hands mid-ASL sign, backlit silhouette, wrists and fingers close"
             place = "empty transit corridor, harsh fluorescent overhead strip light"
             obj = found_obj or "vintage TTY terminal on steel desk, handset resting"
 
-        elif self._any_kw(['autistic', 'neurodiv', 'adhd', 'sensory', 'cognitive', 'interface design'], corpus):
+        elif self._any_kw(['autistic', 'neurodivergent', 'adhd', 'sensory', 'cognitive', 'interface design'], corpus):
             person = "figure bent over ergonomic desk, silhouette lit by cold monitor glow"
             place = "sparse low-lit room, single monitor, wires taped to desk, late night"
             obj = found_obj or "single mechanical key lifted from keyboard, backlit from below"
@@ -343,10 +343,10 @@ class SceneImageGenerator:
         scores = {}
         for key, sauce in SAUCE_CATALOG.items():
             scores[key] = sum(
-            1 for kw in sauce["keywords"]
-            if (kw in corpus if ' ' in kw
-                else bool(re.search(r'\b' + re.escape(kw) + r'\b', corpus)))
-        )
+                1 for kw in sauce["keywords"]
+                if (kw in corpus if ' ' in kw
+                    else bool(re.search(r'\b' + re.escape(kw) + r'\b', corpus)))
+            )
         ranked = sorted(scores, key=lambda k: scores[k], reverse=True)
         # Pick top-n, fall back to SAUCE_FALLBACK_ORDER if ties at 0
         picked = [k for k in ranked if scores[k] > 0][:n]
