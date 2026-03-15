@@ -68,7 +68,7 @@ SAUCE_CATALOG = {
         "prompt": (
             "photograph of Dada assemblage sculpture, {obj} as found-object monument, "
             "Kurt Schwitters Merzbau energy, wire mesh and torn newspaper and plaster mixed, "
-            "mismatched material textures layered in physical space, rough studio floor, "
+            "mismatched material textures layered in physical space, {place}, "
             "harsh single directional light casting deep shadows, "
             "crip body politics as three-dimensional object, no background, no text"
         ),
@@ -134,7 +134,7 @@ SAUCE_CATALOG = {
     },
     "soviet-poster": {
         "prompt": (
-            "Soviet constructivist propaganda poster style, {person}, "
+            "Soviet constructivist propaganda poster style, flat graphic silhouette of {person}, "
             "bold flat red and black only, strong diagonal composition, "
             "geometric sans-serif forms, Rodchenko energy meets disability justice, "
             "high contrast flat color blocking, no gradients, no text"
@@ -318,9 +318,24 @@ class SceneImageGenerator:
             prompts.append(_build_sauce(key, person, obj, accent, place=place))
         return prompts
 
+    def _focus_corpus(self, content, title):
+        """Return focused corpus: title + categories + excerpt only (not full body)."""
+        fm_match = re.search(r'^---\n(.*?)\n---', content, re.DOTALL)
+        excerpt = ""
+        categories = []
+        if fm_match:
+            fm = fm_match.group(1)
+            exc_m = re.search(r'^excerpt:\s*["\'](.*?)["\'"]\s*$', fm, re.MULTILINE)
+            if exc_m:
+                excerpt = exc_m.group(1)
+            cats_m = re.search(r'^categories:\s*\[(.*?)\]', fm, re.MULTILINE)
+            if cats_m:
+                categories = [c.strip(' "\'') for c in cats_m.group(1).split(',')]
+        return (title + ' ' + ' '.join(categories) + ' ' + excerpt).lower()
+
     def _pick_sauces(self, content, title, n=2):
-        """Score each sauce against article corpus, return top-n distinct keys."""
-        corpus = (title + " " + content).lower()
+        """Score each sauce against focused article corpus, return top-n distinct keys."""
+        corpus = self._focus_corpus(content, title)
         scores = {}
         for key, sauce in SAUCE_CATALOG.items():
             scores[key] = sum(1 for kw in sauce["keywords"] if kw in corpus)
