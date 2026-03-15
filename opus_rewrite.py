@@ -11,6 +11,7 @@ academic headers, bullet policy lists, case-study patterns, word count violation
 CTA endings, missing first-person voice.
 """
 import json, re, subprocess, time, logging
+from datetime import datetime, timedelta
 from pathlib import Path
 import os
 
@@ -128,7 +129,7 @@ def score_quality(text):
     if word_count < 600:
         flags.append(f"too-short:{word_count}w")
         score += 3
-    elif word_count > 1200:
+    elif word_count > 2100:
         flags.append(f"too-long:{word_count}w")
         score += 1
 
@@ -152,9 +153,13 @@ def score_quality(text):
 
 
 def scan_posts_needing_rewrite():
-    """Scan _posts/ and return filenames of articles that need a rewrite."""
+    """Scan _posts/ for recent articles that need a rewrite (last 14 days)."""
+    cutoff = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
     targets = []
     for path in sorted(POSTS.glob("*.md")):
+        # Only scan recent articles — older ones are already settled
+        if path.name[:10] < cutoff:
+            continue
         text = path.read_text()
 
         # Skip gold standard — never rewrite the reference article
