@@ -144,6 +144,24 @@ class ProductionOrchestrator:
                 return file.name
         return None
 
+
+    def get_pool_links(self, topic: str, n: int = 15) -> list[dict]:
+        """Query link_pool for URLs relevant to topic. Graceful if table missing."""
+        try:
+            conn = sqlite3.connect(str(self.discovery_db))
+            rows = conn.execute("""
+                SELECT url, title, domain FROM link_pool
+                WHERE is_alive = 1
+                ORDER BY
+                    CASE WHEN topic = ? THEN 0 ELSE 1 END,
+                    RANDOM()
+                LIMIT ?
+            """, (topic, n)).fetchall()
+            conn.close()
+            return [{"url": r[0], "title": r[1] or r[2], "domain": r[2]} for r in rows]
+        except Exception:
+            return []
+
     def get_discovery_from_database(self):
         """Get the best unused discovery from database."""
         if not self.discovery_db.exists():
@@ -1211,6 +1229,8 @@ model_used: {metadata.get('model_used', 'unknown')}
             source_note = f"*This article was inspired by [{discovery['original_title']}]({discovery['url']}) from {domain}.*"
             self.mark_finding_as_used(discovery['id'])
             source_text = self.fetch_source_article(discovery.get('url', ''))
+            pool_topic   = discovery.get('url', '').split('/')[2] if discovery.get('url') else 'general'
+            pool_links   = self.get_pool_links(pool_topic)
             
             # Map domain to agent (improved logic)
             domain_lower = domain.lower()
@@ -1235,6 +1255,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             agent_name = random.choice(list(self.agents.keys()))
             source_note = ""
             source_text = None
+            pool_links   = []
         
         agent_info = self.agents.get(agent_name)
         if not agent_info:
@@ -1246,6 +1267,17 @@ model_used: {metadata.get('model_used', 'unknown')}
         self.logger.info("Register: %s | Target words: %d", register, target_words)
 
         # Step 3: Generate content — prompt asks LLM for its own title
+        if pool_links:
+            _link_lines = '\n'.join(f"- {l['title']}: {l['url']}" for l in pool_links)
+            link_block = (
+                "LINK POOL — weave 0-2 of these into your essay as inline links. "
+                "Pick only if the connection is real and non-obvious. Never force a link. "
+                "The link is woven into a sentence as if you discovered it while writing. "
+                "If none fit, use none.\n" + _link_lines + "\n\n"
+            )
+        else:
+            link_block = ""
+
         prompt = (
             "Voice and style:\n"
             "- First person, expert authority, no hedging\n"
@@ -1263,6 +1295,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             f"LENGTH: ~{target_words} words. Do not pad. Do not rush. Every paragraph earns the next.\n\n"
             f"{agent_info['prompt_block']}\n\n"
             f"{('SOURCE MATERIAL (from the article that inspired this piece — use 2-4 specific facts, names, dates, or quotes as anchors. Do not reproduce its structure or argument — take a different angle):\n---\n' + source_text + '\n---\n\n') if source_text else ''}"
+            f"{link_block}"
             f"Angle/inspiration: {title}\n"
             f"{source_note}\n\n"
             "Return format — EXACTLY as follows:\n"
