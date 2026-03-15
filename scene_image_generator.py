@@ -13,9 +13,9 @@ Three fixed modes per article: CONFRONTING (chiaroscuro) / INTIMATE (cinematic) 
 Requires: POLLINATIONS_API_KEY env var
 """
 
-import json
 import logging
 import os
+import random
 import re
 import struct
 import urllib.parse
@@ -171,7 +171,6 @@ NEAR_BW_STYLES = {"punk-pamphlet", "urbit-pixel", "mimeograph", "dada-sculpture"
 
 def _build_linocut(obj, accent=None):
     """Image 1 — linocut, alternates B&W and two-color risograph."""
-    import random
     if accent and random.random() < 0.5:
         return (
             f"two-color risograph print, {obj} as bold central motif, "
@@ -208,18 +207,16 @@ class SceneImageGenerator:
 
     def _extract_subjects(self, content, title):
         """Extract visual subjects from article frontmatter. No LLM needed."""
-        import re as _re
-
         # Parse frontmatter
-        fm_match = _re.search(r'^---\n(.*?)\n---', content, _re.DOTALL)
+        fm_match = re.search(r'^---\n(.*?)\n---', content, _re.DOTALL)
         excerpt = ""
         categories = []
         if fm_match:
             fm = fm_match.group(1)
-            exc_m = _re.search(r'^excerpt:\s*["\']?(.*?)["\']?\s*$', fm, _re.MULTILINE)
+            exc_m = re.search(r'^excerpt:\s*["\']?(.*?)["\']?\s*$', fm, _re.MULTILINE)
             if exc_m:
                 excerpt = exc_m.group(1).strip('"\'')
-            cats_m = _re.search(r'^categories:\s*\[(.*?)\]', fm, _re.MULTILINE)
+            cats_m = re.search(r'^categories:\s*\[(.*?)\]', fm, _re.MULTILINE)
             if cats_m:
                 categories = [c.strip(' "\'') for c in cats_m.group(1).split(',')]
 
@@ -228,7 +225,7 @@ class SceneImageGenerator:
         corpus = (title + ' ' + ' '.join(categories) + ' ' + excerpt).lower()
 
         # Specific objects from excerpt (skip overly generic ones)
-        obj_words = _re.findall(
+        obj_words = re.findall(
             r'\b(hearing aid|cochlear implant|TTY|ASL interpreter|'
             r'rollator|prosthetic|brace|exoskeleton|'
             r'braille display|white cane|screen reader|magnifier|AAC device|'
@@ -325,7 +322,7 @@ class SceneImageGenerator:
         categories = []
         if fm_match:
             fm = fm_match.group(1)
-            exc_m = re.search(r'^excerpt:\s*["\'](.*?)["\'"]\s*$', fm, re.MULTILINE)
+            exc_m = re.search(r'^excerpt:\s*["\']?(.*?)["\']?\s*$', fm, re.MULTILINE)
             if exc_m:
                 excerpt = exc_m.group(1)
             cats_m = re.search(r'^categories:\s*\[(.*?)\]', fm, re.MULTILINE)
@@ -338,7 +335,10 @@ class SceneImageGenerator:
         corpus = self._focus_corpus(content, title)
         scores = {}
         for key, sauce in SAUCE_CATALOG.items():
-            scores[key] = sum(1 for kw in sauce["keywords"] if kw in corpus)
+            scores[key] = sum(
+            1 for kw in sauce["keywords"]
+            if (kw in corpus if ' ' in kw else bool(re.search(r'\b' + re.escape(kw) + r'\b', corpus)))
+        )
         ranked = sorted(scores, key=lambda k: scores[k], reverse=True)
         # Pick top-n, fall back to SAUCE_FALLBACK_ORDER if ties at 0
         picked = [k for k in ranked if scores[k] > 0][:n]
