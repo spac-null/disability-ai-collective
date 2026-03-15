@@ -670,8 +670,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
         Pipeline:
           1. Imports SceneImageGenerator (scene_image_generator.py)
-          2. Calls generate_content_aware_images() with validate=False (fast mode,
-             skips Qwen vision scoring to avoid 20-90s per-image overhead in cron runs)
+          2. Calls generate_content_aware_images() (no validate kwarg — method does not accept it)
           3. Writes each PNG to assets/ directory
           4. Falls back to SophisticatedArtGenerator if SceneImageGenerator fails
           5. Returns list of filename strings (placeholders if both generators fail)
@@ -697,7 +696,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
             self.logger.info("Generating scene-based pixel art images...")
 
-            images = generator.generate_content_aware_images(content, title, slug, num_images, validate=False)
+            images = generator.generate_content_aware_images(content, title, slug, num_images)
             
             for img in images:
                 filepath = self.assets_dir / img['filename']
@@ -715,18 +714,14 @@ The question isn't whether {title.lower()} matters. The question is whether the 
             self.logger.error(f"Intelligent image generation failed: {e}")
             # Fallback to simple sophisticated generator
             try:
+                sys.path.append(str(self.repo_root / 'archive'))
                 from generate_sophisticated_art_simple import SophisticatedArtGenerator
-                
+
                 generator = SophisticatedArtGenerator(width=800, height=450)
                 image_filenames = []
-                
+
                 for i in range(num_images):
-                    if i == 0:
-                        png_data = generator.generate_acoustic_chaos()
-                    elif i == 1:
-                        png_data = generator.generate_visual_hierarchy()
-                    else:
-                        png_data = generator.generate_accessibility_flow()
+                    png_data = generator.generate_acoustic_chaos()
                     
                     filename = f"{slug}_fallback_{i+1}.png"
                     filepath = self.assets_dir / filename
