@@ -81,6 +81,14 @@ _SOCIAL_PROMPTS = {
 }
 
 
+_AGENT_BEATS = {
+    "Pixel Nova":  ["visual-systems", "architecture-politics", "sign-language-history", "typography-power"],
+    "Siri Sage":   ["acoustics-space", "sensory-phenomenology", "blindness-art-history", "sound-infrastructure"],
+    "Maya Flux":   ["urban-mobility", "disability-economics", "care-as-design", "protest-history"],
+    "Zen Circuit": ["neurodivergent-epistemology", "diagnosis-history", "cross-domain-pattern", "systems-failure"],
+}
+
+
 class ProductionOrchestrator:
     def __init__(self):
         self.repo_root = Path(__file__).parent.parent
@@ -161,6 +169,121 @@ class ProductionOrchestrator:
             return [{"url": r[0], "title": r[1] or r[2], "domain": r[2]} for r in rows]
         except Exception:
             return []
+
+
+    def _init_beats_table(self, conn):
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS article_beats (
+                id       INTEGER PRIMARY KEY AUTOINCREMENT,
+                date     TEXT NOT NULL,
+                agent    TEXT NOT NULL,
+                title    TEXT NOT NULL,
+                beat     TEXT,
+                keywords TEXT
+            )
+        """)
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_beats_agent ON article_beats(agent, date)")
+        conn.commit()
+
+    def _classify_beat(self, agent: str, title: str, first_para: str) -> str:
+        text   = f"{title} {first_para}".lower()
+        beats  = _AGENT_BEATS.get(agent, [])
+        scores = {b: sum(1 for kw in b.replace("-", " ").split() if kw in text) for b in beats}
+        return max(scores, key=scores.get) if any(scores.values()) else "general"
+
+    def _record_beat(self, agent: str, title: str, content: str):
+        """Store article beat in DB after generation."""
+        try:
+            first_para = ""
+            for line in content.splitlines():
+                line = line.strip()
+                if len(line) > 80 and not line.startswith("#") and not line.startswith("!"):
+                    first_para = line[:300]
+                    break
+            beat = self._classify_beat(agent, title, first_para)
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._init_beats_table(conn)
+            conn.execute(
+                "INSERT INTO article_beats (date, agent, title, beat, keywords) VALUES (?, ?, ?, ?, ?)",
+                (datetime.now().strftime("%Y-%m-%d"), agent, title, beat, "")
+            )
+            conn.commit()
+            conn.close()
+            self.logger.info("Beat recorded: %s → %s", agent, beat)
+        except Exception as e:
+            self.logger.debug("_record_beat failed: %s", e)
+
+    def _get_beat_nudge(self, agent: str) -> str:
+        """Return a prompt nudge if agent hasn't covered a beat in 14+ days."""
+        try:
+            cutoff = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
+            conn   = sqlite3.connect(str(self.discovery_db))
+            self._init_beats_table(conn)
+            recent = [r[0] for r in conn.execute(
+                "SELECT beat FROM article_beats WHERE agent = ? AND date > ?", (agent, cutoff)
+            ).fetchall()]
+            # Count coverage
+            all_beats = _AGENT_BEATS.get(agent, [])
+            uncovered = [b for b in all_beats if b not in recent]
+            overused  = [b for b in all_beats if recent.count(b) >= 3]
+            conn.close()
+            nudges = []
+            if uncovered:
+                nudges.append(f"You haven't written about {uncovered[0].replace('-', ' ')} recently — if this topic connects, explore that angle.")
+            if overused:
+                nudges.append(f"You've written about {overused[0].replace('-', ' ')} three times recently — find a different angle or territory.")
+            return ("BEAT NOTE: " + " ".join(nudges) + "\n\n") if nudges else ""
+        except Exception:
+            return ""
+
+    def _should_cross_reference(self) -> bool:
+        return random.random() < 0.20
+
+    def _read_first_paragraph(self, title: str, date: str) -> str:
+        """Read first body paragraph from a published post by title/date."""
+        try:
+            candidates = list(self.posts_dir.glob(f"{date}-*.md"))
+            if not candidates:
+                candidates = list(self.posts_dir.glob("*.md"))
+            for path in sorted(candidates, reverse=True)[:20]:
+                text = path.read_text()
+                in_body = False
+                fm_count = 0
+                for line in text.splitlines():
+                    if line.strip() == "---":
+                        fm_count += 1
+                        if fm_count == 2:
+                            in_body = True
+                        continue
+                    if in_body and len(line.strip()) > 80 and not line.startswith("!"):
+                        return line.strip()[:300]
+        except Exception:
+            pass
+        return ""
+
+    def _get_cross_reference(self, current_agent: str) -> dict | None:
+        """Get a recent article by a different agent to respond to (20% of runs)."""
+        if not self._should_cross_reference():
+            return None
+        try:
+            cutoff = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+            conn   = sqlite3.connect(str(self.discovery_db))
+            self._init_beats_table(conn)
+            rows = conn.execute("""
+                SELECT agent, title, date FROM article_beats
+                WHERE agent != ? AND date > ?
+                ORDER BY date DESC LIMIT 5
+            """, (current_agent, cutoff)).fetchall()
+            conn.close()
+            if not rows:
+                return None
+            pick       = random.choice(rows)
+            first_para = self._read_first_paragraph(pick[1], pick[2])
+            if not first_para:
+                return None
+            return {"agent": pick[0], "title": pick[1], "first_paragraph": first_para}
+        except Exception:
+            return None
 
     def get_discovery_from_database(self):
         """Get the best unused discovery from database."""
@@ -1266,6 +1389,9 @@ model_used: {metadata.get('model_used', 'unknown')}
         target_words = self._pick_length()
         self.logger.info("Register: %s | Target words: %d", register, target_words)
 
+        beat_nudge  = self._get_beat_nudge(agent_name)
+        cross_ref   = self._get_cross_reference(agent_name)
+
         # Step 3: Generate content — prompt asks LLM for its own title
         if pool_links:
             _link_lines = '\n'.join(f"- {l['title']}: {l['url']}" for l in pool_links)
@@ -1298,6 +1424,8 @@ model_used: {metadata.get('model_used', 'unknown')}
             f"{link_block}"
             f"Angle/inspiration: {title}\n"
             f"{source_note}\n\n"
+            f"{beat_nudge}"
+            f"{('THREAD: ' + cross_ref['agent'] + ' recently wrote \"' + cross_ref['title'] + '\"\n' + 'Their opening: \"' + cross_ref['first_paragraph'] + '\"\n' + 'You may respond to, disagree with, extend, or complicate their argument. Do so only if it produces a stronger essay. Be specific about what you are responding to. Do not summarize their article. Do not be polite about it.\n\n') if cross_ref else ''}"
             "Return format — EXACTLY as follows:\n"
             f"TITLE: [your sharp essay title, not the angle above]\n\n"
             f"[essay body, ~{target_words} words, starting directly — no H1 heading, no \"By {agent_name}\"]"
@@ -1359,6 +1487,9 @@ model_used: {metadata.get('model_used', 'unknown')}
         else:
             self.logger.info("Written by %s — no rewrite needed", written_by)
             model_used_label = written_by
+
+        # Record beat for this article
+        self._record_beat(agent_name, extracted_title, content)
 
         # Step 4: Prepare metadata using LLM title for slug
         today = datetime.now().strftime('%Y-%m-%d')
