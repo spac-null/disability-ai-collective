@@ -51,8 +51,7 @@ SAUCE_CATALOG = {
             "pure drawing and print marks absolutely no photography, "
             "Xerox machine as artistic medium, crip punk rage, no readable text"
         ),
-        "keywords": ["access", "barrier", "exclusion", "tax", "crip", "justice",
-                     "navigation", "mobility", "ramp", "protest", "broken", "curb"],
+        "keywords": ["protest", "broken", "curb cut", "inaccessible", "rage", "fight", "riot", "activist"],
     },
     "glitch-corrupt": {
         "prompt": (
@@ -60,7 +59,7 @@ SAUCE_CATALOG = {
             "RGB channel split displacement, VHS scan-line artifacts, "
             "pixel sorting vertical bands, broken codec freeze frame, "
             "data corruption aesthetic, {accent} channel dominant, "
-            "net art meets crip cyborg theory, no clean edges, no text"
+            "net art meets crip cyborg theory, scene: {place}, no clean edges, no text"
         ),
         "keywords": ["ai", "digital", "tech", "interface", "algorithm", "data",
                      "screen", "app", "software", "code", "caption", "subtitle", "automation"],
@@ -93,7 +92,7 @@ SAUCE_CATALOG = {
             "raw scissor and torn edges visible, glue stain halos around pieces, "
             "flat saturated color paper fragments at wildly competing scales, "
             "Matisse cut-out scale and flatness meets disability activism poster, "
-            "dense overlapping paper layers, white gaps where paper doesnt meet, no text"
+            "dense overlapping paper layers, white gaps where paper doesnt meet, imagery evoking {place}, no text"
         ),
         "keywords": ["film", "cinema", "oscar", "media", "culture", "art",
                      "visual", "performance", "theater", "show", "casting", "hollywood"],
@@ -133,6 +132,24 @@ SAUCE_CATALOG = {
         "keywords": ["design", "architecture", "blueprint", "space", "building",
                      "urban", "plan", "system", "map", "acoustic", "sound", "wave"],
     },
+    "soviet-poster": {
+        "prompt": (
+            "Soviet constructivist propaganda poster style, {person}, "
+            "bold flat red and black only, strong diagonal composition, "
+            "geometric sans-serif forms, Rodchenko energy meets disability justice, "
+            "high contrast flat color blocking, no gradients, no text"
+        ),
+        "keywords": ["collective", "movement", "justice", "rights", "access", "community", "solidarity"],
+    },
+    "letterpress-spot": {
+        "prompt": (
+            "letterpress printed broadside, {obj} as central typographic element, "
+            "deep {accent} ink impression on cream cotton paper, "
+            "visible letterform impression depth, ink squeeze at edges, "
+            "wood type and metal type mixed sizes, craft print tradition, no text"
+        ),
+        "keywords": ["language", "text", "words", "voice", "communication", "AAC", "sign", "caption"],
+    },
     "urbit-pixel": {
         "prompt": (
             "isometric pixel art, strict modular grid structure, "
@@ -149,6 +166,8 @@ SAUCE_CATALOG = {
 }
 
 SAUCE_FALLBACK_ORDER = ["popart-collage", "glitch-corrupt", "pixel-strict", "dada-collage"]
+
+NEAR_BW_STYLES = {"punk-pamphlet", "urbit-pixel", "mimeograph", "dada-sculpture"}
 
 def _build_linocut(obj, accent=None):
     """Image 1 — linocut, alternates B&W and two-color risograph."""
@@ -169,10 +188,10 @@ def _build_linocut(obj, accent=None):
         f"no color, no gradients, no photorealism, no text"
     )
 
-def _build_sauce(sauce_key, person, obj, accent):
+def _build_sauce(sauce_key, person, obj, accent, place=""):
     """Render a sauce prompt with extracted subjects."""
     tmpl = SAUCE_CATALOG[sauce_key]["prompt"]
-    return tmpl.format(person=person, obj=obj, accent=accent)
+    return tmpl.format(person=person, obj=obj, accent=accent, place=place or "sparse interior")
 
 
 class SceneImageGenerator:
@@ -289,14 +308,14 @@ class SceneImageGenerator:
 
     # ── Prompt generation ─────────────────────────────────────────────────────
 
-    def _generate_prompts(self, content, title, num_images=3):
+    def _generate_prompts(self, content, title, num_images=3, slug=""):
         """Image 1 = raw linocut always. Images 2+ = context-matched sauces."""
-        accent = ACCENTS[abs(hash(title)) % len(ACCENTS)]
+        accent = ACCENTS[abs(hash(title + slug)) % len(ACCENTS)]
         person, place, obj = self._extract_subjects(content, title)
         prompts = [_build_linocut(obj, accent=accent)]
         sauces = self._pick_sauces(content, title, n=num_images - 1)
         for key in sauces:
-            prompts.append(_build_sauce(key, person, obj, accent))
+            prompts.append(_build_sauce(key, person, obj, accent, place=place))
         return prompts
 
     def _pick_sauces(self, content, title, n=2):
@@ -314,6 +333,13 @@ class SceneImageGenerator:
                     picked.append(k)
                 if len(picked) == n:
                     break
+        # Color diversity guard: if both picks are near-B&W, swap last for best color style
+        if len(picked) >= 2 and all(p in NEAR_BW_STYLES for p in picked):
+            color_ranked = [k for k in ranked if k not in NEAR_BW_STYLES and k not in picked]
+            if not color_ranked:
+                color_ranked = [k for k in SAUCE_FALLBACK_ORDER if k not in NEAR_BW_STYLES and k not in picked]
+            if color_ranked:
+                picked[-1] = color_ranked[0]
         logger.info("Sauce selection (n=%d): %s | scores: %s", n,
                     picked, {k: scores[k] for k in picked})
         return picked
@@ -347,7 +373,7 @@ class SceneImageGenerator:
 
         try:
             logger.info("Generating prompts for: %s", title)
-            prompts = self._generate_prompts(content, title, num_images=num_images)
+            prompts = self._generate_prompts(content, title, num_images=num_images, slug=slug)
 
             for i, prompt in enumerate(prompts):
                 label = labels[i] if i < len(labels) else f"scene{i+1}"
