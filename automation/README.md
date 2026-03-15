@@ -30,6 +30,18 @@ Leave QUEUE empty for fully automatic topic selection from DB.
 ## Active Scripts
 
 ### `automation/production_orchestrator.py`
+
+**Prompt architecture (as of 2026-03-15):**
+1. Voice & style rules
+2. ENDING block — one sentence, concrete image
+3. REGISTER + LENGTH — weighted random per article
+4. Persona block — Opus-generated ~250 tokens per agent
+5. SOURCE MATERIAL — fetched from findings URL (optional)
+6. LINK POOL — 0-2 inline links from pool (optional)
+7. Topic + source note
+8. Beat nudge (optional, 14-day window)
+9. Cross-article THREAD (optional, 20% of articles)
+
 Main article pipeline. Self-loads `/srv/secrets/openclaw.env`.
 
 **Key settings:**
@@ -598,23 +610,34 @@ Planned: separate source type handlers in run_discovery.py for each of these.
 
 ---
 
-## Implementation Order
+## Implementation Order — ALL SHIPPED 2026-03-15
 
-```
-1. Better endings            — 1 prompt line, do now
-2. Persona depth in prompt   — inject full character per agent, not just one-liner
-3. Read source article       — fetch_source_article() before writing, extract anchors
-4. Tonal/structural variety  — random register + length per article
-5. Social media voice        — per-agent Bluesky prompt, not generic hook
-6. Link pool crawler         — new script, new DB table, sitemap-first
-7. Article beats tracking    — avoid repetition, build depth over time
-8. Cross-article threads     — 20% of articles respond to a recent piece
-9. Discovery pipeline expand — academic, artist, policy, social sources
-```
+All 9 steps implemented and committed. Pipeline uses new system on next scheduled run.
 
----
+| Step | Status | What it does |
+|------|--------|-------------|
+| 0    | ✓ done | Audited orchestrator, findings schema, quality gate |
+| 1    | ✓ done | ENDING block — one sentence, concrete image, never CTA |
+| 2    | ✓ done | Persona prompt_blocks — Opus-generated, ~250 tokens each |
+| 3    | ✓ done | fetch_source_article() — reads URL before writing, injects as anchors |
+| 4    | ✓ done | Weighted register (wry/clinical/furious/melancholic/ecstatic) + variable length |
+| 5    | ✓ done | Per-agent social hooks — distinct voice per persona, 250-char |
+| 6    | ✓ done | link_pool_crawler.py — 7 seed sites, weekly Mon 02:00 cron |
+| 7    | ✓ done | article_beats table — 14-day tracking, nudges uncovered territory |
+| 8    | ✓ done | Cross-article threads — 20% of articles respond to different agent |
+| 9a/b | ✓ done | PubMed abstracts + art institution RSS added to daily discovery |
 
-## Hardened Implementation Plan (Opus 4.6 Review — 2026-03-15)
+**One manual step remaining:** `python3 automation/link_pool_crawler.py` on trident to seed the pool (~40 min). Until then link_block is gracefully empty.
+
+**Open decisions resolved:**
+- Heuristic extraction for source articles (not LLM — zero cost, sufficient)
+- Global register weights (not per-persona — review after 30 articles)
+- No internal hyperlinks in cross-reference threads
+- 7 of 13 seed sitemaps verified working (dis.art, decorrespondent.nl, aldaily.com and others had no sitemap)
+- JSTOR: link pool sitemap data, capped at 500 URLs
+
+
+## Hardened Implementation Plan (Opus 4.6 Review — 2026-03-15) — ALL STEPS SHIPPED
 
 > This section supersedes the "Implementation Order" above. All steps below
 > include exact function signatures, error handling, prompt architecture, and
