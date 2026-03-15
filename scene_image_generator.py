@@ -206,9 +206,8 @@ class SceneImageGenerator:
 
     # ── Subject extraction (pure Python) ─────────────────────────────────────
 
-    def _extract_subjects(self, content, title):
-        """Extract visual subjects from article frontmatter. No LLM needed."""
-        # Parse frontmatter
+    def _parse_frontmatter(self, content):
+        """Parse Jekyll frontmatter. Returns (categories, excerpt)."""
         fm_match = re.search(r'^---\n(.*?)\n---', content, re.DOTALL)
         excerpt = ""
         categories = []
@@ -220,6 +219,11 @@ class SceneImageGenerator:
             cats_m = re.search(r'^categories:\s*\[(.*?)\]', fm, re.MULTILINE)
             if cats_m:
                 categories = [c.strip(' "\'') for c in cats_m.group(1).split(',')]
+        return categories, excerpt
+
+    def _extract_subjects(self, content, title):
+        """Extract visual subjects from article frontmatter. No LLM needed."""
+        categories, excerpt = self._parse_frontmatter(content)
 
         # Use title first — most reliable signal, then corpus for broader match
         title_lower = title.lower()
@@ -256,12 +260,13 @@ class SceneImageGenerator:
             place = "empty multiplex theater, rows of vacant seats, screen light beyond"
             obj = found_obj or "35mm film reel, half-unspooled, iridescent celluloid"
 
-        elif any(w in title_lower for w in ['architect', 'building', 'wrong sense', 'acoustic']):
+        elif any(w in title_lower for w in ['architect', 'wrong sense', 'acoustic']):
             person = "lone figure casting sharp shadow across polished concrete atrium floor"
             place = "cavernous open-plan office atrium, glass ceiling, empty, late hour"
             obj = found_obj or "architectural scale model fragment, exposed balsa wood and glue"
 
-        elif any(w in title_lower for w in ['mapmaker', 'map', 'cartograph']):
+        elif any(w in title_lower for w in ['mapmaker', 'cartograph'])\
+                or bool(re.search(r'\bmap\b', title_lower)):
             person = "hands tracing a careful line on large drafting paper, light pressure"
             place = "sparse studio table, scattered notebooks, diffuse north window light"
             obj = found_obj or "hand-drawn topographic map fragment, ink contours visible"
@@ -286,7 +291,7 @@ class SceneImageGenerator:
             place = "sunlit wood desk, scattered tactile materials, warm afternoon light"
             obj = found_obj or "braille cell with six raised dots, close detail, warm light"
 
-        elif any(w in corpus for w in ['film', 'cinema', 'culture', 'crip', 'art', 'media']):
+        elif any(w in corpus for w in ['film', 'cinema', 'theater', 'performance', 'oscar']):
             person = "performer under single harsh spotlight, empty audience chairs behind"
             place = "empty black-box theater, one spot lit on stage, rest in darkness"
             obj = found_obj or "vintage condenser microphone, stand and cable, close detail"
@@ -318,17 +323,7 @@ class SceneImageGenerator:
 
     def _focus_corpus(self, content, title):
         """Return focused corpus: title + categories + excerpt only (not full body)."""
-        fm_match = re.search(r'^---\n(.*?)\n---', content, re.DOTALL)
-        excerpt = ""
-        categories = []
-        if fm_match:
-            fm = fm_match.group(1)
-            exc_m = re.search(r'^excerpt:\s*["\']?(.*?)["\']?\s*$', fm, re.MULTILINE)
-            if exc_m:
-                excerpt = exc_m.group(1)
-            cats_m = re.search(r'^categories:\s*\[(.*?)\]', fm, re.MULTILINE)
-            if cats_m:
-                categories = [c.strip(' "\'') for c in cats_m.group(1).split(',')]
+        categories, excerpt = self._parse_frontmatter(content)
         return (title + ' ' + ' '.join(categories) + ' ' + excerpt).lower()
 
     def _pick_sauces(self, content, title, n=2):
