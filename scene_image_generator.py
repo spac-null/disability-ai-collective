@@ -15,7 +15,6 @@ Requires: POLLINATIONS_API_KEY env var
 
 import logging
 import os
-import random
 import hashlib
 import re
 import struct
@@ -221,6 +220,16 @@ class SceneImageGenerator:
                 categories = [c.strip(' "\'') for c in cats_m.group(1).split(',')]
         return categories, excerpt
 
+    def _any_kw(self, words, corpus):
+        """Word-boundary check for single words, substring for phrases."""
+        for w in words:
+            if ' ' in w:
+                if w in corpus:
+                    return True
+            elif re.search(r'\b' + re.escape(w) + r'\b', corpus):
+                return True
+        return False
+
     def _extract_subjects(self, content, title):
         """Extract visual subjects from article frontmatter. No LLM needed."""
         categories, excerpt = self._parse_frontmatter(content)
@@ -277,27 +286,27 @@ class SceneImageGenerator:
             place = "empty transit corridor, harsh fluorescent overhead strip light"
             obj = found_obj or "vintage TTY terminal on steel desk, handset resting"
 
-        elif any(w in corpus for w in ['deaf', 'hearing loss', 'asl', 'sign language', 'tty', 'caption']):
+        elif self._any_kw(['deaf', 'hearing loss', 'asl', 'sign language', 'tty', 'caption'], corpus):
             person = "two hands mid-ASL sign, backlit silhouette, wrists and fingers close"
             place = "empty transit corridor, harsh fluorescent overhead strip light"
             obj = found_obj or "vintage TTY terminal on steel desk, handset resting"
 
-        elif any(w in corpus for w in ['autistic', 'neurodiv', 'adhd', 'sensory', 'cognitive', 'interface design']):
+        elif self._any_kw(['autistic', 'neurodiv', 'adhd', 'sensory', 'cognitive', 'interface design'], corpus):
             person = "figure bent over ergonomic desk, silhouette lit by cold monitor glow"
             place = "sparse low-lit room, single monitor, wires taped to desk, late night"
             obj = found_obj or "single mechanical key lifted from keyboard, backlit from below"
 
-        elif any(w in corpus for w in ['blind', 'low vision', 'braille', 'screen reader']):
+        elif self._any_kw(['blind', 'low vision', 'braille', 'screen reader'], corpus):
             person = "fingertip pressed to embossed surface, slight pressure visible in skin"
             place = "sunlit wood desk, scattered tactile materials, warm afternoon light"
             obj = found_obj or "braille cell with six raised dots, close detail, warm light"
 
-        elif any(w in corpus for w in ['film', 'cinema', 'theater', 'performance', 'oscar']):
+        elif self._any_kw(['film', 'cinema', 'theater', 'performance', 'oscar'], corpus):
             person = "performer under single harsh spotlight, empty audience chairs behind"
             place = "empty black-box theater, one spot lit on stage, rest in darkness"
             obj = found_obj or "vintage condenser microphone, stand and cable, close detail"
 
-        elif any(w in corpus for w in ['wheelchair', 'mobility', 'ramp', 'curb']):
+        elif self._any_kw(['wheelchair', 'mobility', 'ramp', 'curb'], corpus):
             person = "hands gripping wheel rim from low angle, knuckles and veins in side light"
             place = "rain-slicked urban sidewalk at dusk, amber puddle reflections"
             obj = found_obj or "worn wheelchair tire cross-section, rubber tread and spoke"
@@ -415,6 +424,7 @@ class SceneImageGenerator:
 
         except Exception as e:
             logger.error("generate_content_aware_images failed: %s", e)
+            images = []
             for i in range(num_images):
                 label = labels[i] if i < len(labels) else f"scene{i+1}"
                 images.append({
