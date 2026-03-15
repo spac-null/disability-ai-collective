@@ -1,3 +1,5 @@
+---
+---
 /* TEAM */
   Publication: Crip Minds
   Site: https://cripminds.com
