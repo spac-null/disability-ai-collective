@@ -203,6 +203,10 @@
                     <form class="newsletter-form" id="newsletter-form">
                         <label for="bd-email" class="sr-only">Email address</label>
                         <input type="email" name="email" id="bd-email" placeholder="your@email.com" required>
+                        <div class="newsletter-frequency" role="group" aria-label="Delivery frequency">
+                          <label><input type="radio" name="frequency" value="weekly" checked> Weekly digest</label>
+                          <label><input type="radio" name="frequency" value="daily"> Each article</label>
+                        </div>
                         <button type="submit">Subscribe</button>
                         <p class="newsletter-msg" id="newsletter-msg" aria-live="polite"></p>
                     </form>
@@ -210,13 +214,14 @@
                     document.getElementById("newsletter-form").addEventListener("submit", function(e) {
                       e.preventDefault();
                       var email = document.getElementById("bd-email").value;
+                      var freq = this.querySelector("input[name=frequency]:checked").value;
                       var msg = document.getElementById("newsletter-msg");
                       var btn = this.querySelector("button");
                       btn.disabled = true;
                       fetch("https://subscribe.cripminds.com/subscribe", {
                         method: "POST",
                         headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({email: email})
+                        body: JSON.stringify({email: email, frequency: freq})
                       }).then(function(r){ return r.json(); }).then(function(d) {
                         msg.textContent = d.status === "already_confirmed"
                           ? "You’re already subscribed."

@@ -861,6 +861,126 @@ image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
         except Exception as e:
             self.logger.warning("Mastodon post failed: %s", e)
 
+
+    def post_to_tumblr(self, title, body, article_file, image_filenames=None):
+        """Post article to Tumblr after successful commit. Non-blocking. OAuth 1.0a HMAC-SHA1."""
+        import os, json, mimetypes, urllib.request as ureq, urllib.parse
+        import hmac, hashlib, base64, time, uuid
+
+        ck  = os.environ.get("TUMBLR_CONSUMER_KEY", "")
+        cs  = os.environ.get("TUMBLR_CONSUMER_SECRET", "")
+        at  = os.environ.get("TUMBLR_ACCESS_TOKEN", "")
+        ats = os.environ.get("TUMBLR_ACCESS_TOKEN_SECRET", "")
+        blog = os.environ.get("TUMBLR_BLOG", "").strip().rstrip(".tumblr.com")
+        if not all([ck, cs, at, ats, blog]):
+            self.logger.debug("Tumblr: no credentials, skipping")
+            return
+
+        def _oauth_header(method, url, params, body_params=None):
+            ts    = str(int(time.time()))
+            nonce = uuid.uuid4().hex
+            oauth = {
+                "oauth_consumer_key":     ck,
+                "oauth_nonce":            nonce,
+                "oauth_signature_method": "HMAC-SHA1",
+                "oauth_timestamp":        ts,
+                "oauth_token":            at,
+                "oauth_version":          "1.0",
+            }
+            all_params = {**oauth, **(params or {}), **(body_params or {})}
+            sorted_params = "&".join(
+                f"{urllib.parse.quote(k, safe='')}"
+                f"={urllib.parse.quote(str(v), safe='')}"
+                for k, v in sorted(all_params.items())
+            )
+            base = "&".join([
+                urllib.parse.quote(method.upper(), safe=""),
+                urllib.parse.quote(url, safe=""),
+                urllib.parse.quote(sorted_params, safe=""),
+            ])
+            signing_key = f"{urllib.parse.quote(cs, safe='')}&{urllib.parse.quote(ats, safe='')}"
+            sig = base64.b64encode(
+                hmac.new(signing_key.encode(), base.encode(), hashlib.sha1).digest()
+            ).decode()
+            oauth["oauth_signature"] = sig
+            return "OAuth " + ", ".join(
+                f'{urllib.parse.quote(k, safe="")}="{urllib.parse.quote(v, safe="")}"'
+                for k, v in sorted(oauth.items())
+            )
+
+        try:
+            slug_md  = article_file.name
+            y, m, d  = slug_md[:10].split("-")
+            slug     = slug_md[11:].replace(".md", "")
+            site_url = os.environ.get("SITE_URL", "https://cripminds.com")
+            url      = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
+
+            hook = self._bsky_hook(title, body, max_chars=250)
+            tags = "disability justice,crip culture,disability arts,accessibility,creative technology,cripminds"
+
+            api_url = f"https://api.tumblr.com/v2/blog/{blog}/post"
+
+            # Try photo post with hero image, fall back to link post
+            hero = None
+            if image_filenames:
+                hero_name = next((fn for fn in image_filenames if "_setting_1" in fn), image_filenames[0])
+                hero = self.assets_dir / hero_name
+
+            if hero and hero.exists():
+                img_bytes = hero.read_bytes()
+                mime = mimetypes.guess_type(str(hero))[0] or "image/jpeg"
+                boundary = "----TumblrBoundary"
+                def _part(name, value):
+                    return (f"--{boundary}\r\nContent-Disposition: form-data; "
+                            f'name="{name}"\r\n\r\n{value}\r\n').encode()
+                body_bytes = (
+                    b"".join([
+                        _part("type", "photo"),
+                        _part("caption", f'<p>{hook}</p><p><a href="{url}">{title}</a></p>'),
+                        _part("link", url),
+                        _part("tags", tags),
+                        _part("native_inline_images", "true"),
+                        f"--{boundary}\r\nContent-Disposition: form-data; "
+                        f'name="data[0]"; filename="{hero.name}"\r\n'
+                        f"Content-Type: {mime}\r\n\r\n".encode()
+                        + img_bytes
+                        + f"\r\n--{boundary}--\r\n".encode()
+                    ])
+                )
+                body_params_for_sig = {
+                    "type": "photo", "caption": f'<p>{hook}</p><p><a href="{url}">{title}</a></p>',
+                    "link": url, "tags": tags,
+                }
+                auth = _oauth_header("POST", api_url, {}, body_params_for_sig)
+                req = ureq.Request(
+                    api_url, data=body_bytes,
+                    headers={"Authorization": auth,
+                             "Content-Type": f"multipart/form-data; boundary={boundary}"},
+                    method="POST",
+                )
+            else:
+                body_params = {
+                    "type": "link", "title": title, "url": url,
+                    "description": hook, "tags": tags,
+                }
+                auth = _oauth_header("POST", api_url, {}, body_params)
+                req = ureq.Request(
+                    api_url,
+                    data=urllib.parse.urlencode(body_params).encode(),
+                    headers={"Authorization": auth,
+                             "Content-Type": "application/x-www-form-urlencoded"},
+                    method="POST",
+                )
+
+            with ureq.urlopen(req, timeout=20) as r:
+                result = json.loads(r.read())
+            post_id = result.get("response", {}).get("id", "?")
+            self.logger.info("Tumblr: posted id=%s → https://%s.tumblr.com/post/%s", post_id, blog, post_id)
+
+        except Exception as e:
+            self.logger.warning("Tumblr post failed: %s", e)
+
+
     def _send_newsletter(self, title, content, article_file, agent_name):
         """Send newsletter to subscribers via newsletter-send.py (non-blocking)."""
         import subprocess, os
@@ -1019,10 +1139,11 @@ image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
         # Step 7: Commit article + review sidecar
         commit_success = self.commit_to_git(article_file, image_filenames, review_file)
 
-        # Step 8: Post to Bluesky + Mastodon (non-blocking)
+        # Step 8: Post to Bluesky + Mastodon + Tumblr (non-blocking)
         if commit_success:
             self.post_to_bluesky(extracted_title, content, article_file, image_filenames)
             self.post_to_mastodon(extracted_title, content, article_file, image_filenames)
+            self.post_to_tumblr(extracted_title, content, article_file, image_filenames)
 
         # Step 9: Send newsletter (non-blocking)
         if commit_success:
