@@ -950,7 +950,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             raw = self._call_openai_compat_api(
                 url="http://172.19.0.1:8317/v1",
                 api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
-                system_prompt="Return only the post text. No quotes around it. Under 250 characters.",
+                system_prompt="Return only the post text. No quotes around it. Maximum 250 characters.",
                 user_prompt=prompt,
                 model="claude-sonnet-4-6",
                 max_tokens=80,
@@ -1355,7 +1355,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             title = discovery['angle']
             domain = discovery['domain']
             source_note = f"*This article was inspired by [{discovery['original_title']}]({discovery['url']}) from {domain}.*"
-            self.mark_finding_as_used(discovery['id'])
+            # mark_finding_as_used called after successful commit (see Step 7)
             source_text = self.fetch_source_article(discovery.get('url', ''))
             pool_topic   = discovery.get('url', '').split('/')[2] if discovery.get('url') else 'general'
             pool_links   = self.get_pool_links(pool_topic)
@@ -1527,6 +1527,11 @@ model_used: {metadata.get('model_used', 'unknown')}
 
         # Step 7: Commit article + review sidecar
         commit_success = self.commit_to_git(article_file, image_filenames, review_file)
+
+        # Mark discovery as used only after successful commit — prevents consuming a
+        # finding when generation or commit fails (would lose it for tomorrow)
+        if commit_success and discovery:
+            self.mark_finding_as_used(discovery["id"])
 
         # Step 8: Post to Bluesky + Mastodon + Tumblr (non-blocking)
         if commit_success:
