@@ -983,6 +983,12 @@ body {
   outline-offset: 2px;
 }
 
+.site-nav__menu a[aria-current="page"] {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  border-bottom: 2px solid var(--color-text-primary);
+}
+
 .newsletter-msg {
   font-size: var(--font-size-sm);
   color: var(--color-text-accent);
