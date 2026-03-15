@@ -45,7 +45,7 @@ Leave QUEUE empty for fully automatic topic selection from DB.
 Main article pipeline. Self-loads `/srv/secrets/openclaw.env`.
 
 **Key settings:**
-- `max_tokens`: 4000 (do NOT lower — causes truncation)
+- `max_tokens`: 3500 (article generation), 2500 (rewrite pass)
 - Provider: Claude Opus 4.6 via CLIProxy at http://172.19.0.1:8317
 - Images: Pollinations FLUX API (key from openclaw.env)
 - Bluesky: auto-posts after each article (creds from openclaw.env)
@@ -137,7 +137,7 @@ Weekly (Monday 02:00):
 At article generation (09:00):
   orchestrator picks 10-15 pool URLs relevant to article topic
   → passes to LLM with instruction:
-    "Pick 2-3 that create an interesting, non-obvious connection to
+    "Pick 0-2 that create an interesting, non-obvious connection to
      what you just wrote. Weave the link into a sentence naturally —
      not 'click here', not a footnote."
 ```
