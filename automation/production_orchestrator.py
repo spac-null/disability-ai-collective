@@ -1187,6 +1187,7 @@ image_alt: {json.dumps(image_descriptions[0] if image_descriptions else 'Article
 model_used: {metadata.get('model_used', 'unknown')}
 register: {metadata.get('register', '')}
 article_type: {metadata.get('article_type', 'standard')}
+excerpt: {json.dumps(excerpt)}
 ---
 
 """
@@ -2055,6 +2056,9 @@ article_type: {metadata.get('article_type', 'standard')}
             first_newline = raw_content.find('\n')
             if first_newline > 0:
                 extracted_title = raw_content[:first_newline][6:].strip().strip('"')
+                # Enforce 55-char max (leaves room for " | Crip Minds" suffix in SERP)
+                if len(extracted_title) > 55:
+                    extracted_title = extracted_title[:55].rsplit(' ', 1)[0].rstrip(':,—-').strip()
                 content = raw_content[first_newline:].lstrip('\n')
                 self.logger.info(f"LLM title: {extracted_title}")
             else:
