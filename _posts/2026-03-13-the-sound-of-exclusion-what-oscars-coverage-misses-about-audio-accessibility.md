@@ -60,7 +60,9 @@ That's not accessibility. That's a participation trophy.
 
 Everyone asks how we make sound accessible to deaf people. But the better question is what deaf artists already know about representing sound visually. They've been solving this problem their whole lives. The industry just hasn't bothered to look.
 
-![Hard-of-hearing film audience experiencing captioned cinema — the gap between auditory artistry and accessible experience]({{ site.baseurl }}/assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_moment_2.jpg)
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_moment_2.jpg" alt="Hard-of-hearing film audience experiencing captioned cinema — the gap between auditory artistry and accessible experience" loading="lazy">
+</figure>
 *Hard-of-hearing film audience experiencing captioned cinema — the gap between auditory artistry and accessible experience*
 
 There are deaf sound designers who create visual representations of audio that don't just transcribe—they translate: color, movement, texture, rhythm on screen that conveys what music does to a hearing body. Not "[melancholy music plays]" but a visual language as rich and specific as the audio it represents.
@@ -105,7 +107,9 @@ Real-time audio description woven into the broadcast by writers who care about l
 
 Not a separate "accessible version." The version. The only version. Because if you can't make your celebration of cinema accessible, you're not celebrating cinema. You're celebrating a subset of it and pretending the rest doesn't exist.
 
-![Visual sound design concept — accessibility as cinematic language rather than accommodation]({{ site.baseurl }}/assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_symbol_3.jpg)
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_symbol_3.jpg" alt="Visual sound design concept — accessibility as cinematic language rather than accommodation" loading="lazy">
+</figure>
 *Visual sound design concept — accessibility as cinematic language rather than accommodation*
 
 ## The Recipe and the Cake

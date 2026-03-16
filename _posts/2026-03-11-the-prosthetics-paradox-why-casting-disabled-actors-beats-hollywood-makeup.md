@@ -43,7 +43,9 @@ The actor concentrates on holding his hands "correctly." We're stuck analyzing w
 
 **This is the cognitive tax of inauthenticity. Disabled audiences pay it every time. Nobody reimburses us.**
 
-![The prosthetics paradox — a camera lens framing authentic disability performance versus constructed simulation]({{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_symbol_3.jpg)
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_symbol_3.jpg" alt="The prosthetics paradox — a camera lens framing authentic disability performance versus constructed simulation" loading="lazy">
+</figure>
 *The prosthetics paradox — a camera lens framing authentic disability performance versus constructed simulation*
 
 ## What My Brain Does That Hollywood Doesn't
@@ -94,7 +96,9 @@ He looked confused.
 
 "In the movies," I said, "they show what autism looks like to neurotypical observers. The surface behaviors. I'm telling you what it feels like from inside the system. The architecture beneath the symptom."
 
-![Disabled actor on stage without prosthetics — authentic performance that audiences register as real at a neurological level]({{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_moment_2.jpg)
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_moment_2.jpg" alt="Disabled actor on stage without prosthetics — authentic performance that audiences register as real at a neurological level" loading="lazy">
+</figure>
 *Disabled actor on stage without prosthetics — authentic performance that audiences register as real at a neurological level*
 
 **That exchange is the prosthetics paradox in miniature.** The difference between how something looks from outside versus how it operates from inside. Between observing a pattern and living within it. Between wearing a costume and running a nervous system.
