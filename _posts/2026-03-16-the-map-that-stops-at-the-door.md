@@ -12,19 +12,21 @@ register: clinical
 article_type: standard
 ---
 
-The "Getting Here" page for most arts venues is a list of transportation options arranged by mode, and it tells you almost nothing about getting there.
+There are arts venues that have won accessibility awards. There are Deaf visitors who followed their directions exactly and stood outside, circling, unable to find the entrance. These are, frequently, the same venues.
 
-I say this as someone who designs information systems for a living, and who has stood outside more buildings than I can count, holding a phone that assured me I had arrived while the actual entrance remained invisible. The page tells you which bus. The page tells you which train. The page tells you there is step-free access. What the page does not tell you is where the door is when you can't hear someone say "around the back." What it does not tell you is what you will encounter between the bus stop and the threshold. What it leaves out is the building itself — the physical, spatial, sensory reality of approaching a place that claims to want you inside.
+I design information systems for a living. I have stood outside more buildings than I can count, holding a phone that assured me I had arrived while the actual entrance was invisible. The page told me which bus. Which train. That there was step-free access. It did not tell me where the door was when I could not hear someone say "around the back." It did not tell me what I would encounter between the bus stop and the threshold.
 
-My thesis is simple. Access directions that end at the property line are not about access. They are about liability. And the difference between those two things is the difference between a map that shows you the territory and a map that shows you what the mapmaker is willing to be responsible for.
+It left out the building itself.
+
+Access directions that end at the property line are not about access. They are about liability. The difference is the difference between a map that shows you the territory and a map that shows you what the mapmaker is willing to be responsible for.
 
 ## The property line
 
-Let me describe a building I visited last autumn. A mid-sized arts venue in South London. Their website had a "Getting Here" section. It listed three bus routes, one Tube station, a note about the nearest accessible parking bay. It mentioned that the main entrance had level access. It included a photograph of the front of the building, taken on a sunny day, at a distance that made the whole façade legible in a single glance.
+Let me describe a building I visited in October 2024. A mid-sized arts venue in South London. Their website had a "Getting Here" section. It listed three bus routes, one Tube station, a note about the nearest accessible parking bay. It mentioned that the main entrance had level access. It included a photograph of the front of the building, taken on a sunny day, at a distance that made the whole façade legible in a single glance.
 
 I arrived at dusk. The bus stop was across a four-lane road with no controlled crossing within sight. The pavement between the road and the building had been resurfaced in a pattern that obliterated the tactile paving. The "main entrance" with its level access was around a corner from the street-facing side, marked by a sign I could see only because I had been told, via email, to look for it. The photograph on the website had been taken from inside a car park that was closed to the public.
 
-Now let me describe another building. The [Haags Gemeentemuseum](https://www.kunstmuseum.nl/) in The Hague. Designed by H.P. Berlage and completed in 1935. Berlage was obsessed with the idea that a building should explain itself. The approach to the museum is a sequence of spatial cues — changes in material underfoot, a long reflecting pool that orients your body toward the entrance axis, a portico scaled so that you understand you are arriving before you reach the door. None of this was designed for disabled visitors. Berlage was not thinking about us. But the principle underneath it — that the building owes the approaching body an explanation of itself — that principle is the thing missing from every "Getting Here" page I have ever read.
+Now let me describe another building. The [Haags Gemeentemuseum](https://www.kunstmuseum.nl/) in The Hague. Designed by H.P. Berlage and completed in 1935. It turns out Berlage was obsessed with the idea that a building should explain itself. The approach to the museum is a sequence of spatial cues — changes in material underfoot, a long reflecting pool that orients your body toward the entrance axis, a portico scaled so that you understand you are arriving before you reach the door. None of this was designed for disabled visitors. Berlage was not thinking about us. But the principle underneath it — that the building owes the approaching body an explanation of itself — that principle is the thing missing from every "Getting Here" page I have ever read.
 
 The South London venue had a page. Berlage had an architecture.
 
@@ -36,15 +38,15 @@ It is just not enough.
 
 The problem is not the page. The problem is what the page has replaced. A "Getting Here" section functions, institutionally, as proof that access was considered. It becomes the artifact that satisfies the compliance question. Did you provide access information? Yes. Here it is. The page exists so the institution can point to it. And pointing to it becomes the end of the process, not the beginning.
 
-I know this because I have been the person institutions hire to audit their information systems, and I have watched the moment when a venue director realizes that their "Getting Here" page has been copy-pasted from a template provided by their local council's tourism board. The bus numbers were correct. The map was a screenshot from Google. The access information described the building as it was meant to be, not as it is. The director knew. She said, "We update it when someone complains." She was not cruel. She was describing a system that treats access information as reactive — as response to failure, not as a design practice.
+I know this because I have been the person institutions hire to audit their information systems. I have watched the moment when a venue director realizes that their "Getting Here" page has been copy-pasted from a template provided by their local council's tourism board. The bus numbers were correct. The map was a screenshot from Google. What I did not expect — still do not, no matter how many times I see it — was that the access information described the building as it was meant to be, not as it is. The director knew. She said, "We update it when someone complains." She was not cruel. She was describing a system that treats access information as reactive — as response to failure, not as a design practice.
 
 ## Wayfinding is not directions
 
-There is a discipline called wayfinding. It is not the same as giving directions. Directions tell you what to do. Wayfinding tells you where you are. The distinction matters enormously, and most access information operates entirely in the first mode.
+Turn left. Take the 37 bus. Use the rear entrance. These are commands. They assume a body that can execute them in sequence, with the senses to identify "left" and "rear" in an unfamiliar environment, that can parse instructions delivered in text and hold them in working memory while navigating physical space.
 
-Turn left. Take the 37 bus. Use the rear entrance. These are commands. They assume a body that can execute them in sequence, that possesses the sensory apparatus to identify "left" and "rear" in an unfamiliar environment, that can parse a command structure delivered in text and hold it in working memory while navigating physical space.
+Most access information operates entirely in this mode. What it does not do is tell you where you are.
 
-Wayfinding is different. Wayfinding creates an environment that communicates spatial information continuously, through multiple channels, so that a person can orient themselves without instructions. The Dutch urbanist Steen Eiler Rasmussen wrote about this in the 1950s. The contemporary version is less poetic and more computational, but the core insight holds: a well-wayfound environment does not need to tell you where to go because it shows you where you are.
+There is a name for the thing that does. Wayfinding. It is not the same as giving directions. Directions tell you what to do. Wayfinding tells you where you are. Wayfinding creates an environment that communicates spatial information continuously, through multiple channels, so that a person can orient themselves without instructions. The Dutch urbanist Steen Eiler Rasmussen wrote about this in the 1950s. The contemporary version is less poetic and more computational, but the core insight holds: a well-wayfound environment does not need to tell you where to go because it shows you where you are.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-map-that-stops-at-the-door_moment_2.jpg" alt="Linocut woodblock aesthetic: bold silhouette of a doorway viewed from inside looking out illustration for The Map That Stops at the Door" loading="lazy">
@@ -60,7 +62,7 @@ I learned the difference between information delivery and information architectu
 
 The school had a policy. The policy said a teacher would alert any deaf student during an emergency. The teacher was already in the hallway. The policy was information delivery. What would have saved me was information architecture — a visual alarm, a strobe, a vibrating puck under my chair, any system that communicated through a channel my body could receive without depending on a single person remembering to act.
 
-I bring this up not for sympathy. I bring it up because it is the exact same structural failure as the "Getting Here" page. The page is the policy. It says: we have told you how to arrive. If you cannot arrive using this information, the failure is in the gap between our instructions and your body. The architecture would be different. The architecture would say: we have made the approach legible in every channel we can think of, and we are still learning which channels we have missed.
+This is the exact same structural failure as the "Getting Here" page. The page is the policy. It says: we have told you how to arrive. If you cannot arrive using this information, the failure is in the gap between our instructions and your body. The architecture would be different. The architecture would say: we have made the approach legible in every channel we can think of, and we are still learning which channels we have missed.
 
 ## Two ramps
 
