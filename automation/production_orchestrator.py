@@ -1464,6 +1464,84 @@ register: {metadata.get('register', '')}
         except Exception as e:
             self.logger.warning("Newsletter send failed: %s", e)
 
+    def link_audit(self, dry_run: bool = False) -> dict:
+        """Scan all published articles and inject links for any that slipped through.
+
+        Equivalent to the Opus rewrite guard — catches articles where smart_inject_links
+        failed (network timeout, Haiku error, predates the system, etc.).
+
+        Args:
+            dry_run: if True, report what would change without writing files.
+
+        Returns:
+            {"audited": N, "updated": [...filenames], "skipped": [...]}
+        """
+        import re as _re
+
+        posts = sorted(self.posts_dir.glob("*.md"), reverse=True)
+        results = {"audited": len(posts), "updated": [], "skipped": []}
+
+        for post in posts:
+            try:
+                content = post.read_text(encoding="utf-8")
+                parts = content.split("---", 2)
+                if len(parts) != 3:
+                    results["skipped"].append(post.name)
+                    continue
+
+                fm, body = "---" + parts[1] + "---", parts[2]
+
+                new_body = self.smart_inject_links(body)
+                new_body = self.inject_canonical_links(new_body)
+
+                if new_body == body:
+                    self.logger.debug("link_audit: clean — %s", post.name)
+                    continue
+
+                # Diff: what was added?
+                old_links = set(_re.findall(r'\[([^\]]+)\]\(([^)]+)\)', body))
+                new_links = set(_re.findall(r'\[([^\]]+)\]\(([^)]+)\)', new_body))
+                added = new_links - old_links
+
+                self.logger.info(
+                    "link_audit: %s — +%d links: %s",
+                    post.name, len(added),
+                    ", ".join(f"[{t}]" for t, _ in added)
+                )
+
+                if not dry_run:
+                    post.write_text(fm + new_body, encoding="utf-8")
+
+                results["updated"].append({
+                    "file": post.name,
+                    "added": [{"text": t, "url": u} for t, u in sorted(added)],
+                })
+
+            except Exception as e:
+                self.logger.warning("link_audit: error on %s — %s", post.name, e)
+                results["skipped"].append(post.name)
+
+        if not dry_run and results["updated"]:
+            # Commit all updated articles in one batch
+            try:
+                import subprocess as _sp
+                updated_paths = [str(self.posts_dir / r["file"]) for r in results["updated"]]
+                for p in updated_paths:
+                    _sp.run(["git", "add", p], check=True, cwd=self.repo_root)
+                count = len(results["updated"])
+                _sp.run(
+                    ["git", "commit", "-m",
+                     f"audit: inject missing links in {count} article(s)\n\n"
+                     + "\n".join(f"- {r['file']}: +{len(r['added'])} links" for r in results["updated"])],
+                    check=True, cwd=self.repo_root,
+                )
+                _sp.run(["git", "push", "origin", "main"], check=True, cwd=self.repo_root)
+                self.logger.info("link_audit: committed + pushed %d article(s)", count)
+            except Exception as e:
+                self.logger.warning("link_audit: git commit failed — %s", e)
+
+        return results
+
     def run_production_automation(self):
         """
         PRODUCTION-READY main execution flow
@@ -1687,6 +1765,24 @@ register: {metadata.get('register', '')}
 
 
 if __name__ == "__main__":
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--link-audit", action="store_true",
+                        help="Scan all articles and inject missing links")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="With --link-audit: report changes without writing files")
+    args = parser.parse_args()
+
     orchestrator = ProductionOrchestrator()
-    result = orchestrator.run_production_automation()
-    print(json.dumps(result, indent=2))
+
+    if args.link_audit:
+        result = orchestrator.link_audit(dry_run=args.dry_run)
+        updated = result["updated"]
+        print(f"Audited {result['audited']} articles — {len(updated)} updated, {len(result['skipped'])} skipped")
+        for r in updated:
+            print(f"  {r['file']}: +{len(r['added'])} links")
+            for item in r["added"]:
+                print(f"    [{item['text']}] -> {item['url']}")
+    else:
+        result = orchestrator.run_production_automation()
+        print(json.dumps(result, indent=2))
