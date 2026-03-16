@@ -268,6 +268,7 @@ _STRUCTURAL_SHAPES = {
     "reframe-definition":      ["what we call", "the word", "defined as", "not a", "actually means", "redefine"],
     "historical-anchor":       ["1973", "1990", "1960", "history", "since then", "decades", "century", "invented"],
     "counter-assumption":      ["assume", "you might think", "most people", "common belief", "in fact", "actually"],
+    "comparative-case":        ["contrast", "meanwhile", "both", "versus", "opposite", "parallel", "other side", "where one", "while the"],
 }
 
 
@@ -467,6 +468,13 @@ class ProductionOrchestrator:
                     "No recent article has anchored its argument in a specific historical event. "
                     "Consider: a specific date, a court case, a protest, a piece of legislation, "
                     "a building that was built or torn down — and show how the same dynamic repeats today."
+                )
+            if "comparative-case" not in shapes:
+                nudges.append(
+                    "No recent article has used the comparative-case structure: two parallel stories or examples "
+                    "placed side by side — the contrast carries the argument without stating it. "
+                    "Consider: two buildings, two cities, two policies, two moments — one that worked and one that didn't. "
+                    "No 'this shows that.' The reader draws the conclusion from the gap."
                 )
             if nudges:
                 return "SHAPE NOTE: " + " ".join(nudges) + "\n\n"
@@ -839,11 +847,12 @@ class ProductionOrchestrator:
             "4. NO \"Case study: Sarah, a graphic designer...\" — use real narrative flow\n"
             "5. Paragraphs with rhythm — short sentences land the idea, longer ones develop it. No sentence chains more than two comma-clauses. Paragraph length varies: a short one hits differently after a long one.\n"
             "6. Bold sparingly — only sharpest claims, never structural markers\n"
-            "7. ENDING: the last paragraph is ONE sentence. A concrete image, a paradox, or an unresolved reframing that leaves something open. NEVER a thesis restatement, summary, call-to-action, pitch, protocol announcement, brand statement, or sentence starting with We need / This requires / Join / I am developing. If the draft ends this way, CUT backward to the last concrete image before it and end there.\n"
-            "8. 700-2000 words body — match the original target length, do not shrink\n"
-            "9. Author\'s disability is their EXPERTISE and LENS, never tragedy or limitation\n"
-            "10. No jargon without unpacking, no assumed fluency with theory — but don\'t iron out the author\'s voice to make it sound like journalism. Clarity is not the same as smoothness.\n"
-            "11. Crip culture references (Sins Invalid, crip time, disability justice) only when they fit naturally\n\n"
+            "7. ENDING: the last paragraph is ONE sentence. A concrete image, a paradox, or an unresolved reframing that leaves something open. NEVER a thesis restatement, summary, call-to-action, pitch, protocol announcement, brand statement, or sentence starting with We need / This requires / Join / I am developing. If the draft ends this way, CUT backward to the last concrete image before it and end there. Alternative: the coda — fold back to the opening scene, later or in a different register. No stated moral. The beginning and end form a bracket.\n"
+            "8. CONCESSION: if the draft dismantles an assumption, check that it gives the strongest version of the opposing view first. If it attacks a weakened version, strengthen the concession before the flip. One short sentence does the flipping.\n"
+            "9. 700-2000 words body — match the original target length, do not shrink\n"
+            "10. Author\'s disability is their EXPERTISE and LENS, never tragedy or limitation\n"
+            "11. No jargon without unpacking, no assumed fluency with theory — but don\'t iron out the author\'s voice to make it sound like journalism. Clarity is not the same as smoothness.\n"
+            "12. Crip culture references (Sins Invalid, crip time, disability justice) only when they fit naturally\n\n"
             "Return ONLY the complete edited article (frontmatter preserved + image lines preserved "
             "+ edited body). No commentary, no preamble."
         )
@@ -1898,7 +1907,11 @@ article_type: {metadata.get('article_type', 'standard')}
             "- Write for a smart engaged reader who does not work in the field — no assumed fluency with theory, no jargon without unpacking. Go specific and strange, but stay legible.\n"
             "- Tone: direct, dry when needed, never inspirational, never corporate wellness\n\n"
             "GROUNDING: Your argument lives in your body before it lives in theory. Start from a specific physical sensation, a place, a person, a thing that happened — not from Lefebvre or diagnostic categories. The concept, if it arrives, arrives late, earned by the concrete reality that came before it. Your body knows this before your argument does.\n\n"
-            "ENDING: Your last paragraph is one sentence. It is a concrete image, a paradox, or a reframing that makes the reader sit with something unresolved. Never summarize. Never offer hope. Never call to action. Never conclude. The essay stops mid-thought — but precisely.\n\n"
+            "ENDING: Your last paragraph is one sentence. It is a concrete image, a paradox, or a reframing that makes the reader sit with something unresolved. Never summarize. Never offer hope. Never call to action. Never conclude. The essay stops mid-thought — but precisely.\n"
+            "ENDING VARIANT — THE CODA (use occasionally, not every time): Fold back to the opening scene — the same place, the same person, the same object — but later, or elsewhere, or in a different register. Do not state what changed. Show the same thing, different. The beginning and end form a bracket. The argument has resolved itself through the narrative — you do not need to say so.\n\n"
+            "CONCESSION: Before you dismantle an assumption, give it the strongest version of itself first. Name what is genuinely true, genuinely difficult, genuinely earned about the thing you are arguing against. Do not weaken it to make your argument easier. Then — one short sentence that flips it. The reader must feel the weight of what they believed before you take it away.\n\n"
+            "REDEFINE (use when it fits, not always): The most powerful move is not to challenge the reader's position but to redefine what the problem is. Not 'you are wrong about X' but 'X is not the problem — Y is, and you have not named it yet.' Find the moment where the reader realizes what they thought was the problem was actually the symptom. This is a sentence-level move, not a structural one — it can happen mid-paragraph, almost as an aside.\n\n"
+            "INSIDER WITNESS (use when the topic allows): The strongest evidence is often a confession from someone who benefits from the system you are critiquing — not a researcher, not a statistic. Someone who lives inside the thing and knows it is broken. A building inspector who signs off on ramps he knows are too steep. A hiring manager who admits the 'culture fit' interview is a neurotypicality test. An architect who designs for wheelchair users but has never sat in one. Find or construct the insider who would say, if pressed: 'I know. I do it anyway.'\n\n"
             f"{('FORM: ' + article_type_prompt + chr(10) + chr(10)) if article_type_prompt else ''}"
             f"REGISTER: {register}. {register_prompt}\n\n"
             f"LENGTH: ~{target_words} words. Do not pad. Do not rush. Every paragraph earns the next.\n\n"
