@@ -329,6 +329,105 @@ class ProductionOrchestrator:
         """Return override date if set, else today."""
         return getattr(self, 'override_date', None) or datetime.now().strftime('%Y-%m-%d')
 
+    def _balance_agent(self, preferred: str) -> str:
+        """
+        Guard against agent overuse. Rules (in priority order):
+          1. --agent CLI override always wins.
+          2. If preferred agent ran yesterday → rotate to least-recently-used agent.
+          3. If preferred agent has 2+ articles in last 4 days → rotate.
+          4. Otherwise keep preferred.
+        Returns final agent name.
+        """
+        if getattr(self, 'override_agent', None):
+            return self.override_agent
+
+        try:
+            conn   = sqlite3.connect(str(self.discovery_db))
+            self._init_beats_table(conn)
+            cutoff4 = (datetime.now() - timedelta(days=4)).strftime("%Y-%m-%d")
+            cutoff1 = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+
+            # Count per agent last 4 days
+            rows = conn.execute(
+                "SELECT agent, COUNT(*) FROM article_beats WHERE date >= ? GROUP BY agent",
+                (cutoff4,)
+            ).fetchall()
+            freq = {r[0]: r[1] for r in rows}
+
+            # Last published agent
+            last = conn.execute(
+                "SELECT agent FROM article_beats WHERE date >= ? ORDER BY date DESC, id DESC LIMIT 1",
+                (cutoff1,)
+            ).fetchone()
+            last_agent = last[0] if last else None
+            conn.close()
+
+            all_agents = list(self.agents.keys())
+
+            # Rule 2: avoid yesterday's agent
+            blocked = set()
+            if last_agent == preferred:
+                blocked.add(preferred)
+
+            # Rule 3: avoid agents with 2+ articles in last 4 days
+            for a, c in freq.items():
+                if c >= 2:
+                    blocked.add(a)
+
+            candidates = [a for a in all_agents if a not in blocked]
+            if not candidates:
+                # All blocked — pick least recently used
+                candidates = sorted(all_agents, key=lambda a: freq.get(a, 0))
+
+            if preferred not in blocked:
+                return preferred
+
+            # Prefer least-used among candidates
+            chosen = min(candidates, key=lambda a: freq.get(a, 0))
+            self.logger.info("Agent rebalanced: %s → %s (blocked: %s)", preferred, chosen, blocked)
+            return chosen
+
+        except Exception as e:
+            self.logger.debug("_balance_agent failed: %s", e)
+            return preferred
+
+    def _check_title_freshness(self, title: str) -> list[str]:
+        """
+        Check proposed title for key-word overlap with articles from last 14 days.
+        Returns list of conflict descriptions (empty = clean).
+        """
+        stopwords = {
+            'the','a','an','and','or','of','in','on','at','to','for','is','are',
+            'was','were','with','this','that','from','by','as','it','its','not',
+            'but','how','why','what','when','who','you','your','that','they'
+        }
+        try:
+            conn   = sqlite3.connect(str(self.discovery_db))
+            cutoff = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
+            rows   = conn.execute(
+                "SELECT title, agent FROM article_beats WHERE date >= ?", (cutoff,)
+            ).fetchall()
+            conn.close()
+
+            new_words = {w.lower() for w in re.findall(r"\b[a-zA-Z]{4,}\b", title)
+                         if w.lower() not in stopwords}
+            conflicts = []
+            for old_title, agent in rows:
+                old_words = {w.lower() for w in re.findall(r"\b[a-zA-Z]{4,}\b", old_title)
+                             if w.lower() not in stopwords}
+                overlap = new_words & old_words
+                # Flag if 2+ content words overlap, or any of these high-signal words repeat
+                signal_words = {'body', 'frequency', 'door', 'map', 'sound', 'space',
+                                'design', 'city', 'office', 'time', 'floor', 'wall',
+                                'building', 'navigation', 'access', 'voice', 'language'}
+                signal_overlap = overlap & signal_words
+                if len(overlap) >= 3 or len(signal_overlap) >= 2:
+                    conflicts.append(f"overlaps with '{old_title}' ({agent}): {overlap & (old_words | signal_words)}")
+            return conflicts
+        except Exception as e:
+            self.logger.debug("_check_title_freshness failed: %s", e)
+            return []
+
     def check_for_existing_article_today(self):
         """Check if today's article already exists. Returns filename or None."""
         if getattr(self, 'force_run', False):
@@ -1956,16 +2055,17 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title) if w.lower() not in _stopwords][:8]
             pool_links   = self.get_pool_links(pool_keywords)
             
-            # Map domain to agent (improved logic)
+            # Map domain to agent (improved logic) — then balance for fairness
             domain_lower = domain.lower()
             if any(word in domain_lower for word in ['art', 'design', 'visual']):
-                agent_name = "Pixel Nova"
+                _preferred = "Pixel Nova"
             elif any(word in domain_lower for word in ['tech', 'science', 'system']):
-                agent_name = "Zen Circuit"
+                _preferred = "Zen Circuit"
             elif any(word in domain_lower for word in ['culture', 'social', 'entertainment']):
-                agent_name = "Siri Sage"
+                _preferred = "Siri Sage"
             else:
-                agent_name = "Maya Flux"
+                _preferred = "Maya Flux"
+            agent_name = self._balance_agent(_preferred)
                 
         else:
             # Generate fallback topic
@@ -1976,7 +2076,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 "The Prosthetics Paradox: When Technology Creates New Barriers Instead of Removing Old Ones"
             ]
             title = random.choice(topics)
-            agent_name = random.choice(list(self.agents.keys()))
+            agent_name = self._balance_agent(random.choice(list(self.agents.keys())))
             source_note = ""
             source_text = None
             pool_links   = []
@@ -1995,7 +2095,20 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             article_type_prompt = _INDEFENSIBLE_PROMPTS.get(agent_name, "")
         self.logger.info("Register: %s | Article type: %s | Target words: %d", register, article_type, target_words)
 
-        beat_nudge  = self._get_beat_nudge(agent_name)
+        # Title freshness guard
+        fresh_conflicts = self._check_title_freshness(title)
+        if fresh_conflicts:
+            self.logger.warning("Title freshness conflicts: %s", fresh_conflicts)
+            # Log to result but do not block — nudge the prompt instead
+            title_freshness_warning = (
+                "FRESHNESS NOTE: The proposed title shares key words with recent articles. "
+                "Make the angle clearly distinct — different argument, different form, different territory. "
+                "Do not use the same framing words ('body', 'frequency', 'door', 'map') as recent pieces.\n\n"
+            )
+        else:
+            title_freshness_warning = ""
+
+        beat_nudge  = title_freshness_warning + self._get_beat_nudge(agent_name)
         shape_nudge = self._get_shape_nudge()
         cross_ref   = self._get_cross_reference(agent_name)
 
@@ -2214,6 +2327,10 @@ if __name__ == "__main__":
                         help="Override article date (YYYY-MM-DD), implies --force")
     parser.add_argument("--force", action="store_true",
                         help="Run even if article already exists for target date")
+    parser.add_argument("--agent", type=str, default=None,
+                        help="Force specific agent: 'Pixel Nova', 'Siri Sage', 'Maya Flux', 'Zen Circuit'")
+    parser.add_argument("--retract", type=str, default=None, metavar="SLUG",
+                        help="Retract article by slug (deletes file, removes Bluesky post)")
     args = parser.parse_args()
 
     orchestrator = ProductionOrchestrator()
@@ -2222,8 +2339,12 @@ if __name__ == "__main__":
         orchestrator.force_run = True
     elif args.force:
         orchestrator.force_run = True
+    if args.agent:
+        orchestrator.override_agent = args.agent
 
-    if args.link_audit:
+    if args.retract:
+        orchestrator.retract_article(args.retract)
+    elif args.link_audit:
         result = orchestrator.link_audit(dry_run=args.dry_run)
         updated = result["updated"]
         print(f"Audited {result['audited']} articles — {len(updated)} updated, {len(result['skipped'])} skipped")
