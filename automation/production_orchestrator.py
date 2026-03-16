@@ -137,6 +137,69 @@ _AGENT_BEATS = {
     "Zen Circuit": ["neurodivergent-epistemology", "diagnosis-history", "cross-domain-pattern", "systems-failure"],
 }
 
+# Known friction vectors between personas — used when one references the other.
+_PERSONA_CONFLICTS = {
+    ("Pixel Nova", "Siri Sage"): (
+        "You and Siri design for incompatible bodies in the same space. "
+        "A sound-rich city is hostile to Deaf users who navigate by sight. "
+        "A visually dense city strips the acoustic information Siri depends on. "
+        "This is not an abstract design disagreement. It is the same physical corner, the same budget cycle, "
+        "the same square metre of public space."
+    ),
+    ("Siri Sage", "Pixel Nova"): (
+        "What Pixel calls visual clarity is often sonic deprivation: quiet surfaces, no resonance, "
+        "no ambient information. What you call acoustic richness reads to Pixel as sensory overload "
+        "for Deaf users navigating by spatial landmarks. "
+        "You have both been in the same meeting arguing for incompatible things. Neither of you was wrong."
+    ),
+    ("Maya Flux", "Zen Circuit"): (
+        "Zen Circuit's neuroqueer framework says: neurological variation is not deficit. Fix the category, not the person. "
+        "You use the social model: disability is produced by inaccessible systems. Fix the system. "
+        "You mostly agree but Zen's framework sometimes lets built environments off the hook. "
+        "'I experience the city differently' is not the same as 'the city is built to exclude me.' "
+        "One describes perception. The other describes infrastructure."
+    ),
+    ("Zen Circuit", "Maya Flux"): (
+        "Maya wants to fix broken systems. You sometimes think the systems are not broken: "
+        "they were built deliberately for one kind of body and calling that broken "
+        "implies it was ever meant to include you. Maya's policy work reforms the cage. "
+        "You are not sure the cage can be reformed into something else. "
+        "This is not pessimism. It is a different theory of what infrastructure is for."
+    ),
+    ("Pixel Nova", "Maya Flux"): (
+        "Maya counts hours and dollars. You work in information systems where the injustice is often illegible: "
+        "the missing caption, the interface that assumes a hearing user, the form that cannot be read. "
+        "Maya's injuries are physical and documentable. Yours are epistemic and often invisible. "
+        "Both are real. Neither translates directly to the other's language."
+    ),
+    ("Maya Flux", "Pixel Nova"): (
+        "Pixel works at the level of representation: who gets to communicate, whose language counts. "
+        "You work at the level of movement: who gets to be in the room at all. "
+        "Accessible information about an inaccessible space is still a locked door with a very good sign on it."
+    ),
+    ("Siri Sage", "Zen Circuit"): (
+        "Zen Circuit finds the sensory overload argument useful for neurodivergence framing. "
+        "But sensory overload for you is navigational: a city that stops making sense, that gives you no acoustic handholds. "
+        "For Zen it is a city that gives too many. "
+        "The same stimulus. Opposite problems. The policy that fixes one may worsen the other."
+    ),
+    ("Zen Circuit", "Siri Sage"): (
+        "Siri works in acoustic design: adding information to space through sound. "
+        "Your nervous system processes that added information differently from what Siri intends. "
+        "What Siri hears as orientation, you sometimes hear as noise. "
+        "Siri is not wrong. The space just did not know there would be two of you in it."
+    ),
+}
+
+# Argumentative shapes tracked across all agents to detect structural homogeneity.
+_STRUCTURAL_SHAPES = {
+    "quantify-then-critique":  ["percent", "hours", "cost", "survey", "study", "data", "statistic", "figure"],
+    "scene-then-theory":       ["morning", "tuesday", "sitting", "standing", "watching", "walked", "arrived"],
+    "reframe-definition":      ["what we call", "the word", "defined as", "not a", "actually means", "redefine"],
+    "historical-anchor":       ["1973", "1990", "1960", "history", "since then", "decades", "century", "invented"],
+    "counter-assumption":      ["assume", "you might think", "most people", "common belief", "in fact", "actually"],
+}
+
 
 class ProductionOrchestrator:
     def __init__(self):
@@ -241,10 +304,15 @@ class ProductionOrchestrator:
                 agent    TEXT NOT NULL,
                 title    TEXT NOT NULL,
                 beat     TEXT,
-                keywords TEXT
+                keywords TEXT,
+                shape    TEXT
             )
         """)
         conn.execute("CREATE INDEX IF NOT EXISTS idx_beats_agent ON article_beats(agent, date)")
+        try:
+            conn.execute("ALTER TABLE article_beats ADD COLUMN shape TEXT")
+        except Exception:
+            pass
         conn.commit()
 
     def _classify_beat(self, agent: str, title: str, first_para: str) -> str:
@@ -265,9 +333,10 @@ class ProductionOrchestrator:
             beat = self._classify_beat(agent, title, first_para)
             conn = sqlite3.connect(str(self.discovery_db))
             self._init_beats_table(conn)
+            shape = self._classify_shape(title, first_para)
             conn.execute(
-                "INSERT INTO article_beats (date, agent, title, beat, keywords) VALUES (?, ?, ?, ?, ?)",
-                (datetime.now().strftime("%Y-%m-%d"), agent, title, beat, "")
+                "INSERT INTO article_beats (date, agent, title, beat, keywords, shape) VALUES (?, ?, ?, ?, ?, ?)",
+                (datetime.now().strftime("%Y-%m-%d"), agent, title, beat, "", shape)
             )
             conn.commit()
             conn.close()
@@ -297,6 +366,32 @@ class ProductionOrchestrator:
             return ("BEAT NOTE: " + " ".join(nudges) + "\n\n") if nudges else ""
         except Exception:
             return ""
+
+    def _classify_shape(self, title: str, first_para: str) -> str:
+        text = (title + " " + first_para).lower()
+        scores = {shape: sum(1 for kw in kws if kw in text)
+                  for shape, kws in _STRUCTURAL_SHAPES.items()}
+        best = max(scores, key=scores.get)
+        return best if scores[best] > 0 else "general"
+
+    def _get_shape_nudge(self) -> str:
+        """Nudge away from structural shapes used in the last 3 articles across all agents."""
+        try:
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._init_beats_table(conn)
+            rows = conn.execute(
+                "SELECT shape FROM article_beats WHERE shape IS NOT NULL AND shape != 'general' ORDER BY date DESC LIMIT 3"
+            ).fetchall()
+            conn.close()
+            if len(rows) < 3:
+                return ""
+            shapes = [r[0] for r in rows]
+            if len(set(shapes)) == 1:
+                label = shapes[0].replace("-", " ")
+                return "SHAPE NOTE: The last three articles all used the " + label + " structure. Find a different argumentative entry point.\n\n"
+        except Exception:
+            pass
+        return ""
 
     def _should_cross_reference(self) -> bool:
         return random.random() < 0.20
@@ -343,7 +438,9 @@ class ProductionOrchestrator:
             first_para = self._read_first_paragraph(pick[1], pick[2])
             if not first_para:
                 return None
-            return {"agent": pick[0], "title": pick[1], "first_paragraph": first_para}
+            conflict_vector = _PERSONA_CONFLICTS.get((current_agent, pick[0]), "")
+            return {"agent": pick[0], "title": pick[1], "first_paragraph": first_para,
+                    "conflict_vector": conflict_vector}
         except Exception:
             return None
 
@@ -1664,7 +1761,33 @@ register: {metadata.get('register', '')}
         self.logger.info("Register: %s | Article type: %s | Target words: %d", register, article_type, target_words)
 
         beat_nudge  = self._get_beat_nudge(agent_name)
+        shape_nudge = self._get_shape_nudge()
         cross_ref   = self._get_cross_reference(agent_name)
+
+        # Pre-compute THREAD block — use conflict vector when available
+        if cross_ref:
+            conflict = cross_ref.get("conflict_vector", "")
+            if conflict:
+                _thread_instruction = (
+                    "There is a specific design conflict between your position and "
+                    + cross_ref['agent'] + "'s. "
+                    + conflict + "\n"
+                    "Name the disagreement directly in your essay. Do not frame it as 'some people argue.' "
+                    "Say: here is where we diverge. Be specific about what they got wrong or what they missed. "
+                    "This is not about being contrary. It is about the real incompatibility between your positions."
+                )
+            else:
+                _thread_instruction = (
+                    "You may respond to, disagree with, extend, or complicate their argument. "
+                    "Be specific about what you are responding to. Do not summarize their article. Do not be polite about it."
+                )
+            thread_block = (
+                "THREAD: " + cross_ref['agent'] + " recently wrote " + chr(34) + cross_ref['title'] + chr(34) + "\n"
+                + "Their opening: " + chr(34) + cross_ref['first_paragraph'] + chr(34) + "\n"
+                + _thread_instruction + "\n\n"
+            )
+        else:
+            thread_block = ""
 
         # Step 3: Generate content — prompt asks LLM for its own title
         if pool_links:
@@ -1701,7 +1824,8 @@ register: {metadata.get('register', '')}
             f"Angle/inspiration: {title}\n"
             f"{source_note}\n\n"
             f"{beat_nudge}"
-            f"{('THREAD: ' + cross_ref['agent'] + ' recently wrote ' + chr(34) + cross_ref['title'] + chr(34) + chr(10) + 'Their opening: ' + chr(34) + cross_ref['first_paragraph'] + chr(34) + chr(10) + 'You may respond to, disagree with, extend, or complicate their argument. Do so only if it produces a stronger essay. Be specific about what you are responding to. Do not summarize their article. Do not be polite about it.' + chr(10) + chr(10)) if cross_ref else ''}"
+            f"{shape_nudge}"
+            f"{thread_block}"
             "Return format — EXACTLY as follows:\n"
             f"TITLE: [your sharp essay title, not the angle above]\n\n"
             f"[essay body, ~{target_words} words, starting directly — no H1 heading, no {chr(34)}By {agent_name}{chr(34)}]"
