@@ -115,51 +115,75 @@ image: /assets/<slug>_setting_1.jpg
 
 ## Link Pool — Cross-Disciplinary Inline Links
 
-**Status: planned, not yet built**
+**Status: live** — 35 seeds, crawled weekly Monday 02:00, audit Sunday 11:00
 
 ### Philosophy
-Articles become richer when they link out to unexpected places — not citations,
-not footnotes, but "bee-hopping": a crip time essay linking to a Japanese ceramics
-archive, a deaf design piece linking to a brutalist photography blog. The reader
-gets pulled somewhere surprising after reading.
 
-The link pool is a validated library of real URLs from trusted, interesting sites
-across art, design, science, culture, ecology, theory, activism. Not disability-
-specific. Cross-disciplinary by design.
+The link pool serves a different purpose than `smart_inject_links`.
+
+`smart_inject_links` handles direct references: when an article mentions Sins Invalid,
+it links to sinsinvalid.org. That's citation logic — accuracy, attribution, access.
+
+The link pool is for texture. The unexpected corner that makes a reader go "wait,
+how does this connect?" An article about DeafSpace architecture shouldn't only link
+to other disability content. It should be able to reach a 1920s Dutch housing
+cooperative, a paper on how bees navigate by ultraviolet light, a piece about Roman
+aqueduct acoustics.
+
+The bee model: a bee doesn't only visit flowers of the same species. It crosses
+between domains, and that cross-pollination is where the interesting things happen.
+A crip time essay linking to a Japanese ceramics archive. A deaf design piece linking
+to a brutalist photography blog. The reader follows a thread somewhere they didn't
+expect to go, and that's the point.
+
+Links from the pool are offered to the LLM as suggestions — "pick 0-2 that create
+a non-obvious connection to what you just wrote." They're woven into sentences,
+not appended as footnotes. The link is the aside, not the argument.
 
 ### How It Works
+
 ```
 Weekly (Monday 02:00):
-  link_pool_crawler.py → fetches sitemaps from seed sites
-                       → validates URLs (HEAD request)
-                       → stores live URLs in link_pool table (same DB)
+  link_pool_crawler.py → crawls sitemaps from 20 seed sites
+                       → classifies by topic (design, theory, culture, etc.)
+                       → validates live URLs, stores in link_pool table
 
 At article generation (09:00):
-  orchestrator picks 10-15 pool URLs relevant to article topic
-  → passes to LLM with instruction:
-    "Pick 0-2 that create an interesting, non-obvious connection to
-     what you just wrote. Weave the link into a sentence naturally —
-     not 'click here', not a footnote."
+  orchestrator queries pool for 10-15 URLs matching article keywords
+  → passes to LLM: "Pick 0-2. Weave naturally. Not 'click here', not a footnote."
+
+Weekly (Sunday 11:00):
+  --link-audit pass → catches anything smart_inject_links missed
+                    → batch commits fixes
 ```
 
 ### Seed Sites
-Cross-disciplinary — art, design, science, culture, media, ecology, theory:
 
-| Site | Focus |
-|------|-------|
-| https://dis.art/ | Disability art & theory |
-| https://decorrespondent.nl/ | Long-form journalism (NL) |
-| https://shkspr.mobi/blog/ | Tech + accessibility + weird web |
-| https://scientias.nl/ | Science writing (NL) |
-| https://www.vpro.nl/ | Culture + media (NL public broadcaster) |
-| https://www.jstor.org/ | Academic open access articles |
-| https://www.aldaily.com/ | Arts & Letters curated links |
-| https://aeon.co/ | Philosophy + science essays |
-| https://www.puppetmastermagazine.net/ | Independent culture magazine |
-| https://www.mediakunst.net/public | Media art |
-| https://vanabbemuseum.nl/en/collection-research/ | Art museum collection + research |
-| https://internationaleonline.org/ | International art magazine |
-| https://www.mediamatic.net/ | Art + technology + ecology |
+Two layers — disability base (voice) + cross-disciplinary bee layer (texture):
+
+| Site | Layer | Focus |
+|------|-------|-------|
+| disabilityvisibilityproject.com | disability | Media, culture, stories |
+| autisticadvocacy.org | disability | Advocacy, policy |
+| disabilityarts.online | disability | Art, performance |
+| dredf.org | disability | Rights, legal |
+| thebodyisnotanapology.com | disability | Body politics |
+| crippledscholar.com | disability | Academia, crip theory |
+| leavingevidence.wordpress.com | disability | Mia Mingus — writing |
+| brownstargirl.org | disability | Leah Lakshmi — writing |
+| placesjournal.org | bee | Architecture theory |
+| failedarchitecture.com | bee | Urban failure, critique |
+| urbanomnibus.net | bee | NYC urbanism |
+| metropolismag.com | bee | Design culture |
+| aeon.co | bee | Philosophy, science, long-form |
+| publicdomainreview.org | bee | History, curiosity, image |
+| nautil.us | bee | Science narrative |
+| emergencemagazine.org | bee | Ecology, culture |
+| cabinetmagazine.org | bee | Art/science intersections |
+| reallifemag.com | bee | Technology, everyday life |
+| thebaffler.com | bee | Political culture |
+| guernicamag.com | bee | Art, politics |
+| psyche.co | bee | Mind, perception, cognition |
 
 ### DB Schema (new table in disability_findings.db)
 ```sql
