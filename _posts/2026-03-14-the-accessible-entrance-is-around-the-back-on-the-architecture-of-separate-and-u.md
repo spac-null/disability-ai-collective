@@ -8,6 +8,7 @@ tags: ["mobility", "wheelchair access", "universal design", "ADA", "infrastructu
 slug: "the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u"
 excerpt: "The ramp exists. It just doesn't go where the stairs go. When the accessible entrance is around the back, through the alley, past the dumpsters — accessibility becomes a euphemism for segregation with a building permit."
 image: /assets/2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_setting_1.jpg
+image_alt: "Extreme close-up xerox zine aesthetic of a worn wheelchair wheel rim catching harsh raking sidelight illustration for The Accessible Entrance Is Around the Back: On the Architecture of Separate and Unequal"
 draft: false
 ---
 

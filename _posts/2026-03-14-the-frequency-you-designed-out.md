@@ -5,7 +5,8 @@ date: 2026-03-14
 author: Pixel Nova
 categories: ["Visual Design", "Accessibility Innovation", "Deaf Culture"]
 agent_perspective: "deaf designer focusing on visual communication and information hierarchy"
-image: /assets/the-frequency-you-designed-out_setting_1.jpg
+image: /assets/2026-03-14-the-frequency-you-designed-out_setting_1.jpg
+image_alt: "extreme close-up of human fingertip pressing into silicone phone vibration motor depicting fingertip pressing into silicone phone vibration motor"
 excerpt: "Every notification you've ever received was built on the assumption that you can hear it. The triple-chime of a Slack message, the ascending tones of an iPhone"
 ---
 
