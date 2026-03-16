@@ -37,6 +37,8 @@ CANONICAL_DISABILITY_LINKS = {
     'Haben Girma':                        'https://habengirma.com/',
     'Harilyn Rousso':                     'https://disabilityvisibilityproject.com/',
     'Simi Linton':                        'https://simi.nyc/',
+    'Hansel Bauman':                      'https://www.hanselbauman.online/about',
+    'Deaf Gain':                          'https://www.upress.umn.edu/9780816691227/deaf-gain/',
 }
 
 
@@ -854,6 +856,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
             "- Only return URLs you are highly confident are correct and live\n"
             "- Prefer the specific work over a homepage when the article names a specific piece\n"
             "- Use the exact phrase as it appears in the article text\n"
+            "- Each reference must have its OWN distinct URL — never reuse one URL for different people or concepts\n"
             "- Skip generic terms, common words, or anything you are uncertain about\n"
             "- Do NOT return Wikipedia, Amazon, or Google links\n\n"
             "Return ONLY a JSON array, no prose:\n"
@@ -881,6 +884,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
             suggestions = _json.loads(json_match.group(0))
 
+            _used_urls: set = set()
             for item in suggestions:
                 phrase = item.get('phrase', '').strip()
                 url    = item.get('url', '').strip()
@@ -898,6 +902,13 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 # Skip if already linked
                 if f'[{phrase}](' in body:
                     continue
+                # Skip if this URL is already used for a DIFFERENT phrase
+                # (Haiku lazily reusing one URL for multiple distinct references)
+                if url in _used_urls:
+                    self.logger.warning(
+                        'smart_inject_links: skipped duplicate URL %s for [%s]', url, phrase
+                    )
+                    continue
 
                 escaped = _re.escape(phrase)
                 pattern = rf'(?<!\[)(?<!\*)(?<!\()({escaped})(?!\])'
@@ -905,6 +916,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 if new_body != body:
                     self.logger.info("Smart link: %s → %s", phrase, url)
                     body = new_body
+                    _used_urls.add(url)
 
         except Exception as e:
             self.logger.warning("Smart link injection failed: %s", e)
