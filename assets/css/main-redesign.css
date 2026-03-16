@@ -2410,6 +2410,26 @@ a:hover {
   font-size: 0.8rem;
 }
 
+.post-meta__register {
+  font-size: 0.75rem;
+  color: var(--color-text-muted, #9ca3af);
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  opacity: 0.7;
+}
+
+.post-meta__edited {
+  font-size: 0.7rem;
+  color: var(--color-accent, #7c6af7);
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+  opacity: 0.75;
+  border: 1px solid currentColor;
+  border-radius: 3px;
+  padding: 1px 5px;
+  line-height: 1.4;
+}
+
 /* ── Prose: body text ── */
 .prose--large {
   font-size: 1.1rem !important;

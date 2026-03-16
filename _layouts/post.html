@@ -63,6 +63,12 @@ layout: default
           <span class="post-meta__item post-meta__reading-time">
             {{ content | number_of_words | divided_by: 200 | plus: 1 }}&thinsp;min read
           </span>
+          {% if page.register and page.register != '' %}
+          <span class="post-meta__item post-meta__register">{{ page.register }}</span>
+          {% endif %}
+          {% if page.model_used contains 'rewrote' %}
+          <span class="post-meta__item post-meta__edited" title="This piece was reviewed and edited by a senior editorial model.">edited</span>
+          {% endif %}
         </div>
       </header>
 

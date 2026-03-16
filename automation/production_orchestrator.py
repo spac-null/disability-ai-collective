@@ -816,6 +816,7 @@ categories: [{', '.join(metadata['categories'])}]
 agent_perspective: {json.dumps(str(metadata['agent_perspective']))}
 image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
 model_used: {metadata.get('model_used', 'unknown')}
+register: {metadata.get('register', '')}
 ---
 
 """
@@ -1520,6 +1521,7 @@ model_used: {metadata.get('model_used', 'unknown')}
             'agent_perspective': agent_info['perspective'],
             'source_note': source_note,
             'model_used': model_used_label,
+            'register': register,
         }
 
         # Step 5: Generate images (placeholder)
