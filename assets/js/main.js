@@ -77,3 +77,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 });
+// External links open in new tab
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.post-content a[href^="http"], .post-content a[href^="//"]').forEach(function(a) {
+    if (a.hostname !== window.location.hostname) {
+      a.setAttribute('target', '_blank');
+      a.setAttribute('rel', 'noopener noreferrer');
+    }
+  });
+});
