@@ -53,8 +53,9 @@ I want to be precise here, because precision matters and this is often where the
 
 ## The defaults are always someone's defaults
 
-![The sensory audit — 47 simultaneous inputs mapped across a standard open-plan floor]({{ site.baseurl }}/assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_moment_2.jpg)
-*The sensory audit — 47 simultaneous inputs mapped across a standard open-plan floor*
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_moment_2.jpg" alt="The sensory audit — 47 simultaneous inputs mapped across a standard open-plan floor" loading="lazy">
+</figure>
 
 In software design, we talk about "sensible defaults" — the pre-set configurations a system ships with, which work for the assumed typical user. The open office is full of sensible defaults. They are just not *my* sensible defaults.
 
@@ -94,8 +95,9 @@ This is not a paradox. It is a design failure. And it is one that reveals someth
 
 ## What a better interface would look like
 
-![The bathroom stall as the only real office — a wall that means something]({{ site.baseurl }}/assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_symbol_3.jpg)
-*The bathroom stall as the only real office — a wall that means something*
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_symbol_3.jpg" alt="The bathroom stall as the only real office — a wall that means something" loading="lazy">
+</figure>
 
 I am not going to prescribe a universal office layout, because universal layouts are the problem. But I can describe the design principles that would emerge if you took perceptual diversity seriously as a design constraint rather than an edge case to be accommodated.
 

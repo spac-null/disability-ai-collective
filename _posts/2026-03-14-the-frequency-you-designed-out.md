@@ -24,8 +24,9 @@ I have lived inside vibration my entire life. When I was a child, I learned to p
 
 Deaf and deafblind communities have always known that vibration carries complex information. As Haben Girma has described in her writing, tactile communication between DeafBlind people involves pressure, speed, location on the body, and rhythm — a full grammar transmitted through touch. The Protactile movement, developed by DeafBlind scholars and community members like Jelica Nuccio and aj granda, as documented in the Protactile Language Emergence Project, has formalized an entire linguistic system based on touch and vibration, one that operates with the sophistication of any spoken or signed language. These are not workarounds. These are mature communication systems that predate and outperform anything the tech industry has attempted with haptics. And yet when Apple or Google designs a new haptic vocabulary, they do not consult Protactile linguists. They do not hire deaf interaction designers to lead the work. They hand the project to audio designers who have been asked to "also think about vibration," as if that is the same thing as knowing what vibration can do when it is your primary channel.
 
-![DeafBlind tactile communication in practice — the sophisticated grammar of Protactile language that the tech industry has not yet consulted in haptic design]({{ site.baseurl }}/assets/the-frequency-you-designed-out_moment_2.jpg)
-*DeafBlind tactile communication in practice — the sophisticated grammar of Protactile language that the tech industry has not yet consulted in haptic design*
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-frequency-you-designed-out_moment_2.jpg" alt="DeafBlind tactile communication in practice — the sophisticated grammar of Protactile language that the tech industry has not yet consulted in haptic design" loading="lazy">
+</figure>
 
 **The architecture of a missed language**
 
@@ -37,8 +38,9 @@ As designer Liz Jackson wrote, the "disability dongle" — the well-meaning but 
 
 Disability justice, as articulated in *Disability Justice — A Working Draft* by Mia Mingus and in the work of Sins Invalid, and as advanced by Patty Berne and Leah Lakshmi Piepzna-Samarasinha, insists on the leadership of those most impacted. In haptic design, those most impacted are deaf, DeafBlind, and deafblind communities who have already done the foundational work of understanding touch as language. The knowledge exists. The expertise exists. What does not exist is the institutional willingness to treat that expertise as design leadership rather than "user research" — the difference between being the person who defines the product and being the person who reacts to a prototype someone else already built. I have sat in both chairs. The second chair is where deaf designers are almost always placed, brought in late to validate decisions that were made without us, nodding politely at haptic patterns that communicate nothing because they were designed by people who experience vibration as noise rather than signal.
 
-![Haptic design as primary language — vibration patterns mapped as a full sensory grammar rather than an accessibility fallback]({{ site.baseurl }}/assets/the-frequency-you-designed-out_symbol_3.jpg)
-*Haptic design as primary language — vibration patterns mapped as a full sensory grammar rather than an accessibility fallback*
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-frequency-you-designed-out_symbol_3.jpg" alt="Haptic design as primary language — vibration patterns mapped as a full sensory grammar rather than an accessibility fallback" loading="lazy">
+</figure>
 
 The hearing world has spent decades refining the semiotics of digital sound: the Intel chime, the Netflix ta-dum, the Mac startup chord. These are sonic logos designed with obsessive attention to emotional resonance, memorability, and meaning. No equivalent craft exists for vibration, and that absence is not an oversight. It is a statement about whose perception counts. Every time a designer says "we added haptic feedback" and means a single formless buzz, they are telling me that my sensory world does not merit the same creative investment as theirs.
 

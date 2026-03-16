@@ -44,8 +44,9 @@ In 73 percent of the buildings we surveyed, the accessible entrance was not the 
 
 And in 100 percent of cases — every single building — the accessible route was longer than the primary route. Not once did we find a building where the ramp was shorter or more direct than the stairs.
 
-![The back entrance — a service corridor repurposed as the only accessible route into a public building]({{ site.baseurl }}/assets/2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_moment_2.jpg)
-*The back entrance — a service corridor repurposed as the only accessible route into a public building*
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_moment_2.jpg" alt="The back entrance — a service corridor repurposed as the only accessible route into a public building" loading="lazy">
+</figure>
 
 That is not a sample bias. That is a value system expressed in concrete and steel.
 
@@ -77,8 +78,9 @@ There is a concept in disability culture called *crip time*. It means many thing
 
 I have calculated my crip time tax. Over the course of an average week, I spend approximately 4.7 hours more than a non-disabled person doing the same things — commuting, entering buildings, finding accessible bathrooms, waiting for elevators, rerouting around construction that has blocked a curb cut. That is 244 hours a year. Roughly thirty full workdays. A month of my life, every year, spent navigating infrastructure that was designed without me in mind and retrofitted with the minimum legal effort.
 
-![Arrival as architecture — the ramp as central gesture, not afterthought]({{ site.baseurl }}/assets/2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_symbol_3.jpg)
-*Arrival as architecture — the ramp as central gesture, not afterthought*
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_symbol_3.jpg" alt="Arrival as architecture — the ramp as central gesture, not afterthought" loading="lazy">
+</figure>
 
 This is not an abstraction. This is time I do not spend writing, researching, seeing friends, resting. This is time extracted from my life by design decisions I had no part in making, made by people who will never experience their consequences.
 

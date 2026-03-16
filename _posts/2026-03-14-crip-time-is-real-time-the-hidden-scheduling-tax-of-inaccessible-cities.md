@@ -52,8 +52,9 @@ The biggest time thieves, in order:
 
 Here is the thing about a scheduling tax: it doesn't just steal the minutes of the detour. It steals the minutes you add *before* the detour, because you know the detour is coming. Or might be coming. Or came last time and might come again.
 
-![Crip time mapped — the arithmetic of inaccessible infrastructure across a single week]({{ site.baseurl }}/assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_moment_2.jpg)
-*Crip time mapped — the arithmetic of inaccessible infrastructure across a single week*
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_moment_2.jpg" alt="Crip time mapped — the arithmetic of inaccessible infrastructure across a single week" loading="lazy">
+</figure>
 
 I call this **the buffer tax** — the time you add to every journey not because of a specific barrier you know about, but because of the specific uncertainty that *any* barrier might appear. A walking person leaving for a meeting across town budgets for the journey. I budget for the journey plus a margin of error that accounts for an infrastructure I cannot trust.
 
@@ -93,8 +94,9 @@ I asked a question back: How much does the scheduling tax cost disabled resident
 
 Nobody had an answer to that. The meeting moved on to a discussion about bike lanes.
 
-![The hidden tax made visible — wheelchair route vs walking route overlaid on city grid]({{ site.baseurl }}/assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_symbol_3.jpg)
-*The hidden tax made visible — wheelchair route vs walking route overlaid on city grid*
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_symbol_3.jpg" alt="The hidden tax made visible — wheelchair route vs walking route overlaid on city grid" loading="lazy">
+</figure>
 
 ## The clock that runs differently
 

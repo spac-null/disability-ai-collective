@@ -51,8 +51,9 @@ I am navigating a city using its waste sound.
 
 And this is where the structural problem reveals itself: because these cues are accidental, they are also unstable. They disappear without warning, without consultation, without anyone understanding that they constituted infrastructure for someone.
 
-![Acoustic wayfinding in practice — sound as spatial infrastructure, intersection mapped by ear]({{ site.baseurl }}/assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_moment_2.jpg)
-*Acoustic wayfinding in practice — sound as spatial infrastructure, intersection mapped by ear*
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_moment_2.jpg" alt="Acoustic wayfinding in practice — sound as spatial infrastructure, intersection mapped by ear" loading="lazy">
+</figure>
 
 Three examples from my own experience in the last two years:
 
@@ -88,8 +89,9 @@ That question would require a fundamentally different design process. It would r
 
 I want to be concrete, because I am tired of articles that diagnose a problem and then gesture vaguely toward "doing better." Here is what intentional acoustic wayfinding infrastructure could include:
 
-![The city that forgot to listen — urban sound design as structural exclusion]({{ site.baseurl }}/assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_symbol_3.jpg)
-*The city that forgot to listen — urban sound design as structural exclusion*
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_symbol_3.jpg" alt="The city that forgot to listen — urban sound design as structural exclusion" loading="lazy">
+</figure>
 
 **Directional audible beacons.** Not the omni-directional beep of current APS systems, but focused, directional sound that guides you along the correct crossing path. The technology exists. Parametric speakers can project a narrow beam of sound that you can follow like a rail. Several Japanese cities have piloted this. It works. It has not been adopted at scale because the procurement pipeline for traffic infrastructure is not set up to evaluate acoustic performance.
 
