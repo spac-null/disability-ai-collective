@@ -86,7 +86,7 @@ You've navigated the broken sidewalks. You've taken the three-block detour. You'
 
 And then you get there, and there are two steps. No ramp. Or the doorway is 30 inches wide. Or the accessible restroom is "out of order" and has been since the building opened.
 
-**The vast majority of destinations in our study had at least one inaccessible feature within the final 50 feet.**
+**The vast majority of destinations had at least one inaccessible feature within the final fifty feet.**
 
 These are destination islands—places you can approach but never enter. Restaurants where you can see the menu but can't reach the table. Shops where you can press your face to the glass but can't cross the threshold. Offices where you got the interview but can't get to the conference room.
 
@@ -113,7 +113,7 @@ These aren't individual failures. They're a system that treats wheelchair users 
 
 The fix isn't complicated. It's just never been prioritized.
 
-**Measure what matters.** Compare wheelchair routes to walking routes for the hundred most common trips in your city. If wheelchair users are traveling more than 20% farther, you have a navigation tax problem. Most cities, I guarantee, will discover they have a 70%+ problem.
+**Measure what matters.** Compare wheelchair routes to walking routes for the hundred most common trips in your city. If wheelchair users are traveling significantly farther for the same destinations, you have a navigation tax problem. Most cities, I guarantee, will find the gap is far larger than any official report acknowledges.
 
 **Build networks, not patches.** Stop adding isolated curb cuts and start mapping connected accessible routes. A city where every curb cut leads to another curb cut, where every accessible block connects to the next—that's a city where wheelchair users can actually live, not just survive.
 
