@@ -1476,10 +1476,105 @@ article_type: {metadata.get('article_type', 'standard')}
                 method="POST",
             ), timeout=15) as r:
                 result = json.loads(r.read())
-            self.logger.info("Bluesky: posted %s", result.get("uri", "?"))
+            uri = result.get("uri", "")
+            self.logger.info("Bluesky: posted %s", uri)
+            return uri
 
         except Exception as e:
             self.logger.warning("Bluesky post failed: %s", e)
+            return ""
+
+
+    def _store_social_uri(self, slug, bsky_uri):
+        """Persist Bluesky post URI so retract_article() can delete it later."""
+        import json as _json
+        social_dir = self.repo_root / "_social"
+        social_dir.mkdir(exist_ok=True)
+        fpath = social_dir / f"{slug}.json"
+        data = {}
+        if fpath.exists():
+            try:
+                data = _json.loads(fpath.read_text())
+            except Exception:
+                pass
+        if bsky_uri:
+            data["bsky_uri"] = bsky_uri
+        fpath.write_text(_json.dumps(data, indent=2))
+
+    def retract_article(self, slug):
+        """Remove article from _posts/, assets, _reviews, _social and delete Bluesky post.
+
+        Usage: python3 production_orchestrator.py --retract <slug>
+        Slug is the part after the date, e.g. 'the-map-that-doesn-t-know-you-re-standing-in-it'
+        """
+        import os, json as _json, urllib.request as ureq, subprocess, glob as _glob
+
+        # Find article file (any date prefix)
+        matches = list(self.posts_dir.glob(f"*-{slug}.md"))
+        if not matches:
+            print(f"No article found matching slug: {slug}")
+            return False
+        article_file = matches[0]
+        date_prefix = article_file.stem[:10]
+
+        # Collect files to remove
+        to_remove = [article_file]
+        review = self.repo_root / "_reviews" / f"{article_file.stem}-review.md"
+        if review.exists():
+            to_remove.append(review)
+        social_file = self.repo_root / "_social" / f"{slug}.json"
+        bsky_uri = ""
+        if social_file.exists():
+            try:
+                bsky_uri = _json.loads(social_file.read_text()).get("bsky_uri", "")
+            except Exception:
+                pass
+            to_remove.append(social_file)
+        for asset in self.assets_dir.glob(f"{slug}_*.jpg"):
+            to_remove.append(asset)
+        for asset in self.assets_dir.glob(f"{slug}_*.png"):
+            to_remove.append(asset)
+
+        # Delete Bluesky post
+        if bsky_uri:
+            handle   = os.environ.get("BSKY_HANDLE", "")
+            password = os.environ.get("BSKY_APP_PASSWORD", "")
+            if handle and password:
+                try:
+                    auth_payload = _json.dumps({"identifier": handle, "password": password}).encode()
+                    with ureq.urlopen(ureq.Request(
+                        "https://bsky.social/xrpc/com.atproto.server.createSession",
+                        data=auth_payload, headers={"Content-Type": "application/json"}, method="POST",
+                    ), timeout=15) as r:
+                        session = _json.loads(r.read())
+                    token = session["accessJwt"]
+                    did   = session["did"]
+                    # uri format: at://did:plc:xxx/app.bsky.feed.post/rkey
+                    rkey = bsky_uri.split("/")[-1]
+                    del_payload = _json.dumps({"repo": did, "collection": "app.bsky.feed.post", "rkey": rkey}).encode()
+                    with ureq.urlopen(ureq.Request(
+                        "https://bsky.social/xrpc/com.atproto.repo.deleteRecord",
+                        data=del_payload,
+                        headers={"Content-Type": "application/json", "Authorization": f"Bearer {token}"},
+                        method="POST",
+                    ), timeout=15) as r:
+                        r.read()
+                    print(f"Bluesky post deleted: {bsky_uri}")
+                except Exception as e:
+                    print(f"Bluesky delete failed: {e}")
+            else:
+                print(f"No Bluesky credentials — skipping delete (URI was: {bsky_uri})")
+        else:
+            print("No Bluesky URI stored — skipping delete")
+
+        # git rm + commit + push
+        for f in to_remove:
+            subprocess.run(["git", "rm", "-f", str(f)], cwd=str(self.repo_root), capture_output=True)
+        msg = f"retract: remove {article_file.name}"
+        subprocess.run(["git", "commit", "-m", msg], cwd=str(self.repo_root), check=True)
+        subprocess.run(["git", "push"], cwd=str(self.repo_root), check=True)
+        print(f"Retracted: {article_file.name}")
+        return True
 
 
     def post_to_mastodon(self, title, body, article_file, image_filenames=None, agent_name=None):
@@ -2037,7 +2132,8 @@ article_type: {metadata.get('article_type', 'standard')}
 
         # Step 8: Post to Bluesky + Mastodon + Tumblr (non-blocking)
         if commit_success:
-            self.post_to_bluesky(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
+            bsky_uri = self.post_to_bluesky(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
+            self._store_social_uri(slug, bsky_uri or "")
             self.post_to_mastodon(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
             self.post_to_tumblr(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
 
