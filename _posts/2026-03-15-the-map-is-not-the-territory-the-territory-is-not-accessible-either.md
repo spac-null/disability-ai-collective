@@ -34,9 +34,6 @@ There is a lineage here worth naming. Disability-led access guides have been evo
 <img src="{{ site.baseurl }}/assets/the-map-is-not-the-territory-the-territory-is-not-accessible-either_symbol_3.jpg" alt="Cyanotype photogram on deep blue: wildflower stems and blossoms overlap a wheelchair wheel silhouette in sun-print style, botanical and mobility symbol merged into a single luminous form against an azure field." loading="lazy">
 </figure>
 
-**The information hierarchy we deserve**
-
-What I want — what I have always wanted, professionally and personally — is for access information to be designed with the same intentionality as a exhibition catalog or a brand identity system. I want typographic hierarchy that tells me what to read first. I want visual markers that correspond to sensory experiences. I want maps that are not just geometrically accurate but experientially accurate — that show me not just where things are but what it feels like to move between them. I want the people designing these systems to understand that for many disabled people, the access guide is the first piece of art we encounter from an institution, and it tells us everything we need to know about whether that institution considers us part of its public. Tangled Art + Disability, operating as a disability-led organization, understands this almost intuitively, but intuition is not enough. What we need is a discipline — a rigorous, teachable, crit-able practice of access information design that treats these documents not as compliance artifacts but as communication design at its most consequential. The access guide is the first threshold. It is where the institution's values become visible — or where their absence does.
 
 ---
 

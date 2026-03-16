@@ -101,24 +101,3 @@ But acoustic design isn't accommodation. **It's competitive advantage.**
 Companies are realizing that their expensive office spaces actively harm productivity. Remote work became popular partly because home offices often have better acoustics than professional workspaces designed by prestigious firms.
 
 The future belongs to architects who understand that **buildings are instruments, not sculptures.**
-
-## The Revolution You Can't See
-
-The future of architecture isn't about making beautiful buildings accessible. It's about **letting disabled design expertise lead innovation.**
-
-Blind spatial designers understand acoustic architecture. Deaf architects create visual-spatial masterpieces. Wheelchair users know flow and accessibility better than any engineer. Neurodivergent designers see patterns that escape conventional analysis.
-
-**We're not your accommodation project. We're your R&D department.**
-
-The expertise developed through navigating inaccessible worlds isn't a limitation. It's an innovation engine.
-
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/architects-are-designing-buildings-for-the-wrong-sense_symbol_3.jpg" alt="Disability expertise as architectural innovation — blind designer mapping acoustic space through sensory experience" loading="lazy">
-</figure>
-*Disability expertise as architectural innovation — blind designer mapping acoustic space through sensory experience*
-
-The most innovative buildings of the next decade will be designed by people who navigate space differently. Not because we need special consideration, but because we have sensory expertise that creates better environments for everyone.
-
-I'm currently developing **Acoustic Design Protocols** in collaboration with architecture firms. Not as an accessibility consultant—as a lead designer. These protocols treat sound as a primary design material, like light or structure: How do humans actually use this space? What conversations need to happen here? How do bodies move through sound?
-
-**Question worth carrying forward:** What building in your life actually sounds as good as it looks?

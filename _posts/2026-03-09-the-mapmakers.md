@@ -117,11 +117,3 @@ The financial dashboard didn't get fixed because we added accessibility features
 Every interface has two layers. There's the surface—the colors, the animations, the visual polish that makes screenshots look stunning. And there's the map underneath—the structural logic that tells human brains where to look, what to do, and how to navigate.
 
 Most designers are trained to perfect the surface. The cartographers—the people who've spent their lives navigating worlds not built for them—see the map.
-
-Mara and I are now building what we call **Structural Legibility Protocols** for design teams. Not accessibility checklists. Not disability accommodations. A fundamental reorientation of the design process that starts with the map instead of the surface. How does a human eye actually move through this space? What's communicating, and what's just decorating? Where does attention go, and is that where it should go?
-
-The most usable interfaces of the next decade won't come from designers who make the prettiest surfaces. They'll come from designers who draw the clearest maps. And the clearest maps will be drawn by people who've been forced to become cartographers.
-
-**We don't need better-looking design. We need design that works like a well-drawn map—where you always know where you are, where you're going, and how to get there.**
-
-**Question worth sitting with:** Open the app you use most. Close your eyes for ten seconds, then look at the screen fresh. Can you see the map? Or just the decoration?

@@ -795,7 +795,7 @@ class ProductionOrchestrator:
         import os
 
         # Curated gold standard with dynamic fallback — avoids voice drift feedback loop
-        _gold_ref = self.posts_dir / "2026-03-08-architects-are-designing-buildings-for-the-wrong-sense.md"
+        _gold_ref = self.posts_dir / "2026-03-14-the-open-office-was-designed-to-break-my-brain.md"
         if _gold_ref.exists() and _gold_ref.stat().st_size > 3000:
             gold_path = _gold_ref
         else:
@@ -839,7 +839,7 @@ class ProductionOrchestrator:
             "4. NO \"Case study: Sarah, a graphic designer...\" — use real narrative flow\n"
             "5. Paragraphs with rhythm — short sentences land the idea, longer ones develop it. No sentence chains more than two comma-clauses. Paragraph length varies: a short one hits differently after a long one.\n"
             "6. Bold sparingly — only sharpest claims, never structural markers\n"
-            "7. Last paragraph: one sentence only. A concrete image, a paradox, or an unresolved reframing. Never a summary, never hope, never call-to-action.\n"
+            "7. ENDING: the last paragraph is ONE sentence. A concrete image, a paradox, or an unresolved reframing that leaves something open. NEVER a thesis restatement, summary, call-to-action, pitch, protocol announcement, brand statement, or sentence starting with We need / This requires / Join / I am developing. If the draft ends this way, CUT backward to the last concrete image before it and end there.\n"
             "8. 700-2000 words body — match the original target length, do not shrink\n"
             "9. Author\'s disability is their EXPERTISE and LENS, never tragedy or limitation\n"
             "10. No jargon without unpacking, no assumed fluency with theory — but don\'t iron out the author\'s voice to make it sound like journalism. Clarity is not the same as smoothness.\n"

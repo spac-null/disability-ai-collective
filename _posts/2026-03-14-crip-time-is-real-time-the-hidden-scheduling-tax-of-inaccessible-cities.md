@@ -122,4 +122,4 @@ I want my eleven days back. I know I'm not getting them. They've been absorbed i
 
 But I want you to know the number. I want the number to sit in your head the next time someone describes an accessibility failure as a minor inconvenience. Eleven days. And counting. Every six months. For every year of my life in this city.
 
-The city is not broken. It is working
+The city is not broken. It is working.

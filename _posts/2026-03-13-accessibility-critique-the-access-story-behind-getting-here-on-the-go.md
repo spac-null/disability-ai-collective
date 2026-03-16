@@ -109,13 +109,3 @@ When I redesign information environments, I don't start with what looks good. I 
 I still pass through Union Station. The departure board still flickers. The wayfinding still assumes I can hear. The information architecture still treats my primary sense — vision — as a secondary channel.
 
 But I've stopped seeing these as small failures. Every misaligned sign, every flickering board, every colour system designed without contrast testing — these are arguments. They're arguments about who public space is built for. About whose body counts as default. About whose expertise matters.
-
-Deaf designers don't need special consideration. We need something much more radical than that.
-
-**We need to be recognized as the information architects we already are.**
-
-The expertise I've developed navigating systems designed to exclude me isn't a workaround. It's a body of knowledge about how humans actually process spatial information — knowledge that makes transit systems work better for commuters with ADHD, for elderly passengers with declining vision, for tourists who don't speak the local language, for parents managing children and luggage and stress.
-
-When Tokyo Metro let disabled communities lead their redesign, errors dropped significantly for everyone. That's not accommodation. That's innovation.
-
-**Question worth carrying forward:** The next time you're in a transit station, close your eyes for thirty seconds. When you open them, notice what you see first. Is it the information you need — or seventeen things competing to distract you from it?
