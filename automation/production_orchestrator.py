@@ -939,7 +939,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
 **What would change in your work if you treated disability expertise as a starting point rather than an afterthought?**"""
 
-    def generate_images(self, content, slug, num_images=3):
+    def generate_images(self, content, slug, num_images=3, title=None):
         """Generate scene-based pixel art images for an article.
 
         Pipeline:
@@ -962,7 +962,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
             from scene_image_generator import SceneImageGenerator
 
             title_match = re.search(r'title: "([^"]+)"', content)
-            title = title_match.group(1) if title_match else "Article"
+            title = title or (title_match.group(1) if title_match else "Article")
 
             generator = SceneImageGenerator(width=800, height=450, pixel_size=5)
             image_filenames = []
@@ -1904,7 +1904,7 @@ article_type: {metadata.get('article_type', 'standard')}
             "- One thesis the whole essay serves — state it early, return to it\n"
             "- Reference real disabled artists, theorists, activists, or events by name where relevant\n"
             "- Challenge one assumption the reader probably holds without announcing you are doing so\n"
-            "- Varied sentence rhythm — short sentences land the idea, longer ones develop it. No sentence chains more than two comma-clauses. Paragraph length varies: a short one hits differently after a long one. Not listicles.\n"
+            "- Varied sentence rhythm — short sentences land the idea, longer ones develop it. No sentence chains more than two comma-clauses. Paragraph length varies: a short one hits differently after a long one. Not listicles.\n"            "- SENTENCE LENGTH: If a sentence has an embedded aside (set off by em-dashes or two commas), break it into two sentences. The aside becomes its own sentence or gets cut. Never stack more than one prepositional phrase at the end of a sentence. If you want to write '[subject], [qualifier], [long verb phrase], [trailing adjectives]' — split it: one sentence for the main claim, a short follow-up for the trailing detail. Fragments are allowed. Three words can be a sentence.\n"
             "- Section headers are statements or fragments, never questions\n"
             "- Write for a smart engaged reader who does not work in the field — no assumed fluency with theory, no jargon without unpacking. Go specific and strange, but stay legible.\n"
             "- Tone: direct, dry when needed, never inspirational, never corporate wellness\n\n"
@@ -2014,7 +2014,7 @@ article_type: {metadata.get('article_type', 'standard')}
 
         # Step 5: Generate images (placeholder)
         try:
-            image_filenames, image_descriptions = self.generate_images(content, slug)
+            image_filenames, image_descriptions = self.generate_images(content, slug, title=extracted_title)
         except Exception as e:
             self.logger.warning('Image generation failed: %s -- continuing without images', e)
             image_filenames, image_descriptions = [], []

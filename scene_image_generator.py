@@ -326,8 +326,8 @@ class SceneImageGenerator:
 
         else:
             person = "figure partially silhouetted in doorframe, bright light behind them"
-            place = "sparse modernist interior, single chair, late afternoon light"
-            obj = found_obj or "single worn wooden chair, center frame, raking side light"
+            place = "empty corridor, harsh overhead fluorescent strip light"
+            obj = found_obj or "folded printed document, corner turned up, raking side light"
 
         logger.info("Subjects — person: %r  place: %r  obj: %r", person, place, obj)
         return person, place, obj
