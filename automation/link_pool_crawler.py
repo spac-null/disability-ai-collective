@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
 
-DB_PATH    = Path(__file__).parent / "disability_findings.db"
+DB_PATH    = Path(__file__).parent.parent / "disability_findings.db"
 LOG_PATH   = Path("/srv/data/openclaw/workspaces/ops/disability-ai-collective/automation/link_pool_crawler.log")
 UA         = "Mozilla/5.0 (compatible; CripMinds/1.0)"
 TIMEOUT    = 10
