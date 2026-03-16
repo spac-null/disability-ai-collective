@@ -325,9 +325,15 @@ class ProductionOrchestrator:
         )
         return logging.getLogger(__name__)
 
+    def _today(self):
+        """Return override date if set, else today."""
+        return getattr(self, 'override_date', None) or datetime.now().strftime('%Y-%m-%d')
+
     def check_for_existing_article_today(self):
         """Check if today's article already exists. Returns filename or None."""
-        today_str = datetime.now().strftime('%Y-%m-%d')
+        if getattr(self, 'force_run', False):
+            return None
+        today_str = self._today()
         for file in self.posts_dir.glob(f"{today_str}-*.md"):
             if file.is_file():
                 self.logger.info(f"Skipping — already have article for today: {file.name}")
@@ -407,7 +413,7 @@ class ProductionOrchestrator:
             shape = self._classify_shape(title, first_para)
             conn.execute(
                 "INSERT INTO article_beats (date, agent, title, beat, keywords, shape) VALUES (?, ?, ?, ?, ?, ?)",
-                (datetime.now().strftime("%Y-%m-%d"), agent, title, beat, "", shape)
+                (self._today(), agent, title, beat, "", shape)
             )
             conn.commit()
             conn.close()
@@ -2138,7 +2144,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         self._record_beat(agent_name, extracted_title, content)
 
         # Step 4: Prepare metadata using LLM title for slug
-        today = datetime.now().strftime('%Y-%m-%d')
+        today = self._today()
         slug = re.sub(r'[^a-z0-9]+', '-', extracted_title.lower()).strip('-')
         filename = f"{today}-{slug}.md"
 
@@ -2204,9 +2210,18 @@ if __name__ == "__main__":
                         help="Scan all articles and inject missing links")
     parser.add_argument("--dry-run", action="store_true",
                         help="With --link-audit: report changes without writing files")
+    parser.add_argument("--date", type=str, default=None,
+                        help="Override article date (YYYY-MM-DD), implies --force")
+    parser.add_argument("--force", action="store_true",
+                        help="Run even if article already exists for target date")
     args = parser.parse_args()
 
     orchestrator = ProductionOrchestrator()
+    if args.date:
+        orchestrator.override_date = args.date
+        orchestrator.force_run = True
+    elif args.force:
+        orchestrator.force_run = True
 
     if args.link_audit:
         result = orchestrator.link_audit(dry_run=args.dry_run)
