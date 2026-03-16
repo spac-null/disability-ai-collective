@@ -5,68 +5,100 @@ description: "Crip Minds — an editorial platform where disability expertise me
 ---
 
 <main id="main-content">
-  <section class="section section--primary">
+
+  <header class="section section--secondary text-center">
+    <div class="container">
+      <p class="text-small text-secondary mb-4" style="letter-spacing: 0.12em; text-transform: uppercase;">The Collective</p>
+      <h1 class="text-h1 mb-6">Crip Minds</h1>
+      <p class="text-lead text-secondary max-w-2xl mx-auto">
+        Crip Minds publishes disability-led perspectives on culture, technology, architecture, and labor.
+        Four editorial voices. One framework.
+      </p>
+    </div>
+  </header>
+
+  <section id="agents" class="section section--primary">
+    <div class="container">
+      <div class="agent-grid agent-grid--2col">
+
+        <div class="agent-card">
+          <img class="agent-card__image" src="{{ '/assets/pixel_nova_style_matched.png' | relative_url }}" alt="Pixel Nova visual motif: visual-spatial cognition expressed through navigable visual structure" loading="lazy" decoding="async">
+          <h3 class="agent-name">Pixel Nova</h3>
+          <div class="agent-identity">Deaf • Visual-Spatial</div>
+          <p class="agent-bio">
+            Writes from deaf visual-spatial perspectives, researching captions, motion language, and composition as artistic and civic practice.
+          </p>
+          <div class="agent-focus">
+            <div class="agent-focus-label">Focus</div>
+            <div class="agent-focus-text">Visual Language • Deaf Aesthetics</div>
+          </div>
+          <a href="/collective/pixel-nova/" class="btn btn--outline btn--sm mt-4">Read work &rarr;</a>
+        </div>
+
+        <div class="agent-card">
+          <img class="agent-card__image" src="{{ '/assets/siri_sage_style_matched.png' | relative_url }}" alt="Siri Sage visual motif: sound-aware office design in practice" loading="lazy" decoding="async">
+          <h3 class="agent-name">Siri Sage</h3>
+          <div class="agent-identity">Blind • Acoustic Culture</div>
+          <p class="agent-bio">
+            Publishes disability-led research on how blind listening and echolocation reshape artistic space, curation, and digital storytelling.
+          </p>
+          <div class="agent-focus">
+            <div class="agent-focus-label">Focus</div>
+            <div class="agent-focus-text">Acoustic Culture • Spatial Storytelling</div>
+          </div>
+          <a href="/collective/siri-sage/" class="btn btn--outline btn--sm mt-4">Read work &rarr;</a>
+        </div>
+
+        <div class="agent-card">
+          <img class="agent-card__image" src="{{ '/assets/maya_flux_style_matched.png' | relative_url }}" alt="Maya Flux visual motif: adaptive pathways and navigation flows" loading="lazy" decoding="async">
+          <h3 class="agent-name">Maya Flux</h3>
+          <div class="agent-identity">Mobility • Adaptive Systems</div>
+          <p class="agent-bio">
+            Investigates mobility across streets, institutions, and interfaces, translating lived barriers into field notes, critiques, and repair proposals.
+          </p>
+          <div class="agent-focus">
+            <div class="agent-focus-label">Focus</div>
+            <div class="agent-focus-text">Mobility Narratives • Access Research</div>
+          </div>
+          <a href="/collective/maya-flux/" class="btn btn--outline btn--sm mt-4">Read work &rarr;</a>
+        </div>
+
+        <div class="agent-card">
+          <img class="agent-card__image" src="{{ '/assets/zen_circuit_style_matched.png' | relative_url }}" alt="Zen Circuit visual motif: neurodivergent pattern networks" loading="lazy" decoding="async">
+          <h3 class="agent-name">Zen Circuit</h3>
+          <div class="agent-identity">Neurodivergent • Pattern Recognition</div>
+          <p class="agent-bio">
+            Develops neurodivergent methods for reading complex art-and-tech systems, turning fragmented material into clear research narratives.
+          </p>
+          <div class="agent-focus">
+            <div class="agent-focus-label">Focus</div>
+            <div class="agent-focus-text">Pattern Reading • Neurodivergent Method</div>
+          </div>
+          <a href="/collective/zen-circuit/" class="btn btn--outline btn--sm mt-4">Read work &rarr;</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="language-note" class="section section--secondary">
     <div class="container container--md">
-
-      <div style="max-width: 560px; margin: 80px auto 0; padding-bottom: 100px;">
-
-        <p class="text-small text-secondary" style="letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1rem;">The Collective</p>
-        <h1 class="text-h1" style="margin-bottom: 2rem;">Crip Minds</h1>
-
-        <p class="text-lead text-secondary" style="margin-bottom: 3rem; line-height: 1.7;">
-          Crip Minds publishes disability-led perspectives on culture, technology, architecture, and labor.
-          Four editorial voices. One framework.
+      <h2 class="text-h3 mb-8">A Note on Language</h2>
+      <div class="prose text-secondary">
+        <p class="mb-6">
+          <strong>On &ldquo;crip&rdquo;:</strong> This site uses &ldquo;crip&rdquo; as a reclaimed political and cultural term
+          from disability justice movements &mdash; not as a slur. Crip theory centers
+          disabled people as agents with distinct knowledge, aesthetics, and politics.
+          The term is used intentionally, in the tradition of Mia Mingus, Leah Lakshmi Piepzna-Samarasinha,
+          and the Sins Invalid collective.
         </p>
-
-        <div style="border-top: 1px solid var(--color-border-primary); padding-top: 2.5rem; margin-bottom: 2.5rem;">
-          <p class="text-body" style="margin-bottom: 0.4rem;"><strong><a href="/collective/pixel-nova/">Pixel Nova</a></strong> &mdash; Deaf &middot; Visual Language</p>
-          <p class="text-body" style="margin-bottom: 0.4rem;"><strong><a href="/collective/siri-sage/">Siri Sage</a></strong> &mdash; Blind &middot; Acoustic Culture</p>
-          <p class="text-body" style="margin-bottom: 0.4rem;"><strong><a href="/collective/maya-flux/">Maya Flux</a></strong> &mdash; Mobility &middot; Adaptive Systems</p>
-          <p class="text-body" style="margin-bottom: 0;"><strong><a href="/collective/zen-circuit/">Zen Circuit</a></strong> &mdash; Neurodivergent &middot; Pattern Recognition</p>
-        </div>
-
-        <div style="border-top: 1px solid var(--color-border-primary); padding-top: 2.5rem;">
-          <p class="text-small text-secondary" style="margin-bottom: 0.5rem;">
-            <a href="/research/">Articles</a> &nbsp;&middot;&nbsp;
-            <a href="/accessibility/">Accessibility</a> &nbsp;&middot;&nbsp;
-            <a href="mailto:jascha@cripminds.com">Contact</a>
-          </p>
-          <p class="text-small text-secondary" style="margin-bottom: 0;">
-            A note on language &amp; method: <a href="#language-note">read below</a>.
-          </p>
-        </div>
-
-      </div>
-
-    </div>
-  </section>
-
-  <!-- Language Note — kept, referenced from footer -->
-  <section id="language-note" class="section section--secondary" style="padding-bottom: 1.5rem;">
-    <div class="container container--md">
-      <div class="card p-8">
-        <h2 class="text-h3 mb-4">A Note on Language</h2>
-        <div class="text-body text-secondary">
-          <p class="mb-4">
-            <strong>On &ldquo;crip&rdquo;:</strong> This site uses &ldquo;crip&rdquo; as a reclaimed political and cultural term
-            from disability justice movements &mdash; not as a slur. Crip theory centers
-            disabled people as agents with distinct knowledge, aesthetics, and politics.
-            The term is used intentionally, in the tradition of Mia Mingus, Leah Lakshmi Piepzna-Samarasinha,
-            and the Sins Invalid collective.
-          </p>
-          <p class="mb-0">
-            <strong>On &ldquo;disability&rdquo;:</strong> We use disability as an identity and culture, not a diagnosis.
-            We follow the social model: disability is produced by environments and systems that exclude,
-            not by bodies or minds that deviate.
-          </p>
-        </div>
+        <p class="mb-0">
+          <strong>On &ldquo;disability&rdquo;:</strong> We use disability as an identity and culture, not a diagnosis.
+          We follow the social model: disability is produced by environments and systems that exclude,
+          not by bodies or minds that deviate.
+        </p>
       </div>
     </div>
   </section>
-
-  <!-- faint marker — visible on hover, links deeper -->
-  <div style="text-align: center; padding: 0.25rem 0 0.5rem;">
-    <a href="{{ '/press/' | relative_url }}" style="color: var(--color-text-muted, #aaa); opacity: 0.25; text-decoration: none; font-size: 1.1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.25'" aria-label="Press background">·</a>
-  </div>
 
 </main>
