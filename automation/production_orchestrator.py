@@ -1548,7 +1548,14 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             did   = session["did"]
 
             # URL goes in card embed — text is hook + tags only (lots of breathing room)
-            tags = "#DisabilityJustice #CripMinds #DisabilityArts"
+            _agent_tags = {
+                "Pixel Nova":   "#DeafCulture",
+                "Siri Sage":    "#BlindLife",
+                "Maya Flux":    "#CripLife",
+                "Zen Circuit":  "#Neurodivergent",
+            }
+            _agent_tag = _agent_tags.get(agent_name, "")
+            tags = f"#disability #accessibility #CripMinds #DisabilityJustice{' ' + _agent_tag if _agent_tag else ''}"
             overhead = len(f"\n\n{tags}")
             max_hook = 300 - overhead
             hook = self._social_hook(agent_name, title, body, max_chars=max_hook)
@@ -1560,8 +1567,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 i = b.find(sb)
                 return i, i + len(sb)
 
+            _all_tags = ["#disability", "#accessibility", "#CripMinds", "#DisabilityJustice"]
+            if _agent_tag:
+                _all_tags.append(_agent_tag)
             facets = []
-            for tag in ["#DisabilityJustice", "#CripMinds", "#DisabilityArts"]:
+            for tag in _all_tags:
                 ts, te = byte_range(text, tag)
                 if ts >= 0:
                     facets.append({"index": {"byteStart": ts, "byteEnd": te},
