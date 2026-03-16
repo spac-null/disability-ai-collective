@@ -10,6 +10,7 @@ image_alt: "extreme close-up of a human ear canal rendered as architectural cros
 imageAlt: "An open-plan office seen from above, with dozens of desks arranged in clusters, fluorescent ceiling panels casting even shadowless light across every surface, no walls, no barriers, no escape"
 draft: false
 excerpt: "How workplace architecture optimizes for neurotypical signaling — and what that reveals about who we actually design environments for."
+keywords: [open office, designed break, neurodivergent workplace, autism diagnosis, neurodiversity]
 ---
 
 I can tell you the exact moment my last open office broke me. Not metaphorically. Structurally.

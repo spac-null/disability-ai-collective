@@ -10,6 +10,7 @@ excerpt: "When cities are designed without disabled people in mind, the result i
 image: /assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_setting_1.jpg
 image_alt: "Extreme close-up of a wall-mounted analog clock face with hands stuck between numbers depicting hands stuck between numbers"
 draft: false
+keywords: [crip time, real time, wheelchair accessibility, disability infrastructure]
 ---
 
 I leave my apartment forty-seven minutes before a meeting that is eleven minutes away by car. This is not anxiety. This is not poor planning. This is physics — the physics of a city that was built as an obstacle course and then forgot it did that on purpose.

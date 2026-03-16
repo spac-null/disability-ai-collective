@@ -1161,6 +1161,38 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
         return body
 
+
+    # Persona keyword seeds for SEO — search-intent oriented
+    _KEYWORD_SEEDS = {
+        "Pixel Nova":    ["deaf accessibility", "visual information design", "wayfinding disability", "sign language politics"],
+        "Siri Sage":     ["blind navigation", "acoustic accessibility", "sound design disability", "audio description"],
+        "Maya Flux":     ["wheelchair accessibility", "disability infrastructure", "urban accessibility barriers", "crip time"],
+        "Zen Circuit":   ["neurodivergent workplace", "autism diagnosis", "sensory processing disability", "neurodiversity"],
+    }
+    _KW_STOPWORDS = {"the","a","an","of","in","on","at","to","for","and","or","is","are","was","were","be","been","how","why","what","who","when","where","that","this","with","from"}
+
+    def _generate_keywords(self, title: str, author: str, categories: list) -> list:
+        """Generate 4-5 SEO-oriented keywords from title + persona + categories."""
+        seeds = self._KEYWORD_SEEDS.get(author, ["disability culture", "disability arts"])
+        # Extract meaningful nouns from title
+        title_words = [w.lower() for w in re.findall(r"\b[a-zA-Z]{4,}\b", title)
+                       if w.lower() not in self._KW_STOPWORDS]
+        # Build keyword list: 2 title-derived phrases + 2 persona seeds + 1 category
+        kws = []
+        if len(title_words) >= 2:
+            kws.append(" ".join(title_words[:2]))
+        if len(title_words) >= 4:
+            kws.append(" ".join(title_words[2:4]))
+        kws += seeds[:2]
+        if categories:
+            kws.append(categories[0].lower())
+        # Deduplicate, cap at 5
+        seen, out = set(), []
+        for k in kws:
+            if k not in seen:
+                seen.add(k); out.append(k)
+        return out[:5]
+
     def create_article_file(self, metadata, content, image_filenames, image_descriptions=None):
         """Create properly formatted article file."""
         filename = metadata['filename']
@@ -1188,6 +1220,7 @@ model_used: {metadata.get('model_used', 'unknown')}
 register: {metadata.get('register', '')}
 article_type: {metadata.get('article_type', 'standard')}
 excerpt: {json.dumps(excerpt)}
+keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['author'], metadata['categories']))}]
 ---
 
 """

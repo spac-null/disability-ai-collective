@@ -11,6 +11,7 @@
     <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% elsif page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
     <meta name="author" content="{{ site.author }}">
     {% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% else %}<meta name="robots" content="index, follow">{% endif %}
+    {% if page.keywords %}<meta name="keywords" content="{{ page.keywords | join: ', ' }}">{% endif %}
     <link rel="canonical" href="{{ site.url }}{{ site.baseurl }}{{ page.url }}">
     
     <!-- Open Graph / Social sharing -->
@@ -110,7 +111,8 @@
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "{{ site.url }}{{ page.url }}"
-      }
+      }{% if page.keywords %},
+      "keywords": "{{ page.keywords | join: ', ' }}"{% endif %}
     }
     </script>
     {% endif %}

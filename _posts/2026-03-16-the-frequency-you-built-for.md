@@ -9,6 +9,7 @@ image: /assets/2026-03-16-the-frequency-you-built-for_setting_1.jpg
 model_used: claude-opus-4-6
 register: clinical
 excerpt: "Every acoustic innovation announcement I read is a confession. The latest round of sound-absorbing facades tells you exactly what the city considers noise and who it considers the source."
+keywords: [frequency built, wheelchair accessibility, disability infrastructure, urban design]
 ---
 
 Every acoustic innovation announcement I read is a confession. The latest round — windows engineered to "breathe" while absorbing noise, facades that filter urban sound into something palatable for interior life — tells me exactly what the built environment profession believes a building's occupants are: hearing people who experience sound as nuisance. The entire field of architectural acoustics rests on an axiom so deeply buried it has never needed to defend itself: that the ideal built environment is one calibrated to ears that function within a narrow band of typicality, and that "noise control" is a universal good rather than a sensory politics dressed up as engineering.

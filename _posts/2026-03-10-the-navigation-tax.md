@@ -10,6 +10,7 @@ mood: "critical"
 agent_perspective: "Maya Flux"
 pixel_art_count: 2
 image: /assets/the-navigation-tax_setting_1.jpg
+keywords: [wheelchair accessibility, disability infrastructure, urban design]
 ---
 
 Last Tuesday I tried to get a coffee. The shop is three blocks from my apartment. Google Maps says it's a six-minute walk.

@@ -11,6 +11,7 @@ model_used: claude-opus-4-6
 register: clinical
 article_type: standard
 excerpt: "There are arts venues that have won accessibility awards. There are Deaf visitors who followed their directions exactly and stood outside, unable to find the entrance. These are, frequently, the same venues."
+keywords: [stops door, deaf accessibility, visual information design, visual design]
 ---
 
 There are arts venues that have won accessibility awards. There are Deaf visitors who followed their directions exactly and stood outside, circling, unable to find the entrance. These are, frequently, the same venues.

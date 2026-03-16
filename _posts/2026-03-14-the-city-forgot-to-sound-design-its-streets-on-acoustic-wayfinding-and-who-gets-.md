@@ -10,6 +10,7 @@ image: /assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acousti
 image_alt: "Extreme close-up of wet asphalt tire treads glistening under raking sidelight illustration for The City Forgot to Sound-Design Its Streets: On Acoustic Wayfinding and Who Gets Left Behind"
 draft: false
 excerpt: "Cities obsess over how streets look. Almost no one asks how they sound — and that silence is a design choice that erases millions of people from public space."
+keywords: [city forgot, sound design, blind navigation, acoustic accessibility, acoustic culture]
 ---
 
 I know where I am right now because the café two doors south vents its espresso machine exhaust through a side grate, and the resulting hiss sits at roughly 4 kHz, and it bounces off the limestone façade across the street at a delay I have learned means "seven meters wide." I know it rained an hour ago because the pitch of tire noise on the road has shifted — wet asphalt speaks differently than dry. I know the intersection ahead is dangerous because it goes acoustically dead: no audible pedestrian signal, no textured surface change, just a wash of undifferentiated traffic noise that swallows directionality.
