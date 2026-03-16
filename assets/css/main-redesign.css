@@ -1914,7 +1914,9 @@ a:hover {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2) var(--space-4);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-8);
+  gap: var(--space-2) var(--space-6);
   font-size: var(--font-size-sm);
 }
 
@@ -1927,8 +1929,8 @@ a:hover {
 }
 
 .post-meta__item:not(:last-child)::after {
-  content: "|";
-  margin-left: var(--space-2);
+  content: "\00B7";
+  margin-left: var(--space-3);
   color: var(--color-text-muted);
   opacity: 0.75;
 }
