@@ -2032,6 +2032,22 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         """
         PRODUCTION-READY main execution flow
         """
+        import fcntl
+        lock_path = self.repo_root / '.orchestrator.lock'
+        lock_fh = open(lock_path, 'w')
+        try:
+            fcntl.flock(lock_fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            self.logger.warning("Orchestrator already running — skipping (lock: %s)", lock_path)
+            lock_fh.close()
+            return {"status": "skipped", "message": "Another instance is running"}
+        try:
+            return self._run_production_automation_locked()
+        finally:
+            fcntl.flock(lock_fh, fcntl.LOCK_UN)
+            lock_fh.close()
+
+    def _run_production_automation_locked(self):
         self.logger.info("Starting production automation")
         
         # Step 1: Check if article already exists today
