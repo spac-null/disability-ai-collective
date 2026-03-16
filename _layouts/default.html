@@ -9,10 +9,11 @@
     <!-- SEO and accessibility meta -->
     <title>{% if page.title and page.title != site.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
     <meta name="description" content="{% if page.excerpt %}{{ page.excerpt | strip_html | strip_newlines | truncate: 160 }}{% elsif page.description %}{{ page.description }}{% else %}{{ site.description }}{% endif %}">
-    <meta name="author" content="{{ site.author }}">
+    <meta name="author" content="{% if page.layout == 'post' and page.author %}{{ page.author }}{% else %}{{ site.author }}{% endif %}">
     {% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% else %}<meta name="robots" content="index, follow">{% endif %}
     {% if page.keywords %}<meta name="keywords" content="{{ page.keywords | join: ', ' }}">{% endif %}
     <link rel="canonical" href="{{ site.url }}{{ site.baseurl }}{{ page.url }}">
+    {% if page.image %}<link rel="preload" as="image" href="{{ page.image | relative_url }}">{% endif %}
     
     <!-- Open Graph / Social sharing -->
     <meta property="og:site_name" content="{{ site.title }}">
@@ -22,8 +23,8 @@
     <meta property="og:url" content="{{ site.url }}{{ page.url }}">
     {% if page.image %}
     <meta property="og:image" content="{{ site.url }}{{ page.image | relative_url }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="450">
     {% elsif site.og_image %}
     <meta property="og:image" content="{{ site.url }}{{ site.og_image }}">
     {% endif %}
@@ -112,7 +113,38 @@
         "@type": "WebPage",
         "@id": "{{ site.url }}{{ page.url }}"
       }{% if page.keywords %},
-      "keywords": "{{ page.keywords | join: ', ' }}"{% endif %}
+      "keywords": "{{ page.keywords | join: ', ' }}"{% endif %},
+      "speakable": {
+        "@type": "SpeakableSpecification",
+        "cssSelector": [".post-title", ".post-content p:first-of-type"]
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "{{ site.url }}"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Articles",
+          "item": "{{ site.url }}/research/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ page.title | escape }}",
+          "item": "{{ site.url }}{{ page.url }}"
+        }
+      ]
     }
     </script>
     {% endif %}
