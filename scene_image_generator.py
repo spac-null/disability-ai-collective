@@ -484,6 +484,102 @@ class SceneImageGenerator:
         else:
             return f"{image_type.title()} illustration for {title}"
 
+
+    def _generate_prompts_llm(self, content, title, num_images=3, slug=""):
+        """Use Ollama qwen3:14b to generate article-specific FLUX prompts.
+        Falls back to template system if Ollama fails or returns malformed output.
+        """
+        accent = ACCENTS[int(hashlib.md5((title + slug).encode()).hexdigest(), 16) % len(ACCENTS)]
+
+        categories, excerpt = self._parse_frontmatter(content)
+        fm_end = content.find('\n---', content.find('---') + 3)
+        body_text = ""
+        if fm_end > 0:
+            body_start = content[fm_end + 4:].strip()
+            body_paras = [p.strip() for p in body_start.split('\n\n')
+                          if p.strip() and not p.strip().startswith('#')]
+            body_text = ' '.join(body_paras[:4])
+        article_context = (
+            f"Title: {title}\n"
+            f"Categories: {', '.join(categories)}\n\n"
+            f"{excerpt}\n\n"
+            f"{body_text[:1000]}"
+        )
+
+        style_guide = (
+            "SITE AESTHETIC: punk-pamphlet / dis.art. Confronting, intimate, uncanny. "
+            "Never literal, never stock photo, never inspirational. "
+            "Available print/graphic styles: woodblock linocut, risograph, xerox zine, "
+            "Soviet constructivist poster, Dada photomontage, glitch/VHS, "
+            "paper cut-out collage, cyanotype photogram, mimeograph overprint, "
+            "letterpress broadside, strict 8-bit pixel art. "
+            "Always flat graphic or print medium. Never photography or realism."
+        )
+
+        editorial_voice = (
+            "EDITORIAL IDENTITY: Crip Minds publishes disability-led perspectives where "
+            "disability is culture, expertise, and political position — not tragedy, not "
+            "suffering, not inspiration porn. Images must reflect this: bodies are agents, "
+            "not victims. Aesthetics of resistance, wit, and beauty. Never pity, never "
+            "medicalized imagery, never wheelchair-as-symbol-of-helplessness."
+        )
+
+        llm_prompt = (
+            f"You are an art director for a disability-led editorial site. "
+            f"Generate 3 distinct FLUX image generation prompts for this article.\n\n"
+            f"ARTICLE:\n{article_context}\n\n"
+            f"{style_guide}\n\n"
+            f"{editorial_voice}\n\n"
+            f"ACCENT COLOR for this article: {accent}\n\n"
+            f"Generate exactly 3 prompts:\n"
+            f"1. PRINT/GRAPHIC (hero) — linocut, risograph or xerox. Central object or symbol "
+            f"of THIS article. Not a body, not a person — an object, texture, or environment.\n"
+            f"2. CONFRONTING (body, 40%) — a figure or body in THIS article's specific setting. "
+            f"Active, political, present. Not suffering. References specific details from the article.\n"
+            f"3. SYMBOLIC (body, 75%) — the article's core argument as pure visual form, texture, "
+            f"or print medium. Maximum artistic license. Conceptual not illustrative.\n\n"
+            f"Rules:\n"
+            f"- Each prompt is 2-4 comma-separated clauses\n"
+            f"- Reference SPECIFIC details from this article (objects, places, concepts mentioned)\n"
+            f"- Use {accent} as dominant color where it fits the mood\n"
+            f"- End each prompt with: no text, no gradients\n"
+            f"- Output ONLY a JSON array of 3 strings: [\"prompt1\", \"prompt2\", \"prompt3\"]"
+        )
+
+        try:
+            payload = json.dumps({
+                "model": "qwen3:14b",
+                "prompt": llm_prompt,
+                "stream": False,
+                "options": {"num_predict": 700, "temperature": 0.75},
+            }).encode()
+            req = urllib.request.Request(
+                "http://127.0.0.1:11434/api/generate",
+                data=payload, method="POST",
+            )
+            req.add_header("Content-Type", "application/json")
+            with urllib.request.urlopen(req, timeout=90) as resp:
+                result = json.loads(resp.read())
+            text = result.get("response", "").strip()
+            text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+            arr_match = re.search(r"\[.*?\]", text, re.DOTALL)
+            if arr_match:
+                prompts = json.loads(arr_match.group())
+                if isinstance(prompts, list) and len(prompts) >= 1:
+                    prompts = [p.strip() for p in prompts if isinstance(p, str) and len(p.strip()) > 20]
+                    if prompts:
+                        while len(prompts) < num_images:
+                            prompts.append(prompts[-1])
+                        prompts = prompts[:num_images]
+                        logger.info("LLM-generated prompts for %r:", title)
+                        for i, p in enumerate(prompts):
+                            logger.info("  [%d] %s...", i + 1, p[:100])
+                        return prompts
+        except Exception as e:
+            logger.warning("LLM prompt generation failed (%s) — falling back to templates", e)
+
+        return self._generate_prompts(content, title, num_images=num_images, slug=slug)
+
     def generate_content_aware_images(self, content, title, slug, num_images=3):
         """Generate num_images gallery-quality images via Pollinations FLUX."""
         images = []
@@ -491,7 +587,7 @@ class SceneImageGenerator:
 
         try:
             logger.info("Generating prompts for: %s", title)
-            prompts = self._generate_prompts(content, title, num_images=num_images, slug=slug)
+            prompts = self._generate_prompts_llm(content, title, num_images=num_images, slug=slug)
 
             for i, prompt in enumerate(prompts):
                 label = labels[i] if i < len(labels) else f"scene{i+1}"
