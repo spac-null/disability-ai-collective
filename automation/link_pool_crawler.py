@@ -26,24 +26,31 @@ MAX_BODY   = 60_000   # bytes read per GET
 RECHECK_PCT = 0.10    # re-validate 10% of existing URLs per run
 
 SEED_SITES = [
-    {"domain": "scientias.nl",         "sitemap": "https://scientias.nl/sitemap.xml",              "max_urls": 2000},
-    {"domain": "vpro.nl",              "sitemap": "https://www.vpro.nl/sitemap.xml",                "max_urls": 2000},
-    {"domain": "jstor.org",            "sitemap": "https://www.jstor.org/sitemap.xml",              "max_urls": 500},
-    {"domain": "puppetmastermagazine.net","sitemap":"https://www.puppetmastermagazine.net/sitemap.xml","max_urls":2000},
-    # vanabbemuseum.nl: returns HTML at /sitemap.xml (bot-blocked), removed 2026-03-16
-    {"domain": "mediamatic.net",       "sitemap": "https://www.mediamatic.net/sitemap.xml",         "max_urls": 2000},
-    {"domain": "aeon.co",              "sitemap": "https://assets.aeon.co/sitemaps/aeon/main.xml",  "max_urls": 300, "gzip": True, "sleep": 4},
+    # Disability-led publications and orgs
+    {"domain": "disabilityvisibilityproject.com", "sitemap": "https://disabilityvisibilityproject.com/sitemap.xml",   "max_urls": 500},
+    {"domain": "autisticadvocacy.org",            "sitemap": "https://autisticadvocacy.org/sitemap.xml",              "max_urls": 300},
+    {"domain": "disabilityarts.online",           "sitemap": "https://disabilityarts.online/sitemap.xml",             "max_urls": 400},
+    {"domain": "dredf.org",                       "sitemap": "https://dredf.org/sitemap.xml",                         "max_urls": 200},
+    {"domain": "disabilityrightsuk.org",          "sitemap": "https://www.disabilityrightsuk.org/sitemap.xml",        "max_urls": 200},
+    {"domain": "rootedinrights.org",              "sitemap": "https://rootedinrights.org/sitemap.xml",                "max_urls": 200},
+    {"domain": "thebodyisnotanapology.com",       "sitemap": "https://thebodyisnotanapology.com/sitemap.xml",         "max_urls": 300},
+    {"domain": "crippledscholar.com",             "sitemap": "https://crippledscholar.com/sitemap.xml",               "max_urls": 200},
+    # Disability culture blogs / individuals
+    {"domain": "leavingevidence.wordpress.com",   "sitemap": "https://leavingevidence.wordpress.com/sitemap.xml",     "max_urls": 150},
+    {"domain": "brownstargirl.org",               "sitemap": "https://brownstargirl.org/sitemap.xml",                 "max_urls": 150},
+    # Broader long-form (disability/access/design/justice intersections)
+    {"domain": "aeon.co",                         "sitemap": "https://assets.aeon.co/sitemaps/aeon/main.xml",         "max_urls": 300, "gzip": True, "sleep": 4},
 ]
 
 TOPIC_KEYWORDS = {
-    "art":        ["art", "artist", "gallery", "exhibition", "museum", "painting", "sculpture", "installation"],
-    "design":     ["design", "architecture", "building", "urban", "infrastructure", "spatial"],
-    "science":    ["research", "study", "brain", "cognitive", "neuroscience", "data", "experiment"],
-    "culture":    ["culture", "cultural", "film", "music", "book", "literature", "theatre", "performance"],
-    "ecology":    ["ecology", "environment", "climate", "nature", "species", "planet"],
-    "activism":   ["protest", "movement", "rights", "justice", "policy", "law", "disability", "access"],
-    "theory":     ["theory", "philosophy", "critique", "analysis", "epistemology", "feminist"],
-    "technology": ["technology", "digital", "software", "algorithm", "AI", "interface", "media"],
+    "art":        ["art", "artist", "gallery", "exhibition", "museum", "painting", "sculpture", "installation", "performance", "crip aesthetics"],
+    "design":     ["design", "architecture", "building", "urban", "infrastructure", "spatial", "universal design", "accessible", "DeafSpace"],
+    "science":    ["research", "study", "brain", "cognitive", "neuroscience", "data", "experiment", "psychology"],
+    "culture":    ["culture", "cultural", "film", "music", "book", "literature", "theatre", "crip", "disabled"],
+    "activism":   ["protest", "movement", "rights", "justice", "policy", "law", "disability", "access", "advocacy", "ADA", "CRPD"],
+    "theory":     ["theory", "philosophy", "critique", "analysis", "disability studies", "crip theory", "feminist", "intersectional"],
+    "technology": ["technology", "digital", "software", "algorithm", "AI", "interface", "assistive", "accessibility", "AT"],
+    "identity":   ["identity", "deaf", "blind", "autistic", "wheelchair", "chronic illness", "neurodivergent", "DeafBlind", "community"],
 }
 
 logging.basicConfig(
