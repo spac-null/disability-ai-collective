@@ -815,6 +815,7 @@ author: {json.dumps(str(metadata['author']))}
 categories: [{', '.join(metadata['categories'])}]
 agent_perspective: {json.dumps(str(metadata['agent_perspective']))}
 image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
+image_alt: {json.dumps(image_descriptions[0] if image_descriptions else 'Article illustration')}
 model_used: {metadata.get('model_used', 'unknown')}
 register: {metadata.get('register', '')}
 ---

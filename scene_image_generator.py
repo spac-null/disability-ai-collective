@@ -19,6 +19,7 @@ import hashlib
 import re
 import struct
 import urllib.parse
+import json
 import urllib.request
 import zlib
 from pathlib import Path
@@ -236,7 +237,14 @@ class SceneImageGenerator:
 
         # Use title first — most reliable signal, then corpus for broader match
         title_lower = title.lower()
-        corpus = (title + ' ' + ' '.join(categories) + ' ' + excerpt).lower()
+        # Include first ~3 body paragraphs for richer keyword matching
+        body_text = ""
+        fm_end = content.find('\n---', content.find('---') + 3)
+        if fm_end > 0:
+            body_start = content[fm_end + 4:].strip()
+            body_paras = [p.strip() for p in body_start.split('\n\n') if p.strip() and not p.strip().startswith('#')]
+            body_text = ' '.join(body_paras[:3])
+        corpus = (title + ' ' + ' '.join(categories) + ' ' + excerpt + ' ' + body_text).lower()
 
         # Specific objects from excerpt (skip overly generic ones)
         obj_words = re.findall(
@@ -286,6 +294,11 @@ class SceneImageGenerator:
             place = "empty transit corridor, harsh fluorescent overhead strip light"
             obj = found_obj or "vintage TTY terminal on steel desk, handset resting"
 
+        elif self._any_kw(['vibration', 'frequency', 'sonic', 'sound wave', 'acoustic design', 'resonance'], corpus):
+            person = "lone figure casting sharp shadow across polished concrete atrium floor"
+            place = "cavernous reverberant hall, hard parallel surfaces, no soft furnishing"
+            obj = found_obj or "cross-section of acoustic panel, layered foam and perforated metal"
+
         elif self._any_kw(['deaf', 'hearing loss', 'asl', 'sign language', 'tty', 'caption', 'captions'], corpus):
             person = "two hands mid-ASL sign, backlit silhouette, wrists and fingers close"
             place = "empty transit corridor, harsh fluorescent overhead strip light"
@@ -333,9 +346,15 @@ class SceneImageGenerator:
         return prompts
 
     def _focus_corpus(self, content, title):
-        """Return focused corpus: title + categories + excerpt only (not full body)."""
+        """Return focused corpus: title + categories + excerpt + first body paragraphs."""
         categories, excerpt = self._parse_frontmatter(content)
-        return (title + ' ' + ' '.join(categories) + ' ' + excerpt).lower()
+        body_text = ""
+        fm_end = content.find('\n---', content.find('---') + 3)
+        if fm_end > 0:
+            body_start = content[fm_end + 4:].strip()
+            body_paras = [p.strip() for p in body_start.split('\n\n') if p.strip() and not p.strip().startswith('#')]
+            body_text = ' '.join(body_paras[:3])
+        return (title + ' ' + ' '.join(categories) + ' ' + excerpt + ' ' + body_text).lower()
 
     def _pick_sauces(self, content, title, n=2):
         """Score each sauce against focused article corpus, return top-n distinct keys."""
@@ -387,6 +406,84 @@ class SceneImageGenerator:
 
     # ── Main generation ───────────────────────────────────────────────────────
 
+
+    def _generate_alt_text(self, prompt, title, image_type):
+        """Generate accessible alt text from the image prompt.
+
+        Uses local Ollama (qwen3:14b) for a one-line description.
+        Falls back to extracting key visual terms from prompt string.
+        """
+        # Try Ollama first
+        try:
+            ollama_prompt = (
+                f"Write one concise image description for screen readers (under 25 words). "
+                f"The image is a {image_type} illustration for an article titled \"{title}\". "
+                f"The art prompt was: {prompt[:300]}\n\n"
+                f"Respond with ONLY the alt text, no quotes, no prefix. "
+                f"Describe what a viewer would see, in plain language."
+            )
+            payload = json.dumps({
+                "model": "qwen3:14b",
+                "prompt": ollama_prompt,
+                "stream": False,
+                "options": {"num_predict": 60, "temperature": 0.3},
+            }).encode()
+            req = urllib.request.Request(
+                "http://127.0.0.1:11434/api/generate",
+                data=payload, method="POST",
+            )
+            req.add_header("Content-Type", "application/json")
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                result = json.loads(resp.read())
+            text = result.get("response", "").strip()
+            # Clean: remove thinking tags, quotes, prefixes
+            text = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL).strip()
+            text = text.strip('"\'')
+            text = re.sub(r'^(alt text:|description:|image:)\s*', '', text, flags=re.IGNORECASE).strip()
+            if len(text) > 15 and len(text) < 300:
+                logger.info("  Ollama alt text: %s", text[:80])
+                return text
+        except Exception as e:
+            logger.debug("  Ollama alt text failed (%s), using fallback", e)
+
+        # Fallback: extract key visual terms from the prompt
+        return self._extract_alt_from_prompt(prompt, title, image_type)
+
+    def _extract_alt_from_prompt(self, prompt, title, image_type):
+        """Extract a meaningful alt text from the prompt string itself."""
+        # Remove boilerplate phrases
+        cleaned = prompt
+        for phrase in [
+            'no readable text', 'no text', 'no gradients', 'no photorealism',
+            'no clean edges', 'no smooth edges', 'no background',
+            'no organic forms', 'no figures', 'no clean composition',
+            'absolutely no photography', 'no color',
+        ]:
+            cleaned = cleaned.replace(phrase, '')
+
+        # Identify the art style (first clause usually)
+        style_match = re.match(r'^([^,]+)', cleaned)
+        style = style_match.group(1).strip() if style_match else image_type
+
+        # Find the main subject — look for obj/person descriptions
+        subject = ""
+        # Check for "X as bold central motif" or "X as found-object" patterns
+        motif_match = re.search(r'([^,]+?)\s+as\s+(bold central motif|found-object|central typographic)', cleaned)
+        if motif_match:
+            subject = motif_match.group(1).strip()
+        else:
+            # Check for figure/person descriptions
+            fig_match = re.search(r'(figure [^,]+|hands [^,]+|fingertip [^,]+)', cleaned)
+            if fig_match:
+                subject = fig_match.group(1).strip()
+
+        if subject and style:
+            return f"{style.rstrip(',')} depicting {subject}"
+        elif style:
+            return f"{style.rstrip(',')} illustration for {title}"
+        else:
+            return f"{image_type.title()} illustration for {title}"
+
     def generate_content_aware_images(self, content, title, slug, num_images=3):
         """Generate num_images gallery-quality images via Pollinations FLUX."""
         images = []
@@ -402,10 +499,12 @@ class SceneImageGenerator:
                 try:
                     img_data = self._fetch_pollinations(prompt)
                     filename = f"{slug}_{label}_{i+1}.jpg"
+                    alt_text = self._generate_alt_text(prompt, title, label)
                     images.append({
                         'data': img_data,
                         'filename': filename,
                         'description': f"{label.title()} — {title}",
+                        'alt_text': alt_text,
                         'score': 9,
                         'scene': label,
                         'prompt': prompt,
@@ -493,7 +592,7 @@ class SceneImageGenerator:
 def generate_article_images(content, title, slug, num_images=3):
     gen = SceneImageGenerator()
     imgs = gen.generate_content_aware_images(content, title, slug, num_images)
-    return [{'data': i['data'], 'filename': i['filename'], 'alt_text': i['description']} for i in imgs]
+    return [{'data': i['data'], 'filename': i['filename'], 'alt_text': i.get('alt_text') or i['description']} for i in imgs]
 
 
 if __name__ == "__main__":
