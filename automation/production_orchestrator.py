@@ -2300,7 +2300,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         # Step 8: Post to Bluesky + Mastodon + Tumblr (non-blocking)
         if commit_success:
             bsky_uri = self.post_to_bluesky(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
-            self._store_social_uri(slug, bsky_uri or "")
+            self._store_social_uri(slug, bsky_uri or "", agent=agent_name)
             self.post_to_mastodon(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
             self.post_to_tumblr(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
 
