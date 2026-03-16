@@ -852,7 +852,9 @@ class ProductionOrchestrator:
             "9. 700-2000 words body — match the original target length, do not shrink\n"
             "10. Author\'s disability is their EXPERTISE and LENS, never tragedy or limitation\n"
             "11. No jargon without unpacking, no assumed fluency with theory — but don\'t iron out the author\'s voice to make it sound like journalism. Clarity is not the same as smoothness.\n"
-            "12. Crip culture references (Sins Invalid, crip time, disability justice) only when they fit naturally\n\n"
+            "12. Crip culture references (Sins Invalid, crip time, disability justice) only when they fit naturally\n"
+            "13. PARAGRAPH MOMENTUM: When a paragraph builds by accumulation — a series of specific details gathering weight toward a single point — do not interrupt the accumulation with analysis or critique. Let the details complete their arc first. The indictment, if any, arrives after the observation has landed, not inside it. If you see analysis inserted mid-accumulation, move it after the completed sequence or cut it.\n"
+            "14. LANDING SENTENCES: Avoid abstract meta-claims as landing lines. Formulations like 'X is a diagram of who the system believes is real' or 'this is a map of the system's theory of its user' require the reader to reconstruct a metaphor under pressure. A concrete image or a plain-stated paradox lands harder. If the draft ends an accumulation with an abstract reframing, replace it with the specific thing that carries the same meaning.\n\n"
             "Return ONLY the complete edited article (frontmatter preserved + image lines preserved "
             "+ edited body). No commentary, no preamble."
         )
