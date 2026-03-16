@@ -88,7 +88,46 @@ _ARTICLE_TYPES = [
      "actual desire, delight, the physical experience of doing something your body loves. "
      "The essay lives in that register. Not disability as limitation overcome — "
      "as a body that knows things through wanting them. Specific. Sensory. Not metaphorical."),
+    ("indefensible", 0.03, ""),  # Prompt is persona-specific — see _INDEFENSIBLE_PROMPTS
 ]
+
+# Per-persona prompts for the "indefensible" article type.
+# Each describes a specific contradiction the persona cannot argue their way out of.
+# The essay does not resolve it. It stays with the fact.
+_INDEFENSIBLE_PROMPTS = {
+    "Pixel Nova": (
+        "FORM — THE INDEFENSIBLE PIECE: You designed something. It worked for Deaf users. "
+        "It surveilled everyone else. The data collection was invisible, the consent was implicit, and you knew. "
+        "This article is about that project. You do not resolve it. You do not conclude the surveillance was wrong, "
+        "or that it was right, or that it was worth it. You stay with the fact that you made it anyway, "
+        "and with what that makes you."
+    ),
+    "Siri Sage": (
+        "FORM — THE INDEFENSIBLE PIECE: There is a building you love acoustically. "
+        "The resonance is perfect. The space sings in a way almost no public building does. "
+        "It also has three steps at the entrance and no lift. You have been inside it four times. "
+        "You have never mentioned the steps in any essay about it. "
+        "This article is about why. Not about the building. About the silence."
+    ),
+    "Maya Flux": (
+        "FORM — THE INDEFENSIBLE PIECE: A city planner tried. "
+        "You have his memos, his budget requests, his three rounds of denied funding. "
+        "The ramp he eventually built is technically compliant and practically useless. "
+        "You have used him as an example of systemic failure for years. "
+        "This article is about what it would mean to say he did what he could. "
+        "Not to forgive the ramp. Not to excuse the result. "
+        "To sit with the difference between a system that failed and a person who tried inside it."
+    ),
+    "Zen Circuit": (
+        "FORM — THE INDEFENSIBLE PIECE: The diagnosis gave you a framework. "
+        "The framework gave you cover. "
+        "There is something you have not dealt with — a relationship, a decision, a thing you walked away from — "
+        "that the autism framing let you defer indefinitely. "
+        "This article is not about autism. It is about what you used it for. "
+        "You do not resolve this. You do not conclude the deferral was justified or unjustified. "
+        "You name the thing you deferred."
+    ),
+}
 
 _SOCIAL_PROMPTS = {
     "Pixel Nova": (
@@ -1758,6 +1797,8 @@ register: {metadata.get('register', '')}
         article_type, article_type_prompt = self._pick_article_type()
         if article_type == "provocation":
             target_words = min(target_words, 450)
+        if article_type == "indefensible":
+            article_type_prompt = _INDEFENSIBLE_PROMPTS.get(agent_name, "")
         self.logger.info("Register: %s | Article type: %s | Target words: %d", register, article_type, target_words)
 
         beat_nudge  = self._get_beat_nudge(agent_name)
@@ -1865,7 +1906,7 @@ register: {metadata.get('register', '')}
         is_opus = (used_provider in opus_providers
                    and actual_model is not None
                    and "opus" in actual_model.lower())
-        skip_rewrite_types = {"provocation", "fury", "pleasure"}
+        skip_rewrite_types = {"provocation", "fury", "pleasure", "indefensible"}
         written_by = actual_model or used_provider
         if not is_opus and article_type not in skip_rewrite_types:
             self.logger.info("Written by %s — running Opus rewrite pass", written_by)
