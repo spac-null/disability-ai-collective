@@ -103,6 +103,7 @@ Most "Getting Here" pages are not really about getting here. They are about the 
 The page draws a line. On this side, we are responsible. On that side, you are on your own.
 
 I stood outside that South London venue for eleven minutes, in October dark, circling a building that had assured me it was accessible, looking for the door that was around a corner I could not see from the street, and I thought about Berlage's museum in The Hague, which I visited once in heavy rain, and found the entrance without looking at my phone, because the building told me where it was.
+
 ---
 
 *This article was inspired by [Getting here -](https://tangledarts.org/getting-here-8/) from tangledarts.org.*
