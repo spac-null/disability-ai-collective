@@ -137,8 +137,7 @@ class ProductionOrchestrator:
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s - %(message)s',
             handlers=[
-                logging.FileHandler(self.repo_root / 'automation.log'),
-                logging.StreamHandler()
+                logging.FileHandler(self.repo_root / 'automation.log')
             ]
         )
         return logging.getLogger(__name__)
