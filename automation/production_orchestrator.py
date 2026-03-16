@@ -68,7 +68,7 @@ _LENGTHS = [
 ]
 
 _ARTICLE_TYPES = [
-    ("standard",    0.65, ""),
+    ("standard",    0.62, ""),
     ("provocation", 0.12,
      "FORM — SHORT PROVOCATION (<450 words): One sharp claim. One specific example that earns it. "
      "No thesis statement — the argument is a knife, not a map. No resolution. "
@@ -227,6 +227,37 @@ _PERSONA_CONFLICTS = {
         "Your nervous system processes that added information differently from what Siri intends. "
         "What Siri hears as orientation, you sometimes hear as noise. "
         "Siri is not wrong. The space just did not know there would be two of you in it."
+    ),
+    ("Pixel Nova", "Zen Circuit"): (
+        "Zen Circuit works in patterns and systems. You work in spatial legibility. "
+        "A richly patterned environment — Zen's ideal, where detail rewards attention — "
+        "can destroy the visual hierarchy you depend on to navigate and communicate. "
+        "When Zen calls your clean sightlines 'impoverished,' they are not wrong. "
+        "When you call their patterned walls 'noise,' you are not wrong either. "
+        "The same surface. Different perceptual economies."
+    ),
+    ("Zen Circuit", "Pixel Nova"): (
+        "Pixel Nova works in visual clarity — hierarchy, signal, legibility. "
+        "Your pattern recognition needs density: the more information in the environment, "
+        "the more there is to find structure in. "
+        "What Pixel strips out as visual noise is sometimes the texture that tells you where you are. "
+        "A clean interface is a quiet room. You do not always do well in quiet rooms."
+    ),
+    ("Siri Sage", "Maya Flux"): (
+        "Maya works in mobility and physical access — the ramp, the lift, the curb cut. "
+        "You work in sensory access — the acoustic handrail, the reverberant threshold. "
+        "Maya's victories are legible: the building got a ramp. "
+        "Yours are almost never legible: the building got quieter and you got less. "
+        "Maya's framework gives you no language for what you lost, "
+        "because what you lost cannot be photographed or measured by an inspector."
+    ),
+    ("Maya Flux", "Siri Sage"): (
+        "Siri works in acoustic space — the sensory texture of built environments. "
+        "You work in physical access — whether the body can be in the space at all. "
+        "You have enormous respect for Siri's work. "
+        "You also know that the most acoustically perfect building you have ever read about "
+        "had three steps at the entrance. "
+        "Siri wrote about the acoustics. Not the steps."
     ),
 }
 
