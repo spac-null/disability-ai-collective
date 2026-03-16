@@ -216,6 +216,59 @@ def crawl_site(conn, site: dict) -> tuple[int, int]:
     return new_count, updated_count
 
 
+SEEDS_FILE = Path(__file__).parent / "link_pool_seeds.txt"
+
+
+def load_seeds(conn) -> int:
+    """Insert hand-curated URLs from link_pool_seeds.txt into the pool.
+
+    File format: one URL per line. Lines starting with # or ## are comments/headers.
+    Empty lines ignored. Each URL is fetched and tagged like a crawled URL.
+    """
+    if not SEEDS_FILE.exists():
+        log.info("No seeds file found at %s", SEEDS_FILE)
+        return 0
+
+    lines = SEEDS_FILE.read_text().splitlines()
+    urls  = [l.strip() for l in lines if l.strip() and not l.strip().startswith('#')]
+    if not urls:
+        return 0
+
+    log.info("Loading %d seed URLs from %s", len(urls), SEEDS_FILE.name)
+    new_count = 0
+    now = datetime.now(timezone.utc).isoformat()
+
+    for url in urls:
+        uid = url_id(url)
+        if conn.execute("SELECT id FROM link_pool WHERE id = ?", (uid,)).fetchone():
+            continue
+
+        try:
+            time.sleep(1)
+            raw = fetch_bytes(url)
+            if not raw:
+                log.warning("Seed fetch empty: %s", url)
+                continue
+
+            title, snippet = extract_title_and_snippet(raw[:MAX_BODY])
+            tags, topic    = tag_url(title, snippet)
+            domain         = url.split('/')[2] if '/' in url else url
+
+            conn.execute("""
+                INSERT OR IGNORE INTO link_pool
+                    (id, url, title, domain, tags, topic, is_alive, last_checked, discovered_date, source_sitemap)
+                VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, 'manual')
+            """, (uid, url, title, domain, json.dumps(tags), topic, now, now))
+            conn.commit()
+            new_count += 1
+            log.info("Seeded: %s — %s [%s]", domain, title[:60], topic)
+
+        except Exception as e:
+            log.warning("Seed error %s: %s", url, e)
+
+    return new_count
+
+
 def revalidate_sample(conn) -> int:
     """HEAD-check a random 10% of existing alive URLs. Mark dead ones."""
     rows = conn.execute("SELECT id, url FROM link_pool WHERE is_alive = 1").fetchall()
@@ -242,7 +295,7 @@ def main():
     conn = sqlite3.connect(str(DB_PATH))
     init_db(conn)
 
-    total_new = 0
+    total_new = load_seeds(conn)
     for site in SEED_SITES:
         try:
             new, _ = crawl_site(conn, site)

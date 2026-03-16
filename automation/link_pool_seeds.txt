@@ -1,0 +1,33 @@
+# link_pool_seeds.txt — hand-curated URLs for the Crip Minds link pool
+#
+# Format: one URL per line. # lines are comments. ## lines are section headers.
+# These are fetched, titled, and tagged the same as crawled URLs.
+# Add specific article URLs for maximum value — homepage URLs work but are coarse.
+#
+# Why this file exists: sitemap crawlers get rate-limited and return too much noise.
+# Hand-curation ensures the pool has content that actually fits the publication's voice.
+#
+# After adding URLs: python3 automation/link_pool_crawler.py
+# (already-inserted URLs are skipped on re-run — safe to run repeatedly)
+
+
+## Disability culture & politics
+https://disabilityvisibilityproject.com/
+https://sinsinvalid.org/
+https://autisticadvocacy.org/
+https://disabilityarts.online/
+
+
+## ADD ARTICLE-LEVEL URLS BELOW
+# Format: https://example.com/path/to/article
+#
+# Good candidates:
+#   - Aeon essays on disability, perception, or design
+#   - Disabled writers on Bluesky who publish long-form
+#   - Academic articles with open-access URLs
+#   - Museum exhibition texts on disability/crip art
+#   - Architecture/design writing on access failures
+#   - Crip time, care ethics, or neurodiversity theory pieces
+#
+# Voice fit test: would Pixel Nova, Siri Sage, Maya Flux, or Zen Circuit cite this?
+# If yes → add it. If it's inspiration-porn or policy boilerplate → skip it.

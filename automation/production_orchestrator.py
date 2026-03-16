@@ -153,18 +153,32 @@ class ProductionOrchestrator:
         return None
 
 
-    def get_pool_links(self, topic: str, n: int = 15) -> list[dict]:
-        """Query link_pool for URLs relevant to topic. Graceful if table missing."""
+    def get_pool_links(self, keywords: list[str], n: int = 15) -> list[dict]:
+        """Query link_pool for URLs relevant to article keywords.
+
+        Scores by keyword overlap against title and tags columns (both text-searchable).
+        Falls back to random alive URLs if no keywords match. Graceful if table missing.
+        """
         try:
             conn = sqlite3.connect(str(self.discovery_db))
-            rows = conn.execute("""
-                SELECT url, title, domain FROM link_pool
-                WHERE is_alive = 1
-                ORDER BY
-                    CASE WHEN topic = ? THEN 0 ELSE 1 END,
-                    RANDOM()
-                LIMIT ?
-            """, (topic, n)).fetchall()
+            if keywords:
+                # Build a relevance score: 1 point per keyword hit in title or tags
+                case_parts = ' + '.join(
+                    [f"(CASE WHEN lower(title) LIKE ? THEN 1 ELSE 0 END)" for _ in keywords] +
+                    [f"(CASE WHEN lower(tags)  LIKE ? THEN 1 ELSE 0 END)" for _ in keywords]
+                )
+                params = [f'%{kw}%' for kw in keywords] * 2 + [n]
+                rows = conn.execute(f"""
+                    SELECT url, title, domain FROM link_pool
+                    WHERE is_alive = 1
+                    ORDER BY ({case_parts}) DESC, RANDOM()
+                    LIMIT ?
+                """, params).fetchall()
+            else:
+                rows = conn.execute(
+                    "SELECT url, title, domain FROM link_pool WHERE is_alive = 1 ORDER BY RANDOM() LIMIT ?",
+                    (n,)
+                ).fetchall()
             conn.close()
             return [{"url": r[0], "title": r[1] or r[2], "domain": r[2]} for r in rows]
         except Exception:
@@ -1352,8 +1366,9 @@ model_used: {metadata.get('model_used', 'unknown')}
             source_note = f"*This article was inspired by [{discovery['original_title']}]({discovery['url']}) from {domain}.*"
             # mark_finding_as_used called after successful commit (see Step 7)
             source_text = self.fetch_source_article(discovery.get('url', ''))
-            pool_topic   = discovery.get('url', '').split('/')[2] if discovery.get('url') else 'general'
-            pool_links   = self.get_pool_links(pool_topic)
+            _stopwords   = {'the','a','an','and','or','of','in','on','at','to','for','is','are','was','were','with','this','that','from','by','as','it','its','not','but','how','why','what','when','who'}
+            pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title) if w.lower() not in _stopwords][:8]
+            pool_links   = self.get_pool_links(pool_keywords)
             
             # Map domain to agent (improved logic)
             domain_lower = domain.lower()
