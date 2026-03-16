@@ -32,7 +32,7 @@
         Hardened orchestrator. Editorial voice documented. MANIFESTO rewritten.
         Site has footer version string, HTML source comment, and this file.
 
-  v2.0  —            unreleased
+  v2.0  Fermentation  2026-03-16
         Content quality improvements: source reading, persona depth,
         tonal variety, link pool. Articles start connecting outward.
         Beats tracking and cross-article threads. A site that has opinions
