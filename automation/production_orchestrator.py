@@ -16,6 +16,26 @@ from pathlib import Path
 import time
 import urllib.request
 
+# Canonical URLs for known disability figures/orgs — injected into articles automatically
+CANONICAL_DISABILITY_LINKS = {
+    'Sins Invalid':                       'https://sinsinvalid.org/',
+    'Mia Mingus':                         'https://leavingevidence.wordpress.com/',
+    'Liz Jackson':                        'https://www.disabledlist.org/',
+    'Carmen Papalia':                     'https://carmenpapalia.com/',
+    'Georgina Kleege':                    'https://english.berkeley.edu/users/45',
+    'Leah Lakshmi Piepzna-Samarasinha':   'https://brownstargirl.org/',
+    'Patty Berne':                        'https://sinsinvalid.org/',
+    'Disability Visibility Project':      'https://disabilityvisibilityproject.com/',
+    'Tangled Art':                        'https://tangledarts.org/',
+    'Autistic Self Advocacy Network':     'https://autisticadvocacy.org/',
+    'Disability Arts Online':             'https://disabilityarts.online/',
+    'Alice Wong':                         'https://disabilityvisibilityproject.com/',
+    'Harriet McBryde Johnson':            'https://disabilityvisibilityproject.com/',
+    'Alison Kafer':                       'https://www.alisonkafer.com/',
+    'Robert McRuer':                      'https://english.gwu.edu/robert-mcruer',
+}
+
+
 # Load secrets from env file (no export statements — must parse manually)
 _ENV_FILE = Path("/srv/secrets/openclaw.env")
 if _ENV_FILE.exists():
@@ -581,7 +601,8 @@ class ProductionOrchestrator:
             "deeply personal long-form essays. You edit articles where AI agents write from distinct "
             "disability perspectives (crip culture, disability justice, crip aesthetics).\n\n"
             "Your task: rewrite the BODY of articles to match the publication's voice and quality. "
-            "The frontmatter (between --- markers) and image markdown lines (![...](...)) "
+            "The frontmatter (between --- markers) and image HTML blocks "
+            "(`<figure class=\"article-figure\">...</figure>`) "
             "must be preserved exactly as-is.\n\n"
             "EDITORIAL VOICE RULES:\n"
             "1. Open with ONE specific concrete moment, scene, or sharp claim — never a question, statistics, or 'In today\'s world'\n"
@@ -605,7 +626,7 @@ class ProductionOrchestrator:
             f"<gold_standard>\n{gold}\n</gold_standard>\n\n"
             f"ARTICLE TO REWRITE:\n<article>\n{content}\n</article>\n\n"
             "Rewrite the article body to match the publication quality. "
-            "Preserve frontmatter and all image markdown lines exactly."
+            "Preserve frontmatter and all `<figure>` image HTML blocks exactly."
         )
 
         try:
@@ -793,6 +814,21 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
         return '\n\n'.join(paragraphs)
 
+    def inject_canonical_links(self, body: str) -> str:
+        """Inject hyperlinks for known disability figures/orgs.
+
+        First occurrence only. Skips already-linked text and HTML blocks.
+        """
+        import re as _re
+        for name, url in CANONICAL_DISABILITY_LINKS.items():
+            escaped = _re.escape(name)
+            if _re.search(rf'\[{escaped}\]\(', body):
+                continue  # already linked
+            pattern = rf'(?<!\[)(?<!\*)(?<!\()({escaped})(?!\])'
+            replacement = f'[{name}]({url})'
+            body = _re.sub(pattern, replacement, body, count=1)
+        return body
+
     def create_article_file(self, metadata, content, image_filenames, image_descriptions=None):
         """Create properly formatted article file."""
         filename = metadata['filename']
@@ -802,7 +838,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         excerpt = ""
         for line in content.splitlines():
             line = line.strip()
-            if line and not line.startswith('#') and not line.startswith('!') and not line.startswith('---') and not line.startswith('*') and len(line) > 40:
+            if line and not line.startswith('#') and not line.startswith('!') and not line.startswith('<') and not line.startswith('---') and not line.startswith('*') and len(line) > 40:
                 clean = re.sub(r'\*\*|\*|`', '', line).strip()
                 excerpt = clean[:160].rsplit(' ', 1)[0] if len(clean) > 160 else clean
                 break
@@ -824,6 +860,7 @@ register: {metadata.get('register', '')}
 
         # Insert body images at balanced positions (hero image[0] is frontmatter only)
         body = self._insert_images_balanced(content, image_filenames, image_descriptions)
+        body = self.inject_canonical_links(body)
 
         # Append source note at end of article (not as excerpt/subtitle)
         if metadata.get('source_note'):
