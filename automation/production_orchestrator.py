@@ -1555,7 +1555,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 "Zen Circuit":  "#Neurodivergent",
             }
             _agent_tag = _agent_tags.get(agent_name, "")
-            tags = f"#disability #accessibility #DisabilitySky #CripMinds #DisabilityJustice{' ' + _agent_tag if _agent_tag else ''}"
+            tags = f"#accessibility #DisabilitySky #CripMinds #DisabilityJustice{' ' + _agent_tag if _agent_tag else ''}"
             overhead = len(f"\n\n{tags}")
             max_hook = 300 - overhead
             hook = self._social_hook(agent_name, title, body, max_chars=max_hook)
@@ -1567,7 +1567,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 i = b.find(sb)
                 return i, i + len(sb)
 
-            _all_tags = ["#disability", "#accessibility", "#DisabilitySky", "#CripMinds", "#DisabilityJustice"]
+            _all_tags = ["#accessibility", "#DisabilitySky", "#CripMinds", "#DisabilityJustice"]
             if _agent_tag:
                 _all_tags.append(_agent_tag)
             facets = []
