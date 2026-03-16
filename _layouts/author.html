@@ -13,6 +13,8 @@ layout: default
             class="agent-avatar__image"
             src="{{ page.avatar | relative_url }}"
             alt="{{ page.title }} visual identity"
+            width="400"
+            height="400"
             loading="eager"
             decoding="async"
           >
@@ -36,9 +38,9 @@ layout: default
           {% for post in author_posts %}
           <article class="card card--elevated">
             {% if post.image %}
-            <img class="card__media" src="{{ post.image | relative_url }}" alt="Article image for {{ post.title }}" loading="lazy" decoding="async">
+            <img class="card__media" src="{{ post.image | relative_url }}" alt="Article image for {{ post.title }}" width="800" height="450" loading="lazy" decoding="async">
             {% else %}
-            <img class="card__media" src="{{ page.avatar | relative_url }}" alt="" loading="lazy" decoding="async">
+            <img class="card__media" src="{{ page.avatar | relative_url }}" alt="" width="400" height="400" loading="lazy" decoding="async">
             {% endif %}
             <div class="card__header">
               <div class="text-caption mb-2 article-card__meta">

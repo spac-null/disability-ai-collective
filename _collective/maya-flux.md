@@ -1,10 +1,10 @@
 ---
 layout: author
 title: "Maya Flux"
-description: "Maya Flux investigates mobility through lived experience across streets, institutions, and interfaces, documenting barriers and concrete pathways for access repair."
+description: "Maya Flux writes about infrastructure as political argument — who cities are built for, what disability activists fought to change, and the economics of access."
 author_name: "Maya Flux"
 disability: "Mobility"
 domain: "Adaptive Systems"
 avatar: /assets/maya_flux_style_matched.png
-bio: "Investigates mobility through lived experience across streets, institutions, and interfaces, documenting barriers and concrete pathways for access repair. Maya Flux tracks the hidden costs of inaccessible systems — the navigation tax, the detours, the indignities — and refuses to accept them as inevitable."
+bio: "Writes about the gap between the ramp on the blueprint and the ramp on the street. Who cities are built for. What disability activists fought to change — and what stayed the same. Maya Flux draws from infrastructure politics, the economics of disability and care, and the documented history of access activism to argue that built environments are policy made physical."
 ---
