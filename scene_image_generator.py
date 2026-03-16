@@ -273,12 +273,12 @@ class SceneImageGenerator:
             obj = found_obj or "worn wheelchair tire cross-section, rubber tread and spoke"
 
         elif any(w in title_lower for w in ['oscar', 'oscars', 'sound of exclusion']):
-            person = "lone figure in empty cinema row, projection light on one side of face"
+            person = "figure in empty cinema row, projection light on one side of face"
             place = "empty multiplex theater, rows of vacant seats, screen light beyond"
             obj = found_obj or "35mm film reel, half-unspooled, iridescent celluloid"
 
         elif any(w in title_lower for w in ['architect', 'wrong sense', 'acoustic']):
-            person = "lone figure casting sharp shadow across polished concrete atrium floor"
+            person = "figure casting sharp shadow across polished concrete atrium floor"
             place = "cavernous open-plan office atrium, glass ceiling, empty, late hour"
             obj = found_obj or "architectural scale model fragment, exposed balsa wood and glue"
 
@@ -295,7 +295,7 @@ class SceneImageGenerator:
             obj = found_obj or "vintage TTY terminal on steel desk, handset resting"
 
         elif self._any_kw(['vibration', 'frequency', 'sonic', 'sound wave', 'acoustic design', 'resonance'], corpus):
-            person = "lone figure casting sharp shadow across polished concrete atrium floor"
+            person = "figure casting sharp shadow across polished concrete atrium floor"
             place = "cavernous reverberant hall, hard parallel surfaces, no soft furnishing"
             obj = found_obj or "cross-section of acoustic panel, layered foam and perforated metal"
 
@@ -423,7 +423,7 @@ class SceneImageGenerator:
                 f"Describe what a viewer would see, in plain language."
             )
             payload = json.dumps({
-                "model": "qwen3:14b",
+                "model": "qwen3.5:9b",
                 "prompt": ollama_prompt,
                 "stream": False,
                 "options": {"num_predict": 60, "temperature": 0.3},
@@ -508,20 +508,38 @@ class SceneImageGenerator:
 
         style_guide = (
             "SITE AESTHETIC: punk-pamphlet / dis.art. Confronting, intimate, uncanny. "
-            "Never literal, never stock photo, never inspirational. "
-            "Available print/graphic styles: woodblock linocut, risograph, xerox zine, "
-            "Soviet constructivist poster, Dada photomontage, glitch/VHS, "
-            "paper cut-out collage, cyanotype photogram, mimeograph overprint, "
-            "letterpress broadside, strict 8-bit pixel art. "
-            "Always flat graphic or print medium. Never photography or realism."
+            "Never literal, never stock photo. "
+            "\n\nPRINT TECHNIQUES that FLUX renders beautifully — choose what fits: "
+            "woodblock linocut (hand-carved gouges, uneven ink, stark B&W or two-color), "
+            "risograph (misregistered ink layers, halftone grain, ink overlap creates third color), "
+            "xerox zine (photocopier distortion, roller drag, maximum grain, overexposure), "
+            "Soviet constructivist poster (flat bold silhouettes, strong diagonals, red+black), "
+            "Dada photomontage (torn fragments, mismatched scales, paste residue), "
+            "cyanotype (prussian blue chemistry, tide-mark rings, botanical silhouettes), "
+            "mimeograph (purple-blue ghost impressions, ink starvation, abstract overprint), "
+            "paper cut-out collage (Matisse scale, flat saturated torn shapes, white gaps), "
+            "glitch/VHS (RGB channel split, scan-line artifacts, pixel sorting), "
+            "letterpress (deep ink impression, cream paper, wood+metal type mixed). "
+            "\n\nFLUX RENDERS WELL: high contrast chiaroscuro, single dominant color + near-black, "
+            "extreme close-up of texture or material, silhouettes with strong rim light, "
+            "dramatic raking sidelight, industrial materials (concrete, perforated metal, foam, paper), "
+            "hands and fingers in action, unexpected scale (tiny object filling full frame), "
+            "layered flat shapes, surreal object combinations, shadow as subject."
         )
 
         editorial_voice = (
-            "EDITORIAL IDENTITY: Crip Minds publishes disability-led perspectives where "
-            "disability is culture, expertise, and political position — not tragedy, not "
-            "suffering, not inspiration porn. Images must reflect this: bodies are agents, "
-            "not victims. Aesthetics of resistance, wit, and beauty. Never pity, never "
-            "medicalized imagery, never wheelchair-as-symbol-of-helplessness."
+            "EDITORIAL IDENTITY: Crip Minds — disability as culture, expertise, political position. "
+            "Not tragedy, not suffering, not inspiration. "
+            "Bodies are agents. Aesthetics of resistance, wit, absurdity, beauty. "
+            "\n\nEMOTIONAL REGISTERS available: "
+            "wit (visual pun, unexpected juxtaposition that lands as funny-because-true), "
+            "tension (tight composition, dramatic light, something about to happen), "
+            "wonder (extreme close-up reveals hidden structure nobody usually sees), "
+            "resistance (body in motion, material under pressure, system being pushed against), "
+            "absurdity (surreal object scale or combination that captures the article's argument), "
+            "tenderness (intimate detail, quiet material, raking light on something worn). "
+            "\n\nNEVER: pity, medicalized imagery, wheelchair-as-helplessness, "
+            "inspirational poster composition, generic diversity stock aesthetic."
         )
 
         llm_prompt = (
@@ -531,52 +549,92 @@ class SceneImageGenerator:
             f"{style_guide}\n\n"
             f"{editorial_voice}\n\n"
             f"ACCENT COLOR for this article: {accent}\n\n"
-            f"Generate exactly 3 prompts:\n"
-            f"1. PRINT/GRAPHIC (hero) — linocut, risograph or xerox. Central object or symbol "
-            f"of THIS article. Not a body, not a person — an object, texture, or environment.\n"
-            f"2. CONFRONTING (body, 40%) — a figure or body in THIS article's specific setting. "
-            f"Active, political, present. Not suffering. References specific details from the article.\n"
-            f"3. SYMBOLIC (body, 75%) — the article's core argument as pure visual form, texture, "
-            f"or print medium. Maximum artistic license. Conceptual not illustrative.\n\n"
+            f"Generate 3 visually distinct images for this article. Full artistic freedom — "
+            f"each image can be anything: a close-up nobody expected, an oblique angle on the argument, "
+            f"a visual joke, a quiet absurd detail, pure texture, a figure, an object, pure abstraction, "
+            f"confrontational or funny or tricky or beautiful. "
+            f"No prescribed roles. Let the article suggest what it wants visually.\n\n"
             f"Rules:\n"
+            f"- The 3 prompts must be visually distinct from each other (different styles, scales, moods)\n"
+            f"- Each must reference something SPECIFIC from this article — not generic disability imagery\n"
+            f"- Use {accent} as dominant color in at least one prompt\n"
             f"- Each prompt is 2-4 comma-separated clauses\n"
-            f"- Reference SPECIFIC details from this article (objects, places, concepts mentioned)\n"
-            f"- Use {accent} as dominant color where it fits the mood\n"
-            f"- End each prompt with: no text, no gradients\n"
+            f"- End each with: no text, no gradients\n"
             f"- Output ONLY a JSON array of 3 strings: [\"prompt1\", \"prompt2\", \"prompt3\"]"
         )
 
+        def _parse_prompts(text):
+            """Extract JSON array of prompts from LLM response text."""
+            text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
+            arr_match = re.search(r"\[.*?\]", text, re.DOTALL)
+            if not arr_match:
+                return None
+            try:
+                prompts = json.loads(arr_match.group())
+            except json.JSONDecodeError:
+                return None
+            if not isinstance(prompts, list):
+                return None
+            prompts = [p.strip() for p in prompts if isinstance(p, str) and len(p.strip()) > 20]
+            if not prompts:
+                return None
+            while len(prompts) < num_images:
+                prompts.append(prompts[-1])
+            return prompts[:num_images]
+
+        # Primary: Claude Haiku via CLIProxyAPI (Anthropic messages format)
+        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+        api_base = os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com")
+        if api_key:
+            try:
+                payload = json.dumps({
+                    "model": "claude-haiku-4-5-20251001",
+                    "max_tokens": 800,
+                    "temperature": 0.8,
+                    "messages": [{"role": "user", "content": llm_prompt}],
+                }).encode()
+                req = urllib.request.Request(
+                    api_base.rstrip("/") + "/v1/messages",
+                    data=payload, method="POST",
+                )
+                req.add_header("Content-Type", "application/json")
+                req.add_header("x-api-key", api_key)
+                req.add_header("anthropic-version", "2023-06-01")
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    result = json.loads(resp.read())
+                text = result.get("content", [{}])[0].get("text", "").strip()
+                prompts = _parse_prompts(text)
+                if prompts:
+                    logger.info("Haiku-generated prompts for %r:", title)
+                    for i, p in enumerate(prompts):
+                        logger.info("  [%d] %s...", i + 1, p[:100])
+                    return prompts
+                logger.warning("Haiku returned unparseable output: %s", text[:200])
+            except Exception as e:
+                logger.warning("Haiku prompt generation failed (%s) — trying Ollama", e)
+
+        # Fallback: qwen3.5:9b via Ollama
         try:
             payload = json.dumps({
-                "model": "qwen3:14b",
+                "model": "qwen3.5:9b",
                 "prompt": llm_prompt,
                 "stream": False,
-                "options": {"num_predict": 700, "temperature": 0.75},
+                "options": {"num_predict": 3000, "temperature": 0.75},
             }).encode()
             req = urllib.request.Request(
                 "http://127.0.0.1:11434/api/generate",
                 data=payload, method="POST",
             )
             req.add_header("Content-Type", "application/json")
-            with urllib.request.urlopen(req, timeout=90) as resp:
+            with urllib.request.urlopen(req, timeout=120) as resp:
                 result = json.loads(resp.read())
             text = result.get("response", "").strip()
-            text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
-            arr_match = re.search(r"\[.*?\]", text, re.DOTALL)
-            if arr_match:
-                prompts = json.loads(arr_match.group())
-                if isinstance(prompts, list) and len(prompts) >= 1:
-                    prompts = [p.strip() for p in prompts if isinstance(p, str) and len(p.strip()) > 20]
-                    if prompts:
-                        while len(prompts) < num_images:
-                            prompts.append(prompts[-1])
-                        prompts = prompts[:num_images]
-                        logger.info("LLM-generated prompts for %r:", title)
-                        for i, p in enumerate(prompts):
-                            logger.info("  [%d] %s...", i + 1, p[:100])
-                        return prompts
+            prompts = _parse_prompts(text)
+            if prompts:
+                logger.info("Ollama-generated prompts for %r:", title)
+                return prompts
         except Exception as e:
-            logger.warning("LLM prompt generation failed (%s) — falling back to templates", e)
+            logger.warning("Ollama prompt generation also failed (%s) — using templates", e)
 
         return self._generate_prompts(content, title, num_images=num_images, slug=slug)
 
