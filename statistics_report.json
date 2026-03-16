@@ -1,0 +1,78 @@
+{
+  "timestamp": "2026-03-16T16:02:02.500192",
+  "total_findings": 302,
+  "unique_domains": 10,
+  "used_findings": 3,
+  "unused_findings": 299,
+  "first_discovery": "2026-03-14T12:24:48.484224",
+  "last_discovery": "2026-03-16T08:00:34.969503",
+  "top_categories": [
+    {
+      "disability_concepts": "[\"hidden_angle\"]",
+      "count": 288
+    },
+    {
+      "disability_concepts": "[\"access\", \"artist\", \"gallery\", \"form\", \"performance\", \"exhibition\"]",
+      "count": 3
+    },
+    {
+      "disability_concepts": "mobility-disability,urban-accessibility,economic-cost",
+      "count": 1
+    },
+    {
+      "disability_concepts": "deafness,visual-design,outcomes-tracking",
+      "count": 1
+    },
+    {
+      "disability_concepts": "blindness,acoustic-design,sensory-space",
+      "count": 1
+    },
+    {
+      "disability_concepts": "autism,neurodivergence,empathy-design",
+      "count": 1
+    },
+    {
+      "disability_concepts": "[\"movement\", \"marginal\", \"performance\", \"dance\", \"voice\", \"sound\", \"tradition\", \"color\", \"theater\", \"focus\", \"form\", \"marginalized\", \"vision\"]",
+      "count": 1
+    },
+    {
+      "disability_concepts": "[\"movement\", \"access\", \"marginal\", \"community\", \"beauty\", \"dance\", \"marginalized\", \"vision\"]",
+      "count": 1
+    },
+    {
+      "disability_concepts": "[\"movement\", \"access\", \"film\", \"dance\"]",
+      "count": 1
+    },
+    {
+      "disability_concepts": "[\"installation\", \"museum\", \"film\", \"community\", \"artist\", \"gallery\", \"sound\", \"identity\", \"painting\", \"aesthetic\", \"form\", \"representation\", \"sculpture\", \"exhibition\"]",
+      "count": 1
+    }
+  ],
+  "recent_findings": [
+    {
+      "title": "Beverly Buchanan\u2019s Architecture of Care",
+      "domain": "hyperallergic.com",
+      "discovered_date": "2026-03-16T08:00:34.969503"
+    },
+    {
+      "title": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable \u2013 Disability Visibility Project",
+      "domain": "disabilityvisibilityproject.com",
+      "discovered_date": "2026-03-16T08:00:30.967648"
+    },
+    {
+      "title": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza \u2013 Disability Visibility Project",
+      "domain": "disabilityvisibilityproject.com",
+      "discovered_date": "2026-03-16T08:00:29.832110"
+    },
+    {
+      "title": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective \u2013 Disability Visibility Project",
+      "domain": "disabilityvisibilityproject.com",
+      "discovered_date": "2026-03-16T08:00:28.694741"
+    },
+    {
+      "title": "Disability Justice is Climate Justice | Sins Invalid",
+      "domain": "sinsinvalid.org",
+      "discovered_date": "2026-03-16T08:00:27.493269"
+    }
+  ]
+}

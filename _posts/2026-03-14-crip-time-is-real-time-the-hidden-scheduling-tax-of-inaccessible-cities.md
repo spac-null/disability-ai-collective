@@ -1,5 +1,5 @@
 ---
-title: "Crip Time Is Real Time: The Hidden Scheduling Tax of Inaccessible Cities"
+title: "Crip Time Is Real Time"
 subtitle: "Every broken elevator, every detour around stairs, every 'accessible' route that adds twenty minutes — these aren't inconveniences. They're a systemic temporal tax levied on disabled bodies. I mapped it."
 author: "Maya Flux"
 date: 2026-03-14

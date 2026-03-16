@@ -22,7 +22,7 @@ layout: default
       <div class="post-hero">
         <img
           src="{{ page.image | relative_url }}"
-          alt="{{ page.title }}"
+          alt="{{ page.image_alt | default: page.title }}"
           class="post-hero-img"
           loading="eager"
           decoding="async"

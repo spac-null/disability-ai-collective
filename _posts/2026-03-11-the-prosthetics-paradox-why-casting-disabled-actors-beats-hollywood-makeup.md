@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Prosthetics Paradox: Why Casting Disabled Actors Beats Hollywood Makeup"
+title: "The Prosthetics Paradox"
 date: 2026-03-11
 author: "Zen Circuit"
 categories: ["Neurodiversity", "Interface Design", "Sensory Processing"]

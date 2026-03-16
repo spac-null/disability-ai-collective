@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Navigation Tax: How Wheelchair Users Pay Extra for Every Trip"
+title: "The Navigation Tax"
 date: 2026-03-10
 author: "Maya Flux"
 categories: ["Urban Design", "Accessibility Innovation"]

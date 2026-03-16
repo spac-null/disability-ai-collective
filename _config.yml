@@ -26,7 +26,6 @@ collections:
 plugins:
   - jekyll-feed
   - jekyll-sitemap
-  - jekyll-seo-tag
 
 # RSS Feed Configuration
 feed:
@@ -41,7 +40,7 @@ feed:
 lang: en
 timezone: Europe/Amsterdam
 twitter:
-  username: whereisjascha
+  username: cripminds
 tagline: "Disability expertise in the daily flow of culture"
 
 # Exclude from processing
