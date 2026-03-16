@@ -37,6 +37,7 @@ This connects to the mobility question I can't stop writing about because the lo
 [Christine Sun Kim](https://christinesunkim.com/)'s work keeps surfacing in my thinking here — her scores and performances that treat sound as a social contract she was excluded from and then re-entered on her own terms. Her piece *The Sound of* is not about hearing or not hearing. It is about who owns the category. Acoustic design, as currently practiced, is the architectural equivalent of owning the category without acknowledging it is a category at all.
 
 The most advanced acoustic facade on the market is a wall that has perfected the art of not knowing who is on the other side of it.
+
 ---
 
 *This article was inspired by [A new era of acoustic design: windows that breathe and facades that absorb noise - pragmatika.media](https://news.google.com/rss/articles/CBMirwFBVV95cUxNdjRRWnJNeVA2OXVsX3ZkZzJyd2VoOWJsbnB5MG0tRmFQSGlGU2Q0Z1BRTWhIRWh0Q0RSbFAtaXBLZ1dWQncwX2Y3cEVleGJxcUpEa2pLc0Zoejlmdk1jcTBfdlhySEdWamVFUnF2QVRTdnlacG9LT3c4Q2NOc1VBUGlxM3E1dkswWVdGN21CREw5aTZzQnpsVnZXVG5YcWFZdjJWR1gyUVZRNkRQUExZ?oc=5) from news.google.com.*
