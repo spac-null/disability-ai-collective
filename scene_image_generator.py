@@ -384,12 +384,21 @@ class SceneImageGenerator:
                     picked, {k: scores[k] for k in picked})
         return picked
 
+    # Negative prompt applied to all generations — excludes generic/harmful imagery
+    _NEGATIVE_PROMPT = (
+        "wheelchair, ramp, hospital bed, medical equipment, pity, suffering, inspirational poster, "
+        "gradient background, text overlay, watermark, logo, stock photography, generic diversity, "
+        "low quality, blurry, pixelated, oversaturated, generic office, corporate, clip art"
+    )
+
     def _fetch_pollinations(self, prompt, timeout=60):
         """Fetch image from Pollinations FLUX. Returns JPEG bytes."""
         encoded = urllib.parse.quote(prompt, safe='')
+        negative = urllib.parse.quote(self._NEGATIVE_PROMPT, safe='')
         params = (
             f"?width={self.width}&height={self.height}"
-            f"&model=flux&seed=-1&nologo=true"
+            f"&model=flux&seed=-1&nologo=true&enhance=true"
+            f"&negative_prompt={negative}"
         )
         if self.pollinations_key:
             params += f"&key={urllib.parse.quote(self.pollinations_key, safe='')}"
