@@ -445,20 +445,31 @@ class ProductionOrchestrator:
         return best if scores[best] > 0 else "general"
 
     def _get_shape_nudge(self) -> str:
-        """Nudge away from structural shapes used in the last 3 articles across all agents."""
+        """Nudge away from overused shapes; suggest absent ones (especially historical-anchor)."""
         try:
             conn = sqlite3.connect(str(self.discovery_db))
             self._init_beats_table(conn)
             rows = conn.execute(
-                "SELECT shape FROM article_beats WHERE shape IS NOT NULL AND shape != 'general' ORDER BY date DESC LIMIT 3"
+                "SELECT shape FROM article_beats WHERE shape IS NOT NULL AND shape != 'general' ORDER BY date DESC LIMIT 10"
             ).fetchall()
             conn.close()
-            if len(rows) < 3:
-                return ""
             shapes = [r[0] for r in rows]
-            if len(set(shapes)) == 1:
+            if not shapes:
+                return ""
+            nudges = []
+            # Warn if last 3 share the same shape
+            if len(shapes) >= 3 and len(set(shapes[:3])) == 1:
                 label = shapes[0].replace("-", " ")
-                return "SHAPE NOTE: The last three articles all used the " + label + " structure. Find a different argumentative entry point.\n\n"
+                nudges.append("The last three articles all used the " + label + " structure. Find a different argumentative entry point.")
+            # Suggest historical-anchor if absent from last 10 articles
+            if "historical-anchor" not in shapes:
+                nudges.append(
+                    "No recent article has anchored its argument in a specific historical event. "
+                    "Consider: a specific date, a court case, a protest, a piece of legislation, "
+                    "a building that was built or torn down — and show how the same dynamic repeats today."
+                )
+            if nudges:
+                return "SHAPE NOTE: " + " ".join(nudges) + "\n\n"
         except Exception:
             pass
         return ""
