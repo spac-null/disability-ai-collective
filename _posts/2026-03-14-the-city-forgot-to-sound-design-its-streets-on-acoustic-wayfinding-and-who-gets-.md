@@ -71,7 +71,7 @@ In each case, the change was made by professionals who considered visual impact,
 
 Let me address the one piece of acoustic infrastructure that does exist, because it illustrates the problem perfectly.
 
-Audible pedestrian signals — APS — are the beeping or chirping sounds at crosswalks that indicate when it is safe to cross. They are the single most common acoustic accessibility feature in urban environments. In the United States, the 2023 Public Right-of-Way Accessibility Guidelines require APS at all new and reconstructed signalized intersections. Progress.
+Audible pedestrian signals — APS — are the beeping or chirping sounds at crosswalks that indicate when it is safe to cross. They are the single most common acoustic accessibility feature in urban environments. In the United States, the 2023 [Public Right-of-Way Accessibility Guidelines](https://www.access-board.gov/prowag/) require APS at all new and reconstructed signalized intersections. Progress.
 
 Except.
 

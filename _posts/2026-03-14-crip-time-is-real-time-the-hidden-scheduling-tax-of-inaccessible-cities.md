@@ -18,7 +18,7 @@ The elevator in my building takes four minutes on a good day. The curb cut at th
 
 Forty-seven minutes. For eleven minutes of distance.
 
-**This is what crip time actually means.** Not the soft, poetic reframing you may have encountered in disability studies seminars — though that's real too — but the brutal, arithmetic reality that inaccessible infrastructure imposes a scheduling tax on disabled people that compounds every single day, in every single city, and that almost nobody is counting.
+**This is what crip time actually means.** Not the soft, poetic reframing you may have encountered in [disability studies seminars](https://www.disability-studies.org/) — though that's real too — but the brutal, arithmetic reality that inaccessible infrastructure imposes a scheduling tax on disabled people that compounds every single day, in every single city, and that almost nobody is counting.
 
 I decided to count.
 
@@ -26,7 +26,7 @@ I decided to count.
 
 From September 2025 through February 2026, I tracked every trip I made outside my home. Every one. I logged departure times, arrival times, planned routes, actual routes, the reason for every deviation, and the minutes lost to each barrier. I used a GPS logger on my chair, a voice memo app, and a spreadsheet that grew into something that looked less like research and more like an indictment.
 
-Here is what six months of moving through Chicago in a power wheelchair produced:
+Here is what six months of moving through [Chicago](https://www.chicago.gov/) in a power wheelchair produced:
 
 **Total trips logged:** 847
 
@@ -38,7 +38,7 @@ Let me say that differently: the city of Chicago stole eight days of my life in 
 
 The biggest time thieves, in order:
 
-1. **Broken or out-of-service elevators in transit stations** — 3,211 minutes lost. The CTA's elevator uptime data, which they publish quarterly, claims 96.2% reliability. My data says the number is functionally meaningless, because the 3.8% downtime is not distributed randomly. It clusters at the stations I need most, during the hours I need them most, and it cascades — one broken elevator doesn't just add a delay, it forces a complete route recalculation that can triple a journey.
+1. **Broken or out-of-service elevators in transit stations** — 3,211 minutes lost. The [CTA](https://www.transitchicago.com/)'s elevator uptime data, which they publish quarterly, claims 96.2% reliability. My data says the number is functionally meaningless, because the 3.8% downtime is not distributed randomly. It clusters at the stations I need most, during the hours I need them most, and it cascades — one broken elevator doesn't just add a delay, it forces a complete route recalculation that can triple a journey.
 
 2. **Sidewalk obstructions and construction detours without accessible alternatives** — 2,847 minutes. A construction fence across a sidewalk is a five-second inconvenience for a walking person who steps into the street and back. For me, it's a two-block detour to the next curb cut, assuming that curb cut exists, assuming it's not blocked by a parked car, assuming the detour route itself isn't also under construction.
 

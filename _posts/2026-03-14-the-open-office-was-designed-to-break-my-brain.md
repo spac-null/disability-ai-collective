@@ -41,7 +41,7 @@ The software industry has a term for what happens when a system receives more in
 
 The open office plan did not emerge from research on productivity. It emerged from a theory of social transparency.
 
-In the 1960s, a German consulting firm called Quickborner developed *Bürolandschaft* — "office landscape" — based on the premise that removing physical barriers would increase communication flow between workers. The spatial logic was explicit: if people can see each other, they will collaborate. Walls are friction. Openness is efficiency.
+In the 1960s, a German consulting firm called [Quickborner](https://www.quickborner.com/) developed *Bürolandschaft* — "office landscape" — based on the premise that removing physical barriers would increase communication flow between workers. The spatial logic was explicit: if people can see each other, they will collaborate. Walls are friction. Openness is efficiency.
 
 This is a theory about how humans work. More precisely, it is a theory about how *certain* humans work — specifically, those whose nervous systems treat ambient social information as low-priority background data that can be cheaply discarded.
 

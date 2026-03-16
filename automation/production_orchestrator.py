@@ -33,6 +33,10 @@ CANONICAL_DISABILITY_LINKS = {
     'Harriet McBryde Johnson':            'https://disabilityvisibilityproject.com/',
     'Alison Kafer':                       'https://www.alisonkafer.com/',
     'Robert McRuer':                      'https://english.gwu.edu/robert-mcruer',
+    'Christine Sun Kim':                  'https://christinesunkim.com/',
+    'Haben Girma':                        'https://habengirma.com/',
+    'Harilyn Rousso':                     'https://disabilityvisibilityproject.com/',
+    'Simi Linton':                        'https://simi.nyc/',
 }
 
 
@@ -815,9 +819,10 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         return '\n\n'.join(paragraphs)
 
     def inject_canonical_links(self, body: str) -> str:
-        """Inject hyperlinks for known disability figures/orgs.
+        """Canonical fallback: inject verified URLs for known disability figures/orgs.
 
-        First occurrence only. Skips already-linked text and HTML blocks.
+        Runs AFTER smart_inject_links to catch anything Haiku missed.
+        First occurrence only. Skips already-linked text.
         """
         import re as _re
         for name, url in CANONICAL_DISABILITY_LINKS.items():
@@ -825,8 +830,85 @@ The question isn't whether {title.lower()} matters. The question is whether the 
             if _re.search(rf'\[{escaped}\]\(', body):
                 continue  # already linked
             pattern = rf'(?<!\[)(?<!\*)(?<!\()({escaped})(?!\])'
-            replacement = f'[{name}]({url})'
-            body = _re.sub(pattern, replacement, body, count=1)
+            body = _re.sub(pattern, f'[{name}]({url})', body, count=1)
+        return body
+
+    def smart_inject_links(self, body: str) -> str:
+        """Use Haiku to identify named references and inject contextually relevant URLs.
+
+        Finds: named artists, specific artworks/books/essays, orgs, projects.
+        Links first occurrence only. Verified canonical URLs override Haiku suggestions.
+        Falls back gracefully — original body returned on any failure.
+        """
+        import re as _re, json as _json, os as _os
+
+        SYSTEM = (
+            "You are a link editor for a disability culture publication. "
+            "Read the article body and extract every named reference that deserves a hyperlink:\n"
+            "- Named people (artists, activists, researchers, disabled creators)\n"
+            "- Specific artworks, performances, books, essays referenced by title\n"
+            "- Named organizations, collectives, or projects\n\n"
+            "For each, return the MOST DIRECT URL where a reader can see the work or learn about the person — "
+            "preferably their own site, the work itself, or their primary platform.\n\n"
+            "Rules:\n"
+            "- Only return URLs you are highly confident are correct and live\n"
+            "- Prefer the specific work over a homepage when the article names a specific piece\n"
+            "- Use the exact phrase as it appears in the article text\n"
+            "- Skip generic terms, common words, or anything you are uncertain about\n"
+            "- Do NOT return Wikipedia, Amazon, or Google links\n\n"
+            "Return ONLY a JSON array, no prose:\n"
+            '[{"phrase": "exact text from article", "url": "https://..."}, ...]\n'
+            "If nothing to link, return: []"
+        )
+
+        try:
+            raw = self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=_os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=SYSTEM,
+                user_prompt=body,
+                model="claude-haiku-4-5-20251001",
+                max_tokens=800,
+                timeout=45,
+            )
+            if not raw:
+                return body
+
+            # Extract JSON from response (may have backtick fencing)
+            json_match = _re.search(r'\[.*\]', raw, _re.DOTALL)
+            if not json_match:
+                return body
+
+            suggestions = _json.loads(json_match.group(0))
+
+            for item in suggestions:
+                phrase = item.get('phrase', '').strip()
+                url    = item.get('url', '').strip()
+
+                if not phrase or not url:
+                    continue
+                # Basic URL sanity: must start https, have a dot, not Wikipedia
+                if not url.startswith('https://') or '.' not in url[8:]:
+                    continue
+                if 'wikipedia.org' in url or 'wiktionary.org' in url:
+                    continue
+                # Skip if canonical list has a verified override for this phrase
+                if phrase in CANONICAL_DISABILITY_LINKS:
+                    continue
+                # Skip if already linked
+                if f'[{phrase}](' in body:
+                    continue
+
+                escaped = _re.escape(phrase)
+                pattern = rf'(?<!\[)(?<!\*)(?<!\()({escaped})(?!\])'
+                new_body = _re.sub(pattern, f'[{phrase}]({url})', body, count=1)
+                if new_body != body:
+                    self.logger.info("Smart link: %s → %s", phrase, url)
+                    body = new_body
+
+        except Exception as e:
+            self.logger.warning("Smart link injection failed: %s", e)
+
         return body
 
     def create_article_file(self, metadata, content, image_filenames, image_descriptions=None):
@@ -860,7 +942,8 @@ register: {metadata.get('register', '')}
 
         # Insert body images at balanced positions (hero image[0] is frontmatter only)
         body = self._insert_images_balanced(content, image_filenames, image_descriptions)
-        body = self.inject_canonical_links(body)
+        body = self.smart_inject_links(body)
+        body = self.inject_canonical_links(body)  # canonical fallback
 
         # Append source note at end of article (not as excerpt/subtitle)
         if metadata.get('source_note'):
