@@ -39,6 +39,7 @@ feed:
 # SEO
 lang: en
 timezone: Europe/Amsterdam
+future: true
 twitter:
   username: cripminds
 tagline: "Disability expertise in the daily flow of culture"
