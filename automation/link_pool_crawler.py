@@ -30,9 +30,9 @@ SEED_SITES = [
     {"domain": "vpro.nl",              "sitemap": "https://www.vpro.nl/sitemap.xml",                "max_urls": 2000},
     {"domain": "jstor.org",            "sitemap": "https://www.jstor.org/sitemap.xml",              "max_urls": 500},
     {"domain": "puppetmastermagazine.net","sitemap":"https://www.puppetmastermagazine.net/sitemap.xml","max_urls":2000},
-    {"domain": "vanabbemuseum.nl",     "sitemap": "https://vanabbemuseum.nl/sitemap.xml",           "max_urls": 2000},
+    # vanabbemuseum.nl: returns HTML at /sitemap.xml (bot-blocked), removed 2026-03-16
     {"domain": "mediamatic.net",       "sitemap": "https://www.mediamatic.net/sitemap.xml",         "max_urls": 2000},
-    {"domain": "aeon.co",              "sitemap": "https://assets.aeon.co/sitemaps/aeon/main.xml",  "max_urls": 2000, "gzip": True},
+    {"domain": "aeon.co",              "sitemap": "https://assets.aeon.co/sitemaps/aeon/main.xml",  "max_urls": 300, "gzip": True, "sleep": 4},
 ]
 
 TOPIC_KEYWORDS = {
@@ -81,7 +81,8 @@ def init_db(conn):
 
 def fetch_bytes(url: str, decompress: bool = False) -> bytes | None:
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Encoding": "gzip, deflate"})
+        # No Accept-Encoding header — let servers return plain text so we control decompression
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
         with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
             raw = r.read()
         if decompress or url.endswith(".gz"):
@@ -100,6 +101,12 @@ def extract_sitemap_urls(sitemap_url: str, max_urls: int = 2000, is_gzip: bool =
     raw = fetch_bytes(sitemap_url, decompress=is_gzip)
     if not raw:
         return []
+
+    # Some servers send gzip even without Accept-Encoding — try decompression before parse
+    try:
+        raw = gzip.decompress(raw)
+    except Exception:
+        pass  # Not gzip, use raw as-is
 
     try:
         root = ET.fromstring(raw)
@@ -176,6 +183,7 @@ def crawl_site(conn, site: dict) -> tuple[int, int]:
 
     log.info("%s: %d URLs from sitemap", domain, len(urls))
     new_count = updated_count = 0
+    sleep_secs = site.get("sleep", 1)
     now = datetime.now(timezone.utc).isoformat()
 
     for url in urls:
@@ -185,9 +193,10 @@ def crawl_site(conn, site: dict) -> tuple[int, int]:
             continue  # already in pool
 
         try:
-            time.sleep(1)  # rate limit: 1s per request per domain
+            time.sleep(sleep_secs)
             raw = fetch_bytes(url)
             if not raw:
+                log.debug("Empty response: %s", url)
                 continue
 
             title, snippet = extract_title_and_snippet(raw[:MAX_BODY])
@@ -202,7 +211,7 @@ def crawl_site(conn, site: dict) -> tuple[int, int]:
             new_count += 1
 
         except Exception as e:
-            log.debug("Error processing %s: %s", url, e)
+            log.warning("Error processing %s: %s", url, e)
 
     return new_count, updated_count
 
