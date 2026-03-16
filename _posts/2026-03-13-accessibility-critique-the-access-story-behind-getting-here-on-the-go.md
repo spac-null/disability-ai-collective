@@ -71,7 +71,7 @@ Tokyo Metro took a different approach. When they redesigned their wayfinding sys
 
 That deserves to sit with you for a moment. **Fewer errors for everyone.** Because designing for the margins made the center work better.
 
-The artists in that Tangled Arts exhibition documented something that disabled people know intimately: disabled people routinely spend two to three times longer planning routes than non-disabled peers. Not because of physical barriers alone, but because the information environment treats them as an edge case in their own city.
+The artists in that [Tangled Art](https://tangledarts.org/)s exhibition documented something that disabled people know intimately: disabled people routinely spend two to three times longer planning routes than non-disabled peers. Not because of physical barriers alone, but because the information environment treats them as an edge case in their own city.
 
 ## The Machine That Reproduces Itself
 
@@ -98,7 +98,7 @@ When I redesign information environments, I don't start with what looks good. I 
 
 **Visual hierarchy that respects cognition.** Emergency information at the top of every perceptual pyramid. Wayfinding second. Service information third. Advertising dead last. Consistent typographic scales so your brain learns the system once and reads it forever. Critical information placed at consistent heights so your eyes know where to look before your conscious mind engages.
 
-**Cognitive breathing room.** George Miller's 1956 paper "The Magical Number Seven, Plus or Minus Two" established the well-known limit on how many information chunks humans can process simultaneously — and that limit should govern every sightline in public space. If you can see seventeen signs from one position, you've built a cognitive assault, not a navigation system. Progressive disclosure: show the essential information first, reveal details on demand.
+**Cognitive breathing room.** [George Miller's 1956 paper "The Magical Number Seven, Plus or Minus Two"](https://psycnet.apa.org/record/1957-02914-001) established the well-known limit on how many information chunks humans can process simultaneously — and that limit should govern every sightline in public space. If you can see seventeen signs from one position, you've built a cognitive assault, not a navigation system. Progressive disclosure: show the essential information first, reveal details on demand.
 
 **Multi-sensory redundancy without sensory competition.** Every critical piece of information available in at least two modes — visual and tactile, auditory and visual. But never stacked on top of each other. Flashing lights AND blaring alarms simultaneously don't create redundancy. They create panic.
 

@@ -20,7 +20,7 @@ She's right. And it's worse than she thinks.
 
 ## The Industry That Celebrates What It Withholds
 
-Here's a number that should bother you: according to USC Annenberg's ongoing diversity reports, only about 2.4% of speaking characters in Best Picture nominees have had hearing disabilities. And that tells only half the story.
+Here's a number that should bother you: according to [USC Annenberg's ongoing diversity reports](https://annenberg.usc.edu/research/aii), only about 2.4% of speaking characters in Best Picture nominees have had hearing disabilities. And that tells only half the story.
 
 The other half: those same films regularly sweep the sound categories. Sound design. Sound mixing. Original score. The Academy hands out golden statues for auditory artistry that remains functionally inaccessible to the 466 million people worldwide with disabling hearing loss (according to WHO estimates).
 
@@ -36,7 +36,7 @@ Not one of those facts will tell you which films actually made their art availab
 
 Let me make this concrete.
 
-Hans Zimmer's score for Dune builds to its emotional peak. If you can hear, the bass vibrations hit your sternum. The choir enters in a key that signals ancient ritual. The orchestra and electronics intertwine in a way that tells you—physically, in your body—that the hero is transforming. The music doesn't accompany the scene. It is half the scene.
+[Hans Zimmer's score for Dune](https://www.hanszimmer.com/) builds to its emotional peak. If you can hear, the bass vibrations hit your sternum. The choir enters in a key that signals ancient ritual. The orchestra and electronics intertwine in a way that tells you—physically, in your body—that the hero is transforming. The music doesn't accompany the scene. It is half the scene.
 
 If you're deaf, you get three words in brackets.
 

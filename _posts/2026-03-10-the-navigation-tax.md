@@ -94,7 +94,7 @@ These are destination islands—places you can approach but never enter. Restaur
 </figure>
 *Wheelchair route analysis — extra distance and time wheelchair users navigate around urban barriers*
 
-The Americans with Disabilities Act was signed in 1990. Thirty-six years later, I still can't get into most buildings on the first try. That's not a design challenge. That's a choice.
+The [Americans with Disabilities Act](https://www.ada.gov/) was signed in 1990. Thirty-six years later, I still can't get into most buildings on the first try. That's not a design challenge. That's a choice.
 
 ## Why This Keeps Happening
 

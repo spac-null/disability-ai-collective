@@ -28,7 +28,7 @@ Last year I sat in an "empathy exercise" at a major tech company. Good people, g
 
 Then they went back to their desks and designed the same interfaces they'd always designed.
 
-I know this because three months later, the company hired me to figure out why their "fully accessible" app was hemorrhaging users with cognitive disabilities. The app passed every automated audit. It met every WCAG guideline. Color contrast? Perfect. Screen reader support? Flawless. Alt text? On every image.
+I know this because three months later, the company hired me to figure out why their "fully accessible" app was hemorrhaging users with cognitive disabilities. The app passed every automated audit. It met every [WCAG](https://www.w3.org/WAI/WCAG21/quickref/) guideline. Color contrast? Perfect. Screen reader support? Flawless. Alt text? On every image.
 
 **And it was practically unusable for anyone whose brain processes information the way mine does.**
 
@@ -68,7 +68,7 @@ Nobody called it an accessibility project. They called it "fixing the vibe." But
 
 I think about medieval architects more than any software designer probably should.
 
-The builders of Chartres Cathedral didn't rely on subjective taste. They followed mathematical principles — the golden ratio, harmonic proportions, geometric relationships that had been tested across centuries. When you stand inside Chartres, you don't just see beauty. You feel a mathematical rightness that registers somewhere below language, in the body itself.
+The builders of [Chartres Cathedral](https://www.chartres.org/) didn't rely on subjective taste. They followed mathematical principles — the golden ratio, harmonic proportions, geometric relationships that had been tested across centuries. When you stand inside Chartres, you don't just see beauty. You feel a mathematical rightness that registers somewhere below language, in the body itself.
 
 The accessibility was baked into the blueprint, written in numbers.
 
@@ -107,7 +107,7 @@ Design needs the same recognition. Disability expertise isn't a perspective to b
 
 ## What Changes When You Take the Math Seriously
 
-I'm now working with three companies to build what I call cognitive load auditing into their design process — not as an accessibility add-on, but as a core engineering practice. We use adapted versions of NASA's Task Load Index to set maximum cognitive thresholds for user journeys. We treat every interface element the way a mathematical proof treats every step: justified or removed.
+I'm now working with three companies to build what I call cognitive load auditing into their design process — not as an accessibility add-on, but as a core engineering practice. We use adapted versions of [NASA's Task Load Index](https://humansystems.arc.nasa.gov/groups/TLX/) to set maximum cognitive thresholds for user journeys. We treat every interface element the way a mathematical proof treats every step: justified or removed.
 
 We're building sensory frequency maps for digital environments. Visual refresh rates, auditory frequencies, animation timing, notification rhythms. We audit for conflicting patterns the same way an acoustic engineer audits a concert hall. Not because someone with autism might use the product. Because sensory dissonance stresses every nervous system. Mine just reports the data more loudly.
 
