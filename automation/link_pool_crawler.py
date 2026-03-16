@@ -25,21 +25,42 @@ TIMEOUT    = 10
 MAX_BODY   = 60_000   # bytes read per GET
 RECHECK_PCT = 0.10    # re-validate 10% of existing URLs per run
 
+# Crawl cadence note:
+# - Disability-led sources: primary voice, always crawled
+# - Cross-disciplinary sources: the "bee" layer — unexpected connections that
+#   make readers follow a thread far outside the disability bubble.
+#   An article about DeafSpace should be able to reach acoustics research,
+#   housing cooperatives, botany, urban hydrology. That's the point.
+
 SEED_SITES = [
-    # Disability-led publications and orgs
-    {"domain": "disabilityvisibilityproject.com", "sitemap": "https://disabilityvisibilityproject.com/sitemap.xml",   "max_urls": 500},
-    {"domain": "autisticadvocacy.org",            "sitemap": "https://autisticadvocacy.org/sitemap.xml",              "max_urls": 300},
-    {"domain": "disabilityarts.online",           "sitemap": "https://disabilityarts.online/sitemap.xml",             "max_urls": 400},
-    {"domain": "dredf.org",                       "sitemap": "https://dredf.org/sitemap.xml",                         "max_urls": 200},
-    {"domain": "disabilityrightsuk.org",          "sitemap": "https://www.disabilityrightsuk.org/sitemap.xml",        "max_urls": 200},
-    {"domain": "rootedinrights.org",              "sitemap": "https://rootedinrights.org/sitemap.xml",                "max_urls": 200},
-    {"domain": "thebodyisnotanapology.com",       "sitemap": "https://thebodyisnotanapology.com/sitemap.xml",         "max_urls": 300},
-    {"domain": "crippledscholar.com",             "sitemap": "https://crippledscholar.com/sitemap.xml",               "max_urls": 200},
-    # Disability culture blogs / individuals
-    {"domain": "leavingevidence.wordpress.com",   "sitemap": "https://leavingevidence.wordpress.com/sitemap.xml",     "max_urls": 150},
-    {"domain": "brownstargirl.org",               "sitemap": "https://brownstargirl.org/sitemap.xml",                 "max_urls": 150},
-    # Broader long-form (disability/access/design/justice intersections)
-    {"domain": "aeon.co",                         "sitemap": "https://assets.aeon.co/sitemaps/aeon/main.xml",         "max_urls": 300, "gzip": True, "sleep": 4},
+    # ── Disability-led ────────────────────────────────────────────────────────
+    {"domain": "disabilityvisibilityproject.com", "sitemap": "https://disabilityvisibilityproject.com/sitemap.xml",   "max_urls": 400},
+    {"domain": "autisticadvocacy.org",            "sitemap": "https://autisticadvocacy.org/sitemap.xml",              "max_urls": 250},
+    {"domain": "disabilityarts.online",           "sitemap": "https://disabilityarts.online/sitemap.xml",             "max_urls": 300},
+    {"domain": "dredf.org",                       "sitemap": "https://dredf.org/sitemap.xml",                         "max_urls": 150},
+    {"domain": "thebodyisnotanapology.com",       "sitemap": "https://thebodyisnotanapology.com/sitemap.xml",         "max_urls": 250},
+    {"domain": "crippledscholar.com",             "sitemap": "https://crippledscholar.com/sitemap.xml",               "max_urls": 150},
+    {"domain": "leavingevidence.wordpress.com",   "sitemap": "https://leavingevidence.wordpress.com/sitemap.xml",     "max_urls": 100},
+    {"domain": "brownstargirl.org",               "sitemap": "https://brownstargirl.org/sitemap.xml",                 "max_urls": 100},
+
+    # ── Architecture / urbanism / infrastructure ──────────────────────────────
+    {"domain": "placesjournal.org",               "sitemap": "https://placesjournal.org/sitemap.xml",                 "max_urls": 300},
+    {"domain": "failedarchitecture.com",          "sitemap": "https://failedarchitecture.com/sitemap.xml",            "max_urls": 200},
+    {"domain": "urbanomnibus.net",                "sitemap": "https://urbanomnibus.net/sitemap.xml",                  "max_urls": 200},
+    {"domain": "metropolismag.com",               "sitemap": "https://www.metropolismag.com/sitemap.xml",             "max_urls": 200},
+
+    # ── Long-form cross-disciplinary ─────────────────────────────────────────
+    {"domain": "aeon.co",                         "sitemap": "https://assets.aeon.co/sitemaps/aeon/main.xml",         "max_urls": 400, "gzip": True, "sleep": 4},
+    {"domain": "publicdomainreview.org",          "sitemap": "https://publicdomainreview.org/sitemap.xml",            "max_urls": 300},
+    {"domain": "nautil.us",                       "sitemap": "https://nautil.us/sitemap.xml",                         "max_urls": 300},
+    {"domain": "emergencemagazine.org",           "sitemap": "https://emergencemagazine.org/sitemap.xml",             "max_urls": 200},
+    {"domain": "cabinetmagazine.org",             "sitemap": "https://www.cabinetmagazine.org/sitemap.xml",           "max_urls": 300},
+    {"domain": "reallifemag.com",                 "sitemap": "https://reallifemag.com/sitemap.xml",                   "max_urls": 200},
+    {"domain": "thebaffler.com",                  "sitemap": "https://thebaffler.com/sitemap.xml",                    "max_urls": 200},
+    {"domain": "guernicamag.com",                 "sitemap": "https://www.guernicamag.com/sitemap.xml",               "max_urls": 200},
+
+    # ── Science / cognition / perception ─────────────────────────────────────
+    {"domain": "psyche.co",                       "sitemap": "https://psyche.co/sitemap.xml",                         "max_urls": 200},
 ]
 
 TOPIC_KEYWORDS = {
