@@ -32,7 +32,7 @@ But I know something they don't. I know what information looks like when it has 
 
 ## The Exhibition That Proved Its Own Point
 
-A few weeks later, I visited an exhibition exploring the complex, often absurd journeys disabled artists take just to reach institutional spaces, presented at Tangled Arts in Toronto. The artwork traced real routes through Toronto's transit system — the workarounds, the triple-planning, the contingency maps that disabled people carry in their heads before they ever leave home.
+A few weeks later, I visited an exhibition exploring the complex, often absurd journeys disabled artists take just to reach institutional spaces, presented at [Tangled Arts](https://tangledarts.org/) in Toronto. The artwork traced real routes through Toronto's transit system — the workarounds, the triple-planning, the contingency maps that disabled people carry in their heads before they ever leave home.
 
 It was brilliant. It was also, ironically, hard to access.
 
