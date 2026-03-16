@@ -18,7 +18,9 @@ I don't say this from the Deaf perspective — that's not my body, not my expert
 
 The pragmatika.media piece celebrating these acoustic windows treats sound management as self-evidently desirable. The language is revealing: sound "pollution," noise as "aggressor," silence as "comfort." This is the vocabulary of a sensory monoculture. It assumes that the people inside the building perceive sound, that they perceive it in roughly the same way, and that the architect's job is to deliver a specific auditory experience calibrated to a normative ear. What vanishes from this framework is vibration — the medium through which Deaf and hard-of-hearing people navigate built space, read proximity, sense mechanical failure, feel the approach of a vehicle they cannot hear. A facade engineered to absorb and dampen is also a facade that strips vibratory information from the environment. Nobody runs a cost-benefit analysis on that loss because the people who experience it are not in the room when the spec is written.
 
-![Moment — Article]({{ site.baseurl }}/assets/the-frequency-you-built-for_moment_2.jpg)
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-frequency-you-built-for_moment_2.jpg" alt="Moment — Article" loading="lazy">
+</figure>
 
 I know what these systems cost. A high-performance acoustic glazing unit runs between four hundred and eight hundred euros per square meter installed, depending on the gas fill and lamination layers. Municipal buildings in the EU can access acoustic retrofit funding through urban environmental noise directives. The procurement cycle — from environmental noise mapping to tender to installation — typically runs eighteen to thirty-six months. At no point in that cycle does anyone ask whether the building's occupants include people who rely on vibration, bone conduction, or visual cues to orient themselves in space. The spec is written for a body that hears. The funding is allocated for a body that hears. The evaluation metrics — decibel reduction, speech transmission index, reverberation time — measure success exclusively in terms of what a hearing person experiences. Mike Oliver would recognize this instantly: the building is not "accessible" or "inaccessible" in the abstract. The building is *disabling* when it is designed around a single sensory norm and funded by a system that has no category for the alternative.
 
@@ -26,7 +28,9 @@ I know what these systems cost. A high-performance acoustic glazing unit runs be
 
 This connects to the mobility question I can't stop writing about because the logic is identical. A curb cut is not a concession to wheelchair users; it is a revelation that the curb was always an argument about who belongs on the sidewalk. Similarly, a vibration-transmitting floor is not an accommodation for Deaf residents; it is a revelation that the acoustically dampened floor was always an argument about whose sensory experience counts as real. Lefebvre insisted that space is produced — that every material decision in the built environment encodes a social relation. The acoustic facade is a produced silence, and like all produced silences, it has beneficiaries and casualties. The beneficiaries get to call it "comfort." The casualties get to file an accommodation request, if they know the request exists, if the building has a process, if the process has funding, if the funding survives the next budget cycle.
 
-![Symbol — Article]({{ site.baseurl }}/assets/the-frequency-you-built-for_symbol_3.jpg)
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-frequency-you-built-for_symbol_3.jpg" alt="Symbol — Article" loading="lazy">
+</figure>
 
 Christine Sun Kim's work keeps surfacing in my thinking here — her scores and performances that treat sound as a social contract she was excluded from and then re-entered on her own terms. Her piece *The Sound of* is not about hearing or not hearing. It is about who owns the category. Acoustic design, as currently practiced, is the architectural equivalent of owning the category without acknowledging it is a category at all.
 

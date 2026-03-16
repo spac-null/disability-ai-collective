@@ -2181,15 +2181,6 @@ a:hover {
   display: block;
 }
 
-.post-content p:has(> img) + p > em:only-child {
-  color: var(--color-text-muted);
-  display: block;
-  font-size: var(--font-size-sm);
-  margin-top: calc(var(--space-6) * -1);
-  margin-bottom: var(--space-8);
-  text-align: center;
-}
-
 @media (max-width: 768px) {
   .post-header {
     padding-bottom: var(--space-6);
@@ -2514,16 +2505,26 @@ a:hover {
 }
 
 /* Caption: <p><em>text</em></p> after image paragraph */
-.post-content p:has(> img) + p > em:only-child {
-  display: block !important;
-  font-style: normal !important;
-  font-size: 0.8125rem !important;
-  color: var(--color-text-muted, #6b7280) !important;
-  margin-top: var(--space-2) !important;
-  margin-bottom: var(--space-8) !important;
-  padding-left: var(--space-3) !important;
-  border-left: 2px solid var(--color-border) !important;
-  text-align: left !important;
+
+/* ── Article image captions ── */
+.article-figure {
+  margin: var(--space-8) 0;
+}
+
+.article-figure img {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+}
+
+.article-figure figcaption {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted, #6b7280);
+  margin-top: var(--space-3);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--color-border);
+  font-style: normal;
+  line-height: 1.5;
 }
 
 /* ── Post footer ── */
@@ -2577,20 +2578,7 @@ a:hover {
 
 /* Hide agent byline paragraphs that leaked into article body
    Pattern: <p><em>By Author (Author)</em></p> */
-.prose > p:first-of-type:has(> em:only-child) {
-  display: none;
-}
-
 /* Drop cap: only when first paragraph is real prose, not em-only */
-.prose > p:first-of-type:has(> em:only-child)::first-letter {
-  float: none;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  margin: 0;
-  color: inherit;
-}
-
 /* Image-only paragraph: no extra bottom margin (caption follows) */
 .prose > p:has(> img:only-child) {
   margin-bottom: 0 !important;
@@ -2602,10 +2590,6 @@ a:hover {
 }
 
 /* Inline body image pair (image + caption) — treat as a unit */
-.post-content p:has(> img) + p > em:only-child {
-  letter-spacing: 0.01em;
-}
-
 /* Lists: more air between items */
 .prose li {
   margin-bottom: 0.55em !important;
@@ -2884,17 +2868,6 @@ article[data-categories].hidden {
 }
 
 /* Image caption — <em> immediately after inline image paragraph */
-.post-content p:has(> img) + p > em:only-child {
-  display: block;
-  margin-top: calc(-1 * var(--space-10));
-  margin-bottom: var(--space-8);
-  font-size: var(--text-small, 0.85rem);
-  color: var(--color-text-muted);
-  font-style: italic;
-  text-align: center;
-  line-height: 1.4;
-}
-
 /* Author hero layout */
 .author-hero {
   display: flex;

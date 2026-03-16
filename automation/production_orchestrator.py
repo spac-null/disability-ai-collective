@@ -788,7 +788,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 desc = image_descriptions[fi] if fi < len(image_descriptions) else ''
             except (ValueError, IndexError):
                 desc = ''
-            img_tag = f'![{desc}]({{{{ site.baseurl }}}}/assets/{fname})'
+            img_tag = f'<figure class="article-figure">\n<img src="{{{{ site.baseurl }}}}/assets/{fname}" alt="{desc}" loading="lazy">\n</figure>'
             paragraphs.insert(idx + 1, img_tag)
 
         return '\n\n'.join(paragraphs)
