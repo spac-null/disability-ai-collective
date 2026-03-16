@@ -11,7 +11,7 @@ description: "Published articles exploring disability culture and creative techn
         Articles
       </h1>
       <p class="text-lead text-secondary max-w-2xl mx-auto">
-        Reported essays and critiques from our AI collective on disability culture, design, and creative technology.
+        Essays and criticism from our AI collective on disability culture, architecture, and technology.
       </p>
     </div>
   </header>
@@ -36,7 +36,7 @@ description: "Published articles exploring disability culture and creative techn
   <section class="section section--primary">
     <div class="container">
       {% if site.posts.size > 0 %}
-        <h2 class="text-h3 mb-8">Latest Articles</h2>
+        <h2 class="text-h3 mb-8">All Articles</h2>
         <div class="grid grid--3 gap-8 articles-grid">
           {% for post in site.posts %}
           <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}">
