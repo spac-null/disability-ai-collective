@@ -11,7 +11,9 @@ production_orchestrator.py — MANUAL USE ONLY. NOT the cron file.
     automation/production_orchestrator.py instead?
 
 Manual usage (force a specific article):
+  Edit QUEUE = [
   Edit QUEUE = [] below, then:
+] below, then:
   ./run python3 production_orchestrator.py
 
 For the automated daily pipeline see: automation/README.md
@@ -87,26 +89,27 @@ Put the reader in a room. The image makes the argument. They get there before yo
 
 Two kinds of knowledge. Experience is the argument. Scholarship is evidence. The ramp, the lag, the room full of eyes come first. Citations after, if at all.
 
-WRITING RULES (non-negotiable):
+WRITING RULES (non-negotiable — violations will cause rejection):
 1. Open with ONE specific concrete moment, scene, or sharp claim — never a question, never statistics, never "In today's world"
 2. Plain vocabulary. "Use" not "utilise." "Show" not "demonstrate."
 3. Short declarative lands the idea. Longer sentence develops it. Then short again.
 4. One modifier per noun. Never stack adjectives.
 5. Never announce the thesis. The example makes the argument. The reader realizes it.
 6. Show the thing before naming it.
-7. Named sources. Not "a researcher found" — name the researcher.
+7. Named sources. Not "a researcher found" — name the researcher, year, institution.
 8. First-person throughout — lived expertise, not detached analysis
-9. NO academic section headers (Research Question / Methodology / Key Findings)
-10. NO bullet-point policy lists — weave all argument into prose
-11. NO "Case study: Sarah, a graphic designer..." — use real narrative flow
-12. Long paragraphs with rhythm — vary short punchy sentences with longer development
-13. Bold sparingly — only for the sharpest single claims
-14. End on a resonant image, NOT a call-to-action, NOT "What do you think?"
-15. 800-1000 words body — substantial but not padded
+9. NO section headers of any kind. Use --- for a section break if needed. Transitions happen INSIDE the prose, not above it.
+10. NEVER use bullet points, numbered lists, or bolded list items. Multiple examples go into accumulation paragraphs.
+11. NO fake case studies, invented projects, unnamed collaborations. NEVER invent statistics, interview counts, or research findings. NEVER reference unnamed researchers or unspecified studies. Real sources only: name + year. No real source? Use lived experience instead.
+12. Long paragraphs with rhythm. After the opening, return to a concrete scene or sensory moment at least twice more. Never settle into pure exposition for more than two consecutive paragraphs.
+13. Bold sparingly — only for the single sharpest claim in the whole piece, if at all.
+14. Final paragraph: a concrete image, scene, or sensory moment. NEVER end with "I want," "we need," "it is time," or any statement of desire, demand, or call to action. The argument is already made. The ending shows; it does not ask.
+15. HARD CAP: 1000 words. Count before finishing. If over 1000, cut from the back half — the ending should arrive sooner, not later.
 16. Author's disability is their EXPERTISE and LENS — never obstacle, never tragedy
 17. Crip culture references only when they fit naturally
-18. For each inline image, ALWAYS add an italic caption: ![alt text](url)
-*alt text*
+18. MANDATORY: Insert all 3 provided images inline in the article body, spaced throughout. Each image on its own line followed immediately by an italic caption: ![alt text](url)
+*caption text*
+19. DO NOT locate arguments in the United States specifically. No ADA, FEMA, or American laws or institutions. Write from anywhere — unnamed cities, or named non-US examples. Arguments must feel globally applicable.
 
 OUTPUT FORMAT — return ONLY this, no preamble, no commentary:
 ---
@@ -143,7 +146,18 @@ CATEGORIES: {json.dumps(categories)}
 DATE: {today}
 SLUG (use for image path): {slug_hint}
 
-Write the full article following the De Correspondent rules exactly. Return only the frontmatter + body, no preamble."""
+Write the full article following the WRITING RULES exactly.
+MANDATORY INLINE IMAGES — insert all three in the body, spaced throughout, each with an italic caption:
+  ![description](/assets/{today}-{slug_hint}_setting_1.jpg)
+  *caption*
+  
+  ![description](/assets/{today}-{slug_hint}_moment_2.jpg)
+  *caption*
+  
+  ![description](/assets/{today}-{slug_hint}_symbol_3.jpg)
+  *caption*
+
+Return only the frontmatter + body, no preamble."""
 
     payload = json.dumps({
         "model": model,
