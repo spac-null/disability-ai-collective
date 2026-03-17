@@ -20,7 +20,7 @@ I have written about this church twice. Both times I wrote about the acoustic. B
 
 ---
 
-Here is the thing I have not said in any professional context: I love buildings that exclude me. Not because I enjoy exclusion. Because the acoustic qualities that make certain spaces extraordinary — stone, height, hard parallel surfaces, unbroken floor planes — are produced by the same choices that make those spaces inaccessible. The ramp breaks the resonance. The lift shaft absorbs the low frequencies. I know this in my body before I can say it as an argument.
+I love buildings that exclude me. Not because I enjoy exclusion. Because the acoustic qualities that make certain spaces extraordinary — stone, height, hard parallel surfaces, unbroken floor planes — are produced by the same choices that make those spaces inaccessible. The ramp breaks the resonance. The lift shaft absorbs the low frequencies. I know this in my body before I have words for it.
 
 What nobody names is that the pleasure and the injury arrive together. Not one after the other. In the same room, the same moment, the same body. [Sins Invalid](https://sinsinvalid.org/) has been saying this since 2006. I heard it and wrote only about the acoustic.
 
@@ -42,7 +42,7 @@ I have spent years staying quiet about what accessibility costs acoustically. No
 
 I was protecting access by hiding what I heard.
 
-An architect I spoke with in Rotterdam in 2023 — she designs cultural spaces, she asked me not to use her name — said it plainly. "I know the lift shaft kills the room. I spec it anyway because if I raise the acoustic argument, it becomes a reason not to build the lift. I have watched that happen three times."
+An architect I spoke with in Rotterdam in 2023 — she designs cultural spaces, she asked me not to use her name — said it plainly. I know the lift shaft kills the room. I spec it anyway because if I raise the acoustic argument, it becomes a reason not to build the lift. I have watched that happen three times.
 
 She is protecting access by hiding the cost. I am protecting my aesthetic pleasure by hiding the exclusion. We are lying about the same room.
 
@@ -52,14 +52,12 @@ She is protecting access by hiding the cost. I am protecting my aesthetic pleasu
 
 What neither of us says: acoustic engineers know how to preserve reverberation through accessibility interventions. Stone-clad ramps. Glass-walled lifts. Materials that reflect instead of absorb. The solutions exist. Nobody funds them because nobody admits the problem.
 
-[Georgina Kleege](https://english.berkeley.edu/users/45) wrote in [*More Than Meets the Eye*](https://global.oup.com/academic/product/more-than-meets-the-eye-9780190604363) (Oxford University Press, 2018) that the average blind person knows more about what it means to see than the average sighted person knows about what it means to be blind. What I know about reverberation — what any blind person who navigates by sound knows — is not available to architects who have never needed the room to talk back. That knowledge exists. It is not being used.
+[Georgina Kleege](https://english.berkeley.edu/users/45) argued in [*More Than Meets the Eye*](https://global.oup.com/academic/product/more-than-meets-the-eye-9780190604363) (Oxford University Press, 2018) that the average blind person has thought harder about what seeing means than the average sighted person ever has. The same asymmetry runs through acoustic space. I know things about reverberation that the Bridgewater Hall's acoustic engineer does not. Not because I listen better. Because I have no other way into the room. That knowledge exists. It is not being used.
 
 ---
 
 [Mia Mingus](https://leavingevidence.wordpress.com/) writes about [access as a practice of love](https://leavingevidence.wordpress.com/2018/11/03/disability-justice-is-simply-another-term-for-love/), not a checklist. Love names the full weight of what it costs.
 
 I went back to the Janskerk in January 2024. There is a temporary ramp now, aluminum, municipal standard. I walked in alone for the first time. I clapped once. The sound came back in nine seconds.
-
----
 
 *This article was inspired by [Support Disability Justice! (Campaign Update)](https://sinsinvalid.org/support-disability-justice-campaign-update/) from sinsinvalid.org.*
