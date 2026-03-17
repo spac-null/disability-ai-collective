@@ -1188,6 +1188,77 @@ a:hover {
   gap: var(--space-4);
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: var(--space-16);
+}
+
+
+/* Hero latest essay block */
+.hero-latest {
+  display: inline-block;
+  margin: var(--space-8) auto var(--space-12);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-8);
+  max-width: 680px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.hero-latest__link {
+  display: block;
+  text-decoration: none;
+  transition: opacity var(--transition-base);
+}
+
+.hero-latest__link:hover {
+  opacity: 0.85;
+}
+
+.hero-latest__link:hover .hero-latest__byline {
+  color: var(--color-text-brand);
+  text-decoration-color: var(--color-text-brand);
+}
+
+.hero-latest__quote {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-secondary);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.hero-latest__byline {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-weight: var(--font-weight-medium);
+  text-decoration: underline;
+  text-decoration-color: rgba(255,255,255,0.15);
+  text-underline-offset: 3px;
+  transition: color var(--transition-base), text-decoration-color var(--transition-base);
+}
+
+/* Article card images */
+.article-card__image {
+  width: calc(100% + var(--space-10));
+  margin: calc(var(--space-5) * -1) calc(var(--space-5) * -1) var(--space-5);
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.article-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.card:hover .article-card__image img {
+  transform: scale(1.04);
 }
 
 @media (max-width: 640px) {
