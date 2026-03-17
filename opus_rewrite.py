@@ -33,8 +33,22 @@ API_KEY          = os.environ.get("ANTHROPIC_API_KEY", "")
 API_URL          = "http://172.19.0.1:8317/v1/chat/completions"
 MODEL            = "claude-opus-4-6"
 POSTS            = Path("/srv/data/openclaw/workspaces/ops/disability-ai-collective/_posts")
-GOLD_STANDARD    = POSTS / "2026-03-08-architects-are-designing-buildings-for-the-wrong-sense.md"
 REWRITE_THRESHOLD = 3   # penalty score >= this triggers a rewrite
+
+
+def get_style_references(exclude=None, n=2):
+    """Pick n recent articles as rotating style references. No fixed gold standard."""
+    exclude = exclude or set()
+    candidates = sorted(POSTS.glob("*.md"), reverse=True)
+    refs = []
+    for p in candidates:
+        if p.name in exclude or p.name in FOUNDING_STONES:
+            continue
+        if p.stat().st_size > 3000:
+            refs.append(p.read_text())
+        if len(refs) >= n:
+            break
+    return refs
 
 # Manual override: add filenames here to force-rewrite specific articles.
 # When non-empty, auto-scan is skipped entirely.
@@ -247,18 +261,20 @@ def verify_frontmatter_preserved(original, rewritten):
     return True
 
 
-def call_opus(article_text, gold_text, filename):
-    user_msg = f"""STYLE REFERENCE (match this voice and quality):
-<gold_standard>
-{gold_text}
-</gold_standard>
+def call_opus(article_text, style_refs, filename):
+    refs_block = "\n\n".join(
+        f"<reference_{i+1}>\n{r}\n</reference_{i+1}>" for i, r in enumerate(style_refs)
+    )
+    ref_label = "STYLE REFERENCES (recent articles — match this voice level, not these topics):"
+    user_msg = f"""{ref_label}
+{refs_block}
 
-ARTICLE TO REWRITE:
+ARTICLE TO EDIT:
 <article filename="{filename}">
 {article_text}
 </article>
 
-Rewrite the article body to match the publication's voice and quality. Preserve frontmatter and all image markdown lines exactly."""
+Edit the article body to match the publication's voice and quality. Preserve frontmatter and all image markdown lines exactly."""
 
     payload = json.dumps({
         "model": MODEL,
@@ -299,10 +315,10 @@ FOUNDING_STONES = {
 
 
 def get_all_targets():
-    """Return all articles for full-corpus audit. Skips gold standard and founding stones."""
+    """Return all articles for full-corpus audit. Skips founding stones."""
     targets = []
     for path in sorted(POSTS.glob("*.md")):
-        if path == GOLD_STANDARD or path.name in FOUNDING_STONES:
+        if path.name in FOUNDING_STONES:
             continue
         targets.append(path.name)
     return targets
@@ -315,20 +331,6 @@ def main():
                         help="Audit every article in _posts/ regardless of age or score")
     args = parser.parse_args()
 
-    if GOLD_STANDARD.exists() and GOLD_STANDARD.stat().st_size > 3000:
-        gold = GOLD_STANDARD.read_text()
-    else:
-        _candidates = sorted(POSTS.glob("*.md"), reverse=True)
-        _fallback = None
-        for _c in _candidates:
-            if _c.stat().st_size > 3000 and _c != GOLD_STANDARD:
-                _fallback = _c
-                break
-        if not _fallback:
-            raise SystemExit("No suitable gold standard article found in _posts/")
-        log.warning("Gold standard missing — using %s as reference", _fallback.name)
-        gold = _fallback.read_text()
-
     if args.all:
         log.info("--all flag: auditing entire corpus")
         targets = get_all_targets()
@@ -340,6 +342,12 @@ def main():
         return
 
     log.info("%d article(s) queued for rewrite: %s", len(targets), targets)
+
+    # Rotating style references — 2 most recent articles not in the target list
+    style_refs = get_style_references(exclude=set(targets))
+    if not style_refs:
+        raise SystemExit("No suitable style reference articles found in _posts/")
+    log.info("Style references: %d articles (rotating)", len(style_refs))
     rewritten = []
 
     for filename in targets:
@@ -359,7 +367,7 @@ def main():
         path.with_suffix(".md.bak").write_text(original)
 
         try:
-            rewritten_text = call_opus(original, gold, filename)
+            rewritten_text = call_opus(original, style_refs, filename)
             rewritten_text = rewritten_text.lstrip("\n")
 
             if not verify_frontmatter_preserved(original, rewritten_text):
