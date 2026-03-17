@@ -21,13 +21,11 @@ description: "Editorial arts platform publishing disability-led perspectives on 
 
       {% assign latest = site.posts.first %}
       {% if latest %}
-      <div class="hero-latest">
-        <div class="hero-badge">Latest essay</div>
-        <a href="{{ latest.url | relative_url }}" class="hero-latest__link">
-          <p class="hero-latest__quote">“{{ latest.excerpt | strip_html | split: ". " | first }}.”</p>
-          <span class="hero-latest__byline">{{ latest.author }} — {{ latest.title }} &rarr;</span>
-        </a>
-      </div>
+      <a href="{{ latest.url | relative_url }}" class="hero-latest">
+        <p class="hero-latest__eyebrow">Latest essay by <span>{{ latest.author }}</span></p>
+        <p class="hero-latest__quote">{{ latest.excerpt | strip_html | split: ". " | first }}.</p>
+        <p class="hero-latest__title">— {{ latest.title }} &rarr;</p>
+      </a>
       {% endif %}
       
       <div class="hero-actions">

@@ -1203,41 +1203,56 @@ a:hover {
   max-width: 680px;
   width: 100%;
   box-sizing: border-box;
-}
-
-.hero-latest__link {
-  display: block;
   text-decoration: none;
-  transition: opacity var(--transition-base);
+  cursor: pointer;
+  position: relative;
+  overflow: visible;
+  transition: border-color var(--transition-base);
 }
 
-.hero-latest__link:hover {
-  opacity: 0.85;
+.hero-latest:hover {
+  border-color: rgba(255,255,255,0.25);
 }
 
-.hero-latest__link:hover .hero-latest__byline {
-  color: var(--color-text-brand);
-  text-decoration-color: var(--color-text-brand);
+/* Halftone dot cluster — screenprint/risograph reference */
+.hero-latest::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 44px;
+  height: 44px;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.15) 1.5px, transparent 1.5px);
+  background-size: 6px 6px;
+  pointer-events: none;
+}
+
+.hero-latest__eyebrow {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-3);
+}
+
+.hero-latest__eyebrow span {
+  color: var(--color-text-secondary);
 }
 
 .hero-latest__quote {
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-normal);
-  color: var(--color-text-secondary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-light);
+  font-style: italic;
+  color: var(--color-text-primary);
   line-height: var(--line-height-relaxed);
   margin-bottom: var(--space-4);
-  padding-bottom: var(--space-4);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  letter-spacing: -0.02em;
 }
 
-.hero-latest__byline {
+.hero-latest__title {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
-  font-weight: var(--font-weight-medium);
-  text-decoration: underline;
-  text-decoration-color: rgba(255,255,255,0.15);
-  text-underline-offset: 3px;
-  transition: color var(--transition-base), text-decoration-color var(--transition-base);
+  letter-spacing: 0.03em;
 }
 
 /* Article card images */
@@ -2974,22 +2989,4 @@ article[data-categories].hidden {
   background-image:
     linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
     linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
-    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
-    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
-    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
-    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
-    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
-    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3));
-  background-size:
-    14px 1px, 1px 14px,
-    14px 1px, 1px 14px,
-    14px 1px, 1px 14px,
-    14px 1px, 1px 14px;
-  background-position:
-    7px 7px,                              7px 7px,
-    calc(100% - 21px) 7px,               calc(100% - 8px) 7px,
-    7px calc(100% - 8px),                7px calc(100% - 21px),
-    calc(100% - 21px) calc(100% - 8px),  calc(100% - 8px) calc(100% - 21px);
-  background-repeat: no-repeat;
-  background-color: var(--color-background-elevated);
-}
+    lin
