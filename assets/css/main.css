@@ -819,18 +819,28 @@ body {
 .hero-latest__link {
   display: block;
   text-decoration: none;
-  transition: opacity var(--transition-base) var(--easing-standard);
+  transition: color var(--transition-base) var(--easing-standard);
 }
 
-.hero-latest__link:hover {
-  opacity: 0.75;
+.hero-latest__link:hover .hero-latest__quote {
+  color: var(--color-text-primary);
+}
+
+.hero-latest__link:hover .hero-latest__byline {
+  color: var(--color-text-brand);
+  letter-spacing: 0.01em;
+}
+
+.hero-latest__link:hover .hero-latest__byline::after {
+  margin-left: var(--space-3);
 }
 
 .hero-latest__quote {
-  font-size: var(--font-size-xl);
-  font-style: italic;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
+  font-size: var(--font-size-md);
+  font-style: normal;
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-3);
   line-height: var(--line-height-relaxed);
   max-width: 60ch;
 }
@@ -846,8 +856,9 @@ body {
 
 .hero-latest__byline {
   font-size: var(--font-size-sm);
-  color: var(--color-text-brand);
+  color: var(--color-text-muted);
   font-weight: var(--font-weight-medium);
+  transition: color var(--transition-base) var(--easing-standard), letter-spacing var(--transition-base) var(--easing-standard);
 }
 
 /* AGENT CARDS */
