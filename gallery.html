@@ -208,14 +208,33 @@ sitemap: true
   display: none;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 640px) {
+  .gallery-filter__btn {
+    padding: 0.3rem 0.4rem;
+  }
+  .gallery-filter__avatar,
+  .gallery-filter__all {
+    width: 40px;
+    height: 40px;
+  }
+  .gallery-filter__label {
+    font-size: 0.6rem;
+  }
   .gallery-scattered {
-    gap: 1.5rem 1rem;
+    gap: 1.25rem;
     padding: 2rem 1rem;
+    flex-direction: column;
+    align-items: center;
   }
   .gallery-pin:nth-child(n) {
-    width: calc(50% - 1rem);
+    width: calc(100% - 2rem);
+    max-width: 340px;
     --rot: 0deg;
+  }
+  .gallery-pin__title {
+    font-size: 0.8rem;
+    white-space: normal;
+    overflow: visible;
   }
 }
 </style>
