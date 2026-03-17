@@ -817,6 +817,7 @@ body {
 }
 
 .hero-latest__link {
+  position: relative;
   display: block;
   text-decoration: none;
   transition: color var(--transition-base) var(--easing-standard);
@@ -1313,3 +1314,67 @@ body {
 /* ========================================
    END OF DESIGN SYSTEM IMPLEMENTATION
 ========================================= */
+/* ── Hero-latest registration marks ─────────────────────────────────────── */
+/* L-bracket corner marks, print registration aesthetic, CSS only */
+.hero-latest {
+  position: relative;
+  overflow: visible;
+}
+
+/* Top-left corner */
+.hero-latest::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 12px;
+  height: 12px;
+  border-top: 1px solid var(--color-text-primary);
+  border-left: 1px solid var(--color-text-primary);
+  opacity: 0.25;
+  pointer-events: none;
+  border-radius: 0;
+}
+
+/* Bottom-right corner */
+.hero-latest::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 12px;
+  height: 12px;
+  border-bottom: 1px solid var(--color-text-primary);
+  border-right: 1px solid var(--color-text-primary);
+  opacity: 0.25;
+  pointer-events: none;
+  border-radius: 0;
+}
+
+/* Top-right corner */
+.hero-latest__link::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 12px;
+  height: 12px;
+  border-top: 1px solid var(--color-text-primary);
+  border-right: 1px solid var(--color-text-primary);
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+/* Bottom-left corner */
+.hero-latest__link::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  width: 12px;
+  height: 12px;
+  border-bottom: 1px solid var(--color-text-primary);
+  border-left: 1px solid var(--color-text-primary);
+  opacity: 0.25;
+  pointer-events: none;
+}
