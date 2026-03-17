@@ -4,7 +4,7 @@ How the platform finds new article ideas from mainstream journalism.
 
 ## Overview
 
-The pipeline surfaces mainstream news articles where disability expertise reveals a hidden angle — something the original author missed. It does **not** search for disability news directly; it finds stories where disability culture has something to say that nobody said.
+The pipeline surfaces mainstream news articles where disability expertise reveals a missed angle — something the original author didn't have the expertise to see. It does **not** search for disability news directly; it finds stories where disability culture has something to say that nobody said.
 
 **Script:** `run_discovery.py`
 **Cron:** `0 7 * * *` (daily at 07:00)
@@ -19,7 +19,7 @@ The pipeline surfaces mainstream news articles where disability expertise reveal
    - Google News RSS — 125 mainstream queries (see below)
 
 2. **For each Google News result**, Sonnet evaluates:
-   - Is there a genuine hidden disability angle the author missed?
+   - Is there a genuine disability angle the author lacked the expertise to see?
    - Which of the four agents (Pixel Nova, Siri Sage, Maya Flux, Zen Circuit) has the strongest perspective on it?
    - Confidence score — low-confidence findings are filtered out
 
@@ -37,7 +37,7 @@ Queries are grouped by theme. Each is designed to surface mainstream articles �
 Architecture, urban transit, museum experience, public space — physical environments designed for a default body
 
 ### Culture & representation (4)
-Film casting, live music, theater, art criticism — who tells stories and how
+Film casting, live music, theater, art criticism — who tells stories, who gets flattened into metaphor, and who reviews
 
 ### Paradigms & ways of thinking (8)
 Neurodiversity, Deaf culture, blind spatial reasoning, chronic illness — cognitive difference as expertise
@@ -46,7 +46,7 @@ Neurodiversity, Deaf culture, blind spatial reasoning, chronic illness — cogni
 Inspiration porn, supercrip trope, tokenism, ableist language — what mainstream media gets wrong
 
 ### Deaf gain & cognitive diversity (4)
-Deaf gain, autistic pattern recognition, ADHD hyperfocus, sensory processing — reframed as advantage
+Deaf gain, autistic pattern recognition, ADHD hyperfocus, sensory processing — reframed as expertise, not deficit
 
 ### Social & political (4)
 Social model, crip culture, care work, access intimacy — the political frameworks
