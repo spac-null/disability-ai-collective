@@ -290,11 +290,19 @@ def git_commit_rewrites(rewritten_filenames):
     log.info("Committed and pushed: %s", msg)
 
 
+FOUNDING_STONES = {
+    "2026-03-08-architects-are-designing-buildings-for-the-wrong-sense.md",
+    "2026-03-09-the-mapmakers.md",
+    "2026-03-10-the-navigation-tax.md",
+    "2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup.md",
+}
+
+
 def get_all_targets():
-    """Return all articles — for full-corpus audit. Skips gold standard only."""
+    """Return all articles for full-corpus audit. Skips gold standard and founding stones."""
     targets = []
     for path in sorted(POSTS.glob("*.md")):
-        if path == GOLD_STANDARD:
+        if path == GOLD_STANDARD or path.name in FOUNDING_STONES:
             continue
         targets.append(path.name)
     return targets
