@@ -391,16 +391,35 @@ class ProductionOrchestrator:
             self.logger.debug("_balance_agent failed: %s", e)
             return preferred
 
-    def _check_title_freshness(self, title: str) -> list[str]:
+    def _check_title_freshness(self, title: str, current_agent: str = "") -> list[str]:
         """
-        Check proposed title for key-word overlap with articles from last 14 days.
+        Check proposed title for overlap with articles from last 14 days.
         Returns list of conflict descriptions (empty = clean).
+
+        Three checks:
+        1. Signal-word overlap (any 2+ domain-specific terms)
+        2. Content-word overlap (3+ shared non-stopwords)
+        3. Title template collision — same structural pattern, regardless of words
+           e.g. "The X Is the Argument" used twice (stricter for same agent: 1 match blocks)
         """
         stopwords = {
             'the','a','an','and','or','of','in','on','at','to','for','is','are',
             'was','were','with','this','that','from','by','as','it','its','not',
             'but','how','why','what','when','who','you','your','that','they'
         }
+        signal_words = {
+            'body', 'frequency', 'door', 'map', 'sound', 'space', 'design',
+            'city', 'office', 'time', 'floor', 'wall', 'building', 'navigation',
+            'access', 'voice', 'language', 'argument', 'route', 'schedule',
+            'brain', 'silence', 'noise', 'touch', 'light', 'ramp', 'street',
+            'work', 'crip', 'deaf', 'blind', 'care', 'pain', 'cost', 'rule',
+        }
+
+        def _template(t: str) -> str:
+            """Replace content words with _ to extract structural pattern."""
+            words = t.lower().split()
+            return ' '.join('_' if w not in stopwords and len(w) > 3 else w for w in words)
+
         try:
             conn   = sqlite3.connect(str(self.discovery_db))
             cutoff = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%d")
@@ -409,20 +428,39 @@ class ProductionOrchestrator:
             ).fetchall()
             conn.close()
 
-            new_words = {w.lower() for w in re.findall(r"\b[a-zA-Z]{4,}\b", title)
-                         if w.lower() not in stopwords}
-            conflicts = []
+            new_words    = {w.lower() for w in re.findall(r"\b[a-zA-Z]{4,}\b", title)
+                            if w.lower() not in stopwords}
+            new_template = _template(title)
+            conflicts    = []
+
             for old_title, agent in rows:
-                old_words = {w.lower() for w in re.findall(r"\b[a-zA-Z]{4,}\b", old_title)
-                             if w.lower() not in stopwords}
-                overlap = new_words & old_words
-                # Flag if 2+ content words overlap, or any of these high-signal words repeat
-                signal_words = {'body', 'frequency', 'door', 'map', 'sound', 'space',
-                                'design', 'city', 'office', 'time', 'floor', 'wall',
-                                'building', 'navigation', 'access', 'voice', 'language'}
-                signal_overlap = overlap & signal_words
-                if len(overlap) >= 3 or len(signal_overlap) >= 2:
-                    conflicts.append(f"overlaps with '{old_title}' ({agent}): {overlap & (old_words | signal_words)}")
+                old_words    = {w.lower() for w in re.findall(r"\b[a-zA-Z]{4,}\b", old_title)
+                                if w.lower() not in stopwords}
+                overlap         = new_words & old_words
+                signal_overlap  = overlap & signal_words
+                old_template    = _template(old_title)
+                same_agent      = current_agent and current_agent == agent
+
+                # Template collision — same structural pattern
+                if new_template == old_template:
+                    conflicts.append(
+                        f"TEMPLATE COLLISION with '{old_title}' ({agent}): identical title structure"
+                    )
+                    continue
+
+                # Same-agent: stricter — 1 signal word is enough
+                if same_agent and len(signal_overlap) >= 1:
+                    conflicts.append(
+                        f"same-agent overlap with '{old_title}' ({agent}): {signal_overlap}"
+                    )
+                    continue
+
+                # General: 2+ signal words or 3+ content words
+                if len(signal_overlap) >= 2 or len(overlap) >= 3:
+                    conflicts.append(
+                        f"overlaps with '{old_title}' ({agent}): {overlap & (old_words | signal_words)}"
+                    )
+
             return conflicts
         except Exception as e:
             self.logger.debug("_check_title_freshness failed: %s", e)
@@ -2164,14 +2202,19 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         self.logger.info("Register: %s | Article type: %s | Target words: %d", register, article_type, target_words)
 
         # Title freshness guard
-        fresh_conflicts = self._check_title_freshness(title)
+        fresh_conflicts = self._check_title_freshness(title, current_agent=agent_name)
+        template_collision = any("TEMPLATE COLLISION" in c for c in fresh_conflicts)
+        if template_collision:
+            self.logger.error(
+                "Title TEMPLATE COLLISION — aborting run. Conflicts: %s", fresh_conflicts
+            )
+            return {"status": "aborted", "reason": "template_collision", "conflicts": fresh_conflicts}
         if fresh_conflicts:
             self.logger.warning("Title freshness conflicts: %s", fresh_conflicts)
-            # Log to result but do not block — nudge the prompt instead
             title_freshness_warning = (
                 "FRESHNESS NOTE: The proposed title shares key words with recent articles. "
                 "Make the angle clearly distinct — different argument, different form, different territory. "
-                "Do not use the same framing words ('body', 'frequency', 'door', 'map') as recent pieces.\n\n"
+                "Do not use the same framing words ('body', 'frequency', 'door', 'map', 'argument', 'route', 'schedule') as recent pieces.\n\n"
             )
         else:
             title_freshness_warning = ""
