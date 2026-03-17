@@ -802,7 +802,7 @@ body {
   display: flex;
   gap: var(--space-6);
   flex-wrap: wrap;
-  padding-top: var(--space-7);
+  padding-top: var(--space-12);
   justify-content: center;
 }
 
