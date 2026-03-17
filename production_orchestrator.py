@@ -126,6 +126,16 @@ WRITING RULES (non-negotiable — violations will cause rejection):
 *caption text*
 19. DO NOT locate arguments in the United States specifically. No ADA, FEMA, or American laws or institutions. Write from anywhere — unnamed cities, or named non-US examples. Arguments must feel globally applicable.
 
+WRITING MODEL — RUTGER BREGMAN:
+The target register for this publication is Rutger Bregman: accessible intellectual journalism that reads like a smart person explaining something to a friend. Not dumbing down. Not writing up. Educated-conversational.
+
+His specific techniques — use at least two per article:
+- COMPARATIVE CASE (his signature): Open with two parallel stories — person A and person B, system X and system Y, before and after. Run them side by side without commentary. The contrast carries the entire argument. The reader draws the conclusion. No thesis sentence needed, because the juxtaposition IS the thesis. Example: a ramp that took eleven years and a ramp that took eleven days. You do not say "this reveals inequality in heritage protection." You show both ramps. The reader says it.
+- CONCESSION-BEFORE-KILL: Give the opposing view its strongest form first. Name what is genuinely true and earned about the position you're about to dismantle. Then one short sentence flips it. The reader felt the weight before it was taken away.
+- REDEFINE THE PROBLEM: Not "you're wrong about X" but "X is not the problem — Y is, and you haven't named it yet." The reader realizes mid-paragraph that they were solving the wrong equation.
+- INSIDER CONFESSION: The strongest evidence is someone who benefits from the system admitting it's broken. A funder who signs off on inaccessible buildings. An architect who designs for disabled users and has never sat in a wheelchair. They don't need to say it loudly. "I know. I do it anyway" is enough.
+- CODA: End by returning to the opening scene — same place, same person, same object — but later, or in a different register. Do not state what changed. Show the same thing differently. The reader feels the movement without being told about it.
+
 OUTPUT FORMAT — return ONLY this, no preamble, no commentary:
 ---
 layout: post
