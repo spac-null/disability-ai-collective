@@ -835,6 +835,15 @@ body {
   max-width: 60ch;
 }
 
+.hero-latest__label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-brand);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+}
+
 .hero-latest__byline {
   font-size: var(--font-size-sm);
   color: var(--color-text-brand);
