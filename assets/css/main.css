@@ -807,7 +807,7 @@ body {
 }
 
 .hero-latest {
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-16);
   margin-top: var(--space-5);
   background: var(--color-background-elevated);
   border: 1px solid var(--color-border-primary);
