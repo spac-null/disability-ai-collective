@@ -290,7 +290,23 @@ def git_commit_rewrites(rewritten_filenames):
     log.info("Committed and pushed: %s", msg)
 
 
+def get_all_targets():
+    """Return all articles — for full-corpus audit. Skips gold standard only."""
+    targets = []
+    for path in sorted(POSTS.glob("*.md")):
+        if path == GOLD_STANDARD:
+            continue
+        targets.append(path.name)
+    return targets
+
+
 def main():
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--all", action="store_true",
+                        help="Audit every article in _posts/ regardless of age or score")
+    args = parser.parse_args()
+
     if GOLD_STANDARD.exists() and GOLD_STANDARD.stat().st_size > 3000:
         gold = GOLD_STANDARD.read_text()
     else:
@@ -304,7 +320,12 @@ def main():
             raise SystemExit("No suitable gold standard article found in _posts/")
         log.warning("Gold standard missing — using %s as reference", _fallback.name)
         gold = _fallback.read_text()
-    targets = get_targets()
+
+    if args.all:
+        log.info("--all flag: auditing entire corpus")
+        targets = get_all_targets()
+    else:
+        targets = get_targets()
 
     if not targets:
         log.info("No articles need rewriting. Done.")
