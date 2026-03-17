@@ -54,7 +54,7 @@ Social model, crip culture, care work, access intimacy — the political framewo
 ### Technology as secondary lens (3)
 AI interfaces, wearables, captions — tech where disability is the hidden design story
 
-### Unexpected mainstream (10)
+### Mainstream with invisible disability stakes (10)
 Film composers, museum redesigns, voice interfaces, sports injury, open offices, fashion, video games, restaurant kitchens, concert hall acoustics, emergency evacuation — mainstream topics with invisible disability angles
 
 ### Cripping Collaboration paper angles (10)
@@ -63,7 +63,7 @@ From Dronkert 2023 — crip time vs productivity, inclusion-as-assimilation, ind
 ### Crip time & work (5)
 Long COVID, four-day work week, career gaps, gig economy, wellness programs — work as a disability issue
 
-### Care & loneliness (4)
+### Care infrastructure & the loneliness frame (4)
 Loneliness epidemic, caregiver burnout, mutual aid, doctor-patient relationships — care as political infrastructure
 
 ### Technology & design — advanced (3)
@@ -73,7 +73,7 @@ AI hiring bias, smart cities, exoskeleton/cure ideology — tech where disabilit
 Hostile architecture, quality-of-life policing — ugly laws legacy
 
 ### Culture & aesthetics (3)
-Body image/AI images, ADHD as superpower narrative, prenatal screening — disability aesthetics + Empire of Normality
+Body image/AI images, ADHD-as-superpower narrative (critical), prenatal screening — disability aesthetics + Empire of Normality
 
 ### Policy & law — US (20)
 Medicaid/HCBS/Olmstead, policing & mental health, school discipline, voting access, organ transplants, AI benefits denial, prior authorization, solitary confinement, SSI asset limits, benefits cliff, guardianship, subminimum wage, climate disasters, immigration public charge, group home zoning
