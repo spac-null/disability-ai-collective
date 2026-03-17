@@ -61,10 +61,10 @@ _REGISTERS = [
     ("ecstatic",   0.10, "Something genuinely surprised you. You are writing from inside that surprise. The energy is in the discovery, not in exclamation. Precise wonder."),
 ]
 _LENGTHS = [
-    (800,  0.20),
-    (1200, 0.45),
-    (1600, 0.25),
-    (2000, 0.10),
+    (600,  0.20),
+    (800,  0.45),
+    (900,  0.25),
+    (1000, 0.10),
 ]
 
 _ARTICLE_TYPES = [
@@ -814,15 +814,19 @@ class ProductionOrchestrator:
 
         SYSTEM = (
             "You write long-form essays for a disability culture publication. "
-            "Voice: expert and personal, strong thesis from sentence one, direct without hedging, "
-            "heavy context, questions assumptions readers hold, never starts with 'In this article'. "
+            "Voice: expert and personal, strong thesis from sentence one, direct without hedging. "
             "Disability as culture and identity — never tragedy or inspiration porn. "
-            "Crip aesthetics, disability justice framework, intersectional lens, "
-            "art criticism voice that references actual disabled artists and theorists by name. "
+            "Crip aesthetics, disability justice framework, intersectional lens. "
             "Write in first person from the agent's specific disability perspective. "
-            "One strong thesis the whole piece serves. Varied sentence rhythm — short sentences land hard, longer ones develop. No clause-stacking. Readable to a smart general reader without dumbing down. No listicles. "
-            "Return only the article body — no frontmatter, no meta-commentary, "
-            "no preamble. Start immediately with the opening sentence."
+            "One strong thesis the whole piece serves. Varied sentence rhythm — short sentences land hard, longer ones develop. No clause-stacking. "
+            "HARD RULES — violations will cause rejection: "
+            "(1) NO section headers of any kind. Use --- for a section break if needed. Transitions happen inside the prose. "
+            "(2) NEVER use bullet points, numbered lists, or bolded list items. Multiple examples go into accumulation paragraphs. "
+            "(3) HARD CAP: 1000 words. If over 1000, cut from the back half. "
+            "(4) Final paragraph: one concrete image or paradox. NEVER 'I want', 'we need', 'it is time', or any call to action. "
+            "(5) NEVER invent statistics, interview counts, unnamed research, or unnamed collaborators. Real named sources only. "
+            "(6) DO NOT locate arguments in the United States specifically. No ADA, FEMA, or American laws. Write from anywhere. "
+            "Return only the article body — no frontmatter, no meta-commentary, no preamble. Start immediately with the opening sentence."
         )
 
         PROVIDERS = [
@@ -2193,7 +2197,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "- DISCOVERY VOICE: Make research feel found, not reported. Use the rhythm of live realisation: 'even more interesting is that...', 'it turns out...', 'what nobody mentions is...', 'I could not believe this when I read it.' This is not hedging — it is the opposite. A confident guide saying: here, look at this. The reader leans in because you lean in first. Academic hedging says 'the data suggest'; discovery voice says 'turns out.'\n"
             "- OPENING TENSION: The first paragraph must create a pressure. Not a scene-setter, not context, not a definition. A tension. Either: two facts that should not both be true, but are. Or: the assumption the reader walks in with, stated plainly, then cracked in one sentence. Possible shapes: 'There are those who say X. There are those who say Y.' — not balance, a pressure chamber you are about to open. Or: a juxtaposition so sharp the reader thinks: how? — and keeps reading to find out.\n"
             "- NO INVENTED STATISTICS. Never write a number, percentage, or study finding not present in the source material. Fake data is worse than no data. Use qualitative language: 'significantly more', 'consistently longer', 'dramatically worse'. Real specificity comes from named sources, observed scenes, and concrete details not invented figures.\n"
-            "- Section headers are statements or fragments, never questions\n"
+            "- NO section headers of any kind. Use --- for a section break if needed. Transitions happen inside the prose, not above it.\n"
+            "- NEVER use bullet points, numbered lists, or bolded list items. Multiple examples go into accumulation paragraphs.\n"
+            "- DO NOT locate arguments in the United States specifically. No ADA, FEMA, or American laws or institutions. Write from anywhere — unnamed cities, or named non-US examples. Arguments must feel globally applicable.\n"
             "- REGISTER — a smart person explaining something to a friend: not dumbing down, not writing up. The friend is intelligent and curious but does not work in your field. You would not say 'the approaching body' to a friend — you would say 'you' or 'the person walking up.' You would not say 'sensory apparatus' — you would say 'senses.' You would not stack three adjectives before a noun. You would use one. Your vocabulary is educated-conversational: precise without being technical, specific without being academic. The register to aim for: a dinner party where everyone is smart and nobody has to perform expertise.\n"            "- ONE MODIFIER PER NOUN. Never stack adjectives: not 'the physical, spatial, sensory reality' — pick the one that does the most work and cut the rest. If you need three adjectives, the noun is wrong.\n"            "- LISTS RUN TO THREE. Four items in a list is one too many. Cut the weakest.\n"            "- Tone: direct, dry when it fits. One absurd or ironic observation per major section — not a joke, just a flat acknowledgment that the situation is absurd. Trust-building: it signals you are not taking yourself more seriously than the argument requires.\n\n"
             "GROUNDING: Your argument lives in your body before it lives in theory. Start from a specific physical sensation, a place, a person, a thing that happened — not from Lefebvre or diagnostic categories. The concept, if it arrives, arrives late, earned by the concrete reality that came before it. Your body knows this before your argument does.\n\n"
             "NAMED VOICES: Use 2-3 real named people — quoted directly or closely paraphrased with full attribution. Name + what they said + context (when, where, in what role) in one sentence. At least one should be a source the reader would not expect to agree with your argument — the insider, the opponent, the institution that admits it. Never 'a researcher found that' or 'studies show' — name the researcher, name the study. A quote from someone who benefits from the system saying 'I know, I do it anyway' is worth more than any statistic.\n\n""TEMPORAL ANCHORS: Date your anecdotes. The year at minimum, ideally month and place. 'Last autumn' is not a date. 'When I was nine' is not a date. Dates make ideas into events; events have momentum; abstractions do not. 'It was October 2019, outside a venue in Peckham' is a sentence. 'I arrived at the building' is not. The specificity signals you were actually there.\n\n""SHOW THEN NAME: Never define a concept before you show it. First: the specific example, the concrete detail, the scene that makes the reader feel the thing. Then — only if needed — 'this is called X.' Wrong: 'There is a discipline called wayfinding. It is not the same as giving directions.' Right: [show someone following instructions and ending up at the wrong door] then 'This is the difference between directions and wayfinding.' The reader should understand the concept before you give it its name.\n\n""ENDING: Your last paragraph is one sentence. It is a concrete image, a paradox, or a reframing that makes the reader sit with something unresolved. Never summarize. Never offer hope. Never call to action. Never conclude. The essay stops mid-thought — but precisely.\n"
@@ -2203,7 +2209,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "INSIDER WITNESS (use when the topic allows): The strongest evidence is often a confession from someone who benefits from the system you are critiquing — not a researcher, not a statistic. Someone who lives inside the thing and knows it is broken. A building inspector who signs off on ramps he knows are too steep. A hiring manager who admits the 'culture fit' interview is a neurotypicality test. An architect who designs for wheelchair users but has never sat in one. Find or construct the insider who would say, if pressed: 'I know. I do it anyway.'\n\n"
             f"{('FORM: ' + article_type_prompt + chr(10) + chr(10)) if article_type_prompt else ''}"
             f"REGISTER: {register}. {register_prompt}\n\n"
-            f"LENGTH: ~{target_words} words. Do not pad. Do not rush. Every paragraph earns the next.\n\n"
+            f"LENGTH: ~{target_words} words. HARD CAP: 1000 words. Count before finishing. If over 1000, cut from the back half — the ending should arrive sooner, not later. Do not pad. Every paragraph earns the next.\n\n"
             f"{agent_info['prompt_block']}\n\n"
             f"{('SOURCE MATERIAL (from the article that inspired this piece — use 2-4 specific facts, names, dates, or quotes as anchors. Do not reproduce its structure or argument — take a different angle):' + chr(10) + '---' + chr(10) + source_text + chr(10) + '---' + chr(10) + chr(10)) if source_text else ''}"
             f"{link_block}"
