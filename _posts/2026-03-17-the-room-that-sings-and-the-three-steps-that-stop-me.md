@@ -28,7 +28,7 @@ What nobody names is that the pleasure and the injury arrive together. Not one a
 
 Two buildings. The first: the Janskerk in Utrecht. Romanesque, twelfth century. Reverberation time around six seconds at middle frequencies. A choir singing there produces overtones the singers cannot control. The building finishes the music. I went three times in 2019. Each time someone guided me up the steps. Each time I said thank you like it was nothing.
 
-The second: the [Bridgewater Hall](https://www.bridgewater-hall.co.uk/) in Manchester, opened in 1996. Accessible from every entrance — level access, hearing loops, tactile wayfinding on every floor. I attended a performance of [Feldman's *For Philip Guston*](https://www.schott-music.com/shop/for-philip-guston-neue-ausgabe-englisch-9790001137231) there in November 2022. Four hours. A seat easy to reach. A hall built to include me.
+The second: the [Bridgewater Hall](https://www.bridgewater-hall.co.uk/) in Manchester, opened in 1996. Accessible from every entrance — level access, hearing loops, tactile wayfinding on every floor. I attended a performance of [Feldman's *For Philip Guston*](https://en.wikipedia.org/wiki/For_Philip_Guston) there in November 2022. Four hours. A seat easy to reach. A hall built to include me.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-that-sings-and-the-three-steps-that-stop-me_moment_2.jpg" alt="architectural cross-section diagram torn and reassembled like Dada collage illustration for The Room That Sings and the Three Steps That Stop Me" width="800" height="450" loading="lazy" decoding="async">

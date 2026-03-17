@@ -116,7 +116,7 @@ One is logistical. One is architectural. One tells you what to do before you arr
 <img src="{{ site.baseurl }}/assets/the-map-that-stops-at-the-door_symbol_3.jpg" alt="Surreal paper cut-out collage in flat rose gold and near-black: oversized map fragments (Matisse scale torn shapes) stacked and layered against a miniature doorframe illustration for The Map That Stops at the Door" loading="lazy">
 </figure>
 
-[Christine Sun Kim](https://christinesunkim.com/) made a piece called "[All Day](https://christinesunkim.com/all-day)" in 2012 that charted the volume levels of her daily life as perceived by hearing people around her. She was mapping a power structure through information design—which sounds are acceptable, which are disruptive, which are inaudible and therefore nonexistent.
+[Christine Sun Kim](https://christinesunkim.com/) made a piece called "All Day" in 2012 that charted the volume levels of her daily life as perceived by hearing people around her. She was mapping a power structure through information design—which sounds are acceptable, which are disruptive, which are inaudible and therefore nonexistent.
 
 The "Getting Here" page does the opposite. It flattens a power structure into a uniform list so the hierarchy disappears. The bus route and the wheelchair ramp occupy the same visual weight. But they're not the same. One is infrastructure that exists for everyone. The other is an accommodation that was fought for, legislated, and maintained only as long as someone checks.
 
