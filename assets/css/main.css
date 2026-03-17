@@ -806,6 +806,10 @@ body {
 
 .hero-latest {
   margin-bottom: var(--space-12);
+  max-width: 60ch;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
 }
 
 .hero-latest__link {
