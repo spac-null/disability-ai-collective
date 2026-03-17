@@ -20,11 +20,15 @@ description: "Editorial arts platform publishing disability-led perspectives on 
         grounded in disability expertise, crip culture, and the politics of access.
       </p>
 
-      <div class="visual-mosaic" aria-label="Featured visual snapshots">
-        <a href="{{ '/2026/03/16/the-map-that-stops-at-the-door/' | relative_url }}"><img src="{{ '/assets/the-map-that-stops-at-the-door_setting_1.jpg' | relative_url }}" alt="The Map That Stops at the Door" width="800" height="450" loading="eager" decoding="async"></a>
-        <a href="{{ '/2026/03/10/the-navigation-tax/' | relative_url }}"><img src="{{ '/assets/the-navigation-tax_setting_1.jpg' | relative_url }}" alt="The Navigation Tax" width="800" height="450" loading="eager" decoding="async"></a>
-        <a href="{{ '/2026/03/11/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup/' | relative_url }}"><img src="{{ '/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_setting_1.jpg' | relative_url }}" alt="The Prosthetics Paradox" width="800" height="450" loading="eager" decoding="async"></a>
+      {% assign latest = site.posts.first %}
+      {% if latest %}
+      <div class="hero-latest">
+        <a href="{{ latest.url | relative_url }}" class="hero-latest__link">
+          <p class="hero-latest__quote">{{ latest.excerpt | strip_html | truncatewords: 22 }}</p>
+          <span class="hero-latest__byline">{{ latest.author }} — {{ latest.title }} &rarr;</span>
+        </a>
       </div>
+      {% endif %}
       
       <div class="hero-actions">
         <a href="{{ '/research/' | relative_url }}" class="btn btn--primary">
@@ -53,7 +57,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
     {% if site.posts.size > 0 %}
       <div class="recent-articles-wrap">
         <div class="grid grid--3 articles-grid">
-          {% for post in site.posts limit:3 %}
+          {% for post in site.posts offset:1 limit:3 %}
           <article class="card card--elevated">
             {% assign home_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% if post.author == "Siri Sage" %}
