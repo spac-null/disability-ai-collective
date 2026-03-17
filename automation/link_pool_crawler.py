@@ -61,6 +61,16 @@ SEED_SITES = [
 
     # ── Science / cognition / perception ─────────────────────────────────────
     {"domain": "psyche.co",                       "sitemap": "https://psyche.co/sitemap.xml",                         "max_urls": 200},
+
+    # ── Historical & comparative — Bregman-register bee layer ─────────────────
+    # Sources that bridge past and present, surface unexpected parallels,
+    # tell stories from history that reframe current disability debates.
+    {"domain": "daily.jstor.org",                 "sitemap": "https://daily.jstor.org/sitemap.xml",                   "max_urls": 300},
+    {"domain": "wellcomecollection.org",          "sitemap": "https://wellcomecollection.org/sitemap.xml",            "max_urls": 200},
+    {"domain": "laphamsquarterly.org",            "sitemap": "https://www.laphamsquarterly.org/sitemap.xml",          "max_urls": 200},
+    {"domain": "longreads.com",                   "sitemap": "https://longreads.com/sitemap.xml",                     "max_urls": 200},
+    {"domain": "atlasobscura.com",                "sitemap": "https://www.atlasobscura.com/sitemap.xml",              "max_urls": 300, "sleep": 2},
+    {"domain": "bldgblog.com",                    "sitemap": "https://www.bldgblog.com/sitemap.xml",                  "max_urls": 150},
 ]
 
 TOPIC_KEYWORDS = {

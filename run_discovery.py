@@ -201,6 +201,31 @@ MAINSTREAM_QUERIES = [
     "WHO mental health global policy community care",
     "international aid development disability inclusion",
     "global aging population care workforce crisis",
+
+    # Historical & comparative — Bregman register
+    # Stories that bridge past and present, reframe current debates through
+    # unexpected historical parallels. What disability culture knew before
+    # mainstream discourse caught up.
+    "shipwreck survival isolation community cooperation history",
+    "archaeological evidence ancient disability care survival burial",
+    "indigenous community care elder disabled traditional knowledge",
+    "wartime rehabilitation disability injury prosthetics history adaptation",
+    "asylum mental hospital deinstitutionalization history reform community",
+    "forgotten inventor engineer accessible design history technology",
+    "oral history disability rights movement archive testimony",
+    "natural disaster community mutual aid unexpected solidarity response",
+    "historical accident industrial design failure lesson safety",
+    "medieval historical disability care monastery community record",
+    "nineteenth century freak show exhibition disability history reclaim",
+    "deaf school history residential community sign language suppression",
+    "blind school history reading braille tactile innovation",
+    "polio iron lung survivor history disability rights movement connection",
+    "disability history movement 504 sit-in occupation protest archive",
+    "thalidomide disability rights history pharmaceutical accountability",
+    "island community isolated adaptive improvised culture anthropology",
+    "ancient Rome Greece disability evidence archaeological historical",
+    "historical eugenics disability forced sterilization reckoning",
+    "science overturned assumption rethink paradigm disability perception",
 ]
 
 def log(msg):
