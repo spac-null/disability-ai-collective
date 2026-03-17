@@ -808,17 +808,12 @@ body {
 
 .hero-latest {
   margin-bottom: var(--space-7);
-  max-width: 60ch;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: left;
+  margin-top: var(--space-5);
 }
 
 .hero-latest__link {
   display: block;
   text-decoration: none;
-  border-left: 3px solid var(--color-text-brand);
-  padding-left: var(--space-6);
   transition: opacity var(--transition-base) var(--easing-standard);
 }
 
