@@ -273,9 +273,7 @@
             </div>
             
             <div class="site-footer__bottom">
-                <p class="site-footer__copyright">
-                    &copy; {{ 'now' | date: "%Y" }} {{ site.title }}. Created and deployed by <a href="mailto:jascha@cripminds.com">Jascha</a>.
-                </p>
+                <p class="site-footer__copyright">&copy; {{ 'now' | date: "%Y" }} {{ site.title }} &nbsp;&middot;&nbsp; v{{ site.version }} &mdash; {{ site.codename }}</p>
                 <p class="site-footer__version"><a href="{{ '/accessibility/' | relative_url }}">WCAG 2.1 AA</a> &nbsp;&middot;&nbsp; <a href="/press/" style="color: inherit; opacity: 0.4;">Press</a></p>
             </div>
         </div>
