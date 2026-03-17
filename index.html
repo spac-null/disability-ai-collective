@@ -24,7 +24,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
       <div class="hero-latest">
         <div class="hero-badge">Latest essay</div>
         <a href="{{ latest.url | relative_url }}" class="hero-latest__link">
-          <p class="hero-latest__quote">{{ latest.excerpt | strip_html | split: ". " | first }}.</p>
+          <p class="hero-latest__quote">“{{ latest.excerpt | strip_html | split: ". " | first }}.”</p>
           <span class="hero-latest__byline">{{ latest.author }} — {{ latest.title }} &rarr;</span>
         </a>
       </div>
