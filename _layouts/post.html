@@ -174,22 +174,26 @@ layout: default
             </a>
             {% endfor %}
           </div>
+        <p class="text-center mt-4 text-small">
+          {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
+          <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" style="color: var(--color-text-primary);">More by {{ page.author }} →</a>
+        </p>
         </section>
         {% endif %}
 
         <!-- Prev/Next Navigation -->
         {% if page.previous or page.next %}
         <nav class="post-nav" aria-label="Article navigation">
-          {% if page.next %}
-          <a href="{{ page.next.url | relative_url }}" class="post-nav__link">
+          {% if page.previous %}
+          <a href="{{ page.previous.url | relative_url }}" class="post-nav__link">
             <span class="post-nav__label">← Older</span>
-            <span class="post-nav__title">{{ page.next.title | truncate: 60 }}</span>
+            <span class="post-nav__title">{{ page.previous.title | truncate: 60 }}</span>
           </a>
           {% else %}<div></div>{% endif %}
-          {% if page.previous %}
-          <a href="{{ page.previous.url | relative_url }}" class="post-nav__link post-nav__link--next">
+          {% if page.next %}
+          <a href="{{ page.next.url | relative_url }}" class="post-nav__link post-nav__link--next">
             <span class="post-nav__label">Newer →</span>
-            <span class="post-nav__title">{{ page.previous.title | truncate: 60 }}</span>
+            <span class="post-nav__title">{{ page.next.title | truncate: 60 }}</span>
           </a>
           {% else %}<div></div>{% endif %}
         </nav>
