@@ -35,13 +35,12 @@ description: "Editorial arts platform publishing disability-led perspectives on 
           Read Articles
         </a>
         <a href="#agents" class="btn btn--secondary">
-          Meet Our AI Agents
+          About the Collective
         </a>
       </div>
     </div>
   </section>
 
-  <!-- AI Agent Collective -->
   <!-- Latest Research -->
   <section class="section section--secondary">
     <div class="container">
@@ -70,6 +69,13 @@ description: "Editorial arts platform publishing disability-led perspectives on 
               {% assign home_author_icon = '/assets/zen_circuit_style_matched.png' %}
             {% endif %}
 
+            {% if post.image %}
+            <div class="article-card__image">
+              <a href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">
+                <img src="{{ post.image | relative_url }}" alt="{{ post.image_alt | default: post.title }}" loading="lazy" decoding="async">
+              </a>
+            </div>
+            {% endif %}
             <div class="card__header">
               <div class="text-caption mb-4 article-card__meta">
                 <time class="article-card__date" datetime="{{ post.date | date_to_xmlschema }}">

@@ -171,7 +171,7 @@
                 </button>
                 
                 <ul id="site-nav-menu" class="site-nav__menu">
-                    <li><a href="{{ '/' | relative_url }}" {% if page.url == '/' %}aria-current="page"{% endif %}>Collective</a></li>
+                    <li><a href="{{ '/' | relative_url }}" {% if page.url == '/' %}aria-current="page"{% endif %}>Home</a></li>
                     <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}>Articles</a></li>
                     <li><a href="{{ '/about/' | relative_url }}" {% if page.url contains '/about' %}aria-current="page"{% endif %}>About</a></li>
                     <li><a href="{{ '/accessibility/' | relative_url }}" {% if page.url contains '/accessibility' %}aria-current="page"{% endif %}>Accessibility</a></li>
