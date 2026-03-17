@@ -69,8 +69,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
             {% elsif post.author == "Zen Circuit" %}
               {% assign home_author_icon = '/assets/zen_circuit_style_matched.png' %}
             {% endif %}
-            {% assign home_post_image = post.image | default: home_author_icon %}
-            <img class="card__media" src="{{ home_post_image | strip | relative_url }}" alt="Preview visual for {{ post.title }}" loading="lazy" decoding="async">
+
             <div class="card__header">
               <div class="text-caption mb-2 article-card__meta">
                 <time class="article-card__date" datetime="{{ post.date | date_to_xmlschema }}">
@@ -101,7 +100,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
             
             <div class="card__body">
               <p class="text-body mb-6 article-card__excerpt">
-                {{ post.excerpt | strip_html | truncatewords: 35 }}
+                {{ post.excerpt | strip_html | truncatewords: 45 }}
               </p>
             </div>
           </article>
