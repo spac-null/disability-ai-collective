@@ -1679,7 +1679,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             return ""
 
 
-    def _store_social_uri(self, slug, bsky_uri):
+    def _store_social_uri(self, slug, bsky_uri, agent=None):
         """Persist Bluesky post URI so retract_article() can delete it later."""
         import json as _json
         social_dir = self.repo_root / "_social"
@@ -1693,6 +1693,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 pass
         if bsky_uri:
             data["bsky_uri"] = bsky_uri
+        if agent:
+            data["agent"] = agent
         fpath.write_text(_json.dumps(data, indent=2))
 
     def retract_article(self, slug):
