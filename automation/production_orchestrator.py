@@ -1568,12 +1568,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
     def _bsky_hook(self, title, body, max_chars=160):
         """Generate a complete punchy hook for Bluesky, fits within max_chars."""
         import os
+        budget = max_chars - 15  # safety buffer
         try:
             raw = self._call_openai_compat_api(
                 url="http://172.19.0.1:8317/v1",
                 api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
                 system_prompt=(
-                    f"Write ONE complete sentence (strictly under {max_chars} characters) "
+                    f"Write ONE complete sentence (strictly under {budget} characters, hard limit) "
                     "as a Bluesky hook for this disability arts essay. "
                     "Direct, opinionated — make someone stop scrolling. "
                     "Must end with a period. No ellipsis. No open endings. No hashtags. "
@@ -1586,7 +1587,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             )
             if raw and len(raw) > max_chars:
                 cut = raw[:max_chars].rfind(".")
-                raw = raw[:cut + 1] if cut > max_chars // 2 else raw[:max_chars].rstrip()
+                if cut > max_chars // 2:
+                    raw = raw[:cut + 1]
+                else:
+                    word_cut = raw[:max_chars].rfind( )
+                    raw = raw[:word_cut].rstrip() if word_cut > 0 else raw[:max_chars]
             return raw or body[:max_chars]
         except Exception:
             return body[:max_chars]
