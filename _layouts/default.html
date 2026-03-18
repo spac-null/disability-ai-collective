@@ -317,5 +317,28 @@
     })();
     </script>
 <script data-goatcounter="https://stats.cripminds.com/count" async src="//stats.cripminds.com/count.js"></script>
+<script>
+(function() {
+  // Scroll depth tracking for GoatCounter — article pages only
+  if (!document.querySelector('.post-shell')) return;
+  var marks = { 25: false, 50: false, 75: false, 100: false };
+  function pct() {
+    var el = document.documentElement;
+    return Math.round((el.scrollTop || document.body.scrollTop) / (el.scrollHeight - el.clientHeight) * 100);
+  }
+  function send(depth) {
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: 'scroll-' + depth + ':' + location.pathname, title: 'Scroll ' + depth + '%', event: true });
+    }
+  }
+  window.addEventListener('scroll', function() {
+    var p = pct();
+    [25, 50, 75, 100].forEach(function(m) {
+      if (!marks[m] && p >= m) { marks[m] = true; send(m); }
+    });
+  }, { passive: true });
+})();
+</script>
+
 </body>
 </html>
