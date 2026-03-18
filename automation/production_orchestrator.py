@@ -1975,11 +1975,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                         + f"\r\n--{boundary}--\r\n".encode()
                     ])
                 )
-                body_params_for_sig = {
-                    "type": "photo", "caption": f'<p>{hook}</p><p><a href="{url}">{title}</a></p>',
-                    "link": url, "tags": tags,
-                }
-                auth = _oauth_header("POST", api_url, {}, body_params_for_sig)
+                # Multipart body params must NOT be included in OAuth signature (OAuth 1.0a spec)
+                auth = _oauth_header("POST", api_url, {}, {})
                 req = ureq.Request(
                     api_url, data=body_bytes,
                     headers={"Authorization": auth,
