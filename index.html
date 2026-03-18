@@ -6,7 +6,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
 
 <main id="main-content">
   <!-- Hero Section -->
-  <section class="hero section--primary">
+  <section id="hero" class="hero section--primary">
     <div class="container">
       <div class="hero-badge">Disability-Led AI Editorial</div>
       
@@ -40,7 +40,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
   </section>
 
   <!-- Latest Research -->
-  <section class="section section--secondary">
+  <section id="articles" class="section section--secondary">
     <div class="container">
       <div class="text-center mb-16">
         <h2 class="text-h2 mb-4">
@@ -209,4 +209,43 @@ description: "Editorial arts platform publishing disability-led perspectives on 
   </section>
 
 </main>
+
+<script>
+(function() {
+  var sections = ['hero', 'articles', 'agents'];
+  var seen = new Set();
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting && !seen.has(e.target.id)) {
+        seen.add(e.target.id);
+        if (window.goatcounter && window.goatcounter.count) {
+          window.goatcounter.count({ path: 'home-section-' + e.target.id, title: 'Home: reached ' + e.target.id });
+        }
+      }
+    });
+  }, { threshold: 0.2 });
+  sections.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) observer.observe(el);
+  });
+
+  document.addEventListener('click', function(e) {
+    var a = e.target.closest('a');
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    var label = null;
+    if (a.classList.contains('hero-latest')) label = 'cta-latest-article';
+    else if (href.includes('/research/') && a.classList.contains('btn--primary')) label = 'cta-read-articles';
+    else if (href.includes('/about/')) label = 'cta-about';
+    else if (href.includes('/research/') && a.classList.contains('btn--secondary')) label = 'cta-browse-all';
+    else if (href.includes('/collective/pixel-nova/')) label = 'cta-persona-pixel-nova';
+    else if (href.includes('/collective/siri-sage/')) label = 'cta-persona-siri-sage';
+    else if (href.includes('/collective/maya-flux/')) label = 'cta-persona-maya-flux';
+    else if (href.includes('/collective/zen-circuit/')) label = 'cta-persona-zen-circuit';
+    if (label && window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: label, title: 'Click: ' + label });
+    }
+  });
+})();
+</script>
 <!-- GitHub Pages rebuild trigger: Mon Mar  9 10:51:01 UTC 2026 -->
