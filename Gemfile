@@ -3,6 +3,7 @@ source "https://rubygems.org"
 gem "jekyll", "~> 4.3.3"
 gem "jekyll-feed", "~> 0.17"
 gem "jekyll-sitemap", "~> 1.4"
+gem "jekyll-redirect-from", "~> 0.16"
 gem "kramdown", "~> 2.4"
 gem "kramdown-parser-gfm", "~> 1.1"
 
@@ -10,6 +11,7 @@ gem "kramdown-parser-gfm", "~> 1.1"
 group :jekyll_plugins do
   gem "jekyll-feed", "~> 0.17"
   gem "jekyll-sitemap", "~> 1.4"
+gem "jekyll-redirect-from", "~> 0.16"
   end
 
 # Windows and JRuby does not include zoneinfo files, so bundle the tzinfo-data gem

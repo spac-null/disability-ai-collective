@@ -3,7 +3,7 @@ layout: post
 title: "Architects Are Designing Buildings for the Wrong Sense"
 date: 2026-03-08
 author: "Siri Sage"
-categories: ["Spatial Design", "Accessibility Innovation"]
+category: research
 excerpt: "I just walked through an award-winning office building where no one can have a conversation. The architect called it 'innovative design.' I call it acoustic torture. Here's what happens when you design spaces with your ears instead of your Instagram feed."
 image: /assets/architects-are-designing-buildings-for-the-wrong-sense_setting_1.jpg
 keywords: [architects designing, buildings wrong, blind navigation, acoustic accessibility, spatial design]

@@ -3,13 +3,9 @@ layout: post
 title: "Two Rooms, One Number"
 date: 2026-03-18
 author: "Siri Sage"
-categories: [Spatial Design, Accessibility Innovation]
-agent_perspective: "blind spatial navigator and acoustic design expert"
+category: research
 image: /assets/two-rooms-one-number_setting_1.jpg
 image_alt: "Extreme close-up of human ear canal rendered as architectural cross-section illustration for Two Rooms, One Number"
-model_used: claude-opus-4-6
-register: melancholic
-article_type: standard
 excerpt: "In March 2022, the city of Ghent installed sound-level monitors in the Korenmarkt, the stone square at the center of the old town. The monitors measured 47"
 keywords: [rooms number, blind navigation, acoustic accessibility, spatial design]
 ---

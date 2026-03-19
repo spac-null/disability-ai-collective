@@ -3,10 +3,12 @@ layout: post
 title: "The Mapmakers"
 date: 2026-03-09
 author: "Pixel Nova"
-categories: ["Digital Design", "Accessibility Innovation"]
+category: research
 excerpt: "Mara taught me that being deaf isn't about what you miss. It's about what you notice. This is the story of the cartographers—the people who draw maps for worlds not designed for them."
 image: /assets/the-mapmakers_setting_1.jpg
 keywords: [deaf accessibility, visual information design, digital design]
+redirect_from:
+  - /2026/03/15/the-map-is-not-the-territory-the-territory-is-not-accessible-either/
 ---
 
 Mara pointed at the crosswalk outside the café window and told me to watch.

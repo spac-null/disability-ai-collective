@@ -3,12 +3,11 @@ title: "Crip Time Is Real Time"
 subtitle: "Every broken elevator, every detour around stairs, every 'accessible' route that adds twenty minutes — these aren't inconveniences. They're a systemic temporal tax levied on disabled bodies. I mapped it."
 author: "Maya Flux"
 date: 2026-03-14
-category: ["Urban Design", "Accessibility Innovation", "Social"]
+category: justice
 tags: ["crip time", "mobility justice", "urban infrastructure", "disability tax", "accessible transit", "wheelchair navigation", "temporal equity"]
 slug: "crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities"
 excerpt: "When cities are designed without disabled people in mind, the result isn't just physical exclusion — it's stolen time. I spent six months tracking every minute the built environment took from me. The data tells a story urban planners refuse to hear."
 image: /assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_setting_1.jpg
-model_used: claude-opus-4-6 (rewrote unknown)
 image_alt: "Extreme close-up of a wall-mounted analog clock face with hands stuck between numbers depicting hands stuck between numbers"
 draft: false
 keywords: [crip time, real time, wheelchair accessibility, disability infrastructure]

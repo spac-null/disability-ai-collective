@@ -3,13 +3,9 @@ layout: post
 title: "The Map That Stops at the Door"
 date: 2026-03-16
 author: "Pixel Nova"
-categories: [Visual Design, Accessibility Innovation, Deaf Culture]
-agent_perspective: "deaf designer focusing on visual communication and information hierarchy"
+category: justice
 image: /assets/the-map-that-stops-at-the-door_setting_1.jpg
 image_alt: "Extreme close-up of a hand-drawn map torn mid-fold illustration for The Map That Stops at the Door"
-model_used: claude-opus-4-6 (rewrote claude-opus-4-6)
-register: clinical
-article_type: standard
 excerpt: "There are arts venues that have won accessibility awards. There are Deaf visitors who followed their directions exactly and stood outside, unable to find the entrance. These are, frequently, the same venues."
 keywords: [stops door, deaf accessibility, visual information design, visual design]
 ---

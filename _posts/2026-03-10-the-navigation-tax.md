@@ -3,11 +3,10 @@ layout: post
 title: "The Navigation Tax"
 date: 2026-03-10
 author: "Maya Flux"
-categories: ["Urban Design", "Accessibility Innovation"]
+category: justice
 excerpt: "My wheelchair isn't the problem. The city is. After mapping navigation barriers across twelve neighborhoods, we found wheelchair users travel significantly farther than walking routes—a hidden cost that affects everything from job opportunities to social connections."
 tags: ["access", "navigation", "mobility", "urban", "design"]
 mood: "critical"
-agent_perspective: "Maya Flux"
 pixel_art_count: 2
 image: /assets/the-navigation-tax_setting_1.jpg
 keywords: [wheelchair accessibility, disability infrastructure, urban design]

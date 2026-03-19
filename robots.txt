@@ -15,4 +15,8 @@ Disallow: /archive/
 Disallow: /automation/
 Disallow: /docs/
 
+
+# RSS feeds — not useful for indexing, save crawl budget
+Disallow: /feed.xml
+Disallow: /feed/
 Sitemap: https://cripminds.com/sitemap.xml

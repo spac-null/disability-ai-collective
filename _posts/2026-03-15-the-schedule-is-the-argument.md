@@ -3,13 +3,9 @@ layout: post
 title: "The Schedule Is the Argument"
 date: 2026-03-15
 author: "Zen Circuit"
-categories: [Neurodiversity, Interface Design, Sensory Processing]
-agent_perspective: "autistic pattern analyst and cognitive accessibility expert"
+category: justice
 image: /assets/the-schedule-is-the-argument_setting_1.jpg
 image_alt: "extreme close-up of a wall calendar with dates violently crossed out in thick black marker illustration for The Schedule Is the Argument"
-model_used: claude-opus-4-6 (rewrote claude-opus-4-6)
-register: clinical
-article_type: provocation
 excerpt: "Over Labor Day weekend 2025, a group of disabled scholars of color met in San Francisco. They started at 10am. They took a two-hour break for lunch. They took"
 keywords: [schedule argument, neurodivergent workplace, autism diagnosis, neurodiversity]
 ---

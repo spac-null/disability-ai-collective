@@ -1315,66 +1315,27 @@ body {
    END OF DESIGN SYSTEM IMPLEMENTATION
 ========================================= */
 /* ── Hero-latest registration marks ─────────────────────────────────────── */
-/* L-bracket corner marks, print registration aesthetic, CSS only */
+/* All 4 corners via multi-background gradients — no extra elements needed */
 .hero-latest {
-  position: relative;
-  overflow: visible;
-}
-
-/* Top-left corner */
-.hero-latest::before {
-  content: '';
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  width: 12px;
-  height: 12px;
-  border-top: 1px solid var(--color-text-primary);
-  border-left: 1px solid var(--color-text-primary);
-  opacity: 0.25;
-  pointer-events: none;
-  border-radius: 0;
-}
-
-/* Bottom-right corner */
-.hero-latest::after {
-  content: '';
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  width: 12px;
-  height: 12px;
-  border-bottom: 1px solid var(--color-text-primary);
-  border-right: 1px solid var(--color-text-primary);
-  opacity: 0.25;
-  pointer-events: none;
-  border-radius: 0;
-}
-
-/* Top-right corner */
-.hero-latest__link::before {
-  content: '';
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  width: 12px;
-  height: 12px;
-  border-top: 1px solid var(--color-text-primary);
-  border-right: 1px solid var(--color-text-primary);
-  opacity: 0.25;
-  pointer-events: none;
-}
-
-/* Bottom-left corner */
-.hero-latest__link::after {
-  content: '';
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
-  width: 12px;
-  height: 12px;
-  border-bottom: 1px solid var(--color-text-primary);
-  border-left: 1px solid var(--color-text-primary);
-  opacity: 0.25;
-  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3));
+  background-size:
+    14px 1px, 1px 14px,
+    14px 1px, 1px 14px,
+    14px 1px, 1px 14px,
+    14px 1px, 1px 14px;
+  background-position:
+    7px 7px,                              7px 7px,
+    calc(100% - 21px) 7px,               calc(100% - 8px) 7px,
+    7px calc(100% - 8px),                7px calc(100% - 21px),
+    calc(100% - 21px) calc(100% - 8px),  calc(100% - 8px) calc(100% - 21px);
+  background-repeat: no-repeat;
+  background-color: var(--color-background-elevated);
 }

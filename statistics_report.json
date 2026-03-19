@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-03-16T16:02:02.500192",
-  "total_findings": 302,
-  "unique_domains": 10,
-  "used_findings": 3,
-  "unused_findings": 299,
+  "timestamp": "2026-03-18T17:59:54.822661",
+  "total_findings": 424,
+  "unique_domains": 12,
+  "used_findings": 2,
+  "unused_findings": 422,
   "first_discovery": "2026-03-14T12:24:48.484224",
-  "last_discovery": "2026-03-16T08:00:34.969503",
+  "last_discovery": "2026-03-18T08:00:57.763616",
   "top_categories": [
     {
       "disability_concepts": "[\"hidden_angle\"]",
-      "count": 288
+      "count": 408
     },
     {
-      "disability_concepts": "[\"access\", \"artist\", \"gallery\", \"form\", \"performance\", \"exhibition\"]",
+      "disability_concepts": "[\"performance\", \"gallery\", \"artist\", \"exhibition\", \"form\", \"access\"]",
       "count": 3
     },
     {
@@ -32,47 +32,47 @@
       "count": 1
     },
     {
-      "disability_concepts": "[\"movement\", \"marginal\", \"performance\", \"dance\", \"voice\", \"sound\", \"tradition\", \"color\", \"theater\", \"focus\", \"form\", \"marginalized\", \"vision\"]",
+      "disability_concepts": "[\"visibility\", \"community\", \"identity\", \"accessible\", \"color\", \"form\", \"vision\", \"access\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"movement\", \"access\", \"marginal\", \"community\", \"beauty\", \"dance\", \"marginalized\", \"vision\"]",
+      "disability_concepts": "[\"sound\", \"community\", \"color\", \"form\", \"visibility\", \"access\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"movement\", \"access\", \"film\", \"dance\"]",
+      "disability_concepts": "[\"performance\", \"sound\", \"focus\", \"theater\", \"marginal\", \"marginalized\", \"movement\", \"color\", \"form\", \"vision\", \"dance\", \"tradition\", \"voice\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"installation\", \"museum\", \"film\", \"community\", \"artist\", \"gallery\", \"sound\", \"identity\", \"painting\", \"aesthetic\", \"form\", \"representation\", \"sculpture\", \"exhibition\"]",
+      "disability_concepts": "[\"movement\", \"dance\", \"film\", \"access\"]",
       "count": 1
     }
   ],
   "recent_findings": [
     {
-      "title": "Beverly Buchanan\u2019s Architecture of Care",
-      "domain": "hyperallergic.com",
-      "discovered_date": "2026-03-16T08:00:34.969503"
+      "title": "Malvern optometrist painted by David Hockney for new exhibition",
+      "domain": "bbc.com",
+      "discovered_date": "2026-03-18T08:00:57.763616"
+    },
+    {
+      "title": "Lost Page From Archimedes Palimpsest Reappears In French Museum",
+      "domain": "artforum.com",
+      "discovered_date": "2026-03-18T08:00:38.492609"
     },
     {
       "title": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-16T08:00:30.967648"
+      "discovered_date": "2026-03-18T08:00:27.235730"
     },
     {
       "title": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-16T08:00:29.832110"
+      "discovered_date": "2026-03-18T08:00:26.120808"
     },
     {
       "title": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-16T08:00:28.694741"
-    },
-    {
-      "title": "Disability Justice is Climate Justice | Sins Invalid",
-      "domain": "sinsinvalid.org",
-      "discovered_date": "2026-03-16T08:00:27.493269"
+      "discovered_date": "2026-03-18T08:00:25.019344"
     }
   ]
 }

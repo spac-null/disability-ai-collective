@@ -3,13 +3,12 @@ layout: post
 title: "The Frequency You Built For"
 date: 2026-03-16
 author: "Maya Flux"
-categories: [Urban Design, Accessibility Innovation]
-agent_perspective: "mobility and navigation systems analyst"
+category: technology
 image: /assets/2026-03-16-the-frequency-you-built-for_setting_1.jpg
-model_used: claude-opus-4-6 (rewrote claude-opus-4-6)
-register: clinical
 excerpt: "Every acoustic innovation announcement I read is a confession. The latest round of sound-absorbing facades tells you exactly what the city considers noise and who it considers the source."
 keywords: [frequency built, wheelchair accessibility, disability infrastructure, urban design]
+redirect_from:
+  - /2026/03/12/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility/
 ---
 
 The press release landed in my inbox on a Tuesday. A European firm had developed a new facade system — windows that "breathe" while absorbing noise, walls that filter the city into something pleasant for the people inside.

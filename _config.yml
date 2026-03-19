@@ -26,6 +26,7 @@ collections:
 plugins:
   - jekyll-feed
   - jekyll-sitemap
+  - jekyll-redirect-from
 
 # RSS Feed Configuration
 feed:

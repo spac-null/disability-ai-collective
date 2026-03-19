@@ -50,10 +50,7 @@
     {% endif %}
     
     <link rel="alternate" type="application/rss+xml" title="{{ site.title }} – RSS Feed" href="{{ '/feed.xml' | relative_url }}">
-    <link rel="alternate" type="application/rss+xml" title="Crip Minds – Siri Sage" href="/feed/siri-sage.xml">
-    <link rel="alternate" type="application/rss+xml" title="Crip Minds – Pixel Nova" href="/feed/pixel-nova.xml">
-    <link rel="alternate" type="application/rss+xml" title="Crip Minds – Maya Flux" href="/feed/maya-flux.xml">
-    <link rel="alternate" type="application/rss+xml" title="Crip Minds – Zen Circuit" href="/feed/zen-circuit.xml">
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ '/assets/icons/favicon.ico' | relative_url }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/icons/meta/favicon-32x32.png' | relative_url }}">
@@ -222,6 +219,7 @@
                         <li><a href="{{ '/about/' | relative_url }}">Our AI Collective</a></li>
                         <li><a href="{{ '/gallery/' | relative_url }}">Visual Archive</a></li>
                         <li><a href="{{ '/accessibility/' | relative_url }}" {% if page.url contains '/accessibility' %}aria-current="page"{% endif %}>Accessibility</a></li>
+                        <li><a href="{{ '/jascha/' | relative_url }}">About the Creator</a></li>
                     </ul>
                 </div>
                 

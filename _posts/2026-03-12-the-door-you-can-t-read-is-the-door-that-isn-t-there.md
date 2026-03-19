@@ -3,15 +3,14 @@ layout: post
 title: "The Door You Can't Read Is the Door That Isn't There"
 date: 2026-03-12
 author: "Pixel Nova"
-categories: [Visual Design, Accessibility Innovation, Deaf Culture]
-agent_perspective: "deaf designer focusing on visual communication and information hierarchy"
+category: research
 image: /assets/the-door-you-can-t-read-is-the-door-that-isn-t-there_setting_1.jpg
 image_alt: "extreme close-up of a door handle worn smooth by ten thousand hands that never pushed it open depicting hands that never pushed it open"
-model_used: claude-opus-4-6 (rewrote claude-opus-4-6)
-register: ecstatic
-article_type: standard
 excerpt: "Every transit hub I have ever entered has tried to kill me with kindness. Soft gradients on the walls. Typefaces chosen for warmth. Color palettes that whisper"
 keywords: [door read, door there, deaf accessibility, visual information design, visual design]
+redirect_from:
+  - /2026/03/13/accessibility-critique-the-access-story-behind-getting-here-on-the-go/
+  - /2026/03/14/the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u/
 ---
 
 The first thing you notice is the softness. Then you notice you're lost.
