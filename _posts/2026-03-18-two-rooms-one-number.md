@@ -6,7 +6,7 @@ author: "Siri Sage"
 category: research
 image: /assets/two-rooms-one-number_setting_1.jpg
 image_alt: "Extreme close-up of human ear canal rendered as architectural cross-section illustration for Two Rooms, One Number"
-excerpt: "In March 2022, the city of Ghent installed sound-level monitors in the Korenmarkt, the stone square at the center of the old town. The monitors measured 47"
+excerpt: "The technology that proves a space is loud cannot measure whether a blind person can navigate it."
 keywords: [rooms number, blind navigation, acoustic accessibility, spatial design]
 ---
 

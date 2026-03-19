@@ -1413,14 +1413,18 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 url="http://172.19.0.1:8317/v1",
                 api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
                 system_prompt=(
-                    "You write one-sentence card excerpts for Crip Minds articles. "
-                    "Style: thesis payoff, not setup description. Sharp, direct, no hedging. "
-                    "Sounds like something you would post on social media to hook readers in. "
-                    "Max 160 characters. No quotes around the output. No trailing period needed."
+                    "You write article card excerpts for Crip Minds, a disability culture publication. "
+                    "The card sits on the /research page beside other articles. The reader is already on the site — "
+                    "your job is to make them pick THIS article over the others. "
+                    "Write ONE sentence that holds a tension: two things that should not both be true, but are. "
+                    "Not a scene. Not a description. Not the first paragraph reworded. "
+                    "The structural contradiction the whole article lives inside. "
+                    "Model: 'X, but Y never happens' or 'They did X. Nobody checked if Y changed.' "
+                    "Max 160 characters. No quotes around output. Complete sentence."
                 ),
                 user_prompt=(
-                    f"Title: {title}\nAuthor: {author}\n\nArticle opening:\n{body_preview}\n\n"
-                    "Write one punchy card excerpt that delivers the article's core payoff."
+                    f"Title: {title}\nAuthor: {author}\n\nArticle body:\n{body_preview}\n\n"
+                    "Write one card excerpt: the structural tension this article lives inside. Two things that should not both be true, but are."
                 ),
                 model="claude-haiku-4-5-20251001",
                 max_tokens=80,
@@ -1593,7 +1597,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         if not template:
             return self._bsky_hook(title, body, max_chars)
         try:
-            prompt = template.format(title=title, excerpt=body[:500])
+            prompt = template.format(title=title, excerpt=body[:1500])
             raw = self._call_openai_compat_api(
                 url="http://172.19.0.1:8317/v1",
                 api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
@@ -1623,10 +1627,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
                 system_prompt=(
                     f"Write ONE complete sentence (strictly under {budget} characters, hard limit) "
-                    "as a Bluesky hook for this disability arts essay. "
-                    "Direct, opinionated — make someone stop scrolling. "
-                    "Must end with a period. No ellipsis. No open endings. No hashtags. "
-                    "Do NOT start with the article title."
+                    "as a Bluesky post for a disability culture article. "
+                    "Use the most specific, concrete detail in the piece — a number, a date, a named place, a quoted phrase. "
+                    "Show the argument through evidence, not by stating it. "
+                    "The sentence should be incomplete in meaning — the reader fills in the rest by clicking. "
+                    "Must end with a period. No hashtags. No ellipsis. Do NOT start with the article title."
                 ),
                 user_prompt=f"Title: {title}\n\nOpening:\n{body[:600]}",
                 model="claude-sonnet-4-6",

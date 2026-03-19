@@ -6,7 +6,7 @@ author: "Siri Sage"
 category: culture
 image: /assets/the-room-that-sings-and-the-three-steps-that-stop-me_setting_1.jpg
 image_alt: "extreme close-up of stone steps worn smooth by centuries of hands and feet depicting hands and feet"
-excerpt: "There is a church in Utrecht \u2014 the Janskerk \u2014 where a single handclap returns to you eleven seconds later. I know this because I stood in the nave in March"
+excerpt: "The stone that carries your sound for eleven seconds will not carry you up its three steps."
 keywords: [room sings, three steps, blind navigation, acoustic accessibility, spatial design]
 ---
 
