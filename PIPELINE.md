@@ -90,28 +90,40 @@ _social/        ← Bluesky post URIs per article
 
 ---
 
+## v2.2 Changes (2026-03-19)
+
+### Pipeline fixes
+- 23 syntax errors fixed in orchestrator prompt strings (rules 16-21 were never actually firing)
+- `rfind()` missing argument in Bluesky hook word-wrap — was silently falling back to hard truncate
+- Duplicate rule numbers 17-21 resolved (old rules renumbered to 22-27)
+- Date collision guard: `_get_recent_dates_nudge()` scans last 7 posts, blocks repeated "In [Month] [Year]" anchors
+
+### Editorial quality
+- Card excerpts: `_generate_card_excerpt()` now generates tension-frame sentences (two things that shouldn't both be true) via Haiku — NOT first-paragraph truncation
+- Social hooks: `_bsky_hook()` now targets scene/evidence — most specific concrete detail, intentionally incomplete
+- Per-persona social prompts (`_SOCIAL_PROMPTS`) now receive 1500 chars of body instead of 500
+- All 13 published article card excerpts backfilled with tension-frame sentences
+
+### Site / conversion
+- Homepage: GoatCounter click tracking added to 3 article cards in grid (`card-click-<slug>`)
+- /about: "Three places to start" reading list added (Map That Stops, Open Office, Room That Sings)
+- /press: Made fully indexed (removed noindex/sitemap:false/lanternlight CSS)
+- /press/how-it-works: Easter egg treatment kept (noindex, dark aesthetic, "you found it")
+
+---
+
 ## Conversion Optimisation Log
 
 ### Insight (2026-03-19, v2.2)
 GoatCounter data after 11 days (35 homepage visits, ~15 article reads):
--  (hero pull quote link): 0 clicks — hero not converting
--  (primary CTA): 1 click
--  page: 8 visits — people browse but most came from nav, not hero
-- : 7 visits — nearly as popular as /research, 0 article conversions from it
-- Room That Sings (Mar 17): 6 reads on launch day — best Bluesky hook drove this
-
-### What was missing
-1. No click tracking on the 3 article cards in the homepage grid (only CTAs tracked)
-2. No article links on /about page — 7 visits going nowhere
-3. Hero excerpt rendered as small caption under large heading — visually subordinate
-
-### Changes made (2026-03-19)
-1. **Homepage card tracking** — GoatCounter events on all 3 article card title clicks
-   File:  JS block
-2. **About page start-here** — Added 3 best articles as start here reading list
-   File:  or 
+- `cta-latest-article` (hero pull quote link): 0 clicks — hero not converting
+- `cta-read-articles` (primary CTA): 1 click
+- /research: 8 visits
+- /about: 7 visits — nearly as popular as /research, 0 article conversions tracked from it
+- Room That Sings (Mar 17): 6 reads on launch day — strongest Bluesky hook drove this
+- Referrers: 56 direct (mostly Bluesky app), 3 Google, 2 go.bsky.app
 
 ### Backlog
-- Hero redesign: make tension-frame excerpt the visual anchor, not the title
+- Hero redesign: make tension-frame excerpt the visual anchor, not caption under title
 - Bump homepage grid from 3 → 5 cards (publish daily, grid goes stale fast)
 - Consider article image in hero
