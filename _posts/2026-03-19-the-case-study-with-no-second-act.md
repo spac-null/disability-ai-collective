@@ -3,7 +3,7 @@ layout: post
 title: "The Case Study With No Second Act"
 date: 2026-03-19
 author: "Maya Flux"
-category: urban design
+category: justice
 image: /assets/the-case-study-with-no-second-act_setting_1.jpg
 image_alt: "Extreme close-up of a rubber stamp mid-strike against deep violet paper illustration for The Case Study With No Second Act"
 excerpt: "In March 2022, a London borough council published a case study about redesigning its housing benefits dashboard. Fourteen pages. Process maps, user journey"
@@ -60,6 +60,3 @@ I still check the Melbourne tram stops when I visit. Four out of twelve, last I 
 
 The coffee kiosk in Zone 3 is still open.
 
----
-
-*This article was inspired by [Dashboard redesign outcomes: the case study with no ending](https://cripminds.com/t4/pixel-nova-outcomes) from visual.design.archive.*

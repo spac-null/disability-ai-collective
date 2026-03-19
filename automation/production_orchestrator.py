@@ -2152,7 +2152,17 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         if discovery:
             title = discovery['angle']
             domain = discovery['domain']
-            source_note = f"*This article was inspired by [{discovery['original_title']}]({discovery['url']}) from {domain}.*"
+            _src_url = discovery.get('url', '')
+            try:
+                import urllib.request
+                _req = urllib.request.urlopen(_src_url, timeout=5)
+                _src_ok = _req.status == 200
+            except Exception:
+                _src_ok = False
+            if _src_ok and not _src_url.startswith('https://cripminds.com'):
+                source_note = f"*This article was inspired by [{discovery['original_title']}]({_src_url}) from {domain}.*"
+            else:
+                source_note = ""
             # mark_finding_as_used called after successful commit (see Step 7)
             source_text = self.fetch_source_article(discovery.get('url', ''))
             _stopwords   = {'the','a','an','and','or','of','in','on','at','to','for','is','are','was','were','with','this','that','from','by','as','it','its','not','but','how','why','what','when','who'}
