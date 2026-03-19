@@ -242,6 +242,10 @@ description: "Editorial arts platform publishing disability-led perspectives on 
     else if (href.includes('/collective/siri-sage/')) label = 'cta-persona-siri-sage';
     else if (href.includes('/collective/maya-flux/')) label = 'cta-persona-maya-flux';
     else if (href.includes('/collective/zen-circuit/')) label = 'cta-persona-zen-circuit';
+    else if (href.includes('/2026/') && e.target.closest('.card')) {
+      var parts = href.replace(/\/+$/, '').split('/');
+      label = 'card-click-' + parts[parts.length - 1].substring(0, 50);
+    }
     if (label && window.goatcounter && window.goatcounter.count) {
       window.goatcounter.count({ path: label, title: 'Click: ' + label });
     }
