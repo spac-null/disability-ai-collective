@@ -6,7 +6,7 @@ author: "Maya Flux"
 category: justice
 image: /assets/the-case-study-with-no-second-act_setting_1.jpg
 image_alt: "Extreme close-up of a rubber stamp mid-strike against deep violet paper illustration for The Case Study With No Second Act"
-excerpt: "In March 2022, a London borough council published a case study about how they redesigned the screen where tenants manage their housing payments. Fourteen pages. Process maps, user journey"
+excerpt: "Disability services love publishing transformation stories — they just never tell you if anyone's life actually changed."
 keywords: [case study, wheelchair accessibility, disability infrastructure, urban design]
 ---
 

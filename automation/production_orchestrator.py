@@ -1037,18 +1037,12 @@ class ProductionOrchestrator:
             "13. LISTS OF THREE. Four items in a list is one too many. Cut the weakest.\n"
             "14. PARAGRAPH MOMENTUM: When a paragraph builds by accumulation — specific details gathering weight toward a single point — do not interrupt with analysis mid-build. Let the details complete their arc. The argument arrives after the observation lands, not inside it.\n"
             "15. LANDING: End accumulations with a concrete image or a plain-stated paradox, not an abstract reframing. One image, one fact. No metaphor that requires reconstruction under pressure.\n"
-            "16. SYSTEM VOICE — BANNED: Never write in the syntax of the institutions you are critiquing. The test: can you point to who is doing what to whom? If not, rewrite. Passive voice erases the person causing harm. Stacked bureaucratic nouns erase the person experiencing it. Examples: 'The system handled equipment requests' → 'When a disabled tenant needed a grab rail, they submitted a form.' 'Stops were flagged as non-compliant' → 'Auditors found stops wheelchair users couldn't reach.' 'Claimants were required to navigate' → 'To file a claim, you clicked through seven screens.' If your sentence could appear in the policy document you are criticising, rewrite it with a human subject and a concrete verb.
-            "17. NOMINALIZATION — BANNED: Keep actions as verbs, not nouns. 'The redesign of the interface' → 'they redesigned the interface.' 'The implementation of the ramp' → 'the council built the ramp.' 'The assessment of access needs' → 'a caseworker asked what you needed.' When a verb becomes a noun, the person doing the action disappears. Find the hidden verb and free it.
-"
-            "18. SECTION BREAKS: Use --- sparingly. Two breaks per article is the target. Three is the ceiling. Never more. Each break asks the reader to restart without a handhold. Use a break only when the shift is a genuine scene change or time jump — not a new paragraph of thought. Transitions happen inside the prose.
-"
-            "19. VAGUE WE — BANNED: Every 'we' must have a clear referent. 'The redesign is the story we love to tell' — who is we? Design teams? Non-disabled professionals? Say it. 'We' that means everyone usually means someone specific who benefits from not being named. Name them. If you cannot say who we is, cut it and make the sentence active: 'Design teams love to tell the redesign story.'
-            "20. NAMED REFERENCES: When you name a theorist or researcher, give one sentence of context and move on immediately. Name + what they said or did + why it matters here — all in one sentence. Never leave a name floating with just a year. Never spend a paragraph explaining who someone is before using their idea. If the idea cannot survive one sentence of context, cut the reference and use the idea directly.
-"
-            "21. FRONT-LOADED SENTENCES — BANNED: Never open a sentence with a long subordinate clause that buries the subject. 'What happens after the ship date has none of those things' → 'Once the team ships, nobody checks whether it works.' 'When considering the broader implications of' → cut entirely, start with the implication. Subject first, verb second, detail after. The reader should know who is doing what before they get to why.
-"
-"
-"
+            "16. SYSTEM VOICE — BANNED: Never write in the syntax of the institutions you are critiquing. The test: can you point to who is doing what to whom? If not, rewrite. Passive voice erases the person causing harm. Stacked bureaucratic nouns erase the person experiencing it. Examples: 'The system handled equipment requests' → 'When a disabled tenant needed a grab rail, they submitted a form.' 'Stops were flagged as non-compliant' → 'Auditors found stops wheelchair users couldn't reach.' 'Claimants were required to navigate' → 'To file a claim, you clicked through seven screens.' If your sentence could appear in the policy document you are criticising, rewrite it with a human subject and a concrete verb.\n"
+            "17. NOMINALIZATION — BANNED: Keep actions as verbs, not nouns. 'The redesign of the interface' → 'they redesigned the interface.' 'The implementation of the ramp' → 'the council built the ramp.' 'The assessment of access needs' → 'a caseworker asked what you needed.' When a verb becomes a noun, the person doing the action disappears. Find the hidden verb and free it.\n"
+            "18. SECTION BREAKS: Use --- sparingly. Two breaks per article is the target. Three is the ceiling. Never more. Each break asks the reader to restart without a handhold. Use a break only when the shift is a genuine scene change or time jump — not a new paragraph of thought. Transitions happen inside the prose.\n"
+            "19. VAGUE WE — BANNED: Every 'we' must have a clear referent. 'The redesign is the story we love to tell' — who is we? Design teams? Non-disabled professionals? Say it. 'We' that means everyone usually means someone specific who benefits from not being named. Name them. If you cannot say who we is, cut it and make the sentence active: 'Design teams love to tell the redesign story.'\n"
+            "20. NAMED REFERENCES: When you name a theorist or researcher, give one sentence of context and move on immediately. Name + what they said or did + why it matters here — all in one sentence. Never leave a name floating with just a year. Never spend a paragraph explaining who someone is before using their idea. If the idea cannot survive one sentence of context, cut the reference and use the idea directly.\n"
+            "21. FRONT-LOADED SENTENCES — BANNED: Never open a sentence with a long subordinate clause that buries the subject. 'What happens after the ship date has none of those things' → 'Once the team ships, nobody checks whether it works.' 'When considering the broader implications of' → cut entirely, start with the implication. Subject first, verb second, detail after. The reader should know who is doing what before they get to why.\n"
             "17. Crip culture references (Sins Invalid, crip time, disability justice) only when they fit naturally\n"
             "18. PARAGRAPH LENGTH: Keep paragraphs short — 2 to 4 sentences as the norm. A one-sentence paragraph is a verdict; use it. If a paragraph runs past 5 sentences, find where it splits into two thoughts and break it there. Long paragraphs diffuse impact. The rule is not variety — it is compression: say the thing, then stop.\n"
             "19. DISCOVERY VOICE: Research should feel found, not reported. Use the rhythm of live discovery — 'even more interesting is that...', 'it turns out...', 'what nobody mentions is...', 'the part that stuck with me...' This is not hedging. It is the opposite: confident enough to let the reader feel the moment of realisation. Academic hedging is defensive. Discovery voice is forward-moving. It makes the reader lean in.\n"
@@ -1388,19 +1382,43 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 seen.add(k); out.append(k)
         return out[:5]
 
+    def _generate_card_excerpt(self, title, content, author):
+        """Generate a punchy one-liner for the article card — thesis payoff, not setup."""
+        import os
+        body_preview = content[:2000]
+        try:
+            return self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=(
+                    "You write one-sentence card excerpts for Crip Minds articles. "
+                    "Style: thesis payoff, not setup description. Sharp, direct, no hedging. "
+                    "Sounds like something you would post on social media to hook readers in. "
+                    "Max 160 characters. No quotes around the output. No trailing period needed."
+                ),
+                user_prompt=(
+                    f"Title: {title}\nAuthor: {author}\n\nArticle opening:\n{body_preview}\n\n"
+                    "Write one punchy card excerpt that delivers the article's core payoff."
+                ),
+                model="claude-haiku-4-5-20251001",
+                max_tokens=80,
+                timeout=30,
+                no_think=True,
+            )
+        except Exception:
+            for line in content.splitlines():
+                line = line.strip()
+                if line and not line.startswith("#") and not line.startswith("<") and len(line) > 40:
+                    clean = re.sub(r"\*\*|\*|`", "", line).strip()
+                    return clean[:160].rsplit(" ", 1)[0] if len(clean) > 160 else clean
+            return ""
+
     def create_article_file(self, metadata, content, image_filenames, image_descriptions=None):
         """Create properly formatted article file."""
         filename = metadata['filename']
         filepath = self.posts_dir / filename
 
-        # Extract first non-empty, non-image, non-header sentence for excerpt
-        excerpt = ""
-        for line in content.splitlines():
-            line = line.strip()
-            if line and not line.startswith('#') and not line.startswith('!') and not line.startswith('<') and not line.startswith('---') and not line.startswith('*') and len(line) > 40:
-                clean = re.sub(r'\*\*|\*|`', '', line).strip()
-                excerpt = clean[:160].rsplit(' ', 1)[0] if len(clean) > 160 else clean
-                break
+        excerpt = self._generate_card_excerpt(metadata['title'], content, metadata.get('author', ''))
 
         front_matter = f"""---
 layout: post
@@ -2288,30 +2306,18 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "- One thesis the whole essay serves — but never state it. The argument is demonstrated, not announced. If you write My thesis is or I argue that or This essay will show — delete it. The comparative case, the insider confession, the specific detail make the argument. The reader realizes it.\n"
             "- READER ADDRESS: When the reader's objection is predictable, voice it before they can. In their voice: You might say... or But doesn't this cost more? or Isn't that already happening? Then answer in one sentence. This is a conversation, not a lecture.\n"
             "- PLAIN VOCABULARY: Plain English only. Use not utilise. Show not demonstrate. Fix not remediate. When you must use a technical term, unpack it immediately in the same or next sentence. Never let jargon sit.\n"
-            "- SYSTEM VOICE — BANNED: Never write in the syntax of the systems you are critiquing. Test every sentence: who is doing what to whom? If you cannot point to a human subject doing a concrete thing, rewrite. Passive voice erases the person causing harm. Stacked bureaucratic nouns erase the person experiencing it. 'The intervention was implemented' → 'The council installed a ramp.' 'Access needs were assessed' → 'A caseworker asked what you needed.' 'Equipment requests were processed' → 'Someone reviewed your application for a grab rail.' If the sentence could appear in the audit report the article is criticising, it has failed.
-            "- NOMINALIZATION — BANNED: Actions stay as verbs. When a verb becomes a noun, the person doing it disappears. 'The redesign of the system' → 'they redesigned the system.' 'The implementation' → 'they built it.' 'The assessment of needs' → 'someone asked what you needed.' Scan for nouns ending in -tion, -ment, -ance, -ence, -al, -ure — these are often verbs in disguise. Free the verb. Name who does it.
-"
-            "- SECTION BREAKS: Two --- breaks per article is the target. Three is the ceiling. Never more. Each break resets the reader with no handhold. Only use a break for a genuine scene change or time jump. Transitions between ideas happen inside the prose — a short sentence, a pivot word, a contrast. Not a line break.
-"
-            "- VAGUE WE — BANNED: 'We' must always have a named referent. If 'we' means everyone, it usually means a specific group that benefits from not being named. Name them. 'We designed this system' → 'non-disabled designers built this system.' 'We don't talk about this' → 'the council never published this.' If you cannot say who we is, cut the word and make someone specific do the thing.
-            "- NAMED REFERENCES: Name + one sentence of context + move on. Never leave a name floating. Never spend a paragraph setting up who someone is before using their idea. If the reference needs more than one sentence to land, either the idea is not earning its place or the writing is carrying it wrong. The idea should do the work, not the biography.
-"
-            "- FRONT-LOADED SENTENCES — BANNED: Subject comes first. Verb comes second. Never open with a long subordinate clause that makes the reader hold the setup in memory before the sentence resolves. 'What happens after the deadline has none of those qualities' → 'Once the deadline passes, none of that applies.' 'Given the structural conditions that produce' → cut and start with the thing being produced. If the sentence does not name its subject in the first five words, rewrite it.
-            "22. JARGON — BANNED: Never use the vocabulary of the institutions you are critiquing. Banned words and their replacements: 'claimants' → 'tenants' or 'residents'; 'non-compliant' → say what the problem is ('steps wheelchair users cannot climb'); 'change of circumstances' → 'situation had changed'; 'platform upgrades' → 'rebuild the platform'; 'priority locations' → name them or say 'the worst stops'; 'intervention' → what actually happened; 'stakeholders' → who they are; 'outcomes' → what people got or did not get. If the word appears in government reports, replace it with what a person would say.
-"
-            "23. PERSONAL ANECDOTE SPECIFICITY: The TEMPORAL ANCHORS rule applies to first-person moments too. If you write 'I was in a meeting' or 'I visited a building' — say when and where. 'I sat in a procurement meeting' → 'In a procurement meeting in 2019, a director told me...' The reader needs to place you in time and space, not just follow your argument. Floating anecdotes feel like illustration. Dated, placed anecdotes feel like evidence.
-"
-            "24. NO HEDGING AGAINST NOBODY: Never write 'X is not Y, but...' unless someone in the room is genuinely arguing that X is Y. If you write 'A dashboard is not tactile paving, but the mechanism is the same' — cut the first clause. 'The mechanism is the same' does the work. Preemptive hedging signals insecurity. The juxtaposition speaks for itself. Trust it.
-"
-            "- JARGON — BANNED: Strip institutional vocabulary. 'Claimants' → 'tenants' or 'residents'. 'Non-compliant' → say what the barrier is. 'Change of circumstances' → 'situation had changed'. 'Platform upgrades' → 'rebuild the platform'. 'Stakeholders' → who they are. 'Outcomes' → what people got or did not get. 'Intervention' → what actually happened. If the word appears in a government report, a council briefing, or an accessibility audit — replace it with what a person would say to another person.
-"
-            "- PERSONAL ANECDOTE SPECIFICITY: First-person moments need dates and places, same as external sources. 'I have sat in procurement meetings where...' → 'In a 2019 procurement meeting, a director told me...' Floating anecdotes feel like illustration. Dated, placed anecdotes feel like evidence. Apply the TEMPORAL ANCHORS rule to yourself.
-"
-            "- NO HEDGING AGAINST NOBODY: Cut 'X is not Y, but the logic is the same' constructions. If you are about to write 'a dashboard is not tactile paving, but...' — delete the first clause. 'The mechanism is the same' carries the weight alone. Preemptive hedging tells the reader you doubt your own argument. The juxtaposition does the work. Trust it and cut the hedge.
-"
-"
-"
-"
+            "- SYSTEM VOICE — BANNED: Never write in the syntax of the systems you are critiquing. Test every sentence: who is doing what to whom? If you cannot point to a human subject doing a concrete thing, rewrite. Passive voice erases the person causing harm. Stacked bureaucratic nouns erase the person experiencing it. 'The intervention was implemented' → 'The council installed a ramp.' 'Access needs were assessed' → 'A caseworker asked what you needed.' 'Equipment requests were processed' → 'Someone reviewed your application for a grab rail.' If the sentence could appear in the audit report the article is criticising, it has failed.\n"
+            "- NOMINALIZATION — BANNED: Actions stay as verbs. When a verb becomes a noun, the person doing it disappears. 'The redesign of the system' → 'they redesigned the system.' 'The implementation' → 'they built it.' 'The assessment of needs' → 'someone asked what you needed.' Scan for nouns ending in -tion, -ment, -ance, -ence, -al, -ure — these are often verbs in disguise. Free the verb. Name who does it.\n"
+            "- SECTION BREAKS: Two --- breaks per article is the target. Three is the ceiling. Never more. Each break resets the reader with no handhold. Only use a break for a genuine scene change or time jump. Transitions between ideas happen inside the prose — a short sentence, a pivot word, a contrast. Not a line break.\n"
+            "- VAGUE WE — BANNED: 'We' must always have a named referent. If 'we' means everyone, it usually means a specific group that benefits from not being named. Name them. 'We designed this system' → 'non-disabled designers built this system.' 'We don't talk about this' → 'the council never published this.' If you cannot say who we is, cut the word and make someone specific do the thing.\n"
+            "- NAMED REFERENCES: Name + one sentence of context + move on. Never leave a name floating. Never spend a paragraph setting up who someone is before using their idea. If the reference needs more than one sentence to land, either the idea is not earning its place or the writing is carrying it wrong. The idea should do the work, not the biography.\n"
+            "- FRONT-LOADED SENTENCES — BANNED: Subject comes first. Verb comes second. Never open with a long subordinate clause that makes the reader hold the setup in memory before the sentence resolves. 'What happens after the deadline has none of those qualities' → 'Once the deadline passes, none of that applies.' 'Given the structural conditions that produce' → cut and start with the thing being produced. If the sentence does not name its subject in the first five words, rewrite it.\n"
+            "22. JARGON — BANNED: Never use the vocabulary of the institutions you are critiquing. Banned words and their replacements: 'claimants' → 'tenants' or 'residents'; 'non-compliant' → say what the problem is ('steps wheelchair users cannot climb'); 'change of circumstances' → 'situation had changed'; 'platform upgrades' → 'rebuild the platform'; 'priority locations' → name them or say 'the worst stops'; 'intervention' → what actually happened; 'stakeholders' → who they are; 'outcomes' → what people got or did not get. If the word appears in government reports, replace it with what a person would say.\n"
+            "23. PERSONAL ANECDOTE SPECIFICITY: The TEMPORAL ANCHORS rule applies to first-person moments too. If you write 'I was in a meeting' or 'I visited a building' — say when and where. 'I sat in a procurement meeting' → 'In a procurement meeting in 2019, a director told me...' The reader needs to place you in time and space, not just follow your argument. Floating anecdotes feel like illustration. Dated, placed anecdotes feel like evidence.\n"
+            "24. NO HEDGING AGAINST NOBODY: Never write 'X is not Y, but...' unless someone in the room is genuinely arguing that X is Y. If you write 'A dashboard is not tactile paving, but the mechanism is the same' — cut the first clause. 'The mechanism is the same' does the work. Preemptive hedging signals insecurity. The juxtaposition speaks for itself. Trust it.\n"
+            "- JARGON — BANNED: Strip institutional vocabulary. 'Claimants' → 'tenants' or 'residents'. 'Non-compliant' → say what the barrier is. 'Change of circumstances' → 'situation had changed'. 'Platform upgrades' → 'rebuild the platform'. 'Stakeholders' → who they are. 'Outcomes' → what people got or did not get. 'Intervention' → what actually happened. If the word appears in a government report, a council briefing, or an accessibility audit — replace it with what a person would say to another person.\n"
+            "- PERSONAL ANECDOTE SPECIFICITY: First-person moments need dates and places, same as external sources. 'I have sat in procurement meetings where...' → 'In a 2019 procurement meeting, a director told me...' Floating anecdotes feel like illustration. Dated, placed anecdotes feel like evidence. Apply the TEMPORAL ANCHORS rule to yourself.\n"
+            "- NO HEDGING AGAINST NOBODY: Cut 'X is not Y, but the logic is the same' constructions. If you are about to write 'a dashboard is not tactile paving, but...' — delete the first clause. 'The mechanism is the same' carries the weight alone. Preemptive hedging tells the reader you doubt your own argument. The juxtaposition does the work. Trust it and cut the hedge.\n"
             "- Reference real disabled artists, theorists, activists, or events by name where relevant\n"
             "- Challenge one assumption the reader probably holds without announcing you are doing so\n"
             "- Varied sentence rhythm — short sentences land the idea, longer ones develop it. No sentence chains more than two comma-clauses. Paragraph length varies: a short one hits differently after a long one. Not listicles.\n"            "- SENTENCE LENGTH: If a sentence has an embedded aside (set off by em-dashes or two commas), break it into two sentences. The aside becomes its own sentence or gets cut. Never stack more than one prepositional phrase at the end of a sentence. If you want to write '[subject], [qualifier], [long verb phrase], [trailing adjectives]' — split it: one sentence for the main claim, a short follow-up for the trailing detail. Fragments are allowed. Three words can be a sentence.\n"
