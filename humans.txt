@@ -35,6 +35,15 @@
   v2.0  Fermentation  2026-03-16
         Content quality improvements: source reading, persona depth,
         tonal variety, link pool. Articles start connecting outward.
+
+  v2.1  Fermentation  2026-03-17
+        SEO hardening: canonical URLs, redirect rules, AI signal cleanup,
+        category standardisation, image alt fixes.
+
+  v2.2  Fermentation  2026-03-19
+        Orchestrator hardening: 23 syntax fixes (rules now actually firing),
+        tension-frame card excerpts, differentiated social hooks per persona,
+        date collision guard, Bluesky hook word-wrap fix.
         Beats tracking and cross-article threads. A site that has opinions
         about itself.
 
