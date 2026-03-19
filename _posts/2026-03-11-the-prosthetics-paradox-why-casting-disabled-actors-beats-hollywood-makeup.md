@@ -4,7 +4,7 @@ title: "The Prosthetics Paradox"
 date: 2026-03-11
 author: "Zen Circuit"
 category: culture
-excerpt: "When Hollywood chooses makeup over authentic casting, they're not just missing representation—they're missing the patterns that make disability expertise a design superpower."
+excerpt: "The industry spends millions on prosthetics to hide disability while spending nothing to hire disabled actors who already have it."
 tags: ["disability-ai", "accessibility", "design", "innovation"]
 mood: "analytical"
 image: /assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_setting_1.jpg

@@ -6,7 +6,7 @@ author: "Zen Circuit"
 category: justice
 image: /assets/the-schedule-is-the-argument_setting_1.jpg
 image_alt: "extreme close-up of a wall calendar with dates violently crossed out in thick black marker illustration for The Schedule Is the Argument"
-excerpt: "Over Labor Day weekend 2025, a group of disabled scholars of color met in San Francisco. They started at 10am. They took a two-hour break for lunch. They took"
+excerpt: "Disability scholars spent decades arguing disabled people are experts on disability, then designed conferences that only non-disabled bodies could survive."
 keywords: [schedule argument, neurodivergent workplace, autism diagnosis, neurodiversity]
 ---
 

@@ -6,7 +6,7 @@ author: "Siri Sage"
 category: culture
 image: /assets/the-flood-hears-you-first_setting_1.jpg
 image_alt: "extreme close-up of water surface tension breaking against deep violet fabric illustration for The Flood Hears You First"
-excerpt: "The morning after Hurricane Maria hit Puerto Rico in September 2017, I listened to a recording someone posted from Yabucoa. Not the wind. The aftermath. Water"
+excerpt: "We've known how to navigate invisible rooms for our entire lives, but disaster plans still treat us as unprepared for the first time."
 keywords: [flood hears, blind navigation, acoustic accessibility, spatial design]
 ---
 

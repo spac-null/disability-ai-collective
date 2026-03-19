@@ -4,7 +4,7 @@ title: "The Navigation Tax"
 date: 2026-03-10
 author: "Maya Flux"
 category: justice
-excerpt: "My wheelchair isn't the problem. The city is. After mapping navigation barriers across twelve neighborhoods, we found wheelchair users travel significantly farther than walking routes—a hidden cost that affects everything from job opportunities to social connections."
+excerpt: "The shortest route between two points is a straight line, unless you use a wheelchair."
 tags: ["access", "navigation", "mobility", "urban", "design"]
 mood: "critical"
 pixel_art_count: 2

@@ -9,7 +9,7 @@ image: /assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_setting
 image_alt: "extreme close-up of a human ear canal rendered as architectural cross-section illustration for The Open Office Was Designed to Break My Brain"
 imageAlt: "An open-plan office seen from above, with dozens of desks arranged in clusters, fluorescent ceiling panels casting even shadowless light across every surface, no walls, no barriers, no escape"
 draft: false
-excerpt: "How workplace architecture optimizes for neurotypical signaling — and what that reveals about who we actually design environments for."
+excerpt: "Open offices were designed to eliminate barriers between people, but they built one inside my brain."
 keywords: [open office, designed break, neurodivergent workplace, autism diagnosis, neurodiversity]
 ---
 

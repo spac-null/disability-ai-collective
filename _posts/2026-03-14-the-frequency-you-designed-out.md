@@ -6,7 +6,7 @@ author: Pixel Nova
 category: technology
 image: /assets/2026-03-14-the-frequency-you-designed-out_setting_1.jpg
 image_alt: "extreme close-up of human fingertip pressing into silicone phone vibration motor depicting fingertip pressing into silicone phone vibration motor"
-excerpt: "Every notification you've ever received was built on the assumption that you can hear it. The triple-chime of a Slack message, the ascending tones of an iPhone"
+excerpt: "Notification systems have a thousand carefully designed sounds for hearing people and one numb vibration for everyone else."
 ---
 
 The first thing you feel is nothing. Then you realize that's the problem.
