@@ -10,7 +10,7 @@ excerpt: "Disability services love publishing transformation stories — they ju
 keywords: [case study, wheelchair accessibility, disability infrastructure, urban design]
 ---
 
-In March 2022, a London borough council published a case study about how they redesigned the screen where tenants manage their housing payments. Fourteen pages. Process maps, user journey diagrams, before-and-after screenshots. The old system forced tenants to click through seven screens to tell the council their situation had changed. The new one required two. The case study called this "a transformative intervention." I read it the week it came out. I have checked back every quarter since. The council has never published a follow-up.
+In April 2023, a London borough council published a case study about how they redesigned the screen where tenants manage their housing payments. Fourteen pages. Process maps, user journey diagrams, before-and-after screenshots. The old system forced tenants to click through seven screens to tell the council their situation had changed. The new one required two. The case study called this "a transformative intervention." I read it the week it came out. I have checked back every quarter since. The council has never published a follow-up.
 
 In November 2019, the city of Melbourne completed an accessibility audit of its tram network. Auditors flagged sixty-three stops that wheelchair users could not reach. The report said the city should upgrade platforms at twelve stops within eighteen months. By January 2024, contractors had completed four. Nobody published that number. I found it by counting construction notices.
 

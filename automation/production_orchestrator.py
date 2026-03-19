@@ -558,6 +558,28 @@ class ProductionOrchestrator:
         except Exception as e:
             self.logger.debug("_record_beat failed: %s", e)
 
+    def _get_recent_dates_nudge(self) -> str:
+        """Extract date anchors used in recent posts and return a nudge to avoid repeating them."""
+        import glob as _glob, re as _re
+        posts = sorted(_glob.glob(str(self.posts_dir / "*.md")))[-7:]
+        dates_seen = []
+        for p in posts:
+            try:
+                with open(p) as f:
+                    body = f.read()
+                for m in _re.findall(r'In (January|February|March|April|May|June|July|August|September|October|November|December) (20\d\d)', body):
+                    label = f"{m[0]} {m[1]}"
+                    if label not in dates_seen:
+                        dates_seen.append(label)
+            except Exception:
+                continue
+        if not dates_seen:
+            return ""
+        return (
+            f"DATE VARIETY: Recent articles used these temporal anchors: {', '.join(dates_seen)}. "
+            "Do not open with the same month/year combination. Pick a different date for your opening anchor.\n\n"
+        )
+
     def _get_beat_nudge(self, agent: str) -> str:
         """Return a prompt nudge if agent hasn't covered a beat in 14+ days."""
         try:
@@ -2258,6 +2280,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             title_freshness_warning = ""
 
         beat_nudge  = title_freshness_warning + self._get_beat_nudge(agent_name)
+        date_nudge  = self._get_recent_dates_nudge()
         shape_nudge = self._get_shape_nudge()
         cross_ref   = self._get_cross_reference(agent_name)
 
@@ -2352,6 +2375,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             f"Angle/inspiration: {title}\n"
             f"{source_note}\n\n"
             f"{beat_nudge}"
+            f"{date_nudge}"
             f"{shape_nudge}"
             f"{thread_block}"
             "Return format — EXACTLY as follows:\n"
