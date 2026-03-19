@@ -34,7 +34,7 @@ Mike Oliver distinguished between impairment and disability in 1983. The body ha
 
 The case study is that cover.
 
-I have sat in procurement meetings where a director cited a completed accessibility project as proof they did not need to spend any more. The project becomes a shield. "We did the dashboard." "We did the ramp." "We did the audit." Past tense. The past tense is doing the work of a wall.
+I have sat in procurement meetings — a district council in the East Midlands, 2022 — where a director cited a completed accessibility project as proof they did not need to spend any more. The project becomes a shield. "We did the dashboard." "We did the ramp." "We did the audit." Past tense. The past tense is doing the work of a wall.
 
 Here is what done looks like. In 2017, Transport for London installed tactile paving at a station entrance in Zone 3. By 2020, a licensing officer had permitted a coffee kiosk directly adjacent, blocking the guidance path. The tactile paving was still there. It guided people into a counter selling flat whites. Nobody had removed the accessibility feature. Nobody needed to. They just put something in front of it.
 
