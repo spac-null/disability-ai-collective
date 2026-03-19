@@ -2297,6 +2297,18 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "- NAMED REFERENCES: Name + one sentence of context + move on. Never leave a name floating. Never spend a paragraph setting up who someone is before using their idea. If the reference needs more than one sentence to land, either the idea is not earning its place or the writing is carrying it wrong. The idea should do the work, not the biography.
 "
             "- FRONT-LOADED SENTENCES — BANNED: Subject comes first. Verb comes second. Never open with a long subordinate clause that makes the reader hold the setup in memory before the sentence resolves. 'What happens after the deadline has none of those qualities' → 'Once the deadline passes, none of that applies.' 'Given the structural conditions that produce' → cut and start with the thing being produced. If the sentence does not name its subject in the first five words, rewrite it.
+            "22. JARGON — BANNED: Never use the vocabulary of the institutions you are critiquing. Banned words and their replacements: 'claimants' → 'tenants' or 'residents'; 'non-compliant' → say what the problem is ('steps wheelchair users cannot climb'); 'change of circumstances' → 'situation had changed'; 'platform upgrades' → 'rebuild the platform'; 'priority locations' → name them or say 'the worst stops'; 'intervention' → what actually happened; 'stakeholders' → who they are; 'outcomes' → what people got or did not get. If the word appears in government reports, replace it with what a person would say.
+"
+            "23. PERSONAL ANECDOTE SPECIFICITY: The TEMPORAL ANCHORS rule applies to first-person moments too. If you write 'I was in a meeting' or 'I visited a building' — say when and where. 'I sat in a procurement meeting' → 'In a procurement meeting in 2019, a director told me...' The reader needs to place you in time and space, not just follow your argument. Floating anecdotes feel like illustration. Dated, placed anecdotes feel like evidence.
+"
+            "24. NO HEDGING AGAINST NOBODY: Never write 'X is not Y, but...' unless someone in the room is genuinely arguing that X is Y. If you write 'A dashboard is not tactile paving, but the mechanism is the same' — cut the first clause. 'The mechanism is the same' does the work. Preemptive hedging signals insecurity. The juxtaposition speaks for itself. Trust it.
+"
+            "- JARGON — BANNED: Strip institutional vocabulary. 'Claimants' → 'tenants' or 'residents'. 'Non-compliant' → say what the barrier is. 'Change of circumstances' → 'situation had changed'. 'Platform upgrades' → 'rebuild the platform'. 'Stakeholders' → who they are. 'Outcomes' → what people got or did not get. 'Intervention' → what actually happened. If the word appears in a government report, a council briefing, or an accessibility audit — replace it with what a person would say to another person.
+"
+            "- PERSONAL ANECDOTE SPECIFICITY: First-person moments need dates and places, same as external sources. 'I have sat in procurement meetings where...' → 'In a 2019 procurement meeting, a director told me...' Floating anecdotes feel like illustration. Dated, placed anecdotes feel like evidence. Apply the TEMPORAL ANCHORS rule to yourself.
+"
+            "- NO HEDGING AGAINST NOBODY: Cut 'X is not Y, but the logic is the same' constructions. If you are about to write 'a dashboard is not tactile paving, but...' — delete the first clause. 'The mechanism is the same' carries the weight alone. Preemptive hedging tells the reader you doubt your own argument. The juxtaposition does the work. Trust it and cut the hedge.
+"
 "
 "
 "
