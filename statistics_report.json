@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-03-18T17:59:54.822661",
-  "total_findings": 424,
-  "unique_domains": 12,
-  "used_findings": 2,
-  "unused_findings": 422,
+  "timestamp": "2026-03-21T16:01:55.310296",
+  "total_findings": 593,
+  "unique_domains": 13,
+  "used_findings": 5,
+  "unused_findings": 588,
   "first_discovery": "2026-03-14T12:24:48.484224",
-  "last_discovery": "2026-03-18T08:00:57.763616",
+  "last_discovery": "2026-03-21T08:00:57.311563",
   "top_categories": [
     {
       "disability_concepts": "[\"hidden_angle\"]",
-      "count": 408
+      "count": 575
     },
     {
-      "disability_concepts": "[\"performance\", \"gallery\", \"artist\", \"exhibition\", \"form\", \"access\"]",
+      "disability_concepts": "[\"access\", \"form\", \"artist\", \"performance\", \"exhibition\", \"gallery\"]",
       "count": 3
     },
     {
@@ -32,47 +32,47 @@
       "count": 1
     },
     {
-      "disability_concepts": "[\"visibility\", \"community\", \"identity\", \"accessible\", \"color\", \"form\", \"vision\", \"access\"]",
+      "disability_concepts": "[\"form\", \"access\", \"performance\", \"interaction\", \"function\", \"interface\", \"vision\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"sound\", \"community\", \"color\", \"form\", \"visibility\", \"access\"]",
+      "disability_concepts": "[\"film\", \"music\", \"language\", \"audio\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"performance\", \"sound\", \"focus\", \"theater\", \"marginal\", \"marginalized\", \"movement\", \"color\", \"form\", \"vision\", \"dance\", \"tradition\", \"voice\"]",
+      "disability_concepts": "[\"exhibition\", \"painting\", \"music\", \"wheelchair\", \"artist\", \"form\", \"caption\", \"film\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"movement\", \"dance\", \"film\", \"access\"]",
+      "disability_concepts": "[\"dance\", \"marginal\", \"sound\", \"marginalized\", \"form\", \"vision\", \"color\", \"movement\", \"performance\", \"tradition\", \"voice\", \"theater\", \"focus\"]",
       "count": 1
     }
   ],
   "recent_findings": [
     {
-      "title": "Malvern optometrist painted by David Hockney for new exhibition",
+      "title": "Traitors and Idris Elba help Comic Relief raise \u00a330m",
       "domain": "bbc.com",
-      "discovered_date": "2026-03-18T08:00:57.763616"
+      "discovered_date": "2026-03-21T08:00:57.311563"
     },
     {
-      "title": "Lost Page From Archimedes Palimpsest Reappears In French Museum",
-      "domain": "artforum.com",
-      "discovered_date": "2026-03-18T08:00:38.492609"
+      "title": "Saturday Night Live UK: Can it make Britons laugh?",
+      "domain": "bbc.com",
+      "discovered_date": "2026-03-21T08:00:56.199654"
     },
     {
       "title": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-18T08:00:27.235730"
+      "discovered_date": "2026-03-21T08:00:26.534579"
     },
     {
       "title": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-18T08:00:26.120808"
+      "discovered_date": "2026-03-21T08:00:25.438156"
     },
     {
       "title": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-18T08:00:25.019344"
+      "discovered_date": "2026-03-21T08:00:24.306154"
     }
   ]
 }

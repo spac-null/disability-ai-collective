@@ -1,0 +1,890 @@
+{
+  "timestamp": "2026-03-19T16:01:25.583965+00:00",
+  "wcag_version": "2.1 AA",
+  "tests": {
+    "html_structure": {
+      "passed": false,
+      "issues": [
+        "Invalid heading hierarchy in post.html",
+        "Missing skip links in post.html",
+        "Invalid heading hierarchy in default.html",
+        "Missing main landmark in default.html",
+        "Invalid heading hierarchy in SCRAPING_ETHICS.md",
+        "Missing skip links in SCRAPING_ETHICS.md",
+        "Missing main landmark in SCRAPING_ETHICS.md"
+      ],
+      "recommendations": []
+    },
+    "content_accessibility": {
+      "passed": true,
+      "issues": [
+        "Error reading SCRAPING_ETHICS.md: too many values to unpack (expected 2)",
+        "Error reading README.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-16-the-frequency-you-built-for.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-13-the-flood-hears-you-first.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-10-the-navigation-tax.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-16-the-map-that-stops-at-the-door.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-18-two-rooms-one-number.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-12-the-door-you-can-t-read-is-the-door-that-isn-t-there.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-14-the-open-office-was-designed-to-break-my-brain.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-19-the-case-study-with-no-second-act.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-17-the-room-that-sings-and-the-three-steps-that-stop-me.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-14-the-frequency-you-designed-out.md: too many values to unpack (expected 2)",
+        "Error reading 2026-03-15-the-schedule-is-the-argument.md: too many values to unpack (expected 2)"
+      ],
+      "recommendations": []
+    },
+    "color_contrast": {
+      "passed": true,
+      "issues": [],
+      "tested_combinations": [
+        {
+          "background": "#ffffff",
+          "foreground": "#000000",
+          "ratio": 21.0,
+          "passed": true
+        }
+      ],
+      "min_contrast_ratio": 4.5
+    },
+    "navigation": {
+      "passed": true,
+      "issues": [
+        "No navigation configuration found in _config.yml"
+      ]
+    },
+    "media_accessibility": {
+      "passed": false,
+      "issues": [
+        "No alt text found for 2026-03-17-the-siren-was-never-meant-for-me_setting_1.jpg",
+        "No alt text found for 2026-03-10-the-navigation-tax_moment_2.jpg",
+        "No alt text found for 2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_symbol_3.jpg",
+        "No alt text found for the-mapmakers_setting_1.jpg",
+        "No alt text found for 2026-03-14-the-open-office-was-designed-to-break-my-brain_symbol_3.jpg",
+        "No alt text found for the-flood-hears-you-first_setting_1.jpg",
+        "No alt text found for the-map-is-not-the-territory-the-territory-is-not-accessible-either_setting_1.jpg",
+        "No alt text found for 2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg",
+        "No alt text found for the-room-that-sings-and-the-three-steps-that-stop-me_setting_1.jpg",
+        "No alt text found for architects-are-designing-buildings-for-the-wrong-sense_setting_1.jpg",
+        "No alt text found for 2026-03-10-the-navigation-tax_setting_1.jpg",
+        "No alt text found for 2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_moment_2.jpg",
+        "No alt text found for 2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_symbol_3.jpg",
+        "No alt text found for accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg",
+        "No alt text found for 2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_setting_1.jpg",
+        "No alt text found for 2026-03-08-architects-are-designing-buildings-for-the-wrong-sense_setting_1.jpg",
+        "No alt text found for 2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_moment_2.jpg",
+        "No alt text found for two-rooms-one-number_setting_1.jpg",
+        "No alt text found for 2026-03-13-the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_moment_2.jpg",
+        "No alt text found for 2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_moment_2.jpg",
+        "No alt text found for the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_setting_1.jpg",
+        "No alt text found for accessibility-critique-the-access-story-behind-getting-here-on-the-go_symbol_3.jpg",
+        "No alt text found for the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_moment_2.jpg",
+        "No alt text found for 2026-03-10-the-navigation-tax_symbol_3.jpg",
+        "No alt text found for 2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_setting_1.jpg",
+        "No alt text found for the-case-study-with-no-second-act_setting_1.jpg",
+        "No alt text found for 2026-03-14-the-open-office-was-designed-to-break-my-brain_setting_1.jpg",
+        "No alt text found for beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg",
+        "No alt text found for the-map-is-not-the-territory-the-territory-is-not-accessible-either_symbol_3.jpg",
+        "No alt text found for 2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg",
+        "No alt text found for beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_setting_1.jpg",
+        "No alt text found for 2026-03-14-the-frequency-you-designed-out_setting_1.jpg",
+        "No alt text found for 2026-03-13-the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_symbol_3.jpg",
+        "No alt text found for 2026-03-09-the-mapmakers_setting_1.jpg",
+        "No alt text found for 2026-03-08-architects-are-designing-buildings-for-the-wrong-sense_symbol_3.jpg",
+        "No alt text found for 2026-03-16-the-frequency-you-built-for_setting_1.jpg",
+        "No alt text found for 2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_symbol_3.jpg",
+        "No alt text found for 2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_setting_1.jpg",
+        "No alt text found for the-navigation-tax_setting_1.jpg",
+        "No alt text found for 2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_moment_2.jpg",
+        "No alt text found for 2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_setting_1.jpg",
+        "No alt text found for the-door-you-can-t-read-is-the-door-that-isn-t-there_setting_1.jpg",
+        "No alt text found for the-map-that-stops-at-the-door_setting_1.jpg",
+        "No alt text found for architects-are-designing-buildings-for-the-wrong-sense_symbol_3.jpg",
+        "No alt text found for 2026-03-17-the-siren-was-never-meant-for-me_symbol_3.jpg",
+        "No alt text found for 2026-03-13-the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_setting_1.jpg",
+        "No alt text found for 2026-03-09-the-mapmakers_symbol_3.jpg",
+        "No alt text found for 2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_setting_1.jpg",
+        "No alt text found for the-map-is-not-the-territory-the-territory-is-not-accessible-either_moment_2.jpg",
+        "No alt text found for 2026-03-09-the-mapmakers_moment_2.jpg",
+        "No alt text found for the-frequency-you-built-for_setting_1.jpg",
+        "No alt text found for stylelab_letterpress-broadside.jpg",
+        "No alt text found for accessibility-critique-the-access-story-behind-getting-here-on-the-go_moment_2.jpg",
+        "No alt text found for the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_symbol_3.jpg",
+        "No alt text found for 2026-03-17-the-siren-was-never-meant-for-me_moment_2.jpg",
+        "No alt text found for 2026-03-08-architects-are-designing-buildings-for-the-wrong-sense_moment_2.jpg",
+        "No alt text found for the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_setting_1.jpg",
+        "No alt text found for the-schedule-is-the-argument_setting_1.jpg",
+        "No alt text found for beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_moment_2.jpg",
+        "No alt text found for og-card.png",
+        "No alt text found for gallery_scene_theater.png",
+        "No alt text found for gallery_scene_urban_street.png",
+        "No alt text found for expert_transit_universal_design.png",
+        "No alt text found for gallery_scene_office_interior.png",
+        "No alt text found for expert_street_ada_compliance.png",
+        "No alt text found for gallery_scene_library.png",
+        "No alt text found for gallery_scene_open_air.png",
+        "No alt text found for gallery_scene_data_center.png",
+        "No alt text found for gallery_scene_transit_hub.png",
+        "No alt text found for gallery_scene_campus.png",
+        "No alt text found for favicon-512.png",
+        "No alt text found for favicon-32x32.png",
+        "No alt text found for favicon-192.png",
+        "No alt text found for apple-touch-icon.png",
+        "No alt text found for favicon-16x16.png"
+      ],
+      "media_files": [
+        {
+          "file": "assets/2026-03-17-the-siren-was-never-meant-for-me_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-10-the-navigation-tax_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-mapmakers_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-flood-hears-you-first_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-map-is-not-the-territory-the-territory-is-not-accessible-either_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/stylelab_split-montage.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-case-study-with-no-second-act_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-room-that-sings-and-the-three-steps-that-stop-me_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/architects-are-designing-buildings-for-the-wrong-sense_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-10-the-navigation-tax_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-frequency-you-built-for_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-door-you-can-t-read-is-the-door-that-isn-t-there_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/stylelab_urbit-pixel.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-12-beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-case-study-with-no-second-act_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-08-architects-are-designing-buildings-for-the-wrong-sense_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/two-rooms-one-number_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-13-the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/stylelab_pixel-strict.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/stylelab_raw-linocut.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-10-the-navigation-tax_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-map-that-stops-at-the-door_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-mapmakers_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-14-the-frequency-you-designed-out_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-case-study-with-no-second-act_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-16-the-frequency-you-built-for_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-map-is-not-the-territory-the-territory-is-not-accessible-either_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-navigation-tax_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/stylelab_mimeograph.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-14-the-frequency-you-designed-out_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-13-the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-09-the-mapmakers_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-door-you-can-t-read-is-the-door-that-isn-t-there_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-frequency-you-built-for_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/stylelab_dada-collage.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-08-architects-are-designing-buildings-for-the-wrong-sense_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-16-the-frequency-you-built-for_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/two-rooms-one-number_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-14-the-frequency-you-designed-out_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-11-the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-navigation-tax_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/stylelab_dada-sculpture.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-room-that-sings-and-the-three-steps-that-stop-me_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/stylelab_punk-pamphlet.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-schedule-is-the-argument_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-13-accessibility-critique-the-access-story-behind-getting-here-on-the-go_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-schedule-is-the-argument_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-door-you-can-t-read-is-the-door-that-isn-t-there_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-map-that-stops-at-the-door_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-flood-hears-you-first_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/architects-are-designing-buildings-for-the-wrong-sense_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/two-rooms-one-number_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-flood-hears-you-first_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-17-the-siren-was-never-meant-for-me_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-room-that-sings-and-the-three-steps-that-stop-me_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-16-the-frequency-you-built-for_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/stylelab_silkscreen-pop.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-13-the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/stylelab_glitch-corrupt.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-09-the-mapmakers_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-map-that-stops-at-the-door_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-14-the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-map-is-not-the-territory-the-territory-is-not-accessible-either_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-09-the-mapmakers_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/stylelab_cyanotype.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-frequency-you-built-for_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/stylelab_popart-collage.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/architects-are-designing-buildings-for-the-wrong-sense_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/stylelab_letterpress-broadside.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-mapmakers_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/accessibility-critique-the-access-story-behind-getting-here-on-the-go_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/stylelab_scratch-film.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-navigation-tax_symbol_3.jpg",
+          "type": ".jpg",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/2026-03-17-the-siren-was-never-meant-for-me_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/2026-03-08-architects-are-designing-buildings-for-the-wrong-sense_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/the-schedule-is-the-argument_setting_1.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility_moment_2.jpg",
+          "type": ".jpg",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/og-card.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/realistic_office_acoustic_scene.png",
+          "type": ".png",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/gallery_scene_theater.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/gallery_scene_urban_street.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/expert_transit_universal_design.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/gallery_scene_office_interior.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/expert_street_ada_compliance.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/siri_sage_style_matched.png",
+          "type": ".png",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/gallery_scene_library.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/gallery_scene_open_air.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/gallery_scene_data_center.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/zen_circuit_style_matched.png",
+          "type": ".png",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/maya_flux_style_matched.png",
+          "type": ".png",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/gallery_scene_transit_hub.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/pixel_nova_style_matched.png",
+          "type": ".png",
+          "alt_text_found": true,
+          "accessible": true
+        },
+        {
+          "file": "assets/gallery_scene_campus.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/icons/meta/favicon-512.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/icons/meta/favicon-32x32.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/icons/meta/favicon-192.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/icons/meta/apple-touch-icon.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        },
+        {
+          "file": "assets/icons/meta/favicon-16x16.png",
+          "type": ".png",
+          "alt_text_found": false,
+          "accessible": false
+        }
+      ]
+    }
+  }
+}
