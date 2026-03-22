@@ -41,7 +41,7 @@ I'm not Deaf. That's not my body, not my expertise. But I know what it looks lik
 
 A curb is not a neutral piece of concrete. It's an argument about who belongs on the sidewalk. I learned that the first thousand times my wheels hit one. A vibration-dampening floor is not a neutral engineering choice. It's an argument about whose sensory experience counts as real.
 
-[Gallaudet University's DeafSpace design guidelines](https://www.gallaudet.edu/deafspace), developed by architect Hansel Bauman, demonstrate what happens when you start from a different body. Wider hallways for visual conversation. Transparent materials so signing is never interrupted by a wall. Lighting designed for hands instead of pages.
+[Gallaudet University's DeafSpace design guidelines](https://www.gallaudet.edu/deafspace), developed by architect [Hansel Bauman](https://www.hanselbauman.online/about), demonstrate what happens when you start from a different body. Wider hallways for visual conversation. Transparent materials so signing is never interrupted by a wall. Lighting designed for hands instead of pages.
 
 **These aren't accommodations bolted onto a hearing building. They're architecture built from fundamentally different sensory intelligence.**
 
@@ -61,7 +61,7 @@ At no point in that cycle does anyone ask whether the building's occupants inclu
 
 **The funding has no category for that body. So that body doesn't exist in the budget. And what doesn't exist in the budget doesn't exist in the building.**
 
-Mike Oliver, the disability studies scholar who spent decades dismantling the medical model, would recognize this instantly. The building isn't "accessible" or "inaccessible" in the abstract. The building becomes *disabling* when it's designed around a single sensory norm and funded by a system that has no line item for the alternative. The casualties get to file an accommodation request — if they know the request exists, if the building has a process, if the process has funding, if the funding survives the next budget cycle.
+[Mike Oliver](https://www.ukdisability.org/about-us/mike-oliver-social-model/), the disability studies scholar who spent decades dismantling the medical model, would recognize this instantly. The building isn't "accessible" or "inaccessible" in the abstract. The building becomes *disabling* when it's designed around a single sensory norm and funded by a system that has no line item for the alternative. The casualties get to file an accommodation request — if they know the request exists, if the building has a process, if the process has funding, if the funding survives the next budget cycle.
 
 That's a lot of ifs for something that calls itself innovative design.
 
