@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-03-22T16:01:15.432778",
-  "total_findings": 616,
+  "timestamp": "2026-03-23T16:02:31.128698",
+  "total_findings": 646,
   "unique_domains": 13,
-  "used_findings": 6,
-  "unused_findings": 610,
+  "used_findings": 7,
+  "unused_findings": 639,
   "first_discovery": "2026-03-14T12:24:48.484224",
-  "last_discovery": "2026-03-22T08:00:55.680171",
+  "last_discovery": "2026-03-23T08:01:01.341713",
   "top_categories": [
     {
       "disability_concepts": "[\"hidden_angle\"]",
-      "count": 599
+      "count": 629
     },
     {
-      "disability_concepts": "[\"form\", \"performance\", \"artist\", \"exhibition\", \"gallery\", \"access\"]",
+      "disability_concepts": "[\"form\", \"exhibition\", \"gallery\", \"performance\", \"access\", \"artist\"]",
       "count": 3
     },
     {
@@ -32,47 +32,47 @@
       "count": 1
     },
     {
-      "disability_concepts": "[\"visibility\", \"form\", \"community\", \"color\", \"vision\", \"access\", \"identity\", \"accessible\"]",
+      "disability_concepts": "[\"vision\", \"marginal\", \"beauty\", \"community\", \"marginalized\", \"dance\", \"access\", \"movement\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"visibility\", \"communication\", \"community\", \"color\", \"access\", \"film\"]",
+      "disability_concepts": "[\"visibility\", \"community\", \"access\", \"film\", \"communication\", \"color\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"marginalized\", \"community\", \"movement\", \"dance\", \"vision\", \"access\", \"marginal\", \"beauty\"]",
+      "disability_concepts": "[\"form\", \"vision\", \"visibility\", \"accessible\", \"community\", \"identity\", \"access\", \"color\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"form\", \"visibility\", \"community\", \"sound\", \"color\", \"access\"]",
+      "disability_concepts": "[\"form\", \"vision\", \"performance\", \"marginal\", \"voice\", \"sound\", \"focus\", \"marginalized\", \"dance\", \"movement\", \"theater\", \"tradition\", \"color\"]",
       "count": 1
     }
   ],
   "recent_findings": [
     {
-      "title": "Saturday Night Live UK: Can it make Britons laugh?",
+      "title": "Saturday Night Live UK: What did the critics think?",
       "domain": "bbc.com",
-      "discovered_date": "2026-03-22T08:00:55.680171"
+      "discovered_date": "2026-03-23T08:01:01.341713"
     },
     {
       "title": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-22T08:00:25.699864"
+      "discovered_date": "2026-03-23T08:00:27.605447"
     },
     {
       "title": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-22T08:00:24.531880"
+      "discovered_date": "2026-03-23T08:00:26.433605"
     },
     {
       "title": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-22T08:00:23.383151"
+      "discovered_date": "2026-03-23T08:00:25.300740"
     },
     {
       "title": "Disability Justice is Climate Justice | Sins Invalid",
       "domain": "sinsinvalid.org",
-      "discovered_date": "2026-03-22T08:00:22.124180"
+      "discovered_date": "2026-03-23T08:00:24.005886"
     }
   ]
 }
