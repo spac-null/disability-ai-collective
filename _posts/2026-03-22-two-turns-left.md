@@ -38,7 +38,7 @@ I know what this costs because I've sat in rooms where people price it. In Octob
 
 ---
 
-[Solnit](https://rebeccasolnit.net/) wrote beautifully about walking as a political act, as a way of claiming public space. I read her [*Wanderlust*](https://rebeccasolnit.net/books/wanderlust-a-history-of-walking) in 2009 and loved it and felt the familiar ache of reading someone who assumes the body she inhabits is the body everyone has. Walking is political. Rolling is political in a different register — it exposes infrastructure that walkers never notice. Every crack, every gradient, every missing curb cut. My chair is a diagnostic instrument. It reads the city the way a doctor reads a scan. The navigation app cannot do this because it was never asked to.
+[Solnit](https://rebeccasolnit.net/) wrote beautifully about walking as a political act, as a way of claiming public space. I read her [*Wanderlust*](http://rebeccasolnit.net/book/wanderlust/) in 2009 and loved it and felt the familiar ache of reading someone who assumes the body she inhabits is the body everyone has. Walking is political. Rolling is political in a different register — it exposes infrastructure that walkers never notice. Every crack, every gradient, every missing curb cut. My chair is a diagnostic instrument. It reads the city the way a doctor reads a scan. The navigation app cannot do this because it was never asked to.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/two-turns-left_symbol_3.jpg" alt="Dada photomontage of torn paper fragments: GPS map pieces depicting figure in motion" width="800" height="450" loading="lazy" decoding="async">

@@ -26,7 +26,7 @@ You might say: that's not the designer's fault. You're right. It isn't. That's t
 
 ---
 
-[Mike Oliver](https://www.independentliving.org/docs/oliver.html) distinguished between impairment and disability in 1983. The body has a condition. Society creates the barrier. Oliver changed how a generation of activists and scholars understood access, and the distinction is now so familiar it has become wallpaper. But his insight carries a second edge that most design teams never touch: the barrier is not static. It moves. It regenerates. A team removes one and the system grows another, often borrowing the language of what was just removed as cover.
+[Mike Oliver](https://disability-studies.leeds.ac.uk/library/author/oliver.mike/) distinguished between impairment and disability in 1983. The body has a condition. Society creates the barrier. Oliver changed how a generation of activists and scholars understood access, and the distinction is now so familiar it has become wallpaper. But his insight carries a second edge that most design teams never touch: the barrier is not static. It moves. It regenerates. A team removes one and the system grows another, often borrowing the language of what was just removed as cover.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-case-study-with-no-second-act_moment_2.jpg" alt="Overhead shot of layered transparent sheets of violet and black stacked at oblique angles illustration for The Case Study With No Second Act" width="800" height="450" loading="lazy" decoding="async">

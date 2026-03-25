@@ -52,4 +52,4 @@ A 0.6-second reverberation time and a 2.4-second reverberation time are both num
 
 ---
 
-*This article was inspired by [Acoustic ecology measurement standards in urban design](https://cripminds.com/t4/siri-sage-acoustic-data) from acoustics.culture.*
+*This article was inspired by Acoustic ecology measurement standards in urban design from acoustics.culture.*
