@@ -1749,12 +1749,33 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             return False
 
 
+    def _readability_score(self, content):
+        """Flesch-Kincaid metrics. Returns dict or None."""
+        import re
+        text = re.sub(r'^---.*?---', '', content, flags=re.DOTALL)
+        text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+        text = re.sub(r'<[^>]+>', '', text)
+        text = re.sub(r'[*_`#\[\]{}]', '', text)
+        text = re.sub(r'---', '', text)
+        text = text.strip()
+        sentences = [s.strip() for s in re.split(r'[.!?]+', text) if len(s.strip()) > 10]
+        words = re.findall(r'\b[a-zA-Z]+\b', text)
+        if not words or not sentences:
+            return None
+        syllables = sum(max(1, len(re.findall(r'[aeiouAEIOU]+', w))) for w in words)
+        asl = len(words) / len(sentences)
+        asw = syllables / len(words)
+        fre  = round(206.835 - (1.015 * asl) - (84.6 * asw), 1)
+        fkgl = round((0.39 * asl) + (11.8 * asw) - 15.59, 1)
+        return {"fre": fre, "fkgl": fkgl, "asl": round(asl, 1), "words": len(words)}
+
     def validate_article(self, content, article_file, slug):
-        """Non-blocking citation check. Never delays commit."""
+        """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
         import os, json, urllib.request as ureq
         from datetime import datetime as dt
 
-        SYSTEM = (
+        # ── 1. Citation check ──────────────────────────────────────────────
+        CITATION_SYSTEM = (
             "You are a fact-checker for a disability arts publication. "
             "Extract every specific claim that could be independently verified:\n"
             "- Statistics or percentages with attributed sources\n"
@@ -1762,37 +1783,124 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "- Direct quotes attributed to named people\n"
             "- Specific events cited as fact\n\n"
             "For each, one line: [FLAG] <claim> | SOURCE: <source or UNATTRIBUTED>\n"
+            "Also add a short editorial note at the end under '---' if any claim warrants "
+            "particular scrutiny.\n"
             "If nothing to flag, output exactly: CLEAN"
         )
-
-        review_text = "CLEAN"
+        citation_text = "CLEAN"
         try:
             raw = self._call_openai_compat_api(
                 url="http://172.19.0.1:8317/v1",
                 api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
-                system_prompt=SYSTEM,
+                system_prompt=CITATION_SYSTEM,
                 user_prompt=content,
                 model="claude-sonnet-4-6",
                 max_tokens=600,
                 timeout=60,
             )
-            review_text = raw or "CLEAN"
+            citation_text = raw or "CLEAN"
         except Exception as e:
             self.logger.warning("Citation extraction failed: %s", e)
-            review_text = f"EXTRACTION_FAILED: {e}"
+            citation_text = f"EXTRACTION_FAILED: {e}"
 
+        # ── 2. Readability check (Python, no LLM) ─────────────────────────
+        # Target: Flesch Reading Ease ≥ 52 (slightly easier than The New Yorker ~50-55)
+        scores = self._readability_score(content)
+        readability_lines = []
+        readability_fail = False
+        if scores:
+            verdict = "PASS" if scores["fre"] >= 52 else "FAIL"
+            if scores["fre"] < 52:
+                readability_fail = True
+            readability_lines = [
+                f"Flesch Reading Ease : {scores['fre']}  (target ≥ 52 — New Yorker baseline ~50-55)",
+                f"FK Grade Level      : {scores['fkgl']}  (target ≤ 11)",
+                f"Avg sentence length : {scores['asl']} words",
+                f"Word count          : {scores['words']}",
+                f"Verdict             : {verdict}",
+            ]
+            if readability_fail:
+                readability_lines.append(
+                    "ACTION: High syllable count is usually the cause. "
+                    "Swap Latinate terms for plain Anglo-Saxon equivalents where meaning is identical."
+                )
+        else:
+            readability_lines = ["Could not parse article text for readability."]
+
+        # ── 3. Rule compliance check (LLM) ────────────────────────────────
+        RULES_SYSTEM = (
+            "You are an editorial reviewer for a disability arts publication. "
+            "Check the article against these rules and flag any violations with a brief quote.\n\n"
+            "RULES:\n"
+            "R1  INLINE DEFINITIONS BANNED — no term explained mid-sentence via em-dashes or parentheses. "
+            "'acoustic analysis—the study of sound—' is a violation. If a term needs unpacking it gets its own sentence.\n"
+            "R2  PLAIN VOCABULARY — prefer Anglo-Saxon over Latinate when meaning is identical. "
+            "Flag clusters of: utilise, demonstrate, construct, facilitate, conceptualise, methodology, "
+            "supplementary, implicitly, interrogate, transformation, commenced, implemented, utilised.\n"
+            "R3  ONE MODIFIER PER NOUN — flag three stacked adjectives: 'the physical, spatial, sensory reality'.\n"
+            "R4  NOMINALIZATION BANNED — actions must stay as verbs. "
+            "'The redesign of the interface' → 'they redesigned the interface'. Flag noun-ified verbs.\n"
+            "R5  SYSTEM VOICE BANNED — passive that erases the actor. "
+            "'Stops were flagged as non-compliant' has no person. Flag it.\n"
+            "R6  VAGUE WE BANNED — every 'we' must name a clear referent. Flag 'we' that means everyone.\n"
+            "R7  FRONT-LOADED SENTENCES BANNED — subject must come before long subordinate clause. "
+            "Flag sentences opening with 'When considering...', 'What happens after...', 'Given that...'.\n"
+            "R8  PARAGRAPH LENGTH — flag any paragraph exceeding 5 sentences.\n"
+            "R9  SECTION BREAKS — flag if more than 3 '---' breaks appear in the body.\n"
+            "R10 LISTS — flag any list with 4 or more items (three is the limit).\n"
+            "R11 INVENTED DATA BANNED — flag any specific number, percentage, or study finding "
+            "not traceable to the named source material.\n"
+            "R12 ENDING — last paragraph must be one concrete sentence, image, or paradox. "
+            "Flag if it restates the thesis, calls to action, or starts with 'We need' / 'This requires'.\n"
+            "R13 OPENING TENSION — first paragraph must establish a pressure or broken assumption, "
+            "not scene-setting or definition. Flag if it opens by defining terms.\n"
+            "R14 NAMED REFERENCES — name + what they said/did + why it matters here, all in one sentence. "
+            "Flag floating names with only a year, or paragraph-long introductions of a person.\n\n"
+            "Output format — one line per rule:\n"
+            "[PASS] R1\n"
+            "[FAIL] R2 — quote the violation (max 15 words)\n"
+            "[N/A]  R9 — if not applicable to this article\n\n"
+            "Be strict. A single violation counts as FAIL. Quote the exact offending phrase."
+        )
+        rules_text = ""
+        rules_fails = []
+        try:
+            raw = self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=RULES_SYSTEM,
+                user_prompt=content,
+                model="claude-sonnet-4-6",
+                max_tokens=800,
+                timeout=90,
+            )
+            rules_text = raw or ""
+            rules_fails = [l for l in rules_text.splitlines() if l.startswith("[FAIL]")]
+        except Exception as e:
+            self.logger.warning("Rule compliance check failed: %s", e)
+            rules_text = f"CHECK_FAILED: {e}"
+
+        # ── 4. Build review file ───────────────────────────────────────────
         reviews_dir = self.repo_root / "_reviews"
         reviews_dir.mkdir(exist_ok=True)
         review_file = reviews_dir / f"{article_file.stem}-review.md"
-        is_clean = review_text.strip().upper().startswith("CLEAN")
+
+        citation_clean = citation_text.strip().upper().startswith("CLEAN")
+        is_clean = citation_clean and not readability_fail and not rules_fails
 
         lines = [
-            f"# Citation Review: {article_file.stem}",
+            f"# Article Review: {article_file.stem}",
             f"Generated: {dt.now().strftime('%Y-%m-%d %H:%M')}",
             f"Status: {'CLEAN' if is_clean else 'FLAGGED'}",
             "",
-            "## Extracted Citations",
-            review_text,
+            "## Readability",
+            *readability_lines,
+            "",
+            "## Rule Compliance",
+            rules_text or "Not checked.",
+            "",
+            "## Citations",
+            citation_text,
             "",
             "## Notes",
             "- Article is LIVE — async review only",
@@ -1802,25 +1910,28 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         review_file.write_text("\n".join(lines))
         self.logger.info("Review sidecar: %s (%s)", review_file.name, "CLEAN" if is_clean else "FLAGGED")
 
+        # ── 5. Telegram notification ───────────────────────────────────────
         if not is_clean:
             try:
                 token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
                 chat_id = os.environ.get("TELEGRAM_CHAT_ID", "")
                 if token and chat_id:
-                    flags = [l for l in review_text.splitlines() if l.startswith("[FLAG]")]
-                    msg = (
-                        "📋 *Citation review* — " + article_file.stem[:50] + "\n"
-                        + f"{len(flags)} item(s) to verify:\n\n"
-                        + "\n".join(f"• {fl[7:90]}" for fl in flags[:5])
-                        + (f"\n_(+{len(flags)-5} more)_" if len(flags) > 5 else "")
-                    )
+                    parts = [f"📋 *Review* — {article_file.stem[:45]}"]
+                    if readability_fail and scores:
+                        parts.append(f"📖 Readability: {scores['fre']} (below 52 target)")
+                    if rules_fails:
+                        parts.append(f"📐 Rules: {len(rules_fails)} violation(s)")
+                        parts += [f"• {f[7:80]}" for f in rules_fails[:4]]
+                    if not citation_clean:
+                        cit_flags = [l for l in citation_text.splitlines() if l.startswith("[FLAG]")]
+                        parts.append(f"🔍 Citations: {len(cit_flags)} to verify")
+                    msg = "\n".join(parts)
                     payload = json.dumps({"chat_id": chat_id, "text": msg, "parse_mode": "Markdown"}).encode()
-                    r = ureq.Request(
+                    ureq.urlopen(ureq.Request(
                         f"https://api.telegram.org/bot{token}/sendMessage",
                         data=payload, headers={"Content-Type": "application/json"}, method="POST",
-                    )
-                    ureq.urlopen(r, timeout=10)
-                    self.logger.info("Telegram: citation flags sent (%d)", len(flags))
+                    ), timeout=10)
+                    self.logger.info("Telegram: review flags sent")
             except Exception as e:
                 self.logger.warning("Telegram notification failed: %s", e)
 
