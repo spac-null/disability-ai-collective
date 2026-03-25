@@ -47,29 +47,27 @@ SEED_SITES = [
     {"domain": "placesjournal.org",               "sitemap": "https://placesjournal.org/sitemap.xml",                 "max_urls": 300},
     {"domain": "failedarchitecture.com",          "sitemap": "https://failedarchitecture.com/sitemap.xml",            "max_urls": 200},
     {"domain": "urbanomnibus.net",                "sitemap": "https://urbanomnibus.net/sitemap.xml",                  "max_urls": 200},
-    {"domain": "metropolismag.com",               "sitemap": "https://www.metropolismag.com/sitemap.xml",             "max_urls": 200},
+    {"domain": "metropolismag.com",               "sitemap": "https://www.metropolismag.com/sitemap_index.xml",       "max_urls": 200},
 
     # ── Long-form cross-disciplinary ─────────────────────────────────────────
     {"domain": "aeon.co",                         "sitemap": "https://assets.aeon.co/sitemaps/aeon/main.xml",         "max_urls": 400, "gzip": True, "sleep": 4},
-    {"domain": "publicdomainreview.org",          "sitemap": "https://publicdomainreview.org/sitemap.xml",            "max_urls": 300},
+    {"domain": "publicdomainreview.org",          "sitemap": "https://publicdomainreview.org/sitemap-0.xml",          "max_urls": 300},
     {"domain": "nautil.us",                       "sitemap": "https://nautil.us/sitemap.xml",                         "max_urls": 300},
     {"domain": "emergencemagazine.org",           "sitemap": "https://emergencemagazine.org/sitemap.xml",             "max_urls": 200},
-    {"domain": "cabinetmagazine.org",             "sitemap": "https://www.cabinetmagazine.org/sitemap.xml",           "max_urls": 300},
     {"domain": "reallifemag.com",                 "sitemap": "https://reallifemag.com/sitemap.xml",                   "max_urls": 200},
-    {"domain": "thebaffler.com",                  "sitemap": "https://thebaffler.com/sitemap.xml",                    "max_urls": 200},
     {"domain": "guernicamag.com",                 "sitemap": "https://www.guernicamag.com/sitemap.xml",               "max_urls": 200},
 
     # ── Science / cognition / perception ─────────────────────────────────────
-    {"domain": "psyche.co",                       "sitemap": "https://psyche.co/sitemap.xml",                         "max_urls": 200},
+    {"domain": "psyche.co",                       "sitemap": "https://psyche.co/feed/",                               "max_urls": 100, "rss": True, "sleep": 4},
 
     # ── Historical & comparative — Bregman-register bee layer ─────────────────
     # Sources that bridge past and present, surface unexpected parallels,
     # tell stories from history that reframe current disability debates.
     {"domain": "daily.jstor.org",                 "sitemap": "https://daily.jstor.org/sitemap.xml",                   "max_urls": 300},
     {"domain": "wellcomecollection.org",          "sitemap": "https://wellcomecollection.org/sitemap.xml",            "max_urls": 200},
-    {"domain": "laphamsquarterly.org",            "sitemap": "https://www.laphamsquarterly.org/sitemap.xml",          "max_urls": 200},
+    {"domain": "laphamsquarterly.org",            "sitemap": "https://www.laphamsquarterly.org/rss.xml",              "max_urls": 100, "rss": True},
     {"domain": "longreads.com",                   "sitemap": "https://longreads.com/sitemap.xml",                     "max_urls": 200},
-    {"domain": "atlasobscura.com",                "sitemap": "https://www.atlasobscura.com/sitemap.xml",              "max_urls": 300, "sleep": 2},
+    {"domain": "atlasobscura.com",                "sitemap": "https://www.atlasobscura.com/feeds/latest",             "max_urls": 100, "rss": True, "sleep": 2},
     {"domain": "bldgblog.com",                    "sitemap": "https://www.bldgblog.com/sitemap.xml",                  "max_urls": 150},
 ]
 
@@ -135,7 +133,7 @@ def fetch_bytes(url: str, decompress: bool = False) -> bytes | None:
 
 
 def extract_sitemap_urls(sitemap_url: str, max_urls: int = 2000, is_gzip: bool = False) -> list[str]:
-    """Parse sitemap XML (or sitemap index) and return a list of page URLs."""
+    """Parse sitemap XML, sitemap index, or RSS/Atom feed. Returns list of page URLs."""
     raw = fetch_bytes(sitemap_url, decompress=is_gzip)
     if not raw:
         return []
@@ -152,11 +150,34 @@ def extract_sitemap_urls(sitemap_url: str, max_urls: int = 2000, is_gzip: bool =
         log.warning("XML parse error for %s: %s", sitemap_url, e)
         return []
 
-    ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
     tag = root.tag.lower()
+    # Strip namespace for matching
+    local = tag.split('}')[-1] if '}' in tag else tag
 
-    # Sitemap index — recurse into each child sitemap
-    if "sitemapindex" in tag:
+    # ── RSS / Atom feed ───────────────────────────────────────────────────────
+    if local in ('rss', 'feed') or 'rss' in tag or 'feed' in tag:
+        locs = []
+        # RSS 2.0: <channel><item><link>url</link>
+        for item in root.iter():
+            item_local = item.tag.split('}')[-1] if '}' in item.tag else item.tag
+            if item_local == 'item':
+                link = item.find('link')
+                if link is not None and link.text and link.text.strip().startswith('http'):
+                    locs.append(link.text.strip())
+            # Atom: <entry><link href="url" rel="alternate"/>
+            elif item_local == 'entry':
+                for link in item:
+                    link_local = link.tag.split('}')[-1] if '}' in link.tag else link.tag
+                    if link_local == 'link':
+                        href = link.get('href', '')
+                        if href.startswith('http'):
+                            locs.append(href)
+                            break
+        return locs[:max_urls]
+
+    # ── Sitemap index ─────────────────────────────────────────────────────────
+    ns = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+    if "sitemapindex" in local:
         child_urls = []
         for sitemap_el in root.findall("sm:sitemap", ns):
             loc = sitemap_el.find("sm:loc", ns)
@@ -166,14 +187,13 @@ def extract_sitemap_urls(sitemap_url: str, max_urls: int = 2000, is_gzip: bool =
                     break
         return child_urls[:max_urls]
 
-    # Regular urlset
+    # ── Regular urlset ────────────────────────────────────────────────────────
     locs = []
     for url_el in root.findall("sm:url", ns):
         loc = url_el.find("sm:loc", ns)
         if loc is not None and loc.text:
             locs.append(loc.text.strip())
 
-    # JSTOR is huge — sample randomly
     if len(locs) > max_urls:
         locs = random.sample(locs, max_urls)
     return locs[:max_urls]
