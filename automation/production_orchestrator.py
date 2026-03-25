@@ -1097,8 +1097,8 @@ class ProductionOrchestrator:
             "15. LANDING: End accumulations with a concrete image or a plain-stated paradox, not an abstract reframing. One image, one fact. No metaphor that requires reconstruction under pressure.\n"
             "16. NO INLINE PARENTHETICAL DEFINITIONS. Never explain a term mid-sentence with em-dashes or parentheses — 'acoustic analysis—the scientific study of how sound behaves—' bloats the sentence and talks down to the reader. If the term needs unpacking, give it its own sentence after. If it doesn't need unpacking, trust the reader and move on.\n"
             "17. PLAIN VOCABULARY. Prefer the Anglo-Saxon word over the Latinate one when meaning is identical. 'use' not 'utilise'. 'show' not 'demonstrate'. 'build' not 'construct'. 'change' not 'transformation'. 'ask' not 'interrogate'. 'help' not 'facilitate'. 'think' not 'conceptualise'. Keep technical terms only when no plain word carries the same precision — but earn them one at a time, not in clusters.\n"
-            "16. SYSTEM VOICE — BANNED: Never write in the syntax of the institutions you are critiquing. The test: can you point to who is doing what to whom? If not, rewrite. Passive voice erases the person causing harm. Stacked bureaucratic nouns erase the person experiencing it. Examples: 'The system handled equipment requests' → 'When a disabled tenant needed a grab rail, they submitted a form.' 'Stops were flagged as non-compliant' → 'Auditors found stops wheelchair users couldn't reach.' 'Claimants were required to navigate' → 'To file a claim, you clicked through seven screens.' If your sentence could appear in the policy document you are criticising, rewrite it with a human subject and a concrete verb.\n"
-            "17. NOMINALIZATION — BANNED: Keep actions as verbs, not nouns. 'The redesign of the interface' → 'they redesigned the interface.' 'The implementation of the ramp' → 'the council built the ramp.' 'The assessment of access needs' → 'a caseworker asked what you needed.' When a verb becomes a noun, the person doing the action disappears. Find the hidden verb and free it.\n"
+            "18. SYSTEM VOICE — BANNED: Never write in the syntax of the institutions you are critiquing. The test: can you point to who is doing what to whom? If not, rewrite. Passive voice erases the person causing harm. Stacked bureaucratic nouns erase the person experiencing it. Examples: 'The system handled equipment requests' → 'When a disabled tenant needed a grab rail, they submitted a form.' 'Stops were flagged as non-compliant' → 'Auditors found stops wheelchair users couldn't reach.' 'Claimants were required to navigate' → 'To file a claim, you clicked through seven screens.' If your sentence could appear in the policy document you are criticising, rewrite it with a human subject and a concrete verb.\n"
+            "19. NOMINALIZATION — BANNED: Keep actions as verbs, not nouns. 'The redesign of the interface' → 'they redesigned the interface.' 'The implementation of the ramp' → 'the council built the ramp.' 'The assessment of access needs' → 'a caseworker asked what you needed.' When a verb becomes a noun, the person doing the action disappears. Find the hidden verb and free it.\n"
             "18. SECTION BREAKS: Use --- sparingly. Two breaks per article is the target. Three is the ceiling. Never more. Each break asks the reader to restart without a handhold. Use a break only when the shift is a genuine scene change or time jump — not a new paragraph of thought. Transitions happen inside the prose.\n"
             "19. VAGUE WE — BANNED: Every 'we' must have a clear referent. 'The redesign is the story we love to tell' — who is we? Design teams? Non-disabled professionals? Say it. 'We' that means everyone usually means someone specific who benefits from not being named. Name them. If you cannot say who we is, cut it and make the sentence active: 'Design teams love to tell the redesign story.'\n"
             "20. NAMED REFERENCES: When you name a theorist or researcher, give one sentence of context and move on immediately. Name + what they said or did + why it matters here — all in one sentence. Never leave a name floating with just a year. Never spend a paragraph explaining who someone is before using their idea. If the idea cannot survive one sentence of context, cut the reference and use the idea directly.\n"
@@ -1109,6 +1109,14 @@ class ProductionOrchestrator:
             "25. OPENING TENSION: The first paragraph establishes a pressure. Not scene-setting, not definition — a tension. Either: two things that should not both be true at the same time, but are. Or: a fact that breaks the reader's assumption in the first sentence. Signature shape: 'There are those who say X. There are those who say Y.' — not balance, a pressure chamber you are about to open. Or: a single juxtaposition that makes the reader think: how can that be? The essay answers that question.\n"
             "26. NO INVENTED DATA. Never write a specific number, percentage, or study finding that is not in the source material. Fake stats destroy credibility if checked. Use qualitative language instead: 'significantly more', 'consistently longer', 'dramatically worse'. If source material has real figures, use them and name the source in the prose. If it does not: no figures at all. No '73% of wheelchair users', no 'a 2025 study found', no '$4.2 million' -- unless those exact figures appear in the source text you were given.\n"
             "27. WRITING MODEL — RUTGER BREGMAN: The target register is Bregman — accessible intellectual journalism, educated-conversational. When editing, check for his signature moves. If the draft has a COMPARATIVE CASE shape (two parallel stories whose contrast carries the argument), protect it and sharpen the juxtaposition. If the draft is missing structural contrast entirely, consider whether an early paragraph can be reframed as a comparative case without adding new material. If the draft ends with a call to action, cut back to the last concrete image and stop there. The CODA, CONCESSION, REDEFINE, and INSIDER WITNESS shapes (already defined in these rules) are all Bregman moves — protect them when they appear.\n"
+            "28. JARGON — BANNED: Never use the vocabulary of the institutions being critiqued. 'claimants' → 'tenants' or 'residents'. 'non-compliant' → say what the barrier is. 'change of circumstances' → 'situation had changed'. 'platform upgrades' → 'rebuild the platform'. 'stakeholders' → who they are. 'outcomes' → what people got or did not get. 'intervention' → what actually happened. If the word appears in a government report or audit document, replace it with what a person would say to another person.\n"
+            "29. TEMPORAL ANCHORS: Date every anecdote — year at minimum, ideally month and place. 'Last autumn' is not a date. 'When I was nine' is not a date. 'It was October 2019, outside a venue in Peckham' is a sentence. Dates make ideas into events; events have momentum; abstractions do not. Apply this to first-person moments too — 'I was in a meeting' → 'In a procurement meeting in 2019, a director told me...'\n"
+            "30. NO HEDGING AGAINST NOBODY: Never write 'X is not Y, but...' unless someone is genuinely arguing that X is Y. Cut the first clause. 'The mechanism is the same' does the work alone. Preemptive hedging signals insecurity. The juxtaposition speaks for itself.\n"
+            "31. GROUNDING: The argument lives in the body before it lives in theory. If the draft opens with a concept or a theorist, find the physical sensation, place, or event that earned the concept — and move it to the front. The concept arrives late, earned by the concrete reality that came before it.\n"
+            "32. US-AVOIDANCE: Do not locate arguments in the United States specifically. No ADA, FEMA, or American laws or institutions. Write from anywhere — unnamed cities, or named non-US examples. Arguments must feel globally applicable.\n"
+            "33. NAMED VOICES: The draft should have 2-3 real named people — quoted or closely paraphrased with full attribution. Name + what they said + context in one sentence. At least one should be a source the reader would not expect to agree with the argument. Never 'a researcher found' or 'studies show' — name the researcher, name the study.\n"
+            "34. SHOW THEN NAME: Never define a concept before showing it. First: the specific example, the concrete detail, the scene. Then — only if needed — 'this is called X.' If the concept is defined before the reader has felt it, cut the definition and trust the example.\n"
+            "35. INSIDER WITNESS: The strongest evidence is often a confession from someone who benefits from the system being critiqued. Find or imagine the insider who would say, if pressed: 'I know. I do it anyway.' A building inspector who signs off on ramps he knows are too steep. A hiring manager who admits the interview is a neurotypicality test. Protect this figure if it appears in the draft — do not smooth it into a statistic.\n"
             "Return ONLY the complete edited article (frontmatter preserved + image lines preserved "
             "+ edited body). No commentary, no preamble."
         )
@@ -1749,6 +1757,112 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             return False
 
 
+    def _pre_commit_gate(self, content, article_file):
+        """Pre-commit loop: readability + mechanical rule check → surgical fix if needed.
+        Max 1 iteration. Returns (content, changed)."""
+        import os, re
+
+        scores = self._readability_score(content)
+        if not scores:
+            return content, False
+
+        # Trigger 1: readability hard fail
+        readability_fail = scores["fre"] < 48
+
+        # Trigger 2: mechanical rule violations (fast LLM check, R1-R10 only)
+        GATE_SYSTEM = (
+            "You are a copy editor. Check this article for mechanical rule violations only. "
+            "For each rule below, output one line.\n\n"
+            "R1  INLINE DEFINITIONS — term explained mid-sentence via em-dashes or parentheses\n"
+            "R2  LATINATE CLUSTERS — 3+ high-syllable Latinate words in one paragraph "
+            "(utilise, demonstrate, facilitate, methodology, supplementary, conceptualise, etc.)\n"
+            "R3  STACKED MODIFIERS — three adjectives before one noun\n"
+            "R4  NOMINALIZATION — verb turned into noun ending in -tion/-ment/-ance/-ence\n"
+            "R5  VAGUE WE — 'we' with no named referent\n"
+            "R6  FRONT-LOADED SENTENCE — long subordinate clause before the subject\n"
+            "R7  LONG PARAGRAPH — more than 5 sentences in one paragraph\n"
+            "R8  LONG LIST — 4 or more items in a list\n"
+            "R9  TOO MANY SECTION BREAKS — more than 3 '---' in the body\n"
+            "R10 JARGON — institutional words: claimants, non-compliant, stakeholders, outcomes, intervention\n\n"
+            "Format: [FAIL] R1 — \"quoted phrase\" | [PASS] R2 | [N/A] R9\n"
+            "Be strict. Quote the exact offending phrase. Max 15 words per quote."
+        )
+        violations = []
+        try:
+            raw = self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=GATE_SYSTEM,
+                user_prompt=content,
+                model="claude-sonnet-4-6",
+                max_tokens=400,
+                timeout=45,
+            )
+            violations = [l for l in (raw or "").splitlines() if l.startswith("[FAIL]")]
+        except Exception as e:
+            self.logger.warning("Pre-commit gate check failed: %s", e)
+
+        rule_fail = len(violations) >= 3
+
+        if not readability_fail and not rule_fail:
+            self.logger.info("Pre-commit gate: PASS (FRE=%.1f, violations=%d)", scores["fre"], len(violations))
+            return content, False
+
+        self.logger.info(
+            "Pre-commit gate: FAIL (FRE=%.1f, violations=%d) — running surgical fix",
+            scores["fre"], len(violations)
+        )
+
+        # Surgical fix — Sonnet, targeted, touch nothing else
+        fix_lines = []
+        if readability_fail:
+            fix_lines.append(
+                f"- Flesch Reading Ease is {scores['fre']} (target ≥ 48). "
+                "Swap Latinate words for shorter Anglo-Saxon equivalents where meaning is identical. "
+                "Do not change proper nouns or topic-essential technical terms."
+            )
+        for v in violations[:6]:
+            fix_lines.append(f"- Fix: {v[7:]}")
+
+        FIX_SYSTEM = (
+            "You are a copy editor making surgical fixes to a published article. "
+            "Fix ONLY the specific issues listed below. "
+            "Change nothing else — not the structure, not the argument, not the voice, not the examples. "
+            "Return the complete article with only those changes applied. "
+            "No commentary, no preamble."
+        )
+        fix_prompt = "ISSUES TO FIX:\n" + "\n".join(fix_lines) + "\n\nARTICLE:\n" + content
+
+        try:
+            fixed = self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=FIX_SYSTEM,
+                user_prompt=fix_prompt,
+                model="claude-sonnet-4-6",
+                max_tokens=2000,
+                timeout=90,
+            )
+            if not fixed or len(fixed) < len(content) * 0.7:
+                self.logger.warning("Surgical fix returned too little content — discarding")
+                return content, False
+
+            # Verify it actually improved readability
+            new_scores = self._readability_score(fixed)
+            if new_scores and new_scores["fre"] > scores["fre"]:
+                self.logger.info(
+                    "Surgical fix: FRE %.1f → %.1f", scores["fre"], new_scores["fre"]
+                )
+                # Update article file on disk
+                article_file.write_text(fixed)
+                return fixed, True
+            else:
+                self.logger.info("Surgical fix did not improve readability — discarding")
+                return content, False
+        except Exception as e:
+            self.logger.warning("Surgical fix failed: %s", e)
+            return content, False
+
     def _readability_score(self, content):
         """Flesch-Kincaid metrics. Returns dict or None."""
         import re
@@ -1819,9 +1933,16 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 f"Word count          : {scores['words']}",
                 f"Verdict             : {verdict}",
             ]
+            word_count = scores["words"]
+            if word_count < 400:
+                readability_fail = True
+                readability_lines.append(f"WORD COUNT FAIL: {word_count} words — below 400 minimum.")
+            elif word_count > 1200:
+                readability_fail = True
+                readability_lines.append(f"WORD COUNT FAIL: {word_count} words — above 1200 target ceiling.")
             if readability_fail:
                 readability_lines.append(
-                    "ACTION: High syllable count is usually the cause. "
+                    "ACTION: High syllable count is usually the cause of low FRE. "
                     "Swap Latinate terms for plain Anglo-Saxon equivalents where meaning is identical."
                 )
         else:
@@ -1848,14 +1969,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "R8  PARAGRAPH LENGTH — flag any paragraph exceeding 5 sentences.\n"
             "R9  SECTION BREAKS — flag if more than 3 '---' breaks appear in the body.\n"
             "R10 LISTS — flag any list with 4 or more items (three is the limit).\n"
-            "R11 INVENTED DATA BANNED — flag any specific number, percentage, or study finding "
-            "not traceable to the named source material.\n"
-            "R12 ENDING — last paragraph must be one concrete sentence, image, or paradox. "
+            "R11 ENDING — last paragraph must be one concrete sentence, image, or paradox. "
             "Flag if it restates the thesis, calls to action, or starts with 'We need' / 'This requires'.\n"
-            "R13 OPENING TENSION — first paragraph must establish a pressure or broken assumption, "
-            "not scene-setting or definition. Flag if it opens by defining terms.\n"
-            "R14 NAMED REFERENCES — name + what they said/did + why it matters here, all in one sentence. "
-            "Flag floating names with only a year, or paragraph-long introductions of a person.\n\n"
+            "R12 NAMED REFERENCES — name + what they said/did + why it matters here, all in one sentence. "
+            "Flag floating names with only a year, or paragraph-long introductions of a person.\n"
+            "R13 JARGON BANNED — flag any institutional vocabulary: claimants, non-compliant, stakeholders, "
+            "outcomes, intervention, change of circumstances, platform upgrades, priority locations. "
+            "These words belong in audit reports, not essays.\n\n"
             "Output format — one line per rule:\n"
             "[PASS] R1\n"
             "[FAIL] R2 — quote the violation (max 15 words)\n"
@@ -1871,7 +1991,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 system_prompt=RULES_SYSTEM,
                 user_prompt=content,
                 model="claude-sonnet-4-6",
-                max_tokens=800,
+                max_tokens=1000,
                 timeout=90,
             )
             rules_text = raw or ""
@@ -2719,9 +2839,6 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "- VAGUE WE — BANNED: 'We' must always have a named referent. If 'we' means everyone, it usually means a specific group that benefits from not being named. Name them. 'We designed this system' → 'non-disabled designers built this system.' 'We don't talk about this' → 'the council never published this.' If you cannot say who we is, cut the word and make someone specific do the thing.\n"
             "- NAMED REFERENCES: Name + one sentence of context + move on. Never leave a name floating. Never spend a paragraph setting up who someone is before using their idea. If the reference needs more than one sentence to land, either the idea is not earning its place or the writing is carrying it wrong. The idea should do the work, not the biography.\n"
             "- FRONT-LOADED SENTENCES — BANNED: Subject comes first. Verb comes second. Never open with a long subordinate clause that makes the reader hold the setup in memory before the sentence resolves. 'What happens after the deadline has none of those qualities' → 'Once the deadline passes, none of that applies.' 'Given the structural conditions that produce' → cut and start with the thing being produced. If the sentence does not name its subject in the first five words, rewrite it.\n"
-            "22. JARGON — BANNED: Never use the vocabulary of the institutions you are critiquing. Banned words and their replacements: 'claimants' → 'tenants' or 'residents'; 'non-compliant' → say what the problem is ('steps wheelchair users cannot climb'); 'change of circumstances' → 'situation had changed'; 'platform upgrades' → 'rebuild the platform'; 'priority locations' → name them or say 'the worst stops'; 'intervention' → what actually happened; 'stakeholders' → who they are; 'outcomes' → what people got or did not get. If the word appears in government reports, replace it with what a person would say.\n"
-            "23. PERSONAL ANECDOTE SPECIFICITY: The TEMPORAL ANCHORS rule applies to first-person moments too. If you write 'I was in a meeting' or 'I visited a building' — say when and where. 'I sat in a procurement meeting' → 'In a procurement meeting in 2019, a director told me...' The reader needs to place you in time and space, not just follow your argument. Floating anecdotes feel like illustration. Dated, placed anecdotes feel like evidence.\n"
-            "24. NO HEDGING AGAINST NOBODY: Never write 'X is not Y, but...' unless someone in the room is genuinely arguing that X is Y. If you write 'A dashboard is not tactile paving, but the mechanism is the same' — cut the first clause. 'The mechanism is the same' does the work. Preemptive hedging signals insecurity. The juxtaposition speaks for itself. Trust it.\n"
             "- JARGON — BANNED: Strip institutional vocabulary. 'Claimants' → 'tenants' or 'residents'. 'Non-compliant' → say what the barrier is. 'Change of circumstances' → 'situation had changed'. 'Platform upgrades' → 'rebuild the platform'. 'Stakeholders' → who they are. 'Outcomes' → what people got or did not get. 'Intervention' → what actually happened. If the word appears in a government report, a council briefing, or an accessibility audit — replace it with what a person would say to another person.\n"
             "- PERSONAL ANECDOTE SPECIFICITY: First-person moments need dates and places, same as external sources. 'I have sat in procurement meetings where...' → 'In a 2019 procurement meeting, a director told me...' Floating anecdotes feel like illustration. Dated, placed anecdotes feel like evidence. Apply the TEMPORAL ANCHORS rule to yourself.\n"
             "- NO HEDGING AGAINST NOBODY: Cut 'X is not Y, but the logic is the same' constructions. If you are about to write 'a dashboard is not tactile paving, but...' — delete the first clause. 'The mechanism is the same' carries the weight alone. Preemptive hedging tells the reader you doubt your own argument. The juxtaposition does the work. Trust it and cut the hedge.\n"
@@ -2745,7 +2862,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "ENDING VARIANT — THE CODA (use occasionally, not every time): Fold back to the opening scene — the same place, the same person, the same object — but later, or elsewhere, or in a different register. Do not state what changed. Show the same thing, different. The beginning and end form a bracket. The argument has resolved itself through the narrative — you do not need to say so.\n\n"
             "CONCESSION: Before you dismantle an assumption, give it the strongest version of itself first. Name what is genuinely true, genuinely difficult, genuinely earned about the thing you are arguing against. Do not weaken it to make your argument easier. Then — one short sentence that flips it. The reader must feel the weight of what they believed before you take it away.\n\n"
             "REDEFINE (use when it fits, not always): The most powerful move is not to challenge the reader's position but to redefine what the problem is. Not 'you are wrong about X' but 'X is not the problem — Y is, and you have not named it yet.' Find the moment where the reader realizes what they thought was the problem was actually the symptom. This is a sentence-level move, not a structural one — it can happen mid-paragraph, almost as an aside.\n\n"
-            "INSIDER WITNESS (use when the topic allows): The strongest evidence is often a confession from someone who benefits from the system you are critiquing — not a researcher, not a statistic. Someone who lives inside the thing and knows it is broken. A building inspector who signs off on ramps he knows are too steep. A hiring manager who admits the 'culture fit' interview is a neurotypicality test. An architect who designs for wheelchair users but has never sat in one. Find or construct the insider who would say, if pressed: 'I know. I do it anyway.'\n\n"
+            "INSIDER WITNESS (use when the topic allows): The strongest evidence is often a confession from someone who benefits from the system you are critiquing — not a researcher, not a statistic. Someone who lives inside the thing and knows it is broken. A building inspector who signs off on ramps he knows are too steep. A hiring manager who admits the 'culture fit' interview is a neurotypicality test. An architect who designs for wheelchair users but has never sat in one. Find or imagine the insider who would say, if pressed: 'I know. I do it anyway.'\n\n"
             "WRITING MODEL — RUTGER BREGMAN: The target register for this publication is Rutger Bregman — accessible intellectual journalism that reads like a smart person explaining something to a friend. Educated-conversational. Not dumbing down. Not writing up. Use at least two of his techniques per article:\n"
             "- COMPARATIVE CASE (his signature move): Open with two parallel stories — person A and person B, system X and system Y, before and after. Run them side by side without commentary. The contrast IS the argument. The reader draws the conclusion without being told. No thesis sentence needed. A ramp that took eleven years next to a ramp that took eleven days. You do not say 'this reveals inequality.' You show both. The reader says it.\n"
             "- CONCESSION-BEFORE-KILL: Already defined above as CONCESSION. This is a Bregman move. Use it.\n"
@@ -2867,7 +2984,10 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         # Step 6: Create article file
         article_file = self.create_article_file(metadata, content, image_filenames, image_descriptions)
 
-        # Step 6b: Non-blocking citation review
+        # Step 6b: Pre-commit gate — surgical fix if readability < 48 or 3+ mechanical violations
+        content, gate_fixed = self._pre_commit_gate(content, article_file)
+
+        # Step 6c: Full review (citations + readability + rule compliance)
         review_file, is_clean = self.validate_article(content, article_file, slug)
 
         # Step 7: Commit article + review sidecar
