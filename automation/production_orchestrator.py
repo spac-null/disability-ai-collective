@@ -1896,20 +1896,50 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             self.logger.debug("Bluesky: no credentials, skipping")
             return
 
-        try:
-            # Article URL — use SITE_URL env if set (custom domain), else github.io
-            slug_md    = article_file.name
-            parts = slug_md[:10].split("-")
-            if len(parts) != 3:
-                self.logger.error("Unexpected article filename format: %s", slug_md)
-                return
-            y, m, d = parts
-            slug       = slug_md[11:].replace(".md", "")
-            site_url   = os.environ.get("SITE_URL", "https://spac-null.github.io/disability-ai-collective")
-            url        = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
+        # Pure setup — no network calls, safe to do before try/except
+        slug_md    = article_file.name
+        parts = slug_md[:10].split("-")
+        if len(parts) != 3:
+            self.logger.error("Unexpected article filename format: %s", slug_md)
+            return
+        y, m, d = parts
+        slug       = slug_md[11:].replace(".md", "")
+        site_url   = os.environ.get("SITE_URL", "https://spac-null.github.io/disability-ai-collective")
+        url        = f"{site_url.rstrip('/')}/{y}/{m}/{d}/{slug}/"
+        auth_payload = json.dumps({"identifier": handle, "password": password}).encode()
 
+        _agent_tags = {
+            "Pixel Nova":   "#DeafCulture",
+            "Siri Sage":    "#BlindLife",
+            "Maya Flux":    "#CripLife",
+            "Zen Circuit":  "#Neurodivergent",
+        }
+        _agent_tag = _agent_tags.get(agent_name, "")
+        tags = f"#accessibility #DisabilitySky #CripMinds #DisabilityJustice{' ' + _agent_tag if _agent_tag else ''}"
+        overhead = len(f"\n\n{tags}")
+        max_hook = 300 - overhead
+        hook = self._social_hook(agent_name, title, body, max_chars=max_hook)
+        text = f"{hook}\n\n{tags}"
+
+        def byte_range(s, sub):
+            b, sb = s.encode(), sub.encode()
+            i = b.find(sb)
+            return i, i + len(sb)
+
+        _all_tags = ["#accessibility", "#DisabilitySky", "#CripMinds", "#DisabilityJustice"]
+        if _agent_tag:
+            _all_tags.append(_agent_tag)
+        facets = []
+        for tag in _all_tags:
+            ts, te = byte_range(text, tag)
+            if ts >= 0:
+                facets.append({"index": {"byteStart": ts, "byteEnd": te},
+                               "features": [{"$type": "app.bsky.richtext.facet#tag", "tag": tag[1:]}]})
+
+        record = None  # initialised here so retry block can always reference it
+
+        try:
             # Auth
-            auth_payload = json.dumps({"identifier": handle, "password": password}).encode()
             with ureq.urlopen(ureq.Request(
                 "https://bsky.social/xrpc/com.atproto.server.createSession",
                 data=auth_payload, headers={"Content-Type": "application/json"}, method="POST",
@@ -1917,36 +1947,6 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 session = json.loads(r.read())
             token = session["accessJwt"]
             did   = session["did"]
-
-            # URL goes in card embed — text is hook + tags only (lots of breathing room)
-            _agent_tags = {
-                "Pixel Nova":   "#DeafCulture",
-                "Siri Sage":    "#BlindLife",
-                "Maya Flux":    "#CripLife",
-                "Zen Circuit":  "#Neurodivergent",
-            }
-            _agent_tag = _agent_tags.get(agent_name, "")
-            tags = f"#accessibility #DisabilitySky #CripMinds #DisabilityJustice{' ' + _agent_tag if _agent_tag else ''}"
-            overhead = len(f"\n\n{tags}")
-            max_hook = 300 - overhead
-            hook = self._social_hook(agent_name, title, body, max_chars=max_hook)
-            text = f"{hook}\n\n{tags}"
-
-            # Facets — hashtags only (URL is in card embed, not text)
-            def byte_range(s, sub):
-                b, sb = s.encode(), sub.encode()
-                i = b.find(sb)
-                return i, i + len(sb)
-
-            _all_tags = ["#accessibility", "#DisabilitySky", "#CripMinds", "#DisabilityJustice"]
-            if _agent_tag:
-                _all_tags.append(_agent_tag)
-            facets = []
-            for tag in _all_tags:
-                ts, te = byte_range(text, tag)
-                if ts >= 0:
-                    facets.append({"index": {"byteStart": ts, "byteEnd": te},
-                                   "features": [{"$type": "app.bsky.richtext.facet#tag", "tag": tag[1:]}]})
 
             # Build external card embed — article link with thumbnail
             embed = None
@@ -2018,6 +2018,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 ), timeout=15) as r:
                     session = json.loads(r.read())
                 token = session["accessJwt"]
+                if record is None:
+                    record = {
+                        "$type": "app.bsky.feed.post",
+                        "text": text,
+                        "createdAt": datetime.now(timezone.utc).isoformat(),
+                        "facets": facets,
+                    }
                 post_payload = json.dumps({"repo": session["did"], "collection": "app.bsky.feed.post", "record": record}).encode()
                 with ureq.urlopen(ureq.Request(
                     "https://bsky.social/xrpc/com.atproto.repo.createRecord",
