@@ -47,3 +47,8 @@
         Beats tracking and cross-article threads. A site that has opinions
         about itself.
 
+  v2.3  Fermentation  2026-03-25
+        Prompt refinement: ban inline parenthetical definitions (both rewrite
+        and generation prompts). Bluesky retry fix: UnboundLocalError on auth
+        timeout. HTTPS enforcement enabled. PIPELINE.md excluded from build.
+
