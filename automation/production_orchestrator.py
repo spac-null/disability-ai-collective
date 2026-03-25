@@ -1104,6 +1104,178 @@ class ProductionOrchestrator:
 
         return content
 
+    # ── Pre-publication quality layer ─────────────────────────────────────────
+
+    def _verify_links(self, content):
+        """HTTP-check all markdown/HTML links. Remove broken ones, keep anchor text."""
+        import urllib.request, urllib.error
+        urls = re.findall(r'\[([^\]]+)\]\((https?://[^\)]+)\)', content)
+        broken = []
+        for text, url in urls:
+            try:
+                req = urllib.request.Request(
+                    url, method='HEAD',
+                    headers={'User-Agent': 'Mozilla/5.0 (compatible; CripMinds/1.0)'}
+                )
+                urllib.request.urlopen(req, timeout=6)
+            except Exception:
+                broken.append((text, url))
+        for text, url in broken:
+            content = content.replace(f'[{text}]({url})', text)
+            self.logger.warning("Removed broken link: %s → %s", text[:60], url[:80])
+        if broken:
+            self.logger.info("Link check: removed %d broken link(s)", len(broken))
+        else:
+            self.logger.info("Link check: all links valid")
+        return content
+
+    def _accessibility_check(self, content, title, agent):
+        """Profile 1 (Accidental Reader): Haiku flags jargon/long sentences, fixes if found."""
+        import os, json as _json
+        try:
+            response = self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=(
+                    "You are a curious reader with no disability background. "
+                    "You found this article via Google. You follow any interesting argument "
+                    "but have zero tolerance for jargon or assumed context.\n\n"
+                    "Read the article. Return a JSON object with key 'issues' — a list where each item has:\n"
+                    "  'type': 'jargon' | 'long_sentence' | 'assumed_context'\n"
+                    "  'quote': exact phrase or sentence (max 80 chars)\n"
+                    "  'fix': one sentence describing the change needed\n\n"
+                    "Flag: any term you'd need to Google, any sentence over 25 words, "
+                    "any reference assuming you know who someone is or what an event was.\n"
+                    "Return ONLY valid JSON. If no issues: {\"issues\": []}"
+                ),
+                user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:3500]}",
+                model="claude-haiku-4-5-20251001",
+                max_tokens=700,
+                timeout=30,
+                no_think=True,
+            )
+            match = re.search(r'\{.*\}', response, re.DOTALL)
+            if not match:
+                return content
+            issues = _json.loads(match.group()).get('issues', [])
+            if not issues:
+                self.logger.info("Accessibility check: clean")
+                return content
+            self.logger.info("Accessibility check: %d issue(s) — running fix pass", len(issues))
+            issues_text = "\n".join(
+                f"- [{i['type']}] \"{i.get('quote','')}\" → {i.get('fix','')}"
+                for i in issues
+            )
+            fixed = self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=(
+                    "You are editing an article for plain-language accessibility. "
+                    "Fix ONLY the flagged issues below — do not change anything else. "
+                    "Preserve the argument, persona voice, all structure and examples. "
+                    "Return the complete article body only, no commentary."
+                ),
+                user_prompt=f"Article:\n\n{content}\n\nFix these issues:\n{issues_text}",
+                model="claude-haiku-4-5-20251001",
+                max_tokens=4000,
+                timeout=60,
+                no_think=True,
+            )
+            if fixed and len(fixed) > len(content) * 0.5:
+                return fixed.strip()
+        except Exception as e:
+            self.logger.warning("Accessibility check failed: %s — keeping original", e)
+        return content
+
+    def _editorial_check_due(self):
+        """Return True every 3rd article (based on total article count in beats DB)."""
+        try:
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._init_beats_table(conn)
+            count = conn.execute("SELECT COUNT(*) FROM article_beats").fetchone()[0]
+            conn.close()
+            return count % 3 == 0
+        except Exception:
+            return False
+
+    def _editorial_check(self, content, title, agent):
+        """Opus editorial pass — catches structural quality issues (every 3rd article)."""
+        import os, json as _json
+        try:
+            response = self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=(
+                    "You are an editorial reviewer for Crip Minds, a disability culture publication. "
+                    "Check this article for four structural problems:\n\n"
+                    "1. NO DISAGREEMENT — every section reaches the same conclusion, no friction or counter-argument engaged\n"
+                    "2. HELPS-EVERYONE LOGIC — argument centers non-disabled readers as the people to persuade\n"
+                    "3. PLEASURE ABSENT — disability only shown as limitation or failure, never as experience when things work\n"
+                    "4. PERFORMING FOR OUTSIDERS — explains disability culture to people who don't have it, "
+                    "rather than speaking from inside it\n\n"
+                    "Return a JSON object:\n"
+                    "{\n"
+                    "  \"score\": 0-10,\n"
+                    "  \"issues\": [{\"type\": \"...\", \"quote\": \"...\", \"fix\": \"...\"}]\n"
+                    "}\n"
+                    "score 10 = none of these problems. score < 7 = rewrite needed. "
+                    "Return ONLY valid JSON."
+                ),
+                user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:4000]}",
+                model="claude-opus-4-6",
+                max_tokens=800,
+                timeout=60,
+            )
+            match = re.search(r'\{.*\}', response, re.DOTALL)
+            if not match:
+                return content
+            data = _json.loads(match.group())
+            score = data.get('score', 10)
+            issues = data.get('issues', [])
+            self.logger.info("Editorial check: score %d/10, %d issue(s)", score, len(issues))
+            if score >= 7 or not issues:
+                return content
+            issues_text = "\n".join(
+                f"- [{i['type']}] \"{i.get('quote','')}\" → {i.get('fix','')}"
+                for i in issues
+            )
+            fixed = self._call_openai_compat_api(
+                url="http://172.19.0.1:8317/v1",
+                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                system_prompt=(
+                    "You are editing an article for Crip Minds. Fix ONLY the flagged editorial issues. "
+                    "Protect: the opening scene, argument structure, persona voice, all concrete examples. "
+                    "Do not polish — make the specific changes and stop. "
+                    "Return the complete article body only."
+                ),
+                user_prompt=(
+                    f"Article:\n\n{content}\n\n"
+                    f"Fix these editorial issues (score was {score}/10):\n{issues_text}"
+                ),
+                model="claude-opus-4-6",
+                max_tokens=4500,
+                timeout=90,
+            )
+            if fixed and len(fixed) > len(content) * 0.5:
+                self.logger.info("Editorial fix applied (score was %d/10)", score)
+                return fixed.strip()
+        except Exception as e:
+            self.logger.warning("Editorial check failed: %s — keeping original", e)
+        return content
+
+    def pre_publication_check(self, content, title, agent):
+        """Pre-publication layer: link check + accessibility (every article) + editorial (every 3rd)."""
+        self.logger.info("Pre-publication check: starting")
+        content = self._verify_links(content)
+        content = self._accessibility_check(content, title, agent)
+        if self._editorial_check_due():
+            self.logger.info("Pre-publication check: editorial pass due")
+            content = self._editorial_check(content, title, agent)
+        self.logger.info("Pre-publication check: done")
+        return content
+
+    # ─────────────────────────────────────────────────────────────────────────
+
     def generate_fallback_article(self, title, agent_name, agent_info):
         """Generate article-specific fallback content when all LLM providers fail."""
         import hashlib
@@ -2451,6 +2623,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             else:
                 self.logger.info("Written by %s — no rewrite needed", written_by)
             model_used_label = written_by
+
+        # Step 3c: Pre-publication quality layer (link check + accessibility + editorial)
+        content = self.pre_publication_check(content, extracted_title, agent_name)
 
         # Record beat for this article
         self._record_beat(agent_name, extracted_title, content)
