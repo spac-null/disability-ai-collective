@@ -39,6 +39,14 @@ CANONICAL_DISABILITY_LINKS = {
     'Simi Linton':                        'https://simi.nyc/',
     'Hansel Bauman':                      'https://www.hanselbauman.online/about',
     'Deaf Gain':                          'https://www.upress.umn.edu/9780816691227/deaf-gain/',
+    'Mike Oliver':                        'https://disability-studies.leeds.ac.uk/library/author/oliver.m/',
+    'Remploy':                            'https://www.remploy.co.uk/',
+    'Yasuhisa Toyota':                    'https://www.nagata.co.jp/en/staff/toyota.html',
+    # Cross-persona links — always point to research page, never fictional domains
+    'Pixel Nova':                         '/research/?author=Pixel+Nova',
+    'Siri Sage':                          '/research/?author=Siri+Sage',
+    'Maya Flux':                          '/research/?author=Maya+Flux',
+    'Zen Circuit':                        '/research/?author=Zen+Circuit',
 }
 
 
@@ -345,7 +353,7 @@ class ProductionOrchestrator:
             conn   = sqlite3.connect(str(self.discovery_db))
             self._init_beats_table(conn)
             cutoff4 = (datetime.now() - timedelta(days=4)).strftime("%Y-%m-%d")
-            cutoff1 = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
+            cutoff3 = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
 
             # Count per agent last 4 days
             rows = conn.execute(
@@ -354,22 +362,17 @@ class ProductionOrchestrator:
             ).fetchall()
             freq = {r[0]: r[1] for r in rows}
 
-            # Last published agent
-            last = conn.execute(
-                "SELECT agent FROM article_beats WHERE date >= ? ORDER BY date DESC, id DESC LIMIT 1",
-                (cutoff1,)
-            ).fetchone()
-            last_agent = last[0] if last else None
+            # Agents used in last 3 days — block all of them
+            recent = conn.execute(
+                "SELECT DISTINCT agent FROM article_beats WHERE date >= ?",
+                (cutoff3,)
+            ).fetchall()
             conn.close()
 
             all_agents = list(self.agents.keys())
 
-            # Rule 2: avoid yesterday's agent
-            blocked = set()
-            if last_agent == preferred:
-                blocked.add(preferred)
-
-            # Rule 3: avoid agents with 2+ articles in last 4 days
+            # Rule: no same persona within 3 days + no 2+ articles in 4 days
+            blocked = {r[0] for r in recent}
             for a, c in freq.items():
                 if c >= 2:
                     blocked.add(a)
@@ -646,6 +649,39 @@ class ProductionOrchestrator:
         except Exception:
             pass
         return ""
+
+    def _get_scholar_nudge(self) -> str:
+        """Scan last 7 articles for overused scholar citations. Nudge away from wallpaper repetition."""
+        _WATCHED = ['Mike Oliver', 'Sunaura Taylor', 'Gregory Bateson', 'Rebecca Solnit']
+        try:
+            cutoff = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+            recent_posts = sorted(self.posts_dir.glob("*.md"), reverse=True)[:7]
+            counts = {s: 0 for s in _WATCHED}
+            for post in recent_posts:
+                try:
+                    text = post.read_text(encoding='utf-8')
+                    for scholar in _WATCHED:
+                        if scholar.split()[-1] in text:  # match on last name
+                            counts[scholar] += 1
+                except Exception:
+                    continue
+            nudges = []
+            for scholar, count in counts.items():
+                if count >= 3:
+                    nudges.append(
+                        f"{scholar} has appeared in {count} of the last 7 articles. "
+                        f"Do not cite or explain {scholar.split()[0]} again unless your argument "
+                        f"specifically requires it and cannot be made without them. "
+                        f"Find a different theoretical anchor."
+                    )
+                elif count >= 2:
+                    nudges.append(
+                        f"{scholar} has appeared in {count} recent articles. "
+                        f"If you cite them, do not re-explain their core concept — assume the reader knows it."
+                    )
+            return ("SCHOLAR NOTE: " + " ".join(nudges) + "\n\n") if nudges else ""
+        except Exception:
+            return ""
 
     def _should_cross_reference(self) -> bool:
         return random.random() < 0.20
@@ -1485,6 +1521,28 @@ The question isn't whether {title.lower()} matters. The question is whether the 
             "If nothing to link, return: []"
         )
 
+        # Fictional persona domains — never link to these
+        _BLOCKED_DOMAINS = {
+            'pixelnova.org', 'pixelnova.com',
+            'sirisage.com',  'sirisage.org',
+            'mayaflux.org',  'mayaflux.com',
+            'zencircuit.org','zencircuit.com',
+        }
+
+        def _extract_json_array(s):
+            """Bracket-count to extract first complete JSON array — avoids 'Extra data' errors."""
+            depth, start = 0, None
+            for i, c in enumerate(s):
+                if c == '[':
+                    if start is None:
+                        start = i
+                    depth += 1
+                elif c == ']':
+                    depth -= 1
+                    if depth == 0 and start is not None:
+                        return s[start:i + 1]
+            return None
+
         try:
             raw = self._call_openai_compat_api(
                 url="http://172.19.0.1:8317/v1",
@@ -1498,12 +1556,14 @@ The question isn't whether {title.lower()} matters. The question is whether the 
             if not raw:
                 return body
 
-            # Extract JSON from response (may have backtick fencing)
-            json_match = _re.search(r'\[.*\]', raw, _re.DOTALL)
-            if not json_match:
+            raw_array = _extract_json_array(raw)
+            if not raw_array:
                 return body
-
-            suggestions = _json.loads(json_match.group(0))
+            try:
+                suggestions = _json.loads(raw_array)
+            except _json.JSONDecodeError as je:
+                self.logger.warning("smart_inject_links JSON parse failed: %s", je)
+                return body
 
             _used_urls: set = set()
             for item in suggestions:
@@ -1516,6 +1576,10 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 if not url.startswith('https://') or '.' not in url[8:]:
                     continue
                 if 'wikipedia.org' in url or 'wiktionary.org' in url:
+                    continue
+                # Block fictional persona domains — canonical list handles these
+                _url_host = url.split('/')[2].lower() if url.count('/') >= 2 else ''
+                if _url_host in _BLOCKED_DOMAINS:
                     continue
                 # Skip if canonical list has a verified override for this phrase
                 if phrase in CANONICAL_DISABILITY_LINKS:
@@ -1943,8 +2007,31 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             return uri
 
         except Exception as e:
-            self.logger.warning("Bluesky post failed: %s", e)
-            return ""
+            self.logger.warning("Bluesky post failed (attempt 1): %s — retrying in 10s", e)
+            import time as _time
+            _time.sleep(10)
+            try:
+                # Retry: re-auth and re-post
+                with ureq.urlopen(ureq.Request(
+                    "https://bsky.social/xrpc/com.atproto.server.createSession",
+                    data=auth_payload, headers={"Content-Type": "application/json"}, method="POST",
+                ), timeout=15) as r:
+                    session = json.loads(r.read())
+                token = session["accessJwt"]
+                post_payload = json.dumps({"repo": session["did"], "collection": "app.bsky.feed.post", "record": record}).encode()
+                with ureq.urlopen(ureq.Request(
+                    "https://bsky.social/xrpc/com.atproto.repo.createRecord",
+                    data=post_payload,
+                    headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+                    method="POST",
+                ), timeout=20) as r:
+                    result = json.loads(r.read())
+                uri = result.get("uri", "")
+                self.logger.info("Bluesky: posted on retry %s", uri)
+                return uri
+            except Exception as e2:
+                self.logger.warning("Bluesky post failed (attempt 2): %s", e2)
+                return ""
 
 
     def _store_social_uri(self, slug, bsky_uri, agent=None):
@@ -2456,7 +2543,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         else:
             title_freshness_warning = ""
 
-        beat_nudge  = title_freshness_warning + self._get_beat_nudge(agent_name)
+        beat_nudge  = title_freshness_warning + self._get_beat_nudge(agent_name) + self._get_scholar_nudge()
         date_nudge  = self._get_recent_dates_nudge()
         shape_nudge = self._get_shape_nudge()
         cross_ref   = self._get_cross_reference(agent_name)
@@ -2504,7 +2591,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "- Disability as culture and identity — never as tragedy, never as inspiration\n"
             "- Open with a specific concrete moment or a single sharp claim — not a scene-setter, not a question, not statistics\n"
             "- One thesis the whole essay serves — but never state it. The argument is demonstrated, not announced. If you write My thesis is or I argue that or This essay will show — delete it. The comparative case, the insider confession, the specific detail make the argument. The reader realizes it.\n"
-            "- READER ADDRESS: When the reader's objection is predictable, voice it before they can. In their voice: You might say... or But doesn't this cost more? or Isn't that already happening? Then answer in one sentence. This is a conversation, not a lecture.\n"
+            "- READER ADDRESS: When the reader's objection is predictable, voice it before they can — in whatever phrasing fits your voice naturally. Don't use the same opener twice across your work. Then answer in one sentence. This is a conversation, not a lecture.\n"
             "- PLAIN VOCABULARY: Plain English only. Use not utilise. Show not demonstrate. Fix not remediate. When you must use a technical term, unpack it immediately in the same or next sentence. Never let jargon sit.\n"
             "- SYSTEM VOICE — BANNED: Never write in the syntax of the systems you are critiquing. Test every sentence: who is doing what to whom? If you cannot point to a human subject doing a concrete thing, rewrite. Passive voice erases the person causing harm. Stacked bureaucratic nouns erase the person experiencing it. 'The intervention was implemented' → 'The council installed a ramp.' 'Access needs were assessed' → 'A caseworker asked what you needed.' 'Equipment requests were processed' → 'Someone reviewed your application for a grab rail.' If the sentence could appear in the audit report the article is criticising, it has failed.\n"
             "- NOMINALIZATION — BANNED: Actions stay as verbs. When a verb becomes a noun, the person doing it disappears. 'The redesign of the system' → 'they redesigned the system.' 'The implementation' → 'they built it.' 'The assessment of needs' → 'someone asked what you needed.' Scan for nouns ending in -tion, -ment, -ance, -ence, -al, -ure — these are often verbs in disguise. Free the verb. Name who does it.\n"
