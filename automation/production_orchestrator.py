@@ -2745,9 +2745,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             # Generate fallback topic
             topics = [
                 "The Visual Language of Accessibility: How Color Contrast Speaks Louder Than Words",
-                "Silent Interfaces: What Hearing-Centric Design Misses About Vibration and Haptics", 
                 "Neurodiverse Navigation: Why Standard Wayfinding Fails Creative Minds",
-                "The Prosthetics Paradox: When Technology Creates New Barriers Instead of Removing Old Ones"
+                "The Prosthetics Paradox: When Technology Creates New Barriers Instead of Removing Old Ones",
+                "What Medicaid Cuts Actually Cost: The Arithmetic of Care",
+                "The Protest That Changed Nothing and Then Changed Everything",
+                "Diagnosis as Administrative Fiction: How Labels Are Made",
+                "When the Building Passes Inspection and the Wheelchair Can't Enter",
+                "The Economics of Dependence: Who Profits When Disabled People Can't Manage Alone",
             ]
             title = random.choice(topics)
             agent_name = self._balance_agent(random.choice(list(self.agents.keys())))
