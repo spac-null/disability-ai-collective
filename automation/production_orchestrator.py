@@ -1747,9 +1747,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             commit_msg = f"Add new article: {article_file.stem}"
             subprocess.run(['git', 'commit', '-m', commit_msg], check=True)
             
-            # Push
-            subprocess.run(['git', 'push', 'origin', 'main'], check=True)
-            
+            # Push (pull --rebase first to avoid rejection if remote diverged)
+            self._git_push_safe()
+
             self.logger.info("Successfully committed and pushed to repository")
             return True
             
@@ -1757,6 +1757,22 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             self.logger.error(f"Git operation failed: {e}")
             return False
 
+
+    def _git_push_safe(self, cwd=None):
+        """Pull --rebase before pushing to avoid rejection when remote has diverged."""
+        wd = str(cwd or self.repo_root)
+        stashed = False
+        try:
+            result = subprocess.run(['git', 'stash'], check=True, cwd=wd, capture_output=True, text=True)
+            stashed = 'No local changes' not in result.stdout
+            subprocess.run(['git', 'pull', '--rebase', 'origin', 'main'], check=True, cwd=wd)
+            if stashed:
+                subprocess.run(['git', 'stash', 'pop'], check=True, cwd=wd)
+            subprocess.run(['git', 'push', 'origin', 'main'], check=True, cwd=wd)
+        except subprocess.CalledProcessError as e:
+            if stashed:
+                subprocess.run(['git', 'stash', 'pop'], cwd=wd)
+            raise e
 
     def _pre_commit_gate(self, content, article_file):
         """Pre-commit loop: readability + mechanical rule check → surgical fix if needed.
@@ -2367,7 +2383,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             subprocess.run(["git", "rm", "-f", str(f)], cwd=str(self.repo_root), capture_output=True)
         msg = f"retract: remove {article_file.name}"
         subprocess.run(["git", "commit", "-m", msg], cwd=str(self.repo_root), check=True)
-        subprocess.run(["git", "push"], cwd=str(self.repo_root), check=True)
+        self._git_push_safe()
         print(f"Retracted: {article_file.name}")
         return True
 
@@ -2668,7 +2684,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                      + "\n".join(f"- {r['file']}: +{len(r['added'])} links" for r in results["updated"])],
                     check=True, cwd=self.repo_root,
                 )
-                _sp.run(["git", "push", "origin", "main"], check=True, cwd=self.repo_root)
+                self._git_push_safe()
                 self.logger.info("link_audit: committed + pushed %d article(s)", count)
             except Exception as e:
                 self.logger.warning("link_audit: git commit failed — %s", e)
