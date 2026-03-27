@@ -19,13 +19,23 @@ No manual intervention needed. Cron runs on trident host.
 
 ## Manual Override
 
-To force a specific article, add a brief to `QUEUE = []` at the top of
-`automation/production_orchestrator.py`, then run:
 ```bash
-./run python3 automation/production_orchestrator.py
-```
+# Force run even if article exists today
+./run python3 automation/production_orchestrator.py --force
 
-Leave QUEUE empty for fully automatic topic selection from DB.
+# Force specific agent
+./run python3 automation/production_orchestrator.py --force --agent "Maya Flux"
+
+# Re-post today's article to Bluesky (if social posting was skipped)
+./run python3 automation/production_orchestrator.py --post-today
+
+# Retract article (deletes file + Bluesky post)
+./run python3 automation/production_orchestrator.py --retract <slug>
+
+# Link audit (inject missing links across all articles)
+./run python3 automation/production_orchestrator.py --link-audit
+./run python3 automation/production_orchestrator.py --link-audit --dry-run
+```
 
 ## Active Scripts
 
@@ -50,6 +60,16 @@ Main article pipeline. Self-loads `/srv/secrets/openclaw.env`.
 - Images: Pollinations FLUX API (key from openclaw.env)
 - Bluesky: auto-posts after each article (creds from openclaw.env)
 - Gold standard: `2026-03-08-architects-are-designing-buildings-for-the-wrong-sense.md`
+
+**Git push behaviour (2026-03-27):**
+Every `git push` goes through `_git_push_safe()`: stash → pull --rebase → pop → push.
+Prevents silent `partial` status when remote has diverged from manual Mac edits.
+If push was skipped despite the fix, recover with `--post-today`.
+
+**Fallback topics (when discovery DB has no findings):**
+8 diverse topics — civil rights economics, protest history, diagnosis politics,
+typography, wayfinding, budget arithmetic, museum access, etc.
+`Silent Interfaces` (acoustic) was removed 2026-03-26 after 3-day acoustic clustering.
 
 ### `run_discovery.py`
 Discovers disability/tech topics, writes to `disability_findings.db`.
