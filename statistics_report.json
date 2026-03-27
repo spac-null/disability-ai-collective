@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-03-24T16:01:31.132234",
-  "total_findings": 671,
-  "unique_domains": 15,
-  "used_findings": 8,
-  "unused_findings": 663,
+  "timestamp": "2026-03-27T16:02:18.971743",
+  "total_findings": 755,
+  "unique_domains": 13,
+  "used_findings": 10,
+  "unused_findings": 745,
   "first_discovery": "2026-03-14T12:24:48.484224",
-  "last_discovery": "2026-03-24T08:00:37.588532",
+  "last_discovery": "2026-03-27T08:00:29.139112",
   "top_categories": [
     {
       "disability_concepts": "[\"hidden_angle\"]",
-      "count": 652
+      "count": 736
     },
     {
-      "disability_concepts": "[\"artist\", \"access\", \"gallery\", \"form\", \"exhibition\", \"performance\"]",
+      "disability_concepts": "[\"performance\", \"artist\", \"exhibition\", \"access\", \"gallery\", \"form\"]",
       "count": 3
     },
     {
@@ -32,47 +32,47 @@
       "count": 1
     },
     {
-      "disability_concepts": "[\"visibility\", \"access\", \"sound\", \"form\", \"community\", \"color\"]",
+      "disability_concepts": "[\"movement\", \"film\", \"access\", \"dance\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"visibility\", \"access\", \"identity\", \"vision\", \"form\", \"accessible\", \"community\", \"color\"]",
+      "disability_concepts": "[\"marginalized\", \"beauty\", \"dance\", \"community\", \"marginal\", \"access\", \"movement\", \"vision\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"visibility\", \"access\", \"community\", \"film\", \"communication\", \"color\"]",
+      "disability_concepts": "[\"hearing\", \"voice\", \"audio\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"tradition\", \"voice\", \"movement\", \"theater\", \"sound\", \"vision\", \"form\", \"performance\", \"focus\", \"marginalized\", \"dance\", \"marginal\", \"color\"]",
+      "disability_concepts": "[\"form\", \"access\", \"performance\", \"interaction\", \"function\", \"interface\", \"vision\"]",
       "count": 1
     }
   ],
   "recent_findings": [
     {
-      "title": "2,000-Year-Old Graffiti on Egyptian Tombs Translated",
-      "domain": "artnews.com",
-      "discovered_date": "2026-03-24T08:00:37.588532"
-    },
-    {
-      "title": "White Girls and the Global South",
-      "domain": "hyperallergic.com",
-      "discovered_date": "2026-03-24T08:00:29.518202"
-    },
-    {
       "title": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-24T08:00:26.918126"
+      "discovered_date": "2026-03-27T08:00:29.139112"
     },
     {
       "title": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-24T08:00:25.771757"
+      "discovered_date": "2026-03-27T08:00:28.020414"
     },
     {
       "title": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-24T08:00:24.605997"
+      "discovered_date": "2026-03-27T08:00:26.899910"
+    },
+    {
+      "title": "Disability Justice is Climate Justice | Sins Invalid",
+      "domain": "sinsinvalid.org",
+      "discovered_date": "2026-03-27T08:00:25.612631"
+    },
+    {
+      "title": "The Feministing Five: Patty Berne | Sins Invalid",
+      "domain": "sinsinvalid.org",
+      "discovered_date": "2026-03-27T08:00:24.409267"
     }
   ]
 }
