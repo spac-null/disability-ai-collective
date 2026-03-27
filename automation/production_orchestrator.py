@@ -3059,6 +3059,8 @@ if __name__ == "__main__":
                         help="Force specific agent: 'Pixel Nova', 'Siri Sage', 'Maya Flux', 'Zen Circuit'")
     parser.add_argument("--retract", type=str, default=None, metavar="SLUG",
                         help="Retract article by slug (deletes file, removes Bluesky post)")
+    parser.add_argument("--post-today", action="store_true",
+                        help="Post today's already-published article to Bluesky (use if social posting was skipped)")
     args = parser.parse_args()
 
     orchestrator = ProductionOrchestrator()
@@ -3072,6 +3074,22 @@ if __name__ == "__main__":
 
     if args.retract:
         orchestrator.retract_article(args.retract)
+    elif args.post_today:
+        from datetime import date as _date
+        today = str(_date.today())
+        matches = list(orchestrator.posts_dir.glob(f"{today}-*.md"))
+        if not matches:
+            print(f"No article found for {today}")
+        else:
+            af = matches[0]
+            lines = af.read_text().split('\n')
+            title = next(l.split(':', 1)[1].strip().strip('"') for l in lines if l.startswith('title:'))
+            sep = [i for i, l in enumerate(lines) if l == '---']
+            body = '\n'.join(lines[sep[1]+1:])
+            agent = next((l.split(':', 1)[1].strip().strip('"') for l in lines if l.startswith('author:')), None)
+            images = [f.name for f in orchestrator.repo_root.glob(f"assets/{af.stem}_*.jpg")]
+            uri = orchestrator.post_to_bluesky(title, body, af, image_filenames=images, agent_name=agent)
+            print(f"Posted: {uri}")
     elif args.link_audit:
         result = orchestrator.link_audit(dry_run=args.dry_run)
         updated = result["updated"]
