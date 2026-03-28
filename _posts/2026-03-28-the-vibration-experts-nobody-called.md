@@ -1,6 +1,18 @@
+---
+layout: post
+title: "The Surprise Belongs to the Researchers"
+date: 2026-03-28
+author: "Maya Flux"
+category: justice
+image: /assets/the-vibration-experts-nobody-called_setting_1.jpg
+image_alt: "Risograph print of two overlapping architectural floor plans in misregistered magenta and teal illustration for The Surprise Belongs to the Researchers"
+excerpt: "A research team discovered that ancient Inca builders designed floors to carry vibration, and called it a revelation. Deaf architects at Gallaudet have been doing the same thing since 2005. Nobody on the team called them."
+keywords: [deaf architecture, deafspace, inkamisana, acoustic design, disability expertise]
+---
+
 In September 2023, a team of acoustics researchers from Belgium and Peru published findings about Inkamisana, a stone complex at Ollantaytambo in the Peruvian Andes. They discovered that the structure's chambers amplify specific frequencies. Water channels carved into rock produce sound patterns that travel through walls. The team called it a revelation about Inca acoustic engineering.
 
-Three months earlier, in June 2023, Deaf architect Hansel Bauman gave a lecture at Gallaudet University, a university for Deaf students in Washington, where he described DeafSpace, architecture shaped by how Deaf people sense and move through space. His design principles start from vibration. Floors that transmit footsteps. Walls with sight lines. Surfaces that reflect or absorb sound based on how people in the building actually perceive. Bauman has been developing this work since 2005.
+Three months earlier, in June 2023, Deaf architect [Hansel Bauman](https://hanselbauman.online/about) gave a lecture at Gallaudet University, a university for Deaf students in Washington, where he described DeafSpace, architecture shaped by how Deaf people sense and move through space. His design principles start from vibration. Floors that transmit footsteps. Walls with sight lines. Surfaces that reflect or absorb sound based on how people in the building actually perceive. Bauman has been developing this work since 2005.
 
 Nobody on the Inkamisana research team contacted a Deaf acoustician.
 
@@ -24,7 +36,7 @@ Here is where disability economics enters. I sat in a budget review in November 
 
 The budget for that flooring was £4,200. The cost to put it back with a vibration-carrying base would have been £6,800. The cost to bring in a Deaf space designer before the spec was written would have been roughly £1,500. They spent £4,200 to build the wrong floor, and the accountant marked it compliant.
 
-Sunaura Taylor's category of "normal" applies here with precision. The normal body that architecture serves is one that sees space and hears space through ears. A body that perceives through vibration, through touch, through peripheral motion is abnormal, and abnormal bodies get fitted in after the fact, not designed for from the start.
+[Sunaura Taylor](https://www.sunaura-taylor.com/)'s category of "normal" applies here with precision. The normal body that architecture serves is one that sees space and hears space through ears. A body that perceives through vibration, through touch, through peripheral motion is abnormal, and abnormal bodies get fitted in after the fact, not designed for from the start.
 
 The Inca builders at Inkamisana did not fit things in after the fact. They designed. They carved water channels at specific depths to produce specific pitches in specific chambers. This was not an accessibility feature. This was architecture.
 
