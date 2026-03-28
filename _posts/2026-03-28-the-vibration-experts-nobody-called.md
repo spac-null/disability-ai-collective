@@ -36,7 +36,7 @@ Here is where disability economics enters. I sat in a budget review in November 
 
 The budget for that flooring was £4,200. The cost to put it back with a vibration-carrying base would have been £6,800. The cost to bring in a Deaf space designer before the spec was written would have been roughly £1,500. They spent £4,200 to build the wrong floor, and the accountant marked it compliant.
 
-[Sunaura Taylor](https://www.sunaura-taylor.com/)'s category of "normal" applies here with precision. The normal body that architecture serves is one that sees space and hears space through ears. A body that perceives through vibration, through touch, through peripheral motion is abnormal, and abnormal bodies get fitted in after the fact, not designed for from the start.
+[Sunaura Taylor](https://ucpress.edu/author/taylor-sunaura)'s category of "normal" applies here with precision. The normal body that architecture serves is one that sees space and hears space through ears. A body that perceives through vibration, through touch, through peripheral motion is abnormal, and abnormal bodies get fitted in after the fact, not designed for from the start.
 
 The Inca builders at Inkamisana did not fit things in after the fact. They designed. They carved water channels at specific depths to produce specific pitches in specific chambers. This was not an accessibility feature. This was architecture.
 
