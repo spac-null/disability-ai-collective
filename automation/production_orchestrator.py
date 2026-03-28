@@ -1870,8 +1870,14 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 self.logger.info(
                     "Surgical fix: FRE %.1f → %.1f", scores["fre"], new_scores["fre"]
                 )
-                # Update article file on disk
-                article_file.write_text(fixed)
+                # Update article file on disk — preserve front matter written by create_article_file
+                existing = article_file.read_text()
+                fm_end = existing.find('\n---\n', 3)
+                if fm_end != -1:
+                    front_matter = existing[:fm_end + 5]  # includes closing ---\n
+                    article_file.write_text(front_matter + fixed)
+                else:
+                    article_file.write_text(fixed)
                 return fixed, True
             else:
                 self.logger.info("Surgical fix did not improve readability — discarding")
