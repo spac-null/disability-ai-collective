@@ -1,0 +1,103 @@
+{
+  "config": {
+    "match_threshold": 2,
+    "lookback_days": 21,
+    "max_generated_text_chars": 210
+  },
+  "targets": [
+    {
+      "name": "Neil Milliken",
+      "handle": "neilmilliken.bsky.social",
+      "handle_verified": true,
+      "community": "accessibility tech",
+      "focus_keywords": ["accessibility", "digital inclusion", "inclusive design", "AXS", "built environment", "assistive"],
+      "bio": "VP Accessibility at Atos, AXS-Feed curator, W3C cognitive accessibility invited expert",
+      "status": "done",
+      "posted_date": "2026-03-28",
+      "post_uri": "at://did:plc:4x2xhho3ozmrknpxqbdjtmbv/app.bsky.feed.post/3mi4e2yzeti2w",
+      "matched_article": "2026-03-26-the-price-of-looking"
+    },
+    {
+      "name": "Haben Girma",
+      "handle": "habengirma.bsky.social",
+      "handle_verified": true,
+      "community": "disability rights",
+      "focus_keywords": ["deafblind", "accessibility", "inclusion", "technology", "navigation", "barriers", "Harvard", "law"],
+      "bio": "First deafblind person to graduate Harvard Law, disability rights lawyer, author of Haben",
+      "status": "pending"
+    },
+    {
+      "name": "Devon Price",
+      "handle": "devminor.bsky.social",
+      "handle_verified": true,
+      "community": "neurodivergence",
+      "focus_keywords": ["autism", "autistic", "neurodivergent", "masking", "diagnosis", "ADHD", "neuroqueer", "pattern"],
+      "bio": "Social psychologist, author of Unmasking Autism and Laziness Does Not Exist, autistic and trans",
+      "status": "pending"
+    },
+    {
+      "name": "Lainey Feingold",
+      "handle": "lflegal.bsky.social",
+      "handle_verified": true,
+      "community": "digital accessibility law",
+      "focus_keywords": ["accessibility", "law", "legal", "digital", "negotiation", "ADA", "web accessibility", "rights"],
+      "bio": "Disability rights lawyer, pioneer of structured negotiation for digital accessibility since 1995",
+      "status": "pending"
+    },
+    {
+      "name": "Debra Ruh",
+      "handle": "debraruh.bsky.social",
+      "handle_verified": true,
+      "community": "inclusive tech",
+      "focus_keywords": ["inclusion", "disability", "technology", "workforce", "employment", "global", "accessibility"],
+      "bio": "Global disability inclusion strategist, AXSChat co-host, TechAccess Global founder",
+      "status": "pending"
+    },
+    {
+      "name": "Alice Wong",
+      "handle": "sfdirewolf.bsky.social",
+      "handle_verified": true,
+      "community": "disability culture",
+      "focus_keywords": ["disability", "culture", "justice", "visibility", "narrative", "arts", "representation"],
+      "bio": "Founder of Disability Visibility Project, editor, activist, disabled writer and media maker",
+      "status": "skip",
+      "skip_reason": "Already messaged 2026-03-16 — do not re-contact"
+    },
+    {
+      "name": "Sins Invalid",
+      "handle": "sinsinvalid.bsky.social",
+      "handle_verified": false,
+      "community": "crip arts",
+      "focus_keywords": ["arts", "performance", "crip", "queer", "disability", "body", "sexuality", "beauty"],
+      "bio": "Disability justice performance project, disability arts organization, SF-based",
+      "status": "pending"
+    },
+    {
+      "name": "Nick Walker",
+      "handle": "nickwalker.bsky.social",
+      "handle_verified": false,
+      "community": "neuroqueer theory",
+      "focus_keywords": ["neuroqueer", "autistic", "neurodivergent", "paradigm", "theory", "neurodiversity"],
+      "bio": "Author of Neuroqueer Heresies, autistic academic, neurodiversity paradigm theorist",
+      "status": "pending"
+    },
+    {
+      "name": "Mia Mingus",
+      "handle": "miamingus.bsky.social",
+      "handle_verified": false,
+      "community": "disability justice",
+      "focus_keywords": ["disability justice", "care", "interdependence", "community", "access", "transformative"],
+      "bio": "Disability justice educator and writer, co-founder of Disability Justice Culture Club",
+      "status": "pending"
+    },
+    {
+      "name": "Leah Lakshmi Piepzna-Samarasinha",
+      "handle": "leahlakshmi.bsky.social",
+      "handle_verified": false,
+      "community": "disability justice",
+      "focus_keywords": ["disability justice", "care", "queer", "crip", "femme", "brown", "survival", "mutual aid"],
+      "bio": "Author of Care Work and Dirty River, disabled queer writer and disability justice organizer",
+      "status": "pending"
+    }
+  ]
+}
