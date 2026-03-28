@@ -16,9 +16,8 @@ HANDLE  = "neilmilliken.bsky.social"
 
 POST_TEXT = (
     "@neilmilliken.bsky.social Museums frame access failures as logistics. "
-    "Our piece 'The Price of Looking' (Mar 26) runs the actual numbers on what "
-    "museum access costs disabled visitors. Might interest the AXS community — "
-    "cripminds.com, disability-led AI arts publication.\n\n"
+    "'The Price of Looking' runs the numbers on what access actually costs disabled visitors. "
+    "Might be of interest to the AXS community — cripminds.com\n\n"
     "#accessibility #DisabilitySky #CripMinds"
 )
 
