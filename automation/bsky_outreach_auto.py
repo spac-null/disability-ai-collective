@@ -15,7 +15,7 @@ Run via cron (weekly, e.g. Saturday 10:00):
     source /srv/secrets/openclaw.env && \
     python3 automation/bsky_outreach_auto.py >> automation/bsky_outreach.log 2>&1
 """
-import json, os, re, logging, urllib.request as ureq, urllib.parse
+import json, os, re, logging, subprocess, urllib.request as ureq, urllib.parse
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 
@@ -165,6 +165,23 @@ def bsky_req(path, payload=None, token=None, method="POST"):
     )
     with ureq.urlopen(req, timeout=15) as r:
         return json.loads(r.read())
+
+
+def git_commit_targets(target_name: str):
+    """Commit targets.json state change back to remote."""
+    try:
+        subprocess.run(["git", "stash"], cwd=REPO, capture_output=True)
+        subprocess.run(["git", "pull", "--rebase"], cwd=REPO, capture_output=True)
+        subprocess.run(["git", "stash", "pop"], cwd=REPO, capture_output=True)
+        subprocess.run(["git", "add", str(TARGETS_F)], cwd=REPO, check=True, capture_output=True)
+        subprocess.run(
+            ["git", "commit", "-m", f"outreach: posted to {target_name}"],
+            cwd=REPO, check=True, capture_output=True,
+        )
+        subprocess.run(["git", "push", "origin", "main"], cwd=REPO, check=True, capture_output=True)
+        log.info("targets.json committed and pushed")
+    except subprocess.CalledProcessError as e:
+        log.warning("git commit targets failed: %s", e)
 
 
 def resolve_did(handle: str) -> str:
@@ -320,6 +337,7 @@ def main():
             break
     TARGETS_F.write_text(json.dumps(data, indent=2, ensure_ascii=False))
     log.info("targets.json updated")
+    git_commit_targets(target["name"])
 
 
 if __name__ == "__main__":
