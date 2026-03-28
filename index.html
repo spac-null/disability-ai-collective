@@ -54,7 +54,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
     {% if site.posts.size > 0 %}
       <div class="recent-articles-wrap">
         <div class="grid grid--3 articles-grid">
-          {% for post in site.posts offset:1 limit:3 %}
+          {% for post in site.posts offset:1 limit:5 %}
           <article class="card card--elevated">
             {% assign home_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% if post.author == "Siri Sage" %}

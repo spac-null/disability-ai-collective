@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/the-scissors-knew_setting_1.jpg
 image_alt: "extreme close-up of scissors mid-cut through layered deep violet and black fabric illustration for The Scissors Knew"
 excerpt: "Matisse invented a radical new artistic technique from his sickbed, yet art history remembers it as transcendence rather than adaptation."
-keywords: [scissors knew, blind navigation, acoustic accessibility, spatial design]
+keywords: [art history, disability erasure, adaptive technique, art criticism]
 ---
 
 In November 1950, [Henri Matisse](https://www.matisse.org/) told Louis Aragon something that art criticism has spent seventy years misquoting. He said the cut-outs were a new way of drawing. Not a substitute. Not a compensation. A new way.

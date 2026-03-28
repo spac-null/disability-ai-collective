@@ -184,6 +184,14 @@ _AGENT_BEATS = {
     "Zen Circuit": ["neurodivergent-epistemology", "diagnosis-history", "cross-domain-pattern", "systems-failure"],
 }
 
+# Theme clusters for topic diversity guard — detects overuse within a rolling window
+_THEME_CLUSTERS = {
+    "acoustic": ["acoustic", "sound", "sonic", "hear", "listen", "resonan", "noise", "audio", "vibrat", "music"],
+    "mobility": ["wheelchair", "ramp", "lift", "curb cut", "mobility", "ambulat", "pavement", "sidewalk"],
+    "visual":   ["visual", "color contrast", "low vision", "blind", "optic", "image", "typography"],
+    "diagnosis": ["diagnosis", "diagnos", "label", "condition", "medical", "clinic", "symptom"],
+}
+
 # Known friction vectors between personas — used when one references the other.
 _PERSONA_CONFLICTS = {
     ("Pixel Nova", "Siri Sage"): (
@@ -605,6 +613,26 @@ class ProductionOrchestrator:
             return ("BEAT NOTE: " + " ".join(nudges) + "\n\n") if nudges else ""
         except Exception:
             return ""
+
+    def _get_overused_themes(self, days: int = 7) -> set:
+        """Return set of theme names that appear >=2 times in last N days of published posts."""
+        cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+        counts = {theme: 0 for theme in _THEME_CLUSTERS}
+        try:
+            for post_file in sorted(self.posts_dir.glob("*.md"), reverse=True):
+                if post_file.stem[:10] < cutoff:
+                    break
+                # Only scan frontmatter + first 300 chars to avoid false positives in body
+                text = post_file.read_text(errors="ignore")[:800].lower()
+                for theme, keywords in _THEME_CLUSTERS.items():
+                    if any(kw in text for kw in keywords):
+                        counts[theme] += 1
+        except Exception as e:
+            self.logger.debug("_get_overused_themes failed: %s", e)
+        overused = {theme for theme, count in counts.items() if count >= 2}
+        if overused:
+            self.logger.info("Overused themes (last %d days): %s", days, overused)
+        return overused
 
     def _classify_shape(self, title: str, first_para: str) -> str:
         text = (title + " " + first_para).lower()
@@ -2729,8 +2757,24 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             }
         
         # Step 2: Get discovery or generate topic
+        overused_themes = self._get_overused_themes()
         discovery = self.get_discovery_from_database()
-        
+
+        # Skip discovery if its angle falls into an overused theme
+        if discovery and overused_themes:
+            angle_lower = discovery['angle'].lower()
+            hit = next(
+                (th for th in overused_themes
+                 if any(kw in angle_lower for kw in _THEME_CLUSTERS[th])),
+                None
+            )
+            if hit:
+                self.logger.warning(
+                    "Discovery skipped — theme '%s' already overused in last 7 days (angle: %s)",
+                    hit, discovery['angle'][:60]
+                )
+                discovery = None
+
         if discovery:
             title = discovery['angle']
             domain = discovery['domain']
@@ -2775,6 +2819,20 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 "When the Building Passes Inspection and the Wheelchair Can't Enter",
                 "The Economics of Dependence: Who Profits When Disabled People Can't Manage Alone",
             ]
+            if overused_themes:
+                safe_topics = [
+                    t for t in topics
+                    if not any(
+                        any(kw in t.lower() for kw in _THEME_CLUSTERS[th])
+                        for th in overused_themes
+                    )
+                ]
+                if safe_topics:
+                    self.logger.info(
+                        "Topic diversity guard: %d/%d topics excluded (overused: %s)",
+                        len(topics) - len(safe_topics), len(topics), overused_themes
+                    )
+                    topics = safe_topics
             title = random.choice(topics)
             agent_name = self._balance_agent(random.choice(list(self.agents.keys())))
             source_note = ""
@@ -2813,7 +2871,16 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         else:
             title_freshness_warning = ""
 
-        beat_nudge  = title_freshness_warning + self._get_beat_nudge(agent_name) + self._get_scholar_nudge()
+        if overused_themes:
+            _theme_str = ", ".join(sorted(overused_themes))
+            diversity_note = (
+                f"DIVERSITY NOTE: Recent articles have clustered around {_theme_str} themes. "
+                f"This essay must explore genuinely different territory — do not use {_theme_str} "
+                f"as a frame, lens, or even a contrast point.\n\n"
+            )
+        else:
+            diversity_note = ""
+        beat_nudge  = diversity_note + title_freshness_warning + self._get_beat_nudge(agent_name) + self._get_scholar_nudge()
         date_nudge  = self._get_recent_dates_nudge()
         shape_nudge = self._get_shape_nudge()
         cross_ref   = self._get_cross_reference(agent_name)
