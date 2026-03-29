@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-03-27T16:02:18.971743",
-  "total_findings": 755,
+  "timestamp": "2026-03-28T16:04:38.393870",
+  "total_findings": 780,
   "unique_domains": 13,
-  "used_findings": 10,
-  "unused_findings": 745,
+  "used_findings": 11,
+  "unused_findings": 769,
   "first_discovery": "2026-03-14T12:24:48.484224",
-  "last_discovery": "2026-03-27T08:00:29.139112",
+  "last_discovery": "2026-03-28T08:00:26.867298",
   "top_categories": [
     {
       "disability_concepts": "[\"hidden_angle\"]",
-      "count": 736
+      "count": 761
     },
     {
-      "disability_concepts": "[\"performance\", \"artist\", \"exhibition\", \"access\", \"gallery\", \"form\"]",
+      "disability_concepts": "[\"gallery\", \"form\", \"artist\", \"exhibition\", \"access\", \"performance\"]",
       "count": 3
     },
     {
@@ -32,11 +32,11 @@
       "count": 1
     },
     {
-      "disability_concepts": "[\"movement\", \"film\", \"access\", \"dance\"]",
+      "disability_concepts": "[\"sound\", \"form\", \"focus\", \"color\", \"tradition\", \"movement\", \"marginalized\", \"dance\", \"vision\", \"voice\", \"theater\", \"performance\", \"marginal\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"marginalized\", \"beauty\", \"dance\", \"community\", \"marginal\", \"access\", \"movement\", \"vision\"]",
+      "disability_concepts": "[\"identity\", \"community\", \"form\", \"color\", \"access\", \"visibility\", \"accessible\", \"vision\"]",
       "count": 1
     },
     {
@@ -52,27 +52,27 @@
     {
       "title": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-27T08:00:29.139112"
+      "discovered_date": "2026-03-28T08:00:26.867298"
     },
     {
       "title": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-27T08:00:28.020414"
+      "discovered_date": "2026-03-28T08:00:25.749130"
     },
     {
       "title": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-27T08:00:26.899910"
+      "discovered_date": "2026-03-28T08:00:24.627015"
     },
     {
       "title": "Disability Justice is Climate Justice | Sins Invalid",
       "domain": "sinsinvalid.org",
-      "discovered_date": "2026-03-27T08:00:25.612631"
+      "discovered_date": "2026-03-28T08:00:23.410957"
     },
     {
       "title": "The Feministing Five: Patty Berne | Sins Invalid",
       "domain": "sinsinvalid.org",
-      "discovered_date": "2026-03-27T08:00:24.409267"
+      "discovered_date": "2026-03-28T08:00:22.229859"
     }
   ]
 }
