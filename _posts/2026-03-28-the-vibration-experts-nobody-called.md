@@ -12,7 +12,7 @@ keywords: [deaf architecture, deafspace, inkamisana, acoustic design, disability
 
 In September 2023, a team of acoustics researchers from Belgium and Peru published findings about Inkamisana, a stone complex at Ollantaytambo in the Peruvian Andes. They discovered that the structure's chambers amplify specific frequencies. Water channels carved into rock produce sound patterns that travel through walls. The team called it a revelation about Inca acoustic engineering.
 
-Three months earlier, in June 2023, Deaf architect [Hansel Bauman](https://hanselbauman.online/about) gave a lecture at Gallaudet University, a university for Deaf students in Washington, where he described DeafSpace, architecture shaped by how Deaf people sense and move through space. His design principles start from vibration. Floors that transmit footsteps. Walls with sight lines. Surfaces that reflect or absorb sound based on how people in the building actually perceive. Bauman has been developing this work since 2005.
+Three months earlier, in June 2023, Deaf architect [Hansel Bauman](https://hanselbauman.online/about) gave a lecture at [Gallaudet University](https://www.gallaudet.edu/), a university for Deaf students in Washington, where he described [DeafSpace](https://hanselbauman.online/deafspace), architecture shaped by how Deaf people sense and move through space. His design principles start from vibration. Floors that transmit footsteps. Walls with sight lines. Surfaces that reflect or absorb sound based on how people in the building actually perceive. Bauman has been developing this work since 2005.
 
 Nobody on the Inkamisana research team contacted a Deaf acoustician.
 
@@ -26,7 +26,7 @@ The surprise belongs to the researchers. It does not belong to the building.
 
 You might say this is how research works. Someone measures what was previously unmeasured. I agree. Counting and measuring has value. The problem is not the data. The problem is the frame. The paper treats acoustic design as a hidden feature waiting for modern instruments to decode. It never considers that the people who built Inkamisana understood vibration through their bodies, and that [this kind of knowledge has never stopped existing](https://failedarchitecture.com/a-town-is-a-machine-for-movement-alpine-modernism/) in communities whose main bond with space is not visual.
 
-Bauman introduced the term DeafSpace to describe architecture shaped by touch and visual bearing. His collaborator at Gallaudet, architect and researcher Linda Kozma-Spence, documented how Deaf students use reflected light, motion, and floor vibration to navigate. They do not experience these as workarounds. They experience them as how space communicates.
+Bauman introduced the term DeafSpace to describe architecture shaped by touch and visual bearing. His collaborator at Gallaudet, architect and researcher [Linda Kozma-Spence](https://www.gallaudet.edu/directory/linda-kozma-spence), documented how Deaf students use reflected light, motion, and floor vibration to navigate. They do not experience these as workarounds. They experience them as how space communicates.
 
 The Inca builders at Ollantaytambo channeled water through stone to carry sound. Deaf designers at Gallaudet chose flooring materials to pass vibration through the floor. The mechanism is the same. One gets a research paper. The other gets a footnote in official building standards and guidelines.
 

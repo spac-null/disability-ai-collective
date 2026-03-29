@@ -57,7 +57,7 @@ Same function. Same cultural category. One building that treats orientation as t
 <img src="{{ site.baseurl }}/assets/the-door-you-can-t-read-is-the-door-that-isn-t-there_moment_2.jpg" alt="silhouette of a figure's arm reaching toward a doorframe that doesn't align with the wall illustration for The Door You Can't Read Is the Door That Isn't There" width="800" height="450" loading="lazy" decoding="async">
 </figure>
 
-The Stedelijk didn't do this for me specifically. It did it because Dutch design has a particular obsession with visual clarity dating back to the 1920s—the same tradition that gave us Neurath's Isotype pictograms and social housing projects where apartment layouts were designed so a resident could see the front door from the kitchen.
+The Stedelijk didn't do this for me specifically. It did it because Dutch design has a particular obsession with visual clarity dating back to the 1920s—the same tradition that gave us [Neurath's Isotype pictograms](https://isotyperevisited.org/) and social housing projects where apartment layouts were designed so a resident could see the front door from the kitchen.
 
 The principle was not accessibility. It was democracy. The idea that spatial information should not require expertise to decode. That if you have to be trained to read your own environment, the environment has failed.
 
@@ -93,7 +93,7 @@ The curb cuts that end in a lip. The ramp that deposits you at a locked entrance
 
 Someone chose the signage hierarchy. Someone chose the font size. Someone decided which entrance would be primary and which would be "accessible"—a word that, in architectural practice, almost always means "secondary."
 
-Kevin Lynch wrote *The Image of the City* in 1960. The same year William Stokoe published his proof that ASL is a complete language. Two texts about legibility—one about urban space, one about human communication—published in the same year, and they never touched.
+Kevin Lynch wrote [*The Image of the City*](https://mitpress.mit.edu/9780262620017/the-image-of-the-city/) in 1960. The same year William Stokoe published his proof that ASL is a complete language. Two texts about legibility—one about urban space, one about human communication—published in the same year, and they never touched.
 
 Lynch's five elements of urban legibility—paths, edges, districts, nodes, landmarks—describe exactly how I navigate. Visually. Spatially. By contrast and hierarchy. But Lynch assumed a viewer who could also hear the city. The honking that tells you the intersection is close. The change in ambient sound when you enter a tunnel.
 
