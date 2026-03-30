@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-03-28T16:04:38.393870",
-  "total_findings": 780,
+  "timestamp": "2026-03-30T16:01:03.978995",
+  "total_findings": 814,
   "unique_domains": 13,
   "used_findings": 11,
-  "unused_findings": 769,
+  "unused_findings": 803,
   "first_discovery": "2026-03-14T12:24:48.484224",
-  "last_discovery": "2026-03-28T08:00:26.867298",
+  "last_discovery": "2026-03-30T08:00:27.723245",
   "top_categories": [
     {
       "disability_concepts": "[\"hidden_angle\"]",
-      "count": 761
+      "count": 795
     },
     {
-      "disability_concepts": "[\"gallery\", \"form\", \"artist\", \"exhibition\", \"access\", \"performance\"]",
+      "disability_concepts": "[\"gallery\", \"performance\", \"access\", \"exhibition\", \"form\", \"artist\"]",
       "count": 3
     },
     {
@@ -32,19 +32,19 @@
       "count": 1
     },
     {
-      "disability_concepts": "[\"sound\", \"form\", \"focus\", \"color\", \"tradition\", \"movement\", \"marginalized\", \"dance\", \"vision\", \"voice\", \"theater\", \"performance\", \"marginal\"]",
+      "disability_concepts": "[\"visibility\", \"accessible\", \"access\", \"form\", \"identity\", \"community\", \"color\", \"vision\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"identity\", \"community\", \"form\", \"color\", \"access\", \"visibility\", \"accessible\", \"vision\"]",
+      "disability_concepts": "[\"sound\", \"visibility\", \"access\", \"form\", \"community\", \"color\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"hearing\", \"voice\", \"audio\"]",
+      "disability_concepts": "[\"marginal\", \"focus\", \"performance\", \"dance\", \"tradition\", \"sound\", \"movement\", \"theater\", \"marginalized\", \"voice\", \"form\", \"color\", \"vision\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"form\", \"access\", \"performance\", \"interaction\", \"function\", \"interface\", \"vision\"]",
+      "disability_concepts": "[\"marginal\", \"dance\", \"movement\", \"beauty\", \"access\", \"marginalized\", \"community\", \"vision\"]",
       "count": 1
     }
   ],
@@ -52,27 +52,27 @@
     {
       "title": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-28T08:00:26.867298"
+      "discovered_date": "2026-03-30T08:00:27.723245"
     },
     {
       "title": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-28T08:00:25.749130"
+      "discovered_date": "2026-03-30T08:00:26.629357"
     },
     {
       "title": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-28T08:00:24.627015"
+      "discovered_date": "2026-03-30T08:00:25.469443"
     },
     {
       "title": "Disability Justice is Climate Justice | Sins Invalid",
       "domain": "sinsinvalid.org",
-      "discovered_date": "2026-03-28T08:00:23.410957"
+      "discovered_date": "2026-03-30T08:00:24.192983"
     },
     {
       "title": "The Feministing Five: Patty Berne | Sins Invalid",
       "domain": "sinsinvalid.org",
-      "discovered_date": "2026-03-28T08:00:22.229859"
+      "discovered_date": "2026-03-30T08:00:23.000197"
     }
   ]
 }
