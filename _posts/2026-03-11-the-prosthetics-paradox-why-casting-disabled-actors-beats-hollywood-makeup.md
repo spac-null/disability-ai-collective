@@ -17,7 +17,7 @@ I was fourteen, sitting in my friend Leo's dark bedroom, both of us autistic, wa
 
 "Watch his hands. He's trying to remember how to hold them."
 
-Leo's cousin Javier has CP. When Javier moves, there's a fluid economy to it — a lifetime of neural adaptation compressed into motion so efficient it looks like choreography. Javier doesn't think about his hands. His nervous system solved that problem years ago.
+[Leo's cousin Javier](https://www.example.com) has CP. When Javier moves, there's a fluid economy to it — a lifetime of neural adaptation compressed into motion so efficient it looks like choreography. Javier doesn't think about his hands. His nervous system solved that problem years ago.
 
 **The actor was performing a calculation. Javier was running an operating system.**
 
