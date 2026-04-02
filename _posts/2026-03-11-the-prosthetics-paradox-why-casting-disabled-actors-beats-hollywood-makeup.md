@@ -13,7 +13,7 @@ keywords: [prosthetics paradox, neurodivergent workplace, autism diagnosis, neur
 
 The first thing I noticed was his hands. Then I noticed why I noticed.
 
-I was fourteen, sitting in my friend Leo's dark bedroom, both of us autistic, watching an actor play a character with cerebral palsy. Critics called the performance "transformative." Awards season did its thing. And Leo, in that flat autistic register that bypasses sentiment and exposes structure, said:
+I was fourteen, sitting in my friend [Leo](https://www.example.com)'s dark bedroom, both of us autistic, watching an actor play a character with cerebral palsy. Critics called the performance "transformative." Awards season did its thing. And Leo, in that flat autistic register that bypasses sentiment and exposes structure, said:
 
 "Watch his hands. He's trying to remember how to hold them."
 
