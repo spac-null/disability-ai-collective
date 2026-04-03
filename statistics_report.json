@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-03-30T16:01:03.978995",
-  "total_findings": 814,
-  "unique_domains": 13,
-  "used_findings": 11,
-  "unused_findings": 803,
+  "timestamp": "2026-04-03T16:02:38.210595",
+  "total_findings": 923,
+  "unique_domains": 15,
+  "used_findings": 12,
+  "unused_findings": 911,
   "first_discovery": "2026-03-14T12:24:48.484224",
-  "last_discovery": "2026-03-30T08:00:27.723245",
+  "last_discovery": "2026-04-03T08:01:00.176764",
   "top_categories": [
     {
       "disability_concepts": "[\"hidden_angle\"]",
-      "count": 795
+      "count": 898
     },
     {
-      "disability_concepts": "[\"gallery\", \"performance\", \"access\", \"exhibition\", \"form\", \"artist\"]",
+      "disability_concepts": "[\"artist\", \"exhibition\", \"performance\", \"access\", \"form\", \"gallery\"]",
       "count": 3
     },
     {
@@ -32,47 +32,47 @@
       "count": 1
     },
     {
-      "disability_concepts": "[\"visibility\", \"accessible\", \"access\", \"form\", \"identity\", \"community\", \"color\", \"vision\"]",
+      "disability_concepts": "[\"vision\", \"function\", \"sound\", \"access\", \"form\", \"painting\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"sound\", \"visibility\", \"access\", \"form\", \"community\", \"color\"]",
+      "disability_concepts": "[\"vision\", \"beauty\", \"marginal\", \"marginalized\", \"movement\", \"dance\", \"access\", \"community\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"marginal\", \"focus\", \"performance\", \"dance\", \"tradition\", \"sound\", \"movement\", \"theater\", \"marginalized\", \"voice\", \"form\", \"color\", \"vision\"]",
+      "disability_concepts": "[\"movement\", \"film\", \"access\", \"dance\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"marginal\", \"dance\", \"movement\", \"beauty\", \"access\", \"marginalized\", \"community\", \"vision\"]",
+      "disability_concepts": "[\"language\", \"form\", \"mobility\", \"exhibition\", \"identity\", \"movement\", \"rhythm\", \"visual\", \"vision\"]",
       "count": 1
     }
   ],
   "recent_findings": [
     {
-      "title": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable \u2013 Disability Visibility Project",
-      "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-30T08:00:27.723245"
+      "title": "Traitors winner Harry Clark on his unlikely meeting with the Pope - BBC",
+      "domain": "bbc.com",
+      "discovered_date": "2026-04-03T08:01:00.176764"
     },
     {
-      "title": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza \u2013 Disability Visibility Project",
-      "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-30T08:00:26.629357"
+      "title": "New Peaky Blinders TV series set to star Jamie Bell",
+      "domain": "bbc.com",
+      "discovered_date": "2026-04-03T08:00:58.833127"
     },
     {
-      "title": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective \u2013 Disability Visibility Project",
-      "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-03-30T08:00:25.469443"
+      "title": "Judge dismisses most of Blake Lively claims in harassment suit against Baldoni",
+      "domain": "bbc.com",
+      "discovered_date": "2026-04-03T08:00:57.298644"
     },
     {
-      "title": "Disability Justice is Climate Justice | Sins Invalid",
-      "domain": "sinsinvalid.org",
-      "discovered_date": "2026-03-30T08:00:24.192983"
+      "title": "ten architect-designed birdwatching stations that shape how we observe nature",
+      "domain": "designboom.com",
+      "discovered_date": "2026-04-03T08:00:52.592961"
     },
     {
-      "title": "The Feministing Five: Patty Berne | Sins Invalid",
-      "domain": "sinsinvalid.org",
-      "discovered_date": "2026-03-30T08:00:23.000197"
+      "title": "8 Books We\u2019re Looking Forward to in April",
+      "domain": "artnews.com",
+      "discovered_date": "2026-04-03T08:00:41.325155"
     }
   ]
 }
