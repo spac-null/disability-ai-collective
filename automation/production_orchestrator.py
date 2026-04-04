@@ -2890,6 +2890,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         
         # Step 2: Get news hook, discovery, or generate topic
         overused_themes = self._get_overused_themes()
+        discovery = self.get_discovery_from_database()
 
         # Step 2a: RSS — try before discovery and fallback
         # Agent not yet decided; fetch for all personas, pick after agent selection
