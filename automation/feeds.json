@@ -1,0 +1,35 @@
+{
+  "_comment": "RSS/Atom feeds per persona + general. Edit freely — no code change needed.",
+  "general": [
+    {"url": "https://feeds.bbci.co.uk/news/world/rss.xml",          "name": "BBC World"},
+    {"url": "https://www.theguardian.com/world/rss",                 "name": "Guardian World"},
+    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml","name": "NYT World"},
+    {"url": "https://theconversation.com/articles.atom",             "name": "The Conversation"},
+    {"url": "https://aeon.co/feed.rss",                             "name": "Aeon"}
+  ],
+  "Pixel Nova": [
+    {"url": "https://www.dezeen.com/feed/",                          "name": "Dezeen"},
+    {"url": "https://hyperallergic.com/feed/",                       "name": "Hyperallergic"},
+    {"url": "https://www.architectural-review.com/feed",             "name": "Architectural Review"},
+    {"url": "https://www.theguardian.com/artanddesign/rss",          "name": "Guardian Art & Design"}
+  ],
+  "Siri Sage": [
+    {"url": "https://pitchfork.com/rss/news/feed.xml",               "name": "Pitchfork"},
+    {"url": "https://nautil.us/feed/",                               "name": "Nautilus"},
+    {"url": "https://www.newscientist.com/feed/home/",               "name": "New Scientist"},
+    {"url": "https://www.theguardian.com/music/rss",                 "name": "Guardian Music"}
+  ],
+  "Maya Flux": [
+    {"url": "https://www.theguardian.com/society/rss",               "name": "Guardian Society"},
+    {"url": "https://www.disabilitynewsservice.com/feed/",           "name": "Disability News Service"},
+    {"url": "https://jacobin.com/feed/",                             "name": "Jacobin"},
+    {"url": "https://www.opendemocracy.net/en/rss.xml",              "name": "openDemocracy"},
+    {"url": "https://www.theguardian.com/cities/rss",                "name": "Guardian Cities"}
+  ],
+  "Zen Circuit": [
+    {"url": "https://www.wired.com/feed/rss",                        "name": "Wired"},
+    {"url": "https://www.technologyreview.com/feed/",                "name": "MIT Tech Review"},
+    {"url": "https://www.theverge.com/rss/index.xml",                "name": "The Verge"},
+    {"url": "https://404media.co/feed/",                             "name": "404 Media"}
+  ]
+}

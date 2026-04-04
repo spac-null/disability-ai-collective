@@ -614,6 +614,130 @@ class ProductionOrchestrator:
         except Exception:
             return ""
 
+    def _fetch_rss_news(self, persona_name: str, days: int = 14) -> list:
+        """Fetch recent items from persona-specific + general RSS/Atom feeds.
+        Returns list of dicts sorted newest-first. Gracefully skips dead feeds."""
+        import xml.etree.ElementTree as ET
+        from email.utils import parsedate_to_datetime
+        import re as _re
+
+        feeds_path = Path(__file__).parent / "feeds.json"
+        try:
+            feeds_cfg = json.loads(feeds_path.read_text())
+        except Exception:
+            return []
+
+        feeds = feeds_cfg.get(persona_name, []) + feeds_cfg.get("general", [])
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        ATOM = "http://www.w3.org/2005/Atom"
+        items = []
+
+        def _strip_html(text):
+            return _re.sub(r"<[^>]+>", " ", text or "").strip()[:400]
+
+        def _parse_dt(s):
+            if not s:
+                return datetime.now(timezone.utc)
+            for fn in (
+                lambda x: parsedate_to_datetime(x),
+                lambda x: datetime.fromisoformat(x.rstrip("Z")).replace(tzinfo=timezone.utc),
+                lambda x: datetime.strptime(x[:10], "%Y-%m-%d").replace(tzinfo=timezone.utc),
+            ):
+                try:
+                    return fn(s)
+                except Exception:
+                    pass
+            return datetime.now(timezone.utc)
+
+        for feed in feeds:
+            url = feed.get("url", "")
+            try:
+                req = urllib.request.Request(
+                    url, headers={"User-Agent": "cripminds/1.0 (+https://cripminds.com)"}
+                )
+                with urllib.request.urlopen(req, timeout=6) as r:
+                    raw = r.read()
+                root = ET.fromstring(raw)
+
+                # RSS 2.0
+                for item in root.findall(".//item"):
+                    title = _strip_html(item.findtext("title", ""))
+                    link  = (item.findtext("link") or "").strip()
+                    desc  = _strip_html(item.findtext("description", ""))
+                    dt    = _parse_dt(item.findtext("pubDate", ""))
+                    if dt >= cutoff and title and link:
+                        items.append({
+                            "title": title, "url": link, "summary": desc,
+                            "source": feed.get("name", url), "date": dt.strftime("%Y-%m-%d"),
+                            "_dt": dt,
+                        })
+
+                # Atom
+                ns = {"a": ATOM}
+                for entry in root.findall("a:entry", ns):
+                    title = _strip_html(
+                        entry.findtext("a:title", "", ns) or entry.findtext("title", "")
+                    )
+                    link_el = (
+                        entry.find(f"a:link[@rel='alternate']", ns)
+                        or entry.find("a:link", ns)
+                        or entry.find("link")
+                    )
+                    link = (link_el.get("href", "") if link_el is not None else "").strip()
+                    desc = _strip_html(
+                        entry.findtext("a:summary", "", ns)
+                        or entry.findtext("a:content", "", ns)
+                        or entry.findtext("summary", "")
+                    )
+                    dt = _parse_dt(
+                        entry.findtext("a:updated", "", ns)
+                        or entry.findtext("a:published", "", ns)
+                        or entry.findtext("updated", "")
+                    )
+                    if dt >= cutoff and title and link:
+                        items.append({
+                            "title": title, "url": link, "summary": desc,
+                            "source": feed.get("name", url), "date": dt.strftime("%Y-%m-%d"),
+                            "_dt": dt,
+                        })
+
+            except Exception as e:
+                self.logger.debug("RSS feed skipped (%s): %s", url, e)
+
+        items.sort(key=lambda x: x["_dt"], reverse=True)
+        self.logger.info("RSS: %d items from last %d days across %d feeds", len(items), days, len(feeds))
+        return items
+
+    def _pick_news_item(self, items: list, focus_keywords: list) -> dict | None:
+        """Score news items against persona focus keywords.
+        80% → highest scorer. 20% → random from top-5 (blackbox surprise)."""
+        if not items:
+            return None
+        scored = []
+        for item in items:
+            text  = f"{item['title']} {item['summary']}".lower()
+            score = sum(1 for kw in focus_keywords if kw.lower() in text)
+            scored.append((score, item))
+        scored.sort(key=lambda x: x[0], reverse=True)
+
+        # 20% chance: pick any of the top-5 regardless of score (surprise factor)
+        if random.random() < 0.20:
+            pool = [x[1] for x in scored[:5]]
+            chosen = random.choice(pool)
+            self.logger.info("RSS blackbox pick: '%s' (score ignored)", chosen["title"][:60])
+            return chosen
+
+        best_score, best_item = scored[0]
+        if best_score >= 1:
+            self.logger.info("RSS matched: '%s' (score %d)", best_item["title"][:60], best_score)
+            return best_item
+
+        # No keyword match at all — still use the most recent item (full surprise)
+        if items:
+            self.logger.info("RSS no-match fallback: '%s'", items[0]["title"][:60])
+            return items[0]
+        return None
+
     def _get_overused_themes(self, days: int = 7) -> set:
         """Return set of theme names that appear >=2 times in last N days of published posts."""
         cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
@@ -2764,9 +2888,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 "message": f"Article already exists for today: {existing}"
             }
         
-        # Step 2: Get discovery or generate topic
+        # Step 2: Get news hook, discovery, or generate topic
         overused_themes = self._get_overused_themes()
-        discovery = self.get_discovery_from_database()
+
+        # Step 2a: RSS — try before discovery and fallback
+        # Agent not yet decided; fetch for all personas, pick after agent selection
+        _rss_items_cache = None
+        news_item = None  # set below after agent_name is known
 
         # Skip discovery if its angle falls into an overused theme
         if discovery and overused_themes:
@@ -2816,16 +2944,17 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             agent_name = self._balance_agent(_preferred)
                 
         else:
-            # Generate fallback topic
+            agent_name = self._balance_agent(random.choice(list(self.agents.keys())))
+            # Fallback situations — open-ended, not pre-titled essays
             topics = [
-                "The Visual Language of Accessibility: How Color Contrast Speaks Louder Than Words",
-                "Neurodiverse Navigation: Why Standard Wayfinding Fails Creative Minds",
-                "The Prosthetics Paradox: When Technology Creates New Barriers Instead of Removing Old Ones",
-                "What Medicaid Cuts Actually Cost: The Arithmetic of Care",
-                "The Protest That Changed Nothing and Then Changed Everything",
-                "Diagnosis as Administrative Fiction: How Labels Are Made",
-                "When the Building Passes Inspection and the Wheelchair Can't Enter",
-                "The Economics of Dependence: Who Profits When Disabled People Can't Manage Alone",
+                "the gap between how a technology is described and how disabled people actually use it",
+                "a moment where access was framed as generosity rather than a right",
+                "what happens to disabled people when an institution has a good week in the press",
+                "how a diagnosis changes what a person is allowed to want",
+                "what care work costs the people who do it and the people who receive it",
+                "when the fix for one problem creates a new one for someone else",
+                "the specific way a public space fails its stated purpose for certain bodies",
+                "what it means when a design wins an award for the people it was never built for",
             ]
             if overused_themes:
                 safe_topics = [
@@ -2842,15 +2971,38 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                     )
                     topics = safe_topics
             title = random.choice(topics)
-            agent_name = self._balance_agent(random.choice(list(self.agents.keys())))
             source_note = ""
             source_text = None
             pool_links   = []
-        
+
         agent_info = self.agents.get(agent_name)
         if not agent_info:
             self.logger.error("Unknown agent: %s", agent_name)
             return None
+
+        # RSS news hook — fetch now that agent_name is known
+        try:
+            _rss_items = self._fetch_rss_news(agent_name, days=14)
+            focus_kw   = agent_info.get("categories", []) + list(self.agents[agent_name].get("perspective", "").split())[:6]
+            news_item  = self._pick_news_item(_rss_items, focus_kw)
+        except Exception as _e:
+            self.logger.warning("RSS fetch error: %s", _e)
+            news_item = None
+
+        if news_item:
+            news_block = (
+                f"WORLD CONTEXT — what is happening right now:\n"
+                f"On {news_item['date']}, {news_item['source']} reported:\n"
+                f"\"{news_item['title']}\"\n"
+                f"{news_item['summary']}\n\n"
+                f"This is the ground under your feet. You do not need to cite it. "
+                f"You do not need to explain it or summarise it. "
+                f"Let it shape what you notice, what feels urgent, what angle you take. "
+                f"Your disability expertise is what makes this article different from any other take on this story — "
+                f"write about this moment, not about disability as a general subject.\n\n"
+            )
+        else:
+            news_block = ""
 
         register, register_prompt = self._pick_register()
         target_words = self._pick_length()
@@ -2979,6 +3131,12 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             f"REGISTER: {register}. {register_prompt}\n\n"
             f"LENGTH: ~{target_words} words. HARD CAP: 1000 words. Count before finishing. If over 1000, cut from the back half — the ending should arrive sooner, not later. Do not pad. Every paragraph earns the next.\n\n"
             f"{agent_info['prompt_block']}\n\n"
+            "FORBIDDEN DEFAULTS: Do not build your argument around ramp, curb cut, grab rail, "
+            "tactile paving, accessible toilet, or lift as the central concrete example — "
+            "unless the news context is literally about one of these. "
+            "The world is larger than built environment compliance. "
+            "Find the angle that is not the first one that comes to mind.\n\n"
+            f"{news_block}"
             f"{('SOURCE MATERIAL (from the article that inspired this piece — use 2-4 specific facts, names, dates, or quotes as anchors. Do not reproduce its structure or argument — take a different angle):' + chr(10) + '---' + chr(10) + source_text + chr(10) + '---' + chr(10) + chr(10)) if source_text else ''}"
             f"{link_block}"
             f"Angle/inspiration: {title}\n"
