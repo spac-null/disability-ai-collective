@@ -29,7 +29,7 @@ Here is what I mean. In August 2018, I stood in Union Station, Toronto's main tr
 
 He wanted to know where he was. The signs only told him where to go. Directional signage answers "go here." Contextual signage answers "you are here." They are not the same thing.
 
-Wayfinding that removes context — streets, neighbourhoods, distances — works perfectly for people who already know where they are. Accessibility researcher Carmen Papalia calls this the difference between [being guided and being oriented](https://carmenpapalia.com/). A guided person follows instructions. An oriented person knows their position in space. The first feels like service. The second is freedom.
+Wayfinding that removes context — streets, neighbourhoods, distances — works perfectly for people who already know where they are. Accessibility researcher [Carmen Papalia](https://carmenpapalia.com/) calls this the difference between [being guided and being oriented](https://carmenpapalia.com/). A guided person follows instructions. An oriented person knows their position in space. The first feels like service. The second is freedom.
 
 The Metrolinx map guides. It does not orient. The city vanishes so the network can be legible. And everyone calls this clarity.
 

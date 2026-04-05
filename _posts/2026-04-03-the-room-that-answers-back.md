@@ -9,7 +9,7 @@ image_alt: "extreme close-up of pool tile edge where water meets grout illustrat
 excerpt: "We designed a perfect system for disabled people that removed the very information disabled people use to navigate."
 keywords: [room answers, blind navigation, acoustic accessibility, spatial design]
 ---
-In May 2016, the Meijendel visitor centre outside The Hague opened with a wayfinding system designed for "all minds." Textured floor strips, color-coded zones, simplified pictograms, audio beacons at every junction—four interlocking strategies. The designers won an award. In December 2016, the Tate Modern switched off its audio description guides for three weeks during a gallery rehang and replaced them with nothing. No award. No press release. No one noticed except the people who stopped coming.
+In May 2016, the [Meijendel visitor centre](https://www.meijendel.nl/) outside The Hague opened with a wayfinding system designed for "all minds." Textured floor strips, color-coded zones, simplified pictograms, audio beacons at every junction—four interlocking strategies. The designers won an award. In December 2016, the [Tate Modern](https://www.tate.org.uk/visit/tate-modern) switched off its audio description guides for three weeks during a gallery rehang and replaced them with nothing. No award. No press release. No one noticed except the people who stopped coming.
 
 The Meijendel system was beautiful on paper. It assumed a person moves through space by decoding symbols. You arrive at a junction, you read the sign, you choose a direction. A cognitive task. A visual task dressed up as a universal one. The Tate's silence was cruder but more honest. It said: you are not the audience.
 
@@ -21,7 +21,7 @@ Every room answers back. Marble gives you a bright, hard return. Carpet swallows
 
 Standard wayfinding strips that information out. Acoustic ceiling tiles, installed to reduce "noise," flatten every room into the same dead signal. Drop ceilings erase height. Carpet absorbs the one cue that tells me whether I am approaching a wall or an opening. Architects call this "acoustic comfort." Comfort for whom.
 
-Renzo Griffini, an acoustic consultant in Milan, told me in March 2022 that he had never once been asked to consider echolocation in a commercial wayfinding brief. Not once. In thirty years. He designs sound environments for airports, hospitals, train stations, and transit hubs. He said: "I know blind people use reflected sound. I have never been paid to think about it."
+[Renzo Griffini](https://www.griffini.it/), an acoustic consultant in Milan, told me in March 2022 that he had never once been asked to consider echolocation in a commercial wayfinding brief. Not once. In thirty years. He designs sound environments for airports, hospitals, train stations, and transit hubs. He said: "I know blind people use reflected sound. I have never been paid to think about it."
 
 That is the insider confession. Not cruelty. Competence operating inside a frame that has no room for the body it excludes.
 
