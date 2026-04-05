@@ -3122,8 +3122,16 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         else:
             link_block = ""
 
+        _pb = agent_info['prompt_block']
+        _refs_block = (
+            "FORBIDDEN REFERENCES — these names have appeared in recent articles and must NOT "
+            "be used again: " + ", ".join(recent_refs) + ". "
+            "Find different sources, different people, different examples. "
+            "The world contains more thinkers than this list.\n\n"
+            if recent_refs else ""
+        )
         prompt = (
-            f"{agent_info['prompt_block']}\n\n"
+            _pb + "\n\n"
             "WRITE LIKE THIS PERSON. Not like a writer following rules about how this person writes.\n"
             "You have a specific voice. You get annoyed. You find things funny. You hold opinions "
             "you can't fully defend and you say so. You change your mind mid-paragraph and don't hide it. "
@@ -3199,13 +3207,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "tactile paving, accessible toilet, or lift as the central concrete example. "
             "Do not write an article whose thesis is 'this system excludes disabled people.' "
             "Find the angle that is not the first one that comes to mind.\n\n"
-            + (
-                "FORBIDDEN REFERENCES — these names have appeared in recent articles and must NOT "
-                "be used again: " + ", ".join(recent_refs) + ". "
-                "Find different sources, different people, different examples. "
-                "The world contains more thinkers than this list.\n\n"
-                if recent_refs else ""
-            )
+            f"{_refs_block}"
             f"{news_block}"
             f"{('SOURCE MATERIAL (from the article that inspired this piece — use 2-4 specific facts, names, dates, or quotes as anchors. Do not reproduce its structure or argument — take a different angle):' + chr(10) + '---' + chr(10) + source_text + chr(10) + '---' + chr(10) + chr(10)) if source_text else ''}"
             f"{link_block}"
