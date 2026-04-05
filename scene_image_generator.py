@@ -202,7 +202,7 @@ class SceneImageGenerator:
         self.gw = width // pixel_size
         self.gh = height // pixel_size
         self.pollinations_key = os.environ.get("POLLINATIONS_API_KEY", "")
-        self.pollinations_base = "https://gen.pollinations.ai"
+        self.pollinations_base = "https://image.pollinations.ai/prompt"
 
     # ── Subject extraction (pure Python) ─────────────────────────────────────
 
@@ -402,7 +402,7 @@ class SceneImageGenerator:
         )
         if self.pollinations_key:
             params += f"&key={urllib.parse.quote(self.pollinations_key, safe='')}"
-        url = f"{self.pollinations_base}/image/{encoded}{params}"
+        url = f"{self.pollinations_base}/{encoded}{params}"
         req = urllib.request.Request(
             url,
             headers={"User-Agent": "disability-ai-collective/1.0"},
