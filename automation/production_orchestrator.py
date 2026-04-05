@@ -2996,18 +2996,28 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
 
         if news_item:
             news_block = (
-                f"WORLD CONTEXT — what is happening right now:\n"
+                f"THIS ARTICLE IS A RESPONSE TO SOMETHING HAPPENING RIGHT NOW.\n\n"
                 f"On {news_item['date']}, {news_item['source']} reported:\n"
                 f"\"{news_item['title']}\"\n"
                 f"{news_item['summary']}\n\n"
-                f"This is the ground under your feet. You do not need to cite it. "
-                f"You do not need to explain it or summarise it. "
-                f"Let it shape what you notice, what feels urgent, what angle you take. "
-                f"Your disability expertise is what makes this article different from any other take on this story — "
-                f"write about this moment, not about disability as a general subject.\n\n"
+                f"MANDATORY: Your opening paragraph must be anchored in the present — something "
+                f"happening now, this week, this month. Not a historical case study. Not '\"in 2018...\"'. "
+                f"The reader should feel within the first two sentences that this article exists because "
+                f"something is happening in the world right now.\n\n"
+                f"You do not need to quote or cite the news item directly. But your angle, your urgency, "
+                f"your specific observation must come from this present moment. "
+                f"A non-disabled writer covering this story sees X. You see something else — "
+                f"something your embodied experience makes visible. That difference is the article.\n\n"
+                f"Historical examples may appear, but only in service of the present argument — "
+                f"never as the main subject. The present is the main subject.\n\n"
             )
         else:
-            news_block = ""
+            news_block = (
+                "NOTE: No live news item was available for this run. "
+                "Write about something that is happening in the world right now — "
+                "a political development, a cultural moment, an economic shift, a recent event. "
+                "Your opening paragraph should feel like it was written this week, not this decade.\n\n"
+            )
 
         register, register_prompt = self._pick_register()
         target_words = self._pick_length()
