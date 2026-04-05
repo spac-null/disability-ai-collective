@@ -758,6 +758,28 @@ class ProductionOrchestrator:
             self.logger.info("Overused themes (last %d days): %s", days, overused)
         return overused
 
+    def _get_recent_references(self, days: int = 14) -> list:
+        """Scan recent posts for named references (markdown links + known recurring names).
+        Returns list of names used in the last N days — to be excluded from new articles."""
+        cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+        seen = set()
+        try:
+            for post_file in sorted(self.posts_dir.glob("*.md"), reverse=True):
+                if post_file.stem[:10] < cutoff:
+                    break
+                text = post_file.read_text(errors="ignore")
+                # Extract markdown link labels: [Name](url)
+                for m in re.finditer(r'\[([A-Z][^\]]{3,40})\]\(http', text):
+                    name = m.group(1).strip()
+                    if len(name.split()) <= 4:  # skip long phrases, keep person names
+                        seen.add(name)
+        except Exception as e:
+            self.logger.debug("_get_recent_references failed: %s", e)
+        refs = sorted(seen)
+        if refs:
+            self.logger.info("Recently used references (last %d days): %s", days, refs)
+        return refs
+
     def _classify_shape(self, title: str, first_para: str) -> str:
         text = (title + " " + first_para).lower()
         scores = {shape: sum(1 for kw in kws if kw in text)
@@ -2894,6 +2916,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         
         # Step 2: Get news hook, discovery, or generate topic
         overused_themes = self._get_overused_themes()
+        recent_refs = self._get_recent_references(days=14)
         discovery = self.get_discovery_from_database()
 
         # Step 2a: RSS — try before discovery and fallback
@@ -3157,6 +3180,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "tactile paving, accessible toilet, or lift as the central concrete example. "
             "Do not write an article whose thesis is 'this system excludes disabled people.' "
             "Find the angle that is not the first one that comes to mind.\n\n"
+            + (
+                "FORBIDDEN REFERENCES — these names have appeared in recent articles and must NOT "
+                "be used again: " + ", ".join(recent_refs) + ". "
+                "Find different sources, different people, different examples. "
+                "The world contains more thinkers than this list.\n\n"
+                if recent_refs else ""
+            )
             f"{news_block}"
             f"{('SOURCE MATERIAL (from the article that inspired this piece — use 2-4 specific facts, names, dates, or quotes as anchors. Do not reproduce its structure or argument — take a different angle):' + chr(10) + '---' + chr(10) + source_text + chr(10) + '---' + chr(10) + chr(10)) if source_text else ''}"
             f"{link_block}"
