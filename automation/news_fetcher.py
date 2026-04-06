@@ -46,7 +46,7 @@ QUALITY_FEEDS = [
 
     # ── Technology & design ───────────────────────────────────────────────────
     {"url": "https://www.technologyreview.com/feed/",                   "name": "MIT Tech Review",       "tier": 1},
-    {"url": "https://hnrss.org/frontpage",                              "name": "Hacker News",           "tier": 1},
+    # Hacker News removed — link aggregator with arbitrary titles, not journalism
     {"url": "https://www.wired.com/feed/rss",                           "name": "Wired",                 "tier": 2},
     {"url": "https://404media.co/feed/",                                "name": "404 Media",             "tier": 2},
     {"url": "https://www.theverge.com/rss/index.xml",                   "name": "The Verge",             "tier": 2},
@@ -452,8 +452,10 @@ def main():
     # Title patterns that produce useless grounding material
     BLOCKED_TITLE_PATTERNS = re.compile(
         r'\b(obituary|obituaries|in memoriam|necrology|'
-        r'letters? to the editor|corrections?|erratum|errata|'
-        r'show hn:|ask hn:|tell hn:)\b',
+        r'corrections?|erratum|errata)\b'
+        r'|dies? at \d+'          # implicit obituaries: "Dies at 86"
+        r'|\|\s*letters?\b'       # Guardian "| Letter" / "| Letters" suffix
+        r'|\bshow hn:|\bask hn:|\btell hn:',  # Hacker News submissions
         re.IGNORECASE,
     )
 
