@@ -759,25 +759,57 @@ class ProductionOrchestrator:
         return overused
 
     def _get_recent_references(self, days: int = 14) -> list:
-        """Scan recent posts for named references (markdown links + known recurring names).
+        """Scan recent posts (live + recently deleted) for named references.
         Returns list of names used in the last N days — to be excluded from new articles."""
+        import subprocess
         cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
         seen = set()
+
+        def _extract_refs(text):
+            for m in re.finditer(r'\[([A-Z][^\]]{3,40})\]\(http', text):
+                name = m.group(1).strip()
+                if len(name.split()) <= 4:
+                    seen.add(name)
+
+        # 1. Live posts still on disk
         try:
             for post_file in sorted(self.posts_dir.glob("*.md"), reverse=True):
                 if post_file.stem[:10] < cutoff:
                     break
-                text = post_file.read_text(errors="ignore")
-                # Extract markdown link labels: [Name](url)
-                for m in re.finditer(r'\[([A-Z][^\]]{3,40})\]\(http', text):
-                    name = m.group(1).strip()
-                    if len(name.split()) <= 4:  # skip long phrases, keep person names
-                        seen.add(name)
+                _extract_refs(post_file.read_text(errors="ignore"))
         except Exception as e:
-            self.logger.debug("_get_recent_references failed: %s", e)
+            self.logger.debug("_get_recent_references (live) failed: %s", e)
+
+        # 2. Recently deleted posts (retracted articles) — scan git history
+        try:
+            result = subprocess.run(
+                ["git", "log", "--diff-filter=D", "--name-only", "--pretty=format:%H %ai",
+                 f"--since={days} days ago", "--", "_posts/*.md"],
+                cwd=str(self.repo_root), capture_output=True, text=True, timeout=10
+            )
+            commit_hash = None
+            for line in result.stdout.splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                if line.startswith("_posts/"):
+                    # line is a deleted file path — retrieve content from parent commit
+                    if commit_hash:
+                        show = subprocess.run(
+                            ["git", "show", f"{commit_hash}^:{line}"],
+                            cwd=str(self.repo_root), capture_output=True, text=True, timeout=5
+                        )
+                        if show.returncode == 0:
+                            _extract_refs(show.stdout)
+                else:
+                    # line is "<hash> <date>" — extract hash
+                    commit_hash = line.split()[0] if line else None
+        except Exception as e:
+            self.logger.debug("_get_recent_references (deleted) failed: %s", e)
+
         refs = sorted(seen)
         if refs:
-            self.logger.info("Recently used references (last %d days): %s", days, refs)
+            self.logger.info("Recently used references (last %d days, incl. retracted): %s", days, refs)
         return refs
 
     def _classify_shape(self, title: str, first_para: str) -> str:
