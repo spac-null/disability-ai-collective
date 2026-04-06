@@ -659,8 +659,23 @@ class SceneImageGenerator:
             for i, prompt in enumerate(prompts):
                 label = labels[i] if i < len(labels) else f"scene{i+1}"
                 logger.info("Image %d/%d [%s]: %s...", i+1, num_images, label, prompt[:100])
-                try:
-                    img_data = self._fetch_pollinations(prompt)
+                # Stagger requests — Pollinations rate-limits rapid sequential calls
+                if i > 0:
+                    import time as _time
+                    _time.sleep(5)
+                img_data = None
+                for _attempt in range(2):  # 1 retry on timeout/429
+                    try:
+                        img_data = self._fetch_pollinations(prompt, timeout=90)
+                        break
+                    except Exception as e:
+                        if _attempt == 0:
+                            logger.warning("  Pollinations attempt 1 failed (%s) — retrying in 10s", e)
+                            import time as _time
+                            _time.sleep(10)
+                        else:
+                            logger.warning("  Pollinations failed after retry (%s) — gradient fallback", e)
+                if img_data:
                     filename = f"{slug}_{label}_{i+1}.jpg"
                     alt_text = self._generate_alt_text(prompt, title, label)
                     images.append({
@@ -673,8 +688,7 @@ class SceneImageGenerator:
                         'prompt': prompt,
                     })
                     logger.info("  OK %s (%d bytes)", filename, len(img_data))
-                except Exception as e:
-                    logger.warning("  Pollinations failed (%s) — gradient fallback", e)
+                else:
                     img_data = self._pixel_fallback(i)
                     images.append({
                         'data': img_data,
