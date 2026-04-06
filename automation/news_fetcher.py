@@ -398,6 +398,8 @@ def extract_angle(title: str, summary: str, url: str) -> str | None:
             resp = json.loads(r.read())
         angle = resp["choices"][0]["message"]["content"].strip()
         angle = re.sub(r"<think>.*?</think>", "", angle, flags=re.DOTALL).strip()
+        angle = re.sub(r"\*\*Pitch:\*\*\s*", "", angle).strip()
+        angle = re.sub(r"^\*\*", "", angle).strip()
         if angle.upper().startswith("NONE") or len(angle) < 15:
             return None
         return angle
@@ -443,11 +445,30 @@ def main():
     raw_items = fetch_all_feeds(days=7)
 
     # 2. Score, deduplicate, store items above threshold
-    stored = skipped_score = skipped_dupe = 0
+    stored = skipped_score = skipped_dupe = skipped_blocked = 0
     MIN_SCORE = 0.15
+    MAX_PER_SOURCE = 8  # cap per source per run — prevents one feed dominating
+
+    # Title patterns that produce useless grounding material
+    BLOCKED_TITLE_PATTERNS = re.compile(
+        r'\b(obituary|obituaries|in memoriam|necrology|'
+        r'letters? to the editor|corrections?|erratum|errata|'
+        r'show hn:|ask hn:|tell hn:)\b',
+        re.IGNORECASE,
+    )
+
+    source_counts: dict[str, int] = {}
     for item in raw_items:
+        title = item.get("title", "")
+        if BLOCKED_TITLE_PATTERNS.search(title):
+            skipped_blocked += 1
+            continue
         score, themes = score_item(item)
         if score < MIN_SCORE:
+            skipped_score += 1
+            continue
+        src = item["source_name"]
+        if source_counts.get(src, 0) >= MAX_PER_SOURCE:
             skipped_score += 1
             continue
         item["relevance_score"] = score
@@ -457,8 +478,9 @@ def main():
             continue
         if store_seed(conn, item):
             stored += 1
+            source_counts[src] = source_counts.get(src, 0) + 1
 
-    log(f"Stored {stored} new seeds | skipped {skipped_score} low-score | {skipped_dupe} near-dupe")
+    log(f"Stored {stored} new seeds | skipped {skipped_score} low-score | {skipped_dupe} near-dupe | {skipped_blocked} blocked")
 
     # 3. LLM angle extraction for top candidates
     if API_KEY:
