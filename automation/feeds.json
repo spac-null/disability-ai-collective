@@ -1,35 +1,72 @@
 {
-  "_comment": "RSS/Atom feeds per persona + general. Edit freely — no code change needed.",
+  "_comment": "All personas get 'general' feeds. Persona keys add depth, not replacement. Edit freely.",
+
   "general": [
-    {"url": "https://feeds.bbci.co.uk/news/world/rss.xml",          "name": "BBC World"},
-    {"url": "https://www.theguardian.com/world/rss",                 "name": "Guardian World"},
-    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml","name": "NYT World"},
-    {"url": "https://theconversation.com/articles.atom",             "name": "The Conversation"},
-    {"url": "https://aeon.co/feed.rss",                             "name": "Aeon"}
+    {"url": "https://feeds.bbci.co.uk/news/rss.xml",                       "name": "BBC News"},
+    {"url": "https://www.theguardian.com/world/rss",                        "name": "Guardian World"},
+    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",    "name": "NYT"},
+    {"url": "https://www.independent.co.uk/news/rss",                       "name": "The Independent"},
+    {"url": "https://www.aljazeera.com/xml/rss/all.xml",                    "name": "Al Jazeera"},
+
+    {"url": "https://www.nrc.nl/rss/",                                      "name": "NRC Handelsblad"},
+    {"url": "https://www.volkskrant.nl/rss.xml",                            "name": "Volkskrant"},
+    {"url": "https://www.trouw.nl/nieuws/rss.xml",                          "name": "Trouw"},
+    {"url": "https://www.groene.nl/rss.xml",                                "name": "De Groene Amsterdammer"},
+
+    {"url": "https://www.spiegel.de/schlagzeilen/index.rss",                "name": "Der Spiegel"},
+    {"url": "https://www.faz.net/rss/aktuell/",                             "name": "Frankfurter Allgemeine"},
+    {"url": "https://taz.de/rss.xml",                                       "name": "taz"},
+
+    {"url": "https://www.lemonde.fr/rss/une.xml",                           "name": "Le Monde"},
+    {"url": "https://www.monde-diplomatique.fr/recents.xml",                "name": "Le Monde Diplomatique"},
+
+    {"url": "https://www.scmp.com/rss/91/feed",                             "name": "South China Morning Post"},
+    {"url": "https://www.thehindu.com/feeder/default.rss",                  "name": "The Hindu"},
+    {"url": "https://timesofindia.indiatimes.com/rssfeeds/-2128936835.cms", "name": "Times of India"},
+    {"url": "https://www.japantimes.co.jp/feed/",                           "name": "Japan Times"},
+    {"url": "https://english.hani.co.kr/rss",                               "name": "Hankyoreh (Korea)"},
+    {"url": "https://www.dawn.com/feeds/home",                              "name": "Dawn (Pakistan)"},
+
+    {"url": "https://www.folha.uol.com.br/rss091.xml",                      "name": "Folha de S.Paulo"},
+    {"url": "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml","name": "Agência Brasil"},
+    {"url": "https://elpais.com/rss/elpais/inenglish.xml",                  "name": "El País (English)"},
+    {"url": "https://www.clarin.com/rss/lo-ultimo/",                        "name": "Clarín"},
+
+    {"url": "https://www.economist.com/the-world-this-week/rss.xml",        "name": "The Economist"},
+    {"url": "https://www.theatlantic.com/feed/all/",                        "name": "The Atlantic"},
+    {"url": "https://www.newstatesman.com/feed",                            "name": "New Statesman"},
+    {"url": "https://foreignpolicy.com/feed/",                              "name": "Foreign Policy"},
+    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Opinion.xml",     "name": "NYT Opinion"},
+    {"url": "https://www.theguardian.com/commentisfree/rss",                "name": "Guardian Opinion"},
+    {"url": "https://theconversation.com/articles.atom",                    "name": "The Conversation"},
+    {"url": "https://aeon.co/feed.rss",                                     "name": "Aeon"}
   ],
+
   "Pixel Nova": [
-    {"url": "https://www.dezeen.com/feed/",                          "name": "Dezeen"},
-    {"url": "https://hyperallergic.com/feed/",                       "name": "Hyperallergic"},
-    {"url": "https://www.architectural-review.com/feed",             "name": "Architectural Review"},
-    {"url": "https://www.theguardian.com/artanddesign/rss",          "name": "Guardian Art & Design"}
+    {"url": "https://hyperallergic.com/feed/",                              "name": "Hyperallergic"},
+    {"url": "https://www.dezeen.com/feed/",                                 "name": "Dezeen"},
+    {"url": "https://www.theguardian.com/artanddesign/rss",                 "name": "Guardian Art & Design"},
+    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml",        "name": "NYT Arts"}
   ],
+
   "Siri Sage": [
-    {"url": "https://pitchfork.com/rss/news/feed.xml",               "name": "Pitchfork"},
-    {"url": "https://nautil.us/feed/",                               "name": "Nautilus"},
-    {"url": "https://www.newscientist.com/feed/home/",               "name": "New Scientist"},
-    {"url": "https://www.theguardian.com/music/rss",                 "name": "Guardian Music"}
+    {"url": "https://pitchfork.com/rss/news/feed.xml",                      "name": "Pitchfork"},
+    {"url": "https://nautil.us/feed/",                                      "name": "Nautilus"},
+    {"url": "https://www.theguardian.com/music/rss",                        "name": "Guardian Music"},
+    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml",     "name": "NYT Science"}
   ],
+
   "Maya Flux": [
-    {"url": "https://www.theguardian.com/society/rss",               "name": "Guardian Society"},
-    {"url": "https://www.disabilitynewsservice.com/feed/",           "name": "Disability News Service"},
-    {"url": "https://jacobin.com/feed/",                             "name": "Jacobin"},
-    {"url": "https://www.opendemocracy.net/en/rss.xml",              "name": "openDemocracy"},
-    {"url": "https://www.theguardian.com/cities/rss",                "name": "Guardian Cities"}
+    {"url": "https://www.theguardian.com/society/rss",                      "name": "Guardian Society"},
+    {"url": "https://www.disabilitynewsservice.com/feed/",                  "name": "Disability News Service"},
+    {"url": "https://jacobin.com/feed/",                                    "name": "Jacobin"},
+    {"url": "https://www.theguardian.com/cities/rss",                       "name": "Guardian Cities"}
   ],
+
   "Zen Circuit": [
-    {"url": "https://www.wired.com/feed/rss",                        "name": "Wired"},
-    {"url": "https://www.technologyreview.com/feed/",                "name": "MIT Tech Review"},
-    {"url": "https://www.theverge.com/rss/index.xml",                "name": "The Verge"},
-    {"url": "https://404media.co/feed/",                             "name": "404 Media"}
+    {"url": "https://www.wired.com/feed/rss",                               "name": "Wired"},
+    {"url": "https://www.technologyreview.com/feed/",                       "name": "MIT Tech Review"},
+    {"url": "https://www.theverge.com/rss/index.xml",                       "name": "The Verge"},
+    {"url": "https://404media.co/feed/",                                    "name": "404 Media"}
   ]
 }

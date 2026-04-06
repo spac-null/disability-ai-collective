@@ -1061,6 +1061,107 @@ class ProductionOrchestrator:
             if conn:
                 conn.close()
 
+    # ── news_seeds helpers ─────────────────────────────────────────────────────
+
+    def _init_news_seeds_table(self, conn):
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS news_seeds (
+                id               TEXT PRIMARY KEY,
+                url              TEXT NOT NULL UNIQUE,
+                title            TEXT NOT NULL,
+                summary          TEXT,
+                source_name      TEXT NOT NULL,
+                source_tier      INTEGER DEFAULT 2,
+                pub_date         TEXT,
+                fetched_date     TEXT NOT NULL,
+                relevance_score  REAL DEFAULT 0.0,
+                themes           TEXT,
+                disability_angle TEXT,
+                used             INTEGER DEFAULT 0,
+                used_date        TEXT
+            )
+        """)
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_score ON news_seeds(relevance_score)")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_used  ON news_seeds(used)")
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_pub   ON news_seeds(pub_date)")
+        conn.commit()
+
+    def get_news_seed(self) -> dict | None:
+        """Return best unused news seed from last 3 days, or None."""
+        try:
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._init_news_seeds_table(conn)
+            cutoff = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
+
+            # Priority 1: confirmed disability angle
+            row = conn.execute("""
+                SELECT id, url, title, summary, source_name, relevance_score,
+                       themes, disability_angle, pub_date
+                FROM news_seeds
+                WHERE used = 0 AND pub_date >= ? AND disability_angle IS NOT NULL
+                ORDER BY relevance_score DESC, pub_date DESC
+                LIMIT 1
+            """, (cutoff,)).fetchone()
+
+            # Priority 2: high relevance score, no angle yet
+            if not row:
+                row = conn.execute("""
+                    SELECT id, url, title, summary, source_name, relevance_score,
+                           themes, disability_angle, pub_date
+                    FROM news_seeds
+                    WHERE used = 0 AND pub_date >= ? AND relevance_score >= 0.4
+                    ORDER BY relevance_score DESC, pub_date DESC
+                    LIMIT 1
+                """, (cutoff,)).fetchone()
+
+            conn.close()
+            if not row:
+                return None
+            return {
+                "id": row[0], "url": row[1], "title": row[2],
+                "summary": row[3], "source_name": row[4],
+                "relevance_score": row[5],
+                "themes": json.loads(row[6] or "[]"),
+                "disability_angle": row[7],
+                "pub_date": row[8],
+            }
+        except Exception as e:
+            self.logger.warning("get_news_seed failed: %s", e)
+            return None
+
+    def mark_news_seed_used(self, seed_id: str):
+        """Mark a news seed as used so it won't be picked again."""
+        try:
+            conn = sqlite3.connect(str(self.discovery_db))
+            conn.execute(
+                "UPDATE news_seeds SET used = 1, used_date = ? WHERE id = ?",
+                (datetime.now().strftime("%Y-%m-%d"), seed_id),
+            )
+            conn.commit()
+            conn.close()
+            self.logger.info("Marked news seed %s as used", seed_id)
+        except Exception as e:
+            self.logger.warning("Could not mark news seed as used: %s", e)
+
+    def _news_seed_to_agent(self, themes: list) -> str:
+        """Map news seed themes to preferred persona."""
+        _THEME_TO_PERSONA = {
+            "architecture":   "Pixel Nova",
+            "art_culture":    "Pixel Nova",
+            "technology":     "Zen Circuit",
+            "science_nature": "Zen Circuit",
+            "language":       "Siri Sage",
+            "education":      "Siri Sage",
+            "health_systems": "Maya Flux",
+            "business_labor": "Maya Flux",
+        }
+        for theme in themes:
+            if theme in _THEME_TO_PERSONA:
+                return _THEME_TO_PERSONA[theme]
+        return "Maya Flux"  # default
+
+    # ──────────────────────────────────────────────────────────────────────────
+
     def _call_openai_compat_api(self, url, api_key, system_prompt, user_prompt,
                                    model, max_tokens=3500, timeout=120, no_think=False,
                                    return_model=False):
@@ -1307,7 +1408,11 @@ class ProductionOrchestrator:
             "13. LISTS OF THREE. Four items in a list is one too many. Cut the weakest.\n"
             "14. PARAGRAPH MOMENTUM: When a paragraph builds by accumulation — specific details gathering weight toward a single point — do not interrupt with analysis mid-build. Let the details complete their arc. The argument arrives after the observation lands, not inside it.\n"
             "15. LANDING: End accumulations with a concrete image or a plain-stated paradox, not an abstract reframing. One image, one fact. No metaphor that requires reconstruction under pressure.\n"
-            "16. NO INLINE PARENTHETICAL DEFINITIONS. Never explain a term mid-sentence with em-dashes or parentheses — 'acoustic analysis—the scientific study of how sound behaves—' bloats the sentence and talks down to the reader. If the term needs unpacking, give it its own sentence after. If it doesn't need unpacking, trust the reader and move on.\n"
+            "16. NO INLINE PARENTHETICAL DEFINITIONS. Never explain a term mid-sentence with em-dashes or parentheses. "
+            "NEVER: 'a listed façade (a building legally protected as historically significant)' — cut it entirely. "
+            "NEVER: 'acoustic analysis—the scientific study of how sound behaves—' — same problem. "
+            "RIGHT: 'a listed façade.' or 'a listed façade. Listed buildings are legally protected — nobody can touch the structure.' "
+            "If the term needs unpacking, give it its own sentence after. If it doesn't need unpacking, trust the reader and move on.\n"
             "17. PLAIN VOCABULARY. Prefer the Anglo-Saxon word over the Latinate one when meaning is identical. 'use' not 'utilise'. 'show' not 'demonstrate'. 'build' not 'construct'. 'change' not 'transformation'. 'ask' not 'interrogate'. 'help' not 'facilitate'. 'think' not 'conceptualise'. Keep technical terms only when no plain word carries the same precision — but earn them one at a time, not in clusters.\n"
             "18. SYSTEM VOICE — BANNED: Never write in the syntax of the institutions you are critiquing. The test: can you point to who is doing what to whom? If not, rewrite. Passive voice erases the person causing harm. Stacked bureaucratic nouns erase the person experiencing it. Examples: 'The system handled equipment requests' → 'When a disabled tenant needed a grab rail, they submitted a form.' 'Stops were flagged as non-compliant' → 'Auditors found stops wheelchair users couldn't reach.' 'Claimants were required to navigate' → 'To file a claim, you clicked through seven screens.' If your sentence could appear in the policy document you are criticising, rewrite it with a human subject and a concrete verb.\n"
             "19. NOMINALIZATION — BANNED: Keep actions as verbs, not nouns. 'The redesign of the interface' → 'they redesigned the interface.' 'The implementation of the ramp' → 'the council built the ramp.' 'The assessment of access needs' → 'a caseworker asked what you needed.' When a verb becomes a noun, the person doing the action disappears. Find the hidden verb and free it.\n"
@@ -1362,6 +1467,74 @@ class ProductionOrchestrator:
             self.logger.warning("Opus rewrite failed: %s — keeping original", e)
 
         return content
+
+    def _strip_parentheticals(self, content):
+        """Remove long inline parenthetical definitions from article body.
+
+        Targets parenthetical content over ~25 chars mid-sentence.
+        Skips: markdown links [text](url), <figure> blocks, --- markers,
+        short refs (2025), (ibid), (emphasis mine), etc.
+        """
+        lines = content.split('\n')
+        result = []
+        in_figure = False
+
+        SHORT_REF = re.compile(
+            r'^\s*(\d{4}|ibid\.?|ibid\. \d+|emphasis mine|emphasis added|'
+            r'my emphasis|sic|orig\.|trans\.|n\.d\.|n\.p\.)\s*$',
+            re.I,
+        )
+
+        def maybe_strip(m):
+            inner = m.group(1)
+            if len(inner) < 25:
+                return m.group(0)
+            if SHORT_REF.match(inner):
+                return m.group(0)
+            return ''
+
+        stripped_count = 0
+
+        for line in lines:
+            if '<figure' in line:
+                in_figure = True
+            if in_figure:
+                result.append(line)
+                if '</figure>' in line:
+                    in_figure = False
+                continue
+
+            if line.strip() == '---':
+                result.append(line)
+                continue
+
+            # Protect markdown links [text](url) before stripping
+            placeholders = {}
+
+            def save_link(m, _store=placeholders):
+                key = f'\x00L{len(_store)}\x00'
+                _store[key] = m.group(0)
+                return key
+
+            protected = re.sub(r'\[[^\]]*\]\([^)]*\)', save_link, line)
+            before = protected
+            processed = re.sub(r'\(([^)]+)\)', maybe_strip, protected)
+            if processed != before:
+                stripped_count += 1
+                # Clean punctuation artifacts left by removal
+                processed = re.sub(r'\s+([,.])', r'\1', processed)
+                processed = re.sub(r'\s{2,}', ' ', processed)
+                processed = processed.strip()
+
+            for key, val in placeholders.items():
+                processed = processed.replace(key, val)
+
+            result.append(processed)
+
+        if stripped_count:
+            self.logger.info("_strip_parentheticals: removed %d inline definition(s)", stripped_count)
+
+        return '\n'.join(result)
 
     # ── Pre-publication quality layer ─────────────────────────────────────────
 
@@ -1523,8 +1696,9 @@ class ProductionOrchestrator:
         return content
 
     def pre_publication_check(self, content, title, agent):
-        """Pre-publication layer: link check + accessibility (every article) + editorial (every 3rd)."""
+        """Pre-publication layer: strip parentheticals + link check + accessibility (every article) + editorial (every 3rd)."""
         self.logger.info("Pre-publication check: starting")
+        content = self._strip_parentheticals(content)
         content = self._verify_links(content)
         content = self._accessibility_check(content, title, agent)
         if self._editorial_check_due():
@@ -1905,6 +2079,14 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
         excerpt = self._generate_card_excerpt(metadata['title'], content, metadata.get('author', ''))
 
+        _source_fields = ""
+        if metadata.get('source_url'):
+            _source_fields += f"\nsource_url: {json.dumps(str(metadata['source_url']))}"
+        if metadata.get('source_title'):
+            _source_fields += f"\nsource_title: {json.dumps(str(metadata['source_title']))}"
+        if metadata.get('source_outlet'):
+            _source_fields += f"\nsource_outlet: {json.dumps(str(metadata['source_outlet']))}"
+
         front_matter = f"""---
 layout: post
 title: {json.dumps(str(metadata['title']))}
@@ -1914,7 +2096,7 @@ category: {metadata['categories'][0].lower() if metadata['categories'] else 'res
 image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
 image_alt: {json.dumps(image_descriptions[0] if image_descriptions else 'Article illustration')}
 excerpt: {json.dumps(excerpt)}
-keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['author'], metadata['categories']))}]
+keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['author'], metadata['categories']))}]{_source_fields}
 ---
 
 """
@@ -2948,15 +3130,15 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 "message": f"Article already exists for today: {existing}"
             }
         
-        # Step 2: Get news hook, discovery, or generate topic
+        # Step 2: Get grounding source — priority: news_seed > discovery > fallback
         overused_themes = self._get_overused_themes()
         recent_refs = self._get_recent_references(days=14)
-        discovery = self.get_discovery_from_database()
 
-        # Step 2a: RSS — try before discovery and fallback
-        # Agent not yet decided; fetch for all personas, pick after agent selection
-        _rss_items_cache = None
-        news_item = None  # set below after agent_name is known
+        # Step 2a: Persistent news seed (fetched at 06:00 by news_fetcher.py)
+        news_seed = self.get_news_seed()
+
+        # Step 2b: Discovery DB fallback (fetched at 07:00 by run_discovery.py)
+        discovery = None if news_seed else self.get_discovery_from_database()
 
         # Skip discovery if its angle falls into an overused theme
         if discovery and overused_themes:
@@ -2973,7 +3155,35 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 )
                 discovery = None
 
-        if discovery:
+        # Step 2c: RSS live hook (per-agent, fetched at generation time)
+        _rss_items_cache = None
+        news_item = None  # set below after agent_name is known
+
+        _stopwords = {'the','a','an','and','or','of','in','on','at','to','for','is','are',
+                      'was','were','with','this','that','from','by','as','it','its','not',
+                      'but','how','why','what','when','who'}
+
+        # ── Source: news seed ──────────────────────────────────────────────────
+        if news_seed:
+            self.logger.info(
+                "News seed: [%.2f] %s | %s",
+                news_seed["relevance_score"], news_seed["source_name"],
+                news_seed["title"][:60],
+            )
+            title = news_seed.get("disability_angle") or news_seed["title"]
+            source_note = (
+                f"*This article was prompted by "
+                f"[{news_seed['title']}]({news_seed['url']}) "
+                f"from {news_seed['source_name']}.*"
+            )
+            source_text = self.fetch_source_article(news_seed["url"])
+            pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title)
+                             if w.lower() not in _stopwords][:8]
+            pool_links = self.get_pool_links(pool_keywords)
+            agent_name = self._balance_agent(self._news_seed_to_agent(news_seed["themes"]))
+
+        # ── Source: discovery DB ───────────────────────────────────────────────
+        elif discovery:
             title = discovery['angle']
             domain = discovery['domain']
             _src_url = discovery.get('url', '')
@@ -2987,13 +3197,10 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 source_note = f"*This article was inspired by [{discovery['original_title']}]({_src_url}) from {domain}.*"
             else:
                 source_note = ""
-            # mark_finding_as_used called after successful commit (see Step 7)
             source_text = self.fetch_source_article(discovery.get('url', ''))
-            _stopwords   = {'the','a','an','and','or','of','in','on','at','to','for','is','are','was','were','with','this','that','from','by','as','it','its','not','but','how','why','what','when','who'}
-            pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title) if w.lower() not in _stopwords][:8]
-            pool_links   = self.get_pool_links(pool_keywords)
-            
-            # Map domain to agent (improved logic) — then balance for fairness
+            pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title)
+                             if w.lower() not in _stopwords][:8]
+            pool_links = self.get_pool_links(pool_keywords)
             domain_lower = domain.lower()
             if any(word in domain_lower for word in ['art', 'design', 'visual']):
                 _preferred = "Pixel Nova"
@@ -3004,10 +3211,10 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             else:
                 _preferred = "Maya Flux"
             agent_name = self._balance_agent(_preferred)
-                
+
+        # ── Source: fallback topic list ────────────────────────────────────────
         else:
             agent_name = self._balance_agent(random.choice(list(self.agents.keys())))
-            # Fallback situations — open-ended, not pre-titled essays
             topics = [
                 "the gap between how a technology is described and how disabled people actually use it",
                 "a moment where access was framed as generosity rather than a right",
@@ -3035,28 +3242,26 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             title = random.choice(topics)
             source_note = ""
             source_text = None
-            pool_links   = []
+            pool_links = []
 
         agent_info = self.agents.get(agent_name)
         if not agent_info:
             self.logger.error("Unknown agent: %s", agent_name)
             return None
 
-        # RSS news hook — fetch now that agent_name is known
-        try:
-            _rss_items = self._fetch_rss_news(agent_name, days=14)
-            focus_kw   = agent_info.get("categories", []) + list(self.agents[agent_name].get("perspective", "").split())[:6]
-            news_item  = self._pick_news_item(_rss_items, focus_kw)
-        except Exception as _e:
-            self.logger.warning("RSS fetch error: %s", _e)
-            news_item = None
-
-        if news_item:
+        # News block — news_seed (persistent) takes priority over live RSS hook
+        if news_seed:
+            # Rich grounding from persistent news_seeds table
+            _angle_line = (
+                f"\nThe disability angle: {news_seed['disability_angle']}\n"
+                if news_seed.get("disability_angle") else ""
+            )
             news_block = (
                 f"THIS ARTICLE IS A RESPONSE TO SOMETHING HAPPENING RIGHT NOW.\n\n"
-                f"On {news_item['date']}, {news_item['source']} reported:\n"
-                f"\"{news_item['title']}\"\n"
-                f"{news_item['summary']}\n\n"
+                f"On {news_seed.get('pub_date', 'recently')}, {news_seed['source_name']} published:\n"
+                f"\"{news_seed['title']}\"\n"
+                f"{news_seed.get('summary', '')}\n"
+                f"{_angle_line}\n"
                 f"MANDATORY: Your opening paragraph must be anchored in the present — something "
                 f"happening now, this week, this month. Not a historical case study. Not '\"in 2018...\"'. "
                 f"The reader should feel within the first two sentences that this article exists because "
@@ -3069,12 +3274,39 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 f"never as the main subject. The present is the main subject.\n\n"
             )
         else:
-            news_block = (
-                "NOTE: No live news item was available for this run. "
-                "Write about something that is happening in the world right now — "
-                "a political development, a cultural moment, an economic shift, a recent event. "
-                "Your opening paragraph should feel like it was written this week, not this decade.\n\n"
-            )
+            # Live RSS hook — fetch now that agent_name is known
+            try:
+                _rss_items = self._fetch_rss_news(agent_name, days=14)
+                focus_kw   = agent_info.get("categories", []) + list(self.agents[agent_name].get("perspective", "").split())[:6]
+                news_item  = self._pick_news_item(_rss_items, focus_kw)
+            except Exception as _e:
+                self.logger.warning("RSS fetch error: %s", _e)
+                news_item = None
+
+            if news_item:
+                news_block = (
+                    f"THIS ARTICLE IS A RESPONSE TO SOMETHING HAPPENING RIGHT NOW.\n\n"
+                    f"On {news_item['date']}, {news_item['source']} reported:\n"
+                    f"\"{news_item['title']}\"\n"
+                    f"{news_item['summary']}\n\n"
+                    f"MANDATORY: Your opening paragraph must be anchored in the present — something "
+                    f"happening now, this week, this month. Not a historical case study. Not '\"in 2018...\"'. "
+                    f"The reader should feel within the first two sentences that this article exists because "
+                    f"something is happening in the world right now.\n\n"
+                    f"You do not need to quote or cite the news item directly. But your angle, your urgency, "
+                    f"your specific observation must come from this present moment. "
+                    f"A non-disabled writer covering this story sees X. You see something else — "
+                    f"something your embodied experience makes visible. That difference is the article.\n\n"
+                    f"Historical examples may appear, but only in service of the present argument — "
+                    f"never as the main subject. The present is the main subject.\n\n"
+                )
+            else:
+                news_block = (
+                    "NOTE: No live news item was available for this run. "
+                    "Write about something that is happening in the world right now — "
+                    "a political development, a cultural moment, an economic shift, a recent event. "
+                    "Your opening paragraph should feel like it was written this week, not this decade.\n\n"
+                )
 
         register, register_prompt = self._pick_register()
         target_words = self._pick_length()
@@ -3340,6 +3572,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             'model_used': model_used_label,
             'register': register,
             'article_type': article_type,
+            'source_url':    news_seed['url']         if news_seed else discovery.get('url', '')     if discovery else '',
+            'source_title':  news_seed['title']       if news_seed else discovery.get('original_title', '') if discovery else '',
+            'source_outlet': news_seed['source_name'] if news_seed else discovery.get('domain', '') if discovery else '',
         }
 
         # Step 5: Generate images (placeholder)
@@ -3361,10 +3596,12 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         # Step 7: Commit article + review sidecar
         commit_success = self.commit_to_git(article_file, image_filenames, review_file)
 
-        # Mark discovery as used only after successful commit — prevents consuming a
-        # finding when generation or commit fails (would lose it for tomorrow)
+        # Mark sources as used only after successful commit — prevents consuming a
+        # finding/seed when generation or commit fails (would lose it for tomorrow)
         if commit_success and discovery:
             self.mark_finding_as_used(discovery["id"])
+        if commit_success and news_seed:
+            self.mark_news_seed_used(news_seed["id"])
 
         # Step 8: Post to Bluesky + Mastodon + Tumblr (non-blocking)
         if commit_success:
