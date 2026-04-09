@@ -1,18 +1,18 @@
 {
-  "timestamp": "2026-04-06T16:03:04.271654",
-  "total_findings": 980,
-  "unique_domains": 15,
+  "timestamp": "2026-04-09T16:03:40.110823",
+  "total_findings": 1049,
+  "unique_domains": 16,
   "used_findings": 14,
-  "unused_findings": 966,
+  "unused_findings": 1035,
   "first_discovery": "2026-03-14T12:24:48.484224",
-  "last_discovery": "2026-04-06T08:01:01.588025",
+  "last_discovery": "2026-04-09T08:00:36.463886",
   "top_categories": [
     {
       "disability_concepts": "[\"hidden_angle\"]",
-      "count": 956
+      "count": 1024
     },
     {
-      "disability_concepts": "[\"access\", \"exhibition\", \"form\", \"performance\", \"artist\", \"gallery\"]",
+      "disability_concepts": "[\"gallery\", \"artist\", \"form\", \"exhibition\", \"performance\", \"access\"]",
       "count": 3
     },
     {
@@ -32,47 +32,47 @@
       "count": 1
     },
     {
+      "disability_concepts": "[\"vision\", \"marginal\", \"marginalized\", \"dance\", \"beauty\", \"community\", \"movement\", \"access\"]",
+      "count": 1
+    },
+    {
+      "disability_concepts": "[\"vision\", \"marginal\", \"marginalized\", \"color\", \"dance\", \"focus\", \"voice\", \"form\", \"tradition\", \"performance\", \"sound\", \"movement\", \"theater\"]",
+      "count": 1
+    },
+    {
       "disability_concepts": "[\"vision\", \"function\", \"sound\", \"access\", \"form\", \"painting\"]",
       "count": 1
     },
     {
-      "disability_concepts": "[\"sculpture\", \"exhibition\", \"painting\", \"visual\", \"color\", \"form\", \"curator\", \"composition\", \"museum\", \"language\", \"artist\"]",
-      "count": 1
-    },
-    {
-      "disability_concepts": "[\"marginalized\", \"tradition\", \"form\", \"voice\", \"color\", \"vision\", \"performance\", \"theater\", \"sound\", \"dance\", \"movement\", \"marginal\", \"focus\"]",
-      "count": 1
-    },
-    {
-      "disability_concepts": "[\"language\", \"form\", \"mobility\", \"exhibition\", \"identity\", \"movement\", \"rhythm\", \"visual\", \"vision\"]",
+      "disability_concepts": "[\"vision\", \"access\", \"color\", \"identity\", \"form\", \"visibility\", \"community\", \"accessible\"]",
       "count": 1
     }
   ],
   "recent_findings": [
     {
-      "title": "Jamie Laing and Sophie Habboo on why Raising Chelsea is authentic",
-      "domain": "bbc.com",
-      "discovered_date": "2026-04-06T08:01:01.588025"
-    },
-    {
-      "title": "paolo ulian sculpts carsico washbasin from marble for antoniolupi",
-      "domain": "designboom.com",
-      "discovered_date": "2026-04-06T08:00:53.561216"
+      "title": "Dice Are 6,000 Years Older Than Previously Believed, Study Says",
+      "domain": "hyperallergic.com",
+      "discovered_date": "2026-04-09T08:00:36.463886"
     },
     {
       "title": "When coercion in care makes Kilmeade\u2019s \u201cjust kill \u2019em\u201d thinkable \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-04-06T08:00:27.908925"
+      "discovered_date": "2026-04-09T08:00:31.932445"
     },
     {
       "title": "Two Years of Genocide+: Crips Aren\u2019t Done Sending eSims to Gaza \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-04-06T08:00:26.747105"
+      "discovered_date": "2026-04-09T08:00:30.840323"
     },
     {
       "title": "The State of Critical Race Disability Studies A White Paper Report from the Disabled Scholars of Color Collective \u2013 Disability Visibility Project",
       "domain": "disabilityvisibilityproject.com",
-      "discovered_date": "2026-04-06T08:00:25.597956"
+      "discovered_date": "2026-04-09T08:00:29.699795"
+    },
+    {
+      "title": "Disability Justice is Climate Justice | Sins Invalid",
+      "domain": "sinsinvalid.org",
+      "discovered_date": "2026-04-09T08:00:28.443852"
     }
   ]
 }
