@@ -26,7 +26,7 @@ In September 2022, I sat in a veterans' support office in Birmingham while a cas
 
 The mechanism is the same one that makes a plaque in Canberra legible and a brain injury in Birmingham invisible. Valour is defined as a physical event. Cognition is not physical enough to count.
 
-Kaley Roosen, writing for the Disability Visibility Project — an online platform centred on the perspectives and experiences of disabled people — put it plainly: institutions [claim ownership of bodies they did not build and cannot understand](https://disabilityvisibilityproject.com/2014/09/18/guest-blog-post-whose-body-is-it-anyways-by-kaley-roosen/). Military commemoration takes this further. It claims ownership of the meaning of a body's actions. The plaque decides what the body did and why it mattered. The person inside the body is not consulted.
+[Kaley Roosen](https://disabilityvisibilityproject.com/2014/09/18/guest-blog-post-whose-body-is-it-anyways-by-kaley-roosen/), writing for the [Disability Visibility Project](https://disabilityvisibilityproject.com/) — an online platform centred on the perspectives and experiences of disabled people — put it plainly: institutions [claim ownership of bodies they did not build and cannot understand](https://disabilityvisibilityproject.com/2014/09/18/guest-blog-post-whose-body-is-it-anyways-by-kaley-roosen/). Military commemoration takes this further. It claims ownership of the meaning of a body's actions. The plaque decides what the body did and why it mattered. The person inside the body is not consulted.
 
 ---
 

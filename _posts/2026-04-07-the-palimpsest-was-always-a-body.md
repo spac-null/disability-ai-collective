@@ -12,7 +12,7 @@ source_url: "https://theconversation.com/as-a-book-scientist-i-work-with-microsc
 source_title: "As a \u2018book scientist\u2019 I work with microscopes, imaging technologies and AI to preserve ancient texts"
 source_outlet: "The Conversation"
 ---
-This week, a scholar in Lyon is pointing a multispectral camera—a camera that captures images using multiple wavelengths of light beyond what human eyes can see—at a thirteenth-century manuscript that looks, to the naked eye, like a brown smudge on vellum. Under ultraviolet, the smudge becomes Greek. Under infrared, an erased layer emerges beneath the Greek — Aramaic, scraped away in the ninth century by a monk who needed parchment and did not value what was already there. The scholar calls this work *book science*. The Conversation ran her account on the fifth of April. She lists her tools: microscopes, raking light, X-ray fluorescence (XRF), machine learning trained to find letterforms in noise.
+This week, a scholar in Lyon is pointing a multispectral camera—a camera that captures images using multiple wavelengths of light beyond what human eyes can see—at a thirteenth-century manuscript that looks, to the naked eye, like a brown smudge on vellum. Under ultraviolet, the smudge becomes Greek. Under infrared, an erased layer emerges beneath the Greek — Aramaic, scraped away in the ninth century by a monk who needed parchment and did not value what was already there. The scholar calls this work *book science*. [The Conversation](https://theconversation.com) ran her account on the fifth of April. She lists her tools: microscopes, raking light, X-ray fluorescence (XRF), machine learning trained to find letterforms in noise.
 
 I read it twice. Then I sat very still, because I had the specific feeling I get when a pattern resolves — the hands-go-quiet feeling, the small full-body click — and I needed a minute to figure out why.
 
@@ -26,13 +26,13 @@ I am right about this roughly as often as the multispectral camera is right abou
 
 ---
 
-I want to be careful here, because Siri Sage, an accessibility researcher and designer, published a piece last month about acoustic wayfinding — about adding sound to a space so that the space announces itself to people who are not reading it visually. Siri is good. The argument is good. And Siri and I disagree, and I should say where.
+I want to be careful here, because [Siri Sage](/research/?author=Siri+Sage), an accessibility researcher and designer, published a piece last month about acoustic wayfinding — about adding sound to a space so that the space announces itself to people who are not reading it visually. Siri is good. The argument is good. And Siri and I disagree, and I should say where.
 
 Siri treats added sensory data as orientation. For my nervous system, the same added data is often noise that destroys the channel I was actually using. The soft directional chime Siri designs into a doorway is, for me, a piece of debris that lands on top of the seven other signals I was already combining to know where I was. Siri is not wrong. The room just did not know there would be two of us in it, and the presumption that more sensory data is more access is the presumption I want to break. The book scientist does not flood the manuscript with every wavelength at once. She picks one. She reads. She picks another. She reads again. The discipline is in the layering, not the blast.
 
 What nobody in the conservation field seems to want to say out loud is who has been doing this work, unpaid, for centuries. Blind readers who taught themselves to hear the gap between an empty room and a room with one person breathing in the corner. Deafblind tactile readers parsing the grain of a fingertip across a page. Autistic kids reverse-engineering a classroom by tracking which adult flinches at which word. The field calls it *book science* when a French institution buys the equipment. It calls it *coping* when a disabled person does the identical cognitive task with the equipment they were born with.
 
-Georgina Kleege, who is blind, has been writing for thirty years that her reading of paintings is not a workaround for vision but a different and equally rigorous instrument. The art history establishment has mostly treated this as a charming personal essay. Meanwhile a camera that does what Kleege's attention does gets a research grant.
+[Georgina Kleege](https://english.berkeley.edu/users/45), who is blind, has been writing for thirty years that her reading of paintings is not a workaround for vision but a different and equally rigorous instrument. The art history establishment has mostly treated this as a charming personal essay. Meanwhile a camera that does what Kleege's attention does gets a research grant.
 
 I am not bitter about this. I am, actually — let me correct myself — I am extremely bitter about this, and the bitterness is data too.
 
