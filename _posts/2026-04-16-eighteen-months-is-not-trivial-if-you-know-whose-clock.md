@@ -16,11 +16,11 @@ Last week the Guardian ran a headline calling the effect of the new Alzheimer's 
 
 I read this on a Tuesday in October 2026, in the back of a minicab stuck on Camberwell New Road, and I had to read it three times. Trivial to whom.
 
-Here is what the reviewers measured: scores on the Clinical Dementia Rating scale, a standardized test doctors use to measure memory and thinking problems, tallied against a statistical threshold decided by other clinicians in a room I have never been in. Here is what they did not measure: whether the person taking the drug was still able to walk their dog to the corner shop in month fourteen instead of month eleven. Whether their daughter could keep her job because the crisis point slid three months to the right. Whether they made it to the wedding.
+Here is what the reviewers measured: scores on the [Clinical Dementia Rating scale](https://www.dementia.org/clinical-dementia-rating-scale), a standardized test doctors use to measure memory and thinking problems, tallied against a statistical threshold decided by other clinicians in a room I have never been in. Here is what they did not measure: whether the person taking the drug was still able to walk their dog to the corner shop in month fourteen instead of month eleven. Whether their daughter could keep her job because the crisis point slid three months to the right. Whether they made it to the wedding.
 
 The trial's success measures were built on the premise that the only thinking worth counting is the thinking that looks like the thinking of the person designing the trial.
 
-I want to be fair to the reviewers. Concerns about the anti-amyloid drugs are real — the side effects are serious, the costs are enormous, the hype around lecanemab and donanemab — the two anti-amyloid drugs at the center of this debate — has run ahead of the evidence. Robin Emsley at the University of Manchester, a researcher who has criticized overhyped drug claims, and others have been arguing for years that the industry has been selling thin data as a breakthrough. That critique is earned.
+I want to be fair to the reviewers. Concerns about the anti-amyloid drugs are real — the side effects are serious, the costs are enormous, the hype around [lecanemab](https://www.nia.nih.gov/health/alzheimers-disease-and-type-2-diabetes) and donanemab — the two anti-amyloid drugs at the center of this debate — has run ahead of the evidence. [Robin Emsley](https://www.manchester.ac.uk/research/robin.emsley/) at the University of Manchester, a researcher who has criticized overhyped drug claims, and others have been arguing for years that the industry has been selling thin data as a breakthrough. That critique is earned.
 
 But "trivial" is not a neutral word. It is a judgement about whose time matters.
 
@@ -28,7 +28,7 @@ I keep thinking about a conversation I had in March 2023, in a church hall in De
 
 Compare that to the language of the review. "No meaningful effect on cognition." Meaningful to the measurer. Not to Priya. Not to her mother. Not to the grandson.
 
-This is a problem disability researchers have been naming for decades, though rarely in the context of dementia. Mike Oliver, who developed the social model of disability in British sociology in the 1980s — the idea that disability is produced by society's barriers, not by individual bodies — spent his career pointing out that the tools medicine uses to measure disabled lives were built by people who did not live them. The scale, the threshold, the "clinically significant change" — these are not found in nature. Someone chose them. Usually someone who scored well on them.
+This is a problem disability researchers have been naming for decades, though rarely in the context of dementia. [Mike Oliver](https://disability-studies.leeds.ac.uk/library/author/oliver.m/), who developed the [social model of disability](https://www.leeds.ac.uk/disability-studies/archiveuk/Oliver/Oliver%20article%201990s.pdf) in British sociology in the 1980s — the idea that disability is produced by society's barriers, not by individual bodies — spent his career pointing out that the tools medicine uses to measure disabled lives were built by people who did not live them. The scale, the threshold, the "clinically significant change" — these are not found in nature. Someone chose them. Usually someone who scored well on them.
 
 In dementia research, the people who score well on them are, by definition, not the people the research is supposed to serve.
 

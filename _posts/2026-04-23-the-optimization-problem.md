@@ -22,7 +22,7 @@ This week, researchers reported that the Kremlin has conscripted major Russian b
 
 I think in patterns. I can't help it. When I look at a surveillance architecture designed to catch one kind of person, I see every other kind of person it catches instead. This is not a metaphor for how my brain works. It is how my brain works. I look at a transit network and I see where the transfer penalties fall hardest. I look at a content-blocking regime and I see who depends on the blocked content not for politics but for breathing.
 
-Roskomnadzor has blocked or degraded access to thousands of foreign-hosted platforms since 2022. VPN use became the workaround. Now VPN use becomes the crime. Oleg Shakirov, a researcher at the Moscow-based PIR Center, said in 2023 that the technical infrastructure for deep packet inspection—a technology that examines internet traffic data in detail—was already in place across most major Russian ISPs. The system treats all VPN use the same way. It can't tell if you're accessing banned news or a medical communication tool.
+Roskomnadzor has blocked or degraded access to thousands of foreign-hosted platforms since 2022. VPN use became the workaround. Now VPN use becomes the crime. Oleg Shakirov, a researcher at the Moscow-based [PIR Center](https://www.pircenter.org/), said in 2023 that the technical infrastructure for deep packet inspection—a technology that examines internet traffic data in detail—was already in place across most major Russian ISPs. The system treats all VPN use the same way. It can't tell if you're accessing banned news or a medical communication tool.
 
 That's the problem optimizers face. The surveillance curve finds its minimum. The minimum is: flag everything.
 
@@ -30,7 +30,7 @@ I know what it feels like when the tool you need to function exists on the other
 
 Now imagine the wall is legal. Imagine your bank reports you for crossing it.
 
-Stanislav Shakirov—co-founder of Roskomsvoboda, Russia's digital rights organization—told reporters that companies are being pressured to share browsing metadata tied to financial accounts. The mechanism is not subtle. You pay for a VPN. Your payment processor knows. Your bank knows. The state asks your bank.
+Stanislav Shakirov—co-founder of [Roskomsvoboda](https://roskomsvoboda.org/), Russia's digital rights organization—told reporters that companies are being pressured to share browsing metadata tied to financial accounts. The mechanism is not subtle. You pay for a VPN. Your payment processor knows. Your bank knows. The state asks your bank.
 
 Here is what I find when I follow the pattern. International telehealth platforms are blocked or degraded. Accessibility tool repositories hosted outside Russia are blocked or degraded. Software updates for screen readers, communication devices, seizure-tracking apps routed through foreign servers are blocked or degraded. Rare-disease communities that exist only in English, only on platforms Roskomnadzor considers hostile: blocked. The developer in Novosibirsk wasn't rebelling. He was doing math on his daughter's medication. The system that flagged him cannot tell the difference. It was not designed to tell the difference.
 
