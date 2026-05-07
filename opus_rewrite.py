@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
 # Load secrets from env file (no export statements — must parse manually)
-_ENV_FILE = Path("/srv/secrets/openclaw.env")
+_ENV_FILE = Path("/opt/secrets/openclaw.env")
 if _ENV_FILE.exists():
     for _line in _ENV_FILE.read_text().splitlines():
         _line = _line.strip()
@@ -32,7 +32,7 @@ import urllib.request
 API_KEY          = os.environ.get("ANTHROPIC_API_KEY", "")
 API_URL          = "http://172.19.0.1:8317/v1/chat/completions"
 MODEL            = "claude-opus-4-6"
-POSTS            = Path("/srv/data/openclaw/workspaces/ops/disability-ai-collective/_posts")
+POSTS            = Path(__file__).parent / "_posts"
 REWRITE_THRESHOLD = 3   # penalty score >= this triggers a rewrite
 
 

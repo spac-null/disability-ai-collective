@@ -16,7 +16,7 @@ from email.utils import parsedate_to_datetime
 
 # ── Env / paths ───────────────────────────────────────────────────────────────
 
-_ENV_FILE = Path("/srv/secrets/openclaw.env")
+_ENV_FILE = Path("/opt/secrets/openclaw.env")
 if _ENV_FILE.exists():
     for _line in _ENV_FILE.read_text().splitlines():
         _line = _line.strip()
