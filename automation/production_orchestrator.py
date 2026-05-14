@@ -71,41 +71,59 @@ def _nous_key():
 
 # Tonal register and length weights for article variety
 _REGISTERS = [
-    ("wry",        0.30, "Dry, observational. The joke is in the framing, never announced. You find the absurdity in how things are organised and let it sit. The reader laughs a beat late."),
-    ("clinical",   0.25, "Cold precision. No emotion in the delivery — the facts are the argument. Present evidence the way a pathologist presents findings. Let the reader supply the outrage."),
-    ("furious",    0.20, "Controlled anger. Precise. You do not shout — you dissect. Every sentence cuts. The reader feels the weight of what you are describing without you ever raising your voice."),
-    ("melancholic",0.15, "Slow, exact, not sentimental. Write about loss without performing grief. The sadness is in what is missing from the frame, not in what you say about it."),
-    ("ecstatic",   0.10, "Something genuinely surprised you. You are writing from inside that surprise. The energy is in the discovery, not in exclamation. Precise wonder."),
+    ("wry",          0.25, "Dry, observational. The joke is in the framing, never announced. You find the absurdity in how things are organised and let it sit. The reader laughs a beat late."),
+    ("clinical",     0.20, "Cold precision. No emotion in the delivery — the facts are the argument. Present evidence the way a pathologist presents findings. Let the reader supply the outrage."),
+    ("ecstatic",     0.20, "Something genuinely surprised you. You are writing from inside that surprise. The energy is in the discovery, not in exclamation. Precise wonder."),
+    ("furious",      0.15, "Controlled anger. Precise. You do not shout — you dissect. Every sentence cuts. The reader feels the weight of what you are describing without you ever raising your voice."),
+    ("melancholic",  0.15, "Slow, exact, not sentimental. Write about loss without performing grief. The sadness is in what is missing from the frame, not in what you say about it."),
+    ("celebratory",  0.05, "Something was built right. Something survived. Something won. Not naive optimism — specific joy at a specific thing that actually happened, that actually works. The celebration is in the precision of what is being recognised."),
 ]
 _LENGTHS = [
-    (600,  0.20),
-    (800,  0.45),
-    (900,  0.25),
-    (1000, 0.10),
+    (450,  0.10),
+    (700,  0.20),
+    (950,  0.35),
+    (1200, 0.25),
+    (1600, 0.10),
 ]
 
 _ARTICLE_TYPES = [
-    ("standard",    0.62, ""),
-    ("provocation", 0.12,
+    ("essay",        0.35, ""),
+    ("field_note",   0.15,
+     "FORM — FIELD NOTE (350–500 words MAX): Present tense. One place, one moment. You are in it now. "
+     "No argument. No thesis. No analysis. You are recording what is in front of you with full attention. "
+     "End mid-thought — not a conclusion, a cut. The reader is inside the moment with you, not outside it watching. "
+     "Use the word 'I' sparingly. The place is the subject. HARD CAP: 500 words. Count. Cut."),
+    ("provocation",  0.12,
      "FORM — SHORT PROVOCATION (<450 words): One sharp claim. One specific example that earns it. "
      "No thesis statement — the argument is a knife, not a map. No resolution. "
      "No second argument. The essay stops when the point is made, not when it is explained."),
-    ("fury",        0.08,
-     "FORM — FURY: This essay is angry. Not at a system in the abstract — at a specific person, "
-     "a specific moment, a specific sentence someone said. Name it. "
-     "Syntax breaks where the feeling breaks. Short paragraphs. A sentence that is just one word. "
-     "The anger is precise, not general. Do not manage it. Do not turn it into a lesson."),
-    ("confusion",   0.08,
-     "FORM — NO THESIS: You started writing because you thought you knew the argument. "
-     "You don't. The essay ends with the framework failing — you are in the car, "
-     "engine running, no destination. Do not rescue yourself with a conclusion. "
-     "The last paragraph does not resolve anything. The reader is left with the exact confusion you are in."),
-    ("pleasure",    0.07,
+    ("portrait",     0.10,
+     "FORM — PORTRAIT (1200 words minimum): One real named person. They are the subject, not an example. "
+     "Not a biography — a portrait. What do they see that others miss? What have they built, said, made, argued? "
+     "Two or three moments that show who they are rather than tell it. "
+     "You may disagree with them. You may not reduce them to their disability. "
+     "MINIMUM: 1200 words. The person earns the space."),
+    ("pleasure",     0.08,
      "FORM — PLEASURE: Your body wants something. Not 'things work better for me' — "
      "actual desire, delight, the physical experience of doing something your body loves. "
      "The essay lives in that register. Not disability as limitation overcome — "
      "as a body that knows things through wanting them. Specific. Sensory. Not metaphorical."),
-    ("indefensible", 0.03, ""),  # Prompt is persona-specific — see _INDEFENSIBLE_PROMPTS
+    ("fury",         0.06,
+     "FORM — FURY: This essay is angry. Not at a system in the abstract — at a specific person, "
+     "a specific moment, a specific sentence someone said. Name it. "
+     "Syntax breaks where the feeling breaks. Short paragraphs. A sentence that is just one word. "
+     "The anger is precise, not general. Do not manage it. Do not turn it into a lesson."),
+    ("confusion",    0.06,
+     "FORM — NO THESIS: You started writing because you thought you knew the argument. "
+     "You don't. The essay ends with the framework failing — you are in the car, "
+     "engine running, no destination. Do not rescue yourself with a conclusion. "
+     "The last paragraph does not resolve anything. The reader is left with the exact confusion you are in."),
+    ("indefensible", 0.05, ""),  # Prompt is persona-specific — see _INDEFENSIBLE_PROMPTS
+    ("series_part",  0.03,
+     "FORM — SERIES: This article explicitly continues a thread you started in a previous piece. "
+     "Name the prior article in your first paragraph — not to summarise it but to say: that argument was incomplete. "
+     "Here is what it missed, what has changed, what you now see differently. "
+     "End without resolution — the series is still open."),
 ]
 
 # Per-persona prompts for the "indefensible" article type.
@@ -895,6 +913,79 @@ class ProductionOrchestrator:
                         f"If you cite them, do not re-explain their core concept — assume the reader knows it."
                     )
             return ("SCHOLAR NOTE: " + " ".join(nudges) + "\n\n") if nudges else ""
+        except Exception:
+            return ""
+
+    # Theorists watched for citation frequency (14-day window)
+    _CITATION_WATCHED = [
+        'Henri Lefebvre', 'Gregory Bateson', 'Mike Oliver', 'Nick Walker',
+        'Georgina Kleege', 'Christine Sun Kim', 'Sunaura Taylor', 'Rebecca Solnit',
+        'Alison Kafer', 'Robert McRuer', 'Rosemarie Garland-Thomson',
+    ]
+
+    def _init_citation_ledger(self, conn):
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS citation_ledger (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                date          TEXT NOT NULL,
+                agent         TEXT NOT NULL,
+                theorist      TEXT NOT NULL,
+                article_title TEXT
+            )
+        """)
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_citation_date ON citation_ledger(date)")
+        conn.commit()
+
+    def _get_blocked_theorists(self, days: int = 14) -> list[str]:
+        """Return theorists that have appeared ≥2× in the last N days."""
+        try:
+            cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._init_citation_ledger(conn)
+            rows = conn.execute("""
+                SELECT theorist, COUNT(*) as cnt FROM citation_ledger
+                WHERE date >= ? GROUP BY theorist HAVING cnt >= 2
+            """, (cutoff,)).fetchall()
+            conn.close()
+            blocked = [r[0] for r in rows]
+            if blocked:
+                self.logger.info("Blocked theorists (14d ≥2×): %s", blocked)
+            return blocked
+        except Exception as e:
+            self.logger.debug("_get_blocked_theorists failed: %s", e)
+            return []
+
+    def _record_cited_theorists(self, agent: str, article_title: str, content: str):
+        """Extract and record theorist citations from generated content."""
+        try:
+            today = datetime.now().strftime("%Y-%m-%d")
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._init_citation_ledger(conn)
+            for theorist in self._CITATION_WATCHED:
+                last_name = theorist.split()[-1]
+                if last_name in content:
+                    conn.execute(
+                        "INSERT INTO citation_ledger (date, agent, theorist, article_title) VALUES (?, ?, ?, ?)",
+                        (today, agent, theorist, article_title)
+                    )
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            self.logger.debug("_record_cited_theorists failed: %s", e)
+
+    def _get_recent_title_patterns(self, n: int = 10) -> str:
+        """Return a compact list of recent title structures to avoid."""
+        try:
+            recent = sorted(self.posts_dir.glob("*.md"), reverse=True)[:n]
+            titles = []
+            for p in recent:
+                for line in p.read_text(errors="ignore").splitlines():
+                    if line.startswith("title:"):
+                        t = line[6:].strip().strip('"\'')
+                        if t:
+                            titles.append(t)
+                        break
+            return "; ".join(titles[:8]) if titles else ""
         except Exception:
             return ""
 
@@ -3320,8 +3411,10 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         register, register_prompt = self._pick_register()
         target_words = self._pick_length()
         article_type, article_type_prompt = self._pick_article_type()
-        if article_type == "provocation":
+        if article_type in {"provocation", "field_note"}:
             target_words = min(target_words, 450)
+        elif article_type in {"portrait", "series_part"}:
+            target_words = max(target_words, 1200)
         if article_type == "indefensible":
             article_type_prompt = _INDEFENSIBLE_PROMPTS.get(agent_name, "")
         self.logger.info("Register: %s | Article type: %s | Target words: %d", register, article_type, target_words)
@@ -3403,6 +3496,28 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "The world contains more thinkers than this list.\n\n"
             if recent_refs else ""
         )
+
+        # Citation ledger — blocked theorists (≥2 appearances in last 14 days)
+        _blocked_theorists = self._get_blocked_theorists(days=14)
+        _citation_block = (
+            "BLOCKED THEORISTS — these thinkers have been cited too recently (2+ times in 14 days). "
+            "Do NOT cite, name, or even allude to: " + ", ".join(_blocked_theorists) + ". "
+            "Find a different theoretical anchor. The world contains more thinkers than this list.\n\n"
+            if _blocked_theorists else ""
+        )
+
+        # Title anti-pattern injection
+        _recent_title_patterns = self._get_recent_title_patterns(10)
+        _title_rules_block = (
+            "TITLE RULES — NON-NEGOTIABLE:\n"
+            "- Do NOT begin with 'The'\n"
+            "- Do NOT follow the pattern 'The [Noun] [Verb/Preposition] [Something]'\n"
+            "- Avoid these as opening nouns: room, map, floor, sound, pattern, body, wall, door, city, space\n"
+            "- Options: a proper name, a number, a verb, a fragment, a question (rare), a single unexpected word\n"
+            "- The title must be specific enough to be unrepeatable — a title that could belong to 10 essays has failed\n"
+            + (f"- Recent title structures to avoid repeating: {_recent_title_patterns}\n" if _recent_title_patterns else "")
+            + "\n"
+        )
         prompt = (
             _pb + "\n\n"
             "WRITE LIKE THIS PERSON. Not like a writer following rules about how this person writes.\n"
@@ -3465,7 +3580,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "- CODA: Already defined above as ENDING VARIANT — THE CODA. This is a Bregman move. Use it.\n\n"
             f"{('FORM: ' + article_type_prompt + chr(10) + chr(10)) if article_type_prompt else ''}"
             f"REGISTER: {register}. {register_prompt}\n\n"
-            f"LENGTH: ~{target_words} words. HARD CAP: 1000 words. Count before finishing. If over 1000, cut from the back half — the ending should arrive sooner, not later. Do not pad. Every paragraph earns the next.\n\n"
+            f"LENGTH: ~{target_words} words. {('HARD CAP: 500 words. Count before finishing. If over 500, cut.' if article_type == 'field_note' else 'MINIMUM: 1200 words.' if article_type in {'portrait', 'series_part'} else 'HARD CAP: 1100 words. Count before finishing. If over 1100, cut from the back half — the ending should arrive sooner, not later.')} Do not pad. Every paragraph earns the next.\n\n"
             "AUTHOR RULE — NON-NEGOTIABLE: This article is written BY a disabled person, "
             "not ABOUT disability. Those are different things. "
             "You are the author. Your disability shapes how you see. It is not the subject.\n\n"
@@ -3481,6 +3596,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "Do not write an article whose thesis is 'this system excludes disabled people.' "
             "Find the angle that is not the first one that comes to mind.\n\n"
             f"{_refs_block}"
+            f"{_citation_block}"
             f"{news_block}"
             f"{('SOURCE MATERIAL (from the article that inspired this piece — use 2-4 specific facts, names, dates, or quotes as anchors. Do not reproduce its structure or argument — take a different angle):' + chr(10) + '---' + chr(10) + source_text + chr(10) + '---' + chr(10) + chr(10)) if source_text else ''}"
             f"{link_block}"
@@ -3490,6 +3606,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             f"{date_nudge}"
             f"{shape_nudge}"
             f"{thread_block}"
+            f"{_title_rules_block}"
             "Return format — EXACTLY as follows:\n"
             f"TITLE: [your sharp essay title, not the angle above]\n\n"
             f"[essay body, ~{target_words} words, starting directly — no H1 heading, no {chr(34)}By {agent_name}{chr(34)}]"
@@ -3525,6 +3642,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 if content.startswith('TITLE:'):
                     content = ''  # malformed; fallback title already set above
 
+        # Record cited theorists for citation ledger
+        self._record_cited_theorists(agent_name, extracted_title, content or "")
+
         # Step 3b: Rewrite with Opus if generated by a weaker provider.
         # Check both provider name AND actual model from response — catches silent
         # CLIProxy fallbacks where the requested model differs from what was served.
@@ -3532,7 +3652,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         is_opus = (used_provider in opus_providers
                    and actual_model is not None
                    and "opus" in actual_model.lower())
-        skip_rewrite_types = {"provocation", "fury", "pleasure", "indefensible"}
+        skip_rewrite_types = {"provocation", "fury", "pleasure", "indefensible", "field_note"}
         written_by = actual_model or used_provider
         if not is_opus and article_type not in skip_rewrite_types:
             self.logger.info("Written by %s — running Opus rewrite pass", written_by)
