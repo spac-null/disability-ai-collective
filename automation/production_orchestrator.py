@@ -59,6 +59,15 @@ if _ENV_FILE.exists():
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
 
+def _nous_key():
+    try:
+        with open('/srv/data/hermes/auth.json') as _f:
+            import json as _j
+            return _j.load(_f)['providers']['nous']['agent_key']
+    except Exception:
+        return ''
+
+
 
 # Tonal register and length weights for article variety
 _REGISTERS = [
@@ -1268,27 +1277,27 @@ class ProductionOrchestrator:
 
         PROVIDERS = [
             {
-                "name":      "Claude Opus 4.6 (CLIProxy)",
-                "url":       "http://172.19.0.1:8317/v1",
-                "key":       os.environ.get("ANTHROPIC_API_KEY", ""),
-                "model":     "claude-opus-4-6",
+                "name":      "Claude Opus 4.6 (Nous)",
+                "url":       "https://inference-api.nousresearch.com/v1",
+                "key":       _nous_key(),
+                "model":     "anthropic/claude-opus-4.6",
                 "max_tokens": 3500,
                 "timeout":   180,
                 "no_think":  False,
             },
             {
-                "name":      "Claude Sonnet 4.6 (CLIProxy)",
-                "url":       "http://172.19.0.1:8317/v1",
-                "key":       os.environ.get("ANTHROPIC_API_KEY", ""),
-                "model":     "claude-sonnet-4-6",
+                "name":      "Claude Sonnet 4.6 (Nous)",
+                "url":       "https://inference-api.nousresearch.com/v1",
+                "key":       _nous_key(),
+                "model":     "anthropic/claude-sonnet-4.6",
                 "max_tokens": 3500,
                 "timeout":   120,
                 "no_think":  False,
             },
             {
-                "name":      "GPT-5.2 (CLIProxy)",
-                "url":       "http://172.19.0.1:8317/v1",
-                "key":       os.environ.get("ANTHROPIC_API_KEY", ""),
+                "name":      "GPT-5.2 (skip)",
+                "url":       "https://inference-api.nousresearch.com/v1",
+                "key":       _nous_key(),
                 "model":     "gpt-5.2",
                 "max_tokens": 3500,
                 "timeout":   120,
@@ -1451,11 +1460,11 @@ class ProductionOrchestrator:
         try:
             self.logger.info("Rewriting with Opus for quality improvement...")
             rewritten = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=SYSTEM,
                 user_prompt=user_msg,
-                model="claude-opus-4-6",
+                model="anthropic/claude-opus-4.6",
                 max_tokens=2500,
                 timeout=180,
             )
@@ -1566,8 +1575,8 @@ class ProductionOrchestrator:
         import os, json as _json
         try:
             response = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=(
                     "You are a curious reader with no disability background. "
                     "You found this article via Google. You follow any interesting argument "
@@ -1599,8 +1608,8 @@ class ProductionOrchestrator:
                 for i in issues
             )
             fixed = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=(
                     "You are editing an article for plain-language accessibility. "
                     "Fix ONLY the flagged issues below — do not change anything else. "
@@ -1635,8 +1644,8 @@ class ProductionOrchestrator:
         import os, json as _json
         try:
             response = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=(
                     "You are an editorial reviewer for Crip Minds, a disability culture publication. "
                     "Check this article for four structural problems:\n\n"
@@ -1654,7 +1663,7 @@ class ProductionOrchestrator:
                     "Return ONLY valid JSON."
                 ),
                 user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:4000]}",
-                model="claude-opus-4-6",
+                model="anthropic/claude-opus-4.6",
                 max_tokens=800,
                 timeout=60,
             )
@@ -1672,8 +1681,8 @@ class ProductionOrchestrator:
                 for i in issues
             )
             fixed = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=(
                     "You are editing an article for Crip Minds. Fix ONLY the flagged editorial issues. "
                     "Protect: the opening scene, argument structure, persona voice, all concrete examples. "
@@ -1684,7 +1693,7 @@ class ProductionOrchestrator:
                     f"Article:\n\n{content}\n\n"
                     f"Fix these editorial issues (score was {score}/10):\n{issues_text}"
                 ),
-                model="claude-opus-4-6",
+                model="anthropic/claude-opus-4.6",
                 max_tokens=4500,
                 timeout=90,
             )
@@ -1942,8 +1951,8 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
         try:
             raw = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=_os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=__nous_key(),
                 system_prompt=SYSTEM,
                 user_prompt=body,
                 model="claude-haiku-4-5-20251001",
@@ -2043,8 +2052,8 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         body_preview = content[:2000]
         try:
             return self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=(
                     "You write article card excerpts for Crip Minds, a disability culture publication. "
                     "The card sits on the /research page beside other articles. The reader is already on the site — "
@@ -2209,11 +2218,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         violations = []
         try:
             raw = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=GATE_SYSTEM,
                 user_prompt=content,
-                model="claude-sonnet-4-6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=400,
                 timeout=45,
             )
@@ -2254,11 +2263,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
 
         try:
             fixed = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=FIX_SYSTEM,
                 user_prompt=fix_prompt,
-                model="claude-sonnet-4-6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=2000,
                 timeout=90,
             )
@@ -2329,11 +2338,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         citation_text = "CLEAN"
         try:
             raw = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=CITATION_SYSTEM,
                 user_prompt=content,
-                model="claude-sonnet-4-6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=600,
                 timeout=60,
             )
@@ -2414,11 +2423,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         rules_fails = []
         try:
             raw = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=RULES_SYSTEM,
                 user_prompt=content,
-                model="claude-sonnet-4-6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=1000,
                 timeout=90,
             )
@@ -2496,11 +2505,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         try:
             prompt = template.format(title=title, excerpt=body[:1500])
             raw = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt="Return only the post text. No quotes around it. Maximum 250 characters.",
                 user_prompt=prompt,
-                model="claude-sonnet-4-6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=80,
                 timeout=30,
             )
@@ -2520,8 +2529,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         budget = max_chars - 15  # safety buffer
         try:
             raw = self._call_openai_compat_api(
-                url="http://172.19.0.1:8317/v1",
-                api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+                url="https://inference-api.nousresearch.com/v1",
+                api_key=_nous_key(),
                 system_prompt=(
                     f"Write ONE complete sentence (strictly under {budget} characters, hard limit) "
                     "as a Bluesky post for a disability culture article. "
@@ -2531,7 +2540,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                     "Must end with a period. No hashtags. No ellipsis. Do NOT start with the article title."
                 ),
                 user_prompt=f"Title: {title}\n\nOpening:\n{body[:600]}",
-                model="claude-sonnet-4-6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=60,
                 timeout=30,
             )
@@ -3519,7 +3528,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         # Step 3b: Rewrite with Opus if generated by a weaker provider.
         # Check both provider name AND actual model from response — catches silent
         # CLIProxy fallbacks where the requested model differs from what was served.
-        opus_providers = {"Claude Opus 4.6 (CLIProxy)"}
+        opus_providers = {"Claude Opus 4.6 (Nous)"}
         is_opus = (used_provider in opus_providers
                    and actual_model is not None
                    and "opus" in actual_model.lower())

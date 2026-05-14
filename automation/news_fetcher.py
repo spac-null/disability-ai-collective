@@ -14,6 +14,15 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from email.utils import parsedate_to_datetime
 
+def _nous_key():
+    try:
+        with open('/srv/data/hermes/auth.json') as _f:
+            import json as _j
+            return _j.load(_f)['providers']['nous']['agent_key']
+    except Exception:
+        return ''
+
+
 # ── Env / paths ───────────────────────────────────────────────────────────────
 
 _ENV_FILE = Path("/opt/secrets/openclaw.env")
@@ -28,8 +37,8 @@ REPO = Path(__file__).parent.parent
 DB   = REPO / "disability_findings.db"
 LOG  = REPO / "automation" / "news_fetcher.log"
 
-API_URL = "http://172.19.0.1:8317/v1/chat/completions"
-API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+API_URL = "https://inference-api.nousresearch.com/v1/chat/completions"
+API_KEY = _nous_key()
 MODEL   = "claude-sonnet-4-6"
 
 # ── Feed list ─────────────────────────────────────────────────────────────────
