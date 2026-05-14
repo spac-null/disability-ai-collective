@@ -391,17 +391,19 @@ class SceneImageGenerator:
         "low quality, blurry, pixelated, oversaturated, generic office, corporate, clip art"
     )
 
-    def _fetch_pollinations(self, prompt, timeout=90):
+    def _fetch_pollinations(self, prompt, timeout=90, model=None):
         """Fetch image from Pollinations via gen.pollinations.ai (authenticated).
 
         Uses Bearer auth with POLLINATIONS_API_KEY for billing.
-        Model: zimage (Z-Image Turbo, 2x upscaling) — 0.002 pollen/image.
-        At 3 images/article × 7 articles/week = 0.042 pollen/week (fits 0.15 budget).
-        Falls back to unauthenticated flux if no key is set.
+        Budget: 0.098 pollen/week at 7 articles/day (well within 0.15 limit).
+          - slot 0 (hero/setting): klein — 0.010/img (FLUX.2 Klein 4B, best quality)
+          - slots 1-2 (body inserts): zimage — 0.002/img (Z-Image Turbo, 2x upscale)
+        Falls back to flux (public) if no key is set.
         """
         encoded = urllib.parse.quote(prompt, safe='')
         negative = urllib.parse.quote(self._NEGATIVE_PROMPT, safe='')
-        model = "zimage" if self.pollinations_key else "flux"
+        if model is None:
+            model = "zimage" if self.pollinations_key else "flux"
         params = (
             f"?model={model}&width={self.width}&height={self.height}"
             f"&nologo=true&enhance=true&negative_prompt={negative}"
@@ -662,7 +664,9 @@ class SceneImageGenerator:
 
             for i, prompt in enumerate(prompts):
                 label = labels[i] if i < len(labels) else f"scene{i+1}"
-                logger.info("Image %d/%d [%s]: %s...", i+1, num_images, label, prompt[:100])
+                # Slot 0 (hero) uses klein for best quality; body inserts use zimage
+                slot_model = "klein" if (i == 0 and self.pollinations_key) else ("zimage" if self.pollinations_key else "flux")
+                logger.info("Image %d/%d [%s] model=%s: %s...", i+1, num_images, label, slot_model, prompt[:100])
                 # Stagger requests — Pollinations rate-limits rapid sequential calls
                 if i > 0:
                     import time as _time
@@ -670,7 +674,7 @@ class SceneImageGenerator:
                 img_data = None
                 for _attempt in range(2):  # 1 retry on timeout/429
                     try:
-                        img_data = self._fetch_pollinations(prompt, timeout=90)
+                        img_data = self._fetch_pollinations(prompt, timeout=90, model=slot_model)
                         break
                     except Exception as e:
                         if _attempt == 0:
