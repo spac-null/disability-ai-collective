@@ -202,7 +202,7 @@ class SceneImageGenerator:
         self.gw = width // pixel_size
         self.gh = height // pixel_size
         self.pollinations_key = os.environ.get("POLLINATIONS_API_KEY", "")
-        self.pollinations_base = "https://image.pollinations.ai/prompt"
+        self.pollinations_base = "https://gen.pollinations.ai/image"
 
     # ── Subject extraction (pure Python) ─────────────────────────────────────
 
@@ -391,22 +391,26 @@ class SceneImageGenerator:
         "low quality, blurry, pixelated, oversaturated, generic office, corporate, clip art"
     )
 
-    def _fetch_pollinations(self, prompt, timeout=60):
-        """Fetch image from Pollinations FLUX. Returns JPEG bytes."""
+    def _fetch_pollinations(self, prompt, timeout=90):
+        """Fetch image from Pollinations via gen.pollinations.ai (authenticated).
+
+        Uses Bearer auth with POLLINATIONS_API_KEY for billing.
+        Model: zimage (Z-Image Turbo, 2x upscaling) — 0.002 pollen/image.
+        At 3 images/article × 7 articles/week = 0.042 pollen/week (fits 0.15 budget).
+        Falls back to unauthenticated flux if no key is set.
+        """
         encoded = urllib.parse.quote(prompt, safe='')
         negative = urllib.parse.quote(self._NEGATIVE_PROMPT, safe='')
+        model = "zimage" if self.pollinations_key else "flux"
         params = (
-            f"?width={self.width}&height={self.height}"
-            f"&model=flux&seed=-1&nologo=true&enhance=true"
-            f"&negative_prompt={negative}"
+            f"?model={model}&width={self.width}&height={self.height}"
+            f"&nologo=true&enhance=true&negative_prompt={negative}"
         )
-        if self.pollinations_key:
-            params += f"&key={urllib.parse.quote(self.pollinations_key, safe='')}"
         url = f"{self.pollinations_base}/{encoded}{params}"
-        req = urllib.request.Request(
-            url,
-            headers={"User-Agent": "disability-ai-collective/1.0"},
-        )
+        headers = {"User-Agent": "disability-ai-collective/1.0"}
+        if self.pollinations_key:
+            headers["Authorization"] = f"Bearer {self.pollinations_key}"
+        req = urllib.request.Request(url, headers=headers)
         with urllib.request.urlopen(req, timeout=timeout) as r:
             data = r.read()
         if len(data) < 1000:
