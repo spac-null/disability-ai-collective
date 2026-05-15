@@ -1535,6 +1535,8 @@ class ProductionOrchestrator:
             "34. SHOW THEN NAME: Never define a concept before showing it. First: the specific example, the concrete detail, the scene. Then — only if needed — 'this is called X.' If the concept is defined before the reader has felt it, cut the definition and trust the example.\n"
             "36. NO DECODING REQUIRED: If a sentence requires the reader to stop and work out what it means before moving on, rewrite it. Three patterns to cut: (1) buried qualifiers — 'the thought being that X' → state X directly; (2) metaphors that need unpacking — 'a body that hears with its eyes' requires two mental steps before it means anything, break it into what it actually says; (3) abstract compression — 'something they have no box for' → 'something they cannot name' or 'something outside their framework'. The test: read the sentence aloud. If you pause mid-sentence to process it, the reader will too. Rewrite until they don't.\n"
             "35. INSIDER WITNESS: The strongest evidence is often a confession from someone who benefits from the system being critiqued. Find or imagine the insider who would say, if pressed: 'I know. I do it anyway.' A building inspector who signs off on ramps he knows are too steep. A hiring manager who admits the interview is a neurotypicality test. Protect this figure if it appears in the draft — do not smooth it into a statistic.\n"
+            "36. ANALYTICAL WALL — BREAK IT: If the draft contains three or more consecutive sentences where no specific human being is doing something concrete — sentences about systems, policies, or abstract forces — find a person, body, or moment from elsewhere in the draft and move or echo it inside that wall. Do not invent new material. Redistribute what is already there. Every analytical passage must have a human heartbeat running through it. The reader must feel who is paying the cost of the abstraction being described.\n"
+            "37. TRUNCATED SENTENCES: If the article ends mid-sentence — no period, no deliberate fragment, just a clause that stops — this is a generation error, not intentional rawness. Complete the sentence in the author's voice using context from the rest of the article. Then check: does the completed sentence make a strong enough ending, or does the thought need one more sentence to close properly? The article must end with a complete, deliberate stop — even if that stop is a fragment, it must be a chosen fragment, not an accident.\n"
             "Return ONLY the complete edited article (frontmatter preserved + image lines preserved "
             "+ edited body). No commentary, no preamble."
         )
@@ -1556,8 +1558,8 @@ class ProductionOrchestrator:
                 system_prompt=SYSTEM,
                 user_prompt=user_msg,
                 model="anthropic/claude-opus-4.6",
-                max_tokens=2500,
-                timeout=180,
+                max_tokens=3500,
+                timeout=240,
             )
             if rewritten and rewritten.count("---") >= 2 and len(rewritten) > 400:
                 self.logger.info("Opus rewrite succeeded (%d chars)", len(rewritten))
@@ -3580,7 +3582,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             "- CODA: Already defined above as ENDING VARIANT — THE CODA. This is a Bregman move. Use it.\n\n"
             f"{('FORM: ' + article_type_prompt + chr(10) + chr(10)) if article_type_prompt else ''}"
             f"REGISTER: {register}. {register_prompt}\n\n"
-            f"LENGTH: ~{target_words} words. {('HARD CAP: 500 words. Count before finishing. If over 500, cut.' if article_type == 'field_note' else 'MINIMUM: 1200 words.' if article_type in {'portrait', 'series_part'} else 'HARD CAP: 1100 words. Count before finishing. If over 1100, cut from the back half — the ending should arrive sooner, not later.')} Do not pad. Every paragraph earns the next.\n\n"
+            f"LENGTH: ~{target_words} words. {('HARD CAP: 500 words. Count before finishing. If over 500, cut.' if article_type == 'field_note' else 'MINIMUM: 1200 words.' if article_type in {'portrait', 'series_part'} else f'When you estimate you have written {int(target_words * 0.78)} words, begin writing your final paragraph — do not open a new argument or introduce a new scene. End deliberately. A sentence that cuts off mid-thought because you ran out of space is a failure. Arrive early rather than late.')} Do not pad. Every paragraph earns the next.\n\n"
+            "HUMAN THREAD — NON-NEGOTIABLE: Every time you write two or more consecutive sentences where no specific human being is doing something concrete in a specific place — sentences about systems, policies, theories, or abstract forces — stop and insert a sentence that returns to a specific person doing a specific thing. Not 'disabled people experience this.' Not 'the system fails to account for.' A person. A body. A moment. What are they doing? Where are they? This rule applies throughout the middle of the essay, not just at the opening and close. The analysis lives inside the human story. If you find yourself writing three sentences of policy critique in a row, a person must appear in the fourth.\n\n"
             "AUTHOR RULE — NON-NEGOTIABLE: This article is written BY a disabled person, "
             "not ABOUT disability. Those are different things. "
             "You are the author. Your disability shapes how you see. It is not the subject.\n\n"
