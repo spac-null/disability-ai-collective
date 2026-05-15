@@ -1291,6 +1291,16 @@ a:hover {
     width: 100%;
     max-width: 280px;
   }
+
+  .hero-latest {
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-8);
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .hero-latest__quote {
+    font-size: var(--font-size-base);
+  }
 }
 
 /* ========================================
@@ -2931,25 +2941,29 @@ article[data-categories].hidden {
   }
 }
 
-/* Mobile: reposition fixed toggles to avoid content overlap */
+/* Mobile: reposition fixed toggles to top-right below nav, away from CTAs */
 @media (max-width: 640px) {
   .theme-toggle {
-    right: auto !important;
-    left: var(--space-3) !important;
-    bottom: var(--space-3) !important;
-    min-height: 40px !important;
+    right: var(--space-3) !important;
+    left: auto !important;
+    bottom: auto !important;
+    top: 56px !important;
+    min-height: 36px !important;
     padding: var(--space-2) var(--space-3) !important;
+    font-size: var(--font-size-xs) !important;
   }
   .accessibility-toggle {
-    right: auto !important;
-    left: var(--space-3) !important;
-    bottom: calc(var(--space-3) + 48px) !important;
-    min-height: 40px !important;
+    right: var(--space-3) !important;
+    left: auto !important;
+    bottom: auto !important;
+    top: 98px !important;
+    min-height: 36px !important;
     padding: var(--space-2) var(--space-3) !important;
     font-size: var(--font-size-xs) !important;
   }
   .dark-theme-toggle {
-    bottom: calc(var(--space-3) + 96px) !important;
+    top: 140px !important;
+    bottom: auto !important;
   }
 }
 
