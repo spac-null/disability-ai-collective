@@ -2997,13 +2997,7 @@ article[data-categories].hidden {
   }
 }
 
-/* ── Hero-latest registration marks ─────────────────────────────────────── */
-/* All 4 corners via multi-background gradients — no extra elements needed */
-.hero-latest {
-  background-image:
-    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
-    linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
-    lin
+
 /* ── Article inline subscribe block ──────────────────────────────────────── */
 .post-subscribe {
   position: relative;
