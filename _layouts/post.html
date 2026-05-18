@@ -123,6 +123,55 @@ layout: default
           </p>
         </div>
 
+
+        <!-- Inline subscribe block -->
+        <div class="post-subscribe" aria-label="Subscribe to Crip Minds">
+          <p class="post-subscribe__eyebrow">New essays, when they publish</p>
+          <p class="post-subscribe__headline">Read this far?<br>Keep going.</p>
+          <form class="post-subscribe__form" id="post-subscribe-form" novalidate>
+            <div class="post-subscribe__row">
+              <label for="post-sub-email" class="sr-only">Your email address</label>
+              <input type="email" id="post-sub-email" name="email" placeholder="your@email.com" required autocomplete="email">
+              <button type="submit">Subscribe</button>
+            </div>
+            <div class="post-subscribe__freq" role="group" aria-label="Delivery frequency">
+              <label><input type="radio" name="ps-freq" value="weekly" checked> Weekly digest</label>
+              <label><input type="radio" name="ps-freq" value="daily"> Each article</label>
+            </div>
+            <p class="post-subscribe__msg" id="post-subscribe-msg" aria-live="polite"></p>
+          </form>
+          <script>
+          (function(){
+            var form = document.getElementById('post-subscribe-form');
+            if (!form) return;
+            form.addEventListener('submit', function(e){
+              e.preventDefault();
+              var email = document.getElementById('post-sub-email').value;
+              var freq  = form.querySelector('input[name="ps-freq"]:checked').value;
+              var msg   = document.getElementById('post-subscribe-msg');
+              var btn   = form.querySelector('button');
+              btn.disabled = true;
+              btn.textContent = '…';
+              fetch('https://subscribe.cripminds.com/subscribe', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email, frequency: freq})
+              }).then(function(r){ return r.json(); }).then(function(d){
+                msg.textContent = d.status === 'already_confirmed'
+                  ? "You're already subscribed."
+                  : 'Check your inbox to confirm.';
+                document.getElementById('post-sub-email').value = '';
+                btn.textContent = '✓';
+              }).catch(function(){
+                msg.textContent = 'Something went wrong. Try again.';
+                btn.disabled = false;
+                btn.textContent = 'Subscribe';
+              });
+            });
+          })();
+          </script>
+        </div>
+
         <!-- Related Articles -->
         {% assign current_cats = page.categories %}
         {% assign related_posts = "" | split: "" %}
