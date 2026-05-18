@@ -59,6 +59,14 @@ if _ENV_FILE.exists():
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
 
+# Also load reef bot creds for cripminds notifications
+for _env_path in [Path("/srv/secrets/reef/reef-bot.env")]:
+    if _env_path.exists():
+        for _line in _env_path.read_text().splitlines():
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _k, _, _v = _line.partition("=")
+                os.environ.setdefault(_k.strip(), _v.strip())
 def _nous_key():
     try:
         with open('/srv/data/hermes/auth.json') as _f:
@@ -66,6 +74,9 @@ def _nous_key():
             return _j.load(_f)['providers']['nous']['agent_key']
     except Exception:
         return ''
+
+CLIPROXY_URL = 'http://127.0.0.1:8317/v1'
+CLIPROXY_KEY = 'sk-NwG04asTudtBlAW1kcBmbsAlKmI5o3u2wtanviIr8Lhnw'
 
 
 
@@ -1356,6 +1367,20 @@ class ProductionOrchestrator:
             "The temporary community is more real than the permanent one. Once experienced, it lives permanently in memory and cannot be taken away. "
             "'The visible things are temporary. The invisible things are eternal.' "
             "This is why the publication exists: to make permanent, in the mind of the reader, something the world keeps insisting is marginal.\n\n"
+            "YOUR READER:\n"
+            "A curious, intelligent person who found this through a shared link. Not in disability studies. Has not read Haraway or Kleege. "
+            "May have a disability or know someone who does — or may not. They clicked. That is all you know. "
+            "Write as if thinking aloud in their presence — not lecturing, not performing, not summarising a seminar paper. "
+            "If a sentence would make a reader feel talked at, cut it. If it makes them lean forward, keep it.\n\n"
+            "HUMAN THREAD (enforced — treat this like the word cap):\n"
+            "After every two consecutive analytical sentences, there must be a human moment: a specific person, a specific action, a specific place. "
+            "Not 'disabled people experience X' — that is not a human moment. "
+            "'Rosan Bosch walked into the meeting with the floor plan folded under one arm' — that is. "
+            "Analysis lives between human moments, not the other way around.\n\n"
+            "PLAIN VOCABULARY (enforced):\n"
+            "Anglo-Saxon beats Latinate. Short beats long. Concrete beats abstract. "
+            "'Use' not 'utilise'. 'Show' not 'demonstrate'. 'Change' not 'transformation'. 'Feel' not 'experience'. "
+            "Three Latinate words in a row — rewrite the sentence.\n\n"
             "HARD RULES — violations will cause rejection: "
             "(1) NO section headers of any kind. Use --- for a section break if needed. Transitions happen inside the prose. "
             "(2) NEVER use bullet points, numbered lists, or bolded list items. Multiple examples go into accumulation paragraphs. "
@@ -1368,30 +1393,30 @@ class ProductionOrchestrator:
 
         PROVIDERS = [
             {
+                "name":      "Claude Sonnet 4.5 (OpenRouter/CLIProxy)",
+                "url":       CLIPROXY_URL,
+                "key":       CLIPROXY_KEY,
+                "model":     "openrouter/claude-sonnet-4-5",
+                "max_tokens": 3500,
+                "timeout":   120,
+                "no_think":  False,
+            },
+            {
+                "name":      "Claude Opus 4 (OpenRouter/CLIProxy)",
+                "url":       CLIPROXY_URL,
+                "key":       CLIPROXY_KEY,
+                "model":     "openrouter/claude-opus-4",
+                "max_tokens": 3500,
+                "timeout":   180,
+                "no_think":  False,
+            },
+            {
                 "name":      "Claude Opus 4.6 (Nous)",
                 "url":       "https://inference-api.nousresearch.com/v1",
                 "key":       _nous_key(),
                 "model":     "anthropic/claude-opus-4.6",
                 "max_tokens": 3500,
                 "timeout":   180,
-                "no_think":  False,
-            },
-            {
-                "name":      "Claude Sonnet 4.6 (Nous)",
-                "url":       "https://inference-api.nousresearch.com/v1",
-                "key":       _nous_key(),
-                "model":     "anthropic/claude-sonnet-4.6",
-                "max_tokens": 3500,
-                "timeout":   120,
-                "no_think":  False,
-            },
-            {
-                "name":      "GPT-5.2 (skip)",
-                "url":       "https://inference-api.nousresearch.com/v1",
-                "key":       _nous_key(),
-                "model":     "gpt-5.2",
-                "max_tokens": 3500,
-                "timeout":   120,
                 "no_think":  False,
             },
             {
@@ -1553,11 +1578,11 @@ class ProductionOrchestrator:
         try:
             self.logger.info("Rewriting with Opus for quality improvement...")
             rewritten = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=SYSTEM,
                 user_prompt=user_msg,
-                model="anthropic/claude-opus-4.6",
+                model="openrouter/claude-opus-4",
                 max_tokens=3500,
                 timeout=240,
             )
@@ -1668,8 +1693,8 @@ class ProductionOrchestrator:
         import os, json as _json
         try:
             response = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=(
                     "You are a curious reader with no disability background. "
                     "You found this article via Google. You follow any interesting argument "
@@ -1701,8 +1726,8 @@ class ProductionOrchestrator:
                 for i in issues
             )
             fixed = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=(
                     "You are editing an article for plain-language accessibility. "
                     "Fix ONLY the flagged issues below — do not change anything else. "
@@ -1737,8 +1762,8 @@ class ProductionOrchestrator:
         import os, json as _json
         try:
             response = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=(
                     "You are an editorial reviewer for Crip Minds, a disability culture publication. "
                     "Check this article for four structural problems:\n\n"
@@ -1756,7 +1781,7 @@ class ProductionOrchestrator:
                     "Return ONLY valid JSON."
                 ),
                 user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:4000]}",
-                model="anthropic/claude-opus-4.6",
+                model="openrouter/claude-opus-4",
                 max_tokens=800,
                 timeout=60,
             )
@@ -1774,8 +1799,8 @@ class ProductionOrchestrator:
                 for i in issues
             )
             fixed = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=(
                     "You are editing an article for Crip Minds. Fix ONLY the flagged editorial issues. "
                     "Protect: the opening scene, argument structure, persona voice, all concrete examples. "
@@ -1786,7 +1811,7 @@ class ProductionOrchestrator:
                     f"Article:\n\n{content}\n\n"
                     f"Fix these editorial issues (score was {score}/10):\n{issues_text}"
                 ),
-                model="anthropic/claude-opus-4.6",
+                model="openrouter/claude-opus-4",
                 max_tokens=4500,
                 timeout=90,
             )
@@ -2044,8 +2069,8 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
         try:
             raw = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=__nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=SYSTEM,
                 user_prompt=body,
                 model="claude-haiku-4-5-20251001",
@@ -2145,8 +2170,8 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         body_preview = content[:2000]
         try:
             return self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=(
                     "You write article card excerpts for Crip Minds, a disability culture publication. "
                     "The card sits on the /research page beside other articles. The reader is already on the site — "
@@ -2311,11 +2336,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         violations = []
         try:
             raw = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=GATE_SYSTEM,
                 user_prompt=content,
-                model="anthropic/claude-sonnet-4.6",
+                model="openrouter/claude-sonnet-4-5",
                 max_tokens=400,
                 timeout=45,
             )
@@ -2356,11 +2381,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
 
         try:
             fixed = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=FIX_SYSTEM,
                 user_prompt=fix_prompt,
-                model="anthropic/claude-sonnet-4.6",
+                model="openrouter/claude-sonnet-4-5",
                 max_tokens=2000,
                 timeout=90,
             )
@@ -2431,11 +2456,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         citation_text = "CLEAN"
         try:
             raw = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=CITATION_SYSTEM,
                 user_prompt=content,
-                model="anthropic/claude-sonnet-4.6",
+                model="openrouter/claude-sonnet-4-5",
                 max_tokens=600,
                 timeout=60,
             )
@@ -2516,11 +2541,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         rules_fails = []
         try:
             raw = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=RULES_SYSTEM,
                 user_prompt=content,
-                model="anthropic/claude-sonnet-4.6",
+                model="openrouter/claude-sonnet-4-5",
                 max_tokens=1000,
                 timeout=90,
             )
@@ -2563,8 +2588,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         # ── 5. Telegram notification ───────────────────────────────────────
         if not is_clean:
             try:
-                token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-                chat_id = os.environ.get("TELEGRAM_CHAT_ID", "")
+                token = os.environ.get("REEF_BOT_TOKEN", "")
+                chat_id = os.environ.get("REEF_CHAT_ID", "")
                 if token and chat_id:
                     parts = [f"📋 *Review* — {article_file.stem[:45]}"]
                     if readability_fail and scores:
@@ -2598,11 +2623,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         try:
             prompt = template.format(title=title, excerpt=body[:1500])
             raw = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt="Return only the post text. No quotes around it. Maximum 250 characters.",
                 user_prompt=prompt,
-                model="anthropic/claude-sonnet-4.6",
+                model="openrouter/claude-sonnet-4-5",
                 max_tokens=80,
                 timeout=30,
             )
@@ -2622,8 +2647,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         budget = max_chars - 15  # safety buffer
         try:
             raw = self._call_openai_compat_api(
-                url="https://inference-api.nousresearch.com/v1",
-                api_key=_nous_key(),
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
                 system_prompt=(
                     f"Write ONE complete sentence (strictly under {budget} characters, hard limit) "
                     "as a Bluesky post for a disability culture article. "
@@ -2633,7 +2658,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                     "Must end with a period. No hashtags. No ellipsis. Do NOT start with the article title."
                 ),
                 user_prompt=f"Title: {title}\n\nOpening:\n{body[:600]}",
-                model="anthropic/claude-sonnet-4.6",
+                model="openrouter/claude-sonnet-4-5",
                 max_tokens=60,
                 timeout=30,
             )
@@ -3651,13 +3676,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         # Step 3b: Rewrite with Opus if generated by a weaker provider.
         # Check both provider name AND actual model from response — catches silent
         # CLIProxy fallbacks where the requested model differs from what was served.
-        opus_providers = {"Claude Opus 4.6 (Nous)"}
-        is_opus = (used_provider in opus_providers
-                   and actual_model is not None
-                   and "opus" in actual_model.lower())
-        skip_rewrite_types = {"provocation", "fury", "pleasure", "indefensible", "field_note"}
+        is_opus = "opus" in (actual_model or "").lower()
         written_by = actual_model or used_provider
-        if not is_opus and article_type not in skip_rewrite_types:
+        if not is_opus:
             self.logger.info("Written by %s — running Opus rewrite pass", written_by)
             # Build temporary full article so Opus can see frontmatter context
             temp_front = f"---\nlayout: post\ntitle: {json.dumps(str(extracted_title))}\nauthor: {agent_name}\n---\n\n"
@@ -3676,10 +3697,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                         self.logger.warning("Could not parse Opus rewrite frontmatter, keeping original content")
             model_used_label = f"claude-opus-4-6 (rewrote {written_by})"
         else:
-            if article_type in skip_rewrite_types and not is_opus:
-                self.logger.info("Written by %s — skipping rewrite (form: %s)", written_by, article_type)
-            else:
-                self.logger.info("Written by %s — no rewrite needed", written_by)
+            self.logger.info("Written by Opus — no rewrite needed")
             model_used_label = written_by
 
         # Step 3c: Pre-publication quality layer (link check + accessibility + editorial)
