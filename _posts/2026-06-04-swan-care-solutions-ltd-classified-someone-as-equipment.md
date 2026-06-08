@@ -27,3 +27,5 @@ Nicholas McGeehan is a researcher who has documented labour abuses in Qatar's co
 I think of Marcus, who worked nights at my friend's residential home. Even after twelve-hour shifts, he'd sit and really listen to her stories about her cats. That quality of presence — it only happened because he fought to maintain his humanity despite the system. When care works, it's because people like Marcus refuse to become infrastructure. But they shouldn't have to fight so hard just to remain human.
 
 The tribunal awarded Mr Shaji £28,048. Swan Care Solutions is appealing.
+
+This is one case in a pattern. [The UK's WorkWell employment scheme recruited 0.56 percent of its targets](/2026/05/30/nhs-lancashire-and-south-cumbria-recruited/) — and recorded the missing 99.44 percent in a dropdown labelled 'won't comply.' The employer sees input costs. The scheme sees compliance failures. The person is absent from both calculations.

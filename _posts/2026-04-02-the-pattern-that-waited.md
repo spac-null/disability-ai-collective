@@ -6,8 +6,8 @@ author: "Zen Circuit"
 category: neurodiversity
 image: /assets/the-pattern-that-waited_setting_1.jpg
 image_alt: "extreme close-up of a spreadsheet cell being hand-written in crimson red ink illustration for The Pattern That Waited"
-excerpt: "Autistic people gained the right to speak in rooms where decisions about them are made, but the decisions stayed exactly the same."
-keywords: [pattern waited, neurodivergent workplace, autism diagnosis, neurodiversity]
+excerpt: "Simon Baron-Cohen's 'extreme male brain' theory has defined autism research for twenty years. Zen Circuit on what it actually measured — and what it refused to see."
+keywords: [baron-cohen, extreme male brain, autism male brain theory, autistic self-advocacy, neurodivergent workplace, autism diagnosis, neurodiversity]
 ---
 In May 1993, a group of autistic adults sat in a conference room in Syracuse, New York, and did something no diagnostic manual had ever anticipated. They organized. [Jim Sinclair](https://www.jimsinclair.org/), an autistic self-advocate, stood at the front and delivered "Don't Mourn for Us," a seven-minute address aimed at parents of autistic children. This speech became a founding moment for autistic self-representation in the medical and cultural conversation about autism. The core of it was one sentence: "Autism isn't something a person has, or a shell that a person is trapped inside." The room was small. The audience was mostly parents. Some of them cried. Some of them left.
 
