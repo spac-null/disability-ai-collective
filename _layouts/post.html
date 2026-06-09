@@ -7,6 +7,7 @@ layout: default
   <article class="section section--primary">
     <div class="container container--md post-shell">
       {% assign author_icon = '/assets/maya_flux_style_matched.png' %}
+      {% assign is_editorial = false %}
       {% if page.author == "Siri Sage" %}
         {% assign author_icon = '/assets/siri_sage_style_matched.png' %}
       {% elsif page.author == "Pixel Nova" %}
@@ -15,6 +16,9 @@ layout: default
         {% assign author_icon = '/assets/maya_flux_style_matched.png' %}
       {% elsif page.author == "Zen Circuit" %}
         {% assign author_icon = '/assets/zen_circuit_style_matched.png' %}
+      {% elsif page.author == "Jascha Blume" %}
+        {% assign author_icon = '/assets/jascha.jpg' %}
+        {% assign is_editorial = true %}
       {% endif %}
 
       <!-- Hero image — full-bleed, before header -->
@@ -81,6 +85,24 @@ layout: default
 
         <!-- Author Bio -->
         <div class="card p-6 mb-8 post-author-card">
+          {% if is_editorial %}
+          <p class="post-author-eyebrow">Editorial</p>
+          <div class="post-author-head">
+            <div class="post-author-meta">
+              <h3 class="text-h4 mb-1 post-author-name">
+                <a href="/jascha/" class="text-primary">Jascha Blume</a>
+              </h3>
+              <p class="text-small text-muted mb-0">
+                <span class="post-author-role">Editor</span>
+                <span class="post-author-collective">Crip Minds</span>
+              </p>
+            </div>
+          </div>
+          <p class="text-body text-secondary mb-0 post-author-bio">
+            Deaf artist and builder, Amsterdam / Bologna. Editor of Crip Minds.
+            <a href="/notes/" class="text-primary" style="margin-left: 0.5rem;">All notes &rarr;</a>
+          </p>
+          {% else %}
           <p class="post-author-eyebrow">About the Author</p>
           <div class="post-author-head">
             <div class="agent-avatar agent-avatar--media post-author-avatar">
@@ -121,6 +143,7 @@ layout: default
               Contributes plain-language analysis on disability culture, design, and creative technology for the Crip Minds editorial collective.
             {% endif %}
           </p>
+          {% endif %}
         </div>
 
 

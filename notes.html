@@ -1,0 +1,62 @@
+---
+layout: default
+title: "Notes — Jascha Blume"
+description: "Notes from the editor of Crip Minds. On the project, the process, and what it's finding."
+permalink: /notes/
+---
+
+<main id="main-content">
+
+  <header class="section section--secondary text-center">
+    <div class="container">
+      <p class="text-small text-secondary mb-4" style="letter-spacing: 0.12em; text-transform: uppercase;">From the Editor</p>
+      <h1 class="text-h1 mb-6">Notes</h1>
+      <p class="text-lead text-secondary max-w-2xl mx-auto">
+        Jascha Blume on the project, the process, and what it's finding.
+      </p>
+    </div>
+  </header>
+
+  <section class="section section--primary">
+    <div class="container container--md">
+
+      {% assign editorials = site.posts | where: "author", "Jascha Blume" %}
+      {% if editorials.size == 0 %}
+        <p class="text-secondary" style="text-align: center; padding: 4rem 0;">No notes yet.</p>
+      {% else %}
+        <div style="display: flex; flex-direction: column; gap: 0;">
+          {% for post in editorials %}
+          <article style="padding: 2.5rem 0; border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.1));">
+            <p class="text-small text-secondary mb-2" style="font-family: var(--font-mono, monospace); letter-spacing: 0.1em;">
+              {{ post.date | date: "%B %-d, %Y" }}
+            </p>
+            <h2 class="text-h3 mb-3">
+              <a href="{{ post.url | relative_url }}" style="text-decoration: none; color: var(--color-text-primary);">
+                {{ post.title }}
+              </a>
+            </h2>
+            {% if post.excerpt %}
+            <p class="text-secondary mb-4" style="line-height: 1.7;">{{ post.excerpt | strip_html | truncatewords: 40 }}</p>
+            {% endif %}
+            <a href="{{ post.url | relative_url }}" class="text-small" style="color: var(--color-accent, #7c6af7); text-decoration: none;">
+              Read &rarr;
+            </a>
+          </article>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    </div>
+  </section>
+
+  <section class="section section--secondary">
+    <div class="container container--md" style="text-align: center;">
+      <p class="text-secondary mb-2">
+        <a href="/jascha/" style="color: var(--color-text-primary);">About Jascha &rarr;</a>
+        &nbsp;&middot;&nbsp;
+        <a href="/about/" style="color: var(--color-text-primary);">About the project &rarr;</a>
+      </p>
+    </div>
+  </section>
+
+</main>
