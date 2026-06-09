@@ -12,6 +12,92 @@ image_alt: "Abstract editorial graphic"
 
 I built this in March on a weekend, fast, because the thing I wanted to read every morning didn't exist — disability expertise in the daily flow of culture writing, not in the disability press, not in the cultural press, just not there — and ninety-three days later something is still publishing every morning before I open my laptop, without exception.
 
+<div class="cm-stats-card">
+<style>
+.cm-stats-card { max-width: 600px; margin: 2rem auto; border: 1px solid #ddd; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.07); font-family: Georgia, serif; }
+.cm-stats-card .csh { background: linear-gradient(135deg, #1a3a1a 0%, #2a1a4a 100%); padding: 24px 28px 18px; }
+.cm-stats-card .csh .csl { font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.15em; color: #a8d5a2; text-transform: uppercase; margin-bottom: 6px; }
+.cm-stats-card .csh h2 { font-size: 20px; font-weight: normal; color: #f0ede6; margin: 0; }
+.cm-stats-card .csh h2 span { color: #a8d5a2; }
+.cm-stats-card .csh .cstag { font-size: 12px; color: #c0bdb8; font-style: italic; margin-top: 4px; }
+.cm-stats-card .css { padding: 20px 28px; border-bottom: 1px solid #e8e4df; }
+.cm-stats-card .css:last-child { border-bottom: none; }
+.cm-stats-card .csstitle { font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: #999; margin-bottom: 14px; }
+.cm-stats-card .cssgrid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.cm-stats-card .csbox { background: #f7f5f2; border: 1px solid #e0dbd4; border-radius: 8px; padding: 14px 12px; text-align: center; }
+.cm-stats-card .csbox .csn { font-size: 26px; font-weight: bold; color: #2d6e2d; line-height: 1; margin-bottom: 3px; }
+.cm-stats-card .csbox .csu { font-size: 11px; color: #777; line-height: 1.3; }
+.cm-stats-card .cshi { background: #f4faf4; border: 1px solid #c8e6c8; border-left: 3px solid #4a9e4a; border-radius: 6px; padding: 12px 14px; margin-bottom: 8px; }
+.cm-stats-card .cshi .cshtitle { font-size: 13px; color: #1a3a1a; font-weight: bold; margin-bottom: 3px; }
+.cm-stats-card .cshi .cshdesc { font-size: 12px; color: #666; line-height: 1.5; }
+.cm-stats-card .csar { display: flex; align-items: center; margin-bottom: 8px; gap: 10px; }
+.cm-stats-card .csaf { font-size: 18px; width: 24px; flex-shrink: 0; }
+.cm-stats-card .csal { font-size: 13px; color: #333; flex: 1; }
+.cm-stats-card .csabw { width: 110px; height: 5px; background: #e8e4df; border-radius: 3px; overflow: hidden; }
+.cm-stats-card .csab { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #4a9e4a, #7ec87e); }
+.cm-stats-card .csap { font-size: 12px; color: #999; width: 34px; text-align: right; }
+.cm-stats-card .cssgrid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cm-stats-card .cssi { background: #f7f5f2; border: 1px solid #e0dbd4; border-radius: 6px; padding: 10px 12px; }
+.cm-stats-card .cssi .cssn { font-size: 20px; color: #2d6e2d; font-weight: bold; line-height: 1; }
+.cm-stats-card .cssi .cssl { font-size: 11px; color: #888; margin-top: 2px; }
+.cm-stats-card .csfoot { padding: 12px 28px; display: flex; justify-content: space-between; align-items: center; background: #f7f5f2; border-top: 1px solid #e8e4df; }
+.cm-stats-card .csfoot .csfu { font-family: 'Courier New', monospace; font-size: 11px; color: #4a9e4a; }
+.cm-stats-card .csfoot .csfd { font-size: 11px; color: #aaa; }
+.cm-up { color: #4a9e4a; font-size: 11px; font-family: 'Courier New', monospace; }
+</style>
+
+<div class="csh">
+  <div class="csl">Project Update</div>
+  <h2><span>cripminds</span>.com</h2>
+  <div class="cstag">A daily publication about disability, culture &amp; infrastructure</div>
+</div>
+
+<div class="css">
+  <div class="csstitle">All-Time Numbers</div>
+  <div class="cssgrid">
+    <div class="csbox"><div class="csn">651</div><div class="csu">total visits</div></div>
+    <div class="csbox"><div class="csn">90+</div><div class="csu">articles published</div></div>
+    <div class="csbox"><div class="csn">9.8</div><div class="csu">visits/day<br><span class="cm-up">↑ accelerating</span></div></div>
+  </div>
+</div>
+
+<div class="css">
+  <div class="csstitle">Standout This Month</div>
+  <div class="cshi">
+    <div class="cshtitle">"Swan Care Solutions classified someone as equipment"</div>
+    <div class="cshdesc">143 Google impressions in 4 days. Almost page one. Best performing article to date.</div>
+  </div>
+  <div class="cshi">
+    <div class="cshtitle">Maya Flux — people think she's real</div>
+    <div class="cshdesc">86 impressions of people searching for her by name, including her past. One of the AI voices has become a believable author identity.</div>
+  </div>
+</div>
+
+<div class="css">
+  <div class="csstitle">Where Readers Come From</div>
+  <div class="csar"><div class="csaf">🇳🇱</div><div class="csal">Netherlands <span class="cm-up">↑ spiking</span></div><div class="csabw"><div class="csab" style="width:38%"></div></div><div class="csap">38%</div></div>
+  <div class="csar"><div class="csaf">🇮🇹</div><div class="csal">Italy</div><div class="csabw"><div class="csab" style="width:20%"></div></div><div class="csap">20%</div></div>
+  <div class="csar"><div class="csaf">🇬🇧</div><div class="csal">United Kingdom</div><div class="csabw"><div class="csab" style="width:13%"></div></div><div class="csap">13%</div></div>
+  <div class="csar"><div class="csaf">🇺🇸</div><div class="csal">United States</div><div class="csabw"><div class="csab" style="width:15%"></div></div><div class="csap">15%</div></div>
+</div>
+
+<div class="css">
+  <div class="csstitle">Google Search — 3 months</div>
+  <div class="cssgrid2">
+    <div class="cssi"><div class="cssn">1,020</div><div class="cssl">times shown in results</div></div>
+    <div class="cssi"><div class="cssn">22</div><div class="cssl">clicks from Google</div></div>
+    <div class="cssi"><div class="cssn">#6.5</div><div class="cssl">average position</div></div>
+    <div class="cssi"><div class="cssn">2.2%</div><div class="cssl">click-through rate</div></div>
+  </div>
+</div>
+
+<div class="csfoot">
+  <div class="csfu">cripminds.com</div>
+  <div class="csfd">June 2026</div>
+</div>
+
+</div>
+
 ---
 
 **The numbers.**
