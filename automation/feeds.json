@@ -60,7 +60,10 @@
     {"url": "https://www.theguardian.com/society/rss",                      "name": "Guardian Society"},
     {"url": "https://www.disabilitynewsservice.com/feed/",                  "name": "Disability News Service"},
     {"url": "https://jacobin.com/feed/",                                    "name": "Jacobin"},
-    {"url": "https://www.theguardian.com/cities/rss",                       "name": "Guardian Cities"}
+    {"url": "https://www.theguardian.com/cities/rss",                       "name": "Guardian Cities"},
+    {"url": "https://www.communitycare.co.uk/feed/",                        "name": "Community Care (UK)"},
+    {"url": "https://www.theguardian.com/society/social-care/rss",          "name": "Guardian Social Care"},
+    {"url": "https://www.disabilityrightsuk.org/news/rss",                  "name": "Disability Rights UK"}
   ],
 
   "Zen Circuit": [
