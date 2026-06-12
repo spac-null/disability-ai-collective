@@ -2960,10 +2960,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         }
         _agent_tag = _agent_tags.get(agent_name, "")
         tags = f"#accessibility #DisabilitySky #CripMinds #DisabilityJustice{' ' + _agent_tag if _agent_tag else ''}"
-        overhead = len(f"\n\n{tags}")
+        subscribe_line = "\ncripminds.com/subscribe"
+        overhead = len(f"\n\n{tags}{subscribe_line}")
         max_hook = 300 - overhead
         hook = self._social_hook(agent_name, title, body, max_chars=max_hook)
-        text = f"{hook}\n\n{tags}"
+        text = f"{hook}\n\n{tags}{subscribe_line}"
 
         def byte_range(s, sub):
             b, sb = s.encode(), sub.encode()
@@ -2979,6 +2980,12 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             if ts >= 0:
                 facets.append({"index": {"byteStart": ts, "byteEnd": te},
                                "features": [{"$type": "app.bsky.richtext.facet#tag", "tag": tag[1:]}]})
+        sub_text = "cripminds.com/subscribe"
+        sub_s, sub_e = byte_range(text, sub_text)
+        if sub_s >= 0:
+            facets.append({"index": {"byteStart": sub_s, "byteEnd": sub_e},
+                           "features": [{"$type": "app.bsky.richtext.facet#link",
+                                         "uri": "https://cripminds.com/subscribe"}]})
 
         record = None  # initialised here so retry block can always reference it
 
