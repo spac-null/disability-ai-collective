@@ -48,10 +48,17 @@
     {"url": "https://deafdigest.com/feed/",                                 "name": "DeafDigest"},
     {"url": "https://deafnewstoday.com/feed/",                              "name": "Deaf News Today"},
     {"url": "https://bda.org.uk/feed/",                                     "name": "British Deaf Association"},
+    {"url": "https://deafwest.com/feed/",                                   "name": "Deaf West Theatre"},
+    {"url": "https://www.ntd.org/feed/",                                    "name": "National Theatre of the Deaf"},
+    {"url": "https://dpan.tv/feed/",                                        "name": "D-PAN (Deaf accessible music)"},
+    {"url": "https://deafculturecentre.ca/feed/",                           "name": "Deaf Culture Centre"},
+    {"url": "https://disabilityarts.online/feed/",                          "name": "Disability Arts Online"},
+    {"url": "https://weareunlimited.org.uk/feed/",                          "name": "Unlimited Arts"},
     {"url": "https://muse.jhu.edu/journal/194/feed/",                       "name": "Sign Language Studies (journal)"},
     {"url": "https://www.jbe-platform.com/rss/journals/sll",                "name": "Sign Language & Linguistics (journal)"},
     {"url": "https://paperswithcode.com/rss/latest?task=sign-language-recognition", "name": "Papers With Code — Sign Language Recognition"},
     {"url": "https://rss.arxiv.org/rss/cs.CL",                             "name": "arXiv Computational Linguistics"},
+    {"url": "https://rss.arxiv.org/rss/cs.CV",                             "name": "arXiv Computer Vision"},
     {"url": "https://www.gallaudet.edu/rss/news",                           "name": "Gallaudet University News"}
   ],
 
