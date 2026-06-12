@@ -1595,6 +1595,121 @@ class ProductionOrchestrator:
 
         return content
 
+    def _fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent):
+        """Fable 5 generates an editorial brief before writing.
+
+        Returns dict {persona, angle, register, seed_sentence} or None on failure.
+        """
+        import json as _j
+        personas = "\n".join(
+            f"- {n}: {info['perspective'][:120]}"
+            for n, info in self.agents.items()
+        )
+        reg_names = ", ".join(r[0] for r in _REGISTERS)
+        system = (
+            "You are the editorial director of Crip Minds — a disability culture publication. "
+            "Each persona writes about the world through their specific disability lens, "
+            "not about disability as a topic. "
+            "Assign the best persona for today's story and give the writer a sharp brief."
+        )
+        user = (
+            f"Today's story:\n{news_title}\n"
+            + (f"Summary: {news_summary[:400]}\n" if news_summary else "")
+            + (f"Disability angle: {disability_angle}\n" if disability_angle else "")
+            + f"\nPersonas:\n{personas}\n\n"
+            f"Registers available: {reg_names}\n\n"
+            "Reply with JSON only — no other text:\n"
+            '{"persona":"name","angle":"one sharp sentence, not a question",'
+            '"register":"one register name",'
+            '"seed_sentence":"the opening sentence of the article — concrete, not a question"}'
+        )
+        try:
+            raw = self._call_openai_compat_api(
+                CLIPROXY_URL, CLIPROXY_KEY, system, user,
+                model="openrouter/claude-fable-5", max_tokens=200, timeout=30,
+            )
+            raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
+            brief = _j.loads(raw)
+            if all(k in brief for k in ("persona", "angle", "register", "seed_sentence")):
+                if brief["persona"] in self.agents and any(brief["register"] == r[0] for r in _REGISTERS):
+                    self.logger.info(
+                        "Fable brief → %s | %s | %s",
+                        brief["persona"], brief["register"], brief["angle"][:60],
+                    )
+                    return brief
+            self.logger.warning("Fable brief: invalid persona/register — ignoring")
+        except Exception as e:
+            self.logger.warning("Fable brief failed: %s", e)
+        return None
+
+    def _fable_editorial_review(self, article_body, agent_name, brief_angle, register):
+        """Fable 5 reads the Opus draft and returns (verdict, notes). Non-blocking."""
+        import json as _j
+        agent_info = self.agents.get(agent_name, {})
+        system = (
+            "You are the editorial director of Crip Minds. "
+            "You have just read a draft article by one of the publication's AI personas. "
+            "Give 2-3 specific, actionable revision notes — or confirm it is ready. "
+            "Rules you enforce: no headers, no bullet lists, first-person throughout, "
+            "concrete scene before analysis, no CTA endings, disability as lens not topic."
+        )
+        user = (
+            f"Persona: {agent_name} ({agent_info.get('perspective', '')[:80]})\n"
+            f"Angle: {brief_angle}\nRegister: {register}\n\n"
+            f"DRAFT:\n{article_body[:4000]}\n\n"
+            "Reply with JSON only:\n"
+            '{"verdict":"publish_as_is" or "revise","notes":["note 1","note 2"]}\n'
+            "Notes must name the specific paragraph or sentence. Max 3. "
+            "If publish_as_is, notes may be empty."
+        )
+        try:
+            raw = self._call_openai_compat_api(
+                CLIPROXY_URL, CLIPROXY_KEY, system, user,
+                model="openrouter/claude-fable-5", max_tokens=300, timeout=45,
+            )
+            raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
+            result = _j.loads(raw)
+            verdict = result.get("verdict", "publish_as_is")
+            notes   = result.get("notes", [])[:3]
+            self.logger.info("Fable review: %s (%d notes)", verdict, len(notes))
+            if notes:
+                for n in notes:
+                    self.logger.info("  → %s", n[:100])
+            return verdict, notes
+        except Exception as e:
+            self.logger.warning("Fable editorial review failed: %s — skipping", e)
+            return "publish_as_is", []
+
+    def _opus_targeted_revision(self, article_body, editorial_notes, agent_name):
+        """Opus revises the article based on Fable's editorial notes. Non-blocking."""
+        if not editorial_notes:
+            return article_body
+        notes_text = "\n".join(f"- {n}" for n in editorial_notes)
+        system = (
+            "You are revising a draft for Crip Minds. Apply only the listed editorial notes. "
+            "Do not rewrite anything not flagged. Preserve the author's voice, all facts and names, "
+            "the structure, and the approximate length. "
+            "No headers, no lists, no CTA endings."
+        )
+        user = (
+            f"Persona: {agent_name}\n\nEDITORIAL NOTES:\n{notes_text}\n\n"
+            f"ARTICLE:\n{article_body}\n\n"
+            "Return the revised article body only — no preamble, no commentary."
+        )
+        try:
+            self.logger.info("Opus targeted revision: applying %d editorial notes...", len(editorial_notes))
+            revised = self._call_openai_compat_api(
+                CLIPROXY_URL, CLIPROXY_KEY, system, user,
+                model="openrouter/claude-opus-4.8", max_tokens=3500, timeout=180,
+            )
+            if revised and len(revised) > 400:
+                self.logger.info("Targeted revision: %d chars", len(revised))
+                return revised
+            self.logger.warning("Targeted revision returned short response — keeping original")
+        except Exception as e:
+            self.logger.warning("Targeted revision failed: %s — keeping original", e)
+        return article_body
+
     def _strip_parentheticals(self, content):
         """Remove long inline parenthetical definitions from article body.
 
@@ -3376,6 +3491,23 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             self.logger.error("Unknown agent: %s", agent_name)
             return None
 
+        # ── Fable editorial brief ──────────────────────────────────────────────
+        _ns_title   = (news_seed["title"] if news_seed
+                       else discovery.get("original_title", "") if discovery else title)
+        _ns_summary = news_seed.get("summary", "")         if news_seed else ""
+        _ns_dangle  = news_seed.get("disability_angle", "") if news_seed else ""
+        fable_brief = self._fable_editorial_brief(_ns_title, _ns_summary, _ns_dangle, agent_name)
+        if fable_brief:
+            if fable_brief["persona"] != agent_name:
+                self.logger.info("Fable brief overrides persona: %s → %s", agent_name, fable_brief["persona"])
+                agent_name = fable_brief["persona"]
+                agent_info = self.agents[agent_name]
+            _fable_register   = fable_brief["register"]
+            _fable_seed       = fable_brief["seed_sentence"]
+            _fable_angle_text = fable_brief["angle"]
+        else:
+            _fable_register = _fable_seed = _fable_angle_text = ""
+
         # News block — news_seed (persistent) takes priority over live RSS hook
         if news_seed:
             # Rich grounding from persistent news_seeds table
@@ -3436,6 +3568,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 )
 
         register, register_prompt = self._pick_register()
+        if _fable_register and _fable_register != register:
+            _match = next((r for r in _REGISTERS if r[0] == _fable_register), None)
+            if _match:
+                register, register_prompt = _match[0], _match[2]
+                self.logger.info("Register overridden by Fable brief: %s", register)
         target_words = self._pick_length()
         article_type, article_type_prompt = self._pick_article_type()
         if article_type in {"provocation", "field_note"}:
@@ -3630,7 +3767,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             f"{link_block}"
             f"Angle/inspiration: {title}\n"
             f"{source_note}\n\n"
-            f"{beat_nudge}"
+            + (f"EDITOR BRIEF — sharper angle: {_fable_angle_text}\n\n" if _fable_angle_text else "")
+            + (f"SEED SENTENCE — open here or close to this register (do not quote literally): \"{_fable_seed}\"\n\n" if _fable_seed else "")
+            + f"{beat_nudge}"
             f"{date_nudge}"
             f"{shape_nudge}"
             f"{thread_block}"
@@ -3673,10 +3812,18 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         # Record cited theorists for citation ledger
         self._record_cited_theorists(agent_name, extracted_title, content or "")
 
+        # Step 3b-i: Fable editorial review + targeted Opus revision (Opus drafts only).
+        # Non-Opus drafts skip this and go through the full rewrite_with_opus() below.
+        is_opus = "opus" in (actual_model or "").lower()
+        if content and is_opus:
+            _review_angle = _fable_angle_text or title
+            _verdict, _notes = self._fable_editorial_review(content, agent_name, _review_angle, register)
+            if _verdict == "revise" and _notes:
+                content = self._opus_targeted_revision(content, _notes, agent_name)
+
         # Step 3b: Rewrite with Opus if generated by a weaker provider.
         # Check both provider name AND actual model from response — catches silent
         # CLIProxy fallbacks where the requested model differs from what was served.
-        is_opus = "opus" in (actual_model or "").lower()
         written_by = actual_model or used_provider
         if not is_opus:
             self.logger.info("Written by %s — running Opus rewrite pass", written_by)
