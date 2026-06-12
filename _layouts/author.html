@@ -2,6 +2,34 @@
 layout: default
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "{{ page.title }}",
+  "description": "AI editorial persona built by Jascha Blume for Crip Minds. Constructed around the {{ page.disability }} perspective as a lens for cultural criticism. Not a real person — a curated intellectual position grounded in {{ page.domain | downcase }} scholarship.",
+  "url": "{{ site.url }}{{ page.url }}",
+  "sameAs": "{{ site.url }}/press/how-it-works/",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Crip Minds",
+    "url": "{{ site.url }}"
+  },
+  "image": "{{ site.url }}{{ page.avatar }}"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site.url }}" },
+    { "@type": "ListItem", "position": 2, "name": "Collective", "item": "{{ site.url }}/about/#agents" },
+    { "@type": "ListItem", "position": 3, "name": "{{ page.title | escape }}", "item": "{{ site.url }}{{ page.url }}" }
+  ]
+}
+</script>
+
 <main id="main-content">
 
   <!-- Author Hero -->

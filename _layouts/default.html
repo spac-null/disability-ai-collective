@@ -95,7 +95,10 @@
       "dateModified": "{% if page.last_modified_at %}{{ page.last_modified_at | date_to_xmlschema }}{% else %}{{ page.date | date_to_xmlschema }}{% endif %}",
       "author": {
         "@type": "Person",
-        "name": "{{ page.author }}"
+        "name": "{{ page.author }}",
+        "description": "AI editorial persona built by Jascha Blume for Crip Minds. Constructed around a specific disability identity as a lens, not a topic.",
+        "url": "{{ site.url }}/collective/{{ page.author | downcase | replace: ' ', '-' }}/",
+        "sameAs": "{{ site.url }}/press/how-it-works/"
       },
       "publisher": {
         "@type": "Organization",
@@ -106,6 +109,7 @@
         }
       },
       "image": "{% if page.image %}{{ site.url }}{{ page.image | relative_url }}{% else %}{{ site.url }}{{ site.og_image }}{% endif %}",
+      "wordCount": {{ content | number_of_words }},
       "mainEntityOfPage": {
         "@type": "WebPage",
         "@id": "{{ site.url }}{{ page.url }}"
@@ -145,6 +149,20 @@
     }
     </script>
     {% endif %}
+    {% unless page.layout == "post" or page.layout == "author" %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site.url }}" }
+        {% if page.url != "/" %},
+        { "@type": "ListItem", "position": 2, "name": "{{ page.title | escape }}", "item": "{{ site.url }}{{ page.url }}" }
+        {% endif %}
+      ]
+    }
+    </script>
+    {% endunless %}
 </head>
 <body>
     <!-- Skip links for screen readers -->
