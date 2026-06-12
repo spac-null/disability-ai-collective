@@ -990,7 +990,7 @@ class ProductionOrchestrator:
             if not claims:
                 return ""
             claim_lines = "\n".join(
-                f"  - \"{c['claim']}\" (article: {c.get('article', '?')}, {c.get('date', '?')})"
+                f"  - \"{c.get('claim', '')}\" (article: {c.get('article', '?')}, {c.get('date', '?')})"
                 for c in claims[-5:]
             )
             return (
@@ -4182,7 +4182,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         if rels_path.exists():
             try:
                 rels = _j.loads(rels_path.read_text())
-                for pair in rels.get("conflict_pairs", []):
+                for pair in rels.get("pairs", []):
                     names = pair.get("personas", [])
                     if set(names) == {agent_a, agent_b}:
                         fault_line = pair.get("tension", "")
@@ -4266,22 +4266,26 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         filename = f"{today}-{slug}.md"
 
         # Determine shared category
-        info_a = next((a for a in self.agents if a["name"] == agent_a), {})
+        info_a = self.agents.get(agent_a, {})
         cats = info_a.get("categories", ["culture"])
 
         # Escape voice bodies for YAML literal blocks
         def _yaml_literal(text):
             return "\n".join("  " + line for line in (text or "").splitlines())
 
+        def _yaml_scalar(text):
+            """Escape text for a double-quoted YAML scalar."""
+            return (text or "").replace("\\", "\\\\").replace('"', '\\"')
+
         front = (
             f"---\n"
             f"layout: debate\n"
-            f'title: "{debate_title}"\n'
+            f'title: "{_yaml_scalar(debate_title)}"\n'
             f"date: {today}\n"
             f"authors:\n  - \"{agent_a}\"\n  - \"{agent_b}\"\n"
             f"categories: {cats}\n"
-            f'fault_line: "{fault_display[:120]}"\n'
-            f"excerpt: \"{agent_a} and {agent_b} on: {topic[:100]}\"\n"
+            f'fault_line: "{_yaml_scalar(fault_display[:120])}"\n'
+            f'excerpt: "{_yaml_scalar(agent_a + " and " + agent_b + " on: " + topic[:100])}"\n'
             f"keywords: [debate, {agent_a.lower().replace(' ', '-')}, {agent_b.lower().replace(' ', '-')}, neurodiversity]\n"
             f"voice_a: |\n{_yaml_literal(voice_a_raw)}\n"
             f"voice_b: |\n{_yaml_literal(voice_b_raw)}\n"

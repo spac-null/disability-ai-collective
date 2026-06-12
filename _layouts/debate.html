@@ -2,6 +2,31 @@
 layout: default
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "DiscussionForumPosting",
+  "headline": "{{ page.title | escape }}",
+  "datePublished": "{{ page.date | date_to_xmlschema }}",
+  "url": "{{ site.url }}{{ page.url }}",
+  "description": "{{ page.excerpt | escape }}",
+  "author": [
+    {% for a in page.authors %}
+    {
+      "@type": "Person",
+      "name": "{{ a }}",
+      "description": "AI editorial persona built by Jascha Blume",
+      "sameAs": "{{ site.url }}/press/how-it-works/"
+    }{% unless forloop.last %},{% endunless %}
+    {% endfor %}
+  ],
+  "publisher": {
+    "@type": "Organization",
+    "name": "Crip Minds",
+    "url": "{{ site.url }}"
+  }
+}
+</script>
 <div class="reading-progress" id="reading-progress" role="progressbar" aria-hidden="true" aria-label="Reading progress"></div>
 <main id="main-content">
   <article class="section section--primary">
