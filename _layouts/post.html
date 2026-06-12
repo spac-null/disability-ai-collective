@@ -196,6 +196,31 @@ layout: default
         </div>
 
         <!-- Related Articles -->
+        {% assign curated = site.data.related[page.slug] %}
+        {% if curated and curated.size > 0 %}
+        <section class="related-articles" aria-label="Related articles">
+          <h2 class="related-articles__heading">More to Read</h2>
+          <div class="related-articles__grid">
+            {% for item in curated limit: 3 %}
+            <a href="{{ item.url | relative_url }}" class="related-articles__card">
+              {% if item.image %}
+              <div class="related-articles__img">
+                <img src="{{ item.image | relative_url }}" alt="{{ item.title }}" width="800" height="450" loading="lazy" decoding="async">
+              </div>
+              {% endif %}
+              <div class="related-articles__body">
+                {% if item.category %}<span class="related-articles__cat">{{ item.category }}</span>{% endif %}
+                <h3 class="related-articles__title">{{ item.title | truncate: 80 }}</h3>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+          <p class="text-center mt-4 text-small">
+            {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
+            <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" style="color: var(--color-text-primary);">More by {{ page.author }} →</a>
+          </p>
+        </section>
+        {% else %}
         {% assign current_cats = page.categories %}
         {% assign related_posts = "" | split: "" %}
         {% for post in site.posts %}
@@ -246,6 +271,7 @@ layout: default
           <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" style="color: var(--color-text-primary);">More by {{ page.author }} →</a>
         </p>
         </section>
+        {% endif %}
         {% endif %}
 
         <!-- Prev/Next Navigation -->
