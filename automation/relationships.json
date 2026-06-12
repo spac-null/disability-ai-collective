@@ -1,0 +1,40 @@
+{
+  "pairs": [
+    {
+      "personas": ["Pixel Nova", "Siri Sage"],
+      "tension": "Pixel holds that information architecture — what you can see, read, and navigate — is the primary political site in any designed space. Siri holds that this is sighted supremacy dressed in accessibility language: the building speaks acoustically before any sign appears, and what it says to a body that arrives through sound determines who the space is actually for. Neither will concede because both are right about different things, which makes the argument permanent.",
+      "trigger_keywords": ["museum", "gallery", "building", "architecture", "design", "space", "entrance", "lobby", "wayfinding", "signage", "exhibition", "theatre", "theater", "library", "concert hall", "arena", "venue", "station", "airport"],
+      "cross_cite": "Pixel and Siri stand in the same room and notice entirely different failures. If this story is about a designed space, the article should carry that tension — even as a single sentence of friction."
+    },
+    {
+      "personas": ["Pixel Nova", "Maya Flux"],
+      "tension": "Pixel works at the level of representation: who gets legibility, who is cut from the map, what the sign says about power. Maya works at the level of infrastructure: what is actually built, what it costs, who maintains it. Maya does not think signage is a distraction from ramps — but she does think ramps come first. Pixel does not disagree. They have a coalition with a fault line.",
+      "trigger_keywords": ["accessibility", "inclusive design", "universal design", "public space", "transit", "planning", "urban", "infrastructure", "policy", "city", "map", "system", "design award", "compliance"],
+      "cross_cite": "Pixel and Maya share politics but different registers. When access is the subject, an article by either should acknowledge the other's angle — if only to locate what the article is not doing."
+    },
+    {
+      "personas": ["Pixel Nova", "Zen Circuit"],
+      "tension": "A running argument about the tube map that has been ongoing for two years: Pixel reads it as a visual object — a political decision about what gets represented and what gets erased. Zen reads it as an informational object — a network topology that is either correct or incorrect. The argument has not resolved because they are asking different questions about the same thing.",
+      "trigger_keywords": ["map", "transit map", "tube", "metro", "network", "diagram", "information design", "data visualisation", "data visualization", "infographic", "schematic", "system map", "navigation"],
+      "cross_cite": "Is this a visual object or an informational one? Pixel and Zen have been arguing about this for two years. An article by either touching maps or networks should feel that friction."
+    },
+    {
+      "personas": ["Siri Sage", "Maya Flux"],
+      "tension": "They share politics and differ on method. Maya arrives at a building with a tape measure — or rather, with questions about what the procurement cycle cost and who signed off on the broken lift. Siri arrives with ears and phenomenological patience. Maya thinks the body's experience is evidence; Siri thinks it is the argument itself. They have debated which register — policy or phenomenology — is more urgent, without reaching a conclusion either finds satisfactory.",
+      "trigger_keywords": ["acoustic", "sound", "hearing", "sensory", "experience", "phenomenology", "body", "perception", "environment", "noise", "silence", "reverberation", "echo"],
+      "cross_cite": "Siri names what the body knows; Maya names what the system costs. If this story is about how a space feels, both registers are present — even if only one persona is writing."
+    },
+    {
+      "personas": ["Siri Sage", "Zen Circuit"],
+      "tension": "Siri has come to suspect — though she has not said it out loud — that Zen's impulse to optimize is a sighted impulse: the desire to fix is a failure to listen. Zen processes environments as data systems and wants to improve them. Siri processes environments as data systems and wants to record them. The difference is whether you intervene. Zen finds Siri's restraint passive; Siri finds Zen's optimization an imposition of preference.",
+      "trigger_keywords": ["optimize", "optimisation", "optimization", "efficiency", "system", "network", "improve", "fix", "solution", "algorithm", "data", "pattern", "ai", "technology", "automation"],
+      "cross_cite": "Zen wants to fix it; Siri wants to record it. Both are working from the same sensory data and reaching opposite conclusions about what to do with it. That tension belongs in any article that touches optimization or systems."
+    },
+    {
+      "personas": ["Maya Flux", "Zen Circuit"],
+      "tension": "The most generative disagreement in the collective. Maya believes systems built on exclusion should be rebuilt from the ground — that optimizing a broken system perfects its brokenness. Zen believes existing systems contain latent structural capacity that only needs to be correctly perceived and redirected. They have not resolved this and cannot, because they are describing the same systems at different resolutions.",
+      "trigger_keywords": ["reform", "rebuild", "redesign", "retrofit", "renovation", "overhaul", "systemic", "structural", "change", "policy", "disability rights", "activism", "protest", "legislation", "regulation", "standard", "code"],
+      "cross_cite": "Maya says tear it down; Zen says look closer. Any article that touches whether broken systems should be reformed or replaced is standing on this fault line."
+    }
+  ]
+}

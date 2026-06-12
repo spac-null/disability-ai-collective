@@ -82,6 +82,7 @@ _SCRIPT_DIR   = Path(__file__).parent
 PERSONA_CANON_DIR = _SCRIPT_DIR / "persona_canon"
 PERSONA_STATE_DIR = _SCRIPT_DIR / "persona_state"
 PERSONA_STATE_DIR.mkdir(exist_ok=True)
+_RELATIONSHIPS_FILE = _SCRIPT_DIR / "relationships.json"
 
 _AGENT_SLUG = {
     "Pixel Nova": "pixel-nova",
@@ -1607,6 +1608,26 @@ class ProductionOrchestrator:
 
         return content
 
+    def _active_fault_lines(self, text):
+        """Return list of relationship pairs whose trigger keywords appear in text.
+
+        Each item: {"personas": [...], "tension": "...", "cross_cite": "..."}
+        """
+        try:
+            data = json.loads(_RELATIONSHIPS_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            return []
+        text_lower = text.lower()
+        active = []
+        for pair in data.get("pairs", []):
+            if any(kw in text_lower for kw in pair.get("trigger_keywords", [])):
+                active.append({
+                    "personas": pair["personas"],
+                    "tension":  pair["tension"],
+                    "cross_cite": pair.get("cross_cite", ""),
+                })
+        return active
+
     def _load_persona_canon(self, agent_name):
         """Load the immutable canon file for a persona. Returns text or ''."""
         slug = _AGENT_SLUG.get(agent_name, agent_name.lower().replace(" ", "-"))
@@ -1665,19 +1686,35 @@ class ProductionOrchestrator:
                 state_summaries.append(f"  {name} — {' | '.join(parts)}")
         state_block = ("\nCurrent persona states:\n" + "\n".join(state_summaries)) if state_summaries else ""
 
+        # Detect active fault lines from story text
+        _search_text = f"{news_title} {news_summary} {disability_angle}"
+        _fault_lines = self._active_fault_lines(_search_text)
+        if _fault_lines:
+            _fl_lines = []
+            for fl in _fault_lines[:2]:  # max 2 fault lines in the brief
+                pair_str = " vs. ".join(fl["personas"])
+                _fl_lines.append(f"  [{pair_str}] {fl['cross_cite']}")
+            _fault_block = "\nACTIVE FAULT LINES for this story:\n" + "\n".join(_fl_lines)
+        else:
+            _fault_block = ""
+
         user = (
             f"Today's story:\n{news_title}\n"
             + (f"Summary: {news_summary[:400]}\n" if news_summary else "")
             + (f"Disability angle: {disability_angle}\n" if disability_angle else "")
             + f"\nPersonas:\n{personas}\n"
-            + state_block + "\n\n"
+            + state_block
+            + _fault_block + "\n\n"
             f"Registers available: {reg_names}\n\n"
             "Pick the persona whose current state, canon, and obsessions make them the most alive "
-            "voice for this story right now — not just topic match, but friction, mood, and timing.\n\n"
+            "voice for this story right now — not just topic match, but friction, mood, and timing. "
+            "If a fault line is active, choose the persona who stands most firmly on one side of it, "
+            "and note a cross-citation direction in the angle.\n\n"
             "Reply with JSON only — no other text:\n"
             '{"persona":"name","angle":"one sharp sentence, not a question",'
             '"register":"one register name",'
-            '"seed_sentence":"the opening sentence of the article — concrete, not a question"}'
+            '"seed_sentence":"the opening sentence of the article — concrete, not a question",'
+            '"cross_cite":"optional: one sentence on how to reference or push against another persona\'s position, or empty string"}'
         )
         try:
             raw = self._call_openai_compat_api(
@@ -1688,6 +1725,9 @@ class ProductionOrchestrator:
             brief = _j.loads(raw)
             if all(k in brief for k in ("persona", "angle", "register", "seed_sentence")):
                 if brief["persona"] in self.agents and any(brief["register"] == r[0] for r in _REGISTERS):
+                    brief.setdefault("cross_cite", "")
+                    if brief["cross_cite"]:
+                        self.logger.info("Fable cross-cite: %s", brief["cross_cite"][:80])
                     self.logger.info(
                         "Fable brief → %s | %s | %s",
                         brief["persona"], brief["register"], brief["angle"][:60],
@@ -3606,8 +3646,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             _fable_register   = fable_brief["register"]
             _fable_seed       = fable_brief["seed_sentence"]
             _fable_angle_text = fable_brief["angle"]
+            _fable_cross_cite = fable_brief.get("cross_cite", "")
         else:
-            _fable_register = _fable_seed = _fable_angle_text = ""
+            _fable_register = _fable_seed = _fable_angle_text = _fable_cross_cite = ""
 
         # News block — news_seed (persistent) takes priority over live RSS hook
         if news_seed:
@@ -3887,6 +3928,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             f"{source_note}\n\n"
             + (f"EDITOR BRIEF — sharper angle: {_fable_angle_text}\n\n" if _fable_angle_text else "")
             + (f"SEED SENTENCE — open here or close to this register (do not quote literally): \"{_fable_seed}\"\n\n" if _fable_seed else "")
+            + (f"CROSS-CITATION DIRECTION — {_fable_cross_cite}\n\n" if _fable_cross_cite else "")
             + f"{beat_nudge}"
             f"{date_nudge}"
             f"{shape_nudge}"
