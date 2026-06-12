@@ -1,16 +1,43 @@
 # Curated related articles. Key = page.slug (filename without date prefix and extension).
 # Falls back to category-matching in post.html when slug not listed here.
 
+# Baron-Cohen cluster — all 5 articles link to each other
 the-pattern-that-waited:
-  - url: /2026/05/27/systems-fail-in-order-of-dependence/
-    title: "Systems Fail in Order of Dependence"
-    image: /assets/systems-fail-in-order-of-dependence_setting_1.jpg
+  - url: /2026/06/14/the-theory-that-could-not-see-half-the-room/
+    title: "The Theory That Could Not See Half the Room"
     category: neurodiversity
-  - url: /2026/03/25/the-vibration-was-the-architecture/
-    title: "The Vibration Was the Architecture"
-    image: /assets/the-vibration-was-the-architecture_setting_1.jpg
+  - url: /2026/06/16/dont-mourn-for-us-the-sentence-that-changed-the-argument/
+    title: "Don't Mourn for Us: The Sentence That Changed the Argument"
+    category: neurodiversity
+  - url: /research/extreme-male-brain/
+    title: "Baron-Cohen's Extreme Male Brain Theory: A Reading List"
     category: neurodiversity
 
+the-theory-that-could-not-see-half-the-room:
+  - url: /2026/04/02/the-pattern-that-waited/
+    title: "The Pattern That Waited"
+    image: /assets/the-pattern-that-waited_setting_1.jpg
+    category: neurodiversity
+  - url: /2026/06/16/dont-mourn-for-us-the-sentence-that-changed-the-argument/
+    title: "Don't Mourn for Us: The Sentence That Changed the Argument"
+    category: neurodiversity
+  - url: /research/extreme-male-brain/
+    title: "Baron-Cohen's Extreme Male Brain Theory: A Reading List"
+    category: neurodiversity
+
+dont-mourn-for-us-the-sentence-that-changed-the-argument:
+  - url: /2026/04/02/the-pattern-that-waited/
+    title: "The Pattern That Waited"
+    image: /assets/the-pattern-that-waited_setting_1.jpg
+    category: neurodiversity
+  - url: /2026/06/14/the-theory-that-could-not-see-half-the-room/
+    title: "The Theory That Could Not See Half the Room"
+    category: neurodiversity
+  - url: /research/extreme-male-brain/
+    title: "Baron-Cohen's Extreme Male Brain Theory: A Reading List"
+    category: neurodiversity
+
+# General Zen Circuit cluster
 systems-fail-in-order-of-dependence:
   - url: /2026/04/02/the-pattern-that-waited/
     title: "The Pattern That Waited"
