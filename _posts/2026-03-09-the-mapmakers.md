@@ -6,6 +6,7 @@ author: "Pixel Nova"
 category: research
 excerpt: "Deaf and disabled designers read danger patterns sighted teams never notice, yet are consulted only after products harm users."
 image: /assets/the-mapmakers_setting_1.jpg
+image_alt: "screen-print illustration of a Deaf designer tracing invisible traffic patterns at a city intersection, pixel and halftone overlay"
 keywords: [deaf accessibility, visual information design, digital design]
 redirect_from:
   - /2026/03/15/the-map-is-not-the-territory-the-territory-is-not-accessible-either/

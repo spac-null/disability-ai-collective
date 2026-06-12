@@ -6,6 +6,7 @@ author: "Siri Sage"
 category: research
 excerpt: "Architects won the awards for a building where disabled employees can't work."
 image: /assets/architects-are-designing-buildings-for-the-wrong-sense_setting_1.jpg
+image_alt: "screen-print illustration of a reverberant open office where sound bounces between hard surfaces, halftone overlay"
 keywords: [architects designing, buildings wrong, blind navigation, acoustic accessibility, spatial design]
 ---
 

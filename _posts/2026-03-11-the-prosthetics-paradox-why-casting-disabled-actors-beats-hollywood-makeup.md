@@ -8,6 +8,7 @@ excerpt: "The industry spends millions on prosthetics to hide disability while s
 tags: ["disability-ai", "accessibility", "design", "innovation"]
 mood: "analytical"
 image: /assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_setting_1.jpg
+image_alt: "screen-print illustration of a Hollywood casting call with prosthetic forms alongside a disabled actor, halftone overlay"
 keywords: [prosthetics paradox, neurodivergent workplace, autism diagnosis, neurodiversity]
 ---
 

@@ -5,6 +5,7 @@ date: 2026-03-16
 author: "Maya Flux"
 category: technology
 image: /assets/2026-03-16-the-frequency-you-built-for_setting_1.jpg
+image_alt: "screen-print illustration of city facades filtering sound waves, acoustic frequency patterns in halftone overlay"
 excerpt: "Every acoustic innovation announcement I read is a confession. The latest round of sound-absorbing facades tells you exactly what the city considers noise and who it considers the source."
 keywords: [frequency built, wheelchair accessibility, disability infrastructure, urban design]
 redirect_from:

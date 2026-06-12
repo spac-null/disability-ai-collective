@@ -2,16 +2,12 @@
 layout: default
 title: "How Crip Minds Works"
 description: "The system behind Crip Minds — how it selects topics, writes, fact-checks, illustrates, publishes, and distributes one article every morning."
-sitemap: false
-noindex: true
 ---
 
 <main id="main-content">
   <section class="section section--primary">
     <div class="container container--md">
       <div style="max-width: 620px; margin: 60px auto 0; padding-bottom: 100px;">
-
-        <p style="font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase; color: #4a3e2a; margin-bottom: 3rem; margin-top: -1rem;">&#x25CF;&nbsp; not listed &nbsp;&#x25CF;&nbsp; not indexed &nbsp;&#x25CF;&nbsp; you found it</p>
 
         <p class="text-small text-secondary" style="letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.5rem;"><a href="/press/" style="color: inherit; text-decoration: none;">Press &amp; Background</a></p>
         <p class="text-small text-secondary" style="letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2rem;">How It Works</p>
@@ -108,31 +104,36 @@ noindex: true
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">3.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Writing pass &mdash; Claude (Anthropic)</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">800 to 1200 words from inside the assigned voice. The prompt includes the intellectual framework for that persona, the source material, and a pool of curated links. No invented statistics. No citations the system can&rsquo;t verify.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Editorial brief &mdash; Claude Fable 5</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Before writing begins, an editorial model drafts the angle, register, and structural seed &mdash; what argument to make, what the persona brings to this topic that the others wouldn&rsquo;t. It also checks whether the topic touches a known friction point between personas and, if so, signals where a cross-reference might open rather than close the argument.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">4.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Quality rewrite pass</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">A second pass applies specific rules: paragraph momentum, landing sentences, expert register. The rules come from reading the best disability writers and reverse-engineering what they do.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Writing pass &mdash; Claude Opus 4.8</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">800 to 1200 words from inside the assigned voice, following the editorial brief. The prompt includes the intellectual framework for that persona, its accumulated state &mdash; running obsessions, unresolved questions, positions on record &mdash; plus the source material and a curated link pool. No invented statistics. No citations the system can&rsquo;t verify.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">5.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Citation and fact review</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Every factual claim flagged for review. The system checks whether cited scholars exist, whether ideas attributed to them are traceable to real work. Claims that can&rsquo;t be grounded get cut or softened. This is the hardest constraint in the system &mdash; and the most important one.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Editorial review &amp; revision pass</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Fable 5 reads the draft and returns specific notes: where the argument softens, where a sentence lands wrong, what the piece is trying to say in the third paragraph that it hasn&rsquo;t earned yet. Opus 4.8 makes targeted revisions. The rules come from reading the best disability writers and reverse-engineering what they do.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">6.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Image generation &mdash; Pollinations AI</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Two images per article: header and in-body. Screen-print with halftone and pixel overlay &mdash; deliberately not photographic, not stock, not inspirational. The brief comes from the article&rsquo;s specific argument. No wheelchairs as symbols. No medical equipment as shorthand.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Citation and fact review</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Every factual claim flagged for review. The system checks whether cited scholars exist, whether ideas attributed to them are traceable to real work. Claims that can&rsquo;t be grounded get cut or softened. This is the hardest constraint in the system &mdash; and the most important one.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">7.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Publishing &mdash; Jekyll + GitHub Actions</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Committed as a Markdown file to a private GitHub repository. GitHub Actions builds the Jekyll site and deploys to cripminds.com. No CMS, no database, no login. The site is a set of files that become HTML.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Image generation &mdash; Pollinations AI</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Two images per article: header and in-body. Screen-print with halftone and pixel overlay &mdash; deliberately not photographic, not stock, not inspirational. The brief comes from the article&rsquo;s specific argument. No wheelchairs as symbols. No medical equipment as shorthand.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">8.</span>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Publishing &mdash; Jekyll + GitHub Actions</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Committed as a Markdown file to a private GitHub repository. GitHub Actions builds the Jekyll site and deploys to cripminds.com. No CMS, no database, no login. The site is a set of files that become HTML.</p></div>
+              </div>
+
+              <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">9.</span>
                 <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Distribution &mdash; Bluesky</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">A post goes out on Bluesky. Each persona has a distinct social voice. The post is not a headline with a link. It&rsquo;s the first move in a conversation.</p></div>
               </div>
 
@@ -174,7 +175,8 @@ noindex: true
           <p class="text-small text-secondary" style="letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1.5rem;">05 &mdash; The technology, named plainly</p>
 
           <div style="margin: 1.5rem 0;">
-            <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Claude (Anthropic)</span><span class="text-body text-secondary">Does the writing. Two passes per article &mdash; a drafting pass and a quality rewrite. Anthropic&rsquo;s AI model, running on my own subscription via a local proxy.</span></div>
+            <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Claude Fable 5</span><span class="text-body text-secondary">Editorial intelligence. Drafts the angle and register for each piece, reviews the draft for where the argument softens, and writes the final update to each persona&rsquo;s running memory. Anthropic&rsquo;s latest model, via a local proxy.</span></div>
+            <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Claude Opus 4.8</span><span class="text-body text-secondary">Does the writing. Receives the editorial brief and the persona&rsquo;s intellectual state and writes the piece from inside that framework. Makes targeted revisions after the editorial review pass.</span></div>
             <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Pollinations AI</span><span class="text-body text-secondary">Generates images from text prompts. Open, free, no accounts. Deliberately stylized toward screen-print and halftone aesthetics.</span></div>
             <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Jekyll</span><span class="text-body text-secondary">Turns Markdown files into HTML. Static site generator &mdash; no server-side code, no database. The site is a set of files. Reliable, fast, cheap to host.</span></div>
             <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">GitHub Actions</span><span class="text-body text-secondary">Runs the Jekyll build every time a new article is committed. Deploys to the live site automatically. Takes about 90 seconds from commit to live page.</span></div>
@@ -250,40 +252,5 @@ noindex: true
 @media print {
   .site-header, .site-footer, button { display: none !important; }
   main { margin: 0; padding: 0; }
-}
-</style>
-<style>
-/* Secret page — back-room treatment */
-body {
-  background: #100e0a !important;
-  color: #e8dfc8 !important;
-}
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.6;
-}
-.site-header { background: #100e0a !important; border-bottom-color: #2a2520 !important; opacity: 0.45; }
-.site-header a, .site-header nav { color: #6b6050 !important; }
-.site-footer { background: #100e0a !important; border-top-color: #2a2520 !important; color: #4a4035 !important; }
-.site-footer a, .site-footer p { color: #4a4035 !important; }
-.text-secondary { color: #b8ad98 !important; }
-.text-body { color: #e8dfc8 !important; }
-.text-small { color: #a89e88 !important; }
-[style*="color: var(--color-text-primary)"], [style*="color: var(--color-text-secondary)"] { color: #b8ad98 !important; }
-div[style*="border-top"], div[style*="border: 1px"], span[style*="border-bottom"] { border-color: #2e2920 !important; }
-a { color: #c8a356 !important; }
-a:hover { color: #e0ba6e !important; }
-button { border-color: #3a3328 !important; color: #a89e88 !important; background: transparent !important; }
-button:hover { background: #1e1a14 !important; color: #c8a356 !important; border-color: #c8a356 !important; }
-blockquote { border-left-color: #c8a356 !important; color: #e8dfc8 !important; }
-@media print {
-  .site-header, .site-footer, button { display: none !important; }
-  main { margin: 0; padding: 0; }
-  body { background: white !important; color: black !important; }
 }
 </style>
