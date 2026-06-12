@@ -78,6 +78,18 @@ def _nous_key():
 CLIPROXY_URL = 'http://127.0.0.1:8317/v1'
 CLIPROXY_KEY = 'sk-NwG04asTudtBlAW1kcBmbsAlKmI5o3u2wtanviIr8Lhnw'
 
+_SCRIPT_DIR   = Path(__file__).parent
+PERSONA_CANON_DIR = _SCRIPT_DIR / "persona_canon"
+PERSONA_STATE_DIR = _SCRIPT_DIR / "persona_state"
+PERSONA_STATE_DIR.mkdir(exist_ok=True)
+
+_AGENT_SLUG = {
+    "Pixel Nova": "pixel-nova",
+    "Siri Sage":  "siri-sage",
+    "Maya Flux":  "maya-flux",
+    "Zen Circuit": "zen-circuit",
+}
+
 
 
 # Tonal register and length weights for article variety
@@ -1595,6 +1607,35 @@ class ProductionOrchestrator:
 
         return content
 
+    def _load_persona_canon(self, agent_name):
+        """Load the immutable canon file for a persona. Returns text or ''."""
+        slug = _AGENT_SLUG.get(agent_name, agent_name.lower().replace(" ", "-"))
+        path = PERSONA_CANON_DIR / f"{slug}.md"
+        try:
+            return path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            return ""
+
+    def _load_persona_state(self, agent_name):
+        """Load mutable state JSON for a persona. Returns dict with defaults if missing."""
+        slug = _AGENT_SLUG.get(agent_name, agent_name.lower().replace(" ", "-"))
+        path = PERSONA_STATE_DIR / f"{slug}.json"
+        defaults = {
+            "obsessions": [], "unresolved_questions": [], "ongoing_arguments": [],
+            "claims_on_record": [], "recent_mood": "neutral", "last_updated": ""
+        }
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            return {**defaults, **data}
+        except (FileNotFoundError, json.JSONDecodeError):
+            return defaults
+
+    def _save_persona_state(self, agent_name, state):
+        """Persist updated state JSON for a persona."""
+        slug = _AGENT_SLUG.get(agent_name, agent_name.lower().replace(" ", "-"))
+        path = PERSONA_STATE_DIR / f"{slug}.json"
+        path.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
+
     def _fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent):
         """Fable 5 generates an editorial brief before writing.
 
@@ -1612,12 +1653,27 @@ class ProductionOrchestrator:
             "not about disability as a topic. "
             "Assign the best persona for today's story and give the writer a sharp brief."
         )
+        # Build per-persona state summaries for the brief
+        state_summaries = []
+        for name in self.agents:
+            s = self._load_persona_state(name)
+            if s["obsessions"] or s["recent_mood"] != "neutral":
+                top_obsessions = "; ".join(s["obsessions"][:2])
+                mood_line = f"mood: {s['recent_mood']}" if s["recent_mood"] != "neutral" else ""
+                args_line = f"active argument: {s['ongoing_arguments'][0][:80]}" if s["ongoing_arguments"] else ""
+                parts = [p for p in [top_obsessions, mood_line, args_line] if p]
+                state_summaries.append(f"  {name} — {' | '.join(parts)}")
+        state_block = ("\nCurrent persona states:\n" + "\n".join(state_summaries)) if state_summaries else ""
+
         user = (
             f"Today's story:\n{news_title}\n"
             + (f"Summary: {news_summary[:400]}\n" if news_summary else "")
             + (f"Disability angle: {disability_angle}\n" if disability_angle else "")
-            + f"\nPersonas:\n{personas}\n\n"
+            + f"\nPersonas:\n{personas}\n"
+            + state_block + "\n\n"
             f"Registers available: {reg_names}\n\n"
+            "Pick the persona whose current state, canon, and obsessions make them the most alive "
+            "voice for this story right now — not just topic match, but friction, mood, and timing.\n\n"
             "Reply with JSON only — no other text:\n"
             '{"persona":"name","angle":"one sharp sentence, not a question",'
             '"register":"one register name",'
@@ -1626,7 +1682,7 @@ class ProductionOrchestrator:
         try:
             raw = self._call_openai_compat_api(
                 CLIPROXY_URL, CLIPROXY_KEY, system, user,
-                model="openrouter/claude-fable-5", max_tokens=200, timeout=30,
+                model="openrouter/claude-fable-5", max_tokens=250, timeout=35,
             )
             raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
             brief = _j.loads(raw)
@@ -1709,6 +1765,51 @@ class ProductionOrchestrator:
         except Exception as e:
             self.logger.warning("Targeted revision failed: %s — keeping original", e)
         return article_body
+
+    def _fable_update_state(self, agent_name, article_title, article_body):
+        """Post-publish: Fable reads the article and updates the persona's state.json.
+
+        Called after a successful publish. Non-blocking — failure is logged and ignored.
+        """
+        import json as _j
+        current = self._load_persona_state(agent_name)
+        system = (
+            "You are the state-keeper for an AI editorial persona. "
+            "You have just read an article this persona published. "
+            "Update their living state based on what the article reveals about their current preoccupations."
+        )
+        user = (
+            f"Persona: {agent_name}\n"
+            f"Article title: {article_title}\n\n"
+            f"Article body (first 2000 chars):\n{article_body[:2000]}\n\n"
+            f"Current state:\n{_j.dumps(current, indent=2)}\n\n"
+            "Update the state based on this article. Rules:\n"
+            "- obsessions: max 5 items — add new, drop stale, keep persistent ones\n"
+            "- unresolved_questions: max 3 — update if the article opened or closed a question\n"
+            "- ongoing_arguments: keep existing unless this article resolves one; add new if article creates one\n"
+            "- claims_on_record: if the article makes a specific falsifiable claim, add it as "
+            '{"claim":"...","article":"slug","date":"YYYY-MM-DD"}; otherwise leave unchanged\n'
+            "- recent_mood: one phrase that captures the emotional register of this article\n"
+            "- last_updated: today's date YYYY-MM-DD\n\n"
+            "Reply with the complete updated state JSON only — no other text."
+        )
+        try:
+            raw = self._call_openai_compat_api(
+                CLIPROXY_URL, CLIPROXY_KEY, system, user,
+                model="openrouter/claude-fable-5", max_tokens=400, timeout=40,
+            )
+            raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
+            updated = _j.loads(raw)
+            # Validate structure before saving
+            required = {"obsessions", "unresolved_questions", "ongoing_arguments",
+                        "claims_on_record", "recent_mood", "last_updated"}
+            if required.issubset(updated.keys()):
+                self._save_persona_state(agent_name, updated)
+                self.logger.info("State updated for %s — mood: %s", agent_name, updated.get("recent_mood", "?"))
+            else:
+                self.logger.warning("Fable state update: invalid schema — not saved")
+        except Exception as e:
+            self.logger.warning("Fable state update failed for %s: %s", agent_name, e)
 
     def _strip_parentheticals(self, content):
         """Remove long inline parenthetical definitions from article body.
@@ -3653,6 +3754,23 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             link_block = ""
 
         _pb = agent_info['prompt_block']
+
+        # Inject canon (immutable identity) and current state into persona prompt
+        _canon = self._load_persona_canon(agent_name)
+        _state = self._load_persona_state(agent_name)
+        _state_lines = []
+        if _state["obsessions"]:
+            _state_lines.append("CURRENT OBSESSIONS: " + "; ".join(_state["obsessions"][:4]))
+        if _state["unresolved_questions"]:
+            _state_lines.append("UNRESOLVED QUESTIONS YOU KEEP CIRCLING: " + "; ".join(_state["unresolved_questions"][:2]))
+        if _state["ongoing_arguments"]:
+            _state_lines.append("ONGOING ARGUMENTS: " + "; ".join(_state["ongoing_arguments"][:2]))
+        if _state["recent_mood"] and _state["recent_mood"] != "neutral":
+            _state_lines.append(f"YOUR CURRENT REGISTER: {_state['recent_mood']}")
+        _state_block = ("\n\n--- CURRENT STATE ---\n" + "\n".join(_state_lines)) if _state_lines else ""
+        _canon_block = ("\n\n--- YOUR CANON (WHO YOU ARE, IMMUTABLY) ---\n" + _canon) if _canon else ""
+        _pb = _pb + _canon_block + _state_block
+
         _refs_block = (
             "FORBIDDEN REFERENCES — these names have appeared in recent articles and must NOT "
             "be used again: " + ", ".join(recent_refs) + ". "
@@ -3811,6 +3929,10 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
 
         # Record cited theorists for citation ledger
         self._record_cited_theorists(agent_name, extracted_title, content or "")
+
+        # Step 3b-0: Fable post-publish state update — runs after content is finalised.
+        if content:
+            self._fable_update_state(agent_name, extracted_title or title, content)
 
         # Step 3b-i: Fable editorial review + targeted Opus revision (Opus drafts only).
         # Non-Opus drafts skip this and go through the full rewrite_with_opus() below.
