@@ -46,7 +46,13 @@
     {"url": "https://hyperallergic.com/feed/",                              "name": "Hyperallergic"},
     {"url": "https://www.dezeen.com/feed/",                                 "name": "Dezeen"},
     {"url": "https://www.theguardian.com/artanddesign/rss",                 "name": "Guardian Art & Design"},
-    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml",        "name": "NYT Arts"}
+    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml",       "name": "NYT Arts"},
+    {"url": "https://www.nad.org/feed/",                                    "name": "NAD (National Association of the Deaf)"},
+    {"url": "https://wfdeaf.org/feed/",                                     "name": "World Federation of the Deaf"},
+    {"url": "https://www.sign-lang.uni-hamburg.de/rss.xml",                 "name": "Hamburg Sign Language Research (HPSL)"},
+    {"url": "https://www.deafblind.com/rss.xml",                            "name": "DeafBlind Resources"},
+    {"url": "https://www.handtalk.me/en/blog/feed/",                        "name": "Hand Talk (sign language tech)"},
+    {"url": "https://blogs.gallaudet.edu/feed/",                            "name": "Gallaudet University News"}
   ],
 
   "Siri Sage": [
