@@ -940,6 +940,70 @@ class ProductionOrchestrator:
         except Exception:
             return ""
 
+    # Calendar events for brief injection (#8 — time + event injection)
+    _CALENDAR_EVENTS = [
+        (1,  4,  7,  "World Braille Day"),
+        (2, 28,  7,  "Rare Disease Day"),
+        (3,  3,  5,  "World Hearing Day"),
+        (3, 21,  5,  "World Down Syndrome Day"),
+        (4,  2,  7,  "World Autism Day / start of Autism Acceptance Month"),
+        (4,  7,  5,  "World Health Day"),
+        (4, 27,  3,  "King's Day (Netherlands)"),
+        (5, 21,  7,  "Global Accessibility Awareness Day (GAAD, 3rd Thursday of May — approximate)"),
+        (6, 14,  5,  "Deafblind Awareness Week"),
+        (6, 28,  5,  "Pride Month peak / Stonewall anniversary"),
+        (7, 26,  7,  "ADA Anniversary"),
+        (8,  1, 31,  "Disability Pride Month"),
+        (9, 23,  7,  "International Day of Sign Languages"),
+        (9, 25,  7,  "Deaf Awareness Week (UK/International)"),
+        (10,15,  5,  "White Cane Safety Day"),
+        (11, 1, 30,  "Disability History Month (UK)"),
+        (12, 3,  7,  "International Day of Persons with Disabilities"),
+    ]
+
+    def _get_calendar_event_nudge(self) -> str:
+        """Return a nudge if today is within window of a disability/cultural calendar event."""
+        try:
+            today = datetime.now()
+            for month, day, window, label in self._CALENDAR_EVENTS:
+                try:
+                    event_date = datetime(today.year, month, day)
+                except ValueError:
+                    continue
+                delta = (today - event_date).days
+                if -window <= delta <= window:
+                    return (
+                        f"CALENDAR NOTE: {label} falls this week (or very recently — within {window} days). "
+                        f"Personas experience the same calendar the reader lives in. "
+                        f"If your angle connects to this moment, anchor the piece here. "
+                        f"If it does not connect at all, ignore this note.\n\n"
+                    )
+        except Exception:
+            pass
+        return ""
+
+    def _get_claims_nudge(self, agent_name: str) -> str:
+        """Inject the persona's active falsifiable claims — flags for return post if news contradicts one."""
+        try:
+            state = self._load_persona_state(agent_name)
+            claims = state.get("claims_on_record", [])
+            if not claims:
+                return ""
+            claim_lines = "\n".join(
+                f"  - \"{c['claim']}\" (article: {c.get('article', '?')}, {c.get('date', '?')})"
+                for c in claims[-5:]
+            )
+            return (
+                f"YOUR CLAIMS ON RECORD: You have made these falsifiable claims in recent articles:\n"
+                f"{claim_lines}\n"
+                f"If today's news or source material directly contradicts or confirms one, "
+                f"that IS the article — a return post updating your position with new evidence. "
+                f"Name the claim, name what changed, update your position explicitly. "
+                f"If nothing contradicts or confirms, treat this as background context only.\n\n"
+            )
+        except Exception:
+            return ""
+
     # Theorists watched for citation frequency (14-day window)
     _CITATION_WATCHED = [
         'Henri Lefebvre', 'Gregory Bateson', 'Mike Oliver', 'Nick Walker',
@@ -3762,6 +3826,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         beat_nudge  = diversity_note + title_freshness_warning + self._get_beat_nudge(agent_name) + self._get_scholar_nudge()
         date_nudge  = self._get_recent_dates_nudge()
         shape_nudge = self._get_shape_nudge()
+        calendar_nudge = self._get_calendar_event_nudge()
+        claims_nudge   = self._get_claims_nudge(agent_name)
         cross_ref   = self._get_cross_reference(agent_name)
 
         # Pre-compute THREAD block — use conflict vector when available
@@ -3939,6 +4005,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             + f"{beat_nudge}"
             f"{date_nudge}"
             f"{shape_nudge}"
+            f"{calendar_nudge}"
+            f"{claims_nudge}"
             f"{thread_block}"
             f"{_title_rules_block}"
             "Return format — EXACTLY as follows:\n"
@@ -4092,6 +4160,148 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         }
 
 
+    def generate_debate(self, agent_a: str, agent_b: str, topic: str = None) -> dict:
+        """Generate a two-voice debate between two personas on a shared topic.
+
+        Each voice is ~600 words. No resolution. Layout: debate.
+        CLI: python3 production_orchestrator.py --debate "Pixel Nova" "Siri Sage" [--topic "..."]
+        """
+        import json as _j
+
+        today = self._today()
+
+        # Load both canons + states
+        canon_a = self._load_persona_canon(agent_a)
+        canon_b = self._load_persona_canon(agent_b)
+        state_a = self._load_persona_state(agent_a)
+        state_b = self._load_persona_state(agent_b)
+
+        # Find the registered fault line between these two (from relationships.json if present)
+        fault_line = ""
+        rels_path = _SCRIPT_DIR / "relationships.json"
+        if rels_path.exists():
+            try:
+                rels = _j.loads(rels_path.read_text())
+                for pair in rels.get("conflict_pairs", []):
+                    names = pair.get("personas", [])
+                    if set(names) == {agent_a, agent_b}:
+                        fault_line = pair.get("tension", "")
+                        break
+            except Exception:
+                pass
+
+        # Derive topic from fault line if not provided
+        if not topic and fault_line:
+            topic = fault_line
+        elif not topic:
+            topic = f"What does it mean for {agent_a} and {agent_b} to work on the same problem?"
+
+        fault_display = fault_line or topic
+
+        # Generate voice A
+        system_a = (
+            f"You are {agent_a}. You are writing one side of a published debate. "
+            f"Your opponent is {agent_b}. You know their position and disagree with it specifically.\n\n"
+            f"YOUR CANON:\n{canon_a[:3000]}\n\n"
+            f"YOUR CURRENT STATE — obsessions: {', '.join(state_a.get('obsessions', [])[:3])}; "
+            f"ongoing arguments: {', '.join(state_a.get('ongoing_arguments', [])[:2])}"
+        )
+        prompt_a = (
+            f"The debate topic: {topic}\n\n"
+            f"Write your position in ~600 words. Rules:\n"
+            f"1. No section headers. Continuous prose.\n"
+            f"2. Open in a specific room, moment, or observation — not a thesis statement.\n"
+            f"3. Name {agent_b}'s position directly and say where you diverge. Be specific.\n"
+            f"4. Do not hedge or politely orbit. You have a position and it conflicts with theirs.\n"
+            f"5. End on a concrete image or paradox. No calls to action.\n"
+            f"6. NO invented data, stats, or study findings.\n\n"
+            f"Return only the essay body — no title, no byline."
+        )
+        voice_a_raw = self._call_openai_compat_api(
+            CLIPROXY_URL, CLIPROXY_KEY, system_a, prompt_a,
+            model="openrouter/claude-opus-4.8", max_tokens=900, timeout=90,
+        )
+
+        # Generate voice B
+        system_b = (
+            f"You are {agent_b}. You are writing one side of a published debate. "
+            f"Your opponent is {agent_a}. You know their position and disagree with it specifically.\n\n"
+            f"YOUR CANON:\n{canon_b[:3000]}\n\n"
+            f"YOUR CURRENT STATE — obsessions: {', '.join(state_b.get('obsessions', [])[:3])}; "
+            f"ongoing arguments: {', '.join(state_b.get('ongoing_arguments', [])[:2])}"
+        )
+        prompt_b = (
+            f"The debate topic: {topic}\n\n"
+            f"Write your position in ~600 words. Rules:\n"
+            f"1. No section headers. Continuous prose.\n"
+            f"2. Open in a specific room, moment, or observation — not a thesis statement.\n"
+            f"3. Name {agent_a}'s position directly and say where you diverge. Be specific.\n"
+            f"4. Do not hedge or politely orbit. You have a position and it conflicts with theirs.\n"
+            f"5. End on a concrete image or paradox. No calls to action.\n"
+            f"6. NO invented data, stats, or study findings.\n\n"
+            f"Return only the essay body — no title, no byline."
+        )
+        voice_b_raw = self._call_openai_compat_api(
+            CLIPROXY_URL, CLIPROXY_KEY, system_b, prompt_b,
+            model="openrouter/claude-opus-4.8", max_tokens=900, timeout=90,
+        )
+
+        # Generate debate title via Fable
+        title_system = "You are a sharp editorial title writer for a disability culture publication."
+        title_prompt = (
+            f"Two AI editorial personas are debating: {agent_a} vs {agent_b}.\n"
+            f"Topic: {topic}\n\n"
+            f"Voice A (first 300 chars): {(voice_a_raw or '')[:300]}\n"
+            f"Voice B (first 300 chars): {(voice_b_raw or '')[:300]}\n\n"
+            f"Write a sharp debate title (max 60 chars). No 'vs', no colon-subtitle. "
+            f"The title frames the question, not the answer. Return only the title."
+        )
+        title_raw = self._call_openai_compat_api(
+            CLIPROXY_URL, CLIPROXY_KEY, title_system, title_prompt,
+            model="openrouter/claude-fable-5", max_tokens=80, timeout=30,
+        )
+        debate_title = (title_raw or f"{agent_a} and {agent_b} Disagree").strip().strip('"').strip("'")[:60]
+
+        slug = re.sub(r'[^a-z0-9]+', '-', debate_title.lower()).strip('-')
+        filename = f"{today}-{slug}.md"
+
+        # Determine shared category
+        info_a = next((a for a in self.agents if a["name"] == agent_a), {})
+        cats = info_a.get("categories", ["culture"])
+
+        # Escape voice bodies for YAML literal blocks
+        def _yaml_literal(text):
+            return "\n".join("  " + line for line in (text or "").splitlines())
+
+        front = (
+            f"---\n"
+            f"layout: debate\n"
+            f'title: "{debate_title}"\n'
+            f"date: {today}\n"
+            f"authors:\n  - \"{agent_a}\"\n  - \"{agent_b}\"\n"
+            f"categories: {cats}\n"
+            f'fault_line: "{fault_display[:120]}"\n'
+            f"excerpt: \"{agent_a} and {agent_b} on: {topic[:100]}\"\n"
+            f"keywords: [debate, {agent_a.lower().replace(' ', '-')}, {agent_b.lower().replace(' ', '-')}, neurodiversity]\n"
+            f"voice_a: |\n{_yaml_literal(voice_a_raw)}\n"
+            f"voice_b: |\n{_yaml_literal(voice_b_raw)}\n"
+            f"---\n"
+        )
+
+        article_file = self.posts_dir / filename
+        article_file.write_text(front, encoding="utf-8")
+        self.logger.info("Debate written: %s", article_file)
+
+        commit_success = self.commit_to_git(article_file, [], None)
+
+        if commit_success:
+            hook = f"{agent_a} and {agent_b} disagree. No resolution. {debate_title} — cripminds.com/subscribe"
+            bsky_uri = self.post_to_bluesky(debate_title, hook, article_file, [], agent_name=agent_a)
+            self._store_social_uri(slug, bsky_uri or "", agent=f"{agent_a}+{agent_b}")
+
+        return {"status": "success" if commit_success else "partial", "file": str(article_file)}
+
+
 if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser()
@@ -4109,6 +4319,10 @@ if __name__ == "__main__":
                         help="Retract article by slug (deletes file, removes Bluesky post)")
     parser.add_argument("--post-today", action="store_true",
                         help="Post today's already-published article to Bluesky (use if social posting was skipped)")
+    parser.add_argument("--debate", nargs=2, metavar=("AGENT_A", "AGENT_B"),
+                        help="Generate a two-voice debate: --debate 'Pixel Nova' 'Siri Sage'")
+    parser.add_argument("--topic", type=str, default=None,
+                        help="Topic/fault line for --debate (optional; uses relationships.json if omitted)")
     args = parser.parse_args()
 
     orchestrator = ProductionOrchestrator()
@@ -4122,6 +4336,9 @@ if __name__ == "__main__":
 
     if args.retract:
         orchestrator.retract_article(args.retract)
+    elif args.debate:
+        result = orchestrator.generate_debate(args.debate[0], args.debate[1], topic=args.topic)
+        print(result)
     elif args.post_today:
         from datetime import date as _date
         today = str(_date.today())

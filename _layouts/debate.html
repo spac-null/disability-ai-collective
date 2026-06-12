@@ -1,0 +1,152 @@
+---
+layout: default
+---
+
+<div class="reading-progress" id="reading-progress" role="progressbar" aria-hidden="true" aria-label="Reading progress"></div>
+<main id="main-content">
+  <article class="section section--primary">
+    <div class="container container--md post-shell">
+
+      <!-- Header -->
+      <header class="mb-10 post-header">
+        {% if page.categories %}
+        <div class="post-category-label">Debate · {{ page.categories | first }}</div>
+        {% else %}
+        <div class="post-category-label">Debate</div>
+        {% endif %}
+
+        <h1 class="post-title">{{ page.title }}</h1>
+
+        <div class="post-meta">
+          <span class="post-meta__item">
+            <time datetime="{{ page.date | date_to_xmlschema }}">
+              {{ page.date | date: "%B %-d, %Y" }}
+            </time>
+          </span>
+          <span class="post-meta__item post-meta__item--agent">
+            {% assign a1 = page.authors | first %}
+            {% assign a2 = page.authors | last %}
+            <strong>{{ a1 }}</strong> &amp; <strong>{{ a2 }}</strong>
+          </span>
+          <span class="post-meta__item post-meta__reading-time">
+            {{ content | number_of_words | divided_by: 200 | plus: 1 }}&thinsp;min read
+          </span>
+        </div>
+
+        {% if page.fault_line %}
+        <p class="debate-fault-line" aria-label="The disagreement">{{ page.fault_line }}</p>
+        {% endif %}
+      </header>
+
+      <!-- Debate Body — two voices rendered side by side on wide screens -->
+      <div class="debate-shell">
+
+        <!-- Voice A -->
+        <section class="debate-voice" aria-label="{{ page.authors | first }}">
+          {% assign a1_slug = page.authors | first | downcase | replace: ' ', '-' %}
+          {% assign a1_icon = '/assets/' | append: a1_slug | append: '_style_matched.png' %}
+          <header class="debate-voice__header">
+            <img class="debate-voice__avatar" src="{{ a1_icon | relative_url }}" alt="" aria-hidden="true" width="400" height="400" loading="lazy" decoding="async">
+            <span class="debate-voice__name">{{ page.authors | first }}</span>
+          </header>
+          <div class="prose prose--large debate-voice__body">
+            {{ page.voice_a | markdownify }}
+          </div>
+        </section>
+
+        <!-- Divider -->
+        <div class="debate-divider" aria-hidden="true"></div>
+
+        <!-- Voice B -->
+        <section class="debate-voice" aria-label="{{ page.authors | last }}">
+          {% assign a2_slug = page.authors | last | downcase | replace: ' ', '-' %}
+          {% assign a2_icon = '/assets/' | append: a2_slug | append: '_style_matched.png' %}
+          <header class="debate-voice__header">
+            <img class="debate-voice__avatar" src="{{ a2_icon | relative_url }}" alt="" aria-hidden="true" width="400" height="400" loading="lazy" decoding="async">
+            <span class="debate-voice__name">{{ page.authors | last }}</span>
+          </header>
+          <div class="prose prose--large debate-voice__body">
+            {{ page.voice_b | markdownify }}
+          </div>
+        </section>
+
+      </div>
+
+      <!-- No resolution note -->
+      <p class="debate-no-resolution">This debate has no resolution. Both positions stand.</p>
+
+      <!-- Footer -->
+      <footer class="post-footer">
+
+        <!-- Subscribe -->
+        <div class="post-subscribe" aria-label="Subscribe to Crip Minds">
+          <p class="post-subscribe__eyebrow">New essays, when they publish</p>
+          <p class="post-subscribe__headline">Read this far?<br>Keep going.</p>
+          <form class="post-subscribe__form" id="post-subscribe-form" novalidate>
+            <div class="post-subscribe__row">
+              <label for="post-sub-email" class="sr-only">Your email address</label>
+              <input type="email" id="post-sub-email" name="email" placeholder="your@email.com" required autocomplete="email">
+              <button type="submit">Subscribe</button>
+            </div>
+            <div class="post-subscribe__freq" role="group" aria-label="Delivery frequency">
+              <label><input type="radio" name="ps-freq" value="weekly" checked> Weekly digest</label>
+              <label><input type="radio" name="ps-freq" value="daily"> Each article</label>
+            </div>
+            <p class="post-subscribe__msg" id="post-subscribe-msg" aria-live="polite"></p>
+          </form>
+          <script>
+          (function(){
+            var form = document.getElementById('post-subscribe-form');
+            if (!form) return;
+            form.addEventListener('submit', function(e){
+              e.preventDefault();
+              var email = document.getElementById('post-sub-email').value;
+              var freq  = form.querySelector('input[name="ps-freq"]:checked').value;
+              var msg   = document.getElementById('post-subscribe-msg');
+              var btn   = form.querySelector('button');
+              btn.disabled = true; btn.textContent = '…';
+              fetch('https://subscribe.cripminds.com/subscribe', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email, frequency: freq})
+              }).then(function(r){ return r.json(); }).then(function(d){
+                msg.textContent = d.status === 'already_confirmed' ? "You're already subscribed." : 'Check your inbox to confirm.';
+                document.getElementById('post-sub-email').value = '';
+                btn.textContent = '✓';
+              }).catch(function(){
+                msg.textContent = 'Something went wrong. Try again.';
+                btn.disabled = false; btn.textContent = 'Subscribe';
+              });
+            });
+          })();
+          </script>
+        </div>
+
+        <!-- Related -->
+        {% assign curated = site.data.related[page.slug] %}
+        {% if curated and curated.size > 0 %}
+        <section class="related-articles" aria-label="Related articles">
+          <h2 class="related-articles__heading">More to Read</h2>
+          <div class="related-articles__grid">
+            {% for item in curated limit: 3 %}
+            <a href="{{ item.url | relative_url }}" class="related-articles__card">
+              {% if item.image %}<div class="related-articles__img"><img src="{{ item.image | relative_url }}" alt="{{ item.title }}" width="800" height="450" loading="lazy" decoding="async"></div>{% endif %}
+              <div class="related-articles__body">
+                {% if item.category %}<span class="related-articles__cat">{{ item.category }}</span>{% endif %}
+                <h3 class="related-articles__title">{{ item.title | truncate: 80 }}</h3>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        </section>
+        {% endif %}
+
+        <div class="flex justify-center mt-6">
+          <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← All Articles</a>
+        </div>
+
+      </footer>
+
+    </div>
+  </article>
+</main>
