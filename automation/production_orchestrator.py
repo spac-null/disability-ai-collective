@@ -1316,8 +1316,8 @@ class ProductionOrchestrator:
         """Generate article content using cascading LLM provider fallback.
 
         Provider order:
-          1. Claude Opus 4.6 (CLIProxy)   — primary, best quality for this publication
-          2. Claude Sonnet 4.6 (CLIProxy) — strong fallback, same account
+          1. Claude Opus 4.8 (OpenRouter)  — primary, best quality for this publication
+          2. Claude Sonnet 4.6 (OpenRouter) — strong fallback, same account
           3. GPT-5.2 (CLIProxy)           — strong long-form fallback
           4. Gemini 2.5 Pro               — capable, generous free tier
           5. Qwen 3.5:9b (local)          — zero cost, last resort
@@ -1393,21 +1393,21 @@ class ProductionOrchestrator:
 
         PROVIDERS = [
             {
-                "name":      "Claude Sonnet 4.5 (OpenRouter/CLIProxy)",
+                "name":      "Claude Opus 4.8 (OpenRouter/CLIProxy)",
                 "url":       CLIPROXY_URL,
                 "key":       CLIPROXY_KEY,
-                "model":     "openrouter/claude-sonnet-4-5",
+                "model":     "openrouter/claude-opus-4.8",
                 "max_tokens": 3500,
-                "timeout":   120,
+                "timeout":   180,
                 "no_think":  False,
             },
             {
-                "name":      "Claude Opus 4 (OpenRouter/CLIProxy)",
+                "name":      "Claude Sonnet 4.6 (OpenRouter/CLIProxy)",
                 "url":       CLIPROXY_URL,
                 "key":       CLIPROXY_KEY,
-                "model":     "openrouter/claude-opus-4",
+                "model":     "openrouter/claude-sonnet-4.6",
                 "max_tokens": 3500,
-                "timeout":   180,
+                "timeout":   120,
                 "no_think":  False,
             },
             {
@@ -1582,7 +1582,7 @@ class ProductionOrchestrator:
                 api_key=CLIPROXY_KEY,
                 system_prompt=SYSTEM,
                 user_prompt=user_msg,
-                model="openrouter/claude-opus-4",
+                model="openrouter/claude-opus-4.8",
                 max_tokens=3500,
                 timeout=240,
             )
@@ -1781,7 +1781,7 @@ class ProductionOrchestrator:
                     "Return ONLY valid JSON."
                 ),
                 user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:4000]}",
-                model="openrouter/claude-opus-4",
+                model="openrouter/claude-opus-4.8",
                 max_tokens=800,
                 timeout=60,
             )
@@ -1811,7 +1811,7 @@ class ProductionOrchestrator:
                     f"Article:\n\n{content}\n\n"
                     f"Fix these editorial issues (score was {score}/10):\n{issues_text}"
                 ),
-                model="openrouter/claude-opus-4",
+                model="openrouter/claude-opus-4.8",
                 max_tokens=4500,
                 timeout=90,
             )
@@ -2340,7 +2340,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 api_key=CLIPROXY_KEY,
                 system_prompt=GATE_SYSTEM,
                 user_prompt=content,
-                model="openrouter/claude-sonnet-4-5",
+                model="openrouter/claude-sonnet-4.6",
                 max_tokens=400,
                 timeout=45,
             )
@@ -2385,7 +2385,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 api_key=CLIPROXY_KEY,
                 system_prompt=FIX_SYSTEM,
                 user_prompt=fix_prompt,
-                model="openrouter/claude-sonnet-4-5",
+                model="openrouter/claude-sonnet-4.6",
                 max_tokens=2000,
                 timeout=90,
             )
@@ -2460,7 +2460,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 api_key=CLIPROXY_KEY,
                 system_prompt=CITATION_SYSTEM,
                 user_prompt=content,
-                model="openrouter/claude-sonnet-4-5",
+                model="openrouter/claude-sonnet-4.6",
                 max_tokens=600,
                 timeout=60,
             )
@@ -2545,7 +2545,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 api_key=CLIPROXY_KEY,
                 system_prompt=RULES_SYSTEM,
                 user_prompt=content,
-                model="openrouter/claude-sonnet-4-5",
+                model="openrouter/claude-sonnet-4.6",
                 max_tokens=1000,
                 timeout=90,
             )
@@ -2627,7 +2627,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 api_key=CLIPROXY_KEY,
                 system_prompt="Return only the post text. No quotes around it. Maximum 250 characters.",
                 user_prompt=prompt,
-                model="openrouter/claude-sonnet-4-5",
+                model="openrouter/claude-sonnet-4.6",
                 max_tokens=80,
                 timeout=30,
             )
@@ -2658,7 +2658,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                     "Must end with a period. No hashtags. No ellipsis. Do NOT start with the article title."
                 ),
                 user_prompt=f"Title: {title}\n\nOpening:\n{body[:600]}",
-                model="openrouter/claude-sonnet-4-5",
+                model="openrouter/claude-sonnet-4.6",
                 max_tokens=60,
                 timeout=30,
             )
