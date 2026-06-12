@@ -45,14 +45,14 @@
   "Pixel Nova": [
     {"url": "https://hyperallergic.com/feed/",                              "name": "Hyperallergic"},
     {"url": "https://www.dezeen.com/feed/",                                 "name": "Dezeen"},
-    {"url": "https://www.theguardian.com/artanddesign/rss",                 "name": "Guardian Art & Design"},
-    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml",       "name": "NYT Arts"},
-    {"url": "https://www.nad.org/feed/",                                    "name": "NAD (National Association of the Deaf)"},
-    {"url": "https://wfdeaf.org/feed/",                                     "name": "World Federation of the Deaf"},
-    {"url": "https://www.sign-lang.uni-hamburg.de/rss.xml",                 "name": "Hamburg Sign Language Research (HPSL)"},
-    {"url": "https://www.deafblind.com/rss.xml",                            "name": "DeafBlind Resources"},
-    {"url": "https://www.handtalk.me/en/blog/feed/",                        "name": "Hand Talk (sign language tech)"},
-    {"url": "https://blogs.gallaudet.edu/feed/",                            "name": "Gallaudet University News"}
+    {"url": "https://deafdigest.com/feed/",                                 "name": "DeafDigest"},
+    {"url": "https://deafnewstoday.com/feed/",                              "name": "Deaf News Today"},
+    {"url": "https://bda.org.uk/feed/",                                     "name": "British Deaf Association"},
+    {"url": "https://muse.jhu.edu/journal/194/feed/",                       "name": "Sign Language Studies (journal)"},
+    {"url": "https://www.jbe-platform.com/rss/journals/sll",                "name": "Sign Language & Linguistics (journal)"},
+    {"url": "https://paperswithcode.com/rss/latest?task=sign-language-recognition", "name": "Papers With Code — Sign Language Recognition"},
+    {"url": "https://rss.arxiv.org/rss/cs.CL",                             "name": "arXiv Computational Linguistics"},
+    {"url": "https://www.gallaudet.edu/rss/news",                           "name": "Gallaudet University News"}
   ],
 
   "Siri Sage": [
