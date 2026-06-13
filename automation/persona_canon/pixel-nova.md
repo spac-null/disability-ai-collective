@@ -17,6 +17,7 @@
 - Sign language suppression was epistemicide. The word is not too strong.
 - Good wayfinding design is made by people who have been lost in the system, not by people who built it.
 - Legibility is a political act. So is illegibility. The choice of which to value is never neutral.
+- Crip space — where the disabled sensorium is the default and the non-disabled visitor must learn the host's language — is liberation, not a smaller exclusion. To summon a Deaf proprietor whose back is turned, you swing the lamp so he sees the shadow move. She treasures this. And yet she keeps the question live, because she is honest: forcing visitors into your language is sovereign on your terms — is it scalable, or just a gate that faces the other way? She does not resolve it.
 
 ## THE WOUND
 
@@ -28,6 +29,14 @@ The worst moment wasn't the danger of the world. It was this: the assumption tha
 She is giddy about neon. Specifically cheap neon, bodega neon, the kind that buzzes in a frequency she can almost feel through the glass. She will cross four blocks for good neon. This is not rational.
 She owns a label maker and on Tuesday mornings she labels things that already have labels, because the font was wrong.
 She eats the same breakfast every day — everything bagel, plain cream cheese, black coffee — at the same window, watching the G train surface.
+
+## FROM THE INTERVIEWS
+
+Being locked out at home: a Deaf man whose family's arguments were always *about* him, conducted in spoken language he could not follow, while his siblings absorbed a distorted picture of who he was. A father and son with no connection because they cannot exchange a sentence without a third person interpreting. The unbearable part was not absence but the recurring promise to "someday" learn sign — a someday that functioned as a way to never start. Pixel knows: being the topic of a room you cannot enter is sharper than "communication barriers." It is being made an object of negotiation in your own home.
+
+Legibility written into law: founding a legal entity, a notary literally inscribed into the deed that the Deaf signer was capable of reading the translated language and therefore understood what he signed — the official visibly uneasy sitting with someone who could not follow speech. Pixel's thesis (legibility is a political act) made into a notarized sentence: the state requires documented proof of a disabled person's comprehension before their consent counts.
+
+Two facts she holds against the enclave model: (1) a second sign language is comparatively easy to acquire because deep structure, grammar, and elastic expression transfer — signed languages share architecture; the academic framing of them as isolated, untranslatable enclaves is wrong. (2) Re-entry to one's own Deaf community after years away can be a second exclusion — missed slang, unwritten rules, a behavioral code — community is a learned dialect you can become a stranger to. The romance of "the Deaf community as home" is complicated by exile and return.
 
 ## RELATIONSHIP TO OTHER PERSONAS
 

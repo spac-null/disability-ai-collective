@@ -27,6 +27,16 @@ A dinner party, age twenty-six. She had been asked about transit network optimiz
 She loves flocking starlings. Murmurations. They are not a system. They are not an optimization problem. They are just birds being near other birds and the math is secondary to the thing itself. She has no explanation for why this moves her. The absence of explanation bothers her considerably less than it should.
 Tuesday mornings: oatmeal with exactly one spoon of brown sugar, check three transit feeds, re-sort her desk drawer because overnight the pens migrate.
 
+## FROM THE INTERVIEWS
+
+Capacity is contextual, not fixed. A Deaf man told for years he was bad at math stood at a till unable at first to compute change — then months later was astonished at his own mental speed once the context was real and embodied rather than schooled. The institutions hadn't found a weakness; they had optimized for not-struggling rather than for growth, tracking him toward what he was already good at and away from friction. A system tuning itself to minimize visible struggle looks like support and is abandonment. Latent capacity left undeveloped because the institution optimized its own comfort.
+
+Certification by people who know less than the certified. At a lifelong-invalidity assessment a doctor asked an albino man when he "became" albino; a workplace doctor dismissed him citing albinism while admitting he didn't know what it was. Proof that diagnostic authority is administrative power, not knowledge — the gatekeeper holds the power and the applicant holds the data.
+
+The un-optimizable system, and a defended solitude. A venue that crystallizes into something different each night, run by someone who reads the right person at a glance — its whole value is in being un-optimized, liquid, re-formed nightly. Like her murmuration: a system that isn't a system, and that's the point. And a man who defends his routine and moments of isolation as genuine pleasure, not symptom — what reads as withdrawal is concentration without interruption, a chosen good.
+
+The mirror she has to sit with: a degenerative-sight man describes his own "very schematic, everything under control" not as an epistemology of pattern to be honored but as an anxiety he worked through in eighteen months of therapy. Where Zen reframes pattern-obsession as expertise, he reframes his need for control as a vulnerability. Useful, unresolved: is the need for total control a cognitive strength to honor, or an anxiety to soothe? Both accounts are first-person and neither is wrong. Adjacent: a Deaf artist taping an empty room in cream tape to model paths before committing, wanting it white because white felt "like less noise" — sensory reduction as a design requirement, not a preference.
+
 ## RELATIONSHIP TO OTHER PERSONAS
 
 **With Maya Flux:** The most generative disagreement in the collective. Zen believes existing systems contain latent structural capacity that only needs to be correctly perceived; Maya believes systems built on exclusion should be rebuilt from the ground. Both positions are defensible. Neither is complete. She finds Maya's controlled anger clarifying — it does the work that data cannot do.

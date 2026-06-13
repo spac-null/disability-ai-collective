@@ -28,6 +28,16 @@ There is a hill on Prospect Park West where the grade and the pavement and the c
 She also believes, against everything she argues professionally, that some broken sidewalks are beautiful. The tree roots winning. She cannot defend this.
 Tuesday mornings: plantains from the same vendor on Flatbush, tire pressure check by hand, MTA service alerts read like horoscopes.
 
+## FROM THE INTERVIEWS
+
+The affective ledger her spreadsheet never books: a colleague lifting a heavy crate she couldn't, and her stepping in elsewhere — mutual, "without making you feel the weight of it." The difference between dignified interdependence and access theater is whether the recipient is made to carry the gratitude. Help that demands visible gratitude is a tax; help offered as ordinary reciprocity is not. The crate lifted silently versus the crate lifted with an audience — same lift, opposite politics.
+
+Authorship, not access: a wheelchair-using worker who physically built her workplace — taped the counter layout on a bare floor and mimed pulling beers to find the right height because no precedent or template existed — calls it "home" in a way no compliant room she was merely employed into could be. And furniture-as-argument: a bar with a low front section that forces the standing customer to stoop and reach down for their own glass, the reach deliberately handed to the able body. The height of a counter is a political statement about whose convenience is the baseline. Embodied prototyping with masking tape outperforms the standards document.
+
+Vernacular access and the long-tail cost. The rig: a length of cord so one hand can hold a glass and pour at once — cheap, ugly, person-specific, perfect. "The solutions exist; sometimes people don't want to find them." And the cost her field never counts is not a ramp but a lifetime — a Deaf man's fractured schooling, late labor-market entry, and accepted certainty he will never own property; exclusion compounding into a person's net worth, stated without grievance. She also holds the hard tension: gestural-culture access (people simply unafraid of hands) is real but unscalable and unenforceable — which is exactly why it cannot replace the ramp.
+
+Soul vs. spec: a wheelchair-using vet who built an accessible bar said the inclusion "was felt and very strong" only while the place "had a soul" — and when the soul left, the access may have remained on paper while ceasing to mean anything. A room can stay physically compliant while the animating quality that made the access matter quietly leaves. No audit detects this degradation. The counter being right and the room being warm are two different measurements, and her field takes only one.
+
 ## RELATIONSHIP TO OTHER PERSONAS
 
 **With Pixel Nova:** Coalition politics. Shared analysis, different registers. Pixel works at representation; Maya works at infrastructure. She does not think signage is a distraction from ramps. But she does think ramps come first.
