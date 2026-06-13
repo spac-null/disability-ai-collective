@@ -1721,6 +1721,25 @@ class ProductionOrchestrator:
         path = PERSONA_STATE_DIR / f"{slug}.json"
         path.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
 
+    def _call_editorial_model(self, system, user, max_tokens=300, timeout=45):
+        """Try Fable 5 first; fall back to Opus 4.8 if unavailable. Returns raw text or None."""
+        for model, label in [
+            ("openrouter/claude-fable-5",  "Fable"),
+            ("openrouter/claude-opus-4.8", "Opus"),
+        ]:
+            try:
+                raw = self._call_openai_compat_api(
+                    CLIPROXY_URL, CLIPROXY_KEY, system, user,
+                    model=model, max_tokens=max_tokens, timeout=timeout,
+                )
+                if label == "Opus":
+                    self.logger.warning("Editorial model: Fable unavailable — Opus fallback active")
+                return raw
+            except Exception as e:
+                self.logger.warning("Editorial model %s failed: %s", label, e)
+        self.logger.error("Editorial model: both Fable and Opus failed — no editorial pass possible")
+        return None
+
     def _fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent):
         """Fable 5 generates an editorial brief before writing.
 
@@ -1780,11 +1799,11 @@ class ProductionOrchestrator:
             '"seed_sentence":"the opening sentence of the article — concrete, not a question",'
             '"cross_cite":"optional: one sentence on how to reference or push against another persona\'s position, or empty string"}'
         )
+        raw = self._call_editorial_model(system, user, max_tokens=250, timeout=35)
+        if raw is None:
+            self.logger.error("Fable brief: all models failed — article will publish without persona override, angle, or seed")
+            return None
         try:
-            raw = self._call_openai_compat_api(
-                CLIPROXY_URL, CLIPROXY_KEY, system, user,
-                model="openrouter/claude-fable-5", max_tokens=250, timeout=35,
-            )
             raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
             brief = _j.loads(raw)
             if all(k in brief for k in ("persona", "angle", "register", "seed_sentence")):
@@ -1797,9 +1816,9 @@ class ProductionOrchestrator:
                         brief["persona"], brief["register"], brief["angle"][:60],
                     )
                     return brief
-            self.logger.warning("Fable brief: invalid persona/register — ignoring")
+            self.logger.error("Fable brief: invalid persona/register — article will publish without persona override, angle, or seed")
         except Exception as e:
-            self.logger.warning("Fable brief failed: %s", e)
+            self.logger.error("Fable brief parse failed: %s — article will publish without persona override, angle, or seed", e)
         return None
 
     def _fable_editorial_review(self, article_body, agent_name, brief_angle, register):
@@ -1822,11 +1841,11 @@ class ProductionOrchestrator:
             "Notes must name the specific paragraph or sentence. Max 3. "
             "If publish_as_is, notes may be empty."
         )
+        raw = self._call_editorial_model(system, user, max_tokens=300, timeout=45)
+        if raw is None:
+            self.logger.error("Fable editorial review: all models failed — article ships without revision pass")
+            return "publish_as_is", []
         try:
-            raw = self._call_openai_compat_api(
-                CLIPROXY_URL, CLIPROXY_KEY, system, user,
-                model="openrouter/claude-fable-5", max_tokens=300, timeout=45,
-            )
             raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
             result = _j.loads(raw)
             verdict = result.get("verdict", "publish_as_is")
@@ -1837,7 +1856,7 @@ class ProductionOrchestrator:
                     self.logger.info("  → %s", n[:100])
             return verdict, notes
         except Exception as e:
-            self.logger.warning("Fable editorial review failed: %s — skipping", e)
+            self.logger.error("Fable editorial review parse failed: %s — article ships without revision pass", e)
             return "publish_as_is", []
 
     def _opus_targeted_revision(self, article_body, editorial_notes, agent_name):
@@ -1897,11 +1916,11 @@ class ProductionOrchestrator:
             "- last_updated: today's date YYYY-MM-DD\n\n"
             "Reply with the complete updated state JSON only — no other text."
         )
+        raw = self._call_editorial_model(system, user, max_tokens=400, timeout=40)
+        if raw is None:
+            self.logger.error("Fable state update for %s: all models failed — persona state will not evolve from this article", agent_name)
+            return
         try:
-            raw = self._call_openai_compat_api(
-                CLIPROXY_URL, CLIPROXY_KEY, system, user,
-                model="openrouter/claude-fable-5", max_tokens=400, timeout=40,
-            )
             raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
             updated = _j.loads(raw)
             # Validate structure before saving
@@ -1913,7 +1932,7 @@ class ProductionOrchestrator:
             else:
                 self.logger.warning("Fable state update: invalid schema — not saved")
         except Exception as e:
-            self.logger.warning("Fable state update failed for %s: %s", agent_name, e)
+            self.logger.error("Fable state update parse failed for %s: %s — persona state will not evolve from this article", agent_name, e)
 
     def _strip_parentheticals(self, content):
         """Remove long inline parenthetical definitions from article body.
@@ -3719,6 +3738,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             _fable_angle_text = fable_brief["angle"]
             _fable_cross_cite = fable_brief.get("cross_cite", "")
         else:
+            self.logger.warning("Fable brief unavailable — running without persona override, angle, register, or seed sentence (v2-style output)")
             _fable_register = _fable_seed = _fable_angle_text = _fable_cross_cite = ""
 
         # News block — news_seed (persistent) takes priority over live RSS hook
