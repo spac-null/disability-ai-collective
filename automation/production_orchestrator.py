@@ -1722,22 +1722,39 @@ class ProductionOrchestrator:
         path.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
 
     def _call_editorial_model(self, system, user, max_tokens=300, timeout=45):
-        """Try Fable 5 first; fall back to Opus 4.8 if unavailable. Returns raw text or None."""
-        for model, label in [
-            ("openrouter/claude-fable-5",  "Fable"),
-            ("openrouter/claude-opus-4.8", "Opus"),
-        ]:
+        """Try Fable 5 → Opus 4.8 via CLIProxy, then bypass CLIProxy and call OpenRouter directly.
+
+        CLIProxy is a thin proxy to OpenRouter — if it's down, calling OpenRouter directly
+        is equivalent. Requires OPENROUTER_API_KEY in environment for the direct fallback.
+        """
+        _or_key = os.environ.get("OPENROUTER_API_KEY", "")
+        _or_url = "https://openrouter.ai/api/v1"
+
+        attempts = [
+            (CLIPROXY_URL, CLIPROXY_KEY, "openrouter/claude-fable-5",  "Fable/CLIProxy"),
+            (CLIPROXY_URL, CLIPROXY_KEY, "openrouter/claude-opus-4.8", "Opus/CLIProxy"),
+        ]
+        if _or_key:
+            attempts += [
+                (_or_url, _or_key, "anthropic/claude-fable-5",  "Fable/OpenRouter-direct"),
+                (_or_url, _or_key, "anthropic/claude-opus-4.8", "Opus/OpenRouter-direct"),
+            ]
+
+        for url, key, model, label in attempts:
             try:
                 raw = self._call_openai_compat_api(
-                    CLIPROXY_URL, CLIPROXY_KEY, system, user,
+                    url, key, system, user,
                     model=model, max_tokens=max_tokens, timeout=timeout,
                 )
-                if label == "Opus":
-                    self.logger.warning("Editorial model: Fable unavailable — Opus fallback active")
+                if "direct" in label:
+                    self.logger.warning("Editorial model: CLIProxy bypassed — %s active", label)
+                elif "Opus" in label:
+                    self.logger.warning("Editorial model: Fable unavailable — %s active", label)
                 return raw
             except Exception as e:
                 self.logger.warning("Editorial model %s failed: %s", label, e)
-        self.logger.error("Editorial model: both Fable and Opus failed — no editorial pass possible")
+
+        self.logger.error("Editorial model: all attempts failed (CLIProxy + direct OpenRouter)")
         return None
 
     def _fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent):
