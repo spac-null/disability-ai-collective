@@ -114,6 +114,51 @@ court-ruling-no-effect:
     title: "Swan Care Solutions and the Health and Care Visa: A Reading List"
     category: urban design
 
+# Deaf arts / sign language cluster — Pixel Nova
+she-took-the-score-and-asked-it-a-different-question:
+  - url: /2026/06/22/he-painted-everyone-talking/
+    title: "He Painted Everyone Talking. He Could Hear None of It."
+    category: culture
+  - url: /2026/06/23/what-language-is-the-book-written-in/
+    title: "What Language Is the Book Written In?"
+    category: culture
+  - url: /2026/03/16/the-map-that-stops-at-the-door/
+    title: "The Map That Stops at the Door"
+    category: justice
+
+he-painted-everyone-talking:
+  - url: /2026/06/21/she-took-the-score-and-asked-it-a-different-question/
+    title: "She Took the Score and Asked It a Different Question"
+    category: culture
+  - url: /2026/06/23/what-language-is-the-book-written-in/
+    title: "What Language Is the Book Written In?"
+    category: culture
+  - url: /2026/03/16/the-map-that-stops-at-the-door/
+    title: "The Map That Stops at the Door"
+    category: justice
+
+what-language-is-the-book-written-in:
+  - url: /2026/06/21/she-took-the-score-and-asked-it-a-different-question/
+    title: "She Took the Score and Asked It a Different Question"
+    category: culture
+  - url: /2026/06/22/he-painted-everyone-talking/
+    title: "He Painted Everyone Talking. He Could Hear None of It."
+    category: culture
+  - url: /2026/03/16/the-map-that-stops-at-the-door/
+    title: "The Map That Stops at the Door"
+    category: justice
+
+the-map-that-stops-at-the-door:
+  - url: /2026/06/21/she-took-the-score-and-asked-it-a-different-question/
+    title: "She Took the Score and Asked It a Different Question"
+    category: culture
+  - url: /2026/06/22/he-painted-everyone-talking/
+    title: "He Painted Everyone Talking. He Could Hear None of It."
+    category: culture
+  - url: /2026/06/23/what-language-is-the-book-written-in/
+    title: "What Language Is the Book Written In?"
+    category: culture
+
 # General Zen Circuit cluster
 systems-fail-in-order-of-dependence:
   - url: /2026/04/02/the-pattern-that-waited/
