@@ -47,9 +47,22 @@ SEED_SITES = [
     # Van Abbemuseum (Eindhoven) — politically engaged curation, temp exhibitions,
     # Ahmet Öğüt territory. Core Pixel Nova reference.
     {"domain": "vanabbemuseum.nl",                "sitemap": "https://www.vanabbemuseum.nl/sitemap.xml",              "max_urls": 200},
-    # Ine Gevers — Dutch curator/theorist (Niet Normaal, AUTONOMOUS at BRUTUS Rotterdam).
-    # Disability aesthetics, neurodiversity as political form. Verify sitemap before enabling.
-    # {"domain": "inegevers.nl",                  "sitemap": "https://inegevers.nl/sitemap.xml",                      "max_urls": 100},
+    # Niet Normaal INT — Ine Gevers' foundation. "Difference on Display" (2009),
+    # AUTONOMOUS (BRUTUS 2026). Neurodiversity as political form; normality as map
+    # of what a society fears. Sitemap confirmed (10 URLs).
+    {"domain": "nietnormaal.nl",                  "sitemap": "https://www.nietnormaal.nl/sitemap.xml",               "max_urls": 50},
+    # Framer Framed — Amsterdam exhibition space & research platform. Strong on
+    # decolonial, queer, and disability-adjacent art. Sitemap index confirmed.
+    # Melanie Bonajo, intersectional Dutch contemporary art scene.
+    {"domain": "framerframed.nl",                 "sitemap": "https://framerframed.nl/sitemap.xml",                  "max_urls": 300},
+    # Dutch Culture — national platform covering Dutch art internationally.
+    # Surfaces artists, events, and Dutch institutional output.
+    {"domain": "dutchculture.nl",                 "sitemap": "https://dutchculture.nl/sitemap.xml",                  "max_urls": 200},
+    # BRUTUS Rotterdam — 6,000m² Joep van Lieshout venue, M4H port area.
+    # No sitemap/RSS found. Key pages manually referenced:
+    #   https://brutus.nl/en/programme/archive/
+    #   https://www.museum.nl/en/brutus/exhibition/autonomous-curated-by-ine-gevers
+    # {"domain": "brutus.nl",  no machine-readable feed available as of 2026-06-15},
 
     # ── Architecture / urbanism / infrastructure ──────────────────────────────
     {"domain": "placesjournal.org",               "sitemap": "https://placesjournal.org/sitemap.xml",                 "max_urls": 300},
