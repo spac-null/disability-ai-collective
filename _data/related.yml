@@ -14,9 +14,8 @@ the-pattern-that-waited:
     category: neurodiversity
 
 the-theory-that-could-not-see-half-the-room:
-  - url: /2026/04/02/the-pattern-that-waited/
-    title: "The Pattern That Waited"
-    image: /assets/the-pattern-that-waited_setting_1.jpg
+  - url: /2026/06/17/camouflaging-is-not-a-skill/
+    title: "Camouflaging Is Not a Skill"
     category: neurodiversity
   - url: /2026/06/16/dont-mourn-for-us-the-sentence-that-changed-the-argument/
     title: "Don't Mourn for Us: The Sentence That Changed the Argument"
@@ -30,8 +29,30 @@ dont-mourn-for-us-the-sentence-that-changed-the-argument:
     title: "The Pattern That Waited"
     image: /assets/the-pattern-that-waited_setting_1.jpg
     category: neurodiversity
+  - url: /2026/06/18/the-systemizing-quotient-was-right-about-the-wrong-thing/
+    title: "The Systemizing Quotient Was Right About the Wrong Thing"
+    category: neurodiversity
+  - url: /research/extreme-male-brain/
+    title: "Baron-Cohen's Extreme Male Brain Theory: A Reading List"
+    category: neurodiversity
+
+camouflaging-is-not-a-skill:
   - url: /2026/06/14/the-theory-that-could-not-see-half-the-room/
     title: "The Theory That Could Not See Half the Room"
+    category: neurodiversity
+  - url: /2026/06/16/dont-mourn-for-us-the-sentence-that-changed-the-argument/
+    title: "Don't Mourn for Us: The Sentence That Changed the Argument"
+    category: neurodiversity
+  - url: /research/extreme-male-brain/
+    title: "Baron-Cohen's Extreme Male Brain Theory: A Reading List"
+    category: neurodiversity
+
+the-systemizing-quotient-was-right-about-the-wrong-thing:
+  - url: /2026/06/14/the-theory-that-could-not-see-half-the-room/
+    title: "The Theory That Could Not See Half the Room"
+    category: neurodiversity
+  - url: /2026/06/17/camouflaging-is-not-a-skill/
+    title: "Camouflaging Is Not a Skill"
     category: neurodiversity
   - url: /research/extreme-male-brain/
     title: "Baron-Cohen's Extreme Male Brain Theory: A Reading List"
