@@ -43,6 +43,14 @@ SEED_SITES = [
     {"domain": "leavingevidence.wordpress.com",   "sitemap": "https://leavingevidence.wordpress.com/sitemap.xml",     "max_urls": 100},
     {"domain": "brownstargirl.org",               "sitemap": "https://brownstargirl.org/sitemap.xml",                 "max_urls": 100},
 
+    # ── Dutch art institutions & curatorial practice ──────────────────────────
+    # Van Abbemuseum (Eindhoven) — politically engaged curation, temp exhibitions,
+    # Ahmet Öğüt territory. Core Pixel Nova reference.
+    {"domain": "vanabbemuseum.nl",                "sitemap": "https://www.vanabbemuseum.nl/sitemap.xml",              "max_urls": 200},
+    # Ine Gevers — Dutch curator/theorist (Niet Normaal, AUTONOMOUS at BRUTUS Rotterdam).
+    # Disability aesthetics, neurodiversity as political form. Verify sitemap before enabling.
+    # {"domain": "inegevers.nl",                  "sitemap": "https://inegevers.nl/sitemap.xml",                      "max_urls": 100},
+
     # ── Architecture / urbanism / infrastructure ──────────────────────────────
     {"domain": "placesjournal.org",               "sitemap": "https://placesjournal.org/sitemap.xml",                 "max_urls": 300},
     {"domain": "failedarchitecture.com",          "sitemap": "https://failedarchitecture.com/sitemap.xml",            "max_urls": 200},
