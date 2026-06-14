@@ -39,7 +39,12 @@
     {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Opinion.xml",     "name": "NYT Opinion"},
     {"url": "https://www.theguardian.com/commentisfree/rss",                "name": "Guardian Opinion"},
     {"url": "https://theconversation.com/articles.atom",                    "name": "The Conversation"},
-    {"url": "https://aeon.co/feed.rss",                                     "name": "Aeon"}
+    {"url": "https://aeon.co/feed.rss",                                     "name": "Aeon"},
+
+    {"url": "https://castopod.hku.nl/@DeKunstVanOnderzoek/feed.xml",        "name": "HKU — De Kunst van Onderzoek (artistic research)"},
+    {"url": "https://anchor.fm/s/e7b91864/podcast/rss",                     "name": "Royal College of Art Podcast"},
+    {"url": "http://feeds.libsyn.com/120363/rss",                           "name": "Radio ArtEZ (art + critical theory)"},
+    {"url": "https://www.pzwart.nl/feed/",                                  "name": "Piet Zwart Institute"}
   ],
 
   "Pixel Nova": [
@@ -56,10 +61,15 @@
     {"url": "https://weareunlimited.org.uk/feed/",                          "name": "Unlimited Arts"},
     {"url": "https://muse.jhu.edu/journal/194/feed/",                       "name": "Sign Language Studies (journal)"},
     {"url": "https://www.jbe-platform.com/rss/journals/sll",                "name": "Sign Language & Linguistics (journal)"},
-    {"url": "https://paperswithcode.com/rss/latest?task=sign-language-recognition", "name": "Papers With Code — Sign Language Recognition"},
-    {"url": "https://rss.arxiv.org/rss/cs.CL",                             "name": "arXiv Computational Linguistics"},
-    {"url": "https://rss.arxiv.org/rss/cs.CV",                             "name": "arXiv Computer Vision"},
-    {"url": "https://www.gallaudet.edu/rss/news",                           "name": "Gallaudet University News"}
+    {"url": "https://www.gallaudet.edu/rss/news",                           "name": "Gallaudet University News"},
+
+    {"url": "https://limpingchicken.com/feed/",                             "name": "The Limping Chicken (UK Deaf culture)"},
+    {"url": "https://cripnews.substack.com/feed",                           "name": "Crip News — Kevin Gotkin (disability arts criticism)"},
+    {"url": "https://howlround.com/feed",                                   "name": "HowlRound Theatre Commons (Deaf & disability performance)"},
+    {"url": "https://sarahendren.com/feed.xml",                             "name": "Sara Hendren (design + disability + embodiment)"},
+    {"url": "https://disabilityvisibilityproject.com/feed/",                "name": "Disability Visibility Project — Alice Wong"},
+    {"url": "https://www.doof.nl/feed/",                                    "name": "doof.nl (Dutch Deaf community)"},
+    {"url": "https://deaffest.co.uk/feed/",                                 "name": "Deaffest (UK Deaf film & arts festival)"}
   ],
 
   "Siri Sage": [
