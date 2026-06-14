@@ -63,6 +63,12 @@ SEED_SITES = [
     #   https://brutus.nl/en/programme/archive/
     #   https://www.museum.nl/en/brutus/exhibition/autonomous-curated-by-ine-gevers
     # {"domain": "brutus.nl",  no machine-readable feed available as of 2026-06-15},
+    # AKINCI Gallery (Amsterdam) — Melanie Bonajo's gallery. Exhibitions, artists, projects.
+    # Adjacent Dutch contemporary scene, disability/queer/body/technology territory.
+    {"domain": "akinci.nl",                       "sitemap": "https://akinci.nl/sitemap.xml",                        "max_urls": 200},
+    # Museum van de Geest (Amsterdam) — museum of the mind. Art + mental health + neurodiversity.
+    # AUTONOMOUS adjacent; exhibitions, artworks, people, stories, news.
+    {"domain": "museumvandegeest.nl",             "sitemap": "https://museumvandegeest.nl/sitemap.xml",              "max_urls": 250},
 
     # ── Architecture / urbanism / infrastructure ──────────────────────────────
     {"domain": "placesjournal.org",               "sitemap": "https://placesjournal.org/sitemap.xml",                 "max_urls": 300},
