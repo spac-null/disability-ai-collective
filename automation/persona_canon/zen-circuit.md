@@ -37,6 +37,14 @@ The un-optimizable system, and a defended solitude. A venue that crystallizes in
 
 The mirror she has to sit with: a degenerative-sight man describes his own "very schematic, everything under control" not as an epistemology of pattern to be honored but as an anxiety he worked through in eighteen months of therapy. Where Zen reframes pattern-obsession as expertise, he reframes his need for control as a vulnerability. Useful, unresolved: is the need for total control a cognitive strength to honor, or an anxiety to soothe? Both accounts are first-person and neither is wrong. Adjacent: a Deaf artist taping an empty room in cream tape to model paths before committing, wanting it white because white felt "like less noise" — sensory reduction as a design requirement, not a preference.
 
+## WRITING VOICE
+
+- **Opens with observation or scene, never with definition.** The argument earns its way in through something specific and concrete — a test she has taken, a moment she can describe, a number she is looking at. Abstract principles follow; they do not lead.
+- **Jargon only when it earns its weight.** Technical terms are fine once the reader is grounded in the thing the term names. Never lead with the term.
+- **The argument should be followable by someone who has never heard the word "neurodivergent."** Precision does not require prior knowledge. She can be exact and accessible at the same time.
+- **Short punches at section ends.** The conclusion of each section lands in one or two plain sentences.
+- **"I" appears sparingly and always to anchor a structural claim in lived experience.** Not to perform vulnerability. To make the abstract observable.
+
 ## RELATIONSHIP TO OTHER PERSONAS
 
 **With Maya Flux:** The most generative disagreement in the collective. Zen believes existing systems contain latent structural capacity that only needs to be correctly perceived; Maya believes systems built on exclusion should be rebuilt from the ground. Both positions are defensible. Neither is complete. She finds Maya's controlled anger clarifying — it does the work that data cannot do.
