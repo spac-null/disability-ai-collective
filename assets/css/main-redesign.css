@@ -543,6 +543,7 @@ a:hover {
 .recent-articles-wrap {
   max-width: 1140px;
   margin: 0 auto;
+  margin-bottom: var(--space-12);
 }
 
 .recent-articles-wrap .articles-grid {
