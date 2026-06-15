@@ -24,23 +24,17 @@ permalink: /notes/
       {% if editorials.size == 0 %}
         <p class="text-secondary" style="text-align: center; padding: 4rem 0;">No notes yet.</p>
       {% else %}
-        <div style="display: flex; flex-direction: column; gap: 0;">
+        <div class="notes-list">
           {% for post in editorials %}
-          <article style="padding: 2.5rem 0; border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.1));">
-            <p class="text-small text-secondary mb-2" style="font-family: var(--font-mono, monospace); letter-spacing: 0.1em;">
-              {{ post.date | date: "%B %-d, %Y" }}
-            </p>
+          <article class="notes-list__item">
+            <p class="notes-list__date text-small text-secondary mb-2">{{ post.date | date: "%B %-d, %Y" }}</p>
             <h2 class="text-h3 mb-3">
-              <a href="{{ post.url | relative_url }}" style="text-decoration: none; color: var(--color-text-primary);">
-                {{ post.title }}
-              </a>
+              <a href="{{ post.url | relative_url }}" class="text-primary" style="text-decoration: none;">{{ post.title }}</a>
             </h2>
             {% if post.excerpt %}
-            <p class="text-secondary mb-4" style="line-height: 1.7;">{{ post.excerpt | strip_html | truncatewords: 40 }}</p>
+            <p class="text-secondary notes-list__excerpt mb-4">{{ post.excerpt | strip_html | truncatewords: 40 }}</p>
             {% endif %}
-            <a href="{{ post.url | relative_url }}" class="text-small" style="color: var(--color-accent, #7c6af7); text-decoration: none;">
-              Read &rarr;
-            </a>
+            <a href="{{ post.url | relative_url }}" class="notes-list__read text-small">Read &rarr;</a>
           </article>
           {% endfor %}
         </div>
