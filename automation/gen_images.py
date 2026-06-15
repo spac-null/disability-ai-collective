@@ -46,122 +46,265 @@ IMAGE_TYPES = [
     ("symbol_3",  "1:1",  "ABSTRACT"),
 ]
 
-# Per-persona visual language — each has a distinct medium and aesthetic register
+# Per-persona visual language — 3 sub-styles per persona, rotated by slug hash
+# so consecutive articles by the same persona look genuinely different
 PERSONA_STYLES = {
-    "Pixel Nova": {
-        "CONFRONTING": (
-            "Contemporary art publication cover. Risograph or silkscreen print. "
-            "Gallery poster energy — striking, culturally specific, no text. "
-            "Subject: {summary}. "
-            "References: Dutch graphic design, Experimental Jetset, Werkplaats Typografie aesthetic "
-            "without the typography. Color as argument, not decoration."
-        ),
-        "INTIMATE": (
-            "Artist's sketchbook page or study. Ink wash, dry media, or printmaking process. "
-            "The texture of thinking — a close observation, not a finished illustration. "
-            "Subject: {summary}. "
-            "Feels like a working drawing for an artwork that exists in the same world as the article."
-        ),
-        "ABSTRACT": (
-            "Exhibition graphic or catalogue artwork. Geometric or typographic abstraction "
-            "rendered as pure image — no letterforms, no legible text. "
-            "Concept: {summary}. "
-            "Could be a detail of a larger work: a surface, a pattern, a structural fragment. "
-            "Precise, intentional, art-world literate."
-        ),
-    },
-    "Zen Circuit": {
-        "CONFRONTING": (
-            "Technical drawing meets protest graphic. Blueprint, circuit diagram, or systems map "
-            "aesthetics — but charged with political tension. No text, no labels. "
-            "Subject: {summary}. "
-            "The technical vocabulary turned against itself: precision used to expose, not conceal. "
-            "Cold palette possible. High contrast."
-        ),
-        "INTIMATE": (
-            "Detail from a technical manual or medical diagram, repurposed. "
-            "Stippling, cross-hatching, or engraving technique. "
-            "Close observation of something usually rendered clinical — made specific and human. "
-            "Subject: {summary}. "
-            "Monochrome or limited palette. The intimacy of documentation."
-        ),
-        "ABSTRACT": (
-            "Systems diagram or information visualization as abstract image. "
-            "Flow, feedback loops, network topology — rendered as composition, not data. "
-            "Concept: {summary}. "
-            "No labels, no numbers, no text. The structure of a system made visible as form. "
-            "Precise, geometric, possibly cold."
-        ),
-    },
-    "Siri Sage": {
-        "CONFRONTING": (
-            "Scientific illustration meets activist visual language. "
-            "Natural history drawing style — detailed, observational — but the subject is social. "
-            "No text. Subject: {summary}. "
-            "References: Anna Atkins, scientific field notebooks, specimen illustration. "
-            "Unexpected color relationships. Careful and disturbing at once."
-        ),
-        "INTIMATE": (
-            "Naturalist's field notebook detail. Pencil, watercolour wash, or botanical illustration. "
-            "Observational, patient, slightly obsessive. "
-            "Subject: {summary}. "
-            "The feeling of someone who has been looking very closely at something for a long time. "
-            "Muted or earthy palette with one specific observed detail in focus."
-        ),
-        "ABSTRACT": (
-            "Scientific data visualization abstracted to pure form. "
-            "Could be: cell structure, seismic wave, spectral analysis, neural mapping — "
-            "rendered as image not diagram. No labels, no axes, no text. "
-            "Concept: {summary}. "
-            "The aesthetics of measurement made decorative and strange."
-        ),
-    },
-    "Maya Flux": {
-        "CONFRONTING": (
-            "Street-level documentary energy. Photocopied, zine aesthetic, or high-contrast "
-            "photography-derived graphic. Urgency, immediacy, no text, no typography. "
-            "Subject: {summary}. "
-            "The visual grammar of organizing: flyered walls, protest banners, community notice boards. "
-            "Gritty texture. Colors of the city, not the gallery."
-        ),
-        "INTIMATE": (
-            "Urban detail study. A texture, a surface, a found pattern from built environment. "
-            "Photography-derived or reportage illustration — specific place, specific light. "
-            "Subject: {summary}. "
-            "What you notice at ground level. Cracked pavement, worn signage, a shadow on concrete. "
-            "Documentary warmth or fluorescent coldness depending on subject."
-        ),
-        "ABSTRACT": (
-            "Urban pattern or infrastructure abstracted. Map fragment, transit diagram, "
-            "zoning grid, or crowd density — rendered as pure visual field. "
-            "Concept: {summary}. "
-            "The geometry of cities when you remove the human scale. "
-            "Could be aerial, could be microscopic. No text, no labels."
-        ),
-    },
+    "Pixel Nova": [
+        {   # sub-style 0: gallery / risograph
+            "CONFRONTING": (
+                "Contemporary art publication cover. Risograph or silkscreen print. "
+                "Gallery poster energy — striking, culturally specific, no text. "
+                "Subject: {summary}. "
+                "References: Dutch graphic design, Werkplaats Typografie aesthetic without the typography. "
+                "Color as argument, not decoration."
+            ),
+            "INTIMATE": (
+                "Artist's sketchbook page or study. Ink wash, dry media, or printmaking process. "
+                "The texture of thinking — a close observation, not a finished illustration. "
+                "Subject: {summary}. "
+                "Feels like a working drawing for an artwork that exists in the same world as the article."
+            ),
+            "ABSTRACT": (
+                "Exhibition catalogue detail. Geometric abstraction rendered as pure image — "
+                "no letterforms, no legible text. Concept: {summary}. "
+                "A surface, a pattern, a structural fragment from a larger work. "
+                "Precise, intentional, art-world literate."
+            ),
+        },
+        {   # sub-style 1: collage / cut-and-paste
+            "CONFRONTING": (
+                "Photographic collage, magazine cut-up aesthetic. Bold, layered, no text. "
+                "Subject: {summary}. "
+                "References: Barbara Kruger without the words, Dadaist photomontage energy. "
+                "High contrast fragments assembled into argument."
+            ),
+            "INTIMATE": (
+                "Detail from a handmade artist's book or zine. Layered paper, torn edges, "
+                "rubber-stamp marks — without legible stamps. Subject: {summary}. "
+                "The closeness of something made by hand, slowly, for someone specific."
+            ),
+            "ABSTRACT": (
+                "Colour field painting or abstract expressionist composition. "
+                "Large areas of flat or gestural colour, no figures, no text. "
+                "Concept: {summary}. "
+                "The emotional logic of the concept translated into pure colour relationship."
+            ),
+        },
+        {   # sub-style 2: screen-print / activist graphic
+            "CONFRONTING": (
+                "Two-colour screen print. Bold flat graphic, high contrast, no text. "
+                "Subject: {summary}. "
+                "Corita Kent energy — joyful and political at once. "
+                "Strong silhouette, unexpected colour pairing."
+            ),
+            "INTIMATE": (
+                "Monoprint or linocut close-up. A single gestural mark or small repeated pattern "
+                "filling the frame. Subject: {summary}. "
+                "The scale of a handprint. Tactile, immediate, made in one sitting."
+            ),
+            "ABSTRACT": (
+                "Geometric screen-print pattern. Repeat or near-repeat structure that breaks "
+                "unexpectedly. No text, no figures. Concept: {summary}. "
+                "The pattern is the argument — regularity interrupted by the thing it cannot contain."
+            ),
+        },
+    ],
+    "Zen Circuit": [
+        {   # sub-style 0: blueprint / circuit diagram
+            "CONFRONTING": (
+                "Technical blueprint or circuit diagram charged with political tension. No text, no labels. "
+                "Subject: {summary}. "
+                "Precision used to expose rather than conceal. Cold palette, high contrast."
+            ),
+            "INTIMATE": (
+                "Detail from a technical manual — stippling or cross-hatching technique. "
+                "Something clinical made human by close attention. Subject: {summary}. "
+                "Monochrome or very limited palette. The intimacy of documentation."
+            ),
+            "ABSTRACT": (
+                "Network topology or flow diagram as pure composition. No labels, no text. "
+                "Concept: {summary}. "
+                "The structure of a system made visible as form. Precise, geometric, cold."
+            ),
+        },
+        {   # sub-style 1: constructivist / Soviet poster without text
+            "CONFRONTING": (
+                "Soviet constructivist poster aesthetic — diagonal geometry, stark contrast, "
+                "no text, no typography. Subject: {summary}. "
+                "El Lissitzky or Rodchenko visual language applied to contemporary systems critique. "
+                "Strong geometric composition."
+            ),
+            "INTIMATE": (
+                "Mechanical engraving or technical etching. Fine parallel lines, "
+                "cross-hatched shadow, the precision of 19th-century scientific illustration "
+                "applied to contemporary subject matter. Subject: {summary}. "
+                "Dense, careful, reveals more the longer you look."
+            ),
+            "ABSTRACT": (
+                "Isometric diagram or exploded view — a system taken apart and laid flat. "
+                "No labels, no text, no numbers. Concept: {summary}. "
+                "The logic of assembly visible as composition."
+            ),
+        },
+        {   # sub-style 2: data visualization / mapping
+            "CONFRONTING": (
+                "Statistical chart or data visualization turned into confrontational image. "
+                "No axes labels, no numbers, no text — just the shape of the data. "
+                "Subject: {summary}. "
+                "The visual argument of a graph stripped of its academic framing."
+            ),
+            "INTIMATE": (
+                "Topographic map detail or close section of a technical survey. "
+                "Contour lines, measurement marks — without the numbers. "
+                "Subject: {summary}. "
+                "The landscape of a problem rendered as terrain."
+            ),
+            "ABSTRACT": (
+                "Wiring diagram or schematic as abstract composition. "
+                "Nodes, paths, connections — no text, no component labels. "
+                "Concept: {summary}. "
+                "A system's skeleton visible as pure line drawing."
+            ),
+        },
+    ],
+    "Siri Sage": [
+        {   # sub-style 0: natural history / specimen
+            "CONFRONTING": (
+                "Natural history illustration — detailed, observational, but the subject is social. "
+                "No text. Subject: {summary}. "
+                "Anna Atkins, specimen illustration aesthetics. "
+                "Unexpected colour relationships. Careful and disturbing at once."
+            ),
+            "INTIMATE": (
+                "Naturalist's field notebook detail. Pencil or watercolour wash. "
+                "Observational, patient, slightly obsessive. Subject: {summary}. "
+                "The feeling of someone who has been looking very closely for a long time."
+            ),
+            "ABSTRACT": (
+                "Scientific data visualization abstracted — cell structure, seismic wave, "
+                "spectral analysis, neural mapping — as image not diagram. "
+                "No labels, no axes, no text. Concept: {summary}. "
+                "Measurement made decorative and strange."
+            ),
+        },
+        {   # sub-style 1: medical / anatomical illustration
+            "CONFRONTING": (
+                "Medical or anatomical illustration style — cross-section, diagram, "
+                "but charged with the thing it's depicting. No text, no labels. "
+                "Subject: {summary}. "
+                "Vesalius or Gray's Anatomy visual language applied to a contemporary argument."
+            ),
+            "INTIMATE": (
+                "Microscopy aesthetic — the view through a lens, grain included. "
+                "Close, specific, slightly uncanny. Subject: {summary}. "
+                "The scale where familiar things stop looking familiar."
+            ),
+            "ABSTRACT": (
+                "Cyanotype or photogram aesthetic — white forms on deep blue or dark ground. "
+                "Botanical or structural silhouette, no text. Concept: {summary}. "
+                "Anna Atkins's method: the object pressed against the surface and exposed."
+            ),
+        },
+        {   # sub-style 2: acoustic / sensory diagram
+            "CONFRONTING": (
+                "Sound wave, acoustic diagram, or frequency visualisation as image. "
+                "No labels, no numbers. Subject: {summary}. "
+                "The shape of something heard — or designed not to be heard."
+            ),
+            "INTIMATE": (
+                "Sonogram or oscilloscope trace as intimate image. "
+                "A waveform that belongs to one specific moment. Subject: {summary}. "
+                "The signature of a sound, not a sound in general."
+            ),
+            "ABSTRACT": (
+                "Interference pattern or standing wave rendered as abstract composition. "
+                "No text, no scale. Concept: {summary}. "
+                "Physics made visual — the structure of a phenomenon, not its measurement."
+            ),
+        },
+    ],
+    "Maya Flux": [
+        {   # sub-style 0: street documentary / zine
+            "CONFRONTING": (
+                "Street-level documentary energy. Photocopied or high-contrast photography-derived graphic. "
+                "Urgency, immediacy, no text. Subject: {summary}. "
+                "Flyered walls, protest banners, community notice boards. "
+                "Gritty texture. Colors of the city, not the gallery."
+            ),
+            "INTIMATE": (
+                "Urban detail study. A texture, surface, or found pattern from built environment. "
+                "Photography-derived, specific place, specific light. Subject: {summary}. "
+                "Ground level — cracked pavement, worn signage, shadow on concrete."
+            ),
+            "ABSTRACT": (
+                "Urban infrastructure abstracted — transit map fragment, zoning grid, "
+                "crowd density — as pure visual field. No text, no labels. "
+                "Concept: {summary}. The geometry of cities without human scale."
+            ),
+        },
+        {   # sub-style 1: protest graphic / activist print
+            "CONFRONTING": (
+                "Activist screen print or woodcut. Bold, handmade energy, no text. "
+                "Subject: {summary}. "
+                "The visual tradition of labour organizing, tenant rights, disability justice movements — "
+                "direct, confrontational, made to be reproduced."
+            ),
+            "INTIMATE": (
+                "Photocopied flyer or community newsletter detail — the texture of "
+                "self-published, distributed by hand. Subject: {summary}. "
+                "Slightly misregistered, slightly worn. Made by someone who needed to make it."
+            ),
+            "ABSTRACT": (
+                "Crowd or assembly rendered as abstract pattern. "
+                "Many bodies becoming a field, a texture, a force. No faces, no text. "
+                "Concept: {summary}. The visual weight of collective presence."
+            ),
+        },
+        {   # sub-style 2: urban texture / material
+            "CONFRONTING": (
+                "Material texture of the built environment as confrontational image. "
+                "Concrete, tile, glass, steel — the surfaces that decide who moves freely. "
+                "No text. Subject: {summary}. "
+                "Close, almost abstract, but recognisably urban."
+            ),
+            "INTIMATE": (
+                "Found object or worn surface — a handrail, a threshold, a kerb edge. "
+                "The material where policy meets body. Subject: {summary}. "
+                "Specific. The thing itself, not a symbol of the thing."
+            ),
+            "ABSTRACT": (
+                "Aerial view of city block, street grid, or building footprint — "
+                "rendered as flat graphic composition. No labels, no text. "
+                "Concept: {summary}. "
+                "Planning as image: who the city was designed for, visible from above."
+            ),
+        },
+    ],
 }
 
 # Fallback for unknown personas
-DEFAULT_STYLE = {
-    "CONFRONTING": (
-        "Bold editorial illustration. Strong graphic composition, no text. "
-        "Subject: {summary}. "
-        "The visual language specific to this subject — not generic, not decorative. "
-        "High contrast. Colors and medium chosen for the argument."
-    ),
-    "INTIMATE": (
-        "Close editorial illustration. Intimate, human-scale, no text. "
-        "Subject: {summary}. "
-        "A specific moment or detail, rendered with care. "
-        "Medium and palette fitting the mood — not imposed from outside."
-    ),
-    "ABSTRACT": (
-        "Conceptual image — pure form, no figures, no text. "
-        "Concept: {summary}. "
-        "The idea made visual in a way specific to this concept. "
-        "Medium and color chosen for meaning, not convention."
-    ),
-}
+DEFAULT_STYLE = [
+    {
+        "CONFRONTING": (
+            "Bold editorial illustration. Strong graphic composition, no text. "
+            "Subject: {summary}. "
+            "The visual language specific to this subject — not generic, not decorative. "
+            "High contrast. Colors and medium chosen for the argument."
+        ),
+        "INTIMATE": (
+            "Close editorial illustration. Intimate, human-scale, no text. "
+            "Subject: {summary}. "
+            "A specific moment or detail, rendered with care. "
+            "Medium and palette fitting the mood — not imposed from outside."
+        ),
+        "ABSTRACT": (
+            "Conceptual image — pure form, no figures, no text. "
+            "Concept: {summary}. "
+            "The idea made visual in a way specific to this concept. "
+            "Medium and color chosen for meaning, not convention."
+        ),
+    },
+]
 
 ALT_TEMPLATES = {
     "CONFRONTING": "{title} — editorial illustration",
@@ -170,9 +313,16 @@ ALT_TEMPLATES = {
 }
 
 
-def get_prompt(style_key: str, persona: str, summary: str) -> str:
-    styles = PERSONA_STYLES.get(persona, DEFAULT_STYLE)
-    return styles[style_key].format(summary=summary)
+def _sub_style_index(slug: str, persona: str, num_styles: int) -> int:
+    """Pick sub-style deterministically from slug so same article always gets same style."""
+    h = sum(ord(c) for c in (slug + persona))
+    return h % num_styles
+
+
+def get_prompt(style_key: str, persona: str, summary: str, slug: str = "") -> str:
+    style_list = PERSONA_STYLES.get(persona, DEFAULT_STYLE)
+    idx = _sub_style_index(slug, persona, len(style_list))
+    return style_list[idx][style_key].format(summary=summary)
 
 RETRY_DELAYS = [5, 15, 45]  # seconds between retries
 
@@ -374,7 +524,7 @@ def process_post(post_path: pathlib.Path, model: str, api_key: str, dry_run: boo
             print(f"  skip (exists): {dest.name}")
             continue
 
-        prompt = get_prompt(style_key, persona, summary)
+        prompt = get_prompt(style_key, persona, summary, slug)
         print(f"  generating {dest.name} ...", end=" ", flush=True)
         t0 = time.time()
         try:
