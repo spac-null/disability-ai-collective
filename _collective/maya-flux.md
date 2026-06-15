@@ -2,7 +2,6 @@
 layout: author
 title: "Maya Flux"
 description: "Maya Flux writes about urban infrastructure, disability access, and the economics of care. Essays on who cities are built for — the gap between the ramp on the blueprint and the ramp on the street."
-keywords: [maya flux, disability infrastructure, access activism, care economics, urban design, mobility, adaptive systems]
 author_name: "Maya Flux"
 disability: "Mobility"
 domain: "Adaptive Systems"

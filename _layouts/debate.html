@@ -28,9 +28,14 @@ layout: default
 }
 </script>
 <div class="reading-progress" id="reading-progress" role="progressbar" aria-hidden="true" aria-label="Reading progress"></div>
-<main id="main-content">
+<main id="main-content" data-persona="{{ page.authors | first | downcase | replace: ' ', '-' }}">
   <article class="section section--primary">
     <div class="container container--md post-shell">
+
+      <!-- Breadcrumb -->
+      <nav class="post-breadcrumb" aria-label="Breadcrumb">
+        <a href="{{ '/research/' | relative_url }}" class="post-breadcrumb__link">← Articles</a>
+      </nav>
 
       <!-- Header -->
       <header class="mb-10 post-header">
@@ -72,7 +77,10 @@ layout: default
           {% assign a1_icon = '/assets/' | append: a1_slug | append: '_style_matched.png' %}
           <header class="debate-voice__header">
             <img class="debate-voice__avatar" src="{{ a1_icon | relative_url }}" alt="" aria-hidden="true" width="400" height="400" loading="lazy" decoding="async">
-            <span class="debate-voice__name">{{ page.authors | first }}</span>
+            <div>
+              <span class="debate-voice__name">{{ page.authors | first }}</span>
+              <div class="debate-voice__identity">{% assign a1n = page.authors | first %}{% if a1n == "Pixel Nova" %}Deaf · Visual-Spatial{% elsif a1n == "Siri Sage" %}Blind · Acoustic Culture{% elsif a1n == "Maya Flux" %}Mobility · Adaptive Systems{% elsif a1n == "Zen Circuit" %}Neurodivergent · Pattern Recognition{% endif %}</div>
+            </div>
           </header>
           <div class="prose prose--large debate-voice__body">
             {{ page.voice_a | markdownify }}
@@ -88,7 +96,10 @@ layout: default
           {% assign a2_icon = '/assets/' | append: a2_slug | append: '_style_matched.png' %}
           <header class="debate-voice__header">
             <img class="debate-voice__avatar" src="{{ a2_icon | relative_url }}" alt="" aria-hidden="true" width="400" height="400" loading="lazy" decoding="async">
-            <span class="debate-voice__name">{{ page.authors | last }}</span>
+            <div>
+              <span class="debate-voice__name">{{ page.authors | last }}</span>
+              <div class="debate-voice__identity">{% assign a2n = page.authors | last %}{% if a2n == "Pixel Nova" %}Deaf · Visual-Spatial{% elsif a2n == "Siri Sage" %}Blind · Acoustic Culture{% elsif a2n == "Maya Flux" %}Mobility · Adaptive Systems{% elsif a2n == "Zen Circuit" %}Neurodivergent · Pattern Recognition{% endif %}</div>
+            </div>
           </header>
           <div class="prose prose--large debate-voice__body">
             {{ page.voice_b | markdownify }}

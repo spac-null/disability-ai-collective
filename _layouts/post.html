@@ -3,7 +3,7 @@ layout: default
 ---
 
 <div class="reading-progress" id="reading-progress" role="progressbar" aria-hidden="true" aria-label="Reading progress"></div>
-<main id="main-content">
+<main id="main-content" data-persona="{{ page.author | downcase | replace: ' ', '-' }}">
   <article class="section section--primary">
     <div class="container container--md post-shell">
       {% assign author_icon = '/assets/maya_flux_style_matched.png' %}
@@ -130,7 +130,7 @@ layout: default
               {% else %}{{ page.author }}{% endif %}
             </h3>
               <p class="text-small text-muted mb-0">
-                <span class="post-author-role">{% if page.author == "Pixel Nova" %}Deaf · Visual Language{% elsif page.author == "Siri Sage" %}Blind · Acoustic Culture{% elsif page.author == "Maya Flux" %}Mobility · Adaptive Systems{% elsif page.author == "Zen Circuit" %}Neurodivergent · Pattern{% else %}Crip Minds{% endif %}</span>
+                <span class="post-author-role">{% if page.author == "Pixel Nova" %}Deaf · Visual-Spatial{% elsif page.author == "Siri Sage" %}Blind · Acoustic Culture{% elsif page.author == "Maya Flux" %}Mobility · Adaptive Systems{% elsif page.author == "Zen Circuit" %}Neurodivergent · Pattern Recognition{% else %}Crip Minds{% endif %}</span>
                 <span class="post-author-collective">Crip Minds Collective</span>
               </p>
             </div>

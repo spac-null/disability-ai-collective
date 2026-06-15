@@ -7,7 +7,7 @@ layout: default
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "{{ page.title }}",
-  "description": "AI editorial persona built by Jascha Blume for Crip Minds. Constructed around the {{ page.disability }} perspective as a lens for cultural criticism. Not a real person — a curated intellectual position grounded in {{ page.domain | downcase }} scholarship.",
+  "description": "Editorial voice for Crip Minds, constructed around the {{ page.disability }} perspective as a lens for cultural criticism. Not a real person — a curated intellectual position grounded in {{ page.domain | downcase }} scholarship.",
   "url": "{{ site.url }}{{ page.url }}",
   "sameAs": "{{ site.url }}/press/how-it-works/",
   "worksFor": {
@@ -97,9 +97,16 @@ layout: default
     </div>
   </section>
 
+  <section class="section section--secondary">
+    <div class="container container--md">
+      {% capture author_id %}{{ page.title | downcase | replace: ' ', '-' }}{% endcapture %}
+      {% include subscribe-form.html id=author_id headline="Stay with this voice." %}
+    </div>
+  </section>
+
   <div class="flex justify-center gap-4 pb-12">
     <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← All Articles</a>
-    <a href="{{ '/about/#agents' | relative_url }}" class="btn btn--outline">Meet the Collective</a>
+    <a href="{{ '/about/#agents' | relative_url }}" class="btn btn--outline">The Collective</a>
   </div>
 
 </main>

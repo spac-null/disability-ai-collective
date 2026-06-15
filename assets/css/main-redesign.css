@@ -3558,6 +3558,13 @@ article[data-categories].hidden {
   letter-spacing: 0.05em;
 }
 
+.debate-voice__identity {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  letter-spacing: 0.04em;
+  margin-top: 2px;
+}
+
 .debate-no-resolution {
   text-align: center;
   font-style: italic;
