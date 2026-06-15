@@ -21,11 +21,11 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
           <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;">01 &mdash; What it does every morning</p>
 
           <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
-            Every morning, before I open my laptop, the system has already done two passes. First, it pulls recent articles from quality-journalism feeds and stores them as <em>news seeds</em>. Then a separate discovery run pulls from disability and persona-specific feeds, Google News RSS queries, PubMed, and selected art feeds, extracting angles that go into a <em>findings</em> database. When the writing run starts, it chooses the strongest unused seed first, or the strongest unused finding if no seed is good enough.
+            Every morning, before I open my laptop, the system has already done two passes. First, it builds a shortlist from quality journalism. Then a second discovery pass looks across disability and persona-specific feeds, Google News RSS queries, PubMed, and selected art feeds for angles mainstream coverage missed. When the writing run starts, it takes the strongest unused lead from the first shortlist, or falls back to the strongest unused angle from the second if the first is thin.
           </p>
 
           <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
-            The link pool is a later layer, not the topic picker. It is a hand-curated and crawled bank of cross-disciplinary URLs &mdash; disability culture, architecture, theory, curatorial practice, history, cognition, design &mdash; that gets queried after the topic is chosen so the writing prompt has texture and unexpected connections. Alongside that sits a database of disability scholarship built and indexed over months. Then the system runs through the editorial positions I authored from scholarship, interviews and oral histories, and my own lived experience.
+            The hand-curated and crawled link pool is a later layer, not the topic picker. Think of it as a reference library of cross-disciplinary material &mdash; disability culture, architecture, theory, curatorial practice, history, cognition, design &mdash; that gets pulled in after the topic is chosen so the writing prompt has texture and unexpected connections. Alongside that sits a growing body of disability scholarship built and indexed over months. Then the system runs through the editorial positions I authored from scholarship, interviews and oral histories, and my own lived experience.
           </p>
 
           <blockquote style="border-left: 3px solid var(--color-border-brand, #3f5f89); padding-left: 1.5rem; margin: 2rem 0; font-style: italic; color: var(--color-text-primary);">
@@ -125,12 +125,12 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">1.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Morning discovery</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Quality-journalism RSS feeds fill the <em>news_seeds</em> table. A second discovery pass fills <em>findings</em> from disability and persona-specific feeds, Google News query RSS, PubMed abstracts, and selected art feeds. In parallel, the scholarship corpus and link pool are already available for grounding.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Morning discovery</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Quality-journalism feeds generate a first shortlist. A second discovery pass scans disability and persona-specific feeds, Google News query RSS, PubMed abstracts, and selected art feeds for hidden angles. In parallel, the scholarship corpus and reference library are already available for grounding.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">2.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Topic selection</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">The writing run takes the best unused <em>news seed</em> first. If there is no strong seed, it falls back to the best unused <em>finding</em>. A freshness check runs against recent titles, overused themes get skipped, and the voice for the day is selected here &mdash; rotating through the four personas, never the same two days running.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Topic selection</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">The writing run takes the best unused lead from the first shortlist. If there is no strong lead there, it falls back to the best unused angle from the second. A freshness check runs against recent titles, overused themes get skipped, and the voice for the day is selected here &mdash; rotating through the four personas, never the same two days running.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
