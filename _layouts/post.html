@@ -222,7 +222,7 @@ layout: default
           </div>
           <p class="text-center mt-4 text-small">
             {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
-            <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" style="color: var(--color-text-primary);">More by {{ page.author }} →</a>
+            <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" class="text-primary">More by {{ page.author }} →</a>
           </p>
         </section>
         {% else %}
@@ -273,7 +273,7 @@ layout: default
           </div>
         <p class="text-center mt-4 text-small">
           {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
-          <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" style="color: var(--color-text-primary);">More by {{ page.author }} →</a>
+          <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" class="text-primary">More by {{ page.author }} →</a>
         </p>
         </section>
         {% endif %}

@@ -3588,6 +3588,12 @@ article[data-categories].hidden {
   }
 }
 
+/* ── Page-specific section variants ─────────────────────────────────────── */
+.section--jascha {
+  padding-top: 60px;
+  padding-bottom: 100px;
+}
+
 /* ── Notes list ──────────────────────────────────────────────────────────── */
 .notes-list {
   display: flex;
