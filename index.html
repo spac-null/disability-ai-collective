@@ -34,14 +34,8 @@ description: "Editorial arts platform publishing disability-led perspectives on 
   </section>
 
   <!-- Latest Research -->
-  <section id="articles" class="section section--secondary">
+  <section id="articles" class="section section--secondary" style="padding-top: var(--space-12)">
     <div class="container">
-      <div class="text-center mb-16">
-        <h2 class="text-h2 mb-4">
-          From the collective
-        </h2>
-      </div>
-
     {% if site.posts.size > 0 %}
 
       {% assign featured = site.posts.first %}
@@ -73,7 +67,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
 
       <div class="recent-articles-wrap">
         <div class="grid grid--3 articles-grid">
-          {% for post in site.posts offset:1 limit:5 %}
+          {% for post in site.posts offset:1 limit:3 %}
           <article class="card card--elevated">
             {% assign home_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% if post.author == "Siri Sage" %}
@@ -131,7 +125,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
         </div>
       </div>
       
-      <div class="text-center mt-16">
+      <div class="text-center mt-10">
         <a href="{{ '/research/' | relative_url }}" class="btn btn--secondary">
           All essays &rarr;
         </a>

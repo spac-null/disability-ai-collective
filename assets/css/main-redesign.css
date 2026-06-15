@@ -1287,9 +1287,8 @@ a:hover {
   border: 1px solid var(--color-border-secondary, rgba(255,255,255,0.08));
   text-decoration: none;
   color: inherit;
-  margin-bottom: var(--space-16);
+  margin-bottom: var(--space-10);
   transition: box-shadow 0.2s ease, border-color 0.2s ease;
-  min-height: 340px;
 }
 
 .post-featured:hover {
@@ -1315,11 +1314,11 @@ a:hover {
 }
 
 .post-featured__body {
-  padding: var(--space-12) var(--space-16);
+  padding: var(--space-10) var(--space-12);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: var(--space-6);
+  gap: var(--space-4);
 }
 
 .post-featured__eyebrow {
