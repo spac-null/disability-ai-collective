@@ -26,6 +26,10 @@ Here is what the study cannot capture: I can listen to a three-hour podcast whil
 
 Murray Schafer was a composer and sound theorist. He spent decades mapping what he called soundscapes. These were the acoustic signature of a place. Bells, traffic, wind, footsteps, voices. He was trying to document sound environments before they disappeared. His work revealed something important: sighted people do not notice most of what they hear.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/gloria-mark-says-people-spend-three-minutes-per-task_moment_2.jpg" alt="Gloria Mark Says People Spend Three Minutes Per Task — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 I do not have that filter. I arrive in a room through its acoustics. A tile floor sounds different from carpet. A high ceiling holds reverberation. An empty room has a specific openness. I know the size of a space before I know where the furniture is. That is not a compensatory skill. It is just how I move through the world.
 
 What if it is not extra. What if the sighted figure is just partial.
@@ -37,6 +41,10 @@ I am not arguing that people are not distracted. I am saying the figure has mist
 ---
 
 The question MIT Tech Review asked was whether AI chatbots are making us lose control of our brains. The fear is that outsourcing memory to machines will atrophy our ability to think. There is an underlying fear: that thinking happens in a specific way—visual, linguistic, sequential. You read. You remember. You retrieve.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/gloria-mark-says-people-spend-three-minutes-per-task_symbol_3.jpg" alt="Gloria Mark Says People Spend Three Minutes Per Task — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 But blind people have been navigating information differently for as long as there has been information to navigate. Screenreaders already compress, summarise, skip. I do not read every word on a webpage. I listen to headers, jump between sections, scan by landmark. If that counts as losing control, I lost it decades ago. It did not feel like loss. It felt like access.
 

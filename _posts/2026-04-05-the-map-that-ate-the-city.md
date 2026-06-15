@@ -25,6 +25,10 @@ The new Metrolinx map resolves it by pretending it doesn't exist.
 
 ---
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-map-that-ate-the-city_moment_2.jpg" alt="The Map That Ate the City — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 Here is what I mean. In August 2018, I stood in Union Station, Toronto's main train hub, watching a man with a rolling suitcase try to find the UP Express to Pearson Airport. Signage everywhere. Arrows, icons, platform numbers. He walked past the correct corridor three times. I watched because I recognised the pattern. He was reading the signs. The signs were answering a question he wasn't asking.
 
 He wanted to know where he was. The signs only told him where to go. Directional signage answers "go here." Contextual signage answers "you are here." They are not the same thing.
@@ -36,6 +40,10 @@ The Metrolinx map guides. It does not orient. The city vanishes so the network c
 Sure, Beck's map is a masterpiece. Genuinely. Ninety years of copying prove it works for the thing it does. The problem is not Beck. The problem is that his solution became the default answer to a question nobody bothered to keep asking: what does a person need to know in order to move through a city they don't already understand?
 
 A transit agency that removes the streets from its map has made a decision about who its riders are. They are commuters. They have origins and destinations. They do not wander. They do not get lost in a way that requires knowing what is above them. They are not new. They are not confused. They are not standing in a station watching chairs empty and trying to figure out why.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-map-that-ate-the-city_symbol_3.jpg" alt="The Map That Ate the City — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 William Stokoe proved in 1960 that signed languages are complete linguistic systems, not broken mime. Sixty-five years later, most hearing linguists accept this. But the structure of most public information still assumes that meaning travels in one direction — from the system to the user — and that the user's job is to decode, not to orient. Transit maps, emergency signage, hospital wayfinding: the architecture of all of them says your knowledge of where you are is irrelevant. Trust the diagram.
 
