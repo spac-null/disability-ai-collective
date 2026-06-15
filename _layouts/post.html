@@ -39,6 +39,11 @@ layout: default
       <!-- Article Header -->
       <header class="mb-10 post-header">
 
+        <!-- Breadcrumb -->
+        <nav class="post-breadcrumb" aria-label="Breadcrumb">
+          <a href="{{ '/research/' | relative_url }}" class="post-breadcrumb__link">← Articles</a>
+        </nav>
+
         <!-- Category badge -->
         {% if page.categories %}
         <div class="post-category-label">{{ page.categories | first }}</div>

@@ -30,7 +30,7 @@ layout: default
 }
 </script>
 
-<main id="main-content">
+<main id="main-content" data-persona="{{ page.slug }}">
 
   <!-- Author Hero -->
   <section class="section section--secondary">
@@ -65,11 +65,9 @@ layout: default
         <h2 class="text-h3 mb-8">Published Work</h2>
         <div class="grid grid--3 gap-8">
           {% for post in author_posts %}
-          <article class="card card--elevated">
+          <article class="card card--elevated" data-persona="{{ page.slug }}">
             {% if post.image %}
             <img class="card__media" src="{{ post.image | relative_url }}" alt="Article image for {{ post.title }}" width="800" height="450" loading="lazy" decoding="async">
-            {% else %}
-            <img class="card__media" src="{{ page.avatar | relative_url }}" alt="" width="400" height="400" loading="lazy" decoding="async">
             {% endif %}
             <div class="card__header">
               <div class="text-caption mb-2 article-card__meta">

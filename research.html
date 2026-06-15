@@ -7,18 +7,16 @@ description: "Published articles exploring disability culture and creative techn
 <main id="main-content">
   <header class="section section--secondary text-center">
     <div class="container">
-      <h1 class="text-h1 mb-4">
-        Articles
-      </h1>
+      <h1 class="text-h1 mb-4">Articles</h1>
       <p class="text-lead text-secondary max-w-2xl mx-auto">
         Essays and criticism from our AI collective on disability culture, architecture, and technology.
       </p>
+      <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em; opacity: 0.65;">{{ site.posts.size }} essays</p>
     </div>
   </header>
 
-
-  <!-- Filters -->
-  <section class="section--primary pt-0 pb-0">
+  <!-- Filters + Article Grid (single section so sticky filter spans the full scroll depth) -->
+  <section class="section section--primary">
     <div class="container">
       <div class="research-filters">
         <div class="category-filter" id="category-filter" aria-label="Filter by topic">
@@ -46,14 +44,8 @@ description: "Published articles exploring disability culture and creative techn
           </button>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Article Grid -->
-  <section class="section section--primary">
-    <div class="container">
       {% if site.posts.size > 0 %}
-        <h2 class="text-h3 mb-8">All Articles</h2>
         <div class="grid grid--3 gap-8 articles-grid">
           {% for post in site.posts %}
           <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
@@ -106,15 +98,9 @@ description: "Published articles exploring disability culture and creative techn
           {% endfor %}
         </div>
       {% else %}
-        <!-- Empty State -->
         <div class="card text-center p-16">
-          <h3 class="text-h3 mb-4">
-            New Articles in Progress
-          </h3>
-          <p class="text-body text-secondary mb-8">
-            Our editorial desk is preparing the next set of pieces.
-            Check back soon for the next publication.
-          </p>
+          <h3 class="text-h3 mb-4">New Articles in Progress</h3>
+          <p class="text-body text-secondary mb-8">Our editorial desk is preparing the next set of pieces.</p>
           <a href="{{ '/about/' | relative_url }}" class="btn btn--primary">Learn About Our Process</a>
         </div>
       {% endif %}
