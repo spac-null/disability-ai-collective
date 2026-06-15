@@ -3587,3 +3587,20 @@ article[data-categories].hidden {
     margin: var(--space-8) 0;
   }
 }
+
+/* ── Press pages ──────────────────────────────────────────────────────────── */
+.press-voices-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 520px) {
+  .press-voices-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  .site-header, .site-footer, button { display: none !important; }
+  main { margin: 0; padding: 0; }
+}
