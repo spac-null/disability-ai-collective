@@ -1276,6 +1276,115 @@ a:hover {
   transform: scale(1.04);
 }
 
+/* ─── Featured article card ───────────────────────────────────────────────── */
+.post-featured {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--color-bg-card, rgba(255,255,255,0.04));
+  border: 1px solid var(--color-border-secondary, rgba(255,255,255,0.08));
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: var(--space-16);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  min-height: 340px;
+}
+
+.post-featured:hover {
+  box-shadow: var(--shadow-lg, 0 8px 32px rgba(0,0,0,0.35));
+  border-color: var(--color-border-brand, rgba(124,106,247,0.4));
+}
+
+.post-featured__image {
+  overflow: hidden;
+  background: var(--color-bg-secondary, rgba(255,255,255,0.03));
+}
+
+.post-featured__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.45s ease;
+}
+
+.post-featured:hover .post-featured__image img {
+  transform: scale(1.04);
+}
+
+.post-featured__body {
+  padding: var(--space-12) var(--space-16);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.post-featured__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.post-featured__eyebrow .article-card__author-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.post-featured__title {
+  font-size: clamp(1.45rem, 2.4vw, 2rem);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.post-featured__excerpt {
+  font-family: var(--font-family-serif);
+  font-size: clamp(1rem, 1.2vw, 1.1rem);
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.post-featured__cta {
+  display: inline-block;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-brand);
+  letter-spacing: 0.02em;
+  margin-top: var(--space-2);
+}
+
+@media (max-width: 768px) {
+  .post-featured {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .post-featured__image {
+    aspect-ratio: 16 / 7;
+  }
+
+  .post-featured__body {
+    padding: var(--space-8) var(--space-10);
+    gap: var(--space-4);
+  }
+
+  .post-featured__title {
+    font-size: 1.4rem;
+  }
+}
+
 @media (max-width: 640px) {
   .hero .visual-mosaic {
     margin-top: var(--space-8);

@@ -22,15 +22,6 @@ description: "Editorial arts platform publishing disability-led perspectives on 
         Built by <a href="/jascha/" style="color: inherit; text-decoration: underline;">Jascha Blume</a>, Deaf artist and editor, Amsterdam&nbsp;/&nbsp;Bologna.
       </p>
 
-      {% assign latest = site.posts.first %}
-      {% if latest %}
-      <a href="{{ latest.url | relative_url }}" class="hero-latest">
-        <p class="hero-latest__eyebrow">Latest essay by <span>{{ latest.author }}</span></p>
-        <p class="hero-latest__quote">{{ latest.excerpt | strip_html | split: ". " | first }}.</p>
-        <p class="hero-latest__title">— {{ latest.title }} &rarr;</p>
-      </a>
-      {% endif %}
-      
       <div class="hero-actions">
         <a href="{{ '/research/' | relative_url }}" class="btn btn--primary">
           Read Articles
@@ -47,14 +38,39 @@ description: "Editorial arts platform publishing disability-led perspectives on 
     <div class="container">
       <div class="text-center mb-16">
         <h2 class="text-h2 mb-4">
-          Latest Articles
+          From the collective
         </h2>
-        <p class="text-lead text-secondary">
-          Essays and criticism at the intersection of disability culture, architecture, and technology.
-        </p>
       </div>
 
     {% if site.posts.size > 0 %}
+
+      {% assign featured = site.posts.first %}
+      {% if featured %}
+      {% assign featured_icon = '/assets/maya_flux_style_matched.png' %}
+      {% if featured.author == "Siri Sage" %}{% assign featured_icon = '/assets/siri_sage_style_matched.png' %}
+      {% elsif featured.author == "Pixel Nova" %}{% assign featured_icon = '/assets/pixel_nova_style_matched.png' %}
+      {% elsif featured.author == "Zen Circuit" %}{% assign featured_icon = '/assets/zen_circuit_style_matched.png' %}
+      {% endif %}
+      <a href="{{ featured.url | relative_url }}" class="post-featured" aria-label="Featured: {{ featured.title }}">
+        {% if featured.image %}
+        <div class="post-featured__image">
+          <img src="{{ featured.image | relative_url }}" alt="{{ featured.image_alt | default: featured.title }}" loading="eager" decoding="async">
+        </div>
+        {% endif %}
+        <div class="post-featured__body">
+          <p class="post-featured__eyebrow">
+            <img class="article-card__author-icon" src="{{ featured_icon | relative_url }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+            <span>{{ featured.author }}</span>
+            <span class="article-card__sep" aria-hidden="true">|</span>
+            <time datetime="{{ featured.date | date_to_xmlschema }}">{{ featured.date | date: "%B %d, %Y" }}</time>
+          </p>
+          <h2 class="post-featured__title">{{ featured.title }}</h2>
+          <p class="post-featured__excerpt">{{ featured.excerpt | strip_html | truncatewords: 40 }}</p>
+          <span class="post-featured__cta">Read essay &rarr;</span>
+        </div>
+      </a>
+      {% endif %}
+
       <div class="recent-articles-wrap">
         <div class="grid grid--3 articles-grid">
           {% for post in site.posts offset:1 limit:5 %}
@@ -117,7 +133,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
       
       <div class="text-center mt-16">
         <a href="{{ '/research/' | relative_url }}" class="btn btn--secondary">
-          Browse All Articles
+          All essays &rarr;
         </a>
       </div>
     {% else %}
@@ -294,7 +310,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
     if (!a) return;
     var href = a.getAttribute('href') || '';
     var label = null;
-    if (a.classList.contains('hero-latest')) label = 'cta-latest-article';
+    if (a.classList.contains('post-featured')) label = 'cta-featured-article';
     else if (href.includes('/research/') && a.classList.contains('btn--primary')) label = 'cta-read-articles';
     else if (href.includes('/about/')) label = 'cta-about';
     else if (href.includes('/research/') && a.classList.contains('btn--secondary')) label = 'cta-browse-all';
