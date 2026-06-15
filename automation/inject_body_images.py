@@ -57,10 +57,11 @@ def target_paragraph(paragraphs: list, pct: float) -> int:
 
 def build_figure(slug: str, suffix: str, alt: str) -> str:
     fname = f"{slug}_{suffix}.jpg"
+    caption = f'\n<figcaption>{alt}</figcaption>' if alt else ''
     return (
         f'<figure class="article-figure">\n'
         f'<img src="{{{{ site.baseurl }}}}/assets/{fname}" alt="{alt}" '
-        f'width="800" height="450" loading="lazy" decoding="async">\n'
+        f'width="800" height="450" loading="lazy" decoding="async">{caption}\n'
         f'</figure>'
     )
 
