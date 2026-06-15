@@ -11,10 +11,11 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
 
   <section class="section section--secondary" style="padding-top: var(--space-12); padding-bottom: var(--space-8);">
     <div class="container">
-      <div class="home-carousel" data-home-carousel>
-        <div class="home-carousel__viewport">
-          <div class="home-carousel__track">
-            <section class="home-carousel__slide home-carousel__slide--intro">
+      <div class="home-carousel" data-home-carousel tabindex="0">
+        <div class="home-carousel__frame">
+          <div class="home-carousel__viewport">
+            <div class="home-carousel__track">
+            <section class="home-carousel__slide home-carousel__slide--intro" data-carousel-label="What this is">
               <div class="home-carousel__intro-inner">
                 <p class="text-small text-secondary mb-4" style="letter-spacing: 0.15em; text-transform: uppercase;">What this is</p>
                 <h1 class="text-h2 mb-6">Crip Minds is a daily editorial AI publication by Deaf artist Jascha Blume.</h1>
@@ -40,7 +41,7 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
             {% elsif featured.author == "Pixel Nova" %}{% assign featured_icon = '/assets/pixel_nova_style_matched.png' %}
             {% elsif featured.author == "Zen Circuit" %}{% assign featured_icon = '/assets/zen_circuit_style_matched.png' %}
             {% endif %}
-            <a href="{{ featured.url | relative_url }}" class="home-carousel__slide post-featured" aria-label="Featured: {{ featured.title }}">
+            <a href="{{ featured.url | relative_url }}" class="home-carousel__slide post-featured" aria-label="Featured: {{ featured.title }}" data-carousel-label="Featured essay">
               {% if featured.image %}
               <div class="post-featured__image">
                 <img src="{{ featured.image | relative_url }}" alt="{{ featured.image_alt | default: featured.title }}" loading="eager" decoding="async">
@@ -59,11 +60,12 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
               </div>
             </a>
             {% endif %}
+            </div>
           </div>
-        </div>
 
         {% if featured %}
         <div class="home-carousel__controls">
+          <span class="home-carousel__status" aria-live="polite" data-carousel-status>Slide 1 of 2 · What this is</span>
           <div class="home-carousel__nav">
             <button type="button" class="home-carousel__button" data-carousel-prev aria-label="Previous slide">&larr;</button>
             <button type="button" class="home-carousel__button" data-carousel-next aria-label="Next slide">&rarr;</button>
@@ -291,6 +293,7 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
     var next = carousel.querySelector('[data-carousel-next]');
     var dots = carousel.querySelectorAll('[data-carousel-dot]');
     var jumpButtons = carousel.querySelectorAll('[data-carousel-to]');
+    var status = carousel.querySelector('[data-carousel-status]');
     var current = 0;
 
     function updateCarousel(index) {
@@ -307,6 +310,11 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
           dot.removeAttribute('aria-current');
         }
       });
+
+      if (status) {
+        var label = slides[current].getAttribute('data-carousel-label') || 'Slide ' + (current + 1);
+        status.textContent = 'Slide ' + (current + 1) + ' of ' + slides.length + ' · ' + label;
+      }
     }
 
     if (prev) {
