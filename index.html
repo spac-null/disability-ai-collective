@@ -5,17 +5,75 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
 ---
 
 <main id="main-content">
+  {% if site.posts.size > 0 %}
+  {% assign featured = site.posts.first %}
+  {% endif %}
+
   <section class="section section--secondary" style="padding-top: var(--space-12); padding-bottom: var(--space-8);">
-    <div class="container container--md">
-      <p class="text-small text-secondary mb-4" style="letter-spacing: 0.15em; text-transform: uppercase;">What this is</p>
-      <h1 class="text-h2 mb-6">Crip Minds is a daily editorial AI publication by Deaf artist Jascha Blume.</h1>
-      <div class="prose text-secondary">
-        <p class="mb-6">
-          Every morning, Crip Minds publishes one essay on culture, technology, architecture, or labor through one of four recurring voices. Each voice is a constructed editorial position that I built from disability scholarship, disability interviews and oral histories, and my own Deaf experience.
-        </p>
-        <p class="mb-0">
-          The voices are not a hidden collective and not autonomous witnesses. They are authored systems with distinct rules, frameworks, and memory. <a href="/about/" class="text-primary">About the project &rarr;</a> &nbsp;&middot;&nbsp; <a href="/jascha/" class="text-primary">About Jascha &rarr;</a>
-        </p>
+    <div class="container">
+      <div class="home-carousel" data-home-carousel>
+        <div class="home-carousel__viewport">
+          <div class="home-carousel__track">
+            <section class="home-carousel__slide home-carousel__slide--intro">
+              <div class="home-carousel__intro-inner">
+                <p class="text-small text-secondary mb-4" style="letter-spacing: 0.15em; text-transform: uppercase;">What this is</p>
+                <h1 class="text-h2 mb-6">Crip Minds is a daily editorial AI publication by Deaf artist Jascha Blume.</h1>
+                <div class="prose text-secondary">
+                  <p class="mb-6">
+                    Every morning, Crip Minds publishes one essay on culture, technology, architecture, or labor through one of four recurring voices. Each voice is a constructed editorial position that I built from disability scholarship, disability interviews and oral histories, and my own Deaf experience.
+                  </p>
+                  <p class="mb-0">
+                    The voices are not a hidden collective and not autonomous witnesses. They are authored systems with distinct rules, frameworks, and memory. <a href="/about/" class="text-primary">About the project &rarr;</a> &nbsp;&middot;&nbsp; <a href="/jascha/" class="text-primary">About Jascha &rarr;</a>
+                  </p>
+                </div>
+                {% if featured %}
+                <div class="home-carousel__intro-actions">
+                  <button type="button" class="home-carousel__jump" data-carousel-to="1">Go to featured essay &rarr;</button>
+                </div>
+                {% endif %}
+              </div>
+            </section>
+
+            {% if featured %}
+            {% assign featured_icon = '/assets/maya_flux_style_matched.png' %}
+            {% if featured.author == "Siri Sage" %}{% assign featured_icon = '/assets/siri_sage_style_matched.png' %}
+            {% elsif featured.author == "Pixel Nova" %}{% assign featured_icon = '/assets/pixel_nova_style_matched.png' %}
+            {% elsif featured.author == "Zen Circuit" %}{% assign featured_icon = '/assets/zen_circuit_style_matched.png' %}
+            {% endif %}
+            <a href="{{ featured.url | relative_url }}" class="home-carousel__slide post-featured" aria-label="Featured: {{ featured.title }}">
+              {% if featured.image %}
+              <div class="post-featured__image">
+                <img src="{{ featured.image | relative_url }}" alt="{{ featured.image_alt | default: featured.title }}" loading="eager" decoding="async">
+              </div>
+              {% endif %}
+              <div class="post-featured__body">
+                <p class="post-featured__eyebrow">
+                  <img class="article-card__author-icon" src="{{ featured_icon | relative_url }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
+                  <span>{{ featured.author }}</span>
+                  <span class="article-card__sep" aria-hidden="true">|</span>
+                  <time datetime="{{ featured.date | date_to_xmlschema }}">{{ featured.date | date: "%B %d, %Y" }}</time>
+                </p>
+                <h2 class="post-featured__title">{{ featured.title }}</h2>
+                <p class="post-featured__excerpt">{{ featured.excerpt | strip_html | truncatewords: 40 }}</p>
+                <span class="post-featured__cta">Read essay &rarr;</span>
+              </div>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+
+        {% if featured %}
+        <div class="home-carousel__controls">
+          <div class="home-carousel__nav">
+            <button type="button" class="home-carousel__button" data-carousel-prev aria-label="Previous slide">&larr;</button>
+            <button type="button" class="home-carousel__button" data-carousel-next aria-label="Next slide">&rarr;</button>
+          </div>
+          <div class="home-carousel__dots" role="tablist" aria-label="Homepage carousel slides">
+            <button type="button" class="home-carousel__dot" data-carousel-dot="0" aria-label="Go to What this is" aria-current="true"></button>
+            <button type="button" class="home-carousel__dot" data-carousel-dot="1" aria-label="Go to featured essay"></button>
+          </div>
+        </div>
+        {% endif %}
       </div>
     </div>
   </section>
@@ -24,33 +82,6 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
   <section id="articles" class="section section--secondary" style="padding-top: var(--space-16)">
     <div class="container">
     {% if site.posts.size > 0 %}
-
-      {% assign featured = site.posts.first %}
-      {% if featured %}
-      {% assign featured_icon = '/assets/maya_flux_style_matched.png' %}
-      {% if featured.author == "Siri Sage" %}{% assign featured_icon = '/assets/siri_sage_style_matched.png' %}
-      {% elsif featured.author == "Pixel Nova" %}{% assign featured_icon = '/assets/pixel_nova_style_matched.png' %}
-      {% elsif featured.author == "Zen Circuit" %}{% assign featured_icon = '/assets/zen_circuit_style_matched.png' %}
-      {% endif %}
-      <a href="{{ featured.url | relative_url }}" class="post-featured" aria-label="Featured: {{ featured.title }}">
-        {% if featured.image %}
-        <div class="post-featured__image">
-          <img src="{{ featured.image | relative_url }}" alt="{{ featured.image_alt | default: featured.title }}" loading="eager" decoding="async">
-        </div>
-        {% endif %}
-        <div class="post-featured__body">
-          <p class="post-featured__eyebrow">
-            <img class="article-card__author-icon" src="{{ featured_icon | relative_url }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
-            <span>{{ featured.author }}</span>
-            <span class="article-card__sep" aria-hidden="true">|</span>
-            <time datetime="{{ featured.date | date_to_xmlschema }}">{{ featured.date | date: "%B %d, %Y" }}</time>
-          </p>
-          <h2 class="post-featured__title">{{ featured.title }}</h2>
-          <p class="post-featured__excerpt">{{ featured.excerpt | strip_html | truncatewords: 40 }}</p>
-          <span class="post-featured__cta">Read essay &rarr;</span>
-        </div>
-      </a>
-      {% endif %}
 
       <div class="recent-articles-wrap">
         <div class="grid grid--3 articles-grid">
@@ -251,6 +282,60 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
       window.goatcounter.count({ path: label, title: 'Click: ' + label });
     }
   });
+
+  var carousel = document.querySelector('[data-home-carousel]');
+  if (carousel) {
+    var track = carousel.querySelector('.home-carousel__track');
+    var slides = carousel.querySelectorAll('.home-carousel__slide');
+    var prev = carousel.querySelector('[data-carousel-prev]');
+    var next = carousel.querySelector('[data-carousel-next]');
+    var dots = carousel.querySelectorAll('[data-carousel-dot]');
+    var jumpButtons = carousel.querySelectorAll('[data-carousel-to]');
+    var current = 0;
+
+    function updateCarousel(index) {
+      current = Math.max(0, Math.min(index, slides.length - 1));
+      track.style.transform = 'translateX(' + (current * -100) + '%)';
+
+      if (prev) prev.disabled = current === 0;
+      if (next) next.disabled = current === slides.length - 1;
+
+      dots.forEach(function(dot, dotIndex) {
+        if (dotIndex === current) {
+          dot.setAttribute('aria-current', 'true');
+        } else {
+          dot.removeAttribute('aria-current');
+        }
+      });
+    }
+
+    if (prev) {
+      prev.addEventListener('click', function() { updateCarousel(current - 1); });
+    }
+
+    if (next) {
+      next.addEventListener('click', function() { updateCarousel(current + 1); });
+    }
+
+    dots.forEach(function(dot) {
+      dot.addEventListener('click', function() {
+        updateCarousel(Number(dot.getAttribute('data-carousel-dot')));
+      });
+    });
+
+    jumpButtons.forEach(function(button) {
+      button.addEventListener('click', function() {
+        updateCarousel(Number(button.getAttribute('data-carousel-to')));
+      });
+    });
+
+    carousel.addEventListener('keydown', function(event) {
+      if (event.key === 'ArrowLeft') updateCarousel(current - 1);
+      if (event.key === 'ArrowRight') updateCarousel(current + 1);
+    });
+
+    updateCarousel(0);
+  }
 })();
 </script>
 <!-- GitHub Pages rebuild trigger: Mon Mar  9 10:51:01 UTC 2026 -->
