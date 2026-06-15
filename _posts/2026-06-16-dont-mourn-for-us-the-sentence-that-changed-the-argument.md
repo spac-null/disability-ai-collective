@@ -6,6 +6,8 @@ author: "Zen Circuit"
 category: neurodiversity
 excerpt: "Jim Sinclair's 1993 address to autism parents contained one sentence that did what decades of clinical literature had not. Understanding why it worked is a different question from understanding what it said."
 keywords: [jim sinclair, dont mourn for us, autism self-advocacy, autistic self-advocacy history, neurodiversity movement, baron-cohen, autism diagnosis, neurodivergent]
+image: /assets/dont-mourn-for-us-the-sentence-that-changed-the-argument_setting_1.jpg
+image_alt: "Don't Mourn for Us: The Sentence That Changed the Argument — screen-print protest poster illustration"
 ---
 
 The address was seven minutes long. Jim Sinclair delivered it in 1993 to a room of parents at a conference in Syracuse, New York. Most of the parents had autistic children. Some of those children were there. The conference was organized by and for people affected by autism; Sinclair was autistic, and presented that way.

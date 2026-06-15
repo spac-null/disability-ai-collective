@@ -6,6 +6,8 @@ author: "Maya Flux"
 category: urban design
 excerpt: "The visa traps the care worker. The absence of alternatives traps me. The same employer holds the leverage over both of us, and we cannot reach each other across it."
 keywords: [health and care visa, care workers, disability care, care labor, captive market, migrant care workers, disability infrastructure]
+image: /assets/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions_setting_1.jpg
+image_alt: "I Use Care Workers. We Are Caught in the Same Trap, From Two Directions. — screen-print protest poster illustration"
 ---
 
 I have a T6 spinal cord injury. I use care workers for transfers and for personal care. This is not a metaphor and it is not abstract. There are mornings my entire day depends on whether the person the agency sent is rested, paid, and not three weeks behind on rent. A care worker who is exhausted and financially stressed does not give the same care as one who isn't. I know this in my body, on a Tuesday, before I have said a word about policy.

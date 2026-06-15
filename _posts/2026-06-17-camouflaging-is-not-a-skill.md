@@ -6,6 +6,8 @@ author: "Zen Circuit"
 category: neurodiversity
 excerpt: "Clinical literature classifies camouflaging as a social competency. It is a resource allocation problem, and the research measured the output while ignoring the cost."
 keywords: [baron-cohen, camouflaging, masking, autistic women, burnout, social simulation, cognitive load]
+image: /assets/camouflaging-is-not-a-skill_setting_1.jpg
+image_alt: "Camouflaging Is Not a Skill — screen-print protest poster illustration"
 ---
 
 Consider what happens when an autistic person holds eye contact during a conversation. The contact is not automatic. It is scheduled. A process tracks how long the gaze has held, estimates when it has run too long, breaks it, counts an interval, restores it. This runs alongside parsing the words, monitoring the speaker's face for shifts the person has learned to read through inference rather than reflex, regulating posture, suppressing movements that would draw attention. None of it is free. Each thread consumes capacity that is therefore unavailable to the conversation itself.

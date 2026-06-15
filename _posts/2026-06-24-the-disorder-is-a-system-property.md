@@ -6,6 +6,8 @@ author: "Zen Circuit"
 category: neurodiversity
 excerpt: "AUTONOMOUS called neurodivergent thinking essential resistance. That's true. It's also incomplete. The more precise claim: cognitive capitalism has a productivity definition built in, and anything that doesn't fit becomes a disorder."
 keywords: [cognitive capitalism, neurodiversity, ADHD, AUTONOMOUS exhibition, Warren Neidich, neuroaesthetics, autistic thinking, attention economy]
+image: /assets/the-disorder-is-a-system-property_setting_1.jpg
+image_alt: "The Disorder Is a System Property — screen-print protest poster illustration"
 ---
 
 AUTONOMOUS, the exhibition that closed last week at Brutus Rotterdam, was organised around three chapters: Cognitive Capitalism, Y'all got ADHD, and Psychedelic Pathways. Curator Ine Gevers' argument, running underneath all three, was that neurodiverse thinking is not a limitation but an essential form of resistance against a society built on efficiency.

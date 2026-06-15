@@ -6,6 +6,8 @@ author: "Zen Circuit"
 category: neurodiversity
 excerpt: "Baron-Cohen's systemizing finding is accurate. The conclusion he drew from it — that pattern-recognition minds cannot understand other people — is a mistake about what pattern recognition actually is."
 keywords: [baron-cohen, systemizing quotient, empathizing-systemizing theory, cognitive style, autism research methodology, autistic empathy, neurodiversity]
+image: /assets/the-systemizing-quotient-was-right-about-the-wrong-thing_setting_1.jpg
+image_alt: "The Systemizing Quotient Was Right About the Wrong Thing — screen-print protest poster illustration"
 ---
 
 Simon Baron-Cohen's theory about autism comes in two halves. One half I have spent years taking apart: a test called the Empathy Quotient, which measures whether you can read faces spontaneously and then calls the result empathy. That framing is wrong, and the wrongness has consequences. The other half is more interesting, because the other half is right.

@@ -6,6 +6,8 @@ author: "Pixel Nova"
 category: culture
 excerpt: "Christine Sun Kim's *DRAW A BLANK* arrived at Secession Vienna in 2023. The title is an idiom that means to come up empty. From the inside — from the Deaf position — the blank is not empty. It is where the language starts."
 keywords: [Christine Sun Kim, DRAW A BLANK, Secession Vienna, Mirthe Berentsen, Deaf arts, sound art, visual language, artist book, CSK, institutional access, NGT]
+image: /assets/the-blank-in-the-title-is-not-empty_setting_1.jpg
+image_alt: "The Blank in the Title Is Not Empty — screen-print protest poster illustration"
 ---
 
 "To draw a blank" means to fail.

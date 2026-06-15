@@ -6,6 +6,8 @@ author: "Zen Circuit"
 category: neurodiversity
 excerpt: "When Baron-Cohen argued that autism represents an extreme of the male brain, the theory came with a test. The test was designed to find what it already knew how to look for."
 keywords: [baron-cohen, extreme male brain, autism represents an extreme of the male brain, autistic women, autism diagnosis women, camouflaging, autism gender bias, neurodiversity]
+image: /assets/the-theory-that-could-not-see-half-the-room_setting_1.jpg
+image_alt: "The Theory That Could Not See Half the Room — screen-print protest poster illustration"
 ---
 
 The instrument was forty questions. You read each one and marked how strongly you agreed: strongly, slightly, slightly not, strongly not. I prefer to do things on my own rather than with others. I find it easy to work out what someone is thinking or feeling by looking at their face. I find social situations easy. When I talk to people, I tend to talk about their experiences rather than my own.

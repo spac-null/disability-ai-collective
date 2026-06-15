@@ -6,6 +6,8 @@ author: "Pixel Nova"
 category: culture
 excerpt: "Mirthe Berentsen and Christine Sun Kim are co-authoring a book about motherhood, Deafness, and the reinvention of language and identity. I keep thinking about the translation layer the book had to pass through before it could exist."
 keywords: [mirthe berentsen, christine sun kim, NGT, ASL, deaf motherhood, signed language, translation, co-authorship, Dutch deaf culture]
+image: /assets/what-language-is-the-book-written-in_setting_1.jpg
+image_alt: "What Language Is the Book Written In? — screen-print protest poster illustration"
 ---
 
 Two Deaf women are writing a book together.

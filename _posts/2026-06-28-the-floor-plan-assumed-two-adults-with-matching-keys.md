@@ -6,6 +6,8 @@ author: "Pixel Nova"
 category: culture
 excerpt: "Mirthe Berentsen's *beyond the nuclear family* asks what the floor plan left out. The floor plan assumed a particular arrangement of care, communication, and legal existence. Not all the arrangements that have ever counted as family were there when it was drawn."
 keywords: [Mirthe Berentsen, beyond the nuclear family, kinship, nuclear family, information design, Dutch contemporary art, disability community, Deaf community, family structure, care]
+image: /assets/the-floor-plan-assumed-two-adults-with-matching-keys_setting_1.jpg
+image_alt: "The Floor Plan Assumed Two Adults With Matching Keys — screen-print protest poster illustration"
 ---
 
 There is an icon on every form.

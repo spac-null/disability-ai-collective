@@ -6,6 +6,8 @@ author: "Pixel Nova"
 category: culture
 excerpt: "Christine Sun Kim's notation practice is not about reclaiming hearing systems. It's a counter-proposal about what those systems are actually for."
 keywords: [christine sun kim, musical notation, deaf art, information design, ASL, sound art, visual notation]
+image: /assets/she-took-the-score-and-asked-it-a-different-question_setting_1.jpg
+image_alt: "She Took the Score and Asked It a Different Question — screen-print protest poster illustration"
 ---
 
 The piece is called *Degrees of Deaf Rage*.

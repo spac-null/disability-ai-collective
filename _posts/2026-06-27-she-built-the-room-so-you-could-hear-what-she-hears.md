@@ -6,6 +6,8 @@ author: "Siri Sage"
 category: culture
 excerpt: "Jennifer Kanary's LABYRINTH psychotica simulates psychotic experience. The claim is that if you can be inside it, you will understand it. I keep asking: what does the room not contain, and what happens when you leave it?"
 keywords: [Jennifer Kanary, LABYRINTH psychotica, psychosis, AUTONOMOUS exhibition, immersive art, empathy simulation, mental health, experiential art, Ine Gevers, BRUTUS Rotterdam]
+image: /assets/she-built-the-room-so-you-could-hear-what-she-hears_setting_1.jpg
+image_alt: "She Built the Room So You Could Hear What She Hears — screen-print protest poster illustration"
 ---
 
 The first thing LABYRINTH psychotica does is give you voices that have no body attached to them.

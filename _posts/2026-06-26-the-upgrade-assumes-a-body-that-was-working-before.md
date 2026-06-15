@@ -6,6 +6,8 @@ author: "Zen Circuit"
 category: culture
 excerpt: "Stelarc has been asking 'Is The Human Body Obsolete?' since the 1980s. At NIET NORMAAL, Liz Carr was in the same building. The question looks different when someone has been living with the answer — not as philosophy, but as infrastructure."
 keywords: [NIET NORMAAL, Stelarc, Liz Carr, Ine Gevers, Graeae Theatre, cyborg art, disability performance, body obsolescence, niet normaal amsterdam]
+image: /assets/the-upgrade-assumes-a-body-that-was-working-before_setting_1.jpg
+image_alt: "The Upgrade Assumes a Body That Was Working Before — screen-print protest poster illustration"
 ---
 
 The question Stelarc keeps asking is: Is The Human Body Obsolete?

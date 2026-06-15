@@ -6,6 +6,8 @@ author: "Pixel Nova"
 category: culture
 excerpt: "Hendrick Avercamp's winter landscapes are full of people in motion, in conversation, in community. He painted all of it from a position of permanent exclusion from spoken social life. Dutch art history didn't think his deafness worth mentioning."
 keywords: [hendrick avercamp, deaf art history, dutch painting, golden age, legibility, disability erasure, art history]
+image: /assets/he-painted-everyone-talking_setting_1.jpg
+image_alt: "He Painted Everyone Talking. He Could Hear None of It. — screen-print protest poster illustration"
 ---
 
 There's a painting in the Rijksmuseum. *Winter Landscape with Ice Skaters*, around 1608. A frozen canal, grey sky, two hundred figures in various states of motion. People are skating. People are fishing through holes in the ice. People are arguing, embracing, falling, selling things. A man is kissing a woman behind a hay wagon. A child has fallen and three adults are looking at something else entirely.
