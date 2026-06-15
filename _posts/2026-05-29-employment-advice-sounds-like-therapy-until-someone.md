@@ -30,6 +30,10 @@ The folder my friend was given had a title in bold sans-serif: *Pathways to Work
 
 In acoustic design, there is a concept where one sound gets in the way of another without completely blocking it. White noise machines work this way. The hum does not remove the conversation happening on the other side of the wall — it just makes it unintelligible. You know something is being said. You cannot make out the words. This produces more anxiety than silence.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/employment-advice-sounds-like-therapy-until-someone_moment_2.jpg" alt="Employment Advice Sounds Like Therapy Until Someone — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 Employment advice doesn't just interfere with therapy — it transforms it into something else entirely. The policymakers who design these programs insist integration makes sense: support the whole person, address practical barriers to recovery. The session still uses therapeutic language: support, wellbeing, goals. But underneath, a different conversation is happening. The question is no longer *what do you need?* It is *when will you be ready?*
 
 My friend found her own timeline. Six months after that first session, she was volunteering at a community garden — not because anyone suggested it, but because the tomatoes didn't care about her employment status. The other volunteers included three people who'd been through the same program. They'd all found their way here, to the greenhouse, where nobody asked about CVs.
@@ -43,6 +47,10 @@ The study does not explain why earnings fell. It just records that they did. But
 The compromise is not accidental. It is structural. The employment adviser is there because someone decided therapy should have measurable economic outcomes. Not outcomes for the person receiving therapy — outcomes for the state. Therapy became a site of economic intervention the moment someone asked: how do we get more people back to work?
 
 The answer, it turns out, is: you don't. You make them earn less and work less. You introduce a second agenda into a room that only functions when there is one.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/employment-advice-sounds-like-therapy-until-someone_symbol_3.jpg" alt="Employment Advice Sounds Like Therapy Until Someone — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 My friend never went back to that therapist. She found a different one six months later. Private, not NHS. The first thing the new therapist said was: we will not talk about work unless you bring it up. My friend said she cried with relief.
 

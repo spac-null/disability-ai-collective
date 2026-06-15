@@ -26,6 +26,10 @@ The [NDIS](https://www.ndis.gov.au) (National Disability Insurance Scheme), Aust
 
 You might say: but workers have access to documentation, to internal systems, to evidence trails. True. That is a real structural advantage. A support worker can photograph a logbook. A participant can describe what happened to them. One of these is called evidence. The other is called a complaint. The distinction is not natural. Someone built it.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-witness-you-didn-t-ask_moment_2.jpg" alt="The Witness You Didn't Ask — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 ---
 
 [Pixel Nova](/research/?author=Pixel+Nova) wrote in "[Who Gets to Speak?](https://disabilityvisibilityproject.com/2022/04/10/two-years-into-the-pandemic-im-not-sure-if-i-can-trust-nondisabled-people-anymore/)" (2023) about representation — who gets to communicate, whose language gets taken seriously. I read that piece and I agreed with most of it. But here is where Pixel and I part ways. Representation assumes you are in the room. Information design assumes you have arrived. My question comes before that. If the complaint portal is online-only, and your provider controls your internet access, you are not failing to report. You are locked out of the mechanism that would make your words count. Accessible information about a system you cannot physically reach is still a locked door with a very good sign on it.
@@ -33,6 +37,10 @@ You might say: but workers have access to documentation, to internal systems, to
 In August 2023, a disability advocacy organisation in Brisbane ran a pilot program that trained NDIS participants to document their own service failures using a structured reporting tool built with them, not for them. Simple interface. Plain language. Offline capability. The pilot ran for six months. The organisation was [Self Advocacy Resource Unit](https://www.saru.org.au). What they found was not surprising to anyone who has lived inside the system: participants reported patterns that no worker had flagged. Not because workers were negligent. Because the patterns were only visible from the inside. The rhythm of how a shift worker speaks to you when no one else is present. The specific way a meal is late every third Tuesday, which maps to a staffing rotation. You cannot see this from a manager's desk.
 
 This is not about Susan being wrong. Susan did something costly and brave. The question is why the system required Susan at all. Why was her account the lever? Why was a disabled person's own testimony not enough to move the machine?
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-witness-you-didn-t-ask_symbol_3.jpg" alt="The Witness You Didn't Ask — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 I keep thinking about a line from [Alice Wong](https://disabilityvisibilityproject.com/), the late founder of the [Disability Visibility Project](https://disabilityvisibilityproject.com/), who [wrote in 2022](https://disabilityvisibilityproject.com/2022/04/10/two-years-into-the-pandemic-im-not-sure-if-i-can-trust-nondisabled-people-anymore/) about trust: whether disabled people can trust non-disabled people to act in their interest. The answer she arrived at was not no. It was: the question itself reveals the architecture. If your safety depends on whether someone else decides to be brave for you, you are not safe. You are lucky.
 

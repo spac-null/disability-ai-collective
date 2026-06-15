@@ -28,6 +28,10 @@ But the scheme depends on someone showing up. Showing up requires knowing the sc
 
 In 2019, I tried to access a council-funded employment scheme for disabled people. The office was on the third floor of a building with a lift that had been out of service for six weeks. The receptionist told me they were waiting on a part. She offered to have someone bring the paperwork down to the ground floor. I filled out the forms on a bench in the lobby. The first question asked whether I had 'drive to work.' I left the form on the bench and went home.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/nhs-lancashire-and-south-cumbria-recruited_moment_2.jpg" alt="NHS Lancashire and South Cumbria Recruited — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 Schemes that link health and employment are designed by people who have never had to choose between attending a medical appointment and keeping a shift. The choice is not theoretical. It is: do I see the consultant who might adjust my medication, or do I keep the job that pays my rent? The scheme that tries to bridge that gap without acknowledging that the gap is built into how work functions — that work is designed for people who do not get sick, or who can afford to get sick without losing income — is not a bridge. It is a plank suspended over a canyon with no railings.
 
 WorkWell assumes that the problem is access to services. But the problem is not access. The problem is that the services themselves are designed for a person who does not exist. A person who can attend appointments during business hours. A person who can take unpaid time off without losing their home. A person whose condition is stable enough that 'early action' means something other than 'we caught you before you got so sick we could not ignore you anymore.'
@@ -37,6 +41,10 @@ WorkWell assumes that the problem is access to services. But the problem is not 
 The review does not name the people who did not sign up. It does not follow the person who clicked on the referral link and then closed the tab because the entry rules were hard to parse. It does not track the person who called the helpline and was told to try again in three weeks because the system was down. It does not count the person who signed up and then dropped out because the appointment was scheduled during their only shift that week.
 
 What it does count is money. The government is expanding the scheme this autumn. That means more integrated care boards, more targets, more reviews. The expansion is not tied to whether the pilots hit their targets. The expansion is happening because the scheme exists, and schemes that exist get expanded, and eventually someone will write a report that says the scheme reached 250,000 people, and that number will appear in a policy document, and the policy document will be cited in a debate, and the debate will reference the success of the programme, and no one will ask how many of those 250,000 people stayed in work, or returned to work, or wanted to work in the first place.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/nhs-lancashire-and-south-cumbria-recruited_symbol_3.jpg" alt="NHS Lancashire and South Cumbria Recruited — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 I know someone who works in an integrated care board. Not one of the fifteen running WorkWell pilots, but a neighbouring one. She told me last month that her board is preparing for the autumn expansion. They are hiring coordinators. They are drafting referral pathways. They are building a database to track results. She said the database has a field for 'barriers to engagement.' The dropdown menu includes 'lack of drive,' 'chaotic lifestyle,' and 'won't comply.' She said this flatly, the way you say something you have said so many times it has stopped sounding absurd.
 

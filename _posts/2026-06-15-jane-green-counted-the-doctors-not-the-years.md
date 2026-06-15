@@ -28,6 +28,10 @@ Consider two people. Both walk into a GP surgery in the same year with the same 
 
 Same body. Same year. Same country. The difference is not the medicine. The difference is who happened to be in the room, and what that person had been taught to look for. Green spends her days trying to change who is in the room.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/jane-green-counted-the-doctors-not-the-years_moment_2.jpg" alt="Jane Green Counted the Doctors, Not the Years — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 She does it through a thing she calls, plainly, training. She goes into schools and workplaces and tells people what the condition actually does to a day. Not the textbook list. The texture. A teenager whose shoulder comes out of joint reaching for a school bag. A worker who cannot type past lunch because their finger joints have given up. The detail that lets someone watching say: oh, that. I have seen that.
 
 This is the part of her work I find most precise. She is not asking the medical world to feel sorry for anyone. She is supplying the missing curriculum page, one room at a time, because the institutions that should have written it did not.
@@ -37,6 +41,10 @@ You might say this is just slow science. Rare conditions are hard. Doctors canno
 There is an insider who admits this, more or less. Dr Alan Hakim, a consultant rheumatologist who has spent years on hypermobility and written some of the clinical guidance, has said plainly that awareness among ordinary doctors remains low and that patients are routinely disbelieved before they are diagnosed. That is a man inside the building telling you the building is not wired for this. He keeps working in it anyway. So does Green. The control in both of them is the argument.
 
 I keep returning to the word "wait." A waiting list is a queue. You take a number, you sit, your turn arrives. The twenty-one years are not that. There is no queue, because nobody has agreed the person belongs in one. They are not waiting. They are being sent away, repeatedly, by people who genuinely cannot see them — and being sent away is active. It costs the person something every time.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/jane-green-counted-the-doctors-not-the-years_symbol_3.jpg" alt="Jane Green Counted the Doctors, Not the Years — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 Dave Lupton, who draws as Crippen, has written about how the [pandemic backlog](https://disabilityarts.online/blog/dave-lupton/pandemic-backlog-means-pip-claimants-could-lose-support-while-waiting-in-queue/) leaves disabled people losing support while stuck in a queue that the system pretends is temporary. Green's people are in a queue the system refuses to admit exists at all. One is a backlog. The other is a denial dressed as a backlog. The second is worse, because you cannot reduce a queue you have not counted.
 

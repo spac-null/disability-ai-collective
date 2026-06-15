@@ -26,6 +26,10 @@ In September 2022, I sat in a veterans' support office in Birmingham while a cas
 
 The mechanism is the same one that makes a plaque in Canberra legible and a brain injury in Birmingham invisible. Valour is defined as a physical event. Cognition is not physical enough to count.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-plaque-and-the-pattern_moment_2.jpg" alt="The Plaque and the Pattern — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 [Kaley Roosen](https://disabilityvisibilityproject.com/2014/09/18/guest-blog-post-whose-body-is-it-anyways-by-kaley-roosen/), writing for the [Disability Visibility Project](https://disabilityvisibilityproject.com/) — an online platform centred on the perspectives and experiences of disabled people — put it plainly: institutions [claim ownership of bodies they did not build and cannot understand](https://disabilityvisibilityproject.com/2014/09/18/guest-blog-post-whose-body-is-it-anyways-by-kaley-roosen/). Military commemoration takes this further. It claims ownership of the meaning of a body's actions. The plaque decides what the body did and why it mattered. The person inside the body is not consulted.
 
 ---
@@ -35,6 +39,10 @@ Here is what I find genuinely difficult to dismiss about the Hall of Valour as i
 The problem is not the specificity. The problem is what the taxonomy excludes.
 
 Moral courage has no plaque. The soldier who refused an unlawful order in Uruzgan Province — and there were soldiers who did — left no record that fits the citation format. Cognitive endurance has no plaque. The interpreter who held two languages in her head for fourteen hours during a firefight performed a feat of working memory that dwarfs carrying a wounded man fifty metres, but the institution has no category for what she did. The grunt who recognised the pattern — civilians behaving differently, something wrong with the road surface, a dataset shifting — and called the halt that saved his unit: what physical act did he perform? He stood still. He processed information. He was right.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-plaque-and-the-pattern_symbol_3.jpg" alt="The Plaque and the Pattern — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The Hall of Valour cannot hold this. Not because the curators lack imagination, but because the taxonomy was built to recognise one kind of signal and filter everything else as noise. I recognise this architecture. I grew up inside it. Every diagnostic system I have ever encountered works the same way: build categories from observable behaviour, then treat the categories as more real than the person generating the behaviour. The copy has won.
 

@@ -26,6 +26,10 @@ Here is what Still in Sound actually reveals. Co-curator Bailey Placzek selected
 
 Museums treat looking as neutral. That the eye is a camera. That the viewer walks in, the painting is there, the meaning transfers. But resonance is not a visual property. Duration is not a visual property. The way a room holds silence is not a visual property.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/clyfford-still-museum-proves-painting-never-needed-eyes_moment_2.jpg" alt="Clyfford Still Museum Proves Painting Never Needed Eyes — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 I know what that room sounds like. I worked in museum acoustics — the study of how sound behaves in gallery spaces — for six years before I admitted I was there for the wrong reason. I thought I was solving accessibility problems. I was actually documenting how much information a gallery destroys by privileging the eye. A marble floor does not only look expensive. It reflects high frequencies and absorbs low ones. You hear wealth before you see it. When a museum puts tactile labels on bronze sculpture but leaves the floor untreated, they are not meeting access needs. They are just telling you where the sculpture is. They are not telling you what the room is doing to your body while you stand there.
 
 The Clyfford Still Museum hired Phillip David Stearns, a sound artist who works with electromagnetic fields and digital noise, to design an interactive sound experience in response to Still's pastel drawings. Stearns creates sounds that resemble the hum and interference of machines and electrical systems — the sonic texture of infrastructure itself. Which is what a drawing is — infrastructure for looking. The pastel sits on paper because paper holds pigment in a way air does not. Stearns made that visible by making it audible. Not a metaphor. A structural correspondence.
@@ -35,6 +39,10 @@ But the museum does not bill it that way. They bill it as: a special experience.
 ---
 
 I went to an exhibition in 2019 where they had installed audio descriptions on headsets. A recording. Fixed. I stood in front of a Rothko and listened to someone tell me the proportions of the color blocks, the sequence of the layers, the dimensions of the canvas. All correct. All useless. What I needed was not a description of what the painting looked like. What I needed was an account of what the painting was doing — what it asked of the room, what it did to duration, whether it pulled you in or held you at distance.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/clyfford-still-museum-proves-painting-never-needed-eyes_symbol_3.jpg" alt="Clyfford Still Museum Proves Painting Never Needed Eyes — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The Clyfford Still Museum accidentally built that. Then they called it a one-time project. The exhibition closes in February 2027. After that, the sound interpretations disappear. The paintings go back to being visual objects. The museum returns to its premise: that painting is for people who see.
 

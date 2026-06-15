@@ -21,6 +21,10 @@ Every room answers back. Marble gives you a bright, hard return. Carpet swallows
 
 Standard wayfinding strips that information out. Acoustic ceiling tiles, installed to reduce "noise," flatten every room into the same dead signal. Drop ceilings erase height. Carpet absorbs the one cue that tells me whether I am approaching a wall or an opening. Architects call this "acoustic comfort." Comfort for whom.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-room-that-answers-back_moment_2.jpg" alt="The Room That Answers Back — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 [Renzo Griffini](https://www.griffini.it/), an acoustic consultant in Milan, told me in March 2022 that he had never once been asked to consider echolocation in a commercial wayfinding brief. Not once. In thirty years. He designs sound environments for airports, hospitals, train stations, and transit hubs. He said: "I know blind people use reflected sound. I have never been paid to think about it."
 
 That is the insider confession. Not cruelty. Competence operating inside a frame that has no room for the body it excludes.
@@ -28,6 +32,10 @@ That is the insider confession. Not cruelty. Competence operating inside a frame
 ---
 
 The Meijendel centre installed twelve audio beacons—speakers that emit tones to help locate positions in space. Each one emits a tone at a fixed frequency. The tones do not interact with the space. They sit on top of it like stickers on a window. They tell you where you are by overriding what the room is already saying. A room that could speak for itself, gagged by its own accessibility system.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-room-that-answers-back_symbol_3.jpg" alt="The Room That Answers Back — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The Tate's silence lasted three weeks. Then the guides came back. Nobody redesigned the gallery's acoustics. Nobody asked what the room sounded like to someone who arrives through sound.
 

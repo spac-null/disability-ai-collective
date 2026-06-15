@@ -26,6 +26,10 @@ The article frames PickleFart as a curiosity — an anonymous commenter who happ
 
 The mechanism is the same. A TikTok comment section in 2026 and a BBC message board in 2006 and a woman in a library in the 1980s — the knowledge travels the same route, for the same reason: because the sanctioned route failed.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-frequency-you-already-know_moment_2.jpg" alt="The Frequency You Already Know — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 ---
 
 You might think the difference now is scale. Millions of people seeing a video versus a few hundred on a forum. Fair enough. But scale changes the visibility, not the structure. And here is what I find genuinely absurd: the medical establishment's response to crowdsourced diagnosis is to worry about misinformation. In December 2023, the [Royal College of GPs](https://www.rcgp.org.uk) issued guidance cautioning patients against self-diagnosis through social media. The concern was that people might arrive at consultations with incorrect assumptions.
@@ -35,6 +39,10 @@ I want to be precise about this. The concern is real. People do misidentify symp
 I spent six years working in acoustic design for public buildings. In June 2018, I consulted on a hospital outpatient wing in Leeds. The waiting area had been designed with hard surfaces — easy to clean, visually bright, modern. The reverberation time was nearly two seconds. For a sighted person this registers as echo, maybe unpleasant. For me it meant I could not distinguish the receptionist's voice from the television mounted on the far wall. I raised this in the design review. The project lead, a senior architect I will not name, said: "We've met the acoustic standards." He had. The standards measure decibel levels, not intelligibility. The copy had replaced the original. The measurement had replaced the experience.
 
 That same substitution is happening in the TikTok diagnosis story. The question being asked — is crowdsourced medical advice safe? — is a copy of the real question, which is: why do patients need it?
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-frequency-you-already-know_symbol_3.jpg" alt="The Frequency You Already Know — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 [Joanna Moncrieff](https://www.ucl.ac.uk), a psychiatrist at University College London, has spent years arguing that psychiatric diagnosis functions as a gatekeeping system rather than a descriptive one. She said in a 2022 interview with *Mad in America* that diagnosis "gives the impression that we understand conditions that we actually don't." If the official system cannot consistently name what is happening in a patient's body, the patient's search for answers elsewhere is not a failure of information hygiene. It is an acoustic phenomenon. Sound finding the path of least resistance.
 

@@ -26,6 +26,10 @@ Roskomnadzor has blocked or degraded access to thousands of foreign-hosted platf
 
 That's the problem optimizers face. The surveillance curve finds its minimum. The minimum is: flag everything.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-optimization-problem_moment_2.jpg" alt="The Optimization Problem — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 I know what it feels like when the tool you need to function exists on the other side of a wall someone else built. As someone who processes things differently, I rely on specialized resources to work effectively. In November 2021, I spent four hours trying to access a sensory-processing research database through my university's proxy after a server migration broke the chain that handles authentication. Four hours. My hands were shaking by the end, not from distress but from the specific feeling of knowing the information is there, right there, and the system between you and it doesn't know or care what you need it for. That was an inconvenience. I fixed it the next day.
 
 Now imagine the wall is legal. Imagine your bank reports you for crossing it.
@@ -37,6 +41,10 @@ Here is what I find when I follow the pattern. International telehealth platform
 ---
 
 Gregory Bateson wrote in *Steps to an Ecology of Mind* that the pattern which connects is not a thing but how things relate. The crab and the lobster share a pattern. The orchid and the primrose share a pattern. The pattern is not in either organism. It is between them.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-optimization-problem_symbol_3.jpg" alt="The Optimization Problem — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 Surveillance architecture works the same way. The pattern it detects is not in the user. It is between the user and the blocked destination. The system reads how they connect and assigns it a meaning: rebel, dissident, threat. The system has one category. A father recalculating a dose, an autistic researcher chasing a dataset, a person updating the firmware on their communication device — they all become the same flag.
 

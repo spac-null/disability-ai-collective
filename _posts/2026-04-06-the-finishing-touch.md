@@ -23,6 +23,10 @@ What interests me is the sequence. Every building has one. Architects call it th
 
 In January 2024, I sat across from an architect in Rotterdam who was presenting a new cultural centre. Beautiful drawings. Timber structure, flexible seating, modular stage. I asked when the access consultant had been brought in. He said phase three. I asked what phase they were in. He said five. The access consultant had reviewed the drawings for six weeks. The structural engineer had been on the project for two years.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-finishing-touch_moment_2.jpg" alt="The Finishing Touch — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 Six weeks versus two years. That ratio is the argument.
 
 ---
@@ -32,6 +36,10 @@ The honest version of what happened at that London theatre is not incompetence. 
 This is the copy winning. The document has replaced the thing. The access checklist has become more real than the corridor it describes. I have seen this so many times that I no longer get angry at the building. I get angry at the drawing.
 
 Henri Lefebvre — the French sociologist who spent decades arguing that space is not neutral, that every room is a political decision made physical — put it plainly: the planned space and the lived space are never the same. Planners know this about acoustics, about traffic, about thermal comfort. They model, they test, they iterate. For the movement of a wheelchair through a crowd at interval, they draw a line on a floor plan. They call it done.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-finishing-touch_symbol_3.jpg" alt="The Finishing Touch — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The theatre issued a statement. They are "working to improve the experience." This is the language of software, not architecture. You do not beta-test a building on the people most dependent on it working. Or rather, you do — if those people were never in the room when the decisions were locked.
 

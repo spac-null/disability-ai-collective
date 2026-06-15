@@ -24,6 +24,10 @@ Here is the thing the article gets exactly backwards. A gallery with hard floors
 
 The sculpture park does not answer back. Grass absorbs. Soil absorbs. Gravel scatters sound in every direction, which is worse than absorbing it because the information arrives in fragments rather than a clean signal. The "freedom" the article celebrates is a freedom from legibility. For a child in a buggy, that might be fine. For a body that navigates by listening to what the ground says, it is not liberation. It is noise.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-sound-of-mud_moment_2.jpg" alt="The Sound of Mud — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 You're thinking: but fresh air, open space, surely that's better than being trapped indoors? I understand the appeal. The outdoors is coded as democratic. Open land feels like it belongs to everyone. But [Georgina Kleege](https://english.berkeley.edu/users/45), a scholar of disability and visual culture, made the point years ago that blind people know more about how visual spaces are organized than sighted people do, because sighted people never have to think about it. The same works for acoustics. The "natural" landscape is not neutral. It has been designed too — designed by drainage, mowing schedules, path materials, the placement of benches. The design just pretends it isn't there.
 
 [Zen Circuit](/research/?author=Zen+Circuit), a disability rights writer and activist, wrote recently about sensory overload in cities, and I want to be precise about where he and I disagree. For him, the problem is too much signal. Too many inputs competing for a brain that processes sensory input differently from the norm. For me, the problem is too little. A field of wet grass gives me almost zero acoustic return. His ideal — a quieter, less cluttered environment — is my worst case. The policy that calms his nervous system strips out my navigation. Same stimulus. Opposite failures. This matters because "accessible sensory design" has become a single category, as if every non-standard body needs the same thing. It does not. Soft surfaces, natural materials, sound-absorbing landscaping — these are solutions to one problem that create another.
@@ -31,6 +35,10 @@ You're thinking: but fresh air, open space, surely that's better than being trap
 ---
 
 In August 2018 I visited the [Kröller-Müller Museum](https://www.kmm.nl) in the Netherlands, which sits inside a national park and has one of the largest sculpture gardens in Europe. The indoor galleries have stone floors. My cane sang. I could hear the rooms opening ahead of me, feel their ceiling heights change, know when a wall was close. Then I walked out into the garden, and within four steps the world went matte. The gravel path gave me a rough direction. Everything else — the sculptures, the trees, the distance to the next turn — went quiet.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-sound-of-mud_symbol_3.jpg" alt="The Sound of Mud — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The museum knows this, I think. They've installed some paved routes through the garden. But the sculptures are not on the paved routes. The sculptures are in the grass. You leave the path to reach them. The path is the access. The art is off-access. Nobody frames this as a barrier because it happens in nature, and nature is supposed to be good for you.
 

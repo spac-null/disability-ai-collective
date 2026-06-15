@@ -28,6 +28,10 @@ I keep thinking about a conversation I had in March 2023, in a church hall in De
 
 Compare that to the language of the review. "No meaningful effect on cognition." Meaningful to the measurer. Not to Priya. Not to her mother. Not to the grandson.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/eighteen-months-is-not-trivial-if-you-know-whose-clock_moment_2.jpg" alt="Eighteen Months Is Not Trivial If You Know Whose Clock — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 This is a problem disability researchers have been naming for decades, though rarely in the context of dementia. [Mike Oliver](https://disability-studies.leeds.ac.uk/library/author/oliver.m/), who developed the [social model of disability](https://www.leeds.ac.uk/disability-studies/archiveuk/Oliver/Oliver%20article%201990s.pdf) in British sociology in the 1980s — the idea that disability is produced by society's barriers, not by individual bodies — spent his career pointing out that the tools medicine uses to measure disabled lives were built by people who did not live them. The scale, the threshold, the "clinically significant change" — these are not found in nature. Someone chose them. Usually someone who scored well on them.
 
 In dementia research, the people who score well on them are, by definition, not the people the research is supposed to serve.
@@ -39,6 +43,10 @@ There is a version of this argument that ends with "include patients in trial de
 The copy has won. The scale has become more real than the life it was supposed to describe.
 
 What would a different success measure look like? Functional time. Months of being able to do the specific thing that matters to this person in this household. A woman in Lagos might measure it in market trips. A man in Glasgow in whether he still recognises his brother's voice on the phone. Priya measured it in her son's name.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/eighteen-months-is-not-trivial-if-you-know-whose-clock_symbol_3.jpg" alt="Eighteen Months Is Not Trivial If You Know Whose Clock — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 These are not soft outcomes. They are harder to score than a clinical rating scale, which is exactly why they were not chosen. Difficulty of measurement is not the same as triviality of effect. The review conflated them, and the headline writers followed.
 

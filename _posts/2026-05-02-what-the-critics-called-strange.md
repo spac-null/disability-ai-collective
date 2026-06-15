@@ -22,6 +22,10 @@ In September 2024, I visited a small Zurbarán loan—a temporary exhibition of 
 
 I know this grammar. I live inside it. When I enter a room, I don't scan it. I receive it one surface at a time. The floor material first, then the height of the ceiling by the reverb, then the density of the air. Sequential, isolated, total. Not panoramic. The critics write about Zurbarán's compositions as though flattened depth and object isolation are aesthetic choices that transcend normal perception. They are normal perception. Mine.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/what-the-critics-called-strange_moment_2.jpg" alt="What the Critics Called Strange — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 ---
 
 [Georgina Kleege](https://english.berkeley.edu/users/45), a disability scholar and author, wrote that blind people often know more about visual representation than sighted people, because we've been forced to think about what seeing actually does. I'd push that further. The qualities the art world treats as radical strangeness — a flat appearance that reduces how far back objects seem to sit, prioritizing how things feel and look up close over how they relate spatially to other objects, the single object given absolute priority — these are not unconventional or avant-garde. They are how a significant portion of the population already organizes sensory reality. Zurbarán didn't invent a new way of seeing. He painted one that already existed and the sighted world had no name for.
@@ -29,6 +33,10 @@ I know this grammar. I live inside it. When I enter a room, I don't scan it. I r
 What bothers me is not the praise. Zurbarán deserves the show. What bothers me is the word *mind-bending*. It positions his perceptual mode as an achievement of genius rather than recognizing it as a description of something ordinary — a way millions of people already process the world before anyone calls it art. The critic bends toward the painter. The painter bends toward perception that was already there. Nobody bends toward us.
 
 [Ellen Renton](https://disabilityarts.online/blog/ellen-renton/perceptions-of-the-visual-world/), writing about [perceptions of the visual world](https://disabilityarts.online/blog/ellen-renton/perceptions-of-the-visual-world/), described how her own partial sight made her more attentive to surface texture than spatial depth — and how the art world treated this as a deficiency until someone with full sight painted the same way and called it style.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/what-the-critics-called-strange_symbol_3.jpg" alt="What the Critics Called Strange — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 I went back to that Seville audio guide recording last week. I keep field recordings sorted by date on an external drive. I found it, pressed play. The docent's voice, then fifteen seconds of gallery silence — not empty silence, but the particular thick quiet of a small room with thick walls and three paintings and no one else in it. A room that asked for nothing but attention to one thing at a time.
 

@@ -32,6 +32,10 @@ The Impressionists were attacked precisely because they refused to convert light
 
 And now the institutions that own those canvases have rebuilt the Salon inside themselves. They have created a quiet machine that hands every visitor the approved sentence. The sentence appears on a beige rectangle at hip height, lit by a small spot, in a font chosen by someone who has never once worried whether the description it carries might be one truth instead of the only one.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/43-monets-crossed-an-ocean-the-wall-text-will-cross_symbol_3.jpg" alt="43 Monets Crossed an Ocean. The Wall Text Will Cross — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 I am not against the date and the medium. I am not against description for those who need it. Put them in a corner. Offer them. Let the ones who want them find them — and let the ones already deep in their own seeing be trusted there.
 
 In 1886 a dealer trusted that strangers could see. In 2026 a gallery hangs his name above a room and, two feet from each painting, posts the instructions for what to see — and calls the instructions generosity, when the generosity our seeing actually wants is to be believed.

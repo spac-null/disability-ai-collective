@@ -19,11 +19,19 @@ Here is what I keep seeing. The coverage of corporate DEI (Diversity, Equity, an
 
 This is not an oversight. This is a floor plan. You can read a building's priorities by what it puts on the ground floor and what it sends to the basement. Disability infrastructure inside corporations was always the basement office. The accessibility coordinator, the accommodation pipeline (the process for requesting and approving workplace accommodations), the disability employee resource group. These were never the visible commitments. They were the quiet ones. The ones companies could cut without anyone outside noticing, because no one outside was watching that corridor.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-floor-plan-after-the-fire_moment_2.jpg" alt="The Floor Plan After the Fire — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 [Christine Sun Kim](https://christinesunkim.com/), a Deaf artist, made a piece in 2015 called [*All Day*](https://christinesunkim.com/all-day) that shows four clocks, each face relabeled with phrases describing how she moves through time through the lens of Deaf experience: "obligation time," "ASL time." The structure is the argument. Corporate accessibility worked on obligation time—the bare minimum required by law, turned into daily function by someone who understood both the legal requirement and the human reality. The coordinator translated legal rights into daily function. Without her, the rights still exist on paper. The paper sits in a drawer.
 
 Someone will say: the law still requires accommodation. True. An employee can still file a request. A manager can still approve it. The mechanism is the same the way a map with no street names is the same as a map with them. Technically complete. Functionally useless for the person standing at the corner.
 
 ---
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-floor-plan-after-the-fire_symbol_3.jpg" alt="The Floor Plan After the Fire — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 What was lost is not a programme. It is a translation layer. The person who knew that "reasonable accommodation" meant a specific chair ordered from a specific vendor with a specific lead time. Who knew that the captioning service dropped out after forty-five minutes and had a backup. Who recalled that the last Deaf hire quit after three months because no one budgeted for interpreters at the team offsite. That knowledge lives in a person, not a policy document. It disappears exactly the way an unrecorded sign in sign language (ASL) disappears — the moment the hands stop moving.
 

@@ -26,6 +26,10 @@ The surprise belongs to the researchers. It does not belong to the building.
 
 You might say this is how research works. Someone measures what was previously unmeasured. I agree. Counting and measuring has value. The problem is not the data. The problem is the frame. The paper treats acoustic design as a hidden feature waiting for modern instruments to decode. It never considers that the people who built Inkamisana understood vibration through their bodies, and that [this kind of knowledge has never stopped existing](https://failedarchitecture.com/a-town-is-a-machine-for-movement-alpine-modernism/) in communities whose main bond with space is not visual.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-vibration-experts-nobody-called_moment_2.jpg" alt="The Surprise Belongs to the Researchers — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 Bauman introduced the term DeafSpace to describe architecture shaped by touch and visual bearing. His collaborator at Gallaudet, architect and researcher [Linda Kozma-Spence](https://www.gallaudet.edu/directory/linda-kozma-spence), documented how Deaf students use reflected light, motion, and floor vibration to navigate. They do not experience these as workarounds. They experience them as how space communicates.
 
 The Inca builders at Ollantaytambo channeled water through stone to carry sound. Deaf designers at Gallaudet chose flooring materials to pass vibration through the floor. The mechanism is the same. One gets a research paper. The other gets a footnote in official building standards and guidelines.
@@ -37,6 +41,10 @@ Here is where disability economics enters. I sat in a budget review in November 
 The budget for that flooring was £4,200. The cost to put it back with a vibration-carrying base would have been £6,800. The cost to bring in a Deaf space designer before the spec was written would have been roughly £1,500. They spent £4,200 to build the wrong floor, and the accountant marked it compliant.
 
 [Sunaura Taylor](https://ucpress.edu/author/taylor-sunaura)'s category of "normal" applies here with precision. The normal body that architecture serves is one that sees space and hears space through ears. A body that perceives through vibration, through touch, through peripheral motion is abnormal, and abnormal bodies get fitted in after the fact, not designed for from the start.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-vibration-experts-nobody-called_symbol_3.jpg" alt="The Surprise Belongs to the Researchers — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The Inca builders at Inkamisana did not fit things in after the fact. They designed. They carved water channels at specific depths to produce specific pitches in specific chambers. This was not an accessibility feature. This was architecture.
 

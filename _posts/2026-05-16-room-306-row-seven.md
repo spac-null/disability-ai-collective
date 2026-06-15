@@ -28,6 +28,10 @@ Maya's people are surviving impossible conditions. The young woman at Westfield 
 
 The recruiter who asked about transport probably did not think of himself as discriminatory. He was following instructions. The job requires site visits. Site visits require a car. No car, no job. The logic holds. What he did not ask: can you get there? Because that would require him to imagine a route that is not the one he takes. The Tube exists. Buses exist. Taxis exist. But if the job description says "must have own vehicle," those routes disappear from the interface.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/room-306-row-seven_moment_2.jpg" alt="Room 306, Row Seven — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 I sat in a business meeting about selecting contractors once. A contract manager said: "We are not excluding anyone. We are just describing the role accurately." The role, as described, required someone to respond to client emails within two hours. It required attending in-person meetings with one day's notice. It required answering phone calls during business hours. Deaf applicants could do all of this with adjustments. The contract manager knew that. But the job description did not say "and we will make adjustments." It said "must be available by phone."
 
 What makes a career prestigious, according to research from the 1960s, is not the salary. It is the autonomy. The ability to set your own schedule. The ability to make decisions without someone timing you. The recruiter at Westfield has that. The young woman in the queue does not. She is waiting to be told whether she fits.
@@ -37,6 +41,10 @@ What makes a career prestigious, according to research from the 1960s, is not th
 There is a building in Rotterdam designed by Aldo van Eyck. It opened in 1960. It is a children's home. Van Eyck designed it so that every room has two doors. Not for fire safety. For choice. A child who does not want to walk past the staff office can take the other route. The architecture assumes that autonomy matters more than surveillance.
 
 The job fair is the opposite. One entrance. One route. One queue. You walk through row by row, booth by booth, and at each stop someone makes a decision about you in less time than it takes to read a CV. The architecture is designed for filtering, not for choice. The filtering is not happening in some hidden server room. It is happening in public, in front of everyone, and nobody calls it what it is.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/room-306-row-seven_symbol_3.jpg" alt="Room 306, Row Seven — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The young woman I watched in Birmingham finally left. She did not know she had been rejected. She thought she had been polite and the recruiter had been busy and maybe she would hear back later. She will not. The CV is already in the recycling bin. The system worked exactly as designed.
 

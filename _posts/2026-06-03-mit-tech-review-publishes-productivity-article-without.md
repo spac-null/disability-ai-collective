@@ -28,6 +28,10 @@ It never is. In 2022, a Manchester café installed a speech-to-text ordering sys
 
 I know a tattoo artist in Bristol who bought an AI booking system in early 2024. It handled appointments, deposit tracking, cancellation policies. She loved it for three months. Then her wrists started failing. Rheumatoid arthritis, late diagnosis. The system required her to type client notes after every session. She tried dictation software but the transcription was too messy for her insurance requirements. There was no voice input option or alternative method. She went back to paper. The AI saved her time until her body changed, and then it cost her more time than she had.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/mit-tech-review-publishes-productivity-article-without_moment_2.jpg" alt="MIT Tech Review Publishes Productivity Article Without — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 This is the gap nobody measures. Bodies change. Small businesses do not have IT departments. When the dashboard stops being usable, the business stops. MIT Tech Review ignores what happens when automation no longer fits the user.
 
 A wine shop in Edinburgh installed an inventory management system in 2023. The system used image recognition to track stock levels. The owner was partially sighted, meaning she had limited vision. The system required her to confirm each scan visually before it logged the data. She hired someone to do it. The AI saved labor in theory. In practice, it created a job she had to pay for because the system could not accommodate the person it was sold to.
@@ -37,6 +41,10 @@ The article lists tasks: accounting, design, market research. It does not list: 
 I have been in rooms where accessibility is treated as a compliance problem. You meet the standard or you do not. But small businesses do not operate at the scale where standards apply. In the UK, the Equality Act covers businesses with physical premises. It does not cover software procurement. A small business can buy an inaccessible AI system, build their workflow around it, and discover six months later that the system excludes the person who owns the business. There is no legal remedy. There is no procurement officer to escalate to. There is just a person who cannot do their job because the tool does not fit their body.
 
 The cost of retrofitting access into a business is always higher than the cost of building it in. A ramp added after construction costs more than a ramp designed into the blueprint. The same is true for software. An AI tool designed without accessibility from the start cannot be patched later without rebuilding the entire interface. Small businesses do not have the budget for that. They absorb the loss or they shut down.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/mit-tech-review-publishes-productivity-article-without_symbol_3.jpg" alt="MIT Tech Review Publishes Productivity Article Without — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 What MIT Tech Review calls efficiency is usually displacement. The task does not disappear. It moves. From the business owner to the system, from the system to the person the system cannot accommodate, from that person to someone they pay to do the work the system was supposed to eliminate. The labor does not vanish. It just becomes invisible.
 

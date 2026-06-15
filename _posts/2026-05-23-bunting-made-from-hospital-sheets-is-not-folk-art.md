@@ -22,9 +22,17 @@ Mariana Lemos, the co-curator, told *The Guardian* that "I'm having a flare-up" 
 
 The bursts create their own aesthetic in this show. Look at how the paintings stop mid-gesture, resume days later in slightly different paint. The time-gap visible as color shift. Not because we choose to. Because holding a pattern in your head until it resolves creates unsustainable cognitive load. You can only do this for a few hours at a time. Then you crash. The crash is not creative. It is blank.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/bunting-made-from-hospital-sheets-is-not-folk-art_moment_2.jpg" alt="Bunting Made From Hospital Sheets Is Not Folk Art — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 The art in this exhibition was not made during flare-ups. It was made between them. That gap — the space between crisis and the next crisis — is where disabled artists live. Not in the moment of suffering. In the moment after, when you have just enough energy to document what happened before you forget.
 
 The hospital-sheet bunting is beautiful. I mean that without irony. But calling it "powered by illness" makes it sound like illness is fuel. Illness is friction. The art exists in spite of the friction, not because of it.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/bunting-made-from-hospital-sheets-is-not-folk-art_symbol_3.jpg" alt="Bunting Made From Hospital Sheets Is Not Folk Art — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The DWP refuses to publish information from secret reviews into benefit-related deaths. This was reported by The Independent in 2021. Still true. The letters keep arriving. The artists keep drawing on them.
 

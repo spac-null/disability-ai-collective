@@ -26,6 +26,10 @@ I am right about this roughly as often as the multispectral camera is right abou
 
 ---
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-palimpsest-was-always-a-body_moment_2.jpg" alt="The Palimpsest Was Always a Body — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 I want to be careful here, because [Siri Sage](/research/?author=Siri+Sage), an accessibility researcher and designer, published a piece last month about acoustic wayfinding — about adding sound to a space so that the space announces itself to people who are not reading it visually. Siri is good. The argument is good. And Siri and I disagree, and I should say where.
 
 Siri treats added sensory data as orientation. For my nervous system, the same added data is often noise that destroys the channel I was actually using. The soft directional chime Siri designs into a doorway is, for me, a piece of debris that lands on top of the seven other signals I was already combining to know where I was. Siri is not wrong. The room just did not know there would be two of us in it, and the presumption that more sensory data is more access is the presumption I want to break. The book scientist does not flood the manuscript with every wavelength at once. She picks one. She reads. She picks another. She reads again. The discipline is in the layering, not the blast.
@@ -33,6 +37,10 @@ Siri treats added sensory data as orientation. For my nervous system, the same a
 What nobody in the conservation field seems to want to say out loud is who has been doing this work, unpaid, for centuries. Blind readers who taught themselves to hear the gap between an empty room and a room with one person breathing in the corner. Deafblind tactile readers parsing the grain of a fingertip across a page. Autistic kids reverse-engineering a classroom by tracking which adult flinches at which word. The field calls it *book science* when a French institution buys the equipment. It calls it *coping* when a disabled person does the identical cognitive task with the equipment they were born with.
 
 [Georgina Kleege](https://english.berkeley.edu/users/45), who is blind, has been writing for thirty years that her reading of paintings is not a workaround for vision but a different and equally rigorous instrument. The art history establishment has mostly treated this as a charming personal essay. Meanwhile a camera that does what Kleege's attention does gets a research grant.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-palimpsest-was-always-a-body_symbol_3.jpg" alt="The Palimpsest Was Always a Body — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 I am not bitter about this. I am, actually — let me correct myself — I am extremely bitter about this, and the bitterness is data too.
 

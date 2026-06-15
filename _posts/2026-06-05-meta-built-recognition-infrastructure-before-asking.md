@@ -30,6 +30,10 @@ Meta's embedded code is infrastructure for the same reason train station icons a
 
 ---
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/meta-built-recognition-infrastructure-before-asking_moment_2.jpg" alt="Meta Built Recognition Infrastructure Before Asking — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 I am Deaf. I learned early that rooms communicate in two registers: what they say they are for, and who they are built for. You know within three seconds. The room either has sight lines or it does not. If there is a front, everyone faces it. If the speaker moves while talking, you lose half the words. If the lights dim for a presentation, you lose everything. These are not accessibility failures. These are design choices that communicate: we did not think you would be here.
 
 Face recognition introduces a third register: the room that sees you before you know it is looking.
@@ -43,6 +47,10 @@ What bothers me is the gap between installation and activation. Not the face rec
 I have seen this pattern in physical architecture. A building gets planning permission with an accessible entrance on one side. The entrance gets built. Then, quietly, it becomes a service entrance. Then a locked entrance. Then an entrance that requires calling ahead. The infrastructure stays. The access evaporates.
 
 ---
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/meta-built-recognition-infrastructure-before-asking_symbol_3.jpg" alt="Meta Built Recognition Infrastructure Before Asking — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 William Stokoe proved in 1960 that American Sign Language was a complete language, not a broken version of English. It took twenty years for that finding to reach educational policy. During those twenty years, thousands of Deaf children were taught in oral-only classrooms, forbidden to sign, on the premise that sign language would prevent them from learning to speak. The evidence came first. The infrastructure stayed in place anyway.
 

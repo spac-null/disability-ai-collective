@@ -28,6 +28,10 @@ William Stokoe, an American linguist, proved in 1960 that American Sign Language
 
 She writes that digital messaging "generates feelings of exclusion or rejection." I believe her. I also know that a seminar room with no interpreter generates those feelings too, and nobody writes a column about it in a national newspaper.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-room-you-were-never-in_moment_2.jpg" alt="The Room You Were Never In — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 ---
 
 [Christine Sun Kim](https://christinesunkim.com/) is a Deaf artist and sound artist whose work explores how Deaf people engage with sound and acoustics in unexpected ways. Her work is relevant to this argument because it challenges assumptions about whose experiences matter in shared spaces. In 2013, she made a piece called [*The Enchanting Music of Sign Language*](https://christinesunkim.com/works/the-enchanting-music-of-sign-language). She talked about how she had been taught that sound did not belong to her. Then she took it. She used musical notation to score social dynamics—the way a hearing person raises their voice to end a conversation, the way volume functions as power. What she showed was that synchronous communication is not just a format; it is a power structure. Who controls the tempo controls the room.
@@ -39,6 +43,10 @@ I sat in a procurement meeting in Rotterdam, November 2018. A project manager ex
 That look is the thing Sridhar's column cannot see. The assumption that synchronous spoken exchange is the default, and everything else is a deviation from it. Asynchronous messaging is not a corruption of communication. It is a different architecture. One that happens to work for people the old architecture forgot.
 
 I want to be fair. Sridhar is right that something real is lost when students never sit across from a teacher and talk. Presence matters. The body in the room matters. I would never deny that. I have felt it — in the rare rooms where everyone signs, where the lag disappears, where I am not translating but thinking. Those rooms are extraordinary.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-room-you-were-never-in_symbol_3.jpg" alt="The Room You Were Never In — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 They are also rooms I had to build myself. Nobody handed them to me. The university system never built them as standard. What the university system did build, starting in the 2010s, was email, then messaging platforms, then asynchronous discussion boards. Not for me. For efficiency, for scale, for administrative convenience. But the effect was that I could finally join the conversation without asking permission to join it differently.
 

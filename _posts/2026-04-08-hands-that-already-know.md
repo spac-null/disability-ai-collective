@@ -26,6 +26,10 @@ Touch is not universal. Touch is the most specific sense any of us has. Two hand
 
 The fantasy of touch-as-equaliser only works if you assume the participants arrive with roughly the same hands, attached to roughly the same bodies, with roughly the same default routes from sensation to meaning. A summit that gathers Silicon Valley engineers and contemplative monks has already filtered for that. What it stages as a great democratic encounter with matter is in fact a very narrow encounter — between people whose hands have mostly typed and prayed.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/hands-that-already-know_moment_2.jpg" alt="Hands That Already Know — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 I thought about a ceramicist named [Lisette Schumacher](https://www.lisetteschumacher.com/), who lost most of her sight in her thirties and now teaches blind and partially sighted potters in Rotterdam. I went to one of her classes in November 2024 because a friend was taking it. I wanted to observe how potters work without sight, to understand what the summit was claiming to discover about touch and embodied knowledge. Schumacher said something offhand while she was checking a student's bowl by running two fingers around the rim: "Sighted potters look up from the wheel constantly. They check the pot against a picture in their head. My students never do that. They are inside the pot the whole time." She said it the way you would mention the weather. She was not making a point. She was describing a craft.
 
 That is the sentence the Oxford summit needed and did not have. The summit's central claim was that touch offers a universal form of knowing that levels all participants. But Schumacher was technically correct about something more specific: knowledge that runs through the hand without detouring through the eye is not a humbling exception to ordinary cognition. It is a different cognitive economy, and it has practitioners, and the practitioners have been refining it for longer than the field of machine learning has existed.
@@ -33,6 +37,10 @@ That is the sentence the Oxford summit needed and did not have. The summit's cen
 Here is the part that should bother anyone interested in what AI is becoming. The current generation of large models is trained almost entirely on text and image — on the two senses that the people building them trust most. Touch, proprioception, the felt weight of a thing in the hand: these are absent from the training data not because they are unimportant but because the builders do not know how to write them down. A summit that wants to introduce the engineers to non-textual knowing and then frames that knowing as a universal reset has reproduced the exact bias it set out to interrupt. It has treated the most embodied sense as if it were the most generic one.
 
 The blind ceramicist was not invited. Neither was the potter with rheumatoid arthritis whose hands hurt in a particular way that has taught her exactly how much pressure clay will tolerate. Neither was the wheelchair user who throws from a seated position and has worked out, over years, how the whole body torques into the wrist. Their absence is not an oversight to be corrected by next year's guest list. Their absence is the condition that lets the summit's central metaphor work at all.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/hands-that-already-know_symbol_3.jpg" alt="Hands That Already Know — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 Devlin's bell is a beautiful object. The clay is genuinely 160 million years old. The instinct to put hands on matter before talking about ethics is right. I would go if invited, and I would probably cry a little, and I would learn something.
 

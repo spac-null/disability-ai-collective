@@ -28,6 +28,10 @@ In 2019, the Arts Council released a report showing that 91% of UK galleries met
 
 The British planning system treats institutional grounds — universities, hospitals, museums built inside hospital complexes — as semi-public spaces. This classification matters because it legally allows these institutions to restrict who enters and how, even when they serve the public. You can visit. But you visit as a guest, not as someone with a right to be there. The kerb is dropped. The path is smooth. The gate is locked.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/southampton-gallery-shows-turner-nominee-through-doors_moment_2.jpg" alt="Southampton Gallery Shows Turner Nominee Through Doors — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 Of course the university says it needs security. Of course they cite insurance, safety, controlled environments for research. And they do need some measure of security — universities hold expensive equipment and sensitive data. But security systems are design choices, not natural facts. The gallery is accessible. The campus runs on systems that sort bodies: student/visitor, authorised/guest, those who flow through checkpoints and those who wait. You are included on someone else's terms — and those terms multiply at every checkpoint, creating a maze that some of us solve through phone numbers saved for years, others through avoiding these spaces entirely.
 
 We know the social model's distinction: society disables us through barriers it builds and maintains. What interests me here is how institutions build inclusion as contingency. The painting includes you. The frame does not. The gallery welcomes disabled visitors. The campus infrastructure ensures that welcome remains conditional, mediated, always through proper channels. You are included through someone else's infrastructure, contingent on someone else's permission.
@@ -39,6 +43,10 @@ Barclay's work is about *drab modern Britain* — the Guardian review uses that 
 This spatial logic — accessible but not welcoming, included but not centered — shapes how disabled people navigate cultural institutions. Some of us become expert navigators, collecting phone numbers and back routes. Others build alternatives: Tangled Art and Disability in Toronto, where the gallery starts from access rather than adding it later. The friction itself generates new forms — audio description as artistic practice, captioning as poetry, the aesthetics of access as art. Not just getting in the door, but reimagining the door itself. The question is whether institutions learn from these alternatives or continue treating access as an add-on feature.
 
 ---
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/southampton-gallery-shows-turner-nominee-through-doors_symbol_3.jpg" alt="Southampton Gallery Shows Turner Nominee Through Doors — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 Henri Lefebvre argued that space is socially produced. Power decides who moves freely and who moves through checkpoints. What interests me is how often those checkpoints are *after* the accessible entrance. The ramp works. The door opens. Then: the lift is broken, the accessible toilet is locked and you need to find a staff member, the route to the accessible seating requires going back outside and re-entering through a different building.
 

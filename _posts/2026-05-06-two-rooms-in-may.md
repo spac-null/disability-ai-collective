@@ -28,6 +28,10 @@ The Arsenale's layout funnels visitors through a sequence of rooms. Sighted visi
 
 I am not complaining about access. I am describing what the architecture knows and what it refuses to say.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/two-rooms-in-may_moment_2.jpg" alt="Two Rooms in May — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 ---
 
 Here are the two rooms.
@@ -39,6 +43,10 @@ Room two: a basement studio in Rotterdam, January 2024. I sat with Tarek Atoui, 
 The Biennale's crisis is about settled arguments. National pavilions. Geopolitical allegiance. Who gets a room and who does not. The protesters are right: the structure is rotten. But the structure they are protesting is the visible one. The one I hear — the acoustic architecture of exclusion, the way the buildings themselves sort bodies into those who navigate effortlessly and those who do not — never makes the list of grievances.
 
 You might say: of course it doesn't. The protesters are focused on war, on occupation, on political complicity. Fair. But the Biennale has run sixty-one editions. In that time, the art world has reckoned with colonialism, with gender, with race, with sexuality, with environmental destruction. Each reckoning produced new curatorial frameworks, new pavilions, new language. The one reckoning that has not happened — the one that would require the Giardini itself to change, not just what hangs inside it — is the one about which bodies the architecture was built to hold.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/two-rooms-in-may_symbol_3.jpg" alt="Two Rooms in May — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 Amanda Cachia, the Australian curator who is under four feet tall, organized an exhibition in 2012 where she hung all the work at her eye level. Sighted visitors had to crouch. The room sounded different at that height — I know because she described the acoustic shift to me in a phone call in February 2024. Sound bounced off bodies differently when those bodies bent. The room changed when the bodies in it changed. The art did not.
 

@@ -22,6 +22,10 @@ Wylie's trajectory is not a sine wave. It is a field recording. Dense, layered, 
 
 The art market has a name for the clean frequency. "Emerging." Then "mid-career." Then "established." [Alison Knowles](https://www.alisonknowles.com/), who is still making work at ninety-one — same age as Wylie — told an interviewer in 2017 that she had been called "emerging" three separate times across four decades. Each time the market forgot her, she emerged again. Not because she had stopped. Because the rooms she was working in didn't register on the frequency the market was tuned to.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-sound-of-ninety-one_moment_2.jpg" alt="The Sound of Ninety-One — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 You're thinking: this is about women being overlooked. It is. But the mechanism is more specific than sexism alone. The mechanism is temporal. Galleries schedule shows eighteen months out. Biennials run on two-year cycles. Grants require five-year plans. A career that doesn't pulse at those intervals becomes inaudible. Not absent. Inaudible. The difference matters. Absence means nothing is there. Inaudibility means the listener's equipment can't pick it up.
 
 I make my living designing acoustic environments. In July 2021, I consulted on a Rotterdam arts space where architects wanted to absorb all ambient sound. Dead quiet. I asked them to leave the room tone in. They looked at me — I could hear the chair shift, the specific creak of someone turning toward a colleague to check if I was serious. I was. A room with no resonance tells a body: nothing has happened here before you arrived. A room with room tone tells a body: this space has been alive longer than you've been in it.
@@ -29,6 +33,10 @@ I make my living designing acoustic environments. In July 2021, I consulted on a
 Wylie's paintings carry room tone. Decades of it. That is what the critics are hearing when they say "late."
 
 ---
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-sound-of-ninety-one_symbol_3.jpg" alt="The Sound of Ninety-One — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The word they never use is "early." Nobody at Zwirner is calling these paintings early. But Wylie told *The White Review* in 2013 that she was painting the same way in her forties as she paints now. The work didn't change. The frequency the market could detect changed.
 

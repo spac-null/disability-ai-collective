@@ -26,6 +26,10 @@ Here is what design-meets-health looks like from the other side. You arrive at a
 
 The system was built in a lab where the designer and the engineer and the hospital administrator all assumed users would be standing and able to reach forward. The screen was positioned exactly where their hands expected it to be. Then it shipped. Now it lives in a room with a person who cannot stand, a nurse whose back hurts from holding the tablet, and a machine that cost two hundred thousand pounds. The tablet cost sixty. Nobody budgets for the retrofit.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/design-health-technology-twenty-projects-and-not_moment_2.jpg" alt="Design, Health, Technology \u2014 Twenty Projects and Not — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 Susan Wendell, a disability theorist, introduced the concept of the rejected body in 1996 — the body that does not cooperate with the built environment and gets discarded from the design process rather than included in it. **The solution is not to design for that body after the fact. The solution is to let that body into the room where the design starts.** But graduate programs in health technology do not require collaboration with actual patients. They require a literature review and a working prototype. The prototype has to work in the lab. It does not have to work in a clinic. That is someone else's job.
 
 I know three designers who tried to change that. One embedded herself in a hospital for a year, shadowing nurses and watching how equipment actually gets used. She redesigned a cart for distributing medicine. It was slower to manufacture and cost eight percent more. Purchasing rejected it. One worked with wheelchair users to redesign a physical therapy space. The hospital loved it until they saw the cost of widening the doorways. They put in the new equipment in the old room. The third gave up and went into academic research, where she writes papers about collaborative design that get cited by people who do not practice it.
@@ -33,6 +37,10 @@ I know three designers who tried to change that. One embedded herself in a hospi
 The UC Davis show offers three purchase prizes. The museum buys the winning work. That work now belongs to an institution. It does not belong to the world where someone might use it. A sculpture about health technology lives in the same category as a painting of a bridge. Both are about infrastructure. Neither is infrastructure.
 
 There is a room I have been in exactly once. Toronto, 2019, a design conference. The panel was called Inclusive Health Technology. Four speakers. Three were designers presenting theoretical projects about devices for disabled people. One was a man with cerebral palsy who said: I have been invited to twelve of these panels and nobody has ever asked me what I actually need. He said it very calmly. He had a list. The list was three items long. None of them required new technology. All of them required someone to care about use. The moderator thanked him for his perspective and moved to questions. Fourteen people raised their hands. Not one of them asked about the list.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/design-health-technology-twenty-projects-and-not_symbol_3.jpg" alt="Design, Health, Technology \u2014 Twenty Projects and Not — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 What gets shown is not what gets built. What gets built is not what gets used. What gets used is not what gets maintained. The gap between those four states is where health technology goes to die. A graduate student designs it. A museum buys it. A hospital considers it. A purchasing officer sees the price. A nurse sees the training requirement. A patient never sees it at all. The cycle restarts with a new cohort who believe the problem is technical and not political.
 

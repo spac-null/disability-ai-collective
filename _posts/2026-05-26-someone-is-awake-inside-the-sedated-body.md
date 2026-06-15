@@ -26,6 +26,10 @@ You know the feeling — when you're in the pre-op bed and you can see everythin
 
 I get why surgical teams need their casual atmosphere — the jokes that break tension during a ten-hour procedure, the music that helps them focus through repetitive work. They're human. They need to survive their workday. And maybe some patients would panic hearing laughter while someone cuts into them. But there's something brutal about waking up and realizing the warmth in the room arrived only after you were no longer there to experience it.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/someone-is-awake-inside-the-sedated-body_moment_2.jpg" alt="Someone Is Awake Inside the Sedated Body — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 ---
 
 In 2019 I asked an anaesthetist why they wait until you are sedated — under anesthesia — to turn the music on. He said they do not wait — it is on the whole time, just quieter before induction. Quieter, he said, because patients find it distressing. The music is for us, not you. Once you are gone, we turn it up.
@@ -35,6 +39,10 @@ I thought about this for a long time. The room has two versions. One is performe
 The gap between those two versions is not cruelty. It is necessity. You cannot have a room full of people holding the emotional pitch required to meet a frightened patient at their level of fear for six, eight, ten hours. The room would collapse. So the fear gets managed in a bounded window — the pre-op conversation, the consent form, the hand-holding until the IV takes — and then it is over. You leave, and the room returns to its default state, which is people working.
 
 I understand why it has to be this way. I also know what it feels like to wake up and realise the room you were afraid in does not exist anymore. The warmth arrived after you left. The moment you were incapable of refusing anything, everyone got comfortable.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/someone-is-awake-inside-the-sedated-body_symbol_3.jpg" alt="Someone Is Awake Inside the Sedated Body — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 ---
 

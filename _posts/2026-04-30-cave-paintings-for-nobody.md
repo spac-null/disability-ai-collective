@@ -28,6 +28,10 @@ In May 2022, I visited [De Appel](https://www.deappel.nl), a contemporary art in
 
 The Rotterdam warehouse got coverage in three design magazines. De Appel's renovation got none.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/cave-paintings-for-nobody_moment_2.jpg" alt="Cave Paintings for Nobody — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 ---
 
 Meisenberg's show at 1000 Dean Street, the Prospect Heights gallery mentioned earlier, exists because one out of five commercial spaces in that borough sat empty at the end of last year. A landlord had a conversation with a tenant. A guitar-string manufacturer's office became available. Forty-plus artists installed work throughout the space. The cubicle walls, the closets, the ductwork — all kept. "It feels like we stumbled upon this place and found signs of life," Meisenberg said.
@@ -39,6 +43,10 @@ Here is what I see when I look at photographs of that space. Narrow corridors be
 This happens constantly. A building fails commercially, and someone with taste and friends sees potential. The failure becomes the aesthetic. The exposed pipe is not a pipe — it is a gesture. The too-narrow corridor is not a code violation — it is intimacy. The absence of clear wayfinding is not neglect — it is a curatorial choice. You are meant to stumble upon things.
 
 I don't stumble. I read rooms. Every Deaf person I know reads rooms. You walk in and you clock the sight lines, the exits, the reflective surfaces, the places where someone could approach from behind you without being seen. You do this before you take your coat off. It is not anxiety. It is literacy. And when I read a room that has been made deliberately illegible, I understand exactly what I'm looking at. I'm looking at a space designed by people who can afford to be lost.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/cave-paintings-for-nobody_symbol_3.jpg" alt="Cave Paintings for Nobody — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 [Lebbeus Woods](https://www.lebbeuswoods.net) — the architect who never built, who drew structures emerging from war damage — said in a 2009 lecture at the [Cooper Union](https://www.cooper.edu) that "the ruin is not a starting point but an ending point being misread as a beginning." He was talking about Sarajevo. The scale is different. The mechanism is the same. You take a structure that failed the people who used it, and you reframe that failure as raw material. The guitar-string workers left. The cubicles remain. The cubicles become art.
 

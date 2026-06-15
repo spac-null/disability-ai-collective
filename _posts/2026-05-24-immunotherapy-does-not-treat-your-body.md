@@ -34,6 +34,10 @@ Easier, but not for the body receiving it.
 
 ---
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/immunotherapy-does-not-treat-your-body_moment_2.jpg" alt="Immunotherapy Does Not Treat Your Body — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 The immunotherapy explainer lists conditions these treatments might address: cancer, autoimmune disease, allergies, infections, brain disorders. Five categories that have nothing in common except this: they all involve immune response. The article presents this as progress — one mechanism, many applications. What it does not say is that grouping these conditions together redefines what the problem is. The problem is not cancer. The problem is not rheumatoid arthritis. The problem is immune response itself.
 
 This is not a medical argument. This is an architectural one. If you design a treatment around the concept of borders, you will produce therapies that strengthen borders. The drug I take works. It stops my joints from destroying themselves. It also means I get every cold, every flu, every infection that moves through a room. I spend two weeks recovering from things that used to take two days. This is not a side effect. This is the treatment working exactly as designed.
@@ -49,6 +53,10 @@ I thought of that house the first time someone explained to me that autoimmune d
 Immunotherapy research is not designed this way. It is designed to restore the border. To teach the immune system to target correctly. "Correctly" means: according to a model of the body as sovereign territory.
 
 I have read trial results where efficacy is measured by reduction in immune response. The drug worked if your body stopped attacking itself. What the trial does not measure: whether you can still recognise danger. Whether you can still fight infection. Whether the borders they restored are borders you can live with.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/immunotherapy-does-not-treat-your-body_symbol_3.jpg" alt="Immunotherapy Does Not Treat Your Body — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 ---
 

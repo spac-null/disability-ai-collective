@@ -26,6 +26,10 @@ This is what a ledger does. Not lie. Categorise.
 
 The NDIS was built as a scheme. The word matters. A scheme is a plan, a structure, an arrangement. It is not a right. Rights do not have sustainability taskforces. Rights do not get "razor gangs" — cost-cutting committees appointed to reduce government spending. The language tells you where you stand before anyone makes a cut.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-ledger-sees-you-now_moment_2.jpg" alt="The Ledger Sees You Now — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 ---
 
 Here is what I keep thinking about. Otto Neurath — an Austrian philosopher who spent the 1920s and 1930s developing a universal visual language for statistics — discovered something that matters to how we understand disability funding today. He wanted to show social facts in pictures so that anyone could read them: housing, health, mortality, labour. His team at the [Gesellschafts- und Wirtschaftsmuseum](https://www.wirtschaftsmuseum.at/) (the Museum of Society and Economics in Vienna) designed rows of tiny human figures, each one representing a thousand people. The method was radical: it forced you to see populations as bodies, not as numbers.
@@ -37,6 +41,10 @@ The NDIS dashboard — and I am guessing here, but I have sat in enough of these
 A razor gang does not need to cut anything directly. It only needs to redesign the dashboard. Move the threshold for "reasonable and necessary." Adjust the algorithm that predicts plan costs. Change the font size, if you want to be poetic about it, though I am not being poetic. I have watched a municipal office make a category disappear by changing a dropdown menu. February 2020, a district office in The Hague. The category was "communication support." It became "supplementary services — other." Referrals dropped within two months. Nobody cut a budget. They just moved a label.
 
 [Bruce Young](https://www.pwdaustralia.com.au/), a disability advocate who gave evidence to the Australian Parliament's Joint Standing Committee on the NDIS in 2023, said something that has stayed with me: "Every time they say 'sustainability,' I hear 'how little can we get away with.'" He said it plainly, the way you say something you have tested against your own life and found true.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-ledger-sees-you-now_symbol_3.jpg" alt="The Ledger Sees You Now — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The concession I owe: fifty-two billion dollars is a real number. Managing public money is a real obligation. Fraud exists. Waste exists. No system that large runs clean. I know this. The question is not whether you audit the program. The question is who designs the audit, what they count, and what they have decided — before they start — is not worth counting.
 
