@@ -70,6 +70,33 @@ SEED_SITES = [
     # AUTONOMOUS adjacent; exhibitions, artworks, people, stories, news.
     {"domain": "museumvandegeest.nl",             "sitemap": "https://museumvandegeest.nl/sitemap.xml",              "max_urls": 250},
 
+    # ── Deaf & NGT culture — Netherlands ─────────────────────────────────────
+    # doof.nl — Dutch Deaf news/info platform. Healthcare, education, employment,
+    # culture, NGT accessibility at Dutch museums (Van Gogh, EYE). Active June 2026.
+    # 31-sitemap index confirmed.
+    {"domain": "doof.nl",                         "sitemap": "https://www.doof.nl/sitemap.xml",                       "max_urls": 250},
+    # IN Gebaren — NGT knowledge & training center. 'Musea IN Gebaren' programme
+    # provides NGT video tours at Van Gogh Museum, EYE Filmmuseum, others.
+    # No sitemap found — key URL: https://ingebaren.nl/musea-in-gebaren/
+    # {"domain": "ingebaren.nl",  no machine-readable feed as of 2026-06-15},
+
+    # ── Neurodiversity / cognitive capitalism / neuroaesthetics ──────────────
+    # Warren Neidich — 'activist neuroaesthetics', cognitive capitalism theory.
+    # In AUTONOMOUS. Phantom Limb Boxes (disability + neuroscience). Sitemap confirmed.
+    {"domain": "warrenneidich.com",               "sitemap": "https://warrenneidich.com/sitemap.xml",                 "max_urls": 150},
+    # artbrain.org — Journal of Neuroaesthetics (Neidich + Nathalie Anglés, est.1997).
+    # First online forum connecting art + neuroscience; Zen Circuit territory.
+    {"domain": "artbrain.org",                    "sitemap": "https://www.artbrain.org/sitemap.xml",                  "max_urls": 100},
+
+    # ── Dutch & European critical art platforms ───────────────────────────────
+    # IMPAKT Festival Utrecht — media art, technology, society. Covered Ine Gevers.
+    # 'Dealing with Ine Gevers' (2024). 18 child sitemaps confirmed.
+    {"domain": "impakt.nl",                       "sitemap": "https://impakt.nl/sitemap.xml",                         "max_urls": 250},
+    # Open! Platform — onlineopen.org. 547 articles on art, culture, urbanism,
+    # politics, activism (2015–2021). Critical Dutch/European platform, strong
+    # theory layer. Pixel Nova + Zen Circuit + Maya Flux territory.
+    {"domain": "onlineopen.org",                  "sitemap": "https://onlineopen.org/sitemap.xml",                    "max_urls": 400},
+
     # ── Architecture / urbanism / infrastructure ──────────────────────────────
     {"domain": "placesjournal.org",               "sitemap": "https://placesjournal.org/sitemap.xml",                 "max_urls": 300},
     {"domain": "failedarchitecture.com",          "sitemap": "https://failedarchitecture.com/sitemap.xml",            "max_urls": 200},
