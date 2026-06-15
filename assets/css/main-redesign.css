@@ -3588,6 +3588,21 @@ article[data-categories].hidden {
   }
 }
 
+/* ── 404 page ─────────────────────────────────────────────────────────────── */
+.error-page {
+  max-width: 480px;
+  margin: 80px auto 80px;
+  text-align: center;
+}
+
+.error-page__code {
+  font-size: 5rem;
+  font-weight: 700;
+  color: var(--color-border-primary);
+  line-height: 1;
+  margin-bottom: 1.5rem;
+}
+
 /* ── Press pages ──────────────────────────────────────────────────────────── */
 .press-voices-grid {
   display: grid;
