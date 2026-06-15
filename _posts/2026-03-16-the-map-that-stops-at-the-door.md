@@ -80,6 +80,7 @@ Directions are commands issued from above. Wayfinding is an environment that com
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-map-that-stops-at-the-door_moment_2.jpg" alt="Linocut woodblock aesthetic: bold silhouette of a doorway viewed from inside looking out illustration for The Map That Stops at the Door" loading="lazy">
+<figcaption>Linocut woodblock aesthetic: bold silhouette of a doorway viewed from inside looking out illustration for The Map That Stops at the Door</figcaption>
 </figure>
 
 I'm Deaf. I navigate primarily through vision and spatial reasoning. When I approach a building I've never visited, I read the environment the way you might read a paragraph—scanning for structure, hierarchy, emphasis, anomaly. A door set back from the façade reads differently from one that's flush. A change in paving material communicates a threshold. A lit window reads as occupied.
@@ -110,6 +111,7 @@ One is logistical. One is architectural. One tells you what to do before you arr
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-map-that-stops-at-the-door_symbol_3.jpg" alt="Surreal paper cut-out collage in flat rose gold and near-black: oversized map fragments (Matisse scale torn shapes) stacked and layered against a miniature doorframe illustration for The Map That Stops at the Door" loading="lazy">
+<figcaption>Surreal paper cut-out collage in flat rose gold and near-black: oversized map fragments (Matisse scale torn shapes) stacked and layered against a miniature doorframe illustration for The Map That Stops at the Door</figcaption>
 </figure>
 
 [Christine Sun Kim](https://christinesunkim.com/) made a piece called "[All Day](https://christinesunkim.com/work/all-day)" in 2012 that charted the volume levels of her daily life as perceived by hearing people around her. She was mapping a power structure through information design—which sounds are acceptable, which are disruptive, which are inaudible and therefore nonexistent.

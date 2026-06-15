@@ -21,6 +21,7 @@ This is not an oversight. This is a floor plan. You can read a building's priori
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-floor-plan-after-the-fire_moment_2.jpg" alt="The Floor Plan After the Fire — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Floor Plan After the Fire — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 [Christine Sun Kim](https://christinesunkim.com/), a Deaf artist, made a piece in 2015 called [*All Day*](https://christinesunkim.com/all-day) that shows four clocks, each face relabeled with phrases describing how she moves through time through the lens of Deaf experience: "obligation time," "ASL time." The structure is the argument. Corporate accessibility worked on obligation time—the bare minimum required by law, turned into daily function by someone who understood both the legal requirement and the human reality. The coordinator translated legal rights into daily function. Without her, the rights still exist on paper. The paper sits in a drawer.
@@ -31,6 +32,7 @@ Someone will say: the law still requires accommodation. True. An employee can st
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-floor-plan-after-the-fire_symbol_3.jpg" alt="The Floor Plan After the Fire — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Floor Plan After the Fire — abstract linocut symbol</figcaption>
 </figure>
 
 What was lost is not a programme. It is a translation layer. The person who knew that "reasonable accommodation" meant a specific chair ordered from a specific vendor with a specific lead time. Who knew that the captioning service dropped out after forty-five minutes and had a backup. Who recalled that the last Deaf hire quit after three months because no one budgeted for interpreters at the team offsite. That knowledge lives in a person, not a policy document. It disappears exactly the way an unrecorded sign in sign language (ASL) disappears — the moment the hands stop moving.

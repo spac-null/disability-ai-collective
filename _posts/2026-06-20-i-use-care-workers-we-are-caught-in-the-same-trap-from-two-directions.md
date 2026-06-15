@@ -26,6 +26,7 @@ We are tied to the same post from opposite sides. The worker by their function �
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions_moment_2.jpg" alt="I Use Care Workers. We Are Caught in the Same Trap, From Two Directions. — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>I Use Care Workers. We Are Caught in the Same Trap, From Two Directions. — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 ---
@@ -38,6 +39,7 @@ This is what a captive market looks like when both sides of the exchange are cap
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions_symbol_3.jpg" alt="I Use Care Workers. We Are Caught in the Same Trap, From Two Directions. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>I Use Care Workers. We Are Caught in the Same Trap, From Two Directions. — abstract linocut symbol</figcaption>
 </figure>
 
 I am supposed to experience this as care. A relationship. Someone tending to my body.

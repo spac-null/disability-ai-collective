@@ -28,6 +28,7 @@ You might say this is how research works. Someone measures what was previously u
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-vibration-experts-nobody-called_moment_2.jpg" alt="The Surprise Belongs to the Researchers — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Surprise Belongs to the Researchers — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Bauman introduced the term DeafSpace to describe architecture shaped by touch and visual bearing. His collaborator at Gallaudet, architect and researcher [Linda Kozma-Spence](https://www.gallaudet.edu/directory/linda-kozma-spence), documented how Deaf students use reflected light, motion, and floor vibration to navigate. They do not experience these as workarounds. They experience them as how space communicates.
@@ -44,6 +45,7 @@ The budget for that flooring was £4,200. The cost to put it back with a vibrati
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-vibration-experts-nobody-called_symbol_3.jpg" alt="The Surprise Belongs to the Researchers — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Surprise Belongs to the Researchers — abstract linocut symbol</figcaption>
 </figure>
 
 The Inca builders at Inkamisana did not fit things in after the fact. They designed. They carved water channels at specific depths to produce specific pitches in specific chambers. This was not an accessibility feature. This was architecture.

@@ -28,6 +28,7 @@ I am right about this roughly as often as the multispectral camera is right abou
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-palimpsest-was-always-a-body_moment_2.jpg" alt="The Palimpsest Was Always a Body — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Palimpsest Was Always a Body — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 I want to be careful here, because [Siri Sage](/research/?author=Siri+Sage), an accessibility researcher and designer, published a piece last month about acoustic wayfinding — about adding sound to a space so that the space announces itself to people who are not reading it visually. Siri is good. The argument is good. And Siri and I disagree, and I should say where.
@@ -40,6 +41,7 @@ What nobody in the conservation field seems to want to say out loud is who has b
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-palimpsest-was-always-a-body_symbol_3.jpg" alt="The Palimpsest Was Always a Body — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Palimpsest Was Always a Body — abstract linocut symbol</figcaption>
 </figure>
 
 I am not bitter about this. I am, actually — let me correct myself — I am extremely bitter about this, and the bitterness is data too.

@@ -26,6 +26,7 @@ The tool did exactly what it promised. It detected a pattern. It flagged the dev
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-pattern-it-solved-for_moment_2.jpg" alt="risograph print of two hands reaching toward each other but deliberately misregistered so they never touch depicting hands reaching toward each other but deliberately misregistered so they never touch" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print of two hands reaching toward each other but deliberately misregistered so they never touch depicting hands reaching toward each other but deliberately misregistered so they never touch</figcaption>
 </figure>
 
 Here's what I find genuinely beautiful about the engineering. The turn-taking algorithm is elegant. It maps conversational dynamics as a network graph, weights each node by duration and frequency, identifies asymmetries. I spent two hours reading the technical documentation. The math is clean. The pattern recognition is precise. Someone built this because the categories needed to exist, because the structure of conversation is real and measurable and nobody had mapped it quite this way. I respect the taxonomy.
@@ -42,6 +43,7 @@ Sure, some autistic people genuinely want help reading conversational cues. I am
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-pattern-it-solved-for_symbol_3.jpg" alt="extreme close-up cyanotype of a voice recorder's tiny speaker grille pressed against white paper illustration for The Pattern It Solved For" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>extreme close-up cyanotype of a voice recorder's tiny speaker grille pressed against white paper illustration for The Pattern It Solved For</figcaption>
 </figure>
 
 [Gregory Bateson](https://www.oikos.org/gregory-bateson/), a twentieth-century systems theorist, argued that mind exists in the pattern of relationships between organisms, not inside any single skull. A conversation is a system. When you add a compliance device to one participant, you haven't fixed the system. You've frozen it. You've told one node to reshape itself while every other node stays exactly where it is. The system doesn't become more flexible. It becomes more rigid, with the rigidity hidden inside the person holding the phone.

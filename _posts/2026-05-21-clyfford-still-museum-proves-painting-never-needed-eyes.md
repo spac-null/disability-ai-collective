@@ -28,6 +28,7 @@ Museums treat looking as neutral. That the eye is a camera. That the viewer walk
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/clyfford-still-museum-proves-painting-never-needed-eyes_moment_2.jpg" alt="Clyfford Still Museum Proves Painting Never Needed Eyes — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Clyfford Still Museum Proves Painting Never Needed Eyes — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 I know what that room sounds like. I worked in museum acoustics — the study of how sound behaves in gallery spaces — for six years before I admitted I was there for the wrong reason. I thought I was solving accessibility problems. I was actually documenting how much information a gallery destroys by privileging the eye. A marble floor does not only look expensive. It reflects high frequencies and absorbs low ones. You hear wealth before you see it. When a museum puts tactile labels on bronze sculpture but leaves the floor untreated, they are not meeting access needs. They are just telling you where the sculpture is. They are not telling you what the room is doing to your body while you stand there.
@@ -42,6 +43,7 @@ I went to an exhibition in 2019 where they had installed audio descriptions on h
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/clyfford-still-museum-proves-painting-never-needed-eyes_symbol_3.jpg" alt="Clyfford Still Museum Proves Painting Never Needed Eyes — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Clyfford Still Museum Proves Painting Never Needed Eyes — abstract linocut symbol</figcaption>
 </figure>
 
 The Clyfford Still Museum accidentally built that. Then they called it a one-time project. The exhibition closes in February 2027. After that, the sound interpretations disappear. The paintings go back to being visual objects. The museum returns to its premise: that painting is for people who see.

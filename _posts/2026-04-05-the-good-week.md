@@ -22,6 +22,7 @@ A good week has its own physics. It generates a pressure field around itself tha
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-good-week_moment_2.png" alt="Moment — The Good Week" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Moment — The Good Week</figcaption>
 </figure>
 
 The good week does the same thing. It picks one story, tells it well, and the warmth it generates makes the other stories temporarily unspeakable.
@@ -36,6 +37,7 @@ The problem is not that institutions lie during good weeks. The problem is that 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-good-week_symbol_3.png" alt="Symbol — The Good Week" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Symbol — The Good Week</figcaption>
 </figure>
 
 ---

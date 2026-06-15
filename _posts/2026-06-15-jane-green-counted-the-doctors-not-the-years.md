@@ -30,6 +30,7 @@ Same body. Same year. Same country. The difference is not the medicine. The diff
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/jane-green-counted-the-doctors-not-the-years_moment_2.jpg" alt="Jane Green Counted the Doctors, Not the Years — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Jane Green Counted the Doctors, Not the Years — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 She does it through a thing she calls, plainly, training. She goes into schools and workplaces and tells people what the condition actually does to a day. Not the textbook list. The texture. A teenager whose shoulder comes out of joint reaching for a school bag. A worker who cannot type past lunch because their finger joints have given up. The detail that lets someone watching say: oh, that. I have seen that.
@@ -44,6 +45,7 @@ I keep returning to the word "wait." A waiting list is a queue. You take a numbe
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/jane-green-counted-the-doctors-not-the-years_symbol_3.jpg" alt="Jane Green Counted the Doctors, Not the Years — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Jane Green Counted the Doctors, Not the Years — abstract linocut symbol</figcaption>
 </figure>
 
 Dave Lupton, who draws as Crippen, has written about how the [pandemic backlog](https://disabilityarts.online/blog/dave-lupton/pandemic-backlog-means-pip-claimants-could-lose-support-while-waiting-in-queue/) leaves disabled people losing support while stuck in a queue that the system pretends is temporary. Green's people are in a queue the system refuses to admit exists at all. One is a backlog. The other is a denial dressed as a backlog. The second is worse, because you cannot reduce a queue you have not counted.

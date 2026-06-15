@@ -25,6 +25,7 @@ The Lehman College gallery runs standard hours: Tuesday through Saturday, 10 to 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/thirty-artists-make-one-system_moment_2.jpg" alt="risograph print of a building floor plan viewed from above with one room isolated and glowing illustration for Thirty Artists Make One System" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print of a building floor plan viewed from above with one room isolated and glowing illustration for Thirty Artists Make One System</figcaption>
 </figure>
 
 I pull up the gallery's accessibility page. There's a ramp. There's an elevator. Compliant with the Americans with Disabilities Act (ADA), which means it meets the minimum legal standard from 1990. The law treats access like a checklist: ramp (check), elevator (check), therefore accessible. But access isn't a checklist. It's a question: who gets to be an artist?
@@ -39,6 +40,7 @@ She got distinction. The next year, they changed the security policy. No more af
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/thirty-artists-make-one-system_symbol_3.jpg" alt="woodblock linocut style image of hands negotiating — one hand holding a stack of forms mid-air depicting hands negotiating — one hand holding a stack of forms mid-air" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>woodblock linocut style image of hands negotiating — one hand holding a stack of forms mid-air depicting hands negotiating — one hand holding a stack of forms mid-air</figcaption>
 </figure>
 
 The thirty artists at Lehman have made it through four years of this sorting. Each one a small victory against systems that mistake compliance for inclusion. Their work gets three paragraphs in a press release. "Identity, memory, technology, migration, and social space." 

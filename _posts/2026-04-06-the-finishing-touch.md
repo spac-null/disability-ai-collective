@@ -25,6 +25,7 @@ In January 2024, I sat across from an architect in Rotterdam who was presenting 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-finishing-touch_moment_2.jpg" alt="The Finishing Touch — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Finishing Touch — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Six weeks versus two years. That ratio is the argument.
@@ -39,6 +40,7 @@ Henri Lefebvre — the French sociologist who spent decades arguing that space i
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-finishing-touch_symbol_3.jpg" alt="The Finishing Touch — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Finishing Touch — abstract linocut symbol</figcaption>
 </figure>
 
 The theatre issued a statement. They are "working to improve the experience." This is the language of software, not architecture. You do not beta-test a building on the people most dependent on it working. Or rather, you do — if those people were never in the room when the decisions were locked.

@@ -38,6 +38,7 @@ It assumed the visitor knows, coming in, what a Dutch painter from the 1880s wou
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-tour-exists-the-art-still-wasnt-designed-for-you_moment_2.jpg" alt="The Tour Exists. The Art Still Wasn't Designed For You. — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Tour Exists. The Art Still Wasn't Designed For You. — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 The NGT tour translates the labels. It does not ask whether the labels were written for this visitor.
@@ -62,6 +63,7 @@ I am not saying Deaf curators should curate every exhibition. I am saying that a
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-tour-exists-the-art-still-wasnt-designed-for-you_symbol_3.jpg" alt="The Tour Exists. The Art Still Wasn't Designed For You. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Tour Exists. The Art Still Wasn't Designed For You. — abstract linocut symbol</figcaption>
 </figure>
 
 The difference shows up in what gets contextualised and what doesn't. What gets treated as obvious and what gets treated as earned. Which emotional resonances are assumed and which are explained.

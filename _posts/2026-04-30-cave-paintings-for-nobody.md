@@ -30,6 +30,7 @@ The Rotterdam warehouse got coverage in three design magazines. De Appel's renov
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/cave-paintings-for-nobody_moment_2.jpg" alt="Cave Paintings for Nobody — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Cave Paintings for Nobody — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 ---
@@ -46,6 +47,7 @@ I don't stumble. I read rooms. Every Deaf person I know reads rooms. You walk in
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/cave-paintings-for-nobody_symbol_3.jpg" alt="Cave Paintings for Nobody — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Cave Paintings for Nobody — abstract linocut symbol</figcaption>
 </figure>
 
 [Lebbeus Woods](https://www.lebbeuswoods.net) — the architect who never built, who drew structures emerging from war damage — said in a 2009 lecture at the [Cooper Union](https://www.cooper.edu) that "the ruin is not a starting point but an ending point being misread as a beginning." He was talking about Sarajevo. The scale is different. The mechanism is the same. You take a structure that failed the people who used it, and you reframe that failure as raw material. The guitar-string workers left. The cubicles remain. The cubicles become art.

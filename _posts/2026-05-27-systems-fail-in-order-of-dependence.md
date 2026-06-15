@@ -31,6 +31,7 @@ The chronically ill die first. Not because their conditions are more severe. Bec
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/systems-fail-in-order-of-dependence_moment_2.jpg" alt="a hand holding four insulin vials arranged like bullets in a row illustration for Systems Fail in Order of Dependence" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>a hand holding four insulin vials arranged like bullets in a row illustration for Systems Fail in Order of Dependence</figcaption>
 </figure>
 
 ---
@@ -49,6 +50,7 @@ Baron-Cohen's study treated empathy as the ability to read a face. It did not tr
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/systems-fail-in-order-of-dependence_symbol_3.jpg" alt="a generator the size of a fingernail sitting in the center of an enormous empty hospital room rendered in Soviet constructivist style illustration for Systems Fail in Order of Dependence" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>a generator the size of a fingernail sitting in the center of an enormous empty hospital room rendered in Soviet constructivist style illustration for Systems Fail in Order of Dependence</figcaption>
 </figure>
 
 The humanitarian argument against the Cuba blockade is that it kills civilians. The utilitarian argument is that it does not achieve its stated political goals. Both are true. Neither addresses the mechanism: a health system is only as resilient as its least replaceable input. Make that input inaccessible and you do not need to bomb a hospital. You just wait.

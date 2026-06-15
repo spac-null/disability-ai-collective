@@ -30,6 +30,7 @@ Compare that to the language of the review. "No meaningful effect on cognition."
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/eighteen-months-is-not-trivial-if-you-know-whose-clock_moment_2.jpg" alt="Eighteen Months Is Not Trivial If You Know Whose Clock — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Eighteen Months Is Not Trivial If You Know Whose Clock — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 This is a problem disability researchers have been naming for decades, though rarely in the context of dementia. [Mike Oliver](https://disability-studies.leeds.ac.uk/library/author/oliver.m/), who developed the [social model of disability](https://www.leeds.ac.uk/disability-studies/archiveuk/Oliver/Oliver%20article%201990s.pdf) in British sociology in the 1980s — the idea that disability is produced by society's barriers, not by individual bodies — spent his career pointing out that the tools medicine uses to measure disabled lives were built by people who did not live them. The scale, the threshold, the "clinically significant change" — these are not found in nature. Someone chose them. Usually someone who scored well on them.
@@ -46,6 +47,7 @@ What would a different success measure look like? Functional time. Months of bei
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/eighteen-months-is-not-trivial-if-you-know-whose-clock_symbol_3.jpg" alt="Eighteen Months Is Not Trivial If You Know Whose Clock — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Eighteen Months Is Not Trivial If You Know Whose Clock — abstract linocut symbol</figcaption>
 </figure>
 
 These are not soft outcomes. They are harder to score than a clinical rating scale, which is exactly why they were not chosen. Difficulty of measurement is not the same as triviality of effect. The review conflated them, and the headline writers followed.

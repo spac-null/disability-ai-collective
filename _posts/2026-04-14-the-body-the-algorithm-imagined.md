@@ -27,6 +27,7 @@ Vilém Flusser, a media theorist, wrote in 1983 that technical images do not rep
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-body-the-algorithm-imagined_moment_2.jpg" alt="Xerox zine photocopier distortion of a silhouette figure split vertically in half — one side sharp and compliant depicting figure split vertically in half — one side sharp and compliant" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Xerox zine photocopier distortion of a silhouette figure split vertically in half — one side sharp and compliant depicting figure split vertically in half — one side sharp and compliant</figcaption>
 </figure>
 
 You might say: but this is just optimisation. Platforms need to predict supply. Fair. Prediction is not neutral, though. Every prediction model contains a silhouette of the body it expects. Otto Neurath, a statistician and social theorist, understood this in the 1930s when he built the [Isotype system](https://isotyperevisited.org) — pictorial statistics meant to make social data clear and understandable to anyone. His partner Marie Neurath later admitted that deciding which figures to include and which to leave out was the entire political act. The figure standing in for "worker" was always upright, always symmetrical. The figures that didn't fit the template weren't distorted. They were simply absent.
@@ -39,6 +40,7 @@ In January 2025, I sat in a design review for a delivery platform's driver-facin
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-body-the-algorithm-imagined_symbol_3.jpg" alt="Risograph print of a tiny standardized worker figurine (toy-scale) photographed from below against crumpled kraft paper textured with fingerprints and creases depicting figure impossibly small filling negative space" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Risograph print of a tiny standardized worker figurine (toy-scale) photographed from below against crumpled kraft paper textured with fingerprints and creases depicting figure impossibly small filling negative space</figcaption>
 </figure>
 
 The problem is not that the algorithm discriminates. The problem is that the algorithm has a body in mind and that body is not disclosed. No platform publishes the model worker. No interface shows you the silhouette you are being compared against. The scoring is legible — green, amber, red — but the standard behind the scoring is invisible. I design visual systems. The thing I know in my hands is that the most powerful information is the information a system *chooses not to display*.

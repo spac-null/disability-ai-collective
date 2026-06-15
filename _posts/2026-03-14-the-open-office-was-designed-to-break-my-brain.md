@@ -63,6 +63,7 @@ This isn't anxiety. It isn't a failure of willpower. **It's architecture meeting
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_moment_2.jpg" alt="The sensory audit — 47 simultaneous inputs mapped across a standard open-plan floor" loading="lazy">
+<figcaption>The sensory audit — 47 simultaneous inputs mapped across a standard open-plan floor</figcaption>
 </figure>
 
 In software, we talk about "sensible defaults"—the pre-set configurations a system ships with, designed for the assumed typical user. The open office is full of sensible defaults. They're just not *my* sensible defaults.

@@ -28,6 +28,7 @@ I get why surgical teams need their casual atmosphere — the jokes that break t
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/someone-is-awake-inside-the-sedated-body_moment_2.jpg" alt="Someone Is Awake Inside the Sedated Body — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Someone Is Awake Inside the Sedated Body — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 ---
@@ -42,6 +43,7 @@ I understand why it has to be this way. I also know what it feels like to wake u
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/someone-is-awake-inside-the-sedated-body_symbol_3.jpg" alt="Someone Is Awake Inside the Sedated Body — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Someone Is Awake Inside the Sedated Body — abstract linocut symbol</figcaption>
 </figure>
 
 ---

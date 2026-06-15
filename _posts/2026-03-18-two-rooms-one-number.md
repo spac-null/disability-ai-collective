@@ -26,6 +26,7 @@ In Helsinki, something different happened. The city's 2019 acoustic plan for the
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/two-rooms-one-number_moment_2.jpg" alt="Linocut woodblock print: silhouette of a figure standing in negative space depicting figure standing in negative space" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Linocut woodblock print: silhouette of a figure standing in negative space depicting figure standing in negative space</figcaption>
 </figure>
 
 The Oodi's main hall has a reverberation time of 0.6 seconds. This is a number. But it is a number that describes something I can feel the moment I walk in. My voice comes back to me clean. One reflection. No smear. I know where the walls are. I know where the ceiling changes height. The room tells me its own shape.
@@ -42,6 +43,7 @@ The instrumented evidence that acoustic design advocates have wanted for years n
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/two-rooms-one-number_symbol_3.jpg" alt="Glitch art / VHS scan-line distortion of a brutalist concrete wall with acoustic foam panels illustration for Two Rooms, One Number" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Glitch art / VHS scan-line distortion of a brutalist concrete wall with acoustic foam panels illustration for Two Rooms, One Number</figcaption>
 </figure>
 
 But here is what the numbers cannot carry. The moment I walk into a room and know — before thought, before analysis, before I have taken three steps — whether this room was designed by someone who understood that sound is not decoration. It is the room itself. For me, it is the walls. It is the ceiling. It is the distance between my body and the door I have not yet found.

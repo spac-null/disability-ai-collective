@@ -24,6 +24,7 @@ Systems that classify people by utility always end up treating survival needs as
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/swan-care-solutions-ltd-classified-someone-as-equipment_moment_2.jpg" alt="Swan Care Solutions Ltd Classified Someone as Equipment — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Swan Care Solutions Ltd Classified Someone as Equipment — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Nicholas McGeehan is a researcher who has documented labour abuses in Qatar's construction sector. He calls the system the "sponsorship trap." The employer controls the visa. The worker cannot leave without losing their legal status. In Qatar it was called kafala — a Middle Eastern sponsorship system that ties workers to their employers. In the UK it is called a sponsored work visa. The mechanism is identical. The person is fixed in place by the document that permits them to be there.
@@ -32,6 +33,7 @@ I think of Marcus, who worked nights at my friend's residential home. Even after
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/swan-care-solutions-ltd-classified-someone-as-equipment_symbol_3.jpg" alt="Swan Care Solutions Ltd Classified Someone as Equipment — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Swan Care Solutions Ltd Classified Someone as Equipment — abstract linocut symbol</figcaption>
 </figure>
 
 The tribunal awarded Mr Shaji £28,048. Swan Care Solutions is appealing.

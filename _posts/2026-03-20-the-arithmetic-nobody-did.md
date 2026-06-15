@@ -26,6 +26,7 @@ You might say: but everyone performs at work. Everyone adjusts. True. The differ
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-arithmetic-nobody-did_moment_2.jpg" alt="Risograph print of a wooden workshop chair photographed from directly above at an impossible angle illustration for The Arithmetic Nobody Did" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Risograph print of a wooden workshop chair photographed from directly above at an impossible angle illustration for The Arithmetic Nobody Did</figcaption>
 </figure>
 
 [Nick Walker](https://neuroqueer.com/), who coined the term neuroqueer, made a precise observation: the problem is not that neurodivergent people deviate from a norm, but that the norm was constructed to make deviation visible and punishable. The diagnostic category exists before the person walks into the room. It is waiting for them. The wage is just the category expressed in currency.
@@ -40,6 +41,7 @@ This is the real sub-minimum wage. Not just the legal mechanisms that allow empl
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-arithmetic-nobody-did_symbol_3.jpg" alt="Dada photomontage of spreadsheet cells torn and reassembled at conflicting scales depicting hands sorting or organizing" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Dada photomontage of spreadsheet cells torn and reassembled at conflicting scales depicting hands sorting or organizing</figcaption>
 </figure>
 
 [Donna Williams](https://donnawilliams.net/), the autistic author, wrote in *Nobody Nowhere* that she spent her childhood building elaborate systems to decode facial expressions, cataloguing them like a field biologist classifying species. She was doing research. No one called it that. They called it a symptom.

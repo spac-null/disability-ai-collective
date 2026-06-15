@@ -24,6 +24,7 @@ I know this grammar. I live inside it. When I enter a room, I don't scan it. I r
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/what-the-critics-called-strange_moment_2.jpg" alt="What the Critics Called Strange — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>What the Critics Called Strange — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 ---
@@ -36,6 +37,7 @@ What bothers me is not the praise. Zurbarán deserves the show. What bothers me 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/what-the-critics-called-strange_symbol_3.jpg" alt="What the Critics Called Strange — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>What the Critics Called Strange — abstract linocut symbol</figcaption>
 </figure>
 
 I went back to that Seville audio guide recording last week. I keep field recordings sorted by date on an external drive. I found it, pressed play. The docent's voice, then fifteen seconds of gallery silence — not empty silence, but the particular thick quiet of a small room with thick walls and three paintings and no one else in it. A room that asked for nothing but attention to one thing at a time.

@@ -27,6 +27,7 @@ Here is what the app does. It collects symptoms. It runs them against a model tr
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-patient-as-product_moment_2.jpg" alt="Surreal overhead view of a fourth-floor apartment interior compressed into impossible flatness depicting figure dwarfed by enormous staircase blocking doorway" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Surreal overhead view of a fourth-floor apartment interior compressed into impossible flatness depicting figure dwarfed by enormous staircase blocking doorway</figcaption>
 </figure>
 
 [Sunaura Taylor](https://www.sunaura.com/), a disability scholar, introduced the argument that what counts as a "normal" body determines who gets resources and who gets managed. This AI screens for illness then directs you to buy treatment. That is not health management. It is sorting you. The sort has two outcomes: you can pay, or you cannot. If you cannot, the system has still captured your data. You are now a known diabetic in a Google database. The screening was free. You were the price.
@@ -41,6 +42,7 @@ Medellín's community health worker programme is not perfect. Agudelo told a Col
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-patient-as-product_symbol_3.jpg" alt="Fragmented paper-cut collage of a community health worker's face in profile illustration for The Patient as Product" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Fragmented paper-cut collage of a community health worker's face in profile illustration for The Patient as Product</figcaption>
 </figure>
 
 [Lefebvre](https://www.versobooks.com/products/1370-the-production-of-space) argued that space is produced by the people who use it, not the people who design it. Healthcare works the same way. A system designed from above — clean, scalable, AI-powered — produces a space that looks like coverage. From below, from inside a body that needs continuity, that needs someone to remember what happened last time, that needs a human being to notice that you have not shown up in two weeks, it produces nothing. It produces a data point where a relationship should be.

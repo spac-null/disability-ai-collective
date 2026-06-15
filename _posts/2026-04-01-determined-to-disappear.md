@@ -28,6 +28,7 @@ Someone will say: it's just a word. Language evolves. The intent is positive.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/determined-to-disappear_moment_2.jpg" alt="risograph print of a hand transferring from bed to wheelchair wheel in one fluid motion illustration for Determined to Disappear" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print of a hand transferring from bed to wheelchair wheel in one fluid motion illustration for Determined to Disappear</figcaption>
 </figure>
 
 The intent is irrelevant when the effect is structural.
@@ -44,6 +45,7 @@ Doug Paulley didn't need anyone to deal with him. He needed the bus driver to sa
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/determined-to-disappear_symbol_3.jpg" alt="Soviet constructivist poster aesthetic illustration for Determined to Disappear" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Soviet constructivist poster aesthetic illustration for Determined to Disappear</figcaption>
 </figure>
 
 I think about Paulley every time I read a press release that calls a building "fully accessible" and then describes its disabled visitors in the language of inspiration. The building says: you belong here. The language says: and isn't it wonderful that you tried. The architecture gives me a right. The branding takes it back.

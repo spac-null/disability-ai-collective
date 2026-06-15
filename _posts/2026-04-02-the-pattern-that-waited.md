@@ -25,6 +25,7 @@ Here is where the pattern gets interesting.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-pattern-that-waited_moment_2.jpg" alt="The Pattern That Waited — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Pattern That Waited — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 [Simon Baron-Cohen](https://www.cam.ac.uk/research/news/study-reveals-link-between-autism-and-systematic-thinking), a prominent autism researcher at Cambridge University, published ["The Essential Difference"](https://www.simonbaron-cohen.com/the-essential-difference) in 2003. In it, he argued that autism represents an extreme of the "male brain" — a mind optimized for systemizing (recognizing patterns and rules) at the expense of empathizing (recognizing and responding to others' emotions). I have read this book three times. I have read the studies it cites. The empathizing-systemizing model proposes that autistic people have stronger pattern-recognition abilities but weaker emotional understanding. The model relies on self-report questionnaires that define empathy as recognizing facial expressions in photographs. A photograph is a still image of a face frozen in a single moment. A face in life moves. It shifts. It contradicts itself.
@@ -39,6 +40,7 @@ The protest that changes nothing is the one that asks the institution to update 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-pattern-that-waited_symbol_3.jpg" alt="The Pattern That Waited — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Pattern That Waited — abstract linocut symbol</figcaption>
 </figure>
 
 I think about [Gregory Bateson](https://www.oikos.org/batesonintro.html)'s argument in ["Steps to an Ecology of Mind"](https://www.press.uchicago.edu/ucp/books/book/chicago/S/bo3622206.html) — that mind is not located in the individual but in the pattern of relationships between the individual and the environment. A diagnostic category that locates the deficit inside one person's brain is not describing a mind. It is describing an extraction. It pulls the pattern apart and blames one node.

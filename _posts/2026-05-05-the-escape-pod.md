@@ -29,6 +29,7 @@ Here is what I know from inside ADHD: my attention does not malfunction. It resp
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-escape-pod_moment_2.jpg" alt="risograph print of a human hand pressing against perforated metal mesh illustration for The Escape Pod" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print of a human hand pressing against perforated metal mesh illustration for The Escape Pod</figcaption>
 </figure>
 
 VR as stress relief operates on the same logic as prescribing painkillers for a repetitive strain injury. The workstation remains badly designed in both cases. Nobody disputes that painkillers reduce pain. The question is why the workstation stays unchanged.
@@ -43,6 +44,7 @@ You might say: but the VR works. The children feel calmer. I believe it. Calmer 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-escape-pod_symbol_3.jpg" alt="linocut woodblock style: absurdly oversized ticking clock gear filling entire frame against negative space illustration for The Escape Pod" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>linocut woodblock style: absurdly oversized ticking clock gear filling entire frame against negative space illustration for The Escape Pod</figcaption>
 </figure>
 
 I spent fourteen years in classrooms. I remember every one. Not the lessons — the sensory texture. The particular vibration of a projector fan. The smell of whiteboard markers building over three hours. The moment at 2:15pm when the heating system clicked on and added a low hum that sat exactly at the frequency where my focus collapsed. I did not need an escape pod. I needed someone to turn off the fan, open a window, and believe me when I said the room was wrong.

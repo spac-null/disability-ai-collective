@@ -27,6 +27,7 @@ The new Metrolinx map resolves it by pretending it doesn't exist.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-map-that-ate-the-city_moment_2.jpg" alt="The Map That Ate the City — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Map That Ate the City — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Here is what I mean. In August 2018, I stood in Union Station, Toronto's main train hub, watching a man with a rolling suitcase try to find the UP Express to Pearson Airport. Signage everywhere. Arrows, icons, platform numbers. He walked past the correct corridor three times. I watched because I recognised the pattern. He was reading the signs. The signs were answering a question he wasn't asking.
@@ -43,6 +44,7 @@ A transit agency that removes the streets from its map has made a decision about
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-map-that-ate-the-city_symbol_3.jpg" alt="The Map That Ate the City — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Map That Ate the City — abstract linocut symbol</figcaption>
 </figure>
 
 William Stokoe proved in 1960 that signed languages are complete linguistic systems, not broken mime. Sixty-five years later, most hearing linguists accept this. But the structure of most public information still assumes that meaning travels in one direction — from the system to the user — and that the user's job is to decode, not to orient. Transit maps, emergency signage, hospital wayfinding: the architecture of all of them says your knowledge of where you are is irrelevant. Trust the diagram.

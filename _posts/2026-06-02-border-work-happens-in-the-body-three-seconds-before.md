@@ -25,6 +25,7 @@ The venue does not always know this. A casting director in Madrid sends a Britis
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/border-work-happens-in-the-body-three-seconds-before_moment_2.jpg" alt="absurdist paper cut-out collage: a single hand-torn deep violet shape suspended in white negative space illustration for Border Work Happens in the Body Three Seconds Before" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>absurdist paper cut-out collage: a single hand-torn deep violet shape suspended in white negative space illustration for Border Work Happens in the Body Three Seconds Before</figcaption>
 </figure>
 
 What has happened here is not exclusion. It is friction — the law has added barriers and delays rather than outright bans. The law has not said British actors cannot work in the EU. It has said: the amount of time, money, and administrative capacity required to hire a British actor is now greater than the amount required to hire someone who does not need the permit. Casting directors do not sit in a room and say: we will not hire British actors. They sit in a room and say: we are shooting in eight weeks, we need someone confirmed in two, that rules out anyone who requires eight weeks of paperwork.
@@ -39,6 +40,7 @@ This is how barriers work when they are not designed as barriers. The law does n
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/border-work-happens-in-the-body-three-seconds-before_symbol_3.jpg" alt="risograph overprint texture: layered ghost impressions of a body outline in motion against perforated metal surface illustration for Border Work Happens in the Body Three Seconds Before" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph overprint texture: layered ghost impressions of a body outline in motion against perforated metal surface illustration for Border Work Happens in the Body Three Seconds Before</figcaption>
 </figure>
 
 I know what this feels like from the inside. You explain to the person with the checklist that the thing they are asking for does not exist. The venue does not issue work permits. The venue issues contracts. The contract is not a permit. You can see the person understand this. You can hear them understand this. They cannot override it. They do not have the box for it. You are standing in the gap between what the checklist requires and what the situation allows. The gap is six inches wide and you cannot cross it.

@@ -24,6 +24,7 @@ The art market has a name for the clean frequency. "Emerging." Then "mid-career.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-sound-of-ninety-one_moment_2.jpg" alt="The Sound of Ninety-One — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Sound of Ninety-One — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 You're thinking: this is about women being overlooked. It is. But the mechanism is more specific than sexism alone. The mechanism is temporal. Galleries schedule shows eighteen months out. Biennials run on two-year cycles. Grants require five-year plans. A career that doesn't pulse at those intervals becomes inaudible. Not absent. Inaudible. The difference matters. Absence means nothing is there. Inaudibility means the listener's equipment can't pick it up.
@@ -36,6 +37,7 @@ Wylie's paintings carry room tone. Decades of it. That is what the critics are h
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-sound-of-ninety-one_symbol_3.jpg" alt="The Sound of Ninety-One — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Sound of Ninety-One — abstract linocut symbol</figcaption>
 </figure>
 
 The word they never use is "early." Nobody at Zwirner is calling these paintings early. But Wylie told *The White Review* in 2013 that she was painting the same way in her forties as she paints now. The work didn't change. The frequency the market could detect changed.

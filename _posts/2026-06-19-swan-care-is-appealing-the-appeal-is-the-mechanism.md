@@ -28,6 +28,7 @@ Now consider what Shabin Shaji brings. A judgment in his favour. And a visa that
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/swan-care-is-appealing-the-appeal-is-the-mechanism_moment_2.jpg" alt="Swan Care Is Appealing. The Appeal Is the Mechanism. — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Swan Care Is Appealing. The Appeal Is the Mechanism. — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 The two parties are not contesting the same thing. He is defending a verdict. They are spending it down.
@@ -42,6 +43,7 @@ A genuine win becomes a starting position for the next negotiation. The migrant 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/swan-care-is-appealing-the-appeal-is-the-mechanism_symbol_3.jpg" alt="Swan Care Is Appealing. The Appeal Is the Mechanism. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Swan Care Is Appealing. The Appeal Is the Mechanism. — abstract linocut symbol</figcaption>
 </figure>
 
 I do not think the appeal is being abused here. That is the point I keep arriving at, against my own preference for villains. The appeal is working as designed. The system was built to let a verdict be tested, and it does not ask whether the two sides can afford the testing equally. It assumes they can. They cannot. The inequality is not introduced by anyone's bad faith. It is the resting state of the structure, switched on the moment the gavel falls.

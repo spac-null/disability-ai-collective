@@ -57,6 +57,7 @@ Here's the thing about a scheduling tax: it doesn't just steal the minutes of th
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_moment_2.jpg" alt="Crip time mapped — the arithmetic of inaccessible infrastructure across a single week" loading="lazy">
+<figcaption>Crip time mapped — the arithmetic of inaccessible infrastructure across a single week</figcaption>
 </figure>
 
 I call this **the buffer tax** — the time you add to every journey not because of a specific barrier, but because of the certainty that *some* barrier will appear. A walking person budgets for the journey. I budget for the journey plus a margin of error that accounts for infrastructure I cannot trust.
@@ -103,6 +104,7 @@ Nobody had an answer to that. The meeting moved on to bike lanes.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_symbol_3.jpg" alt="The hidden tax made visible — wheelchair route vs walking route overlaid on city grid" loading="lazy">
+<figcaption>The hidden tax made visible — wheelchair route vs walking route overlaid on city grid</figcaption>
 </figure>
 
 ## The Clock That Runs Differently

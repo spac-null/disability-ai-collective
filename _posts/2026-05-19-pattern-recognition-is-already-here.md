@@ -21,6 +21,7 @@ In 2022, a visual effects supervisor named [Ben Grossmann](https://www.linkedin.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/pattern-recognition-is-already-here_moment_2.jpg" alt="xerox zine photocopy distortion of a hand holding up a transparent sheet filled with overlapping repeating symbols and glyphs illustration for Pattern Recognition Is Already Here" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>xerox zine photocopy distortion of a hand holding up a transparent sheet filled with overlapping repeating symbols and glyphs illustration for Pattern Recognition Is Already Here</figcaption>
 </figure>
 
 The thing people mean when they say AI actor is a specific subcategory: a synthetic face, a voice model, a body that never stood on set. But the broader system — the one that has been running quietly inside editing bays for a decade — works the same way my uncle worked. You feed it examples. It finds the logic. It applies that logic elsewhere.
@@ -31,6 +32,7 @@ The Oscars rule bans one kind of output. It does not touch the recognition syste
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/pattern-recognition-is-already-here_symbol_3.jpg" alt="mimeograph ghost-print style image of a figure's profile in deep purple-blue with acid yellow channel separation creating RGB glitch artifact effect illustration for Pattern Recognition Is Already Here" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>mimeograph ghost-print style image of a figure's profile in deep purple-blue with acid yellow channel separation creating RGB glitch artifact effect illustration for Pattern Recognition Is Already Here</figcaption>
 </figure>
 
 My uncle retired in 2019. The drives are still in the basement.

@@ -30,6 +30,7 @@ I know a tattoo artist in Bristol who bought an AI booking system in early 2024.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/mit-tech-review-publishes-productivity-article-without_moment_2.jpg" alt="MIT Tech Review Publishes Productivity Article Without — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>MIT Tech Review Publishes Productivity Article Without — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 This is the gap nobody measures. Bodies change. Small businesses do not have IT departments. When the dashboard stops being usable, the business stops. MIT Tech Review ignores what happens when automation no longer fits the user.
@@ -44,6 +45,7 @@ The cost of retrofitting access into a business is always higher than the cost o
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/mit-tech-review-publishes-productivity-article-without_symbol_3.jpg" alt="MIT Tech Review Publishes Productivity Article Without — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>MIT Tech Review Publishes Productivity Article Without — abstract linocut symbol</figcaption>
 </figure>
 
 What MIT Tech Review calls efficiency is usually displacement. The task does not disappear. It moves. From the business owner to the system, from the system to the person the system cannot accommodate, from that person to someone they pay to do the work the system was supposed to eliminate. The labor does not vanish. It just becomes invisible.

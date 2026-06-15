@@ -28,6 +28,7 @@ The second: the [Bridgewater Hall](https://www.bridgewater-hall.co.uk/) in Manch
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-that-sings-and-the-three-steps-that-stop-me_moment_2.jpg" alt="architectural cross-section diagram torn and reassembled like Dada collage illustration for The Room That Sings and the Three Steps That Stop Me" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>architectural cross-section diagram torn and reassembled like Dada collage illustration for The Room That Sings and the Three Steps That Stop Me</figcaption>
 </figure>
 
 The reverberation is controlled to within a fraction of a second. Nothing surprises. Nothing comes back late. It works the way a perfectly calibrated hearing aid works — everything arrives, nothing is missing, and something is gone.
@@ -44,6 +45,7 @@ She is protecting access by hiding the cost. I am protecting my aesthetic pleasu
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-that-sings-and-the-three-steps-that-stop-me_symbol_3.jpg" alt="extreme close-up of a hand gripping a bannister mid-motion illustration for The Room That Sings and the Three Steps That Stop Me" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>extreme close-up of a hand gripping a bannister mid-motion illustration for The Room That Sings and the Three Steps That Stop Me</figcaption>
 </figure>
 
 What neither of us says: acoustic engineers know how to preserve reverberation through accessibility interventions. Stone-clad ramps. Glass-walled lifts. Materials that reflect instead of absorb. The solutions exist. Nobody funds them because nobody admits the problem.

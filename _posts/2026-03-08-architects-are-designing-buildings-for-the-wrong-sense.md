@@ -75,6 +75,7 @@ The change was immediate. Productivity improved noticeably. Employee satisfactio
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/architects-are-designing-buildings-for-the-wrong-sense_moment_2.jpg" alt="Acoustic design in practice — rebuilt workspace with sound-absorbing zones and productive flow" loading="lazy">
+<figcaption>Acoustic design in practice — rebuilt workspace with sound-absorbing zones and productive flow</figcaption>
 </figure>
 *Acoustic design in practice — rebuilt workspace with sound-absorbing zones and productive flow*
 

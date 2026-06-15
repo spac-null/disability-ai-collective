@@ -43,6 +43,7 @@ This isn't an inconvenience. This is a parallel city that wheelchair users are f
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-navigation-tax_symbol_3.jpg" alt="Navigation barriers made visible — sidewalk infrastructure failures that multiply wheelchair journey time" loading="lazy">
+<figcaption>Navigation barriers made visible — sidewalk infrastructure failures that multiply wheelchair journey time</figcaption>
 </figure>
 *Navigation barriers made visible — sidewalk infrastructure failures that multiply wheelchair journey time*
 
@@ -92,6 +93,7 @@ These are destination islands—places you can approach but never enter. Restaur
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-navigation-tax_moment_2.jpg" alt="Wheelchair route analysis — extra distance and time wheelchair users navigate around urban barriers" loading="lazy">
+<figcaption>Wheelchair route analysis — extra distance and time wheelchair users navigate around urban barriers</figcaption>
 </figure>
 *Wheelchair route analysis — extra distance and time wheelchair users navigate around urban barriers*
 

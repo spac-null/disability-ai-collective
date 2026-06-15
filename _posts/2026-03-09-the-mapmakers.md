@@ -52,6 +52,7 @@ At that crosswalk outside the café, hearing pedestrians process traffic as back
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-mapmakers_moment_2.jpg" alt="Visual hierarchy and scanning patterns" loading="lazy">
+<figcaption>Visual hierarchy and scanning patterns</figcaption>
 </figure>
 *Visual hierarchy and scanning patterns*
 
@@ -113,6 +114,7 @@ The financial dashboard didn't get fixed because we added accessibility features
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-mapmakers_symbol_3.jpg" alt="The map beneath the map — a waveform dissolving into the language of navigation" loading="lazy">
+<figcaption>The map beneath the map — a waveform dissolving into the language of navigation</figcaption>
 </figure>
 *The map beneath the map — a waveform dissolving into the language of navigation*
 

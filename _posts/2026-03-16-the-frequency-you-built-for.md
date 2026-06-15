@@ -52,6 +52,7 @@ Sound familiar? It should. It's the same thing that happens when you design offi
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/2026-03-16-the-frequency-you-built-for_symbol_3.jpg" alt="dada photomontage of mismatched architectural fragments—a window frame at impossible scale illustration for The Frequency You Built For" loading="lazy">
+<figcaption>dada photomontage of mismatched architectural fragments—a window frame at impossible scale illustration for The Frequency You Built For</figcaption>
 </figure>
 
 ## Follow the Money, Find the Bias
@@ -68,6 +69,7 @@ That's a lot of ifs for something that calls itself innovative design.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/2026-03-16-the-frequency-you-built-for_moment_2.jpg" alt="dada photomontage of mismatched architectural fragments — acoustic facades and impossible scale, Crip Minds" loading="lazy">
+<figcaption>dada photomontage of mismatched architectural fragments — acoustic facades and impossible scale, Crip Minds</figcaption>
 </figure>
 
 ## Who Owns the Category

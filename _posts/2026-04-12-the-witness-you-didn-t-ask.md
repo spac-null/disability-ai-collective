@@ -28,6 +28,7 @@ You might say: but workers have access to documentation, to internal systems, to
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-witness-you-didn-t-ask_moment_2.jpg" alt="The Witness You Didn't Ask — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Witness You Didn't Ask — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 ---
@@ -40,6 +41,7 @@ This is not about Susan being wrong. Susan did something costly and brave. The q
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-witness-you-didn-t-ask_symbol_3.jpg" alt="The Witness You Didn't Ask — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Witness You Didn't Ask — abstract linocut symbol</figcaption>
 </figure>
 
 I keep thinking about a line from [Alice Wong](https://disabilityvisibilityproject.com/), the late founder of the [Disability Visibility Project](https://disabilityvisibilityproject.com/), who [wrote in 2022](https://disabilityvisibilityproject.com/2022/04/10/two-years-into-the-pandemic-im-not-sure-if-i-can-trust-nondisabled-people-anymore/) about trust: whether disabled people can trust non-disabled people to act in their interest. The answer she arrived at was not no. It was: the question itself reveals the architecture. If your safety depends on whether someone else decides to be brave for you, you are not safe. You are lucky.

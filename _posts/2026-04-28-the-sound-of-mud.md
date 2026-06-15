@@ -26,6 +26,7 @@ The sculpture park does not answer back. Grass absorbs. Soil absorbs. Gravel sca
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-sound-of-mud_moment_2.jpg" alt="The Sound of Mud — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Sound of Mud — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 You're thinking: but fresh air, open space, surely that's better than being trapped indoors? I understand the appeal. The outdoors is coded as democratic. Open land feels like it belongs to everyone. But [Georgina Kleege](https://english.berkeley.edu/users/45), a scholar of disability and visual culture, made the point years ago that blind people know more about how visual spaces are organized than sighted people do, because sighted people never have to think about it. The same works for acoustics. The "natural" landscape is not neutral. It has been designed too — designed by drainage, mowing schedules, path materials, the placement of benches. The design just pretends it isn't there.
@@ -38,6 +39,7 @@ In August 2018 I visited the [Kröller-Müller Museum](https://www.kmm.nl) in th
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-sound-of-mud_symbol_3.jpg" alt="The Sound of Mud — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Sound of Mud — abstract linocut symbol</figcaption>
 </figure>
 
 The museum knows this, I think. They've installed some paved routes through the garden. But the sculptures are not on the paved routes. The sculptures are in the grass. You leave the path to reach them. The path is the access. The art is off-access. Nobody frames this as a barrier because it happens in nature, and nature is supposed to be good for you.

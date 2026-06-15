@@ -25,6 +25,7 @@ Here is the thing the Anthropic researcher quoted in the MIT piece almost says, 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-economists-cannot-hear-the-work-that-already_moment_2.jpg" alt="surreal letterpress composition: oversized metal type blocks scattered across perforated steel mesh at impossible angles illustration for The Economists Cannot Hear the Work That Already" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>surreal letterpress composition: oversized metal type blocks scattered across perforated steel mesh at impossible angles illustration for The Economists Cannot Hear the Work That Already</figcaption>
 </figure>
 
 I called Mette Johansen about this last week. She is an autistic civil engineer in Aarhus I have known since 2019, back when she was still masking through every client meeting and going home to lie on the kitchen floor for two hours afterwards. She uses a model now to draft the social register of her emails — the warmth, the small talk, the closing line that says "looking forward to hearing from you." The tool handles those elements without making her want to peel her skin off. "I do the engineering," she said. "It always did the engineering. The tool does the part that was costing me the engineering." She paused. "If someone measures my output now versus 2022, they will say AI made me 30 percent more productive. That is not what happened. AI stopped charging me a tax."
@@ -37,6 +38,7 @@ The honest answer is that no one in the productivity literature wants to ask tha
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-economists-cannot-hear-the-work-that-already_symbol_3.jpg" alt="riograph print: layered silhouettes of hands gesturing in conversation depicting hands gesturing in conversation" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>riograph print: layered silhouettes of hands gesturing in conversation depicting hands gesturing in conversation</figcaption>
 </figure>
 
 So when MIT Tech Review says the missing data is task-level records of what workers do all day, I want to say: the missing data is who was never counted as a worker, doing what was never counted as work, paying a tax that was never counted as a cost. That data is recoverable. It would just require asking us. The instruments exist. They are called questions.

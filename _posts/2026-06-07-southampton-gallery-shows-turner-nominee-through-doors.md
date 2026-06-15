@@ -30,6 +30,7 @@ The British planning system treats institutional grounds — universities, hospi
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/southampton-gallery-shows-turner-nominee-through-doors_moment_2.jpg" alt="Southampton Gallery Shows Turner Nominee Through Doors — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Southampton Gallery Shows Turner Nominee Through Doors — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Of course the university says it needs security. Of course they cite insurance, safety, controlled environments for research. And they do need some measure of security — universities hold expensive equipment and sensitive data. But security systems are design choices, not natural facts. The gallery is accessible. The campus runs on systems that sort bodies: student/visitor, authorised/guest, those who flow through checkpoints and those who wait. You are included on someone else's terms — and those terms multiply at every checkpoint, creating a maze that some of us solve through phone numbers saved for years, others through avoiding these spaces entirely.
@@ -46,6 +47,7 @@ This spatial logic — accessible but not welcoming, included but not centered �
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/southampton-gallery-shows-turner-nominee-through-doors_symbol_3.jpg" alt="Southampton Gallery Shows Turner Nominee Through Doors — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Southampton Gallery Shows Turner Nominee Through Doors — abstract linocut symbol</figcaption>
 </figure>
 
 Henri Lefebvre argued that space is socially produced. Power decides who moves freely and who moves through checkpoints. What interests me is how often those checkpoints are *after* the accessible entrance. The ramp works. The door opens. Then: the lift is broken, the accessible toilet is locked and you need to find a staff member, the route to the accessible seating requires going back outside and re-entering through a different building.

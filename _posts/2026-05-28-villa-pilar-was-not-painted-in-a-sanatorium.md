@@ -23,6 +23,7 @@ Architectural drawings work by removing the viewer's body. You see the building 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/villa-pilar-was-not-painted-in-a-sanatorium_moment_2.jpg" alt="architectural photograph of an empty institutional room corner illustration for Villa Pilar Was Not Painted in a Sanatorium" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>architectural photograph of an empty institutional room corner illustration for Villa Pilar Was Not Painted in a Sanatorium</figcaption>
 </figure>
 
 The museum frames this as art made "during confinement." That is not wrong but it is not precise. Confinement is a locked door. This is a painting of what a building looks like when your body is no longer a reliable way to know where you are. A floor plan is a map for someone who cannot trust their own location.
@@ -33,6 +34,7 @@ I design wayfinding systems. I learned early that the sighted world assumes navi
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/villa-pilar-was-not-painted-in-a-sanatorium_symbol_3.jpg" alt="surreal paper cut-out collage style: oversized paintbrush handle bent at impossible angle beside tiny doorway cutout illustration for Villa Pilar Was Not Painted in a Sanatorium" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>surreal paper cut-out collage style: oversized paintbrush handle bent at impossible angle beside tiny doorway cutout illustration for Villa Pilar Was Not Painted in a Sanatorium</figcaption>
 </figure>
 
 Villa Pilar is not a memory. It is a schematic. You do not need to have been there before to read it.

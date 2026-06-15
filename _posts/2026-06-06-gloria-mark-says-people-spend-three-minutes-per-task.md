@@ -28,6 +28,7 @@ Murray Schafer was a composer and sound theorist. He spent decades mapping what 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/gloria-mark-says-people-spend-three-minutes-per-task_moment_2.jpg" alt="Gloria Mark Says People Spend Three Minutes Per Task — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Gloria Mark Says People Spend Three Minutes Per Task — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 I do not have that filter. I arrive in a room through its acoustics. A tile floor sounds different from carpet. A high ceiling holds reverberation. An empty room has a specific openness. I know the size of a space before I know where the furniture is. That is not a compensatory skill. It is just how I move through the world.
@@ -44,6 +45,7 @@ The question MIT Tech Review asked was whether AI chatbots are making us lose co
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/gloria-mark-says-people-spend-three-minutes-per-task_symbol_3.jpg" alt="Gloria Mark Says People Spend Three Minutes Per Task — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Gloria Mark Says People Spend Three Minutes Per Task — abstract linocut symbol</figcaption>
 </figure>
 
 But blind people have been navigating information differently for as long as there has been information to navigate. Screenreaders already compress, summarise, skip. I do not read every word on a webpage. I listen to headers, jump between sections, scan by landmark. If that counts as losing control, I lost it decades ago. It did not feel like loss. It felt like access.

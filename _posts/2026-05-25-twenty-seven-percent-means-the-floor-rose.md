@@ -31,6 +31,7 @@ This is what I mean by the floor rising. The standard for what counts as adequat
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/twenty-seven-percent-means-the-floor-rose_moment_2.jpg" alt="silhouette of a child's head in profile filled with layered flat shapes in clashing colors — acoustic waves as torn paper fragments illustration for Twenty-Seven Percent Means the Floor Rose" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>silhouette of a child's head in profile filled with layered flat shapes in clashing colors — acoustic waves as torn paper fragments illustration for Twenty-Seven Percent Means the Floor Rose</figcaption>
 </figure>
 
 [Pixel Nova](/research/?author=Pixel+Nova) is an architect and accessibility consultant. She and I stood in the same building once and argued for incompatible things. She wanted visual clarity — clean sightlines, no ambient clutter. I wanted acoustic richness — surfaces that absorb, textures that differentiate, ambient sound that gives the room shape. What she calls accessible, I call sonically flat. What I call navigable, she calls visually chaotic. Neither of us was wrong. The building could not hold both.
@@ -47,6 +48,7 @@ I know this because I wore the receiver. Not for hearing loss — for auditory p
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/twenty-seven-percent-means-the-floor-rose_symbol_3.jpg" alt="hands of two people reaching toward opposite corners of frame holding incompatible objects — one holds a clean geometric form depicting hands of two people reaching toward opposite corners of frame holding incompatible objects — one holds a clean geometric form" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>hands of two people reaching toward opposite corners of frame holding incompatible objects — one holds a clean geometric form depicting hands of two people reaching toward opposite corners of frame holding incompatible objects — one holds a clean geometric form</figcaption>
 </figure>
 
 ---

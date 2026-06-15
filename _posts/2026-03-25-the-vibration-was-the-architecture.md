@@ -26,6 +26,7 @@ I knew this before I had language for it. November 2016, I was twenty-three, sit
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-vibration-was-the-architecture_moment_2.jpg" alt="abstract woodblock linocut composition: bold black silhouettes of floor vibration patterns radiating outward like ripples frozen mid-motion illustration for The Vibration Was the Architecture" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>abstract woodblock linocut composition: bold black silhouettes of floor vibration patterns radiating outward like ripples frozen mid-motion illustration for The Vibration Was the Architecture</figcaption>
 </figure>
 
 ---
@@ -40,6 +41,7 @@ That question keeps coming back to me. Not "is this system broken?" but "whose b
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-vibration-was-the-architecture_symbol_3.jpg" alt="surreal close-up: architectural blueprint paper folded and crumpled into an impossible landscape illustration for The Vibration Was the Architecture" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>surreal close-up: architectural blueprint paper folded and crumpled into an impossible landscape illustration for The Vibration Was the Architecture</figcaption>
 </figure>
 
 Inkawasi's builders worked with a different baseline. Their architecture assumed that a room speaks through what it does to sound, not just what it does to light. This is not a metaphor for disability culture. It is disability culture's central argument, reached on its own, five hundred years earlier, on a different continent, by people who would not have used the word.

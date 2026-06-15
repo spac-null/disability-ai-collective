@@ -23,6 +23,7 @@ Standard wayfinding strips that information out. Acoustic ceiling tiles, install
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-that-answers-back_moment_2.jpg" alt="The Room That Answers Back — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Room That Answers Back — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 [Renzo Griffini](https://www.griffini.it/), an acoustic consultant in Milan, told me in March 2022 that he had never once been asked to consider echolocation in a commercial wayfinding brief. Not once. In thirty years. He designs sound environments for airports, hospitals, train stations, and transit hubs. He said: "I know blind people use reflected sound. I have never been paid to think about it."
@@ -35,6 +36,7 @@ The Meijendel centre installed twelve audio beacons—speakers that emit tones t
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-that-answers-back_symbol_3.jpg" alt="The Room That Answers Back — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Room That Answers Back — abstract linocut symbol</figcaption>
 </figure>
 
 The Tate's silence lasted three weeks. Then the guides came back. Nobody redesigned the gallery's acoustics. Nobody asked what the room sounded like to someone who arrives through sound.

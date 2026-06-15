@@ -31,6 +31,7 @@ There are people for whom Wegovy will be a relief. People whose joints hurt, who
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/body-mass-index-was-never-measuring-health_moment_2.jpg" alt="Xerox zine aesthetic: a hand holding a spreadsheet that's been photocopied so many times it's nearly illegible illustration for Body Mass Index Was Never Measuring Health" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Xerox zine aesthetic: a hand holding a spreadsheet that's been photocopied so many times it's nearly illegible illustration for Body Mass Index Was Never Measuring Health</figcaption>
 </figure>
 
 The thing I cannot let go: the speed at which a statistical artifact becomes a biological truth. Quetelet's formula took 140 years to become BMI. Autism took 33 years to stabilize as a spectrum, and it still hasn't. Both rely on the same mechanism — observation of variance, then classification, then treatment as real. The formula or the checklist becomes more real than the thing it was supposed to describe.
@@ -49,6 +50,7 @@ In May 2023, the [American Medical Association](https://www.ama-assn.org/) said 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/body-mass-index-was-never-measuring-health_symbol_3.jpg" alt="Risograph print of a silhouette figure split vertically in half—one side rendered in acid yellow depicting figure split vertically in half—one side rendered in acid yellow" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Risograph print of a silhouette figure split vertically in half—one side rendered in acid yellow depicting figure split vertically in half—one side rendered in acid yellow</figcaption>
 </figure>
 
 I have a spreadsheet of diagnostic thresholds that changed. IQ cutoff for intellectual disability: shifted from 70 to 75 in some states, back to 70 in others. Fasting blood glucose for diabetes: 140 mg/dL until 1997, then 126 mg/dL. Millions of people became diabetic overnight because the threshold moved. Not because their bodies changed. Because the category changed.

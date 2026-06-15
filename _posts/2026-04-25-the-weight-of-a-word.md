@@ -26,6 +26,7 @@ Henri Lefebvre argued that space is produced socially — that how we organize a
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-weight-of-a-word_moment_2.jpg" alt="The Weight of a Word — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Weight of a Word — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 [Mike Oliver](https://disability-studies.leeds.ac.uk/library/author/oliver.m/), who developed the [social model of disability](https://disability-studies.leeds.ac.uk/library/post/social-model-of-disability/) in the 1980s, drew a hard line between impairment — what a body does or doesn't do — and disability. The social model argues that disability is not caused by a person's impairment, but is produced by systems that refuse to accommodate that body. The NDIS was, in theory, built on something close to this idea. Fund the person. Remove the barriers. Let people choose. What "bloated" does is collapse that distinction. It reframes the funding of barrier removal as the barrier itself. The scheme that was supposed to fix the system becomes the system that needs fixing.
@@ -38,6 +39,7 @@ I know what this looks like from the pavement. In March 2024, I spent four hours
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-weight-of-a-word_symbol_3.jpg" alt="The Weight of a Word — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Weight of a Word — abstract linocut symbol</figcaption>
 </figure>
 
 The Albanese government's reforms this week are the largest changes to the NDIS since it launched. They will cap plan budgets. They will narrow eligibility. They will do this using the language of sustainability, which sounds like care for the future but functions as a ceiling on the present. Sustainability, in this context, means: we will keep funding the scheme, but less generously. The word "bloated" made that sentence possible. It did the rhetorical work months before the policy arrived.

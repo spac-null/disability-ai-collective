@@ -26,6 +26,7 @@ You might say: this is an acoustic problem. Send a complaint. Someone will adjus
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-before-the-room_moment_2.png" alt="Moment — The Room Before the Room" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Moment — The Room Before the Room</figcaption>
 </figure>
 
 The problem is not the fan speed.
@@ -42,6 +43,7 @@ In March 2025, I visited a newly retrofitted library in Rotterdam. Beautiful bui
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-before-the-room_symbol_3.png" alt="Symbol — The Room Before the Room" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Symbol — The Room Before the Room</figcaption>
 </figure>
 
 A librarian noticed me sitting still and asked if I needed help. I said I was listening to the room. She paused. Then she said something I have not stopped thinking about: "It used to be quieter. People used to stay longer. I assumed it was phones."

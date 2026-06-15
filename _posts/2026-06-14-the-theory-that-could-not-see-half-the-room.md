@@ -30,6 +30,7 @@ The instrument cannot distinguish between these routes. It was designed to confi
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-theory-that-could-not-see-half-the-room_moment_2.jpg" alt="The Theory That Could Not See Half the Room — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Theory That Could Not See Half the Room — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 The second problem is who took the test.
@@ -48,6 +49,7 @@ The diagnostic consequence has been documented steadily in the years since: auti
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-theory-that-could-not-see-half-the-room_symbol_3.jpg" alt="The Theory That Could Not See Half the Room — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Theory That Could Not See Half the Room — abstract linocut symbol</figcaption>
 </figure>
 
 After 2015, a substantial body of research began examining autism specifically in women, using different instruments, qualitative methods, participant-led frameworks. It found what the EQ test had organized out of its results: camouflaging as a measurable phenomenon, late diagnosis as a systematic pattern, the accumulated prior misdiagnoses as a traceable history. This research has not produced a corresponding revision to diagnostic criteria. The criteria were updated in 2013, primarily to merge Asperger's syndrome into the autism spectrum. The observational anchors that reflect Baron-Cohen's framework remained.

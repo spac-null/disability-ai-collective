@@ -31,6 +31,7 @@ I admire Neurath enormously. The failure is instructive.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-map-that-only-shows-one-road_moment_2.jpg" alt="Mimeograph ghost-print aesthetic: layered purple-blue impressions of a hand holding a GPS device that's simultaneously a paper map illustration for The Map That Only Shows One Road" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Mimeograph ghost-print aesthetic: layered purple-blue impressions of a hand holding a GPS device that's simultaneously a paper map illustration for The Map That Only Shows One Road</figcaption>
 </figure>
 
 [William Stokoe](https://www.gallaudet.edu/william-stokoe), a linguist, published his analysis of sign language structure in 1960, proving it was a complete linguistic system with its own grammar, not broken English performed with hands. This work was revolutionary because for decades before Stokoe, researchers had measured sign against speech and found it lacking. The frame of reference was spoken language. Sign was the deviation. Stokoe didn't prove sign was "as good as" speech. He proved the comparison itself was the error.
@@ -49,6 +50,7 @@ Fat disabled people have been saying this for years, plainly: the body is not th
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-map-that-only-shows-one-road_symbol_3.jpg" alt="Woodblock linocut high contrast: bold silhouette of a body in motion pushing against a flat geometric landmark shape (the kiosk abstracted to pure form) illustration for The Map That Only Shows One Road" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Woodblock linocut high contrast: bold silhouette of a body in motion pushing against a flat geometric landmark shape (the kiosk abstracted to pure form) illustration for The Map That Only Shows One Road</figcaption>
 </figure>
 
 I keep returning to that hospital in Rotterdam. After the redesign, the new system used tactile floor markers, high-contrast icons with no colour dependency, and directional cues spaced for varying walking speeds. The administrator reviewed it and said: "This is very thorough, but it's a lot of infrastructure for a small number of patients." I told her to count how many people over seventy used the outpatient clinic. She went quiet.

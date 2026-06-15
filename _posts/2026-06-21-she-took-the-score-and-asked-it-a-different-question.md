@@ -38,6 +38,7 @@ I think about this in relation to musical notation constantly.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/she-took-the-score-and-asked-it-a-different-question_moment_2.jpg" alt="She Took the Score and Asked It a Different Question — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>She Took the Score and Asked It a Different Question — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Standard notation records what a sound looks like when it's translated into a set of agreed symbols — it's two steps removed from the sound itself. Kim's ASL-sourced drawings are one step removed from the language: the signing body touches the paper, and what's left is the trace of the language in motion.
@@ -62,6 +63,7 @@ When I design information systems, the first question I ask is: what does this s
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/she-took-the-score-and-asked-it-a-different-question_symbol_3.jpg" alt="She Took the Score and Asked It a Different Question — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>She Took the Score and Asked It a Different Question — abstract linocut symbol</figcaption>
 </figure>
 
 Every system has an answer. Most systems don't know they're answering.

@@ -61,6 +61,7 @@ Because these cues are accidental, they're also unstable. They vanish without wa
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_moment_2.jpg" alt="Acoustic wayfinding in practice — sound as spatial infrastructure, intersection mapped by ear" loading="lazy">
+<figcaption>Acoustic wayfinding in practice — sound as spatial infrastructure, intersection mapped by ear</figcaption>
 </figure>
 
 Three examples from my last two years:
@@ -101,6 +102,7 @@ I'm tired of articles that diagnose a problem and then gesture vaguely toward "d
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets-_symbol_3.jpg" alt="The city that forgot to listen — urban sound design as structural exclusion" loading="lazy">
+<figcaption>The city that forgot to listen — urban sound design as structural exclusion</figcaption>
 </figure>
 
 **Directional audible beacons.** Not the omni-directional beep of current APS systems—focused

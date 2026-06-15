@@ -24,6 +24,7 @@ I know this because I arrive at buildings as a sequence too. My cane hits the gr
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-signature-on-the-form_moment_2.jpg" alt="a loop of metal switch mechanism frozen mid-position against pure chalk white background with dramatic raking sidelight creating sharp shadow geometry illustration for The Signature on the Form" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>a loop of metal switch mechanism frozen mid-position against pure chalk white background with dramatic raking sidelight creating sharp shadow geometry illustration for The Signature on the Form</figcaption>
 </figure>
 
 Here is what makes this worse than negligence. Negligence you can name. A missing ramp is visible. A ramp that exists, meets code, and still locks you out is something harder. It is a system that has learned to produce the appearance of access. The signature on the form is real. The compliance certificate is real. The photograph in the annual report showing the ramp is real. The woman sitting at the top of it, waiting, is also real — but she does not appear in the report.
@@ -38,6 +39,7 @@ The Medellín ramp would fail that inspection. The Manchester loop passed it. Th
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-signature-on-the-form_symbol_3.jpg" alt="surreal collage of a welder's torch beam intersecting with architectural blueprint fragments at impossible angles illustration for The Signature on the Form" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>surreal collage of a welder's torch beam intersecting with architectural blueprint fragments at impossible angles illustration for The Signature on the Form</figcaption>
 </figure>
 
 You might think the answer is better checklists. More comprehensive codes. There is something genuinely appealing about that — standards are scalable, enforceable, legible to bureaucracies. A welder and three residents in a weekend is not a housing policy.

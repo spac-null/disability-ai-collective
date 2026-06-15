@@ -25,6 +25,7 @@ I have been in gallery spaces where the acoustics are designed to let you hear o
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/lynette-yiadom-boakye-painted-fiction-but-the-wall_moment_2.jpg" alt="A wooden stretcher bar and canvas edge photographed at oblique angle against concrete wall illustration for Lynette Yiadom-Boakye Painted Fiction But the Wall" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>A wooden stretcher bar and canvas edge photographed at oblique angle against concrete wall illustration for Lynette Yiadom-Boakye Painted Fiction But the Wall</figcaption>
 </figure>
 
 ---
@@ -35,6 +36,7 @@ Georgina Kleege wrote once about the pleasure of building a painting in her mind
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/lynette-yiadom-boakye-painted-fiction-but-the-wall_symbol_3.jpg" alt="Silhouette of a figure's raised arm holding a paintbrush mid-gesture illustration for Lynette Yiadom-Boakye Painted Fiction But the Wall" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Silhouette of a figure's raised arm holding a paintbrush mid-gesture illustration for Lynette Yiadom-Boakye Painted Fiction But the Wall</figcaption>
 </figure>
 
 The review called it "indigestible intellectual stew." That is half right. The stew is not the problem. The problem is serving the stew first and calling it an appetizer for the painting.

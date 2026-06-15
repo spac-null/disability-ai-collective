@@ -27,6 +27,7 @@ The mechanism is the same. A shutter opens. Light hits a surface. Something is r
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/two-cameras_moment_2.jpg" alt="hands arranging invisible objects in empty space depicting hands arranging invisible objects in empty space" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>hands arranging invisible objects in empty space depicting hands arranging invisible objects in empty space</figcaption>
 </figure>
 
 In June 2023 I attended a photography talk in Rotterdam about photographic aesthetics where the speaker projected thirty images in forty minutes and used the word "vision" as a metaphor eleven times. I counted. I was there because the venue had a flat entrance and clear views from a chair — rare enough that I note it. The speaker described photography as "learning to see." I looked around the room. Everyone was nodding.
@@ -41,6 +42,7 @@ Bavčar once described his process as "photographing the images I carry inside."
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/two-cameras_symbol_3.jpg" alt="torn photograph fragments in mismatched scales reassembled wrong—a detail from one image overlapping a silhouette from another illustration for Two Cameras" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>torn photograph fragments in mismatched scales reassembled wrong—a detail from one image overlapping a silhouette from another illustration for Two Cameras</figcaption>
 </figure>
 
 The Princeton show runs until September. Bavčar is eighty-one and still working in Ljubljana. Eckert continues to exhibit. Neither appears in the exhibition. The tradition has had forty years to notice. What I find funny, in the way that means not funny at all, is that Callahan and White were genuinely radical for their time. They insisted photography was art when institutions said it wasn't. They fought to be taken seriously. Then they built a house and forgot to check who couldn't get through the door.

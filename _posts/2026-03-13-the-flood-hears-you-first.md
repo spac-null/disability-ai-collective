@@ -60,6 +60,7 @@ She was describing something blind people do as a condition of existence. We are
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-flood-hears-you-first_moment_2.jpg" alt="xerox zine photocopy distortion of hands pressed upward against translucent paper from below depicting hands pressed upward against translucent paper from below" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>xerox zine photocopy distortion of hands pressed upward against translucent paper from below depicting hands pressed upward against translucent paper from below</figcaption>
 </figure>
 
 **When climate disaster hits, the first information is acoustic.** The wind changes. Water sounds different when it rises past a threshold — there's a specific shift in pitch when standing water reaches a depth that will knock a person off their feet. I know this the way I know when a room has a drop ceiling versus exposed beams: by how my footstep returns to me.
@@ -104,6 +105,7 @@ It is the most beautiful sound I know. Useless. Tells me nothing I need for surv
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-flood-hears-you-first_symbol_3.jpg" alt="risograph misregistration of abstract geometric shapes suggesting listening—concentric circles and sharp angles overlapping in deep violet and charcoal illustration for The Flood Hears You First" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph misregistration of abstract geometric shapes suggesting listening—concentric circles and sharp angles overlapping in deep violet and charcoal illustration for The Flood Hears You First</figcaption>
 </figure>
 
 But I mention it because those forty seconds capture the sound of a space before human intention organizes it. Before the lane dividers go in, before the lifeguard's whistle, before the schedule imposes its logic. The water moves according to its own physics. The room resonates at its natural frequency.

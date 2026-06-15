@@ -26,6 +26,7 @@ You might say: these apps weren't built for that. Exactly. That is the argument.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/two-turns-left_moment_2.jpg" alt="Risograph print illustration for Two Turns Left" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Risograph print illustration for Two Turns Left</figcaption>
 </figure>
 
 I tried this myself. February 2023, central Rotterdam. I toggled on the "wheelchair accessible" layer in Google Maps — a feature the company launched with some fanfare in select cities. The app routed me to a tram stop. The tram stop had been under renovation for four months. No temporary ramp. No alternative. The app didn't know. The app doesn't update for temporary barriers because temporary barriers are not part of the data architecture. Permanent infrastructure gets mapped. The sandwich board, the construction fence, the delivery truck parked across the curb cut — these don't exist in the model. They exist on the ground, which is where I am.
@@ -42,6 +43,7 @@ I know what this costs because I've sat in rooms where people price it. In Octob
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/two-turns-left_symbol_3.jpg" alt="Dada photomontage of torn paper fragments: GPS map pieces depicting figure in motion" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Dada photomontage of torn paper fragments: GPS map pieces depicting figure in motion</figcaption>
 </figure>
 
 The review that inspired this piece tested fuel estimates. It compared how accurately each app predicted gas costs for a cross-country drive. The reviewer spent three paragraphs on this. He did not spend one sentence on whether either app could route a person in a wheelchair from a train station to a hospital entrance without encountering stairs. That silence is the review. Not what he measured. What he didn't think to measure.

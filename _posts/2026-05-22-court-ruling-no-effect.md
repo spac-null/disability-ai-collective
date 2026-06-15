@@ -25,6 +25,7 @@ I have sat in budget meetings where the phrase "debt recovery pipeline" appears 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/court-ruling-no-effect_moment_2.jpg" alt="Soviet constructivist propaganda poster style depicting figure partially silhouetted in doorframe" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Soviet constructivist propaganda poster style depicting figure partially silhouetted in doorframe</figcaption>
 </figure>
 
 The recovery system and the appeals system do not talk to each other. They run on different software. This creates a fundamental problem: when they contradict each other, both sides believe they are correct. A tribunal can rule that you owe nothing, and that ruling enters one database. The recovery demand enters another. Both are correct according to their own logic. When they contradict, the one with the enforcement mechanism wins.
@@ -37,6 +38,7 @@ She kept her job. That is unusual. Most employers, faced with a wage deduction o
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/court-ruling-no-effect_symbol_3.jpg" alt="paper cut-out collage only illustration for Court Ruling, No Effect" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>paper cut-out collage only illustration for Court Ruling, No Effect</figcaption>
 </figure>
 
 The woman told a UK newspaper she was staggered. I do not think staggered is the word. I think the word is: this again. Because it is never one letter. It is the letter, then the call to correct it, then the second letter, then the escalation, then the complaint, then the elected representative, then the tribunal, then the four years, then the letter to the employer anyway.

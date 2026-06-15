@@ -40,6 +40,7 @@ I understand the argument. But I don't think it's actually about protecting the 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/he-painted-everyone-talking_moment_2.jpg" alt="He Painted Everyone Talking. He Could Hear None of It. — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>He Painted Everyone Talking. He Could Hear None of It. — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Avercamp was a witness. He was exceptionally attentive. But his relationship to the social world he painted was mediated in ways that the "authoritative witness" story cannot absorb without complication.
@@ -66,6 +67,7 @@ The work survives. The annotation of his deafness was deemed not worth preservin
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/he-painted-everyone-talking_symbol_3.jpg" alt="He Painted Everyone Talking. He Could Hear None of It. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>He Painted Everyone Talking. He Could Hear None of It. — abstract linocut symbol</figcaption>
 </figure>
 
 ## What Gets Left Out

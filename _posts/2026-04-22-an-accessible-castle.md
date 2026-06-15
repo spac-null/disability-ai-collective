@@ -31,6 +31,7 @@ That fact is the one the shortlist citation should have led with.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/an-accessible-castle_moment_2.jpg" alt="Loading bay rubber matting and industrial floor surface photographed at oblique angle illustration for An Accessible Castle" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Loading bay rubber matting and industrial floor surface photographed at oblique angle illustration for An Accessible Castle</figcaption>
 </figure>
 
 ---
@@ -49,6 +50,7 @@ Here is what I want to be wrong about. I suspect the judges understand this. I s
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/an-accessible-castle_symbol_3.jpg" alt="Woodblock linocut style: silhouette of a figure in motion descending stairs with one hand touching the wall depicting figure in motion descending stairs with one hand touching the wall" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Woodblock linocut style: silhouette of a figure in motion descending stairs with one hand touching the wall depicting figure in motion descending stairs with one hand touching the wall</figcaption>
 </figure>
 
 The Art Fund prize is £120,000. Norwich's transformation cost £13.5 million and took the better part of a decade to get through planning. The keep dates to 1094. Nine centuries of a building designed around one principle — control who enters — undone by architects who understood that the route is the experience, not the room at the end of it.

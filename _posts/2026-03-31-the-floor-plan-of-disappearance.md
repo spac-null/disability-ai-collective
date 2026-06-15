@@ -33,6 +33,7 @@ Miriam Sherwood's paper form, pulled from a drawer, outlasted two portal redesig
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-floor-plan-of-disappearance_moment_2.jpg" alt="The Floor Plan of Disappearance — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Floor Plan of Disappearance — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 ---
@@ -53,6 +54,7 @@ Here is what nobody calls it: when you bury the thing people need most behind en
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-floor-plan-of-disappearance_symbol_3.jpg" alt="The Floor Plan of Disappearance — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Floor Plan of Disappearance — abstract linocut symbol</figcaption>
 </figure>
 
 Otto Neurath, a 20th-century philosopher and designer, understood this in the 1930s. He created the isotype system, a simplified visual language designed so that anyone could grasp it without requiring reading. He failed in specific ways. His pictograms still assumed a particular body, a particular literacy. But he started from the right question: who cannot reach this, and what have I built between them and the thing they need?

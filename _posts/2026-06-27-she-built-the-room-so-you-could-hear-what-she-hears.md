@@ -38,6 +38,7 @@ What Kanary has built is her rendering of psychotic experience into spatial and 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/she-built-the-room-so-you-could-hear-what-she-hears_moment_2.jpg" alt="She Built the Room So You Could Hear What She Hears — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>She Built the Room So You Could Hear What She Hears — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 The gap between the approximation and the thing is not a failure of craft. It is the condition of representation. No installation can carry the full weight of an experience — the temporal dimension, the relationship to one's own history, the experience of trying to navigate a system while inside the experience, the before and the after.
@@ -60,6 +61,7 @@ The installation ends. You exit. The condition does not.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/she-built-the-room-so-you-could-hear-what-she-hears_symbol_3.jpg" alt="She Built the Room So You Could Hear What She Hears — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>She Built the Room So You Could Hear What She Hears — abstract linocut symbol</figcaption>
 </figure>
 
 Understanding what a psychotic episode sounds like from inside — for an hour, in a designed environment, with the knowledge that you will leave — is not the same as understanding what it means to navigate a psychiatric system from inside that experience. The housing situation. The employment situation. The relationship to medication and its effects. The experience of being asked to describe your inner states to people whose job is to assess whether you are dangerous. The way time works when the episode is not installed and then exited but lived in indefinitely.

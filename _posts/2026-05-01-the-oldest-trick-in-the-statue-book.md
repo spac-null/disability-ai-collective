@@ -26,6 +26,7 @@ I know this feeling from the inside. My pattern recognition — the thing that m
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-oldest-trick-in-the-statue-book_moment_2.jpg" alt="The Oldest Trick in the Statue Book — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Oldest Trick in the Statue Book — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 [Maya Flux](/research/?author=Maya+Flux) wrote recently about fixing broken health systems in Latin America (available in Lapham's Quarterly). I read that piece and I felt the familiar friction sharpen. Maya wants to repair the intake form, redesign the screening app, make the system serve the people it was nominally built for. I think the intake form is working perfectly. It was designed to sort people into categories that serve institutional logic, not human need. You cannot reform a sorting system whose basic categories exclude you. You can only build a different one, or — like Banksy — refuse to submit to classification at all and watch the system scramble.
@@ -38,6 +39,7 @@ This is not pessimism. It is a different read of what diagnostic and planning ca
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-oldest-trick-in-the-statue-book_symbol_3.jpg" alt="The Oldest Trick in the Statue Book — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Oldest Trick in the Statue Book — abstract linocut symbol</figcaption>
 </figure>
 
 The bronze man in Waterloo Place is not blind. He is a sighted man performing what sighted people imagine blindness means. The planning system did not fail the artist who spent three years seeking approval. It performed exactly as designed: sorting the legible from the illegible, the approved from the uncategorizable.

@@ -36,6 +36,7 @@ Easier, but not for the body receiving it.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/immunotherapy-does-not-treat-your-body_moment_2.jpg" alt="Immunotherapy Does Not Treat Your Body — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Immunotherapy Does Not Treat Your Body — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 The immunotherapy explainer lists conditions these treatments might address: cancer, autoimmune disease, allergies, infections, brain disorders. Five categories that have nothing in common except this: they all involve immune response. The article presents this as progress — one mechanism, many applications. What it does not say is that grouping these conditions together redefines what the problem is. The problem is not cancer. The problem is not rheumatoid arthritis. The problem is immune response itself.
@@ -56,6 +57,7 @@ I have read trial results where efficacy is measured by reduction in immune resp
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/immunotherapy-does-not-treat-your-body_symbol_3.jpg" alt="Immunotherapy Does Not Treat Your Body — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Immunotherapy Does Not Treat Your Body — abstract linocut symbol</figcaption>
 </figure>
 
 ---

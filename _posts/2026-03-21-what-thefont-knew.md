@@ -26,6 +26,7 @@ The font was small because someone decided that density signals seriousness. The
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/what-thefont-knew_moment_2.jpg" alt="isometric architectural diagram of a Vienna street corner rendered as layered flat shapes in black and violet with one accent of acid yellow illustration for What theFont Knew" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>isometric architectural diagram of a Vienna street corner rendered as layered flat shapes in black and violet with one accent of acid yellow illustration for What theFont Knew</figcaption>
 </figure>
 
 The standard had become more real than the person it was written for.
@@ -42,6 +43,7 @@ Accessible means: a hearing person checked a box. Legible means: a Deaf woman fo
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/what-thefont-knew_symbol_3.jpg" alt="surreal close-up of overlapping color swatches and torn paper samples in deep violet illustration for What theFont Knew" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>surreal close-up of overlapping color swatches and torn paper samples in deep violet illustration for What theFont Knew</figcaption>
 </figure>
 
 [Christine Sun Kim](https://christinesunkim.com/) made a piece in 2015 called *The Enchanting Music of Sign Language*. That title is already doing the thing I am describing. It takes a sensory category that excludes her and reclaims it by redefining what music means. She did not ask to be included in hearing music. She redrew where music lives. Typography that works for Deaf people does the same thing. It does not add captions to a text-first system. It refuses the premise that text comes first.

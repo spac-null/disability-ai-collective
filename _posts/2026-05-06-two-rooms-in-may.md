@@ -30,6 +30,7 @@ I am not complaining about access. I am describing what the architecture knows a
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/two-rooms-in-may_moment_2.jpg" alt="Two Rooms in May — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Two Rooms in May — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 ---
@@ -46,6 +47,7 @@ You might say: of course it doesn't. The protesters are focused on war, on occup
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/two-rooms-in-may_symbol_3.jpg" alt="Two Rooms in May — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Two Rooms in May — abstract linocut symbol</figcaption>
 </figure>
 
 Amanda Cachia, the Australian curator who is under four feet tall, organized an exhibition in 2012 where she hung all the work at her eye level. Sighted visitors had to crouch. The room sounded different at that height — I know because she described the acoustic shift to me in a phone call in February 2024. Sound bounced off bodies differently when those bodies bent. The room changed when the bodies in it changed. The art did not.

@@ -28,6 +28,7 @@ The NDIS was built as a scheme. The word matters. A scheme is a plan, a structur
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-ledger-sees-you-now_moment_2.jpg" alt="The Ledger Sees You Now — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Ledger Sees You Now — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 ---
@@ -44,6 +45,7 @@ A razor gang does not need to cut anything directly. It only needs to redesign t
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-ledger-sees-you-now_symbol_3.jpg" alt="The Ledger Sees You Now — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Ledger Sees You Now — abstract linocut symbol</figcaption>
 </figure>
 
 The concession I owe: fifty-two billion dollars is a real number. Managing public money is a real obligation. Fraud exists. Waste exists. No system that large runs clean. I know this. The question is not whether you audit the program. The question is who designs the audit, what they count, and what they have decided — before they start — is not worth counting.

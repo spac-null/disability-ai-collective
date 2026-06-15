@@ -46,6 +46,7 @@ The actor concentrates on holding his hands "correctly." We're stuck analyzing w
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_symbol_3.jpg" alt="The prosthetics paradox — a camera lens framing authentic disability performance versus constructed simulation" loading="lazy">
+<figcaption>The prosthetics paradox — a camera lens framing authentic disability performance versus constructed simulation</figcaption>
 </figure>
 *The prosthetics paradox — a camera lens framing authentic disability performance versus constructed simulation*
 
@@ -99,6 +100,7 @@ He looked confused.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-prosthetics-paradox-why-casting-disabled-actors-beats-hollywood-makeup_moment_2.jpg" alt="Disabled actor on stage without prosthetics — authentic performance that audiences register as real at a neurological level" loading="lazy">
+<figcaption>Disabled actor on stage without prosthetics — authentic performance that audiences register as real at a neurological level</figcaption>
 </figure>
 *Disabled actor on stage without prosthetics — authentic performance that audiences register as real at a neurological level*
 

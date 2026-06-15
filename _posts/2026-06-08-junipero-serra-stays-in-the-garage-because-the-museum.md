@@ -31,6 +31,7 @@ What I did not deal with was the filing cabinet itself. I spent eight years sort
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/junipero-serra-stays-in-the-garage-because-the-museum_moment_2.jpg" alt="surreal overhead shot of museum gallery room split in half—one side silent and empty with perfect acoustic panels illustration for Junipero Serra Stays in the Garage Because the Museum" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>surreal overhead shot of museum gallery room split in half—one side silent and empty with perfect acoustic panels illustration for Junipero Serra Stays in the Garage Because the Museum</figcaption>
 </figure>
 
 Howard's sculpture is not in the show because the museum cannot figure out which room it goes in. It is not a monument. It is not a critique of a monument the way museums mean critique — a wall text that contextualizes the original object. It is the original object, remade, bound, blindfolded, stored in a garage. Museums have a room for the object. They have a different room for the critique of the object. They do not have a room where the object and the critique occupy the same physical space.
@@ -47,6 +48,7 @@ The disagreement is not about whether acoustic design works. It works for the pe
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/junipero-serra-stays-in-the-garage-because-the-museum_symbol_3.jpg" alt="intimate close-up photograph of two hands reaching toward the same object from opposite angles depicting hands reaching toward the same object from opposite angles" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>intimate close-up photograph of two hands reaching toward the same object from opposite angles depicting hands reaching toward the same object from opposite angles</figcaption>
 </figure>
 
 Museums build rooms for art that already has a category. Howard's work does not fit the category structure. So it waits. Not censored. Just unaccommodated. The garage is not a moral failure. It is an architectural one.

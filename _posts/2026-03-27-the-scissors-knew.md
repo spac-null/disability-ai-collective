@@ -22,6 +22,7 @@ The Guardian calls this "a final flowering." The phrase does a specific job. It 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-scissors-knew_moment_2.jpg" alt="linocut woodblock print aesthetic: bold silhouette of an open hand with scissors emerging from the palm at impossible angle illustration for The Scissors Knew" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>linocut woodblock print aesthetic: bold silhouette of an open hand with scissors emerging from the palm at impossible angle illustration for The Scissors Knew</figcaption>
 </figure>
 
 [Georgina Kleege](https://english.berkeley.edu/users/45), a disability scholar writing in her book *Sight Unseen*, argues that blindness in art history has always been somebody else's metaphor. The blind figure in a painting is never about blindness. It is about what the sighted painter feels standing in front of whatever they cannot face. Something similar happens here. The wheelchair is never about Matisse's body. It is about the critic's feelings about mortality.
@@ -34,6 +35,7 @@ The critic who writes "life-enhancing genius" without naming the body that gener
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-scissors-knew_symbol_3.jpg" alt="risograph print of scissors lying flat on rumpled paper with deep violet and black inks creating unexpected third color in overlap zones illustration for The Scissors Knew" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print of scissors lying flat on rumpled paper with deep violet and black inks creating unexpected third color in overlap zones illustration for The Scissors Knew</figcaption>
 </figure>
 
 That room had a particular light. His assistant [Lydia Delectorskaya](https://www.centrepompidou.fr/en), who worked closely with him during his later years, held the cut shapes up against the wall while he directed from the bed. A disabled artist and his collaborator, building space with color and scissors.

@@ -30,6 +30,7 @@ You might say: that's not the designer's fault. You're right. It isn't. That's t
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-case-study-with-no-second-act_moment_2.jpg" alt="Overhead shot of layered transparent sheets of violet and black stacked at oblique angles illustration for The Case Study With No Second Act" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Overhead shot of layered transparent sheets of violet and black stacked at oblique angles illustration for The Case Study With No Second Act</figcaption>
 </figure>
 
 The case study is that cover.
@@ -44,6 +45,7 @@ I contacted the team behind the London housing dashboard in early 2024. A former
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-case-study-with-no-second-act_symbol_3.jpg" alt="A single hand in profile pressing against crumpled industrial mesh or perforated metal that's being pushed back illustration for The Case Study With No Second Act" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>A single hand in profile pressing against crumpled industrial mesh or perforated metal that's being pushed back illustration for The Case Study With No Second Act</figcaption>
 </figure>
 
 She knows. She does it anyway.

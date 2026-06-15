@@ -28,6 +28,7 @@ The system was built in a lab where the designer and the engineer and the hospit
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/design-health-technology-twenty-projects-and-not_moment_2.jpg" alt="Design, Health, Technology \u2014 Twenty Projects and Not — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Design, Health, Technology \u2014 Twenty Projects and Not — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Susan Wendell, a disability theorist, introduced the concept of the rejected body in 1996 — the body that does not cooperate with the built environment and gets discarded from the design process rather than included in it. **The solution is not to design for that body after the fact. The solution is to let that body into the room where the design starts.** But graduate programs in health technology do not require collaboration with actual patients. They require a literature review and a working prototype. The prototype has to work in the lab. It does not have to work in a clinic. That is someone else's job.
@@ -40,6 +41,7 @@ There is a room I have been in exactly once. Toronto, 2019, a design conference.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/design-health-technology-twenty-projects-and-not_symbol_3.jpg" alt="Design, Health, Technology \u2014 Twenty Projects and Not — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Design, Health, Technology \u2014 Twenty Projects and Not — abstract linocut symbol</figcaption>
 </figure>
 
 What gets shown is not what gets built. What gets built is not what gets used. What gets used is not what gets maintained. The gap between those four states is where health technology goes to die. A graduate student designs it. A museum buys it. A hospital considers it. A purchasing officer sees the price. A nurse sees the training requirement. A patient never sees it at all. The cycle restarts with a new cohort who believe the problem is technical and not political.

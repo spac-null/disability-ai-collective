@@ -30,6 +30,7 @@ She writes that digital messaging "generates feelings of exclusion or rejection.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-you-were-never-in_moment_2.jpg" alt="The Room You Were Never In — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Room You Were Never In — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 ---
@@ -46,6 +47,7 @@ I want to be fair. Sridhar is right that something real is lost when students ne
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-you-were-never-in_symbol_3.jpg" alt="The Room You Were Never In — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Room You Were Never In — abstract linocut symbol</figcaption>
 </figure>
 
 They are also rooms I had to build myself. Nobody handed them to me. The university system never built them as standard. What the university system did build, starting in the 2010s, was email, then messaging platforms, then asynchronous discussion boards. Not for me. For efficiency, for scale, for administrative convenience. But the effect was that I could finally join the conversation without asking permission to join it differently.

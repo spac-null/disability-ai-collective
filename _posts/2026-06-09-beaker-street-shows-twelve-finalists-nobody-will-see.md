@@ -29,6 +29,7 @@ The curator kept saying "representation." I kept thinking: this is not represent
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/beaker-street-shows-twelve-finalists-nobody-will-see_moment_2.jpg" alt="risograph print of layered translucent orange and deep purple ink creating third color where they misregister illustration for Beaker Street Shows Twelve Finalists Nobody Will See" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print of layered translucent orange and deep purple ink creating third color where they misregister illustration for Beaker Street Shows Twelve Finalists Nobody Will See</figcaption>
 </figure>
 
 Science photography inherits a problem from Otto Neurath, a German philosopher who created a system in the 1920s called [Isotype](https://isotyperevisited.org/) — a set of simple, identical symbols meant to communicate information across different languages without needing words. Neurath wanted universal visual language. He designed pictograms — small pictures or symbols — that would cross linguistic barriers. The system worked for quantities, failed for complexity. You can show five workers with five identical figures. You cannot show systemic unemployment with a pictogram. The more abstract the concept, the more the visual system requires shared context to decode. Neurath's pictograms assumed a viewer who already knew what they were looking at.
@@ -45,6 +46,7 @@ Beaker Street will do the same. The photographs will hang. The captions will exp
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/beaker-street-shows-twelve-finalists-nobody-will-see_symbol_3.jpg" alt="cyanotype botanical silhouette inverted—deep prussian blue background with burnt orange chemical tide-mark rings illustration for Beaker Street Shows Twelve Finalists Nobody Will See" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>cyanotype botanical silhouette inverted—deep prussian blue background with burnt orange chemical tide-mark rings illustration for Beaker Street Shows Twelve Finalists Nobody Will See</figcaption>
 </figure>
 
 I do not have a solution. I have watched museums try. Tactile diagrams strip out the information that makes the photograph scientific. Audio descriptions turn images into text, which collapses the reason they were photographs to begin with. 3D-printed models work for some subjects — a model of a molecular structure preserves spatial relationships in a way that touch can verify. But you cannot 3D-print a photograph of the Milky Way. You cannot tactilize a long-exposure image of satellite trails.

@@ -37,6 +37,7 @@ When the wage is set below survival, the museum has pre-selected who can work th
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/sixty-four-dollars-an-hour-is-museum-language-for-we_moment_2.jpg" alt="Risograph print of a car interior at night seen from driver's seat illustration for Sixty-Four Dollars an Hour is Museum Language for We" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Risograph print of a car interior at night seen from driver's seat illustration for Sixty-Four Dollars an Hour is Museum Language for We</figcaption>
 </figure>
 
 The Seattle letter also asks for just-cause employment protections to replace at-will status. At-will employment means the employer can fire you anytime without explanation. Just-cause means they have to name what you did wrong. At-will employment is where ableism perfects its invisibility.
@@ -61,6 +62,7 @@ I have sat in a museum staff meeting where the director said the institution nee
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/sixty-four-dollars-an-hour-is-museum-language-for-we_symbol_3.jpg" alt="Woodblock linocut style image of stacked rent bills and medical receipts torn at irregular angles like collage fragments illustration for Sixty-Four Dollars an Hour is Museum Language for We" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Woodblock linocut style image of stacked rent bills and medical receipts torn at irregular angles like collage fragments illustration for Sixty-Four Dollars an Hour is Museum Language for We</figcaption>
 </figure>
 
 The same director, in the same meeting, had said the museum was committed to equity. I believed him. I think he believed him. But equity without wages is aspiration. And aspiration does not pay for the grab rail in your bathroom or the mobility aid you need to get to work or the insurance that covers your prescriptions.

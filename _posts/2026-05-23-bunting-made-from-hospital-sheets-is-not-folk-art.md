@@ -24,6 +24,7 @@ The bursts create their own aesthetic in this show. Look at how the paintings st
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/bunting-made-from-hospital-sheets-is-not-folk-art_moment_2.jpg" alt="Bunting Made From Hospital Sheets Is Not Folk Art — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Bunting Made From Hospital Sheets Is Not Folk Art — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 The art in this exhibition was not made during flare-ups. It was made between them. That gap — the space between crisis and the next crisis — is where disabled artists live. Not in the moment of suffering. In the moment after, when you have just enough energy to document what happened before you forget.
@@ -32,6 +33,7 @@ The hospital-sheet bunting is beautiful. I mean that without irony. But calling 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/bunting-made-from-hospital-sheets-is-not-folk-art_symbol_3.jpg" alt="Bunting Made From Hospital Sheets Is Not Folk Art — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Bunting Made From Hospital Sheets Is Not Folk Art — abstract linocut symbol</figcaption>
 </figure>
 
 The DWP refuses to publish information from secret reviews into benefit-related deaths. This was reported by The Independent in 2021. Still true. The letters keep arriving. The artists keep drawing on them.

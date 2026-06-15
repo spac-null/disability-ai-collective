@@ -28,6 +28,7 @@ The mechanism is the same. A TikTok comment section in 2026 and a BBC message bo
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-frequency-you-already-know_moment_2.jpg" alt="The Frequency You Already Know — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Frequency You Already Know — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 ---
@@ -42,6 +43,7 @@ That same substitution is happening in the TikTok diagnosis story. The question 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-frequency-you-already-know_symbol_3.jpg" alt="The Frequency You Already Know — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Frequency You Already Know — abstract linocut symbol</figcaption>
 </figure>
 
 [Joanna Moncrieff](https://www.ucl.ac.uk), a psychiatrist at University College London, has spent years arguing that psychiatric diagnosis functions as a gatekeeping system rather than a descriptive one. She said in a 2022 interview with *Mad in America* that diagnosis "gives the impression that we understand conditions that we actually don't." If the official system cannot consistently name what is happening in a patient's body, the patient's search for answers elsewhere is not a failure of information hygiene. It is an acoustic phenomenon. Sound finding the path of least resistance.

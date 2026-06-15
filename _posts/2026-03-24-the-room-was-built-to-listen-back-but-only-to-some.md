@@ -24,6 +24,7 @@ Here is what I mean. In August 2023, I attended a panel on inclusive venue desig
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-was-built-to-listen-back-but-only-to-some_moment_2.jpg" alt="Architectural section drawing rendered as mimeograph ghost-print in purple-blue illustration for The Room Was Built to Listen Back — But Only to Some" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Architectural section drawing rendered as mimeograph ghost-print in purple-blue illustration for The Room Was Built to Listen Back — But Only to Some</figcaption>
 </figure>
 
 The target demographic. A performing arts venue — publicly funded, built on public land, marketed as a civic space — and the architect who designed its sonic environment could say, without embarrassment, that Deaf people were not the target demographic. She wasn't being cruel. She was being accurate.
@@ -40,6 +41,7 @@ I know this in my skeleton. I have sat in concert halls where the sound was supp
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-was-built-to-listen-back-but-only-to-some_symbol_3.jpg" alt="Wheelchair wheel rim in extreme foreground filling half frame illustration for The Room Was Built to Listen Back — But Only to Some" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Wheelchair wheel rim in extreme foreground filling half frame illustration for The Room Was Built to Listen Back — But Only to Some</figcaption>
 </figure>
 
 The performing arts industry spends extraordinary sums shaping rooms for a single sensory channel and then calls the result universal. [Mike Oliver](https://disability-studies.leeds.ac.uk/mike-oliver/) distinguished between impairment and disability in 1983 — the body is one thing, the barrier is another. The concert hall's barrier is not that Deaf people cannot hear. The barrier is that the architect never imagined them as present.

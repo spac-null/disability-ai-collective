@@ -34,6 +34,7 @@ And now the institutions that own those canvases have rebuilt the Salon inside t
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/43-monets-crossed-an-ocean-the-wall-text-will-cross_symbol_3.jpg" alt="43 Monets Crossed an Ocean. The Wall Text Will Cross — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>43 Monets Crossed an Ocean. The Wall Text Will Cross — abstract linocut symbol</figcaption>
 </figure>
 
 I am not against the date and the medium. I am not against description for those who need it. Put them in a corner. Offer them. Let the ones who want them find them — and let the ones already deep in their own seeing be trusted there.

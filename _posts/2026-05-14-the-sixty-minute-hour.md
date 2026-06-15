@@ -20,6 +20,7 @@ Last month, the city council announced a new strategy for social care. They are 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-sixty-minute-hour_moment_2.jpg" alt="hands shaking in a hotel room at night captured as a risograph print with misregistered cyan and magenta channels creating ghostly double-vision depicting hands shaking in a hotel room at night captured as a risograph print with misregistered cyan and magenta channels creating ghostly double-vision" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>hands shaking in a hotel room at night captured as a risograph print with misregistered cyan and magenta channels creating ghostly double-vision depicting hands shaking in a hotel room at night captured as a risograph print with misregistered cyan and magenta channels creating ghostly double-vision</figcaption>
 </figure>
 
 This is not a new idea. It is the oldest trick in the book of statecraft: Take a public responsibility, wrap it in the language of freedom, and make it a private problem. It redefines the work of holding a society together as a series of individual choices. The writer Silvia Federici identified this mechanism decades ago in her analysis of housework: unpaid labour is the invisible bedrock on which the entire visible economy rests. By calling it love or duty, you ensure it can never be accounted for, never be salaried, never go on strike. The council is not ‘unlocking the potential of community support’. It is privatising exhaustion.
@@ -30,6 +31,7 @@ It is also redrawing the map of the city. A city where care is a public utility 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-sixty-minute-hour_symbol_3.jpg" alt="concrete warehouse steps photographed from directly below as a stark linocut silhouette illustration for The Sixty-Minute Hour" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>concrete warehouse steps photographed from directly below as a stark linocut silhouette illustration for The Sixty-Minute Hour</figcaption>
 </figure>
 
 I know the smile that makes this all work. I used it in May 2018, at a friend’s wedding reception in a restored warehouse with three steep concrete steps at the entrance. Everyone knew. Nobody had mentioned it. When I arrived, a half-dozen well-meaning men rushed forward, offering to lift my chair. I smiled, said thank you, and let them. The smile was the currency I paid to make them feel good about their sudden, clumsy solution to a problem they had all quietly ignored for months. It made the moment smooth. It allowed the party to continue. The smile said, *This is fine. I am fine. You have done a good thing.* Later, alone in a hotel room, my hands shook for an hour. Not from the indignity of being

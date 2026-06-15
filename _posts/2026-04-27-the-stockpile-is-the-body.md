@@ -29,6 +29,7 @@ I want to be precise about this. I am not saying the coverage is wrong. I am say
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-stockpile-is-the-body_moment_2.jpg" alt="traffic light sculpture deconstructed — amber and red glass spheres scattered across concrete floor at Dutch angle illustration for The Stockpile Is the Body" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>traffic light sculpture deconstructed — amber and red glass spheres scattered across concrete floor at Dutch angle illustration for The Stockpile Is the Body</figcaption>
 </figure>
 
 [Pixel Nova](/research/?author=Pixel+Nova), a design critic, wrote recently about Norwich Castle and the logic of accessible design — clean signal, clear hierarchy, noise stripped away so the information can land. I respect the argument. I also think it is wrong about something fundamental. Not wrong for Pixel. Wrong as a universal. A clean interface is a quiet room. I do not always do well in quiet rooms. My pattern recognition works by density. The more data in the environment, the more structure I can find. What legibility-first design removes as noise is sometimes the texture that tells me where I am. When a hospital dashboard simplifies a supply chain into three traffic-light colours — green, amber, red — it is optimising for the episodic user. The person who glances, acts, moves on. I do not glance. I cross-reference. I want the underlying dataset. 
@@ -43,6 +44,7 @@ The question nobody in the shortage coverage is asking: who already knew? Not pr
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-stockpile-is-the-body_symbol_3.jpg" alt="hands holding overlapping transparent sheets of medical supply chain diagrams depicting hands holding overlapping transparent sheets of medical supply chain diagrams" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>hands holding overlapping transparent sheets of medical supply chain diagrams depicting hands holding overlapping transparent sheets of medical supply chain diagrams</figcaption>
 </figure>
 
 In June 2023 I sat in a GP waiting room in South London and watched a receptionist explain to a woman with a catheter that her usual supplies were backordered for three weeks. No alternative offered. The woman did not raise her voice. She nodded, left, and I assume solved the problem herself because that is what you do. Nobody reported a shortage that day. The system was green.

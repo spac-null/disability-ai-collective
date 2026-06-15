@@ -23,6 +23,7 @@ Baselitz spent six decades forcing sighted, neurotypical viewers — people with
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-right-way-up_moment_2.jpg" alt="Acid yellow paint dripping upward against gravity in defiance illustration for The Right Way Up" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Acid yellow paint dripping upward against gravity in defiance illustration for The Right Way Up</figcaption>
 </figure>
 
 A recent article about blindness deployed as metaphor in public sculpture — the bronze figure with a draped face read as wilful ignorance — made a sharp argument: stop using neurological difference as your symbol for moral failure. I agree. But here is where that argument and I part ways. Saying "I experience the city differently" is not the same as saying "the city is built to exclude me." One is perception. The other is a drain grate that catches my front caster on Weesperstraat every single Thursday. Baselitz didn't just perceive differently. He built paintings that forced a specific physical engagement — you had to tilt, crane, reorient. The gallery remained flat, level, hung at standing eye height. The challenge was perceptual. The architecture stayed the same.
@@ -33,6 +34,7 @@ What Baselitz actually proved, without meaning to: the "correct" orientation was
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-right-way-up_symbol_3.jpg" alt="Pair of hands from below adjusting a painting on a white wall depicting hands from below adjusting a painting on a white wall" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Pair of hands from below adjusting a painting on a white wall depicting hands from below adjusting a painting on a white wall</figcaption>
 </figure>
 
 ---

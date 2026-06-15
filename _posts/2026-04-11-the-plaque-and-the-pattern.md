@@ -28,6 +28,7 @@ The mechanism is the same one that makes a plaque in Canberra legible and a brai
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-plaque-and-the-pattern_moment_2.jpg" alt="The Plaque and the Pattern — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Plaque and the Pattern — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 [Kaley Roosen](https://disabilityvisibilityproject.com/2014/09/18/guest-blog-post-whose-body-is-it-anyways-by-kaley-roosen/), writing for the [Disability Visibility Project](https://disabilityvisibilityproject.com/) — an online platform centred on the perspectives and experiences of disabled people — put it plainly: institutions [claim ownership of bodies they did not build and cannot understand](https://disabilityvisibilityproject.com/2014/09/18/guest-blog-post-whose-body-is-it-anyways-by-kaley-roosen/). Military commemoration takes this further. It claims ownership of the meaning of a body's actions. The plaque decides what the body did and why it mattered. The person inside the body is not consulted.
@@ -42,6 +43,7 @@ Moral courage has no plaque. The soldier who refused an unlawful order in Uruzga
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-plaque-and-the-pattern_symbol_3.jpg" alt="The Plaque and the Pattern — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Plaque and the Pattern — abstract linocut symbol</figcaption>
 </figure>
 
 The Hall of Valour cannot hold this. Not because the curators lack imagination, but because the taxonomy was built to recognise one kind of signal and filter everything else as noise. I recognise this architecture. I grew up inside it. Every diagnostic system I have ever encountered works the same way: build categories from observable behaviour, then treat the categories as more real than the person generating the behaviour. The copy has won.

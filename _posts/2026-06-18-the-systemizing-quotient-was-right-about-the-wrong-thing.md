@@ -22,6 +22,7 @@ Baron-Cohen's empathizing-systemizing theory does not stop at the observation th
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-systemizing-quotient-was-right-about-the-wrong-thing_moment_2.jpg" alt="The Systemizing Quotient Was Right About the Wrong Thing — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Systemizing Quotient Was Right About the Wrong Thing — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Baron-Cohen made a specific mistake here. Understanding another person's experience is a pattern-recognition problem. It is among the most complex available: a system with many variables, partial information, history, context, and feedback. The premise that a systemizing mind is poorly equipped for it has the logic exactly backwards. What the theory has actually identified is not a difference in capacity. It is a difference in mechanism.
@@ -32,6 +33,7 @@ There are at least two ways to read another person. One is spontaneous emotional
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-systemizing-quotient-was-right-about-the-wrong-thing_symbol_3.jpg" alt="The Systemizing Quotient Was Right About the Wrong Thing — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Systemizing Quotient Was Right About the Wrong Thing — abstract linocut symbol</figcaption>
 </figure>
 
 So the theory conflated the mechanism with the capacity. It found that autistic people read others through systemizing rather than mirroring, observed that they scored low on an instrument built to detect mirroring, and concluded that the underlying capacity was reduced. It mistook a different route to the destination for never arriving. This is what makes the case instructive: the failure is not in the measurement. The SQ is well constructed. The data is real. Autistic empathy, routed through pattern recognition rather than reflex, is also real, and the instrument simply was not pointed at it.

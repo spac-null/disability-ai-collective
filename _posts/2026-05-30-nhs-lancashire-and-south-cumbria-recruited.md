@@ -30,6 +30,7 @@ In 2019, I tried to access a council-funded employment scheme for disabled peopl
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/nhs-lancashire-and-south-cumbria-recruited_moment_2.jpg" alt="NHS Lancashire and South Cumbria Recruited — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>NHS Lancashire and South Cumbria Recruited — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Schemes that link health and employment are designed by people who have never had to choose between attending a medical appointment and keeping a shift. The choice is not theoretical. It is: do I see the consultant who might adjust my medication, or do I keep the job that pays my rent? The scheme that tries to bridge that gap without acknowledging that the gap is built into how work functions — that work is designed for people who do not get sick, or who can afford to get sick without losing income — is not a bridge. It is a plank suspended over a canyon with no railings.
@@ -44,6 +45,7 @@ What it does count is money. The government is expanding the scheme this autumn.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/nhs-lancashire-and-south-cumbria-recruited_symbol_3.jpg" alt="NHS Lancashire and South Cumbria Recruited — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>NHS Lancashire and South Cumbria Recruited — abstract linocut symbol</figcaption>
 </figure>
 
 I know someone who works in an integrated care board. Not one of the fifteen running WorkWell pilots, but a neighbouring one. She told me last month that her board is preparing for the autumn expansion. They are hiring coordinators. They are drafting referral pathways. They are building a database to track results. She said the database has a field for 'barriers to engagement.' The dropdown menu includes 'lack of drive,' 'chaotic lifestyle,' and 'won't comply.' She said this flatly, the way you say something you have said so many times it has stopped sounding absurd.

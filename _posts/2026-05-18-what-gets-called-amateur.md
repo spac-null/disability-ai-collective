@@ -26,6 +26,7 @@ The snapshot rejects mastery. It refuses the controlled frame. It documents what
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/what-gets-called-amateur_moment_2.jpg" alt="What Gets Called Amateur — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>What Gets Called Amateur — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Jansen wants the images elevated. Mounted in Perspex is not enough. They need something more to justify themselves as art. But the entire argument of the snapshot is that elevation is the wrong frame. The Tumblr comparison is intended as a dismissal, but Tumblr in 2014 was a platform where photographers shared work directly with audiences when galleries, magazines, and institutions would not. Tumblr was where you went if the gallery would not show your work, if the magazine would not publish it, if the institution had already decided your life was not worth the serious gaze.
@@ -38,6 +39,7 @@ There is a history here that the review does not mention. Disability archives ar
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/what-gets-called-amateur_symbol_3.jpg" alt="What Gets Called Amateur — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>What Gets Called Amateur — abstract linocut symbol</figcaption>
 </figure>
 
 What survives is blurry. Off-centre. Technically inadequate by the standards Jansen is applying. Also: the only visual record we have of entire decades of disabled life that institutions refused to document.

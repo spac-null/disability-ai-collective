@@ -29,6 +29,7 @@ This is not a coincidence. This is a pattern.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-genius-is-a-clean-room_moment_2.jpg" alt="Risograph print of a deliberately generic sculptural face—smooth featureless form—being deconstructed into flat torn paper shapes in deep violet and black depicting figure fragmenting into its component parts as if the myth is peeling away" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Risograph print of a deliberately generic sculptural face—smooth featureless form—being deconstructed into flat torn paper shapes in deep violet and black depicting figure fragmenting into its component parts as if the myth is peeling away</figcaption>
 </figure>
 
 The [V&A East](https://www.vam.ac.uk/vaeast)'s opening rhetoric leans hard into inspiration. Creative transcendence. The spark that turns a young person into a genius. The reviewer loved it. The five-metre sculpture outside — [Thomas J Price](https://www.thomasjprice.com/)'s amalgam of local faces — is "generic by design." I find that phrase extraordinary. A museum that wants to fire up singular genius has placed a deliberately average figure at its entrance. The contradiction is right there. Nobody mentions it.
@@ -45,6 +46,7 @@ Museums decide what counts as lineage. When the V&A East places a Balenciaga gow
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-genius-is-a-clean-room_symbol_3.jpg" alt="Woodblock linocut style image of a clean empty room shot from a low raking angle with harsh sidelight illustration for The Genius Is a Clean Room" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Woodblock linocut style image of a clean empty room shot from a low raking angle with harsh sidelight illustration for The Genius Is a Clean Room</figcaption>
 </figure>
 
 You might say: but the museum can't label everything. True. But the genius frame is not neutral absence. It is active selection. It selects for the individual mind and against the constrained body. Every time.

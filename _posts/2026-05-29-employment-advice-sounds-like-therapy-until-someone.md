@@ -32,6 +32,7 @@ In acoustic design, there is a concept where one sound gets in the way of anothe
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/employment-advice-sounds-like-therapy-until-someone_moment_2.jpg" alt="Employment Advice Sounds Like Therapy Until Someone — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Employment Advice Sounds Like Therapy Until Someone — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Employment advice doesn't just interfere with therapy — it transforms it into something else entirely. The policymakers who design these programs insist integration makes sense: support the whole person, address practical barriers to recovery. The session still uses therapeutic language: support, wellbeing, goals. But underneath, a different conversation is happening. The question is no longer *what do you need?* It is *when will you be ready?*
@@ -50,6 +51,7 @@ The answer, it turns out, is: you don't. You make them earn less and work less. 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/employment-advice-sounds-like-therapy-until-someone_symbol_3.jpg" alt="Employment Advice Sounds Like Therapy Until Someone — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Employment Advice Sounds Like Therapy Until Someone — abstract linocut symbol</figcaption>
 </figure>
 
 My friend never went back to that therapist. She found a different one six months later. Private, not NHS. The first thing the new therapist said was: we will not talk about work unless you bring it up. My friend said she cried with relief.

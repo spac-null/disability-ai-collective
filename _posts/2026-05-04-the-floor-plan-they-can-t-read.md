@@ -29,6 +29,7 @@ I am not making an argument about inclusion. I am making an argument about archi
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-floor-plan-they-can-t-read_moment_2.jpg" alt="risograph print of overlapping transparent silhouettes in black and acid yellow depicting figure reading downward one figure reading sideways one figure reading the negative space" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print of overlapping transparent silhouettes in black and acid yellow depicting figure reading downward one figure reading sideways one figure reading the negative space</figcaption>
 </figure>
 
 Otto Neurath built the Isotype system in the 1930s — a visual language using pictures instead of words to make information accessible to people who could not read. It was meant to make knowledge universal. It failed, but not because the pictures were wrong. It failed because universality assumes a single viewer. The moment you design for "everyone," you design for a specific cognitive norm and call it neutral. Neurath knew this by the end. He wrote to a colleague in 1944 that the system worked best when the viewer brought their own logic to the image. The image did not teach. The viewer taught themselves, using the image as material.
@@ -43,6 +44,7 @@ I find this funny in the way that is not actually funny. The same institutions t
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-floor-plan-they-can-t-read_symbol_3.jpg" alt="mimeograph ghost impression of a room's corner where walls meet floor illustration for The Floor Plan They Can't Read" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>mimeograph ghost impression of a room's corner where walls meet floor illustration for The Floor Plan They Can't Read</figcaption>
 </figure>
 
 You could call this ironic. I call it a floor plan problem. The people who know the building best are not consulted on the blueprint because they entered through the side door. The side door is not on the official drawing. So their knowledge does not exist.

@@ -55,6 +55,7 @@ Same function. Same cultural category. One building that treats orientation as t
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-door-you-can-t-read-is-the-door-that-isn-t-there_moment_2.jpg" alt="silhouette of a figure's arm reaching toward a doorframe that doesn't align with the wall illustration for The Door You Can't Read Is the Door That Isn't There" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>silhouette of a figure's arm reaching toward a doorframe that doesn't align with the wall illustration for The Door You Can't Read Is the Door That Isn't There</figcaption>
 </figure>
 
 The Stedelijk didn't do this for me specifically. It did it because Dutch design has a particular obsession with visual clarity dating back to the 1920s—the same tradition that gave us [Neurath's Isotype pictograms](https://isotyperevisited.org/) and social housing projects where apartment layouts were designed so a resident could see the front door from the kitchen.
@@ -101,6 +102,7 @@ Lynch's five elements of urban legibility—paths, edges, districts, nodes, land
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-door-you-can-t-read-is-the-door-that-isn-t-there_symbol_3.jpg" alt="risograph print of a door surface so close you see only texture—peeling paint illustration for The Door You Can't Read Is the Door That Isn't There" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print of a door surface so close you see only texture—peeling paint illustration for The Door You Can't Read Is the Door That Isn't There</figcaption>
 </figure>
 
 ## Why This Matters Beyond Disability

@@ -29,6 +29,7 @@ The access guide told us which doors were wide enough. It did not tell us the ro
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/when-the-room-hears-itself-back_moment_2.jpg" alt="Architectural interior shot from below looking up at a gallery or concert hall ceiling with geometric skylights and ventilation grilles illustration for When the Room Hears Itself Back" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Architectural interior shot from below looking up at a gallery or concert hall ceiling with geometric skylights and ventilation grilles illustration for When the Room Hears Itself Back</figcaption>
 </figure>
 
 In February 2024, Kyoto. A converted machiya — traditional wooden townhouse. Haruki Tanaka claps once near the entrance. The sound: sharp, contained, absorbed quickly by the wood and paper. He claps again halfway down the corridor: longer decay, the sound folding back on itself. At the far end, near the garden: open, the sound continuing outside into the trees. This is how you know where you are in a machiya, he says. The room tells you.
@@ -43,6 +44,7 @@ Tanaka told me something else that week. In Japan, there is a concept called ma 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/when-the-room-hears-itself-back_symbol_3.jpg" alt="Hands in profile facing each other with a thin gap of cobalt blue negative space between the palms—not touching depicting hands textured with tiny parallel lines suggesting resonance or vibration" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Hands in profile facing each other with a thin gap of cobalt blue negative space between the palms—not touching depicting hands textured with tiny parallel lines suggesting resonance or vibration</figcaption>
 </figure>
 
 I thought about that when I read the Guardian piece. The article asked: why did it take Britain so long to recognise Asia-Pacific art? But the question assumes the problem is recognition. That the work was always legible, and institutions just needed to look harder. That is not what happened. The work was illegible because the rooms were designed for one kind of body, one kind of seeing, one kind of hearing. The institutions did not fail to see the work. The institutions built rooms that made certain work invisible — and inaudible — by design.

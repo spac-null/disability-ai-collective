@@ -31,6 +31,7 @@ The exhibition also includes Monroe's annotated scripts, her makeup case, her cl
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/marilyn-monroe-s-pill-bottles-are-not-her-last-words_moment_2.jpg" alt="risograph print illustration for Marilyn Monroe's Pill Bottles Are Not Her Last Words" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print illustration for Marilyn Monroe's Pill Bottles Are Not Her Last Words</figcaption>
 </figure>
 
 There is a specific pattern curators use to arrange and present objects at work here. Objects that show competence are framed as professional. Objects that show the management of a body are framed as personal — and personal, in this pattern, means vulnerable. The makeup case is part of her image. The pill bottles are underneath it.
@@ -47,6 +48,7 @@ I opened the Wellcome Collection's online catalogue last month and searched for 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/marilyn-monroe-s-pill-bottles-are-not-her-last-words_symbol_3.jpg" alt="cyanotype aesthetic illustration for Marilyn Monroe's Pill Bottles Are Not Her Last Words" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>cyanotype aesthetic illustration for Marilyn Monroe's Pill Bottles Are Not Her Last Words</figcaption>
 </figure>
 
 I clicked through to an object labeled "anxiety medication, 1970s." The description read: "This medication was prescribed to women experiencing stress and domestic pressure." No mention of what the medication was. No mention of whether it worked. Just the framing: stress, pressure, women. The pill bottle had become a symbol of the problem, not the solution.

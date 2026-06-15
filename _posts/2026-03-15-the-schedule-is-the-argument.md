@@ -52,6 +52,7 @@ You might say: that's just good event planning. It is not. It is an epistemologi
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-schedule-is-the-argument_moment_2.jpg" alt="risograph print of a hand gripping the edge of a rigid institutional schedule board illustration for The Schedule Is the Argument" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print of a hand gripping the edge of a rigid institutional schedule board illustration for The Schedule Is the Argument</figcaption>
 </figure>
 
 Let me show you what I mean.
@@ -88,6 +89,7 @@ This is what I see when I look at institutional design with my pattern-reading b
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-schedule-is-the-argument_symbol_3.jpg" alt="cyanotype of overlapping torn paper fragments of different schedules layered and pinned illustration for The Schedule Is the Argument" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>cyanotype of overlapping torn paper fragments of different schedules layered and pinned illustration for The Schedule Is the Argument</figcaption>
 </figure>
 
 It looks like inefficiency. A 10am start. Travel recovery days. Two-hour lunch. To the productivity-obsessed academic machine, all that white space looks like waste.

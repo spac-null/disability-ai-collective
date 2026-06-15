@@ -36,6 +36,7 @@ The default is not neutral. It is a set of decisions that have been made invisib
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-floor-plan-assumed-two-adults-with-matching-keys_moment_2.jpg" alt="The Floor Plan Assumed Two Adults With Matching Keys — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Floor Plan Assumed Two Adults With Matching Keys — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 Berentsen's exhibition is asking: what would the form look like if you designed it for all the arrangements that have ever counted as family?
@@ -58,6 +59,7 @@ I'm interested in the word "beyond."
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-floor-plan-assumed-two-adults-with-matching-keys_symbol_3.jpg" alt="The Floor Plan Assumed Two Adults With Matching Keys — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>The Floor Plan Assumed Two Adults With Matching Keys — abstract linocut symbol</figcaption>
 </figure>
 
 It could mean: against. Replace the nuclear family with something else. But that is not what the exhibition seems to be doing. The frame is not destruction of the previous design but the question of what was left outside it — what other arrangements exist, have always existed, and are waiting to be given the same legibility as the baseline.

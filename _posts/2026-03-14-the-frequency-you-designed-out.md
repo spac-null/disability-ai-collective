@@ -75,6 +75,7 @@ And yet when Apple or Google designs a new haptic vocabulary, they don't consult
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/2026-03-14-the-frequency-you-designed-out_moment_2.jpg" alt="DeafBlind tactile communication in practice — the sophisticated grammar of Protactile language that the tech industry has not yet consulted in haptic design" loading="lazy">
+<figcaption>DeafBlind tactile communication in practice — the sophisticated grammar of Protactile language that the tech industry has not yet consulted in haptic design</figcaption>
 </figure>
 
 ## What a Real Haptic Language Looks Like
@@ -115,6 +116,7 @@ I've sat in both chairs. The second chair is where deaf designers are almost alw
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/2026-03-14-the-frequency-you-designed-out_symbol_3.jpg" alt="Haptic design as primary language — vibration patterns mapped as a full sensory grammar rather than an accessibility fallback" loading="lazy">
+<figcaption>Haptic design as primary language — vibration patterns mapped as a full sensory grammar rather than an accessibility fallback</figcaption>
 </figure>
 
 ## Why This Matters Beyond Deafness

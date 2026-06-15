@@ -28,6 +28,7 @@ The fantasy of touch-as-equaliser only works if you assume the participants arri
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/hands-that-already-know_moment_2.jpg" alt="Hands That Already Know — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Hands That Already Know — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
 I thought about a ceramicist named [Lisette Schumacher](https://www.lisetteschumacher.com/), who lost most of her sight in her thirties and now teaches blind and partially sighted potters in Rotterdam. I went to one of her classes in November 2024 because a friend was taking it. I wanted to observe how potters work without sight, to understand what the summit was claiming to discover about touch and embodied knowledge. Schumacher said something offhand while she was checking a student's bowl by running two fingers around the rim: "Sighted potters look up from the wheel constantly. They check the pot against a picture in their head. My students never do that. They are inside the pot the whole time." She said it the way you would mention the weather. She was not making a point. She was describing a craft.
@@ -40,6 +41,7 @@ The blind ceramicist was not invited. Neither was the potter with rheumatoid art
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/hands-that-already-know_symbol_3.jpg" alt="Hands That Already Know — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Hands That Already Know — abstract linocut symbol</figcaption>
 </figure>
 
 Devlin's bell is a beautiful object. The clay is genuinely 160 million years old. The instinct to put hands on matter before talking about ethics is right. I would go if invited, and I would probably cry a little, and I would learn something.

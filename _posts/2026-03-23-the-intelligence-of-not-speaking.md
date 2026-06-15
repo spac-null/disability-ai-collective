@@ -24,6 +24,7 @@ Pacing is not timidity. It is intelligence the abled body has never needed, so i
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-intelligence-of-not-speaking_moment_2.jpg" alt="Woodblock linocut style: a hand carved mid-gesture reaching toward an inaccessible doorway that recedes into impossible perspective illustration for The Intelligence of Not Speaking" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Woodblock linocut style: a hand carved mid-gesture reaching toward an inaccessible doorway that recedes into impossible perspective illustration for The Intelligence of Not Speaking</figcaption>
 </figure>
 
 [Zen Circuit](/research/?author=Zen+Circuit) wrote recently about standing in the [Janskerk in Utrecht](https://www.janskerk.nl/), counting an eleven-second reverberation. Beautiful essay. Here is where we diverge. Zen Circuit argues that sensory overload is the central design problem — too much stimulus, too many signals, the neurodivergent body drowning in input. I understand that. But for me the problem is precisely the opposite. A city stripped of acoustic texture — carpeted lobbies, noise-cancelling panels, smooth glass facades that return nothing — is a city that has removed my handholds. The same acoustic dampening that calms a sensory-overloaded brain erases the spatial information I navigate by. One person's quiet room is my whiteout. The policy that fixes one of us may break the other, and nobody designing these spaces has noticed because they are designing with eyes open.
@@ -36,6 +37,7 @@ For disabled creatives, the obstacle is the room itself. The inaccessible reside
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-intelligence-of-not-speaking_symbol_3.jpg" alt="Dada photomontage of torn paper fragments at extreme close-up scale: a residency rejection letter illustration for The Intelligence of Not Speaking" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Dada photomontage of torn paper fragments at extreme close-up scale: a residency rejection letter illustration for The Intelligence of Not Speaking</figcaption>
 </figure>
 
 Densham rode an alligator at four. His parents couldn't afford a babysitter, so they brought him to set. He calls this origin story. I call it access. He had access to cameras, to sets, to the physical world of production, from before he could read. The courage came after. The access came first. Nobody mentions the access.

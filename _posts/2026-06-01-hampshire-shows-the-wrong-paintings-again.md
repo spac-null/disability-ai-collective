@@ -25,6 +25,7 @@ The assumption is that popular work is simple and difficult work is complex. Tha
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/hampshire-shows-the-wrong-paintings-again_moment_2.jpg" alt="Linocut print style: bold black silhouette of a hand pointing backwards at an empty gilt frame illustration for Hampshire Shows the Wrong Paintings Again" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Linocut print style: bold black silhouette of a hand pointing backwards at an empty gilt frame illustration for Hampshire Shows the Wrong Paintings Again</figcaption>
 </figure>
 
 ---
@@ -35,6 +36,7 @@ But accessible reads as simple. Work that communicates directly is mistaken for 
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/hampshire-shows-the-wrong-paintings-again_symbol_3.jpg" alt="Mimeograph ghost-print aesthetic: layered purple-blue and black rectangular shapes suggesting stacked paintings or institutional files illustration for Hampshire Shows the Wrong Paintings Again" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Mimeograph ghost-print aesthetic: layered purple-blue and black rectangular shapes suggesting stacked paintings or institutional files illustration for Hampshire Shows the Wrong Paintings Again</figcaption>
 </figure>
 
 The exhibition will travel. Other galleries will write similar press releases. The wintry landscapes will be praised as evidence of range. The still lifes will be called minimalist, which means: we can talk about them seriously now. And the flowers will stay in storage, waiting for the next reassessment, when someone decides they were radical after all.

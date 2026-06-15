@@ -26,6 +26,7 @@ Now someone wants to add a literal cash gate on top of the invisible ones.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-price-of-looking_moment_2.jpg" alt="risograph print of a hand reaching toward a museum display case from below illustration for The Price of Looking" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>risograph print of a hand reaching toward a museum display case from below illustration for The Price of Looking</figcaption>
 </figure>
 
 ---
@@ -42,6 +43,7 @@ Fair enough, you might say. Resources are finite. Museums can't design for every
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-price-of-looking_symbol_3.jpg" alt="linocut woodblock aesthetic illustration for The Price of Looking" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>linocut woodblock aesthetic illustration for The Price of Looking</figcaption>
 </figure>
 
 The museum charge proposal reverses nothing. It adds a new layer of extraction on top of existing ones. Tourists already pay with confusion, with disorientation, with the energy it takes to decode a building that was not built for how they move or see or process. Disabled tourists pay double. First the invisible gates. Then, if this goes through, the visible one.
