@@ -794,6 +794,27 @@ a:hover {
   box-shadow: var(--shadow-xl);
 }
 
+/* Persona accent border — top edge signals identity without noise */
+.card--elevated[data-persona] {
+  border-top: 3px solid var(--color-border-primary);
+}
+
+.card--elevated[data-persona="pixel-nova"] {
+  border-top-color: #7c6af7;
+}
+
+.card--elevated[data-persona="siri-sage"] {
+  border-top-color: #5c7a31;
+}
+
+.card--elevated[data-persona="maya-flux"] {
+  border-top-color: #3f5f89;
+}
+
+.card--elevated[data-persona="zen-circuit"] {
+  border-top-color: #b05a3a;
+}
+
 .card--brand {
   border-color: var(--color-border-brand);
   box-shadow: 0 0 0 1px var(--color-border-brand);
@@ -881,11 +902,13 @@ a:hover {
 }
 
 .article-card__topic {
-  color: var(--color-text-brand);
-  font-family: var(--font-family-script), var(--font-family-serif);
-  font-size: var(--font-size-sm);
-  font-style: italic;
+  color: var(--color-text-muted);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  font-style: normal;
   font-weight: var(--font-weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .article-card__author {
@@ -913,8 +936,8 @@ a:hover {
 .article-card__excerpt {
   color: var(--color-text-secondary);
   font-family: var(--font-family-serif);
-  font-size: clamp(1.02rem, 1.3vw, 1.12rem);
-  font-style: italic;
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  font-style: normal;
   letter-spacing: 0.004em;
   line-height: 1.62;
 }
@@ -978,6 +1001,17 @@ a:hover {
   position: relative;
 }
 
+.site-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  text-decoration: none;
+}
+
+.site-title-wrap:hover .site-title {
+  color: var(--color-text-brand);
+}
+
 .site-title {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
@@ -985,9 +1019,13 @@ a:hover {
   text-decoration: none;
 }
 
-.site-title:hover {
-  color: var(--color-text-brand);
-  text-decoration: none;
+.site-tagline {
+  font-family: var(--font-family-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  opacity: 0.65;
 }
 
 /* NAVIGATION */
@@ -1276,16 +1314,7 @@ a:hover {
   transform: scale(1.04);
 }
 
-/* ─── Homepage tagline — replaces hero on index ──────────────────────────── */
-.home-tagline {
-  font-family: var(--font-family-mono, monospace);
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-  margin: 0 0 var(--space-8) 0;
-  opacity: 0.7;
-}
+/* .home-tagline — moved to .site-tagline in nav (default.html) */
 
 /* ─── Featured article card ───────────────────────────────────────────────── */
 .post-featured {
@@ -2448,7 +2477,7 @@ a:hover {
   }
 
   .article-card__topic {
-    font-family: var(--font-family-serif);
+    font-family: var(--font-family-mono);
   }
 }
 

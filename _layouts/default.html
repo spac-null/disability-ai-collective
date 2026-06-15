@@ -175,7 +175,10 @@
     <!-- Header with navigation -->
     <header class="site-header">
         <div class="container">
-            <a href="{{ '/' | relative_url }}" class="site-title">{{ site.title }}</a>
+            <a href="{{ '/' | relative_url }}" class="site-title-wrap">
+              <span class="site-title">{{ site.title }}</span>
+              <span class="site-tagline">Not writing about disability — seeing the world through it.</span>
+            </a>
             
             <!-- Main navigation -->
             <nav id="navigation" class="site-nav">

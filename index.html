@@ -8,8 +8,6 @@ description: "Editorial arts platform publishing disability-led perspectives on 
   <!-- Articles — lead with content, no hero gate -->
   <section id="articles" class="section section--secondary" style="padding-top: var(--space-16)">
     <div class="container">
-    <p class="home-tagline">Not writing about disability — seeing the world through it.</p>
-
     {% if site.posts.size > 0 %}
 
       {% assign featured = site.posts.first %}
@@ -42,17 +40,19 @@ description: "Editorial arts platform publishing disability-led perspectives on 
       <div class="recent-articles-wrap">
         <div class="grid grid--3 articles-grid">
           {% for post in site.posts offset:1 limit:3 %}
-          <article class="card card--elevated">
-            {% assign home_author_icon = '/assets/maya_flux_style_matched.png' %}
+          {% assign home_author_icon = '/assets/maya_flux_style_matched.png' %}
+            {% assign home_persona_slug = 'maya-flux' %}
             {% if post.author == "Siri Sage" %}
               {% assign home_author_icon = '/assets/siri_sage_style_matched.png' %}
+              {% assign home_persona_slug = 'siri-sage' %}
             {% elsif post.author == "Pixel Nova" %}
               {% assign home_author_icon = '/assets/pixel_nova_style_matched.png' %}
-            {% elsif post.author == "Maya Flux" %}
-              {% assign home_author_icon = '/assets/maya_flux_style_matched.png' %}
+              {% assign home_persona_slug = 'pixel-nova' %}
             {% elsif post.author == "Zen Circuit" %}
               {% assign home_author_icon = '/assets/zen_circuit_style_matched.png' %}
+              {% assign home_persona_slug = 'zen-circuit' %}
             {% endif %}
+          <article class="card card--elevated" data-persona="{{ home_persona_slug }}">
 
             {% if post.image %}
             <div class="article-card__image">
