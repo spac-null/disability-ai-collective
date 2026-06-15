@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cripminds.com — June 2026 Update</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #f0ede8;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .card {
+    max-width: 640px;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  .header {
+    background: linear-gradient(135deg, #1a3a1a 0%, #2a1a4a 100%);
+    padding: 32px 32px 24px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .header .label {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: #a8d5a2;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .header h1 {
+    font-size: 26px;
+    font-weight: normal;
+    color: #f0ede6;
+    line-height: 1.2;
+  }
+
+  .header h1 span {
+    color: #a8d5a2;
+  }
+
+  .header .tagline {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #c0bdb8;
+    font-style: italic;
+  }
+
+  .section {
+    padding: 24px 32px;
+    border-bottom: 1px solid #e8e4df;
+  }
+
+  .section:last-child {
+    border-bottom: none;
+  }
+
+  .section-title {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #999;
+    margin-bottom: 16px;
+  }
+
+  .big-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .stat-box {
+    background: #f7f5f2;
+    border: 1px solid #e0dbd4;
+    border-radius: 10px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+
+  .stat-box .num {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2d6e2d;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .stat-box .unit {
+    font-size: 12px;
+    color: #777;
+    line-height: 1.3;
+  }
+
+  .highlight-box {
+    background: #f4faf4;
+    border: 1px solid #c8e6c8;
+    border-left: 3px solid #4a9e4a;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+
+  .highlight-box .title {
+    font-size: 13px;
+    color: #1a3a1a;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .highlight-box .desc {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  .audience-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 12px;
+  }
+
+  .audience-flag {
+    font-size: 20px;
+    width: 28px;
+    flex-shrink: 0;
+  }
+
+  .audience-label {
+    font-size: 13px;
+    color: #333;
+    flex: 1;
+  }
+
+  .audience-bar-wrap {
+    width: 120px;
+    height: 6px;
+    background: #e8e4df;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .audience-bar {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, #4a9e4a, #7ec87e);
+  }
+
+  .audience-pct {
+    font-size: 12px;
+    color: #999;
+    width: 36px;
+    text-align: right;
+  }
+
+  .search-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .search-item {
+    background: #f7f5f2;
+    border: 1px solid #e0dbd4;
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+
+  .search-item .s-num {
+    font-size: 22px;
+    color: #2d6e2d;
+    font-weight: bold;
+    line-height: 1;
+  }
+
+  .search-item .s-label {
+    font-size: 11px;
+    color: #888;
+    margin-top: 3px;
+  }
+
+  .buzz-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .buzz-icon {
+    font-size: 15px;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  .buzz-text {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .buzz-text strong {
+    color: #1a1a1a;
+  }
+
+  .footer {
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f7f5f2;
+    border-top: 1px solid #e8e4df;
+  }
+
+  .footer .url {
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #4a9e4a;
+  }
+
+  .footer .date {
+    font-size: 11px;
+    color: #aaa;
+  }
+
+  .trend-up {
+    color: #4a9e4a;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="label">Project Update</div>
+    <h1><span>cripminds</span>.com</h1>
+    <div class="tagline">A daily publication about disability, culture & infrastructure</div>
+  </div>
+
+  <!-- BIG NUMBERS -->
+  <div class="section">
+    <div class="section-title">All-Time Numbers</div>
+    <div class="big-stats">
+      <div class="stat-box">
+        <div class="num">651</div>
+        <div class="unit">total visits</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">90+</div>
+        <div class="unit">articles published</div>
+      </div>
+      <div class="stat-box">
+        <div class="num">9.8</div>
+        <div class="unit">visits/day<br><span class="trend-up">↑ accelerating</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BEST ARTICLE -->
+  <div class="section">
+    <div class="section-title">Standout This Month</div>
+    <div class="highlight-box">
+      <div class="title">"Swan Care Solutions classified someone as equipment"</div>
+      <div class="desc">Published June 4 — 143 Google impressions in just 4 days. Almost on page 1 for care sector searches. Best performing article to date.</div>
+    </div>
+    <div class="highlight-box">
+      <div class="title">Maya Flux — people think she's real</div>
+      <div class="desc">86 Google impressions of people searching for Maya Flux by name, including "controversies." One of our AI personas has become a believable author identity.</div>
+    </div>
+  </div>
+
+  <!-- AUDIENCE -->
+  <div class="section">
+    <div class="section-title">Where Readers Come From</div>
+
+    <div class="audience-row">
+      <div class="audience-flag">🇳🇱</div>
+      <div class="audience-label">Netherlands <span class="trend-up">↑ spiking this week</span></div>
+      <div class="audience-bar-wrap"><div class="audience-bar" style="width:35%"></div></div>
+      <div class="audience-pct">35%</div>
+    </div>
+
+    <div class="audience-row">
+      <div class="audience-flag">🇮🇹</div>
+      <div class="audience-label">Italy</div>
+      <div class="audience-bar-wrap"><div class="audience-bar" style="width:30%"></div></div>
+      <div class="audience-pct">30%</div>
+    </div>
+
+    <div class="audience-row">
+      <div class="audience-flag">🌍</div>
+      <div class="audience-label">Rest of world</div>
+      <div class="audience-bar-wrap"><div class="audience-bar" style="width:35%"></div></div>
+      <div class="audience-pct">35%</div>
+    </div>
+  </div>
+
+  <!-- GOOGLE SEARCH -->
+  <div class="section">
+    <div class="section-title">Google Search (3 months)</div>
+    <div class="search-grid">
+      <div class="search-item">
+        <div class="s-num">1,020</div>
+        <div class="s-label">times shown in search results</div>
+      </div>
+      <div class="search-item">
+        <div class="s-num">22</div>
+        <div class="s-label">clicks from Google</div>
+      </div>
+      <div class="search-item">
+        <div class="s-num">#6.5</div>
+        <div class="s-label">average position</div>
+      </div>
+      <div class="search-item">
+        <div class="s-num">2.2%</div>
+        <div class="s-label">click-through rate</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUZZ -->
+  <div class="section">
+    <div class="section-title">What's Happening</div>
+
+    <div class="buzz-item">
+      <div class="buzz-icon">📈</div>
+      <div class="buzz-text"><strong>Google traffic is compounding.</strong> SEO from 3 months of daily publishing is now paying off — Google became the #1 traffic source this week.</div>
+    </div>
+
+    <div class="buzz-item">
+      <div class="buzz-icon">📬</div>
+      <div class="buzz-text"><strong>Newsletter running every Sunday</strong> since March, no missed weeks except one. 2 confirmed subscribers so far — early days.</div>
+    </div>
+
+    <div class="buzz-item">
+      <div class="buzz-icon">🗓️</div>
+      <div class="buzz-text"><strong>90+ days of unbroken daily publishing</strong> — every single day since March 8, fully automated.</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="url">cripminds.com</div>
+    <div class="date">June 2026</div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -821,6 +821,12 @@ a:hover {
 .agent-card[data-persona="maya-flux"]   { border-top-color: #3f5f89; }
 .agent-card[data-persona="zen-circuit"] { border-top-color: #b05a3a; }
 
+/* Identity badge tinted per persona */
+.agent-card[data-persona="pixel-nova"] .agent-identity  { color: #7c6af7; border-color: rgba(124,106,247,0.3); background: rgba(124,106,247,0.06); }
+.agent-card[data-persona="siri-sage"] .agent-identity   { color: #5c7a31; border-color: rgba(92,122,49,0.3);   background: rgba(92,122,49,0.06);   }
+.agent-card[data-persona="maya-flux"] .agent-identity   { color: #3f5f89; border-color: rgba(63,95,137,0.3);   background: rgba(63,95,137,0.06);   }
+.agent-card[data-persona="zen-circuit"] .agent-identity { color: #b05a3a; border-color: rgba(176,90,58,0.3);   background: rgba(176,90,58,0.06);   }
+
 /* Persona page eyebrow label inherits accent from page context */
 main[data-persona="pixel-nova"]  .post-category-label { color: #7c6af7; border-bottom-color: #7c6af7; }
 main[data-persona="siri-sage"]   .post-category-label { color: #5c7a31; border-bottom-color: #5c7a31; }
@@ -1530,13 +1536,13 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 }
 
 .agent-card__image {
-  border: 1px solid var(--color-border-secondary);
-  border-radius: 10px;
+  border: 2px solid var(--color-border-secondary);
+  border-radius: 50%;
   display: block;
-  height: 160px;
-  margin-bottom: var(--space-5);
+  height: 56px;
+  margin-bottom: var(--space-4);
   object-fit: cover;
-  width: 100%;
+  width: 56px;
 }
 
 .card__header .agent-avatar,
@@ -2239,19 +2245,19 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 }
 
 .post-author-card {
-  background:
-    linear-gradient(155deg, rgba(0, 102, 204, 0.08) 0%, rgba(0, 102, 204, 0.02) 50%, rgba(0, 0, 0, 0) 100%),
-    var(--color-background-elevated);
-  border-color: var(--color-border-brand);
-  box-shadow: 0 0 0 1px rgba(0, 102, 204, 0.18), var(--shadow-md);
+  background: var(--color-background-elevated);
+  border-color: var(--color-border-primary);
+  box-shadow: var(--shadow-sm);
 }
 
 .post-author-eyebrow {
-  color: var(--color-text-brand);
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
-  letter-spacing: var(--letter-spacing-wide);
+  color: var(--color-text-muted);
+  font-family: var(--font-family-mono);
+  font-size: 0.68rem;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.1em;
   margin-bottom: var(--space-4);
+  opacity: 0.65;
   text-transform: uppercase;
 }
 
@@ -2263,11 +2269,11 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 }
 
 .post-author-avatar {
-  border-radius: 14px;
-  box-shadow: var(--shadow-md);
+  border: 2px solid var(--color-border-secondary);
+  border-radius: 50%;
   flex: 0 0 auto;
-  height: 72px;
-  width: 72px;
+  height: 56px;
+  width: 56px;
 }
 
 .post-author-meta {
@@ -2279,13 +2285,13 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 }
 
 .post-author-role {
-  background: rgba(0, 102, 204, 0.12);
-  border: 1px solid rgba(0, 102, 204, 0.3);
+  background: var(--color-background-muted);
+  border: 1px solid var(--color-border-secondary);
   border-radius: 999px;
-  color: var(--color-text-brand);
+  color: var(--color-text-muted);
   display: inline-flex;
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
   letter-spacing: var(--letter-spacing-wide);
   margin-right: var(--space-3);
   padding: 0.18rem 0.6rem;
@@ -3230,8 +3236,7 @@ article[data-categories].hidden {
   position: relative;
   margin: var(--space-16) 0;
   padding: var(--space-10) var(--space-12) var(--space-10) var(--space-16);
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--color-background-secondary);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -3341,6 +3346,23 @@ article[data-categories].hidden {
   align-items: center;
   gap: var(--space-2);
   cursor: pointer;
+}
+
+.post-subscribe__freq input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid var(--color-border-primary);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.post-subscribe__freq input[type="radio"]:checked {
+  background: var(--color-text-primary);
+  border-color: var(--color-text-primary);
 }
 
 .post-subscribe__msg {
