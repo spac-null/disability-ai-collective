@@ -3638,6 +3638,26 @@ article[data-categories].hidden {
 }
 
 /* ── Press pages ──────────────────────────────────────────────────────────── */
+.press-section {
+  border-top: 1px solid var(--color-border-primary);
+  padding-top: 2.5rem;
+  margin-top: 2.5rem;
+}
+
+.press-section--final {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.press-body {
+  margin-bottom: 1.5rem;
+  line-height: 1.8;
+}
+
 .press-voices-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
