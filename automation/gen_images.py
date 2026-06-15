@@ -39,10 +39,6 @@ ASSETS_DIR = REPO_ROOT / "assets"
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 DEFAULT_MODEL = "recraft/recraft-v4.1"
 
-# Cripminds palette: crimson · near-black · warm cream
-# Recraft rgb_colors constrains the palette used in generation
-PALETTE = [[220, 38, 38], [22, 22, 22], [240, 234, 220]]
-
 # image type → (filename_suffix, aspect_ratio, style_key)
 IMAGE_TYPES = [
     ("setting_1", "16:9", "CONFRONTING"),
@@ -52,24 +48,25 @@ IMAGE_TYPES = [
 
 PROMPTS = {
     "CONFRONTING": (
-        "Screen-print protest poster. Bold flat graphic silhouette. Halftone dot texture. "
-        "8-bit pixel grid overlay. High contrast. No text, no typography. "
-        "Topic: {summary}. "
-        "Aesthetic: Corita Kent meets disability justice activism. "
-        "Crimson, near-black, warm cream. Strong confrontational composition."
+        "Political graphic art. Screen-print or risograph aesthetic. "
+        "Bold composition, strong visual tension. No text, no typography. "
+        "Subject: {summary}. "
+        "Style references: Corita Kent, Barbara Kruger, disability justice visual culture. "
+        "High contrast. Colors emerging from subject matter, not imposed."
     ),
     "INTIMATE": (
-        "Gouache illustration on textured watercolour paper. "
-        "Pixel scan-line overlay at edges, 8-bit color banding. "
-        "Close-up intimate scene, no text. Topic: {summary}. "
-        "Hand-painted warmth. Flat illustration, muted palette with one accent color. "
-        "Soft grain texture throughout."
+        "Intimate editorial illustration. Gouache or watercolour on textured paper. "
+        "Close-up, human scale, emotionally specific. No text. "
+        "Subject: {summary}. "
+        "Warm, tactile surface quality. Colors fitting the mood of the subject — "
+        "not generic, not symbolic. Like a specific moment painted from memory."
     ),
     "ABSTRACT": (
-        "Linocut relief print. Bold hand-cut marks on textured paper. "
-        "Abstract geometric symbol or pattern evoking: {summary}. "
-        "Pixel art border pattern. Pure graphic abstraction — no faces, no text, no figures. "
-        "Black marks on warm cream ground with crimson accent."
+        "Abstract conceptual image. Could be linocut, digital collage, or geometric composition. "
+        "Translates an idea into pure visual form — no literal illustration, no figures, no text. "
+        "Concept: {summary}. "
+        "The visual language should feel specific to this concept, not generic abstraction. "
+        "Color and form chosen for meaning, not decoration."
     ),
 }
 
@@ -154,7 +151,6 @@ def call_openrouter(prompt: str, aspect_ratio: str, model: str, api_key: str) ->
         "image_config": {
             "aspect_ratio": aspect_ratio,
             "image_size": "1K",
-            "rgb_colors": PALETTE,
         },
     }).encode()
 
