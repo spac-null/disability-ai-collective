@@ -17,17 +17,34 @@ description: "Published articles exploring disability culture and creative techn
   </header>
 
 
-  <!-- Category Filter -->
+  <!-- Filters -->
   <section class="section--primary pt-0 pb-0">
     <div class="container">
-      <div class="category-filter" id="category-filter">
-        <button class="category-filter__btn active" data-filter="all">All</button>
-        {% assign all_cats = site.posts | map: "categories" | join: "," | split: "," | uniq | sort %}
-        {% for cat in all_cats %}
-          {% if cat != "" %}
-          <button class="category-filter__btn" data-filter="{{ cat | downcase | strip }}">{{ cat | strip }}</button>
-          {% endif %}
-        {% endfor %}
+      <div class="research-filters">
+        <div class="category-filter" id="category-filter" aria-label="Filter by topic">
+          <button class="category-filter__btn active" data-filter="all">All topics</button>
+          {% assign all_cats = site.posts | map: "categories" | join: "," | split: "," | uniq | sort %}
+          {% for cat in all_cats %}
+            {% if cat != "" %}
+            <button class="category-filter__btn" data-filter="{{ cat | downcase | strip }}">{{ cat | strip }}</button>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="category-filter category-filter--persona" id="persona-filter" aria-label="Filter by voice">
+          <button class="category-filter__btn category-filter__btn--persona active" data-persona="all">All voices</button>
+          <button class="category-filter__btn category-filter__btn--persona" data-persona="Pixel Nova">
+            <img src="/assets/pixel_nova_style_matched.png" alt="" aria-hidden="true" class="filter-persona-icon"> Pixel Nova
+          </button>
+          <button class="category-filter__btn category-filter__btn--persona" data-persona="Siri Sage">
+            <img src="/assets/siri_sage_style_matched.png" alt="" aria-hidden="true" class="filter-persona-icon"> Siri Sage
+          </button>
+          <button class="category-filter__btn category-filter__btn--persona" data-persona="Maya Flux">
+            <img src="/assets/maya_flux_style_matched.png" alt="" aria-hidden="true" class="filter-persona-icon"> Maya Flux
+          </button>
+          <button class="category-filter__btn category-filter__btn--persona" data-persona="Zen Circuit">
+            <img src="/assets/zen_circuit_style_matched.png" alt="" aria-hidden="true" class="filter-persona-icon"> Zen Circuit
+          </button>
+        </div>
       </div>
     </div>
   </section>
@@ -39,7 +56,7 @@ description: "Published articles exploring disability culture and creative techn
         <h2 class="text-h3 mb-8">All Articles</h2>
         <div class="grid grid--3 gap-8 articles-grid">
           {% for post in site.posts %}
-          <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}">
+          <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
             {% assign research_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% if post.author == "Siri Sage" %}
               {% assign research_author_icon = '/assets/siri_sage_style_matched.png' %}

@@ -2942,6 +2942,46 @@ article[data-categories].hidden {
   display: none;
 }
 
+/* Research filters — two rows: topics + voices */
+.research-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.research-filters .category-filter {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: var(--space-4);
+}
+
+.research-filters .category-filter--persona {
+  border-bottom: 1px solid var(--color-border-primary);
+  padding-top: 0;
+  padding-bottom: var(--space-6);
+}
+
+.category-filter__btn--persona {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.filter-persona-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.category-filter__btn--persona.active .filter-persona-icon,
+.category-filter__btn--persona:hover .filter-persona-icon {
+  opacity: 1;
+  filter: invert(1);
+}
+
 /* Agent grid 2-column on homepage */
 .agent-grid--2col {
   grid-template-columns: repeat(2, 1fr) !important;
