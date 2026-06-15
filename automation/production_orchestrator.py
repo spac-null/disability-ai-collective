@@ -2244,78 +2244,75 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 **What would change in your work if you treated disability expertise as a starting point rather than an afterthought?**"""
 
     def generate_images(self, content, slug, num_images=3, title=None):
-        """Generate scene-based pixel art images for an article.
+        """Generate article images via OpenRouter (Recraft V4.1).
 
-        Pipeline:
-          1. Imports SceneImageGenerator (scene_image_generator.py)
-          2. Calls generate_content_aware_images() (no validate kwarg — method does not accept it)
-          3. Writes each PNG to assets/ directory
-          4. Falls back to SophisticatedArtGenerator if SceneImageGenerator fails
-          5. Returns list of filename strings (placeholders if both generators fail)
+        Three images per article:
+          {slug}_setting_1.jpg — confronting screen-print, 16:9 (hero)
+          {slug}_moment_2.jpg  — intimate gouache, 1:1 (body 40%)
+          {slug}_symbol_3.jpg  — abstract linocut, 1:1 (body 75%)
 
-        Args:
-            content:    Article text used to extract title for Qwen scene direction
-            slug:       Article slug, used as filename prefix
-            num_images: Number of images to generate (default 3)
-
-        Returns:
-            List of filename strings (relative to assets/).
+        Requires OPENROUTER_API_KEY in environment.
+        Returns (image_filenames, image_descriptions).
+        Skips files that already exist (safe to re-run).
         """
+        import os as _os
+        import time as _time
+        import pathlib as _pathlib
+        sys.path.insert(0, str(_pathlib.Path(__file__).parent))
         try:
-            sys.path.append(str(self.repo_root))
-            from scene_image_generator import SceneImageGenerator
+            from gen_images import (
+                call_openrouter, save_image,
+                IMAGE_TYPES, PROMPTS, ALT_TEMPLATES, build_summary,
+            )
+        except ImportError as e:
+            self.logger.error(f"Could not import gen_images: {e}")
+            return [], []
 
-            title_match = re.search(r'title: "([^"]+)"', content)
-            title = title or (title_match.group(1) if title_match else "Article")
+        api_key = _os.environ.get("OPENROUTER_API_KEY", "")
+        if not api_key:
+            self.logger.error("OPENROUTER_API_KEY not set — skipping image generation")
+            return [], []
 
-            generator = SceneImageGenerator(width=800, height=450, pixel_size=5)
-            image_filenames = []
-            image_descriptions = []
+        title_match = re.search(r'title:\s*["\']?([^"\'\n]+)["\']?', content)
+        title = title or (title_match.group(1).strip('"\'') if title_match else slug)
 
-            self.logger.info("Generating scene-based pixel art images...")
+        fm = {}
+        for line in content.splitlines():
+            if line == '---':
+                break
+            if ':' in line:
+                k, _, v = line.partition(':')
+                fm[k.strip()] = v.strip().strip('"\'')
+        fm.setdefault('title', title)
+        summary = build_summary(fm)
 
-            images = generator.generate_content_aware_images(content, title, slug, num_images)
-            
-            for img in images:
-                filepath = self.assets_dir / img['filename']
-                
-                with open(filepath, 'wb') as f:
-                    f.write(img['data'])
-                
-                image_filenames.append(img['filename'])
-                image_descriptions.append(img.get('alt_text') or img.get('description') or img['filename'].replace('_',' ').rsplit('.',1)[0])
-                self.logger.info(f"Generated intelligent image: {img['filename']} - {img.get('description','')}")
-            
-            return image_filenames, image_descriptions
-            
-        except Exception as e:
-            self.logger.error(f"Intelligent image generation failed: {e}")
-            # Fallback to simple sophisticated generator
+        image_filenames = []
+        image_descriptions = []
+
+        for suffix, ratio, style_key in IMAGE_TYPES[:num_images]:
+            fname = f"{slug}_{suffix}.jpg"
+            dest = self.assets_dir / fname
+            alt = ALT_TEMPLATES[style_key].format(title=title)
+
+            if dest.exists():
+                self.logger.info(f"Image exists, skipping: {fname}")
+                image_filenames.append(fname)
+                image_descriptions.append(alt)
+                continue
+
+            prompt = PROMPTS[style_key].format(summary=summary)
+            self.logger.info(f"Generating {fname} via OpenRouter...")
             try:
-                sys.path.append(str(self.repo_root / 'archive'))
-                from generate_sophisticated_art_simple import SophisticatedArtGenerator
+                data = call_openrouter(prompt, ratio, "recraft/recraft-v4.1", api_key)
+                save_image(data, dest)
+                image_filenames.append(fname)
+                image_descriptions.append(alt)
+                self.logger.info(f"Generated {fname} ({len(data)//1024}KB)")
+            except Exception as e:
+                self.logger.error(f"Image generation failed for {fname}: {e}")
+            _time.sleep(1.5)
 
-                generator = SophisticatedArtGenerator(width=800, height=450)
-                image_filenames = []
-
-                for i in range(num_images):
-                    png_data = generator.generate_acoustic_chaos()
-                    
-                    filename = f"{slug}_fallback_{i+1}.png"
-                    filepath = self.assets_dir / filename
-                    
-                    with open(filepath, 'wb') as f:
-                        f.write(png_data)
-                    
-                    image_filenames.append(filename)
-                
-                fallback_descs = ["Halftone pixel art illustration" for _ in image_filenames]
-                self.logger.warning("Used fallback image generator")
-                return image_filenames, fallback_descs
-                
-            except Exception as e2:
-                self.logger.error(f"Fallback image generation also failed: {e2}")
-                return [], []  # No phantom filenames — frontmatter uses default.png
+        return image_filenames, image_descriptions
 
     def _insert_images_balanced(self, content, image_filenames, image_descriptions=None):
         """Insert body images at ~40% and ~75% of article content.
