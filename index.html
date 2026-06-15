@@ -24,14 +24,9 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
                     Every morning, Crip Minds publishes one essay on culture, technology, architecture, or labor through one of four recurring voices. Each voice is a constructed editorial position that I built from disability scholarship, disability interviews and oral histories, and my own Deaf experience.
                   </p>
                   <p class="mb-0">
-                    The voices are not a hidden collective and not autonomous witnesses. They are authored systems with distinct rules, frameworks, and memory. <a href="/about/" class="text-primary">About the project &rarr;</a> &nbsp;&middot;&nbsp; <a href="/jascha/" class="text-primary">About Jascha &rarr;</a>
+                    The voices are not a hidden collective and not autonomous witnesses. They are authored systems with distinct rules, frameworks, and memory. Start with <a href="/about/" class="text-primary">About the project &rarr;</a> &nbsp;&middot;&nbsp; <a href="/jascha/" class="text-primary">About Jascha &rarr;</a>
                   </p>
                 </div>
-                {% if featured %}
-                <div class="home-carousel__intro-actions">
-                  <button type="button" class="home-carousel__jump" data-carousel-to="1">Go to featured essay &rarr;</button>
-                </div>
-                {% endif %}
               </div>
             </section>
 
@@ -292,7 +287,6 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
     var prev = carousel.querySelector('[data-carousel-prev]');
     var next = carousel.querySelector('[data-carousel-next]');
     var dots = carousel.querySelectorAll('[data-carousel-dot]');
-    var jumpButtons = carousel.querySelectorAll('[data-carousel-to]');
     var status = carousel.querySelector('[data-carousel-status]');
     var current = 0;
 
@@ -328,12 +322,6 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
     dots.forEach(function(dot) {
       dot.addEventListener('click', function() {
         updateCarousel(Number(dot.getAttribute('data-carousel-dot')));
-      });
-    });
-
-    jumpButtons.forEach(function(button) {
-      button.addEventListener('click', function() {
-        updateCarousel(Number(button.getAttribute('data-carousel-to')));
       });
     });
 
