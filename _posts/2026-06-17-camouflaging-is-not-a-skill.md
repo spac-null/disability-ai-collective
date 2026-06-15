@@ -20,6 +20,10 @@ The word the literature uses for this is skill. I want to examine that carefully
 
 A skill is something that gets cheaper the more you do it. You practise until it moves below the surface — until you stop thinking about it and it runs on its own. The autistic adult who has been masking for thirty years has practised longer than most people practise anything. She knows more scripts than she did at fifteen, more recovery moves when a script breaks, more calibrated guesses about which expression to produce when. The one thing that has not changed is the cost. It is the same work it was at fifteen. Every interaction, from the start. Nothing has moved below the surface.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/camouflaging-is-not-a-skill_moment_2.jpg" alt="Camouflaging Is Not a Skill — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 The research saw the output — fluent, conventional social behaviour — and recorded it as evidence of ability. It did not ask what the output cost to produce. It could not ask, because from the outside her performance is indistinguishable from someone for whom all of this is effortless. Same surface. Different price. The literature measured the behaviour and called it a skill. The price was never in the study.
 
 A machine that keeps producing the right output is not necessarily working well. Sometimes it is running down something that hasn't become visible yet.
@@ -27,6 +31,10 @@ A machine that keeps producing the right output is not necessarily working well.
 ---
 
 The failure mode has a name in the autistic community before it had one in the journals: burnout. It presents as a loss of function — language, executive control, tolerance for sensory input — following long periods of sustained masking. It is frequently accompanied by physical illness. This is not hard to explain. A person running all of this — the performance, the monitoring, sensory management in a room that wasn't designed for her — is running without reserves. Remove the reserves from any system and it does not slow down gracefully. It holds, and holds, and then it does not.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/camouflaging-is-not-a-skill_symbol_3.jpg" alt="Camouflaging Is Not a Skill — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 There is a second loss, less discussed. Information is destroyed at both ends. The camouflager loses access to her own internal state, because attention that might register fatigue, distress, or sensory overload is committed to maintaining the performance. The people around her lose accurate data about who she is and what she requires, because the performance is designed to conceal exactly that. A successful mask is a successful deletion of the signal that would have produced support, accommodation, or diagnosis. This is why the diagnosis arrives late. The instrument was working correctly; it simply had nothing to detect, because the condition had been engineered out of view by the person carrying it.
 

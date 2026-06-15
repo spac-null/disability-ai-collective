@@ -40,6 +40,10 @@ I want to let that sit for a moment. 2021. Four years ago. The language I think 
 
 This is not ancient history. This is the operational legal environment in which Mirthe Berentsen grew up, built her career, and is now writing a book about language and identity.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/what-language-is-the-book-written-in_moment_2.jpg" alt="What Language Is the Book Written In? — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 The oralism campaigns of the nineteenth and twentieth centuries did not merely ban signing in schools. They argued, systematically, that signed language was not language — was gesture, approximation, primitive communication, the thing people resorted to when they could not do the real thing. This argument was not a fringe position. It was consensus, enforced, taught to hearing parents of Deaf children, inscribed in educational policy across Europe and North America for over a century.
 
 When a language is not recognized as a language, its literature cannot be preserved. Its poetry cannot be written down. Its grammar cannot be taught. Its speakers cannot be counted.
@@ -63,6 +67,10 @@ A book co-written by these two people, about motherhood and Deafness, is a book 
 ## What the Translation Layer Costs
 
 My father was a typesetter at a printing house in Amsterdam. He set type by hand until the machines came. He lost the job when I was nine.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/what-language-is-the-book-written-in_symbol_3.jpg" alt="What Language Is the Book Written In? — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 What I understood later: the knowledge he had — the knowledge of leading, kerning, the weight of a typeface in a specific point size, the way a block of text changes character when you adjust the spacing by half a point — that knowledge had nowhere to go once the machines arrived. It wasn't in books. It lived in hands, in practice, in decades of accumulated judgment that couldn't be extracted and preserved. When the machines came, the knowledge dissolved.
 

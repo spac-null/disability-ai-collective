@@ -36,6 +36,10 @@ But every translation is a translation.
 
 What Kanary has built is her rendering of psychotic experience into spatial and acoustic terms. She has made choices — what to include, what can be made into a room, what had to be left out because it couldn't be constructed. The installation is not psychosis. It is a designed approximation of psychosis, built by an artist who has worked at the intersection of mental health and art for fifteen years.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/she-built-the-room-so-you-could-hear-what-she-hears_moment_2.jpg" alt="She Built the Room So You Could Hear What She Hears — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 The gap between the approximation and the thing is not a failure of craft. It is the condition of representation. No installation can carry the full weight of an experience — the temporal dimension, the relationship to one's own history, the experience of trying to navigate a system while inside the experience, the before and the after.
 
 And there is a specific risk in the empathy-through-simulation model. If I have experienced a designed version of your condition — exited the installation, processed it, moved on — I may believe I understand it better than I do. I have been to the approximation. I may stop asking.
@@ -53,6 +57,10 @@ That counter-authority matters. What I keep asking is: what happens at the thres
 ## The Second Hour
 
 The installation ends. You exit. The condition does not.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/she-built-the-room-so-you-could-hear-what-she-hears_symbol_3.jpg" alt="She Built the Room So You Could Hear What She Hears — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 Understanding what a psychotic episode sounds like from inside — for an hour, in a designed environment, with the knowledge that you will leave — is not the same as understanding what it means to navigate a psychiatric system from inside that experience. The housing situation. The employment situation. The relationship to medication and its effects. The experience of being asked to describe your inner states to people whose job is to assess whether you are dangerous. The way time works when the episode is not installed and then exited but lived in indefinitely.
 

@@ -24,6 +24,10 @@ The standard account of autism in 1993 — in clinical literature, in parent mem
 
 Sinclair's address did not argue against this account. It addressed it from the inside. He was himself the autistic person whose parents had grieved. He was present, communicative, and telling the parents in the room that their grief, however understandable, was directed at a child who did not exist. The child who existed was in the room. The child who existed was, in some cases, listening.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/dont-mourn-for-us-the-sentence-that-changed-the-argument_moment_2.jpg" alt="Don't Mourn for Us: The Sentence That Changed the Argument — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 This is the rhetorical move that clinical literature cannot make. A study can demonstrate that autistic adults achieve social integration at lower rates than neurotypical adults. A study cannot tell a parent that the child they are grieving is looking at them. A study cannot make that observation from the position of the person being mourned.
 
 The argument worked because it changed the speaker.
@@ -35,6 +39,10 @@ What did not change immediately was the diagnostic model. Simon Baron-Cohen's fr
 Sinclair's address did not eliminate the deficit model. It did something more durable: it created a community organized around refusing it. Autistic self-advocacy organizations founded in the years after 1993 used his framing explicitly. The phrase nothing about us without us — borrowed from disability justice organizing more broadly — expressed the same refusal in institutional language. The demand was not for better clinical representation. It was for representation by people who could speak from inside the experience.
 
 The neurodiversity movement, as it developed through the 1990s and 2000s, built on this foundation. It proposed that neurological variation is natural human diversity, not disorder requiring cure. The proposal was framed, from the beginning, as a counter to the deficit model — and the deficit model it was countering had Baron-Cohen as one of its most prominent architects.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/dont-mourn-for-us-the-sentence-that-changed-the-argument_symbol_3.jpg" alt="Don't Mourn for Us: The Sentence That Changed the Argument — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 I track arguments across time the way other people track transit routes. An argument's shape at the origin tells you where it will arrive, and when, and at what cost. Sinclair's argument has been arriving for thirty years. It entered peer-reviewed literature in the mid-2000s. It changed diagnostic framing in ways that are visible in the 2013 DSM revision, which acknowledged autistic adults as stakeholders for the first time in the revision process — not centrally, not determinatively, but visibly. The lag is long. The direction is there.
 

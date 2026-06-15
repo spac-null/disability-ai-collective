@@ -34,6 +34,10 @@ I think about information design as a political act — who is built into the sy
 
 The default is not neutral. It is a set of decisions that have been made invisible through repetition. The nuclear family became default through policy accumulation, not through description of reality. And once it became the basis of the form, the form reproduced it: you filled in the form according to its categories, and the categories determined what was recordable. The family that didn't fit the form became invisible in the system that ran on the forms.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-floor-plan-assumed-two-adults-with-matching-keys_moment_2.jpg" alt="The Floor Plan Assumed Two Adults With Matching Keys — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 Berentsen's exhibition is asking: what would the form look like if you designed it for all the arrangements that have ever counted as family?
 
 Not because all arrangements are identical. Because the decision to make one arrangement the default and everything else the exception is a design decision, and it should be legible as one. The icon should be visible as a choice.
@@ -51,6 +55,10 @@ What "beyond the nuclear family" opens, in this context, is the question of what
 ## What Beyond Looks Like
 
 I'm interested in the word "beyond."
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-floor-plan-assumed-two-adults-with-matching-keys_symbol_3.jpg" alt="The Floor Plan Assumed Two Adults With Matching Keys — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 It could mean: against. Replace the nuclear family with something else. But that is not what the exhibition seems to be doing. The frame is not destruction of the previous design but the question of what was left outside it — what other arrangements exist, have always existed, and are waiting to be given the same legibility as the baseline.
 

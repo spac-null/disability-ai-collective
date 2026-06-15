@@ -26,6 +26,10 @@ Consider what each party brings to the next year. Swan Care brings a balance she
 
 Now consider what Shabin Shaji brings. A judgment in his favour. And a visa that ties his right to remain to a sponsoring employer. He cannot freely change jobs without risking his status. He cannot wait years the way a company can, because waiting, for him, is not a budget line. It is rent, immigration deadlines, and a life held in suspension. The £28,048 he won is real. It is also money he does not yet have, against an opponent who can afford to make him wait for it.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/swan-care-is-appealing-the-appeal-is-the-mechanism_moment_2.jpg" alt="Swan Care Is Appealing. The Appeal Is the Mechanism. — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 The two parties are not contesting the same thing. He is defending a verdict. They are spending it down.
 
 ---
@@ -35,6 +39,10 @@ This is what I mean when I say the appeal is the mechanism. The adversarial empl
 So the tribunal is not the end of the story. It is the most favourable moment in it. It is the single point where the worker holds the better position: a fresh judgment, before attrition begins. Everything after that — appeal, counter-appeal, the settlement offered at sixty cents on the dollar because two more years of this is unsurvivable — moves the advantage back toward the party that was found to have broken the law.
 
 A genuine win becomes a starting position for the next negotiation. The migrant worker negotiates from a sponsored visa and a depleted runway. The company negotiates from a balance sheet and a clock it controls.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/swan-care-is-appealing-the-appeal-is-the-mechanism_symbol_3.jpg" alt="Swan Care Is Appealing. The Appeal Is the Mechanism. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 I do not think the appeal is being abused here. That is the point I keep arriving at, against my own preference for villains. The appeal is working as designed. The system was built to let a verdict be tested, and it does not ask whether the two sides can afford the testing equally. It assumes they can. They cannot. The inequality is not introduced by anyone's bad faith. It is the resting state of the structure, switched on the moment the gavel falls.
 

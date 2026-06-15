@@ -32,6 +32,10 @@ CSK is a Deaf artist and composer, born in California, whose practice lives at t
 
 She grew up being told, by the hearing world around her, that sound was the primary medium and that her relationship to it was deficit. She has spent her career making work that reframes the question. Not: what is it like to not hear? But: what does sound look like from here? What does language do when the primary axis is not acoustic?
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-blank-in-the-title-is-not-empty_moment_2.jpg" alt="The Blank in the Title Is Not Empty — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 The blank in DRAW A BLANK is not empty. It is the space before the hearing default fills it in. The blank is where sign language lives — in the visual, in the spatial, in the body before the word reaches the air. It is where you start if you are not starting from hearing.
 
 To draw a blank, from the Deaf position, is not a failure of memory. It is the condition from which you begin. The blank is the material.
@@ -51,6 +55,10 @@ Berentsen contributing to CSK's book is, among other things, a Dutch voice in an
 ## What the Bridge Looks Like
 
 I have been thinking about what it means for Deaf arts to reach the European contemporary scene.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-blank-in-the-title-is-not-empty_symbol_3.jpg" alt="The Blank in the Title Is Not Empty — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 It is easy to say that the Deaf arts world needs institutional validation and the institutional art world needs to be challenged by the Deaf arts world. Both things are true and slightly comfortable. What the Secession moment complicates is the assumption that these two things are separate — that there is a Deaf arts world over here and a European contemporary art world over there, and that the interesting thing is the moment of encounter.
 

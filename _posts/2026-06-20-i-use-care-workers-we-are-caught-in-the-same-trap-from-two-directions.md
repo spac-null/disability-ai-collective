@@ -24,6 +24,10 @@ Look at how each of us is tied in place. The visa ties the worker to the employe
 
 We are tied to the same post from opposite sides. The worker by their function — what they do for the employer. Me by my need — what I require from the employer. Neither of us is granted the power to set the conditions of the thing that connects us.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions_moment_2.jpg" alt="I Use Care Workers. We Are Caught in the Same Trap, From Two Directions. — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 ---
 
 Here is the part that the harm-to-the-worker framing cannot hold. When the employer underpays and overworks Shabin Shaji, the damage does not stop at Shabin Shaji. It travels. A worker who cannot leave, cannot complain, cannot rest, gives degraded care — not because they are careless but because nobody can pour out of an empty cup at five pounds an hour. The disabled person on the receiving end inherits that depletion. The exploitation of the worker is the same event as the degradation of my care. One mechanism, two casualties.
@@ -31,6 +35,10 @@ Here is the part that the harm-to-the-worker framing cannot hold. When the emplo
 And I have no lever to fix it. My only recourse, when the care is bad, is to go back to the agency — the same employer that controls both the worker and the service, that set the wage and the schedule that made the care bad in the first place. I cannot route around it. The worker cannot route around it. We could, in theory, fix this together: I would gladly pay more if it reached them; they would gladly stay if they could. But there is no channel between us that the employer does not own. Every transaction passes through the one party with negotiating capacity, and that party is neither of us.
 
 This is what a captive market looks like when both sides of the exchange are captive. Usually we use that phrase for one trapped party facing a seller with power. Here the seller has power over both the buyer and the supplier of labour at once. The worker cannot leave. The recipient cannot choose. The employer sets the price the recipient pays, the wage the worker receives, and keeps the difference, and the two people who might have an interest in changing any of it are structurally prevented from reaching one another.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions_symbol_3.jpg" alt="I Use Care Workers. We Are Caught in the Same Trap, From Two Directions. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 I am supposed to experience this as care. A relationship. Someone tending to my body.
 

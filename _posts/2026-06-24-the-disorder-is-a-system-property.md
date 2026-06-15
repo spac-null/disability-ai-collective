@@ -30,6 +30,10 @@ But resistance by accident is not the same as resistance by design.
 
 What autistic pattern recognition actually does is find the structure underneath things — the logic of systems, the rule that governs apparently random behaviour, the deviation that doesn't fit the model. This is not resistance to the system. It is, depending on what you point it at, one of the most powerful tools available for understanding a system in order to challenge it. Cognitive capitalism would like to own this too. It does own it — in data science, in quantitative finance, in the parts of the tech industry where pattern-detection is the product. The same cognitive style gets classified as a disorder in a classroom and as a competitive advantage in a trading room.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-disorder-is-a-system-property_moment_2.jpg" alt="The Disorder Is a System Property — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 This is not a paradox. It is a property of a system that decides which cognitive profiles are valuable based on where they can be deployed, and classifies the remainder as deficit. The deficit is not in the neurology. It is in the match between what the economy can use and what the person can offer — and the economy gets to name the mismatch.
 
 ## What the Exhibition Got Right
@@ -45,6 +49,10 @@ Third: putting ADHD in the same frame as psychedelic experience and cognitive ca
 ## Where It Stops
 
 The exhibition could not quite say the full thing: that the resistance it was celebrating is resistance *only because the system decided it was inconvenient*. Which means the system could, in principle, decide to find it convenient instead. Cognitive capitalism has absorbed queerness, absorbed transgression, absorbed many forms of difference that once functioned as resistance, by finding out how to extract value from them.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-disorder-is-a-system-property_symbol_3.jpg" alt="The Disorder Is a System Property — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 Neurodiverse thinking has already been partially absorbed — the parts that produce useful pattern recognition at scale, in contexts the economy controls. What remains outside the system is not the thinking itself. It is the person attached to the thinking, in all the dimensions of their life that are not the thinking.
 

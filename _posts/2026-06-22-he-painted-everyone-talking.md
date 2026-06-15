@@ -38,6 +38,10 @@ There's a scholarly tradition that reads this as irrelevant. The work stands on 
 
 I understand the argument. But I don't think it's actually about protecting the work from reduction. I think it's about protecting a certain story of Dutch Golden Age painting — one in which the painters were embedded in the world they recorded, authoritative witnesses to their own culture.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/he-painted-everyone-talking_moment_2.jpg" alt="He Painted Everyone Talking. He Could Hear None of It. — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 Avercamp was a witness. He was exceptionally attentive. But his relationship to the social world he painted was mediated in ways that the "authoritative witness" story cannot absorb without complication.
 
 When you erase the deafness, you also erase the question the work is quietly asking: what does it mean to spend a career painting a community that cannot fully receive you? What kind of gaze does that produce? What does sustained, precise, decade-long observation of social bodies look like when it comes from someone who was always, in spoken conversation, excluded?
@@ -59,6 +63,10 @@ This is not a reversal of hierarchy. He was still excluded from the spoken conve
 But there's something precise in the fact that the most crowded social canvases in Dutch Golden Age painting were made by the person in the room who was always on the edge of the conversation — watching the gestures, reading the bodies, recording what could be seen rather than heard.
 
 The work survives. The annotation of his deafness was deemed not worth preserving.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/he-painted-everyone-talking_symbol_3.jpg" alt="He Painted Everyone Talking. He Could Hear None of It. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 ## What Gets Left Out
 

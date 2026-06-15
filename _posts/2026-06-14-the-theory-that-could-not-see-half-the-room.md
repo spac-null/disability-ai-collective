@@ -28,6 +28,10 @@ For some people it does. For others, the same understanding arrives by a differe
 
 The instrument cannot distinguish between these routes. It was designed to confirm a hypothesis, and the hypothesis was already encoded in the questions.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-theory-that-could-not-see-half-the-room_moment_2.jpg" alt="The Theory That Could Not See Half the Room — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 The second problem is who took the test.
 
 Baron-Cohen's early research populations skewed heavily male. This was partly because boys receive autism diagnoses at higher rates than girls — a ratio treated, for decades, as a fact about the distribution of autism. It was also a fact about who was being referred for evaluation, who presented in ways that matched the existing clinical picture, and who the clinical picture had been built from in the first place. The population confirmed the theory. The theory described the population.
@@ -41,6 +45,10 @@ A woman who has spent fifteen years rehearsing which expression to make in respo
 Lorna Wing, who introduced the concept of the autistic spectrum in the 1980s, described in her clinical notes presentations that differed from the pattern Baron-Cohen's model would later formalize. The girls in her clinic developed social imitation strategies that masked their difficulties in ways the boys did not. Wing noted this. The notes did not become the model. Baron-Cohen's framework did.
 
 The diagnostic consequence has been documented steadily in the years since: autistic women receive diagnoses significantly later than autistic men. In the interval, they accumulate other diagnoses — anxiety, depression, eating disorders, borderline personality disorder — that describe the symptoms of unrecognized autism without addressing its source. A system built to find one profile finds the adaptations of people who don't match it and treats those adaptations as the condition.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-theory-that-could-not-see-half-the-room_symbol_3.jpg" alt="The Theory That Could Not See Half the Room — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 After 2015, a substantial body of research began examining autism specifically in women, using different instruments, qualitative methods, participant-led frameworks. It found what the EQ test had organized out of its results: camouflaging as a measurable phenomenon, late diagnosis as a systematic pattern, the accumulated prior misdiagnoses as a traceable history. This research has not produced a corresponding revision to diagnostic criteria. The criteria were updated in 2013, primarily to merge Asperger's syndrome into the autism spectrum. The observational anchors that reflect Baron-Cohen's framework remained.
 

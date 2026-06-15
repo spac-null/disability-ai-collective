@@ -36,6 +36,10 @@ Disabled people have been told their bodies are obsolete for as long as the cate
 
 "Is The Human Body Obsolete?" assumes a prior state: a time when the human body was sufficient.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-upgrade-assumes-a-body-that-was-working-before_moment_2.jpg" alt="The Upgrade Assumes a Body That Was Working Before — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 The history of disability makes this assumption difficult to sustain. There was never a period in which all human bodies — Deaf, autistic, chronically ill, spinal cord injured, blind — were treated as adequate by the environments they moved through. The "standard body" was a statistical construct that was promoted to a moral norm. The enforcement of that norm was material. It was built into architecture, into paperwork, into institutional design.
 
 Stelarc's upgrade is a choice he makes about his own body, on his own terms. He has the luxury of choosing to apply the category of obsolescence to himself because nobody applied it to him first.
@@ -53,6 +57,10 @@ The question "is the body obsolete?" is being asked by someone who started from 
 ## What Ine Gevers Knew
 
 Putting Stelarc and Carr in the same exhibition was not accidental. NIET NORMAAL's argument — which Ine Gevers has continued to develop across exhibitions including AUTONOMOUS in 2026 — is that what a society designates as "not normal" reveals the shape of what the society has decided not to accommodate. The designation is not about the bodies. It is about the decision.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-upgrade-assumes-a-body-that-was-working-before_symbol_3.jpg" alt="The Upgrade Assumes a Body That Was Working Before — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 That frame makes the encounter legible. Stelarc's question reads one way from the position of someone choosing obsolescence as an art practice. It reads differently from the position of someone who was classified as obsolete before they had the chance to make that choice themselves.
 

@@ -36,6 +36,10 @@ When the Van Gogh Museum designed its permanent collection presentation, it made
 
 It assumed the visitor knows, coming in, what a Dutch painter from the 1880s would have known about his world. Not from study, but from the kind of ambient cultural transmission that moves through spoken conversation, through overheard context, through the channels Deaf people have spent centuries being systematically excluded from.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-tour-exists-the-art-still-wasnt-designed-for-you_moment_2.jpg" alt="The Tour Exists. The Art Still Wasn't Designed For You. — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+</figure>
+
 The NGT tour translates the labels. It does not ask whether the labels were written for this visitor.
 
 This distinction matters because the two problems require different solutions. Translation after the fact addresses access to the content as designed. It does not address whether the content was designed in a way that treats Deaf cultural memory as a starting point rather than an absence.
@@ -55,6 +59,10 @@ A NGT tour added to that exhibition does not change who was in the room.
 ## What Would Change It
 
 I am not saying Deaf curators should curate every exhibition. I am saying that an institution that has a Deaf staff member in the interpretive design process — not the access process, the design process — makes different assumptions. Not better assumptions, necessarily. Different ones. Assumptions that carry the knowledge of someone who navigated the world in NGT before they navigated it in Dutch.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/the-tour-exists-the-art-still-wasnt-designed-for-you_symbol_3.jpg" alt="The Tour Exists. The Art Still Wasn't Designed For You. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+</figure>
 
 The difference shows up in what gets contextualised and what doesn't. What gets treated as obvious and what gets treated as earned. Which emotional resonances are assumed and which are explained.
 
