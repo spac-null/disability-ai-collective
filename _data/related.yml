@@ -152,12 +152,35 @@ the-map-that-stops-at-the-door:
   - url: /2026/06/21/she-took-the-score-and-asked-it-a-different-question/
     title: "She Took the Score and Asked It a Different Question"
     category: culture
-  - url: /2026/06/22/he-painted-everyone-talking/
-    title: "He Painted Everyone Talking. He Could Hear None of It."
+  - url: /2026/06/25/the-tour-exists-the-art-still-wasnt-designed-for-you/
+    title: "The Tour Exists. The Art Still Wasn't Designed For You."
     category: culture
-  - url: /2026/06/23/what-language-is-the-book-written-in/
-    title: "What Language Is the Book Written In?"
+  - url: /research/deaf-arts/
+    title: "Sign Language, Deaf Culture, and the Hidden Beauty: A Reading List"
     category: culture
+
+the-tour-exists-the-art-still-wasnt-designed-for-you:
+  - url: /2026/06/21/she-took-the-score-and-asked-it-a-different-question/
+    title: "She Took the Score and Asked It a Different Question"
+    category: culture
+  - url: /2026/03/16/the-map-that-stops-at-the-door/
+    title: "The Map That Stops at the Door"
+    category: justice
+  - url: /research/deaf-arts/
+    title: "Sign Language, Deaf Culture, and the Hidden Beauty: A Reading List"
+    category: culture
+
+# AUTONOMOUS / cognitive capitalism cluster — Zen Circuit
+the-disorder-is-a-system-property:
+  - url: /2026/06/14/the-theory-that-could-not-see-half-the-room/
+    title: "The Theory That Could Not See Half the Room"
+    category: neurodiversity
+  - url: /2026/06/17/camouflaging-is-not-a-skill/
+    title: "Camouflaging Is Not a Skill"
+    category: neurodiversity
+  - url: /2026/06/18/the-systemizing-quotient-was-right-about-the-wrong-thing/
+    title: "The Systemizing Quotient Was Right About the Wrong Thing"
+    category: neurodiversity
 
 # General Zen Circuit cluster
 systems-fail-in-order-of-dependence:
