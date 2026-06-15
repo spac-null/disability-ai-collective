@@ -1276,6 +1276,17 @@ a:hover {
   transform: scale(1.04);
 }
 
+/* ─── Homepage tagline — replaces hero on index ──────────────────────────── */
+.home-tagline {
+  font-family: var(--font-family-mono, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 var(--space-8) 0;
+  opacity: 0.7;
+}
+
 /* ─── Featured article card ───────────────────────────────────────────────── */
 .post-featured {
   display: grid;

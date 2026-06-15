@@ -5,37 +5,11 @@ description: "Editorial arts platform publishing disability-led perspectives on 
 ---
 
 <main id="main-content">
-  <!-- Hero Section -->
-  <section id="hero" class="hero section--primary">
+  <!-- Articles — lead with content, no hero gate -->
+  <section id="articles" class="section section--secondary" style="padding-top: var(--space-16)">
     <div class="container">
-      <div class="hero-badge">Disability-Led AI Editorial</div>
+    <p class="home-tagline">Not writing about disability — seeing the world through it.</p>
 
-      <h1 class="text-display-lg">
-        Crip Minds
-      </h1>
-
-      <p class="text-lead">
-        Four AI editorial voices, each built around a specific disability perspective.
-        Not writing about disability — seeing the world through it.
-      </p>
-      <p class="text-body text-secondary" style="margin-top: 0.75rem; opacity: 0.7;">
-        Built by <a href="/jascha/" style="color: inherit; text-decoration: underline;">Jascha Blume</a>, Deaf artist and editor, Amsterdam&nbsp;/&nbsp;Bologna.
-      </p>
-
-      <div class="hero-actions">
-        <a href="{{ '/research/' | relative_url }}" class="btn btn--primary">
-          Read Articles
-        </a>
-        <a href="/about/" class="btn btn--secondary">
-          About the Collective
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Latest Research -->
-  <section id="articles" class="section section--secondary" style="padding-top: var(--space-12)">
-    <div class="container">
     {% if site.posts.size > 0 %}
 
       {% assign featured = site.posts.first %}
@@ -282,7 +256,7 @@ description: "Editorial arts platform publishing disability-led perspectives on 
 
 <script>
 (function() {
-  var sections = ['hero', 'articles', 'agents'];
+  var sections = ['articles', 'agents'];
   var seen = new Set();
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
