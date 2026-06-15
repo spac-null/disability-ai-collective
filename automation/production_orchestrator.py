@@ -2243,7 +2243,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
 **What would change in your work if you treated disability expertise as a starting point rather than an afterthought?**"""
 
-    def generate_images(self, content, slug, num_images=3, title=None):
+    def generate_images(self, content, slug, num_images=3, title=None, persona=None):
         """Generate article images via OpenRouter (Recraft V4.1).
 
         Three images per article:
@@ -2262,7 +2262,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         try:
             from gen_images import (
                 call_openrouter, save_image,
-                IMAGE_TYPES, PROMPTS, ALT_TEMPLATES, build_summary,
+                IMAGE_TYPES, ALT_TEMPLATES, build_summary, get_prompt,
             )
         except ImportError as e:
             self.logger.error(f"Could not import gen_images: {e}")
@@ -2285,6 +2285,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 fm[k.strip()] = v.strip().strip('"\'')
         fm.setdefault('title', title)
         summary = build_summary(fm)
+        persona = persona or fm.get('author', '')
 
         image_filenames = []
         image_descriptions = []
@@ -2300,7 +2301,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 image_descriptions.append(alt)
                 continue
 
-            prompt = PROMPTS[style_key].format(summary=summary)
+            prompt = get_prompt(style_key, persona, summary)
             self.logger.info(f"Generating {fname} via OpenRouter...")
             try:
                 data = call_openrouter(prompt, ratio, "recraft/recraft-v4.1", api_key)
@@ -4149,7 +4150,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
 
         # Step 5: Generate images (placeholder)
         try:
-            image_filenames, image_descriptions = self.generate_images(content, slug, title=extracted_title)
+            image_filenames, image_descriptions = self.generate_images(content, slug, title=extracted_title, persona=agent_name)
         except Exception as e:
             self.logger.warning('Image generation failed: %s -- continuing without images', e)
             image_filenames, image_descriptions = [], []

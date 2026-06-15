@@ -46,35 +46,133 @@ IMAGE_TYPES = [
     ("symbol_3",  "1:1",  "ABSTRACT"),
 ]
 
-PROMPTS = {
+# Per-persona visual language — each has a distinct medium and aesthetic register
+PERSONA_STYLES = {
+    "Pixel Nova": {
+        "CONFRONTING": (
+            "Contemporary art publication cover. Risograph or silkscreen print. "
+            "Gallery poster energy — striking, culturally specific, no text. "
+            "Subject: {summary}. "
+            "References: Dutch graphic design, Experimental Jetset, Werkplaats Typografie aesthetic "
+            "without the typography. Color as argument, not decoration."
+        ),
+        "INTIMATE": (
+            "Artist's sketchbook page or study. Ink wash, dry media, or printmaking process. "
+            "The texture of thinking — a close observation, not a finished illustration. "
+            "Subject: {summary}. "
+            "Feels like a working drawing for an artwork that exists in the same world as the article."
+        ),
+        "ABSTRACT": (
+            "Exhibition graphic or catalogue artwork. Geometric or typographic abstraction "
+            "rendered as pure image — no letterforms, no legible text. "
+            "Concept: {summary}. "
+            "Could be a detail of a larger work: a surface, a pattern, a structural fragment. "
+            "Precise, intentional, art-world literate."
+        ),
+    },
+    "Zen Circuit": {
+        "CONFRONTING": (
+            "Technical drawing meets protest graphic. Blueprint, circuit diagram, or systems map "
+            "aesthetics — but charged with political tension. No text, no labels. "
+            "Subject: {summary}. "
+            "The technical vocabulary turned against itself: precision used to expose, not conceal. "
+            "Cold palette possible. High contrast."
+        ),
+        "INTIMATE": (
+            "Detail from a technical manual or medical diagram, repurposed. "
+            "Stippling, cross-hatching, or engraving technique. "
+            "Close observation of something usually rendered clinical — made specific and human. "
+            "Subject: {summary}. "
+            "Monochrome or limited palette. The intimacy of documentation."
+        ),
+        "ABSTRACT": (
+            "Systems diagram or information visualization as abstract image. "
+            "Flow, feedback loops, network topology — rendered as composition, not data. "
+            "Concept: {summary}. "
+            "No labels, no numbers, no text. The structure of a system made visible as form. "
+            "Precise, geometric, possibly cold."
+        ),
+    },
+    "Siri Sage": {
+        "CONFRONTING": (
+            "Scientific illustration meets activist visual language. "
+            "Natural history drawing style — detailed, observational — but the subject is social. "
+            "No text. Subject: {summary}. "
+            "References: Anna Atkins, scientific field notebooks, specimen illustration. "
+            "Unexpected color relationships. Careful and disturbing at once."
+        ),
+        "INTIMATE": (
+            "Naturalist's field notebook detail. Pencil, watercolour wash, or botanical illustration. "
+            "Observational, patient, slightly obsessive. "
+            "Subject: {summary}. "
+            "The feeling of someone who has been looking very closely at something for a long time. "
+            "Muted or earthy palette with one specific observed detail in focus."
+        ),
+        "ABSTRACT": (
+            "Scientific data visualization abstracted to pure form. "
+            "Could be: cell structure, seismic wave, spectral analysis, neural mapping — "
+            "rendered as image not diagram. No labels, no axes, no text. "
+            "Concept: {summary}. "
+            "The aesthetics of measurement made decorative and strange."
+        ),
+    },
+    "Maya Flux": {
+        "CONFRONTING": (
+            "Street-level documentary energy. Photocopied, zine aesthetic, or high-contrast "
+            "photography-derived graphic. Urgency, immediacy, no text, no typography. "
+            "Subject: {summary}. "
+            "The visual grammar of organizing: flyered walls, protest banners, community notice boards. "
+            "Gritty texture. Colors of the city, not the gallery."
+        ),
+        "INTIMATE": (
+            "Urban detail study. A texture, a surface, a found pattern from built environment. "
+            "Photography-derived or reportage illustration — specific place, specific light. "
+            "Subject: {summary}. "
+            "What you notice at ground level. Cracked pavement, worn signage, a shadow on concrete. "
+            "Documentary warmth or fluorescent coldness depending on subject."
+        ),
+        "ABSTRACT": (
+            "Urban pattern or infrastructure abstracted. Map fragment, transit diagram, "
+            "zoning grid, or crowd density — rendered as pure visual field. "
+            "Concept: {summary}. "
+            "The geometry of cities when you remove the human scale. "
+            "Could be aerial, could be microscopic. No text, no labels."
+        ),
+    },
+}
+
+# Fallback for unknown personas
+DEFAULT_STYLE = {
     "CONFRONTING": (
-        "Political graphic art. Screen-print or risograph aesthetic. "
-        "Bold composition, strong visual tension. No text, no typography. "
+        "Bold editorial illustration. Strong graphic composition, no text. "
         "Subject: {summary}. "
-        "Style references: Corita Kent, Barbara Kruger, disability justice visual culture. "
-        "High contrast. Colors emerging from subject matter, not imposed."
+        "The visual language specific to this subject — not generic, not decorative. "
+        "High contrast. Colors and medium chosen for the argument."
     ),
     "INTIMATE": (
-        "Intimate editorial illustration. Gouache or watercolour on textured paper. "
-        "Close-up, human scale, emotionally specific. No text. "
+        "Close editorial illustration. Intimate, human-scale, no text. "
         "Subject: {summary}. "
-        "Warm, tactile surface quality. Colors fitting the mood of the subject — "
-        "not generic, not symbolic. Like a specific moment painted from memory."
+        "A specific moment or detail, rendered with care. "
+        "Medium and palette fitting the mood — not imposed from outside."
     ),
     "ABSTRACT": (
-        "Abstract conceptual image. Could be linocut, digital collage, or geometric composition. "
-        "Translates an idea into pure visual form — no literal illustration, no figures, no text. "
+        "Conceptual image — pure form, no figures, no text. "
         "Concept: {summary}. "
-        "The visual language should feel specific to this concept, not generic abstraction. "
-        "Color and form chosen for meaning, not decoration."
+        "The idea made visual in a way specific to this concept. "
+        "Medium and color chosen for meaning, not convention."
     ),
 }
 
 ALT_TEMPLATES = {
-    "CONFRONTING": "{title} — screen-print protest poster illustration",
-    "INTIMATE":    "{title} — intimate gouache illustration on textured paper",
-    "ABSTRACT":    "{title} — abstract linocut symbol",
+    "CONFRONTING": "{title} — editorial illustration",
+    "INTIMATE":    "{title} — detail illustration",
+    "ABSTRACT":    "{title} — conceptual image",
 }
+
+
+def get_prompt(style_key: str, persona: str, summary: str) -> str:
+    styles = PERSONA_STYLES.get(persona, DEFAULT_STYLE)
+    return styles[style_key].format(summary=summary)
 
 RETRY_DELAYS = [5, 15, 45]  # seconds between retries
 
@@ -256,9 +354,11 @@ def process_post(post_path: pathlib.Path, model: str, api_key: str, dry_run: boo
     slug = slug_from_path(post_path)
     summary = build_summary(fm)
     title = fm.get("title", slug)
+    persona = fm.get("author", "")
 
     print(f"\n[{post_path.name}]")
     print(f"  title:   {title[:80]}")
+    print(f"  persona: {persona or '(default)'}")
     print(f"  summary: {summary[:100]}...")
 
     if dry_run:
@@ -274,7 +374,7 @@ def process_post(post_path: pathlib.Path, model: str, api_key: str, dry_run: boo
             print(f"  skip (exists): {dest.name}")
             continue
 
-        prompt = PROMPTS[style_key].format(summary=summary)
+        prompt = get_prompt(style_key, persona, summary)
         print(f"  generating {dest.name} ...", end=" ", flush=True)
         t0 = time.time()
         try:
