@@ -1,0 +1,52 @@
+{% assign _form_id  = include.id | append: "-subscribe-form" %}
+{% assign _email_id = include.id | append: "-sub-email" %}
+{% assign _msg_id   = include.id | append: "-subscribe-msg" %}
+{% assign _freq     = include.id | append: "-freq" %}
+{% assign _headline = include.headline | default: "Stay with it." %}
+<div class="subscribe-section">
+  <p class="subscribe-section__eyebrow">New essays, when they publish</p>
+  <h2 class="text-h3 mb-4">{{ _headline }}</h2>
+  <p class="text-secondary subscribe-section__subhead mb-8">One article a day. Weekly digest on Sundays. Unsubscribe any time.</p>
+  <form id="{{ _form_id }}" class="subscribe-section__form" novalidate>
+    <div class="subscribe-section__row">
+      <label for="{{ _email_id }}" class="sr-only">Your email address</label>
+      <input type="email" id="{{ _email_id }}" name="email" placeholder="your@email.com" required autocomplete="email" class="subscribe-section__input">
+      <button type="submit" class="subscribe-section__btn">Subscribe</button>
+    </div>
+    <div class="subscribe-section__freq" role="group" aria-label="Delivery frequency">
+      <label><input type="radio" name="{{ _freq }}" value="weekly" checked> Weekly digest</label>
+      <label><input type="radio" name="{{ _freq }}" value="daily"> Each article</label>
+    </div>
+    <p id="{{ _msg_id }}" class="subscribe-section__msg" aria-live="polite"></p>
+  </form>
+  <script>
+  (function(){
+    var form = document.getElementById('{{ _form_id }}');
+    if (!form) return;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = document.getElementById('{{ _email_id }}').value;
+      var freq  = form.querySelector('input[name="{{ _freq }}"]:checked').value;
+      var msg   = document.getElementById('{{ _msg_id }}');
+      var btn   = form.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = '…';
+      fetch('https://subscribe.cripminds.com/subscribe', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: email, frequency: freq})
+      }).then(function(r){ return r.json(); }).then(function(d){
+        msg.textContent = d.status === 'already_confirmed'
+          ? "You’re already subscribed."
+          : 'Check your inbox to confirm.';
+        document.getElementById('{{ _email_id }}').value = '';
+        btn.textContent = '✓';
+      }).catch(function(){
+        msg.textContent = 'Something went wrong. Try again.';
+        btn.disabled = false;
+        btn.textContent = 'Subscribe';
+      });
+    });
+  })();
+  </script>
+</div>

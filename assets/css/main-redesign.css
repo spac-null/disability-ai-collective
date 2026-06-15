@@ -3387,6 +3387,126 @@ article[data-categories].hidden {
   }
 }
 
+/* ── Page-level subscribe section ────────────────────────────────────────── */
+.subscribe-section {
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.subscribe-section__eyebrow {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #888);
+  margin-bottom: 0.75rem;
+}
+
+.subscribe-section__subhead {
+  font-size: 0.95rem;
+}
+
+.subscribe-section__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.subscribe-section__row {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+.subscribe-section__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem 0.9rem;
+  background: var(--color-bg-secondary, rgba(255,255,255,0.05));
+  border: 1px solid var(--color-border, rgba(255,255,255,0.15));
+  border-radius: 4px;
+  color: var(--color-text-primary, inherit);
+  font-size: 0.9rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+}
+
+.subscribe-section__input::placeholder {
+  color: var(--color-text-secondary, #888);
+}
+
+.subscribe-section__input:focus {
+  outline: none;
+  border-color: rgba(255,255,255,0.35);
+}
+
+.subscribe-section__btn {
+  padding: 0.65rem 1.2rem;
+  background: var(--color-accent, #7c6af7);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+}
+
+.subscribe-section__btn:hover { opacity: 0.85; }
+.subscribe-section__btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.subscribe-section__freq {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #888);
+}
+
+.subscribe-section__freq label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+
+.subscribe-section__freq input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.subscribe-section__freq input[type="radio"]:checked {
+  background: var(--color-accent, #7c6af7);
+  border-color: var(--color-accent, #7c6af7);
+}
+
+.subscribe-section__msg {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary, #888);
+  min-height: 1.2em;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .subscribe-section__row {
+    flex-direction: column;
+  }
+  .subscribe-section__btn {
+    width: 100%;
+  }
+}
+
 /* =============================================
    Debate layout
    ============================================= */

@@ -174,57 +174,7 @@ description: "Crip Minds publishes disability-led perspectives on culture, archi
 
   <section id="subscribe" class="section section--secondary">
     <div class="container container--md">
-      <div style="max-width: 480px; margin: 0 auto; text-align: center;">
-        <p style="font-family: var(--font-mono, monospace); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--color-text-secondary, #888); margin-bottom: 0.75rem;">New essays, when they publish</p>
-        <h2 class="text-h3 mb-4">Keep reading.</h2>
-        <p class="text-secondary mb-8" style="font-size: 0.95rem;">One article a day. Weekly digest on Sundays. Unsubscribe any time.</p>
-        <form id="about-subscribe-form" novalidate style="display: flex; flex-direction: column; gap: 0.75rem; align-items: center;">
-          <div style="display: flex; gap: 0.5rem; width: 100%; max-width: 380px;">
-            <label for="about-sub-email" class="sr-only">Your email address</label>
-            <input type="email" id="about-sub-email" name="email" placeholder="your@email.com" required autocomplete="email"
-              style="flex: 1; padding: 0.65rem 0.9rem; border: 1px solid var(--color-border, rgba(255,255,255,0.15)); background: var(--color-bg-secondary, rgba(255,255,255,0.05)); color: var(--color-text-primary, inherit); border-radius: 4px; font-size: 0.9rem;">
-            <button type="submit"
-              style="padding: 0.65rem 1.2rem; background: var(--color-accent, #7c6af7); color: #fff; border: none; border-radius: 4px; font-size: 0.9rem; cursor: pointer; white-space: nowrap;">
-              Subscribe
-            </button>
-          </div>
-          <div role="group" aria-label="Delivery frequency" style="display: flex; gap: 1.5rem; font-size: 0.85rem; color: var(--color-text-secondary, #888);">
-            <label style="cursor: pointer;"><input type="radio" name="about-freq" value="weekly" checked style="margin-right: 0.3rem;"> Weekly digest</label>
-            <label style="cursor: pointer;"><input type="radio" name="about-freq" value="daily" style="margin-right: 0.3rem;"> Each article</label>
-          </div>
-          <p id="about-subscribe-msg" aria-live="polite" style="font-size: 0.85rem; color: var(--color-text-secondary, #888); min-height: 1.2em;"></p>
-        </form>
-        <script>
-        (function(){
-          var form = document.getElementById('about-subscribe-form');
-          if (!form) return;
-          form.addEventListener('submit', function(e){
-            e.preventDefault();
-            var email = document.getElementById('about-sub-email').value;
-            var freq  = form.querySelector('input[name="about-freq"]:checked').value;
-            var msg   = document.getElementById('about-subscribe-msg');
-            var btn   = form.querySelector('button');
-            btn.disabled = true;
-            btn.textContent = '…';
-            fetch('https://subscribe.cripminds.com/subscribe', {
-              method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({email: email, frequency: freq})
-            }).then(function(r){ return r.json(); }).then(function(d){
-              msg.textContent = d.status === 'already_confirmed'
-                ? "You're already subscribed."
-                : 'Check your inbox to confirm.';
-              document.getElementById('about-sub-email').value = '';
-              btn.textContent = '✓';
-            }).catch(function(){
-              msg.textContent = 'Something went wrong. Try again.';
-              btn.disabled = false;
-              btn.textContent = 'Subscribe';
-            });
-          });
-        })();
-        </script>
-      </div>
+      {% include subscribe-form.html id="about" headline="Keep reading." %}
     </div>
   </section>
 
