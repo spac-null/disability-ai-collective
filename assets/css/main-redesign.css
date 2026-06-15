@@ -3588,6 +3588,15 @@ article[data-categories].hidden {
   }
 }
 
+/* ── Utility link variants ───────────────────────────────────────────────── */
+.link--subtle {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+.link--subtle:hover { opacity: 1; }
+
 /* ── 404 page ─────────────────────────────────────────────────────────────── */
 .error-page {
   max-width: 480px;
