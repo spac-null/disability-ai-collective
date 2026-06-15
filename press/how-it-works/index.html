@@ -21,11 +21,11 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
           <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;">01 &mdash; What it does every morning</p>
 
           <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
-            Every morning, before I open my laptop, a system wakes up and reads the internet. It pulls from general and persona-specific RSS feeds, quality-journalism feeds, Google News RSS queries, a hand-curated and crawled link pool, and a database of disability scholarship built and indexed over months. Then it runs through the editorial positions I authored from scholarship, interviews and oral histories, and my own lived experience. It selects one topic &mdash; one angle, one argument nobody has made yet this week &mdash; and it writes a full essay on that topic.
+            Every morning, before I open my laptop, the system has already done two passes. First, it pulls recent articles from quality-journalism feeds and stores them as <em>news seeds</em>. Then a separate discovery run pulls from disability and persona-specific feeds, Google News RSS queries, PubMed, and selected art feeds, extracting angles that go into a <em>findings</em> database. When the writing run starts, it chooses the strongest unused seed first, or the strongest unused finding if no seed is good enough.
           </p>
 
           <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
-            By the time I check my phone, the piece has been edited, fact-checked, illustrated, published to cripminds.com, and posted to Bluesky. All of that happens automatically. The only human in that process is the one who designed the system and built the rules it runs on.
+            The link pool is a later layer, not the topic picker. It is a hand-curated and crawled bank of cross-disciplinary URLs &mdash; disability culture, architecture, theory, curatorial practice, history, cognition, design &mdash; that gets queried after the topic is chosen so the writing prompt has texture and unexpected connections. Alongside that sits a database of disability scholarship built and indexed over months. Then the system runs through the editorial positions I authored from scholarship, interviews and oral histories, and my own lived experience.
           </p>
 
           <blockquote style="border-left: 3px solid var(--color-border-brand, #3f5f89); padding-left: 1.5rem; margin: 2rem 0; font-style: italic; color: var(--color-text-primary);">
@@ -33,7 +33,7 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
           </blockquote>
 
           <p class="text-body text-secondary" style="margin-bottom: 0; line-height: 1.8;">
-            Crip Minds publishes one article per day. The writer changes every day. There are four of them.
+            By the time I check my phone, the piece has been edited, fact-checked, illustrated, published to cripminds.com, and posted to Bluesky. Crip Minds publishes one article per day. The writer changes every day. There are four of them.
           </p>
 
         </div>
@@ -125,12 +125,12 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">1.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Morning discovery</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">RSS feeds from disability media, academic journals, and design publications. Plus a curated database of disability scholarship &mdash; papers, essays, policy documents &mdash; crawled and indexed over months.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Morning discovery</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Quality-journalism RSS feeds fill the <em>news_seeds</em> table. A second discovery pass fills <em>findings</em> from disability and persona-specific feeds, Google News query RSS, PubMed abstracts, and selected art feeds. In parallel, the scholarship corpus and link pool are already available for grounding.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">2.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Topic selection</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">A topic no one on the site has covered this week. A freshness check runs against every previously published title. The voice for the day is also selected here &mdash; rotating through the four personas, never the same two days running.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Topic selection</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">The writing run takes the best unused <em>news seed</em> first. If there is no strong seed, it falls back to the best unused <em>finding</em>. A freshness check runs against recent titles, overused themes get skipped, and the voice for the day is selected here &mdash; rotating through the four personas, never the same two days running.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
