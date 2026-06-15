@@ -343,11 +343,13 @@ class ProductionOrchestrator:
     def __init__(self):
         self.repo_root = Path(__file__).parent.parent
         self.posts_dir = self.repo_root / "_posts"
+        self.drafts_dir = self.repo_root / "_drafts"
         self.assets_dir = self.repo_root / "assets"
         self.discovery_db = self.repo_root / "disability_findings.db"
-        
+
         # Ensure directories exist
         self.posts_dir.mkdir(exist_ok=True)
+        self.drafts_dir.mkdir(exist_ok=True)
         self.assets_dir.mkdir(exist_ok=True)
         
         self.logger = self._setup_logger()
@@ -2114,7 +2116,8 @@ class ProductionOrchestrator:
             return False
 
     def _editorial_check(self, content, title, agent):
-        """Opus editorial pass — catches structural quality issues (every 3rd article)."""
+        """Opus editorial pass — catches structural quality issues (every 3rd article).
+        Returns (content, score) where score is 0-10 (None if check didn't run)."""
         import os, json as _json
         try:
             response = self._call_openai_compat_api(
@@ -2143,13 +2146,13 @@ class ProductionOrchestrator:
             )
             match = re.search(r'\{.*\}', response, re.DOTALL)
             if not match:
-                return content
+                return content, None
             data = _json.loads(match.group())
             score = data.get('score', 10)
             issues = data.get('issues', [])
             self.logger.info("Editorial check: score %d/10, %d issue(s)", score, len(issues))
             if score >= 7 or not issues:
-                return content
+                return content, score
             issues_text = "\n".join(
                 f"- [{i['type']}] \"{i.get('quote','')}\" → {i.get('fix','')}"
                 for i in issues
@@ -2173,22 +2176,24 @@ class ProductionOrchestrator:
             )
             if fixed and len(fixed) > len(content) * 0.5:
                 self.logger.info("Editorial fix applied (score was %d/10)", score)
-                return fixed.strip()
+                return fixed.strip(), score
         except Exception as e:
             self.logger.warning("Editorial check failed: %s — keeping original", e)
-        return content
+        return content, None
 
     def pre_publication_check(self, content, title, agent):
-        """Pre-publication layer: strip parentheticals + link check + accessibility (every article) + editorial (every 3rd)."""
+        """Pre-publication layer: strip parentheticals + link check + accessibility (every article) + editorial (every 3rd).
+        Returns (content, editorial_score) where editorial_score is 0-10 or None."""
         self.logger.info("Pre-publication check: starting")
         content = self._strip_parentheticals(content)
         content = self._verify_links(content)
         content = self._accessibility_check(content, title, agent)
+        editorial_score = None
         if self._editorial_check_due():
             self.logger.info("Pre-publication check: editorial pass due")
-            content = self._editorial_check(content, title, agent)
+            content, editorial_score = self._editorial_check(content, title, agent)
         self.logger.info("Pre-publication check: done")
-        return content
+        return content, editorial_score
 
     # ─────────────────────────────────────────────────────────────────────────
 
@@ -2554,9 +2559,9 @@ The question isn't whether {title.lower()} matters. The question is whether the 
             return ""
 
     def create_article_file(self, metadata, content, image_filenames, image_descriptions=None):
-        """Create properly formatted article file."""
+        """Create properly formatted article file in _drafts/ (publish-best.py promotes to _posts/)."""
         filename = metadata['filename']
-        filepath = self.posts_dir / filename
+        filepath = self.drafts_dir / filename
 
         excerpt = self._generate_card_excerpt(metadata['title'], content, metadata.get('author', ''))
 
@@ -2568,6 +2573,10 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         if metadata.get('source_outlet'):
             _source_fields += f"\nsource_outlet: {json.dumps(str(metadata['source_outlet']))}"
 
+        _score_field = ""
+        if metadata.get('editorial_score') is not None:
+            _score_field = f"\ndraft_score: {metadata['editorial_score']}"
+
         front_matter = f"""---
 layout: post
 title: {json.dumps(str(metadata['title']))}
@@ -2577,7 +2586,7 @@ category: {metadata['categories'][0].lower() if metadata['categories'] else 'res
 image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
 image_alt: {json.dumps(image_descriptions[0] if image_descriptions else 'Article illustration')}
 excerpt: {json.dumps(excerpt)}
-keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['author'], metadata['categories']))}]{_source_fields}
+keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['author'], metadata['categories']))}]{_source_fields}{_score_field}
 ---
 
 """
@@ -3189,6 +3198,23 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
                 self.logger.warning("Bluesky post failed (attempt 2): %s", e2)
                 return ""
 
+
+    def _store_pending_social(self, slug, title, agent):
+        """Write a pending-social marker so publish_best.py can fire social posts on promotion."""
+        import json as _json
+        social_dir = self.repo_root / "_social"
+        social_dir.mkdir(exist_ok=True)
+        fpath = social_dir / f"{slug}.json"
+        data = {}
+        if fpath.exists():
+            try:
+                data = _json.loads(fpath.read_text())
+            except Exception:
+                pass
+        data["pending_social"] = True
+        data["title"] = title
+        data["agent"] = agent
+        fpath.write_text(_json.dumps(data, indent=2))
 
     def _store_social_uri(self, slug, bsky_uri, agent=None):
         """Persist Bluesky post URI so retract_article() can delete it later."""
@@ -4122,7 +4148,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             model_used_label = written_by
 
         # Step 3c: Pre-publication quality layer (link check + accessibility + editorial)
-        content = self.pre_publication_check(content, extracted_title, agent_name)
+        content, editorial_score = self.pre_publication_check(content, extracted_title, agent_name)
 
         # Record beat for this article
         self._record_beat(agent_name, extracted_title, content)
@@ -4143,6 +4169,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             'model_used': model_used_label,
             'register': register,
             'article_type': article_type,
+            'editorial_score': editorial_score,
             'source_url':    news_seed['url']         if news_seed else discovery.get('url', '')     if discovery else '',
             'source_title':  news_seed['title']       if news_seed else discovery.get('original_title', '') if discovery else '',
             'source_outlet': news_seed['source_name'] if news_seed else discovery.get('domain', '') if discovery else '',
@@ -4174,16 +4201,14 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
         if commit_success and news_seed:
             self.mark_news_seed_used(news_seed["id"])
 
-        # Step 8: Post to Bluesky + Mastodon + Tumblr (non-blocking)
+        # Step 8: Social posting deferred — article goes to _drafts/ first.
+        # publish_best.py promotes to _posts/ every 2 days; social should fire then.
+        # Storing pending social metadata so publish_best.py can trigger it on promotion.
         if commit_success:
-            bsky_uri = self.post_to_bluesky(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
-            self._store_social_uri(slug, bsky_uri or "", agent=agent_name)
-            self.post_to_mastodon(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
-            self.post_to_tumblr(extracted_title, content, article_file, image_filenames, agent_name=agent_name)
+            self._store_pending_social(slug, extracted_title, agent_name)
 
-        # Step 9: Send newsletter (non-blocking)
-        if commit_success:
-            self._send_newsletter(extracted_title, content, article_file, agent_name)
+        # Step 9: Newsletter deferred until promotion (article not yet live)
+        # self._send_newsletter(extracted_title, content, article_file, agent_name)
 
         return {
             "status": "success" if commit_success else "partial",
@@ -4327,9 +4352,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['autho
             f"---\n"
         )
 
-        article_file = self.posts_dir / filename
+        article_file = self.drafts_dir / filename
         article_file.write_text(front, encoding="utf-8")
-        self.logger.info("Debate written: %s", article_file)
+        self.logger.info("Debate written to drafts: %s", article_file)
 
         commit_success = self.commit_to_git(article_file, [], None)
 
@@ -4362,6 +4387,8 @@ if __name__ == "__main__":
                         help="Generate a two-voice debate: --debate 'Pixel Nova' 'Siri Sage'")
     parser.add_argument("--topic", type=str, default=None,
                         help="Topic/fault line for --debate (optional; uses relationships.json if omitted)")
+    parser.add_argument("--post-social", type=str, default=None, metavar="ARTICLE_PATH",
+                        help="Post social (Bluesky/Mastodon/Tumblr) for a promoted article path")
     args = parser.parse_args()
 
     orchestrator = ProductionOrchestrator()
@@ -4373,7 +4400,24 @@ if __name__ == "__main__":
     if args.agent:
         orchestrator.override_agent = args.agent
 
-    if args.retract:
+    if args.post_social:
+        af = pathlib.Path(args.post_social)
+        if not af.exists():
+            print(f"Article not found: {af}")
+            sys.exit(1)
+        lines = af.read_text(encoding="utf-8").split('\n')
+        title = next((l.split(':', 1)[1].strip().strip('"') for l in lines if l.startswith('title:')), af.stem)
+        sep = [i for i, l in enumerate(lines) if l.strip() == '---']
+        body = '\n'.join(lines[sep[1]+1:]) if len(sep) >= 2 else ''
+        agent = next((l.split(':', 1)[1].strip().strip('"') for l in lines if l.startswith('author:')), None)
+        images = [f.name for f in orchestrator.repo_root.glob(f"assets/{af.stem}_*.jpg")]
+        bsky_uri = orchestrator.post_to_bluesky(title, body, af, image_filenames=images, agent_name=agent)
+        slug = af.stem[11:] if re.match(r'\d{4}-\d{2}-\d{2}-', af.stem) else af.stem
+        orchestrator._store_social_uri(slug, bsky_uri or "", agent=agent)
+        orchestrator.post_to_mastodon(title, body, af, image_filenames=images, agent_name=agent)
+        orchestrator.post_to_tumblr(title, body, af, image_filenames=images, agent_name=agent)
+        print(f"Social posts sent. Bluesky URI: {bsky_uri}")
+    elif args.retract:
         orchestrator.retract_article(args.retract)
     elif args.debate:
         result = orchestrator.generate_debate(args.debate[0], args.debate[1], topic=args.topic)
