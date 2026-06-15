@@ -232,18 +232,18 @@ def save_image(data: bytes, path: pathlib.Path) -> None:
 # Process posts
 # ---------------------------------------------------------------------------
 
-def find_posts_needing_images(target_slug: str | None = None) -> list[pathlib.Path]:
+def find_posts_needing_images(target_slug: str | None = None, force: bool = False) -> list[pathlib.Path]:
     posts = sorted(POSTS_DIR.glob("*.md"))
     result = []
     for p in posts:
         if target_slug and slug_from_path(p) != target_slug:
             continue
         text = p.read_text()
-        if has_image_field(text):
+        if has_image_field(text) and not force:
             continue
         slug = slug_from_path(p)
         setting1 = ASSETS_DIR / f"{slug}_setting_1.jpg"
-        if setting1.exists() and not target_slug:
+        if setting1.exists() and not target_slug and not force:
             # Images exist but frontmatter wasn't updated — fix that
             fm = parse_frontmatter(text)
             alt = ALT_TEMPLATES["CONFRONTING"].format(title=fm.get("title", slug))
@@ -309,6 +309,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Generate cripminds article images via OpenRouter")
     parser.add_argument("--slug", help="Process only this article slug")
     parser.add_argument("--dry-run", action="store_true", help="Show what would run, don't call API")
+    parser.add_argument("--force", action="store_true", help="Process even if image: already in frontmatter (use with --slug)")
     parser.add_argument("--model", default=DEFAULT_MODEL, help=f"OpenRouter model (default: {DEFAULT_MODEL})")
     args = parser.parse_args()
 
@@ -317,7 +318,7 @@ def main() -> None:
         print("Error: OPENROUTER_API_KEY not set", file=sys.stderr)
         sys.exit(1)
 
-    posts = find_posts_needing_images(args.slug)
+    posts = find_posts_needing_images(args.slug, force=getattr(args, 'force', False))
 
     if not posts:
         print("All posts have images. Nothing to do.")
