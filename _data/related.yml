@@ -116,11 +116,11 @@ court-ruling-no-effect:
 
 # Deaf arts / sign language cluster — Pixel Nova
 she-took-the-score-and-asked-it-a-different-question:
-  - url: /2026/06/22/he-painted-everyone-talking/
-    title: "He Painted Everyone Talking. He Could Hear None of It."
-    category: culture
   - url: /2026/06/23/what-language-is-the-book-written-in/
     title: "What Language Is the Book Written In?"
+    category: culture
+  - url: /2026/06/29/the-blank-in-the-title-is-not-empty/
+    title: "The Blank in the Title Is Not Empty"
     category: culture
   - url: /research/deaf-arts/
     title: "Sign Language, Deaf Culture, and the Hidden Beauty: A Reading List"
@@ -141,11 +141,11 @@ what-language-is-the-book-written-in:
   - url: /2026/06/21/she-took-the-score-and-asked-it-a-different-question/
     title: "She Took the Score and Asked It a Different Question"
     category: culture
-  - url: /2026/06/22/he-painted-everyone-talking/
-    title: "He Painted Everyone Talking. He Could Hear None of It."
+  - url: /2026/06/29/the-blank-in-the-title-is-not-empty/
+    title: "The Blank in the Title Is Not Empty"
     category: culture
-  - url: /research/deaf-arts/
-    title: "Sign Language, Deaf Culture, and the Hidden Beauty: A Reading List"
+  - url: /2026/06/28/the-floor-plan-assumed-two-adults-with-matching-keys/
+    title: "The Floor Plan Assumed Two Adults With Matching Keys"
     category: culture
 
 the-map-that-stops-at-the-door:
@@ -163,9 +163,9 @@ the-tour-exists-the-art-still-wasnt-designed-for-you:
   - url: /2026/06/21/she-took-the-score-and-asked-it-a-different-question/
     title: "She Took the Score and Asked It a Different Question"
     category: culture
-  - url: /2026/03/16/the-map-that-stops-at-the-door/
-    title: "The Map That Stops at the Door"
-    category: justice
+  - url: /2026/06/26/the-upgrade-assumes-a-body-that-was-working-before/
+    title: "The Upgrade Assumes a Body That Was Working Before"
+    category: culture
   - url: /research/deaf-arts/
     title: "Sign Language, Deaf Culture, and the Hidden Beauty: A Reading List"
     category: culture
@@ -202,3 +202,49 @@ the-vibration-was-the-architecture:
     title: "Systems Fail in Order of Dependence"
     image: /assets/systems-fail-in-order-of-dependence_setting_1.jpg
     category: neurodiversity
+
+# NIET NORMAAL / performance body cluster — Zen Circuit + Siri Sage
+the-upgrade-assumes-a-body-that-was-working-before:
+  - url: /2026/06/24/the-disorder-is-a-system-property/
+    title: "The Disorder Is a System Property"
+    category: neurodiversity
+  - url: /2026/06/25/the-tour-exists-the-art-still-wasnt-designed-for-you/
+    title: "The Tour Exists. The Art Still Wasn't Designed For You."
+    category: culture
+  - url: /2026/06/21/she-took-the-score-and-asked-it-a-different-question/
+    title: "She Took the Score and Asked It a Different Question"
+    category: culture
+
+she-built-the-room-so-you-could-hear-what-she-hears:
+  - url: /2026/06/24/the-disorder-is-a-system-property/
+    title: "The Disorder Is a System Property"
+    category: neurodiversity
+  - url: /2026/06/26/the-upgrade-assumes-a-body-that-was-working-before/
+    title: "The Upgrade Assumes a Body That Was Working Before"
+    category: culture
+  - url: /2026/06/23/what-language-is-the-book-written-in/
+    title: "What Language Is the Book Written In?"
+    category: culture
+
+# Mirthe / CSK cluster — Pixel Nova
+the-floor-plan-assumed-two-adults-with-matching-keys:
+  - url: /2026/06/23/what-language-is-the-book-written-in/
+    title: "What Language Is the Book Written In?"
+    category: culture
+  - url: /2026/06/29/the-blank-in-the-title-is-not-empty/
+    title: "The Blank in the Title Is Not Empty"
+    category: culture
+  - url: /2026/06/25/the-tour-exists-the-art-still-wasnt-designed-for-you/
+    title: "The Tour Exists. The Art Still Wasn't Designed For You."
+    category: culture
+
+the-blank-in-the-title-is-not-empty:
+  - url: /2026/06/23/what-language-is-the-book-written-in/
+    title: "What Language Is the Book Written In?"
+    category: culture
+  - url: /2026/06/21/she-took-the-score-and-asked-it-a-different-question/
+    title: "She Took the Score and Asked It a Different Question"
+    category: culture
+  - url: /2026/06/28/the-floor-plan-assumed-two-adults-with-matching-keys/
+    title: "The Floor Plan Assumed Two Adults With Matching Keys"
+    category: culture
