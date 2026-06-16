@@ -104,6 +104,36 @@ layout: default
     </div>
   </section>
 
+  <!-- Other Voices -->
+  <section class="section section--primary other-voices">
+    <div class="container container--md">
+      <p class="other-voices__label">Other voices in the collective</p>
+      <div class="other-voices__grid">
+        {% for voice in site.collective %}
+          {% unless voice.title == page.title %}
+          <a href="{{ voice.url | relative_url }}" class="other-voices__card" data-persona="{{ voice.slug }}">
+            <div class="agent-avatar other-voices__avatar">
+              <img
+                class="agent-avatar__image"
+                src="{{ voice.avatar | relative_url }}"
+                alt="{{ voice.title }} avatar"
+                width="56"
+                height="56"
+                loading="lazy"
+                decoding="async"
+              >
+            </div>
+            <div class="other-voices__info">
+              <span class="other-voices__name">{{ voice.title }}</span>
+              <span class="other-voices__domain">{{ voice.disability }} · {{ voice.domain }}</span>
+            </div>
+          </a>
+          {% endunless %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
   <div class="flex justify-center gap-4 pb-12">
     <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← Articles</a>
     <a href="{{ '/about/#agents' | relative_url }}" class="btn btn--outline">The Collective</a>

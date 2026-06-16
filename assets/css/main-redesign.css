@@ -1351,6 +1351,83 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 }
 
 /* ========================================
+   OTHER VOICES STRIP (collective pages)
+========================================= */
+
+.other-voices {
+  border-top: 1px solid var(--color-border);
+}
+
+.other-voices__label {
+  font-size: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin-bottom: 1.25rem;
+}
+
+.other-voices__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.other-voices__card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md, 6px);
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.other-voices__card:hover {
+  background: var(--color-background-accent, rgba(124,106,247,0.06));
+  border-color: var(--color-text-brand);
+}
+
+.other-voices__avatar {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  margin-bottom: 0;
+  overflow: hidden;
+  background: var(--color-background-muted);
+  border: 1px solid var(--color-border-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.other-voices__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.other-voices__name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.other-voices__domain {
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono, monospace);
+}
+
+@media (max-width: 640px) {
+  .other-voices__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========================================
    HERO SECTION
 ========================================= */
 
