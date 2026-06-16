@@ -2,6 +2,46 @@
 layout: default
 ---
 
+{% assign _author_url = '' %}
+{% if page.author == "Pixel Nova" %}{% assign _author_url = '/collective/pixel-nova/' %}
+{% elsif page.author == "Siri Sage" %}{% assign _author_url = '/collective/siri-sage/' %}
+{% elsif page.author == "Maya Flux" %}{% assign _author_url = '/collective/maya-flux/' %}
+{% elsif page.author == "Zen Circuit" %}{% assign _author_url = '/collective/zen-circuit/' %}
+{% elsif page.author == "Jascha Blume" %}{% assign _author_url = '/jascha/' %}
+{% endif %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ page.title | jsonify }},
+  "description": {{ page.excerpt | default: page.description | strip_html | strip_newlines | truncate: 300 | jsonify }},
+  "datePublished": "{{ page.date | date_to_xmlschema }}",
+  "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+  "author": {
+    "@type": "Person",
+    "name": {{ page.author | jsonify }},
+    "url": "{{ site.url }}{{ _author_url }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Crip Minds",
+    "url": "{{ site.url }}"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ site.url }}{{ page.url }}"
+  }{% if page.image %},
+  "image": {
+    "@type": "ImageObject",
+    "url": "{{ site.url }}{{ page.image }}",
+    "width": 800,
+    "height": 450
+  }{% endif %}{% if page.keywords %},
+  "keywords": {{ page.keywords | join: ", " | jsonify }}{% endif %}
+}
+</script>
+
 <div class="reading-progress" id="reading-progress" role="progressbar" aria-hidden="true" aria-label="Reading progress"></div>
 <main id="main-content" data-persona="{{ page.author | downcase | replace: ' ', '-' }}">
   <article class="section section--primary">
