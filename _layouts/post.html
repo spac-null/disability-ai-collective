@@ -13,6 +13,17 @@ layout: default
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ site.url }}" },
+    { "@type": "ListItem", "position": 2, "name": "Articles", "item": "{{ site.url }}/research/" },
+    { "@type": "ListItem", "position": 3, "name": {{ page.title | jsonify }}, "item": "{{ site.url }}{{ page.url }}" }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
   "@type": "Article",
   "headline": {{ page.title | jsonify }},
   "description": {{ page.excerpt | default: page.description | strip_html | strip_newlines | truncate: 300 | jsonify }},

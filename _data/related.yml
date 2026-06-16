@@ -171,16 +171,27 @@ the-tour-exists-the-art-still-wasnt-designed-for-you:
     category: culture
 
 # AUTONOMOUS / cognitive capitalism cluster — Zen Circuit
+the-label-was-removed-at-the-door:
+  - url: /2026/06/24/the-disorder-is-a-system-property/
+    title: "The Disorder Is a System Property"
+    category: neurodiversity
+  - url: /2026/06/26/the-upgrade-assumes-a-body-that-was-working-before/
+    title: "The Upgrade Assumes a Body That Was Working Before"
+    category: culture
+  - url: /2026/06/25/the-tour-exists-the-art-still-wasnt-designed-for-you/
+    title: "The Tour Exists. The Art Still Wasn't Designed For You."
+    category: culture
+
 the-disorder-is-a-system-property:
+  - url: /2026/07/01/the-label-was-removed-at-the-door/
+    title: "The Label Was Removed at the Door"
+    category: neurodiversity
   - url: /2026/06/14/the-theory-that-could-not-see-half-the-room/
     title: "The Theory That Could Not See Half the Room"
     category: neurodiversity
-  - url: /2026/06/17/camouflaging-is-not-a-skill/
-    title: "Camouflaging Is Not a Skill"
-    category: neurodiversity
-  - url: /2026/06/18/the-systemizing-quotient-was-right-about-the-wrong-thing/
-    title: "The Systemizing Quotient Was Right About the Wrong Thing"
-    category: neurodiversity
+  - url: /2026/06/26/the-upgrade-assumes-a-body-that-was-working-before/
+    title: "The Upgrade Assumes a Body That Was Working Before"
+    category: culture
 
 # General Zen Circuit cluster
 systems-fail-in-order-of-dependence:
