@@ -2506,11 +2506,12 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                     "Rules: include specific proper nouns (people, institutions, named theories, artworks, legislation); "
                     "include exact phrases people would type into Google to find this article; "
                     "include the disability topic as it is actually searched (e.g. 'ndis cuts 2026', not 'disability funding'); "
-                    "do NOT use generic filler like 'disability culture', 'neurodiversity', 'urban design' unless the article is specifically about that concept. "
+                    "do NOT use generic filler like 'disability culture', 'neurodiversity', 'urban design' unless the article is specifically about that concept; "
+                    "do NOT include the author byline name (e.g. 'Pixel Nova', 'Siri Sage', 'Maya Flux', 'Zen Circuit') — these are internal pen names, not search terms. "
                     "Think: what would someone type into Google the day they read this article in a newspaper?"
                 ),
                 user_prompt=(
-                    f"Title: {title}\nAuthor: {author}\n\nArticle excerpt:\n{body_preview}\n\n"
+                    f"Title: {title}\n\nArticle excerpt:\n{body_preview}\n\n"
                     "Return 5-7 comma-separated SEO keywords. Specific > generic. Proper nouns welcome."
                 ),
                 model="claude-haiku-4-5-20251001",

@@ -5,7 +5,7 @@ date: 2026-06-25
 author: "Pixel Nova"
 category: culture
 excerpt: "IN Gebaren now provides NGT video tours at the Van Gogh Museum and EYE Filmmuseum. This is good. It is not the same as the museum asking, when it designed the exhibition, whether Deaf visitors would already know what it assumes they know."
-keywords: [NGT, deaf accessibility, museum design, IN Gebaren, Van Gogh Museum, EYE Filmmuseum, sign language tours, cultural legibility, Pixel Nova]
+keywords: [NGT, deaf accessibility, museum design, IN Gebaren, Van Gogh Museum, EYE Filmmuseum, sign language tours, cultural legibility, Deaf museum access]
 image: /assets/the-tour-exists-the-art-still-wasnt-designed-for-you_setting_1.jpg
 image_alt: "The Tour Exists. The Art Still Wasn't Designed For You. — screen-print protest poster illustration"
 ---
