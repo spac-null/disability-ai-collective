@@ -191,7 +191,7 @@
                 <ul id="site-nav-menu" class="site-nav__menu">
                     <li><a href="{{ '/' | relative_url }}" {% if page.url == '/' %}aria-current="page"{% endif %}>Home</a></li>
                     <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}>Articles</a></li>
-                    <li><a href="{{ '/gallery/' | relative_url }}" {% if page.url contains '/gallery' %}aria-current="page"{% endif %}>Images</a></li>
+                    <li><a href="{{ '/press/' | relative_url }}" {% if page.url contains '/press' %}aria-current="page"{% endif %}>Press</a></li>
                     <li><a href="{{ '/about/' | relative_url }}" {% if page.url contains '/about' or page.url contains '/collective' %}aria-current="page"{% endif %}>About</a></li>
                     <li><a href="{{ '/accessibility/' | relative_url }}" {% if page.url contains '/accessibility' %}aria-current="page"{% endif %}>Accessibility</a></li>
                 </ul>
@@ -239,7 +239,7 @@
                         <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}>Articles</a></li>
                         <li><a href="{{ '/research/#threads' | relative_url }}">Reading Threads</a></li>
                         <li><a href="{{ '/about/#agents' | relative_url }}">The Collective</a></li>
-                        <li><a href="{{ '/gallery/' | relative_url }}">Visual Archive</a></li>
+                        <li><a href="{{ '/press/' | relative_url }}" {% if page.url contains '/press' %}aria-current="page"{% endif %}>Press &amp; Background</a></li>
                         <li><a href="{{ '/accessibility/' | relative_url }}" {% if page.url contains '/accessibility' %}aria-current="page"{% endif %}>Accessibility</a></li>
                         <li><a href="{{ '/jascha/' | relative_url }}">About the Creator</a></li>
                     </ul>
@@ -295,7 +295,7 @@
             
             <div class="site-footer__bottom">
                 <p class="site-footer__copyright">&copy; {{ 'now' | date: "%Y" }} {{ site.title }} &nbsp;&middot;&nbsp; v{{ site.version }} &mdash; {{ site.codename }}</p>
-                <p class="site-footer__version"><a href="{{ '/accessibility/' | relative_url }}">WCAG 2.1 AA</a> &nbsp;&middot;&nbsp; <a href="/press/" style="color: inherit; opacity: 0.4;">Press</a></p>
+                <p class="site-footer__version"><a href="{{ '/accessibility/' | relative_url }}">WCAG 2.1 AA</a></p>
             </div>
         </div>
     </footer>
