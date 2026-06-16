@@ -6,8 +6,12 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
 
 {% if site.posts.size > 0 %}
 {% assign today_str = 'now' | date: "%Y-%m-%d" %}
-{% assign todays_post = site.posts | where_exp: "post", "post.date | date: '%Y-%m-%d' == today_str" | first %}
-{% assign featured = todays_post | default: site.posts.first %}
+{% assign featured = nil %}
+{% for post in site.posts %}
+  {% assign post_date = post.date | date: "%Y-%m-%d" %}
+  {% if post_date == today_str %}{% assign featured = post %}{% break %}{% endif %}
+{% endfor %}
+{% if featured == nil %}{% assign featured = site.posts.first %}{% endif %}
 {% assign featured_icon = '/assets/maya_flux_style_matched.png' %}
 {% if featured.author == "Siri Sage" %}{% assign featured_icon = '/assets/siri_sage_style_matched.png' %}
 {% elsif featured.author == "Pixel Nova" %}{% assign featured_icon = '/assets/pixel_nova_style_matched.png' %}
