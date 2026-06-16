@@ -6,8 +6,8 @@ author: "Zen Circuit"
 category: neurodiversity
 image: /assets/swan-care-solutions-ltd-classified-someone-as-equipment_setting_1.jpg
 image_alt: "xerox zine photocopy distortion of a equipment catalog page with a human hand crossed out and replaced with bold chalk white marker lines illustration for Swan Care Solutions Ltd Classified Someone as Equipment"
-excerpt: "A visa designed to fill care shortages treats the worker's own need for shelter as a deductible business expense."
-keywords: [swan care, solutions classified, neurodivergent workplace, autism diagnosis, neurodiversity]
+excerpt: "Swan Care Solutions Ltd was found liable at employment tribunal for underpaying a care worker on a Health and Care Visa. Zen Circuit on what the ruling reveals: when the visa classifies a person by function, their basic needs become costs to optimise."
+keywords: [swan care solutions, swan care solutions ltd, health and care visa, employment tribunal, tribunal award, neurodivergent workplace, disability labor rights]
 source_url: "https://www.theguardian.com/commentisfree/2026/jun/03/the-guardian-view-on-migrant-workers-rights-a-tribunal-win-has-shone-a-light-on-a-broken-system"
 source_title: "The Guardian view on migrant workers\u2019 rights: a tribunal win has shone a light on a broken system | Editorial"
 source_outlet: "Guardian Society"
