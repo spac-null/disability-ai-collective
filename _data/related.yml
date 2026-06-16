@@ -227,14 +227,25 @@ the-upgrade-assumes-a-body-that-was-working-before:
     category: culture
 
 she-built-the-room-so-you-could-hear-what-she-hears:
+  - url: /2026/07/03/the-wires-were-already-listening/
+    title: "The Wires Were Already Listening"
+    category: culture
   - url: /2026/06/24/the-disorder-is-a-system-property/
     title: "The Disorder Is a System Property"
     category: neurodiversity
-  - url: /2026/06/26/the-upgrade-assumes-a-body-that-was-working-before/
-    title: "The Upgrade Assumes a Body That Was Working Before"
-    category: culture
   - url: /2026/06/23/what-language-is-the-book-written-in/
     title: "What Language Is the Book Written In?"
+    category: culture
+
+the-wires-were-already-listening:
+  - url: /2026/06/27/she-built-the-room-so-you-could-hear-what-she-hears/
+    title: "She Built the Room So You Could Hear What She Hears"
+    category: culture
+  - url: /2026/06/24/the-disorder-is-a-system-property/
+    title: "The Disorder Is a System Property"
+    category: neurodiversity
+  - url: /2026/07/02/when-the-work-speaks-first/
+    title: "When the Work Speaks First"
     category: culture
 
 # Mirthe / CSK cluster — Pixel Nova
