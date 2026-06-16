@@ -85,6 +85,22 @@ layout: default
         {{ content }}
       </div>
 
+      <!-- Thread signal -->
+      {% assign post_slug = page.slug | default: page.url | remove: '/' | split: '/' | last %}
+      {% for thread in site.data.threads %}
+        {% if thread.slugs contains post_slug %}
+          {% assign matched_thread = thread %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+      {% if matched_thread %}
+      <div class="post-thread-signal">
+        <span class="post-thread-signal__label">Reading thread</span>
+        <a href="{{ matched_thread.url }}" class="post-thread-signal__link">{{ matched_thread.title }} &rarr;</a>
+      </div>
+      {% assign matched_thread = nil %}
+      {% endif %}
+
       <!-- Article Footer -->
       <footer class="post-footer">
 

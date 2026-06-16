@@ -3423,6 +3423,39 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   pointer-events: none;
 }
 
+/* Thread signal — shows when article belongs to a reading thread */
+.post-thread-signal {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: var(--space-10) 0 var(--space-8);
+  padding: 0.85rem 1.1rem;
+  border-left: 3px solid var(--color-accent, #7c6af7);
+  background: var(--color-bg-secondary, rgba(124,106,247,0.06));
+  border-radius: 0 4px 4px 0;
+}
+
+.post-thread-signal__label {
+  font-size: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.post-thread-signal__link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.post-thread-signal__link:hover {
+  color: var(--color-accent, #7c6af7);
+}
+
 /* Prev/Next article nav */
 .post-nav {
   display: grid;
