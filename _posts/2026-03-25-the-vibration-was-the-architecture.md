@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-vibration-was-the-architecture_setting_1.jpg
 image_alt: "extreme close-up of fingertips tracing the carved grooves of stone architecture illustration for The Vibration Was the Architecture"
 excerpt: "Ancient builders engineered sound into stone, but archaeology only learned to listen three centuries after the drawings told them how."
-keywords: [vibration architecture, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Inkawasi, Felipe Guaman Poma de Ayala, acoustic archaeology, Inca ceremonial architecture, sensory archaeology]
 ---
 
 In 1615, the Quechua writer Felipe Guaman Poma de Ayala, an Indigenous writer recording Inca life under Spanish colonial rule, finished a 1,189-page letter to King Philip III of Spain. It included nearly four hundred drawings of Inca life. The letter was sent to Spain but somehow ended up in the [Royal Danish Library](https://www.kb.dk/en), where it sat for three centuries before anyone paid attention. One thing Guaman Poma drew repeatedly: people gathered in architectural spaces, mouths open, instruments raised. He was drawing sound. The buildings were for sound. Nobody saw that either.

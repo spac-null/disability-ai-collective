@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/border-work-happens-in-the-body-three-seconds-before_setting_1.jpg
 image_alt: "extreme close-up of fingertips pressing against translucent skin illustration for Border Work Happens in the Body Three Seconds Before"
 excerpt: "She had all the right paperwork, but the paperwork itself was the problem."
-keywords: [border work, happens body, blind navigation, acoustic accessibility, spatial design]
+keywords: [Brexit visa requirements, UK theatre workers EU travel, Schengen work permit regulations, post-Brexit short-term contracts, border bureaucracy theatre industry]
 source_url: "https://www.theguardian.com/politics/2026/jun/01/creative-industries-brexit-barriers-uk-actors-eu-jobs"
 source_title: "\u2018Catastrophic for creative industries\u2019: Brexit barriers shut UK actors out of EU jobs"
 source_outlet: "Guardian World"

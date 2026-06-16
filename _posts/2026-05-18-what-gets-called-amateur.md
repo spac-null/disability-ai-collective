@@ -7,7 +7,7 @@ category: urban design
 image: /assets/what-gets-called-amateur_setting_1.jpg
 image_alt: "Close-up macro photograph of a blurred Polaroid photograph held in trembling fingers illustration for What Gets Called Amateur"
 excerpt: "Disabled photographers are called amateur for the exact techniques that won the Deutsche B\u00f6rse Prize."
-keywords: [gets called, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [Nan Goldin photography, snapshot aesthetic, Deutsche Börse Prize, amateur photography, Charlotte Jansen art criticism]
 source_url: "https://www.theguardian.com/artanddesign/2026/may/15/rene-matic-deutsche-borse-photography-prize-photographers-gallery"
 source_title: "Mounting Rene Mati\u0107\u2019s snapshots in Perspex isn\u2019t really enough to make them interesting | Charlotte Jansen"
 source_outlet: "Guardian Art & Design"

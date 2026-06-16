@@ -7,7 +7,7 @@ category: urban design
 image: /assets/the-room-was-built-to-listen-back-but-only-to-some_setting_1.jpg
 image_alt: "Extreme close-up of bass transducer coil vibrating against rose gold metal mesh illustration for The Room Was Built to Listen Back \u2014 But Only to Some"
 excerpt: "A building spent 16 years and \u20ac866 million proving sound moves through surfaces, then called it engineering instead of what the Deaf architect already knew."
-keywords: [room built, listen back, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [Elbphilharmonie Hamburg, DeafSpace Gallaudet University, Yasuhisa Toyota acoustician, Hansel Bauman architect, accessible architecture design, universal design principles]
 ---
 
 In July 2021, the [Elbphilharmonie in Hamburg](https://www.elbphilharmonie.de/) celebrated its acoustic perfection again. The concert hall, designed by [Herzog & de Meuron](https://www.herzogdemeuron.com/) with acoustician [Yasuhisa Toyota](https://www.nagata-i.com/1977/01/01/dr-yasuhisa-toyota/), uses 10,000 individually milled gypsum fibre panels to shape how sound moves through the room. Each panel is unique. The building cost €866 million — roughly ten times its original budget — and took sixteen years. Every surface was calculated to deliver sound to a hearing ear with extraordinary precision. Toyota told *The Guardian* in 2017 that he wanted the room to feel "like being inside an instrument." I read that sentence from my wheelchair in a flat where I can feel the bass from my neighbour's stereo through the floorboards, and I thought: you already know sound travels through surfaces. You just chose to optimize for one receptor.

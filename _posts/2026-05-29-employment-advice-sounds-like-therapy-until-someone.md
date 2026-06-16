@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/employment-advice-sounds-like-therapy-until-someone_setting_1.jpg
 image_alt: "extreme close-up of a therapist's notepad mid-sentence illustration for Employment Advice Sounds Like Therapy Until Someone"
 excerpt: "The government proved that adding employment pressure to therapy makes disabled people less likely to work and poorer, yet keeps doing it anyway."
-keywords: [employment advice, sounds like, blind navigation, acoustic accessibility, spatial design]
+keywords: [DWP employment intervention therapy, NHS mental health work requirements, welfare policy mental health treatment, Dr Jay Watts clinical psychology, long-term sick disability employment schemes, Institute for Fiscal Studies therapy study, UK welfare system healthcare integration]
 source_url: "https://www.disabilitynewsservice.com/government-research-shows-activists-were-right-to-warn-of-impact-of-dwp-work-advisers-on-mental-distress/"
 source_title: "Government research shows activists were right to warn of impact of DWP work advisers on mental distress"
 source_outlet: "Disability News Service"

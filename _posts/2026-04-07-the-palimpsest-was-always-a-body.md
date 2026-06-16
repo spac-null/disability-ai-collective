@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-palimpsest-was-always-a-body_setting_1.jpg
 image_alt: "extreme close-up of layered translucent paper or vellum sheets with rose gold ink bleeding through from underneath illustration for The Palimpsest Was Always a Body"
 excerpt: "We use invisible light to reveal what human eyes miss in medieval manuscripts, but we pathologize the nervous systems that naturally work the same way."
-keywords: [palimpsest always, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [multispectral imaging manuscripts, palimpsests conservation science, ultraviolet infrared text recovery, X-ray fluorescence XRF analysis, medieval manuscript restoration]
 source_url: "https://theconversation.com/as-a-book-scientist-i-work-with-microscopes-imaging-technologies-and-ai-to-preserve-ancient-texts-278154"
 source_title: "As a \u2018book scientist\u2019 I work with microscopes, imaging technologies and AI to preserve ancient texts"
 source_outlet: "The Conversation"

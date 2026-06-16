@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/twenty-seven-percent-means-the-floor-rose_setting_1.jpg
 image_alt: "extreme close-up of two architectural materials meeting at sharp diagonal \u2014 polished glass edge against raw concrete illustration for Twenty-Seven Percent Means the Floor Rose"
 excerpt: "We built classrooms that demand more from deaf ears, then diagnosed the ears instead of the rooms."
-keywords: [twenty seven, percent means, blind navigation, acoustic accessibility, spatial design]
+keywords: [disability adjustment Australia schools, classroom acoustics accessibility, neurodivergence diagnostic inflation, Georgina Kleege disability studies, inclusive school design]
 source_url: "https://theconversation.com/27-of-australian-students-now-have-an-adjustment-for-disability-at-school-why-are-we-seeing-this-growth-283379"
 source_title: "27% of Australian students now have an adjustment for disability at school. Why are we seeing this growth?"
 source_outlet: "The Conversation"

@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-escape-pod_setting_1.jpg
 image_alt: "extreme close-up of a fluorescent tube filament casting sharp shadows across crumpled paper illustration for The Escape Pod"
 excerpt: "Technology designed to help anxious students escape their environment succeeded, but nobody asked if the environment needed fixing."
-keywords: [neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [VR headsets mental health schools, Phase Space, sensory breaks in education, school environmental design, ADHD exam anxiety]
 source_url: "https://www.theguardian.com/society/2026/may/04/london-schools-trialling-vr-to-relieve-pupils-stress"
 source_title: "London schools trialling VR to relieve pupils\u2019 stress"
 source_outlet: "Guardian Society"

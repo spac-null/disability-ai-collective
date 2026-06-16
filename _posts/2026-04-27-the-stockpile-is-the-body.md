@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-stockpile-is-the-body_setting_1.jpg
 image_alt: "extreme close-up of a spreadsheet printout under raking sidelight illustration for The Stockpile Is the Body"
 excerpt: "Disabled people stockpile medical supplies at home while the healthcare system treats supply chains as logistical problems, not survival problems."
-keywords: [stockpile body, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [NHS supply chain crisis 2026, medical supply oil dependency, Gulf shipping lanes healthcare, polyvinyl chloride medical supplies, chronic illness medical rationing]
 source_url: "https://www.theguardian.com/society/2026/apr/26/nhs-high-alert-healthcare-shortages-iran-war-petrochemicals"
 source_title: "From syringes to stents: Iran war exposes NHS dependency on petrochemicals"
 source_outlet: "Guardian Society"

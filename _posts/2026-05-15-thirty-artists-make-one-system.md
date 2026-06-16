@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/thirty-artists-make-one-system_setting_1.jpg
 image_alt: "extreme close-up of a security badge and lanyard tangled around fingers at 3am illustration for Thirty Artists Make One System"
 excerpt: "The show celebrates thirty artists' diverse practices while the gallery's accessibility checklist ensures most disabled artists never get sorted into the list at all."
-keywords: [thirty artists, make system, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [neurodivergence and art accessibility, autism spectrum screening, gallery accessibility barriers, institutional gatekeeping in art institutions, ableism in contemporary art]
 source_url: "https://hyperallergic.com/lehman-college-art-gallery-presents-the-2026-thesis-exhibition/"
 source_title: "Lehman College Art Gallery Presents the 2026 Thesis Exhibition"
 source_outlet: "Hyperallergic"

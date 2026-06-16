@@ -7,7 +7,7 @@ category: visual design
 image: /assets/meta-built-recognition-infrastructure-before-asking_setting_1.jpg
 image_alt: "extreme close-up of a human eye being scanned by invisible infrared light beams rendered as crimson red lines illustration for Meta Built Recognition Infrastructure Before Asking"
 excerpt: "Meta built surveillance infrastructure in millions of phones but never told anyone it was there."
-keywords: [meta built, recognition infrastructure, deaf accessibility, visual information design, visual design]
+keywords: [Meta face recognition infrastructure, Isotype project Otto Neurath, International Symbol of Access Susanne Koefoed, algorithmic bias design, tech company surveillance infrastructure]
 source_url: "https://www.wired.com/story/meta-smart-glasses-face-recognition-nametag-connections/"
 source_title: "Meta Silently Added Face-Recognition Code for Its Smart Glasses to Millions of Phones"
 source_outlet: "Wired"

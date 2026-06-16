@@ -7,7 +7,7 @@ category: culture
 image: /assets/the-flood-hears-you-first_setting_1.jpg
 image_alt: "extreme close-up of water surface tension breaking against deep violet fabric illustration for The Flood Hears You First"
 excerpt: "We've known how to navigate invisible rooms for our entire lives, but disaster plans still treat us as unprepared for the first time."
-keywords: [flood hears, blind navigation, acoustic accessibility, spatial design]
+keywords: [Hurricane Maria Puerto Rico, disability justice, climate justice, Sins Invalid, environmental racism, disabled accessibility in disaster response]
 ---
 
 The morning after Hurricane Maria hit Puerto Rico in September 2017, someone posted a recording from Yabucoa. Not the wind. The aftermath. Water moving through a concrete house at a pace that suggested it had no intention of leaving. Furniture knocking against walls in a rhythm that was almost musical, almost patient. And underneath it all, a sound I recognized from a completely different context: the low hum of a space that has changed its dimensions.

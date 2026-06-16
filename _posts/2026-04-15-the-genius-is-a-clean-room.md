@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-genius-is-a-clean-room_setting_1.jpg
 image_alt: "Extreme close-up of a hand adjusting a tool or prosthetic device mid-motion illustration for The Genius Is a Clean Room"
 excerpt: "The best designs come from disability constraints, yet the disability disappears once the design succeeds."
-keywords: [genius clean, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Malling-Hansen Writing Ball, design for disability accommodation, inclusive design history, universal design principles, assistive technology innovation]
 source_url: "https://www.theguardian.com/artanddesign/2026/apr/15/v-and-a-east-collection-review-london-the-music-is-black-a-british-story"
 source_title: "V&A East collection review \u2013 a dazzling wealth of inspiration to fire up the geniuses of the future"
 source_outlet: "Guardian Art & Design"

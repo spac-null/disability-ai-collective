@@ -7,7 +7,7 @@ category: urban design
 image: /assets/two-turns-left_setting_1.jpg
 image_alt: "Extreme close-up of a wheelchair wheel tread pressed hard against cracked asphalt illustration for Two Turns Left"
 excerpt: "Navigation apps designed for accessibility never tested whether disabled people could actually follow their directions."
-keywords: [turns left, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [accessibility in navigation apps, Sabriye Tenberken, Mike Oliver social model, disability design, inclusive technology]
 ---
 
 In June 2017, a blind pedestrian named [Sabriye Tenberken](https://www.braillewithoutborders.org/) was using a popular navigation app to walk from her hotel in Nairobi to a conference venue twelve minutes away. The app told her to turn left. She turned left into a construction trench.

@@ -7,7 +7,7 @@ category: urban design
 image: /assets/southampton-gallery-shows-turner-nominee-through-doors_setting_1.jpg
 image_alt: "Extreme close-up of a dropped kerb edge at raking sidelight illustration for Southampton Gallery Shows Turner Nominee Through Doors"
 excerpt: "The gallery meets every legal accessibility standard, but you need a student ID to reach it."
-keywords: [southampton gallery, shows turner, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [Simeon Barclay, Turner Prize 2021, accessibility in galleries, Arts Council accessibility standards, Southampton University Highfield Campus]
 source_url: "https://www.theguardian.com/artanddesign/2026/jun/05/simeon-barclay-review-john-hansard-gallery-southampton-turner-prize"
 source_title: "Simeon Barclay review \u2013 shut out by the gates of a drab modern Britain"
 source_outlet: "Guardian Art & Design"

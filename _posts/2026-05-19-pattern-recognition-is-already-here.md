@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/pattern-recognition-is-already-here_setting_1.jpg
 image_alt: "extreme close-up of human fingertips tracing a complex geometric pattern carved into black rubber or foam illustration for Pattern Recognition Is Already Here"
 excerpt: "Hollywood banned AI performances while using AI tools to perfect human ones for a decade."
-keywords: [pattern recognition, already here, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [AI-generated performances Oscar ban, Ben Grossmann machine learning film, rotoscoping visual effects AI, pattern recognition film production, Academy Oscar eligibility rules]
 source_url: "https://theconversation.com/most-mainstream-films-already-use-ai-the-new-oscars-rules-wont-stop-that-282598"
 source_title: "Most mainstream films already use AI. The new Oscars rules won\u2019t stop that"
 source_outlet: "The Conversation"

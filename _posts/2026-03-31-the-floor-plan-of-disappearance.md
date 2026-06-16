@@ -7,7 +7,7 @@ category: visual design
 image: /assets/the-floor-plan-of-disappearance_setting_1.jpg
 image_alt: "Overhead shot of architectural floor plan blueprints layered and folded into each other until they become illegible illustration for The Floor Plan of Disappearance"
 excerpt: "Websites designed to meet every accessibility standard simultaneously make care harder to access for disabled people."
-keywords: [floor plan, deaf accessibility, visual information design, visual design]
+keywords: [digital accessibility compliance paradox, WCAG standards, Miriam Sherwood, Haringey housing benefits portal, Almere care portal redesign, dark patterns in government services, accessibility theater]
 ---
 In February 2024, the Dutch municipality of Almere published a redesigned care portal. New typeface, new color palette, new logo. The navigation had been reorganized by a design firm that won an award for it. I pulled up the site on my laptop and counted: fourteen clicks to reach the page where a resident could report that their home care hours had been cut. Fourteen. The old site took three.
 

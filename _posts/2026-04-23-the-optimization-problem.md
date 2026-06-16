@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-optimization-problem_setting_1.jpg
 image_alt: "extreme close-up of a hand adjusting a tiny screw on circuit board illustration for The Optimization Problem"
 excerpt: "Surveillance built to catch political dissidents catches sick people needing medical tools instead."
-keywords: [optimization problem, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Roskomnadzor VPN tracking, Russian surveillance banks, Russian internet censorship, metabolic disorder medication access, digital rights Russia]
 source_url: "https://www.theguardian.com/world/2026/apr/21/kremlin-russia-forcing-firms-join-vpn-witch-hunt-internet"
 source_title: "Kremlin forcing big firms to join \u2018witch-hunt\u2019 against internet rebels, claims report"
 source_outlet: "Guardian World"

@@ -7,7 +7,7 @@ category: urban design
 image: /assets/eighteen-months-is-not-trivial-if-you-know-whose-clock_setting_1.jpg
 image_alt: "Extreme close-up of a clock face with numbers melting or warping into illegibility illustration for Eighteen Months Is Not Trivial If You Know Whose Clock"
 excerpt: "Eighteen months of extra time with your family counts as trivial if you measure it in decline rates instead of moments."
-keywords: [eighteen months, trivial know, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [Alzheimer's disease, amyloid protein, Clinical Dementia Rating scale, meaningful clinical difference, drug efficacy measurement]
 source_url: "https://www.theguardian.com/society/2026/apr/16/effect-gamechanger-alzheimers-drugs-trivial-review-concludes"
 source_title: "Effect of \u2018gamechanger\u2019 Alzheimer\u2019s drugs \u2018trivial\u2019, review concludes"
 source_outlet: "Guardian Society"

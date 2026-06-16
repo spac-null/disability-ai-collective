@@ -7,7 +7,7 @@ category: visual design
 image: /assets/the-floor-plan-after-the-fire_setting_1.jpg
 image_alt: "Extreme close-up of a wooden desk chair's worn fabric seat illustration for The Floor Plan After the Fire"
 excerpt: "She built a system so good nobody noticed it existed until it disappeared."
-keywords: [floor plan, after fire, deaf accessibility, visual information design, visual design]
+keywords: [disability discrimination in tech, corporate DEI rollbacks, workplace accessibility coordinator, ADA compliance audits, accessibility infrastructure, corporate ableism, employment accommodation pipeline]
 ---
 In March 2016, a tech company in Dublin hired its first accessibility coordinator. She sat on the fourth floor, shared a desk with facilities, and spent fourteen months building a system: captioned all-hands meetings, screen-reader-compatible internal tools, a workflow so that when a Deaf employee or a blind employee or someone with chronic fatigue joined a team, the infrastructure already existed. She didn't wait for requests. She designed the room before anyone arrived.
 

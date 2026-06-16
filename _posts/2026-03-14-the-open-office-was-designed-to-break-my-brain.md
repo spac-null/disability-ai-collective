@@ -10,7 +10,7 @@ image_alt: "extreme close-up of a human ear canal rendered as architectural cros
 imageAlt: "An open-plan office seen from above, with dozens of desks arranged in clusters, fluorescent ceiling panels casting even shadowless light across every surface, no walls, no barriers, no escape"
 draft: false
 excerpt: "Open offices were designed to eliminate barriers between people, but they built one inside my brain."
-keywords: [open office, designed break, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [open office workplace design, sensory processing sensitivity, ADHD workplace productivity, neurodivergent employees, workplace accommodations]
 ---
 
 I can tell you the exact moment my last open office broke me. Not metaphorically. Structurally.

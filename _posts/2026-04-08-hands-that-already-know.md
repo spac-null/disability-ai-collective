@@ -7,7 +7,7 @@ category: urban design
 image: /assets/hands-that-already-know_setting_1.jpg
 image_alt: "Extreme close-up of weathered fingertips pressing into clay or dough illustration for Hands That Already Know"
 excerpt: "Hands reveal universal truths about thinking, but every hand that touches clay carries a completely different history into that moment."
-keywords: [hands already, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [Es Devlin, clay working, embodied cognition, Buddhist monks AI, large language models, tactile learning, AI ethics]
 source_url: "https://www.theguardian.com/artanddesign/2026/apr/06/es-devlin-ai-pottery-jurassic-clay-nico-muhly"
 source_title: "What can 160-million-year-old clay tell us about AI and ethics? Inside Es Devlin\u2019s tech and pottery summit"
 source_outlet: "Guardian Art & Design"

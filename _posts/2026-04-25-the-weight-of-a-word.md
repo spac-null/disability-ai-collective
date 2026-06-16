@@ -7,7 +7,7 @@ category: urban design
 image: /assets/the-weight-of-a-word_setting_1.jpg
 image_alt: "extreme close-up of a ramp mechanism mid-deployment caught in xerox zine photocopier distortion illustration for The Weight of a Word"
 excerpt: "The scheme was built to fund disabled people's actual needs, but success at doing so is called a problem."
-keywords: [weight word, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [NDIS funding bloat, David Bowen NDIS, National Disability Insurance Scheme costs, disability support scheme waste, NDIS provider fraud, disability funding language, Australian welfare policy]
 source_url: "https://www.theguardian.com/australia-news/2026/apr/25/todays-bloated-ndis-would-never-have-been-greenlit-its-former-head-says-how-did-we-get-here"
 source_title: "Today\u2019s bloated NDIS would never have been greenlit, its former head says. How did we get here?"
 source_outlet: "Guardian Society"

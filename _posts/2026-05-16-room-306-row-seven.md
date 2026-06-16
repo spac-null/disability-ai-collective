@@ -7,7 +7,7 @@ category: visual design
 image: /assets/room-306-row-seven_setting_1.jpg
 image_alt: "Extreme close-up of a wooden door frame split down the middle illustration for Room 306, Row Seven"
 excerpt: "We design systems claiming to be fair while building the moment of rejection before the person even arrives."
-keywords: [room seven, deaf accessibility, visual information design, visual design]
+keywords: [Algorithmic discrimination, job fair screening bias, employment accessibility barriers, Pixel Nova, care work scheduling]
 source_url: "https://www.theguardian.com/society/2026/may/15/young-at-london-job-show-barriers-to-work-uk-youth-unemployment"
 source_title: "\u2018It makes me feel quite dehumanised\u2019: young at London career fair lay bare barriers to jobs"
 source_outlet: "Guardian Society"

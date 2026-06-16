@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/body-mass-index-was-never-measuring-health_setting_1.jpg
 image_alt: "Extreme close-up of a medical scale's needle frozen between two numbered thresholds illustration for Body Mass Index Was Never Measuring Health"
 excerpt: "A measurement invented to describe populations got renamed and used to diagnose individuals, then a drug was approved based on it."
-keywords: [body mass, index never, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [BMI history Adolphe Quetelet, Ancel Keys Body Mass Index, Wegovy weight-loss medication, DSM diagnostic classifications, autism spectrum disorder classification]
 source_url: "https://www.theguardian.com/science/2026/jun/11/wegovy-weight-loss-pills-available-in-uk-to-buy"
 source_title: "Wegovy weight-loss pills to be available for patients in UK to buy"
 source_outlet: "Guardian Society"

@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-pattern-it-solved-for_setting_1.jpg
 image_alt: "xerox zine photocopy distortion of a human mouth mid-speech frozen mid-syllable illustration for The Pattern It Solved For"
 excerpt: "The same technology that helps autistic people understand conversation became the tool schools used to punish them for talking wrong."
-keywords: [pattern solved, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Samantics app, Harmony classroom software, neurodivergent surveillance, conversational turn-taking analysis, prosodic rhythm detection, autism accessibility technology, algorithmic social norming]
 ---
 
 In November 2018, a developer in Stockholm released an app called Samantics. It tracked conversational turn-taking in real time. A small light on your phone screen shifted from green to amber to red as you spoke, measuring duration, interruption frequency, pause length. It was designed for autistic users. The marketing copy said it would help us "navigate social flow more naturally."

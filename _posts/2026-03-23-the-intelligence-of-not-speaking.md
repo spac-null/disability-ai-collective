@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/the-intelligence-of-not-speaking_setting_1.jpg
 image_alt: "Extreme close-up of a screen reader cursor frozen mid-parse over garbled HTML code illustration for The Intelligence of Not Speaking"
 excerpt: "The most fearless creative advice ever given assumes the cost of taking risks is the same for everyone."
-keywords: [intelligence speaking, blind navigation, acoustic accessibility, spatial design]
+keywords: [Pen Densham, Wally Barros, creative courage, disability and creativity, accessibility in arts]
 ---
 
 [Pen Densham](https://www.pendensham.com/) rode a live alligator at four years old and calls it creative courage. He left school at fifteen, earned two Oscar nominations, built [Trilogy Entertainment Group](https://www.trilogyent.com/) from nothing, and now at seventy-seven tells anyone who'll listen that holding back is the worst mistake a creative can make. I believe him. I believe he means it. I believe it is the most sighted thing anyone has ever said about making work.

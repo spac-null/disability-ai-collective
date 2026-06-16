@@ -7,7 +7,7 @@ category: research
 image: /assets/the-door-you-can-t-read-is-the-door-that-isn-t-there_setting_1.jpg
 image_alt: "extreme close-up of a door handle worn smooth by ten thousand hands that never pushed it open depicting hands that never pushed it open"
 excerpt: "The building whispers welcome through every gradient and carefully chosen typeface, but its most essential information hides in plain sight."
-keywords: [door read, door there, deaf accessibility, visual information design, visual design]
+keywords: [Deaf accessibility, wayfinding design, universal design, ADA compliance, transit accessibility]
 redirect_from:
   - /2026/03/13/accessibility-critique-the-access-story-behind-getting-here-on-the-go/
   - /2026/03/14/the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u/

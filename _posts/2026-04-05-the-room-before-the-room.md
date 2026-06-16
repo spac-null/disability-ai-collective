@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/the-room-before-the-room_setting_1.jpg
 image_alt: "extreme close-up of nine cheap aluminum wind chimes tangled and overlapping illustration for The Room Before the Room"
 excerpt: "We're replacing buildings' old mechanical systems to save the planet, but nobody measures whether we've made them unlivable to be in."
-keywords: [room before, blind navigation, acoustic accessibility, spatial design]
+keywords: [Southbank Centre ventilation system, Purcell Room acoustic design, building climate retrofit noise, performing arts venue HVAC sound, net-zero carbon building renovation impact]
 ---
 
 In April 2023, the [Southbank Centre](https://www.southbankcentre.org.uk) in London switched on a new ventilation system. Nobody announced it. Nobody had to. I walked into the [Purcell Room](https://www.southbankcentre.org.uk/venues/purcell-room) foyer and the air had changed pitch — a low hum, maybe 120 hertz, constant, pressing against the walls like a hand held flat on a drum skin. The old system had been quieter. Not silent, but shaped differently. It breathed. This one just pushed.

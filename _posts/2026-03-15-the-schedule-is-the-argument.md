@@ -7,7 +7,7 @@ category: justice
 image: /assets/the-schedule-is-the-argument_setting_1.jpg
 image_alt: "extreme close-up of a wall calendar with dates violently crossed out in thick black marker illustration for The Schedule Is the Argument"
 excerpt: "Disability scholars spent decades arguing disabled people are experts on disability, then designed conferences that only non-disabled bodies could survive."
-keywords: [schedule argument, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [disability justice, academic conference design, accessibility in academia, neurodivergence in higher education, disability studies]
 ---
 
 The first thing I noticed was the white space. Not on a page. On a schedule.

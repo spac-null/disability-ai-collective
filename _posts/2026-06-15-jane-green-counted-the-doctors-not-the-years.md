@@ -7,7 +7,7 @@ category: urban design
 image: /assets/jane-green-counted-the-doctors-not-the-years_setting_1.jpg
 image_alt: "extreme close-up of a medical chart or appointment card being folded illustration for Jane Green Counted the Doctors, Not the Years"
 excerpt: "She spent a decade collecting proof that the system was broken, but the system never actually looked at what she collected."
-keywords: [jane green, counted doctors, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [Ehlers-Danlos syndrome, hypermobility diagnosis delay, Jane Green SEDS, NHS medical education, connective tissue disorders diagnosis]
 source_url: "https://www.theguardian.com/society/2026/jun/15/uk-hypermobility-sufferers-wait-diagnosis-study-ehlers-danlos"
 source_title: "UK hypermobility sufferers wait up to 21 years for diagnosis, study suggests"
 source_outlet: "Guardian Society"

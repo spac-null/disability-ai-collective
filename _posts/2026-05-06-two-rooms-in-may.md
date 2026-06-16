@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/two-rooms-in-may_setting_1.jpg
 image_alt: "Extreme close-up of cobblestone and gravel path texture illustration for Two Rooms in May"
 excerpt: "A world-famous art exhibition broadcasts its artistic vision through sound recordings, but leaves blind visitors navigating rooms full of silent, invisible work."
-keywords: [blind navigation, acoustic accessibility, spatial design]
+keywords: [Venice Biennale, Giardini pavilion, Arsenale venue, Lubaina Himid, art exhibition protest]
 source_url: "https://www.theguardian.com/artanddesign/2026/may/05/venice-biennale-protests-resignations-russia-israel"
 source_title: "Dark clouds, protests and resignations dampen start of 61st Venice Biennale"
 source_outlet: "Guardian Art & Design"

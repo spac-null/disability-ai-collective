@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/clyfford-still-museum-proves-painting-never-needed-eyes_setting_1.jpg
 image_alt: "Extreme close-up of a vinyl record groove under raking sidelight illustration for Clyfford Still Museum Proves Painting Never Needed Eyes"
 excerpt: "A museum calls it accessibility programming while accidentally proving that paintings were never meant to be seen in the first place."
-keywords: [clyfford still, museum proves, blind navigation, acoustic accessibility, spatial design]
+keywords: [Clyfford Still Museum, Still in Sound, abstract painting interpretation, sound art accessibility, synesthetic art exhibition]
 source_url: "https://hyperallergic.com/clyfford-still-museum-still-in-sound/"
 source_title: "Still in Sound"
 source_outlet: "Hyperallergic"

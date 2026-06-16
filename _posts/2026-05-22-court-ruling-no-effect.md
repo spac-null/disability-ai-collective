@@ -7,7 +7,7 @@ category: urban design
 image: /assets/court-ruling-no-effect_setting_1.jpg
 image_alt: "raw woodblock linocut relief print depicting raking side light"
 excerpt: "A court ruled she owes nothing four years ago, and the government is still collecting the debt."
-keywords: [court ruling, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [carer's allowance debt recovery, benefit tribunal rulings, unlawful wage deduction, UK welfare system enforcement, debt recovery pipeline]
 source_url: "https://www.theguardian.com/society/2026/may/20/dwp-pursued-womans-employer-for-nonexistent-benefit-debt"
 source_title: "DWP pursued woman\u2019s employer for nonexistent \u2018benefit debt\u2019"
 source_outlet: "Guardian Society"

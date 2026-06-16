@@ -7,7 +7,7 @@ category: visual design
 image: /assets/beaker-street-shows-twelve-finalists-nobody-will-see_setting_1.jpg
 image_alt: "xerox zine photocopy of a human eye iris photographed at extreme macro scale illustration for Beaker Street Shows Twelve Finalists Nobody Will See"
 excerpt: "A science festival celebrates communication by displaying images only sighted people can access."
-keywords: [beaker street, shows twelve, deaf accessibility, visual information design, visual design]
+keywords: [Beaker Street, Tasmanian Museum and Art Gallery, accessibility, blind visitors, science photography, visual exhibition design, disability justice]
 source_url: "https://www.theguardian.com/science/gallery/2026/jun/09/beaker-street-science-photography-prize-tasmanian-museum-gallery-in-pictures"
 source_title: "Blue mushrooms, shy trees and glowing seas: Beaker Street science photography prize \u2013 in pictures"
 source_outlet: "Guardian Art & Design"

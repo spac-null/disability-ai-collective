@@ -7,7 +7,7 @@ category: research
 image: /assets/two-rooms-one-number_setting_1.jpg
 image_alt: "Extreme close-up of human ear canal rendered as architectural cross-section illustration for Two Rooms, One Number"
 excerpt: "The technology that proves a space is loud cannot measure whether a blind person can navigate it."
-keywords: [rooms number, blind navigation, acoustic accessibility, spatial design]
+keywords: [Korenmarkt Ghent noise monitors, acoustic design architecture, reverberation time library, soundscape spatial information, Helsinki Oodi library acoustics]
 ---
 
 In March 2022, the city of Ghent installed sound-level monitors in the Korenmarkt, the stone square at the center of the old town. The monitors measured 47 decibels at 7 AM. By noon the number was 73. By evening it was 81. The monitors were placed for a noise-reduction initiative — complaints from residents about nightlife, the usual. The data did exactly what it was supposed to do. It told the city how loud things were.

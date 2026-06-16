@@ -10,7 +10,7 @@ image: /assets/2026-03-14-the-city-forgot-to-sound-design-its-streets-on-acousti
 image_alt: "Extreme close-up of wet asphalt tire treads glistening under raking sidelight illustration for The City Forgot to Sound-Design Its Streets: On Acoustic Wayfinding and Who Gets Left Behind"
 draft: false
 excerpt: "Cities obsess over how streets look. Almost no one asks how they sound — and that silence is a design choice that erases millions of people from public space."
-keywords: [city forgot, sound design, blind navigation, acoustic accessibility, acoustic culture]
+keywords: [universal design, acoustic accessibility, urban sound design, sensory urbanism, disability infrastructure]
 redirect_from:
   - /2026/03/13/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility/
 ---

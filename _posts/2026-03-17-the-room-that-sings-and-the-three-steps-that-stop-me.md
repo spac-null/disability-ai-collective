@@ -7,7 +7,7 @@ category: culture
 image: /assets/the-room-that-sings-and-the-three-steps-that-stop-me_setting_1.jpg
 image_alt: "extreme close-up of stone steps worn smooth by centuries of hands and feet depicting hands and feet"
 excerpt: "The stone that carries your sound for eleven seconds will not carry you up its three steps."
-keywords: [room sings, three steps, blind navigation, acoustic accessibility, spatial design]
+keywords: [accessibility in architecture, Janskerk Utrecht, acoustic design, disability exclusion, Sins Invalid]
 ---
 
 There is a church in Utrecht — the Janskerk — where a single handclap returns to you eleven seconds later. I know this because I stood in the nave in March 2019 and clapped once and counted. The stone gave it back to me so slowly I had time to forget I'd made the sound. I have never felt more precisely located in space. There are three steps at the west entrance and no ramp.

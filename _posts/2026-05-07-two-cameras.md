@@ -7,7 +7,7 @@ category: urban design
 image: /assets/two-cameras_setting_1.jpg
 image_alt: "extreme close-up of a camera's internal mirror mechanism catching crimson red light from the side illustration for Two Cameras"
 excerpt: "Photography's entire tradition was built on seeing, yet the most radical expansion of what photography could be came from someone who cannot see."
-keywords: [wheelchair accessibility, disability infrastructure, urban design]
+keywords: [Photography as a Way of Life, Minor White, Aaron Siskind, Harry Callahan, Evgen Bavčar]
 source_url: "https://www.theguardian.com/artanddesign/gallery/2026/may/06/princeton-art-photography-exhibition"
 source_title: "Backflips, boulders and dancing dogs: the images that shaped art photography \u2013 in pictures"
 source_outlet: "Guardian Art & Design"

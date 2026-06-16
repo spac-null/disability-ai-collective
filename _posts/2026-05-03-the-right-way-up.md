@@ -7,7 +7,7 @@ category: urban design
 image: /assets/the-right-way-up_setting_1.jpg
 image_alt: "Extreme close-up of a painting frame's corner joint illustration for The Right Way Up"
 excerpt: "He spent decades forcing people to see the world differently\u2014the same way disabled people already had to."
-keywords: [wheelchair accessibility, disability infrastructure, urban design]
+keywords: [Georg Baselitz, inverted paintings, visual processing disorder, neurodiversity in art, neurotypical perspective]
 source_url: "https://www.theguardian.com/artanddesign/2026/apr/30/german-artist-georg-baselitz-dies"
 source_title: "German artist Georg Baselitz dies aged 88"
 source_outlet: "Guardian Art & Design"

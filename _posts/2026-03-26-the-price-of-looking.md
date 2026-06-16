@@ -7,7 +7,7 @@ category: visual design
 image: /assets/the-price-of-looking_setting_1.jpg
 image_alt: "extreme close-up of a museum placard being held at an angle illustration for The Price of Looking"
 excerpt: "Museums charge visitors to enter but use invisible fees\u2014unreadable text, unwired captions, inaccessible PDFs\u2014to keep some people out for free."
-keywords: [price looking, deaf accessibility, visual information design, visual design]
+keywords: [museum accessibility design, Rijksmuseum Amsterdam renovation, museum wayfinding signage, universal design museums, museum ticket pricing policy]
 ---
 
 In March 2026, ministers in London floated charging overseas tourists to enter national museums. The proposal treated museums as revenue sources. I read it as a problem about how museums communicate with visitors.

@@ -7,7 +7,7 @@ category: urban design
 image: /assets/someone-is-awake-inside-the-sedated-body_setting_1.jpg
 image_alt: "extreme close-up of surgical overhead light casting sharp shadow across anonymous hands adjusting knobs and dials depicting hands adjusting knobs and dials"
 excerpt: "Doctors relax only after you stop being conscious enough to notice they've relaxed."
-keywords: [someone awake, inside sedated, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [spinal cord injury surgery, anesthesia awareness, T6 spinal cord injury, surgical sedation experiences, patient autonomy in operating room]
 source_url: "https://www.theguardian.com/lifeandstyle/2026/may/26/surgical-assistant-a-job-that-changed-me"
 source_title: "A job that changed me: As an anxious first-time surgical assistant, the casual workplace dynamics surprised me"
 source_outlet: "Guardian Society"

@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/lynette-yiadom-boakye-painted-fiction-but-the-wall_setting_1.jpg
 image_alt: "Extreme close-up of a painted canvas corner where thick brushstrokes overlap and obscure each other illustration for Lynette Yiadom-Boakye Painted Fiction But the Wall"
 excerpt: "Yiadom-Boakye's paintings communicate perfectly through color and composition, yet institutions insist they need theory written beside them to mean anything at all."
-keywords: [lynette yiadom, boakye painted, blind navigation, acoustic accessibility, spatial design]
+keywords: [Lynette Yiadom-Boakye, Project a Black Planet, Barbican, institutional curation, art interpretation, audio description art access]
 source_url: "https://www.theguardian.com/artanddesign/2026/jun/10/project-a-black-planet-review-barbican-london"
 source_title: "Project a Black Planet review: spits out dreary academic theory where it should sing"
 source_outlet: "Guardian Art & Design"

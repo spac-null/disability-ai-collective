@@ -7,7 +7,7 @@ category: visual design
 image: /assets/sixty-four-dollars-an-hour-is-museum-language-for-we_setting_1.jpg
 image_alt: "Extreme close-up of a hand holding a medication bottle label illustration for Sixty-Four Dollars an Hour is Museum Language for We"
 excerpt: "Museums demand equity in their missions while wages systematically exclude the disabled workers who need healthcare most."
-keywords: [sixty four, dollars hour, deaf accessibility, visual information design, visual design]
+keywords: [museum worker unionization, Seattle Art Museum labor strike, disability access museum employment, museum worker wages benefits, precarious arts sector jobs]
 source_url: "https://hyperallergic.com/seattle-art-museum-workers-move-to-unionize/"
 source_title: "Seattle Art Museum Workers Move to Unionize"
 source_outlet: "Hyperallergic"

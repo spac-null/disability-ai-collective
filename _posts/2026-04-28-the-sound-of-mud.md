@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/the-sound-of-mud_setting_1.jpg
 image_alt: "extreme close-up of a white cane tip striking gravel in sharp focus illustration for The Sound of Mud"
 excerpt: "The space celebrated as most accessible to disabled children renders a blind visitor completely unable to navigate it."
-keywords: [blind navigation, acoustic accessibility, spatial design]
+keywords: [Yorkshire Sculpture Park, Henry Moore sculptures, outdoor art venues, sensory experience art, mobility disabilities art access]
 source_url: "https://www.theguardian.com/artanddesign/2026/apr/27/children-art-exhibition-yorkshire-sculpture-park"
 source_title: "There will be mud! Could my child (and buggy) survive a day at a sculpture park?"
 source_outlet: "Guardian Art & Design"

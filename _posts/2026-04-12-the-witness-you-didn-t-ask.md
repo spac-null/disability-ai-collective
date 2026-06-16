@@ -7,7 +7,7 @@ category: urban design
 image: /assets/the-witness-you-didn-t-ask_setting_1.jpg
 image_alt: "Extreme close-up of a human finger pressing against a computer keyboard key that won't depress illustration for The Witness You Didn't Ask"
 excerpt: "A whistleblower was celebrated for speaking up for disabled people whose own reports had already been ignored."
-keywords: [witness didn, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [disability rights, whistleblower protection laws, Henri Lefebvre theory, vulnerable persons testimony, disabled witnesses, Australia disability services 2024, institutionalized ableism]
 source_url: "https://www.theguardian.com/australia-news/2026/apr/11/ndis-job-workers-whistleblower-protections-ntwnfb"
 source_title: "Susan was forced out of a disability support job after speaking out. Are NDIS whistleblower laws still too weak?"
 source_outlet: "Guardian World"

@@ -10,7 +10,7 @@ excerpt: "The city measures accessibility in ramps and buttons while disabled pe
 image: /assets/2026-03-14-crip-time-is-real-time-the-hidden-scheduling-tax-of-inaccessible-cities_setting_1.jpg
 image_alt: "Extreme close-up of a wall-mounted analog clock face with hands stuck between numbers depicting hands stuck between numbers"
 draft: false
-keywords: [crip time, real time, wheelchair accessibility, disability infrastructure]
+keywords: [accessibility infrastructure, disability time tax, ADA compliance failures, crip time theory, inaccessible urban design, wheelchair accessibility barriers, disability studies]
 ---
 
 The meeting is eleven minutes away by car. I leave forty-seven minutes early.

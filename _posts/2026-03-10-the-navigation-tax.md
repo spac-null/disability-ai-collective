@@ -10,7 +10,7 @@ mood: "critical"
 pixel_art_count: 2
 image: /assets/the-navigation-tax_setting_1.jpg
 image_alt: "screen-print illustration of a wheelchair route diverted around city infrastructure, halftone overlay"
-keywords: [wheelchair accessibility, disability infrastructure, urban design]
+keywords: [wheelchair accessibility, navigation tax, urban barriers, curb cuts, sidewalk infrastructure]
 ---
 
 Last Tuesday I tried to get a coffee. The shop is three blocks from my apartment. Google Maps says it's a six-minute walk.

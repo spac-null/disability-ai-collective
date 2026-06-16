@@ -7,7 +7,7 @@ category: visual design
 image: /assets/an-accessible-castle_setting_1.jpg
 image_alt: "Extreme close-up of a medieval stone spiral staircase descending into darkness illustration for An Accessible Castle"
 excerpt: "A medieval fortress designed to exclude people was rebuilt to exclude no one, and somehow this seems unremarkable."
-keywords: [accessible castle, deaf accessibility, visual information design, visual design]
+keywords: [Norwich Castle accessibility redesign, Feilden+Mawson architects, Art Fund shortlist 2024, universal design accessibility, Norman keep wheelchair access]
 source_url: "https://www.theguardian.com/culture/2026/apr/20/v-and-a-east-storehouse-norwich-castle-national-museum-of-the-year-art-fund"
 source_title: "V&A East Storehouse and Norwich Castle among finalists for museum of the year"
 source_outlet: "Guardian Art & Design"

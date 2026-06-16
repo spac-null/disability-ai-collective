@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-plaque-and-the-pattern_setting_1.jpg
 image_alt: "extreme close-up of a hand holding a ballpoint pen mid-scratch across official military form illustration for The Plaque and the Pattern"
 excerpt: "An institution can officially acknowledge a war crime while leaving its entire definition of heroism untouched."
-keywords: [plaque pattern, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Ben Roberts-Smith, Victoria Cross, Australian War Memorial, SAS war crimes, Hall of Valour]
 source_url: "https://www.theguardian.com/australia-news/2026/apr/10/war-memorial-amends-ben-roberts-smith-display-after-former-soldier-charged-with-war-crimes"
 source_title: "Australian War Memorial amends Ben Roberts-Smith display after former soldier charged with war crimes"
 source_outlet: "Guardian World"

@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/when-the-room-hears-itself-back_setting_1.jpg
 image_alt: "Extreme close-up of a wooden flute or shakuhachi being held at raking sidelight illustration for When the Room Hears Itself Back"
 excerpt: "Museums made accessible for disabled people keep the architecture that disables disabled people."
-keywords: [room hears, itself back, blind navigation, acoustic accessibility, spatial design]
+keywords: [Museum accessibility, V&A Victoria and Albert Museum, Tate Modern, neurodivergent museum design, disability inclusion in museums]
 source_url: "https://www.theguardian.com/artanddesign/2026/may/16/asia-pacific-art-britain"
 source_title: "\u2018I couldn\u2019t believe we weren\u2019t falling over ourselves for it\u2019: Asia-Pacific art finally conquers Britain"
 source_outlet: "Guardian Art & Design"

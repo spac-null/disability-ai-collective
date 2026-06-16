@@ -7,7 +7,7 @@ category: urban design
 image: /assets/design-health-technology-twenty-projects-and-not_setting_1.jpg
 image_alt: "Extreme close-up of a hand holding a crumpled three-item list illustration for Design, Health, Technology \u2014 Twenty Projects and Not"
 excerpt: "Twenty design students created cutting-edge health technology that nobody with a disability tested it on."
-keywords: [design health, technology twenty, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [health technology design exhibition, UC Davis art design graduate students, medical device user experience, healthcare interface design, design criticism art museum]
 source_url: "https://hyperallergic.com/health-technology-art-and-design-intersect-at-uc-davis-graduate-showcase/"
 source_title: "Health, Technology, Art, and Design Intersect at UC Davis Graduate Showcase"
 source_outlet: "Hyperallergic"

@@ -7,7 +7,7 @@ category: visual design
 image: /assets/cave-paintings-for-nobody_setting_1.jpg
 image_alt: "Extreme close-up of cubicle partition wall edge illustration for Cave Paintings for Nobody"
 excerpt: "Spaces are preserved as authentic and left untouched, yet their original function becomes completely inaccessible to most visitors."
-keywords: [cave paintings, deaf accessibility, visual information design, visual design]
+keywords: [adaptive reuse galleries, universal design accessibility, Florian Meisenberg, industrial aesthetics architecture, disabled wayfinding]
 source_url: "https://hyperallergic.com/co-working-meets-art-at-brooklyns-newest-experimental-space/"
 source_title: "Co-Working Meets Art at Brooklyn\u2019s Newest Experimental Space"
 source_outlet: "Hyperallergic"

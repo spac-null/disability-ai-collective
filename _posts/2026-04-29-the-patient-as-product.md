@@ -7,7 +7,7 @@ category: urban design
 image: /assets/the-patient-as-product_setting_1.jpg
 image_alt: "Extreme close-up of a human hand holding a pill bottle with worn illustration for The Patient as Product"
 excerpt: "Governments are buying AI to identify sick people, but nobody's paying for what happens after they're found."
-keywords: [patient product, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [El Salvador healthcare AI, Google chronic disease monitoring, health equity digital divide, Maya Flux patient as product, Latin American healthcare privatization]
 source_url: "https://www.lemonde.fr/en/international/article/2026/04/28/el-salvador-s-president-entrusts-monitoring-of-chronic-patients-to-google-s-ai_6752934_4.html"
 source_title: "El Salvador's president entrusts monitoring of chronic patients to Google's AI"
 source_outlet: "Le Monde English"

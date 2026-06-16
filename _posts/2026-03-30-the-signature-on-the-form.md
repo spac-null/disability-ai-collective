@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/the-signature-on-the-form_setting_1.jpg
 image_alt: "extreme close-up of a standardized checklist form being folded and creased by weathered hands illustration for The Signature on the Form"
 excerpt: "A building passed every accessibility requirement while remaining completely inaccessible."
-keywords: [signature form, blind navigation, acoustic accessibility, spatial design]
+keywords: [accessibility standards, universal design, disability access, ADA compliance, ramp design specifications]
 ---
 
 In April 2017, a building inspector in Rotterdam signed off on a newly renovated community arts center. The ramp met code. Gradient of 1:12 — meaning one unit of rise for every twelve units of length, a measure of how steep the ramp is. Handrails at the correct height. Tactile indicators at top and bottom — textured surfaces designed to be felt underfoot to signal where the ramp begins and ends. Every measurement passed. Three weeks later, a wheelchair user arrived for the opening and could not get through the door at the top of the ramp. The door opened outward, toward the ramp, and there was no level landing wide enough to allow a chair to hold position while pulling the door open. She sat at the top of a perfect ramp, in front of a compliant door, and called someone inside to let her in.

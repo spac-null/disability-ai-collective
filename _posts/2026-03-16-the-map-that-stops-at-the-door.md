@@ -7,7 +7,7 @@ category: justice
 image: /assets/the-map-that-stops-at-the-door_setting_1.jpg
 image_alt: "Extreme close-up of a hand-drawn map torn mid-fold illustration for The Map That Stops at the Door"
 excerpt: "There are arts venues that have won accessibility awards. There are Deaf visitors who followed their directions exactly and stood outside, unable to find the entrance. These are, frequently, the same venues."
-keywords: [stops door, deaf accessibility, visual information design, visual design]
+keywords: [accessibility design, wayfinding for disabled people, inclusive information architecture, Universal Design, neurodiversity in public spaces]
 ---
 
 The phone says I've arrived. The building disagrees.

@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/the-sound-of-ninety-one_setting_1.jpg
 image_alt: "extreme close-up of a pool's surface tension at dawn illustration for The Sound of Ninety-One"
 excerpt: "She spent decades making art that mattered; the art world only noticed once it decided she was new."
-keywords: [sound ninety, blind navigation, acoustic accessibility, spatial design]
+keywords: [Rose Wylie, late bloomer artists, artistic career trajectory, Zwirner gallery Paris, room tone acoustic]
 source_url: "https://www.lemonde.fr/en/m-le-mag/article/2026/04/23/the-playful-world-of-british-painter-rose-wylie-exhibited-for-the-first-time-in-france_6752735_117.html"
 source_title: "The playful world of British painter Rose Wylie exhibited for the first time in France"
 source_outlet: "Le Monde English"

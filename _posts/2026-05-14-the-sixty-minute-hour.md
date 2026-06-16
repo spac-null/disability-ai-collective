@@ -7,7 +7,7 @@ category: urban design
 image: /assets/the-sixty-minute-hour_setting_1.jpg
 image_alt: "extreme close-up of a human mouth frozen mid-smile illustration for The Sixty-Minute Hour"
 excerpt: "The first carer arrives at 8:00 a.m. She has an identification badge and a timesheet app on her phone. She clocks in. Her sixty minutes are allocated by a"
-keywords: [sixty minute, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [social care funding UK, unpaid carers, care workforce contracts, personalised independence planning, family caregiving burden, care delivery outcomes, UK council social services]
 ---
 
 The first carer arrives at 8:00 a.m. She has an identification badge and a timesheet app on her phone. She clocks in. Her sixty minutes are allocated by a service procurement manager who has never been in this flat: fifteen for the transfer from bed to chair, twenty-five for washing and dressing, ten for a simple breakfast, ten for tidying. The contract, valued at twenty-two pounds an hour, stipulates these timings. A variance of more than ten percent requires an incident report. The movements are efficient, practiced, impersonal. They are not unkind. They are simply not a conversation. At 9:00 a.m., she clocks out. The system has recorded a successful care delivery outcome.

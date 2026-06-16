@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-oldest-trick-in-the-statue-book_setting_1.jpg
 image_alt: "extreme close-up of a bronze statue's eye socket filled with crimson red paint dripping downward illustration for The Oldest Trick in the Statue Book"
 excerpt: "Art that breaks every rule gets instant approval while art that follows every rule gets rejected for 11 centimetres."
-keywords: [oldest trick, statue book, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Banksy statue Waterloo Place, public art planning permission, City of Westminster heritage guidelines, allegory of Justice blindness, street art regulation]
 source_url: "https://www.theguardian.com/artanddesign/2026/apr/30/banksy-signature-london-statue-man-marching-flag-waterloo-place"
 source_title: "Banksy confirms statue of man blinded by flag in London is his work"
 source_outlet: "Guardian Art & Design"

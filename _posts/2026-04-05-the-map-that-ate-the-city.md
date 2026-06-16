@@ -7,7 +7,7 @@ category: visual design
 image: /assets/the-map-that-ate-the-city_setting_1.jpg
 image_alt: "extreme close-up of a hand holding a paper map illustration for The Map That Ate the City"
 excerpt: "Maps designed for clarity erase the very complexity they claim to serve."
-keywords: [deaf accessibility, visual information design, visual design]
+keywords: [Harry Beck, transit map design, Metrolinx Toronto, schematic map cartography, information architecture]
 ---
 In March 2025, Metrolinx, Toronto's regional transit planning and funding agency, unveiled its redesigned transit map for the Greater Toronto and Hamilton Area. Cleaner lines, smoother curves, a colour palette tested for legibility. I pulled it up on a screen and stared at it for eleven minutes. Not because it was beautiful. Because I was counting what had been removed.
 

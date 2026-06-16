@@ -7,7 +7,7 @@ category: justice
 image: /assets/the-case-study-with-no-second-act_setting_1.jpg
 image_alt: "Extreme close-up of a rubber stamp mid-strike against deep violet paper illustration for The Case Study With No Second Act"
 excerpt: "Disability services love publishing transformation stories — they just never tell you if anyone's life actually changed."
-keywords: [case study, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [government service design, UX case studies, accessibility audit measurement, digital transformation follow-up, council service redesign, disability access implementation, Melbourne tram accessibility]
 ---
 
 In April 2023, a London borough council published a case study about how they redesigned the screen where tenants manage their housing payments. Fourteen pages. Process maps, user journey diagrams, before-and-after screenshots. The old system forced tenants to click through seven screens to tell the council their situation had changed. The new one required two. The case study called this "a transformative intervention." I read it the week it came out. I have checked back every quarter since. The council has never published a follow-up.

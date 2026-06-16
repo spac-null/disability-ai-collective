@@ -7,7 +7,7 @@ category: urban design
 image: /assets/mit-tech-review-publishes-productivity-article-without_setting_1.jpg
 image_alt: "Extreme close-up of rheumatoid arthritic hands frozen mid-type on a mechanical keyboard depicting hands frozen mid-type on a mechanical keyboard"
 excerpt: "AI productivity guides promise to free small businesses from tedious work, but the businesses that need that freedom most can't access the systems being freed."
-keywords: [tech review, publishes productivity, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [AI accessibility, adaptive technology procurement, business accessibility costs, disability accommodations infrastructure, ADA compliance small business, universal design barriers, assistive technology implementation]
 source_url: "https://www.technologyreview.com/2026/06/02/1138227/how-small-businesses-can-leverage-ai/"
 source_title: "How small businesses can leverage AI"
 source_outlet: "MIT Tech Review"

@@ -7,7 +7,7 @@ category: urban design
 image: /assets/determined-to-disappear_setting_1.jpg
 image_alt: "extreme close-up of a two-inch concrete lip edge casting sharp shadow illustration for Determined to Disappear"
 excerpt: "The museum built perfect access, then used language that made needing it seem like a personal achievement."
-keywords: [determined disappear, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [disability rights, Doug Paulley, UK Supreme Court wheelchair access, ableism language, accessibility discrimination]
 ---
 
 In July 2023, the Grand Egyptian Museum posted promotional material calling disabled visitors "People of Determination" and announcing a fully accessible cultural experience. Six thousand kilometres away, in Sheffield, a disabled man named [Doug Paulley](https://www.supremecourt.uk/cases/uksc2014-0000296.html) had already spent a decade in and out of courts over a bus access dispute. In 2007, a bus driver refused to ask a passenger with a pushchair to move from the wheelchair space so Paulley could board. When the bus company argued they could only request, not require, passengers to move, Paulley took the case to the UK Supreme Court. He won in January 2017. The ruling established that bus companies have a legal obligation to enforce wheelchair space access, not merely ask for it politely. It was a landmark decision about the ordinary, everyday right to public transport. The ruling changed nothing about the bus. It changed everything about the word for what happened to him. What happened to him was discrimination. Not a lack of determination.

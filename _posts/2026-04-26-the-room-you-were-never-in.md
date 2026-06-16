@@ -7,7 +7,7 @@ category: visual design
 image: /assets/the-room-you-were-never-in_setting_1.jpg
 image_alt: "extreme close-up of a metronome pendulum mid-swing casting sharp shadow across burnt orange paper illustration for The Room You Were Never In"
 excerpt: "The gold standard of in-person connection excluded her completely, while the digital shift everyone mourns as loss was her first moment of true access."
-keywords: [room never, deaf accessibility, visual information design, visual design]
+keywords: [Deaf accessibility in education, office hours digital communication, sign language interpretation barriers, Devi Sridhar, synchronous learning accessibility]
 source_url: "https://www.theguardian.com/commentisfree/2026/apr/25/phones-social-media-damaging-mental-health"
 source_title: "Even without social media, phones have a subtle, damaging effect on our mental health | Devi Sridhar"
 source_outlet: "Guardian Society"

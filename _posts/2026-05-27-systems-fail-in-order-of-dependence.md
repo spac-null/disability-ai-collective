@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/systems-fail-in-order-of-dependence_setting_1.jpg
 image_alt: "extreme close-up of a refrigerator thermometer frozen at exactly 5\u00b0C illustration for Systems Fail in Order of Dependence"
 excerpt: "Cuba built a healthcare system so good it survived fifty years of blockade, then collapsed when the blockade finally worked."
-keywords: [systems fail, order dependence, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Cuba fuel crisis 2026, US oil embargo, healthcare system collapse, supply chain dependency, critical infrastructure failure]
 source_url: "https://www.lemonde.fr/en/international/article/2026/05/25/in-cuba-an-unprecedented-health-crisis-is-deepening-under-us-oil-blockade_6753797_4.html"
 source_title: "In Cuba, an unprecedented health crisis is deepening under US oil blockade"
 source_outlet: "Le Monde English"

@@ -7,7 +7,7 @@ category: visual design
 image: /assets/the-map-that-only-shows-one-road_setting_1.jpg
 image_alt: "Extreme close-up of a coffee kiosk shutter half-rolled down illustration for The Map That Only Shows One Road"
 excerpt: "We can now predict which bodies will fail the drug, but we still call it a breakthrough in understanding the drug."
-keywords: [only shows, deaf accessibility, visual information design, visual design]
+keywords: [GLP-1 drugs, pharmacogenomics, weight-loss medications, Rotterdam hospital wayfinding, universal design]
 source_url: "https://www.theguardian.com/science/2026/apr/08/dna-could-help-explain-why-weight-loss-jabs-may-not-work"
 source_title: "Genetics may help explain why results from weight-loss jabs vary, say scientists"
 source_outlet: "Guardian Society"

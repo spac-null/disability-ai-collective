@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/the-economists-cannot-hear-the-work-that-already_setting_1.jpg
 image_alt: "extreme close-up of weathered fingers holding a handwritten ledger with crossed-out numbers and margin notes illustration for The Economists Cannot Hear the Work That Already"
 excerpt: "AI productivity is being measured by people who have never experienced the unmeasured work that AI just made possible."
-keywords: [economists cannot, hear work, blind navigation, acoustic accessibility, spatial design]
+keywords: [AI accessibility for disabled workers, MIT Tech Review AI impact study, disabled people AI adoption, AI productivity measurement gaps, workplace accessibility datasets]
 source_url: "https://www.technologyreview.com/2026/04/06/1135187/the-one-piece-of-data-that-could-actually-shed-light-on-your-job-and-ai/"
 source_title: "The one piece of data that could actually shed light on your job and AI"
 source_outlet: "MIT Tech Review"

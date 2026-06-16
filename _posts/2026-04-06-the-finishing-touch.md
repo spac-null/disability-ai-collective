@@ -7,7 +7,7 @@ category: urban design
 image: /assets/the-finishing-touch_setting_1.jpg
 image_alt: "Extreme close-up of a architectural blueprint corner being folded and creased by fingers illustration for The Finishing Touch"
 excerpt: "A theatre built from scratch with unlimited resources still locked disabled people out before anyone thought to check if they could enter."
-keywords: [finishing touch, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [Hunger Games stage adaptation London, wheelchair accessibility theatre design, architectural critical path, universal design construction, ADA compliance venues]
 ---
 In June 2025, a purpose-built theatre in London opened its doors for the first preview of a Hunger Games stage adaptation — a story about survival and power. Purpose-built. Not retrofitted, not repurposed, not a Victorian hall with a listed façade (a building legally protected as historically significant) nobody can touch. Built from dirt. And on the first night, wheelchair users could not reach their seats.
 

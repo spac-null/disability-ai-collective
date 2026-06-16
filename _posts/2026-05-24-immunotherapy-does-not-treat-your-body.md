@@ -7,7 +7,7 @@ category: visual design
 image: /assets/immunotherapy-does-not-treat-your-body_setting_1.jpg
 image_alt: "extreme close-up of a human joint cross-section rendered as xerox zine photocopy distortion illustration for Immunotherapy Does Not Treat Your Body"
 excerpt: "Immunotherapy teaches your body to recognize itself, but the treatment only works if your body has clear borders to begin with."
-keywords: [immunotherapy does, treat your, deaf accessibility, visual information design, visual design]
+keywords: [immunotherapy cancer treatment, autoimmune disease rheumatology, immune system biology, military metaphor medicine, body sovereignty concept]
 source_url: "https://www.theguardian.com/science/2026/may/22/what-are-immunotherapies-and-how-do-they-treat-cancer-and-other-conditions"
 source_title: "What is immunotherapy and how does it treat cancer and other conditions?"
 source_outlet: "Guardian Society"

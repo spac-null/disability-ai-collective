@@ -7,7 +7,7 @@ category: visual design
 image: /assets/the-body-the-algorithm-imagined_setting_1.jpg
 image_alt: "Extreme close-up of a hand adjusting a lever or dial on industrial perforated metal illustration for The Body the Algorithm Imagined"
 excerpt: "Algorithms designed to measure consistency end up measuring the body's capacity to hide its own needs."
-keywords: [body algorithm, deaf accessibility, visual information design, visual design]
+keywords: [gig economy algorithm bias, algorithmic discrimination workers, AI workplace monitoring, platform deactivation patterns, algorithm consistency metrics, algorithmic injustice gender, algorithmic bias disability]
 source_url: "https://theconversation.com/algorithms-dont-care-how-ai-worsens-the-double-burden-for-indonesias-female-gig-workers-279978"
 source_title: "Algorithms don\u2019t care: how AI worsens the double burden for Indonesia\u2019s female gig workers"
 source_outlet: "The Conversation"

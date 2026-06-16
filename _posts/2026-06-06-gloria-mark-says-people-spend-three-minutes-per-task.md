@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/gloria-mark-says-people-spend-three-minutes-per-task_setting_1.jpg
 image_alt: "extreme close-up of a screenreader cursor blinking on black text illustration for Gloria Mark Says People Spend Three Minutes Per Task"
 excerpt: "They measure attention by tracking eyes, but attention happens everywhere else."
-keywords: [gloria mark, says people, blind navigation, acoustic accessibility, spatial design]
+keywords: [Gloria Mark, attention span research, screen reader accessibility, SXSW London, digital distraction measurement, neurodivergent attention patterns, productivity metrics bias]
 source_url: "https://www.technologyreview.com/2026/06/05/1138427/are-ai-chatbots-making-us-lose-control-of-our-brains/"
 source_title: "Are AI chatbots making us lose control of our brains?"
 source_outlet: "MIT Tech Review"

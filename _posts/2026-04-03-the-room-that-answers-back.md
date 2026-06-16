@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/the-room-that-answers-back_setting_1.jpg
 image_alt: "extreme close-up of pool tile edge where water meets grout illustration for The Room That Answers Back"
 excerpt: "We designed a perfect system for disabled people that removed the very information disabled people use to navigate."
-keywords: [room answers, blind navigation, acoustic accessibility, spatial design]
+keywords: [wayfinding design for blind users, Meijendel visitor centre, Tate Modern audio description, echolocation navigation, universal design accessibility]
 ---
 In May 2016, the [Meijendel visitor centre](https://www.meijendel.nl/) outside The Hague opened with a wayfinding system designed for "all minds." Textured floor strips, color-coded zones, simplified pictograms, audio beacons at every junction—four interlocking strategies. The designers won an award. In December 2016, the [Tate Modern](https://www.tate.org.uk/visit/tate-modern) switched off its audio description guides for three weeks during a gallery rehang and replaced them with nothing. No award. No press release. No one noticed except the people who stopped coming.
 

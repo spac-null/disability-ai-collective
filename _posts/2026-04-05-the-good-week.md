@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-good-week_setting_1.png
 image_alt: "Setting \u2014 The Good Week"
 excerpt: "They celebrated employing disabled people while the conditions of celebration made work impossible for those same disabled people."
-keywords: [good week, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [autism employment, disability justice, neurodivergent workplace accommodation, West Midlands regional council, Siri Sage accessibility design]
 ---
 
 In September 2021, a regional council in the West Midlands won a national award for its autism employment programme. Twelve people had been placed in paid roles over eighteen months. The council's communications team posted about it fourteen times in one week. A photographer came. The twelve employees were asked to pose together outside the building, holding a framed copy of the award. I know this because one of them told me, in a forum, that she had called in sick the day of the photo. She said the fluorescent lighting in the atrium where they staged the shot made her nauseous, but she couldn't figure out how to explain that without sounding like she was complaining during the council's best week.

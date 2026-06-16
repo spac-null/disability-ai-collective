@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/the-frequency-you-already-know_setting_1.jpg
 image_alt: "extreme close-up of a stethoscope earpiece pressed against human skin illustration for The Frequency You Already Know"
 excerpt: "Disabled people have been diagnosing each other for decades, but the internet acts shocked when it happens by accident."
-keywords: [frequency already, blind navigation, acoustic accessibility, spatial design]
+keywords: [crowdsourced diagnosis, medical paternalism, patient expertise, ableism in healthcare, doctor-patient communication]
 source_url: "https://www.theguardian.com/technology/2026/apr/12/tiktok-diagnose-cancer-chronic-illnesses-doctors"
 source_title: "Dr TikTok: patients diagnose chronic illnesses with anonymous commenters\u2019 help"
 source_outlet: "Guardian Society"

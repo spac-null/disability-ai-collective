@@ -7,7 +7,7 @@ category: visual design
 image: /assets/the-floor-plan-they-can-t-read_setting_1.jpg
 image_alt: "extreme close-up of a hand drawing a floor plan with a pencil illustration for The Floor Plan They Can't Read"
 excerpt: "Disabled students are naturally gifted at spotting AI bias, yet literacy frameworks designed to teach AI bias detection don't account for how they already learn."
-keywords: [floor plan, they read, deaf accessibility, visual information design, visual design]
+keywords: [AI literacy frameworks, algorithmic intuition, machine learning bias detection, neurodivergent learning, Reaktor Education, AI curriculum design, critical thinking pedagogy]
 source_url: "https://theconversation.com/how-should-schools-teach-ai-3-models-to-consider-278041"
 source_title: "How should schools teach AI? 3 models to consider"
 source_outlet: "The Conversation"

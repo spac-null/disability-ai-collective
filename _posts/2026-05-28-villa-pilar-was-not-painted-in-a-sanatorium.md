@@ -7,7 +7,7 @@ category: visual design
 image: /assets/villa-pilar-was-not-painted-in-a-sanatorium_setting_1.jpg
 image_alt: "extreme close-up of a painter's hand mid-gesture illustration for Villa Pilar Was Not Painted in a Sanatorium"
 excerpt: "She painted architectural precision while drugs destroyed her ability to control her hands."
-keywords: [villa pilar, painted sanatorium, deaf accessibility, visual information design, visual design]
+keywords: [Leonora Carrington, Villa Pilar painting, Cardiazol treatment, Freud Museum, surrealist art psychiatric institutions]
 source_url: "https://www.theguardian.com/artanddesign/2026/may/28/leonora-carrington-work-painted-during-psychiatric-confinement-to-go-on-show-for-first-time"
 source_title: "Leonora Carrington work painted during psychiatric confinement to go on show for first time"
 source_outlet: "Guardian Art & Design"

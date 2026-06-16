@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/marilyn-monroe-s-pill-bottles-are-not-her-last-words_setting_1.jpg
 image_alt: "extreme close-up of a prescription bottle label half-peeled away illustration for Marilyn Monroe's Pill Bottles Are Not Her Last Words"
 excerpt: "Museums treat medication as evidence of tragedy, but medication is evidence of someone managing their life."
-keywords: [marilyn monroe, pill bottles, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Marilyn Monroe, Academy Museum of Los Angeles, Wellcome Collection, prescription drug history, museum curation ethics]
 source_url: "https://www.theguardian.com/film/2026/may/30/marilyn-monroe-exhibition-los-angeles"
 source_title: "\u2018America\u2019s sweetheart\u2019: exhibition explores Marilyn Monroe\u2019s complex relationship to stardom"
 source_outlet: "Guardian Art & Design"

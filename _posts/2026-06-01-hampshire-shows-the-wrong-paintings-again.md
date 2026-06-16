@@ -7,7 +7,7 @@ category: visual design
 image: /assets/hampshire-shows-the-wrong-paintings-again_setting_1.jpg
 image_alt: "Extreme close-up of a museum placard's embossed text catching raking sidelight illustration for Hampshire Shows the Wrong Paintings Again"
 excerpt: "Galleries celebrate discovering hidden work by the same artists whose popular paintings they've been selling for decades."
-keywords: [hampshire shows, wrong paintings, deaf accessibility, visual information design, visual design]
+keywords: [Elizabeth Blackadder, art world bias, gallery curation practices, museum exhibition narratives, art market gatekeeping]
 source_url: "https://www.theguardian.com/artanddesign/2026/may/31/elizabeth-blackadder-exhibition-burlingham-gallery-kingsclere"
 source_title: "Elizabeth Blackadder exhibition reveals wintry Tuscan landscapes and minimalist still lifes"
 source_outlet: "Guardian Art & Design"

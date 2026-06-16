@@ -7,7 +7,7 @@ category: visual design
 image: /assets/43-monets-crossed-an-ocean-the-wall-text-will-cross_setting_1.jpg
 image_alt: "Extreme close-up of museum wall text placard illustration for 43 Monets Crossed an Ocean. The Wall Text Will Cross"
 excerpt: "Museums built ramps to let disabled people in, then filled the space with explanations that assume only sighted people can think."
-keywords: [monets crossed, ocean wall, deaf accessibility, visual information design, visual design]
+keywords: [Paul Durand-Ruel, Impressionism accessibility, museum wall text, Monet exhibition Geelong Gallery, Rothko color perception]
 source_url: "https://www.theguardian.com/artanddesign/2026/jun/13/geelong-art-gallery-exhibition-impressionists-paul-durand-ruel"
 source_title: "One art dealer brought impressionism to America. Now his great-great-granddaughter is bringing it to Geelong"
 source_outlet: "Guardian Art & Design"

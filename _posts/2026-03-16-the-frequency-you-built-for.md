@@ -7,7 +7,7 @@ category: technology
 image: /assets/2026-03-16-the-frequency-you-built-for_setting_1.jpg
 image_alt: "screen-print illustration of city facades filtering sound waves, acoustic frequency patterns in halftone overlay"
 excerpt: "Every acoustic innovation announcement I read is a confession. The latest round of sound-absorbing facades tells you exactly what the city considers noise and who it considers the source."
-keywords: [frequency built, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [universal design, deaf accessibility, acoustic architecture, sensory perception disability, inclusive building design, assistive technology, accessibility standards]
 redirect_from:
   - /2026/03/12/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility/
 ---

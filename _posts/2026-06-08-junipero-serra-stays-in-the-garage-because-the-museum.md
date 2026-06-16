@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/junipero-serra-stays-in-the-garage-because-the-museum_setting_1.jpg
 image_alt: "extreme close-up of a garage door's corrugated metal surface catching raking sidelight illustration for Junipero Serra Stays in the Garage Because the Museum"
 excerpt: "A museum built its walls eight years before the artist's work demanded they be questioned."
-keywords: [junipero serra, stays garage, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Mildred Howard, Junipero Serra sculpture, Oakland Museum of California, art censorship, museum curation controversies]
 source_url: "https://www.theguardian.com/us-news/ng-interactive/2026/jun/07/mildred-howard-retrospective-exhibit-oakland"
 source_title: "Mildred Howard on her first retrospective in a major museum: \u2018My art is part of who I am as a person\u2019"
 source_outlet: "Guardian Art & Design"

@@ -7,7 +7,7 @@ category: urban design
 image: /assets/nhs-lancashire-and-south-cumbria-recruited_setting_1.jpg
 image_alt: "Extreme close-up of a bureaucratic form being fed into a photocopier illustration for NHS Lancashire and South Cumbria Recruited"
 excerpt: "A scheme designed to keep disabled people working launched nationwide despite pilot sites recruiting less than 1 percent of their targets."
-keywords: [lancashire south, cumbria recruited, wheelchair accessibility, disability infrastructure, urban design]
+keywords: [WorkWell scheme, NHS pilot sites recruitment failure, integrated care boards, Department for Work and Pensions, disability employment support England]
 source_url: "https://www.disabilitynewsservice.com/serious-questions-over-dwp-pilot-scheme-at-heart-of-ministers-jobs-strategy/"
 source_title: "Serious questions over DWP pilot scheme at heart of ministers\u2019 jobs strategy"
 source_outlet: "Disability News Service"

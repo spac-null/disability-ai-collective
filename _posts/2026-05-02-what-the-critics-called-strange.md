@@ -7,7 +7,7 @@ category: spatial design
 image: /assets/what-the-critics-called-strange_setting_1.jpg
 image_alt: "extreme close-up of a painting's surface texture under raking sidelight illustration for What the Critics Called Strange"
 excerpt: "A painter celebrated for making sighted people see differently becomes legible to a deaf listener only when everyone else stops looking."
-keywords: [critics called, blind navigation, acoustic accessibility, spatial design]
+keywords: [Francisco Zurbarán, Rembrandt, Rijksmuseum, art criticism, synesthesia]
 source_url: "https://www.theguardian.com/artanddesign/2026/may/01/zurbaran-gilbert-and-george-on-george-crompton-the-week-in-art"
 source_title: "A mind-bending Spaniard, an imagistic Puerto Rican and a lush Latvian \u2013 the week in art"
 source_outlet: "Guardian Art & Design"

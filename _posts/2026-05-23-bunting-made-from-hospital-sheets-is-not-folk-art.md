@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/bunting-made-from-hospital-sheets-is-not-folk-art_setting_1.jpg
 image_alt: "Extreme close-up of crumpled hospital-issue cotton sheet fabric illustration for Bunting Made From Hospital Sheets Is Not Folk Art"
 excerpt: "The art institutions celebrate disability as creative fuel while the disabled artists' actual innovations come from the moments when illness makes creation impossible."
-keywords: [bunting made, hospital sheets, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Flare Up exhibition Goldsmiths, DWP sanctions disabled artists, Arts Council England disability funding, Sarah Chen Marcus Williams, Mariana Lemos curator]
 source_url: "https://www.theguardian.com/artanddesign/2026/may/22/flare-up-cca-goldsmiths-racheal-crowther-derek-jarman-abi-palmer-bella-milroy-lizzy-rose"
 source_title: "Near death experiences, \u2018crip memes\u2019 and the tyranny of the DWP: the new exhibition powered by illness and disability"
 source_outlet: "Guardian Art & Design"

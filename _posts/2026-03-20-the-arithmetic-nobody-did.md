@@ -7,7 +7,7 @@ category: neurodiversity
 image: /assets/the-arithmetic-nobody-did_setting_1.jpg
 image_alt: "Extreme close-up of a hand writing numbers in a ledger illustration for The Arithmetic Nobody Did"
 excerpt: "The commission that opened to guarantee disabled workers' rights existed in the same country, same month, paying some of them less than minimum wage."
-keywords: [arithmetic nobody, neurodivergent workplace, autism diagnosis, neurodiversity]
+keywords: [Disability Rights Commission UK, Remploy sheltered workshops, disabled worker wages, neurodivergence workplace discrimination, sub-minimum wage employment]
 ---
 
 In January 2001, the United Kingdom's [Disability Rights Commission](https://www.equalityhumanrights.com/) opened its doors. That same month, [Remploy](https://www.remploy.co.uk/) — the government-backed network of sheltered factories employing disabled workers — paid some of its workers less than two pounds an hour. Two events, same country, same month. One announced rights. The other priced them.

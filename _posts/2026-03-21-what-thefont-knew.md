@@ -7,7 +7,7 @@ category: visual design
 image: /assets/what-thefont-knew_setting_1.jpg
 image_alt: "extreme close-up of a hand tracing the edge of a bold geometric shape cut from deep violet paper illustration for What theFont Knew"
 excerpt: "Typefaces claim to be neutral design choices, yet they quietly decide who gets to participate in institutions."
-keywords: [thefont knew, deaf accessibility, visual information design, visual design]
+keywords: [Congress of Milan 1880, sign language ban, typography and power, Ellen Lupton, design politics]
 ---
 
 In June 1880, 164 hearing educators voted to ban sign language from Deaf schools across Europe. The resolution passed at the Congress of Milan. One Deaf delegate attended. The typeface on the congress proceedings was a heavy serif, the kind that signals authority. I think about that typeface more than I think about the vote itself.
