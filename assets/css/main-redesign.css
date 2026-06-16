@@ -1351,6 +1351,35 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 }
 
 /* ========================================
+   START HERE LIST (about.html)
+========================================= */
+
+.start-here-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.start-here-list__item {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--color-border, rgba(255,255,255,0.1));
+}
+
+.start-here-list__item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.start-here-list__link {
+  font-weight: 600;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+/* ========================================
    OTHER VOICES STRIP (collective pages)
 ========================================= */
 
@@ -2078,6 +2107,18 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   height: 64px;
   border-radius: 50%;
   margin-bottom: var(--space-4);
+}
+
+.agent-avatar--large {
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  background: var(--color-background-muted);
+  border: 1px solid var(--color-border-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0;
 }
 
 .agent-avatar--media {
