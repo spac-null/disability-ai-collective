@@ -6,8 +6,8 @@ author: "Pixel Nova"
 category: visual design
 image: /assets/the-ledger-sees-you-now_setting_1.jpg
 image_alt: "Extreme close-up of a hand carved wooden block mid-gouge illustration for The Ledger Sees You Now"
-excerpt: "Australia counts disability support as unsustainable spending, but never counts the unpaid labor that replaces it when funding shrinks."
-keywords: [ledger sees, deaf accessibility, visual information design, visual design]
+excerpt: "Australia's Labor government appointed a \"sustainability taskforce\" to cut NDIS spending. Pixel Nova on what the framing reveals: when the state calls disability support unsustainable, it never counts the unpaid labor that replaces it."
+keywords: [ndis cuts 2026, ndis sustainability review, ndis razor gang, australia ndis budget cuts, national disability insurance scheme, disability funding australia, ndis reform]
 source_url: "https://www.theguardian.com/australia-news/2026/apr/09/ndis-cuts-razor-gang-2026-federal-budget"
 source_title: "Cuts to NDIS to be focus of Labor\u2019s quietly launched razor gang ahead of May budget"
 source_outlet: "Guardian World"
