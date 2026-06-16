@@ -2493,36 +2493,37 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         return body
 
 
-    # Persona keyword seeds for SEO — search-intent oriented
-    _KEYWORD_SEEDS = {
-        "Pixel Nova":    ["deaf accessibility", "visual information design", "wayfinding disability", "sign language politics"],
-        "Siri Sage":     ["blind navigation", "acoustic accessibility", "sound design disability", "audio description"],
-        "Maya Flux":     ["wheelchair accessibility", "disability infrastructure", "urban accessibility barriers", "crip time"],
-        "Zen Circuit":   ["neurodivergent workplace", "autism diagnosis", "sensory processing disability", "neurodiversity"],
-    }
-    _KW_STOPWORDS = {"the","a","an","of","in","on","at","to","for","and","or","is","are","was","were","be","been","how","why","what","who","when","where","that","this","with","from"}
-
-    def _generate_keywords(self, title: str, author: str, categories: list) -> list:
-        """Generate 4-5 SEO-oriented keywords from title + persona + categories."""
-        seeds = self._KEYWORD_SEEDS.get(author, ["disability culture", "disability arts"])
-        # Extract meaningful nouns from title
-        title_words = [w.lower() for w in re.findall(r"\b[a-zA-Z]{4,}\b", title)
-                       if w.lower() not in self._KW_STOPWORDS]
-        # Build keyword list: 2 title-derived phrases + 2 persona seeds + 1 category
-        kws = []
-        if len(title_words) >= 2:
-            kws.append(" ".join(title_words[:2]))
-        if len(title_words) >= 4:
-            kws.append(" ".join(title_words[2:4]))
-        kws += seeds[:2]
-        if categories:
-            kws.append(categories[0].lower())
-        # Deduplicate, cap at 5
-        seen, out = set(), []
-        for k in kws:
-            if k not in seen:
-                seen.add(k); out.append(k)
-        return out[:5]
+    def _generate_keywords(self, title: str, content: str, author: str, categories: list) -> list:
+        """Generate 5-7 specific SEO keywords via LLM — proper nouns, named theories, exact search phrases."""
+        body_preview = content[:1500]
+        try:
+            raw = self._call_openai_compat_api(
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
+                system_prompt=(
+                    "You generate SEO keywords for Crip Minds, a disability culture publication. "
+                    "Return 5-7 keywords as a comma-separated list. No explanation, no numbering, no quotes. "
+                    "Rules: include specific proper nouns (people, institutions, named theories, artworks, legislation); "
+                    "include exact phrases people would type into Google to find this article; "
+                    "include the disability topic as it is actually searched (e.g. 'ndis cuts 2026', not 'disability funding'); "
+                    "do NOT use generic filler like 'disability culture', 'neurodiversity', 'urban design' unless the article is specifically about that concept. "
+                    "Think: what would someone type into Google the day they read this article in a newspaper?"
+                ),
+                user_prompt=(
+                    f"Title: {title}\nAuthor: {author}\n\nArticle excerpt:\n{body_preview}\n\n"
+                    "Return 5-7 comma-separated SEO keywords. Specific > generic. Proper nouns welcome."
+                ),
+                model="claude-haiku-4-5-20251001",
+                max_tokens=120,
+                timeout=30,
+                no_think=True,
+            )
+            # Parse comma-separated string into list, strip whitespace/quotes
+            kws = [k.strip().strip('"').strip("'") for k in raw.split(",") if k.strip()]
+            return kws[:7] if kws else ["disability culture", "disability arts"]
+        except Exception:
+            # Fallback: category-based generic
+            return [categories[0].lower()] if categories else ["disability culture"]
 
     def _generate_card_excerpt(self, title, content, author):
         """Generate a punchy one-liner for the article card — thesis payoff, not setup."""
@@ -2587,7 +2588,7 @@ category: {metadata['categories'][0].lower() if metadata['categories'] else 'res
 image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
 image_alt: {json.dumps(image_descriptions[0] if image_descriptions else 'Article illustration')}
 excerpt: {json.dumps(excerpt)}
-keywords: [{', '.join(self._generate_keywords(metadata['title'], metadata['author'], metadata['categories']))}]{_source_fields}{_score_field}
+keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metadata.get('author', ''), metadata['categories']))}]{_source_fields}{_score_field}
 ---
 
 """
