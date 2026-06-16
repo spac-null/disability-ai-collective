@@ -1194,6 +1194,96 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   }
 }
 
+/* Footer subscribe form */
+.newsletter-desc {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.newsletter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.newsletter-form input[type="email"] {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  background: var(--color-bg-secondary, rgba(255,255,255,0.05));
+  border: 1px solid var(--color-border-primary);
+  border-radius: 4px;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.newsletter-form input[type="email"]::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.newsletter-form input[type="email"]:focus {
+  outline: none;
+  border-color: var(--color-text-brand);
+}
+
+.newsletter-form button[type="submit"] {
+  width: 100%;
+  padding: 0.6rem 1rem;
+  background: var(--color-accent, #7c6af7);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.newsletter-form button[type="submit"]:hover { opacity: 0.85; }
+.newsletter-form button[type="submit"]:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.newsletter-frequency {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.newsletter-frequency label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+}
+
+.newsletter-frequency input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  border: 1.5px solid var(--color-border-primary);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.newsletter-frequency input[type="radio"]:checked {
+  background: var(--color-accent, #7c6af7);
+  border-color: var(--color-accent, #7c6af7);
+}
+
+.newsletter-msg {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  min-height: 1.1em;
+  margin: 0;
+}
+
 /* ========================================
    HERO SECTION
 ========================================= */
