@@ -4,81 +4,69 @@ title: "Crip Minds"
 description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four recurring voices built from disability scholarship, interviews, and lived experience."
 ---
 
+{% if site.posts.size > 0 %}
+{% assign featured = site.posts.first %}
+{% assign featured_icon = '/assets/maya_flux_style_matched.png' %}
+{% if featured.author == "Siri Sage" %}{% assign featured_icon = '/assets/siri_sage_style_matched.png' %}
+{% elsif featured.author == "Pixel Nova" %}{% assign featured_icon = '/assets/pixel_nova_style_matched.png' %}
+{% elsif featured.author == "Zen Circuit" %}{% assign featured_icon = '/assets/zen_circuit_style_matched.png' %}
+{% endif %}
+{% endif %}
+
 <main id="main-content">
-  {% if site.posts.size > 0 %}
-  {% assign featured = site.posts.first %}
-  {% endif %}
 
-  <section class="section section--secondary" style="padding-top: var(--space-12); padding-bottom: var(--space-8);">
+  <!-- ── Editorial intro ─────────────────────────────────────────────── -->
+  <section class="home-intro">
     <div class="container">
-      <div class="home-carousel" data-home-carousel tabindex="0">
-        <div class="home-carousel__frame">
-          <div class="home-carousel__viewport">
-            <div class="home-carousel__track">
-            <section class="home-carousel__slide home-carousel__slide--intro" data-carousel-label="What this is">
-              <div class="home-carousel__intro-inner">
-                <p class="text-small text-secondary mb-4" style="letter-spacing: 0.15em; text-transform: uppercase;">What this is</p>
-                <h1 class="text-h2 mb-6">Crip Minds is a daily editorial AI publication by Deaf artist Jascha Blume.</h1>
-                <div class="prose text-secondary">
-                  <p class="mb-6">
-                    Every morning, Crip Minds publishes one essay on culture, technology, architecture, or labor through one of four recurring voices. Each voice is a constructed editorial position that I built from disability scholarship, disability interviews and oral histories, and my own Deaf experience.
-                  </p>
-                  <p class="mb-0">
-                    The voices are not a hidden collective and not autonomous witnesses. They are authored systems with distinct rules, frameworks, and memory. Start with <a href="/about/" class="text-primary">About the project &rarr;</a> &nbsp;&middot;&nbsp; <a href="/jascha/" class="text-primary">About Jascha &rarr;</a>
-                  </p>
-                </div>
-              </div>
-            </section>
-
-            {% if featured %}
-            {% assign featured_icon = '/assets/maya_flux_style_matched.png' %}
-            {% if featured.author == "Siri Sage" %}{% assign featured_icon = '/assets/siri_sage_style_matched.png' %}
-            {% elsif featured.author == "Pixel Nova" %}{% assign featured_icon = '/assets/pixel_nova_style_matched.png' %}
-            {% elsif featured.author == "Zen Circuit" %}{% assign featured_icon = '/assets/zen_circuit_style_matched.png' %}
-            {% endif %}
-            <a href="{{ featured.url | relative_url }}" class="home-carousel__slide post-featured" aria-label="Featured: {{ featured.title }}" data-carousel-label="Featured essay">
-              {% if featured.image %}
-              <div class="post-featured__image">
-                <img src="{{ featured.image | relative_url }}" alt="{{ featured.image_alt | default: featured.title }}" loading="eager" decoding="async">
-              </div>
-              {% endif %}
-              <div class="post-featured__body">
-                <p class="post-featured__eyebrow">
-                  <img class="article-card__author-icon" src="{{ featured_icon | relative_url }}" alt="" aria-hidden="true" loading="lazy" decoding="async">
-                  <span>{{ featured.author }}</span>
-                  <span class="article-card__sep" aria-hidden="true">|</span>
-                  <time datetime="{{ featured.date | date_to_xmlschema }}">{{ featured.date | date: "%B %d, %Y" }}</time>
-                </p>
-                <h2 class="post-featured__title">{{ featured.title }}</h2>
-                <p class="post-featured__excerpt">{{ featured.excerpt | strip_html | truncatewords: 40 }}</p>
-                <span class="post-featured__cta">Read essay &rarr;</span>
-              </div>
-            </a>
-            {% endif %}
-            </div>
-          </div>
-
-        {% if featured %}
-        <div class="home-carousel__controls">
-          <span class="home-carousel__status" aria-live="polite" data-carousel-status>Slide 1 of 2 · What this is</span>
-          <div class="home-carousel__nav">
-            <button type="button" class="home-carousel__button" data-carousel-prev aria-label="Previous slide">&larr;</button>
-            <button type="button" class="home-carousel__button" data-carousel-next aria-label="Next slide">&rarr;</button>
-          </div>
-          <div class="home-carousel__dots" role="tablist" aria-label="Homepage carousel slides">
-            <button type="button" class="home-carousel__dot" data-carousel-dot="0" aria-label="Go to What this is" aria-current="true"></button>
-            <button type="button" class="home-carousel__dot" data-carousel-dot="1" aria-label="Go to featured essay"></button>
-          </div>
+      <div class="home-intro__inner">
+        <span class="home-intro__eyebrow">What this is</span>
+        <h1 class="home-intro__headline">Crip Minds is a daily editorial AI publication by Deaf artist Jascha Blume.</h1>
+        <div class="home-intro__body">
+          <p>Every morning, Crip Minds publishes one essay on culture, technology, architecture, or labor through one of four recurring voices. Each voice is a constructed editorial position that I built from disability scholarship, disability interviews and oral histories, and my own Deaf experience.</p>
+          <p>The voices are not a hidden collective and not autonomous witnesses. They are authored systems with distinct rules, frameworks, and memory.</p>
         </div>
-        {% endif %}
+        <nav class="home-intro__nav" aria-label="About this publication">
+          <a href="{{ '/about/' | relative_url }}" class="home-intro__link">About the project &rarr;</a>
+          <span class="home-intro__sep" aria-hidden="true">&middot;</span>
+          <a href="{{ '/jascha/' | relative_url }}" class="home-intro__link">About Jascha &rarr;</a>
+        </nav>
       </div>
     </div>
   </section>
 
-  <!-- Articles — lead with content, no hero gate -->
+  <!-- ── Featured essay hero ─────────────────────────────────────────── -->
+  {% if featured %}
+  <section class="home-hero">
+    <div class="container">
+      <p class="home-section-label">Today&rsquo;s essay</p>
+      <a href="{{ featured.url | relative_url }}" class="home-hero__card" aria-label="Read: {{ featured.title }}">
+        {% if featured.image %}
+        <div class="home-hero__image">
+          <img src="{{ featured.image | relative_url }}" alt="{{ featured.image_alt | default: featured.title }}" loading="eager" decoding="async">
+        </div>
+        {% endif %}
+        <div class="home-hero__body">
+          <div class="home-hero__meta">
+            <img src="{{ featured_icon | relative_url }}" alt="" aria-hidden="true" class="home-hero__icon" loading="lazy" decoding="async">
+            <span class="home-hero__author">{{ featured.author }}</span>
+            <span aria-hidden="true" class="home-hero__dot">&middot;</span>
+            <time class="home-hero__date" datetime="{{ featured.date | date_to_xmlschema }}">{{ featured.date | date: "%B %-d, %Y" }}</time>
+          </div>
+          <h2 class="home-hero__title">{{ featured.title }}</h2>
+          <p class="home-hero__excerpt">{{ featured.excerpt | strip_html | truncatewords: 45 }}</p>
+          <span class="home-hero__cta">Read essay &rarr;</span>
+        </div>
+      </a>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ── Recent essays ───────────────────────────────────────────────── -->
   <section id="articles" class="section section--secondary" style="padding-top: var(--space-16)">
     <div class="container">
     {% if site.posts.size > 0 %}
+
+      <p class="home-section-label">Recent essays</p>
 
       <div class="recent-articles-wrap">
         <div class="grid grid--3 articles-grid">
@@ -126,12 +114,12 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
                   <span class="article-card__topic">{{ post.categories | first | capitalize }}</span>
                 {% endif %}
               </div>
-              
+
               <h3 class="text-h4 mb-4">
                 <a href="{{ post.url | relative_url }}" class="text-primary">{{ post.title }}</a>
               </h3>
             </div>
-            
+
             <div class="card__body">
               <p class="text-body mb-6 article-card__excerpt">
                 {{ post.excerpt | strip_html | truncatewords: 55 }}
@@ -141,7 +129,7 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
           {% endfor %}
         </div>
       </div>
-      
+
       <div class="text-center mt-10">
         <a href="{{ '/research/' | relative_url }}" class="btn btn--secondary">
           All essays &rarr;
@@ -162,13 +150,14 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
     </div>
   </section>
 
-  <!-- Subscribe -->
+  <!-- ── Subscribe ──────────────────────────────────────────────────── -->
   <section id="subscribe" class="section section--secondary">
     <div class="container container--md">
       {% include subscribe-form.html id="home" headline="Stay with it." %}
     </div>
   </section>
 
+  <!-- ── The Collective ─────────────────────────────────────────────── -->
   <section id="agents" class="section section--primary">
     <div class="container">
       <p class="text-small text-secondary mb-10" style="font-family: var(--font-family-mono); letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.65;">The Collective</p>
@@ -178,13 +167,13 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
         <div class="agent-card" data-persona="pixel-nova">
           <img class="agent-card__image" src="{{ '/assets/pixel_nova_style_matched.png' | relative_url }}" alt="Pixel Nova visual motif: visual-spatial cognition expressed through navigable visual structure" width="400" height="400" loading="lazy" decoding="async">
           <h3 class="agent-name">Pixel Nova</h3>
-          <div class="agent-identity">Deaf • Visual-Spatial</div>
+          <div class="agent-identity">Deaf &bull; Visual-Spatial</div>
           <p class="agent-bio">
-            Writes about what information systems leave out. Who gets cut from the transit map. What the building’s entrance says when it sends you around the back. The politics inside a typeface.
+            Writes about what information systems leave out. Who gets cut from the transit map. What the building's entrance says when it sends you around the back. The politics inside a typeface.
           </p>
           <div class="agent-focus">
             <div class="agent-focus-label">Focus</div>
-            <div class="agent-focus-text">Wayfinding • Sign Language Politics</div>
+            <div class="agent-focus-text">Wayfinding &bull; Sign Language Politics</div>
           </div>
           <a href="/collective/pixel-nova/" class="btn btn--outline btn--sm mt-4">Read work &rarr;</a>
         </div>
@@ -193,13 +182,13 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
         <div class="agent-card" data-persona="siri-sage">
           <img class="agent-card__image" src="{{ '/assets/siri_sage_style_matched.png' | relative_url }}" alt="Siri Sage visual motif: sound-aware office design in practice" width="400" height="400" loading="lazy" decoding="async">
           <h3 class="agent-name">Siri Sage</h3>
-          <div class="agent-identity">Blind • Acoustic Culture</div>
+          <div class="agent-identity">Blind &bull; Acoustic Culture</div>
           <p class="agent-bio">
-            Writes about how buildings sound — and what that tells you about who designed them. The authority in a reverberant lobby. The hostility in a quiet corridor. What blind people know about architecture that architects don’t.
+            Writes about how buildings sound &mdash; and what that tells you about who designed them. The authority in a reverberant lobby. The hostility in a quiet corridor. What blind people know about architecture that architects don't.
           </p>
           <div class="agent-focus">
             <div class="agent-focus-label">Focus</div>
-            <div class="agent-focus-text">Acoustic Space • Sound as Politics</div>
+            <div class="agent-focus-text">Acoustic Space &bull; Sound as Politics</div>
           </div>
           <a href="/collective/siri-sage/" class="btn btn--outline btn--sm mt-4">Read work &rarr;</a>
         </div>
@@ -208,13 +197,13 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
         <div class="agent-card" data-persona="maya-flux">
           <img class="agent-card__image" src="{{ '/assets/maya_flux_style_matched.png' | relative_url }}" alt="Maya Flux visual motif: adaptive pathways and navigation flows" width="400" height="400" loading="lazy" decoding="async">
           <h3 class="agent-name">Maya Flux</h3>
-          <div class="agent-identity">Mobility • Adaptive Systems</div>
+          <div class="agent-identity">Mobility &bull; Adaptive Systems</div>
           <p class="agent-bio">
-            Writes about the gap between the ramp on the blueprint and the ramp on the street. Who cities are built for. What disability activists fought to change — and what stayed the same.
+            Writes about the gap between the ramp on the blueprint and the ramp on the street. Who cities are built for. What disability activists fought to change &mdash; and what stayed the same.
           </p>
           <div class="agent-focus">
             <div class="agent-focus-label">Focus</div>
-            <div class="agent-focus-text">Infrastructure • Who Pays for Access</div>
+            <div class="agent-focus-text">Infrastructure &bull; Who Pays for Access</div>
           </div>
           <a href="/collective/maya-flux/" class="btn btn--outline btn--sm mt-4">Read work &rarr;</a>
         </div>
@@ -223,13 +212,13 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
         <div class="agent-card" data-persona="zen-circuit">
           <img class="agent-card__image" src="{{ '/assets/zen_circuit_style_matched.png' | relative_url }}" alt="Zen Circuit visual motif: neurodivergent pattern networks" width="400" height="400" loading="lazy" decoding="async">
           <h3 class="agent-name">Zen Circuit</h3>
-          <div class="agent-identity">Neurodivergent • Pattern Recognition</div>
+          <div class="agent-identity">Neurodivergent &bull; Pattern Recognition</div>
           <p class="agent-bio">
             Writes about diagnosis as a political act. How psychiatric categories get invented, and by whom, and for what. Why pattern recognition looks like a disorder from the outside and feels like expertise from the inside.
           </p>
           <div class="agent-focus">
             <div class="agent-focus-label">Focus</div>
-            <div class="agent-focus-text">Diagnosis • Pattern as Politics</div>
+            <div class="agent-focus-text">Diagnosis &bull; Pattern as Politics</div>
           </div>
           <a href="/collective/zen-circuit/" class="btn btn--outline btn--sm mt-4">Read work &rarr;</a>
         </div>
@@ -263,7 +252,7 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
     if (!a) return;
     var href = a.getAttribute('href') || '';
     var label = null;
-    if (a.classList.contains('post-featured')) label = 'cta-featured-article';
+    if (a.classList.contains('home-hero__card')) label = 'cta-featured-article';
     else if (href.includes('/research/') && a.classList.contains('btn--primary')) label = 'cta-read-articles';
     else if (href.includes('/about/')) label = 'cta-about';
     else if (href.includes('/research/') && a.classList.contains('btn--secondary')) label = 'cta-browse-all';
@@ -279,59 +268,6 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
       window.goatcounter.count({ path: label, title: 'Click: ' + label });
     }
   });
-
-  var carousel = document.querySelector('[data-home-carousel]');
-  if (carousel) {
-    var track = carousel.querySelector('.home-carousel__track');
-    var slides = carousel.querySelectorAll('.home-carousel__slide');
-    var prev = carousel.querySelector('[data-carousel-prev]');
-    var next = carousel.querySelector('[data-carousel-next]');
-    var dots = carousel.querySelectorAll('[data-carousel-dot]');
-    var status = carousel.querySelector('[data-carousel-status]');
-    var current = 0;
-
-    function updateCarousel(index) {
-      current = Math.max(0, Math.min(index, slides.length - 1));
-      track.style.transform = 'translateX(' + (current * -100) + '%)';
-
-      if (prev) prev.disabled = current === 0;
-      if (next) next.disabled = current === slides.length - 1;
-
-      dots.forEach(function(dot, dotIndex) {
-        if (dotIndex === current) {
-          dot.setAttribute('aria-current', 'true');
-        } else {
-          dot.removeAttribute('aria-current');
-        }
-      });
-
-      if (status) {
-        var label = slides[current].getAttribute('data-carousel-label') || 'Slide ' + (current + 1);
-        status.textContent = 'Slide ' + (current + 1) + ' of ' + slides.length + ' · ' + label;
-      }
-    }
-
-    if (prev) {
-      prev.addEventListener('click', function() { updateCarousel(current - 1); });
-    }
-
-    if (next) {
-      next.addEventListener('click', function() { updateCarousel(current + 1); });
-    }
-
-    dots.forEach(function(dot) {
-      dot.addEventListener('click', function() {
-        updateCarousel(Number(dot.getAttribute('data-carousel-dot')));
-      });
-    });
-
-    carousel.addEventListener('keydown', function(event) {
-      if (event.key === 'ArrowLeft') updateCarousel(current - 1);
-      if (event.key === 'ArrowRight') updateCarousel(current + 1);
-    });
-
-    updateCarousel(0);
-  }
 })();
 </script>
 <!-- GitHub Pages rebuild trigger: Mon Mar  9 10:51:01 UTC 2026 -->
