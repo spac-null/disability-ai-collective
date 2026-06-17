@@ -275,10 +275,11 @@ layout: default
           <h2 class="related-articles__heading">More to Read</h2>
           <div class="related-articles__grid">
             {% for item in curated limit: 3 %}
+            {% assign item_post = site.posts | where: "url", item.url | first %}
             <a href="{{ item.url | relative_url }}" class="related-articles__card">
-              {% if item.image %}
+              {% if item_post.image %}
               <div class="related-articles__img">
-                <img src="{{ item.image | relative_url }}" alt="{{ item.title }}" width="800" height="450" loading="lazy" decoding="async">
+                <img src="{{ item_post.image | relative_url }}" alt="{{ item_post.image_alt | default: item.title }}" width="800" height="450" loading="lazy" decoding="async">
               </div>
               {% endif %}
               <div class="related-articles__body">
