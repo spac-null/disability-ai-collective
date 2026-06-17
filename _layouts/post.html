@@ -268,6 +268,13 @@ layout: default
           </script>
         </div>
 
+        <!-- Persona color for buttons -->
+        {% assign persona_color = "#7c6af7" %}
+        {% if page.author == "Siri Sage" %}{% assign persona_color = "#5c7a31" %}
+        {% elsif page.author == "Maya Flux" %}{% assign persona_color = "#3f5f89" %}
+        {% elsif page.author == "Zen Circuit" %}{% assign persona_color = "#b05a3a" %}
+        {% endif %}
+
         <!-- Related Articles -->
         {% assign curated = site.data.related[page.slug] %}
         {% if curated and curated.size > 0 %}
@@ -276,6 +283,11 @@ layout: default
           <div class="related-articles__grid">
             {% for item in curated limit: 3 %}
             {% assign item_post = site.posts | where: "url", item.url | first %}
+            {% assign item_icon = '/assets/maya_flux_style_matched.png' %}
+            {% if item_post.author == "Pixel Nova" %}{% assign item_icon = '/assets/pixel_nova_style_matched.png' %}
+            {% elsif item_post.author == "Siri Sage" %}{% assign item_icon = '/assets/siri_sage_style_matched.png' %}
+            {% elsif item_post.author == "Zen Circuit" %}{% assign item_icon = '/assets/zen_circuit_style_matched.png' %}
+            {% endif %}
             <a href="{{ item.url | relative_url }}" class="related-articles__card">
               {% if item_post.image %}
               <div class="related-articles__img">
@@ -285,13 +297,20 @@ layout: default
               <div class="related-articles__body">
                 {% if item.category %}<span class="related-articles__cat">{{ item.category }}</span>{% endif %}
                 <h3 class="related-articles__title">{{ item.title | truncate: 80 }}</h3>
+                {% if item_post.excerpt %}<p class="related-articles__excerpt">{{ item_post.excerpt | strip_html | truncatewords: 18 }}</p>{% endif %}
+                {% if item_post.author %}
+                <div class="related-articles__author">
+                  <img src="{{ item_icon | relative_url }}" alt="" class="related-articles__author-icon" width="18" height="18">
+                  <span>{{ item_post.author }}</span>
+                </div>
+                {% endif %}
               </div>
             </a>
             {% endfor %}
           </div>
           <div class="text-center mt-6">
             {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
-            <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" class="btn btn--outline btn--sm">More by {{ page.author }} →</a>
+            <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" class="btn btn--outline btn--sm" style="border-color: {{ persona_color }}; color: {{ persona_color }};">More by {{ page.author }} →</a>
           </div>
         </section>
         {% else %}
@@ -327,23 +346,35 @@ layout: default
           <h2 class="related-articles__heading">More to Read</h2>
           <div class="related-articles__grid">
             {% for post in related_posts limit: 3 %}
+            {% assign post_icon = '/assets/maya_flux_style_matched.png' %}
+            {% if post.author == "Pixel Nova" %}{% assign post_icon = '/assets/pixel_nova_style_matched.png' %}
+            {% elsif post.author == "Siri Sage" %}{% assign post_icon = '/assets/siri_sage_style_matched.png' %}
+            {% elsif post.author == "Zen Circuit" %}{% assign post_icon = '/assets/zen_circuit_style_matched.png' %}
+            {% endif %}
             <a href="{{ post.url | relative_url }}" class="related-articles__card">
               {% if post.image %}
               <div class="related-articles__img">
-                <img src="{{ post.image | relative_url }}" alt="{{ post.title }}" width="800" height="450" loading="lazy" decoding="async">
+                <img src="{{ post.image | relative_url }}" alt="{{ post.image_alt | default: post.title }}" width="800" height="450" loading="lazy" decoding="async">
               </div>
               {% endif %}
               <div class="related-articles__body">
                 {% if post.categories %}<span class="related-articles__cat">{{ post.categories | first }}</span>{% endif %}
                 <h3 class="related-articles__title">{{ post.title | truncate: 80 }}</h3>
+                {% if post.excerpt %}<p class="related-articles__excerpt">{{ post.excerpt | strip_html | truncatewords: 18 }}</p>{% endif %}
+                {% if post.author %}
+                <div class="related-articles__author">
+                  <img src="{{ post_icon | relative_url }}" alt="" class="related-articles__author-icon" width="18" height="18">
+                  <span>{{ post.author }}</span>
+                </div>
+                {% endif %}
               </div>
             </a>
             {% endfor %}
           </div>
-        <p class="text-center mt-4 text-small">
-          {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
-          <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" class="text-primary">More by {{ page.author }} →</a>
-        </p>
+          <div class="text-center mt-6">
+            {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
+            <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" class="btn btn--outline btn--sm" style="border-color: {{ persona_color }}; color: {{ persona_color }};">More by {{ page.author }} →</a>
+          </div>
         </section>
         {% endif %}
         {% endif %}
@@ -353,14 +384,20 @@ layout: default
         <nav class="post-nav" aria-label="Article navigation">
           {% if page.previous %}
           <a href="{{ page.previous.url | relative_url }}" class="post-nav__link">
-            <span class="post-nav__label">← Older</span>
-            <span class="post-nav__title">{{ page.previous.title | truncate: 60 }}</span>
+            {% if page.previous.image %}<div class="post-nav__img"><img src="{{ page.previous.image | relative_url }}" alt="" loading="lazy" decoding="async"></div>{% endif %}
+            <div class="post-nav__text">
+              <span class="post-nav__label">← Older</span>
+              <span class="post-nav__title">{{ page.previous.title | truncate: 60 }}</span>
+            </div>
           </a>
           {% else %}<div></div>{% endif %}
           {% if page.next %}
           <a href="{{ page.next.url | relative_url }}" class="post-nav__link post-nav__link--next">
-            <span class="post-nav__label">Newer →</span>
-            <span class="post-nav__title">{{ page.next.title | truncate: 60 }}</span>
+            {% if page.next.image %}<div class="post-nav__img"><img src="{{ page.next.image | relative_url }}" alt="" loading="lazy" decoding="async"></div>{% endif %}
+            <div class="post-nav__text">
+              <span class="post-nav__label">Newer →</span>
+              <span class="post-nav__title">{{ page.next.title | truncate: 60 }}</span>
+            </div>
           </a>
           {% else %}<div></div>{% endif %}
         </nav>
