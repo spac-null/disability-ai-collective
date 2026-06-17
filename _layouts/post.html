@@ -289,10 +289,10 @@ layout: default
             </a>
             {% endfor %}
           </div>
-          <p class="text-center mt-4 text-small">
+          <div class="text-center mt-6">
             {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
-            <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" class="text-primary">More by {{ page.author }} →</a>
-          </p>
+            <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" class="btn btn--outline btn--sm">More by {{ page.author }} →</a>
+          </div>
         </section>
         {% else %}
         {% assign current_cats = page.categories %}
