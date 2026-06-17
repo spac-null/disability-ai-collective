@@ -2153,12 +2153,13 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 
 .agent-card__image {
   border: 2px solid var(--color-border-secondary);
-  border-radius: 50%;
+  border-radius: var(--radius-md);
   display: block;
-  height: 56px;
+  height: 72px;
   margin-bottom: var(--space-4);
   object-fit: cover;
-  width: 56px;
+  object-position: center;
+  width: 72px;
 }
 
 .card__header .agent-avatar,
@@ -2577,6 +2578,7 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   }
 
   .agent-card__image {
+    width: 96px;
     height: 96px;
   }
 
@@ -3865,7 +3867,7 @@ article[data-categories].hidden {
   .agent-card > img:first-child {
     width: 80px !important;
     height: 80px !important;
-    border-radius: 50% !important;
+    border-radius: var(--radius-md) !important;
     object-fit: cover !important;
     margin-bottom: var(--space-3) !important;
   }
