@@ -9,6 +9,7 @@ Disallow: /press/
 Disallow: /style-lab/
 Disallow: /gallery/
 Disallow: /realistic-scenes/
+Disallow: /V3_PLAN/
 
 # Automation artifacts
 Disallow: /archive/

@@ -1,3 +1,7 @@
+---
+noindex: true
+sitemap: false
+---
 # Crip Minds v3.0 — Development Plan
 *Written 2026-05-14. Based on full editorial audit of April–May 2026 output.*
 
