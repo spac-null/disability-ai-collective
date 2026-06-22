@@ -10,7 +10,14 @@
       "handle": "neilmilliken.bsky.social",
       "handle_verified": true,
       "community": "accessibility tech",
-      "focus_keywords": ["accessibility", "digital inclusion", "inclusive design", "AXS", "built environment", "assistive"],
+      "focus_keywords": [
+        "accessibility",
+        "digital inclusion",
+        "inclusive design",
+        "AXS",
+        "built environment",
+        "assistive"
+      ],
       "bio": "VP Accessibility at Atos, AXS-Feed curator, W3C cognitive accessibility invited expert",
       "status": "done",
       "posted_date": "2026-03-28",
@@ -22,16 +29,37 @@
       "handle": "habengirma.bsky.social",
       "handle_verified": true,
       "community": "disability rights",
-      "focus_keywords": ["deafblind", "accessibility", "inclusion", "technology", "navigation", "barriers", "Harvard", "law"],
+      "focus_keywords": [
+        "deafblind",
+        "accessibility",
+        "inclusion",
+        "technology",
+        "navigation",
+        "barriers",
+        "Harvard",
+        "law"
+      ],
       "bio": "First deafblind person to graduate Harvard Law, disability rights lawyer, author of Haben",
-      "status": "pending"
+      "status": "done",
+      "posted_date": "2026-06-23",
+      "post_uri": "at://did:plc:4x2xhho3ozmrknpxqbdjtmbv/app.bsky.feed.post/3movwtqwybn2v",
+      "matched_article": "2026-06-03-mit-tech-review-publishes-productivity-article-without"
     },
     {
       "name": "Devon Price",
       "handle": "devminor.bsky.social",
       "handle_verified": true,
       "community": "neurodivergence",
-      "focus_keywords": ["autism", "autistic", "neurodivergent", "masking", "diagnosis", "ADHD", "neuroqueer", "pattern"],
+      "focus_keywords": [
+        "autism",
+        "autistic",
+        "neurodivergent",
+        "masking",
+        "diagnosis",
+        "ADHD",
+        "neuroqueer",
+        "pattern"
+      ],
       "bio": "Social psychologist, author of Unmasking Autism and Laziness Does Not Exist, autistic and trans",
       "status": "pending"
     },
@@ -40,7 +68,16 @@
       "handle": "lflegal.bsky.social",
       "handle_verified": true,
       "community": "digital accessibility law",
-      "focus_keywords": ["accessibility", "law", "legal", "digital", "negotiation", "ADA", "web accessibility", "rights"],
+      "focus_keywords": [
+        "accessibility",
+        "law",
+        "legal",
+        "digital",
+        "negotiation",
+        "ADA",
+        "web accessibility",
+        "rights"
+      ],
       "bio": "Disability rights lawyer, pioneer of structured negotiation for digital accessibility since 1995",
       "status": "pending"
     },
@@ -49,7 +86,15 @@
       "handle": "debraruh.bsky.social",
       "handle_verified": true,
       "community": "inclusive tech",
-      "focus_keywords": ["inclusion", "disability", "technology", "workforce", "employment", "global", "accessibility"],
+      "focus_keywords": [
+        "inclusion",
+        "disability",
+        "technology",
+        "workforce",
+        "employment",
+        "global",
+        "accessibility"
+      ],
       "bio": "Global disability inclusion strategist, AXSChat co-host, TechAccess Global founder",
       "status": "pending"
     },
@@ -58,7 +103,15 @@
       "handle": "sfdirewolf.bsky.social",
       "handle_verified": true,
       "community": "disability culture",
-      "focus_keywords": ["disability", "culture", "justice", "visibility", "narrative", "arts", "representation"],
+      "focus_keywords": [
+        "disability",
+        "culture",
+        "justice",
+        "visibility",
+        "narrative",
+        "arts",
+        "representation"
+      ],
       "bio": "Founder of Disability Visibility Project, editor, activist, disabled writer and media maker",
       "status": "skip",
       "skip_reason": "Already messaged 2026-03-16 — do not re-contact"
@@ -68,7 +121,16 @@
       "handle": "sinsinvalid.bsky.social",
       "handle_verified": false,
       "community": "crip arts",
-      "focus_keywords": ["arts", "performance", "crip", "queer", "disability", "body", "sexuality", "beauty"],
+      "focus_keywords": [
+        "arts",
+        "performance",
+        "crip",
+        "queer",
+        "disability",
+        "body",
+        "sexuality",
+        "beauty"
+      ],
       "bio": "Disability justice performance project, disability arts organization, SF-based",
       "status": "pending"
     },
@@ -77,7 +139,14 @@
       "handle": "nickwalker.bsky.social",
       "handle_verified": false,
       "community": "neuroqueer theory",
-      "focus_keywords": ["neuroqueer", "autistic", "neurodivergent", "paradigm", "theory", "neurodiversity"],
+      "focus_keywords": [
+        "neuroqueer",
+        "autistic",
+        "neurodivergent",
+        "paradigm",
+        "theory",
+        "neurodiversity"
+      ],
       "bio": "Author of Neuroqueer Heresies, autistic academic, neurodiversity paradigm theorist",
       "status": "pending"
     },
@@ -86,7 +155,14 @@
       "handle": "miamingus.bsky.social",
       "handle_verified": false,
       "community": "disability justice",
-      "focus_keywords": ["disability justice", "care", "interdependence", "community", "access", "transformative"],
+      "focus_keywords": [
+        "disability justice",
+        "care",
+        "interdependence",
+        "community",
+        "access",
+        "transformative"
+      ],
       "bio": "Disability justice educator and writer, co-founder of Disability Justice Culture Club",
       "status": "pending"
     },
@@ -95,7 +171,16 @@
       "handle": "leahlakshmi.bsky.social",
       "handle_verified": false,
       "community": "disability justice",
-      "focus_keywords": ["disability justice", "care", "queer", "crip", "femme", "brown", "survival", "mutual aid"],
+      "focus_keywords": [
+        "disability justice",
+        "care",
+        "queer",
+        "crip",
+        "femme",
+        "brown",
+        "survival",
+        "mutual aid"
+      ],
       "bio": "Author of Care Work and Dirty River, disabled queer writer and disability justice organizer",
       "status": "pending"
     }
