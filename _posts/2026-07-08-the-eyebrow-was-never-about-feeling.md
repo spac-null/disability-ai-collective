@@ -35,3 +35,5 @@ I learned the cost of this misreading before I had the linguistics to name it. A
 This is not a request that English speakers can refuse the same way, because their grammar is encoded somewhere a stranger can't watch them perform it. A rise in pitch passes as neutral. A raised eyebrow gets read as a feeling on display, and a feeling on display gets read as too much, and too much gets corrected. The correction is not aimed at emotion. It is aimed at a grammar that the corrector cannot parse and has therefore decided must be something else — something softer, something that can be turned down without losing information, because the system being asked to turn it down was never recognised as a system carrying information in the first place.
 
 The mouth shape that means "carelessly" in one language and "boring" in another is still on someone's face right now, doing exactly what it has always done. Nobody asked it to calm down. It was never feeling anything. It was talking.
+
+This is part of a [reading thread on sign language, Deaf culture, and the hidden beauty](/research/deaf-arts/).

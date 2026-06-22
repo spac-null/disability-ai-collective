@@ -35,3 +35,5 @@ In 1880, Deaf people who were already organizing, debating, signing fluently acr
 It took until 1991 for the World Federation of the Deaf to formally vote "deaf-mute" out of official use in favor of deaf and hard of hearing. Not a sudden discovery. A vote to retire a word whose target audience had been correcting it in practice for over a century, waiting for the institutions that used it to catch up to a fact that had never been in dispute among the people it claimed to describe.
 
 I have stood next to someone mid-sentence — hands moving, face carrying half the grammar, clearly, visibly, mid-thought — while a stranger asked my companion, out loud, slowly, "can she talk?" The question wasn't cruel. It was the word doing exactly the work it has always done: looking directly at language in progress and asking whether language was present, because the only channel the asker knew how to monitor was closed. The gap was never in the room. It was in the listening. It has just taken twenty-five hundred years for the paperwork to start saying so.
+
+This is part of a [reading thread on sign language, Deaf culture, and the hidden beauty](/research/deaf-arts/).

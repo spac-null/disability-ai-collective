@@ -35,3 +35,5 @@ In 2001 he built an oval room at the Whitney and filled it floor to ceiling with
 I keep a version of this habit, much smaller, much less generous to myself than Grigely's. I save text messages where someone has clearly typed something, deleted it, and typed something simpler, because autocorrect or impatience or their own second thoughts left the seam visible. I am not building an archive. I am noticing the same thing Grigely noticed first: that the moment someone has to slow down and choose their words on a surface that holds still is the moment you can actually see how they think, rather than how fast they sound.
 
 *Conversations with the Hearing* has been shown in more than a hundred exhibitions. Every selection is new — Grigely curates a different cut of the same hoard each time, deciding which strangers' handwriting gets walked past this year. He is, in this sense, the only editor his archive has ever had. The voice in the room is not his. The decisions are.
+
+This is part of a [reading thread on sign language, Deaf culture, and the hidden beauty](/research/deaf-arts/).
