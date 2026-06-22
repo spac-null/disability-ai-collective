@@ -597,27 +597,25 @@ class SceneImageGenerator:
                 prompts.append(prompts[-1])
             return prompts[:num_images]
 
-        # Primary: Claude Haiku via CLIProxyAPI (Anthropic messages format)
-        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-        api_base = os.environ.get("ANTHROPIC_BASE_URL", "https://api.anthropic.com")
+        # Primary: Claude Haiku via OpenRouter (OpenAI chat-completions format)
+        api_key = os.environ.get("OPENROUTER_API_KEY", "")
         if api_key:
             try:
                 payload = json.dumps({
-                    "model": "claude-haiku-4-5-20251001",
+                    "model": "anthropic/claude-haiku-4.5",
                     "max_tokens": 800,
                     "temperature": 0.8,
                     "messages": [{"role": "user", "content": llm_prompt}],
                 }).encode()
                 req = urllib.request.Request(
-                    api_base.rstrip("/") + "/v1/messages",
+                    "https://openrouter.ai/api/v1/chat/completions",
                     data=payload, method="POST",
                 )
                 req.add_header("Content-Type", "application/json")
-                req.add_header("x-api-key", api_key)
-                req.add_header("anthropic-version", "2023-06-01")
+                req.add_header("Authorization", f"Bearer {api_key}")
                 with urllib.request.urlopen(req, timeout=60) as resp:
                     result = json.loads(resp.read())
-                text = result.get("content", [{}])[0].get("text", "").strip()
+                text = result["choices"][0]["message"]["content"].strip()
                 prompts = _parse_prompts(text)
                 if prompts:
                     logger.info("Haiku-generated prompts for %r:", title)
