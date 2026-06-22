@@ -18,7 +18,7 @@ SOCIAL   = REPO / "_social"
 STATE_F  = Path(__file__).parent / "bsky_engage_seen.json"
 LOG_F    = Path(__file__).parent / "bsky_engage.log"
 API      = "https://bsky.social/xrpc"
-CLAUDE   = "http://172.19.0.1:8317/v1"
+CLAUDE   = "https://openrouter.ai/api/v1"
 
 logging.basicConfig(
     filename=str(LOG_F), level=logging.INFO,
@@ -129,17 +129,11 @@ def build_uri_map():
 
 # ── Claude call ────────────────────────────────────────────────────────────────
 def generate_reply(system, prompt):
-    api_key = os.environ.get("ANTHROPIC_API_KEY", "")
-    payload = {
-        "model": "claude-haiku-4-5-20251001",
-        "max_tokens": 100,
-        "system": system,
-        "messages": [{"role": "user", "content": prompt}],
-    }
+    api_key = os.environ.get("OPENROUTER_API_KEY", "")
     req = ureq.Request(
         f"{CLAUDE}/chat/completions",
         data=json.dumps({
-            "model": "claude-haiku-4-5-20251001",
+            "model": "anthropic/claude-haiku-4.5",
             "max_tokens": 100,
             "messages": [
                 {"role": "system", "content": system},

@@ -24,8 +24,8 @@ TARGETS_F = Path(__file__).parent / "targets.json"
 LOG_F     = Path(__file__).parent / "bsky_outreach.log"
 POSTS_DIR = REPO / "_posts"
 API       = "https://bsky.social/xrpc"
-CLAUDE    = os.environ.get("CLAUDE_API_URL", "http://172.19.0.1:8317/v1")
-CLAUDE_KEY= os.environ.get("CLAUDE_API_KEY", "sk-unused")
+CLAUDE    = os.environ.get("CLAUDE_API_URL", "https://openrouter.ai/api/v1")
+CLAUDE_KEY= os.environ.get("CLAUDE_API_KEY") or os.environ.get("OPENROUTER_API_KEY", "")
 
 logging.basicConfig(
     filename=str(LOG_F), level=logging.INFO,
@@ -127,7 +127,7 @@ def generate_post_text(target: dict, article: dict, max_chars: int) -> str | Non
     )
 
     payload = {
-        "model":      "claude-opus-4-6",
+        "model":      "anthropic/claude-opus-4.6",
         "max_tokens": 300,
         "messages":   [{"role": "user", "content": prompt}],
     }

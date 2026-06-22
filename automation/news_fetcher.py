@@ -420,7 +420,7 @@ def extract_angle(title: str, summary: str, url: str) -> str | None:
 def extract_top_angles(conn, n: int = 10):
     """Fetch top-N unprocessed seeds by score and extract disability angles."""
     if not API_KEY:
-        log("ANTHROPIC_API_KEY not set — skipping angle extraction")
+        log("Nous API key not set — skipping angle extraction")
         return
     rows = conn.execute("""
         SELECT id, url, title, summary FROM news_seeds
@@ -497,7 +497,7 @@ def main():
     if API_KEY:
         extract_top_angles(conn, n=10)
     else:
-        log("ANTHROPIC_API_KEY not set — skipping angle extraction")
+        log("Nous API key not set — skipping angle extraction")
 
     # 4. Prune old unused seeds
     prune_old(conn, days=14)
