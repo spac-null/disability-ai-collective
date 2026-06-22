@@ -18,8 +18,8 @@ Manual usage (force a specific article):
 
 For the automated daily pipeline see: automation/README.md
 
-Provider: Claude Opus 4.6 via CLIProxy at http://172.19.0.1:8317
-Secrets:  ANTHROPIC_API_KEY from /srv/secrets/openclaw.env
+Provider: Claude Opus 4.6 via OpenRouter (direct)
+Secrets:  OPENROUTER_API_KEY from /srv/secrets/openclaw.env
 """
 import json, re, os, time, subprocess, textwrap, logging
 import urllib.request
@@ -40,10 +40,10 @@ if _ENV_FILE.exists():
             os.environ.setdefault(_k.strip(), _v.strip())
 POSTS          = REPO / "_posts"
 ASSETS         = REPO / "assets"
-API_URL        = "http://172.19.0.1:8317/v1/chat/completions"
-API_KEY        = os.environ.get("ANTHROPIC_API_KEY", "")
-MODEL          = "claude-opus-4-6"
-FALLBACK_MODEL = "claude-sonnet-4-20250514"
+API_URL        = "https://openrouter.ai/api/v1/chat/completions"
+API_KEY        = os.environ.get("OPENROUTER_API_KEY", "")
+MODEL          = "anthropic/claude-opus-4.6"
+FALLBACK_MODEL = "anthropic/claude-sonnet-4"
 
 PERSONAS = {
     "Pixel Nova": {
@@ -187,8 +187,10 @@ Return only the frontmatter + body, no preamble."""
     payload = json.dumps({
         "model": model,
         "max_tokens": 4000,
-        "messages": [{"role": "user", "content": user_msg}],
-        "system": SYSTEM,
+        "messages": [
+            {"role": "system", "content": SYSTEM},
+            {"role": "user", "content": user_msg},
+        ],
     }).encode()
 
     req = urllib.request.Request(
@@ -291,7 +293,7 @@ QUEUE = []
 
 if __name__ == "__main__":
     if not API_KEY:
-        raise SystemExit("ANTHROPIC_API_KEY not set")
+        raise SystemExit("OPENROUTER_API_KEY not set")
     if not QUEUE:
         raise SystemExit("QUEUE is empty — add article briefs before running")
 

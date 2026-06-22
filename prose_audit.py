@@ -25,9 +25,9 @@ if _ENV_FILE.exists():
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
 
-API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-API_URL = "http://172.19.0.1:8317/v1/chat/completions"
-MODEL   = "claude-opus-4-6"
+API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+API_URL = "https://openrouter.ai/api/v1/chat/completions"
+MODEL   = "anthropic/claude-opus-4.6"
 BASE    = Path("/srv/data/openclaw/workspaces/ops/disability-ai-collective")
 
 SYSTEM = """You are a senior editor reviewing non-article prose files for a disability culture publication. You check them for voice consistency with the publication's DNA and Bregman register.
@@ -89,8 +89,10 @@ def call_opus(content, path, mode):
     payload = json.dumps({
         "model": MODEL,
         "max_tokens": 2000,
-        "messages": [{"role": "user", "content": user_msg}],
-        "system": SYSTEM,
+        "messages": [
+            {"role": "system", "content": SYSTEM},
+            {"role": "user", "content": user_msg},
+        ],
     }).encode()
     req = urllib.request.Request(
         API_URL, data=payload,

@@ -29,9 +29,9 @@ if _ENV_FILE.exists():
 
 import urllib.request
 
-API_KEY          = os.environ.get("ANTHROPIC_API_KEY", "")
-API_URL          = "http://172.19.0.1:8317/v1/chat/completions"
-MODEL            = "claude-opus-4-6"
+API_KEY          = os.environ.get("OPENROUTER_API_KEY", "")
+API_URL          = "https://openrouter.ai/api/v1/chat/completions"
+MODEL            = "anthropic/claude-opus-4.6"
 POSTS            = Path(__file__).parent / "_posts"
 REWRITE_THRESHOLD = 3   # penalty score >= this triggers a rewrite
 
@@ -279,8 +279,10 @@ Edit the article body to match the publication's voice and quality. Preserve fro
     payload = json.dumps({
         "model": MODEL,
         "max_tokens": 2500,
-        "messages": [{"role": "user", "content": user_msg}],
-        "system": SYSTEM,
+        "messages": [
+            {"role": "system", "content": SYSTEM},
+            {"role": "user", "content": user_msg},
+        ],
     }).encode()
 
     req = urllib.request.Request(

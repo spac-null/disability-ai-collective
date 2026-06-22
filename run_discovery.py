@@ -27,9 +27,9 @@ REPO = Path(__file__).parent
 DB   = REPO / "disability_findings.db"
 LOG  = REPO / "discovery.log"
 
-API_URL  = "http://172.19.0.1:8317/v1/chat/completions"
-API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
-MODEL    = "claude-sonnet-4-6"   # Sonnet fine for extraction — cheap+fast
+API_URL  = "https://openrouter.ai/api/v1/chat/completions"
+API_KEY  = os.environ.get("OPENROUTER_API_KEY", "")
+MODEL    = "anthropic/claude-sonnet-4.6"   # Sonnet fine for extraction — cheap+fast
 
 # Mainstream queries for Google News — designed to surface hidden disability angles
 # NOT "disability accessibility news" — that's too obvious
@@ -586,7 +586,7 @@ def main():
     if API_KEY:
         run_google_news_discovery()
     else:
-        log("WARN: ANTHROPIC_API_KEY not set — skipping Google News LLM extraction")
+        log("WARN: OPENROUTER_API_KEY not set — skipping Google News LLM extraction")
 
     # 3. PubMed academic abstracts
     if API_KEY:
