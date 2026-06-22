@@ -12,7 +12,7 @@ image_alt: "I Use Care Workers. We Are Caught in the Same Trap, From Two Directi
 
 I have a T6 spinal cord injury. I use care workers for transfers and for personal care. This is not a metaphor and it is not abstract. There are mornings my entire day depends on whether the person the agency sent is rested, paid, and not three weeks behind on rent. A care worker who is exhausted and financially stressed does not give the same care as one who isn't. I know this in my body, on a Tuesday, before I have said a word about policy.
 
-So when I read about Shabin Shaji — recruited from India on a health and care visa, paid £5 an hour, who won £28,048 at tribunal against Swan Care Solutions — I do not read it only as a story about a worker being harmed. I read it as a story about a system I am also inside, from the other end.
+So when I read about Shabin Shaji — recruited from India on a health and care visa, paid £5 an hour, [who won £28,048 at tribunal against Swan Care Solutions](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/) — I do not read it only as a story about a worker being harmed. I read it as a story about a system I am also inside, from the other end.
 
 ---
 

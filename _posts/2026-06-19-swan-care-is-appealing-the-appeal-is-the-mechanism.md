@@ -10,7 +10,7 @@ image: /assets/swan-care-is-appealing-the-appeal-is-the-mechanism_setting_1.jpg
 image_alt: "Swan Care Is Appealing. The Appeal Is the Mechanism. — screen-print protest poster illustration"
 ---
 
-Here is the fact. Shabin Shaji won. An employment tribunal found that Swan Care Solutions Ltd had unlawfully deducted his wages, victimised him, and dismissed him unfairly. He was recruited from India on a health and care visa, paid £5 an hour against a £10.42 minimum, with accommodation costs carved out of his pay. The tribunal believed him on every count. The award was £28,048.
+Here is the fact. Shabin Shaji won. An employment tribunal found that [Swan Care Solutions Ltd had unlawfully deducted his wages, victimised him, and dismissed him unfairly](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/). He was recruited from India on a health and care visa, paid £5 an hour against a £10.42 minimum, with accommodation costs carved out of his pay. The tribunal believed him on every count. The award was £28,048.
 
 Swan Care Solutions is appealing.
 

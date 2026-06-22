@@ -14,7 +14,7 @@ The instrument was forty questions. You read each one and marked how strongly yo
 
 The instrument was the Empathy Quotient, developed by Simon Baron-Cohen's team at Cambridge. A low score indicated difficulty with empathy. A corresponding high score on the Systemizing Quotient — its companion measure — indicated a preference for recognizing patterns, rules, and predictable sequences.
 
-Baron-Cohen's claim, set out in The Essential Difference in 2003, was that autism represents an extreme of the male brain: a mind in which systemizing overwhelms empathizing. The theory placed autistic people at one end of a gender spectrum. The typical female brain, by this model, inclines toward empathy. The typical male brain inclines toward systemizing. The autistic brain is the male brain, concentrated and amplified.
+Baron-Cohen's claim, set out in The Essential Difference in 2003, was that [autism represents an extreme of the male brain](/research/extreme-male-brain/): a mind in which systemizing overwhelms empathizing. The theory placed autistic people at one end of a gender spectrum. The typical female brain, by this model, inclines toward empathy. The typical male brain inclines toward systemizing. The autistic brain is the male brain, concentrated and amplified.
 
 I have taken this test. I scored in a range Baron-Cohen would recognize.
 
