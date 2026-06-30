@@ -9,7 +9,6 @@ our commitment to accessibility-first development.
 
 import os
 import json
-import requests
 from pathlib import Path
 from datetime import datetime, timezone
 import subprocess
