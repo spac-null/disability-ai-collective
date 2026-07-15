@@ -8,38 +8,26 @@ stores in news_seeds table, extracts disability angles for top candidates via LL
 Cron: 0 6 * * *  (runs before run_discovery.py at 07:00, generation at 09:00)
 Usage: python3 automation/news_fetcher.py
 """
-import os, sys, json, re, sqlite3, hashlib, time, urllib.request
+import sys, json, re, sqlite3, hashlib, time, urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from email.utils import parsedate_to_datetime
 
-def _nous_key():
-    try:
-        with open('/srv/data/hermes/auth.json') as _f:
-            import json as _j
-            return _j.load(_f)['providers']['nous']['agent_key']
-    except Exception:
-        return ''
-
-
 # ── Env / paths ───────────────────────────────────────────────────────────────
-
-_ENV_FILE = Path("/opt/secrets/openclaw.env")
-if _ENV_FILE.exists():
-    for _line in _ENV_FILE.read_text().splitlines():
-        _line = _line.strip()
-        if _line and not _line.startswith("#") and "=" in _line:
-            _k, _, _v = _line.partition("=")
-            os.environ.setdefault(_k.strip(), _v.strip())
 
 REPO = Path(__file__).parent.parent
 DB   = REPO / "disability_findings.db"
 LOG  = REPO / "automation" / "news_fetcher.log"
 
-API_URL = "https://inference-api.nousresearch.com/v1/chat/completions"
-API_KEY = _nous_key()
-MODEL   = "claude-sonnet-4-6"
+# CLIProxy — same endpoint production_orchestrator.py uses for all editorial LLM
+# calls. news_fetcher previously called Nous Portal directly via a Hermes-managed
+# OAuth agent_key (/srv/data/hermes/auth.json); that key stopped being refreshed
+# on 2026-05-16 when the rest of the pipeline migrated to OpenRouter/CLIProxy,
+# leaving angle extraction silently 401ing for two months.
+API_URL = "http://127.0.0.1:8317/v1/chat/completions"
+API_KEY = "sk-NwG04asTudtBlAW1kcBmbsAlKmI5o3u2wtanviIr8Lhnw"
+MODEL   = "openrouter/claude-sonnet-4.6"
 
 # ── Feed list ─────────────────────────────────────────────────────────────────
 # Tier 1 = quality longform journalism / science. Tier 2 = broad quality.
@@ -420,7 +408,7 @@ def extract_angle(title: str, summary: str, url: str) -> str | None:
 def extract_top_angles(conn, n: int = 10):
     """Fetch top-N unprocessed seeds by score and extract disability angles."""
     if not API_KEY:
-        log("Nous API key not set — skipping angle extraction")
+        log("CLIProxy API key not set — skipping angle extraction")
         return
     rows = conn.execute("""
         SELECT id, url, title, summary FROM news_seeds
@@ -497,7 +485,7 @@ def main():
     if API_KEY:
         extract_top_angles(conn, n=10)
     else:
-        log("Nous API key not set — skipping angle extraction")
+        log("CLIProxy API key not set — skipping angle extraction")
 
     # 4. Prune old unused seeds
     prune_old(conn, days=14)

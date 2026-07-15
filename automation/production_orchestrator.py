@@ -1737,11 +1737,16 @@ class ProductionOrchestrator:
         path = PERSONA_STATE_DIR / f"{slug}.json"
         path.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    def _call_editorial_model(self, system, user, max_tokens=300, timeout=45):
+    def _call_editorial_model(self, system, user, max_tokens=1200, timeout=60):
         """Try Fable 5 → Opus 4.8 via CLIProxy, then bypass CLIProxy and call OpenRouter directly.
 
         CLIProxy is a thin proxy to OpenRouter — if it's down, calling OpenRouter directly
         is equivalent. Requires OPENROUTER_API_KEY in environment for the direct fallback.
+
+        Note: claude-fable-5 has mandatory extended thinking on this endpoint (reasoning
+        cannot be disabled) and reasoning tokens count against max_tokens — budgets here
+        must leave headroom for thinking + the actual JSON payload, or responses truncate
+        mid-string (json.loads failures) or come back with empty content.
         """
         _or_key = os.environ.get("OPENROUTER_API_KEY", "")
         _or_url = "https://openrouter.ai/api/v1"
@@ -1836,7 +1841,7 @@ class ProductionOrchestrator:
             '"resisting_example":"one sentence naming a person or case that resists the argument from inside the same value system — not a straw man",'
             '"cross_cite":"optional: one sentence on how to reference or push against another persona\'s position, or empty string"}'
         )
-        raw = self._call_editorial_model(system, user, max_tokens=250, timeout=35)
+        raw = self._call_editorial_model(system, user, max_tokens=1600, timeout=60)
         if raw is None:
             self.logger.error("Fable brief: all models failed — article will publish without persona override, angle, or seed")
             return None
@@ -1889,7 +1894,7 @@ class ProductionOrchestrator:
             "Notes must name the specific paragraph or sentence. Max 3. "
             "If publish_as_is, notes may be empty."
         )
-        raw = self._call_editorial_model(system, user, max_tokens=300, timeout=45)
+        raw = self._call_editorial_model(system, user, max_tokens=1200, timeout=60)
         if raw is None:
             self.logger.error("Fable editorial review: all models failed — article ships without revision pass")
             return "publish_as_is", []
@@ -1964,7 +1969,7 @@ class ProductionOrchestrator:
             "- last_updated: today's date YYYY-MM-DD\n\n"
             "Reply with the complete updated state JSON only — no other text."
         )
-        raw = self._call_editorial_model(system, user, max_tokens=400, timeout=40)
+        raw = self._call_editorial_model(system, user, max_tokens=1200, timeout=60)
         if raw is None:
             self.logger.error("Fable state update for %s: all models failed — persona state will not evolve from this article", agent_name)
             return
@@ -2095,7 +2100,7 @@ class ProductionOrchestrator:
                     "Return ONLY valid JSON. If no issues: {\"issues\": []}"
                 ),
                 user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:3500]}",
-                model="claude-haiku-4-5-20251001",
+                model="openrouter/claude-haiku-4.5",
                 max_tokens=700,
                 timeout=30,
                 no_think=True,
@@ -2122,7 +2127,7 @@ class ProductionOrchestrator:
                     "Return the complete article body only, no commentary."
                 ),
                 user_prompt=f"Article:\n\n{content}\n\nFix these issues:\n{issues_text}",
-                model="claude-haiku-4-5-20251001",
+                model="openrouter/claude-haiku-4.5",
                 max_tokens=4000,
                 timeout=60,
                 no_think=True,
@@ -2483,7 +2488,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 api_key=CLIPROXY_KEY,
                 system_prompt=SYSTEM,
                 user_prompt=body,
-                model="claude-haiku-4-5-20251001",
+                model="openrouter/claude-haiku-4.5",
                 max_tokens=800,
                 timeout=45,
             )
@@ -2564,7 +2569,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                     f"Title: {title}\n\nArticle excerpt:\n{body_preview}\n\n"
                     "Return 5-7 comma-separated SEO keywords. Specific > generic. Proper nouns welcome."
                 ),
-                model="claude-haiku-4-5-20251001",
+                model="openrouter/claude-haiku-4.5",
                 max_tokens=120,
                 timeout=30,
                 no_think=True,
@@ -2598,7 +2603,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                     f"Title: {title}\nAuthor: {author}\n\nArticle body:\n{body_preview}\n\n"
                     "Write one card excerpt: the structural tension this article lives inside. Two things that should not both be true, but are."
                 ),
-                model="claude-haiku-4-5-20251001",
+                model="openrouter/claude-haiku-4.5",
                 max_tokens=80,
                 timeout=30,
                 no_think=True,
@@ -3019,7 +3024,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                         cit_flags = [l for l in citation_text.splitlines() if l.startswith("[FLAG]")]
                         parts.append(f"🔍 Citations: {len(cit_flags)} to verify")
                     msg = "\n".join(parts)
-                    payload = json.dumps({"chat_id": chat_id, "text": msg, "parse_mode": "Markdown"}).encode()
+                    # No parse_mode: violation/citation text is raw article content and can
+                    # contain unescaped *_[] etc. — Telegram's Markdown parser 400s on that.
+                    payload = json.dumps({"chat_id": chat_id, "text": msg}).encode()
                     ureq.urlopen(ureq.Request(
                         f"https://api.telegram.org/bot{token}/sendMessage",
                         data=payload, headers={"Content-Type": "application/json"}, method="POST",
