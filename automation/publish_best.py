@@ -2,10 +2,18 @@
 """
 publish_best.py — promote the top-scoring draft to _posts/ every 2 days.
 
+Candidate pool: drafts dated within the last AGE_WINDOW_DAYS days. A draft
+that ages out of that window without ever being selected is archived to
+_drafts/_archive/ rather than left to compete forever.
+
 Selection weights:
   - draft_score (0-10 editorial score from Opus, or default 7.0 if missing): 60%
   - topic freshness (1.0 if topic not seen in last 14 days, 0.5 if seen):     25%
   - persona rotation (1.0 if persona not in last 5 published, 0.5 if in last 2, 0.0 if in last 1): 15%
+  - aging bonus: +0.15 per prior losing cycle (tracked via publish_attempts
+    in front matter), capped at +0.6 — prevents a merely-decent draft from
+    being perpetually outcompeted by fresher entries and archived without
+    ever really winning a fair fight.
 
 Cron (trident): 0 8 */2 * * python3 /srv/scripts/ops/publish_best.py
 """
@@ -16,9 +24,13 @@ from datetime import datetime, timedelta
 REPO = pathlib.Path(__file__).parent.parent
 DRAFTS = REPO / "_drafts"
 POSTS = REPO / "_posts"
+ARCHIVE = DRAFTS / "_archive"
 DEFAULT_SCORE = 7.0
 TOPIC_WINDOW_DAYS = 14
 PERSONA_WINDOW = 5  # look at last N published articles for persona rotation
+AGE_WINDOW_DAYS = 7  # drafts older than this without being picked get archived
+LOSS_BONUS = 0.15    # per prior losing cycle
+LOSS_BONUS_CAP = 0.6
 
 
 def parse_frontmatter(text):
@@ -95,62 +107,133 @@ def persona_score(draft_persona, last_personas):
     return 1.0
 
 
-def composite_score(editorial, freshness, persona):
+def composite_score(editorial, freshness, persona, aging_bonus=0.0):
     # All components on 0-10 scale: editorial is already 0-10,
     # freshness and persona (0-1) scaled ×10 before weighting. Max total = 10.
-    return editorial * 0.6 + freshness * 10 * 0.25 + persona * 10 * 0.15
+    return editorial * 0.6 + freshness * 10 * 0.25 + persona * 10 * 0.15 + aging_bonus
+
+
+def draft_date(path):
+    """Parse the YYYY-MM-DD prefix from a draft filename. Returns None if absent/invalid."""
+    m = re.match(r"(\d{4}-\d{2}-\d{2})", path.name)
+    if not m:
+        return None
+    try:
+        return datetime.strptime(m.group(1), "%Y-%m-%d")
+    except ValueError:
+        return None
+
+
+def bump_attempts(path, fm):
+    """Increment publish_attempts in a draft's front matter (adds the field if missing)."""
+    try:
+        attempts = int(fm.get("publish_attempts", 0) or 0)
+    except (ValueError, TypeError):
+        attempts = 0
+    attempts += 1
+    text = path.read_text(encoding="utf-8", errors="replace")
+    if re.search(r"^publish_attempts:.*$", text, re.MULTILINE):
+        text = re.sub(r"^publish_attempts:.*$", f"publish_attempts: {attempts}", text, count=1, flags=re.MULTILINE)
+    else:
+        text = re.sub(r"^---\n", f"---\npublish_attempts: {attempts}\n", text, count=1)
+    path.write_text(text, encoding="utf-8")
+
+
+def archive_draft(path):
+    ARCHIVE.mkdir(exist_ok=True)
+    shutil.move(str(path), str(ARCHIVE / path.name))
 
 
 def main():
-    drafts = sorted(DRAFTS.glob("*.md"))
+    drafts = sorted(d for d in DRAFTS.glob("*.md") if d.is_file())
     if not drafts:
         print("No drafts to publish.")
         return 0
+
+    now = datetime.now()
+    in_window, expired = [], []
+    for draft in drafts:
+        age = draft_date(draft)
+        if age is not None and (now - age).days > AGE_WINDOW_DAYS:
+            expired.append(draft)
+        else:
+            in_window.append(draft)
 
     pub_titles = published_titles_since(TOPIC_WINDOW_DAYS)
     last_personas = recent_personas(PERSONA_WINDOW)
 
     candidates = []
-    for draft in drafts:
+    for draft in in_window:
         text = draft.read_text(encoding="utf-8", errors="replace")
         fm = parse_frontmatter(text)
         try:
             editorial = float(fm.get("draft_score", DEFAULT_SCORE))
         except (ValueError, TypeError):
             editorial = DEFAULT_SCORE
+        try:
+            attempts = int(fm.get("publish_attempts", 0) or 0)
+        except (ValueError, TypeError):
+            attempts = 0
         title = fm.get("title", draft.stem)
         persona = fm.get("author", "")
         fresh = topic_freshness(title, pub_titles)
         prot = persona_score(persona, last_personas)
-        score = composite_score(editorial, fresh, prot)
-        candidates.append((score, draft, editorial, fresh, prot, title, persona))
-        print(f"  {draft.name}: editorial={editorial:.1f} fresh={fresh:.1f} persona_rot={prot:.1f} → {score:.2f}")
+        aging_bonus = min(attempts * LOSS_BONUS, LOSS_BONUS_CAP)
+        score = composite_score(editorial, fresh, prot, aging_bonus)
+        candidates.append((score, draft, editorial, fresh, prot, title, persona, fm))
+        print(f"  {draft.name}: editorial={editorial:.1f} fresh={fresh:.1f} persona_rot={prot:.1f} "
+              f"aging=+{aging_bonus:.2f} (attempts={attempts}) → {score:.2f}")
 
-    if not candidates:
-        print("No scoreable drafts found.")
+    published = False
+    dest = None
+    if candidates:
+        candidates.sort(key=lambda x: x[0], reverse=True)
+        best_score, best_draft, editorial, fresh, prot, title, persona, _fm = candidates[0]
+
+        dest = POSTS / best_draft.name
+        print(f"\nPublishing: {best_draft.name}")
+        print(f"  Title: {title}")
+        print(f"  Persona: {persona}")
+        print(f"  Score: editorial={editorial:.1f} freshness={fresh:.1f} rotation={prot:.1f} → {best_score:.2f}")
+
+        if dest.exists():
+            print(f"ERROR: {dest.name} already exists in _posts/ — aborting to avoid overwrite.", file=sys.stderr)
+            return 1
+
+        shutil.move(str(best_draft), str(dest))
+        published = True
+
+        # Every other in-window candidate just lost this cycle — bump its aging counter.
+        for _score, draft, *_rest, fm in candidates[1:]:
+            bump_attempts(draft, fm)
+    else:
+        print("No scoreable drafts in the last %d days." % AGE_WINDOW_DAYS)
+
+    archived = []
+    for draft in expired:
+        print(f"Archiving (unpublished after {AGE_WINDOW_DAYS}+ days): {draft.name}")
+        archive_draft(draft)
+        archived.append(draft.name)
+
+    if not published and not archived:
         return 0
 
-    candidates.sort(key=lambda x: x[0], reverse=True)
-    best_score, best_draft, editorial, fresh, prot, title, persona = candidates[0]
-
-    dest = POSTS / best_draft.name
-    print(f"\nPublishing: {best_draft.name}")
-    print(f"  Title: {title}")
-    print(f"  Persona: {persona}")
-    print(f"  Score: editorial={editorial:.1f} freshness={fresh:.1f} rotation={prot:.1f} → {best_score:.2f}")
-
-    if dest.exists():
-        print(f"ERROR: {dest.name} already exists in _posts/ — aborting to avoid overwrite.", file=sys.stderr)
-        return 1
-
-    shutil.move(str(best_draft), str(dest))
-
     try:
-        subprocess.run(["git", "add", str(dest)], cwd=str(REPO), check=True)
-        # Stage the deletion from _drafts (move shows as delete in git status)
-        subprocess.run(["git", "add", "-u", str(DRAFTS)], cwd=str(REPO), check=False)
+        if dest:
+            subprocess.run(["git", "add", str(dest)], cwd=str(REPO), check=True)
+        if archived:
+            subprocess.run(["git", "add", str(ARCHIVE)], cwd=str(REPO), check=True)
+        # Stage deletions/moves in _drafts (moved-out files show as deletes) and
+        # the publish_attempts bumps on any remaining drafts.
+        subprocess.run(["git", "add", "-A", str(DRAFTS)], cwd=str(REPO), check=False)
+
+        msg_parts = []
+        if published:
+            msg_parts.append(f"publish: {dest.stem}")
+        if archived:
+            msg_parts.append(f"archive {len(archived)} draft(s) unpublished after {AGE_WINDOW_DAYS}d")
         subprocess.run(
-            ["git", "commit", "-m", f"publish: {dest.stem}"],
+            ["git", "commit", "-m", " | ".join(msg_parts)],
             cwd=str(REPO), check=True
         )
         # Pull --rebase then push
@@ -162,7 +245,8 @@ def main():
         return 1
 
     # Fire social posts now that the article is live
-    _fire_pending_social(best_draft.stem, dest)
+    if published:
+        _fire_pending_social(dest.stem, dest)
 
     return 0
 
