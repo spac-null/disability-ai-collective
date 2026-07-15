@@ -29,14 +29,26 @@ Thumbs.db
 
 # Logs
 *.log
+*.log.*.gz
 
 # Database files
 *.db
 *.sqlite
-*.sqlite3*.bak
+*.sqlite3
+*.bak
 rss_disability_findings.json
 rss_disability_findings_report.md
+prose_audit_report.md
 accessibility/basic-accessibility-audit-*.md
 
 # Persona state — runtime, updated per article, not versioned
 automation/persona_state/
+
+# Social post coordination state (pending_social / bsky_uri markers written by
+# the orchestrator, read by publish_best.py on promotion) — local runtime
+# state, not versioned. Same category as persona_state/ above.
+_social/
+automation/bsky_engage_seen.json
+
+# Orchestrator lock file
+.orchestrator.lock

@@ -2705,7 +2705,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         wd = str(cwd or self.repo_root)
         stashed = False
         try:
-            result = subprocess.run(['git', 'stash'], check=True, cwd=wd, capture_output=True, text=True)
+            result = subprocess.run(['git', 'stash', '--include-untracked'], check=True, cwd=wd, capture_output=True, text=True)
             stashed = 'No local changes' not in result.stdout
             subprocess.run(['git', 'pull', '--rebase', 'origin', 'main'], check=True, cwd=wd)
             if stashed:
