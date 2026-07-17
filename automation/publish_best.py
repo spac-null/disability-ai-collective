@@ -16,9 +16,14 @@ Selection weights:
     ever really winning a fair fight.
 
 Cron (trident): 0 8 */2 * * python3 /srv/scripts/ops/publish_best.py
+
+Usage:
+  publish_best.py            Run for real: publish the best draft, archive expired ones.
+  publish_best.py --dry-run  Show the scoring table and what would happen. No writes,
+                              no git actions, no moves. Safe to run to inspect state.
 """
 
-import pathlib, re, shutil, subprocess, sys
+import argparse, pathlib, re, shutil, subprocess, sys
 from datetime import datetime, timedelta
 
 REPO = pathlib.Path(__file__).parent.parent
@@ -144,7 +149,10 @@ def archive_draft(path):
     shutil.move(str(path), str(ARCHIVE / path.name))
 
 
-def main():
+def main(dry_run=False):
+    if dry_run:
+        print("[DRY RUN — no files will be moved, no git actions will run]\n")
+
     drafts = sorted(d for d in DRAFTS.glob("*.md") if d.is_file())
     if not drafts:
         print("No drafts to publish.")
@@ -191,7 +199,8 @@ def main():
         best_score, best_draft, editorial, fresh, prot, title, persona, _fm = candidates[0]
 
         dest = POSTS / best_draft.name
-        print(f"\nPublishing: {best_draft.name}")
+        verb = "Would publish" if dry_run else "Publishing"
+        print(f"\n{verb}: {best_draft.name}")
         print(f"  Title: {title}")
         print(f"  Persona: {persona}")
         print(f"  Score: editorial={editorial:.1f} freshness={fresh:.1f} rotation={prot:.1f} → {best_score:.2f}")
@@ -200,20 +209,28 @@ def main():
             print(f"ERROR: {dest.name} already exists in _posts/ — aborting to avoid overwrite.", file=sys.stderr)
             return 1
 
-        shutil.move(str(best_draft), str(dest))
-        published = True
+        if dry_run:
+            print(f"  (dry-run: {len(candidates) - 1} other candidate(s) would have their aging counter bumped)")
+        else:
+            shutil.move(str(best_draft), str(dest))
+            published = True
 
-        # Every other in-window candidate just lost this cycle — bump its aging counter.
-        for _score, draft, *_rest, fm in candidates[1:]:
-            bump_attempts(draft, fm)
+            # Every other in-window candidate just lost this cycle — bump its aging counter.
+            for _score, draft, *_rest, fm in candidates[1:]:
+                bump_attempts(draft, fm)
     else:
         print("No scoreable drafts in the last %d days." % AGE_WINDOW_DAYS)
 
     archived = []
     for draft in expired:
-        print(f"Archiving (unpublished after {AGE_WINDOW_DAYS}+ days): {draft.name}")
-        archive_draft(draft)
-        archived.append(draft.name)
+        verb = "Would archive" if dry_run else "Archiving"
+        print(f"{verb} (unpublished after {AGE_WINDOW_DAYS}+ days): {draft.name}")
+        if not dry_run:
+            archive_draft(draft)
+            archived.append(draft.name)
+
+    if dry_run:
+        return 0
 
     if not published and not archived:
         return 0
@@ -278,4 +295,12 @@ def _fire_pending_social(stem, article_file):
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    parser = argparse.ArgumentParser(
+        description="Promote the top-scoring draft to _posts/ every 2 days."
+    )
+    parser.add_argument(
+        "--dry-run", action="store_true",
+        help="Show the scoring table and what would happen. No writes, no git actions."
+    )
+    args = parser.parse_args()
+    sys.exit(main(dry_run=args.dry_run))
