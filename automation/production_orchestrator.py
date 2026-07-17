@@ -2716,9 +2716,57 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 subprocess.run(['git', 'stash', 'pop'], cwd=wd)
             raise e
 
-    def _pre_commit_gate(self, content, article_file):
-        """Pre-commit loop: readability + mechanical rule check → surgical fix if needed.
-        Max 1 iteration. Returns (content, changed)."""
+    def _check_article_type_compliance(self, content, article_type):
+        """Check a draft against its assigned article_type's form rules.
+
+        Word-count caps/floors are checked in plain Python (exact, free — LLMs count
+        words unreliably). The portrait/series_part 'one real named person as sustained
+        subject' rule needs semantic judgment, so that one check uses Opus specifically
+        (matching the crontab's original 'opus rewrite pass' naming — this is what that
+        was meant to be before it was never actually wired up).
+
+        Returns a list of violation strings (empty if compliant).
+        """
+        violations = []
+        word_count = len(re.findall(r"\S+", content))
+
+        if article_type == "field_note" and word_count > 500:
+            violations.append(
+                f"WORD CAP — field_note must be ≤500 words, this is {word_count}. Cut it down."
+            )
+        elif article_type in {"portrait", "series_part"} and word_count < 1200:
+            violations.append(
+                f"WORD MINIMUM — {article_type} must be ≥1200 words, this is only {word_count}. Expand it."
+            )
+
+        if article_type == "portrait":
+            SUBJECT_SYSTEM = (
+                "You are a strict editor checking whether an article actually delivers "
+                "on its assigned form: a PORTRAIT, which requires ONE real, named, "
+                "external person as the sustained subject throughout — not a source "
+                "citation in passing, and not a fellow staff writer at this publication "
+                "(Pixel Nova, Siri Sage, Maya Flux, Zen Circuit are personas of this same "
+                "publication — citing one of them as a disagreement or reference point "
+                "does not count as a portrait subject).\n\n"
+                "Reply with exactly one line: either 'PASS' or "
+                "'FAIL: <one sentence reason>'."
+            )
+            try:
+                verdict = self._call_openai_compat_api(
+                    url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
+                    system_prompt=SUBJECT_SYSTEM, user_prompt=content,
+                    model="openrouter/claude-opus-4.8", max_tokens=100, timeout=60,
+                )
+                if verdict.strip().upper().startswith("FAIL"):
+                    violations.append(f"SUSTAINED SUBJECT — {verdict.strip()}")
+            except Exception as e:
+                self.logger.warning("Portrait subject check failed: %s", e)
+
+        return violations
+
+    def _pre_commit_gate(self, content, article_file, article_type=None):
+        """Pre-commit loop: readability + mechanical rule check + article_type
+        compliance → surgical fix if needed. Max 1 iteration. Returns (content, changed)."""
         import os, re
 
         scores = self._readability_score(content)
@@ -2771,16 +2819,24 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
 
         rule_fail = len(violations) >= 3
 
-        if not readability_fail and not rule_fail:
+        # Trigger 3: article_type compliance (word cap/floor + portrait subject rule).
+        # Always fails the gate on its own — this is a hard requirement, not one vote
+        # among many, unlike the style rules above which need 3+ to matter.
+        type_violations = self._check_article_type_compliance(content, article_type) if article_type else []
+        type_fail = bool(type_violations)
+
+        if not readability_fail and not rule_fail and not type_fail:
             self.logger.info("Pre-commit gate: PASS (FRE=%.1f, violations=%d)", scores["fre"], len(violations))
             return content, False
 
         self.logger.info(
-            "Pre-commit gate: FAIL (FRE=%.1f, violations=%d) — running surgical fix",
-            scores["fre"], len(violations)
+            "Pre-commit gate: FAIL (FRE=%.1f, violations=%d, type_violations=%d) — running surgical fix",
+            scores["fre"], len(violations), len(type_violations)
         )
 
-        # Surgical fix — Sonnet, targeted, touch nothing else
+        # Surgical fix — Sonnet, targeted, touch nothing else (unless a type violation
+        # requires a structural change — e.g. cutting a field_note to its word cap, or
+        # anchoring a portrait on one named subject — those get a more permissive prompt)
         fix_lines = []
         if readability_fail:
             fix_lines.append(
@@ -2790,14 +2846,27 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             )
         for v in violations[:6]:
             fix_lines.append(f"- Fix: {v[7:]}")
+        for v in type_violations:
+            fix_lines.append(f"- Fix: {v}")
 
-        FIX_SYSTEM = (
-            "You are a copy editor making surgical fixes to a published article. "
-            "Fix ONLY the specific issues listed below. "
-            "Change nothing else — not the structure, not the argument, not the voice, not the examples. "
-            "Return the complete article with only those changes applied. "
-            "No commentary, no preamble."
-        )
+        if type_violations:
+            FIX_SYSTEM = (
+                "You are a copy editor bringing a published article into compliance with "
+                "its assigned form. Fix the specific issues listed below — this may require "
+                "cutting length, expanding length, or restructuring around a single named "
+                "subject, as instructed. Keep the voice, persona, and core argument intact "
+                "wherever the fix doesn't require changing them. "
+                "Return the complete article with the fixes applied. "
+                "No commentary, no preamble."
+            )
+        else:
+            FIX_SYSTEM = (
+                "You are a copy editor making surgical fixes to a published article. "
+                "Fix ONLY the specific issues listed below. "
+                "Change nothing else — not the structure, not the argument, not the voice, not the examples. "
+                "Return the complete article with only those changes applied. "
+                "No commentary, no preamble."
+            )
         fix_prompt = "ISSUES TO FIX:\n" + "\n".join(fix_lines) + "\n\nARTICLE:\n" + content
 
         try:
@@ -2814,12 +2883,24 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 self.logger.warning("Surgical fix returned too little content — discarding")
                 return content, False
 
-            # Verify it actually improved readability
+            # Verify the fix actually resolved what it was meant to fix. Readability
+            # improvement is the bar for style-rule fixes; for type_violations, a
+            # word-count/structural fix might not move FRE at all — check compliance
+            # directly instead of gating solely on readability.
             new_scores = self._readability_score(fixed)
-            if new_scores and new_scores["fre"] > scores["fre"]:
-                self.logger.info(
-                    "Surgical fix: FRE %.1f → %.1f", scores["fre"], new_scores["fre"]
-                )
+            readability_improved = bool(new_scores and new_scores["fre"] > scores["fre"])
+            type_now_compliant = True
+            if type_violations:
+                remaining = self._check_article_type_compliance(fixed, article_type)
+                type_now_compliant = not remaining
+                if remaining:
+                    self.logger.warning("Surgical fix did not resolve type violations: %s", remaining)
+
+            if readability_improved or (type_violations and type_now_compliant):
+                if new_scores:
+                    self.logger.info("Surgical fix: FRE %.1f → %.1f", scores["fre"], new_scores["fre"])
+                if type_violations:
+                    self.logger.info("Surgical fix: type compliance resolved (%s)", article_type)
                 # Update article file on disk — preserve front matter written by create_article_file
                 existing = article_file.read_text()
                 fm_end = existing.find('\n---\n', 3)
@@ -2830,7 +2911,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                     article_file.write_text(fixed)
                 return fixed, True
             else:
-                self.logger.info("Surgical fix did not improve readability — discarding")
+                self.logger.info("Surgical fix did not improve readability or resolve type violations — discarding")
                 return content, False
         except Exception as e:
             self.logger.warning("Surgical fix failed: %s", e)
@@ -4256,8 +4337,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         # Step 6: Create article file
         article_file = self.create_article_file(metadata, content, image_filenames, image_descriptions)
 
-        # Step 6b: Pre-commit gate — surgical fix if readability < 48 or 3+ mechanical violations
-        content, gate_fixed = self._pre_commit_gate(content, article_file)
+        # Step 6b: Pre-commit gate — surgical fix if readability < 48, 3+ mechanical
+        # violations, or the draft doesn't comply with its assigned article_type's form
+        content, gate_fixed = self._pre_commit_gate(content, article_file, article_type)
 
         # Step 6c: Full review (citations + readability + rule compliance)
         review_file, is_clean = self.validate_article(content, article_file, slug)
