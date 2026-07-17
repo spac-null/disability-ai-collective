@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Eleven Minutes to Look Up"
 date: 2026-07-16

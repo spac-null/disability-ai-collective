@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Albanese Says the Songs Are Not for Sale. Nobody Asked"
 date: 2026-07-15
