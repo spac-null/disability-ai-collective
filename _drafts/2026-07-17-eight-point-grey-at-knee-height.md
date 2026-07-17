@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Eight-Point Grey at Knee Height"
 date: 2026-07-17
