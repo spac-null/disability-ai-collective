@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Seven Thousand Miles Is a Measurement"
 date: 2026-07-19
