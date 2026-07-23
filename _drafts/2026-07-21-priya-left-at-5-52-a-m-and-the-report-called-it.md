@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Priya Left at 5:52 a.m. and the Report Called It"
 date: 2026-07-21

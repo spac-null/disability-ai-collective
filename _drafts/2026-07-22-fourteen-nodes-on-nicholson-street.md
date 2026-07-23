@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Fourteen Nodes on Nicholson Street"
 date: 2026-07-22
