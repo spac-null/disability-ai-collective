@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Vally Wieselthier Fired Her Kiln While Josef Hoffmann"
 date: 2026-07-26

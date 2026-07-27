@@ -1,5 +1,5 @@
 ---
-publish_attempts: 1
+publish_attempts: 2
 layout: post
 title: "362,802 Viruses No Camera Ever Loved"
 date: 2026-07-23
