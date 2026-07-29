@@ -1,5 +1,5 @@
 ---
-publish_attempts: 2
+publish_attempts: 3
 layout: post
 title: "What the Loss Curve Was Told to Want"
 date: 2026-07-24

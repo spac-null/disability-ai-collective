@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Eleven Million to Fail Gracefully"
 date: 2026-07-28
