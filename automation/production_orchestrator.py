@@ -4554,7 +4554,7 @@ if __name__ == "__main__":
         orchestrator.override_agent = args.agent
 
     if args.post_social:
-        af = pathlib.Path(args.post_social)
+        af = Path(args.post_social)
         if not af.exists():
             print(f"Article not found: {af}")
             sys.exit(1)
