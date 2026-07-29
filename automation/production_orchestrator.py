@@ -1355,15 +1355,19 @@ class ProductionOrchestrator:
 
     def _call_openai_compat_api(self, url, api_key, system_prompt, user_prompt,
                                    model, max_tokens=3500, timeout=120, no_think=False,
-                                   return_model=False):
+                                   return_model=False, reasoning_max_tokens=None):
         """OpenAI-compatible API call — stdlib only, no requests dependency.
 
         return_model=True: returns (text, actual_model_used) tuple.
         return_model=False (default): returns text only — all existing callers unaffected.
+        reasoning_max_tokens: caps thinking-token spend on reasoning models (e.g. Fable 5,
+        which has mandatory extended thinking that otherwise eats the whole max_tokens
+        budget and truncates the actual JSON/text output mid-string). Sent as OpenRouter's
+        unified `reasoning.max_tokens` field; ignored by non-reasoning models.
         """
         import json, urllib.request
         content = ("/no_think " if no_think else "") + user_prompt
-        payload = json.dumps({
+        body = {
             "model": model,
             "messages": [
                 {"role": "system", "content": system_prompt},
@@ -1371,7 +1375,10 @@ class ProductionOrchestrator:
             ],
             "max_tokens": max_tokens,
             "stream": False,
-        }).encode()
+        }
+        if reasoning_max_tokens:
+            body["reasoning"] = {"max_tokens": reasoning_max_tokens}
+        payload = json.dumps(body).encode()
         req = urllib.request.Request(
             url.rstrip("/") + "/chat/completions",
             data=payload,
@@ -1743,11 +1750,18 @@ class ProductionOrchestrator:
         CLIProxy is a thin proxy to OpenRouter — if it's down, calling OpenRouter directly
         is equivalent. Requires OPENROUTER_API_KEY in environment for the direct fallback.
 
-        Note: claude-fable-5 has mandatory extended thinking on this endpoint (reasoning
-        cannot be disabled) and reasoning tokens count against max_tokens — budgets here
-        must leave headroom for thinking + the actual JSON payload, or responses truncate
-        mid-string (json.loads failures) or come back with empty content.
+        claude-fable-5 has mandatory extended thinking on this endpoint (reasoning cannot
+        be disabled) and reasoning tokens count against max_tokens. Left unbounded, thinking
+        was consuming nearly the entire budget and truncating the JSON payload mid-string
+        (json.loads failures on every call). Fixed two ways: cap Fable's reasoning spend via
+        the request's reasoning.max_tokens field, and guarantee max_tokens always leaves at
+        least FABLE_OUTPUT_HEADROOM beyond that cap for the actual response.
         """
+        FABLE_REASONING_BUDGET = 1024
+        FABLE_OUTPUT_HEADROOM = 1600
+        fable_max_tokens = max(max_tokens, FABLE_REASONING_BUDGET + FABLE_OUTPUT_HEADROOM)
+        fable_timeout = max(timeout, 90)
+
         _or_key = os.environ.get("OPENROUTER_API_KEY", "")
         _or_url = "https://openrouter.ai/api/v1"
 
@@ -1762,10 +1776,14 @@ class ProductionOrchestrator:
             ]
 
         for url, key, model, label in attempts:
+            is_fable = "Fable" in label
             try:
                 raw = self._call_openai_compat_api(
                     url, key, system, user,
-                    model=model, max_tokens=max_tokens, timeout=timeout,
+                    model=model,
+                    max_tokens=fable_max_tokens if is_fable else max_tokens,
+                    timeout=fable_timeout if is_fable else timeout,
+                    reasoning_max_tokens=FABLE_REASONING_BUDGET if is_fable else None,
                 )
                 if "direct" in label:
                     self.logger.warning("Editorial model: CLIProxy bypassed — %s active", label)
@@ -4469,10 +4487,10 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             f"Write a sharp debate title (max 60 chars). No 'vs', no colon-subtitle. "
             f"The title frames the question, not the answer. Return only the title."
         )
-        title_raw = self._call_openai_compat_api(
-            CLIPROXY_URL, CLIPROXY_KEY, title_system, title_prompt,
-            model="openrouter/claude-fable-5", max_tokens=80, timeout=30,
-        )
+        # Routed through _call_editorial_model (not a raw 80-token call): Fable 5's mandatory
+        # reasoning alone exceeds 80 tokens, so the old direct call always returned empty and
+        # silently fell back to the generic title below. This gets the reasoning cap + Opus fallback.
+        title_raw = self._call_editorial_model(title_system, title_prompt, max_tokens=200, timeout=30)
         debate_title = (title_raw or f"{agent_a} and {agent_b} Disagree").strip().strip('"').strip("'")[:60]
 
         slug = re.sub(r'[^a-z0-9]+', '-', debate_title.lower()).strip('-')
