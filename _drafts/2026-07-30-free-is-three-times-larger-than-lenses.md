@@ -1,5 +1,5 @@
 ---
-publish_attempts: 1
+publish_attempts: 2
 layout: post
 title: "FREE Is Three Times Larger Than LENSES"
 date: 2026-07-30

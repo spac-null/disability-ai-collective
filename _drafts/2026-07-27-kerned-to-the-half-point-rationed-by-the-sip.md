@@ -1,5 +1,5 @@
 ---
-publish_attempts: 2
+publish_attempts: 3
 layout: post
 title: "Kerned to the Half-Point, Rationed by the Sip"
 date: 2026-07-27

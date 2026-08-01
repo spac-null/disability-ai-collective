@@ -1,5 +1,5 @@
 ---
-publish_attempts: 3
+publish_attempts: 4
 layout: post
 title: "Forty-One Seconds and Sixty Years"
 date: 2026-07-25
