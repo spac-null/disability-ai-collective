@@ -2791,8 +2791,10 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         if not scores:
             return content, False
 
-        # Trigger 1: readability hard fail
-        readability_fail = scores["fre"] < 48
+        # Trigger 1: readability hard fail. 55 targets Bregman's own measured level
+        # (FRE 64.1 on a representative sample) with margin, not a lower bar — the old
+        # 48 sat well under Bregman's floor and let harder-than-Bregman outliers through.
+        readability_fail = scores["fre"] < 55
 
         # Trigger 2: mechanical rule violations (fast LLM check, R1-R10 only)
         GATE_SYSTEM = (
@@ -2858,7 +2860,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         fix_lines = []
         if readability_fail:
             fix_lines.append(
-                f"- Flesch Reading Ease is {scores['fre']} (target ≥ 48). "
+                f"- Flesch Reading Ease is {scores['fre']} (target ≥ 55). "
                 "Swap Latinate words for shorter Anglo-Saxon equivalents where meaning is identical. "
                 "Do not change proper nouns or topic-essential technical terms."
             )
@@ -2990,16 +2992,19 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             citation_text = f"EXTRACTION_FAILED: {e}"
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
-        # Target: Flesch Reading Ease ≥ 52 (slightly easier than The New Yorker ~50-55)
+        # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
+        # (production_orchestrator.py:_pre_commit_gate), itself set to Rutger Bregman's
+        # own measured level (FRE 64.1) with margin. Previously 52 ("New Yorker baseline"),
+        # independently of and inconsistent with the gate's old 48 — now unified.
         scores = self._readability_score(content)
         readability_lines = []
         readability_fail = False
         if scores:
-            verdict = "PASS" if scores["fre"] >= 52 else "FAIL"
-            if scores["fre"] < 52:
+            verdict = "PASS" if scores["fre"] >= 55 else "FAIL"
+            if scores["fre"] < 55:
                 readability_fail = True
             readability_lines = [
-                f"Flesch Reading Ease : {scores['fre']}  (target ≥ 52 — New Yorker baseline ~50-55)",
+                f"Flesch Reading Ease : {scores['fre']}  (target ≥ 55 — Bregman baseline)",
                 f"FK Grade Level      : {scores['fkgl']}  (target ≤ 11)",
                 f"Avg sentence length : {scores['asl']} words",
                 f"Word count          : {scores['words']}",
@@ -3115,7 +3120,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 if token and chat_id:
                     parts = [f"📋 *Review* — {article_file.stem[:45]}"]
                     if readability_fail and scores:
-                        parts.append(f"📖 Readability: {scores['fre']} (below 52 target)")
+                        parts.append(f"📖 Readability: {scores['fre']} (below 55 target)")
                     if rules_fails:
                         parts.append(f"📐 Rules: {len(rules_fails)} violation(s)")
                         parts += [f"• {f[7:80]}" for f in rules_fails[:4]]
@@ -4355,7 +4360,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         # Step 6: Create article file
         article_file = self.create_article_file(metadata, content, image_filenames, image_descriptions)
 
-        # Step 6b: Pre-commit gate — surgical fix if readability < 48, 3+ mechanical
+        # Step 6b: Pre-commit gate — surgical fix if readability < 55, 3+ mechanical
         # violations, or the draft doesn't comply with its assigned article_type's form
         content, gate_fixed = self._pre_commit_gate(content, article_file, article_type)
 
