@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Enid Marx Wove the Announcement Into the Seat"
 date: 2026-08-01

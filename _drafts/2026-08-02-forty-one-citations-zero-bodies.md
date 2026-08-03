@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Forty-One Citations, Zero Bodies"
 date: 2026-08-02
