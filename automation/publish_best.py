@@ -149,6 +149,23 @@ def archive_draft(path):
     shutil.move(str(path), str(ARCHIVE / path.name))
 
 
+def set_publish_date(path, when):
+    """Rewrite the front matter `date:` field to the actual promotion date.
+
+    Drafts keep their original write date until promoted — without this, a
+    draft written days ago and picked today keeps sorting (and permalinking,
+    per :year/:month/:day in _config.yml) at its old date, so it never shows
+    as the newest post despite going live today.
+    """
+    new_date = when.strftime("%Y-%m-%d")
+    text = path.read_text(encoding="utf-8", errors="replace")
+    if re.search(r"^date:.*$", text, re.MULTILINE):
+        text = re.sub(r"^date:.*$", f"date: {new_date}", text, count=1, flags=re.MULTILINE)
+    else:
+        text = re.sub(r"^---\n", f"---\ndate: {new_date}\n", text, count=1)
+    path.write_text(text, encoding="utf-8")
+
+
 def main(dry_run=False):
     if dry_run:
         print("[DRY RUN — no files will be moved, no git actions will run]\n")
@@ -213,6 +230,7 @@ def main(dry_run=False):
             print(f"  (dry-run: {len(candidates) - 1} other candidate(s) would have their aging counter bumped)")
         else:
             shutil.move(str(best_draft), str(dest))
+            set_publish_date(dest, now)
             published = True
 
             # Every other in-window candidate just lost this cycle — bump its aging counter.
