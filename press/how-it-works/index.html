@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "How Crip Minds Works"
-description: "The system behind Crip Minds — how it selects topics, writes, fact-checks, illustrates, publishes, and distributes one article every morning."
+description: "The system behind Crip Minds — how it selects topics, writes, fact-checks, and illustrates one article every morning, and how it decides which one to publish."
 ---
 
 <main id="main-content">
@@ -33,7 +33,7 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
           </blockquote>
 
           <p class="text-body text-secondary" style="margin-bottom: 0; line-height: 1.8;">
-            By the time I check my phone, the piece has been edited, fact-checked, illustrated, published to cripminds.com, and posted to Bluesky. Crip Minds publishes one article per day. The writer changes every day. There are four of them.
+            By the time I check my phone, the piece has been edited, fact-checked, and illustrated &mdash; and added to a queue of drafts. Crip Minds writes one article every morning. Every two days, the strongest draft of the pieces waiting goes live. The writer changes daily. The publish schedule doesn&rsquo;t.
           </p>
 
         </div>
@@ -155,24 +155,29 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">7.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Image generation &mdash; Pollinations AI</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Two images per article: header and in-body. Screen-print with halftone and pixel overlay &mdash; deliberately not photographic, not stock, not inspirational. The brief comes from the article&rsquo;s specific argument. No wheelchairs as symbols. No medical equipment as shorthand.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Image generation &mdash; Recraft V4.1</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Three images per article: a wide confronting hero, an intimate in-body detail, an abstract accent. Screen-print, risograph, and printmaking references &mdash; deliberately not photographic, not stock, not inspirational. The brief comes from the article&rsquo;s specific argument, in a visual language particular to that day&rsquo;s writer. No wheelchairs as symbols. No medical equipment used as pity shorthand.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">8.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Publishing &mdash; Jekyll + GitHub Actions</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Committed as a Markdown file to a private GitHub repository. GitHub Actions builds the Jekyll site and deploys to cripminds.com. No CMS, no database, no login. The site is a set of files that become HTML.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Drafted, not yet published &mdash; Jekyll + GitHub</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Committed as a Markdown file to a private GitHub repository, into a queue of unpublished drafts. No CMS, no database, no login &mdash; the site is a set of files that become HTML, but not every file that gets written becomes a page right away.</p></div>
               </div>
 
               <div style="display: flex; gap: 1rem; align-items: flex-start;">
                 <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">9.</span>
-                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Distribution &mdash; Bluesky</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">A post goes out on Bluesky. Each persona has a distinct social voice. The post is not a headline with a link. It&rsquo;s the first move in a conversation.</p></div>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Curation, every two days</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">Every draft in the queue is scored on editorial quality, freshness, and how recently that persona last published. The strongest one is promoted to the live site; GitHub Actions builds and deploys it. A draft that keeps losing gets archived after a week &mdash; kept on record, not thrown away.</p></div>
+              </div>
+
+              <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                <span class="text-small text-secondary" style="min-width: 1.5rem; padding-top: 0.1rem; flex-shrink: 0;">10.</span>
+                <div><p class="text-body" style="font-weight: 600; margin-bottom: 0.2rem;">Distribution &mdash; Bluesky</p><p class="text-small text-secondary" style="margin-bottom: 0; line-height: 1.6;">A post goes out on Bluesky the moment a piece is promoted. Each persona has a distinct social voice. The post is not a headline with a link. It&rsquo;s the first move in a conversation.</p></div>
               </div>
 
             </div>
           </div>
 
           <p class="text-body text-secondary" style="margin-bottom: 0; line-height: 1.8;">
-            From first RSS scan to published article: roughly four hours. The point of the system is consistency, not theatrical automation. The rules, checks, and editorial memory are designed upstream so the publication can run daily without improvising its ethics each morning.
+            From first RSS scan to finished draft: roughly four hours, every morning. What publishes and when is a separate decision, made every two days, on purpose &mdash; the point of the system is consistency and selection, not theatrical automation.
           </p>
 
         </div>
@@ -212,7 +217,7 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
           <div style="margin: 1.5rem 0;">
             <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Claude Fable 5</span><span class="text-body text-secondary">The editor. It drafts the angle and register, critiques the draft, and updates each voice&rsquo;s memory after publication.</span></div>
             <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Claude Opus 4.8</span><span class="text-body text-secondary">The writer. It receives the brief, the persona state, and the source material, then produces the essay and revision pass.</span></div>
-            <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Pollinations AI</span><span class="text-body text-secondary">The image tool. It turns the article brief into deliberately stylized visuals rather than stock-photo disability imagery.</span></div>
+            <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Recraft V4.1</span><span class="text-body text-secondary">The image tool. It turns the article brief into deliberately stylized visuals rather than stock-photo disability imagery.</span></div>
             <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Python</span><span class="text-body text-secondary">The conductor. It runs the schedule, applies the guardrails, fetches sources, builds prompts, commits files, and hands the finished piece off for publication.</span></div>
             <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">Jekyll</span><span class="text-body text-secondary">The site builder. It turns the Markdown article into a static page.</span></div>
             <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 160px; flex-shrink: 0; font-weight: 600;">GitHub Actions</span><span class="text-body text-secondary">The deployment step. It rebuilds the site and pushes the new article live, usually within a couple of minutes.</span></div>
@@ -248,7 +253,7 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
           </p>
 
           <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
-            What the system does is extend reach. One person, one city, one day. The site publishes every morning. The archive grows. The ideas move. That&rsquo;s the whole point.
+            What the system does is extend reach. One person, one city, one day. The site writes every morning and publishes every two days. The archive grows. The ideas move. That&rsquo;s the whole point.
           </p>
 
           <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
@@ -256,7 +261,7 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
           </p>
 
           <p class="text-body" style="margin-bottom: 0; line-height: 1.8;">
-            This document exists because people kept asking how it works. Now you know.
+            This document exists because people kept asking how it works. Now you know. If you want the deeper technical version &mdash; the quality-gate rules, the curation scoring, the model routing &mdash; that's the <a href="/press/system-report/">System Report</a>.
           </p>
 
         </div>
@@ -266,6 +271,8 @@ description: "The system behind Crip Minds — how it selects topics, writes, fa
             <p class="text-body" style="margin-bottom: 0.25rem; font-weight: 600;">Jascha Blume</p>
             <p class="text-small text-secondary" style="margin-bottom: 0.25rem;">Amsterdam / Bologna, 2026</p>
             <p class="text-small text-secondary" style="margin-bottom: 0;">
+              <a href="/press/system-report/">System Report</a>
+              &nbsp;&middot;&nbsp;
               <a href="/press/">Press &amp; Background</a>
               &nbsp;&middot;&nbsp;
               <a href="/">cripminds.com</a>

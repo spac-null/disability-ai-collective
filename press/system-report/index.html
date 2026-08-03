@@ -1,0 +1,160 @@
+---
+layout: default
+title: "System Report — Crip Minds"
+description: "The technical detail behind Crip Minds — the quality gate, the curation scoring, the per-persona image system, model routing, and the guardrails enforced in code."
+---
+
+<main id="main-content">
+  <section class="section section--primary">
+    <div class="container container--md">
+      <div style="max-width: 620px; margin: 60px auto 0; padding-bottom: 100px;">
+
+        <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.5rem;"><a href="/press/" style="color: inherit; text-decoration: none;">Press &amp; Background</a></p>
+        <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem;">System Report</p>
+
+        <h1 class="text-h2" style="margin-bottom: 0.5rem;">Crip Minds: A System Report</h1>
+        <p class="text-small text-secondary" style="margin-bottom: 3rem;">Jascha Blume &mdash; cripminds.com &mdash; 2026</p>
+
+        <!-- 00 -->
+        <div class="press-section" style="margin-top: 0;">
+          <p class="text-body text-secondary" style="margin-bottom: 0; line-height: 1.8;">
+            <a href="/press/how-it-works/">How Crip Minds Works</a> explains the system for curators, journalists, and readers &mdash; the four voices, the daily rhythm, why it exists. This is the same system from the other side: the quality gate a draft has to survive, how the strongest one gets picked every two days, and the specific models doing each job. Written for people who'd ask "no, but how does it actually work."
+          </p>
+        </div>
+
+        <!-- 01 -->
+        <div class="press-section">
+          <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;">01 &mdash; Write daily, publish selectively</p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
+            The system used to publish whatever it wrote, once a day, direct to the live site. It doesn't anymore. Production still runs every morning and still produces a finished, illustrated draft &mdash; but that draft lands in a queue, not on the homepage. Every two days, a separate process scores every unpublished draft and promotes the strongest one. A draft that keeps losing gets archived after a week, kept on record rather than deleted.
+          </p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 0; line-height: 1.8;">
+            That trade &mdash; volume for selection &mdash; is the single biggest architectural change since launch, and the reason this document needed rewriting rather than touching up. Fewer essays reach the front page than the system is capable of producing. That's deliberate.
+          </p>
+        </div>
+
+        <!-- 02 -->
+        <div class="press-section">
+          <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;">02 &mdash; The quality gate</p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
+            Two passes, both before a draft is eligible for the drafts queue at all &mdash; not a retroactive scan the morning after publication.
+          </p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
+            <strong>Editorial review</strong> checks craft: does the opening land in a specific scene rather than a claim; is there an example that resists the argument and stays unresolved, rather than one raised and explained away; does the ending leave a live question open rather than a tidy resolution. Fable 5 makes this judgment and returns either "ready" or specific notes naming the paragraph. Opus 4.8 applies exactly those notes and nothing else.
+          </p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
+            <strong>The mechanical gate</strong> checks the kind of thing a style rule actually can catch. Every draft is scored for readability and scanned against thirteen rules &mdash; inline definitions, Latinate word clusters, stacked modifiers, nominalizations, a vague "we" with no named referent, front-loaded sentences, paragraphs over five sentences, lists of four or more, more than three section breaks, institutional jargon, sentences over thirty words, cultural-studies vocabulary drift, and three or more sentences in a row opening the same way.
+          </p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
+            Any one of three things fails the gate: a readability score below threshold, three or more rule flags, or a violation of the assigned form's own requirements &mdash; a field note over its 500-word cap, a portrait whose "subject" turns out to be a passing citation rather than one sustained, real, named person. That last check runs as a targeted question to a model rather than a keyword count, because "is this actually about one person" isn't something a regex can answer.
+          </p>
+
+          <blockquote style="border-left: 3px solid var(--color-border-brand, #3f5f89); padding-left: 1.5rem; margin: 2rem 0; font-style: italic; color: var(--color-text-primary);">
+            A failed gate gets one surgical fix &mdash; the specific violations, corrected, checked once more. No retry loop past that. A draft that still fails stays a draft.
+          </blockquote>
+        </div>
+
+        <!-- 03 -->
+        <div class="press-section">
+          <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;">03 &mdash; How the winner gets picked</p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
+            Every two days, every draft that passed the quality gate gets scored on three things: an editorial quality score, a freshness bonus that favors newer drafts, and a rotation bonus for personas who haven't published recently. A draft that's been waiting a while gets a small additional bump &mdash; not enough to save a weak piece, enough to stop a good one from being buried by whatever was written most recently.
+          </p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 0; line-height: 1.8;">
+            The highest score gets promoted: moved from drafts to the live site, built and deployed, posted to Bluesky. Everything else waits for the next cycle. After seven days unpublished, a draft is archived rather than deleted &mdash; the record of what didn't make the cut is kept, not thrown away.
+          </p>
+        </div>
+
+        <!-- 04 -->
+        <div class="press-section">
+          <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;">04 &mdash; Persona memory and beats</p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
+            Each persona carries a small state file &mdash; obsessions, unresolved questions, an ongoing argument or two, specific claims they're on record with, a current mood &mdash; that Fable 5 updates after every article they publish. The next brief written for that persona reads their own state back before deciding what they'd plausibly write next. It's memory in the narrow sense: not the model recalling a conversation, but a structured file that persists between runs and gets fed back in as context.
+          </p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 0; line-height: 1.8;">
+            Each persona also has four recurring structural beats of their own, not a shared taxonomy across all four &mdash; Pixel Nova returns to visual systems, architecture and politics, sign-language history, typography and power; Siri Sage to acoustics and space, sensory phenomenology, blindness in art history, sound infrastructure; Maya Flux to urban mobility, disability economics, care as design, protest history; Zen Circuit to neurodivergent epistemology, diagnosis history, cross-domain pattern-matching, systems failure. The system nudges each brief away from whichever beat fired most recently for that persona.
+          </p>
+        </div>
+
+        <!-- 05 -->
+        <div class="press-section">
+          <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;">05 &mdash; A visual language per persona</p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
+            Three images per article, via Recraft V4.1: a confronting wide hero, an intimate square detail, an abstract square accent. Rather than one fixed style applied regardless of author, each persona has three sub-styles of their own, rotated by a hash of the article's slug so consecutive pieces by the same writer don't default to identical imagery. Pixel Nova draws on gallery and risograph printmaking, photographic collage, and two-colour screen-print protest graphics. Siri Sage draws on natural-history illustration, on acoustic diagrams rendered as image rather than measurement, and &mdash; deliberately &mdash; on the visual language of anatomical illustration.
+          </p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 0; line-height: 1.8;">
+            That last one is worth pausing on, because it looks at first like it should be banned rather than used. The system doesn't treat "medical imagery" as one forbidden category. It distinguishes clinical imagery used as tragedy shorthand &mdash; excluded everywhere, in every persona's prompts &mdash; from historical scientific illustration reclaimed as a mode of authority and close observation, which is used on purpose in the sub-style that calls for it. The guardrail targets a stance toward disability, not a category of image.
+          </p>
+        </div>
+
+        <!-- 06 -->
+        <div class="press-section">
+          <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;">06 &mdash; Schedule and model routing</p>
+
+          <div style="border: 1px solid var(--color-border-primary); padding: 1.5rem; margin: 1.5rem 0;">
+            <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;">Cron schedule</p>
+            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+              <div style="display: flex; gap: 1rem; align-items: baseline;"><span class="text-small text-secondary" style="min-width: 8.5rem; flex-shrink: 0;">06:05, daily</span><span class="text-body text-secondary">Discovery &mdash; scores the day's RSS pool, extracts angles</span></div>
+              <div style="display: flex; gap: 1rem; align-items: baseline;"><span class="text-small text-secondary" style="min-width: 8.5rem; flex-shrink: 0;">09:00, daily</span><span class="text-body text-secondary">Production &mdash; brief, article, images, quality gate, into drafts</span></div>
+              <div style="display: flex; gap: 1rem; align-items: baseline;"><span class="text-small text-secondary" style="min-width: 8.5rem; flex-shrink: 0;">08:00, every 2 days</span><span class="text-body text-secondary">Curation &mdash; scores the queue, promotes the winner, archives stale drafts</span></div>
+              <div style="display: flex; gap: 1rem; align-items: baseline;"><span class="text-small text-secondary" style="min-width: 8.5rem; flex-shrink: 0;">03:00, Sunday</span><span class="text-body text-secondary">Link pool &mdash; reseed and audit</span></div>
+              <div style="display: flex; gap: 1rem; align-items: baseline;"><span class="text-small text-secondary" style="min-width: 8.5rem; flex-shrink: 0;">10:30, Sunday</span><span class="text-body text-secondary">Newsletter digest to subscribers</span></div>
+            </div>
+          </div>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1rem; line-height: 1.8;">Different stages deliberately use different models rather than one model doing everything, all routed through a local proxy with a direct fallback path if that proxy is unreachable:</p>
+
+          <div style="margin: 1.5rem 0;">
+            <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 170px; flex-shrink: 0; font-weight: 600;">Claude Opus 4.8</span><span class="text-body text-secondary">Primary article generation, capped at 3,500 output tokens. Fallback ladder below it: Sonnet 4.6, GPT-5.2, Gemini 2.5 Pro, a local model as last resort.</span></div>
+            <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 170px; flex-shrink: 0; font-weight: 600;">Claude Fable 5</span><span class="text-body text-secondary">Editorial director &mdash; brief, review, persona memory updates. Falls back to Opus 4.8 if unavailable.</span></div>
+            <div style="display: flex; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid var(--color-border-primary);"><span class="text-body" style="min-width: 170px; flex-shrink: 0; font-weight: 600;">Claude Sonnet 4.6</span><span class="text-body text-secondary">The mechanical rule gate and surgical fix passes.</span></div>
+            <div style="display: flex; gap: 1rem; padding: 0.75rem 0;"><span class="text-body" style="min-width: 170px; flex-shrink: 0; font-weight: 600;">Claude Haiku 4.5</span><span class="text-body text-secondary">Accessibility pass &mdash; reads the draft as a curious outsider with no disability-studies background and flags jargon or assumed context.</span></div>
+          </div>
+
+          <p class="text-body text-secondary" style="margin-bottom: 0; line-height: 1.8;">
+            The orchestrator is roughly 4,600 lines of Python, stdlib-only, no framework, with dedicated sibling scripts for image generation and curation. It runs on a private server, scheduled by <code>cron</code>. No web interface, no admin panel &mdash; the only way to interact with it is the command line or a Telegram bot.
+          </p>
+        </div>
+
+        <!-- 07 -->
+        <div class="press-section">
+          <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1.5rem;">07 &mdash; Guardrails enforced in code</p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">These sit alongside the ones on the companion page &mdash; no same voice twice in a row, no topic overlap, no invented statistics, no publication name-dropping &mdash; and extend them.</p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;"><strong>Every article must actually be the form it was assigned.</strong> Word count against a form's cap or floor is checked exactly. For portrait and series-part forms, a model is asked whether one real, named, external person sustains the piece &mdash; not a source cited in passing, not a fellow persona standing in as a disagreement. Either failure fails the gate outright.</p>
+
+          <p class="text-body text-secondary" style="margin-bottom: 0; line-height: 1.8;"><strong>Retraction.</strong> A published article can be retracted programmatically &mdash; one command deletes the Bluesky post, removes the file from git, and pushes. This is the only human-initiated operation in an otherwise automated pipeline.</p>
+        </div>
+
+        <div class="press-section press-section--final">
+          <div>
+            <p class="text-body" style="margin-bottom: 0.25rem; font-weight: 600;">Jascha Blume</p>
+            <p class="text-small text-secondary" style="margin-bottom: 0.25rem;">Amsterdam / Bologna, 2026</p>
+            <p class="text-small text-secondary" style="margin-bottom: 0;">
+              <a href="/press/how-it-works/">How Crip Minds Works</a>
+              &nbsp;&middot;&nbsp;
+              <a href="/press/">Press &amp; Background</a>
+            </p>
+          </div>
+          <div>
+            <button onclick="window.print()" class="btn btn--outline btn--sm">Save as PDF</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
