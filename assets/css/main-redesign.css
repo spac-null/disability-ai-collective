@@ -64,7 +64,19 @@
   --color-text-inverse: var(--foundation-white);
   --color-text-brand: var(--brand-crip-blue-700);
   --color-text-accent: var(--brand-electric-lime-700);
-  
+
+  /* Site-brand accent — generic UI only (buttons, links, focus, blockquote borders).
+     Never a persona color: teal sits in the largest open hue gap between the four
+     persona hues (olive ~85°, slate-blue ~214°) so it reads as "the publication,"
+     not a fifth voice. 5.3:1 on the cream background. Previously this was an
+     undefined --color-accent variable silently falling back to Pixel Nova's exact
+     hex (#7c6af7) in all 9 usages — this was never a deliberate brand choice. */
+  --color-accent: #0e7568;
+  /* Foreground for content sitting ON --color-accent (button labels). White clears
+     5.6:1 here — dark mode needs the opposite (see .dark-theme), not the same value,
+     because the accent itself inverts from dark-on-light to light-on-dark. */
+  --color-on-accent: #ffffff;
+
   --color-background-primary: var(--foundation-white);
   --color-background-secondary: var(--foundation-gray-50);
   --color-background-elevated: var(--foundation-white);
@@ -110,7 +122,12 @@
   --color-text-inverse: #161618;
   --color-text-brand: #c4d2e5;
   --color-text-accent: #d5e0c3;
-  
+
+  /* Same teal hue, lifted for charcoal: 6.9:1 on #2b2b2f. See :root for why teal. */
+  --color-accent: #3fc9b8;
+  /* White on this light teal is 2.05:1 — fails badly. Near-black clears 9.55:1. */
+  --color-on-accent: #0d0c0b;
+
   --color-background-primary: #2b2b2f;
   --color-background-secondary: #333339;
   --color-background-elevated: #3b3b42;
@@ -843,6 +860,14 @@ main[data-persona="siri-sage"]   .post-category-label { color: #5c7a31; border-b
 main[data-persona="maya-flux"]   .post-category-label { color: #3f5f89; border-bottom-color: #3f5f89; }
 main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-bottom-color: #b05a3a; }
 
+/* Dark-theme text variants — same contrast fix as .agent-identity above (1.91:1 measured
+   live for Maya Flux against #333339, well under the 4.5:1 AA minimum). Border keeps the
+   full-saturation brand hue since borders aren't a text-contrast concern. */
+.dark-theme main[data-persona="pixel-nova"]  .post-category-label { color: #b3a9fa; }
+.dark-theme main[data-persona="siri-sage"]   .post-category-label { color: #99bf61; }
+.dark-theme main[data-persona="maya-flux"]   .post-category-label { color: #9eb5d2; }
+.dark-theme main[data-persona="zen-circuit"] .post-category-label { color: #dba793; }
+
 .card--brand {
   border-color: var(--color-border-brand);
   box-shadow: 0 0 0 1px var(--color-border-brand);
@@ -1241,8 +1266,8 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 .newsletter-form button[type="submit"] {
   width: 100%;
   padding: 0.6rem 1rem;
-  background: var(--color-accent, #7c6af7);
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
   border: none;
   border-radius: 4px;
   font-size: 0.875rem;
@@ -1282,8 +1307,8 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 }
 
 .newsletter-frequency input[type="radio"]:checked {
-  background: var(--color-accent, #7c6af7);
-  border-color: var(--color-accent, #7c6af7);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .newsletter-msg {
@@ -3320,7 +3345,7 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 
 .post-meta__edited {
   font-size: 0.7rem;
-  color: var(--color-accent, #7c6af7);
+  color: var(--color-accent);
   letter-spacing: 0.1em;
   text-transform: lowercase;
   opacity: 0.75;
@@ -3558,7 +3583,7 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   gap: 0.75rem;
   margin: var(--space-10) 0 var(--space-8);
   padding: 0.85rem 1.1rem;
-  border-left: 3px solid var(--color-accent, #7c6af7);
+  border-left: 3px solid var(--color-accent);
   background: var(--color-bg-secondary, rgba(124,106,247,0.06));
   border-radius: 0 4px 4px 0;
 }
@@ -3581,7 +3606,7 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 }
 
 .post-thread-signal__link:hover {
-  color: var(--color-accent, #7c6af7);
+  color: var(--color-accent);
 }
 
 /* Prev/Next article nav */
@@ -4155,8 +4180,8 @@ article[data-categories].hidden {
 
 .subscribe-section__btn {
   padding: 0.65rem 1.2rem;
-  background: var(--color-accent, #7c6af7);
-  color: #fff;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
   border: none;
   border-radius: 4px;
   font-size: 0.9rem;
@@ -4197,8 +4222,8 @@ article[data-categories].hidden {
 }
 
 .subscribe-section__freq input[type="radio"]:checked {
-  background: var(--color-accent, #7c6af7);
-  border-color: var(--color-accent, #7c6af7);
+  background: var(--color-accent);
+  border-color: var(--color-accent);
 }
 
 .subscribe-section__msg {
@@ -4324,7 +4349,7 @@ article[data-categories].hidden {
 }
 
 .notes-list__read {
-  color: var(--color-accent, #7c6af7);
+  color: var(--color-accent);
   text-decoration: none;
 }
 
