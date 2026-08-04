@@ -18,16 +18,22 @@ whole site's state in one long-running context again, that's what filled this on
 6. Update this scorecard
 
 **Remaining work (small tail):**
-- [ ] 404 page — never checked
-- [ ] `/research/camouflaging/`, `/research/care-labor/`, `/research/extreme-male-brain/` — same template as `/research/deaf-arts/` (already checked, clean) and `/research/` (checked, clean) — likely fine, but not actually verified individually, so don't assume
-- [ ] `/cripminds-stats-2026-06.html` — confirm it's still linked/live before spending time; if orphaned, skip
+- [x] 404 page — checked, 2 real bugs found + fixed (see log below)
+- [x] `/research/camouflaging/`, `/research/care-labor/`, `/research/extreme-male-brain/` — verified individually, all clean both themes, no new bugs (same template as already-clean pages, assumption held this time)
+- [x] `/cripminds-stats-2026-06.html` — confirmed orphaned (only reference sitewide is this scorecard file itself), skipped per instruction
+- [x] Two reported visual bugs (empty grid cell on `/research/`, avatar moire on homepage) — both confirmed real, both fixed, see log below
 - [ ] Homepage's remaining **design** (not contrast) findings, still open from the first Fable critique — see "Open design findings" section below. These are visual-polish items, lower priority than contrast, but were the original point of the exercise before the WCAG detour
 - [ ] The rest of the site hasn't had a Fable *design* critique at all yet (only homepage did) — everything else has only been contrast-checked. If continuing the design-quality thread (not just accessibility), that's a separate pass still to do on every page below
+- [ ] `about.html` uses the same `.agent-card__image` pattern as the homepage with the same 4 full-size (1024px) source images at the same 72-96px render size — same latent moire issue, NOT fixed this session (out of scope, homepage was the only page reported). Trivial follow-up: point its 4 `<img src>` at the `*_thumb.png` files created this session (see finding below), same as index.html.
 
 **Pages verified clean this session (contrast only, not design-critiqued except homepage):**
-`/`, article template, `/research/`, `/research/deaf-arts/`, `/about/`, `/press/`,
+`/`, article template, `/research/`, `/research/deaf-arts/`, `/research/camouflaging/`,
+`/research/care-labor/`, `/research/extreme-male-brain/`, `/about/`, `/press/`,
 `/press/how-it-works/`, `/press/system-report/`, `/jascha/`, `/notes/`,
-`/accessibility/`, `/editorial-lens/`, all 4 `/collective/*/` pages, `/gallery/`
+`/accessibility/`, `/editorial-lens/`, all 4 `/collective/*/` pages, `/gallery/`, `404.html`
+
+**`cripminds-stats-2026-06.html`**: confirmed orphaned (not linked from any live page,
+`grep -rl` across the repo only turns up this scorecard) — skipped, not checked.
 
 ---
 
@@ -103,6 +109,29 @@ Not contrast bugs — genuine design/polish findings, still open:
    judgment was wrong because I checked semantic reasonableness, not the actual
    numbers. Moved the opacity to just the icon; label now always fully legible.
    (commit bfd182a)
+8. `404.html`, `.error-page__code` ("404" ghost text) — used
+   `--color-border-primary` as a text color, 1.91:1 light / 1.97:1 dark
+   (need 3:1, large bold text). Switched to `--color-text-muted`: 7.04:1
+   light / 6.68:1 dark. (commit f928355)
+9. `404.html` and sitewide, `.btn--primary` / `.btn` / `.btn-generative` /
+   `.section--brand` / `.skip-link` (every consumer of
+   `--color-background-brand`) — paired with `--color-text-inverse`, which
+   flips to near-black (#161618) in dark mode. That's correct when paired
+   with a light surface, but `--color-background-brand` in dark mode is a
+   mid-tone "lifted" blue (#4a648a), not light — near-black text measured
+   2.99:1 (need 4.5:1). Light mode was fine (8.63:1) since background-brand
+   there is dark navy. Added a new `--color-on-brand` token (white in both
+   themes: 8.63:1 light, 5.59:1 dark) and swapped it into the 6 rules that
+   pair text with `--color-background-brand`, leaving `--color-text-inverse`
+   and its other consumer (`.text-inverse` utility) untouched. Grepped for
+   other live usages of `.btn--primary`/`.btn-generative`/`.section--brand`
+   after fixing: only `index.html` and `research.html` also reference
+   `.btn--primary`, both inside the `{% else %}` empty-posts-state block
+   that never renders while posts exist — so this bug was effectively only
+   ever live on 404.html in production, not a retroactive miss on other
+   already-"clean"-marked pages. Fixed the token anyway since it's the
+   correct general fix and future empty-state/skip-link renders would have
+   hit the same bug. (commit f928355)
 
 ## Site-wide findings / lessons (apply once, don't re-litigate per page)
 
@@ -120,6 +149,63 @@ Not contrast bugs — genuine design/polish findings, still open:
   `#7c6af7` fallback anywhere; use `var(--color-accent)` bare. Foreground-on-accent
   should use `var(--color-on-accent)`, not hardcoded white — the two accent
   values invert lightness between themes.
+- **New: `--color-on-brand` token** (added this session, finding #9) — anything
+  painted on top of `--color-background-brand` (buttons, `.section--brand`,
+  skip-link) should use `var(--color-on-brand)`, not `--color-text-inverse`.
+  `--color-text-inverse` is for pairing with light/near-white surfaces only —
+  it flips to near-black in dark mode, which breaks badly against the
+  mid-tone "lifted" brand blue dark mode uses.
+- **New: stale-paint / stale-read artifact in the browser automation itself**
+  (not a site bug) — immediately after toggling the theme class via
+  `javascript_tool`, a `getComputedStyle` read or an axe-core scan can
+  return WRONG values for elements below the fold (colors from the
+  *previous* theme, or a mix), even after a 1s wait and even across 3
+  repeated axe runs with delays between them. A real browser screenshot
+  taken at the same moment shows the CORRECT (already-switched) rendering —
+  so this is a read/eval timing bug in the extension bridge, not an actual
+  flash-of-wrong-theme on the live site. Fix: after toggling theme, force a
+  reflow before trusting any JS-read color value or axe result — scrolling
+  the page (e.g. down then back up, or down to the element in question) was
+  sufficient every time this was hit. Screenshot first if a scan result
+  looks implausible (e.g. reports dark-mode colors right after switching to
+  light) before treating it as a real bug. Cost real time this session on
+  404.html (chased a phantom `#bd-email` "1.02:1" violation twice, in both
+  directions, before recognizing the pattern) — check for this specifically
+  if a violation's reported foreground/background hex pair doesn't match
+  the theme you think you just set.
+
+## Visual bugs found + fixed this session (non-contrast, user-reported)
+
+1. **`/research/` "Reading threads" grid — empty tan/beige void.** `research.html`
+   hardcodes exactly 4 `.research-thread` items into a 3-column CSS grid
+   (`.research-threads`, `assets/css/main-redesign.css` ~line 1351). Row 2 had
+   only 1 populated cell; the other 2 grid tracks were empty, showing the
+   container's border-colored background fill through the `gap:1px` trick —
+   read as a large ugly filled box. Fixed with a `.research-thread--full`
+   modifier (`grid-column: 1 / -1`) on the 4th item so it spans the full row.
+   Confirmed via grep this grid pattern isn't reused elsewhere in the repo.
+   Verified visually both themes — void gone, reads as an intentional
+   full-width row. (commit 117ddbe)
+2. **Homepage persona avatars (Maya Flux, Zen Circuit) — "glitchy/corrupted
+   static" look.** Confirmed real, not a load-order flash (this was an open
+   question carried over from the first Fable design pass). Root cause:
+   source images are legitimate screen-print-style artwork (verified by
+   viewing the full 1024px source directly — dense circuit-grid /
+   cityscape-grid line art, not corrupted) but are 1024x1024 WebP files
+   saved with a `.png` extension, rendered at 72-96px via a plain `<img>`
+   with `object-fit: cover` — a textbook moire/aliasing trigger on
+   Zen Circuit's periodic dot/dash grid especially. Fixed by pre-generating
+   real 192x192 PNG thumbnails (PIL: Gaussian pre-blur radius 1.4, then
+   `Image.LANCZOS` resize) for all 4 personas and pointing
+   `index.html`'s `.agent-card__image` `src` at the new `*_thumb.png`
+   files. Checked all 4 personas even though only 2 showed visibly in the
+   report. Verified by direct inspection of the generated thumbnail files
+   and in-browser screenshots at actual render size, both themes.
+   `.filter-persona-icon` (research.html, 16px) checked and confirmed
+   unaffected at that size — left alone. `about.html` has the identical
+   unfixed pattern (same images, same `.agent-card__image` class, same
+   size) — noted as a follow-up, not fixed this session (out of scope: only
+   the homepage was reported). (commit 23a5445)
 
 ## Log
 
@@ -128,3 +214,14 @@ Not contrast bugs — genuine design/polish findings, still open:
   conformance level). AA contrast work continued anyway per explicit confirmation
   it's a hard floor. Session paused here — context filling up — handoff prepared
   above for continuation in a fresh session or via subagent.
+- 2026-08-04 (later session, subagent): closed out the remaining tail —
+  404.html + 3 individual research subpages contrast-checked (2 new bugs found
+  + fixed on 404.html, subpages were clean), orphaned stats page confirmed +
+  skipped, both reported visual bugs (research-threads grid void, homepage
+  avatar moire) confirmed real and fixed. 4 commits (f928355, 117ddbe,
+  23a5445, plus this doc update), all pushed to origin/main. Remaining open
+  work is unchanged: homepage's other open design findings, and a full Fable
+  design critique pass on every non-homepage page (contrast-only so far).
+  New follow-up noted: `about.html` has the same unfixed avatar-moire pattern
+  as the homepage did (same images, same class) — trivial fix, same
+  `*_thumb.png` files already exist, just needs the 4 `src` swaps.
