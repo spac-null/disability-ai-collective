@@ -828,6 +828,15 @@ a:hover {
 .agent-card[data-persona="maya-flux"] .agent-identity   { color: #3f5f89; border-color: rgba(63,95,137,0.3);   background: rgba(63,95,137,0.06);   }
 .agent-card[data-persona="zen-circuit"] .agent-identity { color: #b05a3a; border-color: rgba(176,90,58,0.3);   background: rgba(176,90,58,0.06);   }
 
+/* Dark-theme text variants of the above — the raw brand hues fail WCAG AA (as low as
+   1.65:1) as text color against dark card backgrounds. Lightened in HSL to clear 5:1
+   with margin while keeping each persona's hue identity. Border/background tints
+   unchanged — only text needs the contrast fix. */
+.dark-theme .agent-card[data-persona="pixel-nova"] .agent-identity  { color: #b3a9fa; }
+.dark-theme .agent-card[data-persona="siri-sage"] .agent-identity   { color: #99bf61; }
+.dark-theme .agent-card[data-persona="maya-flux"] .agent-identity   { color: #9eb5d2; }
+.dark-theme .agent-card[data-persona="zen-circuit"] .agent-identity { color: #dba793; }
+
 /* Persona page eyebrow label inherits accent from page context */
 main[data-persona="pixel-nova"]  .post-category-label { color: #7c6af7; border-bottom-color: #7c6af7; }
 main[data-persona="siri-sage"]   .post-category-label { color: #5c7a31; border-bottom-color: #5c7a31; }
