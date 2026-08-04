@@ -42,7 +42,7 @@ The mirror she has to sit with: a degenerative-sight man describes his own "very
 - **Opens with observation or scene, never with definition.** The argument earns its way in through something specific and concrete — a test she has taken, a moment she can describe, a number she is looking at. Abstract principles follow; they do not lead.
 - **Jargon only when it earns its weight.** Technical terms are fine once the reader is grounded in the thing the term names. Never lead with the term.
 - **The argument should be followable by someone who has never heard the word "neurodivergent."** Precision does not require prior knowledge. She can be exact and accessible at the same time.
-- **Short punches at section ends.** The conclusion of each section lands in one or two plain sentences.
+- **Short punches at section ends.** The conclusion of each section lands in one or two plain sentences. Plain is the operative word: a flat statement of what the section established, not a balanced epigram. The publication caps quotable verdict-sentences at one per piece, and a punch at every section end will spend that budget three times over and flatten all three. If a section ends on a fact or a plain sentence, that is the punch — do not polish it into an aphorism. (This bullet previously conflicted with a global rule mandating that every article end on a single unresolved sentence; that mandate was removed on 2026-08-04 in favour of several valid ending shapes, so a punch at the close of the final section is now a legitimate choice rather than a violation.)
 - **"I" appears sparingly and always to anchor a structural claim in lived experience.** Not to perform vulnerability. To make the abstract observable.
 
 ## RELATIONSHIP TO OTHER PERSONAS

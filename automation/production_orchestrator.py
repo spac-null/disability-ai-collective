@@ -102,12 +102,19 @@ _REGISTERS = [
     ("melancholic",  0.15, "Slow, exact, not sentimental. Write about loss without performing grief. The sadness is in what is missing from the frame, not in what you say about it."),
     ("celebratory",  0.05, "Something was built right. Something survived. Something won. Not naive optimism — specific joy at a specific thing that actually happened, that actually works. The celebration is in the precision of what is being recognised."),
 ]
+# Length pool. Weighted toward the long end (2026-08-04): a patient turn cannot be
+# earned at 800 words, so the 1600 bucket now fires roughly once a week at daily cadence.
+# NOT extended past 1600 on purpose — every generation provider caps at max_tokens=3500
+# (~2600 words) and the local Qwen fallback at 2500 (~1875 words), and
+# _opus_targeted_revision is also capped at 3500. A 2200-2500 word target would truncate
+# mid-sentence on the fallback path and in the revision pass. Raising those three ceilings
+# is the prerequisite for a genuinely Bregman-length (~2800 word) bucket.
 _LENGTHS = [
-    (450,  0.10),
-    (700,  0.20),
-    (950,  0.35),
-    (1200, 0.25),
-    (1600, 0.10),
+    (450,  0.08),
+    (700,  0.15),
+    (950,  0.30),
+    (1200, 0.27),
+    (1600, 0.20),
 ]
 
 _ARTICLE_TYPES = [
@@ -898,11 +905,11 @@ class ProductionOrchestrator:
                 )
             if "comparative-case" not in shapes:
                 nudges.append(
-                    "COMPARATIVE CASE — REQUIRED THIS ARTICLE (it has been absent from every recent piece): "
-                    "Open with two parallel situations — person A and person B, system X and system Y, before and after. "
-                    "Run them side by side with NO commentary until paragraph 3. The reader draws the contrast. "
-                    "This cannot be satisfied by CONCESSION or REDEFINE — those are different moves. "
-                    "Two parallel stories opened simultaneously. No thesis sentence needed. The gap IS the argument."
+                    "COMPARATIVE CASE — worth considering (it has been absent from every recent piece): "
+                    "two parallel situations — person A and person B, system X and system Y, before and after — "
+                    "run side by side with no commentary, the reader drawing the contrast themselves. "
+                    "Only use it if the material actually contains two comparable cases you found. "
+                    "Do not manufacture a second case to satisfy the shape; a forced pairing is worse than none."
                 )
             if nudges:
                 return "SHAPE NOTE: " + " ".join(nudges) + "\n\n"
@@ -1077,6 +1084,35 @@ class ProductionOrchestrator:
                             titles.append(t)
                         break
             return "; ".join(titles[:8]) if titles else ""
+        except Exception:
+            return ""
+
+    def _get_recent_openings(self, n: int = 5) -> str:
+        """Return the opening sentences of the last n posts, so the brief can vary from them.
+
+        Repetition of opening SHAPE across consecutive pieces is invisible from inside
+        any single article — it only shows up reading them back to back. Fable can see
+        the template if we show it the actual sentences.
+        """
+        try:
+            recent = sorted(self.posts_dir.glob("*.md"), reverse=True)[:n]
+            openings = []
+            for path in recent:
+                text = path.read_text(errors="ignore")
+                in_body = False
+                fm_count = 0
+                for line in text.splitlines():
+                    if line.strip() == "---":
+                        fm_count += 1
+                        if fm_count == 2:
+                            in_body = True
+                        continue
+                    s = line.strip()
+                    if in_body and len(s) > 80 and not s.startswith(("!", "<", "#", "*", "-")):
+                        first = re.split(r"(?<=[.!?])\s", s)[0]
+                        openings.append(first[:160])
+                        break
+            return "\n".join(f"  - {o}" for o in openings) if openings else ""
         except Exception:
             return ""
 
@@ -1605,8 +1641,8 @@ class ProductionOrchestrator:
             "4. NO \"Case study: Sarah, a graphic designer...\" — use real narrative flow\n"
             "5. Paragraphs with rhythm — short sentences land the idea, longer ones develop it. No sentence chains more than two comma-clauses. Paragraph length varies: a short one hits differently after a long one.\n"
             "6. Bold sparingly — only sharpest claims, never structural markers\n"
-            "7. ENDING: the last paragraph is a position the reader can argue with, or a live question the essay has given them tools to think about. NOT a concrete image that resolves the feeling. NOT a thesis restatement or title echo. NOT a call to action. The door stays open. NEVER a sentence starting with 'We need' / 'This requires' / 'Join' / 'I am developing'. If the draft ends with a resolving image-couplet (two mirrored sentences, e.g. 'The campfire is warm. The path is cold.') or a thesis echo, CUT backward to the last sentence that introduces genuinely new territory and end there. Alternative: the CODA — fold back to the opening scene in a different register, used at most once every four articles. No stated moral.\n"
-            "8. CONCESSION: if the draft dismantles an assumption, check that it gives the strongest version of the opposing view first. If it attacks a weakened version, strengthen the concession before the flip. One short sentence does the flipping.\n"
+            "7. ENDING — NO HOUSE SHAPE: several endings are valid and you must not convert one into another. A hard resolution the author commits to, a live question left open, a last word given to a quoted source, a plain concrete fact, or a coda folding back to the opening scene: all fine. Do NOT force irresolution, and do NOT cut a confident landing just because it resolves — a warm, committed close is often the best thing in the piece. Still cut: calls to action, summaries of the argument just made, thesis restatements, title echoes, and any sentence starting 'We need' / 'This requires' / 'Join' / 'I am developing'. If the draft closes on a resolving image-couplet (two mirrored sentences, e.g. 'The campfire is warm. The path is cold.') that is a rhythm tic rather than a real ending — flatten it to one sentence or cut back to the last line that says something new.\n"
+            "8. CONCESSION: if the draft happens to dismantle an assumption, check that it gives the strongest version of the opposing view first. If it attacks a weakened version, strengthen the concession before the flip. Do not add a concession that is not already there.\n"
             "9. 700-2000 words body — match the original target length, do not shrink\n"
             "10. Author\'s disability is their EXPERTISE and LENS, never tragedy or limitation\n"
             "10b. AUTHOR RULE: Written BY a disabled person, not ABOUT disability. "
@@ -1635,13 +1671,13 @@ class ProductionOrchestrator:
             "22. Crip culture references (Sins Invalid, crip time, disability justice) only when they fit naturally\n"
             "23. PARAGRAPH LENGTH: Keep paragraphs short — 2 to 4 sentences as the norm. A one-sentence paragraph is a verdict; use it. If a paragraph runs past 5 sentences, find where it splits into two thoughts and break it there. Long paragraphs diffuse impact. The rule is not variety — it is compression: say the thing, then stop.\n"
             "24. DISCOVERY VOICE: Research should feel found, not reported. Use the rhythm of live discovery — 'even more interesting is that...', 'it turns out...', 'what nobody mentions is...', 'the part that stuck with me...' This is not hedging. It is the opposite: confident enough to let the reader feel the moment of realisation. Academic hedging is defensive. Discovery voice is forward-moving. It makes the reader lean in.\n"
-            "25. OPENING SCENE: The first paragraph places the reader in a specific room, moment, or situation — something is happening, or just happened. Scene and tension are not opposites: the scene IS the pressure. Do not open with a claim, a framework statement, a definition, or statistics. If the draft opens with a concept or a theorist, find the concrete moment that earned it and move it to the front. Every word in the opening paragraph must be working. No throat-clearing, no 'X has long been a problem', no context-setting before the scene.\n"
+            "25. OPENING — NO HOUSE SHAPE: do not convert one valid opening into another. A plain expository claim, a cold scene, a bare dated fact, a rare question, and a plain statement of what the writer set out to find out are all legitimate. Never rewrite a committed flat claim into a scene — a claim the essay then spends its length paying off is one of the strongest openings there is, and the placed-body-in-present-tense scene is currently overused across the publication. Do cut: throat-clearing, context-setting, 'X has long been a problem', a definition or a framework named before anything concrete has happened. Every word in the opening paragraph must be working.\n"
             "26. NO INVENTED DATA. Never write a specific number, percentage, or study finding that is not in the source material. Fake stats destroy credibility if checked. Use qualitative language instead: 'significantly more', 'consistently longer', 'dramatically worse'. If source material has real figures, use them and name the source in the prose. If it does not: no figures at all. No '73% of wheelchair users', no 'a 2025 study found', no '$4.2 million' -- unless those exact figures appear in the source text you were given.\n"
-            "27. WRITING MODEL — RUTGER BREGMAN: The target register is Bregman — accessible intellectual journalism, educated-conversational. When editing, check for his signature moves. If the draft has a COMPARATIVE CASE shape (two parallel stories whose contrast carries the argument), protect it and sharpen the juxtaposition. If the draft is missing structural contrast entirely, consider whether an early paragraph can be reframed as a comparative case without adding new material. If the draft ends with a call to action or a summary conclusion, cut it entirely — the ending must be a position the reader can argue with, or a live question the essay has given them the tools to think about. Not a resolution. Not a closing image. The door stays open. The CODA, CONCESSION, REDEFINE, and INSIDER WITNESS shapes (already defined in these rules) are all Bregman moves — protect them when they appear.\n"
+            "27. WRITING MODEL — RUTGER BREGMAN, PROCESS NOT RESIDUE: The target register is Bregman — accessible intellectual journalism, educated-conversational, plain and chronological. What matters is that the piece reads like a record of someone finding something out, not a performance of a conclusion. So: PROTECT these shapes when they are already in the draft — COMPARATIVE CASE, CONCESSION, REDEFINE, INSIDER WITNESS, CODA, the reader's objection voiced and answered, a complication left standing. Do NOT install any of them that is not there. Do not reframe an existing paragraph into a comparative case to manufacture the shape. These moves were reverse-engineered from finished work; adding them by hand is what makes a draft read as technique-shaped with nothing reported inside it. Two things to actively cut instead: (a) any sentence that tells the reader a connection was made rather than letting the facts do it — 'run those two facts next to each other and something clicks', 'this reveals', 'that is the point'; (b) any sentence that announces a move about to be performed — 'here is the case I cannot fold in', 'here is where my argument turns on me'. Delete the announcement, keep the material under it. And cap epigrams at one per piece: if the draft has three or four short balanced verdict-sentences, keep the strongest and flatten the rest into plain prose, so the one that remains lands.\n"
             "28. JARGON — BANNED: Never use the vocabulary of the institutions being critiqued. 'claimants' → 'tenants' or 'residents'. 'non-compliant' → say what the barrier is. 'change of circumstances' → 'situation had changed'. 'platform upgrades' → 'rebuild the platform'. 'stakeholders' → who they are. 'outcomes' → what people got or did not get. 'intervention' → what actually happened. If the word appears in a government report or audit document, replace it with what a person would say to another person.\n"
             "29. TEMPORAL ANCHORS: Date every anecdote — year at minimum, ideally month and place. 'Last autumn' is not a date. 'When I was nine' is not a date. 'It was October 2019, outside a venue in Peckham' is a sentence. Dates make ideas into events; events have momentum; abstractions do not. Apply this to first-person moments too — 'I was in a meeting' → 'In a procurement meeting in 2019, a director told me...'\n"
             "30. NO HEDGING AGAINST NOBODY: Never write 'X is not Y, but...' unless someone is genuinely arguing that X is Y. Cut the first clause. 'The mechanism is the same' does the work alone. Preemptive hedging signals insecurity. The juxtaposition speaks for itself.\n"
-            "31. GROUNDING: The argument lives in the body before it lives in theory. If the draft opens with a concept or a theorist, find the physical sensation, place, or event that earned the concept — and move it to the front. The concept arrives late, earned by the concrete reality that came before it.\n"
+            "31. GROUNDING: The argument lives in the body before it lives in theory. If the draft leans on a concept or a theorist without ever reaching the physical sensation, place, or event that earned it, find that concrete material and bring it forward. This governs what the argument rests on, not which sentence opens the piece — a draft that opens on a plain claim and lands its concrete grounding a paragraph later is fine, so do not move a scene to the front just to have a scene at the front.\n"
             "32. US-AVOIDANCE + UK-PREFERENCE: Do not locate arguments in the United States specifically. No ADA, FEMA, or American laws or institutions. Preferred geographies: UK (DWP, PIP assessments, NHS social care, Equality Act 2010, Section 117 aftercare), the Netherlands, Germany, and unnamed cities. UK disability policy is especially rich territory — the gap between the Equality Act's promises and PIP's practice, the WCA (Work Capability Assessment), care home regulation, and the history of the disabled people's movement from UPIAS onward. When a UK-specific angle fits the argument, use it by name. Arguments must feel globally applicable, but specific named examples carry more weight than vague universals.\n"
             "33. NAMED VOICES: The draft should have 2-3 real named people — quoted or closely paraphrased with full attribution. Name + what they said + context in one sentence. REQUIRED: beyond the primary subject of the article, a second real named person must appear doing something specific in the body. A person named only in the footnote or source note does not count. At least one should be a source the reader would not expect to agree with the argument. Never 'a researcher found' or 'studies show' — name the researcher, name the study.\n"
             "34. SHOW THEN NAME: Never define a concept before showing it. First: the specific example, the concrete detail, the scene. Then — only if needed — 'this is called X.' If the concept is defined before the reader has felt it, cut the definition and trust the example.\n"
@@ -1649,9 +1685,9 @@ class ProductionOrchestrator:
             "35. INSIDER WITNESS: The strongest evidence is often a confession from someone who benefits from the system being critiqued. Find or imagine the insider who would say, if pressed: 'I know. I do it anyway.' A building inspector who signs off on ramps he knows are too steep. A hiring manager who admits the interview is a neurotypicality test. Protect this figure if it appears in the draft — do not smooth it into a statistic.\n"
             "36. ANALYTICAL WALL — BREAK IT: If the draft contains two or more consecutive sentences where no specific human being is doing something concrete — sentences about systems, policies, or abstract forces — find a person, body, or moment from elsewhere in the draft and move or echo it inside that wall. Do not invent new material. Redistribute what is already there. Every analytical passage must have a human heartbeat running through it. The reader must feel who is paying the cost of the abstraction being described.\n"
             "37. TRUNCATED SENTENCES: If the article ends mid-sentence — no period, no deliberate fragment, just a clause that stops — this is a generation error, not intentional rawness. Complete the sentence in the author's voice using context from the rest of the article. Then check: does the completed sentence make a strong enough ending, or does the thought need one more sentence to close properly? The article must end with a complete, deliberate stop — even if that stop is a fragment, it must be a chosen fragment, not an accident.\n"
-            "38. COMPLICATING EXAMPLE: Check whether the essay includes one example that resists the argument and is STILL UNRESOLVED at the end. A false complication introduces a counter-case and then explains why it confirms the argument — that is the argument wearing a mask. If the paragraph after the complication begins with 'But', 'However', 'This does not mean', or otherwise neutralizes it, the complication has been resolved — cut that neutralizing paragraph or move the complication to the final section. If absent, find the case from inside the draft's own logic: the person who shares the argument's values but would push back on its conclusion.\n"
-            "39. PERSONA HISTORY AS COMPLICATION: At least once, the essay should draw on the persona's personal history — not to illustrate the argument, but as the moment where their own position gets complicated or costs them something. Not a confession. The moment where the argument has skin in it. It arrives without announcement and leaves without resolution. If missing, check whether a moment from their established backstory fits naturally.\n"
-            "40. ARRIVAL PARAGRAPH: The draft should use at least one single-sentence paragraph as an arrival point — the moment the argument turns, or when something lands differently than expected. No more than two per article (oversaturation turns them into a rhythm tic). A single-sentence paragraph is NOT an arrival if: (a) it could be appended to the preceding paragraph without loss, (b) it evaluates something the preceding paragraph already argued ('That is real work.'), or (c) it functions as a transition device ('This is not coincidence.'). If missing, find the pivot moment and strip it to one sentence. If over two, cut the weakest ones or fold them back into the preceding paragraph.\n"
+            "38. COMPLICATING EXAMPLE: Check whether the essay includes one example that resists the argument and is STILL UNRESOLVED at the end. A false complication introduces a counter-case and then explains why it confirms the argument — that is the argument wearing a mask. If the paragraph after the complication begins with 'But', 'However', 'This does not mean', or otherwise neutralizes it, the complication has been resolved — cut that neutralizing paragraph or move the complication to the final section. If the complication is introduced by a signpost sentence ('here is the case that complicates this'), delete the signpost and let it arrive unannounced. If no complication is present, leave it that way — do not invent one; a bolted-on counter-case reads worse than none.\n"
+            "39. PERSONA HISTORY: If the draft draws on the persona's own past, protect it — especially where it complicates their position rather than illustrating the argument. If it is absent, do not add one. A dated autobiographical flashback inserted as evidence in every piece, in the same slot, is a filing habit and reads as one.\n"
+            "40. ARRIVAL PARAGRAPH — OPTIONAL, CEILING OF ONE, SHARES THE APHORISM BUDGET: A single-sentence paragraph may mark the moment the argument turns. If the draft has none, leave it that way — do not manufacture one; that is how forced epigrams get in. If the draft has more than one, or has one plus a separate epigram elsewhere, cut back to a single verdict-sentence in the whole piece: keep the strongest and fold the rest into the preceding paragraphs. A single-sentence paragraph is NOT an arrival if: (a) it could be appended to the preceding paragraph without loss, (b) it evaluates something the preceding paragraph already argued ('That is real work.'), or (c) it functions as a transition device ('This is not coincidence.') — fold those back regardless of the count.\n"
             "41. SPIRAL MOVEMENT: The strongest structure moves in widening circles — specific case, abstraction, different domain and different case, abstraction, personal consequence or open question. If the draft builds a logical ladder, check whether any two consecutive examples come from the same domain. If so, find an example from a different world that carries the same weight.\n"
             "Return ONLY the complete edited article (frontmatter preserved + image lines preserved "
             "+ edited body). No commentary, no preamble."
@@ -1811,7 +1847,8 @@ class ProductionOrchestrator:
             "You are the editorial director of Crip Minds — a disability culture publication. "
             "Each persona writes about the world through their specific disability lens, "
             "not about disability as a topic. "
-            "Assign the best persona for today's story and give the writer a sharp brief."
+            "Assign the best persona for today's story and give the writer a sharp brief. "
+            "A brief here is an assignment to go find something out, not a conclusion to be written up."
         )
         # Build per-persona state summaries for the brief
         state_summaries = []
@@ -1837,27 +1874,42 @@ class ProductionOrchestrator:
         else:
             _fault_block = ""
 
+        _recent_openings = self._get_recent_openings(5)
+        _openings_block = (
+            "\nOPENING SENTENCES OF THE LAST FEW PIECES — read these before writing opening_scene. "
+            "If they all share one shape (for example: a body placed in a named room in the present tense), "
+            "you must pick a different shape for this piece. Repetition of opening shape is invisible inside "
+            "any one article and glaring across four:\n" + _recent_openings + "\n"
+        ) if _recent_openings else ""
+
         user = (
             f"Today's story:\n{news_title}\n"
             + (f"Summary: {news_summary[:400]}\n" if news_summary else "")
             + (f"Disability angle: {disability_angle}\n" if disability_angle else "")
             + f"\nPersonas:\n{personas}\n"
             + state_block
-            + _fault_block + "\n\n"
+            + _fault_block
+            + _openings_block + "\n\n"
             f"Registers available: {reg_names}\n\n"
             "Pick the persona whose current state, canon, and obsessions make them the most alive "
             "voice for this story right now — not just topic match, but friction, mood, and timing. "
             "If a fault line is active, choose the persona who stands most firmly on one side of it, "
-            "and note a cross-citation direction in the angle.\n\n"
-            "For opening_scene: write the actual first sentence of the essay, in the persona's voice — a body doing a physical action in a named place. Not a description of where it begins; the sentence itself. WRONG: 'X's work raises questions about...' WRONG: 'There is a concept designers call...' RIGHT: 'In Gallery 3 at Secession, a wall of text faces a wall of silence — and only one of them is legible if you cannot hear.'\n"
-            "For resisting_example: find someone who shares the persona's values, or who benefits from the same framework being applied, but would nonetheless reject the argument — a counter-movement from inside, not a counter-argument from outside. The essay needs this friction to be credible. Do not pick a counter-case that the argument easily defeats.\n\n"
+            "and put the substance of the disagreement in cross_cite — the idea, not an instruction to "
+            "name the colleague. Personas argue with each other's positions, not with each other's bylines.\n\n"
+            "BRIEF A QUESTION, NOT A VERDICT — this is the most important instruction here. Do not hand the writer a thesis to execute. Hand them something they do not know the answer to and have to find out on the page. The old briefs produced essays that were delivery mechanisms for a conclusion the writer already held before the first sentence; that is exactly what we are trying to stop. So the angle is a real question — one where you yourself cannot confidently predict what the persona will conclude, and where at least two answers are genuinely live. 'Whether the drilling next door is maintenance or the eviction' is a question. 'The drilling is the eviction' is a verdict; do not write that. If you can already see the finished argument, the question is too easy — sharpen it until you cannot.\n\n"
+            "For correction_moment: name one specific thing the persona hits that proves them wrong, stops them, or corrects them — a belief the material breaks, a dead end, a document that says the opposite of what they expected, a person who tells them something that does not fit. Concrete and locatable, with a place or a date. This goes into the draft in the past tense, before the midpoint, shown happening. It is not end-of-essay doubt and not a hedge. The engine of this kind of writing is 'I believed X, then I found the thing that broke X' — give them the thing that breaks X.\n\n"
+            "For resisting_example: something the persona actually encounters in the world of this story, not an abstract objection to gesture at. Best case: a real named person who shares the persona's values, or who benefits from the same framework being applied, and who nonetheless rejects the argument — a counter-movement from inside, not a counter-argument from outside. Something they said, did, built, or refused. Do not phrase it as a hypothetical position the writer can ventriloquise ('X would say...'); that produces a monologue. Do not pick a counter-case the argument easily defeats.\n\n"
+            "For opening_scene: write the actual first sentence of the essay, in the persona's voice — the sentence itself, not a description of where the piece begins. THERE IS NO HOUSE OPENING. Do not default to a body doing a physical action in a named place in the present tense; that shape has opened four consecutive pieces and now reads as a template rather than as craft. Choose whichever of these this particular story earns: (a) PLAIN CLAIM — a flat expository assertion the rest of the piece will spend its length paying off ('For centuries western culture has been permeated by the idea that humans are selfish creatures.'); (b) COLD SCENE — a placed body, an action, a named room, something already in progress; (c) A QUESTION — rare, and only when the question is genuinely the engine of the piece; (d) A FACT — one concrete dated thing, stated and left alone ('In 1965, six boys stole a fishing boat from a harbour in Tonga.'); (e) A DECLARATION OF THE HUNT — plainly saying what you set out to find out, and that you did not know the answer. A plain claim or a bare fact is often stronger than a scene, because it commits and then earns the commitment. Still wrong in every variant: 'X's work raises questions about...', 'There is a concept designers call...', and any throat-clearing before the piece starts.\n"
+            "For register: this is where the piece starts, not a setting locked for its whole length — pick the opening tone.\n\n"
             "Reply with JSON only — no other text:\n"
-            '{"persona":"name","angle":"one sharp sentence, not a question",'
+            '{"persona":"name","angle":"the question the persona is finding out the answer to — phrased as a question, one where you cannot predict their conclusion",'
             '"register":"one register name",'
             '"seed_sentence":"the opening sentence of the article — concrete, not a question",'
-            '"opening_scene":"the actual first sentence of the essay in the persona\'s voice — a body, an action, a named place — NOT a description of where it begins",'
-            '"resisting_example":"one sentence naming a person or case that resists the argument from inside the same value system — not a straw man",'
-            '"cross_cite":"optional: one sentence on how to reference or push against another persona\'s position, or empty string"}'
+            '"opening_scene":"the actual first sentence of the essay in the persona\'s voice — NOT a description of where it begins. Vary the shape: plain claim, cold scene, question, bare fact, or a statement of what you set out to find out. Do not default to a placed body in the present tense",'
+            '"opening_shape":"which shape you chose: plain_claim | cold_scene | question | fact | declaration_of_hunt",'
+            '"correction_moment":"one sentence naming the specific thing that proves the persona wrong, stops them, or corrects them mid-piece — concrete, placed or dated",'
+            '"resisting_example":"one sentence naming a real person or case that resists the argument from inside the same value system — something they actually said or did, not a hypothetical",'
+            '"cross_cite":"optional: one sentence on the substance of the disagreement with another persona\'s position — the idea being pushed against, NOT an instruction to name-check them. Leave empty unless the disagreement genuinely bears on this story"}'
         )
         raw = self._call_editorial_model(system, user, max_tokens=1600, timeout=60)
         if raw is None:
@@ -1869,10 +1921,16 @@ class ProductionOrchestrator:
             if all(k in brief for k in ("persona", "angle", "register", "seed_sentence")):
                 if brief["persona"] in self.agents and any(brief["register"] == r[0] for r in _REGISTERS):
                     brief.setdefault("cross_cite", "")
+                    brief.setdefault("correction_moment", "")
+                    brief.setdefault("opening_shape", "")
+                    if brief.get("opening_shape"):
+                        self.logger.info("Fable opening shape: %s", brief["opening_shape"])
                     if not brief.get("opening_scene"):
-                        self.logger.warning("Fable brief: opening_scene missing — article will open without scene anchor")
+                        self.logger.warning("Fable brief: opening_scene missing — article will open without an opening anchor")
                     if not brief.get("resisting_example"):
                         self.logger.warning("Fable brief: resisting_example missing — article will lack structural friction")
+                    if not brief.get("correction_moment"):
+                        self.logger.warning("Fable brief: correction_moment missing — article will lack an onstage moment of being wrong or corrected")
                     if brief["cross_cite"]:
                         self.logger.info("Fable cross-cite: %s", brief["cross_cite"][:80])
                     self.logger.info(
@@ -1894,22 +1952,83 @@ class ProductionOrchestrator:
             "You have just read a draft article by one of the publication's AI personas. "
             "Give 2-3 specific, actionable revision notes — or confirm it is ready. "
             "Rules you enforce: no headers, no bullet lists, first-person throughout, "
-            "concrete scene before analysis, no CTA endings, disability as lens not topic. "
-            "Three additional checks: (1) Does the first paragraph open in a specific scene "
-            "or moment — a body doing something in a named place — rather than a claim, definition, "
-            "or framework statement? (2) Is there at least one example that resists the argument "
-            "and is STILL UNRESOLVED at the end? A complication introduced and then explained away "
-            "does not count — that is the argument wearing a mask. (3) Does the ending leave a door "
-            "open — a live question or arguable position the essay cannot answer — rather than a "
-            "concrete resolving image or thesis echo?"
+            "concrete scene before analysis, no CTA endings, disability as lens not topic.\n\n"
+            "CHECKS THAT PRODUCE REVISION NOTES:\n"
+            "(1) OPENING — there is no house opening and you must not enforce one. A plain expository "
+            "claim, a cold scene, a bare dated fact, a rare question, and a plain statement of what the "
+            "writer set out to find out are all valid; a flat claim that commits is often stronger than a "
+            "scene, because the piece then has to earn it. Do NOT ask for a scene as a default. Flag only "
+            "real failures: throat-clearing, context-setting, 'X has long been a problem', or a definition "
+            "or framework named before anything concrete has happened. Separately: if this opening is the "
+            "same shape as recent pieces — especially a body placed in a named room in the present tense — "
+            "say so and ask for a different shape. That repetition is the single most visible tell across "
+            "a run of articles and is invisible from inside any one of them.\n"
+            "(2) COMPLICATION STANDING — is there at least one example that resists the argument and is "
+            "STILL UNRESOLVED at the end? A complication introduced and then explained away does not "
+            "count — that is the argument wearing a mask. Note that this is something to value when it "
+            "is there, not a quota: do not ask the writer to bolt one on if the piece has no natural "
+            "friction, and never ask for one that the argument would obviously defeat.\n"
+            "(3) DISCOVERY — is there a moment, before the midpoint and in the past tense, where the "
+            "writer was wrong, stuck, or corrected by something they encountered? An essay that knows "
+            "its whole argument from the first sentence and only appends doubt at the end reads as a "
+            "performance of a conclusion rather than a record of curiosity. Doubt in the final "
+            "paragraph does not satisfy this.\n"
+            "(4) A REAL QUOTED VOICE — does at least one other person speak inside actual quotation "
+            "marks, in the past tense, saying something the narrator did not script? Conditional-mood "
+            "positions ('she would say', 'he would reject this'), summarised stances, and ventriloquised "
+            "objections do not count. If every quoted line serves the thesis, the writer wrote the quotes. "
+            "Flag this — a piece with no other human voice in it is a monologue in a sealed room.\n"
+            "(5) APHORISM DENSITY — count the short, balanced, quotable verdict-sentences (the epigram "
+            "shape: 'The drop is the argument. The gender was the alibi.' / 'The frame always arrives "
+            "last.'). One per piece is the cap, and a single-sentence 'arrival' paragraph counts against that "
+            "same budget — one verdict-sentence total, whether it stands as its own paragraph or sits "
+            "inside one. If there are two or more, name the specific ones to cut "
+            "or flatten into plain prose and keep only the strongest. Three crescendos in 800 words means "
+            "none of them land. Also flag it if the narrator has topped a source's line — if a person in "
+            "the piece said the sharpest thing, theirs should stay the sharpest thing.\n"
+            "(6) MANAGING THE READER — flag any sentence that tells the reader a connection was made "
+            "rather than letting the juxtaposition do it: 'run those two facts next to each other and "
+            "something clicks', 'and there it is', 'this reveals', 'that is the point', 'the two are the "
+            "same thing'. Quote the sentence and say to cut it. If the connection is real the facts click "
+            "on their own; if it needs the narrator's help it is not real yet. Same for any sentence whose "
+            "only job is explaining the meaning of the sentence before it.\n"
+            "(7) SIGNPOSTED MOVES — flag any sentence that announces the technique being performed: "
+            "'here is the case I cannot fold in', 'now the person who blows this argument apart', 'here is "
+            "where my own argument turns on me', 'I want to be careful here, because there is a lazy "
+            "version of this argument'. The complication stays; the announcement of it goes. When a turn "
+            "is announced the reader stops experiencing an argument turning and starts watching a "
+            "requirement being satisfied. Quote the signpost and say to delete it, leaving the material "
+            "underneath intact.\n"
+            "(8) ENDING — there is no house ending shape and you must not enforce one. A hard resolution "
+            "the writer commits to, a live question, a last line given to a quoted source, a plain "
+            "concrete fact, a coda folding back to the opening: all valid. Judge only whether this ending "
+            "is the one this piece earned. Do NOT ask for irresolution as a default — mandated "
+            "irresolution reads as performed humility and forecloses the confident, warm landing that is "
+            "the model's most characteristic effect. Still reject: calls to action, summaries, thesis "
+            "restatements, title echoes.\n\n"
+            "CRAFT MOVES TO NOTICE AND PRAISE WHEN THEY ARE ALREADY THERE — never to require, never to "
+            "request, never to count. If one of these emerged from the material, say so in a note so it "
+            "is protected in revision; if none are present, that is not a defect and generates no note: "
+            "COMPARATIVE CASE (two parallel stories run side by side, the contrast carrying the argument "
+            "with no commentary); CONCESSION-BEFORE-KILL (the strongest version of the opposing view "
+            "given first, then one short sentence flipping it); REDEFINITION (not 'you are wrong about X' "
+            "but 'X is not the problem, Y is'); READER'S INTERNAL DIALOGUE (the reader's own objection "
+            "voiced before they can raise it, then answered in a sentence); INSIDER CONFESSION (someone "
+            "who benefits from the system admitting it is broken — worth more than any statistic); "
+            "CODA (the opening scene returned to, later or elsewhere, without stating what changed); "
+            "COMPLICATING EXAMPLE (a case from inside the argument's own value system that it cannot "
+            "absorb). These were reverse-engineered from a finished body of work — they are the residue "
+            "of a process, not the process. Requiring them is what produced technique-shaped drafts with "
+            "no reporting inside them, which is why they now live here and not in the writer's brief."
         )
         user = (
             f"Persona: {agent_name} ({agent_info.get('perspective', '')[:80]})\n"
-            f"Angle: {brief_angle}\nRegister: {register}\n\n"
-            f"DRAFT:\n{article_body[:4000]}\n\n"
+            f"Question briefed: {brief_angle}\nStarting register: {register} (the piece is allowed to shift out of it)\n\n"
+            f"DRAFT:\n{article_body[:12000]}\n\n"
             "Reply with JSON only:\n"
             '{"verdict":"publish_as_is" or "revise","notes":["note 1","note 2"]}\n'
-            "Notes must name the specific paragraph or sentence. Max 3. "
+            "Notes must name the specific paragraph or quote the specific sentence. Max 3 — "
+            "if several checks fail, pick the three that most change the piece. "
             "If publish_as_is, notes may be empty."
         )
         raw = self._call_editorial_model(system, user, max_tokens=1200, timeout=60)
@@ -3945,10 +4064,12 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             _fable_angle_text     = fable_brief["angle"]
             _fable_cross_cite     = fable_brief.get("cross_cite", "")
             _fable_opening_scene  = fable_brief.get("opening_scene", "")
+            _fable_opening_shape  = fable_brief.get("opening_shape", "")
             _fable_resisting      = fable_brief.get("resisting_example", "")
+            _fable_correction     = fable_brief.get("correction_moment", "")
         else:
             self.logger.warning("Fable brief unavailable — running without persona override, angle, register, or seed sentence (v2-style output)")
-            _fable_register = _fable_seed = _fable_angle_text = _fable_cross_cite = _fable_opening_scene = _fable_resisting = ""
+            _fable_register = _fable_seed = _fable_angle_text = _fable_cross_cite = _fable_opening_scene = _fable_resisting = _fable_correction = _fable_opening_shape = ""
 
         # News block — news_seed (persistent) takes priority over live RSS hook
         if news_seed:
@@ -4184,29 +4305,28 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "- PLAIN VOCABULARY. Prefer the Anglo-Saxon word over the Latinate one when meaning is identical. 'use' not 'utilise'. 'show' not 'demonstrate'. 'build' not 'construct'. 'change' not 'transformation'. 'ask' not 'interrogate'. Keep technical terms only when no plain word carries the same precision — earn them one at a time, not in clusters.\n"
             "- PARAGRAPH LENGTH: Keep paragraphs short. Two to four sentences is the target. A one-sentence paragraph lands like a verdict — use it deliberately. If a paragraph exceeds five sentences, it is trying to do two things; break it. The short paragraph after the long one hits harder than any rhetorical device. Compression is the discipline.\n"
             "- DISCOVERY VOICE: Make research feel found, not reported. Use the rhythm of live realisation: 'even more interesting is that...', 'it turns out...', 'what nobody mentions is...', 'I could not believe this when I read it.' This is not hedging — it is the opposite. A confident guide saying: here, look at this. The reader leans in because you lean in first. Academic hedging says 'the data suggest'; discovery voice says 'turns out.'\n"
-            "- OPENING SCENE: The first paragraph places the reader somewhere specific — a room, a moment, a situation already in progress. Something is happening. The tension arrives through the scene, not before it. Do not open with a claim, a framework, a definition, or statistics. Find the concrete moment that earned the argument — and start there. Scene and tension are not opposites: the scene IS the pressure. Every word in the first paragraph must be working. No throat-clearing, no context-setting, no 'X has long been a problem.'\n"
+            "- OPENING — NO FIXED SHAPE: There is no house opening, and the placed-body-in-a-named-room-in-present-tense move is now overused; do not reach for it by reflex. Any of these is valid, whichever this piece earns: a plain expository claim the essay will spend its length paying off; a cold scene already in progress; a bare dated fact stated and left alone; a question, rarely; or a plain statement of what you set out to find out. A flat claim that commits ('For centuries western culture has been permeated by the idea that humans are selfish creatures') is often stronger than a scene, because the rest of the piece then has to earn it. What is banned in every variant: throat-clearing, context-setting, 'X has long been a problem', a definition, and a framework named before anything concrete has happened. Every word in the first paragraph must be working.\n"
             "- NO INVENTED STATISTICS. Never write a number, percentage, or study finding not present in the source material. Fake data is worse than no data. Use qualitative language: 'significantly more', 'consistently longer', 'dramatically worse'. Real specificity comes from named sources, observed scenes, and concrete details not invented figures.\n"
             "- NO section headers of any kind. Use --- for a section break if needed. Transitions happen inside the prose, not above it.\n"
             "- NEVER use bullet points, numbered lists, or bolded list items. Multiple examples go into accumulation paragraphs.\n"
             "- DO NOT locate arguments in the United States specifically. No ADA, FEMA, or American laws or institutions. Write from anywhere — unnamed cities, or named non-US examples. Arguments must feel globally applicable.\n"
             "- REGISTER — a smart person explaining something to a friend: not dumbing down, not writing up. The friend is intelligent and curious but does not work in your field. You would not say 'the approaching body' to a friend — you would say 'you' or 'the person walking up.' You would not say 'sensory apparatus' — you would say 'senses.' You would not stack three adjectives before a noun. You would use one. Your vocabulary is educated-conversational: precise without being technical, specific without being academic. The register to aim for: a dinner party where everyone is smart and nobody has to perform expertise.\n"            "- ONE MODIFIER PER NOUN. Never stack adjectives: not 'the physical, spatial, sensory reality' — pick the one that does the most work and cut the rest. If you need three adjectives, the noun is wrong.\n"            "- LISTS RUN TO THREE. Four items in a list is one too many. Cut the weakest.\n"            "- Tone: direct, dry when it fits. One absurd or ironic observation per major section — not a joke, just a flat acknowledgment that the situation is absurd. Trust-building: it signals you are not taking yourself more seriously than the argument requires.\n\n"
-            "GROUNDING: Your argument lives in your body before it lives in theory. Start from a specific physical sensation, a place, a person, a thing that happened — not from Lefebvre or diagnostic categories. The concept, if it arrives, arrives late, earned by the concrete reality that came before it. Your body knows this before your argument does.\n\n"
-            "NAMED VOICES: Use 2-3 real named people — quoted directly or closely paraphrased with full attribution. Name + what they said + context (when, where, in what role) in one sentence. REQUIRED: beyond the article's primary subject (the artist, author, or event you are writing about), at least one additional real named person must appear doing something specific in the body of the article — a critic, an insider, an opponent, a second artist who complicates the argument. A person named only in the source note or footnote does not count. At least one named voice should be someone the reader would not expect to agree with your argument. Never 'a researcher found that' or 'studies show' — name the researcher, name the study. A quote from someone who benefits from the system saying 'I know, I do it anyway' is worth more than any statistic.\n\n""TEMPORAL ANCHORS: Date your anecdotes. The year at minimum, ideally month and place. 'Last autumn' is not a date. 'When I was nine' is not a date. Dates make ideas into events; events have momentum; abstractions do not. 'It was October 2019, outside a venue in Peckham' is a sentence. 'I arrived at the building' is not. The specificity signals you were actually there.\n\n""SHOW THEN NAME: Never define a concept before you show it. First: the specific example, the concrete detail, the scene that makes the reader feel the thing. Then — only if needed — 'this is called X.' Wrong: 'There is a discipline called wayfinding. It is not the same as giving directions.' Right: [show someone following instructions and ending up at the wrong door] then 'This is the difference between directions and wayfinding.' The reader should understand the concept before you give it its name.\n\n""ENDING: The last paragraph does not conclude. It is a position the reader can argue with, or a live question the essay has given them the tools to think about. Not a concrete image that resolves the feeling. Not a call to action. Not a summary. The door stays open. One sentence is often enough. The essay stops where the next question begins.\n"
-            "ENDING VARIANT — THE CODA (use once every 4-5 articles, not more — it loses force through repetition): Fold back to the opening scene — the same place, the same person, the same object — but later, or elsewhere, or in a different register. Do not state what changed. Show the same thing, different. The beginning and end form a bracket. The argument has resolved itself through the narrative — you do not need to say so. Only use if the opening scene is concrete and specific enough to earn the return.\n\n"
-            "COMPLICATING EXAMPLE — REQUIRED: Include one case, person, or fact that does not fit your argument cleanly — prioritise this type: someone who shares your values, or who has benefited from the same framework you are applying, but would nonetheless reject the argument. A counter-movement from inside, not a counter-argument from outside. Do not resolve it. Do not explain it away. CRITICAL: after the complicating example, the next paragraph may NOT begin with 'But', 'However', 'This does not mean', 'I am not arguing that', or otherwise neutralize it. A false complication introduces a counter-case and then explains why it confirms the argument — that is the argument wearing a mask. The complication must still be standing at the end of the essay, unaccounted for. Place it in the final third where resolution is structurally impossible.\n\n"
-            "PERSONA HISTORY AS COMPLICATION: At least once, draw on your personal history — not to illustrate the argument, but as the moment where your own position gets complicated or costs you something. It arrives without announcement and leaves without resolution. Not a confession: the moment where the argument has skin in it.\n\n"
-            "ARRIVAL PARAGRAPH: Use at least one single-sentence paragraph as an arrival point — the moment the argument turns, or when something lands differently than expected. Maximum two per article; beyond that they become a rhythm tic and lose force. Not for rhythm. Not for emphasis. After the arrival sentence, do not fill the silence — the next paragraph begins a new movement, it does not explain or qualify what just landed. If the paragraph after your arrival begins with 'This means', 'In other words', or 'What this shows is' — delete it.\n\n"
-            "CONCESSION: Before you dismantle an assumption, give it the strongest version of itself first. Name what is genuinely true, genuinely difficult, genuinely earned about the thing you are arguing against. Do not weaken it to make your argument easier. Then — one short sentence that flips it. The reader must feel the weight of what they believed before you take it away.\n\n"
-            "REDEFINE (use when it fits, not always): The most powerful move is not to challenge the reader's position but to redefine what the problem is. Not 'you are wrong about X' but 'X is not the problem — Y is, and you have not named it yet.' Find the moment where the reader realizes what they thought was the problem was actually the symptom. This is a sentence-level move, not a structural one — it can happen mid-paragraph, almost as an aside.\n\n"
-            "INSIDER WITNESS (use when the topic allows): The strongest evidence is often a confession from someone who benefits from the system you are critiquing — not a researcher, not a statistic. Someone who lives inside the thing and knows it is broken. A building inspector who signs off on ramps he knows are too steep. A hiring manager who admits the 'culture fit' interview is a neurotypicality test. An architect who designs for wheelchair users but has never sat in one. Find or imagine the insider who would say, if pressed: 'I know. I do it anyway.'\n\n"
-            "WRITING MODEL — RUTGER BREGMAN: The target register for this publication is Rutger Bregman — accessible intellectual journalism that reads like a smart person explaining something to a friend. Educated-conversational. Not dumbing down. Not writing up. Use at least two of his techniques per article (CONCESSION, REDEFINE, INSIDER CONFESSION, CODA — see definitions above). COMPARATIVE CASE is his signature structural move and is tracked separately — use it when the shape nudge requires it; it cannot substitute for the two-technique count and the two-technique count cannot substitute for it.\n"
-            "- COMPARATIVE CASE (separate from the two-technique requirement): Open with two parallel stories — person A and person B, system X and system Y, before and after. Run them side by side without commentary. The contrast IS the argument. The reader draws the conclusion without being told. No thesis sentence needed. A ramp that took eleven years next to a ramp that took eleven days. You do not say 'this reveals inequality.' You show both. The reader says it.\n"
-            "- CONCESSION-BEFORE-KILL: Already defined above as CONCESSION. This is a Bregman move. Use it.\n"
-            "- REDEFINE THE PROBLEM: Already defined above as REDEFINE. This is a Bregman move. Use it.\n"
-            "- INSIDER CONFESSION: Already defined above as INSIDER WITNESS. This is a Bregman move. Use it.\n"
-            "- CODA: Already defined above as ENDING VARIANT — THE CODA. This is a Bregman move. Use it.\n\n"
+            "GROUNDING: Your argument lives in your body before it lives in theory. It is built from a specific physical sensation, a place, a person, a thing that happened — not from Lefebvre or diagnostic categories. The concept, if it arrives, arrives late, earned by the concrete reality that came before it. Your body knows this before your argument does. This is about what the argument rests on, not about which sentence comes first: a piece may open on a plain claim and reach its concrete grounding in the second paragraph.\n\n"
+            "NAMED VOICES: Use 2-3 real named people — quoted directly or closely paraphrased with full attribution. Name + what they said + context (when, where, in what role) in one sentence. REQUIRED: beyond the article's primary subject (the artist, author, or event you are writing about), at least one additional real named person must appear doing something specific in the body of the article — a critic, an insider, an opponent, a second artist who complicates the argument. A person named only in the source note or footnote does not count. At least one named voice should be someone the reader would not expect to agree with your argument. Never 'a researcher found that' or 'studies show' — name the researcher, name the study. A quote from someone who benefits from the system saying 'I know, I do it anyway' is worth more than any statistic.\n\n"
+            "SOMEONE ELSE MUST SPEAK — NON-NEGOTIABLE: At least one other person says something out loud in this piece, inside actual quotation marks, in the past tense. Said. Not 'she would say.' Not 'he would flatly reject this.' Not a summarised position, not a hypothetical objection you ventriloquise, not a conditional-mood paraphrase. A person opened their mouth and these were the words. And what they said must be something you did not script for them — it should sit at an angle to your argument, or be more interesting than your argument, or be a plain practical remark that has nothing to do with your argument at all. If every quoted line in the draft serves your thesis, you wrote the quotes. A curator saying 'we tried that in 2019 and it was a disaster' beats three paragraphs of you characterising what curators think. Conditional-mood objections ('she would not have signed onto my argument') do not satisfy this and read as a monologue in a sealed room.\n\n"
+            "TEMPORAL ANCHORS: Date your anecdotes. The year at minimum, ideally month and place. 'Last autumn' is not a date. 'When I was nine' is not a date. Dates make ideas into events; events have momentum; abstractions do not. 'It was October 2019, outside a venue in Peckham' is a sentence. 'I arrived at the building' is not. The specificity signals you were actually there.\n\n""SHOW THEN NAME: Never define a concept before you show it. First: the specific example, the concrete detail, the scene that makes the reader feel the thing. Then — only if needed — 'this is called X.' Wrong: 'There is a discipline called wayfinding. It is not the same as giving directions.' Right: [show someone following instructions and ending up at the wrong door] then 'This is the difference between directions and wayfinding.' The reader should understand the concept before you give it its name.\n\n"
+            "ENDING — NO FIXED SHAPE: There is no house ending. Do not default to trailing off, and do not default to a single unresolved sentence — an essay that shrugs on schedule is as much a tic as one that concludes on schedule. Pick the ending this particular piece has earned, from any of these: (a) HARD RESOLUTION — you commit, plainly, to what you now think; the landing is warm and confident and you say the thing. (b) A LIVE QUESTION — a position the reader can argue with, the door left open. (c) A QUOTE — give the last words to someone else and do not top them; if a person in the piece said the best line, let them keep it. (d) A FACT — end on the concrete detail, dated and placed, with no commentary attached. (e) THE CODA — fold back to the opening scene, later or elsewhere or in a different register, without stating what changed. Length is free: one sentence, one paragraph, three paragraphs. Still banned in every variant: a call to action, a summary of what you just argued, a thesis restatement or title echo, and any sentence beginning 'We need' / 'This requires' / 'Join'. Choose by asking what the piece actually arrived at, not by which shape feels most modest.\n\n"
+            "PERSONA HISTORY: If a moment from your own past genuinely belongs here, use it — but only if it arrives because the material pulled it up, not because a piece needs one. A dated autobiographical flashback dropped in as evidence, once per essay, in the same slot every time, is a filing habit, not a memory. If you cannot feel why this piece and not another one summoned it, leave it out.\n\n"
+            "ARRIVAL PARAGRAPH — OPTIONAL, AND IT COSTS YOU YOUR APHORISM: A single-sentence paragraph can mark the moment the argument turns. Use it only if the material produced such a moment. There is no minimum and you are not required to have one — a piece with no arrival paragraph is not missing anything, and reaching for one manufactures exactly the kind of polished verdict-sentence that makes a piece read as a performance. Hard ceiling: one. It shares a budget with the aphorism rule above, not a separate allowance — if you spend your one epigram, you do not also get an arrival sentence, and vice versa. Prefer a plain, flat sentence over a balanced quotable one. After it, do not fill the silence: the next paragraph begins a new movement, it does not explain or qualify what just landed. If the paragraph after it begins with 'This means', 'In other words', or 'What this shows is' — delete it.\n\n"
+            "WRITING MODEL — RUTGER BREGMAN, THE PROCESS AND NOT THE RESIDUE: The target register is Bregman — accessible intellectual journalism, educated-conversational, a smart person explaining something to a friend. But the thing to copy is not his finished moves. It is how he works: he reports something until it surprises him, then tells the story of being surprised, chronologically, at length. His essays are records of curiosity. They are not performances of a conclusion he held before the first sentence. There is no list of techniques to execute here and no quota to hit. If a concession, a redefinition, an insider's confession, a comparative pair, or a coda turns up because the material produced it, good — that is what it looks like when it is real. Reaching for one on purpose is what makes a piece read as technique-shaped with no reporting inside it.\n\n"
+            "FIND SOMETHING OUT — NON-NEGOTIABLE: You do not already know everything when you begin. Somewhere before the midpoint, in the past tense, on the page, there must be a moment where you were wrong, stuck, or corrected by something you encountered: a belief you held that the material broke, a search that dead-ended, a person who told you something that did not fit, an assumption you had to drop. Show it happening, with the same dates and places you give everything else. 'I thought the drilling was routine maintenance. It had been going on for nine months.' Then carry on from where the correction left you. The essay's certainty has to be earned onstage — a reader trusts a writer who was visibly changed by what they found, and does not trust one who arrived holding the finished argument and spent 900 words delivering it. Do not append this as doubt at the end; a last-paragraph shrug is not the same thing and does not satisfy this rule.\n\n"
+            "DO NOT MANAGE THE READER: Put the facts next to each other and stop. Never tell the reader that a connection was made, that something clicked, that two things line up, that this reveals or exposes or is exactly the point. If the juxtaposition is real, they will feel it without help; if it needs your help, it is not real yet and you should find a better fact. Cut every sentence whose only job is to explain the meaning of the sentence before it. Some of your details should argue nothing at all — the guitar strung with steel wire, the lie someone told about which degree was easiest, the fact that the man kept his coat on indoors. Texture is why a reader believes you were there. A piece where every single detail is instantly cashed in for meaning reads like a slideshow with annotations.\n\n"
+            "ONE APHORISM, MAXIMUM: You are allowed one epigram in the whole piece — one short, balanced, quotable verdict-sentence ('The frame always arrives last.'). One lands. Three or four means none of them land, because the reader stops hearing crescendos as crescendos. Everywhere else write plainly and chronologically. And do not top your sources: if someone in the piece said the sharpest thing in it, let their sentence be the sharpest thing in it.\n\n"
+            "NO SIGNPOSTING: Never narrate the move you are making. Not 'here is the case I cannot fold in', not 'now the person who blows this argument apart', not 'here is where my own argument turns on me', not 'I want to be careful here, because there is a lazy version of this argument.' The complication should simply arrive and stand there. The concession should simply be the paragraph where you say the true thing about the other side. When you announce a turn, the reader stops experiencing an argument turning and starts watching a requirement being satisfied.\n\n"
+            "NO ENCYCLOPEDIC APPOSITIVES: Do not gloss every proper noun with its Wikipedia clause — 'ICML, a major machine learning conference', 'the Wiener Werkstätte, an influential Austrian design workshop'. One or two in a piece is fine; the same rhythm on every name is a house tic. Explain through story instead: give the person or place three sentences of what they actually did, where it matters, or let the context carry it and say nothing.\n\n"
             f"{('FORM: ' + article_type_prompt + chr(10) + chr(10)) if article_type_prompt else ''}"
-            f"REGISTER: {register}. {register_prompt}\n\n"
+            f"STARTING REGISTER: {register}. {register_prompt}\n"
+            "This is where the piece opens, not a setting locked for the whole essay. Let it shift when the material earns a shift — a piece can start wry and turn suspenseful, or start clinical and end moved. A single tone held for 900 words is monotone, and monotone is what makes an essay read as a performance rather than a person thinking. Do not force a shift either; if the piece genuinely stays in one register, stay there.\n\n"
             f"LENGTH: ~{target_words} words. {('HARD CAP: 500 words. Count before finishing. If over 500, cut.' if article_type == 'field_note' else 'MINIMUM: 1200 words.' if article_type in {'portrait', 'series_part'} else f'When you estimate you have written {int(target_words * 0.78)} words, begin writing your final paragraph — do not open a new argument or introduce a new scene. End deliberately. A sentence that cuts off mid-thought because you ran out of space is a failure. Arrive early rather than late.')} Do not pad. Every paragraph earns the next.\n\n"
             "HUMAN THREAD — NON-NEGOTIABLE: Every time you write two or more consecutive sentences where no specific human being is doing something concrete in a specific place — sentences about systems, policies, theories, or abstract forces — stop and insert a sentence that returns to a specific person doing a specific thing. Not 'disabled people experience this.' Not 'the system fails to account for.' A person. A body. A moment. What are they doing? Where are they? This rule applies throughout the middle of the essay, not just at the opening and close. The analysis lives inside the human story. If you find yourself writing two sentences of policy critique in a row, a person must appear in the third.\n\n"
             "AUTHOR RULE — NON-NEGOTIABLE: This article is written BY a disabled person, "
@@ -4233,11 +4353,12 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             + (f"YOUR WOUND (the specific episode that costs you something — do NOT quote it directly, "
                f"but it may complicate your argument if you let it): {self._extract_persona_wound(agent_name)}\n\n"
                if self._extract_persona_wound(agent_name) else "")
-            + (f"EDITOR BRIEF — sharper angle: {_fable_angle_text}\n\n" if _fable_angle_text else "")
+            + (f"EDITOR BRIEF — the question you are finding out the answer to (you do not know it yet; do not decide it before you start writing): {_fable_angle_text}\n\n" if _fable_angle_text else "")
             + (f"SEED SENTENCE — open here or close to this register (do not quote literally): \"{_fable_seed}\"\n\n" if _fable_seed else "")
-            + (f"OPENING SCENE — begin with this sentence (lightly adapt to your voice; do NOT summarize the source instead): {_fable_opening_scene}\n\n" if _fable_opening_scene else "")
-            + (f"RESISTING EXAMPLE — this does not fit the argument cleanly; find a place for it: {_fable_resisting}\n\n" if _fable_resisting else "")
-            + (f"CROSS-CITATION DIRECTION — {_fable_cross_cite}\n\n" if _fable_cross_cite else "")
+            + (f"OPENING — begin here (lightly adapt to your voice; do NOT summarize the source instead){(', shape: ' + _fable_opening_shape) if _fable_opening_shape else ''}: {_fable_opening_scene}\n\n" if _fable_opening_scene else "")
+            + (f"CORRECTION MOMENT — this is where you were wrong, stuck, or corrected. Put it in the past tense, before the midpoint, shown happening, with a place or a date. Do not announce it, do not soften it, and do not save it for the end: {_fable_correction}\n\n" if _fable_correction else "")
+            + (f"RESISTING EXAMPLE — this does not fit the argument cleanly. Let it arrive without a signpost sentence and leave it standing; do not write 'here is the case that complicates this' and do not neutralise it in the following paragraph: {_fable_resisting}\n\n" if _fable_resisting else "")
+            + (f"A DISAGREEMENT THAT BEARS ON THIS PIECE — argue against this position on its merits, as an idea in the world. Do NOT signpost it with a name-check: no 'Here is where I part from Siri Sage', no 'That is Pixel Nova's essay and she'd write it well'. Naming a colleague mid-argument reads as the publication talking about itself and breaks the reader's attention on the actual subject. If the other position is worth taking on, take it on — state it as a real position someone holds, in the substance of your argument, and let the reader who follows this publication recognise whose it is. Attribution by name belongs in the source note, not the third paragraph: {_fable_cross_cite}\n\n" if _fable_cross_cite else "")
             + f"{beat_nudge}"
             f"{date_nudge}"
             f"{shape_nudge}"
