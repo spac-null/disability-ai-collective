@@ -38,7 +38,7 @@ dark mode before the reframe:
 
 | Page | Status | Findings | Fixes |
 |---|---|---|---|
-| `/` (homepage) | 🔍 | contrast bug found+fixed; full design critique not yet run | — |
+| `/` (homepage) | 🟨 | Fable design critique run (5 real screenshots, light+dark). Fixed: `.agent-grid` flex→grid (unequal card heights 496-554px, and `.agent-grid--2col` modifier was silently dead under flex — homepage was rendering 4-across instead of intended 2x2); duplicate subscribe form removed (footer already has one on every page). **Not yet fixed, real findings from Fable, next iteration:** hero H1 uses generic default sans while article titles use a serif with real character — brand identity is weaker than the content's own typography; subscribe button is unbranded Tailwind indigo; light mode reads as "dark mode recolored" not separately designed (persona accents + the black essay-hero artwork have no light-mode-specific treatment); inconsistent meta separators (middot in hero vs. pipe in grid cards, inconsistent spacing even within the pipe style); small essay-grid author avatar dots render inconsistently (worth checking if it's a real asset issue or just a load-order flash); WCAG 2.1 AA footer badge is bare text, not treated as the credential it is; persona accent border colors read as "timid" on dark — could afford more saturation/contrast without breaking the muted aesthetic; right column of hero is dead/empty space, not intentional asymmetry. |
 | article template (`_layouts/post.html`) | ⬜ | | |
 | `/research/` | ⬜ | | |
 | `/about/` | ⬜ | | |
