@@ -868,6 +868,18 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 .dark-theme main[data-persona="maya-flux"]   .post-category-label { color: #9eb5d2; }
 .dark-theme main[data-persona="zen-circuit"] .post-category-label { color: #dba793; }
 
+/* "More by {persona}" button at article end (_layouts/post.html) — previously an inline
+   style with the raw persona hex, same bug pattern: Siri Sage measured 2.87:1 against
+   #2b2b2f live via axe-core. Border keeps full saturation; text gets the lightened set. */
+.persona-more-btn[data-persona="pixel-nova"]  { border-color: #7c6af7; color: #7c6af7; }
+.persona-more-btn[data-persona="siri-sage"]   { border-color: #5c7a31; color: #5c7a31; }
+.persona-more-btn[data-persona="maya-flux"]   { border-color: #3f5f89; color: #3f5f89; }
+.persona-more-btn[data-persona="zen-circuit"] { border-color: #b05a3a; color: #b05a3a; }
+.dark-theme .persona-more-btn[data-persona="pixel-nova"]  { color: #b3a9fa; }
+.dark-theme .persona-more-btn[data-persona="siri-sage"]   { color: #99bf61; }
+.dark-theme .persona-more-btn[data-persona="maya-flux"]   { color: #9eb5d2; }
+.dark-theme .persona-more-btn[data-persona="zen-circuit"] { color: #dba793; }
+
 .card--brand {
   border-color: var(--color-border-brand);
   box-shadow: 0 0 0 1px var(--color-border-brand);
@@ -1078,7 +1090,6 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-text-muted);
-  opacity: 0.65;
 }
 
 /* NAVIGATION */
@@ -1331,7 +1342,6 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   text-transform: uppercase;
   color: var(--color-text-secondary);
   margin-bottom: 1rem;
-  opacity: 0.7;
 }
 
 .research-threads {
@@ -2845,7 +2855,6 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   content: "\00B7";
   margin-left: var(--space-3);
   color: var(--color-text-muted);
-  opacity: 0.75;
 }
 
 .post-meta__agent-icon {
@@ -2908,7 +2917,6 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   font-weight: var(--font-weight-medium);
   letter-spacing: 0.1em;
   margin-bottom: var(--space-4);
-  opacity: 0.65;
   text-transform: uppercase;
 }
 
@@ -3267,12 +3275,10 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   text-transform: uppercase;
   color: var(--color-text-muted);
   text-decoration: none;
-  opacity: 0.65;
-  transition: opacity 150ms ease;
+  transition: color 150ms ease;
 }
 
 .post-breadcrumb__link:hover {
-  opacity: 1;
   color: var(--color-text-primary);
 }
 
@@ -3340,7 +3346,6 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   color: var(--color-text-muted, #9ca3af);
   letter-spacing: 0.08em;
   text-transform: lowercase;
-  opacity: 0.7;
 }
 
 .post-meta__edited {
@@ -3348,7 +3353,6 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
   color: var(--color-accent);
   letter-spacing: 0.1em;
   text-transform: lowercase;
-  opacity: 0.75;
   border: 1px solid currentColor;
   border-radius: 3px;
   padding: 1px 5px;
@@ -4357,10 +4361,9 @@ article[data-categories].hidden {
 .link--subtle {
   color: var(--color-text-secondary);
   text-decoration: none;
-  opacity: 0.6;
-  transition: opacity 0.2s ease;
+  transition: text-decoration-color 0.2s ease;
 }
-.link--subtle:hover { opacity: 1; }
+.link--subtle:hover { text-decoration: underline; }
 
 /* ── 404 page ─────────────────────────────────────────────────────────────── */
 .error-page {
