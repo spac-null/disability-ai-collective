@@ -87,14 +87,30 @@ sitemap: false
   border-radius: 8px;
   padding: 0.4rem 0.5rem;
   cursor: pointer;
-  transition: border-color 150ms ease, opacity 150ms ease;
-  opacity: 0.5;
+  transition: border-color 150ms ease;
 }
 
 .gallery-filter__btn.active,
 .gallery-filter__btn:hover {
-  opacity: 1;
   border-color: var(--color-border-brand, #3f5f89);
+}
+
+/* Dimming for the inactive/active state lives on the icon only, not the whole button —
+   it was previously opacity on .gallery-filter__btn, which uniformly dimmed
+   .gallery-filter__label too and dropped its text to 2.16:1 (measured live via
+   axe-core), well under the 4.5:1 AA minimum. The label must stay fully legible in
+   every state; only the icon should visually recede when unselected. */
+.gallery-filter__avatar,
+.gallery-filter__all {
+  opacity: 0.5;
+  transition: opacity 150ms ease;
+}
+
+.gallery-filter__btn.active .gallery-filter__avatar,
+.gallery-filter__btn:hover .gallery-filter__avatar,
+.gallery-filter__btn.active .gallery-filter__all,
+.gallery-filter__btn:hover .gallery-filter__all {
+  opacity: 1;
 }
 
 .gallery-filter__avatar {
