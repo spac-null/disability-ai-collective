@@ -1404,6 +1404,10 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   margin-top: 0.15rem;
 }
 
+.research-thread--full {
+  grid-column: 1 / -1;
+}
+
 @media (max-width: 640px) {
   .research-threads {
     grid-template-columns: 1fr;
