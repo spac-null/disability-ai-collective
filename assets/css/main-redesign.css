@@ -2716,15 +2716,14 @@ main[data-persona="zen-circuit"] .post-category-label { color: #b05a3a; border-b
 
 /* Agent grid styling */
 .agent-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(252px, 280px));
   gap: var(--space-6);
   justify-content: center;
   align-items: stretch;
 }
 
 .agent-grid > .agent-card {
-  flex: 1 1 252px;
   max-width: 280px;
 }
 
