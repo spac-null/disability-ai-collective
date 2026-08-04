@@ -102,19 +102,21 @@ _REGISTERS = [
     ("melancholic",  0.15, "Slow, exact, not sentimental. Write about loss without performing grief. The sadness is in what is missing from the frame, not in what you say about it."),
     ("celebratory",  0.05, "Something was built right. Something survived. Something won. Not naive optimism — specific joy at a specific thing that actually happened, that actually works. The celebration is in the precision of what is being recognised."),
 ]
-# Length pool. Weighted toward the long end (2026-08-04): a patient turn cannot be
-# earned at 800 words, so the 1600 bucket now fires roughly once a week at daily cadence.
-# NOT extended past 1600 on purpose — every generation provider caps at max_tokens=3500
-# (~2600 words) and the local Qwen fallback at 2500 (~1875 words), and
-# _opus_targeted_revision is also capped at 3500. A 2200-2500 word target would truncate
-# mid-sentence on the fallback path and in the revision pass. Raising those three ceilings
-# is the prerequisite for a genuinely Bregman-length (~2800 word) bucket.
+# Length pool. Weighted toward the long end (2026-08-04, extended 2026-08-04): a patient
+# turn cannot be earned at 800 words. The 2800 bucket matches Bregman's own measured piece
+# length (2,865 words, "The real Lord of the Flies") and fires roughly once every 10 days
+# at daily cadence — close to Fable's "let one piece a week run long" ask. This required
+# raising every generation provider's max_tokens from 3500 to 5000 (~3750 words, margin
+# above the 2800 target), the local Qwen fallback from 2500 to 4200, and both
+# rewrite_with_opus and _opus_targeted_revision from 3500 to 5000 — all four return a
+# complete article body at up to the new max length, not an incremental diff.
 _LENGTHS = [
     (450,  0.08),
     (700,  0.15),
-    (950,  0.30),
-    (1200, 0.27),
-    (1600, 0.20),
+    (950,  0.27),
+    (1200, 0.24),
+    (1600, 0.16),
+    (2800, 0.10),
 ]
 
 _ARTICLE_TYPES = [
@@ -1520,7 +1522,7 @@ class ProductionOrchestrator:
                 "url":       CLIPROXY_URL,
                 "key":       CLIPROXY_KEY,
                 "model":     "openrouter/claude-opus-4.8",
-                "max_tokens": 3500,
+                "max_tokens": 5000,
                 "timeout":   180,
                 "no_think":  False,
             },
@@ -1529,7 +1531,7 @@ class ProductionOrchestrator:
                 "url":       CLIPROXY_URL,
                 "key":       CLIPROXY_KEY,
                 "model":     "openrouter/claude-sonnet-4.6",
-                "max_tokens": 3500,
+                "max_tokens": 5000,
                 "timeout":   120,
                 "no_think":  False,
             },
@@ -1538,7 +1540,7 @@ class ProductionOrchestrator:
                 "url":       "https://inference-api.nousresearch.com/v1",
                 "key":       _nous_key(),
                 "model":     "anthropic/claude-opus-4.6",
-                "max_tokens": 3500,
+                "max_tokens": 5000,
                 "timeout":   180,
                 "no_think":  False,
             },
@@ -1547,7 +1549,7 @@ class ProductionOrchestrator:
                 "url":       "https://generativelanguage.googleapis.com/v1beta/openai",
                 "key":       os.environ.get("GEMINI_API_KEY", ""),
                 "model":     "gemini-2.5-pro",
-                "max_tokens": 3500,
+                "max_tokens": 5000,
                 "timeout":   120,
                 "no_think":  False,
             },
@@ -1556,7 +1558,7 @@ class ProductionOrchestrator:
                 "url":       "http://vision-gateway:8080/v1",
                 "key":       "local",
                 "model":     "qwen3.5:9b",
-                "max_tokens": 2500,
+                "max_tokens": 4200,
                 "timeout":   180,
                 "no_think":  True,
             },
@@ -1710,7 +1712,7 @@ class ProductionOrchestrator:
                 system_prompt=SYSTEM,
                 user_prompt=user_msg,
                 model="openrouter/claude-opus-4.8",
-                max_tokens=3500,
+                max_tokens=5000,
                 timeout=240,
             )
             if rewritten and rewritten.count("---") >= 2 and len(rewritten) > 400:
@@ -2069,7 +2071,7 @@ class ProductionOrchestrator:
             self.logger.info("Opus targeted revision: applying %d editorial notes...", len(editorial_notes))
             revised = self._call_openai_compat_api(
                 CLIPROXY_URL, CLIPROXY_KEY, system, user,
-                model="openrouter/claude-opus-4.8", max_tokens=3500, timeout=180,
+                model="openrouter/claude-opus-4.8", max_tokens=5000, timeout=180,
             )
             if revised and len(revised) > 400:
                 self.logger.info("Targeted revision: %d chars", len(revised))
