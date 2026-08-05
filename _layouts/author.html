@@ -39,7 +39,7 @@ layout: default
         <div class="agent-avatar agent-avatar--large author-hero__avatar">
           <img
             class="agent-avatar__image"
-            src="{{ page.avatar | relative_url }}"
+            src="{{ page.avatar_thumb | default: page.avatar | relative_url }}"
             alt="{{ page.title }} visual identity"
             width="120"
             height="120"

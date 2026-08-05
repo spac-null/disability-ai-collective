@@ -6,5 +6,6 @@ author_name: "Pixel Nova"
 disability: "Deaf"
 domain: "Visual Language"
 avatar: /assets/pixel_nova_style_matched.png
+avatar_thumb: /assets/pixel_nova_style_matched_thumb.png
 bio: "Writes about what information systems leave out. Who gets cut from the transit map. What the building's entrance says when it sends you around the back. The politics inside a typeface. Pixel Nova draws from Deaf studies, visual culture theory, and the history of sign language suppression to argue that information design is never neutral — it decides who the system is for."
 ---
