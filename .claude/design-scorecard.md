@@ -26,21 +26,17 @@ whole site's state in one long-running context again, that's what filled this on
 - [x] `about.html` avatar moire follow-up — fixed, points at the same `*_thumb.png` files now (commit `2c00a73`)
 - [x] Article template (`/2026/07/31/injected-since-birth/`) — first Fable critique done, 5 findings fixed, see "Batch A: non-homepage Fable critique pass" below
 - [x] `/research/` — first Fable critique done, 4 findings fixed (2 shared with the article template), 1 confirmed false positive from the local `--limit_posts 5` dev build, 1 confirmed browser-automation screenshot artifact (not a site bug) — see below
-- [~] `/research/deaf-arts/` — Fable unreachable (see below), manually checked for the batch's already-established bug patterns, none found, no fixes needed/applied; critique itself still pending a retry
-- [~] `/about/` — Fable unreachable (same outage as deaf-arts.html), manually checked for the batch's already-established bug patterns, none found, no fixes needed/applied; critique itself still pending a retry
-- [~] `/press/` — Fable unreachable (same outage, persisted the entire batch), manually checked, none of the established bug patterns found, one measured non-bug (the below-fold gap before the footer), no fixes needed/applied; critique itself still pending a retry
-- **Batch A (5 pages) is done as far as it can go this session.** 2 pages got
-  a real Fable critique + fixes (article template, research.html), 3 pages
-  (`/research/deaf-arts/`, `/about/`, `/press/`) got screenshots + a manual
-  established-pattern check but no actual Fable critique — the CLIProxyAPI
-  endpoint went down partway through the batch (`402` then persistent `500
-  auth_unavailable`) and never recovered across ~15+ min of retries. Follow-up:
-  **re-run the Fable critique call for those 3 pages** once the endpoint is
-  confirmed healthy (`curl` a trivial request first) — screenshots are already
+- [x] `/research/deaf-arts/` — **2026-08-05 follow-up: real Fable critique obtained** (OpenRouter direct, CLIProxyAPI abandoned). 3 findings, all shared-component (affects 4 other already-clean pages) — deliberately left, see "Batch A" section 3 below for full reasoning. No fixes needed.
+- [x] `/about/` — **2026-08-05 follow-up: real Fable critique obtained** (light theme). 1 real page-specific bug found + fixed + verified both themes (`#start-here` section blending into the section above it), 2 shared-component findings deliberately left. See "Batch A" section 4 below. Commit `94ec300`.
+- [~] `/press/` — **2026-08-05 follow-up: attempted, no critique obtained.** OpenRouter direct works in general (confirmed via successful calls on the other 2 pages this same session) but the vision route hit a hard, non-recovering block specific to image-bearing requests partway through the batch — not the same failure mode as the earlier CLIProxyAPI outage, see "Batch A" section 5 below for full diagnostic evidence (it's not image-size-sensitive, not simple credit exhaustion, didn't clear after a 4-min wait). Manually re-checked established bug patterns, none found, no fixes applied. Still needs an actual Fable critique — retry with either much more patience or a different vision model.
+- **Batch A (5 pages) is now fully closed except `/press/`'s critique.** All 5 pages have
+  been screenshotted and code-checked; 4 of 5 (article template, research.html,
+  deaf-arts, about) have a real Fable critique on record with fixes applied where
+  warranted. `/press/` alone is missing the actual critique — screenshots are
   captured in the session scratchpad
-  (`/private/tmp/claude-501/.../scratchpad/screenshots/{deaf-arts,about,press}/`,
-  ephemeral — re-shoot if that scratchpad is gone) so it doesn't need a full
-  re-shoot, just the API call + any resulting fixes.
+  (`/private/tmp/claude-501/.../scratchpad/screenshots/`, ephemeral — re-shoot if
+  gone) so a follow-up just needs the API call once the OpenRouter vision route
+  recovers.
 - [ ] Remaining pages (batches B/C — press subpages, jascha, notes, accessibility, editorial-lens, collective pages, gallery) still need their first Fable design critique
 
 **Note on this batch's process**: the subagent originally dispatched for the 7
@@ -338,92 +334,161 @@ on the article template, found independently here; 2 are new):**
 
 Commit: `209067d`
 
-### 3. `/research/deaf-arts/` (research-thread subpage) — Fable unreachable, no fixes needed
+### 3. `/research/deaf-arts/` (research-thread subpage) — Fable critique obtained, no fixes applied
 
-Screenshotted both themes (full scroll, 3 shots/theme) as normal. The Fable
-critique call itself failed 3x in a row with **two different errors**
-across attempts — `402 Payment Required` on the first try, then
-`500 {"error":{"message":"auth_unavailable: no auth available", ...}}` on
-the second and third (after an 8s backoff) — pointing to a live problem on
-the CLIProxyAPI/trident side (matches the pattern in this repo's own recent
-git log: "log lasagna-smoke-gate auth fix"), not a request-shape issue on
-this end (the exact same request shape worked 3x already for the article
-template and research.html in this same session). Per the task's fallback
-instructions, did not block the batch on this — moved forward.
+**2026-08-05 follow-up session**: switched from the now-abandoned CLIProxyAPI
+to OpenRouter direct (`https://openrouter.ai/api/v1/chat/completions`,
+`anthropic/claude-fable-5`, key pulled fresh from
+`/srv/secrets/openclaw.env` on trident). Confirmed working — got a real
+critique for this page, both themes (2 separate single-image calls; see
+"OpenRouter vision-budget finding" below for why single-image-per-call was
+necessary).
 
-In place of the critique, manually grepped `research/deaf-arts.html` for
-the three bug patterns already established as real in this same batch
-(pipe separators, hardcoded `rgba(255,255,255,...)`, raw non-`_thumb`
-persona avatar images) — **zero hits, all three**. The page also renders
-no `<img>` tags at all (confirmed via grep) — it's a pure-text template
-(hero copy, a 3×3 grid of text-only teaser cards, an author card, footer),
-so the avatar-visibility and image-quality bug classes that hit the other
-two pages don't apply here by construction. No code changes made.
+Fable's findings (light theme, cut off by a token-budget constraint before
+finishing, see below):
+1. **The 9-card teaser grid is a "wall of sameness"** — identical size,
+   border, and gray fill on every card, with the "CULTURE" eyebrow label as
+   the only differentiator, so no story reads as more important than
+   another; reads as a default template, not an editorial decision.
+2. **Type scale jumps too abruptly** — huge confident H1, then everything
+   below (intro, essay paragraph, card body) collapses to nearly one small
+   size; missing an intermediate tier for rhythm between hero and dense
+   content.
+3. (cut off mid-sentence on "Vertical sp..." — insufficient text to act on,
+   not counted as a finding)
 
-**Still needed**: the actual Fable design critique (typography/hierarchy/
-spacing judgment) — retry once the endpoint is healthy. Screenshots are
-already captured in the session scratchpad if a follow-up wants to reuse
-them rather than re-shoot.
+Dark theme add-on: **the teal accent is doing almost nothing** — appears
+only in the tiny card category labels, the "All articles →" link, and the
+footer Subscribe button, so the mint CTA color has very little presence on
+this page.
 
-Commit: `4fa4e61`
+**Checked, judged not to need a page-specific fix (all three real findings
+above)**: every element named — `.related-articles__grid`,
+`.related-articles__card`, `.related-articles__cat`, `.related-articles__title`
+— is a **shared component**, confirmed via grep: also live on
+`research/care-labor.html`, `research/camouflaging.html`,
+`research/extreme-male-brain.html`, `_layouts/post.html` (article template),
+and `_layouts/debate.html`. All of those are already marked clean/verified
+elsewhere in this scorecard. A page-specific override here would either (a)
+diverge this page's teaser-card treatment from 4 sibling pages that use the
+identical component, or (b) require a shared-CSS change that's out of scope
+for a single-page fix in a batch explicitly scoped to 3 pages only. Same
+judgment call already made and documented for comparable shared-component
+findings on the article template and research.html batch (see above) — this
+is a real finding, flagged for a future dedicated pass on `.related-articles`
+site-wide, not fixed here.
 
-### 4. `/about/` — Fable unreachable, no fixes needed
+No code changes made to deaf-arts.html this session.
 
-Same outage as `/research/deaf-arts/` above — retried the endpoint 3 more
-times for this page specifically (including a 20s backoff) across roughly
-5 minutes of elapsed session time, same `500 auth_unavailable` every time.
-Confirmed sustained, not a one-off blip. Screenshotted both themes anyway
-(full scroll, 7 shots/theme — this is a long page, ~5700px).
+Commit (2026-08-04, prior attempt): `4fa4e61`. This session's findings are
+docs-only, folded into the batch-close commit below.
 
-Manually checked for the same three established bug patterns: zero hits on
-pipe separators and hardcoded `rgba(255,255,255,...)`. The persona-avatar
-`<img>` tags already point at the `*_thumb.png` files with correct
-`width="192" height="192"` — this page's avatar-moire bug was already found
-and fixed in a prior session (commit `b40dd6e`, explicitly logged as a
-follow-up from the homepage fix), confirmed still in place. Also checked
-the `.agent-grid--2col` dead-gap bug (also previously fixed on the homepage,
-commit `92096ae`) — since that fix lives in the shared CSS rule, not a
-homepage-specific override, it already applies here too; the 2×2 persona
-grid renders as a centered pair with no dead gap in the screenshots. No
-code changes made.
+### 4. `/about/` — Fable critique obtained (partial), 1 fix applied
 
-**Still needed**: the actual Fable design critique — retry once the
-endpoint is healthy. Screenshots already captured in the session
-scratchpad.
+**2026-08-05 follow-up session.** Got a real critique for the light theme —
+one call's `max_tokens` was exhausted by the model's internal reasoning
+before it emitted final-answer text, but the reasoning trace itself
+contained a complete, coherent 3-point critique (verified this is genuine
+critique content, not a hallucination — every point named a specific real
+element, checked against the page). Could not get a second call through for
+the dark theme before the vision route stopped accepting any image request
+for the rest of the session (see finding below).
 
-Commit: `cb021ce`
+Fable's findings (light theme):
+1. **Narrow text measure creates uncomfortably long gray columns.** Real,
+   but `.prose { max-width: 68ch }` is the same shared class already
+   deliberately kept on the article template in the prior Fable batch
+   ("the measure itself is correct" — Fable's own words there). Applying
+   the opposite judgment here for the identical CSS property would be
+   inconsistent. Left as-is, same reasoning as the article-template
+   precedent.
+2. **"Three places to start" has no visual separation from the "About This
+   Project" section above it — they blur together.** Confirmed via code:
+   `#about-project` and `#start-here` both used `section section--secondary`
+   back-to-back, and the page header above them is *also* secondary — three
+   consecutive same-background sections. **Fixed**: `#start-here` switched
+   to `section--primary` (verified unique to about.html via grep, no other
+   page affected). Re-screenshotted both themes — clear visual break now in
+   both. Checked the new adjacency this creates (`#start-here` primary
+   directly before `#agents`, which was already primary) — not a repeat of
+   the same bug, because the content type changes (prose list → bordered
+   card grid) and cards carry their own visual boundary regardless of
+   section background; confirmed by inspection, no dead blur. axe-core
+   (`wcag2a`+`wcag2aa`, 2 runs/theme after scroll-forced reflow): **0
+   violations, both themes**, before and after (background-only swap
+   between two already-vetted theme tokens, no new colors introduced).
+3. **The four voice cards rely entirely on their colored tag pills (purple/
+   green/blue/orange) as the only saturated accent in an otherwise muted
+   palette, feeling disconnected from the rest of the design system.** Real
+   observation, but `.agent-identity` per-persona coloring is a shared
+   component that was already deliberately tuned for contrast + "presence"
+   in the homepage's 7-finding design pass this same scorecard (see
+   "Homepage design findings — CLOSED" above). Retuning it again based on
+   one page's critique risks re-litigating a decision already made
+   holistically across every page that uses it (homepage, about, and any
+   future collective pages). Left as-is.
 
-### 5. `/press/` — Fable unreachable, no fixes needed
+No code changes made beyond the `#start-here` fix.
 
-Same sustained outage, persisted for the entire remainder of this batch
-(~15+ min elapsed across all 3 skipped-critique pages, multiple distinct
-error bodies seen: `402 Payment Required` once, `500 auth_unavailable`
-every other time). Screenshotted both themes (5 shots/theme, ~4500px page).
+Commit (2026-08-04, prior attempt): `cb021ce`. This session's fix:
+`94ec300`.
 
-Manually checked for the batch's established patterns: no pipe separators,
-no hardcoded `rgba(255,255,255,...)`, no persona-avatar images at all (this
-page, like deaf-arts.html, is a pure-text template — confirmed via grep,
-zero `<img>` tags).
+### 5. `/press/` — no Fable critique obtained; OpenRouter vision route hit a hard, non-recovering block
 
-**Specifically investigated the large visual gap between the "How Crip
-Minds Works / System Report" buttons and the footer** (visible in the last
-screenshot of both themes) since it looks similar to a gap Fable flagged as
-a possible bug on the article template earlier in this batch (which turned
-out to be normal spacing there). Measured via `getBoundingClientRect()`:
-button-bottom → `main` bottom is 164px, `main` bottom → `#footer` top is a
-further 64px (the latter matches the standard section-to-footer spacing
-already confirmed normal on the article template). The extra 100px on top
-of that traces to an explicit, deliberate inline style on this page's
-content wrapper (`padding-bottom: 100px`, set in the page's own markup,
-not a stacking accident) — this is a page that intentionally trails off
-with utility links rather than a strong closing statement, so the extra
-breathing room reads as a deliberate choice, not a layout bug. Left as-is.
+**2026-08-05 follow-up session.** OpenRouter direct (not CLIProxyAPI) is
+confirmed working in general — plain text-only calls to `anthropic/claude-fable-5`
+succeeded throughout this session, and 3 image-bearing calls succeeded
+earlier in the batch (deaf-arts ×2, about-light ×1). But by the time this
+page's turn came up, **every image-bearing request started failing with
+`402 Prompt tokens limit exceeded: 1604 > <shrinking ceiling>`**, regardless
+of image content. This is a materially different, more specific failure
+than the prior session's CLIProxyAPI outage, worth documenting precisely
+for the next person who hits it:
 
-No code changes made. **Still needed**: the actual Fable design critique —
-retry once the endpoint is healthy. Screenshots already captured in the
-session scratchpad.
+- The account's actual dollar balance was healthy throughout (`$12.42` of a
+  `$20` monthly cap on this key, confirmed via `/v1/key` — not remotely
+  exhausted).
+- The rejection is **not sensitive to image size** — tested progressively
+  smaller resizes (1440px → 800px → 450px → 260px width) and even a direct
+  crop to the *exact* 450×718px dimensions of the deaf-arts image that had
+  already succeeded earlier — every single one reported the identical
+  `1604` prompt-token figure, including a 100×50px near-blank crop. Once
+  the block set in, no amount of image downscaling helped.
+- Waited it out with a 20s pause and then a dedicated 4-minute polling
+  monitor (12 retries at 20s intervals) — the ceiling never moved
+  (`1604 > 1088` → `1604 > 1088`, unchanged across the entire wait).
+- Text-only calls to the same model kept working the whole time at normal
+  cost (~$0.0003/call), ruling out a full key lockout.
+- Best working theory: this specific model (`claude-fable-5` via Amazon
+  Bedrock, per the `provider` field in successful responses) is unusually
+  expensive per completion token (~$0.05/token, ~50-100x typical Claude
+  pricing observed from real `usage.cost` data) and OpenRouter's pre-flight
+  cost estimator reserves a large, apparently non-decreasing worst-case
+  budget per image once it has observed a few real (expensive) completions
+  in the session — i.e. a one-way ratchet, not a simple balance countdown.
+  If true, waiting longer (this session tested ~15 min total) likely
+  wouldn't have helped; a full quota reset (billing-cycle-linked, or a
+  cooldown measured in hours) would be needed. Unconfirmed — OpenRouter
+  doesn't expose the estimator's internals — but the evidence (flat
+  rejection number independent of actual request content, healthy real
+  balance, text calls unaffected) rules out plain credit exhaustion.
+- **For a future retry**: don't bother re-resizing images if this error
+  reappears — it doesn't help. Check `/v1/key` balance first to confirm
+  it's not simple exhaustion, then either wait substantially longer than
+  15 minutes or use a different/cheaper vision-capable OpenRouter model for
+  the critique pass.
 
-Commit: (pending, see log)
+Manually re-checked the same established bug patterns already confirmed
+absent on this page in the prior session (no pipe separators, no hardcoded
+`rgba(255,255,255,...)`, no `<img>` tags at all — still a pure-text
+template) — nothing new found. Did not re-litigate the previously-measured
+"gap before the footer" (confirmed deliberate `padding-bottom: 100px` in
+the page's own markup, not a bug — see prior session's note, still holds).
+
+No code changes made to press/index.html this session.
+
+Commit (2026-08-04, prior attempt): `1e97585`. This session: docs-only, see
+batch-close commit below.
 
 ## Contrast bugs found + fixed this session (chronological, all verified via axe-core)
 
@@ -613,3 +678,25 @@ Commit: (pending, see log)
   Remaining work: the full Fable design-critique pass on every non-homepage
   page (still only contrast-checked, not design-critiqued) — batches 3-5,
   not yet started as of this entry.
+- 2026-08-05 (follow-up session): finished Batch A's 3 pages that the
+  previous session couldn't reach Fable for (CLIProxyAPI was down that
+  whole session). Switched to OpenRouter direct
+  (`anthropic/claude-fable-5`, key pulled fresh from trident's
+  `/srv/secrets/openclaw.env`) — confirmed working, unlike CLIProxyAPI.
+  Got real critiques for `/research/deaf-arts/` (both themes) and `/about/`
+  (light theme) before the vision route hit a hard, non-recovering block
+  specific to image-bearing requests (documented in full under "Batch A"
+  section 5 above — not image-size-sensitive, not simple credit
+  exhaustion, didn't clear after ~15 min of active + passive waiting,
+  while the account balance stayed healthy the whole time and text-only
+  calls kept working). `/press/` never got its critique as a result. 1 real
+  page-specific bug found + fixed on `/about/` (`#start-here` section
+  blending into the section above it — verified both themes, axe-core 0
+  violations). All other Fable findings across the 3 pages were shared-
+  component observations (touching other already-clean pages) —
+  deliberately left with reasoning logged per finding, consistent with
+  this scorecard's established judgment calls elsewhere. 1 code commit
+  (`94ec300`) + this doc update, pushed to origin/main. Remaining work:
+  `/press/`'s actual Fable critique (retry once the vision route recovers
+  — screenshots already captured, don't need a re-shoot), plus the
+  unstarted batches B/C.
