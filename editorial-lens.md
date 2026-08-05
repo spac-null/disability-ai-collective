@@ -1,6 +1,7 @@
 ---
 title: Editorial Lens
 type: internal
+published: false
 ---
 
 This publication is built by someone who stood in a room at the Van Abbemuseum and recognized it. Ahmet Ogut's Exploded City — scale models of buildings that no longer exist, shown intact. He guided visitors through that room every week for six months. Each time he thought: this is how I think.
