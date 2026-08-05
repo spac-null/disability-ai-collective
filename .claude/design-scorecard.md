@@ -2,12 +2,16 @@
 
 ## HANDOFF (read this first if resuming in a fresh session/context)
 
-This session ran the site through several iterations of: real browser screenshot →
-axe-core WCAG scan (light+dark) → fix → re-verify. **Almost the entire site is now
-checked and clean.** What's left is a small, well-defined tail — see "Remaining work"
-below. Resume by either running `/loop` fresh (new context) or dispatching a
-general-purpose subagent with that section as its task list; don't try to hold the
-whole site's state in one long-running context again, that's what filled this one up.
+This multi-session effort ran the site through: real browser screenshot → axe-core
+WCAG scan (light+dark) → fix → re-verify, then a second pass of design-director
+critique on every page. **As of 2026-08-05, every page on the site has been through
+both passes — the WCAG contrast sweep and the design critique. There is no more
+"remaining work" checklist; the whole site is done.** See "Remaining work (small
+tail)" below for the full history of what was checked and fixed, and "Site-wide
+findings / lessons" for reusable methodology if this resumes for a *new* reason
+(e.g. new pages added, a re-audit, or user-reported bugs like the ones logged
+below). Don't hold the whole site's state in one long-running context if picking
+this up again — that's what filled the original session.
 
 **Standing method, reuse as-is:**
 1. Navigate to the page, both themes, inject axe-core (`https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.9.1/axe.min.js`)
@@ -48,7 +52,23 @@ whole site's state in one long-running context again, that's what filled this on
   `/jascha/`, `/notes/`, `/accessibility/` reviewed in full, both themes — genuinely
   clean, no findings. `/notes/` is a real empty content page (no `_notes` collection
   exists yet), not a bug.
-- [ ] Remaining pages (batch C — editorial-lens, collective pages, gallery) still need their first design critique — use the direct-vision method (below), not an external API
+- [x] **Batch C (`/editorial-lens/`, 4 `/collective/*/` pages, `/gallery/`) — completed
+  2026-08-05 via direct-vision method.** `/gallery/` reviewed in full, both themes —
+  genuinely clean, no findings (photo-scatter card treatment, functional filters).
+  `/editorial-lens/` was a real production bug, not a design issue: the page had no
+  `layout:` in its front matter and was live/public (confirmed 200) but completely
+  unstyled — turned out to be an internal reference doc (`type: internal`, unlinked
+  from site nav, unused by the automation pipeline) that leaked into the public build
+  by Jekyll's default behavior. Fixed with `published: false` rather than inventing a
+  layout it was never meant to have (commit `85e2cc5`) — no longer a page to critique.
+  All 4 `/collective/*/` persona pages had the same avatar-aliasing risk as the
+  homepage/about.html (full 1024px source at 116px hero size) — fixed by adding
+  `avatar_thumb:` front matter + updating the shared `author.html` layout to use it,
+  falling back to the full-size original if unset; left the JSON-LD schema image
+  field on the full-size original deliberately (commit `b6f9123`). Rest of each
+  persona page (Published Work grid, per-persona subscribe form, "Other voices"
+  cards, footer) reviewed and clean, both themes. **Batch C is fully closed — this
+  was the last unreviewed batch. All pages on the site have now had a design pass.**
 
 **Process change, 2026-08-05 — stop routing design critiques through an external API.**
 Every critique pass up to this point sent screenshots to "Fable 5" via an external HTTP
@@ -867,3 +887,17 @@ update.
   clean, no findings. Batch B is now fully closed. Remaining work: batch C
   (editorial-lens, 4 collective pages, gallery) — first design critique on any of
   these, use the direct-vision method, no external API.
+- 2026-08-05 (same day, continued): completed batch C, the last unreviewed batch.
+  `/gallery/` clean, no findings. `/editorial-lens/` turned out to be a real
+  production bug rather than a design-polish item — an internal reference doc
+  (no layout, `type: internal`, unlinked, unused by the pipeline) that Jekyll was
+  publishing live and completely unstyled; excluded from the build with
+  `published: false` (commit `85e2cc5`) instead of inventing a design for a page
+  that was never meant to exist publicly. All 4 `/collective/*/` persona pages had
+  the same avatar-aliasing risk fixed on the homepage/about.html earlier — added
+  `avatar_thumb:` front matter + a layout fallback, left the JSON-LD schema image
+  on the full-size original deliberately (commit `b6f9123`); rest of each page
+  clean. **This closes out the entire design-quality + WCAG AA effort — every page
+  on the site has now had both an axe-core contrast pass and a design critique.**
+  If this scorecard is opened again, it's for something new (a re-audit, new pages,
+  or a specific reported bug), not to continue a checklist — there isn't one left.
