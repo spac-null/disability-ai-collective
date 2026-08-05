@@ -27,7 +27,8 @@ whole site's state in one long-running context again, that's what filled this on
 - [x] Article template (`/2026/07/31/injected-since-birth/`) — first Fable critique done, 5 findings fixed, see "Batch A: non-homepage Fable critique pass" below
 - [x] `/research/` — first Fable critique done, 4 findings fixed (2 shared with the article template), 1 confirmed false positive from the local `--limit_posts 5` dev build, 1 confirmed browser-automation screenshot artifact (not a site bug) — see below
 - [~] `/research/deaf-arts/` — Fable unreachable (see below), manually checked for the batch's already-established bug patterns, none found, no fixes needed/applied; critique itself still pending a retry
-- [ ] `/about/`, `/press/` — batch A in progress, see below
+- [~] `/about/` — Fable unreachable (same outage as deaf-arts.html), manually checked for the batch's already-established bug patterns, none found, no fixes needed/applied; critique itself still pending a retry
+- [ ] `/press/` — batch A in progress, see below
 - [ ] Remaining pages (batches B/C — press subpages, jascha, notes, accessibility, editorial-lens, collective pages, gallery) still need their first Fable design critique
 
 **Note on this batch's process**: the subagent originally dispatched for the 7
@@ -351,6 +352,32 @@ two pages don't apply here by construction. No code changes made.
 spacing judgment) — retry once the endpoint is healthy. Screenshots are
 already captured in the session scratchpad if a follow-up wants to reuse
 them rather than re-shoot.
+
+Commit: `4fa4e61`
+
+### 4. `/about/` — Fable unreachable, no fixes needed
+
+Same outage as `/research/deaf-arts/` above — retried the endpoint 3 more
+times for this page specifically (including a 20s backoff) across roughly
+5 minutes of elapsed session time, same `500 auth_unavailable` every time.
+Confirmed sustained, not a one-off blip. Screenshotted both themes anyway
+(full scroll, 7 shots/theme — this is a long page, ~5700px).
+
+Manually checked for the same three established bug patterns: zero hits on
+pipe separators and hardcoded `rgba(255,255,255,...)`. The persona-avatar
+`<img>` tags already point at the `*_thumb.png` files with correct
+`width="192" height="192"` — this page's avatar-moire bug was already found
+and fixed in a prior session (commit `b40dd6e`, explicitly logged as a
+follow-up from the homepage fix), confirmed still in place. Also checked
+the `.agent-grid--2col` dead-gap bug (also previously fixed on the homepage,
+commit `92096ae`) — since that fix lives in the shared CSS rule, not a
+homepage-specific override, it already applies here too; the 2×2 persona
+grid renders as a centered pair with no dead gap in the screenshots. No
+code changes made.
+
+**Still needed**: the actual Fable design critique — retry once the
+endpoint is healthy. Screenshots already captured in the session
+scratchpad.
 
 Commit: (pending, see log)
 
