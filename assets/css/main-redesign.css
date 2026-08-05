@@ -1412,7 +1412,7 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
 
 .research-threads {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 1px;
   background: var(--color-border-primary);
   border: 1px solid var(--color-border-primary);
@@ -1454,8 +1454,10 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   margin-top: 0.15rem;
 }
 
-.research-thread--full {
-  grid-column: 1 / -1;
+@media (max-width: 768px) {
+  .research-threads {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
