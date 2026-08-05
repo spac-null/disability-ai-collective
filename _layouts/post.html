@@ -58,16 +58,16 @@ layout: default
 <main id="main-content" data-persona="{{ page.author | downcase | replace: ' ', '-' }}">
   <article class="section section--primary">
     <div class="container container--md post-shell">
-      {% assign author_icon = '/assets/maya_flux_style_matched.png' %}
+      {% assign author_icon = '/assets/maya_flux_style_matched_thumb.png' %}
       {% assign is_editorial = false %}
       {% if page.author == "Siri Sage" %}
-        {% assign author_icon = '/assets/siri_sage_style_matched.png' %}
+        {% assign author_icon = '/assets/siri_sage_style_matched_thumb.png' %}
       {% elsif page.author == "Pixel Nova" %}
-        {% assign author_icon = '/assets/pixel_nova_style_matched.png' %}
+        {% assign author_icon = '/assets/pixel_nova_style_matched_thumb.png' %}
       {% elsif page.author == "Maya Flux" %}
-        {% assign author_icon = '/assets/maya_flux_style_matched.png' %}
+        {% assign author_icon = '/assets/maya_flux_style_matched_thumb.png' %}
       {% elsif page.author == "Zen Circuit" %}
-        {% assign author_icon = '/assets/zen_circuit_style_matched.png' %}
+        {% assign author_icon = '/assets/zen_circuit_style_matched_thumb.png' %}
       {% elsif page.author == "Jascha Blume" %}
         {% assign author_icon = '/assets/jascha.jpg' %}
         {% assign is_editorial = true %}

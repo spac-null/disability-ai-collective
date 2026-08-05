@@ -24,7 +24,9 @@ whole site's state in one long-running context again, that's what filled this on
 - [x] Two reported visual bugs (empty grid cell on `/research/`, avatar moire on homepage) — both confirmed real, both fixed, see log below
 - [x] Homepage's 7 open design findings from the first Fable critique — all closed, see "Open design findings" section below (now marked closed) and commits `44f7bbc`, `92096ae`
 - [x] `about.html` avatar moire follow-up — fixed, points at the same `*_thumb.png` files now (commit `2c00a73`)
-- [ ] The rest of the site hasn't had a Fable *design* critique at all yet (only homepage did) — everything else has only been contrast-checked. If continuing the design-quality thread (not just accessibility), that's a separate pass still to do on every page below (this is the next batch of work)
+- [x] Article template (`/2026/07/31/injected-since-birth/`) — first Fable critique done, 5 findings fixed, see "Batch A: non-homepage Fable critique pass" below
+- [ ] `/research/`, `/research/deaf-arts/`, `/about/`, `/press/` — batch A in progress, see below
+- [ ] Remaining pages (batches B/C — press subpages, jascha, notes, accessibility, editorial-lens, collective pages, gallery) still need their first Fable design critique
 
 **Note on this batch's process**: the subagent originally dispatched for the 7
 homepage findings did the actual design work correctly (verified by reading its
@@ -90,6 +92,131 @@ From the first Fable critique run this session, all 7 now fixed and verified
 
 Also found + fixed while re-verifying (not from the original critique):
 `.agent-grid--2col` dead gap between cards, see note above (commit `92096ae`).
+
+## Batch A: non-homepage Fable critique pass (5 pages)
+
+Method: real browser screenshot, full scroll (5 shots top-to-bottom), light +
+dark, desktop 1440px → one Fable 5 critique call per page (all screenshots in
+one message) → concrete CSS/HTML fixes → re-screenshot → axe-core 3x/theme on
+any color-touching fix. Endpoint: CLIProxyAPI on trident, `openrouter/claude-fable-5`,
+`max_tokens` needs ~6000+ for this model (3000 truncated mid-response with
+`finish_reason` still reported as if complete in one run — retried higher, got
+a full `stop`-terminated 7.5k-char response; worth remembering for the
+remaining 4 pages in this batch).
+
+### 1. Article template (`/2026/07/31/injected-since-birth/`) — DONE
+
+Fable's punch list (9 items, full text not reproduced here) covered: an
+orphaned-looking content column, the sans-serif lede paragraph + drop-cap
+treatment, accent-color sprawl, a perceived dead zone before the footer,
+newsletter module inconsistencies between themes, the floating
+Dyslexia/theme-toggle pills, prev/next card padding, missing typographic
+furniture (subheads/pull-quotes), and small dark-mode fit-and-finish issues
+(byline avatar, author card).
+
+**Fixed (5 findings, real bugs confirmed by code inspection + measurement,
+not just taking Fable's read at face value):**
+1. **Byline avatar (`.post-meta__agent-icon`) and author-card avatar
+   (`.post-author-avatar`) — persona portrait nearly invisible in dark mode.**
+   Verified by pixel-cropping both theme screenshots: light mode shows a
+   clear filled circle, dark mode shows almost nothing but a faint ring.
+   Root cause confirmed via direct pixel read of the source PNG
+   (`zen_circuit_style_matched.png`): its own background color is `rgb(26,16,22)`,
+   nearly identical to the dark theme's page background (`#2b2b2f`), so the
+   portrait optically merges with the page at small size. Fixed two ways:
+   swapped `author_icon` (all 4 personas, `_layouts/post.html`) from the raw
+   1024px source to the already-existing `*_thumb.png` files (same fix
+   pattern as commit `23a5445` — that commit fixed the homepage grid but
+   explicitly left this article-template usage as a noted follow-up), and
+   strengthened both avatars' border from `--color-border-secondary` to the
+   stronger `--color-border-primary` (`.post-meta__agent-icon` also bumped
+   1px→1.5px) so the boundary reads even when the portrait's own fill is
+   close to the surrounding background. Verified both themes post-fix —
+   avatar now clearly legible in dark mode.
+2. **Two different "Subscribe" buttons on the same page, two different
+   colors.** The in-article `.post-subscribe__row button` used
+   `var(--color-text-primary)`/`var(--color-background-primary)` (black
+   button, white text in light mode) while the footer's
+   `.subscribe-section__btn` (same CTA, same page) already correctly used
+   `var(--color-accent)`/`var(--color-on-accent)` (teal). Switched the
+   in-article button to match the footer's token pairing — same fix
+   philosophy as the sitewide `--color-on-accent`/`--color-on-brand` work
+   from the earlier session.
+3. **In-article newsletter email input unreadable in light mode.**
+   `.post-subscribe__row input[type="email"]` used hardcoded
+   `rgba(255,255,255,0.06)` background / `rgba(255,255,255,0.15)` border —
+   a white-based translucent overlay that only reads against a dark card
+   surface. Against the light-mode card it was nearly invisible (matches
+   Fable's "underline-only in light mode" observation). Replaced with
+   theme-aware tokens: `var(--color-background-primary)` /
+   `var(--color-border-primary)`, focus ring `var(--color-focus)` (was also
+   hardcoded `rgba(255,255,255,0.35)`).
+4. **Halftone dot texture only visible in dark mode.**
+   `.post-subscribe::after` (decorative screenprint-style dot cluster,
+   top-right of the newsletter card) used hardcoded
+   `rgba(255,255,255,0.1)` dots — invisible against the light-mode card,
+   confirmed by Fable and by inspection. Changed to
+   `var(--color-text-primary)` (flips near-black/near-white per theme) at
+   low opacity (0.07 light / 0.1 dark via a `.dark-theme` override so dark
+   mode's existing look is preserved exactly), so the texture now shows in
+   both themes instead of only dark.
+5. Verified fixes with axe-core (`wcag2a`+`wcag2aa`), 3 runs each theme after
+   a scroll-forced reflow — **0 violations, both themes**, before and after.
+
+**Deliberately left (checked, judged not to need a fix, reasoning below):**
+- **"Orphaned" content column (Fable's #1, called the biggest issue).**
+  Measured via `getBoundingClientRect()` at 1440px: the actual gap is
+  `.post-shell` right edge 1170px vs `.prose` right edge 1041px — **129px**,
+  not the "350px empty third" Fable eyeballed from a static screenshot. It
+  exists because `.prose` (68ch measure, ~755px) is narrower than
+  `.post-shell`'s content box (~868px) and isn't centered within it, so the
+  unused width sits entirely on the right. A real, measured asymmetry — but
+  fixing it means picking a real information-architecture direction
+  (centering the prose column would indent body text ~56px relative to the
+  flush-left H1/breadcrumb/meta bar above it, which is its own new
+  inconsistency; widening the prose measure would fight Fable's own
+  agreement that "the measure itself is correct"). This needs a considered
+  column-width decision for the whole article template, not a one-line CSS
+  patch — flagged for a follow-up design pass rather than guessed at here.
+- **Sans-serif lede paragraph + drop cap on "I" (Fable's #2).** Confirmed
+  via CSS (`.prose > p:first-of-type`) this is an intentional dek/standfirst
+  treatment (larger sans-serif lead-in, explicit code comment), a legitimate
+  and common editorial pattern (De Correspondent, The Verge do the same).
+  Fable's specific complaint — the drop cap on a capital "I" reads as a thin
+  black bar/cursor — is real but is a narrow-letter drop-cap problem
+  inherent to any `::first-letter` implementation; a targeted fix would need
+  per-article Liquid/JS logic to detect the actual first character, which is
+  disproportionate for a cosmetic ding on one letter. Left as a known,
+  accepted limitation.
+- **"Large dead gap before the footer" (Fable's #4).** Measured via
+  `getBoundingClientRect()`: `article.section` bottom to `#footer` top is
+  64px (the section's own `padding-bottom`) — normal spacing, not a bug.
+  What reads as a big gap in the screenshot is the visual effect of a
+  centered pill button with padding around it at that scroll position, not
+  an actual oversized gap.
+- **Prev/next card "image bleed" and "asymmetric padding" (Fable's #7).**
+  Checked `.post-nav__link` / `.post-nav__link--next` CSS: both cards share
+  the same `gap`/`padding` rules, only `flex-direction: row-reverse` differs
+  (a deliberate mirrored older/newer layout), and the thumbnail sits in an
+  `overflow: hidden` box so there's no actual clipping/bleed bug. Read as a
+  stylistic mirrored-card choice, not an asymmetry bug.
+- **Missing typographic furniture — subheads/pull-quotes on this specific
+  essay (Fable's #8).** The site already has CSS for `.prose h2` and
+  `.prose blockquote` (pull-quote styling exists, confirmed in CSS); this
+  particular short essay just doesn't use them. Content-level choice per
+  article, not a template bug — not touched.
+- **Floating Dyslexia/theme-toggle pills styled like a browser extension
+  (Fable's #6).** Real aesthetic point but this is a sitewide fixed-position
+  component (`accessibility.js`), not article-template-specific — restyling
+  it site-wide is out of scope for a single-page fix in this batch; noted
+  for a future dedicated pass on that component.
+- **Newsletter headline weight / hierarchy (part of Fable's #5).** Font
+  weight is `--font-weight-light` on a 2xl headline next to a small
+  uppercase eyebrow — a legitimate, if arguable, editorial weight contrast.
+  Judgment call to leave as-is; the objectively broken parts of the same
+  finding (input contrast, button color, dot texture) were fixed.
+
+Commit: (pending, see log)
 
 ## Contrast bugs found + fixed this session (chronological, all verified via axe-core)
 

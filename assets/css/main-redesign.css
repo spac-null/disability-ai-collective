@@ -3004,7 +3004,7 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   width: 20px;
   height: 20px;
   border-radius: 999px;
-  border: 1px solid var(--color-border-secondary);
+  border: 1.5px solid var(--color-border-primary);
   object-fit: cover;
   box-shadow: var(--shadow-sm);
 }
@@ -3071,7 +3071,7 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
 }
 
 .post-author-avatar {
-  border: 2px solid var(--color-border-secondary);
+  border: 2px solid var(--color-border-primary);
   border-radius: var(--radius-md);
   flex: 0 0 auto;
   height: 56px;
@@ -4140,7 +4140,10 @@ article[data-categories].hidden {
   border-radius: 8px 0 0 8px;
 }
 
-/* Halftone dot cluster — top right, screenprint reference */
+/* Halftone dot cluster — top right, screenprint reference.
+   Dot color rides --color-text-primary (near-black light / near-white dark)
+   at low opacity so the texture reads in both themes instead of only dark
+   (was hardcoded rgba(255,255,255,.1), invisible on the light cream bg). */
 .post-subscribe::after {
   content: '';
   position: absolute;
@@ -4148,9 +4151,14 @@ article[data-categories].hidden {
   right: -8px;
   width: 96px;
   height: 96px;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(circle, var(--color-text-primary) 1.5px, transparent 1.5px);
   background-size: 7px 7px;
+  opacity: 0.07;
   pointer-events: none;
+}
+
+.dark-theme .post-subscribe::after {
+  opacity: 0.1;
 }
 
 .post-subscribe__eyebrow {
@@ -4185,8 +4193,8 @@ article[data-categories].hidden {
 .post-subscribe__row input[type="email"] {
   flex: 1;
   min-width: 0;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.15);
+  background: var(--color-background-primary);
+  border: 1px solid var(--color-border-primary);
   border-radius: 6px;
   padding: var(--space-4) var(--space-6);
   color: var(--color-text-primary);
@@ -4201,12 +4209,14 @@ article[data-categories].hidden {
 
 .post-subscribe__row input[type="email"]:focus {
   outline: none;
-  border-color: rgba(255,255,255,0.35);
+  border-color: var(--color-focus);
 }
 
+/* Matches the footer's .subscribe-section__btn — same CTA, same accent
+   token, instead of an unrelated black/inverse pairing on this page only. */
 .post-subscribe__row button {
-  background: var(--color-text-primary);
-  color: var(--color-background-primary);
+  background: var(--color-accent);
+  color: var(--color-on-accent);
   border: none;
   border-radius: 6px;
   padding: var(--space-4) var(--space-8);
