@@ -28,7 +28,19 @@ whole site's state in one long-running context again, that's what filled this on
 - [x] `/research/` — first Fable critique done, 4 findings fixed (2 shared with the article template), 1 confirmed false positive from the local `--limit_posts 5` dev build, 1 confirmed browser-automation screenshot artifact (not a site bug) — see below
 - [~] `/research/deaf-arts/` — Fable unreachable (see below), manually checked for the batch's already-established bug patterns, none found, no fixes needed/applied; critique itself still pending a retry
 - [~] `/about/` — Fable unreachable (same outage as deaf-arts.html), manually checked for the batch's already-established bug patterns, none found, no fixes needed/applied; critique itself still pending a retry
-- [ ] `/press/` — batch A in progress, see below
+- [~] `/press/` — Fable unreachable (same outage, persisted the entire batch), manually checked, none of the established bug patterns found, one measured non-bug (the below-fold gap before the footer), no fixes needed/applied; critique itself still pending a retry
+- **Batch A (5 pages) is done as far as it can go this session.** 2 pages got
+  a real Fable critique + fixes (article template, research.html), 3 pages
+  (`/research/deaf-arts/`, `/about/`, `/press/`) got screenshots + a manual
+  established-pattern check but no actual Fable critique — the CLIProxyAPI
+  endpoint went down partway through the batch (`402` then persistent `500
+  auth_unavailable`) and never recovered across ~15+ min of retries. Follow-up:
+  **re-run the Fable critique call for those 3 pages** once the endpoint is
+  confirmed healthy (`curl` a trivial request first) — screenshots are already
+  captured in the session scratchpad
+  (`/private/tmp/claude-501/.../scratchpad/screenshots/{deaf-arts,about,press}/`,
+  ephemeral — re-shoot if that scratchpad is gone) so it doesn't need a full
+  re-shoot, just the API call + any resulting fixes.
 - [ ] Remaining pages (batches B/C — press subpages, jascha, notes, accessibility, editorial-lens, collective pages, gallery) still need their first Fable design critique
 
 **Note on this batch's process**: the subagent originally dispatched for the 7
@@ -378,6 +390,38 @@ code changes made.
 **Still needed**: the actual Fable design critique — retry once the
 endpoint is healthy. Screenshots already captured in the session
 scratchpad.
+
+Commit: `cb021ce`
+
+### 5. `/press/` — Fable unreachable, no fixes needed
+
+Same sustained outage, persisted for the entire remainder of this batch
+(~15+ min elapsed across all 3 skipped-critique pages, multiple distinct
+error bodies seen: `402 Payment Required` once, `500 auth_unavailable`
+every other time). Screenshotted both themes (5 shots/theme, ~4500px page).
+
+Manually checked for the batch's established patterns: no pipe separators,
+no hardcoded `rgba(255,255,255,...)`, no persona-avatar images at all (this
+page, like deaf-arts.html, is a pure-text template — confirmed via grep,
+zero `<img>` tags).
+
+**Specifically investigated the large visual gap between the "How Crip
+Minds Works / System Report" buttons and the footer** (visible in the last
+screenshot of both themes) since it looks similar to a gap Fable flagged as
+a possible bug on the article template earlier in this batch (which turned
+out to be normal spacing there). Measured via `getBoundingClientRect()`:
+button-bottom → `main` bottom is 164px, `main` bottom → `#footer` top is a
+further 64px (the latter matches the standard section-to-footer spacing
+already confirmed normal on the article template). The extra 100px on top
+of that traces to an explicit, deliberate inline style on this page's
+content wrapper (`padding-bottom: 100px`, set in the page's own markup,
+not a stacking accident) — this is a page that intentionally trails off
+with utility links rather than a strong closing statement, so the extra
+breathing room reads as a deliberate choice, not a layout bug. Left as-is.
+
+No code changes made. **Still needed**: the actual Fable design critique —
+retry once the endpoint is healthy. Screenshots already captured in the
+session scratchpad.
 
 Commit: (pending, see log)
 
