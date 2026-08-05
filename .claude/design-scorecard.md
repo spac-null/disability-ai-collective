@@ -26,7 +26,8 @@ whole site's state in one long-running context again, that's what filled this on
 - [x] `about.html` avatar moire follow-up — fixed, points at the same `*_thumb.png` files now (commit `2c00a73`)
 - [x] Article template (`/2026/07/31/injected-since-birth/`) — first Fable critique done, 5 findings fixed, see "Batch A: non-homepage Fable critique pass" below
 - [x] `/research/` — first Fable critique done, 4 findings fixed (2 shared with the article template), 1 confirmed false positive from the local `--limit_posts 5` dev build, 1 confirmed browser-automation screenshot artifact (not a site bug) — see below
-- [ ] `/research/deaf-arts/`, `/about/`, `/press/` — batch A in progress, see below
+- [~] `/research/deaf-arts/` — Fable unreachable (see below), manually checked for the batch's already-established bug patterns, none found, no fixes needed/applied; critique itself still pending a retry
+- [ ] `/about/`, `/press/` — batch A in progress, see below
 - [ ] Remaining pages (batches B/C — press subpages, jascha, notes, accessibility, editorial-lens, collective pages, gallery) still need their first Fable design critique
 
 **Note on this batch's process**: the subagent originally dispatched for the 7
@@ -321,6 +322,35 @@ on the article template, found independently here; 2 are new):**
   observation, but it's about *which* images specific past articles used
   (an editorial/content decision), not something a template CSS pass can
   fix — noted, not actioned.
+
+Commit: `209067d`
+
+### 3. `/research/deaf-arts/` (research-thread subpage) — Fable unreachable, no fixes needed
+
+Screenshotted both themes (full scroll, 3 shots/theme) as normal. The Fable
+critique call itself failed 3x in a row with **two different errors**
+across attempts — `402 Payment Required` on the first try, then
+`500 {"error":{"message":"auth_unavailable: no auth available", ...}}` on
+the second and third (after an 8s backoff) — pointing to a live problem on
+the CLIProxyAPI/trident side (matches the pattern in this repo's own recent
+git log: "log lasagna-smoke-gate auth fix"), not a request-shape issue on
+this end (the exact same request shape worked 3x already for the article
+template and research.html in this same session). Per the task's fallback
+instructions, did not block the batch on this — moved forward.
+
+In place of the critique, manually grepped `research/deaf-arts.html` for
+the three bug patterns already established as real in this same batch
+(pipe separators, hardcoded `rgba(255,255,255,...)`, raw non-`_thumb`
+persona avatar images) — **zero hits, all three**. The page also renders
+no `<img>` tags at all (confirmed via grep) — it's a pure-text template
+(hero copy, a 3×3 grid of text-only teaser cards, an author card, footer),
+so the avatar-visibility and image-quality bug classes that hit the other
+two pages don't apply here by construction. No code changes made.
+
+**Still needed**: the actual Fable design critique (typography/hierarchy/
+spacing judgment) — retry once the endpoint is healthy. Screenshots are
+already captured in the session scratchpad if a follow-up wants to reuse
+them rather than re-shoot.
 
 Commit: (pending, see log)
 
