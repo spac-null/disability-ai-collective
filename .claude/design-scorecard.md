@@ -22,9 +22,22 @@ whole site's state in one long-running context again, that's what filled this on
 - [x] `/research/camouflaging/`, `/research/care-labor/`, `/research/extreme-male-brain/` — verified individually, all clean both themes, no new bugs (same template as already-clean pages, assumption held this time)
 - [x] `/cripminds-stats-2026-06.html` — confirmed orphaned (only reference sitewide is this scorecard file itself), skipped per instruction
 - [x] Two reported visual bugs (empty grid cell on `/research/`, avatar moire on homepage) — both confirmed real, both fixed, see log below
-- [ ] Homepage's remaining **design** (not contrast) findings, still open from the first Fable critique — see "Open design findings" section below. These are visual-polish items, lower priority than contrast, but were the original point of the exercise before the WCAG detour
-- [ ] The rest of the site hasn't had a Fable *design* critique at all yet (only homepage did) — everything else has only been contrast-checked. If continuing the design-quality thread (not just accessibility), that's a separate pass still to do on every page below
-- [ ] `about.html` uses the same `.agent-card__image` pattern as the homepage with the same 4 full-size (1024px) source images at the same 72-96px render size — same latent moire issue, NOT fixed this session (out of scope, homepage was the only page reported). Trivial follow-up: point its 4 `<img src>` at the `*_thumb.png` files created this session (see finding below), same as index.html.
+- [x] Homepage's 7 open design findings from the first Fable critique — all closed, see "Open design findings" section below (now marked closed) and commits `44f7bbc`, `92096ae`
+- [x] `about.html` avatar moire follow-up — fixed, points at the same `*_thumb.png` files now (commit `2c00a73`)
+- [ ] The rest of the site hasn't had a Fable *design* critique at all yet (only homepage did) — everything else has only been contrast-checked. If continuing the design-quality thread (not just accessibility), that's a separate pass still to do on every page below (this is the next batch of work)
+
+**Note on this batch's process**: the subagent originally dispatched for the 7
+homepage findings did the actual design work correctly (verified by reading its
+uncommitted diff) but was killed mid-task by hitting the account's monthly Claude
+spend limit before it could verify/commit. The orchestrating session finished the
+verification (local build, screenshot both themes, axe-core 2x/theme, 0
+violations) and committed it directly instead of re-dispatching. Also found+fixed
+one new bug while re-verifying: `.agent-grid--2col` had a large dead gap between
+the two cards (`repeat(2, 1fr)` stretching tracks to ~half the container width
+while `.agent-card` capped at max-width:280px sat left-aligned in the oversized
+cell) — predated this session, live on production, commit `92096ae`. **If
+resuming with subagents again, budget/spend limits are a real constraint now —
+check before dispatching another heavy (screenshot+axe+Fable-API) batch.**
 
 **Pages verified clean this session (contrast only, not design-critiqued except homepage):**
 `/`, article template, `/research/`, `/research/deaf-arts/`, `/research/camouflaging/`,
@@ -54,19 +67,29 @@ intentional or default") → concrete fix → re-screenshot to confirm.
 - 🟨 partially addressed
 - ✅ reviewed and fixed to a genuinely polished standard (contrast) — design critique still pending unless noted
 
-## Open design findings (homepage only — from the one Fable critique run this session)
+## Homepage design findings — CLOSED (commits `44f7bbc`, `92096ae`)
 
-Not contrast bugs — genuine design/polish findings, still open:
-- Hero H1 uses generic default sans while article titles use a serif with real
-  character — brand identity is weaker than the content's own typography
-- Light mode reads as "dark mode recolored," not separately designed (persona
-  accents + the black essay-hero artwork have no light-specific treatment)
-- Inconsistent meta separators (middot in hero vs. pipe in grid cards)
-- Essay-grid avatar dot rendering inconsistency (may just be a load-order flash,
-  worth a second look before assuming it's a real bug)
-- WCAG 2.1 AA footer badge is bare text, not treated as the credential it is
-- Persona accent border colors read "timid" on dark
-- Hero's right column is dead/empty space, not intentional asymmetry
+From the first Fable critique run this session, all 7 now fixed and verified
+(local build, screenshot both themes, axe-core 0 violations):
+- Hero H1 → `--font-family-serif` (was generic default sans), matches article
+  title typography
+- Light mode now gets its own treatment: `.home-hero__card` gets a 3px accent
+  top border in light mode, reverts to the original 1px neutral border in dark
+  (where the near-black artwork already blends naturally)
+- Meta separators standardized to middot sitewide on the homepage (was pipe in
+  grid cards, middot in hero — now consistently middot)
+- Essay-grid avatar dot rendering — was already fixed in the prior batch
+  (moire/aliasing → proper thumbnails), re-verified clean, no further change
+- WCAG 2.1 AA footer badge now a real pill (border, background, checkmark),
+  not bare text
+- Persona accent border colors on dark now use the already-vetted lightened
+  text-contrast variants instead of raw brand hues — more presence, still
+  clears the 3:1 UI-component floor (border/background fill unchanged)
+- Hero's dead right-column space filled with a real pull-quote (Jascha's own
+  personal statement)
+
+Also found + fixed while re-verifying (not from the original critique):
+`.agent-grid--2col` dead gap between cards, see note above (commit `92096ae`).
 
 ## Contrast bugs found + fixed this session (chronological, all verified via axe-core)
 
@@ -206,6 +229,18 @@ Not contrast bugs — genuine design/polish findings, still open:
    unfixed pattern (same images, same `.agent-card__image` class, same
    size) — noted as a follow-up, not fixed this session (out of scope: only
    the homepage was reported). (commit 23a5445)
+3. **Homepage `.agent-grid--2col` — large dead gap between the two Collective
+   cards.** Not user-reported; found while re-verifying the homepage design
+   pass. `grid-template-columns: repeat(2, 1fr) !important` stretched each
+   column track to ~half the (wide) container, while `.agent-card` itself is
+   capped at `max-width: 280px` and left-aligned within its much-wider cell —
+   Pixel Nova/Siri Sage (and Maya Flux/Zen Circuit) rendered at opposite edges
+   of the row with empty space between instead of a centered pair. Predated
+   this session's changes, was live on production. Fixed by sizing the 2
+   tracks to the card's own width (`repeat(2, minmax(252px, 280px))`,
+   matching the base `.agent-grid`'s auto-fit range) so the existing
+   `justify-content: center` actually centers the pair. Verified visually
+   both themes; axe-core clean before and after. (commit 92096ae)
 
 ## Log
 
@@ -225,3 +260,22 @@ Not contrast bugs — genuine design/polish findings, still open:
   New follow-up noted: `about.html` has the same unfixed avatar-moire pattern
   as the homepage did (same images, same class) — trivial fix, same
   `*_thumb.png` files already exist, just needs the 4 `src` swaps.
+- 2026-08-05: dispatched a subagent for the homepage's 7 open design findings
+  (typography, light-mode treatment, separators, footer badge, persona border
+  presence, hero dead space). It did the actual design work correctly — but
+  hit the account's monthly Claude spend limit mid-task and was killed before
+  it could verify or commit, leaving the diff uncommitted. The orchestrating
+  session read the diff, confirmed it addressed all 7 findings coherently,
+  finished verification itself (local jekyll build+serve, real screenshots
+  both themes, axe-core 2x/theme, 0 violations), and committed it directly
+  rather than re-dispatching. While re-verifying, found and fixed a new
+  pre-existing bug (not from the original critique): `.agent-grid--2col`'s
+  dead gap between cards (see visual bugs #3 above). Also closed the
+  `about.html` avatar-moire follow-up noted in the previous log entry.
+  3 commits (44f7bbc, 92096ae, 2c00a73) plus this doc update, pushed to
+  origin/main. **Spend limit is now a live constraint** — flagged to the user
+  before continuing further; if resuming with subagents, confirm headroom
+  first or expect to finish verification/commit steps directly instead.
+  Remaining work: the full Fable design-critique pass on every non-homepage
+  page (still only contrast-checked, not design-critiqued) — batches 3-5,
+  not yet started as of this entry.
