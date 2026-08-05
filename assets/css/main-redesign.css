@@ -3925,21 +3925,6 @@ article[data-categories].hidden {
   filter: invert(1);
 }
 
-/* Agent grid 2-column on homepage. Was `repeat(2, 1fr)`, which stretches each
-   column to ~half the container width; .agent-card's own max-width: 280px then
-   left-aligned inside that much-wider cell, leaving a large dead gap between the
-   two cards instead of a centered pair. Sizing the tracks to the card's own
-   width (matching the base .agent-grid auto-fit range) lets `justify-content:
-   center` (inherited from .agent-grid) center the pair with a normal gap. */
-.agent-grid--2col {
-  grid-template-columns: repeat(2, minmax(252px, 280px)) !important;
-}
-@media (max-width: 640px) {
-  .agent-grid--2col {
-    grid-template-columns: 1fr !important;
-  }
-}
-
 /* Related articles */
 .related-articles {
   margin-top: var(--space-12);
@@ -4036,22 +4021,16 @@ article[data-categories].hidden {
 
 /* Mobile: agent cards single column */
 @media (max-width: 640px) {
-  .agent-grid--2col {
-    grid-template-columns: 1fr !important;
-    gap: var(--space-4) !important;
-  }
   .agent-grid {
     gap: var(--space-4);
   }
-  .agent-grid > .agent-card,
-  .agent-grid--2col > .agent-card {
+  .agent-grid > .agent-card {
     flex-direction: column !important;
     padding: var(--space-5) !important;
     max-width: 100% !important;
   }
   .agent-card__image,
   .agent-grid > .agent-card > img:first-child,
-  .agent-grid--2col > .agent-card > img:first-child,
   .agent-card > img:first-child {
     width: 80px !important;
     height: 80px !important;
