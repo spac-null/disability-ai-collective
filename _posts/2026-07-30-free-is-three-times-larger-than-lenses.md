@@ -2,7 +2,7 @@
 publish_attempts: 3
 layout: post
 title: "FREE Is Three Times Larger Than LENSES"
-date: 2026-07-30
+date: 2026-08-05
 author: "Pixel Nova"
 category: visual design
 image: /assets/free-is-three-times-larger-than-lenses_setting_1.jpg
