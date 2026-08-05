@@ -37,18 +37,36 @@ whole site's state in one long-running context again, that's what filled this on
   (`/private/tmp/claude-501/.../scratchpad/screenshots/`, ephemeral — re-shoot if
   gone) so a follow-up just needs the API call once the OpenRouter vision route
   recovers.
-- [~] **Batch B (5 pages: `/press/how-it-works/`, `/press/system-report/`, `/jascha/`,
-  `/notes/`, `/accessibility/`) — attempted 2026-08-05, no Fable critique obtained.**
-  OpenRouter's image-bearing route is still in the exact same non-recovering blocked
-  state documented for `/press/` in Batch A section 5 — see "Batch B" section below for
-  full diagnostic evidence (this session's own independent re-diagnosis, not just a
-  repeat of the old finding). Screenshots for all 5 pages (light+dark, full page
-  top-to-bottom) are captured and saved in the session scratchpad
-  (`/private/tmp/claude-501/.../scratchpad/screenshots/`, ephemeral — re-shoot if gone)
-  so a future retry just needs the API call once OpenRouter's vision route recovers.
-  Manual code-pattern check (no Fable available) found no established-anti-pattern bugs
-  on any of the 5 pages — see below for detail. No fixes applied, nothing needed fixing.
-- [ ] Remaining pages (batch C — editorial-lens, collective pages, gallery) still need their first Fable design critique
+- [x] **Batch B (5 pages: `/press/how-it-works/`, `/press/system-report/`, `/jascha/`,
+  `/notes/`, `/accessibility/`) — completed 2026-08-05 via the process change below.**
+  Two earlier attempts via external API (CLIProxyAPI, then OpenRouter direct) both hit
+  real infra walls and burned significant time — see "Process change" note directly
+  below. Third attempt dropped the external API entirely: screenshots reviewed directly
+  by the agent doing the work (no API call at all). Result: found + fixed 1 real bug
+  shared across `/press/`, `/press/how-it-works/`, `/press/system-report/` (double
+  spacing before the footer — see Visual bugs log below, commit `91557d1`).
+  `/jascha/`, `/notes/`, `/accessibility/` reviewed in full, both themes — genuinely
+  clean, no findings. `/notes/` is a real empty content page (no `_notes` collection
+  exists yet), not a bug.
+- [ ] Remaining pages (batch C — editorial-lens, collective pages, gallery) still need their first design critique — use the direct-vision method (below), not an external API
+
+**Process change, 2026-08-05 — stop routing design critiques through an external API.**
+Every critique pass up to this point sent screenshots to "Fable 5" via an external HTTP
+call (first CLIProxyAPI on trident, then OpenRouter direct) to get a second-opinion
+design-director persona. Both hit real infra problems that wasted a lot of time and
+several full subagent runs: CLIProxyAPI's OAuth token died mid-session
+(`invalid_refresh_token`), and OpenRouter's image-bearing route then hit an
+unrelated, non-recovering `402` wall (see Batch A/B sections below for the full
+diagnostic trail — kept for the record, but don't retry that route). The user
+pointed out the obvious fix: whoever is doing this work (a Claude Code agent) already
+has vision. Screenshot the page, then look at it yourself and write the critique —
+no external API, no credentials, no rate limits. This is now the standing method
+for any future design-critique batch (see "Design-critique method" below, updated).
+Also worth knowing: subagents dispatched for this doing heavy browser+screenshot work
+have twice hit the *account's* Claude spend limit mid-task (not an external API this
+time) — if that happens again, check for uncommitted work before redoing anything, and
+consider doing the page-by-page critique directly in the orchestrating session instead
+of via subagent for the next batch.
 
 **Note on this batch's process**: the subagent originally dispatched for the 7
 homepage findings did the actual design work correctly (verified by reading its
@@ -80,10 +98,14 @@ level) but actually meant design/visual quality — typography, layout, polish,
 (explicitly confirmed) but is no longer the loop's main subject — see below for
 that thread, which ended up being most of this session's actual output.
 
-Design-critique method (only run on homepage so far): real browser screenshot
-(light + dark, desktop) → Fable 5 design critique (typography, hierarchy,
-spacing/rhythm, color cohesion, image quality, whitespace, "does this read as
-intentional or default") → concrete fix → re-screenshot to confirm.
+Design-critique method — **updated 2026-08-05, external API dropped, see process-change
+note above**: real browser screenshot (light + dark, desktop) → the agent doing the
+work looks at the screenshots itself and writes an honest design-director critique
+(typography, hierarchy, spacing/rhythm, color cohesion, image quality, whitespace,
+"does this read as intentional or default") → concrete fix → re-screenshot to confirm.
+No external API call. (Original method, now abandoned: same but routed the critique
+step through "Fable 5" via CLIProxyAPI/OpenRouter — kept working for exactly 2 pages
+before hitting infra walls both times, see Batch A/B sections for the full trail.)
 
 ## Legend
 - ⬜ not yet reviewed
@@ -721,6 +743,38 @@ update.
    matching the base `.agent-grid`'s auto-fit range) so the existing
    `justify-content: center` actually centers the pair. Verified visually
    both themes; axe-core clean before and after. (commit 92096ae)
+4. **`/research/` "Reading threads" — user feedback superseding fix #1 above.**
+   User didn't want the 2-row (3+1) layout fix #1 produced — asked for one row
+   of 4 instead. Simpler than the span hack: `grid-template-columns:
+   repeat(3, 1fr)` → `repeat(4, 1fr)` on `.research-threads`, removed the now-
+   unneeded `.research-thread--full` modifier entirely, added a 768px
+   breakpoint (2x2) between the existing desktop (4-across) and 640px
+   (1-column) states. Verified visually both themes. (commit `1d0829d`)
+5. **Homepage/`about.html` "Collective" grid — user feedback superseding fix #3
+   above.** User didn't want the 2x2 layout fix #3 produced either — asked why
+   not 4-across, suggested a possible text/size redesign to make it fit. Turned
+   out no redesign was needed: `.agent-grid--2col`'s forced `repeat(2, ...)`
+   was the only thing stopping the base `.agent-grid`'s own `repeat(auto-fit,
+   minmax(252px, 280px))` from placing all 4 cards in one row — the container
+   is wide enough at normal desktop width. Removed the `agent-grid--2col`
+   class from both `index.html` and `about.html`; deleted the now-fully-dead
+   `.agent-grid--2col` CSS (including leftover selectors mixed into the
+   existing 640px mobile media query). No text/font-size changes needed or
+   made. Verified visually both themes, both pages. (commit `4f7f3b4`)
+6. **All 3 press pages (`/press/`, `/press/how-it-works/`, `/press/system-report/`)
+   — large dead gap before the footer.** Found during the direct-vision design
+   pass on `/press/how-it-works/` (~230px measured void between the byline/PDF-
+   button row and the footer). Root cause: shared content-wrapper markup
+   (identical across all 3 pages) had an inline `padding-bottom: 100px` that
+   stacked with `.site-footer`'s own `margin-top: var(--space-section-gap)`
+   (64px) + `padding-top` (also 64px, same token) — 100+64+64 ≈ 228px,
+   matching the measured gap almost exactly. The footer already provides its
+   own generous top spacing; the inline padding was pure redundant excess.
+   Removed `padding-bottom: 100px` from the wrapper's inline style on all 3
+   pages (a prior pass on `/press/` alone had judged this "deliberate" without
+   checking the stack against the footer's own margin — this corrects that
+   call with real measurements). Verified visually, both themes, all 3 pages;
+   axe-core 0 violations. (commit `91557d1`)
 
 ## Log
 
@@ -797,3 +851,19 @@ update.
   scorecard update) pushed to origin/main. Remaining work: retry Batch B's Fable
   critique once OpenRouter's vision route recovers (screenshots already captured,
   no re-shoot needed), then batch C (editorial-lens, collective pages, gallery).
+- 2026-08-05 (later same day): user asked why route the design critique through an
+  external API at all when the agent doing the work already has vision — correct
+  call. Dropped Fable/CLIProxyAPI/OpenRouter entirely for this thread; the standing
+  method is now direct-vision (see updated "Design-critique method" above). Also
+  ran two rounds of direct user feedback on layout fixes made earlier this session,
+  each handled immediately rather than batched: (1) didn't want the 2-row Reading
+  Threads layout (fix #1) — switched to one row of 4 (visual bugs log #4, commit
+  `1d0829d`); (2) didn't want the 2x2 Collective grid (fix #3) — asked for 4-across,
+  turned out to need zero redesign, just removing the `agent-grid--2col` constraint
+  (visual bugs log #5, commit `4f7f3b4`), plus a dead-CSS cleanup in the same commit.
+  Then completed Batch B for real via the new direct-vision method: found + fixed a
+  real shared bug (double-spacing before the footer on all 3 press pages — visual
+  bugs log #6, commit `91557d1`); `/jascha/`, `/notes/`, `/accessibility/` reviewed
+  clean, no findings. Batch B is now fully closed. Remaining work: batch C
+  (editorial-lens, 4 collective pages, gallery) — first design critique on any of
+  these, use the direct-vision method, no external API.
