@@ -25,7 +25,8 @@ whole site's state in one long-running context again, that's what filled this on
 - [x] Homepage's 7 open design findings from the first Fable critique — all closed, see "Open design findings" section below (now marked closed) and commits `44f7bbc`, `92096ae`
 - [x] `about.html` avatar moire follow-up — fixed, points at the same `*_thumb.png` files now (commit `2c00a73`)
 - [x] Article template (`/2026/07/31/injected-since-birth/`) — first Fable critique done, 5 findings fixed, see "Batch A: non-homepage Fable critique pass" below
-- [ ] `/research/`, `/research/deaf-arts/`, `/about/`, `/press/` — batch A in progress, see below
+- [x] `/research/` — first Fable critique done, 4 findings fixed (2 shared with the article template), 1 confirmed false positive from the local `--limit_posts 5` dev build, 1 confirmed browser-automation screenshot artifact (not a site bug) — see below
+- [ ] `/research/deaf-arts/`, `/about/`, `/press/` — batch A in progress, see below
 - [ ] Remaining pages (batches B/C — press subpages, jascha, notes, accessibility, editorial-lens, collective pages, gallery) still need their first Fable design critique
 
 **Note on this batch's process**: the subagent originally dispatched for the 7
@@ -215,6 +216,111 @@ not just taking Fable's read at face value):**
   uppercase eyebrow — a legitimate, if arguable, editorial weight contrast.
   Judgment call to leave as-is; the objectively broken parts of the same
   finding (input contrast, button color, dot texture) were fixed.
+
+Commit: `f36240d`
+
+### 2. `/research/` (articles index) — DONE
+
+Fable's punch list (10 items) covered: blank-looking cards above the fold,
+an apparent essay-count contradiction, sticky filter bar clipping content,
+the Reading Threads module's alignment/dead-space, duplicate newsletter
+modules, an invisible light-mode radio button, a stray background band,
+mismatched image art direction across cards, dark mode "flattening" the
+persona system, and pipe-separator meta lines.
+
+**Fixed (4 findings — 2 of these are the same root-cause bug already fixed
+on the article template, found independently here; 2 are new):**
+1. **Pipe separators (`|`) in `.article-card__meta`** — same "default-
+   WordPress tell" the earlier homepage pass already fixed for the
+   homepage's own cards but never propagated here. `research.html`
+   hardcoded `<span class="article-card__sep">|</span>` twice per card.
+   Swapped both to `&middot;`, matching the sitewide standard.
+2. **`.article-card__author-icon` (20px avatar per card) — same near-
+   invisible-in-dark-mode bug as the article template's byline avatar**,
+   same root cause (raw 1024px source image's own near-black background
+   almost matches the dark theme page background). Added a new
+   `research_author_icon_thumb` Liquid variable (kept the existing
+   `research_author_icon` — raw source — untouched, since it also feeds
+   the large `card__media` fallback image and swapping that to a 192px
+   thumb would have degraded quality for any future post without a custom
+   `page.image`) and pointed only the small avatar `<img>` at the thumb.
+   Border strengthened `--color-border-secondary` → `--color-border-primary`,
+   1px → 1.5px, matching the article-template fix.
+3. **`.filter-persona-icon` (16px persona-filter chip avatars) — same bug,
+   worse at this size.** A prior session's commit (`23a5445`) explicitly
+   checked this element and found "no visible artifact at that size" — but
+   that check was against the *default/light* state; the default (non-
+   hover, non-active) state has no border at all (`opacity: 0.75`, no
+   invert filter — the invert only applies on `:hover`/`.active`), so in
+   dark mode the Zen Circuit chip's icon nearly disappeared into the dark
+   filter-bar background. Swapped all 4 filter-button `src`s to the
+   `_thumb.png` variants and added `border: 1px solid var(--color-border-primary)`
+   so there's a visible boundary in the un-hovered state regardless of the
+   portrait's own fill color. Verified both themes.
+4. **`.subscribe-section__freq input[type="radio"]` (frequency toggle in
+   the shared newsletter include, `_includes/subscribe-form.html`) —
+   hardcoded `rgba(255,255,255,0.3)` border, matching Fable's "'Each
+   article' shows no visible control at all" in light mode.** Same
+   white-overlay-on-dynamic-background anti-pattern already fixed twice on
+   the article template. Swapped to `var(--color-border-primary)`. Because
+   this is the *shared* subscribe-form include, the fix is live everywhere
+   that include is used (research.html's "Keep reading" module + the
+   sitewide footer) — one CSS fix, sitewide reach, not just this page.
+5. Verified with axe-core (`wcag2a`+`wcag2aa`), 3 runs/theme after a
+   scroll-forced reflow — **0 violations, both themes**.
+
+**Confirmed false positives / non-bugs (checked, not fixed):**
+- **"5 essays" hero count contradicts the Reading Threads' 5/9/5/4 counts"
+  (Fable's #2).** The hero count is `{{ site.posts.size }} essays` —
+  dynamic, and this session's local build uses `--limit_posts 5` for speed,
+  so it coincidentally prints "5" and looks like it's being contradicted by
+  a "9 essays" thread. The thread counts are hardcoded curated numbers
+  reflecting the real ~137-post archive; in production `site.posts.size`
+  would show the true total, and there'd be no apparent contradiction.
+  Confirmed by reading the Liquid source — not a real bug, an artifact of
+  this session's local dev build.
+- **"First row of cards renders as empty boxes" (Fable's #1) — confirmed a
+  browser-automation screenshot artifact, not a real site bug, via two
+  independent checks.** First: `document.querySelectorAll('.card__media')`
+  showed every image `complete: true` with valid `naturalWidth` at the
+  exact moment a screenshot still rendered them blank — ruling out an
+  actual network/lazy-load failure. Second: forcing a reflow (scroll away
+  and back, the same workaround already documented in this scorecard's
+  "stale-paint" lesson from the theme-toggle work) made the images render
+  correctly on the next screenshot with no other change. This matches the
+  known extension-bridge timing bug already logged in "Site-wide findings"
+  below, now confirmed to also affect plain image paint, not just
+  post-theme-toggle color reads. Not fixed (nothing to fix — it's a gap
+  between the automation tool's screenshot and the compositor, not
+  something a real visitor's browser would exhibit).
+- **Sticky filter bar "decapitating" card titles mid-scroll (Fable's #3).**
+  This is the ordinary, universal visual effect of any sticky bar sitting
+  above scrolling content at an arbitrary scroll position — not a scroll-
+  margin or fade/shadow issue. No fix applied.
+- **Reading Threads baseline misalignment + full-width 4th cell "dead
+  space" (Fable's #4).** The baseline shift is just an unequal-height
+  consequence of one thread's title wrapping to 2 lines vs. 1 — normal
+  card-grid behavior, not a bug. The full-width 4th cell
+  (`.research-thread--full`) is a *previous* session's deliberate, already-
+  verified fix for a worse bug (an empty void in that grid cell, see
+  "Visual bugs found + fixed" #1 above) — re-litigating it isn't warranted
+  by one critique pass disliking the tradeoff; Fable's alternative (give
+  threads real visual weight/imagery) is a legitimate but bigger content-
+  level enhancement, out of scope here.
+- **Duplicate newsletter modules — mid-page "Keep reading" + footer
+  Subscribe (Fable's #5).** Two subscribe CTAs at different scroll depths
+  on a long page is a common, deliberate editorial pattern (captures
+  readers who bail at different points), not a template bug. Left as-is.
+- **Stray background band before the footer (Fable's #7).** This is the
+  site's existing `section--primary`/`section--secondary` alternating-band
+  pattern, used the same way on every other page (including the already-
+  reviewed homepage) — consistent with established sitewide language, not
+  a research.html-specific defect.
+- **Mixed image art direction — constructivist posters next to a vintage
+  anatomical engraving and a technical blueprint (Fable's #8).** Real
+  observation, but it's about *which* images specific past articles used
+  (an editorial/content decision), not something a template CSS pass can
+  fix — noted, not actioned.
 
 Commit: (pending, see log)
 

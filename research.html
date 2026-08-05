@@ -51,16 +51,16 @@ description: "Essays from Crip Minds — disability-led criticism on culture, ar
         <div class="category-filter category-filter--persona" id="persona-filter" aria-label="Filter by voice">
           <button class="category-filter__btn category-filter__btn--persona active" data-persona="all">All voices</button>
           <button class="category-filter__btn category-filter__btn--persona" data-persona="Pixel Nova">
-            <img src="/assets/pixel_nova_style_matched.png" alt="" aria-hidden="true" class="filter-persona-icon"> Pixel Nova
+            <img src="/assets/pixel_nova_style_matched_thumb.png" alt="" aria-hidden="true" class="filter-persona-icon"> Pixel Nova
           </button>
           <button class="category-filter__btn category-filter__btn--persona" data-persona="Siri Sage">
-            <img src="/assets/siri_sage_style_matched.png" alt="" aria-hidden="true" class="filter-persona-icon"> Siri Sage
+            <img src="/assets/siri_sage_style_matched_thumb.png" alt="" aria-hidden="true" class="filter-persona-icon"> Siri Sage
           </button>
           <button class="category-filter__btn category-filter__btn--persona" data-persona="Maya Flux">
-            <img src="/assets/maya_flux_style_matched.png" alt="" aria-hidden="true" class="filter-persona-icon"> Maya Flux
+            <img src="/assets/maya_flux_style_matched_thumb.png" alt="" aria-hidden="true" class="filter-persona-icon"> Maya Flux
           </button>
           <button class="category-filter__btn category-filter__btn--persona" data-persona="Zen Circuit">
-            <img src="/assets/zen_circuit_style_matched.png" alt="" aria-hidden="true" class="filter-persona-icon"> Zen Circuit
+            <img src="/assets/zen_circuit_style_matched_thumb.png" alt="" aria-hidden="true" class="filter-persona-icon"> Zen Circuit
           </button>
         </div>
       </div>
@@ -70,14 +70,19 @@ description: "Essays from Crip Minds — disability-led criticism on culture, ar
           {% for post in site.posts %}
           <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
             {% assign research_author_icon = '/assets/maya_flux_style_matched.png' %}
+            {% assign research_author_icon_thumb = '/assets/maya_flux_style_matched_thumb.png' %}
             {% if post.author == "Siri Sage" %}
               {% assign research_author_icon = '/assets/siri_sage_style_matched.png' %}
+              {% assign research_author_icon_thumb = '/assets/siri_sage_style_matched_thumb.png' %}
             {% elsif post.author == "Pixel Nova" %}
               {% assign research_author_icon = '/assets/pixel_nova_style_matched.png' %}
+              {% assign research_author_icon_thumb = '/assets/pixel_nova_style_matched_thumb.png' %}
             {% elsif post.author == "Maya Flux" %}
               {% assign research_author_icon = '/assets/maya_flux_style_matched.png' %}
+              {% assign research_author_icon_thumb = '/assets/maya_flux_style_matched_thumb.png' %}
             {% elsif post.author == "Zen Circuit" %}
               {% assign research_author_icon = '/assets/zen_circuit_style_matched.png' %}
+              {% assign research_author_icon_thumb = '/assets/zen_circuit_style_matched_thumb.png' %}
             {% endif %}
             {% assign research_post_image = post.image | default: research_author_icon %}
             <img class="card__media" src="{{ research_post_image | strip | relative_url }}" alt="Article preview visual for {{ post.title }}" loading="lazy" decoding="async">
@@ -86,11 +91,11 @@ description: "Essays from Crip Minds — disability-led criticism on culture, ar
                 <time class="article-card__date" datetime="{{ post.date | date_to_xmlschema }}">
                   {{ post.date | date: "%B %d, %Y" }}
                 </time>
-                <span class="article-card__sep" aria-hidden="true">|</span>
+                <span class="article-card__sep" aria-hidden="true">&middot;</span>
                 <span class="article-card__author">
                   <img
                     class="article-card__author-icon"
-                    src="{{ research_author_icon | relative_url }}"
+                    src="{{ research_author_icon_thumb | relative_url }}"
                     alt=""
                     aria-hidden="true"
                     loading="lazy"
@@ -99,11 +104,11 @@ description: "Essays from Crip Minds — disability-led criticism on culture, ar
                   <span class="article-card__author-name">{{ post.author | default: "AI Collective" }}</span>
                 </span>
                 {% if post.categories %}
-                  <span class="article-card__sep" aria-hidden="true">|</span>
+                  <span class="article-card__sep" aria-hidden="true">&middot;</span>
                   <span class="article-card__topic">{{ post.categories | first | capitalize }}</span>
                 {% endif %}
               </div>
-              
+
               <h3 class="text-h4 mb-4">
                 <a href="{{ post.url | relative_url }}" class="text-primary">{{ post.title }}</a>
               </h3>

@@ -1018,7 +1018,7 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
 }
 
 .article-card__author-icon {
-  border: 1px solid var(--color-border-secondary);
+  border: 1.5px solid var(--color-border-primary);
   border-radius: 999px;
   box-shadow: var(--shadow-sm);
   height: 20px;
@@ -3911,6 +3911,7 @@ article[data-categories].hidden {
   width: 16px;
   height: 16px;
   border-radius: 50%;
+  border: 1px solid var(--color-border-primary);
   object-fit: cover;
   flex-shrink: 0;
   opacity: 0.75;
@@ -4376,7 +4377,7 @@ article[data-categories].hidden {
   -webkit-appearance: none;
   width: 12px;
   height: 12px;
-  border: 1.5px solid rgba(255,255,255,0.3);
+  border: 1.5px solid var(--color-border-primary);
   border-radius: 50%;
   flex-shrink: 0;
   margin: 0;
