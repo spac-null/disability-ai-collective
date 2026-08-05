@@ -32,7 +32,15 @@ this up again — that's what filled the original session.
 - [x] `/research/` — first Fable critique done, 4 findings fixed (2 shared with the article template), 1 confirmed false positive from the local `--limit_posts 5` dev build, 1 confirmed browser-automation screenshot artifact (not a site bug) — see below
 - [x] `/research/deaf-arts/` — **2026-08-05 follow-up: real Fable critique obtained** (OpenRouter direct, CLIProxyAPI abandoned). 3 findings, all shared-component (affects 4 other already-clean pages) — deliberately left, see "Batch A" section 3 below for full reasoning. No fixes needed.
 - [x] `/about/` — **2026-08-05 follow-up: real Fable critique obtained** (light theme). 1 real page-specific bug found + fixed + verified both themes (`#start-here` section blending into the section above it), 2 shared-component findings deliberately left. See "Batch A" section 4 below. Commit `94ec300`.
-- [~] `/press/` — **2026-08-05 follow-up: attempted, no critique obtained.** OpenRouter direct works in general (confirmed via successful calls on the other 2 pages this same session) but the vision route hit a hard, non-recovering block specific to image-bearing requests partway through the batch — not the same failure mode as the earlier CLIProxyAPI outage, see "Batch A" section 5 below for full diagnostic evidence (it's not image-size-sensitive, not simple credit exhaustion, didn't clear after a 4-min wait). Manually re-checked established bug patterns, none found, no fixes applied. Still needs an actual Fable critique — retry with either much more patience or a different vision model.
+- [x] `/press/` — **closed 2026-08-05.** Two earlier attempts to get a Fable critique via
+  OpenRouter direct hit a hard, non-recovering `402` block specific to image-bearing
+  requests (see "Batch A" section 5 below for the full diagnostic trail — not simple
+  credit exhaustion, didn't clear after a 4-min wait). Finally reviewed directly
+  (direct-vision method, no external API) alongside closing out the last loose thread
+  in this effort: full page read top to bottom, both themes. Genuinely clean — same
+  solid typographic template as its two subpages (`/press/how-it-works/`,
+  `/press/system-report/`), footer-gap fix (commit `91557d1`) confirmed holding. No
+  further findings, no further fixes needed.
 - **Batch A (5 pages) is now fully closed except `/press/`'s critique.** All 5 pages have
   been screenshotted and code-checked; 4 of 5 (article template, research.html,
   deaf-arts, about) have a real Fable critique on record with fixes applied where
