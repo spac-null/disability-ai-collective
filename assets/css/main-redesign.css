@@ -3922,9 +3922,14 @@ article[data-categories].hidden {
   filter: invert(1);
 }
 
-/* Agent grid 2-column on homepage */
+/* Agent grid 2-column on homepage. Was `repeat(2, 1fr)`, which stretches each
+   column to ~half the container width; .agent-card's own max-width: 280px then
+   left-aligned inside that much-wider cell, leaving a large dead gap between the
+   two cards instead of a centered pair. Sizing the tracks to the card's own
+   width (matching the base .agent-grid auto-fit range) lets `justify-content:
+   center` (inherited from .agent-grid) center the pair with a normal gap. */
 .agent-grid--2col {
-  grid-template-columns: repeat(2, 1fr) !important;
+  grid-template-columns: repeat(2, minmax(252px, 280px)) !important;
 }
 @media (max-width: 640px) {
   .agent-grid--2col {
