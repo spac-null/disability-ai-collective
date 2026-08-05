@@ -37,6 +37,10 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
           <a href="{{ '/jascha/' | relative_url }}" class="home-intro__link">About Jascha &rarr;</a>
         </nav>
       </div>
+      <aside class="home-intro__quote" aria-label="From the editor">
+        <blockquote class="home-intro__quote-text">Disabled perspective, present daily, where it has been absent.</blockquote>
+        <a href="{{ '/jascha/' | relative_url }}" class="home-intro__quote-attr">&mdash; Jascha Blume, editor &rarr;</a>
+      </aside>
     </div>
   </section>
 
@@ -103,7 +107,7 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
                 <time class="article-card__date" datetime="{{ post.date | date_to_xmlschema }}">
                   {{ post.date | date: "%B %d, %Y" }}
                 </time>
-                <span class="article-card__sep" aria-hidden="true">|</span>
+                <span class="article-card__sep" aria-hidden="true">&middot;</span>
                 <span class="article-card__author">
                   <img
                     class="article-card__author-icon"
@@ -116,7 +120,7 @@ description: "A daily editorial AI publication by Deaf artist Jascha Blume. Four
                   <span class="article-card__author-name">{{ post.author | default: "AI Collective" }}</span>
                 </span>
                 {% if post.categories %}
-                  <span class="article-card__sep" aria-hidden="true">|</span>
+                  <span class="article-card__sep" aria-hidden="true">&middot;</span>
                   <span class="article-card__topic">{{ post.categories | first | capitalize }}</span>
                 {% endif %}
               </div>

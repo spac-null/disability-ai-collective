@@ -856,19 +856,38 @@ a:hover {
    Zen Circuit 4.24:1 against their own tinted badge background, live via axe-core; Maya
    Flux already clears 5.84:1 at full brand color, left as-is. Border/background keep the
    true brand hue at low alpha — only text needs the darkened variant. */
-.agent-card[data-persona="pixel-nova"] .agent-identity  { color: #5a43f5; border-color: rgba(124,106,247,0.3); background: rgba(124,106,247,0.06); }
-.agent-card[data-persona="siri-sage"] .agent-identity   { color: #546f2d; border-color: rgba(92,122,49,0.3);   background: rgba(92,122,49,0.06);   }
-.agent-card[data-persona="maya-flux"] .agent-identity   { color: #3f5f89; border-color: rgba(63,95,137,0.3);   background: rgba(63,95,137,0.06);   }
-.agent-card[data-persona="zen-circuit"] .agent-identity { color: #9d5034; border-color: rgba(176,90,58,0.3);   background: rgba(176,90,58,0.06);   }
+.agent-card[data-persona="pixel-nova"] .agent-identity  { color: #5a43f5; border-color: rgba(124,106,247,0.35); background: rgba(124,106,247,0.10); }
+.agent-card[data-persona="siri-sage"] .agent-identity   { color: #546f2d; border-color: rgba(92,122,49,0.35);   background: rgba(92,122,49,0.10);   }
+.agent-card[data-persona="maya-flux"] .agent-identity   { color: #3f5f89; border-color: rgba(63,95,137,0.35);   background: rgba(63,95,137,0.10);   }
+.agent-card[data-persona="zen-circuit"] .agent-identity { color: #9d5034; border-color: rgba(176,90,58,0.35);   background: rgba(176,90,58,0.10);   }
 
 /* Dark-theme text variants of the above — the raw brand hues fail WCAG AA (as low as
    1.65:1) as text color against dark card backgrounds. Lightened in HSL to clear 5:1
    with margin while keeping each persona's hue identity. Border/background tints
    unchanged — only text needs the contrast fix. */
-.dark-theme .agent-card[data-persona="pixel-nova"] .agent-identity  { color: #b3a9fa; }
-.dark-theme .agent-card[data-persona="siri-sage"] .agent-identity   { color: #99bf61; }
-.dark-theme .agent-card[data-persona="maya-flux"] .agent-identity   { color: #9eb5d2; }
-.dark-theme .agent-card[data-persona="zen-circuit"] .agent-identity { color: #dba793; }
+/* Dark mode keeps the original, more restrained chip fill (a brighter fill on a near-
+   black card reads as a glow/haze rather than a crisp chip) — text gets the lightened
+   variant instead, giving light and dark genuinely different, purpose-tuned treatments
+   rather than one value doing double duty. */
+.dark-theme .agent-card[data-persona="pixel-nova"] .agent-identity  { color: #b3a9fa; border-color: rgba(124,106,247,0.3); background: rgba(124,106,247,0.06); }
+.dark-theme .agent-card[data-persona="siri-sage"] .agent-identity   { color: #99bf61; border-color: rgba(92,122,49,0.3);   background: rgba(92,122,49,0.06);   }
+.dark-theme .agent-card[data-persona="maya-flux"] .agent-identity   { color: #9eb5d2; border-color: rgba(63,95,137,0.3);   background: rgba(63,95,137,0.06);   }
+.dark-theme .agent-card[data-persona="zen-circuit"] .agent-identity { color: #dba793; border-color: rgba(176,90,58,0.3);   background: rgba(176,90,58,0.06);   }
+
+/* Dark-mode top-border presence — the raw brand hues (used unchanged from light mode)
+   read as "timid" against near-black card backgrounds (design critique finding, not a
+   contrast bug — border-vs-background at these values already clears the 3:1 UI-component
+   floor). Reuses the same lightened hues already verified above for text, applied to the
+   accent border instead, for real presence without introducing a new, unvetted color. */
+.dark-theme .card--elevated[data-persona="pixel-nova"]  { border-top-color: #b3a9fa; }
+.dark-theme .card--elevated[data-persona="siri-sage"]   { border-top-color: #99bf61; }
+.dark-theme .card--elevated[data-persona="maya-flux"]   { border-top-color: #9eb5d2; }
+.dark-theme .card--elevated[data-persona="zen-circuit"] { border-top-color: #dba793; }
+
+.dark-theme .agent-card[data-persona="pixel-nova"]  { border-top-color: #b3a9fa; }
+.dark-theme .agent-card[data-persona="siri-sage"]   { border-top-color: #99bf61; }
+.dark-theme .agent-card[data-persona="maya-flux"]   { border-top-color: #9eb5d2; }
+.dark-theme .agent-card[data-persona="zen-circuit"] { border-top-color: #dba793; }
 
 /* Persona page eyebrow label inherits accent from page context */
 main[data-persona="pixel-nova"]  .post-category-label { color: #5a43f5; border-bottom-color: #7c6af7; }
@@ -1246,6 +1265,37 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
   margin: 0;
+}
+
+.site-footer__version {
+  margin: 0;
+}
+
+.site-footer__version a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 999px;
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+}
+
+.site-footer__version a::before {
+  content: "\2713";
+  color: var(--color-accent);
+  font-weight: var(--font-weight-bold);
+}
+
+.site-footer__version a:hover {
+  border-color: var(--color-border-brand);
+  color: var(--color-text-primary);
+  background: var(--color-background-elevated);
 }
 
 @media (max-width: 768px) {
@@ -1668,8 +1718,64 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   border-bottom: 1px solid var(--color-border-secondary);
 }
 
+.home-intro .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-12);
+}
+
 .home-intro__inner {
   max-width: 760px;
+  min-width: 0;
+}
+
+/* Fills what was dead whitespace to the right of the intro column with a real
+   editorial pull-quote (lifted verbatim from Jascha's own personal statement, not
+   invented copy) instead of leaving the asymmetry unexplained. */
+.home-intro__quote {
+  flex: 0 1 320px;
+  margin-top: var(--space-4);
+  padding-left: var(--space-8);
+  border-left: 3px solid var(--color-accent);
+}
+
+.home-intro__quote-text {
+  font-family: var(--font-family-serif);
+  font-style: italic;
+  font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-4);
+  text-wrap: balance;
+}
+
+.home-intro__quote-attr {
+  display: inline-block;
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  text-decoration: none;
+}
+
+.home-intro__quote-attr:hover {
+  color: var(--color-text-brand);
+  text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+  .home-intro .container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .home-intro__quote {
+    margin-top: var(--space-8);
+    padding-left: var(--space-6);
+    max-width: 100%;
+  }
 }
 
 .home-intro__eyebrow {
@@ -1683,10 +1789,11 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
 }
 
 .home-intro__headline {
+  font-family: var(--font-family-serif);
   font-size: clamp(1.5rem, 2.6vw, 2.25rem);
   font-weight: var(--font-weight-bold);
   line-height: 1.22;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   color: var(--color-text-primary);
   margin: 0 0 var(--space-8);
   text-wrap: balance;
@@ -1755,6 +1862,21 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   overflow: hidden;
   background: var(--color-background-elevated);
   transition: border-color 0.2s ease, box-shadow 0.25s ease;
+}
+
+/* Light mode: the black hero artwork otherwise sits as a flat, undesigned block
+   against the cream page background (it's the same asset dark mode uses, unadjusted).
+   A branded top edge gives it an intentional light-mode framing instead of reading as
+   "dark mode recolored." Dark mode reverts to the original uniform 1px border, where
+   the near-black artwork already blends naturally into the near-black page. */
+.home-hero__card {
+  border-top-width: 3px;
+  border-top-color: var(--color-accent);
+}
+
+.dark-theme .home-hero__card {
+  border-top-width: 1px;
+  border-top-color: var(--color-border-primary);
 }
 
 .home-hero__card:hover {
@@ -2804,6 +2926,7 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   letter-spacing: var(--letter-spacing-wide);
   text-transform: uppercase;
   margin-bottom: var(--space-4);
+  text-align: center;
 }
 
 .agent-bio {
