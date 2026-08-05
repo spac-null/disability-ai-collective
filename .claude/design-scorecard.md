@@ -37,7 +37,18 @@ whole site's state in one long-running context again, that's what filled this on
   (`/private/tmp/claude-501/.../scratchpad/screenshots/`, ephemeral — re-shoot if
   gone) so a follow-up just needs the API call once the OpenRouter vision route
   recovers.
-- [ ] Remaining pages (batches B/C — press subpages, jascha, notes, accessibility, editorial-lens, collective pages, gallery) still need their first Fable design critique
+- [~] **Batch B (5 pages: `/press/how-it-works/`, `/press/system-report/`, `/jascha/`,
+  `/notes/`, `/accessibility/`) — attempted 2026-08-05, no Fable critique obtained.**
+  OpenRouter's image-bearing route is still in the exact same non-recovering blocked
+  state documented for `/press/` in Batch A section 5 — see "Batch B" section below for
+  full diagnostic evidence (this session's own independent re-diagnosis, not just a
+  repeat of the old finding). Screenshots for all 5 pages (light+dark, full page
+  top-to-bottom) are captured and saved in the session scratchpad
+  (`/private/tmp/claude-501/.../scratchpad/screenshots/`, ephemeral — re-shoot if gone)
+  so a future retry just needs the API call once OpenRouter's vision route recovers.
+  Manual code-pattern check (no Fable available) found no established-anti-pattern bugs
+  on any of the 5 pages — see below for detail. No fixes applied, nothing needed fixing.
+- [ ] Remaining pages (batch C — editorial-lens, collective pages, gallery) still need their first Fable design critique
 
 **Note on this batch's process**: the subagent originally dispatched for the 7
 homepage findings did the actual design work correctly (verified by reading its
@@ -490,6 +501,76 @@ No code changes made to press/index.html this session.
 Commit (2026-08-04, prior attempt): `1e97585`. This session: docs-only, see
 batch-close commit below.
 
+## Batch B: non-homepage Fable critique pass (5 pages) — 2026-08-05, no critique obtained
+
+Method: same as Batch A — real browser screenshot (Chrome extension bridge), full
+scroll top-to-bottom (2-5 shots per theme depending on page length), light + dark,
+desktop 1440px viewport (actual capture ~1372x870 due to display constraints —
+window resize beyond ~1900px height silently clips to visible screen bounds on this
+Mac, confirmed by testing; scrolling shots substitute for a taller single capture).
+Pages and shot counts: `/press/how-it-works/` (9321px tall, 5 shots/theme),
+`/press/system-report/` (5954px, 5 shots/theme), `/jascha/` (2590px, 3 shots/theme),
+`/notes/` (1303px, 2 shots/theme), `/accessibility/` (2703px, 4 shots/theme).
+
+**OpenRouter's image-bearing vision route is still blocked, same failure signature
+as `/press/` in Batch A section 5, confirmed independently this session:**
+
+- First call (10 images: 5 light + 5 dark for `/press/how-it-works/`) → `402`,
+  `"can only afford 217"` tokens against a requested 7000.
+- Reducing to 1 image, `max_tokens` 2500 → same `402`, same `"can only afford 217"`.
+- Reducing `max_tokens` to 150 → different but equally telling message: `"Prompt
+  tokens limit exceeded: 1605 > 1075"` — near-identical to the `1604 > 1088` figure
+  logged for `/press/` in the prior session, confirming this is the same underlying
+  block, not a new/different issue.
+- `/v1/key` balance check: `$12.42` of `$20` monthly cap, unchanged before and after
+  every failed call — not real credit exhaustion.
+- Ran a fresh, independent 4.5-minute active poll (9 attempts at 30s intervals,
+  single-image request each time) — the block **never cleared**, every attempt
+  failed with the same `1605 > 1075` signature.
+- Cross-checked with a different page's image (`/accessibility/` light-theme shot,
+  different content/size than the `/press/` image used in all other tests) — **same
+  exact `1605 > 1075` error**, confirming the block is account/key-level, not tied
+  to any specific page's image content or size (consistent with Batch A's finding
+  that resizing down to 100×50px didn't help either).
+- Text-only calls to the same model continued to work throughout (confirmed once,
+  not re-tested exhaustively since Batch A already established this thoroughly).
+
+**Conclusion: this is the same one-way-ratchet condition documented in Batch A
+section 5, and it has not cleared across a session boundary (this is a different
+session from the one that first hit it).** Given the account-level (not per-page)
+nature confirmed above, further per-page retries within this batch would just
+reproduce the identical result — not attempted for all 5 pages individually, one
+thorough cross-page diagnostic was judged sufficient. Screenshots for all 5 pages
+are saved in the scratchpad, ready for a future retry without re-shooting.
+
+**Manual code-pattern check (in place of a critique, using established anti-pattern
+list from prior batches) — no fixes needed on any of the 5 pages:**
+- No `<img>` tags at all on any of the 5 pages (all pure-text/prose templates, same
+  as `/press/` in Batch A) — rules out the avatar-moire and thumb-vs-raw-source
+  pattern entirely.
+- No pipe (`|`) separators (grepped `article-card__sep` and literal `|` — none).
+- No hardcoded `rgba(255,255,255,...)` white-overlay anti-pattern (grepped, none).
+- No `opacity: 0.6-0.75` stacked on already-muted text (grepped, none).
+- One instance of a raw hex fallback: `press/system-report/index.html` (1 occurrence)
+  and `press/how-it-works/index.html` (3 occurrences) both use inline
+  `style="border-left: 3px solid var(--color-border-brand, #3f5f89); ..."` on
+  blockquotes. Checked whether this is live: `--color-border-brand` **is** properly
+  defined for both themes (`main-redesign.css` lines 98 and 152) so the `#3f5f89`
+  fallback is dead code, never actually rendered — confirmed by inspecting the
+  screenshots (`/press/system-report/` dark-theme blockquote border reads as the
+  theme's actual brand-border color, not a static hex). Not a visual bug. The inline
+  `style=` attribute itself (vs. a shared `.prose blockquote` class) is a minor code
+  cleanliness point, not a design/contrast issue — not touched, out of scope for a
+  critique-driven pass with no critique to act on.
+- `/accessibility/`'s "What to include in your report" card, which renders visually
+  empty in every screenshot — confirmed via source (`accessibility.html` line 85-86,
+  a native `<details>`/`<summary>` element) to be a collapsed accordion, not a bug.
+
+No code changes made to any of the 5 Batch B pages this session (nothing to fix —
+the manual check found no established-pattern bugs, and no Fable critique was
+obtainable to surface anything beyond that). Commit: docs-only, this scorecard
+update.
+
 ## Contrast bugs found + fixed this session (chronological, all verified via axe-core)
 
 1. `.agent-identity` persona badges, dark mode — raw brand hex as text, Maya Flux
@@ -700,3 +781,19 @@ batch-close commit below.
   `/press/`'s actual Fable critique (retry once the vision route recovers
   — screenshots already captured, don't need a re-shoot), plus the
   unstarted batches B/C.
+- 2026-08-05 (later follow-up session, batch B): attempted the 5 batch-B pages
+  (`/press/how-it-works/`, `/press/system-report/`, `/jascha/`, `/notes/`,
+  `/accessibility/`). Screenshotted all 5, both themes, full page top-to-bottom.
+  Re-diagnosed the OpenRouter vision-route block independently (fresh 4.5-minute/
+  9-attempt active poll, cross-page image test, balance check) — confirmed it's the
+  same account-level one-way-ratchet condition documented for `/press/` in Batch A,
+  and it has not cleared across the session boundary. No Fable critique obtained for
+  any of the 5 pages. Did a manual code-pattern check against every established
+  anti-pattern from prior batches (pipe separators, hardcoded white rgba, opacity-
+  muted-text stacking, raw-source avatars) — none found; the 5 pages are pure-text
+  templates with no `<img>` tags. One harmless dead-code fallback hex noted (inline
+  blockquote style, `--color-border-brand` already properly defined so the fallback
+  never renders) — not fixed, not a bug. No code changes. 1 docs-only commit (this
+  scorecard update) pushed to origin/main. Remaining work: retry Batch B's Fable
+  critique once OpenRouter's vision route recovers (screenshots already captured,
+  no re-shoot needed), then batch C (editorial-lens, collective pages, gallery).
