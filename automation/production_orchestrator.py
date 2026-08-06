@@ -3702,8 +3702,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         data["agent"] = agent
         fpath.write_text(_json.dumps(data, indent=2))
 
-    def _store_social_uri(self, slug, bsky_uri, agent=None, mastodon_url=None):
-        """Persist Bluesky post URI (+ Mastodon URL, if any) so retract_article() can find them later."""
+    def _store_social_uri(self, slug, bsky_uri, agent=None, mastodon_url=None, tumblr_url=None):
+        """Persist Bluesky/Mastodon/Tumblr post identifiers so retract_article() can find them later."""
         import json as _json
         social_dir = self.repo_root / "_social"
         social_dir.mkdir(exist_ok=True)
@@ -3718,18 +3718,20 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             data["bsky_uri"] = bsky_uri
         if mastodon_url:
             data["mastodon_url"] = mastodon_url
+        if tumblr_url:
+            data["tumblr_url"] = tumblr_url
         if agent:
             data["agent"] = agent
         fpath.write_text(_json.dumps(data, indent=2))
 
     def retract_article(self, slug):
         """Remove article from _posts/, assets, _reviews, _social and delete the
-        Bluesky post and, if one was recorded, the Mastodon post.
+        Bluesky, Mastodon, and Tumblr posts, for whichever of those were recorded.
 
         Usage: python3 production_orchestrator.py --retract <slug>
         Slug is the part after the date, e.g. 'the-map-that-doesn-t-know-you-re-standing-in-it'
         """
-        import os, json as _json, urllib.request as ureq, subprocess, glob as _glob
+        import os, json as _json, urllib.request as ureq, urllib.parse, subprocess, glob as _glob
 
         # Find article file (any date prefix)
         matches = list(self.posts_dir.glob(f"*-{slug}.md"))
@@ -3747,11 +3749,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         social_file = self.repo_root / "_social" / f"{slug}.json"
         bsky_uri = ""
         mastodon_url = ""
+        tumblr_url = ""
         if social_file.exists():
             try:
                 _social_data = _json.loads(social_file.read_text())
                 bsky_uri = _social_data.get("bsky_uri", "")
                 mastodon_url = _social_data.get("mastodon_url", "")
+                tumblr_url = _social_data.get("tumblr_url", "")
             except Exception:
                 pass
             to_remove.append(social_file)
@@ -3815,6 +3819,41 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 print(f"No Mastodon credentials — skipping delete (URL was: {mastodon_url})")
         else:
             print("No Mastodon URL stored — skipping delete")
+
+        # Delete Tumblr post — same story as Mastodon: post_to_tumblr's own
+        # docstring implies retraction covers it, but nothing ever called the
+        # delete endpoint. tumblr_url is "https://{blog}.tumblr.com/post/{id}";
+        # blog is re-derived from the URL rather than trusting TUMBLR_BLOG's
+        # current env value, in case that ever changes.
+        if tumblr_url:
+            ck  = os.environ.get("TUMBLR_CONSUMER_KEY", "")
+            cs  = os.environ.get("TUMBLR_CONSUMER_SECRET", "")
+            at  = os.environ.get("TUMBLR_ACCESS_TOKEN", "")
+            ats = os.environ.get("TUMBLR_ACCESS_TOKEN_SECRET", "")
+            if all([ck, cs, at, ats]):
+                try:
+                    _parts = tumblr_url.rstrip("/").split("/")
+                    post_id = _parts[-1]
+                    blog_host = tumblr_url.split("//", 1)[1].split("/", 1)[0]  # "<blog>.tumblr.com"
+                    api_url = f"https://api.tumblr.com/v2/blog/{blog_host}/post/delete"
+                    body_params = {"id": post_id}
+                    auth = self._tumblr_oauth_header("POST", api_url, ck, cs, at, ats, {}, body_params)
+                    del_req = ureq.Request(
+                        api_url,
+                        data=urllib.parse.urlencode(body_params).encode(),
+                        headers={"Authorization": auth,
+                                 "Content-Type": "application/x-www-form-urlencoded"},
+                        method="POST",
+                    )
+                    with ureq.urlopen(del_req, timeout=20) as r:
+                        r.read()
+                    print(f"Tumblr post deleted: {tumblr_url}")
+                except Exception as e:
+                    print(f"Tumblr delete failed: {e}")
+            else:
+                print(f"No Tumblr credentials — skipping delete (URL was: {tumblr_url})")
+        else:
+            print("No Tumblr URL stored — skipping delete")
 
         # git rm + commit + push
         for f in to_remove:
@@ -3903,10 +3942,50 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             return None
 
 
+    @staticmethod
+    def _tumblr_oauth_header(method, url, ck, cs, at, ats, params=None, body_params=None):
+        """OAuth 1.0a HMAC-SHA1 Authorization header for a Tumblr API request.
+
+        Extracted from post_to_tumblr (previously a local closure there, so
+        retract_article had no way to sign a delete request and could never
+        actually remove a Tumblr post despite post_to_tumblr's own docstring
+        mentioning it).
+        """
+        import hmac, hashlib, base64, time, uuid, urllib.parse
+        ts    = str(int(time.time()))
+        nonce = uuid.uuid4().hex
+        oauth = {
+            "oauth_consumer_key":     ck,
+            "oauth_nonce":            nonce,
+            "oauth_signature_method": "HMAC-SHA1",
+            "oauth_timestamp":        ts,
+            "oauth_token":            at,
+            "oauth_version":          "1.0",
+        }
+        all_params = {k: v for k, v in {**oauth, **(params or {}), **(body_params or {})}.items() if v is not None}
+        sorted_params = "&".join(
+            f"{urllib.parse.quote(k, safe='')}"
+            f"={urllib.parse.quote(str(v), safe='')}"
+            for k, v in sorted(all_params.items())
+        )
+        base = "&".join([
+            urllib.parse.quote(method.upper(), safe=""),
+            urllib.parse.quote(url, safe=""),
+            urllib.parse.quote(sorted_params, safe=""),
+        ])
+        signing_key = f"{urllib.parse.quote(cs, safe='')}&{urllib.parse.quote(ats, safe='')}"
+        sig = base64.b64encode(
+            hmac.new(signing_key.encode(), base.encode(), hashlib.sha1).digest()
+        ).decode()
+        oauth["oauth_signature"] = sig
+        return "OAuth " + ", ".join(
+            f'{urllib.parse.quote(k, safe="")}="{urllib.parse.quote(v, safe="")}"'
+            for k, v in sorted(oauth.items())
+        )
+
     def post_to_tumblr(self, title, body, article_file, image_filenames=None, agent_name=None):
         """Post article to Tumblr after successful commit. Non-blocking. OAuth 1.0a HMAC-SHA1."""
         import os, json, mimetypes, urllib.request as ureq, urllib.parse
-        import hmac, hashlib, base64, time, uuid
 
         ck  = os.environ.get("TUMBLR_CONSUMER_KEY", "")
         cs  = os.environ.get("TUMBLR_CONSUMER_SECRET", "")
@@ -3915,46 +3994,17 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         blog = os.environ.get("TUMBLR_BLOG", "").strip().rstrip(".tumblr.com")
         if not all([ck, cs, at, ats, blog]):
             self.logger.debug("Tumblr: no credentials, skipping")
-            return
+            return None
 
         def _oauth_header(method, url, params, body_params=None):
-            ts    = str(int(time.time()))
-            nonce = uuid.uuid4().hex
-            oauth = {
-                "oauth_consumer_key":     ck,
-                "oauth_nonce":            nonce,
-                "oauth_signature_method": "HMAC-SHA1",
-                "oauth_timestamp":        ts,
-                "oauth_token":            at,
-                "oauth_version":          "1.0",
-            }
-            all_params = {k: v for k, v in {**oauth, **(params or {}), **(body_params or {})}.items() if v is not None}
-            sorted_params = "&".join(
-                f"{urllib.parse.quote(k, safe='')}"
-                f"={urllib.parse.quote(str(v), safe='')}"
-                for k, v in sorted(all_params.items())
-            )
-            base = "&".join([
-                urllib.parse.quote(method.upper(), safe=""),
-                urllib.parse.quote(url, safe=""),
-                urllib.parse.quote(sorted_params, safe=""),
-            ])
-            signing_key = f"{urllib.parse.quote(cs, safe='')}&{urllib.parse.quote(ats, safe='')}"
-            sig = base64.b64encode(
-                hmac.new(signing_key.encode(), base.encode(), hashlib.sha1).digest()
-            ).decode()
-            oauth["oauth_signature"] = sig
-            return "OAuth " + ", ".join(
-                f'{urllib.parse.quote(k, safe="")}="{urllib.parse.quote(v, safe="")}"'
-                for k, v in sorted(oauth.items())
-            )
+            return self._tumblr_oauth_header(method, url, ck, cs, at, ats, params, body_params)
 
         try:
             slug_md  = article_file.name
             parts = slug_md[:10].split("-")
             if len(parts) != 3:
                 self.logger.error("Unexpected article filename format: %s", slug_md)
-                return
+                return None
             y, m, d  = parts
             slug     = slug_md[11:].replace(".md", "")
             site_url = os.environ.get("SITE_URL", "https://cripminds.com")
@@ -4017,10 +4067,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             with ureq.urlopen(req, timeout=20) as r:
                 result = json.loads(r.read())
             post_id = result.get("response", {}).get("id", "?")
-            self.logger.info("Tumblr: posted id=%s → https://%s.tumblr.com/post/%s", post_id, blog, post_id)
+            tumblr_url = f"https://{blog}.tumblr.com/post/{post_id}"
+            self.logger.info("Tumblr: posted id=%s → %s", post_id, tumblr_url)
+            return tumblr_url
 
         except Exception as e:
             self.logger.warning("Tumblr post failed: %s", e)
+            return None
 
 
     def _send_newsletter(self, title, content, article_file, agent_name):
@@ -4948,8 +5001,9 @@ if __name__ == "__main__":
         images = [f.name for f in orchestrator.repo_root.glob(f"assets/{slug}_*.jpg")]
         bsky_uri = orchestrator.post_to_bluesky(title, body, af, image_filenames=images, agent_name=agent)
         mastodon_url = orchestrator.post_to_mastodon(title, body, af, image_filenames=images, agent_name=agent)
-        orchestrator._store_social_uri(slug, bsky_uri or "", agent=agent, mastodon_url=mastodon_url or "")
-        orchestrator.post_to_tumblr(title, body, af, image_filenames=images, agent_name=agent)
+        tumblr_url = orchestrator.post_to_tumblr(title, body, af, image_filenames=images, agent_name=agent)
+        orchestrator._store_social_uri(slug, bsky_uri or "", agent=agent,
+                                        mastodon_url=mastodon_url or "", tumblr_url=tumblr_url or "")
         print(f"Social posts sent. Bluesky URI: {bsky_uri}")
     elif args.retract:
         orchestrator.retract_article(args.retract)
