@@ -8,7 +8,7 @@ stores in news_seeds table, extracts disability angles for top candidates via LL
 Cron: 0 6 * * *  (runs before run_discovery.py at 07:00, generation at 09:00)
 Usage: python3 automation/news_fetcher.py
 """
-import sys, json, re, sqlite3, hashlib, time, urllib.request
+import sys, os, json, re, sqlite3, hashlib, time, urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -20,13 +20,23 @@ REPO = Path(__file__).parent.parent
 DB   = REPO / "disability_findings.db"
 LOG  = REPO / "automation" / "news_fetcher.log"
 
+# Load CLIPROXY_KEY from the same secrets file production_orchestrator.py uses
+# (no export statements — parse manually, same pattern as that file).
+_ENV_FILE = Path("/srv/secrets/openclaw.env")
+if _ENV_FILE.exists():
+    for _line in _ENV_FILE.read_text().splitlines():
+        _line = _line.strip()
+        if _line and not _line.startswith("#") and "=" in _line:
+            _k, _, _v = _line.partition("=")
+            os.environ.setdefault(_k.strip(), _v.strip())
+
 # CLIProxy — same endpoint production_orchestrator.py uses for all editorial LLM
 # calls. news_fetcher previously called Nous Portal directly via a Hermes-managed
 # OAuth agent_key (/srv/data/hermes/auth.json); that key stopped being refreshed
 # on 2026-05-16 when the rest of the pipeline migrated to OpenRouter/CLIProxy,
 # leaving angle extraction silently 401ing for two months.
 API_URL = "http://127.0.0.1:8317/v1/chat/completions"
-API_KEY = "sk-NwG04asTudtBlAW1kcBmbsAlKmI5o3u2wtanviIr8Lhnw"
+API_KEY = os.environ.get("CLIPROXY_KEY", "")
 MODEL   = "openrouter/claude-sonnet-4.6"
 
 # ── Feed list ─────────────────────────────────────────────────────────────────

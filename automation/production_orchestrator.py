@@ -76,7 +76,7 @@ def _nous_key():
         return ''
 
 CLIPROXY_URL = 'http://127.0.0.1:8317/v1'
-CLIPROXY_KEY = 'sk-NwG04asTudtBlAW1kcBmbsAlKmI5o3u2wtanviIr8Lhnw'
+CLIPROXY_KEY = os.environ.get('CLIPROXY_KEY', '')
 
 _SCRIPT_DIR   = Path(__file__).parent
 PERSONA_CANON_DIR = _SCRIPT_DIR / "persona_canon"
