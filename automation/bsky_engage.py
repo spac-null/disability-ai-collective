@@ -190,73 +190,87 @@ def run():
     log.info("Fetched %d notifications", len(notifs))
     replied = 0
 
-    for n in notifs:
-        cid    = n.get("cid", "")
-        reason = n.get("reason", "")  # reply | mention | like | repost | follow | quote
+    # try/finally: previously save_seen() only ran once after the loop, so an
+    # uncaught mid-loop failure lost every cid.add() from this run and the next
+    # run would reprocess (and potentially re-reply to) everything already
+    # handled this pass.
+    try:
+        for n in notifs:
+            cid    = n.get("cid", "")
+            reason = n.get("reason", "")  # reply | mention | like | repost | follow | quote
 
-        if cid in seen:
-            continue
-        seen.add(cid)
+            if cid in seen:
+                continue
+            seen.add(cid)
 
-        if reason not in ("reply", "mention", "quote"):
-            continue
+            if reason not in ("reply", "mention", "quote"):
+                continue
 
-        # Get the text of what they wrote
-        record  = n.get("record", {})
-        text    = record.get("text", "")
-        author  = n.get("author", {}).get("handle", "someone")
+            # Get the text of what they wrote
+            record  = n.get("record", {})
+            text    = record.get("text", "")
+            author  = n.get("author", {}).get("handle", "someone")
 
-        if not is_substantive(text):
-            log.info("Skipped non-substantive from @%s: %r", author, text[:60])
-            continue
+            if not is_substantive(text):
+                log.info("Skipped non-substantive from @%s: %r", author, text[:60])
+                continue
 
-        # Find which persona to reply as
-        # Check if they replied to one of our posts
-        reply_ref = record.get("reply", {})
-        parent_uri = reply_ref.get("parent", {}).get("uri", "")
-        agent = uri_map.get(parent_uri, "")
+            # Find which persona to reply as
+            # Check if they replied to one of our posts
+            reply_ref = record.get("reply", {})
+            parent_uri = reply_ref.get("parent", {}).get("uri", "")
+            agent = uri_map.get(parent_uri, "")
 
-        system_prompt = REPLY_PROMPTS.get(agent, GENERIC_PROMPT)
+            system_prompt = REPLY_PROMPTS.get(agent, GENERIC_PROMPT)
 
-        # Build context for Claude
-        user_prompt = (
-            f"@{author} wrote:\n\"{text}\"\n\n"
-            f"Reply in character. Max 220 chars. No preamble, just the reply text."
-        )
+            # Build context for Claude
+            user_prompt = (
+                f"@{author} wrote:\n\"{text}\"\n\n"
+                f"Reply in character. Max 220 chars. No preamble, just the reply text."
+            )
 
-        try:
-            reply_text = generate_reply(system_prompt, user_prompt)
-        except Exception as e:
-            log.warning("Generate failed for @%s: %s", author, e)
-            continue
+            try:
+                reply_text = generate_reply(system_prompt, user_prompt)
+            except Exception as e:
+                log.warning("Generate failed for @%s: %s", author, e)
+                continue
 
-        if not reply_text:
-            continue
+            if not reply_text:
+                continue
 
-        # Post reply
-        try:
-            root_ref = reply_ref.get("root", reply_ref.get("parent", {}))
-            record_payload = {
-                "$type": "app.bsky.feed.post",
-                "text": reply_text,
-                "createdAt": datetime.now(timezone.utc).isoformat(),
-                "reply": {
-                    "root":   {"uri": root_ref.get("uri", parent_uri),
-                               "cid": root_ref.get("cid", n.get("cid", ""))},
-                    "parent": {"uri": n.get("uri", ""),
-                               "cid": n.get("cid", "")},
-                },
-            }
-            result = bsky_post("com.atproto.repo.createRecord",
-                               {"repo": did, "collection": "app.bsky.feed.post",
-                                "record": record_payload},
-                               token=token)
-            log.info("Replied to @%s as %s: %r", author, agent or "generic", reply_text[:80])
-            replied += 1
-        except Exception as e:
-            log.warning("Post reply failed for @%s: %s", author, e)
+            # Post reply
+            try:
+                if reason == "reply" and reply_ref:
+                    root_ref = reply_ref.get("root", reply_ref.get("parent", {}))
+                    root = {"uri": root_ref.get("uri", parent_uri),
+                            "cid": root_ref.get("cid", n.get("cid", ""))}
+                else:
+                    # mention/quote notifications carry no record.reply at all — the
+                    # post being replied to IS the notification itself, so root ==
+                    # parent. Previously root fell through to parent_uri == "" here,
+                    # which the AT protocol would reject (empty root.uri).
+                    root = {"uri": n.get("uri", ""), "cid": n.get("cid", "")}
+                record_payload = {
+                    "$type": "app.bsky.feed.post",
+                    "text": reply_text,
+                    "createdAt": datetime.now(timezone.utc).isoformat(),
+                    "reply": {
+                        "root":   root,
+                        "parent": {"uri": n.get("uri", ""),
+                                   "cid": n.get("cid", "")},
+                    },
+                }
+                result = bsky_post("com.atproto.repo.createRecord",
+                                   {"repo": did, "collection": "app.bsky.feed.post",
+                                    "record": record_payload},
+                                   token=token)
+                log.info("Replied to @%s as %s: %r", author, agent or "generic", reply_text[:80])
+                replied += 1
+            except Exception as e:
+                log.warning("Post reply failed for @%s: %s", author, e)
+    finally:
+        save_seen(seen)
 
-    save_seen(seen)
     log.info("bsky_engage done: %d replies sent", replied)
     print(f"Done: {replied} replies sent")
 
