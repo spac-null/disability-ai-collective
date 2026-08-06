@@ -1635,7 +1635,7 @@ class ProductionOrchestrator:
             "that aren\'t already in the draft. If a reference appears, it must have been in the original.\n"
             "- Do not add citations, studies, or statistics the author didn\'t use.\n"
             "- Do not add summary sentences or conclusions that weren\'t there.\n"
-            "- Do not smooth the ending into resolution — if it ends abruptly, that may be correct.\n\n"
+            "- Do not convert one valid ending shape into another — see rule 7. An abrupt stop may be correct; so may a confident, resolved landing. Change the ending only if it is a call to action, a summary, a thesis restatement, or a mirrored image-couplet.\n\n"
             "EDITORIAL VOICE RULES:\n"
             "1. First-person throughout — lived expertise, not detached analysis\n"
             "2. NO academic headers: Research Question / Methodology / Key Findings / Recommendations / Community Questions\n"
@@ -1645,7 +1645,7 @@ class ProductionOrchestrator:
             "6. Bold sparingly — only sharpest claims, never structural markers\n"
             "7. ENDING — NO HOUSE SHAPE: several endings are valid and you must not convert one into another. A hard resolution the author commits to, a live question left open, a last word given to a quoted source, a plain concrete fact, or a coda folding back to the opening scene: all fine. Do NOT force irresolution, and do NOT cut a confident landing just because it resolves — a warm, committed close is often the best thing in the piece. Still cut: calls to action, summaries of the argument just made, thesis restatements, title echoes, and any sentence starting 'We need' / 'This requires' / 'Join' / 'I am developing'. If the draft closes on a resolving image-couplet (two mirrored sentences, e.g. 'The campfire is warm. The path is cold.') that is a rhythm tic rather than a real ending — flatten it to one sentence or cut back to the last line that says something new.\n"
             "8. CONCESSION: if the draft happens to dismantle an assumption, check that it gives the strongest version of the opposing view first. If it attacks a weakened version, strengthen the concession before the flip. Do not add a concession that is not already there.\n"
-            "9. 700-2000 words body — match the original target length, do not shrink\n"
+            "9. 450-2800 words body — match the original target length, do not shrink. Long pieces are deliberate (the 2800-word bucket matches the writing model's own measured length); do not compress one toward a house length.\n"
             "10. Author\'s disability is their EXPERTISE and LENS, never tragedy or limitation\n"
             "10b. AUTHOR RULE: Written BY a disabled person, not ABOUT disability. "
             "The subject is the world. The disability is the seeing. "
@@ -1657,7 +1657,7 @@ class ProductionOrchestrator:
             "12. ONE MODIFIER PER NOUN. If the draft has \'the physical, spatial, sensory reality\' — pick the one that does the most work and cut the rest. If it needs three adjectives, the noun is wrong.\n"
             "13. LISTS OF THREE. Four items in a list is one too many. Cut the weakest.\n"
             "14. PARAGRAPH MOMENTUM: When a paragraph builds by accumulation — specific details gathering weight toward a single point — do not interrupt with analysis mid-build. Let the details complete their arc. The argument arrives after the observation lands, not inside it.\n"
-            "15. LANDING: End accumulations with a concrete image or a plain-stated paradox, not an abstract reframing. One image, one fact. No metaphor that requires reconstruction under pressure.\n"
+            "15. LANDING: End accumulations with the concrete thing that carries the weight — one image, one fact — not an abstract reframing. No metaphor that requires reconstruction under pressure. This governs accumulations mid-piece, NOT the article's ending (rule 7 governs that), and it does not license a second epigram: the one-verdict-sentence budget in rules 27 and 40 still applies.\n"
             "16. NO INLINE PARENTHETICAL DEFINITIONS. Never explain a term mid-sentence with em-dashes or parentheses. "
             "NEVER: 'a listed façade (a building legally protected as historically significant)' — cut it entirely. "
             "NEVER: 'acoustic analysis—the scientific study of how sound behaves—' — same problem. "
@@ -1682,6 +1682,7 @@ class ProductionOrchestrator:
             "31. GROUNDING: The argument lives in the body before it lives in theory. If the draft leans on a concept or a theorist without ever reaching the physical sensation, place, or event that earned it, find that concrete material and bring it forward. This governs what the argument rests on, not which sentence opens the piece — a draft that opens on a plain claim and lands its concrete grounding a paragraph later is fine, so do not move a scene to the front just to have a scene at the front.\n"
             "32. US-AVOIDANCE + UK-PREFERENCE: Do not locate arguments in the United States specifically. No ADA, FEMA, or American laws or institutions. Preferred geographies: UK (DWP, PIP assessments, NHS social care, Equality Act 2010, Section 117 aftercare), the Netherlands, Germany, and unnamed cities. UK disability policy is especially rich territory — the gap between the Equality Act's promises and PIP's practice, the WCA (Work Capability Assessment), care home regulation, and the history of the disabled people's movement from UPIAS onward. When a UK-specific angle fits the argument, use it by name. Arguments must feel globally applicable, but specific named examples carry more weight than vague universals.\n"
             "33. NAMED VOICES: The draft should have 2-3 real named people — quoted or closely paraphrased with full attribution. Name + what they said + context in one sentence. REQUIRED: beyond the primary subject of the article, a second real named person must appear doing something specific in the body. A person named only in the footnote or source note does not count. At least one should be a source the reader would not expect to agree with the argument. Never 'a researcher found' or 'studies show' — name the researcher, name the study.\n"
+            "33b. SOMEONE ELSE MUST SPEAK: at least one other person must say something out loud inside actual quotation marks, in the past tense, saying something the narrator did not script for them. Conditional-mood positions ('she would say', 'he would reject this'), summarised stances, and ventriloquised objections do not satisfy this. If the draft has one, protect it and do not paraphrase it away. If the draft has none, say so in the edit — but do not invent a quote; never attribute words to a real named person that were not in the draft.\n"
             "34. SHOW THEN NAME: Never define a concept before showing it. First: the specific example, the concrete detail, the scene. Then — only if needed — 'this is called X.' If the concept is defined before the reader has felt it, cut the definition and trust the example.\n"
             "35b. NO DECODING REQUIRED: If a sentence requires the reader to stop and work out what it means before moving on, rewrite it. Three patterns to cut: (1) buried qualifiers — 'the thought being that X' → state X directly; (2) metaphors that need unpacking — 'a body that hears with its eyes' requires two mental steps before it means anything, break it into what it actually says; (3) abstract compression — 'something they have no box for' → 'something they cannot name' or 'something outside their framework'. The test: read the sentence aloud. If you pause mid-sentence to process it, the reader will too. Rewrite until they don't.\n"
             "35. INSIDER WITNESS: The strongest evidence is often a confession from someone who benefits from the system being critiqued. Find or imagine the insider who would say, if pressed: 'I know. I do it anyway.' A building inspector who signs off on ramps he knows are too steep. A hiring manager who admits the interview is a neurotypicality test. Protect this figure if it appears in the draft — do not smooth it into a statistic.\n"
@@ -2238,9 +2239,9 @@ class ProductionOrchestrator:
                     "any reference assuming you know who someone is or what an event was.\n"
                     "Return ONLY valid JSON. If no issues: {\"issues\": []}"
                 ),
-                user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:3500]}",
+                user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:18000]}",
                 model="openrouter/claude-haiku-4.5",
-                max_tokens=700,
+                max_tokens=1200,
                 timeout=30,
                 no_think=True,
             )
@@ -2312,10 +2313,10 @@ class ProductionOrchestrator:
                     "score 10 = none of these problems. score < 7 = rewrite needed. "
                     "Return ONLY valid JSON."
                 ),
-                user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:4000]}",
+                user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:18000]}",
                 model="openrouter/claude-opus-4.8",
                 max_tokens=800,
-                timeout=60,
+                timeout=90,
             )
             match = re.search(r'\{.*\}', response, re.DOTALL)
             if not match:
@@ -2903,6 +2904,20 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
 
         return violations
 
+    @staticmethod
+    def _parse_rule_verdicts(raw):
+        """Last verdict per rule id wins. The rule-checker model (Sonnet 4.6) sometimes
+        emits reasoning inside a [FAIL] line and then reverses itself on the next line
+        ('[FAIL] R3 — ...none found with certainty' / '[PASS] R3') — a naive
+        startswith("[FAIL]") scan counted both, which made the pre-commit gate fire on
+        every article regardless of actual violations (automation.log, 2026-08-02..06)."""
+        verdicts = {}
+        for line in (raw or "").splitlines():
+            m = re.match(r"\[(FAIL|PASS|N/A)\]\s*(R\d+)", line.strip())
+            if m:
+                verdicts[m.group(2)] = (m.group(1), line)
+        return [line for status, line in verdicts.values() if status == "FAIL"]
+
     def _pre_commit_gate(self, content, article_file, article_type=None):
         """Pre-commit loop: readability + mechanical rule check + article_type
         compliance → surgical fix if needed. Max 1 iteration. Returns (content, changed)."""
@@ -2954,7 +2969,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 max_tokens=400,
                 timeout=45,
             )
-            violations = [l for l in (raw or "").splitlines() if l.startswith("[FAIL]")]
+            violations = self._parse_rule_verdicts(raw)
         except Exception as e:
             self.logger.warning("Pre-commit gate check failed: %s", e)
 
@@ -3017,8 +3032,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 system_prompt=FIX_SYSTEM,
                 user_prompt=fix_prompt,
                 model="openrouter/claude-sonnet-4.6",
-                max_tokens=2000,
-                timeout=90,
+                max_tokens=5000,
+                timeout=120,
             )
             if not fixed or len(fixed) < len(content) * 0.7:
                 self.logger.warning("Surgical fix returned too little content — discarding")
@@ -3132,18 +3147,14 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 f"Verdict             : {verdict}",
             ]
             word_count = scores["words"]
-            # Ceiling tracks whichever _LENGTHS bucket generation was actually
-            # targeting this run (with margin), not a fixed number — a hardcoded
-            # 1200 predates the 1600/2800-word buckets and false-fails any article
-            # correctly written to one of those.
-            ceiling = int(target_words * 1.25) if target_words else 1200
-            if word_count < 400:
-                readability_fail = True
-                readability_lines.append(f"WORD COUNT FAIL: {word_count} words — below 400 minimum.")
-            elif word_count > ceiling:
-                readability_fail = True
-                target_note = f"target was {target_words}" if target_words else "no target recorded"
-                readability_lines.append(f"WORD COUNT FAIL: {word_count} words — above {ceiling} ceiling ({target_note}).")
+            # Word-count contracts are per-article_type and enforced (hard-fail) in
+            # _check_article_type_compliance — field_note ≤500, portrait/series_part ≥1200.
+            # _LENGTHS now spans 450-2800 words (2800 bucket added 2026-08-04, a45951c),
+            # so a flat 400/1200 window here was auto-failing ~26% of correctly-targeted
+            # output. Report the bucket; don't re-litigate enforcement that already happens
+            # elsewhere with the actual per-type rule.
+            target_note = f"target was {target_words} words" if target_words else "no target recorded"
+            readability_lines.append(f"Length bucket       : {word_count} words ({target_note})")
             if readability_fail:
                 readability_lines.append(
                     "ACTION: High syllable count is usually the cause of low FRE. "
@@ -3173,10 +3184,17 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "R8  PARAGRAPH LENGTH — flag any paragraph exceeding 5 sentences.\n"
             "R9  SECTION BREAKS — flag if more than 3 '---' breaks appear in the body.\n"
             "R10 LISTS — flag any list with 4 or more items (three is the limit).\n"
-            "R11 ENDING — last paragraph must be a position the reader can argue with, or a live question. "
-            "Flag if it: restates or closely echoes the thesis/title, calls to action, starts with 'We need'/'This requires', "
-            "OR closes on a concrete resolving image-couplet (two mirrored sentences that land a feeling). "
-            "A CODA (folds back to opening scene in a different register) is acceptable if used rarely.\n"
+            "R11 ENDING — there is no house ending shape. Five are all valid and none is preferred: "
+            "(a) a hard resolution the writer commits to — a warm, confident landing is legitimate and "
+            "must NOT be flagged for resolving; (b) a live question or arguable position; (c) the last "
+            "words given to a quoted source; (d) a plain concrete fact, dated or placed, with no "
+            "commentary; (e) a coda folding back to the opening scene. "
+            "Flag ONLY: a call to action, a summary of the argument just made, a thesis restatement or "
+            "title echo, any sentence beginning 'We need' / 'This requires' / 'Join' / 'I am developing', "
+            "or a resolving image-couplet (two mirrored sentences of equal length that land a feeling, "
+            "e.g. 'The campfire is warm. The path is cold.') — the couplet is a rhythm tic, not an "
+            "ending shape, and is the only resolved close that is still a violation. "
+            "Do not flag an ending merely because it resolves, concludes, or lands with confidence.\n"
             "R12 NAMED REFERENCES — name + what they said/did + why it matters here, all in one sentence. "
             "Flag floating names with only a year, or paragraph-long introductions of a person.\n"
             "R13 JARGON BANNED — flag any institutional vocabulary: claimants, non-compliant, stakeholders, "
@@ -3204,7 +3222,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 timeout=90,
             )
             rules_text = raw or ""
-            rules_fails = [l for l in rules_text.splitlines() if l.startswith("[FAIL]")]
+            rules_fails = self._parse_rule_verdicts(rules_text)
         except Exception as e:
             self.logger.warning("Rule compliance check failed: %s", e)
             rules_text = f"CHECK_FAILED: {e}"
