@@ -45,7 +45,8 @@ QUALITY_FEEDS = [
     {"url": "https://www.technologyreview.com/feed/",                   "name": "MIT Tech Review",       "tier": 1},
     # Hacker News removed — link aggregator with arbitrary titles, not journalism
     {"url": "https://www.wired.com/feed/rss",                           "name": "Wired",                 "tier": 2},
-    {"url": "https://404media.co/feed/",                                "name": "404 Media",             "tier": 2},
+    # 404 Media removed — DNS-sinkholed from trident (cert issued by a
+    # "Whalebone Sinkhole CA", network-level block, not fixable in code).
     {"url": "https://www.theverge.com/rss/index.xml",                   "name": "The Verge",             "tier": 2},
 
     # ── Art, design & architecture ────────────────────────────────────────────
@@ -64,7 +65,8 @@ QUALITY_FEEDS = [
     {"url": "https://aeon.co/feed.rss",                                 "name": "Aeon",                  "tier": 1},
     {"url": "https://theconversation.com/articles.atom",                "name": "The Conversation",      "tier": 1},
     {"url": "https://www.theatlantic.com/feed/all/",                    "name": "The Atlantic",          "tier": 1},
-    {"url": "https://www.newstatesman.com/feed",                        "name": "New Statesman",         "tier": 2},
+    # New Statesman removed — 403 to both the crawler UA and a browser UA since
+    # at least 2026-07-30, live-reconfirmed 2026-08-06.
     {"url": "https://www.economist.com/science-and-technology/rss.xml", "name": "Economist Sci-Tech",    "tier": 1},
     {"url": "https://www.economist.com/culture/rss.xml",                "name": "Economist Culture",     "tier": 1},
     {"url": "https://www.groene.nl/rss.xml",                            "name": "De Groene Amsterdammer","tier": 2},
@@ -72,7 +74,9 @@ QUALITY_FEEDS = [
     # ── International quality ─────────────────────────────────────────────────
     {"url": "https://www.nrc.nl/rss/",                                  "name": "NRC Handelsblad",       "tier": 1},
     {"url": "https://www.lemonde.fr/en/rss/une.xml",                    "name": "Le Monde English",      "tier": 1},
-    {"url": "https://elpais.com/rss/elpais/inenglish.xml",              "name": "El Pais English",       "tier": 2},
+    # El Pais English removed — feed is live (200) but frozen: live-verified
+    # 2026-08-06, all 62 items dated January-April 2020, so every fetch always
+    # falls outside the 7-day cutoff and silently yields zero.
     {"url": "https://www.theguardian.com/world/rss",                    "name": "Guardian World",        "tier": 2},
 ]
 
@@ -158,6 +162,20 @@ def init_db(conn):
     conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_used    ON news_seeds(used)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_pub     ON news_seeds(pub_date)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_fetched ON news_seeds(fetched_date)")
+    # disability_angle IS NULL means both "not yet attempted" and "attempted, model
+    # said none exists" — a seed the model correctly rejects stays NULL forever and
+    # gets re-selected by extract_top_angles' ORDER BY relevance_score DESC every
+    # single day until prune_old drops it at 14 days, permanently occupying top-10
+    # slots and starving fresh seeds below it (~150 wasted extraction calls/month).
+    # angle_checked marks "an attempt happened" independent of the outcome, so a
+    # real rejection is remembered without ever writing a sentinel into
+    # disability_angle itself — production_orchestrator.get_news_seed selects on
+    # `disability_angle IS NOT NULL`, so a sentinel there would get fed straight
+    # into the article-generation prompt as if it were a real angle.
+    try:
+        conn.execute("ALTER TABLE news_seeds ADD COLUMN angle_checked TEXT")
+    except sqlite3.OperationalError:
+        pass
     conn.commit()
 
 
@@ -448,21 +466,27 @@ def extract_top_angles(conn, n: int = 10):
         return
     rows = conn.execute("""
         SELECT id, url, title, summary FROM news_seeds
-        WHERE disability_angle IS NULL AND used = 0
+        WHERE disability_angle IS NULL AND angle_checked IS NULL AND used = 0
         ORDER BY relevance_score DESC
         LIMIT ?
     """, (n,)).fetchall()
     extracted = 0
+    today = datetime.now().strftime("%Y-%m-%d")
     for seed_id, url, title, summary in rows:
         angle = extract_angle(title, summary or "", url)
         if angle:
             conn.execute(
-                "UPDATE news_seeds SET disability_angle = ? WHERE id = ?",
-                (angle, seed_id),
+                "UPDATE news_seeds SET disability_angle = ?, angle_checked = ? WHERE id = ?",
+                (angle, today, seed_id),
             )
-            conn.commit()
             log(f"  + angle: {title[:50]} → {angle[:70]}")
             extracted += 1
+        else:
+            conn.execute(
+                "UPDATE news_seeds SET angle_checked = ? WHERE id = ?",
+                (today, seed_id),
+            )
+        conn.commit()
         time.sleep(0.5)
     log(f"Angle extraction done: {extracted}/{len(rows)} got angles")
 
