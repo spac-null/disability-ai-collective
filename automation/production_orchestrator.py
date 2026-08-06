@@ -3093,6 +3093,79 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         fkgl = round((0.39 * asl) + (11.8 * asw) - 15.59, 1)
         return {"fre": fre, "fkgl": fkgl, "asl": round(asl, 1), "words": len(words)}
 
+    def _extract_named_quotes(self, content):
+        """Cheap extraction pass: direct quotations attributed to a specific named
+        real person, other than the first-person narrator. Feeds _web_verify_quote —
+        the LLM-only citation check below has no way to know if a claim is real; this
+        is the input to the step that actually checks."""
+        import json as _json
+        SYSTEM = (
+            "Extract every direct quotation in this article that is attributed to a "
+            "specific named real person other than the first-person narrator. "
+            "Only exact text inside quotation marks counts — not paraphrase, not a "
+            "summarised position, not a conditional-mood statement ('she would say'). "
+            "Return ONLY valid JSON:\n"
+            '{"quotes": [{"person": "Full Name", "quote": "exact quoted text"}]}\n'
+            'If none: {"quotes": []}'
+        )
+        try:
+            raw = self._call_openai_compat_api(
+                url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
+                system_prompt=SYSTEM, user_prompt=content,
+                model="openrouter/claude-haiku-4.5",
+                max_tokens=600, timeout=30, no_think=True,
+            )
+            match = re.search(r'\{.*\}', raw or "", re.DOTALL)
+            data = _json.loads(match.group(0)) if match else {}
+            return [q for q in data.get("quotes", []) if q.get("person") and q.get("quote")]
+        except Exception as e:
+            self.logger.warning("Named-quote extraction failed: %s", e)
+            return []
+
+    def _web_verify_quote(self, person, quote):
+        """Verify one quote against live web sources via Perplexity Sonar.
+
+        Direct OpenRouter call, bypassing CLIProxyAPI — confirmed empirically that
+        CLIProxyAPI 400s on both unlisted models ("unknown provider") and the
+        ':online' web-search suffix on models it does recognise, so search-grounded
+        verification isn't reachable through it. This reuses the same
+        OPENROUTER_API_KEY / direct-OpenRouter pattern _call_editorial_model already
+        falls back to when CLIProxy is down.
+
+        Returns (verdict, reason) — verdict is VERIFIED / UNVERIFIABLE / CONTRADICTED.
+        """
+        import os as _os
+        key = _os.environ.get("OPENROUTER_API_KEY", "")
+        if not key:
+            return "UNVERIFIABLE", "OPENROUTER_API_KEY not set — could not search"
+        prompt = (
+            f'Person: {person}\nQuoted as saying: "{quote}"\n\n'
+            "Search for this exact quote, or a close paraphrase of the same statement, "
+            "attributed to this person in any real source (interview, article, book, talk). "
+            "Respond in exactly this format:\n"
+            "VERDICT: VERIFIED | UNVERIFIABLE | CONTRADICTED\n"
+            "REASON: one sentence, cite a URL if you found one.\n"
+            "VERIFIED = you found this quote or a close paraphrase attributed to this person. "
+            "CONTRADICTED = you searched and found no source saying anything close to this. "
+            "UNVERIFIABLE = genuinely obscure/private context, search was inconclusive either way."
+        )
+        try:
+            raw = self._call_openai_compat_api(
+                url="https://openrouter.ai/api/v1", api_key=key,
+                system_prompt="You are a fact-checker with live web search access.",
+                user_prompt=prompt,
+                model="perplexity/sonar",
+                max_tokens=250, timeout=30,
+            )
+            m = re.search(r"VERDICT:\s*(VERIFIED|UNVERIFIABLE|CONTRADICTED)", raw or "", re.IGNORECASE)
+            verdict = m.group(1).upper() if m else "UNVERIFIABLE"
+            r = re.search(r"REASON:\s*(.+)", raw or "", re.DOTALL)
+            reason = r.group(1).strip()[:220] if r else (raw or "")[:220]
+            return verdict, reason
+        except Exception as e:
+            self.logger.warning("Web verify failed for %s: %s", person, e)
+            return "UNVERIFIABLE", f"search failed: {e}"
+
     def validate_article(self, content, article_file, slug, target_words=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
         import os, json, urllib.request as ureq
@@ -3126,6 +3199,39 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         except Exception as e:
             self.logger.warning("Citation extraction failed: %s", e)
             citation_text = f"EXTRACTION_FAILED: {e}"
+
+        # ── 1b. Web fact-check — named quotes (real search, not LLM self-report) ──
+        # The citation check above can only judge whether the ARTICLE names a source
+        # for a claim — it has no way to know if the claim itself is true, so a fully
+        # invented quote attributed to a real named person passes it as long as the
+        # draft doesn't cite one. This step actually searches the web.
+        fact_check_lines = ["(no named quotes found to verify)"]
+        contradicted = []
+        try:
+            quotes = self._extract_named_quotes(content)
+            if quotes:
+                fact_check_lines = []
+                for q in quotes[:4]:  # cap cost/latency — 4 covers rule 33's "2-3 named people"
+                    verdict, reason = self._web_verify_quote(q["person"], q["quote"])
+                    fact_check_lines.append(f"[{verdict}] {q['person']}: \"{q['quote'][:80]}\" — {reason}")
+                    if verdict == "CONTRADICTED":
+                        contradicted.append(q)
+        except Exception as e:
+            self.logger.warning("Web fact-check failed: %s", e)
+            fact_check_lines = [f"CHECK_FAILED: {e}"]
+
+        if contradicted:
+            # Block auto-promotion rather than silently rewording a misattributed
+            # quote — publish_best.py skips any draft carrying this flag. A human
+            # has to look at this, not another LLM pass.
+            fm_text = article_file.read_text()
+            if not re.search(r"^fact_check_status:", fm_text, re.MULTILINE):
+                fm_text = re.sub(r"^---\n", "---\nfact_check_status: blocked\n", fm_text, count=1)
+                article_file.write_text(fm_text)
+            self.logger.error(
+                "FACT-CHECK BLOCK: %s — %d quote(s) not found in any source",
+                article_file.name, len(contradicted)
+            )
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -3233,12 +3339,15 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         review_file = reviews_dir / f"{article_file.stem}-review.md"
 
         citation_clean = citation_text.strip().upper().startswith("CLEAN")
-        is_clean = citation_clean and not readability_fail and not rules_fails
+        is_clean = citation_clean and not readability_fail and not rules_fails and not contradicted
 
         lines = [
             f"# Article Review: {article_file.stem}",
             f"Generated: {dt.now().strftime('%Y-%m-%d %H:%M')}",
-            f"Status: {'CLEAN' if is_clean else 'FLAGGED'}",
+            f"Status: {'BLOCKED — fabricated quote' if contradicted else ('CLEAN' if is_clean else 'FLAGGED')}",
+            "",
+            "## Web Fact-Check (named quotes, live search)",
+            *fact_check_lines,
             "",
             "## Readability",
             *readability_lines,
@@ -3263,7 +3372,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 token = os.environ.get("REEF_BOT_TOKEN", "")
                 chat_id = os.environ.get("REEF_CHAT_ID", "")
                 if token and chat_id:
-                    parts = [f"📋 *Review* — {article_file.stem[:45]}"]
+                    if contradicted:
+                        parts = [f"🚨 *FACT-CHECK BLOCK* — {article_file.stem[:45]}",
+                                 "Promotion blocked — quote(s) attributed to a real named "
+                                 "person were not found in any source:"]
+                        parts += [f"• {q['person']}: \"{q['quote'][:80]}\"" for q in contradicted]
+                    else:
+                        parts = [f"📋 *Review* — {article_file.stem[:45]}"]
                     if readability_fail and scores:
                         parts.append(f"📖 Readability: {scores['fre']} (below 55 target)")
                     if rules_fails:

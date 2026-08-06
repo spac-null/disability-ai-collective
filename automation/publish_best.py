@@ -191,6 +191,10 @@ def main(dry_run=False):
     for draft in in_window:
         text = draft.read_text(encoding="utf-8", errors="replace")
         fm = parse_frontmatter(text)
+        if fm.get("fact_check_status") == "blocked":
+            print(f"  {draft.name}: SKIPPED — fact_check_status: blocked "
+                  f"(quote attributed to a real person not found in any source; needs human review)")
+            continue
         try:
             editorial = float(fm.get("draft_score", DEFAULT_SCORE))
         except (ValueError, TypeError):
