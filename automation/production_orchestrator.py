@@ -3133,21 +3133,48 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         falls back to when CLIProxy is down.
 
         Returns (verdict, reason) — verdict is VERIFIED / UNVERIFIABLE / CONTRADICTED.
+
+        CONTRADICTED intentionally covers two cases, not just "nothing found at all":
+        outright invention, AND the narrower "real person, real general view, but this
+        exact wording is invented" case. Live-tested three times against a real draft's
+        quote attributed to photographer Pete Eckert: search consistently found him
+        discussing seeing through sound/touch/memory in real interviews, but never this
+        exact phrasing — a looser verdict definition classified that as UNVERIFIABLE
+        (non-blocking) each time, which is too permissive for something presented to
+        the reader inside quotation marks as his verbatim words. Quotation marks are a
+        verbatim claim; a verified paraphrase attested elsewhere does not satisfy it.
         """
         import os as _os
         key = _os.environ.get("OPENROUTER_API_KEY", "")
         if not key:
             return "UNVERIFIABLE", "OPENROUTER_API_KEY not set — could not search"
+        word_count = len(quote.split())
         prompt = (
-            f'Person: {person}\nQuoted as saying: "{quote}"\n\n'
-            "Search for this exact quote, or a close paraphrase of the same statement, "
-            "attributed to this person in any real source (interview, article, book, talk). "
+            f'Person: {person}\nQuoted as saying: "{quote}" ({word_count} words)\n\n'
+            "Search for this attributed to this person in any real source (interview, "
+            "article, book, talk).\n\n"
+            "Two different standards apply depending on length — read both before judging:\n"
+            f"- {word_count} words or fewer, OR a named term/concept/title (e.g. a coined "
+            "phrase, the name of a practice or work): treat as VERIFIED if the person is "
+            "real, demonstrably associated with this term or the idea behind this short "
+            "phrase, and you have no specific reason to think it's wrong. Do not demand a "
+            "verbatim standalone citation for something this short — short phrases get "
+            "paraphrased and re-quoted constantly, and 'not found in this exact form' is "
+            "not evidence of fabrication at this length.\n"
+            "- A longer quote reading as one continuous, specific first-person sentence or "
+            "passage (roughly 12+ words of connected prose, a complete thought in the "
+            "person's own invented voice): this is a verbatim claim and needs a real match. "
+            "VERIFIED only if you find this wording, or phrasing close enough a reader would "
+            "recognise it as the same sentence. If you only find the person expressing a "
+            "similar general idea in visibly different words, that is CONTRADICTED, not "
+            "VERIFIED — a real view rephrased into invented prose is still invented prose "
+            "presented as their verbatim words.\n\n"
             "Respond in exactly this format:\n"
             "VERDICT: VERIFIED | UNVERIFIABLE | CONTRADICTED\n"
             "REASON: one sentence, cite a URL if you found one.\n"
-            "VERIFIED = you found this quote or a close paraphrase attributed to this person. "
-            "CONTRADICTED = you searched and found no source saying anything close to this. "
-            "UNVERIFIABLE = genuinely obscure/private context, search was inconclusive either way."
+            "UNVERIFIABLE = you could not find enough about this person or topic to judge "
+            "either way — reserve this for genuine search failure, not 'found the theme "
+            "but not the exact wording' on a long quote (that's CONTRADICTED per above)."
         )
         try:
             raw = self._call_openai_compat_api(
