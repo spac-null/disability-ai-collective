@@ -3078,7 +3078,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         fkgl = round((0.39 * asl) + (11.8 * asw) - 15.59, 1)
         return {"fre": fre, "fkgl": fkgl, "asl": round(asl, 1), "words": len(words)}
 
-    def validate_article(self, content, article_file, slug):
+    def validate_article(self, content, article_file, slug, target_words=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
         import os, json, urllib.request as ureq
         from datetime import datetime as dt
@@ -3132,12 +3132,18 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 f"Verdict             : {verdict}",
             ]
             word_count = scores["words"]
+            # Ceiling tracks whichever _LENGTHS bucket generation was actually
+            # targeting this run (with margin), not a fixed number — a hardcoded
+            # 1200 predates the 1600/2800-word buckets and false-fails any article
+            # correctly written to one of those.
+            ceiling = int(target_words * 1.25) if target_words else 1200
             if word_count < 400:
                 readability_fail = True
                 readability_lines.append(f"WORD COUNT FAIL: {word_count} words — below 400 minimum.")
-            elif word_count > 1200:
+            elif word_count > ceiling:
                 readability_fail = True
-                readability_lines.append(f"WORD COUNT FAIL: {word_count} words — above 1200 target ceiling.")
+                target_note = f"target was {target_words}" if target_words else "no target recorded"
+                readability_lines.append(f"WORD COUNT FAIL: {word_count} words — above {ceiling} ceiling ({target_note}).")
             if readability_fail:
                 readability_lines.append(
                     "ACTION: High syllable count is usually the cause of low FRE. "
@@ -3503,8 +3509,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         data["agent"] = agent
         fpath.write_text(_json.dumps(data, indent=2))
 
-    def _store_social_uri(self, slug, bsky_uri, agent=None):
-        """Persist Bluesky post URI so retract_article() can delete it later."""
+    def _store_social_uri(self, slug, bsky_uri, agent=None, mastodon_url=None):
+        """Persist Bluesky post URI (+ Mastodon URL, if any) so retract_article() can find them later."""
         import json as _json
         social_dir = self.repo_root / "_social"
         social_dir.mkdir(exist_ok=True)
@@ -3517,6 +3523,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 pass
         if bsky_uri:
             data["bsky_uri"] = bsky_uri
+        if mastodon_url:
+            data["mastodon_url"] = mastodon_url
         if agent:
             data["agent"] = agent
         fpath.write_text(_json.dumps(data, indent=2))
@@ -3605,14 +3613,14 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         instance = os.environ.get("MASTODON_INSTANCE", "").rstrip("/")
         if not token or not instance:
             self.logger.debug("Mastodon: no credentials, skipping")
-            return
+            return None
 
         try:
             slug_md  = article_file.name
             parts = slug_md[:10].split("-")
             if len(parts) != 3:
                 self.logger.error("Unexpected article filename format: %s", slug_md)
-                return
+                return None
             y, m, d  = parts
             slug     = slug_md[11:].replace(".md", "")
             site_url = os.environ.get("SITE_URL", "https://cripminds.com")
@@ -3667,9 +3675,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             with ureq.urlopen(post_req, timeout=15) as r:
                 result = json.loads(r.read())
             self.logger.info("Mastodon: posted %s", result.get("url", "?"))
+            return result.get("url")
 
         except Exception as e:
             self.logger.warning("Mastodon post failed: %s", e)
+            return None
 
 
     def post_to_tumblr(self, title, body, article_file, image_filenames=None, agent_name=None):
@@ -4488,7 +4498,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         content, gate_fixed = self._pre_commit_gate(content, article_file, article_type)
 
         # Step 6c: Full review (citations + readability + rule compliance)
-        review_file, is_clean = self.validate_article(content, article_file, slug)
+        review_file, is_clean = self.validate_article(content, article_file, slug, target_words=target_words)
 
         # Step 7: Commit article + review sidecar
         commit_success = self.commit_to_git(article_file, image_filenames, review_file)
@@ -4712,8 +4722,8 @@ if __name__ == "__main__":
         images = [f.name for f in orchestrator.repo_root.glob(f"assets/{af.stem}_*.jpg")]
         bsky_uri = orchestrator.post_to_bluesky(title, body, af, image_filenames=images, agent_name=agent)
         slug = af.stem[11:] if re.match(r'\d{4}-\d{2}-\d{2}-', af.stem) else af.stem
-        orchestrator._store_social_uri(slug, bsky_uri or "", agent=agent)
-        orchestrator.post_to_mastodon(title, body, af, image_filenames=images, agent_name=agent)
+        mastodon_url = orchestrator.post_to_mastodon(title, body, af, image_filenames=images, agent_name=agent)
+        orchestrator._store_social_uri(slug, bsky_uri or "", agent=agent, mastodon_url=mastodon_url or "")
         orchestrator.post_to_tumblr(title, body, af, image_filenames=images, agent_name=agent)
         print(f"Social posts sent. Bluesky URI: {bsky_uri}")
     elif args.retract:

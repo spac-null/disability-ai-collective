@@ -306,6 +306,13 @@ def _fire_pending_social(stem, article_file):
     )
     if result.returncode == 0:
         print("Social posts sent.")
+        # Re-read: the subprocess (_store_social_uri) just wrote bsky_uri/agent
+        # into this file. Reusing the pre-subprocess `data` here would clobber
+        # that write back to its pre-post state.
+        try:
+            data = _json.loads(social_file.read_text())
+        except Exception:
+            pass
         data["pending_social"] = False
         social_file.write_text(_json.dumps(data, indent=2))
     else:
