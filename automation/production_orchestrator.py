@@ -2520,16 +2520,36 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
         return image_filenames, image_descriptions
 
-    def _insert_images_balanced(self, content, image_filenames, image_descriptions=None):
-        """Insert body images at ~40% and ~75% of article content.
+    @staticmethod
+    def _pick_by_suffix(image_filenames, image_descriptions, suffix):
+        """Find the (filename, description) pair whose filename carries this suffix
+        (e.g. "_setting_1"), regardless of position in the list.
 
-        image_filenames[0] = hero (_setting_1) — already in frontmatter, not repeated.
-        image_filenames[1] = _moment_2 — inserted at ~40%.
-        image_filenames[2] = _symbol_3 — inserted at ~75%.
+        generate_images() only appends filenames for images that actually succeeded
+        — if generation partially fails, the list can be any subset in any order
+        (e.g. just [..._moment_2.jpg, ..._symbol_3.jpg] if setting_1 alone failed).
+        Code that indexed image_filenames[0]/[1]/[2] as if they were always
+        hero/40%/75% would silently promote the wrong image to hero and shift the
+        rest into the wrong body slots whenever one generation failed.
         """
         if not image_descriptions:
             image_descriptions = [''] * len(image_filenames)
-        if len(image_filenames) < 2:
+        for i, fname in enumerate(image_filenames):
+            if suffix in fname:
+                return fname, (image_descriptions[i] if i < len(image_descriptions) else '')
+        return None, ''
+
+    def _insert_images_balanced(self, content, image_filenames, image_descriptions=None):
+        """Insert body images at ~40% and ~75% of article content.
+
+        _setting_1 = hero — already in frontmatter, not repeated here.
+        _moment_2  = inserted at ~40%, if present.
+        _symbol_3  = inserted at ~75%, if present.
+        Each looked up by filename suffix, not list position — see _pick_by_suffix.
+        """
+        moment_fname, moment_desc = self._pick_by_suffix(image_filenames, image_descriptions, '_moment_2')
+        symbol_fname, symbol_desc = self._pick_by_suffix(image_filenames, image_descriptions, '_symbol_3')
+        if not moment_fname and not symbol_fname:
             return content
 
         paragraphs = content.split('\n\n')
@@ -2544,17 +2564,12 @@ The question isn't whether {title.lower()} matters. The question is whether the 
             return min(idx, total - 1)
 
         inserts = []
-        if len(image_filenames) >= 2:
-            inserts.append((target_idx(0.40), image_filenames[1]))
-        if len(image_filenames) >= 3:
-            inserts.append((target_idx(0.75), image_filenames[2]))
+        if moment_fname:
+            inserts.append((target_idx(0.40), moment_fname, moment_desc))
+        if symbol_fname:
+            inserts.append((target_idx(0.75), symbol_fname, symbol_desc))
 
-        for idx, fname in sorted(inserts, reverse=True):
-            try:
-                fi = image_filenames.index(fname)
-                desc = image_descriptions[fi] if fi < len(image_descriptions) else ''
-            except (ValueError, IndexError):
-                desc = ''
+        for idx, fname, desc in sorted(inserts, key=lambda t: t[0], reverse=True):
             caption = f'\n<figcaption>{desc}</figcaption>' if desc else ''
             img_tag = f'<figure class="article-figure">\n<img src="{{{{ site.baseurl }}}}/assets/{fname}" alt="{desc}" width="800" height="450" loading="lazy" decoding="async">{caption}\n</figure>'
             paragraphs.insert(idx + 1, img_tag)
@@ -2780,14 +2795,27 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         if metadata.get('editorial_score') is not None:
             _score_field = f"\ndraft_score: {metadata['editorial_score']}"
 
+        # Hero is _setting_1 by suffix, not image_filenames[0] by position — the
+        # list only contains whichever images actually succeeded, so if setting_1
+        # specifically failed, [0] would silently be a 1:1 body image used as the
+        # 16:9 hero. Fall back to whatever did generate, then to the site's
+        # existing generic OG card (default.png was referenced here but was never
+        # a real file in this repo — a guaranteed 404 the day all three fail).
+        hero_fname, hero_desc = self._pick_by_suffix(image_filenames, image_descriptions, '_setting_1')
+        if not hero_fname and image_filenames:
+            hero_fname = image_filenames[0]
+            hero_desc = image_descriptions[0] if image_descriptions else ''
+        if not hero_fname:
+            hero_fname, hero_desc = 'og-card.png', 'Crip Minds'
+
         front_matter = f"""---
 layout: post
 title: {json.dumps(str(metadata['title']))}
 date: {metadata['date']}
 author: {json.dumps(str(metadata['author']))}
 category: {metadata['categories'][0].lower() if metadata['categories'] else 'research'}
-image: /assets/{image_filenames[0] if image_filenames else 'default.png'}
-image_alt: {json.dumps(image_descriptions[0] if image_descriptions else 'Article illustration')}
+image: /assets/{hero_fname}
+image_alt: {json.dumps(hero_desc or 'Article illustration')}
 excerpt: {json.dumps(excerpt)}
 keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metadata.get('author', ''), metadata['categories']))}]{_source_fields}{_score_field}
 ---
