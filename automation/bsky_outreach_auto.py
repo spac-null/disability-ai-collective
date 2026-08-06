@@ -168,11 +168,19 @@ def bsky_req(path, payload=None, token=None, method="POST"):
 
 
 def git_commit_targets(target_name: str):
-    """Commit targets.json state change back to remote."""
+    """Commit targets.json state change back to remote.
+
+    Previously did a manual stash / pull --rebase / stash pop with no `check=True`
+    on any of the three steps. If the pop hit a conflict on targets.json, the
+    just-written "status": "done" for this target was left stranded in the stash
+    — git add/commit would then run against the pre-update file, silently
+    succeed, and the next run would see the target as still pending and post to
+    the same person again (a duplicate public @-mention of a named community
+    figure). targets.json is the only tracked file this script touches, so
+    --autostash does the same job atomically instead.
+    """
     try:
-        subprocess.run(["git", "stash"], cwd=REPO, capture_output=True)
-        subprocess.run(["git", "pull", "--rebase"], cwd=REPO, capture_output=True)
-        subprocess.run(["git", "stash", "pop"], cwd=REPO, capture_output=True)
+        subprocess.run(["git", "pull", "--rebase", "--autostash"], cwd=REPO, check=True, capture_output=True)
         subprocess.run(["git", "add", str(TARGETS_F)], cwd=REPO, check=True, capture_output=True)
         subprocess.run(
             ["git", "commit", "-m", f"outreach: posted to {target_name}"],

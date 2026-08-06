@@ -50,8 +50,22 @@ def parse_frontmatter(text):
     return fm
 
 
+def post_date(p):
+    """Real publication date: front-matter `date:` (rewritten by set_publish_date
+    on promotion), falling back to the filename's YYYY-MM-DD prefix if missing or
+    malformed. The filename prefix is the draft's *write* date, not publication
+    order — set_publish_date rewrites `date:` but never renames the file, so a
+    draft written days before it wins its scoring cycle keeps an old filename
+    while carrying its real publish date only in front matter."""
+    fm = parse_frontmatter(p.read_text(encoding="utf-8", errors="replace"))
+    d = fm.get("date", "")[:10]
+    if not re.match(r"^\d{4}-\d{2}-\d{2}$", d):
+        d = p.name[:10]
+    return d
+
+
 def recent_posts(n=None):
-    posts = sorted(POSTS.glob("*.md"), reverse=True)
+    posts = sorted(POSTS.glob("*.md"), key=post_date, reverse=True)
     return posts if n is None else posts[:n]
 
 
@@ -59,12 +73,8 @@ def published_titles_since(days):
     cutoff = datetime.now() - timedelta(days=days)
     titles = set()
     for p in recent_posts():
-        # Date from filename: YYYY-MM-DD-slug.md
-        m = re.match(r"(\d{4}-\d{2}-\d{2})", p.name)
-        if not m:
-            continue
         try:
-            pub_date = datetime.strptime(m.group(1), "%Y-%m-%d")
+            pub_date = datetime.strptime(post_date(p), "%Y-%m-%d")
         except ValueError:
             continue
         if pub_date < cutoff:
@@ -103,12 +113,18 @@ def topic_freshness(draft_title, published_titles):
 
 
 def persona_score(draft_persona, last_personas):
+    # last_personas holds up to PERSONA_WINDOW entries — the module docstring
+    # promises "1.0 if persona not in last 5 published", but this used to only
+    # ever look at the first two, so a persona seen 3-5 publications back scored
+    # a full 1.0, identical to one never seen at all.
     if not last_personas:
         return 1.0
     if last_personas[0] == draft_persona:
         return 0.0  # same as most recent — penalise heavily
     if draft_persona in last_personas[:2]:
         return 0.5
+    if draft_persona in last_personas:
+        return 0.75  # seen within the window, but not recently
     return 1.0
 
 
@@ -179,7 +195,10 @@ def main(dry_run=False):
     in_window, expired = [], []
     for draft in drafts:
         age = draft_date(draft)
-        if age is not None and (now - age).days > AGE_WINDOW_DAYS:
+        # draft_date() is midnight, so a draft written exactly AGE_WINDOW_DAYS ago
+        # yields .days == AGE_WINDOW_DAYS, which a strict > lets survive one extra
+        # cycle despite the log/commit message both promising "Nd" as the cutoff.
+        if age is not None and (now - age).days >= AGE_WINDOW_DAYS:
             expired.append(draft)
         else:
             in_window.append(draft)

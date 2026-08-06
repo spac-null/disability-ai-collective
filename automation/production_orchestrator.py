@@ -2501,7 +2501,12 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                 image_descriptions.append(alt)
                 continue
 
-            prompt = get_prompt(style_key, persona, summary)
+            # slug is required for get_prompt's deterministic per-article sub-style
+            # pick (gen_images._sub_style_index) — omitting it collapses the index to
+            # sum(ord(c) for c in persona) % 3, a per-persona CONSTANT, silently
+            # nullifying the "3 sub-styles per persona" feature (38b1535): every
+            # article from a given persona got the exact same sub-style.
+            prompt = get_prompt(style_key, persona, summary, slug)
             self.logger.info(f"Generating {fname} via OpenRouter...")
             try:
                 data = call_openrouter(prompt, ratio, "recraft/recraft-v4.1", api_key)
@@ -3690,7 +3695,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         fpath.write_text(_json.dumps(data, indent=2))
 
     def retract_article(self, slug):
-        """Remove article from _posts/, assets, _reviews, _social and delete Bluesky post.
+        """Remove article from _posts/, assets, _reviews, _social and delete the
+        Bluesky post and, if one was recorded, the Mastodon post.
 
         Usage: python3 production_orchestrator.py --retract <slug>
         Slug is the part after the date, e.g. 'the-map-that-doesn-t-know-you-re-standing-in-it'
@@ -3712,9 +3718,12 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             to_remove.append(review)
         social_file = self.repo_root / "_social" / f"{slug}.json"
         bsky_uri = ""
+        mastodon_url = ""
         if social_file.exists():
             try:
-                bsky_uri = _json.loads(social_file.read_text()).get("bsky_uri", "")
+                _social_data = _json.loads(social_file.read_text())
+                bsky_uri = _social_data.get("bsky_uri", "")
+                mastodon_url = _social_data.get("mastodon_url", "")
             except Exception:
                 pass
             to_remove.append(social_file)
@@ -3754,6 +3763,30 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 print(f"No Bluesky credentials — skipping delete (URI was: {bsky_uri})")
         else:
             print("No Bluesky URI stored — skipping delete")
+
+        # Delete Mastodon post — mastodon_url has been persisted since the
+        # post_to_mastodon fix, but retraction never actually used it, leaving a
+        # live Mastodon post pointing at a 404 on every retraction until now.
+        if mastodon_url:
+            token    = os.environ.get("MASTODON_ACCESS_TOKEN", "")
+            instance = os.environ.get("MASTODON_INSTANCE", "").rstrip("/")
+            if token and instance:
+                try:
+                    status_id = mastodon_url.rstrip("/").split("/")[-1]
+                    del_req = ureq.Request(
+                        f"{instance}/api/v1/statuses/{status_id}",
+                        headers={"Authorization": f"Bearer {token}"},
+                        method="DELETE",
+                    )
+                    with ureq.urlopen(del_req, timeout=15) as r:
+                        r.read()
+                    print(f"Mastodon post deleted: {mastodon_url}")
+                except Exception as e:
+                    print(f"Mastodon delete failed: {e}")
+            else:
+                print(f"No Mastodon credentials — skipping delete (URL was: {mastodon_url})")
+        else:
+            print("No Mastodon URL stored — skipping delete")
 
         # git rm + commit + push
         for f in to_remove:
@@ -4879,9 +4912,13 @@ if __name__ == "__main__":
         sep = [i for i, l in enumerate(lines) if l.strip() == '---']
         body = '\n'.join(lines[sep[1]+1:]) if len(sep) >= 2 else ''
         agent = next((l.split(':', 1)[1].strip().strip('"') for l in lines if l.startswith('author:')), None)
-        images = [f.name for f in orchestrator.repo_root.glob(f"assets/{af.stem}_*.jpg")]
-        bsky_uri = orchestrator.post_to_bluesky(title, body, af, image_filenames=images, agent_name=agent)
+        # Assets are written under the de-dated slug (generate_images(content, slug, ...)),
+        # not the article filename's stem (which keeps the YYYY-MM-DD- prefix) — globbing
+        # on af.stem matched nothing, so every social post has been going out with no
+        # image attached since the publish queue landed (d75d362).
         slug = af.stem[11:] if re.match(r'\d{4}-\d{2}-\d{2}-', af.stem) else af.stem
+        images = [f.name for f in orchestrator.repo_root.glob(f"assets/{slug}_*.jpg")]
+        bsky_uri = orchestrator.post_to_bluesky(title, body, af, image_filenames=images, agent_name=agent)
         mastodon_url = orchestrator.post_to_mastodon(title, body, af, image_filenames=images, agent_name=agent)
         orchestrator._store_social_uri(slug, bsky_uri or "", agent=agent, mastodon_url=mastodon_url or "")
         orchestrator.post_to_tumblr(title, body, af, image_filenames=images, agent_name=agent)
@@ -4904,7 +4941,8 @@ if __name__ == "__main__":
             sep = [i for i, l in enumerate(lines) if l == '---']
             body = '\n'.join(lines[sep[1]+1:])
             agent = next((l.split(':', 1)[1].strip().strip('"') for l in lines if l.startswith('author:')), None)
-            images = [f.name for f in orchestrator.repo_root.glob(f"assets/{af.stem}_*.jpg")]
+            _slug = af.stem[11:] if re.match(r'\d{4}-\d{2}-\d{2}-', af.stem) else af.stem
+            images = [f.name for f in orchestrator.repo_root.glob(f"assets/{_slug}_*.jpg")]
             uri = orchestrator.post_to_bluesky(title, body, af, image_filenames=images, agent_name=agent)
             print(f"Posted: {uri}")
     elif args.link_audit:

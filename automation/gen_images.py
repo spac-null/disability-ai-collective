@@ -430,6 +430,14 @@ def call_openrouter(prompt: str, aspect_ratio: str, model: str, api_key: str) ->
                     raise
                 continue
             raise RuntimeError(f"HTTP {e.code}: {body[:400]}") from e
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            # A read timeout (very plausible on a 120s image-generation call) or a
+            # connection/DNS failure raises URLError/OSError, not HTTPError — these
+            # used to skip the retry loop entirely and fail on the first attempt.
+            print(f"    network error: {e}", file=sys.stderr)
+            if attempt > len(RETRY_DELAYS):
+                raise
+            continue
 
     raise RuntimeError("All retries exhausted")
 
@@ -498,7 +506,7 @@ def find_posts_needing_images(target_slug: str | None = None, force: bool = Fals
     return result
 
 
-def process_post(post_path: pathlib.Path, model: str, api_key: str, dry_run: bool) -> bool:
+def process_post(post_path: pathlib.Path, model: str, api_key: str, dry_run: bool, force: bool = False) -> bool:
     text = post_path.read_text()
     fm = parse_frontmatter(text)
     slug = slug_from_path(post_path)
@@ -520,7 +528,7 @@ def process_post(post_path: pathlib.Path, model: str, api_key: str, dry_run: boo
     success = True
     for suffix, ratio, style_key in IMAGE_TYPES:
         dest = ASSETS_DIR / f"{slug}_{suffix}.jpg"
-        if dest.exists():
+        if dest.exists() and not force:
             print(f"  skip (exists): {dest.name}")
             continue
 
@@ -578,7 +586,7 @@ def main() -> None:
 
     failed = []
     for post_path in posts:
-        ok = process_post(post_path, args.model, api_key, args.dry_run)
+        ok = process_post(post_path, args.model, api_key, args.dry_run, force=args.force)
         if not ok:
             failed.append(post_path.name)
 
