@@ -1,4 +1,5 @@
 ---
+fact_check_status: blocked
 layout: post
 title: "Nobody Could Tell Me What His Hands Were Doing"
 date: 2026-08-05
