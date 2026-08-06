@@ -8,8 +8,16 @@ _drafts/_archive/ rather than left to compete forever.
 
 Selection weights:
   - draft_score (0-10 editorial score from Opus, or default 7.0 if missing): 60%
+    NOTE (2026-08-06 audit): production_orchestrator.py only writes draft_score
+    when its conditional editorial pass fires (~1 in 3 articles) — in practice
+    this term is DEFAULT_SCORE (a constant) for the large majority of real
+    candidates, so freshness/rotation/aging usually do the actual deciding
+    despite the 60% weight on paper. Tracked as an open decision (make the
+    editorial pass unconditional, at the cost of an extra Opus call/article, or
+    treat this weight as aspirational) — not resolved by this note.
   - topic freshness (1.0 if topic not seen in last 14 days, 0.5 if seen):     25%
-  - persona rotation (1.0 if persona not in last 5 published, 0.5 if in last 2, 0.0 if in last 1): 15%
+  - persona rotation (1.0 if persona not in last 5 published, 0.5 if in last 2,
+    0.75 if in last 5 but not last 2, 0.0 if in last 1): 15%
   - aging bonus: +0.15 per prior losing cycle (tracked via publish_attempts
     in front matter), capped at +0.6 — prevents a merely-decent draft from
     being perpetually outcompeted by fresher entries and archived without
