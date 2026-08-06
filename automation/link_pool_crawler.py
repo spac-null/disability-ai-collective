@@ -279,8 +279,28 @@ def extract_title_and_snippet(html: bytes) -> tuple[str, str]:
 
 
 def tag_url(title: str, snippet: str) -> tuple[list[str], str]:
+    # Two bugs fixed here together:
+    # 1. `kw in text` compared TOPIC_KEYWORDS entries against an already-lowercased
+    #    `text` without lowercasing `kw` itself — DeafSpace, ADA, CRPD, AI, AT, and
+    #    DeafBlind (the six keywords that aren't already all-lowercase) could never
+    #    match anything, silently dead since this table was written.
+    # 2. Plain substring matching meant "art" matched inside start/part/chart/
+    #    quarter/article, which is why 'art' was the single largest tag in the pool
+    #    (3221 rows) after 'general' — a title like "New Chart of Quarterly
+    #    Departures" tagged itself 'art' with zero actual art content.
+    # Single words now match whole-word (with simple plural tolerance); multi-word
+    # phrases ("crip aesthetics", "universal design", "chronic illness", etc.) keep
+    # substring matching since word-set membership can't match a phrase.
     text = f"{title} {snippet}".lower()
-    scores = {topic: sum(1 for kw in kws if kw in text) for topic, kws in TOPIC_KEYWORDS.items()}
+    words = set(re.findall(r"\b\w+\b", text))
+
+    def _match(kw):
+        kw = kw.lower()
+        if " " in kw:
+            return kw in text
+        return kw in words or f"{kw}s" in words or f"{kw}es" in words
+
+    scores = {topic: sum(1 for kw in kws if _match(kw)) for topic, kws in TOPIC_KEYWORDS.items()}
     tags   = [t for t, s in scores.items() if s > 0]
     primary = max(scores, key=scores.get) if any(scores.values()) else "general"
     return tags, primary

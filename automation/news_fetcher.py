@@ -330,10 +330,19 @@ def fetch_all_feeds(days: int = 7) -> list[dict]:
 # ── Relevance scoring ─────────────────────────────────────────────────────────
 
 def _keyword_matches(text: str, words: set[str], keyword: str) -> bool:
+    # Substring matching on single words &gt;=4 chars false-positived constantly:
+    # "deaf" in "a deafening silence", "blind" in "SelectBlinds promo", "crip" in
+    # "full description"/subscription/prescription/transcript, "care" in "career",
+    # "work" in "network", "sign" in "design", "text" in "context"/"texture" — all
+    # matched and fired the relevance boost / theme tag on unrelated stories, which
+    # is why the daily top-10 LLM queue was full of promo codes and Xbox news.
+    # Multi-word keys ("sign language", "chronic illness") keep substring matching
+    # since word-set membership can't match a phrase; single words become
+    # whole-word with simple plural tolerance instead.
     kw = keyword.lower()
-    if len(kw) < 4:
-        return kw in words
-    return kw in text
+    if " " in kw:
+        return kw in text
+    return kw in words or f"{kw}s" in words or f"{kw}es" in words
 
 
 def score_item(item: dict) -> tuple[float, list[str]]:
