@@ -70,6 +70,32 @@ QUALITY_FEEDS = [
     {"url": "https://www.theguardian.com/cities/rss",                   "name": "Guardian Cities",       "tier": 1},
     {"url": "https://www.disabilitynewsservice.com/feed/",              "name": "Disability News Service","tier": 1},
     {"url": "https://jacobin.com/feed/",                                "name": "Jacobin",               "tier": 2},
+    {"url": "https://disabilityarts.online/feed/",                      "name": "Disability Arts Online", "tier": 1},
+    {"url": "https://cripnews.substack.com/feed",                       "name": "Crip News",             "tier": 1},
+    {"url": "https://www.disabilitydebrief.org/feed",                   "name": "Disability Debrief",    "tier": 2},
+    {"url": "https://rootedinrights.org/feed/",                         "name": "Rooted in Rights",      "tier": 2},
+
+    # ── Behavioural science, progress & historical reassessment ───────────────
+    # Bregman-vein material: counterintuitive social science, archival reappraisal,
+    # progress-studies-style argument grounded in data. None publish daily; several
+    # will return zero items on most runs at the days=7 cutoff — expected, not a bug.
+    # Paired with the behavioral_science/history_archive THEME_KEYWORDS buckets added
+    # 2026-08-07 — without those, items from these feeds score 0.0 and are silently
+    # discarded before angle-extraction ever sees them (verified live).
+    {"url": "https://psyche.co/feed.rss",                               "name": "Psyche",                "tier": 1},
+    {"url": "https://www.worksinprogress.news/feed",                    "name": "Works in Progress",     "tier": 1},
+    {"url": "https://asteriskmag.com/feed",                             "name": "Asterisk",              "tier": 1},
+    {"url": "https://behavioralscientist.org/feed/",                    "name": "Behavioral Scientist",  "tier": 1},
+    {"url": "https://www.nature.com/nathumbehav.rss",                   "name": "Nature Human Behaviour","tier": 1},
+    {"url": "https://daily.jstor.org/feed/",                            "name": "JSTOR Daily",           "tier": 1},
+    {"url": "https://publicdomainreview.org/rss.xml",                   "name": "Public Domain Review",  "tier": 2},
+    {"url": "https://www.vox.com/rss/future-perfect/index.xml",         "name": "Vox Future Perfect",    "tier": 2},
+    {"url": "https://www.smithsonianmag.com/rss/latest_articles/",      "name": "Smithsonian Magazine",  "tier": 2},
+    {"url": "https://www.atlasobscura.com/feeds/latest",                "name": "Atlas Obscura",         "tier": 2},
+    # Very low cadence (roughly monthly) but genuinely active and right register —
+    # narrative true-story pieces, not trivia lists. Real feed is on FeedBurner; the
+    # site's own /feeds/ path returns the HTML homepage, not XML.
+    {"url": "https://feeds.feedburner.com/damninteresting/all",         "name": "Damn Interesting",      "tier": 2},
 
     # ── Culture & longform ────────────────────────────────────────────────────
     {"url": "https://aeon.co/feed.rss",                                 "name": "Aeon",                  "tier": 1},
@@ -116,6 +142,20 @@ THEME_KEYWORDS = {
                        "pharmaceutical","drug","surgery","chronic"],
     "education":      ["school","university","student","curriculum","learning","classroom",
                        "exam","teaching","pedagogy","literacy","degree","college"],
+    # Added 2026-08-07 alongside the Bregman-vein feed additions (Psyche, Works in
+    # Progress, Asterisk, Behavioral Scientist, Nature Human Behaviour, JSTOR Daily,
+    # Undark, Noema) — without these two buckets, real items from those feeds scored
+    # 0.0 and were silently discarded before angle-extraction ever saw them (verified
+    # live: "The myth of medieval childhood" from Works in Progress, "Mother Teresa
+    # was virtuous, but she was wrong about virtue" from Psyche, "The Many Lives of
+    # Libraries" from JSTOR Daily all scored 0.0 against the prior 8 buckets).
+    "behavioral_science": ["experiment","psychology","psychological","behaviour","behavior",
+                       "cognitive bias","cooperation","altruism","trust","incentive","norm",
+                       "replication","survey","game theory","decision-making","habit",
+                       "persuasion","nudge","bias","virtue","empathy"],
+    "history_archive": ["historian","archive","century","medieval","archaeology","ancient",
+                       "empire","revolution","colonial","primary source","manuscript",
+                       "excavation","antiquity","dynasty","folklore","myth","legacy"],
 }
 
 # Items mentioning these get a +0.3 boost — explicit disability lens
