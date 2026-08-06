@@ -196,7 +196,7 @@ def call_model(model_id, user_prompt, timeout=120):
     text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
     return text, data.get("model", model_id), data.get("usage", {})
 
-def send_tg(token, chat_id, text):
+def send_tg(token, chat_id, text, markdown=True):
     # Telegram max 4096 chars; split cleanly on paragraph boundary if needed
     chunks = []
     while len(text) > 4000:
@@ -207,11 +207,17 @@ def send_tg(token, chat_id, text):
         text = text[cut:].lstrip()
     chunks.append(text)
     for chunk in chunks:
-        payload = json.dumps({
-            "chat_id": chat_id,
-            "text": chunk,
-            "parse_mode": "Markdown",
-        }).encode()
+        payload = {"chat_id": chat_id, "text": chunk}
+        # markdown=False for raw LLM-generated article text: unescaped *_[] etc.
+        # (asterisks for stray emphasis, underscored proper nouns, bracketed
+        # asides) 400 Telegram's legacy Markdown parser — same failure mode
+        # already documented and avoided for citation text in
+        # production_orchestrator.py's own Telegram sends. Was unconditionally
+        # "Markdown" here, so a comparison run could silently fail to deliver
+        # one or more of the actual articles being compared.
+        if markdown:
+            payload["parse_mode"] = "Markdown"
+        payload = json.dumps(payload).encode()
         req = urllib.request.Request(
             f"https://api.telegram.org/bot{token}/sendMessage",
             data=payload,
@@ -364,8 +370,9 @@ def run_comparison(topic, persona_name, register_name=None, model_ids=None):
         r = results.get(info["model_id"])
         if not r:
             continue
-        header = f"*— Article {lbl} —*  _({r['wc']} words)_\n\n"
-        send_tg(tg_token, tg_chat, header + r["text"])
+        header = f"*— Article {lbl} —*  _({r['wc']} words)_"
+        send_tg(tg_token, tg_chat, header)
+        send_tg(tg_token, tg_chat, r["text"], markdown=False)
         time.sleep(2)
 
     send_tg(tg_token, tg_chat,
