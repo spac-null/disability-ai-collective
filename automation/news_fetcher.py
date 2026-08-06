@@ -223,6 +223,18 @@ def _parse_dt(s: str) -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _local(el, name, default=""):
+    """Get a namespace-qualified child's text by local tag name, ignoring whichever
+    namespace it's actually in. Needed for RSS 1.0/RDF feeds (e.g. Nature), whose
+    <item>/<title>/<link>/<description> are all namespace-qualified and use dc:date
+    instead of pubDate — root.findall(".//item") and item.findtext("title") both
+    silently return nothing against them (no exception, so no log line either)."""
+    for c in el:
+        if c.tag.split("}")[-1] == name and c.text:
+            return c.text
+    return default
+
+
 def fetch_feed(feed: dict, days: int = 7) -> list[dict]:
     """Fetch one RSS/Atom feed, return items newer than `days`."""
     url = feed["url"]
@@ -236,14 +248,21 @@ def fetch_feed(feed: dict, days: int = 7) -> list[dict]:
         )
         with urllib.request.urlopen(req, timeout=8) as r:
             raw = r.read()
-        root = ET.fromstring(raw)
+        # .strip(): some feeds (Dezeen) serve leading whitespace before the XML
+        # declaration, which ET rejects outright ("XML or text declaration not at
+        # start of entity") — 127/127 fetch attempts failed silently into the
+        # except-and-log branch below since the log began (2026-04-06).
+        root = ET.fromstring(raw.strip())
 
-        # RSS 2.0
-        for item in root.findall(".//item"):
-            title   = _strip_html(item.findtext("title", ""))[:200]
-            link    = (item.findtext("link") or "").strip()
-            summary = _strip_html(item.findtext("description", ""))[:500]
-            dt      = _parse_dt(item.findtext("pubDate", ""))
+        # RSS 2.0 — also handles RSS 1.0/RDF (e.g. Nature), where <item> and its
+        # children are namespace-qualified and dates are dc:date not pubDate.
+        # root.findall(".//item") only matches the unqualified tag, so an RDF feed
+        # silently yielded 0 items here with no exception and no log line.
+        for item in (e for e in root.iter() if e.tag.split("}")[-1] == "item"):
+            title   = _strip_html(_local(item, "title"))[:200]
+            link    = (_local(item, "link")).strip()
+            summary = _strip_html(_local(item, "description"))[:500]
+            dt      = _parse_dt(_local(item, "pubDate") or _local(item, "date"))
             if dt >= cutoff and title and link:
                 items.append({
                     "title": title, "url": link, "summary": summary,
@@ -263,6 +282,14 @@ def fetch_feed(feed: dict, days: int = 7) -> list[dict]:
             if link_el is None:
                 link_el = entry.find("link")
             link    = (link_el.get("href", "") if link_el is not None else "").strip()
+            if not link:
+                # Some Atom feeds (Jacobin) carry no <link> at all, only <id> — all
+                # three fallbacks above return None and the entry used to be
+                # dropped by the `title and link` check below. <id> is a URI in
+                # practice for these feeds even though the spec doesn't guarantee it.
+                _eid = (entry.findtext("a:id", "", ns) or entry.findtext("id", "")).strip()
+                if _eid.startswith("http"):
+                    link = _eid
             summary = _strip_html(
                 entry.findtext("a:summary", "", ns)
                 or entry.findtext("a:content", "", ns)

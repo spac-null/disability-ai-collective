@@ -22,7 +22,13 @@ DB_PATH    = Path(__file__).parent.parent / "disability_findings.db"
 LOG_PATH   = Path(__file__).parent / "link_pool_crawler.log"
 UA         = "Mozilla/5.0 (compatible; CripMinds/1.0)"
 TIMEOUT    = 10
-MAX_BODY   = 60_000   # bytes read per GET
+MAX_BODY   = 500_000  # bytes of the (already fully downloaded) body we parse for
+                       # title/snippet — fetch_bytes reads the whole response first,
+                       # so this never saved any bandwidth, it only truncated pages
+                       # with large inline <style>/<script>/preload blocks before
+                       # <title>. 2,340 publicdomainreview.org rows (11.4% of the
+                       # pool) had empty titles from exactly this — their <title>
+                       # sits past byte 60,000 on a ~480KB page.
 RECHECK_PCT = 0.10    # re-validate 10% of existing URLs per run
 
 # Crawl cadence note:
@@ -392,11 +398,21 @@ def revalidate_sample(conn) -> int:
             req = urllib.request.Request(url, headers={"User-Agent": UA}, method="HEAD")
             with urllib.request.urlopen(req, timeout=8) as r:
                 alive = r.status == 200
+        except urllib.error.HTTPError as e:
+            # 403/405/429 usually mean bot-blocking (or HEAD not allowed), not a
+            # dead link — treating them as dead is permanent, cumulative data
+            # loss with nothing to ever mark a URL alive again (crawl_site and
+            # load_seeds both skip URLs already in the table). One site
+            # (placesjournal.org) that started 403ing this host accounted for
+            # 626 of 655 dead rows in the whole pool, all otherwise-valid URLs.
+            alive = e.code not in (404, 410)
         except Exception:
-            alive = False
+            alive = True  # timeout / DNS / TLS — transient, don't punish for it
         if not alive:
             conn.execute("UPDATE link_pool SET is_alive = 0, last_checked = ? WHERE id = ?", (now, uid))
             dead += 1
+        else:
+            conn.execute("UPDATE link_pool SET last_checked = ? WHERE id = ?", (now, uid))
     conn.commit()
     log.info("Revalidation: %d checked, %d marked dead", len(sample), dead)
     return dead
