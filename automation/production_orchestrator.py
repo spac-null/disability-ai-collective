@@ -3126,33 +3126,52 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         fkgl = round((0.39 * asl) + (11.8 * asw) - 15.59, 1)
         return {"fre": fre, "fkgl": fkgl, "asl": round(asl, 1), "words": len(words)}
 
-    def _extract_named_quotes(self, content):
-        """Cheap extraction pass: direct quotations attributed to a specific named
-        real person, other than the first-person narrator. Feeds _web_verify_quote —
-        the LLM-only citation check below has no way to know if a claim is real; this
-        is the input to the step that actually checks."""
+    def _extract_verifiable_claims(self, content):
+        """Cheap extraction pass covering all four categories the (advisory-only,
+        LLM-self-report) citation check flags: QUOTE, STUDY, STAT, EVENT. Feeds
+        _web_verify_quote (QUOTE) and _web_verify_claim (STUDY/STAT/EVENT) — the
+        citation check has no way to know if a claim is real, only whether the
+        article names a source for it; these are the steps that actually check.
+
+        Superset of the old _extract_named_quotes (QUOTE-only) — kept the same
+        JSON-in-text extraction pattern, just widened the categories.
+        """
         import json as _json
         SYSTEM = (
-            "Extract every direct quotation in this article that is attributed to a "
-            "specific named real person other than the first-person narrator. "
-            "Only exact text inside quotation marks counts — not paraphrase, not a "
-            "summarised position, not a conditional-mood statement ('she would say'). "
+            "Extract every claim from this article that could be independently "
+            "verified against real sources, categorized by type:\n"
+            "- QUOTE: exact text inside quotation marks attributed to a specific "
+            "named real person, other than the first-person narrator. Not "
+            "paraphrase, not a summarised position, not a conditional-mood "
+            "statement ('she would say').\n"
+            "- STUDY: a named study, report, or audit attributed to a specific "
+            "organization.\n"
+            "- STAT: a specific number, percentage, or statistic attributed to a "
+            "source.\n"
+            "- EVENT: a specific dated event or occurrence stated as fact.\n\n"
+            "For QUOTE: 'subject' is the person's full name, 'claim' is the exact "
+            "quoted text. For STUDY/STAT/EVENT: 'subject' is the organization or "
+            "source named (empty string if none named), 'claim' is the specific "
+            "fact stated.\n\n"
             "Return ONLY valid JSON:\n"
-            '{"quotes": [{"person": "Full Name", "quote": "exact quoted text"}]}\n'
-            'If none: {"quotes": []}'
+            '{"claims": [{"type": "QUOTE|STUDY|STAT|EVENT", "subject": "...", "claim": "..."}]}\n'
+            'If none: {"claims": []}'
         )
         try:
             raw = self._call_openai_compat_api(
                 url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
                 system_prompt=SYSTEM, user_prompt=content,
                 model="openrouter/claude-haiku-4.5",
-                max_tokens=600, timeout=30, no_think=True,
+                max_tokens=900, timeout=30, no_think=True,
             )
             match = re.search(r'\{.*\}', raw or "", re.DOTALL)
             data = _json.loads(match.group(0)) if match else {}
-            return [q for q in data.get("quotes", []) if q.get("person") and q.get("quote")]
+            return [
+                c for c in data.get("claims", [])
+                if c.get("claim") and c.get("type") in ("QUOTE", "STUDY", "STAT", "EVENT")
+            ]
         except Exception as e:
-            self.logger.warning("Named-quote extraction failed: %s", e)
+            self.logger.warning("Verifiable-claim extraction failed: %s", e)
             return []
 
     def _web_verify_quote(self, person, quote):
@@ -3226,6 +3245,89 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             self.logger.warning("Web verify failed for %s: %s", person, e)
             return "UNVERIFIABLE", f"search failed: {e}"
 
+    def _web_verify_claim(self, claim_type, subject, claim_text):
+        """Verify a STUDY, STAT, or EVENT claim against live web sources via
+        Perplexity Sonar. Same direct-OpenRouter mechanism as _web_verify_quote,
+        but a distinct, more lenient standard per type — quotes are a verbatim
+        claim (get their own calibrated logic in _web_verify_quote); these three
+        are not, and each has a different false-positive risk if checked the same
+        strict way:
+
+        STUDY gets a strict standard close to quotes (a named org either published
+        something like this or it didn't — similarly checkable).
+
+        STAT is deliberately lenient: the same number gets restated in
+        incompatible-but-equally-correct forms across sources ("73%" / "nearly
+        three-quarters" / "roughly 3 in 4"), so CONTRADICTED requires an actual
+        conflicting figure, not just "couldn't find this exact phrasing".
+
+        EVENT is deliberately lenient in a different way: a claim describing
+        something recent may not be indexed by search yet, which is NOT evidence
+        of fabrication — CONTRADICTED requires a source actively contradicting the
+        event (wrong date, wrong people, didn't happen), not mere absence of
+        coverage.
+
+        Returns (verdict, reason) — verdict is VERIFIED / UNVERIFIABLE / CONTRADICTED.
+        """
+        import os as _os
+        key = _os.environ.get("OPENROUTER_API_KEY", "")
+        if not key:
+            return "UNVERIFIABLE", "OPENROUTER_API_KEY not set — could not search"
+
+        if claim_type == "STUDY":
+            standard = (
+                "CONTRADICTED = you searched and found no organization or study "
+                "matching this at all — the named organization doesn't appear to "
+                "exist, or exists but nothing resembling this study/report/audit "
+                "is attributed to it. VERIFIED = the organization is real and "
+                "plausibly connected to this finding."
+            )
+        elif claim_type == "STAT":
+            standard = (
+                "Numbers get restated in different forms across sources (73% vs "
+                "'nearly three-quarters' vs 'roughly 3 in 4') — do not require "
+                "exact phrasing or an exact figure match. CONTRADICTED = you found "
+                "a source giving a MATERIALLY DIFFERENT number for the same claim "
+                "— not just 'couldn't find this exact figure stated this way'. If "
+                "you found nothing confirming or conflicting, that is "
+                "UNVERIFIABLE, never CONTRADICTED."
+            )
+        else:  # EVENT
+            standard = (
+                "This claim may describe something recent enough that search "
+                "hasn't indexed it yet — that is NOT evidence of fabrication. "
+                "CONTRADICTED = you found a source actively contradicting this "
+                "event (wrong date, wrong people involved, or it demonstrably "
+                "didn't happen). Absence of coverage alone is UNVERIFIABLE, never "
+                "CONTRADICTED."
+            )
+
+        prompt = (
+            f"Claim type: {claim_type}\nSource/organization named: {subject or '(none named)'}\n"
+            f'Claim: "{claim_text}"\n\n'
+            "Search for whether this claim is accurate.\n\n"
+            f"{standard}\n\n"
+            "Respond in exactly this format:\n"
+            "VERDICT: VERIFIED | UNVERIFIABLE | CONTRADICTED\n"
+            "REASON: one sentence, cite a URL if you found one."
+        )
+        try:
+            raw = self._call_openai_compat_api(
+                url="https://openrouter.ai/api/v1", api_key=key,
+                system_prompt="You are a fact-checker with live web search access.",
+                user_prompt=prompt,
+                model="perplexity/sonar",
+                max_tokens=250, timeout=30,
+            )
+            m = re.search(r"VERDICT:\s*(VERIFIED|UNVERIFIABLE|CONTRADICTED)", raw or "", re.IGNORECASE)
+            verdict = m.group(1).upper() if m else "UNVERIFIABLE"
+            r = re.search(r"REASON:\s*(.+)", raw or "", re.DOTALL)
+            reason = r.group(1).strip()[:220] if r else (raw or "")[:220]
+            return verdict, reason
+        except Exception as e:
+            self.logger.warning("Web verify failed for %s claim (%s): %s", claim_type, subject, e)
+            return "UNVERIFIABLE", f"search failed: {e}"
+
     def validate_article(self, content, article_file, slug, target_words=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
         import os, json, urllib.request as ureq
@@ -3260,37 +3362,65 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             self.logger.warning("Citation extraction failed: %s", e)
             citation_text = f"EXTRACTION_FAILED: {e}"
 
-        # ── 1b. Web fact-check — named quotes (real search, not LLM self-report) ──
+        # ── 1b. Web fact-check — quotes, studies, stats, events (real search, not
+        # LLM self-report) ──────────────────────────────────────────────────────
         # The citation check above can only judge whether the ARTICLE names a source
         # for a claim — it has no way to know if the claim itself is true, so a fully
-        # invented quote attributed to a real named person passes it as long as the
+        # invented quote/study attributed to a real name passes it as long as the
         # draft doesn't cite one. This step actually searches the web.
-        fact_check_lines = ["(no named quotes found to verify)"]
-        contradicted = []
+        #
+        # Not all four categories get the same treatment. QUOTE and STUDY are close
+        # to binary-checkable (a person either said this, an org either published
+        # this, or they didn't) and hard-block promotion on CONTRADICTED — same as
+        # QUOTE always did. STAT and EVENT are inherently harder to verify without
+        # false positives (numbers get restated in incompatible-but-correct forms
+        # across sources; recent events may not be indexed yet), so a CONTRADICTED
+        # verdict on those is advisory only — shown here and marks the review
+        # FLAGGED, but does not set fact_check_status: blocked. Revisit promoting
+        # them to blocking once we've seen the real false-positive rate over some
+        # live runs.
+        fact_check_lines = ["(no verifiable claims found)"]
+        contradicted = []       # QUOTE/STUDY — blocks promotion
+        advisory_flags = []     # STAT/EVENT — flagged, doesn't block
         try:
-            quotes = self._extract_named_quotes(content)
-            if quotes:
+            claims = self._extract_verifiable_claims(content)
+            if claims:
                 fact_check_lines = []
-                for q in quotes[:4]:  # cap cost/latency — 4 covers rule 33's "2-3 named people"
-                    verdict, reason = self._web_verify_quote(q["person"], q["quote"])
-                    fact_check_lines.append(f"[{verdict}] {q['person']}: \"{q['quote'][:80]}\" — {reason}")
+                quote_claims = [c for c in claims if c["type"] == "QUOTE"][:4]
+                other_claims = [c for c in claims if c["type"] in ("STUDY", "STAT", "EVENT")][:4]
+                for c in quote_claims:  # cap 4 — covers rule 33's "2-3 named people"
+                    verdict, reason = self._web_verify_quote(c["subject"], c["claim"])
+                    fact_check_lines.append(f"[{verdict}] QUOTE — {c['subject']}: \"{c['claim'][:80]}\" — {reason}")
                     if verdict == "CONTRADICTED":
-                        contradicted.append(q)
+                        contradicted.append(c)
+                for c in other_claims:  # cap 4 — cost/latency
+                    verdict, reason = self._web_verify_claim(c["type"], c.get("subject", ""), c["claim"])
+                    fact_check_lines.append(f"[{verdict}] {c['type']} — {c.get('subject') or '(unnamed)'}: \"{c['claim'][:80]}\" — {reason}")
+                    if verdict == "CONTRADICTED":
+                        if c["type"] == "STUDY":
+                            contradicted.append(c)
+                        else:
+                            advisory_flags.append(c)
         except Exception as e:
             self.logger.warning("Web fact-check failed: %s", e)
             fact_check_lines = [f"CHECK_FAILED: {e}"]
 
         if contradicted:
             # Block auto-promotion rather than silently rewording a misattributed
-            # quote — publish_best.py skips any draft carrying this flag. A human
-            # has to look at this, not another LLM pass.
+            # quote/study — publish_best.py skips any draft carrying this flag. A
+            # human has to look at this, not another LLM pass.
             fm_text = article_file.read_text()
             if not re.search(r"^fact_check_status:", fm_text, re.MULTILINE):
                 fm_text = re.sub(r"^---\n", "---\nfact_check_status: blocked\n", fm_text, count=1)
                 article_file.write_text(fm_text)
             self.logger.error(
-                "FACT-CHECK BLOCK: %s — %d quote(s) not found in any source",
+                "FACT-CHECK BLOCK: %s — %d quote(s)/study(s) not found in any source",
                 article_file.name, len(contradicted)
+            )
+        if advisory_flags:
+            self.logger.warning(
+                "FACT-CHECK ADVISORY (non-blocking): %s — %d stat(s)/event(s) flagged, needs human review",
+                article_file.name, len(advisory_flags)
             )
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
@@ -3399,14 +3529,15 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         review_file = reviews_dir / f"{article_file.stem}-review.md"
 
         citation_clean = citation_text.strip().upper().startswith("CLEAN")
-        is_clean = citation_clean and not readability_fail and not rules_fails and not contradicted
+        is_clean = (citation_clean and not readability_fail and not rules_fails
+                    and not contradicted and not advisory_flags)
 
         lines = [
             f"# Article Review: {article_file.stem}",
             f"Generated: {dt.now().strftime('%Y-%m-%d %H:%M')}",
-            f"Status: {'BLOCKED — fabricated quote' if contradicted else ('CLEAN' if is_clean else 'FLAGGED')}",
+            f"Status: {'BLOCKED — fabricated quote/study' if contradicted else ('FLAGGED — stat/event needs human review' if advisory_flags else ('CLEAN' if is_clean else 'FLAGGED'))}",
             "",
-            "## Web Fact-Check (named quotes, live search)",
+            "## Web Fact-Check (quotes, studies, stats, events — live search)",
             *fact_check_lines,
             "",
             "## Readability",
@@ -3434,11 +3565,14 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 if token and chat_id:
                     if contradicted:
                         parts = [f"🚨 *FACT-CHECK BLOCK* — {article_file.stem[:45]}",
-                                 "Promotion blocked — quote(s) attributed to a real named "
-                                 "person were not found in any source:"]
-                        parts += [f"• {q['person']}: \"{q['quote'][:80]}\"" for q in contradicted]
+                                 "Promotion blocked — quote(s)/study(s) attributed to a real "
+                                 "named person or organization were not found in any source:"]
+                        parts += [f"• {c['type']} — {c['subject']}: \"{c['claim'][:80]}\"" for c in contradicted]
                     else:
                         parts = [f"📋 *Review* — {article_file.stem[:45]}"]
+                    if advisory_flags:
+                        parts.append(f"📊 Stats/events: {len(advisory_flags)} flagged (non-blocking, verify manually):")
+                        parts += [f"• {c['type']} — {c.get('subject') or '(unnamed)'}: \"{c['claim'][:80]}\"" for c in advisory_flags]
                     if readability_fail and scores:
                         parts.append(f"📖 Readability: {scores['fre']} (below 55 target)")
                     if rules_fails:
