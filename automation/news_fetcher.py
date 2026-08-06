@@ -487,7 +487,8 @@ def main():
         r'\b(obituary|obituaries|in memoriam|necrology|'
         r'corrections?|erratum|errata)\b'
         r'|dies? at \d+'          # implicit obituaries: "Dies at 86"
-        r'|\|\s*letters?\b'       # Guardian "| Letter" / "| Letters" suffix
+        r'|\|\s*(brief\s+)?letters?\b'   # Guardian "| Letters" / "| Brief letters"
+        r'|letters? to the editor'
         r'|\bshow hn:|\bask hn:|\btell hn:',  # Hacker News submissions
         re.IGNORECASE,
     )

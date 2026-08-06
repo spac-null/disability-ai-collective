@@ -52,7 +52,10 @@ SEED_SITES = [
     # ── Dutch art institutions & curatorial practice ──────────────────────────
     # Van Abbemuseum (Eindhoven) — politically engaged curation, temp exhibitions,
     # Ahmet Öğüt territory. Core Pixel Nova reference.
-    {"domain": "vanabbemuseum.nl",                "sitemap": "https://www.vanabbemuseum.nl/sitemap.xml",              "max_urls": 200},
+    # www.vanabbemuseum.nl/sitemap.xml returns the SPA's index.html, not XML —
+    # verified live: 200 but starts with <!doctype html>, not a sitemap; the
+    # site's own robots.txt lists the real one at the non-www host below.
+    {"domain": "vanabbemuseum.nl",                "sitemap": "https://vanabbemuseum.nl/sitemap-index.xml",            "max_urls": 200},
     # Niet Normaal INT — Ine Gevers' foundation. "Difference on Display" (2009),
     # AUTONOMOUS (BRUTUS 2026). Neurodiversity as political form; normality as map
     # of what a society fears. Sitemap confirmed (10 URLs).
