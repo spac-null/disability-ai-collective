@@ -5,7 +5,6 @@ User-agent: *
 Allow: /
 
 # Internal / experimental pages — not for indexing
-Disallow: /press/
 Disallow: /style-lab/
 Disallow: /gallery/
 Disallow: /realistic-scenes/
