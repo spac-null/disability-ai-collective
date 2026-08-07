@@ -1671,7 +1671,9 @@ class ProductionOrchestrator:
             "13. LISTS OF THREE. Four items in a list is one too many. Cut the weakest.\n"
             "14. PARAGRAPH MOMENTUM: When a paragraph builds by accumulation — specific details gathering weight toward a single point — do not interrupt with analysis mid-build. Let the details complete their arc. The argument arrives after the observation lands, not inside it.\n"
             "15. LANDING: End accumulations with the concrete thing that carries the weight — one image, one fact — not an abstract reframing. No metaphor that requires reconstruction under pressure. This governs accumulations mid-piece, NOT the article's ending (rule 7 governs that), and it does not license a second epigram: the one-verdict-sentence budget in rules 27 and 40 still applies.\n"
-            "16. NO INLINE PARENTHETICAL DEFINITIONS. Never explain a term mid-sentence with em-dashes or parentheses. "
+            "16. NO INLINE PARENTHETICAL DEFINITIONS. Never explain a term mid-sentence with em-dashes or parentheses — "
+            "or with a comma-construction like 'X, meaning Y' ('sectional, meaning the design is built on how the "
+            "building reads when you slice through it vertically' is the same violation wearing a comma). "
             "NEVER: 'a listed façade (a building legally protected as historically significant)' — cut it entirely. "
             "NEVER: 'acoustic analysis—the scientific study of how sound behaves—' — same problem. "
             "RIGHT: 'a listed façade.' or 'a listed façade. Listed buildings are legally protected — nobody can touch the structure.' "
@@ -3006,6 +3008,19 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         return hits
 
     @staticmethod
+    def _check_argument_word_overuse(content):
+        """Deterministic count of self-referential 'argument'/'arguments' — a real,
+        corpus-confirmed tic (119 uses across 63 of 138 published articles, 2026-08-07
+        audit) naming the essay's own rhetorical machinery instead of just making the
+        point. Near-zero tolerance: flag if the word appears at all. Returns a list of
+        the offending sentences (empty if none)."""
+        text = re.sub(r'^---.*?---', '', content, flags=re.DOTALL)
+        text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+        text = re.sub(r'<[^>]+>', '', text)
+        sentences = re.split(r'(?<=[.!?])\s+', text.strip())
+        return [s.strip() for s in sentences if re.search(r"\bargument[s]?\b", s, re.IGNORECASE)]
+
+    @staticmethod
     def _parse_rule_verdicts(raw):
         """Last verdict per rule id wins. The rule-checker model (Sonnet 4.6) sometimes
         emits reasoning inside a [FAIL] line and then reverses itself on the next line
@@ -3097,9 +3112,14 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "(e) NAMED ABSTRACT FRAMEWORK AS AGENT — treating a coined category or discipline "
             "as if it acts ('persuasion design wants...', 'clear print rules and persuasion "
             "design want the same thing') instead of naming the concrete object (a banner, a "
-            "leaflet, a shop). Do NOT flag a plain, unadorned comparison stated once and dropped "
+            "leaflet, a shop); "
+            "(f) INANIMATE OBJECT AS DELIBERATE AGENT — giving a building, a drawing, a render, "
+            "or a document deliberate intent it cannot have ('a building has decided that its "
+            "meaning is...', 'the drawings were dismantling my argument') — say who actually did "
+            "it: the architect decided, I concluded from the drawings. "
+            "Do NOT flag a plain, unadorned comparison stated once and dropped "
             "('the room reads it like a spreadsheet') — only flag when the device is doing "
-            "rhetorical work (symmetry, a twist, a pun) rather than just naming a thing.\n\n"
+            "rhetorical work (symmetry, a twist, a pun, or false agency) rather than just naming a thing.\n\n"
             "Format: [FAIL] R1 — \"quoted phrase\" | [PASS] R2 | [N/A] R9\n"
             "Be strict. Quote the exact offending phrase. Max 15 words per quote."
         )
@@ -3133,6 +3153,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 for h in buried_clause_hits
             )
 
+        argument_hits = self._check_argument_word_overuse(content)
+        if argument_hits:
+            violations.extend(
+                f'[FAIL] RAW — self-referential "argument": "{h[:100]}"'
+                for h in argument_hits
+            )
+
         rule_fail = len(violations) >= 3
 
         # Trigger 3: article_type compliance (word cap/floor + portrait subject rule).
@@ -3161,7 +3188,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         # pass instead of a per-quote patch; mechanical-only violations (jargon, passive
         # voice, nominalization — genuinely isolated, patchable spots) keep the narrow
         # surgical fix unchanged.
-        register_prefixes = ("R14", "R15", "RBC")
+        register_prefixes = ("R14", "R15", "RBC", "RAW")
         register_violations = [v for v in violations if any(f"] {p}" in v or f"]  {p}" in v for p in register_prefixes)]
         mechanical_violations = [v for v in violations if v not in register_violations]
         register_rewrite_needed = bool(register_violations)
@@ -3718,9 +3745,12 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "(d) SUSTAINED WORDPLAY — punning or reusing one word for cleverness across "
             "consecutive sentences; "
             "(e) NAMED ABSTRACT FRAMEWORK AS AGENT — treating a coined category or discipline "
-            "as if it acts ('persuasion design wants...') instead of naming the concrete object. "
+            "as if it acts ('persuasion design wants...') instead of naming the concrete object; "
+            "(f) INANIMATE OBJECT AS DELIBERATE AGENT — giving a building, drawing, render, or "
+            "document deliberate intent it cannot have ('a building has decided that its meaning "
+            "is...', 'the drawings were dismantling my argument') — say who actually did it. "
             "Do NOT flag a plain comparison stated once and dropped — only flag when the device "
-            "is doing rhetorical work (symmetry, a twist, a pun), not just naming a thing.\n\n"
+            "is doing rhetorical work (symmetry, a twist, a pun, or false agency), not just naming a thing.\n\n"
             "Output format — one line per rule:\n"
             "[PASS] R1\n"
             "[FAIL] R2 — quote the violation (max 15 words)\n"
@@ -3753,6 +3783,12 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         buried_clause_hits = self._check_buried_clause_sentences(content)
         for h in buried_clause_hits:
             line = f'[FAIL] RBC — buried clause delays main verb: "{h[:100]}"'
+            rules_fails.append(line)
+            rules_text = (rules_text or "") + ("\n" if rules_text else "") + line
+
+        argument_hits = self._check_argument_word_overuse(content)
+        for h in argument_hits:
+            line = f'[FAIL] RAW — self-referential "argument": "{h[:100]}"'
             rules_fails.append(line)
             rules_text = (rules_text or "") + ("\n" if rules_text else "") + line
 
@@ -4965,6 +5001,22 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "positionality, centering (as a verb), lived experience (say what you actually experienced), "
             "holding space, unpacking (use 'look at' or just explain it), at the end of the day, "
             "in the final analysis, it is worth noting, it is important to remember.\n\n"
+            "'ARGUMENT' — NEAR-ZERO. Confirmed by corpus check: 'argument'/'arguments' appears in 63 of "
+            "138 published articles (119 total uses) — a self-referential tic naming your own essay's "
+            "machinery instead of just making the point. Never write 'my argument is', 'this argument "
+            "shows', 'the drawings were dismantling my argument'. Just make the point, undecorated. If "
+            "you must refer to it, say 'the point', 'what I'm saying', 'my case' — but the honest fix is "
+            "almost always to cut the reference entirely and let the sentence stand on its own.\n\n"
+            "ONE IDEA PER SENTENCE — PLAIN-WORDED. Real published example of the failure, confirmed "
+            "against this exact register: 'A building whose entire public character is a colour scheme "
+            "has decided, before the concrete is poured, that its meaning is a thing you receive with "
+            "the eyes.' That single sentence folds three separate ideas — (1) the building's public "
+            "character is a colour scheme, (2) that's a decision made before construction, (3) meaning "
+            "arrives through the eyes — into one nested sentence via a relative clause, an inserted "
+            "aside, and a complement clause. Split it: 'A building's whole public character can be a "
+            "colour scheme. That's a decision, made before the concrete is poured. Here, meaning arrives "
+            "through the eyes.' A sentence can be grammatically plain-worded and still fail this way — "
+            "check idea count, not just vocabulary. If a sentence carries more than one claim, split it.\n\n"
             "ANTI-SYSTEMIC TEST: Read your draft aloud. If it sounds like it was written by a committee "
             "or a policy document, you have failed. Committees don't have opinions. You do. "
             "Committees don't get irritated. You do. Committees don't find things beautiful or absurd. "
@@ -4989,9 +5041,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "- Varied sentence rhythm — short sentences land the idea, longer ones develop it. No sentence chains more than two comma-clauses. Paragraph length varies: a short one hits differently after a long one. Not listicles.\n"            "- SENTENCE LENGTH: If a sentence has an embedded aside (set off by em-dashes or two commas), break it into two sentences. The aside becomes its own sentence or gets cut. Never stack more than one prepositional phrase at the end of a sentence. If you want to write '[subject], [qualifier], [long verb phrase], [trailing adjectives]' — split it: one sentence for the main claim, a short follow-up for the trailing detail. Fragments are allowed. Three words can be a sentence.\n"
             "- PARAGRAPH MOMENTUM: When a paragraph builds by accumulation — specific details gathering weight toward a single point — do not interrupt with analysis mid-build. Let the details complete their arc. The argument arrives after the observation lands, not inside it.\n"
             "- LANDING: End accumulations with a concrete image or a plain-stated paradox, not an abstract reframing. The specific thing that carries the weight — one image, one fact. No metaphor that requires reconstruction.\n"
-            "- NO INLINE PARENTHETICAL DEFINITIONS. Never explain a term mid-sentence with em-dashes or parentheses. If the term needs unpacking, give it its own sentence. If it doesn't, trust the reader.\n"
+            "- NO INLINE PARENTHETICAL DEFINITIONS. Never explain a term mid-sentence with em-dashes or parentheses — and this also covers 'X, meaning Y' or 'X, which means Y' comma-constructions ('The organising logic is sectional, meaning the design is built on how the building reads when you slice through it vertically' is the same violation wearing a comma instead of a dash). If the term needs unpacking, give it its own sentence. If it doesn't, trust the reader.\n"
             "- NO DECODING REQUIRED. If a sentence needs the reader to stop and work out what it means, rewrite it. Three patterns to cut: (1) buried qualifiers — 'the thought being that X' → state X directly; (2) metaphors that need unpacking before they mean anything — break them into what they actually say; (3) abstract compression — 'something they have no box for' → 'something they cannot name'. Test: read the sentence aloud. If you pause to process it, the reader will too.\n"
-            "- CRAFTED RHETORIC — BANNED. Checked directly against real Bregman prose: he essentially never reaches for these five moves, even when everything else about a sentence is plain. (1) METAPHOR FOR MECHANISM — a figurative image standing in for a plain fact ('it grabs the eye before the brain gets a vote') — state the mechanism directly: what does it actually do. (2) MIRRORED/CLEFT SENTENCE — 'X is what... Y is what...', 'one wants X, the other wants Y' — a symmetrical construction built for effect. State the two facts separately instead. (3) APHORISTIC OR IRONIC CLOSER — ending a paragraph on a crafted twist or epigram. End on a plain fact, a real quote, or a concrete narrative beat instead. (4) SUSTAINED WORDPLAY — reusing one word for cleverness across consecutive sentences. Use a different, plainer word the second time. (5) NAMED ABSTRACT FRAMEWORK AS AGENT — treating a coined category or discipline as if it acts ('persuasion design wants...'). Name the concrete object instead — the banner, the leaflet, the shop, the person. If a draft sentence resolves through symmetry, a twist, or a pun rather than a flat statement of fact, rewrite it flat.\n"
+            "- CRAFTED RHETORIC — BANNED. Checked directly against real Bregman prose: he essentially never reaches for these six moves, even when everything else about a sentence is plain. (1) METAPHOR FOR MECHANISM — a figurative image standing in for a plain fact ('it grabs the eye before the brain gets a vote') — state the mechanism directly: what does it actually do. (2) MIRRORED/CLEFT SENTENCE — 'X is what... Y is what...', 'one wants X, the other wants Y' — a symmetrical construction built for effect. State the two facts separately instead. (3) APHORISTIC OR IRONIC CLOSER — ending a paragraph on a crafted twist or epigram. End on a plain fact, a real quote, or a concrete narrative beat instead. (4) SUSTAINED WORDPLAY — reusing one word for cleverness across consecutive sentences. Use a different, plainer word the second time. (5) NAMED ABSTRACT FRAMEWORK AS AGENT — treating a coined category or discipline as if it acts ('persuasion design wants...'). Name the concrete object instead — the banner, the leaflet, the shop, the person. (6) INANIMATE OBJECT AS DELIBERATE AGENT — giving a building, a drawing, a render, a document deliberate intent it cannot have ('a building has decided that its meaning is...', 'the drawings were dismantling my argument'). Buildings don't decide anything and drawings don't dismantle anything — say who did: the architect decided, I concluded from the drawings. If a draft sentence resolves through symmetry, a twist, a pun, or handing intent to a thing, rewrite it flat.\n"
             "- REPLACE THE METAPHOR URGE WITH ACCUMULATION. The moment you feel the pull to explain a mechanism through an image, don't suppress it into a flatter version of the same image — reach for one more concrete fact or number instead and let it sit next to the others as its own short sentence. Bregman explains a claim by piling up three or four short factual sentences in a row (a date, a percentage, a named study, a named person), not by reaching for a figure of speech.\n"
             "- A RHETORICAL QUESTION GETS A ONE-WORD ANSWER. If you ask the reader a direct question, answer it in one word on its own line before you explain anything: 'Should we give up? No.' Don't soften the question or pad the answer — let the blunt one-word verdict land first, then unpack it in the next sentence if needed.\n"
             "- A PLAIN LIST CAN REPEAT VERBATIM AS A REFRAIN. If you state a short list of concrete traits or facts early in a piece, you may repeat that exact same list, word for word, later on as a callback — this is a real Bregman device (a flat repeated refrain), and it is not the same violation as wordplay or a mirrored sentence, because nothing changes or twists between the two instances. A refrain repeats; a pun mutates a word for cleverness.\n"
