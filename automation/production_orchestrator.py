@@ -2201,7 +2201,7 @@ class ProductionOrchestrator:
             "- last_updated: today's date YYYY-MM-DD\n\n"
             "Reply with the complete updated state JSON only — no other text."
         )
-        raw = self._call_editorial_model(system, user, max_tokens=1200, timeout=60)
+        raw = self._call_editorial_model(system, user, max_tokens=2600, timeout=60)
         if raw is None:
             self.logger.error("Fable state update for %s: all models failed — persona state will not evolve from this article", agent_name)
             return
