@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Robert Thomson Signed the Deal Eighteen Months Before"
-date: 2026-08-06
+date: 2026-08-07
 author: "Siri Sage"
 category: spatial design
 image: /assets/robert-thomson-signed-the-deal-eighteen-months-before_setting_1.jpg

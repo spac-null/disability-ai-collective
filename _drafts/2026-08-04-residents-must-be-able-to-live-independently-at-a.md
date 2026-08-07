@@ -1,5 +1,5 @@
 ---
-publish_attempts: 1
+publish_attempts: 2
 layout: post
 title: "Residents Must Be Able to Live Independently at a"
 date: 2026-08-04

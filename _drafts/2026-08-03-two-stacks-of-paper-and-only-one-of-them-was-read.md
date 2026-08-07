@@ -1,5 +1,5 @@
 ---
-publish_attempts: 1
+publish_attempts: 2
 layout: post
 title: "Two Stacks of Paper and Only One of Them Was Read"
 date: 2026-08-03
