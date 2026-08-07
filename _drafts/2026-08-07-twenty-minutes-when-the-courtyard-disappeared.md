@@ -39,7 +39,7 @@ There is a comfortable position I want to argue against here, and it is nearly m
 <figcaption>Twenty Minutes When the Courtyard Disappeared — conceptual image</figcaption>
 </figure>
 
-I do not doubt that the 2018 harmonium performance outside the National Theatre in Dhaka was extraordinary. A multisensory experience just creates different barriers for different people. The critic was wrong to call the festival meaningless. I was wrong to call it access.
+I do not doubt that the 2018 harmonium performance at the Dhaka Art Summit was extraordinary. A multisensory experience just creates different barriers for different people. The critic was wrong to call the festival meaningless. I was wrong to call it access.
 
 The drone stopped. The courtyard came back — doorway, wall, gap, in that order, the way it always does. A woman near me said out loud, to nobody, "I could smell the roses better once it went quiet."
 
