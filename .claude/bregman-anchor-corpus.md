@@ -133,3 +133,39 @@ rule: a "private pre-draft workflow" (silently draft thesis/evidence/mechanism
 before writing the visible essay) — genuine chain-of-thought scaffolding, worth
 a real test on its own terms later, not something to insert blind alongside the
 sentence-level rules.
+
+**2026-08-07, later same day — third document, different in kind.** Not a
+rigid essay template; a statistical/corpus-linguistics framework proposing to
+model sentence-length distribution, function-word frequency, and n-gram overlap
+rather than copying phrases or mandating structure. Genuinely different
+methodology from the two rejected documents, evaluated on its own terms.
+
+Verified its central numeric claim against real data instead of trusting or
+dismissing it: computed real sentence-length stats from all 919 sentences
+across the three Dutch books in Section 1 (Het water komt, De geschiedenis van
+de vooruitgang, Gratis geld voor iedereen). The document's claimed distribution
+(15% <=8 words / 45% 9-18 / 30% 19-30 / 10% 31-45) was directionally right but
+not accurate — real measured: 24.4% / 43.3% / 23.4% / 5.5%, mean 16.6, stdev
+12.6. Same lesson as the earlier document's invented 60-70/20-30/5-10 claim:
+check before trusting a confident-sounding number, even when the direction is
+plausible.
+
+Three real extractions shipped from this document:
+1. Fixed a genuine ambiguity in the MIRRORED/CLEFT SENTENCE ban (R15b/R16b) —
+   it risked suppressing the already-protected REDEFINE technique ("not X, but
+   Y" corrections use nearly the same surface pattern as the banned
+   symmetrical-mirroring tic). Now explicitly distinguished in all three rule
+   locations.
+2. END-WEIGHT — strongest/newest information goes at the end of the sentence.
+   Real, standard principle, not previously encoded.
+3. A genuinely new deterministic check (RSD, sentence-length distribution) —
+   built on the REAL measured baseline above, not the document's claimed one.
+   Flags suspiciously uniform sentence rhythm (near-zero stdev, zero short
+   sentences, high mean length) as its own axis, independent of every pattern-
+   based check already shipped. This is the first check in the whole session
+   that tests distribution rather than pattern-matching a specific violation.
+
+The document's Dutch-specific lexical content (sections 1, 3-47: Dutch
+connective words, Dutch verb lists, Dutch sentence archetypes) doesn't transfer
+to this pipeline's English output and wasn't used — noted for completeness in
+case Dutch-language generation is ever added elsewhere in this project.
