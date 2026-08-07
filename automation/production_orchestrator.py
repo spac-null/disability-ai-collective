@@ -2069,7 +2069,7 @@ class ProductionOrchestrator:
             "if several checks fail, pick the three that most change the piece. "
             "If publish_as_is, notes may be empty."
         )
-        raw = self._call_editorial_model(system, user, max_tokens=1200, timeout=60)
+        raw = self._call_editorial_model(system, user, max_tokens=3200, timeout=60)
         if raw is None:
             self.logger.error("Fable editorial review: all models failed — article ships without revision pass")
             return "publish_as_is", []
