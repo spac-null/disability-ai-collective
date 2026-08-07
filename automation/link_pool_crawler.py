@@ -411,9 +411,18 @@ def load_seeds(conn) -> int:
 
 
 def revalidate_sample(conn) -> int:
-    """HEAD-check a random 10% of existing alive URLs. Mark dead ones."""
-    rows = conn.execute("SELECT id, url FROM link_pool WHERE is_alive = 1").fetchall()
-    sample = random.sample(rows, max(1, int(len(rows) * RECHECK_PCT))) if rows else []
+    """HEAD-check the 10% of alive URLs least recently checked. Mark dead ones.
+
+    Was random.sample over all alive rows — memoryless, so staleness had no
+    ceiling. Measured on the live pool (21,093 alive): 54% hadn't been checked
+    in 90+ days despite a weekly run. Oldest-first bounds every URL to at most
+    ~10 weeks between checks for the same sampling cost.
+    """
+    rows = conn.execute(
+        "SELECT id, url FROM link_pool WHERE is_alive = 1 "
+        "ORDER BY last_checked ASC NULLS FIRST"
+    ).fetchall()
+    sample = rows[:max(1, int(len(rows) * RECHECK_PCT))] if rows else []
     dead = 0
     now  = datetime.now(timezone.utc).isoformat()
     for uid, url in sample:
