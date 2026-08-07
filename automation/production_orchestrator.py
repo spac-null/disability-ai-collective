@@ -2215,8 +2215,17 @@ class ProductionOrchestrator:
                     headers={'User-Agent': 'Mozilla/5.0 (compatible; CripMinds/1.0)'}
                 )
                 urllib.request.urlopen(req, timeout=6)
+            except urllib.error.HTTPError as e:
+                # 403/405/429 usually mean bot-blocking (or HEAD not allowed), not a
+                # dead link. Matches link_pool_crawler's revalidate_sample policy —
+                # this pass used to treat ANY exception, including these, as dead and
+                # silently strip a working link from published prose.
+                if e.code in (404, 410):
+                    broken.append((text, url))
             except Exception:
-                broken.append((text, url))
+                # timeout / DNS / TLS — transient, don't punish for it (same reasoning
+                # link_pool_crawler already uses for its own liveness checks).
+                pass
         for text, url in broken:
             content = content.replace(f'[{text}]({url})', text)
             self.logger.warning("Removed broken link: %s → %s", text[:60], url[:80])
