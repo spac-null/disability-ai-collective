@@ -88,3 +88,32 @@ if fed to a writer or fixer model. See the "multi-draft-and-pick" and "dedicated
 register-editor stage" ideas logged in this session's conversation for the more
 promising next architectural moves; this corpus is what any of those approaches
 would need as their fixed comparison target.
+
+## Section 4 — considered and rejected: rigid 10-section essay template
+
+2026-08-07, same session. An external document proposed a fixed structural
+template for the whole essay: 10 named sections with specific word-count ranges
+(Opening Scene 200-300w → Surprise → Zoom Out → Conventional Explanation →
+Complication → Human Mechanism → Larger Principle → Present → Possibility →
+Return, totaling 2500-4000w), mandating a scene-first opening and a coda-only
+ending. Most of its individual techniques (historical-anecdote testing, human-
+scale number translation, signpost phrases, expert disagreement) duplicated what
+was already in the generation prompt or got added to it the same session — no
+extraction needed there.
+
+**The structural mandate itself was rejected, not adopted.** It directly
+contradicts two rules already deliberately built into this pipeline:
+"OPENING — NO FIXED SHAPE" (explicitly bans defaulting to a scene-first open —
+"the placed-body-in-a-named-room-in-present-tense move is now overused") and
+"ENDING — NO FIXED SHAPE" (offers five valid endings specifically so no piece is
+forced into one shape). Rule 27 already states the underlying reasoning: these
+structural moves "were reverse-engineered from finished work; adding them by
+hand is what makes a draft read as technique-shaped with nothing reported inside
+it." A fill-in-the-blanks 10-section formula is exactly that failure mode. It
+would also break the existing length/type variety system (450-2800 word buckets;
+field_note/portrait/essay/provocation each structurally different) since one
+rigid 2500-4000w template doesn't fit any bucket except the longest.
+
+If this template (or something like it) gets proposed again in a future session:
+it's already been evaluated and rejected for this specific reason, not
+overlooked.
