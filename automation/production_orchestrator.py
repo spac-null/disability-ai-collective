@@ -3014,7 +3014,10 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 system_prompt=GATE_SYSTEM,
                 user_prompt=content,
                 model="openrouter/claude-sonnet-4.6",
-                max_tokens=400,
+                max_tokens=900,  # was 400 — a 13-rule (R1-R13) verdict list at ~25+
+                                 # tokens/rule plus preamble routinely truncated before
+                                 # the tail rules (R11-R13), and truncation was
+                                 # indistinguishable from "passed" to the parser.
                 timeout=45,
             )
             violations = self._parse_rule_verdicts(raw)
