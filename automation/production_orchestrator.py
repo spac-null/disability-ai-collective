@@ -3150,9 +3150,22 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             scores["fre"], len(violations), len(buried_clause_hits), len(type_violations)
         )
 
-        # Surgical fix — Sonnet, targeted, touch nothing else (unless a type violation
-        # requires a structural change — e.g. cutting a field_note to its word cap, or
-        # anchoring a portrait on one named subject — those get a more permissive prompt)
+        # Register violations (RBC, R14, R15) are pervasive-register symptoms, not
+        # isolated errors — validated 2026-08-07: a real test generated 3 full articles,
+        # ran them through this exact gate, applied the surgical fix, and rejudged
+        # against real Bregman excerpts. All 3 still failed afterward (13-15 remaining
+        # issues each, barely down from 15-24 pre-fix) because a "patch only the quoted
+        # phrase, change nothing else" fix cannot touch a whole-document habit — nearly
+        # every paragraph landing on a crafted epigram, or citing 4-5 named figures where
+        # Bregman uses at most one. Any single register violation gets a full rewrite
+        # pass instead of a per-quote patch; mechanical-only violations (jargon, passive
+        # voice, nominalization — genuinely isolated, patchable spots) keep the narrow
+        # surgical fix unchanged.
+        register_prefixes = ("R14", "R15", "RBC")
+        register_violations = [v for v in violations if any(f"] {p}" in v or f"]  {p}" in v for p in register_prefixes)]
+        mechanical_violations = [v for v in violations if v not in register_violations]
+        register_rewrite_needed = bool(register_violations)
+
         fix_lines = []
         if readability_fail:
             fix_lines.append(
@@ -3160,12 +3173,34 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 "Swap Latinate words for shorter Anglo-Saxon equivalents where meaning is identical. "
                 "Do not change proper nouns or topic-essential technical terms."
             )
-        for v in violations[:6]:
+        for v in mechanical_violations[:6]:
+            fix_lines.append(f"- Fix: {v[7:]}")
+        for v in register_violations:
             fix_lines.append(f"- Fix: {v[7:]}")
         for v in type_violations:
             fix_lines.append(f"- Fix: {v}")
 
-        if type_violations:
+        if register_rewrite_needed:
+            FIX_SYSTEM = (
+                "You are revising a published article to fix its overall register — this is a "
+                "whole-piece problem, not a handful of isolated bad sentences, so you may "
+                "restructure sentences and paragraphs as needed. The specific violations listed "
+                "below are symptoms; fix the underlying habit everywhere it appears in the "
+                "piece, not just in the quoted examples. Concretely: (1) if paragraphs tend to "
+                "land on a crafted epigram or twist, rewrite those endings as plain facts, real "
+                "quotes, or concrete narrative beats instead — check every paragraph, not just "
+                "the ones quoted below; (2) if the piece names more than 2 real people/figures, "
+                "cut it back to at most 2, keeping whichever carry the most argumentative "
+                "weight; (3) if sentences run long with a subject held apart from its verb by a "
+                "relative clause or appositive, split them into shorter sentences with subject "
+                "and verb close together; (4) cut any metaphor standing in for a plain mechanical "
+                "fact — state the mechanism directly. Keep the persona's voice, the core "
+                "argument, the real named sources, and the facts intact — this governs sentence "
+                "construction and paragraph rhythm, not the substance. "
+                "Return the complete article with the fix applied throughout. "
+                "No commentary, no preamble."
+            )
+        elif type_violations:
             FIX_SYSTEM = (
                 "You are a copy editor bringing a published article into compliance with "
                 "its assigned form. Fix the specific issues listed below — this may require "
@@ -3202,7 +3237,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             # Verify the fix actually resolved what it was meant to fix. Readability
             # improvement is the bar for style-rule fixes; for type_violations, a
             # word-count/structural fix might not move FRE at all — check compliance
-            # directly instead of gating solely on readability.
+            # directly instead of gating solely on readability. For register rewrites,
+            # Flesch Reading Ease doesn't measure any of the target violations (mirrored
+            # sentences, citation density, aphoristic closers are invisible to a
+            # syllable-count metric) — requiring FRE to improve would reject a
+            # well-executed register fix that legitimately doesn't move that number.
+            # Use the free deterministic buried-clause recheck instead: accept if that
+            # count didn't increase and FRE didn't get meaningfully worse.
             new_scores = self._readability_score(fixed)
             readability_improved = bool(new_scores and new_scores["fre"] > scores["fre"])
             type_now_compliant = True
@@ -3211,8 +3252,19 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 type_now_compliant = not remaining
                 if remaining:
                     self.logger.warning("Surgical fix did not resolve type violations: %s", remaining)
+            register_now_better = True
+            if register_rewrite_needed:
+                remaining_buried = self._check_buried_clause_sentences(fixed)
+                readability_not_worse = bool(new_scores and new_scores["fre"] >= scores["fre"] - 3)
+                register_now_better = len(remaining_buried) <= len(buried_clause_hits) and readability_not_worse
+                if not register_now_better:
+                    self.logger.warning(
+                        "Register rewrite did not clear the bar (buried_clause %d→%d, FRE %.1f→%s)",
+                        len(buried_clause_hits), len(remaining_buried), scores["fre"],
+                        new_scores["fre"] if new_scores else "N/A"
+                    )
 
-            if readability_improved or (type_violations and type_now_compliant):
+            if readability_improved or (type_violations and type_now_compliant) or (register_rewrite_needed and register_now_better):
                 if new_scores:
                     self.logger.info("Surgical fix: FRE %.1f → %.1f", scores["fre"], new_scores["fre"])
                 if type_violations:
