@@ -2088,7 +2088,14 @@ class ProductionOrchestrator:
             return "publish_as_is", []
 
     def _opus_targeted_revision(self, article_body, editorial_notes, agent_name):
-        """Opus revises the article based on Fable's editorial notes. Non-blocking."""
+        """Opus revises the article based on Fable's editorial notes. Non-blocking.
+
+        Superseded by _fable_polish_rewrite (2026-08-07) for the normal call path --
+        having Fable implement its own notes directly removes the cross-model
+        translation step (Fable judges, Opus has to correctly interpret and apply a
+        note it didn't write). Kept as a fallback for when Fable's own rewrite attempt
+        fails or returns too little content.
+        """
         if not editorial_notes:
             return article_body
         notes_text = "\n".join(f"- {n}" for n in editorial_notes)
@@ -2116,6 +2123,56 @@ class ProductionOrchestrator:
         except Exception as e:
             self.logger.warning("Targeted revision failed: %s — keeping original", e)
         return article_body
+
+    def _fable_polish_rewrite(self, article_body, editorial_notes, agent_name, register):
+        """Fable rewrites the article directly, implementing its own editorial notes
+        itself rather than handing them to Opus to interpret. Falls back to
+        _opus_targeted_revision if Fable's rewrite fails or returns too little content
+        -- the notes still exist and are worth applying even if this specific model
+        call has trouble. Non-blocking either way; article ships on the original draft
+        if both attempts fail.
+
+        Note on expectations: two separate model-judged tests earlier the same session
+        found that repair passes -- rule-based and exemplar-based, both run on Sonnet --
+        plateaued at a real ceiling (10-15 remaining register issues per sample) rather
+        than converging. This changes WHICH model executes the fix and WHO wrote the
+        notes being implemented, not the fundamental mechanism (a single text-conditioned
+        rewrite pass). It may still hit a similar ceiling. Worth testing on its own
+        terms rather than assuming the model swap alone breaks through it.
+        """
+        if not editorial_notes:
+            return article_body
+        notes_text = "\n".join(f"- {n}" for n in editorial_notes)
+        system = (
+            "You are the editorial director of Crip Minds, about to rewrite a draft "
+            "yourself instead of handing your notes to someone else to implement. "
+            "You already read this draft once and wrote the notes below -- now fix "
+            "exactly what you flagged, directly, in your own hand. "
+            "Polish and harmonize the prose toward the publication's target register "
+            "(plain declarative sentences, one idea per sentence, subject and verb "
+            "close together, no crafted rhetoric, no aphoristic closers) while fixing "
+            "the specific wholeness/craft issues in your notes. "
+            "Do NOT change: the facts, the named sources and quotes, the persona's "
+            "argument or position, the overall structure, or the approximate length. "
+            "This is polish and harmonization, not a rewrite of substance. "
+            "No headers, no bullet lists, no CTA endings."
+        )
+        user = (
+            f"Persona: {agent_name}\nRegister: {register}\n\n"
+            f"YOUR OWN EDITORIAL NOTES FROM READING THIS DRAFT:\n{notes_text}\n\n"
+            f"DRAFT:\n{article_body}\n\n"
+            "Return the complete rewritten article body only — no preamble, no commentary."
+        )
+        try:
+            self.logger.info("Fable polish rewrite: implementing %d of its own notes...", len(editorial_notes))
+            revised = self._call_editorial_model(system, user, max_tokens=6000, timeout=180)
+            if revised and len(revised) > max(400, len(article_body) * 0.6):
+                self.logger.info("Fable polish rewrite: %d chars", len(revised))
+                return revised
+            self.logger.warning("Fable polish rewrite returned too little content — falling back to Opus")
+        except Exception as e:
+            self.logger.warning("Fable polish rewrite failed: %s — falling back to Opus", e)
+        return self._opus_targeted_revision(article_body, editorial_notes, agent_name)
 
     def _fable_update_state(self, agent_name, article_title, article_body):
         """Post-publish: Fable reads the article and updates the persona's state.json.
@@ -5258,7 +5315,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             _review_angle = _fable_angle_text or title
             _verdict, _notes = self._fable_editorial_review(content, agent_name, _review_angle, register)
             if _verdict == "revise" and _notes:
-                content = self._opus_targeted_revision(content, _notes, agent_name)
+                content = self._fable_polish_rewrite(content, _notes, agent_name, register)
 
         # Step 3b: Rewrite with Opus if generated by a weaker provider.
         # Check both provider name AND actual model from response — catches silent
