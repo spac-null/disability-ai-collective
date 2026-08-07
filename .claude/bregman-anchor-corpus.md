@@ -117,3 +117,19 @@ rigid 2500-4000w template doesn't fit any bucket except the longest.
 If this template (or something like it) gets proposed again in a future session:
 it's already been evaluated and rejected for this specific reason, not
 overlooked.
+
+**2026-08-07, later same day — second, larger document in the same family
+reviewed.** Same rigid macro/micro-structure mandate (an 11-section version this
+time), same rejection applies, no need to re-litigate. Two genuinely new items
+extracted and shipped: a corporate/journalese cliché ban (tip of the iceberg,
+perfect storm, wake-up call, etc. — a different register than the existing
+academic-jargon list) and a "no empty grandeur" rule (don't gesture at stakes
+without specifying them). One claim explicitly NOT adopted: a precise sentence-
+length distribution (60-70% short-medium / 20-30% longer / 5-10% very short)
+with no shown basis — reads as an invented-sounding statistic, and baking an
+unverified one into the rules meant to prevent invented statistics would be a
+bad joke. One idea logged as a separate, untested technique rather than a style
+rule: a "private pre-draft workflow" (silently draft thesis/evidence/mechanism
+before writing the visible essay) — genuine chain-of-thought scaffolding, worth
+a real test on its own terms later, not something to insert blind alongside the
+sentence-level rules.
