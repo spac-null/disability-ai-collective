@@ -127,7 +127,7 @@ def generate_post_text(target: dict, article: dict, max_chars: int) -> str | Non
     )
 
     payload = {
-        "model":      "anthropic/claude-opus-4.6",
+        "model":      "anthropic/claude-haiku-4.5",
         "max_tokens": 300,
         "messages":   [{"role": "user", "content": prompt}],
     }
