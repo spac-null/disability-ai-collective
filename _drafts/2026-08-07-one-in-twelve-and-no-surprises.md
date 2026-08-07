@@ -78,8 +78,4 @@ What I want, in the end, is the same thing my friend wants from a mountain. Not 
 
 ---
 
-*This article was prompted by [MAD scatters boulder-like galleries across green-roofed museum in Shenzhen](https://www.dezeen.com/2026/08/05/shenzhen-bay-culture-square-mad/) from Dezeen. Syren Nagakyrie founded Disabled Hikers and writes detailed-terrain trail guides.*
-
----
-
 *This article was prompted by [MAD scatters boulder-like galleries across green-roofed museum in Shenzhen](https://www.dezeen.com/2026/08/05/shenzhen-bay-culture-square-mad/) from Dezeen.*
