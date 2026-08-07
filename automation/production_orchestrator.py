@@ -1599,8 +1599,16 @@ class ProductionOrchestrator:
         """
         import os
 
-        # Curated gold standard with dynamic fallback — avoids voice drift feedback loop
-        _gold_ref = self.posts_dir / "2026-03-14-the-open-office-was-designed-to-break-my-brain.md"
+        # Curated gold standard with dynamic fallback — avoids voice drift feedback loop.
+        # Was 2026-03-14-the-open-office-was-designed-to-break-my-brain.md, five months
+        # before the Aug-4 Bregman redesign — audit found it violates ~6 current rules
+        # (a banned ## header that _structural_validator strips, two bolded epigrams
+        # against the one-aphorism cap, invented specific numbers, an inline
+        # parenthetical definition, the now-overused placed-body-present-tense opening).
+        # A full worked example teaching the opposite of the current rules outweighs any
+        # amount of abstract instruction. Replaced with a post-redesign piece independently
+        # rated the strongest of a 10-article reader-perspective sample.
+        _gold_ref = self.posts_dir / "2026-07-29-weegee-heard-the-body-first.md"
         if _gold_ref.exists() and _gold_ref.stat().st_size > 3000:
             gold_path = _gold_ref
         else:
