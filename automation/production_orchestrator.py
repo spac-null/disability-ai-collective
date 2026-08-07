@@ -3216,12 +3216,13 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         if not key:
             return "UNVERIFIABLE", "OPENROUTER_API_KEY not set — could not search"
         word_count = len(quote.split())
+        SHORT_PHRASE_MAX_WORDS = 11  # below this: loose standard; 12+ is the strict-verbatim branch
         prompt = (
             f'Person: {person}\nQuoted as saying: "{quote}" ({word_count} words)\n\n'
             "Search for this attributed to this person in any real source (interview, "
             "article, book, talk).\n\n"
             "Two different standards apply depending on length — read both before judging:\n"
-            f"- {word_count} words or fewer, OR a named term/concept/title (e.g. a coined "
+            f"- {SHORT_PHRASE_MAX_WORDS} words or fewer, OR a named term/concept/title (e.g. a coined "
             "phrase, the name of a practice or work): treat as VERIFIED if the person is "
             "real, demonstrably associated with this term or the idea behind this short "
             "phrase, and you have no specific reason to think it's wrong. Do not demand a "
