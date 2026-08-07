@@ -1682,7 +1682,7 @@ class ProductionOrchestrator:
             "18b. SECTION BREAKS: Use --- sparingly. Two breaks per article is the target. Three is the ceiling. Never more. Each break asks the reader to restart without a handhold. Use a break only when the shift is a genuine scene change or time jump — not a new paragraph of thought. Transitions happen inside the prose.\n"
             "19b. VAGUE WE — BANNED: Every 'we' must have a clear referent. 'The redesign is the story we love to tell' — who is we? Design teams? Non-disabled professionals? Say it. 'We' that means everyone usually means someone specific who benefits from not being named. Name them. If you cannot say who we is, cut it and make the sentence active: 'Design teams love to tell the redesign story.'\n"
             "20. NAMED REFERENCES: When you name a theorist or researcher, give one sentence of context and move on immediately. Name + what they said or did + why it matters here — all in one sentence. Never leave a name floating with just a year. Never spend a paragraph explaining who someone is before using their idea. If the idea cannot survive one sentence of context, cut the reference and use the idea directly.\n"
-            "21. FRONT-LOADED SENTENCES — BANNED: Never open a sentence with a long subordinate clause that buries the subject. 'What happens after the ship date has none of those things' → 'Once the team ships, nobody checks whether it works.' 'When considering the broader implications of' → cut entirely, start with the implication. Subject first, verb second, detail after. The reader should know who is doing what before they get to why.\n"
+            "21. FRONT-LOADED SENTENCES — BANNED: Never open a sentence with a long subordinate clause that buries the subject. 'What happens after the ship date has none of those things' → 'Once the team ships, nobody checks whether it works.' 'When considering the broader implications of' → cut entirely, start with the implication. Subject first, verb second, detail after. The reader should know who is doing what before they get to why. This also fails when the subject IS named first but a long appositive or relative clause — 'X as a/an Y that/which/who Z' — is then wedged before the verb ever arrives: 'The eye as an organ that some of us route the whole world through gets a footnote' names 'the eye' immediately but delays 'gets' by 12 words. Split it instead: 'Some of us route the whole world through our eyes. That gets a footnote.'\n"
             "22. Crip culture references (Sins Invalid, crip time, disability justice) only when they fit naturally\n"
             "23. PARAGRAPH LENGTH: Keep paragraphs short — 2 to 4 sentences as the norm. A one-sentence paragraph is a verdict; use it. If a paragraph runs past 5 sentences, find where it splits into two thoughts and break it there. Long paragraphs diffuse impact. The rule is not variety — it is compression: say the thing, then stop.\n"
             "24. DISCOVERY VOICE: Research should feel found, not reported. Use the rhythm of live discovery — 'even more interesting is that...', 'it turns out...', 'what nobody mentions is...', 'the part that stuck with me...' This is not hedging. It is the opposite: confident enough to let the reader feel the moment of realisation. Academic hedging is defensive. Discovery voice is forward-moving. It makes the reader lean in.\n"
@@ -2965,6 +2965,47 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         return violations
 
     @staticmethod
+    def _check_buried_clause_sentences(content):
+        """Deterministic (no LLM) check for a specific delayed-main-verb shape:
+        '<subject> as a/an <noun phrase> that/which/who <clause>, <rest of sentence>'.
+
+        Naming the subject in the first few words (what R6/R7 already check) is not
+        the same as reaching the verb quickly — a real published example passed R6/R7
+        cleanly while still needing a reread: 'The eye as an organ that some of us
+        route the whole world through gets a footnote' names its subject ('The eye')
+        in word 2, then wedges a 9-word appositive-relative clause before the verb
+        ('gets') ever arrives. This is a narrow, specific construction ('X as a/an Y
+        that/which/who Z, <still more sentence>') that is cheap and reliable to catch
+        with a regex — unlike a general 'is this sentence hard to read' judgment,
+        which is why R6/R7/R14's LLM checks miss it: none of them test the distance
+        from subject to verb, only whether a clause precedes the subject (R6/R7) or
+        whether the whole sentence is abstractly compressed (R14).
+
+        Returns a list of the offending sentences (empty if none).
+        """
+        text = re.sub(r'^---.*?---', '', content, flags=re.DOTALL)
+        text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+        text = re.sub(r'<[^>]+>', '', text)
+        sentences = re.split(r'(?<=[.!?])\s+', text.strip())
+        pattern = re.compile(
+            r'\bas\s+(?:a|an)\s+(?:\w+\s+){1,6}?(?:that|which|who)\b',
+            re.IGNORECASE,
+        )
+        hits = []
+        for s in sentences:
+            m = pattern.search(s)
+            if not m:
+                continue
+            # Words left after the relative-clause opener to the end of the sentence.
+            # A short tail means the clause was the sentence's last constituent (fine,
+            # nothing left waiting behind it); a long tail means a main verb and more
+            # is still pending past the buried clause — the actual defect.
+            tail_words = re.findall(r"[A-Za-z']+", s[m.end():])
+            if len(tail_words) >= 4:
+                hits.append(s.strip())
+        return hits
+
+    @staticmethod
     def _parse_rule_verdicts(raw):
         """Last verdict per rule id wins. The rule-checker model (Sonnet 4.6) sometimes
         emits reasoning inside a [FAIL] line and then reverses itself on the next line
@@ -3020,7 +3061,45 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "negotiate (metaphorical), uplift, foregrounding, praxis, positionality\n"
             "R13 RHYTHMIC MONOTONY — 3 or more consecutive sentences opening with the same word "
             "or the same grammatical pattern (e.g. 'The X...', 'The X...', 'The X...' "
-            "or 'It was...', 'It was...', 'It was...')\n\n"
+            "or 'It was...', 'It was...', 'It was...'). EXCEPTION — checked directly against "
+            "real Bregman prose, which does this deliberately: a short, tight run of 2-3 "
+            "sentences that repeats its opening word specifically to build escalating emphasis "
+            "toward one point ('Never before did so many young people see a therapist. Never "
+            "before did so many young workers burn out. Never before were so many "
+            "antidepressants prescribed.') is a real device (anaphora), not a monotony tic. "
+            "Only flag the pattern when it runs LONGER than 3 sentences, or when the repeated "
+            "opener is not building toward a single escalating point (i.e. it reads as an "
+            "unintentional habit rather than a deliberate rhetorical build).\n"
+            "R14 SUBJECT-VERB DISTANCE — the subject is named early (so R6 alone would pass it) "
+            "but a long appositive or relative clause — 'as a/an X that/which/who...', or a "
+            "comma- or em-dash-set-off descriptor — is wedged between the subject and its main "
+            "verb, forcing the reader to hold the subject in memory across the detour. Example "
+            "violation: 'The eye as an organ that some of us route the whole world through gets "
+            "a footnote' — 'The eye' is the subject, but 'gets' doesn't land until 12 words "
+            "later. Do NOT flag a short appositive (3-4 words) that barely delays the verb, and "
+            "do NOT flag a relative clause that IS the sentence's last constituent with nothing "
+            "waiting behind it.\n"
+            "R15 CRAFTED RHETORIC — flag any of these literary devices, even when the sentence "
+            "is otherwise grammatical and plain-worded (real Bregman prose, checked directly "
+            "against his published work, essentially never does any of these): "
+            "(a) METAPHOR FOR MECHANISM — a figurative image standing in for a plain mechanical "
+            "fact ('it grabs the eye before the brain gets a vote', 'the same banner turns into "
+            "a magnet for the eye') — state the mechanism directly instead; "
+            "(b) MIRRORED/CLEFT SENTENCE — 'X is what... Y is what...', 'one wants X, the other "
+            "wants Y', 'the size rule that helps me read the ad is the same size rule that sells "
+            "the ad' — a symmetrical rhetorical construction built for effect; "
+            "(c) APHORISTIC OR IRONIC CLOSER — a paragraph or piece ending on a crafted twist or "
+            "epigram ('that's the trap: the fix for exclusion and the tool for manipulation "
+            "turned out to be the same X') rather than a plain fact, a quote, or a concrete "
+            "narrative beat; "
+            "(d) SUSTAINED WORDPLAY — punning or reusing one word for cleverness across "
+            "consecutive sentences ('pop is blind to who it's popping for'); "
+            "(e) NAMED ABSTRACT FRAMEWORK AS AGENT — treating a coined category or discipline "
+            "as if it acts ('persuasion design wants...', 'clear print rules and persuasion "
+            "design want the same thing') instead of naming the concrete object (a banner, a "
+            "leaflet, a shop). Do NOT flag a plain, unadorned comparison stated once and dropped "
+            "('the room reads it like a spreadsheet') — only flag when the device is doing "
+            "rhetorical work (symmetry, a twist, a pun) rather than just naming a thing.\n\n"
             "Format: [FAIL] R1 — \"quoted phrase\" | [PASS] R2 | [N/A] R9\n"
             "Be strict. Quote the exact offending phrase. Max 15 words per quote."
         )
@@ -3042,6 +3121,18 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         except Exception as e:
             self.logger.warning("Pre-commit gate check failed: %s", e)
 
+        # Trigger 2b: buried-clause sentences (deterministic, R15 — see
+        # _check_buried_clause_sentences docstring). Folded into the same violations
+        # list/3-vote threshold as the LLM rule check, not a hard-fail on its own —
+        # kept consistent with how the LLM violations are weighted, but unlike them
+        # this signal has zero false-positive risk from model sampling/truncation.
+        buried_clause_hits = self._check_buried_clause_sentences(content)
+        if buried_clause_hits:
+            violations.extend(
+                f'[FAIL] RBC — buried clause delays main verb: "{h[:100]}"'
+                for h in buried_clause_hits
+            )
+
         rule_fail = len(violations) >= 3
 
         # Trigger 3: article_type compliance (word cap/floor + portrait subject rule).
@@ -3055,8 +3146,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             return content, False
 
         self.logger.info(
-            "Pre-commit gate: FAIL (FRE=%.1f, violations=%d, type_violations=%d) — running surgical fix",
-            scores["fre"], len(violations), len(type_violations)
+            "Pre-commit gate: FAIL (FRE=%.1f, violations=%d [%d buried-clause], type_violations=%d) — running surgical fix",
+            scores["fre"], len(violations), len(buried_clause_hits), len(type_violations)
         )
 
         # Surgical fix — Sonnet, targeted, touch nothing else (unless a type violation
@@ -3552,7 +3643,32 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "because it is figurative — a metaphor that lands in one read and states the piece's own "
             "argument ('her body is anecdote; a paper about her body is evidence') is doing its job, "
             "not failing this rule. The test is whether a reader stalls, not whether the sentence "
-            "uses figurative language.\n\n"
+            "uses figurative language.\n"
+            "R15 SUBJECT-VERB DISTANCE — the subject is named early (so R7 alone would pass it) "
+            "but a long appositive or relative clause — 'as a/an X that/which/who...', or a "
+            "comma- or em-dash-set-off descriptor — sits between the subject and its main verb, "
+            "making the reader hold the subject in memory across the detour. Example violation: "
+            "'The eye as an organ that some of us route the whole world through gets a footnote' "
+            "— 'The eye' is the subject, but 'gets' doesn't land until 12 words later. Fix by "
+            "splitting: 'Some of us route the whole world through our eyes. That gets a "
+            "footnote.' Do NOT flag a short appositive (3-4 words) that barely delays the verb, "
+            "and do NOT flag a relative clause that IS the sentence's last constituent.\n"
+            "R16 CRAFTED RHETORIC — flag any of these literary devices even in an otherwise "
+            "plain-worded sentence (real Bregman prose essentially never does any of these): "
+            "(a) METAPHOR FOR MECHANISM — a figurative image standing in for a plain mechanical "
+            "fact ('it grabs the eye before the brain gets a vote') — state the mechanism "
+            "directly instead; "
+            "(b) MIRRORED/CLEFT SENTENCE — 'X is what... Y is what...', 'one wants X, the other "
+            "wants Y', 'the rule that helps me is the same rule that sells the ad' — a "
+            "symmetrical construction built for effect; "
+            "(c) APHORISTIC OR IRONIC CLOSER — a paragraph ending on a crafted twist or epigram "
+            "rather than a plain fact, a quote, or a concrete narrative beat; "
+            "(d) SUSTAINED WORDPLAY — punning or reusing one word for cleverness across "
+            "consecutive sentences; "
+            "(e) NAMED ABSTRACT FRAMEWORK AS AGENT — treating a coined category or discipline "
+            "as if it acts ('persuasion design wants...') instead of naming the concrete object. "
+            "Do NOT flag a plain comparison stated once and dropped — only flag when the device "
+            "is doing rhetorical work (symmetry, a twist, a pun), not just naming a thing.\n\n"
             "Output format — one line per rule:\n"
             "[PASS] R1\n"
             "[FAIL] R2 — quote the violation (max 15 words)\n"
@@ -3576,6 +3692,17 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         except Exception as e:
             self.logger.warning("Rule compliance check failed: %s", e)
             rules_text = f"CHECK_FAILED: {e}"
+
+        # R15 — deterministic buried-clause check, same one used in _pre_commit_gate.
+        # Runs here too since this async review is the only pass that sees the fully
+        # assembled article (post-images/links), and because the pre-commit gate only
+        # fixes when combined with 2+ other votes — this makes every buried-clause
+        # sentence visible in the review regardless of whether the gate acted on it.
+        buried_clause_hits = self._check_buried_clause_sentences(content)
+        for h in buried_clause_hits:
+            line = f'[FAIL] RBC — buried clause delays main verb: "{h[:100]}"'
+            rules_fails.append(line)
+            rules_text = (rules_text or "") + ("\n" if rules_text else "") + line
 
         # ── 4. Build review file ───────────────────────────────────────────
         reviews_dir = self.repo_root / "_reviews"
@@ -4801,7 +4928,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "- SECTION BREAKS: Two --- breaks per article is the target. Three is the ceiling. Never more. Each break resets the reader with no handhold. Only use a break for a genuine scene change or time jump. Transitions between ideas happen inside the prose — a short sentence, a pivot word, a contrast. Not a line break.\n"
             "- VAGUE WE — BANNED: 'We' must always have a named referent. If 'we' means everyone, it usually means a specific group that benefits from not being named. Name them. 'We designed this system' → 'non-disabled designers built this system.' 'We don't talk about this' → 'the council never published this.' If you cannot say who we is, cut the word and make someone specific do the thing.\n"
             "- NAMED REFERENCES: Name + one sentence of context + move on. Never leave a name floating. Never spend a paragraph setting up who someone is before using their idea. If the reference needs more than one sentence to land, either the idea is not earning its place or the writing is carrying it wrong. The idea should do the work, not the biography.\n"
-            "- FRONT-LOADED SENTENCES — BANNED: Subject comes first. Verb comes second. Never open with a long subordinate clause that makes the reader hold the setup in memory before the sentence resolves. 'What happens after the deadline has none of those qualities' → 'Once the deadline passes, none of that applies.' 'Given the structural conditions that produce' → cut and start with the thing being produced. If the sentence does not name its subject in the first five words, rewrite it.\n"
+            "- FRONT-LOADED SENTENCES — BANNED: Subject comes first. Verb comes second. Never open with a long subordinate clause that makes the reader hold the setup in memory before the sentence resolves. 'What happens after the deadline has none of those qualities' → 'Once the deadline passes, none of that applies.' 'Given the structural conditions that produce' → cut and start with the thing being produced. If the sentence does not name its subject in the first five words, rewrite it. Naming the subject early is not enough on its own: if a long appositive or relative clause — 'X as a/an Y that/which/who Z' — sits between that subject and its main verb, the reader still has to hold the subject in memory across the detour. 'The eye as an organ that some of us route the whole world through gets a footnote' names 'the eye' in word 2 but delays 'gets' by 12 words — split it: 'Some of us route the whole world through our eyes. That gets a footnote.' Keep subject and verb close together, always.\n"
             "- JARGON — BANNED: Strip institutional vocabulary. 'Claimants' → 'tenants' or 'residents'. 'Non-compliant' → say what the barrier is. 'Change of circumstances' → 'situation had changed'. 'Platform upgrades' → 'rebuild the platform'. 'Stakeholders' → who they are. 'Outcomes' → what people got or did not get. 'Intervention' → what actually happened. If the word appears in a government report, a council briefing, or an accessibility audit — replace it with what a person would say to another person.\n"
             "- PERSONAL ANECDOTE SPECIFICITY: First-person moments need dates and places, same as external sources. 'I have sat in procurement meetings where...' → 'In a 2019 procurement meeting, a director told me...' Floating anecdotes feel like illustration. Dated, placed anecdotes feel like evidence. Apply the TEMPORAL ANCHORS rule to yourself.\n"
             "- NO HEDGING AGAINST NOBODY: Cut 'X is not Y, but the logic is the same' constructions. If you are about to write 'a dashboard is not tactile paving, but...' — delete the first clause. 'The mechanism is the same' carries the weight alone. Preemptive hedging tells the reader you doubt your own argument. The juxtaposition does the work. Trust it and cut the hedge.\n"
@@ -4812,6 +4939,10 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "- LANDING: End accumulations with a concrete image or a plain-stated paradox, not an abstract reframing. The specific thing that carries the weight — one image, one fact. No metaphor that requires reconstruction.\n"
             "- NO INLINE PARENTHETICAL DEFINITIONS. Never explain a term mid-sentence with em-dashes or parentheses. If the term needs unpacking, give it its own sentence. If it doesn't, trust the reader.\n"
             "- NO DECODING REQUIRED. If a sentence needs the reader to stop and work out what it means, rewrite it. Three patterns to cut: (1) buried qualifiers — 'the thought being that X' → state X directly; (2) metaphors that need unpacking before they mean anything — break them into what they actually say; (3) abstract compression — 'something they have no box for' → 'something they cannot name'. Test: read the sentence aloud. If you pause to process it, the reader will too.\n"
+            "- CRAFTED RHETORIC — BANNED. Checked directly against real Bregman prose: he essentially never reaches for these five moves, even when everything else about a sentence is plain. (1) METAPHOR FOR MECHANISM — a figurative image standing in for a plain fact ('it grabs the eye before the brain gets a vote') — state the mechanism directly: what does it actually do. (2) MIRRORED/CLEFT SENTENCE — 'X is what... Y is what...', 'one wants X, the other wants Y' — a symmetrical construction built for effect. State the two facts separately instead. (3) APHORISTIC OR IRONIC CLOSER — ending a paragraph on a crafted twist or epigram. End on a plain fact, a real quote, or a concrete narrative beat instead. (4) SUSTAINED WORDPLAY — reusing one word for cleverness across consecutive sentences. Use a different, plainer word the second time. (5) NAMED ABSTRACT FRAMEWORK AS AGENT — treating a coined category or discipline as if it acts ('persuasion design wants...'). Name the concrete object instead — the banner, the leaflet, the shop, the person. If a draft sentence resolves through symmetry, a twist, or a pun rather than a flat statement of fact, rewrite it flat.\n"
+            "- REPLACE THE METAPHOR URGE WITH ACCUMULATION. The moment you feel the pull to explain a mechanism through an image, don't suppress it into a flatter version of the same image — reach for one more concrete fact or number instead and let it sit next to the others as its own short sentence. Bregman explains a claim by piling up three or four short factual sentences in a row (a date, a percentage, a named study, a named person), not by reaching for a figure of speech.\n"
+            "- A RHETORICAL QUESTION GETS A ONE-WORD ANSWER. If you ask the reader a direct question, answer it in one word on its own line before you explain anything: 'Should we give up? No.' Don't soften the question or pad the answer — let the blunt one-word verdict land first, then unpack it in the next sentence if needed.\n"
+            "- A PLAIN LIST CAN REPEAT VERBATIM AS A REFRAIN. If you state a short list of concrete traits or facts early in a piece, you may repeat that exact same list, word for word, later on as a callback — this is a real Bregman device (a flat repeated refrain), and it is not the same violation as wordplay or a mirrored sentence, because nothing changes or twists between the two instances. A refrain repeats; a pun mutates a word for cleverness.\n"
             "- PLAIN VOCABULARY. Prefer the Anglo-Saxon word over the Latinate one when meaning is identical. 'use' not 'utilise'. 'show' not 'demonstrate'. 'build' not 'construct'. 'change' not 'transformation'. 'ask' not 'interrogate'. Keep technical terms only when no plain word carries the same precision — earn them one at a time, not in clusters.\n"
             "- PARAGRAPH LENGTH: Keep paragraphs short. Two to four sentences is the target. A one-sentence paragraph lands like a verdict — use it deliberately. If a paragraph exceeds five sentences, it is trying to do two things; break it. The short paragraph after the long one hits harder than any rhetorical device. Compression is the discipline.\n"
             "- DISCOVERY VOICE: Make research feel found, not reported. Use the rhythm of live realisation: 'even more interesting is that...', 'it turns out...', 'what nobody mentions is...', 'I could not believe this when I read it.' This is not hedging — it is the opposite. A confident guide saying: here, look at this. The reader leans in because you lean in first. Academic hedging says 'the data suggest'; discovery voice says 'turns out.'\n"
