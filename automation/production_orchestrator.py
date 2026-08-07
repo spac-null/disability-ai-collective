@@ -4483,6 +4483,29 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
 
         # ── Source: fallback topic list ────────────────────────────────────────
         else:
+            # Architecture audit found this branch fires with zero signal anywhere —
+            # no Telegram alert, no distinguishing field in the front matter or return
+            # value. A broken 06:05 news_fetcher run (or a fully-consumed 3-day seed
+            # backlog) silently produces a generic, unsourced, unlinked article every
+            # day indefinitely with no way to notice from outside the logs.
+            self.logger.warning("FALLBACK MODE: no news seed or discovery item — generating from generic topic list")
+            try:
+                _tg_token = os.environ.get("REEF_BOT_TOKEN", "")
+                _tg_chat  = os.environ.get("REEF_CHAT_ID", "")
+                if _tg_token and _tg_chat:
+                    import urllib.request as _ureq, json as _json
+                    _payload = _json.dumps({
+                        "chat_id": _tg_chat,
+                        "text": "⚠️ Crip Minds: no news seed or discovery item today — "
+                                "generating from the generic topic list instead. Check "
+                                "news_fetcher's 06:05 run and the news_seeds backlog.",
+                    }).encode()
+                    _ureq.urlopen(_ureq.Request(
+                        f"https://api.telegram.org/bot{_tg_token}/sendMessage",
+                        data=_payload, headers={"Content-Type": "application/json"}, method="POST",
+                    ), timeout=10)
+            except Exception as _e:
+                self.logger.warning("Fallback-mode Telegram alert failed: %s", _e)
             agent_name = self._balance_agent(random.choice(list(self.agents.keys())))
             topics = [
                 "the gap between how a technology is described and how disabled people actually use it",
