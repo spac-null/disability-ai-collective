@@ -3096,14 +3096,23 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                     self.logger.info("Surgical fix: FRE %.1f → %.1f", scores["fre"], new_scores["fre"])
                 if type_violations:
                     self.logger.info("Surgical fix: type compliance resolved (%s)", article_type)
-                # Update article file on disk — preserve front matter written by create_article_file
-                existing = article_file.read_text()
-                fm_end = existing.find('\n---\n', 3)
-                if fm_end != -1:
-                    front_matter = existing[:fm_end + 5]  # includes closing ---\n
-                    article_file.write_text(front_matter + fixed)
-                else:
-                    article_file.write_text(fixed)
+                # Update article file on disk, if one exists yet — preserve front matter.
+                # article_file is None when this gate runs pre-assembly (before
+                # generate_images/create_article_file), which is now the normal call
+                # order: fixing here on plain content, before images/links/source-note
+                # get woven in by create_article_file, means there is no later file
+                # write to overwrite them with content that never saw that enrichment.
+                # Previously the gate ran post-assembly and wrote fixed-but-unenriched
+                # content straight over the assembled file, silently deleting every
+                # body image, injected link, and the source note on every successful fix.
+                if article_file is not None:
+                    existing = article_file.read_text()
+                    fm_end = existing.find('\n---\n', 3)
+                    if fm_end != -1:
+                        front_matter = existing[:fm_end + 5]  # includes closing ---\n
+                        article_file.write_text(front_matter + fixed)
+                    else:
+                        article_file.write_text(fixed)
                 return fixed, True
             else:
                 self.logger.info("Surgical fix did not improve readability or resolve type violations — discarding")
@@ -4898,6 +4907,15 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             'source_outlet': news_seed['source_name'] if news_seed else discovery.get('domain', '') if discovery else '',
         }
 
+        # Step 4b: Pre-commit gate — surgical fix if readability < 55, 3+ mechanical
+        # violations, or the draft doesn't comply with its assigned article_type's form.
+        # Runs here, on plain pre-enrichment content with no article_file yet (see the
+        # article_file is not None guard inside _pre_commit_gate), so a successful fix
+        # can never overwrite images/links/source-note added in Step 6 below — those
+        # get woven into whatever content comes out of this gate, once, and nothing
+        # after this point touches the file's body again.
+        content, gate_fixed = self._pre_commit_gate(content, None, article_type)
+
         # Step 5: Generate images (placeholder)
         try:
             image_filenames, image_descriptions = self.generate_images(content, slug, title=extracted_title, persona=agent_name)
@@ -4905,12 +4923,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             self.logger.warning('Image generation failed: %s -- continuing without images', e)
             image_filenames, image_descriptions = [], []
 
-        # Step 6: Create article file
+        # Step 6: Create article file (content is already gate-fixed as of Step 4b)
         article_file = self.create_article_file(metadata, content, image_filenames, image_descriptions)
-
-        # Step 6b: Pre-commit gate — surgical fix if readability < 55, 3+ mechanical
-        # violations, or the draft doesn't comply with its assigned article_type's form
-        content, gate_fixed = self._pre_commit_gate(content, article_file, article_type)
 
         # Step 6c: Full review (citations + readability + rule compliance)
         review_file, is_clean = self.validate_article(content, article_file, slug, target_words=target_words)
