@@ -544,7 +544,11 @@ class ProductionOrchestrator:
         if getattr(self, 'force_run', False):
             return None
         today_str = self._today()
-        for file in self.posts_dir.glob(f"{today_str}-*.md"):
+        # Was globbing self.posts_dir — but create_article_file() writes to
+        # self.drafts_dir (_drafts/), and promotion to _posts/ happens on a separate
+        # ~2-day cron cycle. A same-day article essentially never exists in _posts/
+        # yet, so this guard was dead: a same-day re-run would generate a second draft.
+        for file in self.drafts_dir.glob(f"{today_str}-*.md"):
             if file.is_file():
                 self.logger.info(f"Skipping — already have article for today: {file.name}")
                 return file.name
