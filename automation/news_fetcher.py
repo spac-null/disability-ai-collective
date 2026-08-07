@@ -514,12 +514,20 @@ def extract_top_angles(conn, n: int = 10):
     if not API_KEY:
         log("CLIProxy API key not set — skipping angle extraction")
         return
+    # Match get_news_seed's own 3-day pub_date window (production_orchestrator.py) —
+    # this used to select purely by relevance_score with no age filter, so it could
+    # (and did) spend a paid Sonnet call extracting an angle for a seed that would
+    # already be outside get_news_seed's selection window by the time anything looked
+    # for it. Measured live: 31 unused angled seeds in the DB, only 3 actually
+    # reachable by get_news_seed's cutoff.
+    cutoff = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
     rows = conn.execute("""
         SELECT id, url, title, summary FROM news_seeds
         WHERE disability_angle IS NULL AND angle_checked IS NULL AND used = 0
+              AND pub_date >= ?
         ORDER BY relevance_score DESC
         LIMIT ?
-    """, (n,)).fetchall()
+    """, (cutoff, n)).fetchall()
     extracted = 0
     today = datetime.now().strftime("%Y-%m-%d")
     for seed_id, url, title, summary in rows:
