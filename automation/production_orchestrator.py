@@ -4491,8 +4491,21 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         fable_brief = self._fable_editorial_brief(_ns_title, _ns_summary, _ns_dangle, agent_name)
         if fable_brief:
             if fable_brief["persona"] != agent_name:
-                self.logger.info("Fable brief overrides persona: %s → %s", agent_name, fable_brief["persona"])
-                agent_name = fable_brief["persona"]
+                # Route Fable's preference back through _balance_agent instead of
+                # accepting it unconditionally — previously this silently defeated the
+                # 3-day/4-day rotation limits _balance_agent had just applied. Confirmed
+                # via article_beats: 60-day totals Zen Circuit 14, Pixel Nova 9, Siri
+                # Sage 7, Maya Flux 4 (12%), including two clean three-in-a-row runs
+                # where Fable put back an agent _balance_agent had just blocked.
+                _fable_balanced = self._balance_agent(fable_brief["persona"])
+                if _fable_balanced != fable_brief["persona"]:
+                    self.logger.info(
+                        "Fable brief wanted %s but rotation blocked it — using %s instead",
+                        fable_brief["persona"], _fable_balanced
+                    )
+                else:
+                    self.logger.info("Fable brief overrides persona: %s → %s", agent_name, fable_brief["persona"])
+                agent_name = _fable_balanced
                 agent_info = self.agents[agent_name]
             _fable_register       = fable_brief["register"]
             _fable_seed           = fable_brief["seed_sentence"]
