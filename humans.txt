@@ -52,3 +52,26 @@
         and generation prompts). Bluesky retry fix: UnboundLocalError on auth
         timeout. HTTPS enforcement enabled. PIPELINE.md excluded from build.
 
+  v3.0  Aperture      2026-06-13
+        Pixel Nova's persona rebuilt around sign language as a full art form,
+        not an access accommodation: poetry (Lentz, Valli, Conley), ASL as a
+        literary tradition, a computational puzzle, and political territory,
+        held at once. Performing-arts feeds added. New era: the collective
+        stops narrating disability and starts narrating disabled art forms
+        on their own terms.
+
+  v3.1  Aperture      2026-08-07
+        Editorial-review architecture change: Fable now implements its own
+        editorial notes directly instead of handing them to Opus to
+        interpret — the model that made the judgment executes the fix.
+        Added a WHOLENESS check (throughline, setup/payoff, abandoned
+        threads, tonal drift) to catch defects no local rule can see.
+        Fixed two token-budget truncation bugs that were silently killing
+        the new checks before they ever ran. Closed a real gap: the
+        generation prompt pushed hard for a real quote from a named person
+        with no safeguard against inventing one when it didn't have a real
+        one — confirmed live when two of three test drafts fabricated a
+        quote or an event detail. Extended the personification ban beyond
+        buildings and documents to physical materials, after two separate
+        drafts gave a fold and a stretch of ground human intent and memory.
+
