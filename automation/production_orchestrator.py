@@ -3021,6 +3021,51 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         return [s.strip() for s in sentences if re.search(r"\bargument[s]?\b", s, re.IGNORECASE)]
 
     @staticmethod
+    def _check_sentence_length_distribution(content):
+        """Deterministic check for suspiciously uniform sentence-length rhythm — a
+        different axis from every other check here (pattern-matching vs. distribution-
+        matching). Real baseline measured 2026-08-07 against 919 sentences across three
+        full Bregman books (Het water komt, De geschiedenis van de vooruitgang, Gratis
+        geld voor iedereen): mean 16.6 words, stdev 12.6, with roughly a quarter of all
+        sentences at 8 words or fewer and under 4% over 45 words. Every real sample
+        checked showed real variance — no real Bregman text was flat. This flags the
+        opposite failure: a draft where every sentence runs roughly the same length,
+        which reads as monotone regardless of what any individual sentence says.
+        Small-sample noise means thresholds here are deliberately loose — only flags
+        genuinely flat rhythm, not minor deviation from the aggregate. Returns a list
+        of violation strings (empty if none)."""
+        text = re.sub(r'^---.*?---', '', content, flags=re.DOTALL)
+        text = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', text)
+        text = re.sub(r'<[^>]+>', '', text)
+        sentences = [s for s in re.split(r'(?<=[.!?])\s+', text.strip()) if len(s.strip()) > 3]
+        lengths = [len(re.findall(r"[A-Za-z']+", s)) for s in sentences]
+        lengths = [l for l in lengths if l >= 2]
+        if len(lengths) < 8:
+            return []  # too few sentences for distribution stats to mean anything
+        n = len(lengths)
+        mean = sum(lengths) / n
+        variance = sum((l - mean) ** 2 for l in lengths) / n
+        stdev = variance ** 0.5
+        short_pct = sum(1 for l in lengths if l <= 8) / n
+        violations = []
+        if stdev < 5:
+            violations.append(
+                f"sentence-length stdev is {stdev:.1f} across {n} sentences (real Bregman "
+                f"baseline: ~12.6) — sentences are running suspiciously uniform in length"
+            )
+        if short_pct == 0 and n >= 15:
+            violations.append(
+                f"zero sentences at 8 words or fewer across {n} sentences (real baseline: "
+                f"~24%) — no short punch sentences anywhere in the piece"
+            )
+        if mean > 26:
+            violations.append(
+                f"average sentence length is {mean:.1f} words (real Bregman texts measured "
+                f"14.1-19.2) — sentences are running long throughout"
+            )
+        return violations
+
+    @staticmethod
     def _parse_rule_verdicts(raw):
         """Last verdict per rule id wins. The rule-checker model (Sonnet 4.6) sometimes
         emits reasoning inside a [FAIL] line and then reverses itself on the next line
@@ -3100,9 +3145,16 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "(a) METAPHOR FOR MECHANISM — a figurative image standing in for a plain mechanical "
             "fact ('it grabs the eye before the brain gets a vote', 'the same banner turns into "
             "a magnet for the eye') — state the mechanism directly instead; "
-            "(b) MIRRORED/CLEFT SENTENCE — 'X is what... Y is what...', 'one wants X, the other "
-            "wants Y', 'the size rule that helps me read the ad is the same size rule that sells "
-            "the ad' — a symmetrical rhetorical construction built for effect; "
+            "(b) MIRRORED/CLEFT SENTENCE — a symmetrical construction built for cleverness rather "
+            "than genuine correction: 'X is what... Y is what...', 'one wants X, the other wants "
+            "Y', or the SAME grammatical frame reused identically for two different subjects in a "
+            "row ('the size rule that helps me read the ad is the same size rule that sells the "
+            "ad'). Do NOT flag a genuine 'not X, but Y' correction that replaces a real "
+            "misconception with the actual explanation once — that is the REDEFINE technique "
+            "(protected elsewhere: 'not X, but Y', 'the problem is not X, it is Y'), and real "
+            "Bregman prose uses it plainly. Only flag when the mirrored template repeats within "
+            "one piece, or when both halves are built for symmetry rather than to state a "
+            "correction; "
             "(c) APHORISTIC OR IRONIC CLOSER — a paragraph or piece ending on a crafted twist or "
             "epigram ('that's the trap: the fix for exclusion and the tool for manipulation "
             "turned out to be the same X') rather than a plain fact, a quote, or a concrete "
@@ -3160,6 +3212,10 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 for h in argument_hits
             )
 
+        length_dist_hits = self._check_sentence_length_distribution(content)
+        if length_dist_hits:
+            violations.extend(f'[FAIL] RSD — {h}' for h in length_dist_hits)
+
         rule_fail = len(violations) >= 3
 
         # Trigger 3: article_type compliance (word cap/floor + portrait subject rule).
@@ -3188,7 +3244,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         # pass instead of a per-quote patch; mechanical-only violations (jargon, passive
         # voice, nominalization — genuinely isolated, patchable spots) keep the narrow
         # surgical fix unchanged.
-        register_prefixes = ("R14", "R15", "RBC", "RAW")
+        register_prefixes = ("R14", "R15", "RBC", "RAW", "RSD")
         register_violations = [v for v in violations if any(f"] {p}" in v or f"]  {p}" in v for p in register_prefixes)]
         mechanical_violations = [v for v in violations if v not in register_violations]
         register_rewrite_needed = bool(register_violations)
@@ -3737,9 +3793,15 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "(a) METAPHOR FOR MECHANISM — a figurative image standing in for a plain mechanical "
             "fact ('it grabs the eye before the brain gets a vote') — state the mechanism "
             "directly instead; "
-            "(b) MIRRORED/CLEFT SENTENCE — 'X is what... Y is what...', 'one wants X, the other "
-            "wants Y', 'the rule that helps me is the same rule that sells the ad' — a "
-            "symmetrical construction built for effect; "
+            "(b) MIRRORED/CLEFT SENTENCE — a symmetrical construction built for cleverness rather "
+            "than genuine correction: 'X is what... Y is what...', 'one wants X, the other wants "
+            "Y', or the SAME grammatical frame reused identically for two different subjects in a "
+            "row ('the rule that helps me is the same rule that sells the ad'). Do NOT flag a "
+            "genuine 'not X, but Y' correction that replaces a real misconception with the actual "
+            "explanation once — that is the REDEFINE technique (protected elsewhere), and real "
+            "Bregman prose uses it plainly. Only flag when the mirrored template repeats within "
+            "one piece, or when both halves are built for symmetry rather than to state a "
+            "correction; "
             "(c) APHORISTIC OR IRONIC CLOSER — a paragraph ending on a crafted twist or epigram "
             "rather than a plain fact, a quote, or a concrete narrative beat; "
             "(d) SUSTAINED WORDPLAY — punning or reusing one word for cleverness across "
@@ -3789,6 +3851,12 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         argument_hits = self._check_argument_word_overuse(content)
         for h in argument_hits:
             line = f'[FAIL] RAW — self-referential "argument": "{h[:100]}"'
+            rules_fails.append(line)
+            rules_text = (rules_text or "") + ("\n" if rules_text else "") + line
+
+        length_dist_hits = self._check_sentence_length_distribution(content)
+        for h in length_dist_hits:
+            line = f'[FAIL] RSD — {h}'
             rules_fails.append(line)
             rules_text = (rules_text or "") + ("\n" if rules_text else "") + line
 
@@ -5052,7 +5120,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "- LANDING: End accumulations with a concrete image or a plain-stated paradox, not an abstract reframing. The specific thing that carries the weight — one image, one fact. No metaphor that requires reconstruction.\n"
             "- NO INLINE PARENTHETICAL DEFINITIONS. Never explain a term mid-sentence with em-dashes or parentheses — and this also covers 'X, meaning Y' or 'X, which means Y' comma-constructions ('The organising logic is sectional, meaning the design is built on how the building reads when you slice through it vertically' is the same violation wearing a comma instead of a dash). If the term needs unpacking, give it its own sentence. If it doesn't, trust the reader.\n"
             "- NO DECODING REQUIRED. If a sentence needs the reader to stop and work out what it means, rewrite it. Three patterns to cut: (1) buried qualifiers — 'the thought being that X' → state X directly; (2) metaphors that need unpacking before they mean anything — break them into what they actually say; (3) abstract compression — 'something they have no box for' → 'something they cannot name'. Test: read the sentence aloud. If you pause to process it, the reader will too.\n"
-            "- CRAFTED RHETORIC — BANNED. Checked directly against real Bregman prose: he essentially never reaches for these six moves, even when everything else about a sentence is plain. (1) METAPHOR FOR MECHANISM — a figurative image standing in for a plain fact ('it grabs the eye before the brain gets a vote') — state the mechanism directly: what does it actually do. (2) MIRRORED/CLEFT SENTENCE — 'X is what... Y is what...', 'one wants X, the other wants Y' — a symmetrical construction built for effect. State the two facts separately instead. (3) APHORISTIC OR IRONIC CLOSER — ending a paragraph on a crafted twist or epigram. End on a plain fact, a real quote, or a concrete narrative beat instead. (4) SUSTAINED WORDPLAY — reusing one word for cleverness across consecutive sentences. Use a different, plainer word the second time. (5) NAMED ABSTRACT FRAMEWORK AS AGENT — treating a coined category or discipline as if it acts ('persuasion design wants...'). Name the concrete object instead — the banner, the leaflet, the shop, the person. (6) INANIMATE OBJECT AS DELIBERATE AGENT — giving a building, a drawing, a render, a document deliberate intent it cannot have ('a building has decided that its meaning is...', 'the drawings were dismantling my argument'). Buildings don't decide anything and drawings don't dismantle anything — say who did: the architect decided, I concluded from the drawings. If a draft sentence resolves through symmetry, a twist, a pun, or handing intent to a thing, rewrite it flat.\n"
+            "- CRAFTED RHETORIC — BANNED. Checked directly against real Bregman prose: he essentially never reaches for these six moves, even when everything else about a sentence is plain. (1) METAPHOR FOR MECHANISM — a figurative image standing in for a plain fact ('it grabs the eye before the brain gets a vote') — state the mechanism directly: what does it actually do. (2) MIRRORED/CLEFT SENTENCE — a symmetrical construction built for cleverness rather than genuine correction: 'X is what... Y is what...', 'one wants X, the other wants Y', or the same grammatical frame reused identically for two different subjects in a row. Do NOT flag a genuine 'not X, but Y' correction that replaces a real misconception with the actual explanation once — that is the REDEFINE technique, protected elsewhere in this brief, and real Bregman prose uses it plainly ('the problem is not X, it is Y'). Only flag when the mirrored template repeats within one piece, or when both halves are built for symmetry rather than to state a correction. (3) APHORISTIC OR IRONIC CLOSER — ending a paragraph on a crafted twist or epigram. End on a plain fact, a real quote, or a concrete narrative beat instead. (4) SUSTAINED WORDPLAY — reusing one word for cleverness across consecutive sentences. Use a different, plainer word the second time. (5) NAMED ABSTRACT FRAMEWORK AS AGENT — treating a coined category or discipline as if it acts ('persuasion design wants...'). Name the concrete object instead — the banner, the leaflet, the shop, the person. (6) INANIMATE OBJECT AS DELIBERATE AGENT — giving a building, a drawing, a render, a document deliberate intent it cannot have ('a building has decided that its meaning is...', 'the drawings were dismantling my argument'). Buildings don't decide anything and drawings don't dismantle anything — say who did: the architect decided, I concluded from the drawings. If a draft sentence resolves through symmetry, a twist, a pun, or handing intent to a thing, rewrite it flat.\n"
             "- REPLACE THE METAPHOR URGE WITH ACCUMULATION. The moment you feel the pull to explain a mechanism through an image, don't suppress it into a flatter version of the same image — reach for one more concrete fact or number instead and let it sit next to the others as its own short sentence. Bregman explains a claim by piling up three or four short factual sentences in a row (a date, a percentage, a named study, a named person), not by reaching for a figure of speech.\n"
             "- RHETORICAL QUESTIONS — TWO REAL PATTERNS, VARY THEM. A direct question to the reader can resolve either way, and real usage does both: (1) a blunt one-word verdict on its own line before you explain anything — 'Should we give up? No.' — or (2) carried straight into continued exposition with no pause — 'Why did nobody listen? The obvious explanation is incompetence. The more interesting explanation is —'. Don't default to the one-word form every time; use it for a gut-punch moment, use continued exposition when the question is opening an explanation rather than landing a verdict. Never pad or soften the question itself either way.\n"
             "- A PLAIN LIST CAN REPEAT VERBATIM AS A REFRAIN. If you state a short list of concrete traits or facts early in a piece, you may repeat that exact same list, word for word, later on as a callback — this is a real Bregman device (a flat repeated refrain), and it is not the same violation as wordplay or a mirrored sentence, because nothing changes or twists between the two instances. A refrain repeats; a pun mutates a word for cleverness.\n"
@@ -5061,6 +5129,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "- DISCOVERY VOICE: Make research feel found, not reported. Use the rhythm of live realisation: 'even more interesting is that...', 'it turns out...', 'what nobody mentions is...', 'I could not believe this when I read it.' This is not hedging — it is the opposite. A confident guide saying: here, look at this. The reader leans in because you lean in first. Academic hedging says 'the data suggest'; discovery voice says 'turns out.'\n"
             "- SIGNPOST PHRASES AT TRANSITIONS: Complex arguments need visible joints between sections — ordinary spoken phrases, not academic connectives. Draw from (or invent in the same register): 'Start with the obvious question.', 'There is another problem.', 'Now comes the strange part.', 'But history complicates this.', 'So what changed?', 'There is one fact we haven't discussed yet.' These make a piece feel spoken, not bureaucratic. Use at section-level transitions, not every paragraph.\n"
             "- MICROSCOPE AND TELESCOPE: Move deliberately between scale levels rather than staying at one altitude. Start close — one person, one moment, one place — then pull back to the pattern, the institution, the wider principle, then return to something close again. A paragraph that states 'one engineer was ignored' should be followed by a wider question ('why do institutions repeatedly ignore warnings until catastrophe forces action') rather than staying fixed on the one engineer or leaping straight to abstraction with nothing concrete to return to.\n"
+            "- END-WEIGHT: Put the strongest or newest piece of information at the end of the sentence, not the start. 'An extraordinary change occurred in 1953' buries the point; 'In 1953, everything changed' lands it. When a sentence contains one fact worth remembering, structure it so that fact is the last thing the reader reads, not the first.\n"
             "- OPENING — NO FIXED SHAPE: There is no house opening, and the placed-body-in-a-named-room-in-present-tense move is now overused; do not reach for it by reflex. Any of these is valid, whichever this piece earns: a plain expository claim the essay will spend its length paying off; a cold scene already in progress; a bare dated fact stated and left alone; a question, rarely; or a plain statement of what you set out to find out. A flat claim that commits ('For centuries western culture has been permeated by the idea that humans are selfish creatures') is often stronger than a scene, because the rest of the piece then has to earn it. What is banned in every variant: throat-clearing, context-setting, 'X has long been a problem', a definition, and a framework named before anything concrete has happened. Every word in the first paragraph must be working.\n"
             "- NO INVENTED STATISTICS. Never write a number, percentage, or study finding not present in the source material. Fake data is worse than no data. Use qualitative language: 'significantly more', 'consistently longer', 'dramatically worse'. Real specificity comes from named sources, observed scenes, and concrete details not invented figures.\n"
             "- TRANSLATE LARGE NUMBERS TO HUMAN SCALE. A real large number lands as nothing until it's compared to something the reader can picture. '€140 billion' means little on its own; 'roughly a fifth of the country's annual output' or 'five times what the last big infrastructure project cost' does the work. Before using any large real figure, ask: compared with what? If you can't find a real comparison in the source material, state the bare number plainly rather than inventing a comparison.\n"
