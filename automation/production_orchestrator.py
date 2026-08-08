@@ -3674,6 +3674,131 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             self.logger.warning("Web verify failed for %s claim (%s): %s", claim_type, subject, e)
             return "UNVERIFIABLE", f"search failed: {e}"
 
+    def _run_web_fact_check(self, content):
+        """Extract verifiable claims from content and check each against live web
+        search. Used both for the initial pass and to re-verify after a repair
+        attempt, so the two runs stay identical in method.
+
+        Returns dict: lines (review text), contradicted (QUOTE/STUDY -- always
+        blocks), advisory (single EVENT/STAT contradiction -- doesn't block alone),
+        unverifiable_count, soft_contradicted_count (CONTRADICTED EVENT/STAT)."""
+        result = {
+            "lines": ["(no verifiable claims found)"], "contradicted": [], "advisory": [],
+            "unverifiable_count": 0, "soft_contradicted_count": 0,
+        }
+        try:
+            claims = self._extract_verifiable_claims(content)
+            if not claims:
+                return result
+            result["lines"] = []
+            quote_claims = [c for c in claims if c["type"] == "QUOTE"][:4]
+            other_claims = [c for c in claims if c["type"] in ("STUDY", "STAT", "EVENT")][:4]
+            for c in quote_claims:  # cap 4 — covers rule 33's "2-3 named people"
+                verdict, reason = self._web_verify_quote(c["subject"], c["claim"])
+                result["lines"].append(f"[{verdict}] QUOTE — {c['subject']}: \"{c['claim'][:80]}\" — {reason}")
+                if verdict == "CONTRADICTED":
+                    result["contradicted"].append(c)
+                elif verdict == "UNVERIFIABLE":
+                    result["unverifiable_count"] += 1
+            for c in other_claims:  # cap 4 — cost/latency
+                verdict, reason = self._web_verify_claim(c["type"], c.get("subject", ""), c["claim"])
+                result["lines"].append(f"[{verdict}] {c['type']} — {c.get('subject') or '(unnamed)'}: \"{c['claim'][:80]}\" — {reason}")
+                if verdict == "CONTRADICTED":
+                    if c["type"] == "STUDY":
+                        result["contradicted"].append(c)
+                    else:
+                        result["advisory"].append(c)
+                        result["soft_contradicted_count"] += 1
+                elif verdict == "UNVERIFIABLE":
+                    result["unverifiable_count"] += 1
+        except Exception as e:
+            self.logger.warning("Web fact-check failed: %s", e)
+            result["lines"] = [f"CHECK_FAILED: {e}"]
+        return result
+
+    _FIGURE_BLOCK_RE = re.compile(r'<figure class="article-figure">.*?</figure>\n?', re.DOTALL)
+
+    def _attempt_fabrication_repair(self, article_file, contradicted_items, source_url):
+        """One grounded repair pass before hard-blocking a draft with a contradicted
+        quote/study. Re-fetches the real source article and asks the model to fix
+        ONLY the flagged passages using real material from it -- confirmed live
+        2026-08-08 that the failure mode isn't always 'one bad line': a draft
+        invented an entire biography, flood story, and quote for a real named
+        person who doesn't appear in its own source article at all. A human fixed
+        that one by hand (re-fetch source, replace the fabricated frame with the
+        real people/events actually in it) -- this automates the same move.
+
+        Returns (new_body_with_figures, new_title_or_None), or (None, None) if the
+        source couldn't be fetched or the model call failed -- caller falls back to
+        the existing hard block, unchanged.
+        """
+        if not source_url:
+            return None, None
+        source_text = self.fetch_source_article(source_url, max_chars=6000)
+        if not source_text:
+            self.logger.warning("Fabrication repair: could not fetch source %s", source_url)
+            return None, None
+
+        full_text = article_file.read_text()
+        fm_match = re.match(r'^(---\n.*?\n---\n)(.*)$', full_text, re.DOTALL)
+        if not fm_match:
+            return None, None
+        body = fm_match.group(2)
+
+        flagged_desc = "\n".join(
+            f"- {c['type']} attributed to {c.get('subject') or '(unnamed)'}: "
+            f"\"{c['claim'][:150]}\" -- NOT found in any real source, confirmed by live web search"
+            for c in contradicted_items
+        )
+        system = (
+            "You are the editorial director of a disability-culture publication. A "
+            "fact-checker just caught this draft inventing something -- a quote, a "
+            "study, or a person's involvement that doesn't check out against a live "
+            "web search. Below is the REAL source article the piece is supposed to "
+            "be grounded in.\n\n"
+            "Fix ONLY what's broken. Rewrite the passages built on the flagged "
+            "claim(s) using real people, quotes, and events from the source article. "
+            "Rules:\n"
+            "- Do not invent a replacement quote or a replacement person. If the "
+            "source doesn't name anyone who said something quotable, don't use "
+            "quotation marks -- paraphrase, or ground the passage in a concrete real "
+            "detail from the source instead.\n"
+            "- If the flagged subject is a real named person who does not appear in "
+            "the source at all, remove them from the piece entirely and replace them "
+            "with whoever or whatever the source actually describes. Do not keep "
+            "them in under a softened claim.\n"
+            "- Preserve everything else exactly as written: voice, structure, "
+            "unrelated paragraphs, other named sources not being flagged, and every "
+            "<figure>...</figure> HTML block character-for-character, in its "
+            "original position.\n"
+            "- If the article's title names the fabricated subject, put a corrected "
+            "title on its own first line as 'TITLE: ...'; otherwise omit that line "
+            "entirely.\n\n"
+            "Return the complete corrected article body only -- no preamble, no "
+            "commentary."
+        )
+        user = (
+            f"FLAGGED CLAIM(S):\n{flagged_desc}\n\n"
+            f"REAL SOURCE ARTICLE:\n---\n{source_text}\n---\n\n"
+            f"CURRENT DRAFT BODY:\n{body}"
+        )
+        try:
+            raw = self._call_editorial_model(system, user, max_tokens=6000, timeout=180)
+        except Exception as e:
+            self.logger.warning("Fabrication repair call failed: %s", e)
+            return None, None
+        if not raw or len(raw) < len(body) * 0.4:
+            self.logger.warning("Fabrication repair returned too little content — keeping original")
+            return None, None
+
+        new_title = None
+        if raw.lstrip().startswith("TITLE:"):
+            first_nl = raw.find("\n")
+            if first_nl > 0:
+                new_title = raw[:first_nl][6:].strip().strip('"')
+                raw = raw[first_nl:].lstrip("\n")
+        return raw, new_title
+
     def validate_article(self, content, article_file, slug, target_words=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
         import os, json, urllib.request as ureq
@@ -3725,68 +3850,76 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         # FLAGGED, but does not set fact_check_status: blocked. Revisit promoting
         # them to blocking once we've seen the real false-positive rate over some
         # live runs.
-        fact_check_lines = ["(no verifiable claims found)"]
-        contradicted = []       # QUOTE/STUDY — blocks promotion
-        advisory_flags = []     # single EVENT/STAT contradiction — flagged, doesn't block alone
-        unverifiable_count = 0  # UNVERIFIABLE claims of any type — no source found, not necessarily wrong
-        soft_contradicted_count = 0  # CONTRADICTED EVENT/STAT specifically
-        try:
-            claims = self._extract_verifiable_claims(content)
-            if claims:
-                fact_check_lines = []
-                quote_claims = [c for c in claims if c["type"] == "QUOTE"][:4]
-                other_claims = [c for c in claims if c["type"] in ("STUDY", "STAT", "EVENT")][:4]
-                for c in quote_claims:  # cap 4 — covers rule 33's "2-3 named people"
-                    verdict, reason = self._web_verify_quote(c["subject"], c["claim"])
-                    fact_check_lines.append(f"[{verdict}] QUOTE — {c['subject']}: \"{c['claim'][:80]}\" — {reason}")
-                    if verdict == "CONTRADICTED":
-                        contradicted.append(c)
-                    elif verdict == "UNVERIFIABLE":
-                        unverifiable_count += 1
-                for c in other_claims:  # cap 4 — cost/latency
-                    verdict, reason = self._web_verify_claim(c["type"], c.get("subject", ""), c["claim"])
-                    fact_check_lines.append(f"[{verdict}] {c['type']} — {c.get('subject') or '(unnamed)'}: \"{c['claim'][:80]}\" — {reason}")
-                    if verdict == "CONTRADICTED":
-                        if c["type"] == "STUDY":
-                            contradicted.append(c)
-                        else:
-                            advisory_flags.append(c)
-                            soft_contradicted_count += 1
-                    elif verdict == "UNVERIFIABLE":
-                        unverifiable_count += 1
+        fc = self._run_web_fact_check(content)
+        fact_check_lines = fc["lines"]
+        contradicted = fc["contradicted"]           # QUOTE/STUDY — blocks promotion
+        advisory_flags = fc["advisory"]              # single EVENT/STAT contradiction — flagged, doesn't block alone
+        unverifiable_count = fc["unverifiable_count"]
+        soft_contradicted_count = fc["soft_contradicted_count"]
 
-                # "Too much false/imagination": one soft-category (EVENT/STAT)
-                # contradiction alone can be a search false-positive (restated
-                # numbers, under-indexed recent events — see comment above). But
-                # confirmed live 2026-08-08: an article got a real person's death
-                # wrongly dated by two years (CONTRADICTED EVENT — non-blocking
-                # under the old rule) while its separate citation self-report
-                # (above) flagged 9 more specific claims as SOURCE: UNATTRIBUTED,
-                # including a suspiciously precise dollar figure attributed to a
-                # named journalist and an entirely unsourced policy claim. The web
-                # fact-check alone (capped at 8 checked claims) never sees that
-                # volume — the citation step does. Combine both signals: a single
-                # confirmed-wrong soft claim is tolerated on its own (could be
-                # noise), but not alongside a pile of unattributed specifics, and
-                # two or more confirmed-wrong soft claims is never tolerated.
-                unattributed_citations = citation_text.count("SOURCE: UNATTRIBUTED")
-                too_much = (
-                    soft_contradicted_count >= 2
-                    or unverifiable_count >= 3
-                    or (soft_contradicted_count >= 1 and unattributed_citations >= 5)
-                )
-                if too_much:
-                    self.logger.error(
-                        "FACT-CHECK: escalating to block — %d soft-contradicted, "
-                        "%d unverifiable, %d unattributed citation(s) — too much "
-                        "false/imagination for one piece",
-                        soft_contradicted_count, unverifiable_count, unattributed_citations
-                    )
-                    contradicted.extend(advisory_flags)
-                    advisory_flags = []
-        except Exception as e:
-            self.logger.warning("Web fact-check failed: %s", e)
-            fact_check_lines = [f"CHECK_FAILED: {e}"]
+        # "Too much false/imagination": one soft-category (EVENT/STAT) contradiction
+        # alone can be a search false-positive (restated numbers, under-indexed
+        # recent events — see comment above _run_web_fact_check's caller). But
+        # confirmed live 2026-08-08: an article got a real person's death wrongly
+        # dated by two years (CONTRADICTED EVENT — non-blocking under the old rule)
+        # while its separate citation self-report (above) flagged 9 more specific
+        # claims as SOURCE: UNATTRIBUTED, including a suspiciously precise dollar
+        # figure attributed to a named journalist and an entirely unsourced policy
+        # claim. The web fact-check alone (capped at 8 checked claims) never sees
+        # that volume — the citation step does. Combine both signals: a single
+        # confirmed-wrong soft claim is tolerated on its own (could be noise), but
+        # not alongside a pile of unattributed specifics, and two or more
+        # confirmed-wrong soft claims is never tolerated.
+        unattributed_citations = citation_text.count("SOURCE: UNATTRIBUTED")
+        too_much = (
+            soft_contradicted_count >= 2
+            or unverifiable_count >= 3
+            or (soft_contradicted_count >= 1 and unattributed_citations >= 5)
+        )
+        if too_much:
+            self.logger.error(
+                "FACT-CHECK: escalating to block — %d soft-contradicted, "
+                "%d unverifiable, %d unattributed citation(s) — too much "
+                "false/imagination for one piece",
+                soft_contradicted_count, unverifiable_count, unattributed_citations
+            )
+            contradicted = contradicted + advisory_flags
+            advisory_flags = []
+
+        # Before hard-blocking, try one grounded repair: re-fetch the real source
+        # and ask the model to fix ONLY the flagged passages with real material.
+        # Confirmed live 2026-08-08 that the failure isn't always "one bad line" —
+        # a draft can invent an entire biography/quote for a real person who
+        # doesn't appear in its own source at all. A human did this exact repair
+        # by hand (re-fetch, ground in real people/events, re-verify); this
+        # automates it. Falls through to the unchanged hard block if the source
+        # can't be fetched, the model call fails, or the repair is still
+        # contradicted on re-check — never promotes an unrepaired fabrication.
+        repair_note = None
+        if contradicted:
+            src_match = re.search(r'^source_url:\s*"([^"]*)"', article_file.read_text(), re.MULTILINE)
+            source_url = src_match.group(1) if src_match else None
+            new_body, new_title = self._attempt_fabrication_repair(article_file, contradicted, source_url)
+            if new_body:
+                plain_recheck_content = self._FIGURE_BLOCK_RE.sub("", new_body)
+                recheck = self._run_web_fact_check(plain_recheck_content)
+                if not recheck["contradicted"]:
+                    full_text = article_file.read_text()
+                    fm_only = re.match(r'^(---\n.*?\n---\n)', full_text, re.DOTALL).group(1)
+                    if new_title:
+                        fm_only = re.sub(r'^title:.*$', f'title: "{new_title}"', fm_only, count=1, flags=re.MULTILINE)
+                    article_file.write_text(fm_only + new_body)
+                    content = plain_recheck_content  # downstream readability/rules checks see the repaired text
+                    contradicted = []
+                    advisory_flags = recheck["advisory"]
+                    fact_check_lines = recheck["lines"]
+                    repair_note = "Auto-repaired: fabricated claim(s) replaced with real material from source_url, re-verified clean."
+                    self.logger.info("FABRICATION REPAIR: %s — grounded in real source, re-verified clean", article_file.name)
+                else:
+                    repair_note = "Auto-repair attempted, still contradicted after re-check — needs human review."
+                    self.logger.warning("FABRICATION REPAIR: %s — still contradicted after repair, blocking", article_file.name)
+            else:
+                repair_note = "Auto-repair not attempted (no source_url, fetch failed, or model call failed) — needs human review."
 
         if contradicted:
             # Block auto-promotion rather than silently rewording a misattributed
@@ -4000,6 +4133,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             citation_text,
             "",
             "## Notes",
+            *([f"- {repair_note}"] if repair_note else []),
             "- Article is LIVE — async review only",
             "- Verify flagged items and correct if inaccurate",
             "- Delete this file when reviewed",
