@@ -1,55 +1,49 @@
 ---
 layout: post
-title: "Swan Care Is Appealing. The Appeal Is the Mechanism."
+title: "Winning the Case Does Not Turn Off the Clock"
 date: 2026-06-19
 author: "Maya Flux"
 category: urban design
-excerpt: "A migrant care worker won £28,048 at tribunal. His employer is appealing. The appeal is not a correction mechanism. It is an attrition mechanism."
-keywords: [swan care solutions, employment tribunal, health and care visa, sponsored workers, attrition, appeal, migrant care workers]
+excerpt: "A migrant care worker won £28,843.53 at tribunal. It changed nothing about the separate system that can still remove him on a fixed clock. Two systems, one worker, and only one of them checked whether he was right."
+keywords: [swan care solutions, employment tribunal, health and care visa, sponsored workers, visa curtailment, migrant care workers]
 image: /assets/swan-care-is-appealing-the-appeal-is-the-mechanism_setting_1.jpg
-image_alt: "Swan Care Is Appealing. The Appeal Is the Mechanism. — screen-print protest poster illustration"
+image_alt: "Winning the Case Does Not Turn Off the Clock — screen-print protest poster illustration"
 ---
 
-Here is the fact. Shabin Shaji won. An employment tribunal found that [Swan Care Solutions Ltd had unlawfully deducted his wages, victimised him, and dismissed him unfairly](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/). He was recruited from India on a health and care visa, paid £5 an hour against a £10.42 minimum, with accommodation costs carved out of his pay. The tribunal believed him on every count. The award was £28,048.
+Here is the fact. Shabin Shaji won. An employment tribunal found that [Swan Care Solutions Ltd had unlawfully deducted his wages and failed to provide him a written contract](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/), among other breaches. He was recruited from India on a Health and Care Worker visa, sponsored for forty hours a week, and given zero. The tribunal believed him on every count. The award was £28,843.53, plus £8,700 in costs.
 
-Swan Care Solutions is appealing.
+I want to sit with what winning actually changed.
 
-That sentence is usually read as a footnote. A loose end. The story is the win; the appeal is procedural noise. I want to read it the other way. The appeal is not noise. The appeal is the part of the machine that does the work the verdict was supposed to undo.
+It changed the balance sheet. It did not change the other system he is standing inside — the one that decides whether he is allowed to remain in the country at all, and that system does not read tribunal judgments. It reads sponsor licences.
 
 ---
 
-An appeal looks like a second chance at justice. In the brochure, it corrects errors. A bad ruling gets reviewed; a good one survives. That is the function it advertises.
+Here is the mechanism, and it is more ordinary than a conspiracy, which is what makes it durable. When the Home Office revokes a company's sponsor licence — and it revoked Swan Care Solutions' licence in 2024, for exactly the pattern that put Shabin Shaji in front of a tribunal — it does not compensate the workers that company sponsored. It curtails their visas. A sponsored worker whose employer loses its licence is typically given sixty days, or however much time remains on the visa if that is shorter, to find a new sponsor or leave the country. Sixty days is not a metaphor. It is a number written into Home Office guidance, applied the same way to a worker who was defrauded as to one whose employer failed an audit for unrelated reasons. The system that revokes the licence is not adjudicating who was wronged. It is checking a box: is there currently a valid sponsor on file. When the answer becomes no, the clock starts, and the clock does not know or care that a tribunal, running on an entirely separate track, has already ruled that this specific employer defrauded this specific worker.
 
-The function it performs is different, and it depends entirely on who is appealing whom.
-
-Consider what each party brings to the next year. Swan Care brings a balance sheet, a legal team it already retains, and time it can spend without bleeding. An appeal is a line item for a company. It is a cost that can be budgeted, deferred, absorbed. The company does not stop existing while the appeal runs. It keeps recruiting. It keeps invoicing. The £28,048 sits unpaid, and the unpaid sum is itself a form of leverage — a number that can be discounted in a settlement the longer it goes uncollected.
-
-Now consider what Shabin Shaji brings. A judgment in his favour. And a visa that ties his right to remain to a sponsoring employer. He cannot freely change jobs without risking his status. He cannot wait years the way a company can, because waiting, for him, is not a budget line. It is rent, immigration deadlines, and a life held in suspension. The £28,048 he won is real. It is also money he does not yet have, against an opponent who can afford to make him wait for it.
+That is the part I keep returning to. Two systems touched Shabin Shaji's case. One of them — the employment tribunal — spent months examining evidence, weighing testimony, finding that a dismissal letter had been fabricated, and arriving at a verdict of £28,843.53 because he was right. The other — the sponsor licensing system — does not examine anything about him at all. It only ever asks whether the company holding his visa is still in good standing. He can be completely vindicated in one system and still be running out a fixed, indifferent clock in the other, because the two systems were never built to talk to each other.
 
 <figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/swan-care-is-appealing-the-appeal-is-the-mechanism_moment_2.jpg" alt="Swan Care Is Appealing. The Appeal Is the Mechanism. — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>Swan Care Is Appealing. The Appeal Is the Mechanism. — intimate gouache illustration on textured paper</figcaption>
+<img src="{{ site.baseurl }}/assets/swan-care-is-appealing-the-appeal-is-the-mechanism_moment_2.jpg" alt="Winning the Case Does Not Turn Off the Clock — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Winning the Case Does Not Turn Off the Clock — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
-The two parties are not contesting the same thing. He is defending a verdict. They are spending it down.
+The two systems are not contesting the same thing. The tribunal was asked whether he was wronged. The sponsor system only ever asks whether a licence is currently valid. He can win the first question completely and still be answering the second one on a stopwatch.
 
 ---
 
-This is what I mean when I say the appeal is the mechanism. The adversarial employment-law system produces a verdict, and then — in the same motion — hands the losing party a tool to contest that verdict at a price the loser can pay and the winner often cannot. The tool is neutral on paper. In practice it distributes risk to whoever has the least staying power, which is structurally never the employer.
+This is not a rare edge case built for one bad employer. Between mid-2022 and the end of 2024, roughly 39,000 care workers were sponsored by companies that later lost their licences the way Swan Care did — 470 revoked sponsorships, each one starting the same sixty-day clock for everyone still attached to it. Most of those workers did nothing wrong. Some, like Shabin Shaji, were the ones who exposed the wrongdoing in the first place. The clock does not distinguish between them. It runs the same for the worker who blew the whistle and the worker who never noticed anything was wrong, because the clock was never built to notice people at all — only paperwork.
 
-So the tribunal is not the end of the story. It is the most favourable moment in it. It is the single point where the worker holds the better position: a fresh judgment, before attrition begins. Everything after that — appeal, counter-appeal, the settlement offered at sixty cents on the dollar because two more years of this is unsurvivable — moves the advantage back toward the party that was found to have broken the law.
-
-A genuine win becomes a starting position for the next negotiation. The migrant worker negotiates from a sponsored visa and a depleted runway. The company negotiates from a balance sheet and a clock it controls.
+Finding a new sponsor inside sixty days, in the care sector, while a public tribunal record documents that your last employer defrauded you, is its own separate fight, with its own separate rules, running on a track the employment tribunal has no power to touch.
 
 <figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/swan-care-is-appealing-the-appeal-is-the-mechanism_symbol_3.jpg" alt="Swan Care Is Appealing. The Appeal Is the Mechanism. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>Swan Care Is Appealing. The Appeal Is the Mechanism. — abstract linocut symbol</figcaption>
+<img src="{{ site.baseurl }}/assets/swan-care-is-appealing-the-appeal-is-the-mechanism_symbol_3.jpg" alt="Winning the Case Does Not Turn Off the Clock — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Winning the Case Does Not Turn Off the Clock — abstract linocut symbol</figcaption>
 </figure>
 
-I do not think the appeal is being abused here. That is the point I keep arriving at, against my own preference for villains. The appeal is working as designed. The system was built to let a verdict be tested, and it does not ask whether the two sides can afford the testing equally. It assumes they can. They cannot. The inequality is not introduced by anyone's bad faith. It is the resting state of the structure, switched on the moment the gavel falls.
+I do not think anyone designed this on purpose, as a punishment for winning. That is the point I keep arriving at, against my own preference for villains. The two systems were built by different people, for different reasons, at different times, and nobody was ever assigned the job of making sure a person passing between them stays whole. The sponsor-licensing clock does not know a tribunal exists. The tribunal has no jurisdiction over a visa. Each one is coherent on its own terms. The gap between them is where a person actually lives.
 
-Shabin Shaji won. Hold that. It is true and it cost him something to make it true.
+Shabin Shaji won. Hold that. It is true, and it cost him a year of his life to make it true.
 
-And the company that lost now gets to spend years making the win expensive to keep.
+And the system that let his employer do this to him is still, separately, indifferent to whether he gets to stay long enough to enjoy having won.
 
-Not a malfunction. A procedure.
+Not a malfunction. Two procedures, running side by side, that were never asked to agree.
