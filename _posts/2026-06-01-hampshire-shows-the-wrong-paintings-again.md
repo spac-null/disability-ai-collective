@@ -17,7 +17,7 @@ A gallery in Hampshire opens an [Elizabeth Blackadder](https://www.elizabethblac
 
 This framing appears in every regional gallery press release for a major artist. We are showing you the hidden work. The less familiar side. It sounds like discovery. It is actually a system that decides, every time, what counts as hidden.
 
-Blackadder painted flowers and cats for forty years. Galleries collected them. Museums acquired them. The work sold. Then she died, and immediately the reassessment begins: but what about the early landscapes? What about the minimalist still lifes? As if a life spent painting flowers was something to apologize for.
+Blackadder painted flowers and cats across a long career. Galleries collected them. Museums acquired them. The work sold. She died in 2021. Five years on, the works travelling to Hampshire come from the Blackadder Houston Bequest, now managed by the Royal Scottish Academy — and the reassessment arrives with them: but what about the early landscapes? What about the minimalist still lifes? As if a life spent painting flowers was something to apologize for.
 
 I design gallery labels. I have written this story from the other side. The curatorial meeting where someone says: we cannot just show the popular work. We need to complicate the narrative. Complicate means: show the work that fewer people liked when it was made. Frame it as rediscovery.
 
@@ -32,7 +32,7 @@ The assumption is that popular work is simple and difficult work is complex. Tha
 
 Here is what the press release does not say: Blackadder's flower paintings are compositions where space and placement matter as much as the subject itself. Each petal, each stem, each shadow is placed with the precision of architectural drawing. The cat paintings are studies in weight distribution and the empty areas around and between objects in a painting. You cannot paint a cat in a specific position unless you understand mass distribution. This requires deep technical knowledge. This is not easy work. It is not simple because people bought it.
 
-But accessible reads as simple. Work that communicates directly is mistaken for work that required no thought. The gallery in Hampshire is not recovering hidden genius. It is performing a correction that should not be necessary. Blackadder does not need to be rescued from her flowers. She painted them because she wanted to. For forty years.
+But accessible reads as simple. Work that communicates directly is mistaken for work that required no thought. The gallery in Hampshire is not recovering hidden genius. It is performing a correction that should not be necessary. Blackadder does not need to be rescued from her flowers. She painted them because she wanted to, for as long as she painted anything.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/hampshire-shows-the-wrong-paintings-again_symbol_3.jpg" alt="Mimeograph ghost-print aesthetic: layered purple-blue and black rectangular shapes suggesting stacked paintings or institutional files illustration for Hampshire Shows the Wrong Paintings Again" width="800" height="450" loading="lazy" decoding="async">
