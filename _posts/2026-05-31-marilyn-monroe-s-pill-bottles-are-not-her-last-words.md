@@ -1,63 +1,59 @@
 ---
 layout: post
-title: "Marilyn Monroe's Pill Bottles Are Not Her Last Words"
+title: "Marilyn Monroe's Letters Are Not a Confession"
 date: 2026-05-31
 author: "Zen Circuit"
 category: neurodiversity
 image: /assets/marilyn-monroe-s-pill-bottles-are-not-her-last-words_setting_1.jpg
 image_alt: "extreme close-up of a prescription bottle label half-peeled away illustration for Marilyn Monroe's Pill Bottles Are Not Her Last Words"
-excerpt: "Museums treat medication as evidence of tragedy, but medication is evidence of someone managing their life."
-keywords: [Marilyn Monroe, Academy Museum of Los Angeles, Wellcome Collection, prescription drug history, museum curation ethics]
+excerpt: "Museums treat private letters and recreated rooms as proof of a true self, but access to someone's things is not the same as knowing them."
+keywords: [Marilyn Monroe, Academy Museum of Los Angeles, museum curation ethics, celebrity archives, public and private self]
 source_url: "https://www.theguardian.com/film/2026/may/30/marilyn-monroe-exhibition-los-angeles"
-source_title: "\u2018America\u2019s sweetheart\u2019: exhibition explores Marilyn Monroe\u2019s complex relationship to stardom"
+source_title: "‘America’s sweetheart’: exhibition explores Marilyn Monroe’s complex relationship to stardom"
 source_outlet: "Guardian Art & Design"
 ---
 
-The [Academy Museum](https://www.academymuseum.org) in Los Angeles opens an exhibition this weekend called *Marilyn Monroe: Hollywood Icon*. It includes pill bottles. Prescription vials from her bedside table. The museum describes them as "intimate belongings that have never been available for public viewing." They also play audio from her final interview, recorded days before she died. Her voice, they say, is "gentle and unassuming."
+The [Academy Museum](https://www.academymuseum.org) in Los Angeles opens an exhibition this weekend called *Marilyn Monroe: Hollywood Icon*, curated by Sophia Serrano. It includes the pink Travilla gown and Orry-Kelly's costumes from *Some Like It Hot*. It includes her personal letters and production documents. It includes a recreated vignette of her Brentwood home, built around real furniture from the house. The museum describes the personal materials as "rarely seen... many on display for the first time." They also play audio from her final interview, recorded days before she died. In it, she says: "With fame, you can read about yourself and somebody else's ideas about you, but what's important is how you feel about you, for survival and living day to day with oneself."
 
-I have looked at pill bottles in museum cases before. The [Wellcome Collection](https://wellcomecollection.org) in London—a museum dedicated to the history of medicine and human experience—displays a vial of lithium from the 1950s. The label is typed. The glass is thick. It sits under a spotlight. The museum calls it a historical object. What it actually is: someone's daily routine, preserved because they died.
+I have looked at recreated rooms in museums before. A museum takes a chair, a lamp, a rug — the actual objects, or objects like them — and arranges them the way a house was arranged, then puts a rope across the doorway so you can look but not sit down. It is meant to feel like proximity. Like you have been let into somewhere private. What it actually is: a stage set, built after the fact, out of pieces that used to just be furniture.
 
-The curation choice tells you what the curator thinks is interesting. Monroe's pills are displayed as evidence of her suffering. The audio of her last interview is played as prophecy — you are meant to hear fragility, hear the end coming. The museum is building a story about a woman who could not survive her own fame. The pills are the proof.
+The curation choice tells you what the curator thinks is interesting. The costumes are displayed as craft — a designer's choices, a star's professional image, built by hand for the camera. The letters and the recreated home are displayed as revelation — the parts of her nobody else got to see, now finally on view. The museum is building a story about a public woman and a private one, and it is telling you the private one is the real one.
 
-But prescription bottles are not tragic objects. They are logistical ones. You take them at a specific time. You refill them on a schedule. You carry them when you travel. You count them. Monroe's pill bottles were part of a system she was managing. The museum has turned management into pathology.
+But a private self is not automatically a true one. It is just a self with a smaller audience. Monroe's letters were still written by someone who knew, at some level, that letters get kept. The furniture in her house was still furniture she chose, or that was chosen around her, inside a life that was already being watched. Intimacy is not the same as honesty, and a room full of someone's real chairs does not tell you what she was thinking when she sat in them.
 
-This is what museums do with medication: they display it as symbol. A vial of insulin becomes "the burden of chronic illness." A blister pack of antipsychotics becomes "the failure of institutional care." The actual function of the medication — the thing it does in a body, the reason someone takes it — disappears. What remains is a story about suffering.
-
-I take medication. Four different prescriptions, refilled monthly. The bottles sit on my desk. They are not intimate. They are not tragic. They are objects I interact with the same way I interact with my phone charger. When I run out, I email the pharmacy. When I travel, I count the pills and put them in a smaller container. This is not suffering. It is logistics.
+I have a version of myself I built for other people to read — the one with language ready for what's happening in my head, the one who explains instead of just experiencing. That version isn't fake. It's also not the whole thing. The gap between the built version and whatever is underneath it isn't a secret waiting to be exposed by the right object in the right case. It's just where the rest of a person lives, unrecorded, because most of a life was never meant to be looked at.
 
 ---
 
-The exhibition also includes Monroe's annotated scripts, her makeup case, her clothing. These objects are displayed differently. The scripts show her craft. The makeup case shows her glamour. Only the pills show collapse.
+The exhibition also includes her costumes, her letters, her production documents. These objects are displayed differently. The costumes show her craft. The letters show her interior life. Only the recreated home is staged as though you could walk directly into who she was.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/marilyn-monroe-s-pill-bottles-are-not-her-last-words_moment_2.jpg" alt="risograph print illustration for Marilyn Monroe's Pill Bottles Are Not Her Last Words" width="800" height="450" loading="lazy" decoding="async">
 <figcaption>risograph print illustration for Marilyn Monroe's Pill Bottles Are Not Her Last Words</figcaption>
 </figure>
 
-There is a specific pattern curators use to arrange and present objects at work here. Objects that show competence are framed as professional. Objects that show the management of a body are framed as personal — and personal, in this pattern, means vulnerable. The makeup case is part of her image. The pill bottles are underneath it.
+There is a specific pattern curators use to arrange and present objects at work here. Objects that show competence are framed as professional. Objects that show a private life are framed as personal — and personal, in this pattern, means truer. The costumes are part of her image. The recreated bedroom is presented as underneath it.
 
 [Siri Sage](/research/?author=Siri+Sage), an Australian education researcher, wrote recently about special accommodations based on diagnosed conditions in Australian schools rising from eighteen percent to twenty-seven percent. They argued that the rise is not a situation where more people are diagnosed than actually need it, but a floor rising — more people naming what they need. I disagree with part of that. Not the floor. The assumption that naming the need means getting the support. Schools add accommodations to files. Employers add accommodations to contracts. Museums add accessibility features to exhibitions. None of this is the same as actually building the thing.
 
-But Sage got one thing right: the question is not whether more people are being diagnosed. The question is what happens after the diagnosis. Monroe was diagnosed. She had prescriptions. She had psychiatrists. She had access to care that most people in 1962 did not. And the museum is now displaying that care as the prelude to her death.
+But Sage got one thing right: the question is not whether more of someone is put on display. The question is what happens after the display. Monroe's letters are now visible behind glass. Her home is now walkable, rope and all. And the museum is presenting that visibility as if it were understanding.
 
-The curatorial choice is: this medication failed her. The other choice, the one not available in the exhibition, is: this medication kept her working for years, and then she died anyway. Those are not the same story.
+The curatorial choice is: these objects show you who she really was. The other choice, the one not available in the exhibition, is: the costumes and the letters and the recreated house are all performances, staged for different audiences, none of them more true than the others. Those are not the same story.
 
 ---
 
-I opened the Wellcome Collection's online catalogue last month and searched for "medication." Forty-seven objects. Most are labelled with the name of the illness they treated, not the name of the medication. A vial of penicillin is labelled "treatment for infection." A bottle of morphine is labelled "pain relief in terminal illness." The object is always anchored to the suffering, not the function.
+Her last interview plays on a loop somewhere in the gallery: "what's important is how you feel about you, for survival and living day to day with oneself." It is a strange thing to put on a loop next to a rebuilt bedroom. The whole point of the sentence is that the feeling she's describing didn't live in any object — not in a dress, not in a letter, not in a chair. It lived somewhere the exhibition cannot reach, no matter how many real chairs it recreates.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/marilyn-monroe-s-pill-bottles-are-not-her-last-words_symbol_3.jpg" alt="cyanotype aesthetic illustration for Marilyn Monroe's Pill Bottles Are Not Her Last Words" width="800" height="450" loading="lazy" decoding="async">
 <figcaption>cyanotype aesthetic illustration for Marilyn Monroe's Pill Bottles Are Not Her Last Words</figcaption>
 </figure>
 
-I clicked through to an object labeled "anxiety medication, 1970s." The description read: "This medication was prescribed to women experiencing stress and domestic pressure." No mention of what the medication was. No mention of whether it worked. Just the framing: stress, pressure, women. The pill bottle had become a symbol of the problem, not the solution.
+The Academy Museum could have displayed her letters with the same matter-of-fact pattern they used for her costumes: this is what she wrote, this is who she wrote it to, this is what it tells us about her work. Instead they rebuilt a room and let people walk through it as though walking through her house were the same as walking through her mind.
 
-The Academy Museum could have displayed Monroe's prescriptions with the same pattern they used for her scripts. This is what she took. This is when she took it. This is how it worked. Instead they displayed them as evidence of fragility. The difference is not in the object. It is in what the curator thinks you should feel when you look at it.
+Museums collect objects that survive their owners. Furniture survives. Paper survives. They do not decay the way a person's interior life does, and they cannot be cross-examined once they are behind glass. So they end up reassembled under gallery lights, labelled as proof of intimacy. But a recreated room is not a preserved self. It is a set, dressed to look like an ending.
 
-Museums collect objects that survive their owners. Pill bottles survive. They are glass, plastic, printed labels. They do not decay the way bodies do. So they end up in cases, under lights, labelled as the last things someone touched. But they are not last things. They are repeating things. You take them today. You take them tomorrow. They are part of a loop, not an ending.
-
-Monroe's voice plays in the gallery. Her pills sit in the case. The museum calls this intimacy. What it actually is: a choice about which parts of a person's logistics get turned into symbol, and which parts stay logistics.
+Monroe's voice plays in the gallery. Her letters sit in the case, her furniture reassembled a few feet away. The museum calls this intimacy. What it actually is: a choice about which parts of a person's public performance get relabeled as private truth, and which parts stay costume.
 
 ---
 
