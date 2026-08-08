@@ -1,5 +1,4 @@
 ---
-fact_check_status: blocked
 layout: post
 title: "Jebel Irhoud Broke the Single Dot I Was Trusting"
 date: 2026-08-08
@@ -22,7 +21,7 @@ I did not believe this until it happened to me. In 2017 the [Jebel Irhoud papers
 
 I sat with that for a while. I am the kind of person who runs a conversation backward for forty-five minutes looking for the exact frame where it went wrong, so I know what it feels like when an algorithm does not converge. The tree does not converge either. It stops drawing at some point and reports the stopping point as a result.
 
-[Chris Stringer](https://www.nhm.ac.uk/our-science/departments-and-staff/staff-directories/human-origins.html), a paleoanthropologist, built much of the modern framework for where we came from. In recent years he has walked away from the tidy tree in public. "It's more like a braided stream," he said. "The channels separate and then they come back together again." Populations met, split, met again, and gene flow—the movement of genes between populations—crossed lines a tree cannot cross. The mess is not noise around the signal. The mess is the signal. A branching diagram cannot draw a river that rejoins itself, so it draws a branch and loses the rejoining. Genetic mixing happened repeatedly in ways that branching diagrams simply cannot show.
+[Chris Stringer](https://www.nhm.ac.uk/our-science/departments-and-staff/staff-directories/human-origins.html), a paleoanthropologist, built much of the modern framework for where we came from. In recent years he has taken the Braided Stream model seriously in his own assessments of how modern humans evolved — channels of population that separate and then rejoin, rather than a tree that only ever splits. Populations met, split, met again, and gene flow — the movement of genes between populations — crossed lines a tree cannot cross. The mess is not noise around the signal. The mess is the signal. A branching diagram cannot draw a river that rejoins itself, so it draws a branch and loses the rejoining. Genetic mixing happened repeatedly in ways that branching diagrams simply cannot show.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/jebel-irhoud-broke-the-single-dot-i-was-trusting_moment_2.jpg" alt="Jebel Irhoud Broke the Single Dot I Was Trusting — detail illustration" width="800" height="450" loading="lazy" decoding="async">
