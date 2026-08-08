@@ -5397,6 +5397,24 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         # Step 6: Create article file (content is already gate-fixed as of Step 4b)
         article_file = self.create_article_file(metadata, content, image_filenames, image_descriptions)
 
+        if used_provider == "fallback":
+            # generate_fallback_article() produces generic template content (crude
+            # title.lower() substitution, banned CTA ending, none of the source
+            # engagement the real rules enforce) -- it exists so a network/provider
+            # outage doesn't crash the run, not to ever go live. publish_best.py only
+            # skips drafts carrying fact_check_status: blocked; without this, a
+            # fallback article gets the default 7.0 draft_score and competes normally
+            # for promotion. Block it the same way a contradicted-quote draft is
+            # blocked -- a human has to look at this, not another LLM pass.
+            fm_text = article_file.read_text()
+            if not re.search(r"^fact_check_status:", fm_text, re.MULTILINE):
+                fm_text = re.sub(r"^---\n", "---\nfact_check_status: blocked\n", fm_text, count=1)
+                article_file.write_text(fm_text)
+            self.logger.error(
+                "FALLBACK ARTICLE: %s -- all providers failed, generic template used, "
+                "blocked from auto-promotion", article_file.name
+            )
+
         # Step 6c: Full review (citations + readability + rule compliance)
         review_file, is_clean = self.validate_article(content, article_file, slug, target_words=target_words)
 
