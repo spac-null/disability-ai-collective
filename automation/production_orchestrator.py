@@ -3727,7 +3727,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         # live runs.
         fact_check_lines = ["(no verifiable claims found)"]
         contradicted = []       # QUOTE/STUDY — blocks promotion
-        advisory_flags = []     # STAT/EVENT — flagged, doesn't block
+        advisory_flags = []     # single EVENT/STAT contradiction — flagged, doesn't block alone
+        unverifiable_count = 0  # UNVERIFIABLE claims of any type — no source found, not necessarily wrong
+        soft_contradicted_count = 0  # CONTRADICTED EVENT/STAT specifically
         try:
             claims = self._extract_verifiable_claims(content)
             if claims:
@@ -3739,6 +3741,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                     fact_check_lines.append(f"[{verdict}] QUOTE — {c['subject']}: \"{c['claim'][:80]}\" — {reason}")
                     if verdict == "CONTRADICTED":
                         contradicted.append(c)
+                    elif verdict == "UNVERIFIABLE":
+                        unverifiable_count += 1
                 for c in other_claims:  # cap 4 — cost/latency
                     verdict, reason = self._web_verify_claim(c["type"], c.get("subject", ""), c["claim"])
                     fact_check_lines.append(f"[{verdict}] {c['type']} — {c.get('subject') or '(unnamed)'}: \"{c['claim'][:80]}\" — {reason}")
@@ -3747,6 +3751,39 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                             contradicted.append(c)
                         else:
                             advisory_flags.append(c)
+                            soft_contradicted_count += 1
+                    elif verdict == "UNVERIFIABLE":
+                        unverifiable_count += 1
+
+                # "Too much false/imagination": one soft-category (EVENT/STAT)
+                # contradiction alone can be a search false-positive (restated
+                # numbers, under-indexed recent events — see comment above). But
+                # confirmed live 2026-08-08: an article got a real person's death
+                # wrongly dated by two years (CONTRADICTED EVENT — non-blocking
+                # under the old rule) while its separate citation self-report
+                # (above) flagged 9 more specific claims as SOURCE: UNATTRIBUTED,
+                # including a suspiciously precise dollar figure attributed to a
+                # named journalist and an entirely unsourced policy claim. The web
+                # fact-check alone (capped at 8 checked claims) never sees that
+                # volume — the citation step does. Combine both signals: a single
+                # confirmed-wrong soft claim is tolerated on its own (could be
+                # noise), but not alongside a pile of unattributed specifics, and
+                # two or more confirmed-wrong soft claims is never tolerated.
+                unattributed_citations = citation_text.count("SOURCE: UNATTRIBUTED")
+                too_much = (
+                    soft_contradicted_count >= 2
+                    or unverifiable_count >= 3
+                    or (soft_contradicted_count >= 1 and unattributed_citations >= 5)
+                )
+                if too_much:
+                    self.logger.error(
+                        "FACT-CHECK: escalating to block — %d soft-contradicted, "
+                        "%d unverifiable, %d unattributed citation(s) — too much "
+                        "false/imagination for one piece",
+                        soft_contradicted_count, unverifiable_count, unattributed_citations
+                    )
+                    contradicted.extend(advisory_flags)
+                    advisory_flags = []
         except Exception as e:
             self.logger.warning("Web fact-check failed: %s", e)
             fact_check_lines = [f"CHECK_FAILED: {e}"]
