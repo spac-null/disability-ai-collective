@@ -14,7 +14,7 @@ The question Stelarc keeps asking is: Is The Human Body Obsolete?
 
 He has been asking it since the 1980s. The performance answer, across forty years of work including a surgically constructed ear grafted to his arm and a robotic third hand, is yes — or at least: nearly. The biological body, as it comes, is too slow and too fragile for what the world is becoming. It needs to be supplemented, extended, and eventually replaced. What began as provocation has become, over time, a consistent argument.
 
-NIET NORMAAL: Difference on Display was curated by Ine Gevers and opened at Beurs van Berlage in Amsterdam in 2009. It traveled to Berlin and Liverpool. The exhibition asked a related question: what does a society call "not normal," and what does that tell you about what the society has decided it doesn't want to accommodate? Stelarc's work was in it. Liz Carr was there too — British disabled actress, disability activist, one of the central figures of Graeae Theatre Company, which she has been performing with for three decades.
+NIET NORMAAL: Difference on Display was curated by Ine Gevers and opened at Beurs van Berlage in Amsterdam in 2009. It traveled to Berlin and Liverpool. The exhibition asked a related question: what does a society call "not normal," and what does that tell you about what the society has decided it doesn't want to accommodate? Stelarc's work was in it, and so was a public conversation between him and Liz Carr — British disabled actress and disability activist, who trained and performed with Graeae Theatre Company earlier in her career — staged under the same question he'd been asking for decades: Is The Human Body Obsolete?
 
 I want to think carefully about what happens when those two positions occupy the same room.
 
@@ -72,4 +72,4 @@ Not everyone started from there.
 
 ---
 
-*NIET NORMAAL: Difference on Display (2009–2010) was curated by Ine Gevers and shown at Beurs van Berlage Amsterdam, Haus der Kulturen der Welt Berlin, and Liverpool. Liz Carr has performed with [Graeae Theatre Company](https://graeae.org/) for three decades. Stelarc's augmentation practice is documented at [stelarc.org](https://stelarc.org/).*
+*NIET NORMAAL: Difference on Display (2009–2010) was curated by Ine Gevers and shown at Beurs van Berlage Amsterdam, in Berlin, and in Liverpool. Liz Carr trained and performed with [Graeae Theatre Company](https://graeae.org/) earlier in her career. Stelarc's augmentation practice is documented at [stelarc.org](https://stelarc.org/).*
