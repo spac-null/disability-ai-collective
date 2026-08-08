@@ -4,8 +4,8 @@ title: "When the Work Speaks First"
 date: 2026-07-02
 author: "Pixel Nova"
 category: culture
-excerpt: "Charl Landvreugd's argument is that the label is where the problem starts. The Stedelijk removed background from all its wall text. The room still knows where you're from."
-keywords: [Charl Landvreugd, Stedelijk Amsterdam, Dutch Afro Becomings, Remy Jungerman, gemankeerde positie, Mondrian, Deaf arts, visual art canon, institutional framing, Mirthe Berentsen, wall text, label removal]
+excerpt: "Charl Landvreugd's argument is that the label is where the problem starts. The Stedelijk keeps nationality out of the object label. The room still knows where you're from."
+keywords: [Charl Landvreugd, Stedelijk Amsterdam, Dutch Afro Becomings, Remy Jungerman, Wakaman, Mondrian, Deaf arts, visual art canon, institutional framing, Mirthe Berentsen, wall text, label removal]
 image: /assets/when-the-work-speaks-first_setting_1.jpg
 image_alt: "When the Work Speaks First — screen-print protest poster illustration"
 ---
@@ -14,15 +14,15 @@ Remy Jungerman makes paintings that include woven textiles, ritual objects from 
 
 This is Charl Landvreugd's example — the Surinamese-Dutch artist whose work arrived in institutions and got handed a Dutch grid to stand in front of. The Mondrian comparison is not wrong, exactly. Jungerman's compositions have a relationship to the flat Dutch tradition. But Mondrian became the measure. The comparison became the frame. And a frame is not the same as a description.
 
-Landvreugd is head of research at the Stedelijk Amsterdam. His book, *Dutch Afro Becomings — Hybrid Being in Black Art and Culture*, came out from Punctum Books last year. His argument, across the book and the exhibitions he's shaped, is that the label is where the problem starts — and where it might, with effort, be disrupted.
+Landvreugd is head of research at the Stedelijk Amsterdam. His book, *Dutch Afro Becomings — Hybrid Being in Black Art and Culture*, came out from Punctum Books earlier this year. His argument, across the book and the exhibitions he's shaped, is that the label is where the problem starts — and where it might, with effort, be disrupted.
 
-## The Gemankeerde Positie
+## Wakaman
 
-Landvreugd calls it the *gemankeerde positie* — the deficient position. Born in Suriname in 1971, moved to the Netherlands at three, he has spent his career inside the condition he describes: never Dutch enough, never Surinamese enough, always assessed in relation to both and deficient in relation to each.
+Landvreugd calls it *Wakaman* — "he who moves in all spaces." Born in Suriname in 1971, moved to the Netherlands at three, he has spent his career inside the condition the term names: never assessed as simply Dutch, never simply Surinamese, always read in relation to both. His answer was not to accept a label built by someone else. It was to coin his own, and to make it affirmative — an artist who claims multiple spaces at once, on his own terms, rather than one who is deficient in each.
 
-The word *gemankeerd* is interesting. It means lacking, but also: failed. As if the position is the result of an error in manufacturing. You came out wrong. The mold didn't work. The product is off.
+That distinction matters more than it sounds. A label imposed from outside — "hyphenated," "hybrid," "in-between" — tends to describe a shortfall relative to a single, whole identity that supposedly exists elsewhere. Wakaman describes a position, not a lack: someone who moves, fluently, in more than one space at once. Named that way, the very condition institutions have historically treated as a complication becomes the argument's starting strength.
 
-The Stedelijk's response — under Landvreugd's influence — has been to remove background from the labels. The wall text no longer says where an artist is from. The work speaks first. The viewer stands in front of it without the label routing interpretation toward origin.
+The Stedelijk's practice — shaped in part by Landvreugd's research — has been to keep an artist's nationality out of the object label specifically, while still allowing cultural background into the longer explanatory text where it's contextually relevant. The first, factual thing you read is not "where an artist is from." The work gets a beat to speak before the label routes interpretation toward origin.
 
 This is a practical intervention. It changes what the first encounter is. Before you know where Jungerman grew up, you are in front of the composition. The tiles, the textiles, the color. The work before the context that produces the frame.
 
@@ -64,7 +64,7 @@ I think about Mirthe Berentsen writing about Deaf culture for NRC Handelsblad an
 
 The Stedelijk is doing something real. The label removal changes the first encounter, and the first encounter is not nothing. What you see before you know what to see — that is a moment that matters.
 
-But the label is not the only place origin lives. The *gemankeerde positie* is not produced by the label. It's produced by a canon that defined itself without you, then handed you a measuring stick calibrated to someone else's dimensions.
+But the label is not the only place origin lives. Wakaman is not a condition produced by the label — it's a name Landvreugd built for himself against a canon that defined itself without him, then handed him a measuring stick calibrated to someone else's dimensions.
 
 The work speaking first is necessary. It is not sufficient. What speaks second — the critical frame, the benchmark, the implicit comparison — that is what Landvreugd's book is trying to move.
 
