@@ -4,15 +4,15 @@ title: "The Wires Were Already Listening"
 date: 2026-07-03
 author: "Siri Sage"
 category: culture
-excerpt: "Amos Ben-Tal's installation at Amare started computer-controlled and let the dancers take it back. The question was how you get from algorithm to concrete matter. Siri Sage hears the question differently."
+excerpt: "Amos Ben-Tal's installation started computer-controlled and let the dancers take it back. The stated question was about reclaiming power from the algorithm. Siri Sage hears a different question in it."
 keywords: [Amos Ben-Tal, The Bone Algorithm, Amare, OFFprojects, kinetic installation, acoustic environment, algorithm, dance, piano, responsive design, Blind arts, echolocation, sound space]
 image: /assets/the-wires-were-already-listening_setting_1.jpg
 image_alt: "The Wires Were Already Listening — screen-print protest poster illustration"
 ---
 
-When a dancer moves through the grid at Amare and pulls a wire, a piano string sounds above them.
+When a dancer moves through the grid and pulls a wire, a piano string sounds above them.
 
-This is not a performance. It is a translation. The body moves, the weight shifts, the string responds. Amos Ben-Tal called the installation *The Bone Algorithm*. A large raster suspended above the stage floor, dozens of weighted wires hanging from it. The dancers — Alex Blondeau, Xanthe van Opstal, Luca Cacitti — began under computer control. Then, gradually, they took the piece back. Ben-Tal's question, the one the work organized itself around, was this: *hoe kom je weer back to the bone* — how do you get from algorithm back to concrete matter?
+This is not a performance. It is a translation. The body moves, the weight shifts, the string responds. Amos Ben-Tal called the installation *The Bone Algorithm*. A large raster suspended above the stage floor, dozens of weighted wires hanging from it. The dancers — Alex Blondeau, Xanthe van Opstal, Luca Cacitti — began under computer control, movement following the rigid grid precisely. Then, gradually, they took the piece back — the movement loosening, going undulating and free, until the pendulums swing hard enough to produce something closer to chaos than choreography. Ben-Tal's stated question was about reclaiming power from an algorithmic technology built to capture and steer attention: what does it take to go from digital back to analog, from code back to intuition?
 
 I heard the question differently.
 
@@ -60,9 +60,9 @@ The question of whether the dancers are free inside this structure — whether t
 
 ## Before the Dancers Arrived
 
-Ben-Tal's earlier works follow a pattern. *Interval* (2021) used moving rods. *Seconds* (2019) put audiences one-on-one inside cubic tents. *Howl* (2017) was built around Spinvis as a kind of talkshow host. The installations keep designing rooms that make explicit what rooms do — environments that have been made aware of themselves.
+Ben-Tal's earlier works follow a pattern. *Interval* (2021) built an ever-shifting kinetic architecture around the audience. *Seconds* (2019) put one audience member at a time inside a single divided cube, holding hands with a partner outside who controlled how long they watched. *Howl* (2017) was built around Spinvis as a kind of talkshow host. The installations keep designing rooms that make explicit what rooms do — environments that have been made aware of themselves.
 
-The Bone Algorithm is the fullest version of this. The bone in the title is the pre-linguistic body, the one that moves before the algorithm routes the movement. But the dancers who arrived at Amare in February already had bones shaped by decades of technique. The algorithm they were returning from was not the only one.
+The Bone Algorithm is the fullest version of this. The bone in the title is the pre-linguistic body, the one that moves before the algorithm routes the movement. But the dancers who premiered the piece at Korzo in February already had bones shaped by decades of technique. The algorithm they were returning from was not the only one.
 
 I am interested in the room before the dancers arrived. The grid suspended above the stage. The weighted wires hanging still. The piano strings waiting. No movement yet, so no sound. But not silence — the system was present, designed, responsive, ready.
 
@@ -72,4 +72,4 @@ The question is not how you get from algorithm to bone. The question is what you
 
 ---
 
-*The Bone Algorithm by Amos Ben-Tal / OFFprojects was shown at Amare, Den Haag, from 13 February to 17 May 2025. Dancers: Alex Blondeau, Xanthe van Opstal, Luca Cacitti. Designer: Gosse de Kort. Composer: Salvador Breed.*
+*The Bone Algorithm by Amos Ben-Tal / OFFprojects premiered at Korzo Theater, Den Haag, on 13 February 2025, then toured Dutch venues including Frascati Amsterdam and Amare (an excerpt, as part of CaDance Festival, 15–17 May 2025). Dancers: Alex Blondeau, Xanthe van Opstal, Luca Cacitti. Designer: Gosse de Kort. Composer: Salvador Breed.*
