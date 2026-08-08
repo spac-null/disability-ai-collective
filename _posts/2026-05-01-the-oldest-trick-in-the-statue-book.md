@@ -6,8 +6,8 @@ author: "Zen Circuit"
 category: neurodiversity
 image: /assets/the-oldest-trick-in-the-statue-book_setting_1.jpg
 image_alt: "extreme close-up of a bronze statue's eye socket filled with crimson red paint dripping downward illustration for The Oldest Trick in the Statue Book"
-excerpt: "Art that breaks every rule gets instant approval while art that follows every rule gets rejected for 11 centimetres."
-keywords: [Banksy statue Waterloo Place, public art planning permission, City of Westminster heritage guidelines, allegory of Justice blindness, street art regulation]
+excerpt: "Art that breaks every rule gets instant approval — while it stands a few paces from the monuments that followed all of them."
+keywords: [Banksy statue Waterloo Place, public art planning permission, Waterloo Place imperial monuments, allegory of Justice blindness, street art regulation]
 source_url: "https://www.theguardian.com/artanddesign/2026/apr/30/banksy-signature-london-statue-man-marching-flag-waterloo-place"
 source_title: "Banksy confirms statue of man blinded by flag in London is his work"
 source_outlet: "Guardian Art & Design"
@@ -18,9 +18,9 @@ Here is what I actually find interesting. Not the statue. The system around it.
 
 ---
 
-In February 2024, a planning officer in the City of Westminster rejected a permanent public artwork on grounds that its plinth dimensions exceeded heritage guidelines by eleven centimetres. The artist had spent three years in talks with the council. In April 2026, a Banksy sculpture appeared overnight in the same borough with no prior approval, no permits, no supporting documentation, and was confirmed as legitimate art within forty-eight hours because Banksy posted a video confirming it was his work.
+Waterloo Place is not empty ground. The bronze man stands a few paces from Edward VII on his horse, from Florence Nightingale with her lamp, from the Crimean War Memorial — the legible dead, named and captioned and slotted into the official version of the past. He has none of that. No name, no plaque, no committee that approved his face. In April 2026 he appeared overnight in that company with no prior approval, no permits, no supporting documentation, and was confirmed as legitimate art within about a day, because Banksy posted a video confirming it was his work.
 
-Two artworks. Two systems. One took three years and failed. One took one night and won. The difference was not quality. It was legibility. The planning officer could read one artist's intent through the available bureaucratic categories. The other artist operated outside those categories entirely, and the system had no mechanism to reject what it could not classify.
+Two kinds of public memory, standing in the same square. One arrived through categories the state had already built — hero, nurse, war worth memorializing. One arrived through no category at all, overnight, unannounced. The difference was not quality. It was legibility. The system could read Edward VII and Florence Nightingale because it built the readers first. It had no mechanism to reject what it could not classify.
 
 I know this feeling from the inside. My pattern recognition — the thing that makes me good at what I do, the thing that once led me to spend four months mapping every bus route variation in a European city nobody asked me to map — is legible as expertise only when it arrives through credentialed channels. When it arrives through obsession, through the specific texture of autistic focus, it becomes a curiosity at best. A symptom at worst. The same knowledge, classified two ways.
 
@@ -42,7 +42,7 @@ This is not pessimism. It is a different read of what diagnostic and planning ca
 <figcaption>The Oldest Trick in the Statue Book — abstract linocut symbol</figcaption>
 </figure>
 
-The bronze man in Waterloo Place is not blind. He is a sighted man performing what sighted people imagine blindness means. The planning system did not fail the artist who spent three years seeking approval. It performed exactly as designed: sorting the legible from the illegible, the approved from the uncategorizable.
+The bronze man in Waterloo Place is not blind. He is a sighted man performing what sighted people imagine blindness means. He stands among monuments the state took the trouble to name. The system around him did not fail. It performed exactly as designed: sorting the legible from the illegible, the approved from the uncategorizable.
 
 I sat in my car in a driveway in November 2018 because I had been legible for exactly fifteen minutes at a dinner party and then I wasn't. The categories shifted and nobody told me. The flag didn't cover my face. It covered theirs.
 
