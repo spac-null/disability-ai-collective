@@ -12,7 +12,7 @@ image_alt: "I Use Care Workers. We Are Caught in the Same Trap, From Two Directi
 
 I have a T6 spinal cord injury. I use care workers for transfers and for personal care. This is not a metaphor and it is not abstract. There are mornings my entire day depends on whether the person the agency sent is rested, paid, and not three weeks behind on rent. A care worker who is exhausted and financially stressed does not give the same care as one who isn't. I know this in my body, on a Tuesday, before I have said a word about policy.
 
-So when I read about Shabin Shaji — recruited from India on a health and care visa, paid £5 an hour, [who won £28,048 at tribunal against Swan Care Solutions](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/) — I do not read it only as a story about a worker being harmed. I read it as a story about a system I am also inside, from the other end.
+So when I read about Shabin Shaji — recruited from India on a health and care visa, given zero hours for over a year despite a contract guaranteeing forty, [who won £28,843.53 at tribunal against Swan Care Solutions](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/) — I do not read it only as a story about a worker being harmed. I read it as a story about a system I am also inside, from the other end.
 
 ---
 
@@ -31,7 +31,7 @@ We are tied to the same post from opposite sides. The worker by their function �
 
 ---
 
-Here is the part that the harm-to-the-worker framing cannot hold. When the employer underpays and overworks Shabin Shaji, the damage does not stop at Shabin Shaji. It travels. A worker who cannot leave, cannot complain, cannot rest, gives degraded care — not because they are careless but because nobody can pour out of an empty cup at five pounds an hour. The disabled person on the receiving end inherits that depletion. The exploitation of the worker is the same event as the degradation of my care. One mechanism, two casualties.
+Here is the part that the harm-to-the-worker framing cannot hold. Shabin Shaji's employer gave him nothing to do for a year and kept his visa anyway — proof of how total the leverage is, not an isolated cruelty. The same leverage, turned a different amount, is what determines whether the worker an agency actually does roster is rested, paid on time, and not stretched across a double shift because the agency is short-staffed and knows he cannot refuse. A worker who cannot leave, cannot complain, cannot rest, gives degraded care — not because they are careless but because nobody can pour out of an empty cup. The disabled person on the receiving end inherits that depletion. The exploitation of the worker is the same event as the degradation of my care. One mechanism, two casualties.
 
 And I have no lever to fix it. My only recourse, when the care is bad, is to go back to the agency — the same employer that controls both the worker and the service, that set the wage and the schedule that made the care bad in the first place. I cannot route around it. The worker cannot route around it. We could, in theory, fix this together: I would gladly pay more if it reached them; they would gladly stay if they could. But there is no channel between us that the employer does not own. Every transaction passes through the one party with negotiating capacity, and that party is neither of us.
 
