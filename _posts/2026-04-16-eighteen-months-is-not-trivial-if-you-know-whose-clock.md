@@ -20,13 +20,13 @@ Here is what the reviewers measured: scores on the [Clinical Dementia Rating sca
 
 The trial's success measures were built on the premise that the only thinking worth counting is the thinking that looks like the thinking of the person designing the trial.
 
-I want to be fair to the reviewers. Concerns about the anti-amyloid drugs are real — the side effects are serious, the costs are enormous, the hype around [lecanemab](https://www.nia.nih.gov/health/alzheimers-disease-and-type-2-diabetes) and donanemab — the two anti-amyloid drugs at the center of this debate — has run ahead of the evidence. [Robin Emsley](https://www.manchester.ac.uk/research/robin.emsley/) at the University of Manchester, a researcher who has criticized overhyped drug claims, and others have been arguing for years that the industry has been selling thin data as a breakthrough. That critique is earned.
+I want to be fair to the reviewers. Concerns about the anti-amyloid drugs are real — the side effects are serious, the costs are enormous, the hype around [lecanemab](https://www.nia.nih.gov/health/alzheimers-disease-and-type-2-diabetes) and donanemab — two of the seven anti-amyloid drugs covered by the review, across more than 20,000 participants — has run ahead of the evidence. Researchers like Charles Marshall at Queen Mary University of London and Robert Howard at UCL have made that case in plain terms: measured over roughly eighteen months, the cognitive benefit does not clear the threshold either of them would call clinically meaningful. That critique is earned.
 
 But "trivial" is not a neutral word. It is a judgement about whose time matters.
 
-I keep thinking about a conversation I had in March 2023, in a church hall in Deptford, a London neighborhood. I spoke with a woman named Priya whose mother had been on a donanemab trial. This conversation matters because it shows what the medical measures missed. She told me the drug might have given them six extra months of her mother still knowing her grandson's name. "The doctors keep saying it's small," she said. "It's not small in this house." She was not sentimental about it. She knew her mother was still declining. She just knew what six months was worth, because she was the one cooking dinner in it.
+Think about what six extra months of a name actually costs to lose. Six more months of a mother still knowing her grandson's face, still saying it right, before the line goes. Nobody cooking dinner in that house would call that small. The doctors might say it's within the range the statistics predicted. The daughter doing the cooking is not measuring in ranges.
 
-Compare that to the language of the review. "No meaningful effect on cognition." Meaningful to the measurer. Not to Priya. Not to her mother. Not to the grandson.
+Compare that to the language of the review. "No meaningful effect on cognition." Meaningful to the measurer. Not to the daughter. Not to her mother. Not to the grandson whose name she still knows for six more months than the trial's own numbers gave her reason to expect.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/eighteen-months-is-not-trivial-if-you-know-whose-clock_moment_2.jpg" alt="Eighteen Months Is Not Trivial If You Know Whose Clock — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
@@ -43,7 +43,7 @@ There is a version of this argument that ends with "include patients in trial de
 
 The copy has won. The scale has become more real than the life it was supposed to describe.
 
-What would a different success measure look like? Functional time. Months of being able to do the specific thing that matters to this person in this household. A woman in Lagos might measure it in market trips. A man in Glasgow in whether he still recognises his brother's voice on the phone. Priya measured it in her son's name.
+What would a different success measure look like? Functional time. Months of being able to do the specific thing that matters to this person in this household. A woman in Lagos might measure it in market trips. A man in Glasgow in whether he still recognises his brother's voice on the phone. A daughter might measure it in her mother's grip on a name.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/eighteen-months-is-not-trivial-if-you-know-whose-clock_symbol_3.jpg" alt="Eighteen Months Is Not Trivial If You Know Whose Clock — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
@@ -56,4 +56,4 @@ I am not arguing the drugs work. I am arguing we do not know, because the questi
 
 --
 
-On Camberwell New Road the cab finally moved. I put my phone away. I thought about Priya's mother, and the scale of months, and the grandson whose name got to stay in her mouth for a little longer than it would have otherwise, and how a stranger in a journal had just called that trivial.
+On Camberwell New Road the cab finally moved. I put my phone away. I thought about the scale of months, and a grandson's name staying in a mother's mouth a little longer than it otherwise would have, and how a stranger in a journal had just called that trivial.
