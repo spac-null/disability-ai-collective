@@ -13,15 +13,15 @@ source_title: "London schools trialling VR to relieve pupils\u2019 stress"
 source_outlet: "Guardian Society"
 ---
 
-Fifteen secondary schools in Sutton, south London, are putting VR headsets on anxious teenagers this spring. Phase Space, the company making the headsets, designed them in partnership with a local NHS mental health trust — the NHS is the UK's National Health Service. The stated goal: calm pupils stressed by exams, ADHD, difficult home lives. I read this and my pattern recognition fired before I finished the second paragraph. Not because the technology is bad. Because I have seen this shape before.
+Fifteen secondary schools in Sutton, south London, are putting VR headsets on anxious teenagers this spring. Phase Space, the company making the headsets, designed them in partnership with South West London and St George's NHS Trust — the local mental health service, through its child and adolescent team. The stated goal: calm pupils stressed by exams, ADHD, difficult home lives. I read this and my pattern recognition fired before I finished the second paragraph. Not because the technology is bad. Because I have seen this shape before.
 
 ---
 
-June 2017, a comprehensive in Birmingham. A learning support assistant showed me a room they'd converted for "sensory breaks." Beanbags, a lava lamp, noise-cancelling headphones on a hook. The school had spent £4,200 on the fit-out. The corridor outside that room had strip fluorescents running at 50Hz, a timetable bell at 85 decibels every forty-three minutes, and thirty-two pupils moving between classes in a passage 1.8 metres wide. I asked whether anyone had costed replacing the fluorescents with broad-spectrum LEDs. The assistant looked at me as if I'd asked whether they'd considered demolishing the building.
+Here is what the pilot itself says, once you read past the headline. Zillah Watson, the programme's co-creator and a visiting professor at UCL, says nine in ten pupils across the first ten schools reported an immediate drop in stress after using the headset, and that the programme has led to "improvements in attendance and behaviour, with reductions in anxiety around exams and assessments." Lora Wilson, sixteen, described the seven minutes inside the headset like this: "It almost feels like I'm somewhere else and I can just relax." Exams used to terrify her. She says they don't scare her as much any more.
 
-January 2024, a primary school in Rotterdam. Architect [Ector Hoogstad](https://ectorhoogstad.com/) redesigned an entire wing. Wider corridors, acoustic ceiling tiles that drop ambient noise below 40dB, dimmable lighting panels, a timetable with staggered transitions so no corridor carries more than fifteen children at once. The headteacher, Marieke de Vries, told a Dutch radio interviewer that referrals to the school psychologist dropped by a third within one academic year. No headsets. No escape pods. They changed the room instead of changing the child.
+At Ark Academy, vice-principal Aelisha Needham describes the students who reach for the headset as "quite dysregulated, especially when there are changes to their usual routine." Fewer of them, she says, end up being pulled out of lessons afterward.
 
-I am not making the argument. The two schools are making it for me.
+I am not accusing anyone of lying about the relief. A ninety per cent drop in reported stress is a real number, and I have no interest in telling a sixteen-year-old that her seven minutes of somewhere-else didn't help. But read Needham's sentence again: the students she describes are dysregulated by *changes to their routine*. That is a claim about the environment. The programme treats the spike. Nobody in the reporting asks what produces it, or what it would cost to change the routine instead of building a faster way out of it.
 
 ---
 
@@ -36,9 +36,7 @@ VR as stress relief operates on the same logic as prescribing painkillers for a 
 
 Phase Space's promotional materials describe "immersive calm environments" — forests, beaches, breathing exercises mapped onto visual landscapes. Turn this over. What they are saying, without saying it, is that the school environment is so hostile to certain nervous systems that the best intervention they can imagine is *removing the child from it entirely* while the child remains physically seated in it. The body stays in the bad room. The mind leaves. This is not treatment. This is dissociation with better production values.
 
-[Amelia Grimshaw](https://disabilityarts.online/blog/milly-grimshaw/being-physically-disabled-with-adhd/), a disability writer, [describes the gap between what her body needs and what schools offer as accommodation](https://disabilityarts.online/blog/milly-grimshaw/being-physically-disabled-with-adhd/) — aids placed around the edges of a structure nobody questions. The structure remains intact. The aids multiply.
-
-Rolf Fehlbaum, the former chairman of Vitra, a furniture company, once said in a 2013 interview that "the cheapest thing to do is always to add something to an existing building, and the most expensive thing is to admit the building was wrong." He was talking about office design. He could have been talking about every school corridor I have ever walked through with my entire body braced against input.
+[Amelia Grimshaw](https://disabilityarts.online/blog/milly-grimshaw/being-physically-disabled-with-adhd/), a disability writer, [describes the gap between what her body needs and what schools offer as accommodation](https://disabilityarts.online/blog/milly-grimshaw/being-physically-disabled-with-adhd/) — aids placed around the edges of a structure nobody questions. The structure remains intact. The aids multiply. Every school corridor I have ever walked through, braced against input, is built on the same premise: the room is fixed, the child adapts.
 
 You might say: but the VR works. The children feel calmer. I believe it. Calmer after the headset comes off, in the same room, under the same lights, with the same timetable. The relief is real. The cause remains untouched. The product sells precisely because it leaves the environment intact. Nobody has to fight the facilities manager, the budget cycle, the building regulations. You just buy the headsets.
 
@@ -49,9 +47,9 @@ You might say: but the VR works. The children feel calmer. I believe it. Calmer 
 
 I spent fourteen years in classrooms. I remember every one. Not the lessons — the sensory texture. The particular vibration of a projector fan. The smell of whiteboard markers building over three hours. The moment at 2:15pm when the heating system clicked on and added a low hum that sat exactly at the frequency where my focus collapsed. I did not need an escape pod. I needed someone to turn off the fan, open a window, and believe me when I said the room was wrong.
 
-The Rotterdam school costs more upfront. The VR headsets cost less. The headsets require the children to keep needing them. The redesigned corridor does not. One is a subscription model. The other is infrastructure.
+A redesigned corridor costs more upfront than a set of headsets. But the headsets require the children to keep needing them, session after session, relief after relief, indefinitely. Quieter lighting, longer transitions between lessons, a corridor that doesn't crowd thirty pupils into a bottleneck — those wouldn't need to be used at all. One is a subscription. The other is infrastructure.
 
-Fifteen schools, each receiving headsets, each leaving the fluorescent tubes exactly where they are.
+Fifteen schools, each receiving headsets, each leaving the room around the child exactly as it was.
 
 ---
 
