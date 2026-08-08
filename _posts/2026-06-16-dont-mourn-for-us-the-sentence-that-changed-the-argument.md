@@ -10,7 +10,7 @@ image: /assets/dont-mourn-for-us-the-sentence-that-changed-the-argument_setting_
 image_alt: "Don't Mourn for Us: The Sentence That Changed the Argument — screen-print protest poster illustration"
 ---
 
-The address was seven minutes long. Jim Sinclair delivered it in 1993 to a room of parents at a conference in Syracuse, New York. Most of the parents had autistic children. Some of those children were there. The conference was organized by and for people affected by autism; Sinclair was autistic, and presented that way.
+Jim Sinclair delivered it in 1993, at the International Conference on Autism in Toronto, to a room of parents and professionals. Most of the parents had autistic children. Some of those children were there. Sinclair — who is autistic, and identifies outside the gender binary, using xe/xyr pronouns — was one of the only autistic people in the room, addressing an audience that had not been built around autistic attendance.
 
 The central sentence was this: autism is not something a person has, or a shell that a person is trapped inside. There is no normal child hidden behind the autism. Autism is a way of being.
 
@@ -22,7 +22,7 @@ The frame he was refusing was grief.
 
 The standard account of autism in 1993 — in clinical literature, in parent memoirs, in advocacy organizations — positioned autism as a condition that took a child away from its parents. The language was explicitly one of loss: stolen, trapped inside, hidden. The therapeutic goal was recovery, which implied a self that pre-existed the autism and could be returned to. The parent's relationship was to the missing normal child, not to the autistic one present.
 
-Sinclair's address did not argue against this account. It addressed it from the inside. He was himself the autistic person whose parents had grieved. He was present, communicative, and telling the parents in the room that their grief, however understandable, was directed at a child who did not exist. The child who existed was in the room. The child who existed was, in some cases, listening.
+Sinclair's address did not argue against this account. It addressed it from the inside. Xe was xyrself the autistic person whose parents had grieved. Xe was present, communicative, and telling the parents in the room that their grief, however understandable, was directed at a child who did not exist. The child who existed was in the room. The child who existed was, in some cases, listening.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/dont-mourn-for-us-the-sentence-that-changed-the-argument_moment_2.jpg" alt="Don't Mourn for Us: The Sentence That Changed the Argument — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
@@ -48,6 +48,6 @@ The neurodiversity movement, as it developed through the 1990s and 2000s, built 
 
 I track arguments across time the way other people track transit routes. An argument's shape at the origin tells you where it will arrive, and when, and at what cost. Sinclair's argument has been arriving for thirty years. It entered peer-reviewed literature in the mid-2000s. It changed diagnostic framing in ways that are visible in the 2013 DSM revision, which acknowledged autistic adults as stakeholders for the first time in the revision process — not centrally, not determinatively, but visibly. The lag is long. The direction is there.
 
-What the address could not do — what a seven-minute speech delivered in a conference room in 1993 to an audience of parents cannot do — is change what gets funded, what gets measured, what gets written into diagnostic criteria by committees that meet in rooms Sinclair was not invited to. The infrastructure of the deficit model runs on different tracks than the argument against it. The argument wins the culture gradually. The infrastructure holds the clinic.
+What the address could not do — what a single speech delivered to a room of parents and professionals in Toronto in 1993 cannot do — is change what gets funded, what gets measured, what gets written into diagnostic criteria by committees that meet in rooms Sinclair was not invited to. The infrastructure of the deficit model runs on different tracks than the argument against it. The argument wins the culture gradually. The infrastructure holds the clinic.
 
 The sentence that changed the argument is thirty-three years old. The argument is still changing.
