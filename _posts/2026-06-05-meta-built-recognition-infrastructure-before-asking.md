@@ -12,7 +12,7 @@ source_url: "https://www.wired.com/story/meta-smart-glasses-face-recognition-nam
 source_title: "Meta Silently Added Face-Recognition Code for Its Smart Glasses to Millions of Phones"
 source_outlet: "Wired"
 ---
-Meta embedded face-recognition code in the software millions of people installed on their phones this spring. Not as a feature you toggle on. As infrastructure. The code sits there, dormant, waiting for activation. Wired confirmed it this week by reviewing the platform's backend. Meta has not announced it. They built the road before deciding where it goes.
+Meta embedded face-recognition code, named NameTag, inside the Meta AI app already installed on more than fifty million phones. Not as a feature you toggle on. As infrastructure. The code sits there, dormant, waiting for activation. Wired found it this week not by reviewing some backend system but by digging through the app itself — client-side, sitting on the phone in your pocket — work a security researcher did first and Wired then verified. Meta has not exactly hidden this: the New York Times reported on the underlying effort back in February, and Meta has said publicly it is "exploring these types of features." But downplayed is not the same as disclosed. They built the road before deciding where it goes.
 
 I design information systems. I know what infrastructure means. It means the decision has already been made. You are arguing about the guardrails while someone else poured the foundation.
 
@@ -39,7 +39,7 @@ I am Deaf. I learned early that rooms communicate in two registers: what they sa
 
 Face recognition introduces a third register: the room that sees you before you know it is looking.
 
-Meta describes the embedded code as deployment for future features. The language is careful. 'Deployment' suggests planning. It does not suggest installation. But the code is already on your device. The deployment phase is over.
+Meta's own explanation, from spokesperson Ryan Daniels, is careful in the opposite direction: "Regardless of any sensational reporting, the facts are simple: we've said before we're exploring these types of features, and what you're seeing is just evidence of that exploration. Nothing has shipped to consumers and no final decision has been made on what to do here, if anything." 'Exploring' and 'nothing has shipped' are doing a lot of work. NameTag is not a sketch. It runs a three-model pipeline — one model detects a face, one crops it, one matches the crop against a stored biometric faceprint — and core components of it date back to January. Whatever exploration this was, the deployment phase is over.
 
 The technical term for this is releasing hidden code that waits to be turned on remotely — a standard industry practice where engineers deploy software that does nothing until it is activated by a distant command. Software engineers use it to test infrastructure under real conditions without user-facing changes. It is also a way to separate the decision to build from the decision to turn on.
 
