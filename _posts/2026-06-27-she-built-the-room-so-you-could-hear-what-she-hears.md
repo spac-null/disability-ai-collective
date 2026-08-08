@@ -34,7 +34,7 @@ That is real work.
 
 But every translation is a translation.
 
-What Kanary has built is her rendering of psychotic experience into spatial and acoustic terms. She has made choices — what to include, what can be made into a room, what had to be left out because it couldn't be constructed. The installation is not psychosis. It is a designed approximation of psychosis, built by an artist who has worked at the intersection of mental health and art for fifteen years.
+What Kanary has built is her rendering of psychotic experience into spatial and acoustic terms. She has made choices — what to include, what can be made into a room, what had to be left out because it couldn't be constructed. The installation is not psychosis. It is a designed approximation of psychosis, built by an artist whose sister-in-law died by suicide during a psychotic episode in 2005 — the event that sent Kanary into the research, and eventually the practice-based PhD, that became this project.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/she-built-the-room-so-you-could-hear-what-she-hears_moment_2.jpg" alt="She Built the Room So You Could Hear What She Hears — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
@@ -76,4 +76,4 @@ That would be a different kind of installation. I don't know if it can be built.
 
 ---
 
-*Jennifer Kanary's LABYRINTH psychotica appeared in AUTONOMOUS, curated by Ine Gevers, at BRUTUS Rotterdam (March–June 2026). The installation has been developed since 2010 and shown at venues across Europe and North America.*
+*Jennifer Kanary's LABYRINTH psychotica appeared in AUTONOMOUS, curated by Ine Gevers, at BRUTUS Rotterdam (March–June 2026). The installation has been developed since 2010 and shown internationally, including FACT Liverpool and TodaysArt in The Hague.*
