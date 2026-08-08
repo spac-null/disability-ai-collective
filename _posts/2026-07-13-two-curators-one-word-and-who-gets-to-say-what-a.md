@@ -14,7 +14,7 @@ source_outlet: "Guardian Art & Design"
 draft_score: 9
 ---
 
-In July 2026, a co-curator in Manchester announced that his new show of 140 LS Lowry paintings would finally bust the myth that Lowry was "naive and uncultured." A man who painted matchstick figures pouring out of mills, dead against the theory of his own time, will now be defended as sophisticated. The gallery will explain what he was really doing.
+In July 2026, Anthony Spira, director of MK Gallery in Milton Keynes and co-curator of a new show of 140 Lowry paintings, said it plainly: Lowry "certainly wasn't naive or isolated or self-taught; he spent many years at art college." A man who painted matchstick figures pouring out of mills, dead against the theory of his own time, will now be defended as sophisticated. The gallery will explain what he was really doing.
 
 In 2004, my friend Marleen stood in front of a Rothko in a museum I will not name and tried to tell a docent, on a notepad, what she saw in the red. The docent kept writing back what Rothko meant. Marleen was not asking.
 
