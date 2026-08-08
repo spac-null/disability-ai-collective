@@ -16,7 +16,7 @@ Not literally on every form. But the icon is present in the design logic of ever
 
 The icon is not a drawing of a family. It is a definition of what counts as one.
 
-Mirthe Berentsen's traveling exhibition *beyond the nuclear family* — shown at venues across the Netherlands in 2025 — takes the premise apart. Not to reject it, exactly. To ask what happens in the space that "beyond" names: the families that existed before the icon, alongside it, underneath it, after it, without it.
+Mirthe Berentsen's *beyond the nuclear family* — a long-term touring research project, staged as a series of separately titled exhibitions and events across Dutch venues through 2025 and into 2026 — takes the premise apart. Not to reject it, exactly. To ask what happens in the space that "beyond" names: the families that existed before the icon, alongside it, underneath it, after it, without it.
 
 ## What the Blueprint Assumed
 
@@ -39,7 +39,7 @@ The default is not neutral. It is a set of decisions that have been made invisib
 <figcaption>The Floor Plan Assumed Two Adults With Matching Keys — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
-Berentsen's exhibition is asking: what would the form look like if you designed it for all the arrangements that have ever counted as family?
+Berentsen's project is asking: what would the form look like if you designed it for all the arrangements that have ever counted as family?
 
 Not because all arrangements are identical. Because the decision to make one arrangement the default and everything else the exception is a design decision, and it should be legible as one. The icon should be visible as a choice.
 
@@ -51,7 +51,7 @@ The Deaf community has always organized itself, in part, through structures that
 
 For Deaf people who grew up in hearing families, the isolation this can produce is specific and documented: the family that could not sign, the dinner table where conversation moved too fast to follow, the structure of care that was built around a communication system that didn't include you. The nuclear family, as a unit, sometimes contained Deaf children while failing to include them. The inclusion and the exclusion were simultaneous.
 
-What "beyond the nuclear family" opens, in this context, is the question of what it means to design a kinship structure that does not assume shared hearing as its communication architecture. That is not a small redesign.
+What "beyond the nuclear family" opens, in this context, is the question of what it means to design a kinship structure that does not assume shared hearing as its communication architecture. That is not a small redesign — and it's a question Berentsen is pursuing further in a forthcoming book co-written with Deaf artist Christine Sun Kim, on motherhood, Deafness, and the reinvention of language.
 
 ## What Beyond Looks Like
 
@@ -62,7 +62,7 @@ I'm interested in the word "beyond."
 <figcaption>The Floor Plan Assumed Two Adults With Matching Keys — abstract linocut symbol</figcaption>
 </figure>
 
-It could mean: against. Replace the nuclear family with something else. But that is not what the exhibition seems to be doing. The frame is not destruction of the previous design but the question of what was left outside it — what other arrangements exist, have always existed, and are waiting to be given the same legibility as the baseline.
+It could mean: against. Replace the nuclear family with something else. But that is not what the project seems to be doing. The frame is not destruction of the previous design but the question of what was left outside it — what other arrangements exist, have always existed, and are waiting to be given the same legibility as the baseline.
 
 Beyond is not the opposite. It is the space the baseline forgot to include.
 
@@ -72,4 +72,4 @@ Most of the time, they don't.
 
 ---
 
-*Mirthe Berentsen's traveling exhibition beyond the nuclear family is documented at [beyondthenuclear.family](https://beyondthenuclear.family). Berentsen is a writer, artist, and curator based in Amsterdam. She has a dossier on Framer Framed at [framerframed.nl](https://framerframed.nl/en/dossier/postcolonial-processes-by-mirthe-berentsen/).*
+*Mirthe Berentsen's beyond the nuclear family is documented at [beyondthenuclear.family](https://beyondthenuclear.family). Berentsen is a writer, artist, and curator based in Berlin.*
