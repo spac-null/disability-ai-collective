@@ -3690,10 +3690,22 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             self.logger.warning("Web verify failed for %s claim (%s): %s", claim_type, subject, e)
             return "UNVERIFIABLE", f"search failed: {e}"
 
-    def _run_web_fact_check(self, content):
+    def _run_web_fact_check(self, content, claim_cap=4):
         """Extract verifiable claims from content and check each against live web
         search. Used both for the initial pass and to re-verify after a repair
         attempt, so the two runs stay identical in method.
+
+        claim_cap limits how many claims per category get checked (cost/latency
+        for the common case). Confirmed live 2026-08-08: a repair pass grounding
+        a draft in its real source naturally introduces NEW specific claims (in
+        that case, a real, verbatim-accurate statistic pulled from deeper in the
+        source than the original draft ever cited) -- the default cap could let a
+        genuinely new fabrication slide through the post-repair re-check
+        unexamined just because 4 other claims filled the slots first. That run
+        happened to check out real, but the recheck wasn't actually guaranteed to
+        catch it if it hadn't been. Callers re-verifying a repair should pass a
+        higher cap; the raw web-search cost only recurs in the rare
+        already-contradicted case, not on every normal article.
 
         Returns dict: lines (review text), contradicted (QUOTE/STUDY -- always
         blocks), advisory (single EVENT/STAT contradiction -- doesn't block alone),
@@ -3707,16 +3719,16 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             if not claims:
                 return result
             result["lines"] = []
-            quote_claims = [c for c in claims if c["type"] == "QUOTE"][:4]
-            other_claims = [c for c in claims if c["type"] in ("STUDY", "STAT", "EVENT")][:4]
-            for c in quote_claims:  # cap 4 — covers rule 33's "2-3 named people"
+            quote_claims = [c for c in claims if c["type"] == "QUOTE"][:claim_cap]
+            other_claims = [c for c in claims if c["type"] in ("STUDY", "STAT", "EVENT")][:claim_cap]
+            for c in quote_claims:  # default cap covers rule 33's "2-3 named people"
                 verdict, reason = self._web_verify_quote(c["subject"], c["claim"])
                 result["lines"].append(f"[{verdict}] QUOTE — {c['subject']}: \"{c['claim'][:80]}\" — {reason}")
                 if verdict == "CONTRADICTED":
                     result["contradicted"].append(c)
                 elif verdict == "UNVERIFIABLE":
                     result["unverifiable_count"] += 1
-            for c in other_claims:  # cap 4 — cost/latency
+            for c in other_claims:  # default cap — cost/latency
                 verdict, reason = self._web_verify_claim(c["type"], c.get("subject", ""), c["claim"])
                 result["lines"].append(f"[{verdict}] {c['type']} — {c.get('subject') or '(unnamed)'}: \"{c['claim'][:80]}\" — {reason}")
                 if verdict == "CONTRADICTED":
@@ -3918,7 +3930,12 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             new_body, new_title = self._attempt_fabrication_repair(article_file, contradicted, source_url)
             if new_body:
                 plain_recheck_content = self._FIGURE_BLOCK_RE.sub("", new_body)
-                recheck = self._run_web_fact_check(plain_recheck_content)
+                # Higher cap here specifically: a repair that grounds the piece in
+                # real source material tends to introduce new specific claims (see
+                # _run_web_fact_check's docstring) -- this is the last gate before
+                # a repaired draft ships, so check more of them, not just the first
+                # default_cap. Cost only recurs in the already-rare contradicted case.
+                recheck = self._run_web_fact_check(plain_recheck_content, claim_cap=8)
                 if not recheck["contradicted"]:
                     full_text = article_file.read_text()
                     fm_only = re.match(r'^(---\n.*?\n---\n)', full_text, re.DOTALL).group(1)
