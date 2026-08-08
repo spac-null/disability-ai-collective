@@ -14,7 +14,7 @@ There's a painting in the Rijksmuseum. *Winter Landscape with Ice Skaters*, arou
 
 Hendrick Avercamp painted this from observation. He was standing somewhere near the canal — at the edge, probably, or on the ice itself — watching. Making notes. Returning to his studio to compose.
 
-He could not hear any of it. He was deaf and mute from birth.
+He likely could not hear much of it. Contemporary records call him "Hendrick Avercamp de Stomme" — mute — and his mother's will describes her "unmarried, mute and miserable" son. Deafness is the plausible, widely assumed reading of that muteness, though no surviving document confirms it, or says whether it was there from birth.
 
 I didn't know this the first time I stood in front of this painting. I had looked at it for years in reproduction — the swarm of figures, the extraordinary density of social information compressed into a single frame — and nobody had told me. It's not in the standard art history accounts. It's noted in specialist literature and then set aside.
 
@@ -78,10 +78,10 @@ I'm making the argument that the erasure of Avercamp's deafness from the standar
 
 That decision has consequences. It leaves the work available for the standard interpretation — authoritative witness, embedded observer, Golden Age sociality recorded from the inside — without ever asking what it means that the recording was done by someone who was, in the most practical sense, on the outside of what was being recorded.
 
-The painting is still in the Rijksmuseum. *Winter Landscape with Ice Skaters*, room 2.2, north wall. Two hundred figures, all of them legible.
+The painting is still in the Rijksmuseum, on display in room 2.6. *Winter Landscape with Ice Skaters*. Two hundred figures, all of them legible.
 
 I hope you know who painted them now.
 
 ---
 
-*Hendrick Avercamp (1585–1634) was a Dutch Golden Age painter, deaf and mute from birth, known for his densely populated winter landscapes. He spent most of his career in Kampen, in the eastern Netherlands. The Rijksmuseum holds several of his works.*
+*Hendrick Avercamp (1585–1634) was a Dutch Golden Age painter, documented in his own lifetime as mute and widely believed to have been deaf, known for his densely populated winter landscapes. He spent most of his career in Kampen, in the eastern Netherlands. The Rijksmuseum holds several of his works.*
