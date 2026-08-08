@@ -23,8 +23,6 @@ This is not about better or worse architecture. It is about what a space demands
 
 [Georgina Kleege](https://english.berkeley.edu/users/45), a disability scholar, wrote that blind people often know more about visual representation than sighted people because we have had to think about it. I would add: deaf and hard-of-hearing students know more about classroom acoustics than the architects who design them. Nobody asks. The adjustment paperwork arrives later, framed as the child's deficit, never as the building's.
 
-In 2019 a teacher in Melbourne told me her school had renovated. Pulled out the old carpet and ceiling tile, put in stained concrete and exposed ductwork. Industrial aesthetic. Two months later, five students who had never needed support were referred for auditory processing assessments. She knew why. She could hear it. She also knew nobody would connect those two facts in writing.
-
 This is what I mean by the floor rising. The standard for what counts as adequate hearing has been quietly raised by the environments we build. A child who can hear in a soft room but not a hard one gets coded as disordered. The room stays neutral.
 
 ---
@@ -53,7 +51,9 @@ I know this because I wore the receiver. Not for hearing loss — for auditory p
 
 ---
 
-The article in [The Conversation](https://theconversation.com) lists possible causes for the twenty-seven percent figure. Better diagnosis. Reduced stigma. Increased parental advocacy. All true. But none of those explain why the graph curved upward sharply after 2018. That is when the new building codes came in. Cheaper materials, faster construction, open-plan pedagogy. The floor rose.
+The article in [The Conversation](https://theconversation.com) lists the causes it actually found. The disruption of COVID-19. States adopting the national assessment model on different timelines — Queensland only came aboard in 2023. And a funding structure that pays schools more for a higher classification: six thousand dollars for a "supplementary" adjustment, up to forty-five thousand for "extensive" support. All of that is real. None of it needs an acoustic floor to explain it.
+
+But sit with the funding number for a second. A school does not get paid to build a quiet room. It gets paid to name a child's ear a certain way. That incentive is not architectural in the literal sense — no new codes, no cheaper concrete, no open-plan pedagogy. But it is a structure all the same, built out of dollar figures instead of glass and floors, and it rewards the classification, not the fix. The floor didn't rise because concrete replaced carpet. It rose because someone priced the diagnosis.
 
 What counts as disability is always a relationship between a body and an environment. Change the environment and the body that was fine yesterday is disabled today. The adjustment data looks like a medical phenomenon. It is an architectural one.
 
