@@ -13,9 +13,9 @@ source_title: "The one piece of data that could actually shed light on your job 
 source_outlet: "MIT Tech Review"
 ---
 
-This week, [MIT Tech Review](https://www.technologyreview.com/) ran a piece arguing that the single most useful dataset for understanding AI's impact on work would be a long-term record of what people actually do at their jobs — task by task, hour by hour, before and after the tools arrive. The piece is honest about what is missing. It is also, in a way the author does not notice, a confession.
+This week, [MIT Tech Review](https://www.technologyreview.com/) ran a piece arguing that the single most useful dataset for understanding AI's impact on work would be price elasticity of demand spanning the whole economy — how much demand for a given piece of skilled labour shifts when the cost of getting it shifts. The economist Alex Imas put the gap plainly: "We don't currently have this data across the economy." We know exactly how demand moves for cereal and milk, he said, "but we don't have such figures for tutors or web developers or dietitians." The piece is honest about what is missing. It is also, in a way the author does not notice, a confession.
 
-Because the dataset already exists. It has existed for three years. It is just stored in a place economists do not look: inside the working lives of disabled people who started using these tools the week they shipped.
+Because a piece of that dataset already exists. It has existed for three years. It is just stored in a place economists do not look: inside the working lives of disabled people who watched what a model did to the cost of their own labour the week it shipped, and to the demand for what they could suddenly do.
 
 I am writing this on a Thursday morning in February 2026. My screen reader is not reading anything yet. I have just asked a model to summarise a 71-page acoustic consultancy brief sent to me last night by a project lead in Rotterdam. He knows I am blind. He sent the PDF anyway, because he also knows what I will do with it. Three years ago that document would have cost me four hours of fighting with badly tagged—labeled in a way my screen reader could understand—headings and an inaccessible figure on page 43. This morning it cost me eleven minutes. I read the brief. I wrote back with two specific objections to the reverberation targets on the ground floor. The project moved.
 
@@ -28,7 +28,7 @@ Here is the thing the Anthropic researcher quoted in the MIT piece almost says, 
 <figcaption>surreal letterpress composition: oversized metal type blocks scattered across perforated steel mesh at impossible angles illustration for The Economists Cannot Hear the Work That Already</figcaption>
 </figure>
 
-I called Mette Johansen about this last week. She is an autistic civil engineer in Aarhus I have known since 2019, back when she was still masking through every client meeting and going home to lie on the kitchen floor for two hours afterwards. She uses a model now to draft the social register of her emails — the warmth, the small talk, the closing line that says "looking forward to hearing from you." The tool handles those elements without making her want to peel her skin off. "I do the engineering," she said. "It always did the engineering. The tool does the part that was costing me the engineering." She paused. "If someone measures my output now versus 2022, they will say AI made me 30 percent more productive. That is not what happened. AI stopped charging me a tax."
+I think about the disabled colleagues I have talked to this past year who describe some version of the same shift. The ones who now let a model draft the social register of an email — the warmth, the small talk, the closing line that says "looking forward to hearing from you" — because writing that register by hand used to cost them an hour of rehearsal and a headache, on top of doing the actual engineering or design or analysis the email was about. None of them would call what happened augmentation. If someone measured their output now against 2022, the number would say they got more productive. That is not what happened. The cost of the part that was never the job dropped, and the demand for the part that was always the job — the part they were already good at — rose to fill the space.
 
 The tax is the dataset nobody is collecting.
 
@@ -41,7 +41,7 @@ The honest answer is that no one in the productivity literature wants to ask tha
 <figcaption>riograph print: layered silhouettes of hands gesturing in conversation depicting hands gesturing in conversation</figcaption>
 </figure>
 
-So when MIT Tech Review says the missing data is task-level records of what workers do all day, I want to say: the missing data is who was never counted as a worker, doing what was never counted as work, paying a tax that was never counted as a cost. That data is recoverable. It would just require asking us. The instruments exist. They are called questions.
+So when MIT Tech Review says the missing data is how demand for a skill moves when its cost moves, I want to say: the missing data is what happens when the cost was never the cost of the skill at all, but a tax on getting into the room where the skill could be used — a tax that was never counted, charged to people who were never counted as workers. That data is recoverable. It would just require asking us. The instruments exist. They are called questions.
 
 It is 6:14 AM. The pool opens at 6:15. I am standing in the doorway. The water is hearing itself back, and for forty seconds nobody is measuring anything at all.
 
