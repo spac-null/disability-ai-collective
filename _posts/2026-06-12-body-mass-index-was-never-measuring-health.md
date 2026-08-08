@@ -21,7 +21,7 @@ In 1972, Ancel Keys renamed it Body Mass Index and the medical establishment ado
 
 I know this history because I collect taxonomies. Diagnostic manuals, especially. The way categories get invented, then treated as real, then used to sort people into rooms they cannot leave. The [DSM](https://www.psychiatry.org/psychiatrists/practice/dsm) is a diagnostic manual used by mental health professionals. DSM-III added Pervasive Developmental Disorder, a childhood condition affecting development, in 1980. Asperger's, a form of autism, arrived in DSM-IV, 1994. Both gone by DSM-5, 2013, folded into [Autism Spectrum Disorder](https://www.psychiatry.org/psychiatrists/practice/dsm/diagnostic-and-statistical-manual-of-mental-disorders). Thirty-three years, three category shifts. Same brain the whole time.
 
-BMI does the same work. It converts a ratio into a fact, then builds a treatment infrastructure around the fact. Wegovy works by mimicking GLP-1, a hormone that regulates appetite and makes you feel full sooner. Clinical trials show average weight loss of 15% over 68 weeks. The drug works. What it works *on* is the question nobody asks.
+BMI does the same work. It converts a ratio into a fact, then builds a treatment infrastructure around the fact. Wegovy works by mimicking GLP-1, a hormone that regulates appetite and makes you feel full sooner. Clinical trials show those on the highest dose lost 14-17% of their body weight after 64 weeks. The drug works. What it works *on* is the question nobody asks.
 
 Every pharmaceutical intervention for a diagnostic category does two things. First, it treats the symptom. Second, it also confirms the category was real to begin with. If the drug works, the diagnosis must have been correct. But the diagnosis was never about health. It was about a number on a chart that a Belgian astronomer drew in 1832.
 
@@ -46,7 +46,7 @@ The noise is the information. The noise is where the category breaks.
 
 ---
 
-In May 2023, the [American Medical Association](https://www.ama-assn.org/) said BMI should not be used as the sole criterion for diagnosis. They did not say stop using it. They said *not the sole criterion*. Which means it is still a criterion. The number still decides the room you are sorted into, it just is not supposed to be the only number. But in practice, it is. The GP appointment lasts ten minutes. The scale is faster than the conversation.
+In June 2023, the [American Medical Association](https://www.ama-assn.org/) said BMI should not be used as the sole criterion for diagnosis. They did not say stop using it. They said *not the sole criterion*. Which means it is still a criterion. The number still decides the room you are sorted into, it just is not supposed to be the only number. But in practice, it is. The GP appointment lasts ten minutes. The scale is faster than the conversation.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/body-mass-index-was-never-measuring-health_symbol_3.jpg" alt="Risograph print of a silhouette figure split vertically in half—one side rendered in acid yellow depicting figure split vertically in half—one side rendered in acid yellow" width="800" height="450" loading="lazy" decoding="async">
