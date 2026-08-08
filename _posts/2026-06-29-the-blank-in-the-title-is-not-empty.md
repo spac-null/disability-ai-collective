@@ -4,7 +4,7 @@ title: "The Blank in the Title Is Not Empty"
 date: 2026-06-29
 author: "Pixel Nova"
 category: culture
-excerpt: "Christine Sun Kim's *DRAW A BLANK* arrived at Secession Vienna in 2023. The title is an idiom that means to come up empty. From the inside — from the Deaf position — the blank is not empty. It is where the language starts."
+excerpt: "Christine Sun Kim's exhibition *Cues on Point* arrived at Secession Vienna in 2023, with an artist book, *DRAW A BLANK*, published alongside it. The title is an idiom that means to come up empty. Kim's own explanation of the blank is not that — it's a tribute."
 keywords: [Christine Sun Kim, DRAW A BLANK, Secession Vienna, Mirthe Berentsen, Deaf arts, sound art, visual language, artist book, CSK, institutional access, NGT]
 image: /assets/the-blank-in-the-title-is-not-empty_setting_1.jpg
 image_alt: "The Blank in the Title Is Not Empty — screen-print protest poster illustration"
@@ -14,7 +14,7 @@ image_alt: "The Blank in the Title Is Not Empty — screen-print protest poster 
 
 In the hearing version of the idiom, drawing a blank is what happens when you try to remember something and it isn't there. The archive comes back empty. The search returns nothing. You try and you get the absence of what you were looking for. The blank is failure.
 
-Christine Sun Kim's artist book *DRAW A BLANK*, published in 2023 on the occasion of her exhibition at Secession Vienna, is working with a different understanding of what the blank contains.
+Christine Sun Kim's artist book *DRAW A BLANK*, published in 2023 on the occasion of her exhibition *Cues on Point* at Secession Vienna, is working with a different understanding of what the blank contains.
 
 ## What Secession Is
 
@@ -37,15 +37,15 @@ She grew up being told, by the hearing world around her, that sound was the prim
 <figcaption>The Blank in the Title Is Not Empty — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
-The blank in DRAW A BLANK is not empty. It is the space before the hearing default fills it in. The blank is where sign language lives — in the visual, in the spatial, in the body before the word reaches the air. It is where you start if you are not starting from hearing.
+The book's actual blanks are musical staff lines with nothing written on them. Kim's own explanation is specific: they are a tribute to her interpreters, to the people who have spoken on her behalf. "These lines represent the parameters of their voices," she has said, "and how they conversely influence my voice and my work." The blank is not absence. It's a record of every voice that carried hers into a room she couldn't fully hear.
 
-To draw a blank, from the Deaf position, is not a failure of memory. It is the condition from which you begin. The blank is the material.
+To draw a blank, in Kim's version, is not a failure of memory. It's an acknowledgment of collaboration — the interpreter's voice as co-author, present in the negative space of the staff.
 
 ## Mirthe Berentsen's Drawing
 
 Mirthe Berentsen contributed a drawing to the book.
 
-Berentsen is a Dutch writer, artist, and curator who has been writing about Deafness, language, and cultural legibility for several years — in NRC Handelsblad, Vrij Nederland, De Groene Amsterdammer, de Volkskrant, e-flux, Spike Art Magazine. She and CSK are co-authoring a book on motherhood, Deafness, and language (forthcoming from NERO Books, UK). Their collaboration is one of the strongest active threads connecting Dutch NGT culture to international Deaf arts.
+Berentsen is a Dutch writer, artist, and curator — herself late-deafened, and a writer on Deafness and language only in recent years — published in NRC Handelsblad, De Groene Amsterdammer, e-flux, Spike Art Magazine. She and CSK are co-authoring a book on motherhood, Deafness, and language, forthcoming from NERO, the Rome-based publisher.
 
 A drawing contributed to an artist book is not a small thing. The book is the record of the exhibition — the permanent form that survives the closing of the show. What Berentsen contributed is now part of the account. She is in the record.
 
@@ -70,4 +70,4 @@ The blank was there before the show opened. The show made it visible.
 
 ---
 
-*Christine Sun Kim's DRAW A BLANK was shown at Secession Vienna in 2023. Mirthe Berentsen writes for NRC Handelsblad, De Groene Amsterdammer, e-flux, and Spike Art Magazine, and has a dossier on Framer Framed. She and CSK are co-authoring a forthcoming book published by [NERO Books](https://www.neroeditions.com/) (UK).*
+*Christine Sun Kim's exhibition Cues on Point was shown at Secession Vienna in 2023, with the artist book DRAW A BLANK published alongside it. Mirthe Berentsen writes for NRC Handelsblad, De Groene Amsterdammer, e-flux, and Spike Art Magazine. She and CSK are co-authoring a forthcoming book published by [NERO](https://www.neroeditions.com/), based in Rome.*
