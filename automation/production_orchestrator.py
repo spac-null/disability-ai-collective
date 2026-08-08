@@ -1265,9 +1265,25 @@ class ProductionOrchestrator:
                 content_type = resp.headers.get("Content-Type", "")
                 if "text/html" not in content_type:
                     return None
-                html = resp.read().decode("utf-8", errors="replace")[:60000]
+                # This 500K cap is a memory/DoS safety bound on raw HTML scanned, NOT
+                # the output size (max_chars already governs that, below). It used to
+                # be 60K, which silently broke real-world pages with heavy pre-content
+                # markup: confirmed live 2026-08-08 that theconversation.com's actual
+                # article text (the tetraplegic-man-in-a-police-station paragraph, the
+                # Oamaru flooding story) starts at character ~101,000 -- entirely past
+                # the old 60K cutoff. That fetch call was silently returning None for
+                # the WHOLE generation this bug shipped from, meaning the model had no
+                # SOURCE MATERIAL block to draw from and invented a person and a quote
+                # to fill the gap instead. Root cause of that fabrication incident, not
+                # a downstream symptom of it.
+                html = resp.read().decode("utf-8", errors="replace")[:500000]
             text = self._extract_paragraphs(html)
             if not text or len(text) < 200:
+                self.logger.warning(
+                    "fetch_source_article: extracted %s chars (<200) from %s -- "
+                    "generation/repair will proceed without real source material",
+                    len(text) if text else 0, url
+                )
                 return None
             self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
             return text[:max_chars]
