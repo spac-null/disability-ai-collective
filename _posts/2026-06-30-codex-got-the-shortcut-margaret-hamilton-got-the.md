@@ -14,11 +14,11 @@ source_outlet: "The Verge"
 ---
 July 15th, OpenAI ships a small square box with buttons for Codex, its coding tool. The press video calls them shortcuts. A device that turns the long act of writing software into a press, a gesture, a thing your hands do without narrating.
 
-In 1969, Margaret Hamilton ran the team that wrote the Apollo guidance software. She had a habit her colleagues found odd. She kept building checks for errors no one had asked her to anticipate, error routines for failure states the mission profile said could not happen. People told her to stop. The astronauts were trained pilots. They would not push the wrong button.
+Margaret Hamilton ran the team that wrote the Apollo guidance software. She had a habit her colleagues found odd. Before Apollo 8, in 1968, she wanted to build in a safeguard against an astronaut accidentally selecting the pre-launch program mid-flight — a scenario she only thought to worry about after watching her young daughter do exactly that in a simulation. NASA told her, in effect, that astronauts were trained professionals who would not make that mistake.
 
-During the descent of Apollo 11, an astronaut pushed the wrong button.
+During Apollo 8 itself, astronaut Jim Lovell made exactly that mistake, wiping the navigation data mid-mission. Hamilton's team fixed it from the ground within hours, because she had kept working the problem NASA had told her not to worry about.
 
-The computer overloaded. Hamilton's unrequested error routines caught it, dropped the low-priority tasks, and kept the landing alive. The thing she had been told was excessive was the thing that worked. Her obsession had a name in the room: over-engineering. It also had a result: the moon.
+Seven months later, during the Apollo 11 descent, a different failure hit: the guidance computer threw a string of 1202 program alarms, caused by a hardware timing bug in the rendezvous radar, not by anything the crew did wrong. Hamilton's priority-scheduling software — designed to shed low-priority tasks under overload rather than crash — let the landing continue. Two separate failures, seven months apart, and both survived because she had already built for failure states other people were confident would never occur. Her obsession had a name in the room: over-engineering. It also had a result: the moon.
 
 Now look at the Codex box again. It promises to remove the part where you sit with a problem and grind through it. The grind is reframed as friction. The shortcut is the product.
 
@@ -42,4 +42,4 @@ So I cannot stand here and tell you that grinding through the noise is always th
 
 What I know is narrower. The same patience that built Apollo's error routines gets diagnosed as a problem when it operates on topics the credentialing system does not value. OpenAI is not selling a tool. It is selling the chance to skip the part where you sit with something until it shows you its shape.
 
-Hamilton sat with it. The button got pushed wrong anyway. Her obsession is why anyone came home.
+Hamilton sat with it. The failure came anyway, twice, from two directions nobody thought worth guarding against. Her obsession is why anyone came home.
