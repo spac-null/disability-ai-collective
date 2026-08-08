@@ -17,7 +17,7 @@ source_outlet: "Guardian Art & Design"
 
 In July 2022, I was in a physiotherapy waiting room in Rotterdam. The magazine rack had an art supplement open to one of Baselitz's inverted portraits. A woman next to me — she had a visual processing condition, I learned later — glanced at it and said, flatly, "that's just how faces look to me sometimes." She wasn't making an art-critical point. She was stating a fact.
 
-Baselitz spent six decades forcing sighted, neurotypical viewers — people without neurological differences or disabilities — to abandon their default orientation. He made them work. The paintings refuse narrative. You can't read a story into a figure whose head is where its feet should be. You have to look at form, colour, surface. Critics called this revolutionary. Art critic Rosalind Krauss, writing about similar strategies in 1979, described it as stripping the image of its "natural" legibility. What nobody said: some people already live there.
+Baselitz spent six decades forcing sighted, neurotypical viewers — people without neurological differences or disabilities — to abandon their default orientation. He made them work. The paintings refuse narrative. You can't read a story into a figure whose head is where its feet should be. You have to look at form, colour, surface. Critics called this revolutionary. Baselitz was blunter about it himself. "I am an avant-gardist," he said in 1963. "What I do is quite aggressive and quite evil." Not strange. Not unfamiliar. Aggressive, and aimed. What nobody said: some people already live there.
 
 ---
 
