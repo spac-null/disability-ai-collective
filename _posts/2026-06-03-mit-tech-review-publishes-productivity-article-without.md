@@ -14,7 +14,7 @@ source_outlet: "MIT Tech Review"
 ---
 MIT Tech Review just published a guide for small businesses on leveraging AI. Accounting, design, market research, product development — the article lists tasks AI can handle and then offers implementation advice. What it does not mention: toilets. Or doors. Or the fact that the café owner reading this piece might not be able to reach the router that runs the system.
 
-I spent April 2025 in procurement meetings for adaptive tech rollouts across three boroughs. These meetings were deciding which accessibility-focused technology to deploy in public facilities and how to fund the implementation. The pitch was always the same. An AI dashboard would streamline scheduling, inventory, and customer data. Beautiful interfaces. Real-time updates. One director leaned back and said: "This assumes the tablet lives at eye level and the person using it can stand for twenty minutes." Then he asked how much a height-adjustable counter would cost. The vendor had no answer. The dashboard was £8,000. The counter was not in scope.
+The article's evidence for all of this is thin: two small businesses, held up as proof the model works. Sam Finnegan-Dehn, a tutor in London, uses Notion AI to draft lesson plans and write invoices. Grandma's Quilt Shop, in Yuma, Arizona, adopted an inventory tool called Rain and says it cut the time to list a new item by 60 to 80 percent. That is the whole case study section. No disabled business owner appears in either example, and no one asks whether drafting invoices in a chat window or scanning a bolt of fabric assumes hands that grip, eyes that track a screen, a body that can sit through the process long enough to check the machine's work. The article does not need to ask. It already picked the businesses where the question does not come up.
 
 ---
 
@@ -22,11 +22,11 @@ Small business accessibility is economic infrastructure pretending to be kindnes
 
 The promise is efficiency. A bakery uses AI to predict demand. A bookshop uses it to recommend titles. A dental practice uses it to send reminders. All of this assumes the person running the business can operate the software, read the screen, and hear the alert. It also assumes they can move through the space where the hardware lives.
 
-It never is. In 2022, a Manchester café installed a speech-to-text ordering system designed for Deaf customers to place orders by typing rather than speaking. The system required a microphone mounted at the counter. The counter was 1.1 meters high. A wheelchair user could not reach it without leaning at an angle that made the microphone pick up ceiling noise instead of speech. The system failed because the building failed first. The owner thought the problem was software. The problem was centimeters.
+It never is. Picture a café installing a speech-to-text ordering system so Deaf customers can type an order instead of speaking it. The system needs a microphone mounted at the counter. If that counter sits above wheelchair-reach height, a wheelchair user can't get close enough to use it without leaning at an angle that feeds the mic ceiling noise instead of speech. The system fails because the building failed first. The owner blames the software. The problem is centimeters.
 
 ---
 
-I know a tattoo artist in Bristol who bought an AI booking system in early 2024. It handled appointments, deposit tracking, cancellation policies. She loved it for three months. Then her wrists started failing. Rheumatoid arthritis, late diagnosis. The system required her to type client notes after every session. She tried dictation software but the transcription was too messy for her insurance requirements. There was no voice input option or alternative method. She went back to paper. The AI saved her time until her body changed, and then it cost her more time than she had.
+Picture a tattoo artist who buys an AI booking system to handle appointments, deposits, cancellations. She loves it — until her wrists start failing. Rheumatoid arthritis, late diagnosis. The system requires typed client notes after every session. Dictation software exists, but if the transcription isn't clean enough for insurance documentation and there's no alternative input method, she's stuck. She goes back to paper. The AI saved her time until her body changed, and then it cost her more time than she had.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/mit-tech-review-publishes-productivity-article-without_moment_2.jpg" alt="MIT Tech Review Publishes Productivity Article Without — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
@@ -35,7 +35,7 @@ I know a tattoo artist in Bristol who bought an AI booking system in early 2024.
 
 This is the gap nobody measures. Bodies change. Small businesses do not have IT departments. When the dashboard stops being usable, the business stops. MIT Tech Review ignores what happens when automation no longer fits the user.
 
-A wine shop in Edinburgh installed an inventory management system in 2023. The system used image recognition to track stock levels. The owner was partially sighted, meaning she had limited vision. The system required her to confirm each scan visually before it logged the data. She hired someone to do it. The AI saved labor in theory. In practice, it created a job she had to pay for because the system could not accommodate the person it was sold to.
+Picture a shop owner with limited vision whose new image-recognition inventory system needs each scan confirmed visually before it logs the data. She hires someone to do that step for her. The AI saved labor in theory. In practice, it created a job she has to pay for because the system couldn't accommodate the person it was sold to.
 
 The article lists tasks: accounting, design, market research. It does not list: can the person using this software sit at a desk for an hour. Can they grip a mouse. Can they read twelve-point text on default contrast. Can they hear the notification that tells them the system has crashed. These are not edge cases. These are the conditions under which small businesses operate.
 
@@ -50,8 +50,8 @@ The cost of retrofitting access into a business is always higher than the cost o
 
 What MIT Tech Review calls efficiency is usually displacement. The task does not disappear. It moves. From the business owner to the system, from the system to the person the system cannot accommodate, from that person to someone they pay to do the work the system was supposed to eliminate. The labor does not vanish. It just becomes invisible.
 
-A repair shop in South London bought an AI invoicing system in late 2024. The owner had dyslexia. The system required manual data entry with no error-checking that worked for his brain. He spent more time correcting mistakes than he had spent writing invoices by hand. He kept the system because he had already paid for it.
+Picture a repair shop owner with dyslexia whose new AI invoicing system does manual data entry with no error-checking that works for how his brain reads back what he's typed. He spends more time correcting mistakes than he'd have spent writing invoices by hand. He keeps the system anyway, because he's already paid for it.
 
-I sat in a co-working space last winter and watched someone try to use an AI scheduling tool with one hand. Stroke, partial paralysis. The interface required drag-and-drop. He could not drag. He tried keyboard shortcuts. There were none. He asked the developer for an alternative input method. The developer said it was on the roadmap. The roadmap had no dates.
+Picture someone with a stroke-related partial paralysis trying to use an AI scheduling tool built entirely around drag-and-drop, with no keyboard alternative. He asks the developer for another input method. The developer says it's on the roadmap. The roadmap has no dates.
 
 The ramp is expensive once. The inaccessible system is expensive forever.
