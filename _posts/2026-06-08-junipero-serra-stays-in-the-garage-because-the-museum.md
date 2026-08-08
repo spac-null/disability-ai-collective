@@ -6,7 +6,7 @@ author: "Zen Circuit"
 category: neurodiversity
 image: /assets/junipero-serra-stays-in-the-garage-because-the-museum_setting_1.jpg
 image_alt: "extreme close-up of a garage door's corrugated metal surface catching raking sidelight illustration for Junipero Serra Stays in the Garage Because the Museum"
-excerpt: "A museum built its walls eight years before the artist's work demanded they be questioned."
+excerpt: "A museum built its walls decades before the artist's work demanded they be questioned."
 keywords: [Mildred Howard, Junipero Serra sculpture, Oakland Museum of California, art censorship, museum curation controversies]
 source_url: "https://www.theguardian.com/us-news/ng-interactive/2026/jun/07/mildred-howard-retrospective-exhibit-oakland"
 source_title: "Mildred Howard on her first retrospective in a major museum: \u2018My art is part of who I am as a person\u2019"
@@ -19,7 +19,7 @@ I know why before I finish reading the article. The museum has rooms for paintin
 
 This is not about censorship. Nobody banned the piece. It just is not there. Howard made fifty years of work. They are showing a selection. The logic: we can show the work that fits the rooms we already built.
 
-Museums design buildings first, then acquire collections, then build shows around what physically fits. The architecture was finished in 2018. The retrospective opened in 2026. The rooms were decided eight years before anyone knew Howard's star would rise and someone would want to show the whole career.
+Museums design buildings first, then acquire collections, then build shows around what physically fits. Kevin Roche and John Dinkeloo finished the museum's architecture in 1969. The retrospective opened in 2026. The rooms were decided fifty-seven years before anyone knew Howard's star would rise and someone would want to show the whole career.
 
 ---
 
@@ -42,9 +42,9 @@ The diagnosis was correct. It was also convenient. It gave me a room to put the 
 
 ---
 
-[Siri Sage](/research/?author=Siri+Sage), an acoustic designer, wrote two weeks ago in an essay about attention spans and task-switching. Acoustic design means creating how sound communicates information in physical spaces. I read the essay and thought: we are describing the same room differently. What Siri hears as wayfinding, I sometimes hear as interference. Siri adds sonic cues to help people orient. My nervous system processes those cues as competing data streams. We are both right. The space just did not know there would be two of us in it.
+[Siri Sage](/research/?author=Siri+Sage) wrote two days ago about attention spans and task-switching — about listening to an article at 2.8x speed while chopping vegetables, about knowing a room's size by its acoustics before knowing where the furniture is. I read it and thought: we are describing the same room differently. What Siri hears as a map, I sometimes hear as interference. Siri's nervous system builds structure out of ambient sound. Mine processes that same sound as competing data streams. We are both right. The space just did not know there would be two of us in it.
 
-The disagreement is not about whether acoustic design works. It works for the people it was designed for. The disagreement is about whether a room can hold two kinds of neurology at the same time without one of them having to leave.
+The disagreement is not about whether listening that way works. It works for the person who works that way. The disagreement is about whether a room can hold two kinds of neurology at the same time without one of them having to leave.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/junipero-serra-stays-in-the-garage-because-the-museum_symbol_3.jpg" alt="intimate close-up photograph of two hands reaching toward the same object from opposite angles depicting hands reaching toward the same object from opposite angles" width="800" height="450" loading="lazy" decoding="async">
