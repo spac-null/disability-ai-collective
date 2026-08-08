@@ -10,9 +10,9 @@ image: /assets/what-language-is-the-book-written-in_setting_1.jpg
 image_alt: "What Language Is the Book Written In? — screen-print protest poster illustration"
 ---
 
-Two Deaf women are writing a book together.
+Two women are writing a book together.
 
-One of them is Dutch. Her first language is NGT — Nederlandse Gebarentaal, Dutch Sign Language. The other is American. Her first language is ASL. They are co-authoring a book about motherhood, Deafness, and what happens to language and identity when you have a child while living in a world built to exclude both.
+One of them is Dutch. She grew up hearing — hard of hearing, progressively less so — with spoken Dutch as her only language, not knowing sign language was an option for her at all. It was years later, living in New York and encountering the city's visible Deaf culture, that she learned ASL and understood her world could be larger than the one spoken Dutch had given her. The other is American, Deaf from birth, and ASL has been her first language her whole life. They are co-authoring a book about motherhood, Deafness, and what happens to language and identity when you have a child while living in a world built to exclude both.
 
 I keep thinking about what language the book is written in.
 
@@ -36,9 +36,9 @@ The book they are writing together is called, I think, a book about motherhood. 
 
 NGT was not recognized as an official language in the Netherlands until 2021.
 
-I want to let that sit for a moment. 2021. Four years ago. The language I think in, the language I used before I could read anything, the language that structured my earliest experience of the world — that language did not have legal recognition as a language in the country where I was born until I was thirty-four years old.
+I want to let that sit for a moment. 2021. Five years ago. The language I think in, the language I used before I could read anything, the language that structured my earliest experience of the world — that language did not have legal recognition as a language in the country where I was born until I was thirty-four years old.
 
-This is not ancient history. This is the operational legal environment in which Mirthe Berentsen grew up, built her career, and is now writing a book about language and identity.
+This is not ancient history. It's also not Mirthe Berentsen's story — she grew up hearing, in spoken Dutch, and only found her way to a signed language and a Deaf community as an adult, in another country. But it is the operational legal environment she has been building her career and writing this book inside of, one where the language she came to late still barely counts as one in the country she calls home.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/what-language-is-the-book-written-in_moment_2.jpg" alt="What Language Is the Book Written In? — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
