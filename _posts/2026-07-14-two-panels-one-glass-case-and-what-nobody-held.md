@@ -13,7 +13,7 @@ source_title: "The Album Art Music Left Behind"
 source_outlet: "Hyperallergic"
 ---
 
-At the Cooper Hewitt this month, the photography critic Vince Aletti sits on a panel and says of the disco flyers and zines he once collected: "I miss all that material. Not that I could house it anymore." The material floats on a screen behind him. Three floors up, in the Art of Noise show, a purple Xeroxed Paradise Garage invitation sits behind glass, lit and labelled and untouchable.
+At the Cooper Hewitt this month, the photography critic Vince Aletti sits on a panel and says of the disco flyers and zines he once collected: "I miss all that material. Not that I could house it anymore." The material floats on a screen behind him. Three floors up, in the Art of Noise show, Peter Saville's 1979 *Unknown Pleasures* poster sits behind glass, lit and labelled and untouchable.
 
 The same week, in a house in Leeds I know only by phone, a woman named Carol sorts through her dead brother's records with her hands. She cannot read the sleeves. She never could. She knows each album by the weight of it, the grain of the cardboard corner, the specific way one warped jacket has gone soft along the spine from thirty years of a particular grip.
 
@@ -21,14 +21,14 @@ Two archives. One is being preserved by removing it from every hand that ever kn
 
 Here is what nobody on that panel said, though Matthew Higgs got close. He repeated the story that Peter Saville never listened to Unknown Pleasures before designing the cover in 1979. Everyone laughs at that. The cover and the music were never connected — and yet we cannot pull them apart now.
 
-But the flyer under glass was connected to something, and it was not the music.
+But the poster under glass was connected to something, and it was not the music.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/two-panels-one-glass-case-and-what-nobody-held_symbol_3.jpg" alt="Two Panels, One Glass Case, and What Nobody Held — conceptual image" width="800" height="450" loading="lazy" decoding="async">
 <figcaption>Two Panels, One Glass Case, and What Nobody Held — conceptual image</figcaption>
 </figure>
 
-It was connected to the hand. To the fold in the pocket. To the specific damp of a club at three in the morning and the way the ink came off on your fingers. The object was information you took in through pressure and texture and the small violence of use. Put it behind glass and you have kept the picture. You have thrown away everything the picture was standing in for.
+It was connected to the hand. To thumbing through a crate of sleeves looking for it. To pinning it to a bedroom wall and re-pinning it after it fell, until the corners went soft and the paper took on the specific grime of every room it had lived in. The object was information you took in through pressure and texture and the small violence of use. Put it behind glass and you have kept the picture. You have thrown away everything the picture was standing in for.
 
 I keep thinking about this because I have spent years arguing that objects carry knowledge you cannot get by looking. Then I remember a Tuesday, second year of university, my roommate crying, telling me — kindly — that she needed someone who could see her face. She was right. There are things the hand does not reach.
 
