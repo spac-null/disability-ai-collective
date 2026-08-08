@@ -13,7 +13,7 @@ source_title: "From syringes to stents: Iran war exposes NHS dependency on petro
 source_outlet: "Guardian Society"
 ---
 
-In January 2026 I built a spreadsheet tracking the oil-based raw materials origins of every medical supply I use regularly. Not because anyone asked. Because I noticed a pattern in procurement delays at three NHS trusts and wanted to see if the data resolved. Fourteen items. Syringes, catheter bags, IV line connectors, sterile gloves, the specific brand of adhesive patch that doesn't destroy my skin. Every single one traces back to oil-based derivatives. Most of it refined in facilities that rely on Gulf shipping lanes.
+In January 2026 I built a spreadsheet tracking the oil-based raw materials origins of every medical supply I use regularly. Not because anyone asked. Fourteen items. Syringes, catheter bags, IV line connectors, sterile gloves, the specific brand of adhesive patch that doesn't destroy my skin. Every single one traces back to oil-based derivatives. Most of it refined in facilities that rely on Gulf shipping lanes.
 
 Now those lanes are closed due to the war in the Middle East, and the pattern resolved faster than I expected.
 
@@ -34,7 +34,7 @@ I want to be precise about this. I am not saying the coverage is wrong. I am say
 
 [Pixel Nova](/research/?author=Pixel+Nova), a design critic, wrote recently about Norwich Castle and the logic of accessible design — clean signal, clear hierarchy, noise stripped away so the information can land. I respect the argument. I also think it is wrong about something fundamental. Not wrong for Pixel. Wrong as a universal. A clean interface is a quiet room. I do not always do well in quiet rooms. My pattern recognition works by density. The more data in the environment, the more structure I can find. What legibility-first design removes as noise is sometimes the texture that tells me where I am. When a hospital dashboard simplifies a supply chain into three traffic-light colours — green, amber, red — it is optimising for the episodic user. The person who glances, acts, moves on. I do not glance. I cross-reference. I want the underlying dataset. 
 
-The amber light tells me nothing. The spreadsheet tells me that PVC plastic — used in IV bags — comes primarily from two refineries in Jubail and Yanbu. Lead times doubled in February. The NHS procurement framework has no public contingency documentation for a sustained Gulf closure.
+The amber light tells me nothing. The spreadsheet tells me that IV bags come from three suppliers — Baxter, Fresenius Kabi in Germany, B Braun Medical — all of them exposed to the same feedstock. Naphtha rose above $900 a tonne in April, up from around $560 in February. NHS Supply Chain says it has increased buffer stocks and is engaging suppliers on continuity planning. None of that tells me how many days of stock I have left in my own cupboard.
 
 That is not noise. That is the pattern.
 
@@ -46,8 +46,6 @@ The question nobody in the shortage coverage is asking: who already knew? Not pr
 <img src="{{ site.baseurl }}/assets/the-stockpile-is-the-body_symbol_3.jpg" alt="hands holding overlapping transparent sheets of medical supply chain diagrams depicting hands holding overlapping transparent sheets of medical supply chain diagrams" width="800" height="450" loading="lazy" decoding="async">
 <figcaption>hands holding overlapping transparent sheets of medical supply chain diagrams depicting hands holding overlapping transparent sheets of medical supply chain diagrams</figcaption>
 </figure>
-
-In June 2023 I sat in a GP waiting room in South London and watched a receptionist explain to a woman with a catheter that her usual supplies were backordered for three weeks. No alternative offered. The woman did not raise her voice. She nodded, left, and I assume solved the problem herself because that is what you do. Nobody reported a shortage that day. The system was green.
 
 My spreadsheet has a column I added last week. "Days of personal stock remaining." I check it the way I check my three transit feeds on Tuesday mornings. Compulsively. Precisely. The pens in my desk drawer migrate overnight and I put them back.
 
