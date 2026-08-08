@@ -12,7 +12,7 @@ image_alt: "The Threshold Has a Curb — screen-print protest poster illustratio
 
 Jitske Kramer writes about organizations that don't know what to do next.
 
-Her book, *Tricky tijden*, came out in September 2025. The central concept is "permanente liminaliteit" — permanent liminality. The threshold state. You are between what was and what will be, and neither end is visible. Boundaries dissolve. Freedom and anxiety arrive together. There is no clear path forward.
+Her book, *Tricky tijden*, came out in March 2024. One of the concepts she develops is "permanente liminaliteit" — permanent liminality. The threshold state. You are between what was and what will be, and neither end is visible. Boundaries dissolve. Freedom and anxiety arrive together. There is no clear path forward.
 
 She reaches for a campfire. Organizations in uncertain times should gather, find direction together, wait until the path reveals itself.
 
@@ -73,4 +73,4 @@ The campfire is warm. The path to it is cold and has steps.
 
 ---
 
-*Jitske Kramer is a corporate anthropologist. Her book Tricky tijden was published by Bertram + De Leeuw Uitgevers in September 2025.*
+*Jitske Kramer is a corporate anthropologist. Her book Tricky tijden was published by Boom in March 2024.*
