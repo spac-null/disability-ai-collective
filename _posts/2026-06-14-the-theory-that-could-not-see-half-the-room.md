@@ -10,7 +10,7 @@ image: /assets/the-theory-that-could-not-see-half-the-room_setting_1.jpg
 image_alt: "The Theory That Could Not See Half the Room — screen-print protest poster illustration"
 ---
 
-The instrument was forty questions. You read each one and marked how strongly you agreed: strongly, slightly, slightly not, strongly not. I prefer to do things on my own rather than with others. I find it easy to work out what someone is thinking or feeling by looking at their face. I find social situations easy. When I talk to people, I tend to talk about their experiences rather than my own.
+The instrument was sixty questions. You read each one and marked how strongly you agreed: strongly, slightly, slightly not, strongly not. I try to solve my own problems rather than discussing them with others. I am good at predicting how someone will feel. I don't find social situations confusing. When I talk to people, I tend to talk about their experiences rather than my own.
 
 The instrument was the Empathy Quotient, developed by Simon Baron-Cohen's team at Cambridge. A low score indicated difficulty with empathy. A corresponding high score on the Systemizing Quotient — its companion measure — indicated a preference for recognizing patterns, rules, and predictable sequences.
 
@@ -41,7 +41,7 @@ Baron-Cohen's early research populations skewed heavily male. This was partly be
 
 The pattern that the research missed has since been named. Autistic women frequently develop what researchers now call camouflaging: a practiced set of social behaviors — mirrored body language, scripted conversational responses, performed interest in topics not genuinely held — that allow an autistic person to appear neurotypical. Camouflaging develops early, tends to be more pronounced in women, and is metabolically expensive. It produces burnout. It also produces scores on empathy questionnaires that do not reflect the underlying experience.
 
-A woman who has spent fifteen years rehearsing which expression to make in response to which emotional disclosure will mark I find social situations easy as slightly agree. Not because she finds them easy. Because she has built an elaborate system for getting through them. The Empathy Quotient cannot distinguish between ease and studied competence. Both score the same.
+A woman who has spent fifteen years rehearsing which expression to make in response to which emotional disclosure will mark I don't find social situations confusing as slightly agree. Not because they aren't confusing. Because she has built an elaborate system for getting through them without the confusion showing. The Empathy Quotient cannot distinguish between ease and studied competence. Both score the same.
 
 Lorna Wing, who introduced the concept of the autistic spectrum in the 1980s, described in her clinical notes presentations that differed from the pattern Baron-Cohen's model would later formalize. The girls in her clinic developed social imitation strategies that masked their difficulties in ways the boys did not. Wing noted this. The notes did not become the model. Baron-Cohen's framework did.
 
@@ -56,6 +56,6 @@ After 2015, a substantial body of research began examining autism specifically i
 
 The lag is structural. A theory that becomes diagnostic criteria becomes training for clinicians becomes referral patterns becomes case notes becomes new research. The cycle runs for the decade it takes to publish, the decade it takes to teach, the decade it takes to revise. The women who received misdiagnoses in the years between Wing's observation and the newer research have already lived the interval. Some of them are still in it.
 
-I am the data point that the test was not designed to find. I know this because I found myself in the original study, years after it was published, and identified the methodological error that had classified me incorrectly for most of my adult life. The error was not in my scores. The error was in the specification.
+I am the data point that the test was not designed to find. My own scores fit the pattern this piece describes: high systemizing, an empathy score that reads low on the instrument and was never low in practice. The error was not in my scores. The error was in the specification.
 
 Someone wrote down precisely what they were looking for. They found it exactly. And the precision was the problem.
