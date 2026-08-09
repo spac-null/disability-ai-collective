@@ -1,0 +1,454 @@
+"""
+fact_check.py — claim extraction and live web fact-verification.
+
+Extracted 2026-08-09 (module-split, Stage 3 continued). Groups: claim
+extraction (_extract_verifiable_claims), live web verification via Perplexity
+Sonar (_web_verify_quote, _web_verify_claim — direct OpenRouter calls,
+bypassing CLIProxyAPI, see their own docstrings for why), the orchestrating
+pass (_run_web_fact_check), the one-shot grounded repair attempt before
+hard-blocking a contradicted draft (_attempt_fabrication_repair), and
+cross-persona citation accuracy checking (_check_persona_crosscite_accuracy).
+Zero behavior change -- bodies copied verbatim, confirmed via direct substring
+containment against git HEAD.
+"""
+import json
+import re
+import urllib.request
+
+from .config import CLIPROXY_URL, CLIPROXY_KEY, _AGENT_SLUG
+
+
+class FactCheckMixin:
+    def _extract_verifiable_claims(self, content):
+        """Cheap extraction pass covering all four categories the (advisory-only,
+        LLM-self-report) citation check flags: QUOTE, STUDY, STAT, EVENT. Feeds
+        _web_verify_quote (QUOTE) and _web_verify_claim (STUDY/STAT/EVENT) — the
+        citation check has no way to know if a claim is real, only whether the
+        article names a source for it; these are the steps that actually check.
+
+        Superset of the old _extract_named_quotes (QUOTE-only) — kept the same
+        JSON-in-text extraction pattern, just widened the categories.
+        """
+        import json as _json
+        SYSTEM = (
+            "Extract every claim from this article that could be independently "
+            "verified against real sources, categorized by type:\n"
+            "- QUOTE: exact text inside quotation marks attributed to a specific "
+            "named real person, other than the first-person narrator. Not "
+            "paraphrase, not a summarised position, not a conditional-mood "
+            "statement ('she would say').\n"
+            "- STUDY: a named study, report, or audit attributed to a specific "
+            "organization.\n"
+            "- STAT: a specific number, percentage, or statistic attributed to a "
+            "source.\n"
+            "- EVENT: a specific dated event or occurrence stated as fact.\n\n"
+            "For QUOTE: 'subject' is the person's full name, 'claim' is the exact "
+            "quoted text. For STUDY/STAT/EVENT: 'subject' is the organization or "
+            "source named (empty string if none named), 'claim' is the specific "
+            "fact stated.\n\n"
+            "Return ONLY valid JSON:\n"
+            '{"claims": [{"type": "QUOTE|STUDY|STAT|EVENT", "subject": "...", "claim": "..."}]}\n'
+            'If none: {"claims": []}'
+        )
+        try:
+            raw = self._call_openai_compat_api(
+                url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
+                system_prompt=SYSTEM, user_prompt=content,
+                model="openrouter/claude-haiku-4.5",
+                max_tokens=900, timeout=30, no_think=True,
+            )
+            match = re.search(r'\{.*\}', raw or "", re.DOTALL)
+            data = _json.loads(match.group(0)) if match else {}
+            return [
+                c for c in data.get("claims", [])
+                if c.get("claim") and c.get("type") in ("QUOTE", "STUDY", "STAT", "EVENT")
+            ]
+        except Exception as e:
+            self.logger.warning("Verifiable-claim extraction failed: %s", e)
+            return []
+
+    def _web_verify_quote(self, person, quote):
+        """Verify one quote against live web sources via Perplexity Sonar.
+
+        Direct OpenRouter call, bypassing CLIProxyAPI — confirmed empirically that
+        CLIProxyAPI 400s on both unlisted models ("unknown provider") and the
+        ':online' web-search suffix on models it does recognise, so search-grounded
+        verification isn't reachable through it. This reuses the same
+        OPENROUTER_API_KEY / direct-OpenRouter pattern _call_editorial_model already
+        falls back to when CLIProxy is down.
+
+        Returns (verdict, reason) — verdict is VERIFIED / UNVERIFIABLE / CONTRADICTED.
+
+        CONTRADICTED intentionally covers two cases, not just "nothing found at all":
+        outright invention, AND the narrower "real person, real general view, but this
+        exact wording is invented" case. Live-tested three times against a real draft's
+        quote attributed to photographer Pete Eckert: search consistently found him
+        discussing seeing through sound/touch/memory in real interviews, but never this
+        exact phrasing — a looser verdict definition classified that as UNVERIFIABLE
+        (non-blocking) each time, which is too permissive for something presented to
+        the reader inside quotation marks as his verbatim words. Quotation marks are a
+        verbatim claim; a verified paraphrase attested elsewhere does not satisfy it.
+        """
+        import os as _os
+        key = _os.environ.get("OPENROUTER_API_KEY", "")
+        if not key:
+            return "UNVERIFIABLE", "OPENROUTER_API_KEY not set — could not search"
+        word_count = len(quote.split())
+        SHORT_PHRASE_MAX_WORDS = 11  # below this: loose standard; 12+ is the strict-verbatim branch
+        prompt = (
+            f'Person: {person}\nQuoted as saying: "{quote}" ({word_count} words)\n\n'
+            "Search for this attributed to this person in any real source (interview, "
+            "article, book, talk).\n\n"
+            "Two different standards apply depending on length — read both before judging:\n"
+            f"- {SHORT_PHRASE_MAX_WORDS} words or fewer, OR a named term/concept/title (e.g. a coined "
+            "phrase, the name of a practice or work): treat as VERIFIED if the person is "
+            "real, demonstrably associated with this term or the idea behind this short "
+            "phrase, and you have no specific reason to think it's wrong. Do not demand a "
+            "verbatim standalone citation for something this short — short phrases get "
+            "paraphrased and re-quoted constantly, and 'not found in this exact form' is "
+            "not evidence of fabrication at this length.\n"
+            "- A longer quote reading as one continuous, specific first-person sentence or "
+            "passage (roughly 12+ words of connected prose, a complete thought in the "
+            "person's own invented voice): this is a verbatim claim and needs a real match. "
+            "VERIFIED only if you find this wording, or phrasing close enough a reader would "
+            "recognise it as the same sentence. If you only find the person expressing a "
+            "similar general idea in visibly different words, that is CONTRADICTED, not "
+            "VERIFIED — a real view rephrased into invented prose is still invented prose "
+            "presented as their verbatim words.\n\n"
+            "Respond in exactly this format:\n"
+            "VERDICT: VERIFIED | UNVERIFIABLE | CONTRADICTED\n"
+            "REASON: one sentence, cite a URL if you found one.\n"
+            "UNVERIFIABLE = you could not find enough about this person or topic to judge "
+            "either way — reserve this for genuine search failure, not 'found the theme "
+            "but not the exact wording' on a long quote (that's CONTRADICTED per above)."
+        )
+        try:
+            raw = self._call_openai_compat_api(
+                url="https://openrouter.ai/api/v1", api_key=key,
+                system_prompt="You are a fact-checker with live web search access.",
+                user_prompt=prompt,
+                model="perplexity/sonar",
+                max_tokens=250, timeout=30,
+            )
+            m = re.search(r"VERDICT:\s*(VERIFIED|UNVERIFIABLE|CONTRADICTED)", raw or "", re.IGNORECASE)
+            verdict = m.group(1).upper() if m else "UNVERIFIABLE"
+            r = re.search(r"REASON:\s*(.+)", raw or "", re.DOTALL)
+            reason = r.group(1).strip()[:220] if r else (raw or "")[:220]
+            return verdict, reason
+        except Exception as e:
+            self.logger.warning("Web verify failed for %s: %s", person, e)
+            return "UNVERIFIABLE", f"search failed: {e}"
+
+    def _web_verify_claim(self, claim_type, subject, claim_text):
+        """Verify a STUDY, STAT, or EVENT claim against live web sources via
+        Perplexity Sonar. Same direct-OpenRouter mechanism as _web_verify_quote,
+        but a distinct, more lenient standard per type — quotes are a verbatim
+        claim (get their own calibrated logic in _web_verify_quote); these three
+        are not, and each has a different false-positive risk if checked the same
+        strict way:
+
+        STUDY gets a strict standard close to quotes (a named org either published
+        something like this or it didn't — similarly checkable).
+
+        STAT is deliberately lenient: the same number gets restated in
+        incompatible-but-equally-correct forms across sources ("73%" / "nearly
+        three-quarters" / "roughly 3 in 4"), so CONTRADICTED requires an actual
+        conflicting figure, not just "couldn't find this exact phrasing".
+
+        EVENT is deliberately lenient in a different way: a claim describing
+        something recent may not be indexed by search yet, which is NOT evidence
+        of fabrication — CONTRADICTED requires a source actively contradicting the
+        event (wrong date, wrong people, didn't happen), not mere absence of
+        coverage.
+
+        Returns (verdict, reason) — verdict is VERIFIED / UNVERIFIABLE / CONTRADICTED.
+        """
+        import os as _os
+        key = _os.environ.get("OPENROUTER_API_KEY", "")
+        if not key:
+            return "UNVERIFIABLE", "OPENROUTER_API_KEY not set — could not search"
+
+        if claim_type == "STUDY":
+            standard = (
+                "CONTRADICTED = you searched and found no organization or study "
+                "matching this at all — the named organization doesn't appear to "
+                "exist, or exists but nothing resembling this study/report/audit "
+                "is attributed to it. VERIFIED = the organization is real and "
+                "plausibly connected to this finding."
+            )
+        elif claim_type == "STAT":
+            standard = (
+                "Numbers get restated in different forms across sources (73% vs "
+                "'nearly three-quarters' vs 'roughly 3 in 4') — do not require "
+                "exact phrasing or an exact figure match. CONTRADICTED = you found "
+                "a source giving a MATERIALLY DIFFERENT number for the same claim "
+                "— not just 'couldn't find this exact figure stated this way'. If "
+                "you found nothing confirming or conflicting, that is "
+                "UNVERIFIABLE, never CONTRADICTED."
+            )
+        else:  # EVENT
+            standard = (
+                "This claim may describe something recent enough that search "
+                "hasn't indexed it yet — that is NOT evidence of fabrication. "
+                "CONTRADICTED = you found a source actively contradicting this "
+                "event (wrong date, wrong people involved, or it demonstrably "
+                "didn't happen). Absence of coverage alone is UNVERIFIABLE, never "
+                "CONTRADICTED."
+            )
+
+        prompt = (
+            f"Claim type: {claim_type}\nSource/organization named: {subject or '(none named)'}\n"
+            f'Claim: "{claim_text}"\n\n'
+            "Search for whether this claim is accurate.\n\n"
+            f"{standard}\n\n"
+            "Respond in exactly this format:\n"
+            "VERDICT: VERIFIED | UNVERIFIABLE | CONTRADICTED\n"
+            "REASON: one sentence, cite a URL if you found one."
+        )
+        try:
+            raw = self._call_openai_compat_api(
+                url="https://openrouter.ai/api/v1", api_key=key,
+                system_prompt="You are a fact-checker with live web search access.",
+                user_prompt=prompt,
+                model="perplexity/sonar",
+                max_tokens=250, timeout=30,
+            )
+            m = re.search(r"VERDICT:\s*(VERIFIED|UNVERIFIABLE|CONTRADICTED)", raw or "", re.IGNORECASE)
+            verdict = m.group(1).upper() if m else "UNVERIFIABLE"
+            r = re.search(r"REASON:\s*(.+)", raw or "", re.DOTALL)
+            reason = r.group(1).strip()[:220] if r else (raw or "")[:220]
+            return verdict, reason
+        except Exception as e:
+            self.logger.warning("Web verify failed for %s claim (%s): %s", claim_type, subject, e)
+            return "UNVERIFIABLE", f"search failed: {e}"
+
+    def _run_web_fact_check(self, content, claim_cap=4):
+        """Extract verifiable claims from content and check each against live web
+        search. Used both for the initial pass and to re-verify after a repair
+        attempt, so the two runs stay identical in method.
+
+        claim_cap limits how many claims per category get checked (cost/latency
+        for the common case). Confirmed live 2026-08-08: a repair pass grounding
+        a draft in its real source naturally introduces NEW specific claims (in
+        that case, a real, verbatim-accurate statistic pulled from deeper in the
+        source than the original draft ever cited) -- the default cap could let a
+        genuinely new fabrication slide through the post-repair re-check
+        unexamined just because 4 other claims filled the slots first. That run
+        happened to check out real, but the recheck wasn't actually guaranteed to
+        catch it if it hadn't been. Callers re-verifying a repair should pass a
+        higher cap; the raw web-search cost only recurs in the rare
+        already-contradicted case, not on every normal article.
+
+        Returns dict: lines (review text), contradicted (QUOTE/STUDY -- always
+        blocks), advisory (single EVENT/STAT contradiction -- doesn't block alone),
+        unverifiable_count, soft_contradicted_count (CONTRADICTED EVENT/STAT)."""
+        result = {
+            "lines": ["(no verifiable claims found)"], "contradicted": [], "advisory": [],
+            "unverifiable_count": 0, "soft_contradicted_count": 0,
+        }
+        try:
+            claims = self._extract_verifiable_claims(content)
+            if not claims:
+                return result
+            result["lines"] = []
+            quote_claims = [c for c in claims if c["type"] == "QUOTE"][:claim_cap]
+            other_claims = [c for c in claims if c["type"] in ("STUDY", "STAT", "EVENT")][:claim_cap]
+            for c in quote_claims:  # default cap covers rule 33's "2-3 named people"
+                verdict, reason = self._web_verify_quote(c["subject"], c["claim"])
+                result["lines"].append(f"[{verdict}] QUOTE — {c['subject']}: \"{c['claim'][:80]}\" — {reason}")
+                if verdict == "CONTRADICTED":
+                    result["contradicted"].append(c)
+                elif verdict == "UNVERIFIABLE":
+                    result["unverifiable_count"] += 1
+            for c in other_claims:  # default cap — cost/latency
+                verdict, reason = self._web_verify_claim(c["type"], c.get("subject", ""), c["claim"])
+                result["lines"].append(f"[{verdict}] {c['type']} — {c.get('subject') or '(unnamed)'}: \"{c['claim'][:80]}\" — {reason}")
+                if verdict == "CONTRADICTED":
+                    if c["type"] == "STUDY":
+                        result["contradicted"].append(c)
+                    else:
+                        result["advisory"].append(c)
+                        result["soft_contradicted_count"] += 1
+                elif verdict == "UNVERIFIABLE":
+                    result["unverifiable_count"] += 1
+        except Exception as e:
+            self.logger.warning("Web fact-check failed: %s", e)
+            result["lines"] = [f"CHECK_FAILED: {e}"]
+        return result
+
+    _FIGURE_BLOCK_RE = re.compile(r'<figure class="article-figure">.*?</figure>\n?', re.DOTALL)
+
+    def _attempt_fabrication_repair(self, article_file, contradicted_items, source_url):
+        """One grounded repair pass before hard-blocking a draft with a contradicted
+        quote/study. Re-fetches the real source article and asks the model to fix
+        ONLY the flagged passages using real material from it -- confirmed live
+        2026-08-08 that the failure mode isn't always 'one bad line': a draft
+        invented an entire biography, flood story, and quote for a real named
+        person who doesn't appear in its own source article at all. A human fixed
+        that one by hand (re-fetch source, replace the fabricated frame with the
+        real people/events actually in it) -- this automates the same move.
+
+        Returns (new_body_with_figures, new_title_or_None), or (None, None) if the
+        source couldn't be fetched or the model call failed -- caller falls back to
+        the existing hard block, unchanged.
+        """
+        if not source_url:
+            return None, None
+        source_text = self.fetch_source_article(source_url, max_chars=6000)
+        if not source_text:
+            self.logger.warning("Fabrication repair: could not fetch source %s", source_url)
+            return None, None
+
+        full_text = article_file.read_text()
+        fm_match = re.match(r'^(---\n.*?\n---\n)(.*)$', full_text, re.DOTALL)
+        if not fm_match:
+            return None, None
+        body = fm_match.group(2)
+
+        flagged_desc = "\n".join(
+            f"- {c['type']} attributed to {c.get('subject') or '(unnamed)'}: "
+            f"\"{c['claim'][:150]}\" -- NOT found in any real source, confirmed by live web search"
+            for c in contradicted_items
+        )
+        system = (
+            "You are the editorial director of a disability-culture publication. A "
+            "fact-checker just caught this draft inventing something -- a quote, a "
+            "study, or a person's involvement that doesn't check out against a live "
+            "web search. Below is the REAL source article the piece is supposed to "
+            "be grounded in.\n\n"
+            "Fix ONLY what's broken. Rewrite the passages built on the flagged "
+            "claim(s) using real people, quotes, and events from the source article. "
+            "Rules:\n"
+            "- Do not invent a replacement quote or a replacement person. If the "
+            "source doesn't name anyone who said something quotable, don't use "
+            "quotation marks -- paraphrase, or ground the passage in a concrete real "
+            "detail from the source instead.\n"
+            "- If the flagged subject is a real named person who does not appear in "
+            "the source at all, remove them from the piece entirely and replace them "
+            "with whoever or whatever the source actually describes. Do not keep "
+            "them in under a softened claim.\n"
+            "- Preserve everything else exactly as written: voice, structure, "
+            "unrelated paragraphs, other named sources not being flagged, and every "
+            "<figure>...</figure> HTML block character-for-character, in its "
+            "original position.\n"
+            "- If the article's title names the fabricated subject, put a corrected "
+            "title on its own first line as 'TITLE: ...'; otherwise omit that line "
+            "entirely.\n\n"
+            "Return the complete corrected article body only -- no preamble, no "
+            "commentary."
+        )
+        user = (
+            f"FLAGGED CLAIM(S):\n{flagged_desc}\n\n"
+            f"REAL SOURCE ARTICLE:\n---\n{source_text}\n---\n\n"
+            f"CURRENT DRAFT BODY:\n{body}"
+        )
+        try:
+            raw = self._call_editorial_model(system, user, max_tokens=6000, timeout=180)
+        except Exception as e:
+            self.logger.warning("Fabrication repair call failed: %s", e)
+            return None, None
+        if not raw or len(raw) < len(body) * 0.4:
+            self.logger.warning("Fabrication repair returned too little content — keeping original")
+            return None, None
+
+        new_title = None
+        if raw.lstrip().startswith("TITLE:"):
+            first_nl = raw.find("\n")
+            if first_nl > 0:
+                new_title = raw[:first_nl][6:].strip().strip('"')
+                raw = raw[first_nl:].lstrip("\n")
+        return raw, new_title
+
+    def _check_persona_crosscite_accuracy(self, body, current_agent):
+        """Catch a specific recurring failure mode found in a 2026-08-09 manual
+        audit: the generation prompt already instructs the writer NOT to
+        name-check another persona mid-argument ("Do NOT signpost it with a
+        name-check... Attribution by name belongs in the source note, not the
+        third paragraph" — see the cross_cite prompt block above), but the model
+        does it anyway in a meaningful fraction of drafts ("Here is where I part
+        from Maya Flux, a disability theorist..."). Because the writer isn't
+        given the other persona's actual canon in that moment, it invents a
+        plausible-sounding field, credential, location, or external website for
+        a colleague who is a real, canonical in-house persona with a real,
+        specific bio on this very site — e.g. Maya Flux (T6 spinal injury, urban
+        planning, Brooklyn) described as a generic "housing rights researcher"
+        with a fake mayaflux.com; Siri Sage (blind, acoustic culture, Amsterdam)
+        described as "a scholar who writes about AI and disability." This reads
+        to a reader (and to any later fact-check) exactly like fabricating
+        biographical details about a person, because from the outside a
+        cross-referenced house persona and an external real person are
+        indistinguishable prose.
+
+        This does not try to stop the name-check itself (the existing prompt
+        instruction already asks for that, and rephrasing it further is
+        unlikely to move a rate the instruction hasn't moved). Instead it
+        catches the specific harm: if another persona IS named in the body,
+        verify whatever is said about them against that persona's real,
+        canonical bio, and correct anything invented so it can't misdescribe a
+        real recurring byline the way today's audit found it doing. Internal
+        cross-references in the site's own `[Name](/research/?author=Name)`
+        format are correct and left untouched — only inaccurate prose
+        description or an external-looking URL for the mentioned persona
+        triggers a rewrite.
+
+        Returns (corrected_body_or_None, note_or_None).
+        """
+        # Exclude the closing "*This article was prompted by...*" source-note
+        # line from the scan -- that line legitimately names the source outlet,
+        # not another persona, and isn't where this failure mode occurs.
+        main_body = re.split(r'\n---\n\*This article was prompted by', body, maxsplit=1)[0]
+        mentioned = sorted(
+            name for name in _AGENT_SLUG
+            if name != current_agent and re.search(rf'\b{re.escape(name)}\b', main_body)
+        )
+        if not mentioned:
+            return None, None
+        canon_blocks = []
+        for name in mentioned:
+            canon = self._load_persona_canon(name)
+            if canon:
+                canon_blocks.append(f"### Real canon for {name} (ground truth -- do not contradict this)\n{canon}")
+        if not canon_blocks:
+            return None, None
+
+        system = (
+            "You are a copy editor for a disability-culture publication with several "
+            "recurring in-house personas (bylines). This draft, written in one "
+            "persona's voice, names one or more OTHER personas in its body prose. "
+            "Below is each mentioned persona's real, canonical bio.\n\n"
+            "Check whether the draft's description of the mentioned persona -- their "
+            "field, credentials, location, or any URL given for them -- matches their "
+            "real canon. Personas should only ever be cross-referenced via the site's "
+            "own internal link format '[Name](/research/?author=Name)' -- never given "
+            "an external URL, an invented institution, or an invented field that "
+            "isn't in their canon.\n\n"
+            "If every mentioned persona is described accurately to their canon, and "
+            "any link used for them is already the internal /research/?author= "
+            "format, return exactly: NO_CHANGE\n\n"
+            "Otherwise, rewrite ONLY the sentence(s) making the inaccurate claim so "
+            "the described field/credential/location matches the real canon exactly, "
+            "and convert any external-looking URL for that persona to the internal "
+            "link format. Do not invent NEW specifics to replace the wrong ones -- "
+            "use only what the canon actually says, or fall back to an unattributed "
+            "phrasing if the canon doesn't cover the specific claim being made. "
+            "Preserve everything else -- voice, structure, argument, all other "
+            "paragraphs, and every <figure>...</figure> HTML block character-for-"
+            "character -- exactly as written.\n\n"
+            "Return the complete corrected article body only -- no preamble, no "
+            "commentary."
+        )
+        user = "\n\n".join(canon_blocks) + f"\n\n### Current draft body\n{main_body}"
+        try:
+            raw = self._call_editorial_model(system, user, max_tokens=6000, timeout=120)
+        except Exception as e:
+            self.logger.warning("Persona cross-cite check failed: %s", e)
+            return None, None
+        if not raw or raw.strip() == "NO_CHANGE":
+            return None, None
+        if len(raw) < len(main_body) * 0.4:
+            self.logger.warning("Persona cross-cite repair returned too little content — keeping original")
+            return None, None
+        # Re-attach whatever followed main_body in the original (the source-note
+        # footer, if present) -- the model only ever saw/edited main_body.
+        suffix = body[len(main_body):]
+        return raw + suffix, f"Corrected cross-persona reference(s) to match canon: {', '.join(mentioned)}"
