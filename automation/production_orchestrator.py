@@ -3306,7 +3306,33 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         if length_dist_hits:
             violations.extend(f'[FAIL] RSD — {h}' for h in length_dist_hits)
 
-        rule_fail = len(violations) >= 3
+        # Opening-paragraph escalation, added 2026-08-09: a register violation
+        # (crafted rhetoric, buried clause, etc.) in the article's OPENING
+        # PARAGRAPH is far more damaging than the same violation on page 2 --
+        # it's the first thing every reader sees, and the brief-generation
+        # prompt elsewhere in this file already treats the opening as a
+        # specially-engineered spot worth its own instructions. The >=3-total
+        # threshold below assumes a single register hit is forgivable
+        # stylistic color; that assumption breaks exactly here. Confirmed
+        # live 2026-08-09: "A ramp is a promise the ground makes" -- a
+        # textbook R15(a) metaphor-for-mechanism violation -- was the
+        # article's own opening sentence, was correctly caught by this exact
+        # LLM check, and still shipped unfixed because it was the piece's
+        # ONLY register violation (count=1, below the >=3 bar). The reader
+        # who flagged it caught it immediately; the gate built to catch this
+        # didn't, because a hit in sentence one was never weighted any
+        # differently from a hit in paragraph eight.
+        opening_para = content.strip().split("\n\n", 1)[0]
+        opening_register_hit = False
+        for v in violations:
+            if not any(f"] {p}" in v or f"]  {p}" in v for p in ("R14", "R15", "RBC", "RAW", "RSD")):
+                continue
+            m = re.search(r'"([^"]{3,150})"', v)
+            if m and m.group(1)[:60] in opening_para:
+                opening_register_hit = True
+                break
+
+        rule_fail = len(violations) >= 3 or opening_register_hit
 
         # Trigger 3: article_type compliance (word cap/floor + portrait subject rule).
         # Always fails the gate on its own — this is a hard requirement, not one vote
@@ -3319,8 +3345,9 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             return content, False
 
         self.logger.info(
-            "Pre-commit gate: FAIL (FRE=%.1f, violations=%d [%d buried-clause], type_violations=%d) — running surgical fix",
-            scores["fre"], len(violations), len(buried_clause_hits), len(type_violations)
+            "Pre-commit gate: FAIL (FRE=%.1f, violations=%d [%d buried-clause], "
+            "opening_hit=%s, type_violations=%d) — running surgical fix",
+            scores["fre"], len(violations), len(buried_clause_hits), opening_register_hit, len(type_violations)
         )
 
         # Register violations (RBC, R14, R15) are pervasive-register symptoms, not
