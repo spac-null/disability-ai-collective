@@ -606,6 +606,15 @@ def score_item(item: dict) -> tuple[float, list[str]]:
 
     dominant = max(theme_hits, key=theme_hits.get) if theme_hits else None
     if dominant not in _EXCLUSION_PROTECTED_THEMES:
+        # health_systems exclusion added 2026-08-10, explicit request: no
+        # healthcare content at all, including disability-health angles.
+        # First tried ungated (any health_systems hit zeroes outright) --
+        # confirmed live that this re-broke the exact art/disability pieces
+        # fixed earlier tonight (both mention "hospital" in passing: the
+        # disability-arts exhibition, the Carrington piece). Reverted to the
+        # same protected-theme gate as the other two exclusions below.
+        if "health_systems" in theme_hits:
+            return 0.0, []
         if any(kw in text for kw in MENTAL_HEALTH_NEWS_EXCLUDE):
             return 0.0, []
         if any(kw in text for kw in POLICY_PROCESS_EXCLUDE):
@@ -798,6 +807,28 @@ X and Y must not merely be:
 or
 "access barrier" -> "evidence that accessibility matters."
 
+6. EVIDENTIARY BRIDGE (the most important test -- apply it hardest)
+   Quote or closely paraphrase the EXACT fact in the TITLE or SUMMARY that
+   supports the jump from X to Y. Not the general topic -- the specific
+   fact doing the work.
+
+   You are allowed to discover an implication already present in the
+   source. You are NOT allowed to invent the causal bridge yourself.
+
+   Bad bridge, reject the jump even if the destination sounds good:
+   "Google is a private company, therefore this creates private demand
+   generation" -- this is YOUR inference, not a fact stated or implied by
+   the source.
+
+   Good bridge, keep the jump:
+   "the summary states the drug showed a measurable biomarker change but
+   the review calls the patient-level effect trivial" -- this fact is
+   actually present and directly supports the mechanism.
+
+   If you cannot point to a specific sentence or fact doing this work,
+   the bridge field must be null, and the decision must be NO regardless
+   of how good the proposed destination sounds.
+
 DECISION RULE:
 
 Return YES only when:
@@ -805,7 +836,9 @@ Return YES only when:
 * there is concrete evidence in the supplied item;
 * that evidence supports a plausible hidden mechanism;
 * the mechanism changes our understanding of the thing/system itself;
-* and the resulting category jump does not depend on invented facts.
+* the resulting category jump does not depend on invented facts;
+* AND the evidentiary bridge (test 6) points to a specific, quotable
+  fact -- not a plausible-sounding inference you supplied yourself.
 
 Return NO when:
 
@@ -813,7 +846,11 @@ Return NO when:
 * examples merely demonstrate the stated thesis;
 * disability only identifies who benefits or suffers;
 * the apparent and hidden categories are basically the same;
-* or reaching the proposed hidden mechanism requires speculation beyond the supplied item.
+* reaching the proposed hidden mechanism requires speculation beyond the supplied item;
+* OR the evidentiary bridge is empty, vague, or is your own inference
+  rather than something stated or clearly implied by the source. This
+  overrides an otherwise attractive destination -- a great-sounding jump
+  with a hand-wavy bridge is still a NO.
 
 A YES does NOT mean the eventual essay angle has been proven.
 It means the source contains enough grounded friction to justify further investigation.
@@ -826,8 +863,9 @@ Return only this JSON:
 "resisting_detail": "The exact concrete detail creating friction, or null",
 "hidden_mechanism": "What the detail may reveal about what the thing/system actually does, or null",
 "category_jump": "X -> Y, or null",
+"evidentiary_bridge": "The exact fact from the source supporting the jump -- quote or close paraphrase, or null if none exists",
 "correction": "I thought X; this case suggests Y, or null",
-"reason": "Maximum 3 sentences. Explain why it passes or fails the mechanism-reveal test."
+"reason": "Maximum 3 sentences. Explain why it passes or fails the mechanism-reveal test, and if NO specifically because of the bridge, say so."
 }"""
 
 
@@ -886,15 +924,23 @@ def _persist_category_jump_shadow(conn, seed_id: str, judged_at: str, judgment: 
                 UNIQUE(seed_id, judged_at)
             )
         """)
+        # Migration-safe: evidentiary_bridge added 2026-08-10, after the
+        # table already existed in production from the first test run --
+        # ALTER TABLE ADD COLUMN has no "IF NOT EXISTS" in SQLite.
+        try:
+            conn.execute("ALTER TABLE category_jump_shadow ADD COLUMN evidentiary_bridge TEXT")
+        except sqlite3.OperationalError:
+            pass  # column already exists
         conn.execute(
             "INSERT OR REPLACE INTO category_jump_shadow "
             "(seed_id, judged_at, decision, ostensible_category, resisting_detail, "
-            "hidden_mechanism, category_jump, correction, reason) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "hidden_mechanism, category_jump, evidentiary_bridge, correction, reason) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 seed_id, judged_at, judgment.get("decision"),
                 judgment.get("ostensible_category"), judgment.get("resisting_detail"),
                 judgment.get("hidden_mechanism"), judgment.get("category_jump"),
+                judgment.get("evidentiary_bridge"),
                 judgment.get("correction"), judgment.get("reason"),
             ),
         )
