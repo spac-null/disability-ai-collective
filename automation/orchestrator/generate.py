@@ -27,6 +27,53 @@ from .config import _INDEFENSIBLE_PROMPTS, _REGISTERS, _THEME_CLUSTERS
 
 
 class GenerateMixin:
+    def _persist_article_plan(self, slug, agent_name, fable_brief):
+        """Persist the full _fable_editorial_brief JSON, keyed on slug, added
+        2026-08-09 (Stage 0 of the anchor/plan-following architecture blueprint
+        — see .claude/audience-engagement-tasklist.md and the design agent's
+        report in this session's transcript). Today the brief gets truncated
+        into a ~60-character log line and thrown away; nothing about the
+        pipeline's existing plan-following (opening_shape, correction_moment,
+        resisting_example, angle, seed_sentence) has ever been recoverable for
+        analysis. This changes nothing about generation — pure logging, same
+        automation/engagement.db file _persist_review_signals (review.py)
+        already writes to, so a future join between "what was planned" and
+        "what published" and "did readers engage" is just three tables in one
+        file, not a cross-database query.
+
+        Never raises -- mirrors _persist_review_signals's try/except discipline
+        exactly; a persistence failure here must never affect article
+        generation."""
+        if not fable_brief:
+            return
+        import sqlite3
+        try:
+            db_dir = self.repo_root / "automation"
+            db_dir.mkdir(parents=True, exist_ok=True)
+            conn = sqlite3.connect(db_dir / "engagement.db")
+            try:
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS article_plans (
+                        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                        slug        TEXT NOT NULL,
+                        agent       TEXT,
+                        planned_at  TEXT NOT NULL,
+                        plan_json   TEXT NOT NULL,
+                        UNIQUE(slug, planned_at)
+                    )
+                """)
+                conn.execute(
+                    "INSERT OR REPLACE INTO article_plans (slug, agent, planned_at, plan_json) "
+                    "VALUES (?, ?, ?, ?)",
+                    (slug, agent_name, __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                     json.dumps(fable_brief)),
+                )
+                conn.commit()
+            finally:
+                conn.close()
+        except Exception as e:
+            self.logger.warning("Article-plan persistence failed (non-fatal): %s", e)
+
     def _run_production_automation_locked(self):
         self.logger.info("Starting production automation")
         
@@ -655,6 +702,7 @@ class GenerateMixin:
         today = self._today()
         slug = re.sub(r'[^a-z0-9]+', '-', extracted_title.lower()).strip('-')
         filename = f"{today}-{slug}.md"
+        self._persist_article_plan(slug, agent_name, fable_brief)
 
         metadata = {
             'title': extracted_title,
