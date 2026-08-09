@@ -1,15 +1,30 @@
 # Automation — Crip Minds
 
-> 🧪 **Planned: splitting `production_orchestrator.py` (6,100+ lines, ~95 methods,
-> 14 distinct concerns) into per-concern modules under `automation/orchestrator/`.**
-> Design discussed 2026-08-09 — not started yet. Before any extraction: run
-> `python3 automation/snapshot_test.py --check` (baseline recorded 2026-08-09 via
-> `--record`). It verifies, with zero network calls, that the deterministic checks
-> (readability, buried-clause, etc.) and the exact GATE_SYSTEM/RULES_SYSTEM prompt
-> text + call params construction are byte-identical before and after a move — this
-> pipeline runs live and unattended with no other test coverage. Run `--check` after
-> every extraction commit; only re-run `--record` when a change is a deliberate rule
+> 🧪 **`production_orchestrator.py` is now a 186-line entry point.** Module split
+> completed 2026-08-09 (was 6,100+ lines, ~95 methods, one class). Every method
+> moved into an 11-mixin package under `automation/orchestrator/`, each file one
+> coherent concern:
+>   `config.py`/`personas.py` (pure data), `debate.py`, `images.py`, `publish.py`,
+>   `gate.py` (the pre-commit gate + deterministic checks), `llm.py` (API call
+>   wrappers + Fable editorial pipeline), `discovery.py` (RSS/topic-picking),
+>   `content_checks.py`, `fact_check.py`, `review.py` (validate_article),
+>   `social.py`, `generate.py` (the main daily generation loop).
+> `ProductionOrchestrator` inherits all 11 as mixins — every `self.x` reference
+> still resolves exactly as before; nothing about method bodies changed, only
+> which file defines them. Each move was a pure relocation, verified via an AST
+> unresolved-name scan (caught 2 real latent bugs pre-ship: a missing
+> `import random`, and a `Path(__file__).parent` that would have silently
+> resolved to the wrong directory once relocated), a direct verbatim-substring
+> check against git history, `py_compile`, and `python3 automation/snapshot_test.py
+> --check` (byte-identical deterministic-check outputs + GATE_SYSTEM/RULES_SYSTEM
+> prompt construction, zero network calls — this pipeline runs live and
+> unattended with no other test coverage). Run `--check` before touching any of
+> these files again; only re-run `--record` when a change is a deliberate rule
 > fix, not a refactor.
+>
+> Wiring `style_rules.py`'s registry directly into `gate.py`/`review.py`'s
+> hand-typed prompt text is a separate, still-open, genuinely riskier future
+> step — not attempted as part of this split.
 
 > ⚠️ **`automation/production_orchestrator.py` is the only orchestrator file.**
 > A root-level manual-use copy and `opus_rewrite.py` (a separate daily rewrite
