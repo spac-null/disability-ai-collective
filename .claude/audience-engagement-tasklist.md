@@ -164,27 +164,30 @@ order at the top of this file).
 
 ---
 
-## 2. Persist engagement-read + shadow-check output (cheap, do this early)
+## 2. Persist engagement-read + shadow-check output — DONE, 2026-08-09
 
-**The problem:** `_engagement_read`'s verdict and the 3 shadow checks currently
-only get written to the `_reviews/<slug>-review.md` sidecar file — a human has
-to open each file by hand to see a pattern. There's no way to ask "does Zen
-Circuit systematically get worse engagement-read verdicts than Maya Flux" without
-manually reading dozens of files.
+**STATUS: COMPLETE.** `_persist_review_signals` (`review.py`) logs every
+`_engagement_read` verdict and all 3 shadow-check results to a new
+`review_signals` table, called from `validate_article` right after the
+existing markdown sidecar write — the sidecar still gets written too,
+nothing removed. Written to the *same* `automation/engagement.db` that
+`engagement_fetch.py` (item 1) already writes real reader-engagement data
+to — same file, different table, so correlating "did the judge guess this
+was good" against "did readers actually stick around" is a plain `JOIN` on
+`slug`, not a cross-database query. Wrapped in try/except — a persistence
+failure can never affect `validate_article`'s own return value.
 
-**Proposed plan:**
-- Add a DB table logging every `_engagement_read` verdict and shadow-check
-  result per article (slug, persona, date, verdict text, shadow-check hit
-  counts). Cheap — just structured logging of data already being computed,
-  no new checks, no new LLM calls.
-- This makes the shadow-checks' own 2026-08-23 promotion decision *evidence-
-  based* instead of "go re-read a bunch of markdown files by hand."
-- Also sets up the correlation work in #1 and #5 — once real engagement data
-  exists, you can join it against this table.
+Verified via a direct functional test (real write + confirmed the
+`UNIQUE(slug, reviewed_at)` upsert behavior works, not just "doesn't
+crash" — caught and fixed a real robustness gap in the process: the DB's
+parent directory isn't guaranteed to exist in every context, now created
+defensively). Deployed to trident and confirmed the method loads correctly
+there. Real data will start accumulating from the next `validate_article`
+call in the daily 09:00 generation cron.
 
-**Open questions for you:**
-- Worth building now (this week) since it's cheap and unlocks everything else,
-  or bundle it with #1's DB work so there's only one schema to design once?
+This also makes the 3 shadow checks' 2026-08-23 promotion decision
+evidence-based — query real false-positive counts from `review_signals`
+instead of re-reading `_reviews/*.md` files by hand.
 
 ---
 
