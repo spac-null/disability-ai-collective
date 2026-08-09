@@ -1,5 +1,16 @@
 # Automation — Crip Minds
 
+> 🧪 **Planned: splitting `production_orchestrator.py` (6,100+ lines, ~95 methods,
+> 14 distinct concerns) into per-concern modules under `automation/orchestrator/`.**
+> Design discussed 2026-08-09 — not started yet. Before any extraction: run
+> `python3 automation/snapshot_test.py --check` (baseline recorded 2026-08-09 via
+> `--record`). It verifies, with zero network calls, that the deterministic checks
+> (readability, buried-clause, etc.) and the exact GATE_SYSTEM/RULES_SYSTEM prompt
+> text + call params construction are byte-identical before and after a move — this
+> pipeline runs live and unattended with no other test coverage. Run `--check` after
+> every extraction commit; only re-run `--record` when a change is a deliberate rule
+> fix, not a refactor.
+
 > ⚠️ **`automation/production_orchestrator.py` is the only orchestrator file.**
 > A root-level manual-use copy and `opus_rewrite.py` (a separate daily rewrite
 > pass) were deleted 2026-08-09: confirmed via the live trident crontab that

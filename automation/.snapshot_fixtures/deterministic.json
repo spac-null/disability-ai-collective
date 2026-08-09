@@ -1,0 +1,99 @@
+{
+  "_parse_rule_verdicts": {
+    "all_pass": [],
+    "malformed_noise": [
+      "[FAIL]R5 no space before rule",
+      "[FAIL] R6 \u2014 real one"
+    ],
+    "normal_mixed": [
+      "[FAIL] R2 \u2014 \"some quoted phrase here\"",
+      "[FAIL] R14 \u2014 \"another one\""
+    ],
+    "reversal_bug_case": []
+  },
+  "_posts/2026-07-22-fourteen-nodes-on-nicholson-street.md": {
+    "argument_hits": [
+      "Which is why co-design \u2014 collaborative design that involves affected users in creating solutions \u2014 is not obviously the answer, and here the argument stops being comfortable."
+    ],
+    "buried_clause_hits": [],
+    "length_dist_hits": [],
+    "readability_score": {
+      "asl": 14.9,
+      "fkgl": 10.0,
+      "fre": 50.0,
+      "words": 922
+    }
+  },
+  "_posts/2026-07-26-vally-wieselthier-fired-her-kiln-while-josef-hoffmann.md": {
+    "argument_hits": [
+      "The drop is the argument.",
+      "Wieselthier eventually left Vienna, came to New York, and kept firing ceramics that critics filed under \"decorative.\" She would not have signed onto my argument."
+    ],
+    "buried_clause_hits": [],
+    "length_dist_hits": [],
+    "readability_score": {
+      "asl": 13.7,
+      "fkgl": 7.4,
+      "fre": 66.3,
+      "words": 507
+    }
+  },
+  "_posts/2026-07-29-weegee-heard-the-body-first.md": {
+    "argument_hits": [
+      "I want to be careful here, because there's a lazy version of this argument and I refuse it.",
+      "Now \u2014 the person who blows this argument apart, and I have to let him.",
+      "The argument is better with a hole in it.",
+      "So I stand there holding the argument I came in with and it no longer fits my hand."
+    ],
+    "buried_clause_hits": [],
+    "length_dist_hits": [],
+    "readability_score": {
+      "asl": 17.7,
+      "fkgl": 8.6,
+      "fre": 65.1,
+      "words": 1204
+    }
+  },
+  "_posts/2026-07-31-injected-since-birth.md": {
+    "argument_hits": [
+      "A symptom log is not an argument."
+    ],
+    "buried_clause_hits": [],
+    "length_dist_hits": [],
+    "readability_score": {
+      "asl": 17.9,
+      "fkgl": 10.6,
+      "fre": 51.3,
+      "words": 644
+    }
+  },
+  "_posts/2026-08-07-a-stack-of-colours-has-not-made-a-single-sound-yet.md": {
+    "argument_hits": [
+      "The drawings I had lined up as evidence for my argument were quietly dismantling it.",
+      "The building, when it exists, will be an argument in air, and the air has not been made yet.",
+      "There are things I cannot give, and I have spent fifteen years building arguments about what I can give that nobody else can.",
+      "The arguments are good.",
+      "And I know the shape of an argument that spends its whole energy defending the wound rather than describing the world.",
+      "I am telling you this because it is easy to turn any limitation into a proof of superiority, and I did not want to write that kind of argument about a building in Shenzhen."
+    ],
+    "buried_clause_hits": [],
+    "length_dist_hits": [],
+    "readability_score": {
+      "asl": 17.6,
+      "fkgl": 8.9,
+      "fre": 62.6,
+      "words": 1423
+    }
+  },
+  "_posts/2026-08-07-one-in-twelve-and-no-surprises.md": {
+    "argument_hits": [],
+    "buried_clause_hits": [],
+    "length_dist_hits": [],
+    "readability_score": {
+      "asl": 15.1,
+      "fkgl": 7.4,
+      "fre": 68.7,
+      "words": 1523
+    }
+  }
+}
