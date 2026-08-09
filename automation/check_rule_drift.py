@@ -79,6 +79,17 @@ EXPECTED_OCCURRENCES = {
         "measured register score instead of provider identity), not worth more "
         "rule investment ahead of that change.",
     ),
+    "nominalization-distance-exemption": (
+        "'evidence', 'silence', 'distance', 'argument', 'environment'",
+        2,
+        "_pre_commit_gate's GATE_SYSTEM R4 (already had 'distance', canonical — "
+        "matches style_rules.py's nominalization exemptions) and validate_article's "
+        "RULES_SYSTEM R4 (found missing 'distance' — 8 of 9 exempted nouns — during "
+        "the 2026-08-09 /loop convergence pass and fixed to match). Confirmed count "
+        "of 2 via _flatten_adjacent_string_literals; a naive raw-text search "
+        "undercounts to 1 because GATE_SYSTEM wraps this exact phrase across two "
+        "adjacent string literals at the source level.",
+    ),
 }
 
 

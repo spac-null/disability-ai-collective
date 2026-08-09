@@ -3895,7 +3895,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "'The redesign of the interface' → 'they redesigned the interface'. Flag only an "
             "actual verb rewritten as a noun so the actor disappears — NOT ordinary nouns that "
             "merely end in -tion/-ment/-ance/-ence but were never a verb in this sentence "
-            "('access', 'government', 'moment', 'experience', 'evidence', 'silence', "
+            "('access', 'government', 'moment', 'experience', 'evidence', 'silence', 'distance', "
             "'argument', 'environment' are just nouns). Test: is there a hidden actor to free?\n"
             "R5  SYSTEM VOICE BANNED — passive that erases the actor. "
             "'Stops were flagged as non-compliant' has no person. Flag it.\n"
