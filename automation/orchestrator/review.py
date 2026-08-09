@@ -70,6 +70,39 @@ class ReviewMixin:
             self.logger.warning("Engagement read failed: %s", e)
             return None
 
+    # ── Shadow checks (2026-08-09 — observation only, do not act on) ──────────
+    # These are deterministic checks for rules the writer prompt already states
+    # but that NOTHING downstream has ever verified — same class of gap as
+    # system-voice/one-idea-per-sentence found earlier this session (see
+    # check_rule_drift.py's tracked fixes), except those had confirmed real
+    # violations shipping live before being promoted straight to BLOCKING. These
+    # don't have that track record yet, so they start here instead: logged to the
+    # review sidecar as pure observation, never gating anything. DO NOT promote
+    # any of these to ADVISORY-in-the-registry or BLOCKING without at least a
+    # 2-week observation window AND documented false-positive data in hand — a
+    # session doing that without both is guessing on a live production system.
+    # Minimum review date for each check is noted in its own docstring.
+
+    @staticmethod
+    def _check_bullet_points_shadow(content):
+        """SHADOW MODE, added 2026-08-09 — do not promote before 2026-08-23 at the
+        earliest, and only with real false-positive data in hand.
+
+        The writer prompt bans bullet points, numbered lists, and bolded list
+        items ("Multiple examples go into accumulation paragraphs") but nothing
+        downstream has ever checked for a violation. Deterministic and cheap:
+        a line starting with '-'/'*'/'•' followed by a space and content, or a
+        number followed by '.'/')' and a space, is a list marker. Markdown
+        section breaks ('---' with no trailing space+content) do not match.
+        Returns list of offending lines (empty if none)."""
+        body = re.sub(r'^---.*?---', '', content, flags=re.DOTALL)
+        hits = []
+        for line in body.splitlines():
+            stripped = line.strip()
+            if re.match(r'^[-*•]\s+\S', stripped) or re.match(r'^\d+[.)]\s+\S', stripped):
+                hits.append(stripped[:100])
+        return hits
+
     def validate_article(self, content, article_file, slug, target_words=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
         import os, json, urllib.request as ureq
@@ -265,6 +298,10 @@ class ReviewMixin:
         # See _engagement_read's own docstring. Runs on final content, after any
         # persona-crosscite repair above, so it's judging what actually shipped.
         engagement_read = self._engagement_read(content, article_title, current_agent)
+
+        # Shadow checks — observation only, see the class-level comment above
+        # _check_bullet_points_shadow for the rules and the no-promotion guardrail.
+        shadow_bullet_hits = self._check_bullet_points_shadow(content)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -484,6 +521,13 @@ class ReviewMixin:
             "docstring in review.py for why this exists.",
             "",
             engagement_read or "(engagement read unavailable this run)",
+            "",
+            "## Shadow Checks (observation only, added 2026-08-09 — do not act on before "
+            "2026-08-23, and only with real false-positive data)",
+            "Deterministic checks for rules the writer prompt states but nothing has ever "
+            "verified. Never blocks, never affects the status above.",
+            f"- Bullet points / numbered lists in body: {len(shadow_bullet_hits)} found"
+            + ("" if not shadow_bullet_hits else " — " + " | ".join(shadow_bullet_hits[:5])),
             "",
             "## Web Fact-Check (quotes, studies, stats, events — live search)",
             *fact_check_lines,

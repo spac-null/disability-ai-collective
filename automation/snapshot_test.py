@@ -108,6 +108,7 @@ def _snapshot_deterministic(po, fixture_texts):
             "buried_clause_hits": po.ProductionOrchestrator._check_buried_clause_sentences(content),
             "argument_hits": po.ProductionOrchestrator._check_argument_word_overuse(content),
             "length_dist_hits": po.ProductionOrchestrator._check_sentence_length_distribution(content),
+            "shadow_bullet_hits": po.ProductionOrchestrator._check_bullet_points_shadow(content),
         }
     out["_parse_rule_verdicts"] = {
         key: po.ProductionOrchestrator._parse_rule_verdicts(raw)
