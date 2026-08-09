@@ -56,12 +56,18 @@ judge panel genuine structural angle divergence for free.
   (article, plan) pairs, ≥80% agreement) — that data doesn't exist yet since
   plans were never persisted before today. It's a sanity check that the
   judge design itself isn't broken, done before waiting weeks for real data.
-- **Stage C (seam detector), Stage D (anchor/refrain brief fields), Stage E
-  (writer-prompt block) — NOT STARTED.** Stage E is the first change that
-  would actually direct what gets written; per the blueprint, it should not
-  start before Stage B has accumulated real calibration data (~20 articles,
-  several weeks at current cadence) and Stage C exists to detect Stage E's
-  main failure mode (visible seams) before it ships.
+- **Stage C (seam detector) — DONE, shipped in shadow.** `_check_seam_shadow`
+  (`review.py`) — deterministic, detects a sentence ANNOUNCING a callback
+  ("as I said", "to return to") rather than just making it. Built before
+  Stage D/E exist, specifically so the instrument is ready before the
+  mechanism that could trigger this failure ships. 2/6 real fixture articles
+  tripped on "here is where i" — a real hit, not yet investigated (that's
+  what the observation window is for).
+- **Stage D (anchor/refrain brief fields), Stage E (writer-prompt block) —
+  NOT STARTED.** Stage E is the first change that would actually direct what
+  gets written; per the blueprint, it should not start before Stage B has
+  accumulated real calibration data (~20 articles, several weeks at current
+  cadence).
 
 **Explicitly rejected by the blueprint, with real evidence, not deferred:**
 a fixed "movement sequence" (the original design's second half) — it's a
