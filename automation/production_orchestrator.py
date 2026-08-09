@@ -3212,7 +3212,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "nine named items in one sentence, immediately followed by an ironic 'and nothing had "
             "changed' punchline). A long list with no such payoff after it is still a violation.\n"
             "R9  TOO MANY SECTION BREAKS — more than 3 '---' in the body\n"
-            "R10 JARGON — institutional words: claimants, non-compliant, stakeholders, outcomes, intervention\n"
+            "R10 JARGON — institutional words: claimants, non-compliant, stakeholders, outcomes, "
+            "intervention, change of circumstances, platform upgrades, priority locations\n"
             "R11 LONG SENTENCE — any single sentence over 30 words\n"
             "R12 CULTURAL STUDIES VOCAB — words that signal academic drift: liminal, embodied, visceral, "
             "resonant (used metaphorically), apparatus, legibility, interrogate (metaphorical), "
@@ -3279,6 +3280,16 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "Do NOT flag a plain, unadorned comparison stated once and dropped "
             "('the room reads it like a spreadsheet') — only flag when the device is doing "
             "rhetorical work (symmetry, a twist, a pun, or false agency) rather than just naming a thing.\n\n"
+            "R16 ONE IDEA PER SENTENCE — a sentence folds two or more separate claims together via "
+            "a relative clause, an inserted aside, and/or a complement clause, often stacked with "
+            "'and that'. Real published example of the failure: 'A building whose entire public "
+            "character is a colour scheme has decided, before the concrete is poured, that its "
+            "meaning is a thing you receive with the eyes.' That folds three separate ideas — (1) "
+            "the building's public character is a colour scheme, (2) that's a decision made before "
+            "construction, (3) meaning arrives through the eyes — into one sentence. A sentence can "
+            "be grammatically plain-worded and still fail this way — check idea count, not just "
+            "vocabulary. Do NOT flag a sentence with one main claim plus a short supporting detail "
+            "that doesn't stand as its own separate assertion.\n\n"
             "Format: [FAIL] R1 — \"quoted phrase\" | [PASS] R2 | [N/A] R9\n"
             "Be strict. Quote the exact offending phrase. Max 15 words per quote."
         )
@@ -3290,10 +3301,11 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 system_prompt=GATE_SYSTEM,
                 user_prompt=content,
                 model="openrouter/claude-sonnet-4.6",
-                max_tokens=900,  # was 400 — a 13-rule (R1-R13) verdict list at ~25+
-                                 # tokens/rule plus preamble routinely truncated before
-                                 # the tail rules (R11-R13), and truncation was
-                                 # indistinguishable from "passed" to the parser.
+                max_tokens=960,  # was 400 — a rule-verdict list at ~25+ tokens/rule plus
+                                 # preamble routinely truncated before the tail rules, and
+                                 # truncation was indistinguishable from "passed" to the
+                                 # parser. Bumped again 2026-08-09 when R16 was added —
+                                 # keep this ahead of R-count * ~25 + ~150 preamble.
                 timeout=45,
             )
             violations = self._parse_rule_verdicts(raw)
@@ -4279,6 +4291,16 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "the hand', 'a promise the ground makes') — say who actually did it. "
             "Do NOT flag a plain comparison stated once and dropped — only flag when the device "
             "is doing rhetorical work (symmetry, a twist, a pun, or false agency), not just naming a thing.\n\n"
+            "R17 ONE IDEA PER SENTENCE — a sentence folds two or more separate claims together via "
+            "a relative clause, an inserted aside, and/or a complement clause, often stacked with "
+            "'and that'. Real published example of the failure: 'A building whose entire public "
+            "character is a colour scheme has decided, before the concrete is poured, that its "
+            "meaning is a thing you receive with the eyes.' That folds three separate ideas — (1) "
+            "the building's public character is a colour scheme, (2) that's a decision made before "
+            "construction, (3) meaning arrives through the eyes — into one sentence. A sentence can "
+            "be grammatically plain-worded and still fail this way — check idea count, not just "
+            "vocabulary. Do NOT flag a sentence with one main claim plus a short supporting detail "
+            "that doesn't stand as its own separate assertion.\n\n"
             "Output format — one line per rule:\n"
             "[PASS] R1\n"
             "[FAIL] R2 — quote the violation (max 15 words)\n"
@@ -4294,7 +4316,8 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 system_prompt=RULES_SYSTEM,
                 user_prompt=content,
                 model="openrouter/claude-sonnet-4.6",
-                max_tokens=1000,
+                max_tokens=1060,  # bumped from 1000 when R17 was added 2026-08-09 —
+                                  # same truncation risk noted at the GATE_SYSTEM call site.
                 timeout=90,
             )
             rules_text = raw or ""
@@ -5577,7 +5600,7 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
             "- VAGUE WE — BANNED: 'We' must always have a named referent. If 'we' means everyone, it usually means a specific group that benefits from not being named. Name them. 'We designed this system' → 'non-disabled designers built this system.' 'We don't talk about this' → 'the council never published this.' If you cannot say who we is, cut the word and make someone specific do the thing.\n"
             "- NAMED REFERENCES: Name + one sentence of context + move on. Never leave a name floating. Never spend a paragraph setting up who someone is before using their idea. If the reference needs more than one sentence to land, either the idea is not earning its place or the writing is carrying it wrong. The idea should do the work, not the biography.\n"
             "- FRONT-LOADED SENTENCES — BANNED: Subject comes first. Verb comes second. Never open with a long subordinate clause that makes the reader hold the setup in memory before the sentence resolves. 'What happens after the deadline has none of those qualities' → 'Once the deadline passes, none of that applies.' 'Given the structural conditions that produce' → cut and start with the thing being produced. If the sentence does not name its subject in the first five words, rewrite it. Naming the subject early is not enough on its own: if a long appositive or relative clause — 'X as a/an Y that/which/who Z' — sits between that subject and its main verb, the reader still has to hold the subject in memory across the detour. 'The eye as an organ that some of us route the whole world through gets a footnote' names 'the eye' in word 2 but delays 'gets' by 12 words — split it: 'Some of us route the whole world through our eyes. That gets a footnote.' Keep subject and verb close together, always.\n"
-            "- JARGON — BANNED: Strip institutional vocabulary. 'Claimants' → 'tenants' or 'residents'. 'Non-compliant' → say what the barrier is. 'Change of circumstances' → 'situation had changed'. 'Platform upgrades' → 'rebuild the platform'. 'Stakeholders' → who they are. 'Outcomes' → what people got or did not get. 'Intervention' → what actually happened. If the word appears in a government report, a council briefing, or an accessibility audit — replace it with what a person would say to another person.\n"
+            "- JARGON — BANNED: Strip institutional vocabulary. 'Claimants' → 'tenants' or 'residents'. 'Non-compliant' → say what the barrier is. 'Change of circumstances' → 'situation had changed'. 'Platform upgrades' → 'rebuild the platform'. 'Stakeholders' → who they are. 'Outcomes' → what people got or did not get. 'Intervention' → what actually happened. 'Priority locations' → name the actual place. If the word appears in a government report, a council briefing, or an accessibility audit — replace it with what a person would say to another person.\n"
             "- PERSONAL ANECDOTE SPECIFICITY: First-person moments need dates and places, same as external sources. 'I have sat in procurement meetings where...' → 'In a 2019 procurement meeting, a director told me...' Floating anecdotes feel like illustration. Dated, placed anecdotes feel like evidence. Apply the TEMPORAL ANCHORS rule to yourself.\n"
             "- NO HEDGING AGAINST NOBODY: Cut 'X is not Y, but the logic is the same' constructions. If you are about to write 'a dashboard is not tactile paving, but...' — delete the first clause. 'The mechanism is the same' carries the weight alone. Preemptive hedging tells the reader you doubt your own argument. The juxtaposition does the work. Trust it and cut the hedge.\n"
             "- Reference real disabled artists, theorists, activists, or events by name where relevant\n"

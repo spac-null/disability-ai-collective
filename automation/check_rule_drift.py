@@ -59,14 +59,25 @@ EXPECTED_OCCURRENCES = {
     ),
     "jargon-priority-locations": (
         "priority locations",
-        2,
-        "validate_article RULES_SYSTEM R13, rewrite_with_opus rule 28 (converged to "
-        "registry text in the /loop migration, 2026-08-09). Still missing from: the "
-        "writer generation prompt's own JARGON bullet, and _pre_commit_gate's R10 "
-        "(which per the original audit has only 5 of 7 base terms, not just a "
-        "missing 8th — needs its own convergence pass, not just adding this one "
-        "term). Raise this count as each location gets converged; do not raise it "
-        "preemptively.",
+        4,
+        "validate_article RULES_SYSTEM R13, rewrite_with_opus rule 28, writer "
+        "generation prompt's own JARGON bullet, and _pre_commit_gate's GATE_SYSTEM "
+        "R10 — all 4 locations converged to the full 8-term canonical list in the "
+        "/loop migration, 2026-08-09.",
+    ),
+    "one-idea-per-sentence-enforcement": (
+        "A building whose entire public character is a colour scheme has decided",
+        3,
+        "writer generation prompt (pre-existing, generative only), "
+        "_pre_commit_gate's GATE_SYSTEM R16 (blocking, added 2026-08-09), "
+        "validate_article's RULES_SYSTEM R17 (advisory, added 2026-08-09). Closes "
+        "the gap found at the end of the 2026-08-09 editing session: this rule "
+        "existed in the writer's own prompt but had zero downstream enforcement, "
+        "and a real 3-claim-stacked sentence shipped live as a result. "
+        "Deliberately NOT added to rewrite_with_opus — that function is the "
+        "non-Opus doctrine-rewrite pass already flagged for replacement (branch on "
+        "measured register score instead of provider identity), not worth more "
+        "rule investment ahead of that change.",
     ),
 }
 

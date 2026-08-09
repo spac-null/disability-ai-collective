@@ -513,6 +513,55 @@ RULES = [
         added="2026-08-09", last_verified="2026-08-09",
     ),
     Rule(
+        id="one-idea-per-sentence",
+        name="ONE IDEA PER SENTENCE",
+        terse="a sentence folding 2+ separate claims together via relative clause / aside / "
+              "complement clause, often via 'and that'",
+        imperative=(
+            "ONE IDEA PER SENTENCE — PLAIN-WORDED. Real published example of the failure: "
+            "'A building whose entire public character is a colour scheme has decided, "
+            "before the concrete is poured, that its meaning is a thing you receive with "
+            "the eyes.' That single sentence folds three separate ideas — (1) the "
+            "building's public character is a colour scheme, (2) that's a decision made "
+            "before construction, (3) meaning arrives through the eyes — into one nested "
+            "sentence via a relative clause, an inserted aside, and a complement clause. "
+            "Split it: 'A building's whole public character can be a colour scheme. That's "
+            "a decision, made before the concrete is poured. Here, meaning arrives through "
+            "the eyes.' A sentence can be grammatically plain-worded and still fail this "
+            "way — check idea count, not just vocabulary. If a sentence carries more than "
+            "one claim, split it."
+        ),
+        full=(
+            "ONE IDEA PER SENTENCE — a sentence folds two or more separate claims together "
+            "via a relative clause, an inserted aside, and/or a complement clause, often "
+            "stacked with 'and that'. Real published example: 'it has quietly decided that "
+            "the floor is for looking at, not for standing on, and that everyone who moves "
+            "by reading the floor with their hands or their wheels has been designed out "
+            "before the concrete was poured' — three claims in one sentence. A sentence can "
+            "be grammatically plain-worded and still fail this way. Do NOT flag a sentence "
+            "with one main claim plus a short supporting detail that doesn't stand as its "
+            "own separate assertion."
+        ),
+        stages={Stage.GENERATE, Stage.GATE, Stage.REVIEW},
+        severity=Severity.BLOCKING,
+        rationale="The writer's own generation prompt has carried this rule since before "
+                  "2026-08-09, but it had NO downstream check anywhere in the pipeline — "
+                  "purely generative, nothing caught a violation before publish. Confirmed "
+                  "live 2026-08-09: 'it has quietly decided that the floor is for looking "
+                  "at, not for standing on, and that everyone who moves by reading the "
+                  "floor with their hands or their wheels has been designed out before the "
+                  "concrete was poured' shipped in a live article and was caught only by a "
+                  "human reader, not the pipeline. Closed the gap by adding this rule to "
+                  "both _pre_commit_gate's GATE_SYSTEM (as R16, blocking) and "
+                  "validate_article's RULES_SYSTEM (as R17, advisory review) the same day, "
+                  "reusing the writer prompt's existing worked example for consistency. "
+                  "Unlike meta-language-commentary/stacked-temporal-clauses above (kept "
+                  "ADVISORY, same-day single-example feedback), this rule already existed "
+                  "with a citable real-published-article failure — the fix here is "
+                  "enforcement coverage, not a new rule needing corpus validation.",
+        added="2026-08-01", last_verified="2026-08-09",
+    ),
+    Rule(
         id="ending-shape",
         name="ENDING",
         terse="no house ending shape; only CTAs/summaries/title-echoes/couplets are violations",
