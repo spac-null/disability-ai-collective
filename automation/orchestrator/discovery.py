@@ -1033,9 +1033,13 @@ class DiscoveryMixin:
         to steer toward Zen Circuit and Siri Sage. Assignments below are copied
         verbatim from 508cc86's rationale, not re-derived.
 
-        Still unmapped and still defaulting to Maya Flux: "history_archive" (the
-        mythology/ritual/folklore bucket) and "behavioral_science". Neither map
-        ever had them; assigning them is an editorial call, left for the owner.
+        "history_archive" (mythology/ritual/folklore/artifact) and
+        "behavioral_science" -- added 2026-08-09 continuation, owner decision:
+        history_archive -> Pixel Nova (visual/material-culture lens fits
+        artifact/relic/ritual material better than any other persona's focus);
+        behavioral_science -> Zen Circuit (pattern-analysis persona, natural
+        fit for cognition/bias material). Both previously fell through to the
+        Maya Flux default below.
         """
         _THEME_TO_PERSONA = {
             "architecture":   "Pixel Nova",
@@ -1051,6 +1055,8 @@ class DiscoveryMixin:
             "economy_finance":       "Maya Flux",
             "sustainability_ecology": "Maya Flux",
             "indigenous_tribal":     "Siri Sage",
+            "history_archive":       "Pixel Nova",
+            "behavioral_science":    "Zen Circuit",
         }
         for theme in themes:
             if theme in _THEME_TO_PERSONA:
