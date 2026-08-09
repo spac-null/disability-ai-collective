@@ -498,10 +498,48 @@ def _keyword_matches(text: str, words: set[str], keyword: str) -> bool:
     return kw in words or f"{kw}s" in words or f"{kw}es" in words
 
 
+# Added 2026-08-09 continuation, Tier A from the same Opus review: narrow,
+# high-precision welfare/policy-process program names, not the bare word
+# "policy" (a Tier B version using bare government/minister/policy/legislation/
+# reform words was tested and rejected -- 15% of the pool zeroed, including a
+# Hyperallergic thesis exhibition and a Guardian art review; false-positive
+# rate too high). This Tier A list zeroed 12/755 real seeds in testing, 100%
+# precision (every hit was genuinely the UK/AU welfare-administration beat),
+# but blocked 4/54 real published articles -- accepted tradeoff, explicit
+# owner decision: this is effectively the entire beat Disability News Service
+# covers, so it heavily suppresses that feed, not just individual stories.
+POLICY_PROCESS_EXCLUDE = [
+    "white paper", "green paper", "policy paper", "consultation period",
+    "public consultation", "spending review", "select committee",
+    "parliamentary inquiry", "regulatory reform", "autumn statement",
+    "budget statement", "royal commission", "department for work and pensions",
+    "dwp", "benefit claimant", "welfare reform", "universal credit",
+    "benefit cuts", "disability benefits review", "work capability",
+    "pip assessment", "personal independence payment", "ndis review",
+]
+
+# Added 2026-08-09 continuation, same review: base scoring summed keyword hits
+# across all 15 THEME_KEYWORDS buckets with equal weight, so the stated
+# editorial preference (toward architecture/space/mythology, away from
+# policy/admin -- commit 508cc86) existed only in feed/persona-routing
+# decisions and never once in the ranking function itself. A multi-domain
+# welfare story (touching health_systems + business_labor + education +
+# science_nature at once) could out-score a single-domain architecture or
+# mythology piece purely on vocabulary breadth. These multipliers apply
+# per-bucket, before the sum -- default 1.0 for any bucket not listed.
+THEME_WEIGHTS = {
+    "architecture": 1.5, "history_archive": 1.5, "space_cosmos": 1.5,
+    "indigenous_tribal": 1.5, "philosophy": 1.5,
+    "health_systems": 0.7, "business_labor": 0.7,
+}
+
+
 def score_item(item: dict) -> tuple[float, list[str]]:
     """Return (relevance_score 0-1, matched_themes list)."""
     text = f"{item['title']} {item.get('summary', '')}".lower()
     if any(kw in text for kw in MENTAL_HEALTH_NEWS_EXCLUDE):
+        return 0.0, []
+    if any(kw in text for kw in POLICY_PROCESS_EXCLUDE):
         return 0.0, []
     words = set(re.findall(r"\b\w+\b", text))
 
@@ -511,7 +549,8 @@ def score_item(item: dict) -> tuple[float, list[str]]:
         if hits:
             theme_hits[theme] = hits
 
-    base = min(sum(theme_hits.values()) / 8.0, 0.7) if theme_hits else 0.0
+    weighted_sum = sum(hits * THEME_WEIGHTS.get(theme, 1.0) for theme, hits in theme_hits.items())
+    base = min(weighted_sum / 8.0, 0.7) if theme_hits else 0.0
     boost = 0.15 if any(_keyword_matches(text, words, kw) for kw in DISABILITY_BOOSTERS) else 0.0
     matched = sorted(theme_hits, key=theme_hits.get, reverse=True)
     return round(min(base + boost, 1.0), 3), matched
