@@ -1,10 +1,17 @@
 # Automation — Crip Minds
 
-> ⚠️ **Two orchestrator files exist — they are NOT the same:**
-> - `automation/production_orchestrator.py` — **cron file, runs daily at 09:00**
-> - `production_orchestrator.py` (root) — manual use only, simpler, no cascade/rewrite/Bluesky
->
-> Always edit `automation/production_orchestrator.py` for production changes.
+> ⚠️ **`automation/production_orchestrator.py` is the only orchestrator file.**
+> A root-level manual-use copy and `opus_rewrite.py` (a separate daily rewrite
+> pass) were deleted 2026-08-09: confirmed via the live trident crontab that
+> neither has been invoked by cron since the pipeline moved to its current
+> workspace (`/srv/data/hermes/workspace/...`) — the actual cron only runs
+> `cripminds-daily.sh [news|article|stale-check]`, which calls
+> `automation/production_orchestrator.py` directly. Both deleted files also
+> carried writing-style doctrine that had drifted out of sync with (and in
+> several places directly contradicted) the current rules in this file — see
+> git log 2026-08-09 for detail. If one-off manual generation is needed again,
+> add a `--manual`/`--persona`/`--angle` flag to this file rather than
+> recreating a second copy.
 
 ## Daily Pipeline (fully automated)
 
@@ -54,12 +61,16 @@ No manual intervention needed. Cron runs on trident host.
 
 Main article pipeline. Self-loads `/srv/secrets/openclaw.env`.
 
-**Key settings:**
+**Key settings (verified against code 2026-08-09):**
 - `max_tokens`: 3500 (article generation), 2500 (rewrite pass)
-- Provider: Claude Opus 4.6 via CLIProxy at http://172.19.0.1:8317
+- Provider: Claude Opus 4.8 via OpenRouter (`openrouter/claude-opus-4.8`), with CLIProxy
+  (`http://127.0.0.1:8317/v1`) as a fallback path for some calls — direct OpenRouter is
+  primary since the 2026-0x CLIProxy migration, not CLIProxy-first as earlier docs said
 - Images: Pollinations FLUX API (key from openclaw.env)
 - Bluesky: auto-posts after each article (creds from openclaw.env)
-- Gold standard: `2026-03-08-architects-are-designing-buildings-for-the-wrong-sense.md`
+- Style reference for the rewrite pass: no fixed gold-standard file since 2026-03-17
+  (commit `73fe18b`) — rotates through the 2 most recent published articles instead,
+  excluding a small protected set of "founding stones"
 
 **Git push behaviour (2026-03-27):**
 Every `git push` goes through `_git_push_safe()`: stash → pull --rebase → pop → push.
@@ -74,22 +85,6 @@ typography, wayfinding, budget arithmetic, museum access, etc.
 ### `run_discovery.py`
 Discovers disability/tech topics, writes to `disability_findings.db`.
 Runs at 07:00 daily. Self-loads openclaw.env.
-
-### `opus_rewrite.py`
-Quality gate: auto-detects and rewrites weak articles with Claude Opus.
-Runs automatically at **10:30 daily** (after article generation at 09:00). Only scans last 14 days.
-
-Detection triggers (either fires a rewrite):
-- `model_used:` frontmatter field is not Opus (written by fallback model)
-- Quality score ≥ 3: question opener, academic headers, bullet lists, CTA ending, etc.
-
-On rewrite: updates `model_used:` to `claude-opus-4-6 (rewrote <original>)`, commits,
-and **pushes to GH Pages immediately**.
-
-```bash
-./run python3 opus_rewrite.py           # auto-scan mode (normal)
-# To force specific files, edit TARGETS_OVERRIDE = [] in the script
-```
 
 ### `scene_image_generator.py`
 Image generation library used by orchestrator. Self-loads openclaw.env.
