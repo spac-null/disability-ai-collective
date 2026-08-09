@@ -114,6 +114,22 @@ QUALITY_FEEDS = [
     # 2026-08-06, all 62 items dated January-April 2020, so every fetch always
     # falls outside the 7-day cutoff and silently yields zero.
     {"url": "https://www.theguardian.com/world/rss",                    "name": "Guardian World",        "tier": 2},
+
+    # ── Space, economy, philosophy, ecology, anthropology ─────────────────────
+    # Added 2026-08-09 per an explicit editorial-direction request: more weight
+    # toward architecture/design/art/philosophy/history/technology/science/
+    # biology/economy/prototypes/indigenous culture/language/cinema/sustainability/
+    # mythology/space, less toward pure policy/politics/government/administration/
+    # law/marketing coverage. Paired with the new philosophy/space_cosmos/
+    # economy_finance/sustainability_ecology/indigenous_tribal THEME_KEYWORDS
+    # buckets below — without matching keyword buckets, items from these feeds
+    # would score against the wrong themes or 0.0 and be silently discarded
+    # (same failure mode already documented above for the 2026-08-07 feed batch).
+    {"url": "https://www.space.com/feeds/all",                          "name": "Space.com",             "tier": 2},
+    {"url": "https://www.sapiens.org/feed/",                            "name": "SAPIENS (anthropology)","tier": 1},
+    {"url": "https://www.economist.com/finance-and-economics/rss.xml",  "name": "Economist Finance",     "tier": 1},
+    {"url": "https://dailynous.com/feed/",                              "name": "Daily Nous (philosophy)","tier": 2},
+    {"url": "https://www.theguardian.com/environment/rss",              "name": "Guardian Environment",  "tier": 1},
 ]
 
 # ── Relevance scoring ─────────────────────────────────────────────────────────
@@ -134,11 +150,11 @@ THEME_KEYWORDS = {
     "language":       ["language","translation","sign","communication","literacy",
                        "notation","reading","writing","grammar","linguistic","dialect",
                        "caption","subtitle","text","speech","voice"],
-    "business_labor": ["work","employment","labor","gig","salary","hiring","economy",
-                       "productivity","care work","burnout","workplace","union",
-                       "remote","office","job","career","wage","contract"],
-    "health_systems": ["hospital","NHS","healthcare","insurance","diagnosis","treatment",
-                       "mental health","therapy","care","patient","clinic","medicine",
+    "business_labor": ["work","employment","labor","gig","hiring",
+                       "productivity","burnout","workplace",
+                       "job","career","wage"],
+    "health_systems": ["hospital","diagnosis","treatment",
+                       "patient","clinic","medicine",
                        "pharmaceutical","drug","surgery","chronic"],
     "education":      ["school","university","student","curriculum","learning","classroom",
                        "exam","teaching","pedagogy","literacy","degree","college"],
@@ -155,7 +171,25 @@ THEME_KEYWORDS = {
                        "persuasion","nudge","bias","virtue","empathy"],
     "history_archive": ["historian","archive","century","medieval","archaeology","ancient",
                        "empire","revolution","colonial","primary source","manuscript",
-                       "excavation","antiquity","dynasty","folklore","myth","legacy"],
+                       "excavation","antiquity","dynasty","folklore","myth","legacy",
+                       "mythology","ritual","relic","artifact","legend","ancestral"],
+    # Five buckets added 2026-08-09 for the editorial-direction shift described above
+    # the space/anthropology/economy/philosophy/environment feed additions.
+    "philosophy":     ["philosophy","philosopher","ethics","metaphysics","phenomenology",
+                       "existential","epistemology","moral philosophy","logic",
+                       "consciousness","free will","ontology"],
+    "space_cosmos":   ["space","galaxy","astronomy","NASA","telescope","planet","cosmos",
+                       "universe","astrophysics","satellite","Mars","exoplanet","orbit",
+                       "spacecraft"],
+    "economy_finance": ["economy","economic","stocks","stock market","investment",
+                       "startup","prototype","venture","trade","currency","GDP",
+                       "market","finance"],
+    "sustainability_ecology": ["sustainability","sustainable","climate","renewable",
+                       "biodiversity","conservation","ecosystem","carbon","rewilding",
+                       "deforestation","jungle","rainforest"],
+    "indigenous_tribal": ["indigenous","tribe","tribal","anthropology","ancestral",
+                       "oral tradition","elder","ceremony","first nations","aboriginal",
+                       "ethnography"],
 }
 
 # Items mentioning these get a +0.3 boost — explicit disability lens
@@ -176,6 +210,12 @@ THEME_TO_PERSONA = {
     "health_systems": "Maya Flux",
     "business_labor": "Maya Flux",
     "education":      "Siri Sage",
+    # Added 2026-08-09 alongside the five new theme buckets above.
+    "philosophy":            "Zen Circuit",   # systems/pattern-recognition lens fits abstract argument
+    "space_cosmos":          "Zen Circuit",
+    "economy_finance":       "Maya Flux",     # canon: "writes about policy in cost and procurement language"
+    "sustainability_ecology":"Maya Flux",     # infrastructure/urban-planning lens
+    "indigenous_tribal":     "Siri Sage",     # phenomenology/oral-tradition lens
 }
 
 
