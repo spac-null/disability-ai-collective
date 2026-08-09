@@ -81,14 +81,35 @@ like/repost/reply/favorite counts (each platform's API differs — Bluesky via
 AT Protocol, Mastodon via its REST API, Tumblr via its API — three small
 fetchers instead of one, same shape).
 
+**Credentials, checked directly on trident 2026-08-09 (key names only, never
+values):**
+- **GoatCounter:** `goatcounter.env` only has `GOATCOUNTER_SMTP` (its own email
+  alerts) — **no read-API token exists yet.** Needs generating in the
+  GoatCounter admin UI (Settings → API), then a new `GOATCOUNTER_API_TOKEN`
+  added to that same secrets file.
+- **GSC:** no service-account/API credential file anywhere in `/srv/secrets/`
+  — confirmed, only manual dashboard access exists (matches the earlier GSC
+  investigation being done by hand, not via API). Needs a new Google Cloud
+  service account with Search Analytics API access, then that account's email
+  added as a user on the GSC property.
+- **Bluesky:** `BSKY_HANDLE`/`BSKY_APP_PASSWORD` already exist in
+  `openclaw.env` (used for posting). App passwords are typically full-account
+  scope, so these are very likely already sufficient to read back likes/
+  reposts on the account's own posts — worth a quick test call before
+  assuming, but probably no new credential needed.
+- **Tumblr:** full OAuth1 credentials already exist in `tumblr.env`
+  (`TUMBLR_CONSUMER_KEY/SECRET`, `TUMBLR_ACCESS_TOKEN/SECRET`) — likely
+  sufficient to read back notes/likes the same way, no new credential
+  expected.
+- **Mastodon:** `MASTODON_ACCESS_TOKEN` exists in `openclaw.env`, but its
+  granted scope (read vs. write-only, set at token-creation time) is
+  unconfirmed without testing an actual API call — the one credential here
+  that might need regenerating with broader scope.
+
 **Open questions for you:**
-- Do you already have a GoatCounter API token from manual dashboard use, or
-  does one need generating? Same question for GSC API access (existing
-  service account/OAuth credential vs. needs setting up), and for each
-  platform's API auth (Bluesky/Mastodon/Tumblr credentials already exist in
-  `/srv/secrets/openclaw.env` for posting — need to check if those same
-  credentials are sufficient for reading back engagement metrics, or if
-  read-scope needs adding).
+- OK to go ahead and generate the new GoatCounter API token + set up the new
+  GSC service account, or do you want to do either of those yourself and hand
+  me the resulting credential?
 - Scroll-depth (did they read it), search CTR (did the headline earn a
   click), and social engagement (did it spread) are three different signals —
   equally important to you, or is one the real priority to get right first?
