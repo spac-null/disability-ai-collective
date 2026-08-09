@@ -440,12 +440,125 @@ before building):**
   weighting in `news_fetcher.py` — but this is downstream of #1, not
   something to build first.
 
-**Open questions for you (still unanswered — this blocks building the LLM
-judge, since without calibration examples I'd be guessing at what
-"interesting angle" means for this specific publication):**
-- Can you point to 2-3 past articles you felt had a genuinely great premise,
-  and 2-3 you felt were mediocre? Concrete examples would let me calibrate
-  what "interesting angle" should actually mean here, rather than me guessing.
+**RESOLVED, 2026-08-10 continuation — calibration input obtained via an
+external model with real history on the owner's taste** (not by the owner
+recalling examples from memory as originally asked — a portable prompt was
+built and used instead). Two consultation rounds, the second explicitly
+correcting the first:
+
+- **Positive gold-standard** (kept after both rounds): Sara Hendren, "All
+  Technology Is Assistive" (WIRED) — Eames splint -> modernist furniture;
+  Jane Jacobs, "The Uses of Sidewalks: Safety" — busy sidewalk -> security
+  infrastructure.
+- **Downgraded on the second round**: Ta-Nehisi Coates, "The Case for
+  Reparations" — real category jump (house purchase -> extraction
+  mechanism), but judged too broad a taste prediction; the owner already
+  holds the underlying argument, so the case makes it tangible without
+  making the owner rethink the object as violently as the other two.
+- **Same-genre negative controls** (competent journalism that still fails):
+  a Guardian first-person wheelchair-accessibility piece, and an older
+  Guardian web-accessibility piece with a real named source (Paresh
+  Jotangia) and real screen-reader detail. Both kept specifically to kill
+  a shortcut: "named person + concrete detail + disability" is NOT
+  sufficient — the lens has to change what the *system* is or does, not
+  just show who it excludes.
+
+**The core test, sharper than Stage B's "correction moment + resisting
+example" fields (generation side)**: a disability lens must reveal a
+hidden mechanism of the thing/system itself. "Public transport is hard for
+wheelchair users" names harm; "a feature meant to speed passenger flow
+strands one kind of passenger" reveals the system's actual optimization
+target.
+
+**Stage 1 (category-jump judge) — BUILT, shipped in shadow mode,
+2026-08-10.** `category_jump_judge()` (`automation/news_fetcher.py`) runs
+on the same candidates `extract_angle()` already processes, returns a
+structured verdict (decision, ostensible_category, resisting_detail,
+hidden_mechanism, category_jump, evidentiary_bridge, correction, reason),
+persisted to a new `category_jump_shadow` table. Never conditions
+selection/generation — pure observation.
+
+Real first-batch results, then corrected after live calibration feedback:
+- Banksy statue piece (blindness-as-nationalist-metaphor) → NO, correctly
+  — disability is the stated metaphor already, nothing forces a
+  reclassification. Named as a deliberate negative example: "metaphorical
+  disability rather than embodied epistemology" is close to the *inverse*
+  of what this publication is for.
+- El Salvador health-monitoring-app story → flipped YES to NO after adding
+  the **evidentiary-bridge test** (test 6): the judge must quote/paraphrase
+  the exact source fact supporting a proposed jump, not invent the causal
+  bridge itself ("Google is private, therefore private demand generation"
+  is the model's own inference, not a stated/implied fact). Flagged as
+  "probably the most important calibration change" before this leaves
+  shadow mode — confirmed live, it does exactly what it was meant to.
+- Alzheimer's-drug efficacy review → strong YES, with a real grounded
+  bridge (the source explicitly states both the "gamechanger" framing and
+  the "trivial" trial result). Real bug found and fixed along the way:
+  `max_tokens=500` was too tight (a valid, verbose response landed within
+  a few dozen tokens of the cap; a less lucky generation on the same item
+  hit the cap mid-JSON-string and silently returned None) — bumped to 900.
+
+**Stage 2 (persona-specific reframe) — DESIGNED, NOT BUILT.** Deliberately
+asymmetric from Stage 1: Stage 1 asks "is there something objectively
+strange here"; Stage 2 asks "does this persona's specific embodied lens
+reveal something *additional* about that strangeness" — given the Stage 1
+jump as a hypothesis to interrogate, not independently re-derived per
+persona (avoids recreating the original keyword-density problem four
+times over, with personas as motivated reasoners manufacturing relevance).
+Stage 2 needs its own NO: a real category jump can exist with nothing
+distinctive for any of the four personas to add. Operational test: "if I
+removed the persona's disability from the argument, would substantially
+the same essay remain? If yes, Stage 2 fails." Full prompt drafted (system
+prompt + 6-test structure + JSON schema), run independently once per
+persona (4x), article survives if at least one persona produces a strong
+YES. Held deliberately — bigger, separate decision, not built until
+Stage 1's shadow data confirms the anomaly-detection gate itself works.
+
+**False-positive taxonomy to watch for during the shadow window** (named
+during calibration, not yet systematically checked against real shadow
+data):
+1. *Grand-theory sink* — jump lands on a large ideology (capitalism,
+   surveillance, neoliberalism) rather than a specific mechanism (converts,
+   ranks, delays, measures, hides, rewards, substitutes, routes,
+   normalizes, prices, filters). Weak: "AI monitoring -> capitalism."
+   Strong: "AI monitoring -> mechanism that converts diagnosis into
+   privately controlled follow-up demand."
+2. *Clever reinterpretation without source friction* — LLMs are good at
+   producing a plausible-sounding jump with no real resisting detail
+   grounding it (the evidentiary-bridge test targets exactly this).
+3. *Real mechanism, no persona leverage* — e.g. "concert ticket queue ->
+   dynamic pricing market" could be a great Atlantic piece and a bad
+   CripMinds piece if no embodied lens changes what dynamic pricing means.
+   Stage 2's job, not Stage 1's.
+4. *Culturally exhausted mechanism* — passes every logical test and is
+   still dull ("social media feed -> attention extraction machine" — true,
+   concrete, and already widely known). Needs a familiarity filter, not
+   yet designed: would an informed reader already know the destination
+   before paragraph one?
+5. *Metaphorical disability as material, not epistemology* — the Banksy
+   case's category. Almost the inverse of this publication's purpose.
+6. *Category jump without a scene* — a real mechanism (e.g. credit scores
+   encoding geographic segregation) with only aggregate statistics, no
+   person/object/decision/moment to build an essay around. Real research
+   material, not necessarily essay-generating material on its own.
+
+**Shadow-mode exit criterion, decided but not yet reached**: do not
+promote out of shadow mode on volume alone. Target: manually examine at
+least 50 Stage-1 YESes and 100 NOs (asymmetric — false positives cost more
+here than missed stories, since RSS supplies endless raw material but
+each YES consumes expensive downstream stages) from a corpus sampled
+across ALL source types deliberately, not just tech/disability/medicine
+feeds (calibrating only on those rebuilds topical selection through the
+back door). For the YES batch: target ~8/10 feeling genuinely worth
+investigating, not merely defensible — if only ~5/10 do, the gate is too
+permissive. For the NO batch: spot-check rather than only reviewing near
+misses; if a meaningful fraction make you say "that's exactly the sort of
+strange thing this should have caught," the gate is too tight.
+Periodically send blind batches back to the calibration source (item
+title+summary only, no hint which the model called YES/NO) rather than
+asking it to confirm existing verdicts — anchoring the read defeats the
+purpose. Re-run this whenever the Stage 1 prompt, model, RSS source mix,
+or upstream filtering changes.
 
 ---
 
