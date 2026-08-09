@@ -307,3 +307,89 @@ day's incremental work didn't leave anything half-wired behind it.
 
 **Next weekly audit due:** ~2026-08-16. Check `automation/.loop_last_full_review`
 for the actual last-run date before assuming this one still applies.
+
+## Section 7 — anchor-architecture blueprint: design findings not captured elsewhere (2026-08-09)
+
+The anchor-architecture blueprint itself (Stages 0-G, tracked in
+`.claude/audience-engagement-tasklist.md`'s addendum) was produced by a large
+Opus design agent in this session's transcript — no standalone blueprint
+document was ever committed. These specific findings from that agent's
+report didn't make it into the tasklist summary and would otherwise only
+exist in conversation history. Recorded here so they survive session
+boundaries.
+
+**Fabrication-vector constraint, required for Stage D/E when built.** An
+"anchor" (a person/object/place a Stage-D brief would commit to and the
+writer would return to 3+ times) is a *worse* fabrication risk than a normal
+one-off invented detail — an invented anchor gets repeated and reinforced
+across the piece instead of appearing once, and it's exactly the kind of
+confident-sounding, load-bearing detail the fact-checker is least likely to
+flag on a first pass (see `automation/orchestrator/generate.py:548`'s
+existing "NO INVENTED STATISTICS" rule for the closest existing analogue —
+no equivalent rule exists yet for a *named anchor*). Whoever builds Stage D's
+brief-generation prompt and Stage E's writer-prompt block must explicitly
+require the anchor be something real and locatable — sourced from the
+article's actual research material, not invented to fit a device — the same
+way statistics are already required to be real. This is not optional
+polish; skipping it turns the anchor mechanism into a fabrication amplifier.
+
+**Stage A measurement methodology (scripts never committed, note it here so
+a future re-run isn't starting from zero).** The 88%/26%/10-15% figures in
+the tasklist came from two successively refined ad-hoc scripts, run inline
+during the design agent's session and never saved to the repo — there is no
+`measure_anchors.py` or similar to inspect or extend. What's known about
+their methodology, for reconstruction if this is ever revisited:
+- **First pass (88%, would have killed the project):** naive — flagged any
+  proper noun recurring in >=3 paragraphs of an article, no filtering.
+- **Second pass (26%, the number the tasklist currently relies on):** added
+  a larger stopword/blocklist, required confirmed non-sentence-initial
+  occurrences (to exclude a name that's just the grammatical subject
+  repeatedly, not a deliberate callback), and multi-word phrase matching
+  (not just single proper nouns). Of that 26%, roughly half was judged
+  topical necessity (an article about Deaf culture saying "Deaf" often isn't
+  a device) rather than a deliberate anchor — hence the "real device rate
+  10-15%" estimate.
+- **A third, more rigorous pass (100 articles, hand-checked against a human
+  judgment of "is this actually a Bregman-style anchor," not just a keyword
+  detector) was proposed in conversation but never run.** If Stage A's
+  number is ever load-bearing for a bigger decision, this is the gap to
+  close first — the current 26%/10-15% figures rest on scripts nobody can
+  currently inspect.
+
+**Known gap in the pipeline's own safety net: `snapshot_test.py` doesn't
+cover `generate.py`.** Confirmed by reading `automation/snapshot_test.py`
+directly — `_snapshot_llm_calls` only exercises `_pre_commit_gate` (gate.py)
+and `validate_article` (review.py). It never imports or calls anything from
+`generate.py` — no `_run_production_automation_locked`, no
+`_fable_editorial_brief`, no writer-prompt construction. This means Stage
+D/E, whenever built, will be the first change to the writer prompt with zero
+snapshot-test coverage protecting it. Worth closing before Stage E ships,
+not after.
+
+**Rewrite-pass / plan-following conflation risk — relevant to interpreting
+Stage B calibration data.** `rewrite_with_opus`/`_fable_polish_rewrite`
+(`generate.py`, lines ~661-692) run during generation, *before*
+`_plan_follow_read` (`review.py`, wired into `validate_article`) ever checks
+whether the plan (`opening_shape`/`correction_moment`/`resisting_example`)
+was actually executed. A plan-following failure introduced by the rewrite
+pass and one present in the original draft are currently indistinguishable
+to the check. This matters once real calibration data starts accumulating
+(see tasklist Stage B): a low agreement rate could mean the judge itself is
+wrong, or it could mean the rewrite pass is silently undoing a plan the
+first draft executed correctly — two very different fixes, and nothing
+today can tell them apart. Worth instrumenting (e.g. running
+`_plan_follow_read` before and after the rewrite pass) before trusting any
+conclusion drawn from low agreement.
+
+**Refrain instruction (Stage D/E) plausibly conflicts with an existing
+crafted-rhetoric ban — unreconciled.** `gate.py`'s CRAFTED RHETORIC rule
+(R15, clause on "aphoristic or ironic closers") bans a piece ending on a
+crafted twist rather than a plain fact, quote, or concrete narrative beat.
+A refrain that echoes an opening phrase near the ending is a plausible match
+for exactly this ban. The pipeline already has one narrow carve-out —
+`generate.py:540`, "a plain list can repeat verbatim as a refrain" — but
+that only exempts repeating a stated *list*, not an opening *phrase*. No
+equivalent exemption exists for a phrase-refrain. Moot until Stage D/E has
+code, but whoever builds it needs to either extend the carve-out or accept
+that a refrain instruction will regularly collide with an existing blocking
+rule.

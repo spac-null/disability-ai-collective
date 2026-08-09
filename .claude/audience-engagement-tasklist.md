@@ -67,7 +67,20 @@ judge panel genuine structural angle divergence for free.
   NOT STARTED.** Stage E is the first change that would actually direct what
   gets written; per the blueprint, it should not start before Stage B has
   accumulated real calibration data (~20 articles, several weeks at current
-  cadence).
+  cadence). **Before either ships, four things surfaced during design but
+  not yet resolved must be addressed — see `.claude/bregman-anchor-corpus.md`
+  Section 7 for full detail on each:** (1) the anchor must be constrained to
+  something real/locatable, not invented — it's a worse fabrication risk
+  than a normal one-off detail because it repeats 3+ times; (2) a refrain
+  instruction plausibly collides with the existing CRAFTED RHETORIC
+  aphoristic-closer ban in `gate.py`, and the pipeline's only current
+  carve-out covers verbatim list-refrains, not phrase-refrains; (3)
+  `snapshot_test.py` doesn't cover `generate.py` at all — Stage E would be
+  the first writer-prompt change shipped with zero snapshot-test coverage;
+  (4) the rewrite pass runs before `_plan_follow_read` checks plan
+  execution, so a rewrite-introduced plan-following failure and an
+  original-draft one are currently indistinguishable in Stage B's
+  calibration data.
 
 **Explicitly rejected by the blueprint, with real evidence, not deferred:**
 a fixed "movement sequence" (the original design's second half) — it's a
@@ -84,7 +97,18 @@ without reversing that prior decision.
 
 1. Capture real engagement data (foundational — everything else needs this)
 2. Persist engagement-read + shadow-check output to a queryable DB (cheap, unlocks analysis)
-3. Judge-panel / multi-candidate generation (highest ceiling, highest cost)
+3. Judge-panel / multi-candidate generation (highest ceiling, highest cost) —
+   **unresolved sequencing conflict, flagged 2026-08-09 audit, not yet
+   decided:** item 3's own section below already committed to a hand-written
+   "explicit angle instruction" divergence mechanism, built independently of
+   the anchor-architecture blueprint. But the blueprint's addendum (above)
+   separately claims that once Stage 0-E matures, two independent
+   `_fable_editorial_brief` calls give judge-panel divergence "for free" —
+   a different, likely-better mechanism for the same problem. These two
+   plans have never been reconciled: does item 3 get built now with the
+   hand-written approach, wait for Stage E, or get re-scoped so the
+   hand-written version is explicitly a placeholder Stage E later replaces?
+   Needs a decision before item 3 is actually built, not after.
 4. Smarter topic/premise scoring at discovery time
 5. Persona evolution tied to real reception (needs #1 first)
 6. Shadow-check promotion decisions (already dated, 2026-08-23 — housekeeping, not new work)
@@ -310,6 +334,40 @@ publishing whatever the current single-draft path produces) — log both the
 winning and losing draft plus the judge's reasoning to the review sidecar so
 picks can be eyeballed before this is trusted to decide what actually
 publishes, same discipline as the 3 shadow checks already running.
+
+**How "explicit angle instruction" would actually work — four candidate
+mechanisms discussed in conversation, never written down before this audit
+(2026-08-09):**
+1. **Structural-shape alternation.** `_STRUCTURAL_SHAPES` is already a fixed
+   list in the codebase (quantify-then-critique, scene-then-theory,
+   reframe-definition, historical-anchor, counter-assumption,
+   comparative-case) — currently only used as a flat diversity guard
+   (checks overuse after the fact), not something a candidate is told to
+   commit to before writing. Candidate A generates normally; candidate B
+   gets explicitly told to use a different shape from the list. Most
+   concrete and cheapest to implement — a fixed list already exists, and
+   it's easy to explain in the judge's reasoning ("candidate B used X
+   shape, A used Y, judge preferred X because...").
+2. **Sub-angle within the same topic.** E.g. for a topic like AI hiring
+   bias, candidate A leans into the audit/compliance angle, candidate B
+   into the lived-experience angle. More interesting than (1) but needs the
+   discovery/prompt step to surface more than one candidate angle for a
+   given topic — not guaranteed to exist for every discovery item.
+3. **Persona-beat foregrounding.** Each persona already has multiple beats
+   (`_AGENT_BEATS`); candidate A emphasizes one, candidate B another.
+4. **Freeform instruction** — "don't take the most obvious angle" — relying
+   on the model's own judgment of "obvious" with no concrete alternative
+   given. Simplest to implement, vaguest to reason about why one candidate
+   won, hardest to learn from when eyeballing shadow-mode results.
+
+No final choice among these four was recorded before the session moved on
+to the Bregman close-read that produced the anchor-architecture blueprint —
+which is why the sequencing conflict flagged in the priority-order section
+above exists: the blueprint's Stage G note (two independent
+`_fable_editorial_brief` calls giving divergence "for free") is really a
+fifth candidate mechanism, proposed later and never compared against these
+four. Whoever builds item 3 needs to pick one of these five, not assume
+"explicit angle instruction" already specifies which.
 
 ---
 
