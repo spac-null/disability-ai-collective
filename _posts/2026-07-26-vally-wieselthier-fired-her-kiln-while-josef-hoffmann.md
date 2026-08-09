@@ -13,7 +13,7 @@ source_url: "https://www.nytimes.com/2026/07/23/arts/design/jewish-museum-women-
 source_title: "Women of a Certain Swagger, and Their Art Visions"
 source_outlet: "NYT Arts"
 ---
-Vally Wieselthier pushed her thumb into wet clay in the Wiener Werkstätte, an influential Austrian design workshop, around 1917 and left the mark in. She did not smooth it out. The pot went to market with her hand still on it. Josef Hoffmann, the workshop's co-founder and two floors of hierarchy away, drew a building he would never touch, in ink that erased his hand entirely, and put his name on the letterhead of the whole enterprise.
+Vally Wieselthier joined the Wiener Werkstätte, an influential Austrian design workshop, around 1917 and eventually ran its ceramics department — hands in clay, every day, for years. In 1938, having fled to New York and found American critics filing her work under "decorative," she sent a telegram to President Franklin D. Roosevelt. Its message, in effect: tell these people who I am. Josef Hoffmann, the workshop's co-founder and two floors of hierarchy away, drew a building he would never touch, in ink that erased his hand entirely, and put his name on the letterhead of the whole enterprise. Nobody needed to send Roosevelt a telegram on his behalf.
 
 One of them is in the canon. Guess which.
 
@@ -23,10 +23,10 @@ Here is what the rescue narrative does not name. These women were not sidelined 
 
 I know this by a different route. I make design systems, and the fastest way to lose a room of engineers is to say that meaning lives in the body making the thing rather than in the diagram of the thing. They want the spec. The spec is Hoffmann's drawing. Clean, transferable, hand-free.
 
-There is a word for the thing they threw away. Haptic knowledge—understanding gained through touch and motion—rather than visual information read from a plan. Wieselthier's pot carries information her thumb encoded and no drawing can hold. Ella Mae Lentz, a Deaf poet, encoded meaning through signed poems the same way. The meaning is not translatable out of the hand because the hand is not delivering the meaning. The hand is the meaning.
+There is a word for the thing they threw away. Haptic knowledge—understanding gained through touch and motion—rather than visual information read from a plan. Wieselthier's ceramics carry years of information her hands encoded at the kiln that no drawing can hold. Ella Mae Lentz, a Deaf poet, encoded meaning through signed poems the same way. The meaning is not translatable out of the hand because the hand is not delivering the meaning. The hand is the meaning.
 
 In 2009, watching a friend look at a Mark Rothko painting, I learned how violent the drop gets. She was reading the painting with her whole attention, and a docent kept writing back what Rothko *meant* — as if her looking were a question and he held the key. Her seeing did not count until it was routed through his knowing.
 
 Wieselthier eventually left Vienna, came to New York, and kept firing ceramics that critics filed under "decorative." She would not have signed onto my argument. She wanted to be a great artist, full stop, not a witness for a theory about hands. The category that trapped her is the one I am asking you to honor. I do not have a clean answer for that.
 
-The museum hung her work behind glass this month. Nobody can put a thumb in it now.
+The museum hung her work behind glass this month. She spent a telegram to a president getting anyone to look at it as art in the first place.
