@@ -702,6 +702,207 @@ def extract_angle(title: str, summary: str, url: str) -> str | None:
     return angle
 
 
+# ── Category-jump judge (SHADOW MODE, added 2026-08-10) ────────────────────────
+#
+# Item 4 (discovery-time premise/angle scoring) was blocked all session on real
+# calibration input. Got it: two consultations with an external model that has
+# real history on the owner's taste, calibrated against real examples --
+# positive gold-standard: Sara Hendren's "All Technology Is Assistive" (WIRED)
+# and Jane Jacobs's "The Uses of Sidewalks: Safety" (Death and Life of Great
+# American Cities); negative, same-genre controls (competent journalism that
+# still fails the test): a Guardian first-person wheelchair-accessibility
+# piece and a web-accessibility piece with a real named source -- both kept
+# BECAUSE they show "named person + concrete detail + disability" is NOT
+# sufficient on its own. Ta-Nehisi Coates's "The Case for Reparations" was
+# offered first, then explicitly downgraded on a second pass as too broad a
+# taste prediction -- kept out of the prompt below for that reason.
+#
+# The core test, sharper than "correction moment + resisting example" alone
+# (Stage B's fields, on the generation side of this pipeline): a disability
+# lens must reveal what a system/object IS or DOES, not just who it excludes.
+# "Public transport is hard for wheelchair users" names harm; "a feature meant
+# to speed passenger flow strands one kind of passenger" reveals the system's
+# actual optimization target. Concretely, a real category jump: medical splint
+# -> modernist furniture; busy sidewalk -> security infrastructure.
+#
+# SHADOW MODE, same discipline as every other shadow check in this project:
+# runs on the same candidates extract_angle() already processes, logs its
+# YES/NO/reasoning to category_jump_shadow, and NEVER conditions selection or
+# generation on it. Real (item, verdict) pairs need to accumulate and get
+# checked against real judgment before this becomes anything but observation.
+_CATEGORY_JUMP_SYSTEM_PROMPT = """You are the CRIPMINDS SOURCE ANGLE JUDGE.
+
+You receive one RSS item consisting of a TITLE and SUMMARY.
+
+Your job is NOT to decide whether the topic concerns disability, accessibility, AI, art, design, politics, culture, or any other preferred subject.
+
+Your job is to decide whether the item contains concrete material from which a CripMinds writer could reveal a HIDDEN MECHANISM of the thing itself.
+
+A strong item starts in one apparent category and contains a concrete person, object, event, behaviour, failure, contradiction, or detail that could make the argument end in a meaningfully different category.
+
+Examples of the pattern:
+
+* medical leg splint -> modernist furniture
+* busy sidewalk -> security infrastructure
+* assistive device -> theory of technology
+* ordinary house purchase -> extraction mechanism
+
+The disability lens must do more than show that disabled people are affected by something.
+
+BAD:
+"Public transport is difficult for wheelchair users."
+This tells us who is harmed. It does not change what public transport means.
+
+POTENTIALLY GOOD:
+"A design feature intended to speed passenger flow repeatedly strands one kind of passenger."
+This may reveal that the transport system is not simply transporting people; it is optimizing for a hidden definition of the acceptable passenger.
+
+Do not reward:
+
+* disability keyword density
+* worthy social issues
+* policy relevance
+* explicit calls for inclusion
+* statistics about inequality
+* a named disabled person by itself
+* an article merely illustrating a thesis it states from the beginning
+* generic conclusions such as "society is ableist," "accessibility matters," "technology can exclude," or "design should be inclusive"
+
+Do not invent missing facts.
+
+A possible hidden mechanism must be grounded in something actually present in the TITLE or SUMMARY.
+
+Run these tests:
+
+1. OSTENSIBLE CATEGORY
+   What does this item appear to be about before interpretation?
+
+2. RESISTING DETAIL
+   Is there one concrete person, object, event, behaviour, failure, contradiction, or observed detail that does not sit neatly inside the obvious explanation?
+
+3. HIDDEN MECHANISM
+   Could that detail reveal what the object/system is actually doing, optimizing, assuming, measuring, rewarding, hiding, or making possible?
+
+4. CATEGORY JUMP
+   Is that hidden mechanism meaningfully different from the item's ostensible category?
+
+The vocabulary of the starting subject and the ending insight should normally belong to different conceptual domains.
+
+5. CORRECTION
+   Could a writer truthfully make a movement approximately like:
+
+"I thought this was a story about X. The concrete case suggests it is actually a story about Y."
+
+X and Y must not merely be:
+"disability problem" -> "bigger disability problem"
+or
+"access barrier" -> "evidence that accessibility matters."
+
+DECISION RULE:
+
+Return YES only when:
+
+* there is concrete evidence in the supplied item;
+* that evidence supports a plausible hidden mechanism;
+* the mechanism changes our understanding of the thing/system itself;
+* and the resulting category jump does not depend on invented facts.
+
+Return NO when:
+
+* the thesis is already completely stated by the topic;
+* examples merely demonstrate the stated thesis;
+* disability only identifies who benefits or suffers;
+* the apparent and hidden categories are basically the same;
+* or reaching the proposed hidden mechanism requires speculation beyond the supplied item.
+
+A YES does NOT mean the eventual essay angle has been proven.
+It means the source contains enough grounded friction to justify further investigation.
+
+Return only this JSON:
+
+{
+"decision": "YES" | "NO",
+"ostensible_category": "What the item appears to be about",
+"resisting_detail": "The exact concrete detail creating friction, or null",
+"hidden_mechanism": "What the detail may reveal about what the thing/system actually does, or null",
+"category_jump": "X -> Y, or null",
+"correction": "I thought X; this case suggests Y, or null",
+"reason": "Maximum 3 sentences. Explain why it passes or fails the mechanism-reveal test."
+}"""
+
+
+def category_jump_judge(title: str, summary: str) -> dict | None:
+    """SHADOW MODE -- see the module comment above this function for the
+    full design rationale and calibration sources. Never raises, never
+    conditions anything downstream -- a failure here just means no shadow
+    row gets logged this run, unlike extract_angle where a failure needed
+    to be distinguishable from a real verdict."""
+    if not API_KEY:
+        return None
+    user = f"TITLE:\n{title}\n\nSUMMARY:\n{summary}"
+    payload = json.dumps({
+        "model": MODEL,
+        "max_tokens": 500,
+        "messages": [
+            {"role": "system", "content": _CATEGORY_JUMP_SYSTEM_PROMPT},
+            {"role": "user", "content": user},
+        ],
+        "stream": False,
+    }).encode()
+    try:
+        req = urllib.request.Request(
+            API_URL, data=payload,
+            headers={"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=30) as r:
+            resp = json.loads(r.read())
+        raw = resp["choices"][0]["message"]["content"].strip()
+        raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw, flags=re.MULTILINE).strip()
+        judgment = json.loads(raw)
+        if "decision" not in judgment:
+            return None
+        return judgment
+    except Exception as e:
+        log(f"  category-jump judge failed: {e}")
+        return None
+
+
+def _persist_category_jump_shadow(conn, seed_id: str, judged_at: str, judgment: dict):
+    """Never raises -- pure shadow logging, must never affect the real run."""
+    try:
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS category_jump_shadow (
+                id                   INTEGER PRIMARY KEY AUTOINCREMENT,
+                seed_id              TEXT NOT NULL,
+                judged_at            TEXT NOT NULL,
+                decision             TEXT,
+                ostensible_category  TEXT,
+                resisting_detail     TEXT,
+                hidden_mechanism     TEXT,
+                category_jump        TEXT,
+                correction           TEXT,
+                reason               TEXT,
+                UNIQUE(seed_id, judged_at)
+            )
+        """)
+        conn.execute(
+            "INSERT OR REPLACE INTO category_jump_shadow "
+            "(seed_id, judged_at, decision, ostensible_category, resisting_detail, "
+            "hidden_mechanism, category_jump, correction, reason) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            (
+                seed_id, judged_at, judgment.get("decision"),
+                judgment.get("ostensible_category"), judgment.get("resisting_detail"),
+                judgment.get("hidden_mechanism"), judgment.get("category_jump"),
+                judgment.get("correction"), judgment.get("reason"),
+            ),
+        )
+        conn.commit()
+    except Exception as e:
+        log(f"  category-jump shadow persistence failed: {e}")
+
+
 # See extract_top_angles's docstring/comment for why this exists -- a cheap,
 # uncalibrated mitigation for score_item()'s structural blind spot, not a
 # substitute for the real fix (an LLM-judged angle-interest score).
@@ -756,6 +957,7 @@ def extract_top_angles(conn, n: int = 10):
 
     rows = top_rows + explore_rows
     extracted = 0
+    shadow_judged = 0
     today = datetime.now().strftime("%Y-%m-%d")
     for seed_id, url, title, summary in rows:
         try:
@@ -780,8 +982,21 @@ def extract_top_angles(conn, n: int = 10):
                 (today, seed_id),
             )
         conn.commit()
+
+        # SHADOW MODE — see category_jump_judge's module comment. Runs on the
+        # same candidate, logs its verdict, never affects angle/selection.
+        judgment = category_jump_judge(title, summary or "")
+        if judgment:
+            _persist_category_jump_shadow(
+                conn, seed_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), judgment
+            )
+            shadow_judged += 1
+
         time.sleep(0.5)
-    log(f"Angle extraction done: {extracted}/{len(rows)} got angles ({len(explore_rows)} exploration slots)")
+    log(
+        f"Angle extraction done: {extracted}/{len(rows)} got angles "
+        f"({len(explore_rows)} exploration slots, {shadow_judged} category-jump shadow-judged)"
+    )
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
