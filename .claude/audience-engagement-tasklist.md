@@ -81,17 +81,30 @@ like/repost/reply/favorite counts (each platform's API differs — Bluesky via
 AT Protocol, Mastodon via its REST API, Tumblr via its API — three small
 fetchers instead of one, same shape).
 
-**Credentials, checked directly on trident 2026-08-09 (key names only, never
-values):**
-- **GoatCounter:** `goatcounter.env` only has `GOATCOUNTER_SMTP` (its own email
-  alerts) — **no read-API token exists yet.** Needs generating in the
-  GoatCounter admin UI (Settings → API), then a new `GOATCOUNTER_API_TOKEN`
-  added to that same secrets file.
-- **GSC:** no service-account/API credential file anywhere in `/srv/secrets/`
-  — confirmed, only manual dashboard access exists (matches the earlier GSC
-  investigation being done by hand, not via API). Needs a new Google Cloud
-  service account with Search Analytics API access, then that account's email
-  added as a user on the GSC property.
+**Credentials — RESOLVED for GoatCounter, MUCH simpler than assumed for GSC
+(checked directly on trident 2026-08-09; key names only, no secret values
+read or transferred):**
+- **GoatCounter: no token needed at all.** It's not running in Docker — it's a
+  systemd user service on the host, storing everything in a plain SQLite file
+  at `/srv/data/goatcounter/goatcounter.db` (confirmed via its own service
+  description: "GoatCounter analytics - cripminds.com"). Queried it directly,
+  read-only, no auth: real per-article scroll-depth counts exist right now
+  (e.g. one article: scroll-25% reached by 12 sessions, scroll-50% by 11,
+  scroll-75% by 8) and plain pageview counts per path (July 2026 articles
+  range from 1 to 18 views — genuinely low-traffic for a young publication,
+  worth keeping in mind for how long "enough data" will realistically take).
+  The fetch job can just be a read-only SQLite connection from the pipeline
+  host — the exact same pattern already used for `disability_findings.db`,
+  nothing new to set up.
+- **GSC: no new service account needed either.** `/srv/secrets/google-
+  calendar.json` is a real GCP service account
+  (`trident-calendar@gen-lang-client-0047032066.iam.gserviceaccount.com`,
+  project `gen-lang-client-0047032066`) already in use for calendar
+  integration. Reusing it for GSC needs two web-UI actions from you, no new
+  credential file: (1) enable the "Search Console API" on that same GCP
+  project in Cloud Console, (2) add that service account's email as a user
+  (Settings → Users and permissions → Add user) on the cripminds.com property
+  in Search Console, "Restricted" access is enough for read-only reporting.
 - **Bluesky:** `BSKY_HANDLE`/`BSKY_APP_PASSWORD` already exist in
   `openclaw.env` (used for posting). App passwords are typically full-account
   scope, so these are very likely already sufficient to read back likes/
@@ -107,9 +120,10 @@ values):**
   that might need regenerating with broader scope.
 
 **Open questions for you:**
-- OK to go ahead and generate the new GoatCounter API token + set up the new
-  GSC service account, or do you want to do either of those yourself and hand
-  me the resulting credential?
+- OK to go ahead and do the two GSC web-UI steps above yourself (I can't do
+  either — both require your Google account login)? No new credential to hand
+  me either way — once both are done, the existing service-account JSON
+  already on trident covers auth.
 - Scroll-depth (did they read it), search CTR (did the headline earn a
   click), and social engagement (did it spread) are three different signals —
   equally important to you, or is one the real priority to get right first?
