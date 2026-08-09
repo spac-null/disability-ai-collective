@@ -124,9 +124,14 @@ read or transferred):**
   either — both require your Google account login)? No new credential to hand
   me either way — once both are done, the existing service-account JSON
   already on trident covers auth.
-- Scroll-depth (did they read it), search CTR (did the headline earn a
-  click), and social engagement (did it spread) are three different signals —
-  equally important to you, or is one the real priority to get right first?
+**Decisions (2026-08-09):**
+- Build all three (GoatCounter, GSC, social) together — one schema, in one
+  pass, rather than sequencing by priority.
+- Candidate-divergence mechanism for item 3 (below): explicit angle
+  instruction, not temperature alone.
+- Item 3 rollout: shadow mode first — generate 2, judge, but keep publishing
+  whatever the current single-draft path produces until the judge's picks
+  have been eyeballed against real outcomes.
 
 ---
 
@@ -204,17 +209,12 @@ directly.
   of, so added latency is likely fine, but worth confirming nothing else waits
   on this cron slot finishing by a specific time.
 
-**Open questions for you:**
-- For candidate divergence: rely on temperature alone, or explicitly instruct
-  candidate B toward a different angle? The latter is more reliable but is
-  itself a design choice about what "different" should mean.
-- Should the losing draft be discarded silently, or logged somewhere (e.g. to
-  the review sidecar) so you can eyeball whether the judge's picks actually
-  seem right, the way the shadow checks are being eyeballed now?
-- Want this to ship straight to the live daily pipeline once built, or run in
-  shadow mode first (generate 2, judge, but still publish whichever the
-  *current* single-generation path would have produced) so you can compare
-  judge picks against actual outcomes before trusting the judge's taste?
+**Decisions (2026-08-09):** explicit angle instruction for candidate B (not
+temperature alone); ship in shadow mode first (generate 2, judge, but keep
+publishing whatever the current single-draft path produces) — log both the
+winning and losing draft plus the judge's reasoning to the review sidecar so
+picks can be eyeballed before this is trusted to decide what actually
+publishes, same discipline as the 3 shadow checks already running.
 
 ---
 
