@@ -236,3 +236,74 @@ operational rule-of-thumb but are a lossy compression of the real thing —
 periodically re-checking the rules against fresh excerpts (as happened here)
 is how gaps like these get caught; the summary alone wouldn't have surfaced
 either one.
+
+## Section 6 — architecture migration + weekly full audit, 2026-08-09
+
+Same-day follow-through on Section 5's fixes, expanded into a full-day
+architecture pass. Summary for future sessions picking this up — full detail
+is in git log (commits from `168ee79` through `66663d7` on this date):
+
+**Module split (DONE).** `automation/production_orchestrator.py` went from
+6,101 lines / ~95 methods / one class to 186 lines. Every method moved
+verbatim into 11 mixin files under `automation/orchestrator/` (config,
+personas, debate, images, publish, gate, llm, discovery, content_checks,
+fact_check, review, social, generate), composed via multiple inheritance —
+zero behavior change, every `self.x` reference resolves the same regardless
+of which file defines the method. Two real bugs caught before shipping by
+a full AST unresolved-name scan (not just eyeballing): a missing
+`import random`, and a `Path(__file__).parent`-based path that would have
+silently resolved to the wrong directory once relocated (same bug class
+caught twice — also in `config.py`'s `_SCRIPT_DIR`). A `snapshot_test.py`
+harness was built first specifically to make "the method body didn't
+change" a verified claim rather than an eyeball one, on a pipeline with
+zero other test coverage that publishes live and unattended.
+
+**Rule-text convergence (substantially DONE).** Every rule in
+`style_rules.py`'s registry was checked for (a) presence/absence across the
+`GATE`/`GENERATE`/`REVIEW` stages the registry itself declares, and (b) exact
+wording drift between `gate.py`/`review.py`/`generate.py`/the registry.
+Real fixes shipped: `system-voice` was completely absent from the blocking
+gate despite the registry's own rationale field already saying it had been
+"moved to BLOCKING" (the text just never got added); `meta-language-
+commentary` and `stacked-temporal-clauses` existed ONLY in the registry with
+zero real wiring anywhere; `front-loaded-sentence` was missing its worked
+examples in the gate; `crafted-rhetoric`'s plain-comparison exemption was
+missing entirely from the writer prompt (a real behavior risk — the writer
+could over-avoid harmless comparisons with nothing telling it not to);
+`decoding-required`'s registry text was itself stale, missing a worked
+example the live code already had correctly (the one case this round where
+code was ahead of the registry, not behind it). Confirmed clean or
+correct-by-design: `long-list`, `paragraph-length`, `section-breaks`,
+`vague-we`, `named-references`, `subject-verb-distance`, `ending-shape`,
+`jargon`, `nominalization`.
+
+**Shadow-mode checks (3 shipped, IN OBSERVATION — do not act before
+2026-08-23).** New deterministic checks for writer-prompt rules with zero
+downstream enforcement, added to `review.py`'s advisory sidecar only, never
+blocking: bullet points/numbered lists in body, the two FORBIDDEN word lists
+(academic jargon, corporate/journalese clichés), and truncated endings (a
+real silent-failure risk given several LLM calls run under a `max_tokens`
+cap). Two candidates were checked and correctly rejected rather than forced:
+`FORBIDDEN DEFAULTS` (bans something being the *central* argument, not mere
+presence — a naive match would flag any incidental mention) and `FORBIDDEN
+REFERENCES` (already has real enforcement via `_get_recent_references`
+feeding into the generation prompt directly, no gap to fill).
+
+**This weekly audit (2026-08-09, same day as the work above — the first
+audit under the `.loop_last_full_review` tracking convention).** Checked
+for: duplicate/mislabeled R-numbers in `GATE_SYSTEM`/`RULES_SYSTEM` (none —
+sequential 1-17 and 1-19), whether the register-escalation logic
+(`register_prefixes` in `gate.py`) needed updating for the newly-added R16/
+R17 rules (checked and confirmed it correctly excludes both — `system-voice`
+is deliberately classified as a "mechanical, isolated, patchable" violation
+per a real 2026-08-07 validation test, not a "pervasive register" one; almost
+"fixed" this before reading the existing comment's reasoning, which was
+right), whether `check_rule_drift.py`'s file-glob would pick up future new
+orchestrator files (confirmed yes, no hardcoded list), and a scan for
+leftover TODO/FIXME comments (none — one grep hit was a false positive on
+the substring "TOKEN" inside `MASTODON_ACCESS_TOKEN`). **No new issues
+found.** A clean audit is itself the useful signal here — confirms the
+day's incremental work didn't leave anything half-wired behind it.
+
+**Next weekly audit due:** ~2026-08-16. Check `automation/.loop_last_full_review`
+for the actual last-run date before assuming this one still applies.
