@@ -498,6 +498,43 @@ Real first-batch results, then corrected after live calibration feedback:
   a few dozen tokens of the cap; a less lucky generation on the same item
   hit the cap mid-JSON-string and silently returned None) — bumped to 900.
 
+**Sampler decoupled from real selection, 2026-08-10, second calibration
+round.** Judging only `extract_angle`'s keyword-scored top-10 would
+re-import the exact problem Stage 1 exists to escape. `sample_shadow_
+candidates`/`run_category_jump_shadow` now sample independently — a fixed,
+NOT-tuned-by-early-results 3-lane split (~30% `keyword_top`, ~30%
+`keyword_low` — genuinely lowest-scoring, not merely "outside the top 10"
+— ~40% `broad_random`, capped per-source), sampled before any semantic
+ranking (only legitimately-unusable items excluded: used, already
+angle-checked, outside the age window). Writes only to
+`category_jump_shadow`; `extract_angle`'s pool, which actually drives
+selection via `disability_angle` gating `get_news_seed`, is untouched.
+Every row tagged with `candidate_origin`, `sampler_version`,
+`judge_prompt_version`, `model_version` so a later change never silently
+contaminates historical comparisons. Judge failures now split into
+`attempt_status` (success/error) and `error_type` (timeout/model_error/
+empty_response/invalid_json/no_api_key) — decision coverage and taste
+calibration are different questions, must never be conflated (the same
+lesson as the max_tokens bug above). Verified end-to-end on trident: 3
+real judgments, one per lane, all fields populated correctly.
+
+The question this now lets the shadow window actually answer, per the
+calibration source: not just "does Stage 1 work" but *where do the real
+YESes come from* — if `keyword_top` produces more YESes but calibration
+prefers the ones found in `keyword_low`/`broad_random`, that's a much
+sharper diagnosis than "keywords bad": it means the old scorer selects
+*obvious* mechanisms while suppressing the *stranger* ones this
+publication actually wants.
+
+**Deliberately deferred until the first sampler-balanced batch says the
+basic experiment works** (do not build before then): mechanism-fingerprint
+fields (surface_object/hidden_action/hidden_function, to make the
+"grand-theory sink" false-positive checkable in the data), bridge-strength
+self-report (DIRECT/IMPLIED/SPECULATIVE), retry logic, Stage 2, novelty/
+familiarity judging. Resist touching the judge prompt again until then —
+"you now have enough instrumentation to learn from the system instead of
+continuing to design it theoretically."
+
 **Stage 2 (persona-specific reframe) — DESIGNED, NOT BUILT.** Deliberately
 asymmetric from Stage 1: Stage 1 asks "is there something objectively
 strange here"; Stage 2 asks "does this persona's specific embodied lens
