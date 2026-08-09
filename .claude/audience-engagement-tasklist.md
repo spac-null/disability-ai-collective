@@ -117,14 +117,31 @@ without reversing that prior decision.
 
 **STATUS: `automation/engagement_fetch.py` built, tested end-to-end on trident
 against real live data, working.** 354 real metric rows written on first run
-(76 articles, last 90 days): GoatCounter pageviews/scroll-depth for 39
-articles, GSC clicks/impressions/ctr/position for 45, Bluesky likes/reposts/
-replies/quotes for 33, Mastodon favourites/reblogs for 1 (only one Mastodon
-post exists so far). Tumblr returned nothing yet — expected, see the real bug
-found and fixed below. All 5 sources needed zero new secrets beyond what
-already existed on trident (see the credentials section below for exactly
-why). Writes to `automation/engagement.db` (gitignored, stays on trident,
-same as `disability_findings.db`).
+(76 articles, last 90 days): GoatCounter pageviews for 39 articles, GSC
+clicks/impressions/ctr/position for 45, Bluesky likes/reposts/replies/quotes
+for 33, Mastodon favourites/reblogs for 1 (only one Mastodon post exists so
+far). Tumblr returned nothing yet — expected, see the real bug found and
+fixed below. All 5 sources needed zero new secrets beyond what already
+existed on trident (see the credentials section below for exactly why).
+Writes to `automation/engagement.db` (gitignored, stays on trident, same as
+`disability_findings.db`).
+
+**Second real bug found and fixed, 2026-08-09 continuation: scroll-depth
+silently collected ZERO rows since launch, despite this section originally
+claiming otherwise.** The 354-row figure above did NOT include scroll-depth
+— corrected here rather than left wrong. GoatCounter stores automatic
+pageview hits (event=0) without a trailing slash but custom-event paths
+(event=1, this site's own scroll-depth tracker in `_layouts/default.html`)
+with whatever `location.pathname` gave it — which always has the trailing
+slash for this site's permalink structure. `engagement_fetch.py`'s scroll
+query stripped the trailing slash the same way the (correct) pageview query
+does, so every scroll-depth lookup matched zero rows from this script's
+first commit onward — confirmed by reading GoatCounter's raw `paths` table
+directly, not by inspecting the fetch script's logic alone. Fixed (one
+query, plus added depth 100 which the site's JS tracks but the script never
+queried), re-run manually to backfill: went from 354 to 447 rows, with real
+scroll-depth data now present — 35/39 articles reaching scroll-25%, 31
+reaching scroll-50%, 24 reaching scroll-75%, 3 reaching scroll-100%.
 
 **Real bug found and fixed along the way: Tumblr posting had likely never
 actually worked.** While testing whether Tumblr engagement was readable,
