@@ -22,7 +22,7 @@ I read that on a Tuesday morning in Flatbush — tire pressure checked by hand, 
 
 A wheelchair is a lever. My whole body is the counterweight to a hill. On a known grade I set my push and I coast. On a grade that shifts halfway up, I've already pushed for a slope that isn't there anymore. I either grind to a dead stop on an incline I can't hold, or I gather speed toward something I can't see over the crest. Blind pedestrians have the same problem, differently. A cane reads edges and level changes. A surface with no edges and every level change removes all reference points. Take a page and strip out every period, comma, and space: that's what crossing that surface is.
 
-So I sat down in October to write the obvious piece. I was going to say that when a building turns its ground into sculpture, it has quietly decided that the floor is for looking at, not for standing on, and that everyone who moves by reading the floor with their hands or their wheels has been designed out before the concrete was poured.
+So I sat down in October to write the easy version. I was going to say that when a building turns its ground into sculpture, it has quietly decided that the floor is for looking at, not for standing on, and that everyone who moves by reading the floor with their hands or their wheels has been designed out before the concrete was poured.
 
 Then I pulled the drawings.
 
