@@ -735,10 +735,19 @@ def extract_angle(title: str, summary: str, url: str) -> str | None:
 # -> modernist furniture; busy sidewalk -> security infrastructure.
 #
 # SHADOW MODE, same discipline as every other shadow check in this project:
-# runs on the same candidates extract_angle() already processes, logs its
-# YES/NO/reasoning to category_jump_shadow, and NEVER conditions selection or
-# generation on it. Real (item, verdict) pairs need to accumulate and get
-# checked against real judgment before this becomes anything but observation.
+# logs its YES/NO/reasoning to category_jump_shadow, and NEVER conditions
+# selection or generation on it. Real (item, verdict) pairs need to
+# accumulate and get checked against real judgment before this becomes
+# anything but observation.
+#
+# Runs on its OWN sampled candidate pool (see sample_shadow_candidates),
+# deliberately decoupled from extract_angle/extract_top_angles's pool as of
+# 2026-08-10 -- per calibration feedback, judging only the keyword scorer's
+# top-N would re-import the exact problem Stage 1 exists to escape.
+# extract_angle's pool (which DOES drive real selection via disability_angle
+# gating get_news_seed) is untouched by this change.
+_JUDGE_PROMPT_VERSION = "v2-evidentiary-bridge"
+
 _CATEGORY_JUMP_SYSTEM_PROMPT = """You are the CRIPMINDS SOURCE ANGLE JUDGE.
 
 You receive one RSS item consisting of a TITLE and SUMMARY.
@@ -869,14 +878,25 @@ Return only this JSON:
 }"""
 
 
-def category_jump_judge(title: str, summary: str) -> dict | None:
+def category_jump_judge(title: str, summary: str) -> tuple[dict | None, str]:
     """SHADOW MODE -- see the module comment above this function for the
-    full design rationale and calibration sources. Never raises, never
-    conditions anything downstream -- a failure here just means no shadow
-    row gets logged this run, unlike extract_angle where a failure needed
-    to be distinguishable from a real verdict."""
+    full design rationale and calibration sources. Never raises.
+
+    Returns (judgment_or_None, status). Added 2026-08-10, per calibration
+    feedback: a judge FAILURE and a genuine NO must never be
+    indistinguishable in the shadow data -- the exact bug that silently
+    lost the strongest positive example from the first real batch (a
+    truncated-but-real response looked identical to "no judgment" until
+    diagnosed by hand). status is one of:
+      "ok"            -- valid judgment returned
+      "no_api_key"    -- API_KEY not set
+      "timeout"       -- request timed out
+      "model_error"   -- network/API error other than timeout
+      "empty_response" -- API returned no usable content
+      "invalid_json"  -- content didn't parse as the expected JSON shape
+    """
     if not API_KEY:
-        return None
+        return None, "no_api_key"
     user = f"TITLE:\n{title}\n\nSUMMARY:\n{summary}"
     payload = json.dumps({
         "model": MODEL,
@@ -904,19 +924,147 @@ def category_jump_judge(title: str, summary: str) -> dict | None:
         )
         with urllib.request.urlopen(req, timeout=30) as r:
             resp = json.loads(r.read())
-        raw = resp["choices"][0]["message"]["content"].strip()
-        raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw, flags=re.MULTILINE).strip()
-        judgment = json.loads(raw)
-        if "decision" not in judgment:
-            return None
-        return judgment
     except Exception as e:
-        log(f"  category-jump judge failed: {e}")
-        return None
+        status = "timeout" if "timed out" in str(e).lower() else "model_error"
+        log(f"  category-jump judge {status}: {e}")
+        return None, status
+
+    try:
+        raw = resp["choices"][0]["message"]["content"].strip()
+    except (KeyError, IndexError, AttributeError):
+        log("  category-jump judge: empty/malformed API response")
+        return None, "empty_response"
+    if not raw:
+        return None, "empty_response"
+
+    raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw, flags=re.MULTILINE).strip()
+    try:
+        judgment = json.loads(raw)
+    except json.JSONDecodeError as e:
+        log(f"  category-jump judge invalid JSON: {e}")
+        return None, "invalid_json"
+    if "decision" not in judgment:
+        return None, "invalid_json"
+    return judgment, "ok"
 
 
-def _persist_category_jump_shadow(conn, seed_id: str, judged_at: str, judgment: dict):
-    """Never raises -- pure shadow logging, must never affect the real run."""
+SAMPLER_VERSION = "v2-stratified"
+
+
+def sample_shadow_candidates(conn, n: int = 10, days: int = 3):
+    """Stratified sampler for Stage 1 shadow judging ONLY -- added
+    2026-08-10 per calibration feedback. Judging only the keyword scorer's
+    top-N would re-import the exact problem Stage 1 exists to escape:
+    density-ranking is likely to suppress the low-keyword-density material
+    Stage 1 is supposed to catch. Deliberately separate from
+    extract_top_angles's pool, which drives real selection (disability_angle
+    gates get_news_seed) and is completely untouched by this function --
+    this samples for observation only, writes nothing back to news_seeds.
+
+    "Sample before any semantic ranking whatsoever" -- the WHERE clause
+    below only excludes things that are legitimately unusable regardless of
+    taste (already used, already touched by extract_angle/angle_checked,
+    outside the age window); nothing here asks whether content is relevant
+    or interesting. Three lanes, each genuinely distinct (not "not in the
+    other lanes"), fixed proportions -- NOT tuned by early YES rates, which
+    would make later comparisons uninterpretable:
+      - ~30% keyword_top: the old scorer's actual top candidates (does the
+        old system happen to concentrate good anomalies?)
+      - ~30% keyword_low: the old scorer's genuinely LOWEST-scoring
+        candidates (ORDER BY relevance_score ASC, not merely "outside the
+        top 10" -- is the old scorer actively suppressing the material
+        Stage 1 values?)
+      - ~40% broad_random: ORDER BY RANDOM() over the full eligible pool,
+        capped per-source so one prolific feed can't dominate (how common
+        are good anomalies in RSS generally?)
+
+    Returns a list of (seed_id, url, title, summary, candidate_origin)."""
+    cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+    lane_low = max(round(n * 0.3), 0)
+    lane_top = max(round(n * 0.3), 0)
+    lane_broad = max(n - lane_low - lane_top, 0)
+
+    base_where = (
+        "WHERE disability_angle IS NULL AND angle_checked IS NULL AND used = 0 "
+        "AND pub_date >= ?"
+    )
+
+    top_rows = conn.execute(f"""
+        SELECT id, url, title, summary, source_name FROM news_seeds
+        {base_where}
+        ORDER BY relevance_score DESC
+        LIMIT ?
+    """, (cutoff, lane_top)).fetchall()
+
+    low_rows_raw = conn.execute(f"""
+        SELECT id, url, title, summary, source_name FROM news_seeds
+        {base_where}
+        ORDER BY relevance_score ASC
+        LIMIT ?
+    """, (cutoff, lane_low + len(top_rows))).fetchall()  # pad for overlap trim
+    top_ids = {r[0] for r in top_rows}
+    low_rows = [r for r in low_rows_raw if r[0] not in top_ids][:lane_low]
+
+    seen_ids = top_ids | {r[0] for r in low_rows}
+    placeholders = ",".join("?" * len(seen_ids)) if seen_ids else "''"
+    broad_pool = conn.execute(f"""
+        SELECT id, url, title, summary, source_name FROM news_seeds
+        {base_where} AND id NOT IN ({placeholders})
+        ORDER BY RANDOM()
+    """, (cutoff, *seen_ids)).fetchall()
+
+    broad_rows = []
+    per_source_count: dict[str, int] = {}
+    max_per_source = max(2, lane_broad // 3 or 1)
+    for row in broad_pool:
+        src = row[4]
+        if per_source_count.get(src, 0) >= max_per_source:
+            continue
+        broad_rows.append(row)
+        per_source_count[src] = per_source_count.get(src, 0) + 1
+        if len(broad_rows) >= lane_broad:
+            break
+
+    return (
+        [(r[0], r[1], r[2], r[3], "keyword_top") for r in top_rows]
+        + [(r[0], r[1], r[2], r[3], "keyword_low") for r in low_rows]
+        + [(r[0], r[1], r[2], r[3], "broad_random") for r in broad_rows]
+    )
+
+
+def run_category_jump_shadow(conn, n: int = 10):
+    """Drives Stage 1 shadow judging on its own independent candidate pool
+    -- see sample_shadow_candidates's docstring. Never affects real
+    selection/generation; writes only to category_jump_shadow."""
+    if not API_KEY:
+        log("CLIProxy API key not set — skipping category-jump shadow judging")
+        return
+    candidates = sample_shadow_candidates(conn, n=n)
+    judged = failed = 0
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    for seed_id, url, title, summary, origin in candidates:
+        judgment, status = category_jump_judge(title, summary or "")
+        _persist_category_jump_shadow(conn, seed_id, now, judgment or {}, status, origin)
+        if judgment:
+            judged += 1
+        else:
+            failed += 1
+        time.sleep(0.5)
+    log(
+        f"Category-jump shadow judging done: {judged} judged, {failed} failed "
+        f"({SAMPLER_VERSION}, {len(candidates)} sampled)"
+    )
+
+
+def _persist_category_jump_shadow(conn, seed_id: str, judged_at: str, judgment: dict,
+                                   status: str = "ok", candidate_origin: str = None):
+    """Never raises -- pure shadow logging, must never affect the real run.
+
+    status added 2026-08-10: "ok" or an error type (see category_jump_judge's
+    docstring) -- decision coverage and taste calibration are two different
+    questions and must never be conflated by treating a failure identically
+    to a real NO, the exact bug that silently lost a real calibration
+    example earlier tonight."""
     try:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS category_jump_shadow (
@@ -933,24 +1081,35 @@ def _persist_category_jump_shadow(conn, seed_id: str, judged_at: str, judgment: 
                 UNIQUE(seed_id, judged_at)
             )
         """)
-        # Migration-safe: evidentiary_bridge added 2026-08-10, after the
-        # table already existed in production from the first test run --
-        # ALTER TABLE ADD COLUMN has no "IF NOT EXISTS" in SQLite.
-        try:
-            conn.execute("ALTER TABLE category_jump_shadow ADD COLUMN evidentiary_bridge TEXT")
-        except sqlite3.OperationalError:
-            pass  # column already exists
+        # Migration-safe additions -- ALTER TABLE ADD COLUMN has no
+        # "IF NOT EXISTS" in SQLite, and this table already had real rows
+        # in production before each of these fields existed.
+        for col in (
+            "evidentiary_bridge TEXT", "attempt_status TEXT", "error_type TEXT",
+            "candidate_origin TEXT", "sampler_version TEXT",
+            "judge_prompt_version TEXT", "model_version TEXT",
+        ):
+            try:
+                conn.execute(f"ALTER TABLE category_jump_shadow ADD COLUMN {col}")
+            except sqlite3.OperationalError:
+                pass  # column already exists
+        attempt_status = "success" if status == "ok" else "error"
+        error_type = None if status == "ok" else status
         conn.execute(
             "INSERT OR REPLACE INTO category_jump_shadow "
             "(seed_id, judged_at, decision, ostensible_category, resisting_detail, "
-            "hidden_mechanism, category_jump, evidentiary_bridge, correction, reason) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "hidden_mechanism, category_jump, evidentiary_bridge, correction, reason, "
+            "attempt_status, error_type, candidate_origin, sampler_version, "
+            "judge_prompt_version, model_version) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (
                 seed_id, judged_at, judgment.get("decision"),
                 judgment.get("ostensible_category"), judgment.get("resisting_detail"),
                 judgment.get("hidden_mechanism"), judgment.get("category_jump"),
                 judgment.get("evidentiary_bridge"),
                 judgment.get("correction"), judgment.get("reason"),
+                attempt_status, error_type, candidate_origin, SAMPLER_VERSION,
+                _JUDGE_PROMPT_VERSION, MODEL,
             ),
         )
         conn.commit()
@@ -1012,7 +1171,6 @@ def extract_top_angles(conn, n: int = 10):
 
     rows = top_rows + explore_rows
     extracted = 0
-    shadow_judged = 0
     today = datetime.now().strftime("%Y-%m-%d")
     for seed_id, url, title, summary in rows:
         try:
@@ -1037,21 +1195,8 @@ def extract_top_angles(conn, n: int = 10):
                 (today, seed_id),
             )
         conn.commit()
-
-        # SHADOW MODE — see category_jump_judge's module comment. Runs on the
-        # same candidate, logs its verdict, never affects angle/selection.
-        judgment = category_jump_judge(title, summary or "")
-        if judgment:
-            _persist_category_jump_shadow(
-                conn, seed_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S"), judgment
-            )
-            shadow_judged += 1
-
         time.sleep(0.5)
-    log(
-        f"Angle extraction done: {extracted}/{len(rows)} got angles "
-        f"({len(explore_rows)} exploration slots, {shadow_judged} category-jump shadow-judged)"
-    )
+    log(f"Angle extraction done: {extracted}/{len(rows)} got angles ({len(explore_rows)} exploration slots)")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -1133,6 +1278,11 @@ def main():
         extract_top_angles(conn, n=10)
     else:
         log("CLIProxy API key not set — skipping angle extraction")
+
+    # 3b. Category-jump judge, SHADOW MODE ONLY -- independent candidate
+    # pool, writes only to category_jump_shadow, never touches news_seeds.
+    # See run_category_jump_shadow/sample_shadow_candidates docstrings.
+    run_category_jump_shadow(conn, n=10)
 
     # 4. Prune old unused seeds
     prune_old(conn, days=14)
