@@ -211,7 +211,8 @@ class ReviewMixin:
 
     def _persist_review_signals(self, slug, agent_name, engagement_read,
                                  shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
-                                 plan_follow_read=None, shadow_seam_hits=None):
+                                 plan_follow_read=None, shadow_seam_hits=None,
+                                 pre_rewrite_plan_follow_read=None):
         """Log _engagement_read's verdict, the 4 shadow checks' output, and
         (added 2026-08-09, Stage B of the anchor-architecture blueprint)
         _plan_follow_read's verdict, to a queryable table (audience-
@@ -225,6 +226,15 @@ class ReviewMixin:
         correlation between "did the judge guess this was good" and "did
         readers actually stick around" is a plain JOIN on slug, not a
         cross-database query.
+
+        pre_rewrite_plan_follow_read (added 2026-08-09 continuation, blocker
+        #4 fix): the same check's verdict on the pristine first draft, before
+        rewrite_with_opus/_fable_polish_rewrite/_pre_commit_gate ran. Stored
+        alongside plan_follow_read (the post-rewrite verdict already computed
+        above) so a future query can tell "the writer never committed to the
+        plan" (both columns agree it failed) apart from "a downstream pass
+        undid it" (pre-rewrite says executed, post-rewrite says not) — the
+        two failure modes were previously indistinguishable.
 
         Never raises -- a failure here must never affect validate_article's
         own return value or block anything; this is pure logging."""
@@ -251,7 +261,8 @@ class ReviewMixin:
                 # Migration-safe: the table already exists in production from a prior
                 # commit without this column. ALTER TABLE ADD COLUMN has no "IF NOT
                 # EXISTS" in SQLite -- catch the duplicate-column error instead.
-                for _col in ("plan_follow_read TEXT", "shadow_seam_hits TEXT"):
+                for _col in ("plan_follow_read TEXT", "shadow_seam_hits TEXT",
+                             "pre_rewrite_plan_follow_read TEXT"):
                     try:
                         conn.execute(f"ALTER TABLE review_signals ADD COLUMN {_col}")
                     except sqlite3.OperationalError:
@@ -260,8 +271,8 @@ class ReviewMixin:
                     "INSERT OR REPLACE INTO review_signals "
                     "(slug, agent, reviewed_at, engagement_verdict, shadow_bullet_hits, "
                     "shadow_academic_jargon, shadow_corporate_cliches, shadow_truncated_ending, "
-                    "plan_follow_read, shadow_seam_hits) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "plan_follow_read, shadow_seam_hits, pre_rewrite_plan_follow_read) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         slug, agent_name, dt.now().strftime("%Y-%m-%d %H:%M:%S"),
                         engagement_read, len(shadow_bullet_hits),
@@ -269,6 +280,7 @@ class ReviewMixin:
                         json.dumps(shadow_word_hits.get("corporate_cliches", [])),
                         shadow_truncated_ending, plan_follow_read,
                         json.dumps(shadow_seam_hits or []),
+                        pre_rewrite_plan_follow_read,
                     ),
                 )
                 conn.commit()
@@ -389,8 +401,26 @@ class ReviewMixin:
             self.logger.warning("Plan-follow read failed: %s", e)
             return None
 
-    def validate_article(self, content, article_file, slug, target_words=None):
-        """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
+    def validate_article(self, content, article_file, slug, target_words=None,
+                          pre_rewrite_content=None):
+        """Non-blocking review: citations + readability + rule compliance. Never delays commit.
+
+        pre_rewrite_content (added 2026-08-09 continuation, blocker #4 fix
+        from .claude/bregman-anchor-corpus.md Section 7): the PRISTINE first
+        draft, captured by generate.py before any rewrite/gate pass ran.
+        None for any caller that doesn't supply it (e.g. snapshot_test.py) —
+        never required, never blocks anything. When given, this method
+        checks it against the SAME loaded article_plan used for the final
+        verdict below and only pays for a second _plan_follow_read call if
+        the draft actually changed and a real plan exists to check against
+        — otherwise it reuses the verdict it already computed, so an
+        unmodified draft (e.g. an Opus draft the editorial pass approved as-
+        is) never costs a duplicate LLM call. Persisting both under the same
+        loaded plan (rather than pre-rewrite using generate.py's in-memory
+        fable_brief and post-rewrite using a separate DB read, as an earlier
+        version of this fix did) is what makes the two verdicts genuinely
+        comparable — a regression attributable to a specific stage instead
+        of an artifact of comparing against two different plan records."""
         import os, json, urllib.request as ureq
         from datetime import datetime as dt
 
@@ -598,9 +628,17 @@ class ReviewMixin:
         article_plan = self._load_article_plan(slug)
         plan_follow_read = self._plan_follow_read(content, article_plan)
 
+        # See this method's docstring: only make a second call if the draft
+        # actually changed and there's a real plan to re-check it against —
+        # otherwise the pre- and post-rewrite verdicts are the same thing.
+        pre_rewrite_plan_follow_read = plan_follow_read
+        if article_plan and pre_rewrite_content and pre_rewrite_content != content:
+            pre_rewrite_plan_follow_read = self._plan_follow_read(pre_rewrite_content, article_plan)
+
         self._persist_review_signals(slug, current_agent, engagement_read,
                                       shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
-                                      plan_follow_read, shadow_seam_hits)
+                                      plan_follow_read, shadow_seam_hits,
+                                      pre_rewrite_plan_follow_read=pre_rewrite_plan_follow_read)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold

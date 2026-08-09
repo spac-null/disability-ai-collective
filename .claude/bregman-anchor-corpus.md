@@ -332,6 +332,13 @@ require the anchor be something real and locatable — sourced from the
 article's actual research material, not invented to fit a device — the same
 way statistics are already required to be real. This is not optional
 polish; skipping it turns the anchor mechanism into a fabrication amplifier.
+**Deliberately NOT drafted here (2026-08-09 continuation, explicit
+instruction):** the exact prompt wording for this constraint. Pre-writing it
+now would bias whoever designs Stage D/E later — the requirement above is
+the spec, not a draft; a fresh design pass (ideally Opus-tier, same as the
+original blueprint) should write the actual constraint text when Stage D/E
+is actually being built, informed by whatever real calibration data and
+codebase state exists at that time, not by wording frozen weeks earlier.
 
 **Stage A measurement methodology (scripts never committed, note it here so
 a future re-run isn't starting from zero).** The 88%/26%/10-15% figures in
@@ -357,29 +364,43 @@ their methodology, for reconstruction if this is ever revisited:
   currently inspect.
 
 **Known gap in the pipeline's own safety net: `snapshot_test.py` doesn't
-cover `generate.py`.** Confirmed by reading `automation/snapshot_test.py`
-directly — `_snapshot_llm_calls` only exercises `_pre_commit_gate` (gate.py)
-and `validate_article` (review.py). It never imports or calls anything from
-`generate.py` — no `_run_production_automation_locked`, no
-`_fable_editorial_brief`, no writer-prompt construction. This means Stage
-D/E, whenever built, will be the first change to the writer prompt with zero
-snapshot-test coverage protecting it. Worth closing before Stage E ships,
-not after.
+cover `generate.py` — FIXED, 2026-08-09 continuation.** `_snapshot_generate_calls`
+now covers `_fable_editorial_brief`'s (llm.py) system/user prompt construction
+and call parameters, the same way the pre-existing harness covers gate.py/
+review.py — deliberately scoped to this one function, not the full
+~700-line `_run_production_automation_locked` (see snapshot_test.py's module
+docstring for why). An Opus-tier review of the first version of this fix
+(requested explicitly rather than assumed sufficient) found and fixed real
+problems worth recording: the original fixture used all-empty/neutral persona
+state and fault-line stubs, which made every *dynamic* branch of the brief
+prompt (state_block, fault_block, openings_block) render as empty and go
+completely unprotected — exactly the code Stage D/E is most likely to touch.
+Fixed with real non-empty fixture data instead. The review also caught a
+latent isolation gap in the PRE-EXISTING harness (not introduced by this
+fix): `self.posts_dir`/`drafts_dir`/`assets_dir`/`discovery_db` are all
+cached from `self.repo_root` at `__init__` time, before the harness's
+`orch.repo_root = tmpdir` override could take effect — silently leaving them
+pointed at the real repo. Now fixed via a shared `_isolate_paths` helper used
+by both snapshot functions.
 
-**Rewrite-pass / plan-following conflation risk — relevant to interpreting
-Stage B calibration data.** `rewrite_with_opus`/`_fable_polish_rewrite`
-(`generate.py`, lines ~661-692) run during generation, *before*
-`_plan_follow_read` (`review.py`, wired into `validate_article`) ever checks
-whether the plan (`opening_shape`/`correction_moment`/`resisting_example`)
-was actually executed. A plan-following failure introduced by the rewrite
-pass and one present in the original draft are currently indistinguishable
-to the check. This matters once real calibration data starts accumulating
-(see tasklist Stage B): a low agreement rate could mean the judge itself is
-wrong, or it could mean the rewrite pass is silently undoing a plan the
-first draft executed correctly — two very different fixes, and nothing
-today can tell them apart. Worth instrumenting (e.g. running
-`_plan_follow_read` before and after the rewrite pass) before trusting any
-conclusion drawn from low agreement.
+**Rewrite-pass / plan-following conflation risk — FIXED, 2026-08-09
+continuation.** `rewrite_with_opus`/`_fable_polish_rewrite` (`generate.py`)
+used to run during generation *before* `_plan_follow_read` (`review.py`,
+wired into `validate_article`) ever checked whether the plan
+(`opening_shape`/`correction_moment`/`resisting_example`) was executed — so
+a plan-following failure introduced by the rewrite pass and one present in
+the original draft were indistinguishable. Fixed: `generate.py` now captures
+the pristine first draft before any rewrite/gate pass touches it and passes
+it to `validate_article`, which checks it against the SAME loaded
+`article_plan` used for the final (post-rewrite) verdict — only paying for a
+second `_plan_follow_read` call when the draft actually changed and a real
+plan exists to check against, so an unmodified draft never costs a
+duplicate LLM call. Both verdicts now persist to `review_signals` (new
+`pre_rewrite_plan_follow_read` column) under a comparable, single plan
+source — an earlier version of this fix compared against two different plan
+sources (in-memory `fable_brief` pre-rewrite vs. DB-loaded `article_plan`
+post-rewrite), which the same Opus review caught as capable of manufacturing
+a false "rewrite undid the plan" signal on its own.
 
 **Refrain instruction (Stage D/E) plausibly conflicts with an existing
 crafted-rhetoric ban — unreconciled.** `gate.py`'s CRAFTED RHETORIC rule

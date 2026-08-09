@@ -67,20 +67,18 @@ judge panel genuine structural angle divergence for free.
   NOT STARTED.** Stage E is the first change that would actually direct what
   gets written; per the blueprint, it should not start before Stage B has
   accumulated real calibration data (~20 articles, several weeks at current
-  cadence). **Before either ships, four things surfaced during design but
-  not yet resolved must be addressed — see `.claude/bregman-anchor-corpus.md`
-  Section 7 for full detail on each:** (1) the anchor must be constrained to
-  something real/locatable, not invented — it's a worse fabrication risk
-  than a normal one-off detail because it repeats 3+ times; (2) a refrain
-  instruction plausibly collides with the existing CRAFTED RHETORIC
-  aphoristic-closer ban in `gate.py`, and the pipeline's only current
-  carve-out covers verbatim list-refrains, not phrase-refrains; (3)
-  `snapshot_test.py` doesn't cover `generate.py` at all — Stage E would be
-  the first writer-prompt change shipped with zero snapshot-test coverage;
-  (4) the rewrite pass runs before `_plan_follow_read` checks plan
-  execution, so a rewrite-introduced plan-following failure and an
-  original-draft one are currently indistinguishable in Stage B's
-  calibration data.
+  cadence). Four blockers surfaced during design — see
+  `.claude/bregman-anchor-corpus.md` Section 7 for full detail. Two are
+  FIXED (2026-08-09 continuation): (3) `snapshot_test.py` now covers
+  `_fable_editorial_brief`'s prompt construction (was zero coverage before);
+  (4) the rewrite-pass/plan-following attribution gap is closed —
+  `review_signals` now has a comparable pre- vs. post-rewrite verdict pair.
+  Two remain deliberately unresolved, on explicit instruction: (1) the
+  anchor-must-be-real constraint and (2) the refrain/crafted-rhetoric-ban
+  conflict both only make sense as actual prompt text once Stage D/E is
+  being built — pre-drafting that wording now would bias whoever designs it
+  later (ideally another Opus-tier pass, same as the original blueprint).
+  The requirement is documented; the wording is intentionally not.
 
 **Explicitly rejected by the blueprint, with real evidence, not deferred:**
 a fixed "movement sequence" (the original design's second half) — it's a
@@ -373,28 +371,61 @@ four. Whoever builds item 3 needs to pick one of these five, not assume
 
 ## 4. Smarter topic/premise scoring at discovery time
 
-**The problem:** `discovery.py`'s topic selection is RSS feeds + keyword-bucket
-matching (`THEME_KEYWORDS`) — a blunt instrument. All the craft investment
-downstream (personas, rules, the engagement-read check) is applied to whatever
-this blunt instrument picked. If the premise itself isn't interesting, no
-amount of sentence-level polish saves it.
+**The problem, corrected 2026-08-09 after verifying against the actual code
+(the original write-up below had the wrong file for one piece of it):**
+topic scoring is RSS-keyword matching, but it lives in `automation/
+news_fetcher.py` (`score_item`, a separate 06:00 cron script) — not
+`discovery.py`. `news_fetcher.py` scores each RSS item via whole-word
+`THEME_KEYWORDS` matching plus a +0.3 disability-angle booster, stores it as
+`relevance_score` in the `news_seeds` table; `discovery.py` then does a
+deterministic greedy top-1 pick by that score (`get_news_seed`), or by a
+similar keyword-density `confidence` score from the legacy `findings` table
+(`get_discovery_from_database`), or a persona-keyword-hit count with an
+80/20 top-1-vs-top-5 randomizer (`_pick_news_item`). All the craft investment
+downstream (personas, rules, the engagement-read check) is applied to
+whatever this keyword-matching step picked. If the premise itself isn't
+interesting, no amount of sentence-level polish saves it. **What's
+confirmed NOT to exist anywhere in this chain: any LLM judgment of how
+*interesting* a candidate angle is** — the one existing LLM call at
+discovery time (`extract_angle` in `news_fetcher.py`) only decides whether a
+disability angle exists at all (produces an angle sentence or `NONE`), it
+doesn't rank quality/interest.
 
-**Proposed plan:**
+**Diversity-tracking question, resolved 2026-08-09 (was previously
+unverified) — all three mechanisms are genuinely ACTED ON, not just
+tracked, so item 4 would be adding something new, not duplicating an
+unused mechanism:**
+- `_get_recent_title_patterns` (`discovery.py`) is spliced directly into the
+  writer prompt's title-rules block (`generate.py`) — "recent title
+  structures to avoid repeating."
+- `_get_recent_openings` (`discovery.py`) feeds the editorial-brief prompt
+  (`llm.py`) with an explicit "pick a different shape" instruction when
+  recent openings all share one.
+- `_STRUCTURAL_SHAPES` — correcting a misattribution from an earlier
+  session: this is NOT used in `review.py` as a diversity guard. The real
+  mechanism is `_classify_shape`/`_get_shape_nudge` in `discovery.py`,
+  which reads the last 10 articles' shapes and, if the last 3 repeat,
+  injects a "find a different argumentative entry point" nudge directly
+  into the writer prompt at generation time (`generate.py`) — a real,
+  pre-generation soft nudge, just not where it was previously said to live.
+
+**Proposed plan (mechanism unchanged by the above; still needs your input
+before building):**
 - Add an LLM-judged "angle interest" score at discovery time — similar
   mechanism to `_engagement_read` but running on the *candidate topic +
   proposed angle*, before generation, not on the finished article. Cheap
   (short prompt, short response) since it's judging a headline + summary, not
-  a full article.
-- Once #1's real engagement data exists, correlate which topic clusters/themes
-  actually perform, and feed that back into `THEME_KEYWORDS`' weighting — but
-  this is downstream of #1, not something to build first.
-- Check whether the existing diversity-tracking machinery
-  (`_get_recent_title_patterns`, `_get_recent_openings`, `_STRUCTURAL_SHAPES`)
-  is actually being *acted on* anywhere or just tracked — I didn't verify this
-  during the review and it's worth checking before building something new that
-  duplicates it.
+  a full article. This would slot in after `news_fetcher.py`'s keyword
+  scoring and before `discovery.py`'s greedy top-1 pick — genuinely new,
+  not a duplicate of anything found above.
+- Once #1's real engagement data exists, correlate which topic clusters/
+  themes actually perform, and feed that back into `THEME_KEYWORDS`'
+  weighting in `news_fetcher.py` — but this is downstream of #1, not
+  something to build first.
 
-**Open questions for you:**
+**Open questions for you (still unanswered — this blocks building the LLM
+judge, since without calibration examples I'd be guessing at what
+"interesting angle" means for this specific publication):**
 - Can you point to 2-3 past articles you felt had a genuinely great premise,
   and 2-3 you felt were mediocre? Concrete examples would let me calibrate
   what "interesting angle" should actually mean here, rather than me guessing.

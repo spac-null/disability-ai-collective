@@ -650,6 +650,24 @@ class GenerateMixin:
                 if content.startswith('TITLE:'):
                     content = ''  # malformed; fallback title already set above
 
+        # Attribution fix for Stage B of the anchor-architecture blueprint
+        # (see review.py's _plan_follow_read docstring and
+        # .claude/bregman-anchor-corpus.md Section 7, blocker #4). Capture
+        # the PRISTINE first draft, before any rewrite/gate pass below
+        # (_fable_polish_rewrite, rewrite_with_opus, _pre_commit_gate) can
+        # touch it. No LLM call here -- validate_article (Step 6c below)
+        # decides whether a second _plan_follow_read call is actually needed
+        # once it knows the final content and the persisted plan record: if
+        # nothing changed the draft, or there's no plan to check against, it
+        # reuses the one verdict it already computes instead of paying for a
+        # duplicate check. Skipped entirely on the fallback-article path
+        # (used_provider == "fallback") -- that content was never written
+        # against fable_brief's plan in the first place, so checking it
+        # would only manufacture a false "plan not followed" signal.
+        pristine_draft_content = (
+            content if (content and fable_brief and used_provider != "fallback") else None
+        )
+
         # Record cited theorists for citation ledger
         self._record_cited_theorists(agent_name, extracted_title, content or "")
 
@@ -759,7 +777,10 @@ class GenerateMixin:
             )
 
         # Step 6c: Full review (citations + readability + rule compliance)
-        review_file, is_clean = self.validate_article(content, article_file, slug, target_words=target_words)
+        review_file, is_clean = self.validate_article(
+            content, article_file, slug, target_words=target_words,
+            pre_rewrite_content=pristine_draft_content,
+        )
 
         # Step 7: Commit article + review sidecar
         commit_success = self.commit_to_git(article_file, image_filenames, review_file)
