@@ -28,7 +28,36 @@ inline per item or as a general reaction.
 
 ---
 
-## 1. No feedback loop from real reader behavior
+## 1. No feedback loop from real reader behavior — DATA COLLECTION BUILT, 2026-08-09
+
+**STATUS: `automation/engagement_fetch.py` built, tested end-to-end on trident
+against real live data, working.** 354 real metric rows written on first run
+(76 articles, last 90 days): GoatCounter pageviews/scroll-depth for 39
+articles, GSC clicks/impressions/ctr/position for 45, Bluesky likes/reposts/
+replies/quotes for 33, Mastodon favourites/reblogs for 1 (only one Mastodon
+post exists so far). Tumblr returned nothing yet — expected, see the real bug
+found and fixed below. All 5 sources needed zero new secrets beyond what
+already existed on trident (see the credentials section below for exactly
+why). Writes to `automation/engagement.db` (gitignored, stays on trident,
+same as `disability_findings.db`).
+
+**Real bug found and fixed along the way: Tumblr posting had likely never
+actually worked.** While testing whether Tumblr engagement was readable,
+found that `config.py`'s secrets-loading block only ever sourced
+`openclaw.env` and `reef-bot.env` — never `tumblr.env`, despite it having
+real, valid, non-empty credentials the whole time. Every `post_to_tumblr`
+call hit `os.environ.get("TUMBLR_CONSUMER_KEY", "")` → empty string → the
+method's own `if not all([...]): return None` guard silently no-op'd it at
+debug level. Confirmed via zero `_social/*.json` files, across every article
+ever published, ever having a `tumblr_url` field. Fixed (one line, `config.py`
+now also loads `tumblr.env`) and confirmed on trident: credentials load
+correctly now. The next `publish_best.py` cron run (every 2 days, 08:00) will
+be the first time Tumblr posting has actually fired.
+
+**Not yet done:** this isn't scheduled on cron yet — ran manually twice
+during testing. Needs your go-ahead before it becomes a recurring job (see
+open question below). Still pure data collection either way — nothing reads
+this table back into generation decisions yet, same as before.
 
 **The problem, confirmed by reading the code, not guessing:** `_store_social_uri`
 only ever stores a Bluesky/Mastodon/Tumblr post URI so a *retraction* can delete
@@ -81,48 +110,44 @@ like/repost/reply/favorite counts (each platform's API differs — Bluesky via
 AT Protocol, Mastodon via its REST API, Tumblr via its API — three small
 fetchers instead of one, same shape).
 
-**Credentials — RESOLVED for GoatCounter, MUCH simpler than assumed for GSC
-(checked directly on trident 2026-08-09; key names only, no secret values
-read or transferred):**
-- **GoatCounter: no token needed at all.** It's not running in Docker — it's a
-  systemd user service on the host, storing everything in a plain SQLite file
-  at `/srv/data/goatcounter/goatcounter.db` (confirmed via its own service
-  description: "GoatCounter analytics - cripminds.com"). Queried it directly,
-  read-only, no auth: real per-article scroll-depth counts exist right now
-  (e.g. one article: scroll-25% reached by 12 sessions, scroll-50% by 11,
-  scroll-75% by 8) and plain pageview counts per path (July 2026 articles
-  range from 1 to 18 views — genuinely low-traffic for a young publication,
-  worth keeping in mind for how long "enough data" will realistically take).
-  The fetch job can just be a read-only SQLite connection from the pipeline
-  host — the exact same pattern already used for `disability_findings.db`,
-  nothing new to set up.
-- **GSC: no new service account needed either.** `/srv/secrets/google-
-  calendar.json` is a real GCP service account
-  (`trident-calendar@gen-lang-client-0047032066.iam.gserviceaccount.com`,
-  project `gen-lang-client-0047032066`) already in use for calendar
-  integration. Reusing it for GSC needs two web-UI actions from you, no new
-  credential file: (1) enable the "Search Console API" on that same GCP
-  project in Cloud Console, (2) add that service account's email as a user
-  (Settings → Users and permissions → Add user) on the cripminds.com property
-  in Search Console, "Restricted" access is enough for read-only reporting.
-- **Bluesky:** `BSKY_HANDLE`/`BSKY_APP_PASSWORD` already exist in
-  `openclaw.env` (used for posting). App passwords are typically full-account
-  scope, so these are very likely already sufficient to read back likes/
-  reposts on the account's own posts — worth a quick test call before
-  assuming, but probably no new credential needed.
-- **Tumblr:** full OAuth1 credentials already exist in `tumblr.env`
-  (`TUMBLR_CONSUMER_KEY/SECRET`, `TUMBLR_ACCESS_TOKEN/SECRET`) — likely
-  sufficient to read back notes/likes the same way, no new credential
-  expected.
-- **Mastodon:** `MASTODON_ACCESS_TOKEN` exists in `openclaw.env`, but its
-  granted scope (read vs. write-only, set at token-creation time) is
-  unconfirmed without testing an actual API call — the one credential here
-  that might need regenerating with broader scope.
+**Credentials — ALL FIVE CONFIRMED WORKING, zero new secrets needed
+anywhere** (checked and tested directly on trident, 2026-08-09; key names
+only where relevant, no secret values ever read into this conversation):
+- **GoatCounter:** not behind an API at all — a systemd service on the host
+  storing everything in a plain SQLite file at
+  `/srv/data/goatcounter/goatcounter.db`. Queried directly, read-only, no
+  auth. Real numbers: e.g. one article reached scroll-25% by 12 sessions,
+  scroll-50% by 11, scroll-75% by 8; July 2026 articles range 1-18 pageviews
+  — genuinely low-traffic for a young publication, worth keeping in mind for
+  how long "enough data" will realistically take to accumulate.
+- **GSC:** reuses the existing `google-calendar.json` service account
+  (`trident-calendar@gen-lang-client-0047032066.iam.gserviceaccount.com`) via
+  an RS256-signed JWT — no new credential file. You enabled the Search
+  Console API and added that service account as a property user; tested the
+  full flow (JWT → OAuth token → Search Analytics query) and got real
+  per-page clicks/impressions/ctr/position back. One correction from the
+  original plan: the property is the **domain property**
+  `sc-domain:cripminds.com`, not the URL-prefix `https://cripminds.com/` I
+  first guessed — confirmed via a real `/sites` list call; the wrong format
+  403s.
+- **Bluesky:** `app.bsky.feed.getPosts` on the **public, unauthenticated**
+  endpoint (`public.api.bsky.app`) — no session/login needed at all to read
+  engagement on public posts. Tested against 33 real posts, got real
+  like/repost/reply/quote counts back.
+- **Mastodon:** `GET /api/v1/statuses/<id>` is also public, zero auth needed.
+  Tested against a real published post, got real favourites/reblogs/replies
+  counts back.
+- **Tumblr:** `GET /v2/blog/<blog>/posts?api_key=...` returns real
+  `note_count` per post using just the plain consumer API key as a query
+  param — no OAuth1 signing needed for reading (posting still needs full
+  OAuth1, unchanged). Tested against real live posts on the blog.
 
-**Open questions for you:**
-- OK to go ahead and do the two GSC web-UI steps above yourself (I can't do
-  either — both require your Google account login)? No new credential to hand
-  me either way — once both are done, the existing service-account JSON
+**Open questions for you (down to one real one):**
+- Everything above is done and verified. The only thing left: OK to add
+  `engagement_fetch.py` to the daily cron (alongside `cripminds-daily.sh`,
+  probably once a day is enough since GoatCounter/GSC/social metrics all
+  accumulate slowly), or do you want to keep running it manually for a while
+  first before it becomes a permanent recurring job on the host?
   already on trident covers auth.
 **Decisions (2026-08-09):**
 - Build all three (GoatCounter, GSC, social) together — one schema, in one
