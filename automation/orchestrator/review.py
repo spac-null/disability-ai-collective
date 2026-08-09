@@ -121,6 +121,37 @@ class ReviewMixin:
         "at this juncture", "paradigm shift",
     ]
 
+    @staticmethod
+    def _check_truncated_ending_shadow(content):
+        """SHADOW MODE, added 2026-08-09 — do not promote before 2026-08-23 at the
+        earliest, and only with real false-positive data in hand.
+
+        No existing rule bans this; it's a different risk class entirely.
+        Several LLM calls in this pipeline (the writer's own generation call,
+        rewrite_with_opus, the editorial passes) run under a max_tokens cap —
+        if a real article happened to need more room than budgeted, the output
+        gets cut off mid-sentence with no error raised anywhere; the truncated
+        text just gets published as-is. Checks whether the last non-empty line
+        of the article ends in real sentence-final punctuation, after
+        stripping trailing markdown wrapping (closing '*'/'_' for emphasis,
+        closing quote marks, closing brackets) so a correctly-ended sentence
+        inside italics or a quote isn't misread as truncated purely because of
+        the wrapping character. Confirmed against 3 real published endings
+        (plain prose, and the appended source-note footer, which is itself a
+        complete italicized sentence) — all correctly pass. Returns the
+        offending tail (up to 150 chars) if the ending looks cut off, else
+        None. Known limitation: a piece that deliberately ends on an em-dash
+        or ellipsis for effect would be flagged as a false positive — exactly
+        the kind of case this observation window exists to surface."""
+        body = content.strip()
+        if not body:
+            return None
+        last_line = body.splitlines()[-1].strip()
+        cleaned = re.sub(r'[*_"’”)\]]+$', '', last_line).rstrip()
+        if cleaned and not re.search(r'[.!?]$', cleaned):
+            return last_line[-150:]
+        return None
+
     @classmethod
     def _check_forbidden_word_lists_shadow(cls, content):
         """SHADOW MODE, added 2026-08-09 — do not promote before 2026-08-23 at the
@@ -344,6 +375,7 @@ class ReviewMixin:
         # _check_bullet_points_shadow for the rules and the no-promotion guardrail.
         shadow_bullet_hits = self._check_bullet_points_shadow(content)
         shadow_word_hits = self._check_forbidden_word_lists_shadow(content)
+        shadow_truncated_ending = self._check_truncated_ending_shadow(content)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -574,6 +606,7 @@ class ReviewMixin:
             + ("" if not shadow_word_hits["academic_jargon"] else " — " + ", ".join(shadow_word_hits["academic_jargon"])),
             f"- Forbidden corporate/journalese clichés: {len(shadow_word_hits['corporate_cliches'])} found"
             + ("" if not shadow_word_hits["corporate_cliches"] else " — " + ", ".join(shadow_word_hits["corporate_cliches"])),
+            "- Ending looks truncated: " + ("YES — " + shadow_truncated_ending if shadow_truncated_ending else "no"),
             "",
             "## Web Fact-Check (quotes, studies, stats, events — live search)",
             *fact_check_lines,
