@@ -62,8 +62,14 @@ if _ENV_FILE.exists():
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
 
-# Also load reef bot creds for cripminds notifications
-for _env_path in [Path("/srv/secrets/reef/reef-bot.env")]:
+# Also load reef bot creds for cripminds notifications, and Tumblr posting
+# creds (found 2026-08-09: TUMBLR_* had real values in tumblr.env the whole
+# time, but this file never loaded it -- post_to_tumblr's own
+# `if not all([ck, cs, at, ats, blog]): return None` guard was silently
+# no-op'ing every call at debug level, so Tumblr posting has likely never
+# actually fired since tumblr.env was created. Confirmed via zero
+# _social/*.json files ever having a tumblr_url field.
+for _env_path in [Path("/srv/secrets/reef/reef-bot.env"), Path("/srv/secrets/tumblr.env")]:
     if _env_path.exists():
         for _line in _env_path.read_text().splitlines():
             _line = _line.strip()
