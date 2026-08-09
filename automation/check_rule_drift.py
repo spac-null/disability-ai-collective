@@ -128,6 +128,14 @@ EXPECTED_OCCURRENCES = {
         "meta-language-commentary-wired above; both rules were registry-only "
         "with zero real wiring until this fix.",
     ),
+    "front-loaded-sentence-examples": (
+        "Flag sentences opening with 'When considering...', 'What happens after...', 'Given that...'",
+        2,
+        "gate GATE_SYSTEM R6 (added — was a bare one-line definition with no "
+        "worked examples, unlike validate_article's RULES_SYSTEM R7 and "
+        "style_rules.py's own 'full' text, both of which already had these "
+        "examples) and RULES_SYSTEM R7 (canonical, unchanged).",
+    ),
 }
 
 
