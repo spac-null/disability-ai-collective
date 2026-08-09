@@ -17,6 +17,63 @@ inline per item or as a general reaction.
 
 ---
 
+## Addendum, 2026-08-09: the anchor-architecture blueprint (feeds into item 3)
+
+Separate from the priority list below, a real design investigation grew out
+of studying a real Bregman excerpt (publisher-licensed, this session) for how
+strong essays sustain a governing anchor across a whole piece. Full design
+document produced by an Opus design agent — see this session's transcript;
+key finding was that a "Stage 1 plan-then-write" mechanism already exists
+(`_fable_editorial_brief`, `llm.py`) and runs daily, completely unverified.
+This directly refines item 3 (judge-panel generation): the blueprint's Stage G
+says once this mechanism is proven, two independent brief calls give the
+judge panel genuine structural angle divergence for free.
+
+**Progress so far, in the blueprint's own staged order:**
+- **Stage 0 (persist the plan) — DONE.** `_persist_article_plan` (`generate.py`)
+  logs the full brief JSON to a new `article_plans` table in
+  `automation/engagement.db`. Pure logging, zero behavior change.
+- **Stage A (baseline measurement) — DONE, and it validates the project.**
+  The design agent's own crude script found 88% of articles already sustain
+  a recurring term — a number that would have killed the project (the
+  blueprint's own decision rule: >70% means the premise is dead). A more
+  careful version (larger blocklist, confirmed non-sentence-initial
+  occurrences, multi-word phrase matching) found the real number is **26%**,
+  and roughly half of those are topical necessity (a piece about Deaf
+  culture just says "Deaf" a lot) rather than a deliberate anchor device —
+  the real rate for something resembling Bregman's device is closer to
+  10-15%. **The gap is real. Building this is worth doing.**
+- **Stage B (verification judge) — DONE, shipped in shadow.**
+  `_plan_follow_read` (`review.py`) checks whether `correction_moment`/
+  `resisting_example`/`opening_shape` were actually executed — wired into
+  `validate_article`, persisted to `review_signals`. Before shipping, ran a
+  **positive-control calibration**: fed the judge the real Bregman excerpt
+  with a plan derived from the close-read, checked whether it agreed with
+  the independent human analysis. First run surfaced two real bugs
+  (`max_tokens=300` too low, `content[:14000]` truncating ~half the excerpt);
+  after fixing both, **6/6 verdict-level agreement**. This is NOT the formal
+  calibration the check's own design calls for (20 real cripminds
+  (article, plan) pairs, ≥80% agreement) — that data doesn't exist yet since
+  plans were never persisted before today. It's a sanity check that the
+  judge design itself isn't broken, done before waiting weeks for real data.
+- **Stage C (seam detector), Stage D (anchor/refrain brief fields), Stage E
+  (writer-prompt block) — NOT STARTED.** Stage E is the first change that
+  would actually direct what gets written; per the blueprint, it should not
+  start before Stage B has accumulated real calibration data (~20 articles,
+  several weeks at current cadence) and Stage C exists to detect Stage E's
+  main failure mode (visible seams) before it ships.
+
+**Explicitly rejected by the blueprint, with real evidence, not deferred:**
+a fixed "movement sequence" (the original design's second half) — it's a
+repackaging of a structural template this repo's own corpus file already
+rejected twice, the real Bregman chapter's movements are legible only
+because of section headings this pipeline explicitly bans, and there's no
+arithmetic room at the pipeline's modal 950-word length. Replaced with a
+"recurrence budget" (anchor + refrain, no ordering) which keeps the upside
+without reversing that prior decision.
+
+---
+
 ## Priority order (my read — argue with this)
 
 1. Capture real engagement data (foundational — everything else needs this)
