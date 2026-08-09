@@ -61,10 +61,16 @@ QUALITY_FEEDS = [
     {"url": "https://www.techmeme.com/feed.xml",                        "name": "Techmeme",              "tier": 2},
     {"url": "https://restofworld.org/feed/latest/full",                 "name": "Rest of World",         "tier": 1},
     {"url": "https://www.wired.com/feed/rss",                           "name": "Wired",                 "tier": 2},
-    # 404 Media requested 2026-08-09 continuation but NOT added -- still
-    # DNS-sinkholed from trident (cert issued by a "Whalebone Sinkhole CA",
-    # network-level block, not fixable in code). Re-check if trident's network
-    # config ever changes; adding the URL now would just silently fetch nothing.
+    # 404 Media re-added 2026-08-10 -- the "network-level block" from its prior
+    # removal was actually DNS poisoning on trident's WiFi/default-route
+    # resolver (192.168.1.1, router/ISP-side Whalebone filtering), not a real
+    # block on the domain: confirmed via `dig @1.1.1.1`/`@8.8.8.8` returning
+    # real Fastly IPs while trident's default resolver returned a single
+    # sinkhole IP with a fake "Whalebone Sinkhole CA" cert. Fixed at the host
+    # level (systemd-resolved + NetworkManager profile now point wlo1 at
+    # 1.1.1.1/8.8.8.8), not with a third-party proxy service -- verified real
+    # cert (Certainly CA), HTTP 200, valid RSS content post-fix.
+    {"url": "https://www.404media.co/rss/",                             "name": "404 Media",             "tier": 1},
     {"url": "https://www.theverge.com/rss/index.xml",                   "name": "The Verge",             "tier": 2},
 
     # ── Art, design & architecture ────────────────────────────────────────────
