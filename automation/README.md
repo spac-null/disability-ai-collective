@@ -16,7 +16,8 @@
 ## Daily Pipeline (fully automated)
 
 ```
-07:00  run_discovery.py           → finds topics, fills disability_findings.db
+06:05  automation/news_fetcher.py → finds topics via RSS + keyword scoring,
+                                    fills disability_findings.db news_seeds table
 09:00  automation/production_orchestrator.py → picks topic, writes article,
                                                generates images, posts Bluesky,
                                                commits + deploys to GH Pages
@@ -81,10 +82,6 @@ If push was skipped despite the fix, recover with `--post-today`.
 8 diverse topics — civil rights economics, protest history, diagnosis politics,
 typography, wayfinding, budget arithmetic, museum access, etc.
 `Silent Interfaces` (acoustic) was removed 2026-03-26 after 3-day acoustic clustering.
-
-### `run_discovery.py`
-Discovers disability/tech topics, writes to `disability_findings.db`.
-Runs at 07:00 daily. Self-loads openclaw.env.
 
 ### `scene_image_generator.py`
 Image generation library used by orchestrator. Self-loads openclaw.env.

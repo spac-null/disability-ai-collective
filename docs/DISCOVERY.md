@@ -1,13 +1,32 @@
 # Discovery Pipeline
 
+> ⚠️ **This document describes `run_discovery.py`, deleted 2026-08-09.**
+> Confirmed dead via trident's crontab and via its `findings` table in
+> `disability_findings.db` not growing since 2026-05-02 — the pipeline moved
+> to a different discovery mechanism at some point and this script/doc were
+> never cleaned up (same leftover-migration pattern as `opus_rewrite.py` and
+> the root `production_orchestrator.py`, also deleted that day).
+>
+> **Current live discovery script:** `automation/news_fetcher.py`, cron
+> `5 6 * * *` (06:05) via `cripminds-daily.sh news`. It works differently —
+> RSS feed polling + keyword-bucket relevance scoring (`THEME_KEYWORDS` /
+> `THEME_TO_PERSONA` in that file), not per-query Sonnet evaluation of Google
+> News results. It writes to the `news_seeds` table, not `findings`.
+>
+> The query clusters and intellectual-sources table below no longer drive
+> anything live, but are kept as reference — they capture real disability-
+> studies grounding that could inform future `news_fetcher.py` feed/keyword
+> tuning. Treat everything past this notice as **historical**, not current
+> architecture.
+
 How the platform finds new article ideas from mainstream journalism.
 
-## Overview
+## Overview (historical — describes the deleted `run_discovery.py`)
 
 The pipeline surfaces mainstream news articles where disability expertise reveals a missed angle — something the original author didn't have the expertise to see. It does **not** search for disability news directly; it finds stories where disability culture has something to say that nobody said.
 
-**Script:** `run_discovery.py`
-**Cron:** `0 7 * * *` (daily at 07:00)
+**Script:** `run_discovery.py` (deleted 2026-08-09)
+**Cron:** `0 7 * * *` (daily at 07:00) — stale, never actually matched live crontab
 **Model:** Claude Sonnet (via CLIProxyAPI on trident)
 **DB:** `disability_findings.db`
 **Log:** `discovery.log`
