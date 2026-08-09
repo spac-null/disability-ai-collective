@@ -142,11 +142,23 @@ def fetch_goatcounter(conn, articles, fetched_at, dry_run):
             pageviews = row[0] if row else 0
             if pageviews and not dry_run:
                 upsert(conn, art["slug"], "goatcounter", "pageviews", pageviews, fetched_at)
-            for depth in (25, 50, 75):
+            for depth in (25, 50, 75, 100):
+                # NOT .rstrip("/") -- confirmed 2026-08-09 continuation by reading
+                # GoatCounter's raw paths table directly: automatic pageview hits
+                # (event=0, queried above) are stored WITHOUT a trailing slash, but
+                # custom events (event=1, this site's own scroll-depth tracker in
+                # _layouts/default.html) are stored with whatever location.pathname
+                # gave it -- which always has the trailing slash for this site's
+                # /:year/:month/:day/:title/ permalinks. Stripping it here made
+                # every scroll-depth lookup silently match zero rows since this
+                # script's first commit (3c1e478) -- confirmed via a live query,
+                # zero scroll_* rows ever existed in engagement.db despite pageviews
+                # working the whole time. Also added depth 100, tracked by the site's
+                # JS (`marks = {25,50,75,100}`) but never queried here before.
                 row = gc.execute(
                     "SELECT count(*) FROM hits h JOIN paths p ON h.path_id = p.path_id "
                     "WHERE p.event = 1 AND p.path = ?",
-                    (f"scroll-{depth}:{art['site_path'].rstrip('/')}",),
+                    (f"scroll-{depth}:{art['site_path']}",),
                 ).fetchone()
                 n = row[0] if row else 0
                 if n and not dry_run:
