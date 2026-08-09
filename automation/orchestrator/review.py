@@ -175,6 +175,61 @@ class ReviewMixin:
             "corporate_cliches": [t for t in cls._SHADOW_CORPORATE_CLICHES if t in body],
         }
 
+    def _persist_review_signals(self, slug, agent_name, engagement_read,
+                                 shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending):
+        """Log _engagement_read's verdict and the 3 shadow checks' output to a
+        queryable table, added 2026-08-09 (audience-engagement tasklist item 2).
+        Before this, the only record was the _reviews/<slug>-review.md sidecar
+        — readable one file at a time, not queryable as a pattern ("does Zen
+        Circuit systematically get worse engagement-read verdicts than Maya
+        Flux" required opening dozens of files by hand). Writes to the same
+        automation/engagement.db that engagement_fetch.py writes real reader-
+        engagement data to (GoatCounter/GSC/Bluesky/Mastodon/Tumblr) — same
+        file, different table, so a future correlation between "did the judge
+        guess this was good" and "did readers actually stick around" is a
+        plain JOIN on slug, not a cross-database query.
+
+        Never raises -- a failure here must never affect validate_article's
+        own return value or block anything; this is pure logging."""
+        import sqlite3
+        try:
+            db_dir = self.repo_root / "automation"
+            db_dir.mkdir(parents=True, exist_ok=True)
+            conn = sqlite3.connect(db_dir / "engagement.db")
+            try:
+                conn.execute("""
+                    CREATE TABLE IF NOT EXISTS review_signals (
+                        id                     INTEGER PRIMARY KEY AUTOINCREMENT,
+                        slug                   TEXT NOT NULL,
+                        agent                  TEXT,
+                        reviewed_at            TEXT NOT NULL,
+                        engagement_verdict     TEXT,
+                        shadow_bullet_hits     INTEGER,
+                        shadow_academic_jargon TEXT,
+                        shadow_corporate_cliches TEXT,
+                        shadow_truncated_ending TEXT,
+                        UNIQUE(slug, reviewed_at)
+                    )
+                """)
+                conn.execute(
+                    "INSERT OR REPLACE INTO review_signals "
+                    "(slug, agent, reviewed_at, engagement_verdict, shadow_bullet_hits, "
+                    "shadow_academic_jargon, shadow_corporate_cliches, shadow_truncated_ending) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    (
+                        slug, agent_name, dt.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        engagement_read, len(shadow_bullet_hits),
+                        json.dumps(shadow_word_hits.get("academic_jargon", [])),
+                        json.dumps(shadow_word_hits.get("corporate_cliches", [])),
+                        shadow_truncated_ending,
+                    ),
+                )
+                conn.commit()
+            finally:
+                conn.close()
+        except Exception as e:
+            self.logger.warning("Review-signal persistence failed (non-fatal): %s", e)
+
     def validate_article(self, content, article_file, slug, target_words=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
         import os, json, urllib.request as ureq
@@ -376,6 +431,8 @@ class ReviewMixin:
         shadow_bullet_hits = self._check_bullet_points_shadow(content)
         shadow_word_hits = self._check_forbidden_word_lists_shadow(content)
         shadow_truncated_ending = self._check_truncated_ending_shadow(content)
+        self._persist_review_signals(slug, current_agent, engagement_read,
+                                      shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
