@@ -53,10 +53,18 @@ QUALITY_FEEDS = [
 
     # ── Technology & design ───────────────────────────────────────────────────
     {"url": "https://www.technologyreview.com/feed/",                   "name": "MIT Tech Review",       "tier": 1},
-    # Hacker News removed — link aggregator with arbitrary titles, not journalism
+    # Hacker News re-added 2026-08-09 continuation, explicit request, despite the
+    # original removal reasoning below (link aggregator, arbitrary/clickbait-prone
+    # titles) -- kept for visibility, not endorsement; expect noisier candidates
+    # out of this feed than the curated journalism sources around it.
+    {"url": "https://news.ycombinator.com/rss",                         "name": "Hacker News",           "tier": 2},
+    {"url": "https://www.techmeme.com/feed.xml",                        "name": "Techmeme",              "tier": 2},
+    {"url": "https://restofworld.org/feed/latest/full",                 "name": "Rest of World",         "tier": 1},
     {"url": "https://www.wired.com/feed/rss",                           "name": "Wired",                 "tier": 2},
-    # 404 Media removed — DNS-sinkholed from trident (cert issued by a
-    # "Whalebone Sinkhole CA", network-level block, not fixable in code).
+    # 404 Media requested 2026-08-09 continuation but NOT added -- still
+    # DNS-sinkholed from trident (cert issued by a "Whalebone Sinkhole CA",
+    # network-level block, not fixable in code). Re-check if trident's network
+    # config ever changes; adding the URL now would just silently fetch nothing.
     {"url": "https://www.theverge.com/rss/index.xml",                   "name": "The Verge",             "tier": 2},
 
     # ── Art, design & architecture ────────────────────────────────────────────
@@ -64,6 +72,9 @@ QUALITY_FEEDS = [
     {"url": "https://www.dezeen.com/feed/",                             "name": "Dezeen",                "tier": 1},
     {"url": "https://www.theguardian.com/artanddesign/rss",             "name": "Guardian Art & Design", "tier": 1},
     {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml",    "name": "NYT Arts",              "tier": 2},
+    {"url": "https://www.creativeboom.com/feed/",                       "name": "Creative Boom",         "tier": 1},
+    {"url": "https://thecreativeindependent.com/feed.xml",              "name": "The Creative Independent","tier": 1},
+    {"url": "https://www.lemonde.fr/en/arts/rss_full.xml",              "name": "Le Monde Arts",         "tier": 2},
 
     # ── Society, disability & cities ──────────────────────────────────────────
     {"url": "https://www.theguardian.com/society/rss",                  "name": "Guardian Society",      "tier": 1},
@@ -74,6 +85,12 @@ QUALITY_FEEDS = [
     {"url": "https://cripnews.substack.com/feed",                       "name": "Crip News",             "tier": 1},
     {"url": "https://www.disabilitydebrief.org/feed",                   "name": "Disability Debrief",    "tier": 2},
     {"url": "https://rootedinrights.org/feed/",                         "name": "Rooted in Rights",      "tier": 2},
+    # Two added 2026-08-09 continuation -- Deaf-specific and disability-culture-
+    # specific respectively, filling a real gap: nothing above covers Deaf
+    # community writing directly, and DVP is disability CULTURE/politics/media,
+    # a different register than the policy/admin-heavy DNS/Guardian Society beat.
+    {"url": "https://limpingchicken.com/feed/",                         "name": "The Limping Chicken",   "tier": 1},
+    {"url": "https://disabilityvisibilityproject.com/feed/",            "name": "Disability Visibility Project","tier": 1},
 
     # ── Behavioural science, progress & historical reassessment ───────────────
     # Bregman-vein material: counterintuitive social science, archival reappraisal,
@@ -110,6 +127,10 @@ QUALITY_FEEDS = [
     # ── International quality ─────────────────────────────────────────────────
     {"url": "https://www.nrc.nl/rss/",                                  "name": "NRC Handelsblad",       "tier": 1},
     {"url": "https://www.lemonde.fr/en/rss/une.xml",                    "name": "Le Monde English",      "tier": 1},
+    {"url": "https://www.lemonde.fr/en/europe/rss_full.xml",            "name": "Le Monde Europe",       "tier": 2},
+    {"url": "https://dutchnews.nl/feed/",                               "name": "DutchNews",             "tier": 2},
+    {"url": "https://www.ansa.it/emiliaromagna/notizie/emiliaromagna_rss.xml", "name": "ANSA Emilia-Romagna", "tier": 2},
+    {"url": "https://www.ansa.it/english/news/english_nr_rss.xml",      "name": "ANSA English",          "tier": 2},
     # El Pais English removed — feed is live (200) but frozen: live-verified
     # 2026-08-06, all 62 items dated January-April 2020, so every fetch always
     # falls outside the 7-day cutoff and silently yields zero.
