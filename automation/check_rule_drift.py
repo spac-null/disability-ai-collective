@@ -45,12 +45,14 @@ EXPECTED_OCCURRENCES = {
     ),
     "jargon-priority-locations": (
         "priority locations",
-        1,
-        "validate_article RULES_SYSTEM R13 only, as of 2026-08-09 — flagged here "
-        "specifically because it is currently the ONE term present in only one "
-        "location; if this count changes it means someone is (correctly) "
-        "propagating it to the other jargon-list copies, which should then be "
-        "reflected by raising this expected count, not treated as new drift",
+        2,
+        "validate_article RULES_SYSTEM R13, rewrite_with_opus rule 28 (converged to "
+        "registry text in the /loop migration, 2026-08-09). Still missing from: the "
+        "writer generation prompt's own JARGON bullet, and _pre_commit_gate's R10 "
+        "(which per the original audit has only 5 of 7 base terms, not just a "
+        "missing 8th — needs its own convergence pass, not just adding this one "
+        "term). Raise this count as each location gets converged; do not raise it "
+        "preemptively.",
     ),
 }
 
@@ -72,7 +74,11 @@ def check():
     text = _flatten_adjacent_string_literals(raw)
     problems = []
     for rule_id, (phrase, expected_min, where) in EXPECTED_OCCURRENCES.items():
-        actual = len(re.findall(re.escape(phrase), text))
+        # Case-insensitive: the same term legitimately appears capitalized in one
+        # rendering style ('Priority locations' -> ...) and lowercase mid-list in
+        # another (..., platform upgrades, priority locations.) -- confirmed
+        # 2026-08-09, both are the registry's real content, not drift.
+        actual = len(re.findall(re.escape(phrase), text, re.IGNORECASE))
         if actual < expected_min:
             problems.append(
                 f"[DRIFT] {rule_id}: found {actual}/{expected_min} occurrences of "
