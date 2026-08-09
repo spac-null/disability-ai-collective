@@ -3898,9 +3898,31 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
         # confirmed-wrong soft claim is tolerated on its own (could be noise), but
         # not alongside a pile of unattributed specifics, and two or more
         # confirmed-wrong soft claims is never tolerated.
+        #
+        # EVENT gets a stricter standard than STAT, added 2026-08-09 after a manual
+        # audit of everything published under the old rule turned up roughly a
+        # dozen single, isolated CONTRADICTED-EVENT articles that would have shipped
+        # unblocked under this same logic: wrong exhibition venue (V&A Dundee vs.
+        # the real South Kensington show, closed 5 months before the article ran),
+        # wrong museum room number, wrong conference city (Vancouver vs. the real
+        # Seoul ICML), wrong street address, wrong publisher/date for a real book.
+        # None of those had 2+ soft contradictions or 5+ unattributed citations
+        # riding along — each was one clean, isolated wrong fact in an otherwise
+        # unremarkable piece, which is exactly the shape this rule was built to
+        # let through as "could be noise." It wasn't noise: _web_verify_claim's own
+        # EVENT standard already requires a source *actively contradicting* the
+        # claim (wrong date/people, or it didn't happen) — mere absence of coverage
+        # is UNVERIFIABLE, not CONTRADICTED. That's a much stronger signal than a
+        # STAT mismatch (same real number, restated in an incompatible-looking
+        # form) or an EVENT that search simply hasn't indexed yet. A single
+        # CONTRADICTED EVENT has already cleared a bar that filters out the
+        # under-indexing false positives; treat it as sufficient on its own. STAT
+        # keeps the more lenient threshold below — restatement risk there is real.
+        event_contradicted = any(c.get("type") == "EVENT" for c in advisory_flags)
         unattributed_citations = citation_text.count("SOURCE: UNATTRIBUTED")
         too_much = (
-            soft_contradicted_count >= 2
+            event_contradicted
+            or soft_contradicted_count >= 2
             or unverifiable_count >= 3
             or (soft_contradicted_count >= 1 and unattributed_citations >= 5)
         )
