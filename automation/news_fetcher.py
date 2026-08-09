@@ -880,7 +880,16 @@ def category_jump_judge(title: str, summary: str) -> dict | None:
     user = f"TITLE:\n{title}\n\nSUMMARY:\n{summary}"
     payload = json.dumps({
         "model": MODEL,
-        "max_tokens": 500,
+        # 500 wasn't enough -- confirmed via a real failure 2026-08-10 on the
+        # Alzheimer's-drug seed: a verbose-but-valid response (7 populated
+        # fields including a full "reason" paragraph) came within a few
+        # dozen tokens of this cap on a successful run, and a less lucky
+        # generation hit it mid-string, producing invalid JSON that silently
+        # returned None -- losing exactly the strongest positive calibration
+        # example from the first real batch. Same failure class already
+        # diagnosed and fixed elsewhere in this pipeline for the same reason
+        # (see _plan_follow_read's max_tokens history on the generation side).
+        "max_tokens": 900,
         "messages": [
             {"role": "system", "content": _CATEGORY_JUMP_SYSTEM_PROMPT},
             {"role": "user", "content": user},
