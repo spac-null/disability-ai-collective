@@ -99,6 +99,17 @@ EXPECTED_OCCURRENCES = {
         "undercounts to 1 because GATE_SYSTEM wraps this exact phrase across two "
         "adjacent string literals at the source level.",
     ),
+    "system-voice-gate-coverage": (
+        "If the sentence could appear in the audit report the article is criticising, it has failed",
+        3,
+        "gate GATE_SYSTEM R17 (added — was completely absent from the blocking gate "
+        "before this fix, a real 2026-08-09 /loop finding: style_rules.py's own "
+        "'system-voice' rule rationale field already documented this exact gap and "
+        "said 'Moved to BLOCKING here', but the actual GATE_SYSTEM prompt text was "
+        "never updated to match), validate_article's RULES_SYSTEM R5 (converged from "
+        "a terse one-liner to match), and the writer generation prompt (already had "
+        "this exact wording — confirmed, not touched).",
+    ),
 }
 
 

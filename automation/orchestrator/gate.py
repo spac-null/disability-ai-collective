@@ -300,6 +300,12 @@ class GateMixin:
             "be grammatically plain-worded and still fail this way — check idea count, not just "
             "vocabulary. Do NOT flag a sentence with one main claim plus a short supporting detail "
             "that doesn't stand as its own separate assertion.\n\n"
+            "R17 SYSTEM VOICE — passive or bureaucratic-noun construction that erases who did the "
+            "thing. Test every sentence: who is doing what to whom? 'Stops were flagged as "
+            "non-compliant' has no person — flag it. 'The intervention was implemented' → 'The "
+            "council installed a ramp.' 'Access needs were assessed' → 'A caseworker asked what "
+            "you needed.' If the sentence could appear in the audit report the article is "
+            "criticising, it has failed.\n\n"
             "Format: [FAIL] R1 — \"quoted phrase\" | [PASS] R2 | [N/A] R9\n"
             "Be strict. Quote the exact offending phrase. Max 15 words per quote."
         )
@@ -311,7 +317,7 @@ class GateMixin:
                 system_prompt=GATE_SYSTEM,
                 user_prompt=content,
                 model="openrouter/claude-sonnet-4.6",
-                max_tokens=960,  # was 400 — a rule-verdict list at ~25+ tokens/rule plus
+                max_tokens=1010,  # was 400 — a rule-verdict list at ~25+ tokens/rule plus
                                  # preamble routinely truncated before the tail rules, and
                                  # truncation was indistinguishable from "passed" to the
                                  # parser. Bumped again 2026-08-09 when R16 was added —
