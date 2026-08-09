@@ -103,6 +103,47 @@ class ReviewMixin:
                 hits.append(stripped[:100])
         return hits
 
+    # These two word lists are copied from the writer prompt's own FORBIDDEN
+    # ACADEMIC JARGON / FORBIDDEN CORPORATE-JOURNALESE CLICHÉS bullets
+    # (generate.py) — kept here rather than in config.py since they're specific
+    # to this shadow check, not shared elsewhere. If the writer prompt's lists
+    # change, update both together.
+    _SHADOW_ACADEMIC_JARGON = [
+        "embodied", "phenomenological", "epistemicide", "neuroqueer",
+        "intersectionality", "hegemonic", "ableist", "discourse", "praxis",
+        "positionality", "centering", "lived experience", "holding space",
+        "unpacking", "at the end of the day", "in the final analysis",
+        "it is worth noting", "it is important to remember",
+    ]
+    _SHADOW_CORPORATE_CLICHES = [
+        "tip of the iceberg", "perfect storm", "wake-up call", "game changer",
+        "think outside the box", "unprecedented times", "moving forward",
+        "at this juncture", "paradigm shift",
+    ]
+
+    @classmethod
+    def _check_forbidden_word_lists_shadow(cls, content):
+        """SHADOW MODE, added 2026-08-09 — do not promote before 2026-08-23 at the
+        earliest, and only with real false-positive data in hand.
+
+        The writer prompt bans two word lists — academic jargon (embodied,
+        praxis, positionality, etc.) and corporate/journalese clichés (perfect
+        storm, paradigm shift, etc.) — but nothing downstream has ever checked
+        for either. Deterministic, case-insensitive substring match. Known
+        limitation, exactly why this starts in shadow mode: several terms
+        ("centering", "discourse", "unpacking") have legitimate literal uses
+        outside the banned register ('centering a lens', 'unpacking a box') —
+        a naive substring match cannot distinguish literal from banned-register
+        use, which is precisely the false-positive data this observation
+        window exists to collect before anyone decides whether this check is
+        worth keeping at all. Returns dict {"academic_jargon": [...], "corporate_cliches": [...]}
+        of matched terms (empty lists if none)."""
+        body = re.sub(r'^---.*?---', '', content, flags=re.DOTALL).lower()
+        return {
+            "academic_jargon": [t for t in cls._SHADOW_ACADEMIC_JARGON if t in body],
+            "corporate_cliches": [t for t in cls._SHADOW_CORPORATE_CLICHES if t in body],
+        }
+
     def validate_article(self, content, article_file, slug, target_words=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
         import os, json, urllib.request as ureq
@@ -302,6 +343,7 @@ class ReviewMixin:
         # Shadow checks — observation only, see the class-level comment above
         # _check_bullet_points_shadow for the rules and the no-promotion guardrail.
         shadow_bullet_hits = self._check_bullet_points_shadow(content)
+        shadow_word_hits = self._check_forbidden_word_lists_shadow(content)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -528,6 +570,10 @@ class ReviewMixin:
             "verified. Never blocks, never affects the status above.",
             f"- Bullet points / numbered lists in body: {len(shadow_bullet_hits)} found"
             + ("" if not shadow_bullet_hits else " — " + " | ".join(shadow_bullet_hits[:5])),
+            f"- Forbidden academic jargon: {len(shadow_word_hits['academic_jargon'])} found"
+            + ("" if not shadow_word_hits["academic_jargon"] else " — " + ", ".join(shadow_word_hits["academic_jargon"])),
+            f"- Forbidden corporate/journalese clichés: {len(shadow_word_hits['corporate_cliches'])} found"
+            + ("" if not shadow_word_hits["corporate_cliches"] else " — " + ", ".join(shadow_word_hits["corporate_cliches"])),
             "",
             "## Web Fact-Check (quotes, studies, stats, events — live search)",
             *fact_check_lines,

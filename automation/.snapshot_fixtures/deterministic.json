@@ -23,7 +23,11 @@
       "fre": 50.0,
       "words": 922
     },
-    "shadow_bullet_hits": []
+    "shadow_bullet_hits": [],
+    "shadow_word_hits": {
+      "academic_jargon": [],
+      "corporate_cliches": []
+    }
   },
   "_posts/2026-07-26-vally-wieselthier-fired-her-kiln-while-josef-hoffmann.md": {
     "argument_hits": [
@@ -38,7 +42,11 @@
       "fre": 66.3,
       "words": 507
     },
-    "shadow_bullet_hits": []
+    "shadow_bullet_hits": [],
+    "shadow_word_hits": {
+      "academic_jargon": [],
+      "corporate_cliches": []
+    }
   },
   "_posts/2026-07-29-weegee-heard-the-body-first.md": {
     "argument_hits": [
@@ -55,7 +63,11 @@
       "fre": 65.1,
       "words": 1204
     },
-    "shadow_bullet_hits": []
+    "shadow_bullet_hits": [],
+    "shadow_word_hits": {
+      "academic_jargon": [],
+      "corporate_cliches": []
+    }
   },
   "_posts/2026-07-31-injected-since-birth.md": {
     "argument_hits": [
@@ -69,7 +81,11 @@
       "fre": 51.3,
       "words": 644
     },
-    "shadow_bullet_hits": []
+    "shadow_bullet_hits": [],
+    "shadow_word_hits": {
+      "academic_jargon": [],
+      "corporate_cliches": []
+    }
   },
   "_posts/2026-08-07-a-stack-of-colours-has-not-made-a-single-sound-yet.md": {
     "argument_hits": [
@@ -88,7 +104,11 @@
       "fre": 62.6,
       "words": 1423
     },
-    "shadow_bullet_hits": []
+    "shadow_bullet_hits": [],
+    "shadow_word_hits": {
+      "academic_jargon": [],
+      "corporate_cliches": []
+    }
   },
   "_posts/2026-08-07-one-in-twelve-and-no-surprises.md": {
     "argument_hits": [],
@@ -100,6 +120,10 @@
       "fre": 68.7,
       "words": 1523
     },
-    "shadow_bullet_hits": []
+    "shadow_bullet_hits": [],
+    "shadow_word_hits": {
+      "academic_jargon": [],
+      "corporate_cliches": []
+    }
   }
 }
