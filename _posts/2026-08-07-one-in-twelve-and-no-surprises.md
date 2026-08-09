@@ -14,7 +14,7 @@ source_outlet: "Dezeen"
 draft_score: 9
 ---
 
-A wheelchair ramp follows one rule: one inch up for every twelve inches forward. That ratio is called 1:12. It sounds technical, but it does something simple. It lets me look at a ramp I've never used and know, before I touch it, exactly how hard the climb will be.
+A wheelchair ramp follows one rule: one inch up for every twelve inches forward. That ratio is called 1:12. Before I touch a ramp, I can look at it and know exactly how hard the climb will be.
 
 Last week an architecture magazine ran a museum in Shenzhen. Boulder-shaped galleries scattered across a green roof that folds and rises like a dune field. Coastal public space for all city residents, the write-up said. Undulating. Organic. The word rolling appeared twice, both times as praise.
 
