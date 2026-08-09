@@ -16,9 +16,9 @@ draft_score: 9
 
 A wheelchair ramp follows one rule: one inch up for every twelve inches forward. That ratio is called 1:12. Before I touch a ramp, I can look at it and know exactly how hard the climb will be.
 
-Last week an architecture magazine ran a museum in Shenzhen. Boulder-shaped galleries scattered across a green roof that folds and rises like a dune field. Coastal public space for all city residents, the write-up said. Undulating. Organic. The word rolling appeared twice, both times as praise.
+Last week an architecture magazine ran a museum in Shenzhen. Boulder-shaped galleries scattered across a green roof that folds and rises like a dune field. Coastal public space for all city residents, the write-up said, reaching for words like undulating, organic, rolling.
 
-I read that on a Tuesday morning in Flatbush, after I'd checked my tire pressure by hand and before I'd finished the plantains. Rolling. I know exactly how that word feels under my wrists on a surface I cannot predict.
+I read that on a Tuesday morning in Flatbush — tire pressure checked by hand, plantains half eaten. Rolling. I know exactly how that word feels under my wrists on a surface I cannot predict.
 
 A wheelchair is a lever. My whole body is the counterweight to a hill. On a known grade I set my push and I coast. On a grade that shifts halfway up, my arms have already committed to a push calculated for a different slope. I either grind to a dead stop on an incline I can't hold, or I gather speed toward something I can't see over the crest. Blind pedestrians have the same problem, differently. A cane reads edges and level changes. A surface with no edges and every level change removes all reference points. Take a page and strip out every period, comma, and space: that's what crossing that surface is.
 

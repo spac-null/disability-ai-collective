@@ -446,6 +446,73 @@ RULES = [
         added="2026-08-01", last_verified="2026-08-09",
     ),
     Rule(
+        id="meta-language-commentary",
+        name="META-LANGUAGE COMMENTARY",
+        terse="describing HOW something was worded as its own observation, instead of just saying it",
+        imperative=(
+            "NO META-LANGUAGE COMMENTARY: Do not analyze or comment on word choice or "
+            "phrasing as its own observation, from outside the language rather than "
+            "inside it. 'The word rolling appeared twice, both times as praise' is "
+            "commentary ABOUT a word instead of just using the word. 'It sounds "
+            "technical, but it does something simple' is commentary about how a fact "
+            "will land instead of just stating the fact. State the actual thing "
+            "plainly. If a specific word or phrase matters, use it directly in your "
+            "own sentence rather than pointing at it and describing its usage from a "
+            "distance."
+        ),
+        full=(
+            "META-LANGUAGE COMMENTARY — the sentence describes or analyzes how "
+            "something was phrased/worded (word frequency, word choice, tone-of-"
+            "delivery) as its own observation, rather than the writer simply stating "
+            "the underlying fact in their own words. Reads as clinical and "
+            "distancing rather than direct."
+        ),
+        stages={Stage.GENERATE, Stage.REVIEW},
+        severity=Severity.ADVISORY,
+        rationale="Reader feedback 2026-08-09, live article: 'The word rolling "
+                  "appeared twice, both times as praise' (analyzing a source's word "
+                  "choice instead of just using the words) and, from the same "
+                  "editing pass earlier the same day, 'It sounds technical, but it "
+                  "does something simple' (commentary on how a fact would land "
+                  "instead of just stating it). Not yet a rule verified against real "
+                  "Bregman source text the way the other rules were — kept ADVISORY "
+                  "pending that check, not promoted to BLOCKING on the strength of "
+                  "two same-day examples alone.",
+        added="2026-08-09", last_verified="2026-08-09",
+    ),
+    Rule(
+        id="stacked-temporal-clauses",
+        name="STACKED TEMPORAL CLAUSES",
+        terse="'after I'd done X and before I'd done Y' nested clauses used just to gesture at timing",
+        imperative=(
+            "NO STACKED TEMPORAL CLAUSES: Do not anchor a scene in time by stacking "
+            "two subordinate clauses ('after I'd checked my tire pressure and before "
+            "I'd finished the plantains'). This nests grammar just to gesture at "
+            "'morning, mid-routine' and forces the reader to hold two clauses in "
+            "memory before the main clause resolves. If two concrete details both "
+            "matter, state them as a flat parallel list instead ('tire pressure "
+            "checked by hand, plantains half eaten') or just keep the one detail "
+            "that carries the most weight and cut the other."
+        ),
+        full=(
+            "STACKED TEMPORAL CLAUSES — a scene-setting sentence uses two nested "
+            "subordinate clauses (typically 'after X and before Y') purely to "
+            "indicate rough timing, rather than a flat list or a single clean "
+            "clause. Hard to parse in one read even when each clause alone is "
+            "simple."
+        ),
+        stages={Stage.GENERATE, Stage.REVIEW},
+        severity=Severity.ADVISORY,
+        rationale="Reader feedback 2026-08-09, live article: 'I read that on a "
+                  "Tuesday morning in Flatbush, after I'd checked my tire pressure "
+                  "by hand and before I'd finished the plantains' — 'I cant read "
+                  "that normally'. Fixed to a flat parallel construction ('tire "
+                  "pressure checked by hand, plantains half eaten'). Kept ADVISORY, "
+                  "same reasoning as meta-language-commentary above — real feedback, "
+                  "not yet cross-checked against a Bregman source corpus.",
+        added="2026-08-09", last_verified="2026-08-09",
+    ),
+    Rule(
         id="ending-shape",
         name="ENDING",
         terse="no house ending shape; only CTAs/summaries/title-echoes/couplets are violations",
