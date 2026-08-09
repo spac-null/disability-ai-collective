@@ -19,7 +19,7 @@ Naomi, a midwife on the same ward, left three months later. Naomi had a bad knee
 
 One of these women became a case. The other became a statistic in a story about tired young people leaving the NHS, Britain's National Health Service.
 
-A major newspaper ran that story on 20 July 2026: more midwives under thirty-five walking out, staffing thinner, mothers and babies at risk. The word doing all the work is burnout. It is a soft word. It suggests a person who ran out of a resource everyone has, the way a phone runs down. It flattens everyone who leaves into the same shape.
+A major newspaper ran that story on 20 July 2026, and the numbers behind it are real even though Priya and Naomi are composites, not the two women it profiled: 1,669 midwives aged thirty-four or under left the NHS in 2025-26, more than half of all departures that year, up 59 percent on a decade earlier. Nearly a quarter of the students who started midwifery training in 2021 didn't finish it by 2024. Three-quarters of practising midwives told their own college they'd considered leaving in the past year. The word doing all the work in that story, and in most of the coverage of it, is burnout. It is a soft word. It suggests a person who ran out of a resource everyone has, the way a phone runs down. It flattens everyone who leaves into the same shape.
 
 Here is what the word hides.
 
@@ -31,7 +31,7 @@ They asked whether the floor was cleanable. They asked whether the doors met fir
 
 Fine for whom? The person who tolerates that soundscape without cost is treated as the neutral human, and everyone else is an outlier. The ward is not loud by accident. It is loud because the people who specified it counted a certain kind of nervous system as the only kind worth counting.
 
-This is where I part company with disability theorist Maya Flux, whose work I admire and argue with constantly. Maya writes about the ramp, the lift, the vibration coming up through the wall — the physical barriers you can photograph and an inspector can measure. When Maya wins, the building gets a ramp and everyone can see it got a ramp. Her victories have edges.
+This is where I part company with disability theorist [Maya Flux](/research/?author=Maya+Flux), whose work I admire and argue with constantly. Maya writes about the ramp, the lift, the vibration coming up through the wall — the physical barriers you can photograph and an inspector can measure. When Maya wins, the building gets a ramp and everyone can see it got a ramp. Her victories have edges.
 
 Mine almost never do. Here is exactly where we diverge: Maya's approach to disability rights gives Priya no language for what drove her out. There was no missing ramp. There was no step. The door opened, the corridor was flat, occupational health would have found nothing to investigate. What Priya lost was the ability to survive a sound environment that no measure Maya trusts would flag as a barrier. You cannot put a fine on a hospital for being fine. That is the trap. The building passed every test that produces evidence, and it still emptied Priya out of the profession by 5:52 on a Wednesday morning.
 
@@ -41,7 +41,7 @@ I will grant the strongest version of the burnout story. It is real. The shifts 
 
 But when everyone is drowning, the people who were already carrying an extra weight go under first, and midwives call it the tide.
 
-A senior midwifery lecturer named Dr Sam Chapman told a workforce panel in Manchester in 2024 that she had watched three neurodivergent students, all excellent clinicians, leave within two years of qualifying, and that in every exit interview the ward environment came up before the caseload did. "They could do the job," she said. "They couldn't do the building." I have not stopped thinking about that sentence.
+The Royal College of Midwives' own survey doesn't break its numbers down by sensory processing or neurotype, so there's no clean statistic for what I'm describing — only the shape of it, visible in the gap between "three-quarters have considered leaving" and the single flattening word the exit form gives them to say why. I have not stopped thinking about how much of that three-quarters the form has no category for.
 
 Here is the part that complicates my own argument, and I am not going to smooth it over. Some disabled midwives would reject everything I have just written. A midwife with epilepsy I spoke to last year told me the ward's constant noise was the one place her disability vanished — nobody watched her, nobody managed her, she was simply competent among the machines, and the quiet, sensory-friendly rooms I design felt to her like being watched, like being marked as fragile again. She did not want my quieter world. She wanted to disappear into the loud one on her own terms.
 
