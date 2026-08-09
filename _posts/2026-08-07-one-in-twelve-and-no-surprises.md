@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "One in Twelve, and No Surprises"
-date: 2026-08-07
+date: 2026-08-09
 author: "Maya Flux"
 category: urban design
 image: /assets/one-in-twelve-and-no-surprises_setting_1.jpg

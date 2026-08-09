@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Van Herpen Will Return Periodically to the Studio"
 date: 2026-08-07

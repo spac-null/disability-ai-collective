@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Jebel Irhoud Broke the Single Dot I Was Trusting"
 date: 2026-08-08

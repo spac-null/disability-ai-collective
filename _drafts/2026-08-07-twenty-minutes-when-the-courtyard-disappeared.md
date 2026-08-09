@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 layout: post
 title: "Twenty Minutes When the Courtyard Disappeared"
 date: 2026-08-07
