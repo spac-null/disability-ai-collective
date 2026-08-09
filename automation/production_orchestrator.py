@@ -26,9 +26,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 from orchestrator.config import *  # noqa: F401,F403 — see orchestrator/config.py __all__
 from orchestrator import personas
 from orchestrator.debate import DebateMixin
+from orchestrator.images import ImagesMixin
 
 
-class ProductionOrchestrator(DebateMixin):
+class ProductionOrchestrator(DebateMixin, ImagesMixin):
     def __init__(self):
         self.repo_root = Path(__file__).parent.parent
         self.posts_dir = self.repo_root / "_posts"
@@ -2223,138 +2224,6 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
 **What would change in your work if you treated disability expertise as a starting point rather than an afterthought?**"""
 
-    def generate_images(self, content, slug, num_images=3, title=None, persona=None):
-        """Generate article images via OpenRouter (Recraft V4.1).
-
-        Three images per article:
-          {slug}_setting_1.jpg — confronting screen-print, 16:9 (hero)
-          {slug}_moment_2.jpg  — intimate gouache, 1:1 (body 40%)
-          {slug}_symbol_3.jpg  — abstract linocut, 1:1 (body 75%)
-
-        Requires OPENROUTER_API_KEY in environment.
-        Returns (image_filenames, image_descriptions).
-        Skips files that already exist (safe to re-run).
-        """
-        import os as _os
-        import time as _time
-        import pathlib as _pathlib
-        sys.path.insert(0, str(_pathlib.Path(__file__).parent))
-        try:
-            from gen_images import (
-                call_openrouter, save_image,
-                IMAGE_TYPES, ALT_TEMPLATES, build_summary, get_prompt,
-            )
-        except ImportError as e:
-            self.logger.error(f"Could not import gen_images: {e}")
-            return [], []
-
-        api_key = _os.environ.get("OPENROUTER_API_KEY", "")
-        if not api_key:
-            self.logger.error("OPENROUTER_API_KEY not set — skipping image generation")
-            return [], []
-
-        title_match = re.search(r'title:\s*["\']?([^"\'\n]+)["\']?', content)
-        title = title or (title_match.group(1).strip('"\'') if title_match else slug)
-
-        fm = {}
-        for line in content.splitlines():
-            if line == '---':
-                break
-            if ':' in line:
-                k, _, v = line.partition(':')
-                fm[k.strip()] = v.strip().strip('"\'')
-        fm.setdefault('title', title)
-        summary = build_summary(fm)
-        persona = persona or fm.get('author', '')
-
-        image_filenames = []
-        image_descriptions = []
-
-        for suffix, ratio, style_key in IMAGE_TYPES[:num_images]:
-            fname = f"{slug}_{suffix}.jpg"
-            dest = self.assets_dir / fname
-            alt = ALT_TEMPLATES[style_key].format(title=title)
-
-            if dest.exists():
-                self.logger.info(f"Image exists, skipping: {fname}")
-                image_filenames.append(fname)
-                image_descriptions.append(alt)
-                continue
-
-            # slug is required for get_prompt's deterministic per-article sub-style
-            # pick (gen_images._sub_style_index) — omitting it collapses the index to
-            # sum(ord(c) for c in persona) % 3, a per-persona CONSTANT, silently
-            # nullifying the "3 sub-styles per persona" feature (38b1535): every
-            # article from a given persona got the exact same sub-style.
-            prompt = get_prompt(style_key, persona, summary, slug)
-            self.logger.info(f"Generating {fname} via OpenRouter...")
-            try:
-                data = call_openrouter(prompt, ratio, "recraft/recraft-v4.1", api_key)
-                save_image(data, dest)
-                image_filenames.append(fname)
-                image_descriptions.append(alt)
-                self.logger.info(f"Generated {fname} ({len(data)//1024}KB)")
-            except Exception as e:
-                self.logger.error(f"Image generation failed for {fname}: {e}")
-            _time.sleep(1.5)
-
-        return image_filenames, image_descriptions
-
-    @staticmethod
-    def _pick_by_suffix(image_filenames, image_descriptions, suffix):
-        """Find the (filename, description) pair whose filename carries this suffix
-        (e.g. "_setting_1"), regardless of position in the list.
-
-        generate_images() only appends filenames for images that actually succeeded
-        — if generation partially fails, the list can be any subset in any order
-        (e.g. just [..._moment_2.jpg, ..._symbol_3.jpg] if setting_1 alone failed).
-        Code that indexed image_filenames[0]/[1]/[2] as if they were always
-        hero/40%/75% would silently promote the wrong image to hero and shift the
-        rest into the wrong body slots whenever one generation failed.
-        """
-        if not image_descriptions:
-            image_descriptions = [''] * len(image_filenames)
-        for i, fname in enumerate(image_filenames):
-            if suffix in fname:
-                return fname, (image_descriptions[i] if i < len(image_descriptions) else '')
-        return None, ''
-
-    def _insert_images_balanced(self, content, image_filenames, image_descriptions=None):
-        """Insert body images at ~40% and ~75% of article content.
-
-        _setting_1 = hero — already in frontmatter, not repeated here.
-        _moment_2  = inserted at ~40%, if present.
-        _symbol_3  = inserted at ~75%, if present.
-        Each looked up by filename suffix, not list position — see _pick_by_suffix.
-        """
-        moment_fname, moment_desc = self._pick_by_suffix(image_filenames, image_descriptions, '_moment_2')
-        symbol_fname, symbol_desc = self._pick_by_suffix(image_filenames, image_descriptions, '_symbol_3')
-        if not moment_fname and not symbol_fname:
-            return content
-
-        paragraphs = content.split('\n\n')
-        total = len(paragraphs)
-
-        def target_idx(pct):
-            idx = int(total * pct)
-            for offset in range(0, min(5, total - idx)):
-                p = paragraphs[idx + offset].strip()
-                if p and not p.startswith('#') and not p.startswith('!'):
-                    return idx + offset
-            return min(idx, total - 1)
-
-        inserts = []
-        if moment_fname:
-            inserts.append((target_idx(0.40), moment_fname, moment_desc))
-        if symbol_fname:
-            inserts.append((target_idx(0.75), symbol_fname, symbol_desc))
-
-        for idx, fname, desc in sorted(inserts, key=lambda t: t[0], reverse=True):
-            caption = f'\n<figcaption>{desc}</figcaption>' if desc else ''
-            img_tag = f'<figure class="article-figure">\n<img src="{{{{ site.baseurl }}}}/assets/{fname}" alt="{desc}" width="800" height="450" loading="lazy" decoding="async">{caption}\n</figure>'
-            paragraphs.insert(idx + 1, img_tag)
-
-        return '\n\n'.join(paragraphs)
 
     def inject_canonical_links(self, body: str) -> str:
         """Canonical fallback: inject verified URLs for known disability figures/orgs.
