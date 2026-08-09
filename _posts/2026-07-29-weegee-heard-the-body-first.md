@@ -18,7 +18,7 @@ She laughs, kindly, the way people do when they've decided you're being whimsica
 
 This month Dulwich hung its second-ever photography show and called it a portrait of the city across a hundred years. It featured major photographers including Alfred Stieglitz, Dorothea Lange, Saul Leiter, and Weegee. The wall text promises the definitive record of urban life.
 
-Here is the joke buried in the room, and nobody in it is laughing. Weegee — the pen name of Arthur Fellig, a tabloid photographer who became famous for capturing midnight crime scenes — did not find those bodies by looking. He found them by listening. He kept a police radio bolted into his car. In the boot he carried a darkroom, and he drove toward the sound of dispatch before the corpse was cold. The frame arrived last. The frame always arrives last.
+Here is the joke buried in the room, and nobody in it is laughing. Weegee — the pen name of Arthur Fellig, a tabloid photographer who became famous for capturing midnight crime scenes — did not find those bodies by looking. He found them by listening. He kept a police radio bolted into his car — in 1938, he became the only freelance photographer in New York permitted to carry one — and he drove toward the sound of dispatch before the corpse was cold. The frame arrived last. The frame always arrives last.
 
 The city Weegee photographed reached him as sound. The show built around him cannot picture a visitor who knows a city the same way.
 
