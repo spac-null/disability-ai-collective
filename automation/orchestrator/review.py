@@ -176,18 +176,21 @@ class ReviewMixin:
         }
 
     def _persist_review_signals(self, slug, agent_name, engagement_read,
-                                 shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending):
-        """Log _engagement_read's verdict and the 3 shadow checks' output to a
-        queryable table, added 2026-08-09 (audience-engagement tasklist item 2).
-        Before this, the only record was the _reviews/<slug>-review.md sidecar
-        — readable one file at a time, not queryable as a pattern ("does Zen
-        Circuit systematically get worse engagement-read verdicts than Maya
-        Flux" required opening dozens of files by hand). Writes to the same
-        automation/engagement.db that engagement_fetch.py writes real reader-
-        engagement data to (GoatCounter/GSC/Bluesky/Mastodon/Tumblr) — same
-        file, different table, so a future correlation between "did the judge
-        guess this was good" and "did readers actually stick around" is a
-        plain JOIN on slug, not a cross-database query.
+                                 shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
+                                 plan_follow_read=None):
+        """Log _engagement_read's verdict, the 3 shadow checks' output, and
+        (added 2026-08-09, Stage B of the anchor-architecture blueprint)
+        _plan_follow_read's verdict, to a queryable table (audience-
+        engagement tasklist item 2). Before this, the only record was the
+        _reviews/<slug>-review.md sidecar — readable one file at a time, not
+        queryable as a pattern ("does Zen Circuit systematically get worse
+        engagement-read verdicts than Maya Flux" required opening dozens of
+        files by hand). Writes to the same automation/engagement.db that
+        engagement_fetch.py writes real reader-engagement data to (GoatCounter/
+        GSC/Bluesky/Mastodon/Tumblr) — same file, different table, so a future
+        correlation between "did the judge guess this was good" and "did
+        readers actually stick around" is a plain JOIN on slug, not a
+        cross-database query.
 
         Never raises -- a failure here must never affect validate_article's
         own return value or block anything; this is pure logging."""
@@ -211,17 +214,25 @@ class ReviewMixin:
                         UNIQUE(slug, reviewed_at)
                     )
                 """)
+                # Migration-safe: the table already exists in production from a prior
+                # commit without this column. ALTER TABLE ADD COLUMN has no "IF NOT
+                # EXISTS" in SQLite -- catch the duplicate-column error instead.
+                try:
+                    conn.execute("ALTER TABLE review_signals ADD COLUMN plan_follow_read TEXT")
+                except sqlite3.OperationalError:
+                    pass  # column already exists
                 conn.execute(
                     "INSERT OR REPLACE INTO review_signals "
                     "(slug, agent, reviewed_at, engagement_verdict, shadow_bullet_hits, "
-                    "shadow_academic_jargon, shadow_corporate_cliches, shadow_truncated_ending) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                    "shadow_academic_jargon, shadow_corporate_cliches, shadow_truncated_ending, "
+                    "plan_follow_read) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         slug, agent_name, dt.now().strftime("%Y-%m-%d %H:%M:%S"),
                         engagement_read, len(shadow_bullet_hits),
                         json.dumps(shadow_word_hits.get("academic_jargon", [])),
                         json.dumps(shadow_word_hits.get("corporate_cliches", [])),
-                        shadow_truncated_ending,
+                        shadow_truncated_ending, plan_follow_read,
                     ),
                 )
                 conn.commit()
@@ -229,6 +240,118 @@ class ReviewMixin:
                 conn.close()
         except Exception as e:
             self.logger.warning("Review-signal persistence failed (non-fatal): %s", e)
+
+    def _load_article_plan(self, slug):
+        """Read back the _fable_editorial_brief JSON persisted by
+        _persist_article_plan (generate.py) for this slug, if any. Returns the
+        most recent plan dict, or None. None is the normal case for any
+        article generated before 2026-08-09 (Stage 0 of the anchor-
+        architecture blueprint) or whenever the brief itself failed that day —
+        _plan_follow_read below must treat every field as N/A when this
+        returns None, not skip the check silently in a way that could be
+        confused with 'checked and passed'."""
+        import sqlite3
+        try:
+            db_path = self.repo_root / "automation" / "engagement.db"
+            if not db_path.exists():
+                return None
+            conn = sqlite3.connect(db_path)
+            try:
+                row = conn.execute(
+                    "SELECT plan_json FROM article_plans WHERE slug = ? "
+                    "ORDER BY planned_at DESC LIMIT 1",
+                    (slug,),
+                ).fetchone()
+            finally:
+                conn.close()
+            if not row:
+                return None
+            return json.loads(row[0])
+        except Exception as e:
+            self.logger.warning("Article-plan lookup failed (non-fatal): %s", e)
+            return None
+
+    def _plan_follow_read(self, content, plan):
+        """SHADOW MODE, added 2026-08-09 — Stage B of the anchor-architecture
+        blueprint (see .claude/audience-engagement-tasklist.md and this
+        session's design-agent transcript). Do not promote before real
+        calibration data exists (see below) AND a minimum 6-week observation
+        window from whenever calibration passes.
+
+        Checks whether commitments _fable_editorial_brief made BEFORE writing
+        (opening_shape, correction_moment, resisting_example) were actually
+        executed in the finished article. These three fields are fed into the
+        writer prompt (generate.py) and have run daily for a long time —
+        NOTHING has ever verified any of them before this check. Deliberately
+        scoped to these 3 fields only: `anchor`/`anchor_returns`/`refrain`
+        don't exist as brief fields yet (that's Stage D, not built).
+
+        CALIBRATION STATUS, stated honestly rather than faked: this check's
+        own design calls for hand-labelling 20 real (article, plan) pairs and
+        requiring >=80% agreement with a human before trusting any number
+        from it. That data does not exist yet — _persist_article_plan
+        (generate.py) only started saving real plans today, so there is no
+        historical plan data to calibrate against; the fields existed and ran
+        for a long time, but their actual outputs were never recorded before
+        now. This check ships in shadow now so real (article, plan) pairs
+        start accumulating from today's generation runs forward — calibrate
+        once ~20 have accumulated, not before. Until then, treat every verdict
+        this produces as informal, not evidence for anything.
+
+        Never raises. Returns a string verdict or None on failure — same
+        contract as _engagement_read."""
+        try:
+            has_plan = bool(plan)
+            raw = self._call_openai_compat_api(
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
+                system_prompt=(
+                    "Before this article was written, an editor committed the writer to "
+                    "specific things. You are checking, strictly, whether each one actually "
+                    "happened on the page. You are not judging whether the article is good, "
+                    "well written, or correct — only whether it did what it said it would do.\n\n"
+                    "Be hard to satisfy. A commitment is EXECUTED only if you can quote the "
+                    "text that executes it. A commitment the article gestures at, implies, or "
+                    "half-does is NOT executed. If unsure, the answer is PARTIAL, not YES.\n\n"
+                    "Answer in exactly this format, EXACTLY one line per commitment, nothing "
+                    "else. Do not reconsider or output a field a second time -- decide once, "
+                    "commit to it, move on. If a decision is close, PARTIAL is always the "
+                    "right call, not a reason to write the field twice:\n"
+                    "CORRECTION: YES | PARTIAL | NO | N/A — is there a moment, in the past "
+                    "tense, before the midpoint, where the writer was wrong, stuck, or "
+                    "corrected by something they encountered, shown happening rather than "
+                    "stated? Quote it, max 15 words. A last-paragraph hedge is NO.\n"
+                    "RESISTING: YES | PARTIAL | NO | N/A — does the committed resisting "
+                    "example actually appear, standing unresolved? A hypothetical objection "
+                    "the writer voices and then answers is NO.\n"
+                    "OPENING_SHAPE: MATCH | MISMATCH | N/A — then, in a few words, the shape "
+                    "the article's actual first sentence is (plain claim, cold scene, "
+                    "question, fact, declaration of a hunt, or other)."
+                ),
+                user_prompt=(
+                    "WHAT THE EDITOR COMMITTED THE WRITER TO:\n"
+                    f"correction moment: {(plan or {}).get('correction_moment') or '(none committed — answer N/A)'}\n"
+                    f"resisting example: {(plan or {}).get('resisting_example') or '(none committed — answer N/A)'}\n"
+                    f"opening shape: {(plan or {}).get('opening_shape') or '(none committed — answer N/A)'}\n\n"
+                    "Anything marked '(none committed...)' is N/A — do not invent a commitment.\n\n"
+                    f"THE FINISHED ARTICLE:\n{content[:20000]}"
+                ) if has_plan else (
+                    "No plan was recorded for this article (generated before the plan-"
+                    "persistence fix, or the editorial brief failed that day). Answer N/A "
+                    "for every line — do not guess at what might have been planned.\n\n"
+                    f"THE FINISHED ARTICLE:\n{content[:20000]}"
+                ),
+                model="openrouter/claude-sonnet-4.6",
+                max_tokens=700,  # 300 wasn't enough -- confirmed via a real positive-control
+                                 # calibration run 2026-08-09: the model second-guessed itself
+                                 # on one field (emitted two lines before settling), burning
+                                 # its budget before ever reaching RESISTING/OPENING_SHAPE.
+                timeout=60,
+            )
+            return (raw or "").strip() or "(no response)"
+        except Exception as e:
+            self.logger.warning("Plan-follow read failed: %s", e)
+            return None
 
     def validate_article(self, content, article_file, slug, target_words=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
@@ -431,8 +554,16 @@ class ReviewMixin:
         shadow_bullet_hits = self._check_bullet_points_shadow(content)
         shadow_word_hits = self._check_forbidden_word_lists_shadow(content)
         shadow_truncated_ending = self._check_truncated_ending_shadow(content)
+
+        # Stage B of the anchor-architecture blueprint, 2026-08-09 — see
+        # _plan_follow_read's own docstring for calibration status (none yet;
+        # real (article, plan) pairs only start accumulating from today).
+        article_plan = self._load_article_plan(slug)
+        plan_follow_read = self._plan_follow_read(content, article_plan)
+
         self._persist_review_signals(slug, current_agent, engagement_read,
-                                      shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending)
+                                      shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
+                                      plan_follow_read)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -664,6 +795,16 @@ class ReviewMixin:
             f"- Forbidden corporate/journalese clichés: {len(shadow_word_hits['corporate_cliches'])} found"
             + ("" if not shadow_word_hits["corporate_cliches"] else " — " + ", ".join(shadow_word_hits["corporate_cliches"])),
             "- Ending looks truncated: " + ("YES — " + shadow_truncated_ending if shadow_truncated_ending else "no"),
+            "",
+            "## Plan-Follow Read (advisory, added 2026-08-09 — Stage B of the anchor-"
+            "architecture blueprint. NO CALIBRATION DATA YET — real (article, plan) pairs "
+            "only started accumulating today; treat this verdict as informal until ~20 have "
+            "built up and been checked against a human. Never blocks, never affects the "
+            "status above.)",
+            "Checks whether _fable_editorial_brief's pre-generation commitments "
+            "(correction_moment, resisting_example, opening_shape) were actually executed.",
+            plan_follow_read or "(plan-follow read unavailable this run, or no plan was "
+                                 "recorded for this article)",
             "",
             "## Web Fact-Check (quotes, studies, stats, events — live search)",
             *fact_check_lines,
