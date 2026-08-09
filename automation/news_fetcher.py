@@ -214,14 +214,38 @@ THEME_KEYWORDS = {
 }
 
 # Items mentioning these get a +0.3 boost — explicit disability lens
+# Added 2026-08-09 continuation, per an Opus review of this pipeline's weakest
+# link: the +0.3 boost below, on the original bare-word list, was empirically
+# a "welfare-administration journalism" detector, not a disability-lens
+# detector -- 74% of boosted items cleared get_news_seed's 0.4 gate vs 18% of
+# unboosted ones, and 48% of boosted items came from just 2 feeds (Disability
+# News Service + Guardian Society, the UK social-policy beat). This directly
+# contradicted the pipeline's own stated rule ("disability as lens, not
+# topic" -- _fable_editorial_brief, _fable_editorial_review) by rewarding
+# exactly the topic-not-lens framing the writer layer exists to avoid, and
+# starved Bregman-register material: all 4 canonical anchor pieces in
+# .claude/bregman-anchor-corpus.md Section 1 score 0.0 under this scorer,
+# below a Wired affiliate promo-code item at 0.675. Removed the four bare
+# single words responsible ("disability","disabled","barrier","accommodation"
+# -- the last two also false-positive on generic housing/negotiation stories
+# unrelated to disability); kept only multi-word/specific terms, consistent
+# with the whole-word-vs-substring lesson already documented on
+# _keyword_matches. Boost also halved (0.3 -> 0.15) so a genuine lens-match no
+# longer single-handedly clears the 0.4 selection gate on its own.
 DISABILITY_BOOSTERS = [
-    "disability","disabled","accessible","accessibility","wheelchair","deaf","blind",
+    "accessible","accessibility","wheelchair","deaf","blind",
     "autistic","neurodivergent","chronic illness","inclusive design","universal design",
-    "assistive","impairment","barrier","accommodation","sign language","braille",
+    "assistive","impairment","sign language","braille",
     "screen reader","caption","crip","spinal","mobility","invisible disability",
 ]
 
-# Theme → preferred persona for agent selection
+# Theme → preferred persona for agent selection.
+# DEAD COPY — kept only because it documents the intended assignments. Nothing
+# imports news_fetcher and nothing in this file reads this dict. The map the
+# pipeline actually uses at generation time is DiscoveryMixin._news_seed_to_agent
+# in automation/orchestrator/discovery.py; edit that one, and keep this in sync
+# or delete it. (508cc86 extended this copy alone, so the routing half of that
+# editorial shift silently never shipped.)
 THEME_TO_PERSONA = {
     "architecture":   "Pixel Nova",
     "art_culture":    "Pixel Nova",
@@ -488,7 +512,7 @@ def score_item(item: dict) -> tuple[float, list[str]]:
             theme_hits[theme] = hits
 
     base = min(sum(theme_hits.values()) / 8.0, 0.7) if theme_hits else 0.0
-    boost = 0.3 if any(_keyword_matches(text, words, kw) for kw in DISABILITY_BOOSTERS) else 0.0
+    boost = 0.15 if any(_keyword_matches(text, words, kw) for kw in DISABILITY_BOOSTERS) else 0.0
     matched = sorted(theme_hits, key=theme_hits.get, reverse=True)
     return round(min(base + boost, 1.0), 3), matched
 
@@ -634,7 +658,18 @@ def main():
         r'|dies? at \d+'          # implicit obituaries: "Dies at 86"
         r'|\|\s*(brief\s+)?letters?\b'   # Guardian "| Letters" / "| Brief letters"
         r'|letters? to the editor'
-        r'|\bshow hn:|\bask hn:|\btell hn:',  # Hacker News submissions
+        r'|\bshow hn:|\bask hn:|\btell hn:'   # Hacker News submissions
+        # Affiliate/commerce churn. _keyword_matches' comment above already noted
+        # "the daily top-10 LLM queue was full of promo codes" — whole-word matching
+        # fixed the false-positive keywords but not the items themselves, which score
+        # legitimately: "Barkbox Promo Codes and Discounts: Up to 50% Off" scores
+        # 0.675 and "Noom Promo Codes", "Peacock Promo Codes", "HBO Max Promo Code",
+        # "iRobot Promo Code", "Paramount+ Coupon Codes" all clear get_news_seed's
+        # 0.4 gate. 17 such items in a 755-seed sample, all from Wired, all eligible
+        # both for selection and for a paid Sonnet angle-extraction call.
+        r'|\bpromo code|\bcoupon code|\bdiscount code|\bpromo codes'
+        r'|\bbest deals\b|\bdeal of the day\b|\bbuying guide\b'
+        r'|\d+%\s*off\b|\$\d+\s*off\b',
         re.IGNORECASE,
     )
 

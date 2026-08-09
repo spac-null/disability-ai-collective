@@ -1018,7 +1018,25 @@ class DiscoveryMixin:
             self.logger.warning("Could not mark news seed as used: %s", e)
 
     def _news_seed_to_agent(self, themes: list) -> str:
-        """Map news seed themes to preferred persona."""
+        """Map news seed themes to preferred persona.
+
+        THIS is the live map — news_fetcher.py's module-level THEME_TO_PERSONA is
+        defined but never referenced by anything (verified: no import of
+        news_fetcher anywhere, no use inside news_fetcher itself). Commit 508cc86
+        ("shift discovery topic weighting per explicit editorial direction") added
+        the five new buckets to that dead copy only — it touched one file — so the
+        persona routing that shift was supposed to ship never took effect. Every
+        space_cosmos / philosophy / economy_finance / sustainability_ecology /
+        indigenous_tribal seed fell through to the `return "Maya Flux"` default
+        below, i.e. the cost-and-procurement policy persona got first refusal on
+        exactly the astronomy/anthropology/philosophy material the shift was meant
+        to steer toward Zen Circuit and Siri Sage. Assignments below are copied
+        verbatim from 508cc86's rationale, not re-derived.
+
+        Still unmapped and still defaulting to Maya Flux: "history_archive" (the
+        mythology/ritual/folklore bucket) and "behavioral_science". Neither map
+        ever had them; assigning them is an editorial call, left for the owner.
+        """
         _THEME_TO_PERSONA = {
             "architecture":   "Pixel Nova",
             "art_culture":    "Pixel Nova",
@@ -1028,6 +1046,11 @@ class DiscoveryMixin:
             "education":      "Siri Sage",
             "health_systems": "Maya Flux",
             "business_labor": "Maya Flux",
+            "philosophy":            "Zen Circuit",
+            "space_cosmos":          "Zen Circuit",
+            "economy_finance":       "Maya Flux",
+            "sustainability_ecology": "Maya Flux",
+            "indigenous_tribal":     "Siri Sage",
         }
         for theme in themes:
             if theme in _THEME_TO_PERSONA:
