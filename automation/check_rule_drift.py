@@ -110,6 +110,24 @@ EXPECTED_OCCURRENCES = {
         "a terse one-liner to match), and the writer generation prompt (already had "
         "this exact wording — confirmed, not touched).",
     ),
+    "meta-language-commentary-wired": (
+        "The word rolling appeared twice, both times as praise",
+        2,
+        "validate_article's RULES_SYSTEM R18 (added — this rule existed ONLY in "
+        "style_rules.py's registry with zero wiring anywhere in the actual "
+        "pipeline, despite being tagged stages={REVIEW, GENERATE}) and the writer "
+        "generation prompt (added). Not added to the blocking gate — registry "
+        "severity is ADVISORY, not BLOCKING, so this convergence matches the "
+        "registry's own stated intent rather than promoting it.",
+    ),
+    "stacked-temporal-clauses-wired": (
+        "after I'd checked my tire pressure and before I'd finished the plantains",
+        2,
+        "validate_article's RULES_SYSTEM R19 (added) and the writer generation "
+        "prompt (added) — same gap and same reasoning as "
+        "meta-language-commentary-wired above; both rules were registry-only "
+        "with zero real wiring until this fix.",
+    ),
 }
 
 

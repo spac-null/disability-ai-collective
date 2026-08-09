@@ -405,6 +405,16 @@ class ReviewMixin:
             "be grammatically plain-worded and still fail this way — check idea count, not just "
             "vocabulary. Do NOT flag a sentence with one main claim plus a short supporting detail "
             "that doesn't stand as its own separate assertion.\n\n"
+            "R18 META-LANGUAGE COMMENTARY — the sentence describes or analyzes how something was "
+            "phrased/worded (word frequency, word choice, tone-of-delivery) as its own observation, "
+            "rather than the writer simply stating the underlying fact in their own words. "
+            "'The word rolling appeared twice, both times as praise' is commentary ABOUT a word "
+            "instead of just using the word. Reads as clinical and distancing rather than direct.\n\n"
+            "R19 STACKED TEMPORAL CLAUSES — a scene-setting sentence uses two nested subordinate "
+            "clauses (typically 'after X and before Y') purely to indicate rough timing, rather "
+            "than a flat list or a single clean clause ('after I'd checked my tire pressure and "
+            "before I'd finished the plantains'). Hard to parse in one read even when each clause "
+            "alone is simple.\n\n"
             "Output format — one line per rule:\n"
             "[PASS] R1\n"
             "[FAIL] R2 — quote the violation (max 15 words)\n"
@@ -420,8 +430,8 @@ class ReviewMixin:
                 system_prompt=RULES_SYSTEM,
                 user_prompt=content,
                 model="openrouter/claude-sonnet-4.6",
-                max_tokens=1060,  # bumped from 1000 when R17 was added 2026-08-09 —
-                                  # same truncation risk noted at the GATE_SYSTEM call site.
+                max_tokens=1110,  # bumped from 1000->1060 when R17 was added, now ->1110 for
+                                  # R18/R19 — same truncation risk noted at the GATE_SYSTEM call site.
                 timeout=90,
             )
             rules_text = raw or ""
