@@ -169,3 +169,70 @@ The document's Dutch-specific lexical content (sections 1, 3-47: Dutch
 connective words, Dutch verb lists, Dutch sentence archetypes) doesn't transfer
 to this pipeline's English output and wasn't used — noted for completeness in
 case Dutch-language generation is ever added elsewhere in this project.
+
+## Section 5 — direct excerpt review, 2026-08-09 (publisher-licensed use confirmed for this repo)
+
+Triggered by a real reader complaint about a live article's opening sentence
+("A ramp is a promise the ground makes" — textbook inanimate-object-as-agent).
+Investigation found the rule that bans this had already fired correctly in
+the pre-commit gate and was overridden by an unrelated threshold (a single
+register violation didn't meet the 3-violations-needed bar — fixed separately,
+see production_orchestrator.py git log 2026-08-09). While diagnosing this, the
+site owner supplied three real excerpts directly for comparison, confirming
+two things the corpus already had right and surfacing two genuine gaps.
+
+**Sources supplied:** *De geschiedenis van de vooruitgang* / *Utopia for
+Realists*, ch. 1 opening ("De terugkeer van de utopie" / "Twee eeuwen van
+waanzinnige vooruitgang"); *Het water komt*, ch. 1 opening ("Beste
+landgenoot"). Both already represented in Section 1's source list; this
+entry adds specific technique findings the earlier pass didn't capture.
+
+**Confirmed, matching what's already logged above:**
+- The exact short-punch-sentence example already quoted in Section 1 ("Het
+  water. Het water staat te hoog.") is from this same chapter opening —
+  direct confirmation the earlier analysis was reading the real thing.
+- Verbatim-refrain repetition, confirmed a second time: the seven-word list
+  "arm, hongerig, bang, vies, dom, ziek en lelijk" (poor, hungry, afraid,
+  dirty, stupid, sick, ugly) opens the chapter and recurs word-for-word at
+  the chapter's close, unchanged.
+
+**Two genuine gaps found and fixed (see this same repo's git history,
+2026-08-09, for the actual rule-text patches — four duplicate LIST-length
+rule locations and three duplicate METAPHOR-FOR-MECHANISM rule locations):**
+
+1. **List length is earned, not flat-capped.** The "utopia" excerpt's second
+   paragraph lists nine items in one sentence — Columbus, Galileo, Newton,
+   the scientific revolution, the reformation, the enlightenment, gunpowder,
+   the printing press, the steam engine — immediately followed by the
+   punchline that income was still exactly what it had been six hundred
+   years earlier. This directly contradicts the flat "4+ items is always a
+   violation" rule that existed everywhere in this pipeline. The real
+   pattern: a long list is earned when the very next sentence cashes it in
+   with a payoff or reversal; a long list with nothing after it is still the
+   violation the rule was right to ban. (Confirming the cap's basic
+   instinct isn't wrong, either — the same excerpt elsewhere keeps a
+   national-character list to exactly four items: "lukt niet, mag niet, kan
+   niet" plus one more, no payoff sentence needed because it's not building
+   to a reversal.)
+
+2. **A metaphor inside a real quote is not the writer inventing an image.**
+   The "Het water komt" excerpt closes its opening section on a real letter
+   Johan van Veen wrote to a British friend after the 1953 flood: "Niet een
+   kameel, maar een hele kudde olifanten ging door het oog van de naald" —
+   not one camel, but a whole herd of elephants went through the eye of the
+   needle. That's figurative language, but it's a real, documented, directly
+   quoted sentence from a real historical person's real letter — not the
+   narrator reaching for an invented image to describe a mechanism, which is
+   what the METAPHOR FOR MECHANISM rule was actually built to catch. The
+   rule as written before this fix didn't distinguish the two cases and
+   would have flagged a persona correctly quoting a real source's own
+   metaphor. Fixed to exempt metaphors inside real, attributed quotes
+   specifically.
+
+**Process note:** both fixes came from a reader comparing a live article
+directly against real source text, not from testing against this corpus
+file's own summarized bullet points. The summarized rules are useful as an
+operational rule-of-thumb but are a lossy compression of the real thing —
+periodically re-checking the rules against fresh excerpts (as happened here)
+is how gaps like these get caught; the summary alone wouldn't have surfaced
+either one.
