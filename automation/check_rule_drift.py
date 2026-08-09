@@ -43,6 +43,20 @@ EXPECTED_OCCURRENCES = {
         "rewrite_with_opus rule 13, gate GATE_SYSTEM R8, validate_article "
         "RULES_SYSTEM R10, writer generation prompt's LISTS RUN TO THREE bullet",
     ),
+    "nominalization-rewrite-with-opus": (
+        "these are often verbs in disguise",
+        1,
+        "rewrite_with_opus rule 19 — converged to registry canonical text in the "
+        "/loop migration, 2026-08-09 (was independently worded before, no drift "
+        "risk from other copies since this phrase is unique to the registry's "
+        "current nominalization.imperative text).",
+    ),
+    "vague-we-rewrite-with-opus": (
+        "cut the word and make someone specific do the thing",
+        1,
+        "rewrite_with_opus rule 19b — converged to registry canonical text in the "
+        "/loop migration, 2026-08-09.",
+    ),
     "jargon-priority-locations": (
         "priority locations",
         2,
