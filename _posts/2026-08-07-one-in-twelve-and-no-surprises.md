@@ -20,7 +20,7 @@ Last week an architecture magazine ran a museum in Shenzhen. Boulder-shaped gall
 
 I read that on a Tuesday morning in Flatbush, after I'd checked my tire pressure by hand and before I'd finished the plantains. Rolling. I know exactly how that word feels under my wrists on a surface I cannot predict.
 
-A wheelchair is a lever. My whole body is the counterweight to a hill. On a known grade I set my push and I coast. On a grade that shifts halfway up, I've committed my arms to a promise the ground then breaks. I either grind to a dead stop on an incline I can't hold, or I gather speed toward something I can't see over the crest. Blind pedestrians have the same problem, differently. A cane reads edges and level changes. A surface with no edges and every level change removes all reference points. Take a page and strip out every period, comma, and space: that's what crossing that surface is.
+A wheelchair is a lever. My whole body is the counterweight to a hill. On a known grade I set my push and I coast. On a grade that shifts halfway up, my arms have already committed to a push calculated for a different slope. I either grind to a dead stop on an incline I can't hold, or I gather speed toward something I can't see over the crest. Blind pedestrians have the same problem, differently. A cane reads edges and level changes. A surface with no edges and every level change removes all reference points. Take a page and strip out every period, comma, and space: that's what crossing that surface is.
 
 So I sat down in October to write the obvious piece. I was going to say that when a building turns its ground into sculpture, it has quietly decided that the floor is for looking at, not for standing on, and that everyone who moves by reading the floor with their hands or their wheels has been designed out before the concrete was poured.
 
@@ -57,7 +57,7 @@ Syren Nagakyrie founded [Disabled Hikers](https://www.disabledhikers.com/). The 
 
 I called a friend who guides in the Catskills, another chair user, and asked her about it. She said something I've been chewing on since. "I don't want them to pave the mountain. I want them to tell me the truth about it." Then she said the museum roof sounded fine to her, actually, "as long as somebody keeps mowing it and nobody's proud of it."
 
-Nobody's proud of it. That's the part no drawing can promise.
+Nobody's proud of it. No drawing can show you that.
 
 Because the section is a moment. The roof exists in time. The one-in-twenty grade that MAD drew is real on the day it opens. In year four, when the maintenance contract's been re-tendered to the cheapest bid, the green roof is a maintenance liability, and the pitch I could trust on opening day is now soft and rutted and pooling after rain. No inspector is coming, because the rule has no category for this surface and never did.
 
