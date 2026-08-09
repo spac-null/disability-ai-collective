@@ -18,6 +18,58 @@ from .config import CLIPROXY_URL, CLIPROXY_KEY
 
 
 class ReviewMixin:
+    def _engagement_read(self, content, title, agent_name):
+        """A holistic 'would a real reader keep going' read — deliberately NOT a
+        mechanical rule check. Every other check in this pipeline (readability,
+        jargon, buried clauses, nominalization...) asks 'did this trip a known
+        failure pattern.' None of them ask the one question that actually
+        determines whether a piece is worth reading: is the underlying
+        observation interesting. Added 2026-08-09 per an explicit editorial
+        conversation about whether more mechanical rules make writing better —
+        conclusion was no: rules are a floor against confirmed failures, not a
+        ceiling that produces something worth a stranger's attention. This is a
+        first attempt at checking for the ceiling, not the floor.
+
+        Advisory only — logged to the review sidecar, never affects is_clean,
+        never blocks. No observation window exists yet for this kind of
+        subjective judgment the way there is for the mechanical rules; treat
+        its output as a data point to read, not a gate to enforce, until enough
+        real output accumulates to know if it's a signal worth acting on."""
+        try:
+            raw = self._call_openai_compat_api(
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
+                system_prompt=(
+                    "You are a sharp, busy reader scrolling on your phone. You have no "
+                    "obligation to finish anything. You've read a lot of good essays and "
+                    "you know good writing when you see it — not because it followed "
+                    "rules, but because it made you want to keep going.\n\n"
+                    "Read the article below once, the way a real reader would. Then "
+                    "answer, briefly, in exactly this format:\n"
+                    "VERDICT: would you actually finish this, or stop? If you'd stop, at "
+                    "roughly what point, and why?\n"
+                    "HOOK: what's the single most interesting, surprising, or true thing "
+                    "in this piece — the one observation that earns a stranger's time? If "
+                    "there isn't one, say so plainly — do not invent a hook that isn't "
+                    "really there.\n"
+                    "DRAG: what's the one thing most likely to make a reader put this "
+                    "down — not a grammar issue (that's checked elsewhere), a genuine "
+                    "'why should I care' problem.\n\n"
+                    "Do not evaluate grammar, sentence structure, jargon, or rule "
+                    "compliance — all of that is checked elsewhere in this pipeline. Only "
+                    "evaluate whether this specific piece is actually worth a stranger's "
+                    "attention, the way you'd judge anything you read outside of work."
+                ),
+                user_prompt=f"Title: {title}\nAuthor persona: {agent_name}\n\n{content[:6000]}",
+                model="openrouter/claude-sonnet-4.6",
+                max_tokens=300,
+                timeout=45,
+            )
+            return (raw or "").strip() or "(no response)"
+        except Exception as e:
+            self.logger.warning("Engagement read failed: %s", e)
+            return None
+
     def validate_article(self, content, article_file, slug, target_words=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
         import os, json, urllib.request as ureq
@@ -195,6 +247,8 @@ class ReviewMixin:
         fm_text_for_agent = article_file.read_text()
         agent_match = re.search(r'^author:\s*"([^"]*)"', fm_text_for_agent, re.MULTILINE)
         current_agent = agent_match.group(1) if agent_match else None
+        title_match = re.search(r'^title:\s*"?([^"\n]+)"?', fm_text_for_agent, re.MULTILINE)
+        article_title = title_match.group(1).strip() if title_match else article_file.stem
         if current_agent:
             fm_only_match = re.match(r'^(---\n.*?\n---\n)(.*)$', fm_text_for_agent, re.DOTALL)
             if fm_only_match:
@@ -206,6 +260,11 @@ class ReviewMixin:
                     content = new_persona_body
                     repair_note = f"{repair_note} {persona_note}" if repair_note else persona_note
                     self.logger.info("PERSONA CROSS-CITE REPAIR: %s — %s", article_file.name, persona_note)
+
+        # ── 1d. Engagement read (advisory, non-mechanical) ─────────────────
+        # See _engagement_read's own docstring. Runs on final content, after any
+        # persona-crosscite repair above, so it's judging what actually shipped.
+        engagement_read = self._engagement_read(content, article_title, current_agent)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -403,6 +462,13 @@ class ReviewMixin:
             f"# Article Review: {article_file.stem}",
             f"Generated: {dt.now().strftime('%Y-%m-%d %H:%M')}",
             f"Status: {'BLOCKED — fabricated quote/study' if contradicted else ('FLAGGED — stat/event needs human review' if advisory_flags else ('CLEAN' if is_clean else 'FLAGGED'))}",
+            "",
+            "## Engagement Read (advisory — not a rule check, not gated on)",
+            "Would a real reader actually finish this? Never blocks, never affects the",
+            "status above — logged as a data point, not enforced. See _engagement_read's",
+            "docstring in review.py for why this exists.",
+            "",
+            engagement_read or "(engagement read unavailable this run)",
             "",
             "## Web Fact-Check (quotes, studies, stats, events — live search)",
             *fact_check_lines,
