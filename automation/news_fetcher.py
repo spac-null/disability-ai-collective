@@ -134,6 +134,27 @@ QUALITY_FEEDS = [
 
 # ── Relevance scoring ─────────────────────────────────────────────────────────
 
+# Added 2026-08-09 continuation, explicit request: exclude the mental-health-
+# news-cycle beat (NHS service cuts, psychiatric ward conditions, crisis-care
+# policy) from discovery entirely. Scoped narrowly to multi-word news-genre
+# phrases, not single words like "mental" or "psychiatric" -- this only stops
+# an RSS item ABOUT the mental-health-policy beat from being picked as source
+# material; it does not touch what a persona can write about from their own
+# disability lens when it comes up naturally in an unrelated story (see
+# .claude/audience-engagement-tasklist.md's persona-identity guardrail for why
+# that distinction matters). Triggered by a real example: "Millions in England
+# face longer waits for mental health care as NHS providers plan cuts"
+# (Guardian Society) scored via the general health_systems bucket and became
+# a full article before this exclusion existed.
+MENTAL_HEALTH_NEWS_EXCLUDE = [
+    "mental health service", "mental health services", "mental health crisis",
+    "mental health trust", "mental health act", "mental health funding",
+    "mental health policy", "mental health ward", "mental health care",
+    "psychiatric ward", "psychiatric hospital", "psychiatric unit",
+    "psychiatric bed", "crisis care", "crisis line", "suicide prevention",
+    "sectioned under", "nhs mental health", "camhs", "inpatient psychiatric",
+]
+
 THEME_KEYWORDS = {
     "architecture":   ["architecture","building","design","urban","housing","planning",
                        "infrastructure","public space","construction","zoning","facade",
@@ -456,6 +477,8 @@ def _keyword_matches(text: str, words: set[str], keyword: str) -> bool:
 def score_item(item: dict) -> tuple[float, list[str]]:
     """Return (relevance_score 0-1, matched_themes list)."""
     text = f"{item['title']} {item.get('summary', '')}".lower()
+    if any(kw in text for kw in MENTAL_HEALTH_NEWS_EXCLUDE):
+        return 0.0, []
     words = set(re.findall(r"\b\w+\b", text))
 
     theme_hits: dict[str, int] = {}
