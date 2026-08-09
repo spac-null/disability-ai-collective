@@ -136,6 +136,19 @@ EXPECTED_OCCURRENCES = {
         "style_rules.py's own 'full' text, both of which already had these "
         "examples) and RULES_SYSTEM R7 (canonical, unchanged).",
     ),
+    "crafted-rhetoric-plain-comparison-exemption": (
+        "the room reads it like a spreadsheet",
+        3,
+        "gate GATE_SYSTEM R15 (canonical), validate_article RULES_SYSTEM R16 "
+        "(had the exemption's substance but not the worked example — added), "
+        "and the writer generation prompt (missing the ENTIRE exemption, not "
+        "just the example — a real behavior gap, not just judge-calibration: "
+        "without it the writer could over-correct and avoid all comparisons, "
+        "even harmless ones not doing rhetorical work — added). Distinct from "
+        "the already-tracked crafted-rhetoric-quote-exemption entry above, "
+        "which covers a different exemption (metaphors inside real quotes) on "
+        "the same rule.",
+    ),
 }
 
 
