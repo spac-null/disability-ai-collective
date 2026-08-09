@@ -3827,6 +3827,100 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 raw = raw[first_nl:].lstrip("\n")
         return raw, new_title
 
+    def _check_persona_crosscite_accuracy(self, body, current_agent):
+        """Catch a specific recurring failure mode found in a 2026-08-09 manual
+        audit: the generation prompt already instructs the writer NOT to
+        name-check another persona mid-argument ("Do NOT signpost it with a
+        name-check... Attribution by name belongs in the source note, not the
+        third paragraph" — see the cross_cite prompt block above), but the model
+        does it anyway in a meaningful fraction of drafts ("Here is where I part
+        from Maya Flux, a disability theorist..."). Because the writer isn't
+        given the other persona's actual canon in that moment, it invents a
+        plausible-sounding field, credential, location, or external website for
+        a colleague who is a real, canonical in-house persona with a real,
+        specific bio on this very site — e.g. Maya Flux (T6 spinal injury, urban
+        planning, Brooklyn) described as a generic "housing rights researcher"
+        with a fake mayaflux.com; Siri Sage (blind, acoustic culture, Amsterdam)
+        described as "a scholar who writes about AI and disability." This reads
+        to a reader (and to any later fact-check) exactly like fabricating
+        biographical details about a person, because from the outside a
+        cross-referenced house persona and an external real person are
+        indistinguishable prose.
+
+        This does not try to stop the name-check itself (the existing prompt
+        instruction already asks for that, and rephrasing it further is
+        unlikely to move a rate the instruction hasn't moved). Instead it
+        catches the specific harm: if another persona IS named in the body,
+        verify whatever is said about them against that persona's real,
+        canonical bio, and correct anything invented so it can't misdescribe a
+        real recurring byline the way today's audit found it doing. Internal
+        cross-references in the site's own `[Name](/research/?author=Name)`
+        format are correct and left untouched — only inaccurate prose
+        description or an external-looking URL for the mentioned persona
+        triggers a rewrite.
+
+        Returns (corrected_body_or_None, note_or_None).
+        """
+        # Exclude the closing "*This article was prompted by...*" source-note
+        # line from the scan -- that line legitimately names the source outlet,
+        # not another persona, and isn't where this failure mode occurs.
+        main_body = re.split(r'\n---\n\*This article was prompted by', body, maxsplit=1)[0]
+        mentioned = sorted(
+            name for name in _AGENT_SLUG
+            if name != current_agent and re.search(rf'\b{re.escape(name)}\b', main_body)
+        )
+        if not mentioned:
+            return None, None
+        canon_blocks = []
+        for name in mentioned:
+            canon = self._load_persona_canon(name)
+            if canon:
+                canon_blocks.append(f"### Real canon for {name} (ground truth -- do not contradict this)\n{canon}")
+        if not canon_blocks:
+            return None, None
+
+        system = (
+            "You are a copy editor for a disability-culture publication with several "
+            "recurring in-house personas (bylines). This draft, written in one "
+            "persona's voice, names one or more OTHER personas in its body prose. "
+            "Below is each mentioned persona's real, canonical bio.\n\n"
+            "Check whether the draft's description of the mentioned persona -- their "
+            "field, credentials, location, or any URL given for them -- matches their "
+            "real canon. Personas should only ever be cross-referenced via the site's "
+            "own internal link format '[Name](/research/?author=Name)' -- never given "
+            "an external URL, an invented institution, or an invented field that "
+            "isn't in their canon.\n\n"
+            "If every mentioned persona is described accurately to their canon, and "
+            "any link used for them is already the internal /research/?author= "
+            "format, return exactly: NO_CHANGE\n\n"
+            "Otherwise, rewrite ONLY the sentence(s) making the inaccurate claim so "
+            "the described field/credential/location matches the real canon exactly, "
+            "and convert any external-looking URL for that persona to the internal "
+            "link format. Do not invent NEW specifics to replace the wrong ones -- "
+            "use only what the canon actually says, or fall back to an unattributed "
+            "phrasing if the canon doesn't cover the specific claim being made. "
+            "Preserve everything else -- voice, structure, argument, all other "
+            "paragraphs, and every <figure>...</figure> HTML block character-for-"
+            "character -- exactly as written.\n\n"
+            "Return the complete corrected article body only -- no preamble, no "
+            "commentary."
+        )
+        user = "\n\n".join(canon_blocks) + f"\n\n### Current draft body\n{main_body}"
+        try:
+            raw = self._call_editorial_model(system, user, max_tokens=6000, timeout=120)
+        except Exception as e:
+            self.logger.warning("Persona cross-cite check failed: %s", e)
+            return None, None
+        if not raw or raw.strip() == "NO_CHANGE":
+            return None, None
+        if len(raw) < len(main_body) * 0.4:
+            self.logger.warning("Persona cross-cite repair returned too little content — keeping original")
+            return None, None
+        # Re-attach whatever followed main_body in the original (the source-note
+        # footer, if present) -- the model only ever saw/edited main_body.
+        suffix = body[len(main_body):]
+        return raw + suffix, f"Corrected cross-persona reference(s) to match canon: {', '.join(mentioned)}"
+
     def validate_article(self, content, article_file, slug, target_words=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit."""
         import os, json, urllib.request as ureq
@@ -3993,6 +4087,28 @@ keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metada
                 "FACT-CHECK ADVISORY (non-blocking): %s — %d stat(s)/event(s) flagged, needs human review",
                 article_file.name, len(advisory_flags)
             )
+
+        # ── 1c. Persona cross-cite accuracy ────────────────────────────────
+        # See _check_persona_crosscite_accuracy's docstring for why this exists:
+        # the writer prompt already says not to name-check another persona, but
+        # when it happens anyway the writer has no ground truth about that
+        # persona and invents one. Runs regardless of contradicted/advisory
+        # state above -- this is a separate failure mode from source-grounded
+        # fabrication.
+        fm_text_for_agent = article_file.read_text()
+        agent_match = re.search(r'^author:\s*"([^"]*)"', fm_text_for_agent, re.MULTILINE)
+        current_agent = agent_match.group(1) if agent_match else None
+        if current_agent:
+            fm_only_match = re.match(r'^(---\n.*?\n---\n)(.*)$', fm_text_for_agent, re.DOTALL)
+            if fm_only_match:
+                new_persona_body, persona_note = self._check_persona_crosscite_accuracy(
+                    fm_only_match.group(2), current_agent
+                )
+                if new_persona_body:
+                    article_file.write_text(fm_only_match.group(1) + new_persona_body)
+                    content = new_persona_body
+                    repair_note = f"{repair_note} {persona_note}" if repair_note else persona_note
+                    self.logger.info("PERSONA CROSS-CITE REPAIR: %s — %s", article_file.name, persona_note)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
