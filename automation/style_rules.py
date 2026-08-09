@@ -292,12 +292,18 @@ RULES = [
         ),
         exemptions=[
             "a metaphor just because it is figurative — a metaphor that lands in one read "
-            "and states the piece's own argument is doing its job, not failing this rule. "
-            "The test is whether a reader stalls, not whether the sentence uses "
-            "figurative language.",
+            "and states the piece's own argument ('her body is anecdote; a paper about her "
+            "body is evidence') is doing its job, not failing this rule. The test is "
+            "whether a reader stalls, not whether the sentence uses figurative language.",
         ],
         stages={Stage.REVIEW},
         severity=Severity.ADVISORY,
+        rationale="Registry's exemption text was a paraphrase missing the concrete worked "
+                  "example already present in the live RULES_SYSTEM R14 text (validate_article) "
+                  "— found 2026-08-09 during a wording-drift audit where the deployed code "
+                  "turned out to be ahead of the registry, the reverse of the usual direction "
+                  "of drift. Updated the registry to match; no runtime code changed since "
+                  "review.py already had the correct, complete text.",
         added="2026-08-01", last_verified="2026-08-09",
     ),
     Rule(
