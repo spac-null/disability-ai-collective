@@ -8,9 +8,16 @@ separate, higher-risk migration, tracked as an ongoing /loop task — see
 .claude/bregman-anchor-corpus.md Section 5 and this file's own git log for why a
 big-bang prompt rewrite was deliberately deferred). This is a read-only linter:
 it checks that the CONTENT of style_rules.py's canonical rule text is actually
-present, verbatim, everywhere it currently needs to be in
-automation/production_orchestrator.py — the same kind of check a human did by
-hand on 2026-08-09 to find the jargon-wordlist and metaphor-exemption drift.
+present, verbatim, everywhere it currently needs to be — the same kind of check
+a human did by hand on 2026-08-09 to find the jargon-wordlist and metaphor-
+exemption drift.
+
+Scans production_orchestrator.py AND every automation/orchestrator/*.py mixin
+module (updated 2026-08-09 when the module-split extraction moved GATE_SYSTEM
+out of production_orchestrator.py into orchestrator/gate.py — a rule-text
+location moving files is not the same as it disappearing, and this checker
+would have false-alarmed on every future extraction if it only ever looked at
+the original monolith).
 
 Exit code 0 = no drift found. Exit code 1 = drift found, prints exactly what's
 missing and where. Safe to run in a cron/CI step; makes no changes.
@@ -24,7 +31,9 @@ import re
 import sys
 from pathlib import Path
 
-ORCH_FILE = Path(__file__).parent / "production_orchestrator.py"
+AUTOMATION_DIR = Path(__file__).parent
+ORCH_FILE = AUTOMATION_DIR / "production_orchestrator.py"
+SCANNED_FILES = [ORCH_FILE] + sorted((AUTOMATION_DIR / "orchestrator").glob("*.py"))
 
 # Each entry: rule id -> (distinguishing phrase, expected minimum occurrence count,
 # human note on WHERE those occurrences currently live, so a failure is actionable).
@@ -106,8 +115,14 @@ def _flatten_adjacent_string_literals(text):
 
 
 def check():
-    raw = ORCH_FILE.read_text(encoding="utf-8")
-    text = _flatten_adjacent_string_literals(raw)
+    # Concatenated across all scanned files, not per-file — a rule's canonical
+    # phrase can legitimately live in production_orchestrator.py AND a mixin
+    # module post-extraction; EXPECTED_OCCURRENCES counts total occurrences
+    # across the whole codebase, not occurrences-per-file.
+    text = "".join(
+        _flatten_adjacent_string_literals(f.read_text(encoding="utf-8"))
+        for f in SCANNED_FILES
+    )
     problems = []
     for rule_id, (phrase, expected_min, where) in EXPECTED_OCCURRENCES.items():
         # Case-insensitive: the same term legitimately appears capitalized in one
@@ -132,7 +147,10 @@ def check():
             "identically across all copies in one commit)."
         )
         return 1
-    print(f"No drift found — checked {len(EXPECTED_OCCURRENCES)} known fix(es) against {ORCH_FILE.name}.")
+    print(
+        f"No drift found — checked {len(EXPECTED_OCCURRENCES)} known fix(es) against "
+        f"{len(SCANNED_FILES)} file(s): {', '.join(f.name for f in SCANNED_FILES)}."
+    )
     return 0
 
 
