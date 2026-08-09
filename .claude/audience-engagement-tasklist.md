@@ -142,12 +142,16 @@ only where relevant, no secret values ever read into this conversation):
   param — no OAuth1 signing needed for reading (posting still needs full
   OAuth1, unchanged). Tested against real live posts on the blog.
 
-**Open questions for you (down to one real one):**
-- Everything above is done and verified. The only thing left: OK to add
-  `engagement_fetch.py` to the daily cron (alongside `cripminds-daily.sh`,
-  probably once a day is enough since GoatCounter/GSC/social metrics all
-  accumulate slowly), or do you want to keep running it manually for a while
-  first before it becomes a permanent recurring job on the host?
+**ITEM 1 COMPLETE, 2026-08-09.** Scheduled on trident's crontab: daily 11:00,
+`git pull` + `python3 automation/engagement_fetch.py --days 90`, logging to
+`automation/engagement_fetch.log`. Installed via a diffed crontab swap
+(confirmed exactly 3 lines added, nothing else touched, then verified the
+installed crontab matches byte-for-byte). No more open questions on this
+item — it now runs unattended, accumulating real engagement data every day.
+Nothing reads this data back into generation decisions yet, per the
+observation-before-action discipline established for the shadow checks —
+that's a separate, later item once enough data exists (see the priority
+order at the top of this file).
   already on trident covers auth.
 **Decisions (2026-08-09):**
 - Build all three (GoatCounter, GSC, social) together — one schema, in one
