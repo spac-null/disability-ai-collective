@@ -27,9 +27,10 @@ from orchestrator.config import *  # noqa: F401,F403 — see orchestrator/config
 from orchestrator import personas
 from orchestrator.debate import DebateMixin
 from orchestrator.images import ImagesMixin
+from orchestrator.publish import PublishMixin
 
 
-class ProductionOrchestrator(DebateMixin, ImagesMixin):
+class ProductionOrchestrator(DebateMixin, ImagesMixin, PublishMixin):
     def __init__(self):
         self.repo_root = Path(__file__).parent.parent
         self.posts_dir = self.repo_root / "_posts"
@@ -2425,118 +2426,6 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                     return clean[:160].rsplit(" ", 1)[0] if len(clean) > 160 else clean
             return ""
 
-    def create_article_file(self, metadata, content, image_filenames, image_descriptions=None):
-        """Create properly formatted article file in _drafts/ (publish-best.py promotes to _posts/)."""
-        filename = metadata['filename']
-        filepath = self.drafts_dir / filename
-
-        excerpt = self._generate_card_excerpt(metadata['title'], content, metadata.get('author', ''))
-
-        _source_fields = ""
-        if metadata.get('source_url'):
-            _source_fields += f"\nsource_url: {json.dumps(str(metadata['source_url']))}"
-        if metadata.get('source_title'):
-            _source_fields += f"\nsource_title: {json.dumps(str(metadata['source_title']))}"
-        if metadata.get('source_outlet'):
-            _source_fields += f"\nsource_outlet: {json.dumps(str(metadata['source_outlet']))}"
-
-        _score_field = ""
-        if metadata.get('editorial_score') is not None:
-            _score_field = f"\ndraft_score: {metadata['editorial_score']}"
-
-        # Hero is _setting_1 by suffix, not image_filenames[0] by position — the
-        # list only contains whichever images actually succeeded, so if setting_1
-        # specifically failed, [0] would silently be a 1:1 body image used as the
-        # 16:9 hero. Fall back to whatever did generate, then to the site's
-        # existing generic OG card (default.png was referenced here but was never
-        # a real file in this repo — a guaranteed 404 the day all three fail).
-        hero_fname, hero_desc = self._pick_by_suffix(image_filenames, image_descriptions, '_setting_1')
-        if not hero_fname and image_filenames:
-            hero_fname = image_filenames[0]
-            hero_desc = image_descriptions[0] if image_descriptions else ''
-        if not hero_fname:
-            hero_fname, hero_desc = 'og-card.png', 'Crip Minds'
-
-        front_matter = f"""---
-layout: post
-title: {json.dumps(str(metadata['title']))}
-date: {metadata['date']}
-author: {json.dumps(str(metadata['author']))}
-category: {metadata['categories'][0].lower() if metadata['categories'] else 'research'}
-image: /assets/{hero_fname}
-image_alt: {json.dumps(hero_desc or 'Article illustration')}
-excerpt: {json.dumps(excerpt)}
-keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metadata.get('author', ''), metadata['categories']))}]{_source_fields}{_score_field}
----
-
-"""
-
-        # Insert body images at balanced positions (hero image[0] is frontmatter only)
-        body = self._insert_images_balanced(content, image_filenames, image_descriptions)
-        body = self.smart_inject_links(body)
-        body = self.inject_canonical_links(body)  # canonical fallback
-
-        # Append source note at end of article (not as excerpt/subtitle)
-        if metadata.get('source_note'):
-            body = body.rstrip() + '\n\n---\n\n' + metadata['source_note'] + '\n'
-
-        full_content = front_matter + body
-
-        with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(full_content)
-
-        self.logger.info(f"Article file created: {filepath}")
-        return filepath
-
-    def commit_to_git(self, article_file, image_filenames, review_file=None):
-        """Commit changes to git repository."""
-        try:
-            # Change to repo directory
-            os.chdir(self.repo_root)
-            
-            # Add files
-            if not article_file.exists():
-                raise FileNotFoundError(f"Article file missing before commit: {article_file}")
-            subprocess.run(['git', 'add', str(article_file)], check=True)
-            
-            # Add image files (if they exist)
-            for img in image_filenames:
-                img_path = self.assets_dir / img
-                if img_path.exists():
-                    subprocess.run(['git', 'add', str(img_path)], check=True)
-            if review_file and review_file.exists():
-                subprocess.run(['git', 'add', str(review_file)], check=True)
-            
-            # Commit
-            commit_msg = f"Add new article: {article_file.stem}"
-            subprocess.run(['git', 'commit', '-m', commit_msg], check=True)
-            
-            # Push (pull --rebase first to avoid rejection if remote diverged)
-            self._git_push_safe()
-
-            self.logger.info("Successfully committed and pushed to repository")
-            return True
-            
-        except subprocess.CalledProcessError as e:
-            self.logger.error(f"Git operation failed: {e}")
-            return False
-
-
-    def _git_push_safe(self, cwd=None):
-        """Pull --rebase before pushing to avoid rejection when remote has diverged."""
-        wd = str(cwd or self.repo_root)
-        stashed = False
-        try:
-            result = subprocess.run(['git', 'stash', '--include-untracked'], check=True, cwd=wd, capture_output=True, text=True)
-            stashed = 'No local changes' not in result.stdout
-            subprocess.run(['git', 'pull', '--rebase', 'origin', 'main'], check=True, cwd=wd)
-            if stashed:
-                subprocess.run(['git', 'stash', 'pop'], check=True, cwd=wd)
-            subprocess.run(['git', 'push', 'origin', 'main'], check=True, cwd=wd)
-        except subprocess.CalledProcessError as e:
-            if stashed:
-                subprocess.run(['git', 'stash', 'pop'], cwd=wd)
-            raise e
 
     def _check_article_type_compliance(self, content, article_type):
         """Check a draft against its assigned article_type's form rules.
