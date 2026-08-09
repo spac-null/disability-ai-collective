@@ -183,9 +183,15 @@ MENTAL_HEALTH_NEWS_EXCLUDE = [
 ]
 
 THEME_KEYWORDS = {
-    "architecture":   ["architecture","building","design","urban","housing","planning",
+    # "building"/"museum"/"gallery" removed 2026-08-10 (Opus review, Interaction
+    # A) -- confirmed real collateral: "Three men dead after west London
+    # building fire" cleared the selection gate purely on "building" at this
+    # bucket's x1.5 weight; museum/gallery duplicated art_culture, giving any
+    # ordinary gallery review an effective x2.5 (both buckets' weight summed).
+    # A weighted bucket needs higher-precision terms than an unweighted one did.
+    "architecture":   ["architecture","design","urban","housing","planning",
                        "infrastructure","public space","construction","zoning","facade",
-                       "interior","spatial","acoustics","museum","gallery","pavilion"],
+                       "interior","spatial","acoustics","pavilion"],
     "technology":     ["AI","algorithm","interface","software","digital","automation",
                        "robot","sensor","wearable","assistive","app","machine learning",
                        "neural","hardware","platform","code","computing","data"],
@@ -226,7 +232,12 @@ THEME_KEYWORDS = {
     "philosophy":     ["philosophy","philosopher","ethics","metaphysics","phenomenology",
                        "existential","epistemology","moral philosophy","logic",
                        "consciousness","free will","ontology"],
-    "space_cosmos":   ["space","galaxy","astronomy","NASA","telescope","planet","cosmos",
+    # bare "space" removed 2026-08-10 (Opus review, Interaction A) -- matched
+    # 14 items with no astronomy context at all ("Co-Working Meets Art at
+    # Brooklyn's Newest Experimental Space", a heatwave-alert story) and
+    # inflated their score at this bucket's x1.5 weight. The remaining terms
+    # are specific enough that this bucket doesn't need the generic word.
+    "space_cosmos":   ["galaxy","astronomy","NASA","telescope","planet","cosmos",
                        "universe","astrophysics","satellite","Mars","exoplanet","orbit",
                        "spacecraft"],
     "economy_finance": ["economy","economic","stocks","stock market","investment",
@@ -235,7 +246,11 @@ THEME_KEYWORDS = {
     "sustainability_ecology": ["sustainability","sustainable","climate","renewable",
                        "biodiversity","conservation","ecosystem","carbon","rewilding",
                        "deforestation","jungle","rainforest"],
-    "indigenous_tribal": ["indigenous","tribe","tribal","anthropology","ancestral",
+    # "ancestral" removed 2026-08-10 (Opus review, Interaction A) -- duplicated
+    # history_archive, giving any item hitting both an effective x3.0 (both
+    # buckets' x1.5 weight summed). This bucket's remaining terms are specific
+    # enough on their own.
+    "indigenous_tribal": ["indigenous","tribe","tribal","anthropology",
                        "oral tradition","elder","ceremony","first nations","aboriginal",
                        "ethnography"],
 }
@@ -561,13 +576,26 @@ THEME_WEIGHTS = {
 }
 
 
+# Added 2026-08-10, Opus review finding (the most severe of that review):
+# MENTAL_HEALTH_NEWS_EXCLUDE/POLICY_PROCESS_EXCLUDE ran globally on
+# title+summary, before theme scoring -- zeroing real, on-brief disability-
+# arts/history content that happened to mention an excluded phrase in
+# passing. Two confirmed real casualties from the live DB, both actually
+# published under the old rules: a Guardian Art & Design piece on a
+# disability-arts exhibition ("near death experiences, 'crip memes' and the
+# tyranny of the DWP") zeroed on "dwp"; a Leonora Carrington surrealist-art
+# piece zeroed on "psychiatric hospital" matching incidentally in the
+# summary. This directly falsified this file's own prior claim that no
+# published article would be blocked by either list. Exclusions now only
+# apply when the item's DOMINANT theme isn't one of these -- a genuine
+# welfare-beat story won't dominant-match art/architecture/history, so the
+# original mental-health/policy detection is unaffected.
+_EXCLUSION_PROTECTED_THEMES = {"art_culture", "architecture", "history_archive"}
+
+
 def score_item(item: dict) -> tuple[float, list[str]]:
     """Return (relevance_score 0-1, matched_themes list)."""
     text = f"{item['title']} {item.get('summary', '')}".lower()
-    if any(kw in text for kw in MENTAL_HEALTH_NEWS_EXCLUDE):
-        return 0.0, []
-    if any(kw in text for kw in POLICY_PROCESS_EXCLUDE):
-        return 0.0, []
     words = set(re.findall(r"\b\w+\b", text))
 
     theme_hits: dict[str, int] = {}
@@ -575,6 +603,13 @@ def score_item(item: dict) -> tuple[float, list[str]]:
         hits = sum(1 for kw in keywords if _keyword_matches(text, words, kw))
         if hits:
             theme_hits[theme] = hits
+
+    dominant = max(theme_hits, key=theme_hits.get) if theme_hits else None
+    if dominant not in _EXCLUSION_PROTECTED_THEMES:
+        if any(kw in text for kw in MENTAL_HEALTH_NEWS_EXCLUDE):
+            return 0.0, []
+        if any(kw in text for kw in POLICY_PROCESS_EXCLUDE):
+            return 0.0, []
 
     weighted_sum = sum(hits * THEME_WEIGHTS.get(theme, 1.0) for theme, hits in theme_hits.items())
     base = min(weighted_sum / 8.0, 0.7) if theme_hits else 0.0
@@ -608,7 +643,16 @@ def title_already_seen(conn, title: str, days: int = 7) -> bool:
 # ── LLM angle extraction ──────────────────────────────────────────────────────
 
 def extract_angle(title: str, summary: str, url: str) -> str | None:
-    """Ask Sonnet to find the hidden disability angle. Returns angle or None."""
+    """Ask Sonnet to find the hidden disability angle. Returns angle, or None
+    if the model genuinely found none.
+
+    Raises on network/API failure (added 2026-08-10, Opus review) instead of
+    swallowing it into the same None as a genuine "no angle" verdict. Before
+    this fix, a transient CLIProxy outage got recorded identically to "the
+    model said NONE" -- the caller then set angle_checked and never retried
+    that seed. ~10 seeds/day were being permanently lost this way to
+    ordinary transient failures. Callers must catch and retry, not treat an
+    exception as a verdict."""
     if not API_KEY:
         return None
 
@@ -642,24 +686,26 @@ def extract_angle(title: str, summary: str, url: str) -> str | None:
         ],
         "stream": False,
     }).encode()
-    try:
-        req = urllib.request.Request(
-            API_URL, data=payload,
-            headers={"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=30) as r:
-            resp = json.loads(r.read())
-        angle = resp["choices"][0]["message"]["content"].strip()
-        angle = re.sub(r"<think>.*?</think>", "", angle, flags=re.DOTALL).strip()
-        angle = re.sub(r"\*\*Pitch:\*\*\s*", "", angle).strip()
-        angle = re.sub(r"^\*\*", "", angle).strip()
-        if angle.upper().startswith("NONE") or len(angle) < 15:
-            return None
-        return angle
-    except Exception as e:
-        log(f"  LLM extraction failed: {e}")
+    req = urllib.request.Request(
+        API_URL, data=payload,
+        headers={"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"},
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=30) as r:
+        resp = json.loads(r.read())
+    angle = resp["choices"][0]["message"]["content"].strip()
+    angle = re.sub(r"<think>.*?</think>", "", angle, flags=re.DOTALL).strip()
+    angle = re.sub(r"\*\*Pitch:\*\*\s*", "", angle).strip()
+    angle = re.sub(r"^\*\*", "", angle).strip()
+    if angle.upper().startswith("NONE") or len(angle) < 15:
         return None
+    return angle
+
+
+# See extract_top_angles's docstring/comment for why this exists -- a cheap,
+# uncalibrated mitigation for score_item()'s structural blind spot, not a
+# substitute for the real fix (an LLM-judged angle-interest score).
+EXPLORATION_SLOTS = 2
 
 
 def extract_top_angles(conn, n: int = 10):
@@ -674,17 +720,53 @@ def extract_top_angles(conn, n: int = 10):
     # for it. Measured live: 31 unused angled seeds in the DB, only 3 actually
     # reachable by get_news_seed's cutoff.
     cutoff = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
-    rows = conn.execute("""
+    top_n = max(n - EXPLORATION_SLOTS, 0)
+    top_rows = conn.execute("""
         SELECT id, url, title, summary FROM news_seeds
         WHERE disability_angle IS NULL AND angle_checked IS NULL AND used = 0
               AND pub_date >= ?
         ORDER BY relevance_score DESC
         LIMIT ?
-    """, (cutoff, n)).fetchall()
+    """, (cutoff, top_n)).fetchall()
+
+    # Exploration slots, added 2026-08-10 -- mitigation for the discovery
+    # scorer's structural blind spot, not a fix for it (the real fix is an
+    # LLM-judged angle-interest score, still gated on real calibration
+    # examples). score_item() measures topic-keyword density, which is a
+    # DIFFERENT axis from narrative craft -- confirmed via the 4 canonical
+    # Bregman anchor pieces in .claude/bregman-anchor-corpus.md all scoring
+    # 0.0 (real material is low-keyword-density by construction: one
+    # concrete dated thing, plain vocabulary, no named framework). That
+    # means genuinely strong, sparse material can be filtered out before
+    # extract_angle -- the one point that actually reads full content
+    # instead of counting keywords -- ever sees it. A few random slots from
+    # outside the score-ranked top N give that material a chance at the
+    # real judgment, without needing any calibration data to do it.
+    top_ids = [r[0] for r in top_rows]
+    explore_rows = []
+    if EXPLORATION_SLOTS > 0:
+        placeholders = ",".join("?" * len(top_ids)) if top_ids else "''"
+        explore_rows = conn.execute(f"""
+            SELECT id, url, title, summary FROM news_seeds
+            WHERE disability_angle IS NULL AND angle_checked IS NULL AND used = 0
+                  AND pub_date >= ? AND id NOT IN ({placeholders})
+            ORDER BY RANDOM()
+            LIMIT ?
+        """, (cutoff, *top_ids, EXPLORATION_SLOTS)).fetchall()
+
+    rows = top_rows + explore_rows
     extracted = 0
     today = datetime.now().strftime("%Y-%m-%d")
     for seed_id, url, title, summary in rows:
-        angle = extract_angle(title, summary or "", url)
+        try:
+            angle = extract_angle(title, summary or "", url)
+        except Exception as e:
+            # Added 2026-08-10 (Opus review): do NOT set angle_checked here --
+            # a transient API failure is not a verdict. Leaving it NULL means
+            # this seed is retried on the next run instead of being
+            # permanently skipped, which is what happened before this fix.
+            log(f"  LLM extraction failed for {title[:50]}: {e} — will retry next run")
+            continue
         if angle:
             conn.execute(
                 "UPDATE news_seeds SET disability_angle = ?, angle_checked = ? WHERE id = ?",
@@ -699,7 +781,7 @@ def extract_top_angles(conn, n: int = 10):
             )
         conn.commit()
         time.sleep(0.5)
-    log(f"Angle extraction done: {extracted}/{len(rows)} got angles")
+    log(f"Angle extraction done: {extracted}/{len(rows)} got angles ({len(explore_rows)} exploration slots)")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -739,7 +821,13 @@ def main():
         re.IGNORECASE,
     )
 
-    source_counts: dict[str, int] = {}
+    # Score everything first, then sort by score before applying MAX_PER_SOURCE
+    # -- added 2026-08-10 (Opus review). The old order applied the per-source
+    # cap during iteration in feed order (i.e. recency), before any score
+    # comparison, so a high-volume feed's 8 slots went to whatever was newest
+    # regardless of score -- silently undoing tonight's weight/exclusion
+    # retuning for exactly the feeds that publish enough to hit the cap.
+    scored_items = []
     for item in raw_items:
         title = item.get("title", "")
         if BLOCKED_TITLE_PATTERNS.search(title):
@@ -749,12 +837,18 @@ def main():
         if score < MIN_SCORE:
             skipped_score += 1
             continue
+        item["relevance_score"] = score
+        item["themes"] = themes
+        scored_items.append(item)
+
+    scored_items.sort(key=lambda it: it["relevance_score"], reverse=True)
+
+    source_counts: dict[str, int] = {}
+    for item in scored_items:
         src = item["source_name"]
         if source_counts.get(src, 0) >= MAX_PER_SOURCE:
             skipped_score += 1
             continue
-        item["relevance_score"] = score
-        item["themes"] = themes
         if title_already_seen(conn, item["title"]):
             skipped_dupe += 1
             continue
