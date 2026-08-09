@@ -37,31 +37,61 @@ Register/length/article-type selection (`_REGISTERS`/`_LENGTHS`/`_ARTICLE_TYPES`
 in `config.py`) are fixed weighted-random numbers, never adjusted by outcome.
 The system publishes into a void.
 
-**Proposed plan:**
-- Build a small fetch job (own script or a `link_audit`-style method) that pulls
-  current Bluesky like/repost/reply counts for posts from the last N days via
-  the AT Protocol API (no auth needed for public post metrics, I believe —
-  needs verifying).
-- New DB table (`disability_findings.db` or a new dedicated one): article slug,
-  persona, register, length, article_type, topic theme, post date, and a
-  snapshot of engagement numbers at fetch time (metrics change over days, so
-  probably want a few snapshots per article, not just one).
+**Confirmed 2026-08-09, this is better than either of us assumed going in.**
+Real analytics infrastructure already exists — just never wired into the
+pipeline:
+- **GoatCounter**, self-hosted at `stats.cripminds.com` (`_layouts/default.html`
+  line 355). Already firing real custom events: per-article scroll-depth
+  tracking (`scroll-25%`, `scroll-50%`, etc. — a genuinely better "did someone
+  actually read this" signal than raw pageviews) and homepage
+  section-reach/click events. Confirmed by reading the actual script tags —
+  this was NOT the Google Analytics either of us first guessed.
+- **Google Search Console** — real, actively used (a past session resolved a
+  GSC indexing question, see project memory `cripminds-gsc-continuation`).
+  Gives search query/impression/click/CTR data per URL — a different, also
+  valuable signal (does the *headline* make people click from search results).
+- **Zero wiring into `automation/` for either** — confirmed via a repo-wide
+  grep for "goatcounter"/"analytics" outside the HTML templates: no hits.
+
+**Revised plan, now concrete instead of speculative:**
+- GoatCounter exposes a stats API (self-hosted instance, needs an API token —
+  check `/srv/secrets/` on trident for whether one already exists from manual
+  dashboard use, or generate one in the GoatCounter admin UI). Pull per-path
+  pageviews + scroll-depth event counts for recent articles on a schedule.
+- GSC has a Search Analytics API (needs a Google Cloud service account or
+  OAuth — check if one already exists for the prior GSC investigation before
+  setting up a new one). Pull per-URL impressions/clicks/CTR.
+- New DB table: article slug, persona, register, length, article_type, topic
+  theme, post date, GoatCounter pageviews + scroll-depth-50%+ rate, GSC
+  impressions/clicks/CTR — a few snapshots per article over time, not just one
+  (both metrics accumulate for days/weeks after publish).
 - Run on a schedule (daily cron, alongside `cripminds-daily.sh`).
 - **Do NOT wire this into anything that changes generation behavior yet** —
   pure data collection first, same observation-before-action discipline as the
   shadow checks. Behavior changes come after enough data exists to trust a
   correlation, which is weeks away no matter what.
 
+**Confirmed 2026-08-09 (from you): all three social platforms are live and in
+scope** — Bluesky, Mastodon, and Tumblr (the "gallery" one, image-forward).
+All three already have posting wired (`post_to_bluesky`/`post_to_mastodon`/
+`post_to_tumblr` in `social.py`) and URIs stored for retraction — same
+zero-feedback-loop gap as described above, just three channels instead of
+one. Revised table plan: same schema as above, plus per-platform
+like/repost/reply/favorite counts (each platform's API differs — Bluesky via
+AT Protocol, Mastodon via its REST API, Tumblr via its API — three small
+fetchers instead of one, same shape).
+
 **Open questions for you:**
-- Does cripminds.com have any page-view analytics (Google Analytics, Plausible,
-  GitHub Pages' own insights, anything)? Bluesky engagement is one signal but
-  people reading the actual article is the one that matters most, and I don't
-  know if that's currently tracked anywhere at all.
-- Bluesky is the channel with auto-posting already wired (`post_to_bluesky`) —
-  is it also the channel you care most about, or do Mastodon/Tumblr numbers
-  matter equally?
-- Any privacy/ToS concern with polling Bluesky's public metrics on a schedule
-  I should know about before building this?
+- Do you already have a GoatCounter API token from manual dashboard use, or
+  does one need generating? Same question for GSC API access (existing
+  service account/OAuth credential vs. needs setting up), and for each
+  platform's API auth (Bluesky/Mastodon/Tumblr credentials already exist in
+  `/srv/secrets/openclaw.env` for posting — need to check if those same
+  credentials are sufficient for reading back engagement metrics, or if
+  read-scope needs adding).
+- Scroll-depth (did they read it), search CTR (did the headline earn a
+  click), and social engagement (did it spread) are three different signals —
+  equally important to you, or is one the real priority to get right first?
 
 ---
 
@@ -111,15 +141,45 @@ a great one; it can only make a mediocre draft slightly less mediocre.
   synthesize or select. Highest ceiling, highest cost, most complex to build
   and debug on a live pipeline.
 
-I'd start with (a) — cheapest, lowest risk, tests whether "pick the better
-opening" actually produces noticeably better pieces before spending more.
+**Decision (2026-08-09): going straight to (b) — full 2-draft generation.**
+Skipping the cheaper opening-only prototype; testing the real ceiling question
+directly.
+
+**Concrete design for (b):**
+- In `_run_production_automation_locked` (`generate.py`): after building the
+  ~150-line generation prompt (unchanged), call the writer LLM twice — same
+  prompt, relying on sampling temperature for divergence, OR add one line
+  telling candidate B to "take a different angle than the obvious first
+  instinct" for a more reliable difference (needs deciding — pure temperature
+  variance may not diverge enough to matter).
+- New comparative judge step: a dedicated prompt showing both full drafts side
+  by side, asking which one a real reader would rather keep reading and why —
+  distinct from `_engagement_read` (which judges one piece in isolation, no
+  comparison). Could either build this fresh or extend `_engagement_read` to
+  optionally take two candidates; fresh is probably cleaner since "judge A vs
+  B" and "judge one piece" are different enough prompts.
+- Keep the winning draft, discard the loser entirely (do not try to merge/
+  graft — that's real complexity for a first version; a straight pick is
+  simpler and testable).
+- The winning draft proceeds through the existing pipeline unchanged (gate,
+  images, publish) — this only touches the generation step.
+- Cost: roughly doubles the main writer-generation call's cost, plus one
+  judge call. Latency: the two generation calls can run in parallel; the
+  pipeline's daily 09:00 cron has no tight downstream time budget I'm aware
+  of, so added latency is likely fine, but worth confirming nothing else waits
+  on this cron slot finishing by a specific time.
 
 **Open questions for you:**
-- What's an acceptable cost/latency increase? The pipeline currently runs once
-  daily at 09:00 with no tight time budget I know of, but I don't know your
-  actual API cost tolerance.
-- Want to prototype (a) first and evaluate before committing to (b) or (c), or
-  do you already have a strong intuition this needs the bigger swing?
+- For candidate divergence: rely on temperature alone, or explicitly instruct
+  candidate B toward a different angle? The latter is more reliable but is
+  itself a design choice about what "different" should mean.
+- Should the losing draft be discarded silently, or logged somewhere (e.g. to
+  the review sidecar) so you can eyeball whether the judge's picks actually
+  seem right, the way the shadow checks are being eyeballed now?
+- Want this to ship straight to the live daily pipeline once built, or run in
+  shadow mode first (generate 2, judge, but still publish whichever the
+  *current* single-generation path would have produced) so you can compare
+  judge picks against actual outcomes before trusting the judge's taste?
 
 ---
 
