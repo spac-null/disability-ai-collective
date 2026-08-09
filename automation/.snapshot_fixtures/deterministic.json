@@ -24,6 +24,9 @@
       "words": 922
     },
     "shadow_bullet_hits": [],
+    "shadow_seam_hits": [
+      "here is where i"
+    ],
     "shadow_truncated_ending": null,
     "shadow_word_hits": {
       "academic_jargon": [],
@@ -44,6 +47,7 @@
       "words": 507
     },
     "shadow_bullet_hits": [],
+    "shadow_seam_hits": [],
     "shadow_truncated_ending": null,
     "shadow_word_hits": {
       "academic_jargon": [],
@@ -66,6 +70,7 @@
       "words": 1204
     },
     "shadow_bullet_hits": [],
+    "shadow_seam_hits": [],
     "shadow_truncated_ending": null,
     "shadow_word_hits": {
       "academic_jargon": [],
@@ -85,6 +90,9 @@
       "words": 644
     },
     "shadow_bullet_hits": [],
+    "shadow_seam_hits": [
+      "here is where i"
+    ],
     "shadow_truncated_ending": null,
     "shadow_word_hits": {
       "academic_jargon": [],
@@ -109,6 +117,7 @@
       "words": 1423
     },
     "shadow_bullet_hits": [],
+    "shadow_seam_hits": [],
     "shadow_truncated_ending": null,
     "shadow_word_hits": {
       "academic_jargon": [],
@@ -126,6 +135,7 @@
       "words": 1523
     },
     "shadow_bullet_hits": [],
+    "shadow_seam_hits": [],
     "shadow_truncated_ending": null,
     "shadow_word_hits": {
       "academic_jargon": [],

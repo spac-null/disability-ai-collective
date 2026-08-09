@@ -152,6 +152,40 @@ class ReviewMixin:
             return last_line[-150:]
         return None
 
+    _SEAM_PHRASES = [
+        "as i said", "as i mentioned", "to return to", "returning to",
+        "this brings me back", "brings us back", "coming back to",
+        "as noted above", "as noted earlier", "here is where i", "here's where i",
+        "let me come back", "let me return", "back to the", "again, the",
+        "which brings me to", "which brings us to", "as i noted",
+    ]
+
+    @classmethod
+    def _check_seam_shadow(cls, content):
+        """SHADOW MODE, added 2026-08-09 — Stage C of the anchor-architecture
+        blueprint (see .claude/audience-engagement-tasklist.md). Do not
+        promote before 2026-08-23 at the earliest, and only with real
+        false-positive data in hand.
+
+        Deterministic detector for a specific failure mode: a sentence that
+        ANNOUNCES a callback to earlier material ('as I said', 'to return
+        to', 'this brings me back') instead of just making the callback. This
+        is the instrument for a risk identified before it exists in this
+        pipeline: if a future anchor/refrain instruction (Stage D/E, not yet
+        built) asks the writer to return to something, the predictable
+        failure mode is the writer announcing the seam instead of writing
+        through it — 'nothing detects that today because nothing has ever
+        asked for a return before.' Built now, in shadow, specifically so the
+        instrument exists BEFORE the mechanism that could trigger it ships.
+        Deliberately narrower than general transition signposting (this
+        pipeline's writer prompt already sanctions some transition phrases
+        elsewhere — 'Now comes the strange part.' — that is a different,
+        allowed device; this check targets only the callback-announcing
+        pattern, not transitions in general). Case-insensitive substring
+        match. Returns list of matched phrases (empty if none)."""
+        body = re.sub(r'^---.*?---', '', content, flags=re.DOTALL).lower()
+        return [p for p in cls._SEAM_PHRASES if p in body]
+
     @classmethod
     def _check_forbidden_word_lists_shadow(cls, content):
         """SHADOW MODE, added 2026-08-09 — do not promote before 2026-08-23 at the
@@ -177,8 +211,8 @@ class ReviewMixin:
 
     def _persist_review_signals(self, slug, agent_name, engagement_read,
                                  shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
-                                 plan_follow_read=None):
-        """Log _engagement_read's verdict, the 3 shadow checks' output, and
+                                 plan_follow_read=None, shadow_seam_hits=None):
+        """Log _engagement_read's verdict, the 4 shadow checks' output, and
         (added 2026-08-09, Stage B of the anchor-architecture blueprint)
         _plan_follow_read's verdict, to a queryable table (audience-
         engagement tasklist item 2). Before this, the only record was the
@@ -217,22 +251,24 @@ class ReviewMixin:
                 # Migration-safe: the table already exists in production from a prior
                 # commit without this column. ALTER TABLE ADD COLUMN has no "IF NOT
                 # EXISTS" in SQLite -- catch the duplicate-column error instead.
-                try:
-                    conn.execute("ALTER TABLE review_signals ADD COLUMN plan_follow_read TEXT")
-                except sqlite3.OperationalError:
-                    pass  # column already exists
+                for _col in ("plan_follow_read TEXT", "shadow_seam_hits TEXT"):
+                    try:
+                        conn.execute(f"ALTER TABLE review_signals ADD COLUMN {_col}")
+                    except sqlite3.OperationalError:
+                        pass  # column already exists
                 conn.execute(
                     "INSERT OR REPLACE INTO review_signals "
                     "(slug, agent, reviewed_at, engagement_verdict, shadow_bullet_hits, "
                     "shadow_academic_jargon, shadow_corporate_cliches, shadow_truncated_ending, "
-                    "plan_follow_read) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "plan_follow_read, shadow_seam_hits) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         slug, agent_name, dt.now().strftime("%Y-%m-%d %H:%M:%S"),
                         engagement_read, len(shadow_bullet_hits),
                         json.dumps(shadow_word_hits.get("academic_jargon", [])),
                         json.dumps(shadow_word_hits.get("corporate_cliches", [])),
                         shadow_truncated_ending, plan_follow_read,
+                        json.dumps(shadow_seam_hits or []),
                     ),
                 )
                 conn.commit()
@@ -554,6 +590,7 @@ class ReviewMixin:
         shadow_bullet_hits = self._check_bullet_points_shadow(content)
         shadow_word_hits = self._check_forbidden_word_lists_shadow(content)
         shadow_truncated_ending = self._check_truncated_ending_shadow(content)
+        shadow_seam_hits = self._check_seam_shadow(content)
 
         # Stage B of the anchor-architecture blueprint, 2026-08-09 — see
         # _plan_follow_read's own docstring for calibration status (none yet;
@@ -563,7 +600,7 @@ class ReviewMixin:
 
         self._persist_review_signals(slug, current_agent, engagement_read,
                                       shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
-                                      plan_follow_read)
+                                      plan_follow_read, shadow_seam_hits)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -795,6 +832,8 @@ class ReviewMixin:
             f"- Forbidden corporate/journalese clichés: {len(shadow_word_hits['corporate_cliches'])} found"
             + ("" if not shadow_word_hits["corporate_cliches"] else " — " + ", ".join(shadow_word_hits["corporate_cliches"])),
             "- Ending looks truncated: " + ("YES — " + shadow_truncated_ending if shadow_truncated_ending else "no"),
+            f"- Seam phrases (announcing a callback instead of just making it): {len(shadow_seam_hits)} found"
+            + ("" if not shadow_seam_hits else " — " + ", ".join(shadow_seam_hits)),
             "",
             "## Plan-Follow Read (advisory, added 2026-08-09 — Stage B of the anchor-"
             "architecture blueprint. NO CALIBRATION DATA YET — real (article, plan) pairs "
