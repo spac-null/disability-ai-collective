@@ -293,7 +293,20 @@ instead of re-reading `_reviews/*.md` files by hand.
 
 ---
 
-## 3. Judge-panel / multi-candidate generation
+## 3. Judge-panel / multi-candidate generation — DELIBERATELY DEFERRED, NOT BUILT
+
+**STATUS, made explicit 2026-08-10 after a reconciliation check caught this
+item had no status marker at all (every other item does) and could easily
+get silently read as "handled" by a future skim.** Option (b) was decided
+in principle on 2026-08-09 (see "Decisions" below) but the two-draft
+generation code itself was never written — the session's attention moved
+to the Bregman close-read instead, which produced the whole anchor-
+architecture blueprint (Stages A-E below) and, separately, the discovery-
+side category-jump judge (item 4). Neither of those retroactively builds
+this. Revisit only after the upstream premise/anchor experiments (item 4's
+category-jump calibration, anchor Stage B) have real evidence — building
+a judge panel on top of an unvalidated angle-selection mechanism would be
+premature.
 
 **The problem:** the gate's own validated test data (see the comment in
 `gate.py` around the register-violation escalation logic, from a real
@@ -470,7 +483,14 @@ wheelchair users" names harm; "a feature meant to speed passenger flow
 strands one kind of passenger" reveals the system's actual optimization
 target.
 
-**Stage 1 (category-jump judge) — BUILT, shipped in shadow mode,
+**Naming note, added 2026-08-10 after a reconciliation check flagged this:**
+this section's "Stage 1"/"Stage 2" are renamed **CJ-1/CJ-2** (category-jump
+1/2) below, to stop colliding with the UNRELATED anchor-architecture
+Stages A-E above (and an even older "Stage 1 plan-then-write" reference in
+this file's Addendum, from before that work was renumbered Stage 0). Same
+mechanisms, same decisions — naming only.
+
+**CJ-1 (category-jump judge) — BUILT, shipped in shadow mode,
 2026-08-10.** `category_jump_judge()` (`automation/news_fetcher.py`) runs
 on the same candidates `extract_angle()` already processes, returns a
 structured verdict (decision, ostensible_category, resisting_detail,
@@ -500,7 +520,7 @@ Real first-batch results, then corrected after live calibration feedback:
 
 **Sampler decoupled from real selection, 2026-08-10, second calibration
 round.** Judging only `extract_angle`'s keyword-scored top-10 would
-re-import the exact problem Stage 1 exists to escape. `sample_shadow_
+re-import the exact problem CJ-1 exists to escape. `sample_shadow_
 candidates`/`run_category_jump_shadow` now sample independently — a fixed,
 NOT-tuned-by-early-results 3-lane split (~30% `keyword_top`, ~30%
 `keyword_low` — genuinely lowest-scoring, not merely "outside the top 10"
@@ -519,7 +539,7 @@ lesson as the max_tokens bug above). Verified end-to-end on trident: 3
 real judgments, one per lane, all fields populated correctly.
 
 The question this now lets the shadow window actually answer, per the
-calibration source: not just "does Stage 1 work" but *where do the real
+calibration source: not just "does CJ-1 work" but *where do the real
 YESes come from* — if `keyword_top` produces more YESes but calibration
 prefers the ones found in `keyword_low`/`broad_random`, that's a much
 sharper diagnosis than "keywords bad": it means the old scorer selects
@@ -530,26 +550,26 @@ publication actually wants.
 basic experiment works** (do not build before then): mechanism-fingerprint
 fields (surface_object/hidden_action/hidden_function, to make the
 "grand-theory sink" false-positive checkable in the data), bridge-strength
-self-report (DIRECT/IMPLIED/SPECULATIVE), retry logic, Stage 2, novelty/
+self-report (DIRECT/IMPLIED/SPECULATIVE), retry logic, CJ-2, novelty/
 familiarity judging. Resist touching the judge prompt again until then —
 "you now have enough instrumentation to learn from the system instead of
 continuing to design it theoretically."
 
-**Stage 2 (persona-specific reframe) — DESIGNED, NOT BUILT.** Deliberately
-asymmetric from Stage 1: Stage 1 asks "is there something objectively
-strange here"; Stage 2 asks "does this persona's specific embodied lens
-reveal something *additional* about that strangeness" — given the Stage 1
+**CJ-2 (persona-specific reframe) — DESIGNED, NOT BUILT.** Deliberately
+asymmetric from CJ-1: CJ-1 asks "is there something objectively
+strange here"; CJ-2 asks "does this persona's specific embodied lens
+reveal something *additional* about that strangeness" — given the CJ-1
 jump as a hypothesis to interrogate, not independently re-derived per
 persona (avoids recreating the original keyword-density problem four
 times over, with personas as motivated reasoners manufacturing relevance).
-Stage 2 needs its own NO: a real category jump can exist with nothing
+CJ-2 needs its own NO: a real category jump can exist with nothing
 distinctive for any of the four personas to add. Operational test: "if I
 removed the persona's disability from the argument, would substantially
-the same essay remain? If yes, Stage 2 fails." Full prompt drafted (system
+the same essay remain? If yes, CJ-2 fails." Full prompt drafted (system
 prompt + 6-test structure + JSON schema), run independently once per
 persona (4x), article survives if at least one persona produces a strong
 YES. Held deliberately — bigger, separate decision, not built until
-Stage 1's shadow data confirms the anomaly-detection gate itself works.
+CJ-1's shadow data confirms the anomaly-detection gate itself works.
 
 **False-positive taxonomy to watch for during the shadow window** (named
 during calibration, not yet systematically checked against real shadow
@@ -566,7 +586,7 @@ data):
 3. *Real mechanism, no persona leverage* — e.g. "concert ticket queue ->
    dynamic pricing market" could be a great Atlantic piece and a bad
    CripMinds piece if no embodied lens changes what dynamic pricing means.
-   Stage 2's job, not Stage 1's.
+   CJ-2's job, not CJ-1's.
 4. *Culturally exhausted mechanism* — passes every logical test and is
    still dull ("social media feed -> attention extraction machine" — true,
    concrete, and already widely known). Needs a familiarity filter, not
@@ -581,7 +601,9 @@ data):
 
 **Shadow-mode exit criterion, decided but not yet reached**: do not
 promote out of shadow mode on volume alone. Target: manually examine at
-least 50 Stage-1 YESes and 100 NOs (asymmetric — false positives cost more
+least 50 CJ-1 YESes and 100 NOs (150 items total — corrected 2026-08-10,
+~15 days at ~10/day sampled, not "about a week" as first estimated;
+asymmetric — false positives cost more
 here than missed stories, since RSS supplies endless raw material but
 each YES consumes expensive downstream stages) from a corpus sampled
 across ALL source types deliberately, not just tech/disability/medicine
@@ -594,7 +616,7 @@ strange thing this should have caught," the gate is too tight.
 Periodically send blind batches back to the calibration source (item
 title+summary only, no hint which the model called YES/NO) rather than
 asking it to confirm existing verdicts — anchoring the read defeats the
-purpose. Re-run this whenever the Stage 1 prompt, model, RSS source mix,
+purpose. Re-run this whenever the CJ-1 prompt, model, RSS source mix,
 or upstream filtering changes.
 
 ---
