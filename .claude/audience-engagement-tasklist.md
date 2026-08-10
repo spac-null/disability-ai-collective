@@ -15,6 +15,29 @@ without discussing first.
 questions I can't answer without you. Read through, then let's talk — either
 inline per item or as a general reaction.
 
+**Status taxonomy, added 2026-08-10 after a multi-round reconciliation
+check against session logs kept surfacing the same confusion.** Four
+genuinely different states get flattened into "not done" if you're not
+careful, and this file now has real examples of all four — check which
+one actually applies before treating anything below as neglected:
+- **DEFERRED** — designed, deliberately not built yet, waiting on a
+  decision or on upstream evidence (e.g. CJ-2, anchor Stage D/E, the
+  judge-panel/multi-draft experiment).
+- **OPEN BUG** — actually broken, needs a fix (rare below; most of these
+  got closed same-night as found).
+- **WAITING FOR DATA** — built and running correctly, just needs real
+  volume to accumulate before a decision can be made (CJ-1's 50/100
+  threshold, anchor Stage B's real calibration pairs, adaptive use of
+  engagement data).
+- **REJECTED** — considered and explicitly turned down, not a future TODO
+  (the fixed movement-sequence architecture; a broad "policy" keyword
+  exclusion; a "Tier B" welfare exclusion list).
+Treat this file as the authoritative current state; raw session logs are
+provenance, not the live status — a claim that was correct when a log was
+written (e.g. "404 Media is DNS-blocked," "ANSA's zero items might be a
+date-parsing bug") can be superseded by later work in this same file
+without the log itself being wrong at the time.
+
 ---
 
 ## Addendum, 2026-08-09: the anchor-architecture blueprint (feeds into item 3)
@@ -400,6 +423,52 @@ four. Whoever builds item 3 needs to pick one of these five, not assume
 ---
 
 ## 4. Smarter topic/premise scoring at discovery time
+
+**Discovery-pipeline overhaul, 2026-08-09/10 — DONE, recorded here after a
+reconciliation check found none of this had actually made it into this
+file, only into commit messages and conversation.** Triggered by watching
+a real generated article turn out to be an NHS-mental-health-cuts policy
+piece. In order: excluded mental-health-news-cycle content; found the
+real root cause (the disability-lens boost was empirically a welfare-
+administration-journalism detector, not a lens detector — 74% of boosted
+items cleared selection vs 18% unboosted, concentrated in 2 feeds) and
+rescoped it; added `THEME_WEIGHTS` multipliers so the existing
+architecture/space/mythology editorial preference (508cc86) is actually
+encoded in ranking, not just feed selection; added a narrow policy-process
+exclusion (program names like "white paper"/"DWP", not the bare word
+"policy" — a broader version was tested and rejected for false-positiving
+on real art journalism — **REJECTED, not deferred**); added 12 new feeds
+(Deaf/disability-specific, art/design, tech/industry on explicit request
+despite editorial mismatch, international/regional) plus a genuine
+root-cause fix for 404 Media (DNS poisoning on trident's own WiFi resolver
+via the router, not a real network block). A follow-up review then found
+the exclusion lists were zeroing real disability-arts content that
+mentioned an excluded phrase in passing — fixed by gating exclusions on
+dominant theme. Owner-requested healthcare exclusion (broader than
+mental-health, explicitly accepted the collateral-risk tradeoff going in)
+briefly re-broke the same two art pieces and was reverted to the same
+theme-gated pattern within the hour.
+
+**Real first-fetch results from the 12 new feeds** (never previously
+written down): Techmeme, Rest of World, The Limping Chicken, Le Monde
+Arts, ANSA English, and Creative Boom all cleared the 0.4 selection gate
+on real content the same night — better than a synthetic pre-check had
+predicted for the tech/industry feeds specifically. Hacker News and The
+Creative Independent scored real items but stayed below the gate (n too
+small to judge yet). Two feeds returned zero items, both diagnosed as
+**external-source conditions, not pipeline bugs**:
+- **Disability Visibility Project** — dormant. `lastBuildDate` on the live
+  feed is 2026-02-13, six months stale, HTTP 200 throughout. Same pattern
+  already documented elsewhere in this file for El Pais English (live but
+  frozen). No code issue.
+- **ANSA Emilia-Romagna** — healthy feed, scorer mismatch. Confirmed via
+  direct fetch: real items dated today, RFC-822 dates parse cleanly, zero
+  errors. Real headlines (generic Italian local crime/accident news —
+  child hospitalizations, traffic incidents) score `0.0` under
+  `score_item()` because the content is in Italian and `THEME_KEYWORDS` is
+  English-only vocabulary — there is no bug for a hand-check to find; the
+  feed and the scorer are both doing exactly what they're built to do,
+  they just don't intersect for this source's typical content.
 
 **The problem, corrected 2026-08-09 after verifying against the actual code
 (the original write-up below had the wrong file for one piece of it):**
