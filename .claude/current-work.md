@@ -25,31 +25,40 @@ Must complete before ANY creative-prompt phase starts (see DO NOT TOUCH YET).
 - `temperature` param added to `_call_openai_compat_api` — opt-in, `None` by default, production behavior unchanged, pinned only inside the probe (`4ffb4c9`)
 - 3 Fable briefs frozen successfully on trident (`automation/.probe_fixtures/brief_{sauna,hiring_tool,curb_cuts}.json`)
 
-## CURRENT BLOCKER
-First single-sample `phase_probe.py` run failed:
-```
-ValueError: too many values to unpack (expected 2)
-```
-Inside `_run_one_sample()`'s `capturing_call` wrapper (monkeypatches
-`_call_openai_compat_api`) or somewhere in `call_llm_via_openclaw_session`'s
-provider-cascade that unpacks its return value. **Root cause: UNKNOWN until
-a full traceback is captured — do not guess further, do not keep editing
-the harness blind.**
+## CURRENT BLOCKER (mostly resolved, verification pending)
 
-A debugging agent was dispatched (2026-08-10) with instructions to: capture
-the real traceback, find the exact line, apply the smallest fix, re-verify
-one clean sample live on trident (`error: None`, `degraded_stages: []`, real
-article text), prove zero production-state mutation before/after (drafts,
-assets, disability_findings.db news_seeds.used, engagement.db all 3 table
-counts, persona_state), commit, push. **Check whether that agent's fix has
-landed before re-diagnosing from scratch.**
+**Root cause FOUND (Agent A)**: `PROBE_REGISTER`/`PROBE_ARTICLE_TYPE` were
+3-tuples `(name, weight, prompt)` copy-pasted from `_REGISTERS`/
+`_ARTICLE_TYPES`'s raw config rows, but the real `_pick_register()`/
+`_pick_article_type()` return 2-tuples `(name, prompt)` — generate.py does
+`register, register_prompt = self._pick_register()`, which broke with
+"too many values to unpack (expected 2)" once stubbed to the 3-tuple. Fixed:
+both constants are now real 2-tuples in `phase_probe.py`. Not yet committed.
 
-An independent isolation-audit agent was also dispatched in parallel: reads
-`phase_probe.py` against `_run_production_automation_locked`'s real tail and
-lists every production-mutation path (git, drafts, assets, seeds, findings,
-persona state, beat/citation ledgers, engagement DB, social queue),
-confirming each is actually stubbed/redirected — a checklist, not a code
-change. **Check its findings too before trusting the probe's isolation.**
+**Two more gaps found (Agent B, independent isolation audit) and already
+fixed locally on top of Agent A's fix, NOT yet pushed/committed:**
+1. `orch.drafts_dir` was never `.mkdir()`'d after `_isolate_paths` reassigns
+   it — would have been the NEXT crash (`create_article_file` does a bare
+   `open()`, no parent mkdir). Added `.mkdir(parents=True, exist_ok=True)`
+   for both `drafts_dir` and `assets_dir` in `_run_one_sample`.
+2. Degraded-run/fallback-mode Telegram alerts in `generate.py` read
+   `REEF_BOT_TOKEN`/`REEF_CHAT_ID` from the environment directly (not
+   patchable) — could send a REAL message to the real ops channel if a
+   sample's `_degraded_stages` comes back non-empty on a host where those
+   are exported (plausible on trident). Added a save/pop/restore of both
+   env vars scoped to just the `_run_production_automation_locked()` call.
+
+Agent B's audit otherwise confirmed every other production-mutation path
+(git, disability_findings.db used-flags, persona state, beat/citation
+ledgers, article_plans, engagement.db, social queue, image generation,
+Fable brief) is genuinely covered — read line-by-line, not assumed.
+
+**Status as of this checkpoint: local repo has all 3 fixes applied
+(register/type tuple + drafts_dir mkdir + Telegram neutralization), syntax-
+verified, but NOT yet re-tested live on trident with all 3 together, NOT
+committed, NOT pushed.** Agent A was notified of the extra 2 fixes and
+asked to do the final combined verification + commit + push. **Check
+whether that landed before re-diagnosing or re-fixing anything.**
 
 ## DO NOT TOUCH YET
 Nothing in this list gets edited until Phase 0A's baseline (3 topics × 3
