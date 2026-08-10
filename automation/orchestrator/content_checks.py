@@ -545,3 +545,69 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                     clean = re.sub(r"\*\*|\*|`", "", line).strip()
                     return clean[:160].rsplit(" ", 1)[0] if len(clean) > 160 else clean
             return ""
+
+    def _generate_image_briefs(self, title: str, content: str) -> dict:
+        """Pull three concrete, article-specific visual details for image generation.
+
+        Added 2026-08-10: generate_images() previously tried to rebuild frontmatter
+        (title/excerpt/keywords) by re-scanning the article BODY for "---" lines --
+        at that pipeline stage content is body-only, so the scan hit the body's own
+        first horizontal rule and returned nothing, leaving every image prompt with
+        only the article's TITLE to work from. Confirmed live: the 280-prisms sauna
+        article's hero prompt reached the model as "Subject: 280 Prisms and Not One
+        of Them Makes a Sound" -- no sauna, no crystal, no heat, no sound -- and the
+        model produced an anatomical cross-section of wooden logs.
+
+        Three roles, one real concrete detail each, matched to the pipeline's
+        existing three image slots (hero/CONFRONTING, body/INTIMATE, body/ABSTRACT):
+          thing     — the central physical object, place, or document the piece is
+                      actually about (maps to the hero image).
+          gesture   — a specific human action or moment described in the piece --
+                      hands, a posture, a named verb (maps to the intimate image).
+          mechanism — the argument's structure or a concept in the piece, as
+                      something wordless and visual, not a diagram with labels
+                      (maps to the abstract image).
+        No faces, and nothing invented beyond what the article actually describes --
+        this is extraction, not illustration brainstorming.
+        """
+        body_preview = content[:3000]
+        try:
+            raw = self._call_openai_compat_api(
+                url=CLIPROXY_URL,
+                api_key=CLIPROXY_KEY,
+                system_prompt=(
+                    "You extract concrete visual material from an article for an image "
+                    "generator. Return exactly one JSON object with three keys: "
+                    '"thing", "gesture", "mechanism". Each value is one short phrase '
+                    "(under 20 words) describing something ACTUALLY in the article below "
+                    "-- a real object, place, document, action, or structural idea. "
+                    "Do not invent anything not in the text. Do not describe a human "
+                    "face. Do not mention style, medium, or art direction -- that is "
+                    "handled elsewhere; just name the concrete thing.\n"
+                    '"thing": the central physical object, place, or document the piece '
+                    "is actually about.\n"
+                    '"gesture": one specific human action or moment described in the '
+                    "piece -- hands doing something, a posture, a named verb. If no "
+                    "such moment exists in the text, describe the nearest physical "
+                    "detail instead (a texture, a surface, an object being touched).\n"
+                    '"mechanism": the argument\'s structure or a concept in the piece, '
+                    "described as a wordless visual relationship (a pattern, a "
+                    "repetition, a thing breaking a pattern) -- not a labelled diagram.\n"
+                    "Return ONLY the JSON object, no commentary."
+                ),
+                user_prompt=f"Title: {title}\n\nArticle:\n{body_preview}",
+                model="openrouter/claude-haiku-4.5",
+                max_tokens=250,
+                timeout=30,
+                no_think=True,
+            )
+            match = re.search(r'\{.*\}', raw or '', re.DOTALL)
+            briefs = json.loads(match.group(0)) if match else {}
+            return {
+                "thing": briefs.get("thing") or "",
+                "gesture": briefs.get("gesture") or "",
+                "mechanism": briefs.get("mechanism") or "",
+            }
+        except Exception as e:
+            self.logger.debug("Image brief extraction failed: %s -- falling back to title/excerpt/keywords", e)
+            return {}

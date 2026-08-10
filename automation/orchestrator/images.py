@@ -13,7 +13,8 @@ import sys
 
 
 class ImagesMixin:
-    def generate_images(self, content, slug, num_images=3, title=None, persona=None):
+    def generate_images(self, content, slug, num_images=3, title=None, persona=None,
+                         excerpt=None, keywords=None, image_briefs=None):
         """Generate article images via OpenRouter (Recraft V4.1).
 
         Three images per article:
@@ -24,6 +25,16 @@ class ImagesMixin:
         Requires OPENROUTER_API_KEY in environment.
         Returns (image_filenames, image_descriptions).
         Skips files that already exist (safe to re-run).
+
+        excerpt/keywords/image_briefs (added 2026-08-10): this used to try rebuilding
+        frontmatter by re-scanning `content` for "---" lines, but at this pipeline
+        stage `content` is the article BODY ONLY (frontmatter is assembled later, in
+        create_article_file) -- the scan hit the body's own first horizontal rule and
+        stopped, so every prompt reached the model with nothing but the title.
+        Callers now pass the real excerpt/keywords (already generated for the
+        frontmatter -- see generate.py) and image_briefs (three concrete,
+        article-specific visual details -- see _generate_image_briefs in
+        content_checks.py) so prompts are actually grounded in the piece.
         """
         import os as _os
         import time as _time
@@ -45,17 +56,22 @@ class ImagesMixin:
 
         title_match = re.search(r'title:\s*["\']?([^"\'\n]+)["\']?', content)
         title = title or (title_match.group(1).strip('"\'') if title_match else slug)
+        persona = persona or ''
 
-        fm = {}
-        for line in content.splitlines():
-            if line == '---':
-                break
-            if ':' in line:
-                k, _, v = line.partition(':')
-                fm[k.strip()] = v.strip().strip('"\'')
-        fm.setdefault('title', title)
-        summary = build_summary(fm)
-        persona = persona or fm.get('author', '')
+        fallback_summary = build_summary({
+            "title": title,
+            "excerpt": excerpt or "",
+            "keywords": ", ".join(keywords) if keywords else "",
+        })
+
+        # Each slot gets its own role-appropriate concrete detail instead of the
+        # same generic summary three times -- see _generate_image_briefs's
+        # docstring for why the three roles are thing/gesture/mechanism. Falls
+        # back to the title+excerpt+keywords summary per-slot if brief extraction
+        # failed or came back empty for that role, so a partial/failed extraction
+        # degrades gracefully rather than blocking image generation.
+        image_briefs = image_briefs or {}
+        SLOT_BRIEF_KEY = {"CONFRONTING": "thing", "INTIMATE": "gesture", "ABSTRACT": "mechanism"}
 
         image_filenames = []
         image_descriptions = []
@@ -70,6 +86,9 @@ class ImagesMixin:
                 image_filenames.append(fname)
                 image_descriptions.append(alt)
                 continue
+
+            brief = image_briefs.get(SLOT_BRIEF_KEY.get(style_key, ""))
+            summary = f"{title}. {brief}" if brief else fallback_summary
 
             # slug is required for get_prompt's deterministic per-article sub-style
             # pick (gen_images._sub_style_index) — omitting it collapses the index to

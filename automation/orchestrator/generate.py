@@ -748,9 +748,23 @@ class GenerateMixin:
         # after this point touches the file's body again.
         content, gate_fixed = self._pre_commit_gate(content, None, article_type)
 
+        # Step 4c: Compute excerpt/keywords/image briefs once, on final content, and
+        # reuse them for both image generation (Step 5, below) and the frontmatter
+        # create_article_file writes (Step 6) -- these used to be computed only in
+        # Step 6, AFTER images were already generated, so image prompts never had
+        # access to them even before the parsing bug (fixed 2026-08-10) that made
+        # that moot anyway. Storing on metadata so create_article_file can reuse
+        # them instead of paying for the same two LLM calls twice.
+        metadata['excerpt'] = self._generate_card_excerpt(extracted_title, content, agent_name)
+        metadata['keywords'] = self._generate_keywords(extracted_title, content, agent_name, agent_info['categories'])
+        image_briefs = self._generate_image_briefs(extracted_title, content)
+
         # Step 5: Generate images (placeholder)
         try:
-            image_filenames, image_descriptions = self.generate_images(content, slug, title=extracted_title, persona=agent_name)
+            image_filenames, image_descriptions = self.generate_images(
+                content, slug, title=extracted_title, persona=agent_name,
+                excerpt=metadata['excerpt'], keywords=metadata['keywords'], image_briefs=image_briefs,
+            )
         except Exception as e:
             self.logger.warning('Image generation failed: %s -- continuing without images', e)
             image_filenames, image_descriptions = [], []

@@ -39,7 +39,11 @@ class PublishMixin:
         filename = metadata['filename']
         filepath = self.drafts_dir / filename
 
-        excerpt = self._generate_card_excerpt(metadata['title'], content, metadata.get('author', ''))
+        # Reuse excerpt/keywords if the caller already computed them (generate.py does,
+        # so image generation can see them too -- see its Step 4c) rather than paying
+        # for the same two LLM calls again.
+        excerpt = metadata.get('excerpt') or self._generate_card_excerpt(metadata['title'], content, metadata.get('author', ''))
+        keywords = metadata.get('keywords') or self._generate_keywords(metadata['title'], content, metadata.get('author', ''), metadata['categories'])
 
         _source_fields = ""
         if metadata.get('source_url'):
@@ -82,7 +86,7 @@ category: {metadata['categories'][0].lower() if metadata['categories'] else 'res
 image: /assets/{hero_fname}
 image_alt: {json.dumps(hero_desc or 'Article illustration')}
 excerpt: {json.dumps(excerpt)}
-keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metadata.get('author', ''), metadata['categories']))}]{_source_fields}{_score_field}{_version_field}
+keywords: [{', '.join(keywords)}]{_source_fields}{_score_field}{_version_field}
 ---
 
 """
