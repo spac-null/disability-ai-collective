@@ -281,29 +281,12 @@ DISABILITY_BOOSTERS = [
     "screen reader","caption","crip","spinal","mobility","invisible disability",
 ]
 
-# Theme → preferred persona for agent selection.
-# DEAD COPY — kept only because it documents the intended assignments. Nothing
-# imports news_fetcher and nothing in this file reads this dict. The map the
-# pipeline actually uses at generation time is DiscoveryMixin._news_seed_to_agent
-# in automation/orchestrator/discovery.py; edit that one, and keep this in sync
-# or delete it. (508cc86 extended this copy alone, so the routing half of that
-# editorial shift silently never shipped.)
-THEME_TO_PERSONA = {
-    "architecture":   "Pixel Nova",
-    "art_culture":    "Pixel Nova",
-    "technology":     "Zen Circuit",
-    "science_nature": "Zen Circuit",
-    "language":       "Siri Sage",
-    "health_systems": "Maya Flux",
-    "business_labor": "Maya Flux",
-    "education":      "Siri Sage",
-    # Added 2026-08-09 alongside the five new theme buckets above.
-    "philosophy":            "Zen Circuit",   # systems/pattern-recognition lens fits abstract argument
-    "space_cosmos":          "Zen Circuit",
-    "economy_finance":       "Maya Flux",     # canon: "writes about policy in cost and procurement language"
-    "sustainability_ecology":"Maya Flux",     # infrastructure/urban-planning lens
-    "indigenous_tribal":     "Siri Sage",     # phenomenology/oral-tradition lens
-}
+# Theme -> preferred persona for agent selection is live in
+# DiscoveryMixin._news_seed_to_agent (automation/orchestrator/discovery.py).
+# A dead, stale copy of this map used to live here -- removed 2026-08-10
+# rather than synced: nothing in this file ever read it, and a documented-
+# but-stale duplicate of live config is worse than no duplicate, since it
+# can eventually get read as authoritative by someone who doesn't check.
 
 
 def log(msg):
