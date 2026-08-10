@@ -117,3 +117,21 @@ recovery. Tracked as its own follow-up, not closed by this incident.
 directory (timestamped, retained, `PRAGMA integrity_check`'d, stored outside
 the deployable tree) — this incident is the proof these files stopped being
 throwaway caches once real accumulation started.
+
+## Closure (commit `4ffb4c9`)
+
+**Recovered:**
+- Schema recreated through the application's own `init_db()`/`_persist_article_plan()`/`_persist_review_signals()` code paths, not hand-authored SQL. `PRAGMA integrity_check: ok`.
+- `review_signals`: reconstructed for exactly its true lifetime (2 rows, the only 2 sidecars dated on/after 2026-08-09 when this table was introduced) — did not fabricate rows for the 127 older sidecars, which never had a corresponding row in the original table. `plan_follow_read`/`pre_rewrite_plan_follow_read` rebuilt per the post-N7-fix invariant (no persisted plan → deterministic N/A), not by trusting the old sidecars' bogus verdicts verbatim.
+- `engagement_metrics`: re-fetched fresh, all 5 sources individually confirmed — GoatCounter 132 rows, GSC 180, Bluesky 132, Mastodon 3, Tumblr correctly recorded as "no distributed posts yet" (0 rows, not a failure — no `tumblr_url` exists on any of the 76 recent articles).
+- Reconstructed DB backed up (`/srv/backups/cripminds/engagement-2026-08-10.db`, `PRAGMA integrity_check: ok`, verified row counts match the live DB exactly: 447/2/0).
+
+**Lost:** at most 2 raw `article_plans` JSON rows from 2026-08-09 (Zen Circuit + Pixel Nova briefs). Not reconstructed — doing so from finished articles would fabricate the exact "infer a plan that wasn't there" error the N7 fix eliminated the same day. Stage B's calibration needed ~20 real pairs before being usable at all; this was ≤2/20, far below threshold, not a mature dataset.
+
+**Unaffected:** `disability_findings.db` (independently audited: identical hash before/after every sync this session, `PRAGMA integrity_check: ok`, 880 news_seeds / 1,430 findings / 21,669 link_pool rows, mtime matching the legitimate 09:00 production run). All 129 `_reviews/*.md` sidecars. Git history. External engagement sources themselves (GoatCounter/GSC/Bluesky/Mastodon/Tumblr retain their own history independently).
+
+**Recurrence prevention, done:**
+- `automation/sync_to_trident_for_testing.sh` — the safe replacement for the ad hoc rsync that caused this. Hard-excludes `*.db`/`*.db-wal`/`*.db-shm`/`*.db-journal`. Run for real post-recovery; transfer list inspected and confirmed zero database files present.
+- `automation/backup_state_dbs.py` — daily backup via SQLite's own backup API, `PRAGMA integrity_check`'d, 14-day retention, written to `/srv/backups/cripminds/` (outside the deployable tree). Wired into trident's crontab at 03:30 daily (`crontab -l`).
+
+**Deliberately deferred, not blocking further work:** moving `engagement.db`/`disability_findings.db` out of the repo checkout entirely (e.g. `/srv/data/cripminds-state/`) is the real long-term fix — an rsync, git pull, checkout, worktree, or clean operation becomes physically incapable of touching production data — but it touches the live daily cron's path assumptions and deserves its own careful, tested change. Tracked as infrastructure hardening, not something today's incident recovery should block on.
