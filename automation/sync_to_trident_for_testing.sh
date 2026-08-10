@@ -30,6 +30,8 @@ rsync -az \
   --exclude='.snapshot_fixtures/*.json' \
   --exclude='probe_out/' \
   --exclude='.probe_fixtures/' \
+  --exclude='__pycache__/' \
+  --exclude='*.pyc' \
   "$LOCAL_PATH" "$TRIDENT_HOST:$TRIDENT_PATH"
 
 echo "Done. Verify with: ssh $TRIDENT_HOST 'md5sum $TRIDENT_PATH*.db' before/after if in doubt."
