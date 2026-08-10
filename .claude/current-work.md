@@ -92,19 +92,40 @@ entry `"retried": true` (never silently indistinguishable from a
 first-attempt success) — built as general infrastructure but **NOT the
 right tool for finishing baseline attempt 1** (see below).
 
-**User just added OpenRouter credits — believes the account-level cause is
-resolved.** Explicit decision on how to proceed: **do NOT patch attempt 1
-by retrying just the 7 failed slots.** Combining `sauna-0`/`sauna-1` (one
-healthy window) with 7 samples generated after a credit top-up (a different
-window) would leave an uncontrolled variable inside a baseline meant to
-detect subtle writing differences later. Instead: **once `--preflight`
-passes, run a completely FRESH 3×3 (`--run baseline`, all new — this will
-create a new `probe_out/baseline/` directory since attempt 1 now lives at
-`baseline-attempt-1/`), require 9/9 healthy in one contiguous run, redo the
-mutation proof, and freeze THAT as the canonical baseline.** If a second
-clean attempt is also interrupted, that's the moment to revisit whether
-requiring nine contiguous healthy generations is operationally realistic —
-don't weaken the methodology after just one outage.
+**Root cause of the outage turned out to be TWO separate things, both now
+fixed:** (1) OpenRouter account hit a spending limit — user added credits,
+confirmed fixed by a direct curl to OpenRouter (clean 200). (2) CLIProxyAPI
+itself (`127.0.0.1:8317`, a shared user-systemd service also used by
+cineporto-wa/inbox-bot) was independently returning `500` in 0-1ms per
+request — too fast to be a real upstream call, meaning CLIProxy was failing
+internally before even reaching Anthropic/OpenRouter. Traced via
+`journalctl --user -u cliproxyapi`: CLIProxy has TWO subscription OAuth
+accounts on file (`~/.cli-proxy-api/*.json`) — a Claude.ai account (healthy)
+and a Codex/ChatGPT-Plus account whose refresh token has been dead since
+**2026-07-20** (three weeks), which had NOT been blocking Claude-model
+requests all along (confirmed: today's successful early samples ran fine
+with that same dead token) — so the periodic failed-refresh attempt against
+it appears to intermittently corrupt CLIProxy's own internal state/routing
+for ALL requests, not just Codex ones. **Not a phase_probe bug, not a
+CLIPROXY_URL/legacy-routing issue** — traced end-to-end
+(`config.py:90-91`, hardcoded `http://127.0.0.1:8317/v1`, genuinely the
+intended live route, not a misnamed generic variable) and confirmed
+CLIProxyAPI is real, intentional, actively-used shared infrastructure (cost
+savings via subscription OAuth instead of metered billing), not something to
+route around. Fix: `systemctl --user restart cliproxyapi` (no sudo needed,
+user-owned service) — `--preflight` immediately passed clean afterward.
+Worth a separate follow-up decision later: either fix/remove the dead Codex
+account, or make CLIProxy's refresh failures per-account instead of global.
+
+**Decision, confirmed explicitly**: do NOT patch attempt 1 by retrying just
+the 7 failed slots — combining `sauna-0`/`sauna-1` (one window) with 7
+samples from a different window (different external conditions) would leave
+an uncontrolled variable inside a baseline meant to detect subtle writing
+differences later. Instead: preflight passed → running a completely FRESH
+3×3, all new, as `--run baseline-attempt-2 --samples 3` (writes to
+`probe_out/baseline-attempt-2/`). Requires 9/9 healthy in one contiguous run.
+If this one is also interrupted, that's the moment to revisit whether nine
+contiguous healthy generations is operationally realistic — not before.
 
 ## DO NOT TOUCH YET
 Nothing in this list gets edited until Phase 0A's baseline (3 topics × 3
