@@ -498,56 +498,105 @@ questions at once.
 Siri Sage's VOICE ANCHOR / any other persona prompt, thesis-timing /
 correction-discipline rules.
 
-## MODEL-SEAT ROI EXPERIMENT — queued, DO NOT CHANGE during WHY WE WRITE v1
-Recorded 2026-08-10 as a future controlled experiment, explicitly NOT applied
-to the run currently in flight — changing model routing mid-WHY-WE-WRITE-v1
-would add a second independent variable and destroy the causal comparison.
+## MODEL-SEAT ROI EXPERIMENT (Phase 1.5B) — PIVOTED, harness built, not yet run
+Originally recorded 2026-08-10 as "Fable review + Fable rewrite vs Fable
+review + Opus rewrite" (see git history of this section for the original
+A/B/C framing). **Pivoted the same day, before spending anything**, after
+three cheap checks — see `## INFRASTRUCTURE BACKLOG` above for the
+production-outage finding surfaced by the same investigation:
 
-Fable currently occupies several expensive editorial seats; we haven't
-independently proven each seat's ROI:
-1. **Planning/editorial brief** — production uses Fable here. `phase_probe`
-   experiments (baseline, v1, and future ones) do NOT retest this seat —
-   briefs are frozen fixtures, deliberately, so every creative-prompt
-   experiment gets identical planning input. Any future finding from the
-   seats below must NOT be generalized to this seat.
-2. **Whole-article editorial review** — Fable evaluates an Opus-written
-   draft, identifies structural problems.
-3. **Polish/revision** — if Fable requests a revision, Fable may currently
-   also perform the rewrite. Suspected most-expensive-least-necessary seat:
-   deciding what's wrong may need more editorial judgment than executing a
-   specified rewrite.
+1. `probe_out/*.md` files are FINAL pipeline output (post-review/rewrite/
+   gate) — `_run_one_sample()` only reads `drafts_dir` AFTER
+   `_run_production_automation_locked()` returns. They are NOT raw
+   pre-review drafts; reusing them as fresh review input would have been a
+   biased test (already-polished text → mostly pass).
+2. `_fable_polish_rewrite` already passes `prefer_opus=True` (commit
+   `26f5e77`, landed 12:19 today, for a documented truncation-risk reason
+   unrelated to this experiment). Across every real+probe sample logged in
+   `automation.log` since, Opus won the rewrite on the FIRST attempt 100%
+   of the time (0/36 Fable fallback). The rewrite seat is not currently a
+   meaningful cost center to A/B test — production already made this call,
+   just not for a quality-ROI reason.
+3. Fable's REVIEW call fires on every real production run and has NEVER
+   once returned `publish_as_is` (0/39 logged, real or probe, spanning
+   2026-08-09 through today). This is the actual recurring, load-bearing,
+   expensive seat — and the 0/39 pattern is itself a hypothesis worth
+   testing (structural over-editing bias, vs. drafts genuinely always
+   needing work), not assumed proof of either.
 
-Hypothesis: Fable may earn its cost as editor/director, not necessarily as
-writer/rewrite engine. Expected sweet spot to test, not assume: Fable
-decides, Opus writes.
+**Corrected experiment**: does Fable's editorial JUDGMENT (not its prose
+execution) earn its price, or is Opus just as good at deciding what's
+wrong with a draft? Design (locked):
+```
+ONE raw Opus draft, captured live (never reused from probe_out)
+                |
+         /              \
+    Fable review      Opus review
+ (byte-identical prompt/schema, forced model, no fallback chain)
+         |                  |
+    verdict+notes      verdict+notes
+         |                  |
+ if revise: Opus executes   if revise: Opus executes
+ (same executor template,   (same executor template,
+  authorship-agnostic)       authorship-agnostic)
+ else: final = raw          else: final = raw
+```
+`publish_as_is` is a LEGITIMATE, first-class outcome for either branch —
+NOT a skip condition (the decision not to intervene is part of the seat
+being tested). No downstream rewrite/gate runs after the branch point —
+the harness aborts the real pipeline immediately after capturing the raw
+draft (a sentinel exception from the review-capture stub), so no extra
+real spend happens beyond the draft-generation call itself.
 
-Suggested first comparison (frozen inputs, blind grading):
-- A — CURRENT: Fable review + Fable revision
-- B — HYBRID: Fable review + Opus executes the requested revision
-- C — ECONOMICAL: Opus review + Opus revision
+**8 cases planned**: 2 raw drafts each for Siri/sauna, Zen/hiring_tool,
+Maya/curb_cuts, Pixel/museum_labels — the 4 already-frozen topics/briefs,
+no new topic work needed.
 
-Compare on: final article quality, structural-problem detection, false-positive
-editorial notes, whether requested revisions actually improve the article,
-per-article token/cost, latency, degradation/failure rate.
+**Harness built**: `automation/fable_review_roi_probe.py`. `--preflight`
+passes locally (frozen briefs readable, zero API calls). Per case, persists
+`raw_draft.md`, `review_fable.json`, `review_opus.json`,
+`final_from_fable_review.md`, `final_from_opus_review.md`, `provenance.json`
+(models, prompt hash, draft hash, review-response hashes, token
+usage/latency/errors for every call — `cost_usd` deliberately left `null`,
+no verified per-token pricing for the Fable alias, not fabricated). Reuses
+`snapshot_test.py`'s `_isolate_paths`/`_patch_methods` exactly like
+`phase_probe.py` — zero production-state mutation by construction. Draft
+generation is temperature-pinned at 0.9 (matching every other probe this
+session), via the same `_call_openai_compat_api` patch pattern.
 
-Primary question: does Fable materially improve the DECISION about what's
-wrong? Secondary question: once the problem is specified, does paying Fable
-(vs Opus) to perform the rewrite materially improve the result?
+**NOT yet run** — awaiting a code-inspection pass before spending the 8
+cases' real API calls (draft generation + 2 forced reviews + up to 2 forced
+executions per case).
 
-Sequencing: test B vs A first (cheapest hypothesis, changes ~nothing about
-editorial intelligence, potentially eliminates the priciest low-leverage
-Fable usage). Only if B ≈ A, ask whether C ≈ B (does Fable earn the review
-seat either). The planning-seat question (Fable-authored plan vs Opus-authored
-plan) needs a separate experimental design later — the frozen-brief
-architecture here structurally cannot answer it, so don't infer planning ROI
-from this ablation.
+**Two separate evaluations once cases exist** (do not conflate):
+1. **Review quality** (blind the reviewer identity, judge against the raw
+   draft): problem validity, importance (real defect vs. nitpick),
+   coverage of the most important structural issue, specificity/
+   actionability, false-positive pressure (demanding a rewrite of
+   something already working) — this last axis is where the 0/39
+   `publish_as_is` finding becomes testable.
+2. **Result quality** (blind RAW / FINAL-A / FINAL-B, no reviewer
+   attribution): better than raw? worse than raw? was the real structural
+   problem solved? collateral damage? persona preserved? unsupported
+   claims introduced? Also classify, per case: did Fable and Opus
+   independently flag the SAME underlying problem (same / partially
+   overlapping / different-but-both-valid / one-only-valid / both weak) —
+   if they converge repeatedly, paying Fable's premium for judgment may be
+   unnecessary even where Fable phrases the note better.
 
-Placement: run this fairly early in the phase sequence (after WHY WE WRITE
-v1 is resolved, before deciding exact slotting relative to length/evidence/
-testimony work) — if the hybrid holds quality, every later 3×3 experiment
-gets cheaper. But finish WHY WE WRITE v1 first, with the exact model
-architecture the baseline used, or we lose the cleanest causal comparison
-built so far.
+**Intervention-rate tracking, first-class**: Fable revise-rate vs Opus
+revise-rate across the 8 cases, then independently: of the revisions each
+one requested, how many were genuinely justified vs marginal vs false
+positive (per blind result-quality judging). If Fable requests revision
+8/8 and blind judging finds several raw drafts were already as good or
+better, that's an editorial intervention bias, not just an expensive model.
+If Fable requests revision 8/8 and all eight demonstrably improve, the
+0/39 production pattern may simply mean these drafts consistently need
+editorial work — a different, equally real finding.
+
+**Explicitly separate from this experiment, still untested**: the
+planning/brief seat (frozen briefs are held constant by design — no
+finding here generalizes to "should Fable write the plan").
 
 ## INFRASTRUCTURE BACKLOG (not blocking Phase 1)
 CLIProxyAPI's dead Codex/ChatGPT-Plus OAuth account (expired 2026-07-20)
@@ -555,6 +604,35 @@ can apparently poison routing for ALL requests, not just its own — a
 `systemctl --user restart cliproxyapi` fixed it same-day. Fix later:
 remove/refresh the dead account, or file upstream that per-account refresh
 failures shouldn't affect other accounts.
+
+**Real production article shipped degraded on 2026-08-10 09:03:24** (found
+while checking Phase 1.5B's premises against `automation.log` on trident,
+not investigated further — do not fix now, just don't lose it). At that
+exact timestamp: `_fable_editorial_review` returned `revise` (3 notes), then
+ALL FOUR rewrite attempts failed with `HTTP 403: Forbidden`
+(Fable/CLIProxy, Opus/CLIProxy, Fable/OpenRouter-direct, Opus/OpenRouter-
+direct — root cause logged moments later: `"Key limit exceeded (monthly
+limit)"` on the OpenRouter key), `_opus_targeted_revision`'s own fallback
+also failed (`HTTP 500`), so the article shipped completely unrevised
+despite Fable having flagged 3 real notes. In the SAME run: accessibility
+check failed (403), editorial check failed (500), pre-commit gate's own LLM
+call failed (403) though the gate then logged `PASS (FRE=70.2,
+violations=2)` on deterministic checks alone, and image generation failed
+outright (`"Key limit exceeded (monthly limit)"` again) — no images on
+today's article. **Open question, not answered here**: was this run
+stamped `pipeline_degraded` in frontmatter, and if so with which stage(s)?
+Phase 0B's `_degraded_stages` tracking (per its own design) should have
+appended `editorial_revision` (verdict was revise, notes existed, content
+came back byte-identical to pre-revision — exactly the condition
+`_should_block`/degradation-stamping checks for). But image-generation
+failure does NOT appear to be tracked by `_degraded_stages` at all from a
+read of `generate.py`'s Step 3b logic — if true, two separate user-visible
+failures (no editorial revision AND no images) may be collapsing into at
+most one stamped degraded stage, undercounting the real failure surface.
+Do not fix or investigate further now — record the exact timestamp
+(2026-08-10 09:03:24) so this doesn't get lost, and check it against the
+actual published article's frontmatter + `_degraded_stages` code path when
+someone next has reliability-focused capacity.
 
 ## DECISION LEDGER (settled, do not reopen)
 - Production `temperature` stays unset/`None`; only the probe pins it (0.9).
