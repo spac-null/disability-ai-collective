@@ -28,8 +28,16 @@ class LLMMixin:
     def _call_openai_compat_api(self, url, api_key, system_prompt, user_prompt,
                                    model, max_tokens=3500, timeout=120, no_think=False,
                                    return_model=False, reasoning_max_tokens=None,
-                                   check_truncation=False):
+                                   check_truncation=False, temperature=None):
         """OpenAI-compatible API call — stdlib only, no requests dependency.
+
+        temperature: added 2026-08-10 for phase_probe.py's controlled-comparison
+        methodology -- there was previously no way to pin this anywhere, so the
+        provider default (1.0) applied and identical prompts produced materially
+        different articles, making single-run before/after comparisons invalid.
+        Defaults to None/omitted deliberately: no production caller passes this,
+        so live generation behavior is completely unchanged by adding it. Only
+        the probe harness sets it, and only on its own isolated calls.
 
         return_model=True: returns (text, actual_model_used) tuple.
         return_model=False (default): returns text only — all existing callers unaffected.
@@ -66,6 +74,8 @@ class LLMMixin:
         }
         if reasoning_max_tokens:
             body["reasoning"] = {"max_tokens": reasoning_max_tokens}
+        if temperature is not None:
+            body["temperature"] = temperature
         payload = json.dumps(body).encode()
         req = urllib.request.Request(
             url.rstrip("/") + "/chat/completions",
