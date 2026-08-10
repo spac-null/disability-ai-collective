@@ -585,7 +585,12 @@ valid.** Three checks before `--run`, all fixed then verified clean:
    parser-semantics scenario) simulated API/parse failures produce
    distinct non-executing statuses rather than silent defaults.
 
-**Run completed, commit `b99d379`, mechanical acceptance passed**: trident
+**Run completed, commit `b99d379`, mechanical acceptance passed** — keep
+this distinction explicit: the 8 cases were GENERATED at `b99d379`. Commit
+`889942b` (and later checkpoint commits) only add provenance improvements
+and commit the already-completed artifacts — they did not generate or
+touch the experimental data. Future docs must not casually say "the 8
+cases were generated on 889942b." Trident
 stayed on `b99d379` the entire run (verified `git rev-parse HEAD` + `git
 status --short` before pulling results — only expected pre-existing
 untracked leftovers). Exactly 8 cases (2 per persona × 4 personas), all 6
@@ -613,11 +618,92 @@ review-quality judging (below) still has to happen before concluding
 either way — the revise-rate alone answers nothing about the FINANCIALLY
 significant question (does Fable's judgment earn its price).
 
-**Next**: two independent blind evaluations, not yet run (see design
-below, unchanged from the pre-run plan) — review quality (one anonymous
-review at a time against the raw draft, same-problem classification only
-after both are scored) and result quality (RAW/X/Y, no reviewer
-attribution).
+**Static audit of the shared `_review_prompts()` template, done directly,
+no code changed, no rerun** — asked because 8/8 vs 8/8 makes "does the
+SEAT itself lean toward intervention" a live question, not just "which
+model." Answering the five specific questions:
+1. *Is `publish_as_is` described as genuinely acceptable?* Syntactically
+   yes (schema explicitly allows empty notes on `publish_as_is`) — but
+   textually minimized: "or confirm it is ready" is a 4-word clause
+   tacked onto the primary "Give 2-3 specific, actionable revision notes"
+   instruction. The ~800-word body describes 9 checks capable of
+   producing a note; zero words describe what a clean pass looks like.
+2. *"Find problems" vs "decide if there's a problem"?* Mixed, genuinely.
+   The prompt contains 4 explicit ANTI-default-triggering guards ("Do NOT
+   ask for a scene as a default," "do not ask the writer to bolt one on,"
+   "never ask for one the argument would obviously defeat," "Do NOT ask
+   for irresolution as a default") — real counter-bias engineering,
+   already present. But the overall frame is still "run through 9 checks
+   and flag failures," structurally a hunt, not a from-scratch judgment.
+3. *Are examples skewed toward revise?* Yes, clearly — many concrete
+   quoted violation examples across the 9 checks; zero examples anywhere
+   of a passing/clean piece.
+4. *Does producing no notes feel like failing?* The phrase "if several
+   checks fail, pick the three that most change the piece" presupposes
+   multiple failures as the normal case needing prioritization, not the
+   exception.
+5. *Does an "identify up to three" framing presuppose issues exist?* Yes
+   — "Give 2-3 specific, actionable revision notes" is the lead imperative
+   sentence; nothing in the prompt is weighted as heavily toward "if zero
+   checks fail, say so confidently."
+
+**Net finding**: a real, plausible mild-to-moderate structural lean
+toward intervention exists in the SHARED prompt (9 independent low-
+threshold checks = a multiple-comparisons risk; strong example-asymmetry;
+the "if several checks fail" presupposition), partially offset by 4
+already-present explicit anti-default-triggering guards. Not proof either
+model is biased — real material suggesting the SEAT/PROMPT architecture
+itself may lean interventionist regardless of which model occupies it.
+This reframes what 8/8-vs-8/8 can mean; the three-layer design below is
+built to distinguish the live explanations, not assume one.
+
+**Revised evaluation design (three layers, TWO independent blind judges
+per layer — 8 cases is small enough that judge variance could change the
+conclusion, and evaluation tokens are cheap relative to the generation
+already paid for). Not yet run.**
+
+- **Layer 1 — raw necessity** (must run BEFORE either judge sees any
+  review, so the mere existence of two reviews doesn't prime "a revision
+  must have been necessary"): show ONLY the raw draft. Record
+  `publish_as_is` / `minor_revision` / `substantial_revision`, the single
+  most important defect if any, and confidence. This is now the
+  independent baseline both reviewers get judged against — newly critical
+  given both went 8/8 revise.
+- **Layer 2 — review quality**: per case, show Review A and Review B
+  (notes only, anonymized, already built) — score each independently
+  (problem validity, importance, coverage of the real problem,
+  specificity/actionability, false-positive pressure) before any
+  comparison. Only after BOTH are scored: classify the relationship (same
+  underlying problem / partial overlap / different-but-both-valid /
+  Fable-only-valid / Opus-only-valid / both weak).
+- **Layer 3 — result quality**: per case, show RAW / Version X / Version
+  Y (anonymized, already built). Judge EACH version relative to raw (not
+  merely X against Y — two editors can both make a piece worse in
+  different ways, which a pure winner/loser call would hide): better/
+  same/worse than raw, was the important defect actually solved,
+  collateral damage, persona preserved, unsupported material introduced,
+  overall preferred final.
+
+**Keep paired evidence, don't average into one synthetic score early** —
+e.g. per case: raw verdict, Fable-review scores, Opus-review scores,
+Fable-guided-final-vs-raw, Opus-guided-final-vs-raw, side by side. That's
+what explains WHY a model earns the seat, not just whether.
+
+**Decision tree, updated for the 8/8-vs-8/8 result**:
+- Opus identifies essentially the same important problems and the
+  resulting articles are equivalent → remove Fable from the recurring
+  review seat.
+- Fable reliably identifies deeper/load-bearing problems and those notes
+  lead to materially better articles → Fable earns the review seat.
+- Both models frequently request revisions the raw-only judges call
+  unnecessary → the problem is likely the review PROMPT/SEAT, not which
+  model occupies it — redesign the intervention threshold before deciding
+  model ROI.
+- Both models correctly judge all 8 raw drafts as genuinely needing
+  revision (Layer 1 agrees with both) → 8/8 is not evidence of
+  intervention bias at all — it means the raw writer stage is
+  consistently producing drafts that benefit from editorial intervention,
+  a separate, real finding for the larger article-quality repair plan.
 
 **Two separate evaluations once cases exist** (do not conflate):
 1. **Review quality** (blind the reviewer identity, judge against the raw
