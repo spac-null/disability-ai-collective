@@ -15,7 +15,7 @@ not as ten isolated style fixes.
 Must complete before ANY creative-prompt phase starts (see DO NOT TOUCH YET).
 
 ## CURRENT HEAD
-`ae7cd5a` (repo `disability-collective-ai`, `main`, pushed)
+`bb38244` (repo `disability-collective-ai`, `main`, pushed, trident synced)
 
 ## DONE
 - Phase 0B — fail-loud/degraded-run handling (`e4922e6`)
@@ -25,40 +25,26 @@ Must complete before ANY creative-prompt phase starts (see DO NOT TOUCH YET).
 - `temperature` param added to `_call_openai_compat_api` — opt-in, `None` by default, production behavior unchanged, pinned only inside the probe (`4ffb4c9`)
 - 3 Fable briefs frozen successfully on trident (`automation/.probe_fixtures/brief_{sauna,hiring_tool,curb_cuts}.json`)
 
-## CURRENT BLOCKER (mostly resolved, verification pending)
+## CURRENT BLOCKER
+**RESOLVED (commits `63d95da`, `bb38244`).** All 3 bugs fixed, verified live
+on trident TWICE in a row: `error: None`, `degraded_stages: []`, real
+~6.8K-char articles, zero production-state mutation proven before/after
+(drafts hash, assets count, disability_findings.db hash + news_seeds
+used-count, engagement.db's 3 table counts, persona_state hash, git status
+— all identical). 3 Fable briefs committed as fixtures
+(`automation/.probe_fixtures/brief_{sauna,hiring_tool,curb_cuts}.json`).
 
-**Root cause FOUND (Agent A)**: `PROBE_REGISTER`/`PROBE_ARTICLE_TYPE` were
-3-tuples `(name, weight, prompt)` copy-pasted from `_REGISTERS`/
-`_ARTICLE_TYPES`'s raw config rows, but the real `_pick_register()`/
-`_pick_article_type()` return 2-tuples `(name, prompt)` — generate.py does
-`register, register_prompt = self._pick_register()`, which broke with
-"too many values to unpack (expected 2)" once stubbed to the 3-tuple. Fixed:
-both constants are now real 2-tuples in `phase_probe.py`. Not yet committed.
+Bugs were: (1) `PROBE_REGISTER`/`PROBE_ARTICLE_TYPE` were 3-tuples copied
+from raw config rows, but `_pick_register()`/`_pick_article_type()` return
+2-tuples — root cause of the original crash (found by Agent A); (2)
+`orch.drafts_dir`/`assets_dir` never `.mkdir()`'d after path isolation —
+would've been the next crash; (3) degraded-run Telegram alerts read env
+vars directly, unstubbed, could've messaged the real ops channel (2 and 3
+found by Agent B's independent isolation audit, fixed by the main session).
 
-**Two more gaps found (Agent B, independent isolation audit) and already
-fixed locally on top of Agent A's fix, NOT yet pushed/committed:**
-1. `orch.drafts_dir` was never `.mkdir()`'d after `_isolate_paths` reassigns
-   it — would have been the NEXT crash (`create_article_file` does a bare
-   `open()`, no parent mkdir). Added `.mkdir(parents=True, exist_ok=True)`
-   for both `drafts_dir` and `assets_dir` in `_run_one_sample`.
-2. Degraded-run/fallback-mode Telegram alerts in `generate.py` read
-   `REEF_BOT_TOKEN`/`REEF_CHAT_ID` from the environment directly (not
-   patchable) — could send a REAL message to the real ops channel if a
-   sample's `_degraded_stages` comes back non-empty on a host where those
-   are exported (plausible on trident). Added a save/pop/restore of both
-   env vars scoped to just the `_run_production_automation_locked()` call.
-
-Agent B's audit otherwise confirmed every other production-mutation path
-(git, disability_findings.db used-flags, persona state, beat/citation
-ledgers, article_plans, engagement.db, social queue, image generation,
-Fable brief) is genuinely covered — read line-by-line, not assumed.
-
-**Status as of this checkpoint: local repo has all 3 fixes applied
-(register/type tuple + drafts_dir mkdir + Telegram neutralization), syntax-
-verified, but NOT yet re-tested live on trident with all 3 together, NOT
-committed, NOT pushed.** Agent A was notified of the extra 2 fixes and
-asked to do the final combined verification + commit + push. **Check
-whether that landed before re-diagnosing or re-fixing anything.**
+**phase_probe.py's harness itself is now proven working.** Next action is
+the actual 3×3 baseline run (2 more topics × 3 samples each, since topic 0
+"sauna" already has 2 clean samples proven) — see NEXT ACCEPTANCE TEST below.
 
 ## DO NOT TOUCH YET
 Nothing in this list gets edited until Phase 0A's baseline (3 topics × 3
@@ -71,11 +57,11 @@ samples, healthy, zero-mutation-proven) exists and is frozen:
 - Thesis-timing / correction-discipline rules (`generate.py`)
 
 ## NEXT ACCEPTANCE TEST (in order)
-1. One healthy probe article: `error: None`, `degraded_stages: []`, real article text, real prompt saved.
-2. Zero persistent-state mutation proven (before/after hashes/counts, see checklist above).
-3. Repeat once more — same result, same zero-mutation proof.
-4. Only then: run the full 3 topics × 3 samples = 9-article baseline.
-5. Freeze that baseline (commit hash + articles + prompts + metrics) before touching anything in DO NOT TOUCH YET.
+1. ✅ One healthy probe article: `error: None`, `degraded_stages: []`, real article text, real prompt saved. DONE.
+2. ✅ Zero persistent-state mutation proven (before/after hashes/counts). DONE.
+3. ✅ Repeated once more — same result, same zero-mutation proof. DONE (both on topic "sauna").
+4. **NEXT**: run the OFFICIAL 3×3 baseline via the real CLI entry point (`python3 automation/phase_probe.py --run baseline --samples 3`), not the ad-hoc proof script used for steps 1-3 — this writes properly to `automation/probe_out/baseline/` with saved articles/prompts/`metrics.json`, which the ad-hoc proof script didn't do.
+5. Freeze that baseline (commit hash + articles + prompts + metrics, committed to the repo) before touching anything in DO NOT TOUCH YET.
 
 ## DECISION LEDGER (settled, do not reopen)
 - Production `temperature` stays unset/`None`. Only the probe pins it (0.9).
