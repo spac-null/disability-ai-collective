@@ -287,6 +287,66 @@ order at the top of this file).
   whatever the current single-draft path produces until the judge's picks
   have been eyeballed against real outcomes.
 
+**Engagement-system audit, 2026-08-10 — three confirmed bugs fixed, one
+left OPEN, one flagged for later.** An Opus review, briefed to trace real
+records rather than just inspect functions, found the schema/design
+choices (V8: time-series genuinely preserved, not overwritten; correct
+GSC JWT flow; correct Bluesky/Mastodon ID handling; nothing downstream
+reads this data yet, confirming the observation-freeze claim is actually
+true) were sound, but found real correctness bugs underneath:
+- **B1 Tumblr matching — FIXED.** The join key was an exact string match
+  between two URL shapes that are not the same (stored `tumblr_url` has no
+  slug segment; the API's real `post_url` always does) — `remaining.pop()`
+  returned `None` on every post, forever. Confirmed live against the real
+  blog API. Fixed: join on numeric post ID instead. Real `note_count` on
+  the blog is currently 0 regardless, so this closes a correctness bug
+  without producing new signal yet — and the fix hasn't been exercised
+  against real data at all, since zero `_social/*.json` files currently
+  have a `tumblr_url` (no Tumblr post has gone out since the credential
+  fix). First real test is whenever one actually does.
+- **B2 source isolation — FIXED.** GoatCounter's fetcher was the only one
+  of five with no try/except, and ran first — an exception there
+  previously aborted the whole run and rolled back everything already
+  collected that day before GSC/Bluesky/Mastodon/Tumblr even ran. Now
+  isolated per-article; every fetcher commits its own writes immediately.
+- **B3 run/failure observability — FIXED.** No failure signal existed
+  anywhere — exit code always 0, log always said "Wrote N rows" whether
+  or not every source actually worked. This is the exact condition that
+  let B1 and the earlier scroll-depth bug hide from first commit. Per
+  explicit requirement (partial success must never look identical to full
+  success): `main()` now reports one of three states — SUCCESS (all 5
+  clean), PARTIAL (some failed), FAILURE (none did) — exit 0/1/2.
+- **B4 cron/git-pull observability — OPEN BUG, not fixed.** `git pull &&
+  python3 engagement_fetch.py` in the crontab means a pull failure
+  silently skips the entire fetch with zero visible difference from a
+  normal successful day. Same failure family as B3, one layer up, outside
+  the Python collector. Left open deliberately — an operational wrapper
+  fix, not touched in the same pass as B1-B3. Today's 11:00 run is still
+  the first-ever unattended execution of this script (confirmed: the log
+  file didn't exist before this session, all 447 prior rows came from
+  manual test runs) — worth checking after it fires.
+- **Tumblr historical diagnosis — DOC CORRECTION.** This file previously
+  claimed Tumblr "had likely never actually worked." Independently
+  confirmed false: the blog published roughly daily until 2026-05-07, then
+  stopped — the break lines up with the Hermes migration (2026-05-02), not
+  a never-worked architectural defect. The `config.py` env-loading fix
+  from item 1's original writeup is still the right fix; the diagnosis of
+  *why* it was needed was wrong. Matters because "never integrated" and
+  "worked, then regressed at a known boundary" point debugging in
+  different directions.
+- **GSC rolling-90-day window — WAITING / ANALYSIS PREREQUISITE, not
+  fixed.** Every run queries a trailing 90-day window; GoatCounter and
+  social counts are cumulative/lifetime. A GSC value recorded today can be
+  *lower* than the same metric weeks ago purely because old days aged out
+  of the window — a naive time-series read would misread that as
+  engagement decay. Must be accounted for before GSC history is ever used
+  to compare articles or inform a weight. Not urgent while nothing reads
+  this data back (see below).
+- **Engagement → generation leak — VERIFIED ABSENT.** Repo-wide grep
+  found no consumer of `engagement_metrics` anywhere. The observation-
+  freeze claim already made in this file is independently confirmed true,
+  not just asserted.
+
 ---
 
 ## 2. Persist engagement-read + shadow-check output — DONE, 2026-08-09
