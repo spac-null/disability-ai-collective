@@ -564,9 +564,60 @@ no verified per-token pricing for the Fable alias, not fabricated). Reuses
 generation is temperature-pinned at 0.9 (matching every other probe this
 session), via the same `_call_openai_compat_api` patch pattern.
 
-**NOT yet run** — awaiting a code-inspection pass before spending the 8
-cases' real API calls (draft generation + 2 forced reviews + up to 2 forced
-executions per case).
+**Pre-run corrections (before spending anything), then RUN — 8/8 cases
+valid.** Three checks before `--run`, all fixed then verified clean:
+1. Parser failure semantics: malformed JSON/API errors/missing-or-invalid
+   verdict now return distinct `api_error`/`parse_error`/`invalid_verdict`
+   status, never silently collapsed into `publish_as_is` or `revise` (the
+   0/39 finding must not be contaminated by parser artifacts). Same parser
+   for both models. Downstream execution gated strictly on `status=="ok"`.
+2. Explicit sampling settings, both recorded in `provenance.json`:
+   `REVIEW_TEMPERATURE=None` (matches production's own unset-default
+   convention for the real review seat — deliberate, not accidental,
+   applied identically to both forced review calls); `EXECUTOR_TEMPERATURE
+   =0.2` (deliberately pinned low so final-output differences trace to
+   notes content, not independent Opus sampling noise). Also fixed a real
+   `max_tokens` asymmetry (1600 vs 1200) to match production's real 3200
+   review budget for both models.
+3. Mocked offline branch test (`--test-mock`, zero network calls): 21/21
+   checks pass — `publish_as_is` byte-identical final output, executor
+   called exactly once per case, all 6 artifacts present, and (the
+   parser-semantics scenario) simulated API/parse failures produce
+   distinct non-executing statuses rather than silent defaults.
+
+**Run completed, commit `b99d379`, mechanical acceptance passed**: trident
+stayed on `b99d379` the entire run (verified `git rev-parse HEAD` + `git
+status --short` before pulling results — only expected pre-existing
+untracked leftovers). Exactly 8 cases (2 per persona × 4 personas), all 6
+artifacts present per case, `review_prompt_hash` confirms byte-identical
+review prompts sent to both models per case. Full mutation proof clean
+(same backup-vs-backup DB method as every prior check this session —
+`disability_findings.db`/`engagement.db` hashes identical to the pre-run
+backup, persona-state mtimes all predate the run, `_drafts/`(17)/`assets/`
+(588) counts unchanged). Run-level `run_manifest.json` added recording the
+generating commit (provenance.json didn't carry it per-case yet — also
+fixed the harness itself, `_git_commit_hash()` now threaded into every
+future run's per-case provenance).
+
+**Headline result before any blind judging**: all 8 cases `status=="ok"`
+for BOTH models, zero execution failures — every case valid for both
+comparisons, nothing to exclude. **Fable: revise 8/8. Opus: revise 8/8.**
+Both models, independently, request revision on every single case under
+these conditions. This is informative against the 0/39 production
+`publish_as_is` pattern: Opus showing the identical intervention rate
+leans toward "these raw drafts genuinely have real issues most of the
+time" rather than "Fable specifically has a bias" — but does NOT rule out
+both models sharing one, or Fable's notes being more/less justified than
+Opus's even at equal intervention rates. Exactly why the blind
+review-quality judging (below) still has to happen before concluding
+either way — the revise-rate alone answers nothing about the FINANCIALLY
+significant question (does Fable's judgment earn its price).
+
+**Next**: two independent blind evaluations, not yet run (see design
+below, unchanged from the pre-run plan) — review quality (one anonymous
+review at a time against the raw draft, same-problem classification only
+after both are scored) and result quality (RAW/X/Y, no reviewer
+attribution).
 
 **Two separate evaluations once cases exist** (do not conflate):
 1. **Review quality** (blind the reviewer identity, judge against the raw
