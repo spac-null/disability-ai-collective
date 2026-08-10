@@ -812,69 +812,129 @@ Fable-guided). Every "safe" cell above should be read as "did not make an
 already-fabricated draft worse," never as "this article is accurate."
 
 **Second, separate audit — the 8 raw drafts against their frozen sources,
-BEFORE any review touches them** (named people / quotations / attributed
-testimony / numbers / dates / orgs / events / studies, classified
-SUPPORTED / UNSUPPORTED / UNVERIFIABLE-IN-EXPERIMENT — the third label used
-where the claim can't be checked against anything this pipeline actually
-gave the writer, regardless of whether it happens to be true in the real
-world):
-- **8/8 raw drafts contain at least one UNSUPPORTED or UNVERIFIABLE
-  news-event-adjacent factual claim** — sauna (case-00,01): an invented
-  "woman who swims lengths at a public sauna in Finland," presented as
-  someone who spoke to the real artists during the real build, not in
-  source. Hiring_tool (case-02,03): an invented "autistic recruiter" who
-  "asked, in writing... on the record, to HR" — a specific invented
-  documented event; source's one real quote belongs to a different,
-  anonymous "HR director" and IS correctly quoted verbatim in case-03
-  (mixed: one supported quote, one unsupported invented thread).
-  Curb_cuts (case-04,05): "Deborah Antwi" does not exist anywhere in
-  source; case-05's raw draft already fabricates a verbatim quote framed
-  as coming from real council minutes. Museum_labels (case-06,07): both
-  attribute a specific, detailed invented project to Christine Sun Kim, a
-  real living artist — UNVERIFIABLE-IN-EXPERIMENT, and the more serious
-  sub-case (a real identifiable person, not a synthetic news-item
-  character) that neither reviewer caught.
-- **RAW WRITER UNSUPPORTED MATERIAL: 8/8.** This is the dominant,
-  foundational finding — larger and more consequential than the review-
-  seat comparison this experiment was built to answer. The writer stage
-  (Opus, unconstrained) fabricates named-individual testimony in 100% of
-  this small sample, before any reviewer or executor is ever involved.
+BEFORE any review touches them.** First pass (superseded below) said
+"raw writer fabricates 8/8" — **that attribution was wrong and has been
+corrected.** The repeated two-sample symmetry (same invented swimmer in
+both sauna drafts, same invented Deborah Antwi in both curb_cuts drafts,
+etc.) was too structured for eight independent writer hallucinations —
+the obvious shared upstream variable is the frozen Fable-authored
+editorial brief every sample in a topic reuses. Checked all four brief
+JSON files directly. **Confirmed: all five unsupported claims are already
+present, verbatim or near-verbatim, in the brief's own `resisting_example`
+or `correction_moment` field — written by FABLE at planning time, not by
+the writer.**
 
-**Phrased carefully, per the actual causal chain established**: this is
-NOT "Fable fabricated quotes" (Fable never produces final prose — Opus
-executes both branches). It is: *the raw writer stage invented named
-testimony not present in source in 8/8 cases; Fable's review style then
-issued source-dependent instructions ("get her real words," "pull from the
-record") that were impossible to execute safely given the pipeline's
-source-blind executor, in 4/8 cases; Opus's own review style did the
-identical thing once (case-02).* In this 8-case sample, Fable's review
-style triggered unsupported evidence-generation substantially more often
-than Opus's review style (4 vs 1) — not yet "Fable inherently does this
-four times as often at scale"; 8 cases can't establish a general rate.
+**Full attribution table** (claim / in source? / in persona canon? / in
+frozen brief? / first-appearance stage):
+| Claim | In source? | In persona canon? | In frozen brief? | First stage |
+|---|---|---|---|---|
+| Sauna: "a regular at a Finnish public sauna... comes precisely to lose her bearings" | NO | NO | **YES** — `brief_sauna.json`'s `resisting_example`, verbatim | **FABLE PLANNING BRIEF** |
+| Hiring: "an autistic recruiter... formally requested... on the record with HR" | NO (source's real quote belongs to a different, anonymous HR director) | NO | **YES** — `brief_hiring_tool.json`'s `resisting_example`, near-verbatim | **FABLE PLANNING BRIEF** |
+| Curb_cuts: "council notified bay users, one had spoken" (framed as pulled from "the March 14 planning session" record) | NO (source only says no disability advocacy group was consulted — doesn't confirm this) | NO | **YES** — `brief_curb_cuts.json`'s `correction_moment`, near-verbatim | **FABLE PLANNING BRIEF** |
+| Curb_cuts: "Deborah Antwi" (named individual + testimony) | NO | NO | **YES** — `brief_curb_cuts.json`'s `resisting_example`, verbatim | **FABLE PLANNING BRIEF** |
+| Museum: "Christine Sun Kim... spent 2021 replacing Manchester's public captions with 'the sound of anticipation'" | NO | NO (Pixel's canon cites Kim's general work, not this specific project) | **YES** — `brief_museum_labels.json`'s `resisting_example`, verbatim | **FABLE PLANNING BRIEF** |
 
-**Three separate evidence contracts, at three different pipeline layers —
-recorded, NOT implemented now:**
-1. **Writer evidence contract**: the initial writer must not invent named
-   people, testimony, or facts not present in the supplied source package
-   — this is the largest, most upstream gap (8/8), and arguably matters
-   more for CripMinds' credibility than the review-seat cost question that
-   motivated this whole experiment.
-2. **Reviewer evidence contract**: the reviewer cannot safely say "get the
-   real quote from the record" unless a record was actually supplied to
-   it and contains that quote — currently neither `_review_prompts()` nor
-   real production's `_fable_editorial_review` ever receives `source_text`.
-3. **Executor evidence contract**: never convert paraphrase into
-   quotation, and never add a new quotation/statistic/named-person
-   statement/date/number/source-specific detail not already in the draft
-   or in supplied evidence; if a review demands evidence not possessed,
-   preserve the passage and report the instruction as unsupported rather
-   than inventing it. Ideally contracts 2 and 3 eventually receive the
-   actual source/evidence packet, not just an instruction not to
-   hallucinate.
+**All five trace to the identical stage.** Confirmed also: `_fable_editorial_brief`'s
+own prompt (llm.py:565-567) receives only `news_title` + `news_summary[:400]`
+(a ~400-char TRUNCATED summary) — never the full `source_text` at all, an
+even narrower window than the writer gets later. `generate.py:611` then
+inserts `resisting_example` into the writer's prompt near-verbatim,
+explicitly instructed to "let it arrive without a signpost sentence and
+leave it standing" — the writer is not hallucinating independently, it is
+faithfully executing a planning-stage instruction to incorporate material
+Fable invented from a summary, with no fact-check step anywhere in
+between.
+
+**Corrected causal chain**:
+```
+SOURCE (full article, several paragraphs)
+   ↓ (only a ~400-char summary passed through)
+FABLE PLANNING BRIEF — invents named individual + testimony/quote
+   in resisting_example/correction_moment, no source-verification step
+   ↓ (inserted near-verbatim into the writer prompt)
+WRITER (Opus) — faithfully incorporates the invented material as
+   instructed, typically as paraphrase (this is where "8/8 raw drafts
+   contain unsupported material" actually originates — not writer
+   invention, writer COMPLIANCE with an already-fabricated brief)
+   ↓ (for 4/8 cases)
+REVIEW (Fable 4x, Opus 1x) — flags the paraphrase as "no real quoted
+   voice," explicitly demands "her real words," not knowing the person
+   doesn't exist
+   ↓ (source-blind, no way to check)
+EXECUTOR (Opus) — fabricates a plausible verbatim quote to comply
+```
+
+**Corrected wording, exactly**: not "the raw writer stage fabricates
+named-individual testimony (8/8)" — instead: **"unsupported named-
+individual/testimony material is present by the raw-draft stage in 8/8
+cases; traced to its origin, all 8 stem from the frozen Fable-authored
+editorial brief's `resisting_example`/`correction_moment` field (confirmed
+in all 4 topics), not from independent writer invention."** For Deborah
+Antwi (and the sauna swimmer, and the recruiter, and the curb_cuts
+notification claim) — all confirmed absent from the source the article
+purports to report — "fabricated in this article's evidence chain" is
+justified. For Christine Sun Kim specifically — absent from source AND
+persona canon, but not independently checked against the real world —
+the correct label is **"unsupported by experimental evidence,"** not
+"invented"; whether Kim ever did anything resembling this in reality is a
+separate, unverified question from whether this pipeline had any basis
+for asserting it.
+
+**This reopens the planning seat — not the ROI question (still
+untested), a SAFETY question (now confirmed).** The original experiment
+design explicitly froze the brief and said "don't infer planning ROI from
+this ablation" — that's still true for "is Fable's planning BETTER than
+Opus's would be." But this audit answers a different, prior question:
+**does Fable's current planning-stage behavior inject fabricated evidence
+into the pipeline before anything else runs? Confirmed yes, 4/4 topics.**
+The architecture now has FOUR grounding breaks, not three, and the first
+one is the origin point for everything downstream:
+```
+FABLE PLANNING BRIEF — may invent evidence (confirmed, 4/4 topics)
+   ↓
+WRITER — inherits and incorporates unsupported evidence (confirmed, 8/8)
+   ↓
+REVIEW (Fable/Opus) — source-blind, cannot verify or catch it
+   ↓
+EXECUTOR (Opus) — source-blind, can convert invented paraphrase into
+   invented verbatim quotation (confirmed, 4/8 Fable-triggered, 1/8
+   Opus-triggered)
+```
+
+**What survives unchanged from before this correction**: the review-seat
+A/B comparison remains fully causal — every case's two branches share the
+identical (already-brief-contaminated) raw draft, so "did revision make it
+worse" is still a valid, uncontaminated question. Keep exactly: *"In this
+sample, Fable's review style more frequently requested source-dependent
+evidence that the source-blind executor could not safely provide (4/8 vs
+1/8)."* What changed is only where the PRE-EXISTING fabrication
+originated — not the writer, the frozen planning brief.
+
+**Four separate evidence contracts, at four pipeline layers — recorded,
+NOT implemented now, priority order matches the causal chain**:
+1. **Planning evidence contract** (the actual priority, confirmed origin):
+   `_fable_editorial_brief` must not assert a named individual, quotation,
+   or specific documented event in `resisting_example`/`correction_moment`
+   unless it is drawn from supplied source material — and it needs the
+   FULL source, not a 400-char summary, to have any chance of doing this
+   safely.
+2. **Writer evidence contract**: should not incorporate a brief's
+   resisting_example/correction_moment claim as fact without it being
+   traceable to source — though this is arguably better fixed upstream
+   (contract 1) than by asking the writer to second-guess its own brief.
+3. **Reviewer evidence contract**: cannot safely say "get the real quote
+   from the record" unless a record was actually supplied and contains
+   it — currently neither `_review_prompts()` nor real production's
+   `_fable_editorial_review` ever receives `source_text`.
+4. **Executor evidence contract**: never convert paraphrase into
+   quotation, never add new quotation/statistic/named-person statement/
+   date/number/source-specific detail not already in the draft or
+   supplied evidence; if a review demands evidence not possessed,
+   preserve the passage and report the instruction as unsupported.
 
 **This changes the possible Phase 1.5B outcomes from a binary
-Fable-vs-Opus choice into four, and D is now confirmed, not
-hypothetical**:
+Fable-vs-Opus choice into four; D is confirmed, and its origin is now
+narrower and more actionable than "the writer"**:
 - **A.** Opus review is editorially equivalent and safer in this sample →
   replace Fable review with Opus.
 - **B.** Fable is materially better editorially but causes unsafe source-
@@ -882,11 +942,13 @@ hypothetical**:
   seat, not the current one.
 - **C.** Both models are frequently unnecessary/interventionist (Layer 1's
   finding) → redesign the review prompt/seat first, independent of model.
-- **D. Raw drafts themselves contain significant unsupported material —
-  CONFIRMED, not hypothetical (8/8).** Source-grounding repair at the
-  WRITER stage is a prerequisite regardless of which model occupies the
-  review seat, and probably belongs ahead of the review-seat ROI question
-  in the repair sequence.
+- **D. Raw drafts contain significant unsupported material — CONFIRMED
+  (8/8), and now traced to a single, specific, fixable origin: Fable's
+  planning-brief stage (4/4 topics), not diffuse writer hallucination.**
+  This is MORE actionable than the original "writer" framing, not less —
+  fixing one prompt (`_fable_editorial_brief`'s system/user construction,
+  plus giving it full source access) addresses the root of all four
+  topics' contamination at once.
 
 ## PHASE 1.5B VERDICT — not yet a final model-seat decision; a scoped
 finding plus a bigger, unscheduled one
@@ -904,33 +966,51 @@ the roadmap:
    real, architecturally-explained difference, not yet a general rate
    claim, and not solely a Fable defect (case-02 shows Opus's own review
    triggering the identical failure).
-4. **The raw WRITER stage fabricates named-individual testimony not in
-   source in 8/8 of this sample — larger, more foundational, and probably
-   higher-priority than the review-seat ROI question this experiment was
-   built to answer.** This was not designed for going into this
-   experiment; it surfaced from auditing the "fabrication" signal the
-   blind judges flagged, and it changes what "finish Phase 1.5B" even
-   means.
+4. **Unsupported named-individual/testimony material is present by the
+   raw-draft stage in 8/8 of this sample — traced to its origin: the
+   frozen FABLE-AUTHORED planning brief's `resisting_example`/
+   `correction_moment` field, confirmed in all 4 topics by direct read of
+   the brief JSON files, not independent writer invention.** Corrected
+   from an earlier, wrong attribution to "the writer stage" — the
+   repeated two-sample symmetry (identical invented swimmer in both sauna
+   samples, identical invented Deborah Antwi in both curb_cuts samples)
+   was the tell; the writer faithfully incorporates what the brief handed
+   it. This is larger and more foundational than the review-seat ROI
+   question this experiment was built to answer, and it reopens — as a
+   SAFETY question, not the still-untested ROI question — the one seat
+   this experiment's design explicitly declared out of scope.
 
 **What this does NOT change**: the review-seat A/B itself stays causally
-valid — both branches per case share one raw draft, so "did revision make
-a bad draft worse" is still answerable, and finding 3 is real evidence on
-that question. What it DOES change: closing Phase 1.5B with only a model-
-seat recommendation would bury finding 4, which likely matters more for
-CripMinds' credibility than which model reviews.
+valid — both branches per case share one identical (already brief-
+contaminated) raw draft, so "did revision make it worse" is still
+answerable, and finding 3 is real evidence on that question. What it DOES
+change: closing Phase 1.5B with only a model-seat recommendation would
+bury finding 4, which likely matters more for CripMinds' credibility than
+which model reviews — and finding 4 is now sharper and MORE actionable
+than first stated, not less: one prompt (`_fable_editorial_brief`,
+currently fed a ~400-char summary, never the full source) is the
+confirmed origin for all four topics' contamination, not a diffuse
+writer-hallucination problem that would need fixing in many places.
 
-**Recommended next steps, not implemented now**: (a) the three evidence
-contracts above (writer/reviewer/executor), with the WRITER contract as
-the actual priority given 8/8; (b) once contracts exist, re-run a small
-confirmation batch before touching the real review seat in production;
-(c) separately decide where this finding sits relative to Phase 2
-(brevity/evidence/testimony) in the roadmap — it plausibly belongs there
-or earlier, not filed only under "Fable ROI." Not deciding that placement
-here — flagging it so it isn't lost.
+**Recommended next steps, not implemented now**: (a) the four evidence
+contracts above, in causal order — PLANNING first (give
+`_fable_editorial_brief` the full source and a constraint against
+asserting unsourced named individuals/quotes/events in
+`resisting_example`/`correction_moment`), then writer/reviewer/executor;
+(b) once contracts exist, re-run a small confirmation batch before
+touching the real review OR planning seat in production; (c) separately
+decide where this finding sits relative to Phase 2 (brevity/evidence/
+testimony) in the roadmap — it plausibly belongs there or earlier, not
+filed only under "Fable ROI." Not deciding that placement here — flagging
+it so it isn't lost.
 
-**Explicitly separate from this experiment, still untested**: the
-planning/brief seat (frozen briefs are held constant by design — no
-finding here generalizes to "should Fable write the plan").
+**Explicitly separate from this experiment, still untested**: whether
+Fable's planning is BETTER or WORSE than Opus's would be at the same task
+(the original "planning ROI" question — frozen briefs by design can't
+answer this, and this correction doesn't change that). What IS now
+answered, and is a different question: whether Fable's CURRENT planning
+output, as implemented, is safe to keep feeding downstream unchanged —
+no, confirmed 4/4 topics.
 
 ## INFRASTRUCTURE BACKLOG (not blocking Phase 1)
 CLIProxyAPI's dead Codex/ChatGPT-Plus OAuth account (expired 2026-07-20)
