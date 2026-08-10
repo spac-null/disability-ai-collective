@@ -186,6 +186,40 @@ file, personas.py, config.py, generate.py, gate.py, review.py, model-routing
 — everything except `llm.py`) between the two final commits, plus the full
 mutation proof again, before any blind scoring.
 
+**Redo — ALL CHECKS PASSED, this run is valid.** Control commit `bfbc017`,
+V1 commit `a1522c7`. Three-way brief-hash match confirmed from provenance:
+control's own `metrics.json` says `38e10cd5d7b5` for all 3 samples, v1's own
+`metrics.json` says `38e10cd5d7b5` for all 3 samples, direct `sha256sum` of
+the canonical file says `38e10cd5d7b58f72...` — identical. Spot-checked the
+actual prompt text this time (not just the hash): `STARTING REGISTER: wry`
+and the full `EDITOR BRIEF` question are byte-identical between
+`museum_labels-0.prompt.txt` in both output dirs — confirms the hash match
+reflects real identical planning content, not another false positive.
+3/3 + 3/3 `status=ok`, `degraded_stages=[]`. `git diff bfbc017 a1522c7
+--stat` shows exactly 3 changed files: `.claude/current-work.md` (docs,
+expected — main accumulated more checkpoint updates than the control
+branch), `automation/orchestrator/llm.py` (the doctrine block, expected),
+`automation/phase_probe.py` (diffed line-by-line — every change is a
+comment/docstring/CLI-help-text string, `signage`→`museum_labels`
+housekeeping + the territory-framing comment fix; zero executable
+difference). `personas.py`/`config.py`/`generate.py`/`gate.py`/`review.py`
+absent from the diff entirely — git's own stat output is the complete file
+list, so their absence IS the byte-identity confirmation, not an inference.
+Full mutation proof (fresh-backup-vs-16:48-prior-backup, same method):
+`disability_findings.db` and `engagement.db` hashes both byte-identical to
+the pre-run backup; `news_seeds` 91/880, `findings` 1430, `engagement_metrics`
+447, `article_plans` 0, `review_signals` 2 — all unchanged; persona-state
+mtimes all predate this run by days; `_drafts/`17 and `assets/`588 file
+counts unchanged; git status clean apart from expected new output dirs.
+Word counts 1051-1226 (control) / 1025-1148 (v1), comparable to the other
+3 topics' spread. Doctrine-vocabulary smoke check: control 8 hits, v1 5 hits
+across the 6 essays (low totals both ways, no leakage, consistent with the
+3-topic finding). Output pulled locally to `probe_out/pixel-validation-
+control-r2/` and `probe_out/pixel-validation-whywewrite-v1-r2/` (not yet
+committed — pending the blind-scoring decode). Strict blind scoring
+(6 anonymous IDs, same 4-dimension rubric as the 3-topic set, decode after)
+in progress.
+
 **Then**: blind-score those 6 (same 4-dimension rubric, decode after,
 same discipline as the 3-topic set) and re-run the aggregation with all 4
 personas. If Pixel is neutral-or-positive → KEEP WHY WE WRITE v1 outright,
