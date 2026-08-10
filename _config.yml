@@ -1,6 +1,6 @@
 # Site Configuration
-version: "3.1"
-codename: "Aperture"
+version: "3.2"
+codename: "Resolution"
 title: "Crip Minds"
 description: "Editorial platform publishing disability-led perspectives on culture, architecture, labor, and technology."
 author: "Crip Minds"
