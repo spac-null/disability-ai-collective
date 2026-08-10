@@ -137,9 +137,54 @@ branch → cherry-pick the brief-file commit onto `main` → `--run
 pixel-validation-whywewrite-v1 --topic museum_labels --samples 3` on `main`.
 Named `pixel-validation-*`, deliberately NOT folded into
 `baseline`/`whywewrite-v1` — supplemental check, not a retroactive rewrite of
-the canonical baseline. **Delegated to Codex (`mcp__codex__codex`) for
-execution** — self-contained step-by-step instructions given, including the
-byte-identical-brief verification step; awaiting its completion report.
+the canonical baseline.
+
+**INVALID RUN — caught before blind scoring, discarded, redone.** First
+execution delegated to Codex (`mcp__codex__codex`). Codex reported "Frozen
+brief: byte-identical on both branches; SHA-256 d8acd04e5...", 3/3 + 3/3
+`status=ok`, `degraded_stages=[]` — looked clean. It was NOT: each run's own
+`metrics.json` recorded a DIFFERENT `fable_brief_hash` (control `aa8cd607fa2b`
+vs v1 `d8acd04e5e7b`), confirmed by diffing the actual `.prompt.txt` sidecars
+— completely different register (`clinical` vs `wry`), different EDITOR
+BRIEF question, different CORRECTION MOMENT, different RESISTING EXAMPLE.
+Root cause (reconstructed from Codex's own narration: "freeze output did not
+appear in captured stdout... I moved that exact file temporarily... verified
+the checked-in main copy was byte-identical"): the control generation ran
+against the FIRST frozen brief; something (likely an unconfirmed re-freeze,
+possibly with `--force`, after doubting the first one had worked) then
+regenerated a SECOND, different brief before the file was committed — so the
+git-committed file (which Codex correctly verified as byte-identical between
+the two branches) was never the file the control run had actually consumed.
+**Lesson, worth keeping**: artifact equality must be verified from run
+PROVENANCE (each run's own recorded consumed-input hash), not from
+repository state after the fact — two files can be byte-identical in git
+while the two live runs that mattered consumed different content earlier in
+the sequence. All 6 samples discarded as invalid (both runs internally
+healthy/well-formed, but confounded by two independent variables at once —
+doctrine AND planning content/register — so no difference between them can
+be attributed to WHY WE WRITE). Preserved as evidence, not data:
+`probe_out/pixel-validation-baseline-invalid-mixed-briefs/` and
+`probe_out/pixel-validation-whywewrite-v1-invalid-mixed-briefs/`.
+
+**Redo, done directly (no further delegation for this step), stricter
+acceptance condition**: re-froze the brief on `pixel-validation/control`,
+verified via direct `sha256sum` myself (not trusting stdout) —
+`38e10cd5d7b5...` — commit `bfbc017`. Cherry-picked onto `main`, re-verified
+hash match — commit `c3306f4`. Trident stayed on the control branch for the
+ENTIRE control generation (no checkout/pull of `main` until the control run's
+own `metrics.json` exists and all 3 samples are healthy — do not depend on
+import timing or filesystem behavior to make an early branch switch safe).
+Output directories renamed to avoid ever sharing a canonical name with
+invalid data: `pixel-validation-control-r2` /
+`pixel-validation-whywewrite-v1-r2`. **Acceptance condition for "same
+brief" is now**: control run's OWN `metrics.json.samples[].fable_brief_hash`
+== v1 run's OWN `metrics.json.samples[].fable_brief_hash` == direct
+`sha256sum` of the one canonical `brief_museum_labels.json` — three-way
+match from provenance, not a two-way git-state check. After both runs: a
+second full generation-relevant tree comparison (phase_probe.py, the brief
+file, personas.py, config.py, generate.py, gate.py, review.py, model-routing
+— everything except `llm.py`) between the two final commits, plus the full
+mutation proof again, before any blind scoring.
 
 **Then**: blind-score those 6 (same 4-dimension rubric, decode after,
 same discipline as the 3-topic set) and re-run the aggregation with all 4
