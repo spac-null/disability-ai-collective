@@ -312,6 +312,7 @@ class GateMixin:
             "Be strict. Quote the exact offending phrase. Max 15 words per quote."
         )
         violations = []
+        gate_llm_ok = True
         try:
             raw = self._call_openai_compat_api(
                 url=CLIPROXY_URL,
@@ -328,7 +329,17 @@ class GateMixin:
             )
             violations = self._parse_rule_verdicts(raw)
         except Exception as e:
-            self.logger.warning("Pre-commit gate check failed: %s", e)
+            # Added 2026-08-10 after a confirmed live incident: this call 403'd, the
+            # except left violations=[], and the code below logged a bare
+            # "Pre-commit gate: PASS" -- indistinguishable from a real clean pass on
+            # a 2530-word article that shipped with a fabricated quote and a banned
+            # thesis-restatement ending. gate_llm_ok=False makes that state visible
+            # to the log line below and to the caller's pipeline_degraded stamp,
+            # instead of silently reading as "checked, passed."
+            gate_llm_ok = False
+            self.logger.error("Pre-commit gate LLM rule-check call FAILED (violations unknown, not zero): %s", e)
+            if hasattr(self, "_degraded_stages"):
+                self._degraded_stages.append("gate_llm")
 
         # Trigger 2b: buried-clause sentences (deterministic, R15 — see
         # _check_buried_clause_sentences docstring). Folded into the same violations
@@ -388,7 +399,20 @@ class GateMixin:
         type_fail = bool(type_violations)
 
         if not readability_fail and not rule_fail and not type_fail:
-            self.logger.info("Pre-commit gate: PASS (FRE=%.1f, violations=%d)", scores["fre"], len(violations))
+            if gate_llm_ok:
+                self.logger.info("Pre-commit gate: PASS (FRE=%.1f, violations=%d)", scores["fre"], len(violations))
+            else:
+                # Deliberately not "PASS" in any form -- deterministic checks (readability,
+                # article-type) came back clean, but the LLM rule check never ran, so
+                # mechanical rule violations are UNKNOWN, not zero. "gate_llm" is already
+                # in self._degraded_stages (appended above); generate.py's promotion-block
+                # logic reads that, not this return value -- this log line only has to
+                # stop a human skimming it from reading "PASS" as "checked and clean."
+                self.logger.error(
+                    "Pre-commit gate: INCOMPLETE — deterministic checks passed, but the LLM "
+                    "rule check FAILED and did not run (FRE=%.1f). Mechanical rule violations "
+                    "are UNKNOWN, not zero.", scores["fre"]
+                )
             return content, False
 
         self.logger.info(

@@ -62,6 +62,17 @@ class ProductionOrchestrator(DebateMixin, ImagesMixin, PublishMixin, GateMixin, 
         # to clean up.
         self._source_text_cache = {}
 
+        # Per-run degradation tracker, added 2026-08-10 after a confirmed live
+        # incident: the 2026-08-10 09:00 run lost its Fable brief, both editorial
+        # revision passes failed, and the gate's own LLM rule-check call 403'd --
+        # yet every one of those failures was caught, logged as a WARNING, and
+        # silently absorbed, so the article shipped looking exactly like a clean
+        # run. Stages append their own name here on failure (fable_brief, gate_llm,
+        # editorial_revision); publish.py stamps this into the article's own
+        # frontmatter as pipeline_degraded so a bad run is visible after the fact,
+        # not just in a log line nobody was watching.
+        self._degraded_stages = []
+
     def _setup_logger(self):
         """Setup proper logging."""
         import logging

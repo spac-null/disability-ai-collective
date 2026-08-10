@@ -347,9 +347,22 @@ class ReviewMixin:
         this produces as informal, not evidence for anything.
 
         Never raises. Returns a string verdict or None on failure — same
-        contract as _engagement_read."""
+        contract as _engagement_read.
+
+        has_plan=False short-circuits to a deterministic N/A answer rather than
+        asking the model, added 2026-08-10 after a confirmed real failure: given
+        the full article text plus a rubric describing what a real correction/
+        resisting moment looks like, the model answered CORRECTION: YES and
+        RESISTING: YES -- quoting real passages -- for an article that had NO
+        persisted plan at all (the Fable brief failed to parse that run). It
+        only obeyed the "answer N/A, do not guess" instruction for
+        OPENING_SHAPE, not the other two fields. A check meant to verify
+        commitments were kept cannot be trusted if it also happily verifies
+        commitments that were never made -- this makes the failure structurally
+        impossible instead of asking the model not to do it."""
+        if not plan:
+            return "CORRECTION: N/A\nRESISTING: N/A\nOPENING_SHAPE: N/A\n(no plan recorded for this article -- not evaluated)"
         try:
-            has_plan = bool(plan)
             raw = self._call_openai_compat_api(
                 url=CLIPROXY_URL,
                 api_key=CLIPROXY_KEY,
@@ -378,15 +391,10 @@ class ReviewMixin:
                 ),
                 user_prompt=(
                     "WHAT THE EDITOR COMMITTED THE WRITER TO:\n"
-                    f"correction moment: {(plan or {}).get('correction_moment') or '(none committed — answer N/A)'}\n"
-                    f"resisting example: {(plan or {}).get('resisting_example') or '(none committed — answer N/A)'}\n"
-                    f"opening shape: {(plan or {}).get('opening_shape') or '(none committed — answer N/A)'}\n\n"
+                    f"correction moment: {plan.get('correction_moment') or '(none committed — answer N/A)'}\n"
+                    f"resisting example: {plan.get('resisting_example') or '(none committed — answer N/A)'}\n"
+                    f"opening shape: {plan.get('opening_shape') or '(none committed — answer N/A)'}\n\n"
                     "Anything marked '(none committed...)' is N/A — do not invent a commitment.\n\n"
-                    f"THE FINISHED ARTICLE:\n{content[:20000]}"
-                ) if has_plan else (
-                    "No plan was recorded for this article (generated before the plan-"
-                    "persistence fix, or the editorial brief failed that day). Answer N/A "
-                    "for every line — do not guess at what might have been planned.\n\n"
                     f"THE FINISHED ARTICLE:\n{content[:20000]}"
                 ),
                 model="openrouter/claude-sonnet-4.6",

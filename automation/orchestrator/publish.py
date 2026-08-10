@@ -64,6 +64,18 @@ class PublishMixin:
         if _pipeline_codename:
             _version_field += f"\npipeline_codename: {json.dumps(str(_pipeline_codename))}"
 
+        # Records which stages (fable_brief, gate_llm, editorial_revision) silently
+        # failed during this run -- see production_orchestrator.py's __init__ for why.
+        # Absence of this field means every tracked stage ran; it does NOT mean every
+        # stage is known-good, only that none of the ones we currently detect failed.
+        _degraded_field = ""
+        _degraded_stages = getattr(self, "_degraded_stages", None)
+        if _degraded_stages:
+            # YAML flow-sequence, not a comma-joined string -- matches the keywords
+            # field's own style just above and avoids any future consumer having to
+            # split/strip a string to get the stage list back out.
+            _degraded_field = f"\npipeline_degraded: [{', '.join(sorted(set(_degraded_stages)))}]"
+
         # Hero is _setting_1 by suffix, not image_filenames[0] by position — the
         # list only contains whichever images actually succeeded, so if setting_1
         # specifically failed, [0] would silently be a 1:1 body image used as the
@@ -86,7 +98,7 @@ category: {metadata['categories'][0].lower() if metadata['categories'] else 'res
 image: /assets/{hero_fname}
 image_alt: {json.dumps(hero_desc or 'Article illustration')}
 excerpt: {json.dumps(excerpt)}
-keywords: [{', '.join(keywords)}]{_source_fields}{_score_field}{_version_field}
+keywords: [{', '.join(keywords)}]{_source_fields}{_score_field}{_version_field}{_degraded_field}
 ---
 
 """
