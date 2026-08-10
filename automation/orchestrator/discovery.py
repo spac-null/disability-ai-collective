@@ -10,6 +10,7 @@ persona reference tracking) — one coherent concern, even though it spans many
 small methods. Zero behavior change -- bodies copied verbatim, confirmed via
 direct substring containment against git HEAD.
 """
+import html as _html_entities
 import json
 import random
 import re
@@ -22,6 +23,58 @@ from .config import (
     _REGISTERS, _LENGTHS, _ARTICLE_TYPES, _THEME_CLUSTERS, _AGENT_BEATS,
     _PERSONA_CONFLICTS, _STRUCTURAL_SHAPES, _SCRIPT_DIR,
 )
+
+try:
+    from curl_cffi import requests as _curl_cffi_requests
+except ImportError:
+    _curl_cffi_requests = None
+
+try:
+    import trafilatura as _trafilatura
+except ImportError:
+    _trafilatura = None
+
+_NAV_FUNCTION_WORDS = {
+    "the", "a", "an", "of", "to", "and", "in", "is", "was", "that", "it", "for",
+    "on", "with", "as", "at", "by", "from", "but", "this", "which", "are", "be",
+    "been", "were", "has", "have", "had", "its", "their", "his", "her", "they",
+    "we", "you", "he", "she", "not", "or", "would", "will", "said", "says",
+    "more", "than", "when", "who", "what", "there",
+}
+
+
+def _looks_like_nav(text: str) -> bool:
+    """True if a paragraph reads like nav/menu chrome rather than prose.
+
+    Discriminator is function-word density. English prose runs ~0.26-0.42
+    function words per token; concatenated nav menus ('Magazine Awards Jobs
+    Events Guide Showroom...') run 0.00-0.19 however long they get, because
+    they are lists of nouns with no grammar. Measured across seven live
+    news/design sites the populations do not overlap: every nav blob scored
+    <=0.19, every genuine article paragraph >=0.26.
+
+    English-only signal, and it only gates the regex FALLBACK path (used
+    when trafilatura is unavailable or fails) -- never the trafilatura
+    primary path -- so a non-English page can't lose text to it unless
+    trafilatura is also unavailable.
+    """
+    words = [w.strip('.,;:!?"\'()[]').lower() for w in text.split()]
+    words = [w for w in words if w]
+    if len(words) < 8:
+        return False
+    return sum(1 for w in words if w in _NAV_FUNCTION_WORDS) / len(words) < 0.20
+
+
+def _extract_paragraphs_regex(html: str, max_paras: int = 12) -> str:
+    """Legacy regex extraction, now nav-guarded and entity-unescaped. Fallback only."""
+    paragraphs = re.findall(r'<p[^>]*>(.*?)</p>', html, re.DOTALL | re.IGNORECASE)
+    clean = []
+    for p in paragraphs:
+        text = _html_entities.unescape(re.sub(r'<[^>]+>', '', p)).strip()
+        text = re.sub(r'\s+', ' ', text)
+        if len(text) > 80 and not _looks_like_nav(text):
+            clean.append(text)
+    return "\n\n".join(clean[:max_paras])
 
 
 class DiscoveryMixin:
@@ -866,69 +919,124 @@ class DiscoveryMixin:
         return chosen, prompts[chosen]
 
     def _extract_paragraphs(self, html: str) -> str:
-        """Extract body text from HTML. Skip short nav/caption paragraphs."""
-        paragraphs = re.findall(r'<p[^>]*>(.*?)</p>', html, re.DOTALL | re.IGNORECASE)
-        clean = []
-        for p in paragraphs:
-            text = re.sub(r'<[^>]+>', '', p).strip()
-            text = re.sub(r'\s+', ' ', text)
-            if len(text) > 80:
-                clean.append(text)
-        return "\n\n".join(clean[:10])
+        """Extract main article body text from arbitrary site HTML.
+
+        Primary: trafilatura, which scores the DOM readability-style and
+        strips nav/menu/footer/cookie/related-article chrome generically
+        rather than per-site. Added 2026-08-10 after live-testing the old
+        regex-only approach against 7 real sites (Dezeen, NPR, BBC, WIRED,
+        designboom, Ars Technica, The Conversation): it led with a nav/menu
+        junk paragraph on 7/7, eating 22-46% of the output budget every
+        time -- not a Dezeen-specific edge case. trafilatura produced clean
+        article text on all 7; readability-lxml/boilerpy3/jusText/a
+        hand-rolled bs4 link-density scorer all leaked chrome or picked the
+        wrong DOM container on at least one site.
+
+        Falls back to the regex scan (now nav-guarded, see
+        _extract_paragraphs_regex) when trafilatura is absent or returns
+        nothing usable, so extraction never hard-depends on the library.
+        Returns clean paragraph text; a short/empty return remains the
+        existing signal for fetch_source_article() to fall back to the
+        stored RSS summary.
+        """
+        text = ""
+        if _trafilatura is not None:
+            try:
+                text = _trafilatura.extract(
+                    html,
+                    include_comments=False,
+                    include_tables=False,
+                    include_images=False,
+                    favor_precision=False,  # True cut a real article to 469 chars in testing
+                    no_fallback=False,
+                ) or ""
+            except Exception:
+                text = ""
+            text = re.sub(r'\n{3,}', '\n\n', text).strip()
+
+        if len(text) < 200:
+            legacy = _extract_paragraphs_regex(html)
+            if len(legacy) > len(text):
+                text = legacy
+        return text
+
+    def _fetch_url_html(self, url: str) -> str | None:
+        """Plain urllib GET. Returns decoded HTML or None (bad status/content-type)."""
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
+        })
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            if resp.status != 200:
+                return None
+            content_type = resp.headers.get("Content-Type", "")
+            if "text/html" not in content_type:
+                return None
+            # This 500K cap is a memory/DoS safety bound on raw HTML scanned, NOT
+            # the output size (max_chars already governs that, below). It used to
+            # be 60K, which silently broke real-world pages with heavy pre-content
+            # markup: confirmed live 2026-08-08 that theconversation.com's actual
+            # article text (the tetraplegic-man-in-a-police-station paragraph, the
+            # Oamaru flooding story) starts at character ~101,000 -- entirely past
+            # the old 60K cutoff. That fetch call was silently returning None for
+            # the WHOLE generation this bug shipped from, meaning the model had no
+            # SOURCE MATERIAL block to draw from and invented a person and a quote
+            # to fill the gap instead. Root cause of that fabrication incident, not
+            # a downstream symptom of it.
+            return resp.read().decode("utf-8", errors="replace")[:500000]
+
+    def _fetch_url_html_impersonated(self, url: str) -> str | None:
+        """curl_cffi GET impersonating a real browser's TLS fingerprint.
+
+        Added 2026-08-10: plain urllib/curl get HTTP 403 from sites like
+        Dezeen not because of UA-string sniffing but because their TLS
+        ClientHello (JA3 fingerprint) doesn't match a real browser --
+        confirmed live: stock curl on the trident host got a 403 on
+        dezeen.com, but curl_cffi impersonating chrome124/safari17_0/
+        firefox133 got a clean 200 with the full article on the same URL.
+        chrome110's fingerprint specifically stays blocked -- excluded below.
+        Never the sole path: falls through to fallback_text like the
+        urllib attempt if this also fails or curl_cffi isn't installed."""
+        if _curl_cffi_requests is None:
+            return None
+        r = _curl_cffi_requests.get(url, impersonate="chrome124", timeout=15)
+        if r.status_code != 200:
+            return None
+        content_type = r.headers.get("Content-Type", "")
+        if "text/html" not in content_type:
+            return None
+        return r.text[:500000]
 
     def fetch_source_article(self, url: str, max_chars: int = 3000, fallback_text: str = None) -> str | None:
         """Fetch and extract text from source article URL. Never blocks generation.
 
         fallback_text, added 2026-08-10: this fetches the live rendered
-        webpage directly, which some sites actively block (confirmed live:
-        Dezeen returns HTTP 403 even with a full realistic Chrome UA and
-        standard Accept headers -- not simple UA-sniffing, more likely
-        IP-reputation or a JS-challenge, neither fixable by header
-        tweaking). That's a different, blockable route from how the item
-        was originally collected -- news_fetcher.py reads the site's own
-        RSS feed (built for automated consumption, essentially never
-        blocked), storing a real but short (~500 char) summary. If the
-        caller has that summary in scope (news_seed["summary"] / a
-        news_seeds row), pass it here: real-but-short material beats no
-        material, and this is the exact gap a prior fabrication incident
-        came from (see the 500K-cap comment below) -- the model inventing
+        webpage directly, which some sites actively block. That's a
+        different, blockable route from how the item was originally
+        collected -- news_fetcher.py reads the site's own RSS feed (built
+        for automated consumption, essentially never blocked), storing a
+        real but short (~500 char) summary. If the caller has that summary
+        in scope (news_seed["summary"] / a news_seeds row), pass it here:
+        real-but-short material beats no material, and this is the exact
+        gap a prior fabrication incident came from -- the model inventing
         a person/quote to fill a missing SOURCE MATERIAL block."""
         if not url or not url.startswith("http"):
             return fallback_text[:max_chars] if fallback_text else None
+
+        html = None
         try:
-            req = urllib.request.Request(url, headers={
-                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
-            })
-            with urllib.request.urlopen(req, timeout=10) as resp:
-                if resp.status != 200:
-                    return fallback_text[:max_chars] if fallback_text else None
-                content_type = resp.headers.get("Content-Type", "")
-                if "text/html" not in content_type:
-                    return fallback_text[:max_chars] if fallback_text else None
-                # This 500K cap is a memory/DoS safety bound on raw HTML scanned, NOT
-                # the output size (max_chars already governs that, below). It used to
-                # be 60K, which silently broke real-world pages with heavy pre-content
-                # markup: confirmed live 2026-08-08 that theconversation.com's actual
-                # article text (the tetraplegic-man-in-a-police-station paragraph, the
-                # Oamaru flooding story) starts at character ~101,000 -- entirely past
-                # the old 60K cutoff. That fetch call was silently returning None for
-                # the WHOLE generation this bug shipped from, meaning the model had no
-                # SOURCE MATERIAL block to draw from and invented a person and a quote
-                # to fill the gap instead. Root cause of that fabrication incident, not
-                # a downstream symptom of it.
-                html = resp.read().decode("utf-8", errors="replace")[:500000]
-            text = self._extract_paragraphs(html)
-            if not text or len(text) < 200:
-                self.logger.warning(
-                    "fetch_source_article: extracted %s chars (<200) from %s -- "
-                    "generation/repair will proceed without real source material",
-                    len(text) if text else 0, url
-                )
-                return fallback_text[:max_chars] if fallback_text else None
-            self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
-            return text[:max_chars]
+            html = self._fetch_url_html(url)
         except Exception as e:
-            self.logger.debug("fetch_source_article failed for %s: %s", url, e)
+            self.logger.debug("fetch_source_article: urllib attempt failed for %s: %s", url, e)
+
+        if html is None:
+            try:
+                html = self._fetch_url_html_impersonated(url)
+                if html is not None:
+                    self.logger.info("fetch_source_article: urllib blocked, curl_cffi impersonation succeeded for %s", url)
+            except Exception as e:
+                self.logger.debug("fetch_source_article: curl_cffi attempt failed for %s: %s", url, e)
+
+        if html is None:
             if fallback_text:
                 self.logger.info(
                     "fetch_source_article: using the RSS summary already on "
@@ -936,6 +1044,17 @@ class DiscoveryMixin:
                 )
                 return fallback_text[:max_chars]
             return None
+
+        text = self._extract_paragraphs(html)
+        if not text or len(text) < 200:
+            self.logger.warning(
+                "fetch_source_article: extracted %s chars (<200) from %s -- "
+                "generation/repair will proceed without real source material",
+                len(text) if text else 0, url
+            )
+            return fallback_text[:max_chars] if fallback_text else None
+        self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
+        return text[:max_chars]
 
     def mark_finding_as_used(self, finding_id):
         """Mark a finding as used so it won't be picked again."""

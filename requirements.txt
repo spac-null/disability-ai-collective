@@ -6,6 +6,8 @@
 requests==2.31.0
 beautifulsoup4==4.12.3
 python-dateutil==2.8.2
+curl_cffi==0.13.0
+trafilatura==2.2.0
 
 # Git automation
 gitpython==3.1.41
