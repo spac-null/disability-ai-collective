@@ -373,5 +373,11 @@ existing biography now.
    itself, independent of Phase 5's repetition judge catching what remains.
 7. Do NOT touch Siri's phenomenological engine, Maya's gap-attention, Zen's
    implicit measurement-limits engine, or Pixel's legibility-as-politics —
-   all four are genuinely distinct and worth keeping; only the OWNERSHIP/
-   SUPPRESSION framing and the missing MOTIVE need to change.
+   all four candidate engines are sufficiently distinct ON PAPER to
+   preserve as working hypotheses until the same-source/four-persona probe
+   establishes whether those distinctions survive generation. Only the
+   OWNERSHIP/SUPPRESSION framing and the missing MOTIVE need to change now;
+   whether the engines themselves are "worth keeping" is exactly what that
+   future probe tests, not something this audit gets to settle by having
+   read well on the page — the same mistake this whole audit exists to
+   correct for "territory."
