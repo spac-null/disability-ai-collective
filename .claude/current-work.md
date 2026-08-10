@@ -146,6 +146,14 @@ samples, healthy, zero-mutation-proven) exists and is frozen:
 6. Re-run the mutation proof (before/after) across that fresh run too.
 7. Freeze that baseline (commit hash + articles + prompts + metrics, committed to the repo) — only THEN update this file's ACTIVE PHASE to "Phase 0 COMPLETE" and start Phase 1.
 
+## INFRASTRUCTURE BACKLOG (not Phase 0A, do not fix now)
+- CLIProxyAPI's dead Codex/ChatGPT-Plus OAuth account (expired 2026-07-20)
+  appears capable of poisoning routing for ALL requests, not just its own —
+  a restart fixed it today, but an unrelated expired account shouldn't be
+  able to break shared, healthy accounts. Fix later: either remove/refresh
+  the dead Codex account, or file upstream that per-account refresh failures
+  shouldn't affect other accounts' requests.
+
 ## DECISION LEDGER (settled, do not reopen)
 - Production `temperature` stays unset/`None`. Only the probe pins it (0.9).
 - Baseline = 3 topics (spanning 3 personas) × 3 samples each, same fixed article type/register/length across all — format variation is a separate, later probe.
