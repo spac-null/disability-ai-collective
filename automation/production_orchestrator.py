@@ -53,9 +53,14 @@ class ProductionOrchestrator(DebateMixin, ImagesMixin, PublishMixin, GateMixin, 
         self.assets_dir.mkdir(exist_ok=True)
         
         self.logger = self._setup_logger()
-        
+
         # FIXED: Proper agents configuration
         self.agents = personas.AGENTS
+
+        # Per-run source-text memo (see DiscoveryMixin.get_source_text) -- lives
+        # exactly as long as this process/run, cleared by process exit, nothing
+        # to clean up.
+        self._source_text_cache = {}
 
     def _setup_logger(self):
         """Setup proper logging."""

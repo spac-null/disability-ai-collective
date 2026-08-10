@@ -27,7 +27,8 @@ from .config import (
 class LLMMixin:
     def _call_openai_compat_api(self, url, api_key, system_prompt, user_prompt,
                                    model, max_tokens=3500, timeout=120, no_think=False,
-                                   return_model=False, reasoning_max_tokens=None):
+                                   return_model=False, reasoning_max_tokens=None,
+                                   check_truncation=False):
         """OpenAI-compatible API call — stdlib only, no requests dependency.
 
         return_model=True: returns (text, actual_model_used) tuple.
@@ -36,6 +37,21 @@ class LLMMixin:
         which has mandatory extended thinking that otherwise eats the whole max_tokens
         budget and truncates the actual JSON/text output mid-string). Sent as OpenRouter's
         unified `reasoning.max_tokens` field; ignored by non-reasoning models.
+
+        check_truncation: opt-in (default False, no behavior change for existing callers).
+        When True, raises if the API reports the response was cut off by max_tokens.
+        Added 2026-08-10 after confirming live, 6/6 reproductions, that
+        reasoning_max_tokens does NOT reliably bound Fable's real spend --
+        finish_reason came back "length" at max_tokens=6000 on a call whose own
+        math said it should have had ~4,976 tokens of completion headroom to
+        spare, because the field only counts *returned/summarized* thinking, not
+        the raw thinking actually billed against max_tokens. Before this, a
+        truncated response was structurally invisible to every caller: it just
+        looked like a normal, if short, piece of text. Callers that already loop
+        through fallback attempts (_call_editorial_model) opt in so a truncated
+        Fable response is treated as a failure and falls through to the next
+        attempt (Opus, which needs no hidden reasoning budget) instead of being
+        silently accepted or caught only by a caller's own ad hoc length check.
         """
         import json, urllib.request
         content = ("/no_think " if no_think else "") + user_prompt
@@ -65,6 +81,16 @@ class LLMMixin:
         choices = data.get("choices") or []
         if not choices or not choices[0].get("message") or choices[0]["message"].get("content") is None:
             raise ValueError(f"Unexpected API response structure: {list(data.keys())}")
+        if check_truncation:
+            finish_reason = choices[0].get("finish_reason") or data.get("native_finish_reason")
+            if finish_reason in ("length", "max_tokens"):
+                usage = data.get("usage") or {}
+                raise ValueError(
+                    f"Response truncated by max_tokens (model={model}, "
+                    f"finish_reason={finish_reason!r}, "
+                    f"completion_tokens={usage.get('completion_tokens')}, "
+                    f"reasoning_tokens={usage.get('reasoning_tokens')})"
+                )
         raw_text = choices[0]["message"]["content"]
         text = re.sub(r"<think>.*?</think>", "", raw_text, flags=re.DOTALL).strip()
         if return_model:
@@ -369,6 +395,7 @@ class LLMMixin:
                 model="openrouter/claude-opus-4.8",
                 max_tokens=5000,
                 timeout=240,
+                check_truncation=True,
             )
             if rewritten and rewritten.count("---") >= 2 and len(rewritten) > 400:
                 self.logger.info("Opus rewrite succeeded (%d chars)", len(rewritten))
@@ -477,6 +504,7 @@ class LLMMixin:
                     max_tokens=fable_max_tokens if is_fable else max_tokens,
                     timeout=fable_timeout if is_fable else timeout,
                     reasoning_max_tokens=FABLE_REASONING_BUDGET if is_fable else None,
+                    check_truncation=True,
                 )
                 if "direct" in label:
                     self.logger.warning("Editorial model: CLIProxy bypassed — %s active", label)
@@ -753,6 +781,7 @@ class LLMMixin:
             revised = self._call_openai_compat_api(
                 CLIPROXY_URL, CLIPROXY_KEY, system, user,
                 model="openrouter/claude-opus-4.8", max_tokens=5000, timeout=180,
+                check_truncation=True,
             )
             if revised and len(revised) > 400:
                 self.logger.info("Targeted revision: %d chars", len(revised))

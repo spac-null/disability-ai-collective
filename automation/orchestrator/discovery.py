@@ -34,6 +34,12 @@ try:
 except ImportError:
     _trafilatura = None
 
+# Largest max_chars any get_source_text() caller requests today (the fact-check
+# repair pass, at 6000). get_source_text always fetches/caches at this size and
+# slices down for smaller callers, so whichever pipeline stage calls first serves
+# every later stage regardless of call order or requested size.
+_SOURCE_TEXT_CACHE_MAX_CHARS = 6000
+
 _NAV_FUNCTION_WORDS = {
     "the", "a", "an", "of", "to", "and", "in", "is", "was", "that", "it", "for",
     "on", "with", "as", "at", "by", "from", "but", "this", "which", "are", "be",
@@ -1055,6 +1061,30 @@ class DiscoveryMixin:
             return fallback_text[:max_chars] if fallback_text else None
         self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
         return text[:max_chars]
+
+    def get_source_text(self, url: str, max_chars: int = 3000, fallback_text: str = None) -> str | None:
+        """Per-run memoized wrapper around fetch_source_article.
+
+        Added 2026-08-10: generation (generate.py) and the fact-check repair
+        pass (fact_check.py's _attempt_fabrication_repair) both fetch the same
+        source_url, independently, within a single locked orchestrator run
+        (production_orchestrator.py's fcntl lock covers generate -> review/
+        fact-check -> publish in one process) -- confirmed live these are the
+        same process, so an instance-level cache is sufficient and needs no
+        cleanup: it lives exactly as long as the run that populates it, and
+        dies with the process. Before this, the two fetches could disagree --
+        a good scrape at generation time and a blocked one an hour later at
+        repair time (or vice versa), handing the repair pass LESS material
+        than the draft it's fixing was grounded in.
+        """
+        if not hasattr(self, "_source_text_cache"):
+            self._source_text_cache = {}
+        if url not in self._source_text_cache:
+            self._source_text_cache[url] = self.fetch_source_article(
+                url, max_chars=_SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text=fallback_text
+            )
+        cached = self._source_text_cache[url]
+        return cached[:max_chars] if cached else cached
 
     def mark_finding_as_used(self, finding_id):
         """Mark a finding as used so it won't be picked again."""

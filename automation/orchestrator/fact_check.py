@@ -294,43 +294,20 @@ class FactCheckMixin:
         """
         if not source_url:
             return None, None
-        source_text = self.fetch_source_article(source_url, max_chars=6000)
+        # get_source_text (added 2026-08-10) is a per-run memo shared with
+        # generation: this pass runs in the same process/lock as the generation
+        # call that grounded the original draft, so on the normal path this is
+        # a cache hit -- reusing whatever generation already fetched (real
+        # scrape or its own RSS-summary fallback, via fallback_text) rather
+        # than re-fetching the URL independently and risking the two stages
+        # disagreeing about what source material is available.
+        source_text = self.get_source_text(source_url, max_chars=6000)
         if not source_text:
-            # Fallback added 2026-08-10, confirmed live: fetch_source_article
-            # fetches the live rendered webpage directly, which some sites
-            # (confirmed: Dezeen, HTTP 403 even with a full realistic Chrome
-            # UA + standard Accept headers -- not simple UA-sniffing, more
-            # likely IP-reputation or a JS-challenge, neither fixable by
-            # header tweaking) actively block. That's a DIFFERENT route from
-            # how the item was originally collected -- news_fetcher.py reads
-            # the site's own RSS feed, which is built for automated
-            # consumption and essentially never blocked. The RSS summary
-            # (up to 500 chars, real text from the publisher, just shorter
-            # than a full-page scrape) is still sitting in news_seeds for
-            # exactly this URL -- use it rather than giving up entirely.
-            try:
-                import sqlite3
-                conn = sqlite3.connect(str(self.discovery_db))
-                row = conn.execute(
-                    "SELECT summary FROM news_seeds WHERE url = ?", (source_url,)
-                ).fetchone()
-                conn.close()
-                source_text = row[0] if row and row[0] else None
-            except Exception as e:
-                self.logger.debug("Fabrication repair: news_seeds summary lookup failed: %s", e)
-                source_text = None
-            if source_text:
-                self.logger.info(
-                    "Fabrication repair: full-page fetch failed for %s, "
-                    "using the RSS summary already on file instead (%d chars)",
-                    source_url, len(source_text),
-                )
-            else:
-                self.logger.warning(
-                    "Fabrication repair: could not fetch source %s and no "
-                    "RSS summary on file either", source_url,
-                )
-                return None, None
+            self.logger.warning(
+                "Fabrication repair: could not fetch source %s and no "
+                "RSS summary on file either", source_url,
+            )
+            return None, None
 
         full_text = article_file.read_text()
         fm_match = re.match(r'^(---\n.*?\n---\n)(.*)$', full_text, re.DOTALL)
