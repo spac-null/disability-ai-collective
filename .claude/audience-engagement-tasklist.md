@@ -294,16 +294,28 @@ choices (V8: time-series genuinely preserved, not overwritten; correct
 GSC JWT flow; correct Bluesky/Mastodon ID handling; nothing downstream
 reads this data yet, confirming the observation-freeze claim is actually
 true) were sound, but found real correctness bugs underneath:
-- **B1 Tumblr matching — FIXED.** The join key was an exact string match
-  between two URL shapes that are not the same (stored `tumblr_url` has no
-  slug segment; the API's real `post_url` always does) — `remaining.pop()`
-  returned `None` on every post, forever. Confirmed live against the real
-  blog API. Fixed: join on numeric post ID instead. Real `note_count` on
-  the blog is currently 0 regardless, so this closes a correctness bug
-  without producing new signal yet — and the fix hasn't been exercised
-  against real data at all, since zero `_social/*.json` files currently
-  have a `tumblr_url` (no Tumblr post has gone out since the credential
-  fix). First real test is whenever one actually does.
+- **B1 Tumblr matching — FIXED IN CODE, LIVE VERIFICATION PENDING.**
+  Precision matters here: "fixed" describes the join logic, not an
+  end-to-end confirmation — those are different claims and this file
+  should not flatten them. The join key was an exact string match between
+  two URL shapes that are not the same (stored `tumblr_url` has no slug
+  segment; the API's real `post_url` always does) — `remaining.pop()`
+  returned `None` on every post, forever. Fixed in `a945f9a`: join on
+  numeric post ID instead, checked against the actual Tumblr API response
+  shape. But the test run that confirmed this returned early — zero
+  `_social/*.json` files currently contain a `tumblr_url` at all, so the
+  matching branch itself never executed; the run just hit the "nothing to
+  match" short-circuit. The full chain this needs to prove is: CripMinds
+  article → Tumblr publish → `tumblr_url` persisted → Tumblr API fetch →
+  matching branch executes → metrics stored. That chain has not happened
+  once yet. First real verification is whenever the next `publish_best.py`
+  cycle actually posts to Tumblr — separately, real `note_count` on the
+  blog is currently 0 regardless (**Tumblr current engagement signal —
+  WAITING FOR DATA**, distinct from the code-correctness question:
+  repairing collection does not manufacture engagement that doesn't
+  exist). Do not read "verified end-to-end" into this fix before that
+  chain fires once — that would be an overclaim this file has specifically
+  tried to stop making tonight.
 - **B2 source isolation — FIXED.** GoatCounter's fetcher was the only one
   of five with no try/except, and ran first — an exception there
   previously aborted the whole run and rolled back everything already
