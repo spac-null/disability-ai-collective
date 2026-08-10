@@ -11,29 +11,36 @@ prompt system around its true purpose (see project memory
 not as ten isolated style fixes.
 
 ## ACTIVE PHASE
-**Roadmap** (do not reorder without a stated reason):
+**Roadmap** (do not reorder without a stated reason — this order changed
+2026-08-10 evening after Phase 1.5B's planning-brief audit; see
+`## PHASE 1.5B VERDICT` for why grounding jumped ahead of Phase 2):
 
 - **DONE** — Phase 0 (reliability + canonical baseline).
-- **DONE** — Phase 1, WHY WE WRITE → **KEEP** (`## FINAL 4-PERSONA DECISION`
-  below).
+- **DONE** — Phase 1, WHY WE WRITE → **KEEP**, scope-corrected (see the
+  "Scope correction" note in `## FINAL 4-PERSONA DECISION` below — the
+  decision itself is not reopened; what it's entitled to claim is
+  narrower than originally stated).
 - **DONE** — Phase 1.5A, Persona Architecture Audit (design/audit only,
   no code changes, no generations) → `.claude/persona-architecture-audit.md`.
-- **NEXT** — Phase 1.5B, Fable model-seat ROI A/B (`## MODEL-SEAT ROI
-  EXPERIMENT` below) — Fable review+Fable rewrite vs Fable review+Opus
-  rewrite. Not started. Sequenced before Phase 2 deliberately: if Fable can
-  be cheaply removed from the rewrite seat, every later experiment
-  (including Phase 2 and Phase 3's testing loops) gets cheaper.
-- **THEN** — Phase 2, brevity + evidence budget + testimony. Sequenced
-  before Phase 3 deliberately (per the original locked order — this insert
-  does NOT move Phase 2 after Phase 3): article length/evidence-overload/
-  testimony-handling were identified as major structural variables before
-  the persona-architecture question existed; fixing those first means
-  Phase 3's persona experiment gets evaluated inside the cleaner article
-  architecture, not against a prompt system already slated for
-  dismantling.
+- **PAUSED, not concluded** — Phase 1.5B, Fable review-seat ROI. Ran the
+  full 8-case blind experiment (`## PHASE 1.5B VERDICT` below) — useful,
+  causally valid A/B data collected (Fable-guided review-induced
+  unsupported-evidence rate 4/8 vs Opus-guided 1/8), but the actual
+  model-seat decision is DEFERRED until after Phase 1.6, because both
+  reviewers in that experiment were judging drafts whose factual
+  substrate was already contaminated by an ungrounded planner — the
+  distribution and nature of editorial problems may look different once
+  that's fixed.
+- **NEXT** — **Phase 1.6, SOURCE-GROUNDING HARDENING (new, promoted ahead
+  of Phase 2)**. See `## PHASE 1.6` below for the 4 substeps. Rationale:
+  Phase 2 explicitly increases attention to evidence/testimony handling —
+  building better testimony handling on top of a planner that invents the
+  testimony would be backwards. This is now a blocking phase, not an
+  optional hardening pass.
+- **THEN** — Phase 2, brevity + evidence budget + testimony.
 - **THEN** — Phase 3, persona architecture implementation (perceptual
   engines, motives, soft affinities, remove hard territories/prohibitions —
-  informed by 1.5A's findings). Not started.
+  informed by 1.5A's findings).
 - **THEN** — same-source/four-persona probe (validates whatever Phase 3
   produces).
 - **THEN** — Phases 4-8 (correction/repetition/readability/ending/final
@@ -338,11 +345,34 @@ forward. Do not reopen this decision by drift — a future session finding
 Zen Circuit weak should go to the queued Persona Architecture Audit (1.5),
 not back to relitigating WHY WE WRITE.
 
+**Scope correction, added after Phase 1.5B's planning-brief audit (below)
+— does NOT reopen this KEEP decision, narrows what it's entitled to
+claim.** The Phase 1.5B brief audit found all 4 of these same frozen
+briefs (the ones this experiment's baseline/v1 comparison used) contain
+Fable-planning-stage unsupported evidence in `resisting_example`/
+`correction_moment`. This does NOT invalidate the doctrine comparison —
+baseline and v1 consumed the IDENTICAL contaminated brief per topic, so
+the doctrine variable stayed isolated and the observed doctrine-leak
+reduction is still real. What it narrows is the claim this experiment is
+entitled to make: **not** "WHY WE WRITE works under the final intended
+CripMinds pipeline" — **only** "WHY WE WRITE improved or preserved the
+four personas under the then-current planning architecture," which is now
+known to include unsupported-evidence contamination. Do not rerun the
+full 12+12 experiment over this. Once Phase 1.6 (source-grounding
+hardening, below) lands, run a small smoke confirmation instead — one
+clean, verifiably-grounded source × two personas, or four clean single
+samples — to confirm the doctrine doesn't interact badly with a much less
+synthetic, properly-sourced plan. That is verification of an existing
+decision, not reopening it.
+
 **Next, in order** (do not mix these together — each is its own controlled
-experiment): (1) Persona Architecture Audit (1.5) — design/audit only, see
-below. (2) Fable model-seat ROI experiment (A vs B: Fable-review+Fable-
-rewrite vs Fable-review+Opus-rewrite) — queued section below. Both were
-explicitly waiting on this decision landing.
+experiment): (1) Persona Architecture Audit (1.5) — DONE, see below.
+(2) Fable model-seat ROI experiment — DONE but PAUSED, not concluded, see
+below: its clean A/B data survives, but the review-model choice is
+deferred until after Phase 1.6 grounding, since the distribution and
+nature of editorial problems may change once the planner stops handing
+both reviewers an already-contaminated draft. (3) **Phase 1.6,
+source-grounding hardening — NEW, promoted ahead of Phase 2**, see below.
 
 ## PERSONA ARCHITECTURE / TERRITORY AUDIT — Phase 1.5A DONE (design/audit
 only — no `personas.py`/`generate.py` edits, no generations, per this
@@ -884,11 +914,15 @@ for asserting it.
 untested), a SAFETY question (now confirmed).** The original experiment
 design explicitly froze the brief and said "don't infer planning ROI from
 this ablation" — that's still true for "is Fable's planning BETTER than
-Opus's would be." But this audit answers a different, prior question:
-**does Fable's current planning-stage behavior inject fabricated evidence
-into the pipeline before anything else runs? Confirmed yes, 4/4 topics.**
-The architecture now has FOUR grounding breaks, not three, and the first
-one is the origin point for everything downstream:
+Opus's would be." But this audit answers a different, prior question,
+worded exactly (not generalized beyond the 4 audited briefs to a
+population-level Fable rate): **in all four frozen planning briefs
+audited, Fable introduced at least one source-unsupported factual element
+into `resisting_example` or `correction_moment`, which downstream drafts
+then inherited.** The safety conclusion stands regardless of how that
+phrasing is scoped: the current planning contract is not safe enough to
+remain unchanged. The architecture now has FOUR grounding breaks, not
+three, and the first one is the origin point for everything downstream:
 ```
 FABLE PLANNING BRIEF — may invent evidence (confirmed, 4/4 topics)
    ↓
@@ -910,28 +944,6 @@ evidence that the source-blind executor could not safely provide (4/8 vs
 1/8)."* What changed is only where the PRE-EXISTING fabrication
 originated — not the writer, the frozen planning brief.
 
-**Four separate evidence contracts, at four pipeline layers — recorded,
-NOT implemented now, priority order matches the causal chain**:
-1. **Planning evidence contract** (the actual priority, confirmed origin):
-   `_fable_editorial_brief` must not assert a named individual, quotation,
-   or specific documented event in `resisting_example`/`correction_moment`
-   unless it is drawn from supplied source material — and it needs the
-   FULL source, not a 400-char summary, to have any chance of doing this
-   safely.
-2. **Writer evidence contract**: should not incorporate a brief's
-   resisting_example/correction_moment claim as fact without it being
-   traceable to source — though this is arguably better fixed upstream
-   (contract 1) than by asking the writer to second-guess its own brief.
-3. **Reviewer evidence contract**: cannot safely say "get the real quote
-   from the record" unless a record was actually supplied and contains
-   it — currently neither `_review_prompts()` nor real production's
-   `_fable_editorial_review` ever receives `source_text`.
-4. **Executor evidence contract**: never convert paraphrase into
-   quotation, never add new quotation/statistic/named-person statement/
-   date/number/source-specific detail not already in the draft or
-   supplied evidence; if a review demands evidence not possessed,
-   preserve the passage and report the instruction as unsupported.
-
 **This changes the possible Phase 1.5B outcomes from a binary
 Fable-vs-Opus choice into four; D is confirmed, and its origin is now
 narrower and more actionable than "the writer"**:
@@ -944,11 +956,91 @@ narrower and more actionable than "the writer"**:
   finding) → redesign the review prompt/seat first, independent of model.
 - **D. Raw drafts contain significant unsupported material — CONFIRMED
   (8/8), and now traced to a single, specific, fixable origin: Fable's
-  planning-brief stage (4/4 topics), not diffuse writer hallucination.**
-  This is MORE actionable than the original "writer" framing, not less —
-  fixing one prompt (`_fable_editorial_brief`'s system/user construction,
-  plus giving it full source access) addresses the root of all four
-  topics' contamination at once.
+  planning-brief stage (4/4 audited topics), not diffuse writer
+  hallucination.** This is MORE actionable than the original "writer"
+  framing, not less. **This decision is deferred to Phase 1.6 (below) —
+  not made now.**
+
+## PHASE 1.6 — SOURCE-GROUNDING HARDENING (new, blocking, not started)
+Promoted ahead of Phase 2 (see roadmap above). NOT implemented yet — this
+section is the design, recorded for when this phase starts.
+
+**Why a prose "don't hallucinate" instruction is insufficient**: we just
+watched two frontier models confidently invent a named person, then
+separately discuss "retrieving her real words from the record" — a prose
+instruction not to fabricate is exactly what the current brief/review
+prompts already gesture at ("a brief is an assignment to go find something
+out, not a conclusion") and it did not work. **Make grounding machine-
+checkable, not aspirational.**
+
+**1. Planner schema change** — from a flat string:
+```json
+"resisting_example": "Deborah Antwi supported..."
+```
+to a structured object carrying provenance:
+```json
+"resisting_example": {
+  "text": "...",
+  "evidence_type": "source" | "interpretive_move" | "none_available",
+  "source_excerpt": "...",
+  "source_locator": "paragraph/chunk identifier"
+}
+```
+Same for `correction_moment`. The planner must be ALLOWED to output
+`"evidence_type": "none_available"` — **explicitly separate the
+editorial NEED from the evidence CANDIDATE**:
+```
+editorial_need: "Find a person in the source whose experience resists the
+                 apparent thesis."
+evidence_candidate: null
+```
+If the source doesn't contain a resisting example, that's a legitimate,
+expected result, not a failure to fill in — the system currently seems
+designed around always producing the requested editorial object rather
+than admitting the source doesn't contain one; that's the actual mechanism
+to fix, more than any single prompt's wording. For named people,
+quotations, dates, numbers, specific events: require an evidence pointer,
+or the claim doesn't reach downstream generation at all.
+
+**2. Deterministic, non-LLM validator between planner and writer** — do
+not rely on the writer to police a bad brief; the writer should not be
+the principal fact-checker of its own planner. Simple, high-value,
+non-LLM checks:
+- quoted excerpt actually exists in the supplied source text (substring
+  match);
+- named evidence item has a non-null source pointer;
+- cited number/date appears in the referenced evidence chunk;
+- required evidence field isn't empty when `evidence_type=="source"`.
+Won't prove every paraphrase is faithful — closes the catastrophic
+"invent Deborah Antwi and treat her as source material" path specifically,
+which is the failure mode actually observed. Only validated evidence
+reaches the writer prompt.
+
+**3. Reviewer evidence contract**: give the reviewer the source/evidence
+packet (not just `brief_angle`), plus an explicit contract — cannot say
+"get the real quote from the record" unless a record was supplied and
+demonstrably contains it.
+
+**4. Executor evidence contract**: same packet, plus a hard constraint —
+never convert paraphrase into quotation, never introduce new quotation/
+statistic/named-person statement/date/number/source-specific detail not
+already in the draft or in supplied evidence; if a review demands
+evidence not possessed, preserve the passage and report the instruction
+as unsupported rather than inventing it.
+
+**Fix all four substeps in the SAME hardening phase, not sequentially
+deferred**: the causal chain shows sequential amplification (planner
+invents → writer naturalizes → reviewer demands a stronger version →
+executor turns it into quotation) — fixing only the planner leaves
+stages 3-4 free to manufacture NEW unsupported specificity from otherwise
+now-legitimate paraphrase. All four substeps ship together.
+
+**Acceptance test for Phase 1.6 — adversarial, not ordinary articles**:
+run confirmation sources deliberately LACKING a named disabled witness, a
+direct quote, and a resisting anecdote. Success is the planner/reviewer
+correctly outputting "not available in source" — not a plausible-sounding
+invention. That is the behavior that actually needs proving, not whether
+the system still produces pretty articles on cooperative sources.
 
 ## PHASE 1.5B VERDICT — not yet a final model-seat decision; a scoped
 finding plus a bigger, unscheduled one
@@ -992,17 +1084,15 @@ currently fed a ~400-char summary, never the full source) is the
 confirmed origin for all four topics' contamination, not a diffuse
 writer-hallucination problem that would need fixing in many places.
 
-**Recommended next steps, not implemented now**: (a) the four evidence
-contracts above, in causal order — PLANNING first (give
-`_fable_editorial_brief` the full source and a constraint against
-asserting unsourced named individuals/quotes/events in
-`resisting_example`/`correction_moment`), then writer/reviewer/executor;
-(b) once contracts exist, re-run a small confirmation batch before
-touching the real review OR planning seat in production; (c) separately
-decide where this finding sits relative to Phase 2 (brevity/evidence/
-testimony) in the roadmap — it plausibly belongs there or earlier, not
-filed only under "Fable ROI." Not deciding that placement here — flagging
-it so it isn't lost.
+**Recommended next step**: `## PHASE 1.6 — SOURCE-GROUNDING HARDENING`
+(below) — now a promoted, blocking phase ahead of Phase 2, not an
+optional hardening pass filed under "Fable ROI." Its 4 substeps (planner
+schema + provenance, deterministic non-LLM validator, reviewer contract,
+executor contract) ship together, not sequentially — the causal chain
+shows sequential amplification (planner invents → writer naturalizes →
+reviewer demands a stronger version → executor turns it into quotation),
+so fixing only the planner would leave later stages free to manufacture
+new unsupported specificity from otherwise-legitimate paraphrase.
 
 **Explicitly separate from this experiment, still untested**: whether
 Fable's planning is BETTER or WORSE than Opus's would be at the same task
