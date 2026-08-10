@@ -1,11 +1,11 @@
 {
-  "angle": "When a museum strips out all wall text and calls itself 'open to interpretation', does context actually disappear for everyone equally \u2014 the first gallery where a deaf visitor stands on level ground \u2014 or does the information never vanish at all, just migrate into speech, docents, and murmured conversation, rebuilding the old hierarchy in the one channel I can't audit?",
-  "correction_moment": "At Calder Gardens in Philadelphia in October, arriving to celebrate the first gallery where nobody gets the context, she watches a staff 'engagement guide' deliver an unscripted spoken talk to a cluster of a dozen visitors \u2014 the label didn't die, it went oral, and the flat field she came to praise has a hierarchy again, rebuilt in a channel that doesn't include her.",
-  "cross_cite": "The position that the death of the wall label costs nothing and the companion app is pure gain \u2014 since the printed label was never legible to a blind visitor anyway and a screen-readable app is the first label she could ever read \u2014 treats the room's acoustic and digital layers as the real political territory, when the question is precisely whether a room that trusts speech and screens over print has demoted anyone, and whom.",
-  "opening_scene": "A wall label is the only voice in a museum that speaks my language by default.",
-  "opening_shape": "plain_claim",
+  "angle": "When a museum deletes its wall labels, does the information actually disappear or just migrate \u2014 and does the deaf visitor end up in a more level room, or in a room whose default channel has quietly become speech (docents, tours, audio guides) with text demoted to atmosphere?",
+  "correction_moment": "At the Cleveland Museum of Art in October, expecting the ArtLens app to be text's exile, she finds it hands her more written context than any wall ever did \u2014 resizable, captioned, in her pocket \u2014 and her thesis that digital migration equals demotion breaks against a screen that treats text as the primary channel for the first time in the building's history.",
+  "cross_cite": "Against the position that the room itself \u2014 its acoustics, its docent murmur, its spatial address \u2014 is the primary political layer and the label only ever paper over it: if that's true, deleting wall text changes nothing, and the fight over labels is a fight over decoration; this piece has to test whether the label was the architecture or the apology.",
+  "opening_scene": "In September 2025, Calder Gardens opened in Philadelphia without a single wall label, and called the absence a philosophy.",
+  "opening_shape": "fact",
   "persona": "Pixel Nova",
   "register": "wry",
-  "resisting_example": "Christine Sun Kim \u2014 deaf, an artist whose whole practice runs on text \u2014 plastered Manchester's buildings in 2021 with giant hand-drawn captions like '[the sound of no wall text]' precisely because she considers the institutional label a flattened, condescending form of access, not its guarantee; she is not mourning the wall label, she is the one holding the crowbar.",
-  "seed_sentence": "A wall label is the only voice in a museum that speaks my language by default."
+  "resisting_example": "Christine Sun Kim, whose entire practice insists captions matter, spent 2021 replacing Manchester's public captions with subjective ones like 'the sound of anticipation' \u2014 a deaf artist rejecting the neutral informational label from inside deaf culture, choosing interpretation over the very institutional text this piece is tempted to defend.",
+  "seed_sentence": "In September 2025, Calder Gardens opened in Philadelphia without a single wall label, and called the absence a philosophy."
 }
