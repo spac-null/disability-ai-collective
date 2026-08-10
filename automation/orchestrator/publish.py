@@ -13,8 +13,27 @@ import json
 import os
 import subprocess
 
+import yaml
+
 
 class PublishMixin:
+    def _pipeline_version(self):
+        """Read the site's current pipeline version/codename from _config.yml.
+
+        Stamped into each article's own frontmatter at creation time (see
+        create_article_file below) so it survives future version bumps as a
+        permanent per-article record -- lets quality/approach be compared
+        across time as the pipeline evolves, instead of every article only
+        ever reflecting whatever _config.yml says today.
+        """
+        try:
+            with open(self.repo_root / "_config.yml", encoding="utf-8") as f:
+                cfg = yaml.safe_load(f) or {}
+            return cfg.get("version"), cfg.get("codename")
+        except Exception as e:
+            self.logger.debug("Could not read pipeline version from _config.yml: %s", e)
+            return None, None
+
     def create_article_file(self, metadata, content, image_filenames, image_descriptions=None):
         """Create properly formatted article file in _drafts/ (publish-best.py promotes to _posts/)."""
         filename = metadata['filename']
@@ -33,6 +52,13 @@ class PublishMixin:
         _score_field = ""
         if metadata.get('editorial_score') is not None:
             _score_field = f"\ndraft_score: {metadata['editorial_score']}"
+
+        _pipeline_version, _pipeline_codename = self._pipeline_version()
+        _version_field = ""
+        if _pipeline_version:
+            _version_field += f"\npipeline_version: {json.dumps(str(_pipeline_version))}"
+        if _pipeline_codename:
+            _version_field += f"\npipeline_codename: {json.dumps(str(_pipeline_codename))}"
 
         # Hero is _setting_1 by suffix, not image_filenames[0] by position — the
         # list only contains whichever images actually succeeded, so if setting_1
@@ -56,7 +82,7 @@ category: {metadata['categories'][0].lower() if metadata['categories'] else 'res
 image: /assets/{hero_fname}
 image_alt: {json.dumps(hero_desc or 'Article illustration')}
 excerpt: {json.dumps(excerpt)}
-keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metadata.get('author', ''), metadata['categories']))}]{_source_fields}{_score_field}
+keywords: [{', '.join(self._generate_keywords(metadata['title'], content, metadata.get('author', ''), metadata['categories']))}]{_source_fields}{_score_field}{_version_field}
 ---
 
 """

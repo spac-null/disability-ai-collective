@@ -3002,6 +3002,10 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   color: var(--color-text-muted);
 }
 
+.post-pipeline-version {
+  margin-top: var(--space-3);
+}
+
 .post-meta__agent-icon {
   width: 20px;
   height: 20px;

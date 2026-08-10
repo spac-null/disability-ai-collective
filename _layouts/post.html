@@ -128,6 +128,11 @@ layout: default
           <span class="post-meta__item post-meta__reading-time">
             {{ content | number_of_words | divided_by: 200 | plus: 1 }}&thinsp;min read
           </span>
+          {% if page.fact_check_status == "verified" %}
+          <span class="post-meta__item post-meta__fact-check" title="Quotes and factual claims checked against live sources before publishing">
+            ✓ Sources checked
+          </span>
+          {% endif %}
 
         </div>
       </header>
@@ -219,6 +224,11 @@ layout: default
           {% endif %}
         </div>
 
+        {% if page.pipeline_version %}
+        <p class="text-small text-muted post-pipeline-version">
+          Written with Crip Minds v{{ page.pipeline_version }}{% if page.pipeline_codename %} · {{ page.pipeline_codename }}{% endif %}
+        </p>
+        {% endif %}
 
         <!-- Inline subscribe block -->
         <div class="post-subscribe" aria-label="Subscribe to Crip Minds">

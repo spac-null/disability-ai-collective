@@ -580,6 +580,16 @@ class ReviewMixin:
                 "FACT-CHECK BLOCK: %s — %d quote(s)/study(s) not found in any source",
                 article_file.name, len(contradicted)
             )
+        else:
+            # Explicit "verified" (added 2026-08-10), not just the absence of
+            # "blocked" -- every live article already passed this gate
+            # (publish_best.py skips fact_check_status: blocked drafts), so this
+            # is a true, reusable signal for a reader-facing "sources checked"
+            # note, not an inferred one that could also mean the check never ran.
+            fm_text = article_file.read_text()
+            if not re.search(r"^fact_check_status:", fm_text, re.MULTILINE):
+                fm_text = re.sub(r"^---\n", "---\nfact_check_status: verified\n", fm_text, count=1)
+                article_file.write_text(fm_text)
         if advisory_flags:
             self.logger.warning(
                 "FACT-CHECK ADVISORY (non-blocking): %s — %d stat(s)/event(s) flagged, needs human review",
