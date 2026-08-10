@@ -174,6 +174,97 @@ Success: the planner extracts the correct source span; the validator
 accepts it; the writer preserves the quote/paraphrase distinction; the
 reviewer/executor can use the evidence without factual mutation.
 
+## Legacy frozen-brief policy (added after review, before implementation)
+
+The four existing frozen briefs (`brief_sauna.json`, `brief_hiring_tool.json`,
+`brief_curb_cuts.json`, `brief_museum_labels.json`) use the old flat-string
+schema and are the SAME briefs the Phase 1.5B audit confirmed contain
+source-unsupported `resisting_example`/`correction_moment` content (full
+attribution table: `experiments/fable-review-roi-2026-08-10.md`). When the
+planner schema changes to the structured evidence-candidate object (`## 1`
+above), do not let a permissive compatibility adapter — e.g. silently
+wrapping the old string as `{"text": old_string, "evidence_type":
+"source"}` — make these legacy briefs look validator-clean. That would
+launder already-confirmed-unsupported prose straight into the new schema
+and let a known-contaminated artifact re-enter a pipeline that now claims
+to be grounded.
+
+Policy:
+- Legacy flat-schema briefs remain readable for historical experiment
+  reproduction only (rerunning/inspecting `why-we-write-2026-08-10.md` or
+  `fable-review-roi-2026-08-10.md`'s own data).
+- They are NOT considered source-grounded under the new validator,
+  regardless of content — this is a schema-version fact, not a content
+  judgment call.
+- They cannot enter new grounded production runs or any Phase 1.6-onward
+  probe without either (a) full regeneration under the new structured
+  schema + validator, or (b) an explicit `legacy_unsafe: true` (or
+  equivalent) marker that keeps them out of any pipeline path claiming
+  groundedness.
+- The deterministic validator (`## 2` above) should treat "brief field is
+  a flat string, not the structured object" itself as a schema-version
+  mismatch to reject outright — not something to coerce or migrate
+  automatically.
+
+## Evidence packet identity across stages
+
+Don't let the planner, reviewer, and executor each independently
+reconstruct "the source" — build the evidence packet once and thread its
+identity through every stage's own provenance, the same discipline the
+Pixel-validation mixed-brief incident (`experiments/why-we-write-2026-08-10.md`)
+already taught the hard way: two artifacts can be byte-identical in git
+while the live runs that mattered consumed different content earlier in
+the sequence. Provenance must be verified from what each stage actually
+consumed, not inferred from repo state after the fact.
+
+```
+source_text
+    ↓
+evidence_packet  [source_hash]
+    ↓
+planner
+    ↓
+validated brief  [same source_hash]
+    ↓
+writer
+    ↓
+reviewer         [same source_hash]
+    ↓
+executor         [same source_hash]
+```
+
+Persist `source_hash` in every future run's `provenance.json`, at every
+stage, not just the planner's. This lets an experiment prove not merely
+that every stage had *some* source, but that all stages operated against
+the identical evidence snapshot — the exact three-way-match discipline
+the Pixel redo eventually used for brief hashes, generalized to the whole
+evidence packet instead of just the frozen brief file.
+
+## Implementation session start order
+
+Before touching any code:
+1. Verify local HEAD is `d6ad389` (or later, docs-only).
+2. Pull trident to the same HEAD before any remote testing.
+3. Read only `current-work.md` + this design doc — not the archived
+   experiment docs, unless a specific historical detail is needed.
+4. Inspect the actual source-flow/call signatures and every consumer of
+   the current brief fields (planner, writer, reviewer, executor,
+   `phase_probe.py`'s frozen-brief loading) before designing the schema
+   migration concretely.
+5. Decide the legacy-brief rejection/marking mechanism (above) concretely
+   — which of (a) regeneration or (b) an explicit unsafe marker, or both.
+6. Design the evidence-packet/source-hash plumbing (above) concretely —
+   where the packet is constructed, what carries the hash, where it's
+   persisted.
+7. Only then implement substeps 1-4.
+
+## Test order (strict — do not skip ahead)
+
+unit/schema tests → deterministic validator tests → mocked pipeline tests
+→ negative/positive adversarial probes → small real confirmation. No
+ordinary article-quality evaluation runs until grounding itself passes —
+this phase is testing source provenance, not prose quality.
+
 ## After Phase 1.6 lands
 
 - A small grounded WHY-WE-WRITE smoke confirmation only (one clean,
