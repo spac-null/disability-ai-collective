@@ -1,0 +1,171 @@
+{
+  "phase": "baseline",
+  "commit": "bb3824426519d47d5f8c0b4b63676fd645631cac",
+  "temperature": 0.9,
+  "register": "wry",
+  "article_type": "essay",
+  "target_words": 1000,
+  "samples": [
+    {
+      "topic": "sauna",
+      "persona": "Siri Sage",
+      "sample": 0,
+      "timestamp": "2026-08-10T17:20:22",
+      "fable_brief_hash": "b431a42b6179",
+      "actual_models": [
+        "anthropic/claude-opus-4.8",
+        "openrouter/claude-fable-5",
+        "openrouter/claude-fable-5",
+        "openrouter/claude-opus-4.8",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-opus-4.8",
+        "openrouter/claude-sonnet-4.6",
+        "openrouter/claude-sonnet-4.6",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5"
+      ],
+      "degraded_stages": [],
+      "error": null,
+      "word_count": 1071,
+      "status": "ok"
+    },
+    {
+      "topic": "sauna",
+      "persona": "Siri Sage",
+      "sample": 1,
+      "timestamp": "2026-08-10T17:21:46",
+      "fable_brief_hash": "b431a42b6179",
+      "actual_models": [
+        "anthropic/claude-opus-4.8",
+        "openrouter/claude-fable-5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-sonnet-4.6",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5"
+      ],
+      "degraded_stages": [],
+      "error": null,
+      "word_count": 1068,
+      "status": "ok"
+    },
+    {
+      "topic": "sauna",
+      "persona": "Siri Sage",
+      "sample": 2,
+      "timestamp": "2026-08-10T17:22:34",
+      "fable_brief_hash": "b431a42b6179",
+      "actual_models": [
+        "gemini-2.5-pro",
+        "openrouter/claude-haiku-4.5"
+      ],
+      "degraded_stages": [
+        "editorial_revision",
+        "gate_llm"
+      ],
+      "error": null,
+      "status": "rejected_degraded"
+    },
+    {
+      "topic": "hiring_tool",
+      "persona": "Zen Circuit",
+      "sample": 0,
+      "timestamp": "2026-08-10T17:23:07",
+      "fable_brief_hash": "3e0d97833434",
+      "actual_models": [
+        "gemini-2.5-pro"
+      ],
+      "degraded_stages": [
+        "editorial_revision",
+        "gate_llm"
+      ],
+      "error": null,
+      "status": "rejected_degraded"
+    },
+    {
+      "topic": "hiring_tool",
+      "persona": "Zen Circuit",
+      "sample": 1,
+      "timestamp": "2026-08-10T17:23:38",
+      "fable_brief_hash": "3e0d97833434",
+      "actual_models": [
+        "gemini-2.5-pro"
+      ],
+      "degraded_stages": [
+        "editorial_revision",
+        "gate_llm"
+      ],
+      "error": null,
+      "status": "rejected_degraded"
+    },
+    {
+      "topic": "hiring_tool",
+      "persona": "Zen Circuit",
+      "sample": 2,
+      "timestamp": "2026-08-10T17:24:14",
+      "fable_brief_hash": "3e0d97833434",
+      "actual_models": [
+        "gemini-2.5-pro"
+      ],
+      "degraded_stages": [
+        "editorial_revision",
+        "gate_llm"
+      ],
+      "error": null,
+      "status": "rejected_degraded"
+    },
+    {
+      "topic": "curb_cuts",
+      "persona": "Maya Flux",
+      "sample": 0,
+      "timestamp": "2026-08-10T17:24:50",
+      "fable_brief_hash": "74caca056f20",
+      "actual_models": [
+        "gemini-2.5-pro"
+      ],
+      "degraded_stages": [
+        "editorial_revision",
+        "gate_llm"
+      ],
+      "error": null,
+      "status": "rejected_degraded"
+    },
+    {
+      "topic": "curb_cuts",
+      "persona": "Maya Flux",
+      "sample": 1,
+      "timestamp": "2026-08-10T17:25:25",
+      "fable_brief_hash": "74caca056f20",
+      "actual_models": [
+        "gemini-2.5-pro"
+      ],
+      "degraded_stages": [
+        "editorial_revision",
+        "gate_llm"
+      ],
+      "error": null,
+      "status": "rejected_degraded"
+    },
+    {
+      "topic": "curb_cuts",
+      "persona": "Maya Flux",
+      "sample": 2,
+      "timestamp": "2026-08-10T17:26:01",
+      "fable_brief_hash": "74caca056f20",
+      "actual_models": [
+        "gemini-2.5-pro"
+      ],
+      "degraded_stages": [
+        "editorial_revision",
+        "gate_llm"
+      ],
+      "error": null,
+      "status": "rejected_degraded"
+    }
+  ]
+}

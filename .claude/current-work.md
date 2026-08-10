@@ -11,8 +11,9 @@ project memory `project_cripminds_editorial_blueprint.md` / `project_cripminds_t
 not as ten isolated style fixes.
 
 ## ACTIVE PHASE
-**0A — controlled generation baseline** (`automation/phase_probe.py`).
-Must complete before ANY creative-prompt phase starts (see DO NOT TOUCH YET).
+**PHASE 0A — HARNESS VERIFIED, BASELINE PENDING EXTERNAL MODEL HEALTH.**
+Must complete (9/9 healthy, in one contiguous run) before ANY creative-prompt
+phase starts (see DO NOT TOUCH YET).
 
 ## CURRENT HEAD
 `bb38244` (repo `disability-collective-ai`, `main`, pushed, trident synced)
@@ -42,9 +43,68 @@ would've been the next crash; (3) degraded-run Telegram alerts read env
 vars directly, unstubbed, could've messaged the real ops channel (2 and 3
 found by Agent B's independent isolation audit, fixed by the main session).
 
-**phase_probe.py's harness itself is now proven working.** Next action is
-the actual 3×3 baseline run (2 more topics × 3 samples each, since topic 0
-"sauna" already has 2 clean samples proven) — see NEXT ACCEPTANCE TEST below.
+**phase_probe.py's harness itself is proven working** (2 clean samples,
+zero mutation, twice in a row — see above). Then the official 3×3 baseline
+was attempted for real and hit a real external outage:
+
+**Official baseline attempt 1: INVALID / INTERRUPTED BY EXTERNAL MODEL
+AVAILABILITY.** 2/9 healthy samples completed (`sauna-0`, `sauna-1`).
+Beginning with `sauna-2`, 7/9 runs were correctly `rejected_degraded` —
+model services became unavailable mid-run. No degraded output belongs in
+the baseline; **the baseline is NOT accepted.**
+
+Observed failure pattern, starting at `sauna-2` and persisting for the rest
+of the run: `OpenRouter direct → 402 Payment Required`, `CLIProxy → 500
+Internal Server Error`, `Nous → 403 Forbidden`. This strongly supports an
+external provider/account/proxy availability problem (each full sample
+makes ~13 model calls; failure began right after ~2 successful samples'
+worth of spend) — **but the three status codes alone don't by themselves
+prove one single shared billing cause; that's a reasonable hypothesis, not
+a proven root cause.** No evidence of a phase_probe logic failure.
+
+**This is also a real, adversarial validation of Phase 0B**: before today,
+this exact kind of provider collapse could have produced apparently-valid
+articles silently. Now, all 7 bad generations were automatically detected
+(`degraded_stages` populated) and excluded from the experiment — a stronger
+proof than any synthetic 403 test.
+
+Post-batch mutation proof run across the FULL 9-attempt batch (including
+the 7 degraded ones — a better isolation test than 9 successes, since it
+exercises failure paths repeatedly): git status, both DBs (hashes +
+`news_seeds`/table row counts), `_drafts/`/`assets/`, persona state — all
+confirmed unchanged. Zero mutation held even under real, repeated upstream
+failure.
+
+**Preserved as evidence, not baseline data**: the full attempt-1 output
+(2 clean + 7 `DEGRADED-*.md` + `metrics.json`) is committed at
+`automation/probe_out/baseline-attempt-1/` — this is Phase 0B regression
+evidence, do not delete.
+
+**Harness improvement added as a direct result**: `preflight()` in
+`phase_probe.py` — one minimal real call each through the writer path
+(Opus/CLIProxy) and the Fable-brief path (Fable/CLIProxy, with its
+reasoning budget capped so mandatory thinking doesn't read as a false
+failure), run automatically before `--run` spends a full sample's ~13
+calls. `--preflight` also available standalone. Probe-only, does not touch
+production behavior. Also added `--retry-failed PHASE_NAME`: re-runs only
+non-`ok` samples in an existing `metrics.json` in place, marks each retried
+entry `"retried": true` (never silently indistinguishable from a
+first-attempt success) — built as general infrastructure but **NOT the
+right tool for finishing baseline attempt 1** (see below).
+
+**User just added OpenRouter credits — believes the account-level cause is
+resolved.** Explicit decision on how to proceed: **do NOT patch attempt 1
+by retrying just the 7 failed slots.** Combining `sauna-0`/`sauna-1` (one
+healthy window) with 7 samples generated after a credit top-up (a different
+window) would leave an uncontrolled variable inside a baseline meant to
+detect subtle writing differences later. Instead: **once `--preflight`
+passes, run a completely FRESH 3×3 (`--run baseline`, all new — this will
+create a new `probe_out/baseline/` directory since attempt 1 now lives at
+`baseline-attempt-1/`), require 9/9 healthy in one contiguous run, redo the
+mutation proof, and freeze THAT as the canonical baseline.** If a second
+clean attempt is also interrupted, that's the moment to revisit whether
+requiring nine contiguous healthy generations is operationally realistic —
+don't weaken the methodology after just one outage.
 
 ## DO NOT TOUCH YET
 Nothing in this list gets edited until Phase 0A's baseline (3 topics × 3
@@ -60,8 +120,10 @@ samples, healthy, zero-mutation-proven) exists and is frozen:
 1. ✅ One healthy probe article: `error: None`, `degraded_stages: []`, real article text, real prompt saved. DONE.
 2. ✅ Zero persistent-state mutation proven (before/after hashes/counts). DONE.
 3. ✅ Repeated once more — same result, same zero-mutation proof. DONE (both on topic "sauna").
-4. **NEXT**: run the OFFICIAL 3×3 baseline via the real CLI entry point (`python3 automation/phase_probe.py --run baseline --samples 3`), not the ad-hoc proof script used for steps 1-3 — this writes properly to `automation/probe_out/baseline/` with saved articles/prompts/`metrics.json`, which the ad-hoc proof script didn't do.
-5. Freeze that baseline (commit hash + articles + prompts + metrics, committed to the repo) before touching anything in DO NOT TOUCH YET.
+4. ✅ Ran the official 3×3 baseline for real — hit a real external outage partway through (2/9 healthy, 7/9 correctly rejected). Preserved as `probe_out/baseline-attempt-1/` evidence, NOT accepted as the baseline. Added `--preflight` (auto-runs before `--run`) so a dead environment aborts before spending a full sample's calls.
+5. **NEXT**: run `python3 automation/phase_probe.py --preflight` first, standalone, and confirm both routes pass. If clean: run a completely FRESH `--run baseline --samples 3` (writes to a new `probe_out/baseline/`, since attempt 1 now lives at `baseline-attempt-1/`) — require 9/9 `status: ok`, no exceptions, all in one contiguous run.
+6. Re-run the mutation proof (before/after) across that fresh run too.
+7. Freeze that baseline (commit hash + articles + prompts + metrics, committed to the repo) — only THEN update this file's ACTIVE PHASE to "Phase 0 COMPLETE" and start Phase 1.
 
 ## DECISION LEDGER (settled, do not reopen)
 - Production `temperature` stays unset/`None`. Only the probe pins it (0.9).
@@ -71,3 +133,4 @@ samples, healthy, zero-mutation-proven) exists and is frozen:
 - The rest of cripminds' backlog (judge-panel/multi-draft generation, persona evolution, shadow-check promotion 2026-08-23, CJ-2, Stage B/D-E blockers) stays in `.claude/audience-engagement-tasklist.md`, untouched, NOT merged into this blueprint.
 - `engagement.db`/`disability_findings.db` living inside the repo checkout is accepted as a known risk for now (mitigated by the safe sync wrapper + daily backups); moving them out entirely is deferred infrastructure hardening, not a blocker.
 - WHY WE WRITE doctrine text is settled (short version, two guards: not-a-superpower, given-not-announced) — see project memory for exact wording. The *De Gebarentaaltolk en Ik* artwork reference stays OUT of the shipped prompt, confirmed.
+- **First creative experiment, once Phase 0 baseline is frozen, is deliberately narrow**: replace ONLY the founder-biography/`PUBLICATION LENS`/`INTELLECTUAL FORMATION` system block with the short WHY WE WRITE doctrine — nothing else in the same pass. Then re-run the SAME frozen 3×3 inputs and compare against the frozen baseline. This answers one specific question first (did carving in the real purpose make writing more purposeful/persona-specific/worth reading, or just make it talk about disability more) before any other Phase 1 change gets layered on.

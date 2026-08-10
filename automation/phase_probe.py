@@ -434,9 +434,142 @@ def _brief_hash(topic_key):
     return hashlib.sha256(_brief_fixture_path(topic_key).read_bytes()).hexdigest()[:12]
 
 
-def run_phase(phase_name, n_samples=3):
+def preflight(po=None):
+    """Cheap check of the actual model-dependency paths the probe needs,
+    BEFORE spending a full sample's ~13 calls to discover the environment is
+    dead. Added 2026-08-10 after baseline attempt 1: 2/9 samples succeeded,
+    then every subsequent call failed for the rest of the run (OpenRouter
+    direct 402 Payment Required, CLIProxy 500, Nous 403) -- an external
+    provider/account/proxy availability problem, not a phase_probe bug, but
+    one that burned ~7 samples' worth of real calls before the harness's own
+    per-sample rejection caught each one individually. This tests the
+    dependency, not just whether a hostname responds -- two distinct minimal
+    calls, since the writer path and the Fable-brief path share CLIProxy as
+    their PRIMARY route but fall back to different services (OpenRouter-
+    direct, Gemini, local Qwen) if CLIProxy itself is down.
+
+    Returns True if healthy, False if not (with per-route detail printed).
+    Deliberately probe-only -- does not touch or gate production behavior.
+    """
+    po = po or _import_orchestrator()
+    orch = po.ProductionOrchestrator()
+    from orchestrator.config import CLIPROXY_URL, CLIPROXY_KEY
+
+    # Fable has mandatory extended thinking that counts against max_tokens
+    # (see llm.py's _call_editorial_model docstring) -- give it real headroom
+    # and cap its reasoning spend the same way production does, so a merely-
+    # thoughtful reply doesn't get misread as an outage.
+    routes = [
+        ("writer path (Opus via CLIProxy)", "openrouter/claude-opus-4.8", None),
+        ("Fable-brief path (Fable via CLIProxy)", "openrouter/claude-fable-5", 1024),
+    ]
+    all_ok = True
+    for label, model, reasoning_cap in routes:
+        try:
+            raw = orch._call_openai_compat_api(
+                url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
+                system_prompt="Reply with exactly one word.",
+                user_prompt="Say OK.",
+                model=model, max_tokens=2000, timeout=30,
+                reasoning_max_tokens=reasoning_cap,
+            )
+            if raw and raw.strip():
+                print(f"  PREFLIGHT OK   -- {label}")
+            else:
+                print(f"  PREFLIGHT FAIL -- {label}: empty response")
+                all_ok = False
+        except Exception as e:
+            print(f"  PREFLIGHT FAIL -- {label}: {type(e).__name__}: {e}")
+            all_ok = False
+
+    if not all_ok:
+        print("\nPREFLIGHT FAILED — model infrastructure unavailable. No baseline samples attempted.")
+    else:
+        print("\nPREFLIGHT OK — proceeding.")
+    return all_ok
+
+
+def _generate_one_sample_record(po, topic, i, out_dir, retried=False):
+    """Generate one sample and write its files, returning the metrics.json
+    entry for it. Shared by run_phase (fresh runs) and retry_failed (re-running
+    specific failed/rejected slots) so both produce byte-identical record
+    shapes and file-naming conventions."""
     import datetime
+    label = f"{topic['key']}-{i}"
+    print(f"generating {label} (persona={topic['persona']}){' [RETRY]' if retried else ''}...")
+    run_result = _run_one_sample(po, topic, i, PROBE_TEMPERATURE)
+    article_text = run_result["article_text"]
+    degraded = run_result["degraded_stages"]
+
+    sample_record = {
+        "topic": topic["key"],
+        "persona": topic["persona"],
+        "sample": i,
+        "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
+        "fable_brief_hash": _brief_hash(topic["key"]),
+        "actual_models": run_result["actual_models"],
+        "degraded_stages": degraded,
+        "error": run_result["error"],
+    }
+    if retried:
+        # Explicit per the recovery methodology: a retried slot must be visibly
+        # marked as such in metrics.json, never silently indistinguishable from
+        # a first-attempt success -- see .claude/current-work.md.
+        sample_record["retried"] = True
+
+    # A retry can overwrite a previous DEGRADED-<label>.md stub from the same
+    # slot -- clean it up either way (success replaces it with the real file,
+    # a repeat failure gets a fresh DEGRADED- write below) so stale stubs don't
+    # accumulate across retries.
+    degraded_stub = out_dir / f"DEGRADED-{label}.md"
+    if retried and degraded_stub.exists():
+        degraded_stub.unlink()
+
+    if run_result["error"]:
+        sample_record["status"] = "failed"
+        print(f"  FAILED: {run_result['error']}", file=sys.stderr)
+    elif degraded:
+        # Healthy-path assertion: a sample generated during a degraded run
+        # (failed brief/gate-LLM/editorial-revision -- see
+        # production_orchestrator.py's __init__) is excluded from the
+        # baseline set even though it produced an article. Comparing later
+        # clean generations against a baseline partly made during a
+        # simulated or real outage would be exactly the kind of
+        # contaminated comparison this harness exists to prevent. Still
+        # saved to disk (prefixed DEGRADED-) so it's inspectable, just not
+        # counted as "ok".
+        degraded_stub.write_text(article_text or "", encoding="utf-8")
+        sample_record["status"] = "rejected_degraded"
+        print(f"  REJECTED (degraded: {', '.join(degraded)}) -- saved as DEGRADED-{label}.md")
+    elif article_text:
+        (out_dir / f"{label}.md").write_text(article_text, encoding="utf-8")
+        prompt_calls = run_result["prompt_calls"]
+        if prompt_calls:
+            writer_call = prompt_calls[0]
+            (out_dir / f"{label}.prompt.txt").write_text(
+                "=== SYSTEM ===\n" + writer_call["system_prompt"] +
+                "\n\n=== USER ===\n" + writer_call["user_prompt"],
+                encoding="utf-8",
+            )
+        (out_dir / f"{label}.all_calls.json").write_text(
+            json.dumps(prompt_calls, indent=2), encoding="utf-8"
+        )
+        sample_record["word_count"] = len(re.findall(
+            r"\S+", re.sub(r"^---\n.*?\n---\n", "", article_text, flags=re.DOTALL)
+        ))
+        sample_record["status"] = "ok"
+    else:
+        sample_record["status"] = "failed"
+        print("  FAILED: no article text and no error captured", file=sys.stderr)
+
+    return sample_record
+
+
+def run_phase(phase_name, n_samples=3):
     po = _import_orchestrator()
+    print("Running preflight before spending any real sample calls...")
+    if not preflight(po):
+        return 1
     commit_hash = _git_commit_hash()
     out_dir = PROBE_OUT_DIR / phase_name
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -453,67 +586,54 @@ def run_phase(phase_name, n_samples=3):
 
     for topic in PROBE_TOPICS:
         for i in range(n_samples):
-            label = f"{topic['key']}-{i}"
-            print(f"[{phase_name}] generating {label} (persona={topic['persona']})...")
-            run_result = _run_one_sample(po, topic, i, PROBE_TEMPERATURE)
-            article_text = run_result["article_text"]
-            degraded = run_result["degraded_stages"]
-
-            sample_record = {
-                "topic": topic["key"],
-                "persona": topic["persona"],
-                "sample": i,
-                "timestamp": datetime.datetime.now().isoformat(timespec="seconds"),
-                "fable_brief_hash": _brief_hash(topic["key"]),
-                "actual_models": run_result["actual_models"],
-                "degraded_stages": degraded,
-                "error": run_result["error"],
-            }
-
-            if run_result["error"]:
-                sample_record["status"] = "failed"
-                print(f"  FAILED: {run_result['error']}", file=sys.stderr)
-            elif degraded:
-                # Healthy-path assertion: a sample generated during a degraded run
-                # (failed brief/gate-LLM/editorial-revision -- see
-                # production_orchestrator.py's __init__) is excluded from the
-                # baseline set even though it produced an article. Comparing later
-                # clean generations against a baseline partly made during a
-                # simulated or real outage would be exactly the kind of
-                # contaminated comparison this harness exists to prevent. Still
-                # saved to disk (prefixed DEGRADED-) so it's inspectable, just not
-                # counted as "ok".
-                (out_dir / f"DEGRADED-{label}.md").write_text(article_text or "", encoding="utf-8")
-                sample_record["status"] = "rejected_degraded"
-                print(f"  REJECTED (degraded: {', '.join(degraded)}) -- saved as DEGRADED-{label}.md")
-            elif article_text:
-                (out_dir / f"{label}.md").write_text(article_text, encoding="utf-8")
-                prompt_calls = run_result["prompt_calls"]
-                if prompt_calls:
-                    writer_call = prompt_calls[0]
-                    (out_dir / f"{label}.prompt.txt").write_text(
-                        "=== SYSTEM ===\n" + writer_call["system_prompt"] +
-                        "\n\n=== USER ===\n" + writer_call["user_prompt"],
-                        encoding="utf-8",
-                    )
-                (out_dir / f"{label}.all_calls.json").write_text(
-                    json.dumps(prompt_calls, indent=2), encoding="utf-8"
-                )
-                sample_record["word_count"] = len(re.findall(
-                    r"\S+", re.sub(r"^---\n.*?\n---\n", "", article_text, flags=re.DOTALL)
-                ))
-                sample_record["status"] = "ok"
-            else:
-                sample_record["status"] = "failed"
-                print("  FAILED: no article text and no error captured", file=sys.stderr)
-
-            run_log["samples"].append(sample_record)
+            print(f"[{phase_name}] ", end="")
+            run_log["samples"].append(_generate_one_sample_record(po, topic, i, out_dir))
 
     (out_dir / "metrics.json").write_text(json.dumps(run_log, indent=2), encoding="utf-8")
     ok = sum(1 for s in run_log["samples"] if s["status"] == "ok")
     rejected = sum(1 for s in run_log["samples"] if s["status"] == "rejected_degraded")
     print(f"\n[{phase_name}] {ok}/{len(run_log['samples'])} usable "
           f"({rejected} rejected as degraded) -> {out_dir}/")
+    return 0 if ok == len(run_log["samples"]) else 1
+
+
+def retry_failed(phase_name):
+    """Re-run only the samples in an existing metrics.json that are not
+    status=='ok' (i.e. 'failed' or 'rejected_degraded'), in place -- leaves
+    already-clean samples completely untouched, never regenerates them.
+    Each retried entry is marked retried=True (see _generate_one_sample_record)
+    so a retry is always visible in the record, never indistinguishable from
+    a first-attempt success. Requires the phase to have been run at least
+    once already (metrics.json must exist)."""
+    po = _import_orchestrator()
+    out_dir = PROBE_OUT_DIR / phase_name
+    metrics_path = out_dir / "metrics.json"
+    if not metrics_path.exists():
+        print(f"No metrics.json for phase '{phase_name}' -- run --run first.", file=sys.stderr)
+        return 1
+
+    run_log = json.loads(metrics_path.read_text())
+    topics_by_key = {t["key"]: t for t in PROBE_TOPICS}
+    to_retry = [(idx, s) for idx, s in enumerate(run_log["samples"]) if s["status"] != "ok"]
+
+    if not to_retry:
+        print(f"[{phase_name}] nothing to retry -- every sample is already status=ok.")
+        return 0
+
+    slot_labels = [f"{s['topic']}-{s['sample']}" for _, s in to_retry]
+    print(f"[{phase_name}] retrying {len(to_retry)} non-ok sample(s): {slot_labels}")
+
+    for idx, old_record in to_retry:
+        topic = topics_by_key[old_record["topic"]]
+        new_record = _generate_one_sample_record(po, topic, old_record["sample"], out_dir, retried=True)
+        run_log["samples"][idx] = new_record
+
+    metrics_path.write_text(json.dumps(run_log, indent=2), encoding="utf-8")
+    ok = sum(1 for s in run_log["samples"] if s["status"] == "ok")
+    rejected = sum(1 for s in run_log["samples"] if s["status"] == "rejected_degraded")
+    still_bad = len(run_log["samples"]) - ok
+    print(f"\n[{phase_name}] after retry: {ok}/{len(run_log['samples'])} usable "
+          f"({rejected} rejected as degraded, {still_bad - rejected} still failed) -> {out_dir}/")
     return 0 if ok == len(run_log["samples"]) else 1
 
 
@@ -550,10 +670,16 @@ def main():
     parser.add_argument("--run", metavar="PHASE_NAME", help="Run the probe for this phase name (e.g. 'baseline')")
     parser.add_argument("--samples", type=int, default=3, help="Samples per topic (default 3)")
     parser.add_argument("--score", metavar="PHASE_NAME", help="Print mechanical metrics for an already-run phase")
+    parser.add_argument("--preflight", action="store_true", help="Standalone: check model dependency paths, don't run anything")
+    parser.add_argument("--retry-failed", metavar="PHASE_NAME", help="Re-run only the non-ok samples in an existing phase's metrics.json, in place")
     args = parser.parse_args()
 
     if args.freeze_briefs:
         sys.exit(freeze_briefs(force=args.force))
+    elif args.preflight:
+        sys.exit(0 if preflight() else 1)
+    elif args.retry_failed:
+        sys.exit(retry_failed(args.retry_failed))
     elif args.run:
         sys.exit(run_phase(args.run, n_samples=args.samples))
     elif args.score:
