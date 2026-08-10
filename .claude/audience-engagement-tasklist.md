@@ -392,6 +392,34 @@ content for the exact URL that failed. Doesn't fix Dezeen's blocking —
 routes around needing to. Worth watching whether other frequently-used
 sources hit the same block; not investigated further tonight.
 
+**Extended the same day**: the identical fallback risk exists at
+*original generation* time, not just repair — `generate.py`'s two
+`fetch_source_article` calls (the initial writer prompt's source
+material) had no fallback at all, and this codebase's own history already
+documents exactly this failure mode as the root cause of a prior
+fabrication incident ("the model had no SOURCE MATERIAL block to draw
+from and invented a person and a quote to fill the gap instead" —
+comment already in `fetch_source_article`). Today's Aaland
+misattribution was very likely caused by this at generation time, not
+just missed by the repair pass afterward. `fetch_source_article` now
+takes a reusable `fallback_text` param; both `generate.py` call sites
+pass the already-in-scope RSS summary (no DB lookup needed there, unlike
+the repair path).
+
+**OPEN, genuinely unsolved — full-article fetching from blocking
+sources.** The fallback is a mitigation (real-but-short material instead
+of none), not a fix for the actual block. Confirmed Dezeen returns HTTP
+403 even with a full realistic Chrome UA and standard Accept headers —
+not simple UA-sniffing, more likely IP-reputation or a JS-challenge,
+neither fixable by header tweaking from this codebase's current fetch
+approach (plain `urllib.request`). Real options, none evaluated yet:
+a headless-browser fetch path (solves JS-challenges, not IP-reputation
+blocks), checking whether each blocking site has a public API, or a
+scraping proxy service (cost/complexity tradeoff unassessed). Also
+unknown: how many other sources in `QUALITY_FEEDS` (57 feeds as of
+tonight) share this same block — not audited. Worth a real investigation
+in a future session, not a quick fix.
+
 ---
 
 ## 2. Persist engagement-read + shadow-check output — DONE, 2026-08-09
