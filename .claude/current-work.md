@@ -11,10 +11,27 @@ prompt system around its true purpose (see project memory
 not as ten isolated style fixes.
 
 ## ACTIVE PHASE
-**PHASE 0: COMPLETE. WHY WE WRITE (Phase 1): DECIDED — KEEP, frozen.** See
-`## FINAL 4-PERSONA DECISION` below. Next up: Persona Architecture Audit
-(1.5, design-only) and the Fable model-seat ROI experiment — both queued,
-neither started.
+**Roadmap** (do not reorder without a stated reason — Persona Audit 1.5A
+before Fable ROI 1.5B before Phase 3 is deliberate: 1.5A costs nothing and
+directly targets the territory problem; 1.5B, run before the expensive
+Phase-3 testing loop, could make every later persona experiment cheaper):
+
+- **DONE** — Phase 0 (reliability + canonical baseline).
+- **DONE** — Phase 1, WHY WE WRITE → **KEEP** (`## FINAL 4-PERSONA DECISION`
+  below).
+- **DONE** — Phase 1.5A, Persona Architecture Audit (design/audit only,
+  no code changes, no generations) → `.claude/persona-architecture-audit.md`.
+- **NEXT** — Phase 1.5B, Fable model-seat ROI A/B (`## MODEL-SEAT ROI
+  EXPERIMENT` below) — Fable review+Fable rewrite vs Fable review+Opus
+  rewrite. Not started.
+- **THEN** — Phase 3, persona architecture implementation (perceptual
+  engines, motives, soft affinities, remove hard territories/prohibitions —
+  informed by 1.5A's findings). Not started.
+- **THEN** — same-source/four-persona probe (validates whatever Phase 3
+  produces). Not started.
+- Phases 2 (brevity/evidence-budget/testimony) and 4-8 (correction/
+  repetition/readability/ending/final audit) remain queued in their
+  original blueprint order, unaffected by this insert.
 
 ## HEAD / PROVENANCE
 - **WHY WE WRITE doctrine commit**: `01339ce` — the SYSTEM-prompt swap in
@@ -321,17 +338,63 @@ below. (2) Fable model-seat ROI experiment (A vs B: Fable-review+Fable-
 rewrite vs Fable-review+Opus-rewrite) — queued section below. Both were
 explicitly waiting on this decision landing.
 
-## PERSONA ARCHITECTURE / TERRITORY AUDIT — QUEUED
-Important conceptual correction, recorded 2026-08-10 while the Pixel
-supplemental validation was in flight: the museum-labels topic was chosen
-because Pixel has a strong CURRENT ROUTING AFFINITY with questions of
-information form/hierarchy/legibility — NOT because "information
-architecture belongs to Pixel." That distinction matters: an experimental
-convenience must not quietly become canon. The Pixel supplemental test
-validates WHY WE WRITE against her CURRENT persona architecture; it does
-NOT validate or establish persona territory ownership. (Comments in
-`phase_probe.py` updated to say this explicitly, so the distinction survives
-a future session reading the code instead of this file.)
+## PERSONA ARCHITECTURE / TERRITORY AUDIT — Phase 1.5A DONE (design/audit
+only — no `personas.py`/`generate.py` edits, no generations, per this
+document; implementation is Phase 3, not started)
+
+**Historical persona territories are hypotheses, not canon.** Pixel's
+museum-label validation tested WHY WE WRITE under Pixel's existing
+configuration; it did not establish museum labels/information architecture
+as Pixel-owned territory. Future architecture replaces hard territories
+with perceptual engines + soft affinities. A source belongs to whichever
+persona can reveal the strongest evidenced hidden mechanism through their
+particular way of perceiving.
+
+Full audit: **`.claude/persona-architecture-audit.md`** — six-category
+matrix (core person / perceptual engine / motive / affinity / risk /
+texture) for all four personas, extracted from `persona_canon/*.md` +
+`personas.py` + `generate.py`'s routing logic. Headline findings, confirmed
+by direct code read (not inference):
+1. Siri Sage's VOICE ANCHOR (`personas.py`) contains a literal ownership
+   sentence — "Not spatial legibility. Not wayfinding systems. Not
+   information architecture. Those belong to Pixel Nova." **Still present
+   in code as of this audit — an earlier note in this file calling this
+   bug "found and fixed" was wrong; it was only found. Not fixed here
+   either (Phase 3 work) — corrected so a future session doesn't assume
+   it's already handled.**
+2. `generate.py`'s global FORBIDDEN DEFAULTS (bans ramp/curb-cut/grab-rail/
+   tactile-paving/accessible-toilet/lift as "the central concrete example")
+   collides almost entirely with Maya Flux's canon — her wound, fixed
+   beliefs, and evidentiary vocabulary are built on exactly those objects.
+   Independently-discovered second instance of the same failure class as
+   #1: an anti-cliché rule disabling one persona's most load-bearing
+   material.
+3. `generate.py`'s topic→persona routing (lines 161-168) is a hard
+   keyword map (art/design/visual→Pixel, tech/science/system→Zen,
+   culture/social/entertainment→Siri, else→Maya) — topic assignment, not
+   affinity. Maya is the default/else bucket yet has the LOWEST 60-day
+   published count of the four (Zen 14, Pixel 9, Siri 7, Maya 4, per
+   `generate.py`'s own comment) — plausibly downstream of #2 and/or
+   Fable-brief override behavior, not fully diagnosed from static text.
+4. All four personas are missing an explicit MOTIVE sentence ("what I
+   want to give the reader") — confirmed absent in all four
+   `prompt_block`s, not persona-specific.
+5. Zen Circuit (scrutinized hardest per the WHY WE WRITE data — her
+   "why writer"/"give me" scores dipped even as her doctrine-leak improved
+   the MOST of any persona) has real perceptual material in her canon
+   (pattern-recognition-as-expertise, diagnostic-authority-as-power) but it
+   stays list-shaped/argued rather than condensed into one stated
+   question the way Siri's is, and her ONLY dedicated brief section
+   (`WRITING VOICE`) is entirely structural (how to write) with nothing
+   about what she's for. Candidate explanation for the dip, not a
+   diagnosis — the shared publication doctrine has less to attach to when
+   a persona's own engine isn't load-bearing in the brief. **Do not revise
+   WHY WE WRITE over this — the fix, if confirmed, belongs in Phase 3.**
+6. Every persona-pair relationship in canon already states a distinct,
+   self-aware axis of disagreement (not redundant on paper). Whether that
+   holds in actual generated prose is exactly what the future same-source/
+   four-persona probe tests — correctly deferred, not answerable from
+   static text.
 
 **The four personas should NOT own subject territories.** Existing
 territory labels are historical/model-generated assumptions and must be
@@ -397,19 +460,14 @@ small priors (e.g. "+small prior" for Pixel on information-form stories),
 never as a gate — a strong Siri reframe of a software-interface story should
 beat a mediocre Pixel reframe of the same story.
 
-**Why this might explain Zen Circuit's WHY-WE-WRITE softness**: the blind
-3-topic result already shows WHY WE WRITE doesn't affect personas uniformly
-(Maya clear gain, Siri stable/slight gain, Zen mild dip on W/G — see above).
-That could be the shared doctrine interacting differently with each
-persona's EXISTING architecture — e.g. Zen might have an over-narrow
-territory, too much fixed lore, a weak perceptual engine, a motive that
-duplicates the publication doctrine instead of complementing it, or a
-defensive anti-cliché rule suppressing their strongest way of seeing (the
-exact shape of the bug already found and fixed for Siri Sage — her
-wayfinding/spatial-legibility material was banned as a cliché even though
-it's her most epistemically valuable territory). **Do not repair Zen now.**
-Finish Pixel, decide WHY WE WRITE, THEN run the 1.5 audit — it may explain
-Zen's resistance rather than requiring a guess-and-patch fix.
+**Why this explains Zen Circuit's WHY-WE-WRITE softness — now confirmed by
+the 1.5A audit above, not just hypothesized**: see finding #5. Zen's dip is
+a candidate consequence of her own persona architecture (implicit engine,
+missing motive, structure-only brief section), not a doctrine problem —
+confirmed against the same failure CLASS already found for Siri (#1) and
+Maya (#2): an existing prompt structure suppressing or failing to surface
+a persona's real epistemic strength. **Do not repair Zen by revising WHY WE
+WRITE.** The fix, if the Phase 3 rewrite confirms it, is persona-level.
 
 **Explicit ordering constraint**: do not change `personas.py`, broaden
 Pixel's prompt, or modify any persona rule before the Pixel control/v1
