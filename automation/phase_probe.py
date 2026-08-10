@@ -243,9 +243,20 @@ PROBE_TOPICS = [
     },
 ]
 
-PROBE_REGISTER = ("wry", 0.25, "Dry, observational. The joke is in the framing, never announced.")
+
+# Shape MUST match what discovery.py's real _pick_register/_pick_article_type
+# return -- (name, prompt) 2-tuples, weight already consumed internally by
+# random.choices and never part of the return value. These two constants used
+# to be copy-pasted straight from _REGISTERS/_ARTICLE_TYPES's raw 3-tuple rows
+# (name, weight, prompt), which meant the weight float rode along in the
+# prompt-text slot. `_pick_register`'s stub lambda handed that 3-tuple back to
+# generate.py's `register, register_prompt = self._pick_register()`, which
+# blew up with "too many values to unpack (expected 2)" on every real
+# `_run_one_sample()` call. Also restored the full "wry" prompt text (was
+# truncated to one sentence) so the probe exercises the real register prompt.
+PROBE_REGISTER = ("wry", "Dry, observational. The joke is in the framing, never announced. You find the absurdity in how things are organised and let it sit. The reader laughs a beat late.")
 PROBE_LENGTH = 1000
-PROBE_ARTICLE_TYPE = ("essay", 0.35, "")
+PROBE_ARTICLE_TYPE = ("essay", "")
 
 
 def _git_commit_hash():
@@ -331,6 +342,14 @@ def _run_one_sample(po, topic, sample_idx, temperature):
         orch = po.ProductionOrchestrator()
         _isolate_paths(orch, tmpdir)
         orch.posts_dir.mkdir(parents=True, exist_ok=True)
+        # drafts_dir isn't created by _isolate_paths itself (it only reassigns the
+        # path); create_article_file does a bare open(filepath, 'w') with no parent
+        # mkdir, so the first real sample to reach Step 6 would FileNotFoundError
+        # inside the isolated tmpdir. Found by an independent isolation audit
+        # (2026-08-10) before it had a chance to bite -- not a leak, just a crash
+        # waiting to happen one step later than the one already being debugged.
+        orch.drafts_dir.mkdir(parents=True, exist_ok=True)
+        orch.assets_dir.mkdir(parents=True, exist_ok=True)
         (orch.repo_root / "_reviews").mkdir(exist_ok=True)
         for filename, title, body_line in FIXTURE_RECENT_POSTS:
             (orch.posts_dir / filename).write_text(
@@ -372,6 +391,18 @@ def _run_one_sample(po, topic, sample_idx, temperature):
             # ── captured + temperature-pinned ───────────────────────────────
             _call_openai_compat_api=capturing_call,
         )
+        # generate.py's degraded-run and fallback-mode alerts read
+        # REEF_BOT_TOKEN/REEF_CHAT_ID from the environment directly (not via a
+        # patchable method) and POST to the real Telegram API whenever
+        # self._degraded_stages is non-empty -- a real possibility here, since
+        # editorial-revision degradation depends on live LLM behavior, not
+        # something this harness controls. Found by an independent isolation
+        # audit (2026-08-10): on a host where these are already exported (e.g.
+        # trident, where the real automation env lives), an unpatched probe
+        # run could send a real message to the real ops channel about a
+        # throwaway tmpdir path. Neutralize for the duration of this call only.
+        import os as _os
+        _saved_env = {k: _os.environ.pop(k, None) for k in ("REEF_BOT_TOKEN", "REEF_CHAT_ID")}
         try:
             result = orch._run_production_automation_locked()
             error = None
@@ -379,6 +410,9 @@ def _run_one_sample(po, topic, sample_idx, temperature):
             result, error = None, f"{type(e).__name__}: {e}"
         finally:
             restore()
+            for k, v in _saved_env.items():
+                if v is not None:
+                    _os.environ[k] = v
 
         draft_files = list(orch.drafts_dir.glob("*.md")) if orch.drafts_dir.exists() else []
         article_text = draft_files[0].read_text(encoding="utf-8") if draft_files else None
