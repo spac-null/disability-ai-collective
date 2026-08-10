@@ -359,6 +359,39 @@ true) were sound, but found real correctness bugs underneath:
   freeze claim already made in this file is independently confirmed true,
   not just asserted.
 
+**Real live incident, 2026-08-10 — FIXED.** First real 09:00 run under
+every change made tonight (`280-prisms-and-not-one-of-them-makes-a-sound`)
+hit an OpenRouter monthly key limit partway through, cascading into
+failed editorial-model calls, failed image generation, and failed
+fact-check/citation/engagement-read/plan-follow-read checks — the article
+still committed to `_drafts/` with none of those safety checks having
+actually run. Owner raised the limit; finished the incomplete steps by
+hand (generated the 3 missing images, re-ran full validation). The
+re-run's fact-check then correctly caught a real contradicted quote
+(misattributed to sauna scholar Mikkel Aaland) and set
+`fact_check_status: blocked` — confirmed this correctly prevents
+`publish_best.py` promotion regardless of anything else. Softened the
+attribution by hand at the owner's direction.
+
+Investigating *why* the pipeline's own auto-repair (`_attempt_fabrication_
+repair`, `fact_check.py`) didn't fire on this contradiction — it's
+supposed to re-fetch the source and try a grounded fix before hard-
+blocking — surfaced a real, previously-unknown gap: `fetch_source_article`
+fetches the live rendered webpage directly and got HTTP 403 from Dezeen,
+confirmed even with a full realistic Chrome UA + standard headers (not
+simple UA-sniffing — more likely IP-reputation or a JS-challenge, neither
+fixable by header tweaking). This is a genuinely different route from how
+the item was originally collected: `news_fetcher.py` reads the site's own
+RSS feed (built for automated consumption, essentially never blocked),
+storing a real but short (~500 char) summary in `news_seeds` — the full
+article was never fetched at discovery time at all. **Fixed**:
+`_attempt_fabrication_repair` now falls back to that stored RSS summary
+when the full-page fetch fails, rather than falling straight through to a
+hard block with no repair attempt. Verified the fallback finds real
+content for the exact URL that failed. Doesn't fix Dezeen's blocking —
+routes around needing to. Worth watching whether other frequently-used
+sources hit the same block; not investigated further tonight.
+
 ---
 
 ## 2. Persist engagement-read + shadow-check output — DONE, 2026-08-09
