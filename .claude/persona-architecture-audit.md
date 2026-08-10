@@ -11,7 +11,15 @@ section for why "affinity" replaces "territory."
 
 ## Cross-persona findings first (these matter more than any single row)
 
-**1. Confirmed hard-territory mechanism #1 — Siri Sage's VOICE ANCHOR
+Two distinct architectural bug CLASSES emerged, not one — worth keeping
+separate because Phase 3 needs different fixes for each:
+
+- **OWNERSHIP / ROUTING** — "this subject belongs to persona X," stated or
+  enforced structurally. Findings #1 and #3.
+- **SUPPRESSION** — "this evidence is too cliché to use," applied without
+  regard to whose lived instrument the evidence actually is. Finding #2.
+
+**1. Confirmed ownership mechanism #1 — Siri Sage's VOICE ANCHOR
 (`personas.py` line 26), verbatim:**
 > "Your territory is phenomenological, not structural... Not spatial
 > legibility. Not wayfinding systems. Not information architecture. Those
@@ -26,24 +34,27 @@ confirms it's the ONLY explicit "belongs to X" sentence in any of the four
 `prompt_block`s — Pixel/Maya/Zen's blocks contain no equivalent claim about
 Siri or each other.
 
-**2. Confirmed hard-territory mechanism #2 — global FORBIDDEN DEFAULTS
-(`generate.py` line 591), verbatim:**
+**2. Confirmed cross-persona SUPPRESSION mechanism — global FORBIDDEN
+DEFAULTS (`generate.py` line 591), verbatim:**
 > "Do not build your argument around ramp, curb cut, grab rail, tactile
 > paving, accessible toilet, or lift as the central concrete example."
 
-This rule is NOT persona-specific — it applies to whichever persona is
-writing. But it collides almost entirely with ONE persona's canon: Maya
-Flux's `FIXED BELIEFS` open with "the ramp on the blueprint" as "the only
-measurement that matters," her `WOUND` is a three-step wedding venue, her
-`THE INDEFENSIBLE` is about broken sidewalks. A rule written to stop every
-persona from defaulting to the easiest disability image mostly disables
-Maya's actual evidentiary vocabulary. This is the second, independently-
-discovered instance of the same failure mode the blueprint found for Siri:
-an anti-cliché rule banning a persona's most epistemically load-bearing
-material, not just a generic crutch.
+This is a DIFFERENT bug class than #1 — it doesn't name a persona or assign
+a category to a colleague, it's a blanket anti-cliché rule that applies to
+whichever persona is writing. But it collides almost entirely with ONE
+persona's canon: Maya Flux's `FIXED BELIEFS` open with "the ramp on the
+blueprint" as "the only measurement that matters," her `WOUND` is a
+three-step wedding venue, her `THE INDEFENSIBLE` is about broken sidewalks.
+A rule written to stop every persona from defaulting to the easiest
+disability image mostly disables Maya's actual evidentiary vocabulary —
+evidence that is epistemically central to her specific lived instrument,
+not a lazy crutch she reaches for. Independently-discovered second instance
+of the failure the blueprint found for Siri, but via suppression rather than
+ownership — worth Phase 3 treating these as two different fixes (see
+"Carried forward" below), not one.
 
-**3. Hard-territory mechanism #3, at the routing layer, not just the prompt
-— `generate.py` lines 161-168:**
+**3. Ownership mechanism #2, at the routing layer, not just the prompt —
+`generate.py` lines 161-168:**
 ```python
 if any(word in domain_lower for word in ['art', 'design', 'visual']):
     _preferred = "Pixel Nova"
@@ -56,36 +67,49 @@ else:
 ```
 Persona selection for discovery-sourced articles is a hard keyword→persona
 map — topic assignment, exactly what the "affinity not territory" principle
-is meant to replace. Maya is the ELSE/default bucket: she gets everything
-that doesn't match an art/tech/culture keyword, which should mean high
-volume, not low. But `generate.py`'s own comment (line 242-243) records
-60-day published-article totals: **Zen Circuit 14, Pixel Nova 9, Siri Sage
-7, Maya Flux 4** — Maya is lowest despite being the routing default. The
-likely mechanism: she's frequently selected by this router, then loses
-articles downstream — either FORBIDDEN DEFAULTS weakening her drafts (item
-2 above), or Fable's own brief-writing (`_fable_editorial_brief`) preferring
-a different persona for the same source and `_balance_agent` honoring that
-override (line 236-253). Not fully diagnosed from static text alone — worth
-a targeted look at rejected/degraded Maya drafts if this audit's findings
-get acted on, but the routing-layer keyword map is a real hard-territory
-mechanism regardless of which downstream cause dominates.
+is meant to replace. Maya is the ELSE/default bucket. `generate.py`'s own
+comment (line 242-243) records 60-day published-article totals: **Zen
+Circuit 14, Pixel Nova 9, Siri Sage 7, Maya Flux 4** — Maya is lowest despite
+being the routing default. **This is an interesting discrepancy, not a
+diagnosis**: static code alone cannot establish whether Maya is routed
+frequently and then lost downstream (FORBIDDEN DEFAULTS weakening her
+drafts, or Fable's own brief-writing at line 236-253 preferring a different
+persona and `_balance_agent` honoring that override), or simply routed
+infrequently in the first place — if most real discovery domains happen to
+match an art/tech/culture keyword, the else branch could just be rare. We
+don't have the count. **Cheap future diagnostic, not yet run**: instrument
+and count persona assignment at every stage of the funnel —
+`eligible seeds → keyword-preferred persona → Fable-preferred persona →
+_balance_agent final persona → generated → committed/published` — before
+attempting to diagnose Fable-override vs. draft-quality vs. routing
+frequency as the cause. The routing-layer keyword map is still a real
+ownership mechanism regardless of which downstream cause dominates; only
+the CAUSE of Maya's low count is unconfirmed, not the mechanism's existence.
 
-**4. No prompt-mandated tic/wound injection found.** None of the four
-`prompt_block`s contain machinery forcing a specific anecdote into every
-essay — the wound/indefensible-opinion material is framed as background
-("here is what you don't put in your talks"), not a checklist item. The
-repeated-anecdote pattern the blind-comparison agents noticed in practice
-(e.g. Maya's "wedding, three steps" recurring near-verbatim across samples)
-is a generation-tendency/repetition problem, not a prompt-architecture
-defect — it's already Phase 5's territory (the repetition judge), not this
-audit's.
+**4. No prompt-mandated tic/wound injection found — but salience-induced
+reuse remains a live possibility, not dismissed to Phase 5 wholesale.**
+None of the four `prompt_block`s contain machinery forcing a specific
+anecdote into every essay — the wound/indefensible-opinion material is
+framed as background ("here is what you don't put in your talks"), not a
+checklist item. But the repeated-anecdote pattern the blind-comparison
+agents noticed in practice (e.g. Maya's "wedding, three steps" recurring
+near-verbatim across samples) isn't fully absolved by that absence: a
+highly vivid, repeatedly-exposed wound can function as a de facto attractor
+for the writer even when nothing in the prompt says "reuse this." **Split
+the responsibility**: Phase 3 should decide whether biography/wound
+material needs stronger "background, not reusable stock anecdote"
+semantics in the brief itself (a persona-architecture question); Phase 5's
+repetition judge catches whatever salience-driven reuse remains after that
+(a generation-tendency question). Not entirely one or the other.
 
 **5. No persona has an explicit MOTIVE statement.** None of the four
 `prompt_block`s contain a "what I want to give the reader" / "why I write"
 sentence — this matches the blueprint's still-pending Phase 3 item
 ("WHAT I BRING BACK" per persona). Confirmed missing for all four, not
-persona-specific — a genuine gap to fill in Phase 3, not evidence any one
-persona is broken.
+persona-specific — a genuine gap, but **this audit deliberately does NOT
+draft final motive sentences** (see "What this audit does NOT conclude"
+below) — only candidate raw material per persona, so nothing here gets
+fossilized as canon before Phase 3's actual synthesis work.
 
 **6. Relational overlaps are already self-aware, not redundant.** Every
 pairing in each canon file's `RELATIONSHIP TO OTHER PERSONAS` section states
@@ -99,6 +123,29 @@ on paper. Whether it holds in actual generated prose — whether two personas
 converge on the same mechanism when facing the same real source — is
 exactly what the future same-source/four-persona probe is for, and cannot
 be answered from static text. Not a finding, a correctly-deferred question.
+
+## Working hypotheses for each perceptual engine (candidate framings, to be
+empirically tested by the same-source/four-persona probe — not frozen)
+
+- **Siri — responsive space**: what does an environment do to a body that
+  cannot rely on visual confirmation? What information arrives through
+  response, resistance, sequence, sound, and absence?
+- **Zen — measurement turning into judgment**: when does a system's
+  classification of a person actually reveal the limitations of the system
+  doing the measuring?
+- **Maya — promise versus Wednesday**: what does a system/design promise
+  in abstraction, and what does it actually require from a body on an
+  ordinary day?
+- **Pixel — politics of legibility**: what gets made visible, primary,
+  delayed, translated, compressed, or hidden — and who decided that this is
+  the right form for the information?
+
+These overlap enough that all four could plausibly attack the same object
+(a supermarket self-checkout, a museum label, a school timetable), while
+staying different enough that each might surface a different mechanism —
+which is the actual property the future probe needs to test. They are a
+sharper restatement of the per-persona ENGINE material below, not a
+replacement for the evidence backing it.
 
 ## Per-persona matrix
 
@@ -212,14 +259,14 @@ essays can get)
   compliance-without-dignity, not yet a brief-facing sentence.
 - **AFFINITY**: mobility/urban-infrastructure/protest-history topics —
   cheapest application, not exclusive claim.
-- **RISK**: FORBIDDEN DEFAULTS (finding #2) is the dominant risk — it's a
-  global rule that happens to disable one persona's central evidentiary
-  vocabulary far more than the other three's. Combined with the routing
-  layer making her the ELSE-bucket default (finding #3) while her
-  published count is lowest of the four, this is the strongest concrete
-  candidate for "an anti-cliché rule accidentally prohibiting a persona's
-  most epistemically valuable territory" the blueprint predicted for a
-  second persona beyond Siri.
+- **RISK**: FORBIDDEN DEFAULTS (finding #2) is the dominant risk — a
+  suppression rule that happens to disable one persona's central
+  evidentiary vocabulary far more than the other three's. Her ELSE-bucket
+  routing status (finding #3) and lowest-of-four published count are a
+  real, interesting discrepancy alongside this, not yet a confirmed causal
+  chain — see finding #3's funnel-instrumentation note before assuming
+  FORBIDDEN DEFAULTS is *why* her count is low rather than merely
+  correlated with it.
 - **TEXTURE**: Prospect Park West hill speed ("the best feeling she
   knows"), broken-sidewalk tree-roots aesthetic ("she cannot defend this"),
   Tuesday plantains/tire-pressure/MTA-horoscope ritual.
@@ -264,14 +311,22 @@ essays can get)
 
 ## What this audit does NOT conclude
 No territory is reassigned, no prompt is rewritten, no persona is declared
-broken. Zen's WHY WE WRITE dip is a candidate explanation (implicit engine,
-no stated motive, structure-heavy brief), not a diagnosis — confirming it
-requires either the Phase 3 rewrite + re-test, or the same-source/four-
-persona probe showing Zen specifically fails to produce an irreducible
-reframe other personas could also produce. Maya's low article count has a
-plausible mechanism (FORBIDDEN DEFAULTS + routing layer) but the downstream
-cause (Fable override vs. draft quality vs. something else) isn't confirmed
-from static text. Both are Phase 3 questions, not Phase 1.5 conclusions.
+broken, no motive sentences are finalized. Two levels need to stay
+distinct: the ARCHITECTURAL ASYMMETRY is confirmed by direct code read
+(Zen's engine is implicit and unstated where Siri's is explicit; her only
+dedicated brief section is structural, not epistemic). Its CAUSAL ROLE in
+Zen's WHY WE WRITE score dip is NOT confirmed — that's a supported
+hypothesis from static text, and only the Phase 3 rewrite + re-test, or the
+same-source/four-persona probe showing Zen specifically fails to produce an
+irreducible reframe others could also produce, can establish it. Likewise
+Maya's low article count has a plausible mechanism (FORBIDDEN DEFAULTS +
+routing layer) but the downstream cause isn't confirmed from static text —
+see finding #3's funnel-instrumentation note. Motive material identified
+per persona above is candidate raw ingredients, not drafted sentences —
+Phase 3 should synthesize the motive together with each engine (what
+happened → what they learned to notice → what they keep noticing elsewhere
+→ what they want to bring back for the reader), not bolt a slogan onto
+existing biography now.
 
 ## Carried forward into Phase 3 (implementation, not now)
 1. Delete/rewrite Siri's VOICE ANCHOR ownership clause (finding #1) —
@@ -279,16 +334,44 @@ from static text. Both are Phase 3 questions, not Phase 1.5 conclusions.
 2. Rewrite FORBIDDEN DEFAULTS (finding #2) from a blanket ban to something
    like "don't make ramp/curb-cut/lift your ONLY concrete example" — kills
    the laziest default without disabling Maya's real evidentiary register.
-3. Replace the keyword→persona routing map (finding #3) with soft
-   affinities + let Fable's own brief-writing (already persona-aware) carry
-   more of the selection weight, OR audit why Fable-preferred reassignment
-   away from Maya correlates with her low count.
-4. Add one MOTIVE sentence per persona (all four missing, finding #5).
-5. Surface Zen's and Pixel's implicit engines (drafted above) into an
-   explicit one-sentence form the way Siri's already is; keep Maya's real
-   engine (the promise-vs-Wednesday gap) but decouple it from the
-   FORBIDDEN DEFAULTS collision.
-6. Do NOT touch Siri's phenomenological engine, Maya's gap-attention, Zen's
+   Treat this as a SUPPRESSION fix, distinct from #1 and #3's OWNERSHIP
+   fixes — different bug class, different repair.
+3. Replace the keyword→persona routing map (finding #3) with the
+   already-planned CJ-2 competitive-reframing architecture, NOT with "let
+   Fable's brief-writing carry routing" (struck — Fable's editorial brief is
+   downstream planning; giving it routing responsibility too blurs
+   discovery and editorial planning and makes routing both more expensive
+   and harder to inspect). Target shape:
+   ```
+   SOURCE
+     ↓
+   CJ-1: is there a supported category jump?
+     ↓
+   CJ-2: Siri reframe / Zen reframe / Maya reframe / Pixel reframe
+     ↓
+   compare strength / specificity / evidence
+     ↓
+   soft affinity only as prior/tiebreaker
+     ↓
+   selected persona
+     ↓
+   Fable editorial brief
+   ```
+   The article belongs to the mind that reveals the strongest evidenced
+   hidden mechanism, not the persona whose keyword territory matches the
+   source. Before this ships, also run the funnel-instrumentation diagnostic
+   from finding #3 — worth knowing where Maya actually disappears even
+   independent of this replacement.
+4. Draft one MOTIVE sentence per persona (all four missing, finding #5) —
+   in Phase 3, synthesized together with each engine, not now.
+5. Surface Zen's and Pixel's implicit engines (candidate framings above)
+   into an explicit one-sentence form the way Siri's already is; keep
+   Maya's real engine (the promise-vs-Wednesday gap) but decouple it from
+   the FORBIDDEN DEFAULTS collision.
+6. Decide, per finding #4, whether wound/biography material needs
+   stronger "background, not reusable stock anecdote" framing in the brief
+   itself, independent of Phase 5's repetition judge catching what remains.
+7. Do NOT touch Siri's phenomenological engine, Maya's gap-attention, Zen's
    implicit measurement-limits engine, or Pixel's legibility-as-politics —
-   all four are genuinely distinct and worth keeping; only the OWNERSHIP
-   framing and the missing MOTIVE need to change.
+   all four are genuinely distinct and worth keeping; only the OWNERSHIP/
+   SUPPRESSION framing and the missing MOTIVE need to change.

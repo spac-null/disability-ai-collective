@@ -11,10 +11,7 @@ prompt system around its true purpose (see project memory
 not as ten isolated style fixes.
 
 ## ACTIVE PHASE
-**Roadmap** (do not reorder without a stated reason — Persona Audit 1.5A
-before Fable ROI 1.5B before Phase 3 is deliberate: 1.5A costs nothing and
-directly targets the territory problem; 1.5B, run before the expensive
-Phase-3 testing loop, could make every later persona experiment cheaper):
+**Roadmap** (do not reorder without a stated reason):
 
 - **DONE** — Phase 0 (reliability + canonical baseline).
 - **DONE** — Phase 1, WHY WE WRITE → **KEEP** (`## FINAL 4-PERSONA DECISION`
@@ -23,15 +20,24 @@ Phase-3 testing loop, could make every later persona experiment cheaper):
   no code changes, no generations) → `.claude/persona-architecture-audit.md`.
 - **NEXT** — Phase 1.5B, Fable model-seat ROI A/B (`## MODEL-SEAT ROI
   EXPERIMENT` below) — Fable review+Fable rewrite vs Fable review+Opus
-  rewrite. Not started.
+  rewrite. Not started. Sequenced before Phase 2 deliberately: if Fable can
+  be cheaply removed from the rewrite seat, every later experiment
+  (including Phase 2 and Phase 3's testing loops) gets cheaper.
+- **THEN** — Phase 2, brevity + evidence budget + testimony. Sequenced
+  before Phase 3 deliberately (per the original locked order — this insert
+  does NOT move Phase 2 after Phase 3): article length/evidence-overload/
+  testimony-handling were identified as major structural variables before
+  the persona-architecture question existed; fixing those first means
+  Phase 3's persona experiment gets evaluated inside the cleaner article
+  architecture, not against a prompt system already slated for
+  dismantling.
 - **THEN** — Phase 3, persona architecture implementation (perceptual
   engines, motives, soft affinities, remove hard territories/prohibitions —
   informed by 1.5A's findings). Not started.
 - **THEN** — same-source/four-persona probe (validates whatever Phase 3
-  produces). Not started.
-- Phases 2 (brevity/evidence-budget/testimony) and 4-8 (correction/
-  repetition/readability/ending/final audit) remain queued in their
-  original blueprint order, unaffected by this insert.
+  produces).
+- **THEN** — Phases 4-8 (correction/repetition/readability/ending/final
+  audit), original blueprint order, unaffected by this insert.
 
 ## HEAD / PROVENANCE
 - **WHY WE WRITE doctrine commit**: `01339ce` — the SYSTEM-prompt swap in
@@ -366,16 +372,23 @@ by direct code read (not inference):
    tactile-paving/accessible-toilet/lift as "the central concrete example")
    collides almost entirely with Maya Flux's canon — her wound, fixed
    beliefs, and evidentiary vocabulary are built on exactly those objects.
-   Independently-discovered second instance of the same failure class as
-   #1: an anti-cliché rule disabling one persona's most load-bearing
-   material.
+   **A different bug CLASS than #1** — not an ownership claim, a
+   cross-persona SUPPRESSION rule that happens to disable one persona's
+   most load-bearing material. Phase 3 needs a different fix for each
+   class, not one rewrite (see audit doc's taxonomy section).
 3. `generate.py`'s topic→persona routing (lines 161-168) is a hard
    keyword map (art/design/visual→Pixel, tech/science/system→Zen,
    culture/social/entertainment→Siri, else→Maya) — topic assignment, not
-   affinity. Maya is the default/else bucket yet has the LOWEST 60-day
-   published count of the four (Zen 14, Pixel 9, Siri 7, Maya 4, per
-   `generate.py`'s own comment) — plausibly downstream of #2 and/or
-   Fable-brief override behavior, not fully diagnosed from static text.
+   affinity: the second OWNERSHIP mechanism, alongside #1. Maya is the
+   default/else bucket, and has the LOWEST 60-day published count of the
+   four (Zen 14, Pixel 9, Siri 7, Maya 4, per `generate.py`'s own comment)
+   — **an interesting discrepancy, not a confirmed causal chain**: static
+   code can't tell us whether she's routed often and lost downstream, or
+   routed rarely because most real sources happen to match an art/tech/
+   culture keyword. Cheap diagnostic identified, not yet run: count persona
+   assignment at every funnel stage (keyword-preferred → Fable-preferred →
+   `_balance_agent` final → generated → published) before attributing the
+   low count to #2 or to Fable-override behavior specifically.
 4. All four personas are missing an explicit MOTIVE sentence ("what I
    want to give the reader") — confirmed absent in all four
    `prompt_block`s, not persona-specific.
@@ -419,17 +432,21 @@ assigned topic category. No TERRITORY category survives as a hard field —
 below in scope, not in order — Phase numbers below refer to the FINAL
 LOCKED ORDER in project memory `project_cripminds_editorial_blueprint.md`):
 0. Reliability/baseline — DONE.
-1. WHY WE WRITE — currently finishing Pixel validation.
-1.5. **Persona architecture audit — NEW, design/audit only, no code.**
-   Inventory all four personas' current definitions into the six-category
-   matrix above; classify every existing line (territory, prohibition,
-   voice rule, wound anecdote, etc.) into one of the six categories or mark
-   it a deletion candidate. Do NOT touch `personas.py` at this step.
-2. Brevity + evidence budget + testimony (unchanged from prior plan).
+1. WHY WE WRITE — DONE, KEEP (see `## FINAL 4-PERSONA DECISION`).
+1.5A. **Persona architecture audit — DONE, design/audit only, no code.**
+   → `.claude/persona-architecture-audit.md`.
+1.5B. **Fable model-seat ROI A/B — NEXT.** See `## MODEL-SEAT ROI
+   EXPERIMENT` below. Sequenced here (before Phase 2) because a cheap win
+   here reduces the cost of every later experiment.
+2. Brevity + evidence budget + testimony (unchanged from prior plan) —
+   sequenced BEFORE Phase 3 deliberately, not after: evaluate Phase 3's
+   persona rewrite inside the cleaner article architecture, not against a
+   prompt system already slated for dismantling.
 3. **Persona motive + perceptual engine + soft affinities + removal of hard
    territorial ownership** (broadened from the prior "persona motive +
    opening identity" — this is where the actual `personas.py` code change
-   belongs, informed by 1.5's audit).
+   belongs, informed by 1.5A's audit), followed by the same-source/
+   four-persona probe to validate it.
 4-8. Correction discipline / repetition / readability / ending / final
    anti-cliché audit — unchanged from prior plan.
 
@@ -460,14 +477,15 @@ small priors (e.g. "+small prior" for Pixel on information-form stories),
 never as a gate — a strong Siri reframe of a software-interface story should
 beat a mediocre Pixel reframe of the same story.
 
-**Why this explains Zen Circuit's WHY-WE-WRITE softness — now confirmed by
-the 1.5A audit above, not just hypothesized**: see finding #5. Zen's dip is
-a candidate consequence of her own persona architecture (implicit engine,
-missing motive, structure-only brief section), not a doctrine problem —
-confirmed against the same failure CLASS already found for Siri (#1) and
-Maya (#2): an existing prompt structure suppressing or failing to surface
-a persona's real epistemic strength. **Do not repair Zen by revising WHY WE
-WRITE.** The fix, if the Phase 3 rewrite confirms it, is persona-level.
+**Why this strengthens the candidate explanation for Zen Circuit's
+WHY-WE-WRITE softness**: see finding #5. Two levels, kept distinct — the
+ARCHITECTURAL ASYMMETRY is confirmed by direct code read (implicit engine,
+missing motive, structure-only `WRITING VOICE` section, unlike Siri's
+explicit VOICE ANCHOR). Its CAUSAL ROLE in Zen's score dip is NOT
+confirmed — that requires either the Phase 3 rewrite + re-test, or the
+same-source/four-persona probe showing Zen specifically underperforms.
+**Do not repair Zen by revising WHY WE WRITE either way** — if the
+hypothesis holds, the fix is persona-level (Phase 3), not doctrine-level.
 
 **Explicit ordering constraint**: do not change `personas.py`, broaden
 Pixel's prompt, or modify any persona rule before the Pixel control/v1
