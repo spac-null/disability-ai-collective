@@ -254,59 +254,80 @@ PROBE_TOPICS = [
 # persona/territory -- information architecture/legibility/interfaces --
 # without regenerating or renaming anything under the existing 3 topics)
 # can be probed via --topic <key> without touching the default 3-topic path.
+#
+# NOTE on this fixture's provenance (2026-08-10): a first draft here used a
+# fabricated transit-signage story (example.com, invented quotes, an
+# invented "40 stations"/"2013 retrofit"/Braille-removal narrative). Caught
+# and discarded before freezing or running anything against it -- it failed
+# on two counts: (1) it violated the source-grounding principle this whole
+# repair project is trying to strengthen (Fable/Opus reasoning from facts
+# that never happened), and (2) the invented details were themselves
+# essay-ready evidence (a "primary channel" audio-first framing, a
+# conveniently untested app, no disability groups on the design panel) --
+# effectively writing the test's own answer into the fixture. Replaced with
+# a real, retrieved, verifiable story (The Art Newspaper, 2026-01-27) whose
+# surface subject is curatorial/legibility, NOT disability -- it contains
+# zero mentions of accessibility, Deaf visitors, or disability of any kind
+# in the source itself, so any disability content in a generated essay has
+# to come from Pixel's own persona/canon, not be pre-loaded by the source.
+# `disability_angle` is deliberately left empty, same as the sauna topic's
+# precedent -- Fable's brief-writing gets title+summary+persona only, no
+# discovery-stage angle hint, for this one.
 SUPPLEMENTAL_TOPICS = [
     {
-        "key": "signage",
+        "key": "museum_labels",
         "persona": "Pixel Nova",
         "news_seed": {
             "id": 4,
-            "url": "https://example.com/probe-fixture-signage",
-            "title": "Transit authority replaces station signage with adaptive digital displays",
+            "url": "https://www.theartnewspaper.com/2026/01/27/museum-wall-texts-are-an-art-in-their-own-rightbut-will-they-survive-the-digital-age",
+            "title": "Museum wall texts are an art in their own right — but will they survive the digital age?",
             "summary": (
-                "A regional transit authority is replacing fixed printed and tactile "
-                "signage across 40 stations with AI-driven digital displays that "
-                "default to spoken announcements, with text appearing as a delayed "
-                "secondary layer; tactile and Braille platform signage is being removed."
+                "Museums are rethinking the wall label as attention spans shrink: "
+                "Calder Gardens in Philadelphia has dropped wall text entirely, "
+                "branding itself 'open to interpretation', while the Frick Pittsburgh "
+                "invites community members to write 'guest labels' and the Cleveland "
+                "Museum of Art pushes context into a companion app instead."
             ),
-            "source_name": "regional transit trade press",
-            "source_tier": 2,
-            "pub_date": "2026-08-08",
-            "fetched_date": "2026-08-08",
-            "relevance_score": 0.75,
-            "themes": "technology,transit,design",
-            "disability_angle": (
-                "Removes tactile/Braille platform signage in favor of an audio-first "
-                "digital system; equivalent information depends on a companion "
-                "smartphone app not yet tested for reliability underground."
-            ),
+            "source_name": "The Art Newspaper",
+            "source_tier": 1,
+            "pub_date": "2026-01-27",
+            "fetched_date": "2026-08-10",
+            "relevance_score": 0.7,
+            "themes": "art_culture,design,museums",
+            "disability_angle": "",
             "used": 0,
             "used_date": None,
-            "angle_checked": 1,
+            "angle_checked": 0,
         },
         "source_text": (
-            "Transit authority replaces station signage with adaptive digital displays\n\n"
-            "A regional transit authority has begun replacing fixed printed and tactile "
-            "wayfinding signage across 40 stations with a network of AI-driven digital "
-            "displays, the agency announced this week. The new system generates "
-            "platform directions, service alerts, and connection information in real "
-            "time, updating automatically when a train is delayed or a platform "
-            "changes.\n\n"
-            "'Static signs can't keep up with a live network,' the agency's head of "
-            "customer experience said in a statement, describing the rollout as 'a "
-            "more responsive, more inclusive wayfinding experience.' The displays "
-            "default to a spoken announcement layer synced to train arrivals, with "
-            "scrolling text appearing beneath it roughly two seconds later; agency "
-            "documentation describes the audio layer as the system's 'primary "
-            "channel' and the text as a 'supplementary readout.'\n\n"
-            "The rollout removes the raised tactile station-name plaques and Braille "
-            "directional strips that had been mounted at platform edges since a 2013 "
-            "accessibility retrofit; the agency says equivalent information will be "
-            "available through a companion smartphone app using Bluetooth beacons, "
-            "though the app has not yet been tested for reliability inside "
-            "underground platforms with limited signal. Disability advocacy groups "
-            "were not part of the working group that designed the new system; the "
-            "agency's five-person 'wayfinding modernization panel' consisted of "
-            "network engineers and a branding consultancy."
+            "Museum wall texts are an art in their own right — but will they survive "
+            "the digital age?\n\n"
+            "As the average adult attention span is now measured at around 8.25 "
+            "seconds, museums are rethinking what, if anything, a visitor should be "
+            "asked to read next to an artwork. Calder Gardens, a new institution in "
+            "Philadelphia, has dropped wall text altogether, branding itself 'open to "
+            "interpretation' and leaving works entirely unlabelled. The Royal Ontario "
+            "Museum in Toronto has gone the other way, keeping labels but shortening "
+            "them into scannable fragments; assistant vice-president of interpretation "
+            "Juline Chevalier said the museum now writes 'knowing that visitors are "
+            "distracted as they read.'\n\n"
+            "Other institutions are handing label-writing away from curators "
+            "entirely. The Frick Pittsburgh invited community members to write "
+            "'guest labels' for a recent Kara Walker exhibition, including a "
+            "University of Pittsburgh professor, Shaun Myers, who used his label to "
+            "reflect on his own family history. 'What is not being said in "
+            "exhibition text is often just as revealing as what is being shared,' "
+            "said the Frick's chief curator, Dawn Reid Brean. The Cleveland Museum "
+            "of Art has pushed further context into a companion app called ArtLens "
+            "instead of the wall; a museum representative described the printed "
+            "label itself as 'the beginning of a relationship, not the end of an "
+            "explanation.'\n\n"
+            "A 2021 University of Vienna eye-tracking study conducted at Vienna's "
+            "Belvedere Museum found that most visitors follow a fixed rhythm when "
+            "encountering a labelled work: art, then label, then art again, "
+            "confirming that the label is read as a distinct, separate object rather "
+            "than absorbed alongside the image. Labels mounted at eye level were "
+            "found to be read far more often than those placed above or below it."
         ),
     },
 ]
