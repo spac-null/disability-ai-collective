@@ -353,7 +353,11 @@ class FactCheckMixin:
             f"CURRENT DRAFT BODY:\n{body}"
         )
         try:
-            raw = self._call_editorial_model(system, user, max_tokens=6000, timeout=180)
+            # prefer_opus (2026-08-10): this is the exact call that first exposed Fable's
+            # truncation bug on full-body verbatim-preservation tasks -- the finish_reason
+            # check now catches it safely, but every long-article repair was still paying
+            # for a doomed ~73s Fable attempt first. Try Opus first instead.
+            raw = self._call_editorial_model(system, user, max_tokens=6000, timeout=180, prefer_opus=True)
         except Exception as e:
             self.logger.warning("Fabrication repair call failed: %s", e)
             return None, None
@@ -449,7 +453,10 @@ class FactCheckMixin:
         )
         user = "\n\n".join(canon_blocks) + f"\n\n### Current draft body\n{main_body}"
         try:
-            raw = self._call_editorial_model(system, user, max_tokens=6000, timeout=120)
+            # prefer_opus (2026-08-10): same shape as fabrication repair -- full-body
+            # verbatim preservation, no reasoning upside, real truncation risk on longer
+            # articles. See _call_editorial_model's docstring.
+            raw = self._call_editorial_model(system, user, max_tokens=6000, timeout=120, prefer_opus=True)
         except Exception as e:
             self.logger.warning("Persona cross-cite check failed: %s", e)
             return None, None

@@ -464,7 +464,7 @@ class LLMMixin:
         path = PERSONA_STATE_DIR / f"{slug}.json"
         path.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
 
-    def _call_editorial_model(self, system, user, max_tokens=1200, timeout=60):
+    def _call_editorial_model(self, system, user, max_tokens=1200, timeout=60, prefer_opus=False):
         """Try Fable 5 → Opus 4.8 via CLIProxy, then bypass CLIProxy and call OpenRouter directly.
 
         CLIProxy is a thin proxy to OpenRouter — if it's down, calling OpenRouter directly
@@ -476,6 +476,21 @@ class LLMMixin:
         (json.loads failures on every call). Fixed two ways: cap Fable's reasoning spend via
         the request's reasoning.max_tokens field, and guarantee max_tokens always leaves at
         least FABLE_OUTPUT_HEADROOM beyond that cap for the actual response.
+
+        prefer_opus: added 2026-08-10, after an audit of every phase routed through this
+        function found Fable's mandatory reasoning is a straight liability (not just an
+        occasional risk) on full-article-body verbatim-preservation tasks specifically --
+        the reasoning_max_tokens cap doesn't reliably bound real spend (confirmed live,
+        6/6 reproductions), so a ~2800-word article is arithmetically guaranteed to
+        truncate Fable at these call sites' token budgets. Callers doing that kind of task
+        (polish rewrite, cross-cite repair, fabrication repair) should pass True so Opus is
+        tried first -- Fable stays in the chain as a last-resort fallback rather than being
+        removed outright, since a Fable response still beats no response if Opus is down.
+
+        Attempt order also puts Opus/OpenRouter-direct ahead of Fable/OpenRouter-direct
+        (fixed 2026-08-10): if Fable truncated on CLIProxy for token-budget reasons, it will
+        truncate identically via direct OpenRouter -- that attempt was previously
+        guaranteed-wasted whenever CLIProxy failed for an unrelated transport reason.
         """
         FABLE_REASONING_BUDGET = 1024
         FABLE_OUTPUT_HEADROOM = 1600
@@ -485,15 +500,13 @@ class LLMMixin:
         _or_key = os.environ.get("OPENROUTER_API_KEY", "")
         _or_url = "https://openrouter.ai/api/v1"
 
-        attempts = [
-            (CLIPROXY_URL, CLIPROXY_KEY, "openrouter/claude-fable-5",  "Fable/CLIProxy"),
-            (CLIPROXY_URL, CLIPROXY_KEY, "openrouter/claude-opus-4.8", "Opus/CLIProxy"),
-        ]
+        fable_attempts = [(CLIPROXY_URL, CLIPROXY_KEY, "openrouter/claude-fable-5", "Fable/CLIProxy")]
+        opus_attempts = [(CLIPROXY_URL, CLIPROXY_KEY, "openrouter/claude-opus-4.8", "Opus/CLIProxy")]
         if _or_key:
-            attempts += [
-                (_or_url, _or_key, "anthropic/claude-fable-5",  "Fable/OpenRouter-direct"),
-                (_or_url, _or_key, "anthropic/claude-opus-4.8", "Opus/OpenRouter-direct"),
-            ]
+            opus_attempts.append((_or_url, _or_key, "anthropic/claude-opus-4.8", "Opus/OpenRouter-direct"))
+            fable_attempts.append((_or_url, _or_key, "anthropic/claude-fable-5", "Fable/OpenRouter-direct"))
+
+        attempts = (opus_attempts + fable_attempts) if prefer_opus else (fable_attempts[:1] + opus_attempts + fable_attempts[1:])
 
         for url, key, model, label in attempts:
             is_fable = "Fable" in label
@@ -832,7 +845,11 @@ class LLMMixin:
         )
         try:
             self.logger.info("Fable polish rewrite: implementing %d of its own notes...", len(editorial_notes))
-            revised = self._call_editorial_model(system, user, max_tokens=6000, timeout=180)
+            # prefer_opus (2026-08-10): full-body verbatim-preservation task -- Fable's
+            # mandatory reasoning is arithmetically guaranteed to truncate this on longer
+            # articles (see _call_editorial_model's docstring). Opus needs no reasoning
+            # budget for a mechanical rewrite; Fable stays as a last-resort fallback.
+            revised = self._call_editorial_model(system, user, max_tokens=6000, timeout=180, prefer_opus=True)
             if revised and len(revised) > max(400, len(article_body) * 0.6):
                 self.logger.info("Fable polish rewrite: %d chars", len(revised))
                 return revised
