@@ -128,45 +128,67 @@ def list_recent_articles(days):
 
 
 def fetch_goatcounter(conn, articles, fetched_at, dry_run):
+    """Returns True if the source ran cleanly (including "nothing to
+    report"), False on a real failure. Added 2026-08-10 (Opus review, B2):
+    this was the only one of five fetchers with no try/except at all, and
+    it runs first -- an exception here (a lock, a GoatCounter schema
+    change, a permission change on the live -wal/-shm files it reads)
+    previously killed main() outright, rolling back everything already
+    upserted that run and skipping GSC/Bluesky/Mastodon/Tumblr entirely.
+    Now isolated per-article like the other fetchers, and commits its own
+    writes immediately rather than waiting for main()'s final commit, so a
+    later source failing can never roll this one back."""
     if not GOATCOUNTER_DB.exists():
         print(f"GoatCounter DB not found at {GOATCOUNTER_DB} — skipping (expected if not running on trident)")
-        return
-    gc = sqlite3.connect(f"file:{GOATCOUNTER_DB}?mode=ro", uri=True)
+        return True
+    try:
+        gc = sqlite3.connect(f"file:{GOATCOUNTER_DB}?mode=ro", uri=True)
+    except Exception as e:
+        print(f"[FAIL] GoatCounter connect failed: {e}")
+        return False
+    ok = True
     try:
         for art in articles:
-            row = gc.execute(
-                "SELECT count(*) FROM hits h JOIN paths p ON h.path_id = p.path_id "
-                "WHERE p.event = 0 AND p.path = ?",
-                (art["site_path"].rstrip("/"),),
-            ).fetchone()
-            pageviews = row[0] if row else 0
-            if pageviews and not dry_run:
-                upsert(conn, art["slug"], "goatcounter", "pageviews", pageviews, fetched_at)
-            for depth in (25, 50, 75, 100):
-                # NOT .rstrip("/") -- confirmed 2026-08-09 continuation by reading
-                # GoatCounter's raw paths table directly: automatic pageview hits
-                # (event=0, queried above) are stored WITHOUT a trailing slash, but
-                # custom events (event=1, this site's own scroll-depth tracker in
-                # _layouts/default.html) are stored with whatever location.pathname
-                # gave it -- which always has the trailing slash for this site's
-                # /:year/:month/:day/:title/ permalinks. Stripping it here made
-                # every scroll-depth lookup silently match zero rows since this
-                # script's first commit (3c1e478) -- confirmed via a live query,
-                # zero scroll_* rows ever existed in engagement.db despite pageviews
-                # working the whole time. Also added depth 100, tracked by the site's
-                # JS (`marks = {25,50,75,100}`) but never queried here before.
+            try:
                 row = gc.execute(
                     "SELECT count(*) FROM hits h JOIN paths p ON h.path_id = p.path_id "
-                    "WHERE p.event = 1 AND p.path = ?",
-                    (f"scroll-{depth}:{art['site_path']}",),
+                    "WHERE p.event = 0 AND p.path = ?",
+                    (art["site_path"].rstrip("/"),),
                 ).fetchone()
-                n = row[0] if row else 0
-                if n and not dry_run:
-                    upsert(conn, art["slug"], "goatcounter", f"scroll_{depth}", n, fetched_at)
-            if dry_run and pageviews:
-                print(f"  [goatcounter] {art['slug']}: pageviews={pageviews}")
+                pageviews = row[0] if row else 0
+                if pageviews and not dry_run:
+                    upsert(conn, art["slug"], "goatcounter", "pageviews", pageviews, fetched_at)
+                for depth in (25, 50, 75, 100):
+                    # NOT .rstrip("/") -- confirmed 2026-08-09 continuation by reading
+                    # GoatCounter's raw paths table directly: automatic pageview hits
+                    # (event=0, queried above) are stored WITHOUT a trailing slash, but
+                    # custom events (event=1, this site's own scroll-depth tracker in
+                    # _layouts/default.html) are stored with whatever location.pathname
+                    # gave it -- which always has the trailing slash for this site's
+                    # /:year/:month/:day/:title/ permalinks. Stripping it here made
+                    # every scroll-depth lookup silently match zero rows since this
+                    # script's first commit (3c1e478) -- confirmed via a live query,
+                    # zero scroll_* rows ever existed in engagement.db despite pageviews
+                    # working the whole time. Also added depth 100, tracked by the site's
+                    # JS (`marks = {25,50,75,100}`) but never queried here before.
+                    row = gc.execute(
+                        "SELECT count(*) FROM hits h JOIN paths p ON h.path_id = p.path_id "
+                        "WHERE p.event = 1 AND p.path = ?",
+                        (f"scroll-{depth}:{art['site_path']}",),
+                    ).fetchone()
+                    n = row[0] if row else 0
+                    if n and not dry_run:
+                        upsert(conn, art["slug"], "goatcounter", f"scroll_{depth}", n, fetched_at)
+                if dry_run and pageviews:
+                    print(f"  [goatcounter] {art['slug']}: pageviews={pageviews}")
+            except Exception as e:
+                print(f"[FAIL] GoatCounter query failed for {art['slug']}: {e}")
+                ok = False
     finally:
         gc.close()
+    if conn and not dry_run:
+        conn.commit()
+    return ok
 
 
 def _gsc_access_token():
@@ -191,14 +213,23 @@ def _gsc_access_token():
 
 
 def fetch_gsc(conn, articles, fetched_at, dry_run):
+    """Returns True on a clean run (including expected skips), False on a
+    real failure. NOTE (Opus review, design smell D1, not fixed here --
+    WAITING/ANALYSIS PREREQUISITE, not urgent tonight): this queries a
+    rolling trailing-90-day window every run, unlike GoatCounter/social's
+    all-time or lifetime counts. A value recorded today can be LOWER than
+    the same metric recorded weeks ago simply because old days aged out of
+    the window -- a naive time-series read of this column would misread
+    that as engagement decay. Must be accounted for before GSC history is
+    ever used to compare articles or inform any weight."""
     if not GOOGLE_SA_FILE.exists():
         print(f"GSC service account not found at {GOOGLE_SA_FILE} — skipping")
-        return
+        return True
     try:
         token = _gsc_access_token()
     except Exception as e:
-        print(f"GSC auth failed: {e}")
-        return
+        print(f"[FAIL] GSC auth failed: {e}")
+        return False
     site = urllib.parse.quote(GSC_SITE, safe="")
     end = datetime.now().strftime("%Y-%m-%d")
     start = (datetime.now() - timedelta(days=90)).strftime("%Y-%m-%d")
@@ -214,8 +245,8 @@ def fetch_gsc(conn, articles, fetched_at, dry_run):
         with urllib.request.urlopen(req, timeout=30) as resp:
             result = json.load(resp)
     except Exception as e:
-        print(f"GSC query failed: {e}")
-        return
+        print(f"[FAIL] GSC query failed: {e}")
+        return False
     by_path = {}
     for row in result.get("rows", []):
         url = row["keys"][0]
@@ -232,9 +263,14 @@ def fetch_gsc(conn, articles, fetched_at, dry_run):
         upsert(conn, art["slug"], "gsc", "impressions", row["impressions"], fetched_at)
         upsert(conn, art["slug"], "gsc", "ctr", row["ctr"], fetched_at)
         upsert(conn, art["slug"], "gsc", "position", row["position"], fetched_at)
+    if conn and not dry_run:
+        conn.commit()
+    return True
 
 
 def fetch_bluesky(conn, articles, fetched_at, dry_run):
+    """Returns True on a clean run (including expected skips/empty), False
+    if any batch failed."""
     uris = []
     for art in articles:
         if not art["social_json"]:
@@ -247,7 +283,8 @@ def fetch_bluesky(conn, articles, fetched_at, dry_run):
         if uri:
             uris.append((art["slug"], uri))
     if not uris:
-        return
+        return True
+    ok = True
     # getPosts takes up to 25 URIs per call
     for i in range(0, len(uris), 25):
         batch = uris[i:i + 25]
@@ -259,7 +296,8 @@ def fetch_bluesky(conn, articles, fetched_at, dry_run):
             with urllib.request.urlopen(req, timeout=15) as resp:
                 result = json.load(resp)
         except Exception as e:
-            print(f"Bluesky fetch failed for batch: {e}")
+            print(f"[FAIL] Bluesky fetch failed for batch: {e}")
+            ok = False
             continue
         by_uri = {p["uri"]: p for p in result.get("posts", [])}
         for slug, uri in batch:
@@ -272,9 +310,15 @@ def fetch_bluesky(conn, articles, fetched_at, dry_run):
             for metric, key in (("likes", "likeCount"), ("reposts", "repostCount"),
                                  ("replies", "replyCount"), ("quotes", "quoteCount")):
                 upsert(conn, slug, "bluesky", metric, post.get(key, 0), fetched_at)
+    if conn and not dry_run:
+        conn.commit()
+    return ok
 
 
 def fetch_mastodon(conn, articles, fetched_at, dry_run):
+    """Returns True on a clean run (including expected skips/empty), False
+    if any status fetch failed."""
+    ok = True
     for art in articles:
         if not art["social_json"]:
             continue
@@ -295,7 +339,8 @@ def fetch_mastodon(conn, articles, fetched_at, dry_run):
             with urllib.request.urlopen(req, timeout=15) as resp:
                 post = json.load(resp)
         except Exception as e:
-            print(f"Mastodon fetch failed for {art['slug']}: {e}")
+            print(f"[FAIL] Mastodon fetch failed for {art['slug']}: {e}")
+            ok = False
             continue
         if dry_run:
             print(f"  [mastodon] {art['slug']}: favourites={post.get('favourites_count', 0)} reblogs={post.get('reblogs_count', 0)}")
@@ -303,15 +348,37 @@ def fetch_mastodon(conn, articles, fetched_at, dry_run):
         for metric, key in (("favourites", "favourites_count"), ("reblogs", "reblogs_count"),
                              ("replies", "replies_count")):
             upsert(conn, art["slug"], "mastodon", metric, post.get(key, 0), fetched_at)
+    if conn and not dry_run:
+        conn.commit()
+    return ok
 
 
 def fetch_tumblr(conn, articles, fetched_at, dry_run):
+    """Returns True on a clean run (including expected skips/empty), False
+    on a real fetch failure.
+
+    Join key fixed 2026-08-10 (Opus review, B1 -- confirmed via a live API
+    call against the real blog): the old code matched on an exact string
+    comparison between two URLs that are NOT the same shape. This function
+    stored `tumblr_url = f"https://{blog}.tumblr.com/post/{post_id}"`
+    (social.py:628), but the Tumblr API's real `post_url` carries a
+    trailing slug segment the stored URL never has (e.g.
+    ".../post/815936291576365056/harry-callahans-eleanor-chicago-1949-shows-a").
+    `remaining.pop(url, None)` therefore returned None on every single
+    post, forever -- a structural bug, not a data-availability one. Also
+    meant `remaining` never emptied, so the `while remaining and offset <
+    200` loop always walked all 10 pages regardless of match count. Now
+    joins on the numeric post ID extracted from each side instead of the
+    URL string. Separately confirmed live: every real note_count on the
+    blog is currently 0, so this fix produces no signal yet either way --
+    it closes the correctness bug, it doesn't manufacture engagement data
+    that doesn't exist."""
     api_key = os.environ.get("TUMBLR_CONSUMER_KEY", "")
     blog = os.environ.get("TUMBLR_BLOG", "").strip().rstrip(".tumblr.com")
     if not api_key or not blog:
         print("Tumblr: no credentials loaded — skipping")
-        return
-    by_url = {}
+        return True
+    by_id = {}
     for art in articles:
         if not art["social_json"]:
             continue
@@ -320,14 +387,18 @@ def fetch_tumblr(conn, articles, fetched_at, dry_run):
         except Exception:
             continue
         url = data.get("tumblr_url")
-        if url:
-            by_url[url] = art["slug"]
-    if not by_url:
-        return
+        if not url:
+            continue
+        m = re.search(r"/post/(\d+)", url)
+        if m:
+            by_id[m.group(1)] = art["slug"]
+    if not by_id:
+        return True
     # Fetch recent posts once (paginated) rather than one call per post — Tumblr's
-    # posts endpoint doesn't support lookup by URL directly.
+    # posts endpoint doesn't support lookup by ID directly.
     offset = 0
-    remaining = dict(by_url)
+    remaining = dict(by_id)
+    ok = True
     while remaining and offset < 200:
         req = urllib.request.Request(
             f"https://api.tumblr.com/v2/blog/{blog}/posts?api_key={api_key}&limit=20&offset={offset}"
@@ -336,19 +407,23 @@ def fetch_tumblr(conn, articles, fetched_at, dry_run):
             with urllib.request.urlopen(req, timeout=15) as resp:
                 posts = json.load(resp).get("response", {}).get("posts", [])
         except Exception as e:
-            print(f"Tumblr fetch failed: {e}")
+            print(f"[FAIL] Tumblr fetch failed: {e}")
+            ok = False
             break
         if not posts:
             break
         for post in posts:
-            url = post.get("post_url")
-            slug = remaining.pop(url, None)
+            post_id = str(post.get("id") or post.get("id_string") or "")
+            slug = remaining.pop(post_id, None) if post_id else None
             if slug:
                 if dry_run:
                     print(f"  [tumblr] {slug}: notes={post.get('note_count', 0)}")
                 else:
                     upsert(conn, slug, "tumblr", "notes", post.get("note_count", 0), fetched_at)
         offset += 20
+    if conn and not dry_run:
+        conn.commit()
+    return ok
 
 
 def main():
@@ -365,11 +440,23 @@ def main():
         init_db(conn)
     fetched_at = datetime.now().strftime("%Y-%m-%d")
 
-    fetch_goatcounter(conn, articles, fetched_at, args.dry_run)
-    fetch_gsc(conn, articles, fetched_at, args.dry_run)
-    fetch_bluesky(conn, articles, fetched_at, args.dry_run)
-    fetch_mastodon(conn, articles, fetched_at, args.dry_run)
-    fetch_tumblr(conn, articles, fetched_at, args.dry_run)
+    # Added 2026-08-10 (Opus review, B2/B3). Each fetcher is now isolated
+    # and commits its own writes -- one source failing can no longer abort
+    # the whole run and roll back data already collected (GoatCounter, run
+    # first, previously had no try/except at all). Three-state outcome per
+    # explicit requirement: PARTIAL success must never look identical to
+    # FULL success in the log, or this just recreates the observability
+    # bug (B3) in a quieter form. This is exactly the condition that let
+    # the scroll-depth bug and the Tumblr join-key bug (B1, this same
+    # commit) survive undetected -- "Wrote N rows" printed unconditionally
+    # every day regardless of whether every source actually worked.
+    results = {
+        "goatcounter": fetch_goatcounter(conn, articles, fetched_at, args.dry_run),
+        "gsc":         fetch_gsc(conn, articles, fetched_at, args.dry_run),
+        "bluesky":     fetch_bluesky(conn, articles, fetched_at, args.dry_run),
+        "mastodon":    fetch_mastodon(conn, articles, fetched_at, args.dry_run),
+        "tumblr":      fetch_tumblr(conn, articles, fetched_at, args.dry_run),
+    }
 
     if conn:
         conn.commit()
@@ -377,6 +464,17 @@ def main():
         print(f"Wrote {n} metric row(s) for {fetched_at} to {DB_PATH}")
         conn.close()
 
+    failed = [name for name, ok in results.items() if not ok]
+    succeeded = [name for name, ok in results.items() if ok]
+    if not failed:
+        print(f"SUCCESS — all 5 sources completed cleanly: {', '.join(succeeded)}")
+        return 0
+    if succeeded:
+        print(f"PARTIAL — {len(succeeded)}/5 sources completed, {len(failed)} failed: {', '.join(failed)}")
+        return 1
+    print(f"FAILURE — no source completed cleanly: {', '.join(failed)}")
+    return 2
+
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
