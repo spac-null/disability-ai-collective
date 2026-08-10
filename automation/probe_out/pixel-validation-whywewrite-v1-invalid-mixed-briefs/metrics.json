@@ -1,0 +1,87 @@
+{
+  "phase": "pixel-validation-whywewrite-v1",
+  "commit": "e9e54b079b9c445bfa6927ec75eb05dccb3cd98d",
+  "temperature": 0.9,
+  "register": "wry",
+  "article_type": "essay",
+  "target_words": 1000,
+  "samples": [
+    {
+      "topic": "museum_labels",
+      "persona": "Pixel Nova",
+      "sample": 0,
+      "timestamp": "2026-08-10T21:08:34",
+      "fable_brief_hash": "d8acd04e5e7b",
+      "actual_models": [
+        "anthropic/claude-opus-4.8",
+        "openrouter/claude-fable-5",
+        "openrouter/claude-fable-5",
+        "openrouter/claude-opus-4.8",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-opus-4.8",
+        "openrouter/claude-sonnet-4.6",
+        "openrouter/claude-sonnet-4.6",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5"
+      ],
+      "degraded_stages": [],
+      "error": null,
+      "word_count": 960,
+      "status": "ok"
+    },
+    {
+      "topic": "museum_labels",
+      "persona": "Pixel Nova",
+      "sample": 1,
+      "timestamp": "2026-08-10T21:10:58",
+      "fable_brief_hash": "d8acd04e5e7b",
+      "actual_models": [
+        "anthropic/claude-opus-4.8",
+        "openrouter/claude-fable-5",
+        "openrouter/claude-fable-5",
+        "openrouter/claude-opus-4.8",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-opus-4.8",
+        "openrouter/claude-sonnet-4.6",
+        "openrouter/claude-sonnet-4.6",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5"
+      ],
+      "degraded_stages": [],
+      "error": null,
+      "word_count": 1000,
+      "status": "ok"
+    },
+    {
+      "topic": "museum_labels",
+      "persona": "Pixel Nova",
+      "sample": 2,
+      "timestamp": "2026-08-10T21:13:48",
+      "fable_brief_hash": "d8acd04e5e7b",
+      "actual_models": [
+        "anthropic/claude-opus-4.8",
+        "openrouter/claude-fable-5",
+        "openrouter/claude-fable-5",
+        "openrouter/claude-opus-4.8",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-opus-4.8",
+        "openrouter/claude-sonnet-4.6",
+        "openrouter/claude-sonnet-4.6",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5",
+        "openrouter/claude-haiku-4.5"
+      ],
+      "degraded_stages": [],
+      "error": null,
+      "word_count": 1028,
+      "status": "ok"
+    }
+  ]
+}

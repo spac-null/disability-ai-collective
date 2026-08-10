@@ -11,12 +11,28 @@ prompt system around its true purpose (see project memory
 not as ten isolated style fixes.
 
 ## ACTIVE PHASE
-**PHASE 0: COMPLETE.** First creative experiment (WHY WE WRITE v1) IN PROGRESS — see NEXT STEP.
+**PHASE 0: COMPLETE. WHY WE WRITE (Phase 1): DECIDED — KEEP, frozen.** See
+`## FINAL 4-PERSONA DECISION` below. Next up: Persona Architecture Audit
+(1.5, design-only) and the Fable model-seat ROI experiment — both queued,
+neither started.
 
-## HEAD / PROVENANCE (kept distinct on purpose — do not collapse these)
-- **EXPERIMENT CODE COMMIT**: `01339ce` — the WHY WE WRITE doctrine swap, one file, one block.
-- **Trident generation HEAD for all 9 whywewrite-v1 samples**: `01339ce` (verified — every sample's `metrics.json` provenance field says `01339ce`; trident was fast-forwarded onto it via `git pull` before the run started, confirmed clean).
-- **CURRENT MAIN HEAD**: `34b7495` — one docs-only commit (this checkpoint file) on top of `01339ce`. Pushed to `main`, NOT yet pulled onto trident (no need to — it touches no generation code). If a future session sees `git rev-parse HEAD` return something other than `01339ce` on trident or locally, that is expected and not a bug: `34b7495`+ is checkpoint/decision documentation layered on top of the frozen experiment commit, not a change to what generated the 9 samples.
+## HEAD / PROVENANCE
+- **WHY WE WRITE doctrine commit**: `01339ce` — the SYSTEM-prompt swap in
+  `automation/orchestrator/llm.py`, now the permanent/frozen shared doctrine.
+- **3-topic experiment (sauna/hiring_tool/curb_cuts)**: generated from
+  `01339ce` exactly (verified in each sample's own `metrics.json`).
+- **Pixel Nova supplemental (museum_labels)**: control from commit `bfbc017`
+  (branch `pixel-validation/control` — harness identical to `main`, only
+  `llm.py` reverted to pre-`01339ce`), v1 from commit `a1522c7` (on `main`).
+  Both verified byte-identical trees except `llm.py`; both consumed the
+  identical frozen Fable brief (verified from run provenance, not repo
+  state — see the INVALID RUN section below for why that distinction
+  mattered here).
+- **CURRENT MAIN HEAD**: whatever `git rev-parse HEAD` says after the latest
+  checkpoint commit — always AHEAD of `01339ce`/`a1522c7` by docs-only
+  commits. A session seeing a different HEAD than what's cited above is
+  not a bug; those commits are what generated the data, checkpoint commits
+  layer on top without touching generation code.
 
 ## PHASE 0 — DONE
 - 0B fail-loud/degraded-run handling; 0C plan-follow N/A invariant (both `e4922e6`)
@@ -76,7 +92,9 @@ prompt change FIRST, verify trident's `git rev-parse HEAD` matches, THEN run
 
    **Lexical smoke test, per-term (not just totals):** disability 13→11, disabled 6→10, marginal 0→1, mediat 1→0, notice/noticed flat, announce 4→3 — no term shows a clean substitution pattern (e.g. no "disability↓ but 'ways of knowing'↑" swap); none of the doctrine's own vocabulary (deficit/contribution/reclamation/superpower/compensation/perceiv-/knowledge/translation) appears in EITHER condition's prose at all. Clean on leakage.
 
-**VERDICT: PROVISIONAL KEEP.** Positive-to-neutral evidence across all 3 tested personas, materially lower doctrine-leak/disability-announcement in every one of them, no persona shows real degradation (Zen Circuit's small W/G dip is the one soft spot, flagged as a future persona-level question, not a reason to revise the shared doctrine). **Not a final KEEP**: the 3-topic probe design (by construction) has never covered Pixel Nova. Before treating this as resolved, run a 4th-persona supplemental validation (below) — if Pixel is neutral-or-positive, this becomes a straight KEEP; if Pixel regresses clearly, the shared doctrine likely needs a small revision before being treated as permanent. Do NOT start the Fable ROI experiment or Phase 2 until Pixel lands — "WHY WE WRITE resolved" means all 4 personas checked, not 3 of 4.
+**VERDICT (3-topic, superseded by the 4-persona decision below): was
+PROVISIONAL KEEP** pending Pixel Nova — see `## FINAL 4-PERSONA DECISION`
+further down for the resolved KEEP.
 
 **NEXT: Pixel Nova supplemental validation (in progress)** — see below.
 
@@ -216,18 +234,92 @@ Word counts 1051-1226 (control) / 1025-1148 (v1), comparable to the other
 across the 6 essays (low totals both ways, no leakage, consistent with the
 3-topic finding). Output pulled locally to `probe_out/pixel-validation-
 control-r2/` and `probe_out/pixel-validation-whywewrite-v1-r2/` (not yet
-committed — pending the blind-scoring decode). Strict blind scoring
-(6 anonymous IDs, same 4-dimension rubric as the 3-topic set, decode after)
-in progress.
+committed — pending the blind-scoring decode). Strict blind scoring done
+(6 anonymous IDs, same 4-dimension rubric as the 3-topic set, decode after).
+**Pixel supplemental experiment: VALID, decoded, folded into the final
+4-persona decision below.**
 
-**Then**: blind-score those 6 (same 4-dimension rubric, decode after,
-same discipline as the 3-topic set) and re-run the aggregation with all 4
-personas. If Pixel is neutral-or-positive → KEEP WHY WE WRITE v1 outright,
-treat Zen Circuit's small softness as a separate future persona-level
-question, do not touch the shared doctrine trying to fix it. If Pixel
-regresses clearly → the shared doctrine likely needs a small, targeted
-revision before being called permanent — do not proceed to Phase 2 or the
-Fable ROI experiment on an un-landed doctrine decision.
+**Decision logic used (deliberately not a mechanical "Pixel
+neutral-or-positive → KEEP" rule — a sign-of-average isn't enough)**: KEEP
+if Pixel is positive-or-neutral AND no persona shows a MAJOR regression AND
+the 4-persona pattern shows improved give-me/keep-reading without increased
+doctrine-announcement. REVISE if the publication-level effect looks useful
+but one or two personas reliably flatten/genericize under the shared
+doctrine. REJECT only if the doctrine broadly fails to change what writers
+notice, or causes systematic disability-philosophy announcement,
+genericization, or cross-persona convergence.
+
+## FINAL 4-PERSONA DECISION: KEEP WHY WE WRITE v1
+
+|              | Why writer | Give me | Keep reading | Doctrine leak |
+|--------------|:---:|:---:|:---:|:---:|
+| Siri (baseline→v1) | 5.0 → 5.0 | 4.33 → 4.33 | 4.0 → 4.33 | 2.0 → 1.67 |
+| Zen (baseline→v1)  | 4.33 → 4.0 | 4.67 → 4.33 | 4.33 → 4.33 | 1.67 → 1.0 |
+| Maya (baseline→v1) | 4.67 → 4.67 | 4.0 → 4.67 | 4.0 → 4.33 | 1.67 → 1.0 |
+| Pixel (baseline→v1)| 4.0 → 4.0 | 3.67 → 4.0 | 3.33 → 3.33 | 2.0 → 1.33 |
+| **Overall (n=12→12)** | **4.5 → 4.42** | **4.17 → 4.33** | **3.92 → 4.08** | **1.83 → 1.25** |
+
+Win/loss composite (W+G+K, all 24 essays, sorted desc) — substantially
+overlapping distributions: v1 `15,15,14,14,14,13,13,12,12,12,12,8`, baseline
+`15,15,14,13,13,13,12,12,12,11,11,10`. v1 has one clear low outlier (Pixel's
+M1); baseline has two moderate-low essays (Maya's C4, Pixel's M6) instead —
+roughly a wash, no persona's distribution collapses.
+
+**Qualitative line per persona** (what changed in what the writer actually
+notices, not just the number):
+- **Siri**: no real change in substance — both conditions are anchored in
+  genuine acoustic/heat-mapping perception either way; v1 nudges the ending
+  slightly toward earned scene over stated insight. Not the doctrine doing
+  much work here; her existing VOICE ANCHOR was already carrying this.
+- **Zen**: the one persona with a real (if small) dip — confined to
+  "why this writer" and "give me," not to doctrine-leak (which improves the
+  MOST of any persona, 1.67→1.0) or to reading-drive (flat). No collapse
+  into generic disability-tech commentary in either condition. This is the
+  concrete data point for the queued persona audit, not a reason to revise
+  the shared doctrine now.
+- **Maya**: clearest, most consistent gain — v1 essays close on specific
+  images (old bay markings still painted on the road) where baseline essays
+  twice reached for abstract "disabled people"/"the street" generalizations
+  — this is the regression check answering its own question directly: the
+  OLD doctrine was more prone to it here, not the new one.
+- **Pixel**: mild net positive but the noisiest of the four (n=3, one strong
+  v1 essay built on a genuinely embodied image — reading a signed poem's
+  loop-and-hold rhythm as the same shape as the Belvedere eye-tracking
+  study's viewing pattern — and one weak v1 essay that read as checklist-
+  structured). Baseline's worst essay (M6) is also its most doctrine-heavy
+  (score 3, the single highest in the whole 24-essay set) AND contains a
+  fabricated detail (claims Christine Sun Kim removed physical "mounting
+  brackets," not supported by source) — a distinct quality problem, not
+  something to attribute to the doctrine either way.
+
+**Why KEEP, applying the decision logic above**: Pixel is net positive, not
+merely neutral. No persona shows a MAJOR regression — Zen's is the only
+real dip and it's confined to one sub-dimension, with its doctrine-leak
+score improving the most of any persona. The doctrine-leak/regression-check
+axis — the central risk this whole experiment was built to catch —
+improves in ALL FOUR personas, consistently, the single most-replicated
+finding in the dataset. No cross-persona convergence: each persona's
+strongest essay is grounded in a distinct, genuinely embodied perceptual
+mechanism (Siri's heat-gradient substitution, Zen's stillness-as-
+concentration misread as disengagement, Maya's Antwi cross-cutting access
+claim, Pixel's signed-poem reading rhythm) — WHY WE WRITE is not flattening
+personas toward generic disability commentary. Vocabulary smoke test clean
+across all 4 topics (no leakage of the doctrine's own words). Implementation
+verified clean (single-variable, tree-isolated) for both the 3-topic and
+Pixel experiments — the Pixel one only after catching and fixing a real
+mixed-brief bug, which is itself now a recorded methodology lesson.
+
+**FROZEN as of this decision**: `automation/orchestrator/llm.py`'s WHY WE
+WRITE doctrine (commit `01339ce`) is the shared publication doctrine going
+forward. Do not reopen this decision by drift — a future session finding
+Zen Circuit weak should go to the queued Persona Architecture Audit (1.5),
+not back to relitigating WHY WE WRITE.
+
+**Next, in order** (do not mix these together — each is its own controlled
+experiment): (1) Persona Architecture Audit (1.5) — design/audit only, see
+below. (2) Fable model-seat ROI experiment (A vs B: Fable-review+Fable-
+rewrite vs Fable-review+Opus-rewrite) — queued section below. Both were
+explicitly waiting on this decision landing.
 
 ## PERSONA ARCHITECTURE / TERRITORY AUDIT — QUEUED
 Important conceptual correction, recorded 2026-08-10 while the Pixel
