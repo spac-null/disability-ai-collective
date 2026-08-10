@@ -244,6 +244,10 @@ PROBE_TOPICS = [
 ]
 
 
+# Pixel Nova supplemental WHY-WE-WRITE validation.
+# Topic falls within a current Pixel routing affinity; this experiment
+# does NOT validate or establish persona territory ownership.
+#
 # Supplemental, one-off validation topics -- deliberately NOT merged into
 # PROBE_TOPICS. The canonical 3-topic/3-persona design (above) is what the
 # existing frozen baseline/whywewrite-v1 runs used, and any future phase that
@@ -251,9 +255,12 @@ PROBE_TOPICS = [
 # exactly those 3 topics, unchanged, so it stays comparable to that history.
 # This list exists so a specific persona not covered by PROBE_TOPICS (here:
 # Pixel Nova, added 2026-08-10 to validate WHY WE WRITE against a 4th
-# persona/territory -- information architecture/legibility/interfaces --
-# without regenerating or renaming anything under the existing 3 topics)
-# can be probed via --topic <key> without touching the default 3-topic path.
+# persona under her CURRENT architecture -- museum-label legibility is a
+# routing affinity for her, not a claimed "territory"; see
+# .claude/current-work.md's PERSONA ARCHITECTURE / TERRITORY AUDIT section
+# for why that distinction matters and must not be collapsed) without
+# regenerating or renaming anything under the existing 3 topics -- can be
+# probed via --topic <key> without touching the default 3-topic path.
 #
 # NOTE on this fixture's provenance (2026-08-10): a first draft here used a
 # fabricated transit-signage story (example.com, invented quotes, an
@@ -370,7 +377,7 @@ def freeze_briefs(force=False, topic_key=None):
     itself should re-freeze; every other phase reuses the same frozen brief
     so the writer-prompt comparison isn't confounded by a differently-worded
     brief each time. topic_key: restrict to one topic (PROBE_TOPICS or
-    SUPPLEMENTAL_TOPICS, e.g. 'signage') instead of the default 3 -- used for
+    SUPPLEMENTAL_TOPICS, e.g. 'museum_labels') instead of the default 3 -- used for
     one-off supplemental-persona validation without re-freezing the rest."""
     po = _import_orchestrator()
     PROBE_FIXTURES_DIR.mkdir(parents=True, exist_ok=True)
@@ -660,7 +667,7 @@ def _generate_one_sample_record(po, topic, i, out_dir, retried=False):
 
 
 def run_phase(phase_name, n_samples=3, topic_key=None):
-    """topic_key: restrict this run to one topic (e.g. 'signage' for the
+    """topic_key: restrict this run to one topic (e.g. 'museum_labels' for the
     Pixel Nova supplemental validation set) instead of the default 3-topic
     PROBE_TOPICS. Omitting it preserves the exact behavior every existing
     phase (baseline, whywewrite-v1, ...) already used -- do not default this
@@ -772,7 +779,7 @@ def main():
     parser.add_argument("--score", metavar="PHASE_NAME", help="Print mechanical metrics for an already-run phase")
     parser.add_argument("--preflight", action="store_true", help="Standalone: check model dependency paths, don't run anything")
     parser.add_argument("--retry-failed", metavar="PHASE_NAME", help="Re-run only the non-ok samples in an existing phase's metrics.json, in place")
-    parser.add_argument("--topic", metavar="TOPIC_KEY", help="Restrict --run/--freeze-briefs to one topic (e.g. 'signage' for the Pixel Nova supplemental set) instead of the default 3-topic PROBE_TOPICS. Omit for the standard 3-topic behavior.")
+    parser.add_argument("--topic", metavar="TOPIC_KEY", help="Restrict --run/--freeze-briefs to one topic (e.g. 'museum_labels' for the Pixel Nova supplemental set) instead of the default 3-topic PROBE_TOPICS. Omit for the standard 3-topic behavior.")
     args = parser.parse_args()
 
     if args.freeze_briefs:

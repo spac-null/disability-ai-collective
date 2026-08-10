@@ -13,8 +13,10 @@ not as ten isolated style fixes.
 ## ACTIVE PHASE
 **PHASE 0: COMPLETE.** First creative experiment (WHY WE WRITE v1) IN PROGRESS — see NEXT STEP.
 
-## CURRENT HEAD
-`01339ce` (repo `disability-collective-ai`, `main`, pushed, trident fast-forwarded onto this exact commit via `git pull` — not rsync)
+## HEAD / PROVENANCE (kept distinct on purpose — do not collapse these)
+- **EXPERIMENT CODE COMMIT**: `01339ce` — the WHY WE WRITE doctrine swap, one file, one block.
+- **Trident generation HEAD for all 9 whywewrite-v1 samples**: `01339ce` (verified — every sample's `metrics.json` provenance field says `01339ce`; trident was fast-forwarded onto it via `git pull` before the run started, confirmed clean).
+- **CURRENT MAIN HEAD**: `34b7495` — one docs-only commit (this checkpoint file) on top of `01339ce`. Pushed to `main`, NOT yet pulled onto trident (no need to — it touches no generation code). If a future session sees `git rev-parse HEAD` return something other than `01339ce` on trident or locally, that is expected and not a bug: `34b7495`+ is checkpoint/decision documentation layered on top of the frozen experiment commit, not a change to what generated the 9 samples.
 
 ## PHASE 0 — DONE
 - 0B fail-loud/degraded-run handling; 0C plan-follow N/A invariant (both `e4922e6`)
@@ -47,30 +49,202 @@ real run. **Lesson for every future phase_probe experiment**: commit the
 prompt change FIRST, verify trident's `git rev-parse HEAD` matches, THEN run
 `--run <phase>` — never probe against an uncommitted rsync.
 
-Currently running (background, trident, started 2026-08-10 ~18:18 CET):
-`python3 automation/phase_probe.py --run whywewrite-v1 --samples 3`.
-**Do not touch code, do not commit anything else, and do not read partial
-`probe_out/whywewrite-v1/*.md` output while this is in flight** — ten
-minutes for nine full production-path generations (writer + real
-`_pre_commit_gate` call each) is normal, not stuck.
+**Run completed** 2026-08-10 ~18:43 CET: `python3 automation/phase_probe.py --run whywewrite-v1 --samples 3` on trident. Output pulled to local `automation/probe_out/whywewrite-v1/` (not yet committed — pending the KEEP/REVISE/REJECT decision below; commit it alongside that decision, not before).
 
-**When it finishes, mechanical acceptance BEFORE reading any prose**:
-9/9 files exist, 9/9 `status=ok`, 9/9 `degraded_stages=[]`, all 9 provenance
-fields say `01339ce`, 3 samples per frozen topic (sauna/hiring_tool/curb_cuts),
-frozen brief hashes match baseline's, then the full post-run
-production-state zero-mutation proof. Only after all of that passes:
+**Mechanical acceptance — PASSED**:
+- 9/9 files exist, 9/9 `status=ok`, 9/9 `degraded_stages=[]`, all 9 provenance fields say `01339ce`.
+- 3 samples per frozen topic (sauna/hiring_tool/curb_cuts).
+- Frozen brief hashes match baseline exactly per topic: sauna `b431a42b6179`, hiring_tool `3e0d97833434`, curb_cuts `74caca056f20` — identical in both `probe_out/baseline/metrics.json` and `probe_out/whywewrite-v1/metrics.json`.
+- Word counts in range (985-1115, target 1000) comparable to baseline's spread (943-1174).
 
-**Structured comparison, blind where practical, across baseline vs v1's 9
-outputs each** — the four predeclared questions (WHY THIS WRITER / WHAT DID
-THEY GIVE ME / WHY KEEP READING / REGRESSION — did v1 just make the prose say
-"disability/perception/knowledge/marginality/reclamation/contribution" more
-often instead of changing what gets noticed and how it's organized), PLUS a
-mechanical smoke check the regression question implies: raw frequency/context
-count of doctrine-adjacent vocabulary, baseline vs v1 — not a quality score,
-just a prompt-leakage detector. Use two independent sub-agents (one
-implementation-verification, one blind editorial comparison) per the
-original request. Report KEEP / REVISE / REJECT before discussing anything
-else, including the queued experiment below.
+**Zero-mutation proof — PASSED, method corrected mid-check**: first pass compared live-file `sha256` against the 16:48 daily-cron `.backup()` snapshot and got a MISMATCH — this is a false alarm, not evidence of mutation: SQLite's `Connection.backup()` API (what `backup_state_dbs.py` uses) does not guarantee byte-identical output even for logically-identical content (page/freelist layout can differ between two backup calls of the same unchanged DB). Comparing a live file's raw hash against a `.backup()`-derived copy is comparing two different serializations of potentially the same data — an invalid diff. Corrected method: took a FRESH `.backup()` copy of both DBs immediately after the run and compared THAT hash (same mechanism as the 16:48 backup) against the 16:48 snapshot — **byte-identical for both `disability_findings.db` and `engagement.db`**, which spans the entire run window (16:48 → 18:43) with a valid apples-to-apples comparison. Plus: `git status` unchanged (only the harness's own new `probe_out/whywewrite-v1/` output dir, no tracked-file changes); `_drafts/`, `automation/persona_state/*.json`, `automation/relationships.json` all confirmed via `mtime` unchanged since well before the run started (mtimes hours-to-days old, run window was 18:18-18:43) — mtime-unchanged is a fully valid proof for plain files (unlike the SQLite-backup case above, there's no non-deterministic-serialization trap here). **Lesson for future probe mutation-proofs**: never hash a live SQLite file against a `.backup()`-derived one; either diff two backups taken via the identical mechanism, or diff logical query results (row counts), not raw bytes.
+
+**Doctrine-vocabulary smoke check (not a quality score, just a prompt-leakage detector)**: frequency of disability/perception/knowledge/marginal/reclaim/contribution/mediat/superpower/compensat/inspir/announce-type words across all 9 articles: baseline **29** occurrences, v1 **30** — flat, no lexical outbreak. This only rules out the crudest failure mode (doctrine words leaking verbatim into prose); it says nothing about whether the doctrine was internalized well or badly, or not at all.
+
+**Structured comparison — BOTH AGENTS DONE**:
+1. **Implementation-verification — clean single-variable comparison confirmed.** Full `dcca441`→`01339ce` diff (3 commits) categorized: only `llm.py`'s SYSTEM doctrine block is an intended/generation-affecting change; `current-work.md` + committed `probe_out/baseline/*` artifacts are harmless docs/output, not inputs. `generate.py`/`gate.py`/`review.py`/`personas.py`/`config.py` (`_LENGTHS`) byte-identical. Frozen brief hashes and temperature/register/article_type/target_words match exactly. One routing difference found (hiring_tool samples 0/2: baseline made one extra Sonnet call) — traced to `_fable_editorial_review()`'s own content-dependent revise/no-revise verdict reacting to different draft text; the review-gate code itself is unmodified, so this is a downstream effect of the doctrine change, not a second independent variable. **Verdict: yes, a legitimately causal comparison.**
+2. **Blind editorial-comparison (strict v2, decoded)** — 18 essays, single anonymous IDs, no group labels, scored independently, decoded after. Aggregated 3 ways per the requested design:
+
+   **OVERALL (n=9 vs 9):** W(hy this writer) 4.67→4.56 (baseline→v1, trivial/noise-level), G(ave me) 4.33→4.44, K(eep reading) 4.11→4.33, D(octrine leak, 0-3, separate axis) **1.78→1.22** (materially lower in v1). Scores are compressed in the 4-5 band on a 5-point scale (n=9), so treat the 0.1-0.2pt W/G/K deltas as noise; the D delta is the one that isn't.
+
+   **BY TOPIC/PERSONA (n=3 vs 3 each):**
+   - Siri Sage/sauna: W 5.0=5.0, G 4.33=4.33, K 4.0→4.33, D 2.0→1.67 — essentially stable, small K gain.
+   - Zen Circuit/hiring_tool: W 4.33→4.0, G 4.67→4.33, K 4.33=4.33, D 1.67→1.0 — the one persona where v1 is mildly *lower* on W/G (small, n=3, but consistent direction on both quality dims).
+   - Maya Flux/curb_cuts: W 4.67=4.67, G **4.0→4.67**, K 4.0→4.33, D 1.67→1.0 — clearest beneficiary; G is the largest single movement in the whole dataset. (This replicates the informal first-pass agent's independent finding on this same topic: baseline generalized into abstract "disabled people"/"the street" language twice, v1 stayed image-anchored — real signal, not agent noise.)
+
+   **WIN/LOSS distribution (composite W+G+K per article, sorted desc):** v1: `15,15,14,14,13,13,12,12,12`. baseline: `15,15,14,13,13,13,12,12,11`. v1's floor is 12 (no article below); baseline's floor is 11 — its single worst article (curb_cuts, an essay that also asserts a claim the essay's own quoted testimony doesn't support — a distinct, non-doctrine defect the agent flagged separately). v1 has a slightly higher floor and a slightly denser top end; the distributions substantially overlap.
+
+   **Lexical smoke test, per-term (not just totals):** disability 13→11, disabled 6→10, marginal 0→1, mediat 1→0, notice/noticed flat, announce 4→3 — no term shows a clean substitution pattern (e.g. no "disability↓ but 'ways of knowing'↑" swap); none of the doctrine's own vocabulary (deficit/contribution/reclamation/superpower/compensation/perceiv-/knowledge/translation) appears in EITHER condition's prose at all. Clean on leakage.
+
+**VERDICT: PROVISIONAL KEEP.** Positive-to-neutral evidence across all 3 tested personas, materially lower doctrine-leak/disability-announcement in every one of them, no persona shows real degradation (Zen Circuit's small W/G dip is the one soft spot, flagged as a future persona-level question, not a reason to revise the shared doctrine). **Not a final KEEP**: the 3-topic probe design (by construction) has never covered Pixel Nova. Before treating this as resolved, run a 4th-persona supplemental validation (below) — if Pixel is neutral-or-positive, this becomes a straight KEEP; if Pixel regresses clearly, the shared doctrine likely needs a small revision before being treated as permanent. Do NOT start the Fable ROI experiment or Phase 2 until Pixel lands — "WHY WE WRITE resolved" means all 4 personas checked, not 3 of 4.
+
+**NEXT: Pixel Nova supplemental validation (in progress)** — see below.
+
+## PIXEL NOVA SUPPLEMENTAL VALIDATION — 4th persona, in progress
+The canonical 3-topic probe (sauna/Siri, hiring_tool/Zen, curb_cuts/Maya) never
+covered Pixel Nova. Rather than rebuild the whole baseline as 4 topics × 3,
+added a targeted supplemental set for exactly this one persona.
+
+**Harness change** (`automation/phase_probe.py`, not yet committed): added
+`SUPPLEMENTAL_TOPICS` (currently one entry — `signage`, Pixel Nova, a fixture
+about a transit authority replacing tactile/Braille platform signage with an
+audio-first "adaptive" digital display system, equivalent info gated behind
+an untested phone app — chosen to sit in Pixel's actual territory
+(legibility/information-architecture/interfaces) without being a softball;
+a generic tech columnist could plausibly write "AI signage raises
+accessibility questions" — the test is whether WHY WE WRITE makes Pixel
+supply something a generic take wouldn't, or pushes her toward exactly that
+generic take). `PROBE_TOPICS` (the original 3) is byte-unchanged — confirmed
+via diff, only additions. `ALL_TOPICS_BY_KEY` combines both for lookup. New
+`--topic KEY` CLI flag on `--run`/`--freeze-briefs` restricts to one topic;
+omitting it (every existing/future call that doesn't pass `--topic`) is
+byte-identical in behavior to before this change — verified `snapshot_test.py
+--check`: no drift.
+
+**Fixture correction**: the first draft topic (`signage`) was a fabricated
+transit-signage story (example.com, invented quotes/details) — caught before
+freezing or running anything against it. Problems: (1) violated the
+source-grounding principle this whole repair project is trying to
+strengthen, and (2) the invented details were themselves essay-ready
+evidence (audio-first "primary channel" framing, a conveniently untested
+app, no disability groups on the design panel) — writing the test's own
+answer into the fixture. It was also too explicitly an accessibility story
+on its surface — Pixel is supposed to contribute a Deaf/visual-information
+way of seeing, not just detect that an audio-first system excludes people.
+Replaced with `museum_labels`: a real, retrieved The Art Newspaper piece
+(2026-01-27) on museum wall-label redesign — named institutions/curators/
+quotes/data, **zero mention of disability/accessibility in the source
+itself**, so any disability content in a generated essay has to come from
+Pixel's own persona/canon, not be pre-loaded by the fixture.
+
+**Two-code-states problem, solved via git branches, not by testing v1
+against itself**: the new `--topic` harness support didn't exist at the
+original baseline commit, so "Pixel + old doctrine" can't just mean
+"checkout `dcca441`" (that commit lacks the harness). Structure used: a
+`pixel-validation/control` branch = current harness/fixture code (byte
+identical to `main`) with ONLY `automation/orchestrator/llm.py` reverted to
+the pre-`01339ce` doctrine (verified: `git diff main
+pixel-validation/control -- automation/phase_probe.py` is empty; the llm.py
+diff is the exact reverse of `01339ce`'s). `main` itself is the v1 side
+(harness + WHY WE WRITE doctrine, current HEAD). The Fable brief for
+`museum_labels` is frozen ONCE (on the control branch) and `git
+cherry-pick`ed onto `main` — never re-frozen — so both conditions see a
+byte-identical planning brief, same discipline as the 3-topic set.
+
+**Plan**: freeze brief once on `pixel-validation/control` → commit+push →
+`--run pixel-validation-baseline --topic museum_labels --samples 3` on that
+branch → cherry-pick the brief-file commit onto `main` → `--run
+pixel-validation-whywewrite-v1 --topic museum_labels --samples 3` on `main`.
+Named `pixel-validation-*`, deliberately NOT folded into
+`baseline`/`whywewrite-v1` — supplemental check, not a retroactive rewrite of
+the canonical baseline. **Delegated to Codex (`mcp__codex__codex`) for
+execution** — self-contained step-by-step instructions given, including the
+byte-identical-brief verification step; awaiting its completion report.
+
+**Then**: blind-score those 6 (same 4-dimension rubric, decode after,
+same discipline as the 3-topic set) and re-run the aggregation with all 4
+personas. If Pixel is neutral-or-positive → KEEP WHY WE WRITE v1 outright,
+treat Zen Circuit's small softness as a separate future persona-level
+question, do not touch the shared doctrine trying to fix it. If Pixel
+regresses clearly → the shared doctrine likely needs a small, targeted
+revision before being called permanent — do not proceed to Phase 2 or the
+Fable ROI experiment on an un-landed doctrine decision.
+
+## PERSONA ARCHITECTURE / TERRITORY AUDIT — QUEUED
+Important conceptual correction, recorded 2026-08-10 while the Pixel
+supplemental validation was in flight: the museum-labels topic was chosen
+because Pixel has a strong CURRENT ROUTING AFFINITY with questions of
+information form/hierarchy/legibility — NOT because "information
+architecture belongs to Pixel." That distinction matters: an experimental
+convenience must not quietly become canon. The Pixel supplemental test
+validates WHY WE WRITE against her CURRENT persona architecture; it does
+NOT validate or establish persona territory ownership. (Comments in
+`phase_probe.py` updated to say this explicitly, so the distinction survives
+a future session reading the code instead of this file.)
+
+**The four personas should NOT own subject territories.** Existing
+territory labels are historical/model-generated assumptions and must be
+audited, not treated as settled. Target architecture for the eventual
+persona-prompt rewrite (NOT now):
+- **CORE PERSON** — biography/wound/desire, where causally useful.
+- **PERCEPTUAL ENGINE** — what this mind notices/questions before others do.
+- **MOTIVE** — what they want to recover/bring back/give the reader.
+- **AFFINITIES** — soft routing priors only; never ownership boundaries.
+- **RISKS** — the cliché/groove this persona tends to collapse into.
+- **TEXTURE** — habits/tics/passions, used optionally, never checklist
+  behavior (test for wound/passion/tic: does it generate perception, or is
+  it an obligatory anecdote every essay reaches for? Keep the former, cut
+  the latter).
+
+A persona succeeds when their perceptual engine makes the SAME WORLD OBJECT
+become a different thing, not merely when they write competently inside an
+assigned topic category. No TERRITORY category survives as a hard field —
+"territory" becomes "affinity."
+
+**Revised repair sequence** (supersedes the plain 9/10-step list further
+below in scope, not in order — Phase numbers below refer to the FINAL
+LOCKED ORDER in project memory `project_cripminds_editorial_blueprint.md`):
+0. Reliability/baseline — DONE.
+1. WHY WE WRITE — currently finishing Pixel validation.
+1.5. **Persona architecture audit — NEW, design/audit only, no code.**
+   Inventory all four personas' current definitions into the six-category
+   matrix above; classify every existing line (territory, prohibition,
+   voice rule, wound anecdote, etc.) into one of the six categories or mark
+   it a deletion candidate. Do NOT touch `personas.py` at this step.
+2. Brevity + evidence budget + testimony (unchanged from prior plan).
+3. **Persona motive + perceptual engine + soft affinities + removal of hard
+   territorial ownership** (broadened from the prior "persona motive +
+   opening identity" — this is where the actual `personas.py` code change
+   belongs, informed by 1.5's audit).
+4-8. Correction discipline / repetition / readability / ending / final
+   anti-cliché audit — unchanged from prior plan.
+
+**The real territory experiment (future, after 1.5, separate from anything
+running now)**: not "one persona + one suitable topic, is v1 better" (that's
+what the Pixel supplemental test already does) but "same real-world object,
+four different minds — what does each notice?" Give ONE genuinely rich,
+non-disability source to all four personas, deliberately chosen OUTSIDE
+their assumed territories (a supermarket pricing system, a school timetable,
+a heatwave policy, a queue, a sports stadium — NOT "Pixel→interface,
+Maya→architecture, Zen→employment algorithm, Siri→sensory environment",
+which would just confirm the taxonomy already assumed). Score: WHAT DID THIS
+MIND NOTICE (a mechanism the other three missed?), CATEGORY JUMP (did their
+lens change what KIND of thing the source turned out to be?), IRREDUCIBILITY
+(could another persona's name be swapped onto the essay without
+fundamentally changing it?), OVERLAP (did two+ personas converge on the same
+mechanism?), LORE LEAKAGE (did the writer just import their disability
+biography into an unrelated story instead of actually perceiving something?).
+If a persona is only distinctive inside their assumed topic, they don't yet
+have a perceptual engine — they have a beat.
+
+**Downstream consequence for CJ-2** (not scheduled now, recorded so it isn't
+lost): routing should stop being "which persona is appropriate for this
+topic" and become "what does each persona's perceptual engine expose about
+this source, then which reframe is strongest/least generic/best evidenced"
+— competitive reframing, not topic assignment. Affinities survive only as
+small priors (e.g. "+small prior" for Pixel on information-form stories),
+never as a gate — a strong Siri reframe of a software-interface story should
+beat a mediocre Pixel reframe of the same story.
+
+**Why this might explain Zen Circuit's WHY-WE-WRITE softness**: the blind
+3-topic result already shows WHY WE WRITE doesn't affect personas uniformly
+(Maya clear gain, Siri stable/slight gain, Zen mild dip on W/G — see above).
+That could be the shared doctrine interacting differently with each
+persona's EXISTING architecture — e.g. Zen might have an over-narrow
+territory, too much fixed lore, a weak perceptual engine, a motive that
+duplicates the publication doctrine instead of complementing it, or a
+defensive anti-cliché rule suppressing their strongest way of seeing (the
+exact shape of the bug already found and fixed for Siri Sage — her
+wayfinding/spatial-legibility material was banned as a cliché even though
+it's her most epistemically valuable territory). **Do not repair Zen now.**
+Finish Pixel, decide WHY WE WRITE, THEN run the 1.5 audit — it may explain
+Zen's resistance rather than requiring a guess-and-patch fix.
+
+**Explicit ordering constraint**: do not change `personas.py`, broaden
+Pixel's prompt, or modify any persona rule before the Pixel control/v1
+generations (in flight) are scored — doing so now would test "WHY WE WRITE +
+a new Pixel concept" simultaneously and destroy the causal result for both
+questions at once.
 
 ## DO NOT TOUCH YET (until their own dedicated experiment)
 `_LENGTHS`/evidence-budget restructure, testimony extraction/weighting,
