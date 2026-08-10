@@ -876,20 +876,35 @@ class DiscoveryMixin:
                 clean.append(text)
         return "\n\n".join(clean[:10])
 
-    def fetch_source_article(self, url: str, max_chars: int = 3000) -> str | None:
-        """Fetch and extract text from source article URL. Never blocks generation."""
+    def fetch_source_article(self, url: str, max_chars: int = 3000, fallback_text: str = None) -> str | None:
+        """Fetch and extract text from source article URL. Never blocks generation.
+
+        fallback_text, added 2026-08-10: this fetches the live rendered
+        webpage directly, which some sites actively block (confirmed live:
+        Dezeen returns HTTP 403 even with a full realistic Chrome UA and
+        standard Accept headers -- not simple UA-sniffing, more likely
+        IP-reputation or a JS-challenge, neither fixable by header
+        tweaking). That's a different, blockable route from how the item
+        was originally collected -- news_fetcher.py reads the site's own
+        RSS feed (built for automated consumption, essentially never
+        blocked), storing a real but short (~500 char) summary. If the
+        caller has that summary in scope (news_seed["summary"] / a
+        news_seeds row), pass it here: real-but-short material beats no
+        material, and this is the exact gap a prior fabrication incident
+        came from (see the 500K-cap comment below) -- the model inventing
+        a person/quote to fill a missing SOURCE MATERIAL block."""
         if not url or not url.startswith("http"):
-            return None
+            return fallback_text[:max_chars] if fallback_text else None
         try:
             req = urllib.request.Request(url, headers={
                 "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
             })
             with urllib.request.urlopen(req, timeout=10) as resp:
                 if resp.status != 200:
-                    return None
+                    return fallback_text[:max_chars] if fallback_text else None
                 content_type = resp.headers.get("Content-Type", "")
                 if "text/html" not in content_type:
-                    return None
+                    return fallback_text[:max_chars] if fallback_text else None
                 # This 500K cap is a memory/DoS safety bound on raw HTML scanned, NOT
                 # the output size (max_chars already governs that, below). It used to
                 # be 60K, which silently broke real-world pages with heavy pre-content
@@ -909,11 +924,17 @@ class DiscoveryMixin:
                     "generation/repair will proceed without real source material",
                     len(text) if text else 0, url
                 )
-                return None
+                return fallback_text[:max_chars] if fallback_text else None
             self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
             return text[:max_chars]
         except Exception as e:
             self.logger.debug("fetch_source_article failed for %s: %s", url, e)
+            if fallback_text:
+                self.logger.info(
+                    "fetch_source_article: using the RSS summary already on "
+                    "file instead (%d chars) for %s", len(fallback_text), url,
+                )
+                return fallback_text[:max_chars]
             return None
 
     def mark_finding_as_used(self, finding_id):

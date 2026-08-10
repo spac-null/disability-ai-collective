@@ -132,7 +132,7 @@ class GenerateMixin:
                 f"[{news_seed['title']}]({news_seed['url']}) "
                 f"from {news_seed['source_name']}.*"
             )
-            source_text = self.fetch_source_article(news_seed["url"])
+            source_text = self.fetch_source_article(news_seed["url"], fallback_text=news_seed.get("summary"))
             pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title)
                              if w.lower() not in _stopwords][:8]
             pool_links = self.get_pool_links(pool_keywords)
@@ -153,7 +153,7 @@ class GenerateMixin:
                 source_note = f"*This article was inspired by [{discovery['original_title']}]({_src_url}) from {domain}.*"
             else:
                 source_note = ""
-            source_text = self.fetch_source_article(discovery.get('url', ''))
+            source_text = self.fetch_source_article(discovery.get('url', ''), fallback_text=discovery.get('summary'))
             pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title)
                              if w.lower() not in _stopwords][:8]
             pool_links = self.get_pool_links(pool_keywords)
