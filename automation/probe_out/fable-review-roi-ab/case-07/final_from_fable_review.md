@@ -1,0 +1,27 @@
+In September 2025, Calder Gardens opened in Philadelphia without a single wall label, and called the absence a philosophy. Open to interpretation. The mobiles turn in the light. Nobody tells you when Calder made them or why. The press release treats this silence as a gift to the visitor.
+
+I read the coverage and got angry in the way I always get angry, which is fast and then suspicious of myself. My first thought was the obvious one. Delete the text and you delete the channel I read the room through. But I have been wrong about museums before, and I wanted to know which room this actually was.
+
+Start with the eye-tracking. In 2021 a team from the University of Vienna watched visitors at the Belvedere and found a rhythm nobody breaks. Art, then label, then art again. The label is not absorbed into the picture. It is a separate object you turn to and turn back from. Mounted at eye level, people read it. Mounted above or below, they don't.
+
+That study is about everyone. Not deaf people, everyone. The neat idea that hearing visitors float on ambient meaning while I need the printed crutch collapses the moment you watch where the eyes actually go. The label was doing work for the whole room.
+
+So when Calder Gardens removes it, the question is not whether I lose something. It is where the meaning goes instead.
+
+I went to Cleveland in October, sure I already knew. The Cleveland Museum of Art has pushed context off the wall and into an app called ArtLens. I expected the app to be text's exile — the place words go to be optional, to become atmosphere, a thing you could ignore. I opened it in front of a Chinese bronze and it handed me more written context than any wall in that building has ever offered. Resizable. Captioned. In my pocket, at my reading pace, not the curator's. A museum representative had called the printed label "the beginning of a relationship, not the end of an explanation." I had rolled my eyes at that sentence. Standing there, I stopped rolling them. For the first time in that building's history, text was the primary channel and not the apology bolted beside the painting. The resizable text was sitting in my pocket, and I could make it as large as I needed.
+
+But then Calder Gardens has no app either. No wall, no screen, no words. So where does the meaning live there? It lives in the docent walking the floor. It lives in the tour that gathers at ten and two. It lives in the audio guide humming into an ear I do not use. Delete the text with nothing in its place, and the default channel of the room becomes speech.
+
+There is a position I have argued against for years, held by people I respect. It says the room itself is the real political layer. The acoustics, the murmur of the guide, the way sound addresses a body before any sign does. On that view the label was always just paper laid over an acoustic space, and deleting it changes nothing worth fighting about. I do not buy it. Calder Gardens is the test case, and it fails the test cleanly. When the text goes and the tour stays, the building has not become neutral. It has picked a channel. The label was not decoration on top of the architecture. In that room, the label was the only load-bearing thing addressing the eye at the visitor's own pace.
+
+Not every museum handing off the label is doing what Philadelphia did. The Frick Pittsburgh invited community members to write "guest labels" for a Kara Walker show. A University of Pittsburgh professor, Shaun Myers, used his to write about his own family. The Frick's chief curator, Dawn Reid Brean, said something that stuck to me: "What is not being said in exhibition text is often just as revealing as what is being shared." That is text refusing to pretend it is neutral. It stays on the wall. It just stops pretending the curator holds the one answer.
+
+In 2021 Christine Sun Kim went through Manchester and replaced the city's public captions. Where a neutral caption would tell you the sound present, she wrote the sound of anticipation. A deaf artist, whose whole practice insists captions matter, throwing out the neutral informational label from inside deaf culture. Choosing interpretation over the flat institutional sentence I keep wanting to defend.
+
+I sat with that for a while and did not like where it left me. Because I want the label. I want the eye-level sentence that treats my seeing as complete. And here is one of the most important deaf artists alive telling the institution its neutral text was never neutral, that the flat description was a kind of lie about what the room does to you.
+
+I think both can be true, and I think the difference is who holds the pen. Kim replacing a caption is a deaf artist making the room speak in her grammar. Calder Gardens deleting the caption is an institution deciding the eye needs no address at all, then filling the silence with a docent's voice.
+
+The Belvedere study found people at a labelled work looking twice. Art, label, art. Two years later a docent stands in a room in Philadelphia with no labels, telling six people gathered close what the mobile means. My deaf friend, twenty years ago, wrote her reading of a Rothko on a notepad and a hearing man kept answering with what Rothko meant, as though her seeing were a question and he held the key.
+
+Delete the wall text and you have not opened the work to interpretation. You have decided again, quietly, that seeing needs a translator, and moved the translator's mouth closer.

@@ -1,0 +1,147 @@
+{
+  "topic": "curb_cuts",
+  "persona": "Maya Flux",
+  "sample_idx": 0,
+  "brief_angle": "The bike lane came from a resident petition \u2014 so was this a genuine conflict between two access constituencies, or did the consultation process seed the outcome by asking a question that only cyclists were in the room to answer?",
+  "review_prompt_hash": "f7077057b630572bc4eb6f6ac5935f2bf765c12f59f8dc9d431b3a97119412ca",
+  "draft_hash": "a38bdb708b08412356f09433cea9e2d4d5c36d006a0e1e5b355c0cb9b9901a7a",
+  "review_temperature": null,
+  "executor_temperature": 0.2,
+  "fable_review": {
+    "model": "openrouter/claude-fable-5",
+    "verdict": "revise",
+    "notes": [
+      "Deborah Antwi is the best thing in this piece and she never actually speaks. 'Deborah Antwi told the council she supported the bike lane and would take the four-hundred-metre detour' is summary, and 'A protected lane, to her, was not a threat to access. It was access.' is you writing her line for her. She stood up at a public session \u2014 pull her real words from the record and put them in quotation marks. She's your unresolved complication (rightly unresolved: 'I have no clean rebuttal to Deborah Antwi' should stay exactly as is), so she of all people can't be ventriloquized.",
+      "You're over the verdict-sentence budget. 'A petition is not a survey. It counts the people who already knew there was a form to sign.' is the strongest and it's your opening \u2014 keep it. Then flatten 'One group got authorship. The other got accommodation.' and 'Distance is not neutral.' into plain prose; the authorship point in particular is already fully made by the sentences around it ('nobody rebuilt anything for the wheelchair user... handed the wheelchair user the leftovers'), so the epigram is just applauding them.",
+      "Cut 'Here is where it gets genuinely awkward for me.' \u2014 the Antwi paragraph is the awkwardness; announcing it turns a real turn into a performed one. Same treatment for 'It isn't, and the reason is subtle enough that I nearly missed it': start the paragraph at 'A route built for one group and a route shared by two are not the same object' and let the reader feel the subtlety instead of being told it's coming. The discovery sequence earlier ('So I went looking for the missing constituency... They had been notified. One of them had stood up and spoken.') does this correctly \u2014 no announcement, just the record correcting you \u2014 protect that in revision."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4470,
+      "completion_tokens": 2192,
+      "total_tokens": 6662,
+      "cost": 0.1543,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.1543,
+        "upstream_inference_prompt_cost": 0.0447,
+        "upstream_inference_completions_cost": 0.1096
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 430,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 35.78,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "904f16ee4be451bd61a117f7921f8cc90507e9e217c422734a3819c33a62d2f8"
+  },
+  "opus_review": {
+    "model": "openrouter/claude-opus-4.8",
+    "verdict": "revise",
+    "notes": [
+      "Signposted moves \u2014 two sentences announce the turn instead of letting it land. Paragraph 6: 'Here is where it gets genuinely awkward for me.' \u2014 delete it and open straight on Deborah Antwi; the material underneath is strong enough that the discomfort is self-evident. Also paragraph 10: 'the reason is subtle enough that I nearly missed it' and later in that same paragraph the register slides into managing the reader. Cut the announcement, keep the authorship/accommodation contrast.",
+      "Aphorism density \u2014 you are over the one-verdict cap. 'One group got authorship. The other got accommodation.' (para 10), 'Distance is not neutral.' (para 11), and 'A petition is not a survey. It counts the people who already knew there was a form to sign.' (opening) all compete. The authorship/accommodation line is the strongest and does the most work \u2014 keep it, flatten the other two into plain prose so it lands alone. Note also that Deborah Antwi's 'It was access' and your father's line about the schedule being a promise are both sharper than your narration should be allowed to top; protect them.",
+      "Wholeness/setup-and-payoff is excellent and should be protected: the opening 'petition is not a survey' distinction pays off precisely in the closing image of fresh paint and 'two blocks of kerb with nowhere to get up' \u2014 that ending is the one this piece earned, don't touch it. The unresolved complication (Deborah Antwi, 'I have no clean rebuttal... I don't think one exists') stands genuinely unresolved, and the discovery in the past tense ('That stopped me') is real. The father's bus route is a genuine translated abstraction, not colour. All of this stays."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4470,
+      "completion_tokens": 572,
+      "total_tokens": 5042,
+      "cost": 0.03665,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.03665,
+        "upstream_inference_prompt_cost": 0.02235,
+        "upstream_inference_completions_cost": 0.0143
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 10.12,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "c87e6bed517dbb96d60a24069c6f8716badda24d6ce6001731f56f8fde52f29c"
+  },
+  "execute_fable_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2433,
+      "completion_tokens": 1656,
+      "total_tokens": 4089,
+      "cost": 0.053565,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.053565,
+        "upstream_inference_prompt_cost": 0.012165,
+        "upstream_inference_completions_cost": 0.0414
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 14.86,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "2bda8be8d7de1989464a42685b0f5f7ee1fcab5280cd757281f0d87c58c5a733"
+  },
+  "execute_opus_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2415,
+      "completion_tokens": 1645,
+      "total_tokens": 4060,
+      "cost": 0.0532,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0532,
+        "upstream_inference_prompt_cost": 0.012075,
+        "upstream_inference_completions_cost": 0.041125
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 14.85,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "dee21ceb9299debc449c56ff84fc4fb2e95ff14574a3d7148197a0a42851c841"
+  },
+  "cost_usd": null
+}

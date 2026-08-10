@@ -1,0 +1,27 @@
+A sauna is one of the few rooms built to make you stop reading it. Most rooms hand you information the second you cross the threshold. A church at noon gives you its height before you take a step, the reverb climbing away from your feet like the ceiling is a fact you can hear. A sauna refuses. It wants you to arrive and then lose the ability to tell where you are.
+
+That refusal is why the crystal in Skelleftea interested me before I ever went near it. In August 2026 the Stockholm duo Bigert & Bergström finished the Lithium Crystal Sauna, the first permanent thing built on the old Scharin pulp mill site in Västerbotten. They wrapped it in roughly 280 mirrored, titanium-coated steel facets and leaned the whole shell back four degrees. Every account of it I read was about the surface — the pink, the mirror, the crystal shape rising off ground that took seventeen years to clean.
+
+Nobody mentioned what a shell like that would do to sound. I did the maths in my head on the train up. Hard steel facets, all set at odd angles, no two parallel, should throw sharp slap-echo everywhere. I expected to walk in and hear the shape of the room bounce back at me in fragments I could stitch into a map. A hall of mirrors, but for the ears.
+
+I was wrong on the second sit. Someone ladled water onto the stones, the löyly came up off the rocks in that soft violent burst, and the steam killed every reflection I'd been counting on. Water in air scatters high frequencies. Heat bends them. What I got was not a crystal throwing my footsteps back in shards. It was a dead close wash, all the edges rounded off, the geometry I'd spent a minute building simply not answering when I asked it a question. I sat there with my hands on the bench and understood I could no longer point to the door.
+
+For most of my working life this would have counted as a failure. I record spaces before and after builders touch them, and I have spent years arguing that a room speaks before it shows you anything, that silence in a designed space is a choice someone made about whose comfort mattered. A wash like that, in a station or a lobby, is a barrier. You cannot move through what you cannot read.
+
+But a sauna is not a station.
+
+There is a reading of what happened to me that treats it as a defect. Put in absorptive baffling. Fix an audible marker at the door — a fan, a drip, anything that stays put so a body can triangulate back to the exit. Make the room legible again. I know how to do this. I have specced exactly this kind of fix for pools and changing rooms where losing the door is genuinely dangerous. The engineer in me wanted to file a snag report.
+
+The trouble is that recording what the collapse does to a body may matter more than fixing it. A room built to unmap you is not obviously a broken room. When a wet-plaster wall in a new building swallows every footstep and leaves a blind visitor stranded, someone chose that, usually without knowing they chose it, and the person stranded pays for it. Nobody chose to strand me in the crystal. The steam did. And the steam is the point of the entire structure.
+
+A woman who swims lengths at a public sauna in Finland said something to Bigert & Bergström during the Skelleftea build that I keep turning over. She told them she comes precisely to lose her bearings. A sauna where you always know exactly where the door is, she said, has failed at the one thing a sauna is for. I have spent fifteen years insisting that knowing where the door is a right, not a luxury, and here was a person walking into a hot box every week to give that knowing up on purpose.
+
+I do not think she is wrong. I think she has access to something I've been too defensive to say out loud.
+
+There are rooms whose whole job is to stop the reading. A dark cinema. A flotation tank. A confession box. The woman in the Finnish sauna and I want the same thing from a room and we approach it from opposite sides. She has spent her life being able to see the door and needs somewhere to put that down. I have spent mine unable to see it and needing everywhere else to give it back. The crystal treats us the same. It takes the door from both of us. The difference is she paid to feel what I feel by default, and for forty minutes the room was, for once, not built around her senses instead of mine.
+
+I want to be exact about what I could and couldn't do in there. I could not map the shell. I could not tell you where the corners were or how far the ceiling sat. What I could do was feel the heat come off the stove and know roughly how many bodies were on the benches from the small sounds they made shifting. The wash took the geometry. It did not take the people. When someone across the chamber let out a breath, I knew a person was there, warm, unhurried, not looking at anything either.
+
+I sat with that. There is a Tuesday, years back now, when someone I loved needed a face turned toward her and mine could not do the thing she needed. I have built a lot of careful cases since about what I can give that no one else can. None of them touch that Tuesday. But in the crystal, with the geometry gone and eight people breathing in a heat none of us could see through, we were all reading each other the only way I ever have. Not by the shape of the room. By the sound of a body deciding to stay.
+
+The steam came up again off the stones. Somewhere to my left, a door I could no longer find.

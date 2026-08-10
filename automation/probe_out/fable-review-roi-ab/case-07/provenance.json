@@ -1,0 +1,147 @@
+{
+  "topic": "museum_labels",
+  "persona": "Pixel Nova",
+  "sample_idx": 1,
+  "brief_angle": "When a museum deletes its wall labels, does the information actually disappear or just migrate \u2014 and does the deaf visitor end up in a more level room, or in a room whose default channel has quietly become speech (docents, tours, audio guides) with text demoted to atmosphere?",
+  "review_prompt_hash": "b238096e3a10b9f4a57a0e7eb873c3afc761ddc2cd900d8bcb515df037794637",
+  "draft_hash": "173ef9bdcd8c5e798079bc25b318c058161974f831222152c86f91fd8ffabed7",
+  "review_temperature": null,
+  "executor_temperature": 0.2,
+  "fable_review": {
+    "model": "openrouter/claude-fable-5",
+    "verdict": "revise",
+    "notes": [
+      "Aphorism budget is blown \u2014 I count at least three verdict-sentences competing for the same crescendo: 'Migration is not demotion. It can be the opposite.', 'In a room like that one, the label was the architecture', and 'One is authorship. The other is abdication dressed as generosity.' Keep only the closing line ('...moved the translator's mouth closer') as the piece's single verdict and flatten the other three into plain prose \u2014 the Cleveland reversal, for instance, can end on the concrete fact of the resizable text in her pocket, which is stronger than the epigram summarizing it.",
+      "Delete the signpost paragraph 'Which is where the thing I keep circling gets uncomfortable.' \u2014 the Christine Sun Kim material underneath is the best complication in the piece and it lands harder cold. Same treatment for 'That broke my thesis.' \u2014 the Cleveland scene already shows the thesis breaking; announcing it turns a discovery into a technique being demonstrated.",
+      "Protect two things in revision: the concession-before-kill in the acoustics paragraph ('There is a position I have argued against for years...') is doing real work \u2014 the opposing view gets its strongest form before the flip \u2014 and the closing triple juxtaposition (Belvedere study, Philadelphia docent, the friend's Rothko notepad) is the piece's best move, three concrete images clicking with no narration between them. Whatever gets cut, those stay."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4531,
+      "completion_tokens": 2129,
+      "total_tokens": 6660,
+      "cost": 0.15176,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.15176,
+        "upstream_inference_prompt_cost": 0.04531,
+        "upstream_inference_completions_cost": 0.10645
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 441,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 34.64,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "70b9762d08ee0322609bdc39dc0743e6839d9303fdef274e7909648a78ce26f4"
+  },
+  "opus_review": {
+    "model": "openrouter/claude-opus-4.8",
+    "verdict": "revise",
+    "notes": [
+      "Aphorism budget is over. You have at least three verdict-sentences competing: 'Migration is not demotion. It can be the opposite.' / 'One is authorship. The other is abdication dressed as generosity.' / and the closing 'moved the translator's mouth closer.' Three crescendos means none land. Keep the last one \u2014 the closing image is the strongest and earns its place \u2014 and flatten the other two into plain prose. 'Migration is not demotion' especially reads as a manufactured beat; let the Cleveland scene make that point without the epigram stamped on it.",
+      "Signposted moves: cut 'That broke my thesis.' and cut 'Which is where the thing I keep circling gets uncomfortable.' Both announce the turn instead of letting it turn. The Cleveland material and the Christine Sun Kim material already do the work \u2014 the reader feels the thesis break and feels the discomfort without being told a break and a discomfort are coming. Delete the announcements, leave the material.",
+      "The Christine Sun Kim thread is your best complication \u2014 a deaf artist from inside deaf culture throwing out the neutral label you want to defend \u2014 but in the final third you resolve it too tidily with 'the difference is who holds the pen.' That resolution lets the argument absorb its own strongest objection; Kim ends up serving your thesis rather than resisting it. Consider letting the Kim tension stay live rather than reconciled, so the piece keeps the friction it actually earned. Protect what's genuinely working, though: the ArtLens discovery ('I opened it... and it handed me more written context than any wall in that building has ever offered') is a real past-tense moment of being wrong, and Dawn Reid Brean's quote is a genuine voice the narrator did not script \u2014 do not sand either of those down in revision."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4531,
+      "completion_tokens": 594,
+      "total_tokens": 5125,
+      "cost": 0.037505,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.037505,
+        "upstream_inference_prompt_cost": 0.022655,
+        "upstream_inference_completions_cost": 0.01485
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 9.97,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "aa1b6cfdf5b7938bca046c8f2e5290b3df4b16ff3f0449e5e757b32bc46ee475"
+  },
+  "execute_fable_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2353,
+      "completion_tokens": 1698,
+      "total_tokens": 4051,
+      "cost": 0.054215,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.054215,
+        "upstream_inference_prompt_cost": 0.011765,
+        "upstream_inference_completions_cost": 0.04245
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 15.39,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "211fc32bd50224992bd46f6e17383a3265b08813ae698464dd52fc95924809cd"
+  },
+  "execute_opus_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2469,
+      "completion_tokens": 1760,
+      "total_tokens": 4229,
+      "cost": 0.056345,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.056345,
+        "upstream_inference_prompt_cost": 0.012345,
+        "upstream_inference_completions_cost": 0.044
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 20.44,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "530973a55a6388444e10612829ee826b13b90d59e3e23aef0d03d3b8c4f0fae6"
+  },
+  "cost_usd": null
+}

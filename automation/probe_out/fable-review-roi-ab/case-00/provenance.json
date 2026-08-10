@@ -1,0 +1,147 @@
+{
+  "topic": "sauna",
+  "persona": "Siri Sage",
+  "sample_idx": 0,
+  "brief_angle": "Inside a mirrored crystal sauna \u2014 a hard-faceted steel shell wrapped in steam and a heat source \u2014 does the acoustic space stay legible enough to move through, or does the geometry collapse into a wash a blind body cannot read; and if it does collapse, is that a defect of the room or the actual point of a sauna, a space designed to be un-navigated?",
+  "review_prompt_hash": "74f83b60259a69796d9181d102361f4b5bad60551b45aa6daa864fec4fa143f0",
+  "draft_hash": "f309ce4f379134da21f666874596c3a1e8d6bd40b100084473cc3289b91086a8",
+  "review_temperature": null,
+  "executor_temperature": 0.2,
+  "fable_review": {
+    "model": "openrouter/claude-fable-5",
+    "verdict": "revise",
+    "notes": [
+      "The Finnish swimmer never actually speaks. 'She told them she comes precisely to lose her bearings' and 'A sauna where you always know exactly where the door is, she said, has failed at the one thing a sauna is for' are reported speech with no quotation marks, delivered secondhand through Bigert & Bergstr\u00f6m, and shaped exactly to serve the turn the argument needs. Get her real words inside actual quotation marks \u2014 ideally something rougher than the thesis wants \u2014 or the piece is a monologue in a sealed room. And when she does speak, hers should stay the sharpest line in the piece; right now the narrator tops her twice in the paragraphs that follow.",
+      "Two verdict-sentences over budget. 'But a sauna is not a station.' stands as its own single-sentence paragraph, and 'The wash took the geometry. It did not take the people.' is a second full epigram three paragraphs later. Keep 'The wash took the geometry. It did not take the people.' \u2014 it's doing real work in the piece's most important paragraph \u2014 and flatten 'But a sauna is not a station' into the top of the following paragraph as plain prose.",
+      "Protect the she-and-I comparative in the paragraph beginning 'There are rooms whose whole job is to stop the reading' \u2014 'She has spent her life being able to see the door and needs somewhere to put that down. I have spent mine unable to see it and needing everywhere else to give it back.' That parallel carries the whole argument without commentary and is the best thing in the draft; whatever gets moved in revision, that stays. But cut the sentence that introduces the surrounding section, 'I want to be exact about what I could and couldn't do in there.' \u2014 it announces the precision instead of performing it. Start straight at 'I could not map the shell.'"
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4515,
+      "completion_tokens": 2065,
+      "total_tokens": 6580,
+      "cost": 0.1484,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.1484,
+        "upstream_inference_prompt_cost": 0.04515,
+        "upstream_inference_completions_cost": 0.10325
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 576,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 36.18,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "0535f9dbbee29211f83023c75f04e0158439b9439e12170f56029cf811959c56"
+  },
+  "opus_review": {
+    "model": "openrouter/claude-opus-4.8",
+    "verdict": "revise",
+    "notes": [
+      "APHORISM/TOPPING (check 5): the swimmer's line ('A sauna where you always know exactly where the door is has failed at the one thing a sauna is for') should be the sharpest verdict in the piece, and it nearly is \u2014 but the narrator keeps topping it. 'The crystal treats us the same. It takes the door from both of us.' and the closing fragment 'Somewhere to my left, a door I could no longer find.' are both verdict-shaped, plus 'A room built to unmap you is not obviously a broken room.' You are over the one-aphorism cap by two or three. Keep the swimmer's line as the sharpest thing and flatten at least two of these into plain prose. My pick to cut: 'It takes the door from both of us' (the preceding sentence already carries it).",
+      "SIGNPOSTED MOVE (check 7): the line 'I want to be exact about what I could and couldn't do in there.' announces the technique \u2014 it tells me you're about to inventory your senses instead of just doing it. Delete the sentence; the paragraph works better starting cold on 'I could not map the shell.' Same instinct in 'I think she has access to something I've been too defensive to say out loud' \u2014 that's you explaining the meaning of the concession rather than letting it stand; consider trimming.",
+      "WHOLENESS / ABANDONED THREAD (check 9c): the Tuesday paragraph introduces a person you loved and a face that couldn't do what she needed, with real weight, and then the piece leaves her. It's doing a lot \u2014 arguably it's a second essay bleeding into the first. Either the crystal has to pay that Tuesday off more directly than 'None of them touch that Tuesday,' or it's importing grief the room hasn't earned. Decide whether this piece is about the acoustics of un-navigation or about what you couldn't give someone; right now the Tuesday threatens the throughline in its last third. Protect the genuine turn (the swimmer as insider confession, and the redefinition \u2014 the room isn't broken, it's un-built-around-her) \u2014 those are the spine and they're strong."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4515,
+      "completion_tokens": 693,
+      "total_tokens": 5208,
+      "cost": 0.0399,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.0399,
+        "upstream_inference_prompt_cost": 0.022575,
+        "upstream_inference_completions_cost": 0.017325
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 13.54,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "a4d61161f003789093227107baf093433437fba6d639b28ff90fd783b0323386"
+  },
+  "execute_fable_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2416,
+      "completion_tokens": 1672,
+      "total_tokens": 4088,
+      "cost": 0.05388,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.05388,
+        "upstream_inference_prompt_cost": 0.01208,
+        "upstream_inference_completions_cost": 0.0418
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 15.51,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "eec8a3165a7330287b96163fd4f9c022ea7f1c7656f34f3538a9f5aeaaf22e62"
+  },
+  "execute_opus_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2523,
+      "completion_tokens": 1725,
+      "total_tokens": 4248,
+      "cost": 0.05574,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.05574,
+        "upstream_inference_prompt_cost": 0.012615,
+        "upstream_inference_completions_cost": 0.043125
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 16.2,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "6a287eef797ba73613c1131a174da205993e4373c174b59b6c5e2ef2af09b598"
+  },
+  "cost_usd": null
+}

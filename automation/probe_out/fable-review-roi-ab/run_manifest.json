@@ -1,0 +1,8 @@
+{
+  "git_commit": "b99d3793adcf536b02e55debc163dea6c151c8ab",
+  "run_started_note": "harness commit b99d379, run 2026-08-10 evening (see /tmp/fable-review-roi.log on trident for exact timestamps)",
+  "n_cases": 8,
+  "cases_per_persona": 2,
+  "personas": ["Siri Sage", "Zen Circuit", "Maya Flux", "Pixel Nova"],
+  "note_for_future_versions": "provenance.json per-case does NOT currently store git_commit -- this run-level manifest is the workaround. Future versions of fable_review_roi_probe.py should add git_commit directly to every case provenance.json instead of relying on a separate manifest file."
+}

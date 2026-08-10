@@ -1,0 +1,27 @@
+A petition counts only the people who already knew there was a form to sign. On Tuesday the city council voted 6-3 to pull three accessible parking bays off Exchange Street and put a protected bike lane in their place. The bike lane campaign gathered 1,200 signatures over eighteen months. A local cycling group ran it. No disability group was in the room while they ran it.
+
+The bays sat forty metres from the transit interchange. The nearest one left is now roughly four hundred metres away. Two of the three blocks between the new spot and the interchange have no dropped kerb, which means the marked route for a wheelchair adds another 150 metres detouring around them.
+
+I read that staff report on Wednesday morning and I was ready to write the obvious piece. A cyclists' petition, no disabled people consulted, a council accessibility officer on leave for the whole review with nobody covering the desk. Classic seeded outcome. Ask a question only one kind of person can answer, and you already know who wins.
+
+So I pulled the consultation record from the March 14 planning session to nail down the silence. And the silence wasn't there.
+
+The accessible-bay users had been notified. One of them had spoken. The person who runs the transport desk had, technically, ticked every box. What I found was not a rigged form. It was a fight on turnout, and the wheelchair users lost it fairly, one meeting against eighteen months of doorstep signature-gathering by people who had made this their project. That is a worse problem than a rigged form, because you cannot fix it by pointing at a broken rule.
+
+Then it got harder. Deborah Antwi, a wheelchair user downtown, had co-signed the cyclists' petition. She told the council she backed the bike lane and would take the four hundred metres, because a protected lane keeps her chair off a road where she'd been clipped twice. Her exact words in the minutes: "I would rather wheel further than get hit again." An access claim cutting straight across the other access claim. She is not a prop for either side. She is a person doing risk maths with her own body on a specific street, and her sums came out differently from her neighbour's.
+
+I sat with that for a day. Because it means the cyclists were not wrong. Protected lanes save real people from real cars, and some of those people use wheelchairs. This was never bikes versus disabled people. That framing lets you pick a villain when the real trouble has no single face.
+
+The bike lane is being fought over as an information problem. Better wayfinding. More legible routes. The dropped kerbs the staff report flagged. There is a whole industry now that treats a broken route as a signage question — as though the trouble were that people cannot find the good path, rather than that the good path is four hundred metres and two missing kerbs away. Fix the wayfinding, the thinking goes, and you have fixed the access.
+
+You have not. A route rebuilt from scratch for cyclists is a different object from a shared street where neither group is demoted to background. The council did the first thing and called it the second. They took a corridor that worked for one body, handed it whole to another body, and offered the first body a phased future bay with no date attached. "As part of a future phase," the paperwork says, dated nowhere.
+
+The move I keep coming back to is the timing. The accessibility liaison was on leave for the entire review and the post was never backfilled. Not silenced — just absent. The council will say the boxes were ticked, and they were. But a box ticked by nobody is a box ticked by nobody. The one person whose whole job was to notice that a genuine trade-off had been reduced to a turnout contest was not at any of the meetings where it was reduced.
+
+My father drove municipal bus route 4735 for twenty-two years, out past the industrial edge of Santo André. He knew a thing the council report does not. A route works as a whole or it does not work at all, and you do not fix one by improving a single stop and apologising for the gap. The 150-metre detour around the two blocks with no kerbs is not a detail to be phased in later. It is the plainest evidence the route fails.
+
+When a wheelchair user stands up and says she'll take the longer way, the council can file that as consent. She did not offer it as consent to a bad design. She offered it as one person's calculation about getting hit by a car. Those are not the same document, and I refuse to let a council staple them together.
+
+What the petition measured was who already knew there was a form. The cyclists ran an eighteen-month campaign; the bay users got a notice and a meeting. Both are legitimate ways to want a street. Only one of them scales into 1,200 signatures. The council mistook the count for the will of the city, and the count was never that.
+
+There is a real conflict here between two ways of moving through a place, and it deserved a process built to hold both. What it got was a petition and an empty chair at the accessibility desk. On March 14, the room that decided this contained everyone it was supposed to contain and still could not do the one thing it was for.

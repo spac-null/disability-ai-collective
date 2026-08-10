@@ -131,6 +131,16 @@ def _sha256(text):
     return hashlib.sha256((text or "").encode("utf-8")).hexdigest()
 
 
+def _git_commit_hash():
+    import subprocess
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=REPO_ROOT, text=True, stderr=subprocess.DEVNULL,
+        ).strip()
+    except Exception:
+        return "unknown"
+
+
 def _direct_call(url, api_key, system_prompt, user_prompt, model, max_tokens, timeout,
                   reasoning_max_tokens=None, temperature=None):
     """Standalone HTTP call, deliberately bypassing _call_editorial_model's
@@ -554,6 +564,7 @@ def _process_case(case_id, topic_key, sample_idx, raw_draft, agent_name, agent_p
 
     provenance = {
         "topic": topic_key, "persona": agent_name, "sample_idx": sample_idx,
+        "git_commit": _git_commit_hash(),
         "brief_angle": brief_angle,
         "review_prompt_hash": review_prompt_hash,
         "draft_hash": _sha256(raw_draft),

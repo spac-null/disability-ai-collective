@@ -1,0 +1,147 @@
+{
+  "topic": "sauna",
+  "persona": "Siri Sage",
+  "sample_idx": 1,
+  "brief_angle": "Inside a mirrored crystal sauna \u2014 a hard-faceted steel shell wrapped in steam and a heat source \u2014 does the acoustic space stay legible enough to move through, or does the geometry collapse into a wash a blind body cannot read; and if it does collapse, is that a defect of the room or the actual point of a sauna, a space designed to be un-navigated?",
+  "review_prompt_hash": "d388e8dfe5a1d97fdbeaadd1de538dcc5a53e441fba12a7c59674344df906649",
+  "draft_hash": "4f8659d0d1e202415374b9e2ad5f402d8f78b8f515beed95772575c825bd82b6",
+  "review_temperature": null,
+  "executor_temperature": 0.2,
+  "fable_review": {
+    "model": "openrouter/claude-fable-5",
+    "verdict": "revise",
+    "notes": [
+      "Aphorism budget is blown \u2014 I count at least three verdict-sentences: 'She was not describing a defect she tolerates. She was describing the product.', the standalone paragraph 'That is not a small thing to hand back. It is close to unheard of.', and 'The architect drew a crystal. The steam built a different room on top of it.' Keep one (I'd keep the crystal/steam pair, it's doing real work in that paragraph) and flatten the other two into plain prose \u2014 cut 'It is close to unheard of' entirely, and let the woman's paragraph end on 'I keep turning that over.'",
+      "Two signposts announce their moves and should be deleted with the material underneath left intact: 'I want to be honest that this is the part where my whole trade gets nervous' \u2014 just go straight to 'I earn my living arguing that space is sound before it is sight' and the nervousness is felt rather than declared. And 'I hold that and the woman's remark at the same time and do not resolve them, because they are both true' \u2014 this narrates the irresolution instead of performing it. Cut that clause; 'a sauna is the rare place where the second one is allowed to win' already does the job and is a stronger sentence standing alone.",
+      "The woman from the Finnish public sauna is the hinge of the whole piece and she arrives paraphrased, while the architect gets actual quotation marks for a promotional line ('shaped around ambiguity'). If you have her words, put them in quotes \u2014 'she comes precisely to lose her bearings' is your language, not hers, and the sharpest line in the essay should be hers, not the narrator's gloss on her. Separately, protect the Skelleftea coda in revision \u2014 the lithium ground folding back to the poisoned site is the ending this piece earned; don't let trimming elsewhere touch it."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4570,
+      "completion_tokens": 2499,
+      "total_tokens": 7069,
+      "cost": 0.17065,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.17065,
+        "upstream_inference_prompt_cost": 0.0457,
+        "upstream_inference_completions_cost": 0.12495
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 782,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 38.36,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "40909add6c4fb39aa808c40b4db0ff9dd913c8b5acd056a5c56030bb5e34ed0b"
+  },
+  "opus_review": {
+    "model": "openrouter/claude-opus-4.8",
+    "verdict": "revise",
+    "notes": [
+      "Signposted move (check 7): the sentence 'I want to be honest that this is the part where my whole trade gets nervous' announces the turn instead of letting it turn. Cut it \u2014 start that paragraph at 'I earn my living arguing that space is sound before it is sight.' Same with 'Except.' as a one-word paragraph: it's a signpost flagging the pivot you're about to make. Delete it and let the woman's remark do the pivoting.",
+      "Aphorism budget (check 5): you're over the one-verdict cap and, worse, the strongest line is yours rather than your source's. The woman said 'a sauna where you always know where the door is has failed at the one thing a sauna is for' \u2014 that should be the sharpest thing in the piece. But you top it repeatedly: 'That is not a small thing to hand back. It is close to unheard of' and 'The steam built a different room on top of it, one that no facet count predicts.' Flatten one of these into plain prose so hers stays the peak. Keep the 'bench arrives to the hand before it arrives to the ear' line \u2014 it's earned and concrete, not epigram-shaped.",
+      "Wholeness/payoff (check 9b): the closing lithium paragraph is a beautiful image but it's a second thing the piece is about \u2014 it reframes the sauna as protest against an extractive landscape, a throughline you introduced in paragraph two (the poisoned pulp mill, the clay lid) and then dropped for eight paragraphs of acoustics and the Edinburgh Tuesday. As written it reads as a swapped-on coda rather than a payoff of THIS essay about legibility and the off-switch. Either seed the lithium/unhearing thread earlier so the ending completes it, or end on the room-that-is-not-for-reading material, which is what the body actually earned. The Edinburgh Tuesday is the real emotional spine \u2014 protect it, it's your discovery and your complicating case both."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4570,
+      "completion_tokens": 641,
+      "total_tokens": 5211,
+      "cost": 0.038875,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.038875,
+        "upstream_inference_prompt_cost": 0.02285,
+        "upstream_inference_completions_cost": 0.016025
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 12.06,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "d8bb6731efe0ec1f4078923667509af97ba782deaad44fcbe8b7ebc987e111d0"
+  },
+  "execute_fable_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2478,
+      "completion_tokens": 1690,
+      "total_tokens": 4168,
+      "cost": 0.05464,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.05464,
+        "upstream_inference_prompt_cost": 0.01239,
+        "upstream_inference_completions_cost": 0.04225
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 14.8,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "0f6fffcbf851b6470459cdddd583f1123301088e18283179bf1e2c10c806d450"
+  },
+  "execute_opus_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2526,
+      "completion_tokens": 1645,
+      "total_tokens": 4171,
+      "cost": 0.053755,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.053755,
+        "upstream_inference_prompt_cost": 0.01263,
+        "upstream_inference_completions_cost": 0.041125
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 14.38,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "96ac41abfad354c06d2a0e7d6851e028c305e0b62abe085c3124b2069b1502bd"
+  },
+  "cost_usd": null
+}

@@ -1,0 +1,147 @@
+{
+  "topic": "hiring_tool",
+  "persona": "Zen Circuit",
+  "sample_idx": 0,
+  "brief_angle": "When the algorithm flags an autistic candidate's low 'engagement' score for manual review, does the human reviewer overturn the machine's judgment or countersign it \u2014 is the flag functioning as a second chance or as a mark that primes the hand that touches it next?",
+  "review_prompt_hash": "63f64588b3b4401499d1c3dc1b207e13fb6f8d3750dde36088b97c0910cb2a47",
+  "draft_hash": "30bb0a357efada122025f7fd500145e5a46d6ebc251272f4fb9e52046de09844",
+  "review_temperature": null,
+  "executor_temperature": 0.2,
+  "fable_review": {
+    "model": "openrouter/claude-fable-5",
+    "verdict": "revise",
+    "notes": [
+      "No other human actually speaks in this piece. The vendor's marketing copy is quoted, but the recruiter \u2014 your best material, the insider who complicates everything \u2014 only exists in summary and conditional mood: 'Her argument was that...', 'She would rather be measured by a number she can see.' You have her request in writing through the records office; get her actual words inside quotation marks, in the past tense, even one sentence from that HR filing. Right now the piece is a monologue in a sealed room, and she's the one voice that could break it open. Protect the blank-field ending though \u2014 her unresolved file is the payoff this piece earned.",
+      "Delete the sentences that announce your own moves before you make them: 'I want to tell you the obvious thing first, because it is true' (para 2), 'Here is what I did not expect' (para 8), 'I cannot make her disappear and I will not try' (end of para 8), and 'I have felt the pull of that position for years and I want to argue against it here, on its merits' (para 10). In every case the material underneath is strong \u2014 the spreadsheet reversal, the recruiter, the archive argument \u2014 and the announcement turns a turn the reader should feel into a requirement they watch being satisfied. Cut the signposts, keep everything under them.",
+      "You're several verdict-sentences over budget and they're cancelling each other out. 'That is the whole of it' (para 1), 'Nobody watched them. Nobody had to' (para 6), 'it depends, and the dependence is the scandal' (para 11), and 'it names a stranger who will decide whether resemblance is destiny' (para 11) are all doing the epigram thing within one draft. Keep one \u2014 I'd argue for the resemblance/destiny line since it completes the opening's claim \u2014 and flatten the others into plain prose. Also note the recruiter's implied line about published thresholds is sharper than most of yours; once she speaks in her own words, don't top her."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4520,
+      "completion_tokens": 2014,
+      "total_tokens": 6534,
+      "cost": 0.1459,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.1459,
+        "upstream_inference_prompt_cost": 0.0452,
+        "upstream_inference_completions_cost": 0.1007
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 457,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 31.19,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "2e683beb5b17bb49440f76bcd93ac2767284122d89f40ee71f10ccb525efeea1"
+  },
+  "opus_review": {
+    "model": "openrouter/claude-opus-4.8",
+    "verdict": "revise",
+    "notes": [
+      "CHECK 4, NO REAL QUOTED VOICE. The autistic recruiter is the piece's most important other person, but she never speaks inside quotation marks \u2014 every line about her is summarised or paraphrased ('Her argument was that...', 'She would rather be measured...', 'She defends the tool'). 'She would rather' is exactly the conditional-mood ventriloquism that does not count. This is your strongest INSIDER CONFESSION \u2014 someone flagged by the system defending it from inside \u2014 and right now it is a monologue in a sealed room. You filed a records request; you can quote from her written request to HR. Give her one actual sentence in her own words, past tense, and the whole piece gains a second lung.",
+      "CHECK 5, APHORISM DENSITY. You are well over the one-verdict cap. Candidates: 'The word is doing enormous work and no one is watching it'; 'Whether it functions as a wound or a rescue depends entirely on who receives it and what they do with their eyes for the next four minutes'; 'It measures resemblance, and then it names a stranger who will decide whether resemblance is destiny'; 'the dependence is the scandal'; 'the coin whose faces are named...'. Pick one to keep \u2014 the coin image is the strongest and most concrete \u2014 and flatten the rest into plain prose. Three crescendos mean none land.",
+      "CHECK 7, SIGNPOSTED MOVES. 'Here is what I did not expect' (recruiter paragraph) and 'There is a position I respect that says... and I want to argue against it here, on its merits' both announce the turn before performing it. Delete the announcements; the material underneath \u2014 her request, the argument about documentation \u2014 stands on its own and lands harder unlabelled. Also protect what is already working: the Q3 spreadsheet reversal is a genuine DISCOVERY in the past tense before the midpoint, the dinner-party scene is a real TRANSLATED ABSTRACTION mapping the panel's unpublished threshold onto your own body, and the final blank field is a CODA that pays off the flag-as-request-for-attention throughline. Keep all three intact through revision."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4520,
+      "completion_tokens": 714,
+      "total_tokens": 5234,
+      "cost": 0.04045,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.04045,
+        "upstream_inference_prompt_cost": 0.0226,
+        "upstream_inference_completions_cost": 0.01785
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 11.79,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "03980084762125ab71bce66d496b56d8cda54b3c7699371980982af948db4ca1"
+  },
+  "execute_fable_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2494,
+      "completion_tokens": 1654,
+      "total_tokens": 4148,
+      "cost": 0.05382,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.05382,
+        "upstream_inference_prompt_cost": 0.01247,
+        "upstream_inference_completions_cost": 0.04135
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 15.1,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "d356b8674ede7e246a0c33c12032d6fe29b1c1f899fb645870ddfb37936c7373"
+  },
+  "execute_opus_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2581,
+      "completion_tokens": 1692,
+      "total_tokens": 4273,
+      "cost": 0.055205,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.055205,
+        "upstream_inference_prompt_cost": 0.012905,
+        "upstream_inference_completions_cost": 0.0423
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 16.38,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "35e7b16f51c81515919630a4e274a7264c50a58c7051cc8ac5bef902a7814b2c"
+  },
+  "cost_usd": null
+}

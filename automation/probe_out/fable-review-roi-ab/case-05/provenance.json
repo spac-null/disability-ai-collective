@@ -1,0 +1,147 @@
+{
+  "topic": "curb_cuts",
+  "persona": "Maya Flux",
+  "sample_idx": 1,
+  "brief_angle": "The bike lane came from a resident petition \u2014 so was this a genuine conflict between two access constituencies, or did the consultation process seed the outcome by asking a question that only cyclists were in the room to answer?",
+  "review_prompt_hash": "4121a497b8d33a1e790d62fc3e9f5499c7ffb2aaeceb60d2e0d210be8eef2d7d",
+  "draft_hash": "8f93fbe25a1b66800fb88a21a1a4a61f83c8e479c1a7f2991caa9c8efcbafe93",
+  "review_temperature": null,
+  "executor_temperature": 0.2,
+  "fable_review": {
+    "model": "openrouter/claude-fable-5",
+    "verdict": "revise",
+    "notes": [
+      "Aphorism budget is badly blown \u2014 I count at least five verdict-sentences competing to be the landing line: 'Ask a question only one kind of person can answer, and you already know who wins.' / 'That framing is a comfort. It lets you pick a villain.' / 'But a box ticked by nobody is a box ticked by nobody.' / 'Those are not the same document, and I refuse to let a council staple them together.' / 'The council mistook the count for the will of the city, and the count was never that.' Keep one (the box-ticked line is the strongest and does real argumentative work) and flatten the rest into plain prose \u2014 especially since Deborah Antwi's 'I would rather wheel further than get hit again' is the sharpest sentence in the piece and the narrator keeps topping it. Also note the penultimate paragraph re-runs the opening line almost verbatim ('What the petition measured was who already knew there was a form') \u2014 cut the reprise; the opening already committed.",
+      "Two signposts announce their moves and should be deleted with the material underneath left intact: 'Then it got harder.' before the Antwi paragraph, and 'Here is where I think the council actually failed, and it is not the part everyone is angry about.' before the wayfinding section. The Antwi complication is genuinely hard and stays unresolved \u2014 that's the best thing in the draft, protect it \u2014 but announcing its arrival turns it into a requirement being satisfied. Same problem in miniature with 'An access claim cutting straight across the other access claim. She is not a prop for either side.' \u2014 cut both sentences; the quote does that work on its own or it doesn't.",
+      "The discovery sequence in paragraphs three and four ('I was ready to write the obvious piece... So I pulled the consultation record... And the silence wasn't there') is real, past-tense, and correctly placed \u2014 keep it exactly as is. Same for the Santo Andr\u00e9 bus route passage: it's a translated abstraction that earns its keep, and cutting it would cost understanding, not colour. Flag both as untouchable in revision so the aphorism trim doesn't accidentally take 'A route is not the sum of its stops' with it \u2014 that line belongs to the father, not the narrator, and it can stay."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4486,
+      "completion_tokens": 2419,
+      "total_tokens": 6905,
+      "cost": 0.16581,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.16581,
+        "upstream_inference_prompt_cost": 0.04486,
+        "upstream_inference_completions_cost": 0.12095
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 539,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 39.52,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "c9f92be3ef3775a4b28fa823fcc0debb90ecd8b836da9270e0923302bad59aa0"
+  },
+  "opus_review": {
+    "model": "openrouter/claude-opus-4.8",
+    "verdict": "revise",
+    "notes": [
+      "SIGNPOSTED MOVES \u2014 two announcements to delete, material underneath intact. First: 'Here is where I think the council actually failed, and it is not the part everyone is angry about.' Cut it; go straight to the information-problem paragraph. Second, the whole opening of the smiling paragraph: 'I want to be careful about the smiling. There is a version of me that reads Deborah Antwi's line and feels the old reflex...' This announces the turn and stages the writer's own vigilance. Start that paragraph at the material \u2014 'When a wheelchair user stands up and says she'll take the longer way, the council can file that as consent.'",
+      "MANAGING THE READER \u2014 quote to cut: '\"As part of a future phase\" is the sentence that tells you everything.' The phrase does the work; telling us it tells us everything is the narrator stepping in. Also flatten the sentence that follows it \u2014 'It is the paperwork saying: we know, and we did it anyway, and we will smile about it later' \u2014 this is you scripting the council's confession rather than letting the dated, undated phrasing damn them.",
+      "APHORISM DENSITY \u2014 you're over the one-verdict cap and they're blunting each other. Candidates: 'That framing is a comfort. It lets you pick a villain'; 'A route is not the sum of its stops. It is the whole thing moving, or it is nothing'; 'The 150-metre detour... is the route telling you it does not work'; and the closing 'the room that decided this contained everyone it was supposed to contain and still could not do the one thing it was for.' Keep the closing one \u2014 it lands and it pays off the empty-chair setup. Flatten your father's 'a route is not the sum of its stops' into plain prose, or better, note that Deborah Antwi's quoted line is the sharpest thing in the piece and should stay the sharpest \u2014 right now you're competing with her. The rest go to plain sentences."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4486,
+      "completion_tokens": 634,
+      "total_tokens": 5120,
+      "cost": 0.03828,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.03828,
+        "upstream_inference_prompt_cost": 0.02243,
+        "upstream_inference_completions_cost": 0.01585
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 10.68,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "4c917db27b5c3ae684d56d88a94d6784b53df5fab9d84ea69909cfa2b238b202"
+  },
+  "execute_fable_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2586,
+      "completion_tokens": 1671,
+      "total_tokens": 4257,
+      "cost": 0.054705,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.054705,
+        "upstream_inference_prompt_cost": 0.01293,
+        "upstream_inference_completions_cost": 0.041775
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 15.28,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "7b775e60feefa8489ce53099f9625b28db56c02c94c504f0626aa33775471372"
+  },
+  "execute_opus_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2491,
+      "completion_tokens": 1568,
+      "total_tokens": 4059,
+      "cost": 0.051655,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.051655,
+        "upstream_inference_prompt_cost": 0.012455,
+        "upstream_inference_completions_cost": 0.0392
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 13.94,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "ae6df8d26b9e62d71012eef83c7998c9d4ed6d7ebf9cacab18f55796014b5a98"
+  },
+  "cost_usd": null
+}

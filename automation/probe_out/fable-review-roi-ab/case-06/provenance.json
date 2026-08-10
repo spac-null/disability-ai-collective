@@ -1,0 +1,147 @@
+{
+  "topic": "museum_labels",
+  "persona": "Pixel Nova",
+  "sample_idx": 0,
+  "brief_angle": "When a museum deletes its wall labels, does the information actually disappear or just migrate \u2014 and does the deaf visitor end up in a more level room, or in a room whose default channel has quietly become speech (docents, tours, audio guides) with text demoted to atmosphere?",
+  "review_prompt_hash": "00d5617b770d1bd6bd089b313ef3403a2962220954c8f619631e9e44722bc27f",
+  "draft_hash": "77a121e1b1009975cd7ce8d0908037449231d5f17ead21ceb5917ea5084d12a1",
+  "review_temperature": null,
+  "executor_temperature": 0.2,
+  "fable_review": {
+    "model": "openrouter/claude-fable-5",
+    "verdict": "revise",
+    "notes": [
+      "Aphorism budget is blown \u2014 I count at least four verdict-shaped crescendos: 'Text demoted to atmosphere. Speech promoted to default.', the standalone paragraph 'My argument broke against a phone.', 'Cleveland built the screen as a room. Calder Gardens built the air as a room. Same century, opposite decisions.', and 'That is not decoration. That is the load-bearing wall.' Plus the closing pair. Keep exactly one \u2014 the ending's 'The absence is a docent, with his back to you, mid-sentence.' is the strongest and it's earned by the coda. Flatten the others into plain prose: the Cleveland/Calder contrast works fine as an ordinary sentence, and the phone-breaking-the-argument moment is better folded into the bench paragraph than left standing as its own applause line.",
+      "Cut the signpost 'Now the position I actually have to fight.' \u2014 the paragraph that follows (the room-as-political-layer objection, the docent's body turning away) is genuinely the strongest counter in the piece and it works without being introduced as a technique. Same treatment for 'There is a harder problem underneath this, and it is not mine.' before the Kim section: start straight at 'Christine Sun Kim was invited to work with Manchester's public captions' and let the reader discover it's a problem.",
+      "Protect two things in revision: the Cleveland reversal (a real past-tense discovery, before the midpoint, where the thesis broke against reported material \u2014 that's the spine of the piece) and the Kim example, which does something rarer than support the argument: a Deaf artist tearing off the neutral label forces the redefinition 'the label was never the point, what it carried was.' One small repair nearby: the 'eight-point-two-five-second attention span everyone keeps quoting' arrives from nowhere in the penultimate paragraph \u2014 either anchor who quotes it and where, or cut it; right now it reads as a stray fact wandering through the coda."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4617,
+      "completion_tokens": 2193,
+      "total_tokens": 6810,
+      "cost": 0.15582,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.15582,
+        "upstream_inference_prompt_cost": 0.04617,
+        "upstream_inference_completions_cost": 0.10965
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 683,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 34.25,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "673cf8ced0193766e05fa7119ee6ca9d54d95e29256f179161c1569734774ff4"
+  },
+  "opus_review": {
+    "model": "openrouter/claude-opus-4.8",
+    "verdict": "revise",
+    "notes": [
+      "APHORISM DENSITY: you are over budget on verdict-sentences and they are cannibalizing each other. 'Text demoted to atmosphere. Speech promoted to default.' (para 4); 'My argument broke against a phone.' (para 6); 'Same century, opposite decisions.' (para 7); 'That is the load-bearing wall.' (para 11). Keep ONE. 'My argument broke against a phone.' is the strongest because it also carries the discovery \u2014 flatten the other three into plain prose so it lands alone.",
+      "SIGNPOSTED MOVES: 'Now the position I actually have to fight.' (opening the docent-acoustics paragraph) announces the technique. Delete that sentence and let the objection start with 'Someone will tell me the room itself is the political layer.' The paragraph works fine standing on its own; the announcement just tells me a requirement is being satisfied.",
+      "MANAGING THE READER / QUOTED VOICE, and a fix that solves both: the Christine Sun Kim material is your strongest complication but there is no real quoted voice in the whole piece \u2014 the museum spokesperson line and Kim's captions are the only quotes, and Kim never speaks in her own past-tense words. More urgently, 'So the label was never the point. What the label carried was the point' (para after Kim) is you stepping in to explain the juxtaposition the Kim example already makes. Cut that explanatory sentence; the contrast between Kim tearing off the neutral label and Calder deleting both carries itself. And note for protection: the Kim thread is a genuine COMPLICATING EXAMPLE from inside your own value system \u2014 it currently stays unresolved, which is right. Do not tidy it."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4617,
+      "completion_tokens": 575,
+      "total_tokens": 5192,
+      "cost": 0.03746,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.03746,
+        "upstream_inference_prompt_cost": 0.023085,
+        "upstream_inference_completions_cost": 0.014375
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 10.14,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "6d999ab48a6a44e416b1b061809eb1fb48804e4f6bee4279071d433f9b61e177"
+  },
+  "execute_fable_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2617,
+      "completion_tokens": 1766,
+      "total_tokens": 4383,
+      "cost": 0.057235,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.057235,
+        "upstream_inference_prompt_cost": 0.013085,
+        "upstream_inference_completions_cost": 0.04415
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 15.75,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "6f00cd5ec4516a8b79c376fb7569cafceac593970f2f34eaba50df63c0c9454a"
+  },
+  "execute_opus_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2536,
+      "completion_tokens": 1809,
+      "total_tokens": 4345,
+      "cost": 0.057905,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.057905,
+        "upstream_inference_prompt_cost": 0.01268,
+        "upstream_inference_completions_cost": 0.045225
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 16.76,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "cc6c7f17db0eff9aa9e35b4aca11e207d6d3c623b7b3c2898f5ac2f04d1899fd"
+  },
+  "cost_usd": null
+}

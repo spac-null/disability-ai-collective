@@ -1,0 +1,147 @@
+{
+  "topic": "hiring_tool",
+  "persona": "Zen Circuit",
+  "sample_idx": 1,
+  "brief_angle": "When the algorithm flags an autistic candidate's low 'engagement' score for manual review, does the human reviewer overturn the machine's judgment or countersign it \u2014 is the flag functioning as a second chance or as a mark that primes the hand that touches it next?",
+  "review_prompt_hash": "b8d20e2990fba27ba1924955691fadedbf7f8e6e7d867b6c86417f8c905ff4af",
+  "draft_hash": "955d5977139a9b9ce90a0fa68d6efb7a20a0ebcc65f9927931103f7c7a9c5fd7",
+  "review_temperature": null,
+  "executor_temperature": 0.2,
+  "fable_review": {
+    "model": "openrouter/claude-fable-5",
+    "verdict": "revise",
+    "notes": [
+      "The piece is over its epigram budget by a wide margin \u2014 I count at least five verdict-sentences: 'So the flag is not the problem. The threshold is.', 'The engagement metric does its worst damage precisely where it looks most confident.', 'The panel was always the algorithm. The camera only made the scoring visible enough to audit.', 'Kindness has no clear data, which is why it is worse than the alternative.', and 'a perfect record of a hand that mostly countersigns is a perfect record of a rubber stamp.' Keep 'The panel was always the algorithm' pair, which is the piece's real turn, and flatten the rest into plain prose \u2014 five crescendos in this word count means none of them land.",
+      "Cut the signpost 'Here is the part I keep turning over.' at the top of the recruiter paragraph \u2014 the recruiter asking to be scored by the machine that flags her community is strong enough that announcing it as a turn only weakens it. Start the paragraph with her request and leave everything underneath intact, especially 'I resent how good it is,' which is the honest version of the same move.",
+      "In the HR director paragraph, cut 'She meant it as reassurance. Read against the spreadsheet it is a confession.' \u2014 her line 'We're not replacing human judgment. We're focusing it.' set against the audit figures clicks on its own, and right now the narrator tops the sharpest thing a source says twice in three sentences (the confession line, then the 'sharpened it, aimed it' flourish). Her quote is an insider confession and should be the loudest thing in that paragraph. Protect the Crossrail meeting-room scene as is \u2014 it's the one place the argument lives in a body and it earns the recruiter's whole position."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4539,
+      "completion_tokens": 2274,
+      "total_tokens": 6813,
+      "cost": 0.15909,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.15909,
+        "upstream_inference_prompt_cost": 0.04539,
+        "upstream_inference_completions_cost": 0.1137
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 389,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 34.41,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "4c1b19fb2617f32506183083875dec8370cf938890801491edaf8699d570295a"
+  },
+  "opus_review": {
+    "model": "openrouter/claude-opus-4.8",
+    "verdict": "revise",
+    "notes": [
+      "Signposted move \u2014 delete the announcement in the paragraph beginning 'Which is why I cannot fully hold the position...': 'Which is why I cannot fully hold the position that the right response to a rigged instrument is a complete, unedited record...' reads as the writer flagging the requirement being satisfied. The material underneath (archival instinct vs. a rubber-stamped record) is strong and should stay \u2014 just start it at 'The archival instinct says' and let the tension arrive without the framing sentence.",
+      "Aphorism density \u2014 you are over the one-verdict cap. Three epigram-shaped closers compete: 'The panel was always the algorithm. The camera only made the scoring visible enough to audit,' 'Kindness has no clear data, which is why it is worse than the alternative,' and 'The engagement metric does its worst damage precisely where it looks most confident.' Keep 'The panel was always the algorithm' \u2014 it's the sharpest and does structural work \u2014 and flatten the other two into plain prose.",
+      "Managing the reader \u2014 in the HR director paragraph, 'Read against the spreadsheet it is a confession' tells the reader the click happened. The quote 'We're focusing it' and the spreadsheet do the work themselves; cut that sentence and let 'She meant it as reassurance' sit directly against what follows. Protect the rest: the unresolved complication (documentation might be all that survives, and you can't yet say what's enough) genuinely stands, the recruiter's on-record request and the Crossrail scene are real, and the near-miss ending pays off the spreadsheet without restating the thesis."
+    ],
+    "status": "ok",
+    "usage": {
+      "prompt_tokens": 4539,
+      "completion_tokens": 532,
+      "total_tokens": 5071,
+      "cost": 0.035995,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.035995,
+        "upstream_inference_prompt_cost": 0.022695,
+        "upstream_inference_completions_cost": 0.0133
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 9.52,
+    "finish_reason": "stop",
+    "error": null,
+    "response_hash": "1522087c8c05fb73441bb636106d25c05f4c47f29d230762431760035dd3cd97"
+  },
+  "execute_fable_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2455,
+      "completion_tokens": 1711,
+      "total_tokens": 4166,
+      "cost": 0.05505,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.05505,
+        "upstream_inference_prompt_cost": 0.012275,
+        "upstream_inference_completions_cost": 0.042775
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 15.46,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "8cb9c823fd15b54ee9aed5e52cd424db9ebe3a2dff91a6287d902a9e229995a4"
+  },
+  "execute_opus_review_outcome": {
+    "executed": true,
+    "review_status": "ok",
+    "usage": {
+      "prompt_tokens": 2418,
+      "completion_tokens": 1699,
+      "total_tokens": 4117,
+      "cost": 0.054565,
+      "is_byok": false,
+      "prompt_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "audio_tokens": 0,
+        "video_tokens": 0
+      },
+      "cost_details": {
+        "upstream_inference_cost": 0.054565,
+        "upstream_inference_prompt_cost": 0.01209,
+        "upstream_inference_completions_cost": 0.042475
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0,
+        "image_tokens": 0,
+        "audio_tokens": 0
+      }
+    },
+    "latency_s": 15.47,
+    "finish_reason": "stop",
+    "error": null,
+    "output_hash": "9364f73916e5008a251b9545756c84408927ca2103335f2f45672da31260dace"
+  },
+  "cost_usd": null
+}
