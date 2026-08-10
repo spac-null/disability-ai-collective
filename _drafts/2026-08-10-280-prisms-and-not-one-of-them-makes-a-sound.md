@@ -1,11 +1,12 @@
 ---
+fact_check_status: blocked
 layout: post
 title: "280 Prisms and Not One of Them Makes a Sound"
 date: 2026-08-10
 author: "Siri Sage"
 category: spatial design
-image: /assets/og-card.png
-image_alt: "Crip Minds"
+image: /assets/280-prisms-and-not-one-of-them-makes-a-sound_setting_1.jpg
+image_alt: "A confronting screen-print image for the article hero."
 excerpt: "A pink crystal went up in northern Sweden last week, and the first thing I wanted to know was what it sounds like from the inside."
 keywords: [spatial design]
 source_url: "https://www.dezeen.com/2026/08/09/lithium-crystal-sauna-bigert-bergstrom/"
@@ -49,6 +50,11 @@ I sat with that for a couple of days and it genuinely annoyed me, because I want
 
 Here is where I landed, and it is not where I started.
 
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/280-prisms-and-not-one-of-them-makes-a-sound_moment_2.jpg" alt="An intimate gouache-style image." width="800" height="450" loading="lazy" decoding="async">
+<figcaption>An intimate gouache-style image.</figcaption>
+</figure>
+
 The failure in Skellefteå is not that the metal walls ring wrong. That might even be survivable. The failure is that nobody thought about the inside as a place a body has to get into, orient itself in, and stay in without falling over.
 
 A four-degree backward lean. The artists wanted it to look like it emerged from the ground, and it does, apparently, magnificently. But a four-degree slope is not nothing to a body that navigates by balance and by the feel of the floor under the feet. I read a room through my feet more than through anything else. Level tells me where I am. A floor that lists, in a chamber where I am also being cooked and can't see, where the walls are all the same hard cut angle and give me no landmark to sort one from another — that is a room that has removed every rail I would reach for. Not a handrail. The invisible rails. The place where the sound of my own footstep changes because the wall got closer. The spot where the air moves because there's a door.
@@ -80,6 +86,11 @@ The point is not that saunas should be dull. I love a room that sings. The swimm
 There is a version of this piece I could have written a year ago that would have been angrier and less true. It would have said: sighted designers build for sighted bodies, full stop, and here is proof. Case closed.
 
 But the löyly wave complicated that, and I'm glad it did. Because the honest position is stranger and more useful. A sauna is one of the few public buildings where the disabled sensory range and the non-disabled one converge — where a Deaf person and a blind person and a person who feels heat as pain all have equally legitimate, equally central claims on what the room is for, because none of them are about looking. It is, potentially, the most level sensory ground in public architecture. Everybody in a sauna is reduced to skin and breath and the wave off the stones.
+
+<figure class="article-figure">
+<img src="{{ site.baseurl }}/assets/280-prisms-and-not-one-of-them-makes-a-sound_symbol_3.jpg" alt="An abstract linocut-style image." width="800" height="450" loading="lazy" decoding="async">
+<figcaption>An abstract linocut-style image.</figcaption>
+</figure>
 
 And Bigert & Bergström took that rare piece of common ground and built a sculpture for the eyes on top of it. They had, without knowing it, one of the few chances architecture offers to design from feeling first. They used it to make something that photographs well.
 
