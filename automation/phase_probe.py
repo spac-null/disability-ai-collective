@@ -244,6 +244,76 @@ PROBE_TOPICS = [
 ]
 
 
+# Supplemental, one-off validation topics -- deliberately NOT merged into
+# PROBE_TOPICS. The canonical 3-topic/3-persona design (above) is what the
+# existing frozen baseline/whywewrite-v1 runs used, and any future phase that
+# calls run_phase()/freeze_briefs() without --topic must keep iterating
+# exactly those 3 topics, unchanged, so it stays comparable to that history.
+# This list exists so a specific persona not covered by PROBE_TOPICS (here:
+# Pixel Nova, added 2026-08-10 to validate WHY WE WRITE against a 4th
+# persona/territory -- information architecture/legibility/interfaces --
+# without regenerating or renaming anything under the existing 3 topics)
+# can be probed via --topic <key> without touching the default 3-topic path.
+SUPPLEMENTAL_TOPICS = [
+    {
+        "key": "signage",
+        "persona": "Pixel Nova",
+        "news_seed": {
+            "id": 4,
+            "url": "https://example.com/probe-fixture-signage",
+            "title": "Transit authority replaces station signage with adaptive digital displays",
+            "summary": (
+                "A regional transit authority is replacing fixed printed and tactile "
+                "signage across 40 stations with AI-driven digital displays that "
+                "default to spoken announcements, with text appearing as a delayed "
+                "secondary layer; tactile and Braille platform signage is being removed."
+            ),
+            "source_name": "regional transit trade press",
+            "source_tier": 2,
+            "pub_date": "2026-08-08",
+            "fetched_date": "2026-08-08",
+            "relevance_score": 0.75,
+            "themes": "technology,transit,design",
+            "disability_angle": (
+                "Removes tactile/Braille platform signage in favor of an audio-first "
+                "digital system; equivalent information depends on a companion "
+                "smartphone app not yet tested for reliability underground."
+            ),
+            "used": 0,
+            "used_date": None,
+            "angle_checked": 1,
+        },
+        "source_text": (
+            "Transit authority replaces station signage with adaptive digital displays\n\n"
+            "A regional transit authority has begun replacing fixed printed and tactile "
+            "wayfinding signage across 40 stations with a network of AI-driven digital "
+            "displays, the agency announced this week. The new system generates "
+            "platform directions, service alerts, and connection information in real "
+            "time, updating automatically when a train is delayed or a platform "
+            "changes.\n\n"
+            "'Static signs can't keep up with a live network,' the agency's head of "
+            "customer experience said in a statement, describing the rollout as 'a "
+            "more responsive, more inclusive wayfinding experience.' The displays "
+            "default to a spoken announcement layer synced to train arrivals, with "
+            "scrolling text appearing beneath it roughly two seconds later; agency "
+            "documentation describes the audio layer as the system's 'primary "
+            "channel' and the text as a 'supplementary readout.'\n\n"
+            "The rollout removes the raised tactile station-name plaques and Braille "
+            "directional strips that had been mounted at platform edges since a 2013 "
+            "accessibility retrofit; the agency says equivalent information will be "
+            "available through a companion smartphone app using Bluetooth beacons, "
+            "though the app has not yet been tested for reliability inside "
+            "underground platforms with limited signal. Disability advocacy groups "
+            "were not part of the working group that designed the new system; the "
+            "agency's five-person 'wayfinding modernization panel' consisted of "
+            "network engineers and a branding consultancy."
+        ),
+    },
+]
+
+ALL_TOPICS_BY_KEY = {t["key"]: t for t in PROBE_TOPICS + SUPPLEMENTAL_TOPICS}
+
+
 # Shape MUST match what discovery.py's real _pick_register/_pick_article_type
 # return -- (name, prompt) 2-tuples, weight already consumed internally by
 # random.choices and never part of the return value. These two constants used
@@ -272,16 +342,19 @@ def _brief_fixture_path(topic_key):
     return PROBE_FIXTURES_DIR / f"brief_{topic_key}.json"
 
 
-def freeze_briefs(force=False):
+def freeze_briefs(force=False, topic_key=None):
     """Make ONE real, live _fable_editorial_brief call per topic and freeze the
     result. Real network cost -- run this deliberately, not per sample. See
     the blueprint's Section T.3: phases that change brief-generation logic
     itself should re-freeze; every other phase reuses the same frozen brief
     so the writer-prompt comparison isn't confounded by a differently-worded
-    brief each time."""
+    brief each time. topic_key: restrict to one topic (PROBE_TOPICS or
+    SUPPLEMENTAL_TOPICS, e.g. 'signage') instead of the default 3 -- used for
+    one-off supplemental-persona validation without re-freezing the rest."""
     po = _import_orchestrator()
     PROBE_FIXTURES_DIR.mkdir(parents=True, exist_ok=True)
-    for topic in PROBE_TOPICS:
+    topics = [ALL_TOPICS_BY_KEY[topic_key]] if topic_key else PROBE_TOPICS
+    for topic in topics:
         path = _brief_fixture_path(topic["key"])
         if path.exists() and not force:
             print(f"  {topic['key']}: already frozen ({path.name}), skipping (--force to redo)")
@@ -565,7 +638,12 @@ def _generate_one_sample_record(po, topic, i, out_dir, retried=False):
     return sample_record
 
 
-def run_phase(phase_name, n_samples=3):
+def run_phase(phase_name, n_samples=3, topic_key=None):
+    """topic_key: restrict this run to one topic (e.g. 'signage' for the
+    Pixel Nova supplemental validation set) instead of the default 3-topic
+    PROBE_TOPICS. Omitting it preserves the exact behavior every existing
+    phase (baseline, whywewrite-v1, ...) already used -- do not default this
+    to anything but None."""
     po = _import_orchestrator()
     print("Running preflight before spending any real sample calls...")
     if not preflight(po):
@@ -584,7 +662,8 @@ def run_phase(phase_name, n_samples=3):
         "samples": [],
     }
 
-    for topic in PROBE_TOPICS:
+    topics = [ALL_TOPICS_BY_KEY[topic_key]] if topic_key else PROBE_TOPICS
+    for topic in topics:
         for i in range(n_samples):
             print(f"[{phase_name}] ", end="")
             run_log["samples"].append(_generate_one_sample_record(po, topic, i, out_dir))
@@ -613,7 +692,7 @@ def retry_failed(phase_name):
         return 1
 
     run_log = json.loads(metrics_path.read_text())
-    topics_by_key = {t["key"]: t for t in PROBE_TOPICS}
+    topics_by_key = ALL_TOPICS_BY_KEY
     to_retry = [(idx, s) for idx, s in enumerate(run_log["samples"]) if s["status"] != "ok"]
 
     if not to_retry:
@@ -672,16 +751,17 @@ def main():
     parser.add_argument("--score", metavar="PHASE_NAME", help="Print mechanical metrics for an already-run phase")
     parser.add_argument("--preflight", action="store_true", help="Standalone: check model dependency paths, don't run anything")
     parser.add_argument("--retry-failed", metavar="PHASE_NAME", help="Re-run only the non-ok samples in an existing phase's metrics.json, in place")
+    parser.add_argument("--topic", metavar="TOPIC_KEY", help="Restrict --run/--freeze-briefs to one topic (e.g. 'signage' for the Pixel Nova supplemental set) instead of the default 3-topic PROBE_TOPICS. Omit for the standard 3-topic behavior.")
     args = parser.parse_args()
 
     if args.freeze_briefs:
-        sys.exit(freeze_briefs(force=args.force))
+        sys.exit(freeze_briefs(force=args.force, topic_key=args.topic))
     elif args.preflight:
         sys.exit(0 if preflight() else 1)
     elif args.retry_failed:
         sys.exit(retry_failed(args.retry_failed))
     elif args.run:
-        sys.exit(run_phase(args.run, n_samples=args.samples))
+        sys.exit(run_phase(args.run, n_samples=args.samples, topic_key=args.topic))
     elif args.score:
         sys.exit(score_phase(args.score))
     else:
