@@ -84,6 +84,28 @@ PROBE_OUT_DIR = AUTOMATION_DIR / "probe_out"
 ROI_OUT_DIR = PROBE_OUT_DIR / "fable-review-roi-ab"
 CASES_PER_TOPIC = 2
 
+# Explicit, documented sampling choices -- both recorded in provenance.json
+# so neither is ever an accidental, unrecorded difference between branches.
+#
+# REVIEW_TEMPERATURE = None (provider default, left UNSET on purpose): real
+# production's _fable_editorial_review also leaves temperature unset (see
+# llm.py's own convention -- "production temperature stays unset/None").
+# Since this experiment asks "how would Opus perform in the REAL review
+# seat," matching the real seat's real sampling behavior is the more
+# representative choice, not an artificial pin. Applied identically to
+# both the Fable-forced and Opus-forced review calls -- "no override" is
+# itself the equivalence being preserved between the two.
+REVIEW_TEMPERATURE = None
+#
+# EXECUTOR_TEMPERATURE = 0.2 (deliberately pinned, low but not fully
+# greedy/degenerate): both executor branches run the SAME model (Opus) on
+# the SAME template, differing only in which notes they're asked to apply.
+# Any difference in final-output quality should trace to the notes'
+# content, not to independent random sampling noise on top of an already-
+# noisy generation task -- a low, stable temperature here is a deliberate
+# noise-reduction choice, not a match to any production default.
+EXECUTOR_TEMPERATURE = 0.2
+
 sys.path.insert(0, str(AUTOMATION_DIR))
 from snapshot_test import (  # noqa: E402
     _import_orchestrator, _patch_methods, _isolate_paths,
@@ -110,11 +132,16 @@ def _sha256(text):
 
 
 def _direct_call(url, api_key, system_prompt, user_prompt, model, max_tokens, timeout,
-                  reasoning_max_tokens=None):
+                  reasoning_max_tokens=None, temperature=None):
     """Standalone HTTP call, deliberately bypassing _call_editorial_model's
     fallback chain -- every call in this probe is FORCED to one model,
     never silently substituted. Returns (text, usage_dict, latency_s,
-    finish_reason, error_str_or_None)."""
+    finish_reason, error_str_or_None).
+
+    temperature=None means "provider default", not "unspecified by
+    accident" -- see REVIEW_TEMPERATURE/EXECUTOR_TEMPERATURE constants
+    below for the explicit, documented choice made for each call site in
+    this probe."""
     body = {
         "model": model,
         "messages": [
@@ -126,6 +153,8 @@ def _direct_call(url, api_key, system_prompt, user_prompt, model, max_tokens, ti
     }
     if reasoning_max_tokens:
         body["reasoning"] = {"max_tokens": reasoning_max_tokens}
+    if temperature is not None:
+        body["temperature"] = temperature
     payload = json.dumps(body).encode()
     req = urllib.request.Request(
         url.rstrip("/") + "/chat/completions",
@@ -260,15 +289,41 @@ def _review_prompts(article_body, agent_name, agent_perspective, brief_angle, re
     return system, user
 
 
-def _parse_review_json(raw):
-    if raw is None:
-        return "publish_as_is", []
+_VALID_VERDICTS = {"publish_as_is", "revise"}
+
+
+def _parse_review_json(raw, call_error=None):
+    """Returns (verdict, notes, status). status is one of:
+      'ok'             -- call succeeded, valid JSON, verdict is a real
+                          publish_as_is/revise value. verdict/notes reflect
+                          the model's actual judgment.
+      'api_error'      -- the HTTP call itself failed (timeout, network,
+                          non-2xx). verdict/notes are placeholders, NEVER
+                          "revise" or "publish_as_is" -- must not be
+                          counted in either bucket's intervention-rate
+                          statistics.
+      'parse_error'    -- call succeeded but the response wasn't valid
+                          JSON (or wasn't JSON after stripping code fences).
+      'invalid_verdict' -- valid JSON, but 'verdict' is missing or not one
+                          of {publish_as_is, revise} (e.g. truncated mid-
+                          value, or the model returned something else).
+    This exists because 0/39 publish_as_is is the exact finding this
+    experiment is testing -- silently defaulting any of the three failure
+    modes above into "publish_as_is" (the previous behavior) or "revise"
+    would contaminate that measurement with parser artifacts instead of
+    real model judgment. Same function, same logic, used for BOTH Fable
+    and Opus -- identical parser semantics for both sides of the A/B."""
+    if call_error is not None or raw is None:
+        return "call_failed", [], "api_error"
     try:
         cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
         result = json.loads(cleaned)
-        return result.get("verdict", "publish_as_is"), result.get("notes", [])[:3]
     except Exception:
-        return "publish_as_is", []
+        return "unparseable", [], "parse_error"
+    verdict = result.get("verdict")
+    if verdict not in _VALID_VERDICTS:
+        return verdict or "missing_verdict", result.get("notes", [])[:3], "invalid_verdict"
+    return verdict, result.get("notes", [])[:3], "ok"
 
 
 def _execution_prompts(article_body, editorial_notes, agent_name):
@@ -410,24 +465,119 @@ def _generate_raw_draft(po, topic, sample_idx):
             captured["brief_angle"], None)
 
 
-def _run_one_branch(case_dir, label, raw_draft, agent_name, verdict, notes,
+def _run_one_branch(case_dir, label, raw_draft, agent_name, verdict, notes, status,
                      cliproxy_url, cliproxy_key):
     """label: 'fable_review' or 'opus_review'. Writing review_<label> is
     done by the caller; this only handles the execution half + final
-    output, honoring publish_as_is as a legitimate no-op."""
-    if verdict == "revise" and notes:
+    output. Three distinct outcomes, never conflated:
+      status != 'ok'                    -> 'review_failed' (raw draft,
+        unchanged, NOT executed -- we have no trustworthy verdict to act
+        on; must not silently count as either editorial decision)
+      status == 'ok', verdict=='publish_as_is' -> 'publish_as_is_no_op'
+        (raw draft, unchanged -- a real, legitimate editorial decision)
+      status == 'ok', verdict=='revise' + notes -> executed via Opus"""
+    if status != "ok":
+        final_text, usage, lat, finish, err = raw_draft, {}, 0.0, "review_failed", None
+        executed = False
+    elif verdict == "revise" and notes:
         sys_e, user_e = _execution_prompts(raw_draft, notes, agent_name)
         final_text, usage, lat, finish, err = _direct_call(
             cliproxy_url, cliproxy_key, sys_e, user_e,
             model="openrouter/claude-opus-4.8", max_tokens=5000, timeout=180,
+            temperature=EXECUTOR_TEMPERATURE,
         )
         final_text = final_text or raw_draft
+        executed = True
     else:
         final_text, usage, lat, finish, err = raw_draft, {}, 0.0, "publish_as_is_no_op", None
+        executed = False
     (case_dir / f"final_from_{label}.md").write_text(final_text, encoding="utf-8")
-    return {"executed": verdict == "revise" and bool(notes), "usage": usage,
+    return {"executed": executed, "review_status": status, "usage": usage,
             "latency_s": round(lat, 2), "finish_reason": finish, "error": err,
             "output_hash": _sha256(final_text)}
+
+
+def _process_case(case_id, topic_key, sample_idx, raw_draft, agent_name, agent_perspective,
+                   brief_angle, cliproxy_url, cliproxy_key):
+    """Everything from 'have a raw draft' to 'provenance.json written' --
+    factored out of run() so the mocked offline test (--test-mock) can
+    drive this exact logic with a fake _direct_call, with no orchestrator
+    involved at all. Writes case files under ROI_OUT_DIR / case_id and
+    returns the provenance dict (also what gets persisted)."""
+    sys_r, user_r = _review_prompts(raw_draft, agent_name, agent_perspective, brief_angle, "wry")
+    review_prompt_hash = _sha256(sys_r + "\n---\n" + user_r)
+
+    print("  Fable review (forced)...", end=" ", flush=True)
+    # max_tokens=3200 matches _fable_editorial_review's own real call site
+    # (llm.py:733) -- both models get the SAME budget here, same as
+    # production; reasoning_max_tokens is Fable-only infrastructure (its
+    # mandatory extended thinking needs a sub-budget so it doesn't eat the
+    # whole response), not a sampling-setting asymmetry.
+    fable_raw, fable_usage, fable_lat, fable_finish, fable_err = _direct_call(
+        cliproxy_url, cliproxy_key, sys_r, user_r,
+        model="openrouter/claude-fable-5", max_tokens=3200, timeout=90,
+        reasoning_max_tokens=1024, temperature=REVIEW_TEMPERATURE,
+    )
+    f_verdict, f_notes, f_status = _parse_review_json(fable_raw, fable_err)
+    print(f"{f_verdict} [{f_status}] ({len(f_notes)} notes), {fable_lat:.1f}s, err={fable_err}")
+
+    print("  Opus review (forced)...", end=" ", flush=True)
+    opus_raw, opus_usage, opus_lat, opus_finish, opus_err = _direct_call(
+        cliproxy_url, cliproxy_key, sys_r, user_r,
+        model="openrouter/claude-opus-4.8", max_tokens=3200, timeout=60,
+        temperature=REVIEW_TEMPERATURE,
+    )
+    o_verdict, o_notes, o_status = _parse_review_json(opus_raw, opus_err)
+    print(f"{o_verdict} [{o_status}] ({len(o_notes)} notes), {opus_lat:.1f}s, err={opus_err}")
+
+    case_dir = ROI_OUT_DIR / case_id
+    case_dir.mkdir(parents=True, exist_ok=True)
+    (case_dir / "raw_draft.md").write_text(raw_draft, encoding="utf-8")
+    (case_dir / "review_fable.json").write_text(json.dumps({
+        "persona": agent_name, "topic": topic_key, "brief_angle": brief_angle,
+        "verdict": f_verdict, "notes": f_notes, "status": f_status, "raw_response": fable_raw,
+    }, indent=2), encoding="utf-8")
+    (case_dir / "review_opus.json").write_text(json.dumps({
+        "persona": agent_name, "topic": topic_key, "brief_angle": brief_angle,
+        "verdict": o_verdict, "notes": o_notes, "status": o_status, "raw_response": opus_raw,
+    }, indent=2), encoding="utf-8")
+
+    print(f"  -> executing Fable's review outcome...", end=" ", flush=True)
+    fable_exec = _run_one_branch(case_dir, "fable_review", raw_draft, agent_name,
+                                  f_verdict, f_notes, f_status, cliproxy_url, cliproxy_key)
+    print(f"executed={fable_exec['executed']}")
+
+    print(f"  -> executing Opus's review outcome...", end=" ", flush=True)
+    opus_exec = _run_one_branch(case_dir, "opus_review", raw_draft, agent_name,
+                                 o_verdict, o_notes, o_status, cliproxy_url, cliproxy_key)
+    print(f"executed={opus_exec['executed']}")
+
+    provenance = {
+        "topic": topic_key, "persona": agent_name, "sample_idx": sample_idx,
+        "brief_angle": brief_angle,
+        "review_prompt_hash": review_prompt_hash,
+        "draft_hash": _sha256(raw_draft),
+        "review_temperature": REVIEW_TEMPERATURE,
+        "executor_temperature": EXECUTOR_TEMPERATURE,
+        "fable_review": {
+            "model": "openrouter/claude-fable-5", "verdict": f_verdict, "notes": f_notes,
+            "status": f_status, "usage": fable_usage, "latency_s": round(fable_lat, 2),
+            "finish_reason": fable_finish, "error": fable_err,
+            "response_hash": _sha256(fable_raw),
+        },
+        "opus_review": {
+            "model": "openrouter/claude-opus-4.8", "verdict": o_verdict, "notes": o_notes,
+            "status": o_status, "usage": opus_usage, "latency_s": round(opus_lat, 2),
+            "finish_reason": opus_finish, "error": opus_err,
+            "response_hash": _sha256(opus_raw),
+        },
+        "execute_fable_review_outcome": fable_exec,
+        "execute_opus_review_outcome": opus_exec,
+        "cost_usd": None,  # deliberately not estimated -- no verified per-token
+                            # pricing for the Fable alias; do not fabricate one.
+    }
+    (case_dir / "provenance.json").write_text(json.dumps(provenance, indent=2), encoding="utf-8")
+    return provenance
 
 
 def run():
@@ -435,7 +585,6 @@ def run():
     from orchestrator.config import CLIPROXY_URL, CLIPROXY_KEY
 
     ROI_OUT_DIR.mkdir(parents=True, exist_ok=True)
-    prompt_hash = None  # filled in per-case since it includes the draft
     cases = []
 
     for topic in ROI_TOPICS:
@@ -448,79 +597,154 @@ def run():
             if gen_err:
                 print(f"  SKIP (generation failed): {gen_err}")
                 continue
-
-            sys_r, user_r = _review_prompts(raw_draft, agent_name, agent_perspective, brief_angle, "wry")
-            review_prompt_hash = _sha256(sys_r + "\n---\n" + user_r)
-
-            print("  Fable review (forced)...", end=" ", flush=True)
-            fable_raw, fable_usage, fable_lat, fable_finish, fable_err = _direct_call(
-                CLIPROXY_URL, CLIPROXY_KEY, sys_r, user_r,
-                model="openrouter/claude-fable-5", max_tokens=1600, timeout=90,
-                reasoning_max_tokens=1024,
-            )
-            f_verdict, f_notes = _parse_review_json(fable_raw)
-            print(f"{f_verdict} ({len(f_notes)} notes), {fable_lat:.1f}s, err={fable_err}")
-
-            print("  Opus review (forced)...", end=" ", flush=True)
-            opus_raw, opus_usage, opus_lat, opus_finish, opus_err = _direct_call(
-                CLIPROXY_URL, CLIPROXY_KEY, sys_r, user_r,
-                model="openrouter/claude-opus-4.8", max_tokens=1200, timeout=60,
-            )
-            o_verdict, o_notes = _parse_review_json(opus_raw)
-            print(f"{o_verdict} ({len(o_notes)} notes), {opus_lat:.1f}s, err={opus_err}")
-
-            case_dir = ROI_OUT_DIR / case_id
-            case_dir.mkdir(parents=True, exist_ok=True)
-            (case_dir / "raw_draft.md").write_text(raw_draft, encoding="utf-8")
-            (case_dir / "review_fable.json").write_text(json.dumps({
-                "persona": agent_name, "topic": topic["key"], "brief_angle": brief_angle,
-                "verdict": f_verdict, "notes": f_notes, "raw_response": fable_raw,
-            }, indent=2), encoding="utf-8")
-            (case_dir / "review_opus.json").write_text(json.dumps({
-                "persona": agent_name, "topic": topic["key"], "brief_angle": brief_angle,
-                "verdict": o_verdict, "notes": o_notes, "raw_response": opus_raw,
-            }, indent=2), encoding="utf-8")
-
-            print(f"  -> executing Fable's review outcome...", end=" ", flush=True)
-            fable_exec = _run_one_branch(case_dir, "fable_review", raw_draft, agent_name,
-                                          f_verdict, f_notes, CLIPROXY_URL, CLIPROXY_KEY)
-            print(f"executed={fable_exec['executed']}")
-
-            print(f"  -> executing Opus's review outcome...", end=" ", flush=True)
-            opus_exec = _run_one_branch(case_dir, "opus_review", raw_draft, agent_name,
-                                         o_verdict, o_notes, CLIPROXY_URL, CLIPROXY_KEY)
-            print(f"executed={opus_exec['executed']}")
-
-            (case_dir / "provenance.json").write_text(json.dumps({
-                "topic": topic["key"], "persona": agent_name, "sample_idx": sample_idx,
-                "brief_angle": brief_angle,
-                "review_prompt_hash": review_prompt_hash,
-                "draft_hash": _sha256(raw_draft),
-                "fable_review": {
-                    "model": "openrouter/claude-fable-5", "verdict": f_verdict, "notes": f_notes,
-                    "usage": fable_usage, "latency_s": round(fable_lat, 2),
-                    "finish_reason": fable_finish, "error": fable_err,
-                    "response_hash": _sha256(fable_raw),
-                },
-                "opus_review": {
-                    "model": "openrouter/claude-opus-4.8", "verdict": o_verdict, "notes": o_notes,
-                    "usage": opus_usage, "latency_s": round(opus_lat, 2),
-                    "finish_reason": opus_finish, "error": opus_err,
-                    "response_hash": _sha256(opus_raw),
-                },
-                "execute_fable_review_outcome": fable_exec,
-                "execute_opus_review_outcome": opus_exec,
-                "cost_usd": None,  # deliberately not estimated -- no verified per-token
-                                    # pricing for the Fable alias; do not fabricate one.
-            }, indent=2), encoding="utf-8")
+            _process_case(case_id, topic["key"], sample_idx, raw_draft, agent_name,
+                           agent_perspective, brief_angle, CLIPROXY_URL, CLIPROXY_KEY)
             cases.append(case_id)
 
     print(f"\n{len(cases)}/{len(ROI_TOPICS) * CASES_PER_TOPIC} cases collected -> {ROI_OUT_DIR}/")
-    fable_revise = sum(1 for c in cases if json.loads((ROI_OUT_DIR / c / "provenance.json").read_text())["fable_review"]["verdict"] == "revise")
-    opus_revise = sum(1 for c in cases if json.loads((ROI_OUT_DIR / c / "provenance.json").read_text())["opus_review"]["verdict"] == "revise")
-    print(f"Fable: revise {fable_revise}/{len(cases)}, publish_as_is {len(cases)-fable_revise}/{len(cases)}")
-    print(f"Opus:  revise {opus_revise}/{len(cases)}, publish_as_is {len(cases)-opus_revise}/{len(cases)}")
+    provs = [json.loads((ROI_OUT_DIR / c / "provenance.json").read_text()) for c in cases]
+    # Only status=="ok" verdicts count toward the intervention-rate tally --
+    # a parse/API failure must never silently inflate either bucket.
+    fable_ok = [p for p in provs if p["fable_review"]["status"] == "ok"]
+    opus_ok = [p for p in provs if p["opus_review"]["status"] == "ok"]
+    fable_revise = sum(1 for p in fable_ok if p["fable_review"]["verdict"] == "revise")
+    opus_revise = sum(1 for p in opus_ok if p["opus_review"]["verdict"] == "revise")
+    fable_failed = len(cases) - len(fable_ok)
+    opus_failed = len(cases) - len(opus_ok)
+    print(f"Fable: revise {fable_revise}/{len(fable_ok)} (of {len(cases)} total, "
+          f"{fable_failed} review_failed), publish_as_is {len(fable_ok)-fable_revise}/{len(fable_ok)}")
+    print(f"Opus:  revise {opus_revise}/{len(opus_ok)} (of {len(cases)} total, "
+          f"{opus_failed} review_failed), publish_as_is {len(opus_ok)-opus_revise}/{len(opus_ok)}")
     return 0
+
+
+def _test_mock():
+    """Offline branch test, zero network calls, zero real cost. Monkeypatches
+    the MODULE-LEVEL _direct_call (every call site in this file calls it as
+    a bare name, so reassigning the module global here is sufficient --
+    no class patching needed since this file never touches
+    ProductionOrchestrator for this test) to return controlled fake review
+    JSON keyed by which model was requested, then drives _process_case
+    directly with a canned raw draft -- no orchestrator, no real HTTP.
+
+    Verifies exactly what was asked for:
+      Scenario A: Fable -> publish_as_is, Opus -> revise (2 notes)
+        - final_from_fable_review.md is byte-identical to the raw draft
+        - the (mocked) Opus executor was called exactly once
+        - all 6 expected files exist with the right content
+      Scenario B: reversed (Fable -> revise 2 notes, Opus -> publish_as_is)
+        - the opposite pattern holds
+    No gate/review/image/social/DB path can fire either way -- _process_case
+    never imports or calls anything from production_orchestrator.py, so
+    there is nothing downstream to accidentally trigger.
+    """
+    import shutil
+    import tempfile
+
+    RAW_DRAFT = "This is a fixture raw draft.\n\nIt has two paragraphs and no real content."
+    call_log = []
+
+    def make_mock(fable_verdict, fable_notes, opus_verdict, opus_notes):
+        def mock_direct_call(url, api_key, system_prompt, user_prompt, model, max_tokens,
+                              timeout, reasoning_max_tokens=None, temperature=None):
+            call_log.append(model)
+            if "fable" in model:
+                payload = {"verdict": fable_verdict, "notes": fable_notes}
+            elif user_prompt.startswith("Persona:") and "EDITORIAL NOTES:" in user_prompt:
+                # This is an EXECUTOR call (Opus applying notes, from either
+                # branch) -- return a distinguishable "revised" body, not
+                # review JSON.
+                return f"[MOCK REVISED BODY]\n{RAW_DRAFT}", {"prompt_tokens": 10, "completion_tokens": 10}, 0.01, "stop", None
+            else:
+                payload = {"verdict": opus_verdict, "notes": opus_notes}
+            return json.dumps(payload), {"prompt_tokens": 10, "completion_tokens": 10}, 0.01, "stop", None
+        return mock_direct_call
+
+    global ROI_OUT_DIR, _direct_call
+    real_roi_out_dir = ROI_OUT_DIR
+    tmpdir = tempfile.mkdtemp(prefix="fable_roi_mock_")
+    ROI_OUT_DIR = Path(tmpdir)
+    orig_direct_call = _direct_call
+    failures = []
+
+    def check(label, cond):
+        status = "PASS" if cond else "FAIL"
+        print(f"  [{status}] {label}")
+        if not cond:
+            failures.append(label)
+
+    try:
+        print("=== Scenario A: Fable=publish_as_is, Opus=revise(2 notes) ===")
+        call_log.clear()
+        _direct_call = make_mock("publish_as_is", [], "revise", ["fix opening", "cut aphorism"])
+        prov_a = _process_case("case-mockA", "sauna", 0, RAW_DRAFT, "Siri Sage", "blind acoustic expert",
+                                "test angle", "http://mock", "mock-key")
+        case_dir_a = ROI_OUT_DIR / "case-mockA"
+        for fname in ["raw_draft.md", "review_fable.json", "review_opus.json",
+                      "final_from_fable_review.md", "final_from_opus_review.md", "provenance.json"]:
+            check(f"A: {fname} exists", (case_dir_a / fname).exists())
+        check("A: final_from_fable_review.md byte-identical to raw draft",
+              (case_dir_a / "final_from_fable_review.md").read_text() == RAW_DRAFT)
+        check("A: final_from_opus_review.md is the MOCK-revised body, not the raw draft",
+              (case_dir_a / "final_from_opus_review.md").read_text() != RAW_DRAFT)
+        check("A: fable branch NOT executed", prov_a["execute_fable_review_outcome"]["executed"] is False)
+        check("A: opus branch WAS executed", prov_a["execute_opus_review_outcome"]["executed"] is True)
+        # exactly 3 calls: fable review, opus review, one executor call (for the revise branch only)
+        check(f"A: exactly 3 _direct_call invocations (got {len(call_log)})", len(call_log) == 3)
+
+        print("=== Scenario B: Fable=revise(2 notes), Opus=publish_as_is ===")
+        call_log.clear()
+        _direct_call = make_mock("revise", ["fix opening", "cut aphorism"], "publish_as_is", [])
+        prov_b = _process_case("case-mockB", "sauna", 1, RAW_DRAFT, "Siri Sage", "blind acoustic expert",
+                                "test angle", "http://mock", "mock-key")
+        case_dir_b = ROI_OUT_DIR / "case-mockB"
+        for fname in ["raw_draft.md", "review_fable.json", "review_opus.json",
+                      "final_from_fable_review.md", "final_from_opus_review.md", "provenance.json"]:
+            check(f"B: {fname} exists", (case_dir_b / fname).exists())
+        check("B: final_from_opus_review.md byte-identical to raw draft",
+              (case_dir_b / "final_from_opus_review.md").read_text() == RAW_DRAFT)
+        check("B: final_from_fable_review.md is the MOCK-revised body, not the raw draft",
+              (case_dir_b / "final_from_fable_review.md").read_text() != RAW_DRAFT)
+        check("B: opus branch NOT executed", prov_b["execute_opus_review_outcome"]["executed"] is False)
+        check("B: fable branch WAS executed", prov_b["execute_fable_review_outcome"]["executed"] is True)
+        check(f"B: exactly 3 _direct_call invocations (got {len(call_log)})", len(call_log) == 3)
+
+        print("=== Scenario C: parser-failure semantics (Fable API error, Opus malformed JSON) ===")
+        call_log.clear()
+
+        def mock_failure(url, api_key, system_prompt, user_prompt, model, max_tokens,
+                          timeout, reasoning_max_tokens=None, temperature=None):
+            call_log.append(model)
+            if "fable" in model:
+                return None, {}, 0.01, None, "simulated timeout"
+            elif user_prompt.startswith("Persona:") and "EDITORIAL NOTES:" in user_prompt:
+                return "[MOCK REVISED BODY]", {}, 0.01, "stop", None
+            return "not valid json{{{", {}, 0.01, "stop", None
+        _direct_call = mock_failure
+        prov_c = _process_case("case-mockC", "sauna", 2, RAW_DRAFT, "Siri Sage", "blind acoustic expert",
+                                "test angle", "http://mock", "mock-key")
+        check("C: Fable status == api_error (not silently publish_as_is/revise)",
+              prov_c["fable_review"]["status"] == "api_error")
+        check("C: Opus status == parse_error (not silently publish_as_is/revise)",
+              prov_c["opus_review"]["status"] == "parse_error")
+        check("C: fable branch NOT executed on api_error",
+              prov_c["execute_fable_review_outcome"]["executed"] is False)
+        check("C: opus branch NOT executed on parse_error",
+              prov_c["execute_opus_review_outcome"]["executed"] is False)
+        check("C: fable final == raw draft unchanged (review_failed, not executed)",
+              (ROI_OUT_DIR / "case-mockC" / "final_from_fable_review.md").read_text() == RAW_DRAFT)
+
+    finally:
+        _direct_call = orig_direct_call
+        ROI_OUT_DIR = real_roi_out_dir
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+    print()
+    if failures:
+        print(f"MOCK TEST FAILED: {len(failures)} check(s) failed: {failures}")
+        return False
+    print("MOCK TEST PASSED: all checks green. Safe to --run the real 8 cases.")
+    return True
 
 
 def summary():
@@ -530,20 +754,25 @@ def summary():
     for case_dir in sorted(ROI_OUT_DIR.glob("case-*")):
         p = json.loads((case_dir / "provenance.json").read_text())
         print(f"{case_dir.name}: {p['persona']}/{p['topic']}  "
-              f"fable={p['fable_review']['verdict']}({len(p['fable_review']['notes'])}n)  "
-              f"opus={p['opus_review']['verdict']}({len(p['opus_review']['notes'])}n)")
+              f"fable={p['fable_review']['verdict']}[{p['fable_review']['status']}]"
+              f"({len(p['fable_review']['notes'])}n)  "
+              f"opus={p['opus_review']['verdict']}[{p['opus_review']['status']}]"
+              f"({len(p['opus_review']['notes'])}n)")
     return 0
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--preflight", action="store_true")
+    parser.add_argument("--test-mock", action="store_true", help="Offline branch test, zero network calls -- run before --run")
     parser.add_argument("--run", action="store_true")
     parser.add_argument("--summary", action="store_true")
     args = parser.parse_args()
 
     if args.preflight:
         sys.exit(0 if _preflight_check() else 1)
+    elif args.test_mock:
+        sys.exit(0 if _test_mock() else 1)
     elif args.run:
         sys.exit(run())
     elif args.summary:
