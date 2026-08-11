@@ -142,7 +142,7 @@ def _canary_brief(persona_name, register_name):
     }
 
 
-def _capture_writer_prompt(source_origin="fetched_article"):
+def _capture_writer_prompt(source_origin="fetched_article", persona_name="Maya Flux", register_name="wry"):
     """Runs the real pipeline (frozen inputs, stubbed side effects, same
     discipline as phase_probe.py) up to and including the writer's own LLM
     call, capturing the exact prompt string sent AND the evidence_packet
@@ -153,7 +153,13 @@ def _capture_writer_prompt(source_origin="fetched_article"):
     value -- "fetched_article" (default, a genuine fetch) or
     "fallback_summary" (the real-article fetch failed/was blocked and
     get_source_text fell back to returning the RSS summary instead, which
-    generate.py must NOT grant source-snapshot authority to)."""
+    generate.py must NOT grant source-snapshot authority to).
+
+    persona_name/register_name: which persona is writing. NOT mocked --
+    _load_persona_canon()/_load_persona_factual_context() are real,
+    unpatched methods that read the actual files on disk under
+    persona_canon/, so switching this to "Pixel Nova" exercises the real
+    pixel-nova.md/pixel-nova-factual.md content, not a fixture."""
     po = _import_orchestrator()
     captured = {}
 
@@ -166,7 +172,7 @@ def _capture_writer_prompt(source_origin="fetched_article"):
         # current_agent, evidence_packet=None) -- evidence_packet is
         # positional 5th arg in generate.py's real call.
         captured["evidence_packet"] = a[4] if len(a) > 4 else k.get("evidence_packet")
-        return _canary_brief("Maya Flux", "wry")
+        return _canary_brief(persona_name, register_name)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         orch = po.ProductionOrchestrator()
@@ -180,7 +186,7 @@ def _capture_writer_prompt(source_origin="fetched_article"):
                 f"---\ntitle: {title}\n---\n\n{body_line}\n", encoding="utf-8"
             )
 
-        orch.override_agent = "Maya Flux"
+        orch.override_agent = persona_name
         orch.force_run = True
 
         restore = _patch_methods(
@@ -193,8 +199,8 @@ def _capture_writer_prompt(source_origin="fetched_article"):
             get_source_text=lambda self, url, max_chars=3000, fallback_text=None: SOURCE_TEXT[:max_chars],
             get_source_origin=lambda self, url: source_origin,
             get_pool_links=lambda self, keywords: [],
-            _balance_agent=lambda self, preferred: "Maya Flux",
-            _pick_register=lambda self: ("wry", "Dry, observational. The joke is in the framing."),
+            _balance_agent=lambda self, preferred: persona_name,
+            _pick_register=lambda self: (register_name, "Watchful, precise."),
             _pick_length=lambda self: 1000,
             _pick_article_type=lambda self: ("essay", ""),
             _get_calendar_event_nudge=lambda self: "",
@@ -301,9 +307,64 @@ def test_fallback_summary_not_granted_source_authority():
     )
 
 
+def test_pixel_persona_factual_boundary():
+    """Regression for the writer-boundary bug found on re-audit (same day as
+    the provenance_mode fix): persona_factual_context was computed in
+    generate.py and handed to the reviewer and the raw-draft scanner, but
+    the writer's own "PERSONA FACTUAL CONTEXT BOUNDARY" instruction still
+    pointed at CANON ("your CANON above is the complete set of events...
+    you are authorized to claim") -- architecturally false once canon and
+    persona_factual_context became separate objects, and the curated
+    pixel-nova-factual.md text was never actually reaching this prompt at
+    all. Captures the REAL Pixel Nova writer prompt (not a fixture --
+    _load_persona_canon/_load_persona_factual_context are unpatched here,
+    so this reads the actual persona_canon/pixel-nova*.md files on disk)
+    and proves the new AUTHORIZED PERSONAL HISTORY block replaced it."""
+    prompt, packet, error = _capture_writer_prompt(persona_name="Pixel Nova", register_name="wary")
+    check("Pixel writer prompt was actually captured", prompt is not None and error is None)
+    if not prompt:
+        print(f"  (capture failed: {error})")
+        return
+
+    # POSITIVE: the real AUTHORIZED FACTUAL CONTEXT material reaches the writer.
+    check(
+        "writer prompt contains Pixel's authorized interpreter/time-zone material",
+        "another time zone" in prompt and "Gerrit Rietveld Academie" in prompt,
+    )
+    check(
+        "writer prompt contains the AUTHORIZED PERSONAL HISTORY boundary block",
+        "AUTHORIZED PERSONAL HISTORY" in prompt,
+    )
+    check(
+        "writer prompt still contains the real story source evidence (Priya Nathan/Dana Ruiz)",
+        "Priya Nathan" in prompt and "Dana Ruiz" in prompt,
+    )
+
+    # NEGATIVE: PENDING VERIFICATION content, and the notary anecdote it
+    # currently holds, must never cross into the prompt.
+    check("writer prompt does NOT contain the PENDING VERIFICATION heading", "PENDING VERIFICATION" not in prompt)
+    check("writer prompt does NOT contain the notary/legal-deed anecdote", "notary" not in prompt.lower())
+
+    # NEGATIVE: the old, architecturally-false boundary sentence must be gone.
+    check(
+        "writer prompt no longer claims CANON itself is the factual record",
+        "CANON above is the complete set of" not in prompt,
+    )
+
+    # POSITIVE: the editorial engine (canon) is still present and distinct
+    # from the factual-history block -- this is a two-block prompt, not a
+    # replacement of one for the other.
+    check(
+        "editorial CANON (perceptual engine / motive / reference library) is still present",
+        "Deafness supplies Pixel's instrument" in prompt and "terugeisen" in prompt
+        and "CONCEPTUAL REFERENCE LIBRARY" in prompt,
+    )
+
+
 if __name__ == "__main__":
     test_writer_prompt_boundaries()
     test_fallback_summary_not_granted_source_authority()
+    test_pixel_persona_factual_boundary()
 
     print()
     if FAILURES:

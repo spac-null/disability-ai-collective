@@ -893,6 +893,123 @@ not -- consistent with that scanner's documented limitations) -- its
 actual enforcement point is the reviewer's judgment-based first-person
 contract, which now correctly has no AUTHORIZED text to point to for it.
 
+## PHASE 1.6 CONTINUATION — FIFTH-SESSION CORRECTIONS: THE WRITER BOUNDARY BUG (2026-08-11, same day)
+
+The fourth-session pass fixed the reviewer/scanner side correctly but
+missed the single most important consumer: the writer itself. Found by
+the user re-reading the actual generate.py diff, not by this session's
+own tests -- writer_prompt_test.py existed and ran clean the whole time,
+because it never asserted on this specific text.
+
+**The bug, confirmed by direct trace before touching anything (per
+instruction):** `persona_factual_context` (built from
+`_load_persona_factual_context`) was passed to the reviewer
+(`_fable_editorial_review`) and the raw-draft scanner
+(`scan_draft_for_unsupported_specifics`, post-writer) -- but NEVER
+inserted into the writer's own prompt. The writer prompt's "PERSONA
+FACTUAL CONTEXT BOUNDARY" instruction still said "your CANON above is
+the complete set of events, testimony, and documented facts you are
+authorized to claim as your own lived history" -- referring to `_canon`
+(the full `_canon_block`, unrelated to the new split), not
+`persona_factual_context` at all. Confirmed by grep: every read of
+`persona_factual_context` in `generate.py` was at the raw-draft-guard
+call site (post-writer) and the reviewer call site -- zero reads before
+or during `prompt` construction. Result: reviewer/scanner correctly saw
+Pixel's real, curated biography; the writer that actually generates the
+first-person prose was told its factual authority was the ENTIRE
+editorial canon (engine, motive, texture, reference library,
+interpretations) -- almost exactly the mistake the whole two-layer split
+exists to prevent, just relocated one stage earlier.
+
+**Fix:** Replaced the boundary instruction with an explicit
+`--- AUTHORIZED PERSONAL HISTORY ---` / `--- END AUTHORIZED PERSONAL
+HISTORY ---` block built from `_persona_factual_text` itself (the same
+variable already computed for `persona_factual_context`, just never
+written into `prompt`). New instruction text: canon governs voice/
+engine/worldview and does NOT authorize autobiographical facts; the
+AUTHORIZED PERSONAL HISTORY block (phrased differently for
+`real_person_evidence` vs `editorial_canon` -- see rename below) is the
+ONLY persona material authorizing a first-person claim; the source
+material may additionally authorize article-specific facts;
+interpretation/argument/metaphor/present-tense perception remain always
+free to invent. For Pixel this block is ONLY her `-factual.md`'s
+AUTHORIZED section (PENDING VERIFICATION structurally cannot reach it,
+same extraction mechanism as before); for the three fictional personas
+it's their own canon under `editorial_canon`, per the fourth-session
+fix -- the conceptual separation is now visible to the writer for every
+persona, not just enforced downstream of it.
+
+**New regression, not just a unit test of the loader** (per explicit
+instruction): added `test_pixel_persona_factual_boundary()` to
+`writer_prompt_test.py`, capturing the REAL Pixel Nova writer prompt
+(persona_canon/pixel-nova*.md read from disk, unpatched -- only
+`_capture_writer_prompt` gained a `persona_name`/`register_name`
+parameter, defaulting to the existing Maya Flux/wry fixture so every
+prior assertion is unchanged). Proves: authorized interpreter/time-zone
+material present ("another time zone", "Gerrit Rietveld Academie");
+`AUTHORIZED PERSONAL HISTORY` heading present; real story source evidence
+still present (Priya Nathan/Dana Ruiz); `PENDING VERIFICATION` heading
+absent; "notary" absent (case-insensitive) anywhere in the prompt; the
+old "CANON above is the complete set of" sentence gone; and the editorial
+canon (perceptual engine/motive/reference library) is still present and
+distinct from the factual block, not replaced by it. All 8 new checks
+pass; all prior `writer_prompt_test.py` checks unaffected (unchanged
+Maya Flux default path).
+
+**Persona-factual provenance now persists, mirroring evidence_lineage but
+kept SEPARATE from it (deliberately -- see
+`grounding.build_persona_factual_lineage`'s docstring):** added
+`grounding.persona_factual_lineage_entry()`/`build_persona_factual_lineage()`
+(new, 5 unit tests) and wired both a writer entry (real containment check:
+`_persona_factual_text in prompt`, computed right where the confirmed
+containment bug above would have been caught immediately had this existed
+sooner) and a reviewer entry (`declared_shared_context`, same-object
+reasoning as evidence_lineage's reviewer/executor entries) into
+`fable_brief["persona_factual_lineage"]`, persisted alongside
+`fable_brief["evidence_lineage"]` via the same `_persist_article_plan`
+call -- no new persistence pathway needed. No "planner" slot (persona
+factual context is loaded once per run, not produced by a planner call).
+**Executor slot is always `None`, explicitly, not a bug**: the executor
+stages (`_opus_targeted_revision`/`_fable_polish_rewrite`) do not
+currently receive `persona_factual_context` at all -- a real, separate
+gap (an executor revision could reintroduce or preserve an unauthorized
+first-person claim that `find_new_unsupported_specifics` wouldn't catch,
+since that guard only checks against `evidence_packet`'s `source_text`)
+that this session did NOT fix, per the instruction to close only the two
+named gaps. Flagging it here rather than silently wiring it in.
+
+**Renamed `PERSONA_PROVENANCE_HUMAN_EVIDENCE`/`"human_evidence"` to
+`PERSONA_PROVENANCE_REAL_PERSON_EVIDENCE`/`"real_person_evidence"`**
+throughout (`grounding.py`, `llm.py`, `generate.py`, comments): the old
+name reads as "human-reviewed evidence," which overstates
+`pixel-nova-factual.md`'s actual status (model-drafted, not yet
+line-by-line approved by Jascha -- correctly stated in prose since the
+fourth-session pass, but the machine-readable constant itself still
+implied more than the prose claimed). Historical entries above (fourth-
+session section) still say `human_evidence` -- left as-is; they're
+accurate logs of what the code said AT THAT TIME, not something to
+retroactively edit.
+
+**Explicitly documented, not silently assumed equal:** `real_person_evidence`
+and `editorial_canon` are different provenance CLASSES, not two labels for
+equally-strong verification -- `real_person_evidence` is a strict,
+evidence-audit-curated factual corpus; `editorial_canon` is an authorized
+fictional world where the deterministic scanner will have more false
+negatives (canon prose contains names/references/interpretation a
+strict factual file wouldn't), and its actual safety property rests on
+reviewer semantic judgment, not substring matching. Both the writer-
+boundary instruction text and this doc now say so explicitly rather than
+treating both modes as "verified" without qualification.
+
+**Verification:** full suite re-run after all of the above --
+`grounding_test.py` (new persona_factual_lineage tests included),
+`executor_guard_test.py`, `writer_prompt_test.py` (new Pixel boundary
+test included), `snapshot_test.py --check` -- all pass, zero drift (this
+correction touches writer-prompt construction downstream of
+`_fable_editorial_brief`'s own prompt, which is the only thing
+snapshot_test.py's fixtures cover, so no re-recording was needed this
+time).
+
 ## FROZEN DECISIONS (do not reopen by drift)
 - WHY WE WRITE (commit `01339ce`) is the shared publication doctrine.
   KEEP, scope-corrected: entitled to claim "improved or preserved the four

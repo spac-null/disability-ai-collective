@@ -27,6 +27,7 @@ from .config import _INDEFENSIBLE_PROMPTS, _REGISTERS, _THEME_CLUSTERS
 from .grounding import (
     build_evidence_packet, writer_prompt_block, build_evidence_lineage, evidence_lineage_entry,
     build_persona_factual_context, scan_draft_for_unsupported_specifics,
+    persona_factual_lineage_entry, build_persona_factual_lineage,
 )
 
 # Matches get_source_text's own default max_chars (discovery.py) -- both
@@ -695,16 +696,56 @@ class GenerateMixin:
                f"but it may complicate your argument if you let it): {self._extract_persona_wound(agent_name)}\n\n"
                if self._extract_persona_wound(agent_name) else "")
             + (
-                "PERSONA FACTUAL CONTEXT BOUNDARY (Phase 1.6): your CANON above is the complete set of "
-                "events, testimony, and documented facts you are authorized to claim as your own lived "
-                "history. Never invent a new event you personally witnessed, attended, were told, signed, "
-                "heard, saw, remembered, or experienced — a first-person factual episode ('I sat through...', "
-                "'I once watched...', 'I was told...') is only allowed if it is already in your canon above "
-                "or the source material, not merely plausible for someone like you. Never invent documentary "
-                "wording — a quotation from a person, a deed, a notice, a form, a letter — that isn't already "
-                "in your canon or the source. This does not restrict your own present-tense thinking: "
-                "'I think', 'I notice', 'what bothers me is', 'I keep circling back to' are argument and "
-                "perception, not biography, and are always yours to write freely.\n\n"
+                # Corrected same day (fifth-session pass): this block used to say
+                # "your CANON above is the complete set of events/testimony/documented
+                # facts you are authorized to claim" -- architecturally false the
+                # moment persona_factual_context became a separate, curated object.
+                # Canon (engine/motive/texture/reference library/worldview) is not
+                # factual authority; persona_factual_context is. Worse: the curated
+                # text was never even reaching this prompt -- it was built
+                # (_persona_factual_text/_persona_provenance_mode, above) and handed
+                # to the reviewer and the raw-draft scanner, but not to the writer
+                # itself, so the writer had no access to its OWN authorized history
+                # and was pointed at canon instead. Found live by re-audit, not by
+                # this session's own tests (writer_prompt_test.py never asserted on
+                # this text either -- see the new assertions added alongside this
+                # fix). AUTHORIZED PERSONAL HISTORY below is now the actual
+                # persona_factual_context text (Pixel's strict evidence-only file,
+                # or a fictional persona's own canon under editorial_canon) --
+                # PENDING VERIFICATION content can never appear here, because
+                # _load_persona_factual_context already excluded it before this
+                # string was built.
+                (
+                    f"--- AUTHORIZED PERSONAL HISTORY ---\n{_persona_factual_text}\n"
+                    f"--- END AUTHORIZED PERSONAL HISTORY ---\n\n"
+                    f"Your editorial CANON above tells you how to think and write — perceptual engine, "
+                    f"motive, texture, reference library, worldview. It does NOT authorize autobiographical "
+                    f"facts. "
+                    + (
+                        "The AUTHORIZED PERSONAL HISTORY block above is drafted from a real evidence audit "
+                        "of your own documented biography — not yet fully approved line-by-line, so treat it "
+                        "as strict fact, not as license to embellish beyond it. "
+                        if _persona_provenance_mode == "real_person_evidence" else
+                        "The AUTHORIZED PERSONAL HISTORY block above is your own editorially authorized "
+                        "fictional history — established once, as the character, not invented fresh for "
+                        "this piece. "
+                    )
+                    + "It is the ONLY persona material you may treat as events that actually happened to "
+                    "you. The supplied source material above may additionally authorize facts specific to "
+                    "this article. You may freely create interpretation, argument, metaphor, and "
+                    "present-tense perception ('I think', 'I notice', 'what bothers me is', 'I keep "
+                    "circling back to'). You may NOT invent memories, meetings, people, quotations, dates, "
+                    "trips, or witnessed events beyond what AUTHORIZED PERSONAL HISTORY or the source "
+                    "material actually gives you — not because it's implausible for someone like you, but "
+                    "because it isn't there.\n\n"
+                    if _persona_factual_text else
+                    "NO AUTHORIZED PERSONAL HISTORY was supplied for you this run. Your editorial CANON "
+                    "above governs how you think and write, but it does NOT authorize any first-person "
+                    "factual claim. Do not write a sentence claiming you personally witnessed, attended, "
+                    "signed, were told, or experienced anything beyond what the supplied source material "
+                    "establishes. Present-tense thinking, interpretation, and argument remain entirely "
+                    "yours.\n\n"
+                )
             )
             # Phase 1.6 continuation (found across two rounds of review):
             # opening_scene, seed_sentence, angle, and cross_cite are ALL
@@ -765,6 +806,23 @@ class GenerateMixin:
                 "present_in_actual_prompt", "declared_shared_packet",
             )
             if source_text and source_text in prompt else None
+        )
+        # persona_factual_lineage's "writer" entry -- same containment-check
+        # discipline as _writer_evidence_entry above, applied to the
+        # AUTHORIZED PERSONAL HISTORY block instead of the SOURCE MATERIAL
+        # block. Added same day the writer-boundary bug was found: the
+        # curated persona_factual_context text was computed but never
+        # actually reaching the writer prompt at all (see the AUTHORIZED
+        # PERSONAL HISTORY block above) -- this containment check is what
+        # would have caught that bug immediately, had it existed at the
+        # time, instead of surfacing only on a human re-audit.
+        _writer_persona_factual_entry = (
+            persona_factual_lineage_entry(
+                agent_name, persona_factual_context.get("canon_hash"),
+                persona_factual_context.get("persona_factual_context_schema_version"),
+                _persona_provenance_mode, "present_in_actual_prompt",
+            )
+            if _persona_factual_text and _persona_factual_text in prompt else None
         )
 
         try:
@@ -954,6 +1012,24 @@ class GenerateMixin:
                 writer=_writer_evidence_entry,
                 reviewer=_declared_entry if _reviewer_ran else None,
                 executor=_declared_entry if _executor_ran else None,
+            )
+            # persona_factual_lineage: kept SEPARATE from evidence_lineage above
+            # on purpose (grounding.build_persona_factual_lineage's docstring) --
+            # one answers "what source grounded this article," the other "what
+            # authorized this persona to claim this happened to them." No
+            # "planner" slot: persona factual context is loaded once per run,
+            # not produced by a planner call. executor is always None today --
+            # the executor stages don't receive persona_factual_context yet
+            # (a real, separate, flagged gap, not fixed here).
+            _declared_persona_factual_entry = persona_factual_lineage_entry(
+                agent_name, persona_factual_context.get("canon_hash"),
+                persona_factual_context.get("persona_factual_context_schema_version"),
+                _persona_provenance_mode, "declared_shared_context",
+            )
+            fable_brief["persona_factual_lineage"] = build_persona_factual_lineage(
+                writer=_writer_persona_factual_entry,
+                reviewer=_declared_persona_factual_entry if _reviewer_ran else None,
+                executor=None,
             )
         self._persist_article_plan(slug, agent_name, fable_brief)
 

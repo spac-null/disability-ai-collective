@@ -1066,7 +1066,7 @@ PERSONA_FACTUAL_CONTEXT_SCHEMA_VERSION = 2
 # those were never invented DURING article generation, they were
 # authored once, deliberately, as the character. Erasing that with a
 # blanket "you have no life" instruction was never the intent.
-PERSONA_PROVENANCE_HUMAN_EVIDENCE = "human_evidence"   # Pixel Nova: real biography, evidence-audit backed
+PERSONA_PROVENANCE_REAL_PERSON_EVIDENCE = "real_person_evidence"   # Pixel Nova: real biography, evidence-audit backed
 PERSONA_PROVENANCE_EDITORIAL_CANON = "editorial_canon"  # fictional personas: their own authored canon
 
 
@@ -1077,7 +1077,7 @@ def build_persona_factual_context(canon_text, persona_name=None, provenance_mode
     their own history -- what that text actually IS depends on
     provenance_mode and is the caller's (llm.py's) responsibility, not
     this function's:
-      - PERSONA_PROVENANCE_HUMAN_EVIDENCE: ONLY a curated, evidence-audit-
+      - PERSONA_PROVENANCE_REAL_PERSON_EVIDENCE: ONLY a curated, evidence-audit-
         backed factual file (persona_canon/<slug>-factual.md's "##
         AUTHORIZED FACTUAL CONTEXT" section) -- used for Pixel Nova, the
         one persona built from a real person's documented biography, where
@@ -1099,7 +1099,7 @@ def build_persona_factual_context(canon_text, persona_name=None, provenance_mode
 
     Deliberately NOT source-checked, NOT validated against anything --
     the text handed in is already either curated-from-evidence
-    (human_evidence) or authored-as-fiction (editorial_canon); this
+    (real_person_evidence) or authored-as-fiction (editorial_canon); this
     function only hashes/wraps it and records which kind it is. What this
     DOES provide is the same discipline build_evidence_packet gives story
     facts: an identity (hash) a later stage can check a specific claim
@@ -1126,6 +1126,76 @@ def build_persona_factual_context(canon_text, persona_name=None, provenance_mode
         "canon_length_chars": len(canon_text),
         "provenance_mode": provenance_mode,
         "persona_factual_context_schema_version": PERSONA_FACTUAL_CONTEXT_SCHEMA_VERSION,
+    }
+
+
+# Verification vocabulary for persona_factual_lineage_entry -- deliberately
+# separate from _LINEAGE_VERIFICATION_STRENGTHS (story evidence_lineage):
+# persona factual context has no "planner" stage and no packet-truncation
+# concept, so reusing the story vocabulary would imply guarantees this
+# lineage doesn't make.
+_PERSONA_FACTUAL_VERIFICATION_STRENGTHS = {
+    "present_in_actual_prompt",   # writer: real containment check -- the actual text is a substring of the actual prompt
+    "declared_shared_context",    # reviewer/executor: same persona_factual_context object reference, not independently re-derived
+}
+
+
+def persona_factual_lineage_entry(persona_name, context_hash, schema_version, provenance_mode, verification):
+    """Build one stage's entry for build_persona_factual_lineage. Returns
+    None if context_hash is None (this persona had no factual context to
+    report this run -- e.g. a persona with neither a -factual.md nor a
+    canon file, which is the current fail-closed default, not an error).
+
+    Added same day as the two-layer canon/factual-context split (found on
+    re-audit: the split existed for the reviewer and the raw-draft
+    scanner, but nothing recorded WHICH biography version authorized a
+    published article's first-person claims -- six months later, an
+    article saying "at Rietveld I sometimes felt a time zone behind the
+    conversation" would be traceable to a source evidence packet via
+    evidence_lineage, but not traceable to which revision of Pixel's
+    factual file backed the biographical claim itself). Kept as its own
+    function/lineage, not folded into evidence_lineage_entry: this answers
+    "what authorized this persona to claim this happened to them," a
+    different question from "what source grounded this article's story
+    facts" -- conflating the two would make it impossible to tell, from
+    published provenance, which kind of fact a first-person claim traces
+    to."""
+    if context_hash is None:
+        return None
+    if verification not in _PERSONA_FACTUAL_VERIFICATION_STRENGTHS:
+        raise ValueError(f"unknown persona factual verification strength: {verification!r}")
+    return {
+        "persona_name": persona_name,
+        "context_hash": context_hash,
+        "schema_version": schema_version,
+        "provenance_mode": provenance_mode,
+        "verification": verification,
+    }
+
+
+def build_persona_factual_lineage(writer, reviewer, executor=None):
+    """Each of writer/reviewer/executor is either None (that stage did not
+    run, or had no persona factual context to report) or an entry from
+    persona_factual_lineage_entry(). No "planner" slot -- persona factual
+    context is loaded once per run (_load_persona_factual_context), not
+    produced by a planner call the way evidence_packet's brief is.
+
+    executor defaults to None and stays None in every current caller: the
+    executor stages (_opus_targeted_revision/_fable_polish_rewrite) do not
+    currently receive persona_factual_context at all -- only
+    evidence_packet. That is a real, separate gap (an executor revision
+    could reintroduce or preserve an unauthorized first-person claim that
+    find_new_unsupported_specifics wouldn't catch, since that guard only
+    checks against evidence_packet's source_text) -- NOT fixed here,
+    flagged in .claude/current-work.md rather than silently wired in as
+    part of this correction.
+
+    Returns a plain dict, always with all three keys present (each an
+    entry dict or None)."""
+    return {
+        "writer": writer,
+        "reviewer": reviewer,
+        "executor": executor,
     }
 
 

@@ -827,6 +827,54 @@ def test_build_evidence_lineage():
     )
 
 
+def test_persona_factual_lineage_entry():
+    check(
+        "entry with context_hash=None -> None (nothing to report)",
+        g.persona_factual_lineage_entry("Pixel Nova", None, 2, "real_person_evidence", "present_in_actual_prompt") is None,
+    )
+    entry = g.persona_factual_lineage_entry("Pixel Nova", "ch1", 2, "real_person_evidence", "present_in_actual_prompt")
+    check(
+        "entry carries persona_name/context_hash/schema_version/provenance_mode/verification",
+        entry == {
+            "persona_name": "Pixel Nova", "context_hash": "ch1", "schema_version": 2,
+            "provenance_mode": "real_person_evidence", "verification": "present_in_actual_prompt",
+        },
+    )
+    try:
+        g.persona_factual_lineage_entry("Pixel Nova", "ch1", 2, "real_person_evidence", "trust_me_bro")
+        check("unrecognized verification string raises", False)
+    except ValueError:
+        check("unrecognized verification string raises", True)
+
+
+def test_build_persona_factual_lineage():
+    writer = g.persona_factual_lineage_entry("Pixel Nova", "ch1", 2, "real_person_evidence", "present_in_actual_prompt")
+    reviewer = g.persona_factual_lineage_entry("Pixel Nova", "ch1", 2, "real_person_evidence", "declared_shared_context")
+
+    lineage = g.build_persona_factual_lineage(writer, reviewer)
+    check("lineage has all 3 keys (writer/reviewer/executor)", set(lineage.keys()) == {"writer", "reviewer", "executor"})
+    check("executor defaults to None (no current caller wires persona_factual_context into the executor)", lineage["executor"] is None)
+    check(
+        "writer/reviewer entries preserved, distinct verification strengths per stage",
+        lineage["writer"]["verification"] == "present_in_actual_prompt"
+        and lineage["reviewer"]["verification"] == "declared_shared_context",
+    )
+
+    # REGRESSION: two personas' entries must not be silently conflatable --
+    # a fictional persona's editorial_canon context and Pixel's
+    # real_person_evidence context must remain distinguishable per stage,
+    # not collapsed into one shared "provenance" the way source_hash alone
+    # once collapsed evidence identity (same lesson, different lineage).
+    maya_writer = g.persona_factual_lineage_entry("Maya Flux", "ch2", 2, "editorial_canon", "present_in_actual_prompt")
+    check(
+        "different personas' provenance_mode is preserved per-entry, not overwritten",
+        writer["provenance_mode"] == "real_person_evidence" and maya_writer["provenance_mode"] == "editorial_canon",
+    )
+
+    empty = g.build_persona_factual_lineage(None, None)
+    check("nothing supplied -> writer/reviewer are None, executor still None", all(v is None for v in empty.values()))
+
+
 if __name__ == "__main__":
     test_build_evidence_packet()
     test_not_found()
@@ -844,6 +892,8 @@ if __name__ == "__main__":
     test_scan_draft_for_unsupported_specifics()
     test_evidence_lineage_entry()
     test_build_evidence_lineage()
+    test_persona_factual_lineage_entry()
+    test_build_persona_factual_lineage()
 
     print()
     if FAILURES:

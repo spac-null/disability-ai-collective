@@ -487,7 +487,7 @@ class LLMMixin:
 
         Two provenance modes, NOT interchangeable:
 
-        - grounding.PERSONA_PROVENANCE_HUMAN_EVIDENCE: for Pixel Nova only
+        - grounding.PERSONA_PROVENANCE_REAL_PERSON_EVIDENCE: for Pixel Nova only
           right now. Reads persona_canon/<slug>-factual.md -- a file
           separate from the canon .md, model-drafted from a real evidence
           audit of Jascha's documented biography and intended for his
@@ -540,7 +540,7 @@ class LLMMixin:
             return (canon, _grounding.PERSONA_PROVENANCE_EDITORIAL_CANON) if canon else ("", None)
         m = _re.search(r"##\s+AUTHORIZED FACTUAL CONTEXT\s*\n(.*?)(?=\n##\s+PENDING VERIFICATION|\Z)", text, _re.DOTALL)
         authorized = m.group(1).strip() if m else ""
-        return (authorized, _grounding.PERSONA_PROVENANCE_HUMAN_EVIDENCE) if authorized else ("", None)
+        return (authorized, _grounding.PERSONA_PROVENANCE_REAL_PERSON_EVIDENCE) if authorized else ("", None)
 
     def _load_persona_state(self, agent_name):
         """Load mutable state JSON for a persona. Returns dict with defaults if missing."""
@@ -924,13 +924,13 @@ class LLMMixin:
             "REMOVAL, not to polish its prose or ask the writer to develop it further -- an invented "
             "personal history is a worse problem than a weak sentence.\n"
             + (
-                # human_evidence (Pixel Nova): the supplied text is a curated,
+                # real_person_evidence (Pixel Nova): the supplied text is a curated,
                 # evidence-audit-backed factual file -- strict, nothing beyond
                 # it (or the source) legitimizes a first-person claim.
                 f"PERSONA FACTUAL CONTEXT -- human-evidence-verified (the ONLY material that can "
                 f"authorize a first-person experience claim, alongside the source material above):\n"
                 f"---\n{_persona_context_text}\n---\n\n"
-                if _persona_context_text and _persona_provenance_mode == "human_evidence" else
+                if _persona_context_text and _persona_provenance_mode == "real_person_evidence" else
                 # editorial_canon (Maya Flux/Siri Sage/Zen Circuit): the
                 # supplied text is the persona's OWN authored canon -- their
                 # wound/history is real for THEM, established once as the
