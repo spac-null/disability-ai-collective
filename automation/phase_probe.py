@@ -424,7 +424,7 @@ def freeze_briefs(force=False, topic_key=None):
             f"a real production run's get_source_text cap allows. Shorten the fixture or update "
             f"PROBE_SOURCE_MAX_CHARS deliberately."
         )
-        evidence_packet = build_evidence_packet(topic["source_text"], source_max_chars=PROBE_SOURCE_MAX_CHARS)
+        evidence_packet = build_evidence_packet(topic["source_text"], source_max_chars=PROBE_SOURCE_MAX_CHARS, source_origin="fixture")
         brief = orch._fable_editorial_brief(
             ns["title"], ns["summary"], ns["disability_angle"], topic["persona"], evidence_packet,
         )
@@ -450,8 +450,26 @@ def freeze_briefs(force=False, topic_key=None):
 # explicitly, not rely on this default.
 _ORDINARY_PROBE_GROUNDING_STATUSES = {"validated", "validated_with_rejections"}
 
+# Default for an ORDINARY positive probe. NAMING (found on review): this is
+# an ANY-OF-these-fields requirement, NOT an all-of-these-fields requirement
+# -- at least ONE of the two fields listed must have evidence_candidate.
+# status == "found" for the check to pass; the other is allowed to be
+# legitimately not_found. grounding_status alone cannot distinguish "a real
+# witness/quote survived validation" from "the source legitimately had none
+# and the planner correctly said not_found" -- both are "validated". Pass ()
+# or None to skip this check entirely (a negative-control probe WANTS
+# not_found on both and should opt out explicitly, not rely on this default
+# silently letting it through). If a specific probe needs BOTH fields
+# found, pass a stricter check at the call site -- this parameter only ever
+# expresses "any of."
+_ORDINARY_PROBE_ANY_OF_FOUND_FIELDS = ("resisting_example", "correction_moment")
 
-def _load_frozen_brief(topic_key, require_grounding_status=_ORDINARY_PROBE_GROUNDING_STATUSES):
+
+def _load_frozen_brief(
+    topic_key,
+    require_grounding_status=_ORDINARY_PROBE_GROUNDING_STATUSES,
+    require_any_found_fields=_ORDINARY_PROBE_ANY_OF_FOUND_FIELDS,
+):
     """Legacy frozen-brief policy (.claude/phase-1.6-source-grounding.md's
     'Legacy frozen-brief policy' section): the 4 original fixtures
     (brief_sauna.json, brief_hiring_tool.json, brief_curb_cuts.json,
@@ -486,7 +504,20 @@ def _load_frozen_brief(topic_key, require_grounding_status=_ORDINARY_PROBE_GROUN
     set (validated / validated_with_rejections); a caller building a
     deliberately adversarial negative-control probe (source with no
     witness/quote -- see the design doc's acceptance test) should pass a
-    broader or different set explicitly, not rely on this default."""
+    broader or different set explicitly, not rely on this default.
+
+    REVISION (found on review, a third time): grounding_status alone STILL
+    isn't sufficient -- "validated" legitimately covers the case where the
+    source existed and BOTH resisting_example/correction_moment correctly
+    came back not_found (a clean absence of evidence is not a validator
+    failure). That's a perfectly good brief, but not a useful POSITIVE
+    fixture for a probe whose whole point is exercising what happens to a
+    real witness/quote through writer/reviewer/executor. require_any_found_fields
+    (default: at least one of resisting_example/correction_moment must have
+    evidence_candidate.status=="found") closes that gap. Pass () or None to
+    skip this check for a negative-control probe that explicitly WANTS
+    not_found on both fields -- do not rely on the default silently letting
+    an empty-evidence brief through."""
     path = _brief_fixture_path(topic_key)
     if not path.exists():
         raise RuntimeError(
@@ -511,10 +542,24 @@ def _load_frozen_brief(topic_key, require_grounding_status=_ORDINARY_PROBE_GROUN
             f"as 'a useful positive grounded fixture'. If this is intentional (e.g. an adversarial "
             f"negative-control probe), pass require_grounding_status explicitly."
         )
+    if require_any_found_fields:
+        found = [
+            name for name in require_any_found_fields
+            if ((brief.get(name) or {}).get("evidence_candidate") or {}).get("status") == "found"
+        ]
+        if not found:
+            raise RuntimeError(
+                f"Frozen brief for topic '{topic_key}' ({path}) has grounding_status="
+                f"'{brief.get('grounding_status')}' (accepted) but NONE of {require_any_found_fields} has "
+                f"evidence_candidate.status=='found' -- this is a validator-clean but EMPTY brief (the "
+                f"source legitimately had no witness/quote this concrete), not a useful positive "
+                f"grounded fixture. If this is intentional (e.g. a negative-control probe that WANTS "
+                f"not_found), pass require_any_found_fields=() explicitly."
+            )
     topic = ALL_TOPICS_BY_KEY.get(topic_key)
     if topic is None:
         raise RuntimeError(f"Unknown topic_key '{topic_key}' -- not in ALL_TOPICS_BY_KEY.")
-    current_packet = build_evidence_packet(topic["source_text"], source_max_chars=PROBE_SOURCE_MAX_CHARS)
+    current_packet = build_evidence_packet(topic["source_text"], source_max_chars=PROBE_SOURCE_MAX_CHARS, source_origin="fixture")
     if brief.get("source_hash") != current_packet["source_hash"] or brief.get("evidence_packet_hash") != current_packet["evidence_packet_hash"]:
         raise RuntimeError(
             f"Frozen brief for topic '{topic_key}' ({path}) has schema-valid shape but was built "

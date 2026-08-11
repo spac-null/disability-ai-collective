@@ -2,7 +2,7 @@
   "brief_0": {
     "brief": {
       "angle": "Is the replacement bay closer or further for most riders who actually use it?",
-      "brief_schema_version": 2,
+      "brief_schema_version": 3,
       "correction_moment": {
         "editorial_need": "A concrete moment where the council's own account complicates the persona's framing.",
         "evidence_candidate": {
@@ -17,8 +17,8 @@
         "interpretation": "The distance gap is the material fact; the persona's argument turns on it."
       },
       "cross_cite": "",
-      "evidence_packet_hash": "bfead3b9a5b521120d9dc59ea7591da191588ab33c98f1685830c004f68534bb",
-      "evidence_schema_version": 2,
+      "evidence_packet_hash": "9ab27629f1dcb6ddb212671dfac83bdb7dc05ac37c0d9874c7b3a55de98d4ea1",
+      "evidence_schema_version": 3,
       "grounding_scope": "evidence_fields_only",
       "grounding_status": "validated",
       "grounding_violations": [],
@@ -39,6 +39,9 @@
       },
       "seed_sentence": "The new accessible bay is four hundred metres from the tram stop.",
       "source_hash": "7b038d691cdae31d4725e7746d9f2defde33f69d0e3257c8be5498d4eee06c7e",
+      "source_length_chars": 408,
+      "source_origin": null,
+      "source_original_length_chars": null,
       "source_truncated": false
     },
     "calls": [
@@ -55,7 +58,7 @@
   "brief_1": {
     "brief": {
       "angle": "Is the replacement bay closer or further for most riders who actually use it?",
-      "brief_schema_version": 2,
+      "brief_schema_version": 3,
       "correction_moment": {
         "editorial_need": "A specific, sourced claim about what the scoring model actually penalizes.",
         "evidence_candidate": {
@@ -68,8 +71,8 @@
         "interpretation": "This is the mechanism, not just the outcome -- worth naming directly."
       },
       "cross_cite": "",
-      "evidence_packet_hash": "fbce1d91fd5ff24402fb8d670f340a3df6cff6b9413220fe8b03a0c33169fa50",
-      "evidence_schema_version": 2,
+      "evidence_packet_hash": "372f8586709c5b629ed4d89e55bd444c1268e1f712d9e23a062566053b2ee56a",
+      "evidence_schema_version": 3,
       "grounding_scope": "evidence_fields_only",
       "grounding_status": "validated",
       "grounding_violations": [],
@@ -90,6 +93,9 @@
       },
       "seed_sentence": "The new accessible bay is four hundred metres from the tram stop.",
       "source_hash": "88629d53e704aa96376e2269d6d5e807ee4fa32034c0de38b72b031e0dfd453e",
+      "source_length_chars": 389,
+      "source_origin": null,
+      "source_original_length_chars": null,
       "source_truncated": false
     },
     "calls": [

@@ -23,26 +23,28 @@ stated reason.
   no code changes, no generations) → `.claude/persona-architecture-audit.md`.
 - **PAUSED, not concluded** — Phase 1.5B, Fable review-seat ROI. Full
   record: `.claude/experiments/fable-review-roi-2026-08-10.md`.
-- **IN PROGRESS, mocked/offline verification green, 4 review rounds closed**
+- **DONE — mocked/offline baseline, 7 review rounds closed, committed**
   — Phase 1.6, source-grounding hardening. Design doc:
   `.claude/phase-1.6-source-grounding.md`. Code implemented across
-  `grounding.py` (new), `llm.py`, `generate.py`, `review.py`,
+  `grounding.py` (new), `llm.py`, `generate.py`, `discovery.py`, `review.py`,
   `phase_probe.py`, `snapshot_test.py`, `grounding_test.py` (new),
-  `executor_guard_test.py` (new), `writer_prompt_test.py` (new). 129
-  grounding_test.py checks + 7 executor_guard_test.py checks + 11
-  writer_prompt_test.py checks pass (147 total); `snapshot_test.py --check`
-  clean (generate_calls.json re-recorded as wording/hashing changed,
-  deterministic.json/llm_calls.json unaffected throughout -- note
-  snapshot_test.py only ever covers `_fable_editorial_brief`'s own prompt,
-  NOT the writer prompt built in `_run_production_automation_locked`;
+  `executor_guard_test.py` (new), `writer_prompt_test.py` (new).
+  `EVIDENCE_SCHEMA_VERSION`/`BRIEF_SCHEMA_VERSION` are now 3 (bumped from 2
+  in round 7 once `source_origin` became part of the packet/brief
+  contract). 143 grounding_test.py checks + 7 executor_guard_test.py checks
+  + 17 writer_prompt_test.py checks pass (167 total); `snapshot_test.py
+  --check` clean throughout (generate_calls.json re-recorded 3 times as
+  hashing/schema changed; deterministic.json/llm_calls.json unaffected --
+  note snapshot_test.py only ever covers `_fable_editorial_brief`'s own
+  prompt, NOT the writer prompt built in `_run_production_automation_locked`;
   `writer_prompt_test.py` is what actually covers that boundary, added in
   round 4 after this exact gap was flagged). NO real API calls made yet —
   `phase_probe.py --freeze-briefs` (would replace the 4 legacy-contaminated
-  fixtures with schema-v2 ones) and the adversarial negative/positive-control
+  fixtures with schema-v3 ones) and the adversarial negative/positive-control
   probes are still outstanding, and cost real tokens. See "PHASE 1.6 STATUS
-  DETAIL" below before resuming — four adversarial review passes each found
-  real, non-cosmetic gaps before the mocked baseline was allowed to freeze;
-  read the full list before assuming this is done.
+  DETAIL" below before resuming — seven adversarial review passes each
+  found real, non-cosmetic gaps before the mocked baseline was allowed to
+  freeze; read the full list before assuming this is done.
 - **THEN** — Phase 2, brevity + evidence budget + testimony.
 - **THEN** — Phase 3, persona architecture implementation (perceptual
   engines, motives, soft affinities, remove hard territories/prohibitions —
@@ -296,6 +298,135 @@ still had a live analog of every hole the planner path had already closed.
    `{"validated", "validated_with_rejections"}`) so an ordinary probe run
    requires a meaningfully grounded fixture; an adversarial negative-control
    probe can pass a broader/different set explicitly.
+
+FIFTH REVIEW ROUND (same session; explicitly scoped to 3 targeted fixes, no
+further general architecture review): confirmed round 4's writer-boundary
+work was correct, then found two real regressions in the round-3/4 fixes
+themselves plus one unaudited source-origin gap:
+
+1. **evidence_lineage had regressed from packet identity to source
+   identity**: the round-4 rewrite (making planner/writer independently
+   re-derived) accidentally used only `source_hash` for the comparison,
+   which is exactly the collapse Phase 1.6 built `evidence_packet_hash` to
+   prevent (two packets can share source_text but differ in truncation/
+   schema/provenance). Fixed: `evidence_lineage_entry(source_hash,
+   packet_hash, verification)` now keeps BOTH identities per stage plus the
+   verification strength, so source-equality and packet-identity-equality
+   are separately checkable
+   (`len({e["source_hash"] for e in lineage.values() if e}) <= 1` and the
+   same for `packet_hash`) rather than one silently standing in for the
+   other. Added a regression test proving a stage with the SAME source_hash
+   but a DIFFERENT packet_hash is caught by the packet check even though
+   source-equality alone would have missed it.
+2. **The ordinary-probe positive-fixture gate accepted empty evidence**:
+   `grounding_status in {"validated", "validated_with_rejections"}`
+   legitimately includes the case where the source existed and BOTH
+   `resisting_example`/`correction_moment` correctly came back `not_found`
+   -- a valid brief, but not a useful POSITIVE fixture for a probe meant to
+   exercise a real witness/quote through writer/reviewer/executor. Fixed:
+   `_load_frozen_brief` now also requires `require_found_fields` (default:
+   at least one of the two evidence fields must have
+   `evidence_candidate.status == "found"`), with an explicit
+   `require_found_fields=()` opt-out for negative-control probes that
+   deliberately want `not_found` on both.
+3. **Fallback-to-summary source text was indistinguishable from a real
+   fetch** -- confirmed by direct inspection of `discovery.py`'s
+   `fetch_source_article`/`get_source_text` (both return a plain
+   `str | None` on every path, whether the return value came from a real
+   HTML fetch+extraction or from `fallback_text` -- the ~400-char RSS
+   summary -- being substituted after a failed/blocked fetch). This meant
+   `generate.py`'s `source_text = self.get_source_text(url,
+   fallback_text=news_seed.get("summary"))` could silently hand
+   `build_evidence_packet` the SAME short, unvetted summary already shown
+   separately as plain "Summary:" context, certifying it as if it were a
+   genuinely fetched ~3000-char article -- reopening the exact short-
+   summary-as-authority problem the rest of Phase 1.6 exists to close.
+   Fixed: added `self._last_fetch_origin` (set on every return path inside
+   `fetch_source_article`) and `get_source_origin(url)` (cached per-url
+   alongside the text in `get_source_text`), returning
+   `"fetched_article"` / `"fallback_summary"` / `"none"`. Both of
+   generate.py's call sites (news_seed and discovery branches) now check
+   `get_source_origin(url) == "fallback_summary"` and set `source_text =
+   None` in that case -- downgrading to "no source available" rather than
+   granting fallback text the same authority as a real fetch. Verified
+   end-to-end (not just unit-tested) with a new `writer_prompt_test.py`
+   scenario: under a mocked `fallback_summary` origin, the evidence_packet
+   passed to the planner has `source_text=None`, and the captured writer
+   prompt contains neither a SOURCE MATERIAL block nor the fetched-article-
+   only content -- 4 new checks, all passing.
+
+SIXTH REVIEW ROUND (same session; explicitly scoped to 3 tiny corrections
+on round 5's own work, no new architecture areas): confirmed round 5's
+fixes were directionally correct, then found round 5 itself had introduced
+one real regression and left two loose ends.
+
+1. `require_found_fields` (round 5) was semantically "at least ONE of
+   these fields must be found," but the name reads like "all of these are
+   required." Renamed to `require_any_found_fields` throughout
+   `phase_probe.py` (parameter, constant `_ORDINARY_PROBE_ANY_OF_FOUND_FIELDS`,
+   docstrings, error message) -- no behavior change, naming only.
+2. **`source_origin` was detected (round 5) but never actually persisted**
+   -- `get_source_origin()` correctly drove the `source_text = None`
+   downgrade, but nothing carried the ORIGIN itself into evidence
+   provenance. That meant "a fetch failed and fell back to summary" and
+   "there was genuinely no source at all" became indistinguishable again
+   one layer down, inside the packet -- exactly the distinction this whole
+   fix exists to preserve. Fixed: `build_evidence_packet` now takes
+   `source_origin` (one of `fetched_article`/`fixture`/`fallback_summary`/
+   `none`), stores it on the returned packet, and includes it in
+   `evidence_packet_hash` (two otherwise-empty packets with different
+   origins must not hash the same). `generate.py`'s three source branches
+   (news_seed, discovery, fallback-topic-list) each now capture
+   `_source_origin` and pass it through -- verified end-to-end with a new
+   `writer_prompt_test.py` assertion that a `fallback_summary` run's
+   evidence_packet has `source_text=None` AND `source_origin==
+   "fallback_summary"` (not silently "none").
+3. Round 4's `evidence_lineage_entry` used a single `verification` label
+   per stage, which let the writer's real source-text containment check
+   appear to also authenticate `packet_hash` -- it doesn't; containment
+   proves the raw text is present, not that the packet's other metadata
+   (truncation flag, schema version, origin) was independently confirmed.
+   Split into separate `source_verification`/`packet_verification` fields
+   per lineage entry. planner is the only stage that legitimately claims
+   `validator_stamped` for both (validate_brief stamps both hashes from one
+   packet in one pass); writer claims `present_in_actual_prompt` for
+   source_verification but `declared_shared_packet` for packet_verification;
+   reviewer/executor remain `declared_shared_packet` for both.
+
+SEVENTH REVIEW ROUND (same session; explicitly scoped to 4 implementation-
+cleanup items on round 6's own work, no new architecture areas): confirmed
+round 6's rename/source_origin/split-verification fixes were directionally
+correct, then found round 6 had detected `source_origin` but never actually
+persisted it, missed a schema-version bump the change itself required, and
+left a probe/cache inconsistency.
+
+1. `source_origin` was flowing into the evidence PACKET (round 6) but never
+   onto the persisted BRIEF -- `validate_brief` stamped `source_hash`/
+   `evidence_packet_hash`/`evidence_schema_version`/`source_truncated` but
+   not `source_origin`. Fixed: also stamps `source_origin`,
+   `source_length_chars`, `source_original_length_chars` from the packet.
+   `is_current_brief_schema` now also requires `source_origin` present as a
+   key (same "key presence, not truthiness" pattern as source_hash).
+2. `source_origin` becoming part of the packet's canonical identity/hash
+   (round 6) is exactly the kind of packaging change
+   `EVIDENCE_SCHEMA_VERSION` exists to distinguish -- it had been left at 2.
+   Bumped `EVIDENCE_SCHEMA_VERSION`/`BRIEF_SCHEMA_VERSION` to 3 together
+   (a brief's schema version should reflect the full contract, including
+   the packet shape available at validation time). Zero migration cost --
+   the only pre-existing frozen fixtures are the 4 legacy ones already
+   being rejected/regenerated regardless.
+3. `phase_probe.py`'s `freeze_briefs()`/`_load_frozen_brief()` packet
+   construction didn't pass `source_origin` at all (defaulting to `None`)
+   even though production packets now carry meaningful origin provenance --
+   both now pass `source_origin="fixture"` explicitly, kept consistent
+   between freeze and load so the hash-identity comparison still matches.
+4. `get_source_text`'s cache init (`if not hasattr(self,
+   "_source_text_cache"): self._source_text_cache = {};
+   self._source_origin_cache = {}`) would skip creating
+   `_source_origin_cache` entirely for any instance that already had
+   `_source_text_cache` set from before this Phase 1.6 addition --
+   `AttributeError` waiting to happen. Split into two independent
+   `hasattr` checks.
 
 STILL OUTSTANDING before this phase can be called done (none touched yet
 — no real API calls have been made this session):

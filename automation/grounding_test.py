@@ -86,6 +86,32 @@ def test_build_evidence_packet():
         capped["source_hash"] == uncapped["source_hash"] and capped["evidence_packet_hash"] != uncapped["evidence_packet_hash"],
     )
 
+    # source_origin (found on review): purely explanatory, but must still
+    # participate in evidence_packet_hash -- two otherwise-empty packets
+    # with different origins ("a fetch failed and fell back to summary" vs
+    # "there was genuinely no source") make different provenance claims and
+    # must not be indistinguishable once source_text has been suppressed to
+    # None for both.
+    none_origin = g.build_evidence_packet(None, source_origin="none")
+    fallback_origin = g.build_evidence_packet(None, source_origin="fallback_summary")
+    check("both packets have source_text=None (fallback grants no evidence authority)", none_origin["source_text"] is None and fallback_origin["source_text"] is None)
+    check("source_origin is recorded on the packet", fallback_origin["source_origin"] == "fallback_summary")
+    check(
+        "two otherwise-identical empty packets with DIFFERENT source_origin -> DIFFERENT evidence_packet_hash",
+        none_origin["evidence_packet_hash"] != fallback_origin["evidence_packet_hash"],
+    )
+    with_text_a = g.build_evidence_packet(SOURCE, source_origin="fetched_article")
+    with_text_b = g.build_evidence_packet(SOURCE, source_origin="fixture")
+    check(
+        "same source_text, different source_origin -> same source_hash but different evidence_packet_hash",
+        with_text_a["source_hash"] == with_text_b["source_hash"] and with_text_a["evidence_packet_hash"] != with_text_b["evidence_packet_hash"],
+    )
+    try:
+        g.build_evidence_packet(SOURCE, source_origin="somewhere_i_made_up")
+        check("unrecognized source_origin raises", False)
+    except ValueError:
+        check("unrecognized source_origin raises", True)
+
 
 def test_not_found():
     packet = g.build_evidence_packet(SOURCE)
@@ -311,6 +337,10 @@ def test_legacy_schema_gate():
     incomplete = dict(validated)
     del incomplete["source_hash"]
     check("current-looking brief missing source_hash key entirely -> rejected", not g.is_current_brief_schema(incomplete))
+    missing_origin = dict(validated)
+    del missing_origin["source_origin"]
+    check("current-looking brief missing source_origin key entirely -> rejected", not g.is_current_brief_schema(missing_origin))
+    check("validate_brief stamps source_origin as a key even when its value is None (legacy/unspecified)", "source_origin" in validated)
     wrong_scope = dict(validated)
     wrong_scope["grounding_scope"] = "something_else"
     check("brief with an unrecognized grounding_scope -> rejected", not g.is_current_brief_schema(wrong_scope))
@@ -558,37 +588,91 @@ def test_evidence_text():
     check("empty string -> empty string", g.evidence_text("") == "")
 
 
+def _lineage_source_hashes(lineage):
+    return {e["source_hash"] for e in lineage.values() if e and e["source_hash"] is not None}
+
+
+def _lineage_packet_hashes(lineage):
+    return {e["packet_hash"] for e in lineage.values() if e and e["packet_hash"] is not None}
+
+
+def test_evidence_lineage_entry():
+    check("entry with both hashes None -> None (nothing to report)", g.evidence_lineage_entry(None, None, "validator_stamped", "validator_stamped") is None)
+    entry = g.evidence_lineage_entry("sh1", "ph1", "present_in_actual_prompt", "declared_shared_packet")
+    check(
+        "entry carries source_hash/packet_hash and SEPARATE source_verification/packet_verification",
+        entry == {
+            "source_hash": "sh1", "packet_hash": "ph1",
+            "source_verification": "present_in_actual_prompt", "packet_verification": "declared_shared_packet",
+        },
+    )
+    check(
+        "a stage's source_verification and packet_verification can legitimately differ in strength "
+        "(the containment check proves the text, not the packet's other metadata)",
+        entry["source_verification"] != entry["packet_verification"],
+    )
+    try:
+        g.evidence_lineage_entry("sh1", "ph1", "trust_me_bro", "declared_shared_packet")
+        check("unrecognized source_verification string raises", False)
+    except ValueError:
+        check("unrecognized source_verification string raises", True)
+    try:
+        g.evidence_lineage_entry("sh1", "ph1", "validator_stamped", "trust_me_bro")
+        check("unrecognized packet_verification string raises", False)
+    except ValueError:
+        check("unrecognized packet_verification string raises", True)
+
+
 def test_build_evidence_lineage():
     packet = g.build_evidence_packet(SOURCE)
-    h = packet["source_hash"]
+    sh, ph = packet["source_hash"], packet["evidence_packet_hash"]
 
-    all_ran = g.build_evidence_lineage(h, h, h, h)
-    check("all 4 stages given the same hash -> exactly one distinct value", len(set(all_ran.values())) == 1)
+    planner = g.evidence_lineage_entry(sh, ph, "validator_stamped", "validator_stamped")
+    writer = g.evidence_lineage_entry(sh, ph, "present_in_actual_prompt", "declared_shared_packet")
+    reviewer = g.evidence_lineage_entry(sh, ph, "declared_shared_packet", "declared_shared_packet")
+    executor = g.evidence_lineage_entry(sh, ph, "declared_shared_packet", "declared_shared_packet")
+
+    all_ran = g.build_evidence_lineage(planner, writer, reviewer, executor)
     check("lineage has all 4 keys", set(all_ran.keys()) == {"planner", "writer", "reviewer", "executor"})
-    check("lineage packages values verbatim, no transformation", all_ran["planner"] == h and all_ran["writer"] == h)
-
-    partial = g.build_evidence_lineage(h, h, None, None)
-    check("reviewer/executor didn't run -> their entries are None, not fabricated", partial["reviewer"] is None and partial["executor"] is None)
-    check("planner/writer still recorded even when reviewer/executor didn't run", partial["planner"] == h and partial["writer"] == h)
+    check("all 4 stages -> exactly one distinct source_hash", len(_lineage_source_hashes(all_ran)) == 1)
+    check("all 4 stages -> exactly one distinct packet_hash", len(_lineage_packet_hashes(all_ran)) == 1)
     check(
-        "acceptance check tolerates skipped stages: non-None values still all equal",
-        len(set(v for v in partial.values() if v is not None)) == 1,
+        "per-stage verification strength is preserved per-identity, not collapsed into one label",
+        all_ran["planner"]["source_verification"] == "validator_stamped"
+        and all_ran["writer"]["source_verification"] == "present_in_actual_prompt"
+        and all_ran["writer"]["packet_verification"] == "declared_shared_packet"
+        and all_ran["reviewer"]["source_verification"] == "declared_shared_packet",
     )
 
-    reviewer_only = g.build_evidence_lineage(h, h, h, None)
-    check("reviewer ran but not executor -> reviewer stamped, executor None", reviewer_only["reviewer"] is not None and reviewer_only["executor"] is None)
+    partial = g.build_evidence_lineage(planner, writer, None, None)
+    check("reviewer/executor didn't run -> their entries are None, not fabricated", partial["reviewer"] is None and partial["executor"] is None)
+    check("planner/writer still recorded even when reviewer/executor didn't run", partial["planner"] is not None and partial["writer"] is not None)
+    check("acceptance check tolerates skipped stages: non-None source_hashes still all equal", len(_lineage_source_hashes(partial)) == 1)
 
-    no_hashes = g.build_evidence_lineage(None, None, None, None)
-    check("nothing supplied -> every entry is None (nothing to prove)", all(v is None for v in no_hashes.values()))
+    no_entries = g.build_evidence_lineage(None, None, None, None)
+    check("nothing supplied -> every entry is None (nothing to prove)", all(v is None for v in no_entries.values()))
 
-    # REGRESSION for the exact weakness caught on review: a MISMATCHED hash
-    # (simulating a stage that actually consumed different content -- e.g. a
-    # future bug that re-slices source_text at one call site) must be
-    # visible as a real inequality, not silently accepted.
-    mismatched = g.build_evidence_lineage(h, "a-different-hash-entirely", h, h)
+    # REGRESSION for the exact weakness caught on review, twice: (a) a
+    # mismatched SOURCE TEXT must be visible as a real inequality, and (b) a
+    # mismatched PACKET (e.g. same source_text, different truncation
+    # metadata -- see build_evidence_packet's own collision regression test)
+    # must ALSO be visible as a real inequality even when source_hash still
+    # matches -- collapsing to source_hash alone would hide exactly this.
+    other_packet = g.build_evidence_packet(SOURCE, source_max_chars=len(SOURCE))  # same text, source_truncated=True -> different packet_hash
+    check("sanity: same source text, different packet construction -> same source_hash but different packet_hash", other_packet["source_hash"] == sh and other_packet["evidence_packet_hash"] != ph)
+
+    mismatched_source = g.build_evidence_lineage(
+        planner, g.evidence_lineage_entry("a-different-source-hash-entirely", ph, "present_in_actual_prompt", "declared_shared_packet"), reviewer, executor,
+    )
+    check("a genuinely mismatched SOURCE hash produces a real inequality the acceptance check would catch", len(_lineage_source_hashes(mismatched_source)) > 1)
+
+    mismatched_packet = g.build_evidence_lineage(
+        planner, g.evidence_lineage_entry(other_packet["source_hash"], other_packet["evidence_packet_hash"], "present_in_actual_prompt", "declared_shared_packet"), reviewer, executor,
+    )
     check(
-        "a genuinely mismatched stage hash produces a real inequality the acceptance check would catch",
-        len(set(v for v in mismatched.values() if v is not None)) > 1,
+        "a stage with the SAME source_hash but a DIFFERENT packet_hash is caught by the packet-equality "
+        "check even though source-equality alone would have missed it",
+        len(_lineage_source_hashes(mismatched_packet)) == 1 and len(_lineage_packet_hashes(mismatched_packet)) > 1,
     )
 
 
@@ -605,6 +689,7 @@ if __name__ == "__main__":
     test_scan_free_prose_field()
     test_validate_brief_does_not_touch_free_prose_fields()
     test_evidence_text()
+    test_evidence_lineage_entry()
     test_build_evidence_lineage()
 
     print()

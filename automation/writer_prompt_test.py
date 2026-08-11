@@ -142,17 +142,31 @@ def _canary_brief(persona_name, register_name):
     }
 
 
-def _capture_writer_prompt():
+def _capture_writer_prompt(source_origin="fetched_article"):
     """Runs the real pipeline (frozen inputs, stubbed side effects, same
     discipline as phase_probe.py) up to and including the writer's own LLM
-    call, capturing the exact prompt string sent. Returns
-    (prompt_or_None, error_or_None)."""
+    call, capturing the exact prompt string sent AND the evidence_packet
+    the (mocked) planner was actually called with. Returns
+    (prompt_or_None, evidence_packet_or_None, error_or_None).
+
+    source_origin: simulates get_source_origin(url)'s Phase 1.6 return
+    value -- "fetched_article" (default, a genuine fetch) or
+    "fallback_summary" (the real-article fetch failed/was blocked and
+    get_source_text fell back to returning the RSS summary instead, which
+    generate.py must NOT grant source-snapshot authority to)."""
     po = _import_orchestrator()
     captured = {}
 
     def capturing_llm_call(self, prompt, model_priority=None):
         captured["prompt"] = prompt
         raise _StopAfterWriterPrompt()
+
+    def capturing_brief(self, *a, **k):
+        # _fable_editorial_brief(news_title, news_summary, disability_angle,
+        # current_agent, evidence_packet=None) -- evidence_packet is
+        # positional 5th arg in generate.py's real call.
+        captured["evidence_packet"] = a[4] if len(a) > 4 else k.get("evidence_packet")
+        return _canary_brief("Maya Flux", "wry")
 
     with tempfile.TemporaryDirectory() as tmpdir:
         orch = po.ProductionOrchestrator()
@@ -177,13 +191,14 @@ def _capture_writer_prompt():
             _get_overused_themes=lambda self: [],
             _get_recent_references=lambda self, days=14: [],
             get_source_text=lambda self, url, max_chars=3000, fallback_text=None: SOURCE_TEXT[:max_chars],
+            get_source_origin=lambda self, url: source_origin,
             get_pool_links=lambda self, keywords: [],
             _balance_agent=lambda self, preferred: "Maya Flux",
             _pick_register=lambda self: ("wry", "Dry, observational. The joke is in the framing."),
             _pick_length=lambda self: 1000,
             _pick_article_type=lambda self: ("essay", ""),
             _get_calendar_event_nudge=lambda self: "",
-            _fable_editorial_brief=lambda self, *a, **k: _canary_brief("Maya Flux", "wry"),
+            _fable_editorial_brief=capturing_brief,
             _load_persona_state=lambda self, agent_name: dict(FIXTURE_PERSONA_STATE),
             _active_fault_lines=lambda self, text: [dict(FIXTURE_FAULT_LINE)],
             call_llm_via_openclaw_session=capturing_llm_call,
@@ -199,15 +214,17 @@ def _capture_writer_prompt():
         finally:
             restore()
 
-    return captured.get("prompt"), error
+    return captured.get("prompt"), captured.get("evidence_packet"), error
 
 
 def test_writer_prompt_boundaries():
-    prompt, error = _capture_writer_prompt()
+    prompt, packet, error = _capture_writer_prompt(source_origin="fetched_article")
     check("writer prompt was actually captured (pipeline reached the writer call)", prompt is not None and error is None)
     if not prompt:
         print(f"  (capture failed: {error})")
         return
+
+    check("evidence_packet records source_origin=fetched_article for a genuine fetch", packet is not None and packet.get("source_origin") == "fetched_article")
 
     # POSITIVE: real, validated material DOES reach the writer.
     check(
@@ -250,8 +267,43 @@ def test_writer_prompt_boundaries():
     )
 
 
+def test_fallback_summary_not_granted_source_authority():
+    """Round 5 (found on review): get_source_text/fetch_source_article
+    return a plain string whether a real fetch succeeded or it fell back to
+    the RSS summary -- indistinguishable once returned as source_text.
+    generate.py must check get_source_origin(url) and refuse to build an
+    evidence_packet (or a writer SOURCE MATERIAL block) from a
+    fallback_summary result, since that's the exact same unvetted short
+    summary already shown separately as plain "Summary:" context."""
+    prompt, packet, error = _capture_writer_prompt(source_origin="fallback_summary")
+    check("pipeline still reaches the writer call under a fallback_summary origin", prompt is not None and error is None)
+    if not prompt:
+        print(f"  (capture failed: {error})")
+        return
+
+    check(
+        "evidence_packet passed to the planner has NO source_text when origin is fallback_summary",
+        packet is not None and packet.get("source_text") is None,
+    )
+    check(
+        "evidence_packet STILL records source_origin=fallback_summary as explanatory provenance "
+        "(distinguishable from a genuine 'none' -- both otherwise look identical once source_text is None)",
+        packet is not None and packet.get("source_origin") == "fallback_summary",
+    )
+    check(
+        "writer prompt does NOT contain a SOURCE MATERIAL block built from the fallback summary",
+        "SOURCE MATERIAL" not in prompt,
+    )
+    check(
+        "writer prompt does NOT contain the fetched-article-only content (Dana Ruiz/6-3) "
+        "since source_text was correctly suppressed",
+        "Dana Ruiz" not in prompt,
+    )
+
+
 if __name__ == "__main__":
     test_writer_prompt_boundaries()
+    test_fallback_summary_not_granted_source_authority()
 
     print()
     if FAILURES:

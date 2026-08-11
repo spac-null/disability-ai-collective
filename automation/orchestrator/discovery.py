@@ -1024,8 +1024,23 @@ class DiscoveryMixin:
         in scope (news_seed["summary"] / a news_seeds row), pass it here:
         real-but-short material beats no material, and this is the exact
         gap a prior fabrication incident came from -- the model inventing
-        a person/quote to fill a missing SOURCE MATERIAL block."""
+        a person/quote to fill a missing SOURCE MATERIAL block.
+
+        self._last_fetch_origin (Phase 1.6, .claude/phase-1.6-source-
+        grounding.md continuation): set as a side channel on every return
+        path below to one of "fetched_article" / "fallback_summary" /
+        "none" -- get_source_text caches this per-url so a fallback-to-
+        summary result can later be told apart from a genuine fetch. Found
+        on review: this function's plain str|None return type makes those
+        two cases INDISTINGUISHABLE to any caller once returned -- and a
+        caller building an evidence_packet from the result (generate.py)
+        must not silently grant the same source-snapshot authority to the
+        ~400-char RSS summary (real, but the exact same unvetted text
+        already shown separately as plain "Summary:" context) that it
+        grants to a genuinely fetched ~3000-char article. See
+        get_source_origin's docstring for how a caller should act on this."""
         if not url or not url.startswith("http"):
+            self._last_fetch_origin = "fallback_summary" if fallback_text else "none"
             return fallback_text[:max_chars] if fallback_text else None
 
         html = None
@@ -1048,7 +1063,9 @@ class DiscoveryMixin:
                     "fetch_source_article: using the RSS summary already on "
                     "file instead (%d chars) for %s", len(fallback_text), url,
                 )
+                self._last_fetch_origin = "fallback_summary"
                 return fallback_text[:max_chars]
+            self._last_fetch_origin = "none"
             return None
 
         text = self._extract_paragraphs(html)
@@ -1058,8 +1075,10 @@ class DiscoveryMixin:
                 "generation/repair will proceed without real source material",
                 len(text) if text else 0, url
             )
+            self._last_fetch_origin = "fallback_summary" if fallback_text else "none"
             return fallback_text[:max_chars] if fallback_text else None
         self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
+        self._last_fetch_origin = "fetched_article"
         return text[:max_chars]
 
     def get_source_text(self, url: str, max_chars: int = 3000, fallback_text: str = None) -> str | None:
@@ -1076,15 +1095,53 @@ class DiscoveryMixin:
         a good scrape at generation time and a blocked one an hour later at
         repair time (or vice versa), handing the repair pass LESS material
         than the draft it's fixing was grounded in.
+
+        Also caches source_origin per-url (Phase 1.6) alongside the text
+        itself -- see get_source_origin's docstring. The two caches are
+        initialized INDEPENDENTLY (found on review) rather than both inside
+        one `if not hasattr(self, "_source_text_cache")` guard -- an
+        instance that already has _source_text_cache set (e.g. test/probe
+        setup predating this Phase 1.6 addition, or any future code path
+        that only initializes the older cache) would otherwise skip
+        creating _source_origin_cache entirely and hit an AttributeError
+        the first time get_source_origin ran.
         """
         if not hasattr(self, "_source_text_cache"):
             self._source_text_cache = {}
+        if not hasattr(self, "_source_origin_cache"):
+            self._source_origin_cache = {}
         if url not in self._source_text_cache:
             self._source_text_cache[url] = self.fetch_source_article(
                 url, max_chars=_SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text=fallback_text
             )
+            self._source_origin_cache[url] = getattr(self, "_last_fetch_origin", "none")
         cached = self._source_text_cache[url]
         return cached[:max_chars] if cached else cached
+
+    def get_source_origin(self, url: str):
+        """Phase 1.6 (.claude/phase-1.6-source-grounding.md continuation):
+        returns the provenance of get_source_text(url)'s cached result --
+        "fetched_article" (a real HTML fetch + extraction succeeded),
+        "fallback_summary" (the fetch failed/was blocked/extracted too
+        little; the RSS summary fallback_text was returned instead), "none"
+        (nothing was available either way), or None if get_source_text was
+        never called for this url this run.
+
+        WHY THIS EXISTS: fetch_source_article/get_source_text both return a
+        plain string either way, so a fallback-to-summary result was
+        previously INDISTINGUISHABLE from a genuinely fetched article once
+        it became `source_text` in generate.py -- and Phase 1.6's evidence
+        packet/validator machinery would have certified that short, unvetted
+        RSS summary as if it were the full source snapshot, quietly
+        reopening the exact short-summary-as-authority problem the rest of
+        Phase 1.6 was built to close. A caller building an evidence_packet
+        from get_source_text's result should check this and, on
+        "fallback_summary", decline to grant it source-snapshot authority
+        (pass None to build_evidence_packet instead) -- the summary is
+        already shown to the planner separately as plain "Summary:" context,
+        so treating it as source_text too would add no real material, only
+        false authority. See generate.py's call sites."""
+        return getattr(self, "_source_origin_cache", {}).get(url)
 
     def mark_finding_as_used(self, finding_id):
         """Mark a finding as used so it won't be picked again."""

@@ -24,7 +24,7 @@ import re
 import time
 
 from .config import _INDEFENSIBLE_PROMPTS, _REGISTERS, _THEME_CLUSTERS
-from .grounding import build_evidence_packet, writer_prompt_block, build_evidence_lineage
+from .grounding import build_evidence_packet, writer_prompt_block, build_evidence_lineage, evidence_lineage_entry
 
 # Matches get_source_text's own default max_chars (discovery.py) -- both
 # call sites below rely on that default rather than overriding it, so this
@@ -140,6 +140,24 @@ class GenerateMixin:
                 f"from {news_seed['source_name']}.*"
             )
             source_text = self.get_source_text(news_seed["url"], fallback_text=news_seed.get("summary"))
+            # Phase 1.6 (found on review): get_source_text returns a plain
+            # string whether it's a genuine fetch or the RSS-summary
+            # fallback -- indistinguishable once returned. A fallback result
+            # IS real text, but it's the exact same short, unvetted summary
+            # already shown separately below as "Summary: ..." -- granting it
+            # full source-snapshot authority (as if it were the actual
+            # ~3000-char fetched article) would add no real material and
+            # reopen the short-summary-as-authority problem the rest of this
+            # phase closes. Downgrade to "no source" rather than "real
+            # article" when the fetch fell back to the summary. _source_origin
+            # is kept (even after source_text is downgraded to None) so
+            # evidence_packet's provenance can still tell "a fetch failed and
+            # fell back to summary" apart from "there was genuinely no
+            # source" -- both would otherwise look identical once source_text
+            # is None either way.
+            _source_origin = self.get_source_origin(news_seed["url"])
+            if _source_origin == "fallback_summary":
+                source_text = None
             pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title)
                              if w.lower() not in _stopwords][:8]
             pool_links = self.get_pool_links(pool_keywords)
@@ -161,6 +179,12 @@ class GenerateMixin:
             else:
                 source_note = ""
             source_text = self.get_source_text(discovery.get('url', ''), fallback_text=discovery.get('summary'))
+            # See the news_seed branch above for why a fallback-to-summary
+            # result must not be granted source-snapshot authority, and why
+            # _source_origin is kept regardless.
+            _source_origin = self.get_source_origin(discovery.get('url', ''))
+            if _source_origin == "fallback_summary":
+                source_text = None
             pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title)
                              if w.lower() not in _stopwords][:8]
             pool_links = self.get_pool_links(pool_keywords)
@@ -228,6 +252,7 @@ class GenerateMixin:
             title = random.choice(topics)
             source_note = ""
             source_text = None
+            _source_origin = "none"
             pool_links = []
 
         agent_info = self.agents.get(agent_name)
@@ -242,7 +267,7 @@ class GenerateMixin:
         # threaded UNMODIFIED into the planner, reviewer, and executor below --
         # the same evidence-lineage discipline the Pixel-validation mixed-brief
         # incident showed is necessary. Never rebuilt per-stage.
-        evidence_packet = build_evidence_packet(source_text, source_max_chars=_SOURCE_TEXT_MAX_CHARS)
+        evidence_packet = build_evidence_packet(source_text, source_max_chars=_SOURCE_TEXT_MAX_CHARS, source_origin=_source_origin)
 
         _ns_title   = (news_seed["title"] if news_seed
                        else discovery.get("original_title", "") if discovery else title)
@@ -666,15 +691,27 @@ class GenerateMixin:
             f"[essay body, ~{target_words} words, starting directly — no H1 heading, no {chr(34)}By {agent_name}{chr(34)}]"
         )
 
-        # evidence_lineage's "writer" hash (Phase 1.6, see build_evidence_lineage's
-        # docstring for why this must be independently re-derived, not assumed
-        # from variable identity): confirm source_text is a literal substring of
-        # the ACTUAL constructed prompt string before crediting the writer with
-        # having consumed it -- a future bug that re-slices source_text when
-        # building the SOURCE MATERIAL block above would make this containment
-        # check fail, correctly showing "writer: None" instead of a false match.
-        _writer_evidence_hash = (
-            build_evidence_packet(source_text)["source_hash"]
+        # evidence_lineage's "writer" entry (Phase 1.6, see
+        # evidence_lineage_entry's docstring for why this must be
+        # independently re-derived, not assumed from variable identity):
+        # confirm source_text is a literal substring of the ACTUAL
+        # constructed prompt string before crediting the writer with having
+        # consumed it -- a future bug that re-slices source_text when
+        # building the SOURCE MATERIAL block above would make this
+        # containment check fail, correctly showing "writer: None" instead
+        # of a false match. source_hash/packet_hash both come from
+        # evidence_packet itself (the writer used its source_text verbatim,
+        # confirmed by the containment check above), but only source_hash is
+        # actually PROVEN by that containment check -- packet_hash's other
+        # metadata (truncation flag, schema version, origin) was NOT
+        # independently re-checked at this call site, so packet_verification
+        # is honestly "declared_shared_packet," not the stronger
+        # "present_in_actual_prompt" that only applies to the text itself.
+        _writer_evidence_entry = (
+            evidence_lineage_entry(
+                evidence_packet.get("source_hash"), evidence_packet.get("evidence_packet_hash"),
+                "present_in_actual_prompt", "declared_shared_packet",
+            )
             if source_text and source_text in prompt else None
         )
 
@@ -802,26 +839,38 @@ class GenerateMixin:
         today = self._today()
         slug = re.sub(r'[^a-z0-9]+', '-', extracted_title.lower()).strip('-')
         filename = f"{today}-{slug}.md"
-        # evidence_lineage (Phase 1.6, found on review twice): proves in
-        # persisted provenance -- not just by code inspection -- that every
-        # stage this run actually consumed the SAME evidence. Per-slot
-        # strength (see build_evidence_lineage's docstring for why these
-        # differ): "planner" reads back what validate_brief ITSELF stamped
-        # onto fable_brief (independently re-derived from whatever packet
-        # _fable_editorial_brief actually received); "writer" is set only
-        # if source_text was confirmed to literally appear in the actual
-        # constructed writer prompt (real containment check, see
-        # _writer_evidence_hash above); "reviewer"/"executor" are DECLARED
-        # from shared evidence_packet object identity, not independently
-        # re-derived from what those calls' own prompt-construction code did
-        # with it -- weaker than the first two, on purpose documented as such.
+        # evidence_lineage (Phase 1.6, found on review four times): proves
+        # in persisted provenance -- not just by code inspection -- that
+        # every stage this run actually consumed the SAME evidence. Keeps
+        # source_hash (raw-text identity) and packet_hash (full-provenance
+        # identity) SEPARATE per stage -- collapsing to source_hash alone
+        # would hide two stages consuming the same text under different
+        # packet construction -- AND keeps source_verification/
+        # packet_verification separate per stage, since proving one identity
+        # does not prove the other (see evidence_lineage_entry's docstring).
+        # Per-slot strength: "planner" reads back what validate_brief ITSELF
+        # stamped onto fable_brief for BOTH identities in one pass
+        # (independently re-derived from whatever packet
+        # _fable_editorial_brief actually received); "writer" only has its
+        # source_verification independently confirmed (real containment
+        # check, see _writer_evidence_entry above) -- its packet_verification
+        # is declared, same as reviewer/executor, which are declared for
+        # both identities from shared evidence_packet object reference, not
+        # independently re-derived from what those calls' own prompt-
+        # construction code did with it.
         if fable_brief:
-            _declared_hash = evidence_packet.get("source_hash")
+            _declared_entry = evidence_lineage_entry(
+                evidence_packet.get("source_hash"), evidence_packet.get("evidence_packet_hash"),
+                "declared_shared_packet", "declared_shared_packet",
+            )
             fable_brief["evidence_lineage"] = build_evidence_lineage(
-                planner_hash=fable_brief.get("source_hash"),
-                writer_hash=_writer_evidence_hash,
-                reviewer_hash=_declared_hash if _reviewer_ran else None,
-                executor_hash=_declared_hash if _executor_ran else None,
+                planner=evidence_lineage_entry(
+                    fable_brief.get("source_hash"), fable_brief.get("evidence_packet_hash"),
+                    "validator_stamped", "validator_stamped",
+                ),
+                writer=_writer_evidence_entry,
+                reviewer=_declared_entry if _reviewer_ran else None,
+                executor=_declared_entry if _executor_ran else None,
             )
         self._persist_article_plan(slug, agent_name, fable_brief)
 
