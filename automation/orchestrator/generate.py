@@ -278,6 +278,35 @@ class GenerateMixin:
         _ns_summary = news_seed.get("summary", "")         if news_seed else ""
         _ns_dangle  = news_seed.get("disability_angle", "") if news_seed else ""
         fable_brief = self._fable_editorial_brief(_ns_title, _ns_summary, _ns_dangle, agent_name, evidence_packet)
+        # Phase 1.6 continuation (found via an integration-test harness bug
+        # that accidentally simulated this exact scenario -- see
+        # .claude/current-work.md): validate_brief() stamps source_hash/
+        # evidence_packet_hash from the SAME evidence_packet passed into
+        # _fable_editorial_brief above, so in real production this can
+        # never actually diverge -- there is exactly one evidence_packet
+        # object, built once above, passed by reference into every stage.
+        # But nothing enforced that invariant AT this boundary; it only
+        # held by construction. A future refactor that reconstructs a
+        # packet per-stage, a brief cache, or any caller that doesn't
+        # thread the same object would silently produce a MIXED-PROVENANCE
+        # run: a brief whose evidence claims were validated against one
+        # packet, persisted alongside writer/reviewer/executor lineage
+        # built from a different one. Fail closed rather than trust
+        # construction alone: discard the brief entirely (same
+        # degradation path as a parse failure -- no persona override/
+        # angle/seed, not a crash) if its stamped hashes don't match the
+        # packet this run is actually using.
+        if fable_brief and (
+            fable_brief.get("source_hash") != evidence_packet.get("source_hash")
+            or fable_brief.get("evidence_packet_hash") != evidence_packet.get("evidence_packet_hash")
+        ):
+            self.logger.error(
+                "Fable brief's stamped source_hash/evidence_packet_hash does not match this "
+                "run's evidence_packet -- discarding the brief rather than persisting a "
+                "mixed-provenance lineage (article will publish without persona override, "
+                "angle, or seed)"
+            )
+            fable_brief = None
         if fable_brief:
             if fable_brief["persona"] != agent_name:
                 # Route Fable's preference back through _balance_agent instead of

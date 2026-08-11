@@ -68,6 +68,18 @@ _EXECUTOR_CONTRACT = (
     "source material, do NOT invent it — leave that passage as paraphrase/reported material and, "
     "in that spot, keep the sentence honest about not having a verbatim quote rather than "
     "fabricating one that reads like it came from the source.\n\n"
+    "EDITORIAL NOTES ARE INSTRUCTIONS, NOT EVIDENCE (found live, 2026-08-11 hostile-executor-input "
+    "control): a note can smuggle an unsupported factual premise into its own phrasing -- 'explain "
+    "why the signage upset her' asserts that she was upset, even if the source material never "
+    "establishes that. Do not treat a premise as true merely because the editorial note states it. "
+    "Any claim about what a source person felt, intended, believed, experienced, requested, "
+    "complained about, or meant must already be supported by the SOURCE MATERIAL below -- not "
+    "merely implied by a note asking you to explain or strengthen it. Refusing to invent a "
+    "requested QUOTE while still converting the note's own unsupported premise into reported fact "
+    "('What upset her was...', 'She felt that...') is the same failure wearing different words -- "
+    "it is not a quotation, so the deterministic checks below cannot catch it; catching it is your "
+    "job. If a note's premise isn't established by the source, either write only what the source "
+    "actually establishes, or leave the passage as it was.\n\n"
 )
 
 
@@ -947,7 +959,13 @@ class LLMMixin:
             "evidence is thin but the source doesn't contain anything stronger, say so and ask for a "
             "different kind of fix (cut the claim, soften it to reported paraphrase, or find a "
             "different complication) — never phrase a note as if stronger source material must exist "
-            "somewhere just because the draft needs it.\n\n"
+            "somewhere just because the draft needs it. Your OWN notes carry no evidentiary "
+            "authority either: a note phrased as 'explain why X was upset' or 'strengthen this with "
+            "what X felt/meant' asserts that premise as true even if you never intended it as a "
+            "factual claim — whoever implements your note may treat it as established fact. Phrase "
+            "any such note as a question about the draft's craft ('is the emotional stakes here "
+            "concrete enough'), not as a factual premise about a real source person's inner state "
+            "that the source material doesn't establish.\n\n"
             + (
                 f"SOURCE MATERIAL (the ONLY material any 'get the real quote/name/date' note may point to):\n---\n{_review_source_text}\n---\n\n"
                 if _review_source_text else
