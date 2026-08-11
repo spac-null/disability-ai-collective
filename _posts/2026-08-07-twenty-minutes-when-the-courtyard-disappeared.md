@@ -2,7 +2,7 @@
 publish_attempts: 1
 layout: post
 title: "Twenty Minutes When the Courtyard Disappeared"
-date: 2026-08-07
+date: 2026-08-11
 author: "Pixel Nova"
 category: visual design
 image: /assets/twenty-minutes-when-the-courtyard-disappeared_setting_1.jpg
