@@ -23,28 +23,25 @@ stated reason.
   no code changes, no generations) → `.claude/persona-architecture-audit.md`.
 - **PAUSED, not concluded** — Phase 1.5B, Fable review-seat ROI. Full
   record: `.claude/experiments/fable-review-roi-2026-08-10.md`.
-- **DONE — mocked/offline baseline, 7 review rounds closed, committed**
-  — Phase 1.6, source-grounding hardening. Design doc:
-  `.claude/phase-1.6-source-grounding.md`. Code implemented across
-  `grounding.py` (new), `llm.py`, `generate.py`, `discovery.py`, `review.py`,
-  `phase_probe.py`, `snapshot_test.py`, `grounding_test.py` (new),
-  `executor_guard_test.py` (new), `writer_prompt_test.py` (new).
-  `EVIDENCE_SCHEMA_VERSION`/`BRIEF_SCHEMA_VERSION` are now 3 (bumped from 2
-  in round 7 once `source_origin` became part of the packet/brief
-  contract). 143 grounding_test.py checks + 7 executor_guard_test.py checks
-  + 17 writer_prompt_test.py checks pass (167 total); `snapshot_test.py
-  --check` clean throughout (generate_calls.json re-recorded 3 times as
-  hashing/schema changed; deterministic.json/llm_calls.json unaffected --
-  note snapshot_test.py only ever covers `_fable_editorial_brief`'s own
-  prompt, NOT the writer prompt built in `_run_production_automation_locked`;
-  `writer_prompt_test.py` is what actually covers that boundary, added in
-  round 4 after this exact gap was flagged). NO real API calls made yet —
-  `phase_probe.py --freeze-briefs` (would replace the 4 legacy-contaminated
-  fixtures with schema-v3 ones) and the adversarial negative/positive-control
-  probes are still outstanding, and cost real tokens. See "PHASE 1.6 STATUS
-  DETAIL" below before resuming — seven adversarial review passes each
-  found real, non-cosmetic gaps before the mocked baseline was allowed to
-  freeze; read the full list before assuming this is done.
+- **IN PROGRESS — mocked baseline DONE + committed, live controls IN
+  PROGRESS** — Phase 1.6, source-grounding hardening. Design doc:
+  `.claude/phase-1.6-source-grounding.md`. Code across `grounding.py` (new),
+  `llm.py`, `generate.py`, `discovery.py`, `review.py`, `phase_probe.py`,
+  `snapshot_test.py`, `grounding_test.py` (new), `executor_guard_test.py`
+  (new), `writer_prompt_test.py` (new). `EVIDENCE_SCHEMA_VERSION`/
+  `BRIEF_SCHEMA_VERSION` = 3. 149 grounding_test.py + 7 executor_guard_test.py
+  + 17 writer_prompt_test.py checks pass (173 total); `snapshot_test.py
+  --check` clean. Mocked/offline baseline went through 7 adversarial review
+  rounds before being allowed to freeze (each found a real, non-cosmetic
+  gap) — full history below in "PHASE 1.6 STATUS DETAIL." **Real API calls
+  have now been made** (2026-08-11, on trident): all 4 historically-
+  contaminated topics re-frozen under schema v3 (clean, zero contamination
+  recurrence), 2 negative-control planner calls (the second exposed a real
+  `direct_quote` validation gap, fixed same session as round 8). Full
+  results, exact numbers, and what's still outstanding (positive control,
+  tamper control, hostile-review control) are in "PHASE 1.6 LIVE CONTROLS"
+  further down — read that section before assuming this phase is done or
+  re-running anything.
 - **THEN** — Phase 2, brevity + evidence budget + testimony.
 - **THEN** — Phase 3, persona architecture implementation (perceptual
   engines, motives, soft affinities, remove hard territories/prohibitions —
@@ -428,20 +425,146 @@ left a probe/cache inconsistency.
    `AttributeError` waiting to happen. Split into two independent
    `hasattr` checks.
 
-STILL OUTSTANDING before this phase can be called done (none touched yet
-— no real API calls have been made this session):
+## PHASE 1.6 LIVE CONTROLS (real API calls, 2026-08-11, on trident)
 
-- `phase_probe.py --freeze-briefs --force` for all 4 topics, to replace the
-  legacy-contaminated fixtures with real schema-v2 ones (costs real
-  tokens). The legacy-schema gate currently makes `--run`/`--preflight`
-  fail until this happens.
-- Adversarial negative-control probe (source deliberately lacking a
-  witness/quote/anecdote → planner must say `not_found`, reviewer must not
-  demand nonexistent evidence, executor must introduce nothing) and
-  positive-control probe (source genuinely contains a named witness + quote
-  → validator accepts it, writer/reviewer/executor preserve it without
-  mutation) — per the design doc's acceptance test and the strict test
-  order's steps 5-6.
+All 4 real planner freezes done; 2 negative-control planner calls done; one
+real code fix (round 8) landed as a direct result. Not yet done: positive
+control through the FULL pipeline (writer/reviewer/executor preserving
+evidence unchanged), tamper control, hostile-review control.
+
+**Re-freeze of the 4 historically-contaminated topics under schema v3**
+(`phase_probe.py --freeze-briefs --topic <x> --force`, one at a time,
+inspected individually before proceeding to the next):
+
+| Topic | Grounding | Validator rescue | Historical fabrication recurrence | Role fidelity |
+|---|---|---|---|---|
+| sauna | PASS | none | none | weak/plausible |
+| hiring_tool | PASS | none | none | plausible |
+| curb_cuts | PASS | none | none (worst historical case: "Deborah Antwi" + fabricated "March 14" record both explicitly absent) | plausible/strong |
+| museum_labels | PASS | none | none (Christine Sun Kim/Manchester/2021/"sound of anticipation" chain explicitly absent) | plausible |
+
+Every `source_excerpt`/`named_person`/`direct_quote`/`dates_numbers` on all
+4 briefs verified programmatically (not eyeballed) as a real verbatim
+substring of its own fixture. All 4 `grounding_violations == []` (clean
+planner successes, not validator rescues). Strong behavioral signal on
+hiring_tool/curb_cuts specifically: both sources contain unnamed human
+roles (an anonymous HR director, an anonymous transport lead), and the
+planner left `named_person=""` in both cases rather than manufacturing a
+named character — direct evidence the new architecture changed planner
+behavior, not just that the validator cleans up afterward.
+
+**Negative control, run 1** (isolated, `/tmp/adversarial_negative_control_result.json`
+on trident, never touched the 4 production fixtures): a synthetic barren
+source that happened to include an explicit sentence about the ABSENCE of
+consultation/testimony. `resisting_example` → `not_found` (best case).
+`correction_moment` → `found`, using that real "no consultation record"
+sentence as a legitimate correction fact. Reclassified on review: this is
+NOT a not_found-discipline failure — the source itself supplied a real,
+usable "absence is the finding" fact, and using it is defensible editorial
+behavior. Real residual finding from this run: the planner's own
+UN-validated free prose (angle, interpretation) overreached beyond what the
+source actually supports (angle asserted "...a schedule nobody in a chair
+signed off on" — the source only says no consultation record exists, not
+that no one signed off; interpretation converted "no consultation record"
+into "no consultation"). Neither phrase entered a validated evidence field
+or the writer prompt, so this is not a grounding-safety defect — recorded
+as a live-confirmed observation that free planner prose remains
+epistemically loose even when the evidence fields are disciplined. Not
+acted on in code (no semantic prose validator was built or should be).
+
+**Negative control, run 2** (isolated, `/tmp/adversarial_negative_control_result_v2.json`):
+a genuinely barren 3-sentence maintenance notice (repaint, temporary
+closure, resume when dry) with NO meta-statement about absence of anything.
+Result: **0/2 fields returned not_found.** Both `resisting_example` and
+`correction_moment` came back `found`, each using a real, verbatim,
+non-fabricated sentence stretched into an editorial role it does not
+actually perform (an ordinary repaint-cause sentence became a "resisting
+example"; an ordinary completion-schedule sentence became a "correction
+moment"). No fabrication — every excerpt is genuinely verbatim, no invented
+names/dates/numbers. But `correction_moment.direct_quote` was set to
+`"Work will resume when the surface is dry."` — identical to its own
+`source_excerpt` — despite nobody in the source being quoted as saying it.
+**This is the live bug that produced the round-8 code fix below.**
+
+**Round 8 code fix** (the one narrow correction made in response to a live
+finding, not speculative hardening): `direct_quote` previously only
+required verbatim presence in `source_excerpt` — which any ordinary
+narrative sentence trivially satisfies. Added
+`_direct_quote_in_quotation_marks()` (`grounding.py`) requiring
+`direct_quote` to sit immediately inside an actual quote-character pair in
+the excerpt (position-based check, not a broad regex scan — deliberately
+includes straight single quotes here, since real production sources use
+British-style single-quote attribution, e.g. Dezeen's `'The project is
+shaped around ambiguity,' studio founder Niko told Dezeen.`, and excluding
+that punctuation style would have broken all 4 real freezes above). New
+reason_code `direct_quote_not_in_quotation_marks`. Re-validating the exact
+captured raw planner output from negative-control run 2 through the fixed
+validator now correctly downgrades `correction_moment` to
+`grounding_status="validated_with_rejections"` with that reason recorded —
+confirmed before landing the fix, not assumed. Added a matching planner
+prompt clarification (`llm.py`): `direct_quote` must be text the source
+actually presents as quoted speech/writing, not merely a reproducible
+sentence; and status should be `not_found` rather than stretching an
+ordinary source fact into a correction/resisting role it doesn't actually
+perform. **Claim precision, corrected on review**: the deterministic check
+proves quotation-MARK SYNTAX and verbatim provenance only — it does NOT
+prove speaker attribution or that the quoted text is genuinely someone's
+testimony (`The artwork is titled "No Exit."` would pass the mechanical
+check just as validly as real reported speech). `grounding.py`'s docstring
+and rejection message were written to say exactly that, not more — the
+planner prompt (a judgment instruction to the model, not a claim about what
+the deterministic layer proves) still asks Fable to reserve direct_quote
+for actual speech/writing. 6 new regression tests added (the exact live
+case, a British-single-quote non-regression check, a possessive-apostrophe
+false-positive check) — 149 grounding_test.py checks total. Did NOT build a
+semantic validator for correction_moment/resisting_example role-fidelity
+(explicitly rejected as "NLP theater" -- role fidelity remains a
+planner-prompt/editorial-judgment concern, not a deterministic-validator
+concern).
+
+**Experimental interpretation, stated plainly**: source grounding is
+necessary but not sufficient for something to be a CripMinds contribution.
+Negative-control run 2 demonstrated this cleanly — the system was fully
+factually grounded (every excerpt verbatim, zero fabrication) while still
+trying too hard to manufacture editorial significance out of a source that
+had none to give. Grounding safety and editorial worth are different axes;
+Phase 1.6 only ever claimed to guarantee the first.
+
+**Editorial doctrine note (NOT a Phase 1.6 code change, not yet in the
+production prompt)**: the live negative controls surfaced a question bigger
+than grounding safety — CripMinds' premise should not become "every source
+must yield a disability insight if pushed hard enough" (that would make the
+disability lens a stylistic overlay on arbitrary news, the opposite of the
+project's actual purpose — see `project_cripminds_true_purpose.md`). The
+proposed higher-order commissioning question, to live in the editorial
+constitution (not a giant prompt rule) once Phase 1.6 is fully landed:
+**"What does this disabled way of perceiving make knowable about the
+subject that the dominant framing misses?"** — not "what's the disability
+angle," not "how are disabled people affected." If Fable cannot answer that
+concretely from the material, the article probably shouldn't be
+commissioned. Ties directly to the "terugeisen" (reclaiming) framing:
+CripMinds recovers knowledge treated as peripheral, rather than translating
+disabled experience outward for a non-disabled audience. Deliberately not
+implemented now — this is a scope note for after Phase 1.6, not something
+to fold into this phase's prompt surgery.
+
+STILL OUTSTANDING before this phase can be called fully done:
+
+- Positive control through the FULL live pipeline (not just the planner
+  stage) — a source with an unmistakable named witness + exact quotation,
+  confirming writer/reviewer/executor preserve it unchanged end-to-end. The
+  4 freezes above already prove the PLANNER extracts real evidence
+  correctly; the full-pipeline chain (writer receives it, reviewer doesn't
+  demand more, executor doesn't mutate attribution) hasn't been exercised
+  live yet.
+- Tamper control: take a valid found candidate and alter excerpt/name/
+  quote/number — confirm deterministic rejection and that unsafe material
+  never reaches the writer.
+- Hostile-review control: a reviewer instruction that explicitly asks for a
+  quote the source doesn't contain — confirm the executor refuses, and if
+  the model nevertheless invents one, confirm the post-revision guard
+  (`find_new_unsupported_specifics`) actually rejects it in a REAL run (only
+  mocked so far, in `executor_guard_test.py`).
 - A small real production confirmation run, only after the above are green.
 - `_EXECUTOR_CONTRACT`/`find_new_unsupported_specifics` (including the new
   attribution check) have not been exercised against a REAL model response

@@ -243,6 +243,74 @@ def _shape_ok(field):
     return True
 
 
+# Quote-delimiter characters for _direct_quote_in_quotation_marks below.
+# DELIBERATELY includes the straight single quote (') here, unlike
+# _QUOTED_SPAN_RE's broader scanning regexes -- this check tests whether one
+# SPECIFIC, already-extracted string sits immediately inside a quote pair,
+# not "scan this text for anything that might be a quotation" (where a
+# straight single quote is genuinely ambiguous with an apostrophe/
+# contraction). Real production sources routinely use straight single
+# quotes for attribution (British-style: 'This was a difficult trade-off,'
+# said X) -- excluding it here would reject genuinely-quoted real speech
+# just because of house punctuation style, which is not the failure this
+# check exists to catch.
+_QUOTE_CHARS = "\"'“”‘’"
+
+
+def _direct_quote_in_quotation_marks(direct_quote, excerpt):
+    """True if `direct_quote` occurs in `excerpt` immediately preceded by an
+    opening quote-like character, with a closing quote-like character
+    within a few characters after it (allowing trailing punctuation before
+    the close, e.g. "...ambiguity,'" or '..."it," said'). False otherwise.
+
+    WHAT THIS PROVES, PRECISELY (narrowed on review -- do not overclaim):
+    that direct_quote sits inside actual quotation-mark syntax in the
+    source, verbatim. It does NOT prove the quoted text is someone's
+    speech or writing, and it does NOT prove attribution. A source that
+    writes The notice calls the zone "temporary access." or The artwork is
+    titled "No Exit." would pass this check just as validly as a real
+    quoted statement -- both are genuine quotation-mark usage, neither is
+    necessarily testimony. That distinction (quotation syntax vs. semantic
+    "this is someone's speech") is deliberately NOT something this
+    deterministic check attempts to resolve -- doing so would require real
+    semantic/NER judgment, not a mechanical rule. The planner prompt asks
+    Fable to use direct_quote only for actual speech/writing; this function
+    enforces the mechanical half of that (real quotation-mark provenance),
+    not the semantic half (who said it, or whether it's testimony).
+
+    WHY THIS EXISTS (found live, Phase 1.6 adversarial negative control,
+    2026-08-11): validate_evidence_field previously only checked that
+    direct_quote is a VERBATIM SUBSTRING of source_excerpt -- which a plain
+    declarative sentence with no attribution trivially satisfies (a real
+    live run set direct_quote="Work will resume when the surface is dry."
+    -- identical to its own source_excerpt -- for an ordinary maintenance-
+    notice sentence with no quotation marks around it at all). That passed
+    validation because the TEXT existed verbatim; whether it was actually
+    presented as a quotation was never checked. This closes that specific
+    gap: direct_quote must sit inside an actual quote pair in the excerpt,
+    not merely be reproducible prose with no quotation-mark syntax at all.
+
+    Position-based (immediate-adjacency) rather than a broad quoted-span
+    regex scan, specifically to avoid the apostrophe-ambiguity problem
+    straight single quotes would otherwise cause over a wider match: a
+    coincidental "'s " possessive elsewhere in the excerpt cannot satisfy
+    this check unless direct_quote's own text happens to start immediately
+    after that exact apostrophe with no space, which does not occur in
+    ordinary English prose outside genuine quotation."""
+    if not direct_quote:
+        return True  # nothing to check
+    idx = excerpt.find(direct_quote)
+    while idx != -1:
+        has_open = idx > 0 and excerpt[idx - 1] in _QUOTE_CHARS
+        after_start = idx + len(direct_quote)
+        after_window = excerpt[after_start:after_start + 3]
+        has_close = any(c in _QUOTE_CHARS for c in after_window)
+        if has_open and has_close:
+            return True
+        idx = excerpt.find(direct_quote, idx + 1)
+    return False
+
+
 def validate_evidence_field(field_name, field, evidence_packet):
     """Deterministic (non-LLM) validation of one {editorial_need,
     evidence_candidate, interpretation} object.
@@ -308,6 +376,13 @@ def validate_evidence_field(field_name, field, evidence_packet):
         return (
             _empty_candidate(need, interpretation), False, "direct_quote_not_in_excerpt",
             f"{field_name}: direct_quote not found verbatim within its own source_excerpt -- rejected",
+        )
+    if ec["direct_quote"] and not _direct_quote_in_quotation_marks(ec["direct_quote"], excerpt):
+        return (
+            _empty_candidate(need, interpretation), False, "direct_quote_not_in_quotation_marks",
+            f"{field_name}: direct_quote is present in the excerpt verbatim, but the supplied source does "
+            f"not present it inside quotation marks -- this check confirms quotation syntax and verbatim "
+            f"provenance only (not speaker attribution or semantic quotation type) -- rejected",
         )
     for num in ec["dates_numbers"]:
         if num and str(num) not in excerpt:

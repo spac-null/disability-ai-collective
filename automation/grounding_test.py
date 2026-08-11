@@ -208,6 +208,61 @@ def test_source_grounded():
     check("direct_quote not inside its own excerpt -> rejected", not ok)
     check("reason code identifies quote violation", code == "direct_quote_not_in_excerpt")
 
+    # REGRESSION -- the exact live adversarial-control failure (2026-08-11):
+    # an ordinary declarative sentence, verbatim in the excerpt, but nobody
+    # is quoted as saying it. Text-presence alone used to pass this.
+    unattributed_declarative_packet = g.build_evidence_packet(
+        "City crews will repaint a curb ramp after surface wear was observed. "
+        "The ramp will be temporarily closed during repainting. Work will resume when the surface is dry."
+    )
+    unattributed_declarative = field(
+        status="found",
+        source_excerpt="Work will resume when the surface is dry.",
+        direct_quote="Work will resume when the surface is dry.",
+    )
+    out, ok, code, reason = g.validate_evidence_field("correction_moment", unattributed_declarative, unattributed_declarative_packet)
+    check(
+        "LIVE REGRESSION: an unattributed declarative sentence used as direct_quote (verbatim, but nobody is "
+        "quoted saying it) is REJECTED, not merely because it's untrue but because it isn't actually a quote",
+        not ok,
+    )
+    check("reason code identifies the quotation-marks violation specifically", code == "direct_quote_not_in_quotation_marks")
+    check("rejected direct_quote-without-attribution candidate forced to not_found", out["evidence_candidate"]["status"] == "not_found")
+
+    # Real quotation inside DOUBLE quotes -- already covered by `valid` above
+    # (passes). Confirm British-style STRAIGHT SINGLE-quote attribution
+    # (common in real sources -- Dezeen, etc.) is NOT penalized just for
+    # using single rather than double quotes.
+    single_quote_packet = g.build_evidence_packet(
+        "The council voted 6-3 on Tuesday. 'This was a difficult trade-off,' said council transport lead Dana Ruiz."
+    )
+    single_quote_valid = field(
+        status="found",
+        source_excerpt="'This was a difficult trade-off,' said council transport lead Dana Ruiz.",
+        named_person="Dana Ruiz",
+        direct_quote="This was a difficult trade-off",
+    )
+    out, ok, code, reason = g.validate_evidence_field("resisting_example", single_quote_valid, single_quote_packet)
+    check("British-style straight-single-quote attribution is accepted, not penalized for punctuation style", ok)
+
+    # A quote-shaped string that merely CONTAINS an apostrophe elsewhere in
+    # the excerpt (a possessive/contraction, not a real quote boundary)
+    # must not accidentally satisfy the quotation-marks check.
+    possessive_packet = g.build_evidence_packet(
+        "The council's transport lead said the plan works as intended for every resident who uses it."
+    )
+    possessive_field = field(
+        status="found",
+        source_excerpt="The council's transport lead said the plan works as intended for every resident who uses it.",
+        direct_quote="transport lead said the plan works as intended for every resident who uses it",
+    )
+    out, ok, code, reason = g.validate_evidence_field("resisting_example", possessive_field, possessive_packet)
+    check(
+        "a possessive apostrophe elsewhere in the excerpt does not accidentally satisfy the quotation-marks check",
+        not ok,
+    )
+    check("possessive-apostrophe false-positive case rejected with the quotation-marks reason code", code == "direct_quote_not_in_quotation_marks")
+
     real_date = field(
         status="found",
         source_excerpt="The vote happened on 2026-03-14 and affected 400 residents.",

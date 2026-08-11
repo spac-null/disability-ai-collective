@@ -709,11 +709,22 @@ class LLMMixin:
             '"status":"found" or "not_found" -- BE ALLOWED TO SAY not_found. The source above may '
             "simply not contain a correction moment or a resisting example this concrete. Wanting one "
             "does not mean the source has one. If you cannot point to an exact sentence in the source "
-            "text above, say not_found -- do not invent a plausible-sounding one to fill the field,"
+            "text above, say not_found -- do not invent a plausible-sounding one to fill the field. "
+            "Also say not_found rather than stretching an ordinary source fact into a role it does not "
+            "actually perform: a plain descriptive sentence (a schedule, a routine procedural detail, a "
+            "line explaining what something is) is NOT a correction moment just because you can attach an "
+            "interpretation that reframes it as one, and is NOT a resisting example just because it is the "
+            "closest thing to a counter-detail the source contains. A technically-true excerpt that doesn't "
+            "actually perform the requested editorial function is worse than admitting the source doesn't "
+            "supply one -- not_found is the honest and preferred answer whenever that's the case,"
             '"source_excerpt":"the EXACT sentence or clause from the source text above this is grounded '
             'in, copied verbatim -- required if status is found, otherwise empty",'
             '"named_person":"a specific person\'s name, ONLY if it appears word-for-word in source_excerpt, otherwise empty",'
-            '"direct_quote":"a verbatim quotation, ONLY if it appears word-for-word in source_excerpt, otherwise empty",'
+            '"direct_quote":"a verbatim quotation, ONLY if the source text ACTUALLY PRESENTS these words as '
+            "someone's quoted speech or writing (inside quotation marks in the source) AND they appear "
+            "word-for-word in source_excerpt -- otherwise empty. Do not populate this with an ordinary "
+            'narrative or reporting sentence just because it can be reproduced verbatim; if nobody is quoted '
+            'saying it, direct_quote is empty even when source_excerpt is not",'
             '"dates_numbers":["any specific date or number you are relying on, ONLY if it appears in source_excerpt -- otherwise an empty list"]'
             '},'
             '"interpretation":"your own argument-level reasoning about what this means or why it matters -- '
