@@ -102,8 +102,8 @@ def _executor_persona_history_block(persona_factual_context):
     provenance_mode = (persona_factual_context or {}).get("provenance_mode")
     if canon_text and provenance_mode == "real_person_evidence":
         return (
-            "AUTHORIZED PERSONAL HISTORY -- human-evidence-verified (the ONLY material, alongside "
-            f"SOURCE MATERIAL above, that can authorize a first-person experience claim):\n"
+            "AUTHORIZED PERSONAL HISTORY -- real-person evidence-curated context (the ONLY material, "
+            f"alongside SOURCE MATERIAL above, that can authorize a first-person experience claim):\n"
             f"---\n{canon_text}\n---\n\n"
         )
     if canon_text and provenance_mode == "editorial_canon":
@@ -559,7 +559,7 @@ class LLMMixin:
           fictional character, the canon file IS the authored, editorially
           decided biography -- the persona's wound/history was invented
           ONCE, deliberately, as the character, not invented fresh during
-          article generation. The strict human-evidence path exists
+          article generation. The strict real_person_evidence path exists
           because Pixel is the one persona being rebuilt from a REAL
           person's real, still-partially-uncertain biography, where canon
           and verified fact are not the same thing; that distinction does
@@ -970,8 +970,8 @@ class LLMMixin:
                 # real_person_evidence (Pixel Nova): the supplied text is a curated,
                 # evidence-audit-backed factual file -- strict, nothing beyond
                 # it (or the source) legitimizes a first-person claim.
-                f"PERSONA FACTUAL CONTEXT -- human-evidence-verified (the ONLY material that can "
-                f"authorize a first-person experience claim, alongside the source material above):\n"
+                f"PERSONA FACTUAL CONTEXT -- real-person evidence-curated context (the ONLY material "
+                f"that can authorize a first-person experience claim, alongside the source material above):\n"
                 f"---\n{_persona_context_text}\n---\n\n"
                 if _persona_context_text and _persona_provenance_mode == "real_person_evidence" else
                 # editorial_canon (Maya Flux/Siri Sage/Zen Circuit): the

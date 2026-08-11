@@ -344,6 +344,65 @@ def test_story_source_quote_unaffected_by_persona_history_guard():
     )
 
 
+def test_fable_polish_rewrite_primary_path_rejects_invented_memory_and_captures_prompt():
+    """Every persona-history test above exercises _opus_targeted_revision
+    directly. Production's PRIMARY revision path is _fable_polish_rewrite,
+    with _opus_targeted_revision only as its fallback -- the code threads
+    persona_factual_context through Fable and then unchanged into that
+    fallback, but nothing above proves the ACTUAL PROMPT Fable receives
+    contains the persona-history material, not just that the eventual
+    return value is safe. Captures the real (system, user) prompt sent to
+    the Fable rewrite call and asserts on it directly, the same
+    capture-the-actual-prompt discipline writer_prompt_test.py uses for the
+    writer stage."""
+    po, orch = _orch()
+    packet = build_evidence_packet(SOURCE_TEXT_ROSSI)
+    persona_ctx = build_persona_factual_context(PIXEL_FACTUAL_TEXT, persona_name="Pixel Nova", provenance_mode="real_person_evidence")
+    invented_memory = ORIGINAL_ARTICLE + ' In 2019 I visited CERN and watched physicists debate the data live.'
+    clean_fallback = ORIGINAL_ARTICLE + ' I sometimes felt a time zone behind the conversation, especially back at Rietveld.'
+
+    captured = {}
+
+    def capturing_fable_rewrite(self, system, user, *a, **k):
+        captured["system"] = system
+        captured["user"] = user
+        return invented_memory
+
+    restore = _patch_methods(
+        po.ProductionOrchestrator,
+        _call_editorial_model=capturing_fable_rewrite,
+        _call_openai_compat_api=lambda self, *a, **k: clean_fallback,
+    )
+    try:
+        result = orch._fable_polish_rewrite(
+            ORIGINAL_ARTICLE, ["add a personal example"], "Pixel Nova", "wary", packet,
+            persona_factual_context=persona_ctx,
+        )
+    finally:
+        restore()
+
+    full_prompt = captured.get("system", "") + "\n" + captured.get("user", "")
+    check("Fable executor prompt was actually captured", bool(full_prompt.strip()))
+    check("captured Fable prompt contains PERSONA PERSONAL-HISTORY CONTRACT", "PERSONA PERSONAL-HISTORY CONTRACT" in full_prompt)
+    check("captured Fable prompt contains the AUTHORIZED PERSONAL HISTORY heading", "AUTHORIZED PERSONAL HISTORY" in full_prompt)
+    check(
+        "captured Fable prompt contains Pixel's real Rietveld/time-zone factual material",
+        "Rietveld" in full_prompt and "time zone" in full_prompt,
+    )
+    check(
+        "captured Fable prompt contains the story SOURCE MATERIAL block (Rossi)",
+        "SOURCE MATERIAL" in full_prompt and "Rossi" in full_prompt,
+    )
+    check("captured Fable prompt does NOT contain PENDING VERIFICATION", "PENDING VERIFICATION" not in full_prompt)
+    check("captured Fable prompt does NOT contain the notary anecdote", "notary" not in full_prompt.lower())
+
+    check(
+        "primary Fable rewrite's invented CERN/2019 memory is rejected via the real production "
+        "entry point -- Opus fallback's clean revision is what's actually returned",
+        result == clean_fallback,
+    )
+
+
 def test_no_editorial_notes_short_circuits_before_any_call():
     """Both executors return article_body unchanged, with no LLM call at
     all, when there are no editorial notes to apply -- not part of the
@@ -377,6 +436,7 @@ if __name__ == "__main__":
     test_opus_targeted_revision_accepts_fictional_canon_episode()
     test_opus_targeted_revision_rejects_invented_biography_by_name()
     test_story_source_quote_unaffected_by_persona_history_guard()
+    test_fable_polish_rewrite_primary_path_rejects_invented_memory_and_captures_prompt()
     test_no_editorial_notes_short_circuits_before_any_call()
 
     print()

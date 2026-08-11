@@ -1119,6 +1119,51 @@ this session hit one of their known false-positive shapes directly while
 writing tests, which is itself a small piece of live evidence for how
 those limitations manifest in practice, not a new finding.
 
+**Two small closing corrections, same day (before live controls):**
+
+1. **Stale "human-evidence-verified" wording survived in TWO live prompt
+   strings** (`_executor_persona_history_block` and
+   `_fable_editorial_review`'s `_first_person_contract`) even after the
+   `PERSONA_PROVENANCE_HUMAN_EVIDENCE` -> `PERSONA_PROVENANCE_REAL_PERSON_
+   EVIDENCE` rename (fourth-session correction) -- the constant was
+   renamed, these two prompt-facing labels weren't. Both now read
+   "real-person evidence-curated context," matching the honest claim
+   already made elsewhere: `pixel-nova-factual.md` is model-drafted from
+   an evidence audit, not yet line-by-line approved by Jascha -- "verified"
+   overstates that. A stray docstring comment ("The strict human-evidence
+   path exists...") corrected too, for the same reason though it's not
+   prompt-facing.
+2. **Added primary-path executor coverage.** Every persona-history
+   integration test above called `_opus_targeted_revision` directly --
+   correct for proving the shared detector/contract work, but production's
+   actual entry point is `_fable_polish_rewrite`, with Opus only as its
+   fallback. Added one more `executor_guard_test.py` scenario that captures
+   the REAL `(system, user)` prompt sent to the Fable rewrite call (same
+   capture-the-actual-prompt discipline as `writer_prompt_test.py`) and
+   proves: `PERSONA PERSONAL-HISTORY CONTRACT` and the `AUTHORIZED
+   PERSONAL HISTORY` heading are present; Pixel's real Rietveld/time-zone
+   material is present; the story `SOURCE MATERIAL` block (Rossi) is
+   present; `PENDING VERIFICATION` and "notary" are absent; and a mocked
+   Fable rewrite that invents "In 2019 I visited CERN..." is rejected,
+   falling through to a clean Opus fallback -- through the real production
+   call chain, not a synthetic one.
+
+**Verification:** full suite re-run again -- all pass, zero drift.
+
+**Documented limitation, not a defect to fix now** (per explicit
+instruction): `find_new_unsupported_personal_history` is NOT a semantic
+personal-history detector. It runs the same quote/name/number scanner
+`scan_draft_for_unsupported_specifics` already uses and diffs the hits --
+an invented event with no quote, name, or number attached can still
+escape it, exactly as that scanner's own docstring already says. Accepted
+for Phase 1.6 because the layers are complementary, not redundant: the
+prompt contract asks for semantic compliance, the reviewer applies
+semantic judgment, and this deterministic guard catches the strong,
+observable signal shapes (a fabricated quote, name, or number) neither of
+the other two can mechanically guarantee. Building a regex that
+"understands autobiography" was explicitly ruled out, consistent with
+this file's repeated "not NLP theater" stance elsewhere.
+
 ## FROZEN DECISIONS (do not reopen by drift)
 - WHY WE WRITE (commit `01339ce`) is the shared publication doctrine.
   KEEP, scope-corrected: entitled to claim "improved or preserved the four
