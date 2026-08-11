@@ -556,7 +556,26 @@ of an explanation"); (3) `source_hash`/`evidence_packet_hash` unchanged,
 `grounding_violations` still empty, `grounding_validator_version` now
 stamped 2, `is_current_brief_schema()` true. **4/4 topics passed all three
 checks** — only re-saved to disk because every check passed; the script
-was written to refuse to write any topic that diverged. Terminology,
+was written to refuse to write any topic that diverged.
+
+**Test-harness rigor correction (found on review, applied AFTER the commit
+above landed, as a re-verification not a redo)**: the first revalidation
+script compared field snapshots via a shallow `dict(old_brief)` copy and
+Python `==` on live nested-dict references -- correct only if
+`validate_brief()` never mutates a nested `correction_moment`/
+`resisting_example` dict in place. Direct inspection of
+`validate_evidence_field` confirms it doesn't (every code path either
+returns the SAME object unchanged or a brand-new `_empty_candidate()`,
+never an in-place `field[key] = ...` write) -- but the test itself
+shouldn't rely on that as an unverified assumption. Re-ran the exact same
+4-topic comparison against the pristine pre-migration backups using
+`copy.deepcopy()` on the input and canonical (`sort_keys=True`) JSON
+serialization for the before/after comparison, immune to in-place mutation
+regardless of what `validate_brief` does internally, now or later. **All
+4 topics reconfirmed clean** under the mutation-proof method -- identical
+result to the original run, so the already-committed migration (`df50809`)
+did not need to be redone, only re-verified with a trustworthy method.
+Terminology,
 precise: the ORIGINAL frozen briefs (produced before this fix existed)
 never contained a `grounding_validator_version` field at all -- calling
 them "validator v1" would imply a version number that was never actually
