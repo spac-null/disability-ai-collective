@@ -926,7 +926,10 @@ class GenerateMixin:
             _reviewer_ran = True
             if _verdict == "revise" and _notes:
                 _pre_revision_content = content
-                content = self._fable_polish_rewrite(content, _notes, agent_name, register, evidence_packet)
+                content = self._fable_polish_rewrite(
+                    content, _notes, agent_name, register, evidence_packet,
+                    persona_factual_context=persona_factual_context,
+                )
                 _executor_ran = True
                 # editorial_revision degradation is defined at the CAPABILITY level, not the
                 # attempt level (2026-08-10, corrected after review): _fable_polish_rewrite
@@ -1018,9 +1021,18 @@ class GenerateMixin:
             # one answers "what source grounded this article," the other "what
             # authorized this persona to claim this happened to them." No
             # "planner" slot: persona factual context is loaded once per run,
-            # not produced by a planner call. executor is always None today --
-            # the executor stages don't receive persona_factual_context yet
-            # (a real, separate, flagged gap, not fixed here).
+            # not produced by a planner call.
+            #
+            # executor entry (added same day as the executor-boundary fix,
+            # after this was flagged as a real gap rather than fixed): gated
+            # on _executor_ran alone, same as evidence_lineage's executor
+            # entry above -- correct NOW because generate.py actually passes
+            # persona_factual_context into _fable_polish_rewrite/
+            # _opus_targeted_revision (see the call above), so _executor_ran
+            # becoming True truthfully implies the executor call received
+            # this exact object, not merely that the orchestrator had it
+            # available. Stamping this before that wiring existed would have
+            # been a false claim; it's a true one now.
             _declared_persona_factual_entry = persona_factual_lineage_entry(
                 agent_name, persona_factual_context.get("canon_hash"),
                 persona_factual_context.get("persona_factual_context_schema_version"),
@@ -1029,7 +1041,7 @@ class GenerateMixin:
             fable_brief["persona_factual_lineage"] = build_persona_factual_lineage(
                 writer=_writer_persona_factual_entry,
                 reviewer=_declared_persona_factual_entry if _reviewer_ran else None,
-                executor=None,
+                executor=_declared_persona_factual_entry if _executor_ran else None,
             )
         self._persist_article_plan(slug, agent_name, fable_brief)
 

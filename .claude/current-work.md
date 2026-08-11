@@ -978,6 +978,12 @@ since that guard only checks against `evidence_packet`'s `source_text`)
 that this session did NOT fix, per the instruction to close only the two
 named gaps. Flagging it here rather than silently wiring it in.
 
+**CLOSED same day, next session -- see "SIXTH-SESSION CORRECTIONS" below.**
+This gap was correctly identified here but left open; the user judged it
+a real safety gap (not just a provenance gap) rather than something to
+defer into the live controls, and asked for it to be closed before
+running the hostile-review control specifically designed to expose it.
+
 **Renamed `PERSONA_PROVENANCE_HUMAN_EVIDENCE`/`"human_evidence"` to
 `PERSONA_PROVENANCE_REAL_PERSON_EVIDENCE`/`"real_person_evidence"`**
 throughout (`grounding.py`, `llm.py`, `generate.py`, comments): the old
@@ -1009,6 +1015,109 @@ correction touches writer-prompt construction downstream of
 `_fable_editorial_brief`'s own prompt, which is the only thing
 snapshot_test.py's fixtures cover, so no re-recording was needed this
 time).
+
+## PHASE 1.6 CONTINUATION — SIXTH-SESSION CORRECTIONS: THE EXECUTOR SEAM (2026-08-11, same day)
+
+The fifth-session pass fixed the writer and reviewer boundary correctly
+but left the executor stage explicitly unfixed, documented above as "a
+real, separate gap... flagged here rather than silently wired in." The
+user judged this differently from the earlier gaps: not a provenance
+omission to note and move past, but an actual end-to-end grounding hole
+that the very next planned live control (hostile-review) was designed to
+expose -- "Strengthen this with a personal example from Pixel's own
+life" would have reached an executor with zero persona-factual boundary.
+Closed before running that control, not discovered by it.
+
+**The gap, stated precisely:** writer and reviewer both received
+`source_text` + `persona_factual_context`; the executor
+(`_opus_targeted_revision`/`_fable_polish_rewrite`) received `source_text`
+only. `find_new_unsupported_specifics` (the executor's existing
+deterministic backstop) only ever checked new quotes/numbers against
+`evidence_packet`'s `source_text` -- it has no concept of persona factual
+context at all. So an editorial note asking for personal evidence had
+nothing between it and a fabricated first-person memory at the one stage
+still capable of rewriting the body text.
+
+**Fix, four parts, all narrowly scoped to the executor (writer/reviewer
+untouched):**
+
+1. **Threaded the SAME `persona_factual_context` object** (not reloaded,
+   not reconstructed) from `generate.py`'s existing revision call-site into
+   `_fable_polish_rewrite(..., persona_factual_context=persona_factual_context)`,
+   which threads it unchanged into its own fallback call to
+   `_opus_targeted_revision`.
+2. **Added `_EXECUTOR_PERSONA_HISTORY_CONTRACT`** (`llm.py`, parallel to
+   the existing `_EXECUTOR_CONTRACT`) and `_executor_persona_history_block()`
+   (parallel to `_executor_source_block()`) -- phrased per
+   `provenance_mode` exactly like the reviewer's first-person contract
+   (`real_person_evidence` vs `editorial_canon` vs none), inserted into
+   both executor system/user prompts.
+3. **`grounding.find_new_unsupported_personal_history(original, revised,
+   authorized_corpus)`** (new): a thin, deliberately non-duplicative wrapper
+   around `scan_draft_for_unsupported_specifics` -- computes that
+   function's hits on `original_text` and `revised_text` SEPARATELY
+   against the same `authorized_corpus` (source_text + persona canon_text,
+   concatenated the same way generate.py's raw-draft guard already does),
+   returns only hits in `revised`'s set but NOT in `original`'s -- i.e.
+   NEWLY introduced, mirroring `find_new_unsupported_specifics`'s own
+   diff framing rather than re-flagging pre-existing content a revision
+   didn't touch (which would incorrectly penalize the executor for
+   something the writer stage already logged advisory-only and let
+   through). Does NOT replace `find_new_unsupported_specifics` -- both run
+   on every executor output now, via `_reject_if_unsupported_specifics`
+   gaining a `persona_factual_context` parameter and a second check.
+4. **`persona_factual_lineage.executor`** now correctly follows
+   `_executor_ran`, same as `evidence_lineage`'s executor entry --
+   truthful now specifically BECAUSE step 1 makes `_executor_ran=True`
+   actually imply the executor call received this exact object, not
+   merely that the orchestrator had it available (the distinction the
+   user was explicit about: "do not stamp it merely because the
+   orchestrator had the context available").
+
+**New regressions** (per explicit instruction: prove the executor
+actually calls the detector and acts on rejection, not just that the
+detector works in isolation -- `executor_guard_test.py`'s own stated
+purpose, extended rather than duplicated): 5 new integration tests, all
+through the real `_opus_targeted_revision` call with mocked LLM output --
+(1) an editorial request to "add a personal example" met with an invented
+"2019 CERN visit" is REJECTED (original returned unchanged); (2) the same
+request answered with Pixel's own AUTHORIZED PERSONAL HISTORY material
+(Rietveld/time-zone) is ACCEPTED; (3) a fictional persona's own
+`editorial_canon` episode (Maya's established wedding-steps wound) is
+ACCEPTED; (4) a fabricated named person in an invented anecdote is
+REJECTED (same failure class, different signal shape -- name instead of
+number); (5) a real, sourced quote (Rossi's) survives a revision
+UNAFFECTED by the new guard, proving the two checks (story-only,
+persona-aware) run independently without either narrowing the other's
+corpus. Two test-content bugs found and fixed during this pass, not
+product bugs: a sentence-initial "At Rietveld" coincidentally formed a
+two-word Title Case run the heuristic couldn't distinguish from a new
+proper name (rephrased to avoid sentence-initial capitalization abutting
+the real name -- a known, already-documented limitation of the
+Title-Case signal, not something to "fix" in the detector); and a
+rephrased quote changed trailing punctuation (comma to period) relative
+to the source's exact wording, which `find_new_unsupported_specifics`
+correctly treats as a non-match since it doesn't strip edge punctuation
+the way `scan_draft_for_unsupported_specifics` does. Also added 5 unit
+tests for `find_new_unsupported_personal_history` itself in
+`grounding_test.py` (new-fabrication flagged; the SAME issue present in
+both original and revised -- i.e. NOT newly introduced -- correctly not
+flagged; real authorized canon material not flagged; empty/None-input
+edge cases).
+
+**Verification:** full suite re-run -- `grounding_test.py`,
+`executor_guard_test.py`, `writer_prompt_test.py`, `snapshot_test.py
+--check` -- all pass, zero drift (this correction is entirely inside
+executor-stage prompt construction and the post-revision guard, which
+`snapshot_test.py`'s fixtures don't cover and `writer_prompt_test.py`
+never reaches, by design -- it stops at the writer's own LLM call).
+
+**Explicitly not done, still real:** the attribution-grounding heuristics
+throughout this file (Title-Case proper-name detection, quote-edge
+punctuation stripping) remain conservative, documented approximations --
+this session hit one of their known false-positive shapes directly while
+writing tests, which is itself a small piece of live evidence for how
+those limitations manifest in practice, not a new finding.
 
 ## FROZEN DECISIONS (do not reopen by drift)
 - WHY WE WRITE (commit `01339ce`) is the shared publication doctrine.

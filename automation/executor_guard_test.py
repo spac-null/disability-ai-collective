@@ -29,7 +29,7 @@ AUTOMATION_DIR = Path(__file__).parent
 sys.path.insert(0, str(AUTOMATION_DIR))
 
 from snapshot_test import _import_orchestrator, _patch_methods  # noqa: E402
-from orchestrator.grounding import build_evidence_packet  # noqa: E402
+from orchestrator.grounding import build_evidence_packet, build_persona_factual_context  # noqa: E402
 
 FAILURES = []
 
@@ -176,6 +176,174 @@ def test_fable_polish_rewrite_accepts_grounded_primary_attempt():
     )
 
 
+# ─────────────────────────────────────────────────────────────────────────
+# Executor persona-history guard (Phase 1.6 continuation, added same day as
+# the writer/reviewer AUTHORIZED PERSONAL HISTORY boundary): the tests above
+# only ever supplied evidence_packet, never persona_factual_context -- they
+# prove the STORY-evidence guard works, but say nothing about the
+# persona-history guard added alongside _reject_if_unsupported_specifics'
+# second check. These tests supply persona_factual_context explicitly and
+# exercise find_new_unsupported_personal_history through the real executor
+# call, the same "detector works in isolation" vs "executor actually calls
+# it and acts on rejection" distinction this whole module exists to prove.
+# ─────────────────────────────────────────────────────────────────────────
+
+SOURCE_TEXT_ROSSI = (
+    'On 6 August 2026, wheelchair user Elena Rossi tested the temporary entrance. '
+    '"I can enter independently now, but the sign still sends me toward the stairs," Rossi said.'
+)
+
+PIXEL_FACTUAL_TEXT = (
+    "At Gerrit Rietveld Academie they used an NGT interpreter to attend classes and group "
+    "conversation, and described the resulting lag as feeling like being in another time zone "
+    "from the room they were physically in."
+)
+
+MAYA_CANON_TEXT = (
+    "But the wound you carry isn't about ramps. It's about the day your best friend's wedding "
+    "was in a venue with three steps and everyone knew and no one said anything until you arrived."
+)
+
+
+def test_opus_targeted_revision_rejects_invented_personal_memory():
+    """The seam this session's re-audit found: find_new_unsupported_specifics
+    only checks against evidence_packet's source_text, so an executor
+    revision introducing a fabricated first-person biographical episode had
+    nothing to catch it even when persona_factual_context existed elsewhere
+    in the pipeline. "In 2019 I visited CERN" is absent from both the source
+    and PIXEL_FACTUAL_TEXT -- must be rejected."""
+    po, orch = _orch()
+    packet = build_evidence_packet(SOURCE_TEXT_ROSSI)
+    persona_ctx = build_persona_factual_context(PIXEL_FACTUAL_TEXT, persona_name="Pixel Nova", provenance_mode="real_person_evidence")
+    invented_memory = ORIGINAL_ARTICLE + ' In 2019 I visited CERN and watched physicists debate the data live.'
+
+    restore = _patch_methods(
+        po.ProductionOrchestrator,
+        _call_openai_compat_api=lambda self, *a, **k: invented_memory,
+    )
+    try:
+        result = orch._opus_targeted_revision(
+            ORIGINAL_ARTICLE, ["add a personal example"], "Pixel Nova", packet,
+            persona_factual_context=persona_ctx,
+        )
+    finally:
+        restore()
+    check(
+        "executor request to 'add a personal example' does NOT invent a CERN/2019 memory "
+        "-- original article returned unchanged",
+        result == ORIGINAL_ARTICLE,
+    )
+
+
+def test_opus_targeted_revision_accepts_authorized_personal_history():
+    """Using the persona's own AUTHORIZED PERSONAL HISTORY material (Rietveld/
+    time-zone) must be accepted -- the guard's job is to stop invention, not
+    to block a persona from ever mentioning their own real, supplied life."""
+    po, orch = _orch()
+    packet = build_evidence_packet(SOURCE_TEXT_ROSSI)
+    persona_ctx = build_persona_factual_context(PIXEL_FACTUAL_TEXT, persona_name="Pixel Nova", provenance_mode="real_person_evidence")
+    authorized_memory = ORIGINAL_ARTICLE + ' I sometimes felt a time zone behind the conversation, especially back at Rietveld.'
+
+    restore = _patch_methods(
+        po.ProductionOrchestrator,
+        _call_openai_compat_api=lambda self, *a, **k: authorized_memory,
+    )
+    try:
+        result = orch._opus_targeted_revision(
+            ORIGINAL_ARTICLE, ["add a personal example"], "Pixel Nova", packet,
+            persona_factual_context=persona_ctx,
+        )
+    finally:
+        restore()
+    check(
+        "referencing Pixel's own AUTHORIZED PERSONAL HISTORY (Rietveld/time-zone) is ACCEPTED",
+        result == authorized_memory,
+    )
+
+
+def test_opus_targeted_revision_accepts_fictional_canon_episode():
+    """A fictional persona's own editorial_canon material (Maya's established
+    wedding-steps wound) is legitimate for HER to reference -- editorial_canon
+    is a different, weaker-verification provenance class than
+    real_person_evidence (documented, not silently treated as equal), but
+    still authorizes the persona's own established episode, not an
+    invented one."""
+    po, orch = _orch()
+    packet = build_evidence_packet(SOURCE_TEXT_ROSSI)
+    persona_ctx = build_persona_factual_context(MAYA_CANON_TEXT, persona_name="Maya Flux", provenance_mode="editorial_canon")
+    canon_episode = ORIGINAL_ARTICLE + " My best friend's wedding was in a venue with three steps and no one said anything."
+
+    restore = _patch_methods(
+        po.ProductionOrchestrator,
+        _call_openai_compat_api=lambda self, *a, **k: canon_episode,
+    )
+    try:
+        result = orch._opus_targeted_revision(
+            ORIGINAL_ARTICLE, ["add a personal example"], "Maya Flux", packet,
+            persona_factual_context=persona_ctx,
+        )
+    finally:
+        restore()
+    check(
+        "a fictional persona's own editorial_canon episode (Maya's wedding-steps wound) is ACCEPTED",
+        result == canon_episode,
+    )
+
+
+def test_opus_targeted_revision_rejects_invented_biography_by_name():
+    """Same failure class as the CERN test, but via a fabricated named
+    person rather than a fabricated number -- proves the guard catches both
+    signal shapes scan_draft_for_unsupported_specifics checks."""
+    po, orch = _orch()
+    packet = build_evidence_packet(SOURCE_TEXT_ROSSI)
+    persona_ctx = build_persona_factual_context(PIXEL_FACTUAL_TEXT, persona_name="Pixel Nova", provenance_mode="real_person_evidence")
+    invented_person = ORIGINAL_ARTICLE + ' A professor named Helena Vance once pulled me aside after a lecture and told me this changes everything.'
+
+    restore = _patch_methods(
+        po.ProductionOrchestrator,
+        _call_openai_compat_api=lambda self, *a, **k: invented_person,
+    )
+    try:
+        result = orch._opus_targeted_revision(
+            ORIGINAL_ARTICLE, ["add a personal example"], "Pixel Nova", packet,
+            persona_factual_context=persona_ctx,
+        )
+    finally:
+        restore()
+    check(
+        "a new invented named person in a fabricated personal anecdote is REJECTED",
+        result == ORIGINAL_ARTICLE,
+    )
+
+
+def test_story_source_quote_unaffected_by_persona_history_guard():
+    """The persona-history guard must not interfere with the pre-existing
+    story-evidence guard: a revision that preserves Rossi's real, sourced
+    quote verbatim -- with persona_factual_context ALSO supplied -- must
+    still be accepted, proving the two guards run independently and
+    neither's corpus accidentally narrows the other's."""
+    po, orch = _orch()
+    packet = build_evidence_packet(SOURCE_TEXT_ROSSI)
+    persona_ctx = build_persona_factual_context(PIXEL_FACTUAL_TEXT, persona_name="Pixel Nova", provenance_mode="real_person_evidence")
+    preserved_quote = ORIGINAL_ARTICLE + ' Rossi said, "I can enter independently now, but the sign still sends me toward the stairs," reflecting on the encounter.'
+
+    restore = _patch_methods(
+        po.ProductionOrchestrator,
+        _call_openai_compat_api=lambda self, *a, **k: preserved_quote,
+    )
+    try:
+        result = orch._opus_targeted_revision(
+            ORIGINAL_ARTICLE, ["tighten the ending"], "Pixel Nova", packet,
+            persona_factual_context=persona_ctx,
+        )
+    finally:
+        restore()
+    check(
+        "Rossi's real, sourced quote survives a revision unaffected by the new persona-history guard",
+        result == preserved_quote,
+    )
+
+
 def test_no_editorial_notes_short_circuits_before_any_call():
     """Both executors return article_body unchanged, with no LLM call at
     all, when there are no editorial notes to apply -- not part of the
@@ -204,6 +372,11 @@ if __name__ == "__main__":
     test_fable_polish_rewrite_rejects_primary_then_falls_back()
     test_fable_polish_rewrite_rejects_both_primary_and_fallback()
     test_fable_polish_rewrite_accepts_grounded_primary_attempt()
+    test_opus_targeted_revision_rejects_invented_personal_memory()
+    test_opus_targeted_revision_accepts_authorized_personal_history()
+    test_opus_targeted_revision_accepts_fictional_canon_episode()
+    test_opus_targeted_revision_rejects_invented_biography_by_name()
+    test_story_source_quote_unaffected_by_persona_history_guard()
     test_no_editorial_notes_short_circuits_before_any_call()
 
     print()

@@ -1270,3 +1270,47 @@ def scan_draft_for_unsupported_specifics(draft_text, authorized_corpus):
                 f"number '{num}' not found in the supplied source or persona factual context",
             ))
     return violations
+
+
+def find_new_unsupported_personal_history(original_text, revised_text, authorized_corpus):
+    """Deterministic (non-LLM) post-revision guard for the executor stage
+    (_opus_targeted_revision / _fable_polish_rewrite, llm.py) -- the
+    persona-history counterpart to find_new_unsupported_specifics above.
+
+    Added same day the writer/reviewer boundary was fixed, found by
+    re-audit before a live control could expose it: find_new_unsupported_
+    specifics only checks a revision's NEW quotes/numbers against
+    evidence_packet's source_text -- it has no idea persona_factual_context
+    exists. That left the executor stage as the one place in the pipeline
+    that could still introduce an unauthorized first-person biographical
+    claim ("I remember visiting CERN in 2019...") with nothing to catch it,
+    even after the writer and reviewer stages were both correctly bounded
+    -- exactly the seam a hostile-review control asking to "strengthen this
+    with a personal example" would have hit.
+
+    Deliberately a THIN WRAPPER around scan_draft_for_unsupported_specifics,
+    not a new detector: computes that function's hits on original_text and
+    revised_text separately against the SAME authorized_corpus (expected to
+    be source_text + persona_factual_context's canon_text, concatenated by
+    the caller the same way generate.py's raw-draft guard already does),
+    then returns only the hits present in revised_text's set but NOT in
+    original_text's -- i.e. NEWLY introduced, mirroring find_new_
+    unsupported_specifics' own original-vs-revised framing rather than
+    flagging pre-existing content a change didn't touch (which would
+    incorrectly penalize the executor for something the writer stage
+    already logged advisory-only and let through).
+
+    Does NOT replace find_new_unsupported_specifics -- that guard answers
+    "what unsupported STORY-SPECIFIC material did the revision introduce,"
+    checked against source_text alone; this answers "what unsupported
+    PERSONAL-HISTORY-SHAPED material did the revision introduce," checked
+    against the broader source+persona corpus. Both should run on every
+    executor output. Same honest limitations as
+    scan_draft_for_unsupported_specifics: a fabricated event with no quote/
+    name/number attached produces zero hits.
+
+    Returns a list of (reason_code, reason) tuples, empty if clean. Never
+    raises, never modifies either input."""
+    original_hits = set(scan_draft_for_unsupported_specifics(original_text, authorized_corpus))
+    revised_hits = scan_draft_for_unsupported_specifics(revised_text, authorized_corpus)
+    return [hit for hit in revised_hits if hit not in original_hits]

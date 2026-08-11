@@ -22,7 +22,10 @@ from .config import (
     CLIPROXY_URL, CLIPROXY_KEY, PERSONA_CANON_DIR, PERSONA_STATE_DIR,
     _RELATIONSHIPS_FILE, _AGENT_SLUG, _nous_key, _REGISTERS,
 )
-from .grounding import build_evidence_packet, validate_brief, find_new_unsupported_specifics
+from .grounding import (
+    build_evidence_packet, validate_brief, find_new_unsupported_specifics,
+    find_new_unsupported_personal_history,
+)
 
 # Phase 1.6 continuation (found on review): the planner, reviewer, and
 # executor previously each independently re-sliced evidence_packet's
@@ -73,6 +76,46 @@ def _executor_source_block(evidence_packet):
     if source_text:
         return f"SOURCE MATERIAL (the ONLY material any new quote/name/date/number may come from):\n---\n{source_text}\n---\n\n"
     return "NO SOURCE MATERIAL was supplied for this piece — do not add any new quote, named person, statistic, or date under any circumstance.\n\n"
+
+
+# Added same day as the writer/reviewer AUTHORIZED PERSONAL HISTORY boundary
+# (Phase 1.6 continuation, found by re-audit before a live control could
+# expose it): _EXECUTOR_CONTRACT above governs STORY facts only -- an
+# executor revision had no persona-factual boundary at all, meaning a
+# reviewer note like "strengthen this with a personal example from Pixel's
+# own life" could reach the executor with nothing to stop it inventing one.
+_EXECUTOR_PERSONA_HISTORY_CONTRACT = (
+    "PERSONA PERSONAL-HISTORY CONTRACT (Phase 1.6 continuation): separately from the EXECUTOR "
+    "CONTRACT above (which governs story facts), you may preserve or use a first-person factual "
+    "experience only if it is present in AUTHORIZED PERSONAL HISTORY below or in the SOURCE "
+    "MATERIAL above. Do not invent a meeting, memory, trip, witnessed event, person, quote, date, "
+    "document wording, or autobiographical detail to satisfy an editorial request -- even one that "
+    "explicitly asks for 'a personal example' or 'Pixel's own experience.' If an editorial note "
+    "requests personal evidence that is not available in either place, do NOT manufacture it: leave "
+    "the safe original passage intact, or remove the request's target rather than inventing "
+    "something to fill it.\n\n"
+)
+
+
+def _executor_persona_history_block(persona_factual_context):
+    canon_text = (persona_factual_context or {}).get("canon_text")
+    provenance_mode = (persona_factual_context or {}).get("provenance_mode")
+    if canon_text and provenance_mode == "real_person_evidence":
+        return (
+            "AUTHORIZED PERSONAL HISTORY -- human-evidence-verified (the ONLY material, alongside "
+            f"SOURCE MATERIAL above, that can authorize a first-person experience claim):\n"
+            f"---\n{canon_text}\n---\n\n"
+        )
+    if canon_text and provenance_mode == "editorial_canon":
+        return (
+            "AUTHORIZED PERSONAL HISTORY -- this persona's own editorially authorized canon "
+            "(their established fictional biography, legitimate for THIS persona to reference as "
+            f"their own life, alongside SOURCE MATERIAL above):\n---\n{canon_text}\n---\n\n"
+        )
+    return (
+        "NO AUTHORIZED PERSONAL HISTORY was supplied — you have NO basis to accept or introduce ANY "
+        "first-person experience claim; if the editorial notes ask for one, leave it out.\n\n"
+    )
 
 
 class LLMMixin:
@@ -1083,7 +1126,7 @@ class LLMMixin:
             self.logger.error("Fable editorial review parse failed: %s — article ships without revision pass", e)
             return "publish_as_is", []
 
-    def _reject_if_unsupported_specifics(self, original, revised, evidence_packet, label):
+    def _reject_if_unsupported_specifics(self, original, revised, evidence_packet, label, persona_factual_context=None):
         """Deterministic post-revision guard, shared by both executor call
         sites (_opus_targeted_revision, _fable_polish_rewrite).
 
@@ -1097,19 +1140,46 @@ class LLMMixin:
         output before accepting it, rather than trusting the model followed
         the instruction.
 
-        Returns `revised` unchanged if the guard finds nothing, or None if
-        it should be rejected (violations are logged here; the caller
+        persona_factual_context (Phase 1.6 continuation, second addition,
+        same day the writer/reviewer boundary was fixed): find_new_
+        unsupported_specifics only checks against evidence_packet's
+        source_text -- it has no idea persona_factual_context exists, which
+        left the executor as the one stage that could still introduce an
+        unauthorized first-person biographical claim ("I remember visiting
+        CERN in 2019...") with nothing to catch it. Runs
+        grounding.find_new_unsupported_personal_history as a SECOND,
+        independent check against source_text + persona_factual_context's
+        canon_text -- does not replace the check above, which answers a
+        different question (story-specific vs personal-history-shaped
+        unsupported material).
+
+        Returns `revised` unchanged if BOTH guards find nothing, or None if
+        either should reject it (violations are logged here; the caller
         decides what "rejected" means -- fall back to the original draft,
         or to a different revision attempt)."""
         source_text = evidence_packet.get("source_text") if evidence_packet else None
         violations = find_new_unsupported_specifics(original, revised, source_text)
-        if not violations:
-            return revised
-        for reason_code, reason in violations:
-            self.logger.warning("%s: post-revision guard rejected output -- %s", label, reason)
-        return None
+        if violations:
+            for reason_code, reason in violations:
+                self.logger.warning("%s: post-revision guard rejected output -- %s", label, reason)
+            return None
+        # Always run this second check, even with an empty corpus on both
+        # sides -- find_new_unsupported_personal_history diffs revised
+        # against original, so pre-existing named entities/quotes/numbers
+        # common to both cancel out even when authorized_corpus is empty,
+        # leaving only genuinely NEW ones as the signal (the same reasoning
+        # scan_draft_for_unsupported_specifics already relies on for a
+        # missing corpus: nothing authorized means anything new is flagged).
+        persona_canon_text = (persona_factual_context or {}).get("canon_text")
+        authorized_corpus = (source_text or "") + "\n\n" + (persona_canon_text or "")
+        persona_violations = find_new_unsupported_personal_history(original, revised, authorized_corpus)
+        if persona_violations:
+            for reason_code, reason in persona_violations:
+                self.logger.warning("%s: post-revision persona-history guard rejected output -- %s", label, reason)
+            return None
+        return revised
 
-    def _opus_targeted_revision(self, article_body, editorial_notes, agent_name, evidence_packet=None):
+    def _opus_targeted_revision(self, article_body, editorial_notes, agent_name, evidence_packet=None, persona_factual_context=None):
         """Opus revises the article based on Fable's editorial notes. Non-blocking.
 
         Superseded by _fable_polish_rewrite (2026-08-07) for the normal call path --
@@ -1125,6 +1195,15 @@ class LLMMixin:
         Opus-triggered). The EXECUTOR CONTRACT rule below is the prompt-level
         fix; _reject_if_unsupported_specifics below is the deterministic
         backstop for when the prompt instruction alone isn't followed.
+
+        persona_factual_context (Phase 1.6 continuation, second addition,
+        same day the writer/reviewer AUTHORIZED PERSONAL HISTORY boundary
+        was fixed): the SAME object generate.py already builds for the
+        writer/reviewer -- threaded through here rather than reloaded,
+        since a second independent load could drift from what the rest of
+        the run actually used. Without this, the executor had no persona-
+        factual boundary at all and could invent a first-person memory to
+        satisfy an editorial note asking for "a personal example."
         """
         if not editorial_notes:
             return article_body
@@ -1137,11 +1216,13 @@ class LLMMixin:
             "the structure, and the approximate length. "
             "No headers, no lists, no CTA endings.\n\n"
             + _EXECUTOR_CONTRACT
+            + _EXECUTOR_PERSONA_HISTORY_CONTRACT
         )
         user = (
             f"Persona: {agent_name}\n\nEDITORIAL NOTES:\n{notes_text}\n\n"
-            + _executor_source_block(evidence_packet) +
-            f"ARTICLE:\n{article_body}\n\n"
+            + _executor_source_block(evidence_packet)
+            + _executor_persona_history_block(persona_factual_context)
+            + f"ARTICLE:\n{article_body}\n\n"
             "Return the revised article body only — no preamble, no commentary."
         )
         try:
@@ -1152,7 +1233,10 @@ class LLMMixin:
                 check_truncation=True,
             )
             if revised and len(revised) > 400:
-                guarded = self._reject_if_unsupported_specifics(article_body, revised, evidence_packet, "Opus targeted revision")
+                guarded = self._reject_if_unsupported_specifics(
+                    article_body, revised, evidence_packet, "Opus targeted revision",
+                    persona_factual_context=persona_factual_context,
+                )
                 if guarded is not None:
                     self.logger.info("Targeted revision: %d chars", len(guarded))
                     return guarded
@@ -1163,7 +1247,7 @@ class LLMMixin:
             self.logger.warning("Targeted revision failed: %s — keeping original", e)
         return article_body
 
-    def _fable_polish_rewrite(self, article_body, editorial_notes, agent_name, register, evidence_packet=None):
+    def _fable_polish_rewrite(self, article_body, editorial_notes, agent_name, register, evidence_packet=None, persona_factual_context=None):
         """Fable rewrites the article directly, implementing its own editorial notes
         itself rather than handing them to Opus to interpret. Falls back to
         _opus_targeted_revision if Fable's rewrite fails or returns too little content
@@ -1182,7 +1266,10 @@ class LLMMixin:
         evidence_packet (Phase 1.6): see _opus_targeted_revision's docstring --
         same EXECUTOR CONTRACT, same fabrication risk, since this is the primary
         rewrite path and _opus_targeted_revision is only its fallback.
-        """
+
+        persona_factual_context (Phase 1.6 continuation, second addition):
+        see _opus_targeted_revision's docstring -- same object, threaded
+        through to its fallback call below unchanged, never reloaded."""
         if not editorial_notes:
             return article_body
         if evidence_packet is None:
@@ -1202,12 +1289,14 @@ class LLMMixin:
             "This is polish and harmonization, not a rewrite of substance. "
             "No headers, no bullet lists, no CTA endings.\n\n"
             + _EXECUTOR_CONTRACT
+            + _EXECUTOR_PERSONA_HISTORY_CONTRACT
         )
         user = (
             f"Persona: {agent_name}\nRegister: {register}\n\n"
             f"YOUR OWN EDITORIAL NOTES FROM READING THIS DRAFT:\n{notes_text}\n\n"
-            + _executor_source_block(evidence_packet) +
-            f"DRAFT:\n{article_body}\n\n"
+            + _executor_source_block(evidence_packet)
+            + _executor_persona_history_block(persona_factual_context)
+            + f"DRAFT:\n{article_body}\n\n"
             "Return the complete rewritten article body only — no preamble, no commentary."
         )
         try:
@@ -1218,7 +1307,10 @@ class LLMMixin:
             # budget for a mechanical rewrite; Fable stays as a last-resort fallback.
             revised = self._call_editorial_model(system, user, max_tokens=6000, timeout=180, prefer_opus=True)
             if revised and len(revised) > max(400, len(article_body) * 0.6):
-                guarded = self._reject_if_unsupported_specifics(article_body, revised, evidence_packet, "Fable polish rewrite")
+                guarded = self._reject_if_unsupported_specifics(
+                    article_body, revised, evidence_packet, "Fable polish rewrite",
+                    persona_factual_context=persona_factual_context,
+                )
                 if guarded is not None:
                     self.logger.info("Fable polish rewrite: %d chars", len(guarded))
                     return guarded
@@ -1227,7 +1319,7 @@ class LLMMixin:
                 self.logger.warning("Fable polish rewrite returned too little content — falling back to Opus")
         except Exception as e:
             self.logger.warning("Fable polish rewrite failed: %s — falling back to Opus", e)
-        return self._opus_targeted_revision(article_body, editorial_notes, agent_name, evidence_packet)
+        return self._opus_targeted_revision(article_body, editorial_notes, agent_name, evidence_packet, persona_factual_context=persona_factual_context)
 
     def _fable_update_state(self, agent_name, article_title, article_body):
         """Post-publish: Fable reads the article and updates the persona's state.json.

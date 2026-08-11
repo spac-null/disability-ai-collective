@@ -739,6 +739,51 @@ def test_scan_draft_for_unsupported_specifics():
     )
 
 
+def test_find_new_unsupported_personal_history():
+    """The executor-boundary counterpart to find_new_unsupported_specifics
+    (which only checks against source_text) -- added same day as the
+    executor persona-history guard, closing the seam a hostile-review
+    control ("strengthen this with a personal example") would otherwise
+    have exposed: the executor had no persona-factual boundary at all."""
+    authorized_corpus = ARTICLE_SOURCE_EXCERPT + "\n\n" + PIXEL_CANON_EXCERPT
+    original = "A plain draft with no first-person biographical claims at all."
+
+    # A genuinely new fabricated episode (number signal) must be flagged.
+    revised_fabricated = original + " In 2019 I visited CERN and watched physicists debate the data live."
+    hits = g.find_new_unsupported_personal_history(original, revised_fabricated, authorized_corpus)
+    check(
+        "a newly introduced fabricated personal episode (new number) is flagged",
+        any(r == "possible_number_not_in_authorized_corpus" and "2019" in reason for r, reason in hits),
+    )
+
+    # The same episode already present in BOTH original and revised (i.e.
+    # NOT newly introduced by this revision) must not be flagged -- this is
+    # the diff-based framing, deliberately not a whole-draft check, so a
+    # pre-existing issue the writer stage already logged advisory-only
+    # doesn't get blamed on the executor.
+    already_present = original + " In 2019 I visited CERN and watched physicists debate the data live."
+    hits_unchanged = g.find_new_unsupported_personal_history(already_present, already_present, authorized_corpus)
+    check(
+        "an issue present in BOTH original and revised (unchanged by this revision) is NOT flagged as new",
+        hits_unchanged == [],
+    )
+
+    # Using real, authorized canon material (the notary anecdote's
+    # surrounding context, from PIXEL_CANON_EXCERPT) must not be flagged.
+    revised_authorized = original + (
+        ' The persona recalled a notary who wrote that the Deaf signer was '
+        '"capable of reading the translated language and therefore understood what he signed."'
+    )
+    hits_authorized = g.find_new_unsupported_personal_history(original, revised_authorized, authorized_corpus)
+    check(
+        "referencing real, authorized canon material is NOT flagged",
+        not any(r == "quoted_text_not_in_authorized_corpus" for r, _ in hits_authorized),
+    )
+
+    check("empty revised_text -> no violations", g.find_new_unsupported_personal_history(original, "", authorized_corpus) == [])
+    check("None original_text -> treated as empty, no crash", g.find_new_unsupported_personal_history(None, revised_fabricated, authorized_corpus) == hits)
+
+
 def _lineage_source_hashes(lineage):
     return {e["source_hash"] for e in lineage.values() if e and e["source_hash"] is not None}
 
@@ -890,6 +935,7 @@ if __name__ == "__main__":
     test_evidence_text()
     test_build_persona_factual_context()
     test_scan_draft_for_unsupported_specifics()
+    test_find_new_unsupported_personal_history()
     test_evidence_lineage_entry()
     test_build_evidence_lineage()
     test_persona_factual_lineage_entry()
