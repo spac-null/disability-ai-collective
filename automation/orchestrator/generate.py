@@ -498,14 +498,25 @@ class GenerateMixin:
         # interpretation and hypothesis with any real biography; "it's in
         # canon" is not evidence a first-person claim is real -- Pixel
         # Nova's OLD canon was itself a fictional character biography with
-        # no connection to verified fact). _load_persona_factual_context
-        # reads a SEPARATE, human-curated persona_canon/<slug>-factual.md
-        # (only its "## AUTHORIZED FACTUAL CONTEXT" section -- a
-        # "## PENDING VERIFICATION" section, if present, is structurally
-        # excluded) and returns '' for any persona that doesn't have one
-        # yet -- fail-closed, not a silent fallback to canon.
+        # no connection to verified fact).
+        #
+        # Second correction, same day: the first fix over-corrected in the
+        # OTHER direction -- treating an empty persona_factual_context as
+        # globally correct for Maya Flux/Siri Sage/Zen Circuit too, which
+        # made the reviewer read "no basis to accept ANY first-person
+        # claim" for personas who DO have an editorially authorized
+        # fictional wound/history. _load_persona_factual_context now
+        # returns (text, provenance_mode): Pixel Nova gets her strict,
+        # evidence-audit-only persona_canon/pixel-nova-factual.md
+        # ("## AUTHORIZED FACTUAL CONTEXT" only -- "## PENDING
+        # VERIFICATION" structurally excluded); the three fully fictional
+        # personas fall back to their own canon file in full, since for
+        # them the canon IS the authorized biography by editorial design,
+        # not evidence standing in for verified fact. Only a persona with
+        # neither a factual file nor a canon file gets ("", None).
+        _persona_factual_text, _persona_provenance_mode = self._load_persona_factual_context(agent_name)
         persona_factual_context = build_persona_factual_context(
-            self._load_persona_factual_context(agent_name), persona_name=agent_name,
+            _persona_factual_text, persona_name=agent_name, provenance_mode=_persona_provenance_mode,
         )
         _pb = _pb + _canon_block + _state_block
 

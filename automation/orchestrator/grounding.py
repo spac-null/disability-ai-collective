@@ -1053,39 +1053,70 @@ def build_evidence_lineage(planner, writer, reviewer, executor):
 #   NEW ARGUMENT/INTERPRETATION/METAPHOR/PERCEPTION <- writer is free to invent
 # ─────────────────────────────────────────────────────────────────────────
 
-PERSONA_FACTUAL_CONTEXT_SCHEMA_VERSION = 1
+PERSONA_FACTUAL_CONTEXT_SCHEMA_VERSION = 2
+
+# Recognized provenance_mode values (see build_persona_factual_context).
+# Bumped the schema version (1 -> 2) when this field was added, same day,
+# second pass -- corrects a real regression the first cut introduced: an
+# empty persona_factual_context made the reviewer treat NO first-person
+# claim as acceptable for ANY persona, which is correct for Pixel Nova
+# (whose factual context is now strictly real-evidence-only) but wrong for
+# Maya Flux/Siri Sage/Zen Circuit, who are fully fictional and already
+# have editorially authorized wounds/histories in their own canon files --
+# those were never invented DURING article generation, they were
+# authored once, deliberately, as the character. Erasing that with a
+# blanket "you have no life" instruction was never the intent.
+PERSONA_PROVENANCE_HUMAN_EVIDENCE = "human_evidence"   # Pixel Nova: real biography, evidence-audit backed
+PERSONA_PROVENANCE_EDITORIAL_CANON = "editorial_canon"  # fictional personas: their own authored canon
 
 
-def build_persona_factual_context(canon_text, persona_name=None):
+def build_persona_factual_context(canon_text, persona_name=None, provenance_mode=None):
     """Construct the persona-biography counterpart to build_evidence_packet.
 
-    canon_text: the persona's full canon material as actually supplied to
-    the writer this run -- callers should pass the SAME text that reaches
-    the writer prompt (currently: the persona_canon/*.md file content plus
-    personas.py's prompt_block, concatenated -- see generate.py; both are
-    real, overlapping sources of what a persona is authorized to claim as
-    their own history, per the live investigation that found no single
-    point of truth between them). This function does not care about that
-    internal structure -- it hashes/wraps whatever text it's given.
+    canon_text: the specific text this persona is authorized to claim as
+    their own history -- what that text actually IS depends on
+    provenance_mode and is the caller's (llm.py's) responsibility, not
+    this function's:
+      - PERSONA_PROVENANCE_HUMAN_EVIDENCE: ONLY a curated, evidence-audit-
+        backed factual file (persona_canon/<slug>-factual.md's "##
+        AUTHORIZED FACTUAL CONTEXT" section) -- used for Pixel Nova, the
+        one persona built from a real person's documented biography, where
+        "it's in canon" is explicitly NOT sufficient (canon mixes
+        interpretation/engine/hypothesis with any real biography, and an
+        older version of this project's own Pixel canon was proof: a fully
+        invented fictional character with zero connection to the real
+        evidence).
+      - PERSONA_PROVENANCE_EDITORIAL_CANON: the persona's own canon file
+        (persona_canon/<slug>.md, via _load_persona_canon) -- used for
+        Maya Flux/Siri Sage/Zen Circuit, who have no real person to be
+        unfaithful to. Their canon-authored wound/history IS their
+        authorized biography by design; the guard's job for them is to
+        stop NEW invented episodes beyond that canon, not to pretend they
+        have none.
+      - None: no factual context available at all (no factual file, no
+        canon, or a caller that hasn't decided yet). Same as canon_text
+        being empty -- see below.
 
     Deliberately NOT source-checked, NOT validated against anything --
-    persona canon is asserted, authored content (the human curating these
-    personas), not a claim that needs provenance the way a planner's
-    evidence_candidate does. What this DOES provide is the same discipline
-    build_evidence_packet gives story facts: an identity (hash) a later
-    stage can check a specific claim against, and versioning if the canon
-    corpus changes.
+    the text handed in is already either curated-from-evidence
+    (human_evidence) or authored-as-fiction (editorial_canon); this
+    function only hashes/wraps it and records which kind it is. What this
+    DOES provide is the same discipline build_evidence_packet gives story
+    facts: an identity (hash) a later stage can check a specific claim
+    against, and versioning if the corpus changes.
 
     Returns a dict with canon_text, canon_hash, persona_name,
-    persona_factual_context_schema_version. Empty/None canon_text produces
-    a packet with canon_text=None, canon_hash=None -- "no persona factual
-    context available," analogous to build_evidence_packet(None)."""
+    provenance_mode, persona_factual_context_schema_version. Empty/None
+    canon_text produces a packet with canon_text=None, canon_hash=None,
+    provenance_mode=None regardless of what was passed in -- "no persona
+    factual context available," analogous to build_evidence_packet(None)."""
     if not canon_text:
         return {
             "persona_name": persona_name,
             "canon_text": None,
             "canon_hash": None,
             "canon_length_chars": 0,
+            "provenance_mode": None,
             "persona_factual_context_schema_version": PERSONA_FACTUAL_CONTEXT_SCHEMA_VERSION,
         }
     return {
@@ -1093,6 +1124,7 @@ def build_persona_factual_context(canon_text, persona_name=None):
         "canon_text": canon_text,
         "canon_hash": _sha256_text(canon_text),
         "canon_length_chars": len(canon_text),
+        "provenance_mode": provenance_mode,
         "persona_factual_context_schema_version": PERSONA_FACTUAL_CONTEXT_SCHEMA_VERSION,
     }
 

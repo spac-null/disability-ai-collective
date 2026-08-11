@@ -1,5 +1,11 @@
 # Pixel Nova — Factual Context (Authorized Autobiography Only)
 
+**Provenance:** drafted by Claude from the evidence audit cited below, not
+authored or line-by-line approved by Jascha yet. Treat this as a curated
+draft artifact subject to his review, not a human-verified source in its
+own right — the notary-anecdote correction later in this file is a direct
+example of why that distinction matters in practice.
+
 Not the persona's editorial architecture — that lives in `pixel-nova.md`
 and personas.py's prompt_block. This file is read by ONE consumer:
 `LLMMixin._load_persona_factual_context()`, which passes only the
@@ -18,6 +24,16 @@ was an independently invented fictional character (female, born Amsterdam
 museum/Rothko wound) with no connection to Jascha's real biography.
 "Already in the old canon" was explicitly rejected this session as a
 basis for factual authorization — see `.claude/current-work.md`.
+
+**Correction (same day, second pass):** the first version of this file put
+the notary/legal-deed anecdote under AUTHORIZED, describing it as
+"re-verified against `03-WORKS.md`." That citation was wrong — a direct
+`grep -i notary` against the actual evidence-audit file at
+`~/code/trident/deaf-persona-evidence-audit.md` returns zero matches; the
+anecdote's real, sole source in this repo is the OLD, now-retired
+fictional `pixel-nova.md` canon (its "FROM THE INTERVIEWS" section),
+carried over by mistake — the exact "old canon is not evidence" failure
+this file exists to prevent. Moved to PENDING VERIFICATION below.
 
 ## AUTHORIZED FACTUAL CONTEXT
 
@@ -81,15 +97,6 @@ available but not actually usable — for example, a customer-service line
 that only accepts phone calls, which for a Deaf person is information
 that exists but cannot be reached at the moment it is needed.
 
-Pixel was involved in founding a legal entity in a process that required a
-notary to inscribe into the deed that Pixel, as the Deaf signer, was
-capable of reading the translated (written) language and therefore
-understood what they were signing — with the notary visibly uneasy about
-being in a room with someone who could not follow speech. Pixel has taken
-this as a concrete instance of a belief they hold more generally, that
-legibility is a political act: the state required documented proof of a
-disabled person's comprehension before their consent would count.
-
 ## PENDING VERIFICATION — NOT authorized, do not load into persona_factual_context
 
 These appear in one evidence source and have not been reconciled against
@@ -97,6 +104,20 @@ primary material or Jascha's direct confirmation. `_load_persona_factual_
 context()` structurally stops before this heading; nothing below this
 line ever reaches a writer or reviewer prompt as authorized fact.
 
+- **The notary/legal-deed anecdote** (founding a legal entity; a notary
+  inscribing into the deed that the Deaf signer was capable of reading
+  the translated language and therefore understood what they were
+  signing). Its only known source in this repo is the retired fictional
+  `pixel-nova.md` canon's "FROM THE INTERVIEWS" section — NOT the
+  evidence audit (`grep -i notary` against
+  `~/code/trident/deaf-persona-evidence-audit.md` returns nothing). It
+  may still be real — it reads like the kind of concrete institutional
+  detail the audit's own "Legibility written into law" theme would
+  predict — but it needs an actual primary-source passage (e.g. a
+  specific line in `03-WORKS.md` or the interview transcript) before it
+  can move to AUTHORIZED. Do not re-add it on the strength of "it sounds
+  consistent with Pixel's themes" — that is exactly the reasoning that
+  put it here by mistake once already.
 - Hearing parents.
 - A Deaf brother, and watching people's faces together at parties.
 - Detailed schooling history (attending Deaf and mainstream schools

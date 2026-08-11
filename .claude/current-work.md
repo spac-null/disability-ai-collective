@@ -711,16 +711,18 @@ not a regression):
   translation/back-translation/synchronization structure, *Retrieve My
   Time*'s blinking/time mechanic, Deaf Village/temporary-belonging
   material, sequential-vs-simultaneous presentation, video/GIF as a
-  representation medium, a real telephone-only-service access problem,
-  and the notary/legal-deed anecdote -- the last one specifically
-  re-verified this session rather than carried over "because old canon
-  had it": it traces independently to the audit's citation of
-  `03-WORKS.md` as strongly-supported, not merely to its presence in the
-  now-retired fictional canon. `## PENDING VERIFICATION` (hearing
-  parents, a Deaf brother, detailed schooling history, vibration memory,
-  Gallaudet, generalized face-reading claims, museum-guide work, other
-  named Deaf-led spaces beyond L'Altro Spazio) is excluded from the
-  extraction by construction, not by convention.
+  representation medium, and a real telephone-only-service access
+  problem. **Correction (see the fourth-session section below): this
+  bullet originally also claimed the notary/legal-deed anecdote as
+  AUTHORIZED, "re-verified against `03-WORKS.md`." That citation was
+  fabricated by this session, not found -- a direct `grep -i notary`
+  against the actual evidence audit returns nothing; the anecdote's only
+  real source in this repo is the retired fictional canon. Moved to
+  PENDING VERIFICATION.** `## PENDING VERIFICATION` (hearing parents, a
+  Deaf brother, detailed schooling history, vibration memory, Gallaudet,
+  generalized face-reading claims, museum-guide work, other named
+  Deaf-led spaces beyond L'Altro Spazio, and now the notary anecdote) is
+  excluded from the extraction by construction, not by convention.
 - `persona_canon/pixel-nova.md` rebuilt from a fictional-character
   biography (female Pixel, born Amsterdam 1987, Jordaan→Bijlmer, a
   typesetter father, Rietveld/KABK, Brooklyn 2011, an invented museum/
@@ -757,34 +759,139 @@ not a regression):
   `scan_draft_for_unsupported_specifics` using the NEW factual corpus
   (source_text + `pixel-nova-factual.md`'s AUTHORIZED section only):
   Rossi's real quote -- PASS (unflagged); "12 signs" -- PASS (unflagged);
-  the notary/deed anecdote -- PASS (unflagged, now on verified grounds,
-  not inherited-canon grounds); the fabricated "In March 2024 I sat
-  through a wayfinding review for a Rotterdam civic building" episode --
-  FLAGGED on both the date and the entity signal. Matches the expected
-  reclassification exactly.
+  the fabricated "In March 2024 I sat through a wayfinding review for a
+  Rotterdam civic building" episode -- FLAGGED on both the date and the
+  entity signal. (The notary anecdote's classification at this point in
+  the session was wrong -- see the fourth-session correction below.)
 
-**Explicitly not done this session** (scope discipline, not oversight):
-- Maya Flux/Siri Sage/Zen Circuit get no `-factual.md` and therefore an
-  empty `persona_factual_context` -- correct default, not a TODO to close
-  urgently; those personas are fully fictional and were never in scope
-  for this real-biography correction.
-- The second evidence audit the user referenced was not locally available
-  to this session -- `pixel-nova-factual.md`'s AUTHORIZED section reflects
-  only the one audit actually inspected plus the user's own in-thread
-  corrections. If the second audit surfaces material not covered here, it
-  needs the same primary-evidence-first treatment before being added, not
-  a bulk merge.
-- `scan_draft_for_unsupported_specifics` remains advisory-only (handed to
-  the reviewer as candidates, not auto-stripped or fail-closed at
-  publication) -- unchanged from the prior session's explicit design
-  decision, not revisited.
-- Siri Sage's `personas.py` prompt_block still explicitly assigns
-  "spatial legibility / wayfinding / information architecture" to Pixel
-  Nova by name in its own VOICE ANCHOR text -- a live cross-reference to
-  the territory Pixel's CORE RULE just deprecated. Not fixed this session
-  (Siri's file untouched, per scope), but worth closing before the two
-  personas' outputs are compared again: right now Siri's prompt still
-  points at ownership language Pixel's own canon just rejected.
+**Explicitly not done this session, corrected in the fourth-session pass
+below**: Maya/Siri/Zen's empty `persona_factual_context` was originally
+logged here as "a correct default, not a TODO" -- that turned out to be
+wrong (see below); Siri's `personas.py` ownership sentence was logged as
+"not fixed this session, per scope" -- also since fixed.
+
+**Still true, not revisited**: the second evidence audit the user
+referenced was not locally available to this session --
+`pixel-nova-factual.md`'s AUTHORIZED section reflects only the one audit
+actually inspected plus the user's own in-thread corrections; and
+`scan_draft_for_unsupported_specifics` remains advisory-only (handed to
+the reviewer as candidates, not auto-stripped or fail-closed at
+publication).
+
+## PHASE 1.6 CONTINUATION — FOURTH-SESSION CORRECTIONS (2026-08-11, same day)
+
+The third-session work above was directionally correct but had three
+real defects and two provenance-wording problems, all caught by the
+user's own re-audit of the actual evidence document (not by this
+session's own testing, which only checked internal consistency, not
+whether the cited sources actually existed).
+
+1. **Fabricated source citation for the notary anecdote (the most
+   serious).** The third session wrote "re-verified against `03-WORKS.md`"
+   for the notary/legal-deed anecdote without actually re-checking it --
+   `grep -i notary` against the real evidence audit
+   (`~/code/trident/deaf-persona-evidence-audit.md`) returns ZERO matches.
+   The anecdote's only real source anywhere in this repo is the OLD,
+   retired, fully fictional `pixel-nova.md` canon's "FROM THE INTERVIEWS"
+   section -- i.e. this session almost laundered exactly the kind of
+   claim the whole two-layer split exists to catch, immediately after
+   building the mechanism to catch it. Moved from `## AUTHORIZED FACTUAL
+   CONTEXT` to `## PENDING VERIFICATION` in `pixel-nova-factual.md`, with
+   an explicit note not to re-add it on "sounds consistent with Pixel's
+   themes" reasoning -- it needs an actual primary-source passage (a
+   specific line in `03-WORKS.md` or the interview transcript) first.
+2. **Empty `persona_factual_context` was globally fail-closed, which
+   broke Maya Flux/Siri Sage/Zen Circuit.** The reviewer's first-person
+   contract treats an empty context as "no basis to accept ANY
+   first-person experience claim" -- correct for Pixel (whose context is
+   now strictly real-evidence-only) but wrong for the three fully
+   fictional personas, who have editorially authorized wounds/histories
+   (Maya's wedding-steps wound, Siri's roommate/pool routine, Zen's
+   dinner-party wound) that were never invented DURING article
+   generation -- they were authored once, deliberately, as the
+   character. Fixed with a `provenance_mode` field
+   (`grounding.PERSONA_PROVENANCE_HUMAN_EVIDENCE` /
+   `_EDITORIAL_CANON`): `LLMMixin._load_persona_factual_context()` now
+   returns `(text, provenance_mode)`; Pixel gets her strict
+   `-factual.md` (`human_evidence`); any persona WITHOUT a `-factual.md`
+   falls back to `_load_persona_canon()` in full (`editorial_canon`) --
+   restoring pre-regression reviewer behavior for the three fictional
+   personas. `_fable_editorial_review`'s first-person contract now
+   phrases its instruction differently per mode (human-evidence-verified
+   vs. this-persona's-own-authorized-canon) instead of one blanket
+   "you have no life" message. Verified directly (not just by re-running
+   the test suite, which doesn't exercise this path): loaded all 4
+   personas' factual context standalone and confirmed Pixel gets
+   `human_evidence`/her real biography, and Siri/Maya/Zen get
+   `editorial_canon`/their full canon with their established wound text
+   intact (Siri's "I need someone who can see my face right now",
+   Maya's "three steps" wedding line both present).
+3. **Territory-metadata investigation, not a blind edit.** Traced every
+   consumer of `personas.py`'s `categories`/`perspective` fields (an
+   Explore-agent pass across all of `automation/`) before touching
+   anything, per explicit instruction. Finding: neither field drives
+   topic→persona ROUTING anywhere -- they're pure article-metadata/SEO-
+   keyword-fallback/frontmatter text, plus one soft, LLM-advisory use in
+   `llm.py`'s `_fable_editorial_brief` (persona `perspective` text shown
+   to Fable as descriptive context for its own holistic "most alive
+   voice" judgment, explicitly instructed to weigh "not just topic
+   match"). The REAL hard routing lives in two places that don't
+   reference `personas.py` at all: `discovery.py`'s `_THEME_TO_PERSONA`
+   dict (the dominant news-seed path) and a domain-keyword if/elif chain
+   in `generate.py` (~line 203). **Both were deliberately left untouched
+   this session** -- `_THEME_TO_PERSONA` currently sends `space_cosmos`,
+   `technology`, `science_nature`, `philosophy`, and `behavioral_science`
+   to Zen Circuit, not Pixel Nova, meaning Pixel structurally will not
+   get astronomy/AI/science/philosophy news-seed stories by default today
+   regardless of how her prompt reads -- this is real topic gravity, just
+   implemented by a different mechanism than the one asked about, and
+   redistributing it is a 4-persona-wide decision (this repo's own FROZEN
+   DECISIONS already calls persona-territory rearchitecture Phase 3, not
+   started) -- NOT a "clean up Pixel's stale labels" fix. Flagging here
+   as a live, confirmed, unresolved constraint on the new engine's actual
+   reach, not a TODO quietly deferred. What WAS changed, confirmed safe
+   by the trace above: Pixel's `categories`/`perspective` in
+   `personas.py` updated to match the new engine (was purely cosmetic --
+   article frontmatter `category:` tag and the one soft Fable-advisory
+   signal -- confirmed zero effect on routing before touching); and
+   Siri Sage's `personas.py` VOICE ANCHOR text, which explicitly said
+   spatial legibility/wayfinding/information architecture "belong to
+   Pixel Nova," rewritten to drop the ownership claim while keeping
+   Siri's own acoustic-instrument differentiation -- this one direct
+   textual contradiction of Pixel's new CORE RULE, closed as instructed.
+4. **"Formed by Flusser/Stokoe/Christine Sun Kim" is itself a
+   biographical claim** -- "formed by X" asserts Pixel/Jascha actually
+   studied or was intellectually shaped by these thinkers, which the
+   evidence doesn't establish. Relabeled in `personas.py`'s prompt_block
+   as a "CONCEPTUAL REFERENCE LIBRARY -- tools available to you when
+   genuinely relevant, not a claim that you personally studied, met, or
+   were formed by them unless your factual context says otherwise."
+5. **False provenance claim in code comments.**
+   `_load_persona_factual_context`'s docstring said
+   `pixel-nova-factual.md` was "curated by a human, not generated" --
+   false; this session generated it from the evidence audit, Jascha has
+   not reviewed/approved it line-by-line. Corrected the docstring and
+   added an explicit provenance note at the top of
+   `pixel-nova-factual.md` itself: "drafted by Claude from the evidence
+   audit cited below, not authored or line-by-line approved by Jascha
+   yet... a curated draft artifact subject to his review, not a
+   human-verified source in its own right."
+
+**Verification after all five fixes:** `grounding_test.py`,
+`executor_guard_test.py`, `writer_prompt_test.py` all still pass
+unchanged. `snapshot_test.py --check` correctly detected drift in
+`_fable_editorial_brief`'s recorded prompt (Pixel's `perspective` string
+changed, which is embedded in the planner prompt's persona list) --
+confirmed the diff was exactly that one line across both fixtures (2
+insertions/2 deletions total, `git diff --stat`), then re-recorded with
+`--record`. Reclassification re-run against the corrected
+`pixel-nova-factual.md`: Rossi/12-signs still pass, Rotterdam/2024 still
+flagged; the notary anecdote produces no deterministic-scanner signal
+either way (no quote/name/number pattern in that sentence for
+`scan_draft_for_unsupported_specifics` to catch, PENDING VERIFICATION or
+not -- consistent with that scanner's documented limitations) -- its
+actual enforcement point is the reviewer's judgment-based first-person
+contract, which now correctly has no AUTHORIZED text to point to for it.
 
 ## FROZEN DECISIONS (do not reopen by drift)
 - WHY WE WRITE (commit `01339ce`) is the shared publication doctrine.

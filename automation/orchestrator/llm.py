@@ -477,39 +477,70 @@ class LLMMixin:
         m = _re.search(r"##\s+THE WOUND\s*\n(.*?)(?=\n##|\Z)", canon, _re.DOTALL)
         return m.group(1).strip() if m else ""
 
-    def _load_persona_factual_context(self, agent_name) -> str:
-        """Load ONLY the authorized-autobiography text for a persona, for Phase 1.6's
-        persona_factual_context (grounding.build_persona_factual_context).
+    def _load_persona_factual_context(self, agent_name):
+        """Load the (text, provenance_mode) a persona is authorized to claim as their
+        own history, for Phase 1.6's persona_factual_context
+        (grounding.build_persona_factual_context). Returns a
+        (text: str, provenance_mode: str | None) tuple, never just text --
+        the reviewer prompt needs provenance_mode to phrase its instruction
+        correctly (see _fable_editorial_review's _first_person_contract).
 
-        Deliberately NOT the same thing as _load_persona_canon(): canon (personas.py's
-        prompt_block + persona_canon/*.md) mixes personality, perceptual engine, voice
-        rules, interpretation and hypothesis with any real biographical claims -- none
-        of that is evidence a first-person "I once witnessed/attended/was told..." claim
-        is entitled to lean on, and "it's already in canon" was the exact reasoning a
-        prior session used to wave through a notary anecdote without checking whether
-        it traced to real supporting evidence or was simply inherited, unverified, from
-        an older fictional persona write-up. Found live 2026-08-11 during Phase 1.6
-        continuation, corrected same session -- see .claude/current-work.md.
+        Two provenance modes, NOT interchangeable:
 
-        Reads persona_canon/<slug>-factual.md (a file separate from the canon .md,
-        curated by a human, not generated) and returns ONLY the text under
-        "## AUTHORIZED FACTUAL CONTEXT" -- text under a later "## PENDING VERIFICATION"
-        heading (single-source or unreconciled claims) is structurally excluded, the
-        same mechanism _extract_persona_wound already uses to scope a heading. Returns
-        '' if the file doesn't exist (a persona with no curated factual file gets an
-        empty persona_factual_context -- fail-closed: the reviewer/writer prompts both
-        treat empty as "no basis to accept any first-person experience claim," which is
-        the correct default for a persona that hasn't been through this curation yet,
-        not a silent permissive fallback to canon)."""
+        - grounding.PERSONA_PROVENANCE_HUMAN_EVIDENCE: for Pixel Nova only
+          right now. Reads persona_canon/<slug>-factual.md -- a file
+          separate from the canon .md, model-drafted from a real evidence
+          audit of Jascha's documented biography and intended for his
+          review/approval (NOT yet human-approved line-by-line as of this
+          writing -- do not claim it is) -- and returns ONLY the text
+          under "## AUTHORIZED FACTUAL CONTEXT". Text under a later
+          "## PENDING VERIFICATION" heading (single-source or unreconciled
+          claims) is structurally excluded, the same mechanism
+          _extract_persona_wound already uses to scope a heading. This
+          strict path exists because canon (personas.py's prompt_block +
+          persona_canon/*.md) mixes personality, perceptual engine, voice
+          rules, interpretation and hypothesis with any real biographical
+          claims -- none of that is evidence a first-person "I once
+          witnessed/attended/was told..." claim is entitled to lean on,
+          and "it's already in canon" is exactly the reasoning that
+          incorrectly waved through a notary anecdote in this file's first
+          version, sourced from the OLD, retired, fully fictional Pixel
+          canon rather than any real evidence -- caught and corrected same
+          day, see pixel-nova-factual.md's own correction note and
+          .claude/current-work.md.
+        - grounding.PERSONA_PROVENANCE_EDITORIAL_CANON: for every persona
+          WITHOUT a <slug>-factual.md (currently Maya Flux, Siri Sage, Zen
+          Circuit -- all fully fictional, no real person to be unfaithful
+          to). Falls back to _load_persona_canon(agent_name) in full. This
+          is intentional, not a laxer version of the same mistake: for a
+          fictional character, the canon file IS the authored, editorially
+          decided biography -- the persona's wound/history was invented
+          ONCE, deliberately, as the character, not invented fresh during
+          article generation. The strict human-evidence path exists
+          because Pixel is the one persona being rebuilt from a REAL
+          person's real, still-partially-uncertain biography, where canon
+          and verified fact are not the same thing; that distinction does
+          not exist for a persona with no real referent. Do not read this
+          as license to treat editorial_canon as equally strict --
+          `_fable_editorial_review` phrases its instruction differently
+          for the two modes precisely because the fictional-persona text
+          MAY legitimately contain some interpretation/voice material
+          alongside the biography, unlike Pixel's factual file.
+        - Returns ("", None) only if NEITHER a factual file NOR a canon
+          file exists for the persona -- fail-closed default, unchanged
+          from before."""
         import re as _re
+        from . import grounding as _grounding
         slug = _AGENT_SLUG.get(agent_name, agent_name.lower().replace(" ", "-"))
-        path = PERSONA_CANON_DIR / f"{slug}-factual.md"
+        factual_path = PERSONA_CANON_DIR / f"{slug}-factual.md"
         try:
-            text = path.read_text(encoding="utf-8")
+            text = factual_path.read_text(encoding="utf-8")
         except FileNotFoundError:
-            return ""
+            canon = self._load_persona_canon(agent_name)
+            return (canon, _grounding.PERSONA_PROVENANCE_EDITORIAL_CANON) if canon else ("", None)
         m = _re.search(r"##\s+AUTHORIZED FACTUAL CONTEXT\s*\n(.*?)(?=\n##\s+PENDING VERIFICATION|\Z)", text, _re.DOTALL)
-        return m.group(1).strip() if m else ""
+        authorized = m.group(1).strip() if m else ""
+        return (authorized, _grounding.PERSONA_PROVENANCE_HUMAN_EVIDENCE) if authorized else ("", None)
 
     def _load_persona_state(self, agent_name):
         """Load mutable state JSON for a persona. Returns dict with defaults if missing."""
@@ -882,6 +913,7 @@ class LLMMixin:
             )
         )
         _persona_context_text = (persona_factual_context or {}).get("canon_text")
+        _persona_provenance_mode = (persona_factual_context or {}).get("provenance_mode")
         _first_person_contract = (
             "FIRST-PERSON FACTUAL EPISODE CHECK (Phase 1.6): separately from the EVIDENCE CONTRACT above "
             "(which governs story facts), check the draft for any first-person claim of PERSONAL "
@@ -892,9 +924,25 @@ class LLMMixin:
             "REMOVAL, not to polish its prose or ask the writer to develop it further -- an invented "
             "personal history is a worse problem than a weak sentence.\n"
             + (
-                f"PERSONA FACTUAL CONTEXT (the ONLY material that can authorize a first-person "
-                f"experience claim, alongside the source material above):\n---\n{_persona_context_text}\n---\n\n"
-                if _persona_context_text else
+                # human_evidence (Pixel Nova): the supplied text is a curated,
+                # evidence-audit-backed factual file -- strict, nothing beyond
+                # it (or the source) legitimizes a first-person claim.
+                f"PERSONA FACTUAL CONTEXT -- human-evidence-verified (the ONLY material that can "
+                f"authorize a first-person experience claim, alongside the source material above):\n"
+                f"---\n{_persona_context_text}\n---\n\n"
+                if _persona_context_text and _persona_provenance_mode == "human_evidence" else
+                # editorial_canon (Maya Flux/Siri Sage/Zen Circuit): the
+                # supplied text is the persona's OWN authored canon -- their
+                # wound/history is real for THEM, established once as the
+                # character, not invented during this draft. Phrased
+                # differently on purpose: do not tell the reviewer these
+                # personas have no life.
+                f"PERSONA FACTUAL CONTEXT -- this persona's own editorially authorized canon (their "
+                f"established fictional biography, wound, and life history -- legitimate for THIS "
+                f"persona to reference as their own life, alongside the source material above; your "
+                f"job is to catch a NEW episode invented beyond this or the source, not to doubt "
+                f"anything already here):\n---\n{_persona_context_text}\n---\n\n"
+                if _persona_context_text and _persona_provenance_mode == "editorial_canon" else
                 "NO PERSONA FACTUAL CONTEXT was supplied — you have NO basis to accept ANY first-person "
                 "experience claim in this draft; if one appears, flag it for removal.\n\n"
             )
