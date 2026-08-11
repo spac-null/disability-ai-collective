@@ -24,7 +24,10 @@ import re
 import time
 
 from .config import _INDEFENSIBLE_PROMPTS, _REGISTERS, _THEME_CLUSTERS
-from .grounding import build_evidence_packet, writer_prompt_block, build_evidence_lineage, evidence_lineage_entry
+from .grounding import (
+    build_evidence_packet, writer_prompt_block, build_evidence_lineage, evidence_lineage_entry,
+    build_persona_factual_context, scan_draft_for_unsupported_specifics,
+)
 
 # Matches get_source_text's own default max_chars (discovery.py) -- both
 # call sites below rely on that default rather than overriding it, so this
@@ -478,6 +481,32 @@ class GenerateMixin:
             _state_lines.append(f"YOUR CURRENT REGISTER: {_state['recent_mood']}")
         _state_block = ("\n\n--- CURRENT STATE ---\n" + "\n".join(_state_lines)) if _state_lines else ""
         _canon_block = ("\n\n--- YOUR CANON (WHO YOU ARE, IMMUTABLY) ---\n" + _canon) if _canon else ""
+        # persona_factual_context (Phase 1.6 continuation, found live
+        # 2026-08-11): the writer's SECOND authorized-facts universe,
+        # parallel to evidence_packet's source_text -- a live downstream
+        # control found the writer can fabricate an entire first-person "I
+        # witnessed this event" episode that Phase 1.6's evidence pipeline
+        # has no way to check (it only grounds STORY facts). This corpus is
+        # what a later raw-draft scan checks first-person factual claims
+        # against, in addition to source_text -- see
+        # scan_draft_for_unsupported_specifics below.
+        #
+        # Corrected same session, before this ever reached a real run: the
+        # first cut built this from agent_info['prompt_block'] + _canon --
+        # i.e. the ENTIRE persona canon/voice brief, the exact anti-pattern
+        # this mechanism exists to prevent (canon mixes personality, engine,
+        # interpretation and hypothesis with any real biography; "it's in
+        # canon" is not evidence a first-person claim is real -- Pixel
+        # Nova's OLD canon was itself a fictional character biography with
+        # no connection to verified fact). _load_persona_factual_context
+        # reads a SEPARATE, human-curated persona_canon/<slug>-factual.md
+        # (only its "## AUTHORIZED FACTUAL CONTEXT" section -- a
+        # "## PENDING VERIFICATION" section, if present, is structurally
+        # excluded) and returns '' for any persona that doesn't have one
+        # yet -- fail-closed, not a silent fallback to canon.
+        persona_factual_context = build_persona_factual_context(
+            self._load_persona_factual_context(agent_name), persona_name=agent_name,
+        )
         _pb = _pb + _canon_block + _state_block
 
         _refs_block = (
@@ -654,6 +683,18 @@ class GenerateMixin:
             + (f"YOUR WOUND (the specific episode that costs you something — do NOT quote it directly, "
                f"but it may complicate your argument if you let it): {self._extract_persona_wound(agent_name)}\n\n"
                if self._extract_persona_wound(agent_name) else "")
+            + (
+                "PERSONA FACTUAL CONTEXT BOUNDARY (Phase 1.6): your CANON above is the complete set of "
+                "events, testimony, and documented facts you are authorized to claim as your own lived "
+                "history. Never invent a new event you personally witnessed, attended, were told, signed, "
+                "heard, saw, remembered, or experienced — a first-person factual episode ('I sat through...', "
+                "'I once watched...', 'I was told...') is only allowed if it is already in your canon above "
+                "or the source material, not merely plausible for someone like you. Never invent documentary "
+                "wording — a quotation from a person, a deed, a notice, a form, a letter — that isn't already "
+                "in your canon or the source. This does not restrict your own present-tense thinking: "
+                "'I think', 'I notice', 'what bothers me is', 'I keep circling back to' are argument and "
+                "perception, not biography, and are always yours to write freely.\n\n"
+            )
             # Phase 1.6 continuation (found across two rounds of review):
             # opening_scene, seed_sentence, angle, and cross_cite are ALL
             # planner-authored PROSE, not evidence-candidate objects -- none
@@ -745,6 +786,34 @@ class GenerateMixin:
                 if content.startswith('TITLE:'):
                     content = ''  # malformed; fallback title already set above
 
+        # Raw-draft factual guard (Phase 1.6 continuation, found live
+        # 2026-08-11): checks the RAW draft -- before reviewer or executor
+        # ever touch it -- for quoted spans/names/numbers that appear in
+        # neither the article source nor the persona's own factual context.
+        # This is the location the live finding showed was missing: the
+        # existing executor guard (find_new_unsupported_specifics) only
+        # compares original-vs-revised, so it structurally cannot catch a
+        # fabrication the WRITER introduced in its own first draft -- which
+        # is exactly what happened (a fabricated "I sat through a wayfinding
+        # review in Rotterdam, March 2024" episode survived both review and
+        # revision untouched). Advisory only for now: results are handed to
+        # the reviewer below as candidates to judge, not auto-stripped --
+        # scan_draft_for_unsupported_specifics is explicitly documented as
+        # a first-pass signal, not a semantic fabrication validator, and a
+        # hard block on an uncalibrated heuristic risks the same
+        # over-rejection scan_free_prose_field was demoted for earlier in
+        # this phase.
+        _raw_draft_guard_hits = []
+        if content and (source_text or persona_factual_context.get("canon_text")):
+            _authorized_corpus = (source_text or "") + "\n\n" + (persona_factual_context.get("canon_text") or "")
+            _raw_draft_guard_hits = scan_draft_for_unsupported_specifics(content, _authorized_corpus)
+            if _raw_draft_guard_hits:
+                self.logger.warning(
+                    "Raw-draft factual guard: %d unverified specific(s) in the first draft -- "
+                    "handed to the reviewer as candidates, not auto-removed: %s",
+                    len(_raw_draft_guard_hits), _raw_draft_guard_hits,
+                )
+
         # Attribution fix for Stage B of the anchor-architecture blueprint
         # (see review.py's _plan_follow_read docstring and
         # .claude/bregman-anchor-corpus.md Section 7, blocker #4). Capture
@@ -781,7 +850,10 @@ class GenerateMixin:
         _executor_ran = False
         if content and is_opus:
             _review_angle = _fable_angle_text or title
-            _verdict, _notes = self._fable_editorial_review(content, agent_name, _review_angle, register, evidence_packet)
+            _verdict, _notes = self._fable_editorial_review(
+                content, agent_name, _review_angle, register, evidence_packet,
+                persona_factual_context=persona_factual_context, raw_draft_guard_hits=_raw_draft_guard_hits,
+            )
             _reviewer_ran = True
             if _verdict == "revise" and _notes:
                 _pre_revision_content = content

@@ -660,6 +660,85 @@ def test_evidence_text():
     check("empty string -> empty string", g.evidence_text("") == "")
 
 
+PIXEL_CANON_EXCERPT = (
+    "## FROM THE INTERVIEWS\n\n"
+    "Legibility written into law: founding a legal entity, a notary literally inscribed into the deed "
+    "that the Deaf signer was capable of reading the translated language and therefore understood what "
+    "he signed — the official visibly uneasy sitting with someone who could not follow speech."
+)
+
+ARTICLE_SOURCE_EXCERPT = (
+    "On 6 August 2026, wheelchair user Elena Rossi tested the temporary entrance. "
+    '"I can enter independently now, but the sign still sends me toward the stairs," Rossi said.'
+)
+
+
+def test_build_persona_factual_context():
+    empty = g.build_persona_factual_context(None)
+    check("empty persona context has no canon_hash", empty["canon_hash"] is None)
+    check("empty persona context has no canon_text", empty["canon_text"] is None)
+    check("empty persona context still carries schema version", empty["persona_factual_context_schema_version"] == g.PERSONA_FACTUAL_CONTEXT_SCHEMA_VERSION)
+
+    ctx = g.build_persona_factual_context(PIXEL_CANON_EXCERPT, persona_name="Pixel Nova")
+    check("persona context records persona_name", ctx["persona_name"] == "Pixel Nova")
+    check("persona context hashes canon_text", ctx["canon_hash"] == g._sha256_text(PIXEL_CANON_EXCERPT))
+    check("persona context records canon_length_chars", ctx["canon_length_chars"] == len(PIXEL_CANON_EXCERPT))
+
+    ctx2 = g.build_persona_factual_context(PIXEL_CANON_EXCERPT, persona_name="Pixel Nova")
+    check("same canon_text -> identical canon_hash", ctx["canon_hash"] == ctx2["canon_hash"])
+    ctx3 = g.build_persona_factual_context(PIXEL_CANON_EXCERPT + " extra.", persona_name="Pixel Nova")
+    check("different canon_text -> different canon_hash", ctx["canon_hash"] != ctx3["canon_hash"])
+
+
+def test_scan_draft_for_unsupported_specifics():
+    authorized_corpus = ARTICLE_SOURCE_EXCERPT + "\n\n" + PIXEL_CANON_EXCERPT
+
+    check("empty draft -> no violations", g.scan_draft_for_unsupported_specifics("", authorized_corpus) == [])
+    check("None draft -> no violations", g.scan_draft_for_unsupported_specifics(None, authorized_corpus) == [])
+
+    clean_draft = (
+        'Elena Rossi said "I can enter independently now, but the sign still sends me toward the stairs."'
+    )
+    check("draft using only real source material -> clean", g.scan_draft_for_unsupported_specifics(clean_draft, authorized_corpus) == [])
+
+    # REGRESSION -- the exact live finding (2026-08-11 downstream positive
+    # control): a fabricated first-person witnessed event with a specific
+    # invented date, absent from both source and persona canon.
+    fabricated_anecdote = (
+        "In March 2024 I sat through a wayfinding review for a Rotterdam civic building "
+        "and watched exactly that meeting happen."
+    )
+    hits = g.scan_draft_for_unsupported_specifics(fabricated_anecdote, authorized_corpus)
+    check(
+        "LIVE REGRESSION: the fabricated '2024' from the Rotterdam anecdote is flagged",
+        any(r == "possible_number_not_in_authorized_corpus" and "2024" in reason for r, reason in hits),
+    )
+
+    # REGRESSION -- the punctuation-edge false positive also found live: the
+    # real article quoted persona canon's notary anecdote accurately but
+    # added a trailing comma the canon source doesn't have. Must NOT be
+    # flagged once edge punctuation is stripped.
+    real_canon_quote_with_added_comma = (
+        'The persona recalled a notary who wrote that the Deaf signer was '
+        '"capable of reading the translated language and therefore understood what he signed,"'
+    )
+    hits2 = g.scan_draft_for_unsupported_specifics(real_canon_quote_with_added_comma, authorized_corpus)
+    check(
+        "a real canon quote with an added trailing comma (grammatical embedding) is NOT flagged as unsupported",
+        not any(r == "quoted_text_not_in_authorized_corpus" for r, _ in hits2),
+    )
+
+    # A genuinely fabricated quotation must still be caught.
+    fabricated_quote_draft = 'The museum director said "we never received a single complaint about signage."'
+    hits3 = g.scan_draft_for_unsupported_specifics(fabricated_quote_draft, authorized_corpus)
+    check("a genuinely fabricated quotation not in either corpus is flagged", any(r == "quoted_text_not_in_authorized_corpus" for r, _ in hits3))
+
+    check(
+        "no authorized corpus at all -> any quote/name/number is automatically a violation",
+        len(g.scan_draft_for_unsupported_specifics(fabricated_anecdote, None)) > 0,
+    )
+
+
 def _lineage_source_hashes(lineage):
     return {e["source_hash"] for e in lineage.values() if e and e["source_hash"] is not None}
 
@@ -761,6 +840,8 @@ if __name__ == "__main__":
     test_scan_free_prose_field()
     test_validate_brief_does_not_touch_free_prose_fields()
     test_evidence_text()
+    test_build_persona_factual_context()
+    test_scan_draft_for_unsupported_specifics()
     test_evidence_lineage_entry()
     test_build_evidence_lineage()
 

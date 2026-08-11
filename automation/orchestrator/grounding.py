@@ -1024,3 +1024,147 @@ def build_evidence_lineage(planner, writer, reviewer, executor):
         "reviewer": reviewer,
         "executor": executor,
     }
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# Persona factual context + whole-draft guard (found live, 2026-08-11
+# downstream positive control): Phase 1.6's evidence_packet grounds STORY
+# facts (what the source says). It has no opinion on FIRST-PERSON
+# TESTIMONY -- a persona claiming to have personally witnessed, attended,
+# been told, or signed something. That's a real, separate factual claim a
+# writer can invent with full rhetorical authority, and the live positive
+# control did exactly that: a captured real Opus draft claimed "In March
+# 2024 I sat through a wayfinding review for a Rotterdam civic building..."
+# -- a specific fabricated event, confirmed (by exhaustively searching the
+# complete 57k-character writer prompt) absent from the source, the wound,
+# and the full persona canon. It survived both the reviewer and the
+# executor untouched, because neither stage's job includes checking
+# first-person biographical claims. This section gives that second kind of
+# fact -- persona lived history -- its own authorized corpus, the same way
+# evidence_packet gives story facts theirs, WITHOUT requiring every sentence
+# of prose to trace to a source (that would destroy the personas, whose
+# entire premise is that they may draw on established biography, wound, and
+# perceptual history to interpret a story).
+#
+# Two authorized universes, kept conceptually distinct even though this
+# first cut concatenates them into one corpus for the deterministic check:
+#   ARTICLE FACTS      <- evidence_packet's source_text
+#   PERSONA LIFE FACTS <- persona_factual_context's canon_text (this section)
+#   NEW ARGUMENT/INTERPRETATION/METAPHOR/PERCEPTION <- writer is free to invent
+# ─────────────────────────────────────────────────────────────────────────
+
+PERSONA_FACTUAL_CONTEXT_SCHEMA_VERSION = 1
+
+
+def build_persona_factual_context(canon_text, persona_name=None):
+    """Construct the persona-biography counterpart to build_evidence_packet.
+
+    canon_text: the persona's full canon material as actually supplied to
+    the writer this run -- callers should pass the SAME text that reaches
+    the writer prompt (currently: the persona_canon/*.md file content plus
+    personas.py's prompt_block, concatenated -- see generate.py; both are
+    real, overlapping sources of what a persona is authorized to claim as
+    their own history, per the live investigation that found no single
+    point of truth between them). This function does not care about that
+    internal structure -- it hashes/wraps whatever text it's given.
+
+    Deliberately NOT source-checked, NOT validated against anything --
+    persona canon is asserted, authored content (the human curating these
+    personas), not a claim that needs provenance the way a planner's
+    evidence_candidate does. What this DOES provide is the same discipline
+    build_evidence_packet gives story facts: an identity (hash) a later
+    stage can check a specific claim against, and versioning if the canon
+    corpus changes.
+
+    Returns a dict with canon_text, canon_hash, persona_name,
+    persona_factual_context_schema_version. Empty/None canon_text produces
+    a packet with canon_text=None, canon_hash=None -- "no persona factual
+    context available," analogous to build_evidence_packet(None)."""
+    if not canon_text:
+        return {
+            "persona_name": persona_name,
+            "canon_text": None,
+            "canon_hash": None,
+            "canon_length_chars": 0,
+            "persona_factual_context_schema_version": PERSONA_FACTUAL_CONTEXT_SCHEMA_VERSION,
+        }
+    return {
+        "persona_name": persona_name,
+        "canon_text": canon_text,
+        "canon_hash": _sha256_text(canon_text),
+        "canon_length_chars": len(canon_text),
+        "persona_factual_context_schema_version": PERSONA_FACTUAL_CONTEXT_SCHEMA_VERSION,
+    }
+
+
+# Trailing/leading punctuation a quote-embedding sentence commonly adds or
+# needs around an otherwise-verbatim quotation (a comma before the closing
+# quote mark to fit new sentence grammar, a leading space, etc.) -- found
+# live: the real captured article quoted persona canon's notary anecdote
+# accurately in substance but added a trailing comma the canon source
+# doesn't have ("...he signed," vs canon's "...he signed --"), which would
+# otherwise register as a false "unsupported quote" on an exact-substring
+# check. Stripped from both ends before the containment check below ONLY --
+# never used to alter what's actually flagged as a violation.
+_QUOTE_EDGE_PUNCTUATION = ",.;:!? —–-"
+
+
+def scan_draft_for_unsupported_specifics(draft_text, authorized_corpus):
+    """Deterministic (non-LLM) whole-draft guard: checks a FULL ARTICLE
+    DRAFT (not a single planner field) against an AUTHORIZED CORPUS that
+    should be the concatenation of article source evidence
+    (evidence_packet's source_text) and persona factual context
+    (build_persona_factual_context's canon_text) -- the union of the two
+    authorized universes described in this section's module comment.
+
+    Three signals, the same shapes as scan_free_prose_field (see that
+    function's docstring for why these three and not others), applied at
+    whole-draft scale against the broader two-source corpus instead of one
+    planner field against source alone:
+      - a quoted span not verbatim in the corpus (edge punctuation
+        stripped first -- see _QUOTE_EDGE_PUNCTUATION)
+      - a multi-word Title Case run not in the corpus (a plausible new
+        named person/place/org) -- CONSERVATIVE signal, expected to be
+        noisier at whole-article scale than scan_free_prose_field's
+        single-field use, but real persona-canon citations (an artist's
+        name the persona canonically references, e.g. "Ine Gevers") should
+        already be IN the corpus and pass cleanly, since canon_text is
+        part of what's being checked against
+      - a multi-digit number not in the corpus (a plausible fabricated
+        date/statistic/count)
+
+    THIS IS NOT A COMPLETE FABRICATION DETECTOR. A fabricated EVENT stated
+    with no quote, no new name, and no number attached (e.g. "I once helped
+    a stranger find an exit and never told anyone") produces zero hits --
+    same class of limitation documented on scan_free_prose_field, now
+    applied to a full draft instead of one field. This is a first-pass
+    signal for the reviewer to act on with real judgment, not a semantic
+    fabrication validator.
+
+    Returns a list of (reason_code, reason) tuples, empty if clean. Never
+    raises, never modifies either input."""
+    if not draft_text:
+        return []
+    violations = []
+    for m in _QUOTED_SPAN_RE.finditer(draft_text):
+        quoted = m.group(1).strip().strip(_QUOTE_EDGE_PUNCTUATION)
+        if quoted and not (authorized_corpus and quoted in authorized_corpus):
+            violations.append((
+                "quoted_text_not_in_authorized_corpus",
+                f"quoted text '{quoted[:70]}' not found in the supplied source or persona factual context",
+            ))
+    for m in _PROPER_NAME_RE.finditer(draft_text):
+        candidate = m.group(0)
+        if not (authorized_corpus and candidate in authorized_corpus):
+            violations.append((
+                "possible_named_entity_not_in_authorized_corpus",
+                f"possible named entity '{candidate}' not found in the supplied source or persona factual context",
+            ))
+    for m in _MULTIDIGIT_NUMBER_RE.finditer(draft_text):
+        num = m.group(0)
+        if not (authorized_corpus and num in authorized_corpus):
+            violations.append((
+                "possible_number_not_in_authorized_corpus",
+                f"number '{num}' not found in the supplied source or persona factual context",
+            ))
+    return violations

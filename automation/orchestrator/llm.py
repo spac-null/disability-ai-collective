@@ -477,6 +477,40 @@ class LLMMixin:
         m = _re.search(r"##\s+THE WOUND\s*\n(.*?)(?=\n##|\Z)", canon, _re.DOTALL)
         return m.group(1).strip() if m else ""
 
+    def _load_persona_factual_context(self, agent_name) -> str:
+        """Load ONLY the authorized-autobiography text for a persona, for Phase 1.6's
+        persona_factual_context (grounding.build_persona_factual_context).
+
+        Deliberately NOT the same thing as _load_persona_canon(): canon (personas.py's
+        prompt_block + persona_canon/*.md) mixes personality, perceptual engine, voice
+        rules, interpretation and hypothesis with any real biographical claims -- none
+        of that is evidence a first-person "I once witnessed/attended/was told..." claim
+        is entitled to lean on, and "it's already in canon" was the exact reasoning a
+        prior session used to wave through a notary anecdote without checking whether
+        it traced to real supporting evidence or was simply inherited, unverified, from
+        an older fictional persona write-up. Found live 2026-08-11 during Phase 1.6
+        continuation, corrected same session -- see .claude/current-work.md.
+
+        Reads persona_canon/<slug>-factual.md (a file separate from the canon .md,
+        curated by a human, not generated) and returns ONLY the text under
+        "## AUTHORIZED FACTUAL CONTEXT" -- text under a later "## PENDING VERIFICATION"
+        heading (single-source or unreconciled claims) is structurally excluded, the
+        same mechanism _extract_persona_wound already uses to scope a heading. Returns
+        '' if the file doesn't exist (a persona with no curated factual file gets an
+        empty persona_factual_context -- fail-closed: the reviewer/writer prompts both
+        treat empty as "no basis to accept any first-person experience claim," which is
+        the correct default for a persona that hasn't been through this curation yet,
+        not a silent permissive fallback to canon)."""
+        import re as _re
+        slug = _AGENT_SLUG.get(agent_name, agent_name.lower().replace(" ", "-"))
+        path = PERSONA_CANON_DIR / f"{slug}-factual.md"
+        try:
+            text = path.read_text(encoding="utf-8")
+        except FileNotFoundError:
+            return ""
+        m = _re.search(r"##\s+AUTHORIZED FACTUAL CONTEXT\s*\n(.*?)(?=\n##\s+PENDING VERIFICATION|\Z)", text, _re.DOTALL)
+        return m.group(1).strip() if m else ""
+
     def _load_persona_state(self, agent_name):
         """Load mutable state JSON for a persona. Returns dict with defaults if missing."""
         slug = _AGENT_SLUG.get(agent_name, agent_name.lower().replace(" ", "-"))
@@ -802,7 +836,8 @@ class LLMMixin:
             self.logger.error("Fable brief parse failed: %s — article will publish without persona override, angle, or seed", e)
         return None
 
-    def _fable_editorial_review(self, article_body, agent_name, brief_angle, register, evidence_packet=None):
+    def _fable_editorial_review(self, article_body, agent_name, brief_angle, register, evidence_packet=None,
+                                 persona_factual_context=None, raw_draft_guard_hits=None):
         """Fable 5 reads the Opus draft and returns (verdict, notes). Non-blocking.
 
         evidence_packet (Phase 1.6): this reviewer previously received only
@@ -811,7 +846,20 @@ class LLMMixin:
         quote existed (.claude/experiments/fable-review-roi-2026-08-10.md,
         4/8 cases). The EVIDENCE CONTRACT rule below is the fix: it can only
         demand evidence that's actually present in the supplied source, and
-        must say so explicitly when none was supplied at all."""
+        must say so explicitly when none was supplied at all.
+
+        persona_factual_context / raw_draft_guard_hits (Phase 1.6
+        continuation, found live 2026-08-11): a downstream positive control
+        found the reviewer has no way to catch a fabricated FIRST-PERSON
+        FACTUAL episode (the writer claimed to have personally witnessed a
+        specific wayfinding review that existed nowhere in the source or the
+        persona's own canon) -- the EVIDENCE CONTRACT above only governs
+        story-evidence demands, not the writer's own biographical claims.
+        raw_draft_guard_hits are candidates from
+        grounding.scan_draft_for_unsupported_specifics -- a blunt, first-pass
+        deterministic scan, NOT proof of fabrication -- handed to the
+        reviewer as things to actually judge with real understanding of the
+        persona's canon, not to mechanically strip."""
         import json as _j
         if evidence_packet is None:
             evidence_packet = build_evidence_packet(None)
@@ -833,13 +881,41 @@ class LLMMixin:
                 "quote, named person, statistic, or date beyond what the draft already contains.\n\n"
             )
         )
+        _persona_context_text = (persona_factual_context or {}).get("canon_text")
+        _first_person_contract = (
+            "FIRST-PERSON FACTUAL EPISODE CHECK (Phase 1.6): separately from the EVIDENCE CONTRACT above "
+            "(which governs story facts), check the draft for any first-person claim of PERSONAL "
+            "EXPERIENCE -- 'I sat through...', 'I once watched...', 'I was told...', 'I have seen...' -- "
+            "presented as something that actually happened to this persona. Such a claim is only "
+            "legitimate if it traces to the persona's own supplied canon (below) or the source material "
+            "above. If you find one that does NOT trace to either, your correct action is to flag it for "
+            "REMOVAL, not to polish its prose or ask the writer to develop it further -- an invented "
+            "personal history is a worse problem than a weak sentence.\n"
+            + (
+                f"PERSONA FACTUAL CONTEXT (the ONLY material that can authorize a first-person "
+                f"experience claim, alongside the source material above):\n---\n{_persona_context_text}\n---\n\n"
+                if _persona_context_text else
+                "NO PERSONA FACTUAL CONTEXT was supplied — you have NO basis to accept ANY first-person "
+                "experience claim in this draft; if one appears, flag it for removal.\n\n"
+            )
+            + (
+                "A deterministic scan flagged the following specific text in the draft as NOT found in "
+                "either the source material or the persona factual context above -- these are candidates "
+                "for you to judge with real understanding, not proof of fabrication (the scan is blunt and "
+                "can be wrong in both directions): "
+                + "; ".join(f"'{reason}'" for _code, reason in (raw_draft_guard_hits or []))
+                + "\n\n"
+                if raw_draft_guard_hits else ""
+            )
+        )
         system = (
             "You are the editorial director of Crip Minds. "
             "You have just read a draft article by one of the publication's AI personas. "
             "Give 2-3 specific, actionable revision notes — or confirm it is ready. "
             "Rules you enforce: no headers, no bullet lists, first-person throughout, "
             "concrete scene before analysis, no CTA endings, disability as lens not topic.\n\n"
-            + _evidence_contract +
+            + _evidence_contract
+            + _first_person_contract +
             "CHECKS THAT PRODUCE REVISION NOTES:\n"
             "(1) OPENING — there is no house opening and you must not enforce one. A plain expository "
             "claim, a cold scene, a bare dated fact, a rare question, and a plain statement of what the "

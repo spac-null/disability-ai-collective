@@ -659,6 +659,133 @@ STILL OUTSTANDING before this phase can be called fully done:
   fixture) -- it proves the boundary CAN be captured and asserted on, not
   that every persona/register/article-type combination is equally clean.
 
+## PHASE 1.6 CONTINUATION — PERSONA FACTUAL CONTEXT, SECOND CORRECTION (2026-08-11, third session)
+
+The prior session (documented above) added `persona_factual_context` and
+`scan_draft_for_unsupported_specifics` to catch the live Rotterdam/March-
+2024 fabrication, but got interrupted before landing and, on inspection
+this session, had one real architectural bug: `generate.py` built
+`persona_factual_context` from `agent_info['prompt_block'] + _canon` --
+i.e. the ENTIRE persona voice/engine brief and canon file, the exact
+anti-pattern the mechanism exists to prevent (canon mixes personality,
+perceptual engine, voice rules, interpretation and hypothesis with any
+real biography; "it's already in canon" is not evidence a first-person
+claim is real). Confirmed compiling and all tests passing before this
+correction (172+ checks across `grounding_test.py`/`executor_guard_test.py`/
+`writer_prompt_test.py`) -- the interrupted work was functionally intact,
+just conceptually wrong.
+
+**The fix — two separately-sourced layers, not one file split into two
+readings:**
+
+1. `LLMMixin._load_persona_factual_context(agent_name)` (`llm.py`): reads
+   a NEW file, `persona_canon/<slug>-factual.md` (separate from
+   `<slug>.md`, the existing canon file `_load_persona_canon` reads), and
+   returns ONLY the text under `## AUTHORIZED FACTUAL CONTEXT` -- a later
+   `## PENDING VERIFICATION` heading, if present, is structurally excluded
+   from what's returned (same heading-scoped extraction pattern
+   `_extract_persona_wound` already used for `## THE WOUND`). Returns `''`
+   for any persona without this file -- fail-closed: an empty
+   `persona_factual_context` makes the reviewer/writer prompts both treat
+   "no basis to accept any first-person experience claim" as the default,
+   not a silent fallback to canon.
+2. `generate.py` now calls `self._load_persona_factual_context(agent_name)`
+   instead of concatenating `prompt_block` + `_canon`.
+
+**Pixel Nova specifically** (the only persona with real-world grounding;
+Maya Flux/Siri Sage/Zen Circuit are fully fictional and untouched this
+session -- they now get an empty, fail-closed `persona_factual_context`
+until/unless someone builds a `-factual.md` for them, which is correct,
+not a regression):
+
+- `persona_canon/pixel-nova-factual.md` (new): `## AUTHORIZED FACTUAL
+  CONTEXT` built ONLY from material with direct-quotation or
+  strongly-supported backing in the 2026-08-11 evidence audit of the
+  supplied `jascha-dna` archive (`~/code/trident/deaf-persona-evidence-
+  audit.md` -- one of the two evidence audits referenced this session;
+  the second was not locally available to this session, so this file
+  reflects the one audit actually inspected, cross-checked against
+  Jascha's own corrections in-thread). Covers: NGT as mother tongue,
+  Rietveld interpreter experience and translation-lag ("other time zone",
+  laughing late at a joke), *De Gebarentaaltolk en Ik*'s actual
+  translation/back-translation/synchronization structure, *Retrieve My
+  Time*'s blinking/time mechanic, Deaf Village/temporary-belonging
+  material, sequential-vs-simultaneous presentation, video/GIF as a
+  representation medium, a real telephone-only-service access problem,
+  and the notary/legal-deed anecdote -- the last one specifically
+  re-verified this session rather than carried over "because old canon
+  had it": it traces independently to the audit's citation of
+  `03-WORKS.md` as strongly-supported, not merely to its presence in the
+  now-retired fictional canon. `## PENDING VERIFICATION` (hearing
+  parents, a Deaf brother, detailed schooling history, vibration memory,
+  Gallaudet, generalized face-reading claims, museum-guide work, other
+  named Deaf-led spaces beyond L'Altro Spazio) is excluded from the
+  extraction by construction, not by convention.
+- `persona_canon/pixel-nova.md` rebuilt from a fictional-character
+  biography (female Pixel, born Amsterdam 1987, Jordaan→Bijlmer, a
+  typesetter father, Rietveld/KABK, Brooklyn 2011, an invented museum/
+  Rothko wound) into a compact editorial/personality architecture: CORE
+  PERSON, FORMATIVE TENSION (not one cinematic wound -- delay/translation/
+  sequence as a recurring structural condition), PERCEPTUAL ENGINE
+  (THING → TRANSMISSION/MEDIATION → WHAT CHANGED? → HIDDEN MECHANISM),
+  MOTIVE (terughalen / terugeisen), CONTRIBUTION, TEXTURE, AFFINITIES
+  (explicitly soft, not owned), CORE RULE ("Deafness supplies Pixel's
+  instrument, not Pixel's subject list" -- accessibility/wayfinding/
+  interpreters/policy are not Pixel's beat), RISK. No heading named
+  `## THE WOUND` remains, so `_extract_persona_wound` now correctly
+  returns `''` for Pixel -- already handled gracefully by existing
+  conditional code, not a new failure mode.
+- `personas.py`'s Pixel `prompt_block` (the writer-facing generation-time
+  brief, separate from and previously containing the SAME class of
+  problem as the canon file: a "YOUR LIFE" paragraph with the fire-alarm
+  origin, the museum/Rothko wound, and invented habit details) rewritten
+  to match: kept the intellectual-formation references (Flusser, Stokoe,
+  Neurath, Christine Sun Kim, Lentz/Valli, Deaf West -- interpretive/
+  engine material, not biographical claims), replaced the obsession
+  list's hard-ownership framing ("information architecture that reveals
+  or conceals power," "wayfinding systems and who they fail") with the
+  mediation/timing engine and an explicit "NOT your beat" line, and
+  replaced "YOUR LIFE" with only the interpreter-lag material the new
+  factual file actually authorizes plus an explicit prohibition on
+  inventing new episodes.
+
+**Verification, not just claimed:**
+- All pre-existing suites still pass unchanged after the rewrite:
+  `grounding_test.py` (all checks), `executor_guard_test.py` (7/7),
+  `writer_prompt_test.py` (all checks).
+- Reclassified the exact captured downstream scenario through
+  `scan_draft_for_unsupported_specifics` using the NEW factual corpus
+  (source_text + `pixel-nova-factual.md`'s AUTHORIZED section only):
+  Rossi's real quote -- PASS (unflagged); "12 signs" -- PASS (unflagged);
+  the notary/deed anecdote -- PASS (unflagged, now on verified grounds,
+  not inherited-canon grounds); the fabricated "In March 2024 I sat
+  through a wayfinding review for a Rotterdam civic building" episode --
+  FLAGGED on both the date and the entity signal. Matches the expected
+  reclassification exactly.
+
+**Explicitly not done this session** (scope discipline, not oversight):
+- Maya Flux/Siri Sage/Zen Circuit get no `-factual.md` and therefore an
+  empty `persona_factual_context` -- correct default, not a TODO to close
+  urgently; those personas are fully fictional and were never in scope
+  for this real-biography correction.
+- The second evidence audit the user referenced was not locally available
+  to this session -- `pixel-nova-factual.md`'s AUTHORIZED section reflects
+  only the one audit actually inspected plus the user's own in-thread
+  corrections. If the second audit surfaces material not covered here, it
+  needs the same primary-evidence-first treatment before being added, not
+  a bulk merge.
+- `scan_draft_for_unsupported_specifics` remains advisory-only (handed to
+  the reviewer as candidates, not auto-stripped or fail-closed at
+  publication) -- unchanged from the prior session's explicit design
+  decision, not revisited.
+- Siri Sage's `personas.py` prompt_block still explicitly assigns
+  "spatial legibility / wayfinding / information architecture" to Pixel
+  Nova by name in its own VOICE ANCHOR text -- a live cross-reference to
+  the territory Pixel's CORE RULE just deprecated. Not fixed this session
+  (Siri's file untouched, per scope), but worth closing before the two
+  personas' outputs are compared again: right now Siri's prompt still
+  points at ownership language Pixel's own canon just rejected.
+
 ## FROZEN DECISIONS (do not reopen by drift)
 - WHY WE WRITE (commit `01339ce`) is the shared publication doctrine.
   KEEP, scope-corrected: entitled to claim "improved or preserved the four
