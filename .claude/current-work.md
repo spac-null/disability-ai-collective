@@ -29,21 +29,21 @@ stated reason.
   `.claude/experiments/phase-1.6-source-grounding-2026-08-11.md`. Do not
   reopen by drift; only touch this code again if the regression suite
   fails or a real new grounding seam is found live.
-- **NEXT** — persona-selection/routing architecture: `discovery.py`'s
-  `_THEME_TO_PERSONA` dict and `generate.py`'s domain-keyword chain
-  (~line 203) hard-route topics to personas independent of anything in
-  `personas.py` — confirmed by direct trace, not assumed (Phase 1.6
-  continuation, third-session). Today `space_cosmos`/`technology`/
-  `science_nature`/`philosophy`/`behavioral_science` all route to Zen
-  Circuit, not Pixel Nova — meaning Pixel's newly-rebuilt engine
-  ("Deafness supplies Pixel's instrument, not Pixel's subject list") is
-  true inside her prompt but NOT yet true at the selection layer: she
-  cannot naturally win an astronomy/AI/science/philosophy story today,
-  regardless of how strong her perceptual reframe would be. This is the
-  next real work, not more grounding — abolish hard topic ownership so
-  a persona is selected on the strength of their perceptual reframe, not
-  a theme-keyword lookup. Affects all 4 personas' topic exposure, not
-  just Pixel's — a redesign, not a one-line fix.
+- **IN PROGRESS, DESIGN ONLY** — persona-selection/routing architecture,
+  now scoped into two stages: CJ-1 (source friction gate) → CJ-2 (four-
+  persona contribution competition). See `## CJ-1/CJ-2 RESEARCH
+  CHECKPOINT` below before continuing. `discovery.py`'s `_THEME_TO_PERSONA`
+  dict and `generate.py`'s domain-keyword chain (~line 203) hard-route
+  topics to personas independent of `personas.py` — confirmed by direct
+  trace. `_fable_editorial_brief`'s existing persona-override is already
+  topic-blind but runs on a bare 120-char tagline with no real engine
+  material and no cross-persona comparison — that's the actual gap, not
+  the hard router (which only matters as a fallback). Separately,
+  `news_fetcher.py`'s `disability_angle` eligibility gate was found to be
+  the deeper problem: it decides whether a story is even considered
+  before any persona sees it, and its extractor prompt is accessibility/
+  exclusion-shaped. CJ-1/CJ-2 is the redesign in progress; no production
+  code changed yet.
 - **THEN** — Phase 2, brevity + evidence budget + testimony.
 - **THEN** — Phase 3, persona architecture implementation (perceptual
   engines, motives, soft affinities, remove hard territories/prohibitions —
@@ -115,6 +115,104 @@ question, not source-grounding.
 docstring says "post-publish," but `generate.py` actually calls it before
 the reviewer/executor block — see `OPEN INFRASTRUCTURE ISSUES` below.
 Unrelated to grounding; do not derail a future session with it.
+
+## CJ-1/CJ-2 RESEARCH CHECKPOINT (2026-08-11, design only — no code/tests run)
+
+Active work, mid-design. Architecture: **CJ-1 (source friction gate) →
+CJ-2 (four-persona contribution competition, not started)**. Do not
+resume by re-deriving from scratch — pick up from the frozen v3 draft
+below.
+
+**CJ-1's job, narrowed twice this session:** NOT "does this reveal a
+hidden mechanism" (v2, too demanding — 0/20 real production judgments
+ever returned YES, and 0/2 genuine positive-control sources passed
+either). NOT "has the source's own account failed to resolve the
+tension" (an interim proposal, rejected — still interpretive, still
+risks a permanent false-negative). Settled on: **is there at least one
+concrete, exactly-quoted relation between facts in the real source that
+doesn't sit easily together** — nothing more. `hidden_mechanism`,
+`category_jump`, and `correction` all move downstream to CJ-2; CJ-1 never
+produces them.
+
+**Frozen v3 design decisions (prompt drafted in conversation, not yet
+written to any file):**
+- **Full-source-only.** CJ-1 never runs on a bare RSS summary — summary-
+  level judgment was shown live to suppress detectable friction that
+  real source text revealed (Dogs, Conducting). `NO_SOURCE` is a
+  deterministic pre-check outside the model (reusing `get_source_text`/
+  `get_source_origin`, already free/no-LLM-cost), not a third model
+  output alongside PASS/NO.
+- **`source_anchors`**: 1-3 EXACT verbatim substrings of the source (not
+  paraphrase) — friction is often relational between two facts (e.g.
+  Conducting: "musicians... don't need a conductor for the core tasks"
+  + "an exceptional conductor... an electricity can flow"), and exact
+  substrings make the anchor deterministically verifiable later, the
+  same discipline Phase 1.6 already uses for `source_excerpt`/
+  `direct_quote`.
+- **Deliberately high-recall, not high-precision.** Explicit asymmetry:
+  a false PASS costs one downstream CJ-2 comparison that finds nothing;
+  a false NO permanently excludes a source from ever being seen by any
+  persona. "When genuinely uncertain, PASS" is stated directly in the
+  prompt.
+- **Persona-blind AND disability-topic-blind.** No persona names, no
+  `format_or_mediation`/`measurement_gap`-style taxonomy that leaks
+  toward a specific persona's known interests (`transformation` covers
+  format/mediation generically instead). No disability-relevance
+  language anywhere, not even as a "doesn't count on its own" guard —
+  removed entirely rather than restated, since the v2 prompt's own
+  worked examples (not just its rules) were the likely source of "no
+  disability-relevant friction" leaking into live NO verdicts even
+  though the v2 rule already disclaimed topic-relevance.
+- **No worked semantic examples with an implied destination.** v2's
+  illustrative examples (splint→furniture, sidewalk→security, etc.) were
+  removed even in a topic-neutral disguise (an earlier v3 draft's
+  "body restraint → structural elegance" style examples were cut too,
+  same session, for still encoding a resolved destination and still
+  being disability-adjacent via "body"/"limitation"). v3's examples are
+  relation *shapes* only (two facts don't sit together, a stated-
+  necessary component is absent but the process still works, etc.), with
+  no resolution implied.
+- **`open_question` (not `hidden_mechanism`)**: one unanswered question
+  about the anchored relation, explicitly NOT allowed to contain a
+  proposed answer. A weak/missing `open_question` must never downgrade
+  an otherwise grounded PASS — it's handoff metadata for CJ-2, not a gate
+  condition.
+
+**What was tested live before this design settled (real API calls, real
+production data — see conversation history, not yet written to
+`.claude/experiments/`):** provenance audit found the shadow-judge table
+contaminated by manual TEST/TEST2 rows with blank provenance (all 3
+apparent "YES" verdicts were these, not real judgments) — corrected;
+real production history is 20 unique seeds, 0 YES, 20 NO under
+`v2-evidentiary-bridge`. A full-source resolution probe (Dogs, Conducting,
+Roman wreck) showed richer input changes what the judge can see (Dogs
+produced a real `resisting_detail` it didn't have at summary level;
+Conducting produced a full hidden-mechanism-shaped answer, rejected only
+on the bridge-to-interpretation requirement v3 has since removed). Two
+attempted "positive controls" from already-published CripMinds essays
+were BOTH judged invalid as controls, not just as data points: the
+Beaker Street piece is exactly the old accessibility-topic engine the
+redesign is trying to escape, and the AI-curb source was not actually
+independent — `2026-07-22-fourteen-nodes-on-nicholson-street.md` was
+already prompted by that exact URL, a real error this session made and
+should not repeat (cross-check candidate fixtures against `_posts/`
+before calling anything a blind prediction). A free (no-LLM-cost)
+source-fetch coverage sample (n=40) found 88% `fetched_article`, with
+`space.com` failing 0/4 (systematic, not incidental) and `dezeen.com`
+2/3 (matches an existing memory note on Dezeen fetch reliability).
+
+**Explicitly not done:** v3 prompt has not been run against anything,
+against the frozen 8-fixture set, or against the positive-control
+candidates. No file has been written. No production code (news_fetcher.py,
+discovery.py, generate.py) has been touched for this thread. The
+`_THEME_TO_PERSONA`/domain-keyword hard router has NOT been modified or
+removed — still not disproven as mattering only as a fallback.
+
+**Next step, when resumed:** run the frozen v3 prompt (still only in
+conversation, needs to be written to a scratch/experiment location first)
+against the 8-fixture set + a couple of genuinely fresh, never-tested
+sources, using real production fetch — NOT against previously-published
+CripMinds essays as labels. Only after that does CJ-2 design begin.
 
 ## FROZEN DECISIONS (do not reopen by drift)
 - WHY WE WRITE (commit `01339ce`) is the shared publication doctrine.
