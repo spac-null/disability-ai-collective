@@ -1,11 +1,43 @@
 {
-  "angle": "Inside a mirrored crystal sauna \u2014 a hard-faceted steel shell wrapped in steam and a heat source \u2014 does the acoustic space stay legible enough to move through, or does the geometry collapse into a wash a blind body cannot read; and if it does collapse, is that a defect of the room or the actual point of a sauna, a space designed to be un-navigated?",
-  "correction_moment": "I went in expecting the titanium facets to shatter the sound into hard slap-echo I could parse, and instead the l\u00f6yly \u2014 the steam burst off the stones \u2014 swallowed every reflection into a soft dead close, on my second sit, and the geometry I'd been mapping simply stopped answering.",
-  "cross_cite": "There is a reading that treats the acoustic collapse as a fault to be engineered out \u2014 more absorptive baffling, a fixed audible reference at the door; but recording what the collapse does to a body may matter more than repairing it, because a room designed to unmap you is not obviously a broken room.",
-  "opening_scene": "A sauna is one of the few rooms built to make you stop reading it.",
+  "angle": "A crystal sauna clad in ~280 mirrored facets, leaning four degrees off vertical \u2014 is this the kind of deliberately ambiguous, non-repeating surface that an autistic pattern-reader finds legible and orienting, or does the mirror-and-tilt scheme actively defeat the pattern-anchoring a body relies on to know where it is standing and which way is up?",
+  "brief_schema_version": 3,
+  "correction_moment": {
+    "editorial_need": "The piece is stronger if the material breaks Zen's opening assumption that ambiguity is the enemy of a pattern-reader \u2014 that the design's declared intent turns out to be aimed at exactly the cognitive move Zen usually defends.",
+    "evidence_candidate": {
+      "dates_numbers": [],
+      "direct_quote": "The project is shaped around ambiguity",
+      "named_person": "Niko",
+      "source_excerpt": "'The project is shaped around ambiguity,' studio founder Niko told Dezeen.",
+      "status": "found"
+    },
+    "interpretation": "Zen arrives assuming a pattern-reader wants resolution and repeatability, and that ambiguity is a hostile design choice; the maker's stated frame flips that \u2014 ambiguity is the point, not the failure, which forces Zen to ask whether a mind that reads pattern for a living is being courted or excluded, and whether those are even different here."
+  },
+  "cross_cite": "There is a live disagreement about whether a disorienting sensory structure should be documented and left as it is \u2014 a record of what it does to a body \u2014 or corrected until it stops doing it; the tilt and the mirrors force the question of whether recording the disorientation is itself the honest response or a refusal to fix a solvable defect.",
+  "evidence_packet_hash": "6f87632fc38cf075581c366705f9cf36ee1370e27a982f76a907fa463bd01e53",
+  "evidence_schema_version": 3,
+  "grounding_scope": "evidence_fields_only",
+  "grounding_status": "validated",
+  "grounding_validator_version": 2,
+  "grounding_violations": [],
+  "opening_scene": "A structure that leans four degrees back from vertical has made a decision about my inner ear before I ever reach for the door.",
   "opening_shape": "plain_claim",
-  "persona": "Siri Sage",
+  "persona": "Zen Circuit",
   "register": "clinical",
-  "resisting_example": "A regular at a Finnish public sauna told the artists during the Skelleftea build that she comes precisely to lose her bearings \u2014 that a sauna where you always know exactly where the door is has failed at the one thing a sauna is for.",
-  "seed_sentence": "A sauna is one of the few rooms built to make you stop reading it."
+  "resisting_example": {
+    "editorial_need": "A concrete counter-case from inside the same value system \u2014 a prior work by the same makers that resists the reading that ambiguity is disorienting \u2014 keeps Zen from winning the argument too cheaply.",
+    "evidence_candidate": {
+      "dates_numbers": [],
+      "direct_quote": "",
+      "named_person": "Bigert & Bergstrom",
+      "source_excerpt": "Bigert & Bergstrom have previously built climate-themed installations including a solar-powered ice rink and a greenhouse that floods on a timer.",
+      "status": "found"
+    },
+    "interpretation": "A greenhouse that floods on a timer is a rule written once that runs on its own schedule \u2014 utterly legible, utterly predictable, the opposite of ambiguous. The same duo builds both the timer-rule and the mirror-ambiguity, which means the makers do not treat legibility and ambiguity as opposites, and Zen has to reckon with why one work is a clock and this one is a fog."
+  },
+  "seed_sentence": "A structure that leans four degrees back from vertical has made a decision about my inner ear before I ever reach for the door.",
+  "source_hash": "d892a2db5f119669333f1fccf0f627ca91c0c1fa3a75a687777660e3f3e69f26",
+  "source_length_chars": 1154,
+  "source_origin": "fixture",
+  "source_original_length_chars": null,
+  "source_truncated": false
 }

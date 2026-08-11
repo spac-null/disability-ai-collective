@@ -1,11 +1,43 @@
 {
-  "angle": "When a museum deletes its wall labels, does the information actually disappear or just migrate \u2014 and does the deaf visitor end up in a more level room, or in a room whose default channel has quietly become speech (docents, tours, audio guides) with text demoted to atmosphere?",
-  "correction_moment": "At the Cleveland Museum of Art in October, expecting the ArtLens app to be text's exile, she finds it hands her more written context than any wall ever did \u2014 resizable, captioned, in her pocket \u2014 and her thesis that digital migration equals demotion breaks against a screen that treats text as the primary channel for the first time in the building's history.",
-  "cross_cite": "Against the position that the room itself \u2014 its acoustics, its docent murmur, its spatial address \u2014 is the primary political layer and the label only ever paper over it: if that's true, deleting wall text changes nothing, and the fight over labels is a fight over decoration; this piece has to test whether the label was the architecture or the apology.",
-  "opening_scene": "In September 2025, Calder Gardens opened in Philadelphia without a single wall label, and called the absence a philosophy.",
-  "opening_shape": "fact",
+  "angle": "When a museum strips the wall text and calls the result 'open to interpretation,' does removing the label actually remove the informational hierarchy \u2014 or does it just make the default channel invisible, so that whoever the room already served keeps reading it and whoever needed the words is now demoted to guessing?",
+  "brief_schema_version": 3,
+  "correction_moment": {
+    "editorial_need": "Pixel arrives expecting 'no label' to be the purest failure of visual information hierarchy \u2014 the piece is stronger if the material forces her to see that shrinking or relocating text can be just as much a hierarchy decision as deleting it, complicating her 'blank wall = worst case' instinct.",
+    "evidence_candidate": {
+      "dates_numbers": [],
+      "direct_quote": "",
+      "named_person": "",
+      "source_excerpt": "Labels mounted at eye level were found to be read far more often than those placed above or below it.",
+      "status": "found"
+    },
+    "interpretation": "If placement alone \u2014 eye level versus above or below \u2014 swings whether a label is read at all, then the fight was never label-versus-no-label; it was already hierarchy all the way down, and a present label mounted wrong is functionally a blank wall too. That breaks Pixel's clean binary and forces her to argue about degrees of demotion rather than presence versus absence."
+  },
+  "cross_cite": "The claim that the primary failure here is one of information architecture \u2014 what channel carries the meaning and who can access it \u2014 presses against the view that the room's real politics live in its acoustic and spatial texture; the question is whether stripping the words even registers as loss to a visitor who was never navigating by them in the first place.",
+  "evidence_packet_hash": "d9beb752609c1fedfa8f2072e0b2a548701f9c38255ccac428bb62828eaf0cdd",
+  "evidence_schema_version": 3,
+  "grounding_scope": "evidence_fields_only",
+  "grounding_status": "validated",
+  "grounding_validator_version": 2,
+  "grounding_violations": [],
+  "opening_scene": "A blank wall is not the absence of an instruction; it is an instruction that only some visitors can read.",
+  "opening_shape": "plain_claim",
   "persona": "Pixel Nova",
-  "register": "wry",
-  "resisting_example": "Christine Sun Kim, whose entire practice insists captions matter, spent 2021 replacing Manchester's public captions with subjective ones like 'the sound of anticipation' \u2014 a deaf artist rejecting the neutral informational label from inside deaf culture, choosing interpretation over the very institutional text this piece is tempted to defend.",
-  "seed_sentence": "In September 2025, Calder Gardens opened in Philadelphia without a single wall label, and called the absence a philosophy."
+  "register": "clinical",
+  "resisting_example": {
+    "editorial_need": "Pixel's suspicion of the app-and-fragment trend is that it displaces information into channels not everyone can reach; a resisting case from inside her own value system \u2014 someone framing minimal text as an opening rather than a withholding \u2014 keeps her from writing the easy grievance.",
+    "evidence_candidate": {
+      "dates_numbers": [],
+      "direct_quote": "the beginning of a relationship, not the end of an explanation",
+      "named_person": "",
+      "source_excerpt": "a museum representative described the printed label itself as 'the beginning of a relationship, not the end of an explanation.'",
+      "status": "found"
+    },
+    "interpretation": "This is the hardest version of the opposing view for Pixel to defeat, because it isn't defending less information \u2014 it's claiming the wall was never meant to carry the whole load, that hierarchy is supposed to route depth elsewhere. She has to decide whether that routing is generous design or just exclusion relocated to a channel with an entry fee (a phone, an app, a hand free to hold it)."
+  },
+  "seed_sentence": "A blank wall is not the absence of an instruction; it is an instruction that only some visitors can read.",
+  "source_hash": "6bf6f4e85a411ac5d0afd7e2abe49e337726b37346a5c2c7744baa5cce3cd940",
+  "source_length_chars": 1784,
+  "source_origin": "fixture",
+  "source_original_length_chars": null,
+  "source_truncated": false
 }

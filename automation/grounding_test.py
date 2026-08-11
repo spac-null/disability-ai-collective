@@ -403,6 +403,23 @@ def test_legacy_schema_gate():
     wrong_status["grounding_status"] = "totally_fine_trust_me"
     check("brief with a grounding_status outside validate_brief's own defined values -> rejected", not g.is_current_brief_schema(wrong_status))
 
+    # REGRESSION: schema/hash identity alone cannot distinguish "validated
+    # under an older rule set" from "validated under the current one" when
+    # a validation RULE changes without the packet/brief structure changing
+    # (exactly the direct_quote_not_in_quotation_marks case). This is what
+    # grounding_validator_version exists to catch.
+    check("validate_brief stamps grounding_validator_version", validated["grounding_validator_version"] == g.GROUNDING_VALIDATOR_VERSION)
+    stale_validator = dict(validated)
+    stale_validator["grounding_validator_version"] = g.GROUNDING_VALIDATOR_VERSION - 1
+    check(
+        "a brief validated by an OLDER validator version is rejected even though schema/hashes still match "
+        "(schema-current is not the same claim as validated-under-current-rules)",
+        not g.is_current_brief_schema(stale_validator),
+    )
+    missing_validator_version = dict(validated)
+    del missing_validator_version["grounding_validator_version"]
+    check("current-looking brief missing grounding_validator_version key entirely -> rejected", not g.is_current_brief_schema(missing_validator_version))
+
     no_source_brief = {"persona": "Maya Flux", "angle": "x"}
     no_source_validated, _ = g.validate_brief(no_source_brief, g.build_evidence_packet(None))
     check(

@@ -60,6 +60,20 @@ import re
 EVIDENCE_SCHEMA_VERSION = 3
 BRIEF_SCHEMA_VERSION = 3
 
+# Bumped 1 -> 2 (found on review, live-controls direct_quote fix): tracks
+# the RULES validate_brief() actually enforces, separate from
+# EVIDENCE_SCHEMA_VERSION/BRIEF_SCHEMA_VERSION (which track packet/brief
+# STRUCTURE, not validation logic). Without this, a brief's schema/hash
+# identity gives no way to tell "validated under the old rules" apart from
+# "validated under the new rules" when only the RULES changed and the
+# structure didn't -- exactly what happened here: direct_quote_not_in_
+# quotation_marks was added to validate_evidence_field without touching the
+# packet or brief shape at all, so EVIDENCE_SCHEMA_VERSION/
+# BRIEF_SCHEMA_VERSION correctly stayed at 3. Bump this constant whenever
+# validate_evidence_field's/validate_brief's actual CHECKS change, even
+# when the data shape they operate on does not.
+GROUNDING_VALIDATOR_VERSION = 2
+
 # Stamped as grounding_scope alongside grounding_status (validate_brief) so
 # "validated" can never be misread as "the whole brief is grounded" -- see
 # validate_brief's docstring. A named constant, not an inline string, so a
@@ -747,6 +761,7 @@ def validate_brief(brief, evidence_packet):
         status = "validated_with_rejections"
 
     validated["brief_schema_version"] = BRIEF_SCHEMA_VERSION
+    validated["grounding_validator_version"] = GROUNDING_VALIDATOR_VERSION
     validated["grounding_status"] = status
     validated["grounding_scope"] = GROUNDING_SCOPE_EVIDENCE_FIELDS_ONLY
     validated["grounding_violations"] = violations
@@ -799,11 +814,23 @@ def is_current_brief_schema(brief):
     produced it. For that, a caller with access to the current source (e.g.
     phase_probe.py's _load_frozen_brief) should separately verify
     source_hash/evidence_packet_hash against a freshly-built packet from
-    the same source_text -- see that function's own docstring."""
+    the same source_text -- see that function's own docstring.
+
+    REVISION (found on review, live-controls direct_quote fix): schema/hash
+    identity cannot distinguish "validated under an older rule set" from
+    "validated under the current rule set" when a validation RULE changes
+    without the packet/brief STRUCTURE changing -- exactly what happened
+    when direct_quote_not_in_quotation_marks was added without touching
+    EVIDENCE_SCHEMA_VERSION/BRIEF_SCHEMA_VERSION (correctly -- the data
+    shape didn't change). Now also requires grounding_validator_version ==
+    GROUNDING_VALIDATOR_VERSION, so a brief validated by an older validator
+    version is correctly treated as NOT current, even though its schema
+    versions still match."""
     if not isinstance(brief, dict):
         return False
     return (
         brief.get("brief_schema_version") == BRIEF_SCHEMA_VERSION
+        and brief.get("grounding_validator_version") == GROUNDING_VALIDATOR_VERSION
         and brief.get("grounding_scope") == GROUNDING_SCOPE_EVIDENCE_FIELDS_ONLY
         and brief.get("evidence_schema_version") == EVIDENCE_SCHEMA_VERSION
         and brief.get("grounding_status") in _ALLOWED_GROUNDING_STATUSES

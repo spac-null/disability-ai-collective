@@ -522,6 +522,50 @@ semantic validator for correction_moment/resisting_example role-fidelity
 planner-prompt/editorial-judgment concern, not a deterministic-validator
 concern).
 
+**Round 9 code fix (validator provenance)**: the round-8 fix changed
+validate_evidence_field's RULES (what counts as a valid direct_quote)
+without changing EVIDENCE_SCHEMA_VERSION/BRIEF_SCHEMA_VERSION (correctly --
+the packet/brief STRUCTURE didn't change). That left a real gap: the 4
+schema-v3 frozen briefs (all generated before the direct_quote fix existed)
+still report `brief_schema_version=3`/`evidence_schema_version=3` and
+matching hashes, so nothing in their provenance could distinguish "passed
+the old rules" from "passed the current rules." Added
+`GROUNDING_VALIDATOR_VERSION = 2` (bumped from an implicit 1), stamped as
+`grounding_validator_version` in `validate_brief()`, and required by
+`is_current_brief_schema()` alongside the existing checks — a brief
+validated by an older validator version is now correctly rejected even
+when every schema/hash field still matches. 3 new regression tests (stamp
+presence, stale-version rejection, missing-key rejection) — 152
+grounding_test.py checks total.
+
+**Offline revalidation of the 4 already-frozen briefs (no new planner/API
+calls)**: each was re-run through `validate_brief()` against its EXISTING
+planner output and its current fixture packet, checking three separate
+things per topic (not just "did it pass"): (1) `correction_moment`/
+`resisting_example`'s `editorial_need`/`evidence_candidate`/
+`interpretation`, plus `angle`/`register`/`opening_shape`/`opening_scene`/
+`seed_sentence`/`cross_cite`/`persona`, are all byte-identical before and
+after — validator v2 must CERTIFY the existing planner result, not rewrite
+it; (2) the specific real quote already confirmed during the original
+freeze audit survives the new quotation-mark rule verbatim (sauna: "The
+project is shaped around ambiguity"; hiring_tool: "We're not replacing
+human judgment, we're focusing it"; curb_cuts: "This was a genuinely
+difficult trade-off between two forms of sustainable, accessible
+transport"; museum_labels: "the beginning of a relationship, not the end
+of an explanation"); (3) `source_hash`/`evidence_packet_hash` unchanged,
+`grounding_violations` still empty, `grounding_validator_version` now
+stamped 2, `is_current_brief_schema()` true. **4/4 topics passed all three
+checks** — only re-saved to disk because every check passed; the script
+was written to refuse to write any topic that diverged. Terminology,
+precise: the ORIGINAL frozen briefs (produced before this fix existed)
+never contained a `grounding_validator_version` field at all -- calling
+them "validator v1" would imply a version number that was never actually
+stored. They're accurately described as pre-versioning / effectively
+validated under the original (single) rule set, not literally "v1". The
+REVALIDATED briefs now on disk carry `brief_schema_version=3`,
+`grounding_validator_version=2`, identical planner output, identical
+hashes — a legitimate deterministic fixture migration, not regeneration.
+
 **Experimental interpretation, stated plainly**: source grounding is
 necessary but not sufficient for something to be a CripMinds contribution.
 Negative-control run 2 demonstrated this cleanly — the system was fully

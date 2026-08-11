@@ -1,11 +1,43 @@
 {
-  "angle": "When the algorithm flags an autistic candidate's low 'engagement' score for manual review, does the human reviewer overturn the machine's judgment or countersign it \u2014 is the flag functioning as a second chance or as a mark that primes the hand that touches it next?",
-  "correction_moment": "In the employer network's Q3 2024 audit spreadsheet, obtained through a records request to the workforce board, candidates flagged below the engagement threshold were hired at a higher rate than candidates who narrowly cleared it and were never seen by a human at all \u2014 the flag Zen came to expose as a mark had, in at least one quarter's data, functioned as a rescue.",
-  "cross_cite": "Against the archival position that the correct response to a biased instrument is a complete, unedited record of every judgment it renders, this piece tests whether repair is even a coherent goal when the last three systems Zen examined showed the reviewing hand re-signing the machine's error anyway \u2014 documentation may be all that survives contact with the pipeline, and Zen goes in refusing to accept that.",
-  "opening_scene": "An engagement score is a measurement of how closely you resemble the people who were hired before the camera arrived.",
+  "angle": "When this tool flags a low 'engagement' score and hands it to a human for 'focused' review, does the human presence catch the autistic candidate the model misread \u2014 or does the human look at the recording, see the same atypical eye contact and pacing the model saw, and re-sign the machine's judgment as their own reasoned decision?",
+  "brief_schema_version": 3,
+  "correction_moment": {
+    "editorial_need": "The piece needs a moment where Zen's instinct that 'add a human reviewer and the bias survives' is confronted by the actual stated design, so the argument is tested against the rollout's own logic rather than assumed.",
+    "evidence_candidate": {
+      "dates_numbers": [],
+      "direct_quote": "We're not replacing human judgment, we're focusing it",
+      "named_person": "",
+      "source_excerpt": "'We're not replacing human judgment, we're focusing it,' said one HR director involved in the rollout, speaking on condition her company not be named.",
+      "status": "found"
+    },
+    "interpretation": "'Focusing' judgment is the exact mechanism Zen has to reckon with: the human is not removed, they are aimed \u2014 the score decides which faces get human attention, so the reviewer inherits the model's suspicion before watching a second of footage. Whether focusing rescues the flagged candidate or just launders the flag is the thing Zen cannot answer in advance."
+  },
+  "cross_cite": "The tempting move is to simply document that the tool excludes autistic candidates and leave the record standing as indictment; the harder question is whether documenting an appeals process that does not yet exist is worth less than forcing the one the rollout omitted to be built \u2014 and whether a repair grafted onto a scoring layer trained on undisclosed footage can be anything but the same exclusion with a slower interface.",
+  "evidence_packet_hash": "4e354349fda2d296ff3e12af804489dfde7341fcd67d19b3ba3580cf1c667632",
+  "evidence_schema_version": 3,
+  "grounding_scope": "evidence_fields_only",
+  "grounding_status": "validated",
+  "grounding_validator_version": 2,
+  "grounding_violations": [],
+  "opening_scene": "The consortium's defense is that no candidate is rejected by the machine \u2014 a human always watches before anyone is cut, which is meant to reassure me and does the opposite.",
   "opening_shape": "plain_claim",
   "persona": "Zen Circuit",
   "register": "clinical",
-  "resisting_example": "An autistic recruiter inside the same employer network formally requested that her own promotion interview be machine-scored rather than panel-judged, on the record with HR, because the algorithm publishes its threshold and a human panel reading her flat affect never has \u2014 she defends the tool from inside the exact community it flags.",
-  "seed_sentence": "An engagement score is a measurement of how closely you resemble the people who were hired before the camera arrived."
+  "resisting_example": {
+    "editorial_need": "A resisting case from inside the system's own value system would stop Zen from concluding the automation is the whole story, forcing the harder question of what human review actually does with a flag.",
+    "evidence_candidate": {
+      "dates_numbers": [],
+      "direct_quote": "",
+      "named_person": "",
+      "source_excerpt": "Independent researchers who have studied similar tools in other markets have found that scoring models trained this way frequently penalize atypical eye contact, pacing, and vocal tone -- traits correlated with autism and some other disabilities -- regardless of what a candidate actually says.",
+      "status": "found"
+    },
+    "interpretation": "The researchers document the model's bias \u2014 but 'frequently penalize... regardless of what a candidate actually says' cuts against Zen's own reflex too: it locates the failure in the scoring layer, not in the human review layer, which means the finding does not tell Zen whether a human watching the flagged recording repeats the error or corrects it. The evidence resists the tidy conclusion that either the machine or the human is the sole culprit."
+  },
+  "seed_sentence": "A composite score does not make the decision; it decides which recordings a human will bother to watch, and that is a different and quieter kind of power.",
+  "source_hash": "05b69754a72d802b0ee008a4095658c538b75dbbdec8303aba784c5d07fb0a2d",
+  "source_length_chars": 1271,
+  "source_origin": "fixture",
+  "source_original_length_chars": null,
+  "source_truncated": false
 }

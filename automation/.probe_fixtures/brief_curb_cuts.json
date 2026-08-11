@@ -1,11 +1,43 @@
 {
-  "angle": "The bike lane came from a resident petition \u2014 so was this a genuine conflict between two access constituencies, or did the consultation process seed the outcome by asking a question that only cyclists were in the room to answer?",
-  "correction_moment": "Pulling the council's consultation record from the March 14 planning session, I found the accessible-bay users had in fact been notified and one had spoken \u2014 the trick I came to expose wasn't a silenced constituency but a real fight the wheelchair users lost on turnout, which is a harder problem than a rigged form.",
-  "cross_cite": "The bays are being read as an information problem \u2014 dropped kerbs, legible routes, wayfinding \u2014 but a route rebuilt from scratch for one constituency is not the same as a shared route optimized so neither group is demoted to atmosphere, and this story is the second thing failing, not the first.",
-  "opening_scene": "A petition is not a survey; it counts only the people who already knew there was a form to sign.",
+  "angle": "Was the disability consultation absent by accident of scheduling, or does the timeline of the petition against the vacancy of the accessibility liaison show a system that produces exclusion without anyone ever having to choose it?",
+  "brief_schema_version": 3,
+  "correction_moment": {
+    "editorial_need": "Maya arrives expecting a seeded-consultation trick \u2014 a room where the answer was harvested from the people who planted it \u2014 and the piece is stronger if the material refuses that frame and hands her a different mechanism.",
+    "evidence_candidate": {
+      "dates_numbers": [],
+      "direct_quote": "",
+      "named_person": "",
+      "source_excerpt": "No disability advocacy group was consulted during the petition process; the council's own accessibility liaison was on leave for the duration of the review period and the position has not been backfilled.",
+      "status": "found"
+    },
+    "interpretation": "Maya's canon is the ventriloquism test: seed the answer, harvest the answer. But here nobody seeded a disability answer at all \u2014 there was no rigged transcript because there was no transcript. The correction is that the exclusion ran through an empty chair, not a stacked room; the system didn't ventriloquise disabled people, it simply had no channel for them, which is a different and colder failure than the one she came to catch."
+  },
+  "cross_cite": "Whether the right response to a rule that will now run for decades unattended is to document precisely how it came to be signed, or to treat documentation as a delay and demand the broken thing simply be rebuilt \u2014 the temptation to fix can skip the step of understanding what mechanism actually failed.",
+  "evidence_packet_hash": "722120b74a7d9891b0f7279ea3681bafbf7477989d77ce2afbe0ddd223c45ced",
+  "evidence_schema_version": 3,
+  "grounding_scope": "evidence_fields_only",
+  "grounding_status": "validated",
+  "grounding_validator_version": 2,
+  "grounding_violations": [],
+  "opening_scene": "A vote can be a decision, or it can be the visible surface of a process that decided itself long before anyone raised a hand.",
   "opening_shape": "plain_claim",
   "persona": "Maya Flux",
   "register": "clinical",
-  "resisting_example": "Local wheelchair user and petition co-signer Deborah Antwi told the council she supported the bike lane and would take the 400m detour, because a protected lane keeps her chair off a road where she'd already been clipped twice \u2014 an access claim that cuts against the access claim.",
-  "seed_sentence": "A petition is not a survey; it counts only the people who already knew there was a form to sign."
+  "resisting_example": {
+    "editorial_need": "The argument that this was pure procedural neglect is tested if someone inside the process names it as a genuine trade-off between two access claims rather than an oversight.",
+    "evidence_candidate": {
+      "dates_numbers": [],
+      "direct_quote": "This was a genuinely difficult trade-off between two forms of sustainable, accessible transport",
+      "named_person": "",
+      "source_excerpt": "'This was a genuinely difficult trade-off between two forms of sustainable, accessible transport,' the council's transport lead said in a statement, adding that a new accessible bay would be added 'as part of a future phase' with no confirmed date.",
+      "status": "found"
+    },
+    "interpretation": "The transport lead resists Maya's mechanism reading from inside a shared value system \u2014 sustainability, access, both real goods. If it truly was a weighed trade-off, then the empty liaison chair is incidental, not causal. Maya has to test whether 'difficult trade-off' is an honest account of a decision that was made, or the language a system reaches for after a decision that was never actually made by anyone."
+  },
+  "seed_sentence": "The council's accessibility liaison was on leave for the entire duration of the review period, and the position was never backfilled.",
+  "source_hash": "2078577a54f399670b482a4bf06d61e9d77cc5b116af87b5594c24c2745b4b69",
+  "source_length_chars": 1184,
+  "source_origin": "fixture",
+  "source_original_length_chars": null,
+  "source_truncated": false
 }
