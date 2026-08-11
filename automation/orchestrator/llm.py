@@ -22,6 +22,57 @@ from .config import (
     CLIPROXY_URL, CLIPROXY_KEY, PERSONA_CANON_DIR, PERSONA_STATE_DIR,
     _RELATIONSHIPS_FILE, _AGENT_SLUG, _nous_key, _REGISTERS,
 )
+from .grounding import build_evidence_packet, validate_brief, find_new_unsupported_specifics
+
+# Phase 1.6 continuation (found on review): the planner, reviewer, and
+# executor previously each independently re-sliced evidence_packet's
+# source_text with their own cap (this module had _PLANNER_SOURCE_MAX_CHARS
+# = 3000 for the planner and a bare [:6000] literal for the reviewer/
+# executor) -- three different projections of what was supposed to be ONE
+# evidence snapshot threaded unmodified through every stage (build_
+# evidence_packet's own docstring, grounding.py). Harmless today only
+# because the packet is already capped upstream (generate.py's
+# _SOURCE_TEXT_MAX_CHARS) to well under either re-slice threshold, but
+# architecturally wrong: a future change to that upstream cap would make
+# stages silently see different amounts of "the same" source. Every stage
+# below now consumes evidence_packet["source_text"] exactly as built, with
+# no further slicing. If a real token-budget need for a shorter reviewer/
+# executor-specific projection appears later, that should be its own
+# explicit, hashed, named artifact -- not an inline [:N].
+
+# Phase 1.6 executor contract, shared by _opus_targeted_revision and
+# _fable_polish_rewrite -- both convert editorial notes into prose changes,
+# and both were the confirmed site (fable-review-roi-2026-08-10.md) where a
+# reviewer's demand for "real words" became a fabricated verbatim quote.
+#
+# REVISION (found on review): the original wording permitted anything
+# "already in the article below OR in the SOURCE MATERIAL" -- which reads as
+# license to elaborate on a person/subject the moment they already appear
+# anywhere in the draft, even if the draft itself put them there without
+# support (e.g. a writer who inherited a fabricated name from an ungrounded
+# opening_scene/seed_sentence, before this module's other Phase 1.6 fixes
+# closed that path). Existing wording in the draft may be PRESERVED; it may
+# never be used as license to ADD new factual specificity about that subject.
+_EXECUTOR_CONTRACT = (
+    "EXECUTOR CONTRACT (Phase 1.6): you may preserve existing factual wording already in the "
+    "article below unless the editorial note asks you to change it. But do not convert a "
+    "paraphrase into a quotation, and do not introduce ANY NEW quotation, statistic, date, "
+    "number, or named-person claim unless it is supported by the SOURCE MATERIAL supplied below "
+    "-- this applies even to a person or subject who already appears in the article below. The "
+    "fact that a name is already in the draft does not authorize inventing new claims, quotes, "
+    "or specifics about that person; only the SOURCE MATERIAL can. If an editorial note asks you "
+    "to 'get the real words', 'name the person', or otherwise supply evidence that isn't in the "
+    "source material, do NOT invent it — leave that passage as paraphrase/reported material and, "
+    "in that spot, keep the sentence honest about not having a verbatim quote rather than "
+    "fabricating one that reads like it came from the source.\n\n"
+)
+
+
+def _executor_source_block(evidence_packet):
+    source_text = evidence_packet.get("source_text") if evidence_packet else None
+    if source_text:
+        return f"SOURCE MATERIAL (the ONLY material any new quote/name/date/number may come from):\n---\n{source_text}\n---\n\n"
+    return "NO SOURCE MATERIAL was supplied for this piece — do not add any new quote, named person, statistic, or date under any circumstance.\n\n"
 
 
 class LLMMixin:
@@ -512,12 +563,31 @@ class LLMMixin:
         self.logger.error("Editorial model: all attempts failed (CLIProxy + direct OpenRouter)")
         return None
 
-    def _fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent):
+    def _fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent, evidence_packet=None):
         """Fable 5 generates an editorial brief before writing.
 
-        Returns dict {persona, angle, register, seed_sentence} or None on failure.
+        evidence_packet (Phase 1.6, see .claude/phase-1.6-source-grounding.md):
+        built once by generate.py via grounding.build_evidence_packet(source_text)
+        and threaded unmodified through planner/reviewer/executor. Before this,
+        this call received only a ~400-char truncated summary and never the real
+        source -- confirmed (.claude/experiments/fable-review-roi-2026-08-10.md)
+        as the origin of 4/4 audited frozen briefs inventing a named individual/
+        quote/testimony in resisting_example or correction_moment. Passing the
+        real source doesn't make fabrication impossible on its own (a prose
+        instruction not to invent already failed once) -- what makes it safe is
+        that the returned resisting_example/correction_moment are run through
+        grounding.validate_brief() below BEFORE this function returns, which
+        deterministically checks any asserted excerpt/quote/name/date against
+        the actual supplied source text and force-downgrades anything it can't
+        verify to "not_found" rather than shipping it.
+
+        Returns dict {persona, angle, register, seed_sentence, ...} or None on
+        failure. resisting_example/correction_moment are now structured
+        evidence-candidate objects (see grounding.py), not flat strings.
         """
         import json as _j
+        if evidence_packet is None:
+            evidence_packet = build_evidence_packet(None)
         personas = "\n".join(
             f"- {n}: {info['perspective'][:120]}"
             for n, info in self.agents.items()
@@ -562,10 +632,36 @@ class LLMMixin:
             "any one article and glaring across four:\n" + _recent_openings + "\n"
         ) if _recent_openings else ""
 
+        _source_text = evidence_packet.get("source_text")
+        # SUPPLIED SOURCE SNAPSHOT, not "full" (found on review): get_source_text
+        # returns a pre-truncated slice (discovery.py's default ~3000-char cap;
+        # evidence_packet's own source_truncated field is honest about this,
+        # see build_evidence_packet's docstring) -- calling it "FULL SOURCE
+        # TEXT" in the prompt made a stronger completeness claim to the model
+        # than the system can actually back up.
+        _source_block = (
+            "\nSUPPLIED SOURCE SNAPSHOT (this is everything you know about this story -- do not "
+            "assert anything about a named person, a quote, a date, or a number that isn't in here):\n"
+            "---\n" + _source_text + "\n---\n"
+        ) if _source_text else (
+            "\nNO SOURCE TEXT WAS AVAILABLE for this story (summary/angle only). The summary and "
+            "disability angle above are real context about what this story is, but they are NOT "
+            "validated source evidence -- they are an unchecked short description, exactly the kind "
+            "of input that previously led this pipeline to invent named individuals and quotes that "
+            "didn't exist. Do NOT treat anything in the summary/disability angle as authorization to "
+            "name a specific person, quote, date, or number ANYWHERE in this brief -- not in "
+            "resisting_example/correction_moment, and not in angle/cross_cite either. "
+            "resisting_example and correction_moment must both have "
+            'evidence_candidate.status="not_found" (you may still write interpretation -- your own '
+            "reasoning, not a factual claim -- explaining why nothing is available or what that "
+            "absence itself suggests), and angle/cross_cite must stay at the level of an abstract "
+            "question or idea with no specific person/quote/date/number in them at all.\n"
+        )
         user = (
             f"Today's story:\n{news_title}\n"
             + (f"Summary: {news_summary[:400]}\n" if news_summary else "")
             + (f"Disability angle: {disability_angle}\n" if disability_angle else "")
+            + _source_block
             + f"\nPersonas:\n{personas}\n"
             + state_block
             + _fault_block
@@ -577,8 +673,63 @@ class LLMMixin:
             "and put the substance of the disagreement in cross_cite — the idea, not an instruction to "
             "name the colleague. Personas argue with each other's positions, not with each other's bylines.\n\n"
             "BRIEF A QUESTION, NOT A VERDICT — this is the most important instruction here. Do not hand the writer a thesis to execute. Hand them something they do not know the answer to and have to find out on the page. The old briefs produced essays that were delivery mechanisms for a conclusion the writer already held before the first sentence; that is exactly what we are trying to stop. So the angle is a real question — one where you yourself cannot confidently predict what the persona will conclude, and where at least two answers are genuinely live. 'Whether the drilling next door is maintenance or the eviction' is a question. 'The drilling is the eviction' is a verdict; do not write that. If you can already see the finished argument, the question is too easy — sharpen it until you cannot.\n\n"
-            "For correction_moment: name one specific thing the persona hits that proves them wrong, stops them, or corrects them — a belief the material breaks, a dead end, a document that says the opposite of what they expected, a person who tells them something that does not fit. Concrete and locatable, with a place or a date. This goes into the draft in the past tense, before the midpoint, shown happening. It is not end-of-essay doubt and not a hedge. The engine of this kind of writing is 'I believed X, then I found the thing that broke X' — give them the thing that breaks X.\n\n"
-            "For resisting_example: something the persona actually encounters in the world of this story, not an abstract objection to gesture at. Best case: a real named person who shares the persona's values, or who benefits from the same framework being applied, and who nonetheless rejects the argument — a counter-movement from inside, not a counter-argument from outside. Something they said, did, built, or refused. Do not phrase it as a hypothetical position the writer can ventriloquise ('X would say...'); that produces a monologue. Do not pick a counter-case the argument easily defeats.\n\n"
+            "ANGLE/CROSS_CITE FACTUAL DISCIPLINE (Phase 1.6): angle and cross_cite are NOT "
+            "evidence-candidate objects and nothing deterministically checks them the way "
+            "resisting_example/correction_moment are checked below -- the only safe move is to keep "
+            "both at the level of an abstract question or idea. Do not embed a specific named "
+            "person, a direct quote, a date, or a number in either field unless that exact specific "
+            "already appears in the SUPPLIED SOURCE SNAPSHOT above -- the summary/disability angle "
+            "above is real context about the story, but it is NOT validated source evidence and "
+            "must NOT be treated as authorization for factual specificity here; only the supplied "
+            "source snapshot can authorize that. If no source snapshot is supplied at all for this "
+            "story, angle and cross_cite must stay entirely abstract regardless of what the summary "
+            "says. A grammatically valid question can still smuggle an unsupported factual premise "
+            "-- 'Why did Deborah Antwi support the compromise despite being hit there last year?' "
+            "asserts, inside a question, that Antwi exists, supported the compromise, AND was hit "
+            "there last year, none of which may be true. If the source doesn't give you a specific "
+            "person/date/number to build the question or cross-cite around, build it around the "
+            "idea instead.\n\n"
+            "For correction_moment and resisting_example (Phase 1.6 -- these are GROUNDED, not free "
+            "prose; a deterministic check runs on your answer after you submit it and force-rejects "
+            "anything it can't verify against the source text above): "
+            "correction_moment names one specific thing the persona hits that proves them wrong, "
+            "stops them, or corrects them -- a belief the material breaks, a document that says the "
+            "opposite of what they expected, a person who tells them something that does not fit. "
+            "resisting_example is something the persona actually encounters in the world of this "
+            "story, not an abstract objection -- best case a real named person or case, from inside "
+            "the same value system, who nonetheless resists the argument. Do not phrase it as a "
+            "hypothetical the writer can ventriloquise ('X would say...'); do not pick a counter-case "
+            "the argument easily defeats.\n\n"
+            "Each of these two fields is now an OBJECT with THREE SEPARATE PARTS, not a sentence -- "
+            "keep them separate, because a deterministic check runs on evidence_candidate afterward "
+            "and interpretation is never treated as a factual claim, only as your own reasoning:\n"
+            '{"editorial_need":"one sentence -- why this kind of moment would strengthen the piece, '
+            'independent of whether you can actually find one",'
+            '"evidence_candidate":{'
+            '"status":"found" or "not_found" -- BE ALLOWED TO SAY not_found. The source above may '
+            "simply not contain a correction moment or a resisting example this concrete. Wanting one "
+            "does not mean the source has one. If you cannot point to an exact sentence in the source "
+            "text above, say not_found -- do not invent a plausible-sounding one to fill the field,"
+            '"source_excerpt":"the EXACT sentence or clause from the source text above this is grounded '
+            'in, copied verbatim -- required if status is found, otherwise empty",'
+            '"named_person":"a specific person\'s name, ONLY if it appears word-for-word in source_excerpt, otherwise empty",'
+            '"direct_quote":"a verbatim quotation, ONLY if it appears word-for-word in source_excerpt, otherwise empty",'
+            '"dates_numbers":["any specific date or number you are relying on, ONLY if it appears in source_excerpt -- otherwise an empty list"]'
+            '},'
+            '"interpretation":"your own argument-level reasoning about what this means or why it matters -- '
+            "this is NOT evidence and is never checked against the source, so it must never be the only "
+            "place a name/quote/date/number appears. If evidence_candidate.status is not_found, you may "
+            'still explain here why nothing was found or what that absence itself suggests"}\n\n'
+            "For opening_scene and seed_sentence (Phase 1.6 -- a deterministic, non-LLM check runs on "
+            "both after you submit them and will silently blank out either one if it fails, so an "
+            "invented specific costs you the field, not a warning): a quoted phrase, a named person, "
+            "or a specific number/date/statistic is only allowed in these two fields if it appears "
+            "verbatim in the SUPPLIED SOURCE SNAPSHOT above. Neither field is an evidence-candidate object "
+            "like resisting_example/correction_moment -- there is no status='not_found' escape hatch "
+            "here, which means the only safe move when the source doesn't supply a concrete specific "
+            "is to not reach for one: write the opening/seed at the level of claim, scene, or question "
+            "that the material actually supports, without a fabricated name, quote, or number standing "
+            "in for one you don't have.\n"
             "For opening_scene: write the actual first sentence of the essay, in the persona's voice — the sentence itself, not a description of where the piece begins. THERE IS NO HOUSE OPENING. Do not default to a body doing a physical action in a named place in the present tense; that shape has opened four consecutive pieces and now reads as a template rather than as craft. Choose whichever of these this particular story earns: (a) PLAIN CLAIM — a flat expository assertion the rest of the piece will spend its length paying off ('For centuries western culture has been permeated by the idea that humans are selfish creatures.'); (b) COLD SCENE — a placed body, an action, a named room, something already in progress; (c) A QUESTION — rare, and only when the question is genuinely the engine of the piece; (d) A FACT — one concrete dated thing, stated and left alone ('In 1965, six boys stole a fishing boat from a harbour in Tonga.'); (e) A DECLARATION OF THE HUNT — plainly saying what you set out to find out, and that you did not know the answer. A plain claim or a bare fact is often stronger than a scene, because it commits and then earns the commitment. Still wrong in every variant: 'X's work raises questions about...', 'There is a concept designers call...', and any throat-clearing before the piece starts.\n"
             "For register: this is where the piece starts, not a setting locked for its whole length — pick the opening tone.\n\n"
             "Reply with JSON only — no other text:\n"
@@ -587,11 +738,11 @@ class LLMMixin:
             '"seed_sentence":"the opening sentence of the article — concrete, not a question",'
             '"opening_scene":"the actual first sentence of the essay in the persona\'s voice — NOT a description of where it begins. Vary the shape: plain claim, cold scene, question, bare fact, or a statement of what you set out to find out. Do not default to a placed body in the present tense",'
             '"opening_shape":"which shape you chose: plain_claim | cold_scene | question | fact | declaration_of_hunt",'
-            '"correction_moment":"one sentence naming the specific thing that proves the persona wrong, stops them, or corrects them mid-piece — concrete, placed or dated",'
-            '"resisting_example":"one sentence naming a real person or case that resists the argument from inside the same value system — something they actually said or did, not a hypothetical",'
+            '"correction_moment":{the grounded object described above},'
+            '"resisting_example":{the grounded object described above},'
             '"cross_cite":"optional: one sentence on the substance of the disagreement with another persona\'s position — the idea being pushed against, NOT an instruction to name-check them. Leave empty unless the disagreement genuinely bears on this story"}'
         )
-        raw = self._call_editorial_model(system, user, max_tokens=1600, timeout=60)
+        raw = self._call_editorial_model(system, user, max_tokens=2400, timeout=60)
         if raw is None:
             self.logger.error("Fable brief: all models failed — article will publish without persona override, angle, or seed")
             return None
@@ -607,15 +758,32 @@ class LLMMixin:
                         self.logger.info("Fable opening shape: %s", brief["opening_shape"])
                     if not brief.get("opening_scene"):
                         self.logger.warning("Fable brief: opening_scene missing — article will open without an opening anchor")
-                    if not brief.get("resisting_example"):
-                        self.logger.warning("Fable brief: resisting_example missing — article will lack structural friction")
-                    if not brief.get("correction_moment"):
-                        self.logger.warning("Fable brief: correction_moment missing — article will lack an onstage moment of being wrong or corrected")
+
+                    # Phase 1.6 grounding gate -- deterministic, not another LLM
+                    # judgment call. Runs on whatever the model returned, whether
+                    # it followed the new structured schema or not; a malformed/
+                    # legacy-shaped field is treated as a schema violation and
+                    # force-downgraded to not_found by validate_evidence_field,
+                    # same as an unverifiable factual claim -- both fail closed.
+                    brief, _grounding_log = validate_brief(brief, evidence_packet)
+                    for _line in _grounding_log:
+                        self.logger.info("Grounding: %s", _line)
+                    if brief["grounding_status"] in ("rejected", "validated_with_rejections"):
+                        self.logger.warning(
+                            "Fable brief: grounding validator rejected %d evidence field(s) — %s "
+                            "(see Grounding: log lines above) — offending field(s) forced to not_found",
+                            len(brief["grounding_violations"]), brief["grounding_violations"],
+                        )
+
+                    if brief["resisting_example"]["evidence_candidate"]["status"] != "found":
+                        self.logger.warning("Fable brief: resisting_example not_found/absent — article will lack structural friction")
+                    if brief["correction_moment"]["evidence_candidate"]["status"] != "found":
+                        self.logger.warning("Fable brief: correction_moment not_found/absent — article will lack an onstage moment of being wrong or corrected")
                     if brief["cross_cite"]:
                         self.logger.info("Fable cross-cite: %s", brief["cross_cite"][:80])
                     self.logger.info(
-                        "Fable brief → %s | %s | %s",
-                        brief["persona"], brief["register"], brief["angle"][:60],
+                        "Fable brief → %s | %s | %s | grounding=%s",
+                        brief["persona"], brief["register"], brief["angle"][:60], brief["grounding_status"],
                     )
                     return brief
             self.logger.error("Fable brief: invalid persona/register — article will publish without persona override, angle, or seed")
@@ -623,16 +791,44 @@ class LLMMixin:
             self.logger.error("Fable brief parse failed: %s — article will publish without persona override, angle, or seed", e)
         return None
 
-    def _fable_editorial_review(self, article_body, agent_name, brief_angle, register):
-        """Fable 5 reads the Opus draft and returns (verdict, notes). Non-blocking."""
+    def _fable_editorial_review(self, article_body, agent_name, brief_angle, register, evidence_packet=None):
+        """Fable 5 reads the Opus draft and returns (verdict, notes). Non-blocking.
+
+        evidence_packet (Phase 1.6): this reviewer previously received only
+        brief_angle -- never the source -- and demanded "her real words" /
+        "get the actual quote" with no way to know whether that person or
+        quote existed (.claude/experiments/fable-review-roi-2026-08-10.md,
+        4/8 cases). The EVIDENCE CONTRACT rule below is the fix: it can only
+        demand evidence that's actually present in the supplied source, and
+        must say so explicitly when none was supplied at all."""
         import json as _j
+        if evidence_packet is None:
+            evidence_packet = build_evidence_packet(None)
         agent_info = self.agents.get(agent_name, {})
+        _review_source_text = evidence_packet.get("source_text")
+        _evidence_contract = (
+            "EVIDENCE CONTRACT (Phase 1.6): you may only ask for a real quote, a named person's "
+            "words, a statistic, or a date if it is ACTUALLY PRESENT in the SOURCE MATERIAL below. "
+            "Do not tell the writer to 'get her real words', 'pull the actual quote', or 'name the "
+            "person' unless you can point to that exact material in the source. If the draft's "
+            "evidence is thin but the source doesn't contain anything stronger, say so and ask for a "
+            "different kind of fix (cut the claim, soften it to reported paraphrase, or find a "
+            "different complication) — never phrase a note as if stronger source material must exist "
+            "somewhere just because the draft needs it.\n\n"
+            + (
+                f"SOURCE MATERIAL (the ONLY material any 'get the real quote/name/date' note may point to):\n---\n{_review_source_text}\n---\n\n"
+                if _review_source_text else
+                "NO SOURCE MATERIAL was supplied for this piece — you have NO basis to demand any new "
+                "quote, named person, statistic, or date beyond what the draft already contains.\n\n"
+            )
+        )
         system = (
             "You are the editorial director of Crip Minds. "
             "You have just read a draft article by one of the publication's AI personas. "
             "Give 2-3 specific, actionable revision notes — or confirm it is ready. "
             "Rules you enforce: no headers, no bullet lists, first-person throughout, "
             "concrete scene before analysis, no CTA endings, disability as lens not topic.\n\n"
+            + _evidence_contract +
             "CHECKS THAT PRODUCE REVISION NOTES:\n"
             "(1) OPENING — there is no house opening and you must not enforce one. A plain expository "
             "claim, a cold scene, a bare dated fact, a rare question, and a plain statement of what the "
@@ -657,7 +853,11 @@ class LLMMixin:
             "marks, in the past tense, saying something the narrator did not script? Conditional-mood "
             "positions ('she would say', 'he would reject this'), summarised stances, and ventriloquised "
             "objections do not count. If every quoted line serves the thesis, the writer wrote the quotes. "
-            "Flag this — a piece with no other human voice in it is a monologue in a sealed room.\n"
+            "Flag this — a piece with no other human voice in it is a monologue in a sealed room. "
+            "PER THE EVIDENCE CONTRACT ABOVE: if you flag this, your note may only point the writer at a "
+            "quote/voice that is actually present in the SOURCE MATERIAL above. If the source doesn't "
+            "contain one, say the piece lacks a quoted voice AND that the source doesn't supply one — do "
+            "not instruct the writer to 'get the real words' or 'pull the actual quote' regardless.\n"
             "(5) APHORISM DENSITY — count the short, balanced, quotable verdict-sentences (the epigram "
             "shape: 'The drop is the argument. The gender was the alibi.' / 'The frame always arrives "
             "last.'). One per piece is the cap, and a single-sentence 'arrival' paragraph counts against that "
@@ -748,7 +948,33 @@ class LLMMixin:
             self.logger.error("Fable editorial review parse failed: %s — article ships without revision pass", e)
             return "publish_as_is", []
 
-    def _opus_targeted_revision(self, article_body, editorial_notes, agent_name):
+    def _reject_if_unsupported_specifics(self, original, revised, evidence_packet, label):
+        """Deterministic post-revision guard, shared by both executor call
+        sites (_opus_targeted_revision, _fable_polish_rewrite).
+
+        Phase 1.6 continuation (found on review): _EXECUTOR_CONTRACT is a
+        prompt instruction, not a hard constraint -- an LLM can still ignore
+        it, which is exactly what happened in the confirmed Phase 1.5B
+        failure (a reviewer's "get her real words" note led the executor to
+        fabricate a verbatim quote). This makes the "no NEW unsupported
+        quote/number" half of that contract machine-enforced: runs
+        grounding.find_new_unsupported_specifics on the model's actual
+        output before accepting it, rather than trusting the model followed
+        the instruction.
+
+        Returns `revised` unchanged if the guard finds nothing, or None if
+        it should be rejected (violations are logged here; the caller
+        decides what "rejected" means -- fall back to the original draft,
+        or to a different revision attempt)."""
+        source_text = evidence_packet.get("source_text") if evidence_packet else None
+        violations = find_new_unsupported_specifics(original, revised, source_text)
+        if not violations:
+            return revised
+        for reason_code, reason in violations:
+            self.logger.warning("%s: post-revision guard rejected output -- %s", label, reason)
+        return None
+
+    def _opus_targeted_revision(self, article_body, editorial_notes, agent_name, evidence_packet=None):
         """Opus revises the article based on Fable's editorial notes. Non-blocking.
 
         Superseded by _fable_polish_rewrite (2026-08-07) for the normal call path --
@@ -756,18 +982,30 @@ class LLMMixin:
         translation step (Fable judges, Opus has to correctly interpret and apply a
         note it didn't write). Kept as a fallback for when Fable's own rewrite attempt
         fails or returns too little content.
+
+        evidence_packet (Phase 1.6): this executor previously received no source
+        at all and would fabricate a plausible verbatim quote to satisfy a
+        reviewer's "get her real words" note (.claude/experiments/
+        fable-review-roi-2026-08-10.md, 4/8 Fable-triggered cases + 1/8
+        Opus-triggered). The EXECUTOR CONTRACT rule below is the prompt-level
+        fix; _reject_if_unsupported_specifics below is the deterministic
+        backstop for when the prompt instruction alone isn't followed.
         """
         if not editorial_notes:
             return article_body
+        if evidence_packet is None:
+            evidence_packet = build_evidence_packet(None)
         notes_text = "\n".join(f"- {n}" for n in editorial_notes)
         system = (
             "You are revising a draft for Crip Minds. Apply only the listed editorial notes. "
             "Do not rewrite anything not flagged. Preserve the author's voice, all facts and names, "
             "the structure, and the approximate length. "
-            "No headers, no lists, no CTA endings."
+            "No headers, no lists, no CTA endings.\n\n"
+            + _EXECUTOR_CONTRACT
         )
         user = (
             f"Persona: {agent_name}\n\nEDITORIAL NOTES:\n{notes_text}\n\n"
+            + _executor_source_block(evidence_packet) +
             f"ARTICLE:\n{article_body}\n\n"
             "Return the revised article body only — no preamble, no commentary."
         )
@@ -779,14 +1017,18 @@ class LLMMixin:
                 check_truncation=True,
             )
             if revised and len(revised) > 400:
-                self.logger.info("Targeted revision: %d chars", len(revised))
-                return revised
-            self.logger.warning("Targeted revision returned short response — keeping original")
+                guarded = self._reject_if_unsupported_specifics(article_body, revised, evidence_packet, "Opus targeted revision")
+                if guarded is not None:
+                    self.logger.info("Targeted revision: %d chars", len(guarded))
+                    return guarded
+                self.logger.warning("Targeted revision discarded by post-revision guard — keeping original")
+            else:
+                self.logger.warning("Targeted revision returned short response — keeping original")
         except Exception as e:
             self.logger.warning("Targeted revision failed: %s — keeping original", e)
         return article_body
 
-    def _fable_polish_rewrite(self, article_body, editorial_notes, agent_name, register):
+    def _fable_polish_rewrite(self, article_body, editorial_notes, agent_name, register, evidence_packet=None):
         """Fable rewrites the article directly, implementing its own editorial notes
         itself rather than handing them to Opus to interpret. Falls back to
         _opus_targeted_revision if Fable's rewrite fails or returns too little content
@@ -801,9 +1043,15 @@ class LLMMixin:
         notes being implemented, not the fundamental mechanism (a single text-conditioned
         rewrite pass). It may still hit a similar ceiling. Worth testing on its own
         terms rather than assuming the model swap alone breaks through it.
+
+        evidence_packet (Phase 1.6): see _opus_targeted_revision's docstring --
+        same EXECUTOR CONTRACT, same fabrication risk, since this is the primary
+        rewrite path and _opus_targeted_revision is only its fallback.
         """
         if not editorial_notes:
             return article_body
+        if evidence_packet is None:
+            evidence_packet = build_evidence_packet(None)
         notes_text = "\n".join(f"- {n}" for n in editorial_notes)
         system = (
             "You are the editorial director of Crip Minds, about to rewrite a draft "
@@ -817,11 +1065,13 @@ class LLMMixin:
             "Do NOT change: the facts, the named sources and quotes, the persona's "
             "argument or position, the overall structure, or the approximate length. "
             "This is polish and harmonization, not a rewrite of substance. "
-            "No headers, no bullet lists, no CTA endings."
+            "No headers, no bullet lists, no CTA endings.\n\n"
+            + _EXECUTOR_CONTRACT
         )
         user = (
             f"Persona: {agent_name}\nRegister: {register}\n\n"
             f"YOUR OWN EDITORIAL NOTES FROM READING THIS DRAFT:\n{notes_text}\n\n"
+            + _executor_source_block(evidence_packet) +
             f"DRAFT:\n{article_body}\n\n"
             "Return the complete rewritten article body only — no preamble, no commentary."
         )
@@ -833,12 +1083,16 @@ class LLMMixin:
             # budget for a mechanical rewrite; Fable stays as a last-resort fallback.
             revised = self._call_editorial_model(system, user, max_tokens=6000, timeout=180, prefer_opus=True)
             if revised and len(revised) > max(400, len(article_body) * 0.6):
-                self.logger.info("Fable polish rewrite: %d chars", len(revised))
-                return revised
-            self.logger.warning("Fable polish rewrite returned too little content — falling back to Opus")
+                guarded = self._reject_if_unsupported_specifics(article_body, revised, evidence_packet, "Fable polish rewrite")
+                if guarded is not None:
+                    self.logger.info("Fable polish rewrite: %d chars", len(guarded))
+                    return guarded
+                self.logger.warning("Fable polish rewrite discarded by post-revision guard — falling back to Opus")
+            else:
+                self.logger.warning("Fable polish rewrite returned too little content — falling back to Opus")
         except Exception as e:
             self.logger.warning("Fable polish rewrite failed: %s — falling back to Opus", e)
-        return self._opus_targeted_revision(article_body, editorial_notes, agent_name)
+        return self._opus_targeted_revision(article_body, editorial_notes, agent_name, evidence_packet)
 
     def _fable_update_state(self, agent_name, article_title, article_body):
         """Post-publish: Fable reads the article and updates the persona's state.json.

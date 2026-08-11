@@ -1,0 +1,843 @@
+"""
+grounding.py — Phase 1.6 source-grounding hardening: evidence-packet identity
+and the deterministic, non-LLM evidence validator.
+
+See .claude/phase-1.6-source-grounding.md for the design this implements.
+Pure functions only (no `self`, no network, no filesystem) — same convention
+as config.py — so this module is unit-testable without instantiating
+ProductionOrchestrator and without any mocking.
+
+WHY THIS EXISTS: Phase 1.5B's brief audit (.claude/experiments/
+fable-review-roi-2026-08-10.md) found that _fable_editorial_brief invents
+named individuals/quotes/testimony in resisting_example/correction_moment,
+which the writer then inherits and a source-blind reviewer/executor can
+convert into a fabricated verbatim quotation. A prose "don't hallucinate"
+instruction already failed to prevent this. This module makes grounding
+machine-checkable: an evidence-candidate claim only reaches the writer if a
+deterministic check (not another LLM) can confirm it against the actual
+supplied source text.
+
+REVISION 2026-08-11 (before any tests were written against the first draft):
+two loopholes were caught on review and closed here.
+
+1. The first draft put "interpretive_move" inside evidence_type, alongside
+   "source" -- that let a planner attach persona-level interpretation and a
+   fabricated factual claim (e.g. "Deborah Antwi told the council...") under
+   the SAME status="found" umbrella with nothing to force a source check.
+   Fixed: evidence_candidate and interpretation are now separate, structurally
+   un-mergeable fields. There is no evidence_type at all. A claim is either
+   grounded (evidence_candidate.status="found", checked against the source)
+   or it isn't (status="not_found") -- interpretation is always free
+   persona-level reasoning, never itself a factual claim, and is never
+   validated against the source because it is never treated as evidence.
+
+2. The first draft's fact_summary field was planner-authored prose the
+   validator could not check for entailment (it could prove an excerpt is
+   real and a name/quote/date appears within it, but NOT that fact_summary
+   accurately represents what that excerpt says) -- a cleaner-looking
+   version of the same bug, since generate.py would still have inserted
+   untrusted planner prose into the writer prompt as if it were verified
+   fact. Fixed: fact_summary is gone. writer_prompt_block() below composes
+   the writer-facing text directly from the validated primitives (the exact
+   source_excerpt, the exact direct_quote if any, and interpretation
+   labeled as interpretation) -- the writer paraphrases from real material
+   itself rather than receiving a planner-authored summary sentence.
+"""
+import hashlib
+import json
+import re
+
+EVIDENCE_SCHEMA_VERSION = 2
+BRIEF_SCHEMA_VERSION = 2
+
+# Stamped as grounding_scope alongside grounding_status (validate_brief) so
+# "validated" can never be misread as "the whole brief is grounded" -- see
+# validate_brief's docstring. A named constant, not an inline string, so a
+# future second scope value (if this validator's coverage ever expands)
+# can't silently drift out of sync between where it's stamped and where a
+# caller checks for it.
+GROUNDING_SCOPE_EVIDENCE_FIELDS_ONLY = "evidence_fields_only"
+
+_EVIDENCE_FIELDS = ("resisting_example", "correction_moment")
+
+# Phase 1.6 continuation (found on review, before generate_calls snapshot
+# recording): resisting_example/correction_moment are not the only brief
+# fields injected near-verbatim into the writer prompt. opening_scene ("the
+# actual first sentence of the essay") and seed_sentence are planner-authored
+# PROSE-GENERATING fields, not metadata. A first attempt at closing this gap
+# added scan_free_prose_field() (below) as a validate_brief() gate that
+# force-cleared a field on a quote/name/number hit -- REMOVED again on
+# further review: the scanner only catches SOME unsupported-specificity
+# shapes (a quoted phrase, a Title Case name, a 2+ digit number). A plain
+# invented factual sentence with none of those ("The council had ignored
+# earlier complaints for months") sails through undetected, so wiring the
+# scanner into validate_brief overstated what it actually guarantees --
+# "scanned clean" is not the same claim as "grounded," and grounding_status
+# must never imply a guarantee the code doesn't back up. The actual fix
+# (generate.py) is structural instead: opening_scene/seed_sentence text is no
+# longer injected into the writer prompt at all; only opening_shape (a
+# structural category, not prose) crosses into generation. This tuple and
+# scan_free_prose_field() remain as an optional diagnostic utility -- e.g.
+# for someone auditing a batch of persisted article_plans rows by hand -- NOT
+# as anything validate_brief, generation, or grounding_status relies on.
+_FREE_PROSE_FIELDS = ("opening_scene", "seed_sentence")
+
+_CANDIDATE_KEYS = {
+    "status": str,
+    "source_excerpt": str,
+    "named_person": str,
+    "direct_quote": str,
+    "dates_numbers": list,
+}
+
+
+def _sha256_text(text):
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _canonical_json(obj):
+    return json.dumps(obj, sort_keys=True, ensure_ascii=False)
+
+
+def build_evidence_packet(source_text, source_max_chars=None):
+    """Construct the ONE evidence-packet identity for a generation run.
+
+    Built once in generate.py, then passed UNMODIFIED into the planner,
+    reviewer, and executor -- the same discipline the Pixel-validation
+    mixed-brief incident showed is necessary (two artifacts can be
+    byte-identical in git while the live runs that mattered consumed
+    different content). Every stage that receives this packet operates
+    against the identical evidence snapshot, provably, via the hashes below.
+
+    source_hash tracks the raw source text itself. evidence_packet_hash
+    covers the packet's COMPLETE identity payload (source_text plus every
+    other field that describes it: length, truncation flag, original-length
+    claim, schema version) -- REVISION (found on review): a first version
+    hashed only {source_text, schema}, which meant two packets built from
+    the same source_text but different source_max_chars (hence different
+    source_truncated) collided on the same evidence_packet_hash despite
+    representing genuinely different provenance claims. Every field below
+    that isn't source_hash-equivalent now participates in the hash, so
+    source_hash and evidence_packet_hash are deliberately distinguishable
+    (one raw-text identity, one full-packet identity), not the same value
+    under two names, and two packets are only hash-equal when their full
+    provenance -- not just their text -- is identical.
+
+    Truncation honesty (added after review): discovery.py's
+    fetch_source_article extracts the FULL article text and logs its real
+    length, but only returns a pre-truncated slice (get_source_text's own
+    max_chars, 3000 by default) -- the true original length is not
+    recoverable from this call site without changing that function's return
+    contract, which is out of scope for this phase (it's shared with
+    fact_check.py's repair pass too). So this packet records what it can
+    actually verify -- source_length_chars (the length of what we received)
+    and source_truncated (True when that length hit the requested cap, a
+    reliable "this was very likely cut off" signal, not a guess dressed up
+    as certainty) -- and is explicit that source_original_length_chars is
+    unknown rather than omitting the question. Callers that don't know/pass
+    source_max_chars get source_truncated=False, meaning "not verified as
+    truncated," not "verified as complete."
+    """
+    if not source_text:
+        identity_payload = {
+            "source_text": None,
+            "source_length_chars": 0,
+            "source_truncated": False,
+            "source_original_length_chars": None,
+            "evidence_schema_version": EVIDENCE_SCHEMA_VERSION,
+        }
+        return {
+            "source_text": None,
+            "source_hash": None,
+            "source_length_chars": 0,
+            "source_truncated": False,
+            "source_original_length_chars": None,
+            "evidence_packet_hash": _sha256_text(_canonical_json(identity_payload)),
+            "evidence_schema_version": EVIDENCE_SCHEMA_VERSION,
+        }
+    length = len(source_text)
+    truncated = bool(source_max_chars) and length >= source_max_chars
+    identity_payload = {
+        "source_text": source_text,
+        "source_length_chars": length,
+        "source_truncated": truncated,
+        "source_original_length_chars": None,  # not recoverable at this call site -- see docstring
+        "evidence_schema_version": EVIDENCE_SCHEMA_VERSION,
+    }
+    return {
+        "source_text": source_text,
+        "source_hash": _sha256_text(source_text),
+        "source_length_chars": length,
+        "source_truncated": truncated,
+        "source_original_length_chars": None,
+        "evidence_packet_hash": _sha256_text(_canonical_json(identity_payload)),
+        "evidence_schema_version": EVIDENCE_SCHEMA_VERSION,
+    }
+
+
+def _empty_candidate(editorial_need="", interpretation=""):
+    return {
+        "editorial_need": editorial_need,
+        "evidence_candidate": {
+            "status": "not_found",
+            "source_excerpt": "",
+            "named_person": "",
+            "direct_quote": "",
+            "dates_numbers": [],
+        },
+        "interpretation": interpretation,
+    }
+
+
+def _shape_ok(field):
+    if not isinstance(field, dict):
+        return False
+    if not isinstance(field.get("editorial_need"), str):
+        return False
+    if not isinstance(field.get("interpretation"), str):
+        return False
+    ec = field.get("evidence_candidate")
+    if not isinstance(ec, dict):
+        return False
+    for key, expected_type in _CANDIDATE_KEYS.items():
+        if key not in ec or not isinstance(ec[key], expected_type):
+            return False
+    if ec["status"] not in ("found", "not_found"):
+        return False
+    return True
+
+
+def validate_evidence_field(field_name, field, evidence_packet):
+    """Deterministic (non-LLM) validation of one {editorial_need,
+    evidence_candidate, interpretation} object.
+
+    Returns (cleaned_field, ok, reason_code, reason). cleaned_field is
+    always safe to hand downstream -- either the input unchanged (ok=True)
+    or evidence_candidate force-reset to not_found (ok=False) with
+    editorial_need/interpretation PRESERVED (they are never factual claims,
+    so there is nothing to reject them for) -- never raises; a malformed/
+    unsafe candidate degrades to "no evidence for this field" rather than
+    propagating garbage or crashing generation. reason_code is a short,
+    stable machine-checkable string for grounding_violations telemetry;
+    reason is the same information as a human-readable sentence.
+
+    Checks implemented (see phase-1.6-source-grounding.md `## 2`):
+      - schema shape must match exactly (missing/wrong-typed keys reject)
+      - status="not_found" must carry no leftover factual fields
+      - status="found" requires a non-empty source_excerpt that is an
+        actual substring of the supplied source text, and requires
+        named_person/direct_quote/each dates_numbers entry (if present) to
+        each occur within that excerpt
+      - interpretation is NEVER validated against the source -- it is not
+        evidence, by construction there is nothing to check it against, and
+        writer_prompt_block() below never presents it as a factual claim
+    """
+    if not _shape_ok(field):
+        return _empty_candidate(), False, "malformed_shape", f"{field_name}: malformed evidence field shape"
+
+    need = field["editorial_need"]
+    interpretation = field["interpretation"]
+    ec = field["evidence_candidate"]
+
+    if ec["status"] == "not_found":
+        leftover = ec["source_excerpt"] or ec["named_person"] or ec["direct_quote"] or ec["dates_numbers"]
+        if leftover:
+            return (
+                _empty_candidate(need, interpretation), False, "not_found_with_leftover_evidence",
+                f"{field_name}: status=not_found but evidence_candidate fields were populated -- rejected",
+            )
+        return field, True, "", f"{field_name}: not_found (legitimate)"
+
+    # status == "found"
+    source_text = evidence_packet.get("source_text") if evidence_packet else None
+    if not source_text:
+        return (
+            _empty_candidate(need, interpretation), False, "no_source_text_available",
+            f"{field_name}: status=found but no source text was supplied to check it against -- rejected",
+        )
+    excerpt = ec["source_excerpt"]
+    if not excerpt:
+        return _empty_candidate(need, interpretation), False, "empty_source_excerpt", f"{field_name}: status=found with empty source_excerpt -- rejected"
+    if excerpt not in source_text:
+        return (
+            _empty_candidate(need, interpretation), False, "source_excerpt_not_in_source",
+            f"{field_name}: source_excerpt not found verbatim in supplied source -- rejected",
+        )
+    if ec["named_person"] and ec["named_person"] not in excerpt:
+        return (
+            _empty_candidate(need, interpretation), False, "named_person_not_in_excerpt",
+            f"{field_name}: named_person '{ec['named_person'][:40]}' not found within its own source_excerpt -- rejected",
+        )
+    if ec["direct_quote"] and ec["direct_quote"] not in excerpt:
+        return (
+            _empty_candidate(need, interpretation), False, "direct_quote_not_in_excerpt",
+            f"{field_name}: direct_quote not found verbatim within its own source_excerpt -- rejected",
+        )
+    for num in ec["dates_numbers"]:
+        if num and str(num) not in excerpt:
+            return (
+                _empty_candidate(need, interpretation), False, "date_number_not_in_excerpt",
+                f"{field_name}: dates_numbers entry '{num}' not found within its own source_excerpt -- rejected",
+            )
+    return field, True, "", f"{field_name}: source-grounded, verified"
+
+
+# Multi-word Title Case run -- a rough, deliberately over-inclusive proper-noun
+# detector. False positives (a sentence-initial capitalized common phrase)
+# force a field to "" unnecessarily; false negatives (a single-word name, or
+# a name that happens to already appear in source_text under a different
+# surface form) let something through. Given Phase 1.6's own "fail closed,
+# not perfectly" precedent (see validate_evidence_field), over-flagging is
+# the safer failure direction here -- an opening line losing a specific
+# detail costs less than an invented person publishing.
+_PROPER_NAME_RE = re.compile(r"\b[A-Z][a-zA-Z'’-]+(?:\s+[A-Z][a-zA-Z'’-]+){1,3}\b")
+# Straight double, curly double ("smart quotes"), and curly single quote
+# pairs. Straight single quotes (') are deliberately excluded -- far too
+# ambiguous with apostrophes/contractions in running prose ("don't", "the
+# council's plan") to use as a quotation delimiter without much heavier
+# parsing. Curly single quotes ('...') are common in published journalism
+# and were missing from the first version of this regex (found on review)
+# -- the {8,} minimum length already filters out the short apostrophe-driven
+# false matches (a contraction like "don't" has ~2 chars between marks,
+# well under 8) that would otherwise make curly-single risky to include.
+_QUOTED_SPAN_RE = re.compile(r'["“‘]([^"”’]{8,})["”’]')
+_MULTIDIGIT_NUMBER_RE = re.compile(r"\b\d{2,}\b")
+# Attribution verbs required near a candidate name before treating it as
+# the SPEAKER of a nearby quote (see _nearest_attributed_name) -- without
+# this, any Title-Case phrase merely near a quote (a place name, an
+# organization, an unrelated person mentioned in the same sentence) would
+# be treated as an attribution claim. Not exhaustive; conservative by
+# design -- an attribution phrased without one of these verbs (e.g. an
+# em-dash byline, "-- Jane Doe") won't be recognized as an attribution at
+# all, which means it's simply not checked (fails open on THIS check only,
+# not on the underlying quote-text check, which still applies).
+_ATTRIBUTION_VERBS_RE = re.compile(
+    r"\b(said|says|saying|told|tells|telling|wrote|writes|writing|recalled|recalls|"
+    r"explained|explains|explaining|stated|states|noted|notes|noting|added|adds|adding|"
+    r"argued|argues|arguing|insisted|insists|according to|asked|answered|replied|responded)\b",
+    re.IGNORECASE,
+)
+
+
+def scan_free_prose_field(text, source_text):
+    """DIAGNOSTIC ONLY -- NOT a grounding boundary, NOT wired into
+    validate_brief, NOT something grounding_status reflects. Do not treat a
+    clean result from this function as "grounded"; it isn't. See
+    _FREE_PROSE_FIELDS's comment for the full history of why this was tried
+    as an enforcement gate and reverted.
+
+    Cheap, deliberately blunt pattern-matching for THREE specific shapes of
+    source-specific factual specificity in a free-prose planner field
+    (opening_scene, seed_sentence): a quoted span, a multi-word Title Case
+    run (plausible named person/place/org), and a 2+ digit number. Each is
+    checked as "does this specific thing appear verbatim in source_text."
+
+    This is NOT a complete detector -- a plain invented factual sentence
+    with none of these three shapes ("The council had ignored earlier
+    complaints for months", "The project had already been delayed three
+    times") produces zero hits and is not caught. A clean result from this
+    function means "no hit on these three specific patterns," never "this
+    text contains no unsupported claims." Useful only as a cheap first-pass
+    signal for manual review of persisted article_plans rows, not as a
+    substitute for the structural fix (generate.py no longer injects these
+    fields' text into the writer prompt at all).
+
+    When source_text is None/empty, every hit is automatically flagged --
+    there is nothing to ground it against.
+
+    Returns a list of (reason_code, reason) tuples, empty if clean (in the
+    limited sense above). Never raises, never modifies the input."""
+    if not text:
+        return []
+    violations = []
+    for m in _QUOTED_SPAN_RE.finditer(text):
+        quoted = m.group(1).strip()
+        if quoted and not (source_text and quoted in source_text):
+            violations.append((
+                "quoted_text_not_in_source",
+                f"quoted text '{quoted[:60]}' not found verbatim in source",
+            ))
+    for m in _PROPER_NAME_RE.finditer(text):
+        candidate = m.group(0)
+        if not (source_text and candidate in source_text):
+            violations.append((
+                "possible_named_entity_not_in_source",
+                f"possible named entity '{candidate}' not found in source",
+            ))
+    for m in _MULTIDIGIT_NUMBER_RE.finditer(text):
+        num = m.group(0)
+        if not (source_text and num in source_text):
+            violations.append((
+                "possible_number_not_in_source",
+                f"number '{num}' not found in source",
+            ))
+    return violations
+
+
+# How far (chars) around a NEW quote in the REVISED text to look for its
+# attributed speaker (the nearest named-entity candidate), and how far
+# around that SAME quote's location in source_text to accept that name as
+# corroborated. Deliberately generous on the source side (a byline/intro
+# clause can sit well before or after the quoted sentence) and tighter on
+# the revision side (the attribution almost always sits in the same
+# sentence as the quote it belongs to).
+_ATTRIBUTION_WINDOW_CHARS = 80
+_SOURCE_QUOTE_CONTEXT_CHARS = 200
+
+
+# How far (chars) around a candidate name to look for an attribution verb
+# before treating that name as attributing a nearby quote at all.
+_ATTRIBUTION_VERB_PROXIMITY_CHARS = 25
+
+
+def _nearest_attributed_name(text, start, end, window):
+    """Return the proper-name-like candidate (see _PROPER_NAME_RE) closest
+    to the [start, end) span in `text`, searched within `window` chars
+    before/after, that ALSO has an attribution verb (see
+    _ATTRIBUTION_VERBS_RE) within _ATTRIBUTION_VERB_PROXIMITY_CHARS of it --
+    or None if no such candidate exists. Used to find who a NEW quote in a
+    revision is attributed to.
+
+    REVISION (found on review): the first version of this returned the
+    nearest Title-Case phrase full stop, with no attribution-verb check --
+    which meant an unrelated nearby proper noun (an organization, a place,
+    a persona byline) could be misread as the quote's speaker and wrongly
+    flagged as a misattribution, or worse, a name mentioned for an
+    unrelated reason near a genuinely correct quote could produce a false
+    negative on a DIFFERENT, actually-misattributed name landing even
+    closer. Requiring "said/told/wrote/..." (or equivalent) near the
+    candidate makes this a real, if still heuristic, attribution check
+    rather than mere proximity."""
+    lo = max(0, start - window)
+    hi = min(len(text), end + window)
+    candidates = []
+    for m in _PROPER_NAME_RE.finditer(text, lo, hi):
+        verb_lo = max(0, m.start() - _ATTRIBUTION_VERB_PROXIMITY_CHARS)
+        verb_hi = min(len(text), m.end() + _ATTRIBUTION_VERB_PROXIMITY_CHARS)
+        if _ATTRIBUTION_VERBS_RE.search(text[verb_lo:verb_hi]):
+            candidates.append(m)
+    if not candidates:
+        return None
+
+    def distance(m):
+        if m.end() <= start:
+            return start - m.end()
+        if m.start() >= end:
+            return m.start() - end
+        return 0  # overlaps the quote span itself (shouldn't happen, but don't crash)
+
+    return min(candidates, key=distance).group(0)
+
+
+def find_new_unsupported_specifics(original_text, revised_text, source_text):
+    """Deterministic (non-LLM) post-revision guard for the executor stage
+    (_opus_targeted_revision / _fable_polish_rewrite, llm.py) -- the actual
+    hard constraint _EXECUTOR_CONTRACT's prompt wording cannot itself
+    guarantee, since it is only an instruction to an LLM.
+
+    Closes the SPECIFIC observed catastrophic path (Phase 1.5B audit,
+    .claude/experiments/fable-review-roi-2026-08-10.md): a reviewer note
+    like "get her real words" or "name the person" leads the executor to
+    fabricate a plausible verbatim quotation that reads as if it came from
+    the source. Scoped narrowly and deliberately to what's mechanically
+    checkable without semantic fact-checking: NEWLY introduced quoted spans
+    and NEWLY introduced multi-digit numbers -- i.e. present in revised_text
+    but not in original_text -- each checked against source_text.
+
+    REVISION (found on review, twice): checking only "does this exact quote
+    text appear somewhere in source_text" has its own laundering hole -- a
+    quote that IS genuinely in the source can still be REASSIGNED to a
+    fabricated speaker ('Jane Doe said "X"' in source -> 'Deborah Antwi
+    said "X"' in the revision), which is functionally the same catastrophic
+    failure with real words and an invented person. So for any new quote
+    whose TEXT checks out, this now ALSO looks for the nearest
+    ATTRIBUTED name (_nearest_attributed_name -- a candidate name with an
+    attribution verb like "said"/"told"/"wrote" near it, within
+    _ATTRIBUTION_WINDOW_CHARS, NOT merely the nearest capitalized phrase)
+    and, if one exists, requires that name to appear within
+    _SOURCE_QUOTE_CONTEXT_CHARS of ANY occurrence of that same quote text in
+    source_text -- not just the first one found (a quote text can legitimately
+    recur in a source article with the same or different nearby context; only
+    finding the first occurrence would produce false rejections when the
+    correct attribution sits near a later occurrence). This is CONSERVATIVE,
+    not exhaustive entity resolution: a name spelled differently from the
+    source, a correct attribution phrased without a recognized verb (an
+    em-dash byline: "-- Jane Doe"), or an unnamed reference ("the council
+    transport lead") isn't checked either way -- if the revision doesn't
+    produce a recognized VERB-ATTRIBUTED name near the quote at all, only the
+    existing text-presence check applies. Treat a `new_quote_misattributed`
+    hit as "a plausible misattribution worth rejecting," not as proof beyond
+    doubt -- and treat the ABSENCE of a hit as "no misattribution this
+    specific check catches," not as an attribution-correctness guarantee.
+
+    Numbers: still a NARROW, HONEST guard -- a NEW number is checked for
+    TOKEN presence in source_text only ("does this digit string appear
+    anywhere in the source"), not the semantic relationship it's used in.
+    "400 residents were affected" -> "400 people were injured" would NOT be
+    caught (400 is a real source token, reused in a fabricated claim) -- do
+    not describe this as validating what a number means, only that its
+    digits aren't invented outright.
+
+    A named person is NOT independently scanned for outside quote
+    attribution (unlike scan_free_prose_field): the revision task
+    explicitly ALLOWS preserving/rephrasing existing named people from the
+    original draft, and a full existing-vs-new named-entity diff over a
+    whole article body is far more false-positive-prone than the
+    quote-attribution case above, which has a specific anchor (the quote
+    span) to search near.
+
+    NOT exhaustive -- a rephrased-but-still-fabricated claim with no new
+    quote or number, or a quote reattributed to an unnamed reference
+    ("a resident said..."), is not caught. This guard raises the floor for
+    the one failure class that was actually observed and confirmed; it does
+    not claim general fact-checking.
+
+    Returns a list of (reason_code, reason) tuples, empty if clean. Never
+    raises, never modifies either input."""
+    original_text = original_text or ""
+    revised_text = revised_text or ""
+    violations = []
+
+    original_quotes = {m.group(1).strip() for m in _QUOTED_SPAN_RE.finditer(original_text)}
+    for m in _QUOTED_SPAN_RE.finditer(revised_text):
+        quoted = m.group(1).strip()
+        if not quoted or quoted in original_quotes:
+            continue
+        if not (source_text and quoted in source_text):
+            violations.append((
+                "new_quote_not_in_source",
+                f"revision introduces a new quotation '{quoted[:60]}' not present in the "
+                f"original draft or the supplied source -- likely fabricated",
+            ))
+            continue  # already rejected on text grounds; attribution check would be redundant
+
+        attributed_name = _nearest_attributed_name(revised_text, m.start(), m.end(), _ATTRIBUTION_WINDOW_CHARS)
+        if attributed_name:
+            # Check EVERY occurrence of this quote text in source_text, not
+            # just the first -- corroborated near ANY occurrence is enough.
+            corroborated = False
+            search_from = 0
+            while True:
+                quote_pos = source_text.find(quoted, search_from)
+                if quote_pos == -1:
+                    break
+                lo = max(0, quote_pos - _SOURCE_QUOTE_CONTEXT_CHARS)
+                hi = min(len(source_text), quote_pos + len(quoted) + _SOURCE_QUOTE_CONTEXT_CHARS)
+                if attributed_name in source_text[lo:hi]:
+                    corroborated = True
+                    break
+                search_from = quote_pos + 1
+            if not corroborated:
+                violations.append((
+                    "new_quote_misattributed",
+                    f"revision attributes the quotation '{quoted[:60]}' to '{attributed_name}', but "
+                    f"that name does not appear near any occurrence of this quote in the supplied "
+                    f"source -- the words are real, the attribution may not be",
+                ))
+
+    original_numbers = set(_MULTIDIGIT_NUMBER_RE.findall(original_text))
+    for num in _MULTIDIGIT_NUMBER_RE.findall(revised_text):
+        if num in original_numbers:
+            continue
+        if not (source_text and num in source_text):
+            violations.append((
+                "new_number_not_in_source",
+                f"revision introduces a new number '{num}' not present in the original "
+                f"draft or the supplied source -- likely fabricated",
+            ))
+
+    return violations
+
+
+def validate_brief(brief, evidence_packet):
+    """Run validate_evidence_field over both evidence fields of a planner
+    brief, stamp brief_schema_version + grounding_status + grounding_scope +
+    grounding_violations, and return (validated_brief, log).
+
+    grounding_scope=GROUNDING_SCOPE_EVIDENCE_FIELDS_ONLY is stamped
+    alongside grounding_status specifically so "grounding_status: validated"
+    can never be read as a claim about the WHOLE brief (found on review):
+    this function checks resisting_example/correction_moment ONLY. angle,
+    cross_cite, opening_scene, seed_sentence, and any other planner-authored
+    prose are outside its scope entirely -- validated here says nothing
+    about whether those fields are safe, and grounding_scope makes that
+    boundary a machine-readable fact on the brief itself rather than
+    something only this docstring knows. (Those other fields are made safe
+    a different way: opening_scene/seed_sentence are no longer injected into
+    the writer prompt at all -- see generate.py -- and angle/cross_cite carry
+    an explicit no-unsupported-specifics prompt constraint -- see
+    _fable_editorial_brief's system prompt -- rather than a post-hoc check.)
+
+    grounding_status is deliberately kept separate from each field's own
+    evidence_candidate.status -- collapsing "the planner correctly said
+    nothing was found" and "the planner asserted something the validator
+    had to catch and strip" into one "validated" label would erase evidence
+    that the planner misbehaved. This function keeps both observable:
+
+      "no_source_available"       -- no source text existed to check
+                                      against, and nothing was asserted
+                                      that needed rejecting (a fallback-mode
+                                      article with no news seed/discovery
+                                      item -- a legitimate input state, not
+                                      a planner failure)
+      "validated"                 -- source was available (or nothing was
+                                      asserted) and every present field
+                                      passed as-is
+      "validated_with_rejections" -- at least one, but not all, asserted
+                                      fields were force-downgraded because
+                                      the validator could not confirm them
+      "rejected"                  -- EVERY field the planner asserted as
+                                      found failed validation -- the
+                                      planner's evidence output was, in
+                                      aggregate, unusable; still fails
+                                      closed to a safe not_found brief
+                                      rather than blocking generation
+                                      outright (not_found is an explicitly
+                                      legitimate editorial state), but this
+                                      status makes the difference visible
+                                      to telemetry instead of silently
+                                      reading as a clean "validated" run.
+
+    grounding_violations is a list of {"field": ..., "reason_code": ...,
+    "reason": ...} dicts, populated ONLY for actual rejections -- this is
+    the structured record a future audit should read, not grounding_status
+    alone (grounding_status is a summary label; grounding_violations is the
+    evidence for it).
+
+    Mutates a shallow copy of `brief`, never the caller's dict in place.
+    """
+    validated = dict(brief)
+    log = []
+    violations = []
+    present = 0
+    rejected = 0
+
+    for field_name in _EVIDENCE_FIELDS:
+        if field_name not in validated or not validated[field_name]:
+            validated[field_name] = _empty_candidate()
+            log.append(f"{field_name}: absent from model output (treated as not_found)")
+            continue
+        present += 1
+        cleaned, ok, reason_code, reason = validate_evidence_field(field_name, validated[field_name], evidence_packet)
+        validated[field_name] = cleaned
+        log.append(reason)
+        if not ok:
+            rejected += 1
+            violations.append({"field": field_name, "reason_code": reason_code, "reason": reason})
+
+    has_source = bool(evidence_packet and evidence_packet.get("source_text"))
+    if present == 0:
+        status = "validated" if has_source else ("no_source_available" if evidence_packet is not None else "validated")
+    elif rejected == 0:
+        status = "validated" if has_source else "no_source_available"
+    elif rejected == present:
+        status = "rejected"
+    else:
+        status = "validated_with_rejections"
+
+    validated["brief_schema_version"] = BRIEF_SCHEMA_VERSION
+    validated["grounding_status"] = status
+    validated["grounding_scope"] = GROUNDING_SCOPE_EVIDENCE_FIELDS_ONLY
+    validated["grounding_violations"] = violations
+    if evidence_packet:
+        validated["source_hash"] = evidence_packet.get("source_hash")
+        validated["evidence_packet_hash"] = evidence_packet.get("evidence_packet_hash")
+        validated["evidence_schema_version"] = evidence_packet.get("evidence_schema_version")
+        validated["source_truncated"] = evidence_packet.get("source_truncated")
+    return validated, log
+
+
+_ALLOWED_GROUNDING_STATUSES = {"validated", "validated_with_rejections", "rejected", "no_source_available"}
+
+
+def is_current_brief_schema(brief):
+    """Legacy-brief gate (phase-1.6-source-grounding.md's 'Legacy frozen-brief
+    policy'). A brief missing brief_schema_version, or stamped with an older
+    version, is a pre-Phase-1.6 flat-schema artifact -- the exact shape the
+    4 confirmed-contaminated frozen fixtures use. Never coerce/migrate one of
+    these automatically; that would launder already-confirmed-unsupported
+    prose into looking validator-clean. Historical tooling may still read
+    these files directly for archival purposes; nothing that generates new
+    output should accept one.
+
+    REVISION (found on review): checking brief_schema_version alone is too
+    weak for a POSITIVE gate -- a hand-edited or stale JSON file could say
+    {"brief_schema_version": 2} without ever having actually gone through
+    validate_brief() with a real evidence packet. This now additionally
+    requires: grounding_scope matches the current scope constant (not just
+    present -- a future scope value would also fail this, correctly, until
+    this gate is deliberately updated for it), evidence_schema_version
+    matches current, grounding_status is one of validate_brief's own
+    defined output values (never an unrecognized/placeholder string), and
+    source_hash/evidence_packet_hash are present as keys (their VALUE may
+    legitimately be None for a no-source run -- it's the key's presence,
+    proving validate_brief actually ran and stamped provenance, that
+    matters here, not a specific value). This still only proves "this
+    artifact's shape is consistent with having passed through the current
+    validator" -- it cannot prove WHICH evidence packet produced it. For
+    that, a caller with access to the current source (e.g. phase_probe.py's
+    _load_frozen_brief) should separately verify source_hash/
+    evidence_packet_hash against a freshly-built packet from the same
+    source_text -- see that function's own docstring."""
+    if not isinstance(brief, dict):
+        return False
+    return (
+        brief.get("brief_schema_version") == BRIEF_SCHEMA_VERSION
+        and brief.get("grounding_scope") == GROUNDING_SCOPE_EVIDENCE_FIELDS_ONLY
+        and brief.get("evidence_schema_version") == EVIDENCE_SCHEMA_VERSION
+        and brief.get("grounding_status") in _ALLOWED_GROUNDING_STATUSES
+        and "source_hash" in brief
+        and "evidence_packet_hash" in brief
+    )
+
+
+_WRITER_INSTRUCTION = (
+    "Use this sourced material only if it genuinely complicates your argument. "
+    "Do not invent context around it."
+)
+
+
+def writer_prompt_block(label, field_value):
+    """Compose the writer-facing text for one evidence field, from the
+    VALIDATED primitives ONLY -- never from planner-authored prose, even the
+    prose fields this schema treats as "not evidence."
+
+    REVISION (found on review, before any snapshot was recorded against the
+    first version of this function): editorial_need and interpretation are
+    structurally separate from evidence_candidate specifically so a
+    fabricated factual claim can never hide inside them and be waved through
+    as "not evidence, so not checked" (see validate_evidence_field's
+    docstring) -- but the first version of this function then turned around
+    and handed BOTH straight to the writer verbatim anyway. That reopened
+    exactly the laundering path the schema split was supposed to close: a
+    planner can still write a real, verifiable source_excerpt into
+    evidence_candidate and a fabricated claim about a named person into
+    interpretation ("Antwi had already complained to the council in
+    writing") -- the validator has nothing to check that claim against
+    (interpretation is defined as non-factual reasoning, by design), yet the
+    writer would have received it as part of the same trusted-looking block.
+    Fixed by dropping editorial_need/interpretation from the writer-facing
+    text entirely -- they remain on the brief object for plan/debug/
+    editorial-review purposes (article_plans persistence, review.py's
+    _plan_follow_read) but never reach generation. Only the validated
+    primitives (source_excerpt, direct_quote) plus a fixed, code-authored
+    instruction sentence (not planner prose) cross into the writer prompt.
+
+    REJECTS a legacy flat string (pre-Phase-1.6 shape) rather than passing it
+    through -- this is the production WRITE/generation path, where a legacy
+    string reaching here would mean unvalidated pre-Phase-1.6 prose is about
+    to enter a real article, exactly the risk the legacy-schema gate
+    (is_current_brief_schema, phase_probe.py's _load_frozen_brief) exists to
+    keep out. Historical-read tolerance for a legacy string belongs in
+    evidence_text() below (used by review.py's _plan_follow_read, a
+    shadow-mode craft check reading old article_plans DB rows, not
+    generation) -- that is the sanctioned place for "old data, read-only,
+    never regenerated." A pure function can't raise/log here (no `self`, no
+    logger, by this module's own convention); the caller-visible signal is
+    simply an empty section, same as any other "nothing safe to write" case
+    below.
+
+    Returns "" (omit the section entirely) when there is no found evidence
+    to write from -- matches the pipeline's existing behavior of omitting
+    an empty resisting_example/correction_moment section rather than asking
+    the writer to write about the absence of one.
+    """
+    if isinstance(field_value, str):
+        return ""
+    if not isinstance(field_value, dict):
+        return ""
+    ec = field_value.get("evidence_candidate", {})
+    if not isinstance(ec, dict) or ec.get("status") != "found":
+        return ""
+    excerpt = ec.get("source_excerpt", "").strip()
+    if not excerpt:
+        return ""
+    sections = [label] if label else []
+    sections.append("VALIDATED SOURCE EVIDENCE\n" + excerpt)
+    quote = ec.get("direct_quote", "").strip()
+    if quote:
+        sections.append("OPTIONAL EXACT QUOTE\n" + quote)
+    sections.append(_WRITER_INSTRUCTION)
+    return "\n\n".join(sections)
+
+
+def evidence_text(field_value):
+    """Extract a plain-text summary of an evidence field for non-writer-prompt
+    consumers -- specifically review.py's _plan_follow_read, a shadow-mode
+    'did the writer follow the brief' craft check, not a safety boundary, so
+    it needs something to show a judge model, not the writer-block format.
+    Tolerant of BOTH shapes: the new structured dict (fresh generation) and a
+    legacy flat string (pre-Phase-1.6 rows already sitting in engagement.db's
+    article_plans table).
+
+    Deliberately does NOT fabricate a "fact_summary"-style sentence -- this
+    describes what was found, structurally, rather than asserting it as
+    prose the way the removed fact_summary field did."""
+    if isinstance(field_value, str):
+        return field_value
+    if not isinstance(field_value, dict):
+        return ""
+    ec = field_value.get("evidence_candidate", {})
+    if not isinstance(ec, dict) or ec.get("status") != "found":
+        return ""
+    parts = []
+    if ec.get("source_excerpt"):
+        parts.append(f"source excerpt: {ec['source_excerpt']}")
+    if ec.get("direct_quote"):
+        parts.append(f"quote: {ec['direct_quote']}")
+    if field_value.get("interpretation"):
+        parts.append(f"interpretation: {field_value['interpretation']}")
+    return " | ".join(parts)
+
+
+def build_evidence_lineage(planner_hash, writer_hash, reviewer_hash, executor_hash):
+    """Phase 1.6 (found on review, twice): the code threads ONE
+    evidence_packet object through planner/writer/reviewer/executor by
+    construction (generate.py builds it once and passes the same object
+    everywhere), but that was only provable by code inspection -- nothing in
+    persisted provenance made it a machine-checkable fact about a specific
+    run. This packages four independently-supplied hashes into one lineage
+    record so "did every stage consume the same evidence snapshot" becomes a
+    trivial check: `len(set(v for v in lineage.values() if v is not None))
+    <= 1`.
+
+    REVISION (found on review): the first version of this function computed
+    all four values ITSELF from one evidence_packet plus two booleans --
+    which proved only that the ORCHESTRATOR DECLARED the same packet object
+    for each stage, not that each stage's ACTUAL constructed prompt consumed
+    it. That's a real distinction: a future bug that re-slices or otherwise
+    mutates the source text at one call site (exactly the kind of drift the
+    earlier de-slicing fix -- llm.py's _executor_source_block et al. --
+    exists to prevent) would go undetected by a lineage built purely from
+    object identity. So this function no longer computes anything itself --
+    the CALLER (generate.py) is responsible for supplying each hash at the
+    strength it can actually back up, and must document which:
+
+      - planner_hash: pass fable_brief.get("source_hash") -- this is
+        STAMPED INSIDE _fable_editorial_brief by validate_brief() from
+        whatever evidence_packet THAT function actually received, so it is
+        independently re-derived proof, not merely copied from outside.
+      - writer_hash: pass a hash computed from source_text ONLY IF the
+        caller has confirmed source_text is a literal substring of the
+        actual constructed writer prompt (real containment check on the
+        real prompt string) -- None otherwise. Also independently re-derived
+        proof, not assumed from variable identity.
+      - reviewer_hash / executor_hash: current callers pass
+        evidence_packet.get("source_hash") if that stage ran -- this is
+        DECLARED from shared object reference (the same evidence_packet
+        Python object was passed into that call), not independently
+        re-derived from what the stage's own prompt-construction code
+        actually did with it. Weaker than the two above; call sites should
+        say so in their own comments rather than let this function's return
+        value imply uniform strength.
+
+    Any hash value should be None when that stage did not run this turn, so
+    a skipped stage is never misrepresented as having consumed anything.
+
+    Returns a plain dict, always with all four keys present. Never raises."""
+    return {
+        "planner": planner_hash,
+        "writer": writer_hash,
+        "reviewer": reviewer_hash,
+        "executor": executor_hash,
+    }

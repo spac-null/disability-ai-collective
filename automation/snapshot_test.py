@@ -105,16 +105,40 @@ SYNTHETIC_VERDICT_RAWS = {
 # Synthetic inputs for _fable_editorial_brief (generate.py coverage, added
 # 2026-08-09 continuation). Hand-written, not real news items — this is
 # testing prompt CONSTRUCTION, not real editorial judgment.
+# source_text (added Phase 1.6, .claude/phase-1.6-source-grounding.md):
+# _fable_editorial_brief now takes an evidence_packet built from this text
+# (see _snapshot_generate_calls), and _make_editorial_brief_fake's mocked
+# correction_moment/resisting_example excerpts below are written as literal
+# verbatim substrings of it, so the real validate_brief() call inside
+# _fable_editorial_brief accepts them as status="found" rather than
+# rejecting them for a source that doesn't exist -- exercising the
+# validated-clean path, not just the rejection path.
 FIXTURE_BRIEF_INPUTS = [
     {
         "news_title": "City council votes to remove three accessible parking bays downtown",
         "news_summary": "The bays are being replaced with a bike lane after a resident petition.",
         "disability_angle": "Wheelchair users say the replacement bays are 400m further from transit.",
+        "source_text": (
+            "City council votes to remove three accessible parking bays downtown\n\n"
+            "The city council voted 6-3 on Tuesday to remove three accessible parking "
+            "bays and replace them with a protected bike lane. 'This was a genuinely "
+            "difficult trade-off,' said council transport lead Dana Ruiz. Wheelchair "
+            "user Priya Nathan told the council the new route adds a 400-metre "
+            "detour with no dropped kerb for two of the three blocks."
+        ),
     },
     {
         "news_title": "New AI hiring-screening tool adopted by regional employer network",
         "news_summary": "The tool scores video interviews for 'engagement' and 'clarity of speech'.",
         "disability_angle": "",
+        "source_text": (
+            "New AI hiring-screening tool adopted by regional employer network\n\n"
+            "A consortium of 40 regional employers has adopted an AI-driven video "
+            "interview screening tool. 'We're not replacing human judgment, we're "
+            "focusing it,' said HR director Owen Marsh. Autism self-advocate Lena "
+            "Vogt said the scoring model penalizes atypical eye contact and pacing "
+            "regardless of what a candidate actually says."
+        ),
     },
 ]
 
@@ -270,7 +294,29 @@ def _fake_web_verify_claim(self, claim_type, subject, claim_text):
     return ("UNVERIFIABLE", "stubbed by snapshot_test.py — no live web calls in this harness")
 
 
-def _make_editorial_brief_fake(persona_name, register_name):
+def _evidence_field_fixture(editorial_need, source_excerpt, named_person="",
+                             direct_quote="", dates_numbers=None, interpretation=""):
+    """Phase 1.6 (.claude/phase-1.6-source-grounding.md): the structured
+    evidence-candidate shape validate_brief() (grounding.py) expects, not the
+    old flat string. named_person/direct_quote/dates_numbers here must each
+    be an actual verbatim substring of source_excerpt, and source_excerpt
+    itself must be a verbatim substring of whatever source_text the caller's
+    evidence_packet was built from -- see FIXTURE_BRIEF_INPUTS's source_text
+    fields, which these fixture excerpts are hand-matched against."""
+    return {
+        "editorial_need": editorial_need,
+        "evidence_candidate": {
+            "status": "found",
+            "source_excerpt": source_excerpt,
+            "named_person": named_person,
+            "direct_quote": direct_quote,
+            "dates_numbers": dates_numbers or [],
+        },
+        "interpretation": interpretation,
+    }
+
+
+def _make_editorial_brief_fake(persona_name, register_name, correction_moment, resisting_example):
     """Unlike _make_recorder's generic '[PASS] Rn' stub (fine for gate/review,
     which only checks call construction), _fable_editorial_brief parses its
     response as JSON and validates persona/register against real config — a
@@ -278,12 +324,33 @@ def _make_editorial_brief_fake(persona_name, register_name):
     parsing/validation logic itself drifts. Returns a real, schema-valid
     brief using a persona/register pulled from the live orchestrator/config
     at record time, not hand-typed names that could go stale if personas are
-    renamed."""
+    renamed.
+
+    correction_moment/resisting_example (Phase 1.6): pre-built structured
+    evidence-candidate dicts (see _evidence_field_fixture) rather than flat
+    strings, so the mocked LLM response matches the schema
+    _fable_editorial_brief's real validate_brief() call now expects — a flat
+    string here would be rejected as a schema-shape violation before this
+    fixture ever reaches the interesting parts of the pipeline."""
     calls = []
 
     def fake(self, url, api_key, system_prompt, user_prompt, model,
               max_tokens=3500, timeout=120, no_think=False,
-              return_model=False, reasoning_max_tokens=None):
+              return_model=False, reasoning_max_tokens=None,
+              check_truncation=False, temperature=None):
+        # check_truncation/temperature (fixed alongside the Phase 1.6 schema
+        # update): this fake's signature had drifted behind
+        # _call_openai_compat_api's real one (llm.py) -- _call_editorial_model
+        # calls it with check_truncation=True, which every prior version of
+        # this fake rejected with a bare TypeError on argument binding
+        # (before the function body, and therefore before `calls.append`,
+        # ever ran). That silently made this whole fixture inert: brief was
+        # always None and calls was always [] for BOTH personas, in the
+        # committed pre-Phase-1.6 fixture too -- confirmed by diffing against
+        # git HEAD's automation/.snapshot_fixtures/generate_calls.json before
+        # this fix. Not a Phase 1.6 regression, but fixing it here is what
+        # makes this fixture capable of catching prompt-construction drift
+        # at all, which is the whole point of recording it.
         calls.append({
             "system_prompt": system_prompt,
             "user_prompt": user_prompt,
@@ -298,8 +365,8 @@ def _make_editorial_brief_fake(persona_name, register_name):
             "seed_sentence": "The new accessible bay is four hundred metres from the tram stop.",
             "opening_scene": "The new accessible bay is four hundred metres from the tram stop.",
             "opening_shape": "fact",
-            "correction_moment": "The council's own site plan, read closely, put the old bay closer.",
-            "resisting_example": "One wheelchair user testified in favour of the bike lane at the hearing.",
+            "correction_moment": correction_moment,
+            "resisting_example": resisting_example,
             "cross_cite": "",
         })
         return (payload, model) if return_model else payload
@@ -340,35 +407,75 @@ def _snapshot_generate_calls(po):
         from orchestrator.config import _REGISTERS  # AUTOMATION_DIR already on
         # sys.path via _import_orchestrator(); local import keeps this lazy so
         # module load order never depends on record()/check() having run first.
+        from orchestrator.grounding import build_evidence_packet
         persona_name = sorted(orch.agents.keys())[0]
         register_name = sorted(r[0] for r in _REGISTERS)[0]
-        calls, fake_call = _make_editorial_brief_fake(persona_name, register_name)
 
-        restore = _patch_methods(
-            po.ProductionOrchestrator,
-            _call_openai_compat_api=fake_call,
-            _load_persona_state=lambda self, agent_name: dict(FIXTURE_PERSONA_STATE),
-            _active_fault_lines=lambda self, text: [dict(FIXTURE_FAULT_LINE)],
-        )
+        # Phase 1.6: one evidence-candidate excerpt fixture per FIXTURE_BRIEF_INPUTS
+        # entry, hand-matched to that entry's source_text -- see
+        # _evidence_field_fixture's docstring for why these must be verbatim
+        # substrings, not paraphrases.
+        _EVIDENCE_FIXTURES = [
+            (
+                _evidence_field_fixture(
+                    "A concrete moment where the council's own account complicates the persona's framing.",
+                    "Wheelchair user Priya Nathan told the council the new route adds a "
+                    "400-metre detour with no dropped kerb for two of the three blocks.",
+                    named_person="Priya Nathan", dates_numbers=["400"],
+                    interpretation="The distance gap is the material fact; the persona's argument turns on it.",
+                ),
+                _evidence_field_fixture(
+                    "A real position, from inside the same access-advocacy value system, that resists the piece's argument.",
+                    "'This was a genuinely difficult trade-off,' said council transport lead Dana Ruiz.",
+                    named_person="Dana Ruiz", direct_quote="This was a genuinely difficult trade-off",
+                    interpretation="Ruiz frames this as a hard trade-off between two accessible-transport goods, not neglect.",
+                ),
+            ),
+            (
+                _evidence_field_fixture(
+                    "A specific, sourced claim about what the scoring model actually penalizes.",
+                    "Autism self-advocate Lena Vogt said the scoring model penalizes atypical "
+                    "eye contact and pacing regardless of what a candidate actually says.",
+                    named_person="Lena Vogt",
+                    interpretation="This is the mechanism, not just the outcome -- worth naming directly.",
+                ),
+                _evidence_field_fixture(
+                    "The vendor/employer's own stated framing, which resists the piece's argument from inside the hiring-reform value system.",
+                    "'We're not replacing human judgment, we're focusing it,' said HR director Owen Marsh.",
+                    named_person="Owen Marsh", direct_quote="We're not replacing human judgment, we're focusing it",
+                    interpretation="Marsh's framing assumes the tool only filters volume, not that the filter itself discriminates.",
+                ),
+            ),
+        ]
+
         out = {}
-        try:
-            for i, brief_input in enumerate(FIXTURE_BRIEF_INPUTS):
-                calls.clear()
-                try:
-                    brief = orch._fable_editorial_brief(
-                        brief_input["news_title"], brief_input["news_summary"],
-                        brief_input["disability_angle"], persona_name,
-                    )
-                    error = None
-                except Exception as e:
-                    brief, error = None, f"{type(e).__name__}: {e}"
-                out[f"brief_{i}"] = {
-                    "calls": [dict(c) for c in calls],
-                    "brief": brief,
-                    "error": error,
-                }
-        finally:
-            restore()
+        for i, brief_input in enumerate(FIXTURE_BRIEF_INPUTS):
+            correction_fixture, resisting_fixture = _EVIDENCE_FIXTURES[i]
+            calls, fake_call = _make_editorial_brief_fake(
+                persona_name, register_name, correction_fixture, resisting_fixture,
+            )
+            restore = _patch_methods(
+                po.ProductionOrchestrator,
+                _call_openai_compat_api=fake_call,
+                _load_persona_state=lambda self, agent_name: dict(FIXTURE_PERSONA_STATE),
+                _active_fault_lines=lambda self, text: [dict(FIXTURE_FAULT_LINE)],
+            )
+            evidence_packet = build_evidence_packet(brief_input["source_text"])
+            try:
+                brief = orch._fable_editorial_brief(
+                    brief_input["news_title"], brief_input["news_summary"],
+                    brief_input["disability_angle"], persona_name, evidence_packet,
+                )
+                error = None
+            except Exception as e:
+                brief, error = None, f"{type(e).__name__}: {e}"
+            finally:
+                restore()
+            out[f"brief_{i}"] = {
+                "calls": [dict(c) for c in calls],
+                "brief": brief,
+                "error": error,
+            }
 
     return out
 

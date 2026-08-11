@@ -15,6 +15,7 @@ import urllib.request as ureq
 from datetime import datetime as dt
 
 from .config import CLIPROXY_URL, CLIPROXY_KEY
+from .grounding import evidence_text
 
 
 class ReviewMixin:
@@ -391,8 +392,14 @@ class ReviewMixin:
                 ),
                 user_prompt=(
                     "WHAT THE EDITOR COMMITTED THE WRITER TO:\n"
-                    f"correction moment: {plan.get('correction_moment') or '(none committed — answer N/A)'}\n"
-                    f"resisting example: {plan.get('resisting_example') or '(none committed — answer N/A)'}\n"
+                    # Phase 1.6: correction_moment/resisting_example may be either a
+                    # legacy flat string (pre-Phase-1.6 rows already in engagement.db)
+                    # or the new structured evidence-candidate object -- evidence_text()
+                    # handles both and collapses status="not_found" to "" so it falls
+                    # through to the N/A default below, same as the old missing/empty-
+                    # string case did.
+                    f"correction moment: {evidence_text(plan.get('correction_moment')) or '(none committed — answer N/A)'}\n"
+                    f"resisting example: {evidence_text(plan.get('resisting_example')) or '(none committed — answer N/A)'}\n"
                     f"opening shape: {plan.get('opening_shape') or '(none committed — answer N/A)'}\n\n"
                     "Anything marked '(none committed...)' is N/A — do not invent a commitment.\n\n"
                     f"THE FINISHED ARTICLE:\n{content[:20000]}"

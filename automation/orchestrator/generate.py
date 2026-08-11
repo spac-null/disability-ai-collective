@@ -24,6 +24,13 @@ import re
 import time
 
 from .config import _INDEFENSIBLE_PROMPTS, _REGISTERS, _THEME_CLUSTERS
+from .grounding import build_evidence_packet, writer_prompt_block, build_evidence_lineage
+
+# Matches get_source_text's own default max_chars (discovery.py) -- both
+# call sites below rely on that default rather than overriding it, so this
+# constant documents what they already get, for evidence_packet's
+# source_truncated heuristic (grounding.py).
+_SOURCE_TEXT_MAX_CHARS = 3000
 
 
 class GenerateMixin:
@@ -229,11 +236,19 @@ class GenerateMixin:
             return None
 
         # ── Fable editorial brief ──────────────────────────────────────────────
+        # Phase 1.6 (.claude/phase-1.6-source-grounding.md): ONE evidence packet,
+        # built once here from whichever branch above set source_text (news_seed
+        # at line ~135, discovery at line ~156, or None in fallback mode), then
+        # threaded UNMODIFIED into the planner, reviewer, and executor below --
+        # the same evidence-lineage discipline the Pixel-validation mixed-brief
+        # incident showed is necessary. Never rebuilt per-stage.
+        evidence_packet = build_evidence_packet(source_text, source_max_chars=_SOURCE_TEXT_MAX_CHARS)
+
         _ns_title   = (news_seed["title"] if news_seed
                        else discovery.get("original_title", "") if discovery else title)
         _ns_summary = news_seed.get("summary", "")         if news_seed else ""
         _ns_dangle  = news_seed.get("disability_angle", "") if news_seed else ""
-        fable_brief = self._fable_editorial_brief(_ns_title, _ns_summary, _ns_dangle, agent_name)
+        fable_brief = self._fable_editorial_brief(_ns_title, _ns_summary, _ns_dangle, agent_name, evidence_packet)
         if fable_brief:
             if fable_brief["persona"] != agent_name:
                 # Route Fable's preference back through _balance_agent instead of
@@ -253,13 +268,23 @@ class GenerateMixin:
                 agent_name = _fable_balanced
                 agent_info = self.agents[agent_name]
             _fable_register       = fable_brief["register"]
+            # seed_sentence/opening_scene: captured (KeyError/.get() still
+            # enforce the brief shape) but deliberately NOT injected into the
+            # writer prompt below -- see the OPENING block's comment further
+            # down for why (Phase 1.6 continuation).
             _fable_seed           = fable_brief["seed_sentence"]
             _fable_angle_text     = fable_brief["angle"]
             _fable_cross_cite     = fable_brief.get("cross_cite", "")
             _fable_opening_scene  = fable_brief.get("opening_scene", "")
             _fable_opening_shape  = fable_brief.get("opening_shape", "")
-            _fable_resisting      = fable_brief.get("resisting_example", "")
-            _fable_correction     = fable_brief.get("correction_moment", "")
+            # Phase 1.6: resisting_example/correction_moment are now structured
+            # evidence-candidate objects (validated by grounding.validate_brief()
+            # inside _fable_editorial_brief), not flat strings — compose the
+            # writer-facing text from the VALIDATED primitives via
+            # writer_prompt_block() rather than interpolating the raw dict
+            # into the prompt below.
+            _fable_resisting      = writer_prompt_block("", fable_brief.get("resisting_example", ""))
+            _fable_correction     = writer_prompt_block("", fable_brief.get("correction_moment", ""))
         else:
             self.logger.error("Fable brief unavailable — running without persona override, angle, register, or seed sentence (v2-style output)")
             if hasattr(self, "_degraded_stages"):
@@ -604,12 +629,31 @@ class GenerateMixin:
             + (f"YOUR WOUND (the specific episode that costs you something — do NOT quote it directly, "
                f"but it may complicate your argument if you let it): {self._extract_persona_wound(agent_name)}\n\n"
                if self._extract_persona_wound(agent_name) else "")
-            + (f"EDITOR BRIEF — the question you are finding out the answer to (you do not know it yet; do not decide it before you start writing): {_fable_angle_text}\n\n" if _fable_angle_text else "")
-            + (f"SEED SENTENCE — open here or close to this register (do not quote literally): \"{_fable_seed}\"\n\n" if _fable_seed else "")
-            + (f"OPENING — begin here (lightly adapt to your voice; do NOT summarize the source instead){(', shape: ' + _fable_opening_shape) if _fable_opening_shape else ''}: {_fable_opening_scene}\n\n" if _fable_opening_scene else "")
-            + (f"CORRECTION MOMENT — this is where you were wrong, stuck, or corrected. Put it in the past tense, before the midpoint, shown happening, with a place or a date. Do not announce it, do not soften it, and do not save it for the end: {_fable_correction}\n\n" if _fable_correction else "")
-            + (f"RESISTING EXAMPLE — this does not fit the argument cleanly. Let it arrive without a signpost sentence and leave it standing; do not write 'here is the case that complicates this' and do not neutralise it in the following paragraph: {_fable_resisting}\n\n" if _fable_resisting else "")
-            + (f"A DISAGREEMENT THAT BEARS ON THIS PIECE — argue against this position on its merits, as an idea in the world. Do NOT signpost it with a name-check: no 'Here is where I part from Siri Sage', no 'That is Pixel Nova's essay and she'd write it well'. Naming a colleague mid-argument reads as the publication talking about itself and breaks the reader's attention on the actual subject. If the other position is worth taking on, take it on — state it as a real position someone holds, in the substance of your argument, and let the reader who follows this publication recognise whose it is. Attribution by name belongs in the source note, not the third paragraph: {_fable_cross_cite}\n\n" if _fable_cross_cite else "")
+            # Phase 1.6 continuation (found across two rounds of review):
+            # opening_scene, seed_sentence, angle, and cross_cite are ALL
+            # planner-authored PROSE, not evidence-candidate objects -- none
+            # of them are deterministically checkable the way resisting_
+            # example/correction_moment are (a scan for quotes/names/numbers
+            # catches some fabrications, not the general case: "The council
+            # had ignored earlier complaints for months" or "Why did X do Y
+            # despite Z?" contain no quote/name/number and still assert
+            # unsupported specifics or events). Rather than build a fourth
+            # evidence schema for stylistic/argument-framing fields, none of
+            # their literal text crosses into the writer prompt -- only
+            # opening_shape (a structural category: plain_claim, cold_scene,
+            # question, fact, declaration_of_hunt) does. angle/cross_cite
+            # remain on the persisted brief (article_plans) and are still
+            # given to the reviewer as CONTEXT (_fable_editorial_review's
+            # brief_angle param) -- the reviewer doesn't inject new prose
+            # into the article, it only judges/notes, and any notes it
+            # writes still pass through the executor's deterministic guard
+            # (find_new_unsupported_specifics) -- so that use is safe in a
+            # way direct writer injection wasn't.
+            + (f"INVESTIGATIVE STANCE — write this from a live, unresolved question you are finding the answer to on the page, not a thesis you already hold. Build your own specific question from the validated evidence below and the story context above — the literal question a planner might have written is not reproduced here, because a planner-authored question can itself assert unsupported premises inside its own grammar ('Why did X do Y despite Z?' asserts X, Y, and Z all happened). Do not decide the answer before you start writing.\n\n" if _fable_angle_text else "")
+            + (f"OPENING — write your own opening line in this shape, drawing only on the SUPPLIED SOURCE SNAPSHOT / validated evidence blocks in this prompt for any specific name, quote, date, or number. The summary/disability angle above are real context about what this story is, but they are NOT validated evidence and must not be treated as authorization for a new specific detail — only the supplied source snapshot and the validated evidence sections below can supply one. Do NOT reproduce or paraphrase a planner-supplied sentence: shape={_fable_opening_shape}\n\n" if _fable_opening_shape else "")
+            + (f"CORRECTION MOMENT — this is where you were wrong, stuck, or corrected. Put it in the past tense, before the midpoint, shown happening, with a place or a date. Do not announce it, do not soften it, and do not save it for the end:\n{_fable_correction}\n\n" if _fable_correction else "")
+            + (f"RESISTING EXAMPLE — this does not fit the argument cleanly. Let it arrive without a signpost sentence and leave it standing; do not write 'here is the case that complicates this' and do not neutralise it in the following paragraph:\n{_fable_resisting}\n\n" if _fable_resisting else "")
+            + ("A DISAGREEMENT THAT BEARS ON THIS PIECE — if a genuinely competing position exists inside this story's own value system (not a strawman), let it stand on its merits as a real idea in the world; argue against its substance and do not neutralise it with a tidy rebuttal. Do NOT signpost it with a name-check: no 'Here is where I part from Siri Sage', no 'That is Pixel Nova's essay and she'd write it well' — naming a colleague mid-argument reads as the publication talking about itself. Build the competing position from the validated evidence and story context available to you, not from a planner-supplied description of the disagreement, which can itself assert specifics that aren't grounded.\n\n" if _fable_cross_cite else "")
             + f"{beat_nudge}"
             f"{date_nudge}"
             f"{shape_nudge}"
@@ -620,6 +664,18 @@ class GenerateMixin:
             "Return format — EXACTLY as follows:\n"
             f"TITLE: [your sharp essay title, not the angle above]\n\n"
             f"[essay body, ~{target_words} words, starting directly — no H1 heading, no {chr(34)}By {agent_name}{chr(34)}]"
+        )
+
+        # evidence_lineage's "writer" hash (Phase 1.6, see build_evidence_lineage's
+        # docstring for why this must be independently re-derived, not assumed
+        # from variable identity): confirm source_text is a literal substring of
+        # the ACTUAL constructed prompt string before crediting the writer with
+        # having consumed it -- a future bug that re-slices source_text when
+        # building the SOURCE MATERIAL block above would make this containment
+        # check fail, correctly showing "writer: None" instead of a false match.
+        _writer_evidence_hash = (
+            build_evidence_packet(source_text)["source_hash"]
+            if source_text and source_text in prompt else None
         )
 
         try:
@@ -679,13 +735,21 @@ class GenerateMixin:
 
         # Step 3b-i: Fable editorial review + targeted Opus revision (Opus drafts only).
         # Non-Opus drafts skip this and go through the full rewrite_with_opus() below.
+        # _reviewer_ran/_executor_ran (Phase 1.6): tracked so evidence_lineage below
+        # records which stages ACTUALLY consumed evidence_packet this run, not which
+        # ones merely could have -- a run where the reviewer said publish_as_is (no
+        # executor call) shouldn't claim an executor lineage entry that didn't happen.
         is_opus = "opus" in (actual_model or "").lower()
+        _reviewer_ran = False
+        _executor_ran = False
         if content and is_opus:
             _review_angle = _fable_angle_text or title
-            _verdict, _notes = self._fable_editorial_review(content, agent_name, _review_angle, register)
+            _verdict, _notes = self._fable_editorial_review(content, agent_name, _review_angle, register, evidence_packet)
+            _reviewer_ran = True
             if _verdict == "revise" and _notes:
                 _pre_revision_content = content
-                content = self._fable_polish_rewrite(content, _notes, agent_name, register)
+                content = self._fable_polish_rewrite(content, _notes, agent_name, register, evidence_packet)
+                _executor_ran = True
                 # editorial_revision degradation is defined at the CAPABILITY level, not the
                 # attempt level (2026-08-10, corrected after review): _fable_polish_rewrite
                 # already falls through Fable -> _opus_targeted_revision internally, and a
@@ -738,6 +802,27 @@ class GenerateMixin:
         today = self._today()
         slug = re.sub(r'[^a-z0-9]+', '-', extracted_title.lower()).strip('-')
         filename = f"{today}-{slug}.md"
+        # evidence_lineage (Phase 1.6, found on review twice): proves in
+        # persisted provenance -- not just by code inspection -- that every
+        # stage this run actually consumed the SAME evidence. Per-slot
+        # strength (see build_evidence_lineage's docstring for why these
+        # differ): "planner" reads back what validate_brief ITSELF stamped
+        # onto fable_brief (independently re-derived from whatever packet
+        # _fable_editorial_brief actually received); "writer" is set only
+        # if source_text was confirmed to literally appear in the actual
+        # constructed writer prompt (real containment check, see
+        # _writer_evidence_hash above); "reviewer"/"executor" are DECLARED
+        # from shared evidence_packet object identity, not independently
+        # re-derived from what those calls' own prompt-construction code did
+        # with it -- weaker than the first two, on purpose documented as such.
+        if fable_brief:
+            _declared_hash = evidence_packet.get("source_hash")
+            fable_brief["evidence_lineage"] = build_evidence_lineage(
+                planner_hash=fable_brief.get("source_hash"),
+                writer_hash=_writer_evidence_hash,
+                reviewer_hash=_declared_hash if _reviewer_ran else None,
+                executor_hash=_declared_hash if _executor_ran else None,
+            )
         self._persist_article_plan(slug, agent_name, fable_brief)
 
         metadata = {

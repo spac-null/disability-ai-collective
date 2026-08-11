@@ -92,6 +92,14 @@ from snapshot_test import (  # noqa: E402
     _import_orchestrator, _patch_methods, _isolate_paths,
     FIXTURE_RECENT_POSTS, FIXTURE_PERSONA_STATE, FIXTURE_FAULT_LINE,
 )
+from orchestrator.grounding import is_current_brief_schema, build_evidence_packet  # noqa: E402
+
+# Matches generate.py's _SOURCE_TEXT_MAX_CHARS / get_source_text's own default
+# max_chars (discovery.py) -- kept in sync so a frozen probe brief's evidence
+# packet is built under the same truncation assumption a real production run
+# would use. Every PROBE_TOPICS/SUPPLEMENTAL_TOPICS source_text is well under
+# this cap already, so it never actually truncates anything today.
+PROBE_SOURCE_MAX_CHARS = 3000
 
 # Pinned inside this harness only -- see module docstring. 0.9 rather than the
 # provider default (1.0) or something very low (0.3-0.5 would suppress the
@@ -378,7 +386,16 @@ def freeze_briefs(force=False, topic_key=None):
     so the writer-prompt comparison isn't confounded by a differently-worded
     brief each time. topic_key: restrict to one topic (PROBE_TOPICS or
     SUPPLEMENTAL_TOPICS, e.g. 'museum_labels') instead of the default 3 -- used for
-    one-off supplemental-persona validation without re-freezing the rest."""
+    one-off supplemental-persona validation without re-freezing the rest.
+
+    Phase 1.6 (.claude/phase-1.6-source-grounding.md): builds a real
+    evidence_packet from the topic's own source_text and threads it into
+    _fable_editorial_brief the same way generate.py does in production --
+    without this, re-freezing (which _load_frozen_brief's legacy-schema gate
+    now tells callers to do) would call the planner with no source at all,
+    producing a no_source_available/every-field-not_found brief rather than
+    an actually source-grounded replacement for the confirmed-contaminated
+    legacy fixture it's meant to replace."""
     po = _import_orchestrator()
     PROBE_FIXTURES_DIR.mkdir(parents=True, exist_ok=True)
     topics = [ALL_TOPICS_BY_KEY[topic_key]] if topic_key else PROBE_TOPICS
@@ -389,23 +406,124 @@ def freeze_briefs(force=False, topic_key=None):
             continue
         orch = po.ProductionOrchestrator()
         ns = topic["news_seed"]
-        brief = orch._fable_editorial_brief(ns["title"], ns["summary"], ns["disability_angle"], topic["persona"])
+        # source_max_chars below only affects provenance metadata
+        # (source_truncated) -- build_evidence_packet does NOT itself slice
+        # the text (found on review). Every current fixture is well under
+        # PROBE_SOURCE_MAX_CHARS, so this has never mattered in practice, but
+        # a future longer fixture would otherwise silently hand the probe
+        # planner a richer evidence window than production's real cap gives
+        # it, while provenance merely (and misleadingly) says
+        # source_truncated=True. Assert instead of silently truncating here:
+        # a fixture that grows past the cap should fail loudly and force a
+        # deliberate decision (shorten the fixture, or bump the cap
+        # consciously), not quietly change what this probe is measuring.
+        assert len(topic["source_text"]) <= PROBE_SOURCE_MAX_CHARS, (
+            f"{topic['key']}: source_text is {len(topic['source_text'])} chars, over "
+            f"PROBE_SOURCE_MAX_CHARS ({PROBE_SOURCE_MAX_CHARS}) -- build_evidence_packet does not "
+            f"truncate it for you, so this would silently give the probe planner more evidence than "
+            f"a real production run's get_source_text cap allows. Shorten the fixture or update "
+            f"PROBE_SOURCE_MAX_CHARS deliberately."
+        )
+        evidence_packet = build_evidence_packet(topic["source_text"], source_max_chars=PROBE_SOURCE_MAX_CHARS)
+        brief = orch._fable_editorial_brief(
+            ns["title"], ns["summary"], ns["disability_angle"], topic["persona"], evidence_packet,
+        )
         if not brief:
             print(f"  {topic['key']}: _fable_editorial_brief returned nothing -- try again", file=sys.stderr)
             continue
+        if not is_current_brief_schema(brief):
+            print(f"  {topic['key']}: WARNING -- froze a brief that is NOT current schema (unexpected)", file=sys.stderr)
         path.write_text(json.dumps(brief, indent=2, sort_keys=True))
-        print(f"  {topic['key']}: froze brief -> {path}")
+        print(f"  {topic['key']}: froze brief -> {path} (grounding_status={brief.get('grounding_status')})")
     return 0
 
 
-def _load_frozen_brief(topic_key):
+# Default acceptance for an ORDINARY grounded probe -- deliberately
+# stricter than is_current_brief_schema's own _ALLOWED_GROUNDING_STATUSES.
+# "current schema" proves the artifact's shape/identity is trustworthy; it
+# does NOT mean the artifact is a USEFUL positive fixture. A brief with
+# grounding_status="rejected" is safe (bad evidence was stripped down to
+# not_found) but empty -- not a meaningful "here's a real grounded witness/
+# quote" input for the ordinary comparative-quality probes this harness
+# exists for. Adversarial tests that deliberately want a no-evidence or
+# all-rejected fixture should pass a broader require_grounding_status set
+# explicitly, not rely on this default.
+_ORDINARY_PROBE_GROUNDING_STATUSES = {"validated", "validated_with_rejections"}
+
+
+def _load_frozen_brief(topic_key, require_grounding_status=_ORDINARY_PROBE_GROUNDING_STATUSES):
+    """Legacy frozen-brief policy (.claude/phase-1.6-source-grounding.md's
+    'Legacy frozen-brief policy' section): the 4 original fixtures
+    (brief_sauna.json, brief_hiring_tool.json, brief_curb_cuts.json,
+    brief_museum_labels.json) predate the Phase 1.6 structured
+    evidence-candidate schema and are the SAME briefs the Phase 1.5B audit
+    confirmed contain source-unsupported resisting_example/correction_moment
+    content. Fail closed here rather than silently feeding a legacy
+    flat-schema brief into a probe run that would otherwise look
+    validator-clean by omission (it never passes through validate_brief() at
+    all in this harness -- _fable_editorial_brief is stubbed out and this
+    frozen JSON is substituted directly). Re-freeze with --freeze-briefs
+    --force to regenerate under the current schema.
+
+    REVISION (found on review): is_current_brief_schema proves the brief's
+    SHAPE is consistent with having gone through validate_brief, but not
+    which evidence packet actually produced it -- a brief frozen against an
+    older/different version of a fixture's source_text would still pass a
+    shape-only check. So this ALSO rebuilds the evidence packet from the
+    topic's CURRENT source_text and asserts the frozen brief's
+    source_hash/evidence_packet_hash match it exactly -- generalizing the
+    exact lesson from the Pixel-validation mixed-brief incident (two
+    artifacts can look identical/current while having been produced from
+    different underlying content) to this gate specifically.
+
+    REVISION (found on review, again): "current schema" and "good
+    experimental input" are different claims -- a brief can be perfectly
+    current-schema and still have grounding_status="rejected" (every
+    asserted evidence field failed validation and was stripped to
+    not_found) or "no_source_available". Neither is a useful POSITIVE
+    grounded fixture for an ordinary probe run, even though both are
+    perfectly safe. require_grounding_status defaults to the ordinary-probe
+    set (validated / validated_with_rejections); a caller building a
+    deliberately adversarial negative-control probe (source with no
+    witness/quote -- see the design doc's acceptance test) should pass a
+    broader or different set explicitly, not rely on this default."""
     path = _brief_fixture_path(topic_key)
     if not path.exists():
         raise RuntimeError(
             f"No frozen brief for topic '{topic_key}' -- run "
             f"'python3 automation/phase_probe.py --freeze-briefs' first."
         )
-    return json.loads(path.read_text())
+    brief = json.loads(path.read_text())
+    if not is_current_brief_schema(brief):
+        raise RuntimeError(
+            f"Frozen brief for topic '{topic_key}' ({path}) is pre-Phase-1.6 "
+            f"flat-schema (or otherwise missing the current validator's provenance stamp) "
+            f"and may be a known-contaminated fixture (Phase 1.5B audit) -- "
+            f"it is not verifiably source-grounded and must not enter a new probe run. "
+            f"Re-freeze it under the current schema: "
+            f"'python3 automation/phase_probe.py --freeze-briefs --force --topic {topic_key}'."
+        )
+    if require_grounding_status is not None and brief.get("grounding_status") not in require_grounding_status:
+        raise RuntimeError(
+            f"Frozen brief for topic '{topic_key}' ({path}) is current-schema but its "
+            f"grounding_status ('{brief.get('grounding_status')}') is not in the accepted set for "
+            f"this call ({sorted(require_grounding_status)}) -- schema-current is not the same claim "
+            f"as 'a useful positive grounded fixture'. If this is intentional (e.g. an adversarial "
+            f"negative-control probe), pass require_grounding_status explicitly."
+        )
+    topic = ALL_TOPICS_BY_KEY.get(topic_key)
+    if topic is None:
+        raise RuntimeError(f"Unknown topic_key '{topic_key}' -- not in ALL_TOPICS_BY_KEY.")
+    current_packet = build_evidence_packet(topic["source_text"], source_max_chars=PROBE_SOURCE_MAX_CHARS)
+    if brief.get("source_hash") != current_packet["source_hash"] or brief.get("evidence_packet_hash") != current_packet["evidence_packet_hash"]:
+        raise RuntimeError(
+            f"Frozen brief for topic '{topic_key}' ({path}) has schema-valid shape but was built "
+            f"from a DIFFERENT evidence packet than the topic's CURRENT source_text produces "
+            f"(source_hash/evidence_packet_hash mismatch) -- the fixture's source_text changed "
+            f"since this brief was frozen, so it no longer represents this topic's evidence. "
+            f"Re-freeze: 'python3 automation/phase_probe.py --freeze-briefs --force --topic {topic_key}'."
+        )
+    return brief
 
 
 def _run_one_sample(po, topic, sample_idx, temperature):
