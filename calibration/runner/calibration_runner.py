@@ -80,6 +80,13 @@ def _request(method, path, body=None, timeout=30):
         headers={
             "Content-Type": "application/json",
             "X-Calibration-Runner-Token": RUNNER_TOKEN,
+            # Confirmed directly against production this pass: Cloudflare's
+            # edge returned a bare 403 (never reaching this Worker at all —
+            # a plain curl to the identical URL/token got a clean 200)
+            # specifically for urllib's default "Python-urllib/x.y"
+            # User-Agent, a well-known bot signature. Not a real auth or
+            # Worker-side problem — just needs a non-default UA.
+            "User-Agent": "cripminds-calibration-runner/1.0",
         },
     )
     try:
