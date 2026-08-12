@@ -1,0 +1,24 @@
+[Unit]
+Description=Crip Minds Calibration Runner
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=jascha
+Group=jascha
+EnvironmentFile=/srv/secrets/cripminds-calibration/cripminds-calibration-runner.env
+ExecStart=/srv/scripts/ops/cripminds-calibration-runner.sh
+Restart=always
+RestartSec=15
+
+ProtectSystem=strict
+ReadWritePaths=/srv/data/hermes/workspace/disability-ai-collective
+ReadOnlyPaths=/srv/scripts /srv/secrets/cripminds-calibration
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=cripminds-calibration-runner
+
+[Install]
+WantedBy=multi-user.target

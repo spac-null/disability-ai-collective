@@ -1,0 +1,63 @@
+{
+  "artifact_type": "research_context",
+  "round_id": "RL-2026-001",
+  "reconstructed_at": "2026-08-12",
+  "reconstruction_note": "RL-2026-001 was published before the research_context artifact type existed (## 10 of the design doc, added in the calibration-orchestrator pass). This file backfills it entirely from already-public, already-frozen repo artifacts written at the time the round was designed and published: reader-lab/rounds/drafts/RL-2026-001.json (per-item internal_ref/rationale_internal_not_shown_to_reviewer fields) and .claude/current-work.md's own recorded description of each item's B2-v2 R1/R2 state as of the recovery run used to select these items. No reviewer answer/response content was read to produce this file, at any point, in any pass.",
+  "research_question": "When B2-v2's internal stages (R1 proposition-analysis, R2 role/support audit) disagree, or when R1 fails to decompose a proposition at all, which reading of the sentence/source boundary do independent, non-technical humans find more plausible? This round samples 4 distinct known failure/uncertainty shapes plus 1 agreement control — it does not resolve B2's own correctness, and no response here automatically changes any prompt, model, or threshold.",
+  "dataset_purpose_note": "Development material only -- NOT blind_calibration, NOT held_out_evaluation, NOT cross-publisher evaluation. All 5 items are drawn from cj2-fresh-batch-1 (H05/H08/H14/H17) and cj2-reference-probe-1 (05_dutch_painting_soldier/Z), already-inspected B2-v2 regression fixtures -- never untouched cross-publisher held-out corpus.",
+  "source_artifacts": [
+    "reader-lab/rounds/drafts/RL-2026-001.json (SHA256 f04bc4ec5970d2c6a135100208e31e78d7d25ecf419b3942f17c3b35242ef6ee)",
+    ".claude/current-work.md's READER LAB v0 section, RL-2026-001 entry, 2026-08-12",
+    "automation/.probe_fixtures/cj2-fresh-batch-1/human-review-packet-v1.1.md",
+    "automation/.probe_fixtures/cj2-b2-v2-r2-recovery/recovery_results/per_candidate/{H05,H08,H14,H17,05_dutch_painting_soldier__Z}.json",
+    "automation/.probe_fixtures/cj2-b2-v2/acceptance-matrix-v2-preregistered.json"
+  ],
+  "per_item": {
+    "ril_e01890e0-4a62-486b-85b4-c91fb38c6b44": {
+      "slot": 1,
+      "b2_case_reference": "H08 (cj2-fresh-batch-1, engine Z)",
+      "b2_failure_class_or_agreement": "R1 decomposition-coverage miss — R1 (proposition-decomposition) never produced a claim_id for this exact sentence in the real recovery run, so no downstream stage (R2/B2/Stage C) ever had the chance to audit it. This is a coverage miss, not a role/support disagreement between stages.",
+      "machine_reference_label": null,
+      "machine_reference_note": "No machine label exists to compare against — that absence is itself the finding this item probes. machine_comparison for this item should read no_machine_reference, not be treated as an omission.",
+      "dataset_purpose": "development"
+    },
+    "ril_e08ba1e4-8e15-4ef0-8d2b-9f34f8ad4dd2": {
+      "slot": 2,
+      "b2_case_reference": "H17 (cj2-fresh-batch-1, engine Z)",
+      "b2_failure_class_or_agreement": "R1-factual/R2-interpretive hedge conflict — R1 said empirical_dependency=true (a real dependency exists); R2 independently called the same claim interpretive_only, citing the claim's own hedge/parenthetical ('e.g., childbearing') as exemption grounds. The single most-repeated real B2 failure shape across v1.3/v1.4.1/v2 of the B2 harness (FLAGGED_NOT_RESOLVED as of the last B2 pass touching it).",
+      "machine_reference_label": "boundary_ambiguous",
+      "machine_reference_note": "B2's own two stages disagree with each other on this item — there is no single machine label to compare a human reference against, hence boundary_ambiguous rather than picking one side.",
+      "dataset_purpose": "development"
+    },
+    "ril_9df9a4b6-cd47-4697-91ef-586fc28cc6b4": {
+      "slot": 3,
+      "b2_case_reference": "H14 (cj2-fresh-batch-1, engine S)",
+      "b2_failure_class_or_agreement": "Support-strength calibration target — R1 and R2 AGREE on role (factual_dependency) and support (unsupported) for this exact claim in the recovery run; the open question is different: a separate run of the same architecture (Regression #1) put this same claim at 'supported' instead — a documented run-to-run support-strength variability, not a role/decomposition disagreement.",
+      "machine_reference_label": "factual_dependency",
+      "machine_reference_note": "Role classification agrees across R1/R2 in the recovery run used to build this round; only the separate support-strength question varies run-to-run, which this item's human comparison is not testing.",
+      "dataset_purpose": "development"
+    },
+    "ril_ffc53c73-bf29-49fe-a1f2-946b81f07517": {
+      "slot": 4,
+      "b2_case_reference": "H05 (cj2-fresh-batch-1, engine M)",
+      "b2_failure_class_or_agreement": "Second, independent instance of the identical R1-factual/R2-interpretive-hedge failure shape as slot 2 (H17), from a different candidate/engine on a related but not identical passage of the same source article.",
+      "machine_reference_label": "boundary_ambiguous",
+      "machine_reference_note": "Same conflict shape as H17 (slot 2) — B2's own stages disagree, no single machine label to compare against.",
+      "dataset_purpose": "development"
+    },
+    "ril_2452d26c-f319-4dab-80c8-bcd1aa748c4e": {
+      "slot": 5,
+      "b2_case_reference": "05_dutch_painting_soldier/Z (development set, De Hooch) — CONTROL",
+      "b2_failure_class_or_agreement": "R1 and R2 fully agree (r1_agreement='consistent') that this claim is factual_dependency/unsupported — a clean, non-contested internal adjudication, included as a control rather than a known failure shape.",
+      "machine_reference_label": "factual_dependency",
+      "machine_reference_note": "Clean R1/R2 agreement — this is the round's control item, expected to produce the least interesting machine_comparison result (aligns) if the instrument is working as designed.",
+      "dataset_purpose": "development"
+    }
+  },
+  "not_authorized_by_this_artifact": [
+    "Re-running any B2/CJ-2 stage to recompute these labels",
+    "Treating machine_reference_label as ground truth for machine_comparison purposes",
+    "Using this round's items as held_out_evaluation material",
+    "Inspecting or interpreting any reviewer's actual response content"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "ops_request_type": "reader_lab_round_publish",
+  "created_at": "2026-08-12",
+  "created_by": "research session (credential-free)",
+  "round_id": "RL-2026-001",
+  "frozen_manifest_path": "reader-lab/rounds/drafts/RL-2026-001.json",
+  "frozen_manifest_sha256": "f04bc4ec5970d2c6a135100208e31e78d7d25ecf419b3942f17c3b35242ef6ee",
+  "requested_action": "Publish RL-2026-001 from the frozen manifest above, byte-for-byte. Create 5 item records + assignments for reviewer_parent_a and reviewer_parent_b (identical 5 items, same order, independent). Do NOT create new reviewer invitations -- both reviewers already have unrevoked pilot invitations/sessions; reuse them.",
+  "dataset_purpose": "development",
+  "expected_item_count_per_reviewer": 5,
+  "reviewer_ids": [
+    "reviewer_parent_a",
+    "reviewer_parent_b"
+  ],
+  "explicit_constraints": [
+    "No content edits permitted -- publish exactly what is in the frozen manifest, verified by its SHA256 above.",
+    "No new invitation tokens, no credential rotation for either reviewer.",
+    "No cross-publisher or held-out evaluation material is involved -- all 5 items are already-inspected development-set fixtures.",
+    "Round must remain invisible to reviewers as a 'round' -- they should simply see 5 new items available next time they visit, per design doc SS20.3/SS20.7 (no new reviewer-facing route needed).",
+    "This request does not authorize retroactively assigning a round_id to the pilot's own 4 items (design doc SS20.8)."
+  ],
+  "post_write_verification_requested": [
+    "GET /admin/status (or equivalent read-only export) confirming 5 assignments created per reviewer, all unanswered",
+    "Confirm item content hashes in production match source_snapshot_id/candidate_claim_id fields in the frozen manifest",
+    "Return a credential-free publication receipt (e.g. .claude/reader-lab-handoff/RL-2026-001-publication-receipt.json) with production item_ids, assignment timestamps, and confirmation no manifest content was altered -- no need to include any response data, since none should exist yet"
+  ],
+  "not_requested": [
+    "Do not analyze or export any response data as part of this request -- none should exist until reviewers answer.",
+    "Do not modify pilot data, sessions table, or invitation records.",
+    "Do not send new messages/links to reviewers beyond what your own existing reviewer-notification process already does -- this request only concerns backend item/assignment creation."
+  ]
+}

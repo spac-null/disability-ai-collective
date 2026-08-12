@@ -55,3 +55,10 @@ automation/bsky_engage_seen.json
 
 # Claude Code worktree/session metadata
 .claude/worktrees/
+
+# Reader Lab Worker — local dev state and secrets, never committed
+reader-lab-worker/.wrangler/
+reader-lab-worker/.dev.vars
+reader-lab-worker/node_modules/
+reader-lab-worker/.pilot-invites
+reader-lab-worker/.export-token

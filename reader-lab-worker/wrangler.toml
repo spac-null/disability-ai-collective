@@ -1,0 +1,75 @@
+name = "cripminds-reader-lab"
+main = "src/index.js"
+compatibility_date = "2026-08-01"
+
+# Stage 1 (2026-08-12): deployed to workers.dev only.
+# Stage 2 (2026-08-12): lab.cripminds.com attached as a Worker Custom
+# Domain. workers_dev kept explicitly on (adding the route above
+# disables it by default) — no request to restrict it yet.
+workers_dev = true
+
+[[routes]]
+pattern = "lab.cripminds.com"
+custom_domain = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "cripminds-reader-lab"
+database_id = "29eb76ef-7a33-4cee-bbf6-17d628e6b6f8"
+
+# Set with: wrangler secret put ADMIN_TOKEN
+# Never commit the actual admin token value anywhere in this repo.
+# For local `wrangler dev`, put it in a `.dev.vars` file instead
+# (gitignored — see README.md). Never pass secrets as `--var` flags on
+# a real command line where they'd land in shell history.
+
+# Cloudflare Access (admin control plane, src/access.js). ACCESS_TEAM_DOMAIN
+# is not treated as a secret — it's the same value any unauthenticated
+# visitor to /admin already receives in Cloudflare's own 302 redirect
+# (confirmed directly: GET https://lab.cripminds.com/admin without a
+# session redirects to https://blue-king-f6e0.cloudflareaccess.com/...).
+# Verified 2026-08-12 against the live Access API (accounts/.../access/apps):
+# app "lab" (self_hosted), self_hosted_domains covers exactly
+# lab.cripminds.com/admin and lab.cripminds.com/admin/api (narrowed from an
+# initial /admin/* that also caught the legacy /ops/* machine routes — see
+# README.md's "Admin control plane" section for that bug/fix), one Allow
+# policy restricted to three specific emails, no exclude/require rules, no
+# broad "everyone" rule, Cloudflare's own built-in identity provider only
+# (no separate IdP added).
+[vars]
+ACCESS_TEAM_DOMAIN = "blue-king-f6e0"
+
+# ACCESS_AUD is set with: wrangler secret put ACCESS_AUD
+# (kept as a secret rather than a var out of caution, even though it's not
+# especially sensitive on its own — an attacker who knows it still can't
+# forge a valid Access JWT without Cloudflare's private signing key).
+
+# Low-frequency safety net for research-export generation (see
+# scheduled() in src/index.js) — the primary path is the automatic
+# completion hook in handleResponse; this only retries the rare case
+# where that background attempt failed. Hourly is generous for how
+# infrequently a round actually completes. The same scheduled() handler
+# also reconciles calibration runs (a completed+exported round lacking a
+# calibration_runs row gets armed here too — see
+# src/index.js's scheduled()).
+[triggers]
+crons = ["0 * * * *"]
+
+# Calibration Orchestrator (see calibration/workflows/ and
+# src/calibrationWorkflow.js). One instance per completed round's
+# calibration cycle — created idempotently (see armCalibrationRun in
+# src/calibrationOrchestrator.js), never more than once per
+# round_id + research_export_hash + workflow_version.
+[[workflows]]
+name = "cripminds-calibration"
+binding = "CALIBRATION_WORKFLOW"
+class_name = "CalibrationWorkflow"
+
+# CALIBRATION_RUNNER_TOKEN is set with: wrangler secret put CALIBRATION_RUNNER_TOKEN
+# Narrowly scoped, separate from ADMIN_TOKEN/EXPORT_TOKEN — see
+# src/index.js's requireCalibrationRunner. Its only capabilities: claim a
+# calibration job, heartbeat it, submit a result, report a failure. It
+# cannot create/revoke reviewers, publish rounds, alter responses/exports,
+# or reach any other /admin or /ops route. Stored on Trident at
+# /srv/secrets/cripminds-calibration/cripminds-calibration-runner.env
+# (chmod 600) — see calibration/runner/README.md.

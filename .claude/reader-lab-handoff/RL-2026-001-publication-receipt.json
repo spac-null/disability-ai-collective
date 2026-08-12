@@ -1,0 +1,104 @@
+{
+  "receipt_type": "reader_lab_round_publication_receipt",
+  "round_id": "RL-2026-001",
+  "manifest_path": "reader-lab/rounds/drafts/RL-2026-001.json",
+  "manifest_sha256": "f04bc4ec5970d2c6a135100208e31e78d7d25ecf419b3942f17c3b35242ef6ee",
+  "manifest_sha256_independently_reverified_before_publish": true,
+  "ops_request_path": ".claude/reader-lab-handoff/RL-2026-001-ops-request.json",
+  "ops_request_sha256": "5f14efc7ac257f8a6d35635b9bbd764a36c3a88d7fbe97c7a752ed1920723d53",
+  "ops_request_sha256_matched_documented_value_in_current_work_md": true,
+  "publication_timestamp": "2026-08-12T18:05:00Z",
+  "publication_timestamp_note": "Timestamp used consistently for the round/items/assignments rows created this pass; approximate wall-clock of the ops session, not a D1-native NOW().",
+  "production_round_id": "RL-2026-001",
+  "production_round_id_note": "rounds.round_id is the table's own primary key -- no separate surrogate ID exists in this schema.",
+  "dataset_purpose": "development",
+  "task_type": "factual_floor_v0",
+  "task_version": "v0.1",
+  "assignment_version": "v0.1",
+  "pre_publish_checks": {
+    "ops_request_sha256_verified": true,
+    "manifest_sha256_verified": true,
+    "status_is_frozen_ready_for_publish": true,
+    "dataset_purpose_is_development": true,
+    "reviewer_ids_exact_match": [
+      "reviewer_parent_a",
+      "reviewer_parent_b"
+    ],
+    "item_count_is_5": true,
+    "both_reviewers_identical_ordered_item_set": true,
+    "no_held_out_or_cross_publisher_material_per_manifest_provenance": true,
+    "no_new_reviewer_credentials_required": true,
+    "per_item_content_hash_independently_reverified_against_manifest": true,
+    "no_pre_existing_items_with_these_candidate_claim_ids_found_in_production": true,
+    "both_reviewers_confirmed_unrevoked_before_publish": true
+  },
+  "schema_migration_state": {
+    "migration_file": "reader-lab-worker/migrations/0001_calibration_rounds.sql",
+    "status": "applied_to_production_this_pass",
+    "nature": "purely additive -- CREATE TABLE IF NOT EXISTS rounds, ALTER TABLE assignments ADD COLUMN round_id (nullable), CREATE INDEX -- no existing table/column dropped or altered, no existing row rewritten",
+    "verified_after_apply": {
+      "rounds_table_exists": true,
+      "assignments_round_id_column_exists": true,
+      "pilot_assignments_round_id_still_null": true
+    }
+  },
+  "production_items": [
+    {
+      "slot": 1,
+      "item_id": "ril_e01890e0-4a62-486b-85b4-c91fb38c6b44"
+    },
+    {
+      "slot": 2,
+      "item_id": "ril_e08ba1e4-8e15-4ef0-8d2b-9f34f8ad4dd2"
+    },
+    {
+      "slot": 3,
+      "item_id": "ril_9df9a4b6-cd47-4697-91ef-586fc28cc6b4"
+    },
+    {
+      "slot": 4,
+      "item_id": "ril_ffc53c73-bf29-49fe-a1f2-946b81f07517"
+    },
+    {
+      "slot": 5,
+      "item_id": "ril_2452d26c-f319-4dab-80c8-bcd1aa748c4e"
+    }
+  ],
+  "production_items_note": "item_id values only -- no internal candidate label (e.g. 'H08'/'H17'), no expected role/support, no model reasoning included in this receipt. Full internal provenance lives only in the frozen manifest, which this receipt references by hash, not by content.",
+  "reviewer_ids": [
+    "reviewer_parent_a",
+    "reviewer_parent_b"
+  ],
+  "assignment_counts": {
+    "reviewer_parent_a": {
+      "round_assigned": 5,
+      "round_answered": 0,
+      "total_assigned_all_time": 9,
+      "total_answered_all_time": 4
+    },
+    "reviewer_parent_b": {
+      "round_assigned": 5,
+      "round_answered": 0,
+      "total_assigned_all_time": 9,
+      "total_answered_all_time": 4
+    }
+  },
+  "post_publish_verification": {
+    "parent_a_assigned_5_answered_0_for_round": true,
+    "parent_b_assigned_5_answered_0_for_round": true,
+    "both_reviewers_identical_ordered_item_sequence_confirmed": true,
+    "reviewer_isolation_confirmed": "Only reviewer_parent_a/reviewer_parent_b rows exist under round_id='RL-2026-001'; assignments/responses schema has no cross-reviewer read path (unchanged since pilot, UNIQUE(reviewer_id,item_id), no join across reviewer_id in any reviewer-facing route).",
+    "item_content_hashes_match_manifest": true,
+    "pilot_data_untouched": "Pilot's original 4 assignments per reviewer unchanged -- same answered_at timestamps as before this pass, round_id remains NULL on all 4 (per design doc SS20.8, never retroactively assigned a round_id).",
+    "no_new_invitation_created": true,
+    "no_invitation_revoked_or_modified": true,
+    "no_admin_token_or_export_token_or_cloudflare_api_token_used_in_this_receipt": true
+  },
+  "no_secrets": true,
+  "no_response_data_included": "None expected to exist yet -- this receipt covers publication only, not analysis; per ops-request's own 'not_requested' list.",
+  "not_authorized_by_this_pass": [
+    "Analyzing or exporting RL-2026-001 response data (none exists yet)",
+    "Creating or rotating any reviewer invitation",
+    "Any B2/CJ-1/CJ-2 research decision"
+  ]
+}
