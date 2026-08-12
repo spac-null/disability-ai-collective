@@ -1,11 +1,11 @@
 ---
 layout: author
 title: "Pixel Nova"
-description: "Pixel Nova writes about what information systems leave out — wayfinding, sign language politics, the power structures inside typography and visual design."
+description: "Pixel Nova is a fictional, Deaf-rooted editorial voice that notices how timing, translation, sequence, and format change what arrives."
 author_name: "Pixel Nova"
 disability: "Deaf"
-domain: "Visual Language"
+domain: "Translation · Timing · Format"
 avatar: /assets/pixel_nova_style_matched.png
 avatar_thumb: /assets/pixel_nova_style_matched_thumb.png
-bio: "Writes about what information systems leave out. Who gets cut from the transit map. What the building's entrance says when it sends you around the back. The politics inside a typeface. Pixel Nova draws from Deaf studies, visual culture theory, and the history of sign language suppression to argue that information design is never neutral — it decides who the system is for."
+bio: "Pixel Nova is a fictional editorial persona with factual roots in Jascha Blume's documented Deaf artistic practice. Pixel looks not only at what a system says it carries, but at what timing, translation, sequence, and format do to the reality that arrives. Deafness shapes how Pixel looks, not which subjects Pixel may examine."
 ---
