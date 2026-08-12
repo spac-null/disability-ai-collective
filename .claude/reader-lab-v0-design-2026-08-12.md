@@ -2081,19 +2081,30 @@ human_approval`, `existing_reviewer_assignment_policy=automatic_if_valid`,
 `candidate_experiment_policy=research_gated`,
 `fine_tune_experiment_policy=disabled` — chosen to match pre-existing
 production behavior byte-for-byte at deploy time, so the migration itself
-changes nothing observable. **A second, deliberate policy change
-(`policy-v2`) was made immediately after this pass's deploy**, via
-`/admin` → Policy (the same Cloudflare Access-authenticated path Jascha
-uses for everything else): `round_publication_policy → shadow_automatic`
-(implements `## 26.4` below — starts recording the evidence a future
-`automatic_if_valid` decision would need, without changing what actually
-publishes) and `additional_reviewers_per_contested_item → 1` (makes
-`## 26.2`'s additional-review mechanism actually automatic today, matching
-the handoff's own "CURRENT PRODUCTION POLICY" table, rather than leaving
-it permanently stuck at `NEEDS_POLICY_CONFIGURATION`). `existing_reviewer_
-assignment_policy` and `additional_review_policy` were left at their
-already-automatic seed values. This is recorded as its own versioned row,
-actor-attributed, with notes — never a silent edit to the seed.
+changes nothing observable. This pass deliberately did NOT make a second
+policy change itself, even via direct D1/SSH access it technically had —
+doing so would have bypassed the actor-attributed audit trail this design
+exists to create, and changing calibration policy is explicitly one of
+the things this design reserves for Jascha. The recommended next values
+were reported to him instead. **Jascha then created `policy-v2` himself,
+via `/admin` → Policy** (`created_by: "dev@nullspace.it"`, the same
+Cloudflare Access-authenticated identity as every other admin action):
+`round_publication_policy → shadow_automatic` (implements `## 26.4` below
+— starts recording the evidence a future `automatic_if_valid` decision
+would need, without changing what actually publishes) and
+`additional_reviewers_per_contested_item → 1` (makes `## 26.2`'s
+additional-review mechanism actually automatic, matching the handoff's
+own "CURRENT PRODUCTION POLICY" table, rather than leaving it permanently
+stuck at `NEEDS_POLICY_CONFIGURATION`). `existing_reviewer_assignment_
+policy` and `additional_review_policy` were left at their already-
+automatic seed values, inherited unchanged. Independently re-verified
+directly against production D1 in a follow-up read-only verification
+pass (no code/policy change in that pass): `policy-v1` unmutated
+(`is_active=0`, every field identical to its seed), `policy-v2` is the
+sole active row with exactly these values, `production_promotion_policy`
+still fixed to `human_only` on both rows, and no fine-tune/candidate-
+experiment executor exists anywhere in the codebase to act on those two
+still-inert fields.
 
 `/admin` → Policy shows the active version, a form to create a new one
 (every field defaults to the current value; changing nothing and saving
@@ -2288,16 +2299,14 @@ Deploying a new runner version is now exactly: update the pin file,
 restart the service — never a silent drift onto whatever `main` happens
 to be at restart time.
 
-**Not yet done, one remaining manual step:** the actual live wrapper
-script at `/srv/scripts/ops/cripminds-calibration-runner.sh` and the pin
-file itself both still need updating to this pass's new commit, and the
-systemd service needs `sudo systemctl restart cripminds-calibration-
-runner` to pick either up — this session has SSH access to Trident as
-`jascha` (sufficient to write both files) but not passwordless `sudo`
-(needed for the restart). **This is not blocking**: the runner's own
-Python code (`calibration_runner.py`) is unchanged by this pass — every
-new mechanism in `## 26.1`–`## 26.5` lives entirely in the Worker/D1
-side, which this pass deploys directly via the Cloudflare API. The
-currently-running runner process continues working correctly with the
-new Worker unmodified; only the pin-file hygiene fix itself waits on that
-one restart.
+This session wrote the updated wrapper script and pin file to Trident
+(SSH access as `jascha` was sufficient for both) but does not have
+passwordless `sudo`, so could not itself run the one remaining
+`systemctl restart`. **Jascha ran that restart himself.** Independently
+re-verified directly against Trident in the same follow-up read-only
+verification pass: `systemctl is-active`/`is-enabled` both healthy,
+exactly one `calibration_runner.py` process, the service's own journal
+logs `checked out pinned commit d5f0d0510ed918ce4df21f629f025b828cf89708`
+— matching both the pin file's content and this repo's own `HEAD` at the
+time — and zero error/exception/traceback lines anywhere in the
+service's full journal history, before or after the restart.
