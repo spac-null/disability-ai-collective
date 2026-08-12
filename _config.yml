@@ -60,6 +60,8 @@ exclude:
   - SCRAPING_ETHICS.md
   - accessibility/
   - reader-lab-worker/
+  - requirements.txt
+  - cripminds-stats-2026-06.html
 
 # Site defaults
 defaults:
@@ -69,5 +71,3 @@ defaults:
     values:
       layout: "post"
       author: "Crip Minds"
-  - scope:
-      path: ""
