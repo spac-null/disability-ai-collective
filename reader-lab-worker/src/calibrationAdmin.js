@@ -8,6 +8,99 @@
 
 import { secureJson, newId, nowIso, sha256Hex } from "./util.js";
 import { CALIBRATION_WORKFLOW_VERSION } from "./calibrationOrchestrator.js";
+import { getActivePolicy } from "./policy.js";
+
+// Labels the design doc's `## 26` automation cockpit shows Jascha — one
+// line per routine decision category, derived from the active policy,
+// never hard-coded to "automatic" independent of what the policy
+// actually says. additional_review specifically surfaces the
+// NEEDS_POLICY_CONFIGURATION case (policy says automatic, but the
+// required count is unset) as its own label, since "automatic" would
+// otherwise overstate what the system can currently do.
+function automationStateFromPolicy(policy) {
+  return {
+    round_construction: "Automatic",
+    analysis: "Automatic",
+    existing_reviewer_assignment: policy.existing_reviewer_assignment_policy === "automatic_if_valid" ? "Automatic" : "Manual",
+    additional_review:
+      policy.additional_review_policy === "disabled"
+        ? "Disabled"
+        : policy.additional_review_policy === "manual"
+          ? "Manual"
+          : policy.additional_reviewers_per_contested_item == null
+            ? "Policy-driven — not yet configured (set a reviewer count in Policy)"
+            : "Policy-driven — automatic when eligible",
+    publication:
+      policy.round_publication_policy === "human_approval"
+        ? "Human approval"
+        : policy.round_publication_policy === "shadow_automatic"
+          ? "Shadow — recorded, never acted on"
+          : "Automatic when valid",
+    candidate_experiments: policy.candidate_experiment_policy === "research_gated" ? "Infrastructure-ready — research-gated" : policy.candidate_experiment_policy,
+    fine_tune_experiments: policy.fine_tune_experiment_policy === "disabled" ? "Disabled" : policy.fine_tune_experiment_policy,
+    production_promotion: "Human only (fixed — no policy can change this)",
+  };
+}
+
+async function publicationDecisionForRound(env, draftRoundId) {
+  if (!draftRoundId) return null;
+  const row = await env.DB.prepare(
+    "SELECT content_json FROM calibration_artifacts WHERE round_id = ? AND artifact_type = 'publication_policy_decision' ORDER BY created_at DESC LIMIT 1"
+  )
+    .bind(draftRoundId)
+    .first();
+  return row ? JSON.parse(row.content_json) : null;
+}
+
+// Cross-round "does anything need Jascha right now" — draft/review/
+// frozen rounds waiting on him, failed calibration runs, and any
+// additional-review attempt that came back NEEDS_HUMAN_ACTION or
+// NEEDS_POLICY_CONFIGURATION. Deliberately does not include
+// shadow-mode publication decisions here — a shadow decision is
+// informational (see Calibration), never something Jascha must act on.
+export async function handleAutomationSummary(request, env) {
+  const policy = await getActivePolicy(env);
+  const actionRequired = [];
+
+  const rounds = await env.DB.prepare("SELECT round_id, status FROM rounds WHERE status IN ('draft','review','frozen') ORDER BY created_at DESC").all();
+  for (const r of rounds.results) {
+    actionRequired.push({ type: "round_needs_review", round_id: r.round_id, note: `${r.round_id} is ${r.status} — review it in Rounds.` });
+  }
+
+  const failedRuns = await env.DB.prepare("SELECT run_id, round_id FROM calibration_runs WHERE status = 'failed' ORDER BY created_at DESC LIMIT 10").all();
+  for (const r of failedRuns.results) {
+    actionRequired.push({ type: "calibration_failed", round_id: r.round_id, run_id: r.run_id, note: `Calibration failed for ${r.round_id} — retry in Calibration.` });
+  }
+
+  const recentPlans = await env.DB.prepare(
+    "SELECT round_id, content_json, created_at FROM calibration_artifacts WHERE artifact_type = 'additional_review_plan' ORDER BY created_at DESC LIMIT 20"
+  ).all();
+  for (const row of recentPlans.results) {
+    let plan;
+    try {
+      plan = JSON.parse(row.content_json);
+    } catch {
+      continue;
+    }
+    if (plan.status === "NEEDS_HUMAN_ACTION" || plan.status === "NEEDS_POLICY_CONFIGURATION") {
+      actionRequired.push({
+        type: `additional_review_${plan.status.toLowerCase()}`,
+        round_id: row.round_id,
+        note:
+          plan.status === "NEEDS_POLICY_CONFIGURATION"
+            ? `${row.round_id}: additional_reviewers_per_contested_item isn't configured — set it in Policy before this can run automatically.`
+            : `${row.round_id}: automatic additional review couldn't proceed (${plan.reason || "no eligible reviewer available"}) — see Calibration.`,
+      });
+    }
+  }
+
+  return secureJson({
+    policy,
+    automation: automationStateFromPolicy(policy),
+    action_required: actionRequired,
+    no_action_required: actionRequired.length === 0,
+  });
+}
 
 const NEXT_ACTION_BY_STATUS = {
   queued: "Calibration starting.",
@@ -104,11 +197,32 @@ export async function handleCalibrationStatus(request, env, url) {
     if (artifact) nextRoundDraft = JSON.parse(artifact.content_json);
   }
 
+  // Additional review runs alongside next-round preparation, not instead
+  // of it (see calibrationWorkflow.js) — surfaced separately so "did this
+  // round's disagreement get a follow-up reviewer" is answerable without
+  // digging into raw artifacts. Each of the two draft-producing steps
+  // (additional review, next-round prep) can have its own recorded
+  // publication decision — shadow or live — once policy has anything to
+  // say about it.
+  let additionalReviewPlan = null;
+  if (run) {
+    const artifact = await env.DB.prepare(
+      "SELECT content_json FROM calibration_artifacts WHERE run_id = ? AND artifact_type = 'additional_review_plan' ORDER BY created_at DESC LIMIT 1"
+    )
+      .bind(run.run_id)
+      .first();
+    if (artifact) additionalReviewPlan = JSON.parse(artifact.content_json);
+  }
+
+  const nextRoundPublicationDecision = await publicationDecisionForRound(env, nextRoundDraft && nextRoundDraft.draft_round_id);
+  const additionalReviewPublicationDecision = await publicationDecisionForRound(env, additionalReviewPlan && additionalReviewPlan.draft_round_id);
+
   const history = await buildHistory(env, roundId, run);
 
   return secureJson({
     round_id: roundId,
     round_status: round.status,
+    policy_version: run ? run.policy_version : null,
     reviewers,
     calibration_run: run
       ? {
@@ -123,6 +237,9 @@ export async function handleCalibrationStatus(request, env, url) {
       : null,
     evidence_summary: evidenceSummary,
     next_round_draft: nextRoundDraft,
+    next_round_publication_decision: nextRoundPublicationDecision,
+    additional_review: additionalReviewPlan,
+    additional_review_publication_decision: additionalReviewPublicationDecision,
     history,
     next_action: nextActionForRound(round, run, reviewers),
   });
@@ -152,11 +269,16 @@ export async function handleCalibrationRetry(request, env, identity, runId) {
   // both problems rather than guessing at the exact limit.
   const newIdempotencyKey = await sha256Hex(`${failedRun.idempotency_key}:retry:${newRunId}`);
   const now = nowIso();
+  // A retry re-reads the CURRENTLY active policy, same as a fresh arm —
+  // it is explicitly a new attempt "from scratch" (see this function's
+  // own opening comment), not a resumption of the failed run's original
+  // context, so there is no frozen policy_version to carry forward here.
+  const activePolicy = await getActivePolicy(env);
   await env.DB.prepare(
-    `INSERT INTO calibration_runs (run_id, round_id, research_export_hash, workflow_version, workflow_instance_id, idempotency_key, status, created_at)
-     VALUES (?,?,?,?,?,?, 'queued', ?)`
+    `INSERT INTO calibration_runs (run_id, round_id, research_export_hash, workflow_version, workflow_instance_id, idempotency_key, status, policy_version, created_at)
+     VALUES (?,?,?,?,?,?, 'queued', ?, ?)`
   )
-    .bind(newRunId, failedRun.round_id, failedRun.research_export_hash, CALIBRATION_WORKFLOW_VERSION, newIdempotencyKey, newIdempotencyKey, now)
+    .bind(newRunId, failedRun.round_id, failedRun.research_export_hash, CALIBRATION_WORKFLOW_VERSION, newIdempotencyKey, newIdempotencyKey, activePolicy.policy_version, now)
     .run();
 
   try {
@@ -167,6 +289,7 @@ export async function handleCalibrationRetry(request, env, identity, runId) {
         round_id: failedRun.round_id,
         research_export_hash: failedRun.research_export_hash,
         workflow_version: CALIBRATION_WORKFLOW_VERSION,
+        policy_version: activePolicy.policy_version,
       },
     });
   } catch (err) {

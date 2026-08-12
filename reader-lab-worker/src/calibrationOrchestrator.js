@@ -18,6 +18,7 @@
  */
 
 import { sha256Hex, newId, nowIso } from "./util.js";
+import { getActivePolicy } from "./policy.js";
 
 export const CALIBRATION_WORKFLOW_VERSION = "v1"; // pairs analyze-human-round-v1 + prepare-next-round-v1
 
@@ -38,20 +39,35 @@ export async function armCalibrationRun(env, roundId, { actor } = {}) {
     return { armed: false, reason: "already_armed", run_id: existing.run_id, status: existing.status };
   }
 
+  // The run is stamped with the policy version active RIGHT NOW, at
+  // creation — never re-read as "whatever is active" later in the
+  // Workflow, which could otherwise change mid-run (a Workflow can wait
+  // for the Trident runner for up to 3 days). Every policy-gated
+  // decision this run ever makes uses this frozen value, so a run
+  // started under policy_version=3 stays interpretable under
+  // policy_version=3 forever, even after policy_version=4 goes active.
+  const activePolicy = await getActivePolicy(env);
+
   const runId = newId("crun");
   const now = nowIso();
   await env.DB.prepare(
-    `INSERT INTO calibration_runs (run_id, round_id, research_export_hash, workflow_version, workflow_instance_id, idempotency_key, status, created_at)
-     VALUES (?,?,?,?,?,?, 'queued', ?)
+    `INSERT INTO calibration_runs (run_id, round_id, research_export_hash, workflow_version, workflow_instance_id, idempotency_key, status, policy_version, created_at)
+     VALUES (?,?,?,?,?,?, 'queued', ?, ?)
      ON CONFLICT (idempotency_key) DO NOTHING`
   )
-    .bind(runId, roundId, exportRow.content_sha256, CALIBRATION_WORKFLOW_VERSION, idempotencyKey, idempotencyKey, now)
+    .bind(runId, roundId, exportRow.content_sha256, CALIBRATION_WORKFLOW_VERSION, idempotencyKey, idempotencyKey, activePolicy.policy_version, now)
     .run();
 
   try {
     await env.CALIBRATION_WORKFLOW.create({
       id: idempotencyKey,
-      params: { run_id: runId, round_id: roundId, research_export_hash: exportRow.content_sha256, workflow_version: CALIBRATION_WORKFLOW_VERSION },
+      params: {
+        run_id: runId,
+        round_id: roundId,
+        research_export_hash: exportRow.content_sha256,
+        workflow_version: CALIBRATION_WORKFLOW_VERSION,
+        policy_version: activePolicy.policy_version,
+      },
     });
     return { armed: true, run_id: runId };
   } catch (err) {

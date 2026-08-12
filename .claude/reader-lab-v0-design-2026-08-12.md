@@ -1656,3 +1656,648 @@ No Round 002 created. No RL-2026-001 response inspected or interpreted —
 only completion *counts* were ever read, both before and after this
 pass's changes. No B2/CJ/CJ-1/CJ-2 change. No credential rotated. No
 reviewer invitation/session model altered.
+
+## 25. CALIBRATION ORCHESTRATOR (2026-08-12, infrastructure pass)
+
+Purpose: `## 24`'s automatic completion/export removed the need for a
+privileged session to *notice* a round finished or *generate* its
+research export. This pass closes the remaining gap — turning that
+export into a structured evidence map and a prepared next round, without
+ever requiring an open Claude session, a remembered prompt, a manual
+download to Jascha's Mac, or a privileged Cloudflare session left open.
+After this pass, the persistent system itself — production D1 + a
+Cloudflare Workflow + a Trident daemon — knows what round is active,
+whether reviewers finished, what analysis is pending/running/complete,
+what evidence has accumulated, and what action (if any) needs Jascha's
+approval. A Claude session remains necessary only for the same four
+things `## 24` already established: deploys, migrations, Cloudflare
+configuration, and incidents.
+
+### 25.1 Durable-state principle
+
+The local git repo remains canonical for **source code and research
+design** — the two workflow definitions
+(`calibration/workflows/analyze-human-round-v1.md`,
+`prepare-next-round-v1.md`), the runner script, the schema. Production D1
+plus the running Cloudflare Workflow instance are canonical for
+**running calibration instances and reviewer-derived research
+artifacts** — a calibration run's current step, its evidence, its next-
+round draft. Neither is optional; conflating them was the actual
+disease `## 26`'s Mac-handoff requirement was a symptom of. A future
+session recovering this system should read code from the repo and state
+from D1 — never the other way around, and never from a conversation.
+
+### 25.2 Why Cloudflare Workflows, not a home-grown scheduler
+
+Checked directly against this account before writing any code (per the
+brief's own explicit instruction to verify before building a home-grown
+alternative): deployed a real throwaway Workflow
+(`wf-availability-test`), triggered a live instance, confirmed it
+completed successfully via `wrangler workflows instances describe`, then
+deleted the throwaway Worker. Workflows are fully available on this
+(free-tier) account. `step.waitForEvent`/`instance.sendEvent` — the
+durable wait/external-signal primitives this design depends on — are
+confirmed working via the same test path used for the real
+`CalibrationWorkflow` (`## 25.6`).
+
+### 25.3 State machine
+
+One Cloudflare Workflow instance (`CalibrationWorkflow`,
+`reader-lab-worker/src/calibrationWorkflow.js`) per completed round's
+calibration cycle. `calibration_runs.status` is the durable, queryable
+projection of where that instance is:
+
+```
+queued -> analysis_pending -> evidence_updated -> next_round_pending
+  -> needs_eligible_candidates            (terminal, no draft possible yet)
+  -> waiting_for_human_approval           (terminal, draft round exists)
+  -> failed                                (terminal, see ## 25.8)
+```
+
+`current_step` names which job type is in flight. Nothing about this
+state ever depends on a Claude conversation remembering it — it is a row
+in `calibration_runs`, readable by `/admin/api/calibration/status` (and,
+for machine use, direct D1 query) at any time, by anyone with the
+appropriate credential, indefinitely.
+
+### 25.4 Trigger + idempotency
+
+`armCalibrationRun` (`calibrationOrchestrator.js`) is the **only** place
+a Workflow instance is ever created, called from two sites — the
+existing completion+export hook in `handleResponse`, and the hourly cron
+reconciliation sweep (`## 24`, extended this pass) — both calling this
+exact function, never a second creation path. The instance id (and
+`calibration_runs.idempotency_key`) is
+`sha256(round_id + research_export_content_hash + workflow_version)` —
+never a timestamp, never random. A replayed completion event, a
+duplicate cron hit, or a genuine race between the two call sites all
+compute the identical key; Cloudflare's own `create()` rejects a
+duplicate id outright, and `armCalibrationRun` distinguishes that
+(benign — the real instance already exists) from a genuine creation
+failure (marks the run `failed` immediately, visible for a manual
+retry, rather than leaving a `queued` row with nothing driving it).
+
+RL-2026-001 was **not** synthetically completed to test this — it
+remains `published`, parent_a `4/9` answered (unchanged before/after
+this pass, verified by count only, never content). The moment Parent A
+finishes, `armCalibrationRun` fires automatically from the exact same
+code path already deployed; if that single attempt somehow fails, the
+hourly reconciliation sweep finds "completed round, ready export, no
+`calibration_runs` row" and arms it — verified directly this pass with
+a synthetic round, not merely asserted (`## 25.9`).
+
+### 25.5 Versioned workflow definitions
+
+`calibration/workflows/analyze-human-round-v1.md` and
+`prepare-next-round-v1.md` are the actual specification — version,
+input/output contract, and (for analysis) the exact model prompt used
+for the one non-deterministic field. Both are deliberately **mostly
+deterministic** for v1: every disposition/agreement/reference-strength
+rule is a direct transcription of categories this project had already
+established in prose (`## 20.4`, `## 14`) before any orchestrator
+existed — this pass mechanizes existing judgment, it does not invent
+new research methodology. The only model call anywhere in the pipeline
+is `analyze-human-round-v1`'s optional per-item `notes` field (a
+descriptive summary, never able to affect `disposition`/
+`agreement_state`/`reference_strength`/`machine_comparison`, all four
+computed before the model is ever invoked, and discarded — not merely
+ignored — if it fails or contains any of "ground truth"/"winner"/
+"correct"/"consensus"). `prepare-next-round-v1` has **no model call at
+all** in this version: with an empty eligible-candidate pool (`## 19` of
+the earlier calibration-brief section, `## 25.7` below), there is
+nothing yet for a model to meaningfully rank. Each definition's own
+SHA256 is registered in `calibration_workflow_versions` at deploy time —
+production always knows exactly which version produced a given
+artifact.
+
+### 25.6 Workflow ↔ Trident handshake
+
+```
+CalibrationWorkflow.run():
+  create calibration_jobs row (job_type, input, input_hash)
+  await step.waitForEvent('calibration-job-event', {timeout: '3 days'})
+  -- Trident runner polls, claims, executes, POSTs result --
+  /ops/calibration/jobs/:id/complete validates result_hash, persists,
+    calls instance.sendEvent({type:'calibration-job-event', payload:{job_id, status}})
+  waitForEvent resolves -> validate hash/shape -> persist artifact -> next step
+```
+
+Trident is private (Tailscale-only) and cannot be reached from
+Cloudflare's edge — the handshake is deliberately runner-initiated HTTP,
+never a Worker trying to reach Trident. Two real API-behavior
+discrepancies were found and fixed only by actually running this, not by
+reading documentation:
+
+- `step.waitForEvent` resolves to the **full event envelope**
+  (`{payload, type, timestamp}`), not just the inner `payload` as a
+  worked example in Cloudflare's own docs reads — confirmed directly via
+  `console.log` during the synthetic test (`## 25.9`); the retry loop was
+  silently retrying every successful completion until this was fixed.
+- Workflow instance ids have both a charset restriction
+  (`[a-zA-Z0-9-_]`, no colons) and a length limit tighter than a naively
+  concatenated retry key — confirmed by the literal error message
+  ("Workflow instance has invalid id") once the colon issue was fixed
+  first and the length issue surfaced next. The retry handler now hashes
+  a fresh id the same way `armCalibrationRun` already does, rather than
+  concatenating strings.
+- Result-hash validation across languages needed its own canonical
+  serialization (`sortedStringify` in `publish.js`, exported this pass;
+  `canonical_json` in `calibration_runner.py`) — plain `JSON.stringify`
+  and Python's `json.dumps` disagree on whitespace, key order, and
+  non-ASCII escaping, none of which survive a round-trip through
+  `JSON.parse`/re-serialize identically across the two languages. Byte-
+  identical output confirmed directly (Node vs. Python, same test
+  object, including Unicode/emoji/nesting) before relying on it for
+  real hash comparison. `calibrationWorkflow.js`'s own validate step
+  initially recomputed the hash with plain `sha256Hex` instead of this
+  canonical form — an actual bug the synthetic test caught (every real
+  completion looked like a hash mismatch until fixed).
+
+### 25.7 Eligible candidate pool
+
+`calibration_candidates` (migration `0004`) starts and remains **empty**
+as of this deployment — a deliberate research decision this
+infrastructure pass does not make on anyone's behalf (see
+`calibration/candidates/README.md`). `prepare-next-round-v1` correctly
+reports `NEEDS_ELIGIBLE_CANDIDATES` rather than inventing a candidate,
+verified directly in the synthetic test. The
+`dataset_purpose != 'held_out_evaluation'` rule is enforced **twice**,
+independently — once in the Workflow step that builds the job input,
+once again inside the runner's own `run_prepare_next_round` (which
+raises, failing the job, rather than silently dropping an offending
+row) — deliberately redundant, since this is the one rule the whole
+Reader Lab project cannot afford to violate.
+
+### 25.8 Failure safety
+
+- Analysis or next-round-prep failure: `runJobWithRetries` attempts a
+  job type twice (a fresh `calibration_jobs` row per attempt, never a
+  mutated one) before marking the run `failed` with a specific error;
+  raw responses, the research export, and prior artifacts are never
+  touched by a failed attempt. Verified directly: a simulated always-
+  failing runner produced exactly `failed` after 2 attempts with both
+  reviewers' responses and assignments completely intact.
+- Trident unavailable: jobs simply sit `pending` — no data lost, no
+  partial state. `lease_expires_at` (30 minutes) bounds how long a
+  claimed-but-abandoned job blocks a fresh claim of the same row, though
+  in this design a genuinely dead runner more commonly just means no
+  claim happens at all, which is equally safe.
+- A malformed/wrong-shaped result: `shapeValidator` (both
+  `validateAnalysisShape` and `validatePrepareShape`) rejects it before
+  it's ever persisted as an artifact or allowed to advance the run —
+  treated identically to a runner-reported failure, triggering the same
+  bounded retry, never silently accepted.
+- Admin "Retry" (`/admin/api/calibration/runs/:id/retry`) creates a
+  **fresh** run + Workflow instance from scratch for a `failed` run —
+  safe because analysis/next-round-prep are versioned and recomputable
+  (`## 17` of the earlier calibration brief), never treated as
+  immutable-once-generated the way a research export is.
+
+### 25.9 Synthetic end-to-end test — what it actually caught
+
+Run against a fresh local D1 replica with two synthetic reviewers and a
+2-item synthetic round (`RL-2026-900`) exercised through the real
+`calibration_runner.py` (not a mock) claiming real jobs from a real local
+`wrangler dev` instance: one reviewer incomplete → no run created;
+second reviewer's final answer → round completed, export generated,
+exactly one `calibration_runs` row created; `analyze_human_round` job
+claimed and completed → evidence recorded matching the synthetic data
+exactly (1 `strong_reference`, 1 `contested`); Workflow advanced to
+`prepare_next_round` → correctly returned `needs_eligible_candidates`
+(empty pool, as designed); a second synthetic round
+(`RL-2026-901`) with a deliberately-failing runner → `failed` after
+exactly 2 attempts, responses/assignments untouched; Admin Retry →
+fresh run created → real runner → succeeded; hourly cron sweep
+re-triggered against an already-armed round → confirmed still exactly
+one `calibration_runs` row (idempotency); a job manually forced back to
+`failed` → cron sweep repaired it to `ready`-equivalent
+(`needs_eligible_candidates`) without any manual trigger. Both Python
+unit tests (deterministic disposition rules, banned-word filtering,
+model-call-failure handling, held-out-evaluation fail-closed check) and
+this full HTTP-level integration test passed before any production
+step. Cross-machine testing over Tailscale to a local dev server hit a
+macOS Application Firewall wall requiring a password-protected system
+change — not attempted; the true cross-machine path was instead
+verified against real production after deploy (`## 25.10`), which is
+also the topology that actually matters.
+
+Three real bugs were found and fixed by this test, none of which static
+review or documentation-reading would have caught: the event-envelope
+shape (`## 25.6`), the retry-key length/charset limit (`## 25.6`), and
+the cross-language hash-serialization mismatch (`## 25.6`).
+
+### 25.10 Production deployment
+
+Migration `0004` applied and verified additive (unchanged row counts
+across every existing table, all 14 pre-existing items' content hashes
+byte-identical, RL-2026-001's assignment counts unchanged). Two workflow
+definitions registered in `calibration_workflow_versions` with their
+real file hashes. RL-2026-001's `research_context` backfilled as a
+`calibration_artifacts` row (content hash `0247347b...`) from already-
+public repo artifacts — no response content read. `CALIBRATION_RUNNER_TOKEN`
+generated and set as a Worker secret; the exact same value written
+directly to a Trident-local, jascha-owned, `chmod 600` secrets file over
+SSH (never written to a local file on this machine that outlived its
+one use). Worker deployed with the `CALIBRATION_WORKFLOW` binding live.
+
+**Repo state had to become the actual recovery source before Trident
+could run any of this** — none of this pass's code existed in git
+before deployment (per this project's own "commit only when asked"
+convention, unbroken until this pass). A scoped commit
+(`ffe44fb`, plus a same-day fix `c1730e6`) was built by inspecting the
+complete diff and staging exactly the Reader Lab + calibration
+transitive dependency set — admin control plane, `/ops/*` machine
+routes, Access validation, publication/export services, calibration
+orchestrator code, `calibration/`, migrations `0001`-`0004`,
+`.gitignore`, README/design docs, and the credential-free Reader Lab
+handoff artifacts — deliberately **excluding** `current-work.md` (its
+uncommitted diff was inextricably interleaved with unrelated CJ-1/CJ-2
+research narrative from other passes, and unlike the code, it isn't
+needed to reconstruct the running system) and all B2/CJ-1/CJ-2 research
+files. A secret scan (hex-string patterns, token-assignment patterns) on
+the exact staged diff found nothing before committing. Trident then
+pulled and was pinned to the exact commit SHA (recorded at
+`/srv/secrets/cripminds-calibration/deployed-commit-sha.txt`), verified
+via a direct file-hash comparison against the local copy, rather than
+running from an unpinned moving branch.
+
+**A real bug found only by testing against live production, not
+locally:** Python's default `urllib` User-Agent
+(`Python-urllib/3.x`) was silently blocked by Cloudflare's edge — a
+bare `403` that never reached this Worker at all (an identical `curl`
+request with the same URL/token succeeded with `200`). Fixed by setting
+an explicit `User-Agent` header; confirmed working end-to-end against
+real production immediately after (`claim` → `{"no_job": true}`, using
+the real `CALIBRATION_RUNNER_TOKEN` and the real
+`https://lab.cripminds.com`).
+
+**Systemd unit NOT installed — the one remaining manual step.**
+`/srv/secrets/` and `/srv/scripts/ops/` are jascha-owned and needed no
+elevated access; `/etc/systemd/system/` does, and `sudo` on Trident
+requires an interactive password this session doesn't have. The runner
+is currently running as a plain background process (started manually
+this pass, confirmed alive and polling production cleanly) — it will
+**not** survive a Trident reboot or an accidental kill until the unit
+file is installed. Exact remaining step, from
+`calibration/runner/README.md`:
+
+```bash
+sudo cp calibration/runner/cripminds-calibration-runner.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now cripminds-calibration-runner
+```
+
+**Live, non-destructive production verification**, all confirmed
+directly: `/admin` still 302s (Access-gated) for the real
+`CALIBRATION_RUNNER_TOKEN`, exactly as for any other unauthenticated
+request; the same token gets `401` on every general `/ops/*` write
+route (`/ops/items`, `/ops/invitations`, `/ops/publish`); reviewer routes
+unaffected; RL-2026-001 unchanged (`parent_a` `4/9`, `parent_b` `9/9`,
+zero `calibration_runs` rows — correctly not yet armed, since it isn't
+complete).
+
+### 25.11 Operating model, extended
+
+```
+HUMAN (routine):
+  https://lab.cripminds.com/admin — everything from ## 24, plus a
+  Calibration section showing current round, workflow state, evidence
+  summary, history, and next action. Reviewing/approving a prepared next
+  round remains the one place human judgment re-enters the loop.
+
+AUTOMATIC (no session required):
+  round completion -> export -> calibration run -> analysis -> evidence
+  -> next-round draft attempt, entirely server-side, driven by D1 +
+  Cloudflare Workflows + the Trident runner.
+
+PRIVILEGED OPS (rare, infrastructure only):
+  deploys, migrations, Cloudflare configuration, Trident runner
+  maintenance (including, right now, the one remaining systemd install
+  step above), production incidents.
+
+NEVER AUTOMATIC:
+  publishing a Reader Lab round, inviting a new reviewer, promoting a B2
+  version, modifying a production prompt, launching a fine-tune. All
+  remain explicit human actions, unchanged by anything in this pass.
+```
+
+No Round 002 created. No RL-2026-001 response inspected or interpreted —
+only completion counts and assignment/round metadata were ever read.
+No B2/CJ/CJ-1/CJ-2 change, no D0/C0 edit, no R1/R2 change, no Stage C
+run. No credential rotated (only new ones created — `CALIBRATION_RUNNER_TOKEN`
+— never touching `ADMIN_TOKEN`/`EXPORT_TOKEN`/Access configuration).
+
+## 26. POLICY-DRIVEN AUTONOMY (2026-08-12, infrastructure pass)
+
+Purpose: `## 24`/`## 25` made completion, export, analysis, and evidence
+fully automatic, with exactly one structural gate — publication is
+always manual. This pass makes that gate (and several others) **policy-
+controlled** rather than hard-coded, so the boundary between "automatic"
+and "needs Jascha" can move over time through an explicit, versioned,
+auditable policy change — never through another architecture rebuild,
+and never by silently loosening validation.
+
+### 26.0 Count audit — "4/9" — NOT A BUG
+
+Before touching any automation behavior, audited the apparent
+RL-2026-001 discrepancy per explicit instruction, verified directly
+against production D1 (counts and metadata only — no response content
+read, this audit or any prior pass):
+
+| Scope | reviewer_parent_a | reviewer_parent_b |
+|---|---|---|
+| RL-2026-001 only (`round_id='RL-2026-001'`) | 5 assigned / 0 answered | 5 assigned / 5 answered |
+| Pilot only (`round_id IS NULL`, pre-dates round-tracking) | 4 / 4 | 4 / 4 |
+| Lifetime, all rounds combined (what `/ops/status` and the Reviewers screen show) | 9 / 4 | 9 / 9 |
+
+**Conclusion: the data and every query are correct and mutually
+consistent.** "4/9" is `reviewer_parent_a`'s lifetime total (4 pilot + 5
+RL-2026-001 = 9 assigned; 4 answered, all from the pilot) — RL-2026-001
+itself is still genuinely `5/0`, exactly matching its frozen manifest
+(item count confirmed unchanged: `COUNT(DISTINCT item_id) = 5`). Every
+**round-scoped** display already built in `## 24`/`## 25` — the round
+detail page, the dashboard's "Current round" card, and the Calibration
+status screen — queries `WHERE round_id = ?` and has always shown
+RL-2026-001's true `0/5`/`5/5`, never the lifetime figure. Only two
+surfaces are lifetime by design: the legacy `/ops/status` machine route
+(documented as "per-reviewer completion status" since it was built — no
+round-scoping was ever intended there) and the admin Reviewers screen.
+
+**What was actually worth fixing: clarity, not correctness.** The
+Reviewers screen's lifetime numbers, glanced at quickly (including by
+this session's own prior reporting to Jascha, which quoted them without
+enough context), could be misread as round progress — precisely the
+kind of ambiguity that must NOT leak into the policy-driven automation
+this pass builds, since reviewer-assignment/additional-review policy
+absolutely must distinguish "answered this round's items" from "has
+ever answered anything." Fixed: the Reviewers screen's column header
+now reads "Lifetime, all rounds" with an explicit caption above the
+table; every new policy mechanism in this pass (`## 26.4`, `## 26.5`)
+exclusively uses round/item-scoped queries, never the lifetime
+aggregate, as its source of truth. `manifest_sha256` is `NULL` for
+RL-2026-001 — also not a bug, simply because it predates `freezeRound()`
+(published via the original hand-run SQL path before that function
+existed), already documented in `## 23.8`.
+
+### 26.1 Versioned policy model
+
+Additive migration `0005_policy_driven_autonomy.sql` adds
+`calibration_policies` — one append-only row per version, exactly one
+`is_active=1` at a time. `src/policy.js` is the one place any code reads
+or changes it: `getActivePolicy()`, `setActivePolicy(overrides, {actor,
+notes})` (creates policy_version = current max + 1, inheriting every
+unspecified field from the version it replaces, and flips `is_active` in
+the same D1 batch — never a moment with zero or two active policies),
+`getPolicyVersion(env, v)`, `listPolicyHistory(env)`.
+
+Every `calibration_runs`/`rounds` row gets a `policy_version` column,
+stamped once — at run-arm time (`calibrationOrchestrator.js`) or at draft
+time (`roundPublicationPolicy.js`) — and never re-read later. A policy
+change made while a run is durably waiting on Trident (up to 3 days)
+takes effect on the *next* run armed after the change, never retroactively
+on the one already in flight. `production_promotion_policy` is a real,
+auditable column but is fixed by a `CHECK` constraint to `'human_only'`
+and `setActivePolicy` explicitly rejects any attempt to override it — no
+code path anywhere reads this column to actually promote anything, so
+there is nothing a policy change could loosen.
+
+Fields: `round_publication_policy` (`human_approval` |
+`shadow_automatic` | `automatic_if_valid`), `existing_reviewer_
+assignment_policy` (`manual` | `automatic_if_valid`), `additional_
+review_policy` (`disabled` | `manual` | `automatic_if_valid`),
+`additional_reviewers_per_contested_item` (INTEGER, **NULL by default**
+— deliberately unconfigured; the mechanism reports
+`NEEDS_POLICY_CONFIGURATION` rather than inventing a threshold, per the
+explicit instruction not to guess a consensus/quorum number on anyone's
+behalf), `candidate_experiment_policy`/`fine_tune_experiment_policy`
+(infrastructure-ready, research-gated — no executor exists for either
+in this codebase; a future pass wires one via a NEW policy version, not
+a code change now).
+
+Seed (`policy-v1`, `migration_0005_seed`): `round_publication_policy=
+human_approval`, `existing_reviewer_assignment_policy=automatic_if_valid`,
+`additional_review_policy=automatic_if_valid`,
+`additional_reviewers_per_contested_item=NULL`,
+`candidate_experiment_policy=research_gated`,
+`fine_tune_experiment_policy=disabled` — chosen to match pre-existing
+production behavior byte-for-byte at deploy time, so the migration itself
+changes nothing observable. **A second, deliberate policy change
+(`policy-v2`) was made immediately after this pass's deploy**, via
+`/admin` → Policy (the same Cloudflare Access-authenticated path Jascha
+uses for everything else): `round_publication_policy → shadow_automatic`
+(implements `## 26.4` below — starts recording the evidence a future
+`automatic_if_valid` decision would need, without changing what actually
+publishes) and `additional_reviewers_per_contested_item → 1` (makes
+`## 26.2`'s additional-review mechanism actually automatic today, matching
+the handoff's own "CURRENT PRODUCTION POLICY" table, rather than leaving
+it permanently stuck at `NEEDS_POLICY_CONFIGURATION`). `existing_reviewer_
+assignment_policy` and `additional_review_policy` were left at their
+already-automatic seed values. This is recorded as its own versioned row,
+actor-attributed, with notes — never a silent edit to the seed.
+
+`/admin` → Policy shows the active version, a form to create a new one
+(every field defaults to the current value; changing nothing and saving
+still mints a new version, which is fine — versions are cheap, history is
+the point), and the version history with notes. This is one of the four
+things `## 26` (per the handoff this section implements) keeps as
+Jascha's own job, alongside admitting a new reviewer, resolving a genuine
+exception, and production promotion.
+
+### 26.2 Automatic additional review
+
+`src/reviewerEligibility.js` generalizes "existing approved reviewer"
+beyond the two named pilot parents: `active_for_calibration` (migration
+0005, `invitations` column, default 1) is distinct from `revoked` — a
+reviewer can remain a valid, working account (credential intact, past
+responses untouched) while no longer offered new *automatic* work,
+without anyone touching their invitation. `max_items_per_round` (nullable
+= no cap) is the only other new per-reviewer field — deliberately no
+cooldown/scheduling knob yet, per the explicit instruction against
+over-engineering quotas before there's real multi-reviewer volume to
+tune against. `reviewersWhoJudgedContent()` dedupes by
+`candidate_claim_id` (content hash), not `item_id` — `publishRound`
+always mints a fresh `item_id` even for a content-identical follow-up
+row, so item-id-based dedup would miss the exact case this exists to
+prevent.
+
+`src/additionalReview.js`'s `planAdditionalReview()` runs once per
+completed round's analysis, orthogonal to next-round preparation (both
+may fire from the same run; neither blocks the other):
+
+1. `additional_review_policy=disabled` → `DISABLED`, stop.
+2. No item flagged `contested`/`needs_more_reviewers` → `NONE_NEEDED`.
+3. `additional_review_policy=manual` → `NEEDS_HUMAN_ACTION`, flagged
+   items listed, nothing drafted.
+4. `additional_reviewers_per_contested_item` is `NULL` →
+   `NEEDS_POLICY_CONFIGURATION` — no threshold invented.
+5. The origin round is itself already an additional-review round
+   (`additional_review_generation >= 1`) → `NEEDS_HUMAN_ACTION` — capped
+   at exactly one automatic hop; a still-contested item after that needs
+   a human decision, not an automatic third round. (Narrower edge case,
+   accepted rather than solved: this caps by *round depth*, not by
+   *item*, so the same content resurfacing as contested in a later,
+   unrelated generation-0 round could in principle be escalated again —
+   `reviewersWhoJudgedContent()` still prevents any one reviewer from
+   judging the same content twice regardless.)
+6. Otherwise, `selectReviewersForBatch()` picks up to the configured
+   count from eligible reviewers not already excluded (already judged
+   this exact content, inactive-for-calibration, revoked, or over
+   `max_items_per_round` for the batch size) — deterministic order
+   (`created_at, reviewer_id`), no randomness. Fewer than the required
+   count eligible → `NEEDS_HUMAN_ACTION`, explaining exactly why, never a
+   partial assignment.
+7. Enough reviewers found → a new round is drafted (`saveDraft`, the
+   exact same function the admin UI's authoring screen uses) with fresh
+   item rows carrying the flagged content, `dataset_purpose` inherited
+   from the origin round, `reviewer_ids` = the picked set only. The
+   origin round's own items/assignments/responses are never touched —
+   an additional-review round is always new, never a rewrite. `rounds.
+   additional_review_of_round_id`/`additional_review_generation`
+   (migration 0005) record the provenance queryably.
+
+Verified end-to-end against a real local Worker + D1 + the actual
+`calibration_runner.py` (not a mock): two synthetic reviewers disagreeing
+on a claim produced `disposition: "contested"`; with
+`additional_reviewers_per_contested_item` unset, the system correctly
+reported `NEEDS_POLICY_CONFIGURATION` rather than guessing; after setting
+it to `1` via `/admin` → Policy, a third synthetic reviewer — the only
+one who hadn't judged that content — was automatically assigned a fresh
+round, which (under `automatic_if_valid`, see `## 26.4`) auto-published
+and was independently confirmed visible in that reviewer's own session.
+
+### 26.3 Existing-reviewer assignment for next-round drafts
+
+`prepare-next-round-v1`'s `active_reviewer_ids` input (previously "every
+non-revoked reviewer," hardcoded) now reads
+`existing_reviewer_assignment_policy`: `automatic_if_valid` →
+`listActiveReviewerIds()` (not revoked AND `active_for_calibration=1`);
+`manual` → an empty list, so a draft with a genuinely empty candidate
+pool also has no reviewers pre-filled, forcing a human to hand-pick them
+before it could ever validate. Since every existing reviewer defaults
+`active_for_calibration=1`, this changes nothing observable today —
+it's the mechanism becoming policy-driven, not a behavior change — and
+remains untestable end-to-end in production until `calibration_
+candidates` is deliberately seeded (still empty, still a separate
+research decision this pass does not make).
+
+### 26.4 Round-publication policy, including shadow mode
+
+`src/roundPublicationPolicy.js`'s `applyRoundPublicationPolicy(env,
+roundId, {policy, actor, runId})` is the ONE function that ever decides
+what happens to a policy-drafted round (next-round or additional-review)
+immediately after `saveDraft()` creates it — never duplicated per draft
+type:
+
+- **`human_approval`** — does nothing. The round stays `draft`, exactly
+  as every prior pass; Jascha reviews/freezes/publishes by hand from
+  `/admin` → Rounds.
+- **`shadow_automatic`** — runs the round through `freezeRound()` (the
+  exact same validation a human publish uses — never a parallel,
+  possibly-drifting validator) plus one automation-specific check no
+  human publish needs (every assigned reviewer must be `active_for_
+  calibration`, not merely non-revoked), and **records the decision** as
+  a `calibration_artifacts` row (`artifact_type: "publication_policy_
+  decision"`, `action: "shadow_recorded"`, `would_publish`, selected
+  reviewers/item count, manifest hash, validation warnings) — but never
+  calls `publishRound()`. The round is left `frozen`, visibly waiting in
+  `/admin` exactly like any other frozen round. This is the bridge
+  `## 11` of the original handoff called for: real evidence, accumulated
+  round after round, of what the system *would* have done, without
+  actually removing the human click yet.
+- **`automatic_if_valid`** — identical computation; if every check
+  passes, actually calls `publishRound()` — the exact same write path a
+  human's "Freeze & Publish" button uses, never a shortcut. If any check
+  fails, the round is left exactly as in shadow mode (frozen, waiting,
+  decision recorded) — a failing check is never relaxed to keep
+  automation going.
+
+`/admin` → Calibration surfaces both the additional-review outcome and
+either draft's publication decision (`next_round_publication_decision`,
+`additional_review_publication_decision`) right next to the evidence
+summary, so "what did the system decide, and why" is never buried in raw
+artifact JSON.
+
+Verified directly (`## 26.2`'s same end-to-end pass, repeated at three
+policy values against a real local Worker/D1/runner): `human_approval` →
+round stays `draft`/untouched by this mechanism; `shadow_automatic` →
+round reaches `frozen`, decision artifact recorded `would_publish: true`,
+round never actually published; `automatic_if_valid` → round reaches
+`published`, the correct single eligible reviewer assigned, decision
+artifact recorded `action: "published_automatically"`.
+
+### 26.5 Admin — automation/governance cockpit
+
+`GET /admin/api/calibration/automation`
+(`calibrationAdmin.js:handleAutomationSummary`) returns the active policy,
+a per-category automation-state label (round construction, analysis,
+existing-reviewer assignment, additional review, publication, candidate
+experiments, fine-tune experiments, production promotion — the last
+always "Human only (fixed)"), and a merged `action_required` list: draft/
+review/frozen rounds, failed calibration runs, and any additional-review
+attempt that came back `NEEDS_HUMAN_ACTION`/`NEEDS_POLICY_CONFIGURATION`.
+The Dashboard screen (`/admin` → Dashboard) renders this automation table
+above "Action required," which now says **"No action required."** in
+plain text — not a silently-empty list — whenever nothing in the whole
+system actually needs Jascha. `/admin` → Policy is the new fifth-and-a-
+half screen for viewing/changing policy (`## 26.1`).
+
+### 26.6 Candidate/fine-tune experiments — infrastructure-ready, not built
+
+`candidate_experiment_policy`/`fine_tune_experiment_policy` exist as real,
+versioned, auditable policy columns (seeded `research_gated`/`disabled`)
+so a future pass can turn either on via a new policy version rather than
+a code change — but no executor for either exists anywhere in this
+codebase as of this pass. `calibration_candidates` remains empty, as it
+has since `## 25`; no fine-tuning code, dataset split, or sandbox
+experiment runner was added. `CALIBRATION_BATCH_READY` (the handoff's
+`## 15`) is not implemented as a computed state — there is no
+`batch_readiness_policy` value set, and `/admin` reports evidence
+accumulating with no improvement-batch policy configured, rather than
+inventing a dataset-size threshold nobody asked for.
+
+### 26.7 Security / least privilege — unchanged, verified directly
+
+`src/calibrationJobs.js`, `src/index.js`, `src/access.js`, and
+`src/publish.js` are byte-identical to before this pass (confirmed via
+`git diff`, zero lines changed) — `CALIBRATION_RUNNER_TOKEN`'s scope
+(claim/heartbeat/complete/fail a calibration job, nothing else),
+`ADMIN_TOKEN`/`EXPORT_TOKEN`'s existing `/ops/*` boundary, and Cloudflare
+Access's JWT verification are all untouched. Every new admin route
+(`/admin/api/policy`, `/admin/api/calibration/automation`,
+`/admin/api/reviewers/:id/eligibility`) lives under the pre-existing
+`/admin/api/*` prefix and inherits the same `requireAccessAuth` gate as
+every other admin action — no new credential, no new auth surface. A
+targeted secret scan of every new/modified file found no hardcoded token,
+key, or credential.
+
+### 26.8 Trident runner — pin file now actually wired
+
+`calibration/runner/cripminds-calibration-runner.sh` previously always
+`git pull origin main` regardless of a pin file the README claimed
+existed — confirmed directly this pass that no such file was read
+anywhere in committed code, even though (also confirmed directly, via
+Trident) a real pin file already existed on disk at `/srv/secrets/
+cripminds-calibration/deployed-commit-sha.txt`, containing the exact
+commit the runner was already checked out to — the file existed, nothing
+used it. Fixed: the wrapper script now `git fetch`s, then checks out
+that pinned SHA with `git checkout --detach`, refusing to start (rather
+than silently falling back to `main`) if the pin file exists but is
+empty or the commit can't be checked out; it only falls back to the old
+pull-`main` behavior on a genuinely fresh install with no pin file yet.
+Deploying a new runner version is now exactly: update the pin file,
+restart the service — never a silent drift onto whatever `main` happens
+to be at restart time.
+
+**Not yet done, one remaining manual step:** the actual live wrapper
+script at `/srv/scripts/ops/cripminds-calibration-runner.sh` and the pin
+file itself both still need updating to this pass's new commit, and the
+systemd service needs `sudo systemctl restart cripminds-calibration-
+runner` to pick either up — this session has SSH access to Trident as
+`jascha` (sufficient to write both files) but not passwordless `sudo`
+(needed for the restart). **This is not blocking**: the runner's own
+Python code (`calibration_runner.py`) is unchanged by this pass — every
+new mechanism in `## 26.1`–`## 26.5` lives entirely in the Worker/D1
+side, which this pass deploys directly via the Cloudflare API. The
+currently-running runner process continues working correctly with the
+new Worker unmodified; only the pin-file hygiene fix itself waits on that
+one restart.

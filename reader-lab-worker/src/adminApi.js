@@ -24,7 +24,8 @@ import {
   ALLOWED_DISPOSITIONS,
 } from "./publish.js";
 import { buildResearchExport, getExportStatus, getExportPayloadJson } from "./researchExport.js";
-import { handleCalibrationStatus, handleCalibrationRetry } from "./calibrationAdmin.js";
+import { handleCalibrationStatus, handleCalibrationRetry, handleAutomationSummary } from "./calibrationAdmin.js";
+import { getActivePolicy, listPolicyHistory, setActivePolicy, PolicyValidationError } from "./policy.js";
 
 function jsonError(err, fallbackStatus = 500) {
   if (err instanceof ValidationError) {
@@ -131,10 +132,26 @@ async function handleDashboard(request, env, identity) {
     }
   }
 
+  // Merges in anything the policy-driven automation layer (## 26)
+  // couldn't resolve on its own — a failed calibration run, or an
+  // additional-review attempt that came back NEEDS_HUMAN_ACTION /
+  // NEEDS_POLICY_CONFIGURATION. The dashboard's own round-status items
+  // above and this automation feed are two views of the same underlying
+  // idea ("does Jascha need to do anything"), so they're shown together,
+  // not as two competing lists.
+  const automationSummaryResponse = await handleAutomationSummary(request, env);
+  const automationSummary = await automationSummaryResponse.json();
+  for (const item of automationSummary.action_required) {
+    if (item.type === "round_needs_review") continue; // already covered by needsAttention above
+    needsAttention.push({ round_id: item.round_id, note: item.note });
+  }
+
   return secureJson({
     active_round: active || null,
     rounds: summaries,
     needs_attention: needsAttention,
+    automation: automationSummary.automation,
+    policy: automationSummary.policy,
     admin_identity: identity.email,
   });
 }
@@ -353,12 +370,46 @@ async function handleExportDownload(request, env, roundId) {
 }
 
 // ---------------------------------------------------------------------
+// policy — versioned, append-only (see src/policy.js). Viewing/changing
+// calibration policy is one of the four things the design doc's `## 26`
+// keeps as Jascha's own job — this is the one write path for it, gated
+// by the same Cloudflare Access identity as every other admin action.
+// ---------------------------------------------------------------------
+
+async function handlePolicyGet(request, env) {
+  const active = await getActivePolicy(env);
+  const history = await listPolicyHistory(env);
+  return secureJson({ active, history });
+}
+
+async function handlePolicySet(request, env, identity) {
+  const body = (await readJsonBody(request)) || {};
+  try {
+    const policy = await setActivePolicy(env, body, { actor: identity.email, notes: body.notes });
+    await writeAuditLog(env, {
+      action: "policy_changed",
+      entityType: "policy",
+      entityId: String(policy.policy_version),
+      actor: identity.email,
+      detail: body,
+    });
+    return secureJson({ policy });
+  } catch (err) {
+    if (err instanceof PolicyValidationError) {
+      return secureJson({ error: "validation_failed", errors: err.errors }, 422);
+    }
+    return jsonError(err);
+  }
+}
+
+// ---------------------------------------------------------------------
 // reviewers
 // ---------------------------------------------------------------------
 
 async function handleReviewersList(request, env) {
   const rows = await env.DB.prepare(
     `SELECT i.reviewer_id, i.created_at, i.expires_at, i.revoked, i.practice_completed,
+            i.active_for_calibration, i.max_items_per_round,
             COUNT(a.assignment_id) AS total_assigned,
             SUM(CASE WHEN a.answered_at IS NOT NULL THEN 1 ELSE 0 END) AS total_answered
      FROM invitations i
@@ -367,6 +418,35 @@ async function handleReviewersList(request, env) {
      ORDER BY i.created_at`
   ).all();
   return secureJson({ reviewers: rows.results });
+}
+
+// Distinct from revoke/reactivate: a reviewer can remain a valid, working
+// account (credential intact, past responses untouched) while no longer
+// being offered new AUTOMATIC assignments — see reviewerEligibility.js's
+// own docstring for why `revoked` alone can't express this. Setting
+// active_for_calibration=0 never touches an invitation's token/session.
+async function handleReviewerSetEligibility(request, env, identity, reviewerId) {
+  const body = (await readJsonBody(request)) || {};
+  const fields = [];
+  const values = [];
+  if (Object.prototype.hasOwnProperty.call(body, "active_for_calibration")) {
+    fields.push("active_for_calibration = ?");
+    values.push(body.active_for_calibration ? 1 : 0);
+  }
+  if (Object.prototype.hasOwnProperty.call(body, "max_items_per_round")) {
+    const n = body.max_items_per_round;
+    if (n !== null && (!Number.isInteger(n) || n <= 0)) {
+      return secureJson({ error: "max_items_per_round must be a positive integer or null" }, 400);
+    }
+    fields.push("max_items_per_round = ?");
+    values.push(n);
+  }
+  if (!fields.length) return secureJson({ error: "no_fields_to_update" }, 400);
+  await env.DB.prepare(`UPDATE invitations SET ${fields.join(", ")} WHERE reviewer_id = ?`)
+    .bind(...values, reviewerId)
+    .run();
+  await writeAuditLog(env, { action: "reviewer_eligibility_changed", entityType: "reviewer", entityId: reviewerId, actor: identity.email, detail: body });
+  return secureJson({ ok: true });
 }
 
 async function handleReviewerCreate(request, env, identity) {
@@ -432,8 +512,12 @@ export async function adminApiFetch(request, env, identity, url) {
   if ((m = /^\/results\/([^/]+)$/.exec(path)) && method === "GET") return handleResults(request, env, m[1]);
 
   if (path === "/calibration/status" && method === "GET") return handleCalibrationStatus(request, env, url);
+  if (path === "/calibration/automation" && method === "GET") return handleAutomationSummary(request, env);
   if ((m = /^\/calibration\/runs\/([^/]+)\/retry$/.exec(path)) && method === "POST")
     return handleCalibrationRetry(request, env, identity, m[1]);
+
+  if (path === "/policy" && method === "GET") return handlePolicyGet(request, env);
+  if (path === "/policy" && method === "POST") return handlePolicySet(request, env, identity);
 
   if (path === "/reviewers" && method === "GET") return handleReviewersList(request, env);
   if (path === "/reviewers" && method === "POST") return handleReviewerCreate(request, env, identity);
@@ -441,6 +525,8 @@ export async function adminApiFetch(request, env, identity, url) {
     return handleReviewerRevoke(request, env, identity, m[1]);
   if ((m = /^\/reviewers\/([^/]+)\/reactivate$/.exec(path)) && method === "POST")
     return handleReviewerReactivate(request, env, identity, m[1]);
+  if ((m = /^\/reviewers\/([^/]+)\/eligibility$/.exec(path)) && method === "POST")
+    return handleReviewerSetEligibility(request, env, identity, m[1]);
 
   return secureJson({ error: "not_found" }, 404);
 }

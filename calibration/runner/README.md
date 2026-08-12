@@ -72,14 +72,24 @@ quiet — no need to log every empty poll) and logs `claimed job <id>
 
 ## Updating the runner
 
-The systemd unit re-pulls the repo on every start (via the wrapper
-script), so a normal update is:
+The checkout is pinned to an exact commit, not a moving branch — the
+wrapper script reads
+`/srv/secrets/cripminds-calibration/deployed-commit-sha.txt` and
+`git checkout --detach`s exactly that SHA on every start, refusing to
+start if the file is missing content or the commit can't be resolved. A
+normal update is therefore:
 
 ```bash
+echo <new-commit-sha> > /srv/secrets/cripminds-calibration/deployed-commit-sha.txt
 sudo systemctl restart cripminds-calibration-runner
 ```
 
-No manual `git pull` needed on Trident itself — the wrapper does it.
+Never edit the pin file to track `main` again — a moving pin defeats the
+whole point (Trident running code nobody deliberately deployed). If the
+pin file doesn't exist yet at all (a fresh install, before any commit has
+ever been pinned), the wrapper falls back to `git pull origin main` and
+logs a warning — pin a real commit as soon as one exists rather than
+relying on that fallback.
 
 ## What this service must NEVER be given
 

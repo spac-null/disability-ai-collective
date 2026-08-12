@@ -16,10 +16,10 @@ exists today and how to recover it without this conversation.
 
 **As of 2026-08-12, normal Reader Lab operation requires ONLY
 `https://lab.cripminds.com/admin` — no privileged Claude/Cloudflare
-session, no CLI, no D1 query, ever, for routine use.** Round completion
-is detected automatically the moment the last reviewer answers, and the
-credential-free research export is generated automatically in the
-background — nobody has to notice or run anything.
+session, no CLI, no D1 query, ever, for routine use.** Round completion,
+research export, calibration analysis, evidence, and a next-round draft
+all happen automatically, server-side, the moment reviewers finish —
+nobody has to notice or run anything.
 
 ```
 1. Open https://lab.cripminds.com/admin
@@ -28,9 +28,17 @@ background — nobody has to notice or run anything.
 4. Freeze & Publish
 5. Wait for reviewers — the dashboard shows live progress
 6. The dashboard automatically detects completion — no action needed
-7. Open Results to read the raw judgments
-8. Download the research handoff JSON, drop it straight into
-   .claude/reader-lab-handoff/ — nothing to redact, nothing to clean up
+7. Open Results to read the raw judgments, or Calibration to see the
+   automatic evidence map (agreement/disagreement/contested, never a
+   computed "winner")
+8. Once analysis finishes, a next-round draft is prepared automatically
+   (or the system says NEEDS_ELIGIBLE_CANDIDATES if there's nothing
+   eligible yet) — review it in Rounds and Freeze & Publish yourself,
+   same as any other round. Nothing publishes without you.
+9. Download the research handoff JSON any time, drop it straight into
+   .claude/reader-lab-handoff/ — nothing to redact, nothing to clean up.
+   This remains available as backup/audit tooling — the calibration
+   pipeline no longer depends on this manual step happening at all.
 ```
 
 A research session can still author a draft manifest
@@ -39,10 +47,12 @@ for Jascha to import in step 2 — that path still works exactly as
 before, it's just no longer the only way to get a round started.
 
 **Privileged ops / wrangler / direct D1 access is needed ONLY for:**
-deployments, migrations, Cloudflare Access configuration, and production
-incidents (e.g. an export stuck in `EXPORT ERROR` that the in-app Retry
-button somehow can't fix). It is never needed to detect a round finishing,
-generate a research export, check reviewer progress, or publish a round —
+deployments, migrations, Cloudflare Access/Trident configuration, and
+production incidents (e.g. an export or calibration run stuck in an
+error state that the in-app Retry button somehow can't fix). It is
+never needed to detect a round finishing, generate a research export,
+run calibration analysis, prepare a next-round draft, check reviewer
+progress, or publish a round —
 all of that is now fully self-service from `/admin`.
 
 Machine `/ops/*` routes (`ADMIN_TOKEN`/`EXPORT_TOKEN`) still exist for
@@ -247,6 +257,92 @@ Never set `ACCESS_DEV_BYPASS` anywhere except a local, gitignored
 `wrangler.toml` or any deploy step in this project, so it cannot reach
 production by accident, but it would defeat Access entirely if it ever
 did.
+
+## Calibration orchestrator — completed rounds analyze themselves
+
+The moment a round's research export is ready (see "Automatic
+completion + research export" above), a Cloudflare Workflow instance
+(`CalibrationWorkflow`, `src/calibrationWorkflow.js`) starts automatically
+— created idempotently by `armCalibrationRun`
+(`src/calibrationOrchestrator.js`), keyed on
+`round_id + export content hash + workflow version`, so a replayed
+trigger or the hourly cron reconciliation sweep can never produce a
+second run for the same round. No privileged session has to notice a
+round finished or kick off analysis by hand.
+
+The Workflow creates a claimable `calibration_jobs` row and durably waits
+(`step.waitForEvent`, no compute consumed while waiting) for a **private,
+Tailscale-only Trident daemon** (`calibration/runner/calibration_runner.py`)
+to poll for it, execute it, and submit the result back over
+`/ops/calibration/jobs/*` — authenticated by its own narrow
+`CALIBRATION_RUNNER_TOKEN`, never `ADMIN_TOKEN`/`EXPORT_TOKEN`. That
+token can claim/heartbeat/complete/fail a calibration job and nothing
+else — it cannot create/revoke a reviewer, publish a round, or touch a
+response/export; verified directly against production, not just
+asserted (see the design doc's `## 25.10`).
+
+Two job types, both versioned/hashed/documented in
+`calibration/workflows/`:
+
+- **`analyze-human-round-v1`** — turns a completed round's frozen export
+  into a structured per-item evidence map (`agreement_state`,
+  `reference_strength`, `disposition`, `machine_comparison` against this
+  round's already-known B2 reference labels). Deterministic — direct
+  transcription of categories this project already established in prose
+  (design doc `## 20.4`/`## 14`) — except one optional, narrowly-scoped,
+  banned-word-filtered model-generated `notes` field that can never
+  affect any of the deterministic fields. Never computes a "winner,"
+  never treats agreement as ground truth.
+- **`prepare-next-round-v1`** — given the analysis, drafts (never
+  publishes) a next round from an explicit, server-side
+  `calibration_candidates` eligible pool — see
+  `calibration/candidates/README.md`. That pool starts and remains
+  **empty** until a deliberate, separate research decision seeds it;
+  until then this reports `NEEDS_ELIGIBLE_CANDIDATES` rather than
+  inventing a candidate, and independently fails closed (twice — once
+  in the Workflow, once in the runner) if any `held_out_evaluation`
+  material ever appears in that pool.
+
+`/admin`'s **Calibration** section shows the current round, the
+workflow's state, an evidence summary, a simple timestamped history, and
+the next action in plain language — with a **Retry** button for a
+`failed` run (creates a fresh run/instance from scratch; analysis is
+versioned/recomputable, never treated as immutable the way a research
+export is). Failure is bounded and safe: two attempts per job type
+before a run is marked `failed`; raw responses/exports are never
+affected by a failed or retried analysis.
+
+**Deploying/updating the runner:** see
+`calibration/runner/README.md` for the full first-time-install and
+update procedure (systemd, secrets file layout, health checks). The
+canonical source is this repo — Trident's checkout is pinned to an exact
+commit SHA read from
+`/srv/secrets/cripminds-calibration/deployed-commit-sha.txt` by the
+service's own wrapper script (`git fetch` + `git checkout --detach
+<sha>`, refusing to start rather than silently falling back to `main` if
+the pin file is missing content or the commit can't be checked out) —
+never left tracking a moving branch. Deploying a new runner version is
+exactly: update that one file, then `sudo systemctl restart
+cripminds-calibration-runner`.
+
+## Calibration policy — what's automatic, and who can change it (`## 26`)
+
+`/admin` → **Policy** shows the active, versioned calibration policy and
+lets Jascha create a new version (every past run stays interpretable
+under whichever version actually governed it — nothing is ever edited in
+place). `/admin` → **Dashboard** shows the resulting automation state per
+category and a merged "Action required" list that says **"No action
+required."** in plain text whenever nothing needs him. Full design:
+`../.claude/reader-lab-v0-design-2026-08-12.md` `## 26`. In one line per
+category, as of this policy version: round construction and analysis are
+always automatic; existing-reviewer assignment and additional review are
+automatic when the policy says so (the latter needs a configured
+reviewer count, or it reports `NEEDS_POLICY_CONFIGURATION` rather than
+guessing one); round publication defaults to `shadow_automatic` (the
+system computes and records what it *would* publish, but a human still
+clicks Publish); candidate/fine-tune experiments are infrastructure-ready
+but not built; production promotion is always human-only, by a fixed
+constraint no policy setting can change.
 
 ## What "going live" requires, step by step
 

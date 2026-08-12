@@ -29,6 +29,10 @@
 import { WorkflowEntrypoint } from "cloudflare:workers";
 import { sha256Hex, newId, nowIso } from "./util.js";
 import { saveDraft, sortedStringify } from "./publish.js";
+import { getPolicyVersion } from "./policy.js";
+import { listActiveReviewerIds } from "./reviewerEligibility.js";
+import { planAdditionalReview } from "./additionalReview.js";
+import { applyRoundPublicationPolicy } from "./roundPublicationPolicy.js";
 
 const JOB_WAIT_TIMEOUT = "3 days";
 const MAX_ATTEMPTS_PER_JOB = 2;
@@ -53,7 +57,7 @@ function validatePrepareShape(result) {
 
 export class CalibrationWorkflow extends WorkflowEntrypoint {
   async run(event, step) {
-    const { run_id, round_id, workflow_version } = event.payload;
+    const { run_id, round_id, workflow_version, policy_version } = event.payload;
 
     await step.do("mark-started", async () => {
       await this.env.DB.prepare(
@@ -61,6 +65,18 @@ export class CalibrationWorkflow extends WorkflowEntrypoint {
       )
         .bind(nowIso(), run_id)
         .run();
+    });
+
+    // Loaded ONCE, by the exact version this run was armed under (see
+    // calibrationOrchestrator.js's armCalibrationRun) — never re-read as
+    // "whatever is active now." A policy change made while this run is
+    // durably waiting on Trident (up to 3 days) must never retroactively
+    // change what this run does; it takes effect on the NEXT run armed
+    // after the change, never this one.
+    const policy = await step.do("load-policy", async () => {
+      const row = await getPolicyVersion(this.env, policy_version);
+      if (!row) throw new Error(`policy_version_not_found: ${policy_version}`);
+      return row;
     });
 
     let analysis;
@@ -106,6 +122,34 @@ export class CalibrationWorkflow extends WorkflowEntrypoint {
       return artifactId;
     });
 
+    // Additional review is orthogonal to next-round preparation below —
+    // it targets THIS round's own contested/needs_more_reviewers items
+    // using EXISTING reviewers, never the eligible-candidate pool
+    // prepare-next-round-v1 draws from. Both may fire from the same
+    // completed round; neither blocks the other.
+    const additionalReviewResult = await step.do("plan-additional-review", async () => {
+      const draftRoundId = await this.nextRoundId(round_id);
+      return planAdditionalReview(this.env, {
+        roundId: round_id,
+        analysis,
+        policy,
+        nextRoundId: draftRoundId,
+        actor: "system:calibration_orchestrator",
+      });
+    });
+
+    await this.writeArtifact(round_id, run_id, workflow_version, "additional_review_plan", additionalReviewResult, nowIso());
+
+    if (additionalReviewResult.status === "DRAFTED") {
+      await step.do("apply-publication-policy-additional-review", async () => {
+        return applyRoundPublicationPolicy(this.env, additionalReviewResult.draft_round_id, {
+          policy,
+          actor: "system:calibration_orchestrator",
+          runId: run_id,
+        });
+      });
+    }
+
     await step.do("mark-next-round-pending", async () => {
       await this.env.DB.prepare("UPDATE calibration_runs SET status='next_round_pending' WHERE run_id = ?").bind(run_id).run();
     });
@@ -116,12 +160,18 @@ export class CalibrationWorkflow extends WorkflowEntrypoint {
         const candidateRows = await this.env.DB.prepare(
           "SELECT * FROM calibration_candidates WHERE eligible_for_reader_lab = 1 AND dataset_purpose != 'held_out_evaluation'"
         ).all();
-        const reviewerRows = await this.env.DB.prepare("SELECT reviewer_id FROM invitations WHERE revoked = 0").all();
+        // "Active reviewer" for automatic next-round assignment means
+        // EXISTING APPROVED reviewer (not revoked AND
+        // active_for_calibration — see reviewerEligibility.js), not just
+        // "not revoked." A reviewer set inactive-for-calibration keeps a
+        // working invitation but stops being offered new automatic work.
+        const activeReviewerIds =
+          policy.existing_reviewer_assignment_policy === "automatic_if_valid" ? await listActiveReviewerIds(this.env) : [];
         return {
           round_id,
           analysis,
           eligible_candidates: candidateRows.results,
-          active_reviewer_ids: reviewerRows.results.map((r) => r.reviewer_id),
+          active_reviewer_ids: activeReviewerIds,
         };
       });
     } catch (err) {
@@ -168,12 +218,31 @@ export class CalibrationWorkflow extends WorkflowEntrypoint {
         now
       );
 
+      // Policy decides what happens to the freshly-drafted round from
+      // here — human_approval leaves it exactly as before (a draft
+      // waiting in /admin); shadow_automatic computes and records the
+      // decision without publishing; automatic_if_valid actually
+      // publishes it through the same freeze/publish path a human uses.
+      // Same function, same rules, as whatever the additional-review
+      // draft above just went through — one decision point, not two.
+      const decision = await applyRoundPublicationPolicy(this.env, draftRoundId, {
+        policy,
+        actor: "system:calibration_orchestrator",
+        runId: run_id,
+      });
+      const finalRunStatus =
+        decision.action === "published_automatically"
+          ? "next_round_published_automatically"
+          : decision.action === "shadow_recorded"
+            ? "next_round_shadow_recorded"
+            : "waiting_for_human_approval";
+
       await this.env.DB.prepare(
-        "UPDATE calibration_runs SET status='waiting_for_human_approval', completed_at=?, next_round_draft_artifact_id=? WHERE run_id=?"
+        "UPDATE calibration_runs SET status=?, completed_at=?, next_round_draft_artifact_id=? WHERE run_id=?"
       )
-        .bind(now, artifactId, run_id)
+        .bind(finalRunStatus, now, artifactId, run_id)
         .run();
-      return "waiting_for_human_approval";
+      return finalRunStatus;
     });
 
     return { status: finalStatus, run_id };
