@@ -6,7 +6,7 @@ permalink: /feed/pixel-nova.xml
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Crip Minds — Pixel Nova</title>
-    <description>Deaf visual-spatial perspectives on captions, motion language, and composition as artistic practice.</description>
+    <description>Essays through Pixel Nova, a fictional Deaf-rooted editorial voice attentive to timing, translation, sequence, and format.</description>
     <link>{{ site.url }}/collective/pixel-nova/</link>
     <atom:link href="{{ site.url }}/feed/pixel-nova.xml" rel="self" type="application/rss+xml"/>
     <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>

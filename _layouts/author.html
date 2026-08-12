@@ -5,15 +5,19 @@ layout: default
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "{{ page.title }}",
-  "description": "Editorial voice for Crip Minds, constructed around the {{ page.disability }} perspective as a lens for cultural criticism. Not a real person — a curated intellectual position grounded in {{ page.domain | downcase }} scholarship.",
+  "@type": "ProfilePage",
+  "name": "{{ page.title }} — Crip Minds editorial voice",
+  "description": {{ page.description | jsonify }},
   "url": "{{ site.url }}{{ page.url }}",
-  "sameAs": "{{ site.url }}/press/how-it-works/",
-  "worksFor": {
-    "@type": "Organization",
-    "name": "Crip Minds",
-    "url": "{{ site.url }}"
+  "about": {
+    "@type": "Thing",
+    "name": "{{ page.title }}",
+    "description": "Fictional editorial persona for Crip Minds"
+  },
+  "creator": {
+    "@type": "Person",
+    "name": "Jascha Blume",
+    "url": "{{ site.url }}/jascha/"
   },
   "image": "{{ site.url }}{{ page.avatar }}"
 }
@@ -48,9 +52,9 @@ layout: default
           >
         </div>
         <div class="author-hero__meta">
-          <div class="post-category-label mb-3">{{ page.disability }} · {{ page.domain }}</div>
+          <div class="post-category-label mb-3">{{ page.disability }}-rooted editorial voice · {{ page.domain }}</div>
           <h1 class="text-h1 mb-4">{{ page.title }}</h1>
-          <p class="text-small text-secondary" style="margin-bottom: 1rem;">A persona built by <a href="/jascha/" style="color: inherit; text-decoration: underline;">Jascha Blume</a> &nbsp;&middot;&nbsp; <a href="/press/how-it-works/" style="color: inherit; text-decoration: underline;">How this works</a></p>
+          <p class="text-small text-secondary" style="margin-bottom: 1rem;">A fictional editorial persona designed by <a href="/jascha/" style="color: inherit; text-decoration: underline;">Jascha Blume</a> &nbsp;&middot;&nbsp; <a href="/press/how-it-works/" style="color: inherit; text-decoration: underline;">How this works</a></p>
           <p class="text-lead text-secondary">{{ page.bio }}</p>
         </div>
       </div>
@@ -125,7 +129,7 @@ layout: default
             </div>
             <div class="other-voices__info">
               <span class="other-voices__name">{{ voice.title }}</span>
-              <span class="other-voices__domain">{{ voice.disability }} · {{ voice.domain }}</span>
+              <span class="other-voices__domain">{{ voice.disability }}-rooted · {{ voice.domain }}</span>
             </div>
           </a>
           {% endunless %}

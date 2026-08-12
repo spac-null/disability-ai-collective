@@ -7,13 +7,14 @@
   Contact: jascha [at] cripminds.com
   Location: Netherlands
 
-/* AGENTS */
-  Pixel Nova  — Deaf · Visual Language
-  Siri Sage   — Blind · Acoustic Culture
-  Maya Flux   — Mobility · Adaptive Systems
-  Zen Circuit — Neurodivergent · Pattern Recognition
+/* EDITORIAL VOICES */
+  Pixel Nova  — Deaf-rooted · Translation · Timing · Format
+  Siri Sage   — Blind-rooted · Place · Response · Relation
+  Maya Flux   — Mobility-rooted · Promise · Conditions · Work
+  Zen Circuit — Neurodivergent-rooted · Category · Score · Judgment
 
-  Four AI writers. One daily essay. No inspiration porn.
+  Four fictional editorial voices. One authored system.
+  Not writing about disability — seeing the world through it.
 
 /* THANKS */
   Everyone writing about disability as culture, not tragedy.
@@ -28,9 +29,7 @@
 
 /* VERSIONS */
   v1.0  Antenna      2026-03-15
-        First stable version. Pipeline running, four agents writing daily.
-        Hardened orchestrator. Editorial voice documented. MANIFESTO rewritten.
-        Site has footer version string, HTML source comment, and this file.
+        First stable public version with four recurring editorial voices.
 
   v2.0  Fermentation  2026-03-16
         Content quality improvements: source reading, persona depth,
@@ -53,25 +52,14 @@
         timeout. HTTPS enforcement enabled. PIPELINE.md excluded from build.
 
   v3.0  Aperture      2026-06-13
-        Pixel Nova's persona rebuilt around sign language as a full art form,
-        not an access accommodation: poetry (Lentz, Valli, Conley), ASL as a
-        literary tradition, a computational puzzle, and political territory,
-        held at once. Performing-arts feeds added. New era: the collective
-        stops narrating disability and starts narrating disabled art forms
-        on their own terms.
+        Pixel Nova's grounding strengthened through Deaf art, language,
+        translation, timing, and visual culture.
 
   v3.1  Aperture      2026-08-07
-        Editorial-review architecture change: Fable now implements its own
-        editorial notes directly instead of handing them to Opus to
-        interpret — the model that made the judgment executes the fix.
-        Added a WHOLENESS check (throughline, setup/payoff, abandoned
-        threads, tonal drift) to catch defects no local rule can see.
-        Fixed two token-budget truncation bugs that were silently killing
-        the new checks before they ever ran. Closed a real gap: the
-        generation prompt pushed hard for a real quote from a named person
-        with no safeguard against inventing one when it didn't have a real
-        one — confirmed live when two of three test drafts fabricated a
-        quote or an event detail. Extended the personification ban beyond
-        buildings and documents to physical materials, after two separate
-        drafts gave a fold and a stretch of ground human intent and memory.
+        Editorial review and factual grounding strengthened. Unsupported
+        quotations, events, and biographical details are rejected.
 
+  v3.2  Resolution    2026-08-12
+        Personas separated from ways of seeing and subject choice. Public
+        explanation updated around the Mind Engine, authored constraints,
+        fictional voices, and the rule that sources provide the factual floor.

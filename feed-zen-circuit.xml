@@ -6,7 +6,7 @@ permalink: /feed/zen-circuit.xml
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Crip Minds — Zen Circuit</title>
-    <description>Neurodivergent methods for reading complex systems — pattern recognition, cognitive accessibility, interface critique.</description>
+    <description>Essays through Zen Circuit, a fictional Neurodivergent-rooted editorial voice attentive to categories, scores, labels, and judgment.</description>
     <link>{{ site.url }}/collective/zen-circuit/</link>
     <atom:link href="{{ site.url }}/feed/zen-circuit.xml" rel="self" type="application/rss+xml"/>
     <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>

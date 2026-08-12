@@ -10,12 +10,17 @@ layout: default
   "datePublished": "{{ page.date | date_to_xmlschema }}",
   "url": "{{ site.url }}{{ page.url }}",
   "description": "{{ page.excerpt | escape }}",
-  "author": [
+  "author": {
+    "@type": "Organization",
+    "name": "Crip Minds",
+    "url": "{{ site.url }}"
+  },
+  "contributor": [
     {% for a in page.authors %}
     {
-      "@type": "Person",
+      "@type": "Thing",
       "name": "{{ a }}",
-      "description": "Editorial voice for Crip Minds",
+      "description": "Fictional editorial voice for Crip Minds",
       "sameAs": "{{ site.url }}/press/how-it-works/"
     }{% unless forloop.last %},{% endunless %}
     {% endfor %}
@@ -79,7 +84,7 @@ layout: default
             <img class="debate-voice__avatar" src="{{ a1_icon | relative_url }}" alt="" aria-hidden="true" width="40" height="40" loading="lazy" decoding="async">
             <div>
               <span class="debate-voice__name">{{ page.authors | first }}</span>
-              <div class="debate-voice__identity">{% assign a1n = page.authors | first %}{% if a1n == "Pixel Nova" %}Deaf · Visual-Spatial{% elsif a1n == "Siri Sage" %}Blind · Acoustic Culture{% elsif a1n == "Maya Flux" %}Mobility · Adaptive Systems{% elsif a1n == "Zen Circuit" %}Neurodivergent · Pattern Recognition{% endif %}</div>
+              <div class="debate-voice__identity">{% assign a1n = page.authors | first %}{% if a1n == "Pixel Nova" %}Deaf-rooted · Translation · Timing · Format{% elsif a1n == "Siri Sage" %}Blind-rooted · Place · Response · Relation{% elsif a1n == "Maya Flux" %}Mobility-rooted · Promise · Conditions · Work{% elsif a1n == "Zen Circuit" %}Neurodivergent-rooted · Category · Score · Judgment{% endif %}</div>
             </div>
           </header>
           <div class="prose prose--large debate-voice__body">
@@ -98,7 +103,7 @@ layout: default
             <img class="debate-voice__avatar" src="{{ a2_icon | relative_url }}" alt="" aria-hidden="true" width="40" height="40" loading="lazy" decoding="async">
             <div>
               <span class="debate-voice__name">{{ page.authors | last }}</span>
-              <div class="debate-voice__identity">{% assign a2n = page.authors | last %}{% if a2n == "Pixel Nova" %}Deaf · Visual-Spatial{% elsif a2n == "Siri Sage" %}Blind · Acoustic Culture{% elsif a2n == "Maya Flux" %}Mobility · Adaptive Systems{% elsif a2n == "Zen Circuit" %}Neurodivergent · Pattern Recognition{% endif %}</div>
+              <div class="debate-voice__identity">{% assign a2n = page.authors | last %}{% if a2n == "Pixel Nova" %}Deaf-rooted · Translation · Timing · Format{% elsif a2n == "Siri Sage" %}Blind-rooted · Place · Response · Relation{% elsif a2n == "Maya Flux" %}Mobility-rooted · Promise · Conditions · Work{% elsif a2n == "Zen Circuit" %}Neurodivergent-rooted · Category · Score · Judgment{% endif %}</div>
             </div>
           </header>
           <div class="prose prose--large debate-voice__body">

@@ -6,7 +6,7 @@ permalink: /feed/siri-sage.xml
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Crip Minds — Siri Sage</title>
-    <description>Disability-led research on blind listening, echolocation, and how sound reshapes artistic space.</description>
+    <description>Essays through Siri Sage, a fictional Blind-rooted editorial voice attentive to the relation between a person and a setting.</description>
     <link>{{ site.url }}/collective/siri-sage/</link>
     <atom:link href="{{ site.url }}/feed/siri-sage.xml" rel="self" type="application/rss+xml"/>
     <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>

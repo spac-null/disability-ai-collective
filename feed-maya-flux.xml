@@ -6,7 +6,7 @@ permalink: /feed/maya-flux.xml
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Crip Minds — Maya Flux</title>
-    <description>Mobility research across streets, institutions, and interfaces — documenting barriers and access repair.</description>
+    <description>Essays through Maya Flux, a fictional Mobility-rooted editorial voice attentive to promises, hidden conditions, timing, and work.</description>
     <link>{{ site.url }}/collective/maya-flux/</link>
     <atom:link href="{{ site.url }}/feed/maya-flux.xml" rel="self" type="application/rss+xml"/>
     <pubDate>{{ site.time | date_to_rfc822 }}</pubDate>

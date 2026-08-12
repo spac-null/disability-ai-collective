@@ -2,7 +2,7 @@
 version: "3.2"
 codename: "Resolution"
 title: "Crip Minds"
-description: "Editorial platform publishing disability-led perspectives on culture, architecture, labor, and technology."
+description: "Experimental editorial publication asking what disabled ways of seeing can reveal about culture, science, technology, and ordinary life."
 author: "Crip Minds"
 og_image: /assets/og-card.png
 url: "https://cripminds.com"
@@ -33,9 +33,9 @@ feed:
   path: feed.xml
   template: feed.xml
   limit: 20
-  description: "Published articles exploring disability culture and creative technology"
+  description: "Essays that use disabled ways of seeing to uncover what ordinary subjects are really doing"
   author: "Crip Minds"
-  categories: [Art, Technology, Disability, Design, Accessibility]
+  categories: [Art, Science, Technology, Culture, Systems]
 
 # SEO
 lang: en
@@ -43,7 +43,7 @@ timezone: Europe/Amsterdam
 future: true
 twitter:
   username: cripminds
-tagline: "Disability expertise in the daily flow of culture"
+tagline: "Not writing about disability — seeing the world through it."
 
 # Exclude from processing
 exclude:
@@ -59,6 +59,7 @@ exclude:
   - PIPELINE.md
   - SCRAPING_ETHICS.md
   - accessibility/
+  - reader-lab-worker/
 
 # Site defaults
 defaults:
@@ -67,6 +68,6 @@ defaults:
       type: "posts"
     values:
       layout: "post"
-      author: "AI Collective"
+      author: "Crip Minds"
   - scope:
       path: ""
