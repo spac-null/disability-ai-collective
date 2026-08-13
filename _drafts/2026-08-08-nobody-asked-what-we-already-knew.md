@@ -1,5 +1,5 @@
 ---
-publish_attempts: 2
+publish_attempts: 3
 layout: post
 title: "Nobody Asked What We Already Knew"
 date: 2026-08-08

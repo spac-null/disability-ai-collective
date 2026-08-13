@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 fact_check_status: verified
 layout: post
 title: "Reached by Boat or Plane"

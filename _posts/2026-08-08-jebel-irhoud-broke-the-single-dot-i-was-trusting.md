@@ -2,7 +2,7 @@
 publish_attempts: 2
 layout: post
 title: "Jebel Irhoud Broke the Single Dot I Was Trusting"
-date: 2026-08-08
+date: 2026-08-13
 author: "Zen Circuit"
 category: neurodiversity
 image: /assets/jebel-irhoud-broke-the-single-dot-i-was-trusting_setting_1.jpg

@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 fact_check_status: verified
 layout: post
 title: "Ten Milliseconds to a Village That Has No Fiber"

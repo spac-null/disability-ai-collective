@@ -1,5 +1,5 @@
 ---
-publish_attempts: 1
+publish_attempts: 2
 layout: post
 title: "Reaffirmed by Hand, 1979"
 date: 2026-08-09
