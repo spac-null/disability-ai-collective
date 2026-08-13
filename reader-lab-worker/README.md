@@ -344,6 +344,20 @@ clicks Publish); candidate/fine-tune experiments are infrastructure-ready
 but not built; production promotion is always human-only, by a fixed
 constraint no policy setting can change.
 
+## B2 → Reader Lab candidate bridge (`## 27`)
+
+`calibration_candidates` — the pool `prepare-next-round-v1` selects
+from — now has a real write path: `POST /ops/calibration/candidates`
+(`X-Calibration-Runner-Token` or `X-Admin-Token`), or `/admin` →
+**Candidates** as a visibility/import-fallback screen. The moment
+ingestion adds an eligible candidate, any calibration run stuck at
+`NEEDS_ELIGIBLE_CANDIDATES` resumes itself — no "retry" click needed
+unless that genuinely fails. `analyze-human-round-v2` additionally
+computes `role_alignment`/`support_alignment`/`overall_relation` per
+item (only when reviewers agreed) — `machine_comparison` keeps its
+original, role-only meaning for compatibility. Full design:
+`../.claude/reader-lab-v0-design-2026-08-12.md` `## 27`.
+
 ## What "going live" requires, step by step
 
 1. **A scoped Cloudflare API token.** Create a new token (not the

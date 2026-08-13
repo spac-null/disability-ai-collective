@@ -1,24 +1,35 @@
 # Eligible candidate pool
 
-`calibration_candidates` (D1, migration `0004_calibration_orchestrator.sql`)
-is the **only** source `prepare-next-round-v1` may ever select from —
-see `../workflows/prepare-next-round-v1.md`. It starts **empty** as of
-this pass's first deployment, and stays empty until a deliberate,
-separate research decision seeds it. This is not an oversight; it is the
-explicit, correct v1 state:
+`calibration_candidates` (D1, migration `0004_calibration_orchestrator.sql`,
+write path added `0006_candidate_bridge.sql`) is the **only** source
+`prepare-next-round-v1` may ever select from — see
+`../workflows/prepare-next-round-v1.md`. It started **empty** through the
+whole first infrastructure pass, and correctly produced
+`NEEDS_ELIGIBLE_CANDIDATES` for RL-2026-001 until it did:
 
 > "For the first implementation, an empty/limited candidate pool is
 > acceptable. If no eligible new candidate exists: the system should say
 > `NEEDS_ELIGIBLE_CANDIDATES` rather than inventing one."
 
+**Now has a real write path**, `../../reader-lab-worker/src/candidateIngestion.js`
+(`POST /ops/calibration/candidates`, or `/admin` → Candidates as a
+fallback) — see the design doc's `## 27` for the full design. RL-2026-002's
+5 candidates were the first real ingestion, via
+`../runner/prepare_calibration_candidates.py` run on Trident against real
+production.
+
 ## Why this file, not seed data
 
 Choosing what becomes an eligible Reader Lab candidate is a B2/CJ-2
 research decision — which case, which failure class, which source, why
-it's worth another human's independent read. This infrastructure pass
-does not make that decision on anyone's behalf; it only builds the pipe
-the decision flows through once someone (a future research pass, not
-this one) makes it.
+it's worth another human's independent read. The ingestion service below
+never makes that decision itself; it only validates that a bundle
+already deterministically states everything it claims (hashes,
+provenance, `dataset_purpose`, explicit `eligible_for_reader_lab=true`)
+and rejects it outright if not. The actual research judgment still
+happens upstream, in whoever builds the source artifact — a human
+research pass, as of RL-2026-002; `prepare-calibration-candidates-v1`
+formalizes packaging that decision, never making a new one.
 
 ## Every row needs, at minimum
 
@@ -52,11 +63,13 @@ Both checks existing independently is deliberate: a single point of
 enforcement is a single point of failure for the one rule this whole
 system exists to never violate.
 
-## Seeding it (a future pass, not this one)
+## Seeding it — now a real, canonical path
 
-When a research decision is made to seed real candidates, do it via a
-narrow, reviewed script or a direct `INSERT` — not by relaxing
-`eligible_for_reader_lab`'s default, and not by this orchestrator
-inventing rows on its own. Until then, `prepare-next-round-v1` reporting
-`NEEDS_ELIGIBLE_CANDIDATES` after every completed round is the correct,
-expected behavior — not a bug to route around.
+`src/candidateIngestion.js` is that "narrow, reviewed script" — never a
+direct `INSERT` (idempotent by deterministic `candidate_id` + content
+hash: identical resubmission is a no-op, same id with different content
+fails closed, never silently overwritten), never this orchestrator
+inventing a row on its own (it only ever reads rows this service wrote).
+A round with genuinely nothing eligible still correctly reports
+`NEEDS_ELIGIBLE_CANDIDATES` — not a bug to route around, still the
+correct behavior when the pool really is empty.

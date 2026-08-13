@@ -2310,3 +2310,185 @@ logs `checked out pinned commit d5f0d0510ed918ce4df21f629f025b828cf89708`
 — matching both the pin file's content and this repo's own `HEAD` at the
 time — and zero error/exception/traceback lines anywhere in the
 service's full journal history, before or after the restart.
+
+## 27. B2 → READER LAB CANDIDATE BRIDGE (2026-08-13, infrastructure pass)
+
+Purpose: RL-2026-001's completed run stopped at two genuine boundaries
+(`## 26`'s own account) — no eligible additional reviewer, and
+`calibration_candidates` empty. This pass removes the second boundary by
+building the write path `calibration/candidates/README.md` explicitly
+deferred ("a future pass, not this one"), and separately fixes a real
+instrumentation gap the first boundary's own analysis exposed: role-only
+`machine_comparison` masking a support-direction reversal (De Hooch/Z).
+
+### 27.1 Candidate ingestion — the one write path
+
+`reader-lab-worker/src/candidateIngestion.js`'s `ingestCalibrationCandidates`
+is now the only place a row is ever written to `calibration_candidates`.
+Identity is deterministic (`candidate_id = "cand_" + candidate_claim_id`,
+enforced by a real `UNIQUE` index, migration `0006`) — a resubmission of
+identical content is a no-op; the same id with different content is
+rejected, never overwritten. Hard rejections, independent of any policy
+value: `held_out_evaluation` (a third enforcement point, on top of
+`calibrationWorkflow.js`'s SQL filter and the runner's own re-check),
+missing provenance/source/candidate text, a hash that doesn't match
+recomputed content, `eligible_for_reader_lab` anything other than
+literally `true` (never omitted, never accepted-but-inert as `false`),
+and content whose `candidate_claim_id` already exists as a live
+production `items` row (reuse of already-shown content requires an
+explicit decision elsewhere, never automatic re-ingestion here).
+
+`POST /ops/calibration/candidates` accepts `CALIBRATION_RUNNER_TOKEN` or
+`ADMIN_TOKEN` (never `EXPORT_TOKEN` — a write route). Not a privilege
+expansion for the runner token in practice: it already fully controls
+`prepare_next_round`'s draft content via the job it computes and submits
+back; letting it also populate the pool that step reads from is the same
+trust boundary one step earlier, not a new one. `/admin` → Candidates
+(read-mostly visibility + an import fallback calling the identical
+service) confirms this in practice — no new dangerous write surface was
+opened: the runner still cannot create/revoke a reviewer, mutate a
+response, change policy, or publish a round (verified directly, both
+locally and against production).
+
+### 27.2 prepare-calibration-candidates-v1 — a script, not a job type
+
+Unlike `analyze-human-round`/`prepare-next-round`, this has no Worker-side
+trigger event to create a claimable job from — nothing in the Worker
+knows a B2 research pass finished. `calibration/runner/prepare_calibration_candidates.py`
+is instead a plain script that packages an already-frozen local research
+artifact into a bundle and pushes it directly to the ingestion endpoint,
+over the exact same `CALIBRATION_RUNNER_TOKEN`-authenticated path the
+persistent runner already uses. Deterministic only: a record missing a
+required field, an unrecognized `dataset_purpose`, or
+`eligible_for_reader_lab` not literally `true` is excluded with a
+`NEEDS_HUMAN_ACTION`-style reason and never guessed into shape — this
+script's own checks exist for a clean local error message; the server's
+own re-validation is the actual boundary.
+
+### 27.3 Reconciliation — `needs_eligible_candidates` resumes itself
+
+`calibrationOrchestrator.js`'s `armFreshCalibrationRun` generalizes the
+existing human-Retry mechanism (now shared by both) into
+`reconcileStuckCalibrationRuns`: fired synchronously right after an
+ingestion that adds ≥1 newly eligible candidate, plus an hourly cron
+safety net. A stuck run is claimed atomically (`resumed_by_run_id`,
+set-once) before a fresh run is armed for it — never two concurrent
+callers resuming the same stuck run, never requiring a human to click
+anything unless this genuinely fails. Always a full fresh run (re-runs
+`analyze_human_round` too, not just `prepare_next_round`) — analysis is
+versioned/recomputable by design, and Cloudflare Workflows has no
+mechanism to resume a `run()` that has already returned, so a fresh run
+is simpler and strictly safer than trying to splice a continuation onto
+a finished instance. The original stuck run's own row/artifacts are
+never modified — only ever linked to, via `resumed_by_run_id`.
+
+### 27.4 Comparison instrumentation — analyze-human-round-v2
+
+Adds `role_alignment`/`support_alignment`/`overall_relation` to every
+item already produced, computed only when `disposition ==
+"strong_reference"` (reviewers agreed) — for every other disposition all
+three report `not_comparable`, structurally: **a disagreement can never
+be silently resolved into an alignment claim.** `machine_comparison`
+itself keeps its exact v1 (role-only) meaning, unchanged, for
+compatibility — never retroactively reinterpreted. Full design,
+semantics, and the dropped/never-reachable enum values
+(`support_only_alignment`, a `contested` `overall_relation`) in
+`calibration/workflows/analyze-human-round-v2.md`.
+`analyze_human_round`/`prepare_next_round` now version independently
+(`ANALYZE_HUMAN_ROUND_VERSION = "v2"`, `PREPARE_NEXT_ROUND_VERSION =
+"v1"`) rather than sharing one constant, since this pass changed only
+the analysis side.
+
+Verified on a real De-Hooch-shaped synthetic case (local Worker + D1 +
+the real runner, two reviewers agreeing `source_established`, machine
+context declaring `machine_role=factual_dependency`/`machine_support=
+unsupported`): `machine_comparison: "aligns"` (preserved, matching what
+v1 would have said — the exact blind spot), `role_alignment: "aligned"`,
+`support_alignment: "human_more_permissive"`, `overall_relation:
+"role_only_alignment"` — the new fields correctly surface what the old
+field alone could not.
+
+### 27.5 RL-2026-002's own internal classification, corrected before ingestion
+
+`calibration/candidates/RL-2026-002-candidates.json`'s slot 2 (H12/c6)
+was presented as a clean, co-equal `ADJACENT_FACT_SYNTHESIS` instance
+alongside slot 1 (H04/c10) — but it also independently hardens the
+source's own hedge (`"can be at odds with"` → categorical `"structurally
+incompatible"`), a second, distinct linguistic phenomenon layered on top
+of the round's actual target. Corrected internally (never touching the
+reviewer-facing `source_snapshot`/`candidate_sentence`, which never
+carried this label anyway) to its own subtype,
+`ADJACENT_FACT_SYNTHESIS_WITH_HEDGE_HARDENING`, and moved out of the
+preregistration's flat `ADJACENT_FACT_SYNTHESIS` list into its own key.
+The round's primary hypothesis is deliberately small as a result — one
+clean adjacent-synthesis instance, not two — and no second clean example
+was manufactured to balance the sample.
+
+### 27.6 Production run — RL-2026-002 ingested through the real path
+
+Ingested via `prepare_calibration_candidates.py`, run from Trident, using
+the real production `CALIBRATION_RUNNER_TOKEN` (not simulated, not a
+direct D1 insert): all 5 candidates inserted, zero rejections. Ingestion
+correctly triggered synchronous reconciliation, which resumed RL-2026-001's
+stuck run — that resumed run's own analysis artifact happens to read
+`analyze-human-round-v1` (the pre-restart runner process claimed that
+specific job in the ~30-second window before the fix below could take
+effect; a benign timing artifact, not a defect — RL-2026-001's ORIGINAL
+v1 artifact remains byte-identical throughout, confirmed by hash). The
+resumed run's `prepare_next_round` step, which did run under the new
+code, correctly consumed all 5 candidates and produced a draft —
+assigned the round_id **`RL-2026-002`** entirely on its own (the
+existing sequential-numbering logic, not hardcoded), matching the
+research design's own planned name. Under the active production policy
+(`policy-v2`, `round_publication_policy=shadow_automatic`): `would_publish:
+true` recorded, round left `frozen`, **never published** — exactly the
+"draft created + shadow decision recorded + waiting for Jascha" outcome
+this pass targets, confirmed directly against production, not asserted.
+Draft manifest content independently checked: only the seven
+publish.js-defined item fields present, zero family/hypothesis/machine
+internal fields leaked.
+
+### 27.7 Incident found and fixed: shared-workspace collision with the daily content bot
+
+Discovered while updating Trident's checkout for this deploy: the
+calibration runner's own pin mechanism (`## 26.8`, `git checkout
+--detach <pin>` on the SHARED content workspace) collided with a
+separate, independent Trident automation — a daily content-publishing
+bot (same convention as `cripminds-daily.sh`) that also commits directly
+to this same repository's `main` branch, on the same shared working
+tree. Two unrelated automations sharing one mutable working tree, each
+assuming it owns HEAD, is the real bug. Concretely: after the calibration
+runner's pin mechanism first went live, the content bot's next two
+commits (a routine daily publish + a new article) landed on the detached
+HEAD chain instead of advancing `main`, leaving them reachable only via
+`git reflog` — not lost, but one `git gc` away from being unreachable,
+and never pushed to origin.
+
+**Recovered, not lost:** `git branch -f main <tip>` restored `main` to
+include both commits — a safe, non-destructive ref update recovering
+already-existing objects, never a rewrite. **Not pushed to origin** by
+this pass — publishing site content is that bot's own decision/step, out
+of scope here entirely; the recovery only makes sure ITS next run finds
+`main` in the state it expects.
+
+**Fixed at the root:** the calibration runner now checks out its pinned
+commit into a dedicated git worktree
+(`$WORKSPACE/.calibration-checkout`) — still inside the service's
+existing `ReadWritePaths` (a subdirectory of the already-granted path,
+no systemd unit change needed) — and never touches the shared
+workspace's own checkout again. The shared workspace stays on `main`,
+untouched, for the content bot's exclusive use. Verified directly:
+recreated the collision's fix by restarting the service (via a plain
+`kill -TERM` on its own process, not `sudo systemctl restart` — same
+UID, no privilege escalation, and `Restart=always` — already configured,
+unchanged — brought it back up exactly as `systemctl restart` would
+have) and confirmed the journal shows `checked out pinned commit ... in
+/srv/data/hermes/workspace/disability-ai-collective/.calibration-checkout`.
+
+**Not yet done:** Jascha has not yet run an actual `sudo systemctl
+restart` himself since this fix landed — this pass's own `kill -TERM`
+was a one-time, necessary substitute to pick up this deploy's code
+before the queued job ran under stale logic, not a standing replacement
+for that operational step. A future real restart (crash, reboot, or a
+deliberate one) will behave identically, since the fix is in the wrapper
+script itself, not in anything specific to how this pass triggered it.
