@@ -42,7 +42,7 @@ function automationStateFromPolicy(policy) {
   };
 }
 
-async function publicationDecisionForRound(env, draftRoundId) {
+export async function publicationDecisionForRound(env, draftRoundId) {
   if (!draftRoundId) return null;
   const row = await env.DB.prepare(
     "SELECT content_json FROM calibration_artifacts WHERE round_id = ? AND artifact_type = 'publication_policy_decision' ORDER BY created_at DESC LIMIT 1"
@@ -62,14 +62,20 @@ export async function handleAutomationSummary(request, env) {
   const policy = await getActivePolicy(env);
   const actionRequired = [];
 
-  const rounds = await env.DB.prepare("SELECT round_id, status FROM rounds WHERE status IN ('draft','review','frozen') ORDER BY created_at DESC").all();
+  // Only genuinely blocking states surface here — a mid-edit draft is
+  // Jascha's own unfinished work, never a surprise, and never listed
+  // (see adminApi.js's handleDashboard, which covers "frozen — ready to
+  // send" directly with plain wording; round_needs_review below exists
+  // only so /admin/api/calibration/automation on its own still reports
+  // frozen rounds, without duplicating that note twice on the Dashboard).
+  const rounds = await env.DB.prepare("SELECT round_id, status FROM rounds WHERE status = 'frozen' ORDER BY created_at DESC").all();
   for (const r of rounds.results) {
-    actionRequired.push({ type: "round_needs_review", round_id: r.round_id, note: `${r.round_id} is ${r.status} — review it in Rounds.` });
+    actionRequired.push({ type: "round_needs_review", round_id: r.round_id, note: `${r.round_id} is ready to send — review and publish when you're ready.` });
   }
 
   const failedRuns = await env.DB.prepare("SELECT run_id, round_id FROM calibration_runs WHERE status = 'failed' ORDER BY created_at DESC LIMIT 10").all();
   for (const r of failedRuns.results) {
-    actionRequired.push({ type: "calibration_failed", round_id: r.round_id, run_id: r.run_id, note: `Calibration failed for ${r.round_id} — retry in Calibration.` });
+    actionRequired.push({ type: "calibration_failed", round_id: r.round_id, run_id: r.run_id, note: `${r.round_id}: something needs your attention — see Calibration.` });
   }
 
   const recentPlans = await env.DB.prepare(
@@ -83,13 +89,14 @@ export async function handleAutomationSummary(request, env) {
       continue;
     }
     if (plan.status === "NEEDS_HUMAN_ACTION" || plan.status === "NEEDS_POLICY_CONFIGURATION") {
+      const count = (plan.flagged_items || []).length;
       actionRequired.push({
         type: `additional_review_${plan.status.toLowerCase()}`,
         round_id: row.round_id,
         note:
           plan.status === "NEEDS_POLICY_CONFIGURATION"
-            ? `${row.round_id}: additional_reviewers_per_contested_item isn't configured — set it in Policy before this can run automatically.`
-            : `${row.round_id}: automatic additional review couldn't proceed (${plan.reason || "no eligible reviewer available"}) — see Calibration.`,
+            ? `${row.round_id}: ${count} question${count === 1 ? "" : "s"} would benefit from one more independent reviewer, but this isn't configured yet.`
+            : `${row.round_id}: ${count} question${count === 1 ? "" : "s"} would benefit from one more independent reviewer. There are currently no other approved reviewers available.`,
       });
     }
   }
@@ -159,22 +166,14 @@ async function buildHistory(env, roundId, run) {
   return events.filter((e) => e.timestamp).sort((a, b) => a.timestamp.localeCompare(b.timestamp));
 }
 
-export async function handleCalibrationStatus(request, env, url) {
-  const requestedRoundId = url.searchParams.get("round_id");
-  let roundId = requestedRoundId;
-  if (!roundId) {
-    // Default to the most recently created round that has (or should
-    // have) a calibration story — published or completed, most recent
-    // first.
-    const row = await env.DB.prepare(
-      "SELECT round_id FROM rounds WHERE status IN ('published','completed') ORDER BY created_at DESC LIMIT 1"
-    ).first();
-    roundId = row ? row.round_id : null;
-  }
-  if (!roundId) return secureJson({ round_id: null, calibration_run: null, evidence_summary: null, history: [], next_action: "No round yet — create or import one." });
-
+// Everything the Calibration screen needs for one round, factored out so
+// roundSummary() (adminApi.js — used by Dashboard/Rounds cards) can pull
+// the same plain-language-able facts (evidence counts, additional-review
+// outcome, shadow decision) without a second, drifting query path.
+// Returns null fields rather than throwing when nothing has run yet.
+export async function getCalibrationSummaryForRound(env, roundId) {
   const round = await env.DB.prepare("SELECT * FROM rounds WHERE round_id = ?").bind(roundId).first();
-  if (!round) return secureJson({ error: "not_found" }, 404);
+  if (!round) return null;
 
   const reviewers = await roundReviewerProgress(env, roundId);
   const run = await env.DB.prepare("SELECT * FROM calibration_runs WHERE round_id = ? ORDER BY created_at DESC LIMIT 1")
@@ -217,9 +216,7 @@ export async function handleCalibrationStatus(request, env, url) {
   const nextRoundPublicationDecision = await publicationDecisionForRound(env, nextRoundDraft && nextRoundDraft.draft_round_id);
   const additionalReviewPublicationDecision = await publicationDecisionForRound(env, additionalReviewPlan && additionalReviewPlan.draft_round_id);
 
-  const history = await buildHistory(env, roundId, run);
-
-  return secureJson({
+  return {
     round_id: roundId,
     round_status: round.status,
     policy_version: run ? run.policy_version : null,
@@ -240,9 +237,33 @@ export async function handleCalibrationStatus(request, env, url) {
     next_round_publication_decision: nextRoundPublicationDecision,
     additional_review: additionalReviewPlan,
     additional_review_publication_decision: additionalReviewPublicationDecision,
-    history,
     next_action: nextActionForRound(round, run, reviewers),
-  });
+  };
+}
+
+export async function handleCalibrationStatus(request, env, url) {
+  const requestedRoundId = url.searchParams.get("round_id");
+  let roundId = requestedRoundId;
+  if (!roundId) {
+    // Default to the most recently created round that has (or should
+    // have) a calibration story — published or completed, most recent
+    // first.
+    const row = await env.DB.prepare(
+      "SELECT round_id FROM rounds WHERE status IN ('published','completed') ORDER BY created_at DESC LIMIT 1"
+    ).first();
+    roundId = row ? row.round_id : null;
+  }
+  if (!roundId) return secureJson({ round_id: null, calibration_run: null, evidence_summary: null, history: [], next_action: "No round yet — create or import one." });
+
+  const summary = await getCalibrationSummaryForRound(env, roundId);
+  if (!summary) return secureJson({ error: "not_found" }, 404);
+
+  const run = summary.calibration_run
+    ? await env.DB.prepare("SELECT * FROM calibration_runs WHERE run_id = ?").bind(summary.calibration_run.run_id).first()
+    : null;
+  const history = await buildHistory(env, roundId, run);
+
+  return secureJson({ ...summary, history });
 }
 
 export async function handleCalibrationRetry(request, env, identity, runId) {

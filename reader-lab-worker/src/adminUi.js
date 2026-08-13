@@ -58,6 +58,67 @@ export function renderAdminShell(nonce) {
   .adm-muted { opacity: 0.65; font-size: 0.9rem; }
   .adm-note { white-space: pre-wrap; }
   a.btn, button.btn { min-height: 44px; }
+
+  /* Plain-language round summary card (Dashboard + Rounds) */
+  .adm-round-card { border: 2px solid var(--foundation-gray-300, #c4b5a0); border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .adm-round-card--action { border-color: var(--brand-crip-blue, #3f5f89); border-width: 3px; }
+  .adm-round-id { font-size: 0.85rem; opacity: 0.6; margin-bottom: 0.15rem; }
+  .adm-round-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.15rem; }
+  .adm-round-meta { font-size: 0.9rem; opacity: 0.75; margin-bottom: 0.6rem; }
+  .adm-round-summary { margin: 0.5rem 0 0.9rem; line-height: 1.5; }
+  .adm-status-pill { display: inline-block; padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.8rem;
+    font-weight: 700; margin-bottom: 0.5rem; border: 2px solid currentColor; }
+  /* Two visually distinct shapes (not color alone): a filled dot prefix
+     differs between "needs you" and "just informational" pills. */
+  .adm-status-pill::before { content: "\\25CF "; }
+  .adm-status-pill--attention { color: #a3312a; }
+  .adm-status-pill--ready { color: #3f5f89; }
+  .adm-status-pill--progress { color: #8a6a1c; }
+  .adm-status-pill--done { color: #1c7a4d; }
+  .adm-status-pill--neutral { color: #6b6258; }
+
+  /* Native <details> for "Research details" / "Advanced" — keyboard and
+     screen-reader accessible with zero extra JS/ARIA wiring. */
+  details.adm-details { margin: 0.75rem 0; border: 1px solid var(--foundation-gray-300, #c4b5a0);
+    border-radius: 0.5rem; padding: 0; }
+  details.adm-details > summary { cursor: pointer; padding: 0.65rem 1rem; font-weight: 600; font-size: 0.9rem;
+    list-style: none; min-height: 44px; display: flex; align-items: center; }
+  details.adm-details > summary::-webkit-details-marker { display: none; }
+  details.adm-details > summary::before { content: "\\25B8"; margin-right: 0.5rem; opacity: 0.6; }
+  details.adm-details[open] > summary::before { content: "\\25BE"; }
+  details.adm-details > .adm-details-body { padding: 0 1rem 1rem; font-size: 0.85rem; }
+  details.adm-details table.adm-table { font-size: 0.85rem; }
+
+  .adm-big-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+  .adm-big-actions .btn { font-size: 1.05rem; padding: 0.8rem 1.5rem; }
+  .adm-reviewer-answer { border-left: 4px solid var(--foundation-gray-300, #c4b5a0); padding: 0.5rem 0.9rem;
+    margin-bottom: 0.5rem; }
+  .adm-reviewer-answer--agree { border-left-color: #1c7a4d; }
+  .adm-reviewer-answer--disagree { border-left-color: #8a6a1c; }
+
+  /* "Preview as reviewer" — deliberately mirrors the real reviewer app's
+     own look-and-feel (index.js's renderAppShell) so this is a faithful
+     preview, not an admin-styled approximation. Read-only: choice
+     "buttons" here are disabled, nothing here can record a response. */
+  .adm-preview-banner { background: var(--brand-crip-blue-50, #eef2f7); border: 2px solid var(--brand-crip-blue, #3f5f89);
+    border-radius: 0.5rem; padding: 0.85rem 1.1rem; margin-bottom: 1.5rem; font-weight: 600; }
+  .adm-preview-frame { max-width: 640px; margin: 0 auto; padding: 1.5rem 1.25rem; border: 1px dashed var(--foundation-gray-300, #c4b5a0); border-radius: 0.75rem; }
+  .adm-preview-progress { font-size: 0.85rem; opacity: 0.7; margin-bottom: 1.25rem; }
+  .adm-preview-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6; margin-bottom: 0.5rem; }
+  .adm-preview-text { font-size: 1.1rem; line-height: 1.6; margin-bottom: 1.5rem; }
+  .adm-preview-choice { display: block; width: 100%; text-align: left; padding: 0.9rem 1.1rem; margin-bottom: 0.6rem;
+    border: 2px solid var(--foundation-gray-300, #c4b5a0); border-radius: 0.5rem; background: transparent; color: inherit;
+    font: inherit; cursor: default; }
+  .adm-preview-item + .adm-preview-item { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid var(--foundation-gray-300, #c4b5a0); }
+
+  @media (max-width: 30rem) {
+    .adm-shell { padding: 1.25rem 0.9rem 4rem; }
+    .adm-round-title { font-size: 1.1rem; }
+    .adm-big-actions { flex-direction: column; }
+    .adm-big-actions .btn { width: 100%; text-align: center; }
+    table.adm-table, table.adm-table thead { display: none; }
+  }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 </head>
@@ -66,14 +127,96 @@ export function renderAdminShell(nonce) {
 <script nonce="${nonce}">
 (function () {
   var app = document.getElementById("adm-app");
-  var STATUS_LABEL = { draft: "Draft", review: "Review", frozen: "Frozen", published: "Active", completed: "Complete" };
+
+  // ---- plain-language translations ---------------------------------
+  // Canonical snake_case statuses stay exactly as the database/API use
+  // them everywhere internally — these maps are presentation-only, used
+  // at render time. Raw values remain visible under "Research details"/
+  // "Advanced" on every screen that has one, never deleted.
+
+  var STATUS_LABEL = { draft: "Draft", review: "Ready to send", frozen: "Ready to send", published: "In progress", completed: "Finished" };
+  var STATUS_PILL_CLASS = { draft: "neutral", review: "ready", frozen: "ready", published: "progress", completed: "done" };
   var DATASET_PURPOSE_LABEL = { pilot: "Pilot", development: "Development", blind_calibration: "Blind calibration", contested: "Contested" };
   var DISPOSITION_LABEL = { development_reference: "Development reference", contested: "Contested", hold_for_later: "Hold for later" };
+
+  var CALIBRATION_RUN_PLAIN = {
+    queued: "Getting started",
+    analysis_pending: "Looking at the answers",
+    evidence_updated: "Analysis complete",
+    next_round_pending: "Preparing the next round",
+    needs_eligible_candidates: "No new research questions are available yet",
+    waiting_for_human_approval: "Next round ready to send",
+    next_round_shadow_recorded: "Next round ready to send",
+    next_round_published_automatically: "Next round sent automatically",
+    failed: "Something needs your attention",
+  };
+
+  var PUBLIC_RESPONSE_TEXT = {
+    source_supports: "\\u201CThe source supports this.\\u201D",
+    reading_of_source: "\\u201CThis is a reading of the source.\\u201D",
+    adds_unestablished: "\\u201CThis adds something the source doesn't establish.\\u201D",
+    not_sure: "\\u201CI'm not sure.\\u201D",
+  };
+
+  function plainRoundStatus(round) {
+    // A completed round whose analysis is still waiting on a candidate
+    // pool reuses "needs_eligible_candidates" language even though it's
+    // a calibration_run concept, not round.status — Jascha shouldn't
+    // need to know that distinction exists.
+    if (round.status === "completed" && round.calibration_next_action_key === "needs_eligible_candidates") {
+      return "No new research questions are available yet";
+    }
+    return STATUS_LABEL[round.status] || round.status;
+  }
+
+  function statusPill(round) {
+    var cls = STATUS_PILL_CLASS[round.status] || "neutral";
+    return el("span", { class: "adm-status-pill adm-status-pill--" + cls, text: plainRoundStatus(round) });
+  }
+
+  // details/summary wrapper — used everywhere a technical/raw block
+  // should exist but stay out of the way by default.
+  function researchDetails(titleText, bodyChildren) {
+    var d = el("details", { class: "adm-details" });
+    d.appendChild(el("summary", { text: titleText }));
+    var bodyDiv = el("div", { class: "adm-details-body" });
+    (bodyChildren || []).forEach(function (c) { if (c) bodyDiv.appendChild(c); });
+    d.appendChild(bodyDiv);
+    return d;
+  }
+
+  function kvTable(pairs) {
+    var table = el("table", { class: "adm-table" });
+    var tbody = el("tbody", {});
+    pairs.forEach(function (pair) {
+      if (pair[1] === undefined || pair[1] === null || pair[1] === "") return;
+      tbody.appendChild(el("tr", {}, [el("td", { style: "font-weight:600;white-space:nowrap;" }, [pair[0]]), el("td", {}, [String(pair[1])])]));
+    });
+    table.appendChild(tbody);
+    return table;
+  }
 
   function el(tag, attrs, children) {
     var e = document.createElement(tag);
     for (var k in (attrs || {})) {
       if (k === "text") continue;
+      if (k === "style") {
+        // The CSP here has no 'unsafe-inline' on style-src (same nonce-
+        // only policy as script-src) — setting the style ATTRIBUTE
+        // directly is blocked outright. Setting individual CSSOM
+        // properties via element.style.setProperty is not attribute-
+        // level inline style and isn't restricted by style-src, so every
+        // style:"prop:value;" call site below keeps working exactly as
+        // written, with zero change needed at each call site.
+        String(attrs[k]).split(";").forEach(function (decl) {
+          var idx = decl.indexOf(":");
+          if (idx < 0) return;
+          var prop = decl.slice(0, idx).trim();
+          var val = decl.slice(idx + 1).trim();
+          if (prop && val) e.style.setProperty(prop, val);
+        });
+        continue;
+      }
       e.setAttribute(k, attrs[k]);
     }
     if (attrs && attrs.text !== undefined) e.textContent = attrs.text;
@@ -145,119 +288,139 @@ export function renderAdminShell(nonce) {
       if (!res.ok) { body.appendChild(el("p", { class: "adm-err" }, ["Couldn't load the dashboard."])); return; }
       var d = res.body;
 
+      // ---- What do I click next? -----------------------------------
+      body.appendChild(el("p", { class: "adm-title" }, ["Action required"]));
+      if (d.needs_attention.length === 0) {
+        body.appendChild(el("p", { style: "font-weight:700;font-size:1.1rem;" }, ["No action required."]));
+      } else {
+        d.needs_attention.forEach(function (n) {
+          var box = el("div", { class: "adm-round-card adm-round-card--action" });
+          box.appendChild(el("p", { style: "font-weight:600;margin-bottom:0.5rem;" }, [n.note]));
+          // The right next click depends on what's actually blocking —
+          // "add a reviewer" is a different, more useful action than
+          // "go look at the round" when the real problem is nobody else
+          // is available to give a second opinion.
+          var action =
+            n.type === "additional_review_needs_human_action" ? { href: "#/reviewers", label: "Add reviewer" }
+            : n.type === "additional_review_needs_policy_configuration" ? { href: "#/policy", label: "Open Policy" }
+            : n.type === "calibration_failed" ? { href: "#/calibration", label: "Open Calibration" }
+            : { href: "#/rounds/" + n.round_id, label: "Go to " + n.round_id };
+          box.appendChild(el("a", { class: "btn btn--primary", href: action.href }, [action.label]));
+          body.appendChild(box);
+        });
+      }
+
+      // ---- What happened? (every round, plain language) -------------
+      body.appendChild(el("p", { class: "adm-title", style: "margin-top:2rem;" }, ["Rounds"]));
+      if (!d.rounds.length) {
+        body.appendChild(el("p", { class: "adm-muted" }, ["No rounds yet."]));
+      } else {
+        d.rounds.forEach(function (r) { body.appendChild(renderRoundSummaryCard(r)); });
+      }
+
+      var actions = el("div", { class: "adm-actions" });
+      actions.appendChild(el("a", { class: "btn btn--primary", href: "#/rounds/new" }, ["New round"]));
+      actions.appendChild(el("a", { class: "btn btn--outline", href: "#/import" }, ["Import draft"]));
+      body.appendChild(actions);
+
+      // Optional governance and full automation/policy state are real,
+      // useful facts — just never things Jascha has to act on to keep
+      // Reader Lab running, so they live below the fold, collapsed.
+      var advanced = [];
+      if (d.optional_governance && d.optional_governance.length) {
+        var ogList = el("ul", {});
+        d.optional_governance.forEach(function (n) {
+          ogList.appendChild(el("li", {}, [el("a", { href: "#/rounds/" + n.round_id }, [n.round_id]), " \\u2014 " + n.note]));
+        });
+        advanced.push(el("p", { class: "adm-muted" }, ["Optional research classification not set for these rounds \\u2014 never required:"]));
+        advanced.push(ogList);
+      }
       if (d.automation) {
-        body.appendChild(el("p", { class: "adm-title" }, ["Automation"]));
-        var autoCard = el("div", { class: "adm-card" });
         var AUTOMATION_ROW_LABEL = {
           round_construction: "Round construction", analysis: "Analysis",
           existing_reviewer_assignment: "Reviewer assignment", additional_review: "Additional review",
           publication: "Publication", candidate_experiments: "Candidate experiments",
           fine_tune_experiments: "Fine-tune experiments", production_promotion: "Production promotion",
         };
+        var autoRows = [];
         Object.keys(AUTOMATION_ROW_LABEL).forEach(function (key) {
           if (d.automation[key] === undefined) return;
-          var row = el("div", { class: "adm-row", style: "margin-bottom:0.35rem;" });
-          row.appendChild(el("span", { text: AUTOMATION_ROW_LABEL[key] }));
-          row.appendChild(el("span", { class: "adm-muted", text: d.automation[key] }));
-          autoCard.appendChild(row);
+          autoRows.push([AUTOMATION_ROW_LABEL[key], d.automation[key]]);
         });
-        body.appendChild(autoCard);
+        advanced.push(el("p", { class: "adm-label" }, ["Automation state"]));
+        advanced.push(kvTable(autoRows));
       }
-
-      body.appendChild(el("p", { class: "adm-title", style: "margin-top:2rem;" }, ["Current round"]));
-      if (d.active_round) {
-        body.appendChild(renderRoundCard(d.active_round, true));
-      } else {
-        body.appendChild(el("p", { class: "adm-muted" }, ["No round is currently active."]));
-      }
-
-      body.appendChild(el("p", { class: "adm-title", style: "margin-top:2rem;" }, ["Action required"]));
-      if (d.needs_attention.length === 0) {
-        body.appendChild(el("p", { style: "font-weight:600;" }, ["No action required."]));
-      } else {
-        var ul = el("ul", {});
-        d.needs_attention.forEach(function (n) {
-          ul.appendChild(el("li", {}, [el("a", { href: "#/rounds/" + n.round_id }, [n.round_id]), " \\u2014 " + n.note]));
-        });
-        body.appendChild(ul);
-      }
-
-      if (d.optional_governance && d.optional_governance.length) {
-        body.appendChild(el("p", { class: "adm-title", style: "margin-top:1.5rem;" }, ["Optional governance"]));
-        body.appendChild(el("p", { class: "adm-muted" }, ["Never blocks routine operation \\u2014 set only if you want to record a research disposition."]));
-        var ogUl = el("ul", {});
-        d.optional_governance.forEach(function (n) {
-          ogUl.appendChild(el("li", { class: "adm-muted" }, [el("a", { href: "#/rounds/" + n.round_id }, [n.round_id]), " \\u2014 " + n.note]));
-        });
-        body.appendChild(ogUl);
-      }
-
-      body.appendChild(el("p", { class: "adm-title", style: "margin-top:2rem;" }, ["Rounds"]));
-      body.appendChild(renderRoundsTable(d.rounds));
-
-      var actions = el("div", { class: "adm-actions" });
-      actions.appendChild(el("a", { class: "btn btn--primary", href: "#/rounds/new" }, ["New round"]));
-      actions.appendChild(el("a", { class: "btn btn--outline", href: "#/import" }, ["Import draft"]));
-      body.appendChild(actions);
+      if (advanced.length) body.appendChild(researchDetails("Advanced", advanced));
     });
   });
 
-  function renderRoundCard(r, showReviewers) {
-    var card = el("div", { class: "adm-card" });
-    var head = el("div", { class: "adm-row" });
-    head.appendChild(el("h3", {}, [el("a", { href: "#/rounds/" + r.round_id }, [r.round_id])]));
-    head.appendChild(statusBadge(r.status));
-    card.appendChild(head);
-    card.appendChild(el("p", { class: "adm-muted" }, [(DATASET_PURPOSE_LABEL[r.dataset_purpose] || r.dataset_purpose) + " \\u00b7 " + r.item_count + " questions"]));
-    if (showReviewers && r.status === "completed") {
-      var exportStatus = (r.export_status && r.export_status.status) || "not_ready";
-      if (exportStatus === "ready") {
-        card.appendChild(el("p", { style: "margin-top:0.5rem;" }, ["Research export ready."]));
-        card.appendChild(el("a", {
-          class: "btn btn--outline btn--sm",
-          href: "/admin/api/rounds/" + encodeURIComponent(r.round_id) + "/export/download",
-        }, ["Download research handoff"]));
-      } else if (exportStatus === "failed") {
-        card.appendChild(el("p", { class: "adm-err", style: "margin-top:0.5rem;" }, ["Export error \\u2014 see round page to retry."]));
+  // ---- plain-language round summary (shared: Dashboard + Rounds) ----
+
+  function roundHeadlineLines(r) {
+    var lines = [];
+    if (r.status === "draft" || r.status === "review") {
+      lines.push("Still being written.");
+    } else if (r.status === "frozen") {
+      if (r.publication_decision) {
+        lines.push(r.publication_decision.would_publish ? "Automatic checks passed." : "Automatic checks found a problem.");
       } else {
-        card.appendChild(el("p", { class: "adm-muted", style: "margin-top:0.5rem;" }, ["Preparing the research export\\u2026"]));
+        lines.push("Ready for you to review.");
       }
-    } else if (showReviewers && r.reviewers) {
-      r.reviewers.forEach(function (rv) {
-        var row = el("div", { class: "adm-row", style: "margin-top:0.5rem;" });
-        row.appendChild(el("span", { text: rv.reviewer_id }));
-        row.appendChild(el("span", { class: "adm-muted", text: rv.answered + " / " + rv.assigned }));
-        card.appendChild(row);
-        var bar = el("div", { class: "adm-progress-bar", role: "progressbar", "aria-valuenow": String(rv.answered), "aria-valuemin": "0", "aria-valuemax": String(rv.assigned) });
-        var pct = rv.assigned ? Math.round((rv.answered / rv.assigned) * 100) : 0;
-        bar.appendChild(el("div", { class: "adm-progress-fill", style: "width:" + pct + "%;" }));
-        card.appendChild(bar);
-      });
+    } else if (r.status === "published") {
+      var waiting = (r.reviewers || []).filter(function (rv) { return rv.answered < rv.assigned; }).map(function (rv) { return rv.reviewer_id; });
+      lines.push(waiting.length ? "Waiting for " + waiting.join(" and ") + " to answer." : "Waiting for the round to finish.");
+    } else if (r.status === "completed") {
+      var calib = r.calibration;
+      if (!calib || !calib.evidence_summary) {
+        lines.push("Analysis is running\\u2026");
+      } else {
+        var ev = calib.evidence_summary;
+        var agree = (ev.strong_reference || 0) + (ev.provisional_reference || 0);
+        var needMore = (ev.contested || 0) + (ev.needs_more_reviewers || 0);
+        lines.push("Analysis complete.");
+        if (agree) lines.push(agree + " question" + (agree === 1 ? "" : "s") + " had clear agreement.");
+        if (needMore) lines.push(needMore + " question" + (needMore === 1 ? " needs" : "s need") + " more opinions.");
+      }
+      if (calib && calib.next_round_draft) {
+        if (calib.next_round_draft.status === "DRAFT_READY") lines.push("Next round ready to send.");
+        else if (calib.next_round_draft.status === "NEEDS_ELIGIBLE_CANDIDATES") lines.push("No new research questions are available yet.");
+      }
     }
+    return lines;
+  }
+
+  function renderRoundSummaryCard(r) {
+    var card = el("div", { class: "adm-round-card" });
+    card.appendChild(el("p", { class: "adm-round-id" }, [r.round_id]));
+    card.appendChild(statusPill(r));
+    card.appendChild(el("p", { class: "adm-round-meta" }, [r.item_count + " question" + (r.item_count === 1 ? "" : "s") + " \\u00b7 " + r.reviewer_count + " reviewer" + (r.reviewer_count === 1 ? "" : "s")]));
+
+    var summaryLines = roundHeadlineLines(r);
+    if (summaryLines.length) {
+      var summaryP = el("p", { class: "adm-round-summary" });
+      summaryLines.forEach(function (line, i) { if (i > 0) summaryP.appendChild(el("br", {})); summaryP.appendChild(document.createTextNode(line)); });
+      card.appendChild(summaryP);
+    }
+
+    var actions = el("div", { class: "adm-big-actions" });
+    if (r.status === "draft" || r.status === "review") {
+      actions.appendChild(el("a", { class: "btn btn--primary", href: "#/rounds/" + r.round_id }, ["Continue editing"]));
+    } else if (r.status === "frozen") {
+      actions.appendChild(el("a", { class: "btn btn--outline", href: "#/rounds/" + r.round_id + "/preview" }, ["Preview as reviewer"]));
+      actions.appendChild(el("a", { class: "btn btn--primary", href: "#/rounds/" + r.round_id }, ["Review & publish"]));
+    } else if (r.status === "published") {
+      actions.appendChild(el("a", { class: "btn btn--outline", href: "#/rounds/" + r.round_id }, ["View progress"]));
+    } else if (r.status === "completed") {
+      actions.appendChild(el("a", { class: "btn btn--primary", href: "#/results/" + r.round_id }, ["View summary"]));
+      actions.appendChild(el("a", { class: "btn btn--outline", href: "#/rounds/" + r.round_id }, ["Research details"]));
+    }
+    card.appendChild(actions);
     return card;
   }
 
   function renderRoundsTable(rounds) {
-    var wrap = el("div", { class: "adm-table-wrap" });
-    var table = el("table", { class: "adm-table" });
-    var thead = el("thead", {}, [el("tr", {}, [
-      el("th", { text: "Round" }), el("th", { text: "Status" }), el("th", { text: "Purpose" }),
-      el("th", { text: "Questions" }), el("th", { text: "Reviewers" }), el("th", { text: "Created" }),
-    ])]);
-    table.appendChild(thead);
-    var tbody = el("tbody", {});
-    rounds.forEach(function (r) {
-      tbody.appendChild(el("tr", {}, [
-        el("td", {}, [el("a", { href: "#/rounds/" + r.round_id }, [r.round_id])]),
-        el("td", {}, [statusBadge(r.status)]),
-        el("td", { text: DATASET_PURPOSE_LABEL[r.dataset_purpose] || r.dataset_purpose }),
-        el("td", { text: String(r.item_count) }),
-        el("td", { text: String(r.reviewer_count) }),
-        el("td", { text: fmtDate(r.created_at) }),
-      ]));
-    });
-    table.appendChild(tbody);
-    wrap.appendChild(table);
+    var wrap = el("div", {});
+    rounds.forEach(function (r) { wrap.appendChild(renderRoundSummaryCard(r)); });
     return wrap;
   }
 
@@ -594,61 +757,69 @@ export function renderAdminShell(nonce) {
         }
 
         var card = el("div", { class: "adm-card" });
-        card.appendChild(el("p", { class: "adm-title" }, ["Current"]));
-        card.appendChild(el("h3", {}, [el("a", { href: "#/rounds/" + d.round_id }, [d.round_id])]));
+        card.appendChild(el("p", { class: "adm-round-id" }, [d.round_id]));
 
-        (d.reviewers || []).forEach(function (rv) {
-          card.appendChild(el("p", {}, [rv.reviewer_id + " " + rv.answered + " / " + rv.assigned]));
-        });
-
-        card.appendChild(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Workflow"]));
-        card.appendChild(el("p", {}, [d.calibration_run ? (d.calibration_run.status + (d.calibration_run.current_step ? " (" + d.calibration_run.current_step + ")" : "")) : "Not started"]));
-
-        if (d.evidence_summary) {
-          card.appendChild(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Evidence"]));
-          Object.keys(EVIDENCE_LABELS).forEach(function (key) {
-            card.appendChild(el("p", {}, [EVIDENCE_LABELS[key] + " \\u00a0\\u00a0 " + (d.evidence_summary[key] || 0)]));
-          });
-        }
-
-        card.appendChild(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Next action"]));
-        card.appendChild(el("p", { style: "font-weight:600;" }, [d.next_action]));
-
-        if (d.next_round_draft && d.next_round_draft.draft_round_id) {
-          card.appendChild(el("p", {}, [el("a", { class: "btn btn--primary", href: "#/rounds/" + d.next_round_draft.draft_round_id }, ["Review next round"])]));
-        }
-        if (d.next_round_publication_decision) {
-          card.appendChild(renderPublicationDecision(d.next_round_publication_decision, "Next round"));
-        }
-
-        if (d.additional_review) {
-          card.appendChild(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Additional review"]));
-          card.appendChild(renderAdditionalReviewPlan(d.additional_review));
-        }
-        if (d.additional_review_publication_decision) {
-          card.appendChild(renderPublicationDecision(d.additional_review_publication_decision, "Additional review round"));
-        }
-
-        if (d.calibration_run && d.calibration_run.status === "failed") {
-          card.appendChild(el("p", { class: "adm-err", style: "margin-top:0.5rem;" }, [d.calibration_run.error || "Calibration failed."]));
-          var retryBtn = el("button", { class: "btn btn--outline" }, ["Retry"]);
+        var runFailed = d.calibration_run && d.calibration_run.status === "failed";
+        if (runFailed) {
+          card.appendChild(el("p", { style: "font-weight:700;color:#a3312a;" }, ["Something needs your attention."]));
+          card.appendChild(el("p", { class: "adm-muted" }, [d.calibration_run.error || "The automatic analysis ran into a problem."]));
+          var retryBtn = el("button", { class: "btn btn--primary" }, ["Try again"]);
           retryBtn.addEventListener("click", function () {
             retryBtn.disabled = true;
             api("/calibration/runs/" + encodeURIComponent(d.calibration_run.run_id) + "/retry", { method: "POST" }).then(function () { load(); });
           });
           card.appendChild(retryBtn);
-        }
+        } else if (!d.evidence_summary) {
+          card.appendChild(el("p", { style: "font-weight:600;" }, [d.calibration_run ? (CALIBRATION_RUN_PLAIN[d.calibration_run.status] || "Working on it\\u2026") : "Waiting for this round to finish."]));
+        } else {
+          var ev = d.evidence_summary;
+          var agree = (ev.strong_reference || 0) + (ev.provisional_reference || 0);
+          var needMore = (ev.contested || 0) + (ev.needs_more_reviewers || 0);
+          card.appendChild(el("p", { class: "adm-label" }, ["Results from this round"]));
+          if (agree) card.appendChild(el("p", {}, [agree + " question" + (agree === 1 ? "" : "s") + ": reviewers agreed clearly."]));
+          if (needMore) card.appendChild(el("p", {}, [needMore + " question" + (needMore === 1 ? "" : "s") + ": reviewers disagreed and may benefit from another opinion."]));
 
+          if (d.additional_review) {
+            var plain = renderAdditionalReviewPlain(d.additional_review);
+            if (plain) card.appendChild(plain);
+          }
+
+          if (d.next_round_draft) {
+            card.appendChild(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Next round"]));
+            if (d.next_round_draft.status === "DRAFT_READY" && d.next_round_draft.draft_round_id) {
+              card.appendChild(el("p", { style: "font-weight:600;" }, ["Next round ready to send."]));
+              card.appendChild(el("a", { class: "btn btn--primary btn--sm", href: "#/rounds/" + d.next_round_draft.draft_round_id }, ["Review " + d.next_round_draft.draft_round_id]));
+            } else {
+              card.appendChild(el("p", {}, ["No new research questions are available yet."]));
+            }
+          }
+        }
         body.appendChild(card);
 
-        if (d.history && d.history.length) {
-          body.appendChild(el("p", { class: "adm-title", style: "margin-top:1.5rem;" }, ["History"]));
-          var list = el("ul", {});
-          d.history.forEach(function (ev) {
-            list.appendChild(el("li", {}, [fmtDate(ev.timestamp) + " \\u2014 " + ev.label]));
-          });
-          body.appendChild(list);
+        var advanced = [];
+        advanced.push(kvTable([
+          ["Round-scoped reviewer counts", (d.reviewers || []).map(function (rv) { return rv.reviewer_id + ": " + rv.answered + "/" + rv.assigned; }).join(", ")],
+          ["Workflow status (raw)", d.calibration_run ? d.calibration_run.status + (d.calibration_run.current_step ? " (" + d.calibration_run.current_step + ")" : "") : "not started"],
+          ["Policy version", d.policy_version],
+          ["Next action (internal)", d.next_action],
+        ]));
+        if (d.evidence_summary) {
+          advanced.push(el("p", { class: "adm-label", style: "margin-top:0.75rem;" }, ["Raw evidence counts"]));
+          advanced.push(kvTable(Object.keys(EVIDENCE_LABELS).map(function (key) { return [EVIDENCE_LABELS[key], d.evidence_summary[key] || 0]; })));
         }
+        if (d.additional_review) {
+          advanced.push(el("p", { class: "adm-label", style: "margin-top:0.75rem;" }, ["Additional review (raw)"]));
+          advanced.push(renderAdditionalReviewPlan(d.additional_review));
+        }
+        if (d.additional_review_publication_decision) advanced.push(renderPublicationDecision(d.additional_review_publication_decision, "Additional review round"));
+        if (d.next_round_publication_decision) advanced.push(renderPublicationDecision(d.next_round_publication_decision, "Next round"));
+        if (d.history && d.history.length) {
+          advanced.push(el("p", { class: "adm-label", style: "margin-top:0.75rem;" }, ["History"]));
+          var list = el("ul", {});
+          d.history.forEach(function (ev) { list.appendChild(el("li", {}, [fmtDate(ev.timestamp) + " \\u2014 " + ev.label])); });
+          advanced.push(list);
+        }
+        body.appendChild(researchDetails("Research details", advanced));
       });
     }
     load();
@@ -688,7 +859,7 @@ export function renderAdminShell(nonce) {
     return block;
   }
 
-  function renderReviewerPreview(items) {
+  function renderReviewerPreview(items, showInternal) {
     var wrap = el("div", {});
     items.forEach(function (item, i) {
       var block = el("div", { class: "adm-item-block" });
@@ -696,10 +867,59 @@ export function renderAdminShell(nonce) {
       block.appendChild(el("p", { class: "rl-text" }, ["\\u201C" + item.source_snapshot + "\\u201D"]));
       block.appendChild(el("p", { class: "adm-label" }, ["The sentence"]));
       block.appendChild(el("p", { class: "rl-text" }, ["\\u201C" + item.candidate_sentence + "\\u201D"]));
+      if (showInternal && item.internal_note) {
+        block.appendChild(el("p", { class: "adm-label" }, ["Internal note (never shown to reviewers)"]));
+        block.appendChild(el("p", { class: "adm-note adm-muted" }, [item.internal_note]));
+      }
+      if (showInternal && item.provenance) {
+        block.appendChild(el("p", { class: "adm-label" }, ["Provenance"]));
+        block.appendChild(el("p", { class: "adm-muted" }, [item.provenance]));
+      }
       wrap.appendChild(block);
     });
     return wrap;
   }
+
+  // "Preview as reviewer" — the primary way Jascha reviews a round
+  // before publishing (## 10). Renders items exactly as a reviewer will
+  // see them: no family labels, no B2/machine terminology, no research
+  // rationale, no internal candidate IDs — only what the round detail
+  // API already returns for reviewer-facing fields, same guarantee
+  // publish.js's canonicalizeManifest already enforces server-side.
+  route(/^\\/rounds\\/([^/]+)\\/preview$/, function (roundId) {
+    app.appendChild(el("h1", { class: "text-h2" }, ["Preview \\u2014 " + roundId]));
+    var body = el("div", {}, ["Loading\\u2026"]);
+    app.appendChild(body);
+    api("/rounds/" + encodeURIComponent(roundId)).then(function (res) {
+      body.innerHTML = "";
+      if (!res.ok) { body.appendChild(el("p", { class: "adm-err" }, ["Couldn't load this round."])); return; }
+      var round = res.body;
+      body.appendChild(el("div", { class: "adm-preview-banner" }, [
+        "This is exactly what each reviewer will see" + (round.reviewer_count ? " (" + round.reviewer_count + " reviewer" + (round.reviewer_count === 1 ? "" : "s") + " assigned)" : "") + " \\u2014 nothing here can send an answer."
+      ]));
+      var frame = el("div", { class: "adm-preview-frame" });
+      (round.items || []).forEach(function (item, i) {
+        var block = el("div", { class: "adm-preview-item" });
+        block.appendChild(el("p", { class: "adm-preview-progress" }, [(i + 1) + " of " + round.items.length]));
+        block.appendChild(el("p", { class: "adm-preview-label" }, ["Source"]));
+        block.appendChild(el("p", { class: "adm-preview-text" }, ["\\u201C" + item.source_snapshot + "\\u201D"]));
+        block.appendChild(el("p", { class: "adm-preview-label" }, ["The sentence"]));
+        block.appendChild(el("p", { class: "adm-preview-text" }, ["\\u201C" + item.candidate_sentence + "\\u201D"]));
+        block.appendChild(el("p", { class: "adm-preview-label" }, ["Which feels most accurate?"]));
+        [
+          "The source supports this", "This is a reading of the source",
+          "This adds something the source doesn't establish", "I'm not sure",
+        ].forEach(function (choice) {
+          block.appendChild(el("button", { class: "adm-preview-choice", type: "button", disabled: "disabled" }, [choice]));
+        });
+        frame.appendChild(block);
+      });
+      body.appendChild(frame);
+      body.appendChild(el("div", { class: "adm-actions", style: "margin-top:1.5rem;" }, [
+        el("a", { class: "btn btn--outline", href: "#/rounds/" + roundId }, ["Back to round"]),
+      ]));
+    });
+  });
 
   route(/^\\/rounds\\/(new)$/, function (id) { renderRoundEditor(null); });
   route(/^\\/rounds\\/([^/]+)$/, function (id) { renderRoundEditor(id); });
@@ -841,24 +1061,20 @@ export function renderAdminShell(nonce) {
   }
 
   function renderFrozenReviewView(body, round, reload) {
-    body.appendChild(el("p", { class: "adm-muted" }, ["This is exactly what reviewers will see. Nothing is written to production until you publish."]));
-    body.appendChild(el("p", {}, [
-      el("strong", {}, ["Round: "]), round.round_id, " \\u00b7 ",
-      DATASET_PURPOSE_LABEL[round.dataset_purpose] || round.dataset_purpose, " \\u00b7 ",
-      round.reviewer_count + " reviewer(s), " + round.item_count + " question(s)",
-    ]));
-    body.appendChild(renderReviewerPreview(round.items));
+    body.appendChild(el("p", { class: "adm-round-meta" }, [round.item_count + " question" + (round.item_count === 1 ? "" : "s") + " \\u00b7 " + round.reviewer_count + " reviewer" + (round.reviewer_count === 1 ? "" : "s")]));
 
-    var actions = el("div", { class: "adm-actions" });
-    var editBtn = el("a", { class: "btn btn--outline", href: "#/rounds/" + round.round_id + "?edit" }, ["Edit again"]);
-    editBtn.addEventListener("click", function (e) {
-      e.preventDefault();
-      api("/rounds/" + encodeURIComponent(round.round_id), { method: "PUT", body: JSON.stringify({ status: "draft" }) }).then(function () { reload(); });
-    });
-    actions.appendChild(editBtn);
+    var checksLine = round.publication_decision
+      ? (round.publication_decision.would_publish ? "Automatic checks passed." : "Automatic checks found a problem \\u2014 see Research details before publishing.")
+      : "Nothing is sent to reviewers until you publish.";
+    body.appendChild(el("p", { style: "font-weight:600;font-size:1.05rem;" }, [checksLine]));
 
-    var publishBtn = el("button", { class: "btn btn--primary" }, ["Freeze & Publish"]);
     var messageBox = el("div", {});
+
+    var actions = el("div", { class: "adm-big-actions" });
+    actions.appendChild(el("a", { class: "btn btn--outline", href: "#/rounds/" + round.round_id + "/preview" }, ["Preview as reviewer"]));
+
+    var publishBtn = el("button", { class: "btn btn--primary" }, ["Publish"]);
+    if (round.publication_decision && !round.publication_decision.would_publish) publishBtn.disabled = true;
     publishBtn.addEventListener("click", function () {
       publishBtn.disabled = true;
       api("/rounds/" + encodeURIComponent(round.round_id) + "/publish", { method: "POST" }).then(function (res) {
@@ -871,6 +1087,33 @@ export function renderAdminShell(nonce) {
     actions.appendChild(publishBtn);
     body.appendChild(actions);
     body.appendChild(messageBox);
+
+    var editBtn = el("a", { class: "btn btn--outline btn--sm", href: "#/rounds/" + round.round_id + "?edit", style: "margin-top:0.75rem;display:inline-block;" }, ["Edit again"]);
+    editBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      api("/rounds/" + encodeURIComponent(round.round_id), { method: "PUT", body: JSON.stringify({ status: "draft" }) }).then(function () { reload(); });
+    });
+    body.appendChild(editBtn);
+
+    var detailsChildren = [];
+    detailsChildren.push(kvTable([
+      ["Raw status", round.status],
+      ["Dataset purpose", DATASET_PURPOSE_LABEL[round.dataset_purpose] || round.dataset_purpose],
+      ["Frozen at", fmtDate(round.frozen_at)],
+      ["Manifest hash", round.manifest_sha256],
+    ]));
+    if (round.publication_decision) {
+      detailsChildren.push(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Automatic publication check"]));
+      detailsChildren.push(kvTable([
+        ["Would publish", String(round.publication_decision.would_publish)],
+        ["Reason", round.publication_decision.reason],
+        ["Policy version", round.publication_decision.policy_version],
+        ["Decided at", fmtDate(round.publication_decision.decided_at)],
+      ]));
+    }
+    detailsChildren.push(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Questions (raw content + internal notes)"]));
+    detailsChildren.push(renderReviewerPreview(round.items, true));
+    body.appendChild(researchDetails("Research details", detailsChildren));
   }
 
   function renderExportPanel(round) {
@@ -932,21 +1175,56 @@ export function renderAdminShell(nonce) {
   }
 
   function renderPublishedRoundView(body, round) {
-    body.appendChild(el("p", {}, [
-      DATASET_PURPOSE_LABEL[round.dataset_purpose] || round.dataset_purpose, " \\u00b7 ",
-      round.item_count + " question(s) \\u00b7 published " + fmtDate(round.published_at),
+    body.appendChild(el("p", { class: "adm-round-meta" }, [
+      round.item_count + " question" + (round.item_count === 1 ? "" : "s") + " \\u00b7 published " + fmtDate(round.published_at),
     ]));
 
-    body.appendChild(el("p", { class: "adm-label" }, ["Reviewer progress"]));
-    (round.reviewers || []).forEach(function (rv) {
-      body.appendChild(el("p", {}, [rv.reviewer_id + ": " + rv.answered + " / " + rv.assigned]));
-    });
+    if (round.status === "published") {
+      body.appendChild(el("p", { class: "adm-label" }, ["Reviewer progress"]));
+      (round.reviewers || []).forEach(function (rv) {
+        var row = el("div", { class: "adm-row", style: "margin-top:0.5rem;" });
+        row.appendChild(el("span", { text: rv.reviewer_id }));
+        row.appendChild(el("span", { class: "adm-muted", text: rv.answered + " / " + rv.assigned }));
+        body.appendChild(row);
+        var bar = el("div", { class: "adm-progress-bar" });
+        var pct = rv.assigned ? Math.round((rv.answered / rv.assigned) * 100) : 0;
+        bar.appendChild(el("div", { class: "adm-progress-fill", style: "width:" + pct + "%;" }));
+        body.appendChild(bar);
+      });
+    }
 
     if (round.completion_state === "complete") {
+      var calib = round.calibration;
+      var evCard = el("div", { class: "adm-card" });
+      evCard.appendChild(el("p", { style: "font-weight:700;font-size:1.1rem;margin-bottom:0.5rem;" }, ["Finished"]));
+      if (!calib || !calib.evidence_summary) {
+        evCard.appendChild(el("p", { class: "adm-muted" }, ["Analysis is running\\u2026 check back shortly."]));
+      } else {
+        var ev = calib.evidence_summary;
+        var agree = (ev.strong_reference || 0) + (ev.provisional_reference || 0);
+        var needMore = (ev.contested || 0) + (ev.needs_more_reviewers || 0);
+        evCard.appendChild(el("p", {}, ["Results from this round:"]));
+        if (agree) evCard.appendChild(el("p", {}, [agree + " question" + (agree === 1 ? "" : "s") + ": reviewers agreed clearly."]));
+        if (needMore) evCard.appendChild(el("p", {}, [needMore + " question" + (needMore === 1 ? "" : "s") + ": reviewers disagreed and may benefit from another opinion."]));
+        if (!agree && !needMore) evCard.appendChild(el("p", { class: "adm-muted" }, ["Nothing conclusive yet."]));
+
+        if (calib.additional_review) {
+          var arChildren = renderAdditionalReviewPlain(calib.additional_review);
+          if (arChildren) evCard.appendChild(arChildren);
+        }
+      }
+      evCard.appendChild(el("a", { class: "btn btn--primary", href: "#/results/" + round.round_id, style: "margin-top:0.75rem;" }, ["View summary"]));
+      body.appendChild(evCard);
       body.appendChild(renderExportPanel(round));
     }
 
-    body.appendChild(el("p", { class: "adm-label" }, ["Research disposition"]));
+    var detailsChildren = [];
+
+    // Optional research classification — deliberately looks completely
+    // normal when unset; never a warning, never framed as a required
+    // next step (## 4 of the handoff this implements).
+    detailsChildren.push(el("p", { class: "adm-label" }, ["Optional research classification"]));
+    detailsChildren.push(el("p", { class: "adm-muted" }, ["Optional: classify how this completed round should be used in future research. Leaving this unset is completely normal."]));
     var dispSelect = el("select", { class: "adm-field", style: "max-width:20rem;" });
     dispSelect.appendChild(el("option", { value: "", text: "\\u2014 not set \\u2014" }));
     Object.keys(DISPOSITION_LABEL).forEach(function (d) {
@@ -957,33 +1235,67 @@ export function renderAdminShell(nonce) {
     dispSelect.addEventListener("change", function () {
       api("/rounds/" + encodeURIComponent(round.round_id) + "/disposition", { method: "POST", body: JSON.stringify({ disposition: dispSelect.value }) });
     });
-    body.appendChild(dispSelect);
+    detailsChildren.push(dispSelect);
 
-    body.appendChild(el("p", { class: "adm-label", style: "margin-top:1.5rem;" }, ["Questions (admin view)"]));
-    (round.items || []).forEach(function (item, i) {
-      var block = el("div", { class: "adm-item-block" });
-      block.appendChild(el("p", { class: "adm-label" }, ["Source"]));
-      block.appendChild(el("p", { class: "rl-text" }, [item.source_snapshot]));
-      block.appendChild(el("p", { class: "adm-label" }, ["The sentence"]));
-      block.appendChild(el("p", { class: "rl-text" }, [item.candidate_sentence]));
-      if (item.internal_note) {
-        block.appendChild(el("p", { class: "adm-label" }, ["Internal note"]));
-        block.appendChild(el("p", { class: "adm-note adm-muted" }, [item.internal_note]));
+    if (round.completion_state === "complete" && round.calibration) {
+      detailsChildren.push(el("p", { class: "adm-label", style: "margin-top:1.25rem;" }, ["Calibration workflow"]));
+      var calib2 = round.calibration;
+      detailsChildren.push(kvTable([
+        ["Raw evidence counts", calib2.evidence_summary ? JSON.stringify(calib2.evidence_summary) : null],
+        ["Workflow status", calib2.calibration_run ? calib2.calibration_run.status : null],
+        ["Policy version", calib2.policy_version],
+        ["Next action (internal)", calib2.next_action],
+      ]));
+      if (calib2.additional_review) {
+        detailsChildren.push(el("p", { class: "adm-label", style: "margin-top:0.75rem;" }, ["Additional review (raw)"]));
+        detailsChildren.push(renderAdditionalReviewPlan(calib2.additional_review));
       }
-      if (item.provenance) {
-        block.appendChild(el("p", { class: "adm-label" }, ["Provenance"]));
-        block.appendChild(el("p", { class: "adm-muted" }, [item.provenance]));
-      }
-      body.appendChild(block);
-    });
+      detailsChildren.push(el("p", {}, [el("a", { href: "#/calibration" }, ["Open Calibration"])]));
+    }
+
+    detailsChildren.push(el("p", { class: "adm-label", style: "margin-top:1.25rem;" }, ["Questions (raw content + internal notes)"]));
+    detailsChildren.push(renderReviewerPreview(round.items || [], true));
 
     if (round.publication_receipt) {
-      body.appendChild(el("p", { class: "adm-label", style: "margin-top:1.5rem;" }, ["Publication receipt"]));
-      body.appendChild(el("pre", { class: "adm-note", style: "font-size:0.8rem;overflow-x:auto;" }, [JSON.stringify(round.publication_receipt, null, 2)]));
+      detailsChildren.push(el("p", { class: "adm-label", style: "margin-top:1.25rem;" }, ["Publication receipt"]));
+      detailsChildren.push(el("pre", { class: "adm-note", style: "font-size:0.8rem;overflow-x:auto;" }, [JSON.stringify(round.publication_receipt, null, 2)]));
     }
+
+    body.appendChild(researchDetails("Research details", detailsChildren));
+  }
+
+  // Plain-language version of the additional-review outcome, for the
+  // primary (non-Advanced) view. Returns null when there is nothing a
+  // non-technical reader needs to see (no disagreement, or policy
+  // deliberately disabled — neither is actionable).
+  function renderAdditionalReviewPlain(plan) {
+    if (plan.status === "NONE_NEEDED" || plan.status === "DISABLED") return null;
+    var wrap = el("div", { style: "margin-top:0.75rem;" });
+    var count = (plan.flagged_items || []).length;
+    if (plan.status === "NEEDS_HUMAN_ACTION" || plan.status === "NEEDS_POLICY_CONFIGURATION") {
+      wrap.appendChild(el("p", { style: "font-weight:600;" }, [
+        count + " question" + (count === 1 ? "" : "s") + " would benefit from one more independent reviewer.",
+      ]));
+      wrap.appendChild(el("p", { class: "adm-muted" }, [
+        plan.status === "NEEDS_POLICY_CONFIGURATION"
+          ? "This isn't configured yet."
+          : "There are currently no other approved reviewers available.",
+      ]));
+      wrap.appendChild(el("a", { class: "btn btn--outline btn--sm", href: "#/reviewers" }, ["Add reviewer"]));
+    } else if (plan.status === "DRAFTED" && plan.draft_round_id) {
+      wrap.appendChild(el("p", {}, ["An additional round was created automatically for " + count + " question" + (count === 1 ? "" : "s") + "."]));
+      wrap.appendChild(el("a", { class: "btn btn--outline btn--sm", href: "#/rounds/" + plan.draft_round_id }, ["View " + plan.draft_round_id]));
+    }
+    return wrap;
   }
 
   // ---- results ----------------------------------------------------
+
+  var ANALYSIS_FIELD_LABEL = {
+    disposition: "Disposition", agreement_state: "Agreement state", reference_strength: "Reference strength",
+    machine_comparison: "Machine comparison (role only, v1)", role_alignment: "Role alignment",
+    support_alignment: "Support alignment", overall_relation: "Overall relation", notes: "Notes",
+  };
 
   route(/^\\/results\\/([^/]+)$/, function (roundId) {
     app.appendChild(el("h1", { class: "text-h2" }, ["Results \\u2014 " + roundId]));
@@ -992,26 +1304,61 @@ export function renderAdminShell(nonce) {
     api("/results/" + encodeURIComponent(roundId)).then(function (res) {
       body.innerHTML = "";
       if (!res.ok) { body.appendChild(el("p", { class: "adm-err" }, ["Couldn't load results."])); return; }
+      if (!res.body.items.length) { body.appendChild(el("p", { class: "adm-muted" }, ["No responses yet."])); return; }
+
       res.body.items.forEach(function (item, i) {
         var card = el("div", { class: "adm-card" });
-        card.appendChild(el("div", { class: "adm-row" }, [
-          el("h3", {}, ["Question " + (i + 1)]),
-          el("span", { class: "adm-badge", text: item.agreement === "agreement" ? "Agreement" : item.agreement === "disagreement" ? "Disagreement" : "Single judgment" }),
-        ]));
-        card.appendChild(el("p", { class: "adm-label" }, ["Source"]));
-        card.appendChild(el("p", { class: "rl-text" }, [item.source_snapshot]));
-        card.appendChild(el("p", { class: "adm-label" }, ["The sentence"]));
-        card.appendChild(el("p", { class: "rl-text" }, [item.candidate_sentence]));
-        item.judgments.forEach(function (j) {
-          var jBlock = el("div", { style: "margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid var(--foundation-gray-300,#c4b5a0);" });
-          jBlock.appendChild(el("p", {}, [el("strong", {}, [j.reviewer_id]), ": " + j.selected_public_response.replace(/_/g, " ")]));
-          if (j.confidence) jBlock.appendChild(el("p", { class: "adm-muted" }, ["Confidence: " + j.confidence.replace(/_/g, " ")]));
-          if (j.comment) jBlock.appendChild(el("p", {}, [j.comment]));
-          card.appendChild(jBlock);
-        });
+        card.appendChild(el("h3", {}, ["Question " + (i + 1)]));
+
+        if (item.agreement === "agreement") {
+          card.appendChild(el("p", { style: "font-weight:700;color:#1c7a4d;" }, ["Both reviewers agreed"]));
+          card.appendChild(el("p", {}, ["Both answered: " + PUBLIC_RESPONSE_TEXT[item.judgments[0].selected_public_response]]));
+        } else if (item.agreement === "disagreement") {
+          card.appendChild(el("p", { style: "font-weight:700;color:#8a6a1c;" }, ["Reviewers disagreed"]));
+          item.judgments.forEach(function (j, idx) {
+            var label = "Reviewer " + String.fromCharCode(65 + idx);
+            var ans = el("div", { class: "adm-reviewer-answer adm-reviewer-answer--disagree" });
+            ans.appendChild(el("p", { style: "font-weight:600;margin-bottom:0.15rem;" }, [label + ":"]));
+            ans.appendChild(el("p", {}, [PUBLIC_RESPONSE_TEXT[j.selected_public_response]]));
+            card.appendChild(ans);
+          });
+          card.appendChild(el("p", { class: "adm-muted" }, ["This question may benefit from another opinion."]));
+        } else {
+          card.appendChild(el("p", { style: "font-weight:600;" }, ["One reviewer has answered so far"]));
+          card.appendChild(el("p", {}, [PUBLIC_RESPONSE_TEXT[item.judgments[0].selected_public_response]]));
+        }
+
+        var hasComments = item.judgments.some(function (j) { return j.comment; });
+        if (hasComments) {
+          var commentsBody = [];
+          item.judgments.forEach(function (j, idx) {
+            if (!j.comment) return;
+            commentsBody.push(el("p", { style: "margin-top:0.5rem;" }, [
+              el("strong", {}, ["Reviewer " + String.fromCharCode(65 + idx) + ": "]), j.comment,
+            ]));
+          });
+          card.appendChild(researchDetails("Show comments", commentsBody));
+        }
+
+        var compareChildren = [];
+        compareChildren.push(el("p", { class: "adm-label" }, ["Source (frozen excerpt)"]));
+        compareChildren.push(el("p", { class: "rl-text" }, [item.source_snapshot]));
+        compareChildren.push(el("p", { class: "adm-label" }, ["The sentence"]));
+        compareChildren.push(el("p", { class: "rl-text" }, [item.candidate_sentence]));
+        compareChildren.push(el("p", { class: "adm-label", style: "margin-top:0.75rem;" }, ["Each reviewer's raw judgment"]));
+        compareChildren.push(kvTable(item.judgments.map(function (j, idx) {
+          return ["Reviewer " + String.fromCharCode(65 + idx) + " (" + j.reviewer_id + ")", j.internal_normalized_response + (j.confidence ? " \\u00b7 " + j.confidence : "")];
+        })));
+        if (item.analysis) {
+          compareChildren.push(el("p", { class: "adm-label", style: "margin-top:0.75rem;" }, ["Automatic analysis (this round's calibration run)"]));
+          compareChildren.push(kvTable(Object.keys(ANALYSIS_FIELD_LABEL).map(function (k) { return [ANALYSIS_FIELD_LABEL[k], item.analysis[k]]; })));
+        } else {
+          compareChildren.push(el("p", { class: "adm-muted", style: "margin-top:0.75rem;" }, ["Automatic analysis hasn't run for this item yet."]));
+        }
+        card.appendChild(researchDetails("Research comparison", compareChildren));
+
         body.appendChild(card);
       });
-      if (!res.body.items.length) body.appendChild(el("p", { class: "adm-muted" }, ["No responses yet."]));
     });
   });
 

@@ -24,7 +24,13 @@ import {
   ALLOWED_DISPOSITIONS,
 } from "./publish.js";
 import { buildResearchExport, getExportStatus, getExportPayloadJson } from "./researchExport.js";
-import { handleCalibrationStatus, handleCalibrationRetry, handleAutomationSummary } from "./calibrationAdmin.js";
+import {
+  handleCalibrationStatus,
+  handleCalibrationRetry,
+  handleAutomationSummary,
+  getCalibrationSummaryForRound,
+  publicationDecisionForRound,
+} from "./calibrationAdmin.js";
 import { getActivePolicy, listPolicyHistory, setActivePolicy, PolicyValidationError } from "./policy.js";
 import { ingestCalibrationCandidates, CandidateValidationError } from "./candidateIngestion.js";
 import { reconcileStuckCalibrationRuns } from "./calibrationOrchestrator.js";
@@ -84,6 +90,13 @@ async function roundSummary(env, round) {
       .bind(round.round_id)
       .first();
     const exportStatus = round.status === "completed" ? await getExportStatus(env, round.round_id) : null;
+    // Additive, read-only: lets the plain-language dashboard/rounds
+    // cards say "2 questions had clear agreement, 3 need another
+    // opinion" without the UI needing to know disposition/machine-state
+    // vocabulary exists. Never recomputed here — same source
+    // getCalibrationSummaryForRound already reads for the Calibration
+    // screen itself.
+    const calibration = round.status === "completed" ? await getCalibrationSummaryForRound(env, round.round_id) : null;
     return {
       ...base,
       item_count: itemCountRow.n,
@@ -95,17 +108,25 @@ async function roundSummary(env, round) {
       // source of truth for "is this round done."
       completion_state: round.status === "completed" ? "complete" : "in_progress",
       export_status: exportStatus,
+      calibration,
     };
   }
 
   const draft = await env.DB.prepare("SELECT payload_json FROM round_drafts WHERE round_id = ?").bind(round.round_id).first();
   const manifest = draft ? JSON.parse(draft.payload_json) : null;
+  // Frozen rounds already passed validateManifest (freezeRound requires
+  // it) — the shadow/live publication decision, if the automatic
+  // pipeline produced one, tells the plain-language UI whether to say
+  // "Automatic checks passed" without exposing would_publish/policy
+  // vocabulary directly.
+  const publicationDecision = round.status === "frozen" ? await publicationDecisionForRound(env, round.round_id) : null;
   return {
     ...base,
     item_count: manifest ? manifest.items.length : 0,
     reviewer_count: manifest ? manifest.reviewer_ids.length : 0,
     reviewers: [],
     completion_state: "not_started",
+    publication_decision: publicationDecision,
   };
 }
 
@@ -133,11 +154,14 @@ async function handleDashboard(request, env, identity) {
   // optional governance, never merged into needsAttention.
   const optionalGovernance = [];
   for (const r of summaries) {
-    if (r.status === "draft") needsAttention.push({ round_id: r.round_id, note: "Draft — not yet reviewed or frozen." });
-    if (r.status === "review") needsAttention.push({ round_id: r.round_id, note: "Ready for review — freeze when it looks right." });
-    if (r.status === "frozen") needsAttention.push({ round_id: r.round_id, note: "Frozen — ready to publish." });
+    // A draft/review round is unfinished work Jascha already knows
+    // about (he's the only one who can create or continue it) — it
+    // never blocks anything and isn't a surprise, so it stays off
+    // Action Required; Rounds already shows it as "Continue editing."
+    // A frozen round genuinely needs a decision only he can make.
+    if (r.status === "frozen") needsAttention.push({ type: "round_needs_review", round_id: r.round_id, note: "Ready to send — review and publish when you're ready." });
     if (r.status === "completed" && r.export_status && r.export_status.status === "failed") {
-      needsAttention.push({ round_id: r.round_id, note: "Export error — retry from the round page." });
+      needsAttention.push({ type: "export_failed", round_id: r.round_id, note: "Something went wrong preparing this round's research export — retry from the round page." });
     }
     if (r.status === "completed" && !r.dataset_disposition) {
       optionalGovernance.push({ round_id: r.round_id, note: "Research disposition not set — optional, never required for routine operation." });
@@ -155,7 +179,7 @@ async function handleDashboard(request, env, identity) {
   const automationSummary = await automationSummaryResponse.json();
   for (const item of automationSummary.action_required) {
     if (item.type === "round_needs_review") continue; // already covered by needsAttention above
-    needsAttention.push({ round_id: item.round_id, note: item.note });
+    needsAttention.push({ type: item.type, round_id: item.round_id, note: item.note });
   }
 
   return secureJson({
@@ -336,7 +360,30 @@ async function handleResults(request, env, roundId) {
     return { ...item, agreement };
   });
 
-  return secureJson({ round_id: roundId, items });
+  // Additive, read-only: merge in whatever the automatic calibration
+  // analysis already computed for this round's items (disposition,
+  // role_alignment, support_alignment, overall_relation, etc.) — never
+  // recomputed here, never a second source of truth. Presentation-only
+  // consumers (the UI's "Research comparison" toggle) decide whether to
+  // show this; it's simply attached to the response so it's available.
+  const latestRun = await env.DB.prepare(
+    "SELECT analysis_artifact_id FROM calibration_runs WHERE round_id = ? AND analysis_artifact_id IS NOT NULL ORDER BY created_at DESC LIMIT 1"
+  )
+    .bind(roundId)
+    .first();
+  let analysisByItem = new Map();
+  if (latestRun && latestRun.analysis_artifact_id) {
+    const artifact = await env.DB.prepare("SELECT content_json FROM calibration_artifacts WHERE artifact_id = ?")
+      .bind(latestRun.analysis_artifact_id)
+      .first();
+    if (artifact) {
+      const analysis = JSON.parse(artifact.content_json);
+      for (const it of analysis.items || []) analysisByItem.set(it.item_id, it);
+    }
+  }
+  const itemsWithAnalysis = items.map((item) => ({ ...item, analysis: analysisByItem.get(item.item_id) || null }));
+
+  return secureJson({ round_id: roundId, items: itemsWithAnalysis });
 }
 
 // ---------------------------------------------------------------------
