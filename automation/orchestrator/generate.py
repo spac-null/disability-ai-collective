@@ -349,6 +349,19 @@ class GenerateMixin:
                 self._degraded_stages.append("fable_brief")
             _fable_register = _fable_seed = _fable_angle_text = _fable_cross_cite = _fable_opening_scene = _fable_resisting = _fable_correction = _fable_opening_shape = ""
 
+        # ── CJ-2 shadow integration (Phase G.2, .claude/master-roadmap-2026-08-13.md
+        # ## PHASE G.2) — OFF by default (CJ2_INTEGRATION_MODE unset/"OFF"), additive
+        # only. Purely a side-effect call: it cannot change fable_brief, agent_name,
+        # or evidence_packet above (all already finalized by this line), cannot raise,
+        # and does not append to self._degraded_stages (a CJ-2 shadow failure is not a
+        # production degradation and must never trigger publish.py's blocking policy).
+        # When CJ2_INTEGRATION_MODE is unset, as in real production today, this is one
+        # os.environ.get + one string compare with zero further effect — no import of
+        # cj2_shadow/cj2_winner_bridge happens on this line either way; that import is
+        # deferred inside _cj2_shadow_attempt itself, so OFF mode adds no dependency.
+        if os.environ.get("CJ2_INTEGRATION_MODE", "OFF").strip().upper() != "OFF":
+            self._cj2_shadow_attempt(agent_name, evidence_packet)
+
         # News block — news_seed (persistent) takes priority over live RSS hook
         if news_seed:
             # Rich grounding from persistent news_seeds table
