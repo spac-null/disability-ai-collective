@@ -6,8 +6,8 @@
  * round.
  */
 
-import { secureJson, newId, nowIso, sha256Hex } from "./util.js";
-import { CALIBRATION_WORKFLOW_VERSION } from "./calibrationOrchestrator.js";
+import { secureJson } from "./util.js";
+import { armFreshCalibrationRun } from "./calibrationOrchestrator.js";
 import { getActivePolicy } from "./policy.js";
 
 // Labels the design doc's `## 26` automation cockpit shows Jascha — one
@@ -252,56 +252,13 @@ export async function handleCalibrationRetry(request, env, identity, runId) {
     return secureJson({ error: "run_not_failed", status: failedRun.status }, 409);
   }
 
-  // A fresh attempt from scratch — a new run_id and a new Workflow
-  // instance id (the old idempotency_key stays attached to the failed
-  // run so its history is never lost or overwritten). Safe to re-run:
-  // analyze-human-round-v1/prepare-next-round-v1 are both versioned/
-  // recomputable, never treated as immutable-once-generated the way a
-  // research export is.
-  const newRunId = newId("crun");
-  // Workflow instance ids have both a charset restriction ([a-zA-Z0-9-_],
-  // no colons) and a length limit — confirmed directly this pass: a
-  // concatenated `${oldKey}-retry-${newRunId}` string (~110 chars) was
-  // rejected outright ("Workflow instance has invalid id"), and before
-  // that, a colon-containing id hung the request until the Workers
-  // runtime force-canceled it. A fresh sha256 hex digest (64 chars,
-  // same shape armCalibrationRun already uses successfully) sidesteps
-  // both problems rather than guessing at the exact limit.
-  const newIdempotencyKey = await sha256Hex(`${failedRun.idempotency_key}:retry:${newRunId}`);
-  const now = nowIso();
-  // A retry re-reads the CURRENTLY active policy, same as a fresh arm —
-  // it is explicitly a new attempt "from scratch" (see this function's
-  // own opening comment), not a resumption of the failed run's original
-  // context, so there is no frozen policy_version to carry forward here.
-  const activePolicy = await getActivePolicy(env);
-  await env.DB.prepare(
-    `INSERT INTO calibration_runs (run_id, round_id, research_export_hash, workflow_version, workflow_instance_id, idempotency_key, status, policy_version, created_at)
-     VALUES (?,?,?,?,?,?, 'queued', ?, ?)`
-  )
-    .bind(newRunId, failedRun.round_id, failedRun.research_export_hash, CALIBRATION_WORKFLOW_VERSION, newIdempotencyKey, newIdempotencyKey, activePolicy.policy_version, now)
-    .run();
-
-  try {
-    await env.CALIBRATION_WORKFLOW.create({
-      id: newIdempotencyKey,
-      params: {
-        run_id: newRunId,
-        round_id: failedRun.round_id,
-        research_export_hash: failedRun.research_export_hash,
-        workflow_version: CALIBRATION_WORKFLOW_VERSION,
-        policy_version: activePolicy.policy_version,
-      },
-    });
-  } catch (err) {
-    // Same discipline as armCalibrationRun: never leave a 'queued' row
-    // with no real Workflow instance behind it — a create() failure
-    // marks the fresh run 'failed' immediately, visible for another
-    // retry, rather than silently stuck.
-    await env.DB.prepare("UPDATE calibration_runs SET status='failed', error=?, completed_at=? WHERE run_id=?")
-      .bind(`workflow_create_failed: ${String((err && err.message) || err)}`, nowIso(), newRunId)
-      .run();
-    return secureJson({ error: "workflow_create_failed", detail: String((err && err.message) || err) }, 500);
+  // Same "fresh run from scratch" mechanism the automatic candidate-
+  // ingestion reconciliation uses for a run stuck at
+  // needs_eligible_candidates (calibrationOrchestrator.js) — a human
+  // retry and an automatic resume are the same underlying situation.
+  const result = await armFreshCalibrationRun(env, failedRun, { actor: identity.email, reason: "human_retry" });
+  if (!result.armed) {
+    return secureJson({ error: "workflow_create_failed", detail: result.error }, 500);
   }
-
-  return secureJson({ ok: true, run_id: newRunId });
+  return secureJson({ ok: true, run_id: result.run_id });
 }

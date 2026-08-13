@@ -145,8 +145,17 @@ def cliproxy_chat(system, user, temperature=0.0, max_tokens=200, timeout=30):
 
 
 # ---------------------------------------------------------------------
-# analyze_human_round — deterministic core, matching
-# ../workflows/analyze-human-round-v1.md section-for-section.
+# analyze_human_round — deterministic core. v2 (see
+# ../workflows/analyze-human-round-v2.md) adds role_alignment/
+# support_alignment/overall_relation on top of everything v1 already
+# computed (still matching ../workflows/analyze-human-round-v1.md
+# section-for-section for every v1 field, machine_comparison included,
+# which keeps its original role-only meaning even under v2 — see
+# analyze_item's own comment). Job dispatch is by job_type name only
+# ("analyze_human_round"), not by version — there is exactly one deployed
+# copy of this function at a time; already-recorded historical artifacts
+# from when v1 was deployed are immutable D1 rows this code never
+# touches, not a second code path this file has to keep alive.
 # ---------------------------------------------------------------------
 
 NOTES_SYSTEM_PROMPT = (
@@ -193,6 +202,65 @@ def _confidence_summary(judgments):
     return ", ".join(f"{n} {c}" for c, n in counts.items())
 
 
+def _human_role_and_support(distinct):
+    """distinct is always a singleton set here (only ever called when
+    disposition == strong_reference). Returns (human_role, human_support) —
+    human_support is only meaningful (non-None) when human_role is
+    factual_dependency; source_established/unsupported_factual_dependency
+    are the two directions a factual-dependency claim can resolve to."""
+    if distinct == {"source_established"}:
+        return "factual_dependency", "supported"
+    if distinct == {"unsupported_factual_dependency"}:
+        return "factual_dependency", "unsupported"
+    if distinct == {"interpretive_only"}:
+        return "interpretive_only", None
+    return "uncertain", None
+
+
+def _role_alignment(human_role, machine_role):
+    if machine_role is None:
+        return "not_comparable"
+    if human_role == "uncertain":
+        return "not_comparable"
+    if machine_role == "boundary_ambiguous":
+        return "not_comparable"
+    return "aligned" if human_role == machine_role else "divergent"
+
+
+def _support_alignment(human_role, human_support, machine_role, machine_support):
+    # Only meaningful when BOTH sides treat this as a factual-dependency
+    # claim — an interpretive reading has no supported/unsupported
+    # direction to compare, on either side.
+    if human_role != "factual_dependency" or machine_role != "factual_dependency" or machine_support is None:
+        return "not_comparable"
+    if human_support == machine_support:
+        return "aligned"
+    if human_support == "supported" and machine_support == "unsupported":
+        # The De Hooch/Z shape: humans read the source as establishing the
+        # claim; B2 flagged the identical claim unsupported. The OLD
+        # role-only machine_comparison called this "aligns" (both sides
+        # say factual_dependency) — masking exactly this divergence.
+        return "human_more_permissive"
+    if human_support == "unsupported" and machine_support == "supported":
+        return "machine_more_permissive"
+    return "divergent"  # defensive fallback; unreachable given binary values above
+
+
+def _overall_relation(role_alignment, support_alignment):
+    if role_alignment == "not_comparable":
+        return "not_comparable"
+    if role_alignment == "divergent":
+        return "divergence"
+    # role_alignment == "aligned" from here on.
+    if support_alignment in ("aligned", "not_comparable"):
+        # not_comparable here means the agreed reading was interpretive_only
+        # (no support direction to check) — role match alone is the whole
+        # story for an interpretive item, so it's a full alignment, not a
+        # partial one.
+        return "full_alignment"
+    return "role_only_alignment"  # human_more_permissive / machine_more_permissive / divergent
+
+
 def analyze_item(item, research_context_item):
     judgments = item.get("judgments", [])
     n = len(judgments)
@@ -216,31 +284,39 @@ def analyze_item(item, research_context_item):
         reference_strength = "none"
         disposition = "contested"
 
-    machine_label = (research_context_item or {}).get("machine_reference_label")
+    context = research_context_item or {}
+    # machine_reference_label is the ORIGINAL (v1, role-only) field. New
+    # research_context files (RL-2026-002 onward) instead state
+    # machine_role/machine_support/machine_effective_state as three
+    # separate fields from the start — machine_comparison (below) is kept
+    # meaning EXACTLY what it always meant (role only), sourced from
+    # whichever field is actually present, purely for continuity/display.
+    # It is never used to compute the new fields below.
+    legacy_machine_label = context.get("machine_reference_label")
+    machine_role = context.get("machine_role")
+    machine_support = context.get("machine_support")
+    machine_label_for_legacy_field = legacy_machine_label if legacy_machine_label is not None else machine_role
+
     if disposition != "strong_reference":
         machine_comparison = "not_applicable"
-    elif machine_label is None:
-        machine_comparison = "no_machine_reference"
+        role_alignment = "not_comparable"
+        support_alignment = "not_comparable"
+        overall_relation = "not_comparable"
     else:
-        # Role comparison: source_established/unsupported_factual_dependency
-        # both depend on a real-world fact (a "factual dependency" in B2's
-        # own vocabulary); interpretive_only does not. An agreed
-        # "uncertain" (both reviewers unsure) falls to human_role
-        # "uncertain" below — itself a real, meaningful signal (the item
-        # is genuinely ambiguous), just not one with a role to compare
-        # against a machine label.
-        if distinct <= {"source_established", "unsupported_factual_dependency"}:
-            human_role = "factual_dependency"
-        elif distinct == {"interpretive_only"}:
-            human_role = "interpretive_only"
-        else:
-            human_role = "uncertain"
-        if human_role == "uncertain" or machine_label == "boundary_ambiguous":
+        human_role, human_support = _human_role_and_support(distinct)
+
+        if machine_label_for_legacy_field is None:
             machine_comparison = "no_machine_reference"
-        elif human_role == machine_label:
+        elif human_role == "uncertain" or machine_label_for_legacy_field == "boundary_ambiguous":
+            machine_comparison = "no_machine_reference"
+        elif human_role == machine_label_for_legacy_field:
             machine_comparison = "aligns"
         else:
             machine_comparison = "diverges"
+
+        role_alignment = _role_alignment(human_role, machine_role)
+        support_alignment = _support_alignment(human_role, human_support, machine_role, machine_support)
+        overall_relation = _overall_relation(role_alignment, support_alignment)
 
     notes = None
     if judgments:
@@ -263,6 +339,9 @@ def analyze_item(item, research_context_item):
         "comments_present": any(j.get("comment") for j in judgments),
         "reference_strength": reference_strength,
         "machine_comparison": machine_comparison,
+        "role_alignment": role_alignment,
+        "support_alignment": support_alignment,
+        "overall_relation": overall_relation,
         "disposition": disposition,
         "notes": notes,
     }
@@ -280,7 +359,7 @@ def run_analyze_human_round(job_input):
         summary[it["disposition"]] = summary.get(it["disposition"], 0) + 1
 
     return {
-        "analysis_version": "analyze-human-round-v1",
+        "analysis_version": "analyze-human-round-v2",
         "round_id": job_input["round_id"],
         "generated_at": export.get("generated_at"),
         "items": items,

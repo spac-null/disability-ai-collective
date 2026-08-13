@@ -26,6 +26,8 @@ import {
 import { buildResearchExport, getExportStatus, getExportPayloadJson } from "./researchExport.js";
 import { handleCalibrationStatus, handleCalibrationRetry, handleAutomationSummary } from "./calibrationAdmin.js";
 import { getActivePolicy, listPolicyHistory, setActivePolicy, PolicyValidationError } from "./policy.js";
+import { ingestCalibrationCandidates, CandidateValidationError } from "./candidateIngestion.js";
+import { reconcileStuckCalibrationRuns } from "./calibrationOrchestrator.js";
 
 function jsonError(err, fallbackStatus = 500) {
   if (err instanceof ValidationError) {
@@ -120,6 +122,16 @@ async function handleDashboard(request, env, identity) {
     summaries.find((r) => r.status === "completed" && !r.dataset_disposition);
 
   const needsAttention = [];
+  // dataset_disposition (development_reference/contested/hold_for_later)
+  // is a deliberate human GOVERNANCE field, not something the system
+  // needs an answer to before it can proceed — completion, export,
+  // analysis, additional review, and next-round preparation all already
+  // work correctly with it unset. Surfacing "no disposition set" as
+  // ACTION REQUIRED would manufacture a task Jascha doesn't actually
+  // need to do — see the design doc's candidate-bridge section (## 12
+  // of the handoff this implements). It's reported separately, as
+  // optional governance, never merged into needsAttention.
+  const optionalGovernance = [];
   for (const r of summaries) {
     if (r.status === "draft") needsAttention.push({ round_id: r.round_id, note: "Draft — not yet reviewed or frozen." });
     if (r.status === "review") needsAttention.push({ round_id: r.round_id, note: "Ready for review — freeze when it looks right." });
@@ -128,7 +140,7 @@ async function handleDashboard(request, env, identity) {
       needsAttention.push({ round_id: r.round_id, note: "Export error — retry from the round page." });
     }
     if (r.status === "completed" && !r.dataset_disposition) {
-      needsAttention.push({ round_id: r.round_id, note: "Complete — research export ready, no research disposition set yet." });
+      optionalGovernance.push({ round_id: r.round_id, note: "Research disposition not set — optional, never required for routine operation." });
     }
   }
 
@@ -150,6 +162,7 @@ async function handleDashboard(request, env, identity) {
     active_round: active || null,
     rounds: summaries,
     needs_attention: needsAttention,
+    optional_governance: optionalGovernance,
     automation: automationSummary.automation,
     policy: automationSummary.policy,
     admin_identity: identity.email,
@@ -403,6 +416,76 @@ async function handlePolicySet(request, env, identity) {
 }
 
 // ---------------------------------------------------------------------
+// calibration candidates — read-mostly visibility, plus an import
+// fallback that goes through the exact same candidateIngestion.js
+// service the runner's own machine path uses (see index.js's
+// /ops/calibration/candidates). Routine operation should never require
+// this screen — it exists for recovery/debugging and for Jascha to see
+// what's eligible without a D1 query.
+// ---------------------------------------------------------------------
+
+async function handleCandidatesList(request, env) {
+  const rows = await env.DB.prepare(
+    `SELECT candidate_id, provenance, dataset_purpose, eligible_for_reader_lab, internal_rationale,
+            ingested_via, ingestion_actor, created_at, candidate_claim_id
+     FROM calibration_candidates ORDER BY created_at DESC`
+  ).all();
+
+  // "already reviewed / assigned" -- whether this exact claim already
+  // exists as a live Reader Lab item, and if so, how many
+  // assignments/responses it has. Read-only, no response content.
+  const candidates = await Promise.all(
+    rows.results.map(async (c) => {
+      const item = await env.DB.prepare("SELECT item_id FROM items WHERE candidate_claim_id = ?").bind(c.candidate_claim_id).first();
+      let assignmentCount = 0;
+      let answeredCount = 0;
+      if (item) {
+        const counts = await env.DB.prepare(
+          "SELECT COUNT(*) AS assigned, SUM(CASE WHEN answered_at IS NOT NULL THEN 1 ELSE 0 END) AS answered FROM assignments WHERE item_id = ?"
+        )
+          .bind(item.item_id)
+          .first();
+        assignmentCount = counts.assigned || 0;
+        answeredCount = counts.answered || 0;
+      }
+      return {
+        candidate_id: c.candidate_id,
+        provenance: c.provenance,
+        dataset_purpose: c.dataset_purpose,
+        held_out: c.dataset_purpose === "held_out_evaluation",
+        eligible_for_reader_lab: !!c.eligible_for_reader_lab,
+        internal_rationale: c.internal_rationale,
+        ingested_via: c.ingested_via,
+        ingestion_actor: c.ingestion_actor,
+        created_at: c.created_at,
+        already_live_item_id: item ? item.item_id : null,
+        assigned_count: assignmentCount,
+        answered_count: answeredCount,
+      };
+    })
+  );
+  return secureJson({ candidates });
+}
+
+async function handleCandidatesImport(request, env, identity) {
+  const body = await readJsonBody(request);
+  if (!body || !body.bundle) return secureJson({ error: "missing_bundle" }, 400);
+  try {
+    const result = await ingestCalibrationCandidates(env, body.bundle, { actor: identity.email, ingestedVia: "admin_import" });
+    let reconciliation = null;
+    if (result.newly_eligible_candidate_count > 0) {
+      reconciliation = await reconcileStuckCalibrationRuns(env, { actor: "system:candidate_ingestion_reconciliation" });
+    }
+    return secureJson({ ...result, reconciliation });
+  } catch (err) {
+    if (err instanceof CandidateValidationError) {
+      return secureJson({ error: "validation_failed", errors: err.errors }, 422);
+    }
+    return jsonError(err);
+  }
+}
+
+// ---------------------------------------------------------------------
 // reviewers
 // ---------------------------------------------------------------------
 
@@ -518,6 +601,9 @@ export async function adminApiFetch(request, env, identity, url) {
 
   if (path === "/policy" && method === "GET") return handlePolicyGet(request, env);
   if (path === "/policy" && method === "POST") return handlePolicySet(request, env, identity);
+
+  if (path === "/candidates" && method === "GET") return handleCandidatesList(request, env);
+  if (path === "/candidates/import" && method === "POST") return handleCandidatesImport(request, env, identity);
 
   if (path === "/reviewers" && method === "GET") return handleReviewersList(request, env);
   if (path === "/reviewers" && method === "POST") return handleReviewerCreate(request, env, identity);

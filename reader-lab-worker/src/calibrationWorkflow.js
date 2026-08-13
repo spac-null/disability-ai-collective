@@ -7,9 +7,11 @@
  * via HTTP (see index.js's /ops/calibration/jobs/* routes), validates
  * the result, persists it, and moves to the next step. The actual
  * analysis logic — the deterministic disposition rules in
- * calibration/workflows/analyze-human-round-v1.md — lives in the
- * runner's Python script, not here; this file never computes a
- * disposition/agreement/reference-strength value itself.
+ * calibration/workflows/analyze-human-round-v1.md (and v2's additive
+ * role_alignment/support_alignment/overall_relation, see
+ * analyze-human-round-v2.md) — lives in the runner's Python script, not
+ * here; this file never computes a disposition/agreement/reference-
+ * strength/comparison value itself.
  *
  * Durable-state principle (see the design doc): this Workflow instance's
  * own execution state is Cloudflare's problem to persist (that's what
@@ -33,6 +35,7 @@ import { getPolicyVersion } from "./policy.js";
 import { listActiveReviewerIds } from "./reviewerEligibility.js";
 import { planAdditionalReview } from "./additionalReview.js";
 import { applyRoundPublicationPolicy } from "./roundPublicationPolicy.js";
+import { PREPARE_NEXT_ROUND_VERSION } from "./calibrationOrchestrator.js";
 
 const JOB_WAIT_TIMEOUT = "3 days";
 const MAX_ATTEMPTS_PER_JOB = 2;
@@ -57,7 +60,14 @@ function validatePrepareShape(result) {
 
 export class CalibrationWorkflow extends WorkflowEntrypoint {
   async run(event, step) {
-    const { run_id, round_id, workflow_version, policy_version } = event.payload;
+    // workflow_version is the RUN-level stamp, set at arm time to
+    // ANALYZE_HUMAN_ROUND_VERSION (calibrationOrchestrator.js) — the
+    // analysis job dispatch below uses it directly. prepare_next_round
+    // versions independently (PREPARE_NEXT_ROUND_VERSION, imported
+    // above) since its logic hasn't changed since v1 even where
+    // analysis has — see calibrationOrchestrator.js's own comment on why
+    // these two were decoupled.
+    const { run_id, round_id, workflow_version: analyzeWorkflowVersion, policy_version } = event.payload;
 
     await step.do("mark-started", async () => {
       await this.env.DB.prepare(
@@ -81,7 +91,7 @@ export class CalibrationWorkflow extends WorkflowEntrypoint {
 
     let analysis;
     try {
-      analysis = await this.runJobWithRetries(step, run_id, "analyze_human_round", workflow_version, validateAnalysisShape, async () => {
+      analysis = await this.runJobWithRetries(step, run_id, "analyze_human_round", analyzeWorkflowVersion, validateAnalysisShape, async () => {
         const exportRow = await this.env.DB.prepare("SELECT payload_json, status FROM research_exports WHERE round_id = ?")
           .bind(round_id)
           .first();
@@ -112,7 +122,7 @@ export class CalibrationWorkflow extends WorkflowEntrypoint {
         `INSERT INTO calibration_artifacts (artifact_id, artifact_type, round_id, run_id, workflow_version, content_json, content_sha256, created_at)
          VALUES (?, 'analysis', ?, ?, ?, ?, ?, ?)`
       )
-        .bind(artifactId, round_id, run_id, workflow_version, contentJson, hash, nowIso())
+        .bind(artifactId, round_id, run_id, analyzeWorkflowVersion, contentJson, hash, nowIso())
         .run();
       await this.env.DB.prepare(
         "UPDATE calibration_runs SET status='evidence_updated', current_step='prepare_next_round', analysis_artifact_id=? WHERE run_id=?"
@@ -138,7 +148,7 @@ export class CalibrationWorkflow extends WorkflowEntrypoint {
       });
     });
 
-    await this.writeArtifact(round_id, run_id, workflow_version, "additional_review_plan", additionalReviewResult, nowIso());
+    await this.writeArtifact(round_id, run_id, analyzeWorkflowVersion, "additional_review_plan", additionalReviewResult, nowIso());
 
     if (additionalReviewResult.status === "DRAFTED") {
       await step.do("apply-publication-policy-additional-review", async () => {
@@ -156,7 +166,7 @@ export class CalibrationWorkflow extends WorkflowEntrypoint {
 
     let preparation;
     try {
-      preparation = await this.runJobWithRetries(step, run_id, "prepare_next_round", workflow_version, validatePrepareShape, async () => {
+      preparation = await this.runJobWithRetries(step, run_id, "prepare_next_round", PREPARE_NEXT_ROUND_VERSION, validatePrepareShape, async () => {
         const candidateRows = await this.env.DB.prepare(
           "SELECT * FROM calibration_candidates WHERE eligible_for_reader_lab = 1 AND dataset_purpose != 'held_out_evaluation'"
         ).all();
@@ -183,7 +193,7 @@ export class CalibrationWorkflow extends WorkflowEntrypoint {
       const now = nowIso();
 
       if (preparation.status === "NEEDS_ELIGIBLE_CANDIDATES") {
-        await this.writeArtifact(round_id, run_id, workflow_version, "next_round_draft", preparation, now);
+        await this.writeArtifact(round_id, run_id, PREPARE_NEXT_ROUND_VERSION, "next_round_draft", preparation, now);
         await this.env.DB.prepare("UPDATE calibration_runs SET status='needs_eligible_candidates', completed_at=? WHERE run_id=?")
           .bind(now, run_id)
           .run();
@@ -212,7 +222,7 @@ export class CalibrationWorkflow extends WorkflowEntrypoint {
       const artifactId = await this.writeArtifact(
         round_id,
         run_id,
-        workflow_version,
+        PREPARE_NEXT_ROUND_VERSION,
         "next_round_draft",
         { ...preparation, draft_round_id: draftRoundId },
         now

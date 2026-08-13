@@ -1,0 +1,116 @@
+{
+  "artifact_type": "research_context",
+  "round_id": "RL-2026-002",
+  "prepared_at": "2026-08-13",
+  "prepared_by": "research session, zero model calls -- all fields read from already-frozen R1/R2 artifacts",
+  "research_question": "Do independent reviewers accept adjacent-fact synthesis (source states two related facts, candidate connects them) as source-supported more often than unanchored property/mechanism claims (candidate attributes a function/mechanism/cause with no textual anchor at all)? This round tests that narrow question only -- it does not resolve whether B2 is 'too conservative' generally, and no response here automatically changes any prompt, model, or threshold.",
+  "instrumentation_note": "RL-2026-001's analysis exposed that a single machine_comparison field (role-only) can mask a support-direction reversal (De Hooch/Z). This round's OWN internal research_context stores role/support/effective-state as three separate fields from the start, per the completed audit's explicit recommendation -- this does NOT modify RL-2026-001's own historical artifacts, which remain exactly as recorded.",
+  "per_item": {
+    "sha256:14db4855f7e5167e1cdf3aabf774784107090f0c95f88b2f3467607edccd6932": {
+      "slot": 1,
+      "family_internal_only": "ADJACENT_FACT_SYNTHESIS",
+      "b2_case_reference": "H04/c10 (fresh-batch-1, engine S) -- adjacent-fact-synthesis candidate",
+      "machine_role": "factual_dependency",
+      "machine_support": "unsupported",
+      "machine_problems": [
+        "causality_hardening",
+        "undeclared_factual_dependency"
+      ],
+      "machine_conflict_state": "consistent (no R1/R2 conflict)",
+      "machine_effective_state": "unsupported",
+      "machine_why_full_text": "The source establishes (a) water/ammonia reactivity 'can be at odds with' transition metal complexes and (b) phosphines succeed where transition metals fail -- two adjacent facts in the same abstract. R2 treats the candidate's causal attribution ('caused by environmental incompatibility rather than intrinsic molecular properties') as an unsupported addition, since the source states both facts without asserting this specific causal framing between them.",
+      "researcher_side_family_criteria_met": [
+        "both source facts explicitly present (cj1:a1: at-odds reactivity; cj1:a2/a3: phosphine success / rarity)",
+        "same passage, same continuous abstract, standard observation-then-explanation scientific prose sequencing",
+        "candidate connection does not introduce a wholly new external fact -- it names which of the two already-stated facts is the operative one"
+      ],
+      "dataset_purpose": "development"
+    },
+    "sha256:5f16ea51014156952959e5090551f765e288f8805e75e29cd9cc545f595cf7ce": {
+      "slot": 2,
+      "family_internal_only": "ADJACENT_FACT_SYNTHESIS_WITH_HEDGE_HARDENING",
+      "family_internal_only_note": "NOT a clean co-equal ADJACENT_FACT_SYNTHESIS test instance -- see the corrected preregistration `families` object. Kept as its own exploratory/boundary subtype.",
+      "b2_case_reference": "H12/c6 (fresh-batch-1, engine M) -- adjacent-fact-synthesis candidate, WEAKER FIT (compound with modality_hardening, flagged in eligibility audit)",
+      "machine_role": "factual_dependency",
+      "machine_support": "unsupported",
+      "machine_problems": [
+        "modality_hardening",
+        "causality_hardening"
+      ],
+      "machine_conflict_state": "consistent (no R1/R2 conflict)",
+      "machine_effective_state": "unsupported",
+      "machine_why_full_text": "Same two adjacent source facts as slot 1 (rarity; at-odds reactivity), but ALSO hardens the source's own hedge ('can be at odds with') into a categorical 'structurally incompatible' -- a second, distinct linguistic phenomenon (modality strengthening) layered on top of the causal synthesis. Kept in the pool but flagged: a human disagreement here could reflect the modality overreach, not (or not only) the causal-synthesis question this round targets.",
+      "researcher_side_family_criteria_met": [
+        "both source facts explicitly present, same passage as slot 1",
+        "CAVEAT: also contains an unrelated hardening move (hedge -> categorical), confounding a clean test of adjacent-fact synthesis alone"
+      ],
+      "dataset_purpose": "development"
+    },
+    "sha256:fe3419d28e6e5ec5942b6f4493365286c6e8abdbb2d81161ad3ff23c0f2a074b": {
+      "slot": 3,
+      "family_internal_only": "UNANCHORED_PROPERTY",
+      "b2_case_reference": "H11/c6 (fresh-batch-1, engine S) -- unanchored-property/mechanism candidate",
+      "machine_role": "factual_dependency",
+      "machine_support": "unsupported",
+      "machine_problems": [
+        "mechanism_invention",
+        "undeclared_factual_dependency"
+      ],
+      "machine_conflict_state": "consistent (no R1/R2 conflict)",
+      "machine_effective_state": "unsupported",
+      "machine_why_full_text": "The source establishes only that different age cutoffs exist for male/female applicants. It says nothing anywhere about career interruptions, biological timing, or institutional expectations -- there is no second adjacent fact to synthesize from; the entire population-level mechanism is invented.",
+      "researcher_side_family_criteria_met": [
+        "claimed mechanism (resistance landscape / career-interruption pattern) has zero source anchor",
+        "source cannot support it merely by combining stated facts -- only one fact (differential ages) exists at all",
+        "H14-shaped: same corpus family as the already-used RL-2026-001 control-contrast case, different specific claim/sentence"
+      ],
+      "dataset_purpose": "development"
+    },
+    "sha256:d83e6c23a33c18e801db5f6781c3b23a68bdbdab6746d7bb6689919fc268d11a": {
+      "slot": 4,
+      "family_internal_only": "UNANCHORED_PROPERTY",
+      "b2_case_reference": "01_cave_dna/S, c8 (cj2-reference-probe-1, FIRST REFERENCE PROBE) -- unanchored-property/mechanism candidate",
+      "machine_role": "factual_dependency",
+      "machine_support": "unsupported",
+      "machine_problems": [
+        "mechanism_invention",
+        "undeclared_factual_dependency"
+      ],
+      "machine_conflict_state": "consistent (no R1/R2 conflict)",
+      "machine_effective_state": "unsupported",
+      "machine_why_full_text": "The source establishes that a calcium-carbonate layer formed over the painting and was used for uranium-series dating, and separately that authorship is uncertain -- but attributes that uncertainty to the presence of multiple possible hominin species, never to the mineral layer destroying biological evidence. No source sentence anywhere addresses biological-trace destruction.",
+      "researcher_side_family_criteria_met": [
+        "claimed mechanism (mineral crust erasing biological trace) has zero source anchor",
+        "the source's OWN stated reason for authorship uncertainty is a DIFFERENT fact (multiple candidate species) -- ruling out that this is a same-passage synthesis of the source's own reasoning",
+        "topically distinct from slot 3 (archaeology vs. grant policy) -- deliberate diversity, this is one of the original FIRST REFERENCE PROBE's own already-documented SEMANTIC_FACT_LAUNDERING findings (offline audit, 2026-08-11), not newly discovered here"
+      ],
+      "dataset_purpose": "development"
+    },
+    "sha256:ed1133d503f968e2cb22be142299f6655d6795e18e3239207576137c9a803886": {
+      "slot": 5,
+      "family_internal_only": "CONTROL_SUPPORTED",
+      "b2_case_reference": "H16/c4 (fresh-batch-1, engine P) -- CONTROL: R1/R2 agree, cleanly SUPPORTED",
+      "machine_role": "factual_dependency",
+      "machine_support": "supported",
+      "machine_problems": [],
+      "machine_conflict_state": "consistent (no R1/R2 conflict)",
+      "machine_effective_state": "supported",
+      "machine_why_full_text": "The source directly states programme officers are instructed to remove 'policy' and derivatives and assess salvageability -- a direct, near-verbatim restatement, not a synthesis or an invented property. Included as the round's baseline: a case B2 already calls supported, to confirm reviewers use 'source supports this' appropriately when a claim genuinely is a direct restatement (distinct from RL-2026-001's own control, De Hooch/Z, which -- per the completed audit -- is NOT a clean supported baseline, since B2 itself calls it unsupported).",
+      "researcher_side_family_criteria_met": [
+        "N/A -- control, not part of either hypothesized family"
+      ],
+      "dataset_purpose": "development"
+    }
+  },
+  "future_schema_needed_not_yet_built": {
+    "role_alignment": "aligns | diverges | no_machine_reference | not_applicable -- computed exactly as today's machine_comparison",
+    "support_alignment": "aligns | diverges | no_machine_reference | not_applicable -- NEW: compares agreed human support direction (source_established vs. unsupported_factual_dependency) against machine_support",
+    "overall_relation": "full_alignment | role_only_alignment | full_divergence | not_comparable -- NEW: plain-language rollup of the two above, additive only, changes no historical row"
+  },
+  "not_authorized_by_this_artifact": [
+    "Re-running any B2/CJ-2 stage to recompute these labels",
+    "Treating machine_role/machine_support as ground truth for the comparison",
+    "Using this round's items as held_out_evaluation material",
+    "Modifying RL-2026-001's own analysis or research_context"
+  ]
+}

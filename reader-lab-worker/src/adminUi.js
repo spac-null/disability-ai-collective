@@ -123,7 +123,7 @@ export function renderAdminShell(nonce) {
   function renderNav(hash) {
     app.innerHTML = "";
     var nav = el("nav", { class: "adm-nav", "aria-label": "Admin sections" });
-    [["/dashboard", "Dashboard"], ["/rounds", "Rounds"], ["/calibration", "Calibration"], ["/policy", "Policy"], ["/reviewers", "Reviewers"], ["/import", "Import"]].forEach(function (pair) {
+    [["/dashboard", "Dashboard"], ["/rounds", "Rounds"], ["/calibration", "Calibration"], ["/policy", "Policy"], ["/candidates", "Candidates"], ["/reviewers", "Reviewers"], ["/import", "Import"]].forEach(function (pair) {
       var current = hash.indexOf(pair[0]) === 0;
       var a = el("a", { href: "#" + pair[0] }, [pair[1]]);
       if (current) a.setAttribute("aria-current", "page");
@@ -180,6 +180,16 @@ export function renderAdminShell(nonce) {
           ul.appendChild(el("li", {}, [el("a", { href: "#/rounds/" + n.round_id }, [n.round_id]), " \\u2014 " + n.note]));
         });
         body.appendChild(ul);
+      }
+
+      if (d.optional_governance && d.optional_governance.length) {
+        body.appendChild(el("p", { class: "adm-title", style: "margin-top:1.5rem;" }, ["Optional governance"]));
+        body.appendChild(el("p", { class: "adm-muted" }, ["Never blocks routine operation \\u2014 set only if you want to record a research disposition."]));
+        var ogUl = el("ul", {});
+        d.optional_governance.forEach(function (n) {
+          ogUl.appendChild(el("li", { class: "adm-muted" }, [el("a", { href: "#/rounds/" + n.round_id }, [n.round_id]), " \\u2014 " + n.note]));
+        });
+        body.appendChild(ogUl);
       }
 
       body.appendChild(el("p", { class: "adm-title", style: "margin-top:2rem;" }, ["Rounds"]));
@@ -440,6 +450,87 @@ export function renderAdminShell(nonce) {
           });
           body.appendChild(list);
         }
+      });
+    }
+    load();
+  });
+
+  // ---- candidates ----------------------------------------------------
+  // Visibility/debugging only, per the design doc's own instruction:
+  // "normal operation should not require Jascha to manage rows
+  // manually." The import fallback below exists for recovery/audit —
+  // routine research -> Reader Lab movement goes through the automatic
+  // runner path (prepare_calibration_candidates.py -> POST
+  // /ops/calibration/candidates), never this screen.
+
+  route(/^\\/candidates$/, function () {
+    app.appendChild(el("h1", { class: "text-h2" }, ["Calibration candidates"]));
+    app.appendChild(el("p", { class: "adm-muted" }, [
+      "Eligible candidates for the next automatic round draft. Routine operation should never require managing rows here \\u2014 this is visibility/debugging, plus an import fallback for recovery."
+    ]));
+
+    var body = el("div", {}, ["Loading\\u2026"]);
+    app.appendChild(body);
+
+    function load() {
+      api("/candidates").then(function (res) {
+        body.innerHTML = "";
+        if (!res.ok) { body.appendChild(el("p", { class: "adm-err" }, ["Couldn't load candidates."])); return; }
+        var candidates = res.body.candidates;
+        if (!candidates.length) {
+          body.appendChild(el("p", { class: "adm-muted" }, ["No candidates yet \\u2014 prepare-next-round-v1 will report NEEDS_ELIGIBLE_CANDIDATES until some exist."]));
+        } else {
+          var wrap = el("div", { class: "adm-table-wrap" });
+          var table = el("table", { class: "adm-table" });
+          table.appendChild(el("thead", {}, [el("tr", {}, [
+            el("th", { text: "Provenance" }), el("th", { text: "Purpose" }), el("th", { text: "Held out?" }),
+            el("th", { text: "Eligible" }), el("th", { text: "Already live?" }), el("th", { text: "Assigned/Answered" }),
+            el("th", { text: "Ingested via" }), el("th", { text: "Since" }),
+          ])]));
+          var tbody = el("tbody", {});
+          candidates.forEach(function (c) {
+            tbody.appendChild(el("tr", {}, [
+              el("td", { class: "adm-muted", text: c.provenance }),
+              el("td", { text: DATASET_PURPOSE_LABEL[c.dataset_purpose] || c.dataset_purpose }),
+              el("td", { text: c.held_out ? "YES \\u2014 should never appear" : "No" }),
+              el("td", { text: c.eligible_for_reader_lab ? "Yes" : "No" }),
+              el("td", { class: "adm-muted", text: c.already_live_item_id || "\\u2014" }),
+              el("td", { text: c.assigned_count + " / " + c.answered_count }),
+              el("td", { text: c.ingested_via || "\\u2014" }),
+              el("td", { text: fmtDate(c.created_at) }),
+            ]));
+          });
+          table.appendChild(tbody);
+          wrap.appendChild(table);
+          body.appendChild(wrap);
+        }
+
+        var importCard = el("div", { class: "adm-card", style: "margin-top:1.5rem;" });
+        importCard.appendChild(el("h3", {}, ["Import a candidate bundle (fallback)"]));
+        importCard.appendChild(el("p", { class: "adm-muted" }, [
+          "Paste a prepare-calibration-candidates-v1 bundle JSON. Goes through the exact same validation as the automatic runner path."
+        ]));
+        var textarea = el("textarea", { class: "adm-field", style: "min-height:10rem;font-family:monospace;font-size:0.85rem;" });
+        importCard.appendChild(textarea);
+        var resultBox = el("div", {});
+        var importBtn = el("button", { class: "btn btn--primary" }, ["Import"]);
+        importBtn.addEventListener("click", function () {
+          var parsed;
+          try { parsed = JSON.parse(textarea.value); } catch (e) {
+            resultBox.innerHTML = ""; resultBox.appendChild(el("p", { class: "adm-err" }, ["That's not valid JSON."])); return;
+          }
+          importBtn.disabled = true;
+          api("/candidates/import", { method: "POST", body: JSON.stringify({ bundle: parsed }) }).then(function (res2) {
+            importBtn.disabled = false;
+            resultBox.innerHTML = "";
+            if (!res2.ok) { resultBox.appendChild(errorList("adm-err", res2.body.errors || [res2.body.error])); return; }
+            resultBox.appendChild(el("pre", { class: "adm-note", style: "font-size:0.8rem;overflow-x:auto;" }, [JSON.stringify(res2.body, null, 2)]));
+            load();
+          });
+        });
+        importCard.appendChild(importBtn);
+        importCard.appendChild(resultBox);
+        body.appendChild(importCard);
       });
     }
     load();

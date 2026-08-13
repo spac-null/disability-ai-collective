@@ -1,0 +1,39 @@
+{
+  "experiment_id": "B2 SUPPORT-BOUNDARY TARGETED CALIBRATION ROUND (RL-2026-002 draft)",
+  "prepared": "2026-08-13",
+  "status": "DRAFT PREPARED, NOT PUBLISHED, NOT INSERTED INTO calibration_candidates",
+  "primary_question": "Do independent reviewers accept ADJACENT_FACT_SYNTHESIS cases as source-supported (source_established or interpretive_only) more often than UNANCHORED_PROPERTY cases?",
+  "explicitly_not_the_question": "Whether B2 is too conservative overall. This round tests one narrow boundary distinction only.",
+  "families": {
+    "ADJACENT_FACT_SYNTHESIS": [
+      "H04/c10 (slot 1) -- the ONLY clean, co-equal test instance of this family in this round"
+    ],
+    "ADJACENT_FACT_SYNTHESIS_WITH_HEDGE_HARDENING": [
+      "H12/c6 (slot 2) -- NOT a co-equal test instance. Compounds the round's target phenomenon (adjacent-fact synthesis) with a second, distinct one (hedge 'can be at odds with' hardened to categorical 'structurally incompatible'). Kept in the pool as a separate exploratory/boundary case -- a human disagreement here cannot be cleanly attributed to the primary hypothesis alone, and this round's own primary-hypothesis analysis (per-family counts) must not silently merge it into the clean ADJACENT_FACT_SYNTHESIS bucket. No second clean adjacent-synthesis example was manufactured to balance the sample -- see sample_size_note below."
+    ],
+    "UNANCHORED_PROPERTY": [
+      "H11/c6 (slot 3)",
+      "01_cave_dna/S c8 (slot 4)"
+    ],
+    "CONTROL_SUPPORTED": [
+      "H16/c4 (slot 5) -- B2 already says supported; baseline check that reviewers use 'source supports this' correctly when a claim genuinely is a direct restatement"
+    ]
+  },
+  "sample_size_note": "5 items (2+2+1), smaller than the suggested 4+4+1 target. Searched the stage-c-first-integrated-development-probe (14 items), the integrated repair-recheck (9 items), and the v2-r2-recovery corpus (18 items, incl. the original FIRST REFERENCE PROBE's Cave DNA/AI-Exam/De-Hooch candidates) for causality_hardening/mechanism_invention-tagged claims. Found many clean UNANCHORED_PROPERTY candidates but only ONE unambiguous ADJACENT_FACT_SYNTHESIS candidate (slot 1) plus one weaker, compound-tagged second (slot 2) -- consistent with the completed audit's own observation that this exact clean pattern (source itself states both facts adjacently, no other confound) is rare in the flagged pool. Did not pad with weak/ambiguous examples to reach a larger round; several candidates reviewed and excluded for not clearly fitting either family (see ELIGIBILITY AUDIT).",
+  "analysis_plan_preregistered_before_any_response": {
+    "per_family_report": [
+      "count of source_established selections",
+      "count of interpretive_only selections",
+      "count of unsupported_factual_dependency selections",
+      "count of uncertain selections",
+      "per-item agreement_state (agreement | disagreement | single_judgment)"
+    ],
+    "hypothesis_supported_if": "reviewers systematically treat ADJACENT_FACT_SYNTHESIS items as more acceptable (source_established / interpretive_only) than UNANCHORED_PROPERTY items -- read qualitatively, item-by-item, exactly as the completed audit read RL-2026-001, never against an arbitrary significance threshold.",
+    "anti_overcorrection_check": "the round is NOT supporting a general loosening if reviewers also select source_established/interpretive_only for the UNANCHORED_PROPERTY items (slots 3/4) -- that would falsify the hypothesis's specificity, not confirm a broader 'humans are just more permissive' reading.",
+    "no_post_hoc_threshold": true,
+    "no_arbitrary_significance_threshold": true,
+    "explicit_note": "This is calibration evidence from a tiny development round (n=2 reviewers, n=5 items), not a population study."
+  },
+  "reader_lab_instrumentation_gap_recorded": "machine_comparison in analyze-human-round-v1 checks role only, not support direction -- exactly what masked RL-2026-001's De Hooch/Z finding. This round's own research_context (calibration/research-context/RL-2026-002.json) stores machine_role/machine_support/machine_effective_state separately from the start. NOT changing analyze-human-round-v1 itself this pass -- future role_alignment/support_alignment/overall_relation fields specified as additive-only, not built.",
+  "rl_2026_001_frozen_confirmation": "RL-2026-001's own responses/analysis were not read again for content, not modified, not re-scored. Its findings (H14 full alignment; De Hooch/Z support-direction reversal; H17/H05 contested-but-permissive; H08 unresolved) are cited only as the motivating evidence for this round's hypothesis, never included as data in this round."
+}

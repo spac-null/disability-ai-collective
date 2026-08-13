@@ -25,10 +25,11 @@
  *   POST /ops/calibration/jobs/:id/heartbeat    extend a claimed job's lease (X-Calibration-Runner-Token)
  *   POST /ops/calibration/jobs/:id/complete     submit a hash-validated result (X-Calibration-Runner-Token)
  *   POST /ops/calibration/jobs/:id/fail         report a failed attempt (X-Calibration-Runner-Token)
+ *   POST /ops/calibration/candidates            B2 -> Reader Lab candidate bridge (X-Calibration-Runner-Token or X-Admin-Token)
  *
  *   GET  /admin                  admin control-plane UI (Cloudflare Access)
  *   *    /admin/api/*            admin control-plane JSON API (Cloudflare Access) — see adminApi.js
- *                                 (includes /rounds/:id/export/{status,download,retry} and /calibration/*)
+ *                                 (includes /rounds/:id/export/{status,download,retry}, /calibration/*, /policy, /candidates)
  *
  * A round completes itself (no route needed) — see maybeCompleteRound in
  * publish.js, called from handleResponse the instant the last reviewer's
@@ -105,8 +106,9 @@ import { adminApiFetch } from "./adminApi.js";
 import { renderAdminShell } from "./adminUi.js";
 import { directPublishFromManifest, maybeCompleteRound, ValidationError } from "./publish.js";
 import { buildResearchExport } from "./researchExport.js";
-import { armCalibrationRun } from "./calibrationOrchestrator.js";
+import { armCalibrationRun, reconcileStuckCalibrationRuns } from "./calibrationOrchestrator.js";
 import { calibrationJobsFetch } from "./calibrationJobs.js";
+import { ingestCalibrationCandidates, CandidateValidationError } from "./candidateIngestion.js";
 
 // Cloudflare Workflows require the class to be exported from the
 // entrypoint file itself (this file) — re-exporting from
@@ -204,6 +206,17 @@ export default {
       if (url.pathname.startsWith("/ops/calibration/jobs")) {
         return await requireCalibrationRunner(request, env, (req, e) => calibrationJobsFetch(req, e, url));
       }
+      // B2 -> Reader Lab candidate-pool bridge. CALIBRATION_RUNNER_TOKEN
+      // (the automatic path — see calibration/runner/prepare_calibration_
+      // candidates.py) or ADMIN_TOKEN (fallback/audit, same shape as
+      // /ops/publish's relationship to the admin UI). Never EXPORT_TOKEN —
+      // this is a write route. Writes only ever land in
+      // calibration_candidates via candidateIngestion.js's own validation
+      // — this route can never create/revoke a reviewer, mutate a
+      // response, change policy, or publish a round.
+      if (url.pathname === "/ops/calibration/candidates" && request.method === "POST") {
+        return await requireCalibrationRunnerOrAdmin(request, env, (req, e) => handleOpsCandidateIngestion(req, e));
+      }
       // Browser-facing admin control plane — Cloudflare Access-gated
       // (see access.js). Fails closed (503) until Access is actually
       // configured for this Worker; see README.md.
@@ -259,6 +272,16 @@ export default {
     for (const row of needsCalibration.results) {
       ctx.waitUntil(armCalibrationRun(env, row.round_id, { actor: "system:cron_reconciliation" }).catch(() => {}));
     }
+
+    // Candidate-pool reconciliation safety net — the primary trigger is
+    // synchronous, right after a candidate ingestion that added ≥1
+    // newly eligible row (see handleOpsCandidateIngestion above). This
+    // only exists to catch the case where that synchronous call itself
+    // failed, or eligibility changed some other way (e.g. a direct
+    // admin-import that raced a Worker restart). reconcileStuckCalibrationRuns
+    // is itself idempotent (the resumed_by_run_id claim), so running
+    // this against a round with nothing stuck is always a safe no-op.
+    ctx.waitUntil(reconcileStuckCalibrationRuns(env, { actor: "system:cron_reconciliation" }).catch(() => {}));
   },
 };
 
@@ -374,16 +397,36 @@ async function requireReadAccess(request, env, handler) {
   return handler(request, env);
 }
 
-// Third, separate credential — CALIBRATION_RUNNER_TOKEN — gates only
-// /ops/calibration/jobs/*. Deliberately never accepted as an alternative
-// on requireAdmin/requireReadAccess above, and ADMIN_TOKEN/EXPORT_TOKEN
-// are never accepted here either: holding this token can claim/heartbeat/
-// complete/fail a calibration job and nothing else — it has no path to
-// create/revoke a reviewer, publish a round, or touch a response/export.
-// Its own rate-limit bucket, isolated from the other two tokens' failure
-// counters.
+// Third, separate credential — CALIBRATION_RUNNER_TOKEN — gates
+// /ops/calibration/jobs/* and (see requireCalibrationRunnerOrAdmin below)
+// /ops/calibration/candidates. Deliberately never accepted as an
+// alternative on requireAdmin/requireReadAccess above, and
+// ADMIN_TOKEN/EXPORT_TOKEN are never accepted on the jobs routes either:
+// holding this token can claim/heartbeat/complete/fail a calibration job
+// and submit a candidate bundle — nothing else. It still has no path to
+// create/revoke a reviewer, mutate a response, change policy, or publish
+// a round. Its own rate-limit bucket, isolated from the other two
+// tokens' failure counters.
 async function requireCalibrationRunner(request, env, handler) {
   const ok = await checkToken(request, env, "x-calibration-runner-token", "CALIBRATION_RUNNER_TOKEN", "calibration_runner_auth_fail");
+  if (!ok) return secureJson({ error: "unauthorized" }, 401);
+  return handler(request, env);
+}
+
+// Candidate ingestion accepts CALIBRATION_RUNNER_TOKEN (the automatic
+// path) OR ADMIN_TOKEN (fallback/audit — same relationship /ops/publish
+// has to the admin UI's own publish action) — never EXPORT_TOKEN, since
+// this is a write route. This is not a privilege expansion for the
+// runner token in practice: it already fully controls prepare_next_
+// round's OUTPUT (the draft content it computes and submits back via
+// the jobs API), so letting it also populate the pool that step reads
+// from is the same trust boundary one step earlier, not a new one — see
+// the design doc's candidate-bridge section for the full reasoning.
+async function requireCalibrationRunnerOrAdmin(request, env, handler) {
+  const hasRunnerHeader = request.headers.get("x-calibration-runner-token") !== null;
+  const ok = hasRunnerHeader
+    ? await checkToken(request, env, "x-calibration-runner-token", "CALIBRATION_RUNNER_TOKEN", "calibration_runner_auth_fail")
+    : await checkToken(request, env, "x-admin-token", "ADMIN_TOKEN");
   if (!ok) return secureJson({ error: "unauthorized" }, 401);
   return handler(request, env);
 }
@@ -868,6 +911,39 @@ async function handleAdminPublish(request, env) {
   } catch (err) {
     if (err instanceof ValidationError) {
       return secureJson({ error: "validation_failed", errors: err.errors, warnings: err.warnings }, 422);
+    }
+    return secureJson({ error: "internal_error", detail: String((err && err.message) || err) }, 500);
+  }
+}
+
+// B2 -> Reader Lab candidate-pool bridge, machine path. See
+// candidateIngestion.js for the actual validation/idempotency; this
+// handler only resolves who's calling (runner_id from the body for the
+// runner token, "admin_token" for the admin fallback) and, on any newly
+// eligible candidate, immediately tries to resume any calibration run
+// stuck at needs_eligible_candidates — never leaving that to wait for
+// the hourly cron alone.
+async function handleOpsCandidateIngestion(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return secureJson({ error: "invalid_json" }, 400);
+  }
+  const isRunner = request.headers.get("x-calibration-runner-token") !== null;
+  const actor = isRunner ? `runner:${(body && body.runner_id) || "unknown"}` : "admin_token";
+  const ingestedVia = isRunner ? "runner" : "admin_import";
+
+  try {
+    const result = await ingestCalibrationCandidates(env, body, { actor, ingestedVia });
+    let reconciliation = null;
+    if (result.newly_eligible_candidate_count > 0) {
+      reconciliation = await reconcileStuckCalibrationRuns(env, { actor: "system:candidate_ingestion_reconciliation" });
+    }
+    return secureJson({ ...result, reconciliation });
+  } catch (err) {
+    if (err instanceof CandidateValidationError) {
+      return secureJson({ error: "validation_failed", errors: err.errors }, 422);
     }
     return secureJson({ error: "internal_error", detail: String((err && err.message) || err) }, 500);
   }

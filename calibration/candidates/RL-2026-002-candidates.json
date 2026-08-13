@@ -1,0 +1,122 @@
+[
+  {
+    "slot": 1,
+    "family_internal_only": "ADJACENT_FACT_SYNTHESIS",
+    "internal_ref": "H04/c10 (fresh-batch-1, engine S) -- adjacent-fact-synthesis candidate",
+    "source_snapshot": "Abstract\nThe unique reactivity of transition metals has advanced C–H functionalization chemistry, enabling practitioners to directly modify drug and agrochemical compounds during Structure Activity Relationship (SAR) studies. These metals are particularly adept at transforming the C–H bonds of arenes and aromatic heterocycles, generating new reactions that form C–C and C–heteroatom bonds. However, among the many potential coupling partners, (hetero)arene C–H coupling reactions with water and ammonia are rare.1-5 Despite being two of the most abundant chemicals on Earth, their reactivity can be at odds with transition metal complexes and the elementary steps associated with C–O/C–N bond formation.6 We suspected that elements outside of the transition metal block might instead facilitate these reactions. Here, we show that simple triarylphosphines enable selective azine C–H coupling with water and ammonia. The reactions proceed via a distinct mechanism where pendant aldehyde and imine functional groups interconvert to acetal- and aminal-type forms, studied here both experimentally and computationally. This unusual example of neighboring group participation effectively delivers water and ammonia molecules into a P(V) coordination environment, promoting C–O and C–N bond formation via ligand-coupling reactions.7 A broad range of pyridines are compatible, as well as quinolines and diazines, and the chemistry functions as a late-stage tactic for hydroxylation and amination of complex pharmaceuticals and agrochemicals.\nThis is a preview of subscription content, access via your institution\nAccess options\nAccess Nature and 54 other Nature Portfolio journals\nGet Nature+, our best-value online-access subscription\n27,99 € / 30 days\ncancel any time\nSubscribe to this journal\nReceive 52 print issues and online access\n193,42 € per year\nonly 3,72 € per issue\nRent or buy this article\nPrices vary by article type\nfrom$1.95\nto$39.95\nPrices may be subject to local taxes which are calculated during checkout\nSupplementary information\nSupplementary Information (download PDF )\nSupplementary Sections 1–21, including Supplementary Tables 1–17, Supplementary Figs 1–22 and Supplementary Data.\nSupplementary Data (download DOCX )\nMolecular Coordinates\nSupplementary Data (download XLSX )\nThermochemistry data\nRights and permissions\nAbout this article\nCite this article\nNottingham, K.G., Brunner, D.A., Dalmau, D. et al. Phosphine-mediated azine C–H couplings with water and ammonia. Nature (2026). https://doi.org/10.1038/s41586-026-10991-w\n- Received:\n- Accepted:\n- Published:\n- DOI: https://doi.org/10.1038/s41586-026-10991-w",
+    "candidate_sentence": "The rarity of these reactions under transition metal catalysis is an environmental incompatibility, not a molecular one.",
+    "provenance": "automation/.probe_fixtures/cj2-b2-stage-c-first-integrated-development-probe/results/{r1,r2}/H04.json, claim c10",
+    "machine_role": "factual_dependency",
+    "machine_support": "unsupported",
+    "machine_problems": [
+      "causality_hardening",
+      "undeclared_factual_dependency"
+    ],
+    "machine_conflict_state": "consistent (no R1/R2 conflict)",
+    "machine_why": "The source establishes (a) water/ammonia reactivity 'can be at odds with' transition metal complexes and (b) phosphines succeed where transition metals fail -- two adjacent facts in the same abstract. R2 treats the candidate's causal attribution ('caused by environmental incompatibility rather than intrinsic molecular properties') as an unsupported addition, since the source states both facts without asserting this specific causal framing between them.",
+    "researcher_side_family_criteria_met": [
+      "both source facts explicitly present (cj1:a1: at-odds reactivity; cj1:a2/a3: phosphine success / rarity)",
+      "same passage, same continuous abstract, standard observation-then-explanation scientific prose sequencing",
+      "candidate connection does not introduce a wholly new external fact -- it names which of the two already-stated facts is the operative one"
+    ],
+    "source_snapshot_id": "sha256:e7a83b2f2aa620586851396ccfe0f5fdc92901b662aeb53b83f0689284605168",
+    "candidate_claim_id": "sha256:14db4855f7e5167e1cdf3aabf774784107090f0c95f88b2f3467607edccd6932",
+    "dataset_purpose": "development",
+    "eligible_for_reader_lab": true
+  },
+  {
+    "slot": 2,
+    "family_internal_only": "ADJACENT_FACT_SYNTHESIS_WITH_HEDGE_HARDENING",
+    "family_internal_only_note": "NOT a clean co-equal ADJACENT_FACT_SYNTHESIS test instance -- kept as a separate exploratory/boundary subtype because it compounds the round's target phenomenon (adjacent-fact synthesis) with a second, distinct one (hedge->categorical modality hardening). A human disagreement here cannot be cleanly attributed to the primary hypothesis alone. See preregistration's corrected `families` object.",
+    "internal_ref": "H12/c6 (fresh-batch-1, engine M) -- adjacent-fact-synthesis candidate, WEAKER FIT (compound with modality_hardening, flagged in eligibility audit)",
+    "source_snapshot": "Abstract\nThe unique reactivity of transition metals has advanced C–H functionalization chemistry, enabling practitioners to directly modify drug and agrochemical compounds during Structure Activity Relationship (SAR) studies. These metals are particularly adept at transforming the C–H bonds of arenes and aromatic heterocycles, generating new reactions that form C–C and C–heteroatom bonds. However, among the many potential coupling partners, (hetero)arene C–H coupling reactions with water and ammonia are rare.1-5 Despite being two of the most abundant chemicals on Earth, their reactivity can be at odds with transition metal complexes and the elementary steps associated with C–O/C–N bond formation.6 We suspected that elements outside of the transition metal block might instead facilitate these reactions. Here, we show that simple triarylphosphines enable selective azine C–H coupling with water and ammonia. The reactions proceed via a distinct mechanism where pendant aldehyde and imine functional groups interconvert to acetal- and aminal-type forms, studied here both experimentally and computationally. This unusual example of neighboring group participation effectively delivers water and ammonia molecules into a P(V) coordination environment, promoting C–O and C–N bond formation via ligand-coupling reactions.7 A broad range of pyridines are compatible, as well as quinolines and diazines, and the chemistry functions as a late-stage tactic for hydroxylation and amination of complex pharmaceuticals and agrochemicals.\nThis is a preview of subscription content, access via your institution\nAccess options\nAccess Nature and 54 other Nature Portfolio journals\nGet Nature+, our best-value online-access subscription\n27,99 € / 30 days\ncancel any time\nSubscribe to this journal\nReceive 52 print issues and online access\n193,42 € per year\nonly 3,72 € per issue\nRent or buy this article\nPrices vary by article type\nfrom$1.95\nto$39.95\nPrices may be subject to local taxes which are calculated during checkout\nSupplementary information\nSupplementary Information (download PDF )\nSupplementary Sections 1–21, including Supplementary Tables 1–17, Supplementary Figs 1–22 and Supplementary Data.\nSupplementary Data (download DOCX )\nMolecular Coordinates\nSupplementary Data (download XLSX )\nThermochemistry data\nRights and permissions\nAbout this article\nCite this article\nNottingham, K.G., Brunner, D.A., Dalmau, D. et al. Phosphine-mediated azine C–H couplings with water and ammonia. Nature (2026). https://doi.org/10.1038/s41586-026-10991-w\n- Received:\n- Accepted:\n- Published:\n- DOI: https://doi.org/10.1038/s41586-026-10991-w",
+    "candidate_sentence": "Transition metal elementary steps are structurally incompatible with water and ammonia as coupling partners.",
+    "provenance": "automation/.probe_fixtures/cj2-b2-stage-c-first-integrated-development-probe/results/{r1,r2}/H12.json, claim c6",
+    "machine_role": "factual_dependency",
+    "machine_support": "unsupported",
+    "machine_problems": [
+      "modality_hardening",
+      "causality_hardening"
+    ],
+    "machine_conflict_state": "consistent (no R1/R2 conflict)",
+    "machine_why": "Same two adjacent source facts as slot 1 (rarity; at-odds reactivity), but ALSO hardens the source's own hedge ('can be at odds with') into a categorical 'structurally incompatible' -- a second, distinct linguistic phenomenon (modality strengthening) layered on top of the causal synthesis. Kept in the pool but flagged: a human disagreement here could reflect the modality overreach, not (or not only) the causal-synthesis question this round targets.",
+    "researcher_side_family_criteria_met": [
+      "both source facts explicitly present, same passage as slot 1",
+      "CAVEAT: also contains an unrelated hardening move (hedge -> categorical), confounding a clean test of adjacent-fact synthesis alone"
+    ],
+    "source_snapshot_id": "sha256:e7a83b2f2aa620586851396ccfe0f5fdc92901b662aeb53b83f0689284605168",
+    "candidate_claim_id": "sha256:5f16ea51014156952959e5090551f765e288f8805e75e29cd9cc545f595cf7ce",
+    "dataset_purpose": "development",
+    "eligible_for_reader_lab": true
+  },
+  {
+    "slot": 3,
+    "family_internal_only": "UNANCHORED_PROPERTY",
+    "internal_ref": "H11/c6 (fresh-batch-1, engine S) -- unanchored-property/mechanism candidate",
+    "source_snapshot": "The National Natural Science Foundation of China (NSFC) plans to fund an extra 12,000 projects through its Young Scientists Fund (see Nature 655, 557–558; 2026). Under NSFC rules, male applicants must be under 35 years old and female applicants under 40. This raises a wider question for science funders: should early-career support be tied to birthdate?\nAccess options\nAccess Nature and 54 other Nature Portfolio journals\nGet Nature+, our best-value online-access subscription\n27,99 € / 30 days\ncancel any time\nSubscribe to this journal\nReceive 52 print issues and online access\n193,42 € per year\nonly 3,72 € per issue\nRent or buy this article\nPrices vary by article type\nfrom$1.95\nto$39.95\nPrices may be subject to local taxes which are calculated during checkout\nNature 656, 532 (2026)\ndoi: https://doi.org/10.1038/d41586-026-02492-7\nCompeting Interests\nThe author declares no competing interests.",
+    "candidate_sentence": "Female scientists navigate a different resistance landscape (career interruptions, biological timing, institutional expectations) such that the same chronological age does not correspond to the same career-stage position.",
+    "provenance": "automation/.probe_fixtures/cj2-b2-stage-c-first-integrated-development-probe/results/{r1,r2}/H11.json, claim c6",
+    "machine_role": "factual_dependency",
+    "machine_support": "unsupported",
+    "machine_problems": [
+      "mechanism_invention",
+      "undeclared_factual_dependency"
+    ],
+    "machine_conflict_state": "consistent (no R1/R2 conflict)",
+    "machine_why": "The source establishes only that different age cutoffs exist for male/female applicants. It says nothing anywhere about career interruptions, biological timing, or institutional expectations -- there is no second adjacent fact to synthesize from; the entire population-level mechanism is invented.",
+    "researcher_side_family_criteria_met": [
+      "claimed mechanism (resistance landscape / career-interruption pattern) has zero source anchor",
+      "source cannot support it merely by combining stated facts -- only one fact (differential ages) exists at all",
+      "H14-shaped: same corpus family as the already-used RL-2026-001 control-contrast case, different specific claim/sentence"
+    ],
+    "source_snapshot_id": "sha256:9e3e52fddfd060bd0ed87c7c9c4a645a1607340526ba6552689ba9d82fb28002",
+    "candidate_claim_id": "sha256:fe3419d28e6e5ec5942b6f4493365286c6e8abdbb2d81161ad3ff23c0f2a074b",
+    "dataset_purpose": "development",
+    "eligible_for_reader_lab": true
+  },
+  {
+    "slot": 4,
+    "family_internal_only": "UNANCHORED_PROPERTY",
+    "internal_ref": "01_cave_dna/S, c8 (cj2-reference-probe-1, FIRST REFERENCE PROBE) -- unanchored-property/mechanism candidate",
+    "source_snapshot": "Perhaps the most evocative windows into the minds of our ancient ancestors are the images they painted on the walls of caves – renderings known simply as rock art or cave paintings.\n\nRock art, which is found across the world, offers snapshots of human history, preserving representations of cultural traditions, symbolic communication and social identity. Common subjects include animals, hunting scenes and hand stencils – thought to have been made by blowing pigment over the artist’s hand.\n\nScientists have wrestled with basic questions about the origins of rock art such as: what was used to produce it, when was it made, and who made it?\n\nNow, a recent study of cave art from Spain and Portugal has shown that ancient human DNA can be recovered directly from the cave walls. We may therefore be edging closer to answering “who made it?”\n\nUsing this technique to link a specific painting to an ancient artist may be a step too far. But there are still important things it can tell us about the past.\n\nPreviously, researchers had made considerable progress in answering the “what” and “when” questions. Scientists can analyse what pigments are preserved in rock art using techniques such as X-ray fluorescence spectroscopy, which allows them to identify materials such as red ochre and charcoal.\n\nScientists can also estimate the age of the art using techniques such as carbon-14 dating, carried out on minute quantities of organic material, to determine when rock art was created.\n\nFor example, in 2026, researchers reported that a stencil of a human hand had been found in Southeast Sulawesi, Indonesia. The researchers used a laser to bore a microscopic hole and collect samples from a fine layer of calcium carbonate that had formed over the painting.\n\nThe research team then measured the degradation of radioactive uranium contained in these mineral deposits to assign a minimum age to the painting of 67,800 years – making it the world’s oldest known minimum date for cave art.\n\nThe age of this art fits within a period when modern humans (Homo sapiens) are thought to have migrated through the area. But the wider Indonesian archipelago was previously home to other human species, such as Homo erectus and Homo floresiensis (nicknamed “the Hobbits”), which complicates matters significantly.\n\nWhile the stylistic and technical complexity of the art suggests authorship by Homo sapiens, we have no way to be certain who made it.\n\nIdentifying a human linked to a prehistoric item has an established methodology. For example, in 2023, researchers recovered ancient DNA from a deer-tooth pendant found in Denisova cave, southern Siberia.",
+    "candidate_sentence": "The environment, in depositing that mineral crust over the painting, has preserved the art while simultaneously erasing the biological trace of whoever pressed their hand to the surface.",
+    "provenance": "automation/.probe_fixtures/cj2-b2-v2-r2-recovery/recovery_results/per_candidate/01_cave_dna__S.json, claim c8",
+    "machine_role": "factual_dependency",
+    "machine_support": "unsupported",
+    "machine_problems": [
+      "mechanism_invention",
+      "undeclared_factual_dependency"
+    ],
+    "machine_conflict_state": "consistent (no R1/R2 conflict)",
+    "machine_why": "The source establishes that a calcium-carbonate layer formed over the painting and was used for uranium-series dating, and separately that authorship is uncertain -- but attributes that uncertainty to the presence of multiple possible hominin species, never to the mineral layer destroying biological evidence. No source sentence anywhere addresses biological-trace destruction.",
+    "researcher_side_family_criteria_met": [
+      "claimed mechanism (mineral crust erasing biological trace) has zero source anchor",
+      "the source's OWN stated reason for authorship uncertainty is a DIFFERENT fact (multiple candidate species) -- ruling out that this is a same-passage synthesis of the source's own reasoning",
+      "topically distinct from slot 3 (archaeology vs. grant policy) -- deliberate diversity, this is one of the original FIRST REFERENCE PROBE's own already-documented SEMANTIC_FACT_LAUNDERING findings (offline audit, 2026-08-11), not newly discovered here"
+    ],
+    "source_snapshot_id": "sha256:0333af6aea889f326c68acb3fefdf2ab984b20d949316d8ef7c768892b0201d7",
+    "candidate_claim_id": "sha256:d83e6c23a33c18e801db5f6781c3b23a68bdbdab6746d7bb6689919fc268d11a",
+    "dataset_purpose": "development",
+    "eligible_for_reader_lab": true
+  },
+  {
+    "slot": 5,
+    "family_internal_only": "CONTROL_SUPPORTED",
+    "internal_ref": "H16/c4 (fresh-batch-1, engine P) -- CONTROL: R1/R2 agree, cleanly SUPPORTED",
+    "source_snapshot": "Thank you for visiting nature.com. You are using a browser version with limited support for CSS. To obtain\nthe best experience, we recommend you use a more up to date browser (or turn off compatibility mode in\nInternet Explorer). In the meantime, to ensure continued support, we are displaying the site without styles\nand JavaScript.\nThe US National Institutes of Health (NIH) has begun turning away research grant applications for which the “primary function” is informing policymakers and legislators, according to internal documents seen by Nature. This means that the agency is likely to fund fewer projects assessing how public policies affect human health.\n“Policymakers are not considered a stakeholder group within the scope of NIH’s mission,” the internal documents say. “NIH-funded research must empower decision-making by NIH mission-relevant stakeholder groups”, which the documents list as including patients, health-care workers, hospitals and scientists. The change has not yet been formally announced, and there is a lack of clarity inside the agency about how it will be implemented, say NIH officials, who requested anonymity because of the risk of retaliation.\nRemoving policy-focused projects from the agency’s portfolio ignores the reality that policies and social factors fundamentally shape human health, some scientists say. Even the most advanced medical breakthroughs cannot help people if poorly designed distribution policies or social barriers prevent them from reaching the individuals who need them, they say.\n“Public policy that is blind to current evidence risks safety and effectiveness,” says Meredith Matone, a health-services specialist at the University of Pennsylvania in Philadelphia.\nThe NIH did not respond to Nature’s queries about the change or the agency’s rationale for the move.\n‘Policy’ removal\nSome NIH staff members learnt about the change in May, when political appointees inside the NIH and those at its parent agency, the Department of Health and Human Services (HHS), began flagging and freezing policy-focused grant applications that had been previously approved by peer reviewers and agency employees. (In an unprecedented move, the administration of US President Donald Trump has added political appointees to the grant-approval process, Nature reported in June.)\nDozens of applications have since been sent back to NIH programme officers in charge of the proposals, instructing them to remove the word ‘policy’ and its derivatives and determine whether the proposals can be salvaged, two NIH officials say. More than 3,700 projects funded during the 2025 fiscal year include these words in the project title or abstract, according to the NIH’s project database.\nThe NIH leadership has not provided its employees with a rationale for the shift, but top officials have characterized some of the flagged proposals as ‘lobbying’, defined by the agency as using federal funds to pay someone to influence a federal employee or member of the US Cong",
+    "candidate_sentence": "The criterion being applied is lexical: remove 'policy' and its derivatives, then determine if the proposal can be 'salvaged.'",
+    "provenance": "automation/.probe_fixtures/cj2-b2-stage-c-first-integrated-development-probe/results/{r1,r2}/H16.json, claim c4",
+    "machine_role": "factual_dependency",
+    "machine_support": "supported",
+    "machine_problems": [],
+    "machine_conflict_state": "consistent (no R1/R2 conflict)",
+    "machine_why": "The source directly states programme officers are instructed to remove 'policy' and derivatives and assess salvageability -- a direct, near-verbatim restatement, not a synthesis or an invented property. Included as the round's baseline: a case B2 already calls supported, to confirm reviewers use 'source supports this' appropriately when a claim genuinely is a direct restatement (distinct from RL-2026-001's own control, De Hooch/Z, which -- per the completed audit -- is NOT a clean supported baseline, since B2 itself calls it unsupported).",
+    "researcher_side_family_criteria_met": [
+      "N/A -- control, not part of either hypothesized family"
+    ],
+    "source_snapshot_id": "sha256:ec6682f73690f820aad30d1d9c67ae51fe12b60f2b9e40dcee2c0bf40e4be9f7",
+    "candidate_claim_id": "sha256:ed1133d503f968e2cb22be142299f6655d6795e18e3239207576137c9a803886",
+    "dataset_purpose": "development",
+    "eligible_for_reader_lab": true
+  }
+]

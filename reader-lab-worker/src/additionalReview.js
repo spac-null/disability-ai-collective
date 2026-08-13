@@ -1,7 +1,7 @@
 /**
  * Crip Minds Reader Lab — automatic additional review.
  *
- * After a round is analyzed (analyze-human-round-v1), some items may
+ * After a round is analyzed (analyze-human-round-v1/v2), some items may
  * come back `contested` (2+ reviewers disagreed) or
  * `needs_more_reviewers` (this round's own research_context flagged the
  * item as under-reviewed). This module decides — under policy, never by
