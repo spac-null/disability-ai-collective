@@ -208,6 +208,18 @@ export async function getCalibrationSummaryForRound(env, roundId) {
       .first();
     if (artifact) nextRoundDraft = JSON.parse(artifact.content_json);
   }
+  // The artifact's own "DRAFT_READY" status is a frozen historical record
+  // of the moment the draft was created — the draft round itself can
+  // since move through draft -> review -> frozen -> published ->
+  // completed. Attaching its CURRENT status (never rewriting the
+  // artifact) is what lets the UI say "in progress"/"finished" instead
+  // of a stale "ready to send" once that round has moved on.
+  if (nextRoundDraft && nextRoundDraft.draft_round_id) {
+    const draftRound = await env.DB.prepare("SELECT status FROM rounds WHERE round_id = ?")
+      .bind(nextRoundDraft.draft_round_id)
+      .first();
+    nextRoundDraft = { ...nextRoundDraft, current_round_status: draftRound ? draftRound.status : null };
+  }
 
   // Additional review runs alongside next-round preparation, not instead
   // of it (see calibrationWorkflow.js) — surfaced separately so "did this
@@ -258,11 +270,13 @@ export async function handleCalibrationStatus(request, env, url) {
   const requestedRoundId = url.searchParams.get("round_id");
   let roundId = requestedRoundId;
   if (!roundId) {
-    // Default to the most recently created round that has (or should
-    // have) a calibration story — published or completed, most recent
-    // first.
+    // Default to the most recently COMPLETED round if one exists — a
+    // round with actual results to show is more useful to lead with than
+    // one still waiting on reviewers. Falls back to the most recently
+    // created published (in-progress) round only when nothing has
+    // finished yet.
     const row = await env.DB.prepare(
-      "SELECT round_id FROM rounds WHERE status IN ('published','completed') ORDER BY created_at DESC LIMIT 1"
+      "SELECT round_id FROM rounds WHERE status IN ('published','completed') ORDER BY (status = 'completed') DESC, created_at DESC LIMIT 1"
     ).first();
     roundId = row ? row.round_id : null;
   }

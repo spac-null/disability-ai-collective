@@ -614,6 +614,22 @@ async function handleReviewerReactivate(request, env, identity, reviewerId) {
   return secureJson({ ok: true });
 }
 
+// Presentation only — reviewer_id remains the sole identity key on every
+// invitation/assignment/response/provenance record; this only changes
+// what Jascha and the admin UI display for this reviewer. An empty/null
+// value clears the override, falling back to reviewer_id everywhere.
+async function handleReviewerRename(request, env, identity, reviewerId) {
+  const body = (await readJsonBody(request)) || {};
+  const displayName = typeof body.display_name === "string" ? body.display_name.trim() : null;
+  const existing = await env.DB.prepare("SELECT reviewer_id FROM invitations WHERE reviewer_id = ?").bind(reviewerId).first();
+  if (!existing) return secureJson({ error: "not_found" }, 404);
+  await env.DB.prepare("UPDATE invitations SET display_name = ? WHERE reviewer_id = ?")
+    .bind(displayName || null, reviewerId)
+    .run();
+  await writeAuditLog(env, { action: "reviewer_display_name_changed", entityType: "reviewer", entityId: reviewerId, actor: identity.email, detail: { display_name: displayName || null } });
+  return secureJson({ ok: true, display_name: displayName || null });
+}
+
 // ---------------------------------------------------------------------
 // router
 // ---------------------------------------------------------------------
@@ -667,6 +683,8 @@ export async function adminApiFetch(request, env, identity, url) {
     return handleReviewerReactivate(request, env, identity, m[1]);
   if ((m = /^\/reviewers\/([^/]+)\/eligibility$/.exec(path)) && method === "POST")
     return handleReviewerSetEligibility(request, env, identity, m[1]);
+  if ((m = /^\/reviewers\/([^/]+)\/display-name$/.exec(path)) && method === "POST")
+    return handleReviewerRename(request, env, identity, m[1]);
 
   return secureJson({ error: "not_found" }, 404);
 }

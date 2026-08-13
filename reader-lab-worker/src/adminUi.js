@@ -391,6 +391,28 @@ export function renderAdminShell(nonce) {
 
   // ---- plain-language round summary (shared: Dashboard + Rounds) ----
 
+  // A next_round_draft artifact's own "status" field is a frozen
+  // snapshot of the moment it was written — it never reflects what
+  // actually happened to that draft round afterward. current_round_status
+  // (added server-side, never rewriting the artifact) is the only field
+  // that can tell "still waiting to send" apart from "already sent" or
+  // "already finished." Shared between the round-card summary and the
+  // Research results per-round detail so both stay in sync.
+  function nextRoundDraftLine(nrd) {
+    if (!nrd) return null;
+    if (nrd.status === "NEEDS_ELIGIBLE_CANDIDATES") return "No new research questions are available yet.";
+    if (nrd.status === "DRAFT_READY") {
+      var s = nrd.current_round_status;
+      if (s === "published") return "A follow-up round is in progress.";
+      if (s === "frozen") return "Next round ready to send.";
+      if (s === "draft" || s === "review") return "A follow-up round is being prepared.";
+      // completed, or the draft round no longer resolves to anything:
+      // never claim it's still waiting to send.
+      return null;
+    }
+    return null;
+  }
+
   function roundHeadlineLines(r) {
     var lines = [];
     if (r.status === "draft" || r.status === "review") {
@@ -416,10 +438,8 @@ export function renderAdminShell(nonce) {
         if (agree) lines.push(agree + " question" + (agree === 1 ? "" : "s") + " had clear agreement.");
         if (needMore) lines.push(needMore + " question" + (needMore === 1 ? " needs" : "s need") + " more opinions.");
       }
-      if (calib && calib.next_round_draft) {
-        if (calib.next_round_draft.status === "DRAFT_READY") lines.push("Next round ready to send.");
-        else if (calib.next_round_draft.status === "NEEDS_ELIGIBLE_CANDIDATES") lines.push("No new research questions are available yet.");
-      }
+      var nrdLine = nextRoundDraftLine(calib && calib.next_round_draft);
+      if (nrdLine) lines.push(nrdLine);
     }
     return lines;
   }
@@ -551,14 +571,19 @@ export function renderAdminShell(nonce) {
       ]));
 
       var actions = el("div", { class: "adm-actions" });
-      var pauseBtn = el("button", { class: "btn btn--outline btn--sm" }, [rv.active_for_calibration ? "Pause future rounds" : "Resume future rounds"]);
-      pauseBtn.addEventListener("click", function () {
-        pauseBtn.disabled = true;
-        api("/reviewers/" + encodeURIComponent(rv.reviewer_id) + "/eligibility", {
-          method: "POST", body: JSON.stringify({ active_for_calibration: !rv.active_for_calibration }),
-        }).then(function () { loadReviewers(); });
-      });
-      actions.appendChild(pauseBtn);
+      // Rendered from actual state, not always the full set — a revoked
+      // reviewer can only be reactivated; offering "Pause future rounds"
+      // on an already-revoked account would be a contradictory action.
+      if (!rv.revoked) {
+        var pauseBtn = el("button", { class: "btn btn--outline btn--sm" }, [rv.active_for_calibration ? "Pause future rounds" : "Resume future rounds"]);
+        pauseBtn.addEventListener("click", function () {
+          pauseBtn.disabled = true;
+          api("/reviewers/" + encodeURIComponent(rv.reviewer_id) + "/eligibility", {
+            method: "POST", body: JSON.stringify({ active_for_calibration: !rv.active_for_calibration }),
+          }).then(function () { loadReviewers(); });
+        });
+        actions.appendChild(pauseBtn);
+      }
       var revokeBtn = el("button", { class: "btn btn--outline btn--sm" }, [rv.revoked ? "Reactivate" : "Revoke"]);
       revokeBtn.addEventListener("click", function () {
         revokeBtn.disabled = true;
@@ -568,13 +593,42 @@ export function renderAdminShell(nonce) {
       actions.appendChild(revokeBtn);
       card.appendChild(actions);
 
-      card.appendChild(researchDetails("Details", [kvTable([
+      var detailsChildren = [kvTable([
         ["Reviewer ID", rv.reviewer_id],
         ["Lifetime, all rounds", rv.total_answered + " / " + rv.total_assigned + " answered/assigned"],
         ["Since", fmtDate(rv.created_at)],
         ["Auto-assign new rounds", rv.active_for_calibration ? "On" : "Off"],
         ["Max items per round", rv.max_items_per_round || "unset"],
-      ])]));
+      ])];
+
+      // Presentation only — reviewer_id (what every assignment/response/
+      // provenance record actually keys on) never changes here; leaving
+      // this blank simply falls back to showing reviewer_id again.
+      detailsChildren.push(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Display name"]));
+      var nameRow = el("div", { style: "display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;" });
+      var nameInput = el("input", {
+        class: "adm-field", style: "flex:1;min-width:10rem;margin-bottom:0;", value: rv.display_name || "",
+        placeholder: "Falls back to " + rv.reviewer_id, "aria-label": "Display name for " + rv.reviewer_id,
+      });
+      nameRow.appendChild(nameInput);
+      var saveNameBtn = el("button", { class: "btn btn--outline btn--sm" }, ["Save"]);
+      var nameMsg = el("span", { class: "adm-muted" }, []);
+      saveNameBtn.addEventListener("click", function () {
+        saveNameBtn.disabled = true;
+        nameMsg.textContent = "";
+        api("/reviewers/" + encodeURIComponent(rv.reviewer_id) + "/display-name", {
+          method: "POST", body: JSON.stringify({ display_name: nameInput.value.trim() || null }),
+        }).then(function (res) {
+          saveNameBtn.disabled = false;
+          if (!res.ok) { nameMsg.textContent = "Couldn't save."; return; }
+          loadReviewers();
+        });
+      });
+      nameRow.appendChild(saveNameBtn);
+      detailsChildren.push(nameRow);
+      detailsChildren.push(nameMsg);
+
+      card.appendChild(researchDetails("Details", detailsChildren));
       return card;
     }
 
@@ -586,7 +640,24 @@ export function renderAdminShell(nonce) {
           body.appendChild(el("p", { class: "adm-muted" }, ["No reviewers yet. Invite someone when you're ready."]));
           return;
         }
-        res.body.reviewers.forEach(function (rv) { body.appendChild(renderReviewerCard(rv)); });
+        // Revoked accounts (including old test/smoke-test invitations)
+        // are archived by default — real, still-active reviewers
+        // shouldn't have to be found among clutter that isn't relevant
+        // to routine operation. Nothing is deleted or changed here; the
+        // full list is one click away.
+        var activeReviewers = res.body.reviewers.filter(function (rv) { return !rv.revoked; });
+        var archivedReviewers = res.body.reviewers.filter(function (rv) { return rv.revoked; });
+        if (!activeReviewers.length) {
+          body.appendChild(el("p", { class: "adm-muted" }, ["No active reviewers yet. Invite someone when you're ready."]));
+        } else {
+          activeReviewers.forEach(function (rv) { body.appendChild(renderReviewerCard(rv)); });
+        }
+        if (archivedReviewers.length) {
+          body.appendChild(researchDetails(
+            "Archived / technical reviewers (" + archivedReviewers.length + ")",
+            archivedReviewers.map(renderReviewerCard)
+          ));
+        }
       });
     }
     loadReviewers();
@@ -907,20 +978,28 @@ export function renderAdminShell(nonce) {
           card.appendChild(el("p", { class: "adm-label" }, ["Results from this round"]));
           if (agree) card.appendChild(el("p", {}, [agree + " question" + (agree === 1 ? "" : "s") + ": reviewers agreed clearly."]));
           if (needMore) card.appendChild(el("p", {}, [needMore + " question" + (needMore === 1 ? "" : "s") + ": reviewers disagreed and may benefit from another opinion."]));
+          card.appendChild(el("a", { class: "btn btn--outline btn--sm", href: "#/results/" + d.round_id, style: "margin-top:0.5rem;display:inline-block;" }, ["View results"]));
 
           if (d.additional_review) {
             var plain = renderAdditionalReviewPlain(d.additional_review);
             if (plain) card.appendChild(plain);
           }
 
-          if (d.next_round_draft) {
+          // See nextRoundDraftLine's own comment: the artifact's status is
+          // a frozen snapshot, current_round_status (server-added) is what
+          // tells "still waiting to send" apart from "already sent" or
+          // "already finished" — never a stale claim once that round has
+          // moved on.
+          var nextLine = nextRoundDraftLine(d.next_round_draft);
+          var nrdReady = d.next_round_draft && d.next_round_draft.status === "DRAFT_READY" && d.next_round_draft.draft_round_id
+            && ["draft", "review", "frozen"].indexOf(d.next_round_draft.current_round_status) !== -1;
+          var nrdInProgress = d.next_round_draft && d.next_round_draft.status === "DRAFT_READY" && d.next_round_draft.draft_round_id
+            && d.next_round_draft.current_round_status === "published";
+          if (nextLine || nrdReady || nrdInProgress) {
             card.appendChild(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Next round"]));
-            if (d.next_round_draft.status === "DRAFT_READY" && d.next_round_draft.draft_round_id) {
-              card.appendChild(el("p", { style: "font-weight:600;" }, ["Next round ready to send."]));
-              card.appendChild(el("a", { class: "btn btn--primary btn--sm", href: "#/rounds/" + d.next_round_draft.draft_round_id }, ["Review " + d.next_round_draft.draft_round_id]));
-            } else {
-              card.appendChild(el("p", {}, ["No new research questions are available yet."]));
-            }
+            if (nextLine) card.appendChild(el("p", nrdReady ? { style: "font-weight:600;" } : {}, [nextLine]));
+            if (nrdReady) card.appendChild(el("a", { class: "btn btn--primary btn--sm", href: "#/rounds/" + d.next_round_draft.draft_round_id }, ["Review " + d.next_round_draft.draft_round_id]));
+            else if (nrdInProgress) card.appendChild(el("a", { class: "btn btn--outline btn--sm", href: "#/rounds/" + d.next_round_draft.draft_round_id }, ["View " + d.next_round_draft.draft_round_id]));
           }
         }
         body.appendChild(card);
@@ -949,6 +1028,27 @@ export function renderAdminShell(nonce) {
           advanced.push(list);
         }
         body.appendChild(researchDetails("Research details", advanced));
+
+        // Completed results lead the page (handleCalibrationStatus's own
+        // default-round query already prefers a finished round), but a
+        // round still in progress must stay visible, not disappear —
+        // shown here as a compact card, same component as Rounds/Home.
+        api("/rounds").then(function (res2) {
+          if (!res2.ok) return;
+          var others = res2.body.rounds.filter(function (r) {
+            return (r.status === "published" || r.status === "completed") && r.round_id !== d.round_id;
+          });
+          if (!others.length) return;
+          others.sort(function (a, b) {
+            var rank = function (r) { return r.status === "completed" ? 0 : 1; };
+            if (rank(a) !== rank(b)) return rank(a) - rank(b);
+            var aTime = a.completed_at || a.created_at || "";
+            var bTime = b.completed_at || b.created_at || "";
+            return bTime.localeCompare(aTime);
+          });
+          body.appendChild(el("p", { class: "adm-title", style: "margin-top:2rem;" }, ["Other rounds"]));
+          body.appendChild(renderRoundsTable(others));
+        });
       });
     }
     load();
