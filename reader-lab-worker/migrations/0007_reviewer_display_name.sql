@@ -1,0 +1,11 @@
+-- Reader Lab — reviewer display name (additive, presentation-only).
+--
+-- Purely additive: a friendly, admin-chosen label for the admin UI
+-- (Reviewers page, Add Reviewer flow, Results screen) so routine
+-- operation never requires reading/typing a reviewer_id. reviewer_id
+-- remains the one immutable identity key everywhere else (invitations,
+-- assignments, responses, provenance) — this column changes nothing
+-- about how a reviewer is identified, only how their name is displayed.
+-- NULL (unset) is the normal, expected state for every reviewer created
+-- before this migration; the UI falls back to reviewer_id when unset.
+ALTER TABLE invitations ADD COLUMN display_name TEXT;

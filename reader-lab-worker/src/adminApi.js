@@ -56,8 +56,9 @@ async function readJsonBody(request) {
 
 async function roundReviewerProgress(env, roundId) {
   const rows = await env.DB.prepare(
-    `SELECT reviewer_id, COUNT(*) AS assigned, SUM(CASE WHEN answered_at IS NOT NULL THEN 1 ELSE 0 END) AS answered
-     FROM assignments WHERE round_id = ? GROUP BY reviewer_id`
+    `SELECT a.reviewer_id, i.display_name, COUNT(*) AS assigned, SUM(CASE WHEN a.answered_at IS NOT NULL THEN 1 ELSE 0 END) AS answered
+     FROM assignments a JOIN invitations i ON i.reviewer_id = a.reviewer_id
+     WHERE a.round_id = ? GROUP BY a.reviewer_id`
   )
     .bind(roundId)
     .all();
@@ -323,10 +324,11 @@ async function handleResults(request, env, roundId) {
   if (!round) return secureJson({ error: "not_found" }, 404);
 
   const responses = await env.DB.prepare(
-    `SELECT r.item_id, r.reviewer_id, r.selected_public_response, r.internal_normalized_response,
+    `SELECT r.item_id, r.reviewer_id, inv.display_name AS reviewer_display_name, r.selected_public_response, r.internal_normalized_response,
             r.confidence, r.comment, r.timestamp, i.source_snapshot, i.candidate_sentence
      FROM responses r
      JOIN items i ON i.item_id = r.item_id
+     JOIN invitations inv ON inv.reviewer_id = r.reviewer_id
      WHERE r.item_id IN (SELECT DISTINCT item_id FROM assignments WHERE round_id = ?) AND r.practice_or_real = 'real'
      ORDER BY r.item_id, r.timestamp`
   )
@@ -345,6 +347,7 @@ async function handleResults(request, env, roundId) {
     }
     byItem.get(row.item_id).judgments.push({
       reviewer_id: row.reviewer_id,
+      reviewer_display_name: row.reviewer_display_name,
       selected_public_response: row.selected_public_response,
       internal_normalized_response: row.internal_normalized_response,
       confidence: row.confidence,
@@ -538,7 +541,7 @@ async function handleCandidatesImport(request, env, identity) {
 
 async function handleReviewersList(request, env) {
   const rows = await env.DB.prepare(
-    `SELECT i.reviewer_id, i.created_at, i.expires_at, i.revoked, i.practice_completed,
+    `SELECT i.reviewer_id, i.display_name, i.created_at, i.expires_at, i.revoked, i.practice_completed,
             i.active_for_calibration, i.max_items_per_round,
             COUNT(a.assignment_id) AS total_assigned,
             SUM(CASE WHEN a.answered_at IS NOT NULL THEN 1 ELSE 0 END) AS total_answered
@@ -581,15 +584,19 @@ async function handleReviewerSetEligibility(request, env, identity, reviewerId) 
 
 async function handleReviewerCreate(request, env, identity) {
   const body = (await readJsonBody(request)) || {};
+  // reviewer_id is still accepted directly for scripted/legacy callers,
+  // but the normal admin-UI flow never asks Jascha to invent one — a
+  // human-chosen display_name is optional presentation only (see
+  // migration 0007) and never affects reviewer_id/token/provenance.
   const reviewerId = body.reviewer_id || `reader_${randomHex(3)}`;
   const token = randomHex(24);
   const tokenHash = await sha256Hex(token);
   const now = nowIso();
   await env.DB.prepare(
-    `INSERT INTO invitations (reviewer_id, token_hash, contact_channel, created_at, expires_at, revoked, practice_completed)
-     VALUES (?,?,?,?,?,0,0)`
+    `INSERT INTO invitations (reviewer_id, token_hash, contact_channel, display_name, created_at, expires_at, revoked, practice_completed)
+     VALUES (?,?,?,?,?,?,0,0)`
   )
-    .bind(reviewerId, tokenHash, body.contact_channel || null, now, body.expires_at || null)
+    .bind(reviewerId, tokenHash, body.contact_channel || null, body.display_name || null, now, body.expires_at || null)
     .run();
   await writeAuditLog(env, { action: "reviewer_created", entityType: "reviewer", entityId: reviewerId, actor: identity.email });
   return secureJson({ reviewer_id: reviewerId, token, invite_url_path: `/invite/${token}` });

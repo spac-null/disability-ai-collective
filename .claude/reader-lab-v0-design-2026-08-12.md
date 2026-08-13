@@ -2492,3 +2492,312 @@ before the queued job ran under stale logic, not a standing replacement
 for that operational step. A future real restart (crash, reboot, or a
 deliberate one) will behave identically, since the fix is in the wrapper
 script itself, not in anything specific to how this pass triggered it.
+
+## 28. REVIEWER EXPERIENCE — CASE INTEREST / ACCESSIBILITY (2026-08-13,
+## design/backlog only — RL-2026-001/002 untouched, no round created,
+## no prompt/schema change)
+
+**Source of this section:** direct operator/reviewer observation during
+RL-2026-001/RL-2026-002. **Correction to an easy misreading of that
+observation, stated explicitly because it would otherwise mislead future
+selection:** the main reviewer burden is **not** source length — long
+passages are fine. The actual problem is that some selected material is
+niche, technically specific, awkwardly written, hard to care about
+without specialist context, or cognitively demanding for reasons that
+have nothing to do with the factual-floor judgment itself. Left
+unaddressed, this risks turning Reader Lab participation into unpaid
+specialist fact-checking rather than something a volunteer finds worth
+returning to — and repeat participation is what future Reader Lab
+success actually depends on.
+
+### 28.1 Research-validity boundary (non-negotiable)
+
+Reviewer experience improves through **case selection and round
+composition**, never through rewriting: not the source text, not the
+candidate claim, not the factual relationship being tested, not
+hedges/modality, not evidence context. Rewriting any of those changes
+the thing being calibrated. This section adds a selection preference on
+top of the existing eligibility gates — it does not loosen or replace
+any of them.
+
+### 28.2 Fast, high-leverage selection preference (guidance, not code —
+### applies starting now, to human judgment during future case selection)
+
+**When multiple equally research-eligible cases can test the same
+failure shape, prefer the one that is:** understandable without
+specialist background; written in reasonably ordinary language;
+self-contained; about a subject a general reader can form a mental
+picture of; interesting/curious/surprising where possible; not
+dominated by unexplained technical terminology.
+
+Research value remains the first gate. Accessibility is a **secondary**
+criterion applied only among candidates that already clear it — **never
+reject the only scientifically useful case merely because it is dull.**
+
+**Immediate, safe, non-semantic rule, adoptable starting with the next
+round design (not applied retroactively to RL-2026-001/002):** *for
+every planned Reader Lab round, inspect whether an equally informative
+but more generally readable candidate exists before accepting a highly
+niche or technical item.* Also prefer no more than roughly 1–2
+especially demanding items in a normal 5-question round, unless the
+research question itself requires an all-technical set (e.g. this
+project's own recent B2 support-boundary round drew from phosphine
+chemistry and NSFC policy specifically because those were the corpora
+where the target failure shape actually occurred — guidance, not a
+statistical threshold, and research necessity always wins).
+
+### 28.3 Round composition
+
+Where the hypothesis permits variety without weakening it, avoid a
+round where all items are similarly abstract (all hard science, or all
+bureaucratic policy language, or all one register) — mixing
+culture/history/art, everyday systems, science, and social/institutional
+material, plus at most one or two technically demanding boundary cases,
+reads as more varied without touching validity. Do not force diversity
+onto a tightly targeted experiment where the research question itself
+requires a narrow technical set.
+
+### 28.4 Internal reviewer-burden metadata — DESIGNED, NOT IMPLEMENTED
+
+A future, internal-only field on calibration candidates:
+
+```
+reviewer_accessibility: easy | moderate | demanding
+accessibility_notes: string (optional)
+```
+
+Never shown to a reviewer. Never read by, or permitted to influence,
+`disposition`/`agreement_state`/`reference_strength`/`machine_comparison`/
+`role_alignment`/`support_alignment`/`overall_relation` — those remain
+computed exactly as `analyze-human-round-v2` already defines them,
+untouched by this section. Not an objective scientific score — round-
+composition metadata only, informed by jargon density, assumed
+specialist knowledge, syntactic difficulty, contextual dependence, and
+general-reader comprehensibility. **Not implemented this pass** — no
+migration written, no column added to `calibration_candidates`
+(schema `## 27.1`, migration `0006`, untouched). A future pass may add
+it additively, the same discipline as every other field this design has
+ever added to that table.
+
+### 28.5 Longer-term automation goal — priority order for future
+### `prepare-next-round` selection logic (design intent, not implemented)
+
+```
+1. methodological eligibility        (existing, unconditional)
+2. hypothesis / calibration value    (existing, unconditional)
+3. blindness / provenance constraints (existing, unconditional)
+4. reviewer accessibility and interest (NEW, secondary)
+5. round variety                      (NEW, secondary)
+```
+
+Accessibility and variety (4–5) must never override 1–3. Today's
+`prepare-next-round-v1` selection rule (`calibration/workflows/
+prepare-next-round-v1.md`, §"Selection rule (v1, deterministic)")
+already implements 1–3 and none of 4–5 — this is recorded as the target
+shape for a future version, not built here.
+
+### 28.6 Backlog: READER EXPERIENCE V2
+
+**Question:** can Reader Lab feel like a few interesting mini-puzzles
+rather than tedious annotation work?
+
+Potential future explorations (none built, none scheduled): choosing
+intrinsically interesting source material whenever it's research-
+equivalent to a duller alternative; mixing topics within a round;
+clearer progress cues; occasional post-answer context about why a case
+was interesting; a short explanation after a completed round of how the
+reviewer's input helped; volunteer-friendly language around
+participation generally.
+
+**Explicitly to avoid, because it would bias calibration or misrepresent
+what participation is:** fake gamification; points or leaderboards;
+telling a reviewer they were "correct"; revealing B2's expected answer
+before or after judgment in a way that could anchor a future response;
+anything else that leaks a hint about the factual-floor answer into the
+experience.
+
+### 28.7 Explicit scope note
+
+RL-2026-001 and RL-2026-002 are unchanged by this section — both remain
+exactly as already published/analyzed. This section is forward-looking
+selection guidance for rounds not yet designed, recorded now because
+the observation motivating it (`## 28` header) came from direct
+experience with those two rounds, not because either round needed to be
+revisited.
+
+## 29. SIMPLE MODE / ADVANCED MODE — standing UX principle (2026-08-13, presentation/UX pass)
+
+Continuation of the plain-language admin pass in `## 23.9`'s successor
+commit (`0d41ce0`, "plain-language UX pass") — that pass translated
+status vocabulary and collapsed research detail per-screen; this pass
+makes the same distinction structural, at the navigation level, and
+extends it to the reviewer-facing app and the reviewer identity model.
+
+**Standing rule for all future Reader Lab UX work:** exposing internal
+research/workflow vocabulary (calibration_candidates, frozen/published
+DB states, policy enums, machine_comparison, provenance paths, raw
+reviewer_id as the primary identity, import manifests, hashes,
+D1/Workflow concepts) in the DEFAULT view is a UX defect, not a
+feature — not merely a style preference to revisit later. Every screen
+with technical content keeps that content fully available and
+unchanged under an "Advanced"/"Research details" `<details>`
+disclosure (the pre-existing `researchDetails()` helper in
+`adminUi.js`); nothing is deleted, nothing loses provenance, nothing
+loses a working URL.
+
+**Navigation (`src/adminUi.js`):** top nav is now `PRIMARY_NAV` (Home,
+Rounds, Reviewers) plus one `ADVANCED_NAV` item — a native `<details>`
+dropdown labeled "Advanced" containing Research results (renamed from
+"Calibration" in nav/heading only — the route, file, and every internal
+name stay `calibration`), Policy, Candidates, Import. Auto-expands when
+the current hash matches an Advanced page. All prior URLs
+(`#/calibration`, `#/policy`, `#/candidates`, `#/import`) are unchanged
+and still work directly — moving a page under Advanced is a navigation
+change, never a routing change.
+
+**Home/Dashboard:** "New round"/"Import draft" removed from the
+primary view (round construction is automated; per `## 22` these are
+recovery actions, not routine ones) — replaced with one line of plain
+text. The same two actions still exist, moved into a collapsed
+"Advanced / Recovery" block on the Rounds page.
+
+**Duplicate Action Required cards — real bug found and fixed.** Root
+cause: `calibrationAdmin.js`'s `handleAutomationSummary` read the last
+20 `additional_review_plan` calibration artifacts without deduping by
+`round_id`; since a round accumulates one such artifact per calibration
+run (manual retry, or the reconciliation sweep resuming a stuck run),
+an unresolved reviewer shortage on the same round produced one action
+card per re-run, not one per round. Fixed by keeping only the row with
+the latest `created_at` per `round_id` before building `actionRequired`
+— verified directly against a synthetic local duplicate (two
+`additional_review_plan` rows for one round_id, different statuses,
+different timestamps): before the fix, two cards; after, exactly one,
+reflecting the newer artifact.
+
+**Reviewer identity — `display_name`, additive.** There was no
+`reviewers` table (the entity is `invitations`) and no display-name
+concept anywhere — reviewers were identified only by `reviewer_id`
+(e.g. `reader_003`), and README `## 10` explicitly documented "no real
+names required," which was true for the pilot's pseudonymous design but
+poor UX for routine operation once real named volunteers (Maria, Ahmed,
+...) are expected. Migration `0007_reviewer_display_name.sql` adds
+`invitations.display_name TEXT` (nullable, presentation-only,
+`reviewer_id` remains the sole identity key everywhere else —
+assignments, responses, provenance, blinding). The Add Reviewer form is
+now Name + optional note (mapped to the pre-existing `contact_channel`
+field — no second free-text column added) instead of a raw
+`reviewer_id` field; `reviewer_id` continues to auto-generate exactly
+as before. Every place `reviewer_id` was shown to Jascha directly
+(Reviewers page, round-card "waiting for X" text, Results screen's
+per-reviewer answers/comments, Calibration's round-scoped counts, the
+round editor's reviewer checklist) now shows `display_name ||
+reviewer_id`; the raw `reviewer_id` remains visible under each
+reviewer's "Details" disclosure and in every research-comparison table.
+Results screen specifically: the previous "Reviewer A / Reviewer B"
+anonymized-letter scheme is replaced by the reviewer's actual name —
+correct here because these are real, known, consenting reviewers
+Jascha is operating directly, not a blinded research comparison.
+
+**Add Reviewer flow.** Replaces the "reviewer id (optional — generated
+if blank)" field with Name + optional note; on create, shows an
+"Invitation ready" card with the full link, a Copy button
+(`navigator.clipboard`), and a one-line explanation of what happens
+next — matching the design intent that Jascha never invents or reads
+back a `reviewer_id` in normal operation.
+
+**Reviewers page.** Table replaced with one card per reviewer (reusing
+the existing `.adm-round-card` visual language): name, plain
+active/practice/answered-count line, an availability sentence, Pause/
+Resume-future-rounds and Revoke/Reactivate actions, and a "Details"
+disclosure holding `reviewer_id`, exact lifetime counts, `created_at`,
+the raw auto-assign flag, and `max_items_per_round`.
+
+**Policy page.** Added a plain-language summary card above the
+existing raw editor (three sentences: publishing automation, additional-
+review automation, existing-reviewer-assignment automation, plus one
+muted line for candidate-experiment/fine-tune/production-promotion
+state) — read-only, never a second write path. The full raw
+three-`<select>` + count-field editor, save button, and version history
+are unchanged in every respect except being moved inside an "Advanced
+policy settings" disclosure. No policy semantics, versioning, or
+audit behavior changed.
+
+**Candidates page.** Renamed "Research candidates" in the heading; now
+leads with three plain counts (available / already assigned / waiting
+for future rounds, computed by filtering out `held_out` rows) before
+the raw provenance table and the import-bundle fallback, both moved
+into a "Research details" disclosure. Empty state rewritten in plain
+language (no `NEEDS_ELIGIBLE_CANDIDATES` in the default view).
+
+**Import page.** Retitled "Import a round (recovery tool)" with an
+explicit warning banner that routine operation doesn't need it. No
+functional change.
+
+**Reviewer-facing app (`src/index.js`) — one microcopy change, one real
+bug fix.** Progress line changed from bare `"3 of 5"` /
+`"Practice 2 of 4"` to `"Question 3 of 5"` / `"Practice question 2 of
+4"`. Everything else in the reviewer flow (welcome copy, the four
+factual-floor choice labels, practice explanations, thank-you screen)
+was already correct and matches this doc's `## 5`/`## 6` canonical
+wording exactly — confirmed by direct comparison, not assumed —
+so it was deliberately left unchanged; category semantics were never
+touched.
+
+Separately, a real, verified-in-browser bug: `index.js`'s own `el()`
+helper set `style="..."` as a literal HTML attribute, which this app's
+CSP (`style-src` has no `'unsafe-inline'`, same as the admin UI's own
+already-fixed instance of this exact bug — see `0d41ce0`) silently
+blocks. Confirmed directly (`getComputedStyle` showed `display: inline`
+where the code asked for `display: flex`). Concrete user-facing
+consequences before the fix: the welcome screen's assistance-
+declaration checkbox row had no flex layout (checkbox, label text, and
+the Start button ran together instead of stacking); the confidence-
+button row had no flex-wrap/gap; and — the most significant one — the
+optional comment `<textarea>` was **visible by default** instead of
+collapsed behind "Want to say why?", contradicting this doc's own `##
+9` ("comments... collapsed by default") and the brief's explicit
+"comments clearly optional" requirement. Fixed by porting the same
+CSSOM-`style.setProperty` pattern the admin UI's `el()` already uses,
+to `index.js`'s `el()`. Verified end-to-end in a real browser
+afterward: checkbox row flexes correctly, confidence buttons wrap with
+gaps, comment box starts collapsed and the toggle correctly reveals it,
+full practice → real → thank-you flow completes and submits
+successfully.
+
+**Mobile — one real bug found and fixed.** The new Advanced nav
+dropdown, anchored `left: 0` relative to its own (right-of-center)
+trigger, clipped off the right edge of a 390px viewport. Fixed by
+anchoring `right: 0` instead — verified before/after at 390×844.
+
+**Accessibility.** Native `<details>`/`<summary>` (nav dropdown,
+every Advanced/Research-details disclosure) is keyboard-operable with
+no extra ARIA needed — verified directly (Tab reaches "Advanced",
+Enter opens it, focus ring visible throughout). Added `aria-label` to
+several previously placeholder-only inputs (new Name/note fields,
+Round ID, the policy reviewer-count field, the policy notes field).
+Pre-existing good patterns (non-color-only status pills via a filled-
+dot glyph, 44px minimum tap targets, `prefers-reduced-motion` handling)
+were verified intact, not reintroduced. This was real-browser
+verification of the changed surfaces, not a formal WCAG audit of the
+whole app.
+
+**Verification method.** All of the above was checked against a local
+`wrangler dev --local` instance (fresh D1 replica; `ACCESS_DEV_BYPASS`
+used only in a gitignored local `.dev.vars`, removed again afterward)
+seeded with synthetic local-only fixtures (five synthetic rounds
+`RL-2099-100..500` left over from the `0d41ce0` pass, plus a synthetic
+duplicate `additional_review_plan` row and a real Maria invitation
+created through the new flow, both local-only) — real Playwright
+browser sessions, not just API calls: dashboard dedup, nav restructure
+and its dropdown at desktop and 390px mobile widths, the full Add-
+Reviewer-through-copy-link flow, Policy/Candidates/Import's new
+plain/Advanced split, and the complete reviewer welcome → practice →
+real-item → thank-you flow including a live response submission.
+RL-2026-001 and RL-2026-002 were not touched by any of this — no
+production D1 write, no redeploy yet as of this entry.
+
+**Not done in this pass, on purpose (still open per `## 28.6`):**
+Reader Experience V2's deeper ideas (topic mixing, post-answer context,
+post-round impact summary) remain design-only backlog, not built here
+— this pass's reviewer-app scope was the progress-label wording and
+the CSP layout bug, not new reviewer-facing features.

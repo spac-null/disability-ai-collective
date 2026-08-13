@@ -1011,7 +1011,28 @@ function renderAppShell(nonce) {
 
   function el(tag, attrs, children) {
     var e = document.createElement(tag);
-    for (var k in (attrs || {})) e.setAttribute(k, attrs[k]);
+    for (var k in (attrs || {})) {
+      if (k === "style") {
+        // This page's CSP has no 'unsafe-inline' on style-src (same
+        // nonce-only policy as script-src), so setting the style
+        // ATTRIBUTE directly is silently blocked by the browser —
+        // every style:"prop:value;" call site below (the welcome
+        // checkbox row, the confidence-button wrap, and the comment
+        // textarea's initial display:none) would otherwise render
+        // without the layout it depends on. Setting individual CSSOM
+        // properties via element.style.setProperty is not attribute-
+        // level inline style and isn't restricted by style-src.
+        String(attrs[k]).split(";").forEach(function (decl) {
+          var idx = decl.indexOf(":");
+          if (idx < 0) return;
+          var prop = decl.slice(0, idx).trim();
+          var val = decl.slice(idx + 1).trim();
+          if (prop && val) e.style.setProperty(prop, val);
+        });
+        continue;
+      }
+      e.setAttribute(k, attrs[k]);
+    }
     (children || []).forEach(function (c) { e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
     return e;
   }
@@ -1067,7 +1088,7 @@ function renderAppShell(nonce) {
   function renderItem(item, isPractice, onDone) {
     app.innerHTML = "";
     app.appendChild(el("p", { class: "rl-progress" }, [
-      (isPractice ? "Practice " : "") + (state.index + 1) + " of " + state.items.length
+      (isPractice ? "Practice question " : "Question ") + (state.index + 1) + " of " + state.items.length
     ]));
     app.appendChild(el("p", { class: "rl-label" }, ["Source"]));
     app.appendChild(el("p", { class: "rl-text rl-block" }, ["\\u201C" + item.source_snapshot + "\\u201D"]));

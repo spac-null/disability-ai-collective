@@ -24,11 +24,24 @@ export function renderAdminShell(nonce) {
 <style nonce="${nonce}">
   body { background: var(--foundation-white, #fef9f2); color: var(--foundation-black, #0d0c0b); }
   .adm-shell { max-width: 920px; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
-  .adm-nav { display: flex; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 2rem; padding-bottom: 1rem;
+  .adm-nav { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1.25rem; margin-bottom: 2rem; padding-bottom: 1rem;
     border-bottom: 2px solid var(--foundation-gray-300, #c4b5a0); }
   .adm-nav a { font-weight: 600; text-decoration: none; color: inherit; padding: 0.25rem 0; }
   .adm-nav a:hover, .adm-nav a:focus-visible { text-decoration: underline; }
   .adm-nav a[aria-current="page"] { border-bottom: 3px solid var(--brand-crip-blue, #3f5f89); }
+  /* "Advanced" — a native <details> dropdown so routine operation never
+     has to look at Research/Policy/Candidates/Import, but every one of
+     those pages keeps its own working URL and is one click away. */
+  .adm-nav-advanced { position: relative; }
+  .adm-nav-advanced > summary { font-weight: 600; cursor: pointer; list-style: none; padding: 0.25rem 0;
+    min-height: 44px; display: flex; align-items: center; opacity: 0.85; }
+  .adm-nav-advanced > summary::-webkit-details-marker { display: none; }
+  .adm-nav-advanced > summary::after { content: "\\25BE"; margin-left: 0.35rem; font-size: 0.7em; }
+  .adm-nav-advanced[open] > summary::after { content: "\\25B4"; }
+  .adm-nav-advanced-list { position: absolute; top: 100%; right: 0; margin-top: 0.4rem; background: var(--foundation-white, #fef9f2);
+    border: 2px solid var(--foundation-gray-300, #c4b5a0); border-radius: 0.5rem; padding: 0.6rem 0.9rem;
+    display: flex; flex-direction: column; gap: 0.6rem; z-index: 20; min-width: 11rem; white-space: nowrap; }
+  .adm-nav-advanced-list a { padding: 0.15rem 0; }
   .adm-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.65; margin-bottom: 0.4rem; }
   .adm-card { border: 2px solid var(--foundation-gray-300, #c4b5a0); border-radius: 0.6rem; padding: 1.25rem 1.5rem;
     margin-bottom: 1.25rem; }
@@ -263,15 +276,38 @@ export function renderAdminShell(nonce) {
     app.appendChild(el("p", {}, ["Not found."]));
   }
 
+  // Simple Mode (default) vs. Advanced Mode — the file's organizing
+  // navigation principle. Routine operation (is anything waiting for me,
+  // is a round in progress, did one finish, do I need a reviewer) lives
+  // entirely in the three primary links; research/policy/provenance
+  // internals live one click under "Advanced," never deleted, never
+  // moved to a different URL. See .claude/reader-lab-v0-design-2026-08-12.md
+  // for the standing convention this implements.
+  var PRIMARY_NAV = [["/dashboard", "Home"], ["/rounds", "Rounds"], ["/reviewers", "Reviewers"]];
+  var ADVANCED_NAV = [["/calibration", "Research results"], ["/policy", "Policy"], ["/candidates", "Candidates"], ["/import", "Import"]];
+
   function renderNav(hash) {
     app.innerHTML = "";
     var nav = el("nav", { class: "adm-nav", "aria-label": "Admin sections" });
-    [["/dashboard", "Dashboard"], ["/rounds", "Rounds"], ["/calibration", "Calibration"], ["/policy", "Policy"], ["/candidates", "Candidates"], ["/reviewers", "Reviewers"], ["/import", "Import"]].forEach(function (pair) {
+    PRIMARY_NAV.forEach(function (pair) {
       var current = hash.indexOf(pair[0]) === 0;
       var a = el("a", { href: "#" + pair[0] }, [pair[1]]);
       if (current) a.setAttribute("aria-current", "page");
       nav.appendChild(a);
     });
+    var advancedCurrent = ADVANCED_NAV.some(function (pair) { return hash.indexOf(pair[0]) === 0; });
+    var advDetails = el("details", { class: "adm-nav-advanced" });
+    if (advancedCurrent) advDetails.setAttribute("open", "open");
+    advDetails.appendChild(el("summary", { text: "Advanced" }));
+    var advList = el("div", { class: "adm-nav-advanced-list" });
+    ADVANCED_NAV.forEach(function (pair) {
+      var current = hash.indexOf(pair[0]) === 0;
+      var a = el("a", { href: "#" + pair[0] }, [pair[1]]);
+      if (current) a.setAttribute("aria-current", "page");
+      advList.appendChild(a);
+    });
+    advDetails.appendChild(advList);
+    nav.appendChild(advDetails);
     app.appendChild(nav);
   }
 
@@ -318,10 +354,9 @@ export function renderAdminShell(nonce) {
         d.rounds.forEach(function (r) { body.appendChild(renderRoundSummaryCard(r)); });
       }
 
-      var actions = el("div", { class: "adm-actions" });
-      actions.appendChild(el("a", { class: "btn btn--primary", href: "#/rounds/new" }, ["New round"]));
-      actions.appendChild(el("a", { class: "btn btn--outline", href: "#/import" }, ["Import draft"]));
-      body.appendChild(actions);
+      body.appendChild(el("p", { class: "adm-muted", style: "margin-top:1rem;" }, [
+        "New rounds are prepared automatically from eligible research \\u2014 you review and send them from Rounds when they're ready."
+      ]));
 
       // Optional governance and full automation/policy state are real,
       // useful facts — just never things Jascha has to act on to keep
@@ -367,7 +402,7 @@ export function renderAdminShell(nonce) {
         lines.push("Ready for you to review.");
       }
     } else if (r.status === "published") {
-      var waiting = (r.reviewers || []).filter(function (rv) { return rv.answered < rv.assigned; }).map(function (rv) { return rv.reviewer_id; });
+      var waiting = (r.reviewers || []).filter(function (rv) { return rv.answered < rv.assigned; }).map(function (rv) { return rv.display_name || rv.reviewer_id; });
       lines.push(waiting.length ? "Waiting for " + waiting.join(" and ") + " to answer." : "Waiting for the round to finish.");
     } else if (r.status === "completed") {
       var calib = r.calibration;
@@ -428,15 +463,25 @@ export function renderAdminShell(nonce) {
 
   route(/^\\/rounds$/, function () {
     app.appendChild(el("h1", { class: "text-h2" }, ["Rounds"]));
-    var actions = el("div", { class: "adm-actions" });
-    actions.appendChild(el("a", { class: "btn btn--primary", href: "#/rounds/new" }, ["New round"]));
-    app.appendChild(actions);
     var body = el("div", {}, ["Loading\\u2026"]);
     app.appendChild(body);
     api("/rounds").then(function (res) {
       body.innerHTML = "";
       if (!res.ok) { body.appendChild(el("p", { class: "adm-err" }, ["Couldn't load rounds."])); return; }
-      body.appendChild(renderRoundsTable(res.body.rounds));
+      if (!res.body.rounds.length) {
+        body.appendChild(el("p", { class: "adm-muted" }, ["No rounds yet. The system will prepare the next one automatically."]));
+      } else {
+        body.appendChild(renderRoundsTable(res.body.rounds));
+      }
+      body.appendChild(researchDetails("Advanced / Recovery", [
+        el("p", { class: "adm-muted" }, [
+          "New rounds are normally prepared automatically from eligible research. Use these only to build or recover a round by hand."
+        ]),
+        el("div", { class: "adm-actions" }, [
+          el("a", { class: "btn btn--outline", href: "#/rounds/new" }, ["New round"]),
+          el("a", { class: "btn btn--outline", href: "#/import" }, ["Import a round"]),
+        ]),
+      ]));
     });
   });
 
@@ -444,72 +489,104 @@ export function renderAdminShell(nonce) {
 
   route(/^\\/reviewers$/, function () {
     app.appendChild(el("h1", { class: "text-h2" }, ["Reviewers"]));
+
     var newForm = el("div", { class: "adm-card" });
     newForm.appendChild(el("h3", {}, ["Add a reviewer"]));
-    var idField = el("input", { class: "adm-field", placeholder: "reviewer id (optional \\u2014 generated if left blank)" });
-    newForm.appendChild(idField);
+    var nameField = el("input", { class: "adm-field", placeholder: "Name (e.g. Maria)", "aria-label": "Reviewer's name" });
+    newForm.appendChild(nameField);
+    var noteField = el("input", { class: "adm-field", placeholder: "Optional note", "aria-label": "Optional note about this reviewer" });
+    newForm.appendChild(noteField);
     var createdBox = el("div", {});
-    newForm.appendChild(createdBox);
-    var createBtn = el("button", { class: "btn btn--primary" }, ["Create reviewer"]);
+    var createBtn = el("button", { class: "btn btn--primary" }, ["Create invitation"]);
     createBtn.addEventListener("click", function () {
       createBtn.disabled = true;
-      api("/reviewers", { method: "POST", body: JSON.stringify({ reviewer_id: idField.value || undefined }) }).then(function (res) {
+      var chosenName = nameField.value.trim();
+      api("/reviewers", { method: "POST", body: JSON.stringify({ display_name: chosenName || undefined, contact_channel: noteField.value.trim() || undefined }) }).then(function (res) {
         createBtn.disabled = false;
-        if (!res.ok) { createdBox.innerHTML = ""; createdBox.appendChild(el("p", { class: "adm-err" }, ["Couldn't create reviewer."])); return; }
         createdBox.innerHTML = "";
-        createdBox.appendChild(el("p", {}, ["Created " + res.body.reviewer_id + ". Invitation link (copy it now \\u2014 shown once):"]));
-        createdBox.appendChild(el("p", { class: "adm-note" }, ["https://lab.cripminds.com" + res.body.invite_url_path]));
+        if (!res.ok) { createdBox.appendChild(el("p", { class: "adm-err" }, ["Couldn't create the invitation."])); return; }
+        var link = "https://lab.cripminds.com" + res.body.invite_url_path;
+        var card = el("div", { class: "adm-card" });
+        card.appendChild(el("p", { style: "font-weight:700;font-size:1.05rem;" }, ["Invitation ready"]));
+        card.appendChild(el("p", {}, ["Send this private link to " + (chosenName || "the new reviewer") + ":"]));
+        card.appendChild(el("p", { class: "adm-note" }, [link]));
+        var copyBtn = el("button", { class: "btn btn--outline btn--sm" }, ["Copy invitation link"]);
+        copyBtn.addEventListener("click", function () {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(link).then(function () {
+              copyBtn.textContent = "Copied!";
+              setTimeout(function () { copyBtn.textContent = "Copy invitation link"; }, 2000);
+            });
+          }
+        });
+        card.appendChild(copyBtn);
+        card.appendChild(el("p", { class: "adm-muted", style: "margin-top:0.6rem;" }, [
+          "When they open it, Reader Lab will guide them through a few practice questions first."
+        ]));
+        var doneBtn = el("button", { class: "btn btn--outline btn--sm", style: "margin-top:0.6rem;" }, ["Done"]);
+        doneBtn.addEventListener("click", function () { createdBox.innerHTML = ""; });
+        card.appendChild(el("div", {}, [doneBtn]));
+        createdBox.appendChild(card);
+        nameField.value = "";
+        noteField.value = "";
         loadReviewers();
       });
     });
     newForm.appendChild(createBtn);
+    newForm.appendChild(createdBox);
     app.appendChild(newForm);
-
-    app.appendChild(el("p", { class: "adm-muted" }, [
-      "Progress below is lifetime, across every round this reviewer has ever been assigned \\u2014 not this round's progress. See a round's own detail page or Calibration for that."
-    ]));
 
     var body = el("div", {}, ["Loading\\u2026"]);
     app.appendChild(body);
+
+    function renderReviewerCard(rv) {
+      var card = el("div", { class: "adm-round-card" });
+      card.appendChild(el("p", { class: "adm-round-title" }, [rv.display_name || rv.reviewer_id]));
+      var statusBits = [rv.revoked ? "Revoked" : "Active", rv.practice_completed ? "Practice complete" : "Practice not started yet"];
+      card.appendChild(el("p", { class: "adm-round-meta" }, [statusBits.join(" \\u00b7 ") + " \\u00b7 " + rv.total_answered + " question" + (rv.total_answered === 1 ? "" : "s") + " answered"]));
+      card.appendChild(el("p", {}, [
+        rv.revoked ? "Not available for new rounds."
+          : rv.active_for_calibration ? "Available for future rounds."
+          : "Paused \\u2014 won't be offered new rounds automatically.",
+      ]));
+
+      var actions = el("div", { class: "adm-actions" });
+      var pauseBtn = el("button", { class: "btn btn--outline btn--sm" }, [rv.active_for_calibration ? "Pause future rounds" : "Resume future rounds"]);
+      pauseBtn.addEventListener("click", function () {
+        pauseBtn.disabled = true;
+        api("/reviewers/" + encodeURIComponent(rv.reviewer_id) + "/eligibility", {
+          method: "POST", body: JSON.stringify({ active_for_calibration: !rv.active_for_calibration }),
+        }).then(function () { loadReviewers(); });
+      });
+      actions.appendChild(pauseBtn);
+      var revokeBtn = el("button", { class: "btn btn--outline btn--sm" }, [rv.revoked ? "Reactivate" : "Revoke"]);
+      revokeBtn.addEventListener("click", function () {
+        revokeBtn.disabled = true;
+        api("/reviewers/" + encodeURIComponent(rv.reviewer_id) + "/" + (rv.revoked ? "reactivate" : "revoke"), { method: "POST" })
+          .then(function () { loadReviewers(); });
+      });
+      actions.appendChild(revokeBtn);
+      card.appendChild(actions);
+
+      card.appendChild(researchDetails("Details", [kvTable([
+        ["Reviewer ID", rv.reviewer_id],
+        ["Lifetime, all rounds", rv.total_answered + " / " + rv.total_assigned + " answered/assigned"],
+        ["Since", fmtDate(rv.created_at)],
+        ["Auto-assign new rounds", rv.active_for_calibration ? "On" : "Off"],
+        ["Max items per round", rv.max_items_per_round || "unset"],
+      ])]));
+      return card;
+    }
 
     function loadReviewers() {
       api("/reviewers").then(function (res) {
         body.innerHTML = "";
         if (!res.ok) { body.appendChild(el("p", { class: "adm-err" }, ["Couldn't load reviewers."])); return; }
-        var wrap = el("div", { class: "adm-table-wrap" });
-        var table = el("table", { class: "adm-table" });
-        table.appendChild(el("thead", {}, [el("tr", {}, [
-          el("th", { text: "Reviewer" }), el("th", { text: "Status" }), el("th", { text: "Practice" }),
-          el("th", { text: "Auto-assign" }), el("th", { text: "Lifetime, all rounds" }), el("th", { text: "Since" }), el("th", { text: "Action" }),
-        ])]));
-        var tbody = el("tbody", {});
-        res.body.reviewers.forEach(function (rv) {
-          var actionBtn = el("button", { class: "btn btn--outline btn--sm" }, [rv.revoked ? "Reactivate" : "Revoke"]);
-          actionBtn.addEventListener("click", function () {
-            actionBtn.disabled = true;
-            api("/reviewers/" + encodeURIComponent(rv.reviewer_id) + "/" + (rv.revoked ? "reactivate" : "revoke"), { method: "POST" })
-              .then(function () { loadReviewers(); });
-          });
-          var eligCb = el("input", { type: "checkbox", title: "Offer this reviewer new automatic assignments" });
-          eligCb.checked = !!rv.active_for_calibration;
-          eligCb.addEventListener("change", function () {
-            api("/reviewers/" + encodeURIComponent(rv.reviewer_id) + "/eligibility", {
-              method: "POST", body: JSON.stringify({ active_for_calibration: eligCb.checked }),
-            });
-          });
-          tbody.appendChild(el("tr", {}, [
-            el("td", { text: rv.reviewer_id }),
-            el("td", { text: rv.revoked ? "Revoked" : "Active" }),
-            el("td", { text: rv.practice_completed ? "Done" : "Not yet" }),
-            el("td", {}, [eligCb]),
-            el("td", { text: rv.total_answered + " / " + rv.total_assigned }),
-            el("td", { text: fmtDate(rv.created_at) }),
-            el("td", {}, [actionBtn]),
-          ]));
-        });
-        table.appendChild(tbody);
-        wrap.appendChild(table);
-        body.appendChild(wrap);
+        if (!res.body.reviewers.length) {
+          body.appendChild(el("p", { class: "adm-muted" }, ["No reviewers yet. Invite someone when you're ready."]));
+          return;
+        }
+        res.body.reviewers.forEach(function (rv) { body.appendChild(renderReviewerCard(rv)); });
       });
     }
     loadReviewers();
@@ -524,11 +601,28 @@ export function renderAdminShell(nonce) {
     additional_reviewers_per_contested_item: "Additional reviewers per contested item",
   };
 
+  function plainPublicationPolicy(v) {
+    if (v === "automatic_if_valid") return "Automatically publish new rounds when the automatic checks pass.";
+    if (v === "shadow_automatic") return "Ask me before publishing (currently also recording what auto-publish would decide, for review).";
+    return "Ask me before publishing.";
+  }
+  function plainAssignmentPolicy(v) {
+    return v === "automatic_if_valid"
+      ? "Automatically offer new rounds to already-approved reviewers."
+      : "Ask me before assigning existing reviewers to a new round.";
+  }
+  function plainAdditionalReviewPolicy(v, count) {
+    if (v === "disabled") return "Off \\u2014 reviewers who disagree won't automatically get another opinion.";
+    if (v === "automatic_if_valid") {
+      return count == null
+        ? "Automatically ask for another opinion when reviewers disagree \\u2014 needs a reviewer count set below first."
+        : "Automatically ask " + count + " additional approved reviewer" + (count === 1 ? "" : "s") + " when reviewers disagree.";
+    }
+    return "Ask me before requesting another opinion when reviewers disagree.";
+  }
+
   route(/^\\/policy$/, function () {
     app.appendChild(el("h1", { class: "text-h2" }, ["Policy"]));
-    app.appendChild(el("p", { class: "adm-muted" }, [
-      "Every change here creates a NEW, versioned policy \\u2014 nothing is edited in place, and every past calibration run stays interpretable under whichever version actually governed it. Production promotion is always human-only; no policy setting can change that."
-    ]));
     var body = el("div", {}, ["Loading\\u2026"]);
     app.appendChild(body);
 
@@ -538,8 +632,26 @@ export function renderAdminShell(nonce) {
         if (!res.ok) { body.appendChild(el("p", { class: "adm-err" }, ["Couldn't load policy."])); return; }
         var active = res.body.active;
 
+        var plainCard = el("div", { class: "adm-card" });
+        plainCard.appendChild(el("p", { class: "adm-title" }, ["Automation"]));
+        plainCard.appendChild(el("p", { class: "adm-label" }, ["Publishing new rounds"]));
+        plainCard.appendChild(el("p", { style: "font-weight:600;" }, [plainPublicationPolicy(active.round_publication_policy)]));
+        plainCard.appendChild(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Extra opinions"]));
+        plainCard.appendChild(el("p", {}, [plainAdditionalReviewPolicy(active.additional_review_policy, active.additional_reviewers_per_contested_item)]));
+        plainCard.appendChild(el("p", { class: "adm-label", style: "margin-top:1rem;" }, ["Assigning existing reviewers to new rounds"]));
+        plainCard.appendChild(el("p", {}, [plainAssignmentPolicy(active.existing_reviewer_assignment_policy)]));
+        plainCard.appendChild(el("p", { class: "adm-muted", style: "margin-top:1rem;" }, [
+          "Candidate research experiments: " + (active.candidate_experiment_policy === "research_gated" ? "Not automatic yet" : active.candidate_experiment_policy) +
+          " \\u00b7 Fine-tuning: " + (active.fine_tune_experiment_policy === "disabled" ? "Off" : active.fine_tune_experiment_policy) +
+          " \\u00b7 Production changes: Always require your approval."
+        ]));
+        body.appendChild(plainCard);
+
         var card = el("div", { class: "adm-card" });
         card.appendChild(el("p", { class: "adm-title" }, ["Active \\u2014 policy-v" + active.policy_version]));
+        card.appendChild(el("p", { class: "adm-muted" }, [
+          "Every change here creates a NEW, versioned policy \\u2014 nothing is edited in place, and every past calibration run stays interpretable under whichever version actually governed it. Production promotion is always human-only; no policy setting can change that."
+        ]));
 
         var roundPubSelect = el("select", { class: "adm-field" });
         ["human_approval", "shadow_automatic", "automatic_if_valid"].forEach(function (v) {
@@ -568,7 +680,7 @@ export function renderAdminShell(nonce) {
         card.appendChild(el("p", { class: "adm-label" }, [POLICY_FIELD_LABEL.additional_review_policy]));
         card.appendChild(addlReviewSelect);
 
-        var countField = el("input", { class: "adm-field", type: "number", min: "1", placeholder: "unset = NEEDS_POLICY_CONFIGURATION" });
+        var countField = el("input", { class: "adm-field", type: "number", min: "1", placeholder: "e.g. 1 \\u2014 required before \\u201Cadditional review\\u201D can run automatically", "aria-label": POLICY_FIELD_LABEL.additional_reviewers_per_contested_item });
         if (active.additional_reviewers_per_contested_item != null) countField.value = String(active.additional_reviewers_per_contested_item);
         card.appendChild(el("p", { class: "adm-label" }, [POLICY_FIELD_LABEL.additional_reviewers_per_contested_item]));
         card.appendChild(countField);
@@ -578,7 +690,7 @@ export function renderAdminShell(nonce) {
           " \\u00b7 Production promotion: " + active.production_promotion_policy + " (fixed)"
         ]));
 
-        var notesField = el("textarea", { class: "adm-field", placeholder: "Why this change (optional, kept with the version)" });
+        var notesField = el("textarea", { class: "adm-field", placeholder: "Why this change (optional, kept with the version)", "aria-label": "Why this change (optional, kept with the version)" });
         card.appendChild(notesField);
 
         var messageBox = el("div", {});
@@ -601,18 +713,19 @@ export function renderAdminShell(nonce) {
         });
         card.appendChild(saveBtn);
         card.appendChild(messageBox);
-        body.appendChild(card);
 
+        var advancedChildren = [card];
         if (res.body.history && res.body.history.length > 1) {
-          body.appendChild(el("p", { class: "adm-title", style: "margin-top:1.5rem;" }, ["History"]));
+          advancedChildren.push(el("p", { class: "adm-title", style: "margin-top:1.5rem;" }, ["History"]));
           var list = el("ul", {});
           res.body.history.forEach(function (p) {
             list.appendChild(el("li", {}, [
               "policy-v" + p.policy_version + (p.is_active ? " (active)" : "") + " \\u2014 " + fmtDate(p.created_at) + (p.notes ? ": " + p.notes : ""),
             ]));
           });
-          body.appendChild(list);
+          advancedChildren.push(list);
         }
+        body.appendChild(researchDetails("Advanced policy settings", advancedChildren));
       });
     }
     load();
@@ -627,9 +740,9 @@ export function renderAdminShell(nonce) {
   // /ops/calibration/candidates), never this screen.
 
   route(/^\\/candidates$/, function () {
-    app.appendChild(el("h1", { class: "text-h2" }, ["Calibration candidates"]));
+    app.appendChild(el("h1", { class: "text-h2" }, ["Research candidates"]));
     app.appendChild(el("p", { class: "adm-muted" }, [
-      "Eligible candidates for the next automatic round draft. Routine operation should never require managing rows here \\u2014 this is visibility/debugging, plus an import fallback for recovery."
+      "Research questions waiting to be used in a future round. Nothing here needs routine action \\u2014 new rounds are drafted from these automatically."
     ]));
 
     var body = el("div", {}, ["Loading\\u2026"]);
@@ -640,9 +753,22 @@ export function renderAdminShell(nonce) {
         body.innerHTML = "";
         if (!res.ok) { body.appendChild(el("p", { class: "adm-err" }, ["Couldn't load candidates."])); return; }
         var candidates = res.body.candidates;
-        if (!candidates.length) {
-          body.appendChild(el("p", { class: "adm-muted" }, ["No candidates yet \\u2014 prepare-next-round-v1 will report NEEDS_ELIGIBLE_CANDIDATES until some exist."]));
+        var visible = candidates.filter(function (c) { return !c.held_out; });
+        var assigned = visible.filter(function (c) { return c.already_live_item_id; }).length;
+        var waiting = visible.length - assigned;
+
+        if (!visible.length) {
+          body.appendChild(el("p", { class: "adm-muted" }, ["No research questions waiting. Nothing you need to do \\u2014 new ones appear automatically as they become ready."]));
         } else {
+          var summaryCard = el("div", { class: "adm-card" });
+          summaryCard.appendChild(el("p", {}, ["Research questions available: " + visible.length]));
+          summaryCard.appendChild(el("p", {}, ["Already assigned: " + assigned]));
+          summaryCard.appendChild(el("p", {}, ["Waiting for future rounds: " + waiting]));
+          body.appendChild(summaryCard);
+        }
+
+        var advancedChildren = [];
+        if (candidates.length) {
           var wrap = el("div", { class: "adm-table-wrap" });
           var table = el("table", { class: "adm-table" });
           table.appendChild(el("thead", {}, [el("tr", {}, [
@@ -665,13 +791,13 @@ export function renderAdminShell(nonce) {
           });
           table.appendChild(tbody);
           wrap.appendChild(table);
-          body.appendChild(wrap);
+          advancedChildren.push(wrap);
         }
 
         var importCard = el("div", { class: "adm-card", style: "margin-top:1.5rem;" });
         importCard.appendChild(el("h3", {}, ["Import a candidate bundle (fallback)"]));
         importCard.appendChild(el("p", { class: "adm-muted" }, [
-          "Paste a prepare-calibration-candidates-v1 bundle JSON. Goes through the exact same validation as the automatic runner path."
+          "Paste a prepare-calibration-candidates-v1 bundle JSON. Goes through the exact same validation as the automatic runner path. Normally you don't need this \\u2014 it's for recovery only."
         ]));
         var textarea = el("textarea", { class: "adm-field", style: "min-height:10rem;font-family:monospace;font-size:0.85rem;" });
         importCard.appendChild(textarea);
@@ -693,7 +819,9 @@ export function renderAdminShell(nonce) {
         });
         importCard.appendChild(importBtn);
         importCard.appendChild(resultBox);
-        body.appendChild(importCard);
+        advancedChildren.push(importCard);
+
+        body.appendChild(researchDetails("Research details", advancedChildren));
       });
     }
     load();
@@ -741,7 +869,8 @@ export function renderAdminShell(nonce) {
   }
 
   route(/^\\/calibration$/, function () {
-    app.appendChild(el("h1", { class: "text-h2" }, ["Calibration"]));
+    app.appendChild(el("h1", { class: "text-h2" }, ["Research results"]));
+    app.appendChild(el("p", { class: "adm-muted" }, ["What reviewers told us, round by round \\u2014 plain results first, the full research/workflow detail collapsed below."]));
     var body = el("div", {}, ["Loading\\u2026"]);
     app.appendChild(body);
 
@@ -798,7 +927,7 @@ export function renderAdminShell(nonce) {
 
         var advanced = [];
         advanced.push(kvTable([
-          ["Round-scoped reviewer counts", (d.reviewers || []).map(function (rv) { return rv.reviewer_id + ": " + rv.answered + "/" + rv.assigned; }).join(", ")],
+          ["Round-scoped reviewer counts", (d.reviewers || []).map(function (rv) { return (rv.display_name || rv.reviewer_id) + ": " + rv.answered + "/" + rv.assigned; }).join(", ")],
           ["Workflow status (raw)", d.calibration_run ? d.calibration_run.status + (d.calibration_run.current_step ? " (" + d.calibration_run.current_step + ")" : "") : "not started"],
           ["Policy version", d.policy_version],
           ["Next action (internal)", d.next_action],
@@ -959,7 +1088,7 @@ export function renderAdminShell(nonce) {
     }
 
     // draft / review — full editor
-    var idField = el("input", { class: "adm-field", placeholder: "RL-2026-002" });
+    var idField = el("input", { class: "adm-field", placeholder: "RL-2026-002", "aria-label": "Round ID" });
     idField.value = (round && round.round_id) || roundId || "";
     if (roundId) idField.setAttribute("disabled", "disabled");
     body.appendChild(el("p", { class: "adm-label" }, ["Round ID"]));
@@ -991,7 +1120,7 @@ export function renderAdminShell(nonce) {
       var cb = el("input", { type: "checkbox", value: r.reviewer_id });
       if (round && round.reviewers && round.reviewers.some(function (rr) { return rr.reviewer_id === r.reviewer_id; })) cb.checked = true;
       label.appendChild(cb);
-      label.appendChild(document.createTextNode(" " + r.reviewer_id));
+      label.appendChild(document.createTextNode(" " + (r.display_name || r.reviewer_id)));
       reviewerBoxes.push(cb);
       reviewerWrap.appendChild(label);
     });
@@ -1183,7 +1312,7 @@ export function renderAdminShell(nonce) {
       body.appendChild(el("p", { class: "adm-label" }, ["Reviewer progress"]));
       (round.reviewers || []).forEach(function (rv) {
         var row = el("div", { class: "adm-row", style: "margin-top:0.5rem;" });
-        row.appendChild(el("span", { text: rv.reviewer_id }));
+        row.appendChild(el("span", { text: rv.display_name || rv.reviewer_id }));
         row.appendChild(el("span", { class: "adm-muted", text: rv.answered + " / " + rv.assigned }));
         body.appendChild(row);
         var bar = el("div", { class: "adm-progress-bar" });
@@ -1315,8 +1444,8 @@ export function renderAdminShell(nonce) {
           card.appendChild(el("p", {}, ["Both answered: " + PUBLIC_RESPONSE_TEXT[item.judgments[0].selected_public_response]]));
         } else if (item.agreement === "disagreement") {
           card.appendChild(el("p", { style: "font-weight:700;color:#8a6a1c;" }, ["Reviewers disagreed"]));
-          item.judgments.forEach(function (j, idx) {
-            var label = "Reviewer " + String.fromCharCode(65 + idx);
+          item.judgments.forEach(function (j) {
+            var label = j.reviewer_display_name || j.reviewer_id;
             var ans = el("div", { class: "adm-reviewer-answer adm-reviewer-answer--disagree" });
             ans.appendChild(el("p", { style: "font-weight:600;margin-bottom:0.15rem;" }, [label + ":"]));
             ans.appendChild(el("p", {}, [PUBLIC_RESPONSE_TEXT[j.selected_public_response]]));
@@ -1331,10 +1460,10 @@ export function renderAdminShell(nonce) {
         var hasComments = item.judgments.some(function (j) { return j.comment; });
         if (hasComments) {
           var commentsBody = [];
-          item.judgments.forEach(function (j, idx) {
+          item.judgments.forEach(function (j) {
             if (!j.comment) return;
             commentsBody.push(el("p", { style: "margin-top:0.5rem;" }, [
-              el("strong", {}, ["Reviewer " + String.fromCharCode(65 + idx) + ": "]), j.comment,
+              el("strong", {}, [(j.reviewer_display_name || j.reviewer_id) + ": "]), j.comment,
             ]));
           });
           card.appendChild(researchDetails("Show comments", commentsBody));
@@ -1346,8 +1475,8 @@ export function renderAdminShell(nonce) {
         compareChildren.push(el("p", { class: "adm-label" }, ["The sentence"]));
         compareChildren.push(el("p", { class: "rl-text" }, [item.candidate_sentence]));
         compareChildren.push(el("p", { class: "adm-label", style: "margin-top:0.75rem;" }, ["Each reviewer's raw judgment"]));
-        compareChildren.push(kvTable(item.judgments.map(function (j, idx) {
-          return ["Reviewer " + String.fromCharCode(65 + idx) + " (" + j.reviewer_id + ")", j.internal_normalized_response + (j.confidence ? " \\u00b7 " + j.confidence : "")];
+        compareChildren.push(kvTable(item.judgments.map(function (j) {
+          return [(j.reviewer_display_name || j.reviewer_id) + " (" + j.reviewer_id + ")", j.internal_normalized_response + (j.confidence ? " \\u00b7 " + j.confidence : "")];
         })));
         if (item.analysis) {
           compareChildren.push(el("p", { class: "adm-label", style: "margin-top:0.75rem;" }, ["Automatic analysis (this round's calibration run)"]));
@@ -1365,7 +1494,8 @@ export function renderAdminShell(nonce) {
   // ---- import ----------------------------------------------------
 
   route(/^\\/import$/, function () {
-    app.appendChild(el("h1", { class: "text-h2" }, ["Import a round"]));
+    app.appendChild(el("h1", { class: "text-h2" }, ["Import a round (recovery tool)"]));
+    app.appendChild(el("p", { class: "adm-warn" }, ["Normally you do not need this. New rounds are created automatically from eligible research \\u2014 use this only to recover or hand-build a round."]));
     app.appendChild(el("p", { class: "adm-muted" }, ["Paste a round manifest JSON (e.g. reader-lab/rounds/drafts/RL-2026-NNN.json). Nothing is written to production until you choose Save as draft or Freeze & Publish."]));
     var textarea = el("textarea", { class: "adm-field", style: "min-height:12rem;font-family:monospace;font-size:0.85rem;" });
     app.appendChild(textarea);

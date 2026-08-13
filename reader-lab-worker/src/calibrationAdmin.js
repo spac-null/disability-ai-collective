@@ -78,10 +78,22 @@ export async function handleAutomationSummary(request, env) {
     actionRequired.push({ type: "calibration_failed", round_id: r.round_id, run_id: r.run_id, note: `${r.round_id}: something needs your attention — see Calibration.` });
   }
 
+  // A round can accumulate more than one additional_review_plan artifact
+  // over time — one per calibration run, and a round gets a fresh run
+  // every time one is armed (manual retry, or the reconciliation sweep
+  // resuming a stuck run). Without deduping by round_id here, a round
+  // whose shortage of eligible reviewers hasn't been fixed yet produces
+  // one action-required card per re-run, not one per round. Rows arrive
+  // ORDER BY created_at DESC, so the first row seen for a given round_id
+  // is always its latest plan.
   const recentPlans = await env.DB.prepare(
     "SELECT round_id, content_json, created_at FROM calibration_artifacts WHERE artifact_type = 'additional_review_plan' ORDER BY created_at DESC LIMIT 20"
   ).all();
+  const latestPlanByRound = new Map();
   for (const row of recentPlans.results) {
+    if (!latestPlanByRound.has(row.round_id)) latestPlanByRound.set(row.round_id, row);
+  }
+  for (const row of latestPlanByRound.values()) {
     let plan;
     try {
       plan = JSON.parse(row.content_json);
@@ -121,8 +133,9 @@ const NEXT_ACTION_BY_STATUS = {
 
 async function roundReviewerProgress(env, roundId) {
   const rows = await env.DB.prepare(
-    `SELECT reviewer_id, COUNT(*) AS assigned, SUM(CASE WHEN answered_at IS NOT NULL THEN 1 ELSE 0 END) AS answered
-     FROM assignments WHERE round_id = ? GROUP BY reviewer_id`
+    `SELECT a.reviewer_id, i.display_name, COUNT(*) AS assigned, SUM(CASE WHEN a.answered_at IS NOT NULL THEN 1 ELSE 0 END) AS answered
+     FROM assignments a JOIN invitations i ON i.reviewer_id = a.reviewer_id
+     WHERE a.round_id = ? GROUP BY a.reviewer_id`
   )
     .bind(roundId)
     .all();
@@ -134,7 +147,7 @@ function nextActionForRound(round, run, reviewers) {
     return "This round isn't published yet.";
   }
   if (round.status === "published") {
-    const waiting = reviewers.filter((r) => r.answered < r.assigned).map((r) => r.reviewer_id);
+    const waiting = reviewers.filter((r) => r.answered < r.assigned).map((r) => r.display_name || r.reviewer_id);
     return waiting.length ? `Waiting for ${waiting.join(", ")}.` : "Waiting for round completion.";
   }
   if (!run) return "Waiting for calibration to start (usually immediate; the hourly reconciliation sweep catches any delay).";
