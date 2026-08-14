@@ -159,6 +159,126 @@ def case_genuinely_oversized_source_still_gets_a_ceiling():
           packet["source_truncated"] is True)
 
 
+# ── >20K boundary fixtures (S2A semantics-check follow-up) ─────────────────
+#
+# CORRECTED CLASSIFICATION: this is S2 (an evidence-based raised static cap),
+# NOT S3. Audited directly: fetch_source_article's `text = self.
+# _extract_paragraphs(html)` is the only place the full, unsliced extraction
+# ever exists -- a local variable, never cached, never hashed, never
+# returned. `return text[:max_chars]` means everything downstream (the
+# per-run cache, evidence_packet.source_text, source_hash,
+# evidence_packet_hash, what Fable/the writer receive) operates on the
+# ALREADY-SLICED text only. There is no separate canonical full-source
+# representation anywhere in this pipeline. The earlier report's "S3
+# realized as S1-in-practice" framing was wrong and is corrected here.
+#
+# What these fixtures answer precisely (per the semantics-check instructions):
+#   - what is stored canonically -> only the <=20000-char slice
+#   - what is hashed -> only the <=20000-char slice (source_hash/
+#     evidence_packet_hash)
+#   - what reaches Fable / the writer -> the same <=20000-char slice, both
+#     receive the identical evidence_packet.source_text
+#   - can evidence after 20k disappear silently -> the MATERIAL still
+#     disappears (real, not fixed by this pass) -- but no longer SILENTLY:
+#     source_truncated=True plus the new source_original_length_chars (real
+#     number, when discovery.py's fetch captured it) discloses exactly how
+#     much and lets a consumer detect it deterministically
+#   - does any metadata indicate truncation -> yes, both fields above,
+#     already threaded through validate_brief's own stamping with zero
+#     changes needed there
+
+def _fixture_of_length(n, marker=None, marker_at=None):
+    """Build an n-char synthetic source. If marker/marker_at given, inserts
+    the marker text at that character offset (padding around it), so a
+    fixture's critical content sits at a precise, verifiable position."""
+    if marker is None:
+        return "x" * n
+    before = "a" * marker_at
+    after = "b" * (n - marker_at - len(marker))
+    return before + marker + after
+
+
+def case_A_19999_chars_under_cap_not_truncated():
+    text = _fixture_of_length(19999)
+    packet = build_evidence_packet(text, source_max_chars=_SOURCE_TEXT_MAX_CHARS, source_origin="fixture",
+                                    source_original_length_chars=19999)
+    check("A. 19,999-char source (just under the 20000 cap): source_truncated=False",
+          packet["source_truncated"] is False)
+    check("A. source_text stored in full, nothing cut", len(packet["source_text"]) == 19999)
+    check("A. source_original_length_chars matches source_length_chars -- confirms "
+          "nothing was actually lost",
+          packet["source_original_length_chars"] == packet["source_length_chars"] == 19999)
+
+
+def case_B_exactly_20000_chars_boundary():
+    text = _fixture_of_length(20000)
+    packet = build_evidence_packet(text, source_max_chars=_SOURCE_TEXT_MAX_CHARS, source_origin="fixture",
+                                    source_original_length_chars=20000)
+    check("B. exactly 20,000 chars: the existing >= heuristic conservatively "
+          "flags source_truncated=True even though nothing was actually cut "
+          "(pre-existing characteristic of this heuristic, unchanged by this pass)",
+          packet["source_truncated"] is True)
+    check("B. THE FIX: source_original_length_chars == source_length_chars "
+          "disambiguates this exact case -- a consumer can now tell 'flagged "
+          "truncated but actually complete' apart from a real cut, which was "
+          "impossible before this pass (the field was always None)",
+          packet["source_original_length_chars"] == packet["source_length_chars"] == 20000)
+
+
+def case_C_20001_chars_one_over_cap():
+    po, orch = _orch()
+    text = _fixture_of_length(20001, marker="CRITICAL_EVIDENCE_AT_END", marker_at=19976)
+    restore = _patch_methods(
+        po.ProductionOrchestrator,
+        _fetch_url_html=lambda self, url: "<html>fake</html>",
+        _extract_paragraphs=lambda self, html: text,
+    )
+    try:
+        fetched = orch.get_source_text("https://example.org/c-fixture")
+        original_length = orch.get_source_original_length("https://example.org/c-fixture")
+    finally:
+        restore()
+    check("C. 20,001-char source: sliced to exactly 20000 chars", len(fetched) == 20000)
+    check("C. THE FIX: get_source_original_length reports the true original "
+          "length (20001), one more than what's stored", original_length == 20001)
+    packet = build_evidence_packet(fetched, source_max_chars=_SOURCE_TEXT_MAX_CHARS,
+                                    source_origin="fetched_article", source_original_length_chars=original_length)
+    check("C. evidence_packet discloses exactly 1 char was cut (original_length - "
+          "stored_length)", packet["source_original_length_chars"] - packet["source_length_chars"] == 1)
+    check("C. source_truncated=True, correctly", packet["source_truncated"] is True)
+
+
+def case_D_40000_chars_critical_evidence_after_20000_lost():
+    po, orch = _orch()
+    # Critical evidence placed at char 25000 -- well past the 20000 cap.
+    text = _fixture_of_length(40000, marker="CRITICAL_TESTIMONY_HERE", marker_at=25000)
+    restore = _patch_methods(
+        po.ProductionOrchestrator,
+        _fetch_url_html=lambda self, url: "<html>fake</html>",
+        _extract_paragraphs=lambda self, html: text,
+    )
+    try:
+        fetched = orch.get_source_text("https://example.org/d-fixture")
+        original_length = orch.get_source_original_length("https://example.org/d-fixture")
+    finally:
+        restore()
+    check("D. 40,000-char source with evidence at char 25000: the evidence "
+          "IS still genuinely lost -- this pass discloses truncation, it "
+          "does not eliminate it (that would require true S3, deferred)",
+          "CRITICAL_TESTIMONY_HERE" not in fetched)
+    check("D. but the loss is no longer silent: get_source_original_length "
+          "reports the true 40000-char length", original_length == 40000)
+    packet = build_evidence_packet(fetched, source_max_chars=_SOURCE_TEXT_MAX_CHARS,
+                                    source_origin="fetched_article", source_original_length_chars=original_length)
+    check("D. evidence_packet lets a consumer compute exactly how much was "
+          "cut (40000 - 20000 = 20000 chars silently-no-longer -- disclosed)",
+          packet["source_original_length_chars"] - packet["source_length_chars"] == 20000)
+    check("D. Fable and the writer both receive evidence_packet.source_text -- "
+          "same, single, already-capped text; there is no separate 'canonical "
+          "full source' either of them could fall back to",
+          "CRITICAL_TESTIMONY_HERE" not in packet["source_text"])
+
+
 if __name__ == "__main__":
     case_fixture_shape_is_correct()
     case_old_cap_would_have_dropped_late_testimony()
@@ -167,6 +287,10 @@ if __name__ == "__main__":
     case_get_source_text_default_matches_new_cap()
     case_evidence_packet_built_with_new_cap_preserves_testimony()
     case_genuinely_oversized_source_still_gets_a_ceiling()
+    case_A_19999_chars_under_cap_not_truncated()
+    case_B_exactly_20000_chars_boundary()
+    case_C_20001_chars_one_over_cap()
+    case_D_40000_chars_critical_evidence_after_20000_lost()
 
     print()
     if FAILURES:

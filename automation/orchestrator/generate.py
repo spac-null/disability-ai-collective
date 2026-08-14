@@ -182,6 +182,11 @@ class GenerateMixin:
             # source" -- both would otherwise look identical once source_text
             # is None either way.
             _source_origin = self.get_source_origin(news_seed["url"])
+            # Source-truncation closure follow-up (2026-08-14): the true
+            # pre-slice length, when discovery.py's fetch captured it -- see
+            # get_source_original_length's own docstring. None whenever it
+            # isn't known; never a claim of completeness either way.
+            _source_original_length = self.get_source_original_length(news_seed["url"])
             if _source_origin == "fallback_summary":
                 source_text = None
             pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title)
@@ -209,6 +214,7 @@ class GenerateMixin:
             # result must not be granted source-snapshot authority, and why
             # _source_origin is kept regardless.
             _source_origin = self.get_source_origin(discovery.get('url', ''))
+            _source_original_length = self.get_source_original_length(discovery.get('url', ''))
             if _source_origin == "fallback_summary":
                 source_text = None
             pool_keywords = [w.lower() for w in re.findall(r'\b[a-zA-Z]{4,}\b', title)
@@ -279,6 +285,7 @@ class GenerateMixin:
             source_note = ""
             source_text = None
             _source_origin = "none"
+            _source_original_length = None
             pool_links = []
 
         agent_info = self.agents.get(agent_name)
@@ -293,7 +300,10 @@ class GenerateMixin:
         # threaded UNMODIFIED into the planner, reviewer, and executor below --
         # the same evidence-lineage discipline the Pixel-validation mixed-brief
         # incident showed is necessary. Never rebuilt per-stage.
-        evidence_packet = build_evidence_packet(source_text, source_max_chars=_SOURCE_TEXT_MAX_CHARS, source_origin=_source_origin)
+        evidence_packet = build_evidence_packet(
+            source_text, source_max_chars=_SOURCE_TEXT_MAX_CHARS, source_origin=_source_origin,
+            source_original_length_chars=_source_original_length,
+        )
 
         # L2 active human-testimony retrieval (A-M reconciliation item L,
         # 2026-08-14) — OFF by default, see testimony_l2.py's own module

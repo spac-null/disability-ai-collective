@@ -1,5 +1,11 @@
 # Human-Detail Provenance + Source-Packet Truncation Closure — 2026-08-14
 
+**Amended by a semantics-check follow-up commit (after `312e956`): `## 10`'s
+original "S3 realized as S1-in-practice" classification was wrong and is
+corrected below to S2A, with real truncation-disclosure metadata added.
+Everything else in this document (sections 1-9, 11-13) is unchanged from
+the original audit.**
+
 **Isolated worktree.** Branch `human-detail-provenance-2026-08-14`, built from
 current `origin/main` (`64d1658`, verified before starting). Does not touch
 `opening-quality-shadow-2026-08-14`, `ops-release-hardening-2026-08-14`, or
@@ -217,41 +223,102 @@ rendered in the review sidecar.
 
 ## 10. IMPLEMENTATION DECISION — SOURCE TRUNCATION
 
-**S3 realized as a clean, mechanical fix**, closest to S1 in practice: the
-separate "canonical cache" (`discovery.py`'s `_SOURCE_TEXT_CACHE_MAX_CHARS`,
-was 6000) and "model view" (`generate.py`'s `_SOURCE_TEXT_MAX_CHARS`, was
-3000) are now **unified at one generous ceiling: 20,000 characters** — a
-multiple of the longest real source measured this session (~10,800 chars),
-not a literal "no limit," still a safety ceiling against a genuinely
-malformed/runaway extraction. `fetch_source_article`'s and
-`get_source_text`'s own default `max_chars` parameters now reference the
-same module constant directly (previously two independently-hardcoded `3000`
-literals that had to be manually kept in sync — now structurally impossible
-to drift apart).
+**CORRECTED 2026-08-14 (semantics-check follow-up, commit after `312e956`):
+this is S2, not S3.** The original report's "S3 realized as S1-in-practice"
+framing was wrong, caught on re-audit, not preserved for neatness.
 
-**Invariants preserved, verified, not assumed:**
-- `source_hash`/`evidence_packet_hash`: unaffected in kind — a larger
-  `source_text` simply hashes to a different (correct, larger-identity)
-  value, exactly as `build_evidence_packet`'s own docstring already
-  describes ("two packets are only hash-equal when their full provenance...
-  is identical"). No invariant broken; a bigger evidence packet is a
-  different, more complete packet, not a corrupted one.
+**Audited directly**: `fetch_source_article`'s `text = self._extract_paragraphs
+(html)` is the ONLY place the full, unsliced extraction ever exists — a
+local variable, never cached, never hashed, never returned. `return
+text[:max_chars]` means the canonical cache (`_source_text_cache`), the
+hash (`source_hash`/`evidence_packet_hash`), and everything Fable/the
+writer receive (`evidence_packet.source_text`) all operate on the
+ALREADY-SLICED text only. There is no separate canonical full-source
+representation stored anywhere in this pipeline — true S3 was never built.
+
+**Decision: S2A** — 20,000 chars remains a temporary BOUNDED source
+representation, honestly documented as such, with real truncation
+observability added (previously promised, never delivered):
+
+- `discovery.py`'s `_SOURCE_TEXT_CACHE_MAX_CHARS` and `generate.py`'s
+  `_SOURCE_TEXT_MAX_CHARS` unified at 20,000 chars (unchanged from the
+  `312e956` commit) — a multiple of the longest real source measured this
+  session (~10,800 chars), not a literal "no limit."
+- **NEW**: `fetch_source_article` now records the TRUE pre-slice length via
+  a side channel (`self._last_fetch_original_length`, same pattern as the
+  existing `_last_fetch_origin`), cached per-URL by `get_source_text` and
+  exposed via a new `get_source_original_length(url)` accessor.
+- **NEW**: `build_evidence_packet` gained a `source_original_length_chars`
+  parameter — turns that field from an always-`None` promise (its own
+  docstring previously said "not recoverable at this call site") into a
+  real, honest number wherever a caller threads it through. `generate.py`
+  now does, at both call sites (news_seed and discovery branches).
+- `validate_brief` already stamped `source_original_length_chars` from
+  `evidence_packet` onto Fable's brief object — **zero changes needed
+  there**, the plumbing already existed, it was just being fed a constant
+  `None`.
+
+**Why S2A and not true S3 in this pass**: building true S3 would mean
+storing/hashing a genuinely separate "full source" identity alongside the
+existing `source_text`/`source_hash` — and then deciding whether Fable's
+grounding validation (`validate_evidence_field`) should check candidate
+excerpts against the FULLER text instead of the bounded view. That's a real
+editorial/architecture decision (does more available evidence change what
+counts as "grounded"?), not a mechanical fix — exactly the kind of
+migration/compatibility complexity the semantics-check instructions said to
+avoid forcing. S2A gets the disclosure benefit (nothing disappears
+*silently* anymore) without that decision.
+
+**What >20K fixtures prove** (`source_truncation_test.py`, cases A-D):
+- **A (19,999 chars)**: stored in full, `source_truncated=False`,
+  `source_original_length_chars == source_length_chars` (confirms nothing lost).
+- **B (exactly 20,000 chars)**: the pre-existing `>=` heuristic
+  conservatively flags `source_truncated=True` even though nothing was
+  actually cut — a real, pre-existing characteristic of this heuristic
+  (unchanged by this pass) — but now **disambiguated**:
+  `source_original_length_chars == source_length_chars` lets a consumer
+  tell "flagged truncated but actually complete" apart from a real cut,
+  which was impossible before (the field was always `None`).
+- **C (20,001 chars)**: sliced to exactly 20,000; `get_source_original_length`
+  reports 20,001 — a consumer can now compute exactly 1 character was cut.
+- **D (40,000 chars, critical evidence at char 25,000)**: the evidence
+  **is still genuinely lost** — `"CRITICAL_TESTIMONY_HERE" not in
+  evidence_packet["source_text"]`, confirmed directly. This pass does not
+  eliminate the loss (that needs true S3); it makes the loss disclosed —
+  `source_original_length_chars` reports 40,000, `source_length_chars`
+  reports 20,000, so a consumer can compute exactly how much (20,000
+  characters) went missing, deterministically, instead of never knowing.
+
+**Answering the exact questions posed:**
+- What is stored canonically? Only the ≤20,000-char slice.
+- What is hashed? The same ≤20,000-char slice (`source_hash`/`evidence_packet_hash`).
+- What reaches Fable? What reaches the writer? The identical ≤20,000-char
+  slice, both from the same `evidence_packet.source_text` — no separate view exists.
+- Can evidence after 20K disappear silently? **The material still
+  disappears. It is no longer silent** — `source_truncated` plus the new
+  `source_original_length_chars` disclose it deterministically.
+- Does any metadata indicate truncation? Yes, both fields above, already
+  threaded through `validate_brief`'s existing stamping.
+
+**Invariants preserved, verified, not assumed** (unchanged from the original
+audit, re-confirmed after this follow-up):
+- `source_hash`/`evidence_packet_hash`: unaffected in kind — computed over
+  `source_text` exactly as before; the new `source_original_length_chars`
+  parameter adds one more field to `identity_payload` (participates in
+  `evidence_packet_hash`, consistent with every other provenance-relevant
+  field there), it does not change what `source_text`/`source_hash` mean.
 - The "exactly one evidence_packet object threaded by reference through
-  every stage" invariant: untouched — this change only affects what goes
-  INTO the packet at construction time, not how many times it's built or
-  passed.
-- CJ2 bridge's same-evidence_packet invariant: unaffected — `cj2_winner_bridge`
-  receives whatever `evidence_packet` the run already built, regardless of
-  its `source_text` size; `cj2_shadow_integration_test.py` (unmodified) still
-  passes.
-- `source_truncated` semantics: unchanged in meaning, correctly now less
-  often `True` in practice (honestly reflecting that less real material now
-  gets cut) — verified directly (`source_truncation_test.py`) that a
-  genuinely oversized source still gets sliced and correctly flagged.
+  every stage" invariant: untouched.
+- CJ2 bridge's same-evidence_packet invariant: unaffected —
+  `cj2_shadow_integration_test.py` and `cj2_winner_bridge_test.py`
+  (unmodified) both still pass.
+- No duplicated/conflicting evidence identity was created — exactly one
+  `source_text`/`source_hash` per run, as before; the new field is pure
+  observability metadata, not a second source representation.
 
 `snapshot_test.py`: **no drift** — none of the 6 snapshotted fixture
-articles' source material exceeded the OLD 3000-char cap, so this change is
-safe for existing fixtures while ready for real sources that do.
+articles' source material exceeded the OLD 3000-char cap, so this change
+remains safe for existing fixtures while ready for real sources that do.
 
 ---
 
@@ -288,15 +355,19 @@ anticipated, now executed:
   fixtures A-E from the audit brief, no-source-available, the documented
   metaphorical false-positive shape, malformed-input safety, and structural
   no-blocking-authority proofs. ALL PASS.
-- `source_truncation_test.py`: 15 checks — fixture shape validation, the OLD
-  cap mechanically reproduced dropping late testimony, the NEW constants
+- `source_truncation_test.py`: 27 checks (15 original + 12 added in the
+  semantics-check follow-up) — fixture shape validation, the OLD cap
+  mechanically reproduced dropping late testimony, the NEW constants
   confirmed raised, `fetch_source_article`/`get_source_text`/
   `build_evidence_packet` all exercised through the REAL call path (only
-  network fetch + HTML extraction mocked) proving the fix reaches all the
-  way to what Fable/the writer receive, and a genuinely oversized source
-  still correctly capped and flagged. ALL PASS.
+  network fetch + HTML extraction mocked), a genuinely oversized source
+  still correctly capped and flagged, and the four >20K boundary fixtures
+  (A: 19,999 chars, B: exactly 20,000, C: 20,001, D: 40,000 with evidence
+  at char 25,000) proving the disclosure mechanism works exactly as
+  specified. ALL PASS.
 - Full battery: **18/18 test files pass, 0 failures.** `snapshot_test.py`:
-  no drift.
+  no drift. CJ2 bridge, grounding, and lineage suites explicitly re-confirmed
+  individually, not just as part of the batch count.
 
 ---
 

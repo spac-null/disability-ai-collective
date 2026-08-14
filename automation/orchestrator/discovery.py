@@ -1057,6 +1057,7 @@ class DiscoveryMixin:
         get_source_origin's docstring for how a caller should act on this."""
         if not url or not url.startswith("http"):
             self._last_fetch_origin = "fallback_summary" if fallback_text else "none"
+            self._last_fetch_original_length = len(fallback_text) if fallback_text else None
             return fallback_text[:max_chars] if fallback_text else None
 
         html = None
@@ -1080,8 +1081,10 @@ class DiscoveryMixin:
                     "file instead (%d chars) for %s", len(fallback_text), url,
                 )
                 self._last_fetch_origin = "fallback_summary"
+                self._last_fetch_original_length = len(fallback_text)
                 return fallback_text[:max_chars]
             self._last_fetch_origin = "none"
+            self._last_fetch_original_length = None
             return None
 
         text = self._extract_paragraphs(html)
@@ -1092,9 +1095,23 @@ class DiscoveryMixin:
                 len(text) if text else 0, url
             )
             self._last_fetch_origin = "fallback_summary" if fallback_text else "none"
+            self._last_fetch_original_length = len(fallback_text) if fallback_text else None
             return fallback_text[:max_chars] if fallback_text else None
         self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
         self._last_fetch_origin = "fetched_article"
+        # Side channel (source-truncation closure, 2026-08-14 follow-up),
+        # same pattern as self._last_fetch_origin: `text` here is the TRUE,
+        # unsliced extraction -- the only place in this pipeline it still
+        # exists, since the return value below is the (possibly capped)
+        # slice actually stored/cached/hashed downstream. Recording its real
+        # length is cheap and turns build_evidence_packet's own
+        # source_original_length_chars field from an always-None promise
+        # into a real, honest number wherever a caller threads it through
+        # (see get_source_original_length below and generate.py's call site)
+        # -- this is observability only, NOT full-text preservation: the
+        # text itself is still discarded past max_chars, only its true
+        # length survives.
+        self._last_fetch_original_length = len(text)
         return text[:max_chars]
 
     def get_source_text(self, url: str, max_chars: int = _SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text: str = None) -> str | None:
@@ -1126,13 +1143,33 @@ class DiscoveryMixin:
             self._source_text_cache = {}
         if not hasattr(self, "_source_origin_cache"):
             self._source_origin_cache = {}
+        if not hasattr(self, "_source_original_length_cache"):
+            self._source_original_length_cache = {}
         if url not in self._source_text_cache:
             self._source_text_cache[url] = self.fetch_source_article(
                 url, max_chars=_SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text=fallback_text
             )
             self._source_origin_cache[url] = getattr(self, "_last_fetch_origin", "none")
+            self._source_original_length_cache[url] = getattr(self, "_last_fetch_original_length", None)
         cached = self._source_text_cache[url]
         return cached[:max_chars] if cached else cached
+
+    def get_source_original_length(self, url: str):
+        """Source-truncation closure follow-up (2026-08-14): returns the TRUE
+        length of the text fetch_source_article extracted for this url
+        BEFORE any max_chars slice was applied -- the one number that
+        survives past the point where the fuller text itself is discarded
+        (see fetch_source_article's own side-channel comment). None if
+        get_source_text was never called for this url this run, or if
+        nothing was ever fetched (fallback/none origin with no fallback_text).
+
+        A caller building an evidence_packet should thread this into
+        build_evidence_packet's source_original_length_chars parameter --
+        turns that field from an always-None promise (see its own docstring:
+        "not recoverable at this call site") into a real, honest number
+        wherever this accessor's result is available, so a future truncation
+        is disclosed, not silently invisible. See generate.py's call site."""
+        return getattr(self, "_source_original_length_cache", {}).get(url)
 
     def get_source_origin(self, url: str):
         """Phase 1.6 (.claude/phase-1.6-source-grounding.md continuation):

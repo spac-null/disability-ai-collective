@@ -126,7 +126,8 @@ def _canonical_json(obj):
 _VALID_SOURCE_ORIGINS = {"fetched_article", "fixture", "fallback_summary", "none"}
 
 
-def build_evidence_packet(source_text, source_max_chars=None, source_origin=None):
+def build_evidence_packet(source_text, source_max_chars=None, source_origin=None,
+                           source_original_length_chars=None):
     """Construct the ONE evidence-packet identity for a generation run.
 
     Built once in generate.py, then passed UNMODIFIED into the planner,
@@ -170,17 +171,27 @@ def build_evidence_packet(source_text, source_max_chars=None, source_origin=None
     Truncation honesty (added after review): discovery.py's
     fetch_source_article extracts the FULL article text and logs its real
     length, but only returns a pre-truncated slice (get_source_text's own
-    max_chars, 3000 by default) -- the true original length is not
-    recoverable from this call site without changing that function's return
-    contract, which is out of scope for this phase (it's shared with
-    fact_check.py's repair pass too). So this packet records what it can
-    actually verify -- source_length_chars (the length of what we received)
-    and source_truncated (True when that length hit the requested cap, a
+    max_chars). So this packet records what it can actually verify --
+    source_length_chars (the length of what we received) and
+    source_truncated (True when that length hit the requested cap, a
     reliable "this was very likely cut off" signal, not a guess dressed up
-    as certainty) -- and is explicit that source_original_length_chars is
-    unknown rather than omitting the question. Callers that don't know/pass
-    source_max_chars get source_truncated=False, meaning "not verified as
-    truncated," not "verified as complete."
+    as certainty). Callers that don't know/pass source_max_chars get
+    source_truncated=False, meaning "not verified as truncated," not
+    "verified as complete."
+
+    source_original_length_chars (source-truncation closure, 2026-08-14
+    follow-up): the true pre-slice length, when the caller has it --
+    discovery.py's fetch_source_article now exposes this via a side channel
+    (self._last_fetch_original_length) precisely so this field can stop
+    being an always-None promise (its ORIGINAL docstring here said "not
+    recoverable from this call site without changing that function's return
+    contract" -- true when this was written, no longer true once the side
+    channel existed). Still None for any caller that doesn't have or pass
+    it (e.g. phase_probe.py's frozen fixtures, or a fallback-summary path
+    with no fetch at all) -- this is honestly "unknown," not a claim that
+    no truncation occurred. THIS FIELD DOES NOT MAKE source_text COMPLETE:
+    the fuller text itself is still discarded past source_max_chars: only
+    its length survives, for observability, never for recovery.
     """
     if source_origin is not None and source_origin not in _VALID_SOURCE_ORIGINS:
         raise ValueError(f"unknown source_origin: {source_origin!r}")
@@ -209,7 +220,7 @@ def build_evidence_packet(source_text, source_max_chars=None, source_origin=None
         "source_text": source_text,
         "source_length_chars": length,
         "source_truncated": truncated,
-        "source_original_length_chars": None,  # not recoverable at this call site -- see docstring
+        "source_original_length_chars": source_original_length_chars,
         "evidence_schema_version": EVIDENCE_SCHEMA_VERSION,
         "source_origin": source_origin,
     }
@@ -218,7 +229,7 @@ def build_evidence_packet(source_text, source_max_chars=None, source_origin=None
         "source_hash": _sha256_text(source_text),
         "source_length_chars": length,
         "source_truncated": truncated,
-        "source_original_length_chars": None,
+        "source_original_length_chars": source_original_length_chars,
         "evidence_packet_hash": _sha256_text(_canonical_json(identity_payload)),
         "evidence_schema_version": EVIDENCE_SCHEMA_VERSION,
         "source_origin": source_origin,
