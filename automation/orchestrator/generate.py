@@ -290,6 +290,20 @@ class GenerateMixin:
         # incident showed is necessary. Never rebuilt per-stage.
         evidence_packet = build_evidence_packet(source_text, source_max_chars=_SOURCE_TEXT_MAX_CHARS, source_origin=_source_origin)
 
+        # L2 active human-testimony retrieval (A-M reconciliation item L,
+        # 2026-08-14) — OFF by default, see testimony_l2.py's own module
+        # docstring for the mode contract. Mutates evidence_packet IN PLACE
+        # (adds an optional "companion_source" key) rather than returning a
+        # new object, so the "exactly one evidence_packet object, threaded by
+        # reference through every stage" invariant documented just below is
+        # never at risk from this call. OFF mode (default, unset env var)
+        # performs zero heuristic evaluation, zero fixture read, zero
+        # mutation — this call site is safe to leave unconditional. slug isn't
+        # assigned yet at this point in the run (see line ~1054 below) --
+        # same constraint cj2_shadow.py's own call site already has, which
+        # also calls without slug (defaults to None).
+        self._l2_testimony_attempt(evidence_packet)
+
         _ns_title   = (news_seed["title"] if news_seed
                        else discovery.get("original_title", "") if discovery else title)
         _ns_summary = news_seed.get("summary", "")         if news_seed else ""

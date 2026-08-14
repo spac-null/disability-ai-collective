@@ -37,11 +37,12 @@ from orchestrator.review import ReviewMixin
 from orchestrator.social import SocialMixin
 from orchestrator.generate import GenerateMixin
 from orchestrator.cj2_shadow import CJ2ShadowMixin
+from orchestrator.testimony_l2 import TestimonyL2Mixin
 
 
 class ProductionOrchestrator(DebateMixin, ImagesMixin, PublishMixin, GateMixin, LLMMixin, DiscoveryMixin,
                               ContentChecksMixin, FactCheckMixin, ReviewMixin, SocialMixin, GenerateMixin,
-                              CJ2ShadowMixin):
+                              CJ2ShadowMixin, TestimonyL2Mixin):
     def __init__(self):
         self.repo_root = Path(__file__).parent.parent
         self.posts_dir = self.repo_root / "_posts"
