@@ -16,6 +16,7 @@ from datetime import datetime as dt
 
 from .config import CLIPROXY_URL, CLIPROXY_KEY, _ARTICLE_TYPES
 from .grounding import evidence_text
+from .human_detail_provenance import check_provenance as _check_human_detail_provenance
 
 
 class ReviewMixin:
@@ -453,7 +454,8 @@ class ReviewMixin:
                                  shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
                                  plan_follow_read=None, shadow_seam_hits=None,
                                  pre_rewrite_plan_follow_read=None, shadow_repetition_hits=None,
-                                 shadow_length_adherence=None, shadow_stop_risk=None):
+                                 shadow_length_adherence=None, shadow_stop_risk=None,
+                                 shadow_human_detail_provenance=None):
         """Log _engagement_read's verdict, the 4 shadow checks' output, and
         (added 2026-08-09, Stage B of the anchor-architecture blueprint)
         _plan_follow_read's verdict, to a queryable table (audience-
@@ -489,6 +491,12 @@ class ReviewMixin:
         is no proposed blocking use for a subjective drop-off estimate, unlike
         G/E which have a concrete mechanical promotion path).
 
+        shadow_human_detail_provenance (added 2026-08-14, human-detail
+        provenance audit): the list from human_detail_provenance.
+        check_provenance -- each item {"claim", "reason", "quoted_span"}.
+        Stored as JSON. Observation only, same discipline as every other
+        shadow signal here.
+
         Never raises -- a failure here must never affect validate_article's
         own return value or block anything; this is pure logging."""
         import sqlite3
@@ -517,7 +525,7 @@ class ReviewMixin:
                 for _col in ("plan_follow_read TEXT", "shadow_seam_hits TEXT",
                              "pre_rewrite_plan_follow_read TEXT", "shadow_repetition_hits TEXT",
                              "shadow_length_adherence TEXT", "shadow_stop_risk_score INTEGER",
-                             "shadow_stop_risk_reason TEXT"):
+                             "shadow_stop_risk_reason TEXT", "shadow_human_detail_provenance TEXT"):
                     try:
                         conn.execute(f"ALTER TABLE review_signals ADD COLUMN {_col}")
                     except sqlite3.OperationalError:
@@ -529,8 +537,8 @@ class ReviewMixin:
                     "shadow_academic_jargon, shadow_corporate_cliches, shadow_truncated_ending, "
                     "plan_follow_read, shadow_seam_hits, pre_rewrite_plan_follow_read, "
                     "shadow_repetition_hits, shadow_length_adherence, shadow_stop_risk_score, "
-                    "shadow_stop_risk_reason) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "shadow_stop_risk_reason, shadow_human_detail_provenance) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         slug, agent_name, dt.now().strftime("%Y-%m-%d %H:%M:%S"),
                         engagement_read, len(shadow_bullet_hits),
@@ -542,6 +550,7 @@ class ReviewMixin:
                         json.dumps(shadow_repetition_hits or []),
                         json.dumps(shadow_length_adherence or {}),
                         _stop_risk.get("score"), _stop_risk.get("reason"),
+                        json.dumps(shadow_human_detail_provenance or []),
                     ),
                 )
                 conn.commit()
@@ -677,7 +686,7 @@ class ReviewMixin:
             return None
 
     def validate_article(self, content, article_file, slug, target_words=None,
-                          pre_rewrite_content=None, article_type=None):
+                          pre_rewrite_content=None, article_type=None, source_text=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit.
 
         pre_rewrite_content (added 2026-08-09 continuation, blocker #4 fix
@@ -921,6 +930,11 @@ class ReviewMixin:
         shadow_length_adherence = self._check_length_adherence_shadow(
             article_type, _length_adherence_word_count, target_words
         )
+        # Human-detail provenance shadow (human-detail provenance audit,
+        # 2026-08-14) — deterministic, zero model cost. See
+        # human_detail_provenance.py's own module docstring for the two
+        # confirmed incidents this surfaces. Observation only.
+        shadow_human_detail_provenance = _check_human_detail_provenance(content, source_text)
 
         # Stage B of the anchor-architecture blueprint, 2026-08-09 — see
         # _plan_follow_read's own docstring for calibration status (none yet;
@@ -941,6 +955,7 @@ class ReviewMixin:
                                       pre_rewrite_plan_follow_read=pre_rewrite_plan_follow_read,
                                       shadow_repetition_hits=shadow_repetition_hits,
                                       shadow_length_adherence=shadow_length_adherence,
+                                      shadow_human_detail_provenance=shadow_human_detail_provenance,
                                       shadow_stop_risk=shadow_stop_risk)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
@@ -1226,6 +1241,12 @@ class ReviewMixin:
                + (f" — {shadow_stop_risk['reason']}" if shadow_stop_risk.get('reason') else "")
                if shadow_stop_risk.get('score') is not None
                else "not scored (unparseable or absent from this run's engagement read)"),
+            f"- Human-detail provenance (added 2026-08-14 — observation only, deterministic, "
+            f"see human_detail_provenance.py's own module docstring): "
+            f"{len(shadow_human_detail_provenance)} personal-contact claim(s) found"
+            + ("" if not shadow_human_detail_provenance else " — " + " | ".join(
+                f"{c['reason']}: \"{c['claim'][:80]}\"" for c in shadow_human_detail_provenance[:5]
+            )),
             "",
             "## Plan-Follow Read (advisory, added 2026-08-09 — Stage B of the anchor-"
             "architecture blueprint. NO CALIBRATION DATA YET — real (article, plan) pairs "

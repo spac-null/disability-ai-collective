@@ -34,11 +34,27 @@ try:
 except ImportError:
     _trafilatura = None
 
-# Largest max_chars any get_source_text() caller requests today (the fact-check
-# repair pass, at 6000). get_source_text always fetches/caches at this size and
-# slices down for smaller callers, so whichever pipeline stage calls first serves
-# every later stage regardless of call order or requested size.
-_SOURCE_TEXT_CACHE_MAX_CHARS = 6000
+# Canonical source-text ceiling (raised 2026-08-14, human-detail provenance +
+# source-truncation audit; was 6000, itself raised from an original 3000-char
+# default set 2026-03-15, the day source fetching was first built -- no
+# technical justification for either number was ever recorded, same class of
+# stale, unrevisited limit as item H's engagement-read truncation fixed
+# earlier this pass). Confirmed live during this audit: a 2026-05-04 Conversation
+# source article ran ~1,800-1,900 words (~10,800 chars) -- the OLD 3000-char
+# generation-path cap would have captured barely a quarter of it, and even the
+# old 6000-char repair-path cap misses over 40%. Whatever this pipeline's own
+# quote-hoisting/testimony logic operates on must be the FULL article, not an
+# arbitrary early slice, or evidence appearing later in a source is silently
+# invisible to every downstream stage regardless of how good that logic is.
+# 20000 is a generous multiple of the longest real source measured this
+# session, not a literal "no limit" -- still a safety ceiling against a
+# genuinely malformed/runaway extraction, not a load-bearing token budget.
+# get_source_text always fetches/caches at this size and slices down for
+# smaller callers (none request less today -- see generate.py's
+# _SOURCE_TEXT_MAX_CHARS, now unified with this same value), so whichever
+# pipeline stage calls first serves every later stage regardless of call
+# order or requested size.
+_SOURCE_TEXT_CACHE_MAX_CHARS = 20000
 
 _NAV_FUNCTION_WORDS = {
     "the", "a", "an", "of", "to", "and", "in", "is", "was", "that", "it", "for",
@@ -1012,7 +1028,7 @@ class DiscoveryMixin:
             return None
         return r.text[:500000]
 
-    def fetch_source_article(self, url: str, max_chars: int = 3000, fallback_text: str = None) -> str | None:
+    def fetch_source_article(self, url: str, max_chars: int = _SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text: str = None) -> str | None:
         """Fetch and extract text from source article URL. Never blocks generation.
 
         fallback_text, added 2026-08-10: this fetches the live rendered
@@ -1081,7 +1097,7 @@ class DiscoveryMixin:
         self._last_fetch_origin = "fetched_article"
         return text[:max_chars]
 
-    def get_source_text(self, url: str, max_chars: int = 3000, fallback_text: str = None) -> str | None:
+    def get_source_text(self, url: str, max_chars: int = _SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text: str = None) -> str | None:
         """Per-run memoized wrapper around fetch_source_article.
 
         Added 2026-08-10: generation (generate.py) and the fact-check repair

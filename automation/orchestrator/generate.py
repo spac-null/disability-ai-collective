@@ -30,11 +30,16 @@ from .grounding import (
     persona_factual_lineage_entry, build_persona_factual_lineage,
 )
 
-# Matches get_source_text's own default max_chars (discovery.py) -- both
-# call sites below rely on that default rather than overriding it, so this
-# constant documents what they already get, for evidence_packet's
-# source_truncated heuristic (grounding.py).
-_SOURCE_TEXT_MAX_CHARS = 3000
+# Matches get_source_text's own default max_chars (discovery.py's
+# _SOURCE_TEXT_CACHE_MAX_CHARS) -- both call sites below rely on that default
+# rather than overriding it, so this constant documents what they already
+# get, for evidence_packet's source_truncated heuristic (grounding.py).
+# Raised 2026-08-14 (human-detail provenance + source-truncation audit) from
+# 3000 to 20000, in lockstep with discovery.py's own cap -- see that
+# constant's comment for the evidence (a real ~10,800-char source confirmed
+# live, only a quarter of which the old 3000-char cap ever let through to
+# Fable's brief or the writer).
+_SOURCE_TEXT_MAX_CHARS = 20000
 
 
 class GenerateMixin:
@@ -1239,6 +1244,7 @@ class GenerateMixin:
         review_file, is_clean = self.validate_article(
             content, article_file, slug, target_words=target_words,
             pre_rewrite_content=pristine_draft_content, article_type=article_type,
+            source_text=evidence_packet.get("source_text"),
         )
 
         # Step 7: Commit article + review sidecar
