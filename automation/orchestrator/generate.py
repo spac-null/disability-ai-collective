@@ -38,6 +38,23 @@ _SOURCE_TEXT_MAX_CHARS = 3000
 
 
 class GenerateMixin:
+    @staticmethod
+    def _compute_should_block(degraded_stages):
+        """Promotion-blocking policy for a degraded run (A-M reconciliation, `## M`,
+        2026-08-14). `degraded_stages` is an iterable of stage names appended to
+        `self._degraded_stages` on failure (never includes CJ-2/shadow-only
+        failures -- those are non-authoritative and never reach this list at all).
+
+        Blocks on its own: `fable_brief` (loses persona override/angle/register/
+        seed sentence/opening scene/correction moment/resisting example in one
+        shot) or `gate_llm` (the authoritative register/rule-violation check going
+        dark means mechanical rule violations are UNKNOWN, not zero -- the same
+        class of loss as fable_brief, not one vote among many). Otherwise blocks
+        once 2+ distinct stages degrade, since that means most of the editorial
+        safety net never ran this pass."""
+        stages = set(degraded_stages)
+        return "fable_brief" in stages or "gate_llm" in stages or len(stages) >= 2
+
     def _persist_article_plan(self, slug, agent_name, fable_brief):
         """Persist the full _fable_editorial_brief JSON, keyed on slug, added
         2026-08-09 (Stage 0 of the anchor/plan-following architecture blueprint
@@ -1144,11 +1161,20 @@ class GenerateMixin:
             # losing the brief removes persona override, angle, register, seed sentence,
             # opening scene, correction moment AND resisting example in one shot, not a
             # minor degradation, and (once the evidence-budget architecture lands) it will
-            # also mean no controlled evidence budget was ever set. (b) two or more failed
-            # stages of ANY kind blocks too, even without fable_brief among them, since that
-            # means most of the editorial safety net never executed this run.
+            # also mean no controlled evidence budget was ever set. (b) ANY gate_llm
+            # degradation also blocks on its own -- added 2026-08-14 (A-M reconciliation,
+            # `## M`, flagged as an open question there): gate_llm failing/truncating/
+            # omitting rules means "mechanical rule violations are UNKNOWN, not zero" per
+            # gate.py's own log lines, the same authoritative-safety-net loss reasoning
+            # fable_brief already gets -- a lone gate_llm degradation is not one vote among
+            # many, it's the one check built specifically to catch register/fabrication-
+            # adjacent issues going dark. (c) two or more failed stages of ANY kind blocks
+            # too, even without fable_brief/gate_llm among them, since that means most of
+            # the editorial safety net never executed this run. CJ-2/shadow-only failures
+            # never reach `_degraded_stages` at all (see the CJ-2 shadow call site), so
+            # this policy only ever sees authoritative-pipeline stages.
             _stages = sorted(set(self._degraded_stages))
-            _should_block = "fable_brief" in _stages or len(_stages) >= 2
+            _should_block = self._compute_should_block(_stages)
             self.logger.error("DEGRADED RUN: %s -- stages failed: %s", article_file.name, ", ".join(_stages))
             if _should_block:
                 fm_text = article_file.read_text()
