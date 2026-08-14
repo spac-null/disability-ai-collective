@@ -26,6 +26,7 @@ from .grounding import (
     build_evidence_packet, validate_brief, find_new_unsupported_specifics,
     find_new_unsupported_personal_history,
 )
+from .rewrite_integrity import validate_rewrite_integrity
 
 # Phase 1.6 continuation (found on review): the planner, reviewer, and
 # executor previously each independently re-sliced evidence_packet's
@@ -485,10 +486,27 @@ class LLMMixin:
                 timeout=240,
                 check_truncation=True,
             )
-            if rewritten and rewritten.count("---") >= 2 and len(rewritten) > 400:
-                self.logger.info("Opus rewrite succeeded (%d chars)", len(rewritten))
-                return rewritten.lstrip("\n")
-            self.logger.warning("Opus rewrite returned invalid response — keeping original")
+            if rewritten and len(rewritten) > 400:
+                # Replaces the old `rewritten.count("---") >= 2` check (2026-08-14,
+                # morning-stabilization follow-up) -- that check was satisfied by
+                # this function's own synthetic frontmatter wrapper alone,
+                # regardless of body content, and is the confirmed root cause of
+                # `_posts/2026-03-31-the-floor-plan-of-disappearance.md` shipping
+                # with its own body duplicated (see rewrite_integrity.py's module
+                # docstring for the full incident and evidence). require_frontmatter
+                # =True because this function's own `content`/`rewritten` always
+                # carry a real (synthetic or original) frontmatter block -- see the
+                # temp_front wrapper generate.py builds before calling this.
+                integrity = validate_rewrite_integrity(content, rewritten, require_frontmatter=True)
+                if integrity["ok"]:
+                    self.logger.info("Opus rewrite succeeded (%d chars)", len(rewritten))
+                    return rewritten.lstrip("\n")
+                self.logger.warning(
+                    "Opus rewrite rejected by integrity guard (%s, length_ratio=%s) — keeping original",
+                    ", ".join(integrity["reasons"]), integrity["length_ratio"],
+                )
+            else:
+                self.logger.warning("Opus rewrite returned invalid response — keeping original")
         except Exception as e:
             self.logger.warning("Opus rewrite failed: %s — keeping original", e)
 
@@ -1251,14 +1269,28 @@ class LLMMixin:
                 check_truncation=True,
             )
             if revised and len(revised) > 400:
-                guarded = self._reject_if_unsupported_specifics(
-                    article_body, revised, evidence_packet, "Opus targeted revision",
-                    persona_factual_context=persona_factual_context,
-                )
-                if guarded is not None:
-                    self.logger.info("Targeted revision: %d chars", len(guarded))
-                    return guarded
-                self.logger.warning("Targeted revision discarded by post-revision guard — keeping original")
+                # Integrity guard runs BEFORE the fabrication guard (2026-08-14,
+                # morning-stabilization follow-up) -- a verbatim repeat of
+                # article_body introduces no NEW unsupported fact, so
+                # _reject_if_unsupported_specifics alone would accept it. See
+                # rewrite_integrity.py's module docstring for the incident this
+                # closes. require_frontmatter=False -- article_body/revised are
+                # body text only, no frontmatter here.
+                integrity = validate_rewrite_integrity(article_body, revised)
+                if not integrity["ok"]:
+                    self.logger.warning(
+                        "Targeted revision rejected by integrity guard (%s, length_ratio=%s) — keeping original",
+                        ", ".join(integrity["reasons"]), integrity["length_ratio"],
+                    )
+                else:
+                    guarded = self._reject_if_unsupported_specifics(
+                        article_body, revised, evidence_packet, "Opus targeted revision",
+                        persona_factual_context=persona_factual_context,
+                    )
+                    if guarded is not None:
+                        self.logger.info("Targeted revision: %d chars", len(guarded))
+                        return guarded
+                    self.logger.warning("Targeted revision discarded by post-revision guard — keeping original")
             else:
                 self.logger.warning("Targeted revision returned short response — keeping original")
         except Exception as e:
@@ -1325,14 +1357,24 @@ class LLMMixin:
             # budget for a mechanical rewrite; Fable stays as a last-resort fallback.
             revised = self._call_editorial_model(system, user, max_tokens=6000, timeout=180, prefer_opus=True)
             if revised and len(revised) > max(400, len(article_body) * 0.6):
-                guarded = self._reject_if_unsupported_specifics(
-                    article_body, revised, evidence_packet, "Fable polish rewrite",
-                    persona_factual_context=persona_factual_context,
-                )
-                if guarded is not None:
-                    self.logger.info("Fable polish rewrite: %d chars", len(guarded))
-                    return guarded
-                self.logger.warning("Fable polish rewrite discarded by post-revision guard — falling back to Opus")
+                # Same integrity guard as _opus_targeted_revision (2026-08-14,
+                # morning-stabilization follow-up) -- see rewrite_integrity.py's
+                # module docstring. require_frontmatter=False, body text only.
+                integrity = validate_rewrite_integrity(article_body, revised)
+                if not integrity["ok"]:
+                    self.logger.warning(
+                        "Fable polish rewrite rejected by integrity guard (%s, length_ratio=%s) — falling back to Opus",
+                        ", ".join(integrity["reasons"]), integrity["length_ratio"],
+                    )
+                else:
+                    guarded = self._reject_if_unsupported_specifics(
+                        article_body, revised, evidence_packet, "Fable polish rewrite",
+                        persona_factual_context=persona_factual_context,
+                    )
+                    if guarded is not None:
+                        self.logger.info("Fable polish rewrite: %d chars", len(guarded))
+                        return guarded
+                    self.logger.warning("Fable polish rewrite discarded by post-revision guard — falling back to Opus")
             else:
                 self.logger.warning("Fable polish rewrite returned too little content — falling back to Opus")
         except Exception as e:
