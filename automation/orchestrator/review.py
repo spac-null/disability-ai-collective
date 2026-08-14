@@ -17,6 +17,7 @@ from datetime import datetime as dt
 from .config import CLIPROXY_URL, CLIPROXY_KEY, _ARTICLE_TYPES
 from .grounding import evidence_text
 from .human_detail_provenance import check_provenance as _check_human_detail_provenance
+from .opening_template_detector import normalize_opening, find_template_match
 
 
 class ReviewMixin:
@@ -87,7 +88,44 @@ class ReviewMixin:
                     "its difficulty is low risk; an easy essay that goes nowhere is high "
                     "risk. Format: 'STOP_RISK: N — <one clause naming the specific "
                     "reason from the list above, or NONE if the piece earns its length "
-                    "and form>'.\n\n"
+                    "and form>'.\n"
+                    "AUTHOR_PRESENCE: does the OPENING (roughly the first few paragraphs) "
+                    "let you perceive a specific way of noticing or interpreting the world "
+                    "at work — a particular mind's angle on what it's looking at? This is "
+                    "about a PERCEPTUAL POSITION, not a self-introduction. Do NOT require "
+                    "first person, autobiography, the phrase 'as a disabled person', "
+                    "naming the author, describing a diagnosis, or a literal bodily action "
+                    "— a specific way of seeing/hearing/reading a situation counts even "
+                    "with zero identity statement anywhere. Score one of:\n"
+                    "  fused — a specific perceptual/interpretive position is already at "
+                    "work in the opening, whether or not identity is ever named\n"
+                    "  generic_or_delayed — the opening reads as a general journalistic or "
+                    "analytical voice; a specific position may emerge later but not in the "
+                    "opening itself\n"
+                    "  explicit_clunky — the piece stops the observation to announce an "
+                    "identity/disability directly, instead of letting the position show "
+                    "through what's noticed\n"
+                    "  absent — no specific perceptual position is discernible anywhere in "
+                    "the piece, opening or not\n"
+                    "  unclear — genuinely cannot tell\n"
+                    "Format: 'AUTHOR_PRESENCE: <value> — <one clause>'.\n"
+                    "QUESTION_TIMING: does a reader understand early enough what this "
+                    "piece is actually investigating and why to keep reading? This is "
+                    "about ARGUMENTATIVE FUNCTION, not a keyword search — do NOT judge by "
+                    "whether there's a question mark, an explicit single thesis sentence, "
+                    "or word count alone. A deliberately delayed reveal that is doing real "
+                    "argumentative work (building toward a turn) is not a failure. Score "
+                    "one of:\n"
+                    "  early_natural — the reader understands the investigation early, and "
+                    "it arrives organically from what came before\n"
+                    "  early_mechanical — the reader understands it early, but via a "
+                    "formulaic, templated turn of phrase rather than organic development\n"
+                    "  delayed_justified — the reveal comes later, but the delay is doing "
+                    "real work (a deliberate build-up, not a stall)\n"
+                    "  too_late — the reader doesn't know why they're reading until far "
+                    "too late, with no justification for the delay\n"
+                    "  unclear — genuinely cannot tell\n"
+                    "Format: 'QUESTION_TIMING: <value> — <one clause>'.\n\n"
                     "Do not evaluate grammar, sentence structure, jargon, or rule "
                     "compliance — all of that is checked elsewhere in this pipeline. Only "
                     "evaluate whether this specific piece is actually worth a stranger's "
@@ -95,9 +133,10 @@ class ReviewMixin:
                 ),
                 user_prompt=f"Title: {title}\nAuthor persona: {agent_name}\n\n{content}",
                 model="openrouter/claude-sonnet-4.6",
-                max_tokens=400,  # was 300 -- bumped 2026-08-14 (A-M reconciliation, item J)
-                                 # when STOP_RISK was added to the same call/response;
-                                 # keep ahead of VERDICT+HOOK+DRAG+STOP_RISK's combined length.
+                max_tokens=600,  # was 400 -- bumped 2026-08-14 (opening-quality shadow pass)
+                                 # when AUTHOR_PRESENCE/QUESTION_TIMING were added to the same
+                                 # call/response; keep ahead of VERDICT+HOOK+DRAG+STOP_RISK+
+                                 # AUTHOR_PRESENCE+QUESTION_TIMING's combined length.
                 timeout=45,
                 check_truncation=True,
             )
@@ -135,6 +174,104 @@ class ReviewMixin:
         reason = (m.group(2) or "").strip()
         result["reason"] = reason or None
         return result
+
+    # Opening-quality observability (article-quality evidence pass, 2026-08-14,
+    # B/C from the A-M reconciliation) — added to the SAME _engagement_read call
+    # above, same discipline as STOP_RISK: zero extra network/model cost. The
+    # evidence pass's own 15-article manual sample found B (author-presence)
+    # materially weak (~47% generic/delayed/absent) and C (question-timing)
+    # largely healthy (0% clear too-late failures) -- deliberately NOT collapsed
+    # into one field, since the same pass found concrete cases (Determined to
+    # Disappear, Swan Care) where thesis timing was early and clean while
+    # author-presence was absent or very late, proving these are correlated but
+    # separable signals. OBSERVATION ONLY: no blocking authority, never fed into
+    # is_clean or _should_block.
+    _AUTHOR_PRESENCE_VALUES = frozenset({
+        "fused", "generic_or_delayed", "explicit_clunky", "absent", "unclear",
+    })
+    _QUESTION_TIMING_VALUES = frozenset({
+        "early_natural", "early_mechanical", "delayed_justified", "too_late", "unclear",
+    })
+    _AUTHOR_PRESENCE_RE = re.compile(
+        r"AUTHOR_PRESENCE:\s*([a-z_]+)\s*(?:—|-|:)?\s*(.*)", re.IGNORECASE
+    )
+    _QUESTION_TIMING_RE = re.compile(
+        r"QUESTION_TIMING:\s*([a-z_]+)\s*(?:—|-|:)?\s*(.*)", re.IGNORECASE
+    )
+
+    @classmethod
+    def _extract_opening_quality_shadow(cls, engagement_read_text):
+        """Parse the AUTHOR_PRESENCE and QUESTION_TIMING lines out of an
+        already-obtained _engagement_read response. Returns
+        {"author_presence": str or None, "author_presence_reason": str or None,
+        "question_timing": str or None, "question_timing_reason": str or None,
+        "shadow_only": True}. A value is None (not an arbitrary fallback) when
+        the line is absent, malformed, or not one of the known enum values --
+        an unrecognized value is exactly as informative as a missing one, and
+        must not be silently coerced into looking like a real verdict. Never
+        raises."""
+        result = {
+            "author_presence": None, "author_presence_reason": None,
+            "question_timing": None, "question_timing_reason": None,
+            "shadow_only": True,
+        }
+        if not engagement_read_text:
+            return result
+
+        m = cls._AUTHOR_PRESENCE_RE.search(engagement_read_text)
+        if m:
+            value = m.group(1).strip().lower()
+            if value in cls._AUTHOR_PRESENCE_VALUES:
+                result["author_presence"] = value
+                reason = (m.group(2) or "").strip()
+                result["author_presence_reason"] = reason or None
+
+        m = cls._QUESTION_TIMING_RE.search(engagement_read_text)
+        if m:
+            value = m.group(1).strip().lower()
+            if value in cls._QUESTION_TIMING_VALUES:
+                result["question_timing"] = value
+                reason = (m.group(2) or "").strip()
+                result["question_timing_reason"] = reason or None
+
+        return result
+
+    # Cross-article opening-template shadow (article-quality evidence pass,
+    # 2026-08-14) -- see opening_template_detector.py's own module docstring
+    # for the confirmed historical template families and the corpus-derived
+    # threshold. Deterministic, zero model cost. Distinct from
+    # _check_repetition_shadow (G), which compares paragraphs WITHIN one
+    # article -- this compares one article's OPENING against OTHER, already-
+    # published articles' openings.
+    _OPENING_TEMPLATE_WINDOW = 30
+
+    def _check_opening_template_shadow(self, content, slug):
+        """Compares this article's opening against the last
+        _OPENING_TEMPLATE_WINDOW published articles (by filename, which are
+        date-prefixed) in self.posts_dir, excluding the current article's own
+        file. Returns the dict from find_template_match, or
+        {"matched_slug": None, "shared_count": 0, "shared_phrases": []} if no
+        match reaches the threshold. Never raises -- a filesystem error here
+        must never affect validate_article's own return value."""
+        no_match = {"matched_slug": None, "shared_count": 0, "shared_phrases": []}
+        try:
+            this_opening = normalize_opening(content)
+            candidates = {}
+            files = sorted(self.posts_dir.glob("*.md"), reverse=True)
+            for f in files:
+                if slug and slug in f.stem:
+                    continue
+                if len(candidates) >= self._OPENING_TEMPLATE_WINDOW:
+                    break
+                try:
+                    candidates[f.stem] = normalize_opening(f.read_text(encoding="utf-8"))
+                except Exception:
+                    continue
+            match = find_template_match(this_opening, candidates)
+            return match or no_match
+        except Exception as e:
+            self.logger.warning("Opening-template shadow check failed (non-fatal): %s", e)
+            return no_match
 
     # ── Shadow checks (2026-08-09 — observation only, do not act on) ──────────
     # These are deterministic checks for rules the writer prompt already states
@@ -455,7 +592,8 @@ class ReviewMixin:
                                  plan_follow_read=None, shadow_seam_hits=None,
                                  pre_rewrite_plan_follow_read=None, shadow_repetition_hits=None,
                                  shadow_length_adherence=None, shadow_stop_risk=None,
-                                 shadow_human_detail_provenance=None):
+                                 shadow_human_detail_provenance=None,
+                                 shadow_opening_quality=None, shadow_opening_template=None):
         """Log _engagement_read's verdict, the 4 shadow checks' output, and
         (added 2026-08-09, Stage B of the anchor-architecture blueprint)
         _plan_follow_read's verdict, to a queryable table (audience-
@@ -497,6 +635,20 @@ class ReviewMixin:
         Stored as JSON. Observation only, same discipline as every other
         shadow signal here.
 
+        shadow_opening_quality (added 2026-08-14, article-quality evidence
+        pass, B/C): the dict from _extract_opening_quality_shadow -- author_
+        presence/author_presence_reason, question_timing/question_timing_
+        reason. Parsed from the SAME _engagement_read call, zero extra model
+        cost. Deliberately two columns, not one -- the evidence pass found
+        these correlated but separable (Determined to Disappear, Swan Care:
+        early thesis timing, absent author presence). Observation only.
+
+        shadow_opening_template (added 2026-08-14, same pass): the dict from
+        _check_opening_template_shadow -- matched_slug/shared_count/
+        shared_phrases, deterministic, zero model cost. Observation only,
+        same 2026-08-28-or-later no-promotion discipline as every other
+        shadow check.
+
         Never raises -- a failure here must never affect validate_article's
         own return value or block anything; this is pure logging."""
         import sqlite3
@@ -525,20 +677,26 @@ class ReviewMixin:
                 for _col in ("plan_follow_read TEXT", "shadow_seam_hits TEXT",
                              "pre_rewrite_plan_follow_read TEXT", "shadow_repetition_hits TEXT",
                              "shadow_length_adherence TEXT", "shadow_stop_risk_score INTEGER",
-                             "shadow_stop_risk_reason TEXT", "shadow_human_detail_provenance TEXT"):
+                             "shadow_stop_risk_reason TEXT", "shadow_human_detail_provenance TEXT",
+                             "shadow_author_presence TEXT", "shadow_author_presence_reason TEXT",
+                             "shadow_question_timing TEXT", "shadow_question_timing_reason TEXT",
+                             "shadow_opening_template TEXT"):
                     try:
                         conn.execute(f"ALTER TABLE review_signals ADD COLUMN {_col}")
                     except sqlite3.OperationalError:
                         pass  # column already exists
                 _stop_risk = shadow_stop_risk or {}
+                _opening_quality = shadow_opening_quality or {}
                 conn.execute(
                     "INSERT OR REPLACE INTO review_signals "
                     "(slug, agent, reviewed_at, engagement_verdict, shadow_bullet_hits, "
                     "shadow_academic_jargon, shadow_corporate_cliches, shadow_truncated_ending, "
                     "plan_follow_read, shadow_seam_hits, pre_rewrite_plan_follow_read, "
                     "shadow_repetition_hits, shadow_length_adherence, shadow_stop_risk_score, "
-                    "shadow_stop_risk_reason, shadow_human_detail_provenance) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "shadow_stop_risk_reason, shadow_human_detail_provenance, "
+                    "shadow_author_presence, shadow_author_presence_reason, "
+                    "shadow_question_timing, shadow_question_timing_reason, shadow_opening_template) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         slug, agent_name, dt.now().strftime("%Y-%m-%d %H:%M:%S"),
                         engagement_read, len(shadow_bullet_hits),
@@ -551,6 +709,9 @@ class ReviewMixin:
                         json.dumps(shadow_length_adherence or {}),
                         _stop_risk.get("score"), _stop_risk.get("reason"),
                         json.dumps(shadow_human_detail_provenance or []),
+                        _opening_quality.get("author_presence"), _opening_quality.get("author_presence_reason"),
+                        _opening_quality.get("question_timing"), _opening_quality.get("question_timing_reason"),
+                        json.dumps(shadow_opening_template or {}),
                     ),
                 )
                 conn.commit()
@@ -918,6 +1079,12 @@ class ReviewMixin:
         # from the SAME response above, zero extra model call. See
         # _extract_stop_risk_shadow's own docstring; observation only.
         shadow_stop_risk = self._extract_stop_risk_shadow(engagement_read)
+        # B/C opening-quality observability (article-quality evidence pass,
+        # 2026-08-14) — parsed from the SAME response above, zero extra model
+        # call. See _extract_opening_quality_shadow's own docstring; observation
+        # only, deliberately NOT collapsed into one field (B and C are correlated
+        # but separable per the evidence pass).
+        shadow_opening_quality = self._extract_opening_quality_shadow(engagement_read)
 
         # Shadow checks — observation only, see the class-level comment above
         # _check_bullet_points_shadow for the rules and the no-promotion guardrail.
@@ -935,6 +1102,12 @@ class ReviewMixin:
         # human_detail_provenance.py's own module docstring for the two
         # confirmed incidents this surfaces. Observation only.
         shadow_human_detail_provenance = _check_human_detail_provenance(content, source_text)
+
+        # Deterministic cross-article opening-template shadow (same pass) —
+        # zero model cost, compares this article's opening against recently
+        # published articles' openings on disk. See _check_opening_template_shadow's
+        # own docstring.
+        shadow_opening_template = self._check_opening_template_shadow(content, slug)
 
         # Stage B of the anchor-architecture blueprint, 2026-08-09 — see
         # _plan_follow_read's own docstring for calibration status (none yet;
@@ -956,7 +1129,9 @@ class ReviewMixin:
                                       shadow_repetition_hits=shadow_repetition_hits,
                                       shadow_length_adherence=shadow_length_adherence,
                                       shadow_human_detail_provenance=shadow_human_detail_provenance,
-                                      shadow_stop_risk=shadow_stop_risk)
+                                      shadow_stop_risk=shadow_stop_risk,
+                                      shadow_opening_quality=shadow_opening_quality,
+                                      shadow_opening_template=shadow_opening_template)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -1247,6 +1422,26 @@ class ReviewMixin:
             + ("" if not shadow_human_detail_provenance else " — " + " | ".join(
                 f"{c['reason']}: \"{c['claim'][:80]}\"" for c in shadow_human_detail_provenance[:5]
             )),
+            f"- Author presence (B, added 2026-08-14 — observation only, parsed from the "
+            f"same engagement read, see _extract_opening_quality_shadow's own docstring): "
+            + (f"{shadow_opening_quality.get('author_presence')}"
+               + (f" — {shadow_opening_quality['author_presence_reason']}"
+                  if shadow_opening_quality.get('author_presence_reason') else "")
+               if shadow_opening_quality.get('author_presence')
+               else "not scored (unparseable or absent from this run's engagement read)"),
+            f"- Question timing (C, added 2026-08-14 — observation only, same call): "
+            + (f"{shadow_opening_quality.get('question_timing')}"
+               + (f" — {shadow_opening_quality['question_timing_reason']}"
+                  if shadow_opening_quality.get('question_timing_reason') else "")
+               if shadow_opening_quality.get('question_timing')
+               else "not scored (unparseable or absent from this run's engagement read)"),
+            f"- Opening-template match (deterministic, added 2026-08-14 — observation "
+            f"only, see opening_template_detector.py's own module docstring): "
+            + (f"matches {shadow_opening_template.get('matched_slug')} "
+               f"({shadow_opening_template.get('shared_count')} shared shingles: "
+               + ", ".join(shadow_opening_template.get('shared_phrases', [])[:3]) + ")"
+               if shadow_opening_template.get('matched_slug')
+               else "no match against the recent-article window"),
             "",
             "## Plan-Follow Read (advisory, added 2026-08-09 — Stage B of the anchor-"
             "architecture blueprint. NO CALIBRATION DATA YET — real (article, plan) pairs "
