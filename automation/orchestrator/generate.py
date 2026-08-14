@@ -1224,7 +1224,7 @@ class GenerateMixin:
         # Step 6c: Full review (citations + readability + rule compliance)
         review_file, is_clean = self.validate_article(
             content, article_file, slug, target_words=target_words,
-            pre_rewrite_content=pristine_draft_content,
+            pre_rewrite_content=pristine_draft_content, article_type=article_type,
         )
 
         # Step 7: Commit article + review sidecar

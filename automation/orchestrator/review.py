@@ -14,7 +14,7 @@ import re
 import urllib.request as ureq
 from datetime import datetime as dt
 
-from .config import CLIPROXY_URL, CLIPROXY_KEY
+from .config import CLIPROXY_URL, CLIPROXY_KEY, _ARTICLE_TYPES
 from .grounding import evidence_text
 
 
@@ -294,6 +294,91 @@ class ReviewMixin:
                     })
         return candidates
 
+    # Absolute word-count contracts for the two article_types gate.py's
+    # _check_article_type_compliance already hard-enforces (field_note ≤500,
+    # portrait/series_part ≥1200). Mirrored here verbatim, not re-derived, so
+    # this shadow check's classification for those two types can never disagree
+    # with the real enforcement it does not replace or duplicate authority over.
+    _LENGTH_ADHERENCE_ABSOLUTE = {
+        "field_note":  {"max": 500},
+        "portrait":    {"min": 1200},
+        "series_part": {"min": 1200},
+    }
+    _ARTICLE_TYPE_NAMES = frozenset(t[0] for t in _ARTICLE_TYPES)
+
+    @classmethod
+    def _check_length_adherence_shadow(cls, article_type, word_count, target_words):
+        """E SHADOW V0, added 2026-08-14 (A-M reconciliation, item E) — SHADOW
+        MODE ONLY, same discipline as every other check in this section: do
+        not promote before 2026-08-28 at the earliest, and only with real
+        false-positive data in hand.
+
+        The reconciliation confirmed a real gap: _LENGTHS draws a continuous
+        450-2800 target per run, generate.py tells the writer "arrive early
+        rather than late," and nothing downstream ever checks whether the
+        final word count actually landed near that target for the dominant
+        article_type ("essay", 35% weight) or any of pleasure/fury/confusion/
+        indefensible -- only field_note (≤500) and portrait/series_part
+        (≥1200) have real deterministic enforcement, in gate.py, unchanged by
+        this check and not touched here.
+
+        Two distinct classification paths, not one universal cap:
+        - field_note/portrait/series_part: absolute contract from
+          _LENGTH_ADHERENCE_ABSOLUTE (the same numbers gate.py already hard-
+          enforces) -- IN_RANGE or HARD_DEVIATION, no soft tier, because the
+          real rule itself is a binary cap/floor, not a band.
+        - every other known article_type: relative to the per-run target_words
+          actually drawn for this article (there is no fixed range for these
+          types -- target_words is a continuous weighted-random draw, see
+          config.py's _LENGTHS) -- IN_RANGE (0.7-1.3x target), SOFT_DEVIATION
+          (0.5-0.7x or 1.3-1.6x), HARD_DEVIATION (<0.5x or >1.6x). These
+          ratios are a first, uncalibrated guess, not a validated cutoff --
+          exactly the number this observation window exists to inform before
+          any promotion decision, same as G's similarity_threshold.
+        - UNKNOWN_FORMAT: article_type absent, not one of config.py's known
+          _ARTICLE_TYPES, or (for the relative path) target_words missing/zero
+          -- there is nothing to check adherence against.
+
+        Never raises, never blocks, never feeds _should_block -- this is
+        observation only. Returns a dict: {"state": one of the four states
+        above, "article_type": ..., "word_count": ..., "target_words": ...,
+        "ratio": float or None (relative path only), "shadow_only": True}."""
+        result = {
+            "article_type": article_type,
+            "word_count": word_count,
+            "target_words": target_words,
+            "ratio": None,
+            "shadow_only": True,
+        }
+
+        if not article_type or article_type not in cls._ARTICLE_TYPE_NAMES:
+            result["state"] = "UNKNOWN_FORMAT"
+            return result
+
+        absolute = cls._LENGTH_ADHERENCE_ABSOLUTE.get(article_type)
+        if absolute:
+            if "max" in absolute and word_count > absolute["max"]:
+                result["state"] = "HARD_DEVIATION"
+            elif "min" in absolute and word_count < absolute["min"]:
+                result["state"] = "HARD_DEVIATION"
+            else:
+                result["state"] = "IN_RANGE"
+            return result
+
+        if not target_words:
+            result["state"] = "UNKNOWN_FORMAT"
+            return result
+
+        ratio = word_count / target_words
+        result["ratio"] = round(ratio, 2)
+        if 0.7 <= ratio <= 1.3:
+            result["state"] = "IN_RANGE"
+        elif 0.5 <= ratio < 0.7 or 1.3 < ratio <= 1.6:
+            result["state"] = "SOFT_DEVIATION"
+        else:
+            result["state"] = "HARD_DEVIATION"
+        return result
+
     @classmethod
     def _check_forbidden_word_lists_shadow(cls, content):
         """SHADOW MODE, added 2026-08-09 — do not promote before 2026-08-23 at the
@@ -320,7 +405,8 @@ class ReviewMixin:
     def _persist_review_signals(self, slug, agent_name, engagement_read,
                                  shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
                                  plan_follow_read=None, shadow_seam_hits=None,
-                                 pre_rewrite_plan_follow_read=None, shadow_repetition_hits=None):
+                                 pre_rewrite_plan_follow_read=None, shadow_repetition_hits=None,
+                                 shadow_length_adherence=None):
         """Log _engagement_read's verdict, the 4 shadow checks' output, and
         (added 2026-08-09, Stage B of the anchor-architecture blueprint)
         _plan_follow_read's verdict, to a queryable table (audience-
@@ -343,6 +429,11 @@ class ReviewMixin:
         plan" (both columns agree it failed) apart from "a downstream pass
         undid it" (pre-rewrite says executed, post-rewrite says not) — the
         two failure modes were previously indistinguishable.
+
+        shadow_length_adherence (added 2026-08-14, A-M reconciliation item E):
+        the dict returned by _check_length_adherence_shadow -- state, article_type,
+        word_count, target_words, ratio. Stored as JSON like the other shadow
+        signals, same 2026-08-28 no-promotion discipline.
 
         Never raises -- a failure here must never affect validate_article's
         own return value or block anything; this is pure logging."""
@@ -370,7 +461,8 @@ class ReviewMixin:
                 # commit without this column. ALTER TABLE ADD COLUMN has no "IF NOT
                 # EXISTS" in SQLite -- catch the duplicate-column error instead.
                 for _col in ("plan_follow_read TEXT", "shadow_seam_hits TEXT",
-                             "pre_rewrite_plan_follow_read TEXT", "shadow_repetition_hits TEXT"):
+                             "pre_rewrite_plan_follow_read TEXT", "shadow_repetition_hits TEXT",
+                             "shadow_length_adherence TEXT"):
                     try:
                         conn.execute(f"ALTER TABLE review_signals ADD COLUMN {_col}")
                     except sqlite3.OperationalError:
@@ -380,8 +472,8 @@ class ReviewMixin:
                     "(slug, agent, reviewed_at, engagement_verdict, shadow_bullet_hits, "
                     "shadow_academic_jargon, shadow_corporate_cliches, shadow_truncated_ending, "
                     "plan_follow_read, shadow_seam_hits, pre_rewrite_plan_follow_read, "
-                    "shadow_repetition_hits) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "shadow_repetition_hits, shadow_length_adherence) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         slug, agent_name, dt.now().strftime("%Y-%m-%d %H:%M:%S"),
                         engagement_read, len(shadow_bullet_hits),
@@ -391,6 +483,7 @@ class ReviewMixin:
                         json.dumps(shadow_seam_hits or []),
                         pre_rewrite_plan_follow_read,
                         json.dumps(shadow_repetition_hits or []),
+                        json.dumps(shadow_length_adherence or {}),
                     ),
                 )
                 conn.commit()
@@ -526,7 +619,7 @@ class ReviewMixin:
             return None
 
     def validate_article(self, content, article_file, slug, target_words=None,
-                          pre_rewrite_content=None):
+                          pre_rewrite_content=None, article_type=None):
         """Non-blocking review: citations + readability + rule compliance. Never delays commit.
 
         pre_rewrite_content (added 2026-08-09 continuation, blocker #4 fix
@@ -544,7 +637,13 @@ class ReviewMixin:
         fable_brief and post-rewrite using a separate DB read, as an earlier
         version of this fix did) is what makes the two verdicts genuinely
         comparable — a regression attributable to a specific stage instead
-        of an artifact of comparing against two different plan records."""
+        of an artifact of comparing against two different plan records.
+
+        article_type (added 2026-08-14, A-M reconciliation item E): the
+        picked article_type, if the caller has it, so _check_length_adherence_shadow
+        can classify length adherence per-format. None for callers that don't
+        supply it (e.g. snapshot_test.py) -- the shadow check reports
+        UNKNOWN_FORMAT in that case, never raises, never blocks."""
         import os, json, urllib.request as ureq
         from datetime import datetime as dt
 
@@ -756,6 +855,10 @@ class ReviewMixin:
         shadow_truncated_ending = self._check_truncated_ending_shadow(content)
         shadow_seam_hits = self._check_seam_shadow(content)
         shadow_repetition_hits = self._check_repetition_shadow(content)
+        _length_adherence_word_count = len(re.findall(r"\S+", content))
+        shadow_length_adherence = self._check_length_adherence_shadow(
+            article_type, _length_adherence_word_count, target_words
+        )
 
         # Stage B of the anchor-architecture blueprint, 2026-08-09 — see
         # _plan_follow_read's own docstring for calibration status (none yet;
@@ -774,7 +877,8 @@ class ReviewMixin:
                                       shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
                                       plan_follow_read, shadow_seam_hits,
                                       pre_rewrite_plan_follow_read=pre_rewrite_plan_follow_read,
-                                      shadow_repetition_hits=shadow_repetition_hits)
+                                      shadow_repetition_hits=shadow_repetition_hits,
+                                      shadow_length_adherence=shadow_length_adherence)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -1045,6 +1149,14 @@ class ReviewMixin:
                 f"(similarity={h['similarity']}, shared: {', '.join(h['shared_terms'][:5])})"
                 for h in shadow_repetition_hits[:5]
             )),
+            f"- Length adherence (E SHADOW V0, added 2026-08-14 — observation only, "
+            f"see _check_length_adherence_shadow's own docstring): "
+            f"{shadow_length_adherence.get('state', 'UNKNOWN_FORMAT')}"
+            f" ({shadow_length_adherence.get('word_count')} words, "
+            f"article_type={shadow_length_adherence.get('article_type')}, "
+            f"target={shadow_length_adherence.get('target_words')}"
+            + (f", ratio={shadow_length_adherence['ratio']}" if shadow_length_adherence.get('ratio') is not None else "")
+            + ")",
             "",
             "## Plan-Follow Read (advisory, added 2026-08-09 — Stage B of the anchor-"
             "architecture blueprint. NO CALIBRATION DATA YET — real (article, plan) pairs "
