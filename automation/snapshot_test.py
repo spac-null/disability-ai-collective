@@ -264,7 +264,20 @@ def _make_recorder():
 
     def fake_call_openai_compat_api(self, url, api_key, system_prompt, user_prompt,
                                      model, max_tokens=3500, timeout=120, no_think=False,
-                                     return_model=False, reasoning_max_tokens=None):
+                                     return_model=False, reasoning_max_tokens=None,
+                                     check_truncation=False, temperature=None):
+        # check_truncation/temperature added 2026-08-14 (A-M reconciliation, item I):
+        # this fake's signature had drifted behind _call_openai_compat_api's real one
+        # (llm.py) again, the exact same bug class _snapshot_generate_calls's own fake
+        # (below) already documents fixing once for _fable_editorial_brief's caller —
+        # gate.py's own _pre_commit_gate now calls with check_truncation=True (added
+        # this pass), which this fake previously rejected with a bare TypeError on
+        # argument binding, before `calls.append` ever ran. Caught by _pre_commit_gate's
+        # own `except Exception`, so this didn't crash the test -- it silently made
+        # `calls` empty and gate_llm_ok False on every run, which is what --check's
+        # "gate/review LLM-call construction changed" drift was actually reporting,
+        # not a real prompt-text change. Confirmed via direct reproduction before this
+        # fix, not assumed.
         calls.append({
             "system_prompt": system_prompt,
             # user_prompt added 2026-08-09 continuation (review finding): this

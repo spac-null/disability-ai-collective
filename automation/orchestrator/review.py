@@ -35,7 +35,23 @@ class ReviewMixin:
         never blocks. No observation window exists yet for this kind of
         subjective judgment the way there is for the mechanical rules; treat
         its output as a data point to read, not a gate to enforce, until enough
-        real output accumulates to know if it's a signal worth acting on."""
+        real output accumulates to know if it's a signal worth acting on.
+
+        WHOLE-ARTICLE, not sampled (fixed 2026-08-14, A-M reconciliation item
+        H): previously truncated to content[:6000] with no explanation on
+        record for that number, and no technical reason found for it either —
+        the model here (Sonnet 4.6) has a context window several orders of
+        magnitude larger than any article this pipeline produces (the longest
+        deliberate length bucket, config.py's _LENGTHS 2800-word tier, is
+        roughly 16,000 characters). At 6000 characters, this check's own
+        VERDICT question ('would you actually finish this, or stop') could
+        never see anything past roughly the first 1000-1200 words of a piece —
+        for the 2800-word tier specifically (config.py's own '~once every 10
+        days' bucket) that's under half the article, silently. A check that
+        asks whether a reader would finish the piece needs to have read the
+        piece. check_truncation=True added alongside, for the same reason
+        gate.py's rule check gained it this pass — a response cut short by
+        max_tokens now raises instead of silently returning a partial read."""
         try:
             raw = self._call_openai_compat_api(
                 url=CLIPROXY_URL,
@@ -61,10 +77,11 @@ class ReviewMixin:
                     "evaluate whether this specific piece is actually worth a stranger's "
                     "attention, the way you'd judge anything you read outside of work."
                 ),
-                user_prompt=f"Title: {title}\nAuthor persona: {agent_name}\n\n{content[:6000]}",
+                user_prompt=f"Title: {title}\nAuthor persona: {agent_name}\n\n{content}",
                 model="openrouter/claude-sonnet-4.6",
                 max_tokens=300,
                 timeout=45,
+                check_truncation=True,
             )
             return (raw or "").strip() or "(no response)"
         except Exception as e:
@@ -187,6 +204,96 @@ class ReviewMixin:
         body = re.sub(r'^---.*?---', '', content, flags=re.DOTALL).lower()
         return [p for p in cls._SEAM_PHRASES if p in body]
 
+    # Minimal stopword set for _check_repetition_shadow, same style/purpose as
+    # generate.py's own _stopwords set (deliberate divergence: kept separate,
+    # not shared, since this one is tuned for content-word overlap detection,
+    # not keyword-pool generation -- if generate.py's list changes, there is
+    # no reason this one must change with it).
+    _REPETITION_STOPWORDS = frozenset({
+        "the", "a", "an", "and", "or", "of", "in", "on", "at", "to", "for",
+        "is", "are", "was", "were", "with", "this", "that", "these", "those",
+        "from", "by", "as", "it", "its", "not", "but", "how", "why", "what",
+        "when", "who", "which", "be", "been", "being", "has", "have", "had",
+        "will", "would", "could", "should", "can", "do", "does", "did", "no",
+        "so", "than", "then", "there", "their", "they", "them", "he", "she",
+        "his", "her", "you", "your", "i", "we", "our", "if", "into", "out",
+        "up", "down", "about", "still", "just", "one", "also",
+    })
+
+    @classmethod
+    def _check_repetition_shadow(cls, content, min_content_words=8, similarity_threshold=0.35):
+        """G SHADOW V0, added 2026-08-14 (A-M reconciliation, item G) — SHADOW
+        MODE ONLY, same discipline as every other check in this section: do
+        not promote before 2026-08-28 at the earliest, and only with real
+        false-positive data in hand. This is a CANDIDATE DETECTOR, not a
+        verdict — it flags paragraph pairs worth a human or future semantic
+        judge's attention, and explicitly does not, and cannot, distinguish:
+          BAD    — the same claim restated in cosmetic paraphrase, two
+                   paragraphs doing the same argumentative job, or a repeated
+                   example with no progression
+          NOT BAD — a deliberate refrain, a callback whose meaning has
+                   genuinely changed, a necessary reorientation after a
+                   correction, or an intentional introduction/conclusion echo
+        Telling these apart needs the piece's actual argument, which no
+        deterministic lexical measure can read — see this check's own module
+        docstring section header for why this stays a candidate list, never
+        a fake final verdict. A genuinely semantic repetition judge is future
+        work this check exists to gather evidence for, not a stand-in for one.
+
+        Deterministic method: split into paragraphs, extract each paragraph's
+        content words (lowercased, alphabetic, stopwords removed via
+        _REPETITION_STOPWORDS), skip any paragraph under min_content_words
+        (too short to mean anything by overlap alone), then Jaccard-compare
+        every remaining pair's content-word sets. A pair at or above
+        similarity_threshold is a candidate. The one deterministic exception
+        this check DOES encode, because it is common and usually deliberate
+        by design rather than a judgment call: the (first, last) paragraph
+        pair (introduction/conclusion echo) is never flagged.
+
+        similarity_threshold=0.35 is a first, uncalibrated guess, not a
+        validated cutoff — exactly the number this observation window exists
+        to inform before any promotion decision. Returns a list of
+        {"paragraph_pair": [i, j], "similarity": float (rounded to 2 places),
+        "shared_terms": [...] (top 8 by simple frequency-independent overlap,
+        for a human to scan quickly, not a ranked/weighted list),
+        "reason": str, "shadow_only": True} — empty if none found."""
+        body = re.sub(r'^---.*?---', '', content, flags=re.DOTALL)
+        body = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', body)  # markdown links -> link text
+        body = re.sub(r'<[^>]+>', '', body)  # strip HTML (figure/image blocks)
+        paragraphs = [p.strip() for p in body.split("\n\n") if p.strip()]
+
+        def content_words(paragraph):
+            words = re.findall(r"[a-z']+", paragraph.lower())
+            return {w for w in words if w not in cls._REPETITION_STOPWORDS and len(w) > 2}
+
+        word_sets = [content_words(p) for p in paragraphs]
+        candidates = []
+        last_index = len(paragraphs) - 1
+        for i in range(len(paragraphs)):
+            if len(word_sets[i]) < min_content_words:
+                continue
+            for j in range(i + 1, len(paragraphs)):
+                if (i, j) == (0, last_index):
+                    continue  # intro/conclusion echo -- not flagged, see docstring
+                if len(word_sets[j]) < min_content_words:
+                    continue
+                intersection = word_sets[i] & word_sets[j]
+                union = word_sets[i] | word_sets[j]
+                if not union:
+                    continue
+                similarity = len(intersection) / len(union)
+                if similarity >= similarity_threshold:
+                    candidates.append({
+                        "paragraph_pair": [i, j],
+                        "similarity": round(similarity, 2),
+                        "shared_terms": sorted(intersection)[:8],
+                        "reason": "high content-word overlap -- candidate only, not a verdict; "
+                                  "may be a deliberate refrain, an intentional callback, or "
+                                  "necessary reorientation, not restated content",
+                        "shadow_only": True,
+                    })
+        return candidates
+
     @classmethod
     def _check_forbidden_word_lists_shadow(cls, content):
         """SHADOW MODE, added 2026-08-09 — do not promote before 2026-08-23 at the
@@ -213,7 +320,7 @@ class ReviewMixin:
     def _persist_review_signals(self, slug, agent_name, engagement_read,
                                  shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
                                  plan_follow_read=None, shadow_seam_hits=None,
-                                 pre_rewrite_plan_follow_read=None):
+                                 pre_rewrite_plan_follow_read=None, shadow_repetition_hits=None):
         """Log _engagement_read's verdict, the 4 shadow checks' output, and
         (added 2026-08-09, Stage B of the anchor-architecture blueprint)
         _plan_follow_read's verdict, to a queryable table (audience-
@@ -263,7 +370,7 @@ class ReviewMixin:
                 # commit without this column. ALTER TABLE ADD COLUMN has no "IF NOT
                 # EXISTS" in SQLite -- catch the duplicate-column error instead.
                 for _col in ("plan_follow_read TEXT", "shadow_seam_hits TEXT",
-                             "pre_rewrite_plan_follow_read TEXT"):
+                             "pre_rewrite_plan_follow_read TEXT", "shadow_repetition_hits TEXT"):
                     try:
                         conn.execute(f"ALTER TABLE review_signals ADD COLUMN {_col}")
                     except sqlite3.OperationalError:
@@ -272,8 +379,9 @@ class ReviewMixin:
                     "INSERT OR REPLACE INTO review_signals "
                     "(slug, agent, reviewed_at, engagement_verdict, shadow_bullet_hits, "
                     "shadow_academic_jargon, shadow_corporate_cliches, shadow_truncated_ending, "
-                    "plan_follow_read, shadow_seam_hits, pre_rewrite_plan_follow_read) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "plan_follow_read, shadow_seam_hits, pre_rewrite_plan_follow_read, "
+                    "shadow_repetition_hits) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         slug, agent_name, dt.now().strftime("%Y-%m-%d %H:%M:%S"),
                         engagement_read, len(shadow_bullet_hits),
@@ -282,6 +390,7 @@ class ReviewMixin:
                         shadow_truncated_ending, plan_follow_read,
                         json.dumps(shadow_seam_hits or []),
                         pre_rewrite_plan_follow_read,
+                        json.dumps(shadow_repetition_hits or []),
                     ),
                 )
                 conn.commit()
@@ -646,6 +755,7 @@ class ReviewMixin:
         shadow_word_hits = self._check_forbidden_word_lists_shadow(content)
         shadow_truncated_ending = self._check_truncated_ending_shadow(content)
         shadow_seam_hits = self._check_seam_shadow(content)
+        shadow_repetition_hits = self._check_repetition_shadow(content)
 
         # Stage B of the anchor-architecture blueprint, 2026-08-09 — see
         # _plan_follow_read's own docstring for calibration status (none yet;
@@ -663,7 +773,8 @@ class ReviewMixin:
         self._persist_review_signals(slug, current_agent, engagement_read,
                                       shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
                                       plan_follow_read, shadow_seam_hits,
-                                      pre_rewrite_plan_follow_read=pre_rewrite_plan_follow_read)
+                                      pre_rewrite_plan_follow_read=pre_rewrite_plan_follow_read,
+                                      shadow_repetition_hits=shadow_repetition_hits)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -833,9 +944,39 @@ class ReviewMixin:
                 max_tokens=1110,  # bumped from 1000->1060 when R17 was added, now ->1110 for
                                   # R18/R19 — same truncation risk noted at the GATE_SYSTEM call site.
                 timeout=90,
+                # Added 2026-08-14 (A-M reconciliation, item I): this call was the other
+                # remaining production caller of _call_openai_compat_api not yet opted into
+                # llm.py's truncation detection (see gate.py's _pre_commit_gate for the
+                # first fix and its own comment) -- a response cut off by max_tokens raises
+                # here instead of silently returning a partial R1-R19 rule list.
+                check_truncation=True,
             )
             rules_text = raw or ""
             rules_fails = self._parse_rule_verdicts(rules_text)
+            # Added 2026-08-14 (A-M reconciliation, item I): this check has its OWN rule
+            # set (R1-R19, not gate.py's R1-R17 -- includes R18/R19 above) and, until now,
+            # its own independent copy of the exact same invisible-rule gap: a rule the
+            # model silently never mentions contributes neither a PASS nor a FAIL to
+            # rules_fails, previously indistinguishable from that rule having passed. This
+            # check is advisory-only (never blocks the commit, see this file's own module
+            # docstring) -- fixing it here does not make review.py newly authoritative, it
+            # only stops the CLEAN/FLAGGED report itself from silently mischaracterizing an
+            # incomplete rule pass as a complete one.
+            expected_review_rule_ids = frozenset(f"R{i}" for i in range(1, 20))  # R1..R19
+            missing_review_rules = self._missing_rule_ids(rules_text, expected=expected_review_rule_ids)
+            if missing_review_rules:
+                line = (
+                    f"[FAIL] RULE_CHECK_INCOMPLETE — expected rule(s) "
+                    f"{', '.join(sorted(missing_review_rules))} never received a recognized "
+                    f"verdict (response omitted them without the API reporting truncation)"
+                )
+                rules_fails.append(line)
+                rules_text = (rules_text or "") + ("\n" if rules_text else "") + line
+                self.logger.warning(
+                    "Post-publish RULES_SYSTEM check is INCOMPLETE — expected rule(s) %s "
+                    "never evaluated; report will show FLAGGED, not CLEAN, for this reason.",
+                    ", ".join(sorted(missing_review_rules)),
+                )
         except Exception as e:
             self.logger.warning("Rule compliance check failed: %s", e)
             rules_text = f"CHECK_FAILED: {e}"
@@ -897,6 +1038,13 @@ class ReviewMixin:
             "- Ending looks truncated: " + ("YES — " + shadow_truncated_ending if shadow_truncated_ending else "no"),
             f"- Seam phrases (announcing a callback instead of just making it): {len(shadow_seam_hits)} found"
             + ("" if not shadow_seam_hits else " — " + ", ".join(shadow_seam_hits)),
+            f"- Repetition candidates (G SHADOW V0, added 2026-08-14 — CANDIDATE LIST ONLY, "
+            f"not a verdict, see _check_repetition_shadow's own docstring): {len(shadow_repetition_hits)} found"
+            + ("" if not shadow_repetition_hits else " — " + " | ".join(
+                f"paragraphs {h['paragraph_pair'][0]}&{h['paragraph_pair'][1]} "
+                f"(similarity={h['similarity']}, shared: {', '.join(h['shared_terms'][:5])})"
+                for h in shadow_repetition_hits[:5]
+            )),
             "",
             "## Plan-Follow Read (advisory, added 2026-08-09 — Stage B of the anchor-"
             "architecture blueprint. NO CALIBRATION DATA YET — real (article, plan) pairs "

@@ -171,6 +171,12 @@ class GateMixin:
             )
         return violations
 
+    # The fixed rule set GATE_SYSTEM asks the model to evaluate (R1..R17,
+    # see the prompt text in _pre_commit_gate below) — used by
+    # _missing_rule_ids to detect a rule that never got a recognized
+    # verdict at all, as opposed to one that was explicitly judged PASS.
+    _EXPECTED_GATE_RULE_IDS = frozenset(f"R{i}" for i in range(1, 18))
+
     @staticmethod
     def _parse_rule_verdicts(raw):
         """Last verdict per rule id wins. The rule-checker model (Sonnet 4.6) sometimes
@@ -184,6 +190,30 @@ class GateMixin:
             if m:
                 verdicts[m.group(2)] = (m.group(1), line)
         return [line for status, line in verdicts.values() if status == "FAIL"]
+
+    @classmethod
+    def _missing_rule_ids(cls, raw, expected=None):
+        """Which of the expected rule ids never appear with a recognized
+        [FAIL|PASS|N/A] verdict anywhere in raw — added 2026-08-14 (A-M
+        reconciliation, item I). A rule the model silently skips (truncated
+        response, malformed line, or simply omitted) previously contributed
+        NEITHER a PASS nor a FAIL to _parse_rule_verdicts's own violations
+        list — indistinguishable from that rule having passed. This function
+        does not change _parse_rule_verdicts's own return shape (still just
+        the FAIL lines, so existing snapshot fixtures stay byte-identical);
+        it is a separate, additive completeness check callers must consult
+        themselves. Duplicate rule mentions, unrecognized extra rule ids
+        (RBC/RAW/RSD, or a stray R99), and PASS/N/A verdicts are all handled
+        correctly by construction: this only ever looks at which of
+        `expected`'s OWN ids were seen, never at what else was in the text."""
+        if expected is None:
+            expected = cls._EXPECTED_GATE_RULE_IDS
+        seen = set()
+        for line in (raw or "").splitlines():
+            m = re.match(r"\[(FAIL|PASS|N/A)\]\s*(R\d+)", line.strip())
+            if m:
+                seen.add(m.group(2))
+        return frozenset(expected) - seen
 
     def _pre_commit_gate(self, content, article_file, article_type=None):
         """Pre-commit loop: readability + mechanical rule check + article_type
@@ -326,8 +356,33 @@ class GateMixin:
                                  # parser. Bumped again 2026-08-09 when R16 was added —
                                  # keep this ahead of R-count * ~25 + ~150 preamble.
                 timeout=45,
+                # Added 2026-08-14 (A-M reconciliation, item I): this call was the one
+                # remaining production caller of _call_openai_compat_api NOT already
+                # opted into the truncation-detection llm.py added 2026-08-10 (see that
+                # function's own docstring) — a response cut off by max_tokens raises
+                # here instead of silently returning a partial rule list. Reuses
+                # already-proven code (llm.py:486/673/1251), zero new mechanism.
+                check_truncation=True,
             )
             violations = self._parse_rule_verdicts(raw)
+            # Added 2026-08-14 (A-M reconciliation, item I): check_truncation above only
+            # catches the API's OWN finish_reason report — this catches every other way a
+            # rule can end up silently absent (a model that stops mid-list without the
+            # provider reporting truncation, a malformed/unparseable line for one rule,
+            # any other omission) by checking directly whether every expected rule id got
+            # a recognized verdict at all, not just whether the ones that did were FAIL.
+            missing_rules = self._missing_rule_ids(raw)
+            if missing_rules:
+                gate_llm_ok = False
+                self.logger.error(
+                    "Pre-commit gate LLM rule-check response is INCOMPLETE — expected "
+                    "rule(s) %s never received a recognized [FAIL|PASS|N/A] verdict "
+                    "(response omitted them without the API reporting truncation). "
+                    "Mechanical rule violations for those rules are UNKNOWN, not zero.",
+                    ", ".join(sorted(missing_rules)),
+                )
+                if hasattr(self, "_degraded_stages"):
+                    self._degraded_stages.append("gate_llm")
         except Exception as e:
             # Added 2026-08-10 after a confirmed live incident: this call 403'd, the
             # except left violations=[], and the code below logged a bare
