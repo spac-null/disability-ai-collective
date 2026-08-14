@@ -71,7 +71,22 @@ class ReviewMixin:
                     "really there.\n"
                     "DRAG: what's the one thing most likely to make a reader put this "
                     "down — not a grammar issue (that's checked elsewhere), a genuine "
-                    "'why should I care' problem.\n\n"
+                    "'why should I care' problem.\n"
+                    "STOP_RISK: a number 1-5 for how likely a reader is to abandon this "
+                    "before the payoff — 1 = very likely to keep reading to the end, 5 = "
+                    "strong risk of stopping before the piece pays off. Score the reason "
+                    "the reader would leave, not the piece's difficulty or form: delayed "
+                    "payoff (the point takes too long to arrive), unclear purpose (a "
+                    "reader can't tell why this paragraph is here), a repetitive middle "
+                    "(the same observation restated instead of developed), excessive "
+                    "abstraction (nothing concrete to hold onto), or unresolved cognitive "
+                    "burden (the reader has to track too much without a payoff). Do NOT "
+                    "score a piece high-risk just because it is deliberately difficult, "
+                    "formally unusual, or slower than average — a hard essay that earns "
+                    "its difficulty is low risk; an easy essay that goes nowhere is high "
+                    "risk. Format: 'STOP_RISK: N — <one clause naming the specific "
+                    "reason from the list above, or NONE if the piece earns its length "
+                    "and form>'.\n\n"
                     "Do not evaluate grammar, sentence structure, jargon, or rule "
                     "compliance — all of that is checked elsewhere in this pipeline. Only "
                     "evaluate whether this specific piece is actually worth a stranger's "
@@ -79,7 +94,9 @@ class ReviewMixin:
                 ),
                 user_prompt=f"Title: {title}\nAuthor persona: {agent_name}\n\n{content}",
                 model="openrouter/claude-sonnet-4.6",
-                max_tokens=300,
+                max_tokens=400,  # was 300 -- bumped 2026-08-14 (A-M reconciliation, item J)
+                                 # when STOP_RISK was added to the same call/response;
+                                 # keep ahead of VERDICT+HOOK+DRAG+STOP_RISK's combined length.
                 timeout=45,
                 check_truncation=True,
             )
@@ -87,6 +104,36 @@ class ReviewMixin:
         except Exception as e:
             self.logger.warning("Engagement read failed: %s", e)
             return None
+
+    # STOP-risk observability (A-M reconciliation item J, 2026-08-14) — added to the
+    # SAME _engagement_read call above rather than a new model call (there was no
+    # trace of this metric ever existing anywhere in automation/ before this pass --
+    # see .claude/original-blueprint-A-M-reconciliation-2026-08-13.md section J).
+    # OBSERVATION ONLY: no blocking authority, no publication decision, never fed
+    # into is_clean or _should_block. Deterministic parsing of the STOP_RISK line
+    # the prompt above already asks for -- zero extra network/model cost.
+    _STOP_RISK_RE = re.compile(r"STOP_RISK:\s*([1-5])\s*(?:—|-|:)?\s*(.*)", re.IGNORECASE)
+
+    @classmethod
+    def _extract_stop_risk_shadow(cls, engagement_read_text):
+        """Parse the STOP_RISK line out of an already-obtained _engagement_read
+        response. Returns {"score": int 1-5 or None, "reason": str or None,
+        "shadow_only": True}. score=None (not 0) when the line is absent/
+        malformed/unparseable -- distinguishing 'not scored' from a real '1'
+        matters for anyone aggregating this later. Never raises."""
+        result = {"score": None, "reason": None, "shadow_only": True}
+        if not engagement_read_text:
+            return result
+        m = cls._STOP_RISK_RE.search(engagement_read_text)
+        if not m:
+            return result
+        try:
+            result["score"] = int(m.group(1))
+        except (TypeError, ValueError):
+            return result
+        reason = (m.group(2) or "").strip()
+        result["reason"] = reason or None
+        return result
 
     # ── Shadow checks (2026-08-09 — observation only, do not act on) ──────────
     # These are deterministic checks for rules the writer prompt already states
@@ -406,7 +453,7 @@ class ReviewMixin:
                                  shadow_bullet_hits, shadow_word_hits, shadow_truncated_ending,
                                  plan_follow_read=None, shadow_seam_hits=None,
                                  pre_rewrite_plan_follow_read=None, shadow_repetition_hits=None,
-                                 shadow_length_adherence=None):
+                                 shadow_length_adherence=None, shadow_stop_risk=None):
         """Log _engagement_read's verdict, the 4 shadow checks' output, and
         (added 2026-08-09, Stage B of the anchor-architecture blueprint)
         _plan_follow_read's verdict, to a queryable table (audience-
@@ -435,6 +482,13 @@ class ReviewMixin:
         word_count, target_words, ratio. Stored as JSON like the other shadow
         signals, same 2026-08-28 no-promotion discipline.
 
+        shadow_stop_risk (added 2026-08-14, A-M reconciliation item J): the dict
+        returned by _extract_stop_risk_shadow -- score (1-5 or None), reason.
+        Parsed from the SAME _engagement_read call, zero extra model cost.
+        Observation only, no promotion date set (nothing to promote TO -- there
+        is no proposed blocking use for a subjective drop-off estimate, unlike
+        G/E which have a concrete mechanical promotion path).
+
         Never raises -- a failure here must never affect validate_article's
         own return value or block anything; this is pure logging."""
         import sqlite3
@@ -462,18 +516,21 @@ class ReviewMixin:
                 # EXISTS" in SQLite -- catch the duplicate-column error instead.
                 for _col in ("plan_follow_read TEXT", "shadow_seam_hits TEXT",
                              "pre_rewrite_plan_follow_read TEXT", "shadow_repetition_hits TEXT",
-                             "shadow_length_adherence TEXT"):
+                             "shadow_length_adherence TEXT", "shadow_stop_risk_score INTEGER",
+                             "shadow_stop_risk_reason TEXT"):
                     try:
                         conn.execute(f"ALTER TABLE review_signals ADD COLUMN {_col}")
                     except sqlite3.OperationalError:
                         pass  # column already exists
+                _stop_risk = shadow_stop_risk or {}
                 conn.execute(
                     "INSERT OR REPLACE INTO review_signals "
                     "(slug, agent, reviewed_at, engagement_verdict, shadow_bullet_hits, "
                     "shadow_academic_jargon, shadow_corporate_cliches, shadow_truncated_ending, "
                     "plan_follow_read, shadow_seam_hits, pre_rewrite_plan_follow_read, "
-                    "shadow_repetition_hits, shadow_length_adherence) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "shadow_repetition_hits, shadow_length_adherence, shadow_stop_risk_score, "
+                    "shadow_stop_risk_reason) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     (
                         slug, agent_name, dt.now().strftime("%Y-%m-%d %H:%M:%S"),
                         engagement_read, len(shadow_bullet_hits),
@@ -484,6 +541,7 @@ class ReviewMixin:
                         pre_rewrite_plan_follow_read,
                         json.dumps(shadow_repetition_hits or []),
                         json.dumps(shadow_length_adherence or {}),
+                        _stop_risk.get("score"), _stop_risk.get("reason"),
                     ),
                 )
                 conn.commit()
@@ -847,6 +905,10 @@ class ReviewMixin:
         # See _engagement_read's own docstring. Runs on final content, after any
         # persona-crosscite repair above, so it's judging what actually shipped.
         engagement_read = self._engagement_read(content, article_title, current_agent)
+        # J STOP-risk observability (A-M reconciliation item J, 2026-08-14) — parsed
+        # from the SAME response above, zero extra model call. See
+        # _extract_stop_risk_shadow's own docstring; observation only.
+        shadow_stop_risk = self._extract_stop_risk_shadow(engagement_read)
 
         # Shadow checks — observation only, see the class-level comment above
         # _check_bullet_points_shadow for the rules and the no-promotion guardrail.
@@ -878,7 +940,8 @@ class ReviewMixin:
                                       plan_follow_read, shadow_seam_hits,
                                       pre_rewrite_plan_follow_read=pre_rewrite_plan_follow_read,
                                       shadow_repetition_hits=shadow_repetition_hits,
-                                      shadow_length_adherence=shadow_length_adherence)
+                                      shadow_length_adherence=shadow_length_adherence,
+                                      shadow_stop_risk=shadow_stop_risk)
 
         # ── 2. Readability check (Python, no LLM) ─────────────────────────
         # Target: Flesch Reading Ease ≥ 55 — matches the pre-commit gate's threshold
@@ -1157,6 +1220,12 @@ class ReviewMixin:
             f"target={shadow_length_adherence.get('target_words')}"
             + (f", ratio={shadow_length_adherence['ratio']}" if shadow_length_adherence.get('ratio') is not None else "")
             + ")",
+            f"- STOP-risk (J, added 2026-08-14 — observation only, parsed from the "
+            f"engagement read above, see _extract_stop_risk_shadow's own docstring): "
+            + (f"{shadow_stop_risk['score']}/5"
+               + (f" — {shadow_stop_risk['reason']}" if shadow_stop_risk.get('reason') else "")
+               if shadow_stop_risk.get('score') is not None
+               else "not scored (unparseable or absent from this run's engagement read)"),
             "",
             "## Plan-Follow Read (advisory, added 2026-08-09 — Stage B of the anchor-"
             "architecture blueprint. NO CALIBRATION DATA YET — real (article, plan) pairs "
