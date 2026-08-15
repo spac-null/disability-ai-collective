@@ -3,6 +3,12 @@ layout: default
 title: "Articles — Crip Minds"
 description: "Essays using disabled ways of seeing to uncover what culture, science, technology, institutions, and ordinary objects are really doing."
 ---
+<style>
+  /* .research-threads is a fixed 4-column grid tuned for exactly 4 reading-thread cards;
+     the Works list can have any number of entries, so it needs its own responsive columns
+     instead of leaving empty grid tracks that expose the container's gap-line background. */
+  #works .research-threads { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+</style>
 
 <main id="main-content">
   <header class="section section--secondary text-center">
@@ -43,6 +49,28 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
       </div>
     </div>
   </section>
+
+  <!-- Works: non-article publications, deliberately not styled as article cards -->
+  {% if site.works.size > 0 %}
+  <section id="works" class="section section--secondary research-threads-section">
+    <div class="container">
+      <p class="research-threads__eyebrow">Works</p>
+      <p class="text-body text-secondary" style="max-width: 42rem; margin: 0 0 1.5rem;">
+        Some Crip Minds pieces are built as interactions rather than essays — used only when
+        the comparison, sequence, or experience itself is the argument an essay would flatten.
+      </p>
+      <div class="research-threads">
+        {% for work in site.works %}
+        <a href="{{ work.url | relative_url }}" class="research-thread">
+          <span class="research-thread__voice">{{ work.work_form | default: "Work" }}</span>
+          <span class="research-thread__title">{{ work.title }}</span>
+          <span class="research-thread__count">Work</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
 
   <!-- Filters + Article Grid (single section so sticky filter spans the full scroll depth) -->
   <section class="section section--primary">

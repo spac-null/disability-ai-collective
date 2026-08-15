@@ -1,0 +1,51 @@
+---
+layout: default
+---
+<style>
+  .work-identity { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 0; }
+  .work-identity__eyebrow {
+    font-size: .78rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--color-text-brand); margin: 0 0 .5rem;
+  }
+  .work-identity__details summary {
+    cursor: pointer; font-size: .85rem; color: var(--color-text-muted);
+    margin-bottom: .5rem;
+  }
+  .work-identity__body { font-size: .88rem; color: var(--color-text-secondary); }
+  .work-identity__body p { margin: 0 0 .75rem; }
+  .work-identity__provenance { margin: .75rem 0; }
+  .work-identity__provenance dt { font-weight: 700; margin-top: .6rem; }
+  .work-identity__class {
+    font-weight: 400; font-size: .78rem; color: var(--color-text-accent);
+    border: 1px solid var(--color-border-accent); border-radius: 999px;
+    padding: .05rem .55rem; margin-left: .4rem; white-space: nowrap;
+  }
+  .work-identity__provenance dd { margin: .2rem 0 0; color: var(--color-text-secondary); }
+  .work-identity__status { margin-top: .75rem; font-style: italic; }
+</style>
+
+<main id="main-content">
+  <div class="work-identity">
+    <p class="work-identity__eyebrow">A Crip Minds Work{% if page.work_form %} · {{ page.work_form }}{% endif %}</p>
+    <details class="work-identity__details">
+      <summary>Credits &amp; how this was made</summary>
+      <div class="work-identity__body">
+        {% if page.credits %}<p>{{ page.credits }}</p>{% endif %}
+        {% if page.work_materials %}
+        <p><strong>Built from:</strong> {{ page.work_materials | join: "; " }}.</p>
+        {% endif %}
+        {% if page.provenance_summary %}
+        <dl class="work-identity__provenance">
+          {% for item in page.provenance_summary %}
+          <dt>{{ item.label }}<span class="work-identity__class">{{ item.class }}</span></dt>
+          <dd>{{ item.note }}</dd>
+          {% endfor %}
+        </dl>
+        {% endif %}
+        <p class="work-identity__status">Publication status: {{ page.publication_status | default: "published" }}.</p>
+      </div>
+    </details>
+  </div>
+
+  {{ content }}
+</main>

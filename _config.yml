@@ -21,6 +21,9 @@ collections:
   collective:
     output: true
     permalink: /collective/:name/
+  works:
+    output: true
+    permalink: /works/:name/
 
 # Plugins
 plugins:

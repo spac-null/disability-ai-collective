@@ -1,0 +1,573 @@
+---
+layout: work
+title: "What the Room Heard"
+description: "The same real twelve-second field recording, rendered three ways — sound, text, and a deterministic visual transform. What survives, what changes, and what counts as 'the original'?"
+work_form: "Multimodal Comparison"
+work_materials:
+  - "a real, CC0-dedicated field recording (trimmed, otherwise untouched)"
+  - "a deterministic signal-analysis transform of that recording"
+  - "hand-authored interaction (no generative media)"
+credits: "Editorial construction and interaction design: Crip Minds (human-directed, Claude Sonnet 5 assisted). Source recording: dbspin, via Freesound, CC0 1.0 Universal — see the Sound representation below for full attribution."
+publication_status: "published"
+provenance_summary:
+  - label: "Source audio"
+    class: "Document"
+    note: "A real field recording, trimmed to a 12-second excerpt from a longer original; otherwise unedited. CC0-dedicated by its recordist."
+  - label: "Event log"
+    class: "Document (timing) + flagged unverified (cause)"
+    note: "Timestamps and loudness measurements are measured directly from the file; what caused the mid-clip rise in acoustic energy is explicitly stated as unconfirmed, not asserted as fact."
+  - label: "Visual chart"
+    class: "Reconstruction"
+    note: "A disclosed, mechanical transform of the same measured data — not an invented or artistically embellished image."
+  - label: "This page"
+    class: "Simulation / editorial form"
+    note: "Built to let you compare renderings side by side, not to document any event beyond the recording itself."
+---
+<style>
+  .room-lab { max-width: 760px; margin: 0 auto; }
+  .room-lab p { margin: 0 0 1rem; }
+
+  .room-lab__picker {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem;
+    margin: 1.5rem 0;
+  }
+  @media (max-width: 640px) { .room-lab__picker { grid-template-columns: 1fr; } }
+  .room-lab__pick {
+    font: inherit; cursor: pointer; text-align: left;
+    border: 1px solid var(--color-border-brand);
+    background: var(--color-background-elevated);
+    color: var(--color-text-primary);
+    padding: .9rem 1rem; border-radius: 8px;
+  }
+  .room-lab__pick:hover { background: var(--color-background-secondary); }
+  .room-lab__pick strong { display: block; margin-bottom: .3rem; }
+  .room-lab__pick span { font-size: .85rem; color: var(--color-text-muted); }
+  .room-lab__pick[aria-pressed="true"] { border-color: var(--color-accent); border-width: 2px; }
+
+  .room-lab__note {
+    font-size: .9rem; color: var(--color-text-muted); font-style: italic;
+    border-left: 3px solid var(--color-border-secondary); padding-left: .9rem;
+  }
+
+  .room-lab__panel {
+    border: 1px solid var(--color-border-secondary);
+    background: var(--color-background-elevated);
+    border-radius: 8px; padding: 1.25rem 1.25rem 1.5rem; margin: 1.5rem 0;
+  }
+  .room-lab__panel h2 { margin-top: 0; }
+  .room-lab__label {
+    display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .04em;
+    text-transform: uppercase; color: var(--color-text-accent);
+    border: 1px solid var(--color-border-accent); border-radius: 999px;
+    padding: .15rem .6rem; margin-bottom: .75rem;
+  }
+
+  .room-lab__source-note {
+    font-size: .85rem; color: var(--color-text-muted); margin-top: 1rem;
+    border-top: 1px solid var(--color-border-secondary); padding-top: .75rem;
+  }
+
+  .room-log { list-style: none; margin: 0; padding: 0; }
+  .room-log li {
+    display: grid; grid-template-columns: 5.5rem 6rem 1fr; gap: .5rem 1rem;
+    padding: .6rem 0; border-bottom: 1px solid var(--color-border-secondary);
+    align-items: baseline;
+  }
+  @media (max-width: 560px) { .room-log li { grid-template-columns: 1fr; gap: .15rem; } }
+  .room-log li:last-child { border-bottom: none; }
+  .room-log__time { font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--color-text-muted); }
+  .room-log__event { font-weight: 700; font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; }
+  .room-log__unverified {
+    display: block; font-size: .78rem; font-style: italic; color: var(--color-text-muted); margin-top: .25rem;
+  }
+
+  .room-viz__scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; }
+  .room-viz { display: flex; align-items: flex-end; gap: 1px; height: 140px;
+    border-bottom: 1px solid var(--color-border-secondary); padding: 0 0 2px; }
+  .room-viz__bar { flex: 1 1 0; min-width: 2px; background: var(--color-border-brand); }
+  .room-viz__bar--ambience { background: var(--color-border-secondary); }
+  .room-viz__bar--event    { background: var(--color-accent); }
+  .room-viz__axis { display: flex; justify-content: space-between; font-size: .72rem;
+    color: var(--color-text-muted); margin-top: .3rem; min-width: 100%; width: max-content; }
+  .room-viz__legend { display: flex; flex-wrap: wrap; gap: 1rem; font-size: .78rem;
+    color: var(--color-text-muted); margin-top: .75rem; }
+  .room-viz__swatch { display: inline-block; width: .8rem; height: .8rem; border-radius: 2px;
+    vertical-align: middle; margin-right: .35rem; }
+
+  .room-compare table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  .room-compare th, .room-compare td { border-bottom: 1px solid var(--color-border-secondary);
+    padding: .55rem .5rem; text-align: left; vertical-align: top; }
+  .room-compare th { color: var(--color-text-muted); font-size: .78rem; text-transform: uppercase; }
+
+  .room-lab__continue { margin-top: 1rem; }
+  details.room-details summary { cursor: pointer; color: var(--color-text-brand); font-size: .88rem; }
+</style>
+
+<header class="section section--secondary text-center">
+  <div class="container container--md">
+    <h1 class="text-h1 mb-4">What the Room Heard</h1>
+    <p class="text-lead text-secondary">
+      The same real twelve-second field recording, rendered three ways. None of the three is
+      the original — each is its own construction from it.
+    </p>
+  </div>
+</header>
+
+<section class="section section--primary">
+  <div class="container container--md">
+    <div class="room-lab">
+
+      <div class="room-lab__intro prose">
+        <p>In 2014, someone set a portable recorder down in the Grunewald, a forest on the
+        edge of Berlin, and let it run for over four minutes. That recording is real, CC0
+        (public-domain-dedicated by its own recordist), and — beyond trimming twelve seconds
+        out of the middle — unedited. Below are three different renderings built from that
+        twelve-second excerpt: you can hear it, read a log of it, or look at a deterministic
+        transform of it. Pick whichever you want first.</p>
+      </div>
+
+      <p class="room-lab__note">
+        Whichever one you open first will probably start to feel like &ldquo;the real
+        version,&rdquo; with the other two feeling like descriptions of it. That's worth
+        noticing as you go — it isn't true. All three are already constructions. Only the
+        sound route touches the original file directly; the other two are just as real, in
+        a different sense, and neither is a lesser copy of the sound.
+      </p>
+
+      <div id="room-interactive" hidden>
+        <div class="room-lab__picker" role="group" aria-label="Choose a representation to open first">
+          <button class="room-lab__pick" data-target="room-sound" type="button" aria-pressed="false">
+            <strong>Listen</strong><span>The actual recording, 12 seconds</span>
+          </button>
+          <button class="room-lab__pick" data-target="room-text" type="button" aria-pressed="false">
+            <strong>Read</strong><span>An authored event log with timestamps</span>
+          </button>
+          <button class="room-lab__pick" data-target="room-visual" type="button" aria-pressed="false">
+            <strong>See</strong><span>A measured loudness pattern over time</span>
+          </button>
+        </div>
+
+        <section id="room-sound" class="room-lab__panel" hidden tabindex="-1">
+          <span class="room-lab__label">Sound</span>
+          <h2>The recording</h2>
+          <audio controls preload="none" style="width:100%;">
+            <source src="{{ '/assets/format-lab-v2/room-source.ogg' | relative_url }}" type="audio/ogg">
+            Your browser can't play this audio file. A full description of its content is in
+            the &ldquo;Read&rdquo; representation below.
+          </audio>
+          <p class="room-lab__source-note">
+            Source: <em>&ldquo;Sounds of nature recorded on a Zoom H4N in Grunewald near
+            Berlin&rdquo;</em>, by Freesound user dbspin, dedicated to the public domain under
+            CC0 1.0 Universal. <a href="https://freesound.org/people/dbspin/sounds/245286/" rel="noopener">Freesound source page</a>
+            (mirrored to <a href="https://commons.wikimedia.org/wiki/File:245286_dbspin_grunewald.wav" rel="noopener">Wikimedia Commons</a>).
+            This clip is a 12-second excerpt (seconds 12.0&ndash;24.0 of the original ~4:20
+            recording); beyond that trim, it is unedited.
+          </p>
+          <p class="room-lab__continue"><button class="btn btn--outline" data-continue-from="room-sound" type="button">Continue →</button></p>
+        </section>
+
+        <section id="room-text" class="room-lab__panel" hidden tabindex="-1">
+          <span class="room-lab__label">Text</span>
+          <h2>Event log</h2>
+          <ol class="room-log">
+            <li>
+              <span class="room-log__time">0.0–6.7s</span>
+              <span class="room-log__event">Ambience</span>
+              <span>A steady woodland ambience — wind and distant, indistinct rustling —
+              measured at a roughly constant loudness (confirmed by direct measurement of
+              the file; see Evidence). No single sound event stands out from the general
+              texture in this span.</span>
+            </li>
+            <li>
+              <span class="room-log__time">6.7–9.7s</span>
+              <span class="room-log__event">Event</span>
+              <span>A measured, sustained rise in acoustic energy — up to about 19dB louder
+              than the surrounding ambience at its peak (9.4s).
+              <span class="room-log__unverified">What caused it is not independently
+              confirmed in this session (no audio-identification capability available): it
+              is consistent with either a stronger gust of wind moving through the tree
+              canopy or an animal/bird call audible above the ambient recording — see
+              Evidence for what is and isn't confirmed here.</span></span>
+            </li>
+            <li>
+              <span class="room-log__time">9.7–12.0s</span>
+              <span class="room-log__event">Ambience, again</span>
+              <span>Loudness recedes back toward the same woodland ambience level measured
+              at the start — but, measurably, never toward silence. Unlike a studio or
+              network recording, an outdoor field recording has no true quiet floor; the
+              &ldquo;ambience&rdquo; here is continuous wind and forest noise around
+              &minus;50dB, not the absence of sound.</span>
+            </li>
+          </ol>
+          <p class="room-lab__source-note">
+            Every timestamp and loudness value above comes directly from measuring the real
+            audio file (see Evidence for the exact method). The cause of the mid-clip rise is
+            explicitly flagged as uncertain, not stated as confirmed fact.
+          </p>
+          <p class="room-lab__continue"><button class="btn btn--outline" data-continue-from="room-text" type="button">Continue →</button></p>
+        </section>
+
+        <section id="room-visual" class="room-lab__panel" hidden tabindex="-1">
+          <span class="room-lab__label">Visual</span>
+          <h2>Measured loudness over time</h2>
+          <div class="room-viz__scroll" tabindex="0">
+            <div id="room-viz-bars" class="room-viz" role="img" aria-label="Bar chart of measured loudness across the recording, one bar per tenth of a second, color-coded by ambience and event regions. A data table with the same values is available below. On narrow screens this chart scrolls horizontally rather than shrinking bars past legibility."></div>
+            <div class="room-viz__axis"><span>0.0s</span><span>3.0s</span><span>6.0s</span><span>9.0s</span><span>12.0s</span></div>
+          </div>
+          <div class="room-viz__legend">
+            <span><span class="room-viz__swatch" style="background:var(--color-border-secondary)"></span>Ambience</span>
+            <span><span class="room-viz__swatch" style="background:var(--color-accent)"></span>Event</span>
+          </div>
+          <p class="room-lab__source-note">
+            <strong>What became what:</strong> each bar is one measured 100-millisecond
+            window of the real file. Bar height is that window's RMS loudness in decibels, on
+            the same fixed linear scale used for this Work's original source (&minus;60dB =
+            shortest, &minus;10dB = tallest — not renormalized to this quieter clip, so the
+            bars run lower on the chart than a rescaled version would show). Bar color is a
+            region label derived from that same loudness data by a fixed, disclosed rule: a
+            centered 0.5-second rolling average of the loudness trace is compared to the
+            midpoint between this clip's pre-event ambient average (&minus;49.98dB) and its
+            peak (&minus;30.98dB) &mdash; that midpoint is &minus;40.48dB. Windows above it are
+            &ldquo;Event&rdquo;; windows below it are &ldquo;Ambience.&rdquo; Any gap shorter
+            than 0.6s between qualifying Event windows is bridged into the same region, since
+            real wind-driven sound fluctuates within one ongoing event rather than switching
+            cleanly on and off the way the tone in this Work's original studio/network source
+            did. No AI model and no manual eyeballing chose these colors or boundaries — the
+            same measurement used to time the Text representation drives this one. Full
+            method in the accompanying research document.
+          </p>
+          <details class="room-details">
+            <summary>Show as a data table instead</summary>
+            <div id="room-viz-table"></div>
+          </details>
+          <p class="room-lab__continue"><button class="btn btn--outline" data-continue-from="room-visual" type="button">Continue →</button></p>
+        </section>
+
+        <section id="room-compare" class="room-lab__panel room-compare" hidden tabindex="-1">
+          <span class="room-lab__label">Compare</span>
+          <h2>The same three moments, three ways</h2>
+          <table>
+            <thead><tr><th>When</th><th>Sound</th><th>Text</th><th>Visual</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>0.0&ndash;6.7s</td>
+                <td>Steady wind and woodland ambience, no standout event</td>
+                <td>Logged as &ldquo;Ambience&rdquo;, measured as roughly constant loudness</td>
+                <td>A low, gently uneven block of bars &mdash; no sustained rise</td>
+              </tr>
+              <tr>
+                <td>6.7&ndash;9.7s</td>
+                <td>A noticeable rise in the sound &mdash; louder, more textured</td>
+                <td>Logged as &ldquo;Event&rdquo;; cause explicitly marked unverified</td>
+                <td>A visibly taller, jagged cluster of bars against the flatter baseline</td>
+              </tr>
+              <tr>
+                <td>9.7&ndash;12.0s</td>
+                <td>Settles back toward the same wind-and-woodland texture as the start</td>
+                <td>Logged as a measured recede &mdash; explicitly not a return to silence</td>
+                <td>Bars drop back toward (not to zero) baseline height</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="room-lab__source-note">
+            Reading any single column top to bottom, you get a reasonable account of the
+            recording. Reading any one <em>row</em> across, you get three different
+            descriptions of the exact same moment. Neither the column nor the row is more
+            correct — but they make different things easy to notice.
+          </p>
+          <p class="room-lab__continue"><button class="btn btn--outline" id="room-reveal-btn" type="button">What this shows →</button></p>
+        </section>
+
+      </div>
+
+      <noscript>
+        <div class="room-lab__panel prose">
+          <p><strong>JavaScript is off, so here are all three representations already
+          visible, in a fixed order</strong> &mdash; the interactive version lets you choose
+          what to open first; this version can't, so treat this A/B/C ordering as arbitrary,
+          not as evidence that one of them is the real one.</p>
+          <h2>A. Sound</h2>
+          <audio controls preload="none" style="width:100%;">
+            <source src="{{ '/assets/format-lab-v2/room-source.ogg' | relative_url }}" type="audio/ogg">
+          </audio>
+          <p class="room-lab__source-note">CC0 1.0 Universal, dedicated by Freesound user
+          dbspin, mirrored to Wikimedia Commons, 12-second excerpt, otherwise unedited.
+          <a href="https://freesound.org/people/dbspin/sounds/245286/" rel="noopener">Source page</a>.</p>
+          <h2>B. Text</h2>
+          <ol class="room-log">
+            <li><span class="room-log__time">0.0–6.7s</span><span class="room-log__event">Ambience</span><span>Steady woodland wind/ambience.</span></li>
+            <li><span class="room-log__time">6.7–9.7s</span><span class="room-log__event">Event</span><span>Measured rise in loudness; cause unverified in this session.</span></li>
+            <li><span class="room-log__time">9.7–12.0s</span><span class="room-log__event">Ambience, again</span><span>Recedes toward the starting level, not to silence.</span></li>
+          </ol>
+          <h2>C. Visual</h2>
+          <p>The interactive visual bar-chart render requires JavaScript to draw. Its
+          underlying data and mapping rule are described in full in the Text section above
+          and in the accompanying research document — the loudness-over-time shape it draws
+          is not additional information beyond what the event log already states in words.</p>
+          <h2>What this shows</h2>
+          <p>All three of the above come from the same 12-second real file. None is the
+          original with the others as copies of it — each is its own construction. See the
+          full explanation below.</p>
+        </div>
+      </noscript>
+
+    </div>
+  </div>
+</section>
+
+<section id="room-explain" class="section section--secondary" tabindex="-1">
+  <div class="container container--md prose">
+    <h2>What this shows</h2>
+    <p>All three representations above come from the same real 12-second file. None of them
+    is the event itself — the event was a moment in 2014 when a portable recorder, left
+    running in a forest outside Berlin, happened to capture a rise in wind or wildlife
+    sound. What you just compared are three different, equally constructed
+    <em>renderings</em> of a recording of that moment, not the moment and two copies of it.</p>
+    <p>Each rendering keeps something the others drop. Sound keeps the raw acoustic signal
+    but tells you nothing about its own structure unless you already know what to listen
+    for. Text keeps exact, checkable timing and is explicit about what it doesn't know (the
+    cause of the mid-clip rise), but it can't give you the sound's actual texture or timbre.
+    The visual render keeps the loudness shape at a glance — you can see the
+    ambience-to-event texture change instantly, something that takes real listening effort to
+    notice in the audio and that the text render can only assert, not show — but it drops
+    everything about pitch, timbre, and acoustic content entirely by design.</p>
+
+    <h3>What each medium adds that the others flatten</h3>
+    <ul>
+      <li><strong>Sound adds:</strong> the actual acoustic texture — the character of wind,
+      the woodland's ambient noise floor — that neither the log nor the bar chart can
+      represent at all.</li>
+      <li><strong>Text adds:</strong> exact, source-checkable duration and boundary claims,
+      and an explicit, honest flag on what is and isn't verified — a kind of epistemic
+      precision neither the raw audio nor the visual bars state on their own.</li>
+      <li><strong>Visual adds:</strong> instant, at-a-glance pattern recognition of the
+      ambience/event/ambience structure — the shape of the whole twelve seconds in one look,
+      which requires either careful listening or reading a table to get any other way.</li>
+    </ul>
+
+    <h3>Anti-equivalence</h3>
+    <p>The temptation is to conclude &ldquo;all three are just different ways of accessing
+    the same information, so they're equivalent.&rdquo; They aren't. Each rendering makes a
+    <em>different object of attention</em> out of the same source: the sound makes an
+    acoustic event; the text makes a timed, hedged claim; the visual makes a shape. Treating
+    them as interchangeable would flatten exactly the difference this page exists to make
+    noticeable. Accessibility here doesn't mean making the three losslessly equivalent — it
+    means making all three genuinely usable on their own terms, while being honest that they
+    are not the same object.</p>
+
+    <h3>Ontology</h3>
+    <p>Applying the Format Lab V1 provenance classes: the <strong>audio file</strong> is
+    <strong>Document</strong> (a real field recording, trimmed to this 12-second excerpt,
+    otherwise unedited, CC0-dedicated by its recordist). The <strong>timing and loudness
+    measurements</strong> in the text log (ambience/event boundaries, durations, dB values)
+    are also <strong>Document</strong>-grade — directly measured from the file by a
+    disclosed, repeatable method, not estimated or invented. The <strong>cause of the
+    mid-clip event</strong> (wind gust vs. animal/bird call) is a separate, weaker claim —
+    explicitly unconfirmed, and labeled as such rather than passed off as directly
+    identified. The <strong>visual bar chart</strong> is <strong>Reconstruction</strong> —
+    a disclosed, mechanical, and exactly-reproducible transform of the real measured data,
+    not an invented or artistically embellished image. The <strong>page itself</strong>, as
+    a reader-paced comparison built to test a mechanism rather than to document an event, is
+    <strong>Simulation</strong> in the V1 sense, layered on top of Document-grade material
+    underneath.</p>
+
+    <h3>Media lineage</h3>
+    <p>Source recording (Document, CC0, ~4m20s of woodland field recording) → a 12-second
+    excerpt selected by scanning coarse loudness across the full file for a segment with real
+    measurable structure (<strong>meaning-consequential</strong>: choosing where to draw the
+    excerpt boundary is an editorial decision, disclosed here rather than left implicit) →
+    decoded to mono for analysis (meaning-preserving) → measured in 100ms windows via
+    <code>ffmpeg astats</code> (meaning-preserving: a direct physical measurement) →
+    segmented into named regions using a centered 0.5s rolling average, a fixed midpoint
+    threshold (&minus;40.48dB) derived from this clip's own measured ambient/peak values, and
+    a 0.6s gap-bridging tolerance (<strong>meaning-consequential</strong>: choosing this
+    threshold, window, and tolerance is an analytical decision, even though it's then applied
+    mechanically and disclosed) → rendered as bars on the same fixed dB-to-height scale used
+    throughout this Work (meaning-preserving: a direct, disclosed numeric-to-visual mapping,
+    not renormalized to flatter this particular clip) → placed in a reader-paced comparison
+    page (meaning-consequential: this framing is what turns raw measurements into an argument
+    about mediation).</p>
+
+    <h3>Generative-media counterfactual</h3>
+    <p>Would generated audio, animation, video, or 3D make this piece epistemically
+    stronger? No, on the same grounds Format Lab V1 found generally: generated audio would
+    replace a real, provenance-clean CC0 recording with a synthetic one for no reason,
+    discarding the one property (this really happened, to this file, and nothing about it is
+    invented) that makes the comparison meaningful at all. A generated animation in place of
+    the disclosed bar chart would trade a transparent, reproducible mapping for an opaque one
+    — exactly the "spectacle over mechanism" failure V1's V0 control analysis flagged. There
+    is no video or 3D component to this subject at all. The counterfactual holds: every
+    representation here is either the real source untouched (beyond a disclosed trim), or a
+    disclosed, mechanical transform of it — never a generative substitute for either.</p>
+
+    <h3>What prose alone loses</h3>
+    <p>A paragraph can assert that &ldquo;a field recording contains steady ambience, then a
+    rise in sound, then a recede back toward ambience&rdquo; — and this page could have been
+    exactly that sentence with an audio player next to it. What prose alone can't easily do
+    is let a reader <em>notice for themselves</em>, by comparing three independently-presented
+    versions of the same twelve seconds, that the versions genuinely diverge — that picking
+    an entry point quietly shapes which one starts to feel authoritative. That noticing is
+    the actual content of the piece; a single authoritative paragraph describing the
+    recording would have pre-empted it by settling, in its own voice, which details matter.</p>
+
+    <h3>Critical self-review</h3>
+    <p><strong>Could this simply have been an article with an audio player?</strong> No —
+    that version exists implicitly in the "What each medium adds" section above, and it is
+    thinner than the comparison: it would tell a reader that renderings differ rather than
+    letting them find the specific divergence (a flat block of bars vs. a jagged one; an
+    honest "unverified" flag next to a confident-sounding recording) themselves.</p>
+    <p><strong>Does comparing the modalities reveal a mechanism unavailable through any one
+    alone?</strong> Yes — the core finding (mediation creates a new object of attention, not
+    a lossy copy of the "real" one) only becomes concrete by holding two or three
+    renderings side by side and noticing where they diverge; no single rendering can
+    demonstrate its own partiality.</p>
+    <p><strong>Does this accidentally become an accessibility demo?</strong> Guarded against
+    directly: no route is labeled "the accessible version," all three are offered as equal
+    entry points, and the explanation text is explicit that equivalence is not the finding —
+    difference is.</p>
+    <p><strong>Does it claim to approximate disabled lived experience?</strong> No — nowhere
+    does the page claim any rendering simulates Deaf perception or any specific person's
+    experience. The object of study is declared, on the page and here, to be the mediation
+    itself, not a body.</p>
+    <p><strong>Does it produce insight about mediation itself?</strong> Yes — the concrete,
+    checkable claim is that three honest, non-generative renderings of one real recording
+    produce three different objects of attention (an acoustic texture, a hedged timed claim,
+    a shape), and that whichever one a reader reaches first tends to feel like the origin
+    the others merely describe, even though none of them structurally is.</p>
+    <p><strong>Does an ordinary, undramatic source still support the mechanism?</strong>
+    Yes — deliberately so. An ambient woodland recording with one modest rise in loudness was
+    chosen over a more dramatic re-recording precisely so the comparison stays about how
+    each medium mediates, rather than about how interesting the underlying sound is.</p>
+
+    <h3>Recommendation</h3>
+    <p>This mechanism — comparison revealing genuine divergence between mediations of one
+    real source — is treated as a validated pattern independent of which specific recording
+    is used, since replacing the source entirely (for source-rights reasons, not editorial
+    ones) and re-deriving every representation from scratch left the underlying finding
+    intact. A next natural test would deliberately invert the ordering question raised
+    above: run this page with actual readers, log which entry point they choose, and ask
+    afterward which rendering felt most "real" to them, to see whether the effect this page
+    predicts (first-encountered-becomes-authoritative) actually shows up in practice, not
+    just in the design's own reasoning about itself.</p>
+
+    <p class="room-lab__source-note" style="margin-top:2rem;">This is a Crip Minds Work —
+    a publication built as an interaction rather than an essay, used because the comparison
+    itself is the argument. It's listed alongside our articles as a different kind of
+    publication, not a lesser one.</p>
+    <p><a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← Back to Crip Minds</a></p>
+  </div>
+</section>
+
+<script>
+(function () {
+  'use strict';
+
+  // Real, measured data — 120 points, one per 100ms, RMS loudness in dB.
+  // 12-second excerpt (12.0-24.0s) of a ~4:20 CC0 field recording (dbspin, Freesound/Commons).
+  // Derived via: ffmpeg -af "aformat=channel_layouts=mono,asetnsamples=n=4410,
+  //   astats=metadata=1:reset=1,ametadata=print:key=lavfi.astats.Overall.RMS_level"
+  // Full method and script in the accompanying research document.
+  var RMS = [[0.0, -50.1], [0.1, -51.09], [0.2, -49.38], [0.3, -49.57], [0.4, -46.44], [0.5, -47.8], [0.6, -51.33], [0.7, -48.7], [0.8, -49.29], [0.9, -46.76], [1.0, -44.99], [1.1, -50.24], [1.2, -50.1], [1.3, -51.23], [1.4, -50.98], [1.5, -50.6], [1.6, -50.53], [1.7, -51.61], [1.8, -50.94], [1.9, -50.88], [2.0, -49.92], [2.1, -48.88], [2.2, -48.18], [2.3, -50.42], [2.4, -48.17], [2.5, -50.35], [2.6, -49.34], [2.7, -49.87], [2.8, -50.7], [2.9, -51.25], [3.0, -51.53], [3.1, -51.01], [3.2, -49.45], [3.3, -50.74], [3.4, -48.4], [3.5, -50.74], [3.6, -50.96], [3.7, -51.22], [3.8, -51.48], [3.9, -51.17], [4.0, -50.42], [4.1, -50.22], [4.2, -49.43], [4.3, -50.53], [4.4, -51.09], [4.5, -50.71], [4.6, -50.74], [4.7, -50.71], [4.8, -50.17], [4.9, -50.24], [5.0, -49.93], [5.1, -48.24], [5.2, -50.67], [5.3, -50.26], [5.4, -50.0], [5.5, -50.59], [5.6, -49.52], [5.7, -49.15], [5.8, -49.63], [5.9, -46.97], [6.0, -46.34], [6.1, -48.18], [6.2, -45.64], [6.3, -43.76], [6.4, -46.35], [6.5, -45.15], [6.6, -44.13], [6.7, -40.45], [6.8, -32.08], [6.9, -39.07], [7.0, -38.54], [7.1, -45.16], [7.2, -38.3], [7.3, -48.41], [7.4, -49.09], [7.5, -44.78], [7.6, -35.58], [7.7, -39.93], [7.8, -41.21], [7.9, -40.25], [8.0, -34.66], [8.1, -38.7], [8.2, -46.74], [8.3, -40.52], [8.4, -42.4], [8.5, -43.81], [8.6, -39.66], [8.7, -40.26], [8.8, -40.86], [8.9, -35.89], [9.0, -38.73], [9.1, -47.15], [9.2, -37.48], [9.3, -32.48], [9.4, -30.98], [9.5, -38.56], [9.6, -38.16], [9.7, -39.5], [9.8, -46.65], [9.9, -47.51], [10.0, -44.51], [10.1, -48.43], [10.2, -45.3], [10.3, -44.81], [10.4, -40.6], [10.5, -44.24], [10.6, -40.2], [10.7, -43.99], [10.8, -43.1], [10.9, -46.48], [11.0, -44.41], [11.1, -46.82], [11.2, -49.7], [11.3, -48.54], [11.4, -50.25], [11.5, -49.17], [11.6, -49.88], [11.7, -48.75], [11.8, -49.01], [11.9, -47.22]];
+
+  // Region boundaries derived from RMS by a fixed rule (see research doc):
+  // centered 0.5s rolling average, thresholded at -40.48dB (midpoint between this
+  // clip's pre-event ambient average and its peak), gaps under 0.6s bridged.
+  var REGIONS = [
+    { from: 0.0, to: 6.7, kind: 'ambience' },
+    { from: 6.7, to: 9.7, kind: 'event' },
+    { from: 9.7, to: 12.0, kind: 'ambience' }
+  ];
+
+  function regionAt(t) {
+    for (var i = 0; i < REGIONS.length; i++) {
+      if (t >= REGIONS[i].from && t < REGIONS[i].to) return REGIONS[i].kind;
+    }
+    return REGIONS[REGIONS.length - 1].kind;
+  }
+
+  function dbToHeightPct(db) {
+    var clamped = Math.max(-60, Math.min(-10, db));
+    return ((clamped + 60) / 50) * 100;
+  }
+
+  var barsEl = document.getElementById('room-viz-bars');
+  if (barsEl) {
+    RMS.forEach(function (pair) {
+      var t = pair[0], db = pair[1];
+      var bar = document.createElement('div');
+      bar.className = 'room-viz__bar room-viz__bar--' + regionAt(t);
+      bar.style.height = dbToHeightPct(db) + '%';
+      bar.title = t.toFixed(1) + 's, ' + db.toFixed(1) + ' dB';
+      barsEl.appendChild(bar);
+    });
+  }
+
+  var tableEl = document.getElementById('room-viz-table');
+  if (tableEl) {
+    var table = document.createElement('table');
+    table.className = 'room-compare';
+    var thead = document.createElement('thead');
+    thead.innerHTML = '<tr><th>Time</th><th>Loudness (dB)</th><th>Region</th></tr>';
+    table.appendChild(thead);
+    var tbody = document.createElement('tbody');
+    RMS.forEach(function (pair) {
+      var t = pair[0], db = pair[1];
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + t.toFixed(1) + 's</td><td>' + db.toFixed(1) + '</td><td>' + regionAt(t) + '</td>';
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    tableEl.appendChild(table);
+  }
+
+  document.getElementById('room-interactive').hidden = false;
+  document.getElementById('room-explain').hidden = true;
+
+  var picks = document.querySelectorAll('.room-lab__pick');
+  var panels = ['room-sound', 'room-text', 'room-visual'];
+
+  function openPanel(id) {
+    panels.forEach(function (p) {
+      document.getElementById(p).hidden = (p !== id);
+    });
+    picks.forEach(function (btn) {
+      btn.setAttribute('aria-pressed', btn.dataset.target === id ? 'true' : 'false');
+    });
+    var el = document.getElementById(id);
+    el.hidden = false;
+    el.focus();
+  }
+
+  picks.forEach(function (btn) {
+    btn.addEventListener('click', function () { openPanel(btn.dataset.target); });
+  });
+
+  document.querySelectorAll('[data-continue-from]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var from = btn.dataset.continueFrom;
+      document.getElementById(from).dataset.seen = '1';
+      var allSeen = panels.every(function (p) {
+        return document.getElementById(p).dataset.seen === '1';
+      });
+      var next = panels.find(function (p) {
+        return document.getElementById(p).dataset.seen !== '1';
+      });
+      if (allSeen) {
+        document.getElementById('room-compare').hidden = false;
+        document.getElementById('room-compare').focus();
+        panels.forEach(function (p) { document.getElementById(p).hidden = true; });
+      } else {
+        openPanel(next);
+      }
+    });
+  });
+
+  var revealBtn = document.getElementById('room-reveal-btn');
+  if (revealBtn) {
+    revealBtn.addEventListener('click', function () {
+      document.getElementById('room-explain').hidden = false;
+      document.getElementById('room-explain').focus();
+    });
+  }
+})();
+</script>
