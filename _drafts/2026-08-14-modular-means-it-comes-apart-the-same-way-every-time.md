@@ -1,4 +1,5 @@
 ---
+publish_attempts: 1
 fact_check_status: verified
 layout: post
 title: "Modular Means It Comes Apart the Same Way Every Time"

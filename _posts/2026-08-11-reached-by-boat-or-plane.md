@@ -3,7 +3,7 @@ publish_attempts: 1
 fact_check_status: verified
 layout: post
 title: "Reached by Boat or Plane"
-date: 2026-08-11
+date: 2026-08-15
 author: "Siri Sage"
 category: spatial design
 image: /assets/reached-by-boat-or-plane_setting_1.jpg
