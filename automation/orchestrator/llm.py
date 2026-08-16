@@ -23,7 +23,8 @@ from .config import (
     _RELATIONSHIPS_FILE, _AGENT_SLUG, _nous_key, _REGISTERS,
 )
 from .grounding import (
-    build_evidence_packet, validate_brief, find_new_unsupported_specifics,
+    build_evidence_packet, validate_brief, validate_source_decision,
+    find_new_unsupported_specifics,
     find_new_unsupported_personal_history,
 )
 from .rewrite_integrity import validate_rewrite_integrity
@@ -783,6 +784,25 @@ class LLMMixin:
         if evidence_packet is None:
             evidence_packet = build_evidence_packet(None)
         _eligible = list(eligible_agents) if eligible_agents is not None else list(self.agents.keys())
+        # ── LAYER 1 (DSR2 Story Rejection V1): SOURCE COMMISSIONABILITY ──────
+        # Decided with ALL perceptual engines visible, independent of today's
+        # rotation fairness -- so a source is judged commissionable by
+        # CripMinds lenses at all, not by "the eligible lenses only." Conflating
+        # those two questions is exactly the PRF1→decline conflation the DSR2
+        # adversarial review forbids: "no mechanism among today's eligible
+        # writers" is NOT "no mechanism exists." Only the per-engine
+        # perspective() strings (the lens itself) are shown here; biography/
+        # canon/state are deliberately NOT fed to Layer 1, because a real
+        # mechanism either exists in the source or it does not, regardless of
+        # which canon a writer might illustrate it with.
+        perspectives_all_lenses = "\n".join(
+            f"- {n}: {info['perspective'][:200]}"
+            for n, info in self.agents.items()
+        )
+        # ── LAYER 2: PRF1 rotation-constrained EXECUTION ────────────────────
+        # Persona EXECUTION stays constrained to the eligible set, exactly as
+        # PRF1 ships today -- rotation acts only as an input to this decision,
+        # never as a second, subject-blind override afterward.
         personas = "\n".join(
             f"- {n}: {info['perspective'][:120]}"
             for n, info in self.agents.items()
@@ -796,6 +816,21 @@ class LLMMixin:
             "angle achievable with one of the eligible voices above; do not name a persona outside "
             "this list in the \"persona\" field under any circumstance.\n"
         ) if eligible_agents is not None else ""
+        _layer1_block = (
+            "\nLAYER 1 — SOURCE COMMISSIONABILITY (answer this FIRST, using ALL four lenses "
+            "above, NOT only the eligible ones): does this source contain a sufficiently strong "
+            "CripMinds mechanism — a hidden mechanism a disabled perceptual engine would reveal "
+            "that changes what the thing/system IS or DOES, grounded in a concrete source detail?\n"
+            "  - If YES → source_decision = \"commission\"; then proceed to LAYER 2 with the "
+            "eligible-persona constraint below. Set eligible_execution_possible = true unless the "
+            "mechanism genuinely lives in a persona NOT in today's eligible set (in which case "
+            "eligible_execution_possible = false and name which blocked persona's lens carries it).\n"
+            "  - If NO → source_decision = \"decline\". A decline is an editorial verdict that the "
+            "source, fully inspected, contains no sufficiently strong mechanism. It is NOT a verdict "
+            "about persona availability, and it must NOT be emitted when source evidence is "
+            "insufficient (fallback/empty/truncated). Ground any factual anchor you cite verbatim "
+            "in the source below.\n"
+        )
         reg_names = ", ".join(r[0] for r in _REGISTERS)
         system = (
             "You are the editorial director of Crip Minds — a disability culture publication. "
@@ -866,7 +901,11 @@ class LLMMixin:
             + (f"Summary: {news_summary[:400]}\n" if news_summary else "")
             + (f"Disability angle: {disability_angle}\n" if disability_angle else "")
             + _source_block
-            + f"\nPersonas:\n{personas}\n"
+            + _layer1_block
+            + f"\nPERCEPTUAL LENSES — all four, for the LAYER 1 source question "
+            "(NOT constrained by today's rotation):"
+            f"\n{perspectives_all_lenses}\n"
+            + f"\nPersonas (LAYER 2 execution, eligible only):\n{personas}\n"
             + _eligible_constraint
             + state_block
             + _fault_block
@@ -949,6 +988,15 @@ class LLMMixin:
             "For opening_scene: write the actual first sentence of the essay, in the persona's voice — the sentence itself, not a description of where the piece begins. THERE IS NO HOUSE OPENING. Do not default to a body doing a physical action in a named place in the present tense; that shape has opened four consecutive pieces and now reads as a template rather than as craft. Choose whichever of these this particular story earns: (a) PLAIN CLAIM — a flat expository assertion the rest of the piece will spend its length paying off ('For centuries western culture has been permeated by the idea that humans are selfish creatures.'); (b) COLD SCENE — a placed body, an action, a named room, something already in progress; (c) A QUESTION — rare, and only when the question is genuinely the engine of the piece; (d) A FACT — one concrete dated thing, stated and left alone ('In 1965, six boys stole a fishing boat from a harbour in Tonga.'); (e) A DECLARATION OF THE HUNT — plainly saying what you set out to find out, and that you did not know the answer. A plain claim or a bare fact is often stronger than a scene, because it commits and then earns the commitment. Still wrong in every variant: 'X's work raises questions about...', 'There is a concept designers call...', and any throat-clearing before the piece starts.\n"
             "For register: this is where the piece starts, not a setting locked for its whole length — pick the opening tone.\n\n"
             "Reply with JSON only — no other text:\n"
+            "LAYER 1 (decide FIRST, using all four lenses, not only eligible):\n"
+            '{"source_decision":"commission"|"decline" — REQUIRED},\n'
+            'when source_decision=="commission": include "eligible_execution_possible":true unless the '
+            'mechanism lives in a blocked persona, in which case false and name it in '
+            '"blocked_carry_persona"; then fill the Layer 2 fields below,\n'
+            'when source_decision=="decline": fill dominant_framing + source_anchor_examined + '
+            'why_disability_knowledge_does_not_change_subject + reason, and leave the Layer 2 '
+            'fields empty,\n'
+            'LAYER 2 (only when source_decision=="commission"):\n'
             '{"persona":"name","angle":"the question the persona is finding out the answer to — phrased as a question, one where you cannot predict their conclusion",'
             '"register":"one register name",'
             '"seed_sentence":"the opening sentence of the article — concrete, not a question",'
@@ -965,6 +1013,73 @@ class LLMMixin:
         try:
             raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
             brief = _j.loads(raw)
+            # ── LAYER 1 (DSR2 Story Rejection V1): source commissionability ──
+            # A legacy brief (no source_decision) is treated as commission,
+            # preserving PRF1 + existing fixtures/tests unchanged. The Layer-1
+            # verdict is evidence-validated as a UNIT before Layer 2: a
+            # decision that fails evidence-safety (bad origin, truncated
+            # source, ungrounded anchor, malformed structure) is a TECHNICAL
+            # FAILURE (None → degraded path), NEVER a persisted editorial
+            # decline — so provider/schema/anchor failures can never masquerade
+            # as an editorial "no mechanism" verdict.
+            decision_ok, d_code, d_reason, d_violations = validate_source_decision(
+                brief, evidence_packet,
+            )
+            for _v in d_violations:
+                self.logger.warning("Story Rejection: %s", _v["reason"])
+            for _line in (d_reason.split(" | ") if d_reason else []):
+                if _line.strip():
+                    self.logger.info("Decision: %s", _line.strip())
+            if not decision_ok:
+                self.logger.error(
+                    "Fable Layer-1 decision invalid (%s): %s — "
+                    "treated as technical failure, NOT an editorial decline",
+                    d_code, d_reason or "no reason",
+                )
+                return None
+
+            decision = brief.get("source_decision", "commission")
+
+            if decision == "decline":
+                # DECLINE path: stamp grounding hashes + provenance via the
+                # existing deterministic validator (so a persisted decline
+                # carries source_hash/evidence_packet_hash for audit/
+                # reconsideration), then return the decline brief so generate.py
+                # can short-circuit BEFORE the writer/gate/fact-check/commit.
+                # Writer never runs on a decline.
+                brief, _gl = validate_brief(brief, evidence_packet)
+                for _line in _gl:
+                    self.logger.info("Grounding: %s", _line)
+                self.logger.warning(
+                    "Fable: source DECLINED (no sufficiently strong mechanism). "
+                    "framing=%r | reason=%r",
+                    brief.get("dominant_framing", ""),
+                    brief.get("reason", "")[:120],
+                )
+                brief["source_decision"] = "decline"
+                brief["decline_contract_version"] = "sr1"
+                return brief
+
+            if decision == "commission" and brief.get("eligible_execution_possible", True) is False:
+                # LAYER 2 = NO_ELIGIBLE_CARRIER_TODAY. Must return immediately, BEFORE
+                # the eligible-persona gate below -- the model may legitimately have
+                # named the BLOCKED (non-eligible) persona in "persona"/named it only
+                # in "blocked_carry_persona", or omitted Layer 2 fields entirely, since
+                # no eligible voice can carry the mechanism today. None of that is a
+                # schema violation here: requiring brief["persona"] to be in _eligible
+                # (the check below) would misclassify this as a technical failure and
+                # fall through to generate.py's LEGACY commission path, which would
+                # write an article via a substitute persona -- exactly what DSR2
+                # forbids ("no writer, no substitute persona ... clean no-article
+                # result"). Not a decline: source stays viable, nothing persisted here.
+                self.logger.warning(
+                    "Fable: source commissionable but no eligible carrier today "
+                    "(blocked_carry_persona=%r) — no_execution, not a decline.",
+                    brief.get("blocked_carry_persona"),
+                )
+                return brief
+
+            # ── LAYER 2 (existing commission path, unchanged) ────────────────
             if all(k in brief for k in ("persona", "angle", "register", "seed_sentence")):
                 # Persona Brief <-> Writer Reconciliation (2026-08-16): must be
                 # in the ELIGIBLE set, not merely a known agent -- a model that

@@ -22,6 +22,7 @@ import os
 import random
 import re
 import time
+from datetime import datetime
 
 from .config import _INDEFENSIBLE_PROMPTS, _REGISTERS, _THEME_CLUSTERS
 from .grounding import (
@@ -417,6 +418,27 @@ class GenerateMixin:
             _ns_title, _ns_summary, _ns_dangle, agent_name, evidence_packet,
             eligible_agents=_eligible_agents,
         )
+
+        # ── Story Rejection V1 — DSR2 two-layer short-circuit ────────────────
+        # LAYER 1 (source commissionability, judged with ALL four lenses inside
+        # _fable_editorial_brief, evidence-validated by validate_source_decision
+        # before this line) is answered FIRST and INDEPENDENTLY of rotation. Two
+        # Layer-1 verdicts stop the run BEFORE the writer / gate / fact-check /
+        # commit, and crucially BEFORE the PRF1-invariant block below (which reads
+        # fable_brief["persona"] and has no concept of a persona-less decline).
+        # Source-viability must never be conflated with a writer decision.
+        _src_decision = (fable_brief or {}).get("source_decision") if fable_brief else None
+        if fable_brief and _src_decision == "decline":
+            return self._handle_declined_run(news_seed, fable_brief, evidence_packet, _source_origin)
+        if (
+            fable_brief and _src_decision == "commission"
+            and fable_brief.get("eligible_execution_possible", True) is False
+        ):
+            return self._handle_no_execution_run(news_seed, fable_brief, evidence_packet, _source_origin)
+        # (A brief with NO source_decision is LEGACY commission — falls through to
+        # the existing hash/invariant/writer path unchanged; PRF1 untested-by-
+        # this-change.)
+
         # Phase 1.6 continuation (found via an integration-test harness bug
         # that accidentally simulated this exact scenario -- see
         # .claude/current-work.md): validate_brief() stamps source_hash/
@@ -1411,3 +1433,79 @@ class GenerateMixin:
             "commit_success": commit_success,
             "citations_clean": is_clean,
         }
+
+    # ────────────────────────────────────────────────────────────────────
+    # Story Rejection V1 — DSR2 Layer-1 short-circuit handlers
+    #
+    # These return BEFORE the writer/gate/fact-check/commit path, so a
+    # decline or a rotation-day-no-execution produces NO article, NO
+    # publication_safety_version, NO social/plan artifacts, and never marks the
+    # source `used`. mark_news_seed_used only fires on commit_success (Step 7,
+    # above), which these branches never reach.
+    # ────────────────────────────────────────────────────────────────────
+    def _handle_declined_run(self, news_seed, fable_brief, evidence_packet, source_origin):
+        """DSR2 LAYER 1 = DECLINE. Persist the decline (news_seed only) and stop.
+        The writer/gate/fact-check/commit chain NEVER runs for a decline."""
+        decline_record = {
+            "verdict": "declined",
+            "source_decision": "decline",
+            "contract": "sr1",
+            "dominant_framing": _sr_strip(fable_brief.get("dominant_framing")),
+            "source_anchor_examined": _sr_strip(fable_brief.get("source_anchor_examined")),
+            "why_disability_knowledge_does_not_change_subject": _sr_strip(
+                fable_brief.get("why_disability_knowledge_does_not_change_subject")
+            ),
+            "reason": _sr_strip(fable_brief.get("reason")),
+            "resisting_detail": _sr_strip(fable_brief.get("resisting_detail") or fable_brief.get("considered_resisting_detail") or ""),
+            "considered_bridge": _sr_strip(fable_brief.get("considered_bridge") or ""),
+            "source_origin": source_origin,
+            "source_hash": fable_brief.get("source_hash"),
+            "evidence_packet_hash": fable_brief.get("evidence_packet_hash"),
+            "source_truncated": bool(fable_brief.get("source_truncated")),
+            "stamped_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "layer1_visibility": "all_four_lenses",
+        }
+        if news_seed:
+            self.mark_news_seed_declined(news_seed["id"], decline_record)
+        self.logger.warning(
+            "Story Rejection: source DECLINED (no strong mechanism) — no article. "
+            "seed=%s framing=%r",
+            news_seed.get("id") if news_seed else None,
+            decline_record["dominant_framing"],
+        )
+        return {
+            "status": "declined",
+            "source_decision": "decline",
+            "verdict": "declined",
+            "agent": None,
+            "message": "Layer 1: source has no sufficiently strong CripMinds mechanism; article not written",
+            "decline_record": decline_record,
+            "commit_success": False,
+        }
+
+    def _handle_no_execution_run(self, news_seed, fable_brief, evidence_packet, source_origin):
+        """DSR2 LAYER 1 = COMMISSIONABLE but Layer 2 has no defensible eligible
+        carrier today. NOT a decline — source stays viable, no substitute
+        persona, no article. Clean end."""
+        blocked = fable_brief.get("blocked_carry_persona")
+        self.logger.warning(
+            "Story Rejection: source commissionable but no eligible carrier today "
+            "(blocked_carry_persona=%s) — no article, source NOT declined.",
+            blocked,
+        )
+        return {
+            "status": "no_execution",
+            "source_decision": "commission",
+            "eligible_execution_possible": False,
+            "agent": None,
+            "message": "Source is commissionable (all-lens Layer 1) but no eligible persona can defensibly carry the mechanism today — not a decline",
+            "blocked_carry_persona": _sr_strip(blocked or ""),
+            "commit_success": False,
+            "declined": False,
+        }
+
+
+def _sr_strip(v):
+    if isinstance(v, str):
+        return v.strip()
+    return v or ""

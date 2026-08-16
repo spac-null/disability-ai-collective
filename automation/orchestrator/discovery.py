@@ -19,6 +19,7 @@ import time
 import urllib.request
 from datetime import datetime, timedelta, timezone
 
+from .grounding import STORY_REJECTION_CONTRACT_VERSION
 from .config import (
     _REGISTERS, _LENGTHS, _ARTICLE_TYPES, _THEME_CLUSTERS, _AGENT_BEATS,
     _PERSONA_CONFLICTS, _STRUCTURAL_SHAPES, _SCRIPT_DIR,
@@ -1320,7 +1321,12 @@ class DiscoveryMixin:
                 themes           TEXT,
                 disability_angle TEXT,
                 used             INTEGER DEFAULT 0,
-                used_date        TEXT
+                used_date        TEXT,
+                declined         INTEGER DEFAULT 0,
+                declined_date    TEXT,
+                decline_json     TEXT,
+                decline_schema_version TEXT,
+                declined_source_hash  TEXT
             )
         """)
         conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_score ON news_seeds(relevance_score)")
@@ -1328,22 +1334,53 @@ class DiscoveryMixin:
         conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_pub   ON news_seeds(pub_date)")
         conn.commit()
 
+    def _ensure_decline_columns(self, conn):
+        """Story Rejection V1 (DSR2): additive, idempotent migration of the
+        decline columns. Mirrors the angle_checked ALTER precedent in
+        news_fetcher.init_db (try/except OperationalError) so pre-existing
+        production DBs gain the columns without a destructive migration, and
+        fresh DBs have them via the CREATE above. Safe to call repeatedly."""
+        for _col, _def in (
+            ("declined", "INTEGER DEFAULT 0"),
+            ("declined_date", "TEXT"),
+            ("decline_json", "TEXT"),
+            ("decline_schema_version", "TEXT"),
+            ("declined_source_hash", "TEXT"),
+        ):
+            try:
+                conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
+            except sqlite3.OperationalError:
+                pass
+        conn.commit()
+
     def get_news_seed(self) -> dict | None:
         """Return best unused news seed from last 3 days, or None."""
         try:
             conn = sqlite3.connect(str(self.discovery_db))
             self._init_news_seeds_table(conn)
+            self._ensure_decline_columns(conn)
             cutoff = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
 
             # Priority 1: confirmed disability angle
+            # NOTE: excludes only a CURRENT-contract decline (declined=1 AND
+            # decline_schema_version matches today's STORY_REJECTION_CONTRACT_VERSION).
+            # A declined row stamped under a stale/older contract version is left
+            # eligible here -- this is what makes _is_news_seed_declined_current's
+            # "stale contract => reconsiderable" semantics actually reachable from
+            # real selection, instead of only from a test calling the helper
+            # directly. (Source-hash-based reconsideration is provenance-only:
+            # no fresh evidence packet exists at selection time to compare against,
+            # so it cannot be checked here -- see mark_news_seed_declined/
+            # _is_news_seed_declined_current docstrings.)
             row = conn.execute("""
                 SELECT id, url, title, summary, source_name, relevance_score,
                        themes, disability_angle, pub_date
                 FROM news_seeds
                 WHERE used = 0 AND pub_date >= ? AND disability_angle IS NOT NULL
+                  AND NOT (declined = 1 AND decline_schema_version = ?)
                 ORDER BY relevance_score DESC, pub_date DESC
                 LIMIT 1
-            """, (cutoff,)).fetchone()
+            """, (cutoff, STORY_REJECTION_CONTRACT_VERSION)).fetchone()
 
             # Priority 2: high relevance score, no angle yet
             if not row:
@@ -1352,9 +1389,10 @@ class DiscoveryMixin:
                            themes, disability_angle, pub_date
                     FROM news_seeds
                     WHERE used = 0 AND pub_date >= ? AND relevance_score >= 0.4
+                      AND NOT (declined = 1 AND decline_schema_version = ?)
                     ORDER BY relevance_score DESC, pub_date DESC
                     LIMIT 1
-                """, (cutoff,)).fetchone()
+                """, (cutoff, STORY_REJECTION_CONTRACT_VERSION)).fetchone()
 
             conn.close()
             if not row:
@@ -1384,6 +1422,98 @@ class DiscoveryMixin:
             self.logger.info("Marked news seed %s as used", seed_id)
         except Exception as e:
             self.logger.warning("Could not mark news seed as used: %s", e)
+
+    def mark_news_seed_declined(self, seed_id: str, decline_record: dict):
+        """Story Rejection V1 (DSR2): persist an authoritative Layer-1 decline.
+        Does NOT touch `used` (a decline is not a consumption — the source is
+        rejected, not published). Idempotent on the row; only the latest
+        decline record + its source hash are kept, but decline_json is the
+        full structured record (stamps its own schema version for audit/
+        reconsideration). A CURRENT-contract declined seed is excluded by
+        get_news_seed's priorities and by extract_top_angles / the CJ shadow
+        sampler; a seed declined under a stale/older contract version is left
+        reconsiderable by all three (see _is_news_seed_declined_current)."""
+        try:
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._ensure_decline_columns(conn)
+            conn.execute(
+                "UPDATE news_seeds SET declined = 1, declined_date = ?, "
+                "decline_json = ?, decline_schema_version = ?, declined_source_hash = ? "
+                "WHERE id = ?",
+                (
+                    datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    json.dumps(decline_record),
+                    decline_record.get("contract"),
+                    decline_record.get("source_hash"),
+                    seed_id,
+                ),
+            )
+            conn.commit()
+            conn.close()
+            self.logger.info("Marked news seed %s as DECLINED (story rejection)", seed_id)
+        except Exception as e:
+            self.logger.warning("Could not mark news seed as declined: %s", e)
+
+    def get_news_seed_decline(self, seed_id: str) -> dict | None:
+        """Return the persisted decline record for a seed (for tests/audit).
+        Only CURRENT per the recorded schema/version — a stale contract row is
+        returned here but Selection-exclusion helpers treat it as
+        reconsiderable (see _is_news_seed_declined_current)."""
+        try:
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._ensure_decline_columns(conn)
+            row = conn.execute(
+                "SELECT decline_json, decline_schema_version, declined_source_hash "
+                "FROM news_seeds WHERE id = ?", (seed_id,),
+            ).fetchone()
+            conn.close()
+            if not row or not row[0]:
+                return None
+            return {
+                "record": json.loads(row[0]) if row[0] else None,
+                "contract": row[1],
+                "source_hash": row[2],
+            }
+        except Exception:
+            return None
+
+    def _is_news_seed_declined_current(self, conn, seed_id: str, packet) -> bool:
+        """True iff the seed's recorded decline is still authoritative: a
+        current contract version (sr1) AND the recorded source_hash matches the
+        evidence_packet currently in hand. A stale/mismatched row is treated as
+        RECONSIDERABLE (returns False) so a changed source or a contract bump can
+        be re-judged rather than permanently silencing the seed.
+
+        IMPORTANT SCOPE NOTE: real SELECTION (get_news_seed / extract_top_angles /
+        sample_shadow_candidates) only ever checks the CONTRACT-VERSION half of
+        this -- a stale-contract row is reconsidered by SQL directly, with no
+        `packet` involved, because no fresh evidence exists at selection time
+        for a URL that hasn't been (re)fetched yet. The source_hash comparison
+        this method performs is provenance/audit machinery for a caller that
+        already HAS a fresh evidence_packet (e.g. a future explicit
+        revalidation pass) -- declined_source_hash is persisted so that IF such
+        a revalidation ever produces a different current hash, the old decline
+        can be recognized as stale. Automatic same-URL remote-change detection
+        is NOT implemented: nothing in production re-fetches a declined URL to
+        notice its content changed. That would require dedicated revalidation
+        machinery this prototype deliberately does not add."""
+        try:
+            row = conn.execute(
+                "SELECT declined, decline_schema_version, declined_source_hash "
+                "FROM news_seeds WHERE id = ?", (seed_id,),
+            ).fetchone()
+        except Exception:
+            return False
+        if not row or row[0] == 0 or row[0] is None:
+            return False
+        _decline_version = row[1]
+        _recorded_hash = row[2]
+        if _decline_version != STORY_REJECTION_CONTRACT_VERSION:
+            return False
+        _current_hash = (packet or {}).get("source_hash") if packet else None
+        if _current_hash and _recorded_hash and _current_hash != _recorded_hash:
+            return False
+        return True
 
     def _news_seed_to_agent(self, themes: list) -> str:
         """Map news seed themes to preferred persona.

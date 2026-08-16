@@ -797,6 +797,113 @@ def validate_brief(brief, evidence_packet):
 _ALLOWED_GROUNDING_STATUSES = {"validated", "validated_with_rejections", "rejected", "no_source_available"}
 
 
+# ── Story Rejection V1: SOURCE-COMMISSIONABILITY VALIDATOR ───────────────────
+#
+# DSR2 (DeepSeek adversarial review): commissionability is judged at SOURCE
+# layer (Layer 1), with all four perceptual lenses visible, BEFORE the PRF1
+# rotation-eligibility constraint is applied to persona EXECUTION (Layer 2).
+# A `source_decision=="decline"` verdict must therefore be evidence-safe on its
+# own and must NEVER be emitted from insufficient evidence, a provider
+# failure, or a hash mismatch. This validator certifies ONLY the positive
+# factual anchors the decline rests on -- it cannot (and does not claim to)
+# deterministically prove the negative "no mechanism exists"; that remains model
+# judgment. What IS deterministic here mirrors validate_evidence_field:
+#   - the decline's required fields are present and well-typed,
+#   - the source origin was authoritative fetched material (never a
+#     fallback_summary / "none" origin, never an absent packet),
+#   - the source was not materially truncated (a truncation => DEFER, not
+#     DECLINE),
+#   - source_anchor_examined resolves verbatim in the supplied source text.
+# Any failure => the verdict is NOT a valid editorial decline; the caller must
+# treat it as a technical failure (same fail-closed path as a schema violation
+# in _fable_editorial_brief), never as a persisted decline.
+STORY_REJECTION_CONTRACT_VERSION = "sr1"
+
+
+def validate_source_decision(brief, evidence_packet):
+    """Validate a Layer-1 source-decision verdict (DSR2 Story Rejection V1).
+
+    Returns (ok, reason_code, reason, violations). `brief` must already carry a
+    parsed `source_decision`. Handles only the DECLINE branch authoritatively;
+    a "commission" verdict passes trivially here (its persona/angle fields are
+    validated elsewhere by _fable_editorial_brief's existing checks). Never
+    raises -- a malformed decline degrades to "not a valid decline" so the
+    caller's technical-failure path fires instead.
+    """
+    violations = []
+    decision = brief.get("source_decision")
+
+    # A brief without source_decision is LEGACY commission behavior (Phase 1.6
+    # briefs, existing fixtures/tests) -- not a decline, and not this
+    # validator's concern. Pass through clean so PRF1 invariants are intact.
+    if decision is None:
+        return True, "legacy", "Layer-1 verdict absent (legacy brief — commission pass-through)", violations
+
+    log = []
+    if decision == "commission":
+        log.append("source_decision: commission (Layer 1) — execution constrained to eligible set by Layer 2")
+        return True, "commission", " | ".join(log), violations
+
+    if decision != "decline":
+        return (
+            False, "invalid_source_decision",
+            f"Story Rejection: source_decision is '{decision}', expected 'commission' or 'decline' — "
+            "treated as schema violation, not an editorial verdict",
+            [{"field": "source_decision", "reason_code": "invalid_source_decision",
+              "reason": "not 'commission'/'decline'"}],
+        )
+
+    # ── Required fields for a valid decline ──────────────────────────────
+    required = ["source_decision", "dominant_framing",
+                "source_anchor_examined", "why_disability_knowledge_does_not_change_subject",
+                "reason"]
+    missing = [k for k in required if not _truthy_str(brief.get(k))]
+    if missing:
+        violations.append({"field": ", ".join(missing), "reason_code": "decline_missing_required",
+                           "reason": f"decline verdict missing required field(s): {missing}"})
+        return False, "decline_missing_required", (
+            f"Story Rejection: decline missing required field(s) {missing} — "
+            "rejected as incomplete verdict, not a valid decline"), violations
+
+    # ── Evidence-safety gates (the ones that make a decline LEGITIMATE) ──
+    origin = evidence_packet.get("source_origin") if evidence_packet else None
+    if origin not in ("fetched_article", "fixture"):
+        violations.append({"field": "source_origin", "reason_code": "decline_source_insufficient",
+                           "reason": f"source_origin={origin!r}; decline requires authoritative fetched source"})
+        return False, "decline_source_insufficient", (
+            f"Story Rejection: cannot decline from origin={origin!r} (fallback_summary/none "
+            "=> DEFER/insufficient, not a decline)"), violations
+
+    if evidence_packet and evidence_packet.get("source_truncated"):
+        violations.append({"field": "source_truncated", "reason_code": "decline_evidence_truncated",
+                           "reason": "source was truncated at the evidence cap; cannot authoritatively decline"})
+        return False, "decline_evidence_truncated", (
+            "Story Rejection: source is materially truncated — DEFER rather than DECLINE"), violations
+
+    source_text = evidence_packet.get("source_text") if evidence_packet else None
+    anchor_raw = brief.get("source_anchor_examined")
+    anchor = anchor_raw.strip() if isinstance(anchor_raw, str) and anchor_raw.strip() else None
+    if anchor is not None and (not source_text or anchor not in source_text):
+        violations.append({"field": "source_anchor_examined", "reason_code": "decline_anchor_not_grounded",
+                           "reason": "source_anchor_examined does not resolve verbatim in the supplied source"})
+        return False, "decline_anchor_not_grounded", (
+            "Story Rejection: decline's source_anchor_examined is not grounded in the source — "
+            "no editorial decline without a verifiable anchor"), violations
+
+    log.append(f"source_decision: decline — grounded (origin={origin}, anchor verified, "
+               f"reasoning='{_truncate(brief.get('reason',''), 120)}')")
+    return True, "decline", " | ".join(log), violations
+
+
+def _truthy_str(v):
+    return isinstance(v, str) and v.strip() != ""
+
+
+def _truncate(s, n=120):
+    s = s or ""
+    return s if len(s) <= n else s[: n - 1] + "…"
+
+
 def is_current_brief_schema(brief):
     """Legacy-brief gate (phase-1.6-source-grounding.md's 'Legacy frozen-brief
     policy'). A brief missing brief_schema_version, or stamped with an older

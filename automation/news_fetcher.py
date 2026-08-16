@@ -300,6 +300,13 @@ def log(msg):
 
 # ── DB ────────────────────────────────────────────────────────────────────────
 
+# Mirrors orchestrator.grounding.STORY_REJECTION_CONTRACT_VERSION. Duplicated
+# (not imported) deliberately -- news_fetcher.py is a standalone script that
+# does not import the orchestrator package. Must be bumped in lockstep with
+# that constant if the decline contract ever changes shape.
+STORY_REJECTION_CONTRACT_VERSION = "sr1"
+
+
 def init_db(conn):
     conn.execute("""
         CREATE TABLE IF NOT EXISTS news_seeds (
@@ -315,13 +322,33 @@ def init_db(conn):
             themes           TEXT,
             disability_angle TEXT,
             used             INTEGER DEFAULT 0,
-            used_date        TEXT
+            used_date        TEXT,
+            declined         INTEGER DEFAULT 0,
+            declined_date    TEXT,
+            decline_json     TEXT,
+            decline_schema_version TEXT,
+            declined_source_hash  TEXT
         )
     """)
     conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_score   ON news_seeds(relevance_score)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_used    ON news_seeds(used)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_pub     ON news_seeds(pub_date)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_fetched ON news_seeds(fetched_date)")
+    # Story Rejection V1 (DSR2): additive, idempotent migration for pre-existing
+    # DBs (mirrors the angle_checked precedent below). Fresh DBs get these via
+    # the CREATE above; legacy DBs gain them here without destructive work.
+    for _col, _def in (
+        ("declined", "INTEGER DEFAULT 0"),
+        ("declined_date", "TEXT"),
+        ("decline_json", "TEXT"),
+        ("decline_schema_version", "TEXT"),
+        ("declined_source_hash", "TEXT"),
+    ):
+        try:
+            conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
+        except sqlite3.OperationalError:
+            pass
+    conn.commit()
     # disability_angle IS NULL means both "not yet attempted" and "attempted, model
     # said none exists" — a seed the model correctly rejects stays NULL forever and
     # gets re-selected by extract_top_angles' ORDER BY relevance_score DESC every
@@ -967,9 +994,14 @@ def sample_shadow_candidates(conn, n: int = 10, days: int = 3):
     lane_top = max(round(n * 0.3), 0)
     lane_broad = max(n - lane_low - lane_top, 0)
 
+    # NOT (declined = 1 AND decline_schema_version = current) -- excludes only a
+    # CURRENT-contract decline; a stale-contract declined row is left in the
+    # pool for re-judgment (mirrors get_news_seed's selection semantics; see
+    # STORY_REJECTION_CONTRACT_VERSION above).
     base_where = (
         "WHERE disability_angle IS NULL AND angle_checked IS NULL AND used = 0 "
-        "AND pub_date >= ?"
+        "AND pub_date >= ? "
+        "AND NOT (declined = 1 AND decline_schema_version = ?)"
     )
 
     top_rows = conn.execute(f"""
@@ -977,14 +1009,14 @@ def sample_shadow_candidates(conn, n: int = 10, days: int = 3):
         {base_where}
         ORDER BY relevance_score DESC
         LIMIT ?
-    """, (cutoff, lane_top)).fetchall()
+    """, (cutoff, STORY_REJECTION_CONTRACT_VERSION, lane_top)).fetchall()
 
     low_rows_raw = conn.execute(f"""
         SELECT id, url, title, summary, source_name FROM news_seeds
         {base_where}
         ORDER BY relevance_score ASC
         LIMIT ?
-    """, (cutoff, lane_low + len(top_rows))).fetchall()  # pad for overlap trim
+    """, (cutoff, STORY_REJECTION_CONTRACT_VERSION, lane_low + len(top_rows))).fetchall()  # pad for overlap trim
     top_ids = {r[0] for r in top_rows}
     low_rows = [r for r in low_rows_raw if r[0] not in top_ids][:lane_low]
 
@@ -994,7 +1026,7 @@ def sample_shadow_candidates(conn, n: int = 10, days: int = 3):
         SELECT id, url, title, summary, source_name FROM news_seeds
         {base_where} AND id NOT IN ({placeholders})
         ORDER BY RANDOM()
-    """, (cutoff, *seen_ids)).fetchall()
+    """, (cutoff, STORY_REJECTION_CONTRACT_VERSION, *seen_ids)).fetchall()
 
     broad_rows = []
     per_source_count: dict[str, int] = {}
@@ -1119,13 +1151,19 @@ def extract_top_angles(conn, n: int = 10):
     # reachable by get_news_seed's cutoff.
     cutoff = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
     top_n = max(n - EXPLORATION_SLOTS, 0)
+    # NOT (declined = 1 AND decline_schema_version = current) -- a currently-valid
+    # decline is excluded from re-extraction (no wasted paid call, must not
+    # re-enter selection); a stale-contract decline is left in the pool so it can
+    # regain a disability_angle and become reachable by get_news_seed's Priority 1
+    # again (get_news_seed applies the same contract-aware exclusion).
     top_rows = conn.execute("""
         SELECT id, url, title, summary FROM news_seeds
         WHERE disability_angle IS NULL AND angle_checked IS NULL AND used = 0
+              AND NOT (declined = 1 AND decline_schema_version = ?)
               AND pub_date >= ?
         ORDER BY relevance_score DESC
         LIMIT ?
-    """, (cutoff, top_n)).fetchall()
+    """, (STORY_REJECTION_CONTRACT_VERSION, cutoff, top_n)).fetchall()
 
     # Exploration slots, added 2026-08-10 -- mitigation for the discovery
     # scorer's structural blind spot, not a fix for it (the real fix is an
@@ -1147,12 +1185,19 @@ def extract_top_angles(conn, n: int = 10):
         explore_rows = conn.execute(f"""
             SELECT id, url, title, summary FROM news_seeds
             WHERE disability_angle IS NULL AND angle_checked IS NULL AND used = 0
+                  AND NOT (declined = 1 AND decline_schema_version = ?)
                   AND pub_date >= ? AND id NOT IN ({placeholders})
             ORDER BY RANDOM()
             LIMIT ?
-        """, (cutoff, *top_ids, EXPLORATION_SLOTS)).fetchall()
+        """, (STORY_REJECTION_CONTRACT_VERSION, cutoff, *top_ids, EXPLORATION_SLOTS)).fetchall()
 
     rows = top_rows + explore_rows
+    # Story Rejection V1 (DSR2): a currently-valid decline (current contract,
+    # matching source hash) is excluded from re-extraction just as from
+    # get_news_seed's selection -- a rejected source should not spend another
+    # paid angle-extraction call, and must not re-enter selection. Seeds whose
+    # recorded decline is stale (contract bump or changed source hash) are left
+    # in the pool for re-judgment and are filtered by SELECTION, not here.
     extracted = 0
     today = datetime.now().strftime("%Y-%m-%d")
     for seed_id, url, title, summary in rows:
