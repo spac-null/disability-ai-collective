@@ -43,6 +43,29 @@ _SOURCE_TEXT_MAX_CHARS = 20000
 
 
 class GenerateMixin:
+    # Publication-safety contract version (legacy-draft auto-promotion
+    # fail-closed closure, 2026-08-16 -- see the "Reached by Boat or Plane"
+    # remediation audit that found publish_best.py trusts historical
+    # fact_check_status forever, with zero re-check against whatever safety
+    # code is CURRENT at promotion time). Stamped into a draft's front matter
+    # (see the end of run_production_automation's Step 6c, after
+    # validate_article returns) ONLY once every mandatory authoritative check
+    # for THIS run has both RUN and resolved clean this cycle: fable_brief,
+    # gate_llm, the persona-biography fail-closed check (AP1+PS1's
+    # persona_biography_unresolved -- see _compute_should_block below), and
+    # the web fact-check pass (fact_check_status settles to "verified", not
+    # "blocked"). publish_best.py requires this value before treating a draft
+    # as current-safe.
+    #
+    # Bump this integer ONLY when the SET of checks required to earn the
+    # marker changes (a new mandatory safety check added or removed) -- never
+    # for ordinary feature/pipeline releases, which is what pipeline_version/
+    # pipeline_codename already track (see publish.py's _pipeline_version).
+    # This is a safety-contract identifier, not marketing: a higher number
+    # means "a strictly larger/different set of authoritative checks had to
+    # pass," nothing about how good the writing is.
+    PUBLICATION_SAFETY_CONTRACT_VERSION = 1
+
     @staticmethod
     def _compute_should_block(degraded_stages):
         """Promotion-blocking policy for a degraded run (A-M reconciliation, `## M`,
@@ -79,6 +102,43 @@ class GenerateMixin:
             or "persona_biography_unresolved" in stages
             or len(stages) >= 2
         )
+
+    def _maybe_stamp_publication_safety_version(self, article_file, should_block):
+        """Stamp `publication_safety_version` into `article_file`'s front matter
+        (legacy-draft auto-promotion fail-closed closure, 2026-08-16), but only
+        when BOTH hold:
+
+          (a) `should_block` is falsy -- no authoritative stage
+              (fable_brief/gate_llm/persona_biography_unresolved, or a 2+-stage
+              degradation) tripped `_compute_should_block` this run, and
+          (b) the file's `fact_check_status` has settled to the EXPLICIT
+              literal "verified" -- re-read from disk rather than trusted from
+              a caller-supplied verdict, because THREE different call sites in
+              this same run can still stamp `fact_check_status: blocked` after
+              `should_block` was computed (the degraded-stages block, the
+              fallback-provider block, and validate_article's own contradicted-
+              quote check) -- this must run after all three have had their
+              chance, which is exactly why the caller invokes this immediately
+              after Step 6c (validate_article), not any earlier.
+
+        Never overwrites an existing `publication_safety_version` (idempotent,
+        matching every other guarded front-matter write in this file). A
+        missing/malformed/not-exactly-"verified" fact_check_status is treated
+        as NOT verified here, mirroring publish_best.py's own
+        `_ordinary_eligibility_ok` -- there is no implicit-pass path on either
+        side of this contract."""
+        fm_text = article_file.read_text()
+        fact_check_verified = bool(re.search(r"^fact_check_status:\s*verified\s*$", fm_text, re.MULTILINE))
+        if should_block or not fact_check_verified:
+            return
+        if re.search(r"^publication_safety_version:", fm_text, re.MULTILINE):
+            return
+        fm_text = re.sub(
+            r"^---\n",
+            f"---\npublication_safety_version: {self.PUBLICATION_SAFETY_CONTRACT_VERSION}\n",
+            fm_text, count=1,
+        )
+        article_file.write_text(fm_text)
 
     def _persist_article_plan(self, slug, agent_name, fable_brief):
         """Persist the full _fable_editorial_brief JSON, keyed on slug, added
@@ -1205,6 +1265,11 @@ class GenerateMixin:
         # Step 6: Create article file (content is already gate-fixed as of Step 4b)
         article_file = self.create_article_file(metadata, content, image_filenames, image_descriptions)
 
+        # Default for the publication-safety-contract stamp below (Step 6c+) --
+        # only overwritten if self._degraded_stages is non-empty. A run with no
+        # degraded stages at all never enters that branch, so this must exist
+        # ahead of it rather than only being assigned inside the `if`.
+        _should_block = False
         if self._degraded_stages:
             # Added 2026-08-10 -- see production_orchestrator.py's __init__ docstring
             # for the incident this responds to. Blocking policy, decided explicitly
@@ -1278,6 +1343,16 @@ class GenerateMixin:
             pre_rewrite_content=pristine_draft_content, article_type=article_type,
             source_text=evidence_packet.get("source_text"),
         )
+
+        # Publication-safety-contract stamp (legacy-draft auto-promotion
+        # fail-closed closure, 2026-08-16): every authoritative check for this
+        # run has now settled -- _should_block reflects fable_brief/gate_llm/
+        # persona_biography_unresolved (computed above, before Step 6c), and
+        # validate_article (just above) is the LAST place fact_check_status
+        # can still be set to "blocked" this run (a contradicted quote/study),
+        # independently of _degraded_stages. See _maybe_stamp_publication_safety_version's
+        # own docstring for exactly what "both hold" means.
+        self._maybe_stamp_publication_safety_version(article_file, _should_block)
 
         # Step 7: Commit article + review sidecar
         commit_success = self.commit_to_git(article_file, image_filenames, review_file)

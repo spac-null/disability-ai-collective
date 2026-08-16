@@ -2,11 +2,22 @@
 """
 publish_best.py — promote the top-scoring draft to _posts/ every 2 days.
 
-Candidate pool: drafts dated within the last AGE_WINDOW_DAYS days. A draft
-that ages out of that window without ever being selected is archived to
-_drafts/_archive/ rather than left to compete forever.
+Candidate pool: drafts dated within the last AGE_WINDOW_DAYS days that pass
+the promotion gate below. A draft that ages out of that window without ever
+being selected is archived to _drafts/_archive/ rather than left to compete
+forever.
 
-Selection weights:
+Promotion gate (legacy-draft auto-promotion fail-closed closure, 2026-08-16):
+a draft must show BOTH an explicit fact_check_status: verified (bullet A,
+_ordinary_eligibility_ok) AND a publication_safety_version proving it was
+generated under -- and cleared -- the CURRENT publication-safety contract
+(bullet B, _current_safety_contract_ok), not just some past pipeline version.
+Anything failing either bullet is HELD (NEEDS_CURRENT_REVALIDATION): left on
+disk in _drafts/, untouched, excluded from this cycle's scoring, never
+archived or rewritten by this gate alone. UNKNOWN safety != safe -- see
+REQUIRED_SAFETY_VERSION's own comment for the incident this responds to.
+
+Selection weights (applied only to drafts that pass the promotion gate):
   - draft_score (0-10 editorial score from Opus, or default 7.0 if missing): 60%
     NOTE (2026-08-06 audit): production_orchestrator.py only writes draft_score
     when its conditional editorial pass fires (~1 in 3 articles) — in practice
@@ -44,6 +55,19 @@ PERSONA_WINDOW = 5  # look at last N published articles for persona rotation
 AGE_WINDOW_DAYS = 7  # drafts older than this without being picked get archived
 LOSS_BONUS = 0.15    # per prior losing cycle
 LOSS_BONUS_CAP = 0.6
+
+# Legacy-draft auto-promotion fail-closed closure (2026-08-16 -- see the
+# "Reached by Boat or Plane" remediation audit: an Era-D draft generated
+# 2026-08-11, three days before AP1/APE2 and five before PS1 existed,
+# promoted itself on 2026-08-15 on nothing but a five-day-old
+# fact_check_status: verified stamp, with zero re-check against whatever
+# safety code was current at promotion time). Mirrors generate.py's
+# PUBLICATION_SAFETY_CONTRACT_VERSION -- kept as a separate constant rather
+# than a shared import, matching this script's existing standalone-script
+# style (it has never imported anything from automation.orchestrator, by
+# design; see _fire_pending_social's subprocess call for how it reaches the
+# orchestrator instead, only AFTER promotion, only to fire social posts).
+REQUIRED_SAFETY_VERSION = 1
 
 
 def parse_frontmatter(text):
@@ -173,6 +197,35 @@ def archive_draft(path):
     shutil.move(str(path), str(ARCHIVE / path.name))
 
 
+def _ordinary_eligibility_ok(fm):
+    """Bullet (A) of the promotion gate (legacy-draft auto-promotion
+    fail-closed closure, 2026-08-16): fact_check_status must be the EXPLICIT
+    literal "verified" -- not merely "anything other than blocked". A missing
+    field, a typo'd value, or any other legacy value all now read as NOT
+    eligible, never as an implicit pass. This replaces the old bare
+    `!= "blocked"` check, which is what let a draft with no fact_check_status
+    at all -- or a five-day-stale "verified" from a since-superseded safety
+    regime -- promote unexamined. UNKNOWN must never read as SAFE."""
+    return fm.get("fact_check_status") == "verified"
+
+
+def _current_safety_contract_ok(fm):
+    """Bullet (B) of the promotion gate: the draft must carry a
+    publication_safety_version stamped by generate.py's CURRENT code (i.e.
+    an integer >= REQUIRED_SAFETY_VERSION), proving every mandatory
+    authoritative check in TODAY's safety contract (fable_brief, gate_llm,
+    the persona-biography fail-closed check, the fact-check pass) actually
+    ran and resolved clean on THIS draft -- not merely that some past
+    pipeline version, possibly missing checks that exist today, once
+    approved it. Missing/unparseable/too-low all read as NOT current-safe;
+    there is no implicit-pass path here either."""
+    try:
+        version = int(fm.get("publication_safety_version", "") or "0")
+    except (ValueError, TypeError):
+        version = 0
+    return version >= REQUIRED_SAFETY_VERSION
+
+
 def set_publish_date(path, when):
     """Rewrite the front matter `date:` field to the actual promotion date.
 
@@ -221,6 +274,17 @@ def main(dry_run=False):
         if fm.get("fact_check_status") == "blocked":
             print(f"  {draft.name}: SKIPPED — fact_check_status: blocked "
                   f"(quote attributed to a real person not found in any source; needs human review)")
+            continue
+        if not _ordinary_eligibility_ok(fm):
+            print(f"  {draft.name}: HELD (NEEDS_CURRENT_REVALIDATION) — fact_check_status is "
+                  f"{fm.get('fact_check_status')!r}, not the required explicit \"verified\"; "
+                  f"remains in _drafts/ for later remediation, not archived or altered")
+            continue
+        if not _current_safety_contract_ok(fm):
+            print(f"  {draft.name}: HELD (NEEDS_CURRENT_REVALIDATION) — publication_safety_version="
+                  f"{fm.get('publication_safety_version')!r} (requires >= {REQUIRED_SAFETY_VERSION}); "
+                  f"generated before, or not fully checked under, the current publication-safety "
+                  f"contract; remains in _drafts/ for later remediation, not archived or altered")
             continue
         try:
             editorial = float(fm.get("draft_score", DEFAULT_SCORE))
