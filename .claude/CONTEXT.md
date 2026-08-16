@@ -1,3 +1,15 @@
+READ CURRENT STATE FIRST: `.claude/WORK.md` — doctrine, current production safety state (with
+exact SHA), active/next work, parked work, historical corrections, document index. An older
+research/audit document is NOT current authority when WORK.md marks its conclusion superseded.
+
+FOR HISTORY: `.claude/LOGBOOK.md` — chronological, compact entries (what changed, when, why,
+commit SHA, what it superseded).
+
+FOR EVIDENCE: follow the linked research/audit documents from WORK.md's document index — do not
+re-derive conclusions those documents already establish.
+
+---
+
 Resume prompt — cripminds.com session continuation
 
   Project: cripminds.com — Jekyll publication, disability-led AI editorial, 4 AI personas (Pixel Nova/Deaf, Siri Sage/Blind, Maya
