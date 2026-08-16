@@ -72,7 +72,7 @@ material (see Evidence stores).
 | opening-quality-shadow-2026-08-14 | `-opening-quality` | opening-template shadow detector | PARKED | not confirmed superseded — old base (20 behind), owner review recommended |
 | ops-release-hardening-2026-08-14 | `-ops-release-hardening` | release-concurrency preflight + health checker | PARKED | main independently has `release_preflight.py`; not confirmed identical — owner review recommended |
 | publication-surface-production-candidate-2026-08-14 | `-pub-surface-prod-candidate` | production-candidate review (Phase F, per WORK.md, not yet done) | PARKED | gated on Phase F completing |
-| publication-model-v1-2026-08-14 | `-publication-model-v1` | Publication Model V1 synthesis; source of confirmed GENERATE→MATERIALIZE terminology | PARKED — **OFF-MAIN CANONICAL HISTORICAL DOCUMENT pending separate import-to-main correction** | off-main doc preserved: `cripminds-publication-model-v1-2026-08-14.md`; verified byte-identical (SHA-256 `c8edb91c...`) between the live branch blob and the PP1-preserved export — WORK.md cites this document 3x by a path that doesn't exist on `main`; import is a separate follow-up (Phase 3B), not done here |
+| publication-model-v1-2026-08-14 | `-publication-model-v1` | Publication Model V1 synthesis; source of confirmed GENERATE→MATERIALIZE terminology | PARKED — **historical source document recovered onto `main` (Phase 3B, 2026-08-16)** | document `cripminds-publication-model-v1-2026-08-14.md` recovered verbatim (SHA-256 `c8edb91c...`, confirmed identical to the branch blob and the PP1-preserved export) onto `main` at `.claude/cripminds-publication-model-v1-2026-08-14.md`; WORK.md's 3x citations now resolve. The branch itself remains PARKED — importing one document does not change its lifecycle status |
 | publication-surface-v1-2026-08-14 | `-publication-surface-v1` | Publication Surface V1, promotes "What the Room Heard" to a first-class Work | PARKED | off-main doc preserved: `cripminds-publication-surface-v1-2026-08-14.md` |
 | production-editorial-upgrade-v1-2026-08-14 | `-editorial-upgrade-v1` | Editorial Upgrade V1 / "E2" experiment — **explicitly "do not deploy as-is" per WORK.md `## 6`** | PARKED | 2 off-main docs preserved: `production-editorial-upgrade-v1-2026-08-14.md`, `production-formula-root-cause-audit-2026-08-14.md` |
 | testimony-architecture-2026-08-14 | `-testimony-architecture` | L1/L2 testimony architecture audit | PARKED | off-main doc preserved: `testimony-L1-L2-audit-2026-08-14.md` |
@@ -120,9 +120,9 @@ Allowed lifecycle statuses: `ACTIVE`, `FROZEN`, `PARKED`, `MERGED`, `SUPERSEDED`
 
 - Database backup — no SQLite-safe snapshot method exists yet for `disability_findings.db` /
   `automation/engagement.db`; naive `cp` of a live SQLite file is not safe. Separate follow-up.
-- `.claude/cripminds-publication-model-v1-2026-08-14.md` — broken reference in `WORK.md` (cited
-  3x); the exact off-main blob is preserved and verified byte-identical, but not yet imported to
-  `main`. Phase 3B, not done here.
+- ~~`.claude/cripminds-publication-model-v1-2026-08-14.md` — broken WORK.md reference~~ —
+  **RESOLVED, Phase 3B (2026-08-16)**: recovered verbatim onto `main`, WORK.md's 3x citations
+  now resolve. Document classified HISTORICAL — CONCEPTUAL/ARCHITECTURAL EVIDENCE in `WORK.md ## 8`.
 - `pixel-validation/control` (local, `2a190ad`) diverges from `origin/pixel-validation/control`
   (`bfbc017`, 2 commits ahead) — unreconciled, low priority, both sides are git-backed.
 - Story Rejection prototype (`proto/story-rejection-v1`) — **FROZEN, AWAITING PRFV1**. No

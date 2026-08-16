@@ -464,6 +464,7 @@ before declaring something unconfirmed.
 | `docs/DISCOVERY.md` | **HISTORICAL (self-marked)** | describes a deleted script, kept as disability-studies reference only |
 | `.claude/legacy-corpus-integrity-phase1-2026-08-16.md` + `.claude/audits/*.json` | **CURRENT** | public-corpus credibility audit, Phase 1 (Phase 2 not started) |
 | `automation/persona_canon/*.md` | **CURRENT (authoritative)** | the actual persona factual-authorization files |
+| `.claude/cripminds-publication-model-v1-2026-08-14.md` | **HISTORICAL — CONCEPTUAL/ARCHITECTURAL EVIDENCE (recovered onto `main` 2026-08-16, Phase 3B; never implemented, branch never merged)** | Publication Model V1 synthesis from branch `publication-model-v1-2026-08-14`; source of the confirmed GENERATE vs. MATERIALIZE terminology cited in `## 2` — historical design/terminology evidence only, not current production configuration or proof the old branch's architecture is active |
 
 ---
 

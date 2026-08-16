@@ -275,3 +275,11 @@ CODE: this commit (docs/tooling-only; no `automation/` behavior changed)
 SUPERSEDES: nothing — additive navigation layer only.
 FOLLOW-UP: Phase 3B (import the publication-model-v1 doc to `main` as its own isolated commit) and the database-backup follow-up from PP1/PP2 both remain open, tracked in `PROJECT-MAP.md`'s "Open structural issues".
 FOLLOW-UP: none. Both the tracked copy and the original export batch now live in durable, non-`Downloads` locations.
+
+## 2026-08-16 — PROJECT MEMORY PHASE 3B: PUBLICATION MODEL DOCUMENT RECOVERY
+STATUS: RESOLVED
+DECISION: The broken `WORK.md` reference flagged in Phase 3 is closed. `.claude/cripminds-publication-model-v1-2026-08-14.md` was extracted via `git show` from branch `publication-model-v1-2026-08-14` (never checked out) and installed verbatim — no reconstruction, no summarization, no editorial changes — at the same canonical path `WORK.md` already cited. SHA-256 (`c8edb91c...`) confirmed identical across three copies: the live branch blob, the PP1-preserved export at `~/code/cripminds-preservation/documents/off-main-2026-08-16/`, and the newly installed `main` copy. `WORK.md`'s document index (`## 8`) now lists it as **HISTORICAL — CONCEPTUAL/ARCHITECTURAL EVIDENCE**, explicitly not current production configuration and not proof the old branch's architecture is live. `PROJECT-MAP.md`'s branch table and "Open structural issues" updated to reflect the recovery. The historical branch `publication-model-v1-2026-08-14` itself remains PARKED — importing one document does not change a branch's lifecycle status. No production behavior changed; `automation/` untouched; Story Rejection (`proto/story-rejection-v1` @ `37432b9`) untouched, still FROZEN — AWAITING PRFV1; Trident production checkout untouched (no pull).
+EVIDENCE: this file; `.claude/WORK.md` (`## 8`); `.claude/PROJECT-MAP.md`; `.claude/cripminds-publication-model-v1-2026-08-14.md` (the recovered file itself); `.claude/project-manifest.json` (regenerated, `broken_document_references` no longer lists this file)
+CODE: n/a (documentation-only; no `automation/` behavior changed)
+SUPERSEDES: Phase 3's "not repaired here, deferred to Phase 3B" note — that deferral is now resolved.
+FOLLOW-UP: none for this document. Database-backup follow-up and the `pixel-validation/control` divergence remain open, tracked in `PROJECT-MAP.md`.
