@@ -1,0 +1,169 @@
+{
+  "handoff_metadata": {
+    "handoff_type": "reader_lab_calibration_analysis",
+    "export_timestamp": "2026-08-13T10:12:00Z",
+    "round_id": "RL-2026-001",
+    "source": "calibration_artifacts (artifact_type='analysis'), pulled directly from production D1 by the privileged ops session per a cross-session request from a research session that has no D1/Cloudflare credentials by design",
+    "artifact_id": "cart_3a3ce40a-fefa-4db5-bb41-fbfa80152688",
+    "run_id": "crun_e6111e5d-6270-45e1-b391-9009a6e1f28b",
+    "workflow_version": "v1",
+    "workflow_definition": "calibration/workflows/analyze-human-round-v1.md",
+    "content_sha256_as_stored_in_d1": "7cc8d6eb57f03b461eedb7b6e0164da54732de0aa1d64b16cab1f4b414865b32",
+    "artifact_created_at": "2026-08-13T10:05:45.707Z",
+    "included": [
+      "analysis_version, round_id, generated_at",
+      "per-item: item_id, slot, reviewer_judgments (reviewer_id + internal_normalized_response + confidence + has_comment -- boolean only, not comment text itself), agreement_state, confidence_summary, comments_present, reference_strength, machine_comparison, disposition, notes (model-generated, banned-word-filtered, never affects the other fields)",
+      "round_summary (aggregate disposition counts)"
+    ],
+    "excluded_never_included": [
+      "invitation tokens / token hashes",
+      "session ids / session_id_hash",
+      "ADMIN_TOKEN / EXPORT_TOKEN / CALIBRATION_RUNNER_TOKEN / any Cloudflare API token",
+      "contact_channel",
+      "free-text comment content (has_comment is a boolean flag only, per the artifact's own schema -- this handoff does not add or remove anything from what the artifact already contains)"
+    ],
+    "provenance_note": "This is the AUTOMATICALLY-COMPUTED artifact from this project's own calibration orchestrator (calibrationWorkflow.js -> analyze-human-round-v1, executed by calibration/runner/calibration_runner.py) -- not manually reconstructed, not re-run, not edited. Pulled read-only; no round/response/policy state was changed to produce this file.",
+    "policy_version_governing_this_run": 2,
+    "disposition_semantics_reference": "See calibration/workflows/analyze-human-round-v1.md and .claude/reader-lab-v0-design-2026-08-12.md ## 20.4/## 25 for what strong_reference/provisional_reference/contested/needs_more_reviewers/insufficient_evidence and machine_comparison (aligns/diverges/no_machine_reference/not_applicable) mean. Two independent humans agreeing is 'stronger provisional human reference', never ground truth (## 14) -- read this artifact with that discipline.",
+    "additional_review_outcome_note": "The same calibration run's additional-review mechanism (## 26.2) evaluated the 3 contested items below and reported NEEDS_HUMAN_ACTION: only reviewer_parent_a/reviewer_parent_b exist, and both already judged every flagged item, so no third eligible reviewer exists to seek a follow-up opinion from automatically. This is a clean, correct escalation, not a defect -- flagged for Jascha's own action (admit a new reviewer, or adjudicate manually), not something either Claude session should resolve on its own."
+  },
+  "analysis": {
+    "analysis_version": "analyze-human-round-v1",
+    "round_id": "RL-2026-001",
+    "generated_at": "2026-08-13T10:05:15.039Z",
+    "items": [
+      {
+        "item_id": "ril_e01890e0-4a62-486b-85b4-c91fb38c6b44",
+        "slot": 1,
+        "reviewer_judgments": [
+          {
+            "reviewer_id": "reviewer_parent_a",
+            "internal_normalized_response": "uncertain",
+            "confidence": null,
+            "has_comment": true
+          },
+          {
+            "reviewer_id": "reviewer_parent_b",
+            "internal_normalized_response": "unsupported_factual_dependency",
+            "confidence": "not_very_sure",
+            "has_comment": false
+          }
+        ],
+        "agreement_state": "disagreement",
+        "confidence_summary": "1 not_very_sure",
+        "comments_present": true,
+        "reference_strength": "none",
+        "machine_comparison": "not_applicable",
+        "disposition": "contested",
+        "notes": null
+      },
+      {
+        "item_id": "ril_e08ba1e4-8e15-4ef0-8d2b-9f34f8ad4dd2",
+        "slot": 2,
+        "reviewer_judgments": [
+          {
+            "reviewer_id": "reviewer_parent_a",
+            "internal_normalized_response": "interpretive_only",
+            "confidence": "pretty_sure",
+            "has_comment": true
+          },
+          {
+            "reviewer_id": "reviewer_parent_b",
+            "internal_normalized_response": "source_established",
+            "confidence": "somewhat_sure",
+            "has_comment": false
+          }
+        ],
+        "agreement_state": "disagreement",
+        "confidence_summary": "1 pretty_sure, 1 somewhat_sure",
+        "comments_present": true,
+        "reference_strength": "none",
+        "machine_comparison": "not_applicable",
+        "disposition": "contested",
+        "notes": null
+      },
+      {
+        "item_id": "ril_9df9a4b6-cd47-4697-91ef-586fc28cc6b4",
+        "slot": 3,
+        "reviewer_judgments": [
+          {
+            "reviewer_id": "reviewer_parent_a",
+            "internal_normalized_response": "unsupported_factual_dependency",
+            "confidence": null,
+            "has_comment": true
+          },
+          {
+            "reviewer_id": "reviewer_parent_b",
+            "internal_normalized_response": "unsupported_factual_dependency",
+            "confidence": "somewhat_sure",
+            "has_comment": false
+          }
+        ],
+        "agreement_state": "agreement",
+        "confidence_summary": "1 somewhat_sure",
+        "comments_present": true,
+        "reference_strength": "strong_provisional",
+        "machine_comparison": "aligns",
+        "disposition": "strong_reference",
+        "notes": null
+      },
+      {
+        "item_id": "ril_ffc53c73-bf29-49fe-a1f2-946b81f07517",
+        "slot": 4,
+        "reviewer_judgments": [
+          {
+            "reviewer_id": "reviewer_parent_a",
+            "internal_normalized_response": "interpretive_only",
+            "confidence": null,
+            "has_comment": true
+          },
+          {
+            "reviewer_id": "reviewer_parent_b",
+            "internal_normalized_response": "source_established",
+            "confidence": "pretty_sure",
+            "has_comment": false
+          }
+        ],
+        "agreement_state": "disagreement",
+        "confidence_summary": "1 pretty_sure",
+        "comments_present": true,
+        "reference_strength": "none",
+        "machine_comparison": "not_applicable",
+        "disposition": "contested",
+        "notes": null
+      },
+      {
+        "item_id": "ril_2452d26c-f319-4dab-80c8-bcd1aa748c4e",
+        "slot": 5,
+        "reviewer_judgments": [
+          {
+            "reviewer_id": "reviewer_parent_a",
+            "internal_normalized_response": "source_established",
+            "confidence": null,
+            "has_comment": true
+          },
+          {
+            "reviewer_id": "reviewer_parent_b",
+            "internal_normalized_response": "source_established",
+            "confidence": "somewhat_sure",
+            "has_comment": false
+          }
+        ],
+        "agreement_state": "agreement",
+        "confidence_summary": "1 somewhat_sure",
+        "comments_present": true,
+        "reference_strength": "strong_provisional",
+        "machine_comparison": "aligns",
+        "disposition": "strong_reference",
+        "notes": null
+      }
+    ],
+    "round_summary": {
+      "strong_reference": 2,
+      "provisional_reference": 0,
+      "contested": 3,
+      "needs_more_reviewers": 0,
+      "insufficient_evidence": 0
+    }
+  }
+}

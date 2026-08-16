@@ -1,6 +1,7 @@
 {
   "round_id": "RL-2026-002",
   "status": "draft_prepared_by_research_session_not_saved_to_production",
+  "status_correction_2026-08-14": "STALE. Production D1 rounds.status='published' (published_at=2026-08-13T14:32:22.184Z, source='admin_ui', manifest_sha256=b2c82a2e9262211425c456097f1bbf6d1a79588a6526e079904f20fd752fced4). This draft file's status/frozen_at were never updated after the round was actually published through the admin UI, a separate path from this research-session file. As of 2026-08-14: 5 items, 10 assignments, 0 served, 0 answered -- see RL2-A finding, 2026-08-14 async-state-check session (reviewer invite links are valid and reusable; the round is simply not yet opened by either reviewer).",
   "task_type": "factual_floor_v0",
   "task_version": "v0.1",
   "assignment_version": "v0.1",

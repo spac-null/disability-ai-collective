@@ -16,6 +16,13 @@ Keep entries short — do not paste whole reports, link to them. If a project-me
 code (like "H1"/"RLS1" below) isn't a literal term found in repo docs, that's noted once here;
 see `.claude/WORK.md` `## 7` for the full list.
 
+**Chronology/evidence-priority rule** (see `.claude/WORK.md` `## 7a` for the full statement):
+newer does not automatically outrank older. Priority order when documents conflict: (1) direct
+current runtime/code/DB evidence, (2) a frozen experiment artifact, (3) an explicit owner
+decision, (4) current canonical documentation, (5) historical documentation, (6) inference. Check
+uncommitted working-tree state and reachable production hosts before declaring evidence
+nonexistent — see the 2026-08-16 PM1.1 entry below for what this rule was written in response to.
+
 ---
 
 ## 2026-08-09 — DISCOVERY CLEANUP
@@ -77,12 +84,13 @@ EVIDENCE: `.claude/reader-lab-handoff/RL-2026-001-*.json`
 CODE: n/a (data round, not code)
 FOLLOW-UP: exposed 2 gaps (no eligible additional reviewer; empty `calibration_candidates`), fixed same window (§27 of the design doc).
 
-## 2026-08-13 — RL-2026-002 INGESTED
-STATUS: IN PROGRESS (analysis incomplete) — proceeding asynchronously, NOT paused/blocked
-DECISION: All 5 candidates ingested via the real production path, zero rejections, round_id auto-assigned. Frozen but never published (awaiting human review).
-EVIDENCE: `.claude/master-roadmap-2026-08-13.md` §27.5-27.6, `reader-lab/rounds/drafts/RL-2026-002.json`, `calibration/candidates/RL-2026-002-*.json`
-CODE: `79649bd`
-FOLLOW-UP: other CJ-2 freeze-protocol phases (B-F) wait on this; it does not wait on them. As of this consolidation (2026-08-16), its files show LOCAL UNCOMMITTED MODIFICATIONS relative to `79649bd` — genuinely mid-flight, not a clean snapshot.
+## 2026-08-13 — RL-2026-002 INGESTED AND PUBLISHED (corrected 2026-08-16 — was wrongly recorded as "frozen, never published")
+STATUS: PUBLISHED to production D1, awaiting reviewer engagement — not frozen, not blocked
+DECISION: All 5 candidates ingested via the real production path, zero rejections, round_id auto-assigned (`79649bd`). **Correction (2026-08-16 PM1.1 pass):** the round WAS published via the admin UI/candidate-bridge path on `2026-08-13T14:32:22.184Z` (`rounds.status='published'`, `source='admin_ui'`, `manifest_sha256=b2c82a2e9262211425c456097f1bbf6d1a79588a6526e079904f20fd752fced4`) — this evidence was already sitting as an uncommitted `status_correction_2026-08-14` annotation directly inside `reader-lab/rounds/drafts/RL-2026-002.json` and `calibration/candidates/RL-2026-002-preregistration.json` (verified identical on Trident and locally), simply never committed or read during the PM1 pass. The research-session draft file's OWN `status` line still says `"draft_prepared_by_research_session_not_saved_to_production"` — that line describes the research-session file, not the production D1 round, and is what caused the earlier misreading.
+EVIDENCE: `reader-lab/rounds/drafts/RL-2026-002.json`'s and `calibration/candidates/RL-2026-002-preregistration.json`'s own `status_correction_2026-08-14` field (uncommitted, present in working tree)
+CODE: `79649bd` (ingestion); publication itself happened via the admin UI, not a commit
+SUPERSEDES: the "frozen, never published" framing of this entry as it read before 2026-08-16.
+FOLLOW-UP: as of the last check (2026-08-14): 5 items, 10 assignments (2 reviewers × 5), 0 served, 0 answered — reviewers simply haven't reopened their invite link, no code/data defect, no evidence of pressure to continue immediately. Other CJ-2 freeze-protocol phases (B-F) wait on this round's eventual analysis; it does not wait on them. RL-2026-003 remains separately uncommitted/mid-flight (see WORK.md `## 6`).
 
 ## 2026-08-13 — MASTER ROADMAP + A-M RECONCILIATION
 STATUS: DOCUMENTED (frozen snapshot as of this date)
@@ -167,31 +175,32 @@ CODE: `aa0172e` (Work), `691c365` (docs), `dbe0a96` (AP1), `f069852` (AP1 design
 NOTE: "RLS1" is project-memory shorthand introduced by this consolidation, not a literal repo term — see WORK.md `## 7`.
 FOLLOW-UP: APE2 edge case (same day, e93bb1b) — see WORK.md `## 3`.
 
-## 2026-08-16 — DETECTED-BUT-UNCORRECTED PERSONA CLAIMS FAIL CLOSED
+## 2026-08-16 — PS1 (detected-but-uncorrected persona claims fail closed)
 STATUS: SHIPPED
-DECISION: A detected-but-not-repaired persona-biography claim could previously still slip through; now fails closed.
-EVIDENCE: commit messages only (no separate design doc found)
-CODE: `89cd082`, `169e8ff`
+DECISION: A detected-but-not-repaired persona-biography claim could previously still slip through if the revision meant to fix it silently failed; now a known flagged claim surviving a failed revision fails closed instead of publishing. **Corrected label (2026-08-16 PM1.1 pass): this closure is "PS1," a different thing from the `publication_safety_version` contract ("LPF1," see next entry) — an earlier pass conflated the two under one combined label.** Direct empirical case that motivated this exact fix, found during the separate 2026-08-16 five-article evaluation (see `.claude/post-release-five-article-evaluation-2026-08-16.md`): runs 05 and 07 both had a claim the reviewer flagged for revision, which the revision failed to actually remove — the flagged text was still present in the final draft.
+EVIDENCE: commit messages (no separate design doc found); corroborating evidence in `.claude/post-release-five-article-evaluation-2026-08-16.md`
+CODE: candidate `89cd082`, deployed integration `169e8ff`
 FOLLOW-UP: none open.
 
-## 2026-08-16 — PS1 + LPF1 (legacy-draft auto-promotion fail-closed closure)
-STATUS: DEPLOYED (current HEAD, pushed to origin/main)
-DECISION: `publish_best.py`'s only content-safety check was `fact_check_status != "blocked"` — a missing field or a stale legacy `"verified"` both read as promotion-eligible with zero re-check against current safety code. This is exactly how "Reached by Boat or Plane" (below) promoted itself unexamined. Fix: `generate.py` now stamps `publication_safety_version: 1` only once every authoritative check (`fable_brief`, `gate_llm`, persona-biography check, fact-check) has settled clean; `publish_best.py` now requires BOTH `fact_check_status: verified` AND a current `publication_safety_version` before promotion. Anything else: HELD (`NEEDS_CURRENT_REVALIDATION`), untouched on disk.
+## 2026-08-16 — LPF1 (legacy-draft auto-promotion fail-closed closure)
+STATUS: DEPLOYED (current `LAST_PRODUCTION-CODE_RELEASE`, pushed to origin/main)
+DECISION: `publish_best.py`'s only content-safety check was `fact_check_status != "blocked"` — a missing field or a stale legacy `"verified"` both read as promotion-eligible with zero re-check against current safety code. This is exactly how "Reached by Boat or Plane" (below) promoted itself unexamined. Fix: `generate.py` now stamps `publication_safety_version: 1` only once every authoritative check (`fable_brief`, `gate_llm`, persona-biography check, fact-check) has settled clean; `publish_best.py` now requires BOTH `fact_check_status: verified` AND a current `publication_safety_version` before promotion. Anything else: HELD (`NEEDS_CURRENT_REVALIDATION`), untouched on disk. **This is a distinct closure from PS1 above — LPF1 is about a historical draft with stale/missing safety metadata being auto-promoted later; PS1 is about a flagged claim surviving a failed revision within one generation run.**
 EVIDENCE: commit body (`git show 667633f`)
 CODE: `667633f`
 SUPERSEDES: `publish_best.py`'s old `fact_check_status != "blocked"` eligibility check.
-FOLLOW-UP: does NOT cover human-detail provenance (P1, still shadow-only — see 2026-08-14 entry). Legacy drafts/articles lacking current-safety proof are held, not automatically revalidated — "Reached by Boat or Plane" is the standing example (below).
+FOLLOW-UP: does NOT cover human-detail provenance (P1 — a third, separate label, still shadow-only — see 2026-08-14 entry). Legacy drafts/articles lacking current-safety proof are held, not automatically revalidated — "Reached by Boat or Plane" is the standing example (below).
 
-## 2026-08-16 — "REACHED BY BOAT OR PLANE" — LEGACY-PROMOTION-HOLE PILOT/FAILURE CASE
+## 2026-08-16 — "REACHED BY BOAT OR PLANE" — LEGACY-PROMOTION-HOLE PILOT/FAILURE CASE (plan-divergence upgraded to CONFIRMED, 2026-08-16 PM1.1 pass)
 STATUS: NOT YET REMEDIATED PUBLICLY (confirmed by reading current front matter — no `publication_safety_version` field, `fact_check_status: verified` is a pre-LPF1 stamp)
-DECISION (established facts only — do not treat the hypotheses below as settled):
+DECISION (established facts only):
 - Generated as a historical draft (2026-08-11) before AP1/APE2/PS1/LPF1 existed; published 2026-08-15.
 - Its own async citation review (`_reviews/2026-08-11-reached-by-boat-or-plane-review.md`) found a CONTRADICTED stat (courtyard gate height), an UNVERIFIABLE event date, and multiple UNATTRIBUTED personal-history claims (a claimed Amsterdam concert-hall visit March 2019, claimed ferry recordings in the Firth of Forth/Wadden Sea) — none of this blocked publication because citation review here is explicitly async/advisory, not gating.
-- Its own Plan-Follow Read found `OPENING_SHAPE: MISMATCH` — the pre-generation brief's committed opening shape did not match the final article's actual first sentence. This is direct evidence of plan-vs-execution divergence, though only on this one dimension; the broader claim "persisted plan persona/mechanism diverged from final byline/article" is NOT independently confirmed by any repository artifact found (no stored brief/plan JSON for this specific article was located) — treat as UNVERIFIED CLAIM pending someone locating the actual plan artifact.
+- Its own Plan-Follow Read found `OPENING_SHAPE: MISMATCH` — the pre-generation brief's committed opening shape did not match the final article's actual first sentence.
+- **CONFIRMED (direct query against Trident's production `engagement.db`, `article_plans` table, `planned_at: 2026-08-11 09:05:59`):** the DB `agent` column is **Siri Sage**; the persisted `plan_json`'s own `"persona"` field is **Maya Flux**; the plan's `correction_moment`/`resisting_example` evidence fields are centered on the building's physical-access/commission requirements (explicitly: "wheelchair clearance, threshold, and approach," a courtyard gate's specified dimensions/maker) — Maya Flux's mobility/access domain, not acoustics. The final published article is instead entirely about acoustics/listening/ferry-recordings, Siri Sage's domain. **This upgrades the plan/persona-divergence claim from UNVERIFIED (PM1 pass) to CONFIRMED.** The exact Aug-11 "Agent rebalanced X → Y" log line is NOT recoverable (checked directly: no such line found in `automation.log` for this slug) — the specific routing EVENT is inferred from this surrounding mechanism/plan evidence, but the persisted PLAN ↔ final PERSONA/ARTICLE divergence itself is direct DB evidence, not inference.
 - The historical `fact_check_status: verified` metadata was trusted at promotion time with zero re-check — this IS the exact hole LPF1 (above) closed, confirmed directly in code.
-EVIDENCE: `_posts/2026-08-11-reached-by-boat-or-plane.md` (current front matter), `_reviews/2026-08-11-reached-by-boat-or-plane-review.md`, `.claude/legacy-corpus-integrity-phase1-2026-08-16.md` (independently flagged this article RED in Phase 1 of the legacy corpus audit, same day)
+EVIDENCE: `_posts/2026-08-11-reached-by-boat-or-plane.md` (current front matter), `_reviews/2026-08-11-reached-by-boat-or-plane-review.md`, `automation/engagement.db`'s `article_plans` table (Trident, direct query 2026-08-16), `.claude/legacy-corpus-integrity-phase1-2026-08-16.md` (independently flagged this article RED in Phase 1 of the legacy corpus audit, same day)
 CODE: n/a (content, not code)
-SUPERSEDES: n/a
+SUPERSEDES: this entry's own prior UNVERIFIED framing of the plan-divergence claim.
 FOLLOW-UP: recommission/remediation decision NOT yet made — do not silently withdraw or silently patch. See WORK.md `## 5` item 3.
 
 ## 2026-08-16 — LEGACY CORPUS INTEGRITY AUDIT, PHASE 1
@@ -201,9 +210,34 @@ EVIDENCE: `.claude/legacy-corpus-integrity-phase1-2026-08-16.md`, `.claude/audit
 CODE: n/a (audit, no content changed)
 FOLLOW-UP: Phase 2 semantic pass across the 122 unsampled articles; immediate look at `research/care-labor.html`.
 
+## 2026-08-10 — PERSONA TARGET ARCHITECTURE DESIGNED (recovered from git history 2026-08-16 — was silently dropped from current-work.md's lean rewrite)
+STATUS: DESIGN ESTABLISHED, Phase 3 implementation NOT STARTED (still true as of 2026-08-16)
+DECISION: Six-category persona model (CORE PERSON / PERCEPTUAL ENGINE / MOTIVE / AFFINITY / RISK / TEXTURE) recorded, with AFFINITY explicitly replacing "territory" as a soft routing prior, never ownership. Preregistered validation idea: one rich non-disability source → all four personas → score WHAT DID THIS MIND NOTICE / CATEGORY JUMP / IRREDUCIBILITY / OVERLAP / LORE LEAKAGE. Downstream CJ-2 consequence recorded: routing should become "what does each persona's perceptual engine expose about this source" not "which persona is appropriate for this topic."
+EVIDENCE: `.claude/persona-architecture-audit.md` (Phase 1.5A, per-persona hypotheses under all six categories); full original wording recovered from commit `b2773c8`
+CODE: n/a (design doc)
+SUPERSEDES: n/a
+NOTE: this content was present in `current-work.md` as of `b2773c8` (2026-08-10) but is absent from the file's current form — commit `d6ad389` ("rewrite current-work.md as lean operational checkpoint") is where it was pruned. Recovered here so it isn't lost a second time. **Do not confuse this established architecture with the unconfirmed DISCOVERY→SOURCE→SUBJECT→MECHANISM→LENS→VOICE shorthand** (see WORK.md `## 2`) — that shorthand is a different, still-unconfirmed thing named by a later task brief; this six-category model is real, dated, established design history that predates it.
+FOLLOW-UP: Phase 3 (implementation) not started. No motive sentences finalized for any persona.
+
+## 2026-08-16 — POST-RELEASE FIVE-ARTICLE EVALUATION (separate from the 2026-08-14 article-quality evidence pass)
+STATUS: COMPLETE (evaluation run); no report existed in the repo until this pass wrote one from the preserved artifacts
+DECISION: 7 generation attempts across 5 distinct stories, on Trident, isolated worktree, exact release `691c365`, real production providers (OpenRouter: opus-4.8/fable-5/haiku-4.5/sonnet-4.6; perplexity/sonar), zero production mutation. Brief-persona ≠ final byline-persona in 5/5 runs with a captured brief. 4/7 runs produced a genuine unsupported-persona-biography attempt (not 5/7 — corrected from an initial miscount); of those 4, 2 were successfully corrected and 2 (runs 05, 07) survived the revision into the final draft — the direct empirical case behind PS1 (above). No preserved literary-quality ranking exists; a "3 STRONG/2 PROMISING" claim is not confirmed by any artifact.
+EVIDENCE: `.claude/post-release-five-article-evaluation-2026-08-16.md` (written this pass from `/srv/data/hermes/evaluations/cripminds-five-article-2026-08-16/artifacts/{01..07}/*` on Trident)
+CODE: n/a (evaluation, no production code changed by the runs themselves)
+SUPERSEDES: nothing — this is a new record, not a replacement for the 2026-08-14 pass.
+FOLLOW-UP: a fresh editorial read of the 5 primary drafts if a literary-quality ranking is actually needed.
+
 ## 2026-08-16 — PROJECT MEMORY RECOVERY + INSTALLATION
 STATUS: INSTALLED
 DECISION: `.claude/WORK.md` established as canonical current-state file (existing `.claude/current-work.md` does not cleanly serve that role — 266KB append-only diary — marked superseded, not deleted). `.claude/LOGBOOK.md` (this file) established as canonical chronological history. `.claude/CONTEXT.md` (already the natural session-entry file, matching this user's own global fallback convention) given a pointer banner to both. No existing WORK.md/LOGBOOK.md found prior to this entry.
 EVIDENCE: this file + `.claude/WORK.md`
-CODE: n/a (docs-only commit, see WORK.md header for SHA once committed)
-FOLLOW-UP: maintenance rule now in force — see WORK.md header.
+CODE: commit `ed741bb`
+FOLLOW-UP: maintenance rule now in force — see WORK.md header. Post-installation review (below) found several material chronology/evidence errors in this pass's content — architecture kept, content corrected.
+
+## 2026-08-16 — PM1.1 CANONICAL CORRECTION PASS
+STATUS: CORRECTED
+DECISION: The WORK/LOGBOOK architecture from the entry above was correct and is kept unchanged. Several content errors from that first pass are corrected in this entry's sibling entries above: (1) the 2026-08-16 five-article evaluation was wrongly declared nonexistent — it exists on Trident, now documented in `.claude/post-release-five-article-evaluation-2026-08-16.md`, with two of its own headline counts (5/5 not 4/4 brief-mismatches; 4/7 not 5/7 fabrication attempts) corrected against the raw artifacts. (2) The persona target architecture (CORE PERSON/PERCEPTUAL ENGINE/MOTIVE/AFFINITY/RISK/TEXTURE) was real, dated 2026-08-10 design history that had been silently dropped from `current-work.md`'s lean rewrite — recovered from commit `b2773c8`, not invented. (3) "Reached by Boat or Plane"'s plan/persona divergence, previously marked UNVERIFIED, is now CONFIRMED via a direct query against Trident's production `engagement.db`. (4) PS1 and LPF1 were incorrectly conflated as one combined closure — split into two distinct, correctly-labeled entries; a third label, P1, remains separate again. (5) RL-2026-002 was wrongly recorded as "frozen, never published" — an uncommitted `status_correction_2026-08-14` annotation already sitting in the working tree (matched on Trident) shows it was published via the admin UI on 2026-08-13. (6) SHA reporting split into `ORIGIN_MAIN_HEAD`/`TRIDENT_DEPLOYED_HEAD`/`LAST_PRODUCTION-CODE_RELEASE`/`LAST_MEMORY_RECONCILIATION_COMMIT` so a docs-only commit is never again read as a production-code change. (7) GENERATE→MATERIALIZE terminology confirmed with exact source quote (`.claude/cripminds-publication-model-v1-2026-08-14.md`, git branch `publication-model-v1-2026-08-14`, never merged to main). (8) Whitepaper "CripMinds: Reclaiming Ways of Knowing v0.2" searched exhaustively (full repo history, all branches, Trident, Google Drive) and NOT located — recorded as a gap, not fabricated.
+EVIDENCE: this file's corrected entries above; `.claude/WORK.md` (corrected); `.claude/post-release-five-article-evaluation-2026-08-16.md` (new)
+CODE: commit (this correction pass — see WORK.md `## 3` for exact `LAST_MEMORY_RECONCILIATION_COMMIT`)
+SUPERSEDES: the PM1-pass content of the "PROJECT MEMORY RECOVERY + INSTALLATION" entry above (architecture, not superseded — only content).
+FOLLOW-UP: none of the corrections above required a code, article, or deploy change — documentation/evidence reconciliation only, per instruction.

@@ -1,0 +1,216 @@
+{
+  "handoff_metadata": {
+    "handoff_type": "reader_lab_research_export",
+    "export_timestamp": "2026-08-13T10:12:00Z",
+    "round_id": "RL-2026-001",
+    "source": "research_exports table, pulled directly from production D1 by the privileged ops session per a cross-session request from a research session that has no D1/Cloudflare credentials by design",
+    "export_version": "reader-lab-research-export-v1",
+    "content_sha256_as_stored_in_d1": "51b975013f8fd0b50dafb3fdee4979251f9b0d53b6b46bb3980d6dfe68c48474",
+    "generated_at": "2026-08-13T10:05:14.995Z",
+    "status": "ready",
+    "generation_note": "Generated automatically the moment the round completed (src/researchExport.js's buildResearchExport, called from index.js's handleResponse) -- not manually assembled, not edited before this handoff.",
+    "included": [
+      "round metadata (dataset_purpose, task_type/version, blindness/assistance flags, lifecycle timestamps)",
+      "per-item: item_id, source_snapshot, candidate_sentence, and every reviewer's response (selected_public_response, internal_normalized_response, confidence, comment text, timestamp, practice_or_real, blindness/provenance flags)"
+    ],
+    "excluded_never_included": [
+      "invitation tokens / token hashes / session ids -- the export's own SQL only ever touches rounds/items/assignments/responses, never invitations/sessions (structural, not just careful)",
+      "ADMIN_TOKEN / EXPORT_TOKEN / CALIBRATION_RUNNER_TOKEN / any Cloudflare API token"
+    ],
+    "reviewer_isolation_note": "reviewer_parent_a and reviewer_parent_b's responses were recorded under reviewer_blind_to_other_reviewers=1 throughout -- neither reviewer saw the other's answer at any point before, during, or after judging. Reported disagreement is real, independent disagreement."
+  },
+  "research_export": {
+    "export_version": "reader-lab-research-export-v1",
+    "generated_at": "2026-08-13T10:05:15.039Z",
+    "round_id": "RL-2026-001",
+    "manifest_sha256": null,
+    "dataset_purpose": "development",
+    "dataset_purpose_note": null,
+    "task_type": "factual_floor_v0",
+    "task_version": "v0.1",
+    "research_question": null,
+    "reviewer_blind_to_model_output": true,
+    "reviewer_blind_to_other_reviewers": true,
+    "assistance_mode_required": "independent",
+    "created_at": "2026-08-12T18:05:00Z",
+    "frozen_at": "2026-08-12T18:05:00Z",
+    "published_at": null,
+    "completed_at": "2026-08-13T10:05:14.892Z",
+    "reviewer_ids": [
+      "reviewer_parent_a",
+      "reviewer_parent_b"
+    ],
+    "items": [
+      {
+        "slot": 1,
+        "item_id": "ril_e01890e0-4a62-486b-85b4-c91fb38c6b44",
+        "source_snapshot": "When the best decision is no decision: the rise of randomization in grant funding\n\nRachel Heyard’s job was to find a signal in the noise, but the trouble was how often there wasn’t one. As a biostatistician in the data team at the Swiss National Science Foundation (SNSF) in Bern, Switzerland’s main public research funder, Heyard faced a tricky problem. Reviewers and panel members scored each grant application against criteria such as scientific relevance, feasibility and the applicant’s track record, grading the proposal on a scale from A to D. Her team’s task was to test how much those scores could be trusted: to determine which applications truly outranked the others in the competition for limited funds.\n\nThe strongest and the weakest proposals were sorted readily enough. But the rest piled up in the messy middle — what she calls “a cloud of B proposals” — clustered so tightly in score that panels struggled to differentiate them. To force a ranking, they sharpened the grades with pluses and minuses, splitting hairs that might not have existed.\n\nHeyard helped to build a statistical framework to measure what the reviewers’ scores were actually worth. It treated each proposal’s standing not as a fixed rank, but as a range that reflected the uncertainty in a panel’s judgement. Instead of pretending that one proposal was exactly 23rd and another precisely 27th, the model asked whether those apparent ranks could really be distinguished.\n\nNear the funding line, they often could not.",
+        "candidate_sentence": "The specific limit built into this classification is that the scale's resolution was treated as adjustable by the raters, when in fact resolution is a property of the underlying signal — and the signal, near the funding line, was not there to be resolved.",
+        "source_snapshot_id": "sha256:d09ead6bac6cbd71829fad9251913327106ea22c49e1aedeb21cb38fa8305e55",
+        "candidate_claim_id": "sha256:12a6d634ed0d92a15823060482d99533af9acf082b6cfbf77ef39b4eb612664d",
+        "internal_note": null,
+        "provenance": null,
+        "judgments": [
+          {
+            "reviewer_id": "reviewer_parent_a",
+            "selected_public_response": "not_sure",
+            "internal_normalized_response": "uncertain",
+            "confidence": null,
+            "comment": "I find the source clearer than the sentence. It has become more complicated to understand than the source",
+            "timestamp": "2026-08-13T09:00:18.023Z",
+            "reviewer_blind_to_model_output": true,
+            "reviewer_blind_to_other_reviewers": true,
+            "assistance_declared": "independent"
+          },
+          {
+            "reviewer_id": "reviewer_parent_b",
+            "selected_public_response": "adds_unestablished",
+            "internal_normalized_response": "unsupported_factual_dependency",
+            "confidence": "not_very_sure",
+            "comment": null,
+            "timestamp": "2026-08-12T19:15:50.967Z",
+            "reviewer_blind_to_model_output": true,
+            "reviewer_blind_to_other_reviewers": true,
+            "assistance_declared": "independent"
+          }
+        ]
+      },
+      {
+        "slot": 2,
+        "item_id": "ril_e08ba1e4-8e15-4ef0-8d2b-9f34f8ad4dd2",
+        "source_snapshot": "The National Natural Science Foundation of China (NSFC) plans to fund an extra 12,000 projects through its Young Scientists Fund. Under NSFC rules, male applicants must be under 35 years old and female applicants under 40. This raises a wider question for science funders: should early-career support be tied to birthdate?",
+        "candidate_sentence": "The differential cutoffs reveal that the system is not purely measuring career stage at all — it is measuring career stage adjusted for an assumed sex-linked career disruption pattern (e.g., childbearing).",
+        "source_snapshot_id": "sha256:2851e77ac672a482ae18883bf2002e950d0f3ed6465d67d05f7a09216cfc69bb",
+        "candidate_claim_id": "sha256:e1fcfebdb9f5cde989a67c7a13d248e6fb93d6d20b07a8c0bf4075f7fbf1ab6b",
+        "internal_note": null,
+        "provenance": null,
+        "judgments": [
+          {
+            "reviewer_id": "reviewer_parent_a",
+            "selected_public_response": "reading_of_source",
+            "internal_normalized_response": "interpretive_only",
+            "confidence": "pretty_sure",
+            "comment": "Weinig toelichting nodig. Er wordt helemaal geen suggestie gedaan in de tekst over moederschap. Het kan best waar zijn, maar is een interpretatie vd tekst. Ik vind de zin ook wat stroef geformuleerd. Begint met 'differential cutoffs' dat is een moeilijk begrip. Te moeilijk voor een losse tekst denk ik",
+            "timestamp": "2026-08-13T09:54:21.391Z",
+            "reviewer_blind_to_model_output": true,
+            "reviewer_blind_to_other_reviewers": true,
+            "assistance_declared": "independent"
+          },
+          {
+            "reviewer_id": "reviewer_parent_b",
+            "selected_public_response": "source_supports",
+            "internal_normalized_response": "source_established",
+            "confidence": "somewhat_sure",
+            "comment": null,
+            "timestamp": "2026-08-12T19:17:00.759Z",
+            "reviewer_blind_to_model_output": true,
+            "reviewer_blind_to_other_reviewers": true,
+            "assistance_declared": "independent"
+          }
+        ]
+      },
+      {
+        "slot": 3,
+        "item_id": "ril_9df9a4b6-cd47-4697-91ef-586fc28cc6b4",
+        "source_snapshot": "The US National Institutes of Health (NIH) has begun turning away research grant applications for which the “primary function” is informing policymakers and legislators, according to internal documents seen by Nature. This means that the agency is likely to fund fewer projects assessing how public policies affect human health.\n\n“Policymakers are not considered a stakeholder group within the scope of NIH’s mission,” the internal documents say.\n\nDozens of applications have since been sent back to NIH programme officers in charge of the proposals, instructing them to remove the word ‘policy’ and its derivatives and determine whether the proposals can be salvaged, two NIH officials say. More than 3,700 projects funded during the 2025 fiscal year include these words in the project title or abstract, according to the NIH’s project database.",
+        "candidate_sentence": "But the 3,700+ already-funded projects expose what this assumption costs: the word is not decorative in those titles and abstracts; it is load-bearing, marking the orientation of the work toward its intended use.",
+        "source_snapshot_id": "sha256:df6db41d86d9b3209d7b646fe4fe58a05539c9a2423d84bd6b89cf2338fa99d2",
+        "candidate_claim_id": "sha256:5633831e220241bad108d122a51ab9d67d93dee85c8724aeb3492ac0c55a3c6a",
+        "internal_note": null,
+        "provenance": null,
+        "judgments": [
+          {
+            "reviewer_id": "reviewer_parent_a",
+            "selected_public_response": "adds_unestablished",
+            "internal_normalized_response": "unsupported_factual_dependency",
+            "confidence": null,
+            "comment": "In de bron wordt niets gezegd over al gehonoreerde projecten",
+            "timestamp": "2026-08-13T09:56:22.614Z",
+            "reviewer_blind_to_model_output": true,
+            "reviewer_blind_to_other_reviewers": true,
+            "assistance_declared": "independent"
+          },
+          {
+            "reviewer_id": "reviewer_parent_b",
+            "selected_public_response": "adds_unestablished",
+            "internal_normalized_response": "unsupported_factual_dependency",
+            "confidence": "somewhat_sure",
+            "comment": null,
+            "timestamp": "2026-08-12T19:18:44.183Z",
+            "reviewer_blind_to_model_output": true,
+            "reviewer_blind_to_other_reviewers": true,
+            "assistance_declared": "independent"
+          }
+        ]
+      },
+      {
+        "slot": 4,
+        "item_id": "ril_ffc53c73-bf29-49fe-a1f2-946b81f07517",
+        "source_snapshot": "When the best decision is no decision: the rise of randomization in grant funding\n\nRachel Heyard’s job was to find a signal in the noise, but the trouble was how often there wasn’t one. As a biostatistician in the data team at the Swiss National Science Foundation (SNSF) in Bern, Switzerland’s main public research funder, Heyard faced a tricky problem. Reviewers and panel members scored each grant application against criteria such as scientific relevance, feasibility and the applicant’s track record, grading the proposal on a scale from A to D.\n\nThe strongest and the weakest proposals were sorted readily enough. But the rest piled up in the messy middle — what she calls “a cloud of B proposals” — clustered so tightly in score that panels struggled to differentiate them. To force a ranking, they sharpened the grades with pluses and minuses, splitting hairs that might not have existed.\n\nHeyard helped to build a statistical framework to measure what the reviewers’ scores were actually worth. Instead of pretending that one proposal was exactly 23rd and another precisely 27th, the model asked whether those apparent ranks could really be distinguished. Near the funding line, they often could not.\n\nStarting in 2022, the SNSF stopped treating these rankings as exact. A mathematical model identified the proposals that were too close to separate and sent them into a lottery. Peer review still set the bar to qualify, but among the proposals near the funding threshold, a financed project and a rejected one would be decided by chance.",
+        "candidate_sentence": "The invisible work was not evaluation; it was the manufacture of the appearance of evaluation.",
+        "source_snapshot_id": "sha256:4cb780644d0983d3c63aafc9b6fa71741e858102313028b89812cf5900c559d3",
+        "candidate_claim_id": "sha256:4d55c35b26e64dee3101975ebdaae11ac53450b73534a497957687783bb537fd",
+        "internal_note": null,
+        "provenance": null,
+        "judgments": [
+          {
+            "reviewer_id": "reviewer_parent_a",
+            "selected_public_response": "reading_of_source",
+            "internal_normalized_response": "interpretive_only",
+            "confidence": null,
+            "comment": "Brontekst gecompliceerd. de zin is een hele vrije interpretatie die ik niet goed volg. ",
+            "timestamp": "2026-08-13T10:00:04.301Z",
+            "reviewer_blind_to_model_output": true,
+            "reviewer_blind_to_other_reviewers": true,
+            "assistance_declared": "independent"
+          },
+          {
+            "reviewer_id": "reviewer_parent_b",
+            "selected_public_response": "source_supports",
+            "internal_normalized_response": "source_established",
+            "confidence": "pretty_sure",
+            "comment": null,
+            "timestamp": "2026-08-12T19:20:33.580Z",
+            "reviewer_blind_to_model_output": true,
+            "reviewer_blind_to_other_reviewers": true,
+            "assistance_declared": "independent"
+          }
+        ]
+      },
+      {
+        "slot": 5,
+        "item_id": "ril_2452d26c-f319-4dab-80c8-bcd1aa748c4e",
+        "source_snapshot": "Two’s company, three’s a crowd. Perhaps that was the logic someone used hundreds of years ago when altering Pieter de Hooch’s A Man Smoking and a Woman Drinking in a Courtyard (1658-60) by painting over the image of a beer-wielding soldier, removing him from the presence of the two other main figures.\n\nThe Netherlands-based Mauritshuis art museum recently revived the original vision laid out by de Hooch, a 17th-century painter who mastered portrayals of domestic life during the Dutch Golden Age. Conservators decided to paint the missing man back into the scene and rename the artwork Figures in a Courtyard.\n\n“[It] is now much more moralistic,” Judith Niessen, the head of collections and research at the Mauritshuis, tells the Art Newspaper’s Senay Boztas, “which was the intention of de Hooch.”\n\n“With only the man and the woman at the table, the painting seems to be way more innocent than with the second man present,” Niessen tells the Art Newspaper. “Where she would be just drinking a glass of beer before, now it is much more obvious that they are playing a drinking game, where she is drinking the pass-glass and the two men are not.”",
+        "candidate_sentence": "De Hooch's moralism functioned through contrast and implication: the woman drinking the pass-glass while the two men abstain is the moral signal, not mere depiction of drinking.",
+        "source_snapshot_id": "sha256:da2e4211524c1c57f2c463077414f6aaaa314f33ff2e782c248dfa512f5cf244",
+        "candidate_claim_id": "sha256:1d3eacc6b5cf8983d49304bf0d17f81cb5953bbaff8cca34e9f7747b30d49cf2",
+        "internal_note": null,
+        "provenance": null,
+        "judgments": [
+          {
+            "reviewer_id": "reviewer_parent_a",
+            "selected_public_response": "source_supports",
+            "internal_normalized_response": "source_established",
+            "confidence": null,
+            "comment": "Ik denk dat de uitspraak 'contrast and implication' wel een reading of the source is. Maar als geheel denk ik wel direct naar de bron herleidbaar",
+            "timestamp": "2026-08-13T10:05:14.809Z",
+            "reviewer_blind_to_model_output": true,
+            "reviewer_blind_to_other_reviewers": true,
+            "assistance_declared": "independent"
+          },
+          {
+            "reviewer_id": "reviewer_parent_b",
+            "selected_public_response": "source_supports",
+            "internal_normalized_response": "source_established",
+            "confidence": "somewhat_sure",
+            "comment": null,
+            "timestamp": "2026-08-12T19:22:35.864Z",
+            "reviewer_blind_to_model_output": true,
+            "reviewer_blind_to_other_reviewers": true,
+            "assistance_declared": "independent"
+          }
+        ]
+      }
+    ]
+  }
+}
