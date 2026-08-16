@@ -12,9 +12,9 @@ state changed, in the same commit or an immediately adjacent docs commit. A task
 project state but leaves this file stale is not fully closed. Routine article/content commits do
 not need a LOGBOOK entry unless they expose a material system finding.
 
-Last reconciled: 2026-08-16 (PM1.1 correction pass), against `ORIGIN_MAIN_HEAD` — see exact value
-in `## 3`'s SHA table, not restated here to avoid this header going stale again the way the SHA
-claim did in the PM1 pass.
+Last reconciled: 2026-08-16 (Persona Brief <-> Writer Reconciliation release), against
+`ORIGIN_MAIN_HEAD` — see exact value in `## 3`'s SHA table, not restated here to avoid this header
+going stale again the way the SHA claim did in the PM1 pass.
 
 ---
 
@@ -86,10 +86,16 @@ here from git history so it isn't lost twice:
   "what does each persona's perceptual engine expose about this source, then which reframe is
   strongest/least generic/best evidenced" — competitive reframing, not topic assignment.
   Affinities survive only as small priors, never a gate.
-- **Status: Phase 3, confirmed NOT STARTED.** No motive sentences are finalized for any of the
-  four personas. The 2026-08-16 evidence (`## 4a`) shows real brief-persona/byline-persona
-  mismatches in production-realistic runs — this is new empirical support that the problem is
-  real, it did **not** invent this architecture; the architecture predates it by six days.
+- **Status: Phase 3 (motive sentences, CJ-2 competitive-reframing replacement, the OWNERSHIP/
+  SUPPRESSION prompt-clause fixes) confirmed NOT STARTED — but one narrow, separate slice IS now
+  fixed:** the 2026-08-16 evidence's headline finding (`## 4a`) — Fable's own mechanism-aware
+  persona choice being silently overridden by a subject-blind rotation check afterward, with the
+  mechanism/angle shipping unchanged under the substitute persona — is closed as of `## 3` item 5
+  (Persona Brief <-> Writer Reconciliation, `cb69c2d`). This is NOT the CJ-2 competitive-reframing
+  replacement recommended just above, and NOT a fix to Siri's OWNERSHIP clause or the
+  FORBIDDEN_DEFAULTS SUPPRESSION collision — those three remain fully unstarted. What's fixed is
+  narrower: rotation/fairness can no longer silently discard Fable's own persona+mechanism decision
+  after the fact; it now constrains that decision up front instead.
 
 **GENERATE vs. MATERIALIZE — CONFIRMED**, found in `.claude/cripminds-publication-model-v1-2026-08-14.md`
 (git branch `publication-model-v1-2026-08-14`, never merged to `main`): the roadmap phrase
@@ -107,10 +113,10 @@ branch document; do not retroactively edit V0/V1 language to match.
 
 | Field | Value | What it means |
 |---|---|---|
-| `ORIGIN_MAIN_HEAD` | `ed741bb57e90d9077277777adf87569680f1a6e6` | latest commit on GitHub `origin/main` (this PM1.1 correction commit) |
-| `TRIDENT_DEPLOYED_HEAD` | `667633f21088b3f0ff556633d036bc39fba4eb0d` (confirmed via direct SSH read, 2026-08-16) | what the production checkout on Trident has actually pulled and is running — **one commit behind** `ORIGIN_MAIN_HEAD` as of this reconciliation, because deployment happens via the daily cron's `git pull`, not immediately on push |
-| `LAST_PRODUCTION-CODE_RELEASE` | `667633f` | last commit that changed `automation/` behavior (PS1/LPF1, below) |
-| `LAST_MEMORY_RECONCILIATION_COMMIT` | `ed741bb` (PM1 install), corrected again in this same section's own commit (PM1.1) | docs-only, no production code changed |
+| `ORIGIN_MAIN_HEAD` | `cb69c2da1e1a586a70a0f7ba053bc464f9be20a9` | latest commit on GitHub `origin/main` |
+| `TRIDENT_DEPLOYED_HEAD` | `cb69c2da1e1a586a70a0f7ba053bc464f9be20a9` (confirmed via direct SSH read, 2026-08-16) | what the production checkout on Trident has actually pulled and is running — matches `ORIGIN_MAIN_HEAD` exactly as of this reconciliation |
+| `LAST_PRODUCTION-CODE_RELEASE` | `cb69c2d` | last commit that changed `automation/` behavior — Persona Brief <-> Writer Reconciliation (below); supersedes `667633f` (PS1/LPF1) as the most recent code change |
+| `LAST_MEMORY_RECONCILIATION_COMMIT` | this file's own edit (immediately adjacent to `cb69c2d`, not the same commit — see header's maintenance rule) | docs-only, no production code changed |
 
 A docs-only memory commit advancing `ORIGIN_MAIN_HEAD` does NOT mean production code changed —
 check `LAST_PRODUCTION-CODE_RELEASE` for that. **Do not copy any SHA reported in an older
@@ -137,7 +143,7 @@ Authoritative safety-invariant chain, verified directly in code (not just doc cl
    five-article evaluation found exactly this failure mode twice (runs 05 and 07 — a flagged
    claim survived revision into the final draft text); see
    `.claude/post-release-five-article-evaluation-2026-08-16.md`.
-4. **LPF1** (`667633f`, 2026-08-16, current `LAST_PRODUCTION-CODE_RELEASE`) — the legacy-draft
+4. **LPF1** (`667633f`, 2026-08-16) — the legacy-draft
    auto-promotion hole, a DIFFERENT closure from PS1 above (do not conflate — PS1 is about a
    flagged claim surviving revision *within one generation run*; LPF1 is about a *historical*
    draft/article with stale or missing safety metadata being auto-promoted later without
@@ -154,6 +160,33 @@ Authoritative safety-invariant chain, verified directly in code (not just doc cl
      `publication_safety_version >= REQUIRED_SAFETY_VERSION` (currently `1`) before a draft is
      promotion-eligible. Anything else is HELD (`NEEDS_CURRENT_REVALIDATION`), left untouched on
      disk, never auto-archived or auto-rewritten by this gate.
+
+5. **Persona Brief <-> Writer Reconciliation** (`cb69c2d`, 2026-08-16, current
+   `LAST_PRODUCTION-CODE_RELEASE`) — a routing-correctness fix, not a new blocking safety gate
+   (does not stamp `fact_check_status`/`publication_safety_version`), but directly upstream of why
+   AP1/APE2/PS1 have had real fabrication incidents to catch. OLD: `_fable_editorial_brief` chose a
+   persona freely (mechanism-aware), then `generate.py` ran that choice back through
+   `_balance_agent` (rotation-fairness, mechanism-BLIND) a SECOND time and could silently substitute
+   a different persona while every downstream field (angle, correction_moment, resisting_example,
+   cross_cite) stayed exactly as Fable wrote it for the ORIGINAL persona — confirmed root cause of
+   the 5/5 brief/byline mismatches in the 2026-08-16 evaluation (`## 4a`) and of "Reached by Boat or
+   Plane"'s divergence (below), and directly implicated in 2 of that evaluation's 4 real
+   unsupported-persona-biography fabrication incidents (runs 05/07 — the writer, lacking the
+   substitute persona's actual canon support for the inherited mechanism, appears to have invented
+   biography to bridge the gap). NEW: rotation eligibility (`discovery.py`'s new
+   `_rotation_eligible_agents`) is computed BEFORE Fable's decision and passed into
+   `_fable_editorial_brief` as a hard constraint; Fable must choose persona + mechanism together
+   from within it, and the whole brief is rejected (same fail-closed path as any other schema
+   violation) if it names an ineligible persona. The post-brief silent-override block is deleted
+   outright. Invariant now holds structurally: `fable_brief["persona"] == agent_name == the
+   persisted plan persona == the byline`, for every successful Fable path. `_balance_agent` itself
+   is unchanged, still used only for the crude pre-brief keyword seed and the discarded-brief
+   fallback. **Does NOT retroactively repair "Reached by Boat or Plane"** — that article's own
+   remediation decision remains separately pending (below); this fix only prevents the SAME routing
+   failure from recurring in future generation runs. Also explicitly NOT done: story-rejection
+   capability, source/feed concentration, CJ-2 activation, or `persona-architecture-audit.md`
+   findings #1 (Siri Sage's OWNERSHIP prompt clause) / #2 (FORBIDDEN_DEFAULTS SUPPRESSION collision)
+   — all remain Phase 3, confirmed not started (see `## 5` item 5 below).
 
 **Invariant: UNKNOWN SAFETY != SAFE.** A draft or legacy article lacking a current
 `publication_safety_version` is held for revalidation, not treated as safe by default.
@@ -184,6 +217,13 @@ recoverable** (checked directly: `grep` against `automation.log` for this slug r
 routing-decision line) — the specific rebalancing EVENT is inferred from this surrounding
 mechanism/plan evidence, not directly logged. The persisted PLAN ↔ final PERSONA/ARTICLE
 divergence itself, however, is direct DB evidence, not inference. See LOGBOOK entry.
+
+**Root cause of the divergence above is now understood and closed going forward** (item 5,
+Persona Brief <-> Writer Reconciliation, `cb69c2d`, above): the exact silent post-brief rotation
+override that produced this article's Maya-Flux-planned/Siri-Sage-published split can no longer
+happen in new generation runs. This does NOT retroactively repair this specific article — its own
+remediation decision (repair in place / withdraw / leave as-is) remains separately pending, per
+`## 5` item 3 below.
 
 ## 4. LEGACY CORPUS INTEGRITY — REMEDIATION REQUIRED (Phase 1 complete, Phase 2 not started)
 
@@ -236,8 +276,15 @@ rather than one-off. Do not spin these up as five independent efforts.
 5. **Persona-routing authority investigation** — `_THEME_TO_PERSONA` / keyword-routing bugs found
    by `.claude/persona-architecture-audit.md` (Maya Flux is the default/`else` bucket yet has the
    lowest 60-day publish count; the global FORBIDDEN_DEFAULTS ramp/curb-cut/grab-rail ban
-   collides almost entirely with Maya's own core evidentiary vocabulary). Target architecture
-   (CJ-2-based soft-affinity routing) is **Phase 3, confirmed not started.**
+   collides almost entirely with Maya's own core evidentiary vocabulary). **One narrow slice of
+   this is now fixed** (`## 3` item 5, Persona Brief <-> Writer Reconciliation, `cb69c2d`,
+   2026-08-16): the silent post-brief rotation override is closed. Still open, unchanged: the
+   `_THEME_TO_PERSONA` keyword map itself (still a hard lookup table, not affinity-weighted), Siri's
+   OWNERSHIP prompt clause, the FORBIDDEN_DEFAULTS/Maya collision, and Maya's low-publish-count root
+   cause (still unconfirmed which of routing-frequency vs. downstream quality explains it — the
+   funnel-instrumentation diagnostic `persona-architecture-audit.md` finding #3 proposed has still
+   not been run). Full target architecture (CJ-2-based competitive-reframing routing) is **Phase 3,
+   confirmed not started.**
 
 Also open, not part of the causal thread above but real and unresolved:
 - `rewrite_with_opus`'s duplication-blind acceptance check (`automation/orchestrator/llm.py`,
