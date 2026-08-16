@@ -52,13 +52,33 @@ class GenerateMixin:
 
         Blocks on its own: `fable_brief` (loses persona override/angle/register/
         seed sentence/opening scene/correction moment/resisting example in one
-        shot) or `gate_llm` (the authoritative register/rule-violation check going
+        shot), `gate_llm` (the authoritative register/rule-violation check going
         dark means mechanical rule violations are UNKNOWN, not zero -- the same
-        class of loss as fable_brief, not one vote among many). Otherwise blocks
-        once 2+ distinct stages degrade, since that means most of the editorial
-        safety net never ran this pass."""
+        class of loss as fable_brief, not one vote among many), or
+        `persona_biography_unresolved` (author-persona biography fail-closed
+        closure, 2026-08-16 -- _fable_editorial_review positively detected a
+        specific unsupported first-person biographical claim and forced a
+        revision, and the deterministic post-revision recheck in
+        _run_persona_biography_editorial_pass found that exact claim's quoted
+        text still present afterward, or couldn't establish that it was
+        removed. This is a known, named safety finding surviving into the
+        candidate, not a generic vote -- it blocks alone the same way
+        fable_brief/gate_llm do, regardless of what an unrelated fact-check
+        pass concludes about the rest of the article). Otherwise blocks once
+        2+ distinct stages degrade, since that means most of the editorial
+        safety net never ran this pass. Ordinary `editorial_revision`
+        degradation (a revise verdict for purely craft/register reasons,
+        where the recheck above never fires because no persona claim was
+        flagged) is deliberately NOT in the always-blocks set -- it only
+        counts toward the 2+-stages threshold, exactly as before this
+        change."""
         stages = set(degraded_stages)
-        return "fable_brief" in stages or "gate_llm" in stages or len(stages) >= 2
+        return (
+            "fable_brief" in stages
+            or "gate_llm" in stages
+            or "persona_biography_unresolved" in stages
+            or len(stages) >= 2
+        )
 
     def _persist_article_plan(self, slug, agent_name, fable_brief):
         """Persist the full _fable_editorial_brief JSON, keyed on slug, added

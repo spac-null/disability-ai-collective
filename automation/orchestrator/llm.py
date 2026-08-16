@@ -1449,6 +1449,57 @@ class LLMMixin:
             self.logger.warning("Fable polish rewrite failed: %s — falling back to Opus", e)
         return self._opus_targeted_revision(article_body, editorial_notes, agent_name, evidence_packet, persona_factual_context=persona_factual_context)
 
+    # Author-persona biography fail-closed closure (2026-08-16): detection
+    # already exists (_fable_editorial_review's unsupported_persona_claims,
+    # forced verdict="revise" above). The five-article production evaluation
+    # batch found 5/5 real detections but only 3/5 successfully corrected --
+    # the two survivors (both coinciding with an editorial_revision
+    # degradation, i.e. _fable_polish_rewrite/_opus_targeted_revision both
+    # exhausted and returning the draft unchanged) shipped with the exact
+    # flagged claim still in the text, one of them alongside an unrelated
+    # fact_check_status: verified. Nothing downstream re-checks that a
+    # "revise" verdict actually removed what it was supposed to remove --
+    # this is that deterministic recheck. Not a new semantic detector: it
+    # only ever looks at claims _fable_editorial_review already flagged.
+    _PERSONA_CLAIM_NOTE_PREFIX = "REMOVE unsupported persona biography claim: "
+
+    @staticmethod
+    def _extract_flagged_persona_quote(note):
+        """Pull the quoted claim text back out of a 'REMOVE unsupported
+        persona biography claim: "..."' note (see _fable_editorial_review,
+        where this exact prefix is constructed). Returns None if the note
+        isn't in that shape, or has no quoted span to check -- callers must
+        treat None as "cannot verify removal," not as "nothing to check."""
+        prefix = LLMMixin._PERSONA_CLAIM_NOTE_PREFIX
+        if not note.startswith(prefix):
+            return None
+        match = re.search(r'"([^"]+)"', note[len(prefix):])
+        return match.group(1) if match else None
+
+    @staticmethod
+    def _persona_claims_unresolved(notes, content):
+        """True if ANY note flagging an unsupported persona-biography claim
+        still has its quoted text present in `content` after the revision
+        pass ran -- or if a flagged note's quote can't be extracted at all,
+        since "successful remediation cannot be established" is itself a
+        failure condition here, not a pass. Deterministic substring check
+        (whitespace-normalized), independent of whether the revision pass
+        changed content elsewhere -- a rewrite that fixes three unrelated
+        notes but leaves this exact sentence untouched must still count as
+        unresolved, which a whole-content equality check would miss."""
+        def _norm(text):
+            return re.sub(r"\s+", " ", text).strip()
+
+        flagged_notes = [n for n in notes if n.startswith(LLMMixin._PERSONA_CLAIM_NOTE_PREFIX)]
+        if not flagged_notes:
+            return False
+        normalized_content = _norm(content)
+        for note in flagged_notes:
+            quote = LLMMixin._extract_flagged_persona_quote(note)
+            if quote is None or _norm(quote) in normalized_content:
+                return True
+        return False
+
     def _run_persona_biography_editorial_pass(self, content, agent_name, review_angle, register,
                                                evidence_packet, persona_factual_context, raw_draft_guard_hits):
         """_fable_editorial_review + (if flagged) _fable_polish_rewrite, run once
@@ -1500,6 +1551,15 @@ class LLMMixin:
             # exhausted and nothing came back changed despite a revise verdict.
             if content == pre_revision_content and hasattr(self, "_degraded_stages"):
                 self._degraded_stages.append("editorial_revision")
+            # Fail-closed closure (2026-08-16): independent of the whole-content
+            # equality check above -- a revision that changes other flagged
+            # notes but leaves THIS specific unsupported claim's quoted text
+            # in place must still be caught, which content==pre_revision_content
+            # alone would miss. Only fires when _fable_editorial_review actually
+            # flagged a persona-biography claim (notes carries the marked
+            # prefix); an ordinary craft-only revise/degrade never appends this.
+            if self._persona_claims_unresolved(notes, content) and hasattr(self, "_degraded_stages"):
+                self._degraded_stages.append("persona_biography_unresolved")
         return content, reviewer_ran, executor_ran
 
     def _fable_update_state(self, agent_name, article_title, article_body):

@@ -55,17 +55,37 @@ def case_gate_llm_alone_now_blocks():
           GenerateMixin._compute_should_block(["gate_llm"]) is True)
 
 
+def case_persona_biography_unresolved_alone_now_blocks():
+    # Author-persona biography fail-closed closure (2026-08-16): the CripMinds
+    # post-release five-article evaluation batch (691c365) found 2/5 real
+    # unsupported_persona_claims detections survived into a final candidate
+    # unresolved, both because `editorial_revision` degrading was never a
+    # lone-blocker -- one of the two (Article 7) shipped with
+    # fact_check_status: verified, since an unrelated fact-check pass had no
+    # way to know a persona-biography claim was still unresolved.
+    # _run_persona_biography_editorial_pass now appends this new stage only
+    # when a claim _fable_editorial_review actually flagged is still present
+    # (or its removal can't be established) after the revision pass ran.
+    check("persona_biography_unresolved alone -> blocks (THE FIX -- a known, "
+          "specifically-detected unsupported persona-biography claim surviving "
+          "into the candidate is not one vote among many)",
+          GenerateMixin._compute_should_block(["persona_biography_unresolved"]) is True)
+
+
 def case_other_single_stage_alone_still_does_not_block():
-    check("editorial_revision alone -> does not block (only fable_brief/gate_llm are "
-          "lone-blocking; a single non-authoritative-alone stage still needs a second "
-          "failure to matter, unchanged by this fix)",
+    check("editorial_revision alone -> does not block (only fable_brief/gate_llm/"
+          "persona_biography_unresolved are lone-blocking; a single "
+          "non-authoritative-alone stage still needs a second failure to matter, "
+          "unchanged by this fix -- ordinary craft-only editorial_revision "
+          "degradation, where no persona claim was ever flagged, must not be "
+          "treated the same as one that surfaced a real safety finding)",
           GenerateMixin._compute_should_block(["editorial_revision"]) is False)
 
 
 def case_unknown_future_stage_alone_does_not_block():
     check("a hypothetical future stage name alone -> does not block (forward "
-          "compatibility -- only fable_brief/gate_llm are named lone-blockers, "
-          "everything else needs the 2+ threshold)",
+          "compatibility -- only fable_brief/gate_llm/persona_biography_unresolved "
+          "are named lone-blockers, everything else needs the 2+ threshold)",
           GenerateMixin._compute_should_block(["some_future_stage"]) is False)
 
 
@@ -109,6 +129,7 @@ if __name__ == "__main__":
     case_no_degraded_stages_never_blocks()
     case_fable_brief_alone_blocks_unchanged()
     case_gate_llm_alone_now_blocks()
+    case_persona_biography_unresolved_alone_now_blocks()
     case_other_single_stage_alone_still_does_not_block()
     case_unknown_future_stage_alone_does_not_block()
     case_two_distinct_stages_blocks_unchanged()
