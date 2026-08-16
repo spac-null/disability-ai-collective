@@ -373,6 +373,16 @@ class GenerateMixin:
             self.logger.error("Unknown agent: %s", agent_name)
             return None
 
+        # Persona Brief <-> Writer Reconciliation (2026-08-16): the rotation/
+        # fairness-eligible persona SET, computed BEFORE Fable's mechanism-aware
+        # decision -- passed into _fable_editorial_brief below as a hard
+        # constraint, so rotation acts only as an input to that decision, never
+        # as a second, subject-blind check overriding it afterward. See
+        # _rotation_eligible_agents's own docstring (discovery.py) and the
+        # removed post-brief rebalancing block further down for what this
+        # replaces.
+        _eligible_agents = self._rotation_eligible_agents()
+
         # ── Fable editorial brief ──────────────────────────────────────────────
         # Phase 1.6 (.claude/phase-1.6-source-grounding.md): ONE evidence packet,
         # built once here from whichever branch above set source_text (news_seed
@@ -403,7 +413,10 @@ class GenerateMixin:
                        else discovery.get("original_title", "") if discovery else title)
         _ns_summary = news_seed.get("summary", "")         if news_seed else ""
         _ns_dangle  = news_seed.get("disability_angle", "") if news_seed else ""
-        fable_brief = self._fable_editorial_brief(_ns_title, _ns_summary, _ns_dangle, agent_name, evidence_packet)
+        fable_brief = self._fable_editorial_brief(
+            _ns_title, _ns_summary, _ns_dangle, agent_name, evidence_packet,
+            eligible_agents=_eligible_agents,
+        )
         # Phase 1.6 continuation (found via an integration-test harness bug
         # that accidentally simulated this exact scenario -- see
         # .claude/current-work.md): validate_brief() stamps source_hash/
@@ -433,24 +446,41 @@ class GenerateMixin:
                 "angle, or seed)"
             )
             fable_brief = None
+        # Persona Brief <-> Writer Reconciliation (2026-08-16): if a brief
+        # survived the checks above, its persona choice is DEFENSIVELY
+        # re-verified against _eligible_agents (the same set it was already
+        # constrained to inside _fable_editorial_brief, which returns None
+        # rather than a brief naming an ineligible persona) -- not expected to
+        # ever fire in practice, kept as a hard invariant trap rather than a
+        # bare assert (which -O strips) in case a future caller ever
+        # constructs/injects a brief through a different path (e.g. a CJ-2
+        # bridge, still OFF today) that bypasses that internal check.
+        if fable_brief and fable_brief["persona"] not in _eligible_agents:
+            self.logger.error(
+                "INVARIANT VIOLATION: Fable brief named persona %r outside the eligible set "
+                "%s passed to it -- discarding the brief rather than trusting a broken "
+                "invariant (Persona Brief <-> Writer Reconciliation, 2026-08-16)",
+                fable_brief["persona"], _eligible_agents,
+            )
+            fable_brief = None
         if fable_brief:
-            if fable_brief["persona"] != agent_name:
-                # Route Fable's preference back through _balance_agent instead of
-                # accepting it unconditionally — previously this silently defeated the
-                # 3-day/4-day rotation limits _balance_agent had just applied. Confirmed
-                # via article_beats: 60-day totals Zen Circuit 14, Pixel Nova 9, Siri
-                # Sage 7, Maya Flux 4 (12%), including two clean three-in-a-row runs
-                # where Fable put back an agent _balance_agent had just blocked.
-                _fable_balanced = self._balance_agent(fable_brief["persona"])
-                if _fable_balanced != fable_brief["persona"]:
-                    self.logger.info(
-                        "Fable brief wanted %s but rotation blocked it — using %s instead",
-                        fable_brief["persona"], _fable_balanced
-                    )
-                else:
-                    self.logger.info("Fable brief overrides persona: %s → %s", agent_name, fable_brief["persona"])
-                agent_name = _fable_balanced
-                agent_info = self.agents[agent_name]
+            # Fable's persona choice is now AUTHORITATIVE and FINAL -- nothing
+            # runs a second rotation check here anymore. The removed code used
+            # to route Fable's choice BACK through _balance_agent and silently
+            # substitute a different persona when rotation objected, while
+            # every downstream field below (angle, correction_moment,
+            # resisting_example, cross_cite) stayed exactly as Fable wrote it
+            # for the ORIGINAL persona -- confirmed via the conceptual-
+            # architecture audit's evaluation-batch artifacts as the direct
+            # cause of at least two real unsupported-persona-biography
+            # fabrication incidents (the writer, lacking the reassigned
+            # persona's actual canon support for the inherited mechanism,
+            # invented biography to bridge the gap). The invariant this
+            # replaces it with: fable_brief["persona"] == agent_name ==
+            # (eventually) the persisted plan persona == the byline, always,
+            # for every successful Fable path.
+            agent_name = fable_brief["persona"]
+            agent_info = self.agents[agent_name]
             _fable_register       = fable_brief["register"]
             # seed_sentence/opening_scene: captured (KeyError/.get() still
             # enforce the brief shape) but deliberately NOT injected into the

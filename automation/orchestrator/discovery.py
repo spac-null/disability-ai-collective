@@ -100,6 +100,81 @@ def _extract_paragraphs_regex(html: str, max_paras: int = 12) -> str:
 
 
 class DiscoveryMixin:
+    def _rotation_eligible_agents(self):
+        """The rotation/fairness-eligible persona SET, computed BEFORE any
+        mechanism-aware decision is made (Persona Brief <-> Writer
+        Reconciliation, 2026-08-16 -- see the conceptual-architecture audit's
+        CA2 finding and `.claude/persona-architecture-audit.md` finding #3).
+
+        This runs the SAME rotation rule `_balance_agent` below has always
+        applied (no same persona within 3 days; no persona with 2+ articles
+        in the last 4 days), against the same `article_beats` data, but
+        returns the full eligible SET instead of collapsing it into one
+        pick -- so a mechanism-aware caller (Fable's editorial brief) can be
+        given the list of currently-permitted voices as a hard constraint UP
+        FRONT, instead of freely picking any persona and having that choice
+        silently overridden afterward by a second, subject-blind rotation
+        check (the exact failure mode this fix closes -- see generate.py's
+        Fable-brief call site). Deliberately a SEPARATE query rather than a
+        refactor of `_balance_agent` sharing this method's internals: the
+        two functions answer different questions (one persona in/one out,
+        vs. the whole eligible set) and their "all blocked" fallback
+        behavior is shaped differently enough (single min-freq pick vs. a
+        full ranked list) that a shared-internals refactor risks subtly
+        changing `_balance_agent`'s existing, already-relied-upon behavior
+        for a routing-safety-critical function -- the query itself is cheap
+        and runs at most once per generation run, so the small duplication
+        is the safer trade. `_balance_agent` itself is otherwise unchanged
+        and remains the right tool for the crude keyword-seeded fallback
+        paths that run BEFORE any brief exists (news_seed/discovery-domain
+        seeding, the generic-topic-list fallback branch) and as the sole
+        fallback persona when a Fable brief is unavailable/discarded.
+
+        Returns a non-empty list of persona names. Never returns an empty
+        list -- if the strict rotation rule would block everyone, falls back
+        to all personas ranked least-used-first (same "somebody has to
+        write today" reasoning `_balance_agent`'s own all-blocked branch
+        already used). On any DB/query failure, fails OPEN (returns every
+        persona) rather than constraining Fable's choice to a broken/partial
+        read -- the same fail-open spirit as `_balance_agent`'s own
+        except-path (which returns `preferred` unchanged, i.e. blocks
+        nothing, on error).
+        """
+        all_agents = list(self.agents.keys())
+        if getattr(self, 'override_agent', None):
+            return [self.override_agent]
+        try:
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._init_beats_table(conn)
+            cutoff4 = (datetime.now() - timedelta(days=4)).strftime("%Y-%m-%d")
+            cutoff3 = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
+
+            rows = conn.execute(
+                "SELECT agent, COUNT(*) FROM article_beats WHERE date >= ? GROUP BY agent",
+                (cutoff4,)
+            ).fetchall()
+            freq = {r[0]: r[1] for r in rows}
+
+            recent = conn.execute(
+                "SELECT DISTINCT agent FROM article_beats WHERE date >= ?",
+                (cutoff3,)
+            ).fetchall()
+            conn.close()
+
+            blocked = {r[0] for r in recent}
+            for a, c in freq.items():
+                if c >= 2:
+                    blocked.add(a)
+
+            candidates = [a for a in all_agents if a not in blocked]
+            if not candidates:
+                candidates = sorted(all_agents, key=lambda a: freq.get(a, 0))
+            return candidates or all_agents
+
+        except Exception as e:
+            self.logger.debug("_rotation_eligible_agents failed: %s", e)
+            return all_agents
+
     def _balance_agent(self, preferred: str) -> str:
         """
         Guard against agent overuse. Rules (in priority order):
@@ -108,6 +183,19 @@ class DiscoveryMixin:
           3. If preferred agent has 2+ articles in last 4 days → rotate.
           4. Otherwise keep preferred.
         Returns final agent name.
+
+        Persona Brief <-> Writer Reconciliation (2026-08-16): still used by
+        the crude keyword-seeded persona guesses that run BEFORE a Fable
+        brief exists (news_seed/discovery-domain routing, the generic
+        fallback-topic branch) and as the sole fallback persona when a Fable
+        brief is unavailable/discarded -- unchanged, byte-for-byte, from
+        before this fix. NOT used anymore to re-check a brief's own persona
+        choice after the fact -- that silent post-hoc override (Fable
+        chooses persona A, this function silently substitutes B, B writes
+        A's mechanism/angle unchanged) was the exact confirmed bug; see
+        `_rotation_eligible_agents` above, used instead at generate.py's
+        Fable-brief call site to constrain Fable's choice BEFORE it's made,
+        with nothing downstream allowed to override it afterward.
         """
         if getattr(self, 'override_agent', None):
             return self.override_agent

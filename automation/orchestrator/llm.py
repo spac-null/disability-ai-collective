@@ -736,7 +736,8 @@ class LLMMixin:
         self.logger.error("Editorial model: all attempts failed (CLIProxy + direct OpenRouter)")
         return None
 
-    def _fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent, evidence_packet=None):
+    def _fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent,
+                                evidence_packet=None, eligible_agents=None):
         """Fable 5 generates an editorial brief before writing.
 
         evidence_packet (Phase 1.6, see .claude/phase-1.6-source-grounding.md):
@@ -754,17 +755,47 @@ class LLMMixin:
         the actual supplied source text and force-downgrades anything it can't
         verify to "not_found" rather than shipping it.
 
+        eligible_agents (Persona Brief <-> Writer Reconciliation, 2026-08-16):
+        an optional iterable of persona names Fable's choice is constrained to
+        -- generate.py computes this from `_rotation_eligible_agents()` BEFORE
+        calling this method, so rotation/fairness acts as an input constraint
+        on this decision, not a second, subject-blind check that silently
+        overrides it afterward (the exact bug this closes: Fable choosing
+        persona A, a later rotation check substituting B, B then writing A's
+        unchanged mechanism/angle/evidence). Defaults to None, meaning
+        "unconstrained, any current persona" -- preserves the exact prior
+        behavior for callers that don't pass it (frozen probes, snapshot
+        fixtures) rather than silently changing their behavior.
+        `current_agent` remains unused inside this function (was already the
+        case before this change, confirmed by direct inspection -- Fable
+        chooses freely among whichever personas are offered to it, it does
+        not defer to a suggested starting point); kept as a parameter only
+        for call-site/signature compatibility with existing callers.
+
         Returns dict {persona, angle, register, seed_sentence, ...} or None on
-        failure. resisting_example/correction_moment are now structured
-        evidence-candidate objects (see grounding.py), not flat strings.
+        failure -- including when the model returns a persona outside
+        eligible_agents (fails exactly like any other schema violation: no
+        persona override, no angle, no seed; see the validation check below).
+        resisting_example/correction_moment are now structured evidence-
+        candidate objects (see grounding.py), not flat strings.
         """
         import json as _j
         if evidence_packet is None:
             evidence_packet = build_evidence_packet(None)
+        _eligible = list(eligible_agents) if eligible_agents is not None else list(self.agents.keys())
         personas = "\n".join(
             f"- {n}: {info['perspective'][:120]}"
             for n, info in self.agents.items()
+            if n in _eligible
         )
+        _eligible_constraint = (
+            f"\nELIGIBLE PERSONAS FOR THIS CYCLE ONLY: {', '.join(_eligible)}. "
+            "Newsroom rotation-fairness has already excluded any other persona from writing today "
+            "-- you may choose ONLY from the personas listed above, even if a different persona (not "
+            "listed) would otherwise feel like the sharper fit. Find the strongest hidden-mechanism "
+            "angle achievable with one of the eligible voices above; do not name a persona outside "
+            "this list in the \"persona\" field under any circumstance.\n"
+        ) if eligible_agents is not None else ""
         reg_names = ", ".join(r[0] for r in _REGISTERS)
         system = (
             "You are the editorial director of Crip Minds — a disability culture publication. "
@@ -836,6 +867,7 @@ class LLMMixin:
             + (f"Disability angle: {disability_angle}\n" if disability_angle else "")
             + _source_block
             + f"\nPersonas:\n{personas}\n"
+            + _eligible_constraint
             + state_block
             + _fault_block
             + _openings_block + "\n\n"
@@ -934,7 +966,12 @@ class LLMMixin:
             raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
             brief = _j.loads(raw)
             if all(k in brief for k in ("persona", "angle", "register", "seed_sentence")):
-                if brief["persona"] in self.agents and any(brief["register"] == r[0] for r in _REGISTERS):
+                # Persona Brief <-> Writer Reconciliation (2026-08-16): must be
+                # in the ELIGIBLE set, not merely a known agent -- a model that
+                # ignores the eligibility constraint (or a caller that passed
+                # none) fails this exactly like any other schema violation
+                # below (logged, returns None), never silently accepted.
+                if brief["persona"] in _eligible and any(brief["register"] == r[0] for r in _REGISTERS):
                     brief.setdefault("cross_cite", "")
                     brief.setdefault("correction_moment", "")
                     brief.setdefault("opening_shape", "")
@@ -970,7 +1007,11 @@ class LLMMixin:
                         brief["persona"], brief["register"], brief["angle"][:60], brief["grounding_status"],
                     )
                     return brief
-            self.logger.error("Fable brief: invalid persona/register — article will publish without persona override, angle, or seed")
+            self.logger.error(
+                "Fable brief: invalid persona/register (persona=%r not in eligible set %s, or "
+                "register unrecognized) — article will publish without persona override, angle, or seed",
+                brief.get("persona") if isinstance(brief, dict) else None, _eligible,
+            )
         except Exception as e:
             self.logger.error("Fable brief parse failed: %s — article will publish without persona override, angle, or seed", e)
         return None

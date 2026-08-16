@@ -144,7 +144,8 @@ def _run(brief_builder):
         captured["fable_brief"] = dict(fable_brief) if fable_brief else fable_brief
         raise _StopAfterPersist()
 
-    def mocked_fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent, evidence_packet=None):
+    def mocked_fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent,
+                                      evidence_packet=None, eligible_agents=None):
         return brief_builder(evidence_packet)
 
     with tempfile.TemporaryDirectory() as tmpdir:
