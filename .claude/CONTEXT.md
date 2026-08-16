@@ -8,6 +8,10 @@ commit SHA, what it superseded).
 FOR EVIDENCE: follow the linked research/audit documents from WORK.md's document index — do not
 re-derive conclusions those documents already establish.
 
+FOR PHYSICAL PROJECT/WORKTREE/EVIDENCE TOPOLOGY: `.claude/PROJECT-MAP.md` — where worktrees,
+branches, and preserved evidence physically live and their lifecycle status. Machine-generated
+manifest: `.claude/project-manifest.json` (regenerate: `python3 scripts/cripminds_project_inventory.py`).
+
 ---
 
 Resume prompt — cripminds.com session continuation

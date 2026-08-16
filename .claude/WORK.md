@@ -4,7 +4,9 @@
 describes CURRENT TRUTH only — not a diary. History lives in `.claude/LOGBOOK.md`. Full
 evidence/methodology lives in the linked documents under `## DOCUMENT INDEX` — do not
 duplicate their content here, and do not treat an older document's conclusion as authoritative
-if this file marks it superseded.
+if this file marks it superseded. **Physical topology (worktrees, branches, preserved evidence
+locations, lifecycle status) is now canonically tracked in `.claude/PROJECT-MAP.md`** (installed
+2026-08-16, Project Memory Phase 3) — do not duplicate that content here either.
 
 **Maintenance rule:** every material production release, safety-invariant change, architectural
 decision, experiment freeze/unfreeze must update `LOGBOOK.md`, and this file too if current
