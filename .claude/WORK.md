@@ -14,7 +14,7 @@ state changed, in the same commit or an immediately adjacent docs commit. A task
 project state but leaves this file stale is not fully closed. Routine article/content commits do
 not need a LOGBOOK entry unless they expose a material system finding.
 
-Last reconciled: 2026-08-16 (Persona Brief <-> Writer Reconciliation release), against
+Last reconciled: 2026-08-17 (AR3-B testimony-quota fix release; see `## 5a`), against
 `ORIGIN_MAIN_HEAD` — see exact value in `## 3`'s SHA table, not restated here to avoid this header
 going stale again the way the SHA claim did in the PM1 pass.
 
@@ -318,6 +318,56 @@ Also open, not part of the causal thread above but real and unresolved:
   (`the-floor-plan-of-disappearance`) was manually repaired (`64d1658`), the class of bug was not.
   Any future non-Opus-origin draft could reproduce it.
 
+## 5a. NEAR-TERM PRIORITY (2026-08-17): SOFA ARTICLES, NOT DEEPER ARCHITECTURE
+
+**Priority changed, not superseding `## 5`'s causal thread** — that thread remains real and
+un-cancelled, just deprioritized against a faster-turnaround target. Near-term artistic target
+is now **"Sofa Articles"**: pieces Jascha would genuinely sit down and read for pleasure (closer
+to a strong Bregman essay than to "a disability article") — concrete opening, a strange detail
+worth following, real documented material, investigation rather than thesis delivery, disability-
+derived perception doing causal work without becoming the subject, no manufactured human texture.
+Operational rule: prioritize work with a plausible path to a noticeably better finished article
+within 1-3 steps; an artistic experiment should normally produce ~3-6 finished pieces before
+ship/reject/redirect, not run into a long chain. This does not relax evidence/provenance rigor —
+see the AR-series below, all of which is real generation + real provenance audits, not shortcuts.
+
+**Evidence trail (do not re-litigate, read before touching writer-prompt testimony rules again):**
+`.claude/experiments/artistic-reset-ar1-2026-08-17.md` (AR1 — disability as epistemic engine, not
+subject) → `artistic-reset-ar2-silent-lens-2026-08-17.md` (AR2 — Silent-Lens doctrine tested, not
+the primary lever) → `artistic-reset-ar2-1-provenance-and-discovery-motion-2026-08-17.md` (AR2.1 —
+provenance audit found AR2's testimony partly fabricated, isolated NAMED VOICES/SOMEONE ELSE MUST
+SPEAK as the likely driver) → `artistic-reset-ar3-unforced-human-presence-2026-08-17.md` (AR3,
+decision AR3A — confirmed via a real 3-condition/12-article/12-review experiment: removing the
+testimony quota cuts fabrication with zero measured artistic cost) →
+`artistic-reset-concept-perceptual-engines-disturbances-case-memory-2026-08-17.md` (preserved
+conceptual branch: engine vs. persona, disturbance-level discovery, mechanism-indexed case
+memory — real, not cancelled, explicitly deprioritized against Scout).
+
+**SHIPPED (this entry):** the AR3-B testimony-quota fix is live in production —
+`automation/orchestrator/generate.py`'s NAMED VOICES / SOMEONE ELSE MUST SPEAK / NO INVENTED
+QUOTES three-part mandatory block replaced by one compact, evidence-bound "HUMAN TESTIMONY /
+NAMED VOICES" rule (zero testimony/quotation/named-people explicitly valid; inventing any of it
+for narrative texture forbidden; real-name fabrication severity warning carried forward). HUMAN
+THREAD, GROUNDING, TEMPORAL ANCHORS, AUTHOR RULE, "strong thesis from sentence one," Story
+Rejection, PRF1, persona architecture, `disability_angle`, Fable planning, and routing are all
+explicitly untouched by this release — full regression suite + 2 new `writer_prompt_test.py`
+tests pass locally and on the live Trident deploy. See LOGBOOK for the release record.
+
+**Immediate sequence, in order (do not skip ahead without generating/reading real work first):**
+1. Ship the AR3-B testimony fix — **DONE**, this entry.
+2. Build CripMinds Scout (broad source material → disturbance-fragment detection → a very small
+   number of strange, grounded leads → real finished Sofa Articles) — cheap and bounded first
+   version only; not new routing architecture, not a persona redesign, not a case-library
+   database, not a 12-micro-lens engine, not an autonomous research platform.
+3. Generate/read a very small set (~3) of real finished articles from Scout's leads.
+4. Add small, verified case-memory retrieval only if Scout's own output makes a real mechanism-
+   reuse opportunity concrete — not speculatively.
+5. Return to deeper architecture (Engine Before Persona, AR3.1 discovery-motion/thesis
+   contradiction, AR4 `disability_angle` x Fable-planning 2x2, disturbance-mining comparison, case-
+   library shadow prototype) only once finished work makes the question consequential. **None of
+   these are cancelled** — they remain preserved, real, queued research questions; they are simply
+   not the next thing to build.
+
 ## 6. PARKED / DO NOT ACCIDENTALLY RESTART
 
 - **CJ-2** (competitive persona-reframing architecture) — OFF (`CJ2_INTEGRATION_MODE` defaults to
@@ -462,6 +512,11 @@ before declaring something unconfirmed.
 | `.claude/master-roadmap-2026-08-13.md` | **HISTORICAL, frozen 2026-08-13** | CJ-2/B2 phase table (A-J), reconciles two ancestor docs; repo has moved past its "ahead N commits" claims — trust its phase-table structure, not its "current HEAD" claims |
 | `.claude/original-blueprint-A-M-reconciliation-2026-08-13.md` | **HISTORICAL, frozen 2026-08-13, re-checked 2026-08-14 (commit `204c3bc`)** | per-letter A-M status; G/H/I re-confirmed done that day |
 | `.claude/experiments/final-evaluation-freeze-protocol-2026-08-13.md` | **CURRENT (governance)** | the actual CJ-2/B2 freeze requirements — read this, not a paraphrase, before touching CJ-2 |
+| `.claude/experiments/artistic-reset-concept-perceptual-engines-disturbances-case-memory-2026-08-17.md` | **CURRENT (preserved hypothesis, not decided)** | engine-vs-persona, disturbance-level discovery, mechanism-indexed case memory — deprioritized against Sofa Articles/Scout, not cancelled, see `## 5a` |
+| `.claude/experiments/artistic-reset-ar3-unforced-human-presence-2026-08-17.md` | **CURRENT (shipped, AR3A)** | 3-condition/12-article/12-review real experiment; testimony-quota removal cuts fabrication at zero measured artistic cost — production fix shipped this release, see `## 5a` |
+| `.claude/experiments/artistic-reset-ar2-1-provenance-and-discovery-motion-2026-08-17.md` | **CURRENT (forensic audit, AR21B)** | provenance ledger on AR2's 8 articles; found AR2's testimony partly fabricated, isolated NAMED VOICES/SOMEONE ELSE MUST SPEAK as the likely driver — motivated AR3 |
+| `.claude/experiments/artistic-reset-ar2-silent-lens-2026-08-17.md` | **CURRENT (real experiment, AR2C)** | 4-source/2-condition Silent-Lens doctrine test; writer doctrine is not the primary lever of subject-drift |
+| `.claude/experiments/artistic-reset-ar1-2026-08-17.md` | **CURRENT (synthesis, AR1)** | disability-as-epistemic-engine vs. article-subject; whitepaper cross-read against 4 real production articles; designed (didn't run) the Silent-Lens/AR2 experiment |
 | `.claude/experiments/cj1-v3-friction-gate-2026-08-11.md` | **CURRENT (frozen research artifact)** | CJ-1 frozen contract + 3 parked implementation issues |
 | `.claude/experiments/cj2-competitive-reframing-design-2026-08-11.md` | **CURRENT (frozen architecture, pre-freeze)** | CJ-2 4-engine-capsule design, 4 correction rounds |
 | `.claude/experiments/phase-1.6-source-grounding-2026-08-11.md` | **CURRENT (shipped)** | source-grounding hardening, Jascha-archive/Pixel-Nova scope evidence |
