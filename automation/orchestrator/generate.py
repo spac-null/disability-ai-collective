@@ -246,7 +246,10 @@ class GenerateMixin:
                 f"[{news_seed['title']}]({news_seed['url']}) "
                 f"from {news_seed['source_name']}.*"
             )
-            source_text = self.get_source_text(news_seed["url"], fallback_text=news_seed.get("summary"))
+            source_text = self.get_source_text(
+                news_seed["url"], fallback_text=news_seed.get("summary"),
+                underlying_url=news_seed.get("underlying_article_url"),
+            )
             # Phase 1.6 (found on review): get_source_text returns a plain
             # string whether it's a genuine fetch or the RSS-summary
             # fallback -- indistinguishable once returned. A fallback result
@@ -430,6 +433,13 @@ class GenerateMixin:
         _src_decision = (fable_brief or {}).get("source_decision") if fable_brief else None
         if fable_brief and _src_decision == "decline":
             return self._handle_declined_run(news_seed, fable_brief, evidence_packet, _source_origin)
+        if fable_brief and _src_decision == "defer":
+            # V1.1 (SRF3 false-commission fix): a commission verdict that failed
+            # grounding validation. Distinct from both decline (an editorial "no
+            # mechanism" judgment) and the legacy None/technical-failure path (which
+            # falls through to writing via the base agent) -- see
+            # _fable_editorial_brief's docstring and _handle_defer_run below.
+            return self._handle_defer_run(news_seed, fable_brief, evidence_packet, _source_origin)
         if (
             fable_brief and _src_decision == "commission"
             and fable_brief.get("eligible_execution_possible", True) is False
@@ -1481,6 +1491,37 @@ class GenerateMixin:
             "message": "Layer 1: source has no sufficiently strong CripMinds mechanism; article not written",
             "decline_record": decline_record,
             "commit_success": False,
+        }
+
+    def _handle_defer_run(self, news_seed, fable_brief, evidence_packet, source_origin):
+        """DSR2 V1.1 LAYER 1 = COMMISSION verdict failed grounding validation
+        (missing/ungrounded anchor, empty mechanism, mechanism not tied to the
+        anchor, insufficient source origin, or malformed eligible_execution_
+        possible -- see grounding._validate_commission_grounding). NOT a
+        decline (bad evidence is not the same claim as "no mechanism exists"
+        -- an editor who never got to inspect real evidence hasn't made an
+        editorial judgment at all) and NOT the legacy technical-failure
+        write-anyway path (that would let an ungrounded "commission" still
+        produce an article via the base agent, exactly the false-commission
+        failure mode this closes -- see SRF3). Clean end: no writer, no
+        persistence, source is neither declined nor marked used -- fully
+        reconsiderable on a future run with better/more evidence."""
+        self.logger.warning(
+            "Story Rejection: commission verdict failed grounding validation (%s) — "
+            "DEFER (insufficient evidence), no article, source not declined, not marked used.",
+            fable_brief.get("defer_reason_code"),
+        )
+        return {
+            "status": "defer",
+            "source_decision": "defer",
+            "defer_reason_code": fable_brief.get("defer_reason_code"),
+            "defer_reason": _sr_strip(fable_brief.get("defer_reason")),
+            "agent": None,
+            "message": "Commission verdict did not meet grounding requirements "
+                       "(source_anchor_examined/hidden_mechanism/why_disability_knowledge_changes_subject) "
+                       "— insufficient evidence, not an editorial decline",
+            "commit_success": False,
+            "declined": False,
         }
 
     def _handle_no_execution_run(self, news_seed, fable_brief, evidence_packet, source_origin):

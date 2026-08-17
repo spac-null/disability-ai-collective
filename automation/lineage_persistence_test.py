@@ -168,7 +168,7 @@ def _run(brief_builder):
             get_discovery_from_database=lambda self: None,
             _get_overused_themes=lambda self: [],
             _get_recent_references=lambda self, days=14: [],
-            get_source_text=lambda self, url, max_chars=3000, fallback_text=None: SOURCE_TEXT[:max_chars],
+            get_source_text=lambda self, url, max_chars=3000, fallback_text=None, underlying_url=None: SOURCE_TEXT[:max_chars],
             get_source_origin=lambda self, url: "fetched_article",
             get_pool_links=lambda self, keywords: [],
             _balance_agent=lambda self, preferred: "Pixel Nova",

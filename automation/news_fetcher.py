@@ -327,7 +327,8 @@ def init_db(conn):
             declined_date    TEXT,
             decline_json     TEXT,
             decline_schema_version TEXT,
-            declined_source_hash  TEXT
+            declined_source_hash  TEXT,
+            underlying_article_url TEXT
         )
     """)
     conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_score   ON news_seeds(relevance_score)")
@@ -337,12 +338,15 @@ def init_db(conn):
     # Story Rejection V1 (DSR2): additive, idempotent migration for pre-existing
     # DBs (mirrors the angle_checked precedent below). Fresh DBs get these via
     # the CREATE above; legacy DBs gain them here without destructive work.
+    # underlying_article_url (V1.1, aggregator isolation) added to this same
+    # loop -- not a decline field, but the same additive-ALTER migration shape.
     for _col, _def in (
         ("declined", "INTEGER DEFAULT 0"),
         ("declined_date", "TEXT"),
         ("decline_json", "TEXT"),
         ("decline_schema_version", "TEXT"),
         ("declined_source_hash", "TEXT"),
+        ("underlying_article_url", "TEXT"),
     ):
         try:
             conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
@@ -376,8 +380,9 @@ def store_seed(conn, item: dict) -> bool:
         conn.execute("""
             INSERT INTO news_seeds
               (id, url, title, summary, source_name, source_tier, pub_date,
-               fetched_date, relevance_score, themes, disability_angle, used)
-            VALUES (?,?,?,?,?,?,?,?,?,?,NULL,0)
+               fetched_date, relevance_score, themes, disability_angle, used,
+               underlying_article_url)
+            VALUES (?,?,?,?,?,?,?,?,?,?,NULL,0,?)
         """, (
             url_id(item["url"]),
             item["url"],
@@ -389,6 +394,7 @@ def store_seed(conn, item: dict) -> bool:
             datetime.now().strftime("%Y-%m-%d"),
             item["relevance_score"],
             json.dumps(item.get("themes", [])),
+            item.get("underlying_url") or None,
         ))
         conn.commit()
         return True
@@ -407,6 +413,36 @@ def prune_old(conn, days: int = 14):
 
 
 # ── RSS fetch ─────────────────────────────────────────────────────────────────
+
+# Mirrors orchestrator.discovery._AGGREGATOR_DOMAINS (duplicated, not
+# imported -- this module is standalone, same rationale as
+# STORY_REJECTION_CONTRACT_VERSION above). A link-aggregator feed's RSS <link>
+# points at the aggregator's own permalink for the item (a page listing many
+# unrelated stories), not the underlying article -- see discovery.py's
+# _AGGREGATOR_DOMAINS docstring for the incident this closes.
+AGGREGATOR_DOMAINS = {"techmeme.com", "www.techmeme.com"}
+
+
+def _url_domain(url: str) -> str:
+    try:
+        from urllib.parse import urlparse
+        return urlparse(url or "").netloc.lower()
+    except Exception:
+        return ""
+
+
+def _first_external_href(html: str, exclude_domains) -> str:
+    """First http(s) href in raw (pre-strip) `html` whose domain is not in
+    exclude_domains. Deterministic regex match, not an HTML parse (this
+    module has no HTML-parsing dependency elsewhere -- see _strip_html) --
+    used only to recover an aggregator item's underlying article link from
+    its own per-item description HTML, never to interpret arbitrary markup."""
+    for m in re.finditer(r'href=["\'](https?://[^"\']+)["\']', html or ""):
+        href = m.group(1)
+        if _url_domain(href) and _url_domain(href) not in exclude_domains:
+            return href
+    return ""
+
 
 def _strip_html(text: str) -> str:
     return re.sub(r"<[^>]+>", " ", text or "").strip()
@@ -464,16 +500,28 @@ def fetch_feed(feed: dict, days: int = 7) -> list[dict]:
         # root.findall(".//item") only matches the unqualified tag, so an RDF feed
         # silently yielded 0 items here with no exception and no log line.
         for item in (e for e in root.iter() if e.tag.split("}")[-1] == "item"):
-            title   = _strip_html(_local(item, "title"))[:200]
-            link    = (_local(item, "link")).strip()
-            summary = _strip_html(_local(item, "description"))[:500]
-            dt      = _parse_dt(_local(item, "pubDate") or _local(item, "date"))
+            title     = _strip_html(_local(item, "title"))[:200]
+            link      = (_local(item, "link")).strip()
+            _desc_raw = _local(item, "description")
+            summary   = _strip_html(_desc_raw)[:500]
+            dt        = _parse_dt(_local(item, "pubDate") or _local(item, "date"))
             if dt >= cutoff and title and link:
-                items.append({
+                _entry = {
                     "title": title, "url": link, "summary": summary,
                     "pub_date": dt.strftime("%Y-%m-%d"),
                     "source_name": feed["name"], "source_tier": feed["tier"],
-                })
+                }
+                # Aggregator isolation (V1.1): recover the real underlying
+                # article link from the item's own RAW description HTML,
+                # BEFORE _strip_html discards it -- this is the only place in
+                # the pipeline where that href still exists. Only set when
+                # the link itself is an aggregator permalink; a normal
+                # publisher feed's <link> already IS the real article.
+                if _url_domain(link) in AGGREGATOR_DOMAINS:
+                    _underlying = _first_external_href(_desc_raw, AGGREGATOR_DOMAINS)
+                    if _underlying:
+                        _entry["underlying_url"] = _underlying
+                items.append(_entry)
 
         # Atom
         ns = {"a": ATOM_NS}

@@ -821,14 +821,30 @@ STORY_REJECTION_CONTRACT_VERSION = "sr1"
 
 
 def validate_source_decision(brief, evidence_packet):
-    """Validate a Layer-1 source-decision verdict (DSR2 Story Rejection V1).
+    """Validate a Layer-1 source-decision verdict (DSR2 Story Rejection V1 / V1.1).
 
     Returns (ok, reason_code, reason, violations). `brief` must already carry a
-    parsed `source_decision`. Handles only the DECLINE branch authoritatively;
-    a "commission" verdict passes trivially here (its persona/angle fields are
-    validated elsewhere by _fable_editorial_brief's existing checks). Never
-    raises -- a malformed decline degrades to "not a valid decline" so the
-    caller's technical-failure path fires instead.
+    parsed `source_decision`. Never raises -- a malformed verdict degrades to
+    "not valid" so the caller can route it to a non-publishing outcome instead.
+
+    V1.1 (2026-08-17, forensic audit SRF3 on the "7,000 Rooms" false commission):
+    COMMISSION used to pass trivially here -- its persona/angle fields were
+    validated elsewhere, but nothing ever verified the source actually
+    contained the claimed mechanism. That let a model commission an article
+    entirely on topic association (a Malaysia/data-center GDP blurb "implying"
+    an accessibility mechanism it never described) while its own recorded
+    reasoning admitted the source gave no supporting detail. COMMISSION now
+    carries the SAME evidence-safety discipline DECLINE already had: an
+    authoritative source origin, no material truncation, a source_anchor_examined
+    that resolves verbatim in the supplied source, a non-empty hidden_mechanism,
+    and a why_disability_knowledge_changes_subject explanation that itself
+    quotes the grounded anchor (forcing the model to tie its category jump to
+    a real source detail, not merely a shared topic). A verdict that fails any
+    of these is NOT converted into a decline (that would misrepresent
+    insufficient EVIDENCE as an editorial "no mechanism" judgment) -- the
+    caller (`_fable_editorial_brief`) turns a `commission_*` failure code from
+    this function into a `source_decision: "defer"` brief instead: no writer,
+    no persisted decline, source remains fully reconsiderable later.
     """
     violations = []
     decision = brief.get("source_decision")
@@ -841,8 +857,7 @@ def validate_source_decision(brief, evidence_packet):
 
     log = []
     if decision == "commission":
-        log.append("source_decision: commission (Layer 1) — execution constrained to eligible set by Layer 2")
-        return True, "commission", " | ".join(log), violations
+        return _validate_commission_grounding(brief, evidence_packet, log, violations)
 
     if decision != "decline":
         return (
@@ -893,6 +908,75 @@ def validate_source_decision(brief, evidence_packet):
     log.append(f"source_decision: decline — grounded (origin={origin}, anchor verified, "
                f"reasoning='{_truncate(brief.get('reason',''), 120)}')")
     return True, "decline", " | ".join(log), violations
+
+
+def _validate_commission_grounding(brief, evidence_packet, log, violations):
+    """COMMISSION-side evidence-safety gates (V1.1). Mirrors the DECLINE gates
+    above (authoritative origin, non-truncated, verbatim-grounded anchor) plus
+    one commission-specific check: why_disability_knowledge_changes_subject
+    must itself quote the grounded anchor, not merely gesture at the same
+    topic. This is deliberately NOT a semantic/LLM judgment of whether the
+    mechanism is TRUE -- it is a structural proof that the explanation is
+    textually anchored to a real source detail rather than free-floating
+    topic association (the exact "GDP blurb -> raised floors/cable troughs"
+    jump the audited false commission made). A failure here returns a
+    commission_* reason_code, never decline_*/invalid_source_decision -- the
+    caller distinguishes these to route to DEFER, not a persisted decline.
+    """
+    required = ["source_anchor_examined", "hidden_mechanism", "why_disability_knowledge_changes_subject"]
+    missing = [k for k in required if not _truthy_str(brief.get(k))]
+    if missing:
+        violations.append({"field": ", ".join(missing), "reason_code": "commission_missing_required",
+                           "reason": f"commission verdict missing required grounding field(s): {missing}"})
+        return False, "commission_missing_required", (
+            f"Story Rejection: commission missing required grounding field(s) {missing} — "
+            "insufficient evidence, not an editorial commission"), violations
+
+    eligible_flag = brief.get("eligible_execution_possible")
+    if not isinstance(eligible_flag, bool):
+        violations.append({"field": "eligible_execution_possible", "reason_code": "commission_eligible_flag_malformed",
+                           "reason": f"eligible_execution_possible must be a real boolean, got {eligible_flag!r}"})
+        return False, "commission_eligible_flag_malformed", (
+            f"Story Rejection: commission's eligible_execution_possible is not a boolean "
+            f"({eligible_flag!r}) — rejected as malformed, never coerced"), violations
+
+    origin = evidence_packet.get("source_origin") if evidence_packet else None
+    if origin not in ("fetched_article", "fixture"):
+        violations.append({"field": "source_origin", "reason_code": "commission_source_insufficient",
+                           "reason": f"source_origin={origin!r}; commission requires authoritative fetched source"})
+        return False, "commission_source_insufficient", (
+            f"Story Rejection: cannot commission from origin={origin!r} (fallback_summary/none "
+            "=> DEFER/insufficient, not a commission)"), violations
+
+    if evidence_packet and evidence_packet.get("source_truncated"):
+        violations.append({"field": "source_truncated", "reason_code": "commission_evidence_truncated",
+                           "reason": "source was truncated at the evidence cap; cannot authoritatively commission"})
+        return False, "commission_evidence_truncated", (
+            "Story Rejection: source is materially truncated — DEFER rather than COMMISSION"), violations
+
+    source_text = evidence_packet.get("source_text") if evidence_packet else None
+    anchor_raw = brief.get("source_anchor_examined")
+    anchor = anchor_raw.strip() if isinstance(anchor_raw, str) and anchor_raw.strip() else None
+    if anchor is None or not source_text or anchor not in source_text:
+        violations.append({"field": "source_anchor_examined", "reason_code": "commission_anchor_not_grounded",
+                           "reason": "source_anchor_examined does not resolve verbatim in the supplied source"})
+        return False, "commission_anchor_not_grounded", (
+            "Story Rejection: commission's source_anchor_examined is not grounded in the source — "
+            "no commission without a verifiable anchor"), violations
+
+    explanation = brief.get("why_disability_knowledge_changes_subject")
+    if not isinstance(explanation, str) or anchor not in explanation:
+        violations.append({"field": "why_disability_knowledge_changes_subject",
+                           "reason_code": "commission_mechanism_not_tied_to_anchor",
+                           "reason": "explanation does not quote the grounded source_anchor_examined — "
+                                     "mechanism reads as topic association, not a source-grounded category jump"})
+        return False, "commission_mechanism_not_tied_to_anchor", (
+            "Story Rejection: commission's mechanism explanation does not tie back to the grounded "
+            "anchor — DEFER rather than COMMISSION on an ungrounded category jump"), violations
+
+    log.append(f"source_decision: commission — grounded (origin={origin}, anchor verified, "
+               f"mechanism tied to anchor) — execution constrained to eligible set by Layer 2")
+    return True, "commission", " | ".join(log), violations
 
 
 def _truthy_str(v):

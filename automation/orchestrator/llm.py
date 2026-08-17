@@ -822,9 +822,12 @@ class LLMMixin:
             "CripMinds mechanism — a hidden mechanism a disabled perceptual engine would reveal "
             "that changes what the thing/system IS or DOES, grounded in a concrete source detail?\n"
             "  - If YES → source_decision = \"commission\"; then proceed to LAYER 2 with the "
-            "eligible-persona constraint below. Set eligible_execution_possible = true unless the "
-            "mechanism genuinely lives in a persona NOT in today's eligible set (in which case "
-            "eligible_execution_possible = false and name which blocked persona's lens carries it).\n"
+            "eligible-persona constraint below. This must be provable, not asserted: you will be asked "
+            "for source_anchor_examined (verbatim), hidden_mechanism, and an explanation that quotes the "
+            "anchor -- a verdict that cannot produce these against the actual source text below is not "
+            "a real commission. Set eligible_execution_possible = true unless the mechanism genuinely "
+            "lives in a persona NOT in today's eligible set (in which case eligible_execution_possible = "
+            "false and name which blocked persona's lens carries it).\n"
             "  - If NO → source_decision = \"decline\". A decline is an editorial verdict that the "
             "source, fully inspected, contains no sufficiently strong mechanism. It is NOT a verdict "
             "about persona availability, and it must NOT be emitted when source evidence is "
@@ -990,14 +993,27 @@ class LLMMixin:
             "Reply with JSON only — no other text:\n"
             "LAYER 1 (decide FIRST, using all four lenses, not only eligible):\n"
             '{"source_decision":"commission"|"decline" — REQUIRED},\n'
-            'when source_decision=="commission": include "eligible_execution_possible":true unless the '
-            'mechanism lives in a blocked persona, in which case false and name it in '
-            '"blocked_carry_persona"; then fill the Layer 2 fields below,\n'
+            'when source_decision=="commission": a commission is not a guess -- it must be provable from '
+            'the source above, exactly like a decline must be. Include: "source_anchor_examined" (the '
+            'exact sentence or clause from the SUPPLIED SOURCE SNAPSHOT this commission rests on, copied '
+            'verbatim), "hidden_mechanism" (the mechanism a disabled perceptual engine reveals -- state it '
+            'as a claim, not a question), "why_disability_knowledge_changes_subject" (explain the category '
+            'jump from the anchor to the mechanism, and QUOTE source_anchor_examined inside this '
+            'explanation -- if you cannot quote it here, the mechanism is not actually anchored to that '
+            'detail and you should decline or reconsider), and "eligible_execution_possible":true unless '
+            'the mechanism lives in a blocked persona, in which case false and name it in '
+            '"blocked_carry_persona"; then fill the Layer 2 fields below. A source that only establishes a '
+            'general TOPIC (an industry grew, a category exists) without a concrete detail your mechanism '
+            'actually depends on is NOT commissionable -- decline it rather than importing a mechanism '
+            'from outside the source,\n'
             'when source_decision=="decline": fill dominant_framing + source_anchor_examined + '
             'why_disability_knowledge_does_not_change_subject + reason, and leave the Layer 2 '
             'fields empty,\n'
             'LAYER 2 (only when source_decision=="commission"):\n'
-            '{"persona":"name","angle":"the question the persona is finding out the answer to — phrased as a question, one where you cannot predict their conclusion",'
+            '{"source_anchor_examined":"the exact source sentence/clause the commission rests on, verbatim",'
+            '"hidden_mechanism":"the mechanism the lens reveals, stated as a claim",'
+            '"why_disability_knowledge_changes_subject":"the category-jump explanation, quoting source_anchor_examined inside it",'
+            '"persona":"name","angle":"the question the persona is finding out the answer to — phrased as a question, one where you cannot predict their conclusion",'
             '"register":"one register name",'
             '"seed_sentence":"the opening sentence of the article — concrete, not a question",'
             '"opening_scene":"the actual first sentence of the essay in the persona\'s voice — NOT a description of where it begins. Vary the shape: plain claim, cold scene, question, bare fact, or a statement of what you set out to find out. Do not default to a placed body in the present tense",'
@@ -1013,15 +1029,30 @@ class LLMMixin:
         try:
             raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
             brief = _j.loads(raw)
-            # ── LAYER 1 (DSR2 Story Rejection V1): source commissionability ──
+            # ── LAYER 1 (DSR2 Story Rejection V1/V1.1): source commissionability ──
             # A legacy brief (no source_decision) is treated as commission,
             # preserving PRF1 + existing fixtures/tests unchanged. The Layer-1
-            # verdict is evidence-validated as a UNIT before Layer 2: a
-            # decision that fails evidence-safety (bad origin, truncated
-            # source, ungrounded anchor, malformed structure) is a TECHNICAL
-            # FAILURE (None → degraded path), NEVER a persisted editorial
-            # decline — so provider/schema/anchor failures can never masquerade
-            # as an editorial "no mechanism" verdict.
+            # verdict is evidence-validated as a UNIT before Layer 2. Three
+            # distinct failure buckets, not one:
+            #   decline_* / invalid_source_decision -- a DECLINE or malformed-
+            #     shape failure. Unchanged since V1: a TECHNICAL FAILURE (None
+            #     -> degraded/legacy-write path), NEVER a persisted editorial
+            #     decline, so provider/schema/anchor failures on the decline
+            #     side can never masquerade as an editorial "no mechanism"
+            #     verdict.
+            #   commission_* (V1.1, added after SRF3's false-commission
+            #     finding) -- a COMMISSION that failed grounding validation
+            #     (missing anchor/mechanism, ungrounded anchor, mechanism not
+            #     tied to the anchor, insufficient origin, malformed
+            #     eligible_execution_possible). This is bad EVIDENCE, not an
+            #     editorial "no mechanism" verdict (that would be a decline)
+            #     and not a provider/schema failure that should silently fall
+            #     through to the legacy write-anyway path (that would let an
+            #     ungrounded "commission" still produce an article via the
+            #     base agent -- exactly the false-commission failure mode
+            #     this closes). Returns a `source_decision: "defer"` brief
+            #     instead of None, so generate.py's dispatch can short-circuit
+            #     to a clean no-article outcome before the writer runs.
             decision_ok, d_code, d_reason, d_violations = validate_source_decision(
                 brief, evidence_packet,
             )
@@ -1031,6 +1062,20 @@ class LLMMixin:
                 if _line.strip():
                     self.logger.info("Decision: %s", _line.strip())
             if not decision_ok:
+                if isinstance(d_code, str) and d_code.startswith("commission_"):
+                    self.logger.warning(
+                        "Story Rejection: commission verdict failed grounding validation (%s): %s — "
+                        "DEFER (insufficient evidence), not a technical failure, not an editorial "
+                        "decline, no article",
+                        d_code, d_reason or "no reason",
+                    )
+                    return {
+                        "source_decision": "defer",
+                        "defer_reason_code": d_code,
+                        "defer_reason": d_reason,
+                        "source_hash": evidence_packet.get("source_hash") if evidence_packet else None,
+                        "evidence_packet_hash": evidence_packet.get("evidence_packet_hash") if evidence_packet else None,
+                    }
                 self.logger.error(
                     "Fable Layer-1 decision invalid (%s): %s — "
                     "treated as technical failure, NOT an editorial decline",

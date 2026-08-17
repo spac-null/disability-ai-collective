@@ -57,6 +57,28 @@ except ImportError:
 # order or requested size.
 _SOURCE_TEXT_CACHE_MAX_CHARS = 20000
 
+# Aggregator isolation (Story Rejection V1.1, 2026-08-17 -- SRF3 forensic
+# audit): a link-aggregator permalink (e.g. Techmeme) resolves to a page
+# listing MANY unrelated stories. trafilatura's readability extraction has no
+# concept of "the one item this feed entry pointed at" -- it extracts the
+# page's whole main-content block, so fetch_source_article on an aggregator
+# permalink returns text spanning every neighbouring headline too. That is
+# exactly how an unrelated lawsuit item sharing the same Techmeme page
+# contaminated a real commission decision and contributed the finished
+# article's title motif. An aggregator URL must therefore NEVER be treated as
+# `fetched_article` material for ITSELF -- see fetch_source_article's
+# aggregator branch below.
+_AGGREGATOR_DOMAINS = {"techmeme.com", "www.techmeme.com"}
+
+
+def _url_domain(url: str) -> str:
+    try:
+        from urllib.parse import urlparse
+        return urlparse(url or "").netloc.lower()
+    except Exception:
+        return ""
+
+
 _NAV_FUNCTION_WORDS = {
     "the", "a", "an", "of", "to", "and", "in", "is", "was", "that", "it", "for",
     "on", "with", "as", "at", "by", "from", "but", "this", "which", "are", "be",
@@ -1117,7 +1139,8 @@ class DiscoveryMixin:
             return None
         return r.text[:500000]
 
-    def fetch_source_article(self, url: str, max_chars: int = _SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text: str = None) -> str | None:
+    def fetch_source_article(self, url: str, max_chars: int = _SOURCE_TEXT_CACHE_MAX_CHARS,
+                              fallback_text: str = None, underlying_url: str = None) -> str | None:
         """Fetch and extract text from source article URL. Never blocks generation.
 
         fallback_text, added 2026-08-10: this fetches the live rendered
@@ -1143,7 +1166,33 @@ class DiscoveryMixin:
         ~400-char RSS summary (real, but the exact same unvetted text
         already shown separately as plain "Summary:" context) that it
         grants to a genuinely fetched ~3000-char article. See
-        get_source_origin's docstring for how a caller should act on this."""
+        get_source_origin's docstring for how a caller should act on this.
+
+        underlying_url (V1.1 aggregator isolation, 2026-08-17): only consulted
+        when `url` itself is on an aggregator domain (see _AGGREGATOR_DOMAINS).
+        An aggregator permalink is NEVER fetched/extracted as a whole page for
+        itself -- either the real underlying article (this parameter, when
+        news_fetcher.py's feed parser managed to recover one) is fetched
+        instead, or this falls back to `fallback_text` only (the single
+        per-item RSS blurb the caller already has, never the aggregator page)."""
+        if _url_domain(url) in _AGGREGATOR_DOMAINS:
+            if underlying_url and _url_domain(underlying_url) not in _AGGREGATOR_DOMAINS:
+                self.logger.info(
+                    "fetch_source_article: %s is an aggregator permalink -- "
+                    "fetching underlying article %s instead", url, underlying_url,
+                )
+                return self.fetch_source_article(
+                    underlying_url, max_chars=max_chars, fallback_text=fallback_text,
+                )
+            self.logger.info(
+                "fetch_source_article: %s is an aggregator permalink with no underlying "
+                "article URL captured -- using the isolated per-item summary only, "
+                "never the full aggregator page", url,
+            )
+            self._last_fetch_origin = "fallback_summary" if fallback_text else "none"
+            self._last_fetch_original_length = len(fallback_text) if fallback_text else None
+            return fallback_text[:max_chars] if fallback_text else None
+
         if not url or not url.startswith("http"):
             self._last_fetch_origin = "fallback_summary" if fallback_text else "none"
             self._last_fetch_original_length = len(fallback_text) if fallback_text else None
@@ -1203,7 +1252,8 @@ class DiscoveryMixin:
         self._last_fetch_original_length = len(text)
         return text[:max_chars]
 
-    def get_source_text(self, url: str, max_chars: int = _SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text: str = None) -> str | None:
+    def get_source_text(self, url: str, max_chars: int = _SOURCE_TEXT_CACHE_MAX_CHARS,
+                         fallback_text: str = None, underlying_url: str = None) -> str | None:
         """Per-run memoized wrapper around fetch_source_article.
 
         Added 2026-08-10: generation (generate.py) and the fact-check repair
@@ -1227,6 +1277,9 @@ class DiscoveryMixin:
         that only initializes the older cache) would otherwise skip
         creating _source_origin_cache entirely and hit an AttributeError
         the first time get_source_origin ran.
+
+        underlying_url (V1.1 aggregator isolation): forwarded to
+        fetch_source_article unchanged -- see that method's docstring.
         """
         if not hasattr(self, "_source_text_cache"):
             self._source_text_cache = {}
@@ -1236,7 +1289,8 @@ class DiscoveryMixin:
             self._source_original_length_cache = {}
         if url not in self._source_text_cache:
             self._source_text_cache[url] = self.fetch_source_article(
-                url, max_chars=_SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text=fallback_text
+                url, max_chars=_SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text=fallback_text,
+                underlying_url=underlying_url,
             )
             self._source_origin_cache[url] = getattr(self, "_last_fetch_origin", "none")
             self._source_original_length_cache[url] = getattr(self, "_last_fetch_original_length", None)
@@ -1326,7 +1380,8 @@ class DiscoveryMixin:
                 declined_date    TEXT,
                 decline_json     TEXT,
                 decline_schema_version TEXT,
-                declined_source_hash  TEXT
+                declined_source_hash  TEXT,
+                underlying_article_url TEXT
             )
         """)
         conn.execute("CREATE INDEX IF NOT EXISTS idx_ns_score ON news_seeds(relevance_score)")
@@ -1335,17 +1390,22 @@ class DiscoveryMixin:
         conn.commit()
 
     def _ensure_decline_columns(self, conn):
-        """Story Rejection V1 (DSR2): additive, idempotent migration of the
-        decline columns. Mirrors the angle_checked ALTER precedent in
-        news_fetcher.init_db (try/except OperationalError) so pre-existing
-        production DBs gain the columns without a destructive migration, and
-        fresh DBs have them via the CREATE above. Safe to call repeatedly."""
+        """Story Rejection V1/V1.1 (DSR2): additive, idempotent migration of
+        the decline + source-lineage columns. Mirrors the angle_checked ALTER
+        precedent in news_fetcher.init_db (try/except OperationalError) so
+        pre-existing production DBs gain the columns without a destructive
+        migration, and fresh DBs have them via the CREATE above. Safe to call
+        repeatedly. underlying_article_url (V1.1, aggregator isolation) is not
+        itself a decline field -- kept in this same idempotent-ALTER loop
+        rather than a second near-identical method, since both are "extra
+        additive columns on this table" migrations of the same shape."""
         for _col, _def in (
             ("declined", "INTEGER DEFAULT 0"),
             ("declined_date", "TEXT"),
             ("decline_json", "TEXT"),
             ("decline_schema_version", "TEXT"),
             ("declined_source_hash", "TEXT"),
+            ("underlying_article_url", "TEXT"),
         ):
             try:
                 conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
@@ -1374,7 +1434,7 @@ class DiscoveryMixin:
             # _is_news_seed_declined_current docstrings.)
             row = conn.execute("""
                 SELECT id, url, title, summary, source_name, relevance_score,
-                       themes, disability_angle, pub_date
+                       themes, disability_angle, pub_date, underlying_article_url
                 FROM news_seeds
                 WHERE used = 0 AND pub_date >= ? AND disability_angle IS NOT NULL
                   AND NOT (declined = 1 AND decline_schema_version = ?)
@@ -1386,7 +1446,7 @@ class DiscoveryMixin:
             if not row:
                 row = conn.execute("""
                     SELECT id, url, title, summary, source_name, relevance_score,
-                           themes, disability_angle, pub_date
+                           themes, disability_angle, pub_date, underlying_article_url
                     FROM news_seeds
                     WHERE used = 0 AND pub_date >= ? AND relevance_score >= 0.4
                       AND NOT (declined = 1 AND decline_schema_version = ?)
@@ -1404,6 +1464,7 @@ class DiscoveryMixin:
                 "themes": json.loads(row[6] or "[]"),
                 "disability_angle": row[7],
                 "pub_date": row[8],
+                "underlying_article_url": row[9],
             }
         except Exception as e:
             self.logger.warning("get_news_seed failed: %s", e)

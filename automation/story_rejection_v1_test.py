@@ -67,6 +67,22 @@ REGISTER = _REGISTERS[0][0]  # "wry"
 VALID_COMMISSION = {
     "source_decision": "commission",
     "eligible_execution_possible": True,
+    # V1.1 (2026-08-17, SRF3 false-commission fix): a commission verdict must
+    # now carry the same grounding fields a decline already required --
+    # source_anchor_examined resolves verbatim in SRC, and
+    # why_disability_knowledge_changes_subject quotes that anchor, proving the
+    # category jump is tied to a real source detail rather than free-floating
+    # topic association.
+    "source_anchor_examined": ANCHOR,
+    "hidden_mechanism": (
+        "The council measures accessibility by straight-line distance, not the route a "
+        "wheelchair user actually has to travel."
+    ),
+    "why_disability_knowledge_changes_subject": (
+        f"A mobility lens reveals that '{ANCHOR}' is a planning-distance figure, not the "
+        "route disabled riders actually travel — the same number an able-bodied planner "
+        "reads as compliance is, from this lens, evidence the route was never walked."
+    ),
     "persona": "Maya Flux",
     "angle": "Is the replacement bay closer or further for most riders who actually use it?",
     "register": REGISTER,
@@ -678,11 +694,23 @@ def case_validate_source_decision_contract_version():
 
 def case_non_declision_brief_passes():
     ep = _make_evidence(source_origin="fetched_article")
-    ok, code, reason, _ = validate_source_decision({"source_decision": "commission"}, ep)
-    assert ok  # a commission brief is trivially a valid Layer-1 verdict
+    # V1.1: a bare {"source_decision": "commission"} with none of the grounding
+    # fields is NO LONGER trivially valid -- see case_bare_commission_is_ungrounded
+    # below for the dedicated coverage of that. This case now only asserts the
+    # untouched legacy pass-through (no source_decision key at all).
     ok, _, _, _ = validate_source_decision({}, ep)  # legacy, no source_decision
     assert ok  # legacy commission pass-through
-    print("validate OK  commission + legacy briefs pass Layer-1 without evidence gates")
+    print("validate OK  legacy brief (no source_decision) passes Layer-1 without evidence gates")
+
+
+def case_bare_commission_is_ungrounded():
+    """V1.1: a commission verdict with none of the grounding fields is
+    rejected (commission_missing_required), never trivially accepted."""
+    ep = _make_evidence(source_origin="fetched_article")
+    ok, code, _, v = validate_source_decision({"source_decision": "commission"}, ep)
+    assert ok is False and code == "commission_missing_required"
+    assert v and any(x["reason_code"] == "commission_missing_required" for x in v)
+    print("validate OK  bare commission (no grounding fields) -> commission_missing_required")
 
 
 def case_truncated_source_blocks_decline():
@@ -732,6 +760,7 @@ ALL = [
     case_q_no_execution_run_writes_no_publication_artifacts,
     case_validate_source_decision_contract_version,
     case_non_declision_brief_passes,
+    case_bare_commission_is_ungrounded,
     case_truncated_source_blocks_decline,
     case_ungrounded_anchor_blocks_decline,
     case_neither_truncated_nor_ungrounded_on_fixture_origin,
