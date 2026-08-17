@@ -715,7 +715,19 @@ class LLMMixin:
 
         attempts = (opus_attempts + fable_attempts) if prefer_opus else (fable_attempts[:1] + opus_attempts + fable_attempts[1:])
 
-        for url, key, model, label in attempts:
+        # Provider-lineage logging (V1.1, 2026-08-17 -- SRF3 forensic audit
+        # follow-up): the audit had to reconstruct which model actually
+        # produced an accepted response from scattered warning lines and
+        # timestamp correlation, because only a FALLBACK success ever logged
+        # anything -- a first-attempt success was silent. This does not
+        # change the return value, control flow, or which model is tried in
+        # which order (that would be a real behavior change, out of scope
+        # here) -- it only makes every outcome (including first-attempt
+        # success) explicitly greppable as requested_model/actual_model/
+        # fallback_used, so a future forensic report never again has to
+        # infer model lineage from absence-of-a-warning-line.
+        requested_model = attempts[0][2] if attempts else None
+        for _idx, (url, key, model, label) in enumerate(attempts):
             is_fable = "Fable" in label
             try:
                 raw = self._call_openai_compat_api(
@@ -726,15 +738,24 @@ class LLMMixin:
                     reasoning_max_tokens=FABLE_REASONING_BUDGET if is_fable else None,
                     check_truncation=True,
                 )
+                _fallback_used = _idx > 0
                 if "direct" in label:
                     self.logger.warning("Editorial model: CLIProxy bypassed — %s active", label)
                 elif "Opus" in label:
                     self.logger.warning("Editorial model: Fable unavailable — %s active", label)
+                self.logger.info(
+                    "Editorial model lineage: requested_model=%s actual_model=%s label=%s fallback_used=%s",
+                    requested_model, model, label, _fallback_used,
+                )
                 return raw
             except Exception as e:
                 self.logger.warning("Editorial model %s failed: %s", label, e)
 
         self.logger.error("Editorial model: all attempts failed (CLIProxy + direct OpenRouter)")
+        self.logger.info(
+            "Editorial model lineage: requested_model=%s actual_model=None label=None fallback_used=True (all failed)",
+            requested_model,
+        )
         return None
 
     def _fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent,
