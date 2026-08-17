@@ -48,19 +48,23 @@ still not authorized** — this file documents state, it does not permit archiva
 - Release candidate: `~/code/disability-collective-ai-story-rejection-release`, branch
   `release/story-rejection-v1`, SHA `cff6dbc3140a5dea4ea6c2536ba664c633239995` (cherry-pick of
   `37432b9` onto current main `ba64e77`, byte-identical `automation/` content — zero conflicts,
-  zero behavioral drift). Local only, not pushed.
-- Status: **RELEASE CANDIDATE — PRFV-M1 GATE SATISFIED**. PRF1's routing invariant was confirmed
-  under a real, manually-triggered production run (PRFV-M1, 2026-08-17 00:02 CEST); RG1 accepted
-  that evidence as release-gate-sufficient since no code-level distinction exists between a
+  zero behavioral drift). Preserved as release evidence, not deleted.
+- Merged into canonical main as `275470c` (`git cherry-pick -x cff6dbc...`), automation/ content
+  re-verified byte-identical to the reviewed candidate post-merge. 28/28 automation tests pass,
+  `snapshot_test.py --check` shows no drift, py_compile clean, orchestrator imports OK.
+- Status: **MERGED TO MAIN — DEPLOYMENT PENDING**. PRF1's routing invariant was confirmed under a
+  real, manually-triggered production run (PRFV-M1, 2026-08-17 00:02 CEST); RG1 accepted that
+  evidence as release-gate-sufficient since no code-level distinction exists between a
   cron-triggered and manually-triggered invocation of the identical entrypoint. A full adversarial
   release review then re-verified the two-layer (source-commissionability / PRF1-execution)
   architecture, both previously-identified defect fixes (contract-version-aware decline exclusion
-  in the real SQL selection paths; NO_ELIGIBLE_CARRIER falltime never re-entering legacy
+  in the real SQL selection paths; NO_ELIGIBLE_CARRIER fallthrough never re-entering legacy
   commission), source-authority gating, additive/idempotent DB migration, and PRF1 non-regression
-  — all 28 automation test files pass, DB migration/decline/reconsideration semantics verified
-  against isolated SQLite fixtures. **Not yet deployed** — no merge to main, no push to origin, no
-  Trident deploy, no production DB mutation occurred. One further explicit release decision is
-  needed before actual deployment.
+  — all verified against isolated SQLite fixtures. **Not yet deployed to Trident** — no push to
+  origin yet at the time this section was written, no Trident deploy, no production DB mutation.
+  Known non-blocking follow-up: `eligible_execution_possible` lacks explicit boolean type
+  validation on the commission branch (bounded by downstream eligible-persona check); deliberately
+  not patched in this release.
 
 No other worktree/branch is currently ACTIVE — all remaining 19 are FROZEN-adjacent, PARKED,
 SUPERSEDED, or SAFE-TO-ARCHIVE-LATER (below). All 20 sibling worktrees are internally clean
@@ -139,11 +143,10 @@ Allowed lifecycle statuses: `ACTIVE`, `FROZEN`, `PARKED`, `MERGED`, `SUPERSEDED`
   now resolve. Document classified HISTORICAL — CONCEPTUAL/ARCHITECTURAL EVIDENCE in `WORK.md ## 8`.
 - `pixel-validation/control` (local, `2a190ad`) diverges from `origin/pixel-validation/control`
   (`bfbc017`, 2 commits ahead) — unreconciled, low priority, both sides are git-backed.
-- Story Rejection — **RELEASE CANDIDATE, PRFV-M1 GATE SATISFIED** (see Active work above),
-  release review passed 2026-08-17. Not yet deployed; no remote (GitHub) copy of either the
-  prototype or the release candidate yet — proposed ref
-  `origin/experiments/proto-story-rejection-v1` still awaits owner approval, as does the actual
-  deployment decision.
+- Story Rejection — **MERGED TO MAIN — DEPLOYMENT PENDING** (see Active work above), merged as
+  `275470c` 2026-08-17. Not yet deployed to Trident at the time this section was written; the
+  prototype branch itself (`proto/story-rejection-v1`) still has no remote (GitHub) copy —
+  proposed ref `origin/experiments/proto-story-rejection-v1` still awaits owner approval.
 - Trident production checkout is 2 commits behind Mac `main` as of this pass (missing the
   whitepaper-recovery and whitepaper-directory-move docs commits) — routine `git pull`, not a
   preservation risk.

@@ -192,10 +192,11 @@ Authoritative safety-invariant chain, verified directly in code (not just doc cl
    #1 (Siri Sage's OWNERSHIP prompt clause) / #2 (FORBIDDEN_DEFAULTS SUPPRESSION collision) — all
    remain Phase 3, confirmed not started (see `## 5` item 5 below). Story-rejection capability
    itself has since moved past prototype (see LOGBOOK 2026-08-17): PRF1 (this fix, `cb69c2d`) was
-   the release gate it was waiting on — that gate is now satisfied and a reviewed release
-   candidate (`cff6dbc3140a5dea4ea6c2536ba664c633239995`, local worktree
-   `~/code/disability-collective-ai-story-rejection-release`) exists, but it is **not deployed** —
-   no production behavior has changed from story-rejection as of this entry.
+   the release gate it was waiting on — that gate is now satisfied, the reviewed release candidate
+   (`cff6dbc3140a5dea4ea6c2536ba664c633239995`) has been merged onto canonical `main` as `275470c`
+   (automation/ content re-verified byte-identical post-merge, all tests green), but as of this
+   entry it is **MERGED TO MAIN — DEPLOYMENT PENDING**, not yet deployed to Trident — no production
+   behavior has changed from story-rejection as of this entry.
 
 **Invariant: UNKNOWN SAFETY != SAFE.** A draft or legacy article lacking a current
 `publication_safety_version` is held for revalidation, not treated as safe by default.
