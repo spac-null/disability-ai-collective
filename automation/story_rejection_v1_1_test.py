@@ -548,6 +548,161 @@ def case_8h_invalid_commission_no_writer_no_article_no_decline():
 
 
 # --------------------------------------------------------------------------- #
+# Section 9 — semantic entailment gate (adversarial-review follow-up,
+# 2026-08-17): the deterministic checks above (8A-8H) prove textual
+# containment only. This section proves the NARROW verifier
+# (_verify_commission_mechanism_support) catches the specific attack that
+# textual containment cannot: an explanation that QUOTES a genuinely-grounded
+# anchor and then asserts a mechanism with no connection to that anchor's
+# actual content.
+# --------------------------------------------------------------------------- #
+
+# The exact real-world attack (constructed and run live against the
+# unmodified validator BEFORE this fix, confirmed to return
+# ok=True/"commission" -- the entailment gap this section closes).
+_REAL_ANCHOR_INVENTED_MECHANISM_BRIEF = dict(VALID_COMMISSION)
+_REAL_ANCHOR_INVENTED_MECHANISM_BRIEF.update({
+    "source_anchor_examined": ITEM_A_ANCHOR,
+    "hidden_mechanism": "Data centers use raised floors and cable troughs that exclude wheelchair users.",
+    "why_disability_knowledge_changes_subject": (
+        f'The source states: "{ITEM_A_ANCHOR}." This growth in data-center construction reveals a '
+        "hidden mechanism: data centers use raised floors and cable troughs that exclude wheelchair "
+        "users, meaning disabled workers and visitors are structurally barred from entering these "
+        "facilities."
+    ),
+})
+
+
+def case_9a_real_anchor_invented_mechanism_now_defers():
+    """THE attack: anchor is real and verbatim-grounded, explanation quotes it,
+    but the claimed mechanism (raised floors/cable troughs) has zero connection
+    to the anchor's actual content (a GDP/construction growth figure). Proven
+    live (pre-fix) that grounding.validate_source_decision alone returns
+    ok=True/"commission" for exactly this input -- the deterministic
+    anchor-in-explanation check is satisfied by mere quotation, not entailment.
+    Post-fix, the semantic verifier must catch what the deterministic gate
+    cannot."""
+    ep = _make_evidence(source_text=ITEM_A_BLURB, source_origin="fetched_article")
+    # Deterministic layer alone still says "commission" -- this is the exact
+    # gap; the fix lives in the semantic layer, not here.
+    ok, code, _, _ = validate_source_decision(_REAL_ANCHOR_INVENTED_MECHANISM_BRIEF, ep)
+    assert ok is True and code == "commission", (
+        "sanity check: the deterministic gate alone is EXPECTED to still pass this input -- "
+        "proving the semantic verifier, not the deterministic gate, is what must catch it"
+    )
+
+    orch, po = _orch()
+    restore = _patch_common(orch, po, _REAL_ANCHOR_INVENTED_MECHANISM_BRIEF, mechanism_support="UNSUPPORTED")
+    try:
+        brief = orch._fable_editorial_brief(
+            ITEM_A_TITLE, "", "", "Maya Flux", ep, eligible_agents=["Maya Flux", "Siri Sage"],
+        )
+        assert brief is not None, "an unsupported mechanism must become a defer brief, not None"
+        assert brief["source_decision"] == "defer"
+        assert brief["defer_reason_code"] == "commission_mechanism_unsupported"
+        assert "decline_contract_version" not in brief, "must never be persisted as a decline"
+    finally:
+        restore()
+    print("9A OK  real-anchor + invented-mechanism attack: deterministic gate passes it (as expected), "
+          "semantic verifier now catches it -> DEFER, not commission")
+
+
+def case_9b_grounded_reinterpretation_still_commissions():
+    """The permitted counterpart to 9A: VALID_COMMISSION's own mechanism
+    (straight-line-distance measurement REINTERPRETED as hiding real travel
+    distance) reinterprets a fact the anchor actually states, rather than
+    inventing one absent from it. Must still reach COMMISSION with the
+    semantic gate active (mechanism_support="SUPPORTED", the honest verdict
+    for this input)."""
+    orch, po = _orch()
+    restore = _patch_common(orch, po, VALID_COMMISSION, mechanism_support="SUPPORTED")
+    try:
+        ep = _make_evidence(source_origin="fetched_article")
+        brief = orch._fable_editorial_brief(
+            "title", "summary", "angle", "Maya Flux", ep,
+            eligible_agents=["Maya Flux", "Siri Sage"],
+        )
+        assert brief is not None
+        assert brief["source_decision"] == "commission"
+        assert "defer_reason_code" not in brief
+    finally:
+        restore()
+    print("9B OK  grounded anchor + source-supported reinterpretation -> COMMISSION (semantic gate: SUPPORTED)")
+
+
+def case_9c_verifier_uncertain_defers():
+    orch, po = _orch()
+    restore = _patch_common(orch, po, VALID_COMMISSION, mechanism_support="UNCERTAIN")
+    try:
+        ep = _make_evidence(source_origin="fetched_article")
+        brief = orch._fable_editorial_brief(
+            "title", "summary", "angle", "Maya Flux", ep,
+            eligible_agents=["Maya Flux", "Siri Sage"],
+        )
+        assert brief is not None
+        assert brief["source_decision"] == "defer"
+        assert brief["defer_reason_code"] == "commission_mechanism_uncertain"
+        assert "decline_contract_version" not in brief
+    finally:
+        restore()
+    print("9C OK  verifier UNCERTAIN -> DEFER (never WRITE, never DECLINE on uncertainty)")
+
+
+def case_9d_verifier_malformed_or_failed_defers():
+    orch, po = _orch()
+    # None simulates total provider failure (_call_editorial_model exhausts
+    # every fallback and returns None); the verifier's own except/None-guard
+    # must convert this to UNCERTAIN internally, and the caller must still
+    # DEFER, never WRITE, never crash.
+    restore = _patch_common(orch, po, VALID_COMMISSION, mechanism_support=None)
+    try:
+        ep = _make_evidence(source_origin="fetched_article")
+        brief = orch._fable_editorial_brief(
+            "title", "summary", "angle", "Maya Flux", ep,
+            eligible_agents=["Maya Flux", "Siri Sage"],
+        )
+        assert brief is not None
+        assert brief["source_decision"] == "defer"
+        assert brief["defer_reason_code"] == "commission_mechanism_uncertain"
+    finally:
+        restore()
+
+    # A genuinely malformed (multi-word, non-keyword) response must also fail closed.
+    restore2 = _patch_common(orch, po, VALID_COMMISSION, mechanism_support="well, it depends on context...")
+    try:
+        ep2 = _make_evidence(source_origin="fetched_article")
+        brief2 = orch._fable_editorial_brief(
+            "title", "summary", "angle", "Maya Flux", ep2,
+            eligible_agents=["Maya Flux", "Siri Sage"],
+        )
+        assert brief2 is not None
+        assert brief2["source_decision"] == "defer"
+        assert brief2["defer_reason_code"] == "commission_mechanism_uncertain"
+    finally:
+        restore2()
+    print("9D OK  verifier provider-failure / malformed response -> DEFER (fail-closed, never WRITE)")
+
+
+def case_9e_aggregator_isolated_unsupported_mechanism_defers():
+    """Combines both V1.1 fixes: an aggregator-isolated blurb (never the whole
+    page) whose commission attempt invents a mechanism the isolated text does
+    not support. Must DEFER via the real dispatch, same as 9A, proving the
+    semantic gate applies AFTER aggregator isolation, not as a substitute for it."""
+    ep = _make_evidence(source_text=ITEM_A_BLURB, source_origin="fetched_article")
+    orch, po = _orch()
+    restore = _patch_common(orch, po, _REAL_ANCHOR_INVENTED_MECHANISM_BRIEF, mechanism_support="UNSUPPORTED")
+    try:
+        brief = orch._fable_editorial_brief(
+            ITEM_A_TITLE, "", "", "Maya Flux", ep, eligible_agents=["Maya Flux", "Siri Sage"],
+        )
+        assert brief["source_decision"] == "defer"
+        assert brief["defer_reason_code"] == "commission_mechanism_unsupported"
+    finally:
+        restore()
+    print("9E OK  aggregator-isolated evidence + unsupported mechanism -> DEFER (both V1.1 fixes compose)")
+
+
+# --------------------------------------------------------------------------- #
 # Runner
 # --------------------------------------------------------------------------- #
 
@@ -570,6 +725,11 @@ ALL = [
     case_8f_eligible_execution_possible_string_rejected,
     case_8g_valid_commission_no_eligible_carrier_not_decline,
     case_8h_invalid_commission_no_writer_no_article_no_decline,
+    case_9a_real_anchor_invented_mechanism_now_defers,
+    case_9b_grounded_reinterpretation_still_commissions,
+    case_9c_verifier_uncertain_defers,
+    case_9d_verifier_malformed_or_failed_defers,
+    case_9e_aggregator_isolated_unsupported_mechanism_defers,
 ]
 
 

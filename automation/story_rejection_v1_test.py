@@ -141,9 +141,18 @@ class _Stop(Exception):
     never reaches a publication-artifacts step."""
 
 
-def _patch_common(orch, po, brief_json):
+def _patch_common(orch, po, brief_json, mechanism_support="SUPPORTED"):
     """Patch the persona loaders + the editorial model so `_fable_editorial_brief`
-    is fully deterministic. Returns a restore() that undoes all four."""
+    is fully deterministic. Returns a restore() that undoes all four.
+
+    mechanism_support (V1.1 entailment-gate follow-up, 2026-08-17): a valid
+    commission now triggers a SECOND `_call_editorial_model` call (the narrow
+    mechanism-support verifier, llm.py's `_verify_commission_mechanism_support`),
+    distinguished from the Fable-brief call by its system prompt containing
+    LLMMixin._MECHANISM_VERIFIER_MARKER. Defaults to "SUPPORTED" so every
+    EXISTING caller of this helper that reaches a real commission continues to
+    pass unchanged; pass "UNSUPPORTED"/"UNCERTAIN"/None (provider failure) to
+    exercise the verifier's own defer paths."""
     def fake_load_persona_state(self, name):
         return dict(FIXTURE_PERSONA_STATE)
     def fake_active_fault_lines(self, text):
@@ -151,6 +160,10 @@ def _patch_common(orch, po, brief_json):
     def fake_recent_openings(self, n):
         return []
     def fake_call_editorial_model(self, system, user, max_tokens=1200, timeout=60, prefer_opus=False):
+        if getattr(po.LLMMixin, "_MECHANISM_VERIFIER_MARKER", "CripMinds mechanism-support verifier") in system:
+            if mechanism_support is None:
+                return None
+            return mechanism_support
         return _json.dumps(brief_json)
     r_loaders = _patch_methods(
         po.LLMMixin,

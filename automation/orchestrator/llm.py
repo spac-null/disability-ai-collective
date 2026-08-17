@@ -758,6 +758,92 @@ class LLMMixin:
         )
         return None
 
+    # System-prompt marker string, checked verbatim by test mocks (e.g.
+    # story_rejection_v1_test.py's _patch_common) to distinguish this call
+    # from the Fable-brief call sharing the same _call_editorial_model plumbing.
+    # Keep this constant and the literal string in the prompt below in sync.
+    _MECHANISM_VERIFIER_MARKER = "CripMinds mechanism-support verifier"
+
+    def _verify_commission_mechanism_support(self, source_text, source_anchor_examined,
+                                              hidden_mechanism, why_disability_knowledge_changes_subject):
+        """V1.1 entailment gate (2026-08-17, SRF3-follow-up adversarial review).
+
+        _validate_commission_grounding (grounding.py) proves two DETERMINISTIC,
+        purely textual facts: the anchor is a verbatim substring of the source,
+        and the explanation string happens to contain that same substring. It
+        was shown live (adversarial review, real call against
+        validate_source_decision) that both checks pass trivially for an
+        explanation that QUOTES the anchor and then asserts a mechanism with NO
+        connection to the anchor's actual factual content -- e.g. anchor "Malaysia's
+        construction sector grew 6.6 percent, supported by data-center development"
+        (real, present) paired with hidden_mechanism "data centers use raised
+        floors and cable troughs that exclude wheelchair users" (invented; no
+        architectural fact exists anywhere in that anchor to reinterpret). Textual
+        containment cannot detect this -- it is a question of what the anchor's
+        content actually entails, which requires a semantic judgment.
+
+        This function is that judgment call, DELIBERATELY narrow: it receives
+        ONLY the four values above (never persona biography, never the web,
+        never external research, never the downstream article) and is asked to
+        judge -- not improve, not rewrite, not suggest a better mechanism --
+        whether the claimed hidden_mechanism is actually entailed by (a
+        reinterpretation of) the anchor's own stated fact, or whether it depends
+        on some additional factual premise the anchor never supplies.
+
+        Returns exactly one of "SUPPORTED" / "UNSUPPORTED" / "UNCERTAIN". Fails
+        CLOSED on every non-SUPPORTED outcome, including a total provider
+        failure, a malformed/multi-word response, or a truncated reply -- the
+        caller (_fable_editorial_brief) treats anything but "SUPPORTED" as
+        insufficient evidence and routes to `source_decision: "defer"`, exactly
+        like the deterministic gates in grounding.py. Never raises.
+        """
+        system = (
+            f"You are a {self._MECHANISM_VERIFIER_MARKER}. You judge ONE narrow question: "
+            "does HIDDEN_MECHANISM follow from a reinterpretation of the factual content actually "
+            "present in SOURCE_ANCHOR, or does it depend on some additional fact SOURCE_ANCHOR "
+            "does not state?\n\n"
+            "VALID (SUPPORTED): the mechanism reinterprets a fact the anchor actually states -- e.g. "
+            "anchor says a council measures accessibility by straight-line distance; mechanism says "
+            "this metric hides the real travel distance a wheelchair user faces. The underlying fact "
+            "(the distance-measurement method) is present in the anchor; only the INTERPRETATION is new.\n\n"
+            "INVALID (UNSUPPORTED): the mechanism asserts a fact the anchor never states -- e.g. anchor "
+            "says construction/data-center investment increased; mechanism asserts specific architectural "
+            "details (raised floors, cable troughs) or staffing/hiring facts the anchor never mentions. "
+            "Sharing a topic is not the same as the anchor supporting the claim.\n\n"
+            "You are not asked to improve, rewrite, or propose a better mechanism. You are not asked "
+            "whether the mechanism is a GOOD idea. You are asked only whether SOURCE_ANCHOR's own stated "
+            "fact actually entails it.\n\n"
+            "Respond with EXACTLY ONE WORD, nothing else, no punctuation, no explanation: "
+            "SUPPORTED or UNSUPPORTED. If you are not confident, respond UNCERTAIN."
+        )
+        user = (
+            f"SOURCE_TEXT (the full available source evidence):\n{source_text or '(none)'}\n\n"
+            f"SOURCE_ANCHOR (the specific clause the commission rests on, already verified verbatim "
+            f"in SOURCE_TEXT):\n{source_anchor_examined}\n\n"
+            f"HIDDEN_MECHANISM (the claim under review):\n{hidden_mechanism}\n\n"
+            f"MECHANISM_BRIDGE (the model's own explanation of why disability knowledge changes the "
+            f"subject):\n{why_disability_knowledge_changes_subject}\n\n"
+            "One word: SUPPORTED, UNSUPPORTED, or UNCERTAIN."
+        )
+        try:
+            raw = self._call_editorial_model(system, user, max_tokens=20, timeout=30)
+        except Exception as e:  # noqa: BLE001 -- never let a verifier failure propagate as a crash
+            self.logger.warning("Mechanism-support verifier: provider call raised %s — treated as UNCERTAIN", e)
+            return "UNCERTAIN"
+        if not raw:
+            self.logger.warning("Mechanism-support verifier: no response from any model — treated as UNCERTAIN")
+            return "UNCERTAIN"
+        cleaned = re.sub(r"[^A-Za-z]", "", raw.strip().upper())
+        if cleaned == "SUPPORTED":
+            return "SUPPORTED"
+        if cleaned == "UNSUPPORTED":
+            return "UNSUPPORTED"
+        if cleaned != "UNCERTAIN":
+            self.logger.warning(
+                "Mechanism-support verifier: malformed/unexpected response %r — treated as UNCERTAIN", raw[:80],
+            )
+        return "UNCERTAIN"
+
     def _fable_editorial_brief(self, news_title, news_summary, disability_angle, current_agent,
                                 evidence_packet=None, eligible_agents=None):
         """Fable 5 generates an editorial brief before writing.
@@ -1103,6 +1189,50 @@ class LLMMixin:
                     d_code, d_reason or "no reason",
                 )
                 return None
+
+            if d_code == "commission":
+                # V1.1 semantic entailment gate (adversarial-review follow-up,
+                # 2026-08-17): _validate_commission_grounding above proves only
+                # textual containment (the anchor is a real substring of the
+                # source; the explanation happens to quote that same
+                # substring) -- shown live, against the real validator, to
+                # pass an explanation that quotes a genuinely-grounded anchor
+                # and then asserts a mechanism with no connection to that
+                # anchor's actual factual content (the exact "GDP/data-center
+                # growth" -> "raised floors/cable troughs" jump the SRF3
+                # false-commission made). Textual containment cannot detect
+                # this; it requires a semantic judgment of what the anchor's
+                # content actually entails. This narrow, bounded verifier
+                # (see its own docstring for exactly what it does and does
+                # not receive) makes that judgment. Anything but SUPPORTED is
+                # insufficient EVIDENCE, not an editorial "no mechanism"
+                # verdict and not a provider/schema failure -- DEFER, via the
+                # same commission_*-style path as the deterministic gates
+                # above, never a persisted decline, never a silent write.
+                support = self._verify_commission_mechanism_support(
+                    evidence_packet.get("source_text") if evidence_packet else None,
+                    brief.get("source_anchor_examined"),
+                    brief.get("hidden_mechanism"),
+                    brief.get("why_disability_knowledge_changes_subject"),
+                )
+                if support != "SUPPORTED":
+                    reason_code = (
+                        "commission_mechanism_unsupported" if support == "UNSUPPORTED"
+                        else "commission_mechanism_uncertain"
+                    )
+                    self.logger.warning(
+                        "Story Rejection: commission mechanism-support verifier returned %s — "
+                        "DEFER (insufficient evidence), not a technical failure, not an editorial "
+                        "decline, no article",
+                        support,
+                    )
+                    return {
+                        "source_decision": "defer",
+                        "defer_reason_code": reason_code,
+                        "defer_reason": f"mechanism-support verifier returned {support}",
+                        "source_hash": evidence_packet.get("source_hash") if evidence_packet else None,
+                        "evidence_packet_hash": evidence_packet.get("evidence_packet_hash") if evidence_packet else None,
+                    }
 
             decision = brief.get("source_decision", "commission")
 
