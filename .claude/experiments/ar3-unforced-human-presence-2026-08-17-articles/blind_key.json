@@ -1,0 +1,74 @@
+{
+  "R-01": {
+    "source_key": "goudhurst",
+    "condition": "B",
+    "persona": "Pixel Nova",
+    "title_source": "Sat-Nav Companies Agree to Stop Routing Lorries Through Goudhurst"
+  },
+  "R-02": {
+    "source_key": "goudhurst",
+    "condition": "C",
+    "persona": "Pixel Nova",
+    "title_source": "Sat-Nav Companies Agree to Stop Routing Lorries Through Goudhurst"
+  },
+  "R-03": {
+    "source_key": "synesthesia",
+    "condition": "B",
+    "persona": "Maya Flux",
+    "title_source": "A Case Report of Acquired Synesthesia After Traumatic Brain Injury"
+  },
+  "R-04": {
+    "source_key": "synesthesia",
+    "condition": "C",
+    "persona": "Maya Flux",
+    "title_source": "A Case Report of Acquired Synesthesia After Traumatic Brain Injury"
+  },
+  "R-05": {
+    "source_key": "langenegg",
+    "condition": "A",
+    "persona": "Siri Sage",
+    "title_source": "The Austrian Village That Built Its Own Currency"
+  },
+  "R-06": {
+    "source_key": "easement",
+    "condition": "B",
+    "persona": "Zen Circuit",
+    "title_source": "Lytle v. Lind: Maine's Highest Court Rules on a Riverfront Easement Dispute"
+  },
+  "R-07": {
+    "source_key": "langenegg",
+    "condition": "B",
+    "persona": "Siri Sage",
+    "title_source": "The Austrian Village That Built Its Own Currency"
+  },
+  "R-08": {
+    "source_key": "easement",
+    "condition": "A",
+    "persona": "Zen Circuit",
+    "title_source": "Lytle v. Lind: Maine's Highest Court Rules on a Riverfront Easement Dispute"
+  },
+  "R-09": {
+    "source_key": "langenegg",
+    "condition": "C",
+    "persona": "Siri Sage",
+    "title_source": "The Austrian Village That Built Its Own Currency"
+  },
+  "R-10": {
+    "source_key": "goudhurst",
+    "condition": "A",
+    "persona": "Pixel Nova",
+    "title_source": "Sat-Nav Companies Agree to Stop Routing Lorries Through Goudhurst"
+  },
+  "R-11": {
+    "source_key": "easement",
+    "condition": "C",
+    "persona": "Zen Circuit",
+    "title_source": "Lytle v. Lind: Maine's Highest Court Rules on a Riverfront Easement Dispute"
+  },
+  "R-12": {
+    "source_key": "synesthesia",
+    "condition": "A",
+    "persona": "Maya Flux",
+    "title_source": "A Case Report of Acquired Synesthesia After Traumatic Brain Injury"
+  }
+}
