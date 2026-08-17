@@ -1,0 +1,50 @@
+{
+  "R-01": {
+    "source_key": "hbomax",
+    "condition": "B",
+    "persona": "Zen Circuit",
+    "title_source": "HBO Max's Password-Sharing Crackdown Will Expand Globally in 2026"
+  },
+  "R-02": {
+    "source_key": "selfcheckout",
+    "condition": "A",
+    "persona": "Pixel Nova",
+    "title_source": "Grocery Chains Expand AI Camera Systems at Self-Checkout"
+  },
+  "R-03": {
+    "source_key": "warehouse",
+    "condition": "A",
+    "persona": "Siri Sage",
+    "title_source": "Amazon Says Vulcan Is Its First Robot With a Sense of Touch"
+  },
+  "R-04": {
+    "source_key": "warehouse",
+    "condition": "B",
+    "persona": "Siri Sage",
+    "title_source": "Amazon Says Vulcan Is Its First Robot With a Sense of Touch"
+  },
+  "R-05": {
+    "source_key": "hbomax",
+    "condition": "A",
+    "persona": "Zen Circuit",
+    "title_source": "HBO Max's Password-Sharing Crackdown Will Expand Globally in 2026"
+  },
+  "R-06": {
+    "source_key": "selfcheckout",
+    "condition": "B",
+    "persona": "Pixel Nova",
+    "title_source": "Grocery Chains Expand AI Camera Systems at Self-Checkout"
+  },
+  "R-07": {
+    "source_key": "airtrain",
+    "condition": "A",
+    "persona": "Maya Flux",
+    "title_source": "Newark's $3.5 Billion AirTrain Replacement Enters Major Construction Phase"
+  },
+  "R-08": {
+    "source_key": "airtrain",
+    "condition": "B",
+    "persona": "Maya Flux",
+    "title_source": "Newark's $3.5 Billion AirTrain Replacement Enters Major Construction Phase"
+  }
+}
