@@ -201,6 +201,18 @@ Authoritative safety-invariant chain, verified directly in code (not just doc cl
    the deployed code/schema/contract-version match the reviewed candidate. **Story-rejection is now
    live in production** as of 2026-08-17 — a future generation run may write an article, decline a
    source, find no eligible carrier, or defer, and all four are legitimate outcomes, not failures.
+   **UPDATE, same day**: the first real V1 commission ("7,000 Rooms With No Door For Anyone") was
+   forensically found to be a false/permissive commission (SRF3) — the deterministic grounding gate
+   validated DECLINE but not COMMISSION, and a Techmeme aggregator page was fetched whole, letting
+   an unrelated neighboring story contaminate the evidence. **V1.1** (`d0204aa`, fast-forwarded onto
+   `main` from `b925a5d`, deployed to Trident, `underlying_article_url` column added via the same
+   additive path, 1116 rows unchanged) closes both defects: a bounded, separately-invoked semantic
+   verifier (`_verify_commission_mechanism_support`) now rejects commissions whose claimed mechanism
+   isn't actually supported by the source evidence (fail-closed to `defer` on UNSUPPORTED/UNCERTAIN/
+   any provider failure — never a silent decline or write), and aggregator sources are isolated to
+   the selected item (or its underlying article) before evidence ever reaches Layer 1. Story
+   Rejection is now on **V1.1**, live in production, with no code/persona/PRF1 changes beyond this
+   scope.
 
 **Invariant: UNKNOWN SAFETY != SAFE.** A draft or legacy article lacking a current
 `publication_safety_version` is held for revalidation, not treated as safe by default.

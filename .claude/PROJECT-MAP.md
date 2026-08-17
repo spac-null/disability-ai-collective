@@ -83,6 +83,62 @@ still not authorized** — this file documents state, it does not permit archiva
   candidate-2 retry exists by design — a legitimate "no article today" (decline, no-eligible-
   carrier, or defer) is an accepted real outcome of future production runs, not a defect.
 
+**Story Rejection V1.1 (commission grounding + aggregator isolation)**
+- Cause: the first real V1 commission (2026-08-17, "7,000 Rooms With No Door For Anyone") was
+  forensically classified **FC2 — false/permissive commission** (SRF3). Two concrete defects: (A)
+  `validate_source_decision()` validated DECLINE authoritatively but let COMMISSION `return True`
+  trivially — zero grounding required; (B) the source was a Techmeme aggregator page fetched whole,
+  letting an unrelated neighboring story (a Grok/Jane Doe lawsuit mentioning "7,000+ images")
+  contaminate the evidence and contribute the article's title motif.
+- Fix chain (all on branch `fix/story-rejection-v1-1-grounding`, worktree
+  `~/code/disability-collective-ai-story-rejection-v11-fix`):
+  - `d2821cf` + `a5988dc`: deterministic commission grounding (`_validate_commission_grounding()` —
+    origin/truncation/verbatim-anchor/mechanism-tied-to-anchor/boolean-type gates), aggregator
+    item isolation (`discovery.py`/`news_fetcher.py` recover `underlying_url` per-RSS-item, never
+    fetch the whole aggregator page), new `source_decision: "defer"` outcome (bad commission
+    evidence ≠ editorial decline), `underlying_article_url` source-lineage column, and
+    provider-lineage logging.
+  - Adversarial review then proved `a5988dc` alone still let a **real, verbatim-grounded anchor +
+    an explanation that quotes it + an invented, factually-unsupported mechanism** pass as
+    COMMISSION — the deterministic gate checks "does the anchor exist" and "is the anchor quoted,"
+    not "does the anchor's content actually support the mechanism." Confirmed live against the
+    unmodified validator (`ok=True, code="commission"`).
+  - `d0204aa`: added `_verify_commission_mechanism_support()`, a narrow, separately-invoked,
+    freshly-prompted semantic verifier (inputs: source text + anchor + mechanism + explanation
+    only — no persona biography, no web, no downstream article). Output strictly
+    SUPPORTED/UNSUPPORTED/UNCERTAIN; only an unambiguous SUPPORTED token continues to commission,
+    everything else (including any provider failure/timeout/malformed reply) fails closed to
+    `defer`. Adversarial revert proved the gate load-bearing: disabling it alone made the exact
+    attack pass through again; restoring it brought the suite back to green.
+  - Decisions along the way: SR11E-2 (entailment gap confirmed + fixed), SR11R1 (final adversarial
+    release review passed — note: that review freshly re-executed only revert-A of five planned
+    adversarial reverts against `d0204aa`; reverts B–E relied on code inspection and earlier-phase
+    evidence rather than a fresh live re-run. The owner was informed of this narrower coverage and
+    chose to proceed with release regardless).
+- **Status: RELEASED.** Canonical main fast-forwarded `b925a5d..d0204aa` (a direct linear descendant
+  of main — no cherry-pick needed, integrated tree is `d0204aa` byte-for-byte), pushed to
+  `origin/main`. Trident fast-forwarded the same way; deployed file hashes confirmed identical to
+  the reviewed candidate for all five changed production files. Production DB migrated via the same
+  `news_fetcher.init_db()` additive path: `underlying_article_url` column added, all 5 existing
+  Story Rejection V1 decline columns intact, row count unchanged at 1116 before/after, migration
+  re-run confirmed idempotent. Read-only smoke check confirmed all V1.1 code markers present
+  (semantic verifier, aggregator-domain logic, defer dispatch, boolean type check, provider-lineage
+  logging) and CJ2/L2 still OFF. The defining release-gate attack (real anchor + invented mechanism
+  + verifier UNSUPPORTED) was re-verified through the actual `_run_production_automation_locked()`
+  dispatch path during this release, confirming DEFER with no writer/article/plan/decline/mark-used
+  side effects. No production generation, no live provider call, performed at any point during this
+  release or its verification.
+- Known scope limit (recorded, not fixed): Atom-feed underlying-URL extraction is not implemented —
+  the only known real aggregator case (Techmeme) is RSS 2.0. Not a blocker unless an Atom aggregator
+  is discovered in actual use.
+- Prototype (`proto/story-rejection-v1` @ `37432b9`), V1 release worktree
+  (`release/story-rejection-v1` @ `cff6dbc`), and the V1.1 fix worktree/branch above are all
+  preserved as release evidence — none deleted, none pushed to origin beyond canonical main itself.
+- Legitimate outcomes for any future production run now include: DECLINE, DEFER (deterministic
+  grounding failure, semantic UNSUPPORTED, semantic UNCERTAIN, or verifier failure), COMMISSIONABLE
+  + NO_ELIGIBLE_CARRIER, or COMMISSIONABLE + WRITE. "No article today" is not a failure. No
+  candidate-2 retry exists by design.
+
 No other worktree/branch is currently ACTIVE — all remaining 19 are FROZEN-adjacent, PARKED,
 SUPERSEDED, or SAFE-TO-ARCHIVE-LATER (below). All 20 sibling worktrees are internally clean
 (0 dirty, 0 untracked) as of the 2026-08-16 audit — only canonical `main` carries untracked
