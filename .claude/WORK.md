@@ -187,10 +187,15 @@ Authoritative safety-invariant chain, verified directly in code (not just doc cl
    is unchanged, still used only for the crude pre-brief keyword seed and the discarded-brief
    fallback. **Does NOT retroactively repair "Reached by Boat or Plane"** — that article's own
    remediation decision remains separately pending (below); this fix only prevents the SAME routing
-   failure from recurring in future generation runs. Also explicitly NOT done: story-rejection
-   capability, source/feed concentration, CJ-2 activation, or `persona-architecture-audit.md`
-   findings #1 (Siri Sage's OWNERSHIP prompt clause) / #2 (FORBIDDEN_DEFAULTS SUPPRESSION collision)
-   — all remain Phase 3, confirmed not started (see `## 5` item 5 below).
+   failure from recurring in future generation runs. Also explicitly NOT done as part of THIS
+   fix: source/feed concentration, CJ-2 activation, or `persona-architecture-audit.md` findings
+   #1 (Siri Sage's OWNERSHIP prompt clause) / #2 (FORBIDDEN_DEFAULTS SUPPRESSION collision) — all
+   remain Phase 3, confirmed not started (see `## 5` item 5 below). Story-rejection capability
+   itself has since moved past prototype (see LOGBOOK 2026-08-17): PRF1 (this fix, `cb69c2d`) was
+   the release gate it was waiting on — that gate is now satisfied and a reviewed release
+   candidate (`cff6dbc3140a5dea4ea6c2536ba664c633239995`, local worktree
+   `~/code/disability-collective-ai-story-rejection-release`) exists, but it is **not deployed** —
+   no production behavior has changed from story-rejection as of this entry.
 
 **Invariant: UNKNOWN SAFETY != SAFE.** A draft or legacy article lacking a current
 `publication_safety_version` is held for revalidation, not treated as safe by default.

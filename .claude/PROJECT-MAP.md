@@ -41,12 +41,26 @@ still not authorized** — this file documents state, it does not permit archiva
 ## Active work
 
 **Story Rejection prototype**
-- Path: `~/code/disability-collective-ai-srv1`
-- Branch: `proto/story-rejection-v1`
-- SHA: `37432b983093274224a49cd1e2f820d41aa32bb6`
-- Status: **FROZEN — AWAITING PRFV1**. Do not edit, merge, rebase, or deploy. Backed by Mac
+- Prototype (preserved, unmodified): `~/code/disability-collective-ai-srv1`, branch
+  `proto/story-rejection-v1`, SHA `37432b983093274224a49cd1e2f820d41aa32bb6`. Backed by Mac
   worktree + Mac verified bundle + Trident verified bundle (PP2); not pushed to any remote —
-  proposed remote ref `origin/experiments/proto-story-rejection-v1` awaits owner approval.
+  proposed remote ref `origin/experiments/proto-story-rejection-v1` still awaits owner approval.
+- Release candidate: `~/code/disability-collective-ai-story-rejection-release`, branch
+  `release/story-rejection-v1`, SHA `cff6dbc3140a5dea4ea6c2536ba664c633239995` (cherry-pick of
+  `37432b9` onto current main `ba64e77`, byte-identical `automation/` content — zero conflicts,
+  zero behavioral drift). Local only, not pushed.
+- Status: **RELEASE CANDIDATE — PRFV-M1 GATE SATISFIED**. PRF1's routing invariant was confirmed
+  under a real, manually-triggered production run (PRFV-M1, 2026-08-17 00:02 CEST); RG1 accepted
+  that evidence as release-gate-sufficient since no code-level distinction exists between a
+  cron-triggered and manually-triggered invocation of the identical entrypoint. A full adversarial
+  release review then re-verified the two-layer (source-commissionability / PRF1-execution)
+  architecture, both previously-identified defect fixes (contract-version-aware decline exclusion
+  in the real SQL selection paths; NO_ELIGIBLE_CARRIER falltime never re-entering legacy
+  commission), source-authority gating, additive/idempotent DB migration, and PRF1 non-regression
+  — all 28 automation test files pass, DB migration/decline/reconsideration semantics verified
+  against isolated SQLite fixtures. **Not yet deployed** — no merge to main, no push to origin, no
+  Trident deploy, no production DB mutation occurred. One further explicit release decision is
+  needed before actual deployment.
 
 No other worktree/branch is currently ACTIVE — all remaining 19 are FROZEN-adjacent, PARKED,
 SUPERSEDED, or SAFE-TO-ARCHIVE-LATER (below). All 20 sibling worktrees are internally clean
@@ -125,9 +139,11 @@ Allowed lifecycle statuses: `ACTIVE`, `FROZEN`, `PARKED`, `MERGED`, `SUPERSEDED`
   now resolve. Document classified HISTORICAL — CONCEPTUAL/ARCHITECTURAL EVIDENCE in `WORK.md ## 8`.
 - `pixel-validation/control` (local, `2a190ad`) diverges from `origin/pixel-validation/control`
   (`bfbc017`, 2 commits ahead) — unreconciled, low priority, both sides are git-backed.
-- Story Rejection prototype (`proto/story-rejection-v1`) — **FROZEN, AWAITING PRFV1**. No
-  remote (GitHub) copy yet; proposed ref `origin/experiments/proto-story-rejection-v1` awaits
-  owner approval.
+- Story Rejection — **RELEASE CANDIDATE, PRFV-M1 GATE SATISFIED** (see Active work above),
+  release review passed 2026-08-17. Not yet deployed; no remote (GitHub) copy of either the
+  prototype or the release candidate yet — proposed ref
+  `origin/experiments/proto-story-rejection-v1` still awaits owner approval, as does the actual
+  deployment decision.
 - Trident production checkout is 2 commits behind Mac `main` as of this pass (missing the
   whitepaper-recovery and whitepaper-directory-move docs commits) — routine `git pull`, not a
   preservation risk.
