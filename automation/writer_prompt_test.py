@@ -361,10 +361,118 @@ def test_pixel_persona_factual_boundary():
     )
 
 
+def test_testimony_quota_removed():
+    """Regression for the AR3-B production release (2026-08-17, AR3 decision
+    AR3A, .claude/experiments/artistic-reset-ar3-unforced-human-presence-
+    2026-08-17.md): AR2/AR2.1 found the old mandatory "NAMED VOICES: Use 2-3
+    real named people" / "SOMEONE ELSE MUST SPEAK — NON-NEGOTIABLE" testimony
+    quota was a primary driver of fabricated quotes, named people, and
+    first-person events across every tested writer doctrine and persona --
+    including two quotes attributed to apparently-real named public figures
+    (Kevin Irvine, Aimi Hamraie) and one fabricated named judge with a
+    fabricated quoted legal holding. AR3 tested removing the quota
+    (condition B) against 4 real sources and found zero measured artistic
+    cost -- blind-reviewed finished-work quality held flat or improved.
+    This test proves the shipped prompt matches that tested change: the old
+    quota language is gone, the new evidence-bound replacement is present,
+    and everything NOT authorized by AR3A (HUMAN THREAD, AUTHOR RULE) is
+    unchanged in this release. "Strong thesis from sentence one" lives in
+    llm.py's call_llm_via_openclaw_session SYSTEM string, never passed as
+    this test's captured `prompt` argument (that function itself is mocked
+    out here), so it is checked separately, statically, against the source
+    file rather than the captured prompt."""
+    prompt, packet, error = _capture_writer_prompt()
+    check("writer prompt was actually captured", prompt is not None and error is None)
+    if not prompt:
+        print(f"  (capture failed: {error})")
+        return
+
+    # NEGATIVE: the old mandatory quota language must be gone.
+    check(
+        "writer prompt does NOT contain the old mandatory 2-3-named-person quota (NAMED VOICES)",
+        "NAMED VOICES: Use 2-3 real named people" not in prompt,
+    )
+    check(
+        "writer prompt does NOT contain the old non-negotiable direct-quotation demand (SOMEONE ELSE MUST SPEAK)",
+        "SOMEONE ELSE MUST SPEAK" not in prompt,
+    )
+    check(
+        "writer prompt does NOT contain the old standalone NO INVENTED QUOTES override paragraph",
+        "NO INVENTED QUOTES OR OCCASIONS FOR REAL PEOPLE" not in prompt,
+    )
+
+    # POSITIVE: the new evidence-bound replacement rule is present, explicitly
+    # permits zero testimony/quotation/named people, and still carries the
+    # real-name fabrication warning forward.
+    check(
+        "writer prompt contains the new HUMAN TESTIMONY / NAMED VOICES rule",
+        "HUMAN TESTIMONY / NAMED VOICES" in prompt,
+    )
+    check(
+        "new rule explicitly permits zero testimony, zero quotations, and zero secondary named people",
+        "Zero testimony is valid" in prompt
+        and "Zero quotations is valid" in prompt
+        and "Zero secondary named people is valid" in prompt,
+    )
+    check(
+        "new rule still forbids inventing a person, quotation, interview, or attributed experience",
+        "Never invent a person, quotation, interview, conversation, collaborator, "
+        "reported encounter, or attributed experience" in prompt,
+    )
+    check(
+        "new rule still carries forward the real-name fabrication severity warning",
+        "a fabricated quote in real quotation marks attached to a real name is the "
+        "single most exposed factual error this publication can make" in prompt,
+    )
+
+    # UNCHANGED (out of scope for this release, per AR3A/production-cleanup task):
+    check(
+        "HISTORICAL/BIOGRAPHICAL ANECDOTE TEST is unchanged and still present",
+        "HISTORICAL/BIOGRAPHICAL ANECDOTE TEST: Every historical or biographical detail "
+        "must prove something, not just decorate the piece." in prompt,
+    )
+    check(
+        "HUMAN THREAD is unchanged and still present (not touched by this release)",
+        "HUMAN THREAD — NON-NEGOTIABLE: Every time you write two or more consecutive "
+        "sentences" in prompt,
+    )
+    check(
+        "GROUNDING is unchanged and still present (not touched by this release)",
+        "GROUNDING: Your argument lives in your body before it lives in theory" in prompt,
+    )
+    check(
+        "TEMPORAL ANCHORS is unchanged and still present (not touched by this release)",
+        "TEMPORAL ANCHORS: Date your anecdotes." in prompt,
+    )
+    check(
+        "AUTHOR RULE is unchanged and still present (not touched by this release)",
+        "AUTHOR RULE — NON-NEGOTIABLE: This article is written BY a disabled person" in prompt,
+    )
+
+
+def test_system_prompt_thesis_line_unchanged():
+    """Static check (not a prompt-capture test): "strong thesis from sentence
+    one" lives in llm.py's call_llm_via_openclaw_session SYSTEM string, which
+    is never passed through the `prompt` argument this file's harness
+    captures (that function is itself mocked out to intercept generate.py's
+    USER prompt). AR2.1 found this SYSTEM-prompt line textually contradicts
+    the USER prompt's later "never state it" doctrine and the whitepaper's
+    discovery doctrine -- a real, separate, deliberately NOT-yet-reconciled
+    inconsistency (queued as AR3.1, not touched by this release). This test
+    only proves the AR3A production release did not accidentally touch it."""
+    llm_source = (AUTOMATION_DIR / "orchestrator" / "llm.py").read_text(encoding="utf-8")
+    check(
+        "SYSTEM prompt's 'strong thesis from sentence one' line is unchanged (out of scope for this release)",
+        "strong thesis from sentence one" in llm_source,
+    )
+
+
 if __name__ == "__main__":
     test_writer_prompt_boundaries()
     test_fallback_summary_not_granted_source_authority()
     test_pixel_persona_factual_boundary()
+    test_testimony_quota_removed()
+    test_system_prompt_thesis_line_unchanged()
 
     print()
     if FAILURES:
