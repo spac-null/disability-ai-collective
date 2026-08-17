@@ -193,10 +193,14 @@ Authoritative safety-invariant chain, verified directly in code (not just doc cl
    remain Phase 3, confirmed not started (see `## 5` item 5 below). Story-rejection capability
    itself has since moved past prototype (see LOGBOOK 2026-08-17): PRF1 (this fix, `cb69c2d`) was
    the release gate it was waiting on — that gate is now satisfied, the reviewed release candidate
-   (`cff6dbc3140a5dea4ea6c2536ba664c633239995`) has been merged onto canonical `main` as `275470c`
-   (automation/ content re-verified byte-identical post-merge, all tests green), but as of this
-   entry it is **MERGED TO MAIN — DEPLOYMENT PENDING**, not yet deployed to Trident — no production
-   behavior has changed from story-rejection as of this entry.
+   (`cff6dbc3140a5dea4ea6c2536ba664c633239995`) was merged onto canonical `main` as `275470c`
+   (automation/ content re-verified byte-identical post-merge, all tests green) and **deployed to
+   Trident** (`git pull`, fast-forward `ba64e77..9e1c81d`); the production `disability_findings.db`
+   (repo root) was migrated via the real, already-tested additive `news_fetcher.init_db()` path
+   (5 new columns, 1116 rows before/after, zero data loss) and a read-only smoke check confirmed
+   the deployed code/schema/contract-version match the reviewed candidate. **Story-rejection is now
+   live in production** as of 2026-08-17 — a future generation run may write an article, decline a
+   source, find no eligible carrier, or defer, and all four are legitimate outcomes, not failures.
 
 **Invariant: UNKNOWN SAFETY != SAFE.** A draft or legacy article lacking a current
 `publication_safety_version` is held for revalidation, not treated as safe by default.

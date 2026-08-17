@@ -52,19 +52,36 @@ still not authorized** — this file documents state, it does not permit archiva
 - Merged into canonical main as `275470c` (`git cherry-pick -x cff6dbc...`), automation/ content
   re-verified byte-identical to the reviewed candidate post-merge. 28/28 automation tests pass,
   `snapshot_test.py --check` shows no drift, py_compile clean, orchestrator imports OK.
-- Status: **MERGED TO MAIN — DEPLOYMENT PENDING**. PRF1's routing invariant was confirmed under a
-  real, manually-triggered production run (PRFV-M1, 2026-08-17 00:02 CEST); RG1 accepted that
-  evidence as release-gate-sufficient since no code-level distinction exists between a
-  cron-triggered and manually-triggered invocation of the identical entrypoint. A full adversarial
-  release review then re-verified the two-layer (source-commissionability / PRF1-execution)
-  architecture, both previously-identified defect fixes (contract-version-aware decline exclusion
-  in the real SQL selection paths; NO_ELIGIBLE_CARRIER fallthrough never re-entering legacy
-  commission), source-authority gating, additive/idempotent DB migration, and PRF1 non-regression
-  — all verified against isolated SQLite fixtures. **Not yet deployed to Trident** — no push to
-  origin yet at the time this section was written, no Trident deploy, no production DB mutation.
-  Known non-blocking follow-up: `eligible_execution_possible` lacks explicit boolean type
-  validation on the commission branch (bounded by downstream eligible-persona check); deliberately
-  not patched in this release.
+- Status: **RELEASED**. Docs commit `9e1c81d` pushed to `origin/main`; Trident production checkout
+  fast-forwarded `ba64e77..9e1c81d` (`git pull origin main`, no conflicts). Production DB
+  (`disability_findings.db` at the Trident repo root — confirmed during this deploy to be the
+  actual `news_seeds`-holding DB; `automation/disability_findings.db` is a same-named but distinct
+  file holding only `link_pool`, and `rss_disability_findings.db` at repo root is yet another
+  distinct legacy file with neither `news_seeds` nor decline data — this resolves the "DB naming
+  collision across 3 paths" item below as: not a collision, three genuinely different files that
+  happen to share a naming pattern; `REPO/disability_findings.db` per `news_fetcher.py`'s own `DB`
+  constant is unambiguous) migrated via the real, already-tested
+  `news_fetcher.init_db()` additive path: 5 new columns added (`declined`, `declined_date`,
+  `decline_json`, `decline_schema_version`, `declined_source_hash`), row count unchanged at 1116
+  before/after, `used`/unused distribution unchanged (97/1019), zero data loss. Read-only smoke
+  check confirmed: orchestrator imports, `STORY_REJECTION_CONTRACT_VERSION = "sr1"` present in both
+  `grounding.py` and `news_fetcher.py`, the real contract-version exclusion SQL clause executes
+  cleanly against the migrated schema, PRF1 reconciliation code present, CJ2/L2 still OFF, deployed
+  `automation/` content byte-identical to reviewed candidate `cff6dbc`. No article generation, no
+  Fable/provider calls, performed as part of this release or its verification.
+  PRF1's routing invariant was confirmed under a real, manually-triggered production run
+  (PRFV-M1, 2026-08-17 00:02 CEST); RG1 accepted that evidence as release-gate-sufficient since no
+  code-level distinction exists between a cron-triggered and manually-triggered invocation of the
+  identical entrypoint. A full adversarial release review then re-verified the two-layer
+  (source-commissionability / PRF1-execution) architecture, both previously-identified defect fixes
+  (contract-version-aware decline exclusion in the real SQL selection paths; NO_ELIGIBLE_CARRIER
+  fallthrough never re-entering legacy commission), source-authority gating, additive/idempotent DB
+  migration, and PRF1 non-regression — all verified against isolated SQLite fixtures before release,
+  then against the real production DB during deployment. Known non-blocking follow-up:
+  `eligible_execution_possible` lacks explicit boolean type validation on the commission branch
+  (bounded by downstream eligible-persona check); deliberately not patched in this release. No
+  candidate-2 retry exists by design — a legitimate "no article today" (decline, no-eligible-
+  carrier, or defer) is an accepted real outcome of future production runs, not a defect.
 
 No other worktree/branch is currently ACTIVE — all remaining 19 are FROZEN-adjacent, PARKED,
 SUPERSEDED, or SAFE-TO-ARCHIVE-LATER (below). All 20 sibling worktrees are internally clean
@@ -143,10 +160,11 @@ Allowed lifecycle statuses: `ACTIVE`, `FROZEN`, `PARKED`, `MERGED`, `SUPERSEDED`
   now resolve. Document classified HISTORICAL — CONCEPTUAL/ARCHITECTURAL EVIDENCE in `WORK.md ## 8`.
 - `pixel-validation/control` (local, `2a190ad`) diverges from `origin/pixel-validation/control`
   (`bfbc017`, 2 commits ahead) — unreconciled, low priority, both sides are git-backed.
-- Story Rejection — **MERGED TO MAIN — DEPLOYMENT PENDING** (see Active work above), merged as
-  `275470c` 2026-08-17. Not yet deployed to Trident at the time this section was written; the
-  prototype branch itself (`proto/story-rejection-v1`) still has no remote (GitHub) copy —
-  proposed ref `origin/experiments/proto-story-rejection-v1` still awaits owner approval.
+- Story Rejection — **RELEASED** (see Active work above), merged as `275470c`, deployed to
+  Trident at `9e1c81d` 2026-08-17. The prototype branch itself (`proto/story-rejection-v1`) still
+  has no remote (GitHub) copy — proposed ref `origin/experiments/proto-story-rejection-v1` still
+  awaits owner approval; this is unrelated to the release, which is a merge+deploy from `main`,
+  not a push of the prototype branch itself.
 - Trident production checkout is 2 commits behind Mac `main` as of this pass (missing the
   whitepaper-recovery and whitepaper-directory-move docs commits) — routine `git pull`, not a
   preservation risk.
