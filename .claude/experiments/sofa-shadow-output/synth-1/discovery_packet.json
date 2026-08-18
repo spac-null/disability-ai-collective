@@ -1,0 +1,162 @@
+{
+  "schema_version": "sofa-shadow-1",
+  "built_at": "2026-08-18T12:52:27",
+  "evidence_packet_hash": "b70e92887a814ba71beaf9f2dc0eced7d7cf66abca2e1ee84b03b255f9813e52",
+  "source_anchor": {
+    "value": "for the duration of a unit inspection or repair, not to exceed 45 days",
+    "epistemic_type": "EVIDENCE",
+    "note": "verbatim, from commission_brief.source_anchor_examined"
+  },
+  "disturbance": {
+    "value": "A status defined by the authority's own ledger as lasting no more than 45 days has been assigned to the same 61 units continuously since at least January 2022, and only a small fraction of those units show any inspection or repair activity in that time.",
+    "epistemic_type": "EDITORIAL_INTERPRETATION",
+    "note": "what in the evidence does not fit the ordinary explanation"
+  },
+  "hidden_mechanism": {
+    "value": "A status created to describe a brief administrative pause is, through indefinite renewal and a reporting rule that counts it as occupancy, converted into a permanent removal from the accessible-unit waitlist without that removal ever being recorded as one.",
+    "epistemic_type": "EDITORIAL_INTERPRETATION",
+    "note": "INHERITED from Fable Layer 1, NOT regenerated in this slice; already semantic-entailment-checked upstream; this is validated interpretation, not source fact"
+  },
+  "lens": {
+    "value": "Maya Flux",
+    "epistemic_type": "EDITORIAL_METADATA",
+    "note": "the perceptual perspective that noticed the mechanism \u2014 bookkeeping, not a writing instruction"
+  },
+  "reader_contract": {
+    "value": "A report can say zero vacancies for three straight years and be telling the truth about its own paperwork while telling nothing like the truth about the apartments.",
+    "epistemic_type": "EDITORIAL_GUIDANCE",
+    "note": "why a general reader should care; distinct from the mechanism"
+  },
+  "reader_contract_distinctness_reason": {
+    "value": "The mechanism is about how a status converts absence into occupancy on the page; the reader contract is about why a reader who has never heard of Fairview should care that a government number can be accurate and misleading at once.",
+    "epistemic_type": "EDITORIAL_GUIDANCE",
+    "note": "human/model-facing note on why this is not just the mechanism restated \u2014 unvalidated by a similarity gate in this slice, inspected manually per the task"
+  },
+  "supporting_evidence": [
+    {
+      "kind": "measurement",
+      "source_excerpt": {
+        "value": "61 have carried the internal code \"Priority B \u2014 Temporary Hold\" continuously since at least January 2022",
+        "epistemic_type": "EVIDENCE",
+        "note": "supporting_evidence[0] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "the duration the status has actually run, against its own 45-day definition",
+        "epistemic_type": "EDITORIAL_INTERPRETATION",
+        "note": "supporting_evidence[0] editorial note"
+      }
+    },
+    {
+      "kind": "measurement",
+      "source_excerpt": {
+        "value": "only 9 of the 61 units under Priority B have had any inspection or repair logged in the past two years",
+        "epistemic_type": "EVIDENCE",
+        "note": "supporting_evidence[1] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "shows the status is not tracking what it claims to track",
+        "epistemic_type": "EDITORIAL_INTERPRETATION",
+        "note": "supporting_evidence[1] editorial note"
+      }
+    },
+    {
+      "kind": "document",
+      "source_excerpt": {
+        "value": "units under administrative hold are counted as occupied for reporting purposes, consistent with standard practice",
+        "epistemic_type": "EVIDENCE",
+        "note": "supporting_evidence[2] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "the written rule that does the actual work of hiding the units, and its claim to be standard practice",
+        "epistemic_type": "EDITORIAL_INTERPRETATION",
+        "note": "supporting_evidence[2] editorial note"
+      }
+    }
+  ],
+  "carrying_material": [
+    {
+      "kind": "person_action",
+      "source_excerpt": {
+        "value": "told the authority's oversight board in February that he had called about a Priority B unit on Delancey Street four separate times since 2022 and been told each time that the unit was temporarily unavailable, not for the waitlist",
+        "epistemic_type": "EVIDENCE",
+        "note": "carrying_material[0] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "a person repeatedly hitting the same status from outside it, over years \u2014 treat as one sustained pattern, not a single anecdote",
+        "epistemic_type": "EDITORIAL_GUIDANCE",
+        "note": "carrying_material[0] editorial note"
+      }
+    },
+    {
+      "kind": "document",
+      "source_excerpt": {
+        "value": "The board's own annual compliance report, filed with the state in December, lists all 214 units as available accessible inventory without mentioning Priority B at all",
+        "epistemic_type": "EVIDENCE",
+        "note": "carrying_material[1] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "the report erases the category entirely, rather than merely mis-defining it",
+        "epistemic_type": "EDITORIAL_INTERPRETATION",
+        "note": "carrying_material[1] editorial note"
+      }
+    },
+    {
+      "kind": "sequence",
+      "source_excerpt": {
+        "value": "in a letter dated January 14, why the vacancy rate for accessible units appeared to be zero for three consecutive years despite an average 18-month waitlist, the authority's written response, dated January 29",
+        "epistemic_type": "EVIDENCE",
+        "note": "carrying_material[2] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "a two-week question-and-answer sequence is a stronger narrative spine than the raw 61/214 ratio alone -- open on this, not the ratio",
+        "epistemic_type": "EDITORIAL_GUIDANCE",
+        "note": "carrying_material[2] editorial note"
+      }
+    },
+    {
+      "kind": "unresolved_absence",
+      "source_excerpt": {
+        "value": "",
+        "epistemic_type": "EVIDENCE",
+        "note": "carrying_material[3] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "no document reviewed says who first proposed counting Priority B units as occupied, or when -- this gap is stronger left open than guessed at",
+        "epistemic_type": "EDITORIAL_GUIDANCE",
+        "note": "carrying_material[3] editorial note"
+      }
+    }
+  ],
+  "known_gaps": [
+    {
+      "value": "The evidence does not establish who first proposed counting Priority B units as occupied for state reporting, or when that practice began.",
+      "epistemic_type": "GROUNDING_BOUNDARY",
+      "note": "what the evidence does NOT authorize claiming"
+    },
+    {
+      "value": "The evidence does not establish whether any other housing authority uses a comparable practice.",
+      "epistemic_type": "GROUNDING_BOUNDARY",
+      "note": "what the evidence does NOT authorize claiming"
+    },
+    {
+      "value": "The evidence does not establish Marcus Oyelaran's current housing status.",
+      "epistemic_type": "GROUNDING_BOUNDARY",
+      "note": "what the evidence does NOT authorize claiming"
+    },
+    {
+      "value": "The evidence does not establish anyone's knowledge, intent, or state of mind regarding the Priority B practice.",
+      "epistemic_type": "GROUNDING_BOUNDARY",
+      "note": "what the evidence does NOT authorize claiming"
+    },
+    {
+      "value": "The evidence does not establish any legal conclusion about how long a hold may lawfully last -- only the authority's own policy definition of 45 days.",
+      "epistemic_type": "GROUNDING_BOUNDARY",
+      "note": "what the evidence does NOT authorize claiming"
+    }
+  ],
+  "form_suggestion": {
+    "value": "essay -- a document-and-letter sequence carries this more naturally than a portrait or a present-tense field note; Marcus Oyelaran's calls are one strong carrying detail inside the sequence, not a sustained portrait subject",
+    "epistemic_type": "EDITORIAL_GUIDANCE",
+    "note": "suggestion only; writer may override if material argues otherwise"
+  }
+}

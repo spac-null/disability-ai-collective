@@ -1,0 +1,17 @@
+{
+  "packet_valid": true,
+  "audit_passes": false,
+  "audit_reasons": [
+    "UNSUPPORTED: 'Its hold cannot legally outlast forty-five days, and yet fifty-two of the sixty-one units have already run past that mark by close to two years.' \u2014 The source establishes a POLICY DEFINITION (45 days) inside the authority's own ledger, not a legal enforceability finding. 'Cannot legally' asserts a legal conclusion the source never states. The number 'fifty-two' also does not appear anywhere in the source or packet -- it is invented arithmetic, not a supported figure.",
+    "UNSUPPORTED: 'a unit whose own file says its hold cannot legally outlast forty-five days' \u2014 Same legal-conclusion problem as above -- the ledger states a definition, not a legal limit; 'legally' is the article's own unsupported addition.",
+    "UNSUPPORTED: 'Nobody on the other end of those calls was lying to him.' \u2014 This asserts a claim about the knowledge/intent of unnamed call-takers. The source establishes what Marcus Oyelaran was told, not what the people telling him knew or believed. This is exactly the kind of unsupported motive claim known_gaps flags as off-limits.",
+    "UNSUPPORTED: \"A rule specific enough to survive one direct question from a state auditor's office did not appear by accident,\" \u2014 Asserts intentionality/design behind the rule's origin. The packet's own known_gaps explicitly states the evidence does not establish who created the practice or when -- 'did not appear by accident' contradicts that documented gap by implying deliberate origin."
+  ],
+  "eligible_for_comparison": false,
+  "eligibility_reasons": [
+    "ARTICLE: UNSUPPORTED: 'Its hold cannot legally outlast forty-five days, and yet fifty-two of the sixty-one units have already run past that mark by close to two years.' \u2014 The source establishes a POLICY DEFINITION (45 days) inside the authority's own ledger, not a legal enforceability finding. 'Cannot legally' asserts a legal conclusion the source never states. The number 'fifty-two' also does not appear anywhere in the source or packet -- it is invented arithmetic, not a supported figure.",
+    "ARTICLE: UNSUPPORTED: 'a unit whose own file says its hold cannot legally outlast forty-five days' \u2014 Same legal-conclusion problem as above -- the ledger states a definition, not a legal limit; 'legally' is the article's own unsupported addition.",
+    "ARTICLE: UNSUPPORTED: 'Nobody on the other end of those calls was lying to him.' \u2014 This asserts a claim about the knowledge/intent of unnamed call-takers. The source establishes what Marcus Oyelaran was told, not what the people telling him knew or believed. This is exactly the kind of unsupported motive claim known_gaps flags as off-limits.",
+    "ARTICLE: UNSUPPORTED: \"A rule specific enough to survive one direct question from a state auditor's office did not appear by accident,\" \u2014 Asserts intentionality/design behind the rule's origin. The packet's own known_gaps explicitly states the evidence does not establish who created the practice or when -- 'did not appear by accident' contradicts that documented gap by implying deliberate origin."
+  ]
+}

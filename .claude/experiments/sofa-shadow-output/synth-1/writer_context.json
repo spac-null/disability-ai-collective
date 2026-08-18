@@ -1,0 +1,57 @@
+{
+  "lens": "Maya Flux",
+  "disturbance": "A status defined by the authority's own ledger as lasting no more than 45 days has been assigned to the same 61 units continuously since at least January 2022, and only a small fraction of those units show any inspection or repair activity in that time.",
+  "hidden_mechanism": {
+    "claim": "A status created to describe a brief administrative pause is, through indefinite renewal and a reporting rule that counts it as occupancy, converted into a permanent removal from the accessible-unit waitlist without that removal ever being recorded as one.",
+    "epistemic_status": "This is validated EDITORIAL INTERPRETATION, not a quoted source fact. Treat it as the discovery the evidence should be allowed to make intelligible \u2014 not a slogan the article must state, open with, close with, or prove like a thesis."
+  },
+  "source_anchor": "for the duration of a unit inspection or repair, not to exceed 45 days",
+  "supporting_evidence": [
+    {
+      "kind": "measurement",
+      "source_excerpt": "61 have carried the internal code \"Priority B \u2014 Temporary Hold\" continuously since at least January 2022",
+      "editorial_note": "the duration the status has actually run, against its own 45-day definition"
+    },
+    {
+      "kind": "measurement",
+      "source_excerpt": "only 9 of the 61 units under Priority B have had any inspection or repair logged in the past two years",
+      "editorial_note": "shows the status is not tracking what it claims to track"
+    },
+    {
+      "kind": "document",
+      "source_excerpt": "units under administrative hold are counted as occupied for reporting purposes, consistent with standard practice",
+      "editorial_note": "the written rule that does the actual work of hiding the units, and its claim to be standard practice"
+    }
+  ],
+  "carrying_material": [
+    {
+      "kind": "person_action",
+      "source_excerpt": "told the authority's oversight board in February that he had called about a Priority B unit on Delancey Street four separate times since 2022 and been told each time that the unit was temporarily unavailable, not for the waitlist",
+      "editorial_note": "a person repeatedly hitting the same status from outside it, over years \u2014 treat as one sustained pattern, not a single anecdote"
+    },
+    {
+      "kind": "document",
+      "source_excerpt": "The board's own annual compliance report, filed with the state in December, lists all 214 units as available accessible inventory without mentioning Priority B at all",
+      "editorial_note": "the report erases the category entirely, rather than merely mis-defining it"
+    },
+    {
+      "kind": "sequence",
+      "source_excerpt": "in a letter dated January 14, why the vacancy rate for accessible units appeared to be zero for three consecutive years despite an average 18-month waitlist, the authority's written response, dated January 29",
+      "editorial_note": "a two-week question-and-answer sequence is a stronger narrative spine than the raw 61/214 ratio alone -- open on this, not the ratio"
+    },
+    {
+      "kind": "unresolved_absence",
+      "source_excerpt": "",
+      "editorial_note": "no document reviewed says who first proposed counting Priority B units as occupied, or when -- this gap is stronger left open than guessed at"
+    }
+  ],
+  "known_gaps": [
+    "The evidence does not establish who first proposed counting Priority B units as occupied for state reporting, or when that practice began.",
+    "The evidence does not establish whether any other housing authority uses a comparable practice.",
+    "The evidence does not establish Marcus Oyelaran's current housing status.",
+    "The evidence does not establish anyone's knowledge, intent, or state of mind regarding the Priority B practice.",
+    "The evidence does not establish any legal conclusion about how long a hold may lawfully last -- only the authority's own policy definition of 45 days."
+  ],
+  "reader_contract": "A report can say zero vacancies for three straight years and be telling the truth about its own paperwork while telling nothing like the truth about the apartments.",
+  "form_suggestion": "essay -- a document-and-letter sequence carries this more naturally than a portrait or a present-tense field note; Marcus Oyelaran's calls are one strong carrying detail inside the sequence, not a sustained portrait subject"
+}
