@@ -198,3 +198,22 @@ search location, and asking is cheaper than concluding.
 A second, sharper lesson from G-052: the preservation pass recovered the *outputs* first and could
 not settle independence with them. What settled it was recovering **the input**. For any claim about
 what a model did on its own, preserve what it was given, not only what it produced.
+
+## G-001 CLOSED (2026-08-19)
+
+Both components are now closed; recorded here rather than by editing the original G-001 row.
+
+- **Preservation component** — RESOLVED by commit `5256f08` (76 files). 74 method/benchmark/
+  architecture artifacts inventoried; 70 tracked in place; `SOFA-METHOD.md` and the three
+  `automation/` shadow files preserved as hash-matched snapshots under
+  `.claude/experiments/sofa-method-reconciliation-2026-08-19/`, with the originals deliberately
+  left untracked so that neither an unratified canonical-status claim nor experimental code
+  entered the tracked runtime surface.
+- **Documentation / state-sync component** — RESOLVED by the canonical reconciliation of the same
+  date: `WORK.md ## 8` indexes all five in-repo evidence roots, `PROJECT-MAP.md`'s Evidence stores
+  section lists them with their commits, and `LOGBOOK.md` carries the 2026-08-18/19 entry.
+
+No new gap IDs were created for consequences already represented by existing IDs. G-009
+(SOFA-METHOD ratification) is separately resolved by the 2026-08-19 ratification of its
+editorial/artistic principles, with the architecture explicitly held as a working hypothesis —
+see `PROPOSED-PROJECT-STATE-2026-08-19.md` and the file's own SCOPE banner.

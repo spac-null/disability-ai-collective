@@ -8,6 +8,13 @@ commit SHA, what it superseded).
 FOR EVIDENCE: follow the linked research/audit documents from WORK.md's document index — do not
 re-derive conclusions those documents already establish.
 
+FOR THE ARTICLE ARCHITECTURE QUESTION: `.claude/WORK.md` `## 2a` separates four things that are
+easy to conflate — the canonical artistic method, the current *working* architecture
+(DISCOVERY -> ARTICLE FORM -> WRITER, a hypothesis), what production actually runs (it is NOT
+Article Form), and what is parked. `.claude/SOFA-METHOD.md` is the canonical method; read its
+SCOPE banner before citing it as architecture. Audit trail:
+`.claude/experiments/project-state-reconciliation-2026-08-18/`.
+
 FOR PHYSICAL PROJECT/WORKTREE/EVIDENCE TOPOLOGY: `.claude/PROJECT-MAP.md` — where worktrees,
 branches, and preserved evidence physically live and their lifecycle status. Machine-generated
 manifest: `.claude/project-manifest.json` (regenerate: `python3 scripts/cripminds_project_inventory.py`).

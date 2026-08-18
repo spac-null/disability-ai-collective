@@ -194,6 +194,26 @@ Allowed lifecycle statuses: `ACTIVE`, `FROZEN`, `PARKED`, `MERGED`, `SUPERSEDED`
   preserved at `~/code/cripminds-preservation/engineering/cj1-cj2-2026-08-16/`
 - Production DB authority: Trident's `disability_findings.db` /
   `automation/engagement.db` — no SQLite-safe backup exists yet (open risk, below)
+- **In-repo evidence roots (tracked, added 2026-08-19)** — these are inside the canonical repo,
+  not the external preservation root, and each carries its own `PRESERVATION-MANIFEST.md` +
+  `SHA256SUMS.txt`:
+  - `.claude/experiments/sofa-real-ab-1-2026-08-18/` — the real-material Edinburgh lineage
+    (Legacy/Sofa A/B, B.1-B.4, FORM-1, FORM-1.1), source snapshot, captured commission chain,
+    per-iteration grounding audits, implementations/runners, and `external-evidence/`
+    (raw Grok/Perplexity sessions, the contaminated source paste, both readers' evidence,
+    father's read PDF). Commit `7d59bb3`, 203 files.
+  - `.claude/experiments/sofa-method-reconciliation-2026-08-19/` — unratified snapshot of
+    SOFA-METHOD.md plus an implementation snapshot of the Sofa shadow module. The shadow
+    module's originals under `automation/` are deliberately left **untracked**: tracking them
+    would put experimental code on the production/runtime surface. Commit `5256f08`, 76 files
+    (with the Scout V0/V0.x benchmark lineage incl. FOX/HOUR/MOBILE).
+  - `.claude/experiments/project-state-reconciliation-2026-08-18/` — gap ledger G-001..G-053,
+    its normalization, and the state synthesis.
+  - `.claude/experiments/cj1-cj2-b2-dev-artifacts-2026-08-11/` — residual CJ1/CJ2 artifacts with
+    no durable copy elsewhere.
+  - `.claude/experiments/editorial-pairing-blind-test-2026-08-14/` — two surviving spotcheck
+    files. **The four candidate drafts are CONFIRMED LOST** (destroyed 2026-08-19 00:00). Do not
+    attempt to recreate them.
 
 ## Safety rules
 
@@ -221,6 +241,12 @@ Allowed lifecycle statuses: `ACTIVE`, `FROZEN`, `PARKED`, `MERGED`, `SUPERSEDED`
   has no remote (GitHub) copy — proposed ref `origin/experiments/proto-story-rejection-v1` still
   awaits owner approval; this is unrelated to the release, which is a merge+deploy from `main`,
   not a push of the prototype branch itself.
-- Trident production checkout is 2 commits behind Mac `main` as of this pass (missing the
-  whitepaper-recovery and whitepaper-directory-move docs commits) — routine `git pull`, not a
-  preservation risk.
+- **Superseded 2026-08-19** — ~~Trident production checkout is 2 commits behind Mac `main`~~.
+  Current: Trident production checkout and `origin/main` are both at `9f9bf35` (re-read directly,
+  2026-08-19). Mac `main` is 2 commits ahead at `5256f08`, and both are **evidence-only,
+  deliberately unpushed** — `.claude/experiments/` preservation with zero production code. There
+  is nothing for Trident to pull, and nothing to deploy.
+- **Sofa / Article Form is not deployed and must not be described as deployed.**
+  `automation/orchestrator/sofa_discovery_shadow.py` does not exist on Trident and is referenced
+  by neither `production_orchestrator.py` nor `generate.py`. Its in-repo presence is an
+  implementation *snapshot* under `.claude/experiments/`, not a runtime artifact.

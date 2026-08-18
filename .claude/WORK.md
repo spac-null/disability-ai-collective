@@ -14,7 +14,7 @@ state changed, in the same commit or an immediately adjacent docs commit. A task
 project state but leaves this file stale is not fully closed. Routine article/content commits do
 not need a LOGBOOK entry unless they expose a material system finding.
 
-Last reconciled: 2026-08-17 (AR3-B testimony-quota fix release; see `## 5a`), against
+Last reconciled: 2026-08-19 (Sofa/Article Form experiment-state reconciliation; see `## 2a`, `## 5a`), against
 `ORIGIN_MAIN_HEAD` — see exact value in `## 3`'s SHA table, not restated here to avoid this header
 going stale again the way the SHA claim did in the PM1 pass.
 
@@ -40,6 +40,8 @@ going stale again the way the SHA claim did in the PM1 pass.
 
 ## 2. CONCEPTUAL ARCHITECTURE
 
+**Read `## 2a` first — it separates four things this project keeps conflating.**
+
 **Two genuinely different things use similar-sounding "staged pipeline" language. Do not conflate them.**
 
 **(A) DISCOVERY → SOURCE → SUBJECT → MECHANISM → LENS → VOICE — STILL UNCONFIRMED, do not assume
@@ -58,6 +60,14 @@ someone points to it directly, do not cite it as established architecture.** The
 five-article evaluation (`## 4a` below) gives real-world evidence that persona-routing/mechanism
 correctness is a live, material problem — it does NOT establish that this specific staged
 architecture is the intended fix; that's still open.
+
+**Resolution of the "two staged pipelines" question (2026-08-19).** `.claude/SOFA-METHOD.md`
+contains a staged pipeline (WORLD/SOURCE -> DISTURBANCE -> PERCEPTUAL LENS -> DISCOVERY -> READER
+CONTRACT -> RESEARCH/EVIDENCE -> ARTICLE FORM -> WRITER -> BYLINE). It is **not** the missing (A)
+document. It is a genuinely independent construction, built 2026-08-18 by extracting method from
+three frozen benchmarks (FOX/HOUR/MOBILE), and its derivation is auditable from the Scout V0/V0.x
+lineage preserved at commit `5256f08`. (A) remains unlocated and unconfirmed. Do not merge the two,
+and do not treat (A) as retroactively found.
 
 **(B) The persona target architecture — CORE PERSON / PERCEPTUAL ENGINE / MOTIVE / AFFINITY /
 RISK / TEXTURE — IS established, documented design history (2026-08-10), separate from (A) and
@@ -111,15 +121,78 @@ explicitly NOT retroactively rewritten into the earlier V0/V1 docs, "those are h
 of what was actually reasoned and decided at the time." Verbatim source quote preserved in that
 branch document; do not retroactively edit V0/V1 language to match.
 
+## 2a. FOUR STATES — KEEP THESE SEPARATE (installed 2026-08-19)
+
+This project has repeatedly conflated what it believes, what it is testing, what is running, and
+what it abandoned. They are four different things.
+
+**(1) CANONICAL ARTISTIC / EDITORIAL METHOD — settled.** `.claude/SOFA-METHOD.md`, ratified
+2026-08-19, plus `## 1`'s doctrine. Disability-derived perception as an instrument that changes
+what a disturbance *becomes*; hidden mechanism over topic; grounding and source truth as
+fail-closed preconditions; reader discovery over thesis delivery; form follows material; written
+**by** a lens, not **about** disability. Nothing in the Edinburgh work challenges any of this.
+
+**(2) CURRENT WORKING ARTICLE ARCHITECTURE — hypothesis, not canon.**
+
+```
+DISCOVERY → ARTICLE FORM → WRITER
+```
+
+- **Discovery** owns what the editorial system believes the evidence reveals.
+- **Article Form** owns selection, sequence, argumentative burden, the reader's path, and the
+  arrival / stop point.
+- **Writer** owns natural prose execution.
+- The **reader** experiences the discovery. The **writer may know the destination.**
+
+Status: **WORKING HYPOTHESIS · Edinburgh-calibrated · NOT production canonical · transfer
+validation pending.**
+
+*Evidence, stated accurately — this is not a story of monotonic improvement:*
+
+| Iteration | Words | Audited claims | Unsupported | What it showed |
+|---|---|---|---|---|
+| Legacy | 1227 | 10 | 6 | strongest early reader motion; fabricated persona material, perspective instability, failed to stop after arrival |
+| Sofa (original) | 1090 | 7 | 4 | cleaner identity/grounding architecture, but demonstrated a thesis it knew from the start |
+| B.1 | 1040 | 6 | 3 | restored correction/resistance material; editorial machinery leaked visibly into the prose |
+| B.2 | 873 | 7 | 5 | hid the field labels; conclusion preload remained |
+| B.3 | 835 | 9 | 3 | blind writer; restored epistemic freedom; invented an unsupported agency/choice thesis |
+| B.4 | 829 | 7 | 4 | blind writer + perceptual instrument; related unsupported agency/choice and cognitive-demand escalation |
+| FORM-1 | 756 | 6 | **2** | explicit Article Form stage; the old agency/consent attractor did not recur; coherence improved; still failed grounding and continued past arrival |
+| FORM-1.1 | **583** | 5 | 3 | provenance/qualifier/arrival discipline strengthened; **stopped at arrival**; still FAILS grounding — 3 UNSUPPORTED, 1 UNCERTAIN |
+
+Every iteration is grounding FAIL. FORM-1.1 regressed on unsupported proportion relative to
+FORM-1 (3 of 5 audited claims vs 2 of 6). **Do not read that as "FORM-1.1 has Legacy's grounding
+quality" — the claim sets are small and different, and the comparison does not support an
+equivalence.** The stable conclusion is narrow and worth stating exactly:
+
+> Article Form materially improved form, coherence and arrival. Grounding remains unresolved.
+
+*What the blind-writer evidence supports:* two clean Opus experiments, B.3 and B.4, using related
+blind-writer architectures, independently produced closely related unsupported dead-artist
+agency/choice escalation. That suggests a failure in the blind-writer setup/material path. It does
+**not** establish model-independent generality — see `## 7`'s cross-model correction.
+
+**(3) CURRENT LIVE PRODUCTION ARCHITECTURE — what actually runs.** The older Fable/persona/writer
+pipeline, with the released safety chain intact: Story Rejection V1.1 fail-closed commission gate,
+PRF1 persona-routing invariant, AP1/APE2/PS1/LPF1 biography provenance, AR3-B testimony rule. CJ-2
+is OFF (`CJ2_INTEGRATION_MODE` unset, confirmed on Trident). **No Sofa / Article Form
+implementation is deployed** — `automation/orchestrator/sofa_discovery_shadow.py` does not exist on
+Trident and is referenced by neither `production_orchestrator.py` nor `generate.py`. See `## 3`.
+
+**(4) PARKED / REJECTED / SUPERSEDED.** See `## 6`.
+
+**(5) CURRENT NEXT ACTION.** See `## 5b` — FORM-1.1 grounding diagnosis only.
+
 ## 3. CURRENT PRODUCTION SAFETY STATE
 
 **SHA semantics — these are legitimately different fields, do not collapse them:**
 
 | Field | Value | What it means |
 |---|---|---|
-| `ORIGIN_MAIN_HEAD` | `cb69c2da1e1a586a70a0f7ba053bc464f9be20a9` | latest commit on GitHub `origin/main` |
-| `TRIDENT_DEPLOYED_HEAD` | `cb69c2da1e1a586a70a0f7ba053bc464f9be20a9` (confirmed via direct SSH read, 2026-08-16) | what the production checkout on Trident has actually pulled and is running — matches `ORIGIN_MAIN_HEAD` exactly as of this reconciliation |
-| `LAST_PRODUCTION-CODE_RELEASE` | `cb69c2d` | last commit that changed `automation/` behavior — Persona Brief <-> Writer Reconciliation (below); supersedes `667633f` (PS1/LPF1) as the most recent code change |
+| `ORIGIN_MAIN_HEAD` | `9f9bf3519457479347113883a591c7cb92bce697` | latest commit on GitHub `origin/main` (re-read 2026-08-19) |
+| `TRIDENT_DEPLOYED_HEAD` | `9f9bf3519457479347113883a591c7cb92bce697` (confirmed via direct SSH read, 2026-08-19) | what the production checkout on Trident has actually pulled and is running — matches `ORIGIN_MAIN_HEAD` |
+| `LOCAL_MAIN_HEAD` | `5256f08` | two evidence-only commits ahead of origin (`7d59bb3`, `5256f08`), **deliberately unpushed**; both are `.claude/experiments/` preservation only, zero production code |
+| `LAST_PRODUCTION-CODE_RELEASE` | `3225ea1` | last commit that changed `automation/` behavior — AR3-B testimony-quota removal, 2026-08-17. Supersedes `cb69c2d` (Persona Brief <-> Writer Reconciliation), which this table previously named and which was stale by three commits |
 | `LAST_MEMORY_RECONCILIATION_COMMIT` | this file's own edit (immediately adjacent to `cb69c2d`, not the same commit — see header's maintenance rule) | docs-only, no production code changed |
 
 A docs-only memory commit advancing `ORIGIN_MAIN_HEAD` does NOT mean production code changed —
@@ -353,20 +426,40 @@ Rejection, PRF1, persona architecture, `disability_angle`, Fable planning, and r
 explicitly untouched by this release — full regression suite + 2 new `writer_prompt_test.py`
 tests pass locally and on the live Trident deploy. See LOGBOOK for the release record.
 
-**Immediate sequence, in order (do not skip ahead without generating/reading real work first):**
-1. Ship the AR3-B testimony fix — **DONE**, this entry.
-2. Build CripMinds Scout (broad source material → disturbance-fragment detection → a very small
-   number of strange, grounded leads → real finished Sofa Articles) — cheap and bounded first
-   version only; not new routing architecture, not a persona redesign, not a case-library
-   database, not a 12-micro-lens engine, not an autonomous research platform.
-3. Generate/read a very small set (~3) of real finished articles from Scout's leads.
-4. Add small, verified case-memory retrieval only if Scout's own output makes a real mechanism-
-   reuse opportunity concrete — not speculatively.
-5. Return to deeper architecture (Engine Before Persona, AR3.1 discovery-motion/thesis
-   contradiction, AR4 `disability_angle` x Fable-planning 2x2, disturbance-mining comparison, case-
-   library shadow prototype) only once finished work makes the question consequential. **None of
-   these are cancelled** — they remain preserved, real, queued research questions; they are simply
-   not the next thing to build.
+**Sequence status, superseded 2026-08-19 — kept for provenance, do not re-execute:**
+1. Ship the AR3-B testimony fix — **DONE**.
+2. Build CripMinds Scout — **DONE** (Scout V0, then V0.1-V0.5 as a writing lineage).
+3. Generate/read ~3 real finished articles from Scout's leads — **DONE**; those articles became
+   the FOX/HOUR/MOBILE frozen benchmarks the Sofa Method was extracted from.
+4. Case-memory retrieval — **not started, still conditional**, no reuse opportunity surfaced.
+5. Deeper architecture — **partly overtaken**: Article Form answers part of the engine-vs-persona
+   question empirically. AR3.1, AR4, disturbance-mining and the case-library prototype remain
+   queued and uncancelled.
+
+**What actually happened next (2026-08-18/19), and where the thread now is:** real-material
+Article Form calibration on a single frozen Edinburgh commission, then a preservation and
+reconciliation pass. See `## 2a` for the resulting four-state separation and `## 5b` for the
+current next action.
+
+## 5b. CURRENT NEXT ACTION — FORM-1.1 GROUNDING DIAGNOSIS ONLY
+
+**Do not generate FORM-1.2. Do not regenerate anything.** The next experimental action is a
+diagnosis of evidence that already exists.
+
+For each of FORM-1.1's **3 UNSUPPORTED and 1 UNCERTAIN** audited claims
+(`.claude/experiments/sofa-real-ab-1-2026-08-18/iterations/FORM-1.1/sofa-form1-1-grounding-audit.json`),
+determine and record:
+
+- exact claim
+- exact source support (or its absence) in `case/source-snapshot.txt`
+- verdict
+- failure class
+- **origin** — Form / writer / source paraphrase / auditor
+
+No regeneration until that diagnosis is complete. The point is to learn whether Article Form's
+remaining grounding failures originate in the Form stage, in the writer, in paraphrase drift from
+the source, or in auditor overreach — four different fixes, and the current evidence does not
+distinguish them.
 
 ## 6. PARKED / DO NOT ACCIDENTALLY RESTART
 
@@ -420,7 +513,50 @@ tests pass locally and on the live Trident deploy. See LOGBOOK for the release r
   below) — same letters, two unrelated numbering schemes, confirmed by cross-checking both source
   documents.
 
+**Added 2026-08-19 — Sofa/Article Form parked set:**
+
+- **Blind-writer B.3/B.4 as a default architecture** — REJECTED as default. Two clean Opus runs
+  both produced unsupported dead-artist agency/choice escalation. Preserved in full; do not
+  restart as the default writer interface.
+- **Conclusion-preloaded B.1/B.2** — SUPERSEDED. B.1 restored resistance material but leaked
+  editorial machinery into the prose; B.2 hid the field labels but still preloaded the conclusion.
+- **Architecture B slices 1 / 1.1** — SUPERSEDED by the real-material Article Form runs. They were
+  synthetic-fixture only and never reached real evidence packets.
+- **Scout's disturbance/discovery front-end** — **PARKED, not rejected.** Its benchmark lineage is
+  foundational and preserved. It is not required before Article Form work resumes; Edinburgh's
+  commission came from an ordinary fetched article, not a disturbance card.
+- **Reader Lab** — PARKED. Untracked `RL-2026-003` candidates/preregistration exist on disk; no
+  active thread. Do not resume before Article Form transfer validation.
+- **Production migration to Article Form (pipeline-audit P0 remediation)** — **DEFERRED PENDING
+  ARTICLE FORM VALIDATION.** The audit's Lens!=Writer and discovery-dropped-before-writer P0s are
+  real, but remediation is not authorized. Article Form must first resolve the Edinburgh grounding
+  failure and transfer successfully to a materially different real story.
+
 ## 7. HISTORICAL CORRECTIONS (prevent these mistakes from recurring)
+
+- **The cross-model convergence claim was false — do not restate it.** It was recorded that Opus,
+  Grok and Qwen "independently converged" on the dead-artist agency thesis, and that this proved
+  the blind-writer interface creates a model-independent semantic attractor. Raw evidence
+  recovered 2026-08-19 disproves the independence: the text pasted into the prompt's FULL SOURCE
+  slot was not the Guardian review but a damaged capture with Opus B.3's article interleaved into
+  it. Ten B.3-specific phrases appear 0x in the real source and 1x in what the models were given;
+  Grok reproduced B.3's sentences and repaired B.3's corruption; Perplexity's first article opens
+  with the paste's final line. **Grok and Perplexity cannot be used as confirmation. Qwen's
+  original prompt, output and reasoning remain unavailable, so Qwen is UNKNOWN — not
+  corroboration.** Cross-model generality is NOT established. Evidence:
+  `.claude/experiments/sofa-real-ab-1-2026-08-18/external-evidence/cross-model/CONTAMINATION-FINDING.md`.
+- **Perplexity's "for cripminds.com" collapse is an illustrative observation, not a controlled
+  test.** It occurred inside a contaminated session. It is worth remembering as a picture of the
+  disability-as-subject failure mode; it is not evidence about that prompt variable.
+- **Do not conclude an experiment never existed from a Mac-only search.** A reconciliation entry
+  (G-024) concluded there was no Edinburgh lineage on exactly that reasoning. The lineage was
+  complete on Trident the whole time, because the runs required CLIProxy, which the Mac cannot
+  reach. Infer execution location from the runner's infrastructure needs. Do **not** generalize
+  this into "always search Trident."
+- **Cataloguing at-risk `/tmp` evidence is not preserving it.** Four Aug-14 editorial-pairing
+  drafts were catalogued as at-risk at 23:55 on 2026-08-18 and were gone by 00:00 — CONFIRMED
+  LOST, not recreatable, do not reconstruct them. When loss risk is immediate, copy and hash
+  during discovery.
 
 - **No literal historical A-M blueprint document exists in this repo.** Exhaustive git
   archaeology (`git log --all -i -S"<phrase>"` across 1,320+ commits) found zero hits for any
@@ -505,6 +641,12 @@ before declaring something unconfirmed.
 |---|---|---|
 | `.claude/post-release-five-article-evaluation-2026-08-16.md` | **CURRENT** | the real 2026-08-16 evaluation, reconstructed from Trident artifacts — see `## 4a` |
 | `docs/whitepaper/cripminds-whitepaper-v0.2-2026-08-14.md` | **CURRENT — CONCEPTUAL / ARTISTIC AUTHORITY** | "CripMinds: Reclaiming Ways of Knowing," v0.2, 14 August 2026 — recovered verbatim from a local pre-repo artifact (originally `~/Downloads/cripminds-whitepaper-v0.2.md`; the full original export batch, including `.docx`/`.pdf` siblings, is durably preserved outside the repo at `~/code/cripminds-preservation/whitepaper/v0.2/` — archival only, not required for ordinary project use, see LOGBOOK's preservation entry). This is the founder's own artistic/editorial doctrine document — the whitepaper referenced but not reproduced by `## 1`'s "full whitepaper is evidence-only" line. **Read it for WHY the project is shaped this way (artistic lineage from Jascha's 2013 graduation thesis, the terughalen/terugeisen distinction, "artistic compass vs. epistemic material," the Bregman discovery-reading-experience reference, the Section 18 engineering-restraint rule). It is NOT: empirical evidence of any disabled person's lived experience, persona biography canon (see `automation/persona_canon/*.md` for that authority), or production configuration/prompt text (see `automation/orchestrator/llm.py` for what's actually live).** A prior consolidation pass (PM1.1) searched the full repo git history, Trident, and Google Drive and could not find it, and correctly recorded it as "NOT LOCATED" rather than reconstructing it from memory — see LOGBOOK's recovery-correction entry for exactly where it turned up. |
+| `.claude/SOFA-METHOD.md` | **CURRENT — CANONICAL EDITORIAL/ARTISTIC METHOD (ratified 2026-08-19)** | the live method reference. Its DISCOVERY -> ARTICLE FORM -> WRITER architecture is a working hypothesis, **not** deployed — read its SCOPE banner before citing it as architecture |
+| `.claude/experiments/sofa-real-ab-1-2026-08-18/` | **CURRENT (preserved evidence root)** | the complete real-material Edinburgh lineage: original Legacy/Sofa A/B, B.1-B.4, FORM-1, FORM-1.1, source snapshot (SHA-256 `fee0a03b...`), captured commission chain, per-iteration grounding audits, implementations/runners, plus `external-evidence/` (Grok/Perplexity raw sessions, the contaminated source paste, both readers' evidence). Manifests + SHA256SUMS throughout. Committed `7d59bb3` |
+| `.claude/experiments/sofa-method-reconciliation-2026-08-19/` | **CURRENT (preserved evidence root)** | unratified snapshot of SOFA-METHOD.md as it stood before ratification, plus an implementation snapshot of the Sofa shadow module (kept out of the runtime surface deliberately). Committed `5256f08` |
+| `.claude/experiments/project-state-reconciliation-2026-08-18/` | **CURRENT (audit root)** | the gap ledger (G-001..G-053), its normalization (`GAP-LEDGER-NORMALIZED.md`) and the state synthesis this reconciliation is built on |
+| `.claude/experiments/cj1-cj2-b2-dev-artifacts-2026-08-11/` | **CURRENT (preserved evidence root)** | the residual CJ1/CJ2 development artifacts that had no durable copy; the bulk is backed up outside the repo |
+| `.claude/experiments/editorial-pairing-blind-test-2026-08-14/` | **HISTORICAL (partial — most of it is lost)** | the two surviving spotcheck files; the four candidate drafts are CONFIRMED LOST |
 | `.claude/WORK.md` | **CURRENT** | this file |
 | `.claude/LOGBOOK.md` | **CURRENT** | chronological history, compact entries |
 | `.claude/CONTEXT.md` | **CURRENT** | ops facts: cron schedule, DB tables, secrets paths, model routing — read this for "how do I operate the pipeline," not "what's the state of the research" |

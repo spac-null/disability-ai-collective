@@ -16,7 +16,7 @@ BUCKET is the field that stops the project carrying 53 equally-weighted open loo
 
 | ID | STATUS | RESOLUTION | LOSS | BUCKET | One line |
 |---|---|---|---|---|---|
-| G-001 | UNRESOLVED | OPEN | NONE | **BLOCKER** | 08-18 Sofa work untracked. Commit `7d59bb3` covered preservation evidence only — SOFA-METHOD.md, the 3 method docs, pipeline audit, architecture proposal, 2 shadow-slice results, 3 shadow code files and all 11 `scout-v0-*` dirs (incl. the FOX/HOUR/MOBILE frozen benchmarks) are STILL untracked |
+| G-001 | HISTORICAL | RESOLVED | NONE | HISTORICAL | Both components closed 2026-08-19. **Preservation**: commit `5256f08` tracked the 74 method/benchmark/architecture artifacts (70 in place; SOFA-METHOD.md and the 3 shadow runtime files preserved as hash-matched snapshots, originals deliberately left untracked). **Documentation/state-sync**: WORK.md `## 8` now indexes all five evidence roots, PROJECT-MAP.md lists them under Evidence stores, and LOGBOOK.md carries the 2026-08-18/19 entry. |
 | G-002 | HISTORICAL | SUPERSEDED | NONE | OWNER | Scout SV0 verdict gate — see SV0 section in PROPOSED-PROJECT-STATE |
 | G-003 | UNRESOLVED | OPEN | NONE | DEBT | FOX benchmark file carries no `frozen-sofa-benchmark` marker (HOUR/MOBILE do) |
 | G-004 | UNRESOLVED | OPEN | NONE | DEBT | No blind review anywhere in the FOX/HOUR/MOBILE lineage the Sofa Method is extracted from |
@@ -74,18 +74,18 @@ BUCKET is the field that stops the project carrying 53 equally-weighted open loo
 
 | Bucket | n |
 |---|---|
-| **BLOCKER** | 2 (G-001, G-008) |
+| **BLOCKER** | 1 (G-008) |
 | OWNER | 6 (G-002, G-007, G-009, G-015, G-028, G-033) |
 | DEBT | 22 |
-| HISTORICAL | 23 |
+| HISTORICAL | 24 |
 | **Total IDs** | 53 |
 
 | Resolution | n |
 |---|---|
-| RESOLVED | 21 |
+| RESOLVED | 22 |
 | SUPERSEDED | 3 |
 | DISPROVEN | 2 |
-| OPEN | 27 |
+| OPEN | 26 |
 
 | Loss | n |
 |---|---|
