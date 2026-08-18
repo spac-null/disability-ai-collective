@@ -1,0 +1,7 @@
+{
+  "source_decision": "defer",
+  "defer_reason_code": "commission_mechanism_not_tied_to_anchor",
+  "defer_reason": "Story Rejection: commission's mechanism explanation does not tie back to the grounded anchor \u2014 DEFER rather than COMMISSION on an ungrounded category jump",
+  "source_hash": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "evidence_packet_hash": "3bef4a7324bb6c9e703bfdc499c7d3460f5a9f1dbdc24cdcbe759ea7062a71e9"
+}

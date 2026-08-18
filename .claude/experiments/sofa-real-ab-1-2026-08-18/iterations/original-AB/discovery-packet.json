@@ -1,0 +1,193 @@
+{
+  "schema_version": "sofa-shadow-1",
+  "built_at": "2026-08-18T16:55:47",
+  "evidence_packet_hash": "3bef4a7324bb6c9e703bfdc499c7d3460f5a9f1dbdc24cdcbe759ea7062a71e9",
+  "source_anchor": {
+    "value": "You can\u2019t walk into a gallery without learning about some subcultural genius or longlost creative you\u2019ve never heard of.",
+    "epistemic_type": "EVIDENCE",
+    "note": "verbatim, from commission_brief.source_anchor_examined"
+  },
+  "disturbance": {
+    "value": "The review repeatedly frames discovery as a physical act of wandering \u2014 following your nose, walking into galleries, sniffing something out across a sprawl of venues from City Art Gallery to Calton Hill to Jupiter Artland \u2014 yet it never registers that this mobile, spontaneous mode of encounter is itself a condition of entry, not a neutral given. A festival that celebrates the marginalised and unseen assumes a reader-body that can freely cross the whole city to do the seeing.",
+    "epistemic_type": "EDITORIAL_INTERPRETATION",
+    "note": "what in the evidence does not fit the ordinary explanation"
+  },
+  "hidden_mechanism": {
+    "value": "The festival's entire discovery premise is coded as an ambulatory act \u2014 following your nose across venues, walking in, sniffing something out \u2014 so the review's own prose enacts a navigation model that presumes a spontaneous mobile body, meaning the 'unheralded' it celebrates is filtered through an access architecture that quietly pre-selects who can do the uncovering.",
+    "epistemic_type": "EDITORIAL_INTERPRETATION",
+    "note": "INHERITED from Fable Layer 1, NOT regenerated in this slice; already semantic-entailment-checked upstream; this is validated interpretation, not source fact"
+  },
+  "discovery_lens": {
+    "value": "all_lenses_unattributed",
+    "epistemic_type": "EDITORIAL_METADATA",
+    "note": "which lens produced the mechanism \u2014 unattributed unless a competitive-discovery step (Architecture C, not this slice) explicitly recorded it"
+  },
+  "byline_persona": {
+    "value": "Zen Circuit",
+    "epistemic_type": "EDITORIAL_METADATA",
+    "note": "the execution persona selected by Fable Layer 2 \u2014 a byline/execution fact, NOT a claim that this persona discovered the mechanism"
+  },
+  "reader_contract": {
+    "value": "Anyone who has ever felt vaguely guilty at an art festival \u2014 dragged from venue to venue, lectured about geniuses they've never heard of, told they're a bastard for not knowing \u2014 will recognise the exhaustion and the pleasure in this review, which is funny and honest about what it's actually like to be a body walking through too much art in one city.",
+    "epistemic_type": "EDITORIAL_GUIDANCE",
+    "note": "why a general reader should care; distinct from the mechanism"
+  },
+  "reader_contract_distinctness_reason": {
+    "value": "The contract sells the reader on the relatable comedy and physical fatigue of festival-going as an experience, whereas the mechanism is an argument about how the review's mobility metaphors quietly pre-select who gets to be the discoverer.",
+    "epistemic_type": "EDITORIAL_GUIDANCE",
+    "note": "human/model-facing note on why this is not just the mechanism restated \u2014 unvalidated by a similarity gate in this slice, inspected manually per the task"
+  },
+  "supporting_evidence": [
+    {
+      "kind": "quote",
+      "source_excerpt": {
+        "value": "You\u2019ve just got to follow your nose and hope you sniff out something you like.",
+        "epistemic_type": "EVIDENCE",
+        "note": "supporting_evidence[0] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "The review's own prescribed method of encounter is bodily and ambulatory, treating spontaneous physical wandering as the natural way to access the festival's hidden stories.",
+        "epistemic_type": "EDITORIAL_INTERPRETATION",
+        "note": "supporting_evidence[0] editorial note"
+      }
+    },
+    {
+      "kind": "quote",
+      "source_excerpt": {
+        "value": "There are curated displays, satellite exhibitions, performances, off-site projects, and it\u2019s impossible to figure out how any of it fits together.",
+        "epistemic_type": "EVIDENCE",
+        "note": "supporting_evidence[1] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "The dispersed, off-site structure is exactly what demands the mobile body the review presumes, and the difficulty of navigation is registered as personal confusion rather than an access condition.",
+        "epistemic_type": "EDITORIAL_INTERPRETATION",
+        "note": "supporting_evidence[1] editorial note"
+      }
+    },
+    {
+      "kind": "quote",
+      "source_excerpt": {
+        "value": "Over among the horses and goats of Jupiter Artland",
+        "epistemic_type": "EVIDENCE",
+        "note": "supporting_evidence[2] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "The physical spread of venues to a rural sculpture park shows how far the discovering body is expected to travel to complete the festival.",
+        "epistemic_type": "EDITORIAL_INTERPRETATION",
+        "note": "supporting_evidence[2] editorial note"
+      }
+    },
+    {
+      "kind": "quote",
+      "source_excerpt": {
+        "value": "By the time you\u2019re done with Edinburgh art festival you\u2019ll have uncovered so many hidden stories you\u2019ll feel like Columbo.",
+        "epistemic_type": "EVIDENCE",
+        "note": "supporting_evidence[3] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "The discovery premise is framed as an active detective-like uncovering performed by the visitor, foregrounding who is doing the uncovering.",
+        "epistemic_type": "EDITORIAL_INTERPRETATION",
+        "note": "supporting_evidence[3] editorial note"
+      }
+    }
+  ],
+  "carrying_material": [
+    {
+      "kind": "sequence_of_venues",
+      "source_excerpt": {
+        "value": "Richard Maguire at Collective Gallery at the top of Calton Hill",
+        "epistemic_type": "EVIDENCE",
+        "note": "carrying_material[0] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "A concrete geographic waypoint the reader can be walked to; part of a chain of named locations the review physically traverses.",
+        "epistemic_type": "EDITORIAL_GUIDANCE",
+        "note": "carrying_material[0] editorial note"
+      }
+    },
+    {
+      "kind": "person_doing_something",
+      "source_excerpt": {
+        "value": "She captured protests and action groups operating out of living rooms and town halls; people living in hostels and housing schemes, skinheads, labourers, Hare Krishnas, Indians, Jamaicans, white and black.",
+        "epistemic_type": "EVIDENCE",
+        "note": "carrying_material[1] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "Sandra George moving through Craigmillar as a semi-outsider documentarian is itself a vivid enactment of who does the discovering and from what position \u2014 a human thread the reader can follow.",
+        "epistemic_type": "EDITORIAL_GUIDANCE",
+        "note": "carrying_material[1] editorial note"
+      }
+    },
+    {
+      "kind": "object",
+      "source_excerpt": {
+        "value": "A figure in a Georgian wig grins menacingly at you as you enter, a red plasticine smile plastered across his face.",
+        "epistemic_type": "EVIDENCE",
+        "note": "carrying_material[2] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "A vivid, physically encountered object that lets the reader watch the writer walk in and be confronted, dramatising the ambulatory encounter model.",
+        "epistemic_type": "EDITORIAL_GUIDANCE",
+        "note": "carrying_material[2] editorial note"
+      }
+    },
+    {
+      "kind": "contradiction",
+      "source_excerpt": {
+        "value": "The whole thing could do with some more ambition, some bigger names, some starrier attractions. And it\u2019s all a bit worthy and lecture-y, like you\u2019re getting told off in every gallery you enter.",
+        "epistemic_type": "EVIDENCE",
+        "note": "carrying_material[3] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "The tension between celebrating the unheralded and feeling scolded by it gives the piece its central live contradiction to carry the reader.",
+        "epistemic_type": "EDITORIAL_GUIDANCE",
+        "note": "carrying_material[3] editorial note"
+      }
+    },
+    {
+      "kind": "quote",
+      "source_excerpt": {
+        "value": "\u201cYou\u2019ve never heard of this previously undiscovered marginalised artist? You bastard!\u201d",
+        "epistemic_type": "EVIDENCE",
+        "note": "carrying_material[4] verbatim excerpt"
+      },
+      "editorial_note": {
+        "value": "A sharp comic line that can anchor the reader emotionally in the experience of being a wandering, lectured visitor.",
+        "epistemic_type": "EDITORIAL_GUIDANCE",
+        "note": "carrying_material[4] editorial note"
+      }
+    }
+  ],
+  "known_gaps": [
+    {
+      "value": "The source never explicitly discusses physical access, mobility, cost, or who is excluded from visiting the venues \u2014 this is inference from the prose's metaphors, not stated fact.",
+      "epistemic_type": "GROUNDING_BOUNDARY",
+      "note": "what the evidence does NOT authorize claiming"
+    },
+    {
+      "value": "The source gives no figures on attendance, ticket prices, distances between venues, or opening times.",
+      "epistemic_type": "GROUNDING_BOUNDARY",
+      "note": "what the evidence does NOT authorize claiming"
+    },
+    {
+      "value": "The source does not name any access barriers or state that the festival pre-selects its audience; that framing is editorial interpretation.",
+      "epistemic_type": "GROUNDING_BOUNDARY",
+      "note": "what the evidence does NOT authorize claiming"
+    },
+    {
+      "value": "The source does not describe the festival's own stated curatorial intentions beyond the reviewer's characterisation of them as 'worthy and lecture-y'.",
+      "epistemic_type": "GROUNDING_BOUNDARY",
+      "note": "what the evidence does NOT authorize claiming"
+    },
+    {
+      "value": "Birth/death dates and nationalities given (Sandra George 1957-2013, Frank Walter 1926-2009, Sadao Hasegawa 1945-1999) are the only biographical facts available; nothing further about these artists may be claimed.",
+      "epistemic_type": "GROUNDING_BOUNDARY",
+      "note": "what the evidence does NOT authorize claiming"
+    }
+  ],
+  "form_suggestion": {
+    "value": "first-person walking essay tracing the physical route through venues",
+    "epistemic_type": "EDITORIAL_GUIDANCE",
+    "note": "suggestion only; writer may override if material argues otherwise"
+  }
+}

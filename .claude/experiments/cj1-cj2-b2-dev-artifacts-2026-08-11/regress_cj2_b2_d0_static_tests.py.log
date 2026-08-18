@@ -1,0 +1,41 @@
+[PASS] simple_factual: status valid
+[PASS] pure_interpretive: D0 does not judge role, just coverage; status valid
+[PASS] compound_two_props: single claim spanning whole compound sentence satisfies SEGMENT-LEVEL coverage (known limitation -- surface coverage is not proposition completeness; C0's job, not this file's)
+[PASS] compound_two_props_partial_miss: second sentence's segment never referenced -> D0_COVERAGE_FAILURE
+[PASS] semicolon_separated: splits into 2 segments
+[PASS] semicolon_separated: both clauses claimed -> valid
+[PASS] semicolon_separated_one_missed: second clause's segment uncovered -> D0_COVERAGE_FAILURE
+[PASS] parenthetical_attribution: covered, valid
+[PASS] hedge_plus_proposition: covered regardless of hedge wording (D0 doesn't judge factuality)
+[PASS] eg_clause: covered despite parenthetical example, valid
+[PASS] heading_non_propositional: heading excused via non_propositional, sentence claimed, valid
+[PASS] identity_span: identity-restatement claim still covers segment, valid
+[PASS] overlapping_claim_spans: two claims both declaring the same segment_id still yields full coverage, valid
+[PASS] duplicated_spans: two claims on identical span does not itself break coverage
+[PASS] duplicated_spans: both claim_ids recorded as covering the same segment (diagnostic visibility)
+[PASS] uncovered_segment: second sentence never referenced -> D0_COVERAGE_FAILURE (fail closed, not silently valid)
+[PASS] uncovered_segment: detail names the missed text
+[PASS] invalid_span: span not present in field text -> span_resolution_failed (not silently D0_COVERAGE_FAILURE)
+[PASS] valid_span_quote_folded: curly-vs-straight apostrophe resolves via normalized_unique_match, valid
+[PASS] d0_omits_second_field_entirely: D0_COVERAGE_FAILURE
+[PASS] d0_omits_second_field_entirely: field-level zero-reference diagnostic also fires
+[PASS] over_marked_non_propositional: mechanically satisfies coverage (segments accounted for)
+[PASS] over_marked_non_propositional: rate report flags 100% 'other' usage for human review, does not auto-reject
+[PASS] illegal_reason_code: schema_invalid, takes priority over coverage
+[PASS] duplicate_claim_id: schema_invalid, takes priority over coverage even though text is fully covered
+[PASS] claim_references_unknown_field: schema_invalid
+[PASS] missing_segment_ids: empty segment_ids list is schema_invalid (bookkeeping is now required, not optional)
+[PASS] segment_id_fabricated_extra: declaring a segment_id the span doesn't touch -> segment_id_consistency_failed
+[PASS] segment_id_incomplete_declaration: fixture has 2 segments
+[PASS] segment_id_incomplete_declaration: span geometrically covers both segments but only 1 declared -> segment_id_consistency_failed
+[PASS] r1_receives_exact_d0_claim_set: valid handoff
+[PASS] r1_cannot_omit_d0_claim: invalid, c2 reported missing
+[PASS] r1_cannot_split_d0_claim: invalid, c2a reported extra
+[PASS] r1_cannot_merge_d0_claims: invalid, c2 reported missing
+[PASS] r2_receives_exact_r1_claim_set: valid handoff
+[PASS] r2_cannot_reshape_claim_set: invalid, both missing c3 and extra c4 reported
+[PASS] colon_not_split: colon does not create a second segment (one sentence, no semicolon)
+[PASS] bullet_line_kept_as_unit: 3 segments (heading line + 2 bullet lines, bullets not further sentence-split)
+
+============================================================
+ALL STATIC TESTS PASS. Zero API calls, zero network access.

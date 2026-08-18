@@ -1,0 +1,23 @@
+# Following Your Nose Through the Undiscovered
+
+The Edinburgh art festival tells you plainly how it wants to be met. You can't walk into a gallery, it promises, without learning about some subcultural genius or long-lost creative you've never heard of. That is the whole pitch: the underground, the unheralded, the secret history waiting behind the next door. But the festival does not hand you a map to any of this. There are curated displays, satellite exhibitions, performances, off-site projects, and it's impossible to figure out how any of it fits together. You've just got to follow your nose and hope you sniff out something you like. Discovery, in other words, is offered as a mode of movement — the visitor wandering, sniffing, uncovering, arriving at each unfamiliar name as if by accident and delight.
+
+Three of those names sit near the center of what the festival is doing.
+
+Sandra George (1957–2013) was a black photographer and photojournalist who documented life on the margins of inner-city Edinburgh — protests run out of living rooms and town halls, people in hostels and housing schemes, skinheads and labourers and Hare Krishnas, children playing in bleak places. Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.
+
+Frank Walter (1926–2009) was an Antiguan painter, writer, poet and polymath. He worked small and strange, on ripped cardboard and fading paper, painting rainbows and stars and smiling faces and trees that bend at weird angles. He died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.
+
+Sadao Hasegawa (1945–1999) was a Japanese illustrator whose images fuse mythology and hardcore eroticism, figures writhing and brandishing katanas while fighting off giant spiders. Most of his work, too, stayed unpublished and unseen in his lifetime.
+
+Set those three facts side by side and the word "discovery" starts to lose its ease. The festival uses it lightly — the visitor as amateur detective, feeling like Columbo by the end, uncovering hidden stories in gallery after gallery. But George was only discovered after her death in 2013. Walter died having never shown any of it. Hasegawa's work stayed unseen while he lived. Three artists, three lifetimes, and in each case the work and the moment of its being seen do not overlap. The word carries the tone of pleasure — of a happy accident, of the visitor rewarded for wandering — and yet the material it is being applied to is the fact of an entire body of work that no one saw while its maker was alive.
+
+There is a duty in this, the festival's own account allows. If contemporary artists and institutions want to tell hidden stories, they have a duty — to viewers and to their subjects — to tell them clearly. Clarity is worth holding to here, because there are two different things that the single word "discovery" is being asked to do, and they are not the same thing.
+
+The first is what the visitor experiences now. You walk in. You did not know the name. Now you do. The work is in front of you, hung in a gallery, lit and framed and available. Your not-knowing has ended. That is discovery as an event in the present, happening to the person who moves through the rooms — a personal encounter, arriving late, but arriving.
+
+The second is a fact about the work itself, and it belongs to a different time entirely. George's photographs, Walter's thousands of paintings, Hasegawa's illustrations — this work became visible only after having gone unseen during the artist's lifetime. That is not a fact about the visitor's afternoon. It is a fact about the work's history, and it was already true before anyone walked through the door. The visitor's discovery is a first encounter. The work's condition is that it was not seen when the person who made it was alive to see it seen.
+
+These are two claims, and the festival's language folds them into one warm verb. The visitor discovers; the work went unseen. The first is an arrival. The second is an absence that had already happened, and had already ended, before the arrival was possible.
+
+That is the distinction, and it is enough to hold. The pleasure of encountering something new, and the fact that the thing was there, made, complete, and unseen through a whole life — these are not the same, however easily one word covers them both.

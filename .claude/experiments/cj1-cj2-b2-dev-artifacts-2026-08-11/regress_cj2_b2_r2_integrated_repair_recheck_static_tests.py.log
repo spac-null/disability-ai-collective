@@ -1,0 +1,37 @@
+[PASS] r1_system_object_identity
+[PASS] r2_system_object_identity
+[PASS] validate_r1_is_the_original
+[PASS] validate_r2_is_the_original
+[PASS] compute_effective_v2_is_the_original
+[PASS] compute_consistency_is_the_original
+[PASS] validate_auditor_evidence_is_the_original
+[PASS] build_r1_user_is_the_original
+[PASS] build_r2_user_is_the_original
+[PASS] repair_system_is_the_original
+[PASS] is_repairable_failure_is_the_original
+[PASS] apply_repair_patch_is_the_original
+[PASS] verify_immutable_fields_unchanged_is_the_original
+[PASS] call_repair_is_the_original
+[PASS] r1_response_format_is_the_psp_original
+[PASS] r2_response_format_is_the_psp_original
+[PASS] r1_r2_max_tokens_is_12000_unchanged
+[PASS] nine_items
+[PASS] items_match_psp_exactly
+[PASS] candidates_match_psp_source
+[PASS] seeds_match_psp_source
+[PASS] checker_pure_allowlisted_triggers
+[PASS] checker_mixed_violations_does_NOT_trigger
+[PASS] checker_unrelated_only_does_NOT_trigger
+[PASS] checker_no_violations_does_NOT_trigger
+[PASS] checker_claim_already_compliant_does_NOT_trigger
+[PASS] call_repair_appears_exactly_once_in_source
+[PASS] no_while_statement_anywhere
+[PASS] run_one_candidate_called_exactly_once_not_recursively
+[PASS] r2_call_appears_after_r1_validity_check
+[PASS] repair_call_appears_after_allowlist_check
+[PASS] safety_invariant_checks_effective_status_of_repaired_claims
+[PASS] expected_r1_calls_is_9
+[PASS] expected_max_total_calls_is_27
+
+============================================================
+ALL INTEGRATED REPAIR RECHECK STATIC TESTS PASS. Zero API calls, zero network access.

@@ -1,0 +1,108 @@
+{
+  "status": "FAIL",
+  "status_reasons": [
+    "UNSUPPORTED: 'The pleasure of uncovering was only made available by the fact that the maker never got to.' \u2014 This is an editorial causal/interpretive claim. The source states George never showed work publicly in her lifetime and was discovered after death, but does not establish that the pleasure of uncovering was 'only made available' by her not getting to present herself. It's the article's own argument presented as an established relationship.",
+    "UNSUPPORTED: 'But George, Walter and Hasegawa cannot advocate for themselves, and never could.' \u2014 'never could' is an unsupported certainty/motive-style claim about the artists' capacity or agency during their lives; the source only establishes they did not show work publicly, not that they never could advocate for themselves.",
+    "UNSUPPORTED: \"They are relying entirely on how they're presented.\" \u2014 This is the article's interpretive argument, not a source fact. The source does not establish that these artists are 'relying entirely' on presentation."
+  ],
+  "deterministic_flags": [
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'Follow your nose' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'but I'm not sure how the art downstairs fails to work so wel' not found verbatim in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Follow Your Nose' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'The Uneasy Pleasures' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Edinburgh Art Festival\n\nYou' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'At Ingleby Gallery' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'At Custom Lane' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Eva Rothschild's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Anne Hardy's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Jill Edelstein's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Emii Alrai's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'But George' not found in source"
+    ]
+  ],
+  "claims": [
+    {
+      "claim": "The pleasure of uncovering was only made available by the fact that the maker never got to.",
+      "verdict": "UNSUPPORTED",
+      "reason": "This is an editorial causal/interpretive claim. The source states George never showed work publicly in her lifetime and was discovered after death, but does not establish that the pleasure of uncovering was 'only made available' by her not getting to present herself. It's the article's own argument presented as an established relationship."
+    },
+    {
+      "claim": "And the source never tells us why any of these artists went unseen while alive \u2014 only that they did.",
+      "verdict": "SUPPORTED",
+      "reason": "The source indeed only states these artists never showed work in their lifetimes without explaining why. This is accurately characterizing the absence of causal info."
+    },
+    {
+      "claim": "But George, Walter and Hasegawa cannot advocate for themselves, and never could.",
+      "verdict": "UNSUPPORTED",
+      "reason": "'never could' is an unsupported certainty/motive-style claim about the artists' capacity or agency during their lives; the source only establishes they did not show work publicly, not that they never could advocate for themselves."
+    },
+    {
+      "claim": "They are relying entirely on how they're presented.",
+      "verdict": "UNSUPPORTED",
+      "reason": "This is the article's interpretive argument, not a source fact. The source does not establish that these artists are 'relying entirely' on presentation."
+    },
+    {
+      "claim": "young Northern Irish artist Sg\u00e0ire Wood",
+      "verdict": "SUPPORTED",
+      "reason": "Present in source ('young Northern Irish artist Sg\u00e0ire Wood') \u2014 though the audited article does not actually include this; not applicable. Disregard."
+    },
+    {
+      "claim": "Hung beside giants of contemporary painting, a big Rose Wylie, a gorgeous Lynette Yiadom-Boakye, it eclipses all of them.",
+      "verdict": "SUPPORTED",
+      "reason": "Source says his works are flanked by Rose Wylie and Lynette Yiadom-Boakye and that 'it's all eclipsed by his weird little paintings.' Accurately reflected."
+    },
+    {
+      "claim": "The festival has made the posthumous discovery into a house style, a rhythm you learn to anticipate.",
+      "verdict": "UNCERTAIN",
+      "reason": "This is interpretive framing. The source shows multiple posthumously-discovered artists, so the pattern is factually grounded, but characterizing it as a deliberate 'house style' the festival 'made' edges toward an unsupported intentionality/motive claim about the festival's curation."
+    },
+    {
+      "claim": "\"Follow your nose\" is a phrase for a browser with time and appetite, free to like or not like, to drift on.",
+      "verdict": "SUPPORTED",
+      "reason": "This is the article's own commentary on a phrase paraphrased from the source ('follow your nose and hope you sniff out something you like'); not an unsupported factual claim about the world."
+    },
+    {
+      "claim": "the festival's breezy verbs never quite reckon with the difference.",
+      "verdict": "UNCERTAIN",
+      "reason": "This is the article's editorial conclusion/interpretation rather than a source fact; it is a rhetorical closing argument, not a verifiable claim, but is presented as a settled judgment about the festival."
+    }
+  ],
+  "unsupported_count": 3,
+  "uncertain_count": 2,
+  "word_count": 835
+}

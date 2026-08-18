@@ -1,0 +1,7 @@
+{
+  "source_decision": "defer",
+  "defer_reason_code": "commission_evidence_truncated",
+  "defer_reason": "Story Rejection: source is materially truncated \u2014 DEFER rather than COMMISSION",
+  "source_hash": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "evidence_packet_hash": "61a1bab6896871f01b8dae7ca3b7d65bddcdd1193490d7f1c1761731851f27ea"
+}

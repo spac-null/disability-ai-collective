@@ -1,0 +1,100 @@
+SOFA REAL A/B 1 — ARTISTIC FAILURE DIAGNOSIS
+
+STOP all grounding-fix work for now.
+
+Jascha's sofa-read overrides the previous model judgment:
+
+LEGACY is the stronger article.
+SOFA feels off / over-engineered / too linear.
+
+Do NOT generate new prose.
+Do NOT run another case.
+Do NOT change code yet.
+Do NOT deploy anything.
+
+We need to understand WHY.
+
+Compare the exact inputs available to the LEGACY writer versus the SOFA
+writer for this same frozen Edinburgh commission.
+
+Focus especially on information that can create INTERNAL MOVEMENT:
+
+- correction_moment
+- resisting_example
+- uncertainty / unresolved contradiction
+- opening_scene / opening_shape
+- angle as question
+- cross_cite / counter-position
+- any other commission field Legacy receives that Sofa does not
+
+For every relevant field, report:
+
+FIELD:
+VALUE IN FROZEN COMMISSION:
+LEGACY WRITER RECEIVES IT: yes/no + where
+SOFA WRITER RECEIVES IT: yes/no + where
+WHAT IT DOES NARRATIVELY:
+
+Then compare the articles structurally.
+
+LEGACY:
+Identify:
+- initial belief/question
+- first concrete world
+- correction/turn
+- what becomes larger/different
+- unresolved tension
+- ending movement
+
+SOFA:
+Identify the same.
+
+Do NOT judge by grounding yet.
+Do NOT choose based on factual safety.
+This task is about why one reads as a living article and the other as an
+argument executing a pre-known mechanism.
+
+Test this hypothesis explicitly:
+
+"By separating Lens from Writer, Sofa correctly removed persona roleplay,
+but the Discovery Packet also discarded adversarial/corrective editorial
+material that allowed the Legacy writer to discover something on the page.
+The Sofa writer therefore received a mechanism to demonstrate rather than
+a question/material capable of changing that mechanism."
+
+Say SUPPORTED / PARTLY SUPPORTED / NOT SUPPORTED and show evidence.
+
+Also distinguish:
+
+A. qualities that come from PERSONA ROLEPLAY and should NOT be preserved
+
+from
+
+B. qualities that come from EDITORIAL/NARRATIVE STRUCTURE and SHOULD be
+preserved without persona fabrication.
+
+Pay particular attention to the Legacy line:
+
+"Then I read about Sandra George and had to put the argument down."
+
+What input/prompt machinery caused that turn?
+
+And explain why Sofa instead stays on essentially one track from:
+
+"Your feet are the method"
+
+through the ending.
+
+Return:
+
+ARTISTIC DIAGNOSIS
+
+WHAT LEGACY HAS THAT SOFA LOST
+
+WHAT MUST NOT BE COPIED FROM LEGACY
+
+MINIMUM ARCHITECTURAL CORRECTION
+
+Do NOT implement the correction yet.
+
+Then STOP.

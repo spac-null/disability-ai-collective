@@ -1,0 +1,99 @@
+{
+  "status": "FAIL",
+  "status_reasons": [
+    "UNSUPPORTED: \"The festival's job, then, is not merely to arrange objects for a wandering eye. It's to speak for people who did not speak for themselves in public.\" \u2014 This is the article's own editorial interpretation about the festival's 'job'/duty presented as a conclusion. The source does not establish that the festival's role is 'to speak for people' \u2014 this is the article's argument, and while framed as argument, the phrasing 'is not merely... It's to' asserts it as fact.",
+    "UNSUPPORTED: 'the unseen dead cannot be served by vibes' \u2014 This is the article's own evaluative claim, not something the source establishes. The source expresses the reviewer's preference for clarity but does not establish this as a settled proposition about serving 'the unseen dead.'",
+    "UNSUPPORTED: \"Frank Walter's small weird paintings on ripped cardboard eclipse the giants hung beside them precisely because you can see them.\" \u2014 The source says his work is 'eclipsed by his weird little paintings' but gives no causal explanation ('precisely because you can see them'). The article invents the causal mechanism (visibility/clarity) that the source does not state.",
+    "UNSUPPORTED: 'you are being handed responsibility for stories their makers never released.' \u2014 This asserts a claim about the visitor's moral position that the source does not establish. It is the article's interpretive extension of the fact that artists did not show their work publicly."
+  ],
+  "deterministic_flags": [
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'it's impossible to figure out how any of it fits together.' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'uncover so many hidden stories you'll feel like Columbo.' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'I love it, but I'm not sure how the art downstairs fails to ' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'If contemporary artists and institutions want to tell hidden' not found verbatim in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Follow Your Nose\n\nThe' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Edinburgh Art Festival' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Del LaGrace Volcano's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Anne Hardy's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Richard Maguire's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Eva Rothschild's Fruitmarket' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Jamie Fitzpatrick's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Frank Walter's' not found in source"
+    ]
+  ],
+  "claims": [
+    {
+      "claim": "The source does not say why. It says only that it happened \u2014 three times, across three continents and half a century.",
+      "verdict": "SUPPORTED",
+      "reason": "The source does indeed only state that these three artists never showed their work in their lifetime without explaining why. The article correctly frames this as an absence rather than asserting a cause."
+    },
+    {
+      "claim": "The festival's job, then, is not merely to arrange objects for a wandering eye. It's to speak for people who did not speak for themselves in public.",
+      "verdict": "UNSUPPORTED",
+      "reason": "This is the article's own editorial interpretation about the festival's 'job'/duty presented as a conclusion. The source does not establish that the festival's role is 'to speak for people' \u2014 this is the article's argument, and while framed as argument, the phrasing 'is not merely... It's to' asserts it as fact."
+    },
+    {
+      "claim": "the unseen dead cannot be served by vibes",
+      "verdict": "UNSUPPORTED",
+      "reason": "This is the article's own evaluative claim, not something the source establishes. The source expresses the reviewer's preference for clarity but does not establish this as a settled proposition about serving 'the unseen dead.'"
+    },
+    {
+      "claim": "Jamie Fitzpatrick's grinning Georgian statues at Edinburgh Printmakers \u2014 war criminals and slavers rendered as gloopy, collapsing Muppets in clay \u2014 work because they tell you exactly what they mean.",
+      "verdict": "UNCERTAIN",
+      "reason": "The source praises Fitzpatrick's work for clarity and describes it as satirical/clear ('tell them clearly. Which is what Jamie Fitzpatrick... has done'), so the causal 'work because' is a reasonable extension, but the specific causal attribution 'work because they tell you exactly what they mean' is the article's interpretive gloss rather than an explicit source statement."
+    },
+    {
+      "claim": "Frank Walter's small weird paintings on ripped cardboard eclipse the giants hung beside them precisely because you can see them.",
+      "verdict": "UNSUPPORTED",
+      "reason": "The source says his work is 'eclipsed by his weird little paintings' but gives no causal explanation ('precisely because you can see them'). The article invents the causal mechanism (visibility/clarity) that the source does not state."
+    },
+    {
+      "claim": "It asks the visitor to wander, to trust instinct, to accept incoherence as the price of abundance.",
+      "verdict": "UNCERTAIN",
+      "reason": "The source does say to follow your nose and that the festival is too big to make sense, but 'the price of abundance' framing is the article's own interpretation of the trade-off, not a source claim."
+    },
+    {
+      "claim": "you are being handed responsibility for stories their makers never released.",
+      "verdict": "UNSUPPORTED",
+      "reason": "This asserts a claim about the visitor's moral position that the source does not establish. It is the article's interpretive extension of the fact that artists did not show their work publicly."
+    }
+  ],
+  "unsupported_count": 4,
+  "uncertain_count": 2,
+  "word_count": 829
+}

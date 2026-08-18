@@ -1,0 +1,38 @@
+[PASS] d0_system_object_identity
+[PASS] c0_system_object_identity
+[PASS] d0_prompt_sha256_matches_first_probe
+[PASS] c0_prompt_sha256_matches_first_probe
+[PASS] model_unchanged
+[PASS] temperature_unchanged
+[PASS] timeout_unchanged
+[PASS] build_d0_user_is_the_imported_original
+[PASS] build_c0_user_is_the_imported_original
+[PASS] classify_call_outcome_is_the_imported_original
+[PASS] natural_corpus_is_the_same_object_as_transfer_probe
+[PASS] challenge_corpus_is_the_same_object_as_transfer_probe
+[PASS] reference_manifest_is_the_same_object_as_transfer_probe
+[PASS] natural_corpus_has_10_items
+[PASS] challenge_corpus_has_4_items
+[PASS] d0_max_tokens_raised_to_16000
+[PASS] d0_max_tokens_changed_from_original_3000
+[PASS] c0_max_tokens_unchanged_from_original
+[PASS] c0_response_format_is_json_schema_strict
+[PASS] c0_schema_top_level_required_status_and_missing_items
+[PASS] c0_schema_status_enum_matches_validator
+[PASS] c0_schema_missing_item_required_fields_match_validator
+[PASS] c0_schema_no_additional_properties_at_item_level
+[PASS] c0_schema_no_additional_properties_at_top_level
+[PASS] d0_call_passes_response_format_none
+[PASS] plan_length_is_24
+[PASS] expected_total_calls_is_24
+[PASS] plan_has_10_d0
+[PASS] plan_has_10_c0_natural
+[PASS] plan_has_4_c0_challenge
+[PASS] no_selective_rerun_all_10_natural_items_present
+[PASS] normalizer_functions_are_the_imported_originals
+[PASS] call_function_globals_is_this_module
+[PASS] no_imported_module_defines_D0_MAX_TOKENS_16000
+[PASS] no_imported_module_defines_C0_RESPONSE_FORMAT
+
+============================================================
+ALL EXECUTION-ENVELOPE RECOVERY STATIC TESTS PASS. Zero API calls, zero network access.

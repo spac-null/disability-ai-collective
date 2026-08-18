@@ -1,0 +1,40 @@
+{
+  "record_type": "pre-run identity record",
+  "experiment_id": "B2 -> STAGE C FIRST INTEGRATED DEVELOPMENT PROBE",
+  "explicitly_not_named": "v2.1",
+  "prepared": "2026-08-13",
+  "self_reference_note": "This file's OWN SHA256 is deliberately NOT recorded inside itself.",
+  "artifact_hashes_sha256": {
+    "cj2_b2_stage_c_first_integrated_development_probe.py": "f430adcc2280b85d827df2c827f2a03574681010606947e4d6d90ad292b79c58",
+    "cj2_b2_integrated_pipeline_probe.py": "ba512b78b69130787a14cdf8c06a7fbc6a04333193aabb7929a880fb18bbff2f",
+    "cj2_b2_d0c0_execution_envelope_recovery.py": "d6c9bda94ee9e829755c4a170581227ec0d58ebbf37b55daa4248565f6b8afb1",
+    "cj2_b2_d0c0_first_probe.py": "f0e19ee8d4ca5a03e1dfc2c46ce4ef21e4f6ec878a08f7e486a209433e0e1fd1",
+    "cj2_b2_v2_probe.py": "ae8b2fbdf07eefab8d3fea4ce3684e3cae6364520560b547b3bf94deaa642d01",
+    "cj2_b2_r1r2_partial_structured_output_probe.py": "01c5b1d062b7f9a7e7f407e5a8774e36b20fdc0299b77426117fa7f96852f53f",
+    "cj2_b2_r2_contract_repair_probe.py": "17637b8c252893c74f65441d1afbc06728e1f508b02d13789ade00a1343bec3c",
+    "cj2_b2_r2_integrated_repair_recheck.py": "8eaf152b84c7c3ee63cc4a0e3589bf594ae79feaaf74b7324eea6c82eda733b0",
+    "cj2_b2_stage_c_admission_gate.py": "5e4bb10bc44008fbce236ed20dced748fc7d43d275e81da95696d248f73e0ae0",
+    "cj2_reference_probe.py": "b885e47ef5cffe6e0bf7d596b02ba6d2cb16dda5ff46fff6842a7ab9ae83e8c8",
+    "cj2_b2_d0_prototype.py": "34f52ed994b77e6967f21ceb0d37677ee65cb86c6908d86ce8c7d6030a0a8873",
+    "cj2_b2_c0_prototype.py": "e0e7acff1666c62d259d28497adef300a055ae3cb79233d426ae33050809a4a0",
+    "cj2_b2_d0c0_output_normalizer.py": "a32d897bcb82dfab9084c9bd966e993da23025e18dd7d4673c3c33f5a156af0c"
+  },
+  "fixture_hashes_sha256": {
+    "corpus_natural_items": "2e7a413fc204d5fd3cefeeb17ce082a34265df36041d80b376b5bf8fc35a9a69",
+    "candidates_and_seeds": "740d984dab66aa24c16c5fa5011464fff8076ba889598aa91bf9de3880b18ee0",
+    "preregistration": "96997745cec1f43c88ce02848733e9a0a277941ff2b367cb1d43a99536b6ea45"
+  },
+  "call_configuration": {
+    "model": "openrouter/claude-sonnet-4.6",
+    "temperature": 0.0,
+    "d0_max_tokens": 16000,
+    "c0_max_tokens": 2000,
+    "r1_r2_max_tokens": 12000,
+    "repair_max_tokens": 2000,
+    "stage_c_max_tokens": 2200,
+    "timeout_seconds": 120,
+    "retry_policy": "none"
+  },
+  "corpus_size": 14,
+  "execution_status_at_time_of_this_record": "NOT EXECUTED. Zero model/API calls have been made against this exact topology/config."
+}

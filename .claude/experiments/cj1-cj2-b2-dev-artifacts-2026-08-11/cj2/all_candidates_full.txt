@@ -1,0 +1,277 @@
+############ 01_cave_dna ############
+=== Engine P ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2",
+    "cj1:a3"
+  ],
+  "additional_source_observations": [
+    {
+      "id": "obs:1",
+      "excerpt": "The researchers used a laser to bore a microscopic hole and collect samples from a fine layer of calcium carbonate that had formed over the painting.",
+      "observation": "The dating method measures the overlying calcium carbonate deposit, not the pigment itself -- meaning the age assigned is the age of the mineral crust, which establishes only a minimum bound for when the painting was made, not the painting's actual date."
+    }
+  ],
+  "engine_move": "Asking what the measurement process itself quietly does to the reality it is supposed to be carrying -- specifically, what the uranium-series dating of calcium carbonate transmits versus what it omits.",
+  "seed_engagement": "The seed friction notes that the 67,800-year minimum age is used to place the hand stencil within the Homo sapiens migration window, and that stylistic complexity is then invoked to attribute authorship. Both moves depend on the age figure. But the canonical evidence (cj1:a1) calls it a 'minimum age,' and obs:1 establishes why: the measurement is of a calcium carbonate crust that formed OVER the painting, not of the painting itself. The transmission process here is: actual painting event → pigment on wall → calcium carbonate accumulates on top → uranium decay measured in that crust → number reported as the painting's age.",
+  "interpretive_inference": "Each step in that chain introduces a directional distortion. The crust can only have formed after the painting existed, so the date is a floor, not a point estimate -- the painting could be substantially older. This means the 'fit' with the Homo sapiens migration window (cj1:a2) is not a confirmed overlap but a confirmed lower bound: the painting is at least as old as the migration, possibly older, potentially predating Homo sapiens' arrival entirely. The stylistic-complexity argument (cj1:a3) is then doing all the attribution work -- but it is being propped up by a date that the measurement process structurally cannot deliver with the precision the attribution requires. The mediation process (measuring a secondary mineral deposit rather than the primary pigment) produces a number that looks like a date but is actually a one-sided constraint, and that asymmetry is invisible once the number enters the attribution argument.",
+  "conceptual_shift": "age-as-date → age-as-floor: the measurement process produces a directional bound, not a location in time, and that asymmetry undermines the migration-window overlap on which the Homo sapiens attribution partly rests",
+  "claimed_contribution": "A generic reader notices the uncertainty flagged in cj1:a3. This reading goes further: it identifies that the uncertainty is not merely epistemic (we don't know who made it) but is structurally produced by the measurement method itself. Uranium-series dating of an overlying crust can only ever yield a minimum, meaning the painting could predate the Homo sapiens migration window rather than merely fitting within it -- which would make the stylistic-complexity argument the sole remaining basis for attribution, standing without any chronological support at all.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would note the uncertainty about authorship and perhaps the minimum-age qualifier, but would not trace how the specific transmission process (measuring secondary carbonate rather than primary pigment) structurally produces a one-sided constraint that quietly destabilizes the migration-window overlap argument on which the Homo sapiens attribution depends."
+  }
+}
+
+=== Engine S ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2",
+    "cj1:a3"
+  ],
+  "additional_source_observations": [
+    {
+      "id": "obs:1",
+      "excerpt": "The researchers used a laser to bore a microscopic hole and collect samples from a fine layer of calcium carbonate that had formed over the painting.",
+      "observation": "The dating method works by reading a mineral layer deposited by the cave environment itself — the cave wall's own geological process is what makes the age assignment possible, not the painting's material directly."
+    }
+  ],
+  "engine_move": "Treating the cave environment as an active participant — asking what the wall, its mineral deposits, and its prior occupancy actually do in this situation, rather than treating the cave as a neutral container for human marks.",
+  "seed_engagement": "The seed friction identifies an unresolved authorship problem: the hand stencil's age fits Homo sapiens migration, but the region was previously inhabited by other human species, and stylistic complexity alone cannot settle who made it. The canonical evidence (cj1:a2, cj1:a3) frames this as an epistemic gap about the maker. But read through this engine, the cave environment is not merely the backdrop for that uncertainty — it is actively producing it.",
+  "interpretive_inference": "The cave wall's calcium carbonate layer — a geological secretion of the environment itself — is what yields the 67,800-year minimum date. The environment, in depositing that mineral crust over the painting, has preserved the art while simultaneously erasing the biological trace of whoever pressed their hand to the surface. The wall gives a date but withholds an identity. This is not a neutral failure of evidence: the same environmental process (mineral accretion over time) that makes the painting legible as ancient is precisely what occludes the maker's identity. Meanwhile, the region's deep-time occupancy by multiple human species means the cave environment has been a shared space across species and across hundreds of thousands of years — the wall holds marks from a moment that could belong to any of several inhabitants of that landscape. The authorship uncertainty is therefore not simply a gap in our methods; it is a structural consequence of how this particular environment accumulates, preserves, and obscures. The cave participates in the making of the mystery, not just in the preservation of the art.",
+  "conceptual_shift": "cave as passive container of human marks → cave as active geological agent that simultaneously enables dating and forecloses identification, producing the authorship uncertainty as an environmental artifact",
+  "claimed_contribution": "A generic reading notes that we cannot be certain who made the art because other species lived in the region. This engine reveals that the uncertainty is not merely a matter of missing biological evidence — it is structurally generated by the cave environment's own behavior: the same mineral accretion that makes the painting datable is what has erased the maker's biological signature, and the long multi-species occupancy of the landscape means the wall's surface is a palimpsest of possible presences. The environment is not the place where the mystery sits; it is the mechanism by which the mystery is produced.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would note the authorship uncertainty and the presence of multiple species in the region, but would not specifically attend to how the cave's own geological process (mineral deposition) simultaneously enables the date and forecloses the identity — treating the environment as an active agent that produces the epistemic gap rather than merely hosting it."
+  }
+}
+
+=== Engine Z ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2",
+    "cj1:a3"
+  ],
+  "additional_source_observations": [
+    {
+      "id": "obs:1",
+      "excerpt": "The research team then measured the degradation of radioactive uranium contained in these mineral deposits to assign a minimum age to the painting of 67,800 years",
+      "observation": "The dating method measures uranium decay in calcium carbonate overlying the painting -- this establishes a minimum age for the deposit, not the painting itself, meaning the painting could be older; the measurement is of the covering layer, not the art."
+    }
+  ],
+  "engine_move": "Exposing the specific limit built into the measurement itself: what the system chose to count (uranium decay in an overlying mineral layer) is being used as a proxy for authorship-attribution, a purpose the measurement cannot serve.",
+  "seed_engagement": "The canonical evidence establishes a chain: uranium decay in calcium carbonate → minimum age of 67,800 years → temporal overlap with Homo sapiens migration → stylistic complexity → inferred Homo sapiens authorship. The seed friction resists this chain by noting that other human species also occupied the region. But the engine's move is to press on the measurement itself: the uranium-series date is a minimum age for the calcium carbonate layer, not a date for the act of painting. The classification system (minimum age → species attribution via temporal overlap) is doing double duty it was never designed to do.",
+  "interpretive_inference": "The measurement produces a floor, not a point. A minimum age of 67,800 years means the art is at least that old -- it could be substantially older, potentially predating the Homo sapiens migration window entirely. The system then uses this floor as if it were a locating pin on a timeline of species presence, treating 'no earlier than 67,800 years' as equivalent to 'made during the Homo sapiens migration period.' But a minimum bound cannot place an event within a window -- it can only exclude events before the bound. The stylistic-complexity argument is then layered on top of this already-overextended temporal inference, compounding a classification error: 'complexity' is being used as a proxy for species identity, when complexity is itself a culturally and cognitively contested category. The measurement system has thus produced two proxies stacked on each other -- temporal overlap as proxy for presence, stylistic complexity as proxy for cognitive capacity -- neither of which resolves the authorship question, yet together they generate the appearance of a convergent answer.",
+  "conceptual_shift": "minimum age as temporal locator → minimum age as species-attribution anchor (a use the measurement cannot support)",
+  "claimed_contribution": "A generic reader would notice the uncertainty about who made the art. This reading goes further: it identifies that the measurement itself (a minimum bound on an overlying layer) is structurally incapable of placing the painting within any species' presence window, and that the attribution argument requires treating two stacked proxies -- temporal overlap and stylistic complexity -- as jointly sufficient evidence, when each proxy individually fails to do the work assigned to it.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would note the uncertainty flagged in cj1:a3, but would not decompose the measurement's logical structure to show that a minimum bound cannot locate an event within a window, nor identify the double-proxy stacking as the specific mechanism by which the classification system generates false confidence."
+  }
+}
+
+=== Engine M ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2",
+    "cj1:a3"
+  ],
+  "additional_source_observations": [
+    {
+      "id": "obs:1",
+      "excerpt": "The researchers used a laser to bore a microscopic hole and collect samples from a fine layer of calcium carbonate that had formed over the painting. The research team then measured the degradation of radioactive uranium contained in these mineral deposits to assign a minimum age to the painting of 67,800 years",
+      "observation": "The dating method produces a minimum age for the calcium carbonate layer overlying the painting, not a date for the act of painting itself — establishing that the temporal anchor is already one step removed from the authorship question."
+    }
+  ],
+  "engine_move": "Locating the specific operational dependency: the promise that stylistic complexity resolves authorship is underwritten by an implicit assumption that only Homo sapiens could produce such complexity — but that assumption is doing invisible work that the formal attribution never acknowledges.",
+  "seed_engagement": "The seed friction is that the 67,800-year date is used to situate the art within Homo sapiens migration, and stylistic complexity is then invoked to confirm Homo sapiens authorship (cj1:a3). But cj1:a2 establishes that other human species were present in the same region. The date does not discriminate between species; it only confirms the art predates or coincides with Homo sapiens arrival. The stylistic argument is therefore the sole load-bearing element of the attribution — and cj1:a3 immediately concedes it cannot bear that load.",
+  "interpretive_inference": "The promise on paper is: dating + stylistic analysis together identify the maker. In practice, the dating method (obs:1) delivers only a minimum age for a mineral crust, not a maker; and the stylistic argument works only if one already accepts that Homo erectus or Homo floresiensis could not have produced comparable complexity — a premise the source neither establishes nor examines. The invisible work being deferred is a comparative cognitive-capacity argument about non-sapiens hominins that the methodology never actually performs. The attribution to Homo sapiens is therefore not a conclusion the evidence produces; it is an assumption the evidence is dressed around.",
+  "conceptual_shift": "stylistic complexity as evidence of authorship → stylistic complexity as an unexamined cognitive-capacity premise that the methodology silently requires but never tests",
+  "claimed_contribution": "A generic reader would notice the uncertainty flagged in cj1:a3. This reading goes further: it identifies the specific operational dependency that makes the attribution hollow — the stylistic argument only functions as evidence if a prior claim about the cognitive ceiling of other hominins is already granted. That prior claim is the real work the system needs done, and it is nowhere in the methodology. The gap is not merely 'we can't be sure'; it is that the formal chain of reasoning has a missing load-bearing step that is invisible because it is treated as obvious.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would note the uncertainty (cj1:a3 states it plainly) but would not isolate the specific invisible premise — the unexamined cognitive-capacity assumption about non-sapiens hominins — as the precise operational dependency that the attribution silently requires. That move requires attending to what work the formal provision needs done in practice, not just registering that uncertainty exists."
+  }
+}
+
+############ 05_dutch_painting_soldier ############
+=== Engine P ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2"
+  ],
+  "additional_source_observations": [],
+  "engine_move": "Attending to what the transmission/representation process itself produces — specifically, what the act of removal (painting over the soldier) did not merely subtract but actively generated as a new meaning.",
+  "seed_engagement": "cj1:a2 establishes that the two-figure version 'seems way more innocent,' while cj1:a1 establishes that the three-figure version fulfills de Hooch's moralistic intention. The seed friction holds these in tension: the altered version looks more virtuous but is the departure from the moral message. The mediation process — painting over the soldier — did not simply reduce the scene; it inverted its moral register.",
+  "interpretive_inference": "The act of removal was not neutral subtraction. By eliminating the third figure, the mediating intervention actively produced a new moral meaning that contradicts the original: a woman drinking alone with one man reads as ordinary domestic life, while a woman drinking in a structured game with two men reads as a cautionary scene of debauchery. The transmission process (the overpainting) did not merely lose information — it generated a replacement moral frame. The altered painting is not a degraded version of the original message; it is a competing moral statement, one that happens to look more innocent precisely because the mechanism of moral instruction (the drinking game's social structure) was erased. The mediation thus produced the opposite of what it appeared to do: in trying to make the scene more modest, it destroyed the very apparatus by which de Hooch was delivering his moral warning.",
+  "conceptual_shift": "Removal as subtraction -> Removal as moral inversion produced by the transmission process itself",
+  "claimed_contribution": "A generic reading notices the irony that the 'more innocent' version is the altered one. This engine goes further: the overpainting did not merely obscure the moral content — it actively manufactured a new, contradictory moral reading by destroying the structural relationship (the drinking game with two men watching one woman drink) that was the vehicle of the original moral statement. The mediation process is not just imperfect; it is generative of a false moral signal.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would likely note the surface irony (more figures = more moral) but would not identify that the removal process itself produced a new, structurally coherent moral reading — one that actively replaced rather than merely degraded the original. The distinction between 'information lost' and 'a new meaning generated by the act of removal' requires the transmission-focused instrument."
+  }
+}
+
+=== Engine S ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2",
+    "cj1:a3"
+  ],
+  "additional_source_observations": [
+    {
+      "id": "obs:1",
+      "excerpt": "The original scene, with two men seated at a table smoking and drinking while a standing woman takes a swig of beer, would have suggested an air of debauchery, which de Hooch was known to incorporate into his works.",
+      "observation": "This establishes that the courtyard environment — specifically the spatial arrangement of two seated men and one standing woman — is what generates the social meaning. The debauchery is not in any single figure but in the relational geometry of the scene."
+    }
+  ],
+  "engine_move": "Treating the courtyard space and the arrangement of bodies within it as an active participant — asking what the environment does to the figures, and what the figures do to each other through their spatial and behavioral relations.",
+  "seed_engagement": "The seed friction identifies a paradox: the two-figure version looks more innocent but is the moral departure, while the three-figure version looks more compromising but is the moral statement. The canonical evidence in cj1:a2 locates this paradox precisely in the spatial and behavioral configuration — the woman's act of drinking the pass-glass only becomes legible as a drinking game when the second man is present. Without him, the same gesture (a woman drinking beer) reads as solitary or incidental. The environment — the courtyard table, the pass-glass, the two seated men — is what activates the moral meaning of her action.",
+  "interpretive_inference": "The courtyard is not a neutral backdrop but a relational field: the moral charge of the scene is distributed across the spatial arrangement of bodies, not located in any single figure. The woman's drinking is the same physical act in both versions, but its meaning is entirely determined by who else occupies the space and how they are oriented — two men not drinking while she drinks is what constitutes the game, the pressure, the social dynamic. When the soldier is removed, the environment loses a participant, and the relational geometry collapses into something that reads as innocent precisely because the social pressure structure has been dismantled. The alteration did not just remove a figure; it restructured the environment so that it could no longer do its original moral work. This means the 'innocence' of the two-figure version is not a softening of content but an environmental incapacitation — the space can no longer generate the meaning it was built to produce.",
+  "conceptual_shift": "figure removal as content change -> figure removal as environmental restructuring that disables the relational geometry through which moral meaning is produced",
+  "claimed_contribution": "A generic reading notices the paradox that more figures = more moral. This engine reveals why: the moral statement was never in any individual figure but in the spatial and behavioral relation between figures — specifically, the asymmetry of who is drinking and who is watching, which only becomes visible as a structure when all three participants are present. The environment (courtyard, table, pass-glass, arrangement of bodies) is the instrument of moral meaning, and removing one body doesn't just simplify the scene — it deactivates the relational mechanism entirely.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would notice the paradox and might note that the third figure changes the scene's meaning. But the specific claim — that the courtyard environment functions as a relational field whose moral charge is distributed across spatial arrangement and behavioral asymmetry, and that removal of the soldier is an environmental incapacitation rather than a content reduction — requires attending to the environment as an active participant rather than as background. That move is specific to this engine."
+  }
+}
+
+=== Engine Z ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2"
+  ],
+  "additional_source_observations": [],
+  "engine_move": "Attending to what a classification system treats as a proxy for the real thing — here, 'innocence' and 'moralism' are being read off visual content (number of figures, presence of a drinking game), exposing a measurement inversion built into the alteration itself.",
+  "seed_engagement": "The seed friction identifies a paradox: the two-figure version looks more innocent but is the departure from moral intent, while the three-figure version looks more debauched but is the moral statement. The canonical evidence makes this explicit — cj1:a2 establishes that innocence is being measured by visual surface (one woman drinking alone vs. a drinking game), while cj1:a1 establishes that moralism is a property of authorial intention. These are two different classification axes being conflated.",
+  "interpretive_inference": "The alteration — whether motivated by modesty, uniqueness, or value — operated on a specific proxy: visual legibility of transgression. Fewer figures, no drinking game, no obvious debauchery = classified as 'innocent.' But this proxy inverts the actual moral logic of the work. De Hooch's moralism functioned through contrast and implication: the woman drinking the pass-glass while the two men abstain is the moral signal, not mere depiction of drinking. The alteration removed the very element that made the moral structure readable. What the modifier measured (surface appearance of propriety) was not what the artist encoded (a structured scene of moral commentary). The two-figure version thus achieves the appearance of innocence by destroying the instrument through which innocence and transgression were being distinguished. The classification 'more innocent' is therefore not a description of the painting's moral content — it is a description of the painting's reduced capacity to generate moral meaning at all.",
+  "conceptual_shift": "Innocence as visual surface property → Innocence as the absence of the moral apparatus that made transgression legible",
+  "claimed_contribution": "A generic reading notices the irony that the 'innocent' version is the altered one. This engine goes further: it identifies that the alteration worked by destroying a classification mechanism within the painting itself — the contrast between the woman drinking and the men not drinking is the moral signal, and removing the second man collapses the comparative structure that made that signal function. The 'more innocent' label is not just wrong about intent; it is a measurement artifact produced by removing the very instrument of moral measurement from the canvas.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would notice the irony of the inversion (innocent-looking version is the departure from moral intent) but would not specifically identify that the alteration worked by eliminating a comparative classification structure within the painting, nor that 'more innocent' is a measurement artifact rather than a description of moral content."
+  }
+}
+
+=== Engine M ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2",
+    "cj1:a3"
+  ],
+  "additional_source_observations": [],
+  "engine_move": "Tracing the gap between what a formal provision promises and what must actually happen for that promise to become real — here, the 'promise' is the moral legibility of the painting as de Hooch intended it, and the question is what operational condition must hold for that moral message to be readable at all.",
+  "seed_engagement": "The seed friction establishes a paradox: the two-figure version looks more innocent but is the departure from the moral message, while the three-figure version looks more debauched but is the intended moral statement. cj1:a1 confirms the restoration fulfills de Hooch's moralistic intention; cj1:a2 explains that the moral content — the drinking game, the pass-glass, the woman drinking while the men do not — only becomes legible when the second man is present. cj1:a3 notes the alteration may have been motivated by a 'commitment to modesty.' Together these establish that the painting's moral function was not self-contained in the image as altered; it depended on a specific relational configuration of figures.",
+  "interpretive_inference": "The moral message de Hooch encoded was not carried by any single figure or object — not the woman, not the glass, not the courtyard — but by the precise social geometry of three people and what their arrangement implies about who is drinking and who is not. The pass-glass game only becomes readable as a moral scenario when both men are present and visibly not drinking while the woman is. Remove one man, and the same woman with the same glass in the same courtyard reads as innocent refreshment rather than social pressure or excess. This means the painting's moral promise was operationally dependent on a minimum figure count — a dependency that is invisible in the finished image and that the alteration quietly destroyed. The irony the seed friction surfaces is that whoever altered the painting for 'modesty' (cj1:a3) actually eliminated the very mechanism by which the moral warning was delivered: they made the scene look more modest by removing the condition that made its immodesty — and therefore its moral lesson — legible. The restoration does not merely add a figure; it restores the operational precondition without which the promise of moral instruction cannot be produced.",
+  "conceptual_shift": "moral content as inherent in the image -> moral content as produced by a relational configuration that can be silently disabled",
+  "claimed_contribution": "A generic reading notices the paradox that more figures = more moral. This engine goes further: it identifies the specific operational dependency — the social geometry of differential drinking — as the mechanism that produces the moral legibility, and shows precisely how the alteration disabled that mechanism while leaving the surface of the image intact and even apparently more modest. The 'modesty' motivation in cj1:a3 is reread not as a misguided aesthetic choice but as an intervention that, by removing one figure, severed the relational logic on which the entire moral apparatus of the painting depended.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would notice the paradox and likely stop there. The engine's specific move — asking what practical condition must hold for the promise to be real, and locating the exact operational dependency rather than resting on a general irony — is what produces the claim that the alteration disabled a mechanism rather than merely changed an appearance. That framing is not available without the instrument."
+  }
+}
+
+############ 07_ai_cheating_exam ############
+=== Engine P ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2",
+    "cj1:a3"
+  ],
+  "additional_source_observations": [],
+  "engine_move": "Asking what the transmission/representation process itself produces — not just what it fails to carry faithfully, but what new reality it actively generates.",
+  "seed_engagement": "The take-home format (cj1:a1) and the in-person format (cj1:a2) are both described as assessments of the same course content, but the 96% vs. 48.6% gap — and the student attrition in cj1:a3 — reveal that the two formats did not merely measure the same underlying knowledge with different accuracy. They produced two entirely different populations of apparent knowledge.",
+  "interpretive_inference": "The take-home format did not simply allow cheating to introduce noise into measurement — it actively constructed a false population of competent students. The 96% average was not a distorted signal about real knowledge; it was a new artifact generated by the mediation format itself. When the format changed, the artifact disappeared, but so did some of the students (cj1:a3): those whose apparent competence existed only as a product of the take-home medium had no stable identity to bring into the in-person room. The transmission process here did not degrade a signal — it manufactured one. The in-person exam did not 'reveal' the truth that was always there; it terminated the generative process that had been producing a substitute truth. This means the two scores are not two measurements of the same thing at different fidelity levels — they are measurements of two different things: one is a score on a task, the other is a score on a student.",
+  "conceptual_shift": "Measurement format as passive channel → measurement format as active producer of the reality it appears to record",
+  "claimed_contribution": "A generic reading notices the cheating and the score gap. This engine's reading identifies that the take-home format was not a leaky pipe that let false scores through — it was a generative medium that produced a population of apparent competence that had no prior existence. The drop to 48.6% and the student dropouts are not evidence of measurement correcting itself; they are evidence that the prior measurement's object (the 96%-scoring student body) ceased to exist when the medium that produced it was removed.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would note the cheating and the dramatic score reversal, and might observe that the take-home format enabled AI use. They would not specifically identify that the format was not a flawed channel but a generative process that manufactured its own referent — a distinction that requires attending to what mediation produces rather than what it distorts."
+  }
+}
+
+=== Engine S ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2",
+    "cj1:a3"
+  ],
+  "additional_source_observations": [
+    {
+      "id": "obs:1",
+      "excerpt": "Some students were reluctant to return to the classroom after a campus shooting earlier in the academic year, so I administered the midterm test as a take-home exam for the first time in nearly two decades of teaching the course.",
+      "observation": "The take-home format was not a pedagogical choice but an environmental accommodation — the physical classroom had become aversive or inaccessible to some students, making the exam environment itself the initiating cause of the format shift."
+    }
+  ],
+  "engine_move": "Treating the examination environment — not just the exam format — as an active participant that shapes what students do, what they can do, and who remains in the room at all.",
+  "seed_engagement": "The 96% → 48.6% swing (cj1:a1, cj1:a2) is typically read as evidence of cheating on the take-home. But the engine asks: what did each environment actually do to the actor-environment relation? The take-home environment removed spatial co-presence, temporal pressure, and the surveillant gaze of the room — and simultaneously opened the student to every external resource, including AI. The in-person closed-book environment restored all of those constraints simultaneously. The score collapse is not simply the subtraction of AI assistance; it is the sudden re-imposition of a full environmental constraint set that students had not been training against.",
+  "interpretive_inference": "The campus shooting (obs:1) is the environmental event that broke the continuity of the actor-environment relation for the course. The classroom had been a stable, known environment for nearly two decades; the shooting made it threatening, causing the instructor to relocate the exam outside it. That relocation did not merely change convenience — it dissolved the specific resistances (time limits, isolation, no-device rules, physical monitoring) that the historical 65–80% range was calibrated against. Students who then optimized for the open environment of the take-home were not simply cheating; they were adapting to the environment they were actually in. When the final restored the original environment, those students faced a double exposure: the full constraint set returned, AND a subset of them had not developed the unassisted competence the historical range assumed. The drop to 48.6% — below even the historical floor — and the withdrawal of students (cj1:a3) are both legible as environmental mismatches: the in-person room was now a genuinely alien environment for students who had been shaped by a different one. The environment did not merely reveal cheating; it actively produced two incompatible populations of student-environment relations within the same course.",
+  "conceptual_shift": "cheating as individual moral failure → cheating as a symptom of an actor-environment relation that was severed and then abruptly restored, producing incompatible competence profiles",
+  "claimed_contribution": "A generic reading sees the score gap as proof of AI misuse. This reading shows that the gap is also a record of what two different environments did to students over time: one environment trained dependency and removed resistance; the other suddenly reimposed full resistance to actors who had been shaped by its absence. The withdrawal of students (cj1:a3) is the clearest signal — they did not merely fail, they could not re-enter the environment at all, which is a relational outcome, not just an academic one.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would note the score gap and infer cheating. They would not reframe the exam environment itself as an active shaper of student competence over time, nor read the student withdrawals as evidence of an actor-environment incompatibility rather than guilt or unpreparedness, nor trace the causal chain back to the campus shooting as the environmental disruption that initiated the entire relational breakdown."
+  }
+}
+
+=== Engine Z ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2",
+    "cj1:a3"
+  ],
+  "additional_source_observations": [],
+  "engine_move": "Noticing the moment measurement becomes judgment: the exam score is being used as a proxy for learning, but the two administrations measured different things — and the gap between them is being read as evidence of cheating rather than as evidence that the two instruments were not measuring the same construct.",
+  "seed_engagement": "The seed friction presents a dramatic score swing: 96% on take-home vs. 48.6% in-person closed-book. The canonical evidence anchors this as a real, documented gap. The article treats this gap as proof of widespread AI-enabled cheating. But the measurement instrument changed in at least two simultaneous dimensions: format (take-home vs. in-person) AND resource access (open vs. closed-book). The 48.6% score — well below the historical floor of 65% — is just as anomalous as the 96%, yet it receives no scrutiny. The system is treating the in-person closed-book score as the 'true' measure of learning and the take-home score as the corrupted one, but the closed-book score is equally an outlier.",
+  "interpretive_inference": "The classification move embedded here is: 'in-person closed-book = authentic learning; take-home = contaminated.' This treats one measurement condition as a transparent window onto knowledge and the other as noise. But if the historical range of 65–80% was itself produced under a specific set of conditions (presumably in-person, closed-book, but also without the disruption of a campus shooting, without a cohort that had been selectively shaped by mid-semester drops), then neither the 96% nor the 48.6% is being compared to a stable baseline. The 48.6% is partly a product of who remained in the course after cj1:a3 — students who dropped or didn't sit the final are excluded from that average, which likely removes lower-performing students who had relied on AI and recognized they couldn't pass without it. The in-person score is therefore not a clean measure of the original cohort's learning; it measures a self-selected survivor group under maximum-constraint conditions. The system's confidence that it now knows the 'real' level of learning is built on a classification (authentic vs. inauthentic assessment) that obscures the selection effect baked into the second measurement.",
+  "conceptual_shift": "Score gap as evidence of cheating -> score gap as evidence that the two instruments measured different constructs on different populations, making neither score a reliable proxy for the original learning question",
+  "claimed_contribution": "A generic reader notices the dramatic score swing and accepts the author's framing that it reveals cheating. This engine exposes that the 48.6% is treated as the ground-truth baseline without scrutiny, even though it is equally anomalous relative to the historical range, and that the population measured in the final (post-drops, post-no-shows per cj1:a3) is not the same population that took the midterm — so the comparison the article relies on to establish its conclusion is structurally compromised by the very behavior it is trying to measure.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would notice the score gap and likely accept the cheating inference. The specific move here — asking what the measurement instrument actually measured, identifying the selection effect in the second cohort, and noting that the 48.6% is as anomalous as the 96% yet receives no scrutiny — requires attending to what the classification 'authentic assessment' is doing as a proxy decision, not just reading the numbers at face value."
+  }
+}
+
+=== Engine M ===
+{
+  "status": "candidate",
+  "seed_evidence_refs": [
+    "cj1:a1",
+    "cj1:a2",
+    "cj1:a3"
+  ],
+  "additional_source_observations": [],
+  "engine_move": "Locating the specific operational dependency that converts a formal assessment promise into actual measurement of student knowledge — and identifying precisely where that dependency was severed.",
+  "seed_engagement": "The seed friction presents two administrations of the same course exam: take-home (96% average) and in-person closed-book (48.6% average). The canonical evidence anchors establish not just a score gap but a behavioral one — cj1:a3 shows that some students dropped or did not sit the final at all. The resisting detail is that the formal promise of 'examination' — that it measures what a student knows — was identical in both cases on paper, yet the practical conditions that make that promise real were entirely different.",
+  "interpretive_inference": "The formal promise of an exam is that it produces a valid signal of student knowledge. That promise depends on a specific operational condition: the student's cognitive work must be the source of the answer. In the take-home format, that condition was not enforced — it was assumed. The 96% average did not reveal a gap in the promise; it concealed one. The promise appeared to be kept (students submitted answers, scores were recorded, the course proceeded) while the underlying operational dependency — that answers originate from the student — had silently failed. The in-person exam did not 'break' the assessment; it restored the operational condition the take-home had quietly abandoned. The 48.6% average is therefore not a failure of the exam but the first honest measurement the course had produced that semester. Crucially, cj1:a3 reveals a further layer: the drop-outs and no-shows are students for whom the restoration of that operational condition was itself disqualifying — meaning the gap between promise and practice had become load-bearing for their participation in the course. The invisible work that the take-home format had been doing was not just producing scores; it was sustaining enrollment.",
+  "conceptual_shift": "Assessment as formal event -> Assessment as a set of operational conditions that must be actively maintained for the formal promise to produce a valid signal",
+  "claimed_contribution": "A generic reading notices cheating occurred and scores diverged. This engine's reading identifies the specific operational dependency that was silently absent in the take-home format (authorship of answers by the student), shows that the 96% score was not evidence of the promise being kept but of the dependency being unmonitored, and further shows — via the drop/no-show data in cj1:a3 — that the gap had become structurally load-bearing: some students' continued enrollment depended on the operational condition remaining unenforced. The failure was not the in-person exam producing a low score; it was the take-home exam producing a high score while the core operational condition was absent.",
+  "removed_engine_test": {
+    "still_holds_without_engine": false,
+    "why": "A generically curious reader would note the score gap and infer cheating. They would not specifically identify the operational dependency (authorship enforcement) as the thing that was silently absent in the take-home format, nor reframe the 96% as a concealment rather than a measurement, nor read the drop/no-show data as evidence that the unenforced condition had become structurally necessary for some students' participation."
+  }
+}
+

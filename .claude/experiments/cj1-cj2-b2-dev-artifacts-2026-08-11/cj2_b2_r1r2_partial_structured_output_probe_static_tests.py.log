@@ -1,0 +1,43 @@
+[PASS] nine_items
+[PASS] h02_excluded
+[PASS] all_other_items_present
+[PASS] candidates_seeds_match_integrated_probe_source
+[PASS] r1_system_object_identity
+[PASS] r2_system_object_identity
+[PASS] build_r1_user_is_the_original
+[PASS] build_r2_user_is_the_original
+[PASS] validate_r1_is_the_original
+[PASS] validate_r2_is_the_original
+[PASS] run_candidate_pipeline_v2_is_the_original
+[PASS] expected_fields_is_the_original
+[PASS] declared_evidence_set_is_the_original
+[PASS] model_matches_eer
+[PASS] temperature_matches_eer
+[PASS] timeout_matches_eer
+[PASS] r1_r2_max_tokens_is_12000_unchanged_from_integrated_probe
+[PASS] call_function_is_the_eer_original
+[PASS] r1_schema_has_no_conditional_constructs
+[PASS] r2_schema_has_no_conditional_constructs
+[PASS] r1_response_format_strict_true
+[PASS] r2_response_format_strict_true
+[PASS] r1_empirical_dependency_enum_matches_v2_probe
+[PASS] r2_role_enum_matches_v2_probe
+[PASS] r2_importance_enum_matches_v2_probe
+[PASS] r2_support_enum_matches_v2_probe
+[PASS] r2_declaration_enum_matches_v2_probe
+[PASS] r2_r1_agreement_enum_matches_v2_probe
+[PASS] r2_problems_enum_matches_v2_probe
+[PASS] expected_r1_calls_is_9
+[PASS] expected_max_total_calls_is_18
+[PASS] r2_call_appears_after_r1_validity_check
+[PASS] provider_outcome_no_content
+[PASS] provider_outcome_empty
+[PASS] provider_outcome_prose
+[PASS] provider_outcome_truncated
+[PASS] provider_outcome_shape_mismatch
+[PASS] provider_outcome_valid
+[PASS] every_requirement_deterministic_validator_enforced
+[PASS] h13_exact_failure_documented_as_not_provider_enforced
+
+============================================================
+ALL PARTIAL STRUCTURED-OUTPUT PROBE STATIC TESTS PASS. Zero API calls, zero network access.

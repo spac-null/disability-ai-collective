@@ -1,0 +1,114 @@
+PASS: synthetic D0 schema_invalid -> D0_SCHEMA_INVALID
+PASS: synthetic D0 schema_invalid routes BLOCK
+PASS: synthetic D0 span_resolution_failed -> D0_SPAN_RESOLUTION_FAILED
+PASS: synthetic D0 span_resolution_failed routes BLOCK
+PASS: synthetic D0 segment_id_consistency_failed -> D0_SEGMENT_ID_CONSISTENCY_FAILED
+PASS: synthetic D0 segment_id_consistency_failed routes BLOCK
+PASS: synthetic D0 D0_COVERAGE_FAILURE -> D0_COVERAGE_FAILURE_SEGMENT_ACCOUNTING
+PASS: synthetic D0 D0_COVERAGE_FAILURE routes BLOCK
+PASS: synthetic C0_SCHEMA_INVALID -> C0_SCHEMA_INVALID
+PASS: synthetic C0_SCHEMA_INVALID routes BLOCK
+PASS: REAL H03 gate reconstruction: should_call_r1 is False
+PASS: REAL H03 gate reconstruction: status is D0_COVERAGE_FAILURE
+PASS: REAL H03 gate reconstruction: detected_by is c0_semantic_audit
+PASS: REAL H03 gate-blocked case -> D0_COVERAGE_FAILURE_C0_SEMANTIC_AUDIT
+PASS: REAL H03 gate-blocked case routes BLOCK
+PASS: REAL H01 gate PASS has should_call_r1=True
+PASS: REAL gate PASS is not a terminal state (fails closed, not treated as safe)
+PASS: REAL gate PASS routes BLOCK (never silently admitted)
+PASS: SYNTHETIC R1 schema-invalid -> R1_CALL_OR_SCHEMA_FAILURE
+PASS: SYNTHETIC R1 schema-invalid routes BLOCK
+PASS: SYNTHETIC R1 config_failure -> R1_CALL_OR_SCHEMA_FAILURE
+PASS: SYNTHETIC R2 config_failure -> R2_CALL_OR_SCHEMA_FAILURE
+PASS: SYNTHETIC R2 schema-invalid -> R2_CALL_OR_SCHEMA_FAILURE
+PASS: SYNTHETIC R2 schema-invalid routes BLOCK
+PASS: SYNTHETIC R2 unrelated-invalid -> R2_INVALID_UNRELATED_TO_ALLOWLIST
+PASS: SYNTHETIC R2 unrelated-invalid routes BLOCK (repair never attempted)
+PASS: SYNTHETIC repair call/schema failure -> R2_REPAIR_CALL_OR_SCHEMA_FAILURE
+PASS: SYNTHETIC repair call/schema failure routes BLOCK
+PASS: SYNTHETIC repair incomplete -> R2_REPAIR_CALL_OR_SCHEMA_FAILURE
+PASS: SYNTHETIC repaired-still-invalid -> R2_REPAIRED_STILL_INVALID
+PASS: SYNTHETIC repaired-still-invalid routes BLOCK
+PASS: SYNTHETIC INTEGRATION_FAILURE -> INTEGRATION_FAILURE
+PASS: SYNTHETIC INTEGRATION_FAILURE routes BLOCK
+PASS: REAL H01 has R1_R2_SEMANTIC_CONFLICT claims present
+PASS: REAL H01 effective_verdict is unsafe (not ambiguous) despite conflicts
+PASS: REAL H01 (conflict+unsafe) -> EFFECTIVE_VERDICT_UNSAFE
+PASS: REAL H01 (conflict+unsafe) routes BLOCK
+PASS: SYNTHETIC pure-ambiguous -> EFFECTIVE_VERDICT_AMBIGUOUS
+PASS: SYNTHETIC pure-ambiguous routes BLOCK (fail-closed to audit, not silently admitted)
+PASS: REAL H03: repair_triggered is True
+PASS: REAL H03: r2_valid_after_repair is True (repair succeeded)
+PASS: REAL H03: effective_verdict is unsafe
+PASS: REAL H03: gate_candidate terminal_state is EFFECTIVE_VERDICT_UNSAFE
+PASS: REAL H03: gate_candidate routes BLOCK despite successful repair
+PASS: REAL H03: repair_occurred provenance is True
+PASS: REAL H03: item_id provenance round-trips
+PASS: REAL H09: repair_triggered is True
+PASS: REAL H09: r2_valid_after_repair is True (repair succeeded)
+PASS: REAL H09: effective_verdict is unsafe
+PASS: REAL H09: gate_candidate terminal_state is EFFECTIVE_VERDICT_UNSAFE
+PASS: REAL H09: gate_candidate routes BLOCK despite successful repair
+PASS: REAL H09: repair_occurred provenance is True
+PASS: REAL H09: item_id provenance round-trips
+PASS: REAL H13: repair_triggered is True
+PASS: REAL H13: r2_valid_after_repair is True (repair succeeded)
+PASS: REAL H13: effective_verdict is unsafe
+PASS: REAL H13: gate_candidate terminal_state is EFFECTIVE_VERDICT_UNSAFE
+PASS: REAL H13: gate_candidate routes BLOCK despite successful repair
+PASS: REAL H13: repair_occurred provenance is True
+PASS: REAL H13: item_id provenance round-trips
+PASS: SYNTHETIC CONTROL-FLOW safe fixture -> EFFECTIVE_VERDICT_SAFE
+PASS: SYNTHETIC CONTROL-FLOW safe fixture -> ENTER_STAGE_C (routing only, not semantic evidence)
+PASS: SYNTHETIC repaired-AND-safe still -> ENTER_STAGE_C (repair does not penalize)
+PASS: SYNTHETIC repaired-AND-safe: repair_occurred provenance True
+PASS: fail-closed: None -> UNRECOGNIZED_B2_RESULT
+PASS: fail-closed: None routes BLOCK, never ENTER_STAGE_C
+PASS: fail-closed: None -> gate_candidate enter_stage_c is False
+PASS: fail-closed: empty dict -> UNRECOGNIZED_B2_RESULT
+PASS: fail-closed: empty dict routes BLOCK, never ENTER_STAGE_C
+PASS: fail-closed: empty dict -> gate_candidate enter_stage_c is False
+PASS: fail-closed: unrecognized phase -> UNRECOGNIZED_B2_RESULT
+PASS: fail-closed: unrecognized phase routes BLOCK, never ENTER_STAGE_C
+PASS: fail-closed: unrecognized phase -> gate_candidate enter_stage_c is False
+PASS: fail-closed: gate_result not a dict -> UNRECOGNIZED_B2_RESULT
+PASS: fail-closed: gate_result not a dict routes BLOCK, never ENTER_STAGE_C
+PASS: fail-closed: gate_result not a dict -> gate_candidate enter_stage_c is False
+PASS: fail-closed: unrecognized D0 status -> UNRECOGNIZED_B2_RESULT
+PASS: fail-closed: unrecognized D0 status routes BLOCK, never ENTER_STAGE_C
+PASS: fail-closed: unrecognized D0 status -> gate_candidate enter_stage_c is False
+PASS: fail-closed: unrecognized gate source -> UNRECOGNIZED_B2_RESULT
+PASS: fail-closed: unrecognized gate source routes BLOCK, never ENTER_STAGE_C
+PASS: fail-closed: unrecognized gate source -> gate_candidate enter_stage_c is False
+PASS: fail-closed: pipeline_result not a dict -> UNRECOGNIZED_B2_RESULT
+PASS: fail-closed: pipeline_result not a dict routes BLOCK, never ENTER_STAGE_C
+PASS: fail-closed: pipeline_result not a dict -> gate_candidate enter_stage_c is False
+PASS: fail-closed: unrecognized final_disposition -> UNRECOGNIZED_B2_RESULT
+PASS: fail-closed: unrecognized final_disposition routes BLOCK, never ENTER_STAGE_C
+PASS: fail-closed: unrecognized final_disposition -> gate_candidate enter_stage_c is False
+PASS: fail-closed: unrecognized effective_verdict -> UNRECOGNIZED_B2_RESULT
+PASS: fail-closed: unrecognized effective_verdict routes BLOCK, never ENTER_STAGE_C
+PASS: fail-closed: unrecognized effective_verdict -> gate_candidate enter_stage_c is False
+PASS: fail-closed: non-dict top level -> UNRECOGNIZED_B2_RESULT
+PASS: fail-closed: non-dict top level routes BLOCK, never ENTER_STAGE_C
+PASS: fail-closed: non-dict top level -> gate_candidate enter_stage_c is False
+PASS: route() has no default parameter that could leak ENTER_STAGE_C for a bad key
+PASS: every _ROUTING_TABLE value is ENTER_STAGE_C or BLOCK_BEFORE_STAGE_C
+PASS: exactly one _ROUTING_TABLE row is ENTER_STAGE_C (only the safe verdict admits)
+PASS: run_source has require_b2_admission parameter
+PASS: run_source's require_b2_admission defaults to True (integrated mode is the default)
+PASS: run_source has b2_admission_lookup parameter
+PASS: run_source's b2_admission_lookup defaults to None
+PASS: main() calls run_source without overriding require_b2_admission (cannot bypass by accident)
+PASS: run_source imports/uses gate_candidate at the documented insertion point
+PASS: the B2 gate runs before anonymize() is called (insertion point matches the audit)
+PASS: the B2 gate runs after the Stage B `surviving` computation (insertion point matches the audit)
+PASS: run_source contains an explicit pre-candidates_by_label admission assertion
+PASS: that assertion runs before candidates_by_label is built
+PASS: gate module has zero non-__future__ import statements (pure classification logic, no dependency on any B2/Stage-C module)
+PASS: gate module never imports Stage C's prompt/schema builder (checked via actual import lines, not prose)
+PASS: gate module never imports D0/C0/R1/R2/repair-v1 modules (checked via actual import lines, not prose)
+PASS: cj2_reference_probe.py's STAGE_C_SYSTEM/build_stage_c_user/stage_c_projection are unchanged (still present, unedited call sites)
+PASS: gate classifier never reads R2 `problems` field anywhere
+
+ALL PASS

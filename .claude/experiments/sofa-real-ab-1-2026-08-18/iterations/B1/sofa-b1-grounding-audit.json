@@ -1,0 +1,105 @@
+{
+  "status": "FAIL",
+  "status_reasons": [
+    "UNSUPPORTED: 'The unheralded are unheralded *because* they resisted, or were shut out of, the legible systems that would have made them findable.' \u2014 This is a causal claim about WHY these artists went undiscovered. The source only states that they never showed their work in their lifetimes and were discovered after death; it does not establish that they 'resisted' or 'were shut out of' legible systems, nor attribute a cause. The article presents this as established fact ('because').",
+    "UNSUPPORTED: 'for the reviewer, the body that walks in and the mind that gives up on figuring it out are both simply *his*, available, mobile, free to let a show wash over him without needing a route through it' \u2014 This asserts the reviewer's internal state and unspoken assumptions (motive/belief). The source shows the reviewer enjoyed obtuse work and moved through the festival, but does not establish these claims about how he conceives his own body and mind. Presented as characterization of his psychology.",
+    "UNSUPPORTED: 'The unindexed dead resisted the systems that would have found them.' \u2014 Restates the unsupported causal/motive claim that the artists 'resisted' systems. The source only establishes they were undiscovered in their lifetimes, not that they actively resisted indexing systems."
+  ],
+  "deterministic_flags": [
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'You can't walk into a gallery without learning about some su' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'the horses and goats of Jupiter Artland.' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'died having never shown any of the thousands of paintings an' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'Follow your nose' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'If contemporary artists and institutions want to tell hidden' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'mind-meltingly indecipherable,' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'way too knowingly obtuse,' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'works well.' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'I love it, but I'm not sure how.' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'is enough. The failure to make sense is a pleasure he can af' not found verbatim in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'The Unindexed\n\nThe' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Sadao Hasegawa's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Jamie Fitzpatrick's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Anne Hardy's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Eva Rothschild's' not found in source"
+    ]
+  ],
+  "claims": [
+    {
+      "claim": "The unheralded are unheralded *because* they resisted, or were shut out of, the legible systems that would have made them findable.",
+      "verdict": "UNSUPPORTED",
+      "reason": "This is a causal claim about WHY these artists went undiscovered. The source only states that they never showed their work in their lifetimes and were discovered after death; it does not establish that they 'resisted' or 'were shut out of' legible systems, nor attribute a cause. The article presents this as established fact ('because')."
+    },
+    {
+      "claim": "The messiness the review resents (\"impossible to figure out how any of it fits together\") might be structurally faithful to its subjects rather than merely careless.",
+      "verdict": "SUPPORTED",
+      "reason": "Framed as the article's own argument ('might be'), an interpretive claim rather than a source fact, so it does not overstate."
+    },
+    {
+      "claim": "people who were never legibly catalogued, never shown, never entered into any clean index while alive",
+      "verdict": "UNCERTAIN",
+      "reason": "The source supports 'never shown' for Sandra George, Frank Walter and Hasegawa, but 'never legibly catalogued' / 'never entered into any clean index while alive' is an interpretive extrapolation the source does not establish for these individuals; stated here as a shared factual condition."
+    },
+    {
+      "claim": "for the reviewer, the body that walks in and the mind that gives up on figuring it out are both simply *his*, available, mobile, free to let a show wash over him without needing a route through it",
+      "verdict": "UNSUPPORTED",
+      "reason": "This asserts the reviewer's internal state and unspoken assumptions (motive/belief). The source shows the reviewer enjoyed obtuse work and moved through the festival, but does not establish these claims about how he conceives his own body and mind. Presented as characterization of his psychology."
+    },
+    {
+      "claim": "The unindexed dead resisted the systems that would have found them.",
+      "verdict": "UNSUPPORTED",
+      "reason": "Restates the unsupported causal/motive claim that the artists 'resisted' systems. The source only establishes they were undiscovered in their lifetimes, not that they actively resisted indexing systems."
+    },
+    {
+      "claim": "the festival's discovery premise is coded as an ambulatory act ... The \"unheralded\" it celebrates is pre-filtered through an access architecture that quietly selects who gets to do the uncovering.",
+      "verdict": "SUPPORTED",
+      "reason": "This is the discovery packet's hidden_mechanism, and the article frames it as its own 'working suspicion'/argument rather than as a source fact, which is the permitted use."
+    }
+  ],
+  "unsupported_count": 3,
+  "uncertain_count": 1,
+  "word_count": 1040
+}

@@ -1,0 +1,321 @@
+SOFA B.1 — MINIMUM SHADOW CORRECTION + SAME-CASE REPLAY
+
+We have enough diagnosis.
+
+Do NOT create another large architecture proposal.
+Do NOT generate a new Legacy article.
+Do NOT use a new source.
+Do NOT call Fable for a new commission.
+Do NOT deploy anything.
+
+Use the existing frozen Edinburgh case and frozen Legacy article.
+
+Jascha + outside-reader feedback:
+
+- Legacy is substantially more readable than Sofa.
+- Its first movement works well:
+  festival → walking/discovery → provisional interpretation →
+  Sandra George breaks that interpretation.
+- The sudden Deaf anecdote is a jump.
+- After the Sandra George / “two undergrounds” discovery, the article
+  starts becoming too long and loses its line.
+- Outside reader independently said the core “Sandra George was
+  underground twice” argument is original/important, but the overall text
+  does not hang together well and the “I” / perspective is unclear.
+
+Therefore:
+
+We want LEGACY'S CAPACITY TO CHANGE ITS MIND
+
+without:
+
+- synthetic persona biography
+- fake lived-experience “I”
+- compulsory disability anecdote
+- continuing to expand after the article has already arrived
+
+==================================================
+GOAL
+==================================================
+
+Implement the smallest Sofa Architecture B.1 correction in SHADOW ONLY.
+
+Then generate ONE new Sofa Edinburgh article from the SAME:
+
+source
+evidence packet
+frozen commission
+writer model
+writer parameters
+
+Do not touch Legacy.
+
+==================================================
+1. CHANGE THE DISCOVERY→WRITER CONTRACT
+==================================================
+
+Current Sofa effectively gives the writer:
+
+HIDDEN MECHANISM = thing to make intelligible
+
+This creates demonstration.
+
+B.1 should instead distinguish:
+
+WORKING_READING
+the strongest current editorial interpretation; grounded and useful,
+but provisional rather than a conclusion the prose must prove
+
+LIVE_QUESTION
+the real unresolved question inherited from the commission angle,
+persona-neutralized
+
+CORRECTION_MATERIAL
+source-grounded material capable of making the working reading too small,
+wrong, or incomplete
+
+RESISTING_MATERIAL
+source-grounded material that does not fit cleanly and should not
+automatically be neutralized
+
+RIVAL_READING
+a competing interpretation when one genuinely exists
+
+UNRESOLVED_TENSION
+what the available material cannot honestly settle
+
+Do not invent any of these when the commission/source does not contain them.
+
+Not every future article must have all six.
+
+==================================================
+2. PRESERVE EPISTEMIC TYPES
+==================================================
+
+For correction/resisting/rival material, separate:
+
+SOURCE EVIDENCE
+literal source excerpt / source-grounded fact
+
+from:
+
+EDITORIAL INTERPRETATION
+what the editor thinks that material may do to the current reading
+
+Never put the editorial note inside an EVIDENCE envelope.
+
+Known gaps remain GROUNDING_BOUNDARY.
+
+==================================================
+3. USE THE EXISTING COMMISSION MATERIAL
+==================================================
+
+For this Edinburgh case, derive the B.1 fields from the existing frozen:
+
+angle
+correction_moment
+resisting_example
+cross_cite
+hidden_mechanism
+
+Do NOT regenerate Fable.
+
+Do NOT pass persona-specific wording such as:
+
+“it resists Zen”
+
+through to the writer.
+
+Convert only the editorial function into persona-neutral form.
+
+Do not copy persona canon, wound, mood, personal history, state, or biography.
+
+==================================================
+4. CRITICAL WRITER INSTRUCTION
+==================================================
+
+Change the generic writer contract from:
+
+“make this hidden mechanism intelligible”
+
+to something approximately equivalent to:
+
+“You are given a strong working reading, not a verdict.
+Follow the supplied material and allow it to make that reading narrower,
+larger, different, or wrong.
+Do not manufacture a reversal.
+If the correction material genuinely changes the article, let it.
+If it does not, do not fake one.”
+
+The writer must NOT be required to state or prove the original mechanism.
+
+==================================================
+5. NO FORMULA
+==================================================
+
+Do NOT impose:
+
+opening thesis
+→ correction exactly before midpoint
+→ resisting example
+→ larger thesis
+→ outward ending
+
+Those are possible movements, not a template.
+
+For this case the existing correction material strongly suggests a turn,
+but future stories may move differently.
+
+Form still follows material.
+
+==================================================
+6. PERSPECTIVE DISCIPLINE
+==================================================
+
+Default to no synthetic first-person biography.
+
+First person is allowed only when it refers to a real editorial/reporting
+action supported by the material, such as:
+
+“I read...”
+“I called...”
+“I found...”
+
+and only if that action genuinely occurred in the evidence/research record.
+
+Do NOT fabricate:
+
+“I was told at nineteen...”
+“I know this from inside...”
+“I keep returning to a man I heard about...”
+
+No persona roleplay.
+
+For this shadow case, if no real reporting action is preserved in the
+material, prefer third-person / impersonal narrative nonfiction.
+
+==================================================
+7. ARRIVAL / STOP DISCIPLINE
+==================================================
+
+Add one explicit instruction:
+
+Once the strongest source-grounded correction has produced a more precise
+understanding, do not automatically search for:
+
+- another disability example
+- another world
+- another analogy
+- another conceptual escalation
+- a larger universal thesis
+
+The article may stop when it has arrived.
+
+A correction does NOT have to make the thesis larger.
+It may simply make it more precise.
+
+This is especially important for Edinburgh.
+
+Do NOT force the article beyond Sandra George / the two-underground
+discovery merely to include explicit disability content.
+
+Remember:
+
+the disability lens can be causally necessary while narratively optional.
+
+==================================================
+8. KEEP THE GROUNDING LESSONS
+==================================================
+
+Without turning this into a separate grounding project, preserve these
+already-known boundaries:
+
+- editorial interpretation must not be hardened into measured fact
+- do not invent concrete barriers such as stairs/doors/drives unless the
+  source supports them
+- editorial notes are not facts
+- do not fabricate provenance such as “the wall text says...”
+- respect known_gaps
+
+Do not redesign the auditor now.
+
+==================================================
+9. IMPLEMENT SHADOW-ONLY
+==================================================
+
+Modify only the Sofa shadow path needed for B.1.
+
+Do NOT change:
+
+live production
+Legacy architecture
+Fable production contract
+CJ2
+Scout
+Reader Lab
+persona production state
+
+Keep the current A/B1 artifacts frozen.
+
+Call the new version clearly:
+
+SOFA B.1
+
+==================================================
+10. GENERATE ONE SAME-CASE ARTICLE
+==================================================
+
+Use the exact frozen Edinburgh:
+
+source snapshot
+evidence packet
+commission
+
+Use the exact same actual writer model used in A/B1:
+
+anthropic/claude-opus-4.8
+
+with the same writer generation parameters as closely as possible.
+
+Generate ONE Sofa B.1 article.
+
+No multiple candidates.
+No cherry-picking.
+
+==================================================
+11. GROUND IT
+==================================================
+
+Run the existing grounding audit once.
+
+Do not repair the article.
+
+Record:
+
+word count
+GROUNDED / REVIEWABLE_WITH_UNCERTAINTY / FAIL
+unsupported count
+uncertain count
+
+==================================================
+12. RETURN
+==================================================
+
+Return only:
+
+B.1 CHANGES
+maximum 250 words
+
+SOFA B.1 GROUNDING
+status + counts
+
+SOFA B.1 ARTICLE
+
+[full article]
+
+Then STOP.
+
+Do NOT compare it to Legacy.
+Do NOT declare a winner.
+
+Jascha will sofa-read it against the frozen Legacy article.

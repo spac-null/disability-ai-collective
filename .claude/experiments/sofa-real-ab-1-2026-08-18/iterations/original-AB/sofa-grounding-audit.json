@@ -1,0 +1,66 @@
+{
+  "status": "FAIL",
+  "status_reasons": [
+    "UNSUPPORTED: 'standing in front of the self-portraits of Sandra George (1957-2013), a black photographer who documented the impoverished Craigmillar area of Edinburgh from what the wall text calls her position as a semi-outsider' \u2014 The source attributes the 'semi-outsider' perspective to its own narration ('From her unique perspective as a semi-outsider'), not to wall text. Attributing it to 'the wall text' invents a source for the phrase.",
+    "UNSUPPORTED: 'out among the horses and goats of Jupiter Artland, a sculpture park that is not in Edinburgh at all but a drive beyond it' \u2014 The source only says 'Over among the horses and goats of Jupiter Artland'; it never states Jupiter Artland is outside Edinburgh or requires 'a drive beyond it.' The known_gaps explicitly forbid claims about distances. This is invented geography.",
+    "UNSUPPORTED: 'The discovery premise is not neutral. It is ambulatory. It presumes a visitor who can follow their nose... without first checking whether the door, the stairs, the hill, the distance, the drive will let them.' \u2014 This is the discovery packet's hidden_mechanism (an access-architecture interpretation) presented as analysis; known_gaps state the source never discusses physical access or mobility. Framed here largely as the article's own argument, but it asserts specific barriers (door, stairs, drive) the source never establishes exist.",
+    "UNSUPPORTED: 'spontaneous physical wandering is the least distributed capacity in the room' \u2014 This asserts as fact a claim about differential access/mobility that the source never establishes. Per known_gaps the source names no access barriers or excluded audiences. Stated as settled generalization rather than clearly hedged interpretation."
+  ],
+  "deterministic_flags": [
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Follow Your Nose\n\nThe' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Edinburgh Art Festival' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Eva Rothschild's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Jamie Fitzpatrick's' not found in source"
+    ]
+  ],
+  "claims": [
+    {
+      "claim": "standing in front of the self-portraits of Sandra George (1957-2013), a black photographer who documented the impoverished Craigmillar area of Edinburgh from what the wall text calls her position as a semi-outsider",
+      "verdict": "UNSUPPORTED",
+      "reason": "The source attributes the 'semi-outsider' perspective to its own narration ('From her unique perspective as a semi-outsider'), not to wall text. Attributing it to 'the wall text' invents a source for the phrase."
+    },
+    {
+      "claim": "Jamie Fitzpatrick's brilliantly gloopy revenge on the statues of war criminals and slavers who loom over British cities from their plinths",
+      "verdict": "SUPPORTED",
+      "reason": "The source describes Fitzpatrick's show as being about statues of 'war criminals, land barons and slavers' and calls it 'brilliantly gloopy'; 'revenge' is fair characterization of the source's framing."
+    },
+    {
+      "claim": "out among the horses and goats of Jupiter Artland, a sculpture park that is not in Edinburgh at all but a drive beyond it",
+      "verdict": "UNSUPPORTED",
+      "reason": "The source only says 'Over among the horses and goats of Jupiter Artland'; it never states Jupiter Artland is outside Edinburgh or requires 'a drive beyond it.' The known_gaps explicitly forbid claims about distances. This is invented geography."
+    },
+    {
+      "claim": "The discovery premise is not neutral. It is ambulatory. It presumes a visitor who can follow their nose... without first checking whether the door, the stairs, the hill, the distance, the drive will let them.",
+      "verdict": "UNSUPPORTED",
+      "reason": "This is the discovery packet's hidden_mechanism (an access-architecture interpretation) presented as analysis; known_gaps state the source never discusses physical access or mobility. Framed here largely as the article's own argument, but it asserts specific barriers (door, stairs, drive) the source never establishes exist."
+    },
+    {
+      "claim": "You have to, because that's where Richard Maguire is showing at Collective Gallery, at the top, and the top of a hill is the top of a hill.",
+      "verdict": "UNCERTAIN",
+      "reason": "Source says Collective Gallery is 'at the top of Calton Hill,' which supports the hill location, but the framing that a visitor 'has to' physically climb it is the article's own inference toward the access argument, not a stated source fact."
+    },
+    {
+      "claim": "spontaneous physical wandering is the least distributed capacity in the room",
+      "verdict": "UNSUPPORTED",
+      "reason": "This asserts as fact a claim about differential access/mobility that the source never establishes. Per known_gaps the source names no access barriers or excluded audiences. Stated as settled generalization rather than clearly hedged interpretation."
+    },
+    {
+      "claim": "The stories the festival rescues from obscurity are stories about who gets seen and who doesn't. The way it stages that rescue quietly decides who gets to do the seeing.",
+      "verdict": "UNCERTAIN",
+      "reason": "This is the packet's editorial interpretation about the festival's access architecture pre-selecting its audience; known_gaps forbid stating the festival 'pre-selects its audience' as fact. Presented as the article's concluding argument but asserts a decided outcome ('decides who gets to do the seeing') the source does not support."
+    }
+  ],
+  "unsupported_count": 4,
+  "uncertain_count": 2
+}

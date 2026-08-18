@@ -1,0 +1,50 @@
+[PASS] r2_main_prompt_never_referenced
+[PASS] validate_r2_is_the_original
+[PASS] repair_prompt_file_is_its_own_versioned_file
+[PASS] repair_prompt_distinct_from_r2_prompt
+[PASS] trigger_fires_on_unsupported_empty_problems
+[PASS] trigger_fires_on_unsupported_undeclared_only
+[PASS] trigger_does_NOT_fire_when_semantic_problem_already_present
+[PASS] trigger_does_NOT_fire_when_semantic_problem_present_alongside_undeclared
+[PASS] trigger_does_NOT_fire_on_supported_claims
+[PASS] trigger_does_NOT_fire_on_not_required_claims
+[PASS] natural_failing_claim_matches_trigger[H13/c13]
+[PASS] natural_failing_claim_matches_trigger[H13/c16]
+[PASS] natural_failing_claim_matches_trigger[H13/c18]
+[PASS] natural_failing_claim_matches_trigger[H03/c3]
+[PASS] natural_failing_claim_matches_trigger[H03/c7]
+[PASS] natural_failing_claim_matches_trigger[H03/c10]
+[PASS] natural_failing_claim_matches_trigger[H03/c11]
+[PASS] natural_failing_claim_matches_trigger[H09/c10]
+[PASS] controlled_target_matches_trigger[H07_c8]
+[PASS] controlled_ground_truth_is_nonempty[H07_c8]
+[PASS] controlled_target_matches_trigger[H03_c3]
+[PASS] controlled_ground_truth_is_nonempty[H03_c3]
+[PASS] controlled_target_matches_trigger[H12_c5]
+[PASS] controlled_ground_truth_is_nonempty[H12_c5]
+[PASS] immutable_fields_list_excludes_problems (only mutable field)
+[PASS] immutable_fields_covers_claim_id_support_declaration
+[PASS] repair_patch_schema_only_has_claim_id_and_added_problems
+[PASS] repair_patch_schema_added_problems_excludes_undeclared_factual_dependency
+[PASS] repair_schema_has_no_conditional_constructs
+[PASS] legitimate_repair_produces_no_immutable_violations
+[PASS] legitimate_repair_adds_problems_value
+[PASS] legitimate_repair_leaves_other_claim_untouched
+[PASS] out_of_allowlist_claim_never_touched
+[PASS] out_of_allowlist_claim_never_in_applied_dict
+[PASS] existing_undeclared_factual_dependency_preserved_after_repair
+[PASS] append_only_merge_produces_no_violations
+[PASS] checker_detects_a_dropped_existing_problems_value
+[PASS] checker_detects_a_changed_support_field
+[PASS] checker_detects_a_changed_claim_id_set
+[PASS] validate_r2_called_in_natural_arm
+[PASS] call_repair_appears_exactly_once_per_natural_item_iteration
+[PASS] no_retry_or_while_loop_around_call_repair
+[PASS] natural_arm_has_3_items
+[PASS] controlled_arm_has_3_items
+[PASS] model_matches_eer
+[PASS] temperature_matches_eer
+[PASS] call_function_is_the_eer_original
+
+============================================================
+ALL CONTRACT-REPAIR PROBE STATIC TESTS PASS. Zero API calls, zero network access.

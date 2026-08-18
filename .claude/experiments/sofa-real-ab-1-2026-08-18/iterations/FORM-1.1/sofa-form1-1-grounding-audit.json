@@ -1,0 +1,52 @@
+{
+  "status": "FAIL",
+  "status_reasons": [
+    "UNSUPPORTED: \"The way Edinburgh Art Festival describes itself, you can't walk into a gallery without learning about some subcultural genius or long-lost creative you've never heard of.\" \u2014 The source sentence ('You can't walk into a gallery without learning about some subcultural genius or longlost creative you've never heard of') is the reviewer's own observation about the experience of the festival. The article converts it into a claim about how the festival 'describes itself' \u2014 an attribution of self-presentation/branding that the source does not establish. Nothing in the source quotes festival marketing, curatorial statements, or programme copy.",
+    "UNSUPPORTED: 'It is the register the whole event chooses for itself \u2014 undiscovered archives, secret histories, the underground and the unheralded, one previously unknown name after another.' \u2014 This asserts intent/agency on the festival's part ('chooses for itself'). The source phrases \u2014 'queer narratives, secret histories, undiscovered archives: the whole festival is a celebration of the underground and unheralded' \u2014 are the critic's characterization of what the festival contains, not evidence that the festival deliberately adopted this register as its own framing. The article states a motive/self-framing claim as settled.",
+    "UNSUPPORTED: 'The festival keeps its faith in clarity here.' \u2014 The source contains only the reviewer's personal conviction ('I think they have a duty... to tell them clearly'), and elsewhere the reviewer explicitly finds much of the festival unclear ('mind-meltingly indecipherable', 'way too knowingly obtuse', 'impossible to figure out how any of it fits together'). Attributing a 'faith in clarity' to the festival itself is not established \u2014 arguably contradicted \u2014 by the source. The article's very next sentence correctly reassigns the conviction to 'one person', but this opening sentence still asserts a festival-level stance as fact."
+  ],
+  "deterministic_flags": [
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Following Your Nose Through' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Edinburgh's Hidden Stories\n\nThe' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Edinburgh Art Festival' not found in source"
+    ]
+  ],
+  "claims": [
+    {
+      "claim": "The way Edinburgh Art Festival describes itself, you can't walk into a gallery without learning about some subcultural genius or long-lost creative you've never heard of.",
+      "verdict": "UNSUPPORTED",
+      "reason": "The source sentence ('You can't walk into a gallery without learning about some subcultural genius or longlost creative you've never heard of') is the reviewer's own observation about the experience of the festival. The article converts it into a claim about how the festival 'describes itself' \u2014 an attribution of self-presentation/branding that the source does not establish. Nothing in the source quotes festival marketing, curatorial statements, or programme copy."
+    },
+    {
+      "claim": "It is the register the whole event chooses for itself \u2014 undiscovered archives, secret histories, the underground and the unheralded, one previously unknown name after another.",
+      "verdict": "UNSUPPORTED",
+      "reason": "This asserts intent/agency on the festival's part ('chooses for itself'). The source phrases \u2014 'queer narratives, secret histories, undiscovered archives: the whole festival is a celebration of the underground and unheralded' \u2014 are the critic's characterization of what the festival contains, not evidence that the festival deliberately adopted this register as its own framing. The article states a motive/self-framing claim as settled."
+    },
+    {
+      "claim": "The festival keeps its faith in clarity here.",
+      "verdict": "UNSUPPORTED",
+      "reason": "The source contains only the reviewer's personal conviction ('I think they have a duty... to tell them clearly'), and elsewhere the reviewer explicitly finds much of the festival unclear ('mind-meltingly indecipherable', 'way too knowingly obtuse', 'impossible to figure out how any of it fits together'). Attributing a 'faith in clarity' to the festival itself is not established \u2014 arguably contradicted \u2014 by the source. The article's very next sentence correctly reassigns the conviction to 'one person', but this opening sentence still asserts a festival-level stance as fact."
+    },
+    {
+      "claim": "the festival's cheerful vocabulary of discovery lets them share a single word",
+      "verdict": "UNCERTAIN",
+      "reason": "Whether 'discovery' is the festival's own vocabulary (e.g., in its programme or promotional materials) versus the reviewer's vocabulary cannot be resolved from the source, where all the 'discovery' language belongs to the critic. Resolving this would require the festival's actual self-descriptive materials. The article's larger argument about the two senses of 'discovery' is presented as its own interpretation, which is acceptable, but pinning the vocabulary on the festival specifically is not verifiable here."
+    },
+    {
+      "claim": "Pre-scan candidate: 'Edinburgh Art Festival' not found in source",
+      "verdict": "SUPPORTED",
+      "reason": "False positive from case-sensitive matching. The source refers to 'Edinburgh art festival' and 'EAF' throughout; this is the same entity. The other two pre-scan candidates ('Following Your Nose Through' and 'Edinburgh's Hidden Stories\\n\\nThe') are fragments of the article's headline, not named entities or factual claims, and do not assert anything unsupported."
+    }
+  ],
+  "unsupported_count": 3,
+  "uncertain_count": 1,
+  "word_count": 583
+}

@@ -1,0 +1,19 @@
+{
+  "opening_material": [
+    "You can\u2019t walk into a gallery without learning about some subcultural genius or longlost creative you\u2019ve never heard of.",
+    "You\u2019ve just got to follow your nose and hope you sniff out something you like.",
+    "There are curated displays, satellite exhibitions, performances, off-site projects, and it\u2019s impossible to figure out how any of it fits together."
+  ],
+  "correction_material": [
+    "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+    "died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+    "stayed unpublished and unseen in his lifetime"
+  ],
+  "resisting_material": [
+    "If contemporary artists and institutions want to tell hidden stories, I think they have a duty \u2013 to viewers and to their subjects \u2013 to tell them clearly."
+  ],
+  "correction_function": "The festival calls two different things 'discovery': a visitor now encountering work while moving through the festival, and work that went unseen during an artist's lifetime now being available to encounter. These are different moments, described with the same word. The source supports this contrast; it does not establish how the second kind of availability came about.",
+  "destination": "discovery as the visitor encounters it now, versus work becoming visible only after having gone unseen during the artist's lifetime",
+  "grounding_boundaries": "The source does not say why George, Walter, or Hasegawa went unseen during their lifetimes, does not describe how their work came to be shown now, and does not describe their wishes, intentions, or capacity regarding exhibition. It names no access barriers, distances, or excluded audiences.",
+  "length_guidance": "Roughly 650\u2013800 words for this piece; do not pad \u2014 stop when it has said what it has to say."
+}

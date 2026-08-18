@@ -1,0 +1,53 @@
+[PASS] concrete_factual: R1 valid
+[PASS] pure_interpretive: R1 valid
+[PASS] pure_interpretive: R2 valid
+[PASS] pure_interpretive: consistent (ed=false, role=interpretive_only)
+[PASS] hedged_factual: hedge preserved in restatement
+[PASS] hedged_factual: empirical_dependency still true despite hedge
+[PASS] hedged_interpretive: empirical_dependency false
+[PASS] institutional_intent: R1 valid, subject=institution doesn't block empirical_dependency=true
+[PASS] individual_intent: empirical_dependency true for a single-person motive claim
+[PASS] causal_attribution: R2 valid
+[PASS] measurement_modal_hardening: R2 valid
+[PASS] population_generalization: R2 valid
+[PASS] identity_restatement: surface_claim == concrete_restatement is legal
+[PASS] identity_restatement_rate: 1/2 identical
+[PASS] missing_r1_field: invalid
+[PASS] missing_r1_field: violation names concrete_restatement
+[PASS] illegal_enum: invalid
+[PASS] illegal_enum: violation names empirical_dependency
+[PASS] illegal_enum: R2 role enum rejected
+[PASS] claim_set_mismatch (R2 omits c2): invalid
+[PASS] claim_set_mismatch (R2 omits c2): violation names c2
+[PASS] claim_set_mismatch (R2 adds c99): invalid
+[PASS] claim_set_mismatch (R2 adds c99): violation names c99
+[PASS] claim_set_mismatch (duplicate c1): invalid
+[PASS] r1_true_r2_interpretive: R2 schema valid on its own
+[PASS] r1_true_r2_interpretive: SEMANTIC_CONFLICT detected
+[PASS] r1_true_r2_interpretive: effective_status is unresolved_semantic_conflict, not safe
+[PASS] r1_true_r2_interpretive: candidate verdict is ambiguous, NEVER safe (the false-safe this design prevents)
+[PASS] override_cannot_clear_conflict: conflict still fires despite persuasive rationale text
+[PASS] r1_false_r2_factual_escalation: R2 valid
+[PASS] r1_false_r2_factual_escalation: labeled r1_r2_escalation, not a conflict
+[PASS] r1_false_r2_factual_escalation: NOT gated — normal pipeline computes unsafe from R2's own support/declaration
+[PASS] boundary_ambiguous_from_true: consistent, not a conflict
+[PASS] boundary_ambiguous_from_false: consistent, not a conflict/escalation
+[PASS] r1_uncertain_resolved (factual_dependency): R2 valid
+[PASS] r1_uncertain_resolved (factual_dependency): labeled r1_uncertain_resolved
+[PASS] r1_uncertain_resolved (interpretive_only): R2 valid
+[PASS] r1_uncertain_resolved (interpretive_only): labeled r1_uncertain_resolved
+[PASS] missing_override_rationale: invalid
+[PASS] missing_override_rationale: violation names override_rationale
+[PASS] stray_override_rationale: invalid
+[PASS] r1_field_coverage_violation: invalid (claimed_contribution never audited)
+[PASS] r1_field_coverage_violation: violation names claimed_contribution
+[PASS] unresolvable_auditor_evidence: R2 schema valid (citation validity is a separate layer)
+[PASS] unresolvable_auditor_evidence: effective_status is audit_unresolved, not unsupported
+[PASS] unresolvable_auditor_evidence: candidate verdict is ambiguous, not unsafe, when declaration is not itself the violation
+[PASS] undeclared_forces_unsafe: unsafe fires from declaration=undeclared alone, unchanged B2_MODEL_OUTPUT_V1 rule
+[PASS] multi_claim: R2 valid
+[PASS] multi_claim: c1 consistent, c2 consistent, c3 consistent
+[PASS] multi_claim: one unsupported factual claim makes the whole candidate unsafe
+
+============================================================
+ALL STATIC TESTS PASS. Zero API calls, zero network access.

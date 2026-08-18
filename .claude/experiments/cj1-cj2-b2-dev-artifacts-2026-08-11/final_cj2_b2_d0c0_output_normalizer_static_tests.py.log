@@ -1,0 +1,46 @@
+[PASS] plain_json_no_fence: recovery=direct
+[PASS] plain_json_no_fence: parsed matches
+[PASS] plain_json_no_fence: reason is None
+[PASS] class_a_single_fence: recovery=single_fence_recovered
+[PASS] class_a_single_fence: parsed matches
+[PASS] class_a_single_fence: classify_failure_shape agrees
+[PASS] class_a_no_lang_tag: recovery=single_fence_recovered
+[PASS] class_a_surrounding_whitespace_only: recovery=single_fence_recovered
+[PASS] class_b_prose_preamble: recovery=rejected
+[PASS] class_b_prose_preamble: parsed is None
+[PASS] class_b_prose_preamble: reason names the real cause
+[PASS] class_b_prose_preamble: classify_failure_shape agrees
+[PASS] class_b_prose_trailing: recovery=rejected
+[PASS] class_b_prose_trailing: reason names the real cause
+[PASS] class_c_multiple_fences: recovery=rejected
+[PASS] class_c_multiple_fences: reason names the real cause
+[PASS] class_c_multiple_fences: classify_failure_shape agrees
+[PASS] class_d_truncated_in_fence: recovery=rejected
+[PASS] class_d_truncated_in_fence: reason names the real cause
+[PASS] class_d_truncated_no_fence: recovery=rejected
+[PASS] class_d_truncated_no_fence: reason names the real cause
+[PASS] class_d_truncated_no_fence: classify_failure_shape agrees
+[PASS] non_json_plain_text: recovery=rejected
+[PASS] non_json_plain_text: reason names the real cause
+[PASS] raw_none: recovery=rejected
+[PASS] raw_none: reason names the real cause
+[PASS] fence_wraps_non_json: recovery=rejected
+[PASS] fence_wraps_non_json: reason names the real cause
+[PASS] fence_wraps_non_json: classify_failure_shape agrees
+[PASS] no_semantic_transformation: recovered parsed == direct parse of isolated fence body
+[PASS] no_semantic_transformation: no key/value added or removed
+[PASS] real_attempt2_class_a_recovered[d0/1_clean_simple]: recovery=single_fence_recovered
+[PASS] real_attempt2_class_a_recovered[d0/1_clean_simple]: parsed is a dict with claims/non_propositional keys
+[PASS] real_attempt2_class_a_recovered[d0/4_compound_coordination]: recovery=single_fence_recovered
+[PASS] real_attempt2_class_a_recovered[d0/4_compound_coordination]: parsed is a dict with claims/non_propositional keys
+[PASS] real_attempt2_class_a_recovered[d0/5_attribution_embedded]: recovery=single_fence_recovered
+[PASS] real_attempt2_class_a_recovered[d0/5_attribution_embedded]: parsed is a dict with claims/non_propositional keys
+[PASS] real_attempt2_class_a_recovered[d0/7_modality_assumption]: recovery=single_fence_recovered
+[PASS] real_attempt2_class_a_recovered[d0/7_modality_assumption]: parsed is a dict with claims/non_propositional keys
+[PASS] real_attempt2_class_b_STAYS_rejected[c0_challenge/ch2_attribution_reversed]: recovery=rejected (normalizer must NOT recover this)
+[PASS] real_attempt2_class_b_STAYS_rejected[c0_challenge/ch2_attribution_reversed]: reason is substantive_text_outside_single_fence
+[PASS] real_attempt2_class_b_STAYS_rejected[c0_challenge/ch4_modality_reversed]: recovery=rejected (normalizer must NOT recover this)
+[PASS] real_attempt2_class_b_STAYS_rejected[c0_challenge/ch4_modality_reversed]: reason is substantive_text_outside_single_fence
+
+============================================================
+ALL NORMALIZER STATIC TESTS PASS. Zero API calls, zero network access.

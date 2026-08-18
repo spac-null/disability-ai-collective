@@ -1,0 +1,227 @@
+SOFA — ARTICLE FORM LAYER RESET
+
+STOP B.3 / B.4.
+
+Do NOT generate B.5.
+Do NOT call Opus.
+Do NOT call Fable.
+Do NOT modify production.
+Do NOT implement yet.
+
+We now have cross-model evidence.
+
+Using substantially the same blind-writer Edinburgh interface:
+
+- Opus B.3
+- Grok
+- Qwen
+
+independently converged on essentially the same new thesis:
+
+living visitor has freedom/choice to wander
+vs.
+posthumously discovered dead artists lack agency/choice
+
+and independently produced closely related unsupported claims.
+
+Qwen's visible reasoning is especially diagnostic:
+
+it explicitly noted that no motive, intention or causal link could be
+assumed, then nevertheless constructed an agency contrast between the
+living visitor and dead artists.
+
+Therefore:
+
+The remaining failure is NOT primarily writer-model choice.
+
+The blind-writer interface itself creates a semantic attractor.
+
+==================================================
+ARCHITECTURAL CORRECTION TO TEST
+==================================================
+
+Return to the canonical ownership rule:
+
+LENS / DISCOVERY OWNS DISCOVERY.
+WRITER OWNS PROSE.
+
+We had accidentally made the Writer responsible for epistemic discovery
+in B.3/B.4.
+
+The missing role may be the already-canonical:
+
+ARTICLE FORM
+
+Pipeline:
+
+WORLD/SOURCE
+→ DISTURBANCE
+→ PERCEPTUAL LENS
+→ DISCOVERY
+→ RESEARCH/EVIDENCE
+→ ARTICLE FORM
+→ WRITER/PROSE
+→ BYLINE
+
+The next question is NOT:
+
+"How do we make the writer discover freely?"
+
+It is:
+
+"How does Article Form turn a validated discovery and its resisting
+evidence into a narrative path where the READER experiences discovery,
+without making the prose sound like an editorial worksheet?"
+
+==================================================
+TASK 1 — TEST THIS DIAGNOSIS
+==================================================
+
+Evaluate:
+
+"Legacy's strong first movement did not prove that the writer itself needs
+to discover the thesis during generation. Fable had already supplied the
+correction. What worked was that the ARTICLE FORM allowed the reader to
+experience:
+
+initial reading
+→ concrete material
+→ correction
+→ changed understanding.
+
+B.1/B.2 leaked editorial operations into prose.
+B.3/B.4 removed the answer and mistakenly delegated discovery to the
+writer, causing multiple models to invent the same unsupported moral
+mechanism."
+
+SUPPORTED / PARTLY SUPPORTED / NOT SUPPORTED.
+
+Use actual experiment evidence.
+
+==================================================
+TASK 2 — DEFINE ARTICLE FORM'S OWNERSHIP
+==================================================
+
+Design the minimum responsibility of ARTICLE FORM.
+
+It may know:
+
+- validated discovery / hidden mechanism
+- source evidence
+- correction/resisting evidence
+- grounding boundaries
+- reader contract
+- source-supported uncertainties
+
+It should decide:
+
+- what concrete material opens the piece
+- what material arrives next
+- where/if the initial understanding changes
+- which evidence carries the changed understanding
+- what NOT to expand into
+- where the article has arrived and can stop
+
+It must NOT:
+
+- invent facts
+- invent biography
+- invent lived experience
+- choose a persona voice
+- write finished article prose
+- impose a universal correction-before-midpoint formula
+
+==================================================
+TASK 3 — DISTINGUISH THREE THINGS
+==================================================
+
+Clearly distinguish:
+
+DISCOVERY
+What the editorial system believes the material reveals.
+
+ARTICLE FORM
+The sequence/relationship of real material through which a reader can
+encounter that discovery.
+
+WRITER
+Turns the Form into natural narrative nonfiction.
+
+The Writer is allowed to know where the article is going.
+
+Success does NOT require the writing model itself to discover the thesis
+during token generation.
+
+The READER should experience discovery.
+
+==================================================
+TASK 4 — EDINBURGH ON PAPER
+==================================================
+
+Using the frozen Edinburgh source and existing validated commission,
+construct a hypothetical ARTICLE FORM packet.
+
+No model generation.
+
+Do NOT reuse the B.3/B.4 blind-writer open question.
+
+Do NOT include invented dead-artist agency/consent.
+
+Do NOT include synthetic disability anecdotes.
+
+Use only source-grounded material plus clearly typed editorial
+interpretation.
+
+The target should preserve what Jascha found strongest in Legacy:
+
+festival/discovery language
+→ initial reading
+→ Sandra George changes the significance
+→ stronger/more precise understanding
+
+and respect the reader signal:
+
+after the Sandra George / two-underground-type discovery, the old Legacy
+article started to become too long and lose its line.
+
+The correction may make the original interpretation SMALLER or MORE
+PRECISE, not necessarily bigger.
+
+==================================================
+TASK 5 — WRITER-FACING VERSION
+==================================================
+
+Then show exactly what a writer would receive from ARTICLE FORM.
+
+It may know the destination.
+
+But:
+
+- no persona biography
+- no synthetic first person
+- no editorial field vocabulary leaking into prose
+- no "working reading / correction material / unresolved tension"
+  phrases for the writer to parrot
+- facts should carry the turn
+- do not instruct the writer to announce argument mechanics
+
+Maximum 500 words.
+
+==================================================
+RETURN ONLY
+==================================================
+
+CROSS-MODEL FINDING
+
+ARTICLE-FORM DIAGNOSIS
+
+DISCOVERY vs FORM vs WRITER
+
+EDINBURGH ARTICLE-FORM PACKET
+
+EDINBURGH WRITER-FACING FORM
+
+Then STOP.
+
+No implementation.
+No article generation.

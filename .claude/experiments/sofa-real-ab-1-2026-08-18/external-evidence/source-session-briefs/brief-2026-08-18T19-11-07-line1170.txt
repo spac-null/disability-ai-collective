@@ -1,0 +1,107 @@
+SOFA B.3 — BLIND-WRITER RESULT DIAGNOSIS ONLY
+
+Do NOT generate B.4.
+Do NOT change prompts.
+Do NOT implement anything.
+Do NOT call writer/Fable again.
+
+B.3 is now frozen.
+
+The experiment produced an important result:
+
+- the writer genuinely departed from the hidden mechanism
+- visible Sofa scaffolding largely disappeared
+- but the resulting discovery moved toward a different thesis:
+  posthumous discovery / dead artists / agency
+- grounding still FAILS: 3 unsupported + 2 uncertain
+
+We need to understand whether those failures are specifically caused by
+the NEW discovery the blind writer produced.
+
+==================================================
+TASK 1 — EXACT B.3 GROUNDING FINDINGS
+==================================================
+
+For every unsupported and uncertain claim return:
+
+CLAIM:
+AUDIT VERDICT:
+EXACT SOURCE SUPPORT:
+FAILURE CLASS:
+
+A writer invented factual detail
+B interpretation presented as factual certainty
+C source fact overgeneralized
+D causal claim unsupported
+E moral/agency claim unsupported
+F auditor overreach
+G other
+
+WHY:
+
+Also identify where in the article's argumentative movement the claim occurs.
+
+==================================================
+TASK 2 — TEST THESE SPECIFIC SENTENCES
+==================================================
+
+Pay particular attention to:
+
+"The pleasure of uncovering was only made available by the fact that the
+maker never got to."
+
+"The festival has made the posthumous discovery into a house style"
+
+"George, Walter and Hasegawa cannot advocate for themselves, and never could."
+
+"the dead artists whose discovery made that possible had no such choice"
+
+For each, say whether the source actually supports it, whether it is a
+defensible editorial inference, or whether the article has created a new
+causal/moral mechanism without evidence.
+
+==================================================
+TASK 3 — WHAT B.3 PROVED
+==================================================
+
+Evaluate this hypothesis:
+
+"B.3 proves that hiding hidden_mechanism from the writer restores genuine
+discovery, but an ATTENTION signal this generic does not sufficiently carry
+the disability-derived perceptual instrument. The writer can therefore
+discover a coherent but more generic cultural thesis."
+
+SUPPORTED / PARTLY SUPPORTED / NOT SUPPORTED
+
+Use the actual B.3 writer input and article.
+
+Distinguish carefully:
+
+HIDDEN CONCLUSION
+from
+PERCEPTUAL INSTRUMENT.
+
+The conclusion should not be restored to the writer.
+
+The question is whether a persona-neutral perceptual instruction should
+survive.
+
+==================================================
+TASK 4 — NO SOLUTION YET
+==================================================
+
+Do NOT design B.4 yet.
+
+Return only:
+
+B.3 GROUNDING DIAGNOSIS
+
+NEW-THESIS FAILURE PATTERN
+
+WHAT B.3 PROVED ARTISTICALLY
+
+HIDDEN CONCLUSION vs PERCEPTUAL INSTRUMENT
+
+ONE-SENTENCE NEXT ARCHITECTURAL QUESTION
+
+Then STOP.

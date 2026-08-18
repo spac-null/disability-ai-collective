@@ -1,0 +1,32 @@
+SEED FRICTION (resisting_detail is CONTEXT ONLY -- not factual authority; it cannot establish or rescue a factual dependency)
+
+Resisting detail: {resisting_detail}
+
+Canonical evidence:
+cj1:a1: "{excerpt_a1}"
+cj1:a2: "{excerpt_a2}"
+[cj1:a3 if present]
+
+SOURCE SNAPSHOT
+
+{source_snapshot}
+
+CANDIDATE FIELDS TO AUDIT
+
+The following field instances exist on this candidate. Produce exactly one field_audits entry for each one listed below -- no more, no fewer.
+
+additional_source_observations[0]:
+  declared excerpt (obs:1): "{obs_1_excerpt}"
+  observation: "{obs_1_observation}"
+[repeat additional_source_observations[N] for each one actually present -- omit this block entirely if the candidate declared none]
+
+engine_move: "{engine_move}"
+
+seed_engagement: "{seed_engagement}"
+
+interpretive_inference: "{interpretive_inference}"
+
+conceptual_shift: "{conceptual_shift}"
+[omit this line and its field_audits entry entirely if conceptual_shift is null]
+
+claimed_contribution: "{claimed_contribution}"

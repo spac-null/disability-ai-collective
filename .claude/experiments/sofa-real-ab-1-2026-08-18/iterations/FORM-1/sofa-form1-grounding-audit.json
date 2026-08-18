@@ -1,0 +1,64 @@
+{
+  "status": "FAIL",
+  "status_reasons": [
+    "UNSUPPORTED: 'US photographer Del LaGrace Volcano [omitted]... Three of those names sit near the center of what the festival is doing.' \u2014 The claim that these three specifically 'sit near the center of what the festival is doing' is the article's own editorial framing; the source presents George, Walter and Hasegawa among many artists without designating them as central.",
+    "UNSUPPORTED: \"There is a duty in this, the festival's own account allows.\" \u2014 The 'duty' language in the source is the reviewer's own assertion ('I think they have a duty'), not 'the festival's own account.' Attributing it to the festival misrepresents the source's origin of the claim."
+  ],
+  "deterministic_flags": [
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'discovery' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'discovery' not found verbatim in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Following Your Nose Through' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Undiscovered\n\nThe Edinburgh' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'But George' not found in source"
+    ]
+  ],
+  "claims": [
+    {
+      "claim": "US photographer Del LaGrace Volcano [omitted]... Three of those names sit near the center of what the festival is doing.",
+      "verdict": "UNSUPPORTED",
+      "reason": "The claim that these three specifically 'sit near the center of what the festival is doing' is the article's own editorial framing; the source presents George, Walter and Hasegawa among many artists without designating them as central."
+    },
+    {
+      "claim": "George was only discovered after her death in 2013.",
+      "verdict": "SUPPORTED",
+      "reason": "Source states George 'was only discovered after her death in 2013.'"
+    },
+    {
+      "claim": "in each case the work and the moment of its being seen do not overlap",
+      "verdict": "UNCERTAIN",
+      "reason": "The source supports that each never showed work in their lifetime, but the sweeping synthesis is the article's interpretive argument rather than a stated source fact; for George and Walter it aligns, but presented as an established pattern it is the writer's construction."
+    },
+    {
+      "claim": "There is a duty in this, the festival's own account allows.",
+      "verdict": "UNSUPPORTED",
+      "reason": "The 'duty' language in the source is the reviewer's own assertion ('I think they have a duty'), not 'the festival's own account.' Attributing it to the festival misrepresents the source's origin of the claim."
+    },
+    {
+      "claim": "this work became visible only after having gone unseen during the artist's lifetime",
+      "verdict": "UNCERTAIN",
+      "reason": "Source supports that George/Walter/Hasegawa did not show work in their lifetimes, but for Hasegawa the source says 'most' of his work stayed unpublished, not all; the generalized statement overstates what the source establishes."
+    },
+    {
+      "claim": "Sadao Hasegawa (1945\u20131999) was a Japanese illustrator whose images fuse mythology and hardcore eroticism... Most of his work, too, stayed unpublished and unseen in his lifetime.",
+      "verdict": "SUPPORTED",
+      "reason": "Source states most of the Japanese illustrator's work stayed unpublished and unseen in his lifetime and describes the katanas/giant spiders imagery."
+    }
+  ],
+  "unsupported_count": 2,
+  "uncertain_count": 2,
+  "word_count": 756
+}

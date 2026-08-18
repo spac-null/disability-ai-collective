@@ -1,0 +1,256 @@
+[
+  {
+    "system_head": "You are the editorial director of Crip Minds \u2014 a disability culture publication. Each persona writes about the world through their specific disability lens, not about disability as a topic. Assign the",
+    "user_len": 23719,
+    "raw_response": "{\"source_decision\":\"commission\",\"source_anchor_examined\":\"You can\u2019t walk into a gallery without learning about some subcultural genius or longlost creative you\u2019ve never heard of.\",\"hidden_mechanism\":\"The festival's entire discovery model is built on an ambulatory, self-directed body \u2014 'follow your nose', navigate between scattered venues, stumble on the unheralded \u2014 which converts spontaneous physical mobility into the precondition for cultural access, so the 'hidden stories' curation depends on exactly the kind of frictionless roaming that structurally filters out whoever cannot roam.\",\"why_disability_knowledge_changes_subject\":\"On its face 'You can\u2019t walk into a gallery without learning about some subcultural genius' is just a reviewer's enthusiasm about density of content. A cognitive/access analyst reveals it names the retrieval mechanism: the review confirms the festival 'is also a big, unwieldy, confusing thing... impossible to figure out how any of it fits together. You\u2019ve just got to follow your nose.' Combined, the festival's method of surfacing marginalised voices is unstructured spatial serendipity \u2014 and serendipity is a body walking without a map. So the celebration of 'the underground and unheralded' runs on the one navigational assumption that decides in advance who gets to do the uncovering. That is a category jump from 'lots of good content' to 'the discovery interface itself is an access filter.'\",\"eligible_execution_possible\":true,\"persona\":\"Zen Circuit\",\"angle\":\"When a festival's method of surfacing hidden stories is deliberate disorientation \u2014 no map, no legible structure, 'just follow your nose' \u2014 is that unstructured openness actually the most inclusive form (letting the pattern-hungry mind find its own path) or the most exclusionary (an access tax on anyone who can't hold a whole illegible city in their head at once)? Which does the festival's own design turn out to be when you try to route through it?\",\"register\":\"clinical\",\"seed_sentence\":\"A festival that celebrates the unheralded chose, as its interface, the one thing that decides in advance who can do the finding: no map.\",\"opening_scene\":\"A festival that celebrates the unheralded chose, as its interface, the one thing that decides in advance who can do the finding: no map.\",\"opening_shape\":\"plain_claim\",\"correction_moment\":{\"editorial_need\":\"The piece needs a moment where the festival's illegibility, which Zen sets out to indict as an access barrier, instead reveals itself as the very condition that let a genuinely hidden story surface \u2014 forcing the argument to admit that structure and discovery might be in real tension, not simple alignment.\",\"evidence_candidate\":{\"status\":\"found\",\"source_excerpt\":\"Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.\",\"named_person\":\"\",\"direct_quote\":\"\",\"dates_numbers\":[\"2013\"]},\"interpretation\":\"Zen begins assuming legibility is unambiguously good \u2014 a map, a structure, a clear order is access. But the material keeps insisting the works themselves were only surfaced BECAUSE nobody organised or curated them in their makers' lifetimes; the 'underground' is underground precisely because it evaded systematisation. This complicates the clean thesis: the same illegibility that gatekeeps the audience is what preserved the artists. Zen has to sit inside that contradiction rather than resolve it, which is where the piece earns its question instead of answering it in advance.\"},\"resisting_example\":{\"editorial_need\":\"A concrete work inside the festival that resists Zen's 'legibility equals access' instinct from within the same values \u2014 art whose whole meaning depends on being hard to parse \u2014 would stop the argument from collapsing into 'clarity good, confusion bad.'\",\"evidence_candidate\":{\"status\":\"found\",\"source_excerpt\":\"The handout talks about vibrations, energy, AI, weather systems in Texas. It\u2019s mind-meltingly indecipherable. So what\u2019s left is more of a vibe: a sense of human spirituality, survival and endurance in the bleak near-future.\",\"named_person\":\"\",\"direct_quote\":\"\",\"dates_numbers\":[]},\"interpretation\":\"This is the hard case for Zen's cognitive-accessibility position: a work that is deliberately indecipherable, where the reviewer concedes the illegibility itself produces something real \u2014 'a vibe... a sense of human spirituality.' It resists the idea that everything hidden should be made clear. If Zen argues the festival owes viewers legible retrieval, this work says some experiences are only available on the far side of not-understanding \u2014 which is exactly the same claim autistic viewers make when told their perception is 'too much.' The resistance comes from inside Zen's own value system, not against it.\"},\"cross_cite\":\"The instinct to treat 'no map, follow your nose' purely as a cognitive-legibility failure risks missing that the same absent map is a spatial and navigational barrier of an entirely different kind \u2014 a body that cannot route between scattered venues at all is excluded before legibility even becomes the question, and these are not the same exclusion.\"}",
+    "response_format_requested": {
+      "type": "json_schema",
+      "json_schema": {
+        "name": "fable_editorial_brief",
+        "strict": true,
+        "schema": {
+          "type": "object",
+          "properties": {
+            "source_decision": {
+              "type": "string",
+              "enum": [
+                "commission",
+                "decline"
+              ]
+            },
+            "source_anchor_examined": {
+              "type": "string"
+            },
+            "hidden_mechanism": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why_disability_knowledge_changes_subject": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "eligible_execution_possible": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "blocked_carry_persona": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "persona": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "angle": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "register": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "seed_sentence": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "opening_scene": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "opening_shape": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "enum": [
+                "plain_claim",
+                "cold_scene",
+                "question",
+                "fact",
+                "declaration_of_hunt",
+                null
+              ]
+            },
+            "correction_moment": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "editorial_need": {
+                  "type": "string"
+                },
+                "evidence_candidate": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "found",
+                        "not_found"
+                      ]
+                    },
+                    "source_excerpt": {
+                      "type": "string"
+                    },
+                    "named_person": {
+                      "type": "string"
+                    },
+                    "direct_quote": {
+                      "type": "string"
+                    },
+                    "dates_numbers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "source_excerpt",
+                    "named_person",
+                    "direct_quote",
+                    "dates_numbers"
+                  ],
+                  "additionalProperties": false
+                },
+                "interpretation": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "editorial_need",
+                "evidence_candidate",
+                "interpretation"
+              ],
+              "additionalProperties": false
+            },
+            "resisting_example": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "editorial_need": {
+                  "type": "string"
+                },
+                "evidence_candidate": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "found",
+                        "not_found"
+                      ]
+                    },
+                    "source_excerpt": {
+                      "type": "string"
+                    },
+                    "named_person": {
+                      "type": "string"
+                    },
+                    "direct_quote": {
+                      "type": "string"
+                    },
+                    "dates_numbers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "source_excerpt",
+                    "named_person",
+                    "direct_quote",
+                    "dates_numbers"
+                  ],
+                  "additionalProperties": false
+                },
+                "interpretation": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "editorial_need",
+                "evidence_candidate",
+                "interpretation"
+              ],
+              "additionalProperties": false
+            },
+            "cross_cite": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dominant_framing": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "why_disability_knowledge_does_not_change_subject": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "reason": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "source_decision",
+            "source_anchor_examined",
+            "hidden_mechanism",
+            "why_disability_knowledge_changes_subject",
+            "eligible_execution_possible",
+            "blocked_carry_persona",
+            "persona",
+            "angle",
+            "register",
+            "seed_sentence",
+            "opening_scene",
+            "opening_shape",
+            "correction_moment",
+            "resisting_example",
+            "cross_cite",
+            "dominant_framing",
+            "why_disability_knowledge_does_not_change_subject",
+            "reason"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "provider_requested": {
+      "require_parameters": true
+    },
+    "diagnostic_parse_path": "NORMAL_JSON_LOADS"
+  }
+]

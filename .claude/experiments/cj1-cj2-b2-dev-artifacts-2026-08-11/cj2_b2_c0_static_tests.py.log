@@ -1,0 +1,32 @@
+[PASS] complete_no_missing_items: valid
+[PASS] complete_with_missing_items: invalid (contradicts status=complete)
+[PASS] missing_proposition_no_item: invalid (must name at least one item)
+[PASS] unknown_segment_id: invalid
+[PASS] missing_span_unresolvable: invalid
+[PASS] missing_span_outside_declared_segment: invalid (real span, wrong segment_id)
+[PASS] missing_atomic_claim_empty: invalid
+[PASS] duplicate_missing_items: schema still valid (duplicates are diagnostic, not rejected)
+[PASS] duplicate_missing_items: dedupe report correctly counts 1 unique + 1 duplicate
+[PASS] c0_classifies_factuality: banned vocabulary detected
+[PASS] c0_classifies_factuality: full schema validation also rejects it
+[PASS] c0_scope_violation: detected
+[PASS] c0_scope_violation: full schema validation also rejects it
+[PASS] d0_claim_ids_unchanged_after_c0: d0_claims object's claim_ids are bit-for-bit unchanged
+[PASS] d0_claim_ids_unchanged_after_c0: gate reached 'valid' (sanity -- unrelated to the identity check above)
+[PASS] c0_cannot_split_d0_claim: rejected via scope-violation key detection
+[PASS] d0_structural_failure setup: D0 itself reports D0_COVERAGE_FAILURE (second sentence unclaimed)
+[PASS] d0_structural_failure: gate blocks R1 regardless of what C0 would have said
+[PASS] c0_semantic_failure setup: D0 itself reports valid (both segments formally accounted for)
+[PASS] c0_semantic_failure: gate is D0_COVERAGE_FAILURE via c0_semantic_audit, never 'valid'/'safe'
+[PASS] r1_not_called_on_d0_coverage_failure
+[PASS] r1_not_called_on_c0_schema_invalid: malformed C0 fails closed, does NOT default to proceeding
+[PASS] r1_called_when_both_valid_and_complete
+[PASS] h08_shaped_diagnostic: field still segments into 8 units
+[PASS] h08_shaped_diagnostic: D0's own structural check already catches this (as established separately in cj2_b2_d0_h08_structural_test.py)
+[PASS] h08_shaped_diagnostic: combined gate correctly blocks R1, attributed to segment_accounting (D0 caught it before C0 would even need to)
+[PASS] h17_shaped_diagnostic: real sentence still segments into exactly 1 unit (re-confirms the audit's finding)
+[PASS] h17_shaped_diagnostic: D0's OWN structural check reports 'valid' (span honestly, consistently covers the whole segment -- this is exactly the gap D0 alone cannot catch)
+[PASS] h17_shaped_diagnostic: WITHOUT C0, this candidate would silently proceed to R1 missing half a proposition (D0 alone says 'valid'); WITH a correctly-functioning C0, the combined gate correctly blocks R1 -- this is the concrete case that justifies C0's existence
+
+============================================================
+ALL C0 STATIC TESTS PASS. Zero API calls, zero network access, zero model calls.

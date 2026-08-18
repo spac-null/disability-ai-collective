@@ -1,0 +1,83 @@
+{
+  "status": "FAIL",
+  "status_reasons": [
+    "UNSUPPORTED: \"The festival's definition of underground \u2014 never shown, discovered after death \u2014 ... The festival is genuinely good at this underground. It goes looking. It digs.\" \u2014 This is the discovery packet's editorial framing (an access architecture that pre-selects who does the uncovering) presented as characterization of what the festival 'does'; the source does not establish the festival's curatorial intentions or that it 'goes looking' as institutional motive. The known_gaps explicitly say the source does not describe the festival's stated curatorial intentions.",
+    "UNSUPPORTED: 'An arts culture that treats cultural discovery as ambulatory has built a definition of the underground that excludes anyone whose body does not do spontaneous multi-venue wandering.' \u2014 This is the hidden_mechanism interpretation. The known_gaps state the source never discusses physical access, mobility, or who is excluded; the article presents this as an analytic conclusion which is permitted as the article's own argument, but it edges into asserting exclusion the source does not establish. It is clearly framed as the author's own reasoning ('I started out thinking'), so it is the article's argument rather than a source fact \u2014 flagged as UNSUPPORTED only insofar as it must not read as established fact.",
+    "UNSUPPORTED: 'Sandra George was underground in the sense that no institution looked while she was alive.' \u2014 Causal/motive claim. The source says she never showed her work publicly and was only discovered after her death, but it does not establish that 'no institution looked' \u2014 the reason she went unseen (whether she chose not to show, or institutions ignored her) is not established by the source.",
+    "UNSUPPORTED: 'no institution looked at a Black woman photographing Craigmillar while she was alive' \u2014 Causal/motive claim asserting institutional neglect as the reason for her obscurity. The source only states she never showed publicly and was discovered posthumously; it does not attribute this to institutional failure or to her race being the cause.",
+    "UNSUPPORTED: \"Once because Edinburgh's institutions did not look at a Black woman photographing Craigmillar while she was alive.\" \u2014 Repeats the unsupported causal/motive attribution; the source does not establish why her work went unseen.",
+    "UNSUPPORTED: 'that shoebox will be empty in 2060' \u2014 The number 2060 does not appear in the source and is an invented rhetorical date."
+  ],
+  "deterministic_flags": [
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Sandra George Was Underground' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Only One' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Edinburgh Art Festival' not found in source"
+    ],
+    [
+      "possible_number_not_in_source",
+      "number '2060' not found in source"
+    ]
+  ],
+  "claims": [
+    {
+      "claim": "the festival put his weird little cardboard rainbows next to a Lynette Yiadom-Boakye and let them win",
+      "verdict": "SUPPORTED",
+      "reason": "The source states Walter's works were flanked by a Lynette Yiadom-Boakye and that his work eclipsed the giants around it."
+    },
+    {
+      "claim": "a gallery where the lights flicker and rain plays through hidden speakers",
+      "verdict": "UNCERTAIN",
+      "reason": "The source says of Anne Hardy's show 'the lights flicker, the sound of rain fills the gallery' but does not specify 'hidden speakers' \u2014 that mechanism is an embellishment, though minor and plausible."
+    },
+    {
+      "claim": "Sandra George was a Black photographer who documented Craigmillar, one of the poorest parts of Edinburgh, in the 1980s and 90s.",
+      "verdict": "SUPPORTED",
+      "reason": "Source describes her as a black photographer documenting the impoverished Craigmillar area; the 1980s/90s timeframe aligns with the general festival framing though the source only says 'documented communities in the city's impoverished Craigmillar area' without dating that specifically \u2014 but this is within reasonable support."
+    },
+    {
+      "claim": "The festival's definition of underground \u2014 never shown, discovered after death \u2014 ... The festival is genuinely good at this underground. It goes looking. It digs.",
+      "verdict": "UNSUPPORTED",
+      "reason": "This is the discovery packet's editorial framing (an access architecture that pre-selects who does the uncovering) presented as characterization of what the festival 'does'; the source does not establish the festival's curatorial intentions or that it 'goes looking' as institutional motive. The known_gaps explicitly say the source does not describe the festival's stated curatorial intentions."
+    },
+    {
+      "claim": "An arts culture that treats cultural discovery as ambulatory has built a definition of the underground that excludes anyone whose body does not do spontaneous multi-venue wandering.",
+      "verdict": "UNSUPPORTED",
+      "reason": "This is the hidden_mechanism interpretation. The known_gaps state the source never discusses physical access, mobility, or who is excluded; the article presents this as an analytic conclusion which is permitted as the article's own argument, but it edges into asserting exclusion the source does not establish. It is clearly framed as the author's own reasoning ('I started out thinking'), so it is the article's argument rather than a source fact \u2014 flagged as UNSUPPORTED only insofar as it must not read as established fact."
+    },
+    {
+      "claim": "Sandra George was underground in the sense that no institution looked while she was alive.",
+      "verdict": "UNSUPPORTED",
+      "reason": "Causal/motive claim. The source says she never showed her work publicly and was only discovered after her death, but it does not establish that 'no institution looked' \u2014 the reason she went unseen (whether she chose not to show, or institutions ignored her) is not established by the source."
+    },
+    {
+      "claim": "no institution looked at a Black woman photographing Craigmillar while she was alive",
+      "verdict": "UNSUPPORTED",
+      "reason": "Causal/motive claim asserting institutional neglect as the reason for her obscurity. The source only states she never showed publicly and was discovered posthumously; it does not attribute this to institutional failure or to her race being the cause."
+    },
+    {
+      "claim": "Once because Edinburgh's institutions did not look at a Black woman photographing Craigmillar while she was alive.",
+      "verdict": "UNSUPPORTED",
+      "reason": "Repeats the unsupported causal/motive attribution; the source does not establish why her work went unseen."
+    },
+    {
+      "claim": "that shoebox will be empty in 2060",
+      "verdict": "UNSUPPORTED",
+      "reason": "The number 2060 does not appear in the source and is an invented rhetorical date."
+    },
+    {
+      "claim": "Frank Walter, the Antiguan painter who died in 2009 having never shown a single one of his thousands of paintings",
+      "verdict": "SUPPORTED",
+      "reason": "Source states Frank Walter (1926-2009), Antiguan painter, died having never shown any of the thousands of paintings and drawings he amassed."
+    }
+  ],
+  "unsupported_count": 6,
+  "uncertain_count": 1
+}

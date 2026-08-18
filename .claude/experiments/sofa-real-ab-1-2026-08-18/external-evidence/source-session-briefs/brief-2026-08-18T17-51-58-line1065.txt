@@ -1,0 +1,333 @@
+SOFA B.2 — HIDE THE SCAFFOLDING, SAME EDINBURGH CASE
+
+Continue from the completed Sofa B.1 experiment.
+
+Do NOT create another architecture proposal.
+Do NOT use a new source.
+Do NOT call Fable again.
+Do NOT regenerate Legacy.
+Do NOT deploy anything.
+Do NOT touch CJ2 / Scout / Reader Lab.
+
+Freeze Sofa B.1 as an experiment result.
+
+We are doing ONE more Edinburgh iteration only.
+
+==================================================
+WHAT B.1 PROVED
+==================================================
+
+B.1 improved over Sofa v1 because resistance/correction material survived.
+
+But Jascha's sofa-read is:
+
+- genuine improvement
+- still less natural than the good first half of Legacy
+- editorial architecture is visible in the prose
+- article still keeps constructing conceptual layers after it has largely
+  found its strongest discovery
+- 1,040 words still feels longer than this material needs
+
+Examples of visible scaffolding in B.1:
+
+"So the working suspicion is easy to state..."
+
+"This is where the neat version of the complaint collides with itself."
+
+"So the barrier splits in two..."
+
+"This is the working reading arriving from the aesthetic direction..."
+
+"The live question was whether..."
+
+These read like packet-field names translated into prose.
+
+We want the THINKING from the packet, not its vocabulary or sequence.
+
+==================================================
+GOAL
+==================================================
+
+Generate Sofa B.2:
+
+- preserves the possibility that evidence changes the initial reading
+- hides the editorial machinery
+- no synthetic persona / fake autobiographical I
+- stays primarily in the Edinburgh material
+- stops once the strongest changed understanding has landed
+- approximately 750–850 words for THIS CASE ONLY
+
+This is not a universal CripMinds word-count rule.
+
+==================================================
+1. DISCOVERY MAY KEEP THE INTERNAL STRUCTURE
+==================================================
+
+Internally, B.2 Discovery may still know:
+
+- provisional reading
+- source material that disturbs it
+- resisting material
+- rival interpretation
+- unresolved tension
+- grounding boundaries
+
+Do NOT delete that reasoning.
+
+But do NOT expose these to the writer as six prominently labelled
+conceptual operations.
+
+The writer must not feel as if it is filling:
+
+WORKING READING
+→ CORRECTION
+→ RESISTANCE
+→ RIVAL
+→ UNRESOLVED TENSION
+
+==================================================
+2. BUILD A SMALL WRITER-FACING STORY BRIEF
+==================================================
+
+Convert the internal B.2 Discovery state into a compact,
+persona-neutral writer brief.
+
+For this Edinburgh case, the writer-facing brief should communicate no
+more than something functionally equivalent to:
+
+EDITORIAL DIRECTION:
+Begin with the festival's own language of walking / following your nose /
+discovering hidden artists.
+
+IMPORTANT MATERIAL:
+Sandra George materially complicates a simple physical-access reading.
+Follow what that changes rather than forcing the original interpretation
+to survive.
+
+RESISTANCE:
+The review simultaneously demands clarity and enjoys work it describes as
+indecipherable/obtuse. This may matter, but only use it if it genuinely
+advances the changed understanding.
+
+STOP CONDITION:
+Once the strongest source-grounded changed understanding has landed,
+stop. Do not add another disability example, second world, analogy, or
+larger theory merely to keep the essay going.
+
+Do NOT use these exact sentences automatically.
+Construct the brief from the real frozen commission/source.
+
+The brief is editorial guidance, not article prose.
+
+==================================================
+3. GIVE THE WRITER MATERIAL, NOT LABELS
+==================================================
+
+The writer should receive:
+
+- source snapshot
+- source anchor
+- a short editorial direction
+- selected carrying material in useful order
+- correction/resisting source excerpts
+- concise editorial notes separated from evidence
+- known gaps / grounding boundaries
+
+Do NOT prominently expose terms like:
+
+working_reading
+live_question
+correction_material
+resisting_material
+rival_reading
+unresolved_tension
+
+in the prose-generation prompt.
+
+Those may remain internal field names in code if useful, but the generated
+writer prompt should not teach the model to narrate those operations.
+
+==================================================
+4. DO NOT SCRIPT THE TURN
+==================================================
+
+Do not tell the writer:
+
+"place the correction before midpoint"
+
+or:
+
+"now introduce the resisting example"
+
+or:
+
+"state the live question"
+
+Instead:
+
+"Allow later material to change an earlier reading when it genuinely does.
+Do not announce the operation. Let the new fact create the turn."
+
+The movement should feel caused by the world.
+
+==================================================
+5. PERSPECTIVE
+==================================================
+
+No persona roleplay.
+
+No invented autobiographical first person.
+
+No:
+
+"I was told at nineteen..."
+"I know this from inside..."
+"I keep returning to a Deaf man..."
+
+First person only if there is a REAL recorded reporting/editorial action in
+the evidence record.
+
+Otherwise use ordinary narrative nonfiction without an invented narrator.
+
+The disability lens remains causally necessary but may remain narratively
+implicit.
+
+==================================================
+6. THIS CASE'S CENTER OF GRAVITY
+==================================================
+
+Do not force explicit Deaf/disability material into the second half.
+
+The strongest existing reader signal is around:
+
+festival discovery language
+→ walking/follow-your-nose
+→ initial interpretation
+→ Sandra George
+→ the meaning of "underground" changes
+
+Jascha found the Legacy version comfortable through approximately the
+"two undergrounds" discovery, then felt the Deaf anecdote was a sudden jump
+and the article began becoming long.
+
+An outside reader independently said:
+
+- the "Sandra George was underground twice" idea is original and important
+- the overall article does not stay on one line well enough
+- the "I" / perspective becomes unclear
+
+Use those as editorial constraints.
+
+Do NOT quote reader feedback inside the article.
+
+==================================================
+7. ARRIVAL
+==================================================
+
+Important:
+
+A correction does not have to produce a BIGGER thesis.
+
+It may produce a MORE PRECISE thesis.
+
+Do not automatically escalate:
+
+walking
+→ disability
+→ diagnosis
+→ cognition
+→ institutions
+→ universal theory of interfaces
+
+If Sandra George makes the initial walking interpretation smaller or more
+precise, that can be the article.
+
+Land and stop.
+
+==================================================
+8. LENGTH
+==================================================
+
+Target approximately 750–850 words for THIS Edinburgh replay.
+
+Do not pad to reach 850.
+
+If the article naturally arrives around 700–750, stop.
+
+If the source genuinely requires somewhat more, allow it, but the writer
+must have a strong reason.
+
+No universal length rule is being created.
+
+==================================================
+9. GROUNDING
+==================================================
+
+Preserve known grounding lessons:
+
+- no invented wall-text provenance
+- no invented stairs/doors/drives/distances
+- no measured/population claims unsupported by source
+- editorial interpretation must remain recognisable as interpretation
+- editorial notes are not evidence
+- respect known_gaps
+
+Do NOT redesign the grounding auditor.
+
+==================================================
+10. GENERATION CONTROL
+==================================================
+
+Use EXACTLY:
+
+same frozen Edinburgh source
+same evidence packet
+same frozen commission
+same actual writer model:
+anthropic/claude-opus-4.8
+
+same writer parameters as B.1 as closely as possible.
+
+Generate ONE article.
+
+No candidates.
+No selection.
+No retries for literary quality.
+
+==================================================
+11. AUDIT ONCE
+==================================================
+
+Run the same grounding audit once.
+
+Do not repair the article.
+
+Record:
+
+word count
+grounding status
+unsupported count
+uncertain count
+
+==================================================
+12. RETURN
+==================================================
+
+Return only:
+
+B.2 IMPLEMENTATION NOTE
+maximum 200 words
+
+B.2 GROUNDING
+status + counts + word count
+
+SOFA B.2 ARTICLE
+
+[full article]
+
+Then STOP.
+
+Do NOT compare B.2 to Legacy or B.1.
+Do NOT declare a winner.
+
+Jascha will sofa-read it.

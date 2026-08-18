@@ -1,0 +1,7 @@
+{
+  "source_decision": "defer",
+  "defer_reason_code": "commission_eligible_flag_malformed",
+  "defer_reason": "Story Rejection: commission's eligible_execution_possible is not a boolean (None) \u2014 rejected as malformed, never coerced",
+  "source_hash": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "evidence_packet_hash": "61a1bab6896871f01b8dae7ca3b7d65bddcdd1193490d7f1c1761731851f27ea"
+}

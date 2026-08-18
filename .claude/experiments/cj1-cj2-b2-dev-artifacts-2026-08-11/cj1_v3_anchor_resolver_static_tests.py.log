@@ -1,0 +1,27 @@
+PASS: RESOLVER_VERSION is v2
+PASS: F. H06 frozen paraphrase/concatenation -- MUST FAIL
+PASS: F. H06 -- original_substring is None on failure
+PASS: H06's own sibling c3 (real, already-correct quote) still resolves via plain exact_match
+PASS: A. H15 exact frozen failure -- missing '.' before closing quote -> unique recovery
+PASS: A. H15 recovered text is the ORIGINAL source substring, period included
+PASS: D. H15 sibling c12 (already exact) resolves via ordinary exact_match, new fallback not invoked
+PASS: B. synthetic missing '?' before closing quote -> unique recovery
+PASS: C. synthetic missing '!' before closing quote -> unique recovery
+PASS: E. pre-existing real exact-match case unaffected by v2
+PASS: G. invented connective/content -- MUST FAIL
+PASS: H. missing lexical word ('reviewed') -- MUST FAIL
+PASS: I. reordered words -- MUST FAIL
+PASS: J. two distinct punctuation-recovered locations -> ambiguous, fail closed
+PASS: J. ambiguous_match never returns an original_substring
+PASS: dedup: identical raw-pass/folded-pass hit at the same location is NOT double-counted as ambiguous
+PASS: K. internal punctuation difference, no terminal quote -- MUST FAIL (v2 does not apply)
+PASS: K2. missing comma is INTERNAL, not the terminal position -- MUST FAIL
+PASS: L. trailing comma before closing quote -- MUST FAIL (comma never tried)
+PASS: M. semantic/fuzzy near-match -- MUST FAIL
+PASS: out_of_scope path still reachable when v2 step 3 also finds nothing in source_snapshot
+PASS: v1 exact_match unaffected
+PASS: v1 normalized_unique_match (smart quotes) unaffected
+PASS: v1 ambiguous_match (quote-fold, no punctuation gap) unaffected
+PASS: v1 no_match (nothing resembling the excerpt anywhere) unaffected
+
+ALL PASS

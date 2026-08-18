@@ -1,0 +1,120 @@
+{
+  "status": "FAIL",
+  "status_reasons": [
+    "UNSUPPORTED: 'These artists are unheralded because they resisted, or were shut out of, the systems that make an artist easy to find.' \u2014 Unsupported causal/motive claim. The source states these artists never showed their work in their lifetimes, but does not establish WHY \u2014 whether they resisted systems or were shut out. The source offers no explanation of cause.",
+    "UNSUPPORTED: \"the festival's refusal to fit together \u2014 its unwieldiness, its lack of a clean map \u2014 may be structurally faithful to its subjects rather than merely careless\" \u2014 This is the article's own interpretive argument (aligned with the discovery packet's hidden_mechanism), and is hedged with 'may be,' so it is presented as argument rather than source fact. Acceptable as the article's own reasoning, but the causal link between festival structure and subjects is not established by the source.",
+    "UNSUPPORTED: 'The reviewer, without knowing it, hands over the exact principle the situation needs.' \u2014 Unsupported motive/knowledge claim ('without knowing it') \u2014 asserts what the reviewer was or wasn't aware of, which the source cannot establish.",
+    "UNSUPPORTED: 'He does not mean navigability across the city.' \u2014 Unsupported motive/intent claim about what the reviewer means. The source's line about 'duty to tell them clearly' does not specify or exclude navigability; the article asserts the reviewer's intended scope as settled.",
+    "UNSUPPORTED: 'He means clarity of meaning *inside a single show*' \u2014 Unsupported motive/intent claim. The article attributes a specific narrow meaning to the reviewer's statement that the source does not establish."
+  ],
+  "deterministic_flags": [
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'By the time you're done with Edinburgh art festival you'll h' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'You can't walk into a gallery,' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'without learning about some subcultural genius or longlost c' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'There are curated displays, satellite exhibitions, performan' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'a big, unwieldy, confusing thing,' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'too big and complex, with too many moving parts.' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'deserves to be seen far outside the city's confines.' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'died having never shown any of the thousands of paintings an' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'I think they have a duty \u2014 to viewers and to their subjects ' not found verbatim in source"
+    ],
+    [
+      "quoted_text_not_in_source",
+      "quoted text 'Eva Rothschild's rubber-hose goth Memphis upstairs, admires ' not found verbatim in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Follow Your Nose' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'On Who Gets' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Unheralded\n\nThe' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Consider Sandra George' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Jamie Fitzpatrick's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Eva Rothschild's' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Anne Hardy's' not found in source"
+    ]
+  ],
+  "claims": [
+    {
+      "claim": "the Black photographer whose show at City Art Gallery the reviewer rates as one of the strongest things here",
+      "verdict": "UNCERTAIN",
+      "reason": "The source says George's story is 'worth telling' and 'deserves to be seen far outside the city's confines,' but does not explicitly rank it as 'one of the strongest things here.' This is the article's characterization, plausible but not established."
+    },
+    {
+      "claim": "These artists are unheralded because they resisted, or were shut out of, the systems that make an artist easy to find.",
+      "verdict": "UNSUPPORTED",
+      "reason": "Unsupported causal/motive claim. The source states these artists never showed their work in their lifetimes, but does not establish WHY \u2014 whether they resisted systems or were shut out. The source offers no explanation of cause."
+    },
+    {
+      "claim": "the festival's refusal to fit together \u2014 its unwieldiness, its lack of a clean map \u2014 may be structurally faithful to its subjects rather than merely careless",
+      "verdict": "UNSUPPORTED",
+      "reason": "This is the article's own interpretive argument (aligned with the discovery packet's hidden_mechanism), and is hedged with 'may be,' so it is presented as argument rather than source fact. Acceptable as the article's own reasoning, but the causal link between festival structure and subjects is not established by the source."
+    },
+    {
+      "claim": "The reviewer, without knowing it, hands over the exact principle the situation needs.",
+      "verdict": "UNSUPPORTED",
+      "reason": "Unsupported motive/knowledge claim ('without knowing it') \u2014 asserts what the reviewer was or wasn't aware of, which the source cannot establish."
+    },
+    {
+      "claim": "He does not mean navigability across the city.",
+      "verdict": "UNSUPPORTED",
+      "reason": "Unsupported motive/intent claim about what the reviewer means. The source's line about 'duty to tell them clearly' does not specify or exclude navigability; the article asserts the reviewer's intended scope as settled."
+    },
+    {
+      "claim": "He means clarity of meaning *inside a single show*",
+      "verdict": "UNSUPPORTED",
+      "reason": "Unsupported motive/intent claim. The article attributes a specific narrow meaning to the reviewer's statement that the source does not establish."
+    },
+    {
+      "claim": "the good stuff is scattered and you have to move to find it",
+      "verdict": "UNCERTAIN",
+      "reason": "The source supports 'follow your nose and hope you sniff out something you like,' but the framing that 'the good stuff is scattered' as the festival's premise is the article's own gloss extending the hidden_mechanism into a stated fact about the festival."
+    }
+  ],
+  "unsupported_count": 5,
+  "uncertain_count": 2,
+  "word_count": 873
+}

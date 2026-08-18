@@ -1,0 +1,17 @@
+{
+  "attention": "The review repeatedly describes discovering the festival through verbs such as walk, follow your nose, sniff out, uncover and figure out.",
+  "ordered_material": [
+    "You can\u2019t walk into a gallery without learning about some subcultural genius or longlost creative you\u2019ve never heard of.",
+    "You\u2019ve just got to follow your nose and hope you sniff out something you like.",
+    "There are curated displays, satellite exhibitions, performances, off-site projects, and it\u2019s impossible to figure out how any of it fits together.",
+    "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+    "died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+    "stayed unpublished and unseen in his lifetime",
+    "If contemporary artists and institutions want to tell hidden stories, I think they have a duty \u2013 to viewers and to their subjects \u2013 to tell them clearly.",
+    "It\u2019s mind-meltingly indecipherable.",
+    "I love it, but I\u2019m not sure how the art downstairs fails to work so well."
+  ],
+  "open_question": "What happens to the festival's language of wandering and stumbling when it is placed beside artists whose work went unseen until after their deaths?",
+  "grounding_boundaries": "The source names no ticket prices, distances, opening hours, or physical access barriers (stairs, doors, ramps). It does not state who is excluded from visiting or why any artist's work went unseen during their lifetime \u2014 only that it did. No fact beyond the material below and the biographical dates it contains may be used.",
+  "length_guidance": "Roughly 700\u2013850 words for this piece; stop when it has said what it has to say."
+}

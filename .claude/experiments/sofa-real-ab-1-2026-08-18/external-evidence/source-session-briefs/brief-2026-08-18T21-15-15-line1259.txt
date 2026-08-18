@@ -1,0 +1,143 @@
+SOFA ARTICLE FORM — EDINBURGH FORM-1 GENERATION
+
+The Article Form diagnosis is accepted.
+
+Do NOT redesign further.
+Do NOT call Fable.
+Do NOT use a new source.
+Do NOT deploy anything.
+
+Before generation, make ONLY these grounding corrections to the proposed
+Edinburgh Article Form.
+
+==================================================
+CORRECTION 1 — REMOVE UNSUPPORTED SEARCH MECHANISM
+==================================================
+
+Delete any claim equivalent to:
+
+"someone, after the fact, went looking on purpose"
+"an estate, archive, or curator found it"
+"finding by wandering vs finding by looking on purpose"
+
+The source does not establish HOW George/Walter/Hasegawa's work came to its
+current presentation or who searched for it.
+
+Do not invent that mechanism.
+
+The grounded distinction is:
+
+The festival uses "discovery" for two different moments:
+
+A. the visitor now encounters work while moving through the festival
+
+B. work that went unseen/unshown during an artist's lifetime is now
+available to encounter
+
+Those are different meanings/moments of discovery.
+
+The source supports the contrast.
+It does not support a causal account of how B happened.
+
+==================================================
+CORRECTION 2 — HIDE THE TURN IN THE PROSE
+==================================================
+
+Do not tell the writer:
+
+"announce that these facts change the argument"
+
+Use instruction functionally equivalent to:
+
+"After these facts, return to the meaning of 'discovery'. Let the facts
+narrow the opening distinction without announcing an editorial operation."
+
+==================================================
+CORRECTION 3 — GROUNDED DESTINATION
+==================================================
+
+Do not prescribe:
+
+"wandering versus looking on purpose"
+
+Use a destination functionally equivalent to:
+
+"discovery as the visitor encounters it now, versus work becoming visible
+only after having gone unseen during the artist's lifetime."
+
+Do NOT extend this into:
+
+- dead artists' consent
+- dead artists' agency
+- what they wanted
+- why they went unseen
+- who discovered them
+- archival search procedures
+- disability anecdotes
+- general accessibility theory
+
+==================================================
+GENERATE FORM-1
+==================================================
+
+Use:
+
+- frozen Edinburgh source
+- frozen validated commission/evidence
+- corrected Article Form packet
+- writer-facing Form derived from it
+
+Writer model:
+
+anthropic/claude-opus-4.8
+
+same generation parameters as previous Edinburgh tests as closely as
+possible.
+
+Generate exactly ONE article.
+
+No retries.
+No candidates.
+No literary selection.
+
+Aim roughly 650–800 words for this case.
+Do not pad.
+
+==================================================
+GROUNDING
+==================================================
+
+Run the existing grounding audit once.
+
+Do not repair the generated article.
+
+Also manually check specifically for recurrence of the previously observed
+unsupported attractor:
+
+- "they had no choice"
+- "could not advocate"
+- "never meant to be found"
+- "pleasure was possible because..."
+- "house style" as intentional curatorial claim
+- invented reason/process of rediscovery
+
+==================================================
+RETURN ONLY
+==================================================
+
+FORM-1 ARTICLE FORM
+[the corrected internal form packet]
+
+FORM-1 WRITER-FACING FORM
+[exact writer-facing instructions/material]
+
+FORM-1 GROUNDING
+status + counts + word count
+
+FORM-1 ARTICLE
+[full article]
+
+Then STOP.
+
+Do not compare it to previous versions.
+Jascha will sofa-read it.

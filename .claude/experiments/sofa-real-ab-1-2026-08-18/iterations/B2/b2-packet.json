@@ -1,0 +1,59 @@
+{
+  "schema_version": "sofa-b1-1.0",
+  "built_at": "2026-08-18T19:54:36",
+  "evidence_packet_hash": "3bef4a7324bb6c9e703bfdc499c7d3460f5a9f1dbdc24cdcbe759ea7062a71e9",
+  "byline_persona": {
+    "value": "Zen Circuit",
+    "epistemic_type": "EDITORIAL_METADATA",
+    "note": "the execution persona selected by Fable Layer 2 \u2014 byline/attribution metadata only, never fed to the writer as voice/roleplay material"
+  },
+  "source_anchor": {
+    "value": "You can\u2019t walk into a gallery without learning about some subcultural genius or longlost creative you\u2019ve never heard of.",
+    "epistemic_type": "EVIDENCE",
+    "note": "verbatim, from commission_brief"
+  },
+  "working_reading": {
+    "value": "The festival's entire discovery premise is coded as an ambulatory act \u2014 following your nose across venues, walking in, sniffing something out \u2014 so the review's own prose enacts a navigation model that presumes a spontaneous mobile body, meaning the 'unheralded' it celebrates is filtered through an access architecture that quietly pre-selects who can do the uncovering.",
+    "epistemic_type": "EDITORIAL_INTERPRETATION",
+    "note": "the strongest current editorial interpretation \u2014 provisional, not a verdict the article must prove; inherited verbatim from Fable Layer 1, never regenerated"
+  },
+  "live_question": {
+    "value": "Is the festival's 'follow your nose, nothing fits together' sprawl a genuine access failure that pre-sorts who gets to do the discovering \u2014 or is its refusal to be legible actually the one honest thing about it, a structure that at least doesn't pretend the underground can be tidily indexed?",
+    "epistemic_type": "EDITORIAL_GUIDANCE",
+    "note": "the real unresolved question inherited from the commission's angle \u2014 guidance for stance, not a sentence to quote"
+  },
+  "correction_material": {
+    "source_evidence": {
+      "value": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+      "epistemic_type": "EVIDENCE",
+      "note": "verbatim, from commission_brief.correction_moment"
+    },
+    "editorial_interpretation": {
+      "value": "If the festival's whole logic is that the best work is precisely what was never legibly catalogued or shown in life, then a demand for clean, navigable structure argues against the very archive-diving that surfaces this work. This reading's own instinct for a clean interface collides here: the unheralded are unheralded because they resisted legible systems, and the festival's messiness might be structurally faithful to that rather than merely careless.",
+      "epistemic_type": "EDITORIAL_INTERPRETATION",
+      "note": "editor's reasoning about what this material may do to the working reading \u2014 never itself a source fact; persona-neutralized from commission_brief.correction_moment.interpretation"
+    }
+  },
+  "resisting_material": {
+    "source_evidence": {
+      "value": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty \u2013 to viewers and to their subjects \u2013 to tell them clearly.",
+      "epistemic_type": "EVIDENCE",
+      "note": "verbatim, from commission_brief.resisting_example"
+    },
+    "editorial_interpretation": {
+      "value": "The reviewer explicitly frames clarity as a duty owed to both viewers and subjects \u2014 which is precisely this working reading arriving from the aesthetic side. But it resists this reading too: the reviewer means clarity of meaning within a single show, not navigability across the festival, and the shows he most loves are the gloopy and mind-meltingly indecipherable ones, so the 'duty to be clear' coexists with a taste for the obtuse. That tension is the thing to sit inside, not resolve.",
+      "epistemic_type": "EDITORIAL_INTERPRETATION",
+      "note": "editor's reasoning about what this material may do to the working reading \u2014 never itself a source fact; persona-neutralized from commission_brief.resisting_example.interpretation"
+    }
+  },
+  "rival_reading": {
+    "value": "A purely spatial reading would locate the failure in the physical scatter of venues and the assumption of a body moving through them; the cognitive reading insists the deeper barrier is temporal and structural \u2014 a discovery model that demands spontaneous, unsequenced, self-directed navigation of meaning, where even a perfectly ramped building can present an unnavigable interface.",
+    "epistemic_type": "EDITORIAL_INTERPRETATION",
+    "note": "a competing interpretation genuinely present in the commission \u2014 persona-neutralized from commission_brief.cross_cite"
+  },
+  "unresolved_tension": {
+    "value": "The reviewer explicitly frames clarity as a duty owed to both viewers and subjects \u2014 which is precisely this working reading arriving from the aesthetic side. But it resists this reading too: the reviewer means clarity of meaning within a single show, not navigability across the festival, and the shows he most loves are the gloopy and mind-meltingly indecipherable ones, so the 'duty to be clear' coexists with a taste for the obtuse. That tension is the thing to sit inside, not resolve.",
+    "epistemic_type": "EDITORIAL_INTERPRETATION",
+    "note": "derived verbatim from resisting_example's own stated tension \u2014 not a new synthesis; present only because that field already names what it declines to resolve"
+  }
+}

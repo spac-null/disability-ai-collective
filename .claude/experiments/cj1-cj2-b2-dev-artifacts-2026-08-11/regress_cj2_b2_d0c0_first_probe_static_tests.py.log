@@ -1,0 +1,101 @@
+[PASS] hash present and non-empty: d0_prompt_sha256
+[PASS] hash present and non-empty: c0_prompt_sha256
+[PASS] hash present and non-empty: corpus_manifest_sha256
+[PASS] hash present and non-empty: challenge_corpus_manifest_sha256
+[PASS] hash present and non-empty: reference_manifest_sha256
+[PASS] hash present and non-empty: harness_sha256
+[PASS] hash present and non-empty: d0_prototype_module_sha256
+[PASS] hash present and non-empty: c0_prototype_module_sha256
+[PASS] corpus deterministic_segmentation_reference matches live segmenter for every item
+[PASS] expected max call count is 20 (8 D0 + 8 C0-natural + 4 C0-challenge)
+[PASS] natural corpus has exactly 8 items
+[PASS] challenge corpus has exactly 4 items
+[PASS] plan_calls() has exactly 20 entries
+[PASS] plan_calls() has exactly 8 d0 entries
+[PASS] plan_calls() has exactly 8 c0_natural entries
+[PASS] plan_calls() has exactly 4 c0_challenge entries
+[PASS] D0 is never planned for any challenge-arm item (D0 is not called in the challenge arm)
+[PASS] every deterministic segment_id for every item/field appears in D0's built user message
+[PASS] C0 projection contains exactly the 5 allowed keys, nothing else
+[PASS] C0 projection preserves the exact claim_id set (no addition/omission)
+[PASS] C0's built user message contains the claim_id
+[PASS] C0's built user message contains the field text
+[PASS] d0 status is valid on this well-formed stub
+[PASS] malformed C0 output fails closed (should_call_r1=False), never defaults to proceed
+[PASS] d0 status is valid (span honestly spans the whole segment)
+[PASS] gate blocks (should_call_r1=False) when C0 reports a genuine missing_proposition
+[PASS] D0 prompt's OUTPUT SCHEMA does not use any B2-v2 factuality vocabulary as a JSON key
+[PASS] C0 prompt's OUTPUT SCHEMA does not use any B2-v2 factuality vocabulary as a JSON key
+[PASS] D0 prompt contains no persona/engine/disability identity vocabulary
+[PASS] C0 prompt contains no persona/engine/disability identity vocabulary
+[PASS] D0 prompt does not contain real H08 fixture text
+[PASS] C0 prompt does not contain real H08 fixture text
+[PASS] D0 prompt does not contain real H17 fixture text
+[PASS] C0 prompt does not contain real H17 fixture text
+[PASS] corpus item 1_clean_simple does not contain real H08 fixture text
+[PASS] corpus item 2_whole_field_omission_risk does not contain real H08 fixture text
+[PASS] corpus item 3_within_segment_relative_clause does not contain real H08 fixture text
+[PASS] corpus item 4_compound_coordination does not contain real H08 fixture text
+[PASS] corpus item 5_attribution_embedded does not contain real H08 fixture text
+[PASS] corpus item 6_causal_relation does not contain real H08 fixture text
+[PASS] corpus item 7_modality_assumption does not contain real H08 fixture text
+[PASS] corpus item 8_legitimate_non_propositional does not contain real H08 fixture text
+[PASS] corpus item 1_clean_simple does not contain real H17 fixture text
+[PASS] corpus item 2_whole_field_omission_risk does not contain real H17 fixture text
+[PASS] corpus item 3_within_segment_relative_clause does not contain real H17 fixture text
+[PASS] corpus item 4_compound_coordination does not contain real H17 fixture text
+[PASS] corpus item 5_attribution_embedded does not contain real H17 fixture text
+[PASS] corpus item 6_causal_relation does not contain real H17 fixture text
+[PASS] corpus item 7_modality_assumption does not contain real H17 fixture text
+[PASS] corpus item 8_legitimate_non_propositional does not contain real H17 fixture text
+[PASS] every corpus item's provenance string starts with an allowed prefix
+[PASS] 3_within_segment_relative_clause field text matches ADVERSARIAL_CASES['D_relative_clause']['text'] verbatim
+[PASS] 4_compound_coordination field text matches ADVERSARIAL_CASES['A_coordination']['text'] verbatim
+[PASS] 5_attribution_embedded field text matches ADVERSARIAL_CASES['C_attribution']['text'] verbatim
+[PASS] 6_causal_relation field text matches ADVERSARIAL_CASES['B_causal']['text'] verbatim
+[PASS] 7_modality_assumption field text matches ADVERSARIAL_CASES['F_modality']['text'] verbatim
+[PASS] freshly-authored items are not accidental duplicates of an existing adversarial-audit case
+[PASS] D0 prompt's OUTPUT SCHEMA does not use any source-evidence field as a JSON key
+[PASS] C0 prompt's OUTPUT SCHEMA does not use any source-evidence field as a JSON key
+[PASS] exactly 4 controlled challenge cases
+[PASS] reference manifest has exactly 4 controlled_challenge_arm_items
+[PASS] ch1_comparison: has a corresponding reference-manifest entry
+[PASS] ch1_comparison: reference manifest names exactly one intentionally_omitted_proposition (a single dict, not a list)
+[PASS] ch1_comparison: reference manifest is flagged challenge_flag=true
+[PASS] ch2_attribution_reversed: has a corresponding reference-manifest entry
+[PASS] ch2_attribution_reversed: reference manifest names exactly one intentionally_omitted_proposition (a single dict, not a list)
+[PASS] ch2_attribution_reversed: reference manifest is flagged challenge_flag=true
+[PASS] ch3_coordination: has a corresponding reference-manifest entry
+[PASS] ch3_coordination: reference manifest names exactly one intentionally_omitted_proposition (a single dict, not a list)
+[PASS] ch3_coordination: reference manifest is flagged challenge_flag=true
+[PASS] ch4_modality_reversed: has a corresponding reference-manifest entry
+[PASS] ch4_modality_reversed: reference manifest names exactly one intentionally_omitted_proposition (a single dict, not a list)
+[PASS] ch4_modality_reversed: reference manifest is flagged challenge_flag=true
+[PASS] ch1_comparison: fixed_claim_set is structurally valid (schema/span/segment-consistency/segment-accounting all pass -- the exact 'coverage-satisfied but semantically incomplete' shape this arm exists to test)
+[PASS] ch2_attribution_reversed: fixed_claim_set is structurally valid (schema/span/segment-consistency/segment-accounting all pass -- the exact 'coverage-satisfied but semantically incomplete' shape this arm exists to test)
+[PASS] ch3_coordination: fixed_claim_set is structurally valid (schema/span/segment-consistency/segment-accounting all pass -- the exact 'coverage-satisfied but semantically incomplete' shape this arm exists to test)
+[PASS] ch4_modality_reversed: fixed_claim_set is structurally valid (schema/span/segment-consistency/segment-accounting all pass -- the exact 'coverage-satisfied but semantically incomplete' shape this arm exists to test)
+[PASS] ch1_comparison: none of the omitted proposition's distinctive terms ['teenager', 'rose'] leak into the kept claim's atomic_claim
+[PASS] ch2_attribution_reversed: none of the omitted proposition's distinctive terms ['report', 'claim'] leak into the kept claim's atomic_claim
+[PASS] ch3_coordination: none of the omitted proposition's distinctive terms ['traffic', 'reroute'] leak into the kept claim's atomic_claim
+[PASS] ch4_modality_reversed: none of the omitted proposition's distinctive terms ['presum', 'assumption', 'plan'] leak into the kept claim's atomic_claim
+[PASS] ch1_comparison: C0's built challenge-arm user message contains no reference/expected-answer leakage terms
+[PASS] ch2_attribution_reversed: C0's built challenge-arm user message contains no reference/expected-answer leakage terms
+[PASS] ch3_coordination: C0's built challenge-arm user message contains no reference/expected-answer leakage terms
+[PASS] ch4_modality_reversed: C0's built challenge-arm user message contains no reference/expected-answer leakage terms
+[PASS] reference-manifest-v1.json's distinctive content never appears in any D0/C0 prompt or built user message (either arm)
+[PASS] classify_call_outcome({'exception_class': 'URLError', 'http_status': None}) == 'config_failure' (connection never established)
+[PASS] classify_call_outcome({'exception_class': 'TimeoutError', 'http_status': None}) == 'config_failure' (connection-level timeout)
+[PASS] classify_call_outcome({'exception_class': 'HTTPError', 'http_status': 401}) == 'config_failure' (authentication unavailable)
+[PASS] classify_call_outcome({'exception_class': 'HTTPError', 'http_status': 404}) == 'config_failure' (model alias invalid / endpoint not found)
+[PASS] classify_call_outcome({'exception_class': 'HTTPError', 'http_status': 400}) == 'config_failure' (provider rejects request shape)
+[PASS] classify_call_outcome({'exception_class': 'HTTPError', 'http_status': 503}) == 'config_failure' (endpoint unavailable (5xx))
+[PASS] classify_call_outcome({'exception_class': None, 'raw': None, 'parsed': None, 'error': "unexpected response structure: ['foo']"}) == 'config_failure' (response shape doesn't match the configured API contract)
+[PASS] classify_call_outcome({'exception_class': 'JSONDecodeError', 'http_status': 200, 'raw': 'not json', 'parsed': None}) == 'experiment_result' (transport succeeded, model produced content, content just isn't valid JSON -- this is call_failed data, not a config failure)
+[PASS] cj2_b2_d0_prototype defines none of this harness's own call-constant names ('MODEL', 'TEMPERATURE', 'TIMEOUT', 'D0_MAX_TOKENS', 'C0_MAX_TOKENS', 'MAX_TOKENS')
+[PASS] cj2_b2_c0_prototype defines none of this harness's own call-constant names ('MODEL', 'TEMPERATURE', 'TIMEOUT', 'D0_MAX_TOKENS', 'C0_MAX_TOKENS', 'MAX_TOKENS')
+[PASS] probe.MODEL is the literal configured string, not something imported
+[PASS] probe._call.__globals__ is this harness module's own namespace (not an imported module's)
+
+============================================================
+ALL STATIC TESTS PASS. Zero API calls, zero network access.

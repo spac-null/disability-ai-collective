@@ -1,0 +1,204 @@
+SOFA B.3 — BLIND WRITER, ONE EDINBURGH GENERATION
+
+The blind-writer interface audit is accepted with TWO small corrections
+before implementation.
+
+Do NOT redesign it further.
+Do NOT call Fable.
+Do NOT use another source.
+Do NOT generate Legacy.
+Do NOT deploy anything.
+
+==================================================
+CORRECTION 1 — ATTENTION SIGNAL
+==================================================
+
+Use a more observational attention signal.
+
+Do NOT say:
+
+"verbs of physical searching"
+
+Use something functionally equivalent to:
+
+"The review repeatedly describes discovering the festival through verbs
+such as walk, follow your nose, sniff out, uncover and figure out."
+
+No access conclusion.
+No body conclusion.
+No mechanism.
+
+==================================================
+CORRECTION 2 — OPEN QUESTION
+==================================================
+
+Remove:
+
+"after there was no longer anyone to ask how they wanted to be found"
+
+The source does not establish anything about how these artists wanted to
+be found and that clause introduces a new consent/agency thesis.
+
+Use:
+
+"What happens to the festival's language of wandering and stumbling when
+it is placed beside artists whose work went unseen until after their
+deaths?"
+
+This is the actual blind-writer test.
+
+==================================================
+IMPLEMENT B.3
+==================================================
+
+Implement the minimum shadow-only Writer interface exactly as diagnosed:
+
+WRITER RECEIVES ONLY:
+
+1. ATTENTION
+2. ORDERED SOURCE MATERIAL
+3. OPEN QUESTION
+4. GROUNDING BOUNDARIES
+5. CASE-SPECIFIC LENGTH/FORM GUIDANCE
+
+Do NOT expose to the writer:
+
+hidden_mechanism
+working_reading
+reader contract containing mechanism
+correction interpretation
+resisting interpretation
+rival reading
+unresolved tension
+cross_cite interpretation
+persona
+persona biography
+persona state
+persona wound
+persona canon
+
+The SOURCE EXCERPTS previously used for correction/resistance MAY be
+included as ordinary ordered material.
+
+Do not label them:
+
+CORRECTION
+RESISTANCE
+RIVAL
+TURN
+
+They are simply facts/material.
+
+==================================================
+IMPORTANT
+==================================================
+
+Do not tell the writer what Sandra George is supposed to do to the
+argument.
+
+Do not tell the writer that the walking language is an access problem.
+
+Do not tell the writer there are "two undergrounds."
+
+Do not tell the writer that the festival pre-selects its audience.
+
+Do not tell the writer that clarity and accessibility are different.
+
+Those are possible discoveries.
+
+They are NOT writer inputs.
+
+==================================================
+WRITER INSTRUCTION
+==================================================
+
+Keep the prose instruction short.
+
+Something functionally equivalent to:
+
+"Write a narrative nonfiction article from the supplied source material.
+
+Follow what the material actually gives you. The question is genuinely
+open; do not decide its answer in advance.
+
+If a later fact changes the significance of an earlier one, let that
+change happen without announcing the editorial operation.
+
+Do not invent scenes, biography, motives, access barriers, distances,
+reporting actions or lived experience.
+
+Do not introduce explicit disability examples merely because this is a
+disability-led publication.
+
+Stop when the strongest source-grounded understanding has arrived."
+
+Do NOT add back a long rule-heavy Sofa prompt.
+
+==================================================
+GENERATION
+==================================================
+
+Use the exact same frozen Edinburgh:
+
+source snapshot
+evidence packet
+commission
+
+No new Discovery-model call is needed.
+
+Use the same actual writer model:
+
+anthropic/claude-opus-4.8
+
+and the same generation parameters as previous Edinburgh runs.
+
+Generate EXACTLY ONE article.
+
+No retries.
+No candidates.
+No literary selection.
+
+Target approximately 700–850 words for this case only.
+
+==================================================
+POST-WRITER
+==================================================
+
+Run the existing grounding audit once.
+
+Do not repair the article.
+
+Then run the new INTERNAL discovery evaluation separately:
+
+A. REACHES ORIGINAL MECHANISM
+B. MAKES IT MORE PRECISE
+C. PRODUCTIVELY CONTRADICTS/REPLACES IT
+D. NO MEANINGFUL DISCOVERY
+
+This evaluation must NOT rewrite or reject an A/B/C article merely because
+it differs from hidden_mechanism.
+
+Grounding remains a separate requirement.
+
+==================================================
+RETURN ONLY
+==================================================
+
+B.3 WRITER-FACING BRIEF
+[exact prompt material the writer saw, excluding system boilerplate]
+
+B.3 GROUNDING
+status + unsupported/uncertain counts + word count
+
+B.3 DISCOVERY RESULT
+A / B / C / D
+maximum 100-word explanation
+
+B.3 ARTICLE
+
+[full article]
+
+Then STOP.
+
+Do not compare it to Legacy, Sofa v1, B.1 or B.2.
+Jascha will read it.
