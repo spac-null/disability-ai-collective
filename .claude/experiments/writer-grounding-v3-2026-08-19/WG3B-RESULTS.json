@@ -1,0 +1,116 @@
+{
+  "experiment": "WG-3B OBJECT-OF-CLAIM VERDICT",
+  "date": "2026-08-19",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "model": "claude-opus-5[1m], fresh-context blind subagents",
+  "gold": "GOLD V2.1 FROZEN (unchanged, not reconsidered)",
+  "input": "frozen WG-3A extraction, 236 propositions",
+  "verdict_distribution": {
+    "SUPPORTED": 151,
+    "INTERPRETATION": 80,
+    "UNSUPPORTED": 5,
+    "UNCERTAIN": 0
+  },
+  "score": {
+    "tp": 4,
+    "fp": 0,
+    "fn": 4,
+    "unsupported_recall": 0.5,
+    "unsupported_precision": 1.0
+  },
+  "caught": [
+    "G13-01",
+    "GR2-01",
+    "GR2-04",
+    "GR3-03"
+  ],
+  "missed": [
+    "G13-02",
+    "G13-04",
+    "GR2-02",
+    "GR3-01"
+  ],
+  "false_positives_on_interpretation": 0,
+  "success_gate": {
+    "required_recall": 1.0,
+    "required_fp": "<=2",
+    "met": false
+  },
+  "interpretation_preserved": {
+    "G13-03": "INTERPRETATION (SUBJECT_MATTER) \u2014 correct",
+    "GR2-03": "INTERPRETATION (SUBJECT_MATTER) \u2014 correct",
+    "GR3-02": "INTERPRETATION (SUBJECT_MATTER) \u2014 correct",
+    "R3_control_sits_there_without_commentary": "SUPPORTED (not flagged) \u2014 correct",
+    "note": "Zero false positives across all 236 propositions. The requirement 'no broad destruction of legitimate interpretation' is MET. The object-of-claim framing is safe for interpretation; it is too permissive on fact."
+  },
+  "what_improved": {
+    "GR2-01": "NEWLY CAUGHT. Structurally impossible in WG-1B/WG-2A because enumeration had dissolved it. With the span preserved, the verdict stage reasoned exactly as intended: anchor absent, and the nearest material ('you've never heard of') establishes unfamiliarity, 'a strictly weaker claim'. This is the anchor obligation working correctly on HUMAN_STATE."
+  },
+  "failure_mode_1_ENTAILMENT_ABSORPTION": {
+    "affects": [
+      "G13-02",
+      "GR3-01"
+    ],
+    "both": "invented temporal specificity",
+    "regression": "Both were CAUGHT by WG-2A and are now MISSED. WG-3B is a net recall regression vs WG-2A on the same gold (4/8 vs 5/8).",
+    "mechanism": "The verdict stage found its own anchor for the grounded generic state ('longlost creative you've never heard of'), judged that state licensed, and then dissolved the invented interval into it as immaterial. Verbatim: 'An hour ago is a rhetorical rendering of that immediately prior ignorance' and 'an hour earlier marks recency, not an independent duration fact'. Extraction preserved the interval; the VERDICT stage discarded it.",
+    "significance": "A composite proposition (grounded state + invented specific) is judged on its grounded component. The invented specific rides in free. This is the verdict-stage twin of the WG-1B extraction loss."
+  },
+  "failure_mode_2_ABSENCE_AS_EVIDENCE": {
+    "affects": [
+      "G13-04",
+      "GR2-02"
+    ],
+    "both": "negative meta-source claim (SOURCE_OR_REVIEW)",
+    "mechanism": "For both, the stage reported ANCHOR_PRESENT=YES and ANCHOR_SUPPORTS_PREDICATE=YES although the extraction anchor was EMPTY. It did not accept the empty anchor \u2014 it went to the source, FAILED TO FIND a ranking, and treated that failure as positive support for the claim that the review does not rank. Absence of evidence read as evidence of absence.",
+    "why_the_anchor_obligation_did_not_bite": "The obligation asks 'is there an anchor and does it support the predicate'. For a NEGATIVE claim, a verifier can always satisfy itself by scanning and finding nothing. The obligation as written has no defence against this.",
+    "control_pair_collapsed_in_the_wrong_direction": "The R3 control ('it sits there without commentary') stayed correct, but by the SAME reasoning that wrongly rescued G13-04 and GR2-02 \u2014 'nothing anywhere in the review remarks on the quantity'. All three ended SUPPORTED via one identical move. Anchor presence is therefore NOT the discriminator between them.",
+    "correction_to_earlier_reading": "After WG-3A it appeared the control pair separated on anchor presence (empty vs non-empty). WG-3B refutes that. The verdict stage is not bound by the extraction's empty anchor and will manufacture its own justification for a negative claim."
+  },
+  "never_caught_by_any_configuration": {
+    "class": "negative meta-source claim",
+    "members": [
+      "G13-04",
+      "GR2-02"
+    ],
+    "configurations_tried": [
+      "WG-0A source-relative audit",
+      "WG-1A sampling x3",
+      "WG-1B exhaustive enumeration",
+      "WG-2A sharpened semantic principle",
+      "WG-2B deterministic rules",
+      "WG-3B object-of-claim + anchor obligation"
+    ],
+    "note": "Six configurations. Neither has ever been flagged. GR2-02 has been UNSUPPORTED in gold since V1; G13-04 since V2.1."
+  },
+  "union_arithmetic_not_a_run": {
+    "wg2a_caught": [
+      "G13-01",
+      "G13-02",
+      "GR2-04",
+      "GR3-01",
+      "GR3-03"
+    ],
+    "wg3b_caught": [
+      "G13-01",
+      "GR2-01",
+      "GR2-04",
+      "GR3-03"
+    ],
+    "union": [
+      "G13-01",
+      "G13-02",
+      "GR2-01",
+      "GR2-04",
+      "GR3-01",
+      "GR3-03"
+    ],
+    "union_recall": "6/8 = 75%",
+    "still_missing": [
+      "G13-04",
+      "GR2-02"
+    ],
+    "caveat": "Arithmetic on two frozen runs, NOT a measured union configuration. Not a proposal."
+  },
+  "decision": "B \u2014 VERDICT_RECALL_GAP"
+}

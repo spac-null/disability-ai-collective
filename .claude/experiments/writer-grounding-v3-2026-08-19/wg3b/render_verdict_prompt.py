@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+"""WG-3B: object-of-claim verdict. Consumes the frozen WG-3A extraction.
+Verdict ONLY — no re-extraction. BLIND to the gold ledger."""
+import hashlib, json
+from pathlib import Path
+W = Path("/Users/stargatesgx/code/disability-collective-ai/.claude/experiments/writer-grounding-v3-2026-08-19")
+
+SYSTEM = """You are the verdict stage of a source-fidelity audit for a disability-led publication. Propositions have ALREADY been extracted from an article by an earlier stage. Do not look for new claims, do not re-extract, do not edit anything. Judge exactly what you are given, in order.
+
+THE ONLY QUESTION IS SOURCE FIDELITY — never world truth. A statement can be perfectly true in reality and still UNSUPPORTED here, because the supplied SOURCE TEXT does not establish it. Never use outside knowledge to support anything.
+
+WHAT THIS PUBLICATION IS FOR
+
+The article is narrative nonfiction and interpretation is its legitimate work. The publication exists to make new meaning from its material. It is ALLOWED to say things the source never says. Your job is NOT to suppress analysis. Your job is to stop unsupported factual invention from passing as source-grounded fact.
+
+So the boundary is NOT "does the source literally say this?"
+
+The boundary is: "Is this new meaning derived from source-grounded material, or does it add a new factual state about the world, about a person, or about the source itself?"
+
+DECIDE BY THE OBJECT OF THE CLAIM
+
+Each proposition comes with a CLAIM_OBJECT_TYPE from the extraction stage. Treat it as a hypothesis: if you judge it wrong, say so in your REASON and judge by the type you think correct.
+
+  SUBJECT_MATTER — the article reasoning about material the piece discusses: evaluation, comparison,
+      synthesis, metaphor, causal reading, drawing out what grounded facts imply together.
+      >>> This may legitimately be INTERPRETATION EVEN WHEN THE SOURCE NEVER STATES THE COMPARISON,
+          SYNTHESIS, METAPHOR OR EVALUATIVE RELATION ITSELF, and even when no single source sentence
+          states the article's conclusion. An article-level reading may combine several grounded facts.
+      >>> It becomes UNSUPPORTED only if it SMUGGLES IN a new concrete fact — a name, date, duration,
+          number, or a factual state of the world/person/source that the evidence does not license.
+
+  HUMAN_STATE — an assertion about what a person, visitor, viewer or reader knew, felt, believed,
+      intended, expected, brought, or was prepared for.
+      >>> The asserted state REQUIRES SOURCE SUPPORT.
+
+  SOURCE_OR_REVIEW — an assertion about the source text or its reviewer: what it says, ranks, omits,
+      centres, intends, believes, does or does not do; where something appears in it; how often.
+      >>> REQUIRES SOURCE SUPPORT for the specific thing attributed. This includes NEGATIVE claims
+          ("the review does not rank them"). A negative claim about the source is not free just
+          because it is negative, and not free just because it appears inside an interpretive essay.
+          But a negative claim about the source IS legitimate when the evidence bears it out.
+
+  CONCRETE_WORLD_DETAIL — a specific fact: name, venue, date, time, duration, number, quantity, place.
+      >>> REQUIRES SOURCE SUPPORT.
+
+  OTHER — connective tissue, headings, rhetorical framing asserting nothing. Normally INTERPRETATION.
+
+ANCHOR OBLIGATION — apply this ONLY to HUMAN_STATE, SOURCE_OR_REVIEW and CONCRETE_WORLD_DETAIL.
+
+For those three types you must explicitly answer two questions before verdicting:
+  1. IS THERE A SOURCE ANCHOR? Look at SOURCE_ANCHOR_RETURNED, and satisfy yourself by reading the
+     SOURCE TEXT directly — the extraction may have missed one, or returned a poor one.
+  2. DOES THAT ANCHOR ACTUALLY SUPPORT THE PREDICATE BEING ASSERTED? Not merely touch the same topic.
+     Not merely mention the same person or word. It must license THE SPECIFIC THING CLAIMED.
+An empty anchor CANNOT justify a factual claim in these three types.
+A merely related anchor is ALSO insufficient. Watch for an anchor that supports a WEAKER claim than
+the proposition makes — e.g. an anchor establishing that someone is unfamiliar with an artist does
+not establish what that person brought to an encounter; an anchor saying "MOST of the work" does not
+license a proposition asserting it of ALL the work.
+
+DO NOT apply the anchor obligation to SUBJECT_MATTER. Requiring one source sentence to license an
+article-level reading would destroy legitimate interpretation, which is not the goal.
+
+THINGS THAT ARE NOT EVIDENCE OF ANYTHING — do not use these as decision rules:
+  * Absence of a hedge. "Perhaps", "it seems", "on this reading" are NOT required. Good prose states
+    its readings directly. A confident sentence is not thereby unsupported.
+  * Comparative form. "harder", "the one that presses", "above the rest" are not unsupported by virtue
+    of being comparative. Ask what the comparison is ABOUT.
+  * Causal form. "because" is not unsupported by virtue of being causal. Ask what the causation is ABOUT.
+  * Vocabulary. The presence of words like "visitor" or "the review" decides nothing on its own.
+  * Being interesting, analytic or confident.
+Judge semantically, from what the proposition commits to.
+
+VERDICTS
+  SUPPORTED      the source entails or directly licenses it. Quote the anchor.
+  INTERPRETATION the article's analysis of source-grounded material; adds no new factual state.
+  UNSUPPORTED    adds factual content the evidence does not license, stated as settled.
+  UNCERTAIN      plausible but unresolvable from what you were given; say what would resolve it.
+
+OUTPUT
+Reply with JSON only, no markdown fences, no commentary:
+{"verdicts":[{"ID":"P1","CLAIM_OBJECT_TYPE_AGREED":"YES|NO:<corrected type>","ANCHOR_PRESENT":"YES|NO|N/A","ANCHOR_SUPPORTS_PREDICATE":"YES|NO|PARTIAL|N/A","VERDICT":"SUPPORTED|INTERPRETATION|UNSUPPORTED|UNCERTAIN","REASON":"..."}]}
+
+ANCHOR_PRESENT and ANCHOR_SUPPORTS_PREDICATE are "N/A" for SUBJECT_MATTER and OTHER.
+Judge every ID you are given, exactly once, in order."""
+
+def main(tag, art_file):
+    src=(W/"inputs/source-snapshot.txt").read_text(encoding="utf-8")
+    art=(W/"inputs"/art_file).read_text(encoding="utf-8")
+    ex=json.loads((W/"wg3a"/f"{tag}-extract-raw.json").read_text(encoding="utf-8"))
+    P=ex["propositions"] if isinstance(ex,dict) else ex
+    lines="\n".join(json.dumps({k:p.get(k,"") for k in
+        ("ID","SENTENCE_ID","EXACT_SPAN","ATOMIC_PROPOSITION","SUBJECT","PREDICATE",
+         "OBJECT_OR_COMPLEMENT","CLAIM_OBJECT_TYPE","SOURCE_ANCHOR")}, ensure_ascii=False) for p in P)
+    user=(f"SOURCE TEXT (the only evidence — nothing outside it counts):\n---\n{src}\n---\n\n"
+          f"{len(P)} PROPOSITIONS ALREADY EXTRACTED FROM THE ARTICLE. Verdict every one, in order.\n"
+          f"You are given BOTH the EXACT_SPAN (the article's own words, authoritative) and the\n"
+          f"ATOMIC_PROPOSITION (a grammatical normalisation, an aid only). Where they differ, the\n"
+          f"EXACT_SPAN governs what the article actually asserts.\n"
+          f"SOURCE_ANCHOR is what the extraction stage returned; it may be empty, wrong, or too weak.\n---\n{lines}\n---\n")
+    rendered="=== SYSTEM ===\n"+SYSTEM+"\n\n=== USER ===\n"+user
+    sha=lambda s: hashlib.sha256(s.encode()).hexdigest()
+    (W/"wg3b"/f"{tag}-verdict-system.txt").write_text(SYSTEM,encoding="utf-8")
+    (W/"wg3b"/f"{tag}-verdict-user.txt").write_text(user,encoding="utf-8")
+    (W/"wg3b"/f"{tag}-verdict-prompt.txt").write_text(rendered,encoding="utf-8")
+    meta={"experiment":"WG-3B OBJECT-OF-CLAIM VERDICT","tag":tag,"propositions":len(P),
+      "system_sha256":sha(SYSTEM),"user_sha256":sha(user),"prompt_sha256":sha(rendered),
+      "article_sha256":hashlib.sha256(art.encode()).hexdigest(),
+      "source_sha256":hashlib.sha256(src.encode()).hexdigest(),
+      "extraction_input_sha256":hashlib.sha256((W/"wg3a"/f"{tag}-extract-raw.json").read_bytes()).hexdigest(),
+      "model_identity":"claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+      "execution_mode":"LOCAL_CLAUDE_SUBSCRIPTION","blind_to_gold":True,"phase":"PRESERVED_PRE_EXECUTION"}
+    (W/"wg3b"/f"{tag}-verdict-meta.json").write_text(json.dumps(meta,indent=2))
+    print(f'{tag}: {len(P)} props  prompt_sha={meta["prompt_sha256"][:16]}  extract_sha={meta["extraction_input_sha256"][:16]}')
+
+if __name__=="__main__":
+    for t,f in [("form1-3","form1-3-article.md"),("r2","form-1.3-r2-article.md"),("r3","form-1.3-r3-article.md")]:
+        main(t,f)

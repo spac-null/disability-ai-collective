@@ -1,0 +1,418 @@
+{
+  "experiment": "WG-3A EXTRACTION FIDELITY",
+  "gold": "GOLD V2.1 FROZEN",
+  "findings": {
+    "G13-01": {
+      "tag": "form1-3",
+      "gold_span": "City Art Centre",
+      "candidates": [
+        {
+          "ID": "P74",
+          "TYPE": "CONCRETE_WORLD_DETAIL",
+          "EXACT_SPAN": "Whatever the visitor is doing in the gallery at City Art Centre or at Ingleby",
+          "ATOMIC": "The visitor is doing something in the gallery at City Art Centre or at Ingleby.",
+          "SUBJ": "the visitor",
+          "PRED": "is doing something in",
+          "OBJ": "the gallery at City Art Centre or at Ingleby",
+          "ANCHOR": "She appears throughout her show at City Art Gallery in self-portraits, often with her young son."
+        }
+      ],
+      "commitment_checks": [
+        {
+          "commitment": "names the venue 'City Art Centre'",
+          "met": true,
+          "met_by": [
+            "P74"
+          ]
+        }
+      ]
+    },
+    "G13-02": {
+      "tag": "form1-3",
+      "gold_span": "it is happening to a person who did not know the work existed an hour ago",
+      "candidates": [
+        {
+          "ID": "P76",
+          "TYPE": "HUMAN_STATE",
+          "EXACT_SPAN": "it is happening to a person who did not know the work existed an hour ago",
+          "ATOMIC": "It is happening to a person who did not know the work existed an hour ago.",
+          "SUBJ": "the person it is happening to",
+          "PRED": "did not know",
+          "OBJ": "that the work existed, an hour ago",
+          "ANCHOR": ""
+        }
+      ],
+      "commitment_checks": [
+        {
+          "commitment": "person did NOT know the work existed",
+          "met": true,
+          "met_by": [
+            "P76"
+          ]
+        },
+        {
+          "commitment": "the interval 'an hour'",
+          "met": true,
+          "met_by": [
+            "P76"
+          ]
+        }
+      ]
+    },
+    "G13-04": {
+      "tag": "form1-3",
+      "gold_span": "not because the review ranks them or gathers them into a group",
+      "candidates": [
+        {
+          "ID": "P22",
+          "TYPE": "SOURCE_OR_REVIEW",
+          "EXACT_SPAN": "not because the review ranks them or gathers them into a group",
+          "ATOMIC": "The review does not rank the two artists and does not gather them into a group.",
+          "SUBJ": "the review",
+          "PRED": "does not rank / does not gather",
+          "OBJ": "them; them into a group",
+          "ANCHOR": ""
+        }
+      ],
+      "commitment_checks": [
+        {
+          "commitment": "negation preserved",
+          "met": true,
+          "met_by": [
+            "P22"
+          ]
+        },
+        {
+          "commitment": "the REVIEW is the actor",
+          "met": true,
+          "met_by": [
+            "P22"
+          ]
+        },
+        {
+          "commitment": "rank / group predicate",
+          "met": true,
+          "met_by": [
+            "P22"
+          ]
+        }
+      ]
+    },
+    "GR2-01": {
+      "tag": "r2",
+      "gold_span": "without the visitor having brought anything to the encounter except the willingness to walk in",
+      "candidates": [
+        {
+          "ID": "P19",
+          "TYPE": "HUMAN_STATE",
+          "EXACT_SPAN": "without the visitor having brought anything to the encounter except the willingness to walk in",
+          "ATOMIC": "The visitor brought nothing to the encounter except the willingness to walk in.",
+          "SUBJ": "the visitor",
+          "PRED": "brought nothing to the encounter except",
+          "OBJ": "the willingness to walk in",
+          "ANCHOR": ""
+        }
+      ],
+      "commitment_checks": [
+        {
+          "commitment": "negation / exclusivity ('nothing except')",
+          "met": true,
+          "met_by": [
+            "P19"
+          ]
+        },
+        {
+          "commitment": "what the visitor BROUGHT",
+          "met": true,
+          "met_by": [
+            "P19"
+          ]
+        },
+        {
+          "commitment": "willingness to walk in",
+          "met": true,
+          "met_by": [
+            "P19"
+          ]
+        }
+      ]
+    },
+    "GR2-02": {
+      "tag": "r2",
+      "gold_span": "taken here not because the review places them above the rest but simply because they can be set beside each other",
+      "candidates": [
+        {
+          "ID": "P21",
+          "TYPE": "SOURCE_OR_REVIEW",
+          "EXACT_SPAN": "not because the review places them above the rest",
+          "ATOMIC": "The two names are not taken up here because the review places them above the rest; the review does not place them above the rest.",
+          "SUBJ": "the review",
+          "PRED": "does not place",
+          "OBJ": "these two names above the rest",
+          "ANCHOR": ""
+        },
+        {
+          "ID": "P22",
+          "TYPE": "SUBJECT_MATTER",
+          "EXACT_SPAN": "but simply because they can be set beside each other",
+          "ATOMIC": "The two names are taken up here simply because they can be set beside each other.",
+          "SUBJ": "the two names",
+          "PRED": "are taken up here simply because",
+          "OBJ": "they can be set beside each other",
+          "ANCHOR": ""
+        }
+      ],
+      "commitment_checks": [
+        {
+          "commitment": "negation preserved",
+          "met": true,
+          "met_by": [
+            "P21"
+          ]
+        },
+        {
+          "commitment": "the REVIEW is the actor",
+          "met": true,
+          "met_by": [
+            "P21"
+          ]
+        },
+        {
+          "commitment": "rank/placement predicate",
+          "met": true,
+          "met_by": [
+            "P21"
+          ]
+        }
+      ]
+    },
+    "GR2-04": {
+      "tag": "r2",
+      "gold_span": "Sadao Hasegawa's work, the review adds, stayed unpublished and unseen in his lifetime.",
+      "candidates": [
+        {
+          "ID": "P74",
+          "TYPE": "SOURCE_OR_REVIEW",
+          "EXACT_SPAN": "the review adds",
+          "ATOMIC": "The review adds that Sadao Hasegawa's work stayed unpublished and unseen in his lifetime.",
+          "SUBJ": "the review",
+          "PRED": "adds",
+          "OBJ": "that Sadao Hasegawa's work stayed unpublished and unseen in his lifetime",
+          "ANCHOR": "Most of the Japanese illustrator\u2019s work, you guessed it, stayed unpublished and unseen in his lifetime."
+        },
+        {
+          "ID": "P75",
+          "TYPE": "CONCRETE_WORLD_DETAIL",
+          "EXACT_SPAN": "stayed unpublished and unseen in his lifetime",
+          "ATOMIC": "Sadao Hasegawa's work stayed unpublished and unseen in his lifetime.",
+          "SUBJ": "Sadao Hasegawa's work",
+          "PRED": "stayed",
+          "OBJ": "unpublished and unseen in his lifetime",
+          "ANCHOR": "Most of the Japanese illustrator\u2019s work, you guessed it, stayed unpublished and unseen in his lifetime."
+        }
+      ],
+      "commitment_checks": [
+        {
+          "commitment": "Hasegawa's work stayed unpublished/unseen",
+          "met": true,
+          "met_by": [
+            "P74",
+            "P75"
+          ]
+        },
+        {
+          "commitment": "ABSOLUTE scope (no 'most' qualifier)",
+          "met": null,
+          "note": "manual adjudication"
+        }
+      ]
+    },
+    "GR3-01": {
+      "tag": "r3",
+      "gold_span": "the visitor arrives at a name that was not in their possession an hour earlier",
+      "candidates": [
+        {
+          "ID": "P15",
+          "TYPE": "SUBJECT_MATTER",
+          "EXACT_SPAN": "Room after room, the visitor arrives at a name",
+          "ATOMIC": "Room after room, the visitor arrives at a name.",
+          "SUBJ": "the visitor",
+          "PRED": "arrives at, room after room",
+          "OBJ": "a name",
+          "ANCHOR": "You can\u2019t walk into a gallery without learning about some subcultural genius or longlost creative you\u2019ve never heard of."
+        },
+        {
+          "ID": "P16",
+          "TYPE": "HUMAN_STATE",
+          "EXACT_SPAN": "a name that was not in their possession an hour earlier",
+          "ATOMIC": "The name was not in the visitor's possession an hour earlier.",
+          "SUBJ": "the name",
+          "PRED": "was not in the visitor's possession",
+          "OBJ": "an hour earlier",
+          "ANCHOR": ""
+        }
+      ],
+      "commitment_checks": [
+        {
+          "commitment": "visitor did NOT have the name",
+          "met": true,
+          "met_by": [
+            "P16"
+          ]
+        },
+        {
+          "commitment": "the interval 'an hour earlier'",
+          "met": true,
+          "met_by": [
+            "P16"
+          ]
+        }
+      ]
+    },
+    "GR3-03": {
+      "tag": "r3",
+      "gold_span": "walking around Edinburgh in August",
+      "candidates": [
+        {
+          "ID": "P58",
+          "TYPE": "CONCRETE_WORLD_DETAIL",
+          "EXACT_SPAN": "a person who is walking around Edinburgh in August",
+          "ATOMIC": "The person it happens to is walking around Edinburgh in August.",
+          "SUBJ": "the person",
+          "PRED": "is walking around",
+          "OBJ": "Edinburgh in August",
+          "ANCHOR": ""
+        }
+      ],
+      "commitment_checks": [
+        {
+          "commitment": "the month August",
+          "met": true,
+          "met_by": [
+            "P58"
+          ]
+        }
+      ]
+    }
+  },
+  "uncertain": {
+    "U-R2-01": {
+      "tag": "r2",
+      "gold_span": "the festival's characteristic verb",
+      "candidates": [
+        {
+          "ID": "P55",
+          "TYPE": "OTHER",
+          "EXACT_SPAN": "Hold that beside the festival's characteristic verb.",
+          "ATOMIC": "Hold that beside the festival's characteristic verb.",
+          "SUBJ": "the reader",
+          "PRED": "is told to hold that beside",
+          "OBJ": "the festival's characteristic verb",
+          "ANCHOR": ""
+        },
+        {
+          "ID": "P56",
+          "TYPE": "SUBJECT_MATTER",
+          "EXACT_SPAN": "the festival's characteristic verb",
+          "ATOMIC": "The festival has a characteristic verb.",
+          "SUBJ": "the festival",
+          "PRED": "has",
+          "OBJ": "a characteristic verb",
+          "ANCHOR": "We\u2019re talking queer narratives, secret histories, undiscovered archives: the whole festival is a celebration of the underground and unheralded."
+        }
+      ],
+      "commitment_checks": [
+        {
+          "commitment": "verb attributed to the FESTIVAL (possessive)",
+          "met": true,
+          "met_by": [
+            "P55",
+            "P56"
+          ]
+        }
+      ]
+    },
+    "U-R2-02": {
+      "tag": "r2",
+      "gold_span": "What it does not describe, and cannot",
+      "candidates": [
+        {
+          "ID": "P79",
+          "TYPE": "SOURCE_OR_REVIEW",
+          "EXACT_SPAN": "What it does not describe, and cannot",
+          "ATOMIC": "The word discovery does not describe, and cannot describe, the other span of time these dates measure.",
+          "SUBJ": "the word discovery",
+          "PRED": "does not and cannot describe",
+          "OBJ": "the other span of time these dates measure",
+          "ANCHOR": ""
+        }
+      ],
+      "commitment_checks": [
+        {
+          "commitment": "negation preserved",
+          "met": true,
+          "met_by": [
+            "P79"
+          ]
+        },
+        {
+          "commitment": "modal impossibility 'cannot'",
+          "met": true,
+          "met_by": [
+            "P79"
+          ]
+        }
+      ]
+    }
+  },
+  "structural": {
+    "form1-3": {
+      "propositions": 81,
+      "sentence_ids_covered": 40,
+      "sentences_expected": 40,
+      "coverage_complete": true,
+      "missing_sentence_ids": [],
+      "non_contiguous_spans": 0,
+      "non_contiguous_examples": [],
+      "claim_object_type_dist": {
+        "SUBJECT_MATTER": 33,
+        "HUMAN_STATE": 7,
+        "SOURCE_OR_REVIEW": 21,
+        "CONCRETE_WORLD_DETAIL": 18,
+        "OTHER": 2
+      }
+    },
+    "r2": {
+      "propositions": 81,
+      "sentence_ids_covered": 31,
+      "sentences_expected": 31,
+      "coverage_complete": true,
+      "missing_sentence_ids": [],
+      "non_contiguous_spans": 0,
+      "non_contiguous_examples": [],
+      "claim_object_type_dist": {
+        "SUBJECT_MATTER": 28,
+        "HUMAN_STATE": 9,
+        "SOURCE_OR_REVIEW": 18,
+        "CONCRETE_WORLD_DETAIL": 23,
+        "OTHER": 3
+      }
+    },
+    "r3": {
+      "propositions": 74,
+      "sentence_ids_covered": 38,
+      "sentences_expected": 38,
+      "coverage_complete": true,
+      "missing_sentence_ids": [],
+      "non_contiguous_spans": 0,
+      "non_contiguous_examples": [],
+      "claim_object_type_dist": {
+        "SUBJECT_MATTER": 31,
+        "HUMAN_STATE": 5,
+        "SOURCE_OR_REVIEW": 23,
+        "CONCRETE_WORLD_DETAIL": 14,
+        "OTHER": 1
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "experiment": "WG-3B OBJECT-OF-CLAIM VERDICT",
+  "tag": "r2",
+  "propositions": 81,
+  "system_sha256": "545a2ff04fd2449b197bdb43e4d3a1532eb4bc8e8c98c5e639c977e42c2cadad",
+  "user_sha256": "c4172eb33a05fec41fa74bb5e4e4fa114973ed9b67fb40cc4c71d4a9d9bbcb75",
+  "prompt_sha256": "c16ca0ba1685d219f751e25cf46d86f21753386dfe75fc6ba61aba9ead5a1016",
+  "article_sha256": "5ea20461cc09484d7bf1fea3f83de526f5c54720b72438e180cf92e4f1f600ad",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "extraction_input_sha256": "cdcd1c1c296b2a3ba369f9dd908b71ddae2274918b92d21c0315d27b55db6b2a",
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

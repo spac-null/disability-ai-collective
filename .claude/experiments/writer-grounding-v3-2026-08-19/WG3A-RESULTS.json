@@ -1,0 +1,77 @@
+{
+  "experiment": "WG-3A EXTRACTION FIDELITY",
+  "date": "2026-08-19",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "model": "claude-opus-5[1m], fresh-context blind subagents",
+  "gold": "GOLD V2.1 FROZEN (unchanged)",
+  "emits_verdicts": false,
+  "blind_to_gold": true,
+  "totals": {
+    "propositions": 236,
+    "wg1b_baseline": 176,
+    "per_article": {
+      "form1-3": {
+        "props": 81,
+        "sentences": "40/40"
+      },
+      "r2": {
+        "props": 81,
+        "sentences": "31/31"
+      },
+      "r3": {
+        "props": 74,
+        "sentences": "38/38"
+      }
+    }
+  },
+  "structural_validity": {
+    "schema_complete": "236/236",
+    "exact_span_contiguous_substring": "236/236",
+    "sentence_coverage": "109/109 complete"
+  },
+  "unsupported_content_preservation": {
+    "score": "8/8",
+    "verdict": "CONTENT_PRESERVED for all 8",
+    "detail": {
+      "G13-01": "PRESERVED \u2014 P74 CONCRETE_WORLD_DETAIL carries 'City Art Centre'; anchor returned is the source's 'City Art Gallery', so the name mutation is visible to the verdict stage.",
+      "G13-02": "PRESERVED \u2014 P76 HUMAN_STATE, atomic keeps BOTH commitments: 'did not know the work existed' AND 'an hour ago'. Anchor EMPTY.",
+      "G13-04": "PRESERVED \u2014 P22 SOURCE_OR_REVIEW, atomic 'The review does not rank the two artists and does not gather them into a group.' Negation, actor and both predicates intact. Anchor EMPTY.",
+      "GR2-01": "PRESERVED \u2014 the decisive case. P19 HUMAN_STATE, span verbatim, atomic 'The visitor brought nothing to the encounter except the willingness to walk in.' This is exactly the form the spec names as REQUIRED. The WG-1B/WG-2A loss ('unprepared encounters') did not recur.",
+      "GR2-02": "PRESERVED \u2014 P21 SOURCE_OR_REVIEW, atomic states the negative twice, explicitly: 'the review does not place them above the rest'. Anchor EMPTY. The article's own selection rationale is split off into P22 SUBJECT_MATTER, so the meta-claim is isolated.",
+      "GR2-04": "PRESERVED (manually adjudicated) \u2014 P75 atomic asserts the ABSOLUTE 'Sadao Hasegawa's work stayed unpublished and unseen in his lifetime' with no 'most', while the returned anchor is the source's 'MOST OF the Japanese illustrator's work...'. The qualifier drop is therefore fully visible as an atomic-vs-anchor mismatch. P74 separately preserves the attribution to the review.",
+      "GR3-01": "PRESERVED \u2014 P16 HUMAN_STATE keeps both 'was not in the visitor's possession' and 'an hour earlier'. Anchor EMPTY.",
+      "GR3-03": "PRESERVED \u2014 P58 CONCRETE_WORLD_DETAIL keeps 'Edinburgh in August'. Anchor EMPTY."
+    }
+  },
+  "uncertain_preservation": {
+    "score": "2/2",
+    "detail": {
+      "festival's characteristic verb": "PRESERVED \u2014 P56 makes the possessive attribution explicit: 'The festival has a characteristic verb.'",
+      "What it does not describe, and cannot": "PRESERVED \u2014 P79 keeps negation AND modal impossibility: 'does not describe, and cannot describe'."
+    }
+  },
+  "destructive_normalization_scan": {
+    "propositions_scanned": 236,
+    "heuristic_flags": 4,
+    "genuine_losses": 0,
+    "note": "All 4 flags are artifacts of token-level matching, each a legitimate grammatical normalization that preserves the commitment: 'without X having brought anything except' -> 'brought nothing except' (logically identical, and the spec's own ALLOWED example); 'not because the review ranks' -> 'does not rank' (rationale connective dropped, factual commitment made MORE explicit); 'some subcultural genius' -> 'the subcultural genius' (indefinite determiner, not scope); 'which means' -> 'Because' (causal relation re-expressed, not removed)."
+  },
+  "claim_object_type_distribution": {
+    "SUBJECT_MATTER": 92,
+    "SOURCE_OR_REVIEW": 62,
+    "CONCRETE_WORLD_DETAIL": 55,
+    "HUMAN_STATE": 21,
+    "OTHER": 6
+  },
+  "discrimination_cases_ready": {
+    "G13-03": "SUBJECT_MATTER, anchor EMPTY \u2014 legitimate interpretation",
+    "GR2-03": "SUBJECT_MATTER, anchor EMPTY \u2014 legitimate interpretation",
+    "GR3-02": "SUBJECT_MATTER x2 (P41 comparative, P42 causal), anchor EMPTY \u2014 legitimate interpretation",
+    "G13-04": "SOURCE_OR_REVIEW, anchor EMPTY \u2014 must be UNSUPPORTED",
+    "GR2-02": "SOURCE_OR_REVIEW, anchor EMPTY \u2014 must be UNSUPPORTED",
+    "GR2-01": "HUMAN_STATE, anchor EMPTY \u2014 must be UNSUPPORTED",
+    "R3_control": "SOURCE_OR_REVIEW, anchor NON-EMPTY ('it sits there without commentary') \u2014 must stay INTERPRETATION/SUPPORTED"
+  },
+  "key_structural_finding": "The control pair now separates on a signal the verdict stage can actually see: the two meta-source failures and the human-state failure all returned an EMPTY anchor, while the legitimate meta-source control returned a real one. Anchor obligation is testable without any syntax rule.",
+  "decision": "A \u2014 EXTRACTION_FIDELITY_READY"
+}

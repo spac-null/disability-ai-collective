@@ -1,0 +1,57 @@
+{
+  "experiment": "WG-3B OBJECT-OF-CLAIM VERDICT",
+  "gold": "GOLD V2.1 FROZEN",
+  "propositions": 236,
+  "verdict_distribution": {
+    "INTERPRETATION": 80,
+    "SUPPORTED": 151,
+    "UNSUPPORTED": 5
+  },
+  "tp": 4,
+  "fp": 0,
+  "fn": 4,
+  "unsupported_recall": 0.5,
+  "unsupported_precision": 1.0,
+  "caught": [
+    "G13-01",
+    "GR2-01",
+    "GR2-04",
+    "GR3-03"
+  ],
+  "missed": [
+    "G13-02",
+    "G13-04",
+    "GR2-02",
+    "GR3-01"
+  ],
+  "false_positives": [],
+  "gold_to_proposition_map": {
+    "G13-01": [
+      "P74"
+    ],
+    "G13-02": [
+      "P76"
+    ],
+    "G13-04": [
+      "P22"
+    ],
+    "GR2-01": [
+      "P19"
+    ],
+    "GR2-02": [
+      "P21",
+      "P22"
+    ],
+    "GR2-04": [
+      "P74",
+      "P75"
+    ],
+    "GR3-01": [
+      "P15",
+      "P16"
+    ],
+    "GR3-03": [
+      "P58"
+    ]
+  }
+}
