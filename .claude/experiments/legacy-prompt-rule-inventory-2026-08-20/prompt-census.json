@@ -1,0 +1,284 @@
+{
+  "audit_date": "2026-08-20",
+  "repo": "disability-collective-ai",
+  "head": "3a05f61",
+  "method": "static literals via ast.literal_eval; dynamic prompts via repo's own zero-network capture harnesses (writer_prompt_test._capture_writer_prompt, snapshot_test._snapshot_generate_calls). No model calls.",
+  "production_prompts": [
+    {
+      "id": "P-WRITER",
+      "name": "writer user prompt",
+      "loc": "orchestrator/generate.py:783-1050",
+      "chars_maya": 59161,
+      "chars_pixel": 54673,
+      "words_maya": 9862,
+      "rule_units": 75,
+      "assembly": "dynamic",
+      "stage": "GENERATE",
+      "blocking": false
+    },
+    {
+      "id": "P-WSYS",
+      "name": "writer system prompt",
+      "loc": "orchestrator/llm.py:232",
+      "chars": 3212,
+      "assembly": "static",
+      "stage": "GENERATE",
+      "blocking": false
+    },
+    {
+      "id": "P-REWRITE",
+      "name": "rewrite_with_opus SYSTEM",
+      "loc": "orchestrator/llm.py:394",
+      "chars": 25019,
+      "rule_units": 47,
+      "assembly": "static",
+      "stage": "REWRITE",
+      "blocking": false
+    },
+    {
+      "id": "P-PLAN",
+      "name": "planner brief user prompt (Story Rejection L1/L2)",
+      "loc": "orchestrator/llm.py::_fable_editorial_brief",
+      "chars": 15358,
+      "assembly": "dynamic",
+      "stage": "PLAN",
+      "blocking": false
+    },
+    {
+      "id": "P-REVIEW",
+      "name": "RULES_SYSTEM",
+      "loc": "orchestrator/review.py:1173",
+      "chars": 9035,
+      "rule_units": 19,
+      "assembly": "static",
+      "stage": "REVIEW",
+      "blocking": false
+    },
+    {
+      "id": "P-GATE",
+      "name": "GATE_SYSTEM",
+      "loc": "orchestrator/gate.py:233",
+      "chars": 8105,
+      "rule_units": 17,
+      "assembly": "static",
+      "stage": "GATE",
+      "blocking": true
+    },
+    {
+      "id": "P-ENGAGE",
+      "name": "engagement read",
+      "loc": "orchestrator/review.py::_engagement_read",
+      "chars": 4161,
+      "stage": "REVIEW",
+      "blocking": false
+    },
+    {
+      "id": "P-EXEC",
+      "name": "_EXECUTOR_CONTRACT",
+      "loc": "orchestrator/llm.py:61",
+      "chars": 2007,
+      "stage": "EXECUTOR",
+      "blocking": false
+    },
+    {
+      "id": "P-XCITE",
+      "name": "persona cross-cite",
+      "loc": "orchestrator/fact_check.py",
+      "chars": 1484,
+      "stage": "REVIEW",
+      "blocking": false
+    },
+    {
+      "id": "P-FIXREG",
+      "name": "FIX_SYSTEM register",
+      "loc": "orchestrator/gate.py:510",
+      "chars": 1221,
+      "stage": "GATE",
+      "blocking": false
+    },
+    {
+      "id": "P-LINK",
+      "name": "link editor",
+      "loc": "orchestrator/content_checks.py:373",
+      "chars": 1070,
+      "stage": "POST",
+      "blocking": false
+    },
+    {
+      "id": "P-FACT",
+      "name": "claim extraction",
+      "loc": "orchestrator/fact_check.py:33",
+      "chars": 905,
+      "stage": "REVIEW",
+      "blocking": false
+    },
+    {
+      "id": "P-EXECPH",
+      "name": "_EXECUTOR_PERSONA_HISTORY_CONTRACT",
+      "loc": "orchestrator/llm.py:101",
+      "chars": 750,
+      "stage": "EXECUTOR",
+      "blocking": false
+    },
+    {
+      "id": "P-SUBJ",
+      "name": "SUBJECT_SYSTEM article-type compliance",
+      "loc": "orchestrator/gate.py:51",
+      "chars": 533,
+      "stage": "GATE",
+      "blocking": false
+    },
+    {
+      "id": "P-CITE",
+      "name": "CITATION_SYSTEM",
+      "loc": "orchestrator/review.py:879",
+      "chars": 517,
+      "stage": "REVIEW",
+      "blocking": false
+    },
+    {
+      "id": "P-FIXFORM",
+      "name": "FIX_SYSTEM form",
+      "loc": "orchestrator/gate.py:530",
+      "chars": 421,
+      "stage": "GATE",
+      "blocking": false
+    }
+  ],
+  "totals": {
+    "rule_bearing_chars_per_article": 130000,
+    "distinct_prescriptive_rule_statements": 158
+  },
+  "shadow": [
+    {
+      "id": "S-CJ2",
+      "loc": "orchestrator/cj2_shadow.py",
+      "gate": "CJ2_INTEGRATION_MODE",
+      "default": "OFF",
+      "active": false
+    },
+    {
+      "id": "S-L2",
+      "loc": "orchestrator/testimony_l2.py",
+      "gate": "L2_TESTIMONY_MODE",
+      "default": "OFF",
+      "active": false
+    },
+    {
+      "id": "S-SOFA",
+      "loc": "orchestrator/sofa_discovery_shadow.py",
+      "gate": null,
+      "active": false,
+      "note": "not imported by production at all"
+    },
+    {
+      "id": "S-WG",
+      "loc": ".claude/experiments/writer-grounding-*",
+      "gate": null,
+      "active": false,
+      "note": "shadow-calibrated candidate; owner stop in force"
+    }
+  ],
+  "dead": [
+    {
+      "id": "DE-01",
+      "item": "style_rules.py RULES registry",
+      "rules": 16,
+      "consumers": 0
+    },
+    {
+      "id": "DE-03",
+      "item": "check_rule_drift.py",
+      "automated_runner": false
+    }
+  ],
+  "duplication": {
+    "families_in_5_places": 8,
+    "families_in_4_or_more": 16,
+    "families_in_3_or_more": 19,
+    "r_number_collisions_gate_vs_review": 9
+  },
+  "contradictions": [
+    {
+      "id": "C1",
+      "severity": "HIGH",
+      "live": true,
+      "documented": false,
+      "what": "testimony quota survives in rewrite rules 33/33b after AR3 removed it from the writer"
+    },
+    {
+      "id": "C2",
+      "severity": "HIGH",
+      "live": true,
+      "documented": true,
+      "what": "'strong thesis from sentence one' (system) vs 'never state it' (user), same call; queued as AR3.1"
+    },
+    {
+      "id": "C3",
+      "severity": "HIGH",
+      "live": true,
+      "documented": false,
+      "what": "persona canon injected twice byte-identical for fictional personas + self-contradicting joining sentence"
+    },
+    {
+      "id": "C4",
+      "severity": "KNOWN-DIVERGENCE",
+      "live": true,
+      "documented": true,
+      "what": "SOFA 'Byline != prose persona' vs live persona roleplay"
+    },
+    {
+      "id": "C5",
+      "severity": "MEDIUM",
+      "live": true,
+      "documented": "partial",
+      "what": "SOFA 'no persona subject territory' vs _AGENT_BEATS"
+    },
+    {
+      "id": "C6",
+      "severity": "MEDIUM",
+      "live": true,
+      "documented": false,
+      "what": "SOFA 'developed paragraphs' vs blocking gate R7 >5 sentences"
+    },
+    {
+      "id": "C7",
+      "severity": "LOW",
+      "live": true,
+      "documented": false,
+      "what": "PLAIN VOCABULARY stated twice differently inside one prompt"
+    },
+    {
+      "id": "C8",
+      "severity": "MEDIUM",
+      "live": true,
+      "documented": false,
+      "what": "style_rules.py + CONTEXT.md claim source-of-truth authority it does not have"
+    }
+  ],
+  "negative_prohibitions_in_writer_prompt": 80,
+  "owner_decisions_required": 11,
+  "inventory_complete": true,
+  "cleanup_executed": false,
+  "rule_families": {
+    "total": 114,
+    "by_surface": {
+      "PRODUCTION": 96,
+      "HISTORICAL": 7,
+      "SHADOW": 6,
+      "DEAD": 5
+    },
+    "by_category": {
+      "SR": 22,
+      "WP": 35,
+      "TV": 5,
+      "GR": 7,
+      "ST": 5,
+      "PB": 11,
+      "AF": 5,
+      "DI": 14,
+      "DE": 10
+    },
+    "correction_note": "first verbal summary said 98/79/8/11; that was a summary miscount. Mechanical recount of MASTER-INVENTORY.md rows gives 114/96/6/7+5."
+  }
+}
