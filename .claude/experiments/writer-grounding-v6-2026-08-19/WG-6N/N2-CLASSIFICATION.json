@@ -1,0 +1,102 @@
+{
+  "method": "deterministic sentence-level byte-locality + independent source adjudication, no model calls",
+  "byte_locality_granularity": "SENTENCE (a paragraph may hold both a patched and an untouched sentence)",
+  "findings": [
+    {
+      "key": "form1-3/P73/P73-C2",
+      "tag": "form1-3",
+      "parent": "P73",
+      "commitment_id": "P73-C2",
+      "commitment_type": "TEMPORAL_MODIFIER",
+      "owner": "WG-4A",
+      "routing_path": "NOT_NEGATIVE",
+      "EXACT_SPAN": "The word travels easily between the visitor's afternoon and the artist's life",
+      "CONTAINING_SENTENCE": "The word travels easily between the visitor's afternoon and the artist's life, and it is the same word in both places.",
+      "OVERLAPS_CHANGED_BYTES": "NO",
+      "CONTAINING_SENTENCE_PATCHED": "NO",
+      "SAME_PARAGRAPH_CONTAINS_A_PATCH": "NO",
+      "DEPENDS_SEMANTICALLY_ON_PATCH": "NO",
+      "PRE_REPAIR_TEXT_BYTE_IDENTICAL": "YES",
+      "PROPOSITION": "The visitor's encounter with the festival occupies an afternoon.",
+      "ADJUDICATED_STATUS": "UNSUPPORTED",
+      "CATEGORY": "C_PREEXISTING_GENUINE_NEWLY_DETECTED",
+      "BLOCKS": true,
+      "adjudication_evidence": [
+        "The token 'afternoon' does not occur anywhere in the frozen source. Nor does 'hour'. The source states no duration for the visit at all.",
+        "The source's own temporal frame is the whole festival across many venues — 'By the time you're done with Edinburgh art festival' — which if anything runs against a single afternoon.",
+        "Gold V2.1 rates three structurally identical invented temporal specifics as UNSUPPORTED: G13-02 'an hour ago', GR3-01 'an hour earlier', GR3-03 'walking around Edinburgh in August'. 'August' is likewise absent from the source. 'the visitor's afternoon' is the same move with the same zero anchor.",
+        "WG-6B's own repair removed 'an hour ago' from THIS article as G13-02. The identical invention class survives two paragraphs earlier because no gold finding named it."
+      ],
+      "counter_argument_considered": "'the visitor's afternoon' could be read as a scale figure contrasting a short human span with a life rather than a duration claim. Rejected: gold's calibrated owner standard already refused that defence for 'an hour ago' and 'an hour earlier', which are figures in exactly the same rhetorical position.",
+      "confidence": "HIGH"
+    },
+    {
+      "key": "form1-3/P83/P83-NEG",
+      "tag": "form1-3",
+      "parent": "P83",
+      "commitment_id": "P83-NEG",
+      "commitment_type": "NEGATIVE_SOURCE_CLAIM",
+      "owner": "WG-4B",
+      "routing_path": "P3_SYNTHESISED_CARRIER",
+      "EXACT_SPAN": "The review's discovery is the visitor's present encounter with work previously unknown to them",
+      "CONTAINING_SENTENCE": "The review's discovery is the visitor's present encounter with work previously unknown to them.",
+      "OVERLAPS_CHANGED_BYTES": "NO",
+      "CONTAINING_SENTENCE_PATCHED": "NO",
+      "SAME_PARAGRAPH_CONTAINS_A_PATCH": "NO",
+      "DEPENDS_SEMANTICALLY_ON_PATCH": "NO",
+      "PRE_REPAIR_TEXT_BYTE_IDENTICAL": "YES",
+      "PROPOSITION": "Implicitly: the review's sense of 'discovery' is located in the visitor's present encounter and NOT in the posthumous recovery of the artists' work.",
+      "ADJUDICATED_STATUS": "INTERPRETATION",
+      "CATEGORY": "D_DETECTOR_FALSE_POSITIVE_OR_VARIANCE",
+      "BLOCKS": false,
+      "adjudication_evidence": [
+        "The article does not write the negation. WG-4B inferred an implicit exclusive 'NOT' from the copula. The entire finding rests on that inference.",
+        "The SAME frozen WG-4B, pre-repair, judged the corresponding parent (P78, byte-identical prose) IN_SCOPE=YES but NEGATIVE=NO, verdict INTERPRETATION. It declined to draw the same inference one run earlier. This is the WG6-N2 phenomenon in its purest form: a component flipping its own NEGATIVE classification on unchanged text.",
+        "The frozen WG-4A judged it INTERPRETATION in BOTH runs — 'In one of its senses, the review's discovery names the visitor's present encounter' — explicitly an analytic distinction, not a factual claim about the review.",
+        "The article's own preceding paragraph defeats the exclusive reading outright: 'The word travels easily between the visitor's afternoon and the artist's life, and it is the same word in both places.' The article grants both senses on the page before.",
+        "Gold V2.1's closest calibrated precedent is the V1->V2.1 reclassification of exactly this analytic 'the review's X is Y' shape — G13-03, GR2-03, GR3-02 — all moved from UNSUPPORTED to INTERPRETATION by owner calibration."
+      ],
+      "counter_argument_considered": "Taken as a strict definite identification the claim would be a distributed semantic property of the whole review, unbounded scope, hence UNSUPPORTED — which is how gold treats G13-04 and GR2-02. Rejected: those two are explicit written negations in the article's own prose ('not because the review ranks them...'). Here the negation exists only in the detector's paraphrase.",
+      "confidence": "MEDIUM-HIGH"
+    },
+    {
+      "key": "r2/P72/P72-C2",
+      "tag": "r2",
+      "parent": "P72",
+      "commitment_id": "P72-C2",
+      "commitment_type": "TEMPORAL_MODIFIER",
+      "owner": "WG-4A",
+      "routing_path": "NOT_NEGATIVE",
+      "EXACT_SPAN": "was found after 2013",
+      "CONTAINING_SENTENCE": "George never showed her work publicly in her lifetime and was found after 2013.",
+      "OVERLAPS_CHANGED_BYTES": "NO",
+      "CONTAINING_SENTENCE_PATCHED": "NO",
+      "SAME_PARAGRAPH_CONTAINS_A_PATCH": "YES",
+      "DEPENDS_SEMANTICALLY_ON_PATCH": "NO",
+      "PRE_REPAIR_TEXT_BYTE_IDENTICAL": "YES",
+      "PROPOSITION": "The finding happened after the year 2013.",
+      "ADJUDICATED_STATUS": "UNCERTAIN",
+      "CATEGORY": "D_DETECTOR_FALSE_POSITIVE_OR_VARIANCE",
+      "BLOCKS": false,
+      "adjudication_evidence": [
+        "Source: 'she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.' The source fixes the death to 2013 and places the discovery after the death. It never dates the discovery.",
+        "The article drops 'her death' as the reference point. Read as a calendar boundary, 'after 2013' asserts something the source does not license — a discovery later in 2013 satisfies the source and falsifies the article.",
+        "Read as elliptical for 'after [her death in] 2013', with the referent supplied by the preceding clause of the same sentence, it is a faithful compression.",
+        "The text genuinely supports both readings, so grounding cannot be settled from the source. That is precisely Gold V2.1's UNCERTAIN category.",
+        "The SAME frozen instrument, pre-repair, assigned UNCERTAIN to this exact commitment — same parent P72, same commitment id P72-C2, same TEMPORAL_MODIFIER type, byte-identical span. Post-repair it moved to UNSUPPORTED. Neither run ever called it SUPPORTED.",
+        "Unlike the 'afternoon' case there IS a real source anchor carrying the exact date; the defect is a shifted reference point, not an invention from nothing. Different class from G13-02 / GR3-01 / GR3-03."
+      ],
+      "counter_argument_considered": "A strict grounding standard would call any unlicensed boundary UNSUPPORTED, which is what the post-repair detector said with sound reasoning. This is the one classification here a reasonable reviewer could push to C, and it is flagged as such rather than settled quietly.",
+      "confidence": "MEDIUM"
+    }
+  ],
+  "counts": {
+    "REPAIR_INTRODUCED": 0,
+    "REPAIR_RESIDUAL": 0,
+    "PREEXISTING_GENUINE_NEWLY_DETECTED": 1,
+    "DETECTOR_FALSE_POSITIVE_OR_VARIANCE": 2
+  },
+  "article_grounding_clean": false,
+  "precise_language_note": "REPAIR_INTRODUCED = 0 is proven. That is NOT the same claim as 'no new unsupported'.",
+  "decision": "A — VERIFICATION_SEMANTICS_READY"
+}

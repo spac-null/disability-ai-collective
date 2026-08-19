@@ -1,0 +1,291 @@
+{
+  "method": "REUSE_RESCORE_NO_MODEL_CALLS, corrected router v2",
+  "router_change": "added P3 synthesised carrier; routing authority is WG-4B IN_SCOPE+NEGATIVE",
+  "condition_A": {
+    "tp": 8,
+    "fp": 0,
+    "fn": 0,
+    "recall": 1.0,
+    "precision": 1.0,
+    "caught": [
+      "G13-01",
+      "G13-02",
+      "G13-04",
+      "GR2-01",
+      "GR2-02",
+      "GR2-04",
+      "GR3-01",
+      "GR3-03"
+    ],
+    "missed": [],
+    "false_positives": [],
+    "controls": {
+      "G13-04": {
+        "tag": "form1-3",
+        "parent": "P22",
+        "required": "UNSUPPORTED",
+        "got": [
+          "UNSUPPORTED"
+        ],
+        "owner": [
+          "WG-4B"
+        ],
+        "proof_type": [
+          "NONE"
+        ],
+        "routing_path": [
+          "P1_SOURCE_META_CARRIER"
+        ],
+        "pass": true
+      },
+      "GR2-02": {
+        "tag": "r2",
+        "parent": "P21",
+        "required": "UNSUPPORTED",
+        "got": [
+          "UNSUPPORTED"
+        ],
+        "owner": [
+          "WG-4B"
+        ],
+        "proof_type": [
+          "NONE"
+        ],
+        "routing_path": [
+          "P1_SOURCE_META_CARRIER"
+        ],
+        "pass": true
+      },
+      "R3-control": {
+        "tag": "r3",
+        "parent": "P29",
+        "required": "SUPPORTED",
+        "got": [
+          "SUPPORTED"
+        ],
+        "owner": [
+          "WG-4B"
+        ],
+        "proof_type": [
+          "BOUNDED_ABSENCE"
+        ],
+        "routing_path": [
+          "P1_SOURCE_META_CARRIER"
+        ],
+        "pass": true
+      }
+    },
+    "unrouted": 0,
+    "proof_vs_verdict_disagreements": 0,
+    "synthesised_units": 0,
+    "forbidden_fields_read": [],
+    "regression_vs_frozen_WG6A": {
+      "old_tp": 8,
+      "old_fp": 0,
+      "old_fn": 0,
+      "new_tp": 8,
+      "new_fp": 0,
+      "new_fn": 0,
+      "matrix_identical": true,
+      "unsupported_set_identical": true,
+      "appeared": [],
+      "disappeared": []
+    },
+    "unsupported_commitments": [
+      {
+        "tag": "form1-3",
+        "parent": "P22",
+        "commitment_id": "P22-C1",
+        "commitment_type": "SOURCE_META",
+        "owner": "WG-4B",
+        "class": "NEGATIVE_SOURCE",
+        "routing_path": "P1_SOURCE_META_CARRIER",
+        "wg4b_proof_type": "NONE",
+        "parent_span": "not because the review ranks them or gathers them into a group",
+        "proposition": "The review does not rank the two artists and does not gather them into a group."
+      },
+      {
+        "tag": "form1-3",
+        "parent": "P74",
+        "commitment_id": "P74-C2",
+        "commitment_type": "PROPER_NOUN",
+        "owner": "WG-4A",
+        "class": "ORDINARY",
+        "routing_path": "NOT_NEGATIVE",
+        "wg4b_proof_type": null,
+        "parent_span": "Whatever the visitor is doing in the gallery at City Art Centre or at Ingleby",
+        "proposition": "The venue holding the George show is named City Art Centre."
+      },
+      {
+        "tag": "form1-3",
+        "parent": "P76",
+        "commitment_id": "P76-C2",
+        "commitment_type": "TEMPORAL_MODIFIER",
+        "owner": "WG-4A",
+        "class": "ORDINARY",
+        "routing_path": "NOT_NEGATIVE",
+        "wg4b_proof_type": null,
+        "parent_span": "it is happening to a person who did not know the work existed an hour ago",
+        "proposition": "That state of not knowing held one hour earlier."
+      },
+      {
+        "tag": "r2",
+        "parent": "P19",
+        "commitment_id": "P19-C1",
+        "commitment_type": "HUMAN_STATE",
+        "owner": "WG-4A",
+        "class": "ORDINARY",
+        "routing_path": "NOT_NEGATIVE",
+        "wg4b_proof_type": null,
+        "parent_span": "without the visitor having brought anything to the encounter except the willingness to walk in",
+        "proposition": "The visitor brought nothing to the encounter except the willingness to walk in."
+      },
+      {
+        "tag": "r2",
+        "parent": "P21",
+        "commitment_id": "P21-C1",
+        "commitment_type": "SOURCE_META",
+        "owner": "WG-4B",
+        "class": "NEGATIVE_SOURCE",
+        "routing_path": "P1_SOURCE_META_CARRIER",
+        "wg4b_proof_type": "NONE",
+        "parent_span": "not because the review places them above the rest",
+        "proposition": "The review does not place these two names above the rest."
+      },
+      {
+        "tag": "r2",
+        "parent": "P75",
+        "commitment_id": "P75-C2",
+        "commitment_type": "QUANTIFIER",
+        "owner": "WG-4A",
+        "class": "ORDINARY",
+        "routing_path": "NOT_NEGATIVE",
+        "wg4b_proof_type": null,
+        "parent_span": "stayed unpublished and unseen in his lifetime",
+        "proposition": "This held of his work without restriction, i.e. of all of it."
+      },
+      {
+        "tag": "r3",
+        "parent": "P16",
+        "commitment_id": "P16-C2",
+        "commitment_type": "TEMPORAL_MODIFIER",
+        "owner": "WG-4A",
+        "class": "ORDINARY",
+        "routing_path": "NOT_NEGATIVE",
+        "wg4b_proof_type": null,
+        "parent_span": "a name that was not in their possession an hour earlier",
+        "proposition": "That unfamiliarity held as of one hour earlier."
+      },
+      {
+        "tag": "r3",
+        "parent": "P58",
+        "commitment_id": "P58-C2",
+        "commitment_type": "TEMPORAL_MODIFIER",
+        "owner": "WG-4A",
+        "class": "ORDINARY",
+        "routing_path": "NOT_NEGATIVE",
+        "wg4b_proof_type": null,
+        "parent_span": "a person who is walking around Edinburgh in August",
+        "proposition": "This takes place in August."
+      }
+    ]
+  },
+  "condition_B": {
+    "commitments": 293,
+    "verdicts": {
+      "INTERPRETATION": 82,
+      "SUPPORTED": 208,
+      "UNSUPPORTED": 3
+    },
+    "unrouted": 0,
+    "synthesised_units": [
+      {
+        "tag": "form1-3",
+        "parent": "P83",
+        "commitment_id": "P83-NEG",
+        "commitment_type": "NEGATIVE_SOURCE_CLAIM",
+        "proposition": "Implicitly: the review's sense of 'discovery' is located in the visitor's present encounter and NOT in the posthumous recovery of the artists' work.",
+        "parent_span": "The review's discovery is the visitor's present encounter with work previously unknown to them",
+        "class": "NEGATIVE_SOURCE",
+        "owner": "WG-4B",
+        "routing_path": "P3_SYNTHESISED_CARRIER",
+        "wg4a_status": null,
+        "wg4b_proof_type": "NONE",
+        "wg4b_scope": "would require the review's whole use of the discovery vocabulary — semantic emphasis distributed across the text",
+        "arbitrated_verdict": "UNSUPPORTED",
+        "synthesised": true,
+        "reason": "Stated as a definite identification, it asserts that the review's discovery just is the visitor's present encounter. That is a semantic property of the source's usage which cannot be bounded, and the source's own uses of 'discovered' / 'undiscovered' for the artists' posthumous standing run against the exclusive reading. Neither EXPLICIT nor BOUNDED_ABSENCE proof is available.",
+        "flipped_by_arbitration": false,
+        "coexisting_wg4a_commitments": [
+          {
+            "commitment_id": "P83-C1",
+            "type": "OTHER",
+            "kept_verdict": "INTERPRETATION"
+          },
+          {
+            "commitment_id": "P83-C2",
+            "type": "HUMAN_STATE",
+            "kept_verdict": "SUPPORTED"
+          }
+        ]
+      }
+    ],
+    "post_repair_unsupported_total": 3,
+    "post_repair_unsupported": [
+      {
+        "tag": "form1-3",
+        "parent": "P73",
+        "commitment_id": "P73-C2",
+        "commitment_type": "TEMPORAL_MODIFIER",
+        "owner": "WG-4A",
+        "class": "ORDINARY",
+        "routing_path": "NOT_NEGATIVE",
+        "wg4b_proof_type": null,
+        "parent_span": "The word travels easily between the visitor's afternoon and the artist's life",
+        "proposition": "The visitor's encounter with the festival occupies an afternoon.",
+        "reason": "The source never states how long the visit lasts. Its own temporal frame is the whole festival (\"By the time you’re done with Edinburgh art festival\") across many separate venues, which if anything points away from a single afternoon. A grounded base about the visitor's present encounter cannot transfer support to an invented duration."
+      },
+      {
+        "tag": "form1-3",
+        "parent": "P83",
+        "commitment_id": "P83-NEG",
+        "commitment_type": "NEGATIVE_SOURCE_CLAIM",
+        "owner": "WG-4B",
+        "class": "NEGATIVE_SOURCE",
+        "routing_path": "P3_SYNTHESISED_CARRIER",
+        "wg4b_proof_type": "NONE",
+        "parent_span": "The review's discovery is the visitor's present encounter with work previously unknown to them",
+        "proposition": "Implicitly: the review's sense of 'discovery' is located in the visitor's present encounter and NOT in the posthumous recovery of the artists' work.",
+        "reason": "Stated as a definite identification, it asserts that the review's discovery just is the visitor's present encounter. That is a semantic property of the source's usage which cannot be bounded, and the source's own uses of 'discovered' / 'undiscovered' for the artists' posthumous standing run against the exclusive reading. Neither EXPLICIT nor BOUNDED_ABSENCE proof is available."
+      },
+      {
+        "tag": "r2",
+        "parent": "P72",
+        "commitment_id": "P72-C2",
+        "commitment_type": "TEMPORAL_MODIFIER",
+        "owner": "WG-4A",
+        "class": "ORDINARY",
+        "routing_path": "NOT_NEGATIVE",
+        "wg4b_proof_type": null,
+        "parent_span": "was found after 2013",
+        "proposition": "The finding happened after the year 2013.",
+        "reason": "The source dates the discovery to after her death, and that death to 2013; it does not place the discovery after the year 2013. Discovery later in 2013 is fully consistent with the anchor, so 'after 2013' asserts a boundary the source does not license. The article's own earlier restatement (P31) keeps the correct 'after her death in 2013'; this later compression drops the death as the reference point and shifts it to the calendar year."
+      }
+    ],
+    "previously_suppressed_parents": [
+      [
+        "form1-3",
+        "P83"
+      ]
+    ],
+    "recovered_by_fix": [
+      [
+        "form1-3",
+        "P83",
+        "P83-NEG"
+      ]
+    ],
+    "lost_by_fix": []
+  },
+  "decision": "A — ROUTING_GAP_CLOSED"
+}

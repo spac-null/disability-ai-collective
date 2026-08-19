@@ -1,0 +1,54 @@
+{
+  "what_this_is": "Independent source adjudication of every post-repair UNSUPPORTED finding surfaced by the corrected router. Authored by the verifier against the FROZEN source snapshot (sha fee0a03b...) and the frozen Gold V2.1 calibration precedents. No model call: the preserved evidence and the source are sufficient. This file supplies ADJUDICATED_STATUS only; the C/D mapping is applied by classify_n2.py from the rule pre-registered before any of this was written.",
+  "taxonomy": "SUPPORTED | INTERPRETATION | UNCERTAIN | UNSUPPORTED — the same four values Gold V2.1 uses.",
+  "gold_silence_warning": "Gold V2.1 enumerates spans only for its 8 unsupported, 3 reclassified and 2 uncertain items. It does not enumerate its 44 supported or 41 interpretation propositions. None of the three spans below is enumerated in gold. Gold silence is therefore NOT evidence of grounding and is not used as such anywhere below.",
+  "adjudications": [
+    {
+      "key": "form1-3/P73/P73-C2",
+      "commitment": "The visitor's encounter with the festival occupies an afternoon.",
+      "article_sentence": "The word travels easily between the visitor's afternoon and the artist's life, and it is the same word in both places.",
+      "ADJUDICATED_STATUS": "UNSUPPORTED",
+      "evidence": [
+        "The token 'afternoon' does not occur anywhere in the frozen source. Nor does 'hour'. The source states no duration for the visit at all.",
+        "The source's own temporal frame is the whole festival across many venues — 'By the time you're done with Edinburgh art festival' — which if anything runs against a single afternoon.",
+        "Gold V2.1 rates three structurally identical invented temporal specifics as UNSUPPORTED: G13-02 'an hour ago', GR3-01 'an hour earlier', GR3-03 'walking around Edinburgh in August'. 'August' is likewise absent from the source. 'the visitor's afternoon' is the same move with the same zero anchor.",
+        "WG-6B's own repair removed 'an hour ago' from THIS article as G13-02. The identical invention class survives two paragraphs earlier because no gold finding named it."
+      ],
+      "counter_argument_considered": "'the visitor's afternoon' could be read as a scale figure contrasting a short human span with a life rather than a duration claim. Rejected: gold's calibrated owner standard already refused that defence for 'an hour ago' and 'an hour earlier', which are figures in exactly the same rhetorical position.",
+      "confidence": "HIGH"
+    },
+    {
+      "key": "form1-3/P83/P83-NEG",
+      "commitment": "Implicitly: the review's sense of 'discovery' is located in the visitor's present encounter and NOT in the posthumous recovery of the artists' work.",
+      "article_sentence": "The review's discovery is the visitor's present encounter with work previously unknown to them.",
+      "ADJUDICATED_STATUS": "INTERPRETATION",
+      "evidence": [
+        "The article does not write the negation. WG-4B inferred an implicit exclusive 'NOT' from the copula. The entire finding rests on that inference.",
+        "The SAME frozen WG-4B, pre-repair, judged the corresponding parent (P78, byte-identical prose) IN_SCOPE=YES but NEGATIVE=NO, verdict INTERPRETATION. It declined to draw the same inference one run earlier. This is the WG6-N2 phenomenon in its purest form: a component flipping its own NEGATIVE classification on unchanged text.",
+        "The frozen WG-4A judged it INTERPRETATION in BOTH runs — 'In one of its senses, the review's discovery names the visitor's present encounter' — explicitly an analytic distinction, not a factual claim about the review.",
+        "The article's own preceding paragraph defeats the exclusive reading outright: 'The word travels easily between the visitor's afternoon and the artist's life, and it is the same word in both places.' The article grants both senses on the page before.",
+        "Gold V2.1's closest calibrated precedent is the V1->V2.1 reclassification of exactly this analytic 'the review's X is Y' shape — G13-03, GR2-03, GR3-02 — all moved from UNSUPPORTED to INTERPRETATION by owner calibration."
+      ],
+      "counter_argument_considered": "Taken as a strict definite identification the claim would be a distributed semantic property of the whole review, unbounded scope, hence UNSUPPORTED — which is how gold treats G13-04 and GR2-02. Rejected: those two are explicit written negations in the article's own prose ('not because the review ranks them...'). Here the negation exists only in the detector's paraphrase.",
+      "routing_note": "This finding was routed correctly FIRST by the corrected router and appears as an UNSUPPORTED detector output in N1-RESCORE.json condition B. It is adjudicated on its merits here, at the verification stage. It was not suppressed by routing.",
+      "confidence": "MEDIUM-HIGH"
+    },
+    {
+      "key": "r2/P72/P72-C2",
+      "commitment": "The finding happened after the year 2013.",
+      "article_sentence": "George never showed her work publicly in her lifetime and was found after 2013.",
+      "ADJUDICATED_STATUS": "UNCERTAIN",
+      "evidence": [
+        "Source: 'she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.' The source fixes the death to 2013 and places the discovery after the death. It never dates the discovery.",
+        "The article drops 'her death' as the reference point. Read as a calendar boundary, 'after 2013' asserts something the source does not license — a discovery later in 2013 satisfies the source and falsifies the article.",
+        "Read as elliptical for 'after [her death in] 2013', with the referent supplied by the preceding clause of the same sentence, it is a faithful compression.",
+        "The text genuinely supports both readings, so grounding cannot be settled from the source. That is precisely Gold V2.1's UNCERTAIN category.",
+        "The SAME frozen instrument, pre-repair, assigned UNCERTAIN to this exact commitment — same parent P72, same commitment id P72-C2, same TEMPORAL_MODIFIER type, byte-identical span. Post-repair it moved to UNSUPPORTED. Neither run ever called it SUPPORTED.",
+        "Unlike the 'afternoon' case there IS a real source anchor carrying the exact date; the defect is a shifted reference point, not an invention from nothing. Different class from G13-02 / GR3-01 / GR3-03."
+      ],
+      "counter_argument_considered": "A strict grounding standard would call any unlicensed boundary UNSUPPORTED, which is what the post-repair detector said with sound reasoning. This is the one classification here a reasonable reviewer could push to C, and it is flagged as such rather than settled quietly.",
+      "explicitly_not_claimed": "This is NOT adjudicated as grounded and NOT called a detector false positive. It is adjudicated UNCERTAIN. It lands on the D side only because the pre-registered gates bar UNCERTAIN items from becoming repair targets.",
+      "confidence": "MEDIUM"
+    }
+  ]
+}
