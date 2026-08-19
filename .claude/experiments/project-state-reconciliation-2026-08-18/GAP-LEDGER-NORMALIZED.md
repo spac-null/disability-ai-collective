@@ -23,7 +23,7 @@ BUCKET is the field that stops the project carrying 53 equally-weighted open loo
 | G-005 | MISSING | RESOLVED | CONFIRMED_LOST | HISTORICAL | AR3 free-text blind-review reasoning not preserved; note the limitation, nothing recoverable |
 | G-006 | HISTORICAL | SUPERSEDED | NONE | HISTORICAL | Shadow slice 1/1.1 "not ready for real material" — overtaken by the real-material Edinburgh runs |
 | G-007 | UNRESOLVED | OPEN | NONE | OWNER | Pipeline audit's 2 P0s / 7 P1s; remediation decision. Partly answered by FORM-1/1.1 evidence |
-| G-008 | UNRESOLVED | OPEN | NONE | **BLOCKER** | Two competing canonical pipeline statements (WORK.md §2A vs SOFA-METHOD.md) — must reconcile before canonical sync |
+| G-008 | RECONCILED | **RESOLVED** | NONE | HISTORICAL | Two competing canonical pipeline statements (WORK.md §2A vs SOFA-METHOD.md) — resolved by the 2026-08-19 reconciliation (`5eea007`): SOFA-METHOD.md's SCOPE block now declares only its editorial/artistic principles canonical and explicitly labels DISCOVERY→ARTICLE FORM→WRITER a working hypothesis that is NOT production canonical; WORK.md §2a states the same four-state separation. Neither doc now claims the other's territory, and each cites the other. No substantive contradiction remains. |
 | G-009 | UNRESOLVED | OPEN | NONE | OWNER | SOFA-METHOD.md self-declares CANONICAL, never ratified, still untracked |
 | G-010 | HISTORICAL | RESOLVED | NONE | HISTORICAL | Worktree patch-id equivalence established |
 | G-011 | MISSING | OPEN | NONE | DEBT | 2 commits with no doc representation |
@@ -74,7 +74,7 @@ BUCKET is the field that stops the project carrying 53 equally-weighted open loo
 
 | Bucket | n |
 |---|---|
-| **BLOCKER** | 1 (G-008) |
+| **BLOCKER** | 0 (G-008 resolved 2026-08-19) |
 | OWNER | 6 (G-002, G-007, G-009, G-015, G-028, G-033) |
 | DEBT | 22 |
 | HISTORICAL | 24 |
