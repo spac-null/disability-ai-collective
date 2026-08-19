@@ -1,0 +1,170 @@
+{
+  "method": "Independent full-prose inspection of all three frozen drafts against the frozen Guardian source. Gold is NOT defined as whatever the auditor previously flagged. SOURCE-FIDELITY question only: 'is this proposition supported by the frozen commissioned evidence?' -- never 'could it be true in the world?'",
+  "articles": {
+    "FORM-1.3": {
+      "total_propositions": 39,
+      "supported": 19,
+      "interpretation": 18,
+      "uncertain": 0,
+      "unsupported": 2,
+      "unsupported_findings": [
+        {
+          "id": "G13-01",
+          "span": "City Art Centre",
+          "class": "INVENTED_PROPER_NOUN",
+          "origin": "WRITER",
+          "source_anchor": "She appears throughout her show at City Art Gallery in self-portraits",
+          "why": "Source names the venue City Art Gallery; the article itself uses that correct name in P4, then mutates it in P7. Invented variant + internal inconsistency.",
+          "min_correction": "Restore 'City Art Gallery'."
+        },
+        {
+          "id": "G13-02",
+          "span": "it is happening to a person who did not know the work existed an hour ago",
+          "class": "INVENTED_VISITOR_STATE / TEMPORAL_SPECIFICITY",
+          "origin": "WRITER",
+          "source_anchor": "some subcultural genius or longlost creative you've never heard of",
+          "why": "Source supports visitor unfamiliarity but establishes no timeline. 'an hour ago' is invented duration; the asserted knowledge-state is stated as settled fact.",
+          "min_correction": "Remove the invented interval; keep only source-supported unfamiliarity."
+        }
+      ]
+    },
+    "FORM-1.3-R2": {
+      "total_propositions": 28,
+      "supported": 13,
+      "interpretation": 10,
+      "uncertain": 2,
+      "unsupported": 3,
+      "unsupported_findings": [
+        {
+          "id": "GR2-01",
+          "span": "without the visitor having brought anything to the encounter except the willingness to walk in",
+          "class": "INVENTED_VISITOR_STATE",
+          "origin": "WRITER",
+          "source_anchor": "some subcultural genius or longlost creative you've never heard of",
+          "why": "Asserts visitors' preparation and mental state generally. Not having heard of an artist is not 'having brought nothing'.",
+          "min_correction": "Reduce to the source-supported unfamiliarity."
+        },
+        {
+          "id": "GR2-02",
+          "span": "taken here not because the review places them above the rest but simply because they can be set beside each other",
+          "class": "FORM_INSTRUCTION_AS_PROSE_CLAIM",
+          "origin": "FORM",
+          "source_anchor": "that of Sandra George (1957-2013) is worth telling / it deserves to be seen far outside the city's confines / it's all eclipsed by his weird little paintings",
+          "why": "The Form's no-centrality boundary surfaced as an asserted negative about the review's ranking -- which the source arguably contradicts.",
+          "min_correction": "State the article's own selection without asserting what the review does not do."
+        },
+        {
+          "id": "GR2-04",
+          "span": "Sadao Hasegawa's work, the review adds, stayed unpublished and unseen in his lifetime.",
+          "class": "QUALIFIER_DROPPED",
+          "origin": "WRITER",
+          "secondary_origin": "SOURCE_PARAPHRASE",
+          "source_anchor": "Most of the Japanese illustrator's work, you guessed it, stayed unpublished and unseen in his lifetime.",
+          "why": "Source qualifier 'Most of' dropped and the absolute version attributed to the review. Reproduces FORM-1's original failure; Hasegawa was omitted from the packet but returned from the full source.",
+          "min_correction": "Restore the source qualifier."
+        }
+      ],
+      "uncertain_findings": [
+        {
+          "span": "the festival's characteristic verb",
+          "note": "Possessive attribution of vocabulary to the festival -- weak ownership drift, immediately self-corrected by the next sentence ('The review reaches repeatedly for discovery'). Not gold-unsupported, but see CORRECTION note."
+        },
+        {
+          "span": "What it does not describe, and cannot",
+          "note": "Certainty claim, downstream of GR2-04's dropped qualifier."
+        }
+      ]
+    },
+    "FORM-1.3-R3": {
+      "total_propositions": 28,
+      "supported": 12,
+      "interpretation": 14,
+      "uncertain": 0,
+      "unsupported": 2,
+      "unsupported_findings": [
+        {
+          "id": "GR3-01",
+          "span": "the visitor arrives at a name that was not in their possession an hour earlier",
+          "class": "INVENTED_VISITOR_STATE / TEMPORAL_SPECIFICITY",
+          "origin": "WRITER",
+          "source_anchor": "some subcultural genius or longlost creative you've never heard of",
+          "why": "Same construction as G13-02 -- invented interval plus asserted knowledge-state.",
+          "min_correction": "Remove the invented interval."
+        },
+        {
+          "id": "GR3-03",
+          "span": "walking around Edinburgh in August",
+          "class": "INVENTED_TEMPORAL_SPECIFICITY",
+          "origin": "WRITER",
+          "source_anchor": "(none -- the source never states when the festival takes place)",
+          "why": "Month imported from world knowledge. WORLD-TRUE but SOURCE-UNSUPPORTED -- the architectural distinction.",
+          "min_correction": "Delete the month."
+        }
+      ]
+    }
+  },
+  "totals": {
+    "total_propositions": 95,
+    "supported": 44,
+    "interpretation": 42,
+    "uncertain": 2,
+    "unsupported": 7,
+    "unsupported_by_class": {
+      "INVENTED_PROPER_NOUN": 1,
+      "INVENTED_VISITOR_STATE / TEMPORAL_SPECIFICITY": 2,
+      "INVENTED_VISITOR_STATE": 1,
+      "FORM_INSTRUCTION_AS_PROSE_CLAIM": 1,
+      "QUALIFIER_DROPPED": 1,
+      "INVENTED_TEMPORAL_SPECIFICITY": 1
+    },
+    "unsupported_by_origin": {
+      "WRITER": 6,
+      "FORM": 1
+    }
+  },
+  "corrections_to_prior_reporting": [
+    "INTERPRETATION_AS_FACT is 3/3, not 2/3 -- FORM-1.3's 'the second side is the one that presses' is the same class and was not previously counted.",
+    "FORM_INSTRUCTION_AS_PROSE_CLAIM: FORM-1.3 P4 carries a milder variant ('not because the review ranks them or gathers them into a group'), judged defensible here because the source genuinely never ranks or groups these two against each other. R2's 'above the rest' is the unsupported one.",
+    "The structural regex used in the replicate task under-detects ownership drift: it did not match R2's 'the festival's characteristic verb'. The 0/0/0 festival-as-speaker result stands for explicit speaker/self-description claims, but is not a complete ownership check."
+  ],
+  "FROZEN_TOTALS": {
+    "TOTAL_PROPOSITIONS": 95,
+    "SUPPORTED": 44,
+    "INTERPRETATION": 42,
+    "UNCERTAIN": 2,
+    "UNSUPPORTED": 7,
+    "note": "GOLD V2 / OWNER-CALIBRATION-AMENDMENT, 2026-08-19. Derived from Gold V1 (unchanged, still frozen at ../writer-grounding-v2-2026-08-19/inputs/gold-ledger-FROZEN.json). Only three adjudications changed, all UNSUPPORTED -> INTERPRETATION, per owner decision. No proposition added or removed. The reclassified findings are preserved in reclassified_to_interpretation_v2."
+  },
+  "reclassified_to_interpretation_v2": [
+    {
+      "id": "G13-03",
+      "article": "FORM-1.3",
+      "span": "It is a two-sided obligation, and the second side is the one that presses.",
+      "v1_verdict": "UNSUPPORTED",
+      "v1_class": "INTERPRETATION_AS_FACT",
+      "v2_verdict": "INTERPRETATION",
+      "v1_why": "Source names two directions but says nothing about their relative weight. A comparative judgement stated declaratively as though the review established it."
+    },
+    {
+      "id": "GR2-03",
+      "article": "FORM-1.3-R2",
+      "span": "It is stated as an obligation running two ways at once, and the second direction is the harder one.",
+      "v1_verdict": "UNSUPPORTED",
+      "v1_class": "INTERPRETATION_AS_FACT",
+      "v2_verdict": "INTERPRETATION",
+      "v1_why": "Same comparative-as-settled failure as G13-03."
+    },
+    {
+      "id": "GR3-02",
+      "article": "FORM-1.3-R3",
+      "span": "And that second obligation is harder to discharge, because the subject is not in the room to say whether it has been met.",
+      "v1_verdict": "UNSUPPORTED",
+      "v1_class": "INTERPRETATION_AS_FACT",
+      "v2_verdict": "INTERPRETATION",
+      "v1_why": "Comparative plus causal explanation stated as settled, generalised to all subjects."
+    }
+  ],
+  "version": "GOLD-V2 / OWNER-CALIBRATION-AMENDMENT",
+  "derived_from": "gold-ledger-FROZEN.json (GOLD V1, unchanged)",
+  "date": "2026-08-19"
+}

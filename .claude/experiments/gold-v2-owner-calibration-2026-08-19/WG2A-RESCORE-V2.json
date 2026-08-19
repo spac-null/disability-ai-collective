@@ -1,0 +1,71 @@
+{
+  "gold_version": "GOLD-V2",
+  "wg2a_output": "FROZEN, not re-run",
+  "tp": 5,
+  "fp": 0,
+  "fn": 2,
+  "unsupported_recall": 0.7142857142857143,
+  "unsupported_precision": 1.0,
+  "true_positives": [
+    {
+      "article": "FORM-1.3",
+      "prop": "P51",
+      "gold_id": "G13-01"
+    },
+    {
+      "article": "FORM-1.3",
+      "prop": "P53",
+      "gold_id": "G13-02"
+    },
+    {
+      "article": "FORM-1.3-R2",
+      "prop": "P60",
+      "gold_id": "GR2-04"
+    },
+    {
+      "article": "FORM-1.3-R3",
+      "prop": "P12",
+      "gold_id": "GR3-01"
+    },
+    {
+      "article": "FORM-1.3-R3",
+      "prop": "P43",
+      "gold_id": "GR3-03"
+    }
+  ],
+  "false_negatives": [
+    {
+      "gold_id": "GR2-01",
+      "span": "without the visitor having brought anything to the encounter except the willingness to walk in",
+      "class": "INVENTED_VISITOR_STATE",
+      "origin": "WRITER"
+    },
+    {
+      "gold_id": "GR2-02",
+      "span": "taken here not because the review places them above the rest but simply because they can be set beside each other",
+      "class": "FORM_INSTRUCTION_AS_PROSE_CLAIM",
+      "origin": "FORM"
+    }
+  ],
+  "false_positives": [],
+  "reclassified_now_correct": [
+    {
+      "gold_id": "G13-03",
+      "article": "FORM-1.3",
+      "prop": "P30",
+      "wg2a_verdict": "INTERPRETATION"
+    },
+    {
+      "gold_id": "GR2-03",
+      "article": "FORM-1.3-R2",
+      "prop": "P35",
+      "wg2a_verdict": "INTERPRETATION"
+    },
+    {
+      "gold_id": "GR3-02",
+      "article": "FORM-1.3-R3",
+      "prop": "P32",
+      "wg2a_verdict": "INTERPRETATION"
+    }
+  ]
+}

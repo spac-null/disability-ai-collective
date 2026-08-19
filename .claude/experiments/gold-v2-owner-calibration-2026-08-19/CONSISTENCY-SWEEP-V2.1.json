@@ -1,0 +1,269 @@
+{
+  "sweep": "GOLD V2.1 narrow class-A / class-B consistency sweep",
+  "date": "2026-08-19",
+  "scope": "INTERPRETATION-classified propositions asserting (A) human/visitor knowledge, preparation, intention or mental state, or (B) what the source/review says, ranks, omits, centres, intends, believes or does not do. Ordinary metaphor, synthesis, evaluation and comparison NOT reopened.",
+  "method": "Manual inspection of the three frozen articles against the frozen source snapshot, cross-indexed to the 176 itemised WG-2A propositions. NOTE: Gold V1/V2/V2.1 itemise only the findings with exact spans; the SUPPORTED/INTERPRETATION mass is recorded as counts, so the sweep was run over article prose plus the WG-2A enumeration, the only itemised proposition set that exists.",
+  "candidates_inspected": 22,
+  "changes": 1,
+  "candidates": [
+    {
+      "sweep_id": "A1",
+      "article": "FORM-1.3",
+      "article_line": 5,
+      "span": "The visitor navigates by appetite.",
+      "class": "A",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Describes visitor behaviour, not an asserted internal state. Directly grounded in 'follow your nose and hope you sniff out something you like'."
+    },
+    {
+      "sweep_id": "A2",
+      "article": "FORM-1.3",
+      "article_line": 15,
+      "span": "the visitor's present encounter with work previously unknown to them",
+      "class": "A",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "'Previously unknown to them' is entailed by the source's 'some subcultural genius or longlost creative you've never heard of'. No preparation or intention state added."
+    },
+    {
+      "sweep_id": "A3",
+      "article": "FORM-1.3-R2",
+      "article_line": 11,
+      "span": "meets images they had no way of anticipating",
+      "class": "A",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Restates unfamiliarity. If you have never heard of the creative you cannot anticipate the images; this is entailed, not added. Contrast GR2-01, which adds a claim about what the visitor BROUGHT."
+    },
+    {
+      "sweep_id": "A4",
+      "article": "FORM-1.3-R2",
+      "article_line": 15,
+      "span": "someone who did not know it existed",
+      "class": "A",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Entailed by 'you've never heard of'."
+    },
+    {
+      "sweep_id": "A5",
+      "article": "FORM-1.3-R2",
+      "article_line": 3,
+      "span": "a name that arrives without preparation",
+      "class": "A",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Sits in GR2-01's sentence but is a separate clause. 'Without preparation' alone is a restatement of unfamiliarity; the gold finding is the following clause asserting what the visitor brought. Not separately changed."
+    },
+    {
+      "sweep_id": "A6",
+      "article": "FORM-1.3-R3",
+      "article_line": 13,
+      "span": "a story becoming known to someone who did not know it",
+      "class": "A",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Entailed by 'never heard of'."
+    },
+    {
+      "sweep_id": "A7",
+      "article": "FORM-1.3-R3",
+      "article_line": 9,
+      "span": "a word that puts the visitor at the moment of revelation and makes the revelation theirs",
+      "class": "A",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "A reading of the source's second-person grammar, not an assertion about any visitor's mind."
+    },
+    {
+      "sweep_id": "B1",
+      "article": "FORM-1.3",
+      "article_line": 7,
+      "span": "not because the review ranks them or gathers them into a group",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "UNSUPPORTED",
+      "changed": true,
+      "reason": "THE CONSISTENCY CORRECTION. Structurally identical to GR2-02: a factual proposition about what the review does NOT do. Requires source support; the source arguably contradicts it ('worth telling', 'deserves to be seen far outside the city's confines', 'it's all eclipsed by his weird little paintings'). Assigned G13-04."
+    },
+    {
+      "sweep_id": "B2",
+      "article": "FORM-1.3",
+      "article_line": 7,
+      "span": "because of what it happens to record about each",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "'Happens to' carries a faint incidental-intent implication, but the proposition states the ARTICLE's selection basis, and the source does record those facts. Low-grade; reported, not changed."
+    },
+    {
+      "sweep_id": "B3",
+      "article": "FORM-1.3",
+      "article_line": 3,
+      "span": "The line is a joke about the accumulation",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Characterises the register of a specific quoted line. Grounded in the source's own comic voice ('feel like Columbo', 'You bastard!'). A reading of grounded material, not a new fact about intent."
+    },
+    {
+      "sweep_id": "B4",
+      "article": "FORM-1.3",
+      "article_line": 5,
+      "span": "which is less a strategy than an admission that the alternative, a coherent map, is not on offer",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Evaluative reading. The source states outright that it is impossible to figure out how any of it fits together, so the 'admission' reading operates on grounded material."
+    },
+    {
+      "sweep_id": "B5",
+      "article": "FORM-1.3",
+      "article_line": 9,
+      "span": "The demand arrives while the visit is still in progress",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Positional claim about the review. Borne out: the duty passage is followed by further gallery coverage in the source."
+    },
+    {
+      "sweep_id": "B6",
+      "article": "FORM-1.3",
+      "article_line": 11,
+      "span": "the word the review keeps reaching for",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Repetition claim, directly verifiable in the source (hidden stories, secret histories, undiscovered archives, uncovered, another largely undiscovered artist)."
+    },
+    {
+      "sweep_id": "B7",
+      "article": "FORM-1.3",
+      "article_line": 11,
+      "span": "The verbs belong to the visitor",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Grammatical observation about the source, verifiable (second person throughout)."
+    },
+    {
+      "sweep_id": "B8",
+      "article": "FORM-1.3-R2",
+      "article_line": 9,
+      "span": "Midway through the review comes a demand",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "FLAGGED, NOT CHANGED. The duty passage is the 13th of 19 paragraphs (~68%), not the midpoint. Left unchanged because 'midway' is a loose narrative connective with no fixed threshold rather than an assertion about the review's stance, ranking or omission; WG-2A independently reached UNCERTAIN, not UNSUPPORTED, on this same span. Recommended for owner review as the one genuinely arguable residual. Changing it would alter the frozen V2.1 totals."
+    },
+    {
+      "sweep_id": "B9",
+      "article": "FORM-1.3-R2",
+      "article_line": 11,
+      "span": "The review reaches repeatedly for discovery and its family",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Verifiable repetition claim."
+    },
+    {
+      "sweep_id": "B10",
+      "article": "FORM-1.3-R2",
+      "article_line": 11,
+      "span": "The word does real work in the piece",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Evaluation of a grounded pattern. No new fact about what the review says, ranks or intends."
+    },
+    {
+      "sweep_id": "B11",
+      "article": "FORM-1.3-R3",
+      "article_line": 5,
+      "span": "The number is the review's, and it sits there without commentary",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "DISCRIMINATING CASE. A negative claim about source omission \u2014 the same SHAPE as GR2-02/G13-04 \u2014 but this one IS borne out: the source states 'thousands of paintings and drawings he amassed over his lifetime' and adds no remark on the quantity. Class-B claims require source support; this one has it. Proof that the correction is about EVIDENCE, not about banning negative meta-claims."
+    },
+    {
+      "sweep_id": "B12",
+      "article": "FORM-1.3-R3",
+      "article_line": 9,
+      "span": "The reviewer's word for what happens in these rooms is a specific one, used more than once",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Verifiable repetition claim."
+    },
+    {
+      "sweep_id": "B13",
+      "article": "FORM-1.3-R3",
+      "article_line": 9,
+      "span": "the review opens",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Verifiable: the Columbo line is the source's first sentence."
+    },
+    {
+      "sweep_id": "B14",
+      "article": "FORM-1.3-R3",
+      "article_line": 7,
+      "span": "the reviewer's own position on the matter of hidden things",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "Grounded: the source marks it as the reviewer's own view ('I think they have a duty')."
+    },
+    {
+      "sweep_id": "B15",
+      "article": "FORM-1.3-R3",
+      "article_line": 5,
+      "span": "Two of those names are worth setting down with their facts attached",
+      "class": "B",
+      "verdict_before": "INTERPRETATION",
+      "verdict_after": "INTERPRETATION",
+      "changed": false,
+      "reason": "The article's own selection stated WITHOUT any negative claim about the review. R3 is the clean variant of the construction that fails in FORM-1.3 and R2 \u2014 evidence the defect is the meta-claim, not the act of selecting."
+    }
+  ],
+  "out_of_scope": [
+    {
+      "span": "the festival's characteristic verb",
+      "article": "FORM-1.3-R2",
+      "current": "UNCERTAIN",
+      "note": "Already UNCERTAIN in Gold V1. Sweep covers INTERPRETATION-classified propositions only. Left unchanged."
+    },
+    {
+      "span": "What it does not describe, and cannot",
+      "article": "FORM-1.3-R2",
+      "current": "UNCERTAIN",
+      "note": "Already UNCERTAIN in Gold V1, downstream of GR2-04. Left unchanged."
+    }
+  ],
+  "flagged_for_owner_not_changed": [
+    "B8"
+  ]
+}
