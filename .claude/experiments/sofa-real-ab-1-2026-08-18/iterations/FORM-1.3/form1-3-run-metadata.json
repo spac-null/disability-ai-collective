@@ -1,0 +1,27 @@
+{
+  "iteration": "FORM-1.3",
+  "phase": "GENERATED",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "is_production_path_replay": false,
+  "note": "Manual architecture-development run. Writer identity does NOT match the frozen Edinburgh lineage (openrouter/claude-opus-4.8 via CLIProxy); this limits direct comparison with FORM-1/1.1/1.2.",
+  "writer_generations_planned": 1,
+  "retries": 0,
+  "candidates": 1,
+  "frozen_input_sha256": {
+    "source": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+    "commission": "870d84ba931abf194db5fad8017185cbf2f034ec08e383d1d89fcb8b3fce3387",
+    "evidence": "8628b234e1fc335b391b26a2dddf7b048b626f073b09a0cf6706f4e2d5ce60a5"
+  },
+  "packet_sha256": "a620d0ce700a501de1695cc63253b518da283397388dba4dfb1f570af8f8e8ab",
+  "prompt_sha256": "12e520e449752ed89522963c77a48fc2b86636a31a20d8f3ca47ac4ec276cdfd",
+  "system_prompt_sha256": "7ceda368a14d30d97a8233d111e465651b3b247bf3384ad01a43c8447a4bf064",
+  "user_prompt_sha256": "3c800434a2b1a986c6d9e06425f6358eee59417f3ff9733078cbdd1ccb93504f",
+  "source_embedded_in_prompt_verbatim": true,
+  "module_sha256": "fac5041e9ab1eade4c7d81df2e89957d3a7ec1dcc8e869db393b6184c785df91",
+  "runner_sha256": "5a2503cb6f80387bbb5917c5465e2725a8810fdcf226d04d16628ea4c8f1de88",
+  "model_identity_local": "claude-opus-5[1m] (local Claude Code subscription, general-purpose subagent, model inherited from session)",
+  "writer_generations_made": 1,
+  "raw_response_sha256": "8318b0a3207a8e2bafbfe29fc8484c2a2752762b9e50fb9c70290862bf309c85",
+  "article_sha256": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+  "article_word_count": 691
+}
