@@ -1,0 +1,128 @@
+{"sentences":[
+{"ARTICLE_SENTENCE_ID":1,"claims":[
+{"CLAIM_ID":"S1-C1","EXACT_SPAN":"Following the Nose Through Edinburgh","CLAIM":"The subject is an Edinburgh event, and 'following the nose' is the mode of moving through it.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"You’ve just got to follow your nose and hope you sniff out something you like.","REASON":"Headline; the place (Edinburgh art festival) and the nose-following metaphor both come directly from the source."}
+]},
+{"ARTICLE_SENTENCE_ID":2,"claims":[
+{"CLAIM_ID":"S2-C1","EXACT_SPAN":"you'll have uncovered so many hidden stories you'll feel like Columbo","CLAIM":"Doing the Edinburgh art festival leaves you having uncovered so many hidden stories you feel like Columbo.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.","REASON":"Near-verbatim reproduction of the source's opening line."},
+{"CLAIM_ID":"S2-C2","EXACT_SPAN":"the reviewer writes","CLAIM":"This formulation is attributed to the reviewer.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.","REASON":"Attribution matches: the sentence is the reviewer's own."}
+]},
+{"ARTICLE_SENTENCE_ID":3,"claims":[
+{"CLAIM_ID":"S3-C1","EXACT_SPAN":"The festival sprawls","CLAIM":"The festival is sprawling/unwieldy in scale.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"But EAF is also a big, unwieldy, confusing thing.","REASON":"'Sprawls' restates the source's 'big, unwieldy, confusing'."},
+{"CLAIM_ID":"S3-C2","EXACT_SPAN":"curated displays, satellite exhibitions, performances, off-site projects","CLAIM":"The festival comprises curated displays, satellite exhibitions, performances and off-site projects.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"There are curated displays, satellite exhibitions, performances, off-site projects","REASON":"Verbatim list from the source."},
+{"CLAIM_ID":"S3-C3","EXACT_SPAN":"in the reviewer's account, it is impossible to figure out how any of it fits together","CLAIM":"The reviewer holds that it is impossible to work out how the parts fit together.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"and it’s impossible to figure out how any of it fits together","REASON":"Verbatim, correctly attributed to the reviewer."}
+]},
+{"ARTICLE_SENTENCE_ID":4,"claims":[
+{"CLAIM_ID":"S4-C1","EXACT_SPAN":"There is no map that resolves it.","CLAIM":"Nothing organises the festival into a comprehensible whole.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"it’s impossible to figure out how any of it fits together","REASON":"Figurative restatement of the source's incoherence point; asserts no new fact and is not offered as reported detail (no literal claim about festival maps is being made)."}
+]},
+{"ARTICLE_SENTENCE_ID":5,"claims":[
+{"CLAIM_ID":"S5-C1","EXACT_SPAN":"You've just got to follow your nose and hope you sniff out something you like.","CLAIM":"The only way through is to follow your nose and hope to find something you like.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"You’ve just got to follow your nose and hope you sniff out something you like.","REASON":"Verbatim from the source."}
+]},
+{"ARTICLE_SENTENCE_ID":6,"claims":[
+{"CLAIM_ID":"S6-C1","EXACT_SPAN":"And the nose keeps turning up the same kind of thing.","CLAIM":"The wandering repeatedly yields the same category of encounter.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"the whole festival is a celebration of the underground and unheralded","REASON":"Transitional line; the article's own reading of a pattern the source describes, asserting no new fact."}
+]},
+{"ARTICLE_SENTENCE_ID":7,"claims":[
+{"CLAIM_ID":"S7-C1","EXACT_SPAN":"You can't walk into a gallery, the review says, without learning about some subcultural genius or longlost creative you've never heard of.","CLAIM":"The review states that every gallery introduces a subcultural genius or long-lost creative the visitor has never heard of.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.","REASON":"Verbatim, correctly attributed."}
+]},
+{"ARTICLE_SENTENCE_ID":8,"claims":[
+{"CLAIM_ID":"S8-C1","EXACT_SPAN":"a sequence of rooms, each producing a name that arrives without preparation, without the visitor having brought anything to the encounter except the willingness to walk in","CLAIM":"The festival experience consists of successive unprepared encounters with unfamiliar names.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.","REASON":"The article's own characterisation of the experience described in the source; no new factual assertion."}
+]},
+{"ARTICLE_SENTENCE_ID":9,"claims":[
+{"CLAIM_ID":"S9-C1","EXACT_SPAN":"taken here not because the review places them above the rest but simply because they can be set beside each other","CLAIM":"The two artists are selected by this article, not ranked by the review.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"The article's own, explicitly flagged editorial selection rationale; it disclaims rather than asserts a source judgment."}
+]},
+{"ARTICLE_SENTENCE_ID":10,"claims":[
+{"CLAIM_ID":"S10-C1","EXACT_SPAN":"Sandra George (1957-2013)","CLAIM":"Sandra George lived 1957-2013.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"that of Sandra George (1957-2013) is worth telling","REASON":"Name and dates verbatim."},
+{"CLAIM_ID":"S10-C2","EXACT_SPAN":"was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh","CLAIM":"George was a black photographer and photojournalist documenting life on the margins of inner city Edinburgh.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"She was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh.","REASON":"Verbatim."},
+{"CLAIM_ID":"S10-C3","EXACT_SPAN":"protests and action groups working out of living rooms and town halls","CLAIM":"She photographed protests and action groups operating from living rooms and town halls.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"She captured protests and action groups operating out of living rooms and town halls","REASON":"Verbatim apart from 'operating'/'working'."},
+{"CLAIM_ID":"S10-C4","EXACT_SPAN":"people in hostels and housing schemes","CLAIM":"She photographed people living in hostels and housing schemes.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"people living in hostels and housing schemes","REASON":"Verbatim."},
+{"CLAIM_ID":"S10-C5","EXACT_SPAN":"kids playing in bleak places","CLAIM":"Her pictures include children playing in bleak surroundings.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"There are kids everywhere, always playing and laughing, often in desperately bleak places.","REASON":"Supported; the article softens rather than strengthens the source ('often in desperately bleak places')."},
+{"CLAIM_ID":"S10-C6","EXACT_SPAN":"herself appearing throughout in self-portraits, often with her young son","CLAIM":"George appears throughout in self-portraits, often with her young son.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"She appears throughout her show at City Art Gallery in self-portraits, often with her young son.","REASON":"Supported; the source locates the appearances in her City Art Gallery show, which the article does not contradict."}
+]},
+{"ARTICLE_SENTENCE_ID":11,"claims":[
+{"CLAIM_ID":"S11-C1","EXACT_SPAN":"Like a lot of people in EAF","CLAIM":"Her situation is typical of many artists in EAF.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"Like a lot of people in EAF, she never showed her work publicly in her lifetime","REASON":"Verbatim, attributed to the review."},
+{"CLAIM_ID":"S11-C2","EXACT_SPAN":"she never showed her work publicly in her lifetime","CLAIM":"George never exhibited her work publicly while alive.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"she never showed her work publicly in her lifetime","REASON":"Verbatim."},
+{"CLAIM_ID":"S11-C3","EXACT_SPAN":"was only discovered after her death in 2013","CLAIM":"Her work was discovered only after she died in 2013.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"and was only discovered after her death in 2013","REASON":"Verbatim."}
+]},
+{"ARTICLE_SENTENCE_ID":12,"claims":[
+{"CLAIM_ID":"S12-C1","EXACT_SPAN":"Frank Walter (1926-2009)","CLAIM":"Frank Walter lived 1926-2009.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"It’s all centred on Frank Walter (1926-2009)","REASON":"Name and dates verbatim."},
+{"CLAIM_ID":"S12-C2","EXACT_SPAN":"the Antiguan painter, writer, poet and polymath","CLAIM":"Walter was an Antiguan painter, writer, poet and polymath.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"an Antiguan painter, writer, poet and polymath","REASON":"Verbatim."},
+{"CLAIM_ID":"S12-C3","EXACT_SPAN":"at the centre of the group show at Ingleby Gallery","CLAIM":"Walter is the centre of the group show at Ingleby Gallery.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"The group show at Ingleby Gallery is good, too. It’s all centred on Frank Walter","REASON":"Verbatim in substance."},
+{"CLAIM_ID":"S12-C4","EXACT_SPAN":"died having never shown any of the thousands of paintings and drawings he amassed over his lifetime","CLAIM":"Walter died without ever exhibiting any of the thousands of works he made.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime","REASON":"Verbatim."}
+]},
+{"ARTICLE_SENTENCE_ID":13,"claims":[
+{"CLAIM_ID":"S13-C1","EXACT_SPAN":"Small works","CLAIM":"Walter's works are small.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"His work is small, subtle, strange.","REASON":"Verbatim attribute."},
+{"CLAIM_ID":"S13-C2","EXACT_SPAN":"on ripped cardboard and fading paper","CLAIM":"He painted on ripped cardboard and fading paper.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"He paints on ripped cardboard and fading paper","REASON":"Verbatim."},
+{"CLAIM_ID":"S13-C3","EXACT_SPAN":"rainbows and stars and smiling faces","CLAIM":"His subjects include rainbows, stars and smiling faces.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"he depicts rainbows and stars and smiling faces","REASON":"Verbatim."},
+{"CLAIM_ID":"S13-C4","EXACT_SPAN":"trees bending at weird angles","CLAIM":"He depicts trees that bend at weird angles.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"strange trees that bend and twist at weird angles","REASON":"Verbatim in substance."}
+]},
+{"ARTICLE_SENTENCE_ID":14,"claims":[
+{"CLAIM_ID":"S14-C1","EXACT_SPAN":"Midway through the review","CLAIM":"The duty passage occurs midway through the review.","VERDICT":"UNCERTAIN","SOURCE_ANCHOR":"If contemporary artists and institutions want to tell hidden stories, I think they have a duty","REASON":"Positional claim about the source's structure. In the supplied source the passage sits roughly two-thirds of the way through (13th of 19 body paragraphs), not at the midpoint; whether 'midway' is acceptable as approximation is not resolvable from the text alone. A stated paragraph or word position would resolve it."},
+{"CLAIM_ID":"S14-C2","EXACT_SPAN":"comes a demand","CLAIM":"The passage constitutes a demand.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"I think they have a duty","REASON":"The article's characterisation of a hedged first-person opinion ('I think') as a demand; offered as the article's reading, not as reported wording."}
+]},
+{"ARTICLE_SENTENCE_ID":15,"claims":[
+{"CLAIM_ID":"S15-C1","EXACT_SPAN":"If contemporary artists and institutions want to tell hidden stories","CLAIM":"The duty is conditional on artists and institutions wanting to tell hidden stories.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"If contemporary artists and institutions want to tell hidden stories","REASON":"Verbatim, conditional preserved."},
+{"CLAIM_ID":"S15-C2","EXACT_SPAN":"the reviewer argues, they have a duty — to viewers and to their subjects — to tell them clearly","CLAIM":"The reviewer holds that they owe a duty to viewers and to subjects to tell hidden stories clearly.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"I think they have a duty – to viewers and to their subjects – to tell them clearly","REASON":"Verbatim; 'the reviewer argues' preserves the source's 'I think' hedge as opinion rather than fact."}
+]},
+{"ARTICLE_SENTENCE_ID":16,"claims":[
+{"CLAIM_ID":"S16-C1","EXACT_SPAN":"It is stated as an obligation running two ways at once","CLAIM":"The duty as stated has two addressees.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"a duty – to viewers and to their subjects – to tell them clearly","REASON":"The source names exactly two directions of obligation."},
+{"CLAIM_ID":"S16-C2","EXACT_SPAN":"the second direction is the harder one","CLAIM":"The duty toward subjects is harder to meet than the duty toward viewers.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"The source ranks nothing; this is the article's own evaluative reading, visibly its own argument rather than reported fact."}
+]},
+{"ARTICLE_SENTENCE_ID":17,"claims":[
+{"CLAIM_ID":"S17-C1","EXACT_SPAN":"Clarity toward viewers is a matter of craft","CLAIM":"Clarity toward viewers is essentially a craft problem.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"The article's own gloss on the duty; asserts no source fact."},
+{"CLAIM_ID":"S17-C2","EXACT_SPAN":"of handouts that don't melt the mind","CLAIM":"The review complained of a handout that was indecipherable.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"The handout talks about vibrations, energy, AI, weather systems in Texas. It’s mind-meltingly indecipherable.","REASON":"Direct echo of the Talbot Rice handout criticism."},
+{"CLAIM_ID":"S17-C3","EXACT_SPAN":"of context that isn't wispy","CLAIM":"The review criticised work for being wispy and barely contextualised.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"is let down by some wispy, barely contextualised lumps and scrawls","REASON":"Direct echo of the Richard Maguire criticism."}
+]},
+{"ARTICLE_SENTENCE_ID":18,"claims":[
+{"CLAIM_ID":"NO_CHECKABLE_CLAIM","EXACT_SPAN":"Clarity toward subjects is something else.","CLAIM":"Transitional statement distinguishing the second obligation.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"Connective tissue introducing the article's own argument; no source-relative proposition."}
+]},
+{"ARTICLE_SENTENCE_ID":19,"claims":[
+{"CLAIM_ID":"S19-C1","EXACT_SPAN":"It asks what the telling owes to the person being told about, and that question does not settle just because the room is well hung.","CLAIM":"An obligation to subjects raises a question that good presentation does not answer.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"The article's own argument, offered as such; no factual assertion about the source."}
+]},
+{"ARTICLE_SENTENCE_ID":20,"claims":[
+{"CLAIM_ID":"NO_CHECKABLE_CLAIM","EXACT_SPAN":"Hold that beside the festival's characteristic verb.","CLAIM":"Transitional instruction to the reader.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"Pure connective tissue; asserts nothing checkable against the source."}
+]},
+{"ARTICLE_SENTENCE_ID":21,"claims":[
+{"CLAIM_ID":"S21-C1","EXACT_SPAN":"The review reaches repeatedly for discovery and its family","CLAIM":"Discovery vocabulary recurs across the review.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"undiscovered archives","REASON":"The source uses 'undiscovered', 'discovered', 'sniff out' and 'previously undiscovered' at several separate points, so the recurrence claim holds."},
+{"CLAIM_ID":"S21-C2","EXACT_SPAN":"undiscovered archives","CLAIM":"The review uses the phrase 'undiscovered archives'.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"We’re talking queer narratives, secret histories, undiscovered archives","REASON":"Verbatim phrase present."},
+{"CLAIM_ID":"S21-C3","EXACT_SPAN":"another largely undiscovered artist","CLAIM":"The review uses the phrase 'another largely undiscovered artist'.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"Another largely undiscovered artist, Sadao Hasegawa (1945-1999)","REASON":"Verbatim phrase present."},
+{"CLAIM_ID":"S21-C4","EXACT_SPAN":"the visitor who sniffs out something they like","CLAIM":"The review describes sniffing out something you like.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"hope you sniff out something you like","REASON":"Verbatim in substance; person shifted from second to third, no new claim."},
+{"CLAIM_ID":"S21-C5","EXACT_SPAN":"the gallery-goer scolded for never having heard of this previously undiscovered marginalised artist","CLAIM":"The review imagines a visitor being told off for not having heard of a previously undiscovered marginalised artist.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"“You’ve never heard of this previously undiscovered marginalised artist? You bastard!”","REASON":"Verbatim quotation, with the source's 'getting told off in every gallery you enter' supporting 'scolded'."}
+]},
+{"ARTICLE_SENTENCE_ID":22,"claims":[
+{"CLAIM_ID":"S22-C1","EXACT_SPAN":"The word does real work in the piece.","CLAIM":"The discovery vocabulary is load-bearing in the review.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"The article's own critical judgment about the source's language; no new fact asserted."}
+]},
+{"ARTICLE_SENTENCE_ID":23,"claims":[
+{"CLAIM_ID":"S23-C1","EXACT_SPAN":"It describes the shape of an afternoon","CLAIM":"The word describes the experience of a single visit/afternoon.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"Figurative framing by the article; the source specifies no duration of visit, and no literal timing claim is being reported."},
+{"CLAIM_ID":"S23-C2","EXACT_SPAN":"City Art Gallery","CLAIM":"City Art Gallery is one of the festival venues.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"She appears throughout her show at City Art Gallery in self-portraits","REASON":"Venue named in the source."},
+{"CLAIM_ID":"S23-C3","EXACT_SPAN":"Ingleby","CLAIM":"Ingleby Gallery is one of the festival venues.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"The group show at Ingleby Gallery is good, too.","REASON":"Venue named in the source."},
+{"CLAIM_ID":"S23-C4","EXACT_SPAN":"Custom Lane","CLAIM":"Custom Lane is one of the festival venues.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"an eye-popping display of throbbing members and gushing penetration at Custom Lane","REASON":"Venue named in the source."}
+]},
+{"ARTICLE_SENTENCE_ID":24,"claims":[
+{"CLAIM_ID":"S24-C1","EXACT_SPAN":"It is an event that happens to the person looking, and it happens now, in the present tense of the visit","CLAIM":"Discovery, as used, is located in the viewer's present experience.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"The article's own analysis of the source's usage; asserts no new fact."},
+{"CLAIM_ID":"S24-C2","EXACT_SPAN":"the reviewer's own nose-first route","CLAIM":"The reviewer moved through the festival by following their nose.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"You’ve just got to follow your nose and hope you sniff out something you like.","REASON":"The source prescribes and describes exactly this mode of navigation."},
+{"CLAIM_ID":"S24-C3","EXACT_SPAN":"a city too large to be read as a whole","CLAIM":"The city is too large to be comprehended as a whole.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"Basically, EAF is too big and complex, with too many moving parts and collaborations and clashing ideas to really make sense.","REASON":"The source attributes the unreadable bigness to the festival, not to the city; the article transfers it as its own figure while describing a city-wide festival. Offered as the article's framing rather than reported fact, but note the shift of referent."}
+]},
+{"ARTICLE_SENTENCE_ID":25,"claims":[
+{"CLAIM_ID":"NO_CHECKABLE_CLAIM","EXACT_SPAN":"Set that against the two dates.","CLAIM":"Transitional instruction to the reader.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"Pure connective tissue; the dates themselves are asserted in the sentences that follow."}
+]},
+{"ARTICLE_SENTENCE_ID":26,"claims":[
+{"CLAIM_ID":"S26-C1","EXACT_SPAN":"George never showed her work publicly in her lifetime","CLAIM":"George never exhibited publicly while alive.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"she never showed her work publicly in her lifetime","REASON":"Verbatim."},
+{"CLAIM_ID":"S26-C2","EXACT_SPAN":"was found after 2013","CLAIM":"Her work was found after 2013.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"and was only discovered after her death in 2013","REASON":"Restates 'discovered after her death in 2013'; the source gives 2013 as the year of death and the discovery as subsequent."}
+]},
+{"ARTICLE_SENTENCE_ID":27,"claims":[
+{"CLAIM_ID":"S27-C1","EXACT_SPAN":"Walter died having never shown any of it.","CLAIM":"Walter died without exhibiting any of his work.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime","REASON":"Verbatim in substance."}
+]},
+{"ARTICLE_SENTENCE_ID":28,"claims":[
+{"CLAIM_ID":"S28-C1","EXACT_SPAN":"Sadao Hasegawa's","CLAIM":"Sadao Hasegawa is an artist featured in the review.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"Another largely undiscovered artist, Sadao Hasegawa (1945-1999)","REASON":"Name present in the source."},
+{"CLAIM_ID":"S28-C2","EXACT_SPAN":"work, the review adds, stayed unpublished and unseen in his lifetime","CLAIM":"All of Hasegawa's work stayed unpublished and unseen during his lifetime.","VERDICT":"UNSUPPORTED","SOURCE_ANCHOR":"Most of the Japanese illustrator’s work, you guessed it, stayed unpublished and unseen in his lifetime.","REASON":"The source's qualifier 'Most of' is dropped, turning a partial claim into an absolute one and misattributing the absolute version to the review."}
+]},
+{"ARTICLE_SENTENCE_ID":29,"claims":[
+{"CLAIM_ID":"S29-C1","EXACT_SPAN":"The word discovery, then, is describing the visitor's side of the encounter.","CLAIM":"The review's use of 'discovery' refers to the viewer's experience rather than the artist's.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"The article's own conclusion about the source's vocabulary, visibly offered as an argument."}
+]},
+{"ARTICLE_SENTENCE_ID":30,"claims":[
+{"CLAIM_ID":"S30-C1","EXACT_SPAN":"It marks the moment work becomes newly visible to someone who did not know it existed.","CLAIM":"Discovery names the moment work becomes visible to an unaware viewer.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"Continuation of the article's own definition; no source-relative fact asserted."}
+]},
+{"ARTICLE_SENTENCE_ID":31,"claims":[
+{"CLAIM_ID":"S31-C1","EXACT_SPAN":"What it does not describe, and cannot, is the other span of time these dates measure","CLAIM":"The word discovery fails to name the artists' own unshown years.","VERDICT":"INTERPRETATION","SOURCE_ANCHOR":"","REASON":"The article's closing argument about the limits of the source's vocabulary; explicitly its own reading."},
+{"CLAIM_ID":"S31-C2","EXACT_SPAN":"the years in which that same work went unshown while its maker was alive","CLAIM":"The work of these artists went unshown during their lifetimes.","VERDICT":"SUPPORTED","SOURCE_ANCHOR":"she never showed her work publicly in her lifetime","REASON":"Supported for George and Walter by the source; for Hasegawa the source qualifies it as 'Most of' his work, which this general formulation does not contradict."}
+]}
+]}

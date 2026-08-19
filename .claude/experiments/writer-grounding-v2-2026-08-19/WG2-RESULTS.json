@@ -1,0 +1,107 @@
+{
+  "experiment": "WG-2 verdict-boundary calibration",
+  "date": "2026-08-19",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "production_wiring": "NONE",
+  "frozen_inputs": {
+    "gold_propositions": 95,
+    "gold_unsupported": 10,
+    "gold_interpretation": 39,
+    "enumerated_claims": 176,
+    "enumeration": "WG-1B, unchanged, not re-run"
+  },
+  "wg2a_semantic": {
+    "propositions_reverdicted": 176,
+    "distribution": {
+      "SUPPORTED": 114,
+      "INTERPRETATION": 56,
+      "UNSUPPORTED": 5,
+      "UNCERTAIN": 1
+    },
+    "unsupported_recall": 0.5,
+    "tp": 5,
+    "fn": 5,
+    "fp": 0,
+    "precision": 1.0,
+    "interpretation_false_positives": 0,
+    "missed": [
+      "G13-03",
+      "GR2-01",
+      "GR2-02",
+      "GR2-03",
+      "GR3-02"
+    ],
+    "key_finding": "All five contested findings received EXACTLY the same verdict as WG-1B (INTERPRETATION) under a materially sharpened principle. The boundary did not move."
+  },
+  "wg2b_deterministic": {
+    "core_rules": {
+      "unsupported_recall": 0.6,
+      "tp": 6,
+      "fp": 32,
+      "precision": 0.16,
+      "fp_on_interpretation": 13,
+      "missed": [
+        "G13-03",
+        "GR2-02",
+        "GR2-03",
+        "GR3-02"
+      ]
+    },
+    "core_plus_marker": {
+      "unsupported_recall": 1.0,
+      "tp": 10,
+      "fp": 36,
+      "precision": 0.22,
+      "fp_on_interpretation": 17
+    },
+    "by_rule": {
+      "R1_TEMPORAL": {
+        "gold": 3,
+        "false": 2
+      },
+      "R2_MENTAL_STATE": {
+        "gold": 1,
+        "false": 1
+      },
+      "R3_PROPER_NOUN": {
+        "gold": 1,
+        "false": 3
+      },
+      "R4_QUALIFIER_DROPPED": {
+        "gold": 2,
+        "false": 26
+      },
+      "R5_UNMARKED_COMPARATIVE_CAUSAL": {
+        "gold": 4,
+        "false": 4
+      }
+    },
+    "r4_defect": "R4 fires whenever the returned anchor contains any quantifier token anywhere, regardless of whether it modifies the same noun phrase. It caught the one real qualifier drop and ~25 spurious ones. Rule-design artifact, reported not repaired."
+  },
+  "visible_marker_hypothesis": {
+    "gold_recovered": 4,
+    "legitimate_interpretations_falsely_rejected": 4,
+    "net_discrimination": 0,
+    "verdict": "Recovers exactly the four remaining gold findings AND falsely converts four legitimate interpretations. 1:1. Rejected as a decision rule — recovering the misses is not evidence of discrimination."
+  },
+  "success_gate": {
+    "required_recall": 1.0,
+    "required_fp": "<=2",
+    "met_by": null
+  },
+  "decision": "D — VERDICT_BOUNDARY_STILL_UNSOLVED",
+  "open_calibration_question": "The five residual disagreements are not spread across classes — they concentrate on ONE semantic family: evaluative comparatives and causal readings applied to material the source DOES establish ('the second side is the one that presses', 'the second direction is the harder one', 'harder to discharge, because...'). Two independent detector configurations, under two different prompts, classified all five identically as INTERPRETATION. That stability means the residue may be partly a GOLD-CALIBRATION question, not purely a detector defect. Per instruction the gold was NOT altered; the tension is recorded for the owner to resolve.",
+  "cost": {
+    "WG-2A": "1 extra LLM call/article, 176 props in+out, 79-119s observed",
+    "WG-2B": "0 LLM calls, milliseconds, fully auditable"
+  },
+  "candidate_union_v2": {
+    "config": "WG-2A semantic verdict UNION narrow rules R1+R2+R3",
+    "recall": 0.5,
+    "tp": 5,
+    "fp": 6,
+    "precision": 0.45,
+    "fp_on_interpretation": 4,
+    "finding": "Adds ZERO recall over WG-2A alone and costs 6 false positives. The narrow deterministic rules find nothing the semantic verdict has not already found. Union is strictly dominated by WG-2A alone."
+  }
+}

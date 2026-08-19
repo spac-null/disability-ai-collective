@@ -1,0 +1,621 @@
+[
+  {
+    "ID": "P1",
+    "EXACT_SPAN": "Following the Nose Through Edinburgh",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [
+      [
+        "R3_PROPER_NOUN",
+        "Nose Through Edinburgh"
+      ]
+    ],
+    "marker_hits": [],
+    "VERDICT_CORE": "UNSUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P2",
+    "EXACT_SPAN": "the reviewer writes",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [
+      [
+        "R4_QUALIFIER_DROPPED",
+        "many"
+      ]
+    ],
+    "marker_hits": [],
+    "VERDICT_CORE": "UNSUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P3",
+    "EXACT_SPAN": "you will have uncovered so many hidden stories you will feel like Columbo",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P4",
+    "EXACT_SPAN": "the Edinburgh art festival",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P5",
+    "EXACT_SPAN": "The line is a joke about the accumulation, but it also describes the basic condition of moving through the thing.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P6",
+    "EXACT_SPAN": "You cannot walk into a gallery here without learning about some subcultural genius or long-lost creative you have never heard of.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P7",
+    "EXACT_SPAN": "That is the texture of the visit, gallery after gallery.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P8",
+    "EXACT_SPAN": "The festival itself, in the reviewer's account, resists being held in one hand.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P9",
+    "EXACT_SPAN": "There are curated displays, satellite exhibitions, performances, off-site projects, and it is impossible to figure out how any of it fits together.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P10",
+    "EXACT_SPAN": "No route through it presents itself.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P11",
+    "EXACT_SPAN": "You have just got to follow your nose and hope you sniff out something you like",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P12",
+    "EXACT_SPAN": "which is less a strategy than an admission that the alternative, a coherent map, is not on offer",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [
+      [
+        "R5_UNMARKED_COMPARATIVE_CAUSAL",
+        ""
+      ]
+    ],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P13",
+    "EXACT_SPAN": "The visitor navigates by appetite.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P14",
+    "EXACT_SPAN": "What arrives, arrives in the order the walking produces it.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P15",
+    "EXACT_SPAN": "not because the review ranks them or gathers them into a group, but because of what it happens to record about each",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [
+      [
+        "R5_UNMARKED_COMPARATIVE_CAUSAL",
+        ""
+      ]
+    ],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P16",
+    "EXACT_SPAN": "Sandra George, 1957–2013",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P17",
+    "EXACT_SPAN": "was a black photographer and photojournalist",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P18",
+    "EXACT_SPAN": "who documented life on the margins of inner city Edinburgh",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P19",
+    "EXACT_SPAN": "her work is at City Art Gallery",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P20",
+    "EXACT_SPAN": "The review notes that",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [
+      [
+        "R4_QUALIFIER_DROPPED",
+        "a lot"
+      ]
+    ],
+    "marker_hits": [],
+    "VERDICT_CORE": "UNSUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P21",
+    "EXACT_SPAN": "like a lot of people in the festival",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P22",
+    "EXACT_SPAN": "she never showed her work publicly in her lifetime, and was only discovered after her death in 2013",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P23",
+    "EXACT_SPAN": "Frank Walter, 1926–2009",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P24",
+    "EXACT_SPAN": "is the centre of the group show at Ingleby Gallery",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P25",
+    "EXACT_SPAN": "an Antiguan painter, writer, poet and polymath",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P26",
+    "EXACT_SPAN": "who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P27",
+    "EXACT_SPAN": "Two artists, two bodies of work, and in each case the same recorded fact about when the showing did not happen.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P28",
+    "EXACT_SPAN": "the reviewer sets an explicit demand",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P29",
+    "EXACT_SPAN": "If contemporary artists and institutions want to tell hidden stories, the review argues, they have a duty — to viewers and to their subjects — to tell them clearly.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P30",
+    "EXACT_SPAN": "It is a two-sided obligation, and the second side is the one that presses.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [
+      [
+        "R5_UNMARKED_COMPARATIVE_CAUSAL",
+        ""
+      ]
+    ],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P31",
+    "EXACT_SPAN": "Clarity to viewers is a matter of craft",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P32",
+    "EXACT_SPAN": "handouts that are not mind-meltingly indecipherable",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P33",
+    "EXACT_SPAN": "work that is contextualised rather than left as wispy lumps and scrawls",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [
+      [
+        "R4_QUALIFIER_DROPPED",
+        "some"
+      ]
+    ],
+    "marker_hits": [],
+    "VERDICT_CORE": "UNSUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P34",
+    "EXACT_SPAN": "Clarity to subjects is something else.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P35",
+    "EXACT_SPAN": "It asks what is owed to the person whose story is being told, and it does not resolve simply by being well-lit.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P36",
+    "EXACT_SPAN": "The demand arrives while the visit is still in progress, and it does not sit easily with a mode of encounter organised around following your nose.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P37",
+    "EXACT_SPAN": "the word the review keeps reaching for",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P38",
+    "EXACT_SPAN": "Hidden stories.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [
+      [
+        "R4_QUALIFIER_DROPPED",
+        "many"
+      ]
+    ],
+    "marker_hits": [],
+    "VERDICT_CORE": "UNSUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P39",
+    "EXACT_SPAN": "Secret histories.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P40",
+    "EXACT_SPAN": "Undiscovered archives.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P41",
+    "EXACT_SPAN": "The whole festival, the reviewer writes, is a celebration of the underground and unheralded",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P42",
+    "EXACT_SPAN": "the recurring pleasure it offers is the one named in that opening joke: uncovering",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P43",
+    "EXACT_SPAN": "The verbs belong to the visitor.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P44",
+    "EXACT_SPAN": "You uncover, you sniff out, you learn about the long-lost creative you have never heard of.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [
+      [
+        "R4_QUALIFIER_DROPPED",
+        "many"
+      ]
+    ],
+    "marker_hits": [],
+    "VERDICT_CORE": "UNSUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P45",
+    "EXACT_SPAN": "Sandra George was only discovered after her death in 2013.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P46",
+    "EXACT_SPAN": "Sadao Hasegawa is described as another largely undiscovered artist.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P47",
+    "EXACT_SPAN": "The word travels easily between the visitor's afternoon and the artist's life, and it is the same word in both places.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P48",
+    "EXACT_SPAN": "But the facts about George and Walter fix what the word can carry.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P49",
+    "EXACT_SPAN": "George never showed her work publicly in her lifetime.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P50",
+    "EXACT_SPAN": "Walter died having never shown any of the thousands of paintings and drawings he amassed.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P51",
+    "EXACT_SPAN": "the gallery at City Art Centre",
+    "PRIOR": "UNSUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [
+      [
+        "R3_PROPER_NOUN",
+        "City Art Centre"
+      ]
+    ],
+    "marker_hits": [],
+    "VERDICT_CORE": "UNSUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P52",
+    "EXACT_SPAN": "or at Ingleby",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P53",
+    "EXACT_SPAN": "it is happening to a person who did not know the work existed an hour ago",
+    "PRIOR": "UNSUPPORTED",
+    "ANCHOR": false,
+    "core_hits": [
+      [
+        "R1_TEMPORAL",
+        "an hour"
+      ],
+      [
+        "R2_MENTAL_STATE",
+        "no anchor"
+      ]
+    ],
+    "marker_hits": [],
+    "VERDICT_CORE": "UNSUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "UNSUPPORTED"
+  },
+  {
+    "ID": "P54",
+    "EXACT_SPAN": "a span of years that ended before the festival opened",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  },
+  {
+    "ID": "P55",
+    "EXACT_SPAN": "The review's discovery is the visitor's present encounter with work previously unknown to them.",
+    "PRIOR": "INTERPRETATION",
+    "ANCHOR": false,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "INTERPRETATION",
+    "VERDICT_CORE_PLUS_MARKER": "INTERPRETATION"
+  },
+  {
+    "ID": "P56",
+    "EXACT_SPAN": "What it records about George and Walter is that the work went unshown while they were alive.",
+    "PRIOR": "SUPPORTED",
+    "ANCHOR": true,
+    "core_hits": [],
+    "marker_hits": [],
+    "VERDICT_CORE": "SUPPORTED",
+    "VERDICT_CORE_PLUS_MARKER": "SUPPORTED"
+  }
+]

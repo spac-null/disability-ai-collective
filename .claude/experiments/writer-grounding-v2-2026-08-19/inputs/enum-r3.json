@@ -1,0 +1,642 @@
+{
+ "sentences": [
+  {
+   "ARTICLE_SENTENCE_ID": 1,
+   "claims": [
+    {
+     "CLAIM_ID": "NO_CHECKABLE_CLAIM",
+     "EXACT_SPAN": "Following Your Nose Through Edinburgh",
+     "CLAIM": "Headline echoing the review's own figure of speech; asserts no proposition about the world.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "",
+     "REASON": "A title. The phrase derives from the source's \"follow your nose\" and the place name Edinburgh, but the line makes no assertion to check."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 2,
+   "claims": [
+    {
+     "CLAIM_ID": "S2-C1",
+     "EXACT_SPAN": "the Edinburgh art festival",
+     "CLAIM": "There is an event called the Edinburgh art festival.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "REASON": "The festival is named in the source's opening sentence."
+    },
+    {
+     "CLAIM_ID": "S2-C2",
+     "EXACT_SPAN": "is something you move through rather than read",
+     "CLAIM": "The reviewer treats the festival as something navigated rather than interpreted.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "You’ve just got to follow your nose and hope you sniff out something you like.",
+     "REASON": "The article's own gloss on the source, visibly framed as \"by the reviewer's account\". The move/read contrast is the article's vocabulary, not the reviewer's, but it is offered as a reading rather than as reported fact."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 3,
+   "claims": [
+    {
+     "CLAIM_ID": "S3-C1",
+     "EXACT_SPAN": "There are curated displays, satellite exhibitions, performances, off-site projects, and it is impossible to figure out how any of it fits together.",
+     "CLAIM": "The festival contains curated displays, satellite exhibitions, performances and off-site projects, and how they fit together is impossible to work out.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "There are curated displays, satellite exhibitions, performances, off-site projects, and it’s impossible to figure out how any of it fits together.",
+     "REASON": "Reproduced almost verbatim; only \"it's\" is expanded to \"it is\"."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 4,
+   "claims": [
+    {
+     "CLAIM_ID": "S4-C1",
+     "EXACT_SPAN": "No map resolves it.",
+     "CLAIM": "Nothing available resolves the festival's incoherence.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "There are curated displays, satellite exhibitions, performances, off-site projects, and it’s impossible to figure out how any of it fits together.",
+     "REASON": "Figurative restatement of the source's \"impossible to figure out how any of it fits together\". No map is mentioned in the source; the line asserts no new fact."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 5,
+   "claims": [
+    {
+     "CLAIM_ID": "S5-C1",
+     "EXACT_SPAN": "The reviewer's method, stated plainly, is to follow your nose and hope you sniff out something you like",
+     "CLAIM": "The review states that the way to proceed is to follow your nose and hope you sniff out something you like.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "You’ve just got to follow your nose and hope you sniff out something you like.",
+     "REASON": "Near-verbatim. The source phrases it as advice to the visitor (\"You've just got to\"); the article recasts it as the reviewer's method, a minor shift that does not alter the proposition."
+    },
+    {
+     "CLAIM_ID": "S5-C2",
+     "EXACT_SPAN": "a way of proceeding that treats the festival as terrain rather than argument",
+     "CLAIM": "That method amounts to treating the festival as terrain rather than as argument.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "",
+     "REASON": "The article's own characterisation, marked as such by the appositive. Source offers no terrain/argument framing."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 6,
+   "claims": [
+    {
+     "CLAIM_ID": "S6-C1",
+     "EXACT_SPAN": "you can't walk into a gallery, the review says, without learning about some subcultural genius or long-lost creative you've never heard of",
+     "CLAIM": "The review says you cannot enter a gallery without learning about a subcultural genius or long-lost creative you had never heard of.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "REASON": "Verbatim apart from hyphenating \"longlost\"; attribution to the review is correct."
+    },
+    {
+     "CLAIM_ID": "S6-C2",
+     "EXACT_SPAN": "And the terrain has a consistent weather to it",
+     "CLAIM": "The festival experience is consistent in character.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "REASON": "The article's metaphor for the source's \"can't walk into a gallery without...\" generalisation. No new fact asserted."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 7,
+   "claims": [
+    {
+     "CLAIM_ID": "S7-C1",
+     "EXACT_SPAN": "The encounter repeats.",
+     "CLAIM": "The experience of meeting an unfamiliar name recurs across the festival.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "REASON": "Restates the source's generalisation in the article's own words; connective, asserts nothing new."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 8,
+   "claims": [
+    {
+     "CLAIM_ID": "S8-C1",
+     "EXACT_SPAN": "Room after room, the visitor arrives at a name that was not in their possession",
+     "CLAIM": "Gallery after gallery, the visitor meets a name previously unknown to them.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "REASON": "The source's \"You can't walk into a gallery without learning about ... someone you've never heard of\" establishes the repeated encounter with unfamiliar names."
+    },
+    {
+     "CLAIM_ID": "S8-C2",
+     "EXACT_SPAN": "an hour earlier",
+     "CLAIM": "The interval between not knowing and knowing the name is about an hour.",
+     "VERDICT": "UNSUPPORTED",
+     "SOURCE_ANCHOR": "",
+     "REASON": "A specific interval with no basis in the source. The source gives no timing, pacing or duration for a visit. Rhetorical in intent, but it introduces a quantity the source does not establish."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 9,
+   "claims": [
+    {
+     "CLAIM_ID": "NO_CHECKABLE_CLAIM",
+     "EXACT_SPAN": "Two of those names are worth setting down with their facts attached.",
+     "CLAIM": "Transitional statement of the article's own plan to discuss two artists.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "",
+     "REASON": "Editorial signposting. The count of two is the article's own selection, not a source claim."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 10,
+   "claims": [
+    {
+     "CLAIM_ID": "S10-C1",
+     "EXACT_SPAN": "Sandra George, the review notes, was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh",
+     "CLAIM": "Sandra George was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "She was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh.",
+     "REASON": "Verbatim from the source."
+    },
+    {
+     "CLAIM_ID": "S10-C2",
+     "EXACT_SPAN": "like a lot of people in the festival, the reviewer observes",
+     "CLAIM": "The reviewer observes that many artists in the festival share this circumstance.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "REASON": "The source says \"Like a lot of people in EAF\"; EAF is the festival."
+    },
+    {
+     "CLAIM_ID": "S10-C3",
+     "EXACT_SPAN": "never showed her work publicly in her lifetime",
+     "CLAIM": "George never exhibited her work publicly while alive.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "REASON": "Verbatim."
+    },
+    {
+     "CLAIM_ID": "S10-C4",
+     "EXACT_SPAN": "was only discovered after her death in 2013",
+     "CLAIM": "George was discovered only after she died in 2013.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "REASON": "Verbatim; the 2013 date is also corroborated by the source's \"Sandra George (1957-2013)\"."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 11,
+   "claims": [
+    {
+     "CLAIM_ID": "S11-C1",
+     "EXACT_SPAN": "Frank Walter, the Antiguan painter, writer, poet and polymath",
+     "CLAIM": "Frank Walter was an Antiguan painter, writer, poet and polymath.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "Verbatim."
+    },
+    {
+     "CLAIM_ID": "S11-C2",
+     "EXACT_SPAN": "at the centre of the Ingleby Gallery group show",
+     "CLAIM": "Walter is the centre of the group show at Ingleby Gallery.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "The group show at Ingleby Gallery is good, too. It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "The source states the Ingleby Gallery group show is \"all centred on Frank Walter\"."
+    },
+    {
+     "CLAIM_ID": "S11-C3",
+     "EXACT_SPAN": "died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+     "CLAIM": "Walter died without ever having shown any of the thousands of paintings and drawings he amassed.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "Verbatim."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 12,
+   "claims": [
+    {
+     "CLAIM_ID": "S12-C1",
+     "EXACT_SPAN": "Thousands.",
+     "CLAIM": "The number of unshown Walter works runs to thousands.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "The source gives \"thousands of paintings and drawings\"."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 13,
+   "claims": [
+    {
+     "CLAIM_ID": "S13-C1",
+     "EXACT_SPAN": "The number is the review's",
+     "CLAIM": "The figure of thousands comes from the review, not the article.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "Correct attribution: the quantity appears in the source."
+    },
+    {
+     "CLAIM_ID": "S13-C2",
+     "EXACT_SPAN": "it sits there without commentary",
+     "CLAIM": "The review states the number without remarking on it.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "The article's characterisation of how the source handles the figure. The source does present the number in passing, but \"without commentary\" is the article's reading of the source's manner, not a source statement."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 14,
+   "claims": [
+    {
+     "CLAIM_ID": "S14-C1",
+     "EXACT_SPAN": "if contemporary artists and institutions want to tell hidden stories, the review argues, they have a duty — to viewers and to their subjects — to tell them clearly",
+     "CLAIM": "The review argues that artists and institutions wanting to tell hidden stories owe a duty, to viewers and to subjects, to tell them clearly.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "REASON": "Near-verbatim and correctly attributed. The source's hedge \"I think\" is dropped, but the article replaces it with \"the review argues\" and \"the reviewer's own position\", so the claim is not hardened into fact."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 15,
+   "claims": [
+    {
+     "CLAIM_ID": "S15-C1",
+     "EXACT_SPAN": "it arrives with two parties named in it",
+     "CLAIM": "The stated duty names two parties.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "REASON": "The source names exactly two: viewers and subjects."
+    },
+    {
+     "CLAIM_ID": "S15-C2",
+     "EXACT_SPAN": "It is a demand about the telling",
+     "CLAIM": "The reviewer's duty claim concerns the manner of telling.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "REASON": "The article's reading of what kind of demand it is; consistent with \"to tell them clearly\" but the framing is the article's."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 16,
+   "claims": [
+    {
+     "CLAIM_ID": "S16-C1",
+     "EXACT_SPAN": "Viewers are one.",
+     "CLAIM": "Viewers are one of the two parties to whom the duty is owed.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "REASON": "The source names viewers explicitly."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 17,
+   "claims": [
+    {
+     "CLAIM_ID": "S17-C1",
+     "EXACT_SPAN": "Subjects are the other.",
+     "CLAIM": "Subjects are the second party to whom the duty is owed.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "REASON": "The source names \"their subjects\" explicitly."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 18,
+   "claims": [
+    {
+     "CLAIM_ID": "S18-C1",
+     "EXACT_SPAN": "The duty is owed in both directions at once",
+     "CLAIM": "The duty runs to viewers and subjects simultaneously.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "REASON": "The source lists both parties in a single duty clause."
+    },
+    {
+     "CLAIM_ID": "S18-C2",
+     "EXACT_SPAN": "which means the clarity being asked for is not only a service to the person walking through the door",
+     "CLAIM": "The clarity demanded is therefore not merely a service to the gallery visitor.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "REASON": "An inference the article draws from the source's two-party phrasing, offered as reasoning, not as reported fact."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 19,
+   "claims": [
+    {
+     "CLAIM_ID": "S19-C1",
+     "EXACT_SPAN": "It also answers to whoever the story is about.",
+     "CLAIM": "The demanded clarity is also owed to the story's subject.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "REASON": "Continuation of the article's inference from \"to their subjects\". No new source-relative fact."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 20,
+   "claims": [
+    {
+     "CLAIM_ID": "S20-C1",
+     "EXACT_SPAN": "And that second obligation is harder to discharge, because the subject is not in the room to say whether it has been met.",
+     "CLAIM": "The duty to subjects is harder to satisfy because subjects cannot judge whether it has been met.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "",
+     "REASON": "A comparative and causal claim, but it is the article's own argument, presented as argument. The source says nothing about relative difficulty or about subjects being absent."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 21,
+   "claims": [
+    {
+     "CLAIM_ID": "S21-C1",
+     "EXACT_SPAN": "The reviewer's word for what happens in these rooms is a specific one, used more than once.",
+     "CLAIM": "The review repeatedly uses one particular word for what happens at the festival.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "We’re talking queer narratives, secret histories, undiscovered archives: the whole festival is a celebration of the underground and unheralded. Another largely undiscovered artist, Sadao Hasegawa (1945-1999), really ramps up the eroticism with an eye-popping display of throbbing members and gushing penetration at Custom Lane.",
+     "REASON": "The discovery vocabulary recurs in the source: \"undiscovered archives\", \"Another largely undiscovered artist\", \"undiscovered narratives\", plus \"uncovered\" and \"was only discovered\". More than one occurrence is established."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 22,
+   "claims": [
+    {
+     "CLAIM_ID": "S22-C1",
+     "EXACT_SPAN": "Uncovered.",
+     "CLAIM": "\"Uncovered\" is one of the review's words.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "REASON": "The source's opening uses \"you'll have uncovered so many hidden stories\"."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 23,
+   "claims": [
+    {
+     "CLAIM_ID": "S23-C1",
+     "EXACT_SPAN": "Undiscovered.",
+     "CLAIM": "\"Undiscovered\" is one of the review's words.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "We’re talking queer narratives, secret histories, undiscovered archives: the whole festival is a celebration of the underground and unheralded.",
+     "REASON": "The source uses \"undiscovered archives\" (and later \"largely undiscovered artist\", \"undiscovered narratives\")."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 24,
+   "claims": [
+    {
+     "CLAIM_ID": "S24-C1",
+     "EXACT_SPAN": "Sniffed out.",
+     "CLAIM": "\"Sniff out\" is one of the review's words.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "You’ve just got to follow your nose and hope you sniff out something you like.",
+     "REASON": "The source has \"hope you sniff out something you like\"; the article changes tense only."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 25,
+   "claims": [
+    {
+     "CLAIM_ID": "S25-C1",
+     "EXACT_SPAN": "You'll have uncovered so many hidden stories, the review opens, that you'll feel like Columbo",
+     "CLAIM": "The review says the visitor will have uncovered so many hidden stories they will feel like Columbo.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "REASON": "Paraphrase-quotation matching the source's first sentence, with \"By the time you're done with Edinburgh art festival\" elided."
+    },
+    {
+     "CLAIM_ID": "S25-C2",
+     "EXACT_SPAN": "the review opens",
+     "CLAIM": "This wording is the review's opening.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "REASON": "It is the first sentence of the supplied source text."
+    },
+    {
+     "CLAIM_ID": "S25-C3",
+     "EXACT_SPAN": "a word that puts the visitor at the moment of revelation and makes the revelation theirs",
+     "CLAIM": "The word \"uncovered\" positions the visitor as the agent of revelation.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "REASON": "The article's reading of the source's second person address, offered as its own analysis."
+    },
+    {
+     "CLAIM_ID": "S25-C4",
+     "EXACT_SPAN": "the detective's word",
+     "CLAIM": "Columbo is a detective, so \"uncovered\" is a detective's word.",
+     "VERDICT": "UNSUPPORTED",
+     "SOURCE_ANCHOR": "",
+     "REASON": "The source names Columbo but never identifies him as a detective. The characterisation relies on outside knowledge, which cannot be used here, and it is stated as settled."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 26,
+   "claims": [
+    {
+     "CLAIM_ID": "S26-C1",
+     "EXACT_SPAN": "Sadao Hasegawa is described as another largely undiscovered artist.",
+     "CLAIM": "The review describes Sadao Hasegawa as another largely undiscovered artist.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "Another largely undiscovered artist, Sadao Hasegawa (1945-1999), really ramps up the eroticism with an eye-popping display of throbbing members and gushing penetration at Custom Lane.",
+     "REASON": "Verbatim, and correctly marked as the review's description."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 27,
+   "claims": [
+    {
+     "CLAIM_ID": "S27-C1",
+     "EXACT_SPAN": "The whole festival, in the review's framing, is a celebration of the underground and unheralded.",
+     "CLAIM": "The review frames the whole festival as a celebration of the underground and unheralded.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "We’re talking queer narratives, secret histories, undiscovered archives: the whole festival is a celebration of the underground and unheralded.",
+     "REASON": "Verbatim from the source."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 28,
+   "claims": [
+    {
+     "CLAIM_ID": "S28-C1",
+     "EXACT_SPAN": "walking around Edinburgh in August",
+     "CLAIM": "The festival takes place in August.",
+     "VERDICT": "UNSUPPORTED",
+     "SOURCE_ANCHOR": "",
+     "REASON": "The source never dates the festival. No month, season or period appears anywhere in it. An invented specific, stated as settled."
+    },
+    {
+     "CLAIM_ID": "S28-C2",
+     "EXACT_SPAN": "it happens in the present tense, on the day, in front of the work",
+     "CLAIM": "The discovery the review describes occurs live, in the moment of viewing.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "REASON": "The article's reading of the source's second-person, in-the-moment address. No new fact asserted."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 29,
+   "claims": [
+    {
+     "CLAIM_ID": "S29-C1",
+     "EXACT_SPAN": "Set the same word beside George and Walter and it stops covering the same ground.",
+     "CLAIM": "Applied to George and Walter, the word \"discovered\" means something different.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "",
+     "REASON": "The article's own semantic argument, presented as such."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 30,
+   "claims": [
+    {
+     "CLAIM_ID": "S30-C1",
+     "EXACT_SPAN": "She was only discovered after her death in 2013.",
+     "CLAIM": "Sandra George was discovered only after her death in 2013.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "REASON": "Verbatim."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 31,
+   "claims": [
+    {
+     "CLAIM_ID": "S31-C1",
+     "EXACT_SPAN": "He died having never shown the thousands of works he made.",
+     "CLAIM": "Frank Walter died without ever showing thousands of his works.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "The source states he \"died having never shown any of the thousands of paintings and drawings\"."
+    },
+    {
+     "CLAIM_ID": "S31-C2",
+     "EXACT_SPAN": "works he made",
+     "CLAIM": "Walter made the thousands of works himself.",
+     "VERDICT": "UNCERTAIN",
+     "SOURCE_ANCHOR": "It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "The source says the works were ones he \"amassed over his lifetime\", not that he made all of them. Walter is called a painter and the works are paintings and drawings, so authorship is likely but not stated. Source wording confirming he produced them would resolve it."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 32,
+   "claims": [
+    {
+     "CLAIM_ID": "S32-C1",
+     "EXACT_SPAN": "none of that describes anything that occurred while either of them was alive",
+     "CLAIM": "Neither George nor Walter was discovered or shown during their lifetime.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013. It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "The source establishes George was discovered only after death, and that Walter died having never shown the work."
+    },
+    {
+     "CLAIM_ID": "S32-C2",
+     "EXACT_SPAN": "Whatever the word carries when the review uses it — the pleasure of the find, the sense of a story surfacing",
+     "CLAIM": "The review's use of the word carries connotations of pleasurable finding and of a story surfacing.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "REASON": "The article's reading of the connotations of the review's vocabulary; hedged with \"Whatever the word carries\" and offered as interpretation."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 33,
+   "claims": [
+    {
+     "CLAIM_ID": "S33-C1",
+     "EXACT_SPAN": "The finding happened, and it happened on one side of a line neither of them crossed back over.",
+     "CLAIM": "The discovery of both artists occurred after their deaths.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013. It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "Figurative restatement of facts the source does establish; the line image is the article's own."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 34,
+   "claims": [
+    {
+     "CLAIM_ID": "S34-C1",
+     "EXACT_SPAN": "The word holds true for the person in the gallery.",
+     "CLAIM": "The word \"discovery\" accurately describes the gallery visitor's experience.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "REASON": "The article's own conclusion from its reading of the review's address to the visitor."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 35,
+   "claims": [
+    {
+     "CLAIM_ID": "S35-C1",
+     "EXACT_SPAN": "It does not describe an event in the artist's life, because in the artist's life the event did not take place.",
+     "CLAIM": "For the artists themselves no discovery event occurred within their lifetimes.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013. It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "The article's argument, resting on facts the source does supply. Presented as reasoning rather than as reported source fact."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 36,
+   "claims": [
+    {
+     "CLAIM_ID": "NO_CHECKABLE_CLAIM",
+     "EXACT_SPAN": "That is where the two senses part.",
+     "CLAIM": "Connective sentence marking the article's own distinction.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "",
+     "REASON": "Pure connective tissue; no source-relative proposition."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 37,
+   "claims": [
+    {
+     "CLAIM_ID": "S37-C1",
+     "EXACT_SPAN": "The review's discovery is the visitor's, present and first-hand, a story becoming known to someone who did not know it.",
+     "CLAIM": "The discovery the review describes belongs to the visitor and happens first-hand.",
+     "VERDICT": "INTERPRETATION",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "REASON": "The article's summarising reading of the source's second-person framing; no new fact asserted."
+    }
+   ]
+  },
+  {
+   "ARTICLE_SENTENCE_ID": 38,
+   "claims": [
+    {
+     "CLAIM_ID": "S38-C1",
+     "EXACT_SPAN": "it stayed unshown for the whole of the life that made it",
+     "CLAIM": "The work of these artists remained unshown for the entirety of their lives.",
+     "VERDICT": "SUPPORTED",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013. It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "REASON": "The source states George \"never showed her work publicly in her lifetime\" and that Walter \"died having never shown any\" of his works."
+    }
+   ]
+  }
+ ]
+}
