@@ -1,13 +1,43 @@
 
-## CURRENT PHASE (2026-08-19) — WRITER GROUNDING CLOSED BY OWNER STOP; NEXT IS THE LEGACY RULE INVENTORY
+## CURRENT PHASE (2026-08-20) — LEGACY RULE INVENTORY COMPLETE; READY FOR REAL ARTICLE TEST 2
 
+- **LEGACY PROMPT / RULE INVENTORY: COMPLETE**, commit `38c47b8`.
+  Evidence root: `.claude/experiments/legacy-prompt-rule-inventory-2026-08-20/`
+- **114 rule families** found (96 active in production, 6 shadow/gated-OFF, 7 historical, 5 dead).
+- **Mass injection CONFIRMED LIVE**: the writer prompt is assembled per run at
+  `automation/orchestrator/generate.py:783–1050` — 59,161 chars / 9,862 words / 75 prescriptive
+  rule units for Maya Flux. Four further live rule bundles (rewrite 25,019 ch, planner 15,358 ch,
+  review 9,035 ch, gate 8,105 ch). ~130,000 chars of rule text per article.
+- **Current production prompt architecture contains substantial legacy baggage**: 19 rule families
+  duplicated across 3+ surfaces (8 across all 5), 8 contradictions, 11 owner decisions open.
+- **PRODUCTION HAS NOT BEEN CLEANED.** No rule was edited, deleted, wired, or retired.
+  Production cleanup is **DEFERRED** until after Article Form transfer validation.
+- **REAL ARTICLE TEST 2 MUST USE THE CLEAN SHADOW/MANUAL ARCHITECTURE**, not the current legacy
+  production writer prompt. Path: DISCOVERY → ARTICLE FORM → WRITER → WRITER GROUNDING, executed on
+  the local Claude subscription. Test 2 is transfer validation, **not** a production-fidelity test.
+  Therefore the 96 production-active rule families do **not** block Test 2 — they are excluded.
+  Boundary: `.claude/experiments/legacy-prompt-rule-inventory-2026-08-20/TEST2-BOUNDARY.md`
+  Triage:   `.claude/experiments/legacy-prompt-rule-inventory-2026-08-20/OWNER-TRIAGE.md`
 - Writer Grounding: **SHADOW-CALIBRATED CANDIDATE — NOT PRODUCTION-VALIDATED, NOT TRANSFER-VALIDATED**
 - WG6-N1 (routing) and WG6-N2 (verification semantics): **CLOSED**, commit `a1f2889`
 - Final end-to-end shadow replay: **ABORTED_BY_OWNER — DIMINISHING_RETURNS_STOP**, zero model calls.
   Not a failure; nothing was measured. Do NOT reconstruct its missing outputs.
 - **Do NOT create WG-7, another Edinburgh grounding experiment, or another FORM version.**
-- **NEXT TASK: LEGACY PROMPT / RULE INVENTORY** (`WORK.md` `## 5c`), then Real Article Test 2.
+- **NEXT TASK: REAL ARTICLE TEST 2 — design / story selection.**
 - Full statement of the binding OWNER STOP RULE: `WORK.md` `## 5b`.
+
+### Four production-critical debts — RECORDED, NOT FIXED
+
+| Debt | Classification |
+|---|---|
+| AR3 testimony quota still live in `llm.py` rewrite rules 33/33b | MUST_FIX_BEFORE_PRODUCTION_MIGRATION |
+| GATE vs REVIEW R-number collisions (9 rules, parsing keys on them) | MUST_FIX_BEFORE_PRODUCTION_MIGRATION |
+| Persona canon injected twice, byte-identical, contradictory framing | CONSOLIDATE_BEFORE_PRODUCTION |
+| Mass-injected writer prompt | EXCLUDE_FROM_TEST2 + CONSOLIDATE_BEFORE_PRODUCTION |
+
+**Qualification on AR3:** the testimony quota was removed from the **writer prompt** only.
+It is still active in the **rewriter**, which runs on every production article. Any wording
+claiming testimony requirements are fully removed from the pipeline is inaccurate.
 
 ### Superseded phase description (kept for continuity)
 
@@ -78,8 +108,14 @@ Resume prompt — cripminds.com session continuation
   - DB: /srv/data/hermes/workspace/disability-ai-collective/disability_findings.db
     Tables: news_seeds (live, written by news_fetcher.py), findings (dead since 2026-05-02, was run_discovery.py's — kept for
     production_orchestrator.py's fallback read path, never repopulated), article_beats, link_pool, citation_ledger
-  - Style rules: automation/style_rules.py (single source of truth, added 2026-08-09) + automation/check_rule_drift.py (linter —
-    run before touching any style-rule text)
+  - Style rules: **automation/style_rules.py is NOT wired into any prompt** (verified 2026-08-20,
+    commit `38c47b8`: 16-rule registry, five render functions, ZERO consumers — the only
+    `from style_rules import` in the repo is inside its own docstring example). The rules that
+    actually run are hand-typed in four places: generate.py's writer prompt, llm.py's rewrite
+    SYSTEM, gate.py's GATE_SYSTEM, review.py's RULES_SYSTEM. Editing style_rules.py changes
+    NOTHING at runtime. automation/check_rule_drift.py has no automated runner (no Makefile,
+    no CI job, no cron) — manual only. Both classified RETIRE_AFTER_VERIFICATION; do not wire
+    style_rules.py in merely because it exists.
   - Social URIs: _social/*.json (bsky_uri + agent)
   - Reviews: _reviews/*.md (citation check sidecars)
   - Engage state: automation/bsky_engage_seen.json

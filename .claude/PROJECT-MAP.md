@@ -208,6 +208,16 @@ Allowed lifecycle statuses: `ACTIVE`, `FROZEN`, `PARKED`, `MERGED`, `SUPERSEDED`
     module's originals under `automation/` are deliberately left **untracked**: tracking them
     would put experimental code on the production/runtime surface. Commit `5256f08`, 76 files
     (with the Scout V0/V0.x benchmark lineage incl. FOX/HOUR/MOBILE).
+  - `.claude/experiments/legacy-prompt-rule-inventory-2026-08-20/` — the completed Legacy
+    Prompt / Rule Inventory (114 rule families; mass injection confirmed live at
+    `generate.py:783–1050`, 59,161 chars / 9,862 words). Holds the master inventory, active
+    rule surface, mass-injection finding, migration map, duplicates/contradictions, cleanup
+    recommendations, owner triage, Test-2 boundary, `inventory.csv`, `prompt-census.json`, and
+    three **captured live prompts** (writer ×2 personas, planner) obtained via the repo's own
+    zero-network capture harnesses. Commit `38c47b8`, 12 files. **Audit only — no production
+    file was modified.** Unlike the two roots above it carries no `SHA256SUMS.txt`: its
+    captured-prompt artifacts are reproducible on demand from a fixed HEAD by rerunning
+    `automation/writer_prompt_test.py`, so the commit itself is the integrity record.
   - `.claude/experiments/project-state-reconciliation-2026-08-18/` — gap ledger G-001..G-053,
     its normalization, and the state synthesis.
   - `.claude/experiments/cj1-cj2-b2-dev-artifacts-2026-08-11/` — residual CJ1/CJ2 artifacts with

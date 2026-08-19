@@ -576,13 +576,77 @@ inventory is **REQUIRED** and must not disappear from this list.
 2. ~~complete Writer Grounding / end-to-end shadow validation~~ — **NOT DONE, AND NOT TO BE
    RESUMED.** The final shadow replay was aborted by the owner before any model stage ran
    (`ABORTED_BY_OWNER — DIMINISHING_RETURNS_STOP`). Deliberately left incomplete.
-3. **CURRENT** — **LEGACY PROMPT / RULE INVENTORY** (below). Its trigger has been reached.
-4. **THEN** — Real Article Test 2 / transfer work, or production architecture work, according to the
-   state reached at that point.
+3. ~~**LEGACY PROMPT / RULE INVENTORY**~~ — **COMPLETE 2026-08-20**, commit `38c47b8`.
+   See `### LEGACY PROMPT / RULE INVENTORY — COMPLETE` below.
+4. **CURRENT** — **REAL ARTICLE TEST 2**: transfer validation of Article Form + Writer Grounding on
+   a materially different story shape, using the clean shadow/manual path on the local Claude
+   subscription. **Not** the legacy production writer prompt. Next action: design / story selection.
+5. **AFTER TRANSFER** — production architecture / legacy prompt cleanup planning.
+6. **THEN** — production migration + fidelity testing.
+
+**Sequencing rationale (owner decision 2026-08-20).** Production prompt cleanup does NOT happen
+before Test 2. No legacy surface is required by Test 2 — all 13 identified surfaces are excluded
+(`TEST2-BOUNDARY.md`). Cleaning 114 rule families first would make production cleanup another long
+precondition before we learn whether Article Form transfers at all.
 
 ---
 
-### LEGACY PROMPT / RULE INVENTORY
+### LEGACY PROMPT / RULE INVENTORY — COMPLETE
+
+**STATUS: COMPLETE 2026-08-20.** Commit `38c47b8`. Evidence root:
+`.claude/experiments/legacy-prompt-rule-inventory-2026-08-20/`
+
+**RESULT.** 114 rule families: 96 active in production, 6 shadow/gated-OFF, 7 historical, 5 dead.
+
+**MASS INJECTION: CONFIRMED LIVE.** Two generations. The historical one (~15 rules hand-copied into
+≥12 locations across `production_orchestrator.py`, `opus_rewrite.py`, and a root-level orchestrator
+copy) is gone — those files were deleted. The current one is live: the writer prompt is assembled
+per run at `automation/orchestrator/generate.py:783–1050` into **59,161 chars / 9,862 words / 75
+prescriptive rule units** (Maya Flux, measured by capturing the actual constructed prompt via the
+repo's own zero-network `writer_prompt_test.py` harness). Four further live bundles: rewrite SYSTEM
+(25,019 ch / 47 rules), planner brief (15,358 ch), `RULES_SYSTEM` (9,035 ch / R1–R19), `GATE_SYSTEM`
+(8,105 ch / R1–R17, blocking). **≈130,000 chars of rule text per article.**
+
+**`automation/style_rules.py` WAS NEVER WIRED IN.** Built 2026-08-09 as the "single source of truth"
+to end exactly this duplication. 16 rules, five render functions, **zero consumers** — it became a
+fourth parallel copy. `check_rule_drift.py` has no automated runner. Both
+`RETIRE_AFTER_VERIFICATION`. Do not wire style_rules.py in merely because it exists.
+
+**PRODUCTION HAS NOT BEEN CLEANED.** No rule was edited, deleted, wired, or retired. The inventory
+is an input to architectural decisions, not authorization to start editing 114 rule families.
+
+**FOUR PRODUCTION-CRITICAL DEBTS — recorded, not fixed:**
+
+| Debt | Classification |
+|---|---|
+| AR3 testimony quota still live in `llm.py` rewrite rules 33 / 33b (runs on every article via `generate.py:1168`) | MUST_FIX_BEFORE_PRODUCTION_MIGRATION |
+| GATE vs REVIEW R-number collisions — 9 rules, `_parse_rule_verdicts` keys on the identifiers | MUST_FIX_BEFORE_PRODUCTION_MIGRATION |
+| `WP-13` US-avoidance vs unilateral UK-preference split between writer and rewriter | MUST_FIX_BEFORE_PRODUCTION_MIGRATION |
+| Persona canon injected twice, byte-identical (7,216 ch), contradictory authority framing | CONSOLIDATE_BEFORE_PRODUCTION |
+| Mass-injected writer prompt | EXCLUDE_FROM_TEST2 + CONSOLIDATE_BEFORE_PRODUCTION |
+| Negative-prohibition density (80 tokens in the writer prompt) | PRODUCTION CLEANUP RISK — not a Test-2 blocker |
+
+**CORRECTION TO CANONICAL WORDING — AR3.** The testimony quota was removed from the **writer prompt**
+only (`generate.py:882`, AR3A commit `3225ea1`). It is **still active in the rewriter**
+(`llm.py` rewrite rules 33 and 33b), which runs on every production article. AR3A's release note
+records checking `style_rules.py` and `gate.py` for surviving copies; `llm.py` was not checked. Any
+statement that testimony requirements are fully removed from the pipeline is inaccurate. Partial
+mitigation exists and is not overclaimed: rule 33b forbids inventing a quote, and
+`_reject_if_unsupported_specifics` guards the rewrite output — the fabrication path is partly
+blocked, the editorial pressure AR3 identified as causal is not.
+
+**DELIVERABLES.** `MASTER-INVENTORY.md`, `ACTIVE-RULE-SURFACE.md`, `MASS-INJECTION-FINDING.md`,
+`MIGRATION-MAP.md`, `DUPLICATES-AND-CONTRADICTIONS.md`, `CLEANUP-RECOMMENDATIONS.md`,
+`OWNER-TRIAGE.md`, `TEST2-BOUNDARY.md`, `inventory.csv`, `prompt-census.json`, plus the three
+captured live prompts (writer ×2 personas, planner).
+
+**COUNT CORRECTION.** An early verbal summary of this audit said "98 rule families / 79 production /
+8 shadow / 11 historical-dead". Those were a summary miscount. Mechanical recount of the inventory's
+own rows gives **114 / 96 / 6 / 7+5**. The committed artifacts carry the corrected figures.
+
+---
+
+#### Original task definition (kept for continuity)
 
 **STATUS: DEFERRED — REQUIRED AFTER WRITER GROUNDING**
 **TRIGGER:** start only once Writer Grounding is calibrated/solved, and **before** production

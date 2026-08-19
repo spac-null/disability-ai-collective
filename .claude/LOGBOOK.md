@@ -466,3 +466,73 @@ first half was done; the second half is cancelled by owner decision, not by fail
 results (WG6-RESULTS.json, decision A) are unchanged and were not rewritten.
 FOLLOW-UP: next roadmap task is LEGACY PROMPT / RULE INVENTORY (## 5c) — its trigger is now reached.
 Then Real Article Test 2 / transfer validation. Neither started in this session.
+
+## 2026-08-20 — LEGACY PROMPT / RULE INVENTORY COMPLETE (LPRI1)
+STATUS: Inventory COMPLETE. Owner triage recorded. **No cleanup performed, no production change,
+no model call, no deploy, no push.**
+DECISION: Audited the full CripMinds prompt/rule surface at HEAD `3a05f61`. Found **114 rule
+families** (96 active in production, 6 shadow/gated-OFF, 7 historical, 5 dead), counted mechanically
+from the inventory's own rows. **Mass injection confirmed live**, answering Jascha's recollection
+affirmatively rather than dismissing it: two generations exist. The historical one (~15 style rules
+hand-copied into ≥12 locations across `production_orchestrator.py`, `opus_rewrite.py` and a
+root-level orchestrator copy, with four documented drift instances) is gone — those files were
+deleted in the 2026-08-09 module split. The current one is live: `generate.py:783–1050` assembles a
+**59,161-char / 9,862-word / 75-rule-unit** writer prompt per run, plus four further live bundles
+(rewrite SYSTEM 25,019 ch / 47 rules; planner brief 15,358 ch; `RULES_SYSTEM` 9,035 ch / R1–R19;
+`GATE_SYSTEM` 8,105 ch / R1–R17, blocking) — ~130,000 chars of rule text per article. Sizes were
+measured, not estimated: static literals via AST `literal_eval`, dynamic prompts by running the
+repo's own existing zero-network capture harnesses (`writer_prompt_test.py::_capture_writer_prompt`,
+`snapshot_test.py::_snapshot_generate_calls`). No new harness was built and no model was invoked.
+KEY FINDING: **`automation/style_rules.py` was never wired in.** Built 2026-08-09 as the "single
+source of truth" specifically to end this duplication — 16 rules, three renderings each, five render
+functions, R-numbers assigned at render time so the "R14 means two different things" bug class would
+be structurally impossible. It has **zero consumers**; the only `from style_rules import` in the repo
+is inside its own docstring USAGE example. It became a fourth parallel copy. Its companion drift
+linter `check_rule_drift.py` has no automated runner (no Makefile, no CI job, no cron). Consequence:
+19 rule families are duplicated across 3+ surfaces, 8 across all 5, and 9 rules carry **different R
+identifiers in `GATE_SYSTEM` vs `RULES_SYSTEM`** (R5 = SYSTEM VOICE in one, VAGUE WE in the other)
+while `gate.py::_parse_rule_verdicts` keys on those identifiers — precisely the bug the registry was
+built to prevent, still live. 8 contradictions found, 24 families marked MIGRATED/REDUNDANT
+CANDIDATE, 11 owner decisions open.
+CORRECTION (AR3, canonical wording): the testimony quota was removed from the **writer prompt** only
+(`generate.py:882`, AR3A commit `3225ea1`). It is **still active in the rewriter** — `llm.py`
+`rewrite_with_opus` SYSTEM rules 33 ("REQUIRED: … a second real named person must appear") and 33b
+("SOMEONE ELSE MUST SPEAK") — which runs on every production article via `generate.py:1168`. AR3A's
+own release note records checking `style_rules.py` and `gate.py` for surviving copies; `llm.py` was
+not checked. Any wording claiming testimony requirements are fully removed from the pipeline is
+inaccurate and needs qualification. Not overclaimed: rule 33b forbids inventing a quote and
+`_reject_if_unsupported_specifics` guards the rewrite output, so the fabrication path is partly
+blocked; the editorial pressure AR3 identified as causal is not removed. **Not fixed in this task.**
+ALSO FOUND: persona canon is injected **twice, SHA-256 identical** (7,216 ch, ~12% of the prompt) for
+the three fictional personas, with a joining sentence declaring the canon "does NOT authorize
+autobiographical facts" while pointing at that same text as the AUTHORIZED PERSONAL HISTORY. Pixel
+Nova is correct (its two blocks legitimately differ). Root cause is `_load_persona_factual_context`'s
+canon fallback — deliberate and well-argued for provenance, but its prompt-assembly consequence is
+undocumented. Also: 80 negative-prohibition tokens in the writer prompt, several carrying concrete
+nouns and verbatim bad-example sentences (Edinburgh risk class) — recorded as surface area, not a
+measured failure; no experiment run or proposed.
+OWNER DECISION: **Real Article Test 2 must NOT use the legacy production writer prompt or
+mass-injection surface.** Test 2 is transfer validation of Article Form + Writer Grounding on a
+materially different story shape, run through DISCOVERY → ARTICLE FORM → WRITER → WRITER GROUNDING on
+the **local Claude subscription**, not `production_orchestrator.py`. It is **not** a production-path
+fidelity test. Therefore the 96 production-active rule families do **not** block Test 2 — 82 families
+across 13 legacy surfaces are excluded (`TEST2-BOUNDARY.md`), not fixed. Production prompt cleanup is
+**DEFERRED until after transfer validation**, so that cleaning 114 rule families does not become
+another long precondition before we learn whether Article Form transfers at all.
+PRODUCTION STATE: **UNCHANGED AND UNCLEANED.** 96 rule families remain active on every live article
+run. Nothing in this entry describes a production fix.
+EVIDENCE: `.claude/experiments/legacy-prompt-rule-inventory-2026-08-20/` — `MASTER-INVENTORY.md`,
+`ACTIVE-RULE-SURFACE.md`, `MASS-INJECTION-FINDING.md`, `MIGRATION-MAP.md`,
+`DUPLICATES-AND-CONTRADICTIONS.md`, `CLEANUP-RECOMMENDATIONS.md`, `OWNER-TRIAGE.md`,
+`TEST2-BOUNDARY.md`, `inventory.csv`, `prompt-census.json`, plus captured live prompts
+(`writer_prompt_maya.txt`, `writer_prompt_pixel.txt`, `planner_user_prompt.txt`).
+CODE: `38c47b8` (inventory evidence). No production commit.
+SUPERSEDES: `.claude/CONTEXT.md`'s claim that `style_rules.py` is the "single source of truth" and
+that `check_rule_drift.py` should be "run before touching any style-rule text" — corrected in this
+task. Supersedes `WORK.md` `## 5c`'s DEFERRED status for the inventory.
+COUNT CORRECTION: an early verbal summary of this audit reported "98 rule families / 79 production /
+8 shadow / 11 historical-dead". That was a summary miscount, not an error in the artifacts.
+Mechanical recount gives **114 / 96 / 6 / 7+5**; the committed files carry the corrected figures.
+FOLLOW-UP: Real Article Test 2 — design / story selection. Then production architecture / legacy
+prompt cleanup planning, then production migration + fidelity testing. Do NOT begin cleanup, do NOT
+wire `style_rules.py` merely because it exists, do NOT reopen Writer Grounding calibration.
