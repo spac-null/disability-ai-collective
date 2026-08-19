@@ -494,6 +494,70 @@ across the next experiment so any change in structure is attributable.
 Recurring residual classes to target: INVENTED_VISITOR_STATE, INVENTED_TEMPORAL_SPECIFICITY,
 INTERPRETATION_AS_FACT, QUALIFIER_DROPPED, INVENTED_PROPER_NOUN, FORM_INSTRUCTION_AS_PROSE_CLAIM.
 
+## 5c. ROADMAP — WHAT COMES AFTER WRITER GROUNDING
+
+Ordering. The later steps may be re-sequenced once Writer Grounding is solved, but the legacy-rule
+inventory is **REQUIRED** and must not disappear from this list.
+
+1. **CURRENT** — Writer Grounding calibration (`## 5b`).
+2. **THEN** — complete Writer Grounding / end-to-end shadow validation.
+3. **THEN** — **LEGACY PROMPT / RULE INVENTORY** (below).
+4. **THEN** — Real Article Test 2 / transfer work, or production architecture work, according to the
+   state reached at that point.
+
+---
+
+### LEGACY PROMPT / RULE INVENTORY
+
+**STATUS: DEFERRED — REQUIRED AFTER WRITER GROUNDING**
+**TRIGGER:** start only once Writer Grounding is calibrated/solved, and **before** production
+migration or final architecture cleanup. Do not start it earlier; do not skip it.
+
+**PURPOSE.** CripMinds accumulated a large set of early prompt-era controls — mass-injected prompt
+rules, writing rules, persona constraints, grounding instructions, editorial prohibitions. Once
+Writer Grounding is solved, inventory them so the new architecture is not left carrying obsolete
+prompt baggage. The objective is **not** shorter prompts. It is that every surviving instruction has
+one justified architectural owner, one clear purpose, no contradiction with the current method, no
+unnecessary duplication, and evidence it is still needed.
+
+**1. LOCATE** the complete historical rule/instruction surface across the repo and preserved
+evidence — old mass-injected prompt rules, writer system prompts, persona instructions, editorial
+rules, grounding instructions, style/prose rules, disability-lens / by-not-about instructions,
+source and evidence constraints, testimony/persona restrictions, negative prohibitions and
+blocklists, production prompt fragments, historical shadow/experiment prompts. **Do not assume one
+file holds all of them.**
+
+**2. INVENTORY** each meaningful rule: RULE / INSTRUCTION · ORIGINAL LOCATION · CURRENT LOCATION ·
+ORIGIN / DATE if recoverable · CURRENT CONSUMER · CURRENTLY ACTIVE? · PRODUCTION / SHADOW /
+HISTORICAL · NOTES.
+
+**3. CLASSIFY** as ACTIVE · MIGRATED · SUPERSEDED · DUPLICATE · CONTRADICTED · HISTORICAL · PARKED ·
+DEAD/UNUSED · UNKNOWN.
+
+**4. MAP MIGRATION** — which early rules already migrated into SOFA-METHOD, DISCOVERY, ARTICLE FORM,
+WRITER, WRITER GROUNDING, STORY REJECTION, PRF1 / persona-byline controls, or other production
+gates. A migrated rule should not survive as redundant prompt injection merely because it still
+exists historically.
+
+**5. FIND CONTRADICTIONS** with the canonical Sofa editorial/artistic method, with
+DISCOVERY → ARTICLE FORM → WRITER, with the Writer Grounding architecture, with current production
+behaviour, and with the Edinburgh calibration evidence. **Inspect old negative prohibitions
+specifically:** FORM-1.3/R2 demonstrated that a negative Form instruction can itself surface as a
+prose proposition (R2's "not because the review places them above the rest"), so
+prohibition-heavy historical prompts deserve explicit review.
+
+**6. FIND DUPLICATION / PROMPT BAGGAGE** — rules implemented in several layers at once. A principle
+now structurally enforced by Article Form does not also need several writer-prompt warnings. Keep
+**STRUCTURAL CONTROL**, **PROMPT INSTRUCTION** and **POST-WRITE GROUNDING CONTROL** separate.
+
+**7. PROPOSE CLEANUP — DO NOT DELETE AUTOMATICALLY.** Recommend KEEP / MIGRATE / CONSOLIDATE /
+RETIRE / DELETE AFTER VERIFICATION. No historical or production rule is deleted without a separate
+authorized cleanup task. **Preservation first.**
+
+**Desired eventual state:** CripMinds should not depend on dozens of accumulated historical prompt
+rules when the same responsibility is already owned structurally by Sofa Method, Article Form,
+Writer Grounding, or another explicit layer.
+
 ## 6. PARKED / DO NOT ACCIDENTALLY RESTART
 
 - **CJ-2** (competitive persona-reframing architecture) — OFF (`CJ2_INTEGRATION_MODE` defaults to

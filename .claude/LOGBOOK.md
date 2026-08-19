@@ -405,3 +405,24 @@ FORM-1.3-R3}/ and iterations/REPLICATE-SET-RESULTS.md
 CODE: ec540b6 (FORM-1.2), 006ea10 (FORM-1.3), 7248c61 (replicates)
 SUPERSEDES: WORK.md ## 5b's prior "FORM-1.1 grounding diagnosis only" next-action.
 FOLLOW-UP: Design writer/grounding control V0 against the six recurring classes. Keep FORM-1.3 frozen.
+
+## 2026-08-19 — LEGACY PROMPT / RULE INVENTORY QUEUED
+STATUS: DEFERRED — REQUIRED. Not started; no old rules inspected or modified.
+DECISION: Jascha explicitly requested a future dedicated audit of CripMinds' historical prompt-era
+rule surface, so it cannot be lost between sessions. Early development accumulated many
+mass-injected / prompt-level rules (writing rules, persona constraints, grounding instructions,
+editorial prohibitions, blocklists). Once Writer Grounding is solved we determine which of them
+remain ACTIVE, have MIGRATED into the newer architecture, are CONTRADICTED by it, are DUPLICATED
+across layers, or are DEAD and deletable.
+TRIGGER: after Writer Grounding is calibrated/solved and end-to-end shadow validation is complete;
+BEFORE production migration or final architecture cleanup.
+RATIONALE: the objective is not shorter prompts. It is that every surviving instruction has one
+justified architectural owner, one clear purpose, no contradiction with the current method, no
+unnecessary duplication, and evidence it is still needed. FORM-1.3/R2 supplies the specific worry:
+a negative Form constraint surfaced as a prose proposition, so prohibition-heavy historical prompts
+need explicit review rather than assumed harmlessness.
+SCOPE NOTE: cleanup is recommendation-only. No historical or production rule is deleted without a
+separate authorized cleanup task. Preservation first.
+EVIDENCE: .claude/WORK.md ## 5c
+SUPERSEDES: nothing — this is an addition to the roadmap, no prior entry rewritten.
+FOLLOW-UP: do not start before the trigger above. Writer Grounding (## 5b) continues meanwhile.
