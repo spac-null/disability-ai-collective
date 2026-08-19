@@ -1,5 +1,15 @@
 
-## CURRENT PHASE (2026-08-19) — WRITER GROUNDING CONTROL DESIGN / CALIBRATION
+## CURRENT PHASE (2026-08-19) — WRITER GROUNDING CLOSED BY OWNER STOP; NEXT IS THE LEGACY RULE INVENTORY
+
+- Writer Grounding: **SHADOW-CALIBRATED CANDIDATE — NOT PRODUCTION-VALIDATED, NOT TRANSFER-VALIDATED**
+- WG6-N1 (routing) and WG6-N2 (verification semantics): **CLOSED**, commit `a1f2889`
+- Final end-to-end shadow replay: **ABORTED_BY_OWNER — DIMINISHING_RETURNS_STOP**, zero model calls.
+  Not a failure; nothing was measured. Do NOT reconstruct its missing outputs.
+- **Do NOT create WG-7, another Edinburgh grounding experiment, or another FORM version.**
+- **NEXT TASK: LEGACY PROMPT / RULE INVENTORY** (`WORK.md` `## 5c`), then Real Article Test 2.
+- Full statement of the binding OWNER STOP RULE: `WORK.md` `## 5b`.
+
+### Superseded phase description (kept for continuity)
 
 - SOFA editorial/artistic method: **CANONICAL** (`.claude/SOFA-METHOD.md`)
 - Article Form: **LEADING WORKING ARCHITECTURE** (not production canonical)

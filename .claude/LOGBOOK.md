@@ -426,3 +426,43 @@ separate authorized cleanup task. Preservation first.
 EVIDENCE: .claude/WORK.md ## 5c
 SUPERSEDES: nothing — this is an addition to the roadmap, no prior entry rewritten.
 FOLLOW-UP: do not start before the trigger above. Writer Grounding (## 5b) continues meanwhile.
+
+## 2026-08-19 — WG6-N1/N2 CLOSED, THEN OWNER STOP ON WRITER GROUNDING
+STATUS: WG6-N1 and WG6-N2 CLOSED. Final end-to-end shadow replay ABORTED BY OWNER before any model
+stage executed. Writer Grounding frozen as SHADOW-CALIBRATED CANDIDATE — NOT PRODUCTION-VALIDATED,
+NOT TRANSFER-VALIDATED. Nothing pushed, nothing deployed, no article generated, Gold V2.1 and
+FORM-1.3 unmodified.
+DECISION:
+  WG6-N1 — A, ROUTING_GAP_CLOSED. Routing authority for a negative meta-source claim is now WG-4B's
+  own IN_SCOPE + NEGATIVE classification, not a WG-4A COMMITMENT_TYPE label. A negative parent with
+  no SOURCE_META carrier emits a synthesised WG-4B unit and reassigns nothing, so an independent
+  commitment sharing the parent sentence keeps its own verdict. Re-scored on both frozen conditions
+  with no model calls: original condition TP 8 / FP 0 / FN 0, unsupported set byte-identical to
+  frozen WG-6A, unrouted 0; post-repair the previously suppressed finding is recovered.
+  WG6-N2 — A, VERIFICATION_SEMANTICS_READY. Sentence-level byte-locality plus independent source
+  adjudication yields four separately reported counts: repair introduced 0, repair residual 0,
+  preexisting genuine newly detected 1, detector variance 2. "Repair introduced none" is a narrower
+  claim than "no new unsupported"; the two may not be collapsed. The one genuine survivor is
+  FORM-1.3's "the visitor's afternoon", an invented duration absent from the source, same class as
+  gold G13-02 / GR3-01 / GR3-03 — repair did not cause it, gold simply never named it.
+OWNER STOP RULE (binding): repeated stochastic audits of the same Edinburgh prose will not be
+required to produce zero newly discovered propositions forever. Source-relative LLM detection is
+stochastic and a finite gold benchmark cannot prove every possible unsupported proposition in an
+article has been enumerated forever — WG6-N2 measured this directly. The finite Gold V2.1
+calibration and the completed WG experiments have served their purpose. Do NOT create WG-7, do NOT
+create another Edinburgh grounding experiment, do NOT run another FORM version. Reopen Edinburgh
+Writer Grounding only if a later transfer/production test reveals a reproducible failure that maps
+back to this architecture.
+ABORT NOTE: the final-replay directory holds pre-registration, frozen inputs, deterministic stages
+and three rendered stage-1 prompts — and ZERO model calls, ZERO outputs. It is not an experiment
+failure; nothing was measured, so no result may be inferred from it. Missing outputs must not be
+reconstructed, simulated or completed later.
+EVIDENCE: .claude/experiments/writer-grounding-v6-2026-08-19/WG-6N/STATUS.md (read first),
+N1-RESCORE.json, N2-CLASSIFICATION.json, N2-ADJUDICATION.json;
+.claude/experiments/writer-grounding-final-shadow-2026-08-19/STATUS.md (ABORTED_BY_OWNER)
+CODE: a1f2889 (WG-6N closure, last completed evidence checkpoint)
+SUPERSEDES: the "NEXT: close WG6-N1 then run one final shadow replay" plan in WORK.md ## 5b. The
+first half was done; the second half is cancelled by owner decision, not by failure. WG-6's own
+results (WG6-RESULTS.json, decision A) are unchanged and were not rewritten.
+FOLLOW-UP: next roadmap task is LEGACY PROMPT / RULE INVENTORY (## 5c) — its trigger is now reached.
+Then Real Article Test 2 / transfer validation. Neither started in this session.

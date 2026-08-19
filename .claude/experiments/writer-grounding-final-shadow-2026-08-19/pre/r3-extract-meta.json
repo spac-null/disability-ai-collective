@@ -1,0 +1,16 @@
+{
+  "stage": "FINAL SHADOW REPLAY / PRE-REPAIR / WG-3A FAITHFUL EXTRACTION",
+  "component_version": "WG-3A, unchanged (system prompt read verbatim from frozen file)",
+  "phase": "pre",
+  "tag": "r3",
+  "sentences": 38,
+  "system_sha256": "45586e5f37b881cfb08e8a4bc9d7e9583788079b75c4f6aa0de47be1ef35fe95",
+  "user_sha256": "bf61d3ed6d3522cb1408e3c504938e6be1fc8c0ed2e7b2ca65ade5b29893abdd",
+  "prompt_sha256": "ad38a11903524c04e351f745472bcf31a432e1f57f1de3318fe8dd79ee762606",
+  "article_sha256": "27b1038c80af9890ca07b5b4ab1533670b3425f11c41d2898d2a61d806086d94",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "blind_to_gold": true,
+  "preserved": "PRE_EXECUTION"
+}

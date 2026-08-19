@@ -517,24 +517,66 @@ result in `WG6-RESULTS.json`.
 **Architectural result: modular composition is safer than monolithic composition** — at equal recall
 and better precision, it preserved component behaviour the WG-5 monolithic prompt destroyed.
 
-**Two new issues, NOT from the WG-6 charter, both to settle before the final replay:**
-`WG6-N1` a routing gap — WG-4B's proof is consulted only when WG-4A also types a commitment
-SOURCE_META, so a negative-source verdict can be silently suppressed when the components disagree
-about the claim's type (fired once, post-repair, benign against gold but a real recall hole).
-`WG6-N2` detector resampling variance — the identical frozen instrument on byte-identical untouched
-sentences produced 2 UNSUPPORTED it had called INTERPRETATION pre-repair.
+**Two issues found outside the WG-6 charter — BOTH NOW CLOSED (2026-08-19, commit `a1f2889`).**
+Evidence: `.claude/experiments/writer-grounding-v6-2026-08-19/WG-6N/` — read `STATUS.md` first.
 
-**NEXT:** close WG6-N1, re-score WG-6A to prove no regression, then ONE final untouched end-to-end
-shadow replay of the modular Writer Grounding pipeline. The replay was deliberately NOT run in WG-6.
+- **WG6-N1 — A, ROUTING_GAP_CLOSED.** WG-4B's proof was consulted only when WG-4A also typed a
+  commitment SOURCE_META, so a negative-source verdict could be silently suppressed when the two
+  components disagreed about the claim's type. Fixed: routing authority is now WG-4B's own
+  `IN_SCOPE` + `NEGATIVE` classification. A negative parent with no SOURCE_META carrier emits a
+  synthesised WG-4B unit and **reassigns nothing**, so an independent commitment sharing the parent
+  sentence keeps its own verdict. Re-scored on both frozen conditions, no model calls: the original
+  condition is **TP 8 / FP 0 / FN 0** with the unsupported set byte-identical to frozen WG-6A,
+  unrouted 0. Post-repair the previously suppressed finding is recovered.
+- **WG6-N2 — A, VERIFICATION_SEMANTICS_READY.** A single post-repair unsupported count cannot
+  answer "did repair introduce a grounding failure?". Four counts are now reported separately from
+  sentence-level byte-locality plus independent source adjudication: **repair introduced 0, repair
+  residual 0, preexisting genuine newly detected 1, detector variance 2.** "Repair introduced none"
+  is a narrower claim than "no new unsupported" and the two may never be collapsed.
+
+The one genuine survivor is FORM-1.3's `the visitor's afternoon` — an invented duration the source
+never gives, same class as gold G13-02 / GR3-01 / GR3-03. Repair did not cause it; Gold V2.1 simply
+never named it.
+
+### OWNER STOP RULE — 2026-08-19 (binding)
+
+The final end-to-end shadow replay was **STOPPED BY THE OWNER before any model stage executed**:
+`ABORTED_BY_OWNER — DIMINISHING_RETURNS_STOP`. Setup, pre-registration and stage-1 prompts are
+preserved at `.claude/experiments/writer-grounding-final-shadow-2026-08-19/` with **zero model
+calls and zero outputs**. This is **not** an experiment failure — nothing was measured, so no result
+may be inferred from that directory. Missing outputs must **not** be reconstructed or completed.
+
+Writer Grounding is frozen as:
+
+| | |
+|---|---|
+| Writer Grounding architecture | **SHADOW-CALIBRATED CANDIDATE** |
+| | **NOT PRODUCTION-VALIDATED** |
+| | **NOT TRANSFER-VALIDATED** |
+
+**Accepted limitation.** Source-relative LLM detection is stochastic, and a finite gold benchmark
+cannot prove that every possible unsupported proposition in an article has been enumerated forever.
+WG6-N2 measured this directly. Repeated stochastic audits of the same Edinburgh prose will not be
+required to produce zero newly discovered propositions. The finite Gold V2.1 calibration and the
+completed WG experiments have served their purpose.
+
+**Standing prohibitions.** Do NOT create WG-7. Do NOT create another Edinburgh grounding experiment.
+Do NOT run another FORM version. Reopen Edinburgh Writer Grounding **only** if a later transfer or
+production test reveals a reproducible failure that maps back to this architecture.
+
+**NEXT:** `## 5c` LEGACY PROMPT / RULE INVENTORY, then Real Article Test 2 / transfer validation.
 
 ## 5c. ROADMAP — WHAT COMES AFTER WRITER GROUNDING
 
 Ordering. The later steps may be re-sequenced once Writer Grounding is solved, but the legacy-rule
 inventory is **REQUIRED** and must not disappear from this list.
 
-1. **CURRENT** — Writer Grounding calibration (`## 5b`).
-2. **THEN** — complete Writer Grounding / end-to-end shadow validation.
-3. **THEN** — **LEGACY PROMPT / RULE INVENTORY** (below).
+1. ~~Writer Grounding calibration (`## 5b`)~~ — **CLOSED 2026-08-19 by OWNER STOP RULE.** Frozen as
+   SHADOW-CALIBRATED CANDIDATE, not production-validated, not transfer-validated. See `## 5b`.
+2. ~~complete Writer Grounding / end-to-end shadow validation~~ — **NOT DONE, AND NOT TO BE
+   RESUMED.** The final shadow replay was aborted by the owner before any model stage ran
+   (`ABORTED_BY_OWNER — DIMINISHING_RETURNS_STOP`). Deliberately left incomplete.
+3. **CURRENT** — **LEGACY PROMPT / RULE INVENTORY** (below). Its trigger has been reached.
 4. **THEN** — Real Article Test 2 / transfer work, or production architecture work, according to the
    state reached at that point.
 
