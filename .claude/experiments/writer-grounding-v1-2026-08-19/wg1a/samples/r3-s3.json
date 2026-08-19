@@ -1,0 +1,34 @@
+{
+  "claims": [
+    {
+      "claim": "Following Your Nose Through Edinburgh",
+      "verdict": "SUPPORTED",
+      "reason": "Pre-scan flagged this as an unfound named entity, but it is the article's own headline, built directly from the source's phrase 'You've just got to follow your nose' and its Edinburgh setting. No new entity is asserted."
+    },
+    {
+      "claim": "Edinburgh\n\nBy",
+      "verdict": "SUPPORTED",
+      "reason": "Pre-scan artifact: the matcher joined the end of the headline to the opening words 'By the reviewer's account'. Not a claim and not an entity."
+    },
+    {
+      "claim": "Discovery here is something that happens to a person who is walking around Edinburgh in August",
+      "verdict": "UNSUPPORTED",
+      "reason": "The source never dates the festival. Nothing in the review says August, or any month or season. The month is real-world knowledge imported from outside the supplied source, i.e. an invented date detail stated as fact about the review's own scene."
+    },
+    {
+      "claim": "By the reviewer's account, the Edinburgh art festival is something you move through rather than read.",
+      "verdict": "UNCERTAIN",
+      "reason": "Attributed to the reviewer, but the reviewer never frames the festival as moving-versus-reading. The source supports the ingredients (it is 'impossible to figure out how any of it fits together'; 'follow your nose'), so the framing is a defensible paraphrase, but as written it puts the article's own interpretive frame in the reviewer's mouth. Resolving it would need the reviewer to state that opposition, which the source text does not."
+    },
+    {
+      "claim": "And that second obligation is harder to discharge, because the subject is not in the room to say whether it has been met.",
+      "verdict": "UNCERTAIN",
+      "reason": "A causal/evaluative claim of the article's own, asserted flatly. The source states the duty is owed 'to viewers and to their subjects' and nothing about the relative difficulty of the two, nor about subjects being absent as the reason. It reads as the article's argument but is not marked as one; only the reviewer saying so, or the article owning it as its own reading, would settle it."
+    },
+    {
+      "claim": "It does not describe an event in the artist's life, because in the artist's life the event did not take place.",
+      "verdict": "UNCERTAIN",
+      "reason": "Holds for Sandra George, whom the source explicitly says 'was only discovered after her death in 2013'. It is an inference for Frank Walter: the source establishes only that he 'died having never shown any of the thousands of paintings and drawings he amassed', which is a fact about exhibition, not about whether he was discovered or known in his lifetime. The article applies the George timeline to both ('either of them'). Resolving it would need a source statement about when Walter's work was found."
+    }
+  ]
+}

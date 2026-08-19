@@ -1,0 +1,140 @@
+{
+  "gold": {
+    "propositions": 95,
+    "unsupported": 10
+  },
+  "results": [
+    {
+      "detector": "WG-0 BASELINE (1 sample)  strict",
+      "tp": 6,
+      "fn": 4,
+      "fp": 0,
+      "recall": 0.6,
+      "precision": 1.0,
+      "missed": [
+        "G13-03",
+        "GR2-01",
+        "GR3-01",
+        "GR3-02"
+      ]
+    },
+    {
+      "detector": "WG-0 BASELINE (1 sample)  lenient",
+      "tp": 8,
+      "fn": 2,
+      "fp": 1,
+      "recall": 0.8,
+      "precision": 0.8888888888888888,
+      "missed": [
+        "G13-03",
+        "GR3-01"
+      ]
+    },
+    {
+      "detector": "WG-1A 3-SAMPLE UNION    strict ",
+      "tp": 6,
+      "fn": 4,
+      "fp": 1,
+      "recall": 0.6,
+      "precision": 0.8571428571428571,
+      "missed": [
+        "G13-03",
+        "GR2-01",
+        "GR2-03",
+        "GR3-01"
+      ]
+    },
+    {
+      "detector": "WG-1A 3-SAMPLE UNION    lenient",
+      "tp": 7,
+      "fn": 3,
+      "fp": 8,
+      "recall": 0.7,
+      "precision": 0.4666666666666667,
+      "missed": [
+        "G13-03",
+        "GR2-03",
+        "GR3-01"
+      ]
+    },
+    {
+      "detector": "WG-1A 3-SAMPLE MAJORITY strict ",
+      "tp": 3,
+      "fn": 7,
+      "fp": 0,
+      "recall": 0.3,
+      "precision": 1.0,
+      "missed": [
+        "G13-02",
+        "G13-03",
+        "GR2-01",
+        "GR2-02",
+        "GR2-03",
+        "GR3-01",
+        "GR3-02"
+      ]
+    },
+    {
+      "detector": "WG-1A 3-SAMPLE MAJORITY lenient",
+      "tp": 6,
+      "fn": 4,
+      "fp": 3,
+      "recall": 0.6,
+      "precision": 0.6666666666666666,
+      "missed": [
+        "G13-03",
+        "GR2-01",
+        "GR2-03",
+        "GR3-01"
+      ]
+    },
+    {
+      "detector": "WG-1B EXHAUSTIVE          strict",
+      "tp": 5,
+      "fn": 5,
+      "fp": 1,
+      "recall": 0.5,
+      "precision": 0.8333333333333334,
+      "missed": [
+        "G13-03",
+        "GR2-01",
+        "GR2-02",
+        "GR2-03",
+        "GR3-02"
+      ]
+    },
+    {
+      "detector": "WG-1B EXHAUSTIVE          lenient",
+      "tp": 5,
+      "fn": 5,
+      "fp": 3,
+      "recall": 0.5,
+      "precision": 0.625,
+      "missed": [
+        "G13-03",
+        "GR2-01",
+        "GR2-02",
+        "GR2-03",
+        "GR3-02"
+      ]
+    }
+  ],
+  "wg1b_enumeration_recall": 1.0,
+  "wg1b_unsupported_verdict_recall": 0.5,
+  "wg1b_enumerated_but_misclassified": [
+    "G13-03",
+    "GR2-01",
+    "GR2-02",
+    "GR2-03",
+    "GR3-02"
+  ],
+  "never_detected_by_any_config": [
+    "G13-03",
+    "GR2-03"
+  ],
+  "cost": {
+    "WG-0 baseline": "1 audit call/article",
+    "WG-1A": "3 audit calls/article",
+    "WG-1B": "1 audit call/article, ~3-4x output tokens (56-64 claims vs 3-8), ~3-4x latency"
+  }
+}

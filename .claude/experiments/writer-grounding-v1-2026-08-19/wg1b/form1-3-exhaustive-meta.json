@@ -1,0 +1,10 @@
+{
+  "tag": "form1-3",
+  "sentences": 40,
+  "system_sha256": "0b8c76d6cdb68f66ac0a2710c457227d4989d77a037c75846d79b46485f27bfc",
+  "user_sha256": "8fb72793d6998a6f255186d0ce40a871be6730ed2ddd230520126e66131064f2",
+  "prompt_sha256": "af8bea23301831dbc1517209e4548c6dc0c1455c332dd644e47991e2d21d014c",
+  "article_sha256": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

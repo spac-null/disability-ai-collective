@@ -1,0 +1,10 @@
+{
+  "tag": "r2",
+  "sentences": 31,
+  "system_sha256": "0b8c76d6cdb68f66ac0a2710c457227d4989d77a037c75846d79b46485f27bfc",
+  "user_sha256": "af49714ba115a7903e64b157639040c1e6d4bf2d7645a929dd5187b7c8a1fbb0",
+  "prompt_sha256": "2329b6a4f7a25928e7d8e7adf9ff9996867834cdeb17b69323e743230972b581",
+  "article_sha256": "5ea20461cc09484d7bf1fea3f83de526f5c54720b72438e180cf92e4f1f600ad",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

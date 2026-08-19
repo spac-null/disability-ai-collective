@@ -1,0 +1,10 @@
+{
+  "tag": "r3",
+  "sentences": 38,
+  "system_sha256": "0b8c76d6cdb68f66ac0a2710c457227d4989d77a037c75846d79b46485f27bfc",
+  "user_sha256": "ff9f6ab28b819f6cfc2d1749117106495378765d5b20b8dbaf5dc1ffca0388bc",
+  "prompt_sha256": "e87f44146c42b39940451520b480f86d546b0413c5d7ec9f6c3f946e83408d0b",
+  "article_sha256": "27b1038c80af9890ca07b5b4ab1533670b3425f11c41d2898d2a61d806086d94",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}
