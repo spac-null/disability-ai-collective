@@ -1,0 +1,1673 @@
+Write a narrative nonfiction article from the material below. You are not filling in labelled sections -- write it as one continuous piece of thinking. The material below is a supply to draw on, not a running order; the route is the route given here.
+
+Follow this route:
+1. Begin with the crossing as the report describes it: no pedestrian light signals, no physical barrier, and safe use reliant on pedestrians responding to the signage and markings and on observing or hearing approaching trams. Give the place concretely. End this movement with the two channels named as the report names them, and no comment on them yet.
+2. Then take the second channel apart, using only the report's facts, in this order: the audible warning board about 30 metres before the crossing, and that it was installed after a 2005 accident at this same crossing; that outside one named location it is the driver's decision whether to sound the bell or the horn; that the operator's rules ask for an 'appropriate' audible warning of 'adequate length' and the training document repeats the same words; that RAIB's own observation after the accident found passing drivers using either device, generally choosing louder and longer warnings during darkness; and that the on-tram data recorder logs bell and horn on the same channel. Do not say what this means. Let the facts do the narrowing.
+3. Then the accident itself, plainly and chronologically, in seconds. Then the two recorder findings: no bell recorded at the warning board, and RAIB's conclusion that it is probably the case none was sounded; and the horn recorded less than a second before the collision, with insufficient time to act as an effective warning. Keep RAIB's hedge -- 'probably' stays 'probably'.
+4. Then, immediately, before the reader can settle into the reading that the driver simply failed to ring the bell: the two earlier accidents in which a warning WAS given and people still died -- Morden Hall Park in 2008 and Saughton in 2018. Then the other prior occurrences as the report gives them. Then the twenty-year line: the 2005 remedy at this crossing was to install a board reminding a person to act; RAIB's 2017 recommendation after the 2016 death asked that all tram drivers work to the same set of requirements; RAIB now states that more effective implementation of it could have addressed the inconsistencies in audible warnings that were a factor here.
+5. Arrive, and stop there.
+
+The piece should land on this: looking is a property of the crossing, and hearing is a message with a sender. The ordinary state of that second channel is silence. The two pedestrians had crossed this tramway fewer than ten times and had never encountered a tram while crossing, so every silence they had met there had been true. A channel that is almost always silent, and almost always silent truthfully, teaches the people who use it that silence is information.
+
+Do not extend this into any recommendation. Do not propose lights, barriers, automatic warnings, better training or better management, and do not say the accident was preventable or that any remedy would have prevented it. RAIB's own formulation is 'could have addressed' -- do not strengthen it.
+
+The arrival is the end of the piece. Nothing follows it. Do not restate the landing a second or third time in different words, and do not write anything shaped like 'These are two different things...', 'The first is... The second is...', or 'That is the distinction...' followed by another paraphrase. A piece may end immediately after its strongest precise arrival -- it does not need a conventional closing paragraph. Do not widen at the end to trams in general, to other senses, to other crossings, or to society.
+
+Attribute in the ordinary way prose does ('the report finds', 'RAIB concludes', 'the operator's standards require'). Quote the report directly where the wording matters -- 'observing or hearing', 'appropriate', 'adequate length', 'probably the case', 'could have addressed'. But do not discuss attribution with the reader: no sentences about whose view something is or is not, and never state what someone did not say.
+
+Do not invent scenes, biography, motives, interior life, or dialogue. Do not write a scene inside the driving cab. Do not say why the driver did not sound the bell, what they were thinking, or that they were at fault -- the report does not establish it. Do not characterise the two pedestrians beyond what the report states, and do not name anyone; the report names no individual involved.
+
+Do not state or imply that either pedestrian was deaf, hard of hearing, or disabled in any way. Nothing in the report suggests it. Do not introduce a disabled person, a disability example, or an access anecdote anywhere in the piece.
+
+Give no acoustic measurement of any kind -- no decibels, no frequencies, no audibility distances. The report gives none. Do not assert how loud or how quiet a tram is.
+
+Write in third person. Do not adopt a first-person narrator. You are not a character and have no biography.
+
+Roughly 900-1,200 words. There is no requirement to reach 1,200. Do not pad. If the arrival has genuinely landed at 900 words, stop there.
+
+Write only the article, with a title on the first line.
+
+MATERIAL:
+
+The safety case, in the report's own words
+- The report states: "There are no pedestrian light signals at the footpath crossing to indicate to pedestrians to stop if it is safe or unsafe to cross. The design of the crossing also does not include a physical barrier. Safe use of the crossing is reliant on pedestrians correctly responding to the signage and markings, and observing or hearing approaching trams."
+
+The place
+- A 45-metre fence divides the pavement from the tramway on the approach from the south; the first 40 metres are built primarily to prevent road vehicle incursions, and the differing gradient profiles create a drop in height between pavement and tramway. The final 5-metre section segregates pedestrians and follows the downward slope towards the crossing.
+- At the end of the pedestrian fence a signal post displays a blue 'TRAMWAY LOOK BOTH WAYS' sign. On turning east to cross, a user can see two more such signs, one on either side of the crossing.
+- 'LOOK BOTH WAYS' is painted on the pavement immediately before a short stretch of tactile paving leading to the crossing, reminding users of rule 33 of the Highway Code.
+- Past the tactile paving the crossing surface is paved brick, with segregated ballasted track to the south and raised granite cobbles to the north.
+- The pavement forms part of a National Cycle Route; segregation between pedestrians and cycles is denoted by signage and line markings.
+- The crossing is at an intersection of two busy roads and the tramway.
+
+The second channel
+- An audible warning board is provided approximately 30 metres before the crossing, reminding the tram driver of a requirement to sound an audible warning on the approach to the footpath and vehicle crossings. It was originally fitted in response to an accident involving a pedestrian at the same crossing in 2005.
+- The operator's rules and operational standards require drivers to "give a compulsory appropriate audible warning of the approach of the tram. All warnings must be of adequate length to ensure third parties are able to react and move clear of the tram approach."
+- The standards specify the use of the horn only at Sheffield Road bridge, which is not near Staniforth Road. "At all other audible warning boards, it is the driver's decision whether to sound the bell or the horn."
+- The driver training document MEI-CAT Phase Two requires an "appropriate audible warning of the approach of the tram", with warnings of "adequate length".
+- The report finds: "The absence of specific details on audible warnings within operational rules and training documents creates the potential for inconsistency between drivers on the type and length of warnings which are sounded at audible warning boards across the network."
+- RAIB's observations after the accident at the outbound audible warning board found that passing trams used either their bell or horn, "with drivers generally opting for louder and longer warnings during darkness".
+- The bell and horn were tested after the accident against Railway Group Standard GMRT 2484 issue 2 (2007) and LRSSB standard LRSSB-LRG 5.0 (2022). They met the requirements, were fully operational, sounded clearly, and were accurately recorded on the on-tram data recorder, "which records bell and horn activation on the same channel".
+
+The accident
+- At around 16:14 on Sunday 22 June 2025 a tram collided with two pedestrians at Staniforth Road footpath crossing, Sheffield, on the South Yorkshire Supertram network, at approximately 17 mph (27 km/h).
+- The driver booked on at 09:46, worked three days a week, and this was their first shift after two rest days. Tram 101 left Middlewood at 15:46 outbound to Meadowhall Interchange. The tram was lightly loaded, around 30 passengers.
+- The pedestrians had raced at Woodbourn Road athletics stadium and were on a cool-down circuit. They had initially crossed the tramway at Woodbourn Road tram stop, then run on the pavement parallel to the tramway.
+- No requests were made for Woodbourn Road stop, so the tram passed through without stopping. Shortly after, the driver observed the two pedestrians on the pavement, running ahead of the tram alongside the track.
+- The driver accelerated to line speed, using the service brake on the descending gradient to stay at or below the 30 mph (48 km/h) limit, and made a short hazard brake application approximately 30 metres from the start of the crossing to control speed for the 15 mph (24 km/h) reduction.
+- The tram signal for the junction displayed a proceed aspect from the time it came into view.
+- The pedestrians turned to their right and ran across the tramway directly into the path of the tram around 1 second before they were struck. They did not look towards the approaching tram before stepping onto the crossing.
+- Less than a second before the collision the driver applied the hazard brake and sounded the horn simultaneously.
+- One pedestrian was pushed clear of the tram by the other and sustained minor injuries. The other fell with the lower half of their body under the front of the tram and was pushed forward by equipment underneath it for about 6 metres.
+- The tram stopped approximately 4 seconds after the hazard brake application, about 12 metres from the point of collision.
+- One pedestrian sustained serious injuries, the other minor injuries; both were taken to hospital. There were no injuries on board. The driver tested negative for drugs and alcohol.
+
+What the recorders showed
+- "The pedestrians did not hear a warning from the tram before the crossing. The CCTV footage from inside the driving cab shows the driver had their hand on the control to sound the bell or horn. The driver stated that they sounded the bell; however, as the movements required are only slight, the footage is unclear as to whether they did so or not. The OTDR did not record the bell being sounded at the audible warning board and it is therefore probably the case that the tram driver did not sound an audible warning as required."
+- The OTDR recorded use of the warning horn just before the collision, "within a second of the pedestrians turning right into the path of the tram but less than a second before the collision, when the pedestrians were already on the crossing, and with insufficient time to act as an effective warning."
+
+The two pedestrians, as the report describes them
+- Both young people, aged 15 and 17. Not residents of Sheffield; they attend race meets at Woodbourn Road athletics stadium a few times every summer. They were not familiar with the area nor with tram networks generally.
+- The cool-down route is 1.2 km (0.75 miles), takes approximately 6 minutes, and crosses the tramway twice per circuit. They had completed it fewer than 10 times before and "had never encountered a tram while crossing the tramway."
+- Witness evidence shows neither pedestrian was expecting to have to stop for a tram when crossing.
+- They were not wearing headphones or using electronic devices. They were talking with each other while running, which may have drawn their focus away from their surroundings.
+- RAIB measurements indicate the level of passing traffic was unlikely to have hindered their ability to hear any warnings from the tram.
+
+Prior occurrences, exactly as this report records them
+- 27 October 2005, Staniforth Road footpath crossing: a tram struck and seriously injured a pedestrian who stepped onto the crossing directly in front of it. RAIB report 01/2006 found the driver's ability to assess the risk may have been negatively affected by the fence on the approach. Following the accident, the audible warning board was installed and the 24-metre section of fence immediately before the crossing was redesigned.
+- 13 September 2008, Morden Hall Park footpath crossing, London Tramlink: a tram collided with a cyclist, who later died. Causal factors were that the cyclist may have been wearing headphones, preventing them hearing the audible warnings sounded by the tram driver, and that the crossing approach did not encourage cyclists to look towards eastbound trams (RAIB report 06/2009).
+- 16 May 2012, near Sandilands tram stop, Croydon: a pedestrian was struck and seriously injured, falling into the space between platform and tram. They had not looked for an approaching tram, and the layout meant trams on the nearest track approached from behind (RAIB report 03/2013).
+- 22 December 2016, Woodbourn Road tram stop, Sheffield: a pedestrian who had just got off an inbound tram was struck and fatally injured by a non-stop outbound tram at around 13 mph (21 km/h). They were seemingly unaware the tram was approaching, "and the tram did not give an audible warning to indicate that it was passing non-stop through the tram stop" (RAIB report 13/2017).
+- 11 September 2018, near Saughton tram stop, Edinburgh: a pedestrian was struck and fatally injured. "Although the tram driver had used the tram's bell to sound repeated warnings on the approach to the crossing, the audible warning was not sufficiently loud for it to be heard and acted upon by the pedestrian until it was too late" (RAIB report 09/2019).
+
+The twenty-year line
+- RAIB states that recommendation 1 of report 13/2017, made after the 2016 fatal accident, "had the potential to address one or more factors identified in this report", and that "more effective implementation of recommendation 1 from this report could have addressed the inconsistencies in audible warnings for users of the footpath crossing which were a factor in this accident."
+- That recommendation's stated intent was "that all tram drivers drive to the same set of requirements, irrespective of when they were initially trained."
+
+Severity
+- "The area beyond the crossing included raised cobbles, which possibly exacerbated one of the pedestrian's injuries."
+
+Organisations
+- South Yorkshire Future Trams Ltd (SYFTL), operator and maintainer of the network. South Yorkshire Mayoral Combined Authority (SYMCA), owner of the network. RAIB found that management of risk at Staniforth Road footpath crossing by these two "was not sufficiently effective."
+
+GROUNDING BOUNDARIES: The report does not say why the driver did not sound the bell, what they were thinking, or that they were at fault -- only that the recorder logged no bell at the warning board and that it is "probably the case" none was sounded. It gives no acoustic measurement of any kind: no decibels, no frequencies, no audibility distances, and no statement of how loud or quiet a tram is. It names no individual involved. It says nothing about either pedestrian being deaf, hard of hearing, or disabled. It records nothing about the five earlier accidents beyond the summaries given above, and the earlier reports themselves are not available to you. It does not recommend installing lights, barriers, or automatic warnings, and it does not say this accident or any earlier one would have been prevented by any remedy. Nothing outside the FULL SOURCE TEXT below is authorised -- no press coverage, no standards documents, no general knowledge about trams, Sheffield, or acoustics.
+
+FULL SOURCE TEXT (the only source of any named person, quote, date, number, distance, or measurement you may use):
+---
+Rail Accident Report
+
+
+
+
+Collision between a tram and two pedestrians at
+Staniforth Road, Sheffield
+22 June 2025
+
+
+
+
+                                     Report 10/2026
+                                          July 2026
+This investigation was carried out in accordance with:
+• the Railway Safety Directive 2004/49/E C
+• the Railways and Transport Safety Act 2003
+• the Railways (Accident Investigation and Reporting) Regulations 2005.
+
+
+
+
+© Crown copyright 2026
+You may reuse this document/publication (not including departmental or agency logos) free of
+charge in any format or medium. You must reuse it accurately and not in a misleading context.
+The material must be acknowledged as Crown copyright and you must give the title of the
+source publication. Where we have identified any third party copyright material you will need
+to obtain permission from the copyright holders concerned. This document/publication is also
+available at www.gov.uk/raib.
+Any enquiries about this publication should be sent to:
+RAIB                                             Email: enquiries@raib.gov.uk
+The Wharf                                        Telephone: 01332 253 300
+Stores Road                                      Website: www.raib.gov.uk
+Derby UK
+DE21 4BA
+
+This report is published by the Rail Accident Investigation Branch, Department for Transport.
+Preface
+                                                                                                Preface
+
+The purpose of a Rail Accident Investigation Branch (RAIB) investigation is to
+improve railway safety by preventing future railway accidents or by mitigating their
+consequences. It is not the purpose of such an investigation to establish blame or
+liability. Accordingly, it is inappropriate that RAIB reports should be used to assign
+fault or blame, or determine liability, since neither the investigation nor the reporting
+process has been undertaken for that purpose.
+RAIB’s findings are based on its own evaluation of the evidence that was available at
+the time of the investigation and are intended to explain what happened, and why, in a
+fair and unbiased manner.
+Where RAIB has described a factor as being linked to cause and the term is
+unqualified, this means that RAIB has satisfied itself that the evidence supports both
+the presence of the factor and its direct relevance to the causation of the accident or
+incident that is being investigated. However, where RAIB is less confident about the
+existence of a factor, or its role in the causation of the accident or incident, RAIB will
+qualify its findings by use of words such as ‘probable’ or ‘possible’, as appropriate.
+Where there is more than one potential explanation RAIB may describe one factor as
+being ‘more’ or ‘less’ likely than the other.
+In some cases factors are described as ‘underlying’. Such factors are also relevant
+to the causation of the accident or incident but are associated with the underlying
+management arrangements or organisational issues (such as working culture).
+Where necessary, words such as ‘probable’ or ‘possible’ can also be used to qualify
+‘underlying factor’.
+Use of the word ‘probable’ means that, although it is considered highly likely that the
+factor applied, some small element of uncertainty remains. Use of the word ‘possible’
+means that, although there is some evidence that supports this factor, there remains a
+more significant degree of uncertainty.
+An ‘observation’ is a safety issue discovered as part of the investigation that is not
+considered to be causal or underlying to the accident or incident being investigated,
+but does deserve scrutiny because of a perceived potential for safety learning.
+The above terms are intended to assist readers’ interpretation of the report, and to
+provide suitable explanations where uncertainty remains. The report should therefore
+be interpreted as the view of RAIB, expressed with the sole purpose of improving
+railway safety.
+Any information about casualties is based on figures provided to RAIB from various
+sources. Considerations of personal privacy may mean that not all of the actual effects
+of the event are recorded in the report. RAIB recognises that sudden unexpected
+events can have both short- and long-term consequences for the physical and/ or
+mental health of people who were involved, both directly and indirectly, in what
+happened.
+RAIB’s investigation (including its scope, methods, conclusions and recommendations)
+is independent of any inquest or fatal accident inquiry, and all other investigations,
+including those carried out by the safety authority, police or railway industry.
+
+
+
+
+Report 10/2026                                                                      July 2026
+Staniforth Road
+                  This page is intentionally left blank
+
+
+Report 10/2026                     4                      July 2026
+Staniforth Road
+Collision between a tram and two pedestrians at
+Staniforth Road, Sheffield, 22 June 2025
+
+Contents
+
+Preface3
+Summary7
+Introduction8
+     Definitions                                                                 8
+The accident9
+     Summary of the accident                                                     9
+     Context10
+The sequence of events16
+     Events preceding the accident                                             16
+     Events during the accident                                                17
+     Events following the accident                                             17
+Analysis18
+     Identification of the immediate cause                                     18
+     Identification of causal factor                                           19
+     Identification of underlying factor                                       26
+     Factor affecting the severity of consequences                             29
+     Previous occurrences of a similar character                               30
+Summary of conclusions 33
+     Immediate cause                                                           33
+     Causal factors                                                            33
+     Underlying factor                                                         33
+     Factor affecting the severity of consequences                             33
+Previous RAIB recommendation relevant to this investigation34
+     Previous recommendation that had the potential to address one or more 		
+     factors identified in this report                                     34
+Actions reported as already taken or in progress relevant to this report 35
+     Action reported that addresses factors which otherwise would have resulted 		
+     in an RAIB recommendation                                                  35
+     Other reported actions                                                    35
+
+
+
+
+Report 10/2026                                 5                           July 2026
+Staniforth Road
+Recommendations36
+     Recommendations36
+Appendices38
+     Appendix A - Glossary of abbreviations and acronyms        38
+     Appendix B - Investigation details                         39
+
+
+
+
+Report 10/2026                             6                July 2026
+Staniforth Road
+Summary
+                                                                                             Summary
+
+At around 16:14 on Sunday 22 June 2025, a tram travelling on the South Yorkshire
+Supertram network collided with two pedestrians at Staniforth Road footpath crossing
+in Sheffield. The tram was travelling at approximately 17 mph (27 km/h) at the point of
+collision. The two pedestrians involved in the accident were taken to hospital, with one
+having sustained serious injuries, and the other minor injuries.
+The investigation found that the pedestrians were unaware of the approaching tram
+as they crossed into its path. This was because the pedestrians had not recognised
+the approach of the tram and they were not alerted to the approaching tram by the
+tram’s audible warning devices. Additionally, the crossing layout and signage did not
+effectively alert the pedestrians to the risk from approaching trams.
+An underlying factor to the accident was that the management of risk at Staniforth
+Road footpath crossing by South Yorkshire Future Trams Ltd (the operator and
+maintainer of the tram network) and South Yorkshire Mayoral Combined Authority (the
+owner of the network) was not sufficiently effective.
+RAIB has also identified that the injuries one pedestrian received as a result of the
+collision may have been made more serious due to a raised cobble surface that was
+situated immediately beyond the crossing.
+RAIB has made three recommendations. The first, made to South Yorkshire Future
+Trams Ltd and South Yorkshire Mayoral Combined Authority, asks them to continue
+their review of the assessment of risk at Staniforth Road footpath crossing and to
+implement appropriate control measures. The second, made to South Yorkshire Future
+Trams Ltd, aims to address inconsistencies in tram audible warning usage to deliver
+assurance of a consistent approach across the network.
+The third recommendation is for South Yorkshire Future Trams Ltd and South
+Yorkshire Mayoral Combined Authority, working with other relevant local transport
+organisations, to carry out an assessment of all locations on the South Yorkshire
+Supertram network where there is a credible risk of pedestrians being struck by a
+tram, and to implement appropriate changes to minimise injuries.
+
+
+
+
+Report 10/2026                             7                                     July 2026
+Staniforth Road
+               Introduction
+Introduction
+               Definitions
+               1    Metric units are used in this report, except when it is normal tramway practice
+                    to give speeds and locations in imperial units. Where appropriate the equivalent
+                    metric value is also given.
+               2    The report contains abbreviations and technical terms (shown in italics the first
+                    time they appear in the report). These are explained in appendix A. Sources of
+                    evidence used in the investigation are listed in appendix B.
+
+
+
+
+               Report 10/2026                              8                                     July 2026
+               Staniforth Road
+The accident
+
+                                                                                                                                                  The accident
+Summary of the accident
+3    At around 16:14 on Sunday 22 June 2025, a tram travelling from Middlewood to
+     Meadowhall Interchange on the South Yorkshire Supertram tram network, collided
+     with two pedestrians. The tram was travelling at approximately 17 mph (27 km/h)
+     when the collision occurred. The collision took place on the footpath crossing
+     close to the junction of Woodbourn Road and Staniforth Road in Sheffield, South
+     Yorkshire (figure 1).
+4    The two pedestrians involved in the accident were taken to hospital. One
+     sustained serious injuries as a result of the collision, while the other sustained
+     minor injuries.
+
+
+
+
+                                   Location of accident
+
+
+
+
+                                                                   Contains Ordnance Survey data: @Crown Copyright and database right 2026.
+                                                                   OS license number: AC0000833184. Source: Department for Transport, RAIB 2026
+
+
+
+
+Figure 1: Extract from Ordnance Survey map showing location of accident at Staniforth Road.
+
+
+
+
+Report 10/2026                                    9                                                                           July 2026
+Staniforth Road
+               Context
+
+The accident
+               Location
+               5    The accident occurred on the ‘Yellow’ line of the Supertram network, which runs
+                    from Middlewood, via the city centre, to Meadowhall Interchange (figure 2).
+                    From Woodbourn Road tram stop travelling outbound, the tramway continues
+                    approximately 290 metres north-east, parallel with a pavement and Woodbourn
+                    Road, until it intersects Staniforth Road. Beyond Woodbourn Road tram stop, the
+                    track climbs at a 1 in 16 (6.25%) gradient for approximately 184 metres and the
+                    maximum permitted speed is 30 mph (48 km/h). The track then descends at a 1
+                    in 21 (4.7%) gradient for about 64 metres, levelling out approximately 42 metres
+                    before the footpath crossing adjacent to Staniforth Road.
+
+
+                                                                                                                            Yellow route
+                                                                                     Middlewood
+                                                                                     Leppings Lane
+                                                                 Malin Bridge           Hillsborough Stadium
+
+                                                                                     Hillsborough Park
+                                                                                     Hillsborough
+                                        Routes                                       Interchange
+                                              Blue
+                                              Purple
+                                                                                     Bamforth Street
+                                              Tram Train                             Langsett/Primrose View
+                                              Yellow
+                                                                                     Infirmary Road
+                                        Key
+                                                                                     Shalesmoor for Kelham Island
+                                             Bus Interchange
+                                                                                     Netherthorpe Road
+                                             Train Interchange
+
+                                             Park and Ride
+                                                                                     University of Sheffield
+                                             Cycle Parking                           West Street
+                                             Stadiums                                City Hall
+                                             Universities/Colleges
+                                                                                       Cathedral
+                                             West End Hospitals
+                                                                                       Castle Square
+                                                                                       Fitzalan Square
+                                                                                           Ponds Forge
+
+
+
+
+                                                                                                                                    Woodbourn
+                                                        Sheffield Station                     Hyde Park
+                                                      Sheffield Hallam University
+                                                                                              Cricket Inn Road
+                                                          Granville Road                      Nunnery Square
+                                       Bramall Lane        The Sheffield College
+
+                                                  Park Grange Croft
+                                                                                              Woodbourn Road
+                                                                                                   City Athletics Stadium
+                                                                                                                                    Road tram
+                                                                                                                                      stop
+                                                             Park Grange                      Attercliffe
+                                                 Arbourthorne Road                            Arena Olympic Legacy Park
+                                                              Spring Lane                          Sheffield Arena
+
+                                                                Manor Top                     Valley Centertainment
+                                                                 Hollinsend                   Carbrook for IKEA
+                                                 Gleadless Townend                            Meadowhall South
+                                                                                              Tinsley
+                                                     Herdings/
+                                                 Leighton Road                                        Meadowhall
+                                                 Herdings Park                                        Interchange
+
+
+                                                                    White Lane                Magna
+                                                                                              Under construction
+                                                                   Birley Lane                Rotherham Central
+                                                          Birley Moor Road                    Parkgate
+                                                               Hackenthorpe
+                                                                 Donetsk Way
+                                                                      Moss Way                                              Yellow route
+                                                                Crystal Peaks
+                                                                      Interchange
+                                                         Drake House Lane
+                                                                          Beighton
+                                                                 Waterthorpe
+                                                                       Westfield
+                                                                        Halfway
+
+
+               Figure 2: The Sheffield tramway network (courtesy of South Yorkshire Future Trams Ltd with RAIB
+               annotations).
+
+               6    The footpath crossing traverses a two-track segregated section of tramway,
+                    with one track for each direction of travel. These are designated as ‘inbound’,
+                    conveying trams towards Sheffield city centre, and ‘outbound’, which conveys
+                    trams towards Meadowhall and Rotherham Parkgate. The trams are powered
+                    using 750 V DC overhead line equipment (figure 3). The maximum permitted
+                    speed decreases to 15 mph (24 km/h) approximately 8.5 metres beyond the
+                    southern edge of the footpath crossing and 6.5 metres before the tramway
+                    crosses Staniforth Road.
+
+
+
+
+               Report 10/2026                                                                                        10                         July 2026
+               Staniforth Road
+                                                                                                          The accident
+                                        Tram signal
+
+
+
+
+                        Figure 3: The approach to the footpath crossing looking
+                        east.
+
+7    The road junction of Woodbourn Road and Staniforth Road is managed by traffic
+     lights which are interlinked with a tram signal (figure 4) that authorises trams
+     to cross Staniforth Road. Immediately before the tramway intersection with
+     Staniforth Road, the pavement alongside Woodbourn Road leads to a tramway
+     footpath crossing. This footpath crossing is located 276 metres to the north of
+     Woodbourn Road tram stop and 15 metres from Staniforth Road (figure 3). It is
+     the most southerly of the two tramway footpath crossings at the intersection with
+     Staniforth Road.
+
+                                                   St
+                                                        an
+                                                          ifo
+                                                             rth
+                                                                   Ro
+                                                                     ad
+
+
+
+                                                                   15 mph sign
+                                                                   Footpath crossing
+                  Direction of pedestrians
+
+                                                  Direction of tram
+
+
+                                  oad
+       N
+                              rn R                  Audible warning board
+                            bou
+                          Wo
+                             od
+
+Figure 4: The location of the footpath crossing (courtesy of Google with RAIB annotations).
+
+
+
+
+Report 10/2026                                     11                                         July 2026
+Staniforth Road
+               Organisations involved
+
+
+The accident
+               8    South Yorkshire Mayoral Combined Authority (SYMCA) is a formal partnership
+                    between the four local authorities in South Yorkshire. These are Barnsley,
+                    Doncaster, Rotherham, and the City of Sheffield. In 2023, the responsibility for
+                    construction, operation and maintenance of the Supertram network moved from
+                    South Yorkshire Passenger Transport Executive to SYMCA. SYMCA owns the
+                    infrastructure and is responsible for capital investment, repair, refurbishment and
+                    renewal. It does not own the land on which the tramway operates.
+               9    South Yorkshire Future Trams Limited (SYFTL) is the operator of the Supertram
+                    network and is responsible for all routine tram and infrastructure maintenance.
+                    SYMCA governs SYFTL through an operating agreement. SYFTL was also the
+                    employer of the tram driver.
+               10 Before March 2024, the Supertram network was operated by South Yorkshire
+                  Supertram Ltd (SYSL) under a concessionary contract which also gave it the
+                  responsibility for asset investment.
+               11 Sheffield City Council is the highways authority for the City of Sheffield. It owns
+                  Staniforth Road footpath crossing and is responsible for the highway signalling
+                  which controls tram movements over the junction. However, the maintenance
+                  and repair of the crossing are the responsibility of SYMCA, as detailed in the
+                  memorandum of understanding between the two organisations.
+               12 All organisations freely co-operated with the investigation.
+               Tram involved
+               13 The tram that collided with the pedestrians was number 101 (figure 5), one of
+                  a fleet of 25 trams that was built in 1992 by Siemens-Duewag (now Siemens).
+                  Each tram is 35 metres long and comprises three articulated passenger‑carrying
+                  sections, which are supported on four bogies. Each tram weighs 52 tonnes
+                  without passengers.
+
+
+
+
+                                      Figure 5: Tram 101.
+
+
+               Report 10/2026                               12                                   July 2026
+               Staniforth Road
+14 The tram is fitted with a service brake, which is initiated by moving the combined
+
+
+                                                                                                                   The accident
+   power/brake control handle in the driving cab back towards the driver (figure 6).
+   The level of braking increases as the control handle is moved further back. There
+   is a notch or ‘detent’ at the end of the service braking section, marking the point
+   where the hazard brake is applied. The hazard brake applies electromagnetic
+   track brakes and sand for greater braking effect (see paragraph 35) and can
+   be cancelled by moving the handle forward through the detent. The tram has a
+   separate plunger button for the emergency brake, which was not used during the
+   accident. The hazard and emergency brakes provide the same level of braking.
+   They differ solely in the control system used to apply the brake. Unlike many more
+   modern trams, an audible warning is not automatically sounded when the hazard
+   or emergency brake is deployed.
+15 This section of the tramway is controlled using the line-of-sight principle. The
+   Light Rail Safety and Standards Board’s1 (LRSSB) document LRSSB – LRG 1.0
+   ‘Tramways Principles and Guidance’, issue 3, revision 2 dated March 2024,
+   describes this principle. It states that it is ‘where a tram should be able to stop
+   before a reasonably visible stationary obstruction ahead from the intended speed
+   of operation using the service brake.’ Line-of-sight is the predominant mode of
+   operation for tramways in the UK.
+16 The tram was retrofitted with an on-board speed monitoring system called
+   SIMOVE. This is designed to control the risk of drivers exceeding the permitted
+   speed on a route and uses GPS, an odometer, and a connection to the tram’s
+   door system, to determine location. The digital SIMOVE screen displays the
+   current speed inside the driving cab and the maximum permitted speed limit in
+   the current and next sections, denoting whether there is an increase or decrease.
+   The system also indicates the recommended reduction in speed when entering
+   a slower section. In its current configuration, the SIMOVE screen flashes and
+   activates an alarm if the speed of the tram is 3 mph (5 km/h) over the speed limit.
+   SIMOVE does not monitor tram speed to account for dynamic situations, such as
+   collision risks.
+Staff involved
+17 The driver of tram 101 had driven trams on the Sheffield tramway network for
+   about 30 years. They had no recent previous safety incidents on record, and
+   no issues were noted during a competence assessment undertaken the month
+   before the accident. SYFTL’s rating system identified the driver as being one of
+   its best performing drivers. Two months before the accident, the driver passed the
+   periodic medical assessment required to drive trams.
+18 In addition to the driver, the tram was also carrying a conductor. The conductor
+   was not directly involved in the events which occurred before the accident but
+   supported the injured pedestrians following the accident (see paragraph 28).
+
+
+
+
+1
+  The Light Rail Safety and Standards Board is the safety and standards body for the UK tramway sector. Further
+information can be found at https://lrssb.org/.
+
+
+Report 10/2026                                         13                                              July 2026
+Staniforth Road
+The accident
+
+
+
+
+                                                                                        Acceleration, 0 to
+                                                                                        maximum, speed
+                                                                                      increased by pushing
+                                                                                        the lever forward
+
+                                                                                               Coast
+
+
+                                                                                      Service braking, 0 to
+                                                                                       maximum, braking
+                                                                                       force increased by
+                                                                                         pulling the lever
+                                                                                           backwards
+
+
+                                                                                          Hazard brake
+
+
+
+
+               Figure 6: The combined power/brake control handle used to control acceleration and braking.
+
+
+
+
+               Report 10/2026                                   14                                           July 2026
+               Staniforth Road
+Pedestrians involved
+
+
+                                                                                           The accident
+19 The pedestrians were both young people and were 15 and 17 years old at the
+   time of the accident. Neither live near a tramway and they were visiting the area
+   to compete at Woodbourn Road athletics stadium (see paragraph 56).
+External circumstances
+20 The accident happened during daylight and CCTV footage from the tram showed
+   the weather was dry and overcast. At the time of the accident, the sun was to the
+   south-west behind the driver and the pedestrians, so its position was not a factor.
+   Ambient noise levels around the crossing are unlikely to have played a role in the
+   accident for the reasons discussed further in paragraph 54.
+
+
+
+
+Report 10/2026                            15                                   July 2026
+Staniforth Road
+                         The sequence of events
+
+
+
+The sequence of events
+                         Events preceding the accident
+                         21 At 09:46 on 22 June, the driver booked on for duty. The driver worked 3 days a
+                            week and this was their first shift after 2 rest days. They drove tram services from
+                            Cathedral to Herdings Park on the ‘Purple’ route (figure 2) until taking a break
+                            at 13:51. At 14:45, the driver departed from Castle Square in tram 101, driving
+                            to Meadowhall Interchange, and back to Middlewood. At 15:46, tram 101 left
+                            Middlewood to travel through Sheffield City Centre and outbound to Meadowhall
+                            Interchange. At the time of the accident, the tram was lightly loaded, with around
+                            30 passengers.
+                         22 The pedestrians had been taking part in a race meeting at Woodbourn Road
+                            athletics stadium. After completing their race, they ran a cool-down circuit taking
+                            them outside and around the stadium grounds in a clockwise direction (see
+                            paragraph 57 and figure 10). The pedestrians initially crossed the tramway
+                            at Woodbourn Road tram stop and then ran on the pavement parallel to the
+                            tramway.
+                         23 The driver did not receive any requests for the Woodbourn Road stop, so the tram
+                            passed through without stopping. Shortly after driving through Woodbourn Road
+                            tram stop, the driver observed the two pedestrians on the pavement, running
+                            ahead of the tram and alongside the track (figure 7).
+
+
+
+
+                         Figure 7: Forward-facing CCTV footage from tram 101 showing the driver’s view of the pedestrians
+                         (circled) 10 seconds after driving through Woodbourn Road tram stop (courtesy of SYFTL with RAIB
+                         annotations).
+
+
+
+
+                         Report 10/2026                                  16                                         July 2026
+                         Staniforth Road
+24 Data from the on-tram data recorder (OTDR) indicates that, once the tram
+
+
+
+
+                                                                                          The sequence of events
+   had passed Woodbourn Road tram stop, the driver accelerated to line speed.
+   They used the service brake to control the speed on the descending gradient,
+   maintaining the tram’s speed at or below the maximum permitted line speed of
+   30 mph (48 km/h). OTDR data shows that the driver made a short hazard brake
+   application approximately 30 metres from the start of the footpath crossing (see
+   paragraph 35) to control the speed on approach to the 15 mph (24 km/h) speed
+   reduction.
+25 The tram’s forward-facing CCTV (FFCCTV, which shows a view forwards from the
+   driving cab) shows that the tram signal for the junction was displaying a proceed
+   aspect from the time it came into the driver’s view, and that the pedestrians
+   remained running on the pavement ahead and to the left of the tram.
+
+
+Events during the accident
+26 FFCCTV shows that the pedestrians turned to their right and ran across the
+   tramway and directly into the path of the tram around 1 second before they
+   were struck. The pedestrians did not look towards the approaching tram before
+   stepping onto the crossing. Less than a second before the collision, the driver
+   applied the hazard brake and sounded the horn simultaneously. The tram was
+   travelling at a speed of 17 mph (27 km/h) at the time of the collision.
+27 One of the pedestrians was pushed clear of the tram by the other pedestrian and
+   sustained minor physical injuries. The other pedestrian fell with the lower half of
+   their body underneath the front of the tram and was pushed forward by equipment
+   underneath the tram for about 6 metres. The tram stopped approximately
+   4 seconds after the application of the hazard brake and about 12 metres from the
+   point of collision.
+
+
+Events following the accident
+28 The tram driver made an emergency phone call to the tram control centre to
+   report the accident. The conductor and a nurse, who had been travelling on the
+   tram, attended to the pedestrians. The emergency services responded, taking the
+   two pedestrians to hospital where they were treated for their injuries.
+29 There were no injuries to anyone on board the tram and the passengers were
+   evacuated from it without incident. Tram services were disrupted for several
+   hours. The tram driver was subsequently tested for the presence of drugs or
+   alcohol by the police. The tests returned negative results.
+30 Tram 101 was subsequently taken to Nunnery Road depot where it was examined
+   and tested by RAIB inspectors and SYFTL staff.
+
+
+
+
+Report 10/2026                            17                                  July 2026
+Staniforth Road
+           Analysis
+Analysis
+
+           Identification of the immediate cause
+           31 The pedestrians crossed into the path of the approaching tram.
+           32 FFCCTV images and witness evidence show the pedestrians crossing into the
+              path of the tram as it approached. The pedestrians did not look towards the
+              approaching tram before stepping onto the footpath crossing (paragraph 26).
+           33 The driver saw the pedestrians after leaving Woodbourn Road tram stop and
+              throughout the journey to the footpath crossing at Staniforth Road and did
+              not expect them to cross in front of the tram. The main risk for tram drivers at
+              Staniforth Road is perceived to be traffic at the road junction (see paragraph 79).
+           34 The maximum permitted line speed on approach to the footpath crossing
+              is 30 mph (48 km/h), reducing to 15 mph (24 km/h) immediately beyond it
+              (paragraph 7). The OTDR shows the tram reached the maximum speed of
+              30 mph (48 km/h) between Woodbourn Road tram stop and Staniforth Road
+              crossing. The SIMOVE (paragraph 16) speed supervision system was recorded
+              as being in passive mode at the time of the accident and did not intervene before
+              or during the accident, also showing that the tram was operating close to or below
+              the permitted speed.
+           35 The OTDR recorded two hazard brake applications before the collision. The first
+              lasted for approximately 1 second, in the vicinity of the audible warning board.
+              The second hazard brake application was made by the driver in reaction to the
+              pedestrians on the crossing (paragraph 24).
+           36 For the tram to have stopped before the crossing, the second hazard brake
+              application would have needed to have been made 2 to 3 seconds (or 20 to
+              30 metres) earlier than it was. However, as the pedestrians were still approaching
+              the crossing and had not yet turned towards the track at this point, there was no
+              reason for the driver to make such a brake application at that time (figure 8).
+           37 The current minimum peak hazard brake deceleration rate required by SYFTL
+              internal standards is 1.73 m/s2 (17.6%g).2 OTDR data shows that, at the time of
+              the accident, the tram decelerated at approximately 2 m/s2 (20.4%g). During post-
+              accident brake testing by SYFTL, the tram achieved a deceleration rate of 2.27 m/
+              s2 (23%g). Both the braking during the accident and during the test exceeded the
+              1.73 m/s2 required by SYFTL.
+
+
+
+
+           2
+            The value of an acceleration (or deceleration) expressed as a percentage of that achieved by a freely falling
+           object, which is taken to be 9.81 m/s².
+
+
+           Report 10/2026                                          18                                                July 2026
+           Staniforth Road
+                                                                                                         Analysis
+
+
+
+
+                                                                         Warning
+                                                                          board
+
+
+
+
+                                                      15 mph
+                                                       sign
+
+
+
+
+Figure 8: Proximity of the pedestrians (circled) to the crossing from the FFCCTV 3 seconds and
+2 seconds before the final hazard brake was applied (courtesy of South Yorkshire Future Trams Ltd with
+RAIB annotations).
+
+
+
+Identification of causal factor
+The actions of the pedestrians
+38 The pedestrians were unaware of the risk from the approaching tram.
+39 CCTV and witness evidence indicates that the pedestrians were unaware of the
+   presence of the tram before stepping into its path.
+
+
+
+
+Report 10/2026                                   19                                          July 2026
+Staniforth Road
+           40 This causal factor arose due to a combination of the following:
+Analysis        a. The approach of the tram was not recognised by the pedestrians, and they
+                   were not alerted to the approaching tram by the tram’s audible warning
+                   devices (paragraph 44).
+                b. The configuration of the crossing layout and signage did not alert the
+                   pedestrians to the risk from approaching trams (paragraph 58).
+                Each of these factors is now considered in turn.
+           Awareness and warning of the approaching tram
+           41 The approach of the tram was not recognised by the pedestrians, and they
+              were not alerted to the approaching tram by the tram’s audible warning
+              devices.
+           42 Witness and CCTV evidence shows that the pedestrians did not hear or see the
+              approaching tram and did not react to its presence.
+           43 CCTV, road vehicle ‘dash cam’ footage, and witness evidence corroborate that
+              the pedestrians were running at a steady pace ahead of the tram, with the tram
+              approaching from behind them to their right (figure 9). This means that the tram
+              would not have been in the pedestrians’ sight lines as they approached the
+              crossing while running along Woodbourn Road.
+
+
+
+
+           Figure 9: Movement of the tram behind the pedestrians (circled) on the approach to Staniforth Road
+           footpath crossing (dash cam footage courtesy of a member of the public via South Yorkshire Police with
+           RAIB annotations).
+
+
+           Report 10/2026                                    20                                         July 2026
+           Staniforth Road
+44 The pedestrians did not hear the tram’s approach or any warning from the tram to
+                                                                                                                    Analysis
+   alert them to its approach. The tram is fitted with a bell and a horn to enable the
+   driver to give an audible warning of the tram’s approach. The bell is the main form
+   of audible warning, with drivers using the horn to escalate a warning, primarily
+   in emergency situations. When pressed, the control buttons for the bell and the
+   horn immediately sound the bell or horn, which are audible both internally and
+   externally to the tram. The longer the button is depressed, the longer the warning
+   sounds. Witness evidence supports that the tram driver tested the bell and horn
+   before taking the tram into service.
+45 Following the accident, the tram was tested in accordance with Railway Group
+   Standard GMRT 2484, ‘Audibility Requirements for Trains’, issue 2 dated 2007,3
+   and LRSSB standard LRSSB-LRG 5.0, ‘Tramway Audible Warning Acoustic Test
+   Guidance’, issued in 2022. Testing demonstrated that the bell and horn on the
+   tram met the requirements of the standard, were fully operational, sounded clearly
+   and were being accurately recorded on the OTDR, which records bell and horn
+   activation on the same channel.
+46 An audible warning board (figure 4) is provided approximately 30 metres before
+   the crossing. It reminds the tram driver of a requirement to sound an audible
+   warning on the approach to the footpath and vehicle crossings. It was originally
+   fitted in response to an accident involving a pedestrian at the same crossing in
+   2005 (see paragraph 90).
+47 The pedestrians did not hear a warning from the tram before the crossing
+   (paragraph 44). The CCTV footage from inside the driving cab shows the driver
+   had their hand on the control to sound the bell or horn. The driver stated that
+   they sounded the bell; however, as the movements required are only slight, the
+   footage is unclear as to whether they did so or not. The OTDR did not record the
+   bell being sounded at the audible warning board and it is therefore probably the
+   case that the tram driver did not sound an audible warning as required.
+48 The OTDR recorded the use of the warning horn just before the collision
+   (paragraph 24). This took place within a second of the pedestrians turning right
+   into the path of the tram but less than a second before the collision, when the
+   pedestrians were already on the crossing, and with insufficient time to act as an
+   effective warning.
+49 Tram drivers are required to sound an audible warning in accordance with
+   SYFTL’s rules and operational standards. These require drivers to ‘give a
+   compulsory appropriate audible warning of the approach of the tram. All warnings
+   must be of adequate length to ensure third parties are able to react and move
+   clear of the tram approach’. The standards only specify the use of the horn as a
+   warning at Sheffield Road bridge, which is not located near Staniforth Road. At all
+   other audible warning boards, it is the driver’s decision whether to sound the bell
+   or the horn.
+50 Tram drivers are taught to sound an audible warning during their training.
+   SYFTL driver training document MEI-CAT Phase Two requires drivers to give an
+   ‘appropriate audible warning of the approach of the tram’, with warnings to be of
+   ‘adequate length’. This document also states that the horn will normally be used
+   on sections of the tram network that are segregated from the highway.
+3
+ This is a mainline railway standard and was superseded in 2026 by GMRT 2131, ‘Audibility and Visibility of
+Trains’, issue 1.
+
+
+Report 10/2026                                         21                                               July 2026
+Staniforth Road
+           51 Drivers are trained according to these rules, standards and documents, which
+Analysis
+              also require drivers to make audible warnings at warning boards, keep to
+              the speed limits of the route and remain vigilant to hazards, such as vehicles
+              and pedestrians. The way drivers are trained is also influenced by the skills,
+              knowledge and experience of the individual driver trainers responsible for their
+              training.
+           52 Once trained, drivers are assessed annually on their knowledge of operational
+              rules by:
+                • a written assessment (test paper which varies year-on-year), asking questions
+                  on operational rules
+                • a practical assessment (observed cab ride), where the driver’s performance is
+                  assessed, including their response to audible warning boards.
+           53 The absence of specific details on audible warnings within operational rules and
+              training documents creates the potential for inconsistency between drivers on the
+              type and length of warnings which are sounded at audible warning boards across
+              the network. This was supported by RAIB’s observations after the accident at the
+              outbound audible warning board on the approach to Staniforth Road. This found
+              that passing trams used either their bell or horn at the audible warning board, with
+              drivers generally opting for louder and longer warnings during darkness. While the
+              actions of drivers at the crossing may have been influenced by the knowledge that
+              an accident had recently occurred there, inconsistencies such as were observed
+              may reduce the effectiveness of audible warnings as a risk control measure.
+           54 Staniforth Road footpath crossing is located at an intersection of two busy roads
+              and the tramway (paragraph 6). RAIB testing identified that, when traffic held at
+              a red light is released by the traffic lights changing, the ambient noise level on
+              Woodbourn Road increases. Noise levels are also intermittently affected by other
+              variables such as the size of road vehicles. Although the traffic lights had just
+              changed before the accident occurred, only two cars and a panel van passed the
+              pedestrians as they approached the crossing. RAIB measurements indicate that
+              this level of traffic is unlikely to have hindered the pedestrian’s ability to hear any
+              warnings from the tram.
+           55 The pedestrians were not wearing headphones or using any electronic devices
+              as they approached the crossing. However, they were talking with each other
+              while running, and this may have drawn their focus away from their surroundings.
+              Although it is not unusual for runners to talk to each other, research focused on
+              road use has shown that distraction may be higher for the age group in which
+              both pedestrians belonged. Research into runners has shown that those aged
+              15 to 24 are more likely to be involved in a collision with a car while crossing the
+              road than those from other age groups.4
+
+
+
+
+           4
+            Tolmie A and others, ‘The Role of Skills, Attitudes and Perceived Behavioural Control in the Pedestrian
+           Decision- making of Adolescents Aged 11–15 Years’, Road Safety Research Report No. 68, Department of
+           Psychology, University of Strathclyde, prepared for the Department for Transport (October 2006).
+
+
+           Report 10/2026                                         22                                              July 2026
+           Staniforth Road
+56 Neither of the pedestrians are residents of Sheffield and attend race meets at
+                                                                                                     Analysis
+   Woodbourn Road athletics stadium a few times every year during the summer
+   months. They were not familiar with the area nor tram networks generally. They
+   use a set route for a cooldown run outside the stadium after racing due to their
+   lack of knowledge of the area. The number of people on a cooldown run is
+   dependent on who has recently completed a race. At the time of the accident, this
+   was just the two pedestrians.
+57 The cool-down run route is 1.2 km (0.75 miles) and takes approximately 6 mins
+   to complete, starting and ending at the stadium car park (figure 10). Each full
+   circuit of the route sees the pedestrians crossing the tramway twice. They had
+   completed this route less than 10 times before as part of other race meets
+   and had never encountered a tram while crossing the tramway. This may have
+   influenced their expectation as to the likely presence of trams, with witness
+   evidence showing that neither pedestrian was expecting to have to stop for a tram
+   when crossing the tramway.
+
+
+
+      Woodbourn Road footpath crossing              Staniforth Road footpath crossing
+
+
+                          Woodbourn Road tram stop
+
+
+                                    Woodbourn Road
+                                    athletics stadium
+
+                                                          Car
+                                                          park
+
+
+
+
+                   N
+
+
+
+Figure 10: Cool-down route taken by the pedestrians when using Woodbourn Road athletics stadium
+(courtesy of Google with RAIB annotations).
+
+The design and layout of the crossing
+58 The configuration of the crossing layout and signage did not alert the
+   pedestrians to the risk from approaching trams.
+59 The pavement that runs between Woodbourn Road tram stop and the Staniforth
+   Road footpath crossing runs parallel to the tramway (to the east) and Woodbourn
+   Road (to the west, figure 3). The pavement forms part of a National Cycle Route,
+   and the segregation between pedestrians and cycles on the pavement is denoted
+   by signage and line markings.
+
+Report 10/2026                                 23                                        July 2026
+Staniforth Road
+           60 A 45-metre-long fence divides the pavement and the tramway on the approach
+Analysis
+              to the footpath crossing from the south. The first 40 metres of the fence are
+              constructed primarily to prevent road vehicle incursions onto the tramway, and the
+              different gradient profiles here create a drop in height between the pavement and
+              the tramway. The final 5‑metre section of fence immediately before the footpath
+              crossing is intended to segregate pedestrians from the tramway. It follows the
+              downward slope of the footpath towards the crossing. At the end of the pedestrian
+              fence, a signal post displays a blue ‘TRAMWAY LOOK BOTH WAYS’ sign
+              (figure 11).
+
+
+
+
+           Figure 11: Signage at Staniforth Road footpath crossing when approaching from the west.
+
+           61 On turning east (right) to cross the tramway, a user can see two more ‘TRAMWAY
+              LOOK BOTH WAYS’ signs, one on either side of the crossing. The text ‘LOOK
+              BOTH WAYS’ is also painted on the pavement immediately before the user steps
+              onto a short stretch of tactile paving leading to the crossing (figure 12), reminding
+              users of the requirement of rule 33 of the Highway Code for pedestrians to ‘look
+              both ways along the track before crossing’.5 Once the tactile paving is passed, the
+              crossing surface itself is defined by paved brick, with segregated ballasted track
+              to the south, and raised granite cobbles to the north, between the crossing at
+              Staniforth Road itself.
+           62 There are no pedestrian light signals at the footpath crossing to indicate to
+              pedestrians to stop if it is safe or unsafe to cross. The design of the crossing
+              also does not include a physical barrier. Safe use of the crossing is reliant on
+              pedestrians correctly responding to the signage and markings, and observing or
+              hearing approaching trams.
+           63 The information conveyed by the signage and road markings was not effective in
+              informing the pedestrians, who were running and conversing, and were unfamiliar
+              with the location and the tramway, of the correct way to use the crossing. The
+              layout and design of the crossing also did not challenge the pedestrians’
+              expectation that they would not encounter a tram when using it (paragraph 57).
+              The management of the crossing and its safety are examined further from
+              paragraph 64.
+
+
+           5
+               Highway Code, https://www.gov.uk/guidance/the-highway-code/rules-for-pedestrians-1-to-35.
+
+
+           Report 10/2026                                          24                                      July 2026
+           Staniforth Road
+                          Outbound                                                                      Analysis
+                         services to                                            Staniforth Road
+                         Meadowhall
+
+
+        ‘TRAMWAY
+        LOOK BOTH
+        WAYS’ sign                                                              Granite cobbles
+        15 mph sign
+
+
+
+
+    N
+
+                                                                                Brick paving
+
+
+
+
+                               LOOK BOTH WAYS                  LOOK BOTH WAYS
+
+
+
+
+                                                                                  Ballast
+
+
+
+
+        Woodbourn Road
+
+                                                           Inbound services to
+                                                            Woodbourn Road
+                                                                tram stop
+
+Figure 12: Diagram of Staniforth Road footpath crossing.
+
+
+
+
+Report 10/2026                                    25                                        July 2026
+Staniforth Road
+           Identification of underlying factor
+Analysis   Risk management at Staniforth Road footpath crossing
+           64 SYFTL and SYMCA’s management of risk at this crossing was not
+              sufficiently effective.
+           Route risk assessments
+           65 The risks relating to Staniforth Road vehicle and footpath crossings were included
+              within the route risk assessment for the area undertaken by SYSL (the operator of
+              the system before March 2024, paragraph 11), which was subsequently adopted
+              by SYFTL. A route risk assessment is intended to identify and evaluate risks
+              related to a specific route of the tramway, identifying control measures to mitigate
+              such risks. No date was included on this risk assessment, although operator
+              records show it was reviewed in January 2022. The risk from collisions between
+              trams and road vehicles, and trams and users of the footpath crossing, were
+              considered separately.
+           66 The entry detailing the collision risk from road vehicles passing through red traffic
+              signals at the signalled multiple road junction was noted as ‘moderate’. The
+              control measures listed for this risk included tram driver training, line-of- sight
+              operation (paragraph 15), track brake application, vegetation management,
+              signalling and signage for road users, the 15 mph (24 km/h) speed limit across
+              the road crossing and compulsory audible warnings being given by trams.
+           67 The collision risk to cyclists, pedestrians and other users of the footpath crossing
+              was also assessed as ‘moderate’. The control measures were the same as those
+              listed for road vehicle collisions, including the footpath having a painted warning.
+           68 The signs to indicate the 15 mph (24 km/h) speed reduction area on both the
+              outbound and inbound tracks are positioned between the footpath crossing and
+              the road crossing (figure 3). The speed reduction was intended to control the
+              risk associated with road traffic; however, this measure also reduces the speed
+              of trams approaching the outbound footpath crossing. The audible warning
+              board was installed in response to recommendations made by RAIB following
+              the investigation into a pedestrian collision at the footpath crossing in 2005 (see
+              paragraph 90).
+           Non-Motorised User risk assessment
+           69 LRSSB first published its document LRSSB-LRG 2.0 ‘Guidance on Tramway
+              Crossings for Non-Motorised Users’ (NMU) in 2019. The document provides
+              guidance for tram operators and infrastructure managers on the design and
+              assessment of crossings for non-motorised users, such as pedestrians and
+              cyclists.
+           70 Issue 2 of the guidance, dated July 2021, included a suggested risk assessment
+              template to give a structured approach to the assessment of risk at NMU
+              crossings. SYSL used this template to risk assess every footpath crossing on
+              the network including Staniforth Road footpath crossing, which was completed
+              in November 2021. All the assessments remained in draft status until they were
+              reviewed again in October 2022, when they were formally adopted.
+
+
+
+
+           Report 10/2026                             26                                    July 2026
+           Staniforth Road
+71 In 2022, SYSL started a project to install underrun protection (see paragraph 84)
+                                                                                           Analysis
+   at NMU crossings. In developing the scope for the project, SYSL reviewed which
+   of the footpath crossings it classified as NMU crossings. Those on city centre
+   roads, tram stops and on lines with a maximum permitted speed under 20 mph
+   (32 km/h) were removed from the list of NMU crossings.
+72 Despite the footpath crossing at Staniforth Road being located on a line with a
+   30 mph (48 km/h) maximum permitted speed (paragraph 5), it was declassified
+   as an NMU crossing on the basis of lower speed, possibly because of the
+   reduction in line speed to 15 mph (24 km/h) immediately beyond the crossing.
+   Only the NMU risk assessments completed for the crossings that remained on
+   the revised NMU list were formally adopted. As a result, although changes to
+   industry guidance prompted a detailed assessment of NMU crossings, the route
+   risk assessment (updated January 2022) remained the only formal adopted
+   assessment of risk for Staniforth Road footpath crossing.
+73 SYSL reviewed all additional control measures identified as part of the initial
+   NMU crossing risk assessment process, including locations where the draft risk
+   assessments were not subsequently adopted. SYSL reported that it completed
+   the control measures where they were able to be actioned.
+74 The unadopted draft NMU risk assessment for Staniforth Road footpath crossing
+   included the following suggested additional control measures, none of which had
+   been implemented by the time of the accident:
+     a. Improving floor signage by adding yellow lines to define the crossing as
+        a high hazard area, including the yellow edging on the crossing: this was
+        not actioned as the crossing was considered suitably demarcated with the
+        ballast and the raised cobbles denoting the edges of the crossing. Yellow
+        warnings on footpath crossing surfaces are recommended within the LRSSB
+        guidance. It is possible that, had such markings been provided, they may have
+        alerted the pedestrians that they were approaching an operational tramway
+        (paragraph 58).
+     b. The assessment recorded that consideration should be made to installing
+        a small ‘return’ on the fencing (for example, a chicane) on both sides of the
+        crossing, which would direct approaching users to turn fully before crossing.
+        This was not implemented, for reasons which RAIB has been unable to
+        determine from the available evidence. The implementation of such a return
+        may have encouraged the pedestrians to turn so that trams would not
+        approach them from behind, as happened in this accident (paragraph 91). This
+        could have enabled the pedestrians to become aware of the tram which was
+        approaching them from behind (paragraph 43).
+     c. Installing underrun protection. This was recorded as being of lower priority
+        as the 15 mph (24 km/h) line speed beyond the crossing was considered
+        rather than the 30 mph (48 km/h) line speed on approach. It was not actioned
+        primarily due to this, and because the road itself was considered to provide
+        underrun protection. It is possible that, had improved underrun protection been
+        installed, then the consequences of the accident may have been less severe
+        (see paragraph 82).
+
+
+
+
+Report 10/2026                            27                                   July 2026
+Staniforth Road
+                d. Installing lighting, with the knowledge that this would need to be carefully
+Analysis
+                   assessed so as not to introduce negative effects such as impeding signal
+                   sighting and increaseing glare for drivers. This was not actioned as further
+                   review deemed the street lighting in the surrounding area sufficient for the
+                   visibility of pedestrians at the junction. As the accident occurred during daylight
+                   hours (paragraph 20), the installation of further lighting would have had no
+                   effect on this accident.
+           75 At the time of the accident, the LRSSB guidance did not provide a definition as
+              to what constituted an NMU crossing. LRSSB had held two workshops with the
+              light rail industry to identify a clear description and scope for an NMU crossing.
+              However, it remained the responsibility of each tram operator to define what an
+              NMU crossing was on its network. Neither SYFTL nor SYSL had developed a
+              written definition for NMU crossings, and instead used the specifications included
+              in the NMU guidance for the installation of underrun protection as its unwritten
+              definition (paragraph 71).
+           76 The Office of Rail and Road (ORR), the safety authority for tramways in Great
+              Britain, started a series of inspections to proactively inspect the management of
+              risk at NMU crossings by each tramway operator in April 2024. ORR reviewed
+              crossings that the operator had identified as being NMU crossings. Since
+              Staniforth Road pedestrian crossing had been declassified as an NMU crossing
+              by SYSL and maintained as such by SYFTL, ORR would not have included this
+              location within its work.
+           77 In January 2026, after the accident, LRSSB published version 4 of ‘Guidance
+              on Tramway Crossings for Non-Motorised Users’. This included a definition
+              of a non- motorised user crossing as ‘A designated at-grade crossing point
+              with passive warnings and controls, where pedestrians, cyclists, and other
+              non- motorised users traverse a segregated, on or off-street section of the
+              tramway alignment. For example, this includes crossings at tram stops and
+              crossings in the reserved urban environment.’ Under this definition, Staniforth
+              Road footpath crossing would now be considered an NMU crossing.
+           78 Due to the inclusion of a definition of an NMU crossing within the recent guidance
+              update, RAIB has not made a recommendation to LRSSB (see paragraph 104).
+           Joint working to address risk
+           79 The junction of Woodbourn Road and Staniforth Road has a known history of
+              road vehicles not stopping at red traffic signals and running across the junction.
+              In the last 5 years, there have been 31 road vehicle-related near miss incidents
+              at Staniforth Road. In contrast, only two accidents (2005, see paragraph 90, and
+              2018) could be found within the SYFTL records relating to the adjacent footpath
+              crossing.
+           80 Staniforth Road footpath crossing is owned by Sheffield City Council, while
+              SYMCA has the responsibility for its maintenance and repair under a
+              memorandum of understanding. Routine maintenance is in turn contracted by
+              SYMCA to SYFTL (paragraph 12). All three organisations were described by
+              SYMCA as being stakeholders in managing risk at the crossing.
+
+
+
+
+           Report 10/2026                              28                                     July 2026
+           Staniforth Road
+81 Although there is no specific forum in which SYMCA, Sheffield City Council and
+                                                                                             Analysis
+   SYFTL meet to co-operate on managing risk at crossings, stakeholders from
+   across the Supertram network meet throughout the year, usually quarterly, at
+   an ‘MOU’ (memorandum of understanding) meeting to discuss practical matters
+   relating to the tramway, such as drainage and road vehicle collisions. Meetings
+   typically attracted 30‑plus attendees including representatives from SYMCA,
+   Sheffield Council, SYFTL and other observers (such as ORR).
+82 The assessment of risk is not included as a specific part of the agenda of the
+   MOU meetings. However, SYMCA stated that agenda items have included safety
+   topics such as a review of near misses, road traffic collisions, and accident safety
+   data. SYMCA also stated that the meeting has been used as a forum to work
+   on improving safety across the network, including raising the outcomes of NMU
+   inspections.
+
+
+Factor affecting the severity of consequences
+Injury severity
+83 The area beyond the crossing included raised cobbles, which possibly
+   exacerbated one of the pedestrian’s injuries.
+84 Modern trams are fitted with a protective safety device called a lifeguard, which is
+   located at the lower front of the vehicle. During a collision, the lifeguard can push
+   or lift people out of the way, reducing the risk of contact with the tram’s wheels,
+   which would otherwise cause severe injuries.
+85 Each iteration of the LRSSB ‘Guidance on Tramway Crossings for Non-Motorised
+   Users’ has stated that level underrun protection should be provided immediately
+   after pedestrian crossings to provide level ground and a minimal gap between the
+   ground and a tram’s lifeguard. The guidance recognises that off‑street track, such
+   as the ballasted track on the approach to Staniforth Road footpath crossing, has
+   a much deeper clearance beneath the lifeguard. This increases the chance of a
+   person passing underneath the lifeguard towards the tram’s wheels, increasing
+   the likelihood of a pedestrian sustaining more severe injuries.
+86 The industry guidance suggests that ‘there should be a suitably flush surface
+   between the rails along the distance of travel at either side of the main crossing
+   surface to ensure underrun protection is maintained.’ To increase the survivability
+   of a low-speed collision, the guidance recommends that the surface should
+   enable a ‘prone casualty to be slid along’ if they are struck by a tram at 20 mph
+   (32 km/h) or less.
+87 The surface of the area beyond the footpath crossing on the outbound track
+   at Staniforth Road is level with the top of the rails, but with inserted granite
+   cobbles protruding from the surface by an additional 10 to 30 mm. The cobbles
+   range between 90 mm and 150 mm in length, with an average width of 80 mm
+   (figure 13). The cobbles at Staniforth Road crossing create a high friction surface,
+   on which a person would not easily slide.
+
+
+
+
+Report 10/2026                             29                                    July 2026
+Staniforth Road
+Analysis
+
+
+
+
+                                Direction of travel
+
+
+
+
+           Figure 13: Cobbled surface past the footpath crossing on the outbound line at Staniforth Road footpath
+           crossing.
+           88 The cobbled area is on Sheffield City Council land and was designed to create a
+              visual boundary between the footpath crossing, the segregated track area, and
+              Staniforth Road itself. Although the cobbled area has brought the track bed to the
+              level of the rails, there is no warning on the crossing to highlight the area of risk
+              to the crossing user (as suggested in the LRSSB NMU guidance), and it is not
+              conducive to a prone pedestrian sliding along. It is possible that the increased
+              friction caused by the pedestrian being pushed along the cobbles during this
+              accident exacerbated their injuries.
+           89 While the cobbles were identified as underrun protection for the outbound
+              track where the accident took place, RAIB observed that there is no underrun
+              protection for the inbound track on the same crossing. Immediately after the
+              footpath crossing, the inbound track returns to segregated track with ballast
+              (figure 14). It is likely that this lack of underrun protection is a consequence of the
+              ineffective management of risk as discussed in paragraph 65.
+
+
+           Previous occurrences of a similar character
+           90 On 27 October 2005, a tram struck and seriously injured a pedestrian at
+              Staniforth Road footpath crossing. The pedestrian, who had been walking along
+              Woodbourn Road beside the tramway, stepped onto the crossing directly in front
+              of the oncoming tram. RAIB’s investigation (RAIB report 01/2006) identified that
+              the pedestrian stepped onto the crossing directly in front of the oncoming tram
+              and that the driver’s ability to assess the risk posed by the pedestrian may have
+              been negatively affected by the fence on the approach to the crossing. Following
+              the accident, the audible warning board was installed and the 24‑metre section of
+              fence immediately before the crossing was redesigned (paragraph 60).
+
+
+
+
+           Report 10/2026                                    30                                          July 2026
+           Staniforth Road
+                                                                                                           Analysis
+
+
+
+
+                                                       Inbound
+
+
+
+
+                                          Outbound
+
+
+
+
+Figure 14: Absence of underrun protection infill on the inbound track and (inset) an example of underrun
+protection installed at a crossing elsewhere in Sheffield.
+
+91 On 13 September 2008, a London Tramlink tram travelling from Wimbledon to
+   New Addington collided with a cyclist at Morden Hall Park footpath crossing.
+   The cyclist sustained injuries from which they later died. RAIB’s investigation
+   (RAIB report 06/2009) identified that the cyclist rode onto the crossing without
+   looking at the approaching tram. The causal factors were that the cyclist may
+   have been wearing headphones, preventing them hearing the audible warnings
+   sounded by the tram driver, and that the layout of the approach to the crossing
+   did not encourage cyclists to look towards eastbound trams. RAIB made
+   one recommendation to London Tramlink Ltd to assess crossings and make
+   modifications so that users are influenced to look both ways before crossing,
+   and cyclists are encouraged to slow down sufficiently (by means such as the
+   provision of barriers, signs and/or markings), to give them time to become aware
+   of approaching trams.
+92 On 16 May 2012, while using a tramway foot crossing on the approach to
+   Sandilands tram stop in Croydon, a pedestrian was struck and seriously injured
+   by a tram. The impact resulted in the pedestrian falling into the space between the
+   platform and the tram, trapping them in that position as the tram continued into
+   the platform. RAIB’s investigation (RAIB report 03/2013) found that the pedestrian
+   had not looked for an approaching tram before crossing, and that the layout of
+   the crossing meant trams on the nearest track approached crossing users from
+   behind.
+
+
+
+Report 10/2026                                    31                                           July 2026
+Staniforth Road
+           93 On 22 December 2016, a pedestrian, who had just got off an inbound tram at
+Analysis
+              Woodbourn Road tram stop in Sheffield, was struck and fatally injured by a
+              non‑stop outbound tram travelling from Sheffield city centre towards Meadowhall
+              at around 13 mph (21 km/h). The pedestrian was using the crossing at the
+              northern end of the tram stop. The driver did not see the pedestrian in time to
+              take action to prevent the accident. RAIB’s investigation (RAIB report 13/2017)
+              (see paragraph 100) found that the pedestrian was seemingly unaware that the
+              tram was approaching the crossing and the tram did not give an audible warning
+              to indicate that it was passing non-stop through the tram stop. An underlying
+              cause of the accident was that SYSL had not assessed the risk of trams in service
+              running non-stop through tram stops when it first introduced the system of request
+              stops. RAIB also found inconsistencies between the training and assessments for
+              new tram drivers when making non-stop movements through tram stops and the
+              operational standards that drivers are required to follow for such movements.
+           94 On 11 September 2018, a pedestrian who was using a footpath crossing near the
+              Saughton tram stop in Edinburgh, was struck and fatally injured by a tram. The
+              pedestrian was seemingly unaware that the tram was approaching when they
+              walked onto the crossing. The evidence indicates that the pedestrian was not
+              looking out for approaching trams. RAIB’s investigation (RAIB report 09/2019)
+              found that although the tram driver had used the tram’s bell to sound repeated
+              warnings on the approach to the crossing, the audible warning was not sufficiently
+              loud for it to be heard and acted upon by the pedestrian until it was too late. It
+              also found that Edinburgh Trams Limited did not have a process in place for
+              regularly reviewing the risks at its off-street pedestrian crossings.
+
+
+
+
+           Report 10/2026                           32                                   July 2026
+           Staniforth Road
+Summary of conclusions
+
+
+
+                                                                                              Summary of conclusions
+Immediate cause
+95 The pedestrians crossed into the path of the approaching tram (paragraph 31).
+
+
+Causal factor
+96 The causal factor was:
+     a. The pedestrians were unaware of the risk from the approaching tram
+        (paragraph 38), Recommendation 1. This causal factor arose due to a
+        combination of the following:
+         i.   The approach of the tram was not recognised by the pedestrians, and they
+              were not alerted to the approaching tram by the tram’s audible warning
+              devices (paragraph 41), Recommendations 1 and 2.
+         ii. The configuration of the crossing layout and signage did not alert
+             the pedestrians to the risk from approaching trams (paragraph 58)
+             Recommendation 1.
+
+
+Underlying factor
+97 The underlying factor was:
+     a. SYFTL and SYMCA’s management of risk at this crossing was not sufficiently
+        effective (paragraph 64), Recommendation 1.
+
+
+Factor affecting the severity of consequences
+98 A factor that affected the consequences of the event was as follows:
+     a. The area beyond the crossing included raised cobbles, which
+        possibly exacerbated one of the pedestrian’s injuries (paragraph 82),
+        Recommendation 3.
+
+
+
+
+Report 10/2026                              33                                    July 2026
+Staniforth Road
+                                                              Previous RAIB recommendation relevant to this
+
+
+
+
+Previous RAIB recommendation relevant to this investigation
+                                                              investigation
+                                                              99 The following recommendation, which was made by RAIB as a result of its
+                                                                 previous investigations, has relevance to this investigation.
+
+
+                                                              Previous recommendation that had the potential to address one or more
+                                                              factors identified in this report
+                                                              Fatal collision between a tram and pedestrian at Woodbourn Road, Sheffield, 22
+                                                              December 2016, RAIB report 13/2017, Recommendation 1
+                                                              100 RAIB considers that more effective implementation of recommendation 1 from this
+                                                                  report could have addressed the inconsistencies in audible warnings for users of
+                                                                  the footpath crossing which were a factor in this accident.
+                                                              101 This recommendation reads as follows:
+                                                                      Recommendation 1
+                                                                      The intent of this recommendation is that all tram drivers drive to the same set
+                                                                      of requirements, irrespective of when they were initially trained.
+                                                                      Stagecoach Supertram should continue and complete its work to review the
+                                                                      requirements in operational standards against its current training material to
+                                                                      identify any inconsistencies, use the review findings to update its operational
+                                                                      standards and training material as necessary so that there is a consistent set of
+                                                                      requirements for drivers to comply with, and update its drivers on the changes
+                                                                      made.
+                                                              102 In August 2018, ORR reported that Stagecoach Supertram had carried out
+                                                                  a review of its operational standards in response to the recommendation.
+                                                                  The review identified improvements to its documentation related to change
+                                                                  management and the communication of information to new and existing drivers.
+                                                                  Stagecoach Supertram implemented identified changes to its operational
+                                                                  standards manual and completed individual briefings with all tram drivers to
+                                                                  communicate the changes. The result should ensure that all tram drivers drive to
+                                                                  the same set of requirements, irrespective of when they were initially trained.
+                                                              103 ORR recorded the recommendation as being ‘Implemented’ following Stagecoach
+                                                                  Supertram reporting these actions. ORR also brought the recommendation to
+                                                                  the attention of all tram operators within the UK, as it was concluded that there
+                                                                  are equally important lessons for the wider industry. ORR did not ask these
+                                                                  organisations to reply about actions they had taken.
+
+
+
+
+                                                              Report 10/2026                              34                                    July 2026
+                                                              Staniforth Road
+Actions reported as already taken or in progress relevant to
+
+
+
+
+                                                                                             Actions reported as already taken or in progress relevant to this report
+this report
+Action reported that addresses factors which otherwise would have
+resulted in an RAIB recommendation
+104 LRSSB reissued its ‘LRG 2.0 Guidance on Tramway Crossings for Non‑Motorised
+    Users’ in January 2026 (paragraph 77). The new version of the guidance includes
+    a definition of what an NMU crossing is, providing the clarity needed to enable
+    tram operators to consistently implement the guidance.
+
+
+Other reported actions
+105 SYFTL has reported that it has started a review of the risk assessment for
+    Staniforth Road footpath crossing with relevant stakeholders. SYTFL stated that
+    this review is considering physical improvements to influence driver and crossing
+    user behaviour, and that agreed outcomes will be delivered through a structured
+    improvement programme, with any lessons learned applied across the wider
+    network. The current siting of the 15 mph (24 km/h) speed sign just beyond
+    Staniforth Road footpath crossing has also been reviewed with a new location
+    identified. This is intended to increase the safety benefit for pedestrians by
+    providing a greater reaction time for pedestrians and the tram driver.
+106 SYFTL is currently reviewing the route risk assessment (paragraph 65) with active
+    involvement from the Safety Team, Service Delivery Team, and other competent
+    driver team members. Any updates identified as necessary will be reflected in
+    amendments to the driver refresher and training packages.
+107 SYFTL has reported that it has started a review of audible warning use on the
+    Supertram network intended to align operational standards, training arrangements
+    and competency management processes to support their consistent use.
+    Additional monitoring activities have also been introduced and a hazard
+    perception course has been developed for drivers which will be delivered initially
+    to any driver involved in an incident, while also being added to the 2-year training
+    schedule for all drivers.
+108 SYFTL stated that is has begun a network-wide assessment of factors that may
+    influence injury outcomes at crossings in order to create a prioritised improvement
+    plan. In addition, SYFTL is reviewing the location of speed restrictions,
+    strengthening multi-agency collaboration arrangements and implementing
+    updated industry guidance relating to crossings used by non-motorised users.
+109 SYMCA has reported that the MOU meeting has been divided into two separate
+    meetings for engineering and operations (paragraph 81). The operational MOU
+    had been scheduled by SYMCA to be conducted on a 2-monthly basis with a
+    remit ‘to review the operational and safety performance of the tram network
+    in relation to the highway environment, and to work collaboratively to improve
+    the safety of the highway network in which the tram operates and improve the
+    punctuality and reliability of the tram network within the wider highway network’.
+
+
+
+
+Report 10/2026                             35                                    July 2026
+Staniforth Road
+                  Recommendations
+
+
+Recommendations
+                  Recommendations
+                  110 The following recommendations are made:6
+
+
+                        1     The intent of this recommendation is to ensure that risks to users of
+                              Staniforth Road footpath crossing are minimised.
+                              South Yorkshire Future Trams Ltd and South Yorkshire Mayoral
+                              Combined Authority, working with other relevant stakeholders, should
+                              continue their review of the existing risk assessment for Staniforth Road
+                              footpath crossing. This review should consider industry best practice,
+                              including guidance on crossings for non‑motorised users. It should
+                              also consider the use and potential effectiveness of specific mitigations
+                              including:
+                              • audible warnings
+                              • hazard markings on the crossing
+                              • physical measures to encourage crossing users to stop before
+                                crossing.
+                              Following this review South Yorkshire Future Trams Ltd and South
+                              Yorkshire Mayoral Combined Authority, working with other relevant
+                              stakeholders, should implement appropriate changes which will reduce
+                              the risk at Staniforth Road footpath crossing.
+                              This recommendation may also apply to other crossings on infrastructure
+                              operated and managed by South Yorkshire Future Trams Ltd and South
+                              Yorkshire Mayoral Combined Authority (paragraphs 96a, 96a.i, 96a.ii and
+                              97a).
+
+
+
+
+                  6
+                    Those identified in the recommendations have a general and ongoing obligation to comply with health and safety
+                  legislation, and need to take these recommendations into account in ensuring the safety of their employees and
+                  others.
+                  Additionally, for the purposes of regulation 12(1) of the Railways (Accident Investigation and Reporting) Regulations
+                  2005, these recommendations are addressed to ORR to enable it to carry out its duties under regulation 12(2) to:
+                  (a) ensure that recommendations are duly considered and where appropriate acted upon; and
+                  (b) report back to RAIB details of any implementation measures, or the reasons why no implementation measures
+                      are being taken.
+                  Copies of both the regulations and the accompanying guidance notes (paragraphs 200 to 203) can be found on
+                  RAIB’s website www.gov.uk/raib.
+
+
+                  Report 10/2026                                           36                                                July 2026
+                  Staniforth Road
+                                                                                                Recommendations
+     2     The intent of this recommendation is to address the inconsistencies in
+           the use of audible warnings on the South Yorkshire tram network.
+           South Yorkshire Future Trams Ltd should continue its review of its
+           operational processes and procedures relating to audible warnings
+           to ensure that they deliver a consistent approach. Competency
+           management systems should also be reviewed to ensure that the
+           training and assessment relating to the use of audible warnings by tram
+           drivers is delivered consistently. This review should specifically consider
+           how a consistent approach to the use of risk controls such as audible
+           warning devices can be assured in the future.
+           South Yorkshire Future Trams Ltd should develop a timebound plan
+           for the implementation of any appropriate changes to its competency
+           management systems identified by this review (paragraph 96a.i).
+
+     3     The intent of this recommendation is that injuries sustained by
+           pedestrians struck by trams are minimised.
+           South Yorkshire Future Trams Ltd and South Yorkshire Mayoral
+           Combined Authority, working with other relevant local transport
+           organisations, should assess the consequences to pedestrians of being
+           struck by trams at non-motorised user crossings on the South Yorkshire
+           Supertram network.
+           This assessment should specifically consider the surfaces and other
+           physical features of the location and how these might affect the outcome
+           of such collisions.
+           This assessment should take account of good practice such as industry
+           standards for the provision of underrun protection, and the research
+           produced by the Light Rail Safety and Standards Board and other
+           relevant bodies, including those within the road transport sector.
+           South Yorkshire Future Trams Ltd, and South Yorkshire Mayoral
+           Combined Authority, should develop a timebound plan for the
+           implementation of any appropriate changes to its network identified by
+           this assessment (paragraph 98a).
+
+
+
+
+Report 10/2026                               37                                     July 2026
+Staniforth Road
+             Appendices
+Appendices
+             Appendix A - Glossary of abbreviations and acronyms
+             Abbreviation /                                                   Full term
+             acronym
+             FFCCTV                                               Forward-facing CCTV
+             GPS                                              Global positioning system
+             LRSSB                                Light Rail Safety and Standards Board
+             MOU                                         Memorandum of Understanding
+             NMU                                                   Non-motorised users
+             ORR                                                 Office of Rail and Road
+             OTDR                                                On-tram data recorder
+             SYFTL                                 South Yorkshire Future Trams Limited
+             SYMCA                          South Yorkshire Mayoral Combined Authority
+             SYPTE                        South Yorkshire Passenger Transport Executive
+             SYSL                                     South Yorkshire Supertram Limited
+
+
+
+
+             Report 10/2026                  38                                 July 2026
+             Staniforth Road
+Appendix B - Investigation details
+
+                                                                                              Appendices
+RAIB used the following sources of evidence in this investigation:
+• information provided by witnesses
+• information taken from the tram’s OTDR
+• CCTV recordings taken from tram 101
+• Dashcam footage provided to South Yorkshire Police by a member of the public
+• site photographs and measurements
+• weather reports and observations at the site
+• analysis from tests conducted on the tram
+• an audibility assessment of the crossing undertaken by RAIB
+• evidence provided by South Yorkshire Future Trams Limited
+• tram original equipment manufacturer documents
+• British Standard for light rail braking
+• a review of previous RAIB investigations that had relevance to this accident.
+
+
+
+
+Report 10/2026                              39                                    July 2026
+Staniforth Road
+This report is published by the Rail Accident Investigation Branch,
+Department for Transport.
+© Crown copyright 2026
+Any enquiries about this publication should be sent to:
+
+RAIB                                         Email: enquiries@raib.gov.uk
+The Wharf                                    Telephone: 01332 253 300
+Stores Road                                  Website: www.raib.gov.uk
+Derby UK
+DE21 4BA
+
+---

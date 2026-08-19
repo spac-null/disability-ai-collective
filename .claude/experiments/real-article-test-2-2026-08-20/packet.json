@@ -1,0 +1,40 @@
+{
+  "architecture": [
+    "DISCOVERY",
+    "ARTICLE FORM",
+    "WRITER",
+    "WRITER GROUNDING"
+  ],
+  "documents": {
+    "ARTICLE-FORM.md": "a47e45ef3c6e69309d985cab2690fd139424608390ba3cfa5fa0603c2069c5e1",
+    "CANDIDATES.md": "941faca1ad10cb63a8bf2de46eb8140e1410eede57a8429d99178a0323a92cfc",
+    "DISCOVERY.md": "bfeca8bc51ac9ad12b2f0cfd766b36a6f2bc3ec6c48a40ada4c4e418c7f28d6e",
+    "GROUNDING-BOUNDARIES.md": "318532f22b141eae91827137a61b7ec215edb9b6f542b057829baefbcb30748b",
+    "source/PROVENANCE.md": "0fe0cbc0cf42c98703062807f41d84b4625beee106513af572042975204e2415"
+  },
+  "execution_target": "local Claude subscription (manual/shadow)",
+  "experiment": "real-article-test-2",
+  "frozen": "2026-08-20",
+  "legacy_production_prompt_injected": false,
+  "packet_sha256": "da20b5e4966a717daff15cbe9a5630db8013b3cee6e7217ed8ad95f0f8374c2b",
+  "prompt": {
+    "prompt_chars": 110953,
+    "prompt_sha256": "60b1d54e9e23c81a285d380629d792f4d181fa82218dd5a2ae98bb78ece3a975",
+    "prompt_words": 13724,
+    "system_chars": 5246,
+    "system_sha256": "12ae1cdc28a0bd8388ff71e28536b22d1c5aa9c7df5cc993e3acf48daf77aa0e",
+    "user_chars": 105705,
+    "user_sha256": "6e44ca706018d31479800f1cce69a3162c38b112e118571fcc00641fdbe8f0e4"
+  },
+  "source": {
+    "pdf_sha256": "7b27f78f3a70355126b332aa6dba3b316facc638e842f1761666c50ce8e5603f",
+    "pdf_url": "https://assets.publishing.service.gov.uk/media/6a67566bb9e28a4788aa3f61/R102026_260728_Staniforth_Road.pdf",
+    "published": "2026-07-28",
+    "publisher": "Rail Accident Investigation Branch (RAIB)",
+    "report_number": "10/2026",
+    "source_sha256": "be381bbc157f967ea11c46817616d91567394dbfb5801b08898ca1fa46466c6c",
+    "source_words": 10970,
+    "title": "Rail Accident Report -- Collision between a tram and two pedestrians at Staniforth Road, Sheffield, 22 June 2025"
+  },
+  "status": "PRE-EXECUTION -- NOT GENERATED"
+}
