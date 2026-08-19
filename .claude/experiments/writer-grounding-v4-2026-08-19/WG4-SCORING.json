@@ -1,0 +1,25 @@
+{
+  "WG-4A": {
+    "parents": 236,
+    "commitments": 265,
+    "isolated": 6,
+    "absorbed": [
+      "G13-04",
+      "GR2-02"
+    ],
+    "parent_false_positives": 0,
+    "false_fragmentation": 0,
+    "commitment_status": {
+      "INTERPRETATION": 85,
+      "SUPPORTED": 172,
+      "UNSUPPORTED": 6,
+      "UNCERTAIN": 2
+    },
+    "parent_aggregate": {
+      "INTERPRETATION": 83,
+      "SUPPORTED": 145,
+      "UNSUPPORTED": 6,
+      "UNCERTAIN": 2
+    }
+  }
+}

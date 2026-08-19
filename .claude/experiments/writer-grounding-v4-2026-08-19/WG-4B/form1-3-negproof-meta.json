@@ -1,0 +1,15 @@
+{
+  "experiment": "WG-4B NEGATIVE META-SOURCE PROOF",
+  "tag": "form1-3",
+  "input_propositions": 81,
+  "system_sha256": "3e4739d24ea15b4f49102815f2fe8fdaa9b3f249f62721e3e22371fe26c343f8",
+  "user_sha256": "b6821f1003ff764c44e1a697684831b05a5f8b2261023398ef439b116d663edc",
+  "prompt_sha256": "24c9e681e9b9658ef8986a46e8357bd849d7b59cd6c44da8864de538e03f5da0",
+  "article_sha256": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "input_extraction_sha256": "89deb15f0b3502803dab744b6d381b4aade7208fa6255ebb0ab9a9e32d99b9c4",
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

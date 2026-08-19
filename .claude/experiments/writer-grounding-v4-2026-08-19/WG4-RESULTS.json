@@ -1,0 +1,127 @@
+{
+  "experiment": "WG-4 \u2014 COMMITMENT DECOMPOSITION + NEGATIVE META-SOURCE PROOF",
+  "date": "2026-08-19",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "model": "claude-opus-5[1m], six fresh-context blind subagent calls",
+  "inputs": "frozen WG-3A extraction (hashes identical to WG-3B input), frozen source, frozen articles, GOLD V2.1 unchanged",
+  "subtests_kept_separate": true,
+  "combined_pipeline_built": false,
+  "WG-4A": {
+    "name": "COMMITMENT DECOMPOSITION",
+    "parents": 236,
+    "commitments": 265,
+    "avg_per_parent": 1.12,
+    "commitments_per_parent": {
+      "1": 208,
+      "2": 27,
+      "3": 1
+    },
+    "commitment_status": {
+      "SUPPORTED": 172,
+      "INTERPRETATION": 85,
+      "UNSUPPORTED": 6,
+      "UNCERTAIN": 2
+    },
+    "parent_aggregate": {
+      "SUPPORTED": 145,
+      "INTERPRETATION": 83,
+      "UNSUPPORTED": 6,
+      "UNCERTAIN": 2
+    },
+    "commitment_preserved_as_independent_unit": "8/8",
+    "commitment_isolated_AND_flagged_unsupported_by_wg4a": "6/8",
+    "flagged": [
+      "G13-01",
+      "G13-02",
+      "GR2-01",
+      "GR2-04",
+      "GR3-01",
+      "GR3-03"
+    ],
+    "not_flagged_by_wg4a": [
+      "G13-04",
+      "GR2-02"
+    ],
+    "why_the_two_were_not_flagged": "Both WERE isolated as their own SOURCE_META commitment (P22-C1, P21-C1) and independently verdicted \u2014 so decomposition did its job. WG-4A's verdict step then judged them SUPPORTED / INTERPRETATION via the absence-as-evidence move. WG-4A was deliberately NOT given the negative-source proof rule; that mechanism is WG-4B's, which recovers both. The failing component here is not decomposition.",
+    "interval_tests": {
+      "G13-02": {
+        "base": "'The person it is happening to did not know the work existed.' -> SUPPORTED",
+        "modifier": "'That state of not knowing held one hour earlier.' [TEMPORAL_MODIFIER] -> UNSUPPORTED",
+        "result": "RECOVERED"
+      },
+      "GR3-01": {
+        "base": "'The name was not previously known to the visitor.' -> SUPPORTED",
+        "modifier": "'That unfamiliarity held as of one hour earlier.' [TEMPORAL_MODIFIER] -> UNSUPPORTED",
+        "result": "RECOVERED"
+      }
+    },
+    "support_transfer_blocked": "Confirmed. In both interval cases the grounded base kept SUPPORTED while the attached modifier was independently judged UNSUPPORTED. The WG-3B entailment-absorption failure does not recur.",
+    "false_positives_parent_level": 0,
+    "false_fragmentation": 0,
+    "false_fragmentation_detail": "Every legitimate comparative and causal interpretation emitted exactly ONE commitment: G13-03 (P43-C1 OTHER), GR2-03 (P48-C1 OTHER), GR3-02 comparative (P41-C1 OTHER) and GR3-02 causal (P42-C1 CAUSAL_RELATION) \u2014 all INTERPRETATION. 208 of 236 parents produced a single commitment. Analysis was not shredded into fake factual atoms.",
+    "decision": "A \u2014 COMMITMENT_DECOMPOSITION_READY"
+  },
+  "WG-4B": {
+    "name": "NEGATIVE META-SOURCE PROOF",
+    "propositions_offered": 236,
+    "in_scope_semantic": 77,
+    "negative_claims": 8,
+    "verdicts_in_scope": {
+      "SUPPORTED": 56,
+      "INTERPRETATION": 19,
+      "UNSUPPORTED": 2
+    },
+    "proof_types_on_negatives": {
+      "EXPLICIT": 4,
+      "BOUNDED_ABSENCE": 2,
+      "NONE": 2
+    },
+    "G13-04": {
+      "verdict": "UNSUPPORTED",
+      "proof_type": "NONE",
+      "anchor": "extraction anchor EMPTY, not overridden",
+      "scope": "Would have to be the entire review, since ranking and grouping can be implicit, distributed or carried by evaluative tone.",
+      "result": "RECOVERED"
+    },
+    "GR2-02": {
+      "verdict": "UNSUPPORTED",
+      "proof_type": "NONE",
+      "anchor": "extraction anchor EMPTY, not overridden",
+      "scope": "Would require the whole review: ranking, preference and elevation can be carried implicitly by tone, space, ordering and evaluative adjectives.",
+      "result": "RECOVERED"
+    },
+    "R3_control": {
+      "verdict": "SUPPORTED",
+      "proof_type": "BOUNDED_ABSENCE",
+      "scope": "Every occurrence of the quantity in the source plus its containing passage; the figure occurs exactly once.",
+      "why_scope_complete": "Finite and enumerable rather than scanned \u2014 any commentary on the figure would have to sit in the sentence containing it or the sentences around it.",
+      "result": "CORRECTLY RETAINED"
+    },
+    "false_positives": 0,
+    "generalisation_check": "The discrimination is not example-matching. The prompt used ranking as its unboundable example and quantity-commentary as its boundable one. Of the 6 negative claims that KEPT support, 5 are claims the prompt never illustrated \u2014 including R2/P79 'What it does not describe, and cannot', which earned BOUNDED_ABSENCE by enumerating the discovery word-family occurrences itself, and four EXPLICIT proofs scoped to the source's own biographical statements.",
+    "divergence_recorded": "R2/P79 is a GOLD V2.1 UNCERTAIN item and WG-4B called it SUPPORTED. Not a false positive under the gate, which counts wrongly-UNSUPPORTED verdicts, and gold's uncertainty there derives from GR2-04's dropped qualifier rather than from negative proof. Recorded, not adjudicated \u2014 Gold V2.1 was not touched.",
+    "decision": "A \u2014 NEGATIVE_SOURCE_PROOF_READY"
+  },
+  "combined_coverage_ARITHMETIC_ONLY_NOT_A_RUN": {
+    "wg4a_flags": [
+      "G13-01",
+      "G13-02",
+      "GR2-01",
+      "GR2-04",
+      "GR3-01",
+      "GR3-03"
+    ],
+    "wg4b_flags": [
+      "G13-04",
+      "GR2-02"
+    ],
+    "union": "8/8",
+    "false_positives_either": 0,
+    "caveat": "Arithmetic over two SEPARATE frozen runs. NOT a measured combined configuration and NOT a proposal. WG-3 already demonstrated that a change fixing one mechanism can regress another: WG-3B recovered GR2-01 and simultaneously lost G13-02 and GR3-01. A combined prompt must be measured, not assumed."
+  },
+  "overall": {
+    "WG-4A_ready": true,
+    "WG-4B_ready": true,
+    "next": "WG-5 composition is now authorised by the pre-registered criteria, but was NOT built in this task."
+  }
+}

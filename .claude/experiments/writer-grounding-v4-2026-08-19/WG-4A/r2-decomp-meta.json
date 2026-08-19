@@ -1,0 +1,15 @@
+{
+  "experiment": "WG-4A COMMITMENT DECOMPOSITION",
+  "tag": "r2",
+  "input_propositions": 81,
+  "system_sha256": "7a4937c9ef8dadf962951e03d8ff97b440112e5e1082d7123ee795f28dc67b3b",
+  "user_sha256": "6d3cf432bb7ccfc6a77fc2ea23be4f25a5d1702ce7c065186c0ec093cb1e4c96",
+  "prompt_sha256": "7e5ffb79f3b9123010c6cb1c84577a7a2836bea446a72550f0c05cc45b4c6581",
+  "article_sha256": "5ea20461cc09484d7bf1fea3f83de526f5c54720b72438e180cf92e4f1f600ad",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "input_extraction_sha256": "cdcd1c1c296b2a3ba369f9dd908b71ddae2274918b92d21c0315d27b55db6b2a",
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}
