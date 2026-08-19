@@ -1,0 +1,37 @@
+{
+  "iteration": "FORM-1.2",
+  "phase": "EXECUTED",
+  "model_requested": "openrouter/claude-opus-4.8",
+  "parameters": {
+    "max_tokens": 5000,
+    "timeout": 180,
+    "no_think": false,
+    "temperature_override": null
+  },
+  "writer_calls_planned": 1,
+  "retries": 0,
+  "candidates": 1,
+  "frozen_input_sha256": {
+    "source": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+    "commission": "870d84ba931abf194db5fad8017185cbf2f034ec08e383d1d89fcb8b3fce3387",
+    "evidence": "8628b234e1fc335b391b26a2dddf7b048b626f073b09a0cf6706f4e2d5ce60a5"
+  },
+  "expected_frozen_input_sha256": {
+    "source": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+    "commission": "870d84ba931abf194db5fad8017185cbf2f034ec08e383d1d89fcb8b3fce3387",
+    "evidence": "8628b234e1fc335b391b26a2dddf7b048b626f073b09a0cf6706f4e2d5ce60a5"
+  },
+  "frozen_inputs_verified": true,
+  "packet_sha256": "a1671eb807c220aaaa81dc0a550af92dab68dd2063b260af0a8e93c3c35b948f",
+  "prompt_sha256": "a93b750e8217919c2d73ee41d8f7eee3e7868116b55634ea66d06fc37cd6d537",
+  "system_prompt_sha256": "0376ec8361de9d05ddb5599a4097ba2ac04b2cb9f649305e92b821be9c05c064",
+  "user_prompt_sha256": "8ec24cab1fdc64dfbdfa9175f14500556131f1299f3d37996a0d103353ef52d4",
+  "source_embedded_in_prompt_verbatim": true,
+  "module_sha256": "795ad6c3a7a782e235f8785c5b22a75d2d67efa0dbaa6648ab9cbe6b3c40c783",
+  "runner_sha256": "e5456e48ee8e23394a38e6e80babb7a4d4f4656e314dc85ba8264c35acf54ab9",
+  "model_actual": "anthropic/claude-opus-4.8",
+  "writer_calls_made": 1,
+  "raw_response_sha256": "f2f59f35f774fe6c36eca42d86d5776da1b9bfd9f4c815cac4075c1cd7f648a6",
+  "article_sha256": "f2f59f35f774fe6c36eca42d86d5776da1b9bfd9f4c815cac4075c1cd7f648a6",
+  "article_word_count": 635
+}

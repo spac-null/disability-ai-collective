@@ -1,0 +1,37 @@
+{
+  "opening_material": [
+    {
+      "text": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+      "provenance": "REVIEWER_NARRATION"
+    },
+    {
+      "text": "You’ve just got to follow your nose and hope you sniff out something you like.",
+      "provenance": "REVIEWER_NARRATION"
+    },
+    {
+      "text": "There are curated displays, satellite exhibitions, performances, off-site projects, and it’s impossible to figure out how any of it fits together.",
+      "provenance": "REVIEWER_NARRATION"
+    }
+  ],
+  "correction_material": [
+    {
+      "text": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+      "provenance": "SOURCE_FACT"
+    },
+    {
+      "text": "died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+      "provenance": "SOURCE_FACT"
+    }
+  ],
+  "resisting_material": [
+    {
+      "text": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+      "provenance": "REVIEWER_OPINION",
+      "provenance_note": "This is the reviewer's own stated opinion (the source's own words are 'I think they have a duty') — not a statement the festival or its institutions make about themselves. If used, attribute it to the reviewer or quote it without reassigning its source; never write 'the festival says/argues/allows/admits' this."
+    }
+  ],
+  "destination": "The review uses discovery for the visitor's present encounter with previously unknown work, while some of the work it celebrates had remained unshown during its maker's lifetime.",
+  "hasegawa_decision": "OMITTED — George and Walter alone establish the distinction without qualification (both fully documented as never shown in their lifetimes). Hasegawa's real 'most of his work' hedge would force either an inaccurate uniform generalization across three artists (FORM-1's actual failure) or added complexity managing three different qualification states for one clean point. Not omitted to make grounding easier in the abstract — omitted because two clean cases already carry this specific movement.",
+  "grounding_boundaries": "The source does not say why George or Walter went unseen during their lifetimes, does not describe how their work came to be shown now, and does not describe their wishes, intentions, or capacity regarding exhibition. It names no access barriers, distances, or excluded audiences.",
+  "length_guidance": "Roughly 550–700 words for this piece — there is no fixed requirement to reach 700. Do not pad. If the distinction has genuinely landed at 550 words, stop there."
+}

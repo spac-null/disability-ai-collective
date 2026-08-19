@@ -1,0 +1,59 @@
+{
+  "status": "FAIL",
+  "status_reasons": [
+    "UNSUPPORTED: \"So here is the word again, the one the festival keeps offering you at every threshold: discovery. Undiscovered archives, undiscovered narratives, previously undiscovered marginalised artists. It is the festival's whole way of talking about itself\" \u2014 The source never quotes or describes the festival's own self-presentation or marketing language. Every use of 'undiscovered'/'discovery' in the source is the reviewer's vocabulary ('undiscovered archives', 'only discovered after her death'), and the 'You've never heard of this previously undiscovered marginalised artist?' line is the reviewer's satirical paraphrase of a gallery tone, not an actual festival statement. The article asserts as settled fact that the festival itself uses this word as its 'whole way of talking about itself' \u2014 that is the article's editorial interpretation presented as if it were an established source fact.",
+    "UNSUPPORTED: 'That is the encounter the festival is naming: yours.' \u2014 This is a claim about the festival's intent \u2014 what the festival means or is 'naming' when it (allegedly) uses the word discovery. The source contains no statement from the festival about what it intends the word to name. This is the article's own interpretive mechanism stated in declarative, settled form as though it were a source fact.",
+    "UNSUPPORTED: \"Discovery, as the festival uses it, belongs to the viewer's present \u2014 the moment of first sight, the pleasure of the previously unknown.\" \u2014 Again presupposes as fact that 'the festival uses' the word discovery in a particular sense. The source does not establish that the festival uses the word at all, let alone in what sense. The underlying observation (George and Walter were unseen in their lifetimes) is supported, but the attribution of a specific usage and meaning to the festival is not.",
+    "UNSUPPORTED: \"To be discovered, in the festival's mouth, is to be seen at last.\" \u2014 'In the festival's mouth' attributes specific language and a specific meaning to the festival as an institution. The source never records the festival saying anything. This is the article's argument dressed as reported fact."
+  ],
+  "deterministic_flags": [
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Following Your Nose Through' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Edinburgh\n\nYou' not found in source"
+    ]
+  ],
+  "claims": [
+    {
+      "claim": "So here is the word again, the one the festival keeps offering you at every threshold: discovery. Undiscovered archives, undiscovered narratives, previously undiscovered marginalised artists. It is the festival's whole way of talking about itself",
+      "verdict": "UNSUPPORTED",
+      "reason": "The source never quotes or describes the festival's own self-presentation or marketing language. Every use of 'undiscovered'/'discovery' in the source is the reviewer's vocabulary ('undiscovered archives', 'only discovered after her death'), and the 'You've never heard of this previously undiscovered marginalised artist?' line is the reviewer's satirical paraphrase of a gallery tone, not an actual festival statement. The article asserts as settled fact that the festival itself uses this word as its 'whole way of talking about itself' \u2014 that is the article's editorial interpretation presented as if it were an established source fact."
+    },
+    {
+      "claim": "That is the encounter the festival is naming: yours.",
+      "verdict": "UNSUPPORTED",
+      "reason": "This is a claim about the festival's intent \u2014 what the festival means or is 'naming' when it (allegedly) uses the word discovery. The source contains no statement from the festival about what it intends the word to name. This is the article's own interpretive mechanism stated in declarative, settled form as though it were a source fact."
+    },
+    {
+      "claim": "Discovery, as the festival uses it, belongs to the viewer's present \u2014 the moment of first sight, the pleasure of the previously unknown.",
+      "verdict": "UNSUPPORTED",
+      "reason": "Again presupposes as fact that 'the festival uses' the word discovery in a particular sense. The source does not establish that the festival uses the word at all, let alone in what sense. The underlying observation (George and Walter were unseen in their lifetimes) is supported, but the attribution of a specific usage and meaning to the festival is not."
+    },
+    {
+      "claim": "To be discovered, in the festival's mouth, is to be seen at last.",
+      "verdict": "UNSUPPORTED",
+      "reason": "'In the festival's mouth' attributes specific language and a specific meaning to the festival as an institution. The source never records the festival saying anything. This is the article's argument dressed as reported fact."
+    },
+    {
+      "claim": "That is the reviewer's own conviction, not the festival's line about itself",
+      "verdict": "UNCERTAIN",
+      "reason": "The first half is supported \u2014 the source reviewer explicitly says 'I think they have a duty... to tell them clearly.' But the second half asserts what the festival's line about itself is NOT, which cannot be verified: the source never presents any festival statement to compare against. Resolving this would require the festival's actual programme/press language."
+    },
+    {
+      "claim": "possible named entity 'Following Your Nose Through' not found in source (pre-scan candidate)",
+      "verdict": "SUPPORTED",
+      "reason": "Not a factual claim or invented entity \u2014 it is the article's headline, a fair figurative lift from the source's own line 'You've just got to follow your nose and hope you sniff out something you like.' No grounding failure."
+    },
+    {
+      "claim": "possible named entity 'Edinburgh\\nYou' not found in source (pre-scan candidate)",
+      "verdict": "SUPPORTED",
+      "reason": "A tokenization artifact from the headline running into the first sentence. No named entity is actually being asserted; nothing to flag."
+    }
+  ],
+  "unsupported_count": 4,
+  "uncertain_count": 1,
+  "word_count": 635
+}
