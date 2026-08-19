@@ -1,0 +1,23 @@
+{
+  "iteration": "FORM-1.3-R2",
+  "is_new_form_version": false,
+  "repeats_condition": "FORM-1.3 (frozen, byte-identical)",
+  "phase": "GENERATED",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "is_production_path_replay": false,
+  "expected_model_identity": "claude-opus-5[1m]",
+  "frozen_condition_sha256": {
+    "source": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+    "packet": "a620d0ce700a501de1695cc63253b518da283397388dba4dfb1f570af8f8e8ab",
+    "prompt": "12e520e449752ed89522963c77a48fc2b86636a31a20d8f3ca47ac4ec276cdfd"
+  },
+  "writer_generations_planned": 1,
+  "retries": 0,
+  "candidates": 1,
+  "note": "Variance replicate. Nothing in the Form, packet, prompt, source or commission differs from the original FORM-1.3 run. The fixed FORM-1.3 prompt is itself the experimental object.",
+  "model_identity_local": "claude-opus-5[1m]",
+  "writer_generations_made": 1,
+  "raw_response_sha256": "b9e05e1cf50af0ae1dbcf8f9149c55ebb36d9224db817367b02779552547ade2",
+  "article_sha256": "5ea20461cc09484d7bf1fea3f83de526f5c54720b72438e180cf92e4f1f600ad",
+  "article_word_count": 633
+}
