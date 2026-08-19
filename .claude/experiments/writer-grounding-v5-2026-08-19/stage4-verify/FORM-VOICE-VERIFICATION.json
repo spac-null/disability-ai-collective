@@ -1,0 +1,195 @@
+{
+  "form1-3": {
+    "form_before": {
+      "paragraphs": 8,
+      "words": 691,
+      "countervoice_paras": [
+        5
+      ],
+      "arrival_para": 8,
+      "paras_after_arrival": 0,
+      "arrival_final": true,
+      "countervoice_before_arrival": true,
+      "festival_as_speaker_failures": 0,
+      "festival_phrases": [],
+      "schema_label_tokens": [],
+      "attribution_bookkeeping_leakage": 0,
+      "bookkeeping_sentences": [],
+      "agency_consent_attractor_hits": [],
+      "destination_similarity": [
+        0.21,
+        0.2,
+        0.11,
+        0.13,
+        0.13,
+        0.16,
+        0.24,
+        0.65
+      ],
+      "final_para": "The review's discovery is the visitor's present encounter with work previously unknown to them. What it records about George and Walter is that the work went unshown while they were alive."
+    },
+    "form_after": {
+      "paragraphs": 8,
+      "words": 675,
+      "countervoice_paras": [
+        5
+      ],
+      "arrival_para": 8,
+      "paras_after_arrival": 0,
+      "arrival_final": true,
+      "countervoice_before_arrival": true,
+      "festival_as_speaker_failures": 0,
+      "festival_phrases": [],
+      "schema_label_tokens": [],
+      "attribution_bookkeeping_leakage": 0,
+      "bookkeeping_sentences": [],
+      "agency_consent_attractor_hits": [],
+      "destination_similarity": [
+        0.21,
+        0.2,
+        0.11,
+        0.14,
+        0.13,
+        0.16,
+        0.24,
+        0.65
+      ],
+      "final_para": "The review's discovery is the visitor's present encounter with work previously unknown to them. What it records about George and Walter is that the work went unshown while they were alive."
+    },
+    "form_dimensions_changed": {},
+    "form_preserved": true,
+    "voice_token_deltas": {},
+    "voice_tokens_in_patch_text": [],
+    "voice_regression": false,
+    "arrival_paragraph_patched": false,
+    "arrival_bytes_identical": true
+  },
+  "r2": {
+    "form_before": {
+      "paragraphs": 8,
+      "words": 633,
+      "countervoice_paras": [
+        5
+      ],
+      "arrival_para": 8,
+      "paras_after_arrival": 0,
+      "arrival_final": true,
+      "countervoice_before_arrival": true,
+      "festival_as_speaker_failures": 0,
+      "festival_phrases": [],
+      "schema_label_tokens": [],
+      "attribution_bookkeeping_leakage": 0,
+      "bookkeeping_sentences": [],
+      "agency_consent_attractor_hits": [],
+      "destination_similarity": [
+        0.21,
+        0.13,
+        0.24,
+        0.18,
+        0.14,
+        0.25,
+        0.4,
+        0.44
+      ],
+      "final_para": "The word discovery, then, is describing the visitor's side of the encounter. It marks the moment work becomes newly visible to someone who did not know it existed. What it does not describe, and cannot, is the other span of time these dates measure: the years in which that same work went unshown whi"
+    },
+    "form_after": {
+      "paragraphs": 8,
+      "words": 610,
+      "countervoice_paras": [
+        5
+      ],
+      "arrival_para": 8,
+      "paras_after_arrival": 0,
+      "arrival_final": true,
+      "countervoice_before_arrival": true,
+      "festival_as_speaker_failures": 0,
+      "festival_phrases": [],
+      "schema_label_tokens": [],
+      "attribution_bookkeeping_leakage": 0,
+      "bookkeeping_sentences": [],
+      "agency_consent_attractor_hits": [],
+      "destination_similarity": [
+        0.21,
+        0.15,
+        0.21,
+        0.18,
+        0.14,
+        0.25,
+        0.4,
+        0.44
+      ],
+      "final_para": "The word discovery, then, is describing the visitor's side of the encounter. It marks the moment work becomes newly visible to someone who did not know it existed. What it does not describe, and cannot, is the other span of time these dates measure: the years in which that same work went unshown whi"
+    },
+    "form_dimensions_changed": {},
+    "form_preserved": true,
+    "voice_token_deltas": {},
+    "voice_tokens_in_patch_text": [],
+    "voice_regression": false,
+    "arrival_paragraph_patched": false,
+    "arrival_bytes_identical": true
+  },
+  "r3": {
+    "form_before": {
+      "paragraphs": 7,
+      "words": 646,
+      "countervoice_paras": [
+        4
+      ],
+      "arrival_para": 7,
+      "paras_after_arrival": 0,
+      "arrival_final": true,
+      "countervoice_before_arrival": true,
+      "festival_as_speaker_failures": 0,
+      "festival_phrases": [],
+      "schema_label_tokens": [],
+      "attribution_bookkeeping_leakage": 0,
+      "bookkeeping_sentences": [],
+      "agency_consent_attractor_hits": [],
+      "destination_similarity": [
+        0.13,
+        0.14,
+        0.17,
+        0.19,
+        0.22,
+        0.18,
+        0.49
+      ],
+      "final_para": "That is where the two senses part. The review's discovery is the visitor's, present and first-hand, a story becoming known to someone who did not know it. The other fact is about the work: it stayed unshown for the whole of the life that made it."
+    },
+    "form_after": {
+      "paragraphs": 7,
+      "words": 639,
+      "countervoice_paras": [
+        4
+      ],
+      "arrival_para": 7,
+      "paras_after_arrival": 0,
+      "arrival_final": true,
+      "countervoice_before_arrival": true,
+      "festival_as_speaker_failures": 0,
+      "festival_phrases": [],
+      "schema_label_tokens": [],
+      "attribution_bookkeeping_leakage": 0,
+      "bookkeeping_sentences": [],
+      "agency_consent_attractor_hits": [],
+      "destination_similarity": [
+        0.13,
+        0.14,
+        0.17,
+        0.19,
+        0.23,
+        0.18,
+        0.49
+      ],
+      "final_para": "That is where the two senses part. The review's discovery is the visitor's, present and first-hand, a story becoming known to someone who did not know it. The other fact is about the work: it stayed unshown for the whole of the life that made it."
+    },
+    "form_dimensions_changed": {},
+    "form_preserved": true,
+    "voice_token_deltas": {},
+    "voice_tokens_in_patch_text": [],
+    "voice_regression": false,
+    "arrival_paragraph_patched": false,
+    "arrival_bytes_identical": true
+  }
+}

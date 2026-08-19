@@ -1,0 +1,13 @@
+{
+  "stage": "WG-5 STAGE 5 POST-REPAIR COMPOSED VERDICT",
+  "tag": "r3",
+  "input_propositions": 71,
+  "system_sha256": "2db07a4a963cb535e61df74cdf4a3199becf8f5b8e7c9ed716001af7ec1c8d31",
+  "user_sha256": "fb4bddaa5ba4f3c9a20d63985d4f85c2338a378f22c1c402b3dfa6495a28b6dc",
+  "patched_article_sha256": "b71d27195fcd88c006757d92d2a88606cdd983bf1d387642387508295cccf798",
+  "identical_instrument_to_stage2": true,
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

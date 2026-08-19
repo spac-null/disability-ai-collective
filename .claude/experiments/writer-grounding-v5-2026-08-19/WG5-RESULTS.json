@@ -1,0 +1,174 @@
+{
+  "experiment": "WG-5 INTEGRATED WRITER-GROUNDING SHADOW PIPELINE",
+  "date": "2026-08-19",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "model": "claude-opus-5[1m], 15 fresh-context blind subagent calls",
+  "production_wiring": "NONE",
+  "deployed": false,
+  "articles_generated": 0,
+  "gold_modified": false,
+  "gold_version_note": "WG-5 is the FIRST repair calibration against Gold V2.1. WG-0B was calibrated against Gold V1; since then 3 findings became legitimate INTERPRETATION and G13-04 was added. WG-0B established only that patch-only mechanics can preserve structure.",
+  "pipeline": [
+    "WG-3A extraction (unchanged, system prompt byte-identical)",
+    "composed verdict = WG-4A decomposition + WG-3B object-aware + WG-4B negative proof",
+    "patch-only repair",
+    "deterministic fail-closed application",
+    "Form/voice verification",
+    "full post-repair re-audit with the identical instrument"
+  ],
+  "integrated_detector": {
+    "parents": 232,
+    "commitments": 238,
+    "verdicts": {
+      "SUPPORTED": 141,
+      "INTERPRETATION": 86,
+      "UNSUPPORTED": 11
+    },
+    "tp": 8,
+    "fp": 1,
+    "fn": 0,
+    "unsupported_recall": 1.0,
+    "unsupported_precision": 0.889,
+    "gate_8_of_8": "PASS",
+    "fp_within_tolerance": "YES (1 <= 2 allowed)",
+    "caught_all_eight": [
+      "G13-01",
+      "G13-02",
+      "G13-04",
+      "GR2-01",
+      "GR2-02",
+      "GR2-04",
+      "GR3-01",
+      "GR3-03"
+    ],
+    "interpretation_false_positives_on_reclassified": 0,
+    "gold_uncertain_outcomes": "0 UNCERTAIN emitted. Gold's 2 UNCERTAIN items were not flagged UNSUPPORTED, so neither was repaired; but the detector also did not mark them UNCERTAIN. Recorded, not scored as recall.",
+    "milestone": "First configuration ever to reach 8/8. Both WG-3B failure modes fixed at once: intervals isolated as modifiers with grounded bases left SUPPORTED, and the negative meta-source class rejected with PROOF_TYPE NONE.",
+    "composition_regression_on_precision": {
+      "case": "R3 control 'it sits there without commentary'",
+      "standalone_wg4b": "SUPPORTED via BOUNDED_ABSENCE (scope = the single occurrence of the quantity plus its passage)",
+      "composed_wg5": "UNSUPPORTED \u2014 reasoned that the only available support was 'I read the review and found no explicit remark on the number', which Check C rules out",
+      "meaning": "The negative-source rule became STRICTER when merged with Checks A and B. Component behaviour was not fully retained. Within the FP tolerance, but this is the case nominated as decisive for over-strictness."
+    }
+  },
+  "per_article": {
+    "FORM-1.3": {
+      "findings": 4,
+      "patches": 4,
+      "ops": "3 DELETE, 1 REPLACE",
+      "chars_removed": 95,
+      "chars_added": 16,
+      "word_delta": -16,
+      "paragraph_delta": 0,
+      "arrival_paragraph_patched": false,
+      "arrival_bytes_identical": true,
+      "grounding_before": "3 gold UNSUPPORTED (G13-01, G13-02, G13-04)",
+      "grounding_after": "0 UNSUPPORTED",
+      "interpretation_spans_changed": 0,
+      "form_preserved": true,
+      "voice_regression": false,
+      "key_repairs": [
+        "'City Art Centre' -> 'City Art Gallery' (source's own name restored)",
+        "' an hour ago' deleted, grounded base state retained",
+        "both ranking clauses deleted"
+      ]
+    },
+    "FORM-1.3-R2": {
+      "findings": 3,
+      "patches": 3,
+      "ops": "2 DELETE, 1 REPLACE",
+      "chars_removed": 171,
+      "chars_added": 29,
+      "word_delta": -23,
+      "paragraph_delta": 0,
+      "arrival_paragraph_patched": false,
+      "arrival_bytes_identical": true,
+      "grounding_before": "3 gold UNSUPPORTED (GR2-01, GR2-02, GR2-04)",
+      "grounding_after": "0 gold findings remain, but 1 RESIDUAL UNSUPPORTED appeared",
+      "residual": {
+        "span": "without preparation",
+        "type": "HUMAN_STATE",
+        "cause": "The patch removed the flagged clause ', without the visitor having brought anything to the encounter except the willingness to walk in' but left the adjacent 'a name that arrives without preparation', which carries a weaker form of the SAME unsupported visitor-state claim. Pre-repair the detector had subsumed it inside the larger finding; once the larger clause was gone it stood alone and was flagged.",
+        "not_introduced_by_patch": "The words were already in the article. This is repair INCOMPLETENESS, not new invention."
+      },
+      "interpretation_spans_changed": 0,
+      "form_preserved": true,
+      "voice_regression": false,
+      "key_repairs": [
+        "\"Sadao Hasegawa's work\" -> \"Most of Sadao Hasegawa's work\" \u2014 the source qualifier restored, matching gold's stated minimum correction, reached without repair ever seeing gold"
+      ]
+    },
+    "FORM-1.3-R3": {
+      "findings": 4,
+      "patches": 4,
+      "ops": "3 DELETE, 1 REPLACE",
+      "chars_removed": 54,
+      "chars_added": 9,
+      "word_delta": -7,
+      "paragraph_delta": 0,
+      "arrival_paragraph_patched": false,
+      "arrival_bytes_identical": true,
+      "grounding_before": "2 gold UNSUPPORTED (GR3-01, GR3-03)",
+      "grounding_after": "0 UNSUPPORTED",
+      "interpretation_spans_changed": 1,
+      "unauthorized_change": {
+        "before": "The number is the review's, and it sits there without commentary.",
+        "after": "The number is the review's, and it sits there.",
+        "why": "Downstream consequence of the single detector false positive. A legitimate, source-supported editorial observation was stripped. The sentence stays grammatical but loses the observation it existed to make."
+      },
+      "form_preserved": true,
+      "voice_regression": false
+    }
+  },
+  "deterministic_application": {
+    "all_applied": true,
+    "fail_closed_rejections": 0,
+    "boundary_assertion_passed": "3/3 \u2014 every changed byte inside an approved span",
+    "exact_match_required": true,
+    "ambiguous_matches": 0,
+    "overlapping_patches": 0,
+    "paragraph_delta_all": 0
+  },
+  "post_repair_audit": {
+    "method": "Full re-audit with the IDENTICAL instrument \u2014 WG-3A extraction then the same composed verdict \u2014 over the patched articles. Not merely a recheck of old findings.",
+    "gold_findings_remaining": 0,
+    "new_unsupported_introduced_by_patches": 0,
+    "residual_unsupported_pre_existing": 1,
+    "unsupported_modifiers_introduced_inside_patches": 0,
+    "qualifiers_lost": 0,
+    "qualifiers_restored": 1,
+    "proper_nouns_changed_incorrectly": 0,
+    "proper_nouns_corrected": 1,
+    "human_states_invented": 0,
+    "meta_source_claims_invented": 0,
+    "post_repair_unsupported_counts": {
+      "FORM-1.3": 0,
+      "R2": 1,
+      "R3": 0
+    }
+  },
+  "article_form_verification": {
+    "checker": "constants copied VERBATIM from the frozen sofa-real-ab-1 structural_check.py",
+    "festival_as_speaker_failures": "0 / 0 / 0",
+    "discovery_ownership_failures": "0 / 0 / 0",
+    "countervoice_before_arrival": "YES 3/3",
+    "arrival_final": "YES 3/3",
+    "paragraphs_after_arrival": "0 3/3",
+    "post_arrival_restatement": "NONE 3/3",
+    "agency_consent_attractor": "0 3/3",
+    "attribution_bookkeeping_leakage": "0 3/3",
+    "structure_preserved": "3/3",
+    "no_form_dimension_changed_on_any_article": true
+  },
+  "voice_verification": {
+    "voice_guidance_in_repair_prompt": false,
+    "note": "Deliberately omitted per instruction \u2014 the repair prompt was NOT pre-modified to chase WG-0B's 'on the reading offered here' regression. This is an uncoached result.",
+    "narrator_position_tokens_introduced": 0,
+    "voice_regression": "NO 3/3",
+    "hedges_added": 0,
+    "wg0b_regression_recurred": false
+  },
+  "decision": "C \u2014 REPAIR_CURRENT_GOLD_GAP",
+  "decision_reasoning": "The detector met its stated target (8/8 at 1 FP, tolerance 2), so composition works for recall. What fails is downstream and twofold: (1) the pipeline unnecessarily edited legitimate interpretation \u2014 the R3 control \u2014 as the direct consequence of the one detector false positive; (2) repair was incomplete, leaving a residual unsupported visitor-state claim in R2. Not B: recall did not regress and 8/8 was reached. Not D: Article Form preserved 3/3 and no voice regression, so no Form/voice/layer damage.",
+  "architectural_result": "EXTRACTION SOLVED. DETECTOR COMPOSITION REACHES FULL RECALL. REPAIR AGAINST GOLD V2.1 IS NOT YET CLEAN \u2014 it under-clears (residual adjacent claims) and over-edits (propagates detector false positives into legitimate prose)."
+}

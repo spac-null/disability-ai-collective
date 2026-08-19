@@ -1,0 +1,20 @@
+{
+  "stage": "WG-5 STAGE 2 COMPOSED VERDICT",
+  "component_versions": {
+    "decomposition": "WG-4A",
+    "object_aware": "WG-3B",
+    "negative_proof": "WG-4B"
+  },
+  "tag": "form1-3",
+  "input_propositions": 81,
+  "system_sha256": "2db07a4a963cb535e61df74cdf4a3199becf8f5b8e7c9ed716001af7ec1c8d31",
+  "user_sha256": "2243259080c0508f73cb237279c172c49d515ecd4977a8c41ef0887cf47888ed",
+  "prompt_sha256": "94fc452d5af6678fb0c1b277ee53cdf62eafc2dc06492e70e994ef558e26fc84",
+  "article_sha256": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "input_extraction_sha256": "1b7ac2a8b218a2adb35bade5e31879cdd390794aaffbecbe6e3d6cfd9d4250c0",
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

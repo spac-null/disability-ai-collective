@@ -1,0 +1,22 @@
+{
+  "stage": "WG-5 STAGE 3 PATCH-ONLY REPAIR",
+  "tag": "form1-3",
+  "findings": 4,
+  "finding_ids": [
+    "P22-C1",
+    "P23-C1",
+    "P73-C2",
+    "P75-C2"
+  ],
+  "fed_gold": false,
+  "gold_ids_withheld": true,
+  "voice_guidance_in_prompt": false,
+  "system_sha256": "85f21fc61ae2cf79d2f90bcc2e8afa7624b77d7c369858a5ab7507c0df008b07",
+  "user_sha256": "2c5e23d7ad34c99816952406f07c650b9a2d920cad6b95c5f52232ce08475139",
+  "prompt_sha256": "9ffdbf2f033fd2998115083707fc8df7069a1aa7e5dcbb571d833fddc4bb8912",
+  "article_sha256": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

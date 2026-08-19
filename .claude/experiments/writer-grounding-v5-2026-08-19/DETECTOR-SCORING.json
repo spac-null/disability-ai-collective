@@ -1,0 +1,36 @@
+{
+  "parents": 232,
+  "commitments": 238,
+  "verdicts": {
+    "INTERPRETATION": 86,
+    "SUPPORTED": 141,
+    "UNSUPPORTED": 11
+  },
+  "tp": 8,
+  "fp": 1,
+  "fn": 0,
+  "recall": 1.0,
+  "precision": 0.8888888888888888,
+  "caught": [
+    "G13-01",
+    "G13-02",
+    "G13-04",
+    "GR2-01",
+    "GR2-02",
+    "GR2-04",
+    "GR3-01",
+    "GR3-03"
+  ],
+  "missed": [],
+  "false_positives": [
+    {
+      "tag": "r3",
+      "parent": "P28",
+      "commitment": "P28-C1",
+      "offending": "without commentary",
+      "reason": "Check C: the only available reasoning is 'I read the review and found no explicit remark on the number', which the instruction rules out as a proof type. Neither EXPLICIT (the source nowhere states that it withholds comment) nor BOUNDED_ABSENCE (the property is qualitative, not a finite textual feature) is available, so the claim about what the source does not do is stated as settled without licence."
+    }
+  ],
+  "uncertain": [],
+  "gate_8_of_8": true
+}

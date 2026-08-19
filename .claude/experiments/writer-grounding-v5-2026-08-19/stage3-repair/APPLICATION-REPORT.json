@@ -1,0 +1,132 @@
+[
+  {
+    "tag": "form1-3",
+    "status": "APPLIED",
+    "patches": 4,
+    "applied": [
+      {
+        "PATCH_ID": "PT-1",
+        "op": "DELETE",
+        "removed": 37,
+        "added": 0,
+        "old": "not because the review ranks them or ",
+        "new": ""
+      },
+      {
+        "PATCH_ID": "PT-2",
+        "op": "DELETE",
+        "removed": 31,
+        "added": 0,
+        "old": "gathers them into a group, but ",
+        "new": ""
+      },
+      {
+        "PATCH_ID": "PT-3",
+        "op": "REPLACE",
+        "removed": 15,
+        "added": 16,
+        "old": "City Art Centre",
+        "new": "City Art Gallery"
+      },
+      {
+        "PATCH_ID": "PT-4",
+        "op": "DELETE",
+        "removed": 12,
+        "added": 0,
+        "old": " an hour ago",
+        "new": ""
+      }
+    ],
+    "orig_sha256": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+    "patched_sha256": "236c0f1f1108dbb381a6fe27f8fb42f2d183446f6f23189fa2219c44cc4423d0",
+    "chars_removed": 95,
+    "chars_added": 16,
+    "word_delta": -16,
+    "paragraph_delta": 0,
+    "boundary_assert_ok": true
+  },
+  {
+    "tag": "r2",
+    "status": "APPLIED",
+    "patches": 3,
+    "applied": [
+      {
+        "PATCH_ID": "PATCH-1",
+        "op": "DELETE",
+        "removed": 96,
+        "added": 0,
+        "old": ", without the visitor having brought anything to the encounter except the willingness to walk in",
+        "new": ""
+      },
+      {
+        "PATCH_ID": "PATCH-2",
+        "op": "DELETE",
+        "removed": 54,
+        "added": 0,
+        "old": "not because the review places them above the rest but ",
+        "new": ""
+      },
+      {
+        "PATCH_ID": "PATCH-3",
+        "op": "REPLACE",
+        "removed": 21,
+        "added": 29,
+        "old": "Sadao Hasegawa's work",
+        "new": "Most of Sadao Hasegawa's work"
+      }
+    ],
+    "orig_sha256": "5ea20461cc09484d7bf1fea3f83de526f5c54720b72438e180cf92e4f1f600ad",
+    "patched_sha256": "0a7627ccb4c91039f182c44addeaca555016c43172ed9da489ecef3c6b33b7e8",
+    "chars_removed": 171,
+    "chars_added": 29,
+    "word_delta": -23,
+    "paragraph_delta": 0,
+    "boundary_assert_ok": true
+  },
+  {
+    "tag": "r3",
+    "status": "APPLIED",
+    "patches": 4,
+    "applied": [
+      {
+        "PATCH_ID": "R3-P1",
+        "op": "DELETE",
+        "removed": 16,
+        "added": 0,
+        "old": " an hour earlier",
+        "new": ""
+      },
+      {
+        "PATCH_ID": "R3-P2",
+        "op": "DELETE",
+        "removed": 19,
+        "added": 0,
+        "old": " without commentary",
+        "new": ""
+      },
+      {
+        "PATCH_ID": "R3-P3",
+        "op": "REPLACE",
+        "removed": 12,
+        "added": 9,
+        "old": "Edinburgh in",
+        "new": "Edinburgh"
+      },
+      {
+        "PATCH_ID": "R3-P4",
+        "op": "DELETE",
+        "removed": 7,
+        "added": 0,
+        "old": " August",
+        "new": ""
+      }
+    ],
+    "orig_sha256": "27b1038c80af9890ca07b5b4ab1533670b3425f11c41d2898d2a61d806086d94",
+    "patched_sha256": "b71d27195fcd88c006757d92d2a88606cdd983bf1d387642387508295cccf798",
+    "chars_removed": 54,
+    "chars_added": 9,
+    "word_delta": -7,
+    "paragraph_delta": 0,
+    "boundary_assert_ok": true
+  }
+]

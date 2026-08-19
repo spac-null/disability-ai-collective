@@ -1,0 +1,14 @@
+{
+  "stage": "WG-5 STAGE 5 POST-REPAIR EXTRACTION",
+  "component_version": "WG-3A unchanged",
+  "tag": "r3",
+  "sentences": 38,
+  "system_sha256": "45586e5f37b881cfb08e8a4bc9d7e9583788079b75c4f6aa0de47be1ef35fe95",
+  "user_sha256": "e90333c92a442383e684b83eb662d4901ddaadfc4018203a6dbc8e907ebea361",
+  "patched_article_sha256": "b71d27195fcd88c006757d92d2a88606cdd983bf1d387642387508295cccf798",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

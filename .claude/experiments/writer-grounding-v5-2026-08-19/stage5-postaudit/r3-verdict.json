@@ -1,0 +1,1594 @@
+{
+ "propositions": [
+  {
+   "PARENT_CLAIM_ID": "P1",
+   "EXACT_SPAN": "Following Your Nose Through Edinburgh",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P1-C1",
+     "PROPOSITION": "The piece is headed 'Following Your Nose Through Edinburgh'.",
+     "COMMITMENT_TYPE": "OTHER",
+     "CLAIM_OBJECT_TYPE": "OTHER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You’ve just got to follow your nose and hope you sniff out something you like.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "A title. Rhetorical framing that picks up the review's own 'follow your nose' figure; asserts no factual state about the world, the source or a person."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P2",
+   "EXACT_SPAN": "By the reviewer's account",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P2-C1",
+     "PROPOSITION": "What follows is attributed to the reviewer's account.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Attribution frame only. The source is a first-person review ('I think they have a duty'), so an account by a reviewer exists and the article claims nothing more than that the following material comes from it."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P3",
+   "EXACT_SPAN": "the Edinburgh art festival is something you move through rather than read",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P3-C1",
+     "PROPOSITION": "The Edinburgh art festival is something you move through rather than read.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You’ve just got to follow your nose and hope you sniff out something you like.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "SUBJECT_MATTER: a metaphor built on the review's stated method of moving through the festival by nose rather than by comprehension. The anchor obligation does not apply to SUBJECT_MATTER, and no new concrete fact is smuggled in."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P4",
+   "EXACT_SPAN": "There are curated displays, satellite exhibitions, performances, off-site projects",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P4-C1",
+     "PROPOSITION": "The festival contains curated displays, satellite exhibitions, performances and off-site projects.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "There are curated displays, satellite exhibitions, performances, off-site projects, and it’s impossible to figure out how any of it fits together.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Concrete detail reproduced item for item from the anchor; the anchor licenses each of the four listed categories, not merely the topic."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P5",
+   "EXACT_SPAN": "it is impossible to figure out how any of it fits together",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P5-C1",
+     "PROPOSITION": "It is impossible to figure out how any of it fits together.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "There are curated displays, satellite exhibitions, performances, off-site projects, and it’s impossible to figure out how any of it fits together.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Correcting the extraction's SUBJECT_MATTER hypothesis: this is a restatement of an assertion the review makes in these very words, so it is a SOURCE_OR_REVIEW claim with an exact anchor."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P6",
+   "EXACT_SPAN": "No map resolves it.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P6-C1",
+     "PROPOSITION": "No map resolves how the festival fits together.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "There are curated displays, satellite exhibitions, performances, off-site projects, and it’s impossible to figure out how any of it fits together.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Figurative restatement of the source's 'impossible to figure out how any of it fits together'. It is not a claim that the source omits something (Check C does not bite) and it posits no concrete artefact; 'map' is a figure for anything that would make the festival legible."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P7",
+   "EXACT_SPAN": "The reviewer's method, stated plainly, is to follow your nose and hope you sniff out something you like",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P7-C1",
+     "PROPOSITION": "The review plainly states that the method is to follow your nose and hope you sniff out something you like.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You’ve just got to follow your nose and hope you sniff out something you like.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The anchor states exactly this, and states it plainly and directly, so the 'stated plainly' qualifier is licensed by the same anchor rather than riding free on it."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P8",
+   "EXACT_SPAN": "a way of proceeding that treats the festival as terrain rather than argument",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P8-C1",
+     "PROPOSITION": "That way of proceeding treats the festival as terrain rather than as argument.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You’ve just got to follow your nose and hope you sniff out something you like.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "SUBJECT_MATTER: an analytic gloss on the source-given method. A metaphor the source never states is legitimate interpretation; it adds no factual state."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P9",
+   "EXACT_SPAN": "the terrain has a consistent weather to it",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P9-C1",
+     "PROPOSITION": "The terrain has a consistent weather to it.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Extended metaphor for the recurrence the source asserts ('You can't walk into a gallery without...'). No new concrete fact."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P10",
+   "EXACT_SPAN": "the review says",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P10-C1",
+     "PROPOSITION": "The review says the claim that follows.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Attribution of a sentence the source does contain in the words quoted."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P11",
+   "EXACT_SPAN": "you can't walk into a gallery, the review says, without learning about some subcultural genius or long-lost creative you've never heard of",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P11-C1",
+     "PROPOSITION": "The review states that you cannot walk into a gallery without learning about some subcultural genius or long-lost creative you have never heard of.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Correcting the extraction's SUBJECT_MATTER hypothesis: the span is explicitly attributed to the review and reproduces the anchor sentence almost word for word."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P12",
+   "EXACT_SPAN": "some subcultural genius or long-lost creative you've never heard of",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P12-C1",
+     "PROPOSITION": "The visitor has never heard of the subcultural genius or long-lost creative in question.",
+     "COMMITMENT_TYPE": "HUMAN_STATE",
+     "CLAIM_OBJECT_TYPE": "HUMAN_STATE",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "HUMAN_STATE, so an anchor licensing the specific state is required. The source states the negative state itself ('you've never heard of'), which is EXPLICIT proof, not an absence argument. No duration or prior-interval is asserted here."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P13",
+   "EXACT_SPAN": "The encounter repeats.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P13-C1",
+     "PROPOSITION": "The encounter repeats.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Reading of the source's universal generalisation about walking into galleries. Recurrence is what that generalisation says; the article draws it out rather than adding a fact."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P14",
+   "EXACT_SPAN": "Room after room, the visitor arrives at a name",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P14-C1",
+     "PROPOSITION": "Room after room, the visitor arrives at a name.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Single analytic restatement of the source's 'can't walk into a gallery without' generalisation. 'Room after room' is that same universality re-expressed, not an independent count of rooms, so splitting it off would over-fragment one reading."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P15",
+   "EXACT_SPAN": "a name that was not in their possession",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P15-C1",
+     "PROPOSITION": "The name was not previously in the visitor's possession.",
+     "COMMITMENT_TYPE": "HUMAN_STATE",
+     "CLAIM_OBJECT_TYPE": "HUMAN_STATE",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The anchor licenses precisely this state ('you've never heard of'), and the article adds no interval, duration or account of what the visitor brought to the encounter."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P16",
+   "EXACT_SPAN": "Two of those names are worth setting down with their facts attached.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P16-C1",
+     "PROPOSITION": "Two of those names are worth setting down with their facts attached.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "OTHER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Editorial connective tissue announcing the article's own next move. Asserts no factual state about the world or the source."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P17",
+   "EXACT_SPAN": "the review notes",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P17-C1",
+     "PROPOSITION": "The review notes the facts about Sandra George.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "She was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The source does contain the George facts being attributed."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P18",
+   "EXACT_SPAN": "Sandra George, the review notes, was a black photographer and photojournalist",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P18-C1",
+     "PROPOSITION": "Sandra George was a black photographer and photojournalist.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "She was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Verbatim in the anchor. Source fidelity, not world truth, is the test and the source states it."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P19",
+   "EXACT_SPAN": "who documented life on the margins of inner city Edinburgh",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P19-C1",
+     "PROPOSITION": "Sandra George documented life on the margins of inner city Edinburgh.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "She was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Verbatim in the anchor."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P20",
+   "EXACT_SPAN": "like a lot of people in the festival, the reviewer observes",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P20-C1",
+     "PROPOSITION": "The reviewer observes that a lot of people in the festival share this.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The source makes the comparison in its own voice ('Like a lot of people in EAF'); the article attributes it rather than asserting it independently."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P21",
+   "EXACT_SPAN": "never showed her work publicly in her lifetime",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P21-C1",
+     "PROPOSITION": "Sandra George never showed her work publicly in her lifetime.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "A negative claim, but the source states the negation itself, which is the EXPLICIT proof type. No scanning-for-absence is involved."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P22",
+   "EXACT_SPAN": "was only discovered after her death in 2013",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P22-C1",
+     "PROPOSITION": "Sandra George was discovered only after her death.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The source states the negation and the ordering explicitly."
+    },
+    {
+     "COMMITMENT_ID": "P22-C2",
+     "PROPOSITION": "Her death occurred in 2013.",
+     "COMMITMENT_TYPE": "TEMPORAL_MODIFIER",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Split per Check A because a date is an independent modifier that must not ride on the base state. Checked separately: the same anchor carries the year 2013."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P23",
+   "EXACT_SPAN": "Frank Walter, the Antiguan painter, writer, poet and polymath",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P23-C1",
+     "PROPOSITION": "Frank Walter was an Antiguan painter, writer, poet and polymath.",
+     "COMMITMENT_TYPE": "PROPER_NOUN",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Name and descriptors reproduced from the anchor exactly."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P24",
+   "EXACT_SPAN": "at the centre of the Ingleby Gallery group show",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P24-C1",
+     "PROPOSITION": "Frank Walter is at the centre of the Ingleby Gallery group show.",
+     "COMMITMENT_TYPE": "PROPER_NOUN",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "The group show at Ingleby Gallery is good, too. It’s all centred on Frank Walter (1926-2009)",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The venue attribution the extraction's anchor left implicit is carried by the immediately preceding source sentence, which names the Ingleby Gallery group show as the thing centred on Walter."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P25",
+   "EXACT_SPAN": "died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P25-C1",
+     "PROPOSITION": "Frank Walter died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Word-for-word restatement of a single source clause, negation and quantity included; splitting it would fragment one source sentence rather than isolate an independent modifier."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P26",
+   "EXACT_SPAN": "Thousands.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P26-C1",
+     "PROPOSITION": "The paintings and drawings numbered thousands.",
+     "COMMITMENT_TYPE": "QUANTIFIER",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Quantity checked on its own, as Check A requires: the source's own quantifier is 'thousands', with no enlargement."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P27",
+   "EXACT_SPAN": "The number is the review's",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P27-C1",
+     "PROPOSITION": "The number comes from the review.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "A meta-source claim about provenance, and the provenance is visible in the anchor: the figure is the review's own word."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P28",
+   "EXACT_SPAN": "it sits there",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P28-C1",
+     "PROPOSITION": "The number sits there.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Rhetorical emphasis on a figure that is present in the source; no further factual content."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P29",
+   "EXACT_SPAN": "the reviewer's own position on the matter of hidden things",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P29-C1",
+     "PROPOSITION": "The reviewer holds a position on the matter of hidden things.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The anchor is the reviewer stating a first-person position ('I think they have a duty'), which licenses the specific thing claimed."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P30",
+   "EXACT_SPAN": "the review argues",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P30-C1",
+     "PROPOSITION": "The review argues the duty claim that follows.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The anchor is argumentative in form and first-person; attribution is exact."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P31",
+   "EXACT_SPAN": "if contemporary artists and institutions want to tell hidden stories, the review argues, they have a duty — to viewers and to their subjects — to tell them clearly",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P31-C1",
+     "PROPOSITION": "The review holds that contemporary artists and institutions who want to tell hidden stories have a duty, to viewers and to their subjects, to tell them clearly.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Near-verbatim restatement, conditional, both beneficiaries and the content of the duty all present in the anchor. One commitment: this is a single quoted position, not several claims."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P32",
+   "EXACT_SPAN": "It is a demand about the telling",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P32-C1",
+     "PROPOSITION": "The duty claim is a demand about the telling.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Characterisation of a source-given argument. The source's duty is 'to tell them clearly', and calling that a demand about the telling is analysis, not a new fact."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P33",
+   "EXACT_SPAN": "it arrives with two parties named in it",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P33-C1",
+     "PROPOSITION": "The demand names two parties.",
+     "COMMITMENT_TYPE": "QUANTIFIER",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "The single source sentence stating the duty.",
+     "WHY_SCOPE_IS_COMPLETE": "The claim is about what that one sentence names, and the sentence is quoted in full.",
+     "SOURCE_ANCHOR": "I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "A positive, bounded textual observation about one quoted sentence, not an absence claim: the anchor names viewers and subjects, exactly two."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P34",
+   "EXACT_SPAN": "Viewers are one.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P34-C1",
+     "PROPOSITION": "Viewers are one of the two parties named.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Named in the anchor."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P35",
+   "EXACT_SPAN": "Subjects are the other.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P35-C1",
+     "PROPOSITION": "Subjects are the other of the two parties named.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Named in the anchor."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P36",
+   "EXACT_SPAN": "The duty is owed in both directions at once",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P36-C1",
+     "PROPOSITION": "The duty is owed to both named parties at once.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The anchor's conjunction ('to viewers and to their subjects') licenses jointness; 'at once' here means simultaneously owed, which the conjunction entails, not a separate temporal fact."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P37",
+   "EXACT_SPAN": "which means the clarity being asked for is not only a service to the person walking through the door",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P37-C1",
+     "PROPOSITION": "The clarity being asked for is not only a service to the viewer.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "An inference the article draws from the two named beneficiaries. The negation is entailed by the anchor rather than inferred from absence, and the article-level reading is legitimate SUBJECT_MATTER work."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P38",
+   "EXACT_SPAN": "It also answers to whoever the story is about.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P38-C1",
+     "PROPOSITION": "The clarity being asked for also answers to whoever the story is about.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "I think they have a duty – to viewers and to their subjects – to tell them clearly.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Restates the second beneficiary in the article's own terms. Analysis of source-given material, no new fact."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P39",
+   "EXACT_SPAN": "that second obligation is harder to discharge",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P39-C1",
+     "PROPOSITION": "The obligation owed to subjects is harder to discharge than the one owed to viewers.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "An evaluative comparison the source never makes, which is exactly the interpretive work this publication is for. Comparative form decides nothing; no concrete fact is smuggled in."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P40",
+   "EXACT_SPAN": "because the subject is not in the room to say whether it has been met",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P40-C1",
+     "PROPOSITION": "The obligation to subjects is harder to discharge because the subject is not present to say whether it has been met.",
+     "COMMITMENT_TYPE": "CAUSAL_RELATION",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "A causal reading offered as the article's reasoning about the duty it has just quoted. Causal form is not itself grounds for splitting or for rejection; it asserts no factual state about any identified person or event."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P41",
+   "EXACT_SPAN": "The reviewer's word for what happens in these rooms is a specific one",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P41-C1",
+     "PROPOSITION": "The reviewer has a specific word for what happens in these rooms.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "A positive claim about the source's vocabulary, licensed by the source's own use of 'uncovered' and its cognates."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P42",
+   "EXACT_SPAN": "used more than once",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P42-C1",
+     "PROPOSITION": "The reviewer uses that word more than once.",
+     "COMMITMENT_TYPE": "QUANTIFIER",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "The whole supplied SOURCE TEXT.",
+     "WHY_SCOPE_IS_COMPLETE": "The claim is existential ('more than once'), so producing two or more occurrences settles it; several are present.",
+     "SOURCE_ANCHOR": "Another largely undiscovered artist, Sadao Hasegawa (1945-1999), really ramps up the eroticism with an eye-popping display of throbbing members and gushing penetration at Custom Lane.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "A positive frequency claim, so no negative-absence problem arises, and it is demonstrable within the supplied text: 'uncovered', 'undiscovered archives', 'largely undiscovered artist', 'undiscovered narratives' and 'discovered' all occur. More than one occurrence is shown, not inferred."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P43",
+   "EXACT_SPAN": "Uncovered.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P43-C1",
+     "PROPOSITION": "One of the reviewer's words is 'uncovered'.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The word appears in the anchor."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P44",
+   "EXACT_SPAN": "Undiscovered.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P44-C1",
+     "PROPOSITION": "One of the reviewer's words is 'undiscovered'.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Another largely undiscovered artist, Sadao Hasegawa (1945-1999), really ramps up the eroticism with an eye-popping display of throbbing members and gushing penetration at Custom Lane.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The word appears in the anchor."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P45",
+   "EXACT_SPAN": "Sniffed out.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P45-C1",
+     "PROPOSITION": "One of the reviewer's words is 'sniffed out'.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You’ve just got to follow your nose and hope you sniff out something you like.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The lexical item is in the source ('hope you sniff out something you like'); the article inflects it. The claim is about which word the reviewer uses, and that word is present."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P46",
+   "EXACT_SPAN": "the review opens",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P46-C1",
+     "PROPOSITION": "The review opens with the Columbo statement.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "The supplied SOURCE TEXT, read from its first sentence.",
+     "WHY_SCOPE_IS_COMPLETE": "Opening position is settled by the first sentence alone, which is present.",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "A positional claim about the source, checkable against the evidence supplied: the anchor is the first sentence of the SOURCE TEXT."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P47",
+   "EXACT_SPAN": "You'll have uncovered so many hidden stories",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P47-C1",
+     "PROPOSITION": "The review states that you will have uncovered so many hidden stories.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Quoted from the anchor."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P48",
+   "EXACT_SPAN": "you'll feel like Columbo",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P48-C1",
+     "PROPOSITION": "The visitor will feel like Columbo.",
+     "COMMITMENT_TYPE": "HUMAN_STATE",
+     "CLAIM_OBJECT_TYPE": "HUMAN_STATE",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "HUMAN_STATE requires an anchor licensing the specific state, and the source asserts this exact state of the addressed visitor."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P49",
+   "EXACT_SPAN": "the detective's word, the finder's word",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P49-C1",
+     "PROPOSITION": "That word is the detective's word and the finder's word.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "A gloss on the connotation of the review's own Columbo figure. Evaluative reading of source-given material."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P50",
+   "EXACT_SPAN": "a word that puts the visitor at the moment of revelation and makes the revelation theirs",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P50-C1",
+     "PROPOSITION": "That word puts the visitor at the moment of revelation and makes the revelation the visitor's own.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "One analytic reading of what the word does rhetorically, resting on the source's second-person framing. Subordination and length are not reasons to split it."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P51",
+   "EXACT_SPAN": "Sadao Hasegawa is described as another largely undiscovered artist.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P51-C1",
+     "PROPOSITION": "The review describes Sadao Hasegawa as another largely undiscovered artist.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Another largely undiscovered artist, Sadao Hasegawa (1945-1999), really ramps up the eroticism with an eye-popping display of throbbing members and gushing penetration at Custom Lane.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Exact description present in the anchor, and the article attributes it to the review rather than asserting it."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P52",
+   "EXACT_SPAN": "another largely undiscovered artist",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P52-C1",
+     "PROPOSITION": "Sadao Hasegawa is another largely undiscovered artist.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Another largely undiscovered artist, Sadao Hasegawa (1945-1999), really ramps up the eroticism with an eye-popping display of throbbing members and gushing penetration at Custom Lane.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The source asserts this of Hasegawa in these words. Source fidelity is the only question, and the hedge 'largely' is carried over unchanged."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P53",
+   "EXACT_SPAN": "in the review's framing",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P53-C1",
+     "PROPOSITION": "This is the review's framing.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "We’re talking queer narratives, secret histories, undiscovered archives: the whole festival is a celebration of the underground and unheralded.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The framing attributed is stated by the source in its own voice."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P54",
+   "EXACT_SPAN": "The whole festival, in the review's framing, is a celebration of the underground and unheralded.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P54-C1",
+     "PROPOSITION": "The whole festival is a celebration of the underground and unheralded.",
+     "COMMITMENT_TYPE": "SOURCE_META",
+     "CLAIM_OBJECT_TYPE": "SOURCE_OR_REVIEW",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "We’re talking queer narratives, secret histories, undiscovered archives: the whole festival is a celebration of the underground and unheralded.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Verbatim, including the scope word 'whole'."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P55",
+   "EXACT_SPAN": "Discovery here is something that happens to a person who is walking around Edinburgh",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P55-C1",
+     "PROPOSITION": "In the review's sense, discovery is something that happens to a person walking around Edinburgh.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "The article's reading of how the review uses the word, drawn from the source's second-person gallery-going framing. No new concrete fact about any person or venue."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P56",
+   "EXACT_SPAN": "it happens in the present tense, on the day, in front of the work",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P56-C1",
+     "PROPOSITION": "In the review's sense, that discovery happens in the present tense, on the day, in front of the work.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "One reading of the temporality of the review's word, not a dated event. 'On the day' names no date, interval or duration attached to a person, so Check A gives nothing independent to split; the reading rests on the source addressing a visitor who uncovers stories while going round the festival."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P57",
+   "EXACT_SPAN": "Set the same word beside George and Walter and it stops covering the same ground.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P57-C1",
+     "PROPOSITION": "Set beside George and Walter, the same word stops covering the same ground.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "An article-level comparison the source never makes, combining grounded facts. Exactly the kind of synthesis the anchor obligation must not be applied to."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P58",
+   "EXACT_SPAN": "She was only discovered after her death in 2013.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P58-C1",
+     "PROPOSITION": "Sandra George was discovered only after her death.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The source states the negation and ordering explicitly."
+    },
+    {
+     "COMMITMENT_ID": "P58-C2",
+     "PROPOSITION": "Her death occurred in 2013.",
+     "COMMITMENT_TYPE": "TEMPORAL_MODIFIER",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "Date checked separately from the base state; the same anchor gives the year."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P59",
+   "EXACT_SPAN": "He died having never shown the thousands of works he made.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P59-C1",
+     "PROPOSITION": "Frank Walter died having never shown the thousands of works he made.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The negation, the quantity and the authorship are all in the anchor: the source's 'thousands of paintings and drawings he amassed over his lifetime' belongs to a man the source calls a painter and whose paintings it discusses, so 'works he made' does not enlarge the claim."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P60",
+   "EXACT_SPAN": "Whatever the word carries when the review uses it — the pleasure of the find, the sense of a story surfacing",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P60-C1",
+     "PROPOSITION": "When the review uses the word it carries the pleasure of the find and the sense of a story surfacing.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Correcting the extraction's SOURCE_OR_REVIEW hypothesis: this reads the connotation of the review's word rather than reporting anything the review states, ranks or omits. Interpretation of source-given tone."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P61",
+   "EXACT_SPAN": "none of that describes anything that occurred while either of them was alive",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P61-C1",
+     "PROPOSITION": "None of what the word carries describes anything that occurred while George or Walter was alive.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "An article-level synthesis of two explicit source facts: George was discovered only after her death, and Walter died having never shown any of his work. The negation is entailed by what the source states, not inferred from failing to find something, so Check C is satisfied rather than evaded."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P62",
+   "EXACT_SPAN": "The finding happened",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P62-C1",
+     "PROPOSITION": "The finding happened.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "The source states that George was discovered, so a finding occurred."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P63",
+   "EXACT_SPAN": "it happened on one side of a line neither of them crossed back over",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P63-C1",
+     "PROPOSITION": "The finding happened on one side of a line neither of them crossed back over.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Metaphor for death as the boundary, resting on the source's explicit 'after her death'. Confident, unhedged phrasing decides nothing."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P64",
+   "EXACT_SPAN": "The word holds true for the person in the gallery.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P64-C1",
+     "PROPOSITION": "The word holds true for the person in the gallery.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Evaluative conclusion of the article's two-senses argument, grounded in the source's account of the gallery-goer."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P65",
+   "EXACT_SPAN": "It does not describe an event in the artist's life",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P65-C1",
+     "PROPOSITION": "The word does not describe an event in the artist's life.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "This negates the applicability of a word to a life, not something the source does; and even taken strictly the negation is entailed by explicit statements (discovered only after her death; died having never shown any work)."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P66",
+   "EXACT_SPAN": "because in the artist's life the event did not take place",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P66-C1",
+     "PROPOSITION": "The discovery did not take place within the artist's life.",
+     "COMMITMENT_TYPE": "CAUSAL_RELATION",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "EXPLICIT proof: 'was only discovered after her death in 2013' directly entails that the discovery did not occur during her life, and the parallel Walter fact ('died having never shown any') is equally explicit. No absence reasoning is used."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P67",
+   "EXACT_SPAN": "That is where the two senses part.",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P67-C1",
+     "PROPOSITION": "That is where the two senses of the word part.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Connective statement of the article's own distinction."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P68",
+   "EXACT_SPAN": "The review's discovery is the visitor's, present and first-hand",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P68-C1",
+     "PROPOSITION": "The discovery the review describes is the visitor's own, present and first-hand.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo.",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Correcting the extraction's object type: this characterises the sense of the review's word rather than reporting an act of the review. It is grounded anyway, since the source puts the uncovering in the second person, in the visitor's own hands."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P69",
+   "EXACT_SPAN": "a story becoming known to someone who did not know it",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P69-C1",
+     "PROPOSITION": "The story becomes known to someone who did not know it.",
+     "COMMITMENT_TYPE": "HUMAN_STATE",
+     "CLAIM_OBJECT_TYPE": "HUMAN_STATE",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of.",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "HUMAN_STATE with an anchor licensing precisely this state: the source's visitor has 'never heard of' the artist and learns of them on entering. No interval or prior preparation is asserted."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P70",
+   "EXACT_SPAN": "The other fact is about the work",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P70-C1",
+     "PROPOSITION": "The other fact is about the work.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "SUBJECT_MATTER",
+     "NEGATIVE": "NO",
+     "PROOF_TYPE": "N/A",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "",
+     "VERDICT": "INTERPRETATION",
+     "OFFENDING_SPAN": "",
+     "REASON": "Framing sentence distinguishing the article's two senses; no factual content of its own."
+    }
+   ],
+   "PARENT_AGGREGATE": "INTERPRETATION",
+   "SURGICALLY_REMOVABLE": "N/A"
+  },
+  {
+   "PARENT_CLAIM_ID": "P71",
+   "EXACT_SPAN": "it stayed unshown for the whole of the life that made it",
+   "COMMITMENTS": [
+    {
+     "COMMITMENT_ID": "P71-C1",
+     "PROPOSITION": "The work stayed unshown for the whole of the artist's life.",
+     "COMMITMENT_TYPE": "BASE_STATE",
+     "CLAIM_OBJECT_TYPE": "CONCRETE_WORLD_DETAIL",
+     "NEGATIVE": "YES",
+     "PROOF_TYPE": "EXPLICIT",
+     "SCOPE": "",
+     "WHY_SCOPE_IS_COMPLETE": "",
+     "SOURCE_ANCHOR": "who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime",
+     "VERDICT": "SUPPORTED",
+     "OFFENDING_SPAN": "",
+     "REASON": "EXPLICIT proof of a negative: the source says he died having never shown any of the works he amassed over his lifetime, which covers the whole-of-life scope the article claims."
+    }
+   ],
+   "PARENT_AGGREGATE": "SUPPORTED",
+   "SURGICALLY_REMOVABLE": "N/A"
+  }
+ ]
+}
