@@ -1,0 +1,41 @@
+{
+  "executed": "2026-08-20",
+  "experiment": "real-article-test-2",
+  "generation": {
+    "article_sha256": "2efae22e13793197854875500ee17521b6942cf3f7a33447c3ca10302dd06c9c",
+    "candidates_generated": 0,
+    "cherry_picking": false,
+    "hand_editing": false,
+    "infrastructure_retries": 0,
+    "length_adherence": "OVERRUN -- 1587 words, ~32% above the 1200 ceiling",
+    "raw_response_sha256": "2efae22e13793197854875500ee17521b6942cf3f7a33447c3ca10302dd06c9c",
+    "successful_calls": 1,
+    "target_range": "900-1200",
+    "title": "Bell or Horn",
+    "word_count_total": 1590,
+    "writer_calls_total": 1
+  },
+  "model": {
+    "display_name": "Claude Opus 5 (1M context)",
+    "identity": "claude-opus-5[1m]",
+    "not_used": [
+      "Trident",
+      "OpenRouter",
+      "CLIProxyAPI",
+      "automation/orchestrator/generate.py",
+      "legacy production writer prompt",
+      "Hermes/Nous session path"
+    ],
+    "route": "LOCAL_CLAUDE_SUBSCRIPTION (manual/shadow path)"
+  },
+  "preflight": {
+    "packet_sha256_expected": "da20b5e4966a717daff15cbe9a5630db8013b3cee6e7217ed8ad95f0f8374c2b",
+    "packet_sha256_recorded": "da20b5e4966a717daff15cbe9a5630db8013b3cee6e7217ed8ad95f0f8374c2b",
+    "prompt_sha256_actual": "60b1d54e9e23c81a285d380629d792f4d181fa82218dd5a2ae98bb78ece3a975",
+    "prompt_sha256_expected": "60b1d54e9e23c81a285d380629d792f4d181fa82218dd5a2ae98bb78ece3a975",
+    "result": "PASS -- all hashes match, frozen prompt executed unmodified",
+    "source_sha256_actual": "be381bbc157f967ea11c46817616d91567394dbfb5801b08898ca1fa46466c6c",
+    "source_sha256_expected": "be381bbc157f967ea11c46817616d91567394dbfb5801b08898ca1fa46466c6c"
+  },
+  "repo_head_at_execution": "2dd9a86ee41e9b81880df54064d5b333247dacb2"
+}

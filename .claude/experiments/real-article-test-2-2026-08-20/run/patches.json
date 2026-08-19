@@ -1,0 +1,24 @@
+{
+  "patch_count": 2,
+  "mode": "patch-only, no rewrite",
+  "patches": [
+    {
+      "id": "P1",
+      "finding": "F1",
+      "old": "Nine years later, RAIB records that more effective implementation of that recommendation",
+      "new": "RAIB now records that more effective implementation of that recommendation",
+      "rationale": "Removes a writer-computed elapsed interval the source never states, and which is wrong against the sentence's own 2016 anchor (Report 10/2026 was published ten years after that death). 'now' preserves the temporal contrast the sentence was carrying without asserting a figure."
+    },
+    {
+      "id": "P2",
+      "finding": "F2",
+      "old": "fewer than ten of them, none with a tram on the track \u2014 the silence had been true",
+      "new": "fewer than ten of them, and on none of them had they met a tram at the crossing \u2014 the silence had been true",
+      "rationale": "Restores the source's narrower claim. The source says they 'had never encountered a tram while crossing the tramway'; it does not establish that no tram was on the track during those circuits."
+    }
+  ],
+  "pre_sha256": "2efae22e13793197854875500ee17521b6942cf3f7a33447c3ca10302dd06c9c",
+  "post_sha256": "1dea4e54478ea263ea527dde9fab09ee79f29f9400aa734a2d0b33e0a2400ee6",
+  "words_before": 1590,
+  "words_after": 1594
+}
