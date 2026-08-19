@@ -1,3 +1,22 @@
+
+## CURRENT PHASE (2026-08-19) — WRITER GROUNDING CONTROL DESIGN / CALIBRATION
+
+- SOFA editorial/artistic method: **CANONICAL** (`.claude/SOFA-METHOD.md`)
+- Article Form: **LEADING WORKING ARCHITECTURE** (not production canonical)
+- Edinburgh **FORM-1.3**: **FROZEN STRUCTURAL CALIBRATION CANDIDATE**, 3/3 structurally stable
+  across byte-identical replicates (source `fee0a03b`, packet `a620d0ce`, prompt `12e520e4`)
+- Article Form production status: **NOT DEPLOYED**
+- Article Form transfer status: **NOT YET VALIDATED ON A SECOND STORY SHAPE**
+- Blocker before Real Article Test 2: **SYSTEMATIC WRITER / GROUNDING FIDELITY**
+- **No FORM-1.4.** FORM-1.3 stays frozen so the next experiment isolates the writer/grounding layer.
+
+Boundary: Article Form owns semantic relationships, argumentative burden, reader route, functional
+placement, arrival/stop. Writer + grounding control own factual specificity, qualifier preservation,
+the fact/interpretation distinction, source-faithful names/times/states/details.
+
+See `.claude/WORK.md` `## 5b` and
+`.claude/experiments/sofa-real-ab-1-2026-08-18/iterations/REPLICATE-SET-RESULTS.md`.
+
 READ CURRENT STATE FIRST: `.claude/WORK.md` — doctrine, current production safety state (with
 exact SHA), active/next work, parked work, historical corrections, document index. An older
 research/audit document is NOT current authority when WORK.md marks its conclusion superseded.

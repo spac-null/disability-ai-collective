@@ -159,13 +159,41 @@ validation pending.**
 | B.4 | 829 | 7 | 4 | blind writer + perceptual instrument; related unsupported agency/choice and cognitive-demand escalation |
 | FORM-1 | 756 | 6 | **2** | explicit Article Form stage; the old agency/consent attractor did not recur; coherence improved; still failed grounding and continued past arrival |
 | FORM-1.1 | **583** | 5 | 3 | provenance/qualifier/arrival discipline strengthened; **stopped at arrival**; still FAILS grounding — 3 UNSUPPORTED, 1 UNCERTAIN |
+| FORM-1.2 | 635 | 5 | 4 | provenance classified + transmitted to writer; opening reattribution fixed, but festival-possession claims rose 3→6 and it did not stop after arrival. **Disconfirmed** the "provenance dropped between Form and Writer" hypothesis |
+| FORM-1.3 | 691 | 3 | 2 | semantic-ownership propagation + functional placement; **festival-as-speaker 0**, countervoice before a terminal arrival, no leakage. New-class residuals only (invented venue name, invented "an hour ago") |
+| FORM-1.3-R2 | 633 | 8 | 3 | frozen replicate — structure identical; residuals: dropped Hasegawa "Most of" qualifier, Form boundary surfaced as prose claim |
+| FORM-1.3-R3 | 646 | 4 | 2 | frozen replicate — structure identical; residuals: invented "in August", invented "an hour earlier" |
 
-Every iteration is grounding FAIL. FORM-1.1 regressed on unsupported proportion relative to
-FORM-1 (3 of 5 audited claims vs 2 of 6). **Do not read that as "FORM-1.1 has Legacy's grounding
-quality" — the claim sets are small and different, and the comparison does not support an
-equivalence.** The stable conclusion is narrow and worth stating exactly:
+Every iteration is grounding FAIL. **Audited-claim counts are NOT comparable across rows** — the
+auditor selects its own claim set each run (8 / 4 / 3 claims across three byte-identical FORM-1.3
+runs), so denominators differ and percentages are meaningless. Compare recurring failure *classes*,
+not rates.
 
-> Article Form materially improved form, coherence and arrival. Grounding remains unresolved.
+FORM-1.3 was then run three times under one byte-identical condition (same source, packet, rendered
+prompt, model). Every Form-owned structural dimension came out identical 3/3: festival-as-speaker 0,
+discovery-ownership failures 0, countervoice before arrival YES, arrival final YES, paragraphs after
+arrival 0, attribution-bookkeeping leakage 0, agency/consent attractor 0. Sentence-level grounding
+failed in all three, with stable classes and varying instances (invented visitor-state/temporal
+specificity 3/3; interpretation-as-fact 2/3). Origin overwhelmingly WRITER, not Form.
+
+> Article Form's targeted epistemic/narrative behaviour is stable across 3/3 identical-condition
+> Edinburgh generations. Sentence-level factual fidelity is a separate, systematically deficient
+> layer.
+
+**Architectural boundary — leading working hypothesis.** ARTICLE FORM owns semantic relationships,
+argumentative burden, reader route, functional placement, arrival/stop. WRITER + GROUNDING CONTROL
+own factual specificity, qualifier preservation, the fact/interpretation distinction, source-faithful
+names/times/states/details, and prevention or detection of unsupported prose claims. Do not respond
+to sentence-level invention by adding factual constraints to Article Form.
+
+**Two limits of Form-level control** (recorded, not applied — FORM-1.3 stays frozen):
+1. *Form-level omission is not a grounding control.* Hasegawa was omitted from the packet in
+   FORM-1.1 to prevent FORM-1's dropped-"most" failure; he returned in all three FORM-1.3 runs from
+   the full source the writer also receives, and R2 reproduced the qualifier failure exactly.
+2. *A negative Form constraint can surface as a positive prose proposition.* R2 turned the
+   no-centrality boundary into "not because the review places them above the rest" — an assertion
+   the source arguably contradicts. Prefer positive boundaries and positive ownership statements
+   over elaborate negative prohibitions in future Form design.
 
 *What the blind-writer evidence supports:* two clean Opus experiments, B.3 and B.4, using related
 blind-writer architectures, independently produced closely related unsupported dead-artist
@@ -441,25 +469,30 @@ Article Form calibration on a single frozen Edinburgh commission, then a preserv
 reconciliation pass. See `## 2a` for the resulting four-state separation and `## 5b` for the
 current next action.
 
-## 5b. CURRENT NEXT ACTION — FORM-1.1 GROUNDING DIAGNOSIS ONLY
+## 5b. CURRENT PHASE — WRITER GROUNDING CONTROL DESIGN / CALIBRATION
 
-**Do not generate FORM-1.2. Do not regenerate anything.** The next experimental action is a
-diagnosis of evidence that already exists.
+**Do not create FORM-1.4. Do not modify FORM-1.3. Do not start Real Article Test 2 yet.**
 
-For each of FORM-1.1's **3 UNSUPPORTED and 1 UNCERTAIN** audited claims
-(`.claude/experiments/sofa-real-ab-1-2026-08-18/iterations/FORM-1.1/sofa-form1-1-grounding-audit.json`),
-determine and record:
+| | |
+|---|---|
+| SOFA editorial/artistic method | **CANONICAL** (`.claude/SOFA-METHOD.md`) |
+| Article Form | **LEADING WORKING ARCHITECTURE** |
+| Edinburgh FORM-1.3 | **FROZEN STRUCTURAL CALIBRATION CANDIDATE** — 3/3 structurally stable |
+| Article Form production status | **NOT DEPLOYED** |
+| Article Form transfer status | **NOT YET VALIDATED ON A SECOND STORY SHAPE** |
+| Blocker before Test 2 | **SYSTEMATIC WRITER / GROUNDING FIDELITY** |
 
-- exact claim
-- exact source support (or its absence) in `case/source-snapshot.txt`
-- verdict
-- failure class
-- **origin** — Form / writer / source paraphrase / auditor
+FORM-1.3 is frozen at source `fee0a03b`, packet `a620d0ce`, rendered prompt `12e520e4`. Evidence:
+`.claude/experiments/sofa-real-ab-1-2026-08-18/iterations/{FORM-1.3,FORM-1.3-R2,FORM-1.3-R3}/` and
+`iterations/REPLICATE-SET-RESULTS.md`.
 
-No regeneration until that diagnosis is complete. The point is to learn whether Article Form's
-remaining grounding failures originate in the Form stage, in the writer, in paraphrase drift from
-the source, or in auditor overreach — four different fixes, and the current evidence does not
-distinguish them.
+The next experimental question is **not** "can we improve the Form?" but: *can a separate
+Writer/Grounding control eliminate systematic sentence-level unsupported invention while preserving
+the already-stable Article Form behaviour?* That separation is the point — FORM-1.3 must stay frozen
+across the next experiment so any change in structure is attributable.
+
+Recurring residual classes to target: INVENTED_VISITOR_STATE, INVENTED_TEMPORAL_SPECIFICITY,
+INTERPRETATION_AS_FACT, QUALIFIER_DROPPED, INVENTED_PROPER_NOUN, FORM_INSTRUCTION_AS_PROSE_CLAIM.
 
 ## 6. PARKED / DO NOT ACCIDENTALLY RESTART
 

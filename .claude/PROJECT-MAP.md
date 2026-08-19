@@ -198,7 +198,8 @@ Allowed lifecycle statuses: `ACTIVE`, `FROZEN`, `PARKED`, `MERGED`, `SUPERSEDED`
   not the external preservation root, and each carries its own `PRESERVATION-MANIFEST.md` +
   `SHA256SUMS.txt`:
   - `.claude/experiments/sofa-real-ab-1-2026-08-18/` — the real-material Edinburgh lineage
-    (Legacy/Sofa A/B, B.1-B.4, FORM-1, FORM-1.1), source snapshot, captured commission chain,
+    (Legacy/Sofa A/B, B.1-B.4, FORM-1, FORM-1.1, FORM-1.2, FORM-1.3 and its frozen replicates
+    FORM-1.3-R2/R3, plus `iterations/REPLICATE-SET-RESULTS.md`), source snapshot, captured commission chain,
     per-iteration grounding audits, implementations/runners, and `external-evidence/`
     (raw Grok/Perplexity sessions, the contaminated source paste, both readers' evidence,
     father's read PDF). Commit `7d59bb3`, 203 files.

@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-08-18T23:28:47+00:00",
+  "generated_at": "2026-08-19T00:00:00+00:00",
   "canonical_repo": "/Users/stargatesgx/code/disability-collective-ai",
   "origin_main_head": "9f9bf3519457479347113883a591c7cb92bce697",
-  "local_main_head": "5256f08efff429d6c8983b88c8e6e99c8df3e75b",
+  "local_main_head": "7248c61ccf65b9bdcd7cbe9d9fb318c5cbef4482",
   "worktrees": [
     {
       "path": "/Users/stargatesgx/code/disability-collective-ai",
@@ -624,7 +624,8 @@
     "five_article_evaluation_mac_preservation_copy": "/Users/stargatesgx/code/cripminds-preservation/evaluations/cripminds-five-article-2026-08-16/",
     "reader_lab_in_flight": "/Users/stargatesgx/code/disability-collective-ai/reader-lab/rounds/drafts/RL-2026-003.json",
     "cj1_cj2_engineering_preserved": "/Users/stargatesgx/code/cripminds-preservation/engineering/cj1-cj2-2026-08-16/",
-    "production_db_authority": "/srv/data/hermes/workspace/disability-ai-collective/disability_findings.db (Trident is authoritative; Mac copy is a separate, unreconciled, gitignored file)"
+    "production_db_authority": "/srv/data/hermes/workspace/disability-ai-collective/disability_findings.db (Trident is authoritative; Mac copy is a separate, unreconciled, gitignored file)",
+    "sofa_edinburgh_form_lineage": ".claude/experiments/sofa-real-ab-1-2026-08-18/iterations/ \u2014 FORM-1 .. FORM-1.3 + frozen replicates R2/R3; FORM-1.3 is the frozen Edinburgh structural calibration candidate"
   },
   "broken_document_references": [],
   "active_prototypes": [

@@ -382,3 +382,26 @@ EVIDENCE: `.claude/experiments/sofa-real-ab-1-2026-08-18/` (full lineage + `exte
 LOSSES: the four Aug-14 editorial-pairing candidate drafts are CONFIRMED LOST — catalogued as at-risk at 23:55 on 2026-08-18, destroyed by 00:00, probable macOS /tmp reaping. Do not recreate them. Distinct from FULL_RAW_NOT_FOUND material (Qwen, and two older model-comparison artifacts), where there is no evidence anything was ever persisted locally.
 SUPERSEDES: `## 5a`'s Scout sequence as the active thread (its items 1-3 are done; Scout's articles became the FOX/HOUR/MOBILE benchmarks). Scout's disturbance/discovery front-end is PARKED, not rejected — the old SV0 owner gate was never formally completed at the time, and has been superseded as a current blocker by the later benchmark and real-material work.
 FOLLOW-UP: FORM-1.1 grounding diagnosis ONLY — for each of the 3 UNSUPPORTED and 1 UNCERTAIN claims, record exact claim, exact source support, verdict, failure class, and origin (Form / writer / source paraphrase / auditor). No regeneration, no FORM-1.2, until that is complete. Production migration of the pipeline-audit P0s is DEFERRED PENDING ARTICLE FORM VALIDATION.
+
+## 2026-08-19 — FORM-1.2 / FORM-1.3 / FORM-1.3 REPLICATE SET
+STATUS: Article Form structural behaviour STABLE 3/3; sentence-level grounding SYSTEMATICALLY DEFICIENT.
+DECISION: D — SYSTEMATIC_GROUNDING_PROBLEM. FORM-1.3 frozen as the Edinburgh structural calibration
+candidate. No FORM-1.4. Phase moves to writer/grounding control design. Real Article Test 2 blocked
+until sentence-level fidelity is addressed.
+DETAIL: FORM-1.2 disconfirmed the "provenance dropped between Form and Writer" hypothesis (all three
+corrections landed; festival-possession claims rose 3→6; did not stop after arrival). Form-layer
+diagnosis found two defects — ownership asserted only in the destination while the operative
+instruction stayed ownerless, and an internal contradiction between "in the order given" and "STOP at
+arrival". FORM-1.3 corrected exactly those two. Three byte-identical runs then gave 0/0/0
+festival-as-speaker, countervoice before a terminal arrival 3/3, 0 paragraphs after arrival 3/3, no
+leakage, no agency attractor. Residuals are writer-origin and class-stable: invented
+visitor-state/temporal specificity 3/3, interpretation-as-fact 2/3, plus isolated dropped qualifier,
+invented proper noun, and one Form boundary surfacing as a prose claim.
+NOTE: FORM-1.3 and its replicates ran LOCAL_CLAUDE_SUBSCRIPTION (claude-opus-5[1m]), NOT the frozen
+Edinburgh writer path (openrouter/claude-opus-4.8 via CLIProxy). Manual architecture-development runs,
+not production-path replays — a real confound against FORM-1/1.1/1.2.
+EVIDENCE: .claude/experiments/sofa-real-ab-1-2026-08-18/iterations/{FORM-1.2,FORM-1.3,FORM-1.3-R2,
+FORM-1.3-R3}/ and iterations/REPLICATE-SET-RESULTS.md
+CODE: ec540b6 (FORM-1.2), 006ea10 (FORM-1.3), 7248c61 (replicates)
+SUPERSEDES: WORK.md ## 5b's prior "FORM-1.1 grounding diagnosis only" next-action.
+FOLLOW-UP: Design writer/grounding control V0 against the six recurring classes. Keep FORM-1.3 frozen.
