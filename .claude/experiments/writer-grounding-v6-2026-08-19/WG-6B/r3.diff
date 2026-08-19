@@ -1,0 +1,8 @@
+--- r3-original
++++ r3-patched
+@@ -8 +8 @@
+-Room after room, the visitor arrives at a name that was not in their possession an hour earlier.
++Room after room, the visitor arrives at a name that was not in their possession.
+@@ -28 +28 @@
+-Discovery here is something that happens to a person who is walking around Edinburgh in August, and it happens in the present tense, on the day, in front of the work.
++Discovery here is something that happens to a person who is walking around Edinburgh, and it happens in the present tense, on the day, in front of the work.

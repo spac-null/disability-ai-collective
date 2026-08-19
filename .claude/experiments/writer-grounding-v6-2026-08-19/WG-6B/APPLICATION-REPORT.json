@@ -1,0 +1,197 @@
+[
+  {
+    "tag": "form1-3",
+    "status": "APPLIED",
+    "patches": 3,
+    "applied": [
+      {
+        "PATCH_ID": "FORM1-3-P1",
+        "FINDING_ID": "FORM1-3-F1",
+        "op": "REPLACE",
+        "removed": 87,
+        "added": 18,
+        "old": "each other, not because the review ranks them or gathers them into a group, but because",
+        "new": "each other because",
+        "TARGET_COMMITMENT": "That the review does not rank the two artists and does not gather them into a group.",
+        "SEMANTIC_CLOSURE_EXPLANATION": "After the patch the parent sentence reads: \"Two of the artists the review takes up can be set down beside each other because of what it happens to record about each.\" The whole \"not because ... but because\" contrast is gone, so nothing in the sentence denies ranking or grouping, in strong or weak form; no adjacent phrase implies the review withheld ranking or grouping, and no grammatical remnant of the negation (no \"not\", no contrastive \"but\") survives to imply it."
+      },
+      {
+        "PATCH_ID": "FORM1-3-P2",
+        "FINDING_ID": "FORM1-3-F2",
+        "op": "REPLACE",
+        "removed": 15,
+        "added": 16,
+        "old": "City Art Centre",
+        "new": "City Art Gallery",
+        "TARGET_COMMITMENT": "That the venue holding the Sandra George show is named City Art Centre.",
+        "SEMANTIC_CLOSURE_EXPLANATION": "After the patches the parent sentence reads: \"Whatever the visitor is doing in the gallery at City Art Gallery or at Ingleby, it is happening now, and it is happening to a person who did not know the work existed.\" The string \"City Art Centre\" occurs nowhere in it, and no weaker or paraphrased form of that name (no \"Centre\", no \"the Art Centre\", no pronoun or descriptive phrase standing in for it) remains anywhere in the sentence; the only venue names left are the two the source itself gives."
+      },
+      {
+        "PATCH_ID": "FORM1-3-P3",
+        "FINDING_ID": "FORM1-3-F3",
+        "op": "REPLACE",
+        "removed": 28,
+        "added": 16,
+        "old": "the work existed an hour ago",
+        "new": "the work existed",
+        "TARGET_COMMITMENT": "That the visitor's state of not knowing the work existed held as of one hour earlier.",
+        "SEMANTIC_CLOSURE_EXPLANATION": "After the patches the parent sentence reads: \"Whatever the visitor is doing in the gallery at City Art Gallery or at Ingleby, it is happening now, and it is happening to a person who did not know the work existed.\" No interval is named or implied: there is no \"an hour ago\", no shorter equivalent (\"minutes earlier\", \"just before\", \"until now\"), and no adjacent phrase that dates the ignorance — \"it is happening now\" locates the encounter, not the prior state, so the sentence asserts strictly less than the original and carries no residual one-hour commitment."
+      }
+    ],
+    "containment": [
+      {
+        "PATCH_ID": "FORM1-3-P1",
+        "FINDING_ID": "FORM1-3-F1",
+        "old_text_inside_parent_sentence": true,
+        "old_len": 87,
+        "parent_sentence_len": 190
+      },
+      {
+        "PATCH_ID": "FORM1-3-P2",
+        "FINDING_ID": "FORM1-3-F2",
+        "old_text_inside_parent_sentence": true,
+        "old_len": 15,
+        "parent_sentence_len": 178
+      },
+      {
+        "PATCH_ID": "FORM1-3-P3",
+        "FINDING_ID": "FORM1-3-F3",
+        "old_text_inside_parent_sentence": true,
+        "old_len": 28,
+        "parent_sentence_len": 178
+      }
+    ],
+    "orig_sha256": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+    "patched_sha256": "7a13f2cf65ba2abd9678b516125d5796fc0f62490ef879bd3028ad005ffbaeae",
+    "chars_removed": 130,
+    "chars_added": 50,
+    "word_delta": -16,
+    "paragraph_delta": 0,
+    "boundary_assert_ok": true,
+    "reconstruction_matches": true
+  },
+  {
+    "tag": "r2",
+    "status": "APPLIED",
+    "patches": 3,
+    "applied": [
+      {
+        "PATCH_ID": "R2-P1",
+        "FINDING_ID": "R2-F1",
+        "op": "REPLACE",
+        "removed": 136,
+        "added": 7,
+        "old": "a name that arrives without preparation, without the visitor having brought anything to the encounter except the willingness to walk in.",
+        "new": "a name.",
+        "TARGET_COMMITMENT": "The visitor brought nothing to the encounter except the willingness to walk in (i.e. arrived wholly unprepared).",
+        "SEMANTIC_CLOSURE_EXPLANATION": "After the patch the parent sentence reads: \"That is the texture of moving through it — a sequence of rooms, each producing a name.\" The flagged clause is gone and so is the residual carrier \"that arrives without preparation\", which independently asserted the visitor's unpreparedness; no weaker synonym (unprepared, unanticipated, without warning) and no adjacent phrase describing the visitor's state survives, and no grammatical remnant implies one."
+      },
+      {
+        "PATCH_ID": "R2-P2",
+        "FINDING_ID": "R2-F2",
+        "op": "REPLACE",
+        "removed": 114,
+        "added": 53,
+        "old": "taken here not because the review places them above the rest but simply because they can be set beside each other.",
+        "new": "taken here because they can be set beside each other.",
+        "TARGET_COMMITMENT": "The review does not place these two names above the rest.",
+        "SEMANTIC_CLOSURE_EXPLANATION": "After the patch the parent sentence reads: \"Two of those names, taken here because they can be set beside each other.\" The negative claim about the review's ordering is gone, and the exclusivity word \"simply\" is removed as well, since \"simply because\" would still imply that no elevation by the review is in play; nothing left in the sentence characterises the review's ranking, preference or emphasis in any form."
+      },
+      {
+        "PATCH_ID": "R2-P3",
+        "FINDING_ID": "R2-F3",
+        "op": "REPLACE",
+        "removed": 46,
+        "added": 54,
+        "old": "Sadao Hasegawa's work, the review adds, stayed",
+        "new": "Most of Sadao Hasegawa's work, the review adds, stayed",
+        "TARGET_COMMITMENT": "That his work stayed unpublished and unseen in his lifetime held without restriction, i.e. of all of it.",
+        "SEMANTIC_CLOSURE_EXPLANATION": "After the patch the parent sentence reads: \"Most of Sadao Hasegawa's work, the review adds, stayed unpublished and unseen in his lifetime.\" The bare plural that carried universal scope is now explicitly bounded by \"Most of\"; no bare or implicitly total reading of the subject remains, and no adjacent phrase in the sentence re-extends the claim to the whole body of work."
+      }
+    ],
+    "containment": [
+      {
+        "PATCH_ID": "R2-P1",
+        "FINDING_ID": "R2-F1",
+        "old_text_inside_parent_sentence": true,
+        "old_len": 136,
+        "parent_sentence_len": 215
+      },
+      {
+        "PATCH_ID": "R2-P2",
+        "FINDING_ID": "R2-F2",
+        "old_text_inside_parent_sentence": true,
+        "old_len": 114,
+        "parent_sentence_len": 134
+      },
+      {
+        "PATCH_ID": "R2-P3",
+        "FINDING_ID": "R2-F3",
+        "old_text_inside_parent_sentence": true,
+        "old_len": 46,
+        "parent_sentence_len": 86
+      }
+    ],
+    "orig_sha256": "5ea20461cc09484d7bf1fea3f83de526f5c54720b72438e180cf92e4f1f600ad",
+    "patched_sha256": "7c6b405e6b30bcfceff44a5b843bf81995298b83ad96f8efaf10c7449fd3afe3",
+    "chars_removed": 296,
+    "chars_added": 114,
+    "word_delta": -28,
+    "paragraph_delta": 0,
+    "boundary_assert_ok": true,
+    "reconstruction_matches": true
+  },
+  {
+    "tag": "r3",
+    "status": "APPLIED",
+    "patches": 2,
+    "applied": [
+      {
+        "PATCH_ID": "R3-P1",
+        "FINDING_ID": "R3-F1",
+        "op": "DELETE",
+        "removed": 16,
+        "added": 0,
+        "old": " an hour earlier",
+        "new": "",
+        "TARGET_COMMITMENT": "That the visitor's unfamiliarity with the name held as of one hour earlier, i.e. that a specific one-hour interval separated non-possession from encounter.",
+        "SEMANTIC_CLOSURE_EXPLANATION": "After the patch the parent sentence reads: \"Room after room, the visitor arrives at a name that was not in their possession.\" No temporal expression of any kind survives in it — no \"hour\", no \"earlier\", no \"before\", no interval, duration or clock reference in weaker or paraphrased form — so the one-hour timing cannot be recovered from any remaining phrase. \"was not in their possession\" carries only the source-licensed fact of prior unfamiliarity with no time attached, and \"Room after room\" indexes repetition across rooms, not elapsed time, so it does not independently imply an hour or any other measured span."
+      },
+      {
+        "PATCH_ID": "R3-P2",
+        "FINDING_ID": "R3-F2",
+        "op": "DELETE",
+        "removed": 10,
+        "added": 0,
+        "old": " in August",
+        "new": "",
+        "TARGET_COMMITMENT": "That the discovery described takes place in August, i.e. that the festival visit is dated to that month.",
+        "SEMANTIC_CLOSURE_EXPLANATION": "After the patch the parent sentence reads: \"Discovery here is something that happens to a person who is walking around Edinburgh, and it happens in the present tense, on the day, in front of the work.\" No month, season, date or calendar reference remains in any form, so the August commitment is not retained shortened, paraphrased or implied. The surviving phrases \"in the present tense\", \"on the day\" and \"in front of the work\" assert immediacy and co-presence with the artwork — the visitor encounters it at the time of looking — and none of them fixes or hints at which month that is; \"walking around Edinburgh\" names a place only."
+      }
+    ],
+    "containment": [
+      {
+        "PATCH_ID": "R3-P1",
+        "FINDING_ID": "R3-F1",
+        "old_text_inside_parent_sentence": true,
+        "old_len": 16,
+        "parent_sentence_len": 96
+      },
+      {
+        "PATCH_ID": "R3-P2",
+        "FINDING_ID": "R3-F2",
+        "old_text_inside_parent_sentence": true,
+        "old_len": 10,
+        "parent_sentence_len": 166
+      }
+    ],
+    "orig_sha256": "27b1038c80af9890ca07b5b4ab1533670b3425f11c41d2898d2a61d806086d94",
+    "patched_sha256": "c5eee78884b209ed197dd4b01ad342338f61158cfc7e5146b7ba0b0e9578e984",
+    "chars_removed": 26,
+    "chars_added": 0,
+    "word_delta": -5,
+    "paragraph_delta": 0,
+    "boundary_assert_ok": true,
+    "reconstruction_matches": true
+  }
+]

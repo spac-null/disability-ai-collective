@@ -1,0 +1,125 @@
+=== SYSTEM ===
+You are an extraction engine for a source-fidelity audit at a disability-led publication. You did not write this article. You are NOT judging it. You produce no verdicts.
+
+Your single job: walk the article sentence by sentence, in order, and enumerate EVERY assertion each sentence makes, preserving its factual commitments EXACTLY. A later stage will judge them. If you soften, generalise or summarise an assertion, that later stage will judge something the article never said, and the audit fails. Omitting a sentence is a failure of the task.
+
+THE CARDINAL RULE — CONTENT PRESERVATION
+
+EXACT_SPAN is authoritative. ATOMIC_PROPOSITION exists only to make the span easier to reason about. It may normalise grammar. It may NEVER delete factual content that is present in the span.
+
+You must never drop any of these when they appear in the span:
+  * negation ("not", "never", "without", "nothing")
+  * quantifiers and their scope ("most", "all", "some", "any", "thousands")
+  * comparison ("harder", "more than", "above the rest", "the one that presses")
+  * causal relation ("because", "so that", "which means")
+  * time, date, duration, interval ("an hour ago", "in August", "midway")
+  * proper nouns (people, places, venues, galleries, organisations, works)
+  * what a person knew, felt, believed, intended, expected, brought or was prepared for
+  * what the source/review/reviewer says, ranks, omits, centres, intends, believes, does or does not do
+  * institutional attribution (who is being credited with a position or act)
+
+WORKED EXAMPLE — this is the exact failure mode you must avoid.
+
+  EXACT_SPAN: "without the visitor having brought anything to the encounter except the willingness to walk in"
+
+  FORBIDDEN ATOMIC_PROPOSITION: "the encounter was unprepared"
+  FORBIDDEN ATOMIC_PROPOSITION: "the festival experience consists of unprepared encounters"
+      Both delete the actual commitment — what the visitor DID and DID NOT BRING. "Unprepared"
+      is a summary. The assertion was about the visitor's preparation state. It is gone.
+
+  REQUIRED ATOMIC_PROPOSITION: "The visitor brought nothing to the encounter except a willingness to walk in."
+      Grammar normalised. Factual commitment intact.
+
+If a single span makes several separable commitments, emit several entries for that span rather than merging them into one weaker sentence.
+
+CLAIM_OBJECT_TYPE — classify WHAT the assertion is about. Judge this semantically, from what the assertion commits to. Do NOT classify by vocabulary, by which nouns appear, or by sentence shape.
+
+  SUBJECT_MATTER          The article reasoning about material the piece is discussing: evaluation,
+                          comparison, synthesis, metaphor, drawing out what grounded facts imply.
+                          e.g. "the second side is the one that presses"
+  HUMAN_STATE             An assertion about what a person, visitor, viewer or reader knew, felt,
+                          believed, intended, expected, brought, or was prepared for.
+                          e.g. "the visitor brought nothing except willingness to walk in"
+  SOURCE_OR_REVIEW        An assertion about the source text or its reviewer: what it says, ranks,
+                          omits, centres, intends, believes, does or does not do; where something
+                          appears in it; how often it does something.
+                          e.g. "the review does not rank them"
+  CONCRETE_WORLD_DETAIL   A specific fact about the world: a name, venue, date, time, duration,
+                          number, quantity, or place. e.g. "City Art Centre"
+  OTHER                   Connective tissue, headings, or rhetorical framing asserting nothing.
+
+A sentence may produce entries of several different types. Attribution wrappers ("the review says X")
+usually yield TWO entries: one SOURCE_OR_REVIEW entry for the attribution, and one entry for X itself,
+typed by what X is about.
+
+SOURCE_ANCHOR: a verbatim quote from the SOURCE TEXT that bears on this assertion, or "" if there is
+none. Do NOT invent one. Do NOT stretch a loosely related sentence into an anchor — if the source does
+not speak to this assertion, return "". An empty anchor is a legitimate and useful answer. You are not
+being scored on how many anchors you find.
+
+OUTPUT
+Reply with JSON only. No markdown fences, no commentary before or after.
+{"propositions":[{"ID":"P1","SENTENCE_ID":1,"EXACT_SPAN":"...","ATOMIC_PROPOSITION":"...","SUBJECT":"...","PREDICATE":"...","OBJECT_OR_COMPLEMENT":"...","CLAIM_OBJECT_TYPE":"SUBJECT_MATTER|HUMAN_STATE|SOURCE_OR_REVIEW|CONCRETE_WORLD_DETAIL|OTHER","SOURCE_ANCHOR":"..."}]}
+
+EXACT_SPAN must be copied character-for-character from the sentence you were given — a contiguous
+substring, not a paraphrase and not stitched from separate parts. IDs run P1, P2, P3... in order.
+Every sentence id you were given must appear at least once.
+
+=== USER ===
+SOURCE TEXT (the only evidence — nothing outside it counts):
+---
+By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo. We’re talking queer narratives, secret histories, undiscovered archives: the whole festival is a celebration of the underground and unheralded. You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of. That’s not a bad MO for a city-wide art festival.
+But EAF is also a big, unwieldy, confusing thing. There are curated displays, satellite exhibitions, performances, off-site projects, and it’s impossible to figure out how any of it fits together. You’ve just got to follow your nose and hope you sniff out something you like. And you’d better like photography, because there’s a lot of it here.
+The whole thing starts with US photographer Del LaGrace Volcano, whose images of queer nightlife in 1980s London are great: intimate, confrontational, erotic, totally defiant, as are the images of lesbian goths draping themselves over tombstones in Edinburgh graveyards. They’re insights into properly underground, subcultural life in the 1980s and 90s. Plenty of the photos aren’t all that good, but this feels like an artist who should be gathering a lot more attention, dealing with themes that have been all over the art and museum world recently.
+When it comes to untold stories, that of Sandra George (1957-2013) is worth telling. She was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh. Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.
+From her unique perspective as a semi-outsider, she documented communities in the city’s impoverished Craigmillar area. She captured protests and action groups operating out of living rooms and town halls; people living in hostels and housing schemes, skinheads, labourers, Hare Krishnas, Indians, Jamaicans, white and black. She appears throughout her show at City Art Gallery in self-portraits, often with her young son. There are kids everywhere, always playing and laughing, often in desperately bleak places. This might be work about Edinburgh, but it deserves to be seen far outside the city’s confines.
+Jill Edelstein, at Stills Gallery, also started out as a photojournalist, but took a different approach to George. Her polished images of Robert Rauschenberg, James Baldwin and Nelson Mandela don’t do a lot for me, although she does have a series about wild swimming that may find a different audience.
+Scottish photographer Wendy McMurdo’s show at the Scottish National Portrait Gallery is quietly unsettling. For decades she’s been photographing children playing. But the results aren’t joyful visions of childhood: they’re disquieting portraits of a shifting society trying to make sense of rapid technological innovation. The kids play on computers and tablets, but the technology has been digitally removed, leaving behind isolated figures interacting with nothing. These are kids drifting into online worlds, and at risk of being lost in them for ever.
+When it’s not photography, EAF trades in pretty hard-edged contemporary art. Irish sculptor Eva Rothschild has taken over Fruitmarket with a disparate exhibition that feels like someone saved a collection of modernist sculpture from a skip. In the space downstairs, it’s all hyper-referential, full of riffs on Brancusi and Hepworth. Some of it is figurative, some abstract. Some of it is soft, some hard. It’s a lot of things, but none of them good.
+The work upstairs is way better, the palette reduced down to black and primary colours. She’s used rubber hoses like giant bits of liquorice and coiled, squiggled and squirmed them around metal frames. There’s a pile of half-graffitied concrete blocks you can climb, a glossy black geometric tower that reaches towards the ceiling. It’s like Memphis Group aesthetics gone goth and left to rot in the street. I love it, but I’m not sure how the art downstairs fails to work so well.
+A strange ritual from some dystopian future has been built into the vaulted Georgian spaces of Talbot Rice Gallery by Anne Hardy. The floor is covered in breeze blocks and markings in dirt, the lights flicker, the sound of rain fills the gallery. Figures made of bronze and wood stand before you, draped in hooded jackets. The handout talks about vibrations, energy, AI, weather systems in Texas. It’s mind-meltingly indecipherable. So what’s left is more of a vibe: a sense of human spirituality, survival and endurance in the bleak near-future. I’d be lying if I said I had any of this figured out, but its immersiveness and delicacy works well, although it is way too knowingly obtuse.
+Richard Maguire at Collective Gallery at the top of Calton Hill suffers a similar fate, where the strength of the ideas – looking at representations of race and homosexuality across south Asian and British histories – is let down by some wispy, barely contextualised lumps and scrawls.
+Nearby, Emii Alrai’s huge, fractured monument overlooking the city is meant to reference Sumerian deities, standing in opposition to the National Monument of Scotland a few metres away. It feels like something almost ancient, broken, a relic in progress. But up close it’s a pretty shonky looking thing.
+If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly. Which is what Jamie Fitzpatrick at Edinburgh Printmakers has done. His show is the result of spending way too long thinking about the statues that sit on plinths all around the cities of the UK and realising that we’re all being constantly loomed over by war criminals, land barons and slavers.
+A figure in a Georgian wig grins menacingly at you as you enter, a red plasticine smile plastered across his face. He’s on the verge of tumbling and collapsing into a messy pile, as is the skeletal figure behind him, all bared teeth and lumpen features. They’re inspired by the statues you see around Edinburgh, their vileness amplified to better reflect the kinds of men we publicly memorialise. The whole thing is like someone let the Muppets loose on some clay. It’s brilliantly gloopy, messy, cartoonish, chaotic and satirical.
+The group show at Ingleby Gallery is good, too. It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime. His work is small, subtle, strange. He paints on ripped cardboard and fading paper; he depicts rainbows and stars and smiling faces, dancing women and strange trees that bend and twist at weird angles. His works are flanked by some giants of contemporary painting – a big Rose Wylie vision of young tulips, a gorgeous Lynette Yiadom-Boakye portrait of a kneeling figure – but it’s all eclipsed by his weird little paintings.
+Over among the horses and goats of Jupiter Artland, young Northern Irish artist Sgàire Wood has set about mashing together pop culture symbolism and the visual language of heraldry. The result is a gallery filled with shields, drums and birds covered in sequins and pink fur. It feels like a show that’s come too early in their career, but what it lacks in finesse, editing and finish, it makes up for in an overabundance of ideas.
+Another largely undiscovered artist, Sadao Hasegawa (1945-1999), really ramps up the eroticism with an eye-popping display of throbbing members and gushing penetration at Custom Lane. Most of the Japanese illustrator’s work, you guessed it, stayed unpublished and unseen in his lifetime. And that’s a shame because they’re amazing images: either soft-focus portraiture or a violent fusion of Japanese mythology and hardcore porn-filled naked figures writhing and brandishing katanas while fighting off giant spiders.
+There are lots of good shows here and plenty of bad ones, too. The whole thing could do with some more ambition, some bigger names, some starrier attractions. And it’s all a bit worthy and lecture-y, like you’re getting told off in every gallery you enter. “You’ve never heard of this previously undiscovered marginalised artist? You bastard!”
+Basically, EAF is too big and complex, with too many moving parts and collaborations and clashing ideas to really make sense. But maybe not everything has to make sense – maybe sometimes a city can just be filled with interesting, fun, diverse art, with loads of hidden stories and undiscovered narratives, and we can all go home happy. I did.
+---
+
+ARTICLE, SPLIT INTO 31 NUMBERED SENTENCES. Enumerate every assertion in every one of them, in order, sentence ids 1 to 31:
+---
+[1] Following the Nose Through Edinburgh
+[2] By the time you're done with Edinburgh art festival, the reviewer writes, you'll have uncovered so many hidden stories you'll feel like Columbo.
+[3] The festival sprawls: curated displays, satellite exhibitions, performances, off-site projects, and, in the reviewer's account, it is impossible to figure out how any of it fits together.
+[4] There is no map that resolves it.
+[5] You've just got to follow your nose and hope you sniff out something you like.
+[6] And the nose keeps turning up the same kind of thing.
+[7] You can't walk into a gallery, the review says, without learning about some subcultural genius or longlost creative you've never heard of.
+[8] That is the texture of moving through it — a sequence of rooms, each producing a name.
+[9] Two of those names, taken here because they can be set beside each other.
+[10] Sandra George (1957-2013) was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh — protests and action groups working out of living rooms and town halls, people in hostels and housing schemes, kids playing in bleak places, herself appearing throughout in self-portraits, often with her young son.
+[11] Like a lot of people in EAF, the review notes, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.
+[12] Frank Walter (1926-2009), the Antiguan painter, writer, poet and polymath at the centre of the group show at Ingleby Gallery, died having never shown any of the thousands of paintings and drawings he amassed over his lifetime.
+[13] Small works on ripped cardboard and fading paper, rainbows and stars and smiling faces, trees bending at weird angles.
+[14] Midway through the review comes a demand.
+[15] If contemporary artists and institutions want to tell hidden stories, the reviewer argues, they have a duty — to viewers and to their subjects — to tell them clearly.
+[16] It is stated as an obligation running two ways at once, and the second direction is the harder one.
+[17] Clarity toward viewers is a matter of craft, of handouts that don't melt the mind, of context that isn't wispy.
+[18] Clarity toward subjects is something else.
+[19] It asks what the telling owes to the person being told about, and that question does not settle just because the room is well hung.
+[20] Hold that beside the festival's characteristic verb.
+[21] The review reaches repeatedly for discovery and its family: undiscovered archives, another largely undiscovered artist, the visitor who sniffs out something they like, the gallery-goer scolded for never having heard of this previously undiscovered marginalised artist.
+[22] The word does real work in the piece.
+[23] It describes the shape of an afternoon — the moment a visitor walks into City Art Gallery, or Ingleby, or Custom Lane, and meets images they had no way of anticipating.
+[24] It is an event that happens to the person looking, and it happens now, in the present tense of the visit, on the reviewer's own nose-first route through a city too large to be read as a whole.
+[25] Set that against the two dates.
+[26] George never showed her work publicly in her lifetime and was found after 2013.
+[27] Walter died having never shown any of it.
+[28] Most of Sadao Hasegawa's work, the review adds, stayed unpublished and unseen in his lifetime.
+[29] The word discovery, then, is describing the visitor's side of the encounter.
+[30] It marks the moment work becomes newly visible to someone who did not know it existed.
+[31] What it does not describe, and cannot, is the other span of time these dates measure: the years in which that same work went unshown while its maker was alive.
+---

@@ -494,6 +494,25 @@ across the next experiment so any change in structure is attributable.
 Recurring residual classes to target: INVENTED_VISITOR_STATE, INVENTED_TEMPORAL_SPECIFICITY,
 INTERPRETATION_AS_FACT, QUALIFIER_DROPPED, INVENTED_PROPER_NOUN, FORM_INSTRUCTION_AS_PROSE_CLAIM.
 
+**Position in the Writer Grounding lineage, 2026-08-19 — WG-6 IS PAUSED MID-TASK.**
+WG-3A extraction, WG-4A commitment decomposition and WG-4B negative-source proof are each READY.
+WG-5 composed them into one monolithic verdict prompt: recall reached 8/8 but it lost WG-4B's
+BOUNDED_ABSENCE distinction (1 false positive, propagated into an unauthorized edit) and its repair
+under-cleared, leaving a residual visitor-state claim — decision C.
+
+**WG-6A: DECISION A — MODULAR_ARBITRATION_READY.** Deterministic routing (negative source claims to
+WG-4B's proof object, everything else to WG-4A) over the frozen component outputs gives TP 8 / FP 0 /
+FN 0 on Gold V2.1, with the R3 bounded-absence control retained. A reuse/rescore test, no new model
+calls — both components ran on the same frozen extraction. The WG-5 false positive is removed by
+construction, not by weakening negative grounding.
+
+**WG-6B: PARTIAL.** Repair, fail-closed application, Form/voice verification and the per-patch
+closure check are done — Article Form preserved 3/3, arrival byte-identical 3/3, voice-token counts
+unchanged 3/3, R3 control byte-identical, and the WG-5 residual is cleared. The post-repair full
+re-audit was NOT run, so **no overall WG-6 decision exists yet** and two closure verdicts remain
+unadjudicated. Evidence and exact resume steps:
+`.claude/experiments/writer-grounding-v6-2026-08-19/` — read `RESUME.md` first.
+
 ## 5c. ROADMAP — WHAT COMES AFTER WRITER GROUNDING
 
 Ordering. The later steps may be re-sequenced once Writer Grounding is solved, but the legacy-rule

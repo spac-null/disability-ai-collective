@@ -1,0 +1,15 @@
+{
+  "stage": "WG-6B LOCAL POST-PATCH CLOSURE CHECK",
+  "tag": "form1-3",
+  "items": 3,
+  "system_sha256": "f3fe9eeeb113ddfc84e974194cb4f2607d4f9ce42f93c30fe4fffe6a83169b29",
+  "user_sha256": "ff67bd09ddc11626157cd52fa9a70ec3bdbf424fc3e630398a6e72895101df75",
+  "prompt_sha256": "202304606f729767f738f133f06572830b9ddb4850e4e0c740d72ca1d183da56",
+  "patched_article_sha256": "7a13f2cf65ba2abd9678b516125d5796fc0f62490ef879bd3028ad005ffbaeae",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "shows_pre_patch_wording": false,
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

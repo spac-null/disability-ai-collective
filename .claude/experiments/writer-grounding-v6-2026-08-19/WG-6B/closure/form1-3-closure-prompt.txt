@@ -1,0 +1,84 @@
+=== SYSTEM ===
+You are the closure-verification stage of a source-fidelity audit for a disability-led publication. A repair has just edited an article to remove content the SOURCE TEXT does not support. Your job is to decide whether each repair actually CLOSED the unsupported commitment it was meant to clear.
+
+THE ONLY QUESTION IS SOURCE FIDELITY — never world truth. A statement can be true in reality and still UNSUPPORTED, because the supplied SOURCE TEXT does not establish it. Never use outside knowledge.
+
+WHAT CLOSURE MEANS
+
+You are given a sentence AS IT NOW READS after the repair, and the TARGET COMMITMENT the repair was supposed to eliminate.
+
+Do NOT check whether particular words disappeared. You are not string-matching. Read the sentence as a reader would and decide what it now COMMITS TO.
+
+The commitment is NOT closed if the sentence still asserts it in ANY form:
+  * a shorter form of the same claim
+  * a weaker synonym or paraphrase
+  * an adjacent phrase that carries it independently
+  * a grammatical remnant that still implies it
+  * a presupposition the sentence now depends on
+
+The commitment IS closed if, reading the sentence on its own, a reader is no longer told the target
+factual content — even if the sentence still discusses the same subject in a way the source licenses.
+
+RESIDUAL CLASSES — check each explicitly against the sentence as it now reads:
+  HUMAN_STATE       does it still assert what a person knew, felt, intended, expected or brought?
+  TEMPORAL          does it still assert a time, date, duration or interval the source does not give?
+  SOURCE_META       does it still assert what the source says, does, or does not do, unproven?
+  QUANTIFIER_SCOPE  does it assert of ALL what the source restricts to SOME (or the reverse)?
+  CONCRETE_DETAIL   does it still assert a specific place, name, number or fact not in the source?
+  QUALIFIER_LOSS    has a source qualifier been dropped, making the claim stronger than the source?
+
+ALSO CHECK FOR NEW DAMAGE
+  NEW_UNSUPPORTED   does the sentence now assert something unsupported that a repair could have
+                    introduced (an invented substitute fact, a wrong name, a changed number)?
+  HEDGE_ADDED       has a hedge been added to rescue a claim ("perhaps", "it seems", "arguably",
+                    "on this reading")? That is not a repair.
+  GRAMMAR_BROKEN    is the sentence now ungrammatical or incoherent?
+
+Interpretation remains legitimate. A sentence that analyses, evaluates, compares or draws meaning from
+source-grounded material asserts no new factual state and is NOT a residual. Do not report analysis as
+a residual just because it is confident or unhedged.
+
+VERDICT per item:
+  CLOSED        the target commitment is gone in every form, and no new unsupported content appeared
+  UNDER_CLEARED the target commitment, or a residual/weaker form of it, still survives
+  OVER_EDITED   the target is gone but the repair also removed or altered source-supported content,
+                or introduced new unsupported content
+
+OUTPUT
+Reply with JSON only, no markdown fences, no commentary:
+{"checks":[{"PATCH_ID":"...","TARGET_COMMITMENT":"...","SENTENCE_NOW":"...","WHAT_IT_NOW_COMMITS_TO":"...","RESIDUAL_CLASSES_FOUND":["..."],"NEW_UNSUPPORTED":"YES|NO","HEDGE_ADDED":"YES|NO","GRAMMAR_BROKEN":"YES|NO","VERDICT":"CLOSED|UNDER_CLEARED|OVER_EDITED","REASON":"..."}]}
+
+RESIDUAL_CLASSES_FOUND is [] when nothing survives. Process every PATCH_ID you are given, exactly once, in order.
+
+=== USER ===
+SOURCE TEXT (the only evidence — nothing outside it counts):
+---
+By the time you’re done with Edinburgh art festival you’ll have uncovered so many hidden stories you’ll feel like Columbo. We’re talking queer narratives, secret histories, undiscovered archives: the whole festival is a celebration of the underground and unheralded. You can’t walk into a gallery without learning about some subcultural genius or longlost creative you’ve never heard of. That’s not a bad MO for a city-wide art festival.
+But EAF is also a big, unwieldy, confusing thing. There are curated displays, satellite exhibitions, performances, off-site projects, and it’s impossible to figure out how any of it fits together. You’ve just got to follow your nose and hope you sniff out something you like. And you’d better like photography, because there’s a lot of it here.
+The whole thing starts with US photographer Del LaGrace Volcano, whose images of queer nightlife in 1980s London are great: intimate, confrontational, erotic, totally defiant, as are the images of lesbian goths draping themselves over tombstones in Edinburgh graveyards. They’re insights into properly underground, subcultural life in the 1980s and 90s. Plenty of the photos aren’t all that good, but this feels like an artist who should be gathering a lot more attention, dealing with themes that have been all over the art and museum world recently.
+When it comes to untold stories, that of Sandra George (1957-2013) is worth telling. She was a black photographer and photojournalist who documented life on the margins of inner city Edinburgh. Like a lot of people in EAF, she never showed her work publicly in her lifetime, and was only discovered after her death in 2013.
+From her unique perspective as a semi-outsider, she documented communities in the city’s impoverished Craigmillar area. She captured protests and action groups operating out of living rooms and town halls; people living in hostels and housing schemes, skinheads, labourers, Hare Krishnas, Indians, Jamaicans, white and black. She appears throughout her show at City Art Gallery in self-portraits, often with her young son. There are kids everywhere, always playing and laughing, often in desperately bleak places. This might be work about Edinburgh, but it deserves to be seen far outside the city’s confines.
+Jill Edelstein, at Stills Gallery, also started out as a photojournalist, but took a different approach to George. Her polished images of Robert Rauschenberg, James Baldwin and Nelson Mandela don’t do a lot for me, although she does have a series about wild swimming that may find a different audience.
+Scottish photographer Wendy McMurdo’s show at the Scottish National Portrait Gallery is quietly unsettling. For decades she’s been photographing children playing. But the results aren’t joyful visions of childhood: they’re disquieting portraits of a shifting society trying to make sense of rapid technological innovation. The kids play on computers and tablets, but the technology has been digitally removed, leaving behind isolated figures interacting with nothing. These are kids drifting into online worlds, and at risk of being lost in them for ever.
+When it’s not photography, EAF trades in pretty hard-edged contemporary art. Irish sculptor Eva Rothschild has taken over Fruitmarket with a disparate exhibition that feels like someone saved a collection of modernist sculpture from a skip. In the space downstairs, it’s all hyper-referential, full of riffs on Brancusi and Hepworth. Some of it is figurative, some abstract. Some of it is soft, some hard. It’s a lot of things, but none of them good.
+The work upstairs is way better, the palette reduced down to black and primary colours. She’s used rubber hoses like giant bits of liquorice and coiled, squiggled and squirmed them around metal frames. There’s a pile of half-graffitied concrete blocks you can climb, a glossy black geometric tower that reaches towards the ceiling. It’s like Memphis Group aesthetics gone goth and left to rot in the street. I love it, but I’m not sure how the art downstairs fails to work so well.
+A strange ritual from some dystopian future has been built into the vaulted Georgian spaces of Talbot Rice Gallery by Anne Hardy. The floor is covered in breeze blocks and markings in dirt, the lights flicker, the sound of rain fills the gallery. Figures made of bronze and wood stand before you, draped in hooded jackets. The handout talks about vibrations, energy, AI, weather systems in Texas. It’s mind-meltingly indecipherable. So what’s left is more of a vibe: a sense of human spirituality, survival and endurance in the bleak near-future. I’d be lying if I said I had any of this figured out, but its immersiveness and delicacy works well, although it is way too knowingly obtuse.
+Richard Maguire at Collective Gallery at the top of Calton Hill suffers a similar fate, where the strength of the ideas – looking at representations of race and homosexuality across south Asian and British histories – is let down by some wispy, barely contextualised lumps and scrawls.
+Nearby, Emii Alrai’s huge, fractured monument overlooking the city is meant to reference Sumerian deities, standing in opposition to the National Monument of Scotland a few metres away. It feels like something almost ancient, broken, a relic in progress. But up close it’s a pretty shonky looking thing.
+If contemporary artists and institutions want to tell hidden stories, I think they have a duty – to viewers and to their subjects – to tell them clearly. Which is what Jamie Fitzpatrick at Edinburgh Printmakers has done. His show is the result of spending way too long thinking about the statues that sit on plinths all around the cities of the UK and realising that we’re all being constantly loomed over by war criminals, land barons and slavers.
+A figure in a Georgian wig grins menacingly at you as you enter, a red plasticine smile plastered across his face. He’s on the verge of tumbling and collapsing into a messy pile, as is the skeletal figure behind him, all bared teeth and lumpen features. They’re inspired by the statues you see around Edinburgh, their vileness amplified to better reflect the kinds of men we publicly memorialise. The whole thing is like someone let the Muppets loose on some clay. It’s brilliantly gloopy, messy, cartoonish, chaotic and satirical.
+The group show at Ingleby Gallery is good, too. It’s all centred on Frank Walter (1926-2009), an Antiguan painter, writer, poet and polymath, who died having never shown any of the thousands of paintings and drawings he amassed over his lifetime. His work is small, subtle, strange. He paints on ripped cardboard and fading paper; he depicts rainbows and stars and smiling faces, dancing women and strange trees that bend and twist at weird angles. His works are flanked by some giants of contemporary painting – a big Rose Wylie vision of young tulips, a gorgeous Lynette Yiadom-Boakye portrait of a kneeling figure – but it’s all eclipsed by his weird little paintings.
+Over among the horses and goats of Jupiter Artland, young Northern Irish artist Sgàire Wood has set about mashing together pop culture symbolism and the visual language of heraldry. The result is a gallery filled with shields, drums and birds covered in sequins and pink fur. It feels like a show that’s come too early in their career, but what it lacks in finesse, editing and finish, it makes up for in an overabundance of ideas.
+Another largely undiscovered artist, Sadao Hasegawa (1945-1999), really ramps up the eroticism with an eye-popping display of throbbing members and gushing penetration at Custom Lane. Most of the Japanese illustrator’s work, you guessed it, stayed unpublished and unseen in his lifetime. And that’s a shame because they’re amazing images: either soft-focus portraiture or a violent fusion of Japanese mythology and hardcore porn-filled naked figures writhing and brandishing katanas while fighting off giant spiders.
+There are lots of good shows here and plenty of bad ones, too. The whole thing could do with some more ambition, some bigger names, some starrier attractions. And it’s all a bit worthy and lecture-y, like you’re getting told off in every gallery you enter. “You’ve never heard of this previously undiscovered marginalised artist? You bastard!”
+Basically, EAF is too big and complex, with too many moving parts and collaborations and clashing ideas to really make sense. But maybe not everything has to make sense – maybe sometimes a city can just be filled with interesting, fun, diverse art, with loads of hidden stories and undiscovered narratives, and we can all go home happy. I did.
+---
+
+3 REPAIRED SENTENCES. For each, decide whether the target commitment is
+CLOSED in the sentence AS IT NOW READS. You are NOT shown the pre-repair wording, by
+design: judge the resulting semantic commitment, not whether strings disappeared.
+---
+{"PATCH_ID": "FORM1-3-P1", "TARGET_COMMITMENT": "That the review does not rank the two artists and does not gather them into a group.", "FAILURE_CLASS_REPAIRED": "UNPROVEN_NEGATIVE_SOURCE_CLAIM", "SENTENCE_NOW": "Two of the artists the review takes up can be set down beside each other because of what it happens to record about each."}
+{"PATCH_ID": "FORM1-3-P2", "TARGET_COMMITMENT": "That the venue holding the Sandra George show is named City Art Centre.", "FAILURE_CLASS_REPAIRED": "UNSUPPORTED_PROPER_NOUN", "SENTENCE_NOW": "Whatever the visitor is doing in the gallery at City Art Gallery or at Ingleby, it is happening now, and it is happening to a person who did not know the work existed."}
+{"PATCH_ID": "FORM1-3-P3", "TARGET_COMMITMENT": "That the visitor's state of not knowing the work existed held as of one hour earlier.", "FAILURE_CLASS_REPAIRED": "UNSUPPORTED_TEMPORAL_SPECIFICITY", "SENTENCE_NOW": "Whatever the visitor is doing in the gallery at City Art Gallery or at Ingleby, it is happening now, and it is happening to a person who did not know the work existed."}
+---

@@ -1,0 +1,404 @@
+{
+  "experiment": "WG-6 WRITER GROUNDING CLOSURE CALIBRATION",
+  "date": "2026-08-19",
+  "status": "PAUSED_MID_TASK — WG-6A COMPLETE, WG-6B PARTIAL",
+  "paused_reason": "owner request, session usage limit",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "production_wiring": "NONE",
+  "deployed": false,
+  "pushed": false,
+  "articles_generated": 0,
+  "gold_modified": false,
+  "article_form_modified": false,
+  "WG-6A": {
+    "decision": "A — MODULAR_ARBITRATION_READY",
+    "method": "REUSE_RESCORE_NO_MODEL_CALLS",
+    "fresh_model_calls": false,
+    "tp": 8,
+    "fp": 0,
+    "fn": 0,
+    "recall": 1.0,
+    "precision": 1.0,
+    "caught": [
+      "G13-01",
+      "G13-02",
+      "G13-04",
+      "GR2-01",
+      "GR2-02",
+      "GR2-04",
+      "GR3-01",
+      "GR3-03"
+    ],
+    "missed": [],
+    "router": {
+      "routed_to_wg4b": 8,
+      "routed_to_wg4a": 257,
+      "unrouted": 0,
+      "proof_vs_verdict_disagreements": 0,
+      "forbidden_fields_read": []
+    },
+    "controls": {
+      "G13-04": {
+        "required": "UNSUPPORTED",
+        "got": [
+          "UNSUPPORTED"
+        ],
+        "owner": [
+          "WG-4B"
+        ],
+        "proof_type": [
+          "NONE"
+        ],
+        "pass": true
+      },
+      "GR2-02": {
+        "required": "UNSUPPORTED",
+        "got": [
+          "UNSUPPORTED"
+        ],
+        "owner": [
+          "WG-4B"
+        ],
+        "proof_type": [
+          "NONE"
+        ],
+        "pass": true
+      },
+      "R3-control": {
+        "required": "SUPPORTED",
+        "got": [
+          "SUPPORTED"
+        ],
+        "owner": [
+          "WG-4B"
+        ],
+        "proof_type": [
+          "BOUNDED_ABSENCE"
+        ],
+        "pass": true
+      }
+    },
+    "interpretation_flipped_to_unsupported": 1,
+    "interpretation_flip_was_a_true_positive": "GR2-02 (r2/P21) — WG-4A had called it INTERPRETATION via the absence-as-evidence move; WG-4B's PROOF_TYPE NONE correctly overrides. Not a false positive.",
+    "uncertain_checks": [
+      {
+        "span": "the festival's characteristic verb",
+        "parents": [
+          "P55",
+          "P56"
+        ],
+        "verdicts": [
+          "INTERPRETATION",
+          "INTERPRETATION"
+        ],
+        "pass": true
+      },
+      {
+        "span": "What it does not describe, and cannot",
+        "parents": [
+          "P79"
+        ],
+        "verdicts": [
+          "SUPPORTED"
+        ],
+        "pass": true
+      }
+    ],
+    "reclassified_interpretation_checks": [
+      {
+        "id": "G13-03",
+        "tag": "form1-3",
+        "loose_parents": [
+          "P17",
+          "P42",
+          "P43",
+          "P58",
+          "P59",
+          "P76",
+          "P77",
+          "P80"
+        ],
+        "loose_verdicts": [
+          "INTERPRETATION",
+          "INTERPRETATION",
+          "INTERPRETATION",
+          "SUPPORTED",
+          "INTERPRETATION",
+          "SUPPORTED",
+          "UNSUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "gold_disjoint_parents": [
+          "P17",
+          "P42",
+          "P43",
+          "P58",
+          "P59",
+          "P77",
+          "P80"
+        ],
+        "gold_disjoint_verdicts": [
+          "INTERPRETATION",
+          "INTERPRETATION",
+          "INTERPRETATION",
+          "SUPPORTED",
+          "INTERPRETATION",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "overmatched_into_other_gold_findings": [
+          "G13-02"
+        ],
+        "pass": true
+      },
+      {
+        "id": "GR2-03",
+        "tag": "r2",
+        "loose_parents": [
+          "P47",
+          "P48"
+        ],
+        "loose_verdicts": [
+          "SUPPORTED",
+          "INTERPRETATION"
+        ],
+        "gold_disjoint_parents": [
+          "P47",
+          "P48"
+        ],
+        "gold_disjoint_verdicts": [
+          "SUPPORTED",
+          "INTERPRETATION"
+        ],
+        "overmatched_into_other_gold_findings": [],
+        "pass": true
+      },
+      {
+        "id": "GR3-02",
+        "tag": "r3",
+        "loose_parents": [
+          "P41",
+          "P42"
+        ],
+        "loose_verdicts": [
+          "INTERPRETATION",
+          "INTERPRETATION"
+        ],
+        "gold_disjoint_parents": [
+          "P41",
+          "P42"
+        ],
+        "gold_disjoint_verdicts": [
+          "INTERPRETATION",
+          "INTERPRETATION"
+        ],
+        "overmatched_into_other_gold_findings": [],
+        "pass": true
+      }
+    ],
+    "wg5_false_positive_eliminated": "YES — by exclusive routing, not by weakening negative grounding. WG-4B's rule is unchanged and still owns the negative-source class.",
+    "what_this_proves": "Deterministic modular arbitration over calibrated component outputs reaches the pre-registered target and removes the WG-5 composition regression.",
+    "what_this_does_not_prove": "Robustness of the components themselves under resampling — a property of WG-3A/WG-4A/WG-4B, measured in their own tasks and not re-opened here."
+  },
+  "WG-6B": {
+    "status": "PARTIAL — post-repair full re-audit NOT run",
+    "repair_calls": 3,
+    "repair_call_retries": 0,
+    "candidates": 0,
+    "prompts_persisted_before_calls": true,
+    "patches_by_article": {
+      "form1-3": 3,
+      "r2": 3,
+      "r3": 2
+    },
+    "application": {
+      "form1-3": {
+        "status": "APPLIED",
+        "chars_removed": 130,
+        "chars_added": 50,
+        "word_delta": -16,
+        "paragraph_delta": 0,
+        "boundary_assert_ok": true,
+        "reconstruction_matches": true,
+        "orig_sha256": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+        "patched_sha256": "7a13f2cf65ba2abd9678b516125d5796fc0f62490ef879bd3028ad005ffbaeae"
+      },
+      "r2": {
+        "status": "APPLIED",
+        "chars_removed": 296,
+        "chars_added": 114,
+        "word_delta": -28,
+        "paragraph_delta": 0,
+        "boundary_assert_ok": true,
+        "reconstruction_matches": true,
+        "orig_sha256": "5ea20461cc09484d7bf1fea3f83de526f5c54720b72438e180cf92e4f1f600ad",
+        "patched_sha256": "7c6b405e6b30bcfceff44a5b843bf81995298b83ad96f8efaf10c7449fd3afe3"
+      },
+      "r3": {
+        "status": "APPLIED",
+        "chars_removed": 26,
+        "chars_added": 0,
+        "word_delta": -5,
+        "paragraph_delta": 0,
+        "boundary_assert_ok": true,
+        "reconstruction_matches": true,
+        "orig_sha256": "27b1038c80af9890ca07b5b4ab1533670b3425f11c41d2898d2a61d806086d94",
+        "patched_sha256": "c5eee78884b209ed197dd4b01ad342338f61158cfc7e5146b7ba0b0e9578e984"
+      }
+    },
+    "fail_closed_rejections": 0,
+    "containment_all_inside_parent_sentence": true,
+    "article_form_preserved": {
+      "form1-3": true,
+      "r2": true,
+      "r3": true
+    },
+    "article_form_dimensions_changed": {
+      "form1-3": [],
+      "r2": [],
+      "r3": []
+    },
+    "arrival_bytes_identical": {
+      "form1-3": true,
+      "r2": true,
+      "r3": true
+    },
+    "arrival_paragraph_patched": {
+      "form1-3": false,
+      "r2": false,
+      "r3": false
+    },
+    "voice_token_count_deltas": {
+      "form1-3": {},
+      "r2": {},
+      "r3": {}
+    },
+    "voice_regression_true_measure": "NONE — every voice-token count identical before/after on all three articles.",
+    "voice_checker_artifact": "r2 flagged voice_regression=True because the heuristic reports any voice token present in NEW_TEXT regardless of provenance. 'here' occurs once in OLD_TEXT and once in NEW_TEXT: carried through, not introduced.",
+    "r3_control": {
+      "sentence": "The number is the review's, and it sits there without commentary.",
+      "present_in_original": true,
+      "present_in_patched": true,
+      "byte_identical": true,
+      "patched_by_any_patch": false
+    },
+    "r2_residual_literal_scan": {
+      "without preparation": {
+        "before": 1,
+        "after": 0
+      },
+      "brought nothing": {
+        "before": 0,
+        "after": 0
+      },
+      "arrives unprepared": {
+        "before": 0,
+        "after": 0
+      },
+      "without having prepared": {
+        "before": 0,
+        "after": 0
+      },
+      "no preparation": {
+        "before": 0,
+        "after": 0
+      },
+      "unprepared": {
+        "before": 0,
+        "after": 0
+      }
+    },
+    "r2_under_clearance_defect": "FIXED — the WG-5 residual carrier 'a name that arrives without preparation' was removed with the flagged clause. Resulting sentence: 'That is the texture of moving through it — a sequence of rooms, each producing a name.' Closure verdict CLOSED, no HUMAN_STATE residual.",
+    "wg5_defect2_root_cause": "WG-5's repair prompt passed SENTENCE_CONTEXT = the offending span alone, so repair never saw the residual carrier. WG-6B passes the true parent sentence plus an explicit semantic-closure duty and a bounded licence to widen OLD_TEXT within that sentence only.",
+    "closure_checks": {
+      "form1-3": [
+        {
+          "PATCH_ID": "FORM1-3-P1",
+          "VERDICT": "CLOSED",
+          "RESIDUAL_CLASSES_FOUND": [],
+          "NEW_UNSUPPORTED": "NO",
+          "HEDGE_ADDED": "NO",
+          "GRAMMAR_BROKEN": "NO"
+        },
+        {
+          "PATCH_ID": "FORM1-3-P2",
+          "VERDICT": "CLOSED",
+          "RESIDUAL_CLASSES_FOUND": [],
+          "NEW_UNSUPPORTED": "NO",
+          "HEDGE_ADDED": "NO",
+          "GRAMMAR_BROKEN": "NO"
+        },
+        {
+          "PATCH_ID": "FORM1-3-P3",
+          "VERDICT": "UNDER_CLEARED",
+          "RESIDUAL_CLASSES_FOUND": [
+            "HUMAN_STATE"
+          ],
+          "NEW_UNSUPPORTED": "NO",
+          "HEDGE_ADDED": "NO",
+          "GRAMMAR_BROKEN": "NO"
+        }
+      ],
+      "r2": [
+        {
+          "PATCH_ID": "R2-P1",
+          "VERDICT": "CLOSED",
+          "RESIDUAL_CLASSES_FOUND": [],
+          "NEW_UNSUPPORTED": "NO",
+          "HEDGE_ADDED": "NO",
+          "GRAMMAR_BROKEN": "NO"
+        },
+        {
+          "PATCH_ID": "R2-P2",
+          "VERDICT": "OVER_EDITED",
+          "RESIDUAL_CLASSES_FOUND": [],
+          "NEW_UNSUPPORTED": "NO",
+          "HEDGE_ADDED": "NO",
+          "GRAMMAR_BROKEN": "YES"
+        },
+        {
+          "PATCH_ID": "R2-P3",
+          "VERDICT": "CLOSED",
+          "RESIDUAL_CLASSES_FOUND": [],
+          "NEW_UNSUPPORTED": "NO",
+          "HEDGE_ADDED": "NO",
+          "GRAMMAR_BROKEN": "NO"
+        }
+      ],
+      "r3": [
+        {
+          "PATCH_ID": "R3-P1",
+          "VERDICT": "CLOSED",
+          "RESIDUAL_CLASSES_FOUND": [],
+          "NEW_UNSUPPORTED": "NO",
+          "HEDGE_ADDED": "NO",
+          "GRAMMAR_BROKEN": "NO"
+        },
+        {
+          "PATCH_ID": "R3-P2",
+          "VERDICT": "CLOSED",
+          "RESIDUAL_CLASSES_FOUND": [],
+          "NEW_UNSUPPORTED": "NO",
+          "HEDGE_ADDED": "NO",
+          "GRAMMAR_BROKEN": "NO"
+        }
+      ]
+    },
+    "closure_summary": {
+      "CLOSED": 6,
+      "UNDER_CLEARED": 1,
+      "OVER_EDITED": 1
+    },
+    "non_closed_unadjudicated": [
+      "FORM1-3-P3 (UNDER_CLEARED)",
+      "R2-P2 (OVER_EDITED)"
+    ],
+    "adjudication_blocked_on": "the post-repair re-audit, which is the authoritative arbiter and has not been run",
+    "post_repair_reaudit": "NOT RUN — 3 extraction calls were launched then stopped at the pause; no partial output written, stage is clean. Prompts persisted and hashed."
+  },
+  "overall_decision": "NOT YET MADE — requires the WG-6B post-repair numbers",
+  "next_step": "See RESUME.md. Run the 3 post-repair extraction calls, then render + run the 6 verdict calls, score, adjudicate, decide."
+}

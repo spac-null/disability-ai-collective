@@ -1,0 +1,16 @@
+{
+  "stage": "WG-6B POST-REPAIR RE-AUDIT / FAITHFUL EXTRACTION",
+  "component_version": "WG-3A, unchanged (system prompt read verbatim from frozen file)",
+  "tag": "r2",
+  "sentences": 31,
+  "system_sha256": "45586e5f37b881cfb08e8a4bc9d7e9583788079b75c4f6aa0de47be1ef35fe95",
+  "frozen_system_source": "experiments/writer-grounding-v5-2026-08-19/inputs/WG3A-EXTRACTION-SYSTEM-FROZEN.txt",
+  "user_sha256": "f2b0c5d6476ba8e7eae0241c06f5e5908e2c8aad4739c2b38acf5c98d999207a",
+  "prompt_sha256": "2061fae42d613f797d0b5082addead3a6819f1c780fe3021b8ee26c1afb65dd8",
+  "patched_article_sha256": "7c6b405e6b30bcfceff44a5b843bf81995298b83ad96f8efaf10c7449fd3afe3",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

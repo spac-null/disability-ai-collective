@@ -1,0 +1,36 @@
+{
+  "r3_control": {
+    "sentence": "The number is the review's, and it sits there without commentary.",
+    "present_in_original": true,
+    "present_in_patched": true,
+    "byte_identical": true,
+    "patched_by_any_patch": false
+  },
+  "r2_residual_literal_scan": {
+    "without preparation": {
+      "before": 1,
+      "after": 0
+    },
+    "brought nothing": {
+      "before": 0,
+      "after": 0
+    },
+    "arrives unprepared": {
+      "before": 0,
+      "after": 0
+    },
+    "without having prepared": {
+      "before": 0,
+      "after": 0
+    },
+    "no preparation": {
+      "before": 0,
+      "after": 0
+    },
+    "unprepared": {
+      "before": 0,
+      "after": 0
+    }
+  },
+  "r2_residual_note": "Literal scan only. The authoritative test is the SEMANTIC closure check, which judges the commitment, not these strings."
+}

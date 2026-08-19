@@ -1,0 +1,136 @@
+{
+  "form1-3": [
+    {
+      "FINDING_ID": "FORM1-3-F1",
+      "EXACT_OFFENDING_SPAN": "not because the review ranks them or gathers them into a group",
+      "SPAN_OCCURRENCES_IN_ARTICLE": 1,
+      "ATOMIC_UNSUPPORTED_COMMITMENT": "The review does not rank the two artists and does not gather them into a group.",
+      "PARENT_SENTENCE": "Two of the artists the review takes up can be set down beside each other, not because the review ranks them or gathers them into a group, but because of what it happens to record about each.",
+      "SOURCE_ANCHOR": "(none — extraction anchor empty)",
+      "PROOF_STATE": "NEGATIVE SOURCE CLAIM. Proof type NONE: no explicit statement in the source and no bounded, enumerable region of the source can settle it. Scope that would be required: Would have to be the entire review, since ranking and grouping can be implicit, distributed or carried by evaluative tone.",
+      "FAILURE_CLASS": "UNPROVEN_NEGATIVE_SOURCE_CLAIM",
+      "_detector_provenance": {
+        "parent": "P22",
+        "commitment": "P22-C1",
+        "commitment_type": "SOURCE_META",
+        "owner": "WG-4B"
+      }
+    },
+    {
+      "FINDING_ID": "FORM1-3-F2",
+      "EXACT_OFFENDING_SPAN": "Whatever the visitor is doing in the gallery at City Art Centre or at Ingleby",
+      "SPAN_OCCURRENCES_IN_ARTICLE": 1,
+      "ATOMIC_UNSUPPORTED_COMMITMENT": "The venue holding the George show is named City Art Centre.",
+      "PARENT_SENTENCE": "Whatever the visitor is doing in the gallery at City Art Centre or at Ingleby, it is happening now, and it is happening to a person who did not know the work existed an hour ago.",
+      "SOURCE_ANCHOR": "She appears throughout her show at City Art Gallery in self-portraits, often with her young son.",
+      "PROOF_STATE": "ORDINARY FACTUAL COMMITMENT. Not supported by the anchor above.",
+      "FAILURE_CLASS": "UNSUPPORTED_PROPER_NOUN",
+      "_detector_provenance": {
+        "parent": "P74",
+        "commitment": "P74-C2",
+        "commitment_type": "PROPER_NOUN",
+        "owner": "WG-4A"
+      }
+    },
+    {
+      "FINDING_ID": "FORM1-3-F3",
+      "EXACT_OFFENDING_SPAN": "it is happening to a person who did not know the work existed an hour ago",
+      "SPAN_OCCURRENCES_IN_ARTICLE": 1,
+      "ATOMIC_UNSUPPORTED_COMMITMENT": "That state of not knowing held one hour earlier.",
+      "PARENT_SENTENCE": "Whatever the visitor is doing in the gallery at City Art Centre or at Ingleby, it is happening now, and it is happening to a person who did not know the work existed an hour ago.",
+      "SOURCE_ANCHOR": "(none — extraction anchor empty)",
+      "PROOF_STATE": "ORDINARY FACTUAL COMMITMENT. Not supported by the anchor above.",
+      "FAILURE_CLASS": "UNSUPPORTED_TEMPORAL_SPECIFICITY",
+      "_detector_provenance": {
+        "parent": "P76",
+        "commitment": "P76-C2",
+        "commitment_type": "TEMPORAL_MODIFIER",
+        "owner": "WG-4A"
+      }
+    }
+  ],
+  "r2": [
+    {
+      "FINDING_ID": "R2-F1",
+      "EXACT_OFFENDING_SPAN": "without the visitor having brought anything to the encounter except the willingness to walk in",
+      "SPAN_OCCURRENCES_IN_ARTICLE": 1,
+      "ATOMIC_UNSUPPORTED_COMMITMENT": "The visitor brought nothing to the encounter except the willingness to walk in.",
+      "PARENT_SENTENCE": "That is the texture of moving through it — a sequence of rooms, each producing a name that arrives without preparation, without the visitor having brought anything to the encounter except the willingness to walk in.",
+      "SOURCE_ANCHOR": "(none — extraction anchor empty)",
+      "PROOF_STATE": "ORDINARY FACTUAL COMMITMENT. Not supported by the anchor above.",
+      "FAILURE_CLASS": "UNSUPPORTED_HUMAN_STATE",
+      "_detector_provenance": {
+        "parent": "P19",
+        "commitment": "P19-C1",
+        "commitment_type": "HUMAN_STATE",
+        "owner": "WG-4A"
+      }
+    },
+    {
+      "FINDING_ID": "R2-F2",
+      "EXACT_OFFENDING_SPAN": "not because the review places them above the rest",
+      "SPAN_OCCURRENCES_IN_ARTICLE": 1,
+      "ATOMIC_UNSUPPORTED_COMMITMENT": "The review does not place these two names above the rest.",
+      "PARENT_SENTENCE": "Two of those names, taken here not because the review places them above the rest but simply because they can be set beside each other.",
+      "SOURCE_ANCHOR": "(none — extraction anchor empty)",
+      "PROOF_STATE": "NEGATIVE SOURCE CLAIM. Proof type NONE: no explicit statement in the source and no bounded, enumerable region of the source can settle it. Scope that would be required: Would require the whole review: ranking, preference and elevation can be carried implicitly by tone, space, ordering and evaluative adjectives anywhere in the text.",
+      "FAILURE_CLASS": "UNPROVEN_NEGATIVE_SOURCE_CLAIM",
+      "_detector_provenance": {
+        "parent": "P21",
+        "commitment": "P21-C1",
+        "commitment_type": "SOURCE_META",
+        "owner": "WG-4B"
+      }
+    },
+    {
+      "FINDING_ID": "R2-F3",
+      "EXACT_OFFENDING_SPAN": "stayed unpublished and unseen in his lifetime",
+      "SPAN_OCCURRENCES_IN_ARTICLE": 1,
+      "ATOMIC_UNSUPPORTED_COMMITMENT": "This held of his work without restriction, i.e. of all of it.",
+      "PARENT_SENTENCE": "Sadao Hasegawa's work, the review adds, stayed unpublished and unseen in his lifetime.",
+      "SOURCE_ANCHOR": "Most of the Japanese illustrator’s work, you guessed it, stayed unpublished and unseen in his lifetime.",
+      "PROOF_STATE": "ORDINARY FACTUAL COMMITMENT. Not supported by the anchor above.",
+      "FAILURE_CLASS": "UNSUPPORTED_QUANTIFIER_SCOPE",
+      "_detector_provenance": {
+        "parent": "P75",
+        "commitment": "P75-C2",
+        "commitment_type": "QUANTIFIER",
+        "owner": "WG-4A"
+      }
+    }
+  ],
+  "r3": [
+    {
+      "FINDING_ID": "R3-F1",
+      "EXACT_OFFENDING_SPAN": "a name that was not in their possession an hour earlier",
+      "SPAN_OCCURRENCES_IN_ARTICLE": 1,
+      "ATOMIC_UNSUPPORTED_COMMITMENT": "That unfamiliarity held as of one hour earlier.",
+      "PARENT_SENTENCE": "Room after room, the visitor arrives at a name that was not in their possession an hour earlier.",
+      "SOURCE_ANCHOR": "(none — extraction anchor empty)",
+      "PROOF_STATE": "ORDINARY FACTUAL COMMITMENT. Not supported by the anchor above.",
+      "FAILURE_CLASS": "UNSUPPORTED_TEMPORAL_SPECIFICITY",
+      "_detector_provenance": {
+        "parent": "P16",
+        "commitment": "P16-C2",
+        "commitment_type": "TEMPORAL_MODIFIER",
+        "owner": "WG-4A"
+      }
+    },
+    {
+      "FINDING_ID": "R3-F2",
+      "EXACT_OFFENDING_SPAN": "a person who is walking around Edinburgh in August",
+      "SPAN_OCCURRENCES_IN_ARTICLE": 1,
+      "ATOMIC_UNSUPPORTED_COMMITMENT": "This takes place in August.",
+      "PARENT_SENTENCE": "Discovery here is something that happens to a person who is walking around Edinburgh in August, and it happens in the present tense, on the day, in front of the work.",
+      "SOURCE_ANCHOR": "(none — extraction anchor empty)",
+      "PROOF_STATE": "ORDINARY FACTUAL COMMITMENT. Not supported by the anchor above.",
+      "FAILURE_CLASS": "UNSUPPORTED_TEMPORAL_SPECIFICITY",
+      "_detector_provenance": {
+        "parent": "P58",
+        "commitment": "P58-C2",
+        "commitment_type": "TEMPORAL_MODIFIER",
+        "owner": "WG-4A"
+      }
+    }
+  ]
+}

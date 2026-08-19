@@ -1,0 +1,8 @@
+--- form1-3-original
++++ form1-3-patched
+@@ -12 +12 @@
+-Two of the artists the review takes up can be set down beside each other, not because the review ranks them or gathers them into a group, but because of what it happens to record about each.
++Two of the artists the review takes up can be set down beside each other because of what it happens to record about each.
+@@ -37 +37 @@
+-Whatever the visitor is doing in the gallery at City Art Centre or at Ingleby, it is happening now, and it is happening to a person who did not know the work existed an hour ago.
++Whatever the visitor is doing in the gallery at City Art Gallery or at Ingleby, it is happening now, and it is happening to a person who did not know the work existed.
