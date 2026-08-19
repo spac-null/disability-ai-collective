@@ -1,0 +1,16 @@
+{
+  "tag": "r3",
+  "patches": 3,
+  "chars_removed": 233,
+  "chars_added": 222,
+  "orig_sha256": "27b1038c80af9890ca07b5b4ab1533670b3425f11c41d2898d2a61d806086d94",
+  "patched_sha256": "e1872ba55c66ad750c2ebc36ecc0ab84d95a7f2d8fc70aeeb961f06b451f1b6d",
+  "orig_words": 646,
+  "patched_words": 646,
+  "word_delta": 0,
+  "orig_paras": 7,
+  "patched_paras": 7,
+  "unapproved_byte_changes": 0,
+  "arrival_byte_identical": true,
+  "para_delta": 0
+}

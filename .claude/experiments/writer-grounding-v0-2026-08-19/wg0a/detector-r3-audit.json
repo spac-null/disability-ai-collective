@@ -1,0 +1,39 @@
+{
+  "status": "FAIL",
+  "deterministic_flags": [
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Following Your Nose Through' not found in source"
+    ],
+    [
+      "possible_named_entity_not_in_source",
+      "possible named entity 'Edinburgh\n\nBy' not found in source"
+    ]
+  ],
+  "claims": [
+    {
+      "claim": "Discovery here is something that happens to a person who is walking around Edinburgh in August, and it happens in the present tense, on the day, in front of the work.",
+      "verdict": "UNSUPPORTED",
+      "reason": "The source text never states when the festival takes place. 'in August' is an invented temporal detail imported from outside knowledge and presented as a plain fact about the festival. Nothing in the source or the packet's explicit fields establishes the month."
+    },
+    {
+      "claim": "And that second obligation is harder to discharge, because the subject is not in the room to say whether it has been met.",
+      "verdict": "UNCERTAIN",
+      "reason": "This is the article's own causal/evaluative reasoning stated as settled ('is harder', 'because...'). The source establishes only that the reviewer thinks institutions owe a duty to viewers and subjects to tell hidden stories clearly; it says nothing about the relative difficulty of the two obligations, nor does it generalise that subjects are absent. It is defensible for the two dead artists named, but as stated it is a general claim. To resolve it would need either explicit framing as the article's own argument or a source statement about subjects' absence/inability to verify."
+    },
+    {
+      "claim": "Following Your Nose Through Edinburgh",
+      "verdict": "SUPPORTED",
+      "reason": "Pre-scan flagged this as a possible unrecognised named entity. It is not an entity or a factual claim — it is the article's own headline, built from the source's own phrase 'You've just got to follow your nose' and the source's subject (Edinburgh art festival). No fabrication."
+    },
+    {
+      "claim": "Edinburgh\n\nBy the reviewer's account, the Edinburgh art festival is something you move through rather than read.",
+      "verdict": "SUPPORTED",
+      "reason": "Pre-scan flagged 'Edinburgh\\n\\nBy' as a possible named entity; this is an artefact of the headline line-break running into the opening sentence, not an entity or a claim. The substantive assertion is explicitly attributed ('By the reviewer's account') and rests on the source's own 'impossible to figure out how any of it fits together' plus 'follow your nose'."
+    }
+  ],
+  "unsupported_count": 1,
+  "uncertain_count": 1,
+  "word_count": 646,
+  "auditor_note": "Prompt construction byte-identical to FORM-1/1.1/1.2/1.3. Auditor MODEL is the local Claude subscription, not the production review/audit chain. Verdicts are evidence, not authority; independent adjudication applied."
+}

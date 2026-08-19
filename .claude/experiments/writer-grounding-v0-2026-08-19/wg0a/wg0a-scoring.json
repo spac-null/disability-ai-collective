@@ -1,0 +1,57 @@
+{
+  "detector_components": [
+    "DETERMINISTIC PRE-SCAN (grounding.scan_free_prose_field via sofa_discovery_shadow.run_deterministic_prescan)",
+    "SOURCE-RELATIVE LLM AUDIT (build_shadow_grounding_audit_prompt) — NOT deterministic; frozen prompt, sampled output"
+  ],
+  "gold_unsupported": 10,
+  "strict_tp": 6,
+  "strict_fn": 4,
+  "strict_recall": 0.6,
+  "lenient_tp": 8,
+  "lenient_fn": 2,
+  "lenient_recall": 0.8,
+  "false_positives": 1,
+  "alignment": {
+    "G13-01": {
+      "detector": "UNSUPPORTED",
+      "note": "City Art Centre venue mutation"
+    },
+    "G13-02": {
+      "detector": "UNSUPPORTED",
+      "note": "'an hour ago' visitor state"
+    },
+    "G13-03": {
+      "detector": null,
+      "note": "NOT FLAGGED AT ALL"
+    },
+    "GR2-01": {
+      "detector": "UNCERTAIN",
+      "note": "'brought anything to the encounter'"
+    },
+    "GR2-02": {
+      "detector": "UNSUPPORTED",
+      "note": "'places them above the rest'"
+    },
+    "GR2-03": {
+      "detector": "UNSUPPORTED",
+      "note": "'second direction is the harder one'"
+    },
+    "GR2-04": {
+      "detector": "UNSUPPORTED",
+      "note": "Hasegawa 'Most of' dropped"
+    },
+    "GR3-01": {
+      "detector": null,
+      "note": "NOT FLAGGED AT ALL"
+    },
+    "GR3-02": {
+      "detector": "UNCERTAIN",
+      "note": "'second obligation harder to discharge'"
+    },
+    "GR3-03": {
+      "detector": "UNSUPPORTED",
+      "note": "'in August'"
+    }
+  },
+  "decision": "B — DETECTOR_RECALL_GAP"
+}

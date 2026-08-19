@@ -1,0 +1,105 @@
+{
+  "form1-3": {
+    "revision_guard_violations": [],
+    "structure_original": {
+      "paras": 8,
+      "words": 691,
+      "countervoice_para": 5,
+      "arrival_para": 8,
+      "countervoice_before_arrival": true,
+      "paras_after_arrival": 0,
+      "festival_as_speaker": 0,
+      "festival_as_speaker_hits": [],
+      "schema_labels": [],
+      "attribution_bookkeeping": 0,
+      "attractor_hits": [],
+      "final_para": "The review's discovery is the visitor's present encounter with work previously unknown to them. What it records about George and Walter is that the work went unshown while they were alive."
+    },
+    "structure_patched": {
+      "paras": 8,
+      "words": 694,
+      "countervoice_para": 5,
+      "arrival_para": 8,
+      "countervoice_before_arrival": true,
+      "paras_after_arrival": 0,
+      "festival_as_speaker": 0,
+      "festival_as_speaker_hits": [],
+      "schema_labels": [],
+      "attribution_bookkeeping": 0,
+      "attractor_hits": [],
+      "final_para": "The review's discovery is the visitor's present encounter with work previously unknown to them. What it records about George and Walter is that the work went unshown while they were alive."
+    },
+    "all_form_dimensions_preserved": true,
+    "arrival_byte_identical": true
+  },
+  "r2": {
+    "revision_guard_violations": [],
+    "structure_original": {
+      "paras": 8,
+      "words": 633,
+      "countervoice_para": 5,
+      "arrival_para": 8,
+      "countervoice_before_arrival": true,
+      "paras_after_arrival": 0,
+      "festival_as_speaker": 1,
+      "festival_as_speaker_hits": [
+        "Hold that beside the festival's characteristic verb."
+      ],
+      "schema_labels": [],
+      "attribution_bookkeeping": 0,
+      "attractor_hits": [],
+      "final_para": "The word discovery, then, is describing the visitor's side of the encounter. It marks the moment work becomes newly visible to someone who did not know it existed. What it does not describe, and cannot, is the other span of time these dates measure: the years in which that same work went unshown while its maker was alive."
+    },
+    "structure_patched": {
+      "paras": 8,
+      "words": 615,
+      "countervoice_para": 5,
+      "arrival_para": 8,
+      "countervoice_before_arrival": true,
+      "paras_after_arrival": 0,
+      "festival_as_speaker": 1,
+      "festival_as_speaker_hits": [
+        "Hold that beside the festival's characteristic verb."
+      ],
+      "schema_labels": [],
+      "attribution_bookkeeping": 0,
+      "attractor_hits": [],
+      "final_para": "The word discovery, then, is describing the visitor's side of the encounter. It marks the moment work becomes newly visible to someone who did not know it existed. What it does not describe, and cannot, is the other span of time these dates measure: the years in which that same work went unshown while its maker was alive."
+    },
+    "all_form_dimensions_preserved": true,
+    "arrival_byte_identical": true
+  },
+  "r3": {
+    "revision_guard_violations": [],
+    "structure_original": {
+      "paras": 7,
+      "words": 646,
+      "countervoice_para": 4,
+      "arrival_para": 7,
+      "countervoice_before_arrival": true,
+      "paras_after_arrival": 0,
+      "festival_as_speaker": 0,
+      "festival_as_speaker_hits": [],
+      "schema_labels": [],
+      "attribution_bookkeeping": 0,
+      "attractor_hits": [],
+      "final_para": "That is where the two senses part. The review's discovery is the visitor's, present and first-hand, a story becoming known to someone who did not know it. The other fact is about the work: it stayed unshown for the whole of the life that made it."
+    },
+    "structure_patched": {
+      "paras": 7,
+      "words": 646,
+      "countervoice_para": 4,
+      "arrival_para": 7,
+      "countervoice_before_arrival": true,
+      "paras_after_arrival": 0,
+      "festival_as_speaker": 0,
+      "festival_as_speaker_hits": [],
+      "schema_labels": [],
+      "attribution_bookkeeping": 0,
+      "attractor_hits": [],
+      "final_para": "That is where the two senses part. The review's discovery is the visitor's, present and first-hand, a story becoming known to someone who did not know it. The other fact is about the work: it stayed unshown for the whole of the life that made it."
+    },
+    "all_form_dimensions_preserved": true,
+    "arrival_byte_identical": true
+  }
+}

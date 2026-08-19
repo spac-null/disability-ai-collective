@@ -1,0 +1,16 @@
+{
+  "tag": "form1-3",
+  "patches": 3,
+  "chars_removed": 115,
+  "chars_added": 137,
+  "orig_sha256": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+  "patched_sha256": "4565dd5c33237d84f736fc6a5d60adae1cf53e0f9cd6d15ffaacf900f227ab7d",
+  "orig_words": 691,
+  "patched_words": 694,
+  "word_delta": 3,
+  "orig_paras": 8,
+  "patched_paras": 8,
+  "unapproved_byte_changes": 0,
+  "arrival_byte_identical": true,
+  "para_delta": 0
+}

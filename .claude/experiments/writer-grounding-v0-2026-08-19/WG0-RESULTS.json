@@ -1,0 +1,60 @@
+{
+  "experiment": "WG-0A / WG-0B — writer grounding calibration, shadow only",
+  "date": "2026-08-19",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "production_wiring": "NONE",
+  "inputs_frozen": {
+    "source": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+    "form1-3": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+    "r2": "5ea20461cc09484d7bf1fea3f83de526f5c54720b72438e180cf92e4f1f600ad",
+    "r3": "27b1038c80af9890ca07b5b4ab1533670b3425f11c41d2898d2a61d806086d94"
+  },
+  "wg0a": {
+    "detector_components": [
+      "DETERMINISTIC PRE-SCAN (grounding.scan_free_prose_field)",
+      "SOURCE-RELATIVE LLM AUDIT (build_shadow_grounding_audit_prompt) — sampled, NOT deterministic"
+    ],
+    "gold_unsupported": 10,
+    "strict_recall": 0.6,
+    "lenient_recall": 0.8,
+    "false_positives": 1,
+    "decision": "B — DETECTOR_RECALL_GAP"
+  },
+  "wg0b": {
+    "repair_calls": 3,
+    "total_patches": 10,
+    "gold_findings_cleared": 10,
+    "new_unsupported_introduced": 0,
+    "revision_guard": "CLEAN on all three",
+    "form_dimensions_preserved": "3/3",
+    "arrival_byte_identical": "3/3",
+    "unapproved_byte_changes": 0,
+    "repair_induced_regression": {
+      "article": "R2",
+      "patch": "GR2-03",
+      "issue": "NEW_TEXT 'seems to me the harder one' introduces a FIRST-PERSON narrator into an otherwise third-person article, violating the Form writer contract's 'Write in third person; do not adopt a first-person narrator unless quoting the source.' Not a grounding failure — the claim is now correctly interpretive — but a voice regression that the eight structural dimensions do not test.",
+      "severity": "minor, single phrase, trivially correctable"
+    },
+    "decision": "A — PATCH_REPAIR_SEPARATION_CONFIRMED (with one recorded voice caveat)",
+    "future_repair_verification_scope": [
+      "VOICE / PERSON CONSISTENCY — R2's GR2-03 introduced a first-person 'seems to me' into a third-person article. Recorded, NOT fixed; WG-0B stays frozen."
+    ]
+  },
+  "patched_outputs": {
+    "form1-3": "4565dd5c33237d84f736fc6a5d60adae1cf53e0f9cd6d15ffaacf900f227ab7d",
+    "r2": "eda407e5f159299fc157b46cb9a3f015571c26cf50b7d13f5fcfb7593c4475d3",
+    "r3": "e1872ba55c66ad750c2ebc36ecc0ab84d95a7f2d8fc70aeeb961f06b451f1b6d"
+  },
+  "corrections_to_prior_reporting": [
+    "INTERPRETATION_AS_FACT is 3/3 across the replicate set, not 2/3.",
+    "The replicate task's ownership regex under-detected: R2 contains 'the festival's characteristic verb', an ownership drift it did not match. With a widened pattern R2 scores 1 (unchanged by repair, since it was adjudicated UNCERTAIN, not gold-unsupported). The 0/0/0 result stands only for explicit speaker/self-description claims, not as a complete ownership check."
+  ],
+  "FROZEN_GOLD_TOTALS": {
+    "TOTAL_PROPOSITIONS": 95,
+    "SUPPORTED": 44,
+    "INTERPRETATION": 39,
+    "UNCERTAIN": 2,
+    "UNSUPPORTED": 10,
+    "note": "Frozen 2026-08-19 as the WG-1 authority. Adjudications are NOT to be changed during detector testing. The 10 UNSUPPORTED and 2 UNCERTAIN findings are itemised with exact spans; the remaining 83 SUPPORTED/INTERPRETATION propositions are recorded as counts. False positives are therefore scored as: any detector flag that does not correspond to one of the 12 itemised findings falls in the SUPPORTED/INTERPRETATION mass and is adjudicated case-by-case against the frozen source before being counted as FP."
+  }
+}
