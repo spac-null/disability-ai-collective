@@ -218,6 +218,18 @@ Allowed lifecycle statuses: `ACTIVE`, `FROZEN`, `PARKED`, `MERGED`, `SUPERSEDED`
     file was modified.** Unlike the two roots above it carries no `SHA256SUMS.txt`: its
     captured-prompt artifacts are reproducible on demand from a fixed HEAD by rerunning
     `automation/writer_prompt_test.py`, so the commit itself is the integrity record.
+  - `.claude/experiments/real-article-test-2-2026-08-20/` — the Article Form + Writer
+    Grounding transfer test. Frozen source (RAIB Report 10/2026, Staniforth Road), Discovery,
+    Article Form, grounding boundaries, the deterministic prompt renderer, the exact rendered
+    writer prompt, one raw generation, the Form-transfer evaluation, the grounding audit, two
+    patches and the patched article, and the decision. Commits `2dd9a86` (frozen packet) and
+    `8741804` (execution). Carries its own `SHA256SUMS.txt`. **Closed as TRANSFER_PASS by
+    owner decision.** The source PDF is not tracked (12.9 MB, public repo); its SHA-256 is in
+    `source/PROVENANCE.md` and the file is re-retrievable from the URL.
+  - `.claude/experiments/production-architecture-plan-2026-08-20/` — the production migration
+    plan (7 documents, design only, no code). Target pipeline, live-vs-target mapping,
+    component dispositions, legacy-rule fate analysis, re-adjudicated debt, phased sequence,
+    shadow/rollback plan. **No implementation, no deployment.**
   - `.claude/experiments/project-state-reconciliation-2026-08-18/` — gap ledger G-001..G-053,
     its normalization, and the state synthesis.
   - `.claude/experiments/cj1-cj2-b2-dev-artifacts-2026-08-11/` — residual CJ1/CJ2 artifacts with

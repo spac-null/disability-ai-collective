@@ -578,11 +578,34 @@ inventory is **REQUIRED** and must not disappear from this list.
    (`ABORTED_BY_OWNER — DIMINISHING_RETURNS_STOP`). Deliberately left incomplete.
 3. ~~**LEGACY PROMPT / RULE INVENTORY**~~ — **COMPLETE 2026-08-20**, commit `38c47b8`.
    See `### LEGACY PROMPT / RULE INVENTORY — COMPLETE` below.
-4. **CURRENT** — **REAL ARTICLE TEST 2**: transfer validation of Article Form + Writer Grounding on
-   a materially different story shape, using the clean shadow/manual path on the local Claude
-   subscription. **Not** the legacy production writer prompt. Next action: design / story selection.
-5. **AFTER TRANSFER** — production architecture / legacy prompt cleanup planning.
-6. **THEN** — production migration + fidelity testing.
+4. ~~**REAL ARTICLE TEST 2**~~ — **CLOSED 2026-08-20 as TRANSFER_PASS** (owner decision).
+   Frozen packet `2dd9a86`, execution `8741804`. Source: RAIB Report 10/2026, Staniforth Road.
+   Article "Bell or Horn", one writer call on the local Claude subscription.
+   **Article Form is now TRANSFER-VALIDATED ON TWO MATERIALLY DIFFERENT STORY SHAPES**
+   (Edinburgh = structural/semantic; Staniforth Road = event/system/channel/recurrence).
+   Writer Grounding was successfully exercised: it found the 2 genuine factual slips
+   (a writer-computed elapsed interval, a quantifier widening), patch-only repair removed
+   them, no legitimate interpretation was damaged. The 1,587-word output against a
+   900–1,200 request is **NON-BLOCKING EDITORIAL / LENGTH-CONTROL DEBT** — not a reason for
+   another generation. **Do NOT rerun Test 2, create Test 2.1, or generate a compressed
+   variant. The frozen Test-2 article is not to be modified.**
+5. **CURRENT** — **PRODUCTION ARCHITECTURE / MIGRATION PLANNING.** Planning only, not
+   implementation, not deployment. Plan:
+   `.claude/experiments/production-architecture-plan-2026-08-20/` (7 documents).
+   Target pipeline: WORLD/SOURCE → DISCOVERY → ARTICLE FORM → WRITER → WRITER GROUNDING →
+   ACCEPT/HOLD → publication stages.
+6. **THEN** — production migration + fidelity testing (Phase 5 must run on Trident; the
+   production writer path is unreachable from the Mac).
+
+**Central planning finding (2026-08-20).** ~81% of the 114-family legacy rule debt is
+**deleted by replacing three stages** — the writer prompt, the whole-document rewrite, and
+the two LLM rule-judges — rather than cleaned. Nearly every item on the inventory's top-10
+cleanup list should therefore NOT be cleaned: not AR3's rewrite 33/33b, not the 9 R-number
+collisions, not the WP-13 UK-preference divergence, not the persona-canon double-injection,
+not the eight five-copy style families, and `style_rules.py` should be retired rather than
+wired in. **Do not spend effort cleaning a component the migration will delete.**
+Caveat, recorded and owner-facing: those debts remain live for the whole migration window.
+If the migration stalls or is deprioritised, the cheap AR3 patch becomes correct after all.
 
 **Sequencing rationale (owner decision 2026-08-20).** Production prompt cleanup does NOT happen
 before Test 2. No legacy surface is required by Test 2 — all 13 identified surfaces are excluded

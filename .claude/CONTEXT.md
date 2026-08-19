@@ -1,5 +1,35 @@
 
-## CURRENT PHASE (2026-08-20) — LEGACY RULE INVENTORY COMPLETE; READY FOR REAL ARTICLE TEST 2
+## CURRENT PHASE (2026-08-20) — PRODUCTION ARCHITECTURE / MIGRATION PLANNING
+
+- **REAL ARTICLE TEST 2: TRANSFER_PASS** (owner decision), evidence commit `8741804`.
+  Source: RAIB Report 10/2026, Staniforth Road tram collision. Article "Bell or Horn".
+  One writer call, local Claude subscription, clean shadow/manual path.
+- **Article Form: TRANSFER-VALIDATED ON TWO MATERIALLY DIFFERENT STORY SHAPES.**
+  Edinburgh = structural/semantic discovery case. Staniforth Road = event/system/channel/
+  recurrence case. Neither Form was derived from the other.
+- **Writer Grounding: SHADOW-CALIBRATED and successfully exercised on Test 2** — it found
+  the 2 genuine factual slips, patch-only repair removed them, and no legitimate
+  interpretation was flattened. **Still not production-validated.**
+- **PRODUCTION IS STILL NOT MIGRATED.** Nothing above implies production validation.
+  96 legacy rule families remain active on every live article run.
+- Test 2's 1,587-word output (against a 900–1,200 request) is recorded as
+  **NON-BLOCKING EDITORIAL / LENGTH-CONTROL DEBT**. Likely owner: ARTICLE FORM. It is NOT
+  sufficient reason for another transfer-test generation. No rigid universal length
+  mechanism until cross-story evidence exists. Do NOT rerun Test 2, do NOT create Test 2.1,
+  do NOT generate a compressed variant. The frozen Test-2 article is not to be modified.
+- **CURRENT PHASE: PRODUCTION ARCHITECTURE / MIGRATION PLANNING — planning, not
+  implementation, not deployment.**
+  Plan: `.claude/experiments/production-architecture-plan-2026-08-20/`
+- **Central planning finding: ~81% of the 114-family legacy rule debt is DELETED by
+  replacing three stages** (the writer prompt, the whole-document rewrite, the two LLM
+  rule-judges) — not cleaned. Do NOT patch AR3's rewrite 33/33b, the 9 R-number collisions,
+  the UK-preference divergence, or the persona-canon double-injection, and do NOT wire
+  `style_rules.py`. Caveat: those debts stay live for the whole migration window; if the
+  migration stalls, the cheap AR3 patch becomes correct. Owner decision.
+
+### Superseded phase description (kept for continuity)
+
+## CURRENT PHASE (2026-08-20, superseded) — LEGACY RULE INVENTORY COMPLETE
 
 - **LEGACY PROMPT / RULE INVENTORY: COMPLETE**, commit `38c47b8`.
   Evidence root: `.claude/experiments/legacy-prompt-rule-inventory-2026-08-20/`

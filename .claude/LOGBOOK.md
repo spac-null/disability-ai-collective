@@ -536,3 +536,80 @@ Mechanical recount gives **114 / 96 / 6 / 7+5**; the committed files carry the c
 FOLLOW-UP: Real Article Test 2 — design / story selection. Then production architecture / legacy
 prompt cleanup planning, then production migration + fidelity testing. Do NOT begin cleanup, do NOT
 wire `style_rules.py` merely because it exists, do NOT reopen Writer Grounding calibration.
+
+## 2026-08-20 — REAL ARTICLE TEST 2 CLOSED AS TRANSFER_PASS; MIGRATION PLANNING OPENED (RAT2)
+STATUS: Test 2 **TRANSFER_PASS** by owner decision, reclassified from the run's own
+LOCAL_DEFECT verdict. Current phase is now PRODUCTION ARCHITECTURE / MIGRATION PLANNING —
+planning only. **No code modified, no deployment, no cleanup, nothing pushed.**
+DECISION: Test 2 executed once at packet `2dd9a86`, evidence `8741804`. Source: RAIB Report
+10/2026, collision between a tram and two pedestrians at Staniforth Road, Sheffield. One
+writer call on the local Claude subscription (claude-opus-5[1m]), frozen prompt `60b1d54e`
+executed unmodified, no retries, no candidates, no hand editing. Article "Bell or Horn".
+The owner reclassified the outcome as TRANSFER_PASS on the grounds that the architecture
+succeeded on every substantive transfer criterion: a materially different Article Form
+emerged; no Edinburgh geometry reversion; the perceptual instrument stayed necessary but
+narratively invisible (zero occurrences of deaf/disability/access/impairment); the
+resistance and recurrence material was structurally load-bearing; the arrival was earned and
+terminal; Writer Grounding identified the genuine factual slips; patch repair removed them;
+no legitimate interpretation was damaged; the final article was source-grounded.
+The 1,587-word output against a 900–1,200 request is recorded as **NON-BLOCKING EDITORIAL /
+LENGTH-CONTROL DEBT**, likely owned by ARTICLE FORM as an editorial output constraint. It is
+explicitly NOT sufficient reason for another transfer-test generation. No rigid universal
+length mechanism is to be introduced until cross-story evidence exists; that evidence should
+be collected as a by-product of shadow comparison, not by running generations for it.
+**Do not rerun Test 2, create Test 2.1, or generate a compressed variant. The frozen Test-2
+article is not to be modified.**
+CANONICAL STATE: Article Form is now **TRANSFER-VALIDATED ON TWO MATERIALLY DIFFERENT STORY
+SHAPES** — Edinburgh as the structural/semantic discovery case, Staniforth Road as the
+event/system/channel/recurrence case; neither Form was derived from the other. Writer
+Grounding remains **SHADOW-CALIBRATED**, now successfully exercised on Test 2, and is still
+**not production-validated**. **Production is still NOT migrated**; 96 legacy rule families
+remain active on every live article run. Nothing in this entry implies production validation.
+MIGRATION PLAN: seven documents at
+`.claude/experiments/production-architecture-plan-2026-08-20/`. Target pipeline:
+WORLD/SOURCE → DISCOVERY → ARTICLE FORM → WRITER → WRITER GROUNDING → ACCEPT/HOLD →
+publication stages. Every current major component given a disposition. KEEP: Story Rejection
+V1.1, `grounding.py` primitives, web fact-check, deterministic integrity checks, publication
+stages. ADAPT: Fable brief (decomposed into commissionability + byline, dropping the
+planner-authored prose fields), PRF1 (byline only, not prose voice), gate and review (split —
+deterministic checks kept, LLM rule-judges removed), `sofa_discovery_shadow.py` as the seed
+of DISCOVERY/ARTICLE FORM. REPLACE: the 59,161-character writer prompt, `_should_block` →
+ACCEPT/HOLD. REMOVE: the whole-document rewrite stage, persona canon injection into the
+writer, register/type/length selectors, `style_rules.py`, `check_rule_drift.py`. PARK: CJ-2,
+L2 testimony, Reader Lab (verified not imported by `automation/`).
+CENTRAL FINDING: **~81% of the 114-family legacy rule debt is deleted by replacing three
+stages** — the writer prompt, the whole-document rewrite, and the two LLM rule-judges —
+rather than cleaned. This inverts most of the inventory's top-10 cleanup list. Do NOT patch
+AR3's rewrite rules 33/33b, do NOT renumber the 9 gate/review R-number collisions, do NOT fix
+the WP-13 UK-preference divergence, do NOT de-duplicate the persona canon double-injection,
+do NOT consolidate the eight five-copy style families, and do NOT wire `style_rules.py`.
+The correct action on that debt is to do nothing until its stage is deleted.
+CAVEAT, recorded honestly and owner-facing: those debts stay live for the entire migration
+window. AR3's quota keeps pressuring every production article toward a second named voice and
+a spoken quote until the rewrite stage is actually removed. If the migration stalls or is
+deprioritised, the ~3-line AR3 patch becomes correct after all. That is an owner decision,
+not the plan's.
+MIGRATION BLOCKERS identified from repository evidence, not from the inventory: B1 Writer
+Grounding has no production implementation; B2 Article Form has no production implementation
+(`sofa_discovery_shadow.py` exists but is imported by nothing in production); B3 no
+live-vs-shadow comparison harness exists; B4 the production writer path routes through
+Trident-only CLIProxyAPI and is unreachable from the Mac, so Phase 5 must run on Trident;
+B5 ACCEPT/HOLD has no definition in code and `_compute_should_block` cannot be ported because
+it keys on stage names that will no longer exist; B6 Story Rejection's FC2 finding is open and
+travels into the target; B7 length control unspecified (deliberately deferred).
+SEQUENCE: Phase 0 freeze baseline → 1 build in shadow (OFF by default, reusing
+`cj2_shadow.py`'s discipline) → 2 live-vs-shadow on held-out real stories → 3 resolve only
+blocking differences → 4 production candidate, deleting before switching, six separate commits
+→ 5 production-fidelity test on Trident → 6 controlled migration with the legacy path retained
+until the observation window closes.
+EVIDENCE: `.claude/experiments/production-architecture-plan-2026-08-20/` —
+`TARGET-ARCHITECTURE.md`, `LIVE-VS-TARGET.md`, `COMPONENT-DISPOSITIONS.md`,
+`LEGACY-RULE-MIGRATION.md`, `PRODUCTION-DEBT-BEFORE-MIGRATION.md`, `MIGRATION-SEQUENCE.md`,
+`ROLLBACK-AND-SHADOW-PLAN.md`.
+CODE: none. No production commit.
+SUPERSEDES: the run's own LOCAL_DEFECT verdict in
+`.claude/experiments/real-article-test-2-2026-08-20/run/DECISION.md` (kept as the run record;
+the owner reclassification is the operative status). Supersedes `WORK.md` `## 5c`'s
+"CURRENT — Real Article Test 2".
+FOLLOW-UP: Phase 0 — freeze the production baseline. Do NOT implement, deploy, clean, create
+Test 3, or return to Edinburgh.
