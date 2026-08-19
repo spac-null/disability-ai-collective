@@ -494,24 +494,38 @@ across the next experiment so any change in structure is attributable.
 Recurring residual classes to target: INVENTED_VISITOR_STATE, INVENTED_TEMPORAL_SPECIFICITY,
 INTERPRETATION_AS_FACT, QUALIFIER_DROPPED, INVENTED_PROPER_NOUN, FORM_INSTRUCTION_AS_PROSE_CLAIM.
 
-**Position in the Writer Grounding lineage, 2026-08-19 — WG-6 IS PAUSED MID-TASK.**
+**Position in the Writer Grounding lineage, 2026-08-19 — WG-6 COMPLETE, DECISION A.**
 WG-3A extraction, WG-4A commitment decomposition and WG-4B negative-source proof are each READY.
 WG-5 composed them into one monolithic verdict prompt: recall reached 8/8 but it lost WG-4B's
 BOUNDED_ABSENCE distinction (1 false positive, propagated into an unauthorized edit) and its repair
 under-cleared, leaving a residual visitor-state claim — decision C.
 
-**WG-6A: DECISION A — MODULAR_ARBITRATION_READY.** Deterministic routing (negative source claims to
-WG-4B's proof object, everything else to WG-4A) over the frozen component outputs gives TP 8 / FP 0 /
-FN 0 on Gold V2.1, with the R3 bounded-absence control retained. A reuse/rescore test, no new model
-calls — both components ran on the same frozen extraction. The WG-5 false positive is removed by
-construction, not by weakening negative grounding.
+**WG-6 fixed both.** `.claude/experiments/writer-grounding-v6-2026-08-19/` — read `STATUS.md` first,
+result in `WG6-RESULTS.json`.
 
-**WG-6B: PARTIAL.** Repair, fail-closed application, Form/voice verification and the per-patch
-closure check are done — Article Form preserved 3/3, arrival byte-identical 3/3, voice-token counts
-unchanged 3/3, R3 control byte-identical, and the WG-5 residual is cleared. The post-repair full
-re-audit was NOT run, so **no overall WG-6 decision exists yet** and two closure verdicts remain
-unadjudicated. Evidence and exact resume steps:
-`.claude/experiments/writer-grounding-v6-2026-08-19/` — read `RESUME.md` first.
+- **WG-6A — A, MODULAR_ARBITRATION_READY.** Composing only the components' VERDICTS through small
+  deterministic routing — negative source claims decided by WG-4B's proof object, everything else by
+  WG-4A — gives **TP 8 / FP 0 / FN 0** on Gold V2.1 with the R3 bounded-absence control retained. A
+  reuse/rescore test, no new model calls: both components had run on the same frozen extraction. The
+  WG-5 false positive is removed by construction, not by weakening negative grounding.
+- **WG-6B — A, REPAIR_CLOSURE_READY.** All 8 gold unsupported cleared, 0 introduced by patches,
+  0 interpretations or uncertain items edited, Article Form preserved 3/3, arrival byte-identical
+  3/3, voice-token counts unchanged 3/3, R3 control byte-identical. The WG-5 residual is gone; its
+  root cause was that WG-5 passed only the offending span as context, so repair never saw the
+  residual carrier.
+
+**Architectural result: modular composition is safer than monolithic composition** — at equal recall
+and better precision, it preserved component behaviour the WG-5 monolithic prompt destroyed.
+
+**Two new issues, NOT from the WG-6 charter, both to settle before the final replay:**
+`WG6-N1` a routing gap — WG-4B's proof is consulted only when WG-4A also types a commitment
+SOURCE_META, so a negative-source verdict can be silently suppressed when the components disagree
+about the claim's type (fired once, post-repair, benign against gold but a real recall hole).
+`WG6-N2` detector resampling variance — the identical frozen instrument on byte-identical untouched
+sentences produced 2 UNSUPPORTED it had called INTERPRETATION pre-repair.
+
+**NEXT:** close WG6-N1, re-score WG-6A to prove no regression, then ONE final untouched end-to-end
+shadow replay of the modular Writer Grounding pipeline. The replay was deliberately NOT run in WG-6.
 
 ## 5c. ROADMAP — WHAT COMES AFTER WRITER GROUNDING
 

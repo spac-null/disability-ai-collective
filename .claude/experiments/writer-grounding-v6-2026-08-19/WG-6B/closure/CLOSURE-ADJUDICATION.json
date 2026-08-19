@@ -1,0 +1,100 @@
+{
+  "closure_verdicts": {
+    "FORM1-3-P1": "CLOSED",
+    "FORM1-3-P2": "CLOSED",
+    "FORM1-3-P3": "UNDER_CLEARED",
+    "R2-P1": "CLOSED",
+    "R2-P2": "OVER_EDITED",
+    "R2-P3": "CLOSED",
+    "R3-P1": "CLOSED",
+    "R3-P2": "CLOSED"
+  },
+  "closed": [
+    "FORM1-3-P1",
+    "FORM1-3-P2",
+    "R2-P1",
+    "R2-P3",
+    "R3-P1",
+    "R3-P2"
+  ],
+  "non_closed": [
+    "FORM1-3-P3",
+    "R2-P2"
+  ],
+  "adjudication": {
+    "FORM1-3-P3": {
+      "closure_verdict": "UNDER_CLEARED",
+      "residuals": [
+        "HUMAN_STATE"
+      ],
+      "grammar_broken_claim": "NO",
+      "checker_reason": "The one-hour measure is gone, but the target commitment is a temporally indexed mental state, and the sentence still asserts the state itself: 'a person who did not know the work existed', set against 'it is happening now', still tells the reader that this visitor's ignorance held at an earlier point and ended at the visit. That is a shorter, weaker form of the same claim rather than its removal, and the rubric counts shorter and weaker forms as non-closure. The source establishes only that George, Walter and Hasegawa never showed work publicly in their lifetimes and were undiscovered; it says nothing about what any visitor knew or did not know, so the surviving human-state assertion is still unsupported. No hedge was added, no substitute fact appeared, and the sentence is grammatical.",
+      "patch_removed": [
+        " an hour ago"
+      ],
+      "patch_added": [],
+      "finite_verbs_before": {},
+      "finite_verbs_after": {},
+      "scope_of_crosscheck": "the repaired sentence only",
+      "other_unsupported_elsewhere_in_article": [
+        {
+          "parent": "P73",
+          "span": "The word travels easily between the visitor's afternoon and the artist's life"
+        }
+      ],
+      "calibrated_detector_post_repair_unsupported_in_article": [],
+      "same_checker_peer_verdicts": {
+        "FORM1-3-P1": "CLOSED",
+        "FORM1-3-P2": "CLOSED",
+        "R2-P1": "CLOSED",
+        "R2-P2": "OVER_EDITED",
+        "R2-P3": "CLOSED",
+        "R3-P1": "CLOSED",
+        "R3-P2": "CLOSED"
+      },
+      "classification": "CHECKER_ARTIFACT",
+      "classification_basis": "The calibrated post-repair detector flags NO unsupported content inside this repaired sentence, so the retained material is source-supported under the frozen instrument. The closure checker is stricter here than the detector that defined the finding."
+    },
+    "R2-P2": {
+      "closure_verdict": "OVER_EDITED",
+      "residuals": [],
+      "grammar_broken_claim": "YES",
+      "checker_reason": "The target is genuinely gone: no negative claim about the review's ranking or emphasis survives in any form, and the surviving rationale ('taken here because they can be set beside each other') is the writer's own editorial choice, which asserts nothing about the source. But the repair excised the main clause rather than the offending claim inside it, leaving a subjectless, verbless fragment with no predication at all — the reader is told two names are taken, but never what is said about them. That is removal of content beyond the target and leaves the sentence incoherent on its own, so it fails as a clean closure despite the target being cleared.",
+      "patch_removed": [
+        " not because the review places them above the rest but simply"
+      ],
+      "patch_added": [],
+      "finite_verbs_before": {
+        "can": 1
+      },
+      "finite_verbs_after": {
+        "can": 1
+      },
+      "grammar_adjudication": {
+        "finite_verb_forms_before": {
+          "can": 1
+        },
+        "finite_verb_forms_after": {
+          "can": 1
+        },
+        "finite_verb_inventory_unchanged": true,
+        "heuristic_limit": "This check counts finite verb FORMS; it cannot tell a main clause from a subordinate one. It therefore does NOT establish whether the sentence was a fragment. What it does establish is whether the patch changed the sentence's verb structure at all.",
+        "observed": "The only finite form present, 'can be', sits inside the subordinate 'because' clause and is present both before and after; the patch removed no verb of any kind.",
+        "verdict": "GRAMMATICAL_COMPLETENESS_UNCHANGED_BY_REPAIR — the patch removed no finite verb and left the subject and the because-clause standing, so whatever the sentence's grammatical status was, the repair did not alter it. The closure checker judged the result in isolation, without the pre-patch form, which is a deliberate design choice of this stage — so it cannot distinguish a pre-existing authorial fragment from repair-induced breakage."
+      },
+      "over_edit_adjudication": {
+        "checker_claim": "excised the main clause rather than the offending claim inside it",
+        "actually_removed": [
+          " not because the review places them above the rest but simply"
+        ],
+        "main_clause_surviving": "taken here because they can be set beside each other.",
+        "factual_content_removed_beyond_target": [],
+        "non_factual_collateral": [
+          "simply"
+        ],
+        "verdict": null
+      }
+    }
+  },
+  "note": "The closure checker deliberately does NOT see pre-patch wording, so it cannot distinguish a pre-existing authorial fragment from repair-induced breakage, and it may judge retained source-supported material more strictly than the calibrated detector that defined the finding. Both effects appear below and are adjudicated against deterministic evidence and the frozen detector."
+}

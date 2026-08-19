@@ -1,0 +1,84 @@
+{
+  "arbitration_unrouted": [
+    {
+      "tag": "form1-3",
+      "parent": "P83",
+      "commitment_id": "P83-C1",
+      "commitment_type": "OTHER",
+      "commitments_in_parent": 2,
+      "wg4b_proof_type": "NONE",
+      "wg4b_verdict_suppressed": "UNSUPPORTED",
+      "wg4a_verdict_kept": "INTERPRETATION",
+      "parent_span": "The review's discovery is the visitor's present encounter with work previously unknown to them"
+    },
+    {
+      "tag": "form1-3",
+      "parent": "P83",
+      "commitment_id": "P83-C2",
+      "commitment_type": "HUMAN_STATE",
+      "commitments_in_parent": 2,
+      "wg4b_proof_type": "NONE",
+      "wg4b_verdict_suppressed": "UNSUPPORTED",
+      "wg4a_verdict_kept": "SUPPORTED",
+      "parent_span": "The review's discovery is the visitor's present encounter with work previously unknown to them"
+    }
+  ],
+  "method": "post-repair re-audit, identical modular instrument, patched articles",
+  "commitments": 292,
+  "verdicts": {
+    "INTERPRETATION": 82,
+    "SUPPORTED": 208,
+    "UNSUPPORTED": 2
+  },
+  "post_repair_unsupported_total": 2,
+  "post_repair_unsupported_per_article": {
+    "form1-3": 1,
+    "r2": 1
+  },
+  "gold_unsupported_remaining": 0,
+  "gold_unsupported_remaining_detail": [],
+  "new_unsupported": 2,
+  "new_unsupported_detail": [
+    {
+      "tag": "form1-3",
+      "parent": "P73",
+      "commitment_id": "P73-C2",
+      "commitment_type": "TEMPORAL_MODIFIER",
+      "proposition": "The visitor's encounter with the festival occupies an afternoon.",
+      "parent_span": "The word travels easily between the visitor's afternoon and the artist's life",
+      "owner": "WG-4A",
+      "class": "ORDINARY",
+      "wg4b_proof_type": null,
+      "wg4a_status": "UNSUPPORTED",
+      "arbitrated_verdict": "UNSUPPORTED",
+      "reason": "The source never states how long the visit lasts. Its own temporal frame is the whole festival (\"By the time you’re done with Edinburgh art festival\") across many separate venues, which if anything points away from a single afternoon. A grounded base about the visitor's present encounter cannot transfer support to an invented duration.",
+      "gold_id": null
+    },
+    {
+      "tag": "r2",
+      "parent": "P72",
+      "commitment_id": "P72-C2",
+      "commitment_type": "TEMPORAL_MODIFIER",
+      "proposition": "The finding happened after the year 2013.",
+      "parent_span": "was found after 2013",
+      "owner": "WG-4A",
+      "class": "ORDINARY",
+      "wg4b_proof_type": null,
+      "wg4a_status": "UNSUPPORTED",
+      "arbitrated_verdict": "UNSUPPORTED",
+      "reason": "The source dates the discovery to after her death, and that death to 2013; it does not place the discovery after the year 2013. Discovery later in 2013 is fully consistent with the anchor, so 'after 2013' asserts a boundary the source does not license. The article's own earlier restatement (P31) keeps the correct 'after her death in 2013'; this later compression drops the death as the reference point and shifts it to the calendar year.",
+      "gold_id": null
+    }
+  ],
+  "gold_uncertain_patched": [],
+  "gold_uncertain_checks": [
+    {
+      "span": "the festival's characteristic verb",
+      "patched": false
+    },
+    {
+      "span": "What it does not describe, and cannot",
+      "patched": false
+    }
+  ]
+}

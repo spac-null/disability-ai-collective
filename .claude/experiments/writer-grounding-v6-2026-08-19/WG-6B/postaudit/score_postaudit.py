@@ -23,6 +23,7 @@ def arbitrate(tag):
     ex = json.loads((W / f"{tag}-extract-raw.json").read_text())
     E = {p["ID"]: p for p in (ex["propositions"] if isinstance(ex, dict) else ex)}
     out = []
+    unrouted_local = []
     for pid, parent in A.items():
         nb = Bm.get(pid, {})
         is_neg = nb.get("IN_SCOPE") == "YES" and nb.get("NEGATIVE") == "YES"
@@ -33,23 +34,35 @@ def arbitrate(tag):
             to_b = is_neg and (c.get("COMMITMENT_TYPE") == "SOURCE_META" or fallback)
             if to_b:
                 proof = nb.get("PROOF_TYPE")
-                v = PROOF_TO_VERDICT.get(proof, "ARBITRATION_ERROR")
+                assert proof in PROOF_TO_VERDICT, f"ARBITRATION_ERROR {tag}/{pid} proof={proof!r}"
+                v = PROOF_TO_VERDICT[proof]
                 owner, cls = "WG-4B", "NEGATIVE_SOURCE"
             else:
                 v, owner, cls, proof = c.get("SUPPORT_STATUS"), "WG-4A", "ORDINARY", None
+                if is_neg and not meta and len(cs) > 1:
+                    cls = "ARBITRATION_UNROUTED"
+                    unrouted_local.append({
+                        "tag": tag, "parent": pid, "commitment_id": c["COMMITMENT_ID"],
+                        "commitment_type": c.get("COMMITMENT_TYPE"),
+                        "commitments_in_parent": len(cs),
+                        "wg4b_proof_type": nb.get("PROOF_TYPE"),
+                        "wg4b_verdict_suppressed": nb.get("VERDICT"),
+                        "wg4a_verdict_kept": c.get("SUPPORT_STATUS"),
+                        "parent_span": E.get(pid, {}).get("EXACT_SPAN")})
             out.append({"tag": tag, "parent": pid, "commitment_id": c["COMMITMENT_ID"],
                         "commitment_type": c.get("COMMITMENT_TYPE"), "proposition": c.get("PROPOSITION"),
                         "parent_span": E.get(pid, {}).get("EXACT_SPAN"), "owner": owner, "class": cls,
                         "wg4b_proof_type": proof, "wg4a_status": c.get("SUPPORT_STATUS"),
                         "arbitrated_verdict": v, "reason": c.get("REASON")})
-    return out
+    return out, unrouted_local
 
-arb = []
+arb, unrouted = [], []
 for tag in TAGS.values():
     missing = [f for f in (f"{tag}-wg4a-raw.json", f"{tag}-wg4b-raw.json") if not (W / f).exists()]
     if missing:
         print(f"MISSING for {tag}: {missing}"); raise SystemExit(1)
-    arb += arbitrate(tag)
+    _a, _u = arbitrate(tag)
+    arb += _a; unrouted += _u
 
 gold = json.loads((I / "gold-ledger-V2.1-FROZEN.json").read_text())
 findings = {f["id"]: (art, f) for art, a in gold["articles"].items() for f in a["unsupported_findings"]}
@@ -92,7 +105,13 @@ for u in unc:
     unc_touched.append({"span": u["span"], "patched": touched})
     print(f'  gold UNCERTAIN "{u["span"]}" patched={touched}')
 
-res = {"method": "post-repair re-audit, identical modular instrument, patched articles",
+print(f"\n  ARBITRATION_UNROUTED negatives (pre-registered coverage gap): {len(unrouted)}")
+for u in unrouted:
+    print(f'   [{u["tag"]}/{u["parent"]}] {u["commitment_id"]} wg4b proof={u["wg4b_proof_type"]} '
+          f'verdict={u["wg4b_verdict_suppressed"]} SUPPRESSED -> kept WG-4A {u["wg4a_verdict_kept"]}')
+    print(f'      span: "{u["parent_span"]}"')
+
+res = {"arbitration_unrouted": unrouted, "method": "post-repair re-audit, identical modular instrument, patched articles",
        "commitments": len(arb),
        "verdicts": dict(collections.Counter(a["arbitrated_verdict"] for a in arb)),
        "post_repair_unsupported_total": len(uns),

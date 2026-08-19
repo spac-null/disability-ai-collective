@@ -1,0 +1,16 @@
+{
+  "stage": "WG-6B POST-REPAIR RE-AUDIT / WG4B",
+  "component_version": "WG4B unchanged (system prompt read verbatim from frozen WG-4 file)",
+  "tag": "r3",
+  "input_propositions": 72,
+  "system_sha256": "3e4739d24ea15b4f49102815f2fe8fdaa9b3f249f62721e3e22371fe26c343f8",
+  "user_sha256": "e2373e7f0f32156cab146acd8b4041593b97d9f38653b64500bca0b52519425b",
+  "prompt_sha256": "98fae0534b8de07b4b3fd8563e814859718ac125b689dfdca253ec797c49b52d",
+  "patched_article_sha256": "c5eee78884b209ed197dd4b01ad342338f61158cfc7e5146b7ba0b0e9578e984",
+  "input_extraction_sha256": "a51e9ee4e0bb8365a7927fa3f253150279d268c87f947bfa5072a402e14779f3",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "model_identity": "claude-opus-5[1m] via local Claude subscription, fresh-context subagent",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "blind_to_gold": true,
+  "phase": "PRESERVED_PRE_EXECUTION"
+}

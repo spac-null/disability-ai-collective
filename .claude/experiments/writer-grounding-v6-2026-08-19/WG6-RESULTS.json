@@ -1,0 +1,449 @@
+{
+  "experiment": "WG-6 WRITER GROUNDING — MODULAR ARBITRATION + SEMANTIC REPAIR CLOSURE",
+  "date": "2026-08-19",
+  "execution_mode": "LOCAL_CLAUDE_SUBSCRIPTION",
+  "model": "claude-opus-5[1m], fresh-context blind subagent calls",
+  "production_wiring": "NONE",
+  "deployed": false,
+  "pushed": false,
+  "articles_generated": 0,
+  "gold_modified": false,
+  "article_form_modified": false,
+  "form_1_4_created": false,
+  "WG-6A": {
+    "name": "MODULAR VERDICT ARBITRATION",
+    "method": "REUSE_RESCORE_NO_MODEL_CALLS",
+    "fresh_calls": false,
+    "why_reuse_is_valid": "WG-4A and WG-4B ran on the SAME frozen WG-3A extraction (236 parents, hashes verified identical). The arbitration layer under test is pure deterministic code, so the arbitrated verdict set is fully determined by artefacts that already exist.",
+    "tp": 8,
+    "fp": 0,
+    "fn": 0,
+    "recall": 1.0,
+    "precision": 1.0,
+    "caught": [
+      "G13-01",
+      "G13-02",
+      "G13-04",
+      "GR2-01",
+      "GR2-02",
+      "GR2-04",
+      "GR3-01",
+      "GR3-03"
+    ],
+    "missed": [],
+    "router": {
+      "to_wg4b": 8,
+      "to_wg4a": 257,
+      "unrouted": 0,
+      "proof_vs_verdict_disagreements": 0,
+      "forbidden_fields_read": []
+    },
+    "controls": {
+      "G13-04": {
+        "required": "UNSUPPORTED",
+        "got": [
+          "UNSUPPORTED"
+        ],
+        "owner": [
+          "WG-4B"
+        ],
+        "proof_type": [
+          "NONE"
+        ],
+        "pass": true
+      },
+      "GR2-02": {
+        "required": "UNSUPPORTED",
+        "got": [
+          "UNSUPPORTED"
+        ],
+        "owner": [
+          "WG-4B"
+        ],
+        "proof_type": [
+          "NONE"
+        ],
+        "pass": true
+      },
+      "R3-control": {
+        "required": "SUPPORTED",
+        "got": [
+          "SUPPORTED"
+        ],
+        "owner": [
+          "WG-4B"
+        ],
+        "proof_type": [
+          "BOUNDED_ABSENCE"
+        ],
+        "pass": true
+      }
+    },
+    "interpretation_flipped_to_unsupported": 1,
+    "that_flip_explained": "GR2-02 (r2/P21). WG-4A had called it INTERPRETATION via the absence-as-evidence move; WG-4B's PROOF_TYPE NONE correctly overrides. A true positive, not a false positive.",
+    "gold_uncertain_checks": [
+      {
+        "span": "the festival's characteristic verb",
+        "parents": [
+          "P55",
+          "P56"
+        ],
+        "verdicts": [
+          "INTERPRETATION",
+          "INTERPRETATION"
+        ],
+        "pass": true
+      },
+      {
+        "span": "What it does not describe, and cannot",
+        "parents": [
+          "P79"
+        ],
+        "verdicts": [
+          "SUPPORTED"
+        ],
+        "pass": true
+      }
+    ],
+    "reclassified_interpretation_checks": [
+      {
+        "id": "G13-03",
+        "tag": "form1-3",
+        "loose_parents": [
+          "P17",
+          "P42",
+          "P43",
+          "P58",
+          "P59",
+          "P76",
+          "P77",
+          "P80"
+        ],
+        "loose_verdicts": [
+          "INTERPRETATION",
+          "INTERPRETATION",
+          "INTERPRETATION",
+          "SUPPORTED",
+          "INTERPRETATION",
+          "SUPPORTED",
+          "UNSUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "gold_disjoint_parents": [
+          "P17",
+          "P42",
+          "P43",
+          "P58",
+          "P59",
+          "P77",
+          "P80"
+        ],
+        "gold_disjoint_verdicts": [
+          "INTERPRETATION",
+          "INTERPRETATION",
+          "INTERPRETATION",
+          "SUPPORTED",
+          "INTERPRETATION",
+          "SUPPORTED",
+          "SUPPORTED",
+          "SUPPORTED"
+        ],
+        "overmatched_into_other_gold_findings": [
+          "G13-02"
+        ],
+        "pass": true
+      },
+      {
+        "id": "GR2-03",
+        "tag": "r2",
+        "loose_parents": [
+          "P47",
+          "P48"
+        ],
+        "loose_verdicts": [
+          "SUPPORTED",
+          "INTERPRETATION"
+        ],
+        "gold_disjoint_parents": [
+          "P47",
+          "P48"
+        ],
+        "gold_disjoint_verdicts": [
+          "SUPPORTED",
+          "INTERPRETATION"
+        ],
+        "overmatched_into_other_gold_findings": [],
+        "pass": true
+      },
+      {
+        "id": "GR3-02",
+        "tag": "r3",
+        "loose_parents": [
+          "P41",
+          "P42"
+        ],
+        "loose_verdicts": [
+          "INTERPRETATION",
+          "INTERPRETATION"
+        ],
+        "gold_disjoint_parents": [
+          "P41",
+          "P42"
+        ],
+        "gold_disjoint_verdicts": [
+          "INTERPRETATION",
+          "INTERPRETATION"
+        ],
+        "overmatched_into_other_gold_findings": [],
+        "pass": true
+      }
+    ],
+    "wg5_false_positive": "ELIMINATED BY CONSTRUCTION — exclusive routing, not a weakened negative-source rule. WG-4B's rule is byte-identical and still owns its class.",
+    "decision": "A — MODULAR_ARBITRATION_READY"
+  },
+  "WG-6B": {
+    "name": "SEMANTIC REPAIR CLOSURE",
+    "repair_calls": 3,
+    "repair_retries": 0,
+    "candidates": 0,
+    "full_rewrites": 0,
+    "prompts_persisted_before_calls": true,
+    "gold_ids_or_verdicts_shown_to_repair": false,
+    "patches_by_article": {
+      "form1-3": 3,
+      "r2": 3,
+      "r3": 2
+    },
+    "patches_total": 8,
+    "application": {
+      "form1-3": {
+        "status": "APPLIED",
+        "chars_removed": 130,
+        "chars_added": 50,
+        "word_delta": -16,
+        "paragraph_delta": 0,
+        "boundary_assert_ok": true,
+        "reconstruction_matches": true,
+        "orig_sha256": "9a78d9a4c28f4a891cf222b28c87d76fe567bc31c0ff7eec8d56aa93d339bff4",
+        "patched_sha256": "7a13f2cf65ba2abd9678b516125d5796fc0f62490ef879bd3028ad005ffbaeae"
+      },
+      "r2": {
+        "status": "APPLIED",
+        "chars_removed": 296,
+        "chars_added": 114,
+        "word_delta": -28,
+        "paragraph_delta": 0,
+        "boundary_assert_ok": true,
+        "reconstruction_matches": true,
+        "orig_sha256": "5ea20461cc09484d7bf1fea3f83de526f5c54720b72438e180cf92e4f1f600ad",
+        "patched_sha256": "7c6b405e6b30bcfceff44a5b843bf81995298b83ad96f8efaf10c7449fd3afe3"
+      },
+      "r3": {
+        "status": "APPLIED",
+        "chars_removed": 26,
+        "chars_added": 0,
+        "word_delta": -5,
+        "paragraph_delta": 0,
+        "boundary_assert_ok": true,
+        "reconstruction_matches": true,
+        "orig_sha256": "27b1038c80af9890ca07b5b4ab1533670b3425f11c41d2898d2a61d806086d94",
+        "patched_sha256": "c5eee78884b209ed197dd4b01ad342338f61158cfc7e5146b7ba0b0e9578e984"
+      }
+    },
+    "fail_closed_rejections": 0,
+    "ambiguous_matches": 0,
+    "overlapping_patches": 0,
+    "containment_all_old_text_inside_parent_sentence": true,
+    "new_licence_this_experiment": "Repair may widen OLD_TEXT beyond the flagged span for semantic closure, but ONLY within the parent sentence of that finding. Enforced deterministically by the applier as a fail-closed containment assertion.",
+    "post_repair_reaudit": {
+      "method": "Full source-fidelity inspection of the PATCHED articles with the IDENTICAL instrument — frozen WG-3A extraction (sha 45586e5f...), then frozen WG-4A (sha 7a4937c9...) and frozen WG-4B (sha 3e4739d2...), then the SAME deterministic arbitration rule. No prompt was retyped or tuned.",
+      "propositions": {
+        "form1-3": 86,
+        "r2": 81,
+        "r3": 72
+      },
+      "propositions_pre_repair": {
+        "form1-3": 81,
+        "r2": 81,
+        "r3": 74
+      },
+      "commitments": 292,
+      "verdicts": {
+        "INTERPRETATION": 82,
+        "SUPPORTED": 208,
+        "UNSUPPORTED": 2
+      },
+      "gold_unsupported_remaining": 0,
+      "post_repair_unsupported_total": 2,
+      "post_repair_unsupported_per_article": {
+        "form1-3": 1,
+        "r2": 1
+      },
+      "unsupported_introduced_by_patches": 0,
+      "unsupported_new_relative_to_gold": 2,
+      "new_unsupported_detail": [
+        {
+          "tag": "form1-3",
+          "parent": "P73",
+          "span": "The word travels easily between the visitor's afternoon and the artist's life",
+          "commitment": "The visitor's encounter with the festival occupies an afternoon.",
+          "type": "TEMPORAL_MODIFIER"
+        },
+        {
+          "tag": "r2",
+          "parent": "P72",
+          "span": "was found after 2013",
+          "commitment": "The finding happened after the year 2013.",
+          "type": "TEMPORAL_MODIFIER"
+        }
+      ],
+      "new_unsupported_attribution": "BOTH are on prose NO PATCH TOUCHED, verified byte-identical between the original and patched articles, and BOTH were judged INTERPRETATION by the SAME instrument in the pre-repair run. form1-3 'the visitor's afternoon': pre-repair one OTHER/INTERPRETATION commitment (P68-C1); post-repair the resampled WG-4A split it into base + TEMPORAL_MODIFIER and flagged the modifier. r2 'was found after 2013': same pattern. This is DETECTOR RESAMPLING VARIANCE on untouched text, not repair-introduced invention.",
+      "gold_uncertain_patched": 0,
+      "gold_uncertain_checks": [
+        {
+          "span": "the festival's characteristic verb",
+          "patched": false
+        },
+        {
+          "span": "What it does not describe, and cannot",
+          "patched": false
+        }
+      ]
+    },
+    "closure_check": {
+      "method": "Per-patch semantic closure over the sentence AS IT NOW READS. The checker is deliberately NOT shown the pre-patch wording, so it judges the resulting commitment rather than whether strings disappeared.",
+      "verdicts": {
+        "FORM1-3-P1": "CLOSED",
+        "FORM1-3-P2": "CLOSED",
+        "FORM1-3-P3": "UNDER_CLEARED",
+        "R2-P1": "CLOSED",
+        "R2-P2": "OVER_EDITED",
+        "R2-P3": "CLOSED",
+        "R3-P1": "CLOSED",
+        "R3-P2": "CLOSED"
+      },
+      "summary": {
+        "CLOSED": 6,
+        "UNDER_CLEARED": 1,
+        "OVER_EDITED": 1
+      },
+      "adjudication": {
+        "FORM1-3-P3": {
+          "closure_verdict": "UNDER_CLEARED",
+          "classification": "CHECKER_ARTIFACT",
+          "basis": "The calibrated post-repair detector flags NO unsupported content inside this repaired sentence. Gold V2.1's own min_correction for this finding is 'Remove the invented interval; keep only source-supported unfamiliarity' — exactly what the repair did. The same closure checker called the semantically equivalent R3-P1 sentence CLOSED, so it is internally inconsistent between the two."
+        },
+        "R2-P2": {
+          "closure_verdict": "OVER_EDITED",
+          "classification": "CHECKER_ARTIFACT_WITH_MINOR_COLLATERAL",
+          "basis": "The checker's stated rationale — 'excised the main clause rather than the offending claim inside it' — is factually wrong. The patch removed exactly ' not because the review places them above the rest but simply'. The subject and the because-clause both survive: 'taken here because they can be set beside each other.' The patch removed no finite verb, so grammatical completeness is unchanged by the repair. Only collateral: the intensifier 'simply', which carries no factual commitment.",
+          "residual_classes_found": []
+        }
+      }
+    },
+    "article_form": {
+      "preserved": {
+        "form1-3": true,
+        "r2": true,
+        "r3": true
+      },
+      "dimensions_changed": {
+        "form1-3": [],
+        "r2": [],
+        "r3": []
+      },
+      "structure_preserved": "3/3",
+      "arrival_bytes_identical": {
+        "form1-3": true,
+        "r2": true,
+        "r3": true
+      },
+      "arrival_paragraph_patched": {
+        "form1-3": false,
+        "r2": false,
+        "r3": false
+      },
+      "paragraph_delta": {
+        "form1-3": 0,
+        "r2": 0,
+        "r3": 0
+      }
+    },
+    "voice": {
+      "token_count_deltas": {
+        "form1-3": {},
+        "r2": {},
+        "r3": {}
+      },
+      "regression": "NONE 3/3 — every voice-token count identical before/after on all three articles",
+      "checker_artifact": "r2's voice_regression=True flag reports any voice token present in NEW_TEXT regardless of provenance. 'here' occurs once in OLD_TEXT and once in NEW_TEXT: carried through, not introduced."
+    },
+    "r3_control": {
+      "sentence": "The number is the review's, and it sits there without commentary.",
+      "present_in_original": true,
+      "present_in_patched": true,
+      "byte_identical": true,
+      "patched_by_any_patch": false,
+      "post_repair_reconfirmation": "In the post-repair re-audit the same claim (renumbered P28) was again judged NEGATIVE with proof BOUNDED_ABSENCE -> SUPPORTED, independently re-derived on the patched article."
+    },
+    "r2_under_clearance_control": {
+      "wg5_residual": "a name that arrives without preparation",
+      "eliminated": true,
+      "sentence_now": "That is the texture of moving through it — a sequence of rooms, each producing a name.",
+      "closure_verdict": "CLOSED, no HUMAN_STATE residual",
+      "residual_visitor_state_after_repair": "NO",
+      "wg5_root_cause_identified": "WG-5's repair prompt passed SENTENCE_CONTEXT = the offending span alone, so repair never saw the residual carrier. WG-6B passes the true parent sentence plus an explicit closure duty and the bounded widening licence."
+    },
+    "decision": "A — REPAIR_CLOSURE_READY"
+  },
+  "NEW_FINDINGS_NOT_PART_OF_THE_WG6_CHARTER": [
+    {
+      "id": "WG6-N1",
+      "name": "ARBITRATION_UNROUTED coverage gap — the pre-registered fallback fired for the first time",
+      "what": "The router consults WG-4B's proof object only when WG-4A typed at least one commitment in the parent as SOURCE_META, or when the parent has exactly one commitment. In the post-repair run, form1-3/P83 was judged NEGATIVE with PROOF_TYPE NONE by WG-4B, but WG-4A decomposed that parent into two commitments (OTHER, HUMAN_STATE), neither typed SOURCE_META. The negative claim therefore had no routing target and WG-4B's UNSUPPORTED verdict was SUPPRESSED; WG-4A's INTERPRETATION stood.",
+      "consequence_here": "Benign against frozen Gold V2.1, which does not list that proposition as unsupported — so the suppression happened to be correct.",
+      "consequence_in_general": "A real recall hole. A genuinely unproven negative source claim sitting in a multi-commitment parent that WG-4A does not type SOURCE_META will silently escape the negative-source proof rule entirely.",
+      "why_it_did_not_show_in_WG-6A": "WG-6A had 0 unrouted: both G13-04 and GR2-02 were typed SOURCE_META by WG-4A. The gap is latent in the pre-registered rule and only exposed by resampling.",
+      "recommended_fix": "Make routing depend on WG-4B's own class judgement rather than requiring WG-4A to agree on the type — i.e. route on (IN_SCOPE=YES and NEGATIVE=YES) regardless of WG-4A commitment typing, applying the proof object to the parent. This must be measured, not assumed: it would have changed nothing in WG-6A but would flip form1-3/P83 to UNSUPPORTED post-repair."
+    },
+    {
+      "id": "WG6-N2",
+      "name": "Detector resampling variance on untouched prose",
+      "what": "Re-running the identical frozen instrument over articles whose relevant sentences are byte-identical produced 2 UNSUPPORTED findings that the pre-repair run had judged INTERPRETATION, and changed extraction granularity (form1-3 81 -> 86 propositions, r3 74 -> 72).",
+      "consequence": "The 'new unsupported: 0' gate cannot be read literally off a single resampled audit. Attribution must be done by checking whether the flagged text was touched by a patch — which is what was done here.",
+      "recommended_next": "Quantify instrument variance directly (repeat the same audit on the same unmodified article N times) before treating any single post-repair count as an absolute gate."
+    }
+  ],
+  "SUCCESS_GATE_ASSESSMENT": {
+    "WG-6A: 8/8 detector recall": "PASS (TP 8, FN 0)",
+    "WG-6A: 0 false positives": "PASS (FP 0)",
+    "WG-6A: R3 bounded-absence control retained": "PASS",
+    "WG-6B: all unsupported cleared": "PASS — gold unsupported remaining 0",
+    "WG-6B: 0 new unsupported": "PASS ON ATTRIBUTION, NOT ON RAW COUNT — 0 introduced by patches; 2 appeared under the resampled instrument on prose no patch touched, both judged INTERPRETATION by the same instrument pre-repair. Recorded as WG6-N2, not as a repair defect.",
+    "WG-6B: 0 legitimate interpretations edited": "PASS",
+    "WG-6B: 0 uncertain items edited": "PASS",
+    "WG-6B: Article Form preserved 3/3": "PASS",
+    "WG-6B: voice stable 3/3": "PASS",
+    "WG-6B: R3 control byte-identical": "PASS",
+    "WG-6B: R2 residual eliminated": "PASS"
+  },
+  "OVERALL_DECISION": "A — WRITER_GROUNDING_COMPONENTS_READY_FOR_FINAL_SHADOW_REPLAY",
+  "decision_reasoning": "Both defects WG-6 was chartered to fix are resolved. Defect 1 (false-positive composition): modular arbitration retains WG-4B's BOUNDED_ABSENCE distinction, the R3 control survives as SUPPORTED, and FP fell from 1 to 0 without touching the negative-source rule. Defect 2 (repair under-clearance): the residual visitor-state carrier is gone, all 8 gold unsupported are cleared, and the root cause of WG-5's failure is identified and fixed in the repair contract. Article Form and voice show no regression, so not D. Nothing under-clears, so not B. The one OVER_EDITED verdict is a checker artifact whose stated rationale is factually wrong about what was removed, so not C.",
+  "decision_caveat": "Decision A rests on attributing the 2 post-repair unsupported findings to instrument resampling variance rather than to repair. That attribution is evidenced (byte-identical untouched text; the same instrument called both INTERPRETATION pre-repair) but it does mean the literal 'new unsupported = 0' reading of the gate was not met. Recorded openly as WG6-N2 so the owner can overrule.",
+  "architectural_result": "MODULAR COMPOSITION IS SAFER THAN MONOLITHIC COMPOSITION. Keeping each calibrated component's judgement intact and composing only their VERDICTS through small deterministic arbitration preserved component behaviour that the WG-5 monolithic prompt destroyed, at equal recall and better precision. Repair closes commitments semantically when it is given the real parent sentence and a bounded licence to clear residual carriers within it. Two new issues are now on the table: a latent routing gap that suppresses a negative-source verdict when the components disagree about the claim's type, and measurable detector variance under resampling.",
+  "EXACT_NEXT_STEP": "Close the WG6-N1 routing gap (route on WG-4B's own class judgement, re-score WG-6A to prove nothing regresses), then run ONE final untouched end-to-end shadow replay of the complete modular Writer Grounding pipeline. The replay was NOT run in this task.",
+  "guards_respected": [
+    "Article Form unmodified",
+    "FORM-1.4 not created",
+    "no article generated",
+    "Real Article Test 2 not run",
+    "production not wired",
+    "_should_block untouched",
+    "not deployed",
+    "not pushed",
+    "LEGACY PROMPT / RULE INVENTORY not started (still DEFERRED, WORK.md 5c)",
+    "final shadow replay NOT run"
+  ]
+}

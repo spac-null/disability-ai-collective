@@ -39,12 +39,22 @@ for pid, c in non_closed.items():
 
     if c["VERDICT"] == "UNDER_CLEARED":
         # authoritative cross-check: does the calibrated detector still flag this span?
-        span = None
+        # SENTENCE-level, not article-level: an unsupported item elsewhere in the same
+        # article says nothing about whether THIS patch closed THIS commitment.
+        sent_now = c["SENTENCE_NOW"]
         still = []
         if post:
             for u in post["gold_unsupported_remaining_detail"] + post["new_unsupported_detail"]:
-                if u["tag"] == a["tag"]:
+                if u["tag"] != a["tag"]:
+                    continue
+                sp = (u.get("parent_span") or "").strip()
+                if sp and sp in sent_now:
                     still.append(u)
+        entry["scope_of_crosscheck"] = "the repaired sentence only"
+        entry["other_unsupported_elsewhere_in_article"] = [
+            {"parent": u["parent"], "span": u["parent_span"]}
+            for u in (post["gold_unsupported_remaining_detail"] + post["new_unsupported_detail"]
+                      if post else []) if u["tag"] == a["tag"] and (u.get("parent_span") or "").strip() not in sent_now]
         entry["calibrated_detector_post_repair_unsupported_in_article"] = [
             {"parent": u["parent"], "span": u["parent_span"], "commitment": u["proposition"]} for u in still]
         # is the same semantic content judged CLOSED elsewhere by the same checker?
@@ -54,22 +64,32 @@ for pid, c in non_closed.items():
         entry["classification"] = ("GENUINE_REPAIR_DEFECT" if still else "CHECKER_ARTIFACT")
         entry["classification_basis"] = (
             "The calibrated post-repair detector — the same instrument that produced the findings — "
-            "still flags unsupported content in this article." if still else
-            "The calibrated post-repair detector flags NO unsupported content in this article, so the "
+            "still flags unsupported content INSIDE THIS REPAIRED SENTENCE." if still else
+            "The calibrated post-repair detector flags NO unsupported content inside this repaired "
+            "sentence, so the "
             "retained material is source-supported under the frozen instrument. The closure checker is "
             "stricter here than the detector that defined the finding.")
 
     if c["GRAMMAR_BROKEN"] == "YES":
-        before_frag = not finite_verbs(a["old"])
+        unchanged = finite_verbs(a["old"]) == finite_verbs(a["new"])
         entry["grammar_adjudication"] = {
-            "sentence_had_no_finite_main_verb_before": before_frag,
-            "finite_verb_inventory_unchanged": finite_verbs(a["old"]) == finite_verbs(a["new"]),
-            "verdict": ("PRE_EXISTING_AUTHORIAL_FRAGMENT — the sentence carried no finite main verb "
-                        "before the patch either, and the patch changed no finite verb. The repair did "
-                        "not break grammar; the closure checker judged the sentence in isolation "
-                        "without the pre-patch form, which is a deliberate design choice of this stage."
-                        if finite_verbs(a["old"]) == finite_verbs(a["new"])
-                        else "REPAIR_ALTERED_VERB_STRUCTURE — investigate")}
+            "finite_verb_forms_before": finite_verbs(a["old"]),
+            "finite_verb_forms_after": finite_verbs(a["new"]),
+            "finite_verb_inventory_unchanged": unchanged,
+            "heuristic_limit": ("This check counts finite verb FORMS; it cannot tell a main clause "
+                                "from a subordinate one. It therefore does NOT establish whether the "
+                                "sentence was a fragment. What it does establish is whether the patch "
+                                "changed the sentence's verb structure at all."),
+            "observed": ("The only finite form present, 'can be', sits inside the subordinate "
+                         "'because' clause and is present both before and after; the patch removed no "
+                         "verb of any kind."),
+            "verdict": ("GRAMMATICAL_COMPLETENESS_UNCHANGED_BY_REPAIR — the patch removed no finite "
+                        "verb and left the subject and the because-clause standing, so whatever the "
+                        "sentence's grammatical status was, the repair did not alter it. The closure "
+                        "checker judged the result in isolation, without the pre-patch form, which is "
+                        "a deliberate design choice of this stage — so it cannot distinguish a "
+                        "pre-existing authorial fragment from repair-induced breakage."
+                        if unchanged else "REPAIR_ALTERED_VERB_STRUCTURE — investigate")}
     if c["VERDICT"] == "OVER_EDITED":
         entry["over_edit_adjudication"] = {
             "checker_claim": "excised the main clause rather than the offending claim inside it",
