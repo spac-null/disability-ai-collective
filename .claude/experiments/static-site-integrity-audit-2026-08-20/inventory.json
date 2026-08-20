@@ -1,0 +1,95 @@
+{
+  "audit": "static-website-integrity-audit",
+  "frozen_at": "2026-08-20",
+  "scope_note": "Non-article static/shared surfaces only. 142-article _posts corpus explicitly excluded (separate LC1 workstream).",
+  "deploy_health_at_freeze": {
+    "workflow": "Deploy to GitHub Pages",
+    "latest_run_status": "success",
+    "latest_run_completed_at": "2026-08-20T12:07:57Z",
+    "latest_run_commit_subject": "fix: correct legacy care-labor factual error"
+  },
+  "pages": [
+    {"id": "home", "path": "index.html", "url": "/", "last_commit": "4adc6d2", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "about", "path": "about.html", "url": "/about/", "last_commit": "4adc6d2", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "accessibility", "path": "accessibility.html", "url": "/accessibility/", "last_commit": "e4746db", "last_commit_date": "2026-08-12", "built": true, "disposition": "UPDATE_FRESHNESS", "finding_ref": "F-1"},
+    {"id": "404", "path": "404.html", "url": "/404.html", "last_commit": "e4746db", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "gallery", "path": "gallery.html", "url": "/gallery/", "last_commit": "84c96a2", "last_commit_date": "2026-08-12", "built": true, "disposition": "UPDATE_FACT", "finding_ref": "F-5"},
+    {"id": "style-lab", "path": "style-lab.html", "url": null, "last_commit": "84c96a2", "last_commit_date": "2026-08-12", "built": false, "disposition": "KEEP"},
+    {"id": "realistic-scenes", "path": "realistic-scenes.html", "url": null, "last_commit": "84c96a2", "last_commit_date": "2026-08-12", "built": false, "disposition": "KEEP"},
+    {"id": "research-index", "path": "research.html", "url": "/research/", "last_commit": "aa0172e", "last_commit_date": "2026-08-15", "built": true, "disposition": "KEEP"},
+    {"id": "jascha", "path": "jascha.html", "url": "/jascha/", "last_commit": "5646db8", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "notes", "path": "notes.html", "url": "/notes/", "last_commit": "b73c07c", "last_commit_date": "2026-06-15", "built": true, "disposition": "OWNER_DECISION", "finding_ref": "F-4"},
+    {"id": "collective-redirect", "path": "collective.html", "url": "/collective/", "last_commit": "916af3e", "last_commit_date": "2026-06-15", "built": true, "disposition": "KEEP"},
+    {"id": "stats-snapshot", "path": "cripminds-stats-2026-06.html", "url": null, "last_commit": "dd6bb6a", "last_commit_date": "2026-06-15", "built": false, "disposition": "KEEP"},
+    {"id": "press-index", "path": "press/index.html", "url": "/press/", "last_commit": "4d5efc4", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "press-how-it-works", "path": "press/how-it-works/index.html", "url": "/press/how-it-works/", "last_commit": "a8587f3", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "press-system-report", "path": "press/system-report/index.html", "url": "/press/system-report/", "last_commit": "a8587f3", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "research-deaf-arts", "path": "research/deaf-arts.html", "url": "/research/deaf-arts/", "last_commit": "e4746db", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP", "haspart_count": 9, "haspart_verified": true},
+    {"id": "research-care-labor", "path": "research/care-labor.html", "url": "/research/care-labor/", "last_commit": "83c6a6b", "last_commit_date": "2026-08-20", "built": true, "disposition": "KEEP", "haspart_count": 5, "haspart_verified": true},
+    {"id": "research-extreme-male-brain", "path": "research/extreme-male-brain.html", "url": "/research/extreme-male-brain/", "last_commit": "e4746db", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP", "haspart_count": 5, "haspart_verified": true},
+    {"id": "research-camouflaging", "path": "research/camouflaging.html", "url": "/research/camouflaging/", "last_commit": "e4746db", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP", "haspart_count": 4, "haspart_verified": true},
+    {"id": "collective-pixel-nova", "path": "_collective/pixel-nova.md", "url": "/collective/pixel-nova/", "last_commit": "5646db8", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "collective-siri-sage", "path": "_collective/siri-sage.md", "url": "/collective/siri-sage/", "last_commit": "5646db8", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "collective-maya-flux", "path": "_collective/maya-flux.md", "url": "/collective/maya-flux/", "last_commit": "5646db8", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "collective-zen-circuit", "path": "_collective/zen-circuit.md", "url": "/collective/zen-circuit/", "last_commit": "5646db8", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
+    {"id": "works-room-heard", "path": "_works/what-the-room-heard.html", "url": "/works/what-the-room-heard/", "last_commit": "aa0172e", "last_commit_date": "2026-08-15", "built": true, "disposition": "KEEP"}
+  ],
+  "shared_chrome": [
+    {"path": "_layouts/default.html", "last_commit": "f57caa5", "disposition": "UPDATE_FACT", "finding_ref": "F-3"},
+    {"path": "_layouts/post.html", "last_commit": "e4746db", "disposition": "KEEP"},
+    {"path": "_layouts/author.html", "last_commit": "e4746db", "disposition": "KEEP"},
+    {"path": "_layouts/work.html", "last_commit": "aa0172e", "disposition": "KEEP"},
+    {"path": "_layouts/debate.html", "last_commit": "e4746db", "disposition": "KEEP"},
+    {"path": "_includes/subscribe-form.html", "last_commit": "f57caa5", "disposition": "KEEP"},
+    {"path": "robots.txt", "last_commit": "113799b", "disposition": "UPDATE_TRUST_DISCLOSURE", "finding_ref": "T-1"},
+    {"path": "_config.yml", "last_commit": "aa0172e", "disposition": "UPDATE_TRUST_DISCLOSURE", "finding_ref": "T-1"}
+  ],
+  "unintended_exposure_surface": {
+    "finding_ref": "T-1",
+    "priority": "P1",
+    "status": "CLOSED",
+    "closed_by_commit": "f7a355d",
+    "closed_at": "2026-08-20",
+    "confirmed_live": [
+      "https://cripminds.com/calibration/research-context/RL-2026-002.json (HTTP 200, real content)",
+      "sitemap.xml lists calibration/workflows/analyze-human-round-v1/, -v2/, prepare-calibration-candidates-v1/, prepare-next-round-v1/, calibration/candidates/, calibration/runner/"
+    ],
+    "confirmed_closed": [
+      "all 9 calibration URLs above: HTTP 404 post-deploy",
+      "sitemap.xml: 0 calibration/reader-lab entries post-deploy"
+    ],
+    "files": [
+      "calibration/workflows/analyze-human-round-v1.md",
+      "calibration/workflows/analyze-human-round-v2.md",
+      "calibration/workflows/prepare-calibration-candidates-v1.md",
+      "calibration/workflows/prepare-next-round-v1.md",
+      "calibration/candidates/README.md",
+      "calibration/research-context/RL-2026-001.json",
+      "calibration/research-context/RL-2026-002.json",
+      "calibration/candidates/RL-2026-002-candidates.json",
+      "calibration/candidates/RL-2026-002-preregistration.json"
+    ],
+    "latent_related": ["reader-lab/ — CORRECTED: was NOT actually empty/latent, was live-exposed too (T-2), also closed by the same commit"]
+  },
+  "explicitly_excluded_confirmed_not_live": [
+    "accessibility/", "archive/", "automation/", "docs/", "reader-lab-worker/",
+    "*.py", "*.db", "MANIFESTO.md", "PIPELINE.md", "SCRAPING_ETHICS.md",
+    "requirements.txt", "cripminds-stats-2026-06.html"
+  ],
+  "counts": {
+    "P0": 0,
+    "P1": 1,
+    "P2": 1,
+    "P3": 3,
+    "P4": 3,
+    "KEEP": 18,
+    "UPDATE_FACT": 2,
+    "UPDATE_FRESHNESS": 1,
+    "UPDATE_POSITIONING": 1,
+    "UPDATE_ARCHITECTURE_DESCRIPTION": 1,
+    "UPDATE_TRUST_DISCLOSURE": 1,
+    "REMOVE_MERGE": 0,
+    "OWNER_DECISION": 6
+  },
+  "audit_complete": true
+}

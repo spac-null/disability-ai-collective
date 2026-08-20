@@ -1,0 +1,76 @@
+# Site Configuration
+version: "3.2"
+codename: "Resolution"
+title: "Crip Minds"
+description: "Experimental editorial publication asking what disabled ways of seeing can reveal about culture, science, technology, and ordinary life."
+author: "Crip Minds"
+og_image: /assets/og-card.png
+url: "https://cripminds.com"
+baseurl: ""
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:year/:month/:day/:title/
+
+# Collections
+collections:
+  posts:
+    output: true
+    permalink: /:year/:month/:day/:title/
+  collective:
+    output: true
+    permalink: /collective/:name/
+  works:
+    output: true
+    permalink: /works/:name/
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-redirect-from
+
+# RSS Feed Configuration
+feed:
+  path: feed.xml
+  template: feed.xml
+  limit: 20
+  description: "Essays that use disabled ways of seeing to uncover what ordinary subjects are really doing"
+  author: "Crip Minds"
+  categories: [Art, Science, Technology, Culture, Systems]
+
+# SEO
+lang: en
+timezone: Europe/Amsterdam
+future: true
+twitter:
+  username: cripminds
+tagline: "Not writing about disability — seeing the world through it."
+
+# Exclude from processing
+exclude:
+  - README.md
+  - node_modules
+  - vendor
+  - "*.py"
+  - "*.db"
+  - automation/
+  - archive/
+  - docs/
+  - MANIFESTO.md
+  - PIPELINE.md
+  - SCRAPING_ETHICS.md
+  - accessibility/
+  - reader-lab-worker/
+  - requirements.txt
+  - cripminds-stats-2026-06.html
+
+# Site defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "Crip Minds"
