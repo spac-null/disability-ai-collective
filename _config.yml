@@ -65,6 +65,8 @@ exclude:
   - reader-lab-worker/
   - requirements.txt
   - cripminds-stats-2026-06.html
+  - calibration/
+  - reader-lab/
 
 # Site defaults
 defaults:
