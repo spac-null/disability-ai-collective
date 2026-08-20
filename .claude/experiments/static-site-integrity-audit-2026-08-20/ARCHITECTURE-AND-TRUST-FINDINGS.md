@@ -137,6 +137,41 @@ which specifically softened an earlier overclaim on `press/how-it-works/`.
 
 ---
 
+## ADDENDUM to T-1/T-2 (2026-08-20, Batch-1 follow-up): website exposure ≠ repository exposure
+
+Closing the *website* build/serve exposure surfaced a second, distinct
+problem that the original T-1/T-2 findings did not separate out: **the
+`disability-ai-collective` GitHub repository is public**, and Batch-1's fix
+(a Jekyll `exclude:` entry) only stops these files from being *built into the
+served site*. It does nothing to the *repository*.
+
+- **PUBLIC REPOSITORY CURRENT-TREE EXPOSURE: YES.** `git ls-tree -r
+  origin/main` (as of commit `3242e50`) still lists all 16 calibration/
+  reader-lab source files — research-context JSON, candidate JSON,
+  preregistration docs, workflow instructions, and the calibration runner
+  script + systemd unit — fully readable by anyone via the GitHub web UI,
+  `git clone`, or the GitHub API.
+- **PUBLIC REPOSITORY HISTORY EXPOSURE: YES.** These paths have been tracked
+  since at least `ffe44fb` ("Reader Lab control plane and calibration
+  orchestrator"), across 6 total commits touching the paths.
+- **No secrets found** in any of these files (confirmed in Batch-1's secret
+  scan) — so this is a confidentiality/positioning gap against the site's own
+  "editorial mechanics remain private" claim, not a credential-exposure
+  incident.
+- **This means the "editorial mechanics remain private" claim is currently
+  PARTIAL, not TRUE**, even after Batch-1: true for the deployed website,
+  false for the source repository backing it.
+- Three owner options (keep-public-narrow-the-claim / move-research-private-
+  going-forward / history-purge), with consequences, are recorded in
+  `OWNER-DECISIONS.md` OD-7. **No history rewrite, force-push, or deletion was
+  performed** — this addendum is read-only classification, per directive.
+
+This does not change the STATUS: CLOSED lines above — those refer
+specifically to *website* exposure, which is accurate and stays closed. The
+repository-level question is tracked separately and remains open.
+
+---
+
 ## T-2. `reader-lab/` is empty today but not excluded — a latent version of T-1
 
 - **Correction (2026-08-20, Batch 1)**: this finding's premise was wrong.
