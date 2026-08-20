@@ -444,14 +444,14 @@
     "history_rewrite_authorized": false
   },
   "status": {
-    "as_of": "2026-08-20",
+    "as_of": "2026-08-20 (Batch 2 verified)",
     "static_audit": "COMPLETE",
     "static_surfaces": 39,
     "batch_1_website_containment": "COMPLETE",
     "batch_1_trust": "COMPLETE",
-    "static_cleanup": "NOT COMPLETE",
-    "batch_2": "READY, NOT STARTED",
-    "batch_3": "NOT STARTED",
+    "static_cleanup": "NOT COMPLETE — Batch 3 (positioning) not started",
+    "batch_2": "COMPLETE — all canonical Batch-2 findings dispositioned, live-verified",
+    "batch_3": "NOT REQUIRED per CLOSEOUT-2026-08-20.md — zero material findings; remaining items are 1 cosmetic owner decision (OD-5), 1 infrastructure decision (OD-7 migration), 1 off-repo manual action (Tumblr bio)",
     "open_findings_after_batch_1": {
       "P0": 0,
       "P1": 0,
@@ -475,6 +475,26 @@
     "deploy_runs": {
       "trust_wording_98ea267": "32372116318 (success, 2026-08-20T13:03:21Z) — closed S-2/S-3 P1s",
       "final_disclosure_49fd180": "32372952679 (success, 2026-08-20) — completed the private-mechanics disclosure; state below verified against this deploy"
-    }
+    },
+    "open_findings_after_batch_2": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0,
+      "P3": 0,
+      "code_or_content_changes_pending": 0,
+      "owner_decisions_open": [
+        "OD-5 / F-4 — /notes/ nav placement (P4, cosmetic; either answer defensible)"
+      ],
+      "manual_off_repo_open": [
+        "OD-2 / F-2 — Tumblr profile bio still presents the personas as autonomous AI agents; replacement copy drafted, owner must paste it in (P2)"
+      ],
+      "closed_by_closeout": "S-7 persona feeds — KEEP_AS_DIRECT_URL (CLOSEOUT-2026-08-20.md)"
+    },
+    "batch_2_commits": {
+      "content": "5f411a1",
+      "evidence": "0226e2b",
+      "verification": "this commit"
+    },
+    "batch_2_deploy_run": "run for 0226e2b — success 2026-08-20T13:18:19Z; all four changed surfaces live-verified, no feed regression"
   }
 }

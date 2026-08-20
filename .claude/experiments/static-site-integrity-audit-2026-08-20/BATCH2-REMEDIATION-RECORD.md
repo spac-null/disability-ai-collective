@@ -184,3 +184,115 @@ articles' cards, JSON-LD, OpenGraph, feed entries, or index references.
 insertions, 10 deletions. No `automation/`, no `_posts/`, no migration code.
 `automation/` and Phase-2 capture confirmed unaffected (diff scope alone is
 sufficient evidence — neither is anywhere in this diff).
+
+---
+
+# Batch-2 closure verification — 2026-08-20 (independent pass)
+
+The remediation above was executed and committed but its record stopped at
+`git diff --stat`: it named no deployment run and asserted no live
+verification. This section closes that gap. Every claim below was checked
+against the **live site**, not the repository.
+
+## Deployment
+
+| | |
+|---|---|
+| Content commit | `5f411a1` — gallery noindex, Tumblr `sameAs`, feed config, accessibility date |
+| Evidence commit | `0226e2b` — the record above |
+| Deploy run | **`32372116318`-series: run for `0226e2b` completed `success` 2026-08-20T13:18:19Z** (the content in `5f411a1` reached production through it) |
+
+## Live verification — all four changed surfaces
+
+| Change | Live result |
+|---|---|
+| `gallery.html` noindex (F-5) | `/gallery/` serves `<meta name="robots" content="noindex, nofollow">`; `sitemap.xml` contains **0** `/gallery/` entries |
+| `Organization.sameAs` (F-3) | homepage JSON-LD serves `["https://bsky.app/profile/cripminds.bsky.social", "https://www.tumblr.com/cripminds"]` |
+| accessibility date (F-1) | `/accessibility/` serves "Last updated: August 12, 2026. Standards: WCAG 2.1 AA" |
+| `_config.yml` `feed:` removal (S-6) | see regression check below |
+
+## Feed regression check — the one real risk in Batch 2
+
+Removing the `feed:` block while leaving `jekyll-feed` in `plugins:` could in
+principle have let the plugin start generating a competing feed. **It did not.**
+
+| Feed | HTTP | `<item>` count | First item |
+|---|---|---|---|
+| `/feed.xml` | 200 | **10** | Reached by Boat or Plane |
+| `/feed/maya-flux.xml` | 200 | 20 | One in Twelve, and No Surprises |
+| `/feed/pixel-nova.xml` | 200 | 20 | Twenty Minutes When the Courtyard Disapp… |
+| `/feed/siri-sage.xml` | 200 | 20 | Reached by Boat or Plane |
+| `/feed/zen-circuit.xml` | 200 | 20 | Jebel Irhoud Broke the Single Dot I Was… |
+
+`/feed.xml` still serves the hand-authored **RSS 2.0** document with the
+`dc:` namespace and its hardcoded `limit:10` — jekyll-feed emits Atom, so the
+served output confirms the hand-written template still wins. All five feeds
+retained their pre-change item counts. **No regression.**
+
+## Accessibility date — evidence re-verified independently
+
+This is the only Batch-2 change that could have manufactured freshness, so the
+justification was re-checked from scratch rather than taken from the record.
+
+`e4746db` ("site: align public metadata and persona framing", **2026-08-12**)
+substantively changed what `accessibility.html` itself promises: it removed a
+concrete service-level claim — the "Acknowledge: within 24 hours / Critical
+fixes: within 48 hours" list and the "I'll respond within 48 hours" line — and
+replaced both with impact-based, non-time-bound wording. `git log` confirms it
+is also the most recent commit touching the file before Batch 2.
+
+A page's "Last updated" line exists to track exactly that kind of change, so
+**August 12, 2026 is the accurate date and the bump is evidence-backed, not
+manufactured.** Note the original OD-3 question asked only about the
+2026-08-05 design-scorecard audit, which indeed changed nothing on this page;
+the bump rests on `e4746db` instead.
+
+## Propagation integrity — independently re-verified, PASS
+
+Bounded to the retitled Swan Care article (the case that originally exposed
+stale representation):
+
+- canonical frontmatter title: "Winning the Case Does Not Turn Off the Clock"
+- article page `<title>`, `og:title`, and JSON-LD `headline`: **all three carry
+  the new title**
+- old title ("…the appeal is the mechanism"): **0 hits** across `/`,
+  `/research/`, `/feed.xml`, `/sitemap.xml`, and the article page body
+- `/research/` index: new title present; `/feed/maya-flux.xml`: present
+
+Absence from `/feed.xml` and `/` is correct, not stale — a June article falls
+outside the canonical feed's 10-item window and the homepage's recent-posts
+loop. **PASS.**
+
+## Owner-decision status reconciliation
+
+Two entries in `OWNER-DECISIONS.md` still read "Decision needed" although
+Batch 2 resolved them. Their status lines are corrected there; recorded here so
+the two documents agree:
+
+- **OD-3** (accessibility date) → **DONE**, bumped to 2026-08-12 on `e4746db` evidence.
+- **OD-4** (robots.txt lines for `/style-lab/`, `/realistic-scenes/`) → **DONE — NO CHANGE, intentional.** `84c96a2` ("site: keep visual working methods private") deliberately shelved both pages; the disallow lines are defense-in-depth against accidental re-publish, matching the Batch-1 pattern. Not dead code.
+
+## Final Batch-2 disposition table
+
+| ID | Surface | Priority | Disposition |
+|---|---|---|---|
+| **F-5** | `gallery.html` | P3 | **CLOSED** — `noindex: true`, live-verified |
+| **F-3** | `_layouts/default.html` JSON-LD | P3 | **CLOSED** — Tumblr in `sameAs`, live-verified |
+| **S-6** | `_config.yml` / `feed.xml` | P3 | **CLOSED** — inert config removed, no feed regression |
+| **F-1 / OD-3** | `accessibility.html` | P3 | **CLOSED** — date bumped on verified evidence |
+| **OD-4** | `robots.txt` | P4 | **NO CHANGE — VERIFIED CORRECT** (defense-in-depth) |
+| **S-5** | five feeds | — | **NO CHANGE — VERIFIED CORRECT** (0 representation failures) |
+| **S-4** | `/research/` claim | — | **NO CHANGE — VERIFIED CORRECT** |
+| Propagation | corrected articles' cards/JSON-LD/OG/feeds | — | **PASS** |
+| **F-2 / OD-2** | Tumblr profile bio (off-repo) | P2 | **MANUAL FOLLOW-UP** — owner must edit Tumblr; replacement copy drafted above |
+| **S-7** | four persona feeds | P3 | **CLOSED — `KEEP_AS_DIRECT_URL`** per `CLOSEOUT-2026-08-20.md`, which supersedes the earlier deferred OWNER_DECISION: keep generating, add no nav links, add no autodiscovery, do not retire |
+| **F-4 / OD-5** | `/notes/` discoverability | P4 | **OWNER_DECISION** — still open, canonically a Batch-3 item; not a Batch-2 blocker |
+
+**BATCH 2: COMPLETE.** Every canonical Batch-2 finding has a final
+disposition. Zero P0, zero P1, zero actionable P2/P3 code or content changes
+remain in scope.
+
+Not started, deliberately: Batch 3 (positioning), LC1 corpus remediation,
+private-research migration (OD-7 Option 2), local-`main` reconciliation.
+`automation/`, `_posts/`, `calibration/`, `reader-lab/` and Phase-2 capture were
+not touched by Batch 2 or by this verification pass.

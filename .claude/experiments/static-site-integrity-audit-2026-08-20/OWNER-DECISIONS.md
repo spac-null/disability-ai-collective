@@ -39,6 +39,17 @@ date would remain accurate. This diff was not performed in this pass (would
 require reading the 62KB `design-scorecard.md` end-to-end against the current
 page, judged out of scope for a static-surface-only audit with a hard stop).
 
+**Status: DONE 2026-08-20 (Batch 2).** Resolved on different evidence than this
+question anticipated. The 2026-08-05 design-scorecard audit did indeed change
+nothing on this page — so on its own it would have justified no bump. But
+`e4746db` ("site: align public metadata and persona framing", 2026-08-12)
+substantively changed what the page itself promises: it removed the concrete
+"Acknowledge: within 24 hours / Critical fixes: within 48 hours" service-level
+list and the "I'll respond within 48 hours" line, replacing both with
+impact-based wording. It is also the most recent commit touching the file.
+"Last updated" was bumped to **August 12, 2026** accordingly — evidence-backed,
+not manufactured freshness. Live-verified. See `BATCH2-REMEDIATION-RECORD.md`.
+
 ## OD-4 (ties to LINK-AND-NAV, P4). Dead `robots.txt` rules for unpublished pages
 
 **Decision needed**: `robots.txt` disallows `/style-lab/` and
@@ -47,6 +58,14 @@ built. Confirm this is intentional (pages are deliberately shelved/experimental,
 not accidentally orphaned) before removing the now-unnecessary `robots.txt`
 lines — if they're expected to come back, leave the rules in place as
 forward cover.
+
+**Status: DONE 2026-08-20 (Batch 2) — NO CHANGE, confirmed intentional.**
+`84c96a2` ("site: keep visual working methods private", 2026-08-12) added
+`published: false` to both pages with explicit intent. That is a deliberate
+shelving, not accidental orphaning, so the `robots.txt` disallow lines are
+correct as defense-in-depth against an accidental future re-publish — the same
+pattern Batch 1 applied to `/calibration/` and `/reader-lab/`. **Not dead code;
+lines kept.** See `BATCH2-REMEDIATION-RECORD.md`.
 
 ## OD-5 (ties to F-4, P4). `/notes/` discoverability
 
