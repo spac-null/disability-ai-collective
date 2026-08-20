@@ -770,3 +770,78 @@ FOLLOW-UP: Phase 2 — live-vs-shadow comparison on held-out real stories. Block
 historical fixtures are verifiable but not byte-reproducible (production still does not persist
 source text); a comparison harness does not yet exist; and Phase-2 must account for production
 currently blocking 4 of 7 drafts. Do NOT run live shadow, deploy, or clean legacy prompts.
+
+## 2026-08-20 — PHASE 2 PREP: PASSIVE CAPTURE + COMPARISON HARNESS (PM-P2PREP)
+STATUS: **COMPLETE.** Not deployed, not pushed, flag not enabled, cron untouched, no
+production behaviour changed. No model call.
+DECISION: Built the one-off evidence fix Phase 2 requires, plus the harness that will consume
+it. Owner decisions honoured: AR3 still deferred; production source persistence approved but
+**observability only**; Phase-2 sample = first 3 complete eligible runs after enablement.
+SEPARATION OF DEPLOYABLE CODE: the canonical local repo is 25+ commits ahead of origin with
+`.claude/` evidence that is never deployed, so building instrumentation on that history would
+make deployment ambiguous. Created worktree
+`../disability-collective-ai-production-observability`, branch
+`production-observability-2026-08-20`, **based exactly on `8af3622`** — verified it carries
+zero research-history commits. Deployable commit **`20a7e3a`**: 3 files, **+530/−0**, with
+`generate.py` at **+52/−0** (five one-line hooks, two helper assignments, safe defaults, one
+import). Independently cherry-pickable.
+EVIDENCE FLOW TRACED FIRST (before writing capture code): **"source text" is not one object.**
+Four distinct representations exist and the code permits divergence — R1 the full cached
+extraction (`_source_text_cache[url]`, capped 20,000), R2 the returned slice
+(`cached[:max_chars]`), R3 the post-fallback-downgrade value handed to `build_evidence_packet`
+(set to `None` when `source_origin == fallback_summary`), and R4 the evidence packet threaded
+unmodified into planner/reviewer/executor. R1 and R2 coincide today only because both call
+sites use the same 20,000 default — configuration, not an invariant — so all three text forms
+are captured separately rather than assumed equal. Writer-visible evidence is the SOURCE
+MATERIAL block interpolated at `generate.py:917` from the same variable, so capturing the
+assembled prompt captures exactly what the writer saw.
+CRITICAL CAPTURE: the **RAW writer output**, which exists only between `generate.py:1057` and
+the rewrite that reassigns it, and is on no disk today. Because the target architecture removes
+the whole-document rewrite stage, separating what the legacy WRITER produced from what the
+legacy REWRITER changed is the most informative comparison signal available — and it is
+attributable **by construction**, since nothing executes between the two captures.
+CAPTURE CONTRACT: OFF unless `SHADOW_CAPTURE` is set; `capture()` catches `BaseException`, logs
+and returns, so **a capture failure can never alter, block or fail an article run** (a
+deliberate exception to the target architecture's fail-closed posture — capture observes the
+legacy baseline and is not part of ACCEPT/HOLD); append-only `manifest.jsonl`; atomic temp +
+fsync + `os.replace`; `COMPLETE` seal so partial bundles are detectable; refuses to persist any
+artifact containing credential-shaped markers and records the refusal; no sqlite3, no network,
+no subprocess, nothing under `_posts/` or `_drafts/` in executable code. Storage root
+`/srv/data/cripminds-shadow-capture` — outside the repo, outside content dirs, and deliberately
+**not** under `/srv/backups/cripminds` where 14-day rotation would delete bundles.
+PROOF OF NO BEHAVIOUR CHANGE: `snapshot_test.py --check` passes unchanged in the observability
+worktree with the capture code present and OFF ("No drift — 6 article(s) match recorded
+fixtures"), and the patch deletes zero lines.
+COMPARISON HARNESS (research side, `harness/compare.py`, 307 lines): six dimensions — source
+equivalence (hash-gated; a mismatch **rejects** the comparison before any outcome is
+reported), legacy outcome, shadow outcome, grounding, structure, legacy rule effects. No LLM
+judge, no `difflib`/`SequenceMatcher`, no prose-quality score — asserted by test against
+executable code. Grounding is reported **separately, never merged**: legacy has only
+brief-field validation plus world-relative fact-check, while shadow Writer Grounding is
+source-relative on finished prose; collapsing them would be a category error. Gate/review
+rule-judge effects are explicitly returned as `NOT_ATTRIBUTABLE_FROM_THIS_BUNDLE` rather than
+inferred, because the gate rewrites in place and only its result is captured.
+BLOCKED RUNS ARE DATA: production currently blocks 4 of 7 drafts and has published nothing
+since 2026-08-11. The harness records the pairing (e.g. legacy BLOCKED / shadow ACCEPT) and
+carries an explicit note that neither system is assumed correct merely because it blocked.
+PRE-REGISTRATION: Phase-2 comparison set = the **first 3 complete eligible runs after capture
+enablement**, in capture-run-id order, registered before deployment and before any run was
+observed. Eligibility is mechanical (normal article run, sealed complete bundle with matching
+hashes, enough lineage). Topic, quality, publication state, fact-check block, degraded stages
+and apparent winner are all explicitly NOT grounds for exclusion. `CAPTURE_INVALID` bundles are
+recorded and the next chronological complete run is taken.
+TESTS: **72 checks, 72 pass** — 36 capture-side, 36 harness-side. Fixtures are built by calling
+the real capture module, not a hand-rolled imitation of the bundle format.
+TEST-PRECISION FIXES: two of my own tests matched prose rather than code and were tightened to
+scan executable code only (AST: identifiers, imports, non-docstring literals). The harness one
+was a genuine failing test — it matched the word "similarity" inside `compare.py`'s own
+docstring stating it does not do similarity. Fixed rather than deleted: a test asserting what
+the prose says instead of what the code does is not a safety test.
+EVIDENCE: `.claude/experiments/production-migration-phase2-prep-2026-08-20/` —
+PHASE2-CAPTURE-DESIGN, CAPTURE-SCHEMA, COMPARISON-PROTOCOL, FIRST-3-PRE-REGISTRATION,
+SAFETY-RESULTS, DEPLOYMENT-PLAN, README, SHA256SUMS, `harness/`, `results/`.
+CODE: `20a7e3a` in the observability worktree only. No commit to production, nothing pushed.
+FOLLOW-UP: owner reviews the +52-line `generate.py` diff, then cherry-pick, deploy, run both
+test files on Trident, create the capture root, and enable `SHADOW_CAPTURE=1` in the article
+cron — the single reversible enabling step. Then collect the pre-registered three runs. Do NOT
+run live shadow or change architecture before that.

@@ -1,0 +1,59 @@
+
+test_accepts_exact_hash_match
+  PASS  valid bundle validates
+  PASS  exact source hash match -> COMPARABLE
+  PASS  source equivalence proven by hash
+
+test_rejects_source_mismatch
+  PASS  source mismatch -> REJECTED
+  PASS  mismatch reason explains unsoundness
+
+test_legacy_only_mode
+  PASS  no shadow supplied -> LEGACY_ONLY
+  PASS  legacy outcome still reported
+
+test_raw_writer_and_rewrite_distinct
+  PASS  raw writer output hash present
+  PASS  post-rewrite hash present
+  PASS  raw writer and rewrite outputs are distinct
+  PASS  rewrite effect attributable by construction
+  PASS  attribution basis stated
+
+test_blocked_run_remains_comparable
+  PASS  blocked legacy run is still COMPARABLE
+  PASS  legacy blocking observed
+  PASS  outcome pair recorded (legacy BLOCKED vs shadow ACCEPT)
+  PASS  neither system assumed correct
+
+test_incomplete_bundle_rejected
+  PASS  unsealed bundle -> CAPTURE_INVALID
+  PASS  next action is the next chronological run
+
+test_tampered_bundle_rejected
+  PASS  hash mismatch -> CAPTURE_INVALID
+  PASS  mismatch names the artifact
+
+test_missing_bundle_fails_closed
+  PASS  missing bundle fails closed
+  PASS  bundle without manifest fails closed
+
+test_no_llm_judge
+  PASS  harness contains no openai in executable code
+  PASS  harness contains no anthropic in executable code
+  PASS  harness contains no openrouter in executable code
+  PASS  harness contains no requests in executable code
+  PASS  harness contains no urllib in executable code
+  PASS  harness contains no socket in executable code
+  PASS  harness contains no subprocess in executable code
+  PASS  no prose-similarity machinery (difflib)
+  PASS  no prose-similarity machinery (sequencematcher)
+  PASS  no prose-similarity machinery (ratio)
+
+test_source_representations_reported
+  PASS  legacy packet source hash reported
+  PASS  evidence packet hash reported
+  PASS  raw-cached vs packet-source relationship reported
+  PASS  grounding measurements kept separate, not merged
+
+------------------------------------------------------------
+ALL COMPARISON HARNESS TESTS PASSED

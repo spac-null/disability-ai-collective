@@ -42,8 +42,28 @@
   - Writer Grounding receives `{writer_output, source}` only — it structurally cannot change
     the Article Form.
   - LIVE_SHADOW scaffolded, raises, never executed. No model call was made.
-- **CURRENT PHASE: PRODUCTION ARCHITECTURE / MIGRATION — Phase 0 and Phase 1 done.
-  Phase 2 (live-vs-shadow on held-out stories) NOT started.**
+- **PHASE 2 PREP: COMPLETE 2026-08-20.**
+  `.claude/experiments/production-migration-phase2-prep-2026-08-20/`
+  Passive OFF-by-default production capture + live-vs-shadow comparison harness. 72/72 safety
+  checks. **NOT DEPLOYED, NOT PUSHED, FLAG NOT ENABLED, cron unchanged.**
+  - **Deployable commit `20a7e3a`** on branch `production-observability-2026-08-20`, based
+    directly on `8af3622` in worktree `../disability-collective-ai-production-observability`
+    — carries none of the research history, independently cherry-pickable. +530/−0;
+    `generate.py` is +52/−0.
+  - Fixes the Phase-2 blocker: captures the **four distinct source representations** (full
+    cached extraction, returned slice, post-downgrade packet source, evidence packet) as
+    bytes, not just hashes. "Source text" is not one object.
+  - Captures the **RAW writer output before the rewrite** — ephemeral otherwise, and the key
+    signal since the target architecture deletes the rewrite stage. Rewrite effect is
+    attributable by construction.
+  - Capture is **non-authoritative**: failure is logged and swallowed, and can never hold an
+    article. Deliberate exception to fail-closed — it observes the legacy baseline.
+  - `snapshot_test --check` passes unchanged with capture present and OFF.
+  - **Phase-2 sample PRE-REGISTERED before enablement:** the FIRST 3 COMPLETE ELIGIBLE runs
+    after capture is enabled. Blocked runs are valid data and must not be excluded.
+- **CURRENT PHASE: PRODUCTION ARCHITECTURE / MIGRATION — Phase 0, Phase 1 and Phase 2 prep
+  done. Phase 2 execution NOT started (needs owner review of the patch, then deployment,
+  then 3 runs).**
   Plan: `.claude/experiments/production-architecture-plan-2026-08-20/`
 - **Central planning finding: ~81% of the 114-family legacy rule debt is DELETED by
   replacing three stages** (the writer prompt, the whole-document rewrite, the two LLM

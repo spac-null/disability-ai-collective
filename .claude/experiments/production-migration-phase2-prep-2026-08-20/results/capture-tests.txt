@@ -1,0 +1,59 @@
+
+test_default_off
+  PASS  capture disabled with no flag
+  PASS  OFF writes nothing at all
+
+test_flag_on_writes_only_capture_artifacts
+  PASS  all writes are under the run id
+  PASS  no leftover temp/partial files
+  PASS  manifest is append-only jsonl
+  PASS  COMPLETE marker written by seal
+
+test_source_representations_preserved
+  PASS  raw cached source preserved verbatim
+  PASS  returned slice preserved verbatim
+  PASS  packet source preserved verbatim
+  PASS  evidence packet preserved
+  PASS  three source representations kept distinct
+
+test_writer_visible_evidence_and_raw_output
+  PASS  writer-visible evidence (prompt) preserved
+  PASS  RAW writer output preserved
+  PASS  post-rewrite output preserved
+  PASS  raw writer and rewritten output remain distinct
+  PASS  manifest records that the rewrite changed content
+
+test_hashes_recorded_and_mismatch_detectable
+  PASS  hash recorded for each artifact
+  PASS  hash mismatch detectable after tampering
+
+test_incomplete_bundle_detectable
+  PASS  bundle without COMPLETE is detectable as incomplete
+  PASS  sealed bundle is detectable as complete
+
+test_no_secrets_persisted
+  PASS  secret-bearing artifact refused, not written
+  PASS  refusal recorded in manifest
+  PASS  no secret value anywhere in the bundle
+
+test_capture_failure_never_raises
+  PASS  capture failure is swallowed, never raised
+  PASS  unknown event is a no-op
+  PASS  missing run_id is a no-op
+
+test_no_db_publication_or_network_in_capture_code
+  PASS  no sqlite3 in capture code
+  PASS  no _posts write in capture code
+  PASS  no _drafts write in capture code
+  PASS  no publication call in capture code
+  PASS  no subprocess in capture code
+  PASS  no network client in capture code
+  PASS  no urllib in capture code
+  PASS  no socket in capture code
+
+test_hooks_are_additive_only
+  FAIL  generate.py hook diff visible to git  no diff output
+
+------------------------------------------------------------
+FAILED: 1
+   - generate.py hook diff visible to git
