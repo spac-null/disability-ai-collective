@@ -1,0 +1,80 @@
+=== PRE-HOTFIX FREEZE 2026-08-20T11:56:36Z ===
+TRIDENT HEAD: ad7b8c7f1dd8dc84c48ed1a892169dca41a6bbaa
+git status (tracked): 0
+0
+untracked: 3
+
+selector code hash:  1dbc4fac8179cf27bfe0b69b5f4a53696f70f989c36da4b44106f24b2f30ca76
+stamper code hash:   21b0111baaae593f307e164fd97599874fe525b42db1acdaf600cf3771b12099
+
+=== 7 candidate drafts: hash + key front matter ===
+--- 2026-08-13-what-the-word-modular-quietly-removes.md ---
+    sha256: af7901f2381c5fda31b9daed0eb47256828e3239d1366361ac1893aea164be3e
+    date_written: 2026-08-13
+    fact_check_status:           verified
+    publication_safety_version:  <ABSENT>
+    pipeline_degraded:           <ABSENT>
+    publish_attempts:            1
+    draft_score:                 <ABSENT>
+    author:                      "Pixel Nova"
+    title:                       "What the Word \"Modular\" Quietly Removes"
+--- 2026-08-14-modular-means-it-comes-apart-the-same-way-every-time.md ---
+    sha256: 5a7e243b5a79f7755dd29cbd3eea064bb1a4421d25b990bda825a7aa971028a9
+    date_written: 2026-08-14
+    fact_check_status:           verified
+    publication_safety_version:  <ABSENT>
+    pipeline_degraded:           <ABSENT>
+    publish_attempts:            1
+    draft_score:                 <ABSENT>
+    author:                      "Zen Circuit"
+    title:                       "Modular Means It Comes Apart the Same Way Every Time"
+--- 2026-08-15-hand-hammered-edge-and-nobody-asked-what-it-sounds.md ---
+    sha256: c8c6511b4995770d97ade8cf3cf6e73f094cb6069ae55a3596228a3324a04169
+    date_written: 2026-08-15
+    fact_check_status:           blocked
+    publication_safety_version:  <ABSENT>
+    pipeline_degraded:           <ABSENT>
+    publish_attempts:            <ABSENT>
+    draft_score:                 <ABSENT>
+    author:                      "Siri Sage"
+    title:                       "Hand-Hammered Edge, and Nobody Asked What It Sounds"
+--- 2026-08-16-sniff-it-out-follow-your-nose-whatever-your-legs-can.md ---
+    sha256: e198d8db52841c14dcb6abbd9d68748c5c4f3cde19f035ac3c3f2043448a13a1
+    date_written: 2026-08-16
+    fact_check_status:           verified
+    publication_safety_version:  <ABSENT>
+    pipeline_degraded:           <ABSENT>
+    publish_attempts:            <ABSENT>
+    draft_score:                 9
+    author:                      "Maya Flux"
+    title:                       "Sniff It Out, Follow Your Nose, Whatever Your Legs Can"
+--- 2026-08-17-7-000-rooms-with-no-door-for-anyone.md ---
+    sha256: 38c3493316f90b057ac4cecf60950d8c9232b80afdfd264c06fc3caa1ec1cb3a
+    date_written: 2026-08-17
+    fact_check_status:           blocked
+    publication_safety_version:  <ABSENT>
+    pipeline_degraded:           [persona_biography_unresolved]
+    publish_attempts:            <ABSENT>
+    draft_score:                 <ABSENT>
+    author:                      "Maya Flux"
+    title:                       "7,000 Rooms With No Door For Anyone"
+--- 2026-08-17-galaxy-h1-was-already-sorted-before-it-had-a-shape.md ---
+    sha256: 9a1909490001ec9f7e6b278ffc0857c115d45dc18e602c186a7e93c731d1db4e
+    date_written: 2026-08-17
+    fact_check_status:           blocked
+    publication_safety_version:  <ABSENT>
+    pipeline_degraded:           [gate_llm, persona_biography_unresolved]
+    publish_attempts:            <ABSENT>
+    draft_score:                 <ABSENT>
+    author:                      "Pixel Nova"
+    title:                       "Galaxy H1 Was Already Sorted Before It Had a Shape"
+--- 2026-08-20-surovell-built-a-box-warren-tested-it-for-access-and.md ---
+    sha256: e8b9f65a5b2cfeec9f958652834ef8bf7e56a407f63b5f38193d7f61e0aa6fb3
+    date_written: 2026-08-20
+    fact_check_status:           blocked
+    publication_safety_version:  <ABSENT>
+    pipeline_degraded:           [fable_brief]
+    publish_attempts:            <ABSENT>
+    draft_score:                 8
+    author:                      "Siri Sage"
+    title:                       "Surovell Built a Box, Warren Tested It for Access, and"

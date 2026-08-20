@@ -98,6 +98,18 @@
     ran on 08-17 and 08-19 (archive-only commits `ba64e77`, `11826e4`) and correctly found
     nothing eligible. **Selector status: WORKING-BUT-NO-ELIGIBLE-CANDIDATE.** The stamper's
     correctness is UNPROVEN — it has never fired.
+  - **CUTOVER DECISION 2026-08-20:** the two verified-but-unstamped drafts (08-14, 08-16 —
+    the latter scoring 9/10) **CANNOT be safely backfilled** and were **NOT stamped**. Proven
+    by Trident reflog: the 08-16 draft was written 09:09, the `persona_biography_unresolved`
+    check arrived 11:20 the same morning, so that predicate term was never evaluated —
+    absence means *not checked*, not *passed*. **No code hotfix**: the trap is self-limiting
+    (all pre-cutover drafts age out by 08-23) and any rescue would be permanent legacy bypass
+    debt. They archive unpublished; archiving beats bypassing publication safety.
+    **Stamper verified 23/23** — sound, it had simply never fired.
+    See `safety-cutover-hotfix-2026-08-20/`.
+  - **08-21 selector observation ARMED with zero cron/code change** — byte-offset anchor at
+    `/srv/data/cripminds-shadow-capture/selector/ANCHOR-before-2026-08-21.json` (offset
+    211415); extract with `tail -c +211416 automation.log`.
   - Target: `… → ACCEPT/HOLD → ACCEPTED CANDIDATE POOL → PERIODIC SELECTOR → PUBLISH ONE/NONE`.
     **ACCEPT = eligible candidate, NOT publish-now.** Selector disposition: **ADAPT** —
     `publication_safety_version` is REPLACED_BY_TARGET_STAGE (re-derive from ACCEPT);

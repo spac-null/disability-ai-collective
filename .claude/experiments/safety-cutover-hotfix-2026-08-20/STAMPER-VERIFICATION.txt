@@ -1,0 +1,27 @@
+stamper predicate: should_block falsy AND fact_check_status=='verified' AND no existing stamp
+
+  PASS  pass condition stamps the version
+  PASS  stamped exactly once
+  PASS  stamp is inside front matter
+  PASS  unrelated front matter preserved: layout
+  PASS  unrelated front matter preserved: title
+  PASS  unrelated front matter preserved: author
+  PASS  unrelated front matter preserved: date
+  PASS  unrelated front matter preserved: fact_check_status
+  PASS  unrelated front matter preserved: publish_attempts
+  PASS  body unchanged
+  PASS  only one line added
+  PASS  repeat invocation is idempotent
+  PASS  should_block=True writes nothing
+  PASS  fact_check_status='blocked' writes nothing
+  PASS  fact_check_status='unverified' writes nothing
+  PASS  fact_check_status='VERIFIED' writes nothing
+  PASS  fact_check_status='' writes nothing
+  PASS  missing fact_check_status writes nothing
+  PASS  existing stamp not overwritten
+  PASS  no duplicate stamp added
+  PASS  selector: _ordinary_eligibility_ok on stamped draft
+  PASS  selector: _current_safety_contract_ok on stamped draft
+  PASS  selector: unstamped draft correctly INELIGIBLE
+
+ALL STAMPER VERIFICATION CHECKS PASSED

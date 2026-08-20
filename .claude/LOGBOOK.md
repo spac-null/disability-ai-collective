@@ -984,3 +984,77 @@ CODE: none.
 FOLLOW-UP: owner decisions on (a) backfilling or re-validating the three HELD drafts before
 they age out (08-14 expires 08-21, 08-16 expires 08-23), (b) `draft_score`'s fate, (c) whether
 an empty-pool alarm is wanted. Do NOT fix any of it yet.
+
+## 2026-08-20 — SAFETY-CUTOVER COMPATIBILITY: NO BACKFILL, NO HOTFIX (CUTFIX1)
+STATUS: Investigation complete. **No draft stamped. No code hotfix. No safety requirement
+weakened. No cron change.** Phase-2 capture stayed enabled; sample still 0/3.
+FREEZE: Trident `ad7b8c7`, clean; `publish_best.py` `1dbc4fac…`; `generate.py` `21b0111b…`;
+all 7 draft hashes + front matter preserved in `PRE-HOTFIX-FREEZE.txt`. Verified after the
+task that both candidate drafts are byte-identical to the freeze and still unstamped.
+EXACT PREDICATE: `stamp iff should_block falsy AND ^fact_check_status:\s*verified\s*$ re-read
+from disk AND no existing ^publication_safety_version:`. `should_block = "fable_brief" in
+stages or "gate_llm" in stages or "persona_biography_unresolved" in stages or len(stages)>=2`.
+Inputs are run-local `self._degraded_stages` plus the file's own fact_check_status. **No LLM
+call, no network** — pure file I/O.
+RECONSTRUCTABILITY: `pipeline_degraded` frontmatter has existed since 2026-08-10 (`e4922e6`)
+and is written by `create_article_file` (line 1326, after the gate at 1302), so for a
+post-08-10 draft its absence does mean the stage list was empty at write time. Necessary but
+NOT sufficient.
+**BLOCKING TERM — `persona_biography_unresolved`.** Introduced 2026-08-16 (`89cd082`/
+`169e8ff`). Trident's own reflog settles when it landed: `394a02e HEAD@{2026-08-16 09:09:00}:
+commit: Add new article: 2026-08-16-sniff-it-out-…` then `169e8ff HEAD@{2026-08-16 11:20:38}:
+pull origin main`. The 08-16 draft was written at 09:09; the check arrived at 11:20, **two
+hours and eleven minutes later**. It never ran on that draft, and a fortiori not on the 08-14
+one. So `"persona_biography_unresolved" not in stages` is UNVERIFIABLE for both — its absence
+means *never evaluated*, not *evaluated and passed*. That is exactly the gate's own stated
+principle: UNKNOWN safety is not safety. `_compute_should_block` also changed on 08-14
+(`b1d919c`) and 08-16 (`667633f`), so the 08-14 draft ran under an older, weaker rule too.
+**VERDICT: CANNOT_SAFELY_BACKFILL for both.** No blanket backfill was used; equating
+`fact_check_status == verified` with "current safety contract passed" would have silently
+bypassed the requirement for precisely the drafts it was written to catch.
+THE TWO DRAFTS — both `fact_check_status: verified`, no `pipeline_degraded`, no existing stamp;
+both PASS the fact-check and no-existing-stamp components and are UNVERIFIABLE on
+`should_block`. `2026-08-14-modular-means-it-comes-apart…` (Zen Circuit, expires 08-21,
+draft_score absent → 7.0 default) — **not stamped**. `2026-08-16-sniff-it-out…` (Maya Flux,
+expires 08-23, **draft_score 9**, the highest-scoring candidate on disk, on the Edinburgh
+source) — **not stamped**. Both will archive unpublished. Archiving is preferable to bypassing
+publication safety.
+NO CODE HOTFIX — and this is the substantive judgement. The cutover trap is self-limiting: it
+affects only drafts predating `667633f` reaching Trident, i.e. exactly the three on disk
+(08-13 archived today, 08-14 on 08-21, 08-16 on 08-23). After 08-23 no pre-cutover draft
+remains and the gate behaves normally. Any rescue would have to take the form of a permanent
+"pre-2026-08-16 drafts don't need `publication_safety_version`" exemption — the legacy bypass
+debt the brief explicitly forbids — added to save two drafts, one expiring tomorrow. The
+remaining barrier afterwards is `fact_check_status: blocked` on recent runs, which is the
+safety system working, not a cutover artefact.
+STAMPER VERIFIED (it had never fired — 0/165 articles carry the stamp): **23/23 deterministic
+checks** against temp fixtures, no article created, no model call, no production file touched.
+Confirms pass-condition writes the version exactly once inside front matter; unrelated front
+matter and body byte-preserved with exactly one line added; idempotent on repeat; writes
+nothing for should_block=True, or for fact_check_status blocked/unverified/wrong-case/empty/
+missing; never overwrites or duplicates an existing stamp; and `publish_best.py`'s own
+`_ordinary_eligibility_ok` + `_current_safety_contract_ok` accept a stamped draft and reject an
+unstamped one. The mechanism is sound; it has simply never had a qualifying run. Kept as
+evidence rather than added to the deployable branch so the observability patch under review
+stays unchanged — promoting it to a permanent test is a reasonable follow-up.
+08-21 SELECTOR OBSERVATION ARMED, ZERO CHANGE: `publish_best.py` already prints its full
+scoring table and cron already appends stdout to `automation.log`; confirmed no logrotate rule
+matches that log. Instead of touching cron, wrote a byte-offset anchor to
+`/srv/data/cripminds-shadow-capture/selector/ANCHOR-before-2026-08-21.json` (offset 211415,
+log sha `260ada9d…`, extract `tail -c +211416`). Everything appended after it contains the
+natural 08:00 run — candidate set, eligibility verdicts, scores, selection or none, archive
+actions, git result. No cron change, no code change, no manual trigger.
+MIGRATION DEBT RECORDED (not implemented): (1) cadence — `0 8 */2 * *` fires on odd days of
+month and can fire on consecutive days at 31st→1st; target should enforce a real ">= 48 hours
+since last publication" cooldown independent of calendar day, selector free to run daily;
+(2) ranking — `draft_score` is absent on most drafts and defaults to 7.0, so freshness/
+rotation/aging dominate despite the nominal 60% weight, and the ranking must stop presenting
+that default as measured editorial quality; (3) cutover discipline — the root failure was
+shipping a requirement and its producer in one commit with no compatibility path and no alarm
+for "eligible pool empty across consecutive cycles"; any future gate of this kind needs a
+migration plan for in-flight artefacts before it goes live.
+EVIDENCE: `.claude/experiments/safety-cutover-hotfix-2026-08-20/` — SAFETY-CUTOVER-HOTFIX.md,
+PRE-HOTFIX-FREEZE.txt, STAMPER-VERIFICATION.txt, verify_stamper.py, SHA256SUMS.txt.
+CODE: none. No production change of any kind beyond one new evidence file in the capture root.
+FOLLOW-UP: after 2026-08-21 08:00, extract the selector slice with the anchor's command. P2-01
+remains the natural 09:00 run. Owner decision open on whether an empty-pool alarm is wanted.
