@@ -158,17 +158,30 @@ served site*. It does nothing to the *repository*.
   scan) — so this is a confidentiality/positioning gap against the site's own
   "editorial mechanics remain private" claim, not a credential-exposure
   incident.
-- **This means the "editorial mechanics remain private" claim is currently
-  PARTIAL, not TRUE**, even after Batch-1: true for the deployed website,
-  false for the source repository backing it.
+- **Status at time of this addendum**: the "editorial mechanics remain
+  private" claim was PARTIAL, not TRUE, even after Batch-1's website fix —
+  true for the deployed website, false for the source repository backing it.
 - Three owner options (keep-public-narrow-the-claim / move-research-private-
-  going-forward / history-purge), with consequences, are recorded in
-  `OWNER-DECISIONS.md` OD-7. **No history rewrite, force-push, or deletion was
-  performed** — this addendum is read-only classification, per directive.
+  going-forward / history-purge), with consequences, were recorded in
+  `OWNER-DECISIONS.md` OD-7 and put to the owner.
 
-This does not change the STATUS: CLOSED lines above — those refer
-specifically to *website* exposure, which is accurate and stays closed. The
-repository-level question is tracked separately and remains open.
+**UPDATE 2026-08-20 (Batch-1 trust close): OD-7 decided — Option 2.** Public
+wording was corrected to match: no page now claims mechanics have "always"
+remained private (the word "remain" was removed from the absolute claims in
+`about.html`, `press/index.html`, `press/how-it-works/index.html`, and
+`press/system-report/index.html`, replaced with present-tense "not part of
+the public write-up" / "not published," which makes no historical
+guarantee). `press/system-report/index.html`'s "06 — Currently in
+development" section additionally now discloses explicitly that R&D material
+behind the fuller architecture "has previously existed in Crip Minds' public
+code repository." **Historical public-git exposure remains
+ACCEPTED/DISCLOSED, NOT PURGED** — no history rewrite, force-push, or
+deletion was performed, per directive. The claim is now literally true: true
+for the deployed website (unchanged from Batch-1), and now also true for the
+public wording about the repository (it no longer overclaims permanence).
+The underlying repository files themselves are still present in
+`origin/main`'s tree and history — that fact is unchanged; what changed is
+that the site no longer claims otherwise.
 
 ---
 

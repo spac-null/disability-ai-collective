@@ -82,7 +82,32 @@ during Batch-1 secret scan) — this is a confidentiality/positioning problem
 reachable through history; first-introduced in `ffe44fb`, `79649bd`, and later
 touched in 4 more commits, 6 total).
 
-**Decision needed** — three realistic options, none executed:
+**Status: DECIDED 2026-08-20 — Option 2 chosen.** Going forward, internal
+research/calibration material (calibration/, Reader Lab, raw experiment
+evidence, preregistration/workflow artifacts, the calibration runner) should
+not continue accumulating in this public repository. **No migration was
+performed in this task** — no repository created, no history moved, no
+history rewritten, no force-push. This decision only updates public wording
+(see below) and records the boundary for future work. Migrating the actual
+research destination is a separate, later, controlled task.
+
+Recorded status:
+- WEBSITE EXPOSURE: CLOSED
+- ONGOING FUTURE RESEARCH EXPOSURE: must stop before new research material
+  accumulates in this repo — a private research destination is needed before
+  that happens (see `ROADMAP-PRIVATE-RESEARCH.md` in this directory)
+- HISTORICAL PUBLIC-GIT EXPOSURE: ACCEPTED / DISCLOSED, NOT PURGED (Option 3
+  rejected as disproportionate — no credentials were found)
+
+Public wording was corrected accordingly on 2026-08-20 (see content commit) —
+no page now claims editorial mechanics have "always remained private"; pages
+instead say the mechanics are "not part of the public write-up" (present
+tense, no historical guarantee), and `press/system-report/index.html`'s
+"Currently in development" section explicitly discloses that R&D material
+behind the fuller architecture has previously existed in the public repo.
+
+Three realistic options were recorded before the decision (kept below for
+the record):
 
 - **Option 1 — Keep public repo, narrow the public claim.** Change any
   on-site or off-site statement that editorial mechanics "remain private" to
@@ -120,9 +145,16 @@ private" claim fully true again.
 
 ## OD-8 (new, from seven-surface supplement). Canonical contact address
 
-**Decision needed**: three distinct addresses appear across site surfaces —
-`jascha@cripminds.com`, `editor@cripminds.com`, `email@jaschablume.nl` — with
-no single one marked canonical. Not assumed by this audit. See
-`SEVEN-SURFACE-SUPPLEMENT.md` for detail. Pick one canonical address (or an
-explicit routing rule, e.g. "editor@ for editorial, jascha@ for owner-direct")
-and the remaining Batch-1 cleanup can update all surfaces to match.
+**Status: RESOLVED 2026-08-20 — routing policy, not a single mailbox.**
+`jascha@cripminds.com` = general/owner/project contact. `editor@cripminds.com`
+= editorial questions, factual corrections, corrections requests.
+`email@jaschablume.nl` = retired from all public CripMinds-surface
+presentation (the mailbox itself was not touched, only its public listing).
+
+Applied: `llms.txt`'s Contact section (previously `email@jaschablume.nl`) now
+reads `jascha@cripminds.com`. On inspection, `about.html` (`editor@`),
+`jascha.html`, `accessibility.html`, and `press/index.html` (all `jascha@`)
+already matched this routing correctly — no change needed there.
+`email@jaschablume.nl` had exactly one public-surface occurrence
+(`llms.txt`); confirmed zero remaining after the fix via repo-wide grep of
+the non-article static surface.
