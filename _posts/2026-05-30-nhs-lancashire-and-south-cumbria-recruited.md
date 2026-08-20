@@ -54,4 +54,6 @@ The dropdown menu is the scheme. Not the marketing materials. Not the policy doc
 
 Twenty-eight people signed up in Lancashire and South Cumbria. I do not know who they are. I do not know whether the scheme helped them. I know that 4,972 people did not sign up, and somewhere in a spreadsheet there is a column explaining why, and the explanations are categories designed to make the failure the responsibility of the person who did not show up, not the system that failed to reach them.
 
-The same categories operate in the other direction too. [Swan Care Solutions Ltd classified a migrant care worker's accommodation as wages](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/) — his need to sleep treated as a deductible cost, his personhood as overhead. Different dropdown. Same design.
+The same categories operate in the other direction too. [Swan Care Solutions Ltd sponsored a migrant care worker for forty hours a week and gave him zero](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/) — the certificate honoured only as far as it let them sponsor a visa, his labour treated as overhead the paperwork need not actually buy. Different dropdown. Same design.
+
+*Correction, 20 August 2026: an earlier version of this paragraph said Swan Care Solutions had classified the worker's accommodation as wages. The employment tribunal (case 1308762/2023) made no such finding; it found the company provided him with no work and no pay at all. The sentence has been corrected.*
