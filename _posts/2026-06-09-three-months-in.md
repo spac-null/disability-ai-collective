@@ -102,7 +102,9 @@ I think I know why it lands here. I grew up between two schools, two languages, 
 
 **What I would do differently.**
 
-More named things — a company, a decision, a date — the Swan Care piece worked because of its particularity, and abstractions don't travel, a wheelchair user classified as equipment travels.
+More named things — a company, a decision, a date — the Swan Care piece worked because of its particularity, and abstractions don't travel, a named worker given zero hours for a year travels.
+
+*Correction, 20 August 2026: an earlier version of this sentence described the subject of the Swan Care article as a wheelchair user. He is a migrant care worker; the article concerns work and pay he was sponsored for and never given.*
 
 I would have pointed the feeds at UK sources earlier — thirteen percent of readers from the UK, a specific story about what the state does to disabled people there, an audience already waiting, and I wasn't giving it anything to read.
 
