@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-08-20T12:12:11+00:00",
+  "generated_at": "2026-08-20T12:22:08+00:00",
   "canonical_repo": "/Users/stargatesgx/code/disability-collective-ai",
-  "origin_main_head": "70d92929b14494eab9d00a02e1ee3446cc168dae",
-  "local_main_head": "5cd80ffd2e55787b6b656d94cdb8c57deb99ddad",
+  "origin_main_head": "86a91d38a7b8a20827a7c55d83666a7772845a5f",
+  "local_main_head": "83c6a6bc4d2fb773e94f23f24c3b1e17419c8f18",
   "worktrees": [
     {
       "path": "/Users/stargatesgx/code/disability-collective-ai",
       "branch": "main",
       "detached": false,
-      "head": "5cd80ffd2e55787b6b656d94cdb8c57deb99ddad",
-      "dirty_tracked": 2,
-      "untracked_status_entries": 79,
-      "untracked_recursive_files": 716,
+      "head": "83c6a6bc4d2fb773e94f23f24c3b1e17419c8f18",
+      "dirty_tracked": 1,
+      "untracked_status_entries": 80,
+      "untracked_recursive_files": 733,
       "unique_commits_vs_main": 0,
       "commits_behind_main": 0,
       "lifecycle_status": "ACTIVE",
@@ -26,7 +26,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 13,
-      "commits_behind_main": 89,
+      "commits_behind_main": 91,
       "lifecycle_status": "PARKED",
       "off_main_docs": []
     },
@@ -39,7 +39,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 0,
-      "commits_behind_main": 66,
+      "commits_behind_main": 68,
       "lifecycle_status": "SAFE-TO-ARCHIVE-LATER",
       "off_main_docs": []
     },
@@ -52,7 +52,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 4,
-      "commits_behind_main": 69,
+      "commits_behind_main": 71,
       "lifecycle_status": "PARKED",
       "off_main_docs": [
         ".claude/production-editorial-upgrade-v1-2026-08-14.md",
@@ -68,7 +68,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 0,
-      "commits_behind_main": 63,
+      "commits_behind_main": 65,
       "lifecycle_status": "SAFE-TO-ARCHIVE-LATER",
       "off_main_docs": []
     },
@@ -81,7 +81,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 2,
-      "commits_behind_main": 69,
+      "commits_behind_main": 71,
       "lifecycle_status": "PARKED",
       "off_main_docs": [
         ".claude/cripminds-format-lab-v0-2026-08-14.md"
@@ -96,7 +96,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 3,
-      "commits_behind_main": 69,
+      "commits_behind_main": 71,
       "lifecycle_status": "PARKED",
       "off_main_docs": [
         ".claude/cripminds-format-lab-v1-generative-media-2026-08-14.md"
@@ -111,7 +111,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 4,
-      "commits_behind_main": 69,
+      "commits_behind_main": 71,
       "lifecycle_status": "PARKED",
       "off_main_docs": [
         ".claude/cripminds-format-lab-v2-what-the-room-heard-2026-08-14.md"
@@ -126,7 +126,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 2,
-      "commits_behind_main": 74,
+      "commits_behind_main": 76,
       "lifecycle_status": "PARKED",
       "off_main_docs": []
     },
@@ -139,7 +139,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 0,
-      "commits_behind_main": 69,
+      "commits_behind_main": 71,
       "lifecycle_status": "SAFE-TO-ARCHIVE-LATER",
       "off_main_docs": []
     },
@@ -152,7 +152,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 0,
-      "commits_behind_main": 63,
+      "commits_behind_main": 65,
       "lifecycle_status": "SAFE-TO-ARCHIVE-LATER",
       "off_main_docs": []
     },
@@ -165,7 +165,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 2,
-      "commits_behind_main": 74,
+      "commits_behind_main": 76,
       "lifecycle_status": "PARKED",
       "off_main_docs": []
     },
@@ -178,7 +178,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 1,
-      "commits_behind_main": 74,
+      "commits_behind_main": 76,
       "lifecycle_status": "PARKED",
       "off_main_docs": []
     },
@@ -191,7 +191,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 3,
-      "commits_behind_main": 69,
+      "commits_behind_main": 71,
       "lifecycle_status": "SUPERSEDED",
       "off_main_docs": []
     },
@@ -204,7 +204,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 1,
-      "commits_behind_main": 63,
+      "commits_behind_main": 65,
       "lifecycle_status": "SUPERSEDED",
       "off_main_docs": []
     },
@@ -217,7 +217,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 4,
-      "commits_behind_main": 34,
+      "commits_behind_main": 36,
       "lifecycle_status": "UNKNOWN",
       "off_main_docs": []
     },
@@ -230,7 +230,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 3,
-      "commits_behind_main": 69,
+      "commits_behind_main": 71,
       "lifecycle_status": "PARKED",
       "off_main_docs": []
     },
@@ -243,7 +243,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 5,
-      "commits_behind_main": 69,
+      "commits_behind_main": 71,
       "lifecycle_status": "PARKED",
       "off_main_docs": [
         ".claude/cripminds-publication-model-v1-2026-08-14.md"
@@ -258,7 +258,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 6,
-      "commits_behind_main": 69,
+      "commits_behind_main": 71,
       "lifecycle_status": "PARKED",
       "off_main_docs": [
         ".claude/cripminds-publication-surface-v1-2026-08-14.md"
@@ -273,7 +273,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 1,
-      "commits_behind_main": 56,
+      "commits_behind_main": 58,
       "lifecycle_status": "FROZEN",
       "off_main_docs": []
     },
@@ -286,7 +286,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 1,
-      "commits_behind_main": 50,
+      "commits_behind_main": 52,
       "lifecycle_status": "UNKNOWN",
       "off_main_docs": []
     },
@@ -299,7 +299,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 0,
-      "commits_behind_main": 42,
+      "commits_behind_main": 44,
       "lifecycle_status": "UNKNOWN",
       "off_main_docs": []
     },
@@ -312,7 +312,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 1,
-      "commits_behind_main": 74,
+      "commits_behind_main": 76,
       "lifecycle_status": "PARKED",
       "off_main_docs": [
         ".claude/testimony-L1-L2-audit-2026-08-14.md"
@@ -327,7 +327,7 @@
       "untracked_status_entries": 0,
       "untracked_recursive_files": 0,
       "unique_commits_vs_main": 0,
-      "commits_behind_main": 56,
+      "commits_behind_main": 58,
       "lifecycle_status": "SAFE-TO-ARCHIVE-LATER",
       "off_main_docs": []
     }
@@ -338,7 +338,7 @@
       "head": "d55e49d240ab167d7d3eeaec8824cb3145fd3f96",
       "upstream": null,
       "ahead_of_main": 13,
-      "behind_main": 89,
+      "behind_main": 91,
       "merged_into_main": false
     },
     {
@@ -346,7 +346,7 @@
       "head": "c4852367bae41da8614a06d3279bc29cbade5548",
       "upstream": null,
       "ahead_of_main": 0,
-      "behind_main": 56,
+      "behind_main": 58,
       "merged_into_main": true
     },
     {
@@ -354,7 +354,7 @@
       "head": "e93bb1b928b9d3458c33e6eca13ca644847f83c5",
       "upstream": "origin/main",
       "ahead_of_main": 3,
-      "behind_main": 69,
+      "behind_main": 71,
       "merged_into_main": false
     },
     {
@@ -362,7 +362,7 @@
       "head": "d0204aac584752b00f6bfb0574fa2d3c092f61d4",
       "upstream": null,
       "ahead_of_main": 0,
-      "behind_main": 42,
+      "behind_main": 44,
       "merged_into_main": true
     },
     {
@@ -370,7 +370,7 @@
       "head": "4df5770990b838757e82877d269ccaadf3c42a0d",
       "upstream": null,
       "ahead_of_main": 2,
-      "behind_main": 69,
+      "behind_main": 71,
       "merged_into_main": false
     },
     {
@@ -378,7 +378,7 @@
       "head": "7f38b470ca4a3b02c1baebb05ffef4cd571526b1",
       "upstream": null,
       "ahead_of_main": 3,
-      "behind_main": 69,
+      "behind_main": 71,
       "merged_into_main": false
     },
     {
@@ -386,7 +386,7 @@
       "head": "40dd5afbb6079726717dcd61d2263bfb1d7b240c",
       "upstream": null,
       "ahead_of_main": 4,
-      "behind_main": 69,
+      "behind_main": 71,
       "merged_into_main": false
     },
     {
@@ -394,7 +394,7 @@
       "head": "c7ef217d1237ad939c9f5788754474d789ea8a0c",
       "upstream": null,
       "ahead_of_main": 2,
-      "behind_main": 74,
+      "behind_main": 76,
       "merged_into_main": false
     },
     {
@@ -402,7 +402,7 @@
       "head": "691c3655695c66e4ceb8ff12069a34d158d78bbf",
       "upstream": "origin/main",
       "ahead_of_main": 0,
-      "behind_main": 63,
+      "behind_main": 65,
       "merged_into_main": true
     },
     {
@@ -410,12 +410,12 @@
       "head": "7a367f442f20777a6718c874359ff9f31c07d647",
       "upstream": "origin/main",
       "ahead_of_main": 0,
-      "behind_main": 69,
+      "behind_main": 71,
       "merged_into_main": true
     },
     {
       "name": "main",
-      "head": "5cd80ffd2e55787b6b656d94cdb8c57deb99ddad",
+      "head": "83c6a6bc4d2fb773e94f23f24c3b1e17419c8f18",
       "upstream": "origin/main",
       "ahead_of_main": 0,
       "behind_main": 0,
@@ -426,7 +426,7 @@
       "head": "8b8c033c0a62042243687d6325a1a3a9b78ab991",
       "upstream": null,
       "ahead_of_main": 2,
-      "behind_main": 74,
+      "behind_main": 76,
       "merged_into_main": false
     },
     {
@@ -434,7 +434,7 @@
       "head": "394f2b77272856a6c0b90bfdf595c7fdcac6d04d",
       "upstream": "origin/main",
       "ahead_of_main": 1,
-      "behind_main": 74,
+      "behind_main": 76,
       "merged_into_main": false
     },
     {
@@ -442,7 +442,7 @@
       "head": "89cd082d971497b44fb971417bd0cdd0d6ed8698",
       "upstream": null,
       "ahead_of_main": 1,
-      "behind_main": 63,
+      "behind_main": 65,
       "merged_into_main": false
     },
     {
@@ -450,7 +450,7 @@
       "head": "169e8ffc4881f6093ca273640250fd4706d607b4",
       "upstream": null,
       "ahead_of_main": 0,
-      "behind_main": 61,
+      "behind_main": 63,
       "merged_into_main": true
     },
     {
@@ -458,7 +458,7 @@
       "head": "2a190ada6cf3fb35736d4c3c4ac704edb6c639a0",
       "upstream": "origin/pixel-validation/control",
       "ahead_of_main": 1,
-      "behind_main": 145,
+      "behind_main": 147,
       "merged_into_main": false
     },
     {
@@ -466,7 +466,7 @@
       "head": "dc3186f03be4f463a6897cfa7892f0fb38bd3ba1",
       "upstream": "origin/main",
       "ahead_of_main": 4,
-      "behind_main": 69,
+      "behind_main": 71,
       "merged_into_main": false
     },
     {
@@ -474,7 +474,7 @@
       "head": "8c4b4a5d44a6ef0ae8d1a17896402ca83d3aec41",
       "upstream": null,
       "ahead_of_main": 4,
-      "behind_main": 34,
+      "behind_main": 36,
       "merged_into_main": false
     },
     {
@@ -482,7 +482,7 @@
       "head": "37432b983093274224a49cd1e2f820d41aa32bb6",
       "upstream": null,
       "ahead_of_main": 1,
-      "behind_main": 56,
+      "behind_main": 58,
       "merged_into_main": false
     },
     {
@@ -490,7 +490,7 @@
       "head": "90988d7697017cd1a23ba591358734b4f831ce01",
       "upstream": null,
       "ahead_of_main": 5,
-      "behind_main": 69,
+      "behind_main": 71,
       "merged_into_main": false
     },
     {
@@ -498,7 +498,7 @@
       "head": "1772d30dba152c6a7bb6cf365fe48b47ddd087a1",
       "upstream": null,
       "ahead_of_main": 3,
-      "behind_main": 69,
+      "behind_main": 71,
       "merged_into_main": false
     },
     {
@@ -506,7 +506,7 @@
       "head": "4a9505a5710e4b55c8b005ff5accff393c220526",
       "upstream": null,
       "ahead_of_main": 6,
-      "behind_main": 69,
+      "behind_main": 71,
       "merged_into_main": false
     },
     {
@@ -514,7 +514,7 @@
       "head": "2ad23005d53406eab1ac6f61bf742da4f5e65e59",
       "upstream": null,
       "ahead_of_main": 12,
-      "behind_main": 89,
+      "behind_main": 91,
       "merged_into_main": false
     },
     {
@@ -522,7 +522,7 @@
       "head": "cff6dbc3140a5dea4ea6c2536ba664c633239995",
       "upstream": null,
       "ahead_of_main": 1,
-      "behind_main": 50,
+      "behind_main": 52,
       "merged_into_main": false
     },
     {
@@ -530,18 +530,18 @@
       "head": "41e6c5ea6be6c085f7eef918859ec178df2d2c53",
       "upstream": null,
       "ahead_of_main": 1,
-      "behind_main": 74,
+      "behind_main": 76,
       "merged_into_main": false
     }
   ],
   "remote_refs": [
     {
       "name": "origin",
-      "head": "70d92929b14494eab9d00a02e1ee3446cc168dae"
+      "head": "86a91d38a7b8a20827a7c55d83666a7772845a5f"
     },
     {
       "name": "origin/main",
-      "head": "70d92929b14494eab9d00a02e1ee3446cc168dae"
+      "head": "86a91d38a7b8a20827a7c55d83666a7772845a5f"
     },
     {
       "name": "origin/pixel-validation/control",

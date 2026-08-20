@@ -1179,3 +1179,59 @@ RECORD.md, preserved pre-correction page + preserved tribunal written reasons, h
 CODE: none. CONTENT COMMIT: `5cd80ff` local / `70d9292` published.
 FOLLOW-UP: Batch 1, starting with the 2026-06-19 appeal article. Do NOT start it in the same
 task as other work.
+
+## 2026-08-20 — SWAN CARE CLUSTER CLOSED: 0 withdrawals, 3 corrections (SWANCLOSE1)
+STATUS: Cluster closed. 3 content corrections published and verified live. **No withdrawals.**
+Phase-2 capture, crons, selector, AR3, Writer Grounding and production prompts untouched.
+CORRECTION TO MY OWN PRIOR FINDING: the previous task reported
+`2026-06-19-swan-care-is-appealing-the-appeal-is-the-mechanism` as "the strongest WITHDRAW
+candidate in the corpus" because its title and thesis rested on a non-existent appeal. **That
+was wrong — I read the index card, not the article.** The article was **already rebuilt on
+2026-08-08** (commit `7c4719d`, *"rebuild second Swan Care article — its entire thesis was
+fabricated"*), retitled from "Swan Care Is Appealing. The Appeal Is the Mechanism." to
+**"Winning the Case Does Not Turn Off the Clock"**, with a new thesis about visa curtailment
+when a sponsor licence is revoked — which the record supports. The only "appeal" strings left
+in it are three asset filenames derived from the old slug. What was actually broken was
+`research/care-labor.html`, never updated when the article was rebuilt, so for twelve days it
+presented the withdrawn title and an appeal-based description as a normal current article, in
+both the visible card and the JSON-LD itemList.
+CLUSTER (7 public items checked against the already-preserved tribunal record, not re-derived):
+`research/care-labor.html` CORRECT_WITH_DISCLOSURE (P0 lede fixed in `70d9292`, stale cards
+fixed here); `2026-05-30-nhs-lancashire-and-south-cumbria-recruited` CORRECT_WITH_DISCLOSURE —
+said Swan Care "classified a migrant care worker's accommodation as wages", a finding the
+tribunal never made; `2026-06-09-three-months-in` CORRECT_WITH_DISCLOSURE — described the
+subject as "a wheelchair user" when he is a migrant care worker (a NEW false claim found in
+this pass); `2026-06-04-…classified-someone-as-equipment` KEEP_AS_LEGACY — verified accurate;
+`2026-06-19-…` KEEP_AS_LEGACY — already rebuilt; `2026-06-20-i-use-care-workers…`
+KEEP_AS_LEGACY — accurate; `research.html` + `cripminds-stats-2026-06.html` no action, title
+references only.
+06-04 VERIFIED ACCURATE against the judgment: zero hours for a year, 40hrs/£22,880 certificate,
+£17,000 to an agent, "twenty thousand four hundred pounds in unpaid wages" (£20,400.76), the
+27 December 2023 letter the tribunal found *"did not exist as at 27 December 2023"*, and the
+sponsorship licence *"ultimately revoked in 2024"*. Two press-sourced specifics (the tap-water/
+bread quote and the "39,000 care workers / 470 revoked sponsorships" statistic) are **not in
+the judgment but not disproven by that** — absence from a judgment is not disproof, and the
+article cites Guardian Society. Logged as MEDIUM-risk LC1 items, explicitly NOT Swan Care
+falsehoods.
+CHANGES: 3 files, 18 insertions / 10 deletions, each correction carrying a visible dated
+disclosure. No style modernisation, no unrelated interpretation touched, no article rewritten
+through the new engine, no URL changed.
+URL LEFT ALONE DELIBERATELY: `/2026/06/19/swan-care-is-appealing-the-appeal-is-the-mechanism/`
+still carries the pre-rebuild slug. Renaming it would break the canonical record, inbound
+links and the article's own asset paths, to fix a slug on an article whose content is now
+correct. The index card discloses it. Owner decision, not a factual necessity.
+SOCIAL: `_social/` records Bluesky URIs only. **Exactly one post exists in the whole cluster** —
+`at://did:plc:4x2xhho3ozmrknpxqbdjtmbv/app.bsky.feed.post/3mnh2k2ymo22v` (Zen Circuit) for the
+2026-06-04 article, which is **accurate**. NO_ACTION. Nothing was withdrawn, so no promotional
+post is circulating an invalidated claim. No X/Reddit/LinkedIn/Facebook records exist.
+DEPLOY DISCIPLINE REPEATED: local `main` was 36 commits ahead of origin with `.claude/`
+evidence never intended for deployment; the content commit was cherry-picked onto `origin/main`
+and pushed alone (`70d9292..86a91d3`), verified to contain zero `.claude/` files before
+pushing. Pages deploy run `32368084791` **success** (55s); all four affected URLs verified live
+by `curl`.
+EVIDENCE: `.claude/experiments/swan-care-cluster-closure-2026-08-20/` —
+SWAN-CARE-CLUSTER-CLOSURE.md, pre/post hashes, preserved copies, cluster-fix.diff, SHA256SUMS.
+CODE: none. CONTENT COMMIT: `83c6a6b` local / `86a91d3` published.
+FOLLOW-UP: **Swan Care incident is CLOSED.** Do NOT begin LC1 Batch 1 or the static-site audit
+in the same task. Two MEDIUM-risk press-sourced specifics in the 06-04 article are queued for a
+later batch, not P0.
