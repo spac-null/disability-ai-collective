@@ -613,3 +613,85 @@ the owner reclassification is the operative status). Supersedes `WORK.md` `## 5c
 "CURRENT — Real Article Test 2".
 FOLLOW-UP: Phase 0 — freeze the production baseline. Do NOT implement, deploy, clean, create
 Test 3, or return to Edinburgh.
+
+## 2026-08-20 — PRODUCTION MIGRATION PHASE 0: BASELINE FROZEN (PM-P0)
+STATUS: **PHASE 0 COMPLETE.** No implementation, no deployment, no production code modified,
+no cleanup, no AR3 patch, nothing pushed.
+DECISION: Froze the current production baseline so later live-vs-shadow comparison is
+meaningful and reversible. Local HEAD `c6f97b8` (25 commits ahead of origin, all `.claude/`
+evidence, **none deployed**; 2 behind — production's own output commits). Production checkout
+`/srv/data/hermes/workspace/disability-ai-collective` at `8af3622`, clean, in sync with
+origin. **Verified all 13 core pipeline files byte-identical between local and Trident**,
+which is what makes a locally-captured prompt baseline a genuine production baseline.
+RUNTIME: production is **live and publishing** — it generated and pushed an article at 09:00
+this morning while this planning work proceeded. Cron confirmed: news 06:05, article 09:00,
+stale-check 10:30, publish_best every 2 days 08:00, DB backup 03:30. `CJ2_INTEGRATION_MODE`
+and `L2_TESTIMONY_MODE` are unset on the host, so both default OFF — CJ-2 and L2 confirmed
+inert. Writer routes through `call_llm_via_openclaw_session`; editorial/gate/review through
+CLIProxy at `127.0.0.1:8317`, Trident-local, confirming migration Phase 5 must run there.
+PROMPT BASELINE: hash-froze 12 static prompts, 5 persona canon files, 4 `personas.py` prompt
+blocks and 13 pipeline source files. The assembled writer prompt was **re-derived with the
+repo's own zero-network harness and reproduces byte-identically** to the capture preserved in
+the Legacy Inventory (`38c47b8`), so it is referenced by path+commit+hash rather than
+duplicated. No model call was made anywhere in Phase 0.
+DATABASES: 5 SQLite DBs found in the production workspace; **all 5 backed up with SQLite's
+`Connection.backup()` API** (never `cp`), **all 5 verified `integrity_check: ok`**, hashed,
+to a retained root `/srv/backups/cripminds-phase0-baseline/`. No blockers; no unsafe copy was
+substituted.
+CORRECTION: the claim carried in `PROJECT-MAP.md` and repeated in the migration plan that
+**"no SQLite-safe backup exists yet"** is **false and now corrected in both files**.
+`automation/backup_state_dbs.py` has run daily at 03:30 since 2026-08-10 (added after the
+engagement.db incident), using the SQLite backup API with a post-backup `integrity_check`,
+writing outside the repo with 14-day retention, covering both live DBs. The real limitation is
+that 14-day rotation would delete a baseline before migration completes — which is why a
+separate retained Phase-0 root was created. Residual risk, unresolved: backups share the
+source disk; offsite backup remains a separate open item.
+NEW BASELINE FINDING (D9): **promotion is currently stalled.** Latest published post is
+2026-08-11 — nine days ago. Seven drafts sit unpromoted, and **four of the seven carry
+`fact_check_status: blocked`**, three with explicit `pipeline_degraded` lists
+(`persona_biography_unresolved`; `gate_llm` + `persona_biography_unresolved`; `fable_brief`).
+`_compute_should_block` is actively firing in production. Whether that is the safety net
+working correctly or a stall worth investigating is **not decided** — it is recorded as the
+baseline condition so post-migration change can be attributed. It also matters for Phase 2: a
+comparison that ignores blocking would compare the new architecture against articles
+production itself declined to publish.
+NEW PHASE-2 BLOCKER: **production does not persist fetched source text anywhere.**
+`article_plans.plan_json` stores `source_hash`/`evidence_packet_hash`/lengths but not the text;
+`news_seeds` stores only the RSS summary; there is no source-text cache table. For most
+fixtures the exact bytes the writer saw cannot be recovered, only verified by re-fetch against
+the stored hash. Mitigations recorded for owner decision (freeze at generation time going
+forward; accept hash-verified-or-flagged fixtures; prefer already-frozen sources).
+HELD-OUT FIXTURES: five identified from existing production output, **no generation
+performed**, selected for material diversity and lineage completeness rather than quality —
+two are blocked articles. The strongest is `sniff-it-out-follow-your-nose-whatever-your-legs-can`
+(2026-08-16, Maya Flux): its `source_hash` `fee0a03b8bb0c56b…` is **byte-identical to the
+Edinburgh source already frozen in FORM-1.3**, giving a direct legacy-vs-Article-Form
+comparison on identical input with both sides preserved. Others: `what-the-word-modular`
+(Dezeen, fetch at risk, pairs with a same-source different-persona draft), `7-000-rooms`
+(macroeconomic, `source_decision=commission`), `galaxy-h1` (1,434-char source → 1,776-word
+article, exercises `gate_llm`), `surovell` (degraded-path only, no brief persisted).
+SNAPSHOT TEST: runs clean at baseline ("No drift — 6 article(s) match recorded fixtures"), was
+**not modified**. Reusable for migration regression checks, with two named limits: (1) the
+25,019-character `rewrite_with_opus` SYSTEM has **zero snapshot coverage in any harness**, and
+Phase 4 deletes it — its hash is now recorded in the Phase-0 prompt baseline so the removal is
+still provable; (2) baselines must be re-recorded deliberately per deletion, never in one
+squashed migration commit. Other uncovered surfaces recorded: engagement read, persona
+cross-cite, both `FIX_SYSTEM`s, `SUBJECT_SYSTEM`, fact_check and link SYSTEMs, persona canon
+payloads, and end-to-end output.
+DEFECTS PRESERVED, NOT FIXED: D1 AR3 testimony quota live in rewrite 33/33b; D2 nine
+gate/review R-number collisions; D3 WP-13 UK-preference mismatch; D4 duplicated persona canon
+(7,216 ch, byte-identical); D5 mass-injected writer prompt (59,161 ch); D6 `style_rules.py`
+unwired and `check_rule_drift.py` unrun; D7 80 negative-prohibition tokens; D8 fallback
+publishes a template rather than holding; D9 promotion stalled.
+AR3: **HOTFIX DECISION PENDING AFTER BASELINE FREEZE**, per instruction. Rewrite 33/33b were
+NOT patched — the baseline had to capture real current behaviour first.
+EVIDENCE: `.claude/experiments/production-migration-phase0-baseline-2026-08-20/` — README,
+GIT-AND-RUNTIME-BASELINE, PRODUCTION-COMPONENT-MAP, PROMPT-BASELINE, KNOWN-DEFECTS,
+DATABASE-BACKUP-MANIFEST, PUBLICATION-STATE, HELD-OUT-FIXTURES, SNAPSHOT-TEST-COVERAGE,
+db-backup-manifest.json, SHA256SUMS.txt.
+CODE: none. No production commit. Backups written to `/srv/backups/` on Trident only.
+SUPERSEDES: `PROJECT-MAP.md`'s "no SQLite-safe backup exists yet" and the same claim in
+`production-architecture-plan-2026-08-20/ROLLBACK-AND-SHADOW-PLAN.md`.
+FOLLOW-UP: owner decision on AR3 hotfix; then Phase 1 (build DISCOVERY/ARTICLE FORM and
+Writer Grounding arbitration as OFF-by-default shadow modules). Do NOT implement, deploy,
+clean, or create Test 3 before that decision.

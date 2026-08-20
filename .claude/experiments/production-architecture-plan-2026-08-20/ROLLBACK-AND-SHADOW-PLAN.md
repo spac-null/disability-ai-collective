@@ -85,9 +85,15 @@ This is where rollback matters most, because Phase 4 removes stages.
 - Never bare-rsync a directory that may contain gitignored state — this caused a real data
   loss incident on 2026-08-10.
 - A push landing on `main` does not mean the site is live; confirm the Pages workflow.
-- The production DB has no SQLite-safe backup yet. **This is an open risk that predates this
-  plan and is not resolved by it.** Any phase that could write to `disability_findings.db` or
-  `engagement.db` should not proceed until it is.
+- ~~The production DB has no SQLite-safe backup yet.~~ **CORRECTED 2026-08-20 by the Phase-0
+  freeze.** `automation/backup_state_dbs.py` has run daily at 03:30 since 2026-08-10 using
+  SQLite's `Connection.backup()` API with a post-backup `integrity_check`, writing outside the
+  repo to `/srv/backups/cripminds` with 14-day retention, and covering both live DBs. A
+  separate retained Phase-0 baseline (all 5 DBs, integrity verified) now exists at
+  `/srv/backups/cripminds-phase0-baseline/`. See
+  `.claude/experiments/production-migration-phase0-baseline-2026-08-20/DATABASE-BACKUP-MANIFEST.md`.
+  Residual risk, unresolved: backups share the source disk; offsite backup remains a separate
+  open item.
 
 ## Observability during shadow
 

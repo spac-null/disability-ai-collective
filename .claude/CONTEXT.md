@@ -17,8 +17,23 @@
   sufficient reason for another transfer-test generation. No rigid universal length
   mechanism until cross-story evidence exists. Do NOT rerun Test 2, do NOT create Test 2.1,
   do NOT generate a compressed variant. The frozen Test-2 article is not to be modified.
+- **PHASE 0 (BASELINE FREEZE): COMPLETE 2026-08-20.**
+  `.claude/experiments/production-migration-phase0-baseline-2026-08-20/`
+  Production `8af3622` (live, publishing daily); local `c6f97b8`, 25 evidence commits ahead,
+  **none deployed**; all 13 pipeline files verified byte-identical local↔Trident. Prompt
+  surface hash-frozen. All 5 SQLite DBs safely backed up (`Connection.backup()` +
+  `integrity_check: ok`) to a retained root. 5 held-out fixtures identified, no generation.
+  snapshot_test passes clean.
+  - **CORRECTION:** "no SQLite-safe backup exists" was **false** — a safe daily backup has run
+    since 2026-08-10. Fixed in `PROJECT-MAP.md` and the migration plan.
+  - **NEW: promotion is stalled** — nothing published since 2026-08-11; 4 of 7 drafts
+    `blocked`; `_compute_should_block` actively firing. Baseline condition, not diagnosed.
+  - **NEW Phase-2 blocker:** production does not persist fetched source text (only
+    `source_hash`), so most fixtures can be verified but not byte-reproduced. Exception:
+    `sniff-it-out` shares Edinburgh's frozen source hash `fee0a03b…` exactly.
+  - **AR3 HOTFIX DECISION PENDING AFTER BASELINE FREEZE** — rewrite 33/33b NOT patched.
 - **CURRENT PHASE: PRODUCTION ARCHITECTURE / MIGRATION PLANNING — planning, not
-  implementation, not deployment.**
+  implementation, not deployment. Phase 0 done; Phase 1 not started.**
   Plan: `.claude/experiments/production-architecture-plan-2026-08-20/`
 - **Central planning finding: ~81% of the 114-family legacy rule debt is DELETED by
   replacing three stages** (the writer prompt, the whole-document rewrite, the two LLM

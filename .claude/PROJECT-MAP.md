@@ -193,7 +193,12 @@ Allowed lifecycle statuses: `ACTIVE`, `FROZEN`, `PARKED`, `MERGED`, `SUPERSEDED`
   `automation/.probe_fixtures/` — untracked on canonical `main` (52 scripts + fixtures),
   preserved at `~/code/cripminds-preservation/engineering/cj1-cj2-2026-08-16/`
 - Production DB authority: Trident's `disability_findings.db` /
-  `automation/engagement.db` — no SQLite-safe backup exists yet (open risk, below)
+  `automation/engagement.db` — **a SQLite-safe daily backup DOES exist** (corrected
+  2026-08-20; an earlier note here claiming otherwise was stale):
+  `automation/backup_state_dbs.py`, daily 03:30 since 2026-08-10, `Connection.backup()` +
+  `integrity_check`, 14-day retention, to `/srv/backups/cripminds`. A retained Phase-0
+  migration baseline of all 5 DBs sits at `/srv/backups/cripminds-phase0-baseline/`.
+  Residual open risk: backups share the source disk (no offsite copy)
 - **In-repo evidence roots (tracked, added 2026-08-19)** — these are inside the canonical repo,
   not the external preservation root, and each carries its own `PRESERVATION-MANIFEST.md` +
   `SHA256SUMS.txt`:
