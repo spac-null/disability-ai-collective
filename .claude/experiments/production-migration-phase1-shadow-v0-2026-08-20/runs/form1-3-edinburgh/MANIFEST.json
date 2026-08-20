@@ -1,0 +1,16 @@
+{
+  "decision": "HOLD",
+  "fixture": "form1-3-edinburgh",
+  "schema_version": "shadow-v0.1",
+  "shadow_v0_mode": "REPLAY",
+  "source_sha256": "fee0a03b8bb0c56b88b0806a9120576c87f0983764d8620c77c56b59531d4753",
+  "stage_hashes": {
+    "ARTICLE_FORM": "02de29402354bf19e7983aae732193cf1f9178966019cf4ed671242489053cfa",
+    "DISCOVERY": "e6a9427ced3c7d2dc3d8152229135dd288b5f44b132c5929adf9ac7e89be5ab7",
+    "GROUNDING_FINDINGS": "26b9287f2fb06d030ac8fb26c39369f1476f5f5f0424f06fac483bf4940d7b8d",
+    "SHADOW_DECISION": "b9f6d3d04880d5f8589e7e2c519571e86846542e67645775ca96743164e97acf",
+    "SOURCE_SNAPSHOT": "655192734c14d98fbb9d0acb5c91454ce411082282a2d48476675ae1ef4b5f1a",
+    "WRITER_INPUT": "5f0e5bbc53bcdc5d1b0b3f723907593b374c495f95c7a4773f95a0bb1c4fdbe9",
+    "WRITER_OUTPUT": "5fae3a4c1649c5bb47da032d4325aa9ed439d91f21bb7d680e4b89f9cb53da09"
+  }
+}

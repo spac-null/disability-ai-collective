@@ -1,0 +1,59 @@
+{
+  "content_hash": "82f31ae3a4ff868d17861f649002d51de8c0044543a5f99d84ec00ff3d1515f5",
+  "created_at": "2026-08-20T00:00:00Z",
+  "input_hashes": {
+    "source": "e740d74d78e55b768a9dce5ce359c3dd1eb647b909b72ba4dfa79b4a5d54e02e",
+    "writer_output": "976f691349436d5cd91c283c0e4819b5748ae421f3e75c6179840e6446b6a342"
+  },
+  "payload": {
+    "findings": [
+      {
+        "classification": "TRUE_UNSUPPORTED",
+        "id": "F1",
+        "summary": "'Nine years later' -- writer-computed elapsed interval absent from the source and wrong against its own 2016 anchor."
+      },
+      {
+        "classification": "TRUE_UNSUPPORTED",
+        "id": "F2",
+        "summary": "'none with a tram on the track' -- widens the source's narrower 'never encountered a tram while crossing'."
+      },
+      {
+        "classification": "TRUE_UNCERTAIN",
+        "id": "F3",
+        "summary": "'the operator' -- the 2017 recommendation was addressed to Stagecoach Supertram."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F4",
+        "summary": "'Its ordinary state is silence.'"
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F5",
+        "summary": "looking as a property of the crossing"
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F6",
+        "summary": "'the silence had been true'"
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F7",
+        "summary": "the closing claim about what such a channel teaches"
+      }
+    ],
+    "gold_v2_1_used_as_detector_input": false,
+    "provenance": {
+      "document": "run/GROUNDING-AUDIT.md",
+      "document_sha256": "b82711b2489df4e69c14b9d356006aadc458743e4915786ce884d4595c7db81b",
+      "frozen_commit": "8741804"
+    },
+    "qualifiers_preserved": true,
+    "status": "settled",
+    "uncertain_adjudicated": true,
+    "uncertain_adjudication_note": "F3 was explicitly adjudicated no-patch: repairing it would require naming entities the article deliberately does not name."
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "GROUNDING_FINDINGS"
+}

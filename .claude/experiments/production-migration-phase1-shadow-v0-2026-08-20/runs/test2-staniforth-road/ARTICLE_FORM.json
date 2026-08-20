@@ -1,0 +1,31 @@
+{
+  "content_hash": "f6c9bb66143c5d45a9eeece8e726377ce258d5c3d2677e5b883b500f60f00521",
+  "created_at": "2026-08-20T00:00:00Z",
+  "input_hashes": {
+    "discovery": "ab3a7a87cbed38423c2b98c385996de023583633d796988e8c1ca6721bf0e8ed",
+    "source": "e740d74d78e55b768a9dce5ce359c3dd1eb647b909b72ba4dfa79b4a5d54e02e"
+  },
+  "payload": {
+    "arrival": "Looking is a property of the crossing; hearing is a message with a sender. A channel almost always silent, and almost always silent truthfully, teaches the people who use it that silence is information.",
+    "burden": "The argument is carried by the report's facts in sequence. No remedy, no second arrival, no disability example, no persona voice, third person.",
+    "motion": "narrows -> accumulates -> recurs",
+    "provenance": {
+      "document": "ARTICLE-FORM.md",
+      "document_sha256": "a47e45ef3c6e69309d985cab2690fd139424608390ba3cfa5fa0603c2069c5e1",
+      "frozen_commit": "2dd9a86"
+    },
+    "route": [
+      "The premise: the crossing as the report describes it, closing on the two channels named.",
+      "Take the second channel apart using only the report's facts. Let the facts narrow.",
+      "The accident, plainly and chronologically, in seconds; then the two recorder findings.",
+      "Resistance then accumulation: the prior cases where a warning WAS given; then the rest; then the twenty-year remedy line.",
+      "Arrive, and stop there."
+    ],
+    "target_words": [
+      900,
+      1200
+    ]
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "ARTICLE_FORM"
+}

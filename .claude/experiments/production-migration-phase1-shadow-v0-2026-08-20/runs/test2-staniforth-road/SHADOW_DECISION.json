@@ -1,0 +1,22 @@
+{
+  "content_hash": "067ff23ef373133e3eb5f48a5992f89cf2509e27f096a84b75209af6e15ad947",
+  "created_at": "2026-08-20T00:00:00Z",
+  "input_hashes": {
+    "findings": "82f31ae3a4ff868d17861f649002d51de8c0044543a5f99d84ec00ff3d1515f5",
+    "repair": "82e6f0cfb56d18425e846fe42de15a9614170a63c4a7a5818f138ca07c45a859",
+    "writer_output": "976f691349436d5cd91c283c0e4819b5748ae421f3e75c6179840e6446b6a342"
+  },
+  "payload": {
+    "decision": "ACCEPT",
+    "policy": "shadow-v0 positive acceptance; not connected to publication",
+    "reasons": [
+      "writer output present, provider ok",
+      "grounding settled",
+      "2 TRUE_UNSUPPORTED finding(s), all repaired patch-only",
+      "1 TRUE_UNCERTAIN finding(s), explicitly adjudicated",
+      "repair verified: 0 residual, 0 introduced, 0 unrelated edits"
+    ]
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "SHADOW_DECISION"
+}

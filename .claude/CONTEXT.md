@@ -32,8 +32,18 @@
     `source_hash`), so most fixtures can be verified but not byte-reproduced. Exception:
     `sniff-it-out` shares Edinburgh's frozen source hash `fee0a03b…` exactly.
   - **AR3 HOTFIX DECISION PENDING AFTER BASELINE FREEZE** — rewrite 33/33b NOT patched.
-- **CURRENT PHASE: PRODUCTION ARCHITECTURE / MIGRATION PLANNING — planning, not
-  implementation, not deployment. Phase 0 done; Phase 1 not started.**
+- **PHASE 1 (SHADOW V0): COMPLETE 2026-08-20.**
+  `.claude/experiments/production-migration-phase1-shadow-v0-2026-08-20/`
+  OFF-by-default vertical slice: 8 artifact contracts, source-text persistence (fixes the
+  Phase-0 blocker), positive ACCEPT/HOLD. Golden replay: Test 2 → **ACCEPT**, FORM-1.3 →
+  **HOLD** (2 unresolved unsupported). Deterministic across runs. 39/39 safety checks.
+  Implementation lives under `.claude/experiments/`; **nothing in `automation/` imports it**;
+  no sqlite3/network/subprocess in executable code. Commits `71a5a20` (impl), see LOGBOOK.
+  - Writer Grounding receives `{writer_output, source}` only — it structurally cannot change
+    the Article Form.
+  - LIVE_SHADOW scaffolded, raises, never executed. No model call was made.
+- **CURRENT PHASE: PRODUCTION ARCHITECTURE / MIGRATION — Phase 0 and Phase 1 done.
+  Phase 2 (live-vs-shadow on held-out stories) NOT started.**
   Plan: `.claude/experiments/production-architecture-plan-2026-08-20/`
 - **Central planning finding: ~81% of the 114-family legacy rule debt is DELETED by
   replacing three stages** (the writer prompt, the whole-document rewrite, the two LLM

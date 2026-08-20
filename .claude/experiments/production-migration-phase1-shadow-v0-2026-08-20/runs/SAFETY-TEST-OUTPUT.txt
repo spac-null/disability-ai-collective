@@ -1,0 +1,76 @@
+
+test_default_off
+  PASS  shadow mode defaults to OFF
+  PASS  run() refuses when OFF
+
+test_live_shadow_not_executable
+  PASS  LIVE_SHADOW refuses to execute
+
+test_no_db_or_publication_code
+  PASS  no sqlite3 in executable code
+  PASS  no _posts path in executable code
+  PASS  no _drafts path in executable code
+  PASS  no subprocess in executable code
+  PASS  no network client in executable code
+  PASS  no urllib in executable code
+  PASS  no socket in executable code
+
+test_writes_confined_to_run_root
+  PASS  writes only under the run root
+  PASS  source snapshot persisted as a file
+  PASS  manifest persisted
+  PASS  no _posts file touched
+
+test_source_text_persisted_not_just_hash
+  PASS  SOURCE_SNAPSHOT carries source_text
+  PASS  SOURCE_SNAPSHOT carries provenance origin
+  PASS  SOURCE_SNAPSHOT hash matches its own text
+  PASS  frozen Test-2 source hash preserved exactly
+
+test_hash_mismatch_fails_closed
+  PASS  source hash mismatch fails closed
+
+test_lineage_break_fails_closed
+  PASS  lineage break fails closed
+
+test_missing_stage_artifact_holds
+  PASS  missing required stage -> HOLD
+  PASS  missing stage reason names the gap
+
+test_missing_required_field_fails_closed
+  PASS  missing required field fails closed
+
+test_grounding_unresolved_holds
+  PASS  FORM-1.3 unresolved unsupported -> HOLD
+  PASS  HOLD reason names the unresolved findings
+
+test_uncertain_holds_by_default
+  PASS  unadjudicated TRUE_UNCERTAIN -> HOLD
+
+test_provider_failure_holds
+  PASS  provider failure -> HOLD (no template fallback)
+  PASS  provider-failure reason rejects legacy fallback
+
+test_accept_path
+  PASS  Test 2 replays to ACCEPT
+
+test_no_legacy_prompt_surface
+  PASS  no legacy prompt surface in test2-staniforth-road writer input
+  PASS  no legacy prompt surface in form1-3-edinburgh writer input
+  PASS  legacy marker in writer input fails closed
+
+test_form_and_grounding_are_separate_stages
+  PASS  ARTICLE_FORM and GROUNDING_FINDINGS are distinct artifacts
+  PASS  Writer Grounding receives writer_output + source
+  PASS  Writer Grounding does NOT receive ARTICLE_FORM
+  PASS  Article Form derives from discovery + source
+  PASS  Discovery derives from source only
+
+test_repair_is_patch_only
+  PASS  non-patch-only repair fails closed
+
+test_determinism
+  PASS  replay is deterministic across runs
+
+------------------------------------------------------------
+ALL SAFETY TESTS PASSED

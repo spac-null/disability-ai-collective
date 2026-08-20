@@ -695,3 +695,78 @@ SUPERSEDES: `PROJECT-MAP.md`'s "no SQLite-safe backup exists yet" and the same c
 FOLLOW-UP: owner decision on AR3 hotfix; then Phase 1 (build DISCOVERY/ARTICLE FORM and
 Writer Grounding arbitration as OFF-by-default shadow modules). Do NOT implement, deploy,
 clean, or create Test 3 before that decision.
+
+## 2026-08-20 — MIGRATION PHASE 1: CLEAN SHADOW VERTICAL SLICE V0 (PM-P1)
+STATUS: **PHASE 1 COMPLETE.** OFF by default. No production code modified, no deployment, no
+publication, no legacy cleanup, no AR3 patch, nothing pushed. **No model call was made.**
+DECISION: Built the smallest OFF-by-default shadow vertical slice of the validated target
+architecture — WORLD/SOURCE → DISCOVERY → ARTICLE FORM → WRITER → WRITER GROUNDING → SHADOW
+ACCEPT/HOLD — as plumbing and artifact-integrity validation, not another editorial experiment.
+LOCATION / ISOLATION: implementation lives entirely under
+`.claude/experiments/production-migration-phase1-shadow-v0-2026-08-20/impl/shadow_v0/`,
+deliberately outside `automation/`. The brief allowed either; the experiment root makes "no
+production import" true by construction rather than convention, and the repo already has a
+cautionary precedent in `sofa_discovery_shadow.py` (inside `automation/`, imported by nothing,
+left untracked). Verified: `grep -rn "shadow_v0" automation/` returns nothing; `run()` raises
+`ShadowDisabled` unless `SHADOW_V0_MODE` is set; the package has no `sqlite3`, no network
+client and no `subprocess` in executable code, so a production DB write or a publication is
+unimplementable from here rather than merely disallowed.
+CONTRACTS: 8 artifacts at schema `shadow-v0.1` — SOURCE_SNAPSHOT, DISCOVERY, ARTICLE_FORM,
+WRITER_INPUT, WRITER_OUTPUT, GROUNDING_FINDINGS, GROUNDING_REPAIR (optional), SHADOW_DECISION.
+Each carries schema_version, stage, injected `created_at`, `input_hashes` and payload, with a
+content hash over all of it. Fail-closed on: unknown stage, wrong schema, missing required
+field, self-inconsistent hash, lineage break, non-`patch_only` repair, and any of 29 legacy
+prompt markers appearing in WRITER_INPUT.
+SOURCE PERSISTENCE — PHASE-2 BLOCKER FIXED: `SOURCE_SNAPSHOT` must carry the source **text**
+plus provenance (origin, url, retrieved, upstream identifiers, frozen_at/commit), not just a
+hash; validation recomputes the hash and rejects a mismatch, so a hash-only artifact cannot be
+constructed. The runner also writes `source-snapshot.txt` beside the JSON. This is passive
+capture — production source handling is unchanged.
+STAGE SEPARATION, enforced by the artifact graph rather than by comment and asserted by test:
+Discovery consumes `{source}`; Article Form consumes `{discovery, source}`; **Writer Grounding
+consumes `{writer_output, source}` and never `article_form`**, so grounding structurally cannot
+change the Form. Discovery and Article Form are not collapsed into a writer prompt, and no
+persona material enters WRITER_INPUT at all.
+ACCEPT/HOLD: deliberately **not** a port of `_compute_should_block` (which is a negative test
+over stage names that will not exist). Positive rule: ACCEPT requires complete lineage, writer
+output with `provider_status == ok`, settled grounding, every TRUE_UNSUPPORTED repaired,
+TRUE_UNCERTAIN explicitly adjudicated, and repair verification 0/0/0. Everything else HOLDs.
+**Provider failure → HOLD, not the legacy template fallback** — recorded as a shadow policy
+candidate, still an owner decision. ACCEPT is not connected to publication.
+GOLDEN REPLAY: Test 2 (Staniforth Road) replays end-to-end to **ACCEPT** with source hash
+`be381bbc…` intact, all 8 stages emitted and lineage-chained, 2 patches applied patch-only,
+repair verified. FORM-1.3 (Edinburgh) replays to **HOLD** on 2 unresolved TRUE_UNSUPPORTED
+findings drawn from its own frozen audit (`status: FAIL`) — included precisely because a
+decision contract that only ever accepts proves nothing. FORM-1.3's source hash `fee0a03b…` is
+the one byte-identical to production's `article_plans.source_hash` for the draft
+`sniff-it-out-…`, which is what will make a Phase-2 comparison provable for that story.
+Replay is deterministic: two runs produce identical hashes for all 8 stages, guaranteed by
+`created_at` being injected rather than clock-read.
+BUGS FOUND AND FIXED IN-TASK (all caught by running it): (1) repo-root resolution was off by
+one — `parents[4]` resolved to `.claude/`, breaking every fixture path; fixed to `parents[5]`
+with a loud assertion. (2) `replay.py` passed `mode=MODE_REPLAY` explicitly, bypassing
+`SHADOW_V0_MODE` and defeating default-OFF through the only executable entry point; fixed to
+read the flag. (3) The safety test for "no `_posts`/`_drafts` reference" scanned raw file text
+and failed on those words inside `runner.py`'s own safety docstring; tightened to scan
+executable code only (identifiers, imports, non-docstring string literals via AST), so it
+asserts what the code does rather than what its prose says.
+SAFETY TESTS: 39 checks across 17 functions, **39/39 pass** — default OFF, LIVE_SHADOW refuses,
+no DB/publication/network code, writes confined to the run root with `_posts` mtimes unchanged,
+source text persisted, hash mismatch fails closed, lineage break fails closed, missing stage →
+HOLD, missing field → ContractViolation, grounding unresolved → HOLD, unadjudicated UNCERTAIN →
+HOLD, provider failure → HOLD, legacy marker rejected, Form/Grounding separation, patch-only
+enforcement, determinism. No literary quality tests.
+PRODUCTION SAFETY NET: `automation/snapshot_test.py` was **not modified**; re-run to confirm
+the baseline holds ("No drift — 6 article(s) match recorded fixtures"). The shadow path has its
+own golden tests, kept separate. Integration point recorded for Phase 4, including the Phase-0
+finding that `rewrite_with_opus`'s 25,019-char SYSTEM has zero snapshot coverage anywhere.
+AR3: unchanged and still deferred per owner decision — rewrite 33/33b remain known migration
+debt; the stall is fact_check blocking and there is no evidence AR3 causes it.
+EVIDENCE: `.claude/experiments/production-migration-phase1-shadow-v0-2026-08-20/` — README,
+ARCHITECTURE, STAGE-CONTRACTS, SOURCE-PERSISTENCE, ACCEPT-HOLD, REPLAY-RESULT, SAFETY-TESTS,
+SHA256SUMS, `impl/` (622 lines package + tests), `runs/` (both fixtures' artifacts + outputs).
+CODE: `71a5a20` (implementation). No production commit.
+FOLLOW-UP: Phase 2 — live-vs-shadow comparison on held-out real stories. Blockers recorded:
+historical fixtures are verifiable but not byte-reproducible (production still does not persist
+source text); a comparison harness does not yet exist; and Phase-2 must account for production
+currently blocking 4 of 7 drafts. Do NOT run live shadow, deploy, or clean legacy prompts.
