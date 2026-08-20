@@ -235,3 +235,35 @@ that the site no longer claims otherwise.
   authority and the `.claude/author-persona-biography-provenance-2026-08-14.md`
   AP1/APE2 safety doctrine (checked by cross-reference, not independently
   re-audited byte-for-byte in this pass).
+
+---
+
+# SUPPLEMENT (2026-08-20) — trust findings from the seven uncovered surfaces
+
+Full detail: `COMPLETION-SUPPLEMENT-SEVEN-SURFACES.md`.
+
+## S-2 · `humans.txt` v3.1 milestone — P1 · UPDATE_TRUST_DISCLOSURE
+
+> "Unsupported quotations, events, and biographical details are rejected."
+
+Stated as completed historical fact, dated 2026-08-07. Against **LC1 — MATERIAL LEGACY
+CREDIBILITY RISK** (60–100 of 142 articles scoped for remediation) and the two P0 corrections
+published 2026-08-20 for unsupported claims about a real named person live since June, this
+reads as a corpus guarantee the corpus cannot support. Not rewritten; the eventual wording
+must separate an editorial standard from a demonstrated property of already-published work.
+
+## S-3 · `llms.txt` — P1 · UPDATE_TRUST_DISCLOSURE
+
+> "Interpretation may go beyond a source's conclusion; factual premises may not be invented."
+
+Present tense, no temporal qualifier, immediately after a description of the live system, in a
+file addressed to machine consumers that will read it as an assertion about the corpus. The
+**principle is correct and must not be erased** — the defect is present-tense/provenance
+ambiguity, the same class as S-2.
+
+## Architecture truth — no finding
+
+`llms.txt` describes only a "private working method called the Mind Engine" whose "exact
+mechanics are not public documentation." It does **not** imply the SOFA / Article Form /
+Writer Grounding architecture is live. Correct as-is. The persona feed channel descriptions
+likewise frame each voice as "a fictional … editorial voice" with no provenance overclaim.

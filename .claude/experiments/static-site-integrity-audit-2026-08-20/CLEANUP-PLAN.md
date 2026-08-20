@@ -59,3 +59,18 @@ Depends on: OD-2, OD-3, OD-5 decisions from OWNER-DECISIONS.md.
 corpus (separate LC1 workstream, per directive), Phase-2 capture work
 (untouched), any production-automation changes (untouched). Nothing in this
 plan touches `automation/`, `_posts/`, or any deploy/generation script.
+
+---
+
+# SUPPLEMENT (2026-08-20) — placement of the seven-surface findings
+
+- **BATCH 1 — TRUTH / TRUST:** **S-2** (`humans.txt` v3.1 guarantee) and **S-3** (`llms.txt`
+  present-tense guarantee). Both P1. Both require wording that separates an editorial standard
+  from a demonstrated property of the published corpus. Neither principle is being retracted.
+- **BATCH 2 — FRESHNESS / REPRESENTATION:** **S-6** (`feed.xml` config drift, P3); **S-1**
+  (contact addresses) once OD-7 is answered.
+- **BATCH 3 — POSITIONING:** **S-7** (persona feed discoverability, P3) — an editorial choice,
+  not a defect; may be declined.
+
+**S-4** and **S-5** need no cleanup: the `/research/` claim is correct, and feed representation
+integrity has zero failures.

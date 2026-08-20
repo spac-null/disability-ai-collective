@@ -137,3 +137,33 @@ copy, and one schema field.
   architecture as deployed — all references to "the Mind Engine" are deliberately
   vague and explicitly marked "in development" / "private," consistent with
   `.claude/SOFA-METHOD.md`'s own scope banner ("Production has NOT migrated...").
+
+---
+
+# SUPPLEMENT (2026-08-20) — factual/freshness findings from the seven uncovered surfaces
+
+## S-4 · `/research/` index claim — CORRECT, no finding
+
+`llms.txt` says articles are "indexed at /research/". Verified: `research.html` renders
+`<h1>Articles</h1>`, iterates `site.posts`, and serves at `/research/`. Accurate. Recorded so
+the suspicion is not re-raised.
+
+## S-5 · Feed representation integrity — 0 failures · KEEP
+
+Swan Care standing rule applied to all five feeds. **All article-derived fields are generated
+from canonical post data at build time** (`post.title`, `post.excerpt`/`post.content`,
+`post.url`, `post.author`, `post.categories`); persona feeds select via
+`where: "author", "<Persona>"`. A stale article representation is therefore structurally
+impossible in a feed.
+
+Useful contrast for the standing rule: the 2026-06-19 Swan Care article was retitled
+2026-08-08 and its feed entry followed automatically, while the hand-maintained card in
+`research/care-labor.html` went stale for twelve days. **Generated surfaces self-heal;
+hand-maintained cards do not.**
+
+## S-6 · `feed.xml` config drift — P3 · UPDATE_FACT
+
+`_config.yml` configures `jekyll-feed` with `limit: 20` and its own `description`, but a
+hand-written `feed.xml` at the same path is what ships, using `limit:10` and
+`{{ site.description }}`. The `feed:` block's `limit`/`description`/`author`/`categories` are
+inert. Two site descriptions exist in the repo; only one is served.

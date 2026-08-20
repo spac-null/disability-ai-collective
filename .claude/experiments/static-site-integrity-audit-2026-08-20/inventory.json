@@ -9,40 +9,348 @@
     "latest_run_commit_subject": "fix: correct legacy care-labor factual error"
   },
   "pages": [
-    {"id": "home", "path": "index.html", "url": "/", "last_commit": "4adc6d2", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "about", "path": "about.html", "url": "/about/", "last_commit": "4adc6d2", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "accessibility", "path": "accessibility.html", "url": "/accessibility/", "last_commit": "e4746db", "last_commit_date": "2026-08-12", "built": true, "disposition": "UPDATE_FRESHNESS", "finding_ref": "F-1"},
-    {"id": "404", "path": "404.html", "url": "/404.html", "last_commit": "e4746db", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "gallery", "path": "gallery.html", "url": "/gallery/", "last_commit": "84c96a2", "last_commit_date": "2026-08-12", "built": true, "disposition": "UPDATE_FACT", "finding_ref": "F-5"},
-    {"id": "style-lab", "path": "style-lab.html", "url": null, "last_commit": "84c96a2", "last_commit_date": "2026-08-12", "built": false, "disposition": "KEEP"},
-    {"id": "realistic-scenes", "path": "realistic-scenes.html", "url": null, "last_commit": "84c96a2", "last_commit_date": "2026-08-12", "built": false, "disposition": "KEEP"},
-    {"id": "research-index", "path": "research.html", "url": "/research/", "last_commit": "aa0172e", "last_commit_date": "2026-08-15", "built": true, "disposition": "KEEP"},
-    {"id": "jascha", "path": "jascha.html", "url": "/jascha/", "last_commit": "5646db8", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "notes", "path": "notes.html", "url": "/notes/", "last_commit": "b73c07c", "last_commit_date": "2026-06-15", "built": true, "disposition": "OWNER_DECISION", "finding_ref": "F-4"},
-    {"id": "collective-redirect", "path": "collective.html", "url": "/collective/", "last_commit": "916af3e", "last_commit_date": "2026-06-15", "built": true, "disposition": "KEEP"},
-    {"id": "stats-snapshot", "path": "cripminds-stats-2026-06.html", "url": null, "last_commit": "dd6bb6a", "last_commit_date": "2026-06-15", "built": false, "disposition": "KEEP"},
-    {"id": "press-index", "path": "press/index.html", "url": "/press/", "last_commit": "4d5efc4", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "press-how-it-works", "path": "press/how-it-works/index.html", "url": "/press/how-it-works/", "last_commit": "a8587f3", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "press-system-report", "path": "press/system-report/index.html", "url": "/press/system-report/", "last_commit": "a8587f3", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "research-deaf-arts", "path": "research/deaf-arts.html", "url": "/research/deaf-arts/", "last_commit": "e4746db", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP", "haspart_count": 9, "haspart_verified": true},
-    {"id": "research-care-labor", "path": "research/care-labor.html", "url": "/research/care-labor/", "last_commit": "83c6a6b", "last_commit_date": "2026-08-20", "built": true, "disposition": "KEEP", "haspart_count": 5, "haspart_verified": true},
-    {"id": "research-extreme-male-brain", "path": "research/extreme-male-brain.html", "url": "/research/extreme-male-brain/", "last_commit": "e4746db", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP", "haspart_count": 5, "haspart_verified": true},
-    {"id": "research-camouflaging", "path": "research/camouflaging.html", "url": "/research/camouflaging/", "last_commit": "e4746db", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP", "haspart_count": 4, "haspart_verified": true},
-    {"id": "collective-pixel-nova", "path": "_collective/pixel-nova.md", "url": "/collective/pixel-nova/", "last_commit": "5646db8", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "collective-siri-sage", "path": "_collective/siri-sage.md", "url": "/collective/siri-sage/", "last_commit": "5646db8", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "collective-maya-flux", "path": "_collective/maya-flux.md", "url": "/collective/maya-flux/", "last_commit": "5646db8", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "collective-zen-circuit", "path": "_collective/zen-circuit.md", "url": "/collective/zen-circuit/", "last_commit": "5646db8", "last_commit_date": "2026-08-12", "built": true, "disposition": "KEEP"},
-    {"id": "works-room-heard", "path": "_works/what-the-room-heard.html", "url": "/works/what-the-room-heard/", "last_commit": "aa0172e", "last_commit_date": "2026-08-15", "built": true, "disposition": "KEEP"}
+    {
+      "id": "home",
+      "path": "index.html",
+      "url": "/",
+      "last_commit": "4adc6d2",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "about",
+      "path": "about.html",
+      "url": "/about/",
+      "last_commit": "4adc6d2",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "accessibility",
+      "path": "accessibility.html",
+      "url": "/accessibility/",
+      "last_commit": "e4746db",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "UPDATE_FRESHNESS",
+      "finding_ref": "F-1"
+    },
+    {
+      "id": "404",
+      "path": "404.html",
+      "url": "/404.html",
+      "last_commit": "e4746db",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "gallery",
+      "path": "gallery.html",
+      "url": "/gallery/",
+      "last_commit": "84c96a2",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "UPDATE_FACT",
+      "finding_ref": "F-5"
+    },
+    {
+      "id": "style-lab",
+      "path": "style-lab.html",
+      "url": null,
+      "last_commit": "84c96a2",
+      "last_commit_date": "2026-08-12",
+      "built": false,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "realistic-scenes",
+      "path": "realistic-scenes.html",
+      "url": null,
+      "last_commit": "84c96a2",
+      "last_commit_date": "2026-08-12",
+      "built": false,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "research-index",
+      "path": "research.html",
+      "url": "/research/",
+      "last_commit": "aa0172e",
+      "last_commit_date": "2026-08-15",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "jascha",
+      "path": "jascha.html",
+      "url": "/jascha/",
+      "last_commit": "5646db8",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "notes",
+      "path": "notes.html",
+      "url": "/notes/",
+      "last_commit": "b73c07c",
+      "last_commit_date": "2026-06-15",
+      "built": true,
+      "disposition": "OWNER_DECISION",
+      "finding_ref": "F-4"
+    },
+    {
+      "id": "collective-redirect",
+      "path": "collective.html",
+      "url": "/collective/",
+      "last_commit": "916af3e",
+      "last_commit_date": "2026-06-15",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "stats-snapshot",
+      "path": "cripminds-stats-2026-06.html",
+      "url": null,
+      "last_commit": "dd6bb6a",
+      "last_commit_date": "2026-06-15",
+      "built": false,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "press-index",
+      "path": "press/index.html",
+      "url": "/press/",
+      "last_commit": "4d5efc4",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "press-how-it-works",
+      "path": "press/how-it-works/index.html",
+      "url": "/press/how-it-works/",
+      "last_commit": "a8587f3",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "press-system-report",
+      "path": "press/system-report/index.html",
+      "url": "/press/system-report/",
+      "last_commit": "a8587f3",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "research-deaf-arts",
+      "path": "research/deaf-arts.html",
+      "url": "/research/deaf-arts/",
+      "last_commit": "e4746db",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP",
+      "haspart_count": 9,
+      "haspart_verified": true
+    },
+    {
+      "id": "research-care-labor",
+      "path": "research/care-labor.html",
+      "url": "/research/care-labor/",
+      "last_commit": "83c6a6b",
+      "last_commit_date": "2026-08-20",
+      "built": true,
+      "disposition": "KEEP",
+      "haspart_count": 5,
+      "haspart_verified": true
+    },
+    {
+      "id": "research-extreme-male-brain",
+      "path": "research/extreme-male-brain.html",
+      "url": "/research/extreme-male-brain/",
+      "last_commit": "e4746db",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP",
+      "haspart_count": 5,
+      "haspart_verified": true
+    },
+    {
+      "id": "research-camouflaging",
+      "path": "research/camouflaging.html",
+      "url": "/research/camouflaging/",
+      "last_commit": "e4746db",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP",
+      "haspart_count": 4,
+      "haspart_verified": true
+    },
+    {
+      "id": "collective-pixel-nova",
+      "path": "_collective/pixel-nova.md",
+      "url": "/collective/pixel-nova/",
+      "last_commit": "5646db8",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "collective-siri-sage",
+      "path": "_collective/siri-sage.md",
+      "url": "/collective/siri-sage/",
+      "last_commit": "5646db8",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "collective-maya-flux",
+      "path": "_collective/maya-flux.md",
+      "url": "/collective/maya-flux/",
+      "last_commit": "5646db8",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "collective-zen-circuit",
+      "path": "_collective/zen-circuit.md",
+      "url": "/collective/zen-circuit/",
+      "last_commit": "5646db8",
+      "last_commit_date": "2026-08-12",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "works-room-heard",
+      "path": "_works/what-the-room-heard.html",
+      "url": "/works/what-the-room-heard/",
+      "last_commit": "aa0172e",
+      "last_commit_date": "2026-08-15",
+      "built": true,
+      "disposition": "KEEP"
+    },
+    {
+      "id": "llms",
+      "path": "llms.txt",
+      "url": "/llms.txt",
+      "type": "machine-readable method/contact",
+      "built": true,
+      "sha256": "b6c589383800cb74b963ac4c0288cce1322b6d4e4b9ac99855704052bb29cf5a",
+      "disposition": "UPDATE_TRUST_DISCLOSURE (S-3, P1) + OWNER_DECISION (S-1, P2)",
+      "source": "supplement"
+    },
+    {
+      "id": "humans",
+      "path": "humans.txt",
+      "url": "/humans.txt",
+      "type": "credits/method/milestones",
+      "built": true,
+      "sha256": "257ce6d68ed936599e409003a9c2f34a6dc6f9af717b8114255c1e1c87f14b40",
+      "disposition": "UPDATE_TRUST_DISCLOSURE (S-2, P1) + OWNER_DECISION (S-1, P2)",
+      "source": "supplement"
+    },
+    {
+      "id": "feed",
+      "path": "feed.xml",
+      "url": "/feed.xml",
+      "type": "canonical RSS",
+      "built": true,
+      "sha256": "efc5c84865b8561363336d04af192ef458ed143a9e2e5dc729094d4900c89bbb",
+      "disposition": "UPDATE_FACT (S-6, P3)",
+      "source": "supplement"
+    },
+    {
+      "id": "feed-maya-flux",
+      "path": "feed-maya-flux.xml",
+      "url": "/feed/maya-flux.xml",
+      "type": "persona RSS",
+      "built": true,
+      "sha256": "c0bd42afb117f985f834207a01172aece527046f9df3fc723de05c5d06d4dfbf",
+      "disposition": "KEEP (S-5); S-7 P3 discoverability",
+      "source": "supplement"
+    },
+    {
+      "id": "feed-pixel-nova",
+      "path": "feed-pixel-nova.xml",
+      "url": "/feed/pixel-nova.xml",
+      "type": "persona RSS",
+      "built": true,
+      "sha256": "d0b51a48c52421f416e13f636968f25740b8d5f5411d677d258f7c67fa44247e",
+      "disposition": "KEEP (S-5); S-7 P3 discoverability",
+      "source": "supplement"
+    },
+    {
+      "id": "feed-siri-sage",
+      "path": "feed-siri-sage.xml",
+      "url": "/feed/siri-sage.xml",
+      "type": "persona RSS",
+      "built": true,
+      "sha256": "b87f5cb15beb6194434bab00362d2786faa374ea8bc412f9b0c040184d67c77c",
+      "disposition": "KEEP (S-5); S-7 P3 discoverability",
+      "source": "supplement"
+    },
+    {
+      "id": "feed-zen-circuit",
+      "path": "feed-zen-circuit.xml",
+      "url": "/feed/zen-circuit.xml",
+      "type": "persona RSS",
+      "built": true,
+      "sha256": "f9004afd80e21c5f8eed0c62c61594c276f5dec133bd5c4699f946c9cbc09d7a",
+      "disposition": "KEEP (S-5); S-7 P3 discoverability",
+      "source": "supplement"
+    }
   ],
   "shared_chrome": [
-    {"path": "_layouts/default.html", "last_commit": "f57caa5", "disposition": "UPDATE_FACT", "finding_ref": "F-3"},
-    {"path": "_layouts/post.html", "last_commit": "e4746db", "disposition": "KEEP"},
-    {"path": "_layouts/author.html", "last_commit": "e4746db", "disposition": "KEEP"},
-    {"path": "_layouts/work.html", "last_commit": "aa0172e", "disposition": "KEEP"},
-    {"path": "_layouts/debate.html", "last_commit": "e4746db", "disposition": "KEEP"},
-    {"path": "_includes/subscribe-form.html", "last_commit": "f57caa5", "disposition": "KEEP"},
-    {"path": "robots.txt", "last_commit": "113799b", "disposition": "UPDATE_TRUST_DISCLOSURE", "finding_ref": "T-1"},
-    {"path": "_config.yml", "last_commit": "aa0172e", "disposition": "UPDATE_TRUST_DISCLOSURE", "finding_ref": "T-1"}
+    {
+      "path": "_layouts/default.html",
+      "last_commit": "f57caa5",
+      "disposition": "UPDATE_FACT",
+      "finding_ref": "F-3"
+    },
+    {
+      "path": "_layouts/post.html",
+      "last_commit": "e4746db",
+      "disposition": "KEEP"
+    },
+    {
+      "path": "_layouts/author.html",
+      "last_commit": "e4746db",
+      "disposition": "KEEP"
+    },
+    {
+      "path": "_layouts/work.html",
+      "last_commit": "aa0172e",
+      "disposition": "KEEP"
+    },
+    {
+      "path": "_layouts/debate.html",
+      "last_commit": "e4746db",
+      "disposition": "KEEP"
+    },
+    {
+      "path": "_includes/subscribe-form.html",
+      "last_commit": "f57caa5",
+      "disposition": "KEEP"
+    },
+    {
+      "path": "robots.txt",
+      "last_commit": "113799b",
+      "disposition": "UPDATE_TRUST_DISCLOSURE",
+      "finding_ref": "T-1"
+    },
+    {
+      "path": "_config.yml",
+      "last_commit": "aa0172e",
+      "disposition": "UPDATE_TRUST_DISCLOSURE",
+      "finding_ref": "T-1"
+    }
   ],
   "unintended_exposure_surface": {
     "finding_ref": "T-1",
@@ -69,27 +377,101 @@
       "calibration/candidates/RL-2026-002-candidates.json",
       "calibration/candidates/RL-2026-002-preregistration.json"
     ],
-    "latent_related": ["reader-lab/ — CORRECTED: was NOT actually empty/latent, was live-exposed too (T-2), also closed by the same commit"]
+    "latent_related": [
+      "reader-lab/ — CORRECTED: was NOT actually empty/latent, was live-exposed too (T-2), also closed by the same commit"
+    ],
+    "scope_correction": "T-1 status CLOSED refers to the WEBSITE layer only. The same files remain publicly readable in the public GitHub repository, in both the current tree of origin/main and in history. See EXPOSURE-SCOPE-AND-GIT-STATE.md.",
+    "public_repo_layer": "OPEN (not closed by f7a355d)"
   },
   "explicitly_excluded_confirmed_not_live": [
-    "accessibility/", "archive/", "automation/", "docs/", "reader-lab-worker/",
-    "*.py", "*.db", "MANIFESTO.md", "PIPELINE.md", "SCRAPING_ETHICS.md",
-    "requirements.txt", "cripminds-stats-2026-06.html"
+    "accessibility/",
+    "archive/",
+    "automation/",
+    "docs/",
+    "reader-lab-worker/",
+    "*.py",
+    "*.db",
+    "MANIFESTO.md",
+    "PIPELINE.md",
+    "SCRAPING_ETHICS.md",
+    "requirements.txt",
+    "cripminds-stats-2026-06.html"
   ],
   "counts": {
     "P0": 0,
-    "P1": 1,
-    "P2": 1,
-    "P3": 3,
+    "P1": 3,
+    "P2": 2,
+    "P3": 5,
     "P4": 3,
-    "KEEP": 18,
-    "UPDATE_FACT": 2,
+    "KEEP": 22,
+    "UPDATE_FACT": 3,
     "UPDATE_FRESHNESS": 1,
     "UPDATE_POSITIONING": 1,
     "UPDATE_ARCHITECTURE_DESCRIPTION": 1,
-    "UPDATE_TRUST_DISCLOSURE": 1,
+    "UPDATE_TRUST_DISCLOSURE": 3,
     "REMOVE_MERGE": 0,
-    "OWNER_DECISION": 6
+    "OWNER_DECISION": 7
   },
-  "audit_complete": true
+  "audit_complete": true,
+  "supplement": {
+    "name": "completion supplement — seven uncovered surfaces",
+    "doc": "COMPLETION-SUPPLEMENT-SEVEN-SURFACES.md",
+    "reason": "seven public surfaces were absent from the original audited set",
+    "audited_at": "2026-08-20",
+    "docs": [
+      "COMPLETION-SUPPLEMENT-SEVEN-SURFACES.md",
+      "EXPOSURE-SCOPE-AND-GIT-STATE.md"
+    ]
+  },
+  "counts_note": "Totals include the seven-surface completion supplement. The pre-supplement figures (32 surfaces; P1=1, P2=1, P3=3, KEEP=18, UPDATE_FACT=2, UPDATE_TRUST_DISCLOSURE=1, OWNER_DECISION=6) are superseded, not final. Counting model caveat: this counts block tracks FINDINGS, not inventory rows — even pre-supplement it did not equal a tally of row dispositions (rows tallied KEEP=26 vs stated KEEP=18). The supplement deltas (+2 P1, +1 P2, +2 P3, +4 KEEP, +1 UPDATE_FACT, +2 UPDATE_TRUST_DISCLOSURE, +1 OWNER_DECISION) were applied under that same findings model. The row-vs-findings ambiguity is pre-existing and was NOT re-derived here, since re-deriving every total would be a re-audit rather than an integration.",
+  "surfaces_total": 39,
+  "audit_complete_note": "True only WITH the supplement. The original commit set this flag while seven public surfaces were unaudited.",
+  "exposure_scope": {
+    "doc": "EXPOSURE-SCOPE-AND-GIT-STATE.md",
+    "verified_at": "2026-08-20",
+    "note": "Website exposure and public-repository exposure are distinct. Batch 1 closed only the website layer.",
+    "public_website": "CLOSED",
+    "public_repo_current_tree": "OPEN",
+    "public_repo_history": "OPEN",
+    "repo_visibility": "PUBLIC (spac-null/disability-ai-collective)",
+    "tracked_files_in_origin_main": 16,
+    "history_commits_touching_paths": 6,
+    "anonymous_raw_github_fetches": "HTTP 200 for reader-lab/rounds/drafts/RL-2026-001.json, calibration/research-context/RL-2026-002.json, calibration/runner/calibration_runner.py",
+    "website_fetches": "HTTP 404 for the same two published URLs on cripminds.com",
+    "editorial_mechanics_remain_private": "PARTIAL / NOT LITERALLY TRUE",
+    "disposition": "OWNER_DECISION",
+    "secrets_found": false,
+    "history_rewrite_authorized": false
+  },
+  "status": {
+    "as_of": "2026-08-20",
+    "static_audit": "COMPLETE",
+    "static_surfaces": 39,
+    "batch_1_website_containment": "COMPLETE",
+    "batch_1_trust": "COMPLETE",
+    "static_cleanup": "NOT COMPLETE",
+    "batch_2": "READY, NOT STARTED",
+    "batch_3": "NOT STARTED",
+    "open_findings_after_batch_1": {
+      "P0": 0,
+      "P1": 0,
+      "P2": 0,
+      "P3": 2,
+      "detail": "S-6 feed.xml config drift -> Batch 2; S-7 persona feed discoverability -> Batch 3"
+    },
+    "closed_by": {
+      "website_containment": "f7a355d",
+      "trust_wording": "98ea267",
+      "owner_decisions": "2f61ed2",
+      "audit_completion": "0015c53 (landed by this commit)"
+    },
+    "deploy_run": "32372116318 (success, 2026-08-20T13:03:21Z)",
+    "live_verified": true,
+    "public_git_historical_exposure": "ACCEPTED / DISCLOSED / NOT PURGED",
+    "private_research_destination": "REQUIRED BEFORE FUTURE MATERIAL INTERNAL RESEARCH CONTINUES (OD-7 Option 2; not yet built)",
+    "authoritative_supplement": "COMPLETION-SUPPLEMENT-SEVEN-SURFACES.md",
+    "superseded_supplement": "SEVEN-SURFACE-SUPPLEMENT.md (5ac5c9b) — SUPERSEDED_BY_0015c53",
+    "phase_2_capture": "UNCHANGED",
+    "local_research_main": "NOT RECONCILED (separate lower-priority task)"
+  }
 }

@@ -70,3 +70,30 @@ re-verified live in this pass (listed for completeness, not as findings).
   excluded from the Jekyll build (`_config.yml`) — it is not live, not a
   duplicate-in-production, just a historical artifact sitting in the working
   tree. No action needed unless the owner wants it deleted for tidiness.
+
+---
+
+# SUPPLEMENT (2026-08-20) — contact and discoverability
+
+## S-1 · Contact address conflict — P2 · OWNER_DECISION
+
+**Three** contact addresses are published, not two. The original audit listed
+`editor@cripminds.com` and `jascha@cripminds.com` without flagging a conflict, and did not
+cover `llms.txt`.
+
+| Address | Surfaces | Apparent role |
+|---|---|---|
+| `jascha@cripminds.com` | `jascha.html`, `accessibility.html`, `press/index.html`, `humans.txt` | general / accessibility / press |
+| `editor@cripminds.com` | `about.html` — "Questions, corrections, responses to published work" | editorial corrections |
+| `email@jaschablume.nl` | `llms.txt` | machine-readable contact |
+
+`email@jaschablume.nl` reads as a placeholder — local part is literally `email`, on a
+different domain from every other contact. **No repo or runtime evidence establishes a
+canonical address**, so none is assumed. `your@email.com` ×4 is a form placeholder in
+`_includes/subscribe-form.html` and is correct.
+
+## S-7 · Persona feeds undiscoverable — P3
+
+`_layouts/default.html` emits one `<link rel="alternate">`, for `/feed.xml` only. The four
+persona feeds are referenced from no public HTML, Markdown or text surface. Live and correct,
+but reachable only by guessing the URL.

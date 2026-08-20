@@ -1,3 +1,17 @@
+> **SUPERSEDED_BY_0015c53 — 2026-08-20.**
+> This file is retained for history only. The authoritative seven-surface
+> completion is **`COMPLETION-SUPPLEMENT-SEVEN-SURFACES.md`**, which covers the
+> same seven surfaces with per-surface SHA-256 hashes, exact quoted wording, the
+> persona-feed `permalink:` correction, and the mechanical recalculation of the
+> audit totals (32 -> 39 surfaces) that this file does not perform. Where the two
+> differ, that file governs. One taxonomy difference: this file dispositions
+> persona-feed discoverability as `UPDATE_ARCHITECTURE_DESCRIPTION` P3; the
+> authoritative file records a plain P3. The substance is the same.
+>
+> The findings below are also no longer "open" as stated at the foot of this
+> file: both P1s were closed and deployed on 2026-08-20 (`98ea267`), and the
+> contact decision was resolved as OD-8.
+
 # Seven-Surface Audit Supplement — 2026-08-20
 
 Status: SUPPLEMENT / COMPLETION to the static-site integrity audit (not a

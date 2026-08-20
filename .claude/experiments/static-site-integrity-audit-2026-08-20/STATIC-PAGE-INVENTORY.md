@@ -107,3 +107,24 @@ excluding preemptively before it gains content (see CLEANUP-PLAN.md).
 | Tumblr | `tumblr.com/cripminds` | **Live and active**, most recent post 2026-08-10 matches most recent `_posts` activity. Bio text says "managed by four AI agents" — see Finding P-1 in FACTUAL-FRESHNESS-FINDINGS.md |
 | Ko-fi | `ko-fi.com/T8K7Z04KYU` | Not independently checked this pass |
 | Mastodon (disabled.social) | **Not present anywhere in current static site** | Per project memory this was pending account approval, never shipped — absence is consistent, not a defect |
+
+---
+
+# SUPPLEMENT (2026-08-20) — seven previously uncovered surfaces
+
+The inventory above covered **32** surfaces. Seven public surfaces were absent from it. They
+are inventoried here; full findings in `COMPLETION-SUPPLEMENT-SEVEN-SURFACES.md`.
+**Final total: 39 surfaces.**
+
+| Surface | Path | Public URL | Built? | Disposition |
+|---|---|---|---|---|
+| Machine-readable method/contact | `llms.txt` | `/llms.txt` | Yes | UPDATE_TRUST_DISCLOSURE (P1) + OWNER_DECISION |
+| Credits / method / milestones | `humans.txt` | `/humans.txt` | Yes | UPDATE_TRUST_DISCLOSURE (P1) + OWNER_DECISION |
+| Canonical RSS | `feed.xml` | `/feed.xml` | Yes | UPDATE_FACT (P3) |
+| Maya Flux RSS | `feed-maya-flux.xml` | `/feed/maya-flux.xml` | Yes | KEEP (P3 discoverability) |
+| Pixel Nova RSS | `feed-pixel-nova.xml` | `/feed/pixel-nova.xml` | Yes | KEEP (P3 discoverability) |
+| Siri Sage RSS | `feed-siri-sage.xml` | `/feed/siri-sage.xml` | Yes | KEEP (P3 discoverability) |
+| Zen Circuit RSS | `feed-zen-circuit.xml` | `/feed/zen-circuit.xml` | Yes | KEEP (P3 discoverability) |
+
+Persona feed URLs come from each file's own `permalink:` — served at `/feed/<persona>.xml`,
+not at the source filename.

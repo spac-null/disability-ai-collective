@@ -158,3 +158,12 @@ already matched this routing correctly — no change needed there.
 `email@jaschablume.nl` had exactly one public-surface occurrence
 (`llms.txt`); confirmed zero remaining after the fix via repo-wide grep of
 the non-article static surface.
+
+**Cross-reference:** the completion supplement records this same conflict as
+finding **S-1** (`COMPLETION-SUPPLEMENT-SEVEN-SURFACES.md`), where it is
+numbered OD-7. That numbering is superseded: **OD-7 = public-repository
+exposure, OD-8 = contact routing**, as above. S-1's supporting evidence (the
+per-surface address table, and the confirmation that `your@email.com` x4 is a
+legitimate form placeholder in `_includes/subscribe-form.html`) is recorded in
+`LINK-AND-NAV-FINDINGS.md`.
+
