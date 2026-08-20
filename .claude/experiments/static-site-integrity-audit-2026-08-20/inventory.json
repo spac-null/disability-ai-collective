@@ -465,13 +465,16 @@
       "owner_decisions": "2f61ed2",
       "audit_completion": "0015c53 (landed by this commit)"
     },
-    "deploy_run": "32372116318 (success, 2026-08-20T13:03:21Z)",
-    "live_verified": true,
+    "live_verified": "YES — verified against deploy 32372952679: humans.txt v3.1 standard-vs-earlier-work wording; llms.txt current-standard wording with /research/ index claim intact; contact routing (editor@ on /about/, jascha@ on /jascha/ /accessibility/ /press/ /llms.txt /humans.txt); zero email@jaschablume.nl occurrences across public surfaces; press/system-report three-tense disclosure; calibration + reader-lab URLs still HTTP 404",
     "public_git_historical_exposure": "ACCEPTED / DISCLOSED / NOT PURGED",
     "private_research_destination": "REQUIRED BEFORE FUTURE MATERIAL INTERNAL RESEARCH CONTINUES (OD-7 Option 2; not yet built)",
     "authoritative_supplement": "COMPLETION-SUPPLEMENT-SEVEN-SURFACES.md",
     "superseded_supplement": "SEVEN-SURFACE-SUPPLEMENT.md (5ac5c9b) — SUPERSEDED_BY_0015c53",
     "phase_2_capture": "UNCHANGED",
-    "local_research_main": "NOT RECONCILED (separate lower-priority task)"
+    "local_research_main": "NOT RECONCILED (separate lower-priority task)",
+    "deploy_runs": {
+      "trust_wording_98ea267": "32372116318 (success, 2026-08-20T13:03:21Z) — closed S-2/S-3 P1s",
+      "final_disclosure_49fd180": "32372952679 (success, 2026-08-20) — completed the private-mechanics disclosure; state below verified against this deploy"
+    }
   }
 }
