@@ -911,3 +911,76 @@ P2-01/02/03 in chronological order; record CAPTURE_INVALID bundles and take the 
 after P2-03 **disable the flag** (cron backup saved) and confirm production continues
 normally, leaving the capture code dormant. Then STOP — live-vs-shadow execution is a separate
 task. Do NOT run Discovery/Article Form/Writer/Writer Grounding on captured sources yet.
+
+## 2026-08-20 — PUBLICATION CADENCE / SELECTOR AUDIT (PUBAUD1)
+STATUS: Read-only audit. No code, cron, capture or production change. Phase-2 capture left
+enabled throughout; sample still 0/3.
+OWNER RECOLLECTION CONFIRMED: generate candidates daily, publish ONE best eligible article
+~every two days from a ~seven-day candidate window. That is exactly what
+`automation/publish_best.py` does. Daily generation is NOT daily publication.
+MECHANISM: `automation/publish_best.py`, cron `0 8 */2 * *`. **Precision the docstring rounds
+off:** `*/2` in the day-of-month field steps from the field's first legal value (1), so it
+fires on **ODD days 1,3,…,31** — confirmed against every promotion commit (08-01/03/05/07/09/
+11/13/15/17/19). In a 31-day month the boundary runs land on the 31st and the 1st, two
+consecutive days; a 30-day month gives a normal 2-day gap.
+SELECTOR: window `AGE_WINDOW_DAYS=7` (>=7 days -> archived to `_drafts/_archive/`); eligibility
+requires BOTH explicit `fact_check_status: verified` AND `publication_safety_version >= 1`;
+rank `draft_score(def 7.0)*0.6 + topic_freshness*10*0.25 + persona_rotation*10*0.15 +
+min(publish_attempts*0.15, 0.6)`; publishes exactly ONE or none; archives expired regardless.
+WHAT "BEST" ACTUALLY MEANS: not editorial quality. `draft_score` is only written when the
+conditional Opus editorial pass fires — live evidence 2 of 7 drafts carry it — so the 60% term
+is usually the 7.0 constant and freshness/rotation/aging do the real deciding. The script's own
+docstring already flags this as an open decision.
+CORRECTION TO PHASE 0 (my error): Phase 0 recorded "nothing published since 2026-08-11" by
+reading filenames. Drafts keep their **write-date filename** while `set_publish_date` rewrites
+only front-matter `date:`. `_posts/2026-08-11-reached-by-boat-or-plane.md` carries
+`date: 2026-08-15`. **The last publication was 2026-08-15** (commit `50c1a2d`); the gap is 5
+days and 2 missed cycles, not 9 days.
+PROMOTION RUN HISTORY: 08-15 published + archived 3 (`50c1a2d`); 08-17 archive-only
+(`ba64e77`); 08-19 archive-only (`11826e4`); 08-21 upcoming. **The selector fired on schedule
+every time — it is not broken and not failing to run.**
+ROOT CAUSE OF THE STALL — two compounding causes. (1) A hard cutover with no migration path:
+commit `667633f` (2026-08-16 11:55) added BOTH halves of the publication-safety contract at
+once — `publish_best.py` began requiring `publication_safety_version >= 1` and `generate.py`
+began stamping it — with no backfill, so every draft written before that commit reached Trident
+lacks the stamp permanently and is HELD until it ages out and is archived unpublished (08-13,
+08-14, 08-16 — all `verified`, one scoring 9/10). (2) Every post-cutover run has been
+`blocked` (`persona_biography_unresolved`; `gate_llm + persona_biography_unresolved`;
+`fable_brief`), so no new draft has earned a stamp either.
+STRIKING FINDING: **0 of 165 articles on disk has EVER carried `publication_safety_version`**
+— 0/142 `_posts`, 0/7 `_drafts`, 0/16 `_archive`. `_maybe_stamp_publication_safety_version`
+requires `should_block` falsy AND `fact_check_status: verified` re-read from disk, and no run
+has satisfied both since it went live. **The stamper's correctness is UNPROVEN in production —
+it has never had the opportunity to fire.** Phase-2 captures may be its first observation.
+Diagnosed with a `--dry-run` on Trident, which the script documents as write-free.
+CLASSIFICATION: **WORKING-BUT-NO-ELIGIBLE-CANDIDATE** — closest to option D (blocking policy
+excludes everything), reached via a cutover with no backfill rather than by malfunction. The
+gate behaves exactly as designed; the design has no path for in-flight drafts and no alarm for
+"pool empty across consecutive cycles".
+CADENCE DECISION RECORDED: daily generation is INTENTIONAL and should stay daily — it builds
+the candidate pool a less frequent selector needs. Do NOT make the article cron every-two-days.
+TARGET ARCHITECTURE COMPLETED: `SOURCE → DISCOVERY → ARTICLE FORM → WRITER → WRITER GROUNDING
+→ ACCEPT/HOLD → ACCEPTED CANDIDATE POOL → PERIODIC SELECTOR → PUBLISH ONE / PUBLISH NONE →
+publication stages`. **ACCEPT = eligible candidate, NOT publish-now.** CripMinds must not
+auto-publish every ACCEPTed article; editorial scarcity is preserved by the selector.
+SELECTOR DISPOSITION: **ADAPT** (not replace). SURVIVES: `fact_check_status`, topic freshness,
+persona rotation, `publish_attempts` aging, filename-date window, `set_publish_date`.
+REPLACED_BY_TARGET_STAGE: `publication_safety_version` — `gate_llm` disappears with the LLM
+rule-judge and `fable_brief` becomes DISCOVERY, so the contract must be re-derived from
+ACCEPT/HOLD. REMOVE-or-REPLACE (owner decision): `draft_score`, already largely inert.
+PHASE-2 IMPLICATION: pre-registered sample UNCHANGED (first 3 complete eligible daily runs).
+A selector observation IS additionally needed, because migration changes one of the selector's
+two gate inputs — but ONE naturally-occurring decision suffices; do not expand Phase 2.
+Current capture is NOT sufficient for the selector (`shadow_capture.py` hooks only
+`generate.py`). **Minimum missing capture may be zero code:** `publish_best.py` already prints
+its full scoring table and gate verdicts and the cron already appends stdout to
+`automation.log`; the only gaps are that those lines are untimestamped (`print()`, not logger)
+and live in a rotating log. Preferred options, NOT implemented: (1) copy the relevant
+`automation.log` slice into the capture root at the next odd-day run; (2) redirect that one
+cron job's stdout to a dated file under the capture root — a cron-line change, no code;
+(3) only if structured data proves necessary, a `--json` flag.
+EVIDENCE: `.claude/experiments/publication-cadence-audit-2026-08-20/PUBLICATION-CADENCE-AUDIT.md`
+CODE: none.
+FOLLOW-UP: owner decisions on (a) backfilling or re-validating the three HELD drafts before
+they age out (08-14 expires 08-21, 08-16 expires 08-23), (b) `draft_score`'s fate, (c) whether
+an empty-pool alarm is wanted. Do NOT fix any of it yet.

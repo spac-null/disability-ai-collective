@@ -26,8 +26,11 @@
   snapshot_test passes clean.
   - **CORRECTION:** "no SQLite-safe backup exists" was **false** — a safe daily backup has run
     since 2026-08-10. Fixed in `PROJECT-MAP.md` and the migration plan.
-  - **NEW: promotion is stalled** — nothing published since 2026-08-11; 4 of 7 drafts
-    `blocked`; `_compute_should_block` actively firing. Baseline condition, not diagnosed.
+  - **NEW: promotion is stalled** — 4 of 7 drafts `blocked`; `_compute_should_block` actively
+    firing. **DIAGNOSED 2026-08-20**, see `publication-cadence-audit-2026-08-20/`.
+    **CORRECTION: last publication was 2026-08-15, not 2026-08-11** — Phase 0 read filenames,
+    but drafts keep their write-date filename while `set_publish_date` rewrites only
+    front-matter `date:`. Gap is 5 days / 2 missed cycles.
   - **NEW Phase-2 blocker:** production does not persist fetched source text (only
     `source_hash`), so most fixtures can be verified but not byte-reproduced. Exception:
     `sniff-it-out` shares Edinburgh's frozen source hash `fee0a03b…` exactly.
@@ -78,6 +81,27 @@
     push, but production's `_git_push_safe` pushes `main` at the end of every article run, so
     the observability commits reach the **public** GitHub repo at 09:00 on 08-21. Unavoidable
     short of not deploying. No secrets in the patch.
+- **PUBLICATION CADENCE (audited 2026-08-20, read-only):** generation and publication are
+  SEPARATE and must stay so. Generation `0 9 * * *` (daily). Publication
+  `automation/publish_best.py` via `0 8 */2 * *` — **odd days of the month**, since `*/2` on
+  day-of-month steps from 1; ~every 2 days. Window `AGE_WINDOW_DAYS=7`; **exactly one** article
+  published per run, or none; expired drafts archived. Owner's remembered design is CORRECT.
+  **Daily generation is intentional** — it builds the candidate pool. Do NOT make the article
+  cron every-two-days.
+  - Eligibility needs BOTH `fact_check_status: verified` AND `publication_safety_version >= 1`.
+  - Ranking: `draft_score*0.6 + freshness*2.5 + persona_rotation*1.5 + aging(<=0.6)`. In
+    practice `draft_score` is usually the 7.0 default, so freshness/rotation/aging decide.
+  - **ROOT CAUSE of the stall: 0 of 165 articles on disk has EVER carried
+    `publication_safety_version`.** Commit `667633f` (2026-08-16) added the requirement and the
+    stamper together, with no backfill, so pre-cutover drafts are HELD until they age out; and
+    every post-cutover run has been `blocked`, so none has earned a stamp either. The selector
+    ran on 08-17 and 08-19 (archive-only commits `ba64e77`, `11826e4`) and correctly found
+    nothing eligible. **Selector status: WORKING-BUT-NO-ELIGIBLE-CANDIDATE.** The stamper's
+    correctness is UNPROVEN — it has never fired.
+  - Target: `… → ACCEPT/HOLD → ACCEPTED CANDIDATE POOL → PERIODIC SELECTOR → PUBLISH ONE/NONE`.
+    **ACCEPT = eligible candidate, NOT publish-now.** Selector disposition: **ADAPT** —
+    `publication_safety_version` is REPLACED_BY_TARGET_STAGE (re-derive from ACCEPT);
+    `draft_score` is REMOVE-or-REPLACE (owner decision); everything else survives.
 - **CURRENT PHASE: PRODUCTION ARCHITECTURE / MIGRATION — Phase 0, Phase 1, Phase 2 prep done;
   Phase 2 capture live, sample collection 0/3. NO shadow execution yet.**
   Plan: `.claude/experiments/production-architecture-plan-2026-08-20/`
