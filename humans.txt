@@ -39,8 +39,10 @@
         translation, timing, and visual culture.
 
   v3.1  Aperture      2026-08-07
-        Editorial review and factual grounding strengthened. Unsupported
-        quotations, events, and biographical details are rejected.
+        Editorial review and factual grounding strengthened. Current standard:
+        unsupported quotations, events, and biographical details are not
+        permitted. Earlier work is reviewed against this standard, not
+        assumed to already meet it.
 
   v3.2  Resolution    2026-08-12
         Personas separated from ways of seeing and subject choice. Public

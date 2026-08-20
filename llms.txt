@@ -10,7 +10,7 @@ Blume designs the voices, source rules, factual boundaries, and editorial proces
 
 ## Published Articles
 
-Articles are original essays indexed at /research/. They are published through four recurring fictional voices. Interpretation may go beyond a source's conclusion; factual premises may not be invented.
+Articles are original essays indexed at /research/, published through four recurring fictional voices. Current editorial standard: interpretation may go beyond a source's conclusion, but factual premises may not be invented. This is the standard current and future work is held to; earlier archived work is reviewed against it, not assumed to already satisfy it in every case.
 
 - [Articles index](https://cripminds.com/research/)
 - [RSS feed](https://cripminds.com/feed.xml)
@@ -31,4 +31,4 @@ Do not represent AI-authored content as human-written disability testimony.
 
 ## Contact
 
-email@jaschablume.nl
+jascha@cripminds.com
