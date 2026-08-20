@@ -818,6 +818,30 @@ unless it actually has been.** Phase 1 also found the site's stated editorial po
 already contradicted by its own published content — that must be resolved in the same pass,
 not compounded.
 
+### 7a. LC1 BACKLOG — FINITE BATCHES (recorded 2026-08-20, NOT started)
+
+**P0 item DONE:** `research/care-labor.html` corrected and published 2026-08-20 — see
+`.claude/experiments/legacy-p0-care-labor-correction-2026-08-20/`. That was the single
+confirmed real-person factual mismatch Phase 1 flagged as highest severity.
+
+**It exposed that the same false claims run through published articles**, so the backlog now
+starts there rather than at the top of the corpus:
+
+| Batch | Contents | Cap |
+|---|---|---|
+| **BATCH 1** | Highest-risk confirmed/probable **personal-history and real-person claims**. Starts with the three Swan Care items: `_posts/2026-06-19-swan-care-is-appealing-the-appeal-is-the-mechanism.md` (strongest **WITHDRAW** candidate in the corpus — its title and thesis rest on an appeal that is not in the tribunal record), `_posts/2026-06-04-swan-care-solutions-ltd-classified-someone-as-equipment.md` (housing-deduction claim; has a recorded Bluesky post), `_posts/2026-06-09-three-months-in.md` (repeats a Swan Care claim as settled fact) | 10–20 articles |
+| **BATCH 2** | Quotes, attribution, named-person testimony | 10–20 |
+| **BATCH 3** | Specific factual claims, numbers, dates, institutional/source claims | 10–20 |
+| Then | Lower-risk interpretation/style material | 10–20 |
+
+Every article ends as exactly one of **`KEEP_AS_LEGACY`** / **`CORRECT_WITH_DISCLOSURE`** /
+**`WITHDRAW`**.
+
+**Do not re-inventory** — start from the Phase-1 report and its JSON manifest.
+**Do not automatically rerun any article through the new engine.** Doing so produces a new
+article, not a corrected one, and destroys the provenance distinction this workstream exists
+to preserve.
+
 ### 7. Sequencing
 
 | When | What |

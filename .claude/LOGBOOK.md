@@ -1114,3 +1114,68 @@ the substantive evidence.
 CODE: none.
 FOLLOW-UP: do NOT start scanning articles. When authorised, begin from the Phase-1 findings and
 its JSON manifest rather than re-inventorying, and take `research/care-labor.html` first.
+
+## 2026-08-20 — LEGACY P0 CORRECTED: care-labor real-person factual error (LCP0-1)
+STATUS: **P0 corrected and live.** One content commit, published. No new audit, no rescan of
+142 articles. Phase-2 capture, crons, selector, AR3, Writer Grounding and production prompts
+all untouched.
+THE FINDING (from the existing Phase-1 audit, not rediscovered): `research/care-labor.html`
+named a real individual (Shabin Shaji) and a real company (Swan Care Solutions Ltd) in
+connection with genuine UK employment tribunal case 1308762/2023, and asserted claims the
+record does not support. Flagged 2026-08-16 as "HIGHEST-SEVERITY FINDING IN AUDIT"; public
+until today.
+VERIFIED AGAINST THE PRIMARY SOURCE — the tribunal's own written reasons, retrieved from
+assets.publishing.service.gov.uk and preserved (sha256 `910c1bd6…`), cross-checked against
+Guardian and Work Rights Centre coverage. **Four errors, not the three Phase 1 listed** — the
+date error surfaced during verification: (1) "paid £5 an hour" — FALSE, zero matches for `£5`/
+`per hour`/`hourly`/`an hour` anywhere in the decision; he was paid nothing; (2) "housing was
+deducted as wages" — FALSE, no accommodation deduction found, the word appears only in
+narrative about where he arranged to live before starting; (3) "Swan Care is appealing" —
+UNSUPPORTED, "appeal" does not appear in the decision and no appeal is in any published
+report; (4) "In June 2026" — FALSE, heard 2–4 March 2026, judgment sent to the parties 5 March
+2026.
+WHAT THE RECORD SAYS: sponsored for a 40-hour week at £22,880 gross p.a., employed 15 Apr 2023
+– 21 Apr 2024, *"ready, willing and able to perform his duties, and the only reason he did not
+do so was because the respondent did not provide him with work"*; the full gross salary for
+the period was treated as an unauthorised deduction. Awards £20,400.76 net + £2,168.85 net
+holiday pay + £4,080.15 + £433.77 uplift + £1,760. **The truth is worse than what was
+published** — not underpayment but a year of withheld work and withheld pay under a
+sponsorship visa.
+REMEDIATION: **CORRECT_WITH_DISCLOSURE**, not WITHDRAW — the page's central argument (the
+health and care visa as a sponsorship trap) survives and is strengthened by the real record;
+the false specifics were local to the lede and metadata. 18 insertions / 5 deletions in one
+file: front-matter description, JSON-LD description, the lede, the "appeal as attrition" clause
+(which presupposed the appeal), plus a visible correction note stating what changed without
+describing internal architecture and without claiming retrospective validation. No rewrite
+through the new engine, no stylistic modernisation, URL unchanged, no unrelated prose touched.
+PUBLISH METHOD — deliberately narrow: local `main` was **34 commits ahead of origin, 33 of them
+`.claude/` evidence that has never been deployed**, so a naive push would have published the
+entire research history. Cherry-picked the single content commit onto a branch at `origin/main`
+and pushed only that: `8af3622..70d9292`, one file. Verified afterwards that origin/main
+contains exactly one new commit touching exactly one file. GitHub Pages deploy run
+`32367255606` completed **success** in 1m7s, and the live page was confirmed by `curl` to carry
+the correction — a push landing on main is not evidence it is live.
+WIDER PROBLEM FLAGGED, NOT FIXED: the corrected page is an index, and the same unsupported
+claims are asserted by **published articles** — `2026-06-19-swan-care-is-appealing-the-appeal-
+is-the-mechanism.md` (entire article and title built on the non-existent appeal; strongest
+WITHDRAW candidate in the corpus), `2026-06-04-swan-care-solutions-ltd-classified-someone-as-
+equipment.md` (housing-deduction claim; has a recorded Bluesky post), and
+`2026-06-09-three-months-in.md` (repeats a Swan Care claim as settled fact). The live page
+still shows the appeal article's own title in a link card; that is **disclosed in the
+correction note** rather than hidden, since this page cannot rename another article.
+SOCIAL: `_social/` tracks Bluesky URIs only. One record exists —
+`at://did:plc:4x2xhho3ozmrknpxqbdjtmbv/app.bsky.feed.post/3mnh2k2ymo22v` (Zen Circuit) for the
+2026-06-04 article. No X/Reddit/LinkedIn/Facebook records in the repo. **No social modification
+performed**; the corrected article is the canonical correction record. Follow-up becomes high
+priority if the 2026-06-19 article is withdrawn.
+LC1 BACKLOG RECORDED (not started), `WORK.md` `## 5d`/`7a`: finite batches capped at 10–20
+articles — BATCH 1 highest-risk personal-history/real-person claims **starting with the three
+Swan Care items above**, BATCH 2 quotes/attribution/named-person testimony, BATCH 3 specific
+factual claims/numbers/dates/institutional claims, then lower-risk material. Each article ends
+as KEEP_AS_LEGACY / CORRECT_WITH_DISCLOSURE / WITHDRAW. Do not re-inventory; do not auto-rerun
+any article through the new engine.
+EVIDENCE: `.claude/experiments/legacy-p0-care-labor-correction-2026-08-20/` — P0-CORRECTION-
+RECORD.md, preserved pre-correction page + preserved tribunal written reasons, hashes.
+CODE: none. CONTENT COMMIT: `5cd80ff` local / `70d9292` published.
+FOLLOW-UP: Batch 1, starting with the 2026-06-19 appeal article. Do NOT start it in the same
+task as other work.

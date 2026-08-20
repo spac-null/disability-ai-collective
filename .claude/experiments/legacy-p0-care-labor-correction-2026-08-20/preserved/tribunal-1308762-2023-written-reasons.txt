@@ -1,0 +1,1126 @@
+                                                          Case Number: 1308762/2023
+
+
+
+
+            EMPLOYMENT TRIBUNALS
+Claimant:             Mr S Shaji
+
+Respondent:           Swan Care Solutions Ltd
+
+
+Heard at:      Birmingham (hybrid)                         On:    2-4 March 2026
+
+Before:               Employment Judge Edmonds
+
+Representation
+Claimant:             Mr R Anderson, counsel
+Respondent:           Mr N Tudor-Radu, senior litigation consultant
+
+JUDGMENT having been sent to the parties on 5 March 2026 and written
+reasons having been requested in accordance with Rule 60 of the Employment
+Tribunals Rules of Procedure, the following reasons are provided:
+
+
+                              REASONS
+Introduction
+
+1.   The claimant is an Indian citizen who came to the UK under a certificate of
+     sponsorship which named the respondent as his employer. He says that he
+     had been made an offer of employment, which he had accepted, and he
+     came to the UK ready, able and willing to complete that role. He says that
+     the respondent never provided him with work to do and never paid him and
+     claims that this amounted to an unauthorised deduction from wages,
+     amongst other things.
+
+2.   ACAS early conciliation commenced on 1 December 2023, and ended on
+     2023, with the claim form being presented to the Tribunal on 18 December
+     2023.
+
+Claims and Issues
+
+3.   The relevant complaints had been determined at a Preliminary Hearing on
+     29 January 2025 (page 43) (“the Preliminary Hearing”). They were as
+     follows:
+
+     1.        Employment status
+
+               1.1.   Was the claimant an employee of the respondent within the
+                                           1
+             meaning of section 230 Employment Rights Act 1996
+             (“ERA”) and, if so what were the dates of employment?
+
+2.    Time limits
+
+      2.1.   Given the date the claim form was presented and the dates
+             of early conciliation, any complaint about something that
+             happened before 01 September 2023 may not have been
+             brought in time.
+
+      2.2.   Were the claims made within the time limit in the ERA 1996?
+             The Tribunal will decide:
+
+             2.2.1. Was the claim made to the Tribunal within three
+                    months (plus early conciliation extension) of the act
+                    complained of?
+             2.2.2. If not, was it reasonably practicable for the claim to be
+                    made to the Tribunal within the time limit?
+             2.2.3. If it was not reasonably practicable for the claim to be
+                    made to the Tribunal within the time limit, was it made
+                    within a reasonable period?
+
+3.    Holiday Pay (Working Time Regulations 1998)
+
+      3.1.    Did the respondent fail to pay the claimant for annual leave
+             the claimant had accrued but not taken when their
+             employment ended?
+      3.2.    What was the claimant’s leave year?
+      3.3.    How much of the leave year had passed when the claimant’s
+             employment ended?
+      3.4.    How much leave had accrued for the year by that date?
+      3.5.    How much paid leave had the claimant taken in the year?
+      3.6.    Were any days carried over from previous holiday years?
+      3.7.    How many days remain unpaid?
+      3.8.    What is the relevant daily rate of pay?
+
+ 4.   Unauthorised deductions
+
+      4.1.   Was the claimant “ready, willing and able” to perform his
+             duties for the respondent as established in Petrie v
+             McFisheries Limited [1940] 1KB 258?
+
+             4.1.1. Was the claimant’s inability to work due to the
+                    external and involuntary factor of the respondents
+                    withholding work assignments?
+             4.1.2. Did the respondents offer any reasonable
+                    accommodation or alternative duties that the claimant
+                    could have performed, and did the claimant show
+                    willingness to engage in these?
+
+      4.2.   Did the respondent make unauthorised deductions from the
+             claimant’s wages and if so how much was deducted?
+      4.3.   Were the wages paid to the claimant between 10 April 2023
+                                  2
+             to 21 April 2024 less than the wages they should have been
+             paid?
+      4.4.    Was any deduction required or authorised by statute?
+      4.5.    Was any deduction required or authorised by a written term
+             of the contract?
+      4.6.    Did the claimant have a copy of the contract or written notice
+             of the contract term before the deduction was made?
+      4.7.    Did the claimant agree in writing to the deduction before it
+             was made?
+      4.8.    How much is the claimant owed?
+
+ 5.   Unlawful Payments to Employer
+
+      5.1.    Did the claimant have the right under section 15 Employment
+             Rights Act 1996 not to have to make payments to the
+             respondent?
+      5.2.    Did the claimant make a payment to the respondent through
+             intermediaries (“agents”) in order to be interviewed by the
+             respondent?
+      5.3.    Did the claimant make payments to the respondent through
+             intermediaries (“agents”) for the claimant’s Certificate of
+             Sponsorship to be released to the claimant?
+      5.4.    Was the respondent in breach of section 15 EAR by
+             receiving     payments       from   the   claimant    through
+             intermediaries? If so:
+             5.4.1. What amounts did the claimant pay the respondent?
+             5.4.2. What is the amount of recoverable payments to which
+                    the claimant is entitled?
+
+6.    Itemised Pay Statements
+
+      6.1.   Did the respondent provide the claimant with itemised pay
+             statement(s) in accordance with section 8(1) ERA 1996?
+      6.2.   If the respondent failed to provide the claimant with itemized
+             pay statement(s), should the Employment Tribunal make a
+             declaration to that effect?
+
+7.    Remedy
+
+      7.1.    How much should the claimant be awarded and is the
+             claimant entitled to interest for delayed receipt in accordance
+             with section 35A of the Senior Courts Act 1981 and Section
+             69 of the County Courts Act 1984?
+      7.2.    If the Tribunal has made a declaration under section 23(1)(b)
+             ERA 1996 should the respondent compensate the claimant
+             for any financial loss sustained in accordance with section
+             24(2) ERA 1996?
+      7.3.    Did the ACAS Code of Practice on Disciplinary and
+             Grievance Procedures apply?
+      7.4.    Did the respondent or the claimant unreasonably fail to
+             comply with it?
+      7.5.    Is it just and equitable to increase or decrease any award
+             payable to the claimant?
+                                 3
+             7.6.    By what proportion, up to 25%?
+             7.7.    When these proceedings were begun, was the respondent in
+                    breach of its duty to give the claimant a written statement of
+                    employment particulars or of a change to those particulars?
+             7.8.    If the claim succeeds, are there exceptional circumstances
+                    that would make it unjust or inequitable to make the minimum
+                    award of two weeks’ pay under section 38 of the
+                    Employment Act 2002? If not, the Tribunal must award two
+                    weeks’ pay and may award four weeks’ pay.
+             7.9.    Would it be just and equitable to award four weeks’ pay?
+
+4.   During the course of the hearing, the claimant withdrew the complaint about
+     unlawful payments to the employer (issue 5 above) because, not being able
+     to give oral evidence (see below about this), the claimant considered that
+     he would be unable to prove his case on the balance of probabilities in
+     respect of this matter. I dismissed that complaint on withdrawal.
+
+5.   One further matter to reference in relation to the List of Issues is that, whilst
+     holiday pay appeared in the List of Issues, on reading the papers I identified
+     that this complaint had been the subject of a previous amendment
+     application which was then withdrawn. Unfortunately neither representative
+     before me were at the Preliminary Hearing and therefore it was not possible
+     to ascertain exactly how something that had been subject to a withdrawn
+     amendment application had been included in the List of Issues. We agreed
+     to address the issue once I had read the papers more fully and each party
+     had time to reflect on the matter. Having done so the respondent’s
+     representative confirmed that the List of Issues had been previously agreed
+     by the respondent and they were comfortable for the List of Issues to
+     remain as it was drafted at the Preliminary Hearing. Therefore, I decided
+     that, to the extent that any amendment was required, it had been granted by
+     implication at the Preliminary Hearing through its inclusion in the List of
+     Issues.
+
+Procedure, Documents and Evidence Heard
+
+Withdrawal of claim against second respondent
+
+6.   At the Preliminary Hearing it had been recorded that the claimant had
+     withdrawn his claims against the second respondent, Mrs Elizabeth
+     Chengeta, however it did not appear that any Judgment formally dismissing
+     that claim had been sent to the parties. I therefore agreed to include that
+     within my Judgment, which I did.
+
+Documents
+
+7.   I was provided with a file of 390 pages (although not until the morning of the
+     hearing, due to a delay on the respondent’s representative’s part, for which
+     he apologised): references in these Reasons to a page are to the relevant
+     page of that file.
+
+8.   Prior to the hearing, the claimant had written to the respondent on 29
+     October 2025, requesting disclosure of documentation relating to (a) the
+     withdrawal of an offer of employment to the claimant, and (b) evidence of an
+                                          4
+     induction meeting and the claimant being invited to that meeting. This arose
+     from comments made in Mrs Chengeta’s witness statement. Ultimately, a
+     purported letter withdrawing an offer of employment was provided to the
+     respondent on 23 February 2026 (see below for my findings in relation to
+     this document), leading to the claimant requesting proof of postage in
+     relation to that document and proof of the withdrawal of the claimant’s
+     sponsorship. The respondent said that there was no such proof of postage
+     as it was sent first class post, and no proof of the withdrawal of
+     sponsorship. In relation to the induction matter the respondent referred to
+     an email chain in the file which the claimant did not accept was what had
+     been requested but agreed that as the respondent said there were no other
+     documents, it was a matter for cross examination. There was therefore no
+     specific disclosure issue for me to address.
+
+Evidence from abroad
+
+9.   I was provided with witness statements from the claimant and from Mrs
+     Elizabeth Chengeta on behalf of the respondent. Mrs Chengeta attended
+     the hearing in person to give her evidence, however the claimant has
+     moved back to India and dialled in remotely from India (with the Tribunal’s
+     permission). India has not granted permission to individuals to give
+     evidence by video from India in Tribunal proceedings on a blanket basis,
+     and instead requests can be considered on a case by case basis according
+     to the information set out on the FCDO site “Taking and giving evidence by
+     video link from abroad in UK court cases and Tribunals”.
+
+10. The claimant’s representative had applied to the High Commissioner of
+    India in London for permission to give evidence in these proceedings on 29
+    October 2025. Unfortunately, despite chasing the matter and seeking to use
+    personal contacts of the representatives to secure a response, no response
+    had been forthcoming before this hearing and I was provided with a witness
+    statement from the claimant’s representative, Sarmila Bose, setting out the
+    actions she had taken. Therefore, I did not permit the claimant to give
+    evidence remotely (and nor in fairness to the claimant was there any
+    suggestion from him that I should). The parties each made submissions to
+    me about the weight that I should attach to the claimant’s written witness
+    statement, and I address that below. In addition, in light of his inability to
+    give evidence from abroad, the claimant withdrew issue 5 set out above on
+    the second day of the hearing.
+
+11. Ultimately, the hearing proceeded with Mrs Chengeta and the respondent’s
+    representative attending in person, but the claimant and his representative
+    both attending by video at their request (in the claimant’s case, because he
+    was abroad, and in the representative’s case, because he was acting on a
+    pro bono basis and not located in Birmingham, therefore the Tribunal
+    agreed that he could attend remotely).
+
+Weight to attach to oral witness evidence
+
+12. I heard oral evidence from Mrs Chengeta and had a written witness
+    statement from her however, as explained above, had only a written witness
+    statement from the claimant. This was however, signed, dated and
+    accompanied by a statement of truth. I had to consider how much weight to
+                                        5
+     attach to the evidence, given the claimant’s inability to give oral evidence.
+     The claimant said that his evidence should nevertheless be given weight by
+     the Tribunal, the respondent said that it should not.
+
+13. The statement itself remained admissible however I had to determine how
+    much weight to attach to it. I was directed to section 4 of the Civil Evidence
+    Act 1995 by the claimant’s representative which provides as follows, and
+    which applies to civil proceedings before any tribunal in relation to which the
+    strict rules of evidence apply:
+
+      Section 4 — Considerations relevant to weighing of hearsay evidence
+
+      (1) In estimating the weight (if any) to be given to hearsay evidence in civil
+          proceedings the court shall have regard to any circumstances from
+          which any inference can reasonably be drawn as to the reliability or
+          otherwise of the evidence.
+      (2) Regard may be had, in particular, to the following—
+             (a) whether it would have been reasonable and practicable for the
+                 party by whom the evidence was adduced to have produced the
+                 maker of the original statement as a witness;
+             (b) whether the original statement was made contemporaneously
+                 with the occurrence or existence of the matters stated;
+             (c) whether the evidence involves multiple hearsay;
+             (d) whether any person involved had any motive to conceal or
+                 misrepresent matters;
+             (e) whether the original statement was an edited account, or was
+                 made in collaboration with another or for a particular purpose;
+             (f) whether the circumstances in which the evidence is adduced as
+                 hearsay are such as to suggest an attempt to prevent proper
+                 evaluation of its weight.
+
+14. Whilst I do think that the claimant’s application for permission could perhaps
+    have been made earlier than October 2025, I do recognise that it was still
+    made a number of months before the hearing and in these circumstances it
+    was not reasonable or practicable for the claimant to have given oral
+    evidence. I also however recognise that the statement was prepared in
+    September 2025, some time after the events and therefore is not
+    contemporaneous. It does not however involve multiple hearsay.
+
+15. As to whether there was any motive to conceal or misrepresent matters or
+    whether the circumstances are such as to suggest an attempt to prevent
+    proper evaluation of its weight, I find that the claimant was ready and willing
+    to give evidence, and it is the lack of permission that prevents him from
+    doing so. There is no attempt to conceal anything: to the contrary, he has
+    withdrawn part of his claim in acceptance of the fact that without his oral
+    evidence his prospects on that aspect were materially weaker than they
+    otherwise would have been.
+
+16. I also note, as will be apparent from my findings of fact, that much of what
+    the claimant says is supported by contemporaneous documents. Therefore,
+                                         6
+     in respect of those aspects, the claimant's witness statement is not
+     prepared in isolation but can be read in that context and the contents
+     verified through the documents themselves.
+
+17. There are however some aspects which are not covered by documents, for
+    example evidence about phone calls. These matters are matters upon
+    which both the respondent's representative and I would have wanted to
+    clarify certain points with the claimant and hear his evidence under oath
+    about them. I do find that the respondent would certainly be prejudiced were
+    the contents of those aspects of the statement to be accepted by the
+    Tribunal without it having had the ability to do so.
+
+18. Overall, I decided that the claimant's witness statement is admissible and
+    that, in respect of those sections which cross refer to documentation, can
+    be given substantial weight. However, in respect of those elements which
+    do not cross refer to documents, particularly given the absence of cross
+    examination and the fact that the statement was not prepared
+    contemporaneously, whilst it is not discounted entirely in that it provides
+    some form of chronology to matters, I do attach little weight to what the
+    claimant says was the precise content of, for example, phone calls.
+
+19. It is however also relevant to comment on the respondent’s oral evidence.
+    Turning to the respondent's evidence, I heard evidence from Mrs Chengeta
+    alone on behalf of the respondent. I make the following observations:
+
+         a. In respect of some matters, particularly in relation to phone calls
+            and what she says that other employees of the respondent did in
+            relation to progressing the claimant's application for employment,
+            she was not party to those matters and from her evidence appears
+            to be relying on what she says she thinks or believes happened, not
+            what she actually knows. At best, it is hearsay evidence based on
+            what the third party might have told her, but in many cases it
+            appears that she does not even have any information from the third
+            party (with both Tafadzwa Mushipe (known as "Taffy") and Marlene
+            Djurasevic having left the respondent's employment some time
+            ago). In addition, some of her evidence related to matters regarding
+            Mr Kasinganeti, Operations Manager, who still works for the
+            respondent but who did not give evidence in these proceedings.
+            Mrs Chengeta herself never spoke to the claimant as far as I can
+            tell other than one small email exchange. Therefore, whilst I lack
+            oral evidence from the claimant about these matters, I equally lack
+            oral evidence from the respondent on these matters. Here, I am not
+            persuaded that it would not have been reasonable and practicable
+            for those individuals to have given evidence: whilst two of them
+            have left the respondent's employment, no attempts have been
+            made to contact them to ask them to give evidence on behalf of the
+            respondent in these proceedings.
+
+         b. As to what Mrs Chengeta has said she thinks would have been
+            discussed in those phone calls, this is not only hearsay evidence
+            but from the evidence I heard, I do not find that she actually had
+            any information from the relevant individuals about what was
+            discussed. I therefore attach no weight to what she has said about
+                                       7
+                those things.
+
+20. Therefore, in relation to matters about which there is no documentary
+    evidence, I attach no weight to the claimant's written statement save for
+    understanding the chronology of events, but equally attach no weight to
+    what Mrs Chengeta has said about these matters either.
+
+21. More generally in relation to Mrs Chengeta's oral evidence, in addition to
+    the point I have outlined about the reliability of her evidence on third party
+    discussions with the claimant and third party actions, I also find that her
+    evidence was at times inconsistent. I draw attention to certain examples of
+    this in my findings of fact below. One particular example is in relation to the
+    letter which appears at page 379 of the file where I have found that the
+    document was not prepared on the date asserted by her and that the
+    information she has put forward in evidence about it quite simply cannot be
+    correct and contradicts itself. She also on occasion refused to accept the
+    plain interpretation of the words contained within emails in the file, for
+    example the email chain from August 2023 between the claimant and
+    Marlene Djurasevic (to which I again turn below).
+
+22. I find generally that she answered the questions which were put to her in a
+    way that she believed would best advance the respondent's case, rather
+    than focussing on the precise question being asked of her. For these
+    reasons, I have decided that where there is a conflict between the
+    documentary evidence and the evidence of Mrs Chengeta, to prefer the
+    documentary evidence and to prefer the ordinary reasonable interpretation
+    that can be deduced from that documentary evidence, rather than the
+    interpretation that Mrs Chengeta on occasion submitted that I should make.
+
+Other matters
+
+23. At the start of the second day of the hearing, the respondent’s
+    representative requested that the hearing start late so that he could attend
+    to a private matter relating to the case. I agreed, no objection having been
+    raised by the claimant and the hearing ultimately started at 10.50am.
+
+24. We had agreed that I would issue judgment first in respect of liability, and
+    that remedy would be addressed thereafter (but within the three day hearing
+    window). Having issued oral judgment, the parties’ representatives helpfully
+    worked collaboratively together to seek to agree the sums owed as far as
+    possible, as indicated in the Conclusions section below. Mrs Chengeta
+    declined to attend the remedy section of the hearing, citing her mental
+    health following her attendance at the first two days of the hearing.
+
+Facts
+
+The job offer
+
+25. The claimant is an Indian citizen. The circumstances of how the claimant
+    came to be in contact with the respondent initially are not entirely clear: it is
+    clear from the documents (e.g. pages 63, 66 and 67, 69, 70 and 71) that the
+    claimant was in touch with individuals to whom he appears to have
+    transferred some money (which he says was in order to secure a role in the
+                                          8
+     healthcare sector in the UK and various associated costs). However, given
+     the withdrawal of the allegations relating to the payment of money to those
+     individuals, I do not need to make findings on exactly what happened.
+
+26. What is clear is that the claimant had a WhatsApp video interview with Taffy
+    Mushipe, a trainee manager at the respondent at the time. On balance of
+    probabilities I find that this took place on 9 February 2026, based on a
+    WhatsApp conversation of the same date (page 319), in which the claimant
+    said "Its me Shabin Shaji" which suggested prior contact between them and
+    in which he provided his email address. It is accepted by the respondent
+    that the claimant was "successful at the interview".
+
+27. Another reason why I find that the interview was on 9 February 2023 is
+    because I have seen the Certificate of Sponsorship for the claimant (page
+    64) which says that it was assigned on that date, along with evidence that a
+    copy was sent to the claimant on that date (page 304) although it is not
+    clear who the person was that sent it to him. This certificate has an expiry
+    date of 10 May 2023, included the claimant's name and various details
+    about him, and said that his work start date would be 27 February 2023 with
+    his weekly hours of work being 40 hours per week, and gross salary of
+    £22,880 per annum. The work address quoted was the respondent's
+    registered office at that time.
+
+28. The respondent accepts that this certificate of sponsorship was obtained by
+    it but Mrs Chengeta suggested in oral evidence the following:
+
+          a. That she thinks that they are not applied for on an individual basis
+             and the employee's details would be inserted when the certificate of
+             sponsorship was allocated at a later date; and
+
+          b. That the employment start date was potentially added by the
+             authorities and not by the respondent themselves, and therefore it
+             is not representative of the actual start date.
+
+29. Mrs Chengeta did not herself complete the certificate of sponsorship forms
+    for the respondent, that was Mr Kasinganeti and therefore the points I have
+    raised about her evidence of third party matters apply here. I have been
+    provided with a link to government guidance called "Defined certificate of
+    sponsorship: SMS manual 12". From this it is clear that it is the employer
+    who fills in the box for start date, end date, job title, job type and salary
+    amongst other matters. I find that this was a specific certificate of
+    sponsorship for a specific role, which was due to commence on 27
+    February 2023 on the basis of 40 hours per week.
+
+30. The next communication between Taffy Mushipe and the claimant was not
+    until 28 March 2023. There was no formal offer of employment emailed or
+    sent to him in writing, and there is no record of what offer was made to him.
+    The respondent's position is that the offer was subject to various things,
+    namely the provision of relevant documents, an in-person registration,
+    conducting all online training and attending an in-person induction meeting.
+
+31. In the absence of any formal contract or offer letter, and with no oral
+    evidence from either person involved in the job interview, I must decide on
+                                        9
+     balance of probabilities what I think was the basis of the offer made to the
+     claimant. The only contemporaneous documentation that we have on this
+     point is the certificate of sponsorship itself. This was prepared on the day of
+     the interview and clearly stated the start date to be 27 February 2023 based
+     on 40 hours per week. On the balance of probabilities I find that this was the
+     basis of the offer.
+
+32. As to whether it was made subject to the conditions which the respondent
+    relies on, I find on balance of probabilities that if there were those pre-
+    conditions to the employment, these would have been made clear to the
+    claimant through WhatsApp or through email (noting that the claimant
+    provided his email address to Ms Mushipe on 9 February 2023), which it
+    was not. I do however find that the claimant having the correct visa was
+    understood by them to be a pre-requisite for employment, given that the
+    next WhatsApp message between them was on 28 March 2023 (page 319),
+    when the claimant informed Ms Mushipe that he had received his visa the
+    previous day. Had that not been a pre-requisite, I consider on balance of
+    probabilities that he would have been contacting them to ask why his work
+    could not start on 27 February 2023. It is clear that from the claimant's
+    perspective, he had understood that his work could not commence without
+    that visa. I also find that by implication if nothing else, the claimant being
+    present in the UK and in commutable distance from R's work was another
+    pre-condition of employment which the claimant clearly understood to be
+    the case from the context of their various discussions.
+
+33. In relation to the conditions which the respondent relies on I would also
+    comment as follows:
+
+          a. Provision of relevant documents. I can see that the claimant did
+             provide copies of various documents to a person named Arjun
+             (page 68, 70, 71) on 11, 14 and 15 February 2023. It is not however
+             clear whether those were for the purposes of this role or for his visa
+             application and there is a dispute about who Arjun was and whether
+             he represented the respondent. More generally, there is nothing
+             wrong with an employer requiring the provision of documents (in
+             fact the respondent is right that it must do so) however I heard no
+             evidence as to why this could not be electronic and then
+             supplemented with physical copies on the first day of employment.
+
+          b. Attending an in-person registration. This is something that could
+             happen on the first day of employment and in the absence of any
+             documentation suggesting that this was a pre-condition, I find on
+             balance of probabilities that it was not.
+
+          c. Conducting all relevant online training. The respondent's position is
+             that employment could not start until the employee had completed
+             relevant training, which it says the claimant had not. However, the
+             respondent's licence to issue certificates of sponsorship was
+             ultimately revoked in 2024, in part precisely because the
+             respondent did not pay its workers until that training had been
+             completed. The letter suspending the respondent's licence (page
+             201, at 205-206) clearly set out that the salary paid to workers must
+             be reflective of that on the certificate of sponsorship and that
+                                        10
+             training time forms part of working time. This quite clearly reflects
+             the legal position. The fact that the respondent continued to argue
+             that completing online training could legitimately be a pre-condition
+             of carrying out work for the respondent is surprising to say the least.
+             I find that any time spent carrying out training would be working
+             time. The logical way for an employer to address this is for time to
+             be set aside at the start of the employment period for the individual
+             to carry out that training, before they start their duties.
+
+          d. An induction period. The respondent appeared to accept that
+             individuals would be paid for this period. The respondent also says
+             that it would have been at this time that a contract of employment
+             would be issued.
+
+34. The respondent's position is that due to regulatory requirements these
+    things all had to be done before work could start. I agree that these are
+    steps that would be required before the employee could carry out full duties,
+    but that is not the same as the start date of employment. It is indeed
+    common practice in many organisations for employees to start employment
+    and spend the initial period of employment meeting training and regulatory
+    requirements before undertaking normal duties. That is still part of the
+    employment period and they are paid for it. For completeness, I note that
+    the Grounds of Resistance set out a slightly different list of alleged pre-
+    conditions for employment, but I have used the above list as the one put
+    forward by the respondent in evidence.
+
+The claimant’s arrival in the UK
+
+35. On 28 March 2023 the claimant sent a message (page 319 and 140)
+    confirming that he now had his visa and was arranging travel to the UK. He
+    asked for information about where he would be based so he could find
+    accommodation. There were then a series of discussions over the coming
+    days, in which he indicated he would be travelling between 10 and 14 April
+    2023, and Ms Mushipe informed him that he would be primarily working in
+    Stafford. On 9 April 2023 he said that he was flying to the UK on that day
+    and had arranged accommodation in London for a week. (page 132). Given
+    that he knew that his role would be in the Midlands and he was basing
+    himself in London for that week I find that he was not intending to work
+    during the initial few days.
+
+36. On 12 April 2023, the claimant said that he was planning to attend the
+    offices the following day (page 308). He was informed by Ms Mushipe that
+    he could email the front and back of the BRP and it was not necessary to
+    come in. Then on 14 April 2023 he updated with his accommodation
+    address, and on 17 April 2023 he messaged on WhatsApp requesting an
+    update on procedures he needed to follow.
+
+37. On 18 April 2023 (page 148) Ms Mushipe emailed the claimant, inviting him
+    to a new starter registration meeting on 19 April 2023. The email said
+    congratulations on joining the team and asked for various documents to be
+    emailed through. One of the items listed was a DBS check, however on the
+    same day Ms Mushipe sent a WhatsApp message to the claimant (page
+    308) in which she said the DBS was not required at that time as he would
+                                        11
+     be covered by his police clearance initially. The claimant provided a number
+     of documents to Ms Mushipe in the early hours of 19 April (page 152) and
+     from the titles of those documents and based on him saying in that email "I
+     have attached all the required documents" I find that these were the
+     documents requested in their entirety.
+
+The new starter registration meeting and failure to provide work thereafter
+
+38. The meeting took place on 19 April 2023. The respondent has said that the
+    claimant would have needed to provide hard copies of the documents, and
+    in the absence of any indication that he did not (for example an email
+    chasing for them after the meeting) I find that he did so.
+
+39. The claimant had done what needed to be done in order for him to start
+    work. The start date on his certificate of sponsorship had already passed
+    and he was now in the country, with the right permissions, and living in the
+    right location.
+
+40. However, the respondent did not provide him with work, nor did they pay
+    him. He was told to complete various training modules (page 150). In the
+    email from Ms Mushipe telling him to do so, she describes this as being part
+    of his induction (and not in fact separate to it): there is nothing setting out
+    that employment will not start until this is done. This supports my finding
+    that this was not a pre-condition of employment (and nor could it lawfully
+    have been).
+
+41. On 27 April 2023 the claimant updated Ms Mushipe (page 308) that he was
+    getting a car and doing the training sessions. Ms Mushipe replied to say
+    that his references were awaited, however on 28 April 2023 the claimant
+    emailed her to say that his previous employer had told him that they had not
+    received a reference request. In this email he also raised concerns about
+    the fact he had been in the country for 3 weeks and not started duties yet.
+    This supports the fact that the claimant's clear expectation was that work
+    would start once he arrived in the respondent's location, and not that he
+    would be subject to time-consuming pre-conditions of employment. I find
+    that any delay in progressing the references was on balance of probabilities
+    due to the respondent not progressing the matter.
+
+42. In evidence Mrs Chengeta suggested that perhaps there had been a typo in
+    Ms Mushipe's email to that employer requesting a reference and it did not
+    go through, therefore presumably accepting that this was an issue at the
+    respondent and not the claimant.
+
+43. On 14 May 2023 the respondent added the claimant to a WhatsApp group
+    (page 316). On that date there was a message saying that there would be a
+    group call on Tuesday morning to discuss the job and start dates. There
+    were then a series of messages on Tuesday to point out both by the
+    claimant and others that the respondent had not conducted that call. There
+    was then a chaser from the claimant on 20 May 2023 but no response. On
+    22 August 2023 the respondent sent a message saying that new contracts
+    were tendered for and there would be an update once feedback was
+    received.
+
+
+                                        12
+44. In evidence the alleged WhatsApp group was discussed and Ms Chengeta
+    referred to a different WhatsApp group that she said the claimant was part
+    of in 2024 relating to the certificate of sponsorship removal. That makes no
+    sense as by that time even on the claimant's own case, his employment had
+    ended. What makes more sense is that this is the group that was referred to
+    in paragraph 8 of the respondent’s grounds of resistance. If that is the case
+    however, there is no evidence to suggest that the individuals in the group
+    had been notified of any withdrawal of their offers of employment, as
+    suggested in the Grounds of Resistance.
+
+45. What I do note however is that Mrs Chengeta also said in evidence that
+    these WhatsApp groups were set up to support individuals and answer
+    questions, however it is clear from the message trail that this did not
+    happen. The claimant's question went unanswered and the supposed call
+    did not take place. Ultimately the claimant was randomly removed from the
+    group in April 2024 by the respondent.
+
+The claimant’s further contact requesting to start duties
+
+46. On 30 May 2023 the claimant emailed the respondent saying that he had
+    done the training and wanted to know when he can start. Mrs Chengeta
+    replied saying HR will be in touch, it won't be long (page 156) There was no
+    suggestion that he had not completed all of the training, nor that there was
+    anything at all that the claimant still had to do. I find that what Mrs Chengeta
+    meant was that HR would be in touch when they had work to give the
+    claimant to do. In this regard I find that the claimant's representative's
+    submission made during the hearing, that what in effect the respondent was
+    doing, was treating the claimant as a zero hours worker, was entirely
+    correct. The problem of course was that the claimant was not a zero hours
+    worker.
+
+47. On 16 June 2023 the claimant emailed the respondent again to a central
+    “HR” email address at the respondent asking about starting his duties and
+    confirming that he had completed online training (page 158). Again there
+    was no response to suggest that he had not done so. In his witness
+    statement the claimant does say that he completed the training between
+    April and August and there are certificates in the file suggesting that some
+    training was not done until August. However, there is no evidence to show
+    that the claimant was told to do those particular training modules in April,
+    nor any chasers for him to do them, and in any event I have found that any
+    time spent on training is working time.
+
+48. The response that the claimant did receive on 16 June 2023 (page 160)
+    from Cynthia Judith in HR instead said to contact Ms Mushipe for his
+    induction and start date. He did so on the same date (page 159) but it
+    appears that no induction / start date was provided to him. The respondent
+    suggests that there was a phone call but no evidence of this has been
+    provided other than Mrs Chengeta thinking that there was. I find, given what
+    came next, that no satisfactory update was provided to the claimant at this
+    point.
+
+49. On 13 July 2023 the claimant chased again, directly to Mrs Chengeta (page
+    156). He said that Taffy Mushipe had told him to contact her.
+                                         13
+50. On 2 August 2023 the claimant was sent an email by Marlene Djurasevic
+    about registration with the respondent (page 164). This was in effect a
+    duplicate of what he had been sent by Ms Mushipe on 18 April 2023 and
+    which had already been done. He replied, saying that he would attend the
+    meeting but pointing out that it had already taken place. Ms Djurasevic
+    replied to say that Todd Maforimbo, Service Manager, would be in touch
+    shortly about his work schedule and requirements, that the register (i.e.
+    registration) meeting was "no more necessary" and would be "rescheduled".
+    Mrs Chengeta submits that this was not to be interpreted as meaning that
+    the registration meeting was not needed, because of the word
+    "rescheduled". However, the plain reading of the email and the chain in its
+    entirety is that the meeting was not needed any more and would not take
+    place on the scheduled date because he had already attended one in April.
+    To suggest otherwise is fanciful. Equally, to suggest as the respondent has
+    done that the claimant was the one who failed to attend this meeting, is
+    fanciful. This is one of the things that goes to the credibility of Mrs
+    Chengeta's evidence.
+
+51. On 24 October 2023 the claimant emailed Ms Djurasevic saying that he was
+    struggling due to what he described as unemployment but in reality what he
+    meant was the lack of work duties and pay (pages 168-169). She replied on
+    the same day saying that she would forward the email to managers and
+    referenced seeing if they could help with a food bank.
+
+The respondent’s emails about not having the claimant’s documents
+
+52. On 24 November 2023 Ms Djurasevic asked the claimant for an update on
+    his employment situation: this is odd given the past history of the case
+    (page 170) He replied on the same date saying that he was still waiting and
+    raised financial concerns. She replied later that day saying that the
+    respondent held no documents about him and asked whether he had been
+    invited to registration. This was also odd given that she herself had had a
+    discussion with him about that in August. He replied that day providing
+    screenshots showing those discussions (page 171) and she replied saying
+    that she could recreate his file. On 27 November 2023 she emailed again
+    saying that he was not returning her calls. I find that by this point it was
+    understandable if he was not, given that he was back to square one.
+
+53. On 27 November 2023 the claimant emailed saying that he wanted to talk
+    with a director or registered manager (page 173) about the fact that he (and
+    others) had not been given work. Ms Djurasevic replied to say that she
+    would forward the email to management. She also asked to be sent his
+    registration documents again. In evidence Mrs Chengeta suggested that
+    she did not think the email was passed to her however page 364 clearly
+    shows that it was. In the absence of any evidence that shows that Mrs
+    Chengeta acted on this, I find that she did not on balance of probabilities.
+
+The purported withdrawal of employment offer letter
+
+54. On 27 December 2023 the respondent purported to send a “withdrawal of
+    employment offer” letter to the claimant (page 379). It was signed by Mr
+    Kasinganeti. This referred to the claimant not having complied with Ms
+                                       14
+      Djurasevic's instructions on 2 August 2023. In relation to this letter, I note as
+      follows:
+
+           a. The reasons for withdrawing the offer stated in the letter are
+              different to those in the respondent’s Grounds of Resistance (page
+              33 at paragraph 7), which relied on a downturn in work.
+
+           b. It was only disclosed to the claimant in February 2026, despite
+              disclosure taking place some months earlier. The respondent's
+              position is in effect that it was found late in the day in the
+              respondent's offices.
+
+           c. No proof of postage or electronic proof of creation date or sending
+              date has been provided, despite the claimant requesting it. The
+              respondent said that this was because it was sent first class and
+              there was no proof.
+
+           d. The date on which it was sent is a date on which the respondent
+              had previously (in an application for an extension of time in which to
+              submit its ET3) said that Mr Kasinganeti was on leave (page 375).
+              In evidence Mrs Chengeta suggested that it had been done
+              electronically as both of them had a habit of working during holiday
+              periods, but this is at odds with the point about first class post. If it
+              had been created electronically abroad and sent by first class post
+              from the UK, then there would be some form of trail showing it
+              being sent electronically to someone in the UK so that they could
+              print and post it. I also find that the signature on it appears to be a
+              manuscript signature (noting that the first imprint is bolder than the
+              rest of it) rather than a signature done via an app as the respondent
+              suggested.
+
+           e. It is not clear why it would have been at that particular time that R
+              would have decided to withdraw the offer on that basis.
+
+           f. This document is a letter, whereas all other communications are by
+              email, WhatsApp or by telephone.
+
+55. I find that this document did not exist as at 27 December 2023 and was not
+    sent to the claimant, for all the reasons outlined above. I find on balance of
+    probabilities that this document has been created with the purpose of
+    assisting the respondent in its defence to this claim. Ironically, however, it
+    actually does the opposite, in that it contradicts the pleaded defence of a
+    downturn in work. On that point, I find that, regardless of whether or not
+    there was a downturn in work, the respondent did not in fact withdraw the
+    job offer at any time, for any reason.
+
+56. The claimant managed to secure alternative full time employment
+    elsewhere and started that new role on 22 April 2024. He therefore quite
+    properly accepted that his employment must have ended on 21 April 2024
+    to enable him to take up that role.
+
+Law
+
+
+                                          15
+57. Section 13 of the ERA provides:
+
+      (1) An employer shall not make a deduction from wages of a worker
+          employed by him unless—
+
+          (a)the deduction is required or authorised to be made by virtue of a
+          statutory provision or a relevant provision of the worker’s contract, or
+
+          (b)the worker has previously signified in writing his agreement or
+          consent to the making of the deduction.
+
+
+      (2) In this section “relevant provision”, in relation to a worker’s contract,
+          means a provision of the contract comprised—
+
+          (a)in one or more written terms of the contract of which the employer
+          has given the worker a copy on an occasion prior to the employer
+          making the deduction in question, or
+
+          (b)in one or more terms of the contract (whether express or implied
+          and, if express, whether oral or in writing) the existence and effect, or
+          combined effect, of which in relation to the worker the employer has
+          notified to the worker in writing on such an occasion.
+
+      (3) Where the total amount of wages paid on any occasion by an
+          employer to a worker employed by him is less than the total amount of
+          the wages properly payable by him to the worker on that occasion
+          (after deductions), the amount of the deficiency shall be treated for the
+          purposes of this Part as a deduction made by the employer from the
+          worker’s wages on that occasion.
+
+      (4) …..
+
+58. A failure to pay any wages amounts to a deduction from wages (Delaney v
+    Staples (Trading As de Montfort Recruitment) [1991] 1 All ER 609).
+
+59. Where an offer of employment is made subject to conditions, and the
+    employee accepts the offer, the contract does not take effect until those
+    conditions have been satisfied. However, the conditions must be made
+    clear to the employee (Stubbes v Trower, Still and Keeling 1987 IRLR
+    321, CA).
+
+60. Where an employee is ready, willing and able to work, then they are entitled
+    to be paid even if the respondent does not provide work to them for them to
+    do (unless there is an express or implied term to the contrary) (Petrie v
+    MacFisheries [1940] 1 KB 258, Gregg v North West Anglia NHS
+    Foundation Trust 2019 ICR 1279, CA). An employee who offers their
+    services to their employer is entitled under common law to be paid unless
+    there is a contractual term saying otherwise (Beveridge v KLM UK Ltd
+    2000 IRLR 765, EAT).
+
+61. Regulations 19, 33, 38 and 46 of the National Minimum Wage Regulations
+    2015 provide that a worker must be paid national minimum wage in respect
+                                        16
+     of time spent on training approved by the employer.
+
+62. Section 8 of the ERA provides:
+
+      (1) A worker has the right to be given by his employer, at or before the
+          time at which any payment of wages or salary is made to him, a
+          written itemised pay statement.
+
+63. Section 26 of the ERA provides:
+
+     Section 23 does not affect the jurisdiction of an employment tribunal to
+     consider a reference under section 11 in relation to any deduction from the
+     wages of a worker; but the aggregate of any amounts ordered by
+     an employment tribunal to be paid under section 12(4) and under section 24
+     (whether on the same or different occasions) in respect of a particular
+     deduction shall not exceed the amount of the deduction.
+
+64. Section 38 of the Employment Act 2002 provides:
+
+      (1) This section applies to proceedings before an employment tribunal
+          relating to a claim by a worker under any of the jurisdictions listed in
+          Schedule 5.
+
+      (2) If in the case of proceedings to which this section applies—
+
+         a. the employment tribunal finds in favour of the worker, but makes no
+             award to him in respect of the claim to which the proceedings
+             relate, and
+         b. when the proceedings were begun the employer was in breach of
+             his duty to the worker under section 1(1) or 4(1) of the Employment
+             Rights Act 1996 (c. 18) (duty to give a written statement of initial
+             employment particulars or of particulars of change or (in the case of
+             a claim by an worker) under section 41B or 41C of that Act (duty to
+             give a written statement in relation to rights not to work on Sunday),
+         the tribunal must, subject to subsection (5), make an award of the
+         minimum amount to be paid by the employer to the worker and may, if
+         it considers it just and equitable in all the circumstances, award the
+         higher amount instead.
+
+      (3) If in the case of proceedings to which this section applies—
+          a. the employment tribunal makes an award to the worker in respect
+              of the claim to which the proceedings relate, and
+          b. when the proceedings were begun the employer was in breach of
+              his duty to the worker under section 1(1) or 4(1) of the Employment
+              Rights Act 1996 or (in the case of a claim by an worker) under
+              section 41B or 41C of that Act,
+              the tribunal must, subject to subsection (5), increase the award by
+              the minimum amount and may, if it considers it just and equitable in
+              all the circumstances, increase the award by the higher amount
+              instead.
+
+      (4) In subsections (2) and (3)—
+          a. references to the minimum amount are to an amount equal to two
+                                       17
+             weeks’ pay, and
+          b. references to the higher amount are to an amount equal to four
+             weeks’ pay.
+
+      (5) The duty under subsection (2) or (3) does not apply if there are
+          exceptional circumstances which would make an award or increase
+          under that subsection unjust or inequitable.
+
+      (6) The amount of a week’s pay of an a worker] shall—
+
+          a. be calculated for the purposes of this section in accordance with
+             Chapter 2 of Part 14 of the Employment Rights Act 1996 (c. 18),
+             and
+          b. not exceed the amount for the time being specified in section 227 of
+             that Act (maximum amount of week’s pay).
+
+          ….
+
+Conclusions
+
+65. Although at the hearing I reached my conclusions on liability first and then,
+    following further submissions, on remedy, for ease I set out the conclusions
+    on both liability and remedy in respect of each complaint in turn below.
+
+Was the claimant an employee of the respondent within the meaning of section
+230 ERA 1996 and, if so, what were the dates of employment?
+
+
+66. As to whether the claimant was an employee, the respondent’s submission
+    is simply that employment did not commence: they accept that, if it had,
+    then he would be an employee (and therefore I do not need to concern
+    myself with matters such as control, mutuality of obligation and personal
+    service).
+
+67. I have found that the proposed start date was 27 February 2023 and that
+    the offer of employment was made on the basis of that start date. I have
+    found that the only pre-conditions of employment were that the claimant
+    was in the UK, had a valid visa and was a commutable distance from the
+    workplace. He was in the UK from 10 April 2023 however he was in London
+    initially and it was not until 14 April 2023 that he had accommodation in the
+    Midlands. Therefore his employment commenced on 15 April 2023, the day
+    after he communicated that this pre-condition had been met. For the
+    avoidance of doubt, if I was wrong on that, and being a commutable
+    distance was not a pre-condition then I conclude in the alternative that the
+    claimant was not ready able and willing to attend work until that date.
+
+68. I find that the claimant remained an employee until 21 April 2024: there
+    having been no withdrawal of the offer from the respondent, nor any
+    dismissal, nor any resignation prior to that point.
+
+69. Whilst the claimant was not provided with work and did refer in his
+    communications to a start date being requested, this was a start date for
+    actual duties and did not prevent him from being an employee or entitled to
+    pay prior to that date. As to the point raised by the respondent about the
+                                       18
+     respondent not having the registration documents on file for the claimant,
+     that is a matter for the respondent given that the respondent had apparently
+     lost them. It does not prevent employment starting. In any event, I have not
+     found that this was communicated as a pre-condition of employment.
+
+70. Therefore the claimant was an employee of the respondent from 15 April
+    2023 to 21 April 2024.
+
+Time Limits
+
+71. The respondent’s representative confirmed to me during their submissions
+    that they did not seek to argue that the claim had been presented outside of
+    the relevant time limits. I conclude that the claim was made within the time
+    limit in the ERA.
+
+Holiday Pay
+
+72. Having found that the claimant was an employee, he would be entitled to
+    holiday and to accrued but untaken holiday on termination of employment.
+    The respondent submits that no holiday is due given that he was not
+    actually working, however he was an employee and I have seen nothing to
+    suggest that the respondent required him to take holiday at any particular
+    time. Therefore holiday would have continued to accrue. No payment in
+    respect of accrued but untaken holiday was paid to him following the ending
+    of his employment (or at any other time).
+
+73. I therefore conclude that there was a failure to pay holiday pay to the
+    claimant.
+
+74. As to the calculation of what holiday pay was owed to the claimant, after
+    giving oral judgment on liability, the parties were able to agree that the sum
+    owed to the claimant in respect of holiday pay is £2,168.85 net. I therefore
+    do not need to reach conclusions in respect of the specific sub-issues
+    relating to the remedy for holiday pay from the List of Issues and I award
+    the claimant £2,168.85 net. As I only have the net figure, and given that
+    holiday pay is subject to deductions for tax and national insurance
+    contributions, the respondent may gross up the figure so that the amount
+    received by the claimant is the net amount.
+
+Unauthorised deductions from wages
+
+75. It is for the claimant to show that there were wages properly payable to him,
+    which were not paid. I have found that the claimant was employed from 15
+    April 2023 to 21 April 2024. I have found that this was based on a 40 hour
+    working week with a gross salary of £22,880 per annum.
+
+76. During that period, the claimant was ready, willing and able to perform his
+    duties, and the only reason he did not do so was because the respondent
+    did not provide him with work. The respondent withheld work from him
+    which was an external and involuntary factor preventing him from
+    completing his duties.
+
+77. There was therefore an unauthorised deduction from his wages in respect
+                                        19
+     of the full amount of his gross salary during this period. The deduction was
+     not required or authorised by statute, nor by a term of the contract, nor did
+     he agree to the deduction.
+
+78. Again, after I gave oral judgment on liability, the parties worked together to
+    agree the amount owed to the claimant in respect of unauthorised
+    deductions from wages. They agreed that this was £20,400.76 net and I
+    award the claimant this amount. Again, as I only have the net figure, and
+    given that wages are subject to deductions for tax and national insurance
+    contributions, the respondent may gross up the figure so that the amount
+    received by the claimant is the net amount.
+
+79. Whilst the claimant’s Schedule of Loss referenced further financial losses
+    attributable to the claimant’s complaint, during the remedy section of the
+    hearing the claimant’s representative explained that those sums were no
+    longer sought, given the claimant’s inability to give oral evidence about
+    them.
+
+Itemised pay statements
+
+80. It follows, as the respondent accepts, that having determined that he was
+    an employee entitled to pay, there was a failure to provide itemised pay
+    statements.
+
+81. However, given that the failure to provide itemised pay statements relates to
+    the same matters as the unauthorised deductions from wages, the claimant
+    did not seek any additional compensation in respect of this aspect of his
+    claim (as otherwise he would have double recovery). No financial award is
+    therefore made.
+
+ACAS Code of Practice
+
+82. The respondent did not comply with the ACAS Code of Practice for
+    Disciplinary and Grievance Procedures (having not addressed the
+    claimant’s complaints about not being provided with work). During the
+    remedy section of the hearing the parties agreed that there should be an
+    uplift of 20%, and I award that uplift. This amounts to £4,080.15 in respect
+    of unauthorised deductions from wages and a further £433.77 in respect of
+    holiday pay.
+
+Failure to provide statement of terms
+
+83. Given the complete absence of any contract of employment or statement of
+    particulars of employment, I conclude that there has been a failure to
+    provide a written statement of employment particulars as required under
+    section 1 ERA.
+
+84. The respondent submitted that there were exceptional circumstances such
+    that it would be unjust or inequitable to make an award to the claimant in
+    respect of this failure. The respondent’s position is that the respondent
+    genuinely, albeit mistakenly, thought that the claimant was unable to start
+    work and had not issued a contract of employment on that basis.
+
+
+                                        20
+85. I conclude that there were no such exceptional circumstances. The
+    respondent made an offer of employment to the claimant, with a certificate
+    of sponsorship setting out a clear start date of 27 February 2023. The
+    respondent, whilst not a large employer, equally had some access to HR
+    support or could have obtained it, and I have found that the claimant was
+    offered employment to start on 27 February 2023 or as soon as the limited
+    pre-conditions that I have found existed were achieved. I do not accept the
+    respondent’s argument that it genuinely did not realise that it was employing
+    the claimant in those circumstances.
+
+86. In addition, the respondent not only failed to provide the statement of terms
+    in itself, but also failed to provide any written confirmation whatsoever of
+    what had been offered to the claimant, leaving the claimant to incur the
+    significant expense of relocating to the UK and then still not providing the
+    statement of terms once he had done so. There were no exceptional
+    circumstances.
+
+87. As to the amount of the award, for the same reasons I consider it just and
+    equitable to award the higher amount of four weeks’ pay. The parties’
+    helpfully agreed that this amounts to £1,760 (being four weeks’ gross pay).
+
+Other matters
+
+88. During the remedy section of the hearing, and in order that matters could be
+    concluded swiftly and oral Judgment given on that day, the claimant
+    withdrew his claim for interest in respect of delayed receipt.
+
+89. The claimant’s representative raised the issues of costs, and separate
+    correspondence has been sent to the parties setting out how that will be
+    considered.
+
+90. The claimant’s representative further raised a question as to whether the
+    respondent’s conduct should be referred as a potential contempt of court.
+    This is not something that individual Employment Judges can do, and I
+    therefore agreed to raise the matter with the Regional Employment Judge
+    for consideration. This has been done. It will be for them to determine
+    whether the matter should go any further and the parties will not be advised
+    of their decision.
+
+
+
+
+                                        Employment Judge Edmonds
+
+                                        27 March 2026
+
+
+
+
+                                       21
+
