@@ -31,6 +31,11 @@ from .grounding import (
     persona_factual_lineage_entry, build_persona_factual_lineage,
 )
 
+# Passive, OFF-by-default observational capture (Phase-2 prep). Import is side-effect
+# free; every entry point returns immediately unless SHADOW_CAPTURE is set, and
+# capture() never raises. See automation/shadow_capture.py.
+from shadow_capture import capture as _shadow_capture, seal as _shadow_seal, new_run_id as _shadow_run_id
+
 # Matches get_source_text's own default max_chars (discovery.py's
 # _SOURCE_TEXT_CACHE_MAX_CHARS) -- both call sites below rely on that default
 # rather than overriding it, so this constant documents what they already
@@ -250,6 +255,8 @@ class GenerateMixin:
                 news_seed["url"], fallback_text=news_seed.get("summary"),
                 underlying_url=news_seed.get("underlying_article_url"),
             )
+            _capture_src_url = news_seed["url"]              # observability only
+            _capture_returned_source = source_text           # pre-downgrade returned slice
             # Phase 1.6 (found on review): get_source_text returns a plain
             # string whether it's a genuine fetch or the RSS-summary
             # fallback -- indistinguishable once returned. A fallback result
@@ -294,6 +301,8 @@ class GenerateMixin:
             else:
                 source_note = ""
             source_text = self.get_source_text(discovery.get('url', ''), fallback_text=discovery.get('summary'))
+            _capture_src_url = discovery.get('url', '')      # observability only
+            _capture_returned_source = source_text           # pre-downgrade returned slice
             # See the news_seed branch above for why a fallback-to-summary
             # result must not be granted source-snapshot authority, and why
             # _source_origin is kept regardless.
@@ -394,9 +403,31 @@ class GenerateMixin:
         # threaded UNMODIFIED into the planner, reviewer, and executor below --
         # the same evidence-lineage discipline the Pixel-validation mixed-brief
         # incident showed is necessary. Never rebuilt per-stage.
+        _capture_src_url = locals().get("_capture_src_url")
+        _capture_returned_source = locals().get("_capture_returned_source")
         evidence_packet = build_evidence_packet(
             source_text, source_max_chars=_SOURCE_TEXT_MAX_CHARS, source_origin=_source_origin,
             source_original_length_chars=_source_original_length,
+        )
+
+        # Phase-2 observational capture (passive, OFF by default, never raises).
+        _capture_run_id = _shadow_run_id()
+        _shadow_capture(
+            "evidence", _capture_run_id, self.logger,
+            raw_cached_source=(getattr(self, "_source_text_cache", {}) or {}).get(_capture_src_url),
+            returned_source=_capture_returned_source,
+            packet_source=source_text,
+            evidence_packet=evidence_packet,
+            provenance={
+                "source_url": _capture_src_url,
+                "source_origin": _source_origin,
+                "source_original_length_chars": _source_original_length,
+                "news_seed_id": (news_seed or {}).get("id"),
+                "news_seed_url": (news_seed or {}).get("url"),
+                "underlying_article_url": (news_seed or {}).get("underlying_article_url"),
+                "discovery_id": (discovery or {}).get("id"),
+                "source_text_max_chars": _SOURCE_TEXT_MAX_CHARS,
+            },
         )
 
         # L2 active human-testimony retrieval (A-M reconciliation item L,
@@ -421,6 +452,11 @@ class GenerateMixin:
             _ns_title, _ns_summary, _ns_dangle, agent_name, evidence_packet,
             eligible_agents=_eligible_agents,
         )
+        _shadow_capture("commission", _capture_run_id, self.logger,
+                        fable_brief=fable_brief,
+                        commission_input={"news_title": _ns_title, "news_summary": _ns_summary,
+                                          "disability_angle": _ns_dangle, "agent_name": agent_name,
+                                          "eligible_agents": _eligible_agents})
 
         # ── Story Rejection V1 — DSR2 two-layer short-circuit ────────────────
         # LAYER 1 (source commissionability, judged with ALL four lenses inside
@@ -1065,6 +1101,12 @@ class GenerateMixin:
             used_provider = "fallback"
             actual_model = "fallback"
 
+        # Phase-2 capture of the RAW writer output, BEFORE the whole-document rewrite.
+        # This is the only point at which it exists; `content` is reassigned below.
+        _shadow_capture("writer", _capture_run_id, self.logger,
+                        writer_prompt=prompt, raw_writer_output=raw_content,
+                        provider=used_provider, model=actual_model)
+
         # Parse TITLE: prefix from content
         extracted_title = title  # fallback to angle
         content = raw_content
@@ -1168,6 +1210,8 @@ class GenerateMixin:
             rewritten = self.rewrite_with_opus(
                 _pre_rewrite_full, evidence_packet=evidence_packet, persona_factual_context=persona_factual_context,
             )
+            _shadow_capture("rewrite", _capture_run_id, self.logger,
+                            pre_rewrite=_pre_rewrite_full, post_rewrite=rewritten)
             # rewrite_with_opus returns its own input, byte-identical, when every internal
             # attempt fails (see its docstring) -- that comparison is the capability-level
             # signal, same reasoning as the is_opus branch above.
@@ -1413,6 +1457,14 @@ class GenerateMixin:
         # independently of _degraded_stages. See _maybe_stamp_publication_safety_version's
         # own docstring for exactly what "both hold" means.
         self._maybe_stamp_publication_safety_version(article_file, _should_block)
+
+        _shadow_capture("disposition", _capture_run_id, self.logger,
+                        gate_fixed=locals().get("gate_fixed"),
+                        degraded_stages=getattr(self, "_degraded_stages", []),
+                        should_block=_should_block, review_clean=is_clean,
+                        disposition="draft_blocked" if _should_block else "draft",
+                        slug=slug, article_file=article_file)
+        _shadow_seal(_capture_run_id, self.logger)
 
         # Step 7: Commit article + review sidecar
         commit_success = self.commit_to_git(article_file, image_filenames, review_file)
