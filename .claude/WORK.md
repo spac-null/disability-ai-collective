@@ -720,6 +720,117 @@ authorized cleanup task. **Preservation first.**
 rules when the same responsibility is already owned structurally by Sofa Method, Article Form,
 Writer Grounding, or another explicit layer.
 
+## 5d. REQUIRED BEFORE PUBLIC CUTOVER — PUBLIC CORPUS INTEGRITY / ENGINE ERA SEPARATION
+
+**STATUS: RECORDED 2026-08-20. NOT STARTED. Do NOT begin scanning articles.**
+This is a roadmap record only. Phase-2 migration/capture work continues uninterrupted.
+
+### Why this is a hard gate
+
+CripMinds has **142 published articles** (plus 20 static/institutional pages, 4 persona pages,
+1 work — 162 public items), many also promoted on Bluesky/Mastodon, all produced under the
+**legacy editorial engine**.
+
+Deploying the new architecture must not make that historical corpus *appear* to have been
+produced or validated by DISCOVERY → ARTICLE FORM → WRITER → WRITER GROUNDING. It was not.
+
+**The trust problem is provenance ambiguity, not the existence of legacy articles.**
+Wholesale rewriting of the old corpus is explicitly NOT the plan.
+
+### This builds on existing work — do not restart it
+
+`.claude/legacy-corpus-integrity-phase1-2026-08-16.md` (+ machine-readable
+`.claude/audits/legacy-corpus-integrity-2026-08-16.json`) already completed a Phase-1
+diagnosis on 2026-08-16: public inventory, production eras, structural scan of all 142
+articles, a 14% semantic sample, and a scoping estimate of **60–100 of 142 articles** needing
+some remediation.
+
+Its verdict was **LC1 — MATERIAL LEGACY CREDIBILITY RISK; BEGIN PRIORITIZED REMEDIATION**, and
+that has **not yet been actioned**. This section is the policy/sequencing layer on top of it,
+not a new investigation.
+
+**Still open from Phase 1, highest priority, unaddressed since 2026-08-16:** a confirmed
+real-person/real-company factual mismatch on the live static page `research/care-labor.html`
+concerning a real tribunal case. Phase 1 recommended it be the first thing fixed, independent
+of the rest of the corpus. It is still live.
+
+### 1. Hard editorial-engine era boundary
+
+- **`LEGACY_ENGINE`** — all content produced before validated production cutover.
+- **`CURRENT_ENGINE`** — content produced after the new architecture is actually deployed.
+
+The boundary is a specific date, set by the actual cutover, not by intent.
+
+### 2. Article-level provenance metadata — DEFINE ONLY, DO NOT IMPLEMENT
+
+Conceptual fields, no schema work yet:
+
+| Field | Meaning |
+|---|---|
+| `engine_generation` | `LEGACY_ENGINE` / `CURRENT_ENGINE` |
+| `integrity_audit_status` | not-yet-audited / audited-clean / corrected / withdrawn |
+| `source_provenance_status` | whether generation-time source evidence is recoverable |
+| `last_integrity_review` | date of the most recent review |
+
+Note the Phase-0 finding that production never persisted generation-time source text, so
+`source_provenance_status` will be *unrecoverable* for most legacy articles by construction.
+
+### 3. Finite legacy-corpus integrity audit, prioritised by factual risk
+
+| Priority | Covers |
+|---|---|
+| **HIGH** | quotes · named-person testimony · specific numbers/dates · human states/motives · studies/statistics · institutional and source claims · fabrication-sensitive specifics |
+| **MEDIUM** | ordinary factual / source-fidelity claims |
+| **LOW** | primarily interpretation, style, or Form differences |
+
+Phase 1 already found the dominant failure mode is **invented personal-history testimony**,
+which the existing citation scanner structurally cannot see — so HIGH must include a
+personal-history-specific re-read, not just citation checking.
+
+**Finite batches. This must not become another endless calibration project.**
+
+### 4. Allowed outcomes per article
+
+`KEEP_AS_LEGACY` · `CORRECT_WITH_DISCLOSURE` · `WITHDRAW`
+
+**Do NOT automatically rewrite historical articles through the new engine.** Running a legacy
+article through the new architecture would produce a new article, not a corrected one, and
+would destroy exactly the provenance distinction this workstream exists to preserve.
+
+### 5. Social media
+
+The **article URL is the canonical correction record**.
+
+- Materially corrected article that was promoted socially → update/edit/follow up where practical.
+- Article withdrawn for fundamental factual unreliability → remove associated social promotion where practical.
+- **No blanket deletion of historical social posts.**
+
+`_social/` holds 127+ post-URI artifacts, so the promotion trail is recoverable per article.
+
+### 6. Public transparency requirement
+
+Before any public new-engine cutover or public claim about the new architecture, publish an
+editorial-method/history or corrections statement: the system changed on a specific date, and
+earlier articles were produced under the previous architecture.
+
+**Do not claim the historical corpus has been retrospectively Writer-Grounding validated
+unless it actually has been.** Phase 1 also found the site's stated editorial policies are
+already contradicted by its own published content — that must be resolved in the same pass,
+not compounded.
+
+### 7. Sequencing
+
+| When | What |
+|---|---|
+| **NOW** | Phase-2 migration/capture continues. This section is recorded only. |
+| **REQUIRED BEFORE PUBLIC CUTOVER** | engine-era separation + integrity policy in place |
+| **LEGACY CORPUS AUDIT** | finite batches; may run in parallel; must not block indefinitely or expand |
+
+Production migration Phases 3–6 may proceed on their own track. What is gated is the **public
+claim** about the new engine, not the engineering.
+
+---
+
 ## 6. PARKED / DO NOT ACCIDENTALLY RESTART
 
 - **CJ-2** (competitive persona-reframing architecture) — OFF (`CJ2_INTEGRATION_MODE` defaults to

@@ -114,6 +114,22 @@
     **ACCEPT = eligible candidate, NOT publish-now.** Selector disposition: **ADAPT** —
     `publication_safety_version` is REPLACED_BY_TARGET_STAGE (re-derive from ACCEPT);
     `draft_score` is REMOVE-or-REPLACE (owner decision); everything else survives.
+- **REQUIRED BEFORE PUBLIC CUTOVER (recorded 2026-08-20, NOT STARTED): PUBLIC CORPUS
+  INTEGRITY / ENGINE ERA SEPARATION** — `WORK.md` `## 5d`. 142 published articles, many
+  promoted socially, all from the legacy engine. The new architecture must not make them
+  appear produced or validated by DISCOVERY→ARTICLE FORM→WRITER→WRITER GROUNDING. **The trust
+  problem is provenance ambiguity, not the existence of legacy articles — do NOT plan a
+  wholesale rewrite, and never auto-rerun a legacy article through the new engine.**
+  Builds on the existing Phase-1 diagnosis (`legacy-corpus-integrity-phase1-2026-08-16.md` +
+  `audits/*.json`, verdict **LC1 — material risk, begin prioritized remediation**, 60–100 of
+  142 articles, **not yet actioned**) — do NOT restart it.
+  **Still live and unfixed since 2026-08-16:** a real-person/real-company factual mismatch on
+  `research/care-labor.html` about a real tribunal case, which Phase 1 said to fix first.
+  Gated: engine-era boundary, provenance metadata (define only), finite risk-prioritised audit
+  (HIGH = quotes/testimony/numbers/motives/studies/institutional claims), outcomes
+  KEEP_AS_LEGACY / CORRECT_WITH_DISCLOSURE / WITHDRAW, social follow-up without blanket
+  deletion, and a public method/corrections statement that does NOT claim retrospective
+  Writer-Grounding validation. **What is gated is the public claim, not the engineering.**
 - **CURRENT PHASE: PRODUCTION ARCHITECTURE / MIGRATION — Phase 0, Phase 1, Phase 2 prep done;
   Phase 2 capture live, sample collection 0/3. NO shadow execution yet.**
   Plan: `.claude/experiments/production-architecture-plan-2026-08-20/`

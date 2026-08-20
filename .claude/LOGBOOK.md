@@ -1058,3 +1058,59 @@ PRE-HOTFIX-FREEZE.txt, STAMPER-VERIFICATION.txt, verify_stamper.py, SHA256SUMS.t
 CODE: none. No production change of any kind beyond one new evidence file in the capture root.
 FOLLOW-UP: after 2026-08-21 08:00, extract the selector slice with the anchor's command. P2-01
 remains the natural 09:00 run. Owner decision open on whether an empty-pool alarm is wanted.
+
+## 2026-08-20 — ROADMAP RECORD: PUBLIC CORPUS INTEGRITY / ENGINE ERA SEPARATION (CORPINT1)
+STATUS: **Record only.** No article scanned, no published content modified, no social media
+touched, no code, no deploy. Phase-2 capture and migration work uninterrupted.
+DECISION: Recorded a required pre-public-cutover workstream in `WORK.md` `## 5d`. CripMinds has
+**142 published articles** (162 public items total), many promoted socially, all produced under
+the legacy editorial engine. Deploying the new architecture must not make that corpus appear to
+have been produced or validated by DISCOVERY → ARTICLE FORM → WRITER → WRITER GROUNDING. It was
+not. **The trust problem is provenance ambiguity, not the existence of legacy articles** —
+wholesale rewriting of the old corpus is explicitly NOT the plan.
+BUILDS ON EXISTING WORK — DO NOT RESTART: `.claude/legacy-corpus-integrity-phase1-2026-08-16.md`
+plus `.claude/audits/legacy-corpus-integrity-2026-08-16.json` already completed a Phase-1
+diagnosis on 2026-08-16 — public inventory, production eras, structural scan of all 142
+articles, a 14% semantic sample, and a scoping estimate of **60–100 of 142 articles** needing
+remediation. Its verdict was **LC1 — MATERIAL LEGACY CREDIBILITY RISK; BEGIN PRIORITIZED
+REMEDIATION**, and that has **not been actioned**. Section 5d is the policy/sequencing layer on
+top of that diagnosis, not a new investigation.
+STILL-OPEN HIGH-PRIORITY ITEM SURFACED, NOT FIXED: Phase 1 identified a confirmed
+real-person/real-company factual mismatch on the live static page `research/care-labor.html`
+concerning a real tribunal case, and recommended it be the first thing fixed independent of the
+rest of the corpus. It has been live and unaddressed since 2026-08-16. Flagged here because it
+is the highest factual-risk item in the corpus; **not touched in this task** (record-only).
+RECORDED REQUIREMENTS: (1) hard era boundary `LEGACY_ENGINE` (before validated cutover) vs
+`CURRENT_ENGINE` (after actual deployment), the date set by the real cutover, not by intent;
+(2) article-level provenance metadata DEFINED ONLY, not implemented — `engine_generation`,
+`integrity_audit_status`, `source_provenance_status`, `last_integrity_review`, with the
+Phase-0 caveat that production never persisted generation-time source text so
+`source_provenance_status` will be unrecoverable for most legacy articles by construction;
+(3) a finite risk-prioritised audit — HIGH covering quotes, named-person testimony, specific
+numbers/dates, human states/motives, studies/statistics, institutional/source claims and
+fabrication-sensitive specifics; MEDIUM ordinary factual/source-fidelity claims; LOW
+interpretation/style/Form — noting Phase 1's finding that the dominant failure mode is
+**invented personal-history testimony**, which the existing citation scanner structurally
+cannot see, so HIGH must include a personal-history-specific re-read rather than citation
+checking alone; (4) allowed outcomes `KEEP_AS_LEGACY` / `CORRECT_WITH_DISCLOSURE` / `WITHDRAW`,
+with **no automatic re-running of historical articles through the new engine** — that would
+produce a new article, not a corrected one, and would destroy the very provenance distinction
+the workstream exists to preserve; (5) social-media principle — the article URL is the
+canonical correction record, update/follow up where a materially corrected article was
+promoted, remove promotion where an article is withdrawn for fundamental unreliability, and
+**no blanket deletion** of historical social posts (`_social/` holds 127+ post-URI artifacts so
+the trail is recoverable per article); (6) a public editorial-method/history or corrections
+statement before any public new-engine claim, explicitly **not** claiming the historical corpus
+has been retrospectively Writer-Grounding validated unless it has — Phase 1 also found the
+site's stated editorial policies are already contradicted by its own published content, which
+must be resolved in the same pass rather than compounded.
+SEQUENCING: Phase-2 migration/capture continues now. Engine-era separation + integrity policy
+are REQUIRED BEFORE PUBLIC CUTOVER. The legacy audit may run in finite batches in parallel and
+must not become another endless calibration project. Production migration Phases 3–6 may
+proceed on their own track — what is gated is the **public claim** about the new engine, not
+the engineering.
+EVIDENCE: `WORK.md` `## 5d`. No new experiment root created; the Phase-1 audit documents remain
+the substantive evidence.
+CODE: none.
+FOLLOW-UP: do NOT start scanning articles. When authorised, begin from the Phase-1 findings and
+its JSON manifest rather than re-inventorying, and take `research/care-labor.html` first.
