@@ -192,16 +192,53 @@ def test_no_db_publication_or_network_in_capture_code():
         check(label, banned not in src, "found %r" % banned)
 
 
+BASELINE = "8af3622"   # frozen production baseline this patch must remain additive against
+
+
 def test_hooks_are_additive_only():
-    """The generate.py patch must add lines and delete none."""
+    """The generate.py patch must add lines and delete none, measured against the
+    production baseline -- not against HEAD, which is empty once the patch is committed."""
     import subprocess  # test-only; not in the capture module
-    out = subprocess.run(["git", "diff", "--numstat", "--", "orchestrator/generate.py"],
-                         cwd=str(HERE), capture_output=True, text=True).stdout.strip()
+    out = subprocess.run(["git", "diff", "--numstat", BASELINE, "--", "automation/orchestrator/generate.py"],
+                         cwd=str(HERE.parent), capture_output=True, text=True).stdout.strip()
     if not out:
-        check("generate.py hook diff visible to git", False, "no diff output"); return
+        check("generate.py diff vs baseline visible", False, "no diff vs %s" % BASELINE); return
     added, deleted, _ = out.split(None, 2)
-    check("generate.py patch deletes no lines", deleted == "0", "deleted=%s" % deleted)
+    check("generate.py patch deletes no lines vs baseline", deleted == "0", "deleted=%s" % deleted)
     check("generate.py patch is small (<80 added lines)", int(added) < 80, "added=%s" % added)
+
+
+def test_process_signals_propagate():
+    """SystemExit / KeyboardInterrupt must NOT be swallowed by the sidecar."""
+    import tempfile as _tf
+    orig = SC._write
+    for exc_type in (KeyboardInterrupt, SystemExit):
+        def boom(*a, **k):
+            raise exc_type()
+        SC._write = boom
+        try:
+            with _tf.TemporaryDirectory() as d:
+                _on(d)
+                try:
+                    SC.capture("evidence", "sig", None, packet_source="X")
+                    check("%s propagates (not swallowed)" % exc_type.__name__, False, "swallowed")
+                except exc_type:
+                    check("%s propagates (not swallowed)" % exc_type.__name__, True)
+        finally:
+            SC._write = orig
+    # and an ordinary error is still swallowed
+    def boom_ordinary(*a, **k):
+        raise RuntimeError("disk on fire")
+    SC._write = boom_ordinary
+    try:
+        with _tf.TemporaryDirectory() as d:
+            _on(d)
+            SC.capture("evidence", "ord", None, packet_source="X")
+            check("ordinary Exception still swallowed", True)
+    except Exception as e:
+        check("ordinary Exception still swallowed", False, e)
+    finally:
+        SC._write = orig
 
 
 def main():
@@ -209,7 +246,8 @@ def main():
                test_source_representations_preserved, test_writer_visible_evidence_and_raw_output,
                test_hashes_recorded_and_mismatch_detectable, test_incomplete_bundle_detectable,
                test_no_secrets_persisted, test_capture_failure_never_raises,
-               test_no_db_publication_or_network_in_capture_code, test_hooks_are_additive_only]:
+               test_no_db_publication_or_network_in_capture_code, test_hooks_are_additive_only,
+               test_process_signals_propagate]:
         print("\n" + fn.__name__)
         fn()
     _off()

@@ -21,6 +21,9 @@ CONTRACT -- this module is NON-AUTHORITATIVE
     logs and returns. A capture failure MUST NOT change what production does, and in
     particular must never cause an article to be held. This module observes the legacy
     baseline; it is not part of the target ACCEPT/HOLD architecture.
+    The guards catch `Exception`, NOT `BaseException`: observability must not swallow
+    process-level signals such as SystemExit or KeyboardInterrupt, which have to
+    propagate so the orchestrator can shut down cleanly.
   * Append-only. It writes new files under its own root and never rewrites one.
   * No SQLite. No network. No subprocess. No LLM call. Nothing under _posts/ or _drafts/.
   * No mutation of any object handed to it -- payloads are serialised, never modified.
@@ -92,7 +95,7 @@ def _atomic_write(path: pathlib.Path, text: str) -> None:
             fh.flush()
             os.fsync(fh.fileno())
         os.replace(tmp, path)
-    except BaseException:
+    except Exception:
         try:
             os.unlink(tmp)
         except OSError:
@@ -227,11 +230,12 @@ def capture(event: str, run_id: str = None, logger=None, **kwargs) -> None:
             return
         entries = handler(run_id, logger, **kwargs)
         _append_manifest(run_id, event, entries, logger)
-    except BaseException as exc:            # deliberately broad -- see docstring
+    except Exception as exc:                # broad, but NOT BaseException: SystemExit
+                                            # and KeyboardInterrupt must propagate
         try:
             if logger:
                 logger.error("shadow_capture: capture(%r) failed, continuing unaffected: %s", event, exc)
-        except BaseException:
+        except Exception:
             pass
         return
 
@@ -244,9 +248,9 @@ def seal(run_id: str, logger=None) -> None:
         _atomic_write(_root() / run_id / "COMPLETE",
                       json.dumps({"schema_version": SCHEMA_VERSION,
                                   "sealed_at": datetime.now(timezone.utc).isoformat()}) + "\n")
-    except BaseException as exc:
+    except Exception as exc:
         try:
             if logger:
                 logger.error("shadow_capture: seal failed, continuing unaffected: %s", exc)
-        except BaseException:
+        except Exception:
             pass
