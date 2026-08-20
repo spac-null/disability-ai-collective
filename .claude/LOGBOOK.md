@@ -845,3 +845,69 @@ FOLLOW-UP: owner reviews the +52-line `generate.py` diff, then cherry-pick, depl
 test files on Trident, create the capture root, and enable `SHADOW_CAPTURE=1` in the article
 cron — the single reversible enabling step. Then collect the pre-registered three runs. Do NOT
 run live shadow or change architecture before that.
+
+## 2026-08-20 — PHASE-2 CAPTURE DEPLOYED AND ENABLED; SAMPLE 0/3 (PM-P2DEPLOY)
+STATUS: Capture deployed to Trident and enabled. **Sample collection incomplete: 0 of 3 runs.**
+No shadow execution, no model call, no architecture change, no AR3 patch, nothing pushed.
+PRE-DEPLOY CORRECTION: `capture()`/`seal()` caught `BaseException`, which would swallow
+`SystemExit`/`KeyboardInterrupt`. Narrowed to `Exception` in five handlers — ordinary failures
+still swallowed so capture can never alter/block/fail a run, but process signals now propagate.
+Commit `8c4b4a5`. Two of my own tests were found not to exercise what they claimed and were
+fixed: `test_hooks_are_additive_only` diffed the working tree against HEAD (empty once
+committed, so it proved nothing) and now diffs against the `8af3622` baseline; the ad-hoc
+signal check passed a payload that never reached a raising code path and reported "swallowed"
+even after the fix, replaced by `test_process_signals_propagate` which patches `SC._write` to
+raise. 39/39 pass.
+DEPLOYMENT: branch `production-observability-2026-08-20` verified to descend directly from
+`8af3622`, +572/−0 across 3 files, **zero `.claude/` research files**. Trident HEAD confirmed
+still `8af3622` and clean, so the patch was compatible. Deployed by `git format-patch` piped
+over ssh to `git am` — exact commits preserved, no push, no research history transferred.
+Trident `8af3622` → `ad7b8c7`. SHAs differ (git am re-stamps) but all three files verified
+SHA-256 identical to local.
+PRE-ENABLE CHECKS (flag OFF), all passed: 39/39 capture tests on Trident; `snapshot_test
+--check` "No drift"; `production_orchestrator` imports; **0 artifacts written while OFF**;
+writer/rewrite/GATE/RULES SYSTEM hashes all unchanged; `llm.py`, `gate.py`, `review.py` file
+hashes identical to the Phase-0 baseline; **AR3 rewrite 33/33b present and unchanged**;
+`_posts` 142 / `_drafts` 7 unchanged; SQLite untouched.
+CAPTURE ROOT: `/srv/data/cripminds-shadow-capture`, owner jascha, **mode 700** (not
+world-readable — source material may be sensitive), writeable by the job user, outside the
+repo/`_posts`/`_drafts`/SQLite, **not** under `/srv/backups/cripminds` where 14-day rotation
+would delete bundles, not mixed with logs. 18G free.
+ENABLED: 2026-08-20T09:36:55Z, `SHADOW_CAPTURE=1` prefixed to the **article** cron line only —
+1 of 63 lines changed, cron backed up to the capture root. Shadow V0 / Discovery / Article
+Form / Writer / Writer Grounding were NOT enabled; production remains the exact legacy
+pipeline and capture is observational. **Flag propagation verified end-to-end** rather than
+assumed: `cripminds-daily.sh` uses `set -a` + `source` (adds to the environment, does not
+clear it) and `enabled()` returns True through a nested shell as cron invokes it — without
+this check three days could have passed with capture silently inert.
+SAMPLE 0/3 — HONEST INCOMPLETION: the article cron fires once daily at 09:00 CEST and today's
+run completed at 09:09, **before** enablement at 11:36, so it is correctly excluded. The three
+pre-registered eligible runs are 2026-08-21, -22 and -23. The brief forbids triggering
+artificial runs to fill the sample, so collection takes three real days and cannot be done in
+the deploying session. Nothing was faked, forced or back-dated.
+TOOLING SO THE REST IS MECHANICAL: added `harness/validate_bundle.py` — 11 deterministic
+checks (complete, sealed, raw source, normalized source, evidence packet, writer-visible
+evidence, raw writer output, rewrite output, disposition, hashes verify, secrets clean), exit
+0/1, emitting the manifest row as JSON. Self-tested against bundles built by the real capture
+module: a **blocked** run validates VALID (blocked runs count) and an unsealed one returns
+CAPTURE_INVALID. Plus `VALIDATION-RUNBOOK.md` with exact pull/validate/index/disable commands
+and stop conditions, and a frozen `PHASE2-SAMPLE-MANIFEST.md` skeleton.
+OWNER-FACING CONSEQUENCE: Trident `main` is now 2 commits ahead of `origin/main`. I did not
+push — but `publish.py::commit_to_git` calls `_git_push_safe()`, which runs
+`git stash --include-untracked` → `git pull --rebase` → `git push origin main` at the end of
+every article run, so the observability commits will reach the **public** GitHub repo at 09:00
+on 2026-08-21 regardless. Unavoidable short of not deploying. That same mechanism also drove
+the deployment method: an uncommitted working-tree patch would be stashed and popped every
+run, and one pop conflict would silently delete the capture code mid-flight. The patch carries
+no secrets (the only credential-shaped strings are the literal marker list the scanner uses to
+*refuse* secrets) and the repo already contains the whole pipeline publicly. Recorded rather
+than left to surprise.
+EVIDENCE: `.claude/experiments/production-migration-phase2-deployment-2026-08-20/` — STATUS,
+DEPLOYMENT-RECORD, PHASE2-SAMPLE-MANIFEST, VALIDATION-RUNBOOK, README, SHA256SUMS, `bundles/`.
+CODE: `20a7e3a` + `8c4b4a5` (local branch) = `445fbbc` + `ad7b8c7` (Trident). No research
+commit deployed.
+FOLLOW-UP: after each of the three runs, pull the bundle and run `validate_bundle.py`; assign
+P2-01/02/03 in chronological order; record CAPTURE_INVALID bundles and take the next run;
+after P2-03 **disable the flag** (cron backup saved) and confirm production continues
+normally, leaving the capture code dormant. Then STOP — live-vs-shadow execution is a separate
+task. Do NOT run Discovery/Article Form/Writer/Writer Grounding on captured sources yet.

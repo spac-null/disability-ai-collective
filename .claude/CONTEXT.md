@@ -61,9 +61,25 @@
   - `snapshot_test --check` passes unchanged with capture present and OFF.
   - **Phase-2 sample PRE-REGISTERED before enablement:** the FIRST 3 COMPLETE ELIGIBLE runs
     after capture is enabled. Blocked runs are valid data and must not be excluded.
-- **CURRENT PHASE: PRODUCTION ARCHITECTURE / MIGRATION — Phase 0, Phase 1 and Phase 2 prep
-  done. Phase 2 execution NOT started (needs owner review of the patch, then deployment,
-  then 3 runs).**
+- **PHASE-2 CAPTURE DEPLOYED AND ENABLED 2026-08-20T09:36:55Z.**
+  `.claude/experiments/production-migration-phase2-deployment-2026-08-20/`
+  Trident `8af3622` → **`ad7b8c7`** (capture `445fbbc` + Exception fix). Content verified
+  byte-identical to local. Pre-enable checks all pass: 39/39 capture tests, snapshot_test
+  clean, 0 artifacts while OFF, all four prompt hashes unchanged, `llm.py`/`gate.py`/
+  `review.py` hashes identical, **AR3 33/33b present and unchanged**, content/DB untouched.
+  Capture root `/srv/data/cripminds-shadow-capture` (mode 700). Flag on the **article cron
+  only**; propagation verified end-to-end through the wrapper shell.
+  - **SAMPLE: 0 of 3 captured.** The article cron runs once daily at 09:00 CEST and today's
+    run finished at 09:09, before enablement. The three pre-registered runs are
+    **2026-08-21, -22, -23**. Artificial runs must NOT be triggered to fill the sample, so
+    this takes three real days. Runbook + `harness/validate_bundle.py` make the remaining
+    steps mechanical. **Disable capture after P2-03** (cron backup saved).
+  - **OPEN, owner-facing:** Trident `main` is 2 commits ahead of `origin/main`. I did not
+    push, but production's `_git_push_safe` pushes `main` at the end of every article run, so
+    the observability commits reach the **public** GitHub repo at 09:00 on 08-21. Unavoidable
+    short of not deploying. No secrets in the patch.
+- **CURRENT PHASE: PRODUCTION ARCHITECTURE / MIGRATION — Phase 0, Phase 1, Phase 2 prep done;
+  Phase 2 capture live, sample collection 0/3. NO shadow execution yet.**
   Plan: `.claude/experiments/production-architecture-plan-2026-08-20/`
 - **Central planning finding: ~81% of the 114-family legacy rule debt is DELETED by
   replacing three stages** (the writer prompt, the whole-document rewrite, the two LLM
