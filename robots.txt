@@ -13,6 +13,8 @@ Disallow: /realistic-scenes/
 Disallow: /archive/
 Disallow: /automation/
 Disallow: /docs/
+Disallow: /calibration/
+Disallow: /reader-lab/
 
 
 # RSS feeds — not useful for indexing, save crawl budget
