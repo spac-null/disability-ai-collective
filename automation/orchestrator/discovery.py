@@ -1454,7 +1454,9 @@ class DiscoveryMixin:
             # acquired usably. Deliberately NOT the decline columns above --
             # a failed fetch is a technical failure, not an editorial
             # decline, and conflating them would corrupt story-rejection
-            # evidence. See mark_news_seed_source_unusable.
+            # evidence. Historical/diagnostic ONLY: candidate selection does
+            # not treat these as an exclusion, because acquisition failure is
+            # often transient. See mark_news_seed_source_unusable.
             ("source_unusable", "INTEGER DEFAULT 0"),
             ("source_unusable_reason", "TEXT"),
             ("source_unusable_date", "TEXT"),
@@ -1468,11 +1470,19 @@ class DiscoveryMixin:
     def get_news_seed(self, exclude_ids=None) -> dict | None:
         """Return best unused news seed from last 3 days, or None.
 
-        Excludes seeds already marked source_unusable (source-retry,
-        2026-08-23): a paywalled / JS-shell / empty-body URL does not become
-        fetchable on a later run, so re-picking it would re-lose the day.
-        exclude_ids additionally skips seeds already attempted THIS run, so a
-        retry loop cannot hand back the same seed twice before the mark lands.
+        exclude_ids skips seeds already attempted in the CURRENT run, so a
+        retry loop cannot hand back the same candidate twice. That exclusion is
+        run-local and evaporates when the run ends.
+
+        A past `source_unusable` mark is deliberately NOT an exclusion here
+        (owner correction, 2026-08-23). Acquisition failure is frequently
+        transient -- a temporary anti-bot response, a rotating interstitial, a
+        site outage, a one-off extractor miss -- and it is not an editorial
+        judgement, so one bad fetch must not remove a source from every future
+        production day. The columns remain as historical/diagnostic evidence
+        only. A later natural run may consider the same source again; if it
+        still cannot be acquired, it simply fails acquisition again and the
+        normal bounded retry applies.
         """
         try:
             conn = sqlite3.connect(str(self.discovery_db))
@@ -1502,7 +1512,6 @@ class DiscoveryMixin:
                 FROM news_seeds
                 WHERE used = 0 AND pub_date >= ? AND disability_angle IS NOT NULL
                   AND NOT (declined = 1 AND decline_schema_version = ?)
-                  AND COALESCE(source_unusable, 0) = 0
                   AND id NOT IN (%s)
                 ORDER BY relevance_score DESC, pub_date DESC
                 LIMIT 1
@@ -1516,7 +1525,6 @@ class DiscoveryMixin:
                     FROM news_seeds
                     WHERE used = 0 AND pub_date >= ? AND relevance_score >= 0.4
                       AND NOT (declined = 1 AND decline_schema_version = ?)
-                      AND COALESCE(source_unusable, 0) = 0
                       AND id NOT IN (%s)
                     ORDER BY relevance_score DESC, pub_date DESC
                     LIMIT 1
@@ -1596,10 +1604,12 @@ class DiscoveryMixin:
         mark never makes a seed look "declined" to anything that reads the
         decline lineage.
 
-        Persistent on purpose: a paywalled or JS-only URL will not become
-        fetchable tomorrow, so re-picking it would re-lose another day. The
-        reason and date are stored so the decision is auditable and reversible
-        by hand if an outlet is ever fixed.
+        This records EVIDENCE, not an exclusion (owner correction, 2026-08-23).
+        Within the current run the candidate is skipped via the run-local
+        exclusion set; nothing here bars it from a future scheduled run, because
+        acquisition failure is often transient. The reason and date are kept so
+        repeated failures are visible if a cooldown or retry-day policy is ever
+        justified later -- that decision is explicitly not made here.
         """
         try:
             conn = sqlite3.connect(str(self.discovery_db))
@@ -1613,8 +1623,10 @@ class DiscoveryMixin:
             conn.commit()
             conn.close()
             self.logger.warning(
-                "Source unusable — seed %s skipped (%s). Technical fetch failure, "
-                "NOT an editorial decline; trying the next candidate.", seed_id, reason
+                "Source unusable — seed %s skipped for the REST OF THIS RUN (%s). "
+                "Technical fetch failure, NOT an editorial decline, and NOT a "
+                "permanent exclusion: a later run may try this source again.",
+                seed_id, reason
             )
         except Exception as e:
             self.logger.warning("mark_news_seed_source_unusable failed for %s: %s", seed_id, e)
@@ -1634,6 +1646,11 @@ class DiscoveryMixin:
             candidate-hunting.
           * Hard budget of MAX_SOURCE_ACQUISITION_ATTEMPTS candidates. No
             fourth attempt, ever.
+          * The failed-candidate exclusion is RUN-LOCAL. It lasts only for the
+            remaining attempts of this run; a past acquisition failure never
+            bars a source from a future scheduled run (owner correction,
+            2026-08-23). Only an editorial decline keeps its existing
+            persistence semantics.
           * Each attempt is a real restart from candidate selection. Nothing is
             carried over: the rejected candidate's text/origin/packet never
             reach the returned seed's evidence, because the caller builds its

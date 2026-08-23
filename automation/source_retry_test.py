@@ -22,6 +22,9 @@ Covers TEST A-F of the owner brief:
   D  three acquisition failures  -> exhausted, no fourth candidate
   E  candidate 2 produces the article -> zero candidate-1 leakage
   F  capture stays OFF by default; SHADOW_CAPTURE=1 stays explicit
+plus the owner correction of 2026-08-23: an acquisition failure is RUN-LOCAL,
+never a permanent blacklist -- see
+test_failure_is_run_local_not_a_permanent_blacklist.
 
 No network, no provider calls, no production DB, no real repo paths.
 
@@ -260,6 +263,74 @@ def test_D2_empty_pool_is_not_exhaustion():
           o._source_acquisition_exhausted is False)
 
 
+def test_failure_is_run_local_not_a_permanent_blacklist():
+    """Owner correction (2026-08-23): one acquisition failure must NOT remove a
+    source from every future production day.
+
+    Acquisition failure is frequently transient -- a temporary anti-bot
+    response, a rotating interstitial, a site outage, a one-off extractor miss.
+    It is not an editorial judgement. So:
+      * a failed candidate cannot be reselected in the SAME run;
+      * its acquisition-failure metadata is persisted, for evidence;
+      * a NEW run is free to consider that source again;
+      * if it fails again, the normal bounded retry just applies again.
+    """
+    o = _orch()
+    _seed(o, "flaky", 0.99, "https://flaky.example/a")
+    _seed(o, "other", 0.10, "https://other.example/b")
+
+    # --- run 1: source is down. It must not be picked twice within this run. ---
+    calls1 = []
+    _install_fetch(o, {"https://flaky.example/a": SHELL,
+                       "https://other.example/b": SHELL}, calls=calls1)
+    check("run 1 finds nothing usable", o.get_news_seed_with_usable_source() is None)
+    check("run 1 tried each candidate exactly once -- no same-run reselection",
+          sorted(calls1) == ["https://flaky.example/a", "https://other.example/b"], calls1)
+    check("run 1 attempted each seed id at most once",
+          len({a["seed_id"] for a in o._source_acquisition_attempts})
+          == len(o._source_acquisition_attempts))
+
+    # --- the evidence survives ---
+    row = _row(o, "flaky")
+    check("acquisition-failure metadata is persisted for evidence",
+          row["source_unusable"] == 1 and bool(row["source_unusable_reason"])
+          and bool(row["source_unusable_date"]))
+    check("still not recorded as an editorial decline", row["declined"] == 0)
+
+    # --- a later run must NOT be blocked by that flag ---
+    later = o.get_news_seed()
+    check("plain selection still offers the previously-failed source "
+          "(no permanent blacklist)", later is not None and later["id"] == "flaky", later)
+
+    # --- later run, source recovered: usable again and actually used ---
+    o2 = _orch()
+    _seed(o2, "flaky", 0.99, "https://flaky.example/a")
+    conn = sqlite3.connect(str(o2.discovery_db))
+    conn.execute("UPDATE news_seeds SET source_unusable = 1, "
+                 "source_unusable_reason = 'no_article_body:paragraphs=1<3', "
+                 "source_unusable_date = '2026-08-23T09:00:00' WHERE id = 'flaky'")
+    conn.commit(); conn.close()
+    _install_fetch(o2, {"https://flaky.example/a": GOOD})
+    seed = o2.get_news_seed_with_usable_source()
+    check("a later run CAN use a source that failed acquisition before, once it "
+          "recovers", seed is not None and seed["id"] == "flaky", seed)
+    check("the recovered attempt is recorded as USABLE",
+          o2._source_acquisition_attempts[-1]["result"] == "USABLE")
+
+    # --- later run, still down: fails acquisition again, normally ---
+    o3 = _orch()
+    _seed(o3, "flaky", 0.99, "https://flaky.example/a")
+    conn = sqlite3.connect(str(o3.discovery_db))
+    conn.execute("UPDATE news_seeds SET source_unusable = 1 WHERE id = 'flaky'")
+    conn.commit(); conn.close()
+    calls3 = []
+    _install_fetch(o3, {"https://flaky.example/a": SHELL}, calls=calls3)
+    check("a still-broken source is re-attempted and fails normally",
+          o3.get_news_seed_with_usable_source() is None and len(calls3) == 1, calls3)
+    check("...and that run is flagged exhausted",
+          o3._source_acquisition_exhausted is True)
+
+
 def test_E_no_cross_attempt_leakage():
     """TEST E -- article-producing candidate owns every source artifact."""
     o = _orch()
@@ -350,6 +421,7 @@ def main():
                test_C_editorial_decline_does_not_retry,
                test_D_exhaustion_stops_at_three,
                test_D2_empty_pool_is_not_exhaustion,
+               test_failure_is_run_local_not_a_permanent_blacklist,
                test_E_no_cross_attempt_leakage,
                test_F_capture_defaults_unchanged,
                test_retry_is_reachable_only_from_selection]:
