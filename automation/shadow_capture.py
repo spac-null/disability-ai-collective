@@ -58,7 +58,8 @@ CAPTURE_CONTRACT = "phase2-capture-v0.1"
 # Events every normal run under v0.1 must contain. Intermediate transformation events
 # are deliberately absent: they are required only if their stage actually ran.
 REQUIRED_EVENTS = ("evidence", "commission", "writer", "final_output", "disposition")
-CONDITIONAL_EVENTS = ("rewrite", "persona_biography_pass", "fable_polish")
+CONDITIONAL_EVENTS = ("rewrite", "persona_biography_pass", "fable_polish",
+                      "source_acquisition")
 ENV_FLAG = "SHADOW_CAPTURE"
 ENV_ROOT = "SHADOW_CAPTURE_ROOT"
 DEFAULT_ROOT = "/srv/data/cripminds-shadow-capture"
@@ -286,6 +287,32 @@ def _ev_final_output(run_id, logger=None, *, final_body=None, persisted_article=
     return e
 
 
+def _ev_source_acquisition(run_id, logger=None, *, attempts=None, chosen_seed_id=None,
+                           chosen_url=None, exhausted=None):
+    """SOURCE_ACQUISITION_RETRY_V1 observability. Additive: does NOT touch the
+    article-output contract -- REQUIRED_EVENTS is unchanged and this event is
+    absent on a single-attempt run, like any other conditional event.
+
+    Records one row per acquisition attempt (attempt number, candidate identity,
+    USABLE / SOURCE_ACQUISITION_FAILED, reason code) plus which candidate the
+    article was actually built from. That last field is what makes a bundle
+    unambiguous when candidate 1 failed and candidate 2 produced the article:
+    every source/evidence/writer/final artifact in the bundle belongs to
+    chosen_seed_id, and the failed candidates appear ONLY here, as metadata --
+    never as source representations.
+    """
+    payload = {
+        "policy": "SOURCE_ACQUISITION_RETRY_V1",
+        "attempts": list(attempts or []),
+        "attempt_count": len(attempts or []),
+        "chosen_seed_id": chosen_seed_id,
+        "chosen_url": chosen_url,
+        "exhausted": bool(exhausted),
+    }
+    name = "source/acquisition_attempts.json"
+    return {name: _write(run_id, name, _j(payload), logger)}
+
+
 def _ev_disposition(run_id, logger=None, *, gate_fixed=None, degraded_stages=None,
                     should_block=None, review_clean=None, fact_check_status=None,
                     disposition=None, slug=None, article_file=None):
@@ -306,6 +333,7 @@ _EVENTS = {
     "persona_biography_pass": _ev_persona_pass,
     "fable_polish": _ev_fable_polish,
     "final_output": _ev_final_output,
+    "source_acquisition": _ev_source_acquisition,
     "disposition": _ev_disposition,
 }
 

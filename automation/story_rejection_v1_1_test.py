@@ -407,7 +407,15 @@ def case_real_dispatch_routes_defer_to_handler_not_writer():
         restore = _patch_methods(
             po.ProductionOrchestrator,
             check_for_existing_article_today=lambda self: None,
-            get_news_seed=lambda self: dict(NEWS_SEED),
+            get_news_seed=lambda self, exclude_ids=None: dict(NEWS_SEED),
+            # SOURCE_ACQUISITION_RETRY_V1 (2026-08-23): selection now goes
+            # through the acquisition gate. This case is about EDITORIAL
+            # dispatch, not acquisition, and SOURCE_TEXT is a deliberately
+            # minimal 224-char fixture that the gate would (correctly) treat as
+            # an unusable extraction -- so stub the selection layer here, the
+            # same way get_source_text/get_source_origin are already stubbed.
+            # Acquisition behaviour has its own suite: source_retry_test.py.
+            get_news_seed_with_usable_source=lambda self, max_attempts=None: dict(NEWS_SEED),
             get_discovery_from_database=lambda self: None,
             get_source_text=lambda self, url, max_chars=3000, fallback_text=None, underlying_url=None: SOURCE_TEXT[:max_chars],
             get_source_origin=lambda self, url: "fetched_article",

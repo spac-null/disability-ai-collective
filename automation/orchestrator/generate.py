@@ -25,6 +25,7 @@ import time
 from datetime import datetime
 
 from .config import _INDEFENSIBLE_PROMPTS, _REGISTERS, _THEME_CLUSTERS
+from .discovery import MAX_SOURCE_ACQUISITION_ATTEMPTS
 from .grounding import (
     build_evidence_packet, writer_prompt_block, build_evidence_lineage, evidence_lineage_entry,
     build_persona_factual_context, scan_draft_for_unsupported_specifics,
@@ -210,7 +211,40 @@ class GenerateMixin:
         recent_refs = self._get_recent_references(days=14)
 
         # Step 2a: Persistent news seed (fetched at 06:00 by news_fetcher.py)
-        news_seed = self.get_news_seed()
+        # Source-retry (2026-08-23): pick the best seed whose source actually
+        # FETCHES into usable article text, rather than the best seed full stop.
+        # A paywall interstitial / JS shell / error page used to cost the whole
+        # day: the top seed was accepted, the unusable body flowed downstream,
+        # and Story Rejection declined it several LLM stages later while 100+
+        # unused seeds sat in the pool. Bounded and cache-backed -- see
+        # get_news_seed_with_usable_source. Entirely upstream of the Phase-2
+        # capture hooks, so phase2-capture-v0.1 is unaffected.
+        news_seed = self.get_news_seed_with_usable_source()
+
+        # SOURCE_ACQUISITION_RETRY_V1: the budget was spent entirely on
+        # candidates whose source could not be acquired. End the run normally
+        # with a distinct, non-editorial status rather than continuing -- a
+        # fourth candidate via the discovery pool would be exactly the
+        # "artificial extra attempt" the policy rules out. Note this fires ONLY
+        # when attempts were actually made and all failed; an empty seed pool
+        # leaves the flag False, so the pre-existing discovery/RSS fallback
+        # below is reached unchanged.
+        if getattr(self, "_source_acquisition_exhausted", False):
+            _attempts = getattr(self, "_source_acquisition_attempts", [])
+            return {
+                "status": "no_article_source_acquisition_exhausted",
+                "source_decision": "source_acquisition_failed",
+                "attempts": _attempts,
+                "attempt_count": len(_attempts),
+                "message": (
+                    "SOURCE_ACQUISITION_RETRY_V1: %d/%d candidates failed source "
+                    "acquisition (technical fetch/extraction failure, NOT an editorial "
+                    "decline and NOT a commissioning defer). No article." % (
+                        len(_attempts), MAX_SOURCE_ACQUISITION_ATTEMPTS)
+                ),
+                "commit_success": False,
+                "declined": False,
+            }
 
         # Step 2b: Discovery DB fallback (fetched at 07:00 by run_discovery.py)
         discovery = None if news_seed else self.get_discovery_from_database()
@@ -429,6 +463,17 @@ class GenerateMixin:
                 "source_text_max_chars": _SOURCE_TEXT_MAX_CHARS,
             },
         )
+
+        # SOURCE_ACQUISITION_RETRY_V1 lineage: emitted only when the run
+        # actually made more than one acquisition attempt, so a normal
+        # single-attempt run's bundle is byte-identical in shape to before.
+        # chosen_seed_id/chosen_url pin the article to ONE candidate.
+        _acq = getattr(self, "_source_acquisition_attempts", []) or []
+        if len(_acq) > 1:
+            _shadow_capture("source_acquisition", _capture_run_id, self.logger,
+                            attempts=_acq, chosen_seed_id=(news_seed or {}).get("id"),
+                            chosen_url=(news_seed or {}).get("url"),
+                            exhausted=getattr(self, "_source_acquisition_exhausted", False))
 
         # L2 active human-testimony retrieval (A-M reconciliation item L,
         # 2026-08-14) — OFF by default, see testimony_l2.py's own module

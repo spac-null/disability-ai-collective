@@ -57,6 +57,36 @@ except ImportError:
 # order or requested size.
 _SOURCE_TEXT_CACHE_MAX_CHARS = 20000
 
+# SOURCE_ACQUISITION_RETRY_V1 (2026-08-23).
+#
+# The 2026-08-23 natural run fetched ~286 chars of JavaScript/error shell from
+# lemonde.fr. Crucially that is ABOVE fetch_source_article's own long-standing
+# "<200 chars" extraction-failure check, so the snapshot was labelled
+# `fetched_article` and flowed downstream as if it were a real article; Story
+# Rejection then correctly found no story content and the whole daily run ended.
+#
+# The gate below therefore does NOT lean on a single character count. Primary
+# signals are structured/structural -- the fetch's own origin state and the
+# absence of an article body (paragraph count) -- with markers and a length
+# floor only as backstops. See classify_source_acquisition.
+_SOURCE_MIN_USABLE_CHARS = 600            # backstop, not the primary signal
+_SOURCE_MIN_USABLE_PARAGRAPHS = 3         # structural: an article has a body
+
+# Interstitial / access-wall / JS-shell markers. Deliberately a short, literal
+# list of things that are never article prose -- NOT a general web-content
+# classifier, which the brief explicitly rules out.
+_SOURCE_FAILURE_MARKERS = (
+    "enable javascript", "javascript is disabled", "javascript to continue",
+    "access denied", "403 forbidden", "are you a robot", "unusual traffic",
+    "subscribe to continue", "subscribers only", "create an account to continue",
+    "page not found", "404 not found", "service unavailable",
+)
+
+# Hard, finite budget per scheduled run: candidate 1, 2, 3. Only
+# SOURCE_ACQUISITION_FAILED consumes it -- never an editorial defer or decline.
+MAX_SOURCE_ACQUISITION_ATTEMPTS = 3
+
+
 # Aggregator isolation (Story Rejection V1.1, 2026-08-17 -- SRF3 forensic
 # audit): a link-aggregator permalink (e.g. Techmeme) resolves to a page
 # listing MANY unrelated stories. trafilatura's readability extraction has no
@@ -1223,6 +1253,7 @@ class DiscoveryMixin:
                 return fallback_text[:max_chars]
             self._last_fetch_origin = "none"
             self._last_fetch_original_length = None
+            self._last_fetch_paragraph_count = 0
             return None
 
         text = self._extract_paragraphs(html)
@@ -1234,9 +1265,17 @@ class DiscoveryMixin:
             )
             self._last_fetch_origin = "fallback_summary" if fallback_text else "none"
             self._last_fetch_original_length = len(fallback_text) if fallback_text else None
+            self._last_fetch_paragraph_count = 0
             return fallback_text[:max_chars] if fallback_text else None
         self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
         self._last_fetch_origin = "fetched_article"
+        # Side channel (SOURCE_ACQUISITION_RETRY_V1): how many real body
+        # paragraphs the extractor kept. _extract_paragraphs joins with a blank
+        # line and already drops nav chrome and anything under 80 chars, so this
+        # counts article body, not markup. It is the structural signal that
+        # separates a JS/paywall shell from a genuinely short article, which a
+        # character count alone cannot do.
+        self._last_fetch_paragraph_count = len([b for b in text.split("\n\n") if b.strip()])
         # Side channel (source-truncation closure, 2026-08-14 follow-up),
         # same pattern as self._last_fetch_origin: `text` here is the TRUE,
         # unsliced extraction -- the only place in this pipeline it still
@@ -1287,6 +1326,8 @@ class DiscoveryMixin:
             self._source_origin_cache = {}
         if not hasattr(self, "_source_original_length_cache"):
             self._source_original_length_cache = {}
+        if not hasattr(self, "_source_paragraph_count_cache"):
+            self._source_paragraph_count_cache = {}
         if url not in self._source_text_cache:
             self._source_text_cache[url] = self.fetch_source_article(
                 url, max_chars=_SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text=fallback_text,
@@ -1294,6 +1335,7 @@ class DiscoveryMixin:
             )
             self._source_origin_cache[url] = getattr(self, "_last_fetch_origin", "none")
             self._source_original_length_cache[url] = getattr(self, "_last_fetch_original_length", None)
+            self._source_paragraph_count_cache[url] = getattr(self, "_last_fetch_paragraph_count", None)
         cached = self._source_text_cache[url]
         return cached[:max_chars] if cached else cached
 
@@ -1398,7 +1440,9 @@ class DiscoveryMixin:
         repeatedly. underlying_article_url (V1.1, aggregator isolation) is not
         itself a decline field -- kept in this same idempotent-ALTER loop
         rather than a second near-identical method, since both are "extra
-        additive columns on this table" migrations of the same shape."""
+        additive columns on this table" migrations of the same shape -- the
+        source_unusable trio (2026-08-23 source-retry) is carried here for the
+        same stated reason."""
         for _col, _def in (
             ("declined", "INTEGER DEFAULT 0"),
             ("declined_date", "TEXT"),
@@ -1406,6 +1450,14 @@ class DiscoveryMixin:
             ("decline_schema_version", "TEXT"),
             ("declined_source_hash", "TEXT"),
             ("underlying_article_url", "TEXT"),
+            # Source-retry (2026-08-23): a seed whose SOURCE could not be
+            # acquired usably. Deliberately NOT the decline columns above --
+            # a failed fetch is a technical failure, not an editorial
+            # decline, and conflating them would corrupt story-rejection
+            # evidence. See mark_news_seed_source_unusable.
+            ("source_unusable", "INTEGER DEFAULT 0"),
+            ("source_unusable_reason", "TEXT"),
+            ("source_unusable_date", "TEXT"),
         ):
             try:
                 conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
@@ -1413,13 +1465,25 @@ class DiscoveryMixin:
                 pass
         conn.commit()
 
-    def get_news_seed(self) -> dict | None:
-        """Return best unused news seed from last 3 days, or None."""
+    def get_news_seed(self, exclude_ids=None) -> dict | None:
+        """Return best unused news seed from last 3 days, or None.
+
+        Excludes seeds already marked source_unusable (source-retry,
+        2026-08-23): a paywalled / JS-shell / empty-body URL does not become
+        fetchable on a later run, so re-picking it would re-lose the day.
+        exclude_ids additionally skips seeds already attempted THIS run, so a
+        retry loop cannot hand back the same seed twice before the mark lands.
+        """
         try:
             conn = sqlite3.connect(str(self.discovery_db))
             self._init_news_seeds_table(conn)
             self._ensure_decline_columns(conn)
             cutoff = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
+            # Parameterised NOT IN: never string-interpolate the ids themselves.
+            # "" is a placeholder that matches no real seed id, so the clause is
+            # a harmless no-op when nothing is excluded.
+            _excl = tuple(exclude_ids or ()) or ("",)
+            _excl_sql = ",".join("?" for _ in _excl)
 
             # Priority 1: confirmed disability angle
             # NOTE: excludes only a CURRENT-contract decline (declined=1 AND
@@ -1438,9 +1502,11 @@ class DiscoveryMixin:
                 FROM news_seeds
                 WHERE used = 0 AND pub_date >= ? AND disability_angle IS NOT NULL
                   AND NOT (declined = 1 AND decline_schema_version = ?)
+                  AND COALESCE(source_unusable, 0) = 0
+                  AND id NOT IN (%s)
                 ORDER BY relevance_score DESC, pub_date DESC
                 LIMIT 1
-            """, (cutoff, STORY_REJECTION_CONTRACT_VERSION)).fetchone()
+            """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, *_excl)).fetchone()
 
             # Priority 2: high relevance score, no angle yet
             if not row:
@@ -1450,9 +1516,11 @@ class DiscoveryMixin:
                     FROM news_seeds
                     WHERE used = 0 AND pub_date >= ? AND relevance_score >= 0.4
                       AND NOT (declined = 1 AND decline_schema_version = ?)
+                      AND COALESCE(source_unusable, 0) = 0
+                      AND id NOT IN (%s)
                     ORDER BY relevance_score DESC, pub_date DESC
                     LIMIT 1
-                """, (cutoff, STORY_REJECTION_CONTRACT_VERSION)).fetchone()
+                """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, *_excl)).fetchone()
 
             conn.close()
             if not row:
@@ -1469,6 +1537,165 @@ class DiscoveryMixin:
         except Exception as e:
             self.logger.warning("get_news_seed failed: %s", e)
             return None
+
+    def get_source_paragraph_count(self, url: str):
+        """Body-paragraph count for the last fetch of this url, or None if
+        unknown. Cached per-url by get_source_text, same as origin/length."""
+        return getattr(self, "_source_paragraph_count_cache", {}).get(url)
+
+    @staticmethod
+    def classify_source_acquisition(text, origin, paragraph_count=None):
+        """(status, reason) for one acquisition attempt. Pure -- no I/O.
+
+        status is "USABLE" or "SOURCE_ACQUISITION_FAILED". This answers ONLY
+        "did we obtain a usable representation of the article?" -- never
+        "is this a good story?". An editorial defer or decline is a different
+        class entirely and is not produced here.
+
+        Signals, strongest first (deliberately not a single character count --
+        the 2026-08-23 shell was 286 chars, comfortably above
+        fetch_source_article's own <200 check, and a bare threshold cannot
+        separate a paywall shell from a genuinely short article):
+
+          1. origin -- the fetch's own structured state. "fallback_summary"
+             means every live route failed and we are holding the RSS blurb;
+             "none" means nothing was obtained at all.
+          2. paragraph_count -- structural absence of an article body.
+             _extract_paragraphs already drops nav chrome and sub-80-char
+             fragments, so a real article yields several blocks and a JS or
+             access-wall shell yields ~none.
+          3. failure markers -- short literal list of strings that are never
+             article prose.
+          4. length floor -- backstop only, for anything the above missed.
+        """
+        if origin in ("fallback_summary", "none"):
+            return "SOURCE_ACQUISITION_FAILED", "fetch_no_live_article:origin=%s" % origin
+        body = (text or "").strip()
+        if not body:
+            return "SOURCE_ACQUISITION_FAILED", "empty_extraction"
+        if paragraph_count is not None and paragraph_count < _SOURCE_MIN_USABLE_PARAGRAPHS:
+            return ("SOURCE_ACQUISITION_FAILED",
+                    "no_article_body:paragraphs=%d<%d" % (paragraph_count,
+                                                          _SOURCE_MIN_USABLE_PARAGRAPHS))
+        low = body.lower()
+        hit = next((m for m in _SOURCE_FAILURE_MARKERS if m in low), None)
+        if hit:
+            return "SOURCE_ACQUISITION_FAILED", "interstitial_marker:%s" % hit.replace(" ", "_")
+        if len(body) < _SOURCE_MIN_USABLE_CHARS:
+            return ("SOURCE_ACQUISITION_FAILED",
+                    "extraction_too_short:%d<%d" % (len(body), _SOURCE_MIN_USABLE_CHARS))
+        return "USABLE", "ok"
+
+    def mark_news_seed_source_unusable(self, seed_id: str, reason: str):
+        """Flag a seed whose SOURCE could not be acquired usably.
+
+        Deliberately NOT mark_news_seed_declined: that records an editorial
+        story-rejection verdict with a decline contract version, and a failed
+        fetch is not an editorial verdict. Keeping them in separate columns is
+        what lets story-rejection evidence stay honest -- and it means this
+        mark never makes a seed look "declined" to anything that reads the
+        decline lineage.
+
+        Persistent on purpose: a paywalled or JS-only URL will not become
+        fetchable tomorrow, so re-picking it would re-lose another day. The
+        reason and date are stored so the decision is auditable and reversible
+        by hand if an outlet is ever fixed.
+        """
+        try:
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._init_news_seeds_table(conn)
+            self._ensure_decline_columns(conn)
+            conn.execute(
+                "UPDATE news_seeds SET source_unusable = 1, source_unusable_reason = ?, "
+                "source_unusable_date = ? WHERE id = ?",
+                (reason, datetime.now().isoformat(timespec="seconds"), seed_id),
+            )
+            conn.commit()
+            conn.close()
+            self.logger.warning(
+                "Source unusable — seed %s skipped (%s). Technical fetch failure, "
+                "NOT an editorial decline; trying the next candidate.", seed_id, reason
+            )
+        except Exception as e:
+            self.logger.warning("mark_news_seed_source_unusable failed for %s: %s", seed_id, e)
+
+    def get_news_seed_with_usable_source(self, max_attempts: int = MAX_SOURCE_ACQUISITION_ATTEMPTS):
+        """SOURCE_ACQUISITION_RETRY_V1. Best seed whose source actually acquires.
+
+        Why this exists: a source that cannot be fetched used to cost the whole
+        day. On 2026-08-23 the top seed returned a 286-char JS/error shell,
+        Story Rejection correctly found no story content, and the run ended with
+        no article while 100+ unused seeds sat in the pool.
+
+        Policy, frozen:
+          * Only SOURCE_ACQUISITION_FAILED consumes an attempt. An editorial
+            defer or decline happens LATER, downstream of this method, and can
+            never re-enter it -- so a disliked story never triggers
+            candidate-hunting.
+          * Hard budget of MAX_SOURCE_ACQUISITION_ATTEMPTS candidates. No
+            fourth attempt, ever.
+          * Each attempt is a real restart from candidate selection. Nothing is
+            carried over: the rejected candidate's text/origin/packet never
+            reach the returned seed's evidence, because the caller builds its
+            evidence packet from the RETURNED seed's url only, and that url's
+            own cache entry.
+          * Runs entirely upstream of the Phase-2 capture hooks, so
+            phase2-capture-v0.1's article-output contract is untouched.
+
+        Attempts are recorded on self._source_acquisition_attempts (list of
+        dicts) for observability, and self._source_acquisition_exhausted is set
+        only when the budget was actually spent on failures -- an empty pool
+        leaves it False so the pre-existing discovery/RSS fallback still
+        applies unchanged.
+
+        Costs at most max_attempts fetches: get_source_text memoizes per url, so
+        the caller's later real acquisition of the returned seed is a cache hit.
+        """
+        budget = max(1, min(int(max_attempts), MAX_SOURCE_ACQUISITION_ATTEMPTS))
+        self._source_acquisition_attempts = []
+        self._source_acquisition_exhausted = False
+        attempted = []
+        for n in range(1, budget + 1):
+            # Only pass the new kwarg once there is something to exclude, so a
+            # first attempt is an unchanged `get_news_seed()` call -- existing
+            # callers and test stubs that replaced the old zero-arg signature
+            # keep working untouched.
+            seed = self.get_news_seed(exclude_ids=attempted) if attempted else self.get_news_seed()
+            if not seed:
+                break
+            text = self.get_source_text(
+                seed["url"], fallback_text=seed.get("summary"),
+                underlying_url=seed.get("underlying_article_url"),
+            )
+            status, reason = self.classify_source_acquisition(
+                text, self.get_source_origin(seed["url"]),
+                self.get_source_paragraph_count(seed["url"]),
+            )
+            self._source_acquisition_attempts.append({
+                "attempt": n, "seed_id": seed["id"], "url": seed["url"],
+                "source_name": seed.get("source_name"), "result": status, "reason": reason,
+                "chars": len((text or "").strip()),
+                "paragraphs": self.get_source_paragraph_count(seed["url"]),
+            })
+            if status == "USABLE":
+                if attempted:
+                    self.logger.info(
+                        "Source acquisition: attempt %d/%d usable — seed %s "
+                        "(after %d SOURCE_ACQUISITION_FAILED candidate(s))",
+                        n, budget, seed["id"], len(attempted),
+                    )
+                return seed
+            self.mark_news_seed_source_unusable(seed["id"], reason)
+            attempted.append(seed["id"])
+        if attempted:
+            self._source_acquisition_exhausted = True
+            self.logger.error(
+                "NO_ARTICLE_SOURCE_ACQUISITION_EXHAUSTED: %d/%d candidate(s) failed "
+                "source acquisition (%s). No further attempt.", len(attempted), budget,
+                ", ".join("%s=%s" % (a["seed_id"], a["reason"])
+                          for a in self._source_acquisition_attempts),
+            )
+        return None
 
     def mark_news_seed_used(self, seed_id: str):
         """Mark a news seed as used so it won't be picked again."""

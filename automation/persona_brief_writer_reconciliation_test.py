@@ -347,7 +347,14 @@ def _run_pipeline(eligible_agents, fable_persona, seed_persona_via_balance_agent
 
         _replacements = dict(
             check_for_existing_article_today=lambda self: None,
-            get_news_seed=lambda self: dict(NEWS_SEED),
+            # SOURCE_ACQUISITION_RETRY_V1 (2026-08-23): selection now runs through
+            # the acquisition gate, and these harnesses use a deliberately minimal
+            # synthetic SOURCE_TEXT the gate would correctly call an unusable
+            # extraction. These cases are not about acquisition, so stub the
+            # selection layer directly -- acquisition has its own suite,
+            # source_retry_test.py.
+            get_news_seed=lambda self, exclude_ids=None: dict(NEWS_SEED),
+            get_news_seed_with_usable_source=lambda self, max_attempts=None: dict(NEWS_SEED),
             get_discovery_from_database=lambda self: None,
             _get_overused_themes=lambda self: [],
             _get_recent_references=lambda self, days=14: [],
