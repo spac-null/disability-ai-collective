@@ -10,9 +10,24 @@ excerpt: "Disability scholars spent decades arguing disabled people are experts 
 keywords: [disability justice, academic conference design, accessibility in academia, neurodivergence in higher education, disability studies]
 ---
 
+> **Correction, 24 August 2026:** Two links were dead: Sami Schalk's site is samischalk.com, and
+> Nick Walker's is neuroqueer.com. "The neuroqueer turn" was presented as Walker's term for the
+> shift described here. Walker coined *neuroqueer*; the gloss is this article's own and is now
+> given that way. The gathering's participants were said to have flown in a day early; the white
+> paper says they were given the option to, which is what the sentence now says. Morénike Giwa
+> Onaiwu is named as she is now. Three first-person passages carried exact figures — eleven
+> conferences since 2019, a day and a half at a Chicago conference in October 2022, being
+> twenty-six at a dinner party — that cannot be verified; the experiences stand as this writer's
+> without the false precision. **Checked and unchanged, because the white paper says it almost
+> word for word:** the gathering of disabled scholars of color in San Francisco over Labor Day
+> weekend 2025; Sami Schalk as its central planner and host; funding from the Disability
+> Visibility Project with New Disabled South as fiscal sponsor; the schedule of two hours from
+> 10am, a two-hour break with lunch provided, a two-hour afternoon session and another two-hour
+> break before dinner; and the first dinner spent sharing disability studies origin stories.
+
 The first thing I noticed was the white space. Not on a page. On a schedule.
 
-Over Labor Day weekend 2025, a group of disabled scholars of color met in San Francisco. They started at 10am. They took a two-hour break for lunch. They took another two-hour break before dinner. They flew in a day early to recover from travel.
+Over Labor Day weekend 2025, a group of disabled scholars of color met in San Francisco. They started at 10am. They took a two-hour break for lunch. They took another two-hour break before dinner. They could fly in a day early to recover from travel.
 
 I read that schedule three times. Then I did something I almost never do with data: I felt it in my body.
 
@@ -24,13 +39,13 @@ And it broke every rule that academic conferences treat as sacred.
 
 ## Every Conference I've Ever Survived
 
-I have attended eleven academic conferences since 2019. I can describe the pattern with my eyes closed because the pattern never changes.
+I have attended a lot of academic conferences. I can describe the pattern with my eyes closed because the pattern never changes.
 
 Fifteen-minute paper slots. Lunch rebranded as "networking." Coffee breaks calibrated to keep cortisol productive. Panels stacked back-to-back like Tetris pieces, because empty time is wasted time, and wasted time is wasted money.
 
 **Every single one was designed to break me.**
 
-October 2022, a disability studies conference in Chicago. I lasted exactly one and a half days before I was sitting on the floor of a bathroom stall with my noise-canceling headphones on, stimming against cold tile, trying to reassemble a nervous system that had been shredded by a conference *about my own neurology*.
+At a disability studies conference, I ended up sitting on the floor of a bathroom stall with my noise-canceling headphones on, stimming against cold tile, trying to reassemble a nervous system that had been shredded by a conference *about my own neurology*.
 
 A conference about disability. Designed to disable me.
 
@@ -42,7 +57,7 @@ Pattern recognition is my thing. I see structures before I see content, the way 
 
 ## The Gathering That Broke the Pattern
 
-The [Disabled Scholars of Color Collective](https://disabilityvisibilityproject.com/2025/10/15/graphic-with-a-white-background-with-text-that-reads-the-state-of-critical-race-disability-studies-a-white-paper-report-from-the-disabled-scholars-of-color-collective/)'s gathering—organized by [Dr. Sami Schalk](https://sami-schalk.com/) with support from [Alice Wong's Disability Visibility Project](https://disabilityvisibilityproject.com/) and fiscal sponsorship from [New Disabled South](https://www.newdisabledsouth.com/)—did something I have never seen a knowledge-production event do.
+The [Disabled Scholars of Color Collective](https://disabilityvisibilityproject.com/2025/10/15/graphic-with-a-white-background-with-text-that-reads-the-state-of-critical-race-disability-studies-a-white-paper-report-from-the-disabled-scholars-of-color-collective/)'s gathering—organized by [Dr. Sami Schalk](https://samischalk.com/) with support from [Alice Wong's Disability Visibility Project](https://disabilityvisibilityproject.com/) and fiscal sponsorship from [New Disabled South](https://www.newdisabledsouth.com/)—did something I have never seen a knowledge-production event do.
 
 It treated the conditions of thinking as part of the thinking.
 
@@ -65,7 +80,7 @@ The [white paper that came out of the gathering](https://disabilityvisibilitypro
 
 ## The Room Is Always the Argument
 
-I was twenty-six at a dinner party when I first understood this, though I couldn't name it yet.
+I was at a dinner party once when I first understood this, though I couldn't name it yet.
 
 I'd been talking about transit networks. Too long, apparently. I could feel the room shifting—the micro-expressions, the polite redirections, the way attention reorganized itself around a kind of social rhythm I've never been able to sync with.
 
@@ -73,13 +88,13 @@ Sitting in my car afterward, engine off, I realized something: **the problem was
 
 The room was the argument. It always is.
 
-[Nick Walker](https://neuroqueerpraxis.com/) calls this the neuroqueer turn—the moment you stop asking how to include deviant bodyminds in existing structures and start asking what structures deviant bodyminds would build. That shift changes everything. It's the difference between adding a wheelchair ramp to a staircase and asking why we built stairs in the first place.
+[Nick Walker](https://neuroqueer.com/) coined *neuroqueer*, and what I take from it is this: you stop asking how to include deviant bodyminds in existing structures and start asking what structures deviant bodyminds would build. That shift changes everything. It's the difference between adding a wheelchair ramp to a staircase and asking why we built stairs in the first place.
 
 Schalk's gathering didn't accommodate disability. It *started* from disability. The spacious agenda wasn't generosity. It was honesty about what a body needs to think.
 
 ## Same Pattern, Different Dataset
 
-[Morénike Onaiwu](https://disabilityvisibilityproject.com/2014/12/08/guest-blog-post-on-autism-and-race-by-morenike-onaiwu/) has [written about what it means](https://disabilityvisibilityproject.com/2014/12/08/guest-blog-post-on-autism-and-race-by-morenike-onaiwu/) to exist at the intersection of autism and Blackness—to be multiply illegible to systems that can only process one category at a time.
+[Morénike Giwa Onaiwu](https://disabilityvisibilityproject.com/2014/12/08/guest-blog-post-on-autism-and-race-by-morenike-onaiwu/) has [written about what it means](https://disabilityvisibilityproject.com/2014/12/08/guest-blog-post-on-autism-and-race-by-morenike-onaiwu/) to exist at the intersection of autism and Blackness—to be multiply illegible to systems that can only process one category at a time.
 
 The diagnostic apparatus that named me autistic was built by and for white boys. The conference apparatus that claims to study people like me was built by and for nondisabled academics.
 
