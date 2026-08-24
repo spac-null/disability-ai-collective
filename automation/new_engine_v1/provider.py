@@ -1,0 +1,151 @@
+"""
+provider.py -- the model transport for NEW_ENGINE_V1.
+
+PRODUCTION FIDELITY, deliberately
+Same endpoint, same auth and the same model identifiers the legacy editorial path
+uses: the local CLIProxy (`http://127.0.0.1:8317/v1`, production's own proxy in front
+of OpenRouter) with a direct-OpenRouter fallback. Reimplemented here as a ~40-line
+stdlib POST rather than imported from `orchestrator.llm`, for one reason only: this
+package must carry NO legacy prompt surface, and a test asserts that by scanning
+imports. The transport is identical; the prompt machinery is not inherited.
+
+It sends exactly the system and user strings it is given. There is no prompt assembly
+here, no persona canon, no style-rule pile, no register selector -- those live in the
+legacy path and are not reachable from this module.
+
+Every call records what actually served it. `requested_model` and `actual_model` are
+kept apart on purpose: production has been silently falling back Fable -> Opus for
+days, and a candidate architecture that cannot see that is not observable.
+
+Stdlib only. No `requests`.
+"""
+from __future__ import annotations
+
+import json
+import os
+import urllib.error
+import urllib.request
+from dataclasses import dataclass, field
+
+# Production's own values (orchestrator/config.py). Read at call time, not import
+# time, so a test can point them somewhere harmless.
+DEFAULT_CLIPROXY_URL = "http://127.0.0.1:8317/v1"
+OPENROUTER_URL = "https://openrouter.ai/api/v1"
+
+# The model the migration targets for editorial reasoning and prose. Same family the
+# legacy path lands on today after its Fable fallback.
+DEFAULT_MODEL = "anthropic/claude-opus-4.8"
+
+
+class ProviderError(Exception):
+    """Transport or response-shape failure. Never swallowed into a fake completion."""
+
+
+@dataclass
+class Completion:
+    text: str
+    requested_model: str
+    actual_model: str
+    provider_label: str
+    usage: dict = field(default_factory=dict)
+
+    def identity(self) -> dict:
+        return {
+            "requested_model": self.requested_model,
+            "actual_model": self.actual_model,
+            "provider": self.provider_label,
+            "fallback_used": self.actual_model != self.requested_model,
+            "usage": self.usage,
+        }
+
+
+def _post(url: str, key: str, payload: dict, timeout: int) -> dict:
+    req = urllib.request.Request(
+        url.rstrip("/") + "/chat/completions",
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json",
+                 "Authorization": "Bearer %s" % key},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        raise ProviderError("HTTP %s from %s: %s"
+                            % (e.code, url, e.read()[:300].decode("utf-8", "replace")))
+    except Exception as e:                                   # timeout, DNS, refused
+        raise ProviderError("%s: %s" % (type(e).__name__, e))
+
+
+def _extract(body: dict) -> tuple[str, str, dict]:
+    choices = body.get("choices")
+    if not choices:
+        raise ProviderError("no choices in response: keys=%s" % sorted(body))
+    msg = choices[0].get("message") or {}
+    text = (msg.get("content") or "").strip()
+    if not text:
+        raise ProviderError("empty completion content")
+    return text, body.get("model") or "", body.get("usage") or {}
+
+
+class Provider:
+    """CLIProxy first, direct OpenRouter as fallback. Raises rather than degrading."""
+
+    def __init__(self, model: str = DEFAULT_MODEL, cliproxy_url: str | None = None):
+        self.model = model
+        self.cliproxy_url = cliproxy_url or os.environ.get(
+            "NEW_ENGINE_CLIPROXY_URL", DEFAULT_CLIPROXY_URL)
+
+    def complete(self, system: str, user: str, max_tokens: int = 3000,
+                 timeout: int = 180, temperature: float | None = None) -> Completion:
+        payload = {
+            "model": self.model,
+            "messages": [{"role": "system", "content": system},
+                         {"role": "user", "content": user}],
+            "max_tokens": max_tokens,
+        }
+        if temperature is not None:
+            payload["temperature"] = temperature
+
+        attempts = []
+        for label, url, key in (
+            ("CLIProxy", self.cliproxy_url, os.environ.get("CLIPROXY_KEY", "")),
+            ("OpenRouter", OPENROUTER_URL, os.environ.get("OPENROUTER_API_KEY", "")),
+        ):
+            if not url:
+                continue
+            try:
+                body = _post(url, key, payload, timeout)
+                text, actual, usage = _extract(body)
+                return Completion(text=text, requested_model=self.model,
+                                  actual_model=actual or self.model,
+                                  provider_label=label, usage=usage)
+            except ProviderError as e:
+                attempts.append("%s: %s" % (label, e))
+        raise ProviderError("all providers failed -- " + " | ".join(attempts))
+
+
+def parse_json_object(text: str) -> dict:
+    """Parse a model reply expected to be one JSON object.
+
+    Tolerates a ```json fence and leading/trailing prose, because that is a formatting
+    habit rather than a semantic failure -- the same lesson as the legacy eligible-flag
+    contract mismatch. Anything that is not recoverably one object raises: a stage that
+    cannot be parsed must fail, never silently produce a partial payload.
+    """
+    s = text.strip()
+    if s.startswith("```"):
+        s = s.split("```")[1] if "```" in s[3:] else s[3:]
+        s = s.lstrip()
+        if s.lower().startswith("json"):
+            s = s[4:].lstrip()
+    start, end = s.find("{"), s.rfind("}")
+    if start == -1 or end <= start:
+        raise ProviderError("reply contains no JSON object: %r" % text[:200])
+    try:
+        obj = json.loads(s[start:end + 1])
+    except json.JSONDecodeError as e:
+        raise ProviderError("reply is not valid JSON (%s): %r" % (e, text[:200]))
+    if not isinstance(obj, dict):
+        raise ProviderError("reply JSON is %s, expected object" % type(obj).__name__)
+    return obj
