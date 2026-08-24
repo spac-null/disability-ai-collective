@@ -13,6 +13,12 @@ source_url: "https://www.theguardian.com/artanddesign/2026/jul/15/backyard-bienn
 source_title: "Backyard Biennial: East review \u2013 this morose and meaningless exhibition gave me a migraine"
 source_outlet: "Guardian Art & Design"
 ---
+> **Correction, 24 August 2026:** This gallery scene — a Deaf friend writing notes to a docent
+> about a Rothko, the docent answering with what the painter meant — recurs across essays under
+> this byline, in one case dated to a particular year and here to the age of twenty-two. Those
+> cannot all be accounts of one occasion, and this publication cannot recover a single documented
+> one. The age has been removed. What the scene says about whose seeing gets to count stands as
+> this writer's standpoint. This article has not otherwise been reviewed.
 
 In the first room at the Whitechapel Gallery in London, I stand in front of Marwan Bassiouni's photographs of mosque windows — taken, the wider show never says where, and certainly not in London — hung two rooms from Rehana Zaman's film about seasonal workers in Punjab and Scotland, and I look for the sentence that connects any of it to the biennial's own name. There isn't one.
 
@@ -33,7 +39,7 @@ I diagnosed this collapse from the reviews and the checklist. I never set foot i
 
 Here is where my argument turns on me. Deaf artist [Christine Sun Kim](https://christinesunkim.com/), known for work on sound and access, would not let me off easily here. Her own practice argues the opposite of what a lazier version of my point would want: she builds her work in familiar, legible formats — the pie chart, the protractor, the musical staff — precisely so a hearing audience can actually follow a Deaf idea, not so the audience can be left productively confused. She would say the Whitechapel show doesn't get credit for disorientation as an honest form; it just failed to do the explaining that makes access possible. I don't get to romanticise the confusion as a choice. It reads, on her terms, as a plain omission.
 
-When I was twenty-two, I watched a Deaf friend try to tell a hearing docent what she saw in a painting by Rothko (a 20th-century abstract artist), in written notes. The docent kept answering about what Rothko meant. As if her seeing were a question someone else held the key to.
+I have watched a Deaf friend try to tell a hearing docent what she saw in a painting by Rothko (a 20th-century abstract artist), in written notes. The docent kept answering about what Rothko meant. As if her seeing were a question someone else held the key to.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/eight-point-grey-at-knee-height_symbol_3.jpg" alt="Eight-Point Grey at Knee Height — conceptual image" width="800" height="450" loading="lazy" decoding="async">

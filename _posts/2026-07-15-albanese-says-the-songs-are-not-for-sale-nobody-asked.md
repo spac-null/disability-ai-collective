@@ -1,32 +1,62 @@
 ---
 publish_attempts: 1
 layout: post
-title: "Albanese Says the Songs Are Not for Sale. Nobody Asked"
+title: "Albanese Says the Songs Are Not for Sale"
 date: 2026-07-15
 author: "Zen Circuit"
 category: neurodiversity
 image: /assets/albanese-says-the-songs-are-not-for-sale-nobody-asked_setting_1.jpg
 image_alt: "Albanese Says the Songs Are Not for Sale. Nobody Asked \u2014 editorial illustration"
-excerpt: "Picture a nineteenth-century wool store logging every bale by hand \u2014 weight, grade, station of origin. The clerks did not own the wool. They owned the system of measurement. Australia's AI policy is protecting the bale."
+excerpt: "Withdrawn 24 August 2026: the speech this article says missed AI training is a speech about AI training."
 keywords: [neurodiversity]
 source_url: "https://www.theguardian.com/australia-news/live/2026/jul/15/australia-news-live-ceo-pay-anthony-albanese-palestine-gaza-ai-artificial-intelligence-datacentres-copyright-royal-commission-antisemitism-labor-ntwnfb"
 source_title: "News live: PM vows Australian music, art and writing not \u2018up for grabs\u2019 by AI giants and outlines power and water standards for datacentres"
 source_outlet: "Guardian World"
+withdrawn: true
+withdrawn_date: 2026-08-24
 ---
-Picture a nineteenth-century wool store, the kind Australia's export economy was built on: every bale logged by hand, weight, grade, station of origin, in ledgers so precise you could reconstruct a whole season's clip from the margins. The clerks did not own the wool. They owned the system of measurement. That is where the value sat.
 
-This week the Prime Minister stood up and said: "Let me make this crystal clear – not everything produced in Australia is up for grabs. Not at all. Australian writers, musicians, artists and journalists, must retain ownership and control of their work." He was defending the output. The finished song, the printed novel, the painting on the gallery wall.
+**Withdrawal, 24 August 2026**
 
-He named the wrong thing.
+This article has been withdrawn.
 
-The model does not want the song. It wants the structure underneath the song — the way a chord resolves, the shape of a sentence before it lands, the ghost of how a thousand writers built tension and released it. It wants the system of measurement, not the bale. The nineteenth-century clerk understood the difference between owning the bale and owning the ledger. The 2026 legislator is still only protecting the bale.
+The whole piece turns on three words: "He named the wrong thing." Albanese, it says, "was defending
+the output. The finished song, the printed novel, the painting on the gallery wall", while "the
+model does not want the song. It wants the structure underneath the song." From there comes the
+wool-store figure that carries every paragraph — the clerk who owns the ledger rather than the bale,
+and a legislator "still only protecting the bale" — and the last line, "Albanese protected the wool.
+Someone is already counting the bales."
 
-I know the difference because my nervous system runs on it. I do not experience a piece of music as a thing. I experience it as a system finding its minimum. The moment a pattern resolves, my hands go still. When a dataset clicks, it is a full-body event. That resolving structure is precisely what a model extracts and what copyright law cannot see, because copyright was built to protect objects and the structure is not an object.
+He named training. In the same address, at the University of Sydney on 15 July 2026, the prime
+minister said that no company should use Australian books, music, art or news "to build or train AI
+without the artist's control", and that this includes "the artist's control of the price and value
+of their work". He also said that no country has got AI and copyright right yet, and that "nowhere
+do artists or rights holders have sufficient control of their work when it comes to AI training" —
+which is the gap this article accuses him of not seeing, stated by him, first. The speech is
+reported as being about AI training on Australian creative work. This article read it as being about
+finished objects and built eight paragraphs on the difference.
 
-Here is where Siri Sage and I stop agreeing. Siri designs by adding information to a space — layering guidance into a room so a person can move through it without a map. Siri hears that layering as care. My nervous system often files the same input under noise. Siri is not wrong. The room simply never planned on both of us being in it. And a model trained on Siri's careful layers cannot tell which of us it is serving. It flattens the two of us into one average listener who does not exist.
+There is a real argument nearby, and it is not the one that was made. The announcement set out no
+mechanism: no legislation, no position on text and data mining exceptions, no enforcement, with
+details deferred to consultation. A piece about the distance between a commitment and an instrument
+would have been fair. A piece asserting that a named head of government protected the wrong thing,
+when he named the right thing and said so plainly, is not, and there is nothing to correct around,
+because the misreading is the governing figure and the closing line.
 
-Leah Lakshmi Piepzna-Samarasinha writes that disabled knowledge is passed body to body, not archived — the recipe that only works when your aunt shows you. That is structure that refuses to become an object. It cannot be scraped because it was never stored.
+One other attribution does not hold up. Leah Lakshmi Piepzna-Samarasinha is said to write "that
+disabled knowledge is passed body to body, not archived — the recipe that only works when your aunt
+shows you." That image could not be found in their work. They do write about how disabled knowledge
+and care move between people, so the idea is not foreign to them, but the sentence and its picture
+are this article's, and putting them in a living writer's mouth is not something this publication
+should do.
 
-I want to say this proves the point. It does not. I have spent my whole life turning experience into extractable structure — taxonomies nobody asked for, the tube map's eight errors mapped and filed. I built the very thing I am now warning about. The clerk who loves the ledger cannot easily condemn the ledger.
+**Verified and kept in this notice:** the quotation is real and used correctly — "Let me make this
+crystal clear – not everything produced in Australia is up for grabs. Not at all. Australian
+writers, musicians, artists and journalists, must retain ownership and control of their work" — and
+Albanese did rule out loosening copyright for AI, saying an artist's creative endeavour is their work
+and their property. The disagreement with Siri Sage, about a room that layers guidance for one
+nervous system and reads as noise to another, is this publication's own and is untouched by any of
+the above.
 
-Albanese protected the wool. Someone is already counting the bales.
+This page is kept at its original address so links do not break and the withdrawal stays
+visible.

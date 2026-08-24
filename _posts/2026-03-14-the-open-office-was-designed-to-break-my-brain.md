@@ -13,15 +13,28 @@ excerpt: "Open offices were designed to eliminate barriers between people, but t
 keywords: [open office workplace design, sensory processing sensitivity, ADHD workplace productivity, neurodivergent employees, workplace accommodations]
 ---
 
+> **Correction, 24 August 2026:** This article was published incomplete. It stopped part-way
+> through an image tag, immediately under a heading announcing what a better interface would look
+> like, and has stood that way since March; the broken markup is gone and the break is now stated
+> in the text. The opening scene also carried a set of counts precise enough to read as a record —
+> 2:17 PM on a Tuesday, notifications every eleven seconds from three laptops, 340 fluorescent
+> panels, and a figure caption claiming 47 simultaneous inputs. None of those can be checked and
+> the piece does not need them; they are gone, while the impressionistic distances have been left
+> as the sensory description they are. The flicker figure was right in substance and is now given
+> as twice the mains frequency rather than a bare number. The Quickborner Team is real and did
+> develop Bürolandschaft, but from the late 1950s rather than in the 1960s, and quickborner.com does
+> not resolve, so the link has been dropped and the date corrected. A claim that the open plan "has
+> never been shown" to produce better work is now stated as what this writer has not seen.
+
 I can tell you the exact moment my last open office broke me. Not metaphorically. Structurally.
 
-It was 2:17 PM on a Tuesday. The person two desks away was eating an apple. Slack notifications fired every eleven seconds from three different laptops—not quite synchronized—creating a polyrhythmic interference pattern my brain could not stop modeling. The HVAC system was cycling at a frequency just below conscious hearing but well within the range my nervous system treats as threat. And the 340 fluorescent panels above me were flickering at 120 hertz, which most people cannot perceive and I cannot *not* perceive.
+Mid-afternoon. The person two desks away was eating an apple. Slack notifications fired from several laptops at once, not quite synchronized, creating a polyrhythmic interference pattern my brain could not stop modeling. The HVAC system was cycling at a frequency just below conscious hearing but well within the range my nervous system treats as threat. And the fluorescent panels above me were flickering at twice the mains frequency, which most people cannot perceive and I cannot *not* perceive.
 
 I was supposed to be writing a database migration. Instead, my entire cognitive architecture had been hijacked by the involuntary project of processing every sensory input in a 40-foot radius, simultaneously, with no priority filtering.
 
 Because that's what my brain does. That's what it has always done.
 
-I went to the bathroom, locked the stall, sat on the floor, and wrote the migration there. It was the most productive fourteen minutes of my day.
+I went to the bathroom, locked the stall, sat on the floor, and wrote the migration there. It was the most productive stretch of my day.
 
 **The bathroom stall was a better office than the office.**
 
@@ -47,7 +60,7 @@ This is not a disorder of attention. It is a difference in filtration.
 
 The open office didn't emerge from research on productivity. It emerged from a theory of social transparency.
 
-In the 1960s, a German consulting firm called [Quickborner](https://www.quickborner.com/) developed *Bürolandschaft*—"office landscape"—based on the premise that removing physical barriers would increase communication flow. The spatial logic was explicit: if people can see each other, they will collaborate. Walls are friction. Openness is efficiency.
+In the late 1950s, a German consulting firm known as the Quickborner Team developed *Bürolandschaft*—"office landscape"—based on the premise that removing physical barriers would increase communication flow. It spread through European and then American offices during the 1960s. The spatial logic was explicit: if people can see each other, they will collaborate. Walls are friction. Openness is efficiency.
 
 This is a theory about how humans work. More precisely, it's a theory about how *certain* humans work—specifically, those whose nervous systems treat ambient social information as low-priority background data that can be cheaply discarded.
 
@@ -62,8 +75,8 @@ This isn't anxiety. It isn't a failure of willpower. **It's architecture meeting
 ## The Defaults Are Always Someone's Defaults
 
 <figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_moment_2.jpg" alt="The sensory audit — 47 simultaneous inputs mapped across a standard open-plan floor" loading="lazy">
-<figcaption>The sensory audit — 47 simultaneous inputs mapped across a standard open-plan floor</figcaption>
+<img src="{{ site.baseurl }}/assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_moment_2.jpg" alt="The sensory audit — simultaneous inputs mapped across a standard open-plan floor" loading="lazy">
+<figcaption>The sensory audit — simultaneous inputs mapped across a standard open-plan floor</figcaption>
 </figure>
 
 In software, we talk about "sensible defaults"—the pre-set configurations a system ships with, designed for the assumed typical user. The open office is full of sensible defaults. They're just not *my* sensible defaults.
@@ -102,9 +115,8 @@ I catch bugs other developers miss because I process code at a level of granular
 
 **The environment is optimized to suppress the exact cognitive architecture it hired me for.**
 
-This isn't a paradox. It's a design failure. And it reveals something important: we've confused "the environment most people can tolerate" with "the environment that produces the best work." These are different claims. The open office satisfies the first. It has never been shown to satisfy the second.
+This isn't a paradox. It's a design failure. And it reveals something important: we've confused "the environment most people can tolerate" with "the environment that produces the best work." These are different claims. The open office satisfies the first. I have not seen it shown to satisfy the second.
 
 ## What a Better Interface Would Look Like
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/2026-03-14-the-open-office-was-designed-to-break-my-brain_symbol_3.jpg
+*This article was published unfinished. It breaks off here, part-way through an image tag, under a heading promising what a better interface would look like. That section was never written, and this publication is not going to write it years later and present it as the original. What stands is everything above.*
