@@ -25,10 +25,14 @@ source_outlet: "Guardian Art & Design"
 > office, the writer's subject here is categories and what they leave out, and no pronoun is on
 > record. Two visits were given exact dates — a Tuesday in March 2023, August 2018 — which cannot
 > be verified; the dates are gone and the listening they describe is left as this writer's
-> standpoint. **Checked and unchanged:** Emma Spencer as YSP's informal learning manager, and the
-> Hidden Forest, Sculpture Baby sessions, activity packs, under-fives provision and the Weston,
-> all of which the park runs as described.
-A newspaper article this week sends a parent and a buggy out to Yorkshire Sculpture Park, and it is honest about what happens next: mud, a great deal of it, and a stroller nearly lost to the ground more than once. No white walls, no string barriers, no hushing gallery attendant — just green space, and the ground fighting back the whole way round. I read it twice, not because I doubted the mud, but because the writer stopped exactly where I wanted her to keep going.
+> standpoint. A detail attributed to the source could not be found in it: the
+> column was said to describe the buggy "stuck twice on the same stretch of path", and the opening
+> to describe "a stroller nearly lost to the ground more than once". Chloë Ashby's piece reports
+> neither. What it reports is pushing the buggy uphill and struggling for grip as her own boots
+> slipped in the mud. Both sentences now say that instead. **Checked and unchanged:** Emma Spencer
+> as YSP's informal learning manager, and the Hidden Forest, Sculpture Baby sessions, activity
+> packs, under-fives provision and the Weston, all of which the park runs as described.
+A newspaper article this week sends a parent and a buggy out to Yorkshire Sculpture Park, and it is honest about what happens next: mud, a great deal of it, and a parent pushing a buggy uphill with her boots slipping under her. No white walls, no string barriers, no hushing gallery attendant — just green space, and the ground fighting back the whole way round. I read it twice, not because I doubted the mud, but because the writer stopped exactly where I wanted her to keep going.
 
 I have been to [Yorkshire Sculpture Park](https://ysp.org.uk), an outdoor art venue in West Yorkshire, on a grey and wet day. I went because a friend told me the [Henry Moores](https://www.henry-moore.org) — large bronzes with holes and hollows cast through them — make the wind behave differently. She meant it as poetry, but she was right. A large bronze with a hole through its center does something to air pressure that a solid form does not, and you can hear it. The wind changes pitch as it threads through the opening. I stood in front of one for ten minutes, shifting my weight from foot to foot, and the sculpture told me more about its own shape than any audio guide ever has.
 
@@ -38,7 +42,7 @@ Then the path turned to grass, and the grass turned to mud, and the mud took my 
 
 Here is where the article's honesty runs out. A gallery with hard floors, high ceilings, and right angles is not a hostile environment, whatever the prevailing loathing of the "white cube" says. It is a legible one. My cane on marble gives me the room's dimensions in three taps. My footsteps on polished concrete tell me where the wall is before I reach it. The dreaded white cube — the space that art criticism has spent decades calling sterile, elitist, exclusionary — is the most acoustically transparent room I have ever been in. Every surface answers back.
 
-The sculpture park does not answer back. Grass absorbs. Soil absorbs. Gravel scatters sound in every direction, which is worse than absorbing it because the information arrives in fragments rather than a clean signal. The article already knows the ground is not simply generous — it says as much about the buggy, stuck twice on the same stretch of path. But it treats that friction as a wheel problem, solvable with better boots and a firm grip on the handlebar. For a body that navigates by listening to what the ground says, the same mud is not an inconvenience to route around. It is a blackout.
+The sculpture park does not answer back. Grass absorbs. Soil absorbs. Gravel scatters sound in every direction, which is worse than absorbing it because the information arrives in fragments rather than a clean signal. The article already knows the ground is not simply generous — it says as much about the climb uphill, the buggy muddied and the boots losing their grip. But it treats that friction as a wheel problem, solvable with better boots and a firm grip on the handlebar. For a body that navigates by listening to what the ground says, the same mud is not an inconvenience to route around. It is a blackout.
 
 To be fair to the park, it does not pretend the mud is nothing. The piece talks to Emma Spencer, YSP's learning manager, about everything built to absorb exactly this kind of friction: a staffed area for children under five, a program called Hidden Forest, activity packs handed out at the gate, dedicated Sculpture Baby sessions, and the Weston restaurant waiting at the end of the walk for anyone who needs dry socks and a chair. That is real infrastructure, built by someone who has clearly thought hard about which bodies struggle with this landscape, and why. It has just never been asked to think about mine.
 
