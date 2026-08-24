@@ -12,9 +12,22 @@ source_url: "https://www.theguardian.com/artanddesign/2026/apr/06/es-devlin-ai-p
 source_title: "What can 160-million-year-old clay tell us about AI and ethics? Inside Es Devlin\u2019s tech and pottery summit"
 source_outlet: "Guardian Art & Design"
 ---
-This week [Es Devlin](https://www.es-devlin.com/), a British stage designer and artist known for her immersive large-scale installations, convened a summit at Oxford, in a potters' workshop, where she invited AI practitioners with a deliberately divergent set of viewpoints to sit at workbenches and push their fingers into Jurassic clay. [The Guardian](https://www.theguardian.com/) published an admiring account of the event. The clay is 160 million years old. The bell that opens the gathering is a singing bowl, the kind once used in Buddhist chanting rituals, and it hits, in Devlin's own words, just the right frequency to make the temples vibrate pleasantly. Everyone, the piece suggests, is humbled by the same encounter with matter. Whatever a person believes about AI, the piece implies, their hands are equally surprised by what they know that their mind does not.
 
-I read it on a Wednesday in April, parked outside a plantain stall in my neighbourhood, and I felt the small flat irritation that arrives when a beautiful idea is half-built and someone is selling the half as the whole.
+> **Correction, 24 August 2026:** The link given for Es Devlin, es-devlin.com, does not resolve;
+> her site is esdevlin.com, and the link has been fixed. The article also stated as fact who was
+> not at the summit — blind potters, a potter with rheumatoid arthritis, a wheelchair user who
+> throws seated. The attendee list is not something this article can establish, and the passage
+> now says what it can support: that the account describes a room of AI practitioners and no
+> disabled practitioners. A small internal inconsistency, reading the piece on a Wednesday
+> outside a stall visited every Tuesday, has been fixed. One thing could not be checked either
+> way: the paraphrase of Devlin on the singing bowl's frequency, because the review is not
+> accessible to us. The summit itself, the 160-million-year-old clay and Devlin's description as
+> a British stage designer known for immersive large-scale work are corroborated by the cited
+> reporting and unchanged.
+
+This week [Es Devlin](https://esdevlin.com/), a British stage designer and artist known for her immersive large-scale installations, convened a summit at Oxford, in a potters' workshop, where she invited AI practitioners with a deliberately divergent set of viewpoints to sit at workbenches and push their fingers into Jurassic clay. [The Guardian](https://www.theguardian.com/) published an admiring account of the event. The clay is 160 million years old. The bell that opens the gathering is a singing bowl, the kind once used in Buddhist chanting rituals, and it hits, in Devlin's own words, just the right frequency to make the temples vibrate pleasantly. Everyone, the piece suggests, is humbled by the same encounter with matter. Whatever a person believes about AI, the piece implies, their hands are equally surprised by what they know that their mind does not.
+
+I read it parked outside a plantain stall in my neighbourhood, and I felt the small flat irritation that arrives when a beautiful idea is half-built and someone is selling the half as the whole.
 
 Because here is what is true, and I want to give it its full weight first. Working clay does change how a person thinks. Hands solve problems that the speaking part of the brain has not yet noticed. Anyone who has thrown a pot, kneaded bread, or wired a circuit board knows this. The summit's instinct — that the people building large language models should spend a day with their minds in their fingers — is correct. It is also, in 2026, almost too late to be radical. The monks have been saying it for a thousand years.
 
@@ -37,7 +50,7 @@ That is the point the Oxford summit needed and did not make. The summit's centra
 
 Here is the part that should bother anyone interested in what AI is becoming. The current generation of large models is trained almost entirely on text and image — on the two senses that the people building them trust most. Touch, proprioception, the felt weight of a thing in the hand: these are absent from the training data not because they are unimportant but because the builders do not know how to write them down. A summit that wants to introduce the engineers to non-textual knowing and then frames that knowing as a universal reset has reproduced the exact bias it set out to interrupt. It has treated the most embodied sense as if it were the most generic one.
 
-Blind potters were not invited. Neither was the potter with rheumatoid arthritis whose hands hurt in a particular way that has taught her exactly how much pressure clay will tolerate. Neither was the wheelchair user who throws from a seated position and has worked out, over years, how the whole body torques into the wrist. Their absence is not an oversight to be corrected by next year's guest list. Their absence is the condition that lets the summit's central metaphor work at all.
+No blind potter appears in the account. Nor does the potter with rheumatoid arthritis whose hands hurt in a particular way that has taught her exactly how much pressure clay will tolerate, or the wheelchair user who throws from a seated position and has worked out, over years, how the whole body torques into the wrist. That absence is not an oversight to be corrected by next year's guest list. It is the condition that lets the summit's central metaphor work at all.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/hands-that-already-know_symbol_3.jpg" alt="Hands That Already Know — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">

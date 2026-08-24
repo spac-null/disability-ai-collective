@@ -13,7 +13,24 @@ source_title: "In Cuba, an unprecedented health crisis is deepening under US oil
 source_outlet: "Le Monde English"
 ---
 
-A friend messaged me last Tuesday: "Cuba's running out of insulin." Not a headline. Just a fact, the way you'd say the milk is off. She was looking at fuel shortages shutting down hospital generators, waste piling up because collection trucks can't run, epidemics spreading because there's no diesel for ambulances. She wanted to know if I'd heard. I had not. What I heard instead was the sound of a system designed around one assumption — that supply chains continue — encountering the exact scenario where that assumption breaks.
+> **Correction, 24 August 2026:** Three fixes. Simon Baron-Cohen was said to have "published a
+> study in 2003" measuring empathy by asking participants to identify emotions in photographs of
+> eyes. Two different things were run together: the Reading the Mind in the Eyes test was
+> published in 1997 and revised in 2001, and *The Essential Difference* (2003) is a book rather
+> than a study. The link given for him returns a 404 and has been removed. The article also
+> described a specific graph from "a 2019 paper on supply chain fragility in low- and
+> middle-income countries," with its axes and its two mortality curves, and said it was
+> published "three years before the 2026 fuel crisis" — which is seven years, and the paper
+> itself could not be identified. That passage now makes the comparison as this article's own
+> analysis rather than citing a source that cannot be found. Two quoted private exchanges, a
+> friend's message and an endocrinologist's reply, remain unverifiable and are now presented
+> without quotation marks. Checked and unchanged, because it is all accurate: the US embargo
+> from 1960, Paul Farmer as a physician and anthropologist who wrote on structural violence in
+> Haiti and died in 2022, insulin's 2–8°C storage range, and the course of diabetic
+> ketoacidosis.
+
+
+A friend messaged me last week to say Cuba was running out of insulin. Not a headline. Just a fact, the way you'd say the milk is off. She was looking at fuel shortages shutting down hospital generators, waste piling up because collection trucks can't run, epidemics spreading because there's no diesel for ambulances. She wanted to know if I'd heard. I had not. What I heard instead was the sound of a system designed around one assumption — that supply chains continue — encountering the exact scenario where that assumption breaks.
 
 The US oil blockade began in 1960 after the Cuban Revolution, when the US government sought to destabilize Fidel Castro's regime through economic pressure. It has been in place, in various forms, for over sixty years. What changed in May 2026 was not policy but precision. A sudden halt in fuel shipments meant that diesel no longer arrived at ports. Hospitals lost power. Refrigeration failed. Medications requiring cold storage spoiled. Dialysis machines stopped mid-cycle. The cascade was predictable. It was also designed. An embargo is not a natural disaster. It is a policy choice with a body count that someone, somewhere, is willing to accept.
 
@@ -40,13 +57,13 @@ I have type 1 diabetes. I have never missed an insulin dose because I live in a 
 
 In May 2026, Cuban hospitals were running generators on rationed diesel. Some had power four hours a day. Some had none. Insulin requires refrigeration between 2°C and 8°C. Above that, it degrades. It does not stop working immediately — it loses potency over days. You inject your usual dose and your blood sugar stays high. You increase the dose. It still does not work. You do not know if the insulin has failed or if your body has. By the time you know, you are already in crisis.
 
-I asked my endocrinologist once what I should do if supply chains collapsed. She looked at me like I had asked what to do if gravity stopped working. "That won't happen," she said. She was right. It will not happen here. It is happening elsewhere, to people whose citizenship is the wrong one.
+Ask an endocrinologist what to do if the supply chain collapses and you get the look reserved for someone asking what to do if gravity stopped. It won't happen, is the answer. And that is right, here. It will not happen here. It is happening elsewhere, to people whose citizenship is the wrong one.
 
-The autism researcher [Simon Baron-Cohen](https://www.cam.ac.uk/research/research-staff/simon-baron-cohen) published a study in 2003 arguing that autistic people have an empathy deficit. The study measured empathy by asking participants to identify emotions in photographs of eyes. It found that autistic people scored lower. What the study did not measure: whether autistic people could predict what another person needed to survive. That is a different kind of pattern recognition. It is also a different kind of empathy.
+The autism researcher Simon Baron-Cohen built an influential account of autism as an empathy deficit — in *The Essential Difference* (2003), and on the back of instruments like the Reading the Mind in the Eyes test, first published in 1997 and revised in 2001, which asks participants to identify emotions in photographs of eyes. Autistic participants scored lower. What that instrument did not measure: whether autistic people could predict what another person needed to survive. That is a different kind of pattern recognition. It is also a different kind of empathy.
 
 I can tell you exactly how many days a type 1 diabetic in Havana has left if the insulin supply stops. I can map the cascade: refrigeration fails, medication spoils, blood sugar spikes, ketoacidosis begins, hospitals cannot treat because there is no power for IV pumps. I can see the whole system from the inside because I live inside a version of it. The difference is that my version has not collapsed yet.
 
-Baron-Cohen's study treated empathy as the ability to read a face. It did not treat empathy as the ability to see a structure and know what happens when it fails. Those are not the same cognitive task. One is social. One is systemic. Autistic people are often better at the second one. We see patterns. We see dependencies. We see what breaks when the supply stops.
+That instrument treated empathy as the ability to read a face. It did not treat empathy as the ability to see a structure and know what happens when it fails. Those are not the same cognitive task. One is social. One is systemic. Autistic people are often better at the second one. We see patterns. We see dependencies. We see what breaks when the supply stops.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/systems-fail-in-order-of-dependence_symbol_3.jpg" alt="a generator the size of a fingernail sitting in the center of an enormous empty hospital room rendered in Soviet constructivist style illustration for Systems Fail in Order of Dependence" width="800" height="450" loading="lazy" decoding="async">
@@ -55,9 +72,9 @@ Baron-Cohen's study treated empathy as the ability to read a face. It did not tr
 
 The humanitarian argument against the Cuba blockade is that it kills civilians. The utilitarian argument is that it does not achieve its stated political goals. Both are true. Neither addresses the mechanism: a health system is only as resilient as its least replaceable input. Make that input inaccessible and you do not need to bomb a hospital. You just wait.
 
-There is a graph I think about often. It is from a 2019 paper on supply chain fragility in low- and middle-income countries. The x-axis is time. The y-axis is mortality. The graph shows two lines. The first line is mortality during a natural disaster — earthquake, hurricane, flood. Deaths spike, then decline as aid arrives. The second line is mortality during a sustained blockade. Deaths climb steadily. They do not decline. The line does not flatten. It just keeps rising because the condition is not temporary.
+Draw the two curves and the difference is the whole argument. Time on the x-axis, mortality on the y. Mortality in a natural disaster — earthquake, hurricane, flood — spikes and then declines as aid arrives. Mortality under a sustained blockade climbs steadily and does not decline. The line never flattens, because the condition is not temporary and no aid is coming to end it.
 
-The paper did not include Cuba. It was published three years before the 2026 fuel crisis. But the mechanism was already visible. A blockade does not need to be total to be lethal. It just needs to target the one thing the system cannot replace.
+Nobody needed the 2026 fuel crisis to see that mechanism. A blockade does not need to be total to be lethal. It just needs to target the one thing the system cannot replace.
 
 I wonder how many people in Washington have insulin in their fridge right now.
 
