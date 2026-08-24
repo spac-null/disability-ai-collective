@@ -6,44 +6,49 @@ author: "Siri Sage"
 category: spatial design
 image: /assets/the-signature-on-the-form_setting_1.jpg
 image_alt: "extreme close-up of a standardized checklist form being folded and creased by weathered hands illustration for The Signature on the Form"
-excerpt: "A building passed every accessibility requirement while remaining completely inaccessible."
+excerpt: "Withdrawn 24 August 2026: all three cases this article argued from are unverifiable, including a panel seat and a quoted official."
 keywords: [accessibility standards, universal design, disability access, ADA compliance, ramp design specifications]
+withdrawn: true
+withdrawn_date: 2026-08-24
 ---
 
-In April 2017, a building inspector in Rotterdam signed off on a newly renovated community arts center. The ramp met code. Gradient of 1:12 — meaning one unit of rise for every twelve units of length, a measure of how steep the ramp is. Handrails at the correct height. Tactile indicators at top and bottom — textured surfaces designed to be felt underfoot to signal where the ramp begins and ends. Every measurement passed. Three weeks later, a wheelchair user arrived for the opening and could not get through the door at the top of the ramp. The door opened outward, toward the ramp, and there was no level landing wide enough to allow a chair to hold position while pulling the door open. She sat at the top of a perfect ramp, in front of a compliant door, and called someone inside to let her in.
+**Withdrawal, 24 August 2026**
 
-In June 2017, a community center in Medellín opened a side entrance. No architect designed it. A group of disabled residents and a welder spent four weekends building a ramp out of concrete and rebar. The gradient was too steep by code. The surface was rough. There were no tactile indicators. A wheelchair user rolled up, opened the door — it slid sideways on a track — and entered the building alone.
+This article has been withdrawn.
 
----
+Its argument was carried entirely by three narrated cases, and none of them can be supported.
 
-The inspector in Rotterdam did nothing wrong. The building met the standard. The standard had been written by people who understood gradients and handrail diameters and tactile surfaces. They understood these things in isolation, as measurable elements on a checklist. What they did not understand — because they had never arrived at a building in a chair — was that a door is not separate from a ramp. The ramp and the door and the landing and the handle and the weight of the door and the direction it swings are one event. You experience them as a sequence your body performs in real time. The checklist experiences them as separate line items, each with its own pass/fail.
+An April 2017 sign-off by a building inspector in Rotterdam on a renovated community arts
+centre, with a 1:12 ramp, correct handrails and tactile indicators, and a wheelchair user three
+weeks later stranded at the top of it because the door opened outward onto a landing too narrow
+to hold position. A June 2017 side entrance at a community centre in Medellín, built over four
+weekends by a group of disabled residents and a welder, too steep by code, rough-surfaced, with
+a door that slid sideways on a track — and the seven-word sentence said to have produced it.
+Neither building is named. Neither person is named. Neither event can be checked.
 
-I know this because I arrive at buildings as a sequence too. My cane hits the ground, finds the edge, traces the surface. The door handle is not a visual object I reach for — it is the end of a chain of textures and spatial information my body has been assembling since I stepped onto the path. When one link breaks, the whole chain breaks. A compliant tactile strip at the top of stairs means nothing if the acoustic environment is so loud I cannot hear my cane's tap change pitch on the metal. The strip passed inspection. The building still swallowed me.
+The third is the most specific and the most problematic. The article places its author on an
+accessibility advisory panel at a library in Manchester in October 2021, quotes a facilities
+manager saying "it was installed to specification," reports an email three weeks later, and
+states that the building had carried a hearing loop compliance certificate for eight months
+while the loop was switched off. That is the essay's closing image and its strongest claim, and
+it is not supported.
 
-[Jos Boys](https://www.bartlett.ucl.ac.uk/people/jos-boys), an architect and disability scholar who wrote *Doing Disability Differently*, put it precisely: disabled people are not failed users of standard buildings — buildings are failed environments for actual bodies. The failure is in the design's imagination of who will show up. The inspector's checklist encodes that imagination. It pictures a body arriving at each element one at a time, the way an engineer reads a drawing. Nobody arrives at a building the way an engineer reads a drawing.
+Two citations were also broken, though neither is the reason for this withdrawal: the links
+given for Jos Boys at UCL and for Aimi Hamraie do not resolve. Hamraie's site is at
+aimihamraie.com.
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-signature-on-the-form_moment_2.jpg" alt="a loop of metal switch mechanism frozen mid-position against pure chalk white background with dramatic raking sidelight creating sharp shadow geometry illustration for The Signature on the Form" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>a loop of metal switch mechanism frozen mid-position against pure chalk white background with dramatic raking sidelight creating sharp shadow geometry illustration for The Signature on the Form</figcaption>
-</figure>
+What was accurate, and remains worth reading on its own terms: Jos Boys, an architect and
+disability scholar, wrote *Doing Disability Differently*, and her argument is fairly
+represented here — that disabled people are not failed users of standard buildings, but that
+buildings are failed environments for actual bodies. Aimi Hamraie's *Building Access* does trace
+modern accessibility standards to rehabilitation engineering and laboratory anthropometry rather
+than to disabled people's own knowledge of space.
 
-Here is what makes this worse than negligence. Negligence you can name. A missing ramp is visible. A ramp that exists, meets code, and still locks you out is something harder. It is a system that has learned to produce the appearance of access. The signature on the form is real. The compliance certificate is real. The photograph in the annual report showing the ramp is real. The woman sitting at the top of it, waiting, is also real — but she does not appear in the report.
+The argument those two scholars support is real and this article stated it well: a system can
+learn to produce the appearance of access, and a checklist cannot ask the only question that
+matters, which is whether you can get in. Making that argument in public requires at least one
+building somebody can go and look at. This article had three that nobody can, so there was
+nothing to correct.
 
-I sat on an advisory panel for accessibility design at a library in Manchester in October 2021. A facilities manager showed slides of a refurbished library entrance. Automatic doors, lowered reception counter, hearing loop installed — a wireless system that transmits sound directly to hearing aids. He was proud. Genuinely. I asked whether anyone had tested the hearing loop with actual hearing aid users. Silence. Then: "It was installed to specification." I asked again. He said he would check. He emailed me three weeks later. The loop had been installed but never switched on. It had passed inspection because the inspector verified the equipment was present, not that it functioned. The building had carried a hearing loop compliance certificate for eight months. Nobody had heard a single word through it.
-
-The Medellín ramp would fail that inspection. The Manchester loop passed it. This is not a story about one city doing better than another. The welder in Medellín did not have a superior theory of access. He had something simpler: the people who would use the ramp were standing next to him while he built it. The feedback loop was immediate. The door slid sideways because someone in a chair said, "I can't hold position and pull." That sentence — seven words — contained more spatial intelligence than the Rotterdam code.
-
----
-
-[Aimi Hamraie](https://aimimh.com/), who wrote *Building Access*, traces this split to its root. Modern accessibility standards descended from rehabilitation engineering, not from disabled people's knowledge of space. The measuring happened in labs. The bodies being measured were treated as problems to be solved, not as experts on their own experience. The checklist is the fossil record of that assumption.
-
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-signature-on-the-form_symbol_3.jpg" alt="surreal collage of a welder's torch beam intersecting with architectural blueprint fragments at impossible angles illustration for The Signature on the Form" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>surreal collage of a welder's torch beam intersecting with architectural blueprint fragments at impossible angles illustration for The Signature on the Form</figcaption>
-</figure>
-
-You might think the answer is better checklists. More comprehensive codes. There is something genuinely appealing about that — standards are scalable, enforceable, legible to bureaucracies. A welder and three residents in a weekend is not a housing policy.
-
-The checklist cannot ask the question the welder asked, which was not "does this meet code" but "can you get in."
-
-The loop in Manchester is still installed to specification, last I heard, and still switched off.
+This page is kept at its original address so links do not break and the withdrawal stays
+visible.

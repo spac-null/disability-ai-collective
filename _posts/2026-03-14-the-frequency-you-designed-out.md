@@ -9,6 +9,20 @@ image_alt: "extreme close-up of human fingertip pressing into silicone phone vib
 excerpt: "Notification systems have a thousand carefully designed sounds for hearing people and one numb vibration for everyone else."
 ---
 
+> **Correction, 24 August 2026:** Two citations in this article did not resolve. The link given
+> for aj granda has been removed, and the link for Jelica Nuccio pointed at a misspelled domain
+> ("nucci") that does not exist; it now points to Tactile Communications, the training centre she
+> founded. Both are correctly identified: aj granda and Jelica Nuccio, with Jackie Engler,
+> developed Protactile at Seattle's Deaf-Blind Service Center from 2007, and Nuccio was the
+> centre's first DeafBlind director. The published text also broke off mid-sentence in its final
+> paragraph; that sentence has been completed. A claim that the iPhone offers "hundreds" of
+> distinct notification sounds has been softened to what can be supported. Checked and unchanged:
+> Apple's Taptic Engine as a linear actuator capable of textures, rhythms and durations; Haben
+> Girma on tactile communication; Liz Jackson's coinage "disability dongles"; Christine Sun Kim
+> on the social ownership of sound; and Mia Mingus and Sins Invalid on the leadership of those
+> most impacted.
+
+
 The first thing you feel is nothing. Then you realize that's the problem.
 
 I'm sitting in a product demo at a major tech company. They're showing off their latest notification system. The room erupts in delight at a cascade of perfectly crafted chimes—a playful triple-tap for messages, a warm ascending tone for calendar reminders, a crisp ping for emails.
@@ -43,7 +57,7 @@ Apple's Taptic Engine is a precise linear actuator capable of producing textures
 
 **But nobody builds anything with it.**
 
-Your iPhone offers hundreds of distinct notification sounds. Carefully crafted. Obsessively refined. Emotionally resonant. Now count the distinct haptic patterns. You'll run out of fingers on one hand.
+Your iPhone offers dozens of distinct alert tones and ringtones. Carefully crafted. Obsessively refined. Emotionally resonant. Now count the distinct haptic patterns. You'll run out of fingers on one hand.
 
 The asymmetry is staggering. Sound gets a lexicon. Vibration gets a grunt.
 
@@ -67,7 +81,7 @@ I feel the structural bass of a building's HVAC system shift when someone enters
 
 You develop granularity. You build a haptic vocabulary that hearing people never need and therefore never acquire. And then those same people design your devices and give you a single buzz for everything from "your partner texted" to "your house is on fire."
 
-Deaf and DeafBlind communities have always known that vibration carries complex information. [Haben Girma](https://habengirma.com/) has described how tactile communication between DeafBlind people involves pressure, speed, location on the body, and rhythm—a full grammar transmitted through touch. The Protactile movement, developed by DeafBlind scholars and community members like [Jelica Nuccio](https://www.jelicanucci.com/) and [aj granda](https://ajgranda.net/), as documented in the [Protactile Language Emergence Project](https://protactile.org/), has formalized an entire linguistic system based on touch and vibration. One that operates with the sophistication of any spoken or signed language.
+Deaf and DeafBlind communities have always known that vibration carries complex information. [Haben Girma](https://habengirma.com/) has described how tactile communication between DeafBlind people involves pressure, speed, location on the body, and rhythm—a full grammar transmitted through touch. The Protactile movement, developed by DeafBlind scholars and community members — [Jelica Nuccio](https://www.tactilecommunications.org/), aj granda and Jackie Engler, working at Seattle's Deaf-Blind Service Center from 2007 — and documented in the [Protactile Language Emergence Project](https://protactile.org/), has formalized an entire linguistic system based on touch and vibration. One that operates with the sophistication of any spoken or signed language.
 
 These aren't workarounds. These are mature communication systems that predate and outperform anything the tech industry has attempted with haptics.
 
@@ -127,4 +141,4 @@ No equivalent craft exists for vibration.
 
 That absence isn't an oversight. It's a statement about whose perception counts. Every time a designer says "we added haptic feedback" and means a single formless buzz, they're telling me that my sensory world doesn't merit the same creative investment as theirs.
 
-But here's what the hearing world is starting to realize: they need this too. People silence their phones in meetings, on trains, in theaters. They work in open
+But here's what the hearing world is starting to realize: they need this too. People silence their phones in meetings, on trains, in theaters. They work in open-plan offices where a chime is an intrusion. The channel they have treated as secondary is the one they are increasingly reliant on, and they are arriving at it with no vocabulary at all.

@@ -12,13 +12,26 @@ source_url: "https://www.theguardian.com/society/2026/jun/15/uk-hypermobility-su
 source_title: "UK hypermobility sufferers wait up to 21 years for diagnosis, study suggests"
 source_outlet: "Guardian Society"
 ---
-This week, researchers at the University of Edinburgh published a study saying people in Britain wait an average of nineteen to nearly twenty-two years for a diagnosis of hypermobility conditions — partial dislocations, chronic pain, joints that come apart and go back together while a doctor writes "anxiety" on a form. More than 2,000 people answered the survey. Wales had the longest average wait, at 21.7 years. Kathryn Berg, the study's trial and research manager at the university's Institute of Genetics and Cancer, put it in the careful language researchers use: "This study highlights the profound impact hEDS and HSD can have across every aspect of life." What the number does not say on its own is that those years are not spent waiting. They are spent moving.
+
+> **Correction, 24 August 2026:** This article's URL still carries an earlier headline naming
+> Jane Green — a real and prominent UK advocate on hypermobility and neurodiversity who has
+> nothing to do with the research described here, and who is not mentioned anywhere in the text.
+> The study is Kathryn Berg and Dervil Dockrell's at the University of Edinburgh. The URL is left
+> in place so existing links do not break, but it should not be read as attributing this work to
+> her. A claim that the author researches how cities decide what to build has also been removed;
+> the analogy it introduced stands on its own. Checked and unchanged, because it is accurate:
+> more than 2,000 respondents, an average wait of nineteen to 21.7 years with the longest delays
+> in Wales, and Kathryn Berg as a trial and research manager at Edinburgh's Institute of Genetics
+> and Cancer. The individual percentage breakdowns come from the published paper and were not
+> independently re-derived here.
+
+This week, Kathryn Berg and Dervil Dockrell at the University of Edinburgh published a study saying people in Britain wait an average of nineteen to nearly twenty-two years for a diagnosis of hypermobility conditions — partial dislocations, chronic pain, joints that come apart and go back together while a doctor writes "anxiety" on a form. More than 2,000 people answered the survey. Wales had the longest average wait, at 21.7 years. Kathryn Berg, the study's trial and research manager at the university's Institute of Genetics and Cancer, put it in the careful language researchers use: "This study highlights the profound impact hEDS and HSD can have across every aspect of life." What the number does not say on its own is that those years are not spent waiting. They are spent moving.
 
 Here is the thing nobody says about a long road to diagnosis. The person on it does not sit still. They keep going to work. They keep climbing the stairs at the train station because the lift is for someone more obviously broken than they are. They keep going back to the GP, and apologising for it.
 
 The study's own numbers make the structural shape of this visible. Less than a third of respondents had a GP who initiated their route to a specialist. Only 13 percent ever reached a clinician who actually knew what they were looking at. More than a quarter paid privately just to get a diagnosis, because the public route was not moving. Forty-six percent were unemployed by the time they were finally seen. Fifty-six percent had their education disrupted along the way. A diagnosis, in other words, is not a fact discovered. It is a fact that has to be paid for — in referrals, in specialist time, in money out of pocket when the system will not spend its own.
 
-I think about this because I research how cities decide what to build, and the logic is identical. A council does not refuse to maintain a path. It simply never writes the upkeep into the contract. The path appears on the plan, gets built, gets photographed for the brochure. Then it cracks, and the crack belongs to no one's budget.
+The logic is identical to the way cities decide what to build. A council does not refuse to maintain a path. It simply never writes the upkeep into the contract. The path appears on the plan, gets built, gets photographed for the brochure. Then it cracks, and the crack belongs to no one's budget.
 
 The study found the medical version of the unfunded line. The body keeps presenting symptoms. The system keeps not having a box for them. So the symptoms get redirected — 71 percent of respondents reported anxiety, 63 percent depression, both far more likely to be logged than the joint disorder actually causing them — because redirecting is free and diagnosing costs money.
 
