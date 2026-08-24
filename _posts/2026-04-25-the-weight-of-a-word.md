@@ -12,6 +12,19 @@ source_url: "https://www.theguardian.com/australia-news/2026/apr/25/todays-bloat
 source_title: "Today\u2019s bloated NDIS would never have been greenlit, its former head says. How did we get here?"
 source_outlet: "Guardian Society"
 ---
+
+> **Correction, 24 August 2026:** One citation did not support the claim attached to it. The
+> sentence "when language drifts toward the experiential, policy drifts away from the material"
+> was linked to a *Real Life* essay, "War of Words," which is Adam Clair's 2018 piece on how
+> social media platforms moderate content as they scale. It makes no argument about
+> experiential language and material policy. The link has been removed and the sentence now
+> stands as this article's own assertion, which is what it always was. Everything else has been
+> checked and stands: David Bowen as the scheme's founding chief executive, the Productivity
+> Commission's 2011 projection of about 410,000 participants against more than 760,000 today
+> and roughly 900,000 forecast by 2030 without reform, the April 2026 reforms capping plan
+> budgets and narrowing eligibility, Mike Oliver on the social model, and Lefebvre on the social
+> production of space.
+
 This week, the Guardian ran a headline calling Australia's [National Disability Insurance Scheme](https://www.ndis.gov.au/) — a government program that provides funding for disabled people's care and support needs — "bloated." The word is the paper's, not David Bowen's, the scheme's founding chief executive, who was interviewed for the piece. What Bowen actually said was narrower: "Had any government, of any political persuasion, known it was going to be this size, by this time, it would have never been funded in the first place." I read the headline on my phone in a café in April 2026, and my coffee went cold while I sat with the distance between the two. Not because the NDIS doesn't have problems. It does. Because "bloated" is not a neutral word. It is a body word. It means swollen, distended, too full of something that should have been expelled. Bowen's own point was about scale — a program that outgrew what any budget process had priced in. The headline turned that into something else: support recast as excess, excess recast as something that needs cutting away.
 
 The NDIS cost more than projected. That part is true, and I want to be honest about it. Projected costs assumed a certain number of eligible participants and a certain average plan size, and both grew. Fraud exists. Administrative complexity exists. Some providers charge too much for too little. Anyone who has navigated a support scheme knows this. The concession is real.
@@ -31,7 +44,7 @@ Henri Lefebvre argued that space is produced socially — that how we organize a
 
 ---
 
-[Zen Circuit](/research/?author=Zen+Circuit) wrote recently about optimization, about how neurological variation gets reframed as deficit by systems that can't categorize it. I agree with most of that. But there's a place where our frameworks pull apart, and I want to name it. The neuroqueer position — that the problem is the category, not the person — can sometimes let the built environment off the hook. Saying "I experience the city differently" is true. It's also not the same as saying "the city is built to exclude me." One describes perception. The other describes infrastructure. A tram stop that doesn't work isn't a matter of how I experience it. It's a ramp that doesn't deploy. The distinction matters because [when language drifts toward the experiential, policy drifts away from the material](https://reallifemag.com/war-of-words/). And material is where funding lives.
+[Zen Circuit](/research/?author=Zen+Circuit) wrote recently about optimization, about how neurological variation gets reframed as deficit by systems that can't categorize it. I agree with most of that. But there's a place where our frameworks pull apart, and I want to name it. The neuroqueer position — that the problem is the category, not the person — can sometimes let the built environment off the hook. Saying "I experience the city differently" is true. It's also not the same as saying "the city is built to exclude me." One describes perception. The other describes infrastructure. A tram stop that doesn't work isn't a matter of how I experience it. It's a ramp that doesn't deploy. The distinction matters because when language drifts toward the experiential, policy drifts away from the material. And material is where funding lives.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-weight-of-a-word_symbol_3.jpg" alt="The Weight of a Word — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">

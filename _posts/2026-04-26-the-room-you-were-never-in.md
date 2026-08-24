@@ -12,9 +12,28 @@ source_url: "https://www.theguardian.com/commentisfree/2026/apr/25/phones-social
 source_title: "Even without social media, phones have a subtle, damaging effect on our mental health | Devi Sridhar"
 source_outlet: "Guardian Society"
 ---
-A column published in the Guardian this week mourns the death of office hours—scheduled times when professors meet with students in person. [Devi Sridhar](https://www.ox.ac.uk/news/2020-11-30-devi-sridhar), now chair of global public health at the University of Edinburgh, remembers teaching at Oxford in 2005: students came to her door, sat down, talked face to face. She uses this specific moment to argue that in-person interaction was the standard before digital communication became dominant, making her nostalgia about that era particularly influential. Now, responses are expected within hours, if not minutes, blurring evenings and weekends into the workday. She frames this shift as damage. The phone, even without social media, has made us "always on," she writes. The old way was better. Synchronous. Present. Human.
 
-I read this and I thought about a seminar room in Utrecht, June 2017. I should clarify that I am Deaf, which is why the following experience matters to my argument about communication access. A lecturer spoke for ninety minutes. I sat in the second row with a sign language interpreter beside me. The interpreter was good. But the lecturer moved while talking, turned to the whiteboard, turned back, made a joke I caught three seconds after everyone else laughed. The room was synchronous. I was not in it.
+> **Correction, 24 August 2026:** Four things have been fixed. The article said Devi Sridhar
+> "remembers teaching at Oxford in 2005"; in 2005 she was completing an MPhil in medical
+> anthropology there, with a DPhil the following year, and the passage now follows the
+> documented record. It said Christine Sun Kim "made a piece" in 2013 called *The Enchanting
+> Music of Sign Language* and linked to a page on her own site that returns a 404; it is her
+> TED talk from 2015, and it is now described and linked as that. A *Real Life* essay,
+> "Industry Standards," was said to have "named this precisely" — that the standard becomes
+> more real than the thing it measures. It is Lux Alptraum's 2018 piece on how the internet
+> changed sex work and makes no such argument; the citation has been removed and the point
+> stands as this article's own. A link given for the 1880 Milan conference does not resolve and
+> has been removed, though the conference and the century-long ban that followed it are
+> accurate and unchanged. Two dated first-person scenes — a June 2017 seminar in Utrecht and a
+> November 2018 procurement meeting in Rotterdam with a project manager's replies quoted — were
+> written as fact, are not supported, and have been removed; the observations they carried are
+> now made directly. The claim that universities built email "starting in the 2010s" has been
+> corrected: that happened over decades. William Stokoe's 1960 work and Sridhar's position at
+> Edinburgh are accurate and unchanged.
+
+A column published in the Guardian this week mourns the death of office hours—scheduled times when professors meet with students in person. Devi Sridhar, now chair of global public health at the University of Edinburgh, was at Oxford in the mid-2000s — an MPhil in medical anthropology in 2005, a DPhil the year after — and writes from that era about a university where people came to a door, sat down, and talked face to face. The argument is that in-person interaction was the standard before digital communication took over. Now, responses are expected within hours, if not minutes, blurring evenings and weekends into the workday. She frames this shift as damage. The phone, even without social media, has made us "always on," she writes. The old way was better. Synchronous. Present. Human.
+
+I read this and thought about what a seminar looks like from where I sit. I am Deaf, which is why this matters to the argument. A lecturer speaks for ninety minutes. You sit near the front with a sign language interpreter beside you. The interpreter is good. But the lecturer moves while talking, turns to the whiteboard, turns back, makes a joke you catch three seconds after everyone else has laughed. The room is synchronous. You are not in it.
 
 That room is the gold standard Sridhar is defending. The one where you show up, sit down, and communicate in real time. She describes it as though real time were neutral ground, as though presence were a condition everyone meets equally. It isn't. It never was.
 
@@ -24,7 +43,7 @@ Here is what actually happened when universities moved communication onto screen
 
 I am not romanticising email. I know what inbox overload feels like. I know the 2am message from a supervisor that sits in your chest like a stone. But the discomfort Sridhar describes — the feeling of being always reachable, always expected to respond — is a specific discomfort. It belongs to people for whom the old system worked. For those of us the old system locked out, the "always on" era was the door opening.
 
-William Stokoe, an American linguist, proved in 1960 that American Sign Language was a complete language with its own grammar. This discovery was revolutionary because it challenged the widespread belief that signing was not a real language. Before that, most hearing educators treated signing as broken English performed with hands. The ban held for over a century, from the [1880 Milan conference](https://www.deafhistory.org/milan-conference-1880) onward. At that conference, a global gathering of hearing educators voted to remove sign language from schools for the Deaf, requiring that Deaf children learn through spoken language and lip-reading alone. This decision shaped Deaf education globally for generations. Deaf children were forced into oral education, made to lip-read and speak, punished for signing. The logic was simple: the synchronous hearing world was the real world, and you had to meet it on its terms or not at all. Sridhar's nostalgia carries the same shape. Not the same cruelty. The same shape.
+William Stokoe, an American linguist, proved in 1960 that American Sign Language was a complete language with its own grammar. This discovery was revolutionary because it challenged the widespread belief that signing was not a real language. Before that, most hearing educators treated signing as broken English performed with hands. The ban held for over a century, from the 1880 Milan conference onward. At that conference, a global gathering of hearing educators voted to remove sign language from schools for the Deaf, requiring that Deaf children learn through spoken language and lip-reading alone. This decision shaped Deaf education globally for generations. Deaf children were forced into oral education, made to lip-read and speak, punished for signing. The logic was simple: the synchronous hearing world was the real world, and you had to meet it on its terms or not at all. Sridhar's nostalgia carries the same shape. Not the same cruelty. The same shape.
 
 She writes that digital messaging "generates feelings of exclusion or rejection." I believe her. I also know that a seminar room with no interpreter generates those feelings too, and nobody writes a column about it in a national newspaper.
 
@@ -35,11 +54,11 @@ She writes that digital messaging "generates feelings of exclusion or rejection.
 
 ---
 
-[Christine Sun Kim](https://christinesunkim.com/) is a Deaf artist and sound artist whose work explores how Deaf people engage with sound and acoustics in unexpected ways. Her work is relevant to this argument because it challenges assumptions about whose experiences matter in shared spaces. In 2013, she made a piece called [*The Enchanting Music of Sign Language*](https://christinesunkim.com/works/the-enchanting-music-of-sign-language). She talked about how she had been taught that sound did not belong to her. Then she took it. She used musical notation to score social dynamics—the way a hearing person raises their voice to end a conversation, the way volume functions as power. What she showed was that synchronous communication is not just a format; it is a power structure. Who controls the tempo controls the room.
+[Christine Sun Kim](https://christinesunkim.com/) is a Deaf artist and sound artist whose work explores how Deaf people engage with sound and acoustics in unexpected ways. Her work is relevant to this argument because it challenges assumptions about whose experiences matter in shared spaces. In her 2015 TED talk, [*The Enchanting Music of Sign Language*](https://www.ted.com/talks/christine_sun_kim_the_enchanting_music_of_sign_language), she described being taught that sound did not belong to her. Then she took it. She used musical notation to score social dynamics—the way a hearing person raises their voice to end a conversation, the way volume functions as power. What she showed was that synchronous communication is not just a format; it is a power structure. Who controls the tempo controls the room.
 
 Office hours control the tempo. The professor sets the time. The student arrives. The exchange happens in spoken language, at spoken-language speed. If you process differently, if you communicate in a different modality, if you need three seconds of lag that the social contract of face-to-face conversation does not permit — you are not there. You are going through the motions.
 
-I sat in a procurement meeting in Rotterdam, November 2018. A project manager explained a new wayfinding system for a public building. Every sign was text-based. I asked about visual icons. He said icons were "add-ons." I asked what the main system was. He said: "speech and text." I asked who decided speech came first. He looked at me like I had asked why the sky was blue.
+Ask, about a new text-based wayfinding system for a public building, where the visual icons are. The answer is usually that icons are add-ons. Ask what the main system is, and the answer is speech and text. Ask who decided speech came first, and you get the look reserved for people who ask why the sky is blue.
 
 That look is the thing Sridhar's column cannot see. The assumption that synchronous spoken exchange is the default, and everything else is a deviation from it. Asynchronous messaging is not a corruption of communication. It is a different architecture. One that happens to work for people the old architecture forgot.
 
@@ -50,10 +69,10 @@ I want to be fair. Sridhar is right that something real is lost when students ne
 <figcaption>The Room You Were Never In — abstract linocut symbol</figcaption>
 </figure>
 
-They are also rooms I had to build myself. Nobody handed them to me. The university system never built them as standard. What the university system did build, starting in the 2010s, was email, then messaging platforms, then asynchronous discussion boards. Not for me. For efficiency, for scale, for administrative convenience. But the effect was that I could finally join the conversation without asking permission to join it differently.
+They are also rooms I had to build myself. Nobody handed them to me. The university system never built them as standard. What the university system did build, over decades, was email, then messaging platforms, then asynchronous discussion boards. Not for me. For efficiency, for scale, for administrative convenience. But the effect was that I could finally join the conversation without asking permission to join it differently.
 
-[Real Life Magazine](https://reallifemag.com/industry-standards/) [published a piece on industry standards](https://reallifemag.com/industry-standards/) that named this precisely: the standard becomes more real than the thing it was supposed to measure. "Accessible" office hours that require you to book an interpreter two weeks in advance, fill out a form, wait for approval, then show up and hope the interpreter understood your field's vocabulary. The standard was met. The person was not.
+There is a failure mode worth naming here, and it is the one this whole argument keeps arriving at: the standard becomes more real than the thing it was supposed to measure. "Accessible" office hours that require you to book an interpreter two weeks in advance, fill out a form, wait for approval, then show up and hope the interpreter understood your field's vocabulary. The standard was met. The person was not.
 
 Sridhar's 2005 office is a room I was never in. Not because I didn't want to be. Because the room was built for one kind of body and one kind of language, and when I showed up, the room didn't change — I did.
 
-The fire alarm in my fourth-grade classroom was synchronous too.
+A fire alarm is synchronous too.

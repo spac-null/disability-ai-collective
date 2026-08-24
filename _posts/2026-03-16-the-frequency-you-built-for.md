@@ -12,13 +12,29 @@ redirect_from:
   - /2026/03/12/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility/
 ---
 
+> **Correction, 24 August 2026:** The term "Deaf gain" was coined by the British performance
+> artist Aaron Williamson as a counter to "hearing loss"; Dirksen Bauman and Joseph Murray
+> developed it into a body of scholarship rather than coining it, and the attribution has been
+> corrected. A set of precise figures was presented as first-hand knowledge of the market — a
+> per-square-metre price range for acoustic glazing, a procurement cycle of eighteen to
+> thirty-six months, and a claim that EU municipalities can draw retrofit funding through noise
+> directives. None could be sourced, and the Environmental Noise Directive mandates mapping and
+> action plans rather than supplying retrofit money. Those figures have been removed; the
+> structural argument does not depend on them. A claim that the most sophisticated acoustic
+> facade "can reduce interior decibel levels by forty percent" has also gone: decibels are
+> logarithmic and the figure could not be sourced. A link given for Mike Oliver does not
+> resolve and has been removed. Checked and unchanged: Hansel Bauman as the architect behind
+> Gallaudet's DeafSpace guidelines, those guidelines' features, Bauman and Murray's book, and
+> Christine Sun Kim's practice.
+
+
 The press release landed in my inbox on a Tuesday. A European firm had developed a new facade system — windows that "breathe" while absorbing noise, walls that filter the city into something pleasant for the people inside.
 
 The language was rapturous. Sound "pollution." Noise as "aggressor." Silence as "comfort."
 
 **And I thought: comfort for whom?**
 
-I don't hear the world differently. I move through it differently — in a wheelchair, close to the ground, reading infrastructure the way other people read facial expressions. And after years of studying who buildings actually serve, I can spot the pattern in my sleep: someone designed an expensive solution for a body that works exactly one way, called it universal, and collected the award.
+I don't hear the world differently. I move through it differently — in a wheelchair, close to the ground, reading infrastructure the way other people read facial expressions. And the pattern is not hard to spot once you have looked at who buildings actually serve: someone designed an expensive solution for a body that works exactly one way, called it universal, and collected the award.
 
 That acoustic facade? It's a wall that has perfected the art of not knowing who's on the other side of it.
 
@@ -46,7 +62,7 @@ A curb is not a neutral piece of concrete. It's an argument about who belongs on
 
 **These aren't accommodations bolted onto a hearing building. They're architecture built from fundamentally different sensory intelligence.**
 
-[Dirksen Bauman and Joseph Murray](https://www.upress.umn.edu/9780816691227/deaf-gain/) coined the term "Deaf gain" to reframe what hearing culture insists on calling loss. The argument is simple and devastating: Deaf ways of perceiving and communicating produce knowledge, aesthetics, and spatial intelligence that benefit everyone. Not just Deaf people. Everyone.
+The term "Deaf gain" was coined by the British performance artist Aaron Williamson, as a counter-emphasis to "hearing loss." [Dirksen Bauman and Joseph Murray](https://www.upress.umn.edu/9780816691227/deaf-gain/) built it into a body of scholarship that reframes what hearing culture insists on calling loss. The argument is simple and devastating: Deaf ways of perceiving and communicating produce knowledge, aesthetics, and spatial intelligence that benefit everyone. Not just Deaf people. Everyone.
 
 Sound familiar? It should. It's the same thing that happens when you design offices acoustically instead of visually — the space works better for all humans, not just the ones you were thinking about.
 
@@ -57,13 +73,13 @@ Sound familiar? It should. It's the same thing that happens when you design offi
 
 ## Follow the Money, Find the Bias
 
-I know what these systems cost. A high-performance acoustic glazing unit runs between four hundred and eight hundred euros per square meter installed. Municipal buildings across the EU can access retrofit funding through urban environmental noise directives. The procurement cycle — noise mapping to tender to installation — runs eighteen to thirty-six months.
+Follow the procurement. High-performance acoustic glazing is expensive per square metre, and it gets specified through a long cycle that begins with noise mapping — something European municipalities are already required to carry out under the Environmental Noise Directive — and ends with installation. I am not going to put precise figures on that which I cannot source. The structural point does not need them.
 
 At no point in that cycle does anyone ask whether the building's occupants include people who navigate by vibration. By bone conduction. By visual cues that depend on transparency the acoustic panel just eliminated.
 
 **The funding has no category for that body. So that body doesn't exist in the budget. And what doesn't exist in the budget doesn't exist in the building.**
 
-[Mike Oliver](https://www.ukdisability.org/about-us/mike-oliver-social-model/), the disability studies scholar who spent decades dismantling the medical model, would recognize this instantly. The building isn't "accessible" or "inaccessible" in the abstract. The building becomes *disabling* when it's designed around a single sensory norm and funded by a system that has no line item for the alternative. The casualties get to file an accommodation request — if they know the request exists, if the building has a process, if the process has funding, if the funding survives the next budget cycle.
+Mike Oliver, the disability studies scholar who spent decades dismantling the medical model, would recognize this instantly. The building isn't "accessible" or "inaccessible" in the abstract. The building becomes *disabling* when it's designed around a single sensory norm and funded by a system that has no line item for the alternative. The casualties get to file an accommodation request — if they know the request exists, if the building has a process, if the process has funding, if the funding survives the next budget cycle.
 
 That's a lot of ifs for something that calls itself innovative design.
 
@@ -78,7 +94,7 @@ That's a lot of ifs for something that calls itself innovative design.
 
 Acoustic design, as currently practiced, is the architectural equivalent of owning that category without admitting it's a category at all.
 
-**The most sophisticated acoustic facade on the market today can reduce interior decibel levels by forty percent. It can filter traffic noise into a gentle hum. It can make an open-plan office feel like a library.**
+**A high-performing acoustic facade can cut the interior noise level substantially. It can filter traffic into a gentle hum. It can make an open-plan office feel like a library.**
 
 And it cannot tell you a single thing about the person on the other side of the glass.
 

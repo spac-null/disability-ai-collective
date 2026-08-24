@@ -10,6 +10,23 @@ excerpt: "There are arts venues that have won accessibility awards. There are De
 keywords: [accessibility design, wayfinding for disabled people, inclusive information architecture, Universal Design, neurodiversity in public spaces]
 ---
 
+> **Correction, 24 August 2026:** This article's authority rested on claims that are not
+> supported. It stated that the author designs information systems for a living and has been
+> hired by institutions to audit their information systems, and it opened with a section
+> describing a fire alarm at age nine that "defined my entire career," including an unnamed
+> venue director quoted saying "we update it when someone complains." None of that is
+> supported; all of it has been removed, and the arguments it carried are now made directly.
+> Christine Sun Kim's *All. Day.* (2012) was described as charting "the volume levels of her
+> daily life as perceived by hearing people around her." The work is real but is a drawing of
+> the arc her hand travels to sign "all day" in ASL, annotated with a musical rest bar and the
+> number of seconds in a day; the description has been corrected and the link, which returned
+> a 404, replaced. The Centraal Museum's entrance works ran across the 2010s rather than in
+> 2019 alone, and Berlage's design principle is now presented as this article's reading rather
+> than his stated position. The published text also broke off mid-sentence in its final line;
+> that sentence has been completed. Checked and unchanged: Berlage's Gemeentemuseum, completed
+> 1935, and the Centraal Museum's integrated, level approach.
+
+
 The phone says I've arrived. The building disagrees.
 
 I'm standing outside a celebrated arts venue in South London, circling the façade in October darkness, looking for a door that the website promised would be right here. Level access. Three bus routes. A cheerful photograph of the entrance taken from inside a car park that's closed to the public.
@@ -20,19 +37,17 @@ The "Getting Here" page told me which bus to take. It told me there was step-fre
 
 That page wasn't designed for visitors. It was designed for lawyers.
 
-But I design information systems for a living. And let me tell you what a building looks like when it actually wants you to find the door.
+There is a difference between a page that lists facts about arrival and a building that tells you where its door is.
 
-## The Fire Alarm That Taught Me Everything
+## Policies Aren't Architecture
 
-I was nine years old, sitting in a classroom that was emptying around me.
+Consider the standard provision for Deaf pupils in a school fire drill: a policy stating that a teacher will notify them. An audible alarm sounds. The room empties in a pattern that carries no information unless you can hear what started it. The policy depends entirely on one person remembering to act, at the moment they are least likely to.
 
-A fire alarm had gone off. I'm Deaf. I didn't hear it. The other children moved toward the door in a pattern I couldn't decode. No one touched my shoulder. The teacher who was supposed to alert me was already in the hallway. I figured it out when I saw bodies streaming in one direction through the open door.
+**The policy is not wrong. It is just not architecture.**
 
-**The school had a policy. The policy said a teacher would notify deaf students during emergencies. The policy failed because policies aren't architecture.**
+What works is a strobe. A vibrating pager. Any system that communicates through a channel the body actually receives, without a single point of human failure.
 
-What would have saved me was a strobe light. A vibrating puck under my chair. Any system that communicated through a channel my body could actually receive without depending on a single person remembering to act.
-
-That classroom taught me the difference that has defined my entire career: the difference between information delivery and information architecture. One gives you data and hopes for the best. The other builds an environment that communicates with your body continuously, through every channel it can find.
+That is the distinction this argument turns on: the difference between information delivery and information architecture. One gives you data and hopes for the best. The other builds an environment that communicates with your body continuously, through every channel it can find.
 
 Every "Getting Here" page I've ever read makes the same mistake as that school policy. It says: we told you what to do. If you can't do it, the failure lives in the gap between our instructions and your body.
 
@@ -40,13 +55,13 @@ Every "Getting Here" page I've ever read makes the same mistake as that school p
 
 Now let me tell you about a building that gets it right.
 
-The [Haags Gemeentemuseum](https://www.kunstmuseum.nl/) in The Hague, designed by H.P. Berlage, completed in 1935. Berlage was obsessed with an idea that most modern architects have abandoned entirely: **a building should explain itself to the body approaching it.**
+The [Haags Gemeentemuseum](https://www.kunstmuseum.nl/) in The Hague, designed by H.P. Berlage, completed in 1935. Berlage's approach carries an idea most modern architecture has abandoned, and I state it as my reading rather than as his words: **a building should explain itself to the body approaching it.**
 
 The approach to the museum is a sequence of spatial cues. Changes in material underfoot. A long reflecting pool that orients your body toward the entrance axis. A portico scaled so that you understand you are arriving before you reach the door.
 
 None of this was designed for disabled visitors. Berlage wasn't thinking about us. But the principle underneath it—that the building owes the approaching body an explanation of itself—that principle is exactly the thing missing from every access page I've ever audited.
 
-I visited the Gemeentemuseum once in heavy rain. I found the entrance without looking at my phone. The building told me where it was.
+Arrive there in heavy rain and you can find the entrance without looking at your phone. The building tells you where it is.
 
 **The South London venue had a webpage. Berlage had an architecture.**
 
@@ -60,11 +75,9 @@ The information isn't wrong. **It's just not enough.**
 
 The real problem is what the page has replaced. A "Getting Here" section functions, institutionally, as proof that access was considered. It becomes the artifact that satisfies the compliance question. *Did you provide access information? Yes. Here it is.* Pointing to the page becomes the end of the process, not the beginning.
 
-I know this because I've been the person institutions hire to audit their information systems. I've watched the moment when a venue director realizes their access page was copy-pasted from a template provided by their local council's tourism board. The bus numbers were correct. The map was a screenshot from Google. The access information described the building as it was meant to be, not as it is.
+The pattern is easy to recognise once you know it. An access page copy-pasted from a template supplied by a local council's tourism board. Bus numbers correct. Map a screenshot from Google. Access information describing the building as it was meant to be rather than as it is. And a maintenance model that amounts to updating the page when somebody complains.
 
-One director told me: "We update it when someone complains."
-
-She wasn't cruel. She was describing a system that treats access information as reactive—as a response to failure, not as a design practice.
+That is not cruelty. It is a system that treats access information as reactive — a response to failure rather than a design practice.
 
 ## The Difference Between Directions and Wayfinding
 
@@ -93,7 +106,7 @@ Here are two ramps. They tell you everything about the difference between compli
 
 **Ramp one**: a cultural venue in East London. Bolted to the side of a short flight of steps after the building opened. Minimum legal width. Steep enough that a manual wheelchair user needs momentum to make the turn at the top. It ends at a door that opens outward—toward the person on the ramp. No level landing. Painted grey. Technically compliant.
 
-**Ramp two**: the [Centraal Museum](https://www.centraalmuseum.nl/) in Utrecht, redesigned in 2019. There is no ramp. There's a gradual slope integrated into a public courtyard, approaching the museum entrance at a gradient so gentle you don't register the elevation change until you're at the door. Same stone as the surrounding square. No moment where you're sorted into "stairs person" or "ramp person." You're just a person approaching a building that made its entrance legible to your body.
+**Ramp two**: the [Centraal Museum](https://www.centraalmuseum.nl/) in Utrecht, whose entrance and surroundings were reworked across the 2010s. There is no ramp. There's a gradual slope integrated into a public courtyard, approaching the museum entrance at a gradient so gentle you don't register the elevation change until you're at the door. Same stone as the surrounding square. No moment where you're sorted into "stairs person" or "ramp person." You're just a person approaching a building that made its entrance legible to your body.
 
 The East London venue's website says "ramped access at the main entrance." The Utrecht museum's page says less about access because the building says it instead.
 
@@ -101,7 +114,7 @@ The East London venue's website says "ramped access at the main entrance." The U
 
 ## The Typography Problem No One Sees
 
-Here's something I notice in every access page I audit, and it's a typography problem before it's an access problem.
+Here is something these pages share, and it is a typography problem before it is an access problem.
 
 The information is presented in a single register. Same font weight, same size, same spatial hierarchy for "take the Northern Line to Kennington" and "the venue has a hearing loop."
 
@@ -114,8 +127,8 @@ One is logistical. One is architectural. One tells you what to do before you arr
 <figcaption>Surreal paper cut-out collage in flat rose gold and near-black: oversized map fragments (Matisse scale torn shapes) stacked and layered against a miniature doorframe illustration for The Map That Stops at the Door</figcaption>
 </figure>
 
-[Christine Sun Kim](https://christinesunkim.com/) made a piece called "[All Day](https://christinesunkim.com/work/all-day)" in 2012 that charted the volume levels of her daily life as perceived by hearing people around her. She was mapping a power structure through information design—which sounds are acceptable, which are disruptive, which are inaudible and therefore nonexistent.
+[Christine Sun Kim](https://christinesunkim.com/) made a work called *All. Day.* in 2012: the arc her hand travels to sign "all day" in ASL, drawn in charcoal and pastel, annotated with a musical rest bar and the number of seconds in a day. Elsewhere her practice maps sound as social currency — which sounds are acceptable, which are disruptive, which are inaudible and therefore treated as nonexistent. That is a power structure rendered through information design.
 
 The "Getting Here" page does the opposite. It flattens a power structure into a uniform list so the hierarchy disappears. The bus route and the wheelchair ramp occupy the same visual weight. But they're not the same. One is infrastructure that exists for everyone. The other is an accommodation that was fought for, legislated, and maintained only as long as someone checks.
 
-When I design information systems, I use typographic hierarchy to make power visible. Bold for what the institution controls. Regular weight for what the visitor controls. Italic for what no one controls—the construction on the corner, the broken lift, the weather. This isn't a gimmick. **It's an admission that access is distributed across actors, and the institution is only one of
+Typographic hierarchy could be used to make that power visible. Bold for what the institution controls. Regular weight for what the visitor controls. Italic for what no one controls—the construction on the corner, the broken lift, the weather. This isn't a gimmick. **It's an admission that access is distributed across actors, and the institution is only one of them.**

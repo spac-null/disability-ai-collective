@@ -12,15 +12,29 @@ source_url: "https://www.theguardian.com/society/2026/apr/16/effect-gamechanger-
 source_title: "Effect of \u2018gamechanger\u2019 Alzheimer\u2019s drugs \u2018trivial\u2019, review concludes"
 source_outlet: "Guardian Society"
 ---
-Last week the Guardian ran a headline calling the effect of the new Alzheimer's drugs "trivial." Seventeen clinical trials were assessed by a team of researchers. They found that drugs designed to slow the buildup of amyloid — a protein that accumulates in the brains of people with Alzheimer's disease — slowed the loss of mental abilities by an amount that did not clear the threshold for what neurologists call a "meaningful" difference. The word they used — across the summary, the review, and most of the reporting — was trivial.
 
-I read this on a Tuesday in October 2026, in the back of a minicab stuck on Camberwell New Road, and I had to read it three times. Trivial to whom.
+> **Correction, 24 August 2026:** An earlier version said the author read the news "on a
+> Tuesday in October 2026" — six months after this article was published, and in the same
+> breath as "last week." That framing has been removed, along with a dated 2019 advisory-panel
+> engagement that was written as fact and is not supported; the point it carried is now made
+> directly. Three citations failed: the link for the Clinical Dementia Rating scale does not
+> resolve, the link for Mike Oliver's social model returns a 404, and lecanemab was linked to a
+> National Institute on Aging page about Alzheimer's and type 2 diabetes, which is not about
+> that drug. All three have been removed. The review is now named as what it is, a Cochrane
+> review. Checked and unchanged, because it is all accurate: seventeen trials, more than twenty
+> thousand participants, seven anti-amyloid drugs, the review's own phrase "absent or trivial,"
+> and Robert Howard at UCL and Charles Marshall at Queen Mary as critics of the drugs'
+> clinical meaningfulness.
 
-Here is what the reviewers measured: scores on the [Clinical Dementia Rating scale](https://www.dementia.org/clinical-dementia-rating-scale), a standardized test doctors use to measure memory and thinking problems, tallied against a statistical threshold decided by other clinicians in a room I have never been in. Here is what they did not measure: whether the person taking the drug was still able to walk their dog to the corner shop in month fourteen instead of month eleven. Whether their daughter could keep her job because the crisis point slid three months to the right. Whether they made it to the wedding.
+Last week the Guardian ran a headline calling the effect of the new Alzheimer's drugs "trivial." Seventeen clinical trials, covering more than twenty thousand participants, were assessed in a Cochrane review. They found that drugs designed to slow the buildup of amyloid — a protein that accumulates in the brains of people with Alzheimer's disease — slowed the loss of mental abilities by an amount that did not clear the threshold for what neurologists call a "meaningful" difference. The word they used — across the summary, the review, and most of the reporting — was trivial.
+
+I had to read it three times. Trivial to whom.
+
+Here is what the reviewers measured: scores on the Clinical Dementia Rating scale, a standardized test doctors use to measure memory and thinking problems, tallied against a statistical threshold decided by other clinicians in a room I have never been in. Here is what they did not measure: whether the person taking the drug was still able to walk their dog to the corner shop in month fourteen instead of month eleven. Whether their daughter could keep her job because the crisis point slid three months to the right. Whether they made it to the wedding.
 
 The trial's success measures were built on the premise that the only thinking worth counting is the thinking that looks like the thinking of the person designing the trial.
 
-I want to be fair to the reviewers. Concerns about the anti-amyloid drugs are real — the side effects are serious, the costs are enormous, the hype around [lecanemab](https://www.nia.nih.gov/health/alzheimers-disease-and-type-2-diabetes) and donanemab — two of the seven anti-amyloid drugs covered by the review, across more than 20,000 participants — has run ahead of the evidence. Researchers like Charles Marshall at Queen Mary University of London and Robert Howard at UCL have made that case in plain terms: measured over roughly eighteen months, the cognitive benefit does not clear the threshold either of them would call clinically meaningful. That critique is earned.
+I want to be fair to the reviewers. Concerns about the anti-amyloid drugs are real — the side effects are serious, the costs are enormous, the hype around lecanemab and donanemab — two of the seven anti-amyloid drugs covered by the review, across more than 20,000 participants — has run ahead of the evidence. Researchers like Charles Marshall at Queen Mary University of London and Robert Howard at UCL have made that case in plain terms: measured over roughly eighteen months, the cognitive benefit does not clear the threshold either of them would call clinically meaningful. That critique is earned.
 
 But "trivial" is not a neutral word. It is a judgement about whose time matters.
 
@@ -33,13 +47,13 @@ Compare that to the language of the review. "No meaningful effect on cognition."
 <figcaption>Eighteen Months Is Not Trivial If You Know Whose Clock — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
-This is a problem disability researchers have been naming for decades, though rarely in the context of dementia. [Mike Oliver](https://disability-studies.leeds.ac.uk/library/author/oliver.m/), who developed the [social model of disability](https://www.leeds.ac.uk/disability-studies/archiveuk/Oliver/Oliver%20article%201990s.pdf) in British sociology in the 1980s — the idea that disability is produced by society's barriers, not by individual bodies — spent his career pointing out that the tools medicine uses to measure disabled lives were built by people who did not live them. The scale, the threshold, the "clinically significant change" — these are not found in nature. Someone chose them. Usually someone who scored well on them.
+This is a problem disability researchers have been naming for decades, though rarely in the context of dementia. [Mike Oliver](https://disability-studies.leeds.ac.uk/library/author/oliver.m/), who developed the social model of disability in British sociology in the 1980s — the idea that disability is produced by society's barriers, not by individual bodies — spent his career pointing out that the tools medicine uses to measure disabled lives were built by people who did not live them. The scale, the threshold, the "clinically significant change" — these are not found in nature. Someone chose them. Usually someone who scored well on them.
 
 In dementia research, the people who score well on them are, by definition, not the people the research is supposed to serve.
 
 --
 
-There is a version of this argument that ends with "include patients in trial design," and everyone nods, and a committee gets formed, and the success measures stay the same. I have sat through that committee. In 2019 I was on an advisory panel for a transport accessibility study where we, the disabled advisors, said the outcome measures were wrong — and the researchers thanked us warmly and used the original measures because those were the ones the funder recognised.
+There is a version of this argument that ends with "include patients in trial design," and everyone nods, and a committee gets formed, and the success measures stay the same. That is the usual shape of it: the disabled advisors say the outcome measures are wrong, they are thanked warmly, and the original measures get used anyway, because those are the ones the funder recognises.
 
 The copy has won. The scale has become more real than the life it was supposed to describe.
 
@@ -56,4 +70,4 @@ I am not arguing the drugs work. I am arguing we do not know, because the questi
 
 --
 
-On Camberwell New Road the cab finally moved. I put my phone away. I thought about the scale of months, and a grandson's name staying in a mother's mouth a little longer than it otherwise would have, and how a stranger in a journal had just called that trivial.
+I put the phone away and thought about the scale of months, and a grandson's name staying in a mother's mouth a little longer than it otherwise would have, and how a stranger in a journal had just called that trivial.
