@@ -48,6 +48,23 @@ from shadow_capture import capture as _shadow_capture, seal as _shadow_seal, new
 # Fable's brief or the writer).
 _SOURCE_TEXT_MAX_CHARS = 20000
 
+# PREWRITER_CANDIDATE_LOOP_V1 (2026-08-24). How many USABLE-source candidates may
+# enter the editorial/commissioning path in one scheduled run before the run ends
+# with no article. Acquisition failures are NOT counted here -- they have their own
+# separate budget in SOURCE_ACQUISITION_RETRY_V1 and are handled upstream.
+#
+# Why this exists: a single candidate deferring at the commission gate used to end
+# the whole daily generation attempt. commission_mechanism_not_tied_to_anchor did
+# exactly that on 2026-08-21 (canary), 08-22 (natural) and 08-24 (acceptance),
+# while 100+ unused stories sat in the pool. The gate is correct and stays; it just
+# must not consume the day.
+#
+# HARD BOUNDARY: this budget is PRE-WRITER ONLY. Once the writer begins for a
+# candidate, that candidate owns the run through writer, post-writer
+# transformations, review, final output and disposition. A draft blocked
+# downstream ends the run -- there is no outcome-fishing with another candidate.
+MAX_PREWRITER_CANDIDATES = 5
+
 
 class GenerateMixin:
     # Publication-safety contract version (legacy-draft auto-promotion
@@ -195,7 +212,90 @@ class GenerateMixin:
             self.logger.warning("Article-plan persistence failed (non-fatal): %s", e)
 
     def _run_production_automation_locked(self):
+        """PREWRITER_CANDIDATE_LOOP_V1 -- finite pre-writer candidate rotation.
+
+        Runs _run_single_candidate_attempt repeatedly, up to
+        MAX_PREWRITER_CANDIDATES usable-source candidates, continuing ONLY while
+        candidates end in a pre-writer editorial outcome (defer or decline).
+
+        Restarting at the whole-attempt boundary is deliberate: it is the
+        cleanest existing orchestration seam, and it gives each candidate a
+        genuinely fresh pipeline -- new locals, a new capture run id, a new
+        evidence packet, a new brief -- rather than hand-resetting a dozen
+        variables and hoping none was missed. Nothing candidate-specific can
+        survive into the next attempt except the exclusion list itself.
+
+        Everything that is NOT a pre-writer editorial outcome terminates
+        immediately, which is what keeps the hard boundary intact:
+          * an article was produced (any disposition, including a blocked
+            draft) -- the writer ran, so this run is over;
+          * source acquisition exhausted -- that has its own frozen budget in
+            SOURCE_ACQUISITION_RETRY_V1 and is not a pre-writer editorial
+            outcome;
+          * no candidate left, or the same-day guard skipped the run.
+        """
+        _PREWRITER_OUTCOMES = ("defer", "declined")
+        attempted_ids = []
+        attempts = []
+        result = None
+        for n in range(1, MAX_PREWRITER_CANDIDATES + 1):
+            result = self._run_single_candidate_attempt(exclude_seed_ids=attempted_ids)
+            status = (result or {}).get("status")
+            seed_id = (result or {}).get("news_seed_id")
+            attempts.append({"candidate": n, "seed_id": seed_id,
+                             "status": status,
+                             "reason": (result or {}).get("defer_reason_code")
+                                       or (result or {}).get("source_decision")})
+            if status not in _PREWRITER_OUTCOMES:
+                if n > 1:
+                    self.logger.info(
+                        "Pre-writer candidate loop: candidate %d/%d ended the run (%s)",
+                        n, MAX_PREWRITER_CANDIDATES, status)
+                break
+            if seed_id:
+                attempted_ids.append(seed_id)
+            self.logger.warning(
+                "Pre-writer candidate loop: candidate %d/%d ended %s (%s) — "
+                "excluded for the REST OF THIS RUN, trying the next usable candidate. "
+                "The editorial gate is unchanged; only the candidate rotates.",
+                n, MAX_PREWRITER_CANDIDATES, status,
+                (result or {}).get("defer_reason_code") or "editorial decline")
+        else:
+            self.logger.error(
+                "NO_ARTICLE_PREWRITER_CANDIDATES_EXHAUSTED: %d usable candidates all "
+                "ended defer/decline without reaching the writer. No candidate %d.",
+                MAX_PREWRITER_CANDIDATES, MAX_PREWRITER_CANDIDATES + 1)
+            return {
+                "status": "no_article_prewriter_candidates_exhausted",
+                "prewriter_candidates": attempts,
+                "candidate_count": len(attempts),
+                "message": (
+                    "PREWRITER_CANDIDATE_LOOP_V1: %d usable candidates all ended in a "
+                    "pre-writer editorial outcome (defer/decline) without reaching the "
+                    "writer. Editorial gates were not weakened and no further candidate "
+                    "was tried." % MAX_PREWRITER_CANDIDATES),
+                "commit_success": False,
+            }
+        if result is not None and len(attempts) > 1:
+            result = dict(result)
+            result["prewriter_candidates"] = attempts
+            result["candidate_count"] = len(attempts)
+        return result
+
+    def _run_single_candidate_attempt(self, exclude_seed_ids=None):
+        """ONE pre-writer candidate attempt, from candidate selection onward.
+
+        Was _run_production_automation_locked before PREWRITER_CANDIDATE_LOOP_V1.
+        exclude_seed_ids are candidates already tried editorially in THIS
+        scheduled run; they are excluded run-locally only and stay eligible on a
+        future day under existing semantics.
+        """
         self.logger.info("Starting production automation")
+        # Per-candidate reset: _degraded_stages is initialised once in __init__ and
+        # appended to during a run, so without this a candidate that deferred would
+        # leak its degradation marks into the next candidate's disposition. Every
+        # other piece of run state is either function-local or keyed per source URL.
+        self._degraded_stages = []
         
         # Step 1: Check if article already exists today
         existing = self.check_for_existing_article_today()
@@ -219,7 +319,7 @@ class GenerateMixin:
         # unused seeds sat in the pool. Bounded and cache-backed -- see
         # get_news_seed_with_usable_source. Entirely upstream of the Phase-2
         # capture hooks, so phase2-capture-v0.1 is unaffected.
-        news_seed = self.get_news_seed_with_usable_source()
+        news_seed = self.get_news_seed_with_usable_source(exclude_ids=exclude_seed_ids)
 
         # SOURCE_ACQUISITION_RETRY_V1: the budget was spent entirely on
         # candidates whose source could not be acquired. End the run normally
@@ -1624,6 +1724,10 @@ class GenerateMixin:
             "status": "declined",
             "source_decision": "decline",
             "verdict": "declined",
+            # PREWRITER_CANDIDATE_LOOP_V1: lets the candidate loop exclude this
+            # candidate for the rest of THIS run. The decline record above is
+            # untouched and keeps its existing persistence semantics.
+            "news_seed_id": (news_seed or {}).get("id"),
             "agent": None,
             "message": "Layer 1: source has no sufficiently strong CripMinds mechanism; article not written",
             "decline_record": decline_record,
@@ -1659,6 +1763,10 @@ class GenerateMixin:
                        "— insufficient evidence, not an editorial decline",
             "commit_success": False,
             "declined": False,
+            # PREWRITER_CANDIDATE_LOOP_V1: run-local exclusion key. A defer still
+            # leaves the source neither declined nor marked used, so it stays
+            # reconsiderable on a future day exactly as before.
+            "news_seed_id": (news_seed or {}).get("id"),
         }
 
     def _handle_no_execution_run(self, news_seed, fable_brief, evidence_packet, source_origin):

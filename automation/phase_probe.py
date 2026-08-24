@@ -637,7 +637,7 @@ def _run_one_sample(po, topic, sample_idx, temperature):
             # selection layer directly -- acquisition has its own suite,
             # source_retry_test.py.
             get_news_seed=lambda self, exclude_ids=None: dict(ns),
-            get_news_seed_with_usable_source=lambda self, max_attempts=None: dict(ns),
+            get_news_seed_with_usable_source=lambda self, max_attempts=None, exclude_ids=None: dict(ns),
             get_discovery_from_database=lambda self: None,
             _get_overused_themes=lambda self: [],
             _get_recent_references=lambda self, days=14: [],

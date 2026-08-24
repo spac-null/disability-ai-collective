@@ -1639,7 +1639,8 @@ class DiscoveryMixin:
         except Exception as e:
             self.logger.warning("mark_news_seed_source_unusable failed for %s: %s", seed_id, e)
 
-    def get_news_seed_with_usable_source(self, max_attempts: int = MAX_SOURCE_ACQUISITION_ATTEMPTS):
+    def get_news_seed_with_usable_source(self, max_attempts: int = MAX_SOURCE_ACQUISITION_ATTEMPTS,
+                                         exclude_ids=None):
         """SOURCE_ACQUISITION_RETRY_V1. Best seed whose source actually acquires.
 
         Why this exists: a source that cannot be fetched used to cost the whole
@@ -1679,7 +1680,13 @@ class DiscoveryMixin:
         budget = max(1, min(int(max_attempts), MAX_SOURCE_ACQUISITION_ATTEMPTS))
         self._source_acquisition_attempts = []
         self._source_acquisition_exhausted = False
-        attempted = []
+        # exclude_ids (PREWRITER_CANDIDATE_LOOP_V1): candidates already tried
+        # EDITORIALLY earlier in this same scheduled run. Seeded into the same
+        # run-local exclusion list the acquisition retry uses, so one run never
+        # re-offers a candidate it has already commissioned-and-deferred. Still
+        # run-local: nothing here persists to a future day.
+        attempted = list(exclude_ids or [])
+        prior_editorial_exclusions = len(attempted)
         for n in range(1, budget + 1):
             # Only pass the new kwarg once there is something to exclude, so a
             # first attempt is an unchanged `get_news_seed()` call -- existing
@@ -1712,7 +1719,9 @@ class DiscoveryMixin:
                 return seed
             self.mark_news_seed_source_unusable(seed["id"], reason)
             attempted.append(seed["id"])
-        if attempted:
+        # only ACQUISITION failures count toward exhaustion -- editorial
+        # exclusions passed in by the candidate loop must not trip it
+        if len(attempted) > prior_editorial_exclusions:
             self._source_acquisition_exhausted = True
             self.logger.error(
                 "NO_ARTICLE_SOURCE_ACQUISITION_EXHAUSTED: %d/%d candidate(s) failed "

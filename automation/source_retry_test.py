@@ -468,9 +468,9 @@ def test_F_capture_defaults_unchanged():
 def test_retry_is_reachable_only_from_selection():
     """Structural: one call site, in step 2a, before any editorial stage."""
     src = (Path(__file__).parent / "orchestrator" / "generate.py").read_text()
-    n = src.count("get_news_seed_with_usable_source()")
+    n = src.count("self.get_news_seed_with_usable_source(")
     check("exactly one call site in generate.py", n == 1, n)
-    i_acq = src.index("get_news_seed_with_usable_source()")
+    i_acq = src.index("self.get_news_seed_with_usable_source(")
     # note: the evidence hook is a multi-line call, so match its first argument
     for label, marker in (("evidence", '"evidence", _capture_run_id'),
                           ("commission", '_shadow_capture("commission"'),
@@ -480,6 +480,11 @@ def test_retry_is_reachable_only_from_selection():
     check("no acquisition retry inside the defer handler",
           "get_news_seed_with_usable_source" not in src[src.index("def _handle_defer_run"):]
           if "def _handle_defer_run" in src else True)
+    # PREWRITER_CANDIDATE_LOOP_V1: the acquisition call must sit inside the
+    # single-candidate attempt, which the loop re-invokes -- not inside the loop
+    # itself, or a candidate would be selected without its own fresh pipeline.
+    check("acquisition lives in the single-candidate attempt",
+          src.index("def _run_single_candidate_attempt") < i_acq)
 
 
 def main():
