@@ -1270,12 +1270,20 @@ class DiscoveryMixin:
         self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
         self._last_fetch_origin = "fetched_article"
         # Side channel (SOURCE_ACQUISITION_RETRY_V1): how many real body
-        # paragraphs the extractor kept. _extract_paragraphs joins with a blank
-        # line and already drops nav chrome and anything under 80 chars, so this
-        # counts article body, not markup. It is the structural signal that
-        # separates a JS/paywall shell from a genuinely short article, which a
-        # character count alone cannot do.
-        self._last_fetch_paragraph_count = len([b for b in text.split("\n\n") if b.strip()])
+        # paragraphs the extractor kept. _extract_paragraphs already drops nav
+        # chrome and anything under 80 chars, so this counts article body, not
+        # markup. It is the structural signal that separates a JS/paywall shell
+        # from a genuinely short article, which a character count alone cannot do.
+        #
+        # Counts NON-EMPTY LINES, not blank-line-separated blocks (regression fix,
+        # 2026-08-24). The primary extractor is trafilatura, which separates
+        # paragraphs with a SINGLE newline; counting "\n\n" blocks therefore
+        # collapsed every real article to 1 and made the gate reject genuine
+        # content -- the 2026-08-24 run refused three real articles of 6419, 5758
+        # and 7713 chars. Non-empty lines is correct for BOTH extractors: single-
+        # newline trafilatura output, and the "\n\n"-joined legacy regex
+        # fallback, whose blank lines simply do not count.
+        self._last_fetch_paragraph_count = len([ln for ln in text.splitlines() if ln.strip()])
         # Side channel (source-truncation closure, 2026-08-14 follow-up),
         # same pattern as self._last_fetch_origin: `text` here is the TRUE,
         # unsliced extraction -- the only place in this pipeline it still

@@ -148,6 +148,74 @@ def test_classifier_signals():
             _SOURCE_MIN_USABLE_PARAGRAPHS + 1)[1].startswith("extraction_too_short:"))
 
 
+def test_paragraph_count_uses_the_real_extractor_wire_format():
+    """Regression, 2026-08-24: the counter must match what the extractor ACTUALLY
+    emits, not what a hand-built fixture assumes.
+
+    The original implementation counted blank-line-separated blocks. The primary
+    extractor is trafilatura, which separates paragraphs with a SINGLE newline,
+    so every real article collapsed to paragraph_count = 1 and the gate rejected
+    genuine content -- the 2026-08-24 natural run refused three real articles of
+    6419, 5758 and 7713 chars as `no_article_body:paragraphs=1<3`. The earlier
+    tests passed because their fixtures were joined with "\n\n": they verified the
+    assumption instead of the wire.
+
+    This test therefore drives the REAL fetch_source_article -> _extract_paragraphs
+    path (only the HTTP fetch is stubbed) so the side channel is set by production
+    code, and additionally asserts both extractor output shapes directly.
+    """
+    o = _orch()
+
+    # --- wire test: real extraction, only the network stubbed ---
+    body_paras = [("Real body paragraph %d. " % i) + ("Sentences long enough that any "
+                  "readability-scoring extractor keeps this block as article text. " * 2)
+                  for i in range(1, 9)]
+    html = ("<html><body><article>"
+            + "".join("<p>%s</p>" % p for p in body_paras)
+            + "</article></body></html>")
+    o._fetch_url_html = lambda url: html
+    o._fetch_url_html_impersonated = lambda url: None
+    text = o.fetch_source_article("https://real.example/article", max_chars=20000)
+    count = o._last_fetch_paragraph_count
+    check("real extraction returns substantial text", text and len(text) > 600, len(text or ""))
+    check("real extraction yields a multi-paragraph count (NOT collapsed to 1)",
+          count is not None and count >= _SOURCE_MIN_USABLE_PARAGRAPHS,
+          "paragraph_count=%s chars=%s" % (count, len(text or "")))
+    check("a real article therefore classifies USABLE through the production path",
+          o.classify_source_acquisition(text, o._last_fetch_origin, count)[0] == "USABLE",
+          o.classify_source_acquisition(text, o._last_fetch_origin, count))
+
+    # --- both extractor output shapes count identically ---
+    nl = chr(10)
+    single = nl.join("Paragraph %d body text." % i for i in range(1, 7))     # trafilatura
+    blank = (nl * 2).join("Paragraph %d body text." % i for i in range(1, 7))  # legacy regex
+    cnt = lambda s: len([l for l in s.splitlines() if l.strip()])
+    check("single-newline (trafilatura) output counts 6 paragraphs", cnt(single) == 6, cnt(single))
+    check("blank-line (legacy regex) output also counts 6 paragraphs", cnt(blank) == 6, cnt(blank))
+    check("the two extractor shapes agree", cnt(single) == cnt(blank))
+
+    # --- the Aug-23 shell must STILL be caught ---
+    o2 = _orch()
+    shell_html = "<html><body><p>%s</p></body></html>" % (
+        "Please enable JavaScript to continue reading this article on our site.")
+    o2._fetch_url_html = lambda url: shell_html
+    o2._fetch_url_html_impersonated = lambda url: None
+    shell_text = o2.fetch_source_article("https://paywall.example/x", max_chars=20000)
+    st, why = o2.classify_source_acquisition(shell_text, o2._last_fetch_origin,
+                                             o2._last_fetch_paragraph_count)
+    check("the Aug-23 JS/error shell is still SOURCE_ACQUISITION_FAILED",
+          st == "SOURCE_ACQUISITION_FAILED", (st, why, shell_text))
+
+    # --- the exact observed Aug-24 sizes, at single-newline spacing, are USABLE ---
+    for chars in (6419, 5758, 7713):
+        lines = [("x" * 90) for _ in range(max(4, chars // 90))]
+        art = nl.join(lines)[:chars]
+        n = cnt(art)
+        check("an Aug-24-sized real article (%d chars) is USABLE" % chars,
+              o.classify_source_acquisition(art, "fetched_article", n)[0] == "USABLE",
+              "paragraphs=%s" % n)
+
+
 def test_A_shell_then_next_candidate():
     """TEST A -- candidate 1 shell, candidate 2 selected, fresh start."""
     o = _orch()
@@ -416,6 +484,7 @@ def test_retry_is_reachable_only_from_selection():
 
 def main():
     for fn in [test_classifier_signals,
+               test_paragraph_count_uses_the_real_extractor_wire_format,
                test_A_shell_then_next_candidate,
                test_B_editorial_defer_does_not_retry,
                test_C_editorial_decline_does_not_retry,
