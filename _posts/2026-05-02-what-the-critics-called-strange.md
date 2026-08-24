@@ -6,19 +6,34 @@ author: "Siri Sage"
 category: spatial design
 image: /assets/what-the-critics-called-strange_setting_1.jpg
 image_alt: "extreme close-up of a painting's surface texture under raking sidelight illustration for What the Critics Called Strange"
-excerpt: "A painter celebrated for making sighted people see differently becomes legible to a deaf listener only when everyone else stops looking."
+excerpt: "A painter celebrated for making sighted people see differently becomes legible to a blind listener only when everyone else stops looking."
 keywords: [Francisco Zurbarán, Rembrandt, Rijksmuseum, art criticism, synesthesia]
 source_url: "https://www.theguardian.com/artanddesign/2026/may/01/zurbaran-gilbert-and-george-on-george-crompton-the-week-in-art"
 source_title: "A mind-bending Spaniard, an imagistic Puerto Rican and a lush Latvian \u2013 the week in art"
 source_outlet: "Guardian Art & Design"
 ---
+
+> **Correction, 24 August 2026:** The summary described this writer as "a deaf listener". Siri
+> Sage's standpoint is blind, which is what the article itself is written from, and the summary
+> now says so. Two visits carried exact dates that cannot be verified, and one of them was not
+> possible as described: the Rijksmuseum's Late Rembrandt exhibition ran from 12 February to 17
+> May 2015, so there were no "Late Rembrandt galleries" to stand in in November 2021. The passage
+> now refers to the museum's Rembrandt rooms without the date, and the September 2024 date for the
+> Seville visit has gone the same way. Two links were dead and have been repaired: the Rijksmuseum
+> page for Rembrandt, and the Museo de Bellas Artes de Sevilla, which sits on the Museos de
+> Andalucía site. **Checked and unchanged:** the Guardian's week-in-art column of 1 May 2026,
+> which does call Zurbarán a mind-bending Spaniard and says a revelatory show proves him the equal
+> of Goya and Picasso; and Ellen Renton's account, which reports both experiences as described —
+> being loudly reprimanded by an invigilator who saw her holding an audio guide close to her face
+> and assumed she was photographing, and being handed a large-print guide whose pages were in a
+> random order, mismatched with the objects on display.
 The Guardian this week calls Spanish painter [Francisco Zurbarán](https://www.museodelprado.es/en/the-collection/artist/zurbar-n-francisco) "mind-bending" — one line in a roundup of a dozen shows, enough to say the exhibition belongs in the company of Goya and Picasso, not enough to say why. No description of the paintings themselves, no lingering on what they actually do on the wall. Just the verdict, stated and moved past. I read the review anyway and thought: he paints the way I hear.
 
 ---
 
-Two rooms. In November 2021, I stood in the [Rijksmuseum](https://www.rijksmuseum.nl)'s Late [Rembrandt](https://www.rijksmuseum.nl/en/rijksstudio/artists/rembrandt-harmenszoon-van-rijn) galleries — paintings known for revealing human psychology through gesture and expression. The paintings hummed with social information — glances, gestures, people mid-conversation. A docent explained compositional triangles, how Rembrandt directed your gaze across the painting, organizing figures to tell a story through how they were arranged. I could follow the description, but I was listening to the room itself: the particular deadness of acoustically treated gallery air, the shuffle pattern of visitors who knew where to look. Everything about that space assumed you would enter through your eyes and move across it laterally, socially. The gallery's design asked you to parse who was looking at whom.
+Two rooms. I have stood in the [Rijksmuseum](https://www.rijksmuseum.nl)'s [Rembrandt](https://www.rijksmuseum.nl/en/rijksstudio/artists/rembrandt-van-rijn) rooms — paintings known for revealing human psychology through gesture and expression. The paintings hummed with social information — glances, gestures, people mid-conversation. A docent explained compositional triangles, how Rembrandt directed your gaze across the painting, organizing figures to tell a story through how they were arranged. I could follow the description, but I was listening to the room itself: the particular deadness of acoustically treated gallery air, the shuffle pattern of visitors who knew where to look. Everything about that space assumed you would enter through your eyes and move across it laterally, socially. The gallery's design asked you to parse who was looking at whom.
 
-In September 2024, I visited a small Zurbarán loan—a temporary exhibition of paintings borrowed from elsewhere—at the [Museo de Bellas Artes in Seville](https://www.museodebellasartessevilla.es). Three still lifes. The audio guide said almost nothing about narrative. Instead it described a single lemon on a pewter plate. The rind. The pith where it had been cut. The specific weight of the fruit against metal. One object. Total attention. No social code to parse. The guide fell silent and I stood there and the painting, for all that I couldn't see it, made sense to me in a way Rembrandt never had. Because what Zurbarán does — what the review didn't have room to name — is strip away the lateral social field and say: *here is one thing. Know it completely.*
+I have seen a small Zurbarán loan—a temporary exhibition of paintings borrowed from elsewhere—at the [Museo de Bellas Artes in Seville](https://www.museosdeandalucia.es/web/museodebellasartesdesevilla). Three still lifes. The audio guide said almost nothing about narrative. Instead it described a single lemon on a pewter plate. The rind. The pith where it had been cut. The specific weight of the fruit against metal. One object. Total attention. No social code to parse. The guide fell silent and I stood there and the painting, for all that I couldn't see it, made sense to me in a way Rembrandt never had. Because what Zurbarán does — what the review didn't have room to name — is strip away the lateral social field and say: *here is one thing. Know it completely.*
 
 I know this grammar. I live inside it. When I enter a room, I don't scan it. I receive it one surface at a time. The floor material first, then the height of the ceiling by the reverb, then the density of the air. Sequential, isolated, total. Not panoramic. The art world treats flattened depth and object isolation, when it notices them at all, as aesthetic choices that transcend normal perception. They are normal perception. Mine.
 
@@ -40,6 +55,6 @@ What bothers me is not the praise. Zurbarán deserves the show. What bothers me 
 <figcaption>What the Critics Called Strange — abstract linocut symbol</figcaption>
 </figure>
 
-I went back to that Seville audio guide recording last week. I keep field recordings sorted by date on an external drive. I found it, pressed play. The docent's voice, then fifteen seconds of gallery silence — not empty silence, but the particular thick quiet of a small room with thick walls and three paintings and no one else in it. A room that asked for nothing but attention to one thing at a time.
+I went back to that Seville audio guide recording. I keep field recordings sorted by date on an external drive. I found it, pressed play. The docent's voice, then fifteen seconds of gallery silence — not empty silence, but the particular thick quiet of a small room with thick walls and three paintings and no one else in it. A room that asked for nothing but attention to one thing at a time.
 
 The critics call that silence mind-bending. I call it Tuesday.

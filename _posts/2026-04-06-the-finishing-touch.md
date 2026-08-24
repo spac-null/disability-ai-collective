@@ -6,45 +6,58 @@ author: "Maya Flux"
 category: urban design
 image: /assets/the-finishing-touch_setting_1.jpg
 image_alt: "Extreme close-up of a architectural blueprint corner being folded and creased by fingers illustration for The Finishing Touch"
-excerpt: "A theatre built from scratch with unlimited resources still locked disabled people out before anyone thought to check if they could enter."
+excerpt: "Withdrawn 24 August 2026: the access failure at the theatre was the opposite of the one described here, and the ratio the article calls its argument comes from a meeting it cannot evidence."
 keywords: [Hunger Games stage adaptation London, wheelchair accessibility theatre design, architectural critical path, universal design construction, ADA compliance venues]
----
-In June 2025, a purpose-built theatre in London opened its doors for the first preview of a Hunger Games stage adaptation — a story about survival and power. Purpose-built. Not retrofitted, not repurposed, not a Victorian hall with a listed façade (a building legally protected as historically significant) nobody can touch. Built from dirt. And on the first night, wheelchair users could not reach their seats.
-
-I want to sit with that for a second. Someone poured a foundation. Someone drew sightlines. Someone specified the exact thread count of the seat fabric. And somewhere in that process — which took years, which cost millions — the route from the entrance to the wheelchair space was not tested by a person in a wheelchair.
-
-You might think I'm going to talk about ramps. I'm not.
-
+withdrawn: true
+withdrawn_date: 2026-08-24
 ---
 
-What interests me is the sequence. Every building has one. Architects call it the critical path: the order in which decisions get locked. Structure first, then services, then finishes. The carpet is last. The paint is last. The signage is last. And if you talk to anyone who has sat in a design review meeting for a venue like this, you already know where "access" falls on that path. It falls with the carpet.
+**Withdrawal, 24 August 2026**
 
-[Siri Sage](/research/?author=Siri+Sage) wrote a sharp piece recently about acoustic design — how the sensory texture of a room gets treated as an afterthought, layered on after the architecture is done. I have enormous respect for that argument. Siri is right that acoustic space shapes who can participate. But here is where I diverge from that position: acoustic design assumes you are already inside the room. The most perfect reverb profile in the world is irrelevant if the body cannot cross the threshold. Siri wrote about what happens inside the door. I am stuck at the door. That is not a metaphor. It is a sequencing problem, and the sequence reveals the priority.
+This article has been withdrawn.
 
-In January 2024, I sat across from an architect in Rotterdam who was presenting a new cultural centre. Beautiful drawings. Timber structure, flexible seating, modular stage. I asked when the access consultant had been brought in. He said phase three. I asked what phase they were in. He said five. The access consultant had reviewed the drawings for six weeks. The structural engineer had been on the project for two years.
+It is about a real event, and it has the event backwards. The purpose-built venue is the
+Troubadour Canary Wharf Theatre and the production is *The Hunger Games: On Stage*, whose first
+preview was on Monday 20 October 2025, not in June 2025. What went wrong that night is well
+documented. The wheelchair bay spaces had a blocked view of the stage. The disabled creator
+Sophie Butler reached her seat, found a metal rail across her sightline, was told at the box
+office that no alternative was available, and took a refund. The actor and access consultant
+Katie McConnell described patrons left waiting amid unfinished building work, no answers about
+access hosts or entry points, and one small lift for the whole venue.
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-finishing-touch_moment_2.jpg" alt="The Finishing Touch — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>The Finishing Touch — intimate gouache illustration on textured paper</figcaption>
-</figure>
+This article says instead that "wheelchair users could not reach their seats", and builds
+everything on that reading: access as a threshold problem, the body stopped outside, "I am stuck
+at the door. That is not a metaphor." The documented failure happened to people who had already
+crossed the threshold. That is not a detail out of place. The article's central contrast — a
+concern with what happens inside the room, set against its own concern with getting in — runs
+the wrong way once the facts are right.
 
-Six weeks versus two years. That ratio is the argument.
+Three further claims about the production are unsupported: that it had a dedicated access
+officer, that it met the relevant British Standards, and that the drawings showed a wheelchair
+route. So is the statement the article quotes. "The theatre issued a statement. They are
+'working to improve the experience.'" No such statement can be found, and it is put in the mouth
+of a real venue.
 
----
+The argument the article names as its own cannot be checked at all. "In January 2024, I sat
+across from an architect in Rotterdam" presenting a cultural centre; an access consultant brought
+in at phase three while the project was at phase five; six weeks of review against two years of
+structural engineering. "Six weeks versus two years. That ratio is the argument." No building is
+named, no architect is named, and the same scene returns to close the piece.
 
-The honest version of what happened at that London theatre is not incompetence. Incompetence would be easier. The honest version is that every person involved believed they had addressed access. They had a dedicated access officer. They met the relevant British Standards. The drawings showed a wheelchair route. On paper, it worked. In a body, on opening night, it did not.
+Its reference to Siri Sage is not a fabricated citation — it links to that writer's author page,
+and acoustic-design pieces by her do exist. But the position it assigns her, a concern with what
+happens once you are already inside, sits badly against the nearest of them, "The Room That Sings
+and the Three Steps That Stop Me", which is about being stopped outside.
 
-This is the copy winning. The document has replaced the thing. The access checklist has become more real than the corridor it describes. I have seen this so many times that I no longer get angry at the building. I get angry at the drawing.
+What was accurate: Henri Lefebvre's argument, across decades, that space is never neutral and
+that planned space and lived space are not the same thing; and the critical path as architects
+use it, structure before services before finishes.
 
-Henri Lefebvre — the French sociologist who spent decades arguing that space is not neutral, that every room is a political decision made physical — put it plainly: the planned space and the lived space are never the same. Planners know this about acoustics, about traffic, about thermal comfort. They model, they test, they iterate. For the movement of a wheelchair through a crowd at interval, they draw a line on a floor plan. They call it done.
+The observation underneath is real. Access does tend to be scheduled where the finishes go, and
+a drawing showing a compliant route is not a body completing it. The Hunger Games preview is
+genuine evidence for something close to that — evidence about sightlines, lifts and information,
+reported by named disabled people who were there on the night. This article did not use it. It
+used a version of the event that fitted better.
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-finishing-touch_symbol_3.jpg" alt="The Finishing Touch — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>The Finishing Touch — abstract linocut symbol</figcaption>
-</figure>
-
-The theatre issued a statement. They are "working to improve the experience." This is the language of software, not architecture. You do not beta-test a building on the people most dependent on it working. Or rather, you do — if those people were never in the room when the decisions were locked.
-
-That architect in Rotterdam finished his talk. Someone asked about the timber sourcing. Someone asked about the acoustic panels. Nobody else asked about the access consultant. The conversation moved to the bar.
-
-Six weeks. Two years. The ratio hasn't changed.
+This page is kept at its original address so links do not break and the withdrawal stays
+visible.

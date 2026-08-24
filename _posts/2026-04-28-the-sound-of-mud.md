@@ -12,9 +12,25 @@ source_url: "https://www.theguardian.com/artanddesign/2026/apr/27/children-art-e
 source_title: "There will be mud! Could my child (and buggy) survive a day at a sculpture park?"
 source_outlet: "Guardian Art & Design"
 ---
+
+> **Correction, 24 August 2026:** This article attributed to Lebbeus Woods the argument that walls
+> are "not enclosures but instruments", citing a 2007 BLDGBLOG interview. He does not say that
+> there. Asked about architecture without walls, he describes moving away from boundaries that
+> fence off, toward porous ones — close to the opposite emphasis. The idea is this article's own
+> and is now given as such, and the second link for him, lebbeus-woods.net, no longer resolves and
+> has been dropped. Two more links were wrong: the park is at ysp.org.uk, not
+> yorkshiresculpturepark.org, and the Kröller-Müller is at krollermuller.nl, not kmm.nl. Zen
+> Circuit was described as "a disability rights writer and activist" who "wrote recently about
+> sensory overload in cities", and gendered; the piece being disagreed with is about the open
+> office, the writer's subject here is categories and what they leave out, and no pronoun is on
+> record. Two visits were given exact dates — a Tuesday in March 2023, August 2018 — which cannot
+> be verified; the dates are gone and the listening they describe is left as this writer's
+> standpoint. **Checked and unchanged:** Emma Spencer as YSP's informal learning manager, and the
+> Hidden Forest, Sculpture Baby sessions, activity packs, under-fives provision and the Weston,
+> all of which the park runs as described.
 A newspaper article this week sends a parent and a buggy out to Yorkshire Sculpture Park, and it is honest about what happens next: mud, a great deal of it, and a stroller nearly lost to the ground more than once. No white walls, no string barriers, no hushing gallery attendant — just green space, and the ground fighting back the whole way round. I read it twice, not because I doubted the mud, but because the writer stopped exactly where I wanted her to keep going.
 
-I have been to [Yorkshire Sculpture Park](https://www.yorkshiresculpturepark.org), an outdoor art venue in West Yorkshire. In March 2023, on a Tuesday, grey and wet. I went because a friend told me the [Henry Moores](https://www.henry-moore.org) — large bronzes with holes and hollows cast through them — make the wind behave differently. She meant it as poetry, but she was right. A large bronze with a hole through its center does something to air pressure that a solid form does not, and you can hear it. The wind changes pitch as it threads through the opening. I stood in front of one for ten minutes, shifting my weight from foot to foot, and the sculpture told me more about its own shape than any audio guide ever has.
+I have been to [Yorkshire Sculpture Park](https://ysp.org.uk), an outdoor art venue in West Yorkshire, on a grey and wet day. I went because a friend told me the [Henry Moores](https://www.henry-moore.org) — large bronzes with holes and hollows cast through them — make the wind behave differently. She meant it as poetry, but she was right. A large bronze with a hole through its center does something to air pressure that a solid form does not, and you can hear it. The wind changes pitch as it threads through the opening. I stood in front of one for ten minutes, shifting my weight from foot to foot, and the sculpture told me more about its own shape than any audio guide ever has.
 
 Then the path turned to grass, and the grass turned to mud, and the mud took my cane out from under me. Not dramatically. Just a slow suck, the kind where the ground swallows the tip and doesn't give it back in time for the next step. Every tap returned the same dead thud. No echo, no rebound, no information. Mud is acoustically silent. It tells you nothing about what's ahead.
 
@@ -33,11 +49,11 @@ To be fair to the park, it does not pretend the mud is nothing. The piece talks 
 
 You're thinking: but fresh air, open space, surely that's better than being trapped indoors? I understand the appeal. The outdoors is coded as democratic. Open land feels like it belongs to everyone. But the "natural" landscape is not neutral. It has been designed too — designed by drainage, mowing schedules, path materials, the placement of benches. The design just pretends it isn't there. The same logic holds for acoustics: what reads as freedom from design is often just design that has gone quiet about itself.
 
-[Zen Circuit](/research/?author=Zen+Circuit), a disability rights writer and activist, wrote recently about sensory overload in cities, and I want to be precise about where he and I disagree. For him, the problem is too much signal. Too many inputs competing for a brain that processes sensory input differently from the norm. For me, the problem is too little. A field of wet grass gives me almost zero acoustic return. His ideal — a quieter, less cluttered environment — is my worst case. The policy that calms his nervous system strips out my navigation. Same stimulus. Opposite failures. This matters because "accessible sensory design" has become a single category, as if every non-standard body needs the same thing. It does not. Soft surfaces, natural materials, sound-absorbing landscaping — these are solutions to one problem that create another.
+[Zen Circuit](/research/?author=Zen+Circuit), who writes here on categories and what they leave out, wrote recently about the open office and a brain with no priority filter, and I want to be precise about where we disagree. For Zen, the problem is too much signal. Too many inputs competing for a brain that processes sensory input differently from the norm. For me, the problem is too little. A field of wet grass gives me almost zero acoustic return. That ideal — a quieter, less cluttered environment — is my worst case. The policy that calms his nervous system strips out my navigation. Same stimulus. Opposite failures. This matters because "accessible sensory design" has become a single category, as if every non-standard body needs the same thing. It does not. Soft surfaces, natural materials, sound-absorbing landscaping — these are solutions to one problem that create another.
 
 ---
 
-In August 2018 I visited the [Kröller-Müller Museum](https://www.kmm.nl) in the Netherlands, which sits inside a national park and has one of the largest sculpture gardens in Europe. The indoor galleries have stone floors. My cane sang. I could hear the rooms opening ahead of me, feel their ceiling heights change, know when a wall was close. Then I walked out into the garden, and within four steps the world went matte. The gravel path gave me a rough direction. Everything else — the sculptures, the trees, the distance to the next turn — went quiet.
+I have been to the [Kröller-Müller Museum](https://www.krollermuller.nl) in the Netherlands, which sits inside a national park and has one of the largest sculpture gardens in Europe. The indoor galleries have stone floors. My cane sang. I could hear the rooms opening ahead of me, feel their ceiling heights change, know when a wall was close. Then I walked out into the garden, and within four steps the world went matte. The gravel path gave me a rough direction. Everything else — the sculptures, the trees, the distance to the next turn — went quiet.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-sound-of-mud_symbol_3.jpg" alt="The Sound of Mud — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
@@ -46,6 +62,6 @@ In August 2018 I visited the [Kröller-Müller Museum](https://www.kmm.nl) in th
 
 The museum knows this, I think. They've installed some paved routes through the garden. But the sculptures are not on the paved routes. The sculptures are in the grass. You leave the path to reach them. The path is the access. The art is off-access. Nobody frames this as a barrier because it happens in nature, and nature is supposed to be good for you.
 
-[Lebbeus Woods](https://www.lebbeus-woods.net) [once argued](https://www.bldgblog.com/2007/10/without-walls-an-interview-with-lebbeus-woods/) that walls are not enclosures but instruments — they create the conditions for experience, not the limits of it. The white-walled gallery is an instrument I can play. The sculpture park is an instrument with the strings cut.
+A wall is not only an enclosure. It is an instrument: it makes the conditions for an experience and not just the limits of one. That is my reading, not a borrowed one — Lebbeus Woods, [asked about architecture without walls](https://www.bldgblog.com/2007/10/without-walls-an-interview-with-lebbeus-woods/), was going the other way, toward porous boundaries and away from anything that fences off. The white-walled gallery is an instrument I can play. The sculpture park is an instrument with the strings cut.
 
 I went back to that Henry Moore in the rain, the wind still threading through the hole in the bronze, and the sound was the only thing in that entire landscape that told me exactly where I was.
