@@ -6,54 +6,52 @@ author: "Maya Flux"
 category: justice
 image: /assets/the-case-study-with-no-second-act_setting_1.jpg
 image_alt: "Extreme close-up of a rubber stamp mid-strike against deep violet paper illustration for The Case Study With No Second Act"
-excerpt: "Disability services love publishing transformation stories — they just never tell you if anyone's life actually changed."
+excerpt: "Withdrawn 24 August 2026: every specific in this article is either unverifiable by construction or wrong, including a quoted private email and a misattributed audit."
 keywords: [government service design, UX case studies, accessibility audit measurement, digital transformation follow-up, council service redesign, disability access implementation, Melbourne tram accessibility]
+withdrawn: true
+withdrawn_date: 2026-08-24
 ---
 
-In April 2023, a London borough council published a case study about how they redesigned the screen where tenants manage their housing payments. Fourteen pages. Process maps, user journey diagrams, before-and-after screenshots. The old system forced tenants to click through seven screens to tell the council their situation had changed. The new one required two. The case study called this "a transformative intervention." I read it the week it came out. I have checked back every quarter since. The council has never published a follow-up.
+**Withdrawal, 24 August 2026**
 
-In November 2019, the city of Melbourne completed an accessibility audit of its tram network. Auditors flagged sixty-three stops that wheelchair users could not reach. The report said the city should upgrade platforms at twelve stops within eighteen months. By January 2024, contractors had completed four. Nobody published that number. I found it by counting construction notices.
+This article has been withdrawn.
 
----
+Its one checkable institutional claim is wrong. The article said "the city of Melbourne
+completed an accessibility audit of its tram network" in November 2019, flagging sixty-three
+stops wheelchair users could not reach and recommending twelve platform upgrades within
+eighteen months, of which four had been completed by January 2024 — a figure the author said
+she had established by counting construction notices. The audit of tram accessibility was
+carried out by the **Victorian Auditor-General's Office**, a state body, and reported in 2020;
+none of those numbers could be verified. What is documented is different and no less damning:
+that audit found only about 15 per cent of tram services accessible, and reporting from
+November 2019 described a pace of three or four stops a year.
 
-Designers, project managers, and council directors love to tell the redesign story. The audit, the consultation, the prototype, the ship date — these have beginnings, middles, and satisfying endings. The months after the ship date offer none of those things. The work turns messy, slow, and the people who built the thing almost never measure it.
+Everything else the article offered as evidence is unverifiable by construction, and the
+pivotal item is a private communication. The article described contacting the team behind an
+unnamed London borough's housing dashboard in early 2024 and quoted a former product manager at
+length over email: "We know the processing times went back up… Nobody is going to publish a
+case study that says 'we made the screen faster and the wait got longer.'" That quotation is the
+essay's centrepiece and there is no way to check any part of it.
 
-I know this because I helped write one of these case studies. Not the London one. A different dashboard, a different council, a different year. When a disabled resident needed a wheelchair, a hoist, or adapted cutlery, they submitted a form. Caseworkers spent an average of forty minutes processing a single request through the old interface. Our team got it down to twelve. The project lead published the case study in 2021. It was gorgeous.
+The same is true of the April 2023 case study from an unnamed London borough, quoted as calling
+its own work "a transformative intervention," and of the author's claim to have checked back
+every quarter since. And of having helped write one of these case studies at another unnamed
+council, taking caseworker processing time from forty minutes to twelve, after which three
+caseworkers became one and the queue stretched to nine weeks. And of a 2022 procurement meeting
+at a district council in the East Midlands. And of tactile paving installed by Transport for
+London at a Zone 3 station in 2017 with a coffee kiosk licensed in front of it by 2020.
 
-What I didn't write: six months later, the council restructured its care team. Three caseworkers became one. Requests now sat in a queue that took nine weeks to clear. The dashboard was faster. The person waiting for a shower chair was not.
+A smaller thing, but telling: the article closes by saying a timeline still promises 2021 "in
+2025," in a piece published in 2026.
 
-You might say: that's not the designer's fault. You're right. It isn't. That's the point.
+What was accurate: Mike Oliver's 1983 distinction between impairment and disability, and the
+broad situation in Melbourne, where the tram network remains largely inaccessible and upgrades
+have moved slowly for years.
 
----
+The argument was worth making, and it is a real one: a redesigned interface is a product, a
+person receiving their equipment in a livable timeframe is an outcome, and a case study frozen
+at its publication date measures the first while implying the second. Making that argument
+requires one verifiable example. This article had none, so there was nothing to correct.
 
-[Mike Oliver](https://disability-studies.leeds.ac.uk/library/author/oliver.mike/) distinguished between impairment and disability in 1983. The body has a condition. Society creates the barrier. Oliver changed how a generation of activists and scholars understood access, and the distinction is now so familiar it has become wallpaper. But his insight carries a second edge that most design teams never touch: the barrier is not static. It moves. It regenerates. A team removes one and the system grows another, often borrowing the language of what was just removed as cover.
-
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-case-study-with-no-second-act_moment_2.jpg" alt="Overhead shot of layered transparent sheets of violet and black stacked at oblique angles illustration for The Case Study With No Second Act" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>Overhead shot of layered transparent sheets of violet and black stacked at oblique angles illustration for The Case Study With No Second Act</figcaption>
-</figure>
-
-The case study is that cover.
-
-I have sat in procurement meetings — a district council in the East Midlands, 2022 — where a director cited a completed accessibility project as proof they did not need to spend any more. The project becomes a shield. "We did the dashboard." "We did the ramp." "We did the audit." Past tense. The past tense is doing the work of a wall.
-
-Here is what done looks like. In 2017, [Transport for London](https://tfl.gov.uk) installed tactile paving at a station entrance in Zone 3. By 2020, a licensing officer had permitted a coffee kiosk directly adjacent, blocking the guidance path. The tactile paving was still there. It guided people into a counter selling flat whites. Nobody had removed the accessibility feature. Nobody needed to. They just put something in front of it.
-
-The mechanism is the same. The intervention is real. The context around it keeps moving. And the case study, frozen on its publication date, [becomes a ruin at the moment of completion](https://failedarchitecture.com/buildings-born-ruins-philosophy-and-architecture-after-the-apocalypse/).
-
-I contacted the team behind the London housing dashboard in early 2024. A former product manager replied. She was candid. "We know the processing times went back up," she told me over email. "The bottleneck moved from the interface to staffing. But the case study is what gets shared in meetings. It's what the director links to. Nobody is going to publish a case study that says 'we made the screen faster and the wait got longer.'"
-
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-case-study-with-no-second-act_symbol_3.jpg" alt="A single hand in profile pressing against crumpled industrial mesh or perforated metal that's being pushed back illustration for The Case Study With No Second Act" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>A single hand in profile pressing against crumpled industrial mesh or perforated metal that's being pushed back illustration for The Case Study With No Second Act</figcaption>
-</figure>
-
-She knows. She does it anyway.
-
----
-
-Bad design is not the problem. Designers, managers, and commissioners have confused delivering a product with delivering an outcome. A redesigned dashboard is a product. A person receiving their equipment within a livable timeframe is an outcome. The case study measures the first and implies the second. That implication is where disabled people disappear.
-
-I still check the Melbourne tram stops when I visit. Four out of twelve, last I counted. The audit website still shows the original timeline. Nobody has updated it. Nobody has taken it down either. It just sits there, promising 2021, in 2025.
-
-The coffee kiosk in Zone 3 is still open.
+This page is kept at its original address so links do not break and the withdrawal stays
+visible.

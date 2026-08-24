@@ -10,9 +10,24 @@ excerpt: "Matisse invented a radical new artistic technique from his sickbed, ye
 keywords: [art history, disability erasure, adaptive technique, art criticism]
 ---
 
-In November 1950, [Henri Matisse](https://www.matisse.org/) told Louis Aragon something that art criticism has spent seventy years misquoting. He said the cut-outs were a new way of drawing. Not a substitute. Not a compensation. A new way.
+> **Correction, 24 August 2026:** The opening attributed a statement to a conversation between
+> Matisse and Louis Aragon in November 1950. That specific exchange could not be verified, and
+> it has been replaced with Matisse's own documented framing — drawing with scissors, cutting
+> directly into colour, and his remark that there is "no gap" between his earlier pictures and
+> the cut-outs. The substance of the point is unchanged and is his. The interval since is about
+> seventy-five years, not seventy. The Grand Palais is an exhibition hall rather than a museum,
+> and Georgina Kleege's book specifically on blindness and visual art is *More Than Meets the
+> Eye*; both descriptions have been tightened. A link given for Lydia Delectorskaya pointed
+> only to a general museum homepage and has been removed. One claim could not be checked either
+> way: the counts of how often the Guardian review uses "transcendent" and whether it uses
+> "disabled" at all, because the review is not accessible to us. Checked and unchanged: the 1941
+> cancer surgery, the thirteen years that followed, the gouache-painted paper, *The Snail* and
+> *Blue Nude IV*, and Delectorskaya's role as his assistant.
 
-The Guardian review of the [Grand Palais retrospective](https://www.grandpalais.fr/)—an exhibition at the famous Paris museum showcasing Matisse's final works—published March 2026, uses the word transcendent four times. It does not use the word disabled once.
+
+[Henri Matisse](https://www.matisse.org/) was explicit about what the cut-outs were, and art criticism has spent seventy-five years softening it. He called the method drawing with scissors, and cutting directly into colour, and he wrote that there was "no gap" between his earlier pictures and the cut-outs — that he had only "reached a form reduced to the essential." Not a substitute. Not a compensation. A new way.
+
+The Guardian review of the [Grand Palais retrospective](https://www.grandpalais.fr/)—the Paris exhibition hall's show of Matisse's final works—published March 2026, uses the word transcendent four times. It does not use the word disabled once.
 
 ---
 
@@ -25,7 +40,7 @@ The Guardian calls this "a final flowering." The phrase does a specific job. It 
 <figcaption>linocut woodblock print aesthetic: bold silhouette of an open hand with scissors emerging from the palm at impossible angle illustration for The Scissors Knew</figcaption>
 </figure>
 
-[Georgina Kleege](https://english.berkeley.edu/users/45), a disability scholar writing in her book *Sight Unseen*, argues that blindness in art history has always been somebody else's metaphor. The blind figure in a painting is never about blindness. It is about what the sighted painter feels standing in front of whatever they cannot face. Something similar happens here. The wheelchair is never about Matisse's body. It is about the critic's feelings about mortality.
+[Georgina Kleege](https://english.berkeley.edu/users/45), a disability scholar whose *More Than Meets the Eye* takes up blindness and visual art directly, and whose *Sight Unseen* dismantles how blindness gets depicted, argues that blindness has always been somebody else's metaphor. The blind figure in a painting is never about blindness. It is about what the sighted painter feels standing in front of whatever they cannot face. Something similar happens here. The wheelchair is never about Matisse's body. It is about the critic's feelings about mortality.
 
 Cut that out, and you see what's left: a systematic reinvention of mark-making under material constraints that the artist did not choose and did not transcend. He worked with them. The scissors moved where a brush could not. The body lying down changed what the hand could reach, and that changed what the composition could do. The shapes in *The Snail*, a collage of vivid paper cutouts, and *Blue Nude IV*, a figurative work made with the same cut-paper technique, are not shapes a standing painter makes. The angle of incision is different. The relationship between the cut edge and the body holding the scissors is specific to how Matisse was positioned when he made it.
 
@@ -38,7 +53,7 @@ The critic who writes "life-enhancing genius" without naming the body that gener
 <figcaption>risograph print of scissors lying flat on rumpled paper with deep violet and black inks creating unexpected third color in overlap zones illustration for The Scissors Knew</figcaption>
 </figure>
 
-That room had a particular light. His assistant [Lydia Delectorskaya](https://www.centrepompidou.fr/en), who worked closely with him during his later years, held the cut shapes up against the wall while he directed from the bed. A disabled artist and his collaborator, building space with color and scissors.
+That room had a particular light. His assistant Lydia Delectorskaya, who worked with him from the 1930s until his death, held the cut shapes up against the wall while he directed from the bed. A disabled artist and his collaborator, building space with color and scissors.
 
 The scissors stayed scissors.
 

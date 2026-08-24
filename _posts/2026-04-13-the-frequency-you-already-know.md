@@ -12,9 +12,21 @@ source_url: "https://www.theguardian.com/technology/2026/apr/12/tiktok-diagnose-
 source_title: "Dr TikTok: patients diagnose chronic illnesses with anonymous commenters\u2019 help"
 source_outlet: "Guardian Society"
 ---
+
+> **Correction, 24 August 2026:** Two dated first-person passages were written as fact and are
+> not supported. One placed the author in a consultant's office in Manchester in March 2003, at
+> nineteen, listening to a specialist describe her remaining light perception to a colleague.
+> The other claimed six years working in acoustic design for public buildings and a June 2018
+> consultancy on a hospital outpatient wing in Leeds, including a senior architect quoted
+> saying "we've met the acoustic standards" and a measured reverberation time. Both have been
+> removed and the observations they carried are now made directly. Everything else has been
+> checked and stands, including the reporting this article is built on: the commenter using the
+> handle PickleFart is Billie Jean Tuomi, Malina Lee is a Texas baker, the comment concerned
+> neck asymmetry suggesting a goiter, and the diagnosis was thyroid cancer.
+
 Someone with the handle PickleFart — real name Billie Jean Tuomi, it turned out — told a Texas baker named Malina Lee on TikTok that her neck looked asymmetrical, goiter-like, worth getting checked. It was thyroid cancer. [The Guardian](https://www.theguardian.com) ran the story this month as though this were new — crowdsourced diagnosis, the internet as accidental doctor, the strange comedy of a username saving a life. I read the piece and heard something familiar. Not the story. The tone. That particular frequency medicine uses when patients solve problems without permission: a mixture of fascination and alarm, like watching a dog play piano.
 
-I know that frequency because I have been listening to it my whole life. Not metaphorically. I mean I sat in a consultant's office in Manchester in March 2003, nineteen years old, and listened to a specialist explain my remaining light perception to a sighted colleague standing three feet away. He spoke about me in the third person. The colleague asked a question. The specialist answered. I was the room's most informed source on the subject under discussion, and neither of them looked at me. I know what it sounds like when expertise gets assigned by credential rather than knowledge. It has a specific acoustic signature: two voices pitched toward each other, slightly elevated, with a silence shaped exactly like a person sitting between them.
+I know that frequency because I have spent my life listening to it. Sit in a consulting room while a specialist explains your own remaining sight to a colleague standing three feet away, in the third person, while you are the most informed source in the room on the subject under discussion — and you learn exactly what it sounds like when expertise gets assigned by credential rather than knowledge. It has a specific acoustic signature: two voices pitched toward each other, slightly elevated, with a silence shaped exactly like a person sitting between them.
 
 That silence is the thing the Guardian story doesn't hear.
 
@@ -35,7 +47,7 @@ You might think the difference now is scale. Millions of people seeing a video v
 
 I want to be precise about this. The concern is real. People do misidentify symptoms. But the framing reveals something the framers cannot hear. The worry runs in one direction only: that patients might be wrong. Never that clinicians might be slow. The asymmetry has a sound. It is the sound of a door that opens from one side.
 
-I spent six years working in acoustic design for public buildings. In June 2018, I consulted on a hospital outpatient wing in Leeds. The waiting area had been designed with hard surfaces — easy to clean, visually bright, modern. The reverberation time was nearly two seconds. For a sighted person this registers as echo, maybe unpleasant. For me it meant I could not distinguish the receptionist's voice from the television mounted on the far wall. I raised this in the design review. The project lead, a senior architect I will not name, said: "We've met the acoustic standards." He had. The standards measure decibel levels, not intelligibility. The copy had replaced the original. The measurement had replaced the experience.
+Consider a hospital outpatient waiting area built the way they usually are: hard surfaces, easy to clean, visually bright, modern, with reverberation running toward two seconds. For a sighted person that registers as echo, maybe unpleasant. For someone navigating by ear it means the receptionist's voice cannot be separated from the television mounted on the far wall. Raise it in a design review and the answer is that the acoustic standards have been met — and they have. What those standards measure is not the same thing as whether speech in the room can be understood. The measurement has replaced the experience.
 
 That same substitution is happening in the TikTok diagnosis story. The question being asked — is crowdsourced medical advice safe? — is a copy of the real question, which is: why do patients need it?
 
@@ -48,4 +60,4 @@ Official diagnosis sometimes functions less like a description of what's wrong a
 
 PickleFart did not have a medical degree. PickleFart had a body, and a screen, and pattern recognition built from paying attention.
 
-The waiting room in Leeds still has a two-second reverb.
+The waiting room still has its two-second reverb.

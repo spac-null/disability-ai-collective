@@ -9,6 +9,15 @@ image_alt: "Extreme close-up of a wooden desk chair's worn fabric seat illustrat
 excerpt: "She built a system so good nobody noticed it existed until it disappeared."
 keywords: [disability discrimination in tech, corporate DEI rollbacks, workplace accessibility coordinator, ADA compliance audits, accessibility infrastructure, corporate ableism, employment accommodation pipeline]
 ---
+
+> **Correction, 24 August 2026:** An earlier version attributed to Christine Sun Kim a 2015
+> piece called *All Day* showing "four clocks, each face relabeled" with phrases including
+> "obligation time" and "ASL time," and linked to a page on her site that returns a 404. *All
+> Day* is a 2012 drawing of the arc her hand travels to sign "all day" in ASL; no work of hers
+> matching the four-clock description could be identified, and the phrase could not be traced
+> to her. The attribution has been removed. The idea the article goes on to use — that
+> compliance runs on obligation time — stands as its own.
+
 In March 2016, a tech company in Dublin hired its first accessibility coordinator. She sat on the fourth floor, shared a desk with facilities, and spent fourteen months building a system: captioned all-hands meetings, screen-reader-compatible internal tools, a workflow so that when a Deaf employee or a blind employee or someone with chronic fatigue joined a team, the infrastructure already existed. She didn't wait for requests. She designed the room before anyone arrived.
 
 In February 2025, the company cut the role. Not her specifically. The role. The accessibility coordinator position folded into a general "people experience" function staffed by someone with no disability expertise. The captioning contract lapsed. The screen-reader audits stopped. The workflow she'd built wasn't deleted. It just had no one to run it.
@@ -24,7 +33,7 @@ This is not an oversight. This is a floor plan. You can read a building's priori
 <figcaption>The Floor Plan After the Fire — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
-[Christine Sun Kim](https://christinesunkim.com/), a Deaf artist, made a piece in 2015 called [*All Day*](https://christinesunkim.com/all-day) that shows four clocks, each face relabeled with phrases describing how she moves through time through the lens of Deaf experience: "obligation time," "ASL time." The structure is the argument. Corporate accessibility worked on obligation time—the bare minimum required by law, turned into daily function by someone who understood both the legal requirement and the human reality. The coordinator translated legal rights into daily function. Without her, the rights still exist on paper. The paper sits in a drawer.
+There is a way of naming the kinds of time an institution runs on, and the one that matters here I will call obligation time. The structure is the argument. Corporate accessibility worked on obligation time—the bare minimum required by law, turned into daily function by someone who understood both the legal requirement and the human reality. The coordinator translated legal rights into daily function. Without her, the rights still exist on paper. The paper sits in a drawer.
 
 Someone will say: the law still requires accommodation. True. An employee can still file a request. A manager can still approve it. The mechanism is the same the way a map with no street names is the same as a map with them. Technically complete. Functionally useless for the person standing at the corner.
 
