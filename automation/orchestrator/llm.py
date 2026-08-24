@@ -1125,6 +1125,14 @@ class LLMMixin:
             '"seed_sentence":"the opening sentence of the article — concrete, not a question",'
             '"opening_scene":"the actual first sentence of the essay in the persona\'s voice — NOT a description of where it begins. Vary the shape: plain claim, cold scene, question, bare fact, or a statement of what you set out to find out. Do not default to a placed body in the present tense",'
             '"opening_shape":"which shape you chose: plain_claim | cold_scene | question | fact | declaration_of_hunt",'
+            # PROMPT/GATE CONTRACT FIX (2026-08-24): eligible_execution_possible was
+            # described only in the LAYER 1 prose above and was absent from THIS reply
+            # schema -- the one the model actually copies. Opus therefore omitted it on
+            # 2 of 5 candidates and _validate_commission_grounding (which reads it with
+            # no default) rejected both as commission_eligible_flag_malformed. The gate
+            # is right to fail closed on a missing value; the prompt simply never asked
+            # for it here. One canonical representation, requested where it is read.
+            '"eligible_execution_possible":true|false — REQUIRED, a real JSON boolean, never a string and never omitted: true unless the mechanism lives in a persona outside today\'s eligible set, in which case false and name it in "blocked_carry_persona",'
             '"correction_moment":{the grounded object described above},'
             '"resisting_example":{the grounded object described above},'
             '"cross_cite":"optional: one sentence on the substance of the disagreement with another persona\'s position — the idea being pushed against, NOT an instruction to name-check them. Leave empty unless the disagreement genuinely bears on this story"}'
@@ -1136,6 +1144,21 @@ class LLMMixin:
         try:
             raw = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(), flags=re.MULTILINE)
             brief = _j.loads(raw)
+            # Canonicalise eligible_execution_possible to a REAL boolean before the
+            # Layer-1 gate sees it (2026-08-24). Only these exact, unambiguous
+            # representations are accepted; anything else -- missing, null, prose,
+            # a number, "maybe" -- is left untouched so
+            # _validate_commission_grounding still fails closed on it. This
+            # normalises SYNTAX only and never invents a verdict.
+            _elig = brief.get("eligible_execution_possible")
+            if isinstance(_elig, str):
+                _canon = {"true": True, "false": False, "yes": True, "no": False}.get(
+                    _elig.strip().lower())
+                if _canon is not None:
+                    brief["eligible_execution_possible"] = _canon
+                    self.logger.info(
+                        "Commission: normalised eligible_execution_possible %r -> %s",
+                        _elig, _canon)
             # ── LAYER 1 (DSR2 Story Rejection V1/V1.1): source commissionability ──
             # A legacy brief (no source_decision) is treated as commission,
             # preserving PRF1 + existing fixtures/tests unchanged. The Layer-1

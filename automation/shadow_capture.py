@@ -38,6 +38,7 @@ import hashlib
 import json
 import os
 import pathlib
+import re
 import tempfile
 import uuid
 from datetime import datetime, timezone
@@ -67,10 +68,32 @@ DEFAULT_ROOT = "/srv/data/cripminds-shadow-capture"
 # Substrings that must never be written into a capture bundle. If an upstream bug ever
 # lets a credential into a source packet we stop capturing that field rather than persist
 # it -- see _scan_for_secrets.
-_SECRET_MARKERS = (
-    "api_key", "apikey", "api-key", "secret", "password", "passwd", "authorization",
-    "bearer ", "sk-", "ghp_", "xoxb-", "access_token", "refresh_token", "private_key",
+# Two tiers, deliberately. Bare-substring matching on generic English words was a
+# false-positive generator: on 2026-08-24 a public Guardian/Conversation article whose
+# prose contained the ordinary word "secret" had ALL FOUR of its source representations
+# refused, so that candidate's bundle carried no source at all. The same flaw sat on
+# "password", "authorization" and "bearer ", and "sk-" matched innocent words like
+# "task-" and "risk-". A generic word in public article prose is not a credential.
+#
+# TIER 1 -- literal identifiers that essentially never occur in prose (snake/kebab
+# case, key headers, vendor token prefixes). Substring match is safe for these.
+_SECRET_LITERALS = (
+    "api_key", "apikey", "api-key", "client_secret", "access_token", "refresh_token",
+    "private_key", "secret_key", "secret_access_key", "ghp_", "xoxb-",
     "BEGIN RSA", "BEGIN OPENSSH", "BEGIN PRIVATE KEY",
+)
+
+# TIER 2 -- credential-like STRUCTURE, not vocabulary: an assignment of a secret-ish
+# name to a long opaque value, an Authorization header with a real value, a bearer or
+# sk- token of plausible length. Requires the shape, so prose discussing secrecy,
+# passwords or authorization passes untouched.
+_SECRET_PATTERNS = (
+    ("assigned_credential",
+     r"(?:client_secret|secret[_-]?key|secret|password|passwd|api[_-]?key|auth[_-]?token|token)"
+     r"\s*[:=]\s*[\"']?[A-Za-z0-9_\-\./+]{8,}"),
+    ("authorization_header", r"authorization\s*:\s*(?:bearer|basic)\s+\S{12,}"),
+    ("bearer_token", r"\bbearer\s+[A-Za-z0-9._\-]{20,}"),
+    ("sk_token", r"\bsk-[A-Za-z0-9]{6,}"),
 )
 
 
@@ -96,10 +119,21 @@ def _sha256(data) -> str:
 
 
 def _scan_for_secrets(text) -> list:
+    """Marker names that look like real credentials. Never vocabulary alone.
+
+    Returns [] for ordinary prose that merely discusses secrets, passwords or
+    authorization -- see _SECRET_LITERALS / _SECRET_PATTERNS for why. Still fails
+    closed on anything credential-SHAPED: this is a refuse-to-persist guard, and a
+    miss here would write a credential into a bundle.
+    """
     if not isinstance(text, str):
         return []
     low = text.lower()
-    return [m for m in _SECRET_MARKERS if m.lower() in low]
+    hits = [m for m in _SECRET_LITERALS if m.lower() in low]
+    for name, pat in _SECRET_PATTERNS:
+        if re.search(pat, low, re.IGNORECASE):
+            hits.append(name)
+    return hits
 
 
 def _atomic_write(path: pathlib.Path, text: str) -> None:
