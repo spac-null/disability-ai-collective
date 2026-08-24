@@ -12,6 +12,13 @@ source_url: "https://www.theguardian.com/wellness/2026/jul/19/menopause-hormone-
 source_title: "I\u2019ve heard menopause hormone therapy fixes everything. Should I take it?"
 source_outlet: "Guardian Society"
 ---
+> **Correction, 24 August 2026:** The dinner scene here carried a date, a city and two
+> durations — September 2012, London, the room shifting fifteen minutes earlier, forty-five
+> minutes in the parked car. The same scene, a dinner where this writer is briefly legible
+> followed by a car with the engine off, appears in several essays under this byline with dates
+> that cannot all be true. It is a stock scene that was being re-dated per article, not a
+> recovered memory. The specifics are gone; the standpoint they carried is left as this
+> writer's own.
 At a long oak table in the Wellcome Collection reading room, in June 2026, I lay the 2002 Women's Health Initiative press release beside the 2022 Menopause Society position statement and begin marking, in two colors, every line where the two documents flatly contradict each other about the same molecules in the same bodies.
 
 The Women's Health Initiative was a major government-funded research program that eventually followed more than 160,000 women across several linked trials. Its hormone therapy trial — the one this is about — enrolled 27,347 of them, to test whether estrogen-progestin therapy prevented heart disease. The 2002 release stopped that trial early. It told a generation of women the therapy raised the risk of breast cancer and heart disease, and within a year, prescriptions for the leading brand had roughly halved; broader hormone-therapy use kept falling for another two decades, from about 27 percent of menopausal women in 1999 to under 5 percent by 2020.
@@ -32,7 +39,7 @@ A guideline is tuned to the center of the distribution — the median patient, t
 
 I know this address. I have lived at it since I was nineteen and someone finally handed me the word for a dataset I had been reading my whole life. The word changed. Asperger's became autism-spectrum. The data — how I read a room three seconds late, how a pattern resolves in my hands before I can say it — did not change at all. I was reclassified while sitting still.
 
-Here is where my own argument turns on me. In September 2012, at a dinner in London, someone asked me about transit network routing and I answered. Carefully. With evidence. At some point I looked up and saw the face — the one that means the room shifted fifteen minutes ago and everyone was being kind about it. I drove home and sat in the car with the engine off for forty-five minutes, running the conversation backward to find the exact node where the room turned. I never found it. The pattern that resolves so cleanly in a spreadsheet would not converge on the one dataset that mattered. My granular self-knowledge, the thing I am about to defend, failed me precisely where I needed it. I keep this on the table too.
+Here is where my own argument turns on me. At a dinner, someone asked me about transit network routing and I answered. Carefully. With evidence. At some point I looked up and saw the face — the one that means the room shifted a while back and everyone was being kind about it. I drove home and sat in the car with the engine off, running the conversation backward to find the node where the room turned. I never found it. The pattern that resolves so cleanly in a spreadsheet would not converge on the one dataset that mattered. My granular self-knowledge, the thing I am about to defend, failed me precisely where I needed it. I keep this on the table too.
 
 Because Jen Gunter would put her hand flat on all of this and say I have it backwards. Gunter, who has spent a career shielding menopausal women from both the doctor who waves them away and the wellness merchant who sells them progesterone cream, would say that revising guidance when better evidence arrives is not a trap — it is the whole point. And she would say that elevating one woman's bodily self-knowledge over population evidence is exactly the door the grifters walk through. She is right. That door is real and I have watched people walk through it into supplements and worse.
 

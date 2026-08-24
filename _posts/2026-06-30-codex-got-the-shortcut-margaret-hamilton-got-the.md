@@ -12,6 +12,10 @@ source_url: "https://www.theverge.com/ai-artificial-intelligence/959174/openai-c
 source_title: "OpenAI is teasing new hardware\u2026 for Codex"
 source_outlet: "The Verge"
 ---
+> **Correction, 24 August 2026:** This essay's parked-car scene was timed at forty-five
+> minutes. The same dinner-and-driveway scene recurs across essays under this byline with
+> figures and dates that cannot all be true, so the duration is not a remembered one. It has
+> been removed and the standpoint left as this writer's own.
 July 15th, OpenAI ships a small square box with buttons for Codex, its coding tool. The press video calls them shortcuts. A device that turns the long act of writing software into a press, a gesture, a thing your hands do without narrating.
 
 Margaret Hamilton ran the team that wrote the Apollo guidance software. She had a habit her colleagues found odd. Before Apollo 8, in 1968, she wanted to build in a safeguard against an astronaut accidentally selecting the pre-launch program mid-flight — a scenario she only thought to worry about after watching her young daughter do exactly that in a simulation. NASA told her, in effect, that astronauts were trained professionals who would not make that mistake.
@@ -36,7 +40,7 @@ A coding tool that does the seeing for you is not giving you Tammet's gift. It i
 
 Now the part that does not fit. I would buy the box.
 
-I have sat in a car in a driveway, engine off, for forty-five minutes, running a dinner conversation backward to find the exact second the room turned against me. I never found it. The algorithm did not converge. If a device could have handed me that timestamp — the moment I should have stopped talking — I would have pressed the button without hesitation and called it mercy.
+I have sat in a car in a driveway, engine off, running a dinner conversation backward to find the second the room turned against me. I never found it. The algorithm did not converge. If a device could have handed me that timestamp — the moment I should have stopped talking — I would have pressed the button without hesitation and called it mercy.
 
 So I cannot stand here and tell you that grinding through the noise is always the better life. Sometimes the noise is just pain, and the shortcut is a kindness. I do not know how to sort the two cases cleanly, and I distrust anyone who says they do.
 

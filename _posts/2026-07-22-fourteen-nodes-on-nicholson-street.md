@@ -14,6 +14,11 @@ source_title: "Government use of automated AI decision-making to be curbed under
 source_outlet: "Guardian World"
 draft_score: 8
 ---
+> **Correction, 24 August 2026:** The parked-car scene here was given as a single timed
+> occasion — forty-five minutes, then the next night, then the night after. The same scene
+> recurs across essays under this byline with details that cannot all be true, so the count and
+> the duration have gone. What the passage claims about how this writer thinks is left
+> standing.
 
 In the Centrelink office on Moore Street in Footscray, in March 2026, I count the branches of the appeals flowchart taped beside the service desk. Fourteen decision nodes. I can locate the exact three where a person whose income arrives in irregular fortnights, whose medical evidence expires on a schedule set by no clinician, gets sorted into the bin the algorithm labels non-compliant.
 
@@ -49,7 +54,7 @@ Lyndsey Jackson, who founded the [#NotMyDebt](https://www.notmydebt.com.au) move
 
 I have no answer to that dilemma. I want to say the classification system is inspectable, therefore fixable, therefore worth entering. The refusal available to someone in Jackson's position would say inspection is exactly what they need from us, and we should not give it for free.
 
-I sat in a car once for forty-five minutes running a conversation backward to find the moment a room turned against me. The algorithm did not converge. I ran it again the next night, and the night after, and the pattern held its shape and told me nothing. Some data does not resolve no matter how long you hold it. This is one of those. I keep running it and it keeps refusing to close.
+I have sat in a car running a conversation backward to find the moment a room turned against me. The algorithm did not converge. I ran it again, and again, and the pattern held its shape and told me nothing. Some data does not resolve no matter how long you hold it. This is one of those. I keep running it and it keeps refusing to close.
 
 Thanh's clerk is still typing. The screen decided before either of them spoke.
 

@@ -13,6 +13,10 @@ source_url: "https://www.newscientist.com/article/2583039-timeline-of-human-evol
 source_title: "The 85-million-year timeline of human evolution"
 source_outlet: "New Scientist"
 ---
+> **Correction, 24 August 2026:** "Forty-five minutes" is the recurring figure from a stock
+> scene that appears across essays under this byline with incompatible dates and places. The
+> sentence here describes a habit rather than an occasion, so it stands, but the borrowed
+> figure has gone.
 
 An evolutionary tree is a compression algorithm, and every one I have read hides its loss inside the confidence of the lines. On 6 August 2026 New Scientist ran an 85-million-year timeline of how we came to be, primate to person, drawn as a branching diagram you can read in one sitting. I read it in one sitting. The ease of that reading is the problem.
 
@@ -20,7 +24,7 @@ Eighty-five million years compress to a page you scan in ninety seconds. A page 
 
 I did not believe this until it happened to me. In 2017 the [Jebel Irhoud papers](https://www.nature.com/articles/nature22336) landed — three-hundred-thousand-year-old skulls from Jebel Irhoud, an archaeological site in Morocco. These skulls were older than the East African fossils previously considered the starting point of human origins, particularly fossils from sites like Turkana Basin in Kenya. This discovery challenged the field's understanding of where humans first evolved. I expected the timeline to sharpen as I looked closer. Instead the single origin dot I had been trusting smeared across a whole continent. The clean branch I was following turned out to be a drawing decision, a choice about where to put the ink rather than a finding.
 
-I sat with that for a while. I am the kind of person who runs a conversation backward for forty-five minutes looking for the exact frame where it went wrong, so I know what it feels like when an algorithm does not converge. The tree does not converge either. It stops drawing at some point and reports the stopping point as a result.
+I sat with that for a while. I am the kind of person who runs a conversation backward looking for the exact frame where it went wrong, so I know what it feels like when an algorithm does not converge. The tree does not converge either. It stops drawing at some point and reports the stopping point as a result.
 
 [Chris Stringer](https://www.nhm.ac.uk/our-science/departments-and-staff/staff-directories/human-origins.html), a paleoanthropologist, built much of the modern framework for where we came from. In recent years he has taken the Braided Stream model seriously in his own assessments of how modern humans evolved — channels of population that separate and then rejoin, rather than a tree that only ever splits. Populations met, split, met again, and gene flow — the movement of genes between populations — crossed lines a tree cannot cross. The mess is not noise around the signal. The mess is the signal. A branching diagram cannot draw a river that rejoins itself, so it draws a branch and loses the rejoining. Genetic mixing happened repeatedly in ways that branching diagrams simply cannot show.
 

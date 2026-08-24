@@ -67,8 +67,7 @@ reader-lab-worker/.export-token
 # automation/orchestrator/review.py. These are internal artifacts: never a Jekyll
 # collection, never rendered, /reviews/... 404s. They restate claims as they stood at
 # generation time, including claims later found false, so they do not belong in the
-# public repo. The current snapshot was moved to private storage on 2026-08-24
-# (/srv/data/cripminds-lc1/legacy-generation-reviews/ + MANIFEST.json). The writer is
-# unaffected — it still mkdirs and writes locally; this only keeps new sidecars from
-# re-entering git.
+# public repo. The current snapshot was moved to private storage on 2026-08-24, verified
+# file by file against sha256 before removal. The writer is unaffected — it still mkdirs
+# and writes locally; this only keeps new sidecars from re-entering git.
 _reviews/
