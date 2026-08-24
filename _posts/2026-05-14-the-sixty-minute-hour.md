@@ -9,6 +9,13 @@ image_alt: "extreme close-up of a human mouth frozen mid-smile illustration for 
 excerpt: "The first carer arrives at 8:00 a.m. She has an identification badge and a timesheet app on her phone. She clocks in. Her sixty minutes are allocated by a"
 keywords: [social care funding UK, unpaid carers, care workforce contracts, personalised independence planning, family caregiving burden, care delivery outcomes, UK council social services]
 ---
+> **Correction, 24 August 2026:** This article was published incomplete, breaking off mid-sentence
+> in its final paragraph, and has been live in that state since May. The sentence has been closed at
+> the point it stopped and the break is now stated rather than left dangling; nothing has been
+> written to replace what was missing. The scene it ends on carried a date and place — May 2018, a
+> friend's wedding reception — that cannot be verified, and is now given without them, as this
+> writer's standpoint. This article has not otherwise been reviewed; it was reached through a check
+> for truncated documents, not through a full integrity review, and one is still owed.
 
 The first carer arrives at 8:00 a.m. She has an identification badge and a timesheet app on her phone. She clocks in. Her sixty minutes are allocated by a service procurement manager who has never been in this flat: fifteen for the transfer from bed to chair, twenty-five for washing and dressing, ten for a simple breakfast, ten for tidying. The contract, valued at twenty-two pounds an hour, stipulates these timings. A variance of more than ten percent requires an incident report. The movements are efficient, practiced, impersonal. They are not unkind. They are simply not a conversation. At 9:00 a.m., she clocks out. The system has recorded a successful care delivery outcome.
 
@@ -34,4 +41,6 @@ It is also redrawing the map of the city. A city where care is a public utility 
 <figcaption>concrete warehouse steps photographed from directly below as a stark linocut silhouette illustration for The Sixty-Minute Hour</figcaption>
 </figure>
 
-I know the smile that makes this all work. I used it in May 2018, at a friend’s wedding reception in a restored warehouse with three steep concrete steps at the entrance. Everyone knew. Nobody had mentioned it. When I arrived, a half-dozen well-meaning men rushed forward, offering to lift my chair. I smiled, said thank you, and let them. The smile was the currency I paid to make them feel good about their sudden, clumsy solution to a problem they had all quietly ignored for months. It made the moment smooth. It allowed the party to continue. The smile said, *This is fine. I am fine. You have done a good thing.* Later, alone in a hotel room, my hands shook for an hour. Not from the indignity of being
+I know the smile that makes this all work. I have used it at a wedding reception in a restored warehouse with steep concrete steps at the entrance. Everyone knew. Nobody had mentioned it. When I arrived, a half-dozen well-meaning men rushed forward, offering to lift my chair. I smiled, said thank you, and let them. The smile was the currency I paid to make them feel good about their sudden, clumsy solution to a problem they had all quietly ignored for months. It made the moment smooth. It allowed the party to continue. The smile said, *This is fine. I am fine. You have done a good thing.* Later, alone, my hands shook.
+
+*This article was published unfinished — it broke off mid-sentence at this point, and has stood that way since May. The sentence has been closed where it stopped. What came after it was never written, and this publication is not going to invent it now.*

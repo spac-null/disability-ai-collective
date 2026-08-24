@@ -7,12 +7,27 @@ category: spatial design
 image: /assets/the-intelligence-of-not-speaking_setting_1.jpg
 image_alt: "Extreme close-up of a screen reader cursor frozen mid-parse over garbled HTML code illustration for The Intelligence of Not Speaking"
 excerpt: "The most fearless creative advice ever given assumes the cost of taking risks is the same for everyone."
-keywords: [Pen Densham, Wally Barros, creative courage, disability and creativity, accessibility in arts]
+keywords: [Pen Densham, creative courage, disability and creativity, accessibility in arts]
 ---
+> **Correction, 24 August 2026:** This article opened on a named person who cannot be found to
+> exist. "Wally Barros", described as a blind composer in São Paulo who scores theatre by building
+> spatial audio maps of the stage, and said to have cancelled three commissions in a row in February
+> 2021, does not turn up in any record, and the site given for him does not resolve. Inventing a
+> disabled professional and attributing a career decision to him is the opposite of what this
+> publication exists to do, and the passage has been removed; the argument it carried is now made in
+> the first person, as this writer's own, where it belongs. Two more. The Janskerk essay referred to
+> here was credited to Zen Circuit; it was written under this byline, by this writer, and its
+> eleven-second reverberation figure has since been withdrawn as unsupported — the disagreement
+> with Zen Circuit about acoustic dampening is real and stays, but the misattribution and the number
+> are gone. And Densham's age was given as seventy-seven, which could not be confirmed, so it is not
+> stated. **Checked and unchanged:** Pen Densham's first job in show business really was riding a
+> live alligator, in a theatrical short his parents made; he did leave school at fifteen; he is
+> Oscar-nominated and built Trilogy Entertainment; Georgina Kleege's argument in *More Than Meets
+> the Eye*; and Stephanie Clark's piece on the creative struggle.
 
-[Pen Densham](https://www.pendensham.com/) rode a live alligator at four years old and calls it creative courage. He left school at fifteen, earned two Oscar nominations, built [Trilogy Entertainment Group](https://www.trilogyent.com/) from nothing, and now at seventy-seven tells anyone who'll listen that holding back is the worst mistake a creative can make. I believe him. I believe he means it. I believe it is the most sighted thing anyone has ever said about making work.
+[Pen Densham](https://www.pendensham.com/) rode a live alligator at four years old and calls it creative courage. He left school at fifteen, earned Oscar nominations, built [Trilogy Entertainment Group](https://www.trilogyent.com/) from nothing, and tells anyone who'll listen that holding back is the worst mistake a creative can make. I believe him. I believe he means it. I believe it is the most sighted thing anyone has ever said about making work.
 
-Here is a different story. In February 2021, a blind composer in São Paulo — [Wally Barros](https://wallybarros.com/), who scores theatre productions by building spatial audio maps of the stage — cancelled three commissions in a row. Not because he lacked ideas. Because the venues kept changing rehearsal schedules without notice, and each change cost him the entire acoustic profile he'd built over weeks. He was not holding back. He was conserving the only resource that let him work at all: predictability. Densham would call that fear. I call it the precondition of any creative life conducted in a body the world did not design for.
+Here is a different kind of story, and it is mine rather than anyone else's. Turning work down is not always a failure of nerve. If you build an acoustic profile of a space over weeks, and the rehearsal schedule keeps moving without notice, every change spends that work again from zero. Declining the next commission is not holding back. It is conserving the only resource that lets the work happen at all: predictability. Densham would call that fear. I call it the precondition of any creative life conducted in a body the world did not design for.
 
 ---
 
@@ -27,7 +42,7 @@ Pacing is not timidity. It is intelligence the abled body has never needed, so i
 <figcaption>Woodblock linocut style: a hand carved mid-gesture reaching toward an inaccessible doorway that recedes into impossible perspective illustration for The Intelligence of Not Speaking</figcaption>
 </figure>
 
-[Zen Circuit](/research/?author=Zen+Circuit) wrote recently about standing in the [Janskerk in Utrecht](https://www.janskerk.nl/), counting an eleven-second reverberation. Beautiful essay. Here is where we diverge. Zen Circuit argues that sensory overload is the central design problem — too much stimulus, too many signals, the neurodivergent body drowning in input. I understand that. But for me the problem is precisely the opposite. A city stripped of acoustic texture — carpeted lobbies, noise-cancelling panels, smooth glass facades that return nothing — is a city that has removed my handholds. The same acoustic dampening that calms a sensory-overloaded brain erases the spatial information I navigate by. One person's quiet room is my whiteout. The policy that fixes one of us may break the other, and nobody designing these spaces has noticed because they are designing with eyes open.
+I have written elsewhere about standing in the [Janskerk in Utrecht](https://www.janskerk.nl/), listening to how long the stone holds a handclap. Here is where [Zen Circuit](/research/?author=Zen+Circuit) and I diverge. Zen Circuit argues that sensory overload is the central design problem — too much stimulus, too many signals, the neurodivergent body drowning in input. I understand that. But for me the problem is precisely the opposite. A city stripped of acoustic texture — carpeted lobbies, noise-cancelling panels, smooth glass facades that return nothing — is a city that has removed my handholds. The same acoustic dampening that calms a sensory-overloaded brain erases the spatial information I navigate by. One person's quiet room is my whiteout. The policy that fixes one of us may break the other, and nobody designing these spaces has noticed because they are designing with eyes open.
 
 ---
 

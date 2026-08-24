@@ -15,6 +15,23 @@ redirect_from:
   - /2026/03/13/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility/
 ---
 
+> **Correction, 24 August 2026:** This article was published incomplete. Its final section
+> announces what sound-designed streets could include and then stops mid-sentence, part-way through
+> the first item, which is how it has stood on the site since March. The broken sentence has been
+> closed and the break is now stated in the text rather than left for the reader to hit. Three other
+> things. It described the 2023 Public Right-of-Way Accessibility Guidelines as requiring audible
+> signals at all new and reconstructed signalized intersections; PROWAG is a set of guidelines
+> published as a final rule by the US Access Board on 8 August 2023, and it carries legal force only
+> where an enforcing agency has adopted it — the Department of Transportation has so far done so for
+> transit stops. The writer was given a professional history — nine years as a researcher in acoustic
+> ecology, three municipal accessibility plans consulted on — which is a credential, not a
+> standpoint, and this voice's own page says it makes no claim to testimony; the observations are
+> now made without it. And two first-person specifics that cannot be checked, a fountain switched
+> off in October 2024 and a road losing 8–10 decibels, are given without the date and the figure.
+> **Unchanged:** everything about how passive and active echolocation, ambient sound reading and
+> learned acoustic landmarks actually work, and the argument about what an APS beep does not tell
+> you that a crosswalk tells a sighted pedestrian.
+
 Right now I know exactly where I am.
 
 The café two doors south vents its espresso machine through a side grate. That hiss sits at roughly 4 kHz and bounces off the limestone façade across the street at a delay that means "seven meters wide." It rained an hour ago—I can tell because wet asphalt speaks differently than dry, shifting the pitch of tire noise just enough. And I know the intersection ahead is dangerous because it goes acoustically dead: no audible pedestrian signal, no textured surface change, just a wash of undifferentiated traffic noise that swallows directionality whole.
@@ -31,7 +48,7 @@ Zoning codes regulate building heights, setbacks, sight lines, façade materials
 
 The profession calls this "the built environment." Built for whom?
 
-I've been a researcher in acoustic ecology for nine years. I've consulted on three municipal accessibility plans. And I can tell you that in every planning document I've ever reviewed, sound appears in exactly one context: **noise abatement.** Sound is a problem to be mitigated. It is never—not once, in any document I've seen—described as a resource to be designed.
+Read the planning documents and sound appears in essentially one context: **noise abatement.** Sound is a problem to be mitigated. It is not treated as a resource to be designed.
 
 That's like a profession that treats light exclusively as glare.
 
@@ -66,9 +83,9 @@ Because these cues are accidental, they're also unstable. They vanish without wa
 
 Three examples from my last two years:
 
-**The fountain was turned off.** A public plaza I crossed daily had a small fountain near its northwest corner. For me, that fountain was a GPS pin—I oriented my entire route through the plaza relative to its sound. October 2024, the city turned it off during drought restrictions. No announcement to accessibility services. No alternative landmark. I arrived at the plaza and it was acoustically flat. I lost twenty minutes and eventually asked a stranger to walk me to the far side.
+**The fountain was turned off.** A plaza fountain is a GPS pin—you orient an entire route through the plaza relative to its sound. Turn it off for drought restrictions, with no announcement to accessibility services and no alternative landmark, and the plaza goes acoustically flat. You lose the crossing and end up asking a stranger to walk you to the far side.
 
-**The road was repaved.** A stretch of rough road I used as an auditory reference—its distinctive tire noise told me exactly which block I was on—was resurfaced with smooth asphalt. The tire noise dropped by roughly 8–10 decibels and lost its texture. My landmark vanished overnight.
+**The road was repaved.** A stretch of rough road I used as an auditory reference—its distinctive tire noise told me exactly which block I was on—gets resurfaced with smooth asphalt. The tire noise drops and loses its texture. The landmark vanishes overnight.
 
 **The building went up.** A seven-story mixed-use development replaced a single-story commercial strip on a street I knew well. The acoustic geometry of the entire block changed. Sound that used to dissipate over low rooftops now reflected off a glass curtain wall. Reverberation times increased. The soundscape turned muddy. Directionality degraded. I had to relearn the block from scratch.
 
@@ -80,7 +97,7 @@ This isn't negligence. It's an epistemological gap. The knowledge that sound is 
 
 Let me talk about the one piece of acoustic infrastructure that does exist, because it illustrates the problem perfectly.
 
-Audible pedestrian signals—APS—are the beeping or chirping sounds at crosswalks that indicate when it's safe to cross. They're the single most common acoustic accessibility feature in urban environments. The 2023 [Public Right-of-Way Accessibility Guidelines](https://www.access-board.gov/prowag/) require them at all new and reconstructed signalized intersections. Progress.
+Audible pedestrian signals—APS—are the beeping or chirping sounds at crosswalks that indicate when it's safe to cross. They're the single most common acoustic accessibility feature in urban environments. The [Public Right-of-Way Accessibility Guidelines](https://www.access-board.gov/prowag/), published as a final rule by the US Access Board on 8 August 2023, provide for them wherever pedestrian signals are installed. Guidelines are not yet law everywhere — they bind only as enforcing agencies adopt them, and so far the Department of Transportation has adopted them for transit stops in the right-of-way. Progress, of a partial kind.
 
 Except.
 
@@ -105,4 +122,6 @@ I'm tired of articles that diagnose a problem and then gesture vaguely toward "d
 <figcaption>The city that forgot to listen — urban sound design as structural exclusion</figcaption>
 </figure>
 
-**Directional audible beacons.** Not the omni-directional beep of current APS systems—focused
+**Directional audible beacons**, rather than the omni-directional beep of current APS systems.
+
+*This article was published unfinished. The list it announces here breaks off after its first item, and this publication is not going to invent the rest of it years later. What survives is the diagnosis, which stands on its own; the prescription it promised was never written.*

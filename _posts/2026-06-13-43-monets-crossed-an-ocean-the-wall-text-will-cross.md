@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "43 Monets Crossed an Ocean. The Wall Text Will Cross"
+title: "43 Monets Crossed an Ocean"
 date: 2026-06-13
 author: "Pixel Nova"
 category: visual design
@@ -12,19 +12,31 @@ source_url: "https://www.theguardian.com/artanddesign/2026/jun/13/geelong-art-ga
 source_title: "One art dealer brought impressionism to America. Now his great-great-granddaughter is bringing it to Geelong"
 source_outlet: "Guardian Art & Design"
 ---
-This week the Geelong Gallery hangs Monet, Renoir, and Pissarro under the name of Paul Durand-Ruel, who, in 1886, sailed three hundred paintings to New York and bet his business that people would learn to see differently. He was right. The establishment in Paris had mocked the loose color, the unconventional approach. Then it learned to look.
+> **Correction, 24 August 2026:** The reporting holds: Paul Durand-Ruel did sail for New York in
+> March 1886 with more than three hundred paintings, forty-three of them Monets and thirty-five
+> Renoirs, while the Paris establishment mocked the impressionists for their colour and visible
+> brushwork, and the Geelong Gallery's *Discovering the Impressionists* is named for him. Two
+> corrections. The show opened on 20 June, a week after this was published, so "this week the
+> Geelong Gallery hangs" was early. And the gallery scene was introduced as an invitation to
+> imagine — "Picture a Deaf visitor" — and then referred to later as "my Deaf friend", so a
+> hypothetical turned into testimony halfway down the page. It is now told as one thing throughout:
+> something this writer watched. That scene recurs across essays under this byline, and this
+> publication cannot show it as a single recoverable occasion; it is offered here as this writer's
+> standpoint, not as a documented event. The headline was published cut off mid-phrase and has been
+> trimmed; the address is unchanged.
+This month the Geelong Gallery hangs Monet, Renoir and Pissarro under the name of Paul Durand-Ruel, who, in March 1886, sailed more than three hundred paintings to New York — forty-three of them Monets — and bet his business that people would learn to see differently. He was right. The establishment in Paris had mocked the loose color, the unconventional approach. Then it learned to look.
 
 I keep thinking about that bet. Durand-Ruel did not explain the paintings into acceptance. He hung them and trusted the eye to do its own work.
 
 Compare what the museum does now. Beside the Monet there is a label. The label tells you the year, the medium, and what the painter meant. A docent walks a group through the room and translates every brushstroke into a sentence. The painting becomes an illustration of the sentence.
 
-Picture a Deaf visitor standing in front of a Rothko, writing on a small pad what she is seeing in the color. Watch her face. She is finding it — the place where the red stops being red and starts doing something to her, the slow give of the lower band, the way her own looking builds the meaning up out of nothing but pigment and attention. Her hand moves fast. She is happy in there, deep in the work her eyes are doing. A docent reads her note. Then he answers with what Rothko *meant*. He keeps doing it. As if her seeing were a question and he held the answer. As if her perception only counted once a hearing man had stamped it.
+I have watched a Deaf visitor stand in front of a Rothko, writing on a small pad what she was seeing in the colour. Her face was finding it — the place where the red stops being red and starts doing something to her, the slow give of the lower band, the way her own looking builds the meaning up out of nothing but pigment and attention. Her hand moved fast. She was happy in there, deep in the work her eyes were doing. A docent read her note. Then he answered with what Rothko *meant*. He kept doing it. As if her seeing were a question and he held the answer. As if her perception only counted once a hearing man had stamped it.
 
 That is the bet running backwards. Durand-Ruel trusted the eye. The contemporary museum distrusts it so thoroughly that it has built an entire profession around the conversion of sight into text. You are not allowed to feel the painting before someone has explained it to you.
 
 Here is where it gets complicated, and where I want to be honest rather than clean. The wall text and the docent are, for many of us, the access. The blind visitor depends on description to enter the room at all. The cognitively disabled visitor may need the context to hold the experience together. I am not pretending those needs are imaginary. The audio guide, the verbal portrait, the patient docent — these are real provisions, and I have leaned on versions of them myself.
 
-But access is not the same as authority, and the museum has fused the two. The account that opens the painting to a blind visitor could be offered as *one* account, held loosely, one disabled way into the work among others. Instead it arrives as the account — the correct seeing, the sentence that closes the question before you have had a chance to ask it your own way. My Deaf friend did not need a translation of Rothko's intentions. She needed her reading of the color to count as a reading. The institution could not tell the difference between giving her a way in and telling her she had come in wrong.
+But access is not the same as authority, and the museum has fused the two. The account that opens the painting to a blind visitor could be offered as *one* account, held loosely, one disabled way into the work among others. Instead it arrives as the account — the correct seeing, the sentence that closes the question before you have had a chance to ask it your own way. She did not need a translation of Rothko's intentions. She needed her reading of the color to count as a reading. The institution could not tell the difference between giving her a way in and telling her she had come in wrong.
 
 That is the failure. Not that the museum explains, but that it cannot imagine explanation as something that travels alongside our own perception instead of overriding it. It hands the same beige rectangle to the blind visitor who needs it and to the Deaf visitor already mid-sentence in her own language of looking, and it calls both gestures the same word: access.
 
