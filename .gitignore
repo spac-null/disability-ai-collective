@@ -62,3 +62,12 @@ reader-lab-worker/.dev.vars
 reader-lab-worker/node_modules/
 reader-lab-worker/.pilot-invites
 reader-lab-worker/.export-token
+
+# Generation-time citation-review sidecars (_reviews/<slug>-review.md), written by
+# automation/orchestrator/review.py. These are internal artifacts: never a Jekyll
+# collection, never rendered, /reviews/... 404s. They restate claims as they stood at
+# generation time, including claims later found false, so they do not belong in the
+# public repo. The current snapshot was moved to private storage on 2026-08-24, verified
+# file by file against sha256 before removal. The writer is unaffected — it still mkdirs
+# and writes locally; this only keeps new sidecars from re-entering git.
+_reviews/
