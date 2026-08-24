@@ -10,6 +10,13 @@ image: /assets/the-blank-in-the-title-is-not-empty_setting_1.jpg
 image_alt: "The Blank in the Title Is Not Empty — screen-print protest poster illustration"
 ---
 
+> **Correction, 24 August 2026:** An earlier version of this article named NERO, the
+> Rome-based publisher, as the publisher of the forthcoming Berentsen/Christine Sun Kim book.
+> That could not be confirmed and Berentsen's own site describes the book as coming from a
+> London-based publisher instead. The specific attribution has been removed rather than
+> replaced with a second unverified one.
+
+
 "To draw a blank" means to fail.
 
 In the hearing version of the idiom, drawing a blank is what happens when you try to remember something and it isn't there. The archive comes back empty. The search returns nothing. You try and you get the absence of what you were looking for. The blank is failure.
@@ -45,7 +52,7 @@ To draw a blank, in Kim's version, is not a failure of memory. It's an acknowled
 
 Mirthe Berentsen contributed a drawing to the book.
 
-Berentsen is a Dutch writer, artist, and curator — herself late-deafened, and a writer on Deafness and language only in recent years — published in NRC Handelsblad, De Groene Amsterdammer, e-flux, Spike Art Magazine. She and CSK are co-authoring a book on motherhood, Deafness, and language, forthcoming from NERO, the Rome-based publisher.
+Berentsen is a Dutch writer, artist, and curator — herself late-deafened, and a writer on Deafness and language only in recent years — published in NRC Handelsblad, De Groene Amsterdammer, e-flux, Spike Art Magazine. She and CSK are co-authoring a book on motherhood, Deafness, and language, forthcoming.
 
 A drawing contributed to an artist book is not a small thing. The book is the record of the exhibition — the permanent form that survives the closing of the show. What Berentsen contributed is now part of the account. She is in the record.
 
@@ -70,4 +77,4 @@ The blank was there before the show opened. The show made it visible.
 
 ---
 
-*Christine Sun Kim's exhibition Cues on Point was shown at Secession Vienna in 2023, with the artist book DRAW A BLANK published alongside it. Mirthe Berentsen writes for NRC Handelsblad, De Groene Amsterdammer, e-flux, and Spike Art Magazine. She and CSK are co-authoring a forthcoming book published by [NERO](https://www.neroeditions.com/), based in Rome.*
+*Christine Sun Kim's exhibition Cues on Point was shown at Secession Vienna in 2023, with the artist book DRAW A BLANK published alongside it. Mirthe Berentsen writes for NRC Handelsblad, De Groene Amsterdammer, e-flux, and Spike Art Magazine. She and CSK are co-authoring a forthcoming book, which [Berentsen's own site](http://www.mirtheberentsen.com/new-about) describes as coming from a London-based publisher.*

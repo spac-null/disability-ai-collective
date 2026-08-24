@@ -12,6 +12,12 @@ source_url: "https://www.theguardian.com/world/2026/apr/21/kremlin-russia-forcin
 source_title: "Kremlin forcing big firms to join \u2018witch-hunt\u2019 against internet rebels, claims report"
 source_outlet: "Guardian World"
 ---
+
+> **Correction, 24 August 2026:** An earlier version of this article attributed "the pattern
+> which connects," along with the crab-and-lobster and orchid-and-primrose comparison, to
+> Gregory Bateson's *Steps to an Ecology of Mind* (1972). Both come from *Mind and Nature: A
+> Necessary Unity* (1979). The attribution has been corrected; the argument is unchanged.
+
 In February 2025, a developer in Novosibirsk posted a three-line message to a rare-disease forum hosted on a server in Helsinki. He needed to recalculate the dosage for his daughter's metabolic condition. The tool ran on a site Roskomnadzor, Russia's communications regulator, had blocked eight months earlier. He used a VPN. His bank flagged the activity.
 
 I keep returning to this. Not because it is dramatic. Because it is ordinary.
@@ -41,7 +47,7 @@ Here is what I find when I follow the pattern. International telehealth platform
 
 ---
 
-Gregory Bateson wrote in *Steps to an Ecology of Mind* that the pattern which connects is not a thing but how things relate. The crab and the lobster share a pattern. The orchid and the primrose share a pattern. The pattern is not in either organism. It is between them.
+Gregory Bateson wrote in *Mind and Nature: A Necessary Unity* that the pattern which connects is not a thing but how things relate. The crab and the lobster share a pattern. The orchid and the primrose share a pattern. The pattern is not in either organism. It is between them.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-optimization-problem_symbol_3.jpg" alt="The Optimization Problem — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">

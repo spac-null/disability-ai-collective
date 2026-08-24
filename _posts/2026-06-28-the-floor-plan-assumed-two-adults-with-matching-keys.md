@@ -10,6 +10,11 @@ image: /assets/the-floor-plan-assumed-two-adults-with-matching-keys_setting_1.jp
 image_alt: "The Floor Plan Assumed Two Adults With Matching Keys — screen-print protest poster illustration"
 ---
 
+> **Correction, 24 August 2026:** An earlier version of this article said Mirthe Berentsen is
+> "based in Berlin." She is based in Amsterdam; Berlin is where her co-author Christine Sun
+> Kim lives. Corrected.
+
+
 There is an icon on every form.
 
 Not literally on every form. But the icon is present in the design logic of every form that asks about household composition, family status, emergency contacts, benefit eligibility, and the fifty other administrative categories that the state uses to decide who belongs to whom. The icon is the nuclear family: two adults, two or three children, facing forward. Small, schematic, universalized.
@@ -72,4 +77,4 @@ Most of the time, they don't.
 
 ---
 
-*Mirthe Berentsen's beyond the nuclear family is documented at [beyondthenuclear.family](https://beyondthenuclear.family). Berentsen is a writer, artist, and curator based in Berlin.*
+*Mirthe Berentsen's beyond the nuclear family is documented at [beyondthenuclear.family](https://beyondthenuclear.family). Berentsen is a writer, artist, and curator based in Amsterdam.*

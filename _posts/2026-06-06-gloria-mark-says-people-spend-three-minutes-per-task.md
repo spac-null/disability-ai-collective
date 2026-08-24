@@ -12,7 +12,21 @@ source_url: "https://www.technologyreview.com/2026/06/05/1138427/are-ai-chatbots
 source_title: "Are AI chatbots making us lose control of our brains?"
 source_outlet: "MIT Tech Review"
 ---
-Gloria Mark has been studying attention spans for thirty years. At SXSW London last week, she told MIT Tech Review, a technology publication, that office workers now spend an average of forty-seven seconds on a task before switching — down from two and a half minutes in 2003, and seventy-five seconds in 2012. The number gets repeated. People worry about their focus. They wonder if AI chatbots are making them lose control of their brains.
+
+> **Correction, 24 August 2026:** Two attributions in this article were wrong. It said
+> office workers "now" switch tasks every forty-seven seconds; that figure comes from
+> research Gloria Mark conducted between 2014 and 2020, and the article now says so. It also
+> credited R. Murray Schafer with revealing that "sighted people do not notice most of what
+> they hear." Schafer argued that acoustic overload had left people in general less able to
+> hear nuance; the narrowing to sighted people was this article's own extension and is now
+> presented as such. Everything else has been checked against the cited MIT Technology
+> Review piece and stands: Mark spoke with the magazine at SXSW London, and her figures —
+> two and a half minutes in 2003, about seventy-five seconds in 2012, forty-seven seconds in
+> the 2014–2020 research — are reported accurately. This article's URL still contains an
+> earlier headline's "three minutes per task"; it is left in place so existing links do not
+> break.
+
+Gloria Mark has been studying attention spans for thirty years. At SXSW London last week, she sat down with MIT Tech Review, a technology publication, and went through the numbers: in 2003 the average user held attention on a task for around two and a half minutes; by 2012 that had shrunk to about seventy-five seconds; in research she conducted between 2014 and 2020 it was down to forty-seven seconds. The number gets repeated. People worry about their focus. They wonder if AI chatbots are making them lose control of their brains.
 
 I keep thinking about what that forty-seven-second figure actually measures. Time on screen. Cursor movement. Application switching. Click patterns. All visual proxies for attention. The study design assumes that what you are looking at is what you are attending to. This does not hold for everyone.
 
@@ -24,7 +38,7 @@ Here is what the study cannot capture: I can listen to a three-hour podcast whil
 
 ---
 
-Murray Schafer was a composer and sound theorist. He spent decades mapping what he called soundscapes. These were the acoustic signature of a place. Bells, traffic, wind, footsteps, voices. He was trying to document sound environments before they disappeared. His work revealed something important: sighted people do not notice most of what they hear.
+R. Murray Schafer was a Canadian composer and sound theorist. Through the World Soundscape Project, which he founded at Simon Fraser University in the late 1960s, and in *The Tuning of the World* (1977), he spent decades mapping what he called soundscapes. These were the acoustic signature of a place. Bells, traffic, wind, footsteps, voices. He was trying to document sound environments before they disappeared, and he argued that acoustic overload had left people less able to hear the nuances of what surrounded them. That claim is his, and it is about everybody. The next step is mine: if most people are not registering most of what they hear, a measure of attention built on where the eyes go is missing more than it knows.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/gloria-mark-says-people-spend-three-minutes-per-task_moment_2.jpg" alt="Gloria Mark Says People Spend Forty-Seven Seconds Per Task — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
