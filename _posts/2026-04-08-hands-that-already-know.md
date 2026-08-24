@@ -13,19 +13,20 @@ source_title: "What can 160-million-year-old clay tell us about AI and ethics? I
 source_outlet: "Guardian Art & Design"
 ---
 
-> **Correction, 24 August 2026:** The link given for Es Devlin, es-devlin.com, does not resolve;
-> her site is esdevlin.com, and the link has been fixed. The article also stated as fact who was
-> not at the summit — blind potters, a potter with rheumatoid arthritis, a wheelchair user who
-> throws seated. The attendee list is not something this article can establish, and the passage
-> now says what it can support: that the account describes a room of AI practitioners and no
-> disabled practitioners. A small internal inconsistency, reading the piece on a Wednesday
-> outside a stall visited every Tuesday, has been fixed. One thing could not be checked either
-> way: the paraphrase of Devlin on the singing bowl's frequency, because the review is not
-> accessible to us. The summit itself, the 160-million-year-old clay and Devlin's description as
-> a British stage designer known for immersive large-scale work are corroborated by the cited
-> reporting and unchanged.
+> **Correction, 24 August 2026:** The link given for Es Devlin, es-devlin.com, does not resolve; her
+> site is esdevlin.com, and the link has been fixed. The article also stated as fact who was not at
+> the summit — blind potters, a potter with rheumatoid arthritis, a wheelchair user who throws
+> seated. The attendee list is not something this article can establish, and the passage now says
+> what it can support: that the account describes a room of AI practitioners and no disabled
+> practitioners. A small internal inconsistency, reading the piece on a Wednesday outside a stall
+> visited every Tuesday, has been fixed. The singing bowl's frequency, described as making the
+> temples vibrate pleasantly, was given as Devlin's own words; the cited reporting carries it as the
+> reporter's narration and not as a statement by her, and the article now attributes it to the
+> account. The summit itself, the 160-million-year-old clay and Devlin's description as a British
+> stage designer known for immersive large-scale work are corroborated by the cited reporting and
+> unchanged.
 
-This week [Es Devlin](https://esdevlin.com/), a British stage designer and artist known for her immersive large-scale installations, convened a summit at Oxford, in a potters' workshop, where she invited AI practitioners with a deliberately divergent set of viewpoints to sit at workbenches and push their fingers into Jurassic clay. [The Guardian](https://www.theguardian.com/) published an admiring account of the event. The clay is 160 million years old. The bell that opens the gathering is a singing bowl, the kind once used in Buddhist chanting rituals, and it hits, in Devlin's own words, just the right frequency to make the temples vibrate pleasantly. Everyone, the piece suggests, is humbled by the same encounter with matter. Whatever a person believes about AI, the piece implies, their hands are equally surprised by what they know that their mind does not.
+This week [Es Devlin](https://esdevlin.com/), a British stage designer and artist known for her immersive large-scale installations, convened a summit at Oxford, in a potters' workshop, where she invited AI practitioners with a deliberately divergent set of viewpoints to sit at workbenches and push their fingers into Jurassic clay. [The Guardian](https://www.theguardian.com/) published an admiring account of the event. The clay is 160 million years old. The bell that opens the gathering is a singing bowl, the kind once used in Buddhist chanting rituals, and the account describes it hitting just the right frequency to make the temples vibrate pleasantly. Everyone, the piece suggests, is humbled by the same encounter with matter. Whatever a person believes about AI, the piece implies, their hands are equally surprised by what they know that their mind does not.
 
 I read it parked outside a plantain stall in my neighbourhood, and I felt the small flat irritation that arrives when a beautiful idea is half-built and someone is selling the half as the whole.
 
