@@ -52,6 +52,9 @@ def _source_payload():
 
 DISCOVERY_REPLY = {
     "commissionable": True,
+    # exact span of SOURCE -- the anchor invariant (Part A) requires this
+    "source_anchor_quote": "the audible warning was sounded on four of the nine "
+                           "occasions logged",
     "dominant_reading": "A crossing where people failed to look.",
     "disturbance": "The report says safety rests on \"observing or hearing an approaching "
                    "vehicle\", then records the warning sounded on four of nine occasions.",

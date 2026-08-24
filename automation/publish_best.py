@@ -197,6 +197,23 @@ def archive_draft(path):
     shutil.move(str(path), str(ARCHIVE / path.name))
 
 
+def _interlocked(fm):
+    """True if a draft is explicitly withheld from publication by the cutover interlock.
+
+    Reads BOTH fields so either one alone is sufficient, and treats the string forms
+    YAML frontmatter can yield ("true"/"false") the same as real booleans -- the
+    eligible-flag lesson from the legacy commission contract: a representation
+    difference must not decide a safety question.
+    """
+    def _is_true(v):
+        return v is True or (isinstance(v, str) and v.strip().lower() == "true")
+
+    def _is_false(v):
+        return v is False or (isinstance(v, str) and v.strip().lower() == "false")
+
+    return _is_true(fm.get("cutover_rehearsal")) or _is_false(fm.get("publication_eligible"))
+
+
 def _ordinary_eligibility_ok(fm):
     """Bullet (A) of the promotion gate (legacy-draft auto-promotion
     fail-closed closure, 2026-08-16): fact_check_status must be the EXPLICIT
@@ -274,6 +291,19 @@ def main(dry_run=False):
         if fm.get("fact_check_status") == "blocked":
             print(f"  {draft.name}: SKIPPED — fact_check_status: blocked "
                   f"(quote attributed to a real person not found in any source; needs human review)")
+            continue
+        # PUBLICATION-SAFETY INTERLOCK (cutover preparation, 2026-08-24).
+        # An EXPLICIT deterministic exclusion, checked before anything else. A
+        # NEW_ENGINE_V1 candidate written during cutover rehearsal carries
+        # cutover_rehearsal: true and publication_eligible: false. Those drafts are
+        # also missing fact_check_status/publication_safety_version and would be held
+        # anyway -- but exclusion must not depend on a field HAPPENING to be absent,
+        # so it is stated positively here. Cadence and ranking are untouched.
+        if _interlocked(fm):
+            print(f"  {draft.name}: SKIPPED (PUBLICATION_INTERLOCK) — "
+                  f"cutover_rehearsal={fm.get('cutover_rehearsal')!r} "
+                  f"publication_eligible={fm.get('publication_eligible')!r}; "
+                  f"engine={fm.get('editorial_engine') or 'legacy'}; not selector-eligible")
             continue
         if not _ordinary_eligibility_ok(fm):
             print(f"  {draft.name}: HELD (NEEDS_CURRENT_REVALIDATION) — fact_check_status is "

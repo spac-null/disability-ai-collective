@@ -27,6 +27,7 @@ import os
 import pathlib
 
 from . import contracts as C
+from . import invariants as INV
 from . import stages as S
 from .decision import decide
 
@@ -101,6 +102,33 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
                 "reasons": ["discovery: source not commissionable -- %s"
                             % str(d.get("disturbance", ""))[:200]],
                 "provider": prov}
+    # CONTRACT REVISION 2026-08-24 (Part A): the designated source anchor must be an
+    # exact span of the snapshot. Enforced BEFORE Article Form and before the writer, so
+    # an ungrounded Discovery can never reach prose. Only mechanically harmless
+    # differences are normalised away -- a paraphrase still fails. See invariants.py.
+    ok, code, detail = INV.check_anchor(d, src)
+    anchor_note = detail
+    if not ok:
+        # ONE bounded repair, exactness only, changing only the anchor field. No loop.
+        repaired, rdetail = INV.repair_anchor(provider, d, src)
+        prov["anchor_repair"] = {"attempted": True, "succeeded": repaired,
+                                 "detail": rdetail}
+        if not repaired:
+            reasons = ["%s: %s" % (code, detail), "anchor repair: %s" % rdetail,
+                       "HOLD before writer -- Discovery is not source-grounded"]
+            A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
+                                   {"source": A[C.SOURCE_SNAPSHOT]})
+            A[C.SHADOW_DECISION] = _emit(
+                C.SHADOW_DECISION, at,
+                {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
+                 "reason_code": code,
+                 "policy": "ACCEPT = eligible for the candidate pool; never publication"},
+                {"discovery": A[C.DISCOVERY]})
+            _persist(A, run_root, name, mode, prov, "HOLD", reasons)
+            return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
+                    "provider": prov, "reason_code": code}
+        ok, code, anchor_note = INV.check_anchor(d, src)
+    d["source_anchor_verified"] = True
     A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
                            {"source": A[C.SOURCE_SNAPSHOT]})
 
@@ -121,25 +149,40 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
     prov["writer"] = wo.get("_provider", {})
 
     if wo["provider_status"] != "ok":
-        # A note on the frozen contract: decision.py anticipates
-        # provider_status != "ok", but contracts.validate() requires a non-empty
-        # article_text, so a FAILED writer output cannot be expressed as a valid
-        # WRITER_OUTPUT artifact. Rather than edit a frozen contract or fabricate
-        # placeholder prose, no WRITER_OUTPUT is emitted: the run HOLDs on an
-        # explicit, recorded reason. Fail-closed either way, and the provider error
-        # is preserved in the manifest. Flagged for the contract owner.
-        reasons = ["writer provider failed (%s); HOLD, no template fallback"
-                   % wo.get("provider_error", "unknown")[:160],
-                   "no WRITER_OUTPUT artifact emitted: the frozen contract cannot "
-                   "represent an empty article_text"]
+        # PART B (2026-08-24). decision.py anticipates provider_status != "ok", but
+        # contracts.validate() requires a NON-EMPTY article_text, so a failed writer
+        # cannot be expressed as a valid WRITER_OUTPUT. Rather than edit a frozen
+        # contract or fabricate placeholder prose, the failure gets its own first-class
+        # record -- RUN_STATUS -- and the run HOLDs. No WRITER_OUTPUT artifact is
+        # emitted, so nothing downstream can mistake a failure for a draft.
+        run_status = {
+            "status": "PROVIDER_FAILURE",
+            "stage": C.WRITER_OUTPUT,
+            "failure_category": "writer_provider_unavailable",
+            "provider": (wo.get("_provider") or {}).get("provider", "unknown"),
+            "requested_model": (wo.get("_provider") or {}).get(
+                "requested_model", getattr(provider, "model", "unknown")),
+            "actual_model": (wo.get("_provider") or {}).get("actual_model", ""),
+            "error": wo.get("provider_error", "")[:500],
+            "run": name,
+            "created_at": at,
+            "engine": ENGINE,
+            "writer_output_emitted": False,
+            "article_produced": False,
+        }
+        reasons = ["writer provider failed; HOLD, no template fallback",
+                   "RUN_STATUS=PROVIDER_FAILURE recorded; no WRITER_OUTPUT artifact "
+                   "emitted, so no empty or placeholder article exists"]
         A[C.SHADOW_DECISION] = _emit(
             C.SHADOW_DECISION, at,
             {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
-             "provider_error": wo.get("provider_error", ""),
+             "reason_code": "WRITER_PROVIDER_FAILURE",
              "policy": "ACCEPT = eligible for the candidate pool; never publication"},
             {"writer_input": A[C.WRITER_INPUT]})
-        _persist(A, run_root, name, mode, prov, "HOLD", reasons)
-        return {"artifacts": A, "decision": "HOLD", "reasons": reasons, "provider": prov}
+        _persist(A, run_root, name, mode, prov, "HOLD", reasons, run_status=run_status)
+        return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
+                "provider": prov, "run_status": run_status,
+                "reason_code": "WRITER_PROVIDER_FAILURE"}
 
     A[C.WRITER_OUTPUT] = _emit(C.WRITER_OUTPUT, at, _strip_provider(wo),
                                {"writer_input": A[C.WRITER_INPUT]})
@@ -187,7 +230,8 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
 
 
 def _persist(A: dict, run_root: pathlib.Path, name: str, mode: str,
-             prov: dict, decision: str, reasons: list) -> None:
+             prov: dict, decision: str, reasons: list,
+             run_status: dict | None = None) -> None:
     """The ONLY filesystem write. Isolated candidate/evidence location."""
     out = run_root / name
     out.mkdir(parents=True, exist_ok=True)
@@ -203,6 +247,10 @@ def _persist(A: dict, run_root: pathlib.Path, name: str, mode: str,
     if C.GROUNDING_REPAIR in A:
         (out / "article-repaired.md").write_text(
             A[C.GROUNDING_REPAIR].payload["article_text"], encoding="utf-8")
+    if run_status is not None:
+        (out / "RUN_STATUS.json").write_text(
+            json.dumps(run_status, indent=2, sort_keys=True, ensure_ascii=False),
+            encoding="utf-8")
     (out / "MANIFEST.json").write_text(json.dumps({
         "engine": ENGINE,
         "mode": mode,
@@ -213,5 +261,6 @@ def _persist(A: dict, run_root: pathlib.Path, name: str, mode: str,
         "reasons": reasons,
         "source_sha256": A[C.SOURCE_SNAPSHOT].payload["source_sha256"],
         "provider_identity": prov,
+        "run_status": (run_status or {"status": "OK"})["status"],
         "publication": "NONE -- candidate only, not connected to any selector or publish path",
     }, indent=2, sort_keys=True, ensure_ascii=False), encoding="utf-8")

@@ -71,8 +71,14 @@ def discovery_prompt(source_text: str, sha: str) -> str:
         '  "commissionable": true|false,\n'
         '  "dominant_reading": "how this subject is normally understood -- the framing a '
         'general reader would arrive with",\n'
+        '  "source_anchor_quote": "ONE clause or sentence copied CHARACTER-FOR-CHARACTER '
+        'from the source above -- the exact span this whole reading rests on. It is '
+        'checked against the source programmatically and the run is rejected if it is '
+        'not an exact span, so do not paraphrase, do not merge two places, and do not '
+        'tidy the punctuation.",\n'
         '  "disturbance": "the specific detail IN THE SOURCE where that reading stops '
-        'holding. Quote the source clause it rests on, verbatim, inside this field.",\n'
+        'holding, in your own words. This is prose and may paraphrase -- the exact span '
+        'lives in source_anchor_quote.",\n'
         '  "perceptual_instrument": "the disability-informed way of perceiving used as an '
         'instrument here -- what it is tuned to notice. Name a capacity, not a persona '
         'and not an identity claim.",\n'
@@ -123,12 +129,14 @@ def form_prompt(discovery: dict, source_text: str, sha: str) -> str:
         _source_block(source_text, sha) +
         "\nMATERIAL FROM DISCOVERY:\n"
         "  dominant reading   : %s\n"
+        "  source anchor      : %s\n"
         "  disturbance        : %s\n"
         "  instrument         : %s\n"
         "  what becomes knowable: %s\n"
         "  source facts       : %s\n"
         "  evidence gaps      : %s\n"
-        % (discovery.get("dominant_reading", ""), discovery.get("disturbance", ""),
+        % (discovery.get("dominant_reading", ""),
+           discovery.get("source_anchor_quote", ""), discovery.get("disturbance", ""),
            discovery.get("perceptual_instrument", ""),
            discovery.get("what_becomes_knowable", ""),
            "; ".join(discovery.get("source_facts", [])[:8]),
@@ -182,6 +190,8 @@ def build_writer_input(article_form: dict, discovery: dict,
            article_form["burden"],
            article_form.get("target_words", [900, 1200])[0],
            article_form.get("target_words", [900, 1200])[1]) +
+        "\nSOURCE ANCHOR (verified verbatim in the source; the argument rests on it)\n"
+        "  %s\n" % discovery.get("source_anchor_quote", "") +
         "\nWHAT THE READING MAKES KNOWABLE (the article's argument)\n  %s\n"
         % discovery.get("what_becomes_knowable", "") +
         "\nGROUNDING BOUNDARIES (binding)\n%s\n" % discovery.get("grounding_boundaries", "") +
