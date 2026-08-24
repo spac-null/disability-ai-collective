@@ -9,6 +9,15 @@ image_alt: "extreme close-up of a spreadsheet cell being hand-written in crimson
 excerpt: "Baron-Cohen's claim that autism represents an extreme of the male brain defined a generation of diagnosis. What the theory measured, and what it refused to see."
 keywords: [baron-cohen, "autism represents an extreme of the male brain", extreme male brain theory, autism male brain baron-cohen, autistic self-advocacy, autism diagnosis, neurodiversity]
 ---
+
+> **Correction, 24 August 2026:** An earlier version of this article contained a
+> first-person clinical account — sitting in a psychologist's office in January 2016 at
+> nineteen, being told of "a deficit in affective empathy," and a detail about the author's
+> mother. It was written as autobiography and is not supported. It has been removed and the
+> point it was illustrating is now made directly. The scholarship this article rests on,
+> including Jim Sinclair's 1993 address and Baron-Cohen's model, is accurately cited and
+> unchanged.
+
 In May 1993, a group of autistic adults sat in a conference room in Syracuse, New York, and did something no diagnostic manual had ever anticipated. They organized. [Jim Sinclair](https://www.jimsinclair.org/), an autistic self-advocate, stood at the front and delivered "Don't Mourn for Us," a seven-minute address aimed at parents of autistic children. This speech became a founding moment for autistic self-representation in the medical and cultural conversation about autism. The core of it was one sentence: "Autism isn't something a person has, or a shell that a person is trapped inside." The room was small. The audience was mostly parents. Some of them cried. Some of them left.
 
 In October 2019, a group of autistic adults sat in a conference room in Westminster and did something every diagnostic manual had anticipated. They waited. The UK parliament's All-Party Parliamentary Group on Autism held a consultation on the national autism strategy. Autistic people had been invited to share their experiences. The session ran two hours. Each speaker got three minutes. A civil servant took notes on a laptop. The final strategy, published eighteen months later, contained the phrase "autistic people and their families" forty-seven times. It contained the phrase "autistic-led" once.
@@ -32,7 +41,7 @@ Here is where the pattern gets interesting.
 
 His team tested whether autistic people could read faces like non-autistic researchers read them. When results differed, he concluded autistic people lacked empathy. This reasoning has a flaw: the instrument measured conformity to a perceptual norm and called it emotional capacity.
 
-I know this because I am the person who scores low on those tests and high on the thing the tests claim to measure. I sat in a psychologist's office in January 2016, age nineteen, and watched her read my results with a specific expression. The expression meant: the numbers confirm what the numbers were designed to confirm. She told me I had "a deficit in affective empathy." I had spent the previous three years noticing when my mother was sad before my mother noticed. The data didn't match. But the data was mine, and the instrument was hers, and hers had a publication record.
+The instrument decides what counts as the finding. Someone can score low on a measure of affective empathy and be, in the ordinary sense the measure claims to be about, unusually attentive to the people around them — and the score is what enters the record, because the score has a publication history behind it and the attentiveness does not. The numbers confirm what the numbers were designed to confirm.
 
 ---
 

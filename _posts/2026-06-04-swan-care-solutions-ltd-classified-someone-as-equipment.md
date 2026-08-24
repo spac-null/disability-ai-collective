@@ -12,6 +12,15 @@ source_url: "https://www.theguardian.com/commentisfree/2026/jun/03/the-guardian-
 source_title: "The Guardian view on migrant workers\u2019 rights: a tribunal win has shone a light on a broken system | Editorial"
 source_outlet: "Guardian Society"
 ---
+
+> **Correction, 24 August 2026:** An earlier version of this article stated that the
+> WorkWell scheme "recorded the missing 99.44 percent in a dropdown labelled 'won't
+> comply.'" That claim originated in another Crip Minds article which has since been
+> withdrawn: it rested on an anonymous secondhand account of an unnamed NHS integrated care
+> board and could not be verified. The clause has been removed here. The 0.56 percent
+> recruitment figure is real and comes from Disability News Service's reporting; the
+> tribunal material in this article is unaffected.
+
 Shabin Shaji won his employment tribunal case this year. Swan Care Solutions Ltd had recruited him from India on a Health and Care Worker visa, sponsoring him for a job that, on paper, guaranteed forty hours a week and £22,880 a year. He arrived with a computer science degree, no family in the UK, and £17,000 already spent — paid to a recruitment agent he'd found through a YouTube influencer. Over the following year he was given zero hours. Not reduced hours. Zero. He was told to wait his turn. He was directed to food banks. His visa let him work up to twenty hours a week for someone else, which is not enough to live on and is exactly the amount of freedom a sponsor can afford to grant before the leash goes slack. The tribunal found unlawful deduction of wages, failure to provide a written contract, and two separate breaches of the ACAS code. It awarded him £28,843.53, plus £8,700 in costs.
 
 I want to sit on the number zero, because it is doing more work than "underpaid" ever could. Underpaid implies a wage that fell short. Zero is not a shortfall. Zero is a certificate — the actual legal document that brought him across a border, that named a job, a salary, a schedule — being honoured by the company that signed it only as far as it let them sponsor a visa. The paperwork was real. The forty hours were not. A system built entirely on documents discovered it did not need to keep the part of the document that cost it money.
@@ -40,4 +49,4 @@ The Home Office had already revoked Swan Care Solutions' sponsorship licence onc
 
 The tribunal gave Mr Shaji what he was owed. It could not give him back the year, the £17,000, or the meals he skipped waiting for a shift that was never coming.
 
-This is one case in a pattern. [The UK's WorkWell employment scheme recruited 0.56 percent of its targets](/2026/05/30/nhs-lancashire-and-south-cumbria-recruited/) — and recorded the missing 99.44 percent in a dropdown labelled 'won't comply.' The employer sees input costs. The scheme sees compliance failures. The person is absent from both calculations.
+This is one case in a pattern. The UK's WorkWell employment scheme recruited 0.56 percent of its targets across its pilot sites, as reported by Disability News Service. The employer sees input costs. The scheme counts the people who did not enrol. The person is absent from both calculations.

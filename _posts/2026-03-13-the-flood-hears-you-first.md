@@ -10,6 +10,16 @@ excerpt: "We've known how to navigate invisible rooms for our entire lives, but 
 keywords: [Hurricane Maria Puerto Rico, disability justice, climate justice, Sins Invalid, environmental racism, disabled accessibility in disaster response]
 ---
 
+> **Correction, 24 August 2026:** An earlier version of this article stated that Shira
+> Wakschlag of The Arc had told reporters that people with intellectual and developmental
+> disabilities were being turned away from shelters during Hurricane Milton. No source
+> supports her having said that, and the sentence has been removed. Ms Wakschlag is a real
+> attorney and The Arc's Senior Director of Legal Advocacy; attributing a statement to her
+> that she did not make was a serious error. The passage now cites reporting that does
+> document shelter access failures during Milton. A paraphrase of Pauline Oliveros was also
+> presented as something she said; it has been rewritten to separate her documented
+> distinction between hearing and listening from this article's own gloss on it.
+
 The morning after Hurricane Maria hit Puerto Rico in September 2017, someone posted a recording from Yabucoa. Not the wind. The aftermath. Water moving through a concrete house at a pace that suggested it had no intention of leaving. Furniture knocking against walls in a rhythm that was almost musical, almost patient. And underneath it all, a sound I recognized from a completely different context: the low hum of a space that has changed its dimensions.
 
 The room was smaller now. The water had redrawn it.
@@ -36,7 +46,7 @@ In August 2005, when Katrina drowned New Orleans, the evacuation buses weren't w
 
 What's less discussed: the sensory architecture of the disaster itself. The alarms that were visual only. The emergency broadcasts that assumed literacy, sight, hearing, a working television. The entire warning system was built for one kind of body.
 
-Nineteen years later, when Hurricane Milton bore down on Florida's Gulf Coast in October 2024, disability rights attorney [Shira Wakschlag](https://thearc.org/) of The Arc told reporters that people with intellectual and developmental disabilities were still being turned away from shelters because staff didn't know how to accommodate them.
+Nineteen years later, when Hurricane Milton bore down on Florida's Gulf Coast in October 2024, the same failures were documented again. [Reporting by Marianne Dhenin for Atmos](https://atmos.earth/hurricane-milton-confirmed-what-disabled-citizens-feared-most), published on 11 October 2024, records a Sarasota woman told that a shelter already held 1,800 people and could not accommodate her elderly parents, and notes that access problems at emergency shelters are common: insufficient signage for blind and low-vision people, missing ramps and accessible bathrooms, and a lack of training among staff and volunteers. Dom Kelly, president and chief executive of New Disabled South, put it plainly in the same piece: "Disabled people are left behind in planning. We are literally, physically left behind in evacuations, and the majority of people who die are disabled." 
 
 Still. The same coast. The same storm season pattern. The same exclusion dressed in new emergency management jargon.
 
@@ -54,7 +64,7 @@ When a tornado siren goes off, I hear things sighted people don't:
 
 None of this is superpower. It's skill developed by necessity, refined by attention, and ignored by every emergency planner I've ever spoken to.
 
-[Pauline Oliveros](https://paulineoliveros.us/) spent decades developing what she called Deep Listening — a practice of attending to the full sonic environment, not just the sounds you expect. She once said that listening is not the same as hearing; listening is a directed attention, a decision to treat sound as knowledge rather than noise.
+[Pauline Oliveros](https://paulineoliveros.us/) spent decades developing what she called Deep Listening — a practice of attending to the full sonic environment, not just the sounds you expect. Her own formulation of the distinction is that hearing is the physical means of perception while listening is giving attention to what is perceived. The step from there to treating sound as knowledge rather than noise is this article's, not hers.
 
 She was describing something blind people do as a condition of existence. We are not practitioners of her method. We are the method's origin point, uncredited.
 

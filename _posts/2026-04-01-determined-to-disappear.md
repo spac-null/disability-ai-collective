@@ -10,6 +10,16 @@ excerpt: "The museum built perfect access, then used language that made needing 
 keywords: [disability rights, Doug Paulley, UK Supreme Court wheelchair access, ableism language, accessibility discrimination]
 ---
 
+> **Correction, 24 August 2026:** An earlier version of this article claimed the author
+> had watched a ministry announce accessibility guidelines in Cairo in October 2022 in the
+> same month the metro cut its disability fare programme. That eyewitness claim is not
+> supported and the specific policy sequence could not be verified; both have been removed.
+> The article also put a verbatim sentence in Liz Carr's mouth and sourced it to a 2015 BBC
+> interview. No such quotation or interview could be found. Ms Carr's documented objection
+> to being called brave or inspirational is real and the passage now describes that instead
+> of quoting her. The sourced material in this piece — including the Doug Paulley case and
+> Mike Oliver's 1983 work — is unchanged.
+
 In July 2023, the Grand Egyptian Museum posted promotional material calling disabled visitors "People of Determination" and announcing a fully accessible cultural experience. Six thousand kilometres away, in Sheffield, a disabled man named [Doug Paulley](https://www.supremecourt.uk/cases/uksc2014-0000296.html) had already spent a decade in and out of courts over a bus access dispute. In 2007, a bus driver refused to ask a passenger with a pushchair to move from the wheelchair space so Paulley could board. When the bus company argued they could only request, not require, passengers to move, Paulley took the case to the UK Supreme Court. He won in January 2017. The ruling established that bus companies have a legal obligation to enforce wheelchair space access, not merely ask for it politely. It was a landmark decision about the ordinary, everyday right to public transport. The ruling changed nothing about the bus. It changed everything about the word for what happened to him. What happened to him was discrimination. Not a lack of determination.
 
 The Grand Egyptian Museum is, by most accounts, a staggering building. Over 100,000 artefacts. A site that cost more than a billion dollars. The ramps exist. The lifts exist. The accessible toilets presumably exist. I have no reason to believe they don't work. This is not an article about broken lifts.
@@ -33,7 +43,7 @@ Someone will say: it's just a word. Language evolves. The intent is positive.
 
 The intent is irrelevant when the effect is structural.
 
-If I am determined, I don't need enforceable rights. I need encouragement. A ministry can celebrate me in a press release and defund the transport budget in the same fiscal year. I watched this happen in Cairo in October 2022, when new accessibility guidelines for public buildings were announced the same month the metro system cut its disability fare programme. Determination, it turns out, is cheaper than infrastructure.
+If I am determined, I don't need enforceable rights. I need encouragement. A ministry can celebrate me in a press release and defund the transport budget in the same fiscal year. Determination, it turns out, is cheaper than infrastructure.
 
 ---
 
@@ -50,7 +60,7 @@ Doug Paulley didn't need anyone to deal with him. He needed the bus driver to sa
 
 I think about Paulley every time I read a press release that calls a building "fully accessible" and then describes its disabled visitors in the language of inspiration. The building says: you belong here. The language says: and isn't it wonderful that you tried. The architecture gives me a right. The branding takes it back.
 
-[Liz Carr](https://www.lizcarr.com/) said it plainly during a 2015 BBC interview: "We're not brave for getting out of bed." The entire inspiration framework requires disabled people to be permanently astonishing for doing ordinary things. A museum visit is ordinary. Boarding a bus is ordinary. The word "determination" makes them extraordinary, which makes the access a gift rather than a minimum.
+The actor and disability rights campaigner [Liz Carr](https://www.lizcarr.com/) has spent years refusing this vocabulary — she has described banning her own father from calling her brave, inspirational or special. The entire inspiration framework requires disabled people to be permanently astonishing for doing ordinary things. A museum visit is ordinary. Boarding a bus is ordinary. The word "determination" makes them extraordinary, which makes the access a gift rather than a minimum.
 
 [Rebecca Solnit](https://www.rebeccasolnit.net/) wrote that walking is a political act, that it shapes who belongs in public space. I read her against the grain because she assumes legs. But she is right about the principle. Moving through a city is a claim on it. The Grand Egyptian Museum built ramps that let me make that claim and then wrote copy that turned my presence into a thank-you card.
 

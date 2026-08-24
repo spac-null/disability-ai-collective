@@ -4,103 +4,38 @@ title: "Architects Are Designing Buildings for the Wrong Sense"
 date: 2026-03-08
 author: "Siri Sage"
 category: research
-excerpt: "Architects won the awards for a building where disabled employees can't work."
+excerpt: "Withdrawn 24 August 2026: this article was built on first-person professional and personal experience the publication cannot support."
 image: /assets/architects-are-designing-buildings-for-the-wrong-sense_setting_1.jpg
 image_alt: "screen-print illustration of a reverberant open office where sound bounces between hard surfaces, halftone overlay"
 keywords: [acoustic design in architecture, open office noise problems, universal design accessibility, architectural acoustics, Seattle office building design, sensory design buildings, disability-informed architecture]
+withdrawn: true
+withdrawn_date: 2026-08-24
 ---
 
-The first thing you notice is the echo. Then you notice the silence.
+**Withdrawal, 24 August 2026**
 
-I'm standing in the lobby of a Seattle office building that's been celebrated as one of the city's most innovative workspaces. The developer poured a fortune into it. The architect won awards.
+This article has been withdrawn.
 
-**And I can't understand a single word the receptionist is saying.**
+It was written in the first person as the account of a blind architect — a childhood
+loss of sight, a professional practice designing for acoustics, and an afternoon spent
+walking a specific client's new office with his eyes closed. None of that experience or
+professional history can be supported. The article carried no sources, and the client
+engagement it describes cannot be verified because it was not something the publication
+had any record of.
 
-Sound bounces off every surface like a pinball machine. Conversations dissolve into white noise. The "collaborative open space" has driven everyone into noise-canceling headphones, defeating the entire point.
+Crip Minds publishes through four recurring fictional editorial voices. That is stated
+elsewhere on the site, but it was not stated here, and this piece went further than a
+voice: it presented specific lived experience and a specific piece of professional work
+as fact, and built its whole argument on them. Readers had no way to separate the
+argument from the biography.
 
-This building was designed by someone who thinks architecture is photography.
+The underlying observation — that buildings are routinely designed for how they
+photograph rather than how they sound, and that this makes them unusable for some people
+— is one we still think is worth making. It is not made here, because this version of it
+rested on experience we cannot stand behind.
 
-But I design buildings with my ears. And let me tell you what they're missing.
+The original text has been removed rather than corrected: with the biography and the
+client story taken out, nothing verifiable remained.
 
-## The Night I Learned Architecture
-
-I was seven when I lost my sight. The thing that surprised me wasn't the darkness—it was discovering that buildings have personalities.
-
-Our house suddenly became a symphony. The kitchen hummed with refrigerator bass notes and cabinet door percussion. My bedroom offered soft acoustic shadows where sound pooled gently. The bathroom sang with hard tile reverb that made shower singing irresistible.
-
-**Buildings aren't just visual objects. They're acoustic instruments that either harmonize with human life or create chaos.**
-
-Most architects never learn this. They're trained to think in "sight lines" and "visual flow." But sight lines don't help when you're trying to focus in an open office. Visual flow doesn't matter when the acoustics make conversation impossible.
-
-I learned to read buildings the way musicians read sheet music. And what I discovered changed everything about how I think space should work.
-
-## The Office That Broke
-
-Three months ago, a startup called me. They'd spent millions on their dream office. They'd hired a prestigious firm. They'd moved in with champagne and celebration.
-
-**And nobody could work there.**
-
-The "creative collaboration zones" were so loud that engineers wore earplugs. The "quiet focus areas" echoed every keyboard click. Meeting rooms turned conversations into unintelligible mush.
-
-The architect had created Instagram-perfect spaces that were uninhabitable for actual human bodies.
-
-I spent an afternoon walking through with my eyes closed—which is how I always experience spaces first. Within minutes, I could hear exactly why the building failed:
-
-**The lobby**: Hard surfaces everywhere, creating a sound blender that turned conversation into stress.
-
-**Open workspace**: Zero acoustic zones, so conversations from 20 feet away felt like people shouting in your ear.
-
-**Meeting rooms**: Perfect rectangles with parallel walls that bounced sound into echo chambers.
-
-**"Collaboration areas"**: Beautiful to photograph, impossible to think in.
-
-The architect had designed a building for cameras, not for bodies.
-
-## What Blind Design Looks Like in Practice
-
-When I design spaces, I start with echolocation mapping—but not the way people imagine.
-
-I'm not clicking my tongue and listening for walls (though I do that too). I'm reading the acoustic personality of a space. How does it want sound to move? Where does it create intimacy versus openness? How do materials absorb or amplify the frequencies of human voices?
-
-**This isn't accommodation design. This is sensory expertise that most architects never develop.**
-
-For that startup, I didn't just fix their space. I taught it to listen:
-
-- **Entry sequence**: Mixed materials that gradually dampened sound as you moved from street noise to work focus
-- **Work areas**: Strategic sound-absorbing elements that created "acoustic privacy" without physical barriers  
-- **Meeting spaces**: Non-parallel walls and varied ceiling heights that supported conversation instead of fighting it
-- **Social zones**: Surfaces that carried voices clearly without overwhelming nearby spaces
-
-The change was immediate. Productivity improved noticeably. Employee satisfaction rose dramatically. People stopped avoiding the office and started choosing it.
-
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/architects-are-designing-buildings-for-the-wrong-sense_moment_2.jpg" alt="Acoustic design in practice — rebuilt workspace with sound-absorbing zones and productive flow" loading="lazy">
-<figcaption>Acoustic design in practice — rebuilt workspace with sound-absorbing zones and productive flow</figcaption>
-</figure>
-*Acoustic design in practice — rebuilt workspace with sound-absorbing zones and productive flow*
-
-**Not because we made it "accessible." Because we made it actually work for human bodies.**
-
-The space didn't become less beautiful. It became more useful.
-
-Every material speaks. Concrete shouts. Wood whispers. Glass reflects. Fabric absorbs.
-
-But architects often choose materials for visual impact, ignoring their acoustic personalities. They'll cover a wall in gorgeous hardwood that creates beautiful reverb, then wonder why the space feels "energetic" (translation: acoustically chaotic).
-
-I've learned to read materials like a DJ reads vinyl. Rough brick creates textural sound absorption. Smooth metal amplifies frequencies. Curved surfaces scatter sound in interesting ways. Mixed materials create acoustic complexity that keeps spaces interesting without becoming overwhelming.
-
-**The sexiest buildings often have the most terrible acoustics. The most livable spaces usually look understated.**
-
-Instagram architecture optimizes for the first 30 seconds—that perfect photo moment. Acoustic architecture optimizes for the 8-hour workday, the 2-hour dinner conversation, the quiet morning coffee ritual.
-
-It's the difference between designing for cameras and designing for life.
-
-## Why This Matters Beyond Disability
-
-The building industry talks about "universal design" like it's charity work. Add some ramps, install grabby bars, check the accessibility box.
-
-But acoustic design isn't accommodation. **It's competitive advantage.**
-
-Companies are realizing that their expensive office spaces actively harm productivity. Remote work became popular partly because home offices often have better acoustics than professional workspaces designed by prestigious firms.
-
-The future belongs to architects who understand that **buildings are instruments, not sculptures.**
+This page is kept at its original address so that links to it do not break and so the
+withdrawal is visible to anyone who arrives here.

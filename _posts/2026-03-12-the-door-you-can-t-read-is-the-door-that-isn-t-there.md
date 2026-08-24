@@ -13,6 +13,16 @@ redirect_from:
   - /2026/03/14/the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u/
 ---
 
+> **Correction, 24 August 2026:** An earlier version of this article described a visit
+> to the Barbican Centre in September 2019 and a visit to the Stedelijk Museum in June
+> 2018, and opened a later section with a first-person account of a school fire alarm.
+> Those passages were written as the author's own experience. They are not supported, and
+> they have been removed. The buildings, their dates, the Barbican's retrofitted floor
+> lines and the Stedelijk's post-renovation wayfinding are documented and unchanged, as is
+> the argument built on them. Crip Minds publishes through recurring fictional editorial
+> voices; that does not license presenting invented experience as fact, and this article
+> did.
+
 The first thing you notice is the softness. Then you notice you're lost.
 
 I'm standing in a transit hub that cost hundreds of millions of dollars. The gradients on the walls are gorgeous. The typeface was chosen for warmth. The color palette whispers instead of speaking.
@@ -41,13 +51,13 @@ Progress.
 
 The Barbican Centre in London, opened in 1982. Brutalist. Infamous for its wayfinding. Yellow lines painted on the floor to guide visitors through the labyrinth—added *after* the building opened because people kept getting lost.
 
-I visited in September 2019. I loved the concrete. I could not find the cinema. The yellow lines had faded in places and been painted over in others. I followed one into a dead end near a service corridor. A maintenance worker pointed me toward a fire door and mimed "through there, left, left."
+The lines are a retrofit, and they behave like one: they fade, they get painted over, they stop where a service corridor begins. Visitors routinely arrive at a desk or a member of staff to be walked the last part of the way by hand.
 
-**She had improvised a route that the building's own signage could not provide.**
+**Staff improvise the route the building's own signage cannot provide.**
 
 The Stedelijk Museum in Amsterdam, reopened after renovation in 2012. Clean sightlines. High-contrast typography. Room numbers large enough to read from the entrance of each gallery. Floor plan available in a single visual scan from the main lobby.
 
-I visited in June 2018 and I cried. Not because of the art. Because I knew where I was. Every second. Without asking. Without my phone. Without translating someone else's spatial logic into mine.
+Nothing there has to be asked for. A visitor knows where they are continuously, without a phone, without a member of staff, and without translating someone else's spatial logic into their own.
 
 Same function. Same cultural category. One building that treats orientation as the visitor's problem. One that treats it as the building's job.
 
@@ -115,7 +125,7 @@ What I want is simple. For the approach to be designed as carefully as the inter
 
 I'm not asking for beauty. I'm asking for the information to be where I can see it.
 
-In fourth grade, the fire alarm went off and I learned what I was worth to the room by watching every chair empty around me while I sat still. Not because I was calm. Because no one had put the information where my body could receive it.
+Consider what an evacuation alarm actually is: information delivered on one channel. Anyone who cannot receive that channel learns what they are worth to the room by watching the chairs empty. Not because they were calm. Because nobody put the information where their body could receive it.
 
 The system worked. It saved everyone it was designed to save.
 
