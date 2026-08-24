@@ -108,6 +108,18 @@ class ProductionOrchestrator(DebateMixin, ImagesMixin, PublishMixin, GateMixin, 
             lock_fh.close()
             return {"status": "skipped", "message": "Another instance is running"}
         try:
+            # ── ENGINE SELECTION (controlled cutover, 2026-08-24) ──────────────
+            # The ONE boundary. Default legacy, so an unset variable changes nothing;
+            # an unknown value RAISES rather than guessing which engine to run. Held
+            # inside the same lock as legacy, so the two engines can never overlap.
+            # Rollback is removing CRIPMINDS_ENGINE from the cron environment.
+            import engine_switch as _engine_switch
+            _engine = _engine_switch.resolve_engine()
+            if _engine == _engine_switch.NEW_ENGINE_V1:
+                import new_engine_production as _new_engine
+                self.logger.info("CRIPMINDS_ENGINE=%s — running the CURRENT_ENGINE path",
+                                 _engine)
+                return _new_engine.run_scheduled(self)
             return self._run_production_automation_locked()
         finally:
             fcntl.flock(lock_fh, fcntl.LOCK_UN)

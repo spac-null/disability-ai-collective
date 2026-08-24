@@ -49,7 +49,7 @@ def _yaml_scalar(v) -> str:
 
 
 def build_frontmatter(*, title: str, author: str, engine_meta: dict,
-                      rehearsal: bool = True) -> str:
+                      rehearsal: bool = True, safety: dict | None = None) -> str:
     """Frontmatter for a new-engine candidate.
 
     Deliberately absent: `fact_check_status: verified` and `publication_safety_version`.
@@ -76,10 +76,19 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
         ("writer_grounding_status", engine_meta["grounding_status"]),
         ("writer_grounding_unsupported", engine_meta["grounding_unsupported"]),
         ("provider_model", engine_meta.get("provider_model", "")),
-        # explicit publication interlock
-        ("cutover_rehearsal", bool(rehearsal)),
-        ("publication_eligible", False),
     ]
+    # Publication-safety stamp from the CURRENT_ENGINE bridge, when it granted
+    # eligibility. Absent stamp => not eligible. A rehearsal candidate is NEVER
+    # eligible regardless of what the bridge said.
+    stamp = dict(safety or {})
+    if rehearsal:
+        stamp = {"publication_eligible": False,
+                 "publication_safety_profile": stamp.get("publication_safety_profile",
+                                                         "CURRENT_ENGINE_V1")}
+    fields += [("cutover_rehearsal", bool(rehearsal))]
+    if "publication_eligible" not in stamp:
+        stamp["publication_eligible"] = False
+    fields += sorted(stamp.items())
     lines = ["---"]
     lines += ["%s: %s" % (k, _yaml_scalar(v)) for k, v in fields]
     lines.append("---")
@@ -88,12 +97,13 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
 
 def persist_candidate(*, drafts_dir: pathlib.Path, slug: str, body: str,
                       title: str, author: str, engine_meta: dict,
-                      rehearsal: bool = True) -> pathlib.Path:
+                      rehearsal: bool = True, safety: dict | None = None) -> pathlib.Path:
     """Write ONE accepted candidate into the normal draft location. No git, no publish."""
     drafts_dir.mkdir(parents=True, exist_ok=True)
     path = drafts_dir / ("%s-%s.md" % (engine_meta["generated_at"][:10], slug))
     path.write_text(build_frontmatter(title=title, author=author,
-                                      engine_meta=engine_meta, rehearsal=rehearsal)
+                                      engine_meta=engine_meta, rehearsal=rehearsal,
+                                      safety=safety)
                     + body.rstrip() + "\n", encoding="utf-8")
     return path
 

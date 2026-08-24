@@ -197,6 +197,24 @@ def archive_draft(path):
     shutil.move(str(path), str(ARCHIVE / path.name))
 
 
+def _current_engine_ineligible(fm):
+    """CURRENT_ENGINE candidates must carry an EXPLICIT publication_eligible: true.
+
+    Legacy candidates are untouched by this rule -- they have no engine_generation and
+    keep their existing eligibility semantics exactly. For a CURRENT_ENGINE candidate,
+    anything other than a clear true (false, missing, malformed, a stray string) means
+    the publication-safety bridge did not grant eligibility, so the selector skips it.
+    Fail-closed by construction: the ONLY passing value is an explicit true.
+    """
+    if str(fm.get("engine_generation", "")).strip() != "CURRENT_ENGINE":
+        return False, ""
+    v = fm.get("publication_eligible")
+    if v is True or (isinstance(v, str) and v.strip().lower() == "true"):
+        return False, ""
+    return True, ("publication_eligible=%r (CURRENT_ENGINE requires an explicit true "
+                  "granted by the publication-safety bridge)" % (v,))
+
+
 def _interlocked(fm):
     """True if a draft is explicitly withheld from publication by the cutover interlock.
 
@@ -299,6 +317,12 @@ def main(dry_run=False):
         # also missing fact_check_status/publication_safety_version and would be held
         # anyway -- but exclusion must not depend on a field HAPPENING to be absent,
         # so it is stated positively here. Cadence and ranking are untouched.
+        _ce_bad, _ce_why = _current_engine_ineligible(fm)
+        if _ce_bad:
+            print(f"  {draft.name}: SKIPPED (CURRENT_ENGINE_NOT_ELIGIBLE) — {_ce_why}; "
+                  f"engine={fm.get('editorial_engine')} "
+                  f"profile={fm.get('publication_safety_profile')}")
+            continue
         if _interlocked(fm):
             print(f"  {draft.name}: SKIPPED (PUBLICATION_INTERLOCK) — "
                   f"cutover_rehearsal={fm.get('cutover_rehearsal')!r} "
