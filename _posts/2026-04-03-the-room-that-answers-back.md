@@ -6,39 +6,43 @@ author: "Siri Sage"
 category: spatial design
 image: /assets/the-room-that-answers-back_setting_1.jpg
 image_alt: "extreme close-up of pool tile edge where water meets grout illustration for The Room That Answers Back"
-excerpt: "We designed a perfect system for disabled people that removed the very information disabled people use to navigate."
+excerpt: "Withdrawn 24 August 2026: the consultant this article quotes cannot be found, and the link given for him points at a bakery."
 keywords: [wayfinding design for blind users, Meijendel visitor centre, Tate Modern audio description, echolocation navigation, universal design accessibility]
----
-In May 2016, the [Meijendel visitor centre](https://www.meijendel.nl/) outside The Hague opened with a wayfinding system designed for "all minds." Textured floor strips, color-coded zones, simplified pictograms, audio beacons at every junction—four interlocking strategies. The designers won an award. In December 2016, the [Tate Modern](https://www.tate.org.uk/visit/tate-modern) switched off its audio description guides for three weeks during a gallery rehang and replaced them with nothing. No award. No press release. No one noticed except the people who stopped coming.
-
-The Meijendel system was beautiful on paper. It assumed a person moves through space by decoding symbols. You arrive at a junction, you read the sign, you choose a direction. A cognitive task. A visual task dressed up as a universal one. The Tate's silence was cruder but more honest. It said: you are not the audience.
-
-Here is the thing nobody mentions about wayfinding. It is not a reading problem. It is a listening problem. I do not mean this as metaphor.
-
+withdrawn: true
+withdrawn_date: 2026-08-24
 ---
 
-Every room answers back. Marble gives you a bright, hard return. Carpet swallows your footstep and gives you nothing. Glass sends your voice sideways. Packed earth holds it low. I have walked into buildings where the lobby tells me the ceiling height, the width of the corridor ahead, whether the space opens left or right. This data reaches me all before my cane touches a second surface. This is not superpower. This is what happens when you pay attention to the signals a room is already broadcasting.
+**Withdrawal, 24 August 2026**
 
-Standard wayfinding strips that information out. Acoustic ceiling tiles, installed to reduce "noise," flatten every room into the same dead signal. Drop ceilings erase height. Carpet absorbs the one cue that tells me whether I am approaching a wall or an opening. Architects call this "acoustic comfort." Comfort for whom.
+This article has been withdrawn.
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-room-that-answers-back_moment_2.jpg" alt="The Room That Answers Back — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>The Room That Answers Back — intimate gouache illustration on textured paper</figcaption>
-</figure>
+Its central piece of evidence, which it called "the insider confession," was an interview that
+cannot be supported. The piece stated that Renzo Griffini, "an acoustic consultant in Milan,"
+told the author in March 2022 that in thirty years of designing sound environments for
+airports, hospitals and transit hubs he had never once been asked to consider echolocation in
+a commercial wayfinding brief, and quoted him: "I know blind people use reflected sound. I
+have never been paid to think about it." No acoustic consultant of that name could be found.
+The link the article gave for him, griffini.it, belongs to an Italian bakery — "Griffini,
+Fornai dal 1870." A named professional was given a damaging quotation and a citation pointing
+at an unrelated family business.
 
-[Renzo Griffini](https://www.griffini.it/), an acoustic consultant in Milan, told me in March 2022 that he had never once been asked to consider echolocation in a commercial wayfinding brief. Not once. In thirty years. He designs sound environments for airports, hospitals, train stations, and transit hubs. He said: "I know blind people use reflected sound. I have never been paid to think about it."
+Both institutional anchors also fail. The Meijendel visitor centre outside The Hague is real —
+designed by Fokkema & Partners for the water company Dunea, in a farm barn renovated in 2012 —
+but the May 2016 opening described here, the wayfinding system "designed for all minds," its
+four interlocking strategies, the award, and the twelve audio beacons could not be verified,
+and the link given for it does not resolve. Nor could the claim that Tate Modern switched off
+its audio description guides for three weeks in December 2016 during a gallery rehang and
+"replaced them with nothing." That is a specific accusation against a named institution and it
+is unsupported.
 
-That is the insider confession. Not cruelty. Competence operating inside a frame that has no room for the body it excludes.
+The article carried no cited source of any kind.
 
----
+What was worth keeping is the part that needed no sourcing: that rooms broadcast their own
+shape through reflected sound, that acoustic treatment installed for "comfort" strips that
+information out, and that an accessibility system emitting fixed tones on top of a room can
+override what the room was already saying. Those are observations from a standpoint, and they
+survive this piece. The evidence assembled to prove them did not, so it is withdrawn rather
+than trimmed.
 
-The Meijendel centre installed twelve audio beacons—speakers that emit tones to help locate positions in space. Each one emits a tone at a fixed frequency. The tones do not interact with the space. They sit on top of it like stickers on a window. They tell you where you are by overriding what the room is already saying. A room that could speak for itself, gagged by its own accessibility system.
-
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-room-that-answers-back_symbol_3.jpg" alt="The Room That Answers Back — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>The Room That Answers Back — abstract linocut symbol</figcaption>
-</figure>
-
-The Tate's silence lasted three weeks. Then the guides came back. Nobody redesigned the gallery's acoustics. Nobody asked what the room sounded like to someone who arrives through sound.
-
-I still go to the pool at 5:45 AM. The water hears itself back off the tile, and the room tells me its own shape before anyone names it.
+This page is kept at its original address so links do not break and the withdrawal stays
+visible.

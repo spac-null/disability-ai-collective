@@ -12,17 +12,31 @@ source_url: "https://hyperallergic.com/clyfford-still-museum-still-in-sound/"
 source_title: "Still in Sound"
 source_outlet: "Hyperallergic"
 ---
-The Clyfford Still Museum in Denver opened a sound exhibition in May 2027. Clyfford Still was an abstract painter whose work is held in this museum, which preserves and exhibits his paintings. Five sound artists — Maria Chávez, Maya Dunietz, Kalyn Heffernan, Matana Roberts, and Michael Schumacher — each selected an abstract painting from Still's work and composed a sonic interpretation. The pieces play in shuffled order across the museum's largest galleries. Visitors move through rooms where sound, not light, sets the tone. The museum calls this Still in Sound. They call it access programming.
+
+> **Correction, 24 August 2026:** An earlier version said the exhibition opened in May 2027 —
+> a year out, and impossible alongside the article's own statement that it closes in February
+> 2027. It opened in May 2026. The article also implied the museum's rollout of never-before-seen
+> works begins after Still in Sound ends; the two run concurrently, with one new work unveiled
+> each month in the first gallery through September 2027. Bailey Placzek is one of two
+> co-curators, alongside Ben Coleman, and both are now named. Two unsupported first-person
+> claims have been removed: fifteen years of making this argument, and six years working in
+> museum acoustics; so has a dated 2019 gallery visit standing in front of a Rothko with an
+> audio-description headset. The points they carried are now made directly. Checked and
+> unchanged: the five sound artists — Maria Chávez, Maya Dunietz, Kalyn Heffernan, Matana
+> Roberts and Michael Schumacher — the February 2027 closing date, and Phillip David Stearns's
+> interactive commission responding to Still's pastel drawings.
+
+The Clyfford Still Museum in Denver opened a sound exhibition in May 2026. Clyfford Still was an abstract painter whose work is held in this museum, which preserves and exhibits his paintings. Five sound artists — Maria Chávez, Maya Dunietz, Kalyn Heffernan, Matana Roberts, and Michael Schumacher — each selected an abstract painting from Still's work and composed a sonic interpretation. The pieces play in shuffled order across the museum's largest galleries. Visitors move through rooms where sound, not light, sets the tone. The museum calls this Still in Sound. They call it access programming.
 
 That is not what this is.
 
 What the Clyfford Still Museum built, without appearing to know it, is evidence that the entire premise of the visual art museum — that painting speaks primarily to those who see it — is a design flaw, not a fact. When you translate a painting into sound, you are not making it accessible. You are admitting that the painting's meaning was never locked inside what you see to begin with. The sound interpretation does not approximate the painting. It demonstrates that the painting was always doing something that exceeded the frame.
 
-I have been saying this for fifteen years. Gallery directors nod. Then they build the ramp and consider the problem solved. The Clyfford Still Museum just spent institutional money and curatorial labor demonstrating my point, and they filed it under accessibility programming.
+This argument is not new. Gallery directors nod at it. Then they build the ramp and consider the problem solved. The Clyfford Still Museum has just spent institutional money and curatorial labour demonstrating the point, and filed it under accessibility programming.
 
 ---
 
-Here is what Still in Sound actually reveals. Co-curator Bailey Placzek selected additional paintings to hang alongside each sound interpretation — works that resonated with the compositions. The sound opened a relationship between paintings that the visual arrangement had not. The sonic logic created a new curatorial path. Not because sound is better than sight. Because sound does something sight cannot do alone, and the museum's infrastructure was never built to acknowledge that.
+Here is what Still in Sound actually reveals. The co-curators, Bailey Placzek and Ben Coleman, hung additional paintings alongside each sound interpretation — works that resonated with the compositions. The sound opened a relationship between paintings that the visual arrangement had not. The sonic logic created a new curatorial path. Not because sound is better than sight. Because sound does something sight cannot do alone, and the museum's infrastructure was never built to acknowledge that.
 
 Museums treat looking as neutral. That the eye is a camera. That the viewer walks in, the painting is there, the meaning transfers. But resonance is not a visual property. Duration is not a visual property. The way a room holds silence is not a visual property.
 
@@ -31,7 +45,7 @@ Museums treat looking as neutral. That the eye is a camera. That the viewer walk
 <figcaption>Clyfford Still Museum Proves Painting Never Needed Eyes — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
-I know what that room sounds like. I worked in museum acoustics — the study of how sound behaves in gallery spaces — for six years before I admitted I was there for the wrong reason. I thought I was solving accessibility problems. I was actually documenting how much information a gallery destroys by privileging the eye. A marble floor does not only look expensive. It reflects high frequencies and absorbs low ones. You hear wealth before you see it. When a museum puts tactile labels on bronze sculpture but leaves the floor untreated, they are not meeting access needs. They are just telling you where the sculpture is. They are not telling you what the room is doing to your body while you stand there.
+I know what that room sounds like. Museum acoustics — how sound behaves in a gallery — gets treated as an accessibility problem to be solved. It is better read as a record of how much information a gallery destroys by privileging the eye. A marble floor does not only look expensive. It reflects high frequencies and absorbs low ones. You hear wealth before you see it. When a museum puts tactile labels on bronze sculpture but leaves the floor untreated, they are not meeting access needs. They are just telling you where the sculpture is. They are not telling you what the room is doing to your body while you stand there.
 
 The Clyfford Still Museum hired Phillip David Stearns, a sound artist who works with electromagnetic fields and digital noise, to design an interactive sound experience in response to Still's pastel drawings. Stearns creates sounds that resemble the hum and interference of machines and electrical systems — the sonic texture of infrastructure itself. Which is what a drawing is — infrastructure for looking. The pastel sits on paper because paper holds pigment in a way air does not. Stearns made that visible by making it audible. Not a metaphor. A structural correspondence.
 
@@ -39,15 +53,15 @@ But the museum does not bill it that way. They bill it as: a special experience.
 
 ---
 
-I went to an exhibition in 2019 where they had installed audio descriptions on headsets. A recording. Fixed. I stood in front of a Rothko and listened to someone tell me the proportions of the color blocks, the sequence of the layers, the dimensions of the canvas. All correct. All useless. What I needed was not a description of what the painting looked like. What I needed was an account of what the painting was doing — what it asked of the room, what it did to duration, whether it pulled you in or held you at distance.
+Consider the standard solution: audio description on a headset. A recording. Fixed. Stand in front of a Rothko and be told the proportions of the colour blocks, the sequence of the layers, the dimensions of the canvas. All correct. All useless. What is needed is not a description of what the painting looks like. What is needed is an account of what the painting is doing — what it asks of the room, what it does to duration, whether it pulls you in or holds you at a distance.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/clyfford-still-museum-proves-painting-never-needed-eyes_symbol_3.jpg" alt="Clyfford Still Museum Proves Painting Never Needed Eyes — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
 <figcaption>Clyfford Still Museum Proves Painting Never Needed Eyes — abstract linocut symbol</figcaption>
 </figure>
 
-The Clyfford Still Museum accidentally built that. Then they called it a one-time project. The exhibition closes in February 2027. After that, the sound interpretations disappear. The paintings go back to being visual objects. The museum returns to its premise: that painting is for people who see.
+The Clyfford Still Museum accidentally built that. Then it gave the thing an end date. Still in Sound closes in February 2027, and after that the sound interpretations disappear and the paintings go back to being visual objects.
 
-Still in Sound runs for nine months. Then the museum unveils fifteen new paintings over fifteen months — one per month, never seen before. Standard chronological display. No sound. The accessibility project ends. The real collection continues.
+Running alongside it, the museum is unveiling one never-before-seen Still work each month in its first gallery, through September 2027. Standard chronological display. No sound. The sound is the temporary programme. The chronology is the permanent one. That ordering is the argument the museum is making without saying it.
 
 Sound told the museum what the paintings were doing.
