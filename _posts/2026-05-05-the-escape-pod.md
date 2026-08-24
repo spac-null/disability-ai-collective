@@ -13,15 +13,35 @@ source_title: "London schools trialling VR to relieve pupils\u2019 stress"
 source_outlet: "Guardian Society"
 ---
 
+> **Correction, 24 August 2026:** This article changed a real person's words and then built
+> its argument on the changed version. Aelisha Needham was quoted as describing pupils as
+> "quite dysregulated, especially when there are changes to their usual routine." What she
+> said was "quite deregulated, especially when we have changes to their usual structures" —
+> and she went on to list causes this article left out: a cover teacher, distress brought from
+> home, no breakfast, friendship trouble, homework not done. Trimming the list to "changes to
+> their routine" let the article treat her as making a claim about the environment that she
+> did not narrow in that way. The quote and the list have been restored and the environmental
+> reading is now the article's own. Her school, Ark Academy, is in north London and is using
+> the headsets separately from the Sutton pilot; the article implied it was one of the Sutton
+> fifteen. The claim that the nine-in-ten figure came from "the first ten schools" could not
+> be verified and has been dropped. A disability writer, whose byline is Amelia Florence, was
+> credited with describing "the gap between what her body needs and what schools offer as
+> accommodation"; the piece linked is a personal reflection about a mind that needs to run and
+> a body that cannot, and says nothing about schools or accommodation. The attribution has
+> been corrected. Checked and unchanged: all fifteen Sutton secondary schools, Phase Space,
+> the NHS partnership, Zillah Watson's role and figures, the seven-minute session, and Lora
+> Wilson's words, which are quoted accurately.
+
+
 Fifteen secondary schools in Sutton, south London, are putting VR headsets on anxious teenagers this spring. Phase Space, the company making the headsets, designed them in partnership with South West London and St George's NHS Trust — the local mental health service, through its child and adolescent team. The stated goal: calm pupils stressed by exams, ADHD, difficult home lives. I read this and my pattern recognition fired before I finished the second paragraph. Not because the technology is bad. Because I have seen this shape before.
 
 ---
 
-Here is what the pilot itself says, once you read past the headline. Zillah Watson, the programme's co-creator and a visiting professor at UCL, says nine in ten pupils across the first ten schools reported an immediate drop in stress after using the headset, and that the programme has led to "improvements in attendance and behaviour, with reductions in anxiety around exams and assessments." Lora Wilson, sixteen, described the seven minutes inside the headset like this: "It almost feels like I'm somewhere else and I can just relax." Exams used to terrify her. She says they don't scare her as much any more.
+Here is what the pilot itself says, once you read past the headline. Zillah Watson, the programme's co-creator, a visiting professor at UCL and formerly head of VR at the BBC, says nine in ten pupils reported an immediate drop in stress after using the headset, and that the programme has led to "improvements in attendance and behaviour, with reductions in anxiety around exams and assessments." Lora Wilson, sixteen, described the seven minutes inside the headset like this: "It almost feels like I'm somewhere else and I can just relax." Exams used to terrify her. She says they don't scare her as much any more.
 
-At Ark Academy, vice-principal Aelisha Needham describes the students who reach for the headset as "quite dysregulated, especially when there are changes to their usual routine." Fewer of them, she says, end up being pulled out of lessons afterward.
+Aelisha Needham, vice-principal for ethics at Ark Academy in north London — a school outside the Sutton pilot that is also using the headsets — describes pupils who "in the mornings feel quite deregulated, especially when we have changes to their usual structures," and sets out what those can be: a cover teacher, something distressing at home, no breakfast, friendship trouble, homework not done.
 
-I am not accusing anyone of lying about the relief. A ninety per cent drop in reported stress is a real number, and I have no interest in telling a sixteen-year-old that her seven minutes of somewhere-else didn't help. But read Needham's sentence again: the students she describes are dysregulated by *changes to their routine*. That is a claim about the environment. The programme treats the spike. Nobody in the reporting asks what produces it, or what it would cost to change the routine instead of building a faster way out of it.
+I am not accusing anyone of lying about the relief. A ninety per cent drop in reported stress is a real number, and I have no interest in telling a sixteen-year-old that her seven minutes of somewhere-else didn't help. But look at Needham's list. Some of it a school cannot touch — what a child carries in from home, whether they ate. Some of it is the school: the cover teacher, the changed structure, the transition that goes wrong. The programme treats the spike either way. What the reporting does not ask is how much of the spike the building and the timetable produce, or what it would cost to change that instead of building a faster way out of it.
 
 ---
 
@@ -34,9 +54,9 @@ Here is what I know from inside ADHD: my attention does not malfunction. It resp
 
 VR as stress relief operates on the same logic as prescribing painkillers for a repetitive strain injury. The workstation remains badly designed in both cases. Nobody disputes that painkillers reduce pain. The question is why the workstation stays unchanged.
 
-Phase Space's promotional materials describe "immersive calm environments" — forests, beaches, breathing exercises mapped onto visual landscapes. Turn this over. What they are saying, without saying it, is that the school environment is so hostile to certain nervous systems that the best intervention they can imagine is *removing the child from it entirely* while the child remains physically seated in it. The body stays in the bad room. The mind leaves. This is not treatment. This is dissociation with better production values.
+The product is a calm environment on demand — landscapes, breathing exercises, somewhere that is not the room. Turn this over. What they are saying, without saying it, is that the school environment is so hostile to certain nervous systems that the best intervention they can imagine is *removing the child from it entirely* while the child remains physically seated in it. The body stays in the bad room. The mind leaves. This is not treatment. This is dissociation with better production values.
 
-[Amelia Grimshaw](https://disabilityarts.online/blog/milly-grimshaw/being-physically-disabled-with-adhd/), a disability writer, [describes the gap between what her body needs and what schools offer as accommodation](https://disabilityarts.online/blog/milly-grimshaw/being-physically-disabled-with-adhd/) — aids placed around the edges of a structure nobody questions. The structure remains intact. The aids multiply. Every school corridor I have ever walked through, braced against input, is built on the same premise: the room is fixed, the child adapts.
+The disability writer [Amelia Florence](https://disabilityarts.online/blog/milly-grimshaw/being-physically-disabled-with-adhd/) has written about a different version of this gap — a mind that needs to run and a body that cannot. Her subject is not schools, but the shape is the one I keep meeting: what a body needs and what is actually on offer to it are two different things. Aids get added around the edges of a structure nobody questions. The aids multiply. The structure stays. Every school corridor I have ever walked through, braced against input, is built on the same premise: the room is fixed, the child adapts.
 
 You might say: but the VR works. The children feel calmer. I believe it. Calmer after the headset comes off, in the same room, under the same lights, with the same timetable. The relief is real. The cause remains untouched. The product sells precisely because it leaves the environment intact. Nobody has to fight the facilities manager, the budget cycle, the building regulations. You just buy the headsets.
 

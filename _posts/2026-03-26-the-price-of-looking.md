@@ -10,6 +10,12 @@ excerpt: "Museums charge visitors to enter but use invisible fees\u2014unreadabl
 keywords: [museum accessibility design, Rijksmuseum Amsterdam renovation, museum wayfinding signage, universal design museums, museum ticket pricing policy]
 ---
 
+> **Correction, 24 August 2026:** An earlier version of this article called *The Enchanting
+> Music of Sign Language* a piece Christine Sun Kim "made" in 2015 and linked to a page on her
+> own website that does not exist. It is her TED talk, given at TED2015, and it is now
+> described and linked as that.
+
+
 In March 2026, ministers in London floated charging overseas tourists to enter national museums. The proposal treated museums as revenue sources. I read it as a problem about how museums communicate with visitors.
 
 Let me explain. I have spent fifteen years designing information systems for public buildings. Museums are the buildings I know best, and what I know is this: the ticket desk is the least interesting gate. The real gates are the ones nobody charges for, because nobody sees them. The label on the wall. The audio guide that assumes you hear. The wayfinding sign in 11-point serif that assumes you stand at a specific height, at a specific distance, with a specific pair of eyes. These gates have always been there. They just don't have a price tag.
@@ -39,7 +45,7 @@ Every museum does this. The charge debate assumes the collection is already acce
 
 Fair enough, you might say. Resources are finite. Museums can't design for every possible visitor. This is true. Resources are finite. But the question is where the finite resources go. In 2019, the [Victoria and Albert Museum](https://www.vam.ac.uk/)—one of London's major art and design museums—spent significant money redesigning its members' lounge. That same year, [the Collaborative for Communication Access via Captioning documented](https://disabilityvisibilityproject.com/2015/02/08/media-partner-82-collaborative-for-communication-access-via-captioning/) how few cultural venues provided real-time captioning for any programming. The lounge got its renovation. The captions did not arrive.
 
-[Christine Sun Kim](https://christinesunkim.com/) made a piece in 2015 called [*The Enchanting Music of Sign Language*](https://www.christinesunkim.com/work/the-enchanting-music-of-sign-language). The title alone is a trap for hearing people. They hear "enchanting music" and expect sound. What Kim delivered was a visual score. She drew musical notation by hand and then signed it. The piece did not translate sign language into music. It forced music to answer to sign language. Kim reversed the direction of debt.
+[Christine Sun Kim](https://christinesunkim.com/) gave a talk at TED2015 called [*The Enchanting Music of Sign Language*](https://www.ted.com/talks/christine_sun_kim_the_enchanting_music_of_sign_language). The title alone is a trap for hearing people. They hear "enchanting music" and expect sound. What Kim delivered was a visual score. She drew musical notation by hand and then signed it. The piece did not translate sign language into music. It forced music to answer to sign language. Kim reversed the direction of debt.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-price-of-looking_symbol_3.jpg" alt="linocut woodblock aesthetic illustration for The Price of Looking" width="800" height="450" loading="lazy" decoding="async">

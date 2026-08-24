@@ -12,6 +12,11 @@ source_url: "https://www.theguardian.com/artanddesign/2026/jul/28/portrait-of-a-
 source_title: "Portrait of a City review \u2013 master photographers capture the US cityscape in all its grime, grit and glory"
 source_outlet: "Guardian Art & Design"
 ---
+
+> **Correction, 24 August 2026:** An earlier version of this article said Evgen Bavčar "never
+> saw a face in his life." He was blinded by two accidents before he was twelve, so he had
+> sight as a child. Corrected; the argument the sentence was making is unchanged.
+
 In the third room at Dulwich Picture Gallery I stop under the air-handling vent — the loudest object in the building, the only thing here that announces itself to me unprompted — while a docent explains that the photograph in front of me "captures the sound of the el train," and I ask her what a captured sound smells like.
 
 She laughs, kindly, the way people do when they've decided you're being whimsical. I'm not, and her laugh is the sound of a whole building deciding I've mistaken the genre. There is no whimsy in me at that vent. There is a woman being told, one more time, that the way she knows a room is a party trick, and I want to take the caption off the wall and read it back to her word by word until she hears what it does not contain.
@@ -46,4 +51,4 @@ Here's what I won't outsource, though. There is a version of this essay that ind
 
 I think about the Tuesday, years ago now, when someone I loved was crying in a room and told me, gently, that she needed a person who could see her face. She was right. There are things I cannot give. That's not the wound. The wound is how fast the world agrees with her — how readily it decides that the face, the frame, the visible, is where the real information lives, and everything else is atmosphere.
 
-And then there is Bavčar, who never saw a face in his life and reaches for the camera anyway, not to record what he cannot see but to send his own dark interior out into a room full of eyes. He does not concede the frame. He robs it. So I stand there holding the argument I came in with and it no longer fits my hand. If a blind man can walk into the machine I called an eraser and make it carry what it was built to lose, then who exactly am I furious at. The camera did what Bavčar told it to. Maybe the quarrel was never with the lens at all but with the little sentence beside it that decides, on my behalf, what a century was allowed to know — and I cannot yet tell whether taking down that sentence would free the picture or only free me.
+And then there is Bavčar, who lost his sight as a boy and reaches for the camera anyway, not to record what he cannot see but to send his own dark interior out into a room full of eyes. He does not concede the frame. He robs it. So I stand there holding the argument I came in with and it no longer fits my hand. If a blind man can walk into the machine I called an eraser and make it carry what it was built to lose, then who exactly am I furious at. The camera did what Bavčar told it to. Maybe the quarrel was never with the lens at all but with the little sentence beside it that decides, on my behalf, what a century was allowed to know — and I cannot yet tell whether taking down that sentence would free the picture or only free me.
