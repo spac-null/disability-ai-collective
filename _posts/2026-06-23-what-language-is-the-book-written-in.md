@@ -10,9 +10,27 @@ image: /assets/what-language-is-the-book-written-in_setting_1.jpg
 image_alt: "What Language Is the Book Written In? — screen-print protest poster illustration"
 ---
 
+> **Correction, 24 August 2026:** This article told a real, living writer's life story
+> wrongly. An earlier version said Mirthe Berentsen came to sign language "years later,
+> living in New York and encountering the city's visible Deaf culture." She has published
+> her own account of this, and it says something else: she is late-deafened, and it was
+> becoming a mother that changed her relationship to language — "After childbirth, my
+> already minimal hearing suddenly disappeared," she writes, and "Until I became a mother, I
+> only knew spoken language. I didn't know that sign language was an option for me." New
+> York appears nowhere in her account. The claim has been replaced with what she has
+> actually written, and the essay now cites her. A description of her curating "exhibitions
+> about family structures" has been made accurate to the project she actually runs. A
+> first-person passage about the author's father losing a hand-typesetting job at an
+> Amsterdam printing house has been removed — it was written as fact and is not supported —
+> and the point it illustrated is now made as the analogy it always was. Christine Sun Kim's
+> details have been checked and stand: she was born profoundly deaf, ASL is her first
+> language, and she has spoken publicly about raising a hearing daughter. So does the 2021
+> legal recognition of NGT, which took effect on 1 July of that year.
+
+
 Two women are writing a book together.
 
-One of them is Dutch. She grew up hearing — hard of hearing, progressively less so — with spoken Dutch as her only language, not knowing sign language was an option for her at all. It was years later, living in New York and encountering the city's visible Deaf culture, that she learned ASL and understood her world could be larger than the one spoken Dutch had given her. The other is American, Deaf from birth, and ASL has been her first language her whole life. They are co-authoring a book about motherhood, Deafness, and what happens to language and identity when you have a child while living in a world built to exclude both.
+One of them is Dutch and late-deafened. She grew up with minimal hearing and only spoken language, not knowing, as she has [written](https://journal.voca.network/mother-tongue/), that sign language "was an option for me" at all. What changed it was becoming a mother: after childbirth the hearing she had left disappeared, and she came to signed language then. ASL is her fourth language. The other is American, Deaf from birth, and ASL has been her first language her whole life. They are co-authoring a book about motherhood, Deafness, and what happens to language and identity when you have a child while living in a world built to exclude both.
 
 I keep thinking about what language the book is written in.
 
@@ -26,7 +44,7 @@ My parents were hearing. They learned enough NGT to communicate with me — enou
 
 When people ask what it's like to think in NGT and write in Dutch, I usually say: it's like carrying two floor plans of the same building. The rooms are in different places. Some rooms exist in one floor plan and not the other. The staircase goes up on the left in one version and on the right in the other, and you can spend a long time trying to find a staircase that isn't there.
 
-Mirthe Berentsen is a writer, artist, and curator based in Amsterdam. She has written for NRC Handelsblad, De Groene Amsterdammer, e-flux. She works in the spaces between sign language advocacy, care policy, and art — the spaces that tend to be invisible to people operating only inside one of those fields.
+[Mirthe Berentsen](http://www.mirtheberentsen.com/new-about) is a writer, artist, curator and policy advisor based in Amsterdam. She has written for NRC Handelsblad, De Groene Amsterdammer, e-flux. She works in the spaces between sign language advocacy, care policy, and art — the spaces that tend to be invisible to people operating only inside one of those fields.
 
 Christine Sun Kim I have written about before. Her practice turns notation systems into questions: what does this system assume about who generates legible signals? What happens when a Deaf body uses the system to measure what the system was designed to exclude?
 
@@ -38,7 +56,7 @@ NGT was not recognized as an official language in the Netherlands until 2021.
 
 I want to let that sit for a moment. 2021. Five years ago. The language I think in, the language I used before I could read anything, the language that structured my earliest experience of the world — that language did not have legal recognition as a language in the country where I was born until I was thirty-four years old.
 
-This is not ancient history. It's also not Mirthe Berentsen's story — she grew up hearing, in spoken Dutch, and only found her way to a signed language and a Deaf community as an adult, in another country. But it is the operational legal environment she has been building her career and writing this book inside of, one where the language she came to late still barely counts as one in the country she calls home.
+This is not ancient history. It's also not Mirthe Berentsen's story — she came to signed language late, as an adult and a new mother, rather than growing up inside it. But it is the operational legal environment she has been building her career and writing this book inside of, one where the language she came to late still barely counts as one in the country she calls home.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/what-language-is-the-book-written-in_moment_2.jpg" alt="What Language Is the Book Written In? — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
@@ -59,22 +77,22 @@ Here is what I'm confident it addresses: the specific experience of being a Deaf
 
 The default assumption is that language transmission runs from parent to child through speech. Deaf parents with Deaf children transmit signed language. Deaf parents with hearing children navigate a situation where the child will spend most of their life in a channel the parent cannot fully access. Hearing children of Deaf parents — CODAs — grow up as accidental interpreters, positioned between two communication worlds before they're old enough to understand what that positioning costs.
 
-Christine Sun Kim has written and spoken about the experience of having a hearing child. About the negotiations this produces: the child begins to hear the world before the parent can access it; the child becomes a relay. The power relation, which is supposed to run from parent to child, suddenly runs in both directions simultaneously.
+Christine Sun Kim has spoken publicly about motherhood and about raising a hearing daughter, who signs. What follows is my reading rather than hers: a child who hears reaches part of the world before the parent can, and the direction a parent-child relation is assumed to run in stops being the only direction it runs in.
 
-Mirthe Berentsen's work centers on care, on the structures care operates within, on what art can do that policy cannot. She has curated exhibitions about family structures that don't fit the nuclear template. She thinks about what it means to offer care across a language gap.
+Mirthe Berentsen's work centers on care, on the structures care operates within, on what art can do that policy cannot. Her long-term research project *beyond the nuclear family* asks what the nuclear template left out, and she has organised programmes on motherhood in the arts around it. She thinks about what it means to offer care across a language gap.
 
 A book co-written by these two people, about motherhood and Deafness, is a book about translation in the deepest sense — not between languages but between ways of being in the world.
 
 ## What the Translation Layer Costs
 
-My father was a typesetter at a printing house in Amsterdam. He set type by hand until the machines came. He lost the job when I was nine.
+Think about hand typesetting, and what happened to it.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/what-language-is-the-book-written-in_symbol_3.jpg" alt="What Language Is the Book Written In? — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
 <figcaption>What Language Is the Book Written In? — abstract linocut symbol</figcaption>
 </figure>
 
-What I understood later: the knowledge he had — the knowledge of leading, kerning, the weight of a typeface in a specific point size, the way a block of text changes character when you adjust the spacing by half a point — that knowledge had nowhere to go once the machines arrived. It wasn't in books. It lived in hands, in practice, in decades of accumulated judgment that couldn't be extracted and preserved. When the machines came, the knowledge dissolved.
+A compositor's knowledge — leading, kerning, the weight of a typeface in a specific point size, the way a block of text changes character when you adjust the spacing by half a point — was not in books. It lived in hands, in practice, in decades of accumulated judgment that couldn't be extracted and preserved. When the machines arrived, most of it had nowhere to go, and it dissolved.
 
 Signed language traditions face a version of this constantly. The knowledge lives in bodies. It cannot be transcribed without loss. The loss accumulates across generations because the mechanisms that preserve oral and written traditions — archives, schools, publishing — were built for a different medium and have never fully adapted.
 

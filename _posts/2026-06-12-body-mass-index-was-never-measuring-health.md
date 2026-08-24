@@ -13,6 +13,19 @@ source_title: "Wegovy weight-loss pills to be available for patients in UK to bu
 source_outlet: "Guardian Society"
 ---
 
+> **Correction, 24 August 2026:** An earlier version of this article said clinical trials
+> showed patients "on the highest dose" losing "14-17% of their body weight after 64 weeks."
+> Neither part was right. The trial behind the UK approval, OASIS 4, tested a single dose —
+> the 25 mg tablet that was licensed — so there was no highest-dose arm, and the published
+> result is a mean loss of 13.6% against 2.2% on placebo over 64 weeks, with an on-treatment
+> analysis of the same trial giving 16.6%. The "14-17%" range appears in no published
+> result. The figures have been replaced with the trial's own. The history in this article
+> has been checked and stands: Quetelet's 1832 index and his own population-level framing,
+> Ancel Keys renaming it Body Mass Index in 1972, the DSM-III/DSM-IV/DSM-5 chronology, the
+> American Medical Association's June 2023 policy, and the 1997 move of the diabetes
+> fasting-glucose threshold from 140 to 126 mg/dL.
+
+
 The UK regulator just approved Wegovy, a weight-loss medication, in tablet form. Third country after the US and UAE. Patients who meet criteria can now buy it with a private prescription. The criteria matter. BMI above 30, or above 27 with one weight-related condition. The number decides eligibility.
 
 BMI was invented in 1832 by a Belgian astronomer named Adolphe Quetelet. He was not a physician. He was building a statistical model of the average man — l'homme moyen, meaning "the average man" — using Belgian and French military conscripts. White men, mostly. The formula was never meant to assess individual health. Quetelet said so himself. He called it social physics. It measured populations, not people.
@@ -21,7 +34,7 @@ In 1972, Ancel Keys renamed it Body Mass Index and the medical establishment ado
 
 I know this history because I collect taxonomies. Diagnostic manuals, especially. The way categories get invented, then treated as real, then used to sort people into rooms they cannot leave. The [DSM](https://www.psychiatry.org/psychiatrists/practice/dsm) is a diagnostic manual used by mental health professionals. DSM-III added Pervasive Developmental Disorder, a childhood condition affecting development, in 1980. Asperger's, a form of autism, arrived in DSM-IV, 1994. Both gone by DSM-5, 2013, folded into [Autism Spectrum Disorder](https://www.psychiatry.org/psychiatrists/practice/dsm/diagnostic-and-statistical-manual-of-mental-disorders). Thirty-three years, three category shifts. Same brain the whole time.
 
-BMI does the same work. It converts a ratio into a fact, then builds a treatment infrastructure around the fact. Wegovy works by mimicking GLP-1, a hormone that regulates appetite and makes you feel full sooner. Clinical trials show those on the highest dose lost 14-17% of their body weight after 64 weeks. The drug works. What it works *on* is the question nobody asks.
+BMI does the same work. It converts a ratio into a fact, then builds a treatment infrastructure around the fact. Wegovy works by mimicking GLP-1, a hormone that regulates appetite and makes you feel full sooner. In OASIS 4, the trial behind the tablet's approval, patients taking the licensed 25 mg dose lost a mean 13.6% of their body weight over 64 weeks against 2.2% on placebo; an on-treatment analysis of the same trial puts it at 16.6%. The drug works. What it works *on* is the question nobody asks.
 
 Every pharmaceutical intervention for a diagnostic category does two things. First, it treats the symptom. Second, it also confirms the category was real to begin with. If the drug works, the diagnosis must have been correct. But the diagnosis was never about health. It was about a number on a chart that a Belgian astronomer drew in 1832.
 

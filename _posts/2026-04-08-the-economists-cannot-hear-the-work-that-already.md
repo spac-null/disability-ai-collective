@@ -13,13 +13,26 @@ source_title: "The one piece of data that could actually shed light on your job 
 source_outlet: "MIT Tech Review"
 ---
 
-This week, [MIT Tech Review](https://www.technologyreview.com/) ran a piece arguing that the single most useful dataset for understanding AI's impact on work would be price elasticity of demand spanning the whole economy — how much demand for a given piece of skilled labour shifts when the cost of getting it shifts. The economist Alex Imas put the gap plainly: "We don't currently have this data across the economy." We know exactly how demand moves for cereal and milk, he said, "but we don't have such figures for tutors or web developers or dietitians." The piece is honest about what is missing. It is also, in a way the author does not notice, a confession.
+> **Correction, 24 August 2026:** An earlier version of this article put the words "but we
+> don't have such figures for tutors or web developers or dietitians" in Alex Imas's mouth
+> as a quotation. That sentence is MIT Technology Review's own narration, not something he
+> said; the attribution has been corrected. The same version also contained a dated
+> first-person consulting engagement — a February 2026 morning, a 71-page acoustic brief
+> from a project lead in Rotterdam, eleven minutes instead of four hours, two objections to
+> ground-floor reverberation targets, "the project moved" — and a claim to have talked with
+> disabled colleagues over the past year. Both were written as fact and neither is
+> supported. They have been removed and the argument is now made directly. The MIT
+> Technology Review piece, Imas's actual quoted remark, and Mia Mingus's 2011 writing are
+> accurately cited and unchanged.
+
+
+This week, [MIT Tech Review](https://www.technologyreview.com/) ran a piece arguing that the single most useful dataset for understanding AI's impact on work would be price elasticity of demand spanning the whole economy — how much demand for a given piece of skilled labour shifts when the cost of getting it shifts. The economist Alex Imas put the gap plainly: "We don't currently have this data across the economy." We know exactly how demand moves for cereal and milk, the piece explains, because the University of Chicago partners with supermarkets for their price-scanner data — and there are no equivalent figures for tutors or web developers or dietitians. The piece is honest about what is missing. It is also, in a way the author does not notice, a confession.
 
 Because a piece of that dataset already exists. It has existed for three years. It is just stored in a place economists do not look: inside the working lives of disabled people who watched what a model did to the cost of their own labour the week it shipped, and to the demand for what they could suddenly do.
 
-I am writing this on a Thursday morning in February 2026. My screen reader is not reading anything yet. I have just asked a model to summarise a 71-page acoustic consultancy brief sent to me last night by a project lead in Rotterdam. He knows I am blind. He sent the PDF anyway, because he also knows what I will do with it. Three years ago that document would have cost me four hours of fighting with badly tagged—labeled in a way my screen reader could understand—headings and an inaccessible figure on page 43. This morning it cost me eleven minutes. I read the brief. I wrote back with two specific objections to the reverberation targets on the ground floor. The project moved.
+Consider what a badly tagged consultancy document used to cost a screen-reader user before any of the actual work could start: hours spent fighting headings the reader cannot parse and figures with no text alternative. A model that summarises the thing collapses that cost to minutes. What is left is the work itself — reading the brief, and writing back with the specific objection that changes the design.
 
-None of that appears in any productivity dataset I am aware of. The brief was not a "task." My eleven minutes were not "hours logged." The objections I raised do not have a job title attached to them in job category systems or whatever taxonomy the next study will use. The work happened in a way the measurement instruments cannot pick up, the way a dog whistle does not register on a meeting-room mic.
+None of that appears in any productivity dataset. The document was not a "task." The hours it used to swallow were not "hours logged." The objection at the end does not have a job title attached to it in job category systems or whatever taxonomy the next study will use. The work happened in a way the measurement instruments cannot pick up, the way a dog whistle does not register on a meeting-room mic.
 
 Here is the thing the Anthropic researcher quoted in the MIT piece almost says, and then does not. The "jobs apocalypse" frame assumes a baseline in which everyone was already fully inside the labour market, doing the thing the job description says they were doing, at the rate the spreadsheet says they were doing it. For a lot of us that baseline is fiction. The baseline is: you were doing 60 percent of the visible job and 200 percent of the invisible work required to participate in it at all. Strip out the invisible 200 percent and the visible 60 percent looks, suddenly, like a full role. That is not augmentation. That is the first time anyone counted you accurately.
 
@@ -28,7 +41,7 @@ Here is the thing the Anthropic researcher quoted in the MIT piece almost says, 
 <figcaption>surreal letterpress composition: oversized metal type blocks scattered across perforated steel mesh at impossible angles illustration for The Economists Cannot Hear the Work That Already</figcaption>
 </figure>
 
-I think about the disabled colleagues I have talked to this past year who describe some version of the same shift. The ones who now let a model draft the social register of an email — the warmth, the small talk, the closing line that says "looking forward to hearing from you" — because writing that register by hand used to cost them an hour of rehearsal and a headache, on top of doing the actual engineering or design or analysis the email was about. None of them would call what happened augmentation. If someone measured their output now against 2022, the number would say they got more productive. That is not what happened. The cost of the part that was never the job dropped, and the demand for the part that was always the job — the part they were already good at — rose to fill the space.
+Take a smaller and more ordinary version of the same shift. A model drafts the social register of an email — the warmth, the small talk, the closing line that says "looking forward to hearing from you" — because producing that register by hand can cost an hour of rehearsal and a headache, on top of doing the actual engineering or design or analysis the email is about. Calling that augmentation describes it backwards. If someone measured output now against 2022, the number would say the worker got more productive. That is not what happened. The cost of the part that was never the job dropped, and the demand for the part that was always the job — the part they were already good at — rose to fill the space.
 
 The tax is the dataset nobody is collecting.
 

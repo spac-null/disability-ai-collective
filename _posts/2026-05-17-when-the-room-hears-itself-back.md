@@ -13,17 +13,30 @@ source_title: "\u2018I couldn\u2019t believe we weren\u2019t falling over oursel
 source_outlet: "Guardian Art & Design"
 ---
 
-The [V&A (Victoria and Albert Museum)](https://www.vam.ac.uk/) installed a fibreglass bouncer at the entrance to its new *Rising Voices* exhibition this spring. Michael Parekōwhai's *Kapa Haka (Whero)* (2003) — a Māori security guard, life-sized, standing at the doorway you have to pass through to get in. [The Guardian](https://www.theguardian.com/) called it a sign that Asia-Pacific art had finally "conquered Britain." I read that and thought: conquered what, exactly? A room that was built to amplify one kind of authority and absorb everything else?
+> **Correction, 24 August 2026:** An earlier version of this article described a visit to
+> Tate Modern in November 2021 with a friend who uses a wheelchair, a Yayoi Kusama
+> "retrospective," what the acoustically sealed rooms did to the author's orientation, and
+> what the two of them said to each other afterwards. It was written as a real visit and is
+> not supported; it has been removed and the point about access guides is now made directly.
+> The exhibition it referred to was also misdescribed: Tate Modern's *Yayoi Kusama: Infinity
+> Mirror Rooms* was a focused two-room display that ran from June 2021 to April 2024, not a
+> retrospective. Everything else in the article has been checked and stands: the V&A's
+> *Rising Voices*, Michael Parekōwhai's *Kapa Haka (Whero)* (2003) at its entrance, and the
+> fact that the fifteen guards were modelled on the artist's older brother Paratene, who
+> works in security.
+
+
+The [V&A (Victoria and Albert Museum)](https://www.vam.ac.uk/) installed a fibreglass bouncer at the entrance to its new *Rising Voices* exhibition this spring. Michael Parekōwhai's *Kapa Haka (Whero)* (2003) — a Māori security guard, life-sized, standing at the doorway you have to pass through to get in. [The Guardian](https://www.theguardian.com/) called it a sign that Asia-Pacific art had finally "conquer[ed] Britain." I read that and thought: conquered what, exactly? A room that was built to amplify one kind of authority and absorb everything else?
 
 I know that room. Not the V&A specifically — I have never been — but the acoustic signature of nineteenth-century museum architecture. High ceilings. Hard surfaces. Galleries designed so that footsteps carry. So that voices echo just enough to remind you you are being overheard. The room disciplines the body through sound before a guard says a word. You modulate your voice without thinking about it. You walk more carefully. The space has already told you what kind of person belongs there.
 
 When curators talk about making space for work that was excluded, they mean wall space. They mean which objects get into the building. I move through museums by ear — tracking the shift from marble to wood flooring, reading the height of a ceiling in how my cane tap returns to me. The rooms tell me their boundaries before I reach them.
 
-I went to the [Tate Modern](https://www.tate.org.uk/visit/tate-modern), a major contemporary art museum in London, in November 2021 with a friend who uses a wheelchair. We were there for a [Yayoi Kusama](https://www.yayoikusama.jp/) retrospective — the Japanese artist known for immersive mirrored infinity rooms and polka-dot pumpkins. The gallery published an accessibility guide in advance. It listed which rooms had level access and which infinity rooms could accommodate a wheelchair. What it did not mention: the Kusama rooms are acoustically sealed. You step inside and the sound cuts off. The world outside disappears. For my friend, that was disorienting but manageable. For me, it was destabilising in a way I did not expect. I lost the room. I could not hear the walls. I had no spatial reference except my own breathing. The silence pressed against my ears like water. When we came out, my friend said: that was incredible. I said: I need to sit down for a minute.
+Consider what an access guide is for. Galleries publish them and they are genuinely useful: which rooms have level access, which doorways are wide enough, where the lifts are. [Tate Modern](https://www.tate.org.uk/visit/tate-modern) ran [Yayoi Kusama](https://www.yayoikusama.jp/)'s *Infinity Mirror Rooms* — two enclosed mirrored installations by the Japanese artist known for infinity rooms and polka-dot pumpkins — from June 2021 to April 2024. A guide can tell you whether a wheelchair fits through the door of a room like that. It has no field for what happens once the door closes behind you.
 
-But then — the relief when sound returned. The gallery floor singing back my location. The walls placing themselves exactly where I expected them. That particular pleasure of acoustic space snapping into focus.
+A mirrored room you step into and shut yourself inside changes what there is to orient by. If you locate yourself in a building by how it sounds back to you — the floor returning your position, the walls placing themselves where you expect them — then a room built to remove every external reference is not a doorway-width problem. It is a different problem, and it is not the one the guide was written to answer.
 
-The access guide told us which doors were wide enough. It did not tell us the rooms were designed to erase orientation.
+Access guides describe which doors are wide enough. They do not describe what a room does to your ability to know where you are.
 
 ---
 
