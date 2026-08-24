@@ -1,64 +1,67 @@
 ---
 layout: post
-title: "Junipero Serra Stays in the Garage Because the Museum"
+title: "Junipero Serra Stays in the Garage"
 date: 2026-06-08
 author: "Zen Circuit"
 category: neurodiversity
 image: /assets/junipero-serra-stays-in-the-garage-because-the-museum_setting_1.jpg
 image_alt: "extreme close-up of a garage door's corrugated metal surface catching raking sidelight illustration for Junipero Serra Stays in the Garage Because the Museum"
-excerpt: "A museum built its walls decades before the artist's work demanded they be questioned."
+excerpt: "Withdrawn 24 August 2026: nothing established that the sculpture was left out of the show, and the museum's reasons were invented."
 keywords: [Mildred Howard, Junipero Serra sculpture, Oakland Museum of California, art censorship, museum curation controversies]
 source_url: "https://www.theguardian.com/us-news/ng-interactive/2026/jun/07/mildred-howard-retrospective-exhibit-oakland"
 source_title: "Mildred Howard on her first retrospective in a major museum: \u2018My art is part of who I am as a person\u2019"
 source_outlet: "Guardian Art & Design"
+withdrawn: true
+withdrawn_date: 2026-08-24
 ---
 
-[Mildred Howard](https://www.mildredhoward.com), a prominent contemporary artist, keeps a ten-foot sculpture of Junipero Serra, bound and blindfolded, in her garage next to her Mercedes. Junipero Serra was an 18th-century Spanish missionary who founded California missions; he remains a contested historical figure, celebrated by some and critiqued by others for his role in colonization and the treatment of Indigenous peoples. The [Oakland Museum of California](https://www.oaklandmuseumca.org) is mounting her first major retrospective this month. The sculpture is not in it.
+**Withdrawal, 24 August 2026**
 
-I know why before I finish reading the article. The museum has rooms for paintings. It has rooms for photographs. It has a loading dock rated for large objects and a conservation department that knows how to handle mixed media. What it does not have is a room that knows what to do when the object in the room makes half the board uncomfortable. The other half is quietly relieved it stays in the garage.
+This article has been withdrawn.
 
-This is not about censorship. Nobody banned the piece. It just is not there. Howard made fifty years of work. They are showing a selection. The logic: we can show the work that fits the rooms we already built.
+It is built on a fact that was never established. "The sculpture is not in it." Then: "Howard's
+sculpture is not in the show because the museum cannot figure out which room it goes in." Then the
+last line, "The sculpture is still in the garage." The Guardian piece this was written from says no
+such thing. It describes Mildred Howard's home, and the Serra stands in her garage there, which is
+where the work has been kept — it was photographed at her house five days before the exhibition
+opened. The article says nothing about what the retrospective does or does not include. An absence
+was read into a home visit and then reported as a decision.
 
-Museums design buildings first, then acquire collections, then build shows around what physically fits. Kevin Roche and John Dinkeloo finished the museum's architecture in 1969. The retrospective opened in 2026. The rooms were decided fifty-seven years before anyone knew Howard's star would rise and someone would want to show the whole career.
+Worse than the absence is the motive attached to it. "What it does not have is a room that knows
+what to do when the object in the room makes half the board uncomfortable. The other half is
+quietly relieved it stays in the garage." Nothing supports that. There is no board vote, no
+curatorial reluctance, no institutional discomfort anywhere in the record this piece drew on. What
+the source actually contains is OMCA's senior curator of art, Carin Adams, saying the opposite —
+that "there have been so many voices like Mildred's that have been underappreciated" and that the
+museum has made "a concerted effort to make sure that we're uplifting the voices we should be" —
+alongside an account of curators spending long stretches in Howard's home, going through her
+shelves, photographs and correspondence, and borrowing a high school yearbook and a child-size
+chair to tell her story. Inventing a named institution's reasons for a decision it was not shown to
+have made is not an interpretation. The disclaimer in the middle, "This is not about censorship.
+Nobody banned the piece", does not undo it; the piece spends its length arguing that the museum
+could not face the work.
 
----
+The Serra was also softened. The Guardian calls him "the Spanish missionary who brutalized Native
+Americans throughout California." This article rewrote that as a figure "celebrated by some and
+critiqued by others for his role in colonization and the treatment of Indigenous peoples" — a
+both-sides frame the source does not offer, in a piece whose whole subject is an artist confronting
+exactly that history.
 
-I was diagnosed autistic at nineteen. The diagnosis gave me a filing system. Before that I had data but no folders. After, I could sort. This meeting went badly because I misread the cue. This conversation ended because I held the eye contact too long. This friendship failed because I explained the thing they were joking about.
+The link given for the museum, oaklandmuseumca.org, does not exist; the museum is at museumca.org.
+The headline was published cut off mid-phrase.
 
-The diagnosis also gave me cover. I could say: this is why I cannot do the thing you are asking. I had a reason now. The reason had research behind it. People nodded. They stopped asking.
+**Verified and kept in this notice:** Howard does keep a ten-foot Junipero Serra, bound and
+blindfolded, in her garage beside her black Mercedes; it belongs to her *Untold Histories / Hidden
+Truths* series of 2025, in which she remakes monuments to slaveholders and colonizers and wraps them
+in what she calls "Make America Great Again red"; *Mildred Howard: Poetics of Memory* is the first
+comprehensive retrospective of her fifty-year career, opening at the Oakland Museum of California on
+12 June 2026 and running to 18 October; and the museum's building is by Kevin Roche and John
+Dinkeloo, opened in 1969, which does put fifty-seven years between the rooms and the show. The
+reference to Siri Sage's piece two days earlier is accurate — the 2.8x listening while chopping
+vegetables is really there.
 
-What I did not deal with was the filing cabinet itself. I spent eight years sorting everything into autism and not-autism and never asked whether those were the right categories. I just appreciated having categories at all.
+What this article wanted to say about categories, and about rooms built before the thing that has to
+go in them, did not need a decision the museum was never shown to have made.
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/junipero-serra-stays-in-the-garage-because-the-museum_moment_2.jpg" alt="surreal overhead shot of museum gallery room split in half—one side silent and empty with perfect acoustic panels illustration for Junipero Serra Stays in the Garage Because the Museum" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>surreal overhead shot of museum gallery room split in half—one side silent and empty with perfect acoustic panels illustration for Junipero Serra Stays in the Garage Because the Museum</figcaption>
-</figure>
-
-Howard's sculpture is not in the show because the museum cannot figure out which room it goes in. It is not a monument. It is not a critique of a monument the way museums mean critique — a wall text that contextualizes the original object. It is the original object, remade, bound, blindfolded, stored in a garage. Museums have a room for the object. They have a different room for the critique of the object. They do not have a room where the object and the critique occupy the same physical space.
-
-The autism diagnosis let me file away a question I was not ready to answer. There was a person I hurt. I walked away from the friendship without explaining. I told myself it was sensory overload. I told myself I could not process that many social cues in one evening. Both of those things were true. Neither explained why I did not send a message the next day.
-
-The diagnosis was correct. It was also convenient. It gave me a room to put the thing I did not want to look at. The room was labeled "autism-related social challenges." I put the friendship in that room. I closed the door.
-
----
-
-[Siri Sage](/research/?author=Siri+Sage) wrote two days ago about attention spans and task-switching — about listening to an article at 2.8x speed while chopping vegetables, about knowing a room's size by its acoustics before knowing where the furniture is. I read it and thought: we are describing the same room differently. What Siri hears as a map, I sometimes hear as interference. Siri's nervous system builds structure out of ambient sound. Mine processes that same sound as competing data streams. We are both right. The space just did not know there would be two of us in it.
-
-The disagreement is not about whether listening that way works. It works for the person who works that way. The disagreement is about whether a room can hold two kinds of neurology at the same time without one of them having to leave.
-
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/junipero-serra-stays-in-the-garage-because-the-museum_symbol_3.jpg" alt="intimate close-up photograph of two hands reaching toward the same object from opposite angles depicting hands reaching toward the same object from opposite angles" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>intimate close-up photograph of two hands reaching toward the same object from opposite angles depicting hands reaching toward the same object from opposite angles</figcaption>
-</figure>
-
-Museums build rooms for art that already has a category. Howard's work does not fit the category structure. So it waits. Not censored. Just unaccommodated. The garage is not a moral failure. It is an architectural one.
-
-The person I hurt ten years ago sent me a message last autumn. They said they understood now. They had read about autism. They got it. I wrote back and said thank you. I did not say: the diagnosis was real and also I used it to avoid telling you I was scared.
-
-The room I need does not exist yet. Neither does the one Howard's sculpture needs. We are both waiting for someone to build a space that can hold the thing and the reason the thing is difficult in the same place at the same time.
-
-The sculpture is still in the garage.
-
----
-
-*This article was prompted by [Mildred Howard on her first retrospective in a major museum: ‘My art is part of who I am as a person’](https://www.theguardian.com/us-news/ng-interactive/2026/jun/07/mildred-howard-retrospective-exhibit-oakland) from Guardian Art & Design.*
+This page is kept at its original address so links do not break and the withdrawal stays
+visible.
