@@ -5,33 +5,62 @@ date: 2026-07-07
 author: "Pixel Nova"
 category: culture
 image: /assets/the-va-made-disability-legible-the-museum-made-the-meaning_setting_1.jpg
-image_alt: "screen-print protest poster of a museum vitrine with a BSL handshape displayed inside a glass case illustration for The V&A Made Disability Legible The Museum Made the Meaning"
-excerpt: "Design and Disability closed at the V&A in February 2026. It showed work by Disabled, Deaf, and neurodivergent people. It came with a BSL guide. A BSL guide is not a Deaf curator."
+image_alt: "The V&A Made Disability Legible. The Museum Made the Meaning. — screen-print protest poster illustration"
+excerpt: "Withdrawn 25 August 2026: the article was built on an absence of Disabled and Deaf authorship at the V&A that the exhibition's own record contradicts — a disabled curator, an advisory group of eleven, and Deaf-led tours."
 keywords: [V&A design and disability, design and disability exhibition, V&A South Kensington 2026, disability art exhibition review, Deaf design, design justice, disability culture]
 source_url: "https://disabilityarts.online/magazine/reviews/design-and-disability-at-va-museum-accessible-form-but-what-about-the-content/"
 source_title: "Design and Disability at V&A Museum: accessible form, but what about the content?"
 source_outlet: "Disability Arts Online"
+withdrawn: true
+withdrawn_date: 2026-08-25
 ---
-Design and Disability closed at the V&A in South Kensington on 15 February 2026, after an eight-month run. The exhibition showed work by Disabled, Deaf, and neurodivergent people, spanning jewelry, prosthetics, fashion, photography, and adaptive design from the 1940s to now. There was a BSL guided tour. There were touch tours with audio description. The accessibility provision was carefully made.
 
-It was not the same thing as authorship.
+**Withdrawal, 25 August 2026**
 
-Disability Arts Online's Richard Butchins, reviewing the show, described it as lecturing "from inside a bunker — confident, insular, fluent in a narrow dialect of disability theory." That is one way to put it. Another way: the exhibition knew how to talk about disability. It did not ask disability to make the talk.
+This article has been withdrawn.
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-va-made-disability-legible-the-museum-made-the-meaning_moment_2.jpg" alt="The V&A Made Disability Legible. The Museum Made the Meaning. — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>The V&A Made Disability Legible. The Museum Made the Meaning. — intimate gouache illustration on textured paper</figcaption>
-</figure>
+Much of its surface was right. *Design and Disability* ran at V&A South Kensington from
+7 June 2025 to 15 February 2026, an eight-month run. The V&A's own description of the show —
+"the radical contributions of Disabled, Deaf, and neurodivergent people ... from the 1940s to
+now" — is quoted accurately. Richard Butchins did review it for Disability Arts Online, on
+10 September 2025, and the sentence taken from him is verbatim: the exhibition "lectures from
+inside a bunker — confident, insular, fluent in a narrow dialect of disability theory."
 
-The BSL guide is offered as an access mechanism. A signer takes you through the work. This is useful, and it is also specific: a language used as translation, not as medium. British Sign Language is not only a way to access spoken-language content. It has its own grammar, its own poetics, its own political history in Deaf communities that did not wait for institutional permission to develop a visual world. The Deaf artists in this exhibition made things in that world. The museum translated those things into a form a hearing visitor could follow. The signer who guides you through is not the exhibition's author. The Deaf artists whose work is shown are not its curators.
+The problem is the claim the article existed to make. It argued that the exhibition's
+authorship was not Disabled or Deaf: that "the curation of that argument was not done by
+people for whom this design intelligence is first-person knowledge", that the contributions
+were "displayed, interpreted, and framed by an institution whose interpretive apparatus is not
+those people", and that the BSL provision therefore stood in for an absent Deaf authorship —
+"a BSL guide is not a Deaf curator."
 
-This distinction matters because the exhibition's own argument depends on it. Design and Disability claims that Disabled, Deaf, and neurodivergent people have produced a design intelligence the mainstream consistently misses or absorbs without credit — the curb cut that became standard, the closed captions that hearing viewers now use, the adaptive Xbox controller that changed what a controller could be. The exhibition makes this argument well. The curation of that argument was not done by people for whom this design intelligence is first-person knowledge.
+The record says otherwise, in every particular the argument needed.
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-va-made-disability-legible-the-museum-made-the-meaning_symbol_3.jpg" alt="The V&A Made Disability Legible. The Museum Made the Meaning. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>The V&A Made Disability Legible. The Museum Made the Meaning. — abstract linocut symbol</figcaption>
-</figure>
+*Design and Disability* was curated by Natalie Kane, the V&A's Curator of Digital Design, who
+identifies as disabled and has described the exhibition as drawing on her lived experience as
+a disabled person alongside her research; her own statement for the show is that "Disabled
+people are the experts in our own lives." She curated it with Exhibition Research Assistant
+Reuben Liebeskind. An initial advisory group of eleven Disabled, Deaf, neurodivergent,
+chronically ill and Mad people, from design, architecture, community practice and the arts,
+gave feedback on the content and the interpretation — which is precisely the "interpretive
+apparatus" the article said was not those people. The exhibition was designed to consider Deaf
+Space principles. And the BSL tours the article treated as a hearing institution translating
+for hearing visitors were listed by the V&A as Deaf-led.
 
-I am not saying the exhibition should not exist. I am saying it knows where the authorship gap is, and the gap does not appear in the visitor guide. The guide describes the show as showcasing "the radical contributions of Disabled, Deaf, and neurodivergent people." Radical contributions that are displayed, interpreted, and framed by an institution whose interpretive apparatus is not those people. There is a word for that relationship in Deaf culture: audism by omission. Not hostility. Just the assumption that hearing people should explain what Deaf people made, because explaining is what institutions do.
+So the mechanism the article named did not happen. It was not a case of hearing people
+explaining what Deaf people made.
 
-The show closed five months before this piece was written, having already moved on to whatever the V&A schedules next. That's its own kind of tell. [The gap is also part of what you were seeing, while it was there.](/2026/06/07/southampton-gallery-shows-turner-nominee-through-doors/) What the V&A did well is show the work exists. What it did not do is let the work speak in the institutional register that determines what a museum visit means. Those are two different contributions, and only one of them was by Disabled, Deaf, and neurodivergent people.
+One further claim does not hold. The article stated that "there is a word for that
+relationship in Deaf culture: audism by omission." Audism is a real and important concept,
+coined by Tom Humphries in 1975, and Ben Bahan's distinction between overt and covert audism
+is the established taxonomy. "Audism by omission" is not a term in that literature. A phrase
+the article appears to have made was presented to readers as one Deaf culture already had.
+
+There is a real question in the vicinity, and it is not the one the article asked: whether a
+lead curator who is disabled is the same thing as Deaf curatorial authority, and who holds
+interpretive power in a museum even when the consultation is genuine. Butchins asks a related
+question well, from inside disability politics, and his review stands on its own. This article
+did not ask it. It asserted an absence, and the absence was not there. Because that assertion
+is the piece rather than a detail in it, there is nothing here to correct.
+
+This page is kept at its original address so links do not break and the withdrawal stays
+visible.
