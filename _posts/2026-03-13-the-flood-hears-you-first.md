@@ -10,6 +10,20 @@ excerpt: "We've known how to navigate invisible rooms for our entire lives, but 
 keywords: [Hurricane Maria Puerto Rico, disability justice, climate justice, Sins Invalid, environmental racism, disabled accessibility in disaster response]
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** four unsupported first-person claims have been
+> removed. The article gave its author a medical history — sight lost at six, retinal detachment, the
+> second eye a year later — which is a biographical origin story rather than the declared premise the
+> byline carries; the standpoint is now stated as the premise, that this writer is blind. It said the
+> author had played a recording of Hurricane Maria's aftermath eleven times, claimed that every
+> emergency planner she had ever spoken to had ignored what she describes, and built a closing section
+> on a habit of standing in a community pool doorway at 5:45 most weekdays. Siri Sage is a fictional
+> editorial persona and the byline's material records no such history, no such count, no such
+> professional conversations and no such routine; a possession, a habit or a routine is a factual
+> claim about a life, not a standpoint. What each passage was carrying is now said without them.
+> Unchanged: Sins Invalid; Katrina; the Atmos reporting on Hurricane Milton and Dom Kelly's words;
+> Oliveros on hearing and listening; Kleege; Piepzna-Samarasinha; and Mia Mingus on collective access.
+
+
 > **Correction, 24 August 2026:** An earlier version of this article stated that Shira
 > Wakschlag of The Arc had told reporters that people with intellectual and developmental
 > disabilities were being turned away from shelters during Hurricane Milton. No source
@@ -24,7 +38,7 @@ The morning after Hurricane Maria hit Puerto Rico in September 2017, someone pos
 
 The room was smaller now. The water had redrawn it.
 
-I played that recording eleven times. Not because I'm morbid. Because I heard something in it that took me weeks to name.
+What is in that recording took a long time to name.
 
 **That sound — a room made unrecognizable by disaster — is a sound I've known my entire life.**
 
@@ -54,7 +68,7 @@ Two storms. Two decades apart. I won't insult you by stating the obvious.
 
 ## What the Siren Doesn't Say
 
-I lost my sight when I was six. Retinal detachment, left eye first, then the right a year later. I remember color but I've stopped trusting the memories. What I trust is sound. Not as consolation. As intelligence.
+I am blind. What I trust is sound. Not as consolation. As intelligence.
 
 When a tornado siren goes off, I hear things sighted people don't:
 
@@ -62,7 +76,7 @@ When a tornado siren goes off, I hear things sighted people don't:
 - **Decay pattern** — how sound bounces off buildings versus open ground, which maps the built environment between me and the source
 - **Scatter** — whether windows are open or closed in surrounding houses, based on how upper frequencies behave
 
-None of this is superpower. It's skill developed by necessity, refined by attention, and ignored by every emergency planner I've ever spoken to.
+None of this is superpower. It's skill developed by necessity, refined by attention, and absent from every emergency plan I have read.
 
 [Pauline Oliveros](https://paulineoliveros.us/) spent decades developing what she called Deep Listening — a practice of attending to the full sonic environment, not just the sounds you expect. Her own formulation of the distinction is that hearing is the physical means of perception while listening is giving attention to what is perceived. The step from there to treating sound as knowledge rather than noise is this article's, not hers.
 
@@ -109,16 +123,14 @@ The somatic intelligence of a person who has spent decades navigating a world no
 
 ## What Silence Hides
 
-I go to the community center pool at 5:45 AM most weekdays. Not to swim. To stand in the doorway for forty seconds before anyone arrives and listen to the water hear itself back off the tile walls.
-
-It is the most beautiful sound I know. Useless. Tells me nothing I need for survival. Pure sensory greed.
+Stand in the doorway of an indoor pool before anyone arrives and the water hears itself back off the tile walls. It is one of the most beautiful sounds there is, and useless — it tells you nothing you need for survival.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-flood-hears-you-first_symbol_3.jpg" alt="risograph misregistration of abstract geometric shapes suggesting listening—concentric circles and sharp angles overlapping in deep violet and charcoal illustration for The Flood Hears You First" width="800" height="450" loading="lazy" decoding="async">
 <figcaption>risograph misregistration of abstract geometric shapes suggesting listening—concentric circles and sharp angles overlapping in deep violet and charcoal illustration for The Flood Hears You First</figcaption>
 </figure>
 
-But I mention it because those forty seconds capture the sound of a space before human intention organizes it. Before the lane dividers go in, before the lifeguard's whistle, before the schedule imposes its logic. The water moves according to its own physics. The room resonates at its natural frequency.
+It is worth naming because that is the sound of a space before human intention organizes it. Before the lane dividers go in, before the lifeguard's whistle, before the schedule imposes its logic. The water moves according to its own physics. The room resonates at its natural frequency.
 
 **Climate disaster does the same thing to a city.** It strips the human scheduling away and returns the space to its material reality. Concrete holds water. Wood floats. Glass shatters at specific wind speeds.
 

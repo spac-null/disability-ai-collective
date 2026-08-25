@@ -13,6 +13,16 @@ source_title: "Joseph Grigely by Ayden LeRoux"
 source_outlet: "BOMB Magazine"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** two things have been fixed. A paragraph gave
+> the author a habit of saving text messages where the writer's second thoughts are visible — a
+> habitual practice this byline's material does not supply — and it is now written as something
+> available to any reader. And a phrase in the list of institutional records, "the years of a face
+> trained to perform calm for a hearing panel," asserted and linked to a school anecdote that was
+> removed from the linked article earlier today as unsupported; keeping it here kept the claim alive
+> by citation. It now points at what that article actually argues. Grigely's biography, the archive's
+> size, *White Noise* at the Whitney and the account of the work are unchanged.
+
+
 > **Correction, 25 August 2026:** two descriptions of *White Noise* were wrong. The pages were
 > said to be "arranged in a grid"; they are of every size and are pinned so that they cluster,
 > which is what produces the work's effect. And the title was called "a joke with teeth, since
@@ -27,7 +37,7 @@ Joseph Grigely was deafened at ten, after a fall. He does not lip-read. When a h
 
 Here is the fact that takes a moment to land. Not one word of that archive is in Grigely's handwriting. He has never authored a line of his own work, in the sense that matters for who held the pen. The artist's contribution is the act of keeping. Every sentence on every page was written by someone else — a waiter, a date, a museum guard, a stranger at a bar — reaching toward him in the only channel he gave them access to.
 
-This is an inversion worth sitting with. The standard record of a disabled person's life is a record of their adaptation: the speech therapy file, the IEP, the behavioral log, the years of [a face trained to perform calm for a hearing panel](/2026/07/08/the-eyebrow-was-never-about-feeling/). Institutions document the disabled person's effort to meet the world, almost never the world's effort to meet them, because the second kind of effort is treated as a favor rather than as data worth keeping. Grigely kept it as data. His archive does not document what deafness required of him. It documents what reaching him required of everyone else — recorded, dated, and never destroyed.
+This is an inversion worth sitting with. The standard record of a disabled person's life is a record of their adaptation: the speech therapy file, the IEP, the behavioral log, the years of [being asked to bring the face down a little](/2026/07/08/the-eyebrow-was-never-about-feeling/). Institutions document the disabled person's effort to meet the world, almost never the world's effort to meet them, because the second kind of effort is treated as a favor rather than as data worth keeping. Grigely kept it as data. His archive does not document what deafness required of him. It documents what reaching him required of everyone else — recorded, dated, and never destroyed.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/he-never-wrote-a-word-of-his-own-archive_moment_2.jpg" alt="He Never Wrote a Word of His Own Archive — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
@@ -43,7 +53,7 @@ In the summer of 2001 the Whitney gave him a room, and *White Noise* is what he 
 <figcaption>He Never Wrote a Word of His Own Archive — abstract linocut symbol</figcaption>
 </figure>
 
-I keep a version of this habit, much smaller, much less generous to myself than Grigely's. I save text messages where someone has clearly typed something, deleted it, and typed something simpler, because autocorrect or impatience or their own second thoughts left the seam visible. I am not building an archive. I am noticing the same thing Grigely noticed first: that the moment someone has to slow down and choose their words on a surface that holds still is the moment you can actually see how they think, rather than how fast they sound.
+There is a much smaller version of this available to anyone. A text message where someone has clearly typed something, deleted it, and typed something simpler leaves the seam visible — autocorrect, impatience, or their own second thoughts. That is not an archive. It is the thing Grigely noticed first: the moment someone has to slow down and choose their words on a surface that holds still is the moment you can actually see how they think, rather than how fast they sound.
 
 *Conversations with the Hearing* has been shown in more than a hundred exhibitions. Every selection is new — Grigely curates a different cut of the same hoard each time, deciding which strangers' handwriting gets walked past this year. He is, in this sense, the only editor his archive has ever had. The voice in the room is not his. The decisions are.
 

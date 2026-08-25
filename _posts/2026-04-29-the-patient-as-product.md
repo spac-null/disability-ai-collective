@@ -13,6 +13,15 @@ source_title: "El Salvador's president entrusts monitoring of chronic patients t
 source_outlet: "Le Monde English"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** one sentence has been removed — "I have been
+> screened, flagged, monitored, and referred more times than I can count" — which is a medical-
+> encounter history rather than the premise this byline carries. It is the generalised remainder of a
+> dated clinic visit the note below removed in August. The spinal cord injury stays: it is the
+> declared premise of the byline, and the physiological consequences named alongside it are what that
+> premise means rather than a record of appointments. The DoctorSV announcement, the documented
+> criticisms of it, the promotora model, Taylor, Hamilton and Lefebvre are unchanged.
+
+
 > **Correction, 24 August 2026:** Several things here were wrong. The announcement was made in
 > **April 2026**, not December 2023 — it is the second phase of DoctorSV, an app launched in
 > November 2025 and built on Google's Gemini under a seven-year agreement. A named community
@@ -37,7 +46,7 @@ In San Salvador, a government app screens you for diabetes and hypertension and 
 
 El Salvador's president announced in April 2026 that Google's AI will monitor the country's chronic patients — the second phase of DoctorSV, an app launched the previous November and built on Gemini under a seven-year agreement with Google. It identifies who is at risk, generates lab orders, and follows up automatically, including alerts for treatment abandonment. Le Monde, a major French newspaper, reported the basics. What nobody in that coverage asked is the question that would occur to anyone who has ever managed a chronic condition on a budget: what happens after the screen?
 
-I know what happens after the screen. I manage a spinal cord injury, which affects how my body controls several systems. This means I also manage pressure sores, urinary tract infections, bone density loss, and a cardiovascular system that does not regulate itself the way yours does. I have been screened, flagged, monitored, and referred more times than I can count. Screening is the cheap part. A scan can cost nothing and still hand you a referral with a months-long wait, transport you cannot easily arrange, and nobody whose actual job is to close the distance between the flag and the care.
+I know what happens after the screen. I manage a spinal cord injury, which affects how my body controls several systems: pressure sores, urinary tract infections, bone density loss, a cardiovascular system that does not regulate itself the way yours does. That is not one condition with one appointment attached. Screening is the cheap part. A scan can cost nothing and still hand you a referral with a months-long wait, transport you cannot easily arrange, and nobody whose actual job is to close the distance between the flag and the care.
 
 That gap is the thing an app does not buy.
 

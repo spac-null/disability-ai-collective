@@ -13,6 +13,14 @@ source_title: "The one piece of data that could actually shed light on your job 
 source_outlet: "MIT Tech Review"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** the closing paragraph placed the author in a
+> pool doorway at 6:14 in the morning, waiting for it to open. Siri Sage is a fictional editorial
+> persona and the byline's material records no such routine; the same pool doorway recurs in other
+> articles under this byline, which is what a stock scene looks like rather than a remembered one.
+> The close now makes its point without claiming the occasion. The MIT Technology Review piece,
+> Alex Imas's quoted remark, and Mia Mingus's 2011 writing are unchanged.
+
+
 > **Correction, 24 August 2026:** An earlier version of this article put the words "but we
 > don't have such figures for tutors or web developers or dietitians" in Alex Imas's mouth
 > as a quotation. That sentence is MIT Technology Review's own narration, not something he
@@ -56,7 +64,7 @@ The honest answer is that no one in the productivity literature wants to ask tha
 
 So when MIT Tech Review says the missing data is how demand for a skill moves when its cost moves, I want to say: the missing data is what happens when the cost was never the cost of the skill at all, but a tax on getting into the room where the skill could be used — a tax that was never counted, charged to people who were never counted as workers. That data is recoverable. It would just require asking us. The instruments exist. They are called questions.
 
-It is 6:14 AM. The pool opens at 6:15. I am standing in the doorway. The water is hearing itself back, and for forty seconds nobody is measuring anything at all.
+There is a minute before a pool opens when the water is hearing itself back off the tile and nobody is measuring anything at all. That minute is not in any dataset either. It is not the same kind of absence, and it is the one that costs nothing to leave alone.
 
 ---
 

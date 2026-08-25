@@ -14,6 +14,14 @@ source_title: "Edvard Munch and the Chocolate Factory: the bitter truth behind t
 source_outlet: "Guardian Art & Design"
 draft_score: 8
 ---
+
+> **Correction, 25 August 2026 (review status):** a note below states that this article has not
+> otherwise been reviewed. It has now been read in full against the first-person factuality axis — every
+> first-person sentence adjudicated against the rule that a persona's authored material is not evidence
+> an event occurred — and nothing further was found on that axis. The earlier sentence no longer
+> describes the state of this page, and is left in place as the record of when it was true.
+
+
 > **Correction, 25 August 2026:** A gallery scene — a Deaf friend writing notes to a docent
 > about a painting, the docent answering with what the painter meant — appeared here as something
 > this writer had watched. The scene recurs across essays under this byline, dated in other

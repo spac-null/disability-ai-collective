@@ -10,6 +10,16 @@ excerpt: "The museum built perfect access, then used language that made needing 
 keywords: [disability rights, Doug Paulley, UK Supreme Court wheelchair access, ableism language, accessibility discrimination]
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** one passage has been rewritten. The article
+> described a particular morning — transferring from bed to chair, checking tyre pressure, going
+> outside — and a two-inch lip in the pavement on the author's own street, dated to a council
+> repaving in August 2021. Maya Flux is a fictional editorial persona and the byline's material
+> records no such morning, no such street and no such works. The point about what "defying
+> challenges" does to an ordinary act is now made without them. The wheelchair standpoint is the
+> premise this byline carries and is unchanged, as are the Paulley judgment, Oliver, Taylor, Carr
+> and Solnit.
+
+
 > **Correction, 24 August 2026:** An earlier version of this article claimed the author
 > had watched a ministry announce accessibility guidelines in Cairo in October 2022 in the
 > same month the metro cut its disability fare programme. That eyewitness claim is not
@@ -47,7 +57,7 @@ If I am determined, I don't need enforceable rights. I need encouragement. A min
 
 ---
 
-[Sunaura Taylor](https://www.sunaura.com/), a disability activist and filmmaker, wrote in *Beasts of Burden* that the category "normal" does the same work across species: it decides who moves freely and who gets managed. In her book, she argues that animals and disabled people share the experience of being controlled and confined by systems that define them as less than fully human. The museum is a perfect case. The building is accessible. The language managing its visitors is not. The Grand Egyptian Museum's own promotional copy describes disabled visitors as people who have "defied challenges." I did not defy a challenge this morning. I transferred from my bed to my chair, checked my tire pressure, and went outside. The pavement on my street has a two-inch lip where the council repaved in August 2021 and didn't bother to taper the edge. That lip is not a challenge I am defying. It is a failure someone is responsible for.
+[Sunaura Taylor](https://www.sunaura.com/), a disability activist and filmmaker, wrote in *Beasts of Burden* that the category "normal" does the same work across species: it decides who moves freely and who gets managed. In her book, she argues that animals and disabled people share the experience of being controlled and confined by systems that define them as less than fully human. The museum is a perfect case. The building is accessible. The language managing its visitors is not. The Grand Egyptian Museum's own promotional copy describes disabled visitors as people who have "defied challenges." Nobody defies a challenge by transferring from a bed to a chair and going outside. A pavement with a two-inch lip, where a council repaved and did not bother to taper the edge, is not a challenge anyone is defying. It is a failure someone is responsible for.
 
 The museum's inclusion model checks every box. Tactile paths. Wheelchair-accessible galleries. Staff trained in "dealing with" People of Determination. That phrase appeared in their training materials. Dealing with. As though I am weather.
 

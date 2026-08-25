@@ -13,6 +13,17 @@ source_title: "What can 160-million-year-old clay tell us about AI and ethics? I
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** the article opened and closed on the same
+> unsupported scene: the author reading the Guardian piece parked outside a plantain stall in her
+> neighbourhood, and then checking her tyres by hand there, "the way I do every Tuesday." An August
+> note corrected an internal inconsistency in that scene — a Wednesday against a stall visited every
+> Tuesday — and by fixing the day it preserved the occasion, which was the larger error. Maya Flux is
+> a fictional editorial persona and the byline's material records no such place and no such routine.
+> Both passages now make their point without it. Es Devlin's Oxford summit, the 160-million-year-old
+> clay, the singing bowl as the cited account describes it, and the argument about touch as the least
+> universal sense are unchanged.
+
+
 > **Correction, 24 August 2026:** The link given for Es Devlin, es-devlin.com, does not resolve; her
 > site is esdevlin.com, and the link has been fixed. The article also stated as fact who was not at
 > the summit — blind potters, a potter with rheumatoid arthritis, a wheelchair user who throws
@@ -28,7 +39,7 @@ source_outlet: "Guardian Art & Design"
 
 This week [Es Devlin](https://esdevlin.com/), a British stage designer and artist known for her immersive large-scale installations, convened a summit at Oxford, in a potters' workshop, where she invited AI practitioners with a deliberately divergent set of viewpoints to sit at workbenches and push their fingers into Jurassic clay. [The Guardian](https://www.theguardian.com/) published an admiring account of the event. The clay is 160 million years old. The bell that opens the gathering is a singing bowl, the kind once used in Buddhist chanting rituals, and the account describes it hitting just the right frequency to make the temples vibrate pleasantly. Everyone, the piece suggests, is humbled by the same encounter with matter. Whatever a person believes about AI, the piece implies, their hands are equally surprised by what they know that their mind does not.
 
-I read it parked outside a plantain stall in my neighbourhood, and I felt the small flat irritation that arrives when a beautiful idea is half-built and someone is selling the half as the whole.
+Reading it produces the small flat irritation that arrives when a beautiful idea is half-built and someone is selling the half as the whole.
 
 Because here is what is true, and I want to give it its full weight first. Working clay does change how a person thinks. Hands solve problems that the speaking part of the brain has not yet noticed. Anyone who has thrown a pot, kneaded bread, or wired a circuit board knows this. The summit's instinct — that the people building large language models should spend a day with their minds in their fingers — is correct. It is also, in 2026, almost too late to be radical. The monks have been saying it for a thousand years.
 
@@ -62,4 +73,4 @@ Devlin's bell is a beautiful object. The clay is genuinely 160 million years old
 
 I would also notice, the way you notice a small stone in your shoe, that the room had been arranged so that everyone's hands could agree.
 
-Outside the plantain stall my tyres were soft, and I checked them by hand, the way I do every Tuesday, and the rubber told me what it tells me, and I did not need a word for it.
+A soft tyre tells your hand it is soft before you have a word for it. That is the knowledge the summit went looking for, and it was never scarce.

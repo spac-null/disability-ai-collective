@@ -12,6 +12,18 @@ source_url: "https://www.theguardian.com/society/2026/may/15/young-at-london-job
 source_title: "\u2018It makes me feel quite dehumanised\u2019: young at London career fair lay bare barriers to jobs"
 source_outlet: "Guardian Society"
 ---
+
+> **Correction, 25 August 2026 (first-person axis):** this article was citing figures another article
+> has since withdrawn. It attributed to Maya Flux's piece a specific breakdown of a care hour —
+> fifteen minutes for the transfer, twenty-five for washing and dressing, ten for breakfast, ten for
+> tidying — and built its comparison on "they allocated fifteen minutes for something that takes
+> longer." That article removed those minute allocations and now marks the whole hour as a construct,
+> so the numbers were being kept alive here by citation. The reference now describes what that piece
+> actually says. A parallel that implied this writer has an employer has also gone. The Westfield
+> reporting, the unemployment figures, Laura-Jane Rawlings's quotation and Aldo van Eyck's building
+> are unchanged.
+
+
 > **Correction, 24 August 2026:** The reporting this was written from holds up in full — Demi
 > Trowsdale, Angel Simpson and Harvey Barns are quoted accurately, as are the figures: 713,000
 > young people unemployed, 15.8% among 16- to 24-year-olds, 24.6% in London. Four things around it
@@ -46,7 +58,7 @@ Systems like this one route people through decisions. Candidates are filtered ou
 
 ---
 
-Maya Flux wrote two days ago about an hour of home care carved into allocations — fifteen minutes for the transfer from bed to chair, twenty-five for washing and dressing, ten for breakfast, ten for tidying. She is right that the hour has become the injury. Here is where we split: her injury is documentable. Mine is not. She can point to the schedule and say: look, they allocated fifteen minutes for something that takes longer. I point to the form and say: look, the dropdown menu does not have my language in it. Her employer stole time. Mine stole the ability to name what was stolen.
+Maya Flux wrote two days ago about a commissioned hour of home care, itemised into the transfer from bed to chair, washing and dressing, breakfast, tidying, with a variance to explain if you run over. She is right that the hour has become the injury. Here is where we split: her injury is documentable. Mine is not. She can point to the itemisation and say: look, this is what they costed. I point to the form and say: look, the dropdown menu does not have my language in it. One theft is legible on a schedule. The other takes away the words for saying what was taken.
 
 The job fair operates the same way. The question is not "are you qualified?" The question is "do you fit the infrastructure we already built?" And the infrastructure was designed by people who assume everyone hears the phone ring, everyone owns a car, everyone can absorb the cost of simply getting to a job. As Laura-Jane Rawlings, chief executive of Youth Employment UK, put it: "In London especially, transport costs, housing pressures and digital exclusion must be recognised as employment barriers." If you do not fit that assumption, the system filters you out before anyone has to make a decision that feels like discrimination.
 

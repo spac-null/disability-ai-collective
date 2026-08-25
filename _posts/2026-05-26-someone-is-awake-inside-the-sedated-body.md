@@ -13,6 +13,15 @@ source_title: "A job that changed me: As an anxious first-time surgical assistan
 source_outlet: "Guardian Society"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** one sentence has been rewritten. "I also know
+> what it feels like to wake up and realise the room you were afraid in does not exist anymore"
+> claims a surgical experience. The note below records that this article's first-person surgical
+> history and a dated exchange with an anaesthetist were removed earlier today; this sentence is the
+> same claim in a shorter form and survived that pass. The observation stands, in the second person
+> the rest of the passage already uses. Roland Bull's own published sequence, and everything drawn
+> from it, is unchanged.
+
+
 > **Correction, 25 August 2026:** three first-person passages have been removed. The article opened
 > with an anaesthetist cracking a joke "three minutes after they put me under," which the author
 > said she knew from reading the surgical notes; it went on to catalogue her own surgical history
@@ -53,7 +62,7 @@ The room has two versions. One is performed for the patient: calm, procedural, d
 
 The gap between those two versions is not cruelty. It is necessity, and Bull says so himself: a single operation is unlikely to be the most important thing to happen in a surgical team member's lifetime, because of the sheer volume of procedures they get through. You cannot have a room full of people holding the emotional pitch required to meet a frightened patient at their level of fear for six, eight, ten hours. The room would collapse. So the fear gets managed in a bounded window — the pre-op conversation, the consent form, the hand-holding until the IV takes — and then it is over. You leave, and the room returns to its default state, which is people working.
 
-I understand why it has to be this way. I also know what it feels like to wake up and realise the room you were afraid in does not exist anymore. The warmth arrived after you left. The moment you were incapable of refusing anything, everyone got comfortable.
+I understand why it has to be this way. And the other thing is also true: you wake up and the room you were afraid in does not exist anymore. The warmth arrived after you left. The moment you were incapable of refusing anything, everyone got comfortable.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/someone-is-awake-inside-the-sedated-body_symbol_3.jpg" alt="Someone Is Awake Inside the Sedated Body — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">

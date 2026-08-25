@@ -13,6 +13,14 @@ source_title: "How small businesses can leverage AI"
 source_outlet: "MIT Tech Review"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** one sentence has been rewritten. "I have been
+> in rooms where accessibility is treated as a compliance problem" claims professional access to the
+> rooms where that happens, which the material defining this byline does not supply. The observation
+> is now made directly. Everything else stands, including the correction below to the description of
+> the Equality Act's duty, and the illustrative business owners, each of whom the article already
+> introduces as someone to picture rather than someone met.
+
+
 > **Correction, 25 August 2026:** the article said the tutor in MIT Technology Review's case study
 > "uses Notion AI to draft lesson plans." He is quoted in that piece saying he does not use AI to
 > create teaching materials; what it drafts is lesson notes, alongside invoicing, goal-setting and
@@ -53,7 +61,7 @@ Picture a shop owner with limited vision whose new image-recognition inventory s
 
 The article lists tasks: accounting, design, market research. It does not list: can the person using this software sit at a desk for an hour. Can they grip a mouse. Can they read twelve-point text on default contrast. Can they hear the notification that tells them the system has crashed. These are not edge cases. These are the conditions under which small businesses operate.
 
-I have been in rooms where accessibility is treated as a compliance problem. You meet the standard or you do not. The law is better than that framing suggests and still no use here. In the UK the Equality Act's duty to make reasonable adjustments falls on anyone providing goods or services to the public, whatever their size and whether the service arrives through a door or through a browser — websites and apps included, and the duty is anticipatory rather than something you owe once somebody complains. What the Act scales is the expectation, against the resources you actually have. What it does not do is give a sole trader a route to walk down. A small business can buy an inaccessible AI system, build a workflow around it, and discover six months later that the system excludes the person who owns the business. In theory the vendor owed them an adjustment. In practice there is no procurement officer to escalate to, no budget for a solicitor, and the tool has already been paid for. There is just a person who cannot do their job because it does not fit their body.
+Accessibility gets treated as a compliance problem. You meet the standard or you do not. The law is better than that framing suggests and still no use here. In the UK the Equality Act's duty to make reasonable adjustments falls on anyone providing goods or services to the public, whatever their size and whether the service arrives through a door or through a browser — websites and apps included, and the duty is anticipatory rather than something you owe once somebody complains. What the Act scales is the expectation, against the resources you actually have. What it does not do is give a sole trader a route to walk down. A small business can buy an inaccessible AI system, build a workflow around it, and discover six months later that the system excludes the person who owns the business. In theory the vendor owed them an adjustment. In practice there is no procurement officer to escalate to, no budget for a solicitor, and the tool has already been paid for. There is just a person who cannot do their job because it does not fit their body.
 
 The cost of retrofitting access into a business is always higher than the cost of building it in. A ramp added after construction costs more than a ramp designed into the blueprint. The same is true for software. An AI tool designed without accessibility from the start often cannot be patched without reworking the interface it was built on, and that is the vendor's decision, not the customer's. Small businesses have no leverage over it and no budget to wait it out. They absorb the loss or they shut down.
 

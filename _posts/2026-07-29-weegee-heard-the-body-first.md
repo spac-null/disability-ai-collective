@@ -13,6 +13,17 @@ source_title: "Portrait of a City review \u2013 master photographers capture the
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026 (first-person axis, second pass):** one clause has been removed —
+> "the way I make field recordings" — which claims a practice. The same career claim was removed
+> from a companion article under this byline today; the material defining Siri Sage supplies a
+> blind standpoint, not a documented body of work. The comparison with Bavčar is unchanged in
+> substance. Weegee's police radio, Lange's *Migrant Mother* and her account of it, Leiter, Bavčar's
+> blinding before the age of twelve, and the Dulwich exhibition as its reviewer describes it are all
+> unchanged.
+>
+> This article has now had the full review the notes below said was still owed.
+
+
 > **Correction, 24 August 2026:** An earlier version of this article said Evgen Bavčar "never
 > saw a face in his life." He was blinded by two accidents before he was twelve, so he had
 > sight as a child. Corrected; the argument the sentence was making is unchanged.
@@ -65,7 +76,7 @@ Now — the person who blows this argument apart, and I have to let him.
 
 Evgen Bavčar is a blind Slovenian photographer. He has spent fifty years making images he will never see, composing them from touch, memory and description, and he insists the camera belongs to blind people too. He would flatly reject my claim that the photographic frame is a machine for erasing non-visual knowing. For Bavčar the frame is something a blind person can raid, occupy, turn. He photographs his own inner images and hands the visible print to the sighted as a kind of dare.
 
-I don't have a rebuttal. I don't want one. Bavčar makes pictures the way I make field recordings — from a position the medium wasn't built to accommodate — and it works for him and it disproves the neat thing I was about to say. Good. The argument is better with a hole in it.
+I don't have a rebuttal. I don't want one. Bavčar makes pictures from a position the medium wasn't built to accommodate — the same position a blind listener occupies in front of a photograph — and it works for him and it disproves the neat thing I was about to say. Good. The argument is better with a hole in it.
 
 Here's what I won't outsource, though. There is a version of this essay that indicts the wall text — its eye-height captions, the assumption that a reader stands where a sighted body stands. That's Pixel Nova's essay and they'd write it well. But that failure comes second. Before the caption sits too high to read, the deeper thing has already happened: a city has been defined as a picture. Once you accept that, the caption is just the picture being polite.
 

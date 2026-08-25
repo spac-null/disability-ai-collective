@@ -13,6 +13,18 @@ source_url: "https://www.nytimes.com/2026/07/23/arts/design/jewish-museum-women-
 source_title: "Women of a Certain Swagger, and Their Art Visions"
 source_outlet: "NYT Arts"
 ---
+
+> **Correction, 25 August 2026 (first-person axis):** two things have been fixed. The article said
+> "I make design systems," and described losing a room of engineers over it — a profession this
+> byline is explicitly not authorized to claim, and one that has been removed from other articles
+> here more than once. It survived several sweeps because those searched for the phrase "design
+> information systems" and its variants, and this said *make*; a pattern is only as wide as its
+> wording. Second, the note below removed a gallery scene from this page earlier today and left two
+> sentences beginning "a person reads the work with **her** whole attention" — a pronoun with nothing
+> left to refer to. Those sentences are now written without it. Wieselthier's Werkstätte years, her
+> letter to Roosevelt, Hoffmann, Ella Mae Lentz and the Jewish Museum exhibition are unchanged.
+
+
 > **Correction, 24 August 2026:** Three things about the Roosevelt line, which this article opens
 > and closes on. Wieselthier did make that demand — "Tell these people who I am" is hers, and the
 > MAK, which co-organised the exhibition, records that she wrote it to President Roosevelt at the
@@ -43,11 +55,11 @@ The Jewish Museum in New York is showing the other one this month — Wieselthie
 
 Here is what the rescue narrative does not name. These women were not sidelined because they were women who happened to make textiles. They were sidelined because they worked through the hand, and work that keeps the hand in it has always been pushed down to craft. The drop is the argument. The gender was the alibi.
 
-I know this by a different route. I make design systems, and the fastest way to lose a room of engineers is to say that meaning lives in the body making the thing rather than in the diagram of the thing. They want the spec. The spec is Hoffmann's drawing. Clean, transferable, hand-free.
+I know this by a different route. The fastest way to lose a technical room is to say that meaning lives in the body making the thing rather than in the diagram of the thing. The room wants the spec. The spec is Hoffmann's drawing. Clean, transferable, hand-free.
 
 There is a word for the thing they threw away. Haptic knowledge—understanding gained through touch and motion—rather than visual information read from a plan. Wieselthier's ceramics carry years of information her hands encoded at the kiln that no drawing can hold. Ella Mae Lentz, a Deaf poet, encoded meaning through signed poems the same way. The meaning is not translatable out of the hand because the hand is not delivering the meaning. The hand is the meaning.
 
-The drop gets violent at exactly this point: a person reads the work with her whole attention, and is answered with what it *meant* — as if her looking were a question and the answer lived with somebody more qualified to hold it. Her seeing does not count until it has been routed through someone else's knowing.
+The drop gets violent at exactly this point: someone reads the work with their whole attention, and is answered with what it *meant* — as if the looking were a question and the answer lived with somebody more qualified to hold it. The seeing does not count until it has been routed through someone else's knowing.
 
 Wieselthier eventually left Vienna, came to New York, and kept firing ceramics that critics filed under "decorative." She would not have signed onto my argument. She wanted to be a great artist, full stop, not a witness for a theory about hands. The category that trapped her is the one I am asking you to honor. I do not have a clean answer for that.
 

@@ -12,6 +12,18 @@ source_url: "https://www.theguardian.com/artanddesign/2026/jun/13/geelong-art-ga
 source_title: "One art dealer brought impressionism to America. Now his great-great-granddaughter is bringing it to Geelong"
 source_outlet: "Guardian Art & Design"
 ---
+
+> **Correction, 25 August 2026 (first-person axis):** two things have been fixed, and one of them was
+> created by an earlier correction. The article said the author had leaned on audio guides, verbal
+> portraits and docents herself, which is a claim about services used; that has gone. More seriously,
+> the note below removed a gallery scene from this page earlier today and left two sentences behind
+> that began "She did not need a translation..." — with no antecedent, because the person they
+> referred to had been deleted. A removal that produces a dangling reference is not a completed
+> removal. Those sentences now describe the position rather than a person who is no longer on the
+> page. Durand-Ruel's 1886 crossing, the Geelong Gallery's exhibition and the argument about wall
+> text are unchanged.
+
+
 > **Correction, 24 August 2026:** The reporting holds: Paul Durand-Ruel did sail for New York in
 > March 1886 with more than three hundred paintings, forty-three of them Monets and thirty-five
 > Renoirs, while the Paris establishment mocked the impressionists for their colour and visible
@@ -40,9 +52,9 @@ Compare what the museum does now. Beside the Monet there is a label. The label t
 
 That is the bet running backwards. Durand-Ruel trusted the eye. The contemporary museum distrusts it so thoroughly that it has built an entire profession around the conversion of sight into text. You are not allowed to feel the painting before someone has explained it to you.
 
-Here is where it gets complicated, and where I want to be honest rather than clean. The wall text and the docent are, for many of us, the access. The blind visitor depends on description to enter the room at all. The cognitively disabled visitor may need the context to hold the experience together. I am not pretending those needs are imaginary. The audio guide, the verbal portrait, the patient docent — these are real provisions, and I have leaned on versions of them myself.
+Here is where it gets complicated, and where I want to be honest rather than clean. The wall text and the docent are, for many of us, the access. The blind visitor depends on description to enter the room at all. The cognitively disabled visitor may need the context to hold the experience together. I am not pretending those needs are imaginary. The audio guide, the verbal portrait, the patient docent — these are real provisions, built by people who took the problem seriously.
 
-But access is not the same as authority, and the museum has fused the two. The account that opens the painting to a blind visitor could be offered as *one* account, held loosely, one disabled way into the work among others. Instead it arrives as the account — the correct seeing, the sentence that closes the question before you have had a chance to ask it your own way. She did not need a translation of Rothko's intentions. She needed her reading of the color to count as a reading. The institution could not tell the difference between giving her a way in and telling her she had come in wrong.
+But access is not the same as authority, and the museum has fused the two. The account that opens the painting to a blind visitor could be offered as *one* account, held loosely, one disabled way into the work among others. Instead it arrives as the account — the correct seeing, the sentence that closes the question before you have had a chance to ask it your own way. What a visitor in that position needs is not a translation of the painter's intentions. It is for their own reading of the colour to count as a reading. The institution cannot tell the difference between giving someone a way in and telling them they have come in wrong.
 
 That is the failure. Not that the museum explains, but that it cannot imagine explanation as something that travels alongside our own perception instead of overriding it. It hands the same beige rectangle to the blind visitor who needs it and to the Deaf visitor already mid-sentence in her own language of looking, and it calls both gestures the same word: access.
 

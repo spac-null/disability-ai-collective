@@ -10,6 +10,16 @@ image: /assets/the-theory-that-could-not-see-half-the-room_setting_1.jpg
 image_alt: "The Theory That Could Not See Half the Room — screen-print protest poster illustration"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** two claims to have sat the instrument have
+> been removed. The article said "I have taken this test. I scored in a range Baron-Cohen would
+> recognize," and closed by identifying the author as the data point the test could not find, with
+> her own scores. Zen Circuit is a fictional editorial persona and the byline's material records no
+> assessment; a test taken and a score received are factual claims about a life. The argument does
+> not need them, and it is made from the instrument's construction, the sample skew, Lorna Wing's
+> 1981 account and the camouflaging literature — all unchanged, including the four verbatim Empathy
+> Quotient items.
+
+
 > **Correction, 25 August 2026:** two errors have been fixed. The fourth Empathy Quotient item
 > quoted at the top is item 35, and it reads "I don't tend to find social situations confusing" —
 > an earlier version dropped "tend to" in both places the item appears. And Lorna Wing's
@@ -26,7 +36,7 @@ The instrument was the Empathy Quotient, developed by Simon Baron-Cohen's team a
 
 Baron-Cohen's claim, set out in The Essential Difference in 2003, was that [autism represents an extreme of the male brain](/research/extreme-male-brain/): a mind in which systemizing overwhelms empathizing. The theory placed autistic people at one end of a gender spectrum. The typical female brain, by this model, inclines toward empathy. The typical male brain inclines toward systemizing. The autistic brain is the male brain, concentrated and amplified.
 
-I have taken this test. I scored in a range Baron-Cohen would recognize.
+Take the test and it returns a number. The number is the finding, and the finding is the instrument.
 
 ---
 
@@ -66,6 +76,6 @@ After 2015, a substantial body of research began examining autism specifically i
 
 The lag is structural. A theory that becomes diagnostic criteria becomes training for clinicians becomes referral patterns becomes case notes becomes new research. The cycle runs for the decade it takes to publish, the decade it takes to teach, the decade it takes to revise. The women who received misdiagnoses in the years between Wing's observation and the newer research have already lived the interval. Some of them are still in it.
 
-I am the data point that the test was not designed to find. My own scores fit the pattern this piece describes: high systemizing, an empathy score that reads low on the instrument and was never low in practice. The error was not in my scores. The error was in the specification.
+The data point the test was not designed to find looks exactly like the pattern this piece describes: high systemizing, an empathy score that reads low on the instrument and was never low in practice. The error is not in the scores. The error is in the specification.
 
 Someone wrote down precisely what they were looking for. They found it exactly. And the precision was the problem.

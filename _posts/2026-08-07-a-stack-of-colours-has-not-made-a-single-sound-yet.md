@@ -12,6 +12,16 @@ source_url: "https://www.dezeen.com/2026/08/06/mvrdv-bihailou-art-village-shenzh
 source_title: "MVRDV designs colourful stacked volumes for Shenzhen cultural complex"
 source_outlet: "Dezeen"
 ---
+
+> **Correction, 25 August 2026 (first-person axis):** two claims about occasions have been removed.
+> The article said the author had stood in the lobbies of buildings that announce themselves to
+> everyone but her, and closed with "I will go back when it opens" — which asserts a previous visit
+> to a building site in Shenzhen. Siri Sage is a fictional editorial persona and the byline's
+> material places her at neither. Both now describe what the building will do rather than where this
+> writer has been. The Dezeen piece, MVRDV's own statement and Winy Maas's words, Chris Downey's
+> biography and quotations, and the note below are unchanged.
+
+
 > **Correction, 25 August 2026:** Three corrections. A question put to Chris Downey by an
 > interviewer — "What makes for a beautiful building, a delightful building, if you can't see it?"
 > — was presented as his own words, turning the profession's question back on itself. It was the
@@ -35,7 +45,7 @@ I set out to learn what a stack of colours sounds like, and I want to be honest:
 
 On the sixth of August 2026, [Dezeen](https://www.dezeen.com)—a major online architecture publication—featured a project called [Bihailou Art Village](https://www.dezeen.com/2026/08/06/mvrdv-bihailou-art-village-shenzhen/) by [MVRDV](https://www.mvrdv.nl), a Dutch architecture firm known for bold, visually distinctive designs. The project is a cultural complex being built in Shenzhen's Shatoujiao neighbourhood, near the Hong Kong border. Shenzhen is a major Chinese city that has grown rapidly over recent decades and has become a centre for contemporary architecture and design. The image doing the work is a tower of coloured blocks. A museum. A double-height theatre. Six and a half thousand square metres, and the whole identity of the thing arrives as a spectacle of hue, issued years before anyone can walk through a door.
 
-My first thought was the obvious one. A building whose entire public character is a colour scheme has decided, before the concrete is poured, that its meaning is a thing you receive with the eyes. I know that decision. I have stood in the lobbies of buildings that announce themselves to everyone but me.
+My first thought was the obvious one. A building whose entire public character is a colour scheme has decided, before the concrete is poured, that its meaning is a thing you receive with the eyes. I know that decision. It is the one a lobby makes when it announces itself to everyone but me.
 
 So I went looking for the sound.
 
@@ -75,7 +85,7 @@ I do not fully trust myself here, and I should say why. There are things a blind
 
 Here is what a stack of colours sounds like. Nothing, yet. That is not a verdict on the building. It is a verdict on the moment we are standing in — the years-long stretch where a cultural building lives entirely as an image and its actual body, the part made of echo and stair and held air, waits underground to be born.
 
-I will go back when it opens. I will stand in the double-height theatre and clap once and count the seconds it takes for the room to hear itself back. That number will tell me more about what Bihailou means than the whole colour scheme ever could. It is the first honest measurement of the place, and it cannot be taken until there is a place.
+The measurement worth having is available only later: stand in the double-height theatre, clap once, and count the seconds it takes for the room to hear itself back. That number will say more about what Bihailou means than the whole colour scheme ever could. It is the first honest measurement of the place, and it cannot be taken until there is a place.
 
 ---
 

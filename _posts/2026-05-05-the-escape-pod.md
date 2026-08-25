@@ -13,6 +13,18 @@ source_title: "London schools trialling VR to relieve pupils\u2019 stress"
 source_outlet: "Guardian Society"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** two things have been corrected, one of them
+> about the byline itself. The article said "here is what I know from inside ADHD." Zen Circuit is a
+> fictional editorial persona whose declared disability is autism; claiming a different diagnosis in
+> the first person is not a standpoint this publication can offer, and the passage now describes an
+> attention that responds to signal strength without claiming a condition the byline does not carry.
+> The article also reported fourteen years in classrooms remembered in sensory detail, down to the
+> hour the heating came on, and "every school corridor I have ever walked through" — a schooling
+> history the byline's material does not supply. Both are now written as what a classroom does rather
+> than what happened to this writer. The Guardian's report on the Sutton pilot, Zillah Watson's and
+> Lora Wilson's words, Aelisha Needham's list and Amelia Florence's piece are unchanged.
+
+
 > **Correction, 24 August 2026:** This article changed a real person's words and then built
 > its argument on the changed version. Aelisha Needham was quoted as describing pupils as
 > "quite dysregulated, especially when there are changes to their usual routine." What she
@@ -45,7 +57,7 @@ I am not accusing anyone of lying about the relief. A ninety per cent drop in re
 
 ---
 
-Here is what I know from inside ADHD: my attention does not malfunction. It responds to signal strength. A flickering fluorescent tube is a signal. A ticking clock is a signal. Twenty-eight bodies shifting in chairs, each one producing a micro-sound my nervous system catalogues without my permission. That is a signal. The system is not broken. The system is receiving too much data from a badly designed environment. The appropriate engineering response is to reduce noise at the source. Not to hand the receiver a blindfold.
+Here is what an attention that responds to signal strength actually does, from the inside: it does not malfunction. A flickering fluorescent tube is a signal. A ticking clock is a signal. Twenty-eight bodies shifting in chairs, each one producing a micro-sound a nervous system like mine catalogues without being asked. That is a signal. The system is not broken. The system is receiving too much data from a badly designed environment. The appropriate engineering response is to reduce noise at the source. Not to hand the receiver a blindfold.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-escape-pod_moment_2.jpg" alt="risograph print of a human hand pressing against perforated metal mesh illustration for The Escape Pod" width="800" height="450" loading="lazy" decoding="async">
@@ -56,7 +68,7 @@ VR as stress relief operates on the same logic as prescribing painkillers for a 
 
 The product is a calm environment on demand — landscapes, breathing exercises, somewhere that is not the room. Turn this over. What they are saying, without saying it, is that the school environment is so hostile to certain nervous systems that the best intervention they can imagine is *removing the child from it entirely* while the child remains physically seated in it. The body stays in the bad room. The mind leaves. This is not treatment. This is dissociation with better production values.
 
-The disability writer [Amelia Florence](https://disabilityarts.online/blog/milly-grimshaw/being-physically-disabled-with-adhd/) has written about a different version of this gap — a mind that needs to run and a body that cannot. Her subject is not schools, but the shape is the one I keep meeting: what a body needs and what is actually on offer to it are two different things. Aids get added around the edges of a structure nobody questions. The aids multiply. The structure stays. Every school corridor I have ever walked through, braced against input, is built on the same premise: the room is fixed, the child adapts.
+The disability writer [Amelia Florence](https://disabilityarts.online/blog/milly-grimshaw/being-physically-disabled-with-adhd/) has written about a different version of this gap — a mind that needs to run and a body that cannot. Her subject is not schools, but the shape is the one I keep meeting: what a body needs and what is actually on offer to it are two different things. Aids get added around the edges of a structure nobody questions. The aids multiply. The structure stays. The school corridor is built on the same premise: the room is fixed, the child adapts.
 
 You might say: but the VR works. The children feel calmer. I believe it. Calmer after the headset comes off, in the same room, under the same lights, with the same timetable. The relief is real. The cause remains untouched. The product sells precisely because it leaves the environment intact. Nobody has to fight the facilities manager, the budget cycle, the building regulations. You just buy the headsets.
 
@@ -65,7 +77,7 @@ You might say: but the VR works. The children feel calmer. I believe it. Calmer 
 <figcaption>linocut woodblock style: absurdly oversized ticking clock gear filling entire frame against negative space illustration for The Escape Pod</figcaption>
 </figure>
 
-I spent fourteen years in classrooms. I remember every one. Not the lessons — the sensory texture. The particular vibration of a projector fan. The smell of whiteboard markers building over three hours. The moment at 2:15pm when the heating system clicked on and added a low hum that sat exactly at the frequency where my focus collapsed. I did not need an escape pod. I needed someone to turn off the fan, open a window, and believe me when I said the room was wrong.
+What a classroom leaves behind, for a nervous system like this one, is not the lessons. It is the sensory texture: the particular vibration of a projector fan, the smell of whiteboard markers building over three hours, the afternoon moment when the heating clicks on and adds a low hum at exactly the frequency where focus collapses. That does not need an escape pod. It needs someone to turn off the fan, open a window, and believe the child who says the room is wrong.
 
 A redesigned corridor costs more upfront than a set of headsets. But the headsets require the children to keep needing them, session after session, relief after relief, indefinitely. Quieter lighting, longer transitions between lessons, a corridor that doesn't crowd thirty pupils into a bottleneck — those wouldn't need to be used at all. One is a subscription. The other is infrastructure.
 

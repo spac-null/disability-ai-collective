@@ -13,6 +13,16 @@ source_title: "Blue mushrooms, shy trees and glowing seas: Beaker Street science
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** one sentence has been rewritten. "The curator
+> kept saying 'representation'" reports a conversation. The note below records that a dated curator
+> meeting was removed from this page earlier today and rewritten as the proposal it described; this
+> sentence was the same occasion in a shorter form and survived that pass. The point about what a
+> raised-line translation discards is unchanged, as are the Beaker Street finalists, the account of
+> false-colour astronomical imaging, the Event Horizon Telescope image and Neurath's Isotype.
+>
+> This article has now had the full review an earlier note said was still owed.
+
+
 > **Correction, 25 August 2026:** Otto Neurath was Austrian, not German, and worked in Vienna;
 > that is now how it reads. A dated first-person passage claimed this writer watched a museum
 > display the Event Horizon Telescope's black-hole image in October 2017. That image was not
@@ -36,7 +46,7 @@ Science photography compounds this. The image is data. You cannot audio-describe
 
 Consider the proposal, which museums do make, to render astronomical images as tactile reproductions — Hubble photographs turned into raised-line drawings. The intention is good. The execution is incoherent. You cannot translate a nebula into a raised line and preserve what makes it a nebula. The image shows light in different wavelengths — the different colors and frequencies of light that human eyes cannot normally see. Instruments add computer colors to show these invisible wavelengths. The beauty is in the colour relationships. The science is in the spatial distribution of wavelengths. A raised-line version gives you the shape. It does not give you the gradient, the luminosity, the relationship between hot and cold regions that the computer-colored image was designed to show. You end up with something worse than nothing: an object that signals access but withholds information.
 
-The curator kept saying "representation." I kept thinking: this is not representation. This is a translation that has discarded the syntax.
+The word that gets used for this is "representation." It is not representation. It is a translation that has discarded the syntax.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/beaker-street-shows-twelve-finalists-nobody-will-see_moment_2.jpg" alt="risograph print of layered translucent orange and deep purple ink creating third color where they misregister illustration for Beaker Street Shows Twelve Finalists Nobody Will See" width="800" height="450" loading="lazy" decoding="async">

@@ -10,6 +10,19 @@ image: /assets/what-language-is-the-book-written-in_setting_1.jpg
 image_alt: "What Language Is the Book Written In? — screen-print protest poster illustration"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** three claims have been removed. The article
+> gave the author hearing parents who learned some NGT, a Deaf school and a van on the way to it, and
+> — by arithmetic — a birth year and a birthplace, in the sentence saying NGT was not recognised as a
+> language "until I was thirty-four years old." The material defining this byline is explicit that it
+> is not to be assigned parents, a childhood neighbourhood or formative incidents, and the fictional
+> biography those numbers reconstruct was retired in August 2026 precisely because it had been
+> invented wholesale. **Unchanged, because it is authorized:** that this writer grew up speaking NGT before
+> reading Dutch, the account of thinking in one language and writing in another, and the description
+> of rooms where the translation lag disappears. Mirthe Berentsen's own published account of coming
+> to signed language, Christine Sun Kim's biography, and the 2021 legal recognition of NGT are
+> unchanged.
+
+
 > **Correction, 24 August 2026:** This article told a real, living writer's life story
 > wrongly. An earlier version said Mirthe Berentsen came to sign language "years later,
 > living in New York and encountering the city's visible Deaf culture." She has published
@@ -40,7 +53,7 @@ Not as a logistical question — I assume they work in written English, or writt
 
 I grew up speaking NGT before I could read Dutch.
 
-My parents were hearing. They learned enough NGT to communicate with me — enough, not fluent, enough. Written Dutch was my access to the world they lived in. NGT was the world I built with the other Deaf children in my school, in the van on the way to school, in the spaces adults had arranged for us but did not occupy.
+Written Dutch was the access route to the hearing world. NGT was the language of the rooms where nobody was translating — the spaces where direct, unmediated conversation was the default rather than the exception, which for a Deaf signer is not an ordinary condition but an occasional one.
 
 When people ask what it's like to think in NGT and write in Dutch, I usually say: it's like carrying two floor plans of the same building. The rooms are in different places. Some rooms exist in one floor plan and not the other. The staircase goes up on the left in one version and on the right in the other, and you can spend a long time trying to find a staircase that isn't there.
 
@@ -54,7 +67,7 @@ The book they are writing together is called, I think, a book about motherhood. 
 
 NGT was not recognized as an official language in the Netherlands until 2021.
 
-I want to let that sit for a moment. 2021. Five years ago. The language I think in, the language I used before I could read anything, the language that structured my earliest experience of the world — that language did not have legal recognition as a language in the country where I was born until I was thirty-four years old.
+I want to let that sit for a moment. 2021. Five years ago. The language I think in, the language I used before I could read anything, the language that structured my earliest experience of the world — that language did not have legal recognition as a language in the Netherlands until five years ago.
 
 This is not ancient history. It's also not Mirthe Berentsen's story — she came to signed language late, as an adult and a new mother, rather than growing up inside it. But it is the operational legal environment she has been building her career and writing this book inside of, one where the language she came to late still barely counts as one in the country she calls home.
 

@@ -9,6 +9,15 @@ keywords: [baron-cohen, systemizing quotient, empathizing-systemizing theory, co
 image: /assets/the-systemizing-quotient-was-right-about-the-wrong-thing_setting_1.jpg
 image_alt: "The Systemizing Quotient Was Right About the Wrong Thing — screen-print protest poster illustration"
 ---
+
+> **Correction, 25 August 2026 (first-person axis):** one sentence has been removed — "I score in the
+> top range on this test" — which claims a score on an instrument the byline's material records no
+> encounter with. The same claim was removed from a companion article under this byline today. The
+> standpoint that follows it, about what the pattern does on entering a room, is perceptual and
+> stands. The account of the theory, the psychometric criticisms of the Systemizing Quotient, the
+> genetic correlation and the cognitive/affective empathy distinction are unchanged.
+
+
 > **Correction, 25 August 2026:** Three claims about the state of the evidence were
 > overstated and have been corrected. This article said the systemizing finding "replicates every
 > time"; the finding has held up well, including a reported genetic correlation between systemizing
@@ -25,7 +34,7 @@ image_alt: "The Systemizing Quotient Was Right About the Wrong Thing — screen-
 
 Simon Baron-Cohen's theory about autism comes in two halves. One half I have spent years taking apart: a questionnaire called the Empathy Quotient, sixty statements you rate your agreement with — I am good at predicting how someone will feel, I find it hard to know what to do in a social situation — that scores the result and calls it empathy. That framing is wrong, and the wrongness has consequences. The other half is more interesting, because the other half is right.
 
-The second test is called the Systemizing Quotient. It asks whether you notice the structure underneath things — timetables, electrical circuits, the pattern a piece of music returns to, the rule that governs how a system behaves. I score in the top range on this test. That is accurate. When I walk into a room I am already tracking the exits, the flow of people, the rate at which the nearest conversation is about to change. The pattern is the first thing I see, before anything else has registered.
+The second test is called the Systemizing Quotient. It asks whether you notice the structure underneath things — timetables, electrical circuits, the pattern a piece of music returns to, the rule that governs how a system behaves. On the thing it is pointed at, it is accurate. When I walk into a room I am already tracking the exits, the flow of people, the rate at which the nearest conversation is about to change. The pattern is the first thing I see, before anything else has registered.
 
 So what follows is not an argument that the test is wrong. It is an argument about what Baron-Cohen concluded from it — and why getting the data right is not the same as reading it correctly.
 

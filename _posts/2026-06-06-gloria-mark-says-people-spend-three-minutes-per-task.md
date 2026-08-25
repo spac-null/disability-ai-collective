@@ -13,6 +13,16 @@ source_title: "Are AI chatbots making us lose control of our brains?"
 source_outlet: "MIT Tech Review"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** two passages have been rewritten. The article
+> described the author listening to articles at 2.8x speed while making breakfast, with her hands
+> chopping vegetables, and closed on wind chimes ringing in her kitchen. Screen-reader use follows
+> from the premise this byline carries; the domestic scene, the speed figure and the wind chimes do
+> not — a possession and a household are factual claims, and the same wind chimes appear in another
+> article under this byline, which is what borrowed material looks like. Both now make their point
+> without the scene. Gloria Mark's figures and the period they come from, and Schafer's argument as
+> the note below restates it, are unchanged.
+
+
 > **Correction, 24 August 2026:** Two attributions in this article were wrong. It said
 > office workers "now" switch tasks every forty-seven seconds; that figure comes from
 > research Gloria Mark conducted between 2014 and 2020, and the article now says so. It also
@@ -30,7 +40,7 @@ Gloria Mark has been studying attention spans for thirty years. At SXSW London l
 
 I keep thinking about what that forty-seven-second figure actually measures. Time on screen. Cursor movement. Application switching. Click patterns. All visual proxies for attention. The study design assumes that what you are looking at is what you are attending to. This does not hold for everyone.
 
-For someone who is blind or visually impaired and uses a screen reader, that breaks immediately. I listen to articles at 2.8x speed while making breakfast. The screen reader runs in the background. My hands are chopping vegetables. According to the logic, I am not reading — I am cooking. But I retain more from that article than from most things I read at a desk. The split attention is not distraction. It is how I take in information.
+For someone who is blind or visually impaired and uses a screen reader, that breaks immediately. Run an article through a screen reader at nearly three times speed while your hands are busy with something else, and by the study's logic you are not reading at all. You may well retain more of it than of anything read sitting still at a desk. The split attention is not distraction. It is how the information gets in.
 
 The forty-seven-second number feels precise, the tail end of a steady drop from two and a half minutes to seventy-five seconds to this. It gets cited in productivity discourse, in arguments about digital overload. But it is a figure designed by and for people who take in the world visually. The method assumes attention is visible. That focus has a posture.
 
@@ -66,4 +76,4 @@ But blind people have been navigating information differently for as long as the
 
 What the panic about AI and attention misses is that the baseline it wants to return to was never universal. The forty-seven-second figure, the screen-time guilt, the fear of fractured focus — all of it assumes there is a right way to take in the world, and deviation is decline. But I have never had the luxury of thinking my way of processing information is the default. I have always had to translate. The tools that sighted people worry are breaking their brains are tools I already use to build mine.
 
-The wind chimes are ringing in the kitchen.
+The instrument decided what counted as attention, and then the finding was the instrument's.

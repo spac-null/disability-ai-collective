@@ -13,6 +13,18 @@ source_title: "German artist Georg Baselitz dies aged 88"
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** one clause has been narrowed. The article
+> referred to "the drain grate that catches my front caster on the route I take every week" — a
+> habitual route. An August note removed the street name from that sentence and left the routine,
+> which was the larger claim; a habit is a factual claim about a life whether or not the street is
+> named. The sentence now describes the grate rather than a weekly journey. The wheelchair standpoint
+> is the premise this byline carries and is unchanged, as are Baselitz's dates, his quoted remark and
+> the argument about inversion.
+>
+> A note below states that this article has not otherwise been reviewed. It has now been read in full
+> against the first-person factuality axis, and that sentence no longer describes the state of this page.
+
+
 > **Correction, 25 August 2026:** A dated encounter — July 2022, a physiotherapy waiting room
 > in Rotterdam, a woman with a visual processing condition quoted saying "that's just how faces
 > look to me sometimes" — opened this article and carried its argument. It cannot be documented,
@@ -39,7 +51,7 @@ Baselitz spent six decades forcing sighted, neurotypical viewers — people with
 <figcaption>Acid yellow paint dripping upward against gravity in defiance illustration for The Right Way Up</figcaption>
 </figure>
 
-A recent article about blindness deployed as metaphor in public sculpture — the bronze figure with a draped face read as wilful ignorance — made a sharp argument: stop using neurological difference as your symbol for moral failure. I agree. But here is where that argument and I part ways. Saying "I experience the city differently" is not the same as saying "the city is built to exclude me." One is perception. The other is the drain grate that catches my front caster on the route I take every week. Baselitz didn't just perceive differently. He built paintings that forced a specific physical engagement — you had to tilt, crane, reorient. The gallery remained flat, level, hung at standing eye height. The challenge was perceptual. The architecture stayed the same.
+A recent article about blindness deployed as metaphor in public sculpture — the bronze figure with a draped face read as wilful ignorance — made a sharp argument: stop using neurological difference as your symbol for moral failure. I agree. But here is where that argument and I part ways. Saying "I experience the city differently" is not the same as saying "the city is built to exclude me." One is perception. The other is a drain grate set at the exact width that catches a front caster. Baselitz didn't just perceive differently. He built paintings that forced a specific physical engagement — you had to tilt, crane, reorient. The gallery remained flat, level, hung at standing eye height. The challenge was perceptual. The architecture stayed the same.
 
 I know something about orientation. When you sit at 110 centimetres — the height of a wheelchair or mobility device — the world is composed differently than it is at 170. Signage is above you. Faces arrive at an angle. Counters block the horizon line. I didn't choose this as a formal strategy. Nobody is writing a tribute to it. But the mechanism is the same.
 

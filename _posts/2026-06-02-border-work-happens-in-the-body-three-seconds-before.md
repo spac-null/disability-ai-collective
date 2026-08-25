@@ -13,6 +13,17 @@ source_title: "\u2018Catastrophic for creative industries\u2019: Brexit barriers
 source_outlet: "Guardian World"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** one clause has been removed — "from my own work
+> in theatre and audio production" — which claims a career. The note below records that a dated
+> first-person engagement on a named radio drama was removed from this page in August; the profession
+> the passage rested on survived that pass and has now gone the same way. The comparison it introduced,
+> between a procedural border and a procedural threshold, is unchanged. Spotlight's evidence to the
+> select committee, Matt Hood's and Jonathan Shalit's quotations, Kate Nash's £26,000, the ONS export
+> figures, the 90-in-180 rule and the National Theatre's 2021 decision are unchanged.
+>
+> This article has now had the full review an earlier note said was still owed.
+
+
 > **Correction, 25 August 2026:** This article opened on a single UK performer shortlisted for a
 > commercial whose case "Spotlight... tracked" and "recorded". No such individual case appears in
 > the cited reporting. What the reporting contains is Spotlight's written evidence to a select
@@ -36,7 +47,7 @@ Consider how a TV commercial gets cast. The brief moves the way commercial casti
 
 Here is what I want you to notice. The performer was not turned away by a law that says British performers cannot work in the EU. No such law exists. What stopped the work was a physical object — a permit — that takes weeks to produce, arriving, if it arrives at all, after the production has already moved on. The law has not changed the work. It has changed the sequence of actions a body must complete to be allowed to do the work. Apply earlier. Wait longer. Carry paper that proves something the production cannot prove on your behalf. The law does not care whether the work gets done. It cares whether the objects arrive in the correct order, before the deadline the industry actually runs on.
 
-I know this sequence from my own work in theatre and audio production. I know what it is to arrive at a building and be told: you can enter, but not the way you need to. You can come in through the loading dock. You can sit in the audience, but not backstage. You can work here, but not today. The reason is always procedural — a rule or administrative requirement that must be followed exactly, even when the situation does not fit neatly into it. The procedure is always material. Someone did not install the ramp. Someone did not file the form. Someone did not check the box that makes you legible to the system that controls the door.
+I know this sequence from the other side of it, in access rather than immigration. It is the shape of arriving at a building and being told: you can enter, but not the way you need to. You can come in through the loading dock. You can sit in the audience, but not backstage. You can work here, but not today. The reason is always procedural — a rule or administrative requirement that must be followed exactly, even when the situation does not fit neatly into it. The procedure is always material. Someone did not install the ramp. Someone did not file the form. Someone did not check the box that makes you legible to the system that controls the door.
 
 Here is what changed. Before 2021, when the UK left the European Union, a British performer could work anywhere in the EU under freedom of movement — no permit, no advance application, no clock running. The paperwork was nil. The border was there, but it was thin. You crossed it without stopping. Now the border is thick. It requires many objects and steps. You must have a visa. You must apply for a work permit if you will be paid. Work is allowed for only 90 days out of any 180, and that window is inclusive of any European holiday time. There are customs, tax and other documents that vary between countries and can take an inordinate amount of time and cost to process. Depending on the country, twelve to twenty-two per cent of the fee is deducted for social security before the performer sees it — reclaimable, but often only after months and an accountant chasing it. The permit costs money. The application takes weeks. The approval is not guaranteed. The National Theatre halted tours to mainland Europe in 2021. Performing-arts exports to the EU, worth £1.15bn in 2016, had fallen to £929m by 2023.
 
