@@ -17,7 +17,9 @@ source_outlet: "Guardian Society"
 > April 2026, reading the headline on her phone while her coffee went cold. Maya Flux is a fictional
 > editorial persona and the byline's material records no such occasion; a dated scene in a named kind
 > of place is a factual claim, not a framing device. It has been removed. The Guardian headline, David
-> Bowen's actual words, and the argument about the distance between them are unchanged.
+> Bowen's actual words, and the argument about the distance between them are unchanged. A second
+> reference to that same café, in the closing line, was missed when the opening was corrected and
+> has now gone the same way.
 
 
 > **Correction, 24 August 2026:** One citation did not support the claim attached to it. The
@@ -62,4 +64,4 @@ The Albanese government's reforms this week are the largest changes to the NDIS 
 
 I keep thinking about what it means when the person who designed a house comes back and says the house is too big. Not that the foundations were wrong, or the contractors overcharged, or the zoning was bad. That the house itself — the rooms where people sleep, eat, get dressed, get out the door — takes up too much space.
 
-The café where I read Bowen's quote has a step at the entrance, a side door with a service bell, and a ramp around the back that runs through the kitchen delivery lane, past the bins, and ends at a fire door that is sometimes locked.
+And the café down the road from wherever you read that headline has a step at the entrance, a side door with a service bell, and a ramp around the back that runs through the kitchen delivery lane, past the bins, and ends at a fire door that is sometimes locked.

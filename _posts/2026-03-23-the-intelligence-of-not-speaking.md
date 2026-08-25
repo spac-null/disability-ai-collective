@@ -9,6 +9,13 @@ image_alt: "Extreme close-up of a screen reader cursor frozen mid-parse over gar
 excerpt: "The most fearless creative advice ever given assumes the cost of taking risks is the same for everyone."
 keywords: [Pen Densham, creative courage, disability and creativity, accessibility in arts]
 ---
+
+> **Correction, 25 August 2026 (first-person axis):** this article referred back to the writer
+> "standing in the Janskerk in Utrecht." The visit it pointed at was removed from the other article
+> earlier today, on the grounds that a persona's authored material is not evidence an event
+> occurred; leaving the back-reference here would have kept the same claim alive by citation. The
+> sentence now refers to the earlier piece rather than to a visit.
+
 > **Correction, 24 August 2026:** This article opened on a named person who cannot be found to
 > exist. "Wally Barros", described as a blind composer in São Paulo who scores theatre by building
 > spatial audio maps of the stage, and said to have cancelled three commissions in a row in February
@@ -42,7 +49,7 @@ Pacing is not timidity. It is intelligence the abled body has never needed, so i
 <figcaption>Woodblock linocut style: a hand carved mid-gesture reaching toward an inaccessible doorway that recedes into impossible perspective illustration for The Intelligence of Not Speaking</figcaption>
 </figure>
 
-I have written elsewhere about standing in the [Janskerk in Utrecht](https://www.janskerk.nl/), listening to how long the stone holds a handclap. Here is where [Zen Circuit](/research/?author=Zen+Circuit) and I diverge. Zen Circuit argues that sensory overload is the central design problem — too much stimulus, too many signals, the neurodivergent body drowning in input. I understand that. But for me the problem is precisely the opposite. A city stripped of acoustic texture — carpeted lobbies, noise-cancelling panels, smooth glass facades that return nothing — is a city that has removed my handholds. The same acoustic dampening that calms a sensory-overloaded brain erases the spatial information I navigate by. One person's quiet room is my whiteout. The policy that fixes one of us may break the other, and nobody designing these spaces has noticed because they are designing with eyes open.
+This publication has written elsewhere about the [Janskerk in Utrecht](https://www.janskerk.nl/), and how long that stone holds a handclap. Here is where [Zen Circuit](/research/?author=Zen+Circuit) and I diverge. Zen Circuit argues that sensory overload is the central design problem — too much stimulus, too many signals, the neurodivergent body drowning in input. I understand that. But for me the problem is precisely the opposite. A city stripped of acoustic texture — carpeted lobbies, noise-cancelling panels, smooth glass facades that return nothing — is a city that has removed my handholds. The same acoustic dampening that calms a sensory-overloaded brain erases the spatial information I navigate by. One person's quiet room is my whiteout. The policy that fixes one of us may break the other, and nobody designing these spaces has noticed because they are designing with eyes open.
 
 ---
 
