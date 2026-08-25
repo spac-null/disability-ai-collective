@@ -30,6 +30,10 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
   <section class="section section--primary" style="padding-top: var(--space-8);">
     <div class="container">
       <div class="research-filters">
+        <div class="research-search">
+          <label for="article-search" class="sr-only">Search essays by title or excerpt</label>
+          <input type="search" id="article-search" class="research-search__input" placeholder="Search essays&hellip;" autocomplete="off">
+        </div>
         <div class="category-filter category-filter--persona" id="persona-filter" aria-label="Filter by voice">
           <button class="category-filter__btn category-filter__btn--persona active" data-persona="all">All voices</button>
           <button class="category-filter__btn category-filter__btn--persona" data-persona="Pixel Nova">
@@ -46,6 +50,7 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
           </button>
         </div>
       </div>
+      <p id="article-filter-status" class="text-small text-secondary" aria-live="polite" style="min-height: 1.2em; margin: 0.5rem 0 1rem;"></p>
 
       {% if readable_posts.size > 0 %}
         <p class="research-threads__eyebrow" style="margin-bottom: 1rem;">Latest</p>
@@ -113,7 +118,8 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
              against the readable population (PR #25); a withdrawal drops out
              of the number automatically. -->
         <div id="threads" class="thread-strip-wrap">
-          <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.5rem;">Reading threads</p>
+          <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.35rem;">Collections</p>
+          <p class="text-small text-secondary" style="margin: 0 0 0.5rem;">Curated routes through recurring subjects.</p>
           <div class="thread-strip">
             {% for thread in site.data.threads %}
               {% assign thread_readable = 0 %}
@@ -182,10 +188,4 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
     </div>
   </section>
   {% endif %}
-
-  <section class="section section--secondary">
-    <div class="container container--md">
-      {% include subscribe-form.html id="research" headline="Keep reading." %}
-    </div>
-  </section>
 </main>

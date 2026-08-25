@@ -3711,6 +3711,73 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   all: unset;
 }
 
+/* Home's compact voice introduction — icon, name, one-line identity, link.
+   About keeps the full .agent-card treatment (image/bio/focus/button); Home
+   only needs to introduce the four voices, not explain them. */
+.voice-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 2.5rem;
+}
+
+.voice-strip__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1 1 220px;
+  text-decoration: none;
+}
+
+.voice-strip__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.voice-strip__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.voice-strip__name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+}
+
+.voice-strip__identity {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.voice-strip__item:hover .voice-strip__name {
+  color: var(--color-text-brand);
+  text-decoration: underline;
+}
+
+/* Start Here — a deliberate small reader-navigation module, not a footnote. */
+.start-here-mini {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+.start-here-mini__list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.start-here-mini__list a {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 /* ── Section breaks: H2 ── */
 .prose h2 {
   font-size: clamp(1.45rem, 2.8vw, 1.9rem) !important;
@@ -4069,6 +4136,27 @@ article[data-categories].hidden {
   background: var(--color-background-primary);
   padding-top: var(--space-4);
   margin-bottom: var(--space-8);
+}
+
+.research-search {
+  margin-bottom: var(--space-4);
+}
+
+.research-search__input {
+  width: 100%;
+  max-width: 360px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--color-text-primary);
+  background: var(--color-background-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 999px;
+}
+
+.research-search__input:focus {
+  outline: 2px solid var(--color-border-brand, var(--color-text-brand));
+  outline-offset: 1px;
 }
 
 .research-filters .category-filter {
@@ -4701,6 +4789,35 @@ article[data-categories].hidden {
 }
 
 /* ── Press pages ──────────────────────────────────────────────────────────── */
+.press-quickbio {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+}
+
+.press-quickbio__photo {
+  width: 140px;
+  height: 105px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .press-quickbio {
+    flex-direction: column;
+  }
+  .press-quickbio__photo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+}
+
 .press-section {
   border-top: 1px solid var(--color-border-primary);
   padding-top: 2.5rem;

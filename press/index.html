@@ -5,6 +5,7 @@ description: "Background on Crip Minds and its founder, for press and editorial 
 ---
 
 {% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
+{% assign withdrawn_count = site.posts.size | minus: readable_posts.size %}
 <main id="main-content">
   <section class="section section--primary">
     <div class="container">
@@ -18,6 +19,17 @@ description: "Background on Crip Minds and its founder, for press and editorial 
           Crip Minds is an experimental editorial publication by Deaf artist Jascha Blume &mdash; four fictional editorial voices using disabled ways of seeing to uncover what ordinary subjects are really doing.
         </p>
 
+        <div class="press-quickbio">
+          <img class="press-quickbio__photo" src="{{ '/assets/jascha-blume-press-portrait.jpg' | relative_url }}" alt="Jascha Blume, founder of Crip Minds" width="160" height="120" loading="lazy" decoding="async">
+          <div class="press-quickbio__text">
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem;">Press bio &mdash; ready to use</p>
+            <p class="text-body" style="margin: 0 0 0.6rem; line-height: 1.7;">
+              Jascha Blume is a Deaf artist and the founder of Crip Minds, an experimental editorial publication that uses disabled ways of seeing to reveal what ordinary subjects are really doing. Born and raised in Amsterdam, Nederlandse Gebarentaal is his mother tongue; he graduated from the Gerrit Rietveld Academie. His artistic practice, including <em>De Gebarentaaltolk en Ik</em> and <em>Retrieve My Time</em> (2010), has repeatedly examined what translation, timing, and format do to the reality a person receives. He later applied that question to access at L&rsquo;Altro Spazio in Bologna. Crip Minds continues it through four fictional editorial personas working within an authored system he designs. Based between Amsterdam and Bologna.
+            </p>
+            <a href="{{ '/assets/jascha-blume-press-portrait.jpg' | relative_url }}" class="text-small" target="_blank" rel="noopener">Download high-res photo &rarr;</a>
+          </div>
+        </div>
+
         <div class="press-quickfacts" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; padding: 1.5rem; border: 1px solid var(--color-border-primary); border-radius: 8px;">
           <div>
             <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Founder</p>
@@ -28,8 +40,12 @@ description: "Background on Crip Minds and its founder, for press and editorial 
             <p class="text-body" style="margin: 0;">Four fictional editorial personas, AI-assisted within an authored system</p>
           </div>
           <div>
-            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Essays published</p>
-            <p class="text-body" style="margin: 0;">{{ readable_posts.size }} (of {{ site.posts.size }} total; withdrawn pieces stay public for transparency)</p>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Essays</p>
+            <p class="text-body" style="margin: 0;">{{ readable_posts.size }} available to read</p>
+          </div>
+          <div>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Archive</p>
+            <p class="text-body" style="margin: 0;">{{ withdrawn_count }} withdrawn pages preserved for transparency</p>
           </div>
           <div>
             <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Contact</p>

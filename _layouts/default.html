@@ -236,7 +236,7 @@
                     <h3>Explore</h3>
                     <ul class="site-footer__links">
                         <li><a href="{{ '/research/' | relative_url }}" {% if page.url contains '/research' or page.layout == 'post' %}aria-current="page"{% endif %}>Articles</a></li>
-                        <li><a href="{{ '/research/#threads' | relative_url }}">Reading Threads</a></li>
+                        <li><a href="{{ '/research/#threads' | relative_url }}">Collections</a></li>
                         <li><a href="{{ '/about/#agents' | relative_url }}">The Collective</a></li>
                         <li><a href="{{ '/press/' | relative_url }}" {% if page.url contains '/press' %}aria-current="page"{% endif %}>Press &amp; Background</a></li>
                         <li><a href="{{ '/accessibility/' | relative_url }}" {% if page.url contains '/accessibility' %}aria-current="page"{% endif %}>Accessibility</a></li>
@@ -316,21 +316,34 @@
       }
       window.addEventListener('scroll', update, { passive: true });
     })();
-    // Category + persona filter (AND logic)
+    // Category + persona + text filter (AND logic)
     (function(){
       var catBtns  = document.querySelectorAll('#category-filter .category-filter__btn');
       var psnBtns  = document.querySelectorAll('#persona-filter .category-filter__btn--persona');
-      if (!catBtns.length && !psnBtns.length) return;
+      var searchInput = document.getElementById('article-search');
+      var statusEl = document.getElementById('article-filter-status');
+      if (!catBtns.length && !psnBtns.length && !searchInput) return;
 
       var activeCat = 'all';
       var activePsn = 'all';
+      var activeQuery = '';
 
       function applyFilters() {
-        document.querySelectorAll('[data-categories]').forEach(function(el) {
+        var items = document.querySelectorAll('[data-categories]');
+        var visible = 0;
+        items.forEach(function(el) {
           var catMatch = activeCat === 'all' || (el.dataset.categories || '').indexOf(activeCat) !== -1;
           var psnMatch = activePsn === 'all' || (el.dataset.persona || '') === activePsn;
-          el.classList.toggle('hidden', !(catMatch && psnMatch));
+          var textMatch = !activeQuery || (el.textContent || '').toLowerCase().indexOf(activeQuery) !== -1;
+          var show = catMatch && psnMatch && textMatch;
+          el.classList.toggle('hidden', !show);
+          if (show) visible++;
         });
+        if (statusEl && (activeQuery || activePsn !== 'all' || activeCat !== 'all')) {
+          statusEl.textContent = visible + ' essay' + (visible === 1 ? '' : 's') + ' match' + (visible === 1 ? 'es' : '') + '.';
+        } else if (statusEl) {
+          statusEl.textContent = '';
+        }
       }
 
       catBtns.forEach(function(btn) {
@@ -350,6 +363,17 @@
           applyFilters();
         });
       });
+
+      if (searchInput) {
+        var debounceTimer;
+        searchInput.addEventListener('input', function() {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(function() {
+            activeQuery = searchInput.value.trim().toLowerCase();
+            applyFilters();
+          }, 150);
+        });
+      }
     })();
     </script>
 <script data-goatcounter="https://stats.cripminds.com/count" async src="//stats.cripminds.com/count.js"></script>
