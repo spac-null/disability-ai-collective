@@ -457,6 +457,27 @@ def test_writer_failure_behavior_unchanged():
               C.GROUNDING_FINDINGS not in out["artifacts"])
 
 
+def test_writer_contract_failure_holds_cleanly():
+    """write()'s success path is not model-parsed JSON, so this edge is narrower than
+    Discovery/Form/Grounding's -- but it is not unreachable: an empty completion is
+    the one way article_text can fail contracts.validate()'s WRITER_OUTPUT check
+    despite provider_status == 'ok'. The real Provider already prevents this
+    (provider.py raises ProviderError on empty content before write() would ever
+    return 'ok'), but write() itself is duck-typed against any object exposing
+    .complete(), so this boundary must hold on its own, not merely inherit a
+    guarantee from a different module."""
+    with tempfile.TemporaryDirectory() as d:
+        out = _run(StubProvider(article=""), d, name="w-inv")
+        _assert_stage_holds_cleanly(out, d, "w-inv", C.WRITER_OUTPUT,
+                                    [C.GROUNDING_FINDINGS], expect_status="CONTRACT_FAILURE")
+        check("reason_code identifies writer + invalid_response_shape",
+              out.get("reason_code") == "WRITER_OUTPUT_INVALID_RESPONSE_SHAPE",
+              out.get("reason_code"))
+        check("DISCOVERY, ARTICLE_FORM, WRITER_INPUT still ran before the writer's "
+              "contract check failed",
+              {C.DISCOVERY, C.ARTICLE_FORM, C.WRITER_INPUT} <= set(out["artifacts"]))
+
+
 def test_non_commissionable_source_holds_cleanly():
     with tempfile.TemporaryDirectory() as d:
         out = _run(StubProvider(discovery=dict(DISCOVERY_REPLY, commissionable=False)),
@@ -538,6 +559,68 @@ def test_package_purity_static():
         check("no quality-preference judge: %r absent" % phrase, phrase not in joined)
 
 
+def test_infra_failure_stays_operator_visible():
+    """The one thing structured stage-failure evidence (this file's earlier tests) does
+    NOT by itself prove: that the SCHEDULED PROCESS still signals failure to an
+    operator. Discovery/Form/Grounding/Writer failures all HOLD without raising --
+    correct -- but production_orchestrator.py's __main__ used to rely on an UNCAUGHT
+    exception's non-zero exit code to make cripminds-daily.sh's bash wrapper log an
+    ERROR and fire a Telegram alert. A clean HOLD, left unchecked, would exit 0 and
+    that signal would never fire -- indistinguishable, to the wrapper, from an
+    ordinary editorial HOLD (which correctly stays silent). This proves the fix:
+    production_orchestrator._is_infra_or_contract_failure() must say True for every
+    infra/contract failure category and False for an ordinary editorial HOLD."""
+    import production_orchestrator as PO
+    import new_engine_production as NEP
+
+    class _FakeOrch:
+        def __init__(self):
+            import logging
+            self.logger = logging.getLogger("test_infra_failure_stays_operator_visible")
+            self.drafts_dir = pathlib.Path(tempfile.mkdtemp())
+
+        def get_news_seed_with_usable_source(self):
+            return {"id": "s1", "url": "https://example.org/a", "summary": "s"}
+
+        def get_source_text(self, url, fallback_text=None, underlying_url=None):
+            return SOURCE
+
+        def get_source_origin(self, url):
+            return "fetched_article"
+
+        def get_source_original_length(self, url):
+            return len(SOURCE)
+
+        def get_source_paragraph_count(self, url):
+            return 2
+
+    os.environ["NEW_ENGINE_V1_MODE"] = "LIVE"
+    CASES = {
+        "discovery_provider": (dict(fail_discovery=True), True),
+        "discovery_contract": (dict(discovery={k: v for k, v in DISCOVERY_REPLY.items()
+                                               if k != "grounding_boundaries"}), True),
+        "article_form_provider": (dict(fail_form=True), True),
+        "grounding_provider": (dict(fail_ground=True), True),
+        "writer_provider": (dict(fail_writer=True), True),
+        "writer_contract": (dict(article=""), True),
+        "editorial_hold": (dict(discovery=dict(DISCOVERY_REPLY, commissionable=False)), False),
+        "clean_accept": ({}, False),
+    }
+    real_provider = NEP.Provider
+    try:
+        for label, (kwargs, expect_infra_failure) in CASES.items():
+            NEP.Provider = lambda model=None, _k=kwargs, **kw: StubProvider(**_k)
+            out = NEP.run_scheduled(_FakeOrch(),
+                                    evidence_root=tempfile.mkdtemp())
+            got = PO._is_infra_or_contract_failure(out)
+            check("_is_infra_or_contract_failure(%s) == %s" % (label, expect_infra_failure),
+                  got == expect_infra_failure,
+                  (label, got, out.get("run_status")))
+    finally:
+        NEP.Provider = real_provider
+    os.environ.pop("NEW_ENGINE_V1_MODE", None)
+
+
 def test_legacy_scheduled_path_unchanged():
     gen = (HERE / "orchestrator" / "generate.py").read_text()
     check("legacy prewriter loop still present and bounded at 5",
@@ -571,6 +654,8 @@ def main():
                test_grounding_provider_exception_holds_cleanly,
                test_grounding_malformed_response_holds_cleanly,
                test_writer_failure_behavior_unchanged,
+               test_writer_contract_failure_holds_cleanly,
+               test_infra_failure_stays_operator_visible,
                test_non_commissionable_source_holds_cleanly,
                test_no_publication_side_effect,
                test_package_purity_static,

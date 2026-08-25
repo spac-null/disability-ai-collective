@@ -234,8 +234,22 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
                 "provider": prov, "run_status": run_status,
                 "reason_code": "WRITER_PROVIDER_FAILURE"}
 
-    A[C.WRITER_OUTPUT] = _emit(C.WRITER_OUTPUT, at, _strip_provider(wo),
-                               {"writer_input": A[C.WRITER_INPUT]})
+    # write()'s success path (provider_status == "ok") is not model-parsed JSON --
+    # article_sha256 is always computed from article_text in the same expression, and
+    # provider_status is always the literal "ok" -- so contracts.validate() cannot
+    # diverge on those two fields. article_text could in principle be empty (the one
+    # field _require() treats as missing), but provider.py's real Provider already
+    # raises ProviderError on an empty completion before write() ever reaches this
+    # branch. Wrapped anyway, for the same reason the other three stages are: this
+    # boundary should not depend on a guarantee living in a different module holding
+    # forever, and a caller satisfying write()'s duck-typed provider interface
+    # differently must still fail closed here, not raise uncaught.
+    try:
+        A[C.WRITER_OUTPUT] = _emit(C.WRITER_OUTPUT, at, _strip_provider(wo),
+                                   {"writer_input": A[C.WRITER_INPUT]})
+    except C.ContractViolation as e:
+        return _stage_failure(C.WRITER_OUTPUT, "invalid_response_shape", e, at, A,
+                              run_root, name, mode, prov)
 
     # --- WRITER GROUNDING: writer output + source ONLY (never the Form) -------
     try:
