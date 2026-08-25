@@ -4891,6 +4891,8 @@ article[data-categories].hidden {
   --color-accent: var(--ink);
   --color-text-brand: var(--ink);
   --color-border-brand: var(--ink);
+  --color-background-brand: var(--ink);
+  --color-on-brand: var(--canvas);
   --color-on-accent: var(--canvas);
 }
 
@@ -4923,6 +4925,8 @@ article[data-categories].hidden {
   --color-accent: var(--ink);
   --color-text-brand: var(--ink);
   --color-border-brand: var(--ink);
+  --color-background-brand: var(--ink);
+  --color-on-brand: var(--canvas);
   --color-on-accent: var(--paper);
 }
 
@@ -5213,6 +5217,146 @@ h1, .text-h1 { font-weight: 800; letter-spacing: -0.02em; }
 .press-quickfacts > div > p:first-child,
 .press-quickbio__text > p.text-small {
   font-family: var(--font-family-mono);
+}
+
+/* ========================================================================
+   VISUAL LANGUAGE — D 1.3 finishing pass
+   Marker geometry, search/filter finish, footer/button de-genericization,
+   Home Collective density. No IA change, no functional change.
+========================================================================= */
+
+/* ---- Marker geometry: layered gradient instead of a flat solid rectangle,
+   so the fill has a soft (not hard-mathematical) top/bottom edge — reads as
+   ink settling into paper rather than a <mark> background. Rotation is
+   still not used (would not survive box-decoration-break: clone cleanly);
+   this is the "irregularity via the background itself" approach. Small
+   marks get a barely-there fade (they're only a few px tall — anything
+   bigger would just look weak); the large hero mark gets more visible
+   roughness plus a slightly unequal left/right overshoot, per instruction
+   that the big stroke may read rougher than tiny metadata strokes. */
+.marker--lime {
+  background-image: linear-gradient(179deg,
+    transparent 0%,
+    var(--marker-lime) 4%,
+    var(--marker-lime) 96%,
+    transparent 100%);
+}
+.marker--pink {
+  background-image: linear-gradient(179deg,
+    transparent 0%,
+    var(--marker-pink) 4%,
+    var(--marker-pink) 96%,
+    transparent 100%);
+}
+.marker--hero {
+  background-image: linear-gradient(177deg,
+    transparent 0%,
+    var(--marker-lime) 9%,
+    var(--marker-lime) 94%,
+    transparent 100%);
+  padding-left: 0.05em;
+  padding-right: 0.14em;
+  margin-left: -0.05em;
+  margin-right: -0.14em;
+}
+
+/* ---- Articles search: a visible mono "Search" label (replacing the
+   sr-only one — this is a styling change to an existing, still-correctly-
+   `for`-associated label, not a functional change) above a flat rule,
+   reading as an index heading rather than an unlabeled floating line.
+   width:100% was missing before, so the input was rendering at its
+   browser-default intrinsic width regardless of max-width — fixed, so it
+   now properly fills up to 320px desktop / the available width on mobile. */
+.research-search__label {
+  display: block;
+  font-family: var(--font-family-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 0.35rem;
+}
+.research-search__input {
+  width: 100%;
+}
+
+/* ---- Voice filter strip: baseline-align "All voices" (text-only) against
+   the icon-bearing persona buttons, so the row reads as one line of
+   typography instead of separately-aligned controls. */
+.category-filter--persona {
+  align-items: baseline;
+}
+
+/* ---- Home Collective: same content, ~25% less vertical padding (space-24
+   vs the default section's space-32) so it reads as a compact roster
+   rather than a sparse feature band. Scoped to Home only — About's
+   Four Voices section keeps its current spacing untouched. */
+.home-collective {
+  padding-top: var(--space-24);
+  padding-bottom: var(--space-24);
+}
+
+/* ---- Buttons: the base .btn:hover state (and the secondary/outline hover
+   variants) still referenced the raw brand-blue color directly and added
+   a lift + colored shadow — both leftover from before the ink/canvas
+   system existed on this page set, missed in earlier passes because they
+   don't show up in a static screenshot, only on interaction. Fixed to the
+   same restrained ink/canvas language as everything else; radius reduced
+   to match the 0-3px scale used everywhere else (cards, search, chips). */
+.btn {
+  border-radius: 3px;
+}
+.btn:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--canvas);
+  transform: none;
+  box-shadow: none;
+}
+.btn:active {
+  transform: none;
+  box-shadow: none;
+}
+.btn--secondary:hover,
+.btn--outline:hover {
+  background: var(--canvas);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.newsletter-form input[type="email"],
+.newsletter-form button[type="submit"] {
+  border-radius: 2px;
+}
+/* The pre-existing rule removed the focus outline unconditionally on
+   :focus (not :focus-visible) with no replacement indicator — a real
+   keyboard-accessibility gap, not something D 1.x introduced but worth
+   fixing while auditing this control. Falls through to the global
+   ink+lime :focus-visible ring instead. */
+.newsletter-form input[type="email"]:focus {
+  outline: revert;
+  border-color: var(--ink-muted);
+}
+
+/* ---- Footer: same four groups, same links, tightened into something
+   closer to a publication colophon than a template footer. Headings
+   become small mono labels (matching every other eyebrow/index label
+   site-wide) instead of a plain bold sans heading — this is also the
+   typographic-consistency fix called for in the audit. */
+.site-footer {
+  padding: var(--space-24) 0 var(--space-10);
+}
+.site-footer__section h3 {
+  font-family: var(--font-family-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: var(--space-4);
+}
+.site-footer__links li {
+  margin-bottom: 0.4rem;
 }
 
 @media print {
