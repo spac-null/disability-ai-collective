@@ -126,6 +126,20 @@ class ProductionOrchestrator(DebateMixin, ImagesMixin, PublishMixin, GateMixin, 
             lock_fh.close()
 
 
+def _is_infra_or_contract_failure(result: dict) -> bool:
+    """True when `result` (production_orchestrator's run output) is a NEW_ENGINE_V1
+    infrastructure/contract failure -- a Discovery/Article-Form/Grounding/Writer
+    provider error or malformed/invalid model reply -- as opposed to an ordinary
+    editorial HOLD (source not commissionable, unresolved unsupported claim, etc.) or
+    a legacy-path result (which carries no `run_status` key at all).
+
+    Both shapes HOLD cleanly with no exception; this is the one place that still
+    needs to tell them apart, because only one of them should make the scheduled
+    process exit non-zero.
+    """
+    run_status = (result or {}).get("run_status") or {}
+    return run_status.get("status") in ("PROVIDER_FAILURE", "CONTRACT_FAILURE")
+
 
 if __name__ == "__main__":
     import argparse
@@ -216,3 +230,19 @@ if __name__ == "__main__":
     else:
         result = orchestrator.run_production_automation()
         print(json.dumps(result, indent=2))
+        # NEW_ENGINE_V1 infrastructure/contract failures (Discovery/Article-Form/
+        # Grounding/Writer provider errors or malformed/invalid model replies) HOLD
+        # cleanly -- no exception, full structured RUN_STATUS/MANIFEST evidence
+        # already on disk -- but must not become operationally silent. Without this,
+        # the process exits 0 and cripminds-daily.sh's only failure signal (the
+        # "orchestrator failed" ERROR log line + Telegram alert) never fires,
+        # making an infra failure indistinguishable, to anyone not reading the
+        # evidence directory, from an ordinary editorial HOLD (which correctly
+        # stays quiet and unaffected -- it has no run_status, or run_status is None).
+        if _is_infra_or_contract_failure(result):
+            rs = result.get("run_status") or {}
+            print("CURRENT_ENGINE %s at stage %s (%s) -- exiting non-zero so the "
+                  "cron wrapper's failure alert fires; see run_status above" %
+                  (rs.get("status"), rs.get("stage"), rs.get("failure_category")),
+                  file=sys.stderr)
+            sys.exit(1)

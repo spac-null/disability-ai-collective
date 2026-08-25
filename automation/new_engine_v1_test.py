@@ -87,7 +87,10 @@ class StubProvider:
     """Scripted replies. Records every (system, user) pair for inspection."""
 
     def __init__(self, discovery=None, form=None, article=None, grounding=None,
-                 recheck=None, fail_writer=False):
+                 recheck=None, fail_writer=False,
+                 fail_discovery=False, malformed_discovery=False,
+                 fail_form=False, malformed_form=False,
+                 fail_ground=False, malformed_ground=False):
         self.calls = []
         self._discovery = discovery if discovery is not None else DISCOVERY_REPLY
         self._form = form if form is not None else FORM_REPLY
@@ -95,20 +98,36 @@ class StubProvider:
         self._grounding = grounding if grounding is not None else {"findings": []}
         self._recheck = recheck
         self._fail_writer = fail_writer
+        self._fail_discovery = fail_discovery
+        self._malformed_discovery = malformed_discovery
+        self._fail_form = fail_form
+        self._malformed_form = malformed_form
+        self._fail_ground = fail_ground
+        self._malformed_ground = malformed_ground
         self._ground_calls = 0
 
     def complete(self, system, user, max_tokens=3000, timeout=180, temperature=None):
         self.calls.append({"system": system, "user": user})
         from new_engine_v1.provider import Completion, ProviderError
         if "discovery stage" in system:
-            body = json.dumps(self._discovery)
+            if self._fail_discovery:
+                raise ProviderError("stub provider failure: discovery")
+            body = "not json at all, just prose" if self._malformed_discovery \
+                else json.dumps(self._discovery)
         elif "article-form stage" in system:
-            body = json.dumps(self._form)
+            if self._fail_form:
+                raise ProviderError("stub provider failure: article form")
+            body = "<<<not json>>>" if self._malformed_form else json.dumps(self._form)
         elif "writer-grounding stage" in system:
             self._ground_calls += 1
-            src = (self._recheck if (self._ground_calls > 1 and self._recheck is not None)
-                   else self._grounding)
-            body = json.dumps(src)
+            if self._fail_ground:
+                raise ProviderError("stub provider failure: grounding")
+            if self._malformed_ground:
+                body = "{unterminated json"
+            else:
+                src = (self._recheck if (self._ground_calls > 1 and self._recheck is not None)
+                       else self._grounding)
+                body = json.dumps(src)
         else:
             if self._fail_writer:
                 raise ProviderError("stub provider failure")
@@ -305,6 +324,160 @@ def test_provider_failure_holds_without_fallback_article():
               any("provider" in r for r in out["reasons"]), out["reasons"])
 
 
+# --------------------------------------------------------------------------- #
+# Stage-failure containment (Blocker 2). DISCOVERY, ARTICLE_FORM and
+# GROUNDING_FINDINGS each get the same guarantee WRITER_OUTPUT already had:
+# provider/parse failure -> clean HOLD, no fabricated artifact for the failed
+# stage, no downstream stage runs, and a structured RUN_STATUS naming the stage.
+def _assert_stage_holds_cleanly(out, d, name, failed_stage, later_stages,
+                                expect_status="PROVIDER_FAILURE"):
+    check("%s failure HOLDs (%s)" % (failed_stage, out.get("reason_code")),
+          out["decision"] == HOLD, out["reasons"])
+    check("no %s artifact was fabricated" % failed_stage,
+          failed_stage not in out["artifacts"])
+    for later in later_stages:
+        check("no downstream stage ran: %s absent after %s failure" % (later, failed_stage),
+              later not in out["artifacts"])
+    # article.md is the raw evidence copy of whatever the writer actually drafted --
+    # written by _persist whenever WRITER_OUTPUT exists, regardless of what happens
+    # after. It is not a publication signal (that's publication_eligible, set only by
+    # the safety bridge in new_engine_production.py, never by runner.py). So: absent
+    # for a pre-writer failure (Discovery/Article Form), present-but-inert for a
+    # post-writer failure (Grounding) -- exactly mirroring existing editorial-HOLD
+    # behavior (e.g. an unresolved TRUE_UNSUPPORTED finding also leaves article.md
+    # on disk as evidence).
+    article_path = pathlib.Path(d) / name / "article.md"
+    if C.WRITER_OUTPUT in out["artifacts"]:
+        check("article.md exists as inert evidence (writer succeeded before %s failed)"
+              % failed_stage, article_path.exists())
+    else:
+        check("no article.md was written (writer never ran)", not article_path.exists())
+    rs_path = pathlib.Path(d) / name / "RUN_STATUS.json"
+    check("RUN_STATUS.json exists", rs_path.exists())
+    if rs_path.exists():
+        rs = json.loads(rs_path.read_text())
+        check("RUN_STATUS names the failed stage", rs.get("stage") == failed_stage, rs)
+        check("RUN_STATUS status is %s" % expect_status,
+              rs.get("status") == expect_status, rs)
+        check("RUN_STATUS is distinguishable from an editorial HOLD "
+              "(carries failure_category)", "failure_category" in rs, rs)
+    man = json.loads((pathlib.Path(d) / name / "MANIFEST.json").read_text())
+    check("MANIFEST publication is NONE", man["publication"].startswith("NONE"))
+    check("MANIFEST run_status mirrors RUN_STATUS.status",
+          man["run_status"] == expect_status, man)
+    check("out carries no 'publication_eligible: true'-shaped signal",
+          "publication_eligible" not in out)
+
+
+def test_discovery_provider_exception_holds_cleanly():
+    with tempfile.TemporaryDirectory() as d:
+        out = _run(StubProvider(fail_discovery=True), d, name="d-exc")
+        _assert_stage_holds_cleanly(
+            out, d, "d-exc", C.DISCOVERY,
+            [C.ARTICLE_FORM, C.WRITER_INPUT, C.WRITER_OUTPUT, C.GROUNDING_FINDINGS])
+        check("reason_code identifies discovery + provider_error",
+              out.get("reason_code") == "DISCOVERY_PROVIDER_ERROR", out.get("reason_code"))
+
+
+def test_discovery_malformed_response_holds_cleanly():
+    with tempfile.TemporaryDirectory() as d:
+        out = _run(StubProvider(malformed_discovery=True), d, name="d-mal")
+        _assert_stage_holds_cleanly(
+            out, d, "d-mal", C.DISCOVERY,
+            [C.ARTICLE_FORM, C.WRITER_INPUT, C.WRITER_OUTPUT, C.GROUNDING_FINDINGS])
+
+
+def test_discovery_structurally_invalid_response_holds_cleanly():
+    """Valid JSON, but missing a required field -- contracts.validate() raises
+    ContractViolation, not ProviderError. Distinct failure category, same
+    containment guarantee."""
+    with tempfile.TemporaryDirectory() as d:
+        bad = dict(DISCOVERY_REPLY)
+        del bad["grounding_boundaries"]
+        out = _run(StubProvider(discovery=bad), d, name="d-inv")
+        _assert_stage_holds_cleanly(
+            out, d, "d-inv", C.DISCOVERY,
+            [C.ARTICLE_FORM, C.WRITER_INPUT, C.WRITER_OUTPUT, C.GROUNDING_FINDINGS],
+            expect_status="CONTRACT_FAILURE")
+        check("reason_code identifies discovery + invalid_response_shape",
+              out.get("reason_code") == "DISCOVERY_INVALID_RESPONSE_SHAPE",
+              out.get("reason_code"))
+
+
+def test_article_form_provider_exception_holds_cleanly():
+    with tempfile.TemporaryDirectory() as d:
+        out = _run(StubProvider(fail_form=True), d, name="f-exc")
+        _assert_stage_holds_cleanly(
+            out, d, "f-exc", C.ARTICLE_FORM,
+            [C.WRITER_INPUT, C.WRITER_OUTPUT, C.GROUNDING_FINDINGS])
+        check("DISCOVERY still ran and was persisted before the Form failed",
+              C.DISCOVERY in out["artifacts"])
+
+
+def test_article_form_malformed_response_holds_cleanly():
+    with tempfile.TemporaryDirectory() as d:
+        out = _run(StubProvider(malformed_form=True), d, name="f-mal")
+        _assert_stage_holds_cleanly(
+            out, d, "f-mal", C.ARTICLE_FORM,
+            [C.WRITER_INPUT, C.WRITER_OUTPUT, C.GROUNDING_FINDINGS])
+
+
+def test_grounding_provider_exception_holds_cleanly():
+    with tempfile.TemporaryDirectory() as d:
+        out = _run(StubProvider(fail_ground=True), d, name="g-exc")
+        _assert_stage_holds_cleanly(out, d, "g-exc", C.GROUNDING_FINDINGS, [])
+        check("WRITER_OUTPUT still ran and was persisted before grounding failed",
+              C.WRITER_OUTPUT in out["artifacts"])
+        check("no SHADOW_DECISION (ACCEPT/HOLD editorial verdict) was reached",
+              C.SHADOW_DECISION not in out["artifacts"])
+
+
+def test_grounding_malformed_response_holds_cleanly():
+    with tempfile.TemporaryDirectory() as d:
+        out = _run(StubProvider(malformed_ground=True), d, name="g-mal")
+        _assert_stage_holds_cleanly(out, d, "g-mal", C.GROUNDING_FINDINGS, [])
+
+
+def test_writer_failure_behavior_unchanged():
+    """The pre-existing WRITER_OUTPUT failure path (Part B, 2026-08-24) must be
+    byte-for-byte unchanged by the new stage-failure containment: same status
+    string, same stage identity, same reason_code shape."""
+    with tempfile.TemporaryDirectory() as d:
+        out = _run(StubProvider(fail_writer=True), d, name="w-exc")
+        check("writer failure still HOLDs", out["decision"] == HOLD)
+        check("writer failure status is still PROVIDER_FAILURE",
+              out["run_status"]["status"] == "PROVIDER_FAILURE", out["run_status"])
+        check("writer failure stage is still WRITER_OUTPUT",
+              out["run_status"]["stage"] == C.WRITER_OUTPUT, out["run_status"])
+        check("writer failure reason_code is still WRITER_PROVIDER_FAILURE",
+              out["reason_code"] == "WRITER_PROVIDER_FAILURE", out["reason_code"])
+        check("DISCOVERY, ARTICLE_FORM, WRITER_INPUT still ran before the writer failed",
+              {C.DISCOVERY, C.ARTICLE_FORM, C.WRITER_INPUT} <= set(out["artifacts"]))
+        check("no GROUNDING_FINDINGS ran after a writer failure",
+              C.GROUNDING_FINDINGS not in out["artifacts"])
+
+
+def test_writer_contract_failure_holds_cleanly():
+    """write()'s success path is not model-parsed JSON, so this edge is narrower than
+    Discovery/Form/Grounding's -- but it is not unreachable: an empty completion is
+    the one way article_text can fail contracts.validate()'s WRITER_OUTPUT check
+    despite provider_status == 'ok'. The real Provider already prevents this
+    (provider.py raises ProviderError on empty content before write() would ever
+    return 'ok'), but write() itself is duck-typed against any object exposing
+    .complete(), so this boundary must hold on its own, not merely inherit a
+    guarantee from a different module."""
+    with tempfile.TemporaryDirectory() as d:
+        out = _run(StubProvider(article=""), d, name="w-inv")
+        _assert_stage_holds_cleanly(out, d, "w-inv", C.WRITER_OUTPUT,
+                                    [C.GROUNDING_FINDINGS], expect_status="CONTRACT_FAILURE")
+        check("reason_code identifies writer + invalid_response_shape",
+              out.get("reason_code") == "WRITER_OUTPUT_INVALID_RESPONSE_SHAPE",
+              out.get("reason_code"))
+        check("DISCOVERY, ARTICLE_FORM, WRITER_INPUT still ran before the writer's "
+              "contract check failed",
+              {C.DISCOVERY, C.ARTICLE_FORM, C.WRITER_INPUT} <= set(out["artifacts"]))
+
+
 def test_non_commissionable_source_holds_cleanly():
     with tempfile.TemporaryDirectory() as d:
         out = _run(StubProvider(discovery=dict(DISCOVERY_REPLY, commissionable=False)),
@@ -386,6 +559,68 @@ def test_package_purity_static():
         check("no quality-preference judge: %r absent" % phrase, phrase not in joined)
 
 
+def test_infra_failure_stays_operator_visible():
+    """The one thing structured stage-failure evidence (this file's earlier tests) does
+    NOT by itself prove: that the SCHEDULED PROCESS still signals failure to an
+    operator. Discovery/Form/Grounding/Writer failures all HOLD without raising --
+    correct -- but production_orchestrator.py's __main__ used to rely on an UNCAUGHT
+    exception's non-zero exit code to make cripminds-daily.sh's bash wrapper log an
+    ERROR and fire a Telegram alert. A clean HOLD, left unchecked, would exit 0 and
+    that signal would never fire -- indistinguishable, to the wrapper, from an
+    ordinary editorial HOLD (which correctly stays silent). This proves the fix:
+    production_orchestrator._is_infra_or_contract_failure() must say True for every
+    infra/contract failure category and False for an ordinary editorial HOLD."""
+    import production_orchestrator as PO
+    import new_engine_production as NEP
+
+    class _FakeOrch:
+        def __init__(self):
+            import logging
+            self.logger = logging.getLogger("test_infra_failure_stays_operator_visible")
+            self.drafts_dir = pathlib.Path(tempfile.mkdtemp())
+
+        def get_news_seed_with_usable_source(self):
+            return {"id": "s1", "url": "https://example.org/a", "summary": "s"}
+
+        def get_source_text(self, url, fallback_text=None, underlying_url=None):
+            return SOURCE
+
+        def get_source_origin(self, url):
+            return "fetched_article"
+
+        def get_source_original_length(self, url):
+            return len(SOURCE)
+
+        def get_source_paragraph_count(self, url):
+            return 2
+
+    os.environ["NEW_ENGINE_V1_MODE"] = "LIVE"
+    CASES = {
+        "discovery_provider": (dict(fail_discovery=True), True),
+        "discovery_contract": (dict(discovery={k: v for k, v in DISCOVERY_REPLY.items()
+                                               if k != "grounding_boundaries"}), True),
+        "article_form_provider": (dict(fail_form=True), True),
+        "grounding_provider": (dict(fail_ground=True), True),
+        "writer_provider": (dict(fail_writer=True), True),
+        "writer_contract": (dict(article=""), True),
+        "editorial_hold": (dict(discovery=dict(DISCOVERY_REPLY, commissionable=False)), False),
+        "clean_accept": ({}, False),
+    }
+    real_provider = NEP.Provider
+    try:
+        for label, (kwargs, expect_infra_failure) in CASES.items():
+            NEP.Provider = lambda model=None, _k=kwargs, **kw: StubProvider(**_k)
+            out = NEP.run_scheduled(_FakeOrch(),
+                                    evidence_root=tempfile.mkdtemp())
+            got = PO._is_infra_or_contract_failure(out)
+            check("_is_infra_or_contract_failure(%s) == %s" % (label, expect_infra_failure),
+                  got == expect_infra_failure,
+                  (label, got, out.get("run_status")))
+    finally:
+        NEP.Provider = real_provider
+    os.environ.pop("NEW_ENGINE_V1_MODE", None)
+
+
 def test_legacy_scheduled_path_unchanged():
     gen = (HERE / "orchestrator" / "generate.py").read_text()
     check("legacy prewriter loop still present and bounded at 5",
@@ -411,6 +646,16 @@ def main():
                test_accept_impossible_with_unresolved_unsupported_claim,
                test_patch_only_repair_and_recheck,
                test_provider_failure_holds_without_fallback_article,
+               test_discovery_provider_exception_holds_cleanly,
+               test_discovery_malformed_response_holds_cleanly,
+               test_discovery_structurally_invalid_response_holds_cleanly,
+               test_article_form_provider_exception_holds_cleanly,
+               test_article_form_malformed_response_holds_cleanly,
+               test_grounding_provider_exception_holds_cleanly,
+               test_grounding_malformed_response_holds_cleanly,
+               test_writer_failure_behavior_unchanged,
+               test_writer_contract_failure_holds_cleanly,
+               test_infra_failure_stays_operator_visible,
                test_non_commissionable_source_holds_cleanly,
                test_no_publication_side_effect,
                test_package_purity_static,

@@ -112,6 +112,11 @@ def run_scheduled(orch, *, rehearsal: bool = False,
               "engine": "new_engine_v1", "engine_generation": CAND.ENGINE_GENERATION,
               "engine_run": run, "decision": out["decision"],
               "reasons": out["reasons"], "reason_code": out.get("reason_code"),
+              # Propagated so a caller (production_orchestrator.py's __main__) can
+              # tell an infrastructure/contract failure apart from an ordinary
+              # editorial HOLD -- both HOLD here, but only one needs an operator
+              # signal. Absent (None) for an ordinary editorial HOLD.
+              "run_status": out.get("run_status"),
               "evidence": str(root / run), "commit_success": False,
               "source_url": payload["provenance"]["url"]}
 

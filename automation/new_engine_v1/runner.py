@@ -30,6 +30,7 @@ from . import contracts as C
 from . import invariants as INV
 from . import stages as S
 from .decision import decide
+from .provider import ProviderError
 
 ENGINE = "NEW_ENGINE_V1"
 MODE_OFF = "OFF"
@@ -63,6 +64,41 @@ def _strip_provider(payload: dict) -> dict:
     return {k: v for k, v in payload.items() if k != "_provider"}
 
 
+def _stage_failure(stage: str, category: str, exc: Exception, at: str, A: dict,
+                   run_root: pathlib.Path, name: str, mode: str, prov: dict) -> dict:
+    """A model-stage failure at DISCOVERY, ARTICLE_FORM or GROUNDING_FINDINGS is
+    recorded exactly like the existing WRITER_OUTPUT provider-failure path: HOLD, no
+    downstream stage runs, no artifact is fabricated for the failed stage, and a
+    RUN_STATUS record identifies which stage and why -- distinguishable from an
+    editorial HOLD (`decision.py`'s HOLDs always carry a full artifact set; this one
+    never does).
+
+    Two failure categories reach here, kept distinct in the record:
+      * `ProviderError` -- transport failure or a reply that isn't recoverably one
+        JSON object (`provider.py::parse_json_object`).
+      * `contracts.ContractViolation` -- the reply parsed, but doesn't satisfy the
+        stage's required shape (missing field, wrong type) -- caught where `_emit`
+        calls `contracts.validate()`.
+    """
+    status = "PROVIDER_FAILURE" if isinstance(exc, ProviderError) else "CONTRACT_FAILURE"
+    run_status = {
+        "status": status,
+        "stage": stage,
+        "failure_category": category,
+        "error": str(exc)[:500],
+        "run": name,
+        "created_at": at,
+        "engine": ENGINE,
+        "writer_output_emitted": False,
+        "article_produced": False,
+    }
+    reasons = ["%s failed (%s); HOLD, no downstream stage runs" % (stage, category),
+               "RUN_STATUS=%s recorded; no %s artifact emitted for this run" % (status, stage)]
+    _persist(A, run_root, name, mode, prov, "HOLD", reasons, run_status=run_status)
+    return {"artifacts": A, "decision": "HOLD", "reasons": reasons, "provider": prov,
+            "run_status": run_status, "reason_code": "%s_%s" % (stage, category.upper())}
+
+
 def run(source_payload: dict, run_root: pathlib.Path, provider,
         name: str, created_at: str, byline: str = DEFAULT_BYLINE,
         mode: str | None = None) -> dict:
@@ -89,54 +125,68 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
     sha = source_payload["source_sha256"]
 
     # --- DISCOVERY: consumes source only -------------------------------------
-    d = S.discover(provider, src, sha)
-    prov["discovery"] = d.get("_provider", {})
-    if d.get("commissionable") is False:
-        # A grounded refusal. Recorded as a first-class outcome, not an error: the
-        # source carries no mechanism this reading can reach.
-        disc = _emit(C.DISCOVERY, at, _strip_provider(d), {"source": A[C.SOURCE_SNAPSHOT]})
-        A[C.DISCOVERY] = disc
-        _persist(A, run_root, name, mode, prov,
-                 decision="HOLD", reasons=["discovery: source not commissionable"])
-        return {"artifacts": A, "decision": "HOLD",
-                "reasons": ["discovery: source not commissionable -- %s"
-                            % str(d.get("disturbance", ""))[:200]],
-                "provider": prov}
-    # CONTRACT REVISION 2026-08-24 (Part A): the designated source anchor must be an
-    # exact span of the snapshot. Enforced BEFORE Article Form and before the writer, so
-    # an ungrounded Discovery can never reach prose. Only mechanically harmless
-    # differences are normalised away -- a paraphrase still fails. See invariants.py.
-    ok, code, detail = INV.check_anchor(d, src)
-    anchor_note = detail
-    if not ok:
-        # ONE bounded repair, exactness only, changing only the anchor field. No loop.
-        repaired, rdetail = INV.repair_anchor(provider, d, src)
-        prov["anchor_repair"] = {"attempted": True, "succeeded": repaired,
-                                 "detail": rdetail}
-        if not repaired:
-            reasons = ["%s: %s" % (code, detail), "anchor repair: %s" % rdetail,
-                       "HOLD before writer -- Discovery is not source-grounded"]
-            A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
-                                   {"source": A[C.SOURCE_SNAPSHOT]})
-            A[C.SHADOW_DECISION] = _emit(
-                C.SHADOW_DECISION, at,
-                {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
-                 "reason_code": code,
-                 "policy": "ACCEPT = eligible for the candidate pool; never publication"},
-                {"discovery": A[C.DISCOVERY]})
-            _persist(A, run_root, name, mode, prov, "HOLD", reasons)
-            return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
-                    "provider": prov, "reason_code": code}
-        ok, code, anchor_note = INV.check_anchor(d, src)
-    d["source_anchor_verified"] = True
-    A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
-                           {"source": A[C.SOURCE_SNAPSHOT]})
+    try:
+        d = S.discover(provider, src, sha)
+        prov["discovery"] = d.get("_provider", {})
+        if d.get("commissionable") is False:
+            # A grounded refusal. Recorded as a first-class outcome, not an error: the
+            # source carries no mechanism this reading can reach.
+            disc = _emit(C.DISCOVERY, at, _strip_provider(d), {"source": A[C.SOURCE_SNAPSHOT]})
+            A[C.DISCOVERY] = disc
+            _persist(A, run_root, name, mode, prov,
+                     decision="HOLD", reasons=["discovery: source not commissionable"])
+            return {"artifacts": A, "decision": "HOLD",
+                    "reasons": ["discovery: source not commissionable -- %s"
+                                % str(d.get("disturbance", ""))[:200]],
+                    "provider": prov}
+        # CONTRACT REVISION 2026-08-24 (Part A): the designated source anchor must be an
+        # exact span of the snapshot. Enforced BEFORE Article Form and before the writer, so
+        # an ungrounded Discovery can never reach prose. Only mechanically harmless
+        # differences are normalised away -- a paraphrase still fails. See invariants.py.
+        ok, code, detail = INV.check_anchor(d, src)
+        anchor_note = detail
+        if not ok:
+            # ONE bounded repair, exactness only, changing only the anchor field. No loop.
+            # (repair_anchor already catches its own provider call internally and
+            # degrades to "repair failed" rather than raising -- not re-caught here.)
+            repaired, rdetail = INV.repair_anchor(provider, d, src)
+            prov["anchor_repair"] = {"attempted": True, "succeeded": repaired,
+                                     "detail": rdetail}
+            if not repaired:
+                reasons = ["%s: %s" % (code, detail), "anchor repair: %s" % rdetail,
+                           "HOLD before writer -- Discovery is not source-grounded"]
+                A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
+                                       {"source": A[C.SOURCE_SNAPSHOT]})
+                A[C.SHADOW_DECISION] = _emit(
+                    C.SHADOW_DECISION, at,
+                    {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
+                     "reason_code": code,
+                     "policy": "ACCEPT = eligible for the candidate pool; never publication"},
+                    {"discovery": A[C.DISCOVERY]})
+                _persist(A, run_root, name, mode, prov, "HOLD", reasons)
+                return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
+                        "provider": prov, "reason_code": code}
+            ok, code, anchor_note = INV.check_anchor(d, src)
+        d["source_anchor_verified"] = True
+        A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
+                               {"source": A[C.SOURCE_SNAPSHOT]})
+    except (ProviderError, C.ContractViolation) as e:
+        return _stage_failure(
+            C.DISCOVERY,
+            "provider_error" if isinstance(e, ProviderError) else "invalid_response_shape",
+            e, at, A, run_root, name, mode, prov)
 
     # --- ARTICLE FORM: consumes discovery + source ---------------------------
-    f = S.make_form(provider, d, src, sha)
-    prov["article_form"] = f.get("_provider", {})
-    A[C.ARTICLE_FORM] = _emit(C.ARTICLE_FORM, at, _strip_provider(f),
-                              {"discovery": A[C.DISCOVERY], "source": A[C.SOURCE_SNAPSHOT]})
+    try:
+        f = S.make_form(provider, d, src, sha)
+        prov["article_form"] = f.get("_provider", {})
+        A[C.ARTICLE_FORM] = _emit(C.ARTICLE_FORM, at, _strip_provider(f),
+                                  {"discovery": A[C.DISCOVERY], "source": A[C.SOURCE_SNAPSHOT]})
+    except (ProviderError, C.ContractViolation) as e:
+        return _stage_failure(
+            C.ARTICLE_FORM,
+            "provider_error" if isinstance(e, ProviderError) else "invalid_response_shape",
+            e, at, A, run_root, name, mode, prov)
 
     # --- WRITER INPUT: derived from the Form. Deterministic, no model. --------
     wi = S.build_writer_input(f, d, src, sha, byline)
@@ -184,20 +234,46 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
                 "provider": prov, "run_status": run_status,
                 "reason_code": "WRITER_PROVIDER_FAILURE"}
 
-    A[C.WRITER_OUTPUT] = _emit(C.WRITER_OUTPUT, at, _strip_provider(wo),
-                               {"writer_input": A[C.WRITER_INPUT]})
+    # write()'s success path (provider_status == "ok") is not model-parsed JSON --
+    # article_sha256 is always computed from article_text in the same expression, and
+    # provider_status is always the literal "ok" -- so contracts.validate() cannot
+    # diverge on those two fields. article_text could in principle be empty (the one
+    # field _require() treats as missing), but provider.py's real Provider already
+    # raises ProviderError on an empty completion before write() ever reaches this
+    # branch. Wrapped anyway, for the same reason the other three stages are: this
+    # boundary should not depend on a guarantee living in a different module holding
+    # forever, and a caller satisfying write()'s duck-typed provider interface
+    # differently must still fail closed here, not raise uncaught.
+    try:
+        A[C.WRITER_OUTPUT] = _emit(C.WRITER_OUTPUT, at, _strip_provider(wo),
+                                   {"writer_input": A[C.WRITER_INPUT]})
+    except C.ContractViolation as e:
+        return _stage_failure(C.WRITER_OUTPUT, "invalid_response_shape", e, at, A,
+                              run_root, name, mode, prov)
 
     # --- WRITER GROUNDING: writer output + source ONLY (never the Form) -------
-    gf = S.ground(provider, wo["article_text"], src, sha)
-    prov["grounding"] = gf.get("_provider", {})
-    A[C.GROUNDING_FINDINGS] = _emit(C.GROUNDING_FINDINGS, at, _strip_provider(gf),
-                                    {"writer_output": A[C.WRITER_OUTPUT],
-                                     "source": A[C.SOURCE_SNAPSHOT]})
+    try:
+        gf = S.ground(provider, wo["article_text"], src, sha)
+        prov["grounding"] = gf.get("_provider", {})
+        A[C.GROUNDING_FINDINGS] = _emit(C.GROUNDING_FINDINGS, at, _strip_provider(gf),
+                                        {"writer_output": A[C.WRITER_OUTPUT],
+                                         "source": A[C.SOURCE_SNAPSHOT]})
+    except (ProviderError, C.ContractViolation) as e:
+        return _stage_failure(
+            C.GROUNDING_FINDINGS,
+            "provider_error" if isinstance(e, ProviderError) else "invalid_response_shape",
+            e, at, A, run_root, name, mode, prov)
 
     # --- PATCH-ONLY REPAIR, then a real re-check of the affected findings -----
     rp = S.repair(wo["article_text"], gf["findings"])
     if rp is not None:
-        recheck = S.ground(provider, rp["article_text"], src, sha)
+        try:
+            recheck = S.ground(provider, rp["article_text"], src, sha)
+        except ProviderError as e:
+            # The recheck's own parsed findings never reach a separate _emit -- only
+            # `rp`'s deterministic shape does -- so ProviderError is the only risk here.
+            return _stage_failure(C.GROUNDING_FINDINGS, "provider_error", e, at, A,
+                                  run_root, name, mode, prov)
         prov["grounding_recheck"] = recheck.get("_provider", {})
         before = {f_.get("quote") for f_ in gf["findings"]
                   if f_.get("classification") == "TRUE_UNSUPPORTED"}
