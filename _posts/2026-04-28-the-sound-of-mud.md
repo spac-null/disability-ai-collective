@@ -20,7 +20,9 @@ source_outlet: "Guardian Art & Design"
 > no such friend. An earlier note today removed a later sentence referring back to the same trip and
 > left the trip itself, which was inconsistent. Both are now gone. What the bronzes do to wind, what
 > mud does to a cane, and the acoustic argument the piece is making are unchanged, as is the
-> newspaper article it responds to.
+> newspaper article it responds to. A second claimed visit in this article, to the Kröller-Müller
+> Museum, was found during verification rather than by the scan and has been removed on the same
+> grounds; what stone floors and gravel paths do to a cane is unchanged.
 
 
 > **Correction, 25 August 2026 (wound rule):** this article reported a first-person visit as
@@ -76,7 +78,7 @@ You're thinking: but fresh air, open space, surely that's better than being trap
 
 ---
 
-I have been to the [Kröller-Müller Museum](https://www.krollermuller.nl) in the Netherlands, which sits inside a national park and has one of the largest sculpture gardens in Europe. The indoor galleries have stone floors. My cane sang. I could hear the rooms opening ahead of me, feel their ceiling heights change, know when a wall was close. Then I walked out into the garden, and within four steps the world went matte. The gravel path gave me a rough direction. Everything else — the sculptures, the trees, the distance to the next turn — went quiet.
+Consider the [Kröller-Müller Museum](https://www.krollermuller.nl) in the Netherlands, which sits inside a national park and has one of the largest sculpture gardens in Europe. Its indoor galleries have stone floors, and a cane sings on stone: the rooms open ahead of you, their ceiling heights audible, a wall announcing itself before you reach it. Step out into the garden and within four paces the world goes matte. A gravel path gives a rough direction. Everything else — the sculptures, the trees, the distance to the next turn — goes quiet.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-sound-of-mud_symbol_3.jpg" alt="The Sound of Mud — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
