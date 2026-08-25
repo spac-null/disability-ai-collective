@@ -13,6 +13,13 @@ source_title: "There will be mud! Could my child (and buggy) survive a day at a 
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** one superlative has been removed. The article
+> called the white cube "the most acoustically transparent room I have ever been in," which is a claim
+> about rooms the author has stood in — the residue of the gallery visits the notes below removed
+> earlier today. The sentence now describes the acoustic property rather than ranking a set of visits.
+> Nothing else has changed.
+
+
 > **Correction, 25 August 2026 (first-person pass):** this article reported a visit to Yorkshire
 > Sculpture Park on a grey and wet day, made because a friend had said the Henry Moores change how
 > the wind behaves, and described standing before one for ten minutes and then losing a cane in the
@@ -61,7 +68,7 @@ Then the path turns to grass, and the grass turns to mud, and mud is where a can
 
 ---
 
-Here is where the article's honesty runs out. A gallery with hard floors, high ceilings, and right angles is not a hostile environment, whatever the prevailing loathing of the "white cube" says. It is a legible one. My cane on marble gives me the room's dimensions in three taps. My footsteps on polished concrete tell me where the wall is before I reach it. The dreaded white cube — the space that art criticism has spent decades calling sterile, elitist, exclusionary — is the most acoustically transparent room I have ever been in. Every surface answers back.
+Here is where the article's honesty runs out. A gallery with hard floors, high ceilings, and right angles is not a hostile environment, whatever the prevailing loathing of the "white cube" says. It is a legible one. My cane on marble gives me the room's dimensions in three taps. My footsteps on polished concrete tell me where the wall is before I reach it. The dreaded white cube — the space that art criticism has spent decades calling sterile, elitist, exclusionary — is about as acoustically transparent as a room gets. Every surface answers back.
 
 The sculpture park does not answer back. Grass absorbs. Soil absorbs. Gravel scatters sound in every direction, which is worse than absorbing it because the information arrives in fragments rather than a clean signal. The article already knows the ground is not simply generous — it says as much about the climb uphill, the buggy muddied and the boots losing their grip. But it treats that friction as a wheel problem, solvable with better boots and a firm grip on the handlebar. For a body that navigates by listening to what the ground says, the same mud is not an inconvenience to route around. It is a blackout.
 

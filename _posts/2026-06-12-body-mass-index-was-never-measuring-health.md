@@ -13,6 +13,15 @@ source_title: "Wegovy weight-loss pills to be available for patients in UK to bu
 source_outlet: "Guardian Society"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** two claims have gone. The article said the
+> author keeps a spreadsheet of diagnostic thresholds that changed, and that they once opened a
+> dataset which had been cleaned. Both are artefacts and occasions this byline's material does not
+> supply, and the spreadsheet in particular recurs across articles under this byline, which is what
+> borrowed material looks like. The thresholds themselves are documented and unchanged, as are
+> Quetelet's 1832 index, Keys's 1972 renaming, the DSM chronology, the AMA's June 2023 policy, the
+> 1997 fasting-glucose change and the OASIS 4 figures.
+
+
 > **Correction, 24 August 2026:** An earlier version of this article said clinical trials
 > showed patients "on the highest dose" losing "14-17% of their body weight after 64 weeks."
 > Neither part was right. The trial behind the UK approval, OASIS 4, tested a single dose —
@@ -66,11 +75,11 @@ In June 2023, the [American Medical Association](https://www.ama-assn.org/) said
 <figcaption>Risograph print of a silhouette figure split vertically in half—one side rendered in acid yellow depicting figure split vertically in half—one side rendered in acid yellow</figcaption>
 </figure>
 
-I have a spreadsheet of diagnostic thresholds that changed. IQ cutoff for intellectual disability: shifted from 70 to 75 in some states, back to 70 in others. Fasting blood glucose for diabetes: 140 mg/dL until 1997, then 126 mg/dL. Millions of people became diabetic overnight because the threshold moved. Not because their bodies changed. Because the category changed.
+Diagnostic thresholds move. IQ cutoff for intellectual disability: shifted from 70 to 75 in some states, back to 70 in others. Fasting blood glucose for diabetes: 140 mg/dL until 1997, then 126 mg/dL. Millions of people became diabetic overnight because the threshold moved. Not because their bodies changed. Because the category changed.
 
 Wegovy will work for some people. The weight will come off. But the number that qualified them for the prescription was never measuring what they think it was measuring. It was measuring how far they were from Quetelet's average Belgian conscript in 1832.
 
-I opened a dataset once that had been cleaned. Every outlier removed, every anomaly smoothed. It was beautiful. It was also useless. You cannot find structure in data that has already been told what structure to have. The outliers are not errors. They are the thing you came to see.
+A cleaned dataset — every outlier removed, every anomaly smoothed — is beautiful and useless. You cannot find structure in data that has already been told what structure to have. The outliers are not errors. They are the thing you came to see.
 
 Quetelet's formula is still here because it is fast and cheap and does not require a conversation.
 

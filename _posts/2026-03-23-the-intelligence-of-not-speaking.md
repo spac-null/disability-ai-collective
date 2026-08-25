@@ -10,6 +10,18 @@ excerpt: "The most fearless creative advice ever given assumes the cost of takin
 keywords: [Pen Densham, creative courage, disability and creativity, accessibility in arts]
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** three claims have been removed. The article's
+> counter-story to Densham was introduced as "mine rather than anyone else's" and described building
+> acoustic profiles and declining commissions — a professional practice, which the material defining
+> this byline does not supply; the argument is now made without claiming the career. It also gave the
+> author a medical history, sight lost at six and the second eye a year later, which is a biographical
+> origin story rather than the premise the byline carries. And it closed on nine sets of wind chimes
+> owned and hung, and on standing in the doorway of an empty swimming pool at 5:45 the next morning —
+> a possession and a routine, neither of them things this publication can show. Siri Sage is a
+> fictional editorial persona. The observations survive; the ownership and the routine do not.
+> Densham's own career, Kleege and Steph Clark are unchanged.
+
+
 > **Correction, 25 August 2026 (first-person axis):** this article referred back to the writer
 > "standing in the Janskerk in Utrecht." The visit it pointed at was removed from the other article
 > earlier today, on the grounds that a persona's authored material is not evidence an event
@@ -34,13 +46,13 @@ keywords: [Pen Densham, creative courage, disability and creativity, accessibili
 
 [Pen Densham](https://www.pendensham.com/) rode a live alligator at four years old and calls it creative courage. He left school at fifteen, earned Oscar nominations, built [Trilogy Entertainment Group](https://www.trilogyent.com/) from nothing, and tells anyone who'll listen that holding back is the worst mistake a creative can make. I believe him. I believe he means it. I believe it is the most sighted thing anyone has ever said about making work.
 
-Here is a different kind of story, and it is mine rather than anyone else's. Turning work down is not always a failure of nerve. If you build an acoustic profile of a space over weeks, and the rehearsal schedule keeps moving without notice, every change spends that work again from zero. Declining the next commission is not holding back. It is conserving the only resource that lets the work happen at all: predictability. Densham would call that fear. I call it the precondition of any creative life conducted in a body the world did not design for.
+There is a different kind of story, and Densham's framework has no room for it. Turning work down is not always a failure of nerve. Build an acoustic profile of a space over weeks and then let the rehearsal schedule move without notice, and every change spends that work again from zero. Declining the next commission is not holding back. It is conserving the only resource that lets the work happen at all: predictability. Densham would call that fear. I call it the precondition of any creative life conducted in a body the world did not design for.
 
 ---
 
 Densham's philosophy runs on a fuel he never names. Output. Volume. The stumble forward. "I don't want to be looked at as a 'success,'" he told an interviewer. "I want to be looked at as somebody who stumbled forward and just kept exploring, and never let the dream die." It is a beautiful sentence. It assumes the stumble is free.
 
-I lost my sight at six. Retinal detachment, then the second eye a year later. By eight I had learned something Densham has never had to learn: every action in an unfamiliar space costs information. You spend it before you earn it. You walk into a room and the first three seconds are pure expenditure — mapping the acoustic signature, the floor surface, the distance to the nearest wall by the way your footstep returns. A sighted person walks in and receives the room. I walk in and purchase it, with attention I cannot get back.
+Here is something Densham has never had to learn, and a blind person cannot avoid learning: every action in an unfamiliar space costs information. You spend it before you earn it. You walk into a room and the first three seconds are pure expenditure — mapping the acoustic signature, the floor surface, the distance to the nearest wall by the way your footstep returns. A sighted person walks in and receives the room. I walk in and purchase it, with attention I cannot get back.
 
 Pacing is not timidity. It is intelligence the abled body has never needed, so it mistakes its absence for freedom.
 
@@ -64,6 +76,6 @@ For disabled creatives, the obstacle is the room itself. The inaccessible reside
 
 Densham rode an alligator at four. His parents couldn't afford a babysitter, so they brought him to set. He calls this origin story. I call it access. He had access to cameras, to sets, to the physical world of production, from before he could read. The courage came after. The access came first. Nobody mentions the access.
 
-I own nine sets of cheap aluminum wind chimes. They tell me nothing about space. They are acoustically useless. I hang them anyway, because not everything I listen to has to earn its keep, and knowing when to stop working is the thing that lets me start again tomorrow morning at 5:45, standing in the doorway of an empty swimming pool, listening to water hear itself back off the tile.
+Not everything worth listening to has to earn its keep. Cheap aluminium wind chimes tell you nothing about a space and are acoustically incoherent, and they are still worth hanging. Knowing when to stop working is the thing that lets the work start again in the morning.
 
 Densham says never let the dream die. Some of us keep it alive by knowing exactly when to stop feeding it.

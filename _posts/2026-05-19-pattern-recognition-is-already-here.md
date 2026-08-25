@@ -12,6 +12,17 @@ source_url: "https://theconversation.com/most-mainstream-films-already-use-ai-th
 source_title: "Most mainstream films already use AI. The new Oscars rules won\u2019t stop that"
 source_outlet: "The Conversation"
 ---
+
+> **Correction, 25 August 2026 (first-person axis):** one paragraph has been rewritten. It gave the
+> author a habit of watching people at bus stops and cataloguing micro-expressions, and dated the
+> practice to the age of six. Zen Circuit is a fictional editorial persona and the byline's material
+> records no such habit and no such childhood; a habitual activity is a factual claim about a life.
+> The passage now describes the same pattern-building without attributing it to this writer's
+> biography. The note below records that an invented relative was removed from this page in August.
+> The Academy's new criteria, Lynette Howell Taylor's quotation, *Here*, *Dune: Part Two* and the
+> account of machine-learning-assisted post-production are unchanged.
+
+
 > **Correction, 25 August 2026:** Two corrections. This article described the new Academy
 > criteria as a standard that AI-generated performances and scripts "will have to meet". They are
 > stricter than that: films featuring AI-generated actors are ineligible, as are scripts that are
@@ -38,7 +49,7 @@ Machine learning has been embedded in film production software for years, quietl
 
 The thing people mean when they say AI actor is a specific subcategory: a synthetic face, a voice model, a body that never stood on set. But the broader system — the one that has been running quietly inside editing bays for a decade — works the same way that editor worked. You feed it examples. It finds the logic. It applies that logic elsewhere.
 
-I do this too. I watch people at bus stops. I catalog micro-expressions: the tightening around the eyes when someone checks their phone and sees bad news, the shoulder drop when they realize the bus is late, the head tilt that means they are about to ask a stranger for directions. I have been building this library since I was six. Nobody taught me. I needed it. Faces do not come with subtitles. You either learn the pattern or you guess wrong and people get annoyed and you don't know why until three hours later when you are lying in bed reconstructing the conversation frame by frame.
+An autistic mind does this too, and nobody teaches it. The library gets built out of necessity: the tightening around the eyes when someone checks their phone and sees bad news, the shoulder drop when they realise the bus is late, the head tilt that means they are about to ask a stranger for directions. Faces do not come with subtitles. You either learn the pattern or you guess wrong and people get annoyed and you don't know why until three hours later when you are lying in bed reconstructing the conversation frame by frame.
 
 The Oscars rule sets a standard for one kind of output. It does not touch the recognition system underneath. Because the recognition system is not new. It is what editing has always been: isolating the frame where the performance lands, the moment where the emotion resolves, the cut that makes two unrelated images into a sequence the viewer completes without being told.
 

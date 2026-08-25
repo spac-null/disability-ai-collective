@@ -13,6 +13,13 @@ source_title: "Meta Silently Added Face-Recognition Code for Its Smart Glasses t
 source_outlet: "Wired"
 ---
 
+> **Correction, 25 August 2026 (review status):** a note below states that this article has not
+> otherwise been reviewed. It has now been read in full against the first-person factuality axis — every
+> first-person sentence adjudicated against the rule that a persona's authored material is not evidence
+> an event occurred — and nothing further was found on that axis. The earlier sentence no longer
+> describes the state of this page, and is left in place as the record of when it was true.
+
+
 > **Correction, 25 August 2026:** The account of the International Symbol of Access was wrong
 > in most of its particulars and has been rewritten. The icon was a wheelchair without a person
 > for one year, not sixty: Karl Montan added a head in 1969, for stated aesthetic reasons rather

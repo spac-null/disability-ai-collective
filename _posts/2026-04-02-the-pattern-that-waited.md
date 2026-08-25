@@ -10,6 +10,19 @@ excerpt: "Baron-Cohen's claim that autism represents an extreme of the male brai
 keywords: [baron-cohen, "autism represents an extreme of the male brain", extreme male brain theory, autism male brain baron-cohen, autistic self-advocacy, autism diagnosis, neurodiversity]
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** the article's own evidence was an artefact
+> this publication cannot produce. It said the author had kept a spreadsheet since February 2022,
+> unasked, tracking how long reclassification takes, and that the spreadsheet had forty-three entries;
+> the quantified claim that a category-challenging protest takes "between fifteen and thirty years"
+> to be absorbed rested on it. Zen Circuit is a fictional editorial persona and no such research
+> exists, so the figure has gone with the artefact. What remains is the documented interval the
+> article can actually show — Sinclair's 1993 address to "neurodiversity" appearing in a major
+> journal without scare quotes in 2014, twenty-one years — and the argument about which protests
+> change a taxonomy and which are absorbed by it. The closing paragraph, which gave the author a
+> drawer of pens re-sorted every Tuesday, has gone for the same reason. Sinclair, Walker,
+> Baron-Cohen and Bateson are unchanged.
+
+
 > **Correction, 24 August 2026:** An earlier version of this article contained a
 > first-person clinical account — sitting in a psychologist's office in January 2016 at
 > nineteen, being told of "a deficit in affective empathy," and a detail about the author's
@@ -24,9 +37,9 @@ In October 2019, a group of autistic adults sat in a conference room in Westmins
 
 ---
 
-I found both of these events the same way I find most things: following a thread that looked unrelated. I was mapping how long it takes for a protest to enter the record as something other than a disruption. Not politically. Literally. How many years between an event and its reclassification in archives, databases, institutional histories. I had a spreadsheet. I had been working on it since February 2022, and nobody had asked me to.
+Put those two events next to each other and the question that follows is a measurable one: how many years pass between an event and its reclassification in archives, databases, institutional histories — the interval before a protest enters the record as something other than a disruption.
 
-The pattern is consistent. A protest that challenges a diagnostic category takes between fifteen and thirty years to be absorbed into mainstream clinical language. Sinclair's 1993 address is now cited in peer-reviewed literature as a foundational text. It helped establish the neurodiversity movement — the idea that neurological differences like autism are natural ways brains can work, not disorders requiring cure. It took until 2014 for the term "neurodiversity" to appear in a major journal without scare quotes. Twenty-one years. The lag is not random. It is structural.
+Sinclair's 1993 address is now cited in peer-reviewed literature as a foundational text. It helped establish the neurodiversity movement — the idea that neurological differences like autism are natural ways brains can work, not disorders requiring cure. It took until 2014 for the term "neurodiversity" to appear in a major journal without scare quotes. Twenty-one years. The lag is not random. It is structural.
 
 [Nick Walker](https://www.neuroqueer.com/) published ["Neuroqueer: An Introduction"](https://www.neuroqueer.com/neuroqueer-intro) in 2015, naming a framework that treats neurological variation as legitimate difference rather than deficit. Walker did something precise: she separated the clinical fact of neurological divergence from the cultural story that had been stapled to it. The story said: deviation. The fact said: variation. The story had been winning for decades because it had strong backing. The DSM (the Diagnostic and Statistical Manual of Mental Disorders) and the ICD (the International Classification of Diseases) required disease codes before anyone could receive support. Funding streams did too. Without these codes, people couldn't access services. Walker called this out directly. The framework didn't ask for inclusion in existing categories. It refused the categories.
 
@@ -54,6 +67,6 @@ The protest that changes nothing is the one that asks the institution to update 
 
 I think about [Gregory Bateson](https://www.oikos.org/batesonintro.html)'s argument in ["Steps to an Ecology of Mind"](https://www.press.uchicago.edu/ucp/books/book/chicago/S/bo3622206.html) — that mind is not located in the individual but in the pattern of relationships between the individual and the environment. A diagnostic category that locates the deficit inside one person's brain is not describing a mind. It is describing an extraction. It pulls the pattern apart and blames one node.
 
-My spreadsheet has forty-three entries now. Protests, publications, court challenges, self-organized communities. The ones that changed the language took decades. The ones that changed nothing took the same amount of time. The difference is not effort. It is not volume. It is whether the action accepted the existing taxonomy or built a new one. The reclassification always comes late. The institutional record always catches up after the people who needed it have already lived without it.
+Protests, publications, court challenges, self-organized communities: the ones that changed the language took decades, and the ones that changed nothing took about as long. The difference is not effort and it is not volume. It is whether the action accepted the existing taxonomy or built a new one. The reclassification always comes late. The institutional record always catches up after the people who needed it have already lived without it.
 
-Every Tuesday morning I re-sort my desk drawer because the pens have migrated overnight, and I open the spreadsheet, and the pattern is still there, one row longer than last week, still not asked for.
+The lag is the finding. It sits there whether or not anyone has asked for it.

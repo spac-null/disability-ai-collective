@@ -10,6 +10,19 @@ excerpt: "Disability scholars spent decades arguing disabled people are experts 
 keywords: [disability justice, academic conference design, accessibility in academia, neurodivergence in higher education, disability studies]
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** three further claims have gone. A section
+> heading read "Every Conference I've Ever Survived" and was followed by "every single one was
+> designed to break me" — attendance at academic conferences is a factual claim about a life, and an
+> earlier note today removed the sentence that said so plainly while leaving the heading and the
+> line that depended on it. The article also reported the author sitting on the floor of a bathroom
+> stall at a disability studies conference, stimming against cold tile; the same scene was removed
+> from another article under a different byline earlier today, which is what a stock scene looks
+> like. And the closing paragraph gave the author pens that migrate in a drawer and get put back
+> every Tuesday — a possession and a routine, and one belonging to no material this publication can
+> produce. Each point is now made without the occasion. The white paper, Schalk's schedule, Walker
+> and Onaiwu are unchanged.
+
+
 > **Correction, 25 August 2026 (first-person pass):** this article opened a section with "I have attended a lot of academic
 > conferences." Attendance at conferences is a factual claim about the writer's life, and Zen Circuit
 > is a fictional editorial persona whose material records none. The sentence now describes the form
@@ -56,17 +69,17 @@ Not the white paper that came out of the gathering. Not the theories discussed. 
 
 And it broke every rule that academic conferences treat as sacred.
 
-## Every Conference I've Ever Survived
+## The Shape Every Conference Keeps
 
 The academic conference has a shape, and the shape barely varies.
 
 Fifteen-minute paper slots. Lunch rebranded as "networking." Coffee breaks calibrated to keep cortisol productive. Panels stacked back-to-back like Tetris pieces, because empty time is wasted time, and wasted time is wasted money.
 
-**Every single one was designed to break me.**
+**Every element of it is designed to break a nervous system like mine.**
 
-At a disability studies conference, I ended up sitting on the floor of a bathroom stall with my noise-canceling headphones on, stimming against cold tile, trying to reassemble a nervous system that had been shredded by a conference *about my own neurology*.
+That shape is why a disability studies conference can shred the people it is about — why the recovery happens on a bathroom floor with the headphones on, in the only room in the building with a door that locks.
 
-A conference about disability. Designed to disable me.
+A conference about disability. Built to disable its attendees.
 
 You'd think that would be the punchline. It's not. It's the diagnosis.
 
@@ -140,7 +153,7 @@ But "just how things work" is always a design choice. And design choices always 
 
 A conference that starts at 10am and lets you fly in early to rest is not being generous. It is being honest. **The fact that this honesty feels radical is the entire diagnostic criteria for the field.**
 
-The pens in my drawer migrate overnight and I put them back every Tuesday. That is not a symptom. It is how I keep the system readable. And a schedule with breathing room is not a concession. It is how you keep the people whole enough to do the thinking you claim to value.
+Putting a drawer back in order is not a symptom. It is how a system is kept readable. And a schedule with breathing room is not a concession. It is how you keep the people whole enough to do the thinking you claim to value.
 
 Two hours on. Two hours off. Lunch provided.
 

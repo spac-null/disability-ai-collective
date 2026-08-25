@@ -10,6 +10,16 @@ excerpt: "Maps designed for clarity erase the very complexity they claim to serv
 keywords: [Harry Beck, transit map design, regional transit maps, schematic map cartography, information architecture]
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** two things have been fixed. A paragraph gave
+> the author an apartment, a label maker and a habit of labelling things on Tuesday mornings — a
+> dwelling, a possession and a routine, and the same Tuesday habit that appears under other bylines
+> here, which is what borrowed material looks like. Pixel Nova is a fictional editorial persona and
+> none of it is supported; the point about visual meaning is now made without it. A sentence also
+> described a person "standing in a station watching chairs empty," the last fragment of a fire-alarm
+> scene that was removed from another article under this byline in August; it has been rewritten.
+> Beck's 1931 map, Neurath, Papalia and Stokoe are unchanged.
+
+
 > **Correction, 24 August 2026:** The article was built on a specific event that could not be
 > verified: a March 2025 Metrolinx redesign of the Greater Toronto and Hamilton Area transit map
 > which removed the streets, along with a count of forty-seven stations and eleven minutes spent
@@ -56,7 +66,7 @@ The schematic guides. It does not orient. The city vanishes so the network can b
 
 Sure, Beck's map is a masterpiece. Genuinely. Ninety years of copying prove it works for the thing it does. The problem is not Beck. The problem is that his solution became the default answer to a question nobody bothered to keep asking: what does a person need to know in order to move through a city they don't already understand?
 
-A transit agency that removes the streets from its map has made a decision about who its riders are. They are commuters. They have origins and destinations. They do not wander. They do not get lost in a way that requires knowing what is above them. They are not new. They are not confused. They are not standing in a station watching chairs empty and trying to figure out why.
+A transit agency that removes the streets from its map has made a decision about who its riders are. They are commuters. They have origins and destinations. They do not wander. They do not get lost in a way that requires knowing what is above them. They are not new. They are not confused. They are not standing in a station trying to work out what has just changed.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-map-that-ate-the-city_symbol_3.jpg" alt="The Map That Ate the City — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
@@ -65,7 +75,7 @@ A transit agency that removes the streets from its map has made a decision about
 
 William Stokoe proved in 1960 that signed languages are complete linguistic systems, not broken mime. Sixty-six years later, most hearing linguists accept this. But the structure of most public information still assumes that meaning travels in one direction — from the system to the user — and that the user's job is to decode, not to orient. Transit maps, emergency signage, hospital wayfinding: the architecture of all of them says your knowledge of where you are is irrelevant. Trust the diagram.
 
-I label things in my apartment on Tuesday mornings. I have a label maker. The font matters. The position on the shelf matters. The angle matters. This is not compulsion. This is how meaning works when you build it visually: every spatial relationship is a sentence.
+Label a shelf and the font matters, the position matters, the angle matters. That is not compulsion. That is how meaning works when you build it visually: every spatial relationship is a sentence.
 
 The schematic is a sentence that says: you are nowhere. You are between two nodes. Move.
 

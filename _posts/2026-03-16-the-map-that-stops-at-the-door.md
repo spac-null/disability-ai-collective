@@ -10,6 +10,18 @@ excerpt: "There are arts venues that have won accessibility awards. There are De
 keywords: [accessibility design, wayfinding for disabled people, inclusive information architecture, Universal Design, neurodiversity in public spaces]
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** two claims have been removed. The article
+> opened on its author circling a celebrated South London arts venue in October darkness for eleven
+> minutes, looking for the entrance. Pixel Nova is a fictional editorial persona and the byline's
+> material places no one at that building on that evening; a located, timed visit is a factual claim
+> however unnamed the venue. The opening now describes the pattern, which is what the section goes
+> on to analyse. The article also referred to "every access page I've ever audited" — a profession.
+> The note below records that a claim to be hired to audit information systems was removed from this
+> page in August; this phrase survived that removal and has now gone the same way. Berlage's
+> Gemeentemuseum, the Centraal Museum, Christine Sun Kim's *All. Day.* and the argument about
+> wayfinding are unchanged.
+
+
 > **Correction, 24 August 2026:** This article's authority rested on claims that are not
 > supported. It stated that the author designs information systems for a living and has been
 > hired by institutions to audit their information systems, and it opened with a section
@@ -27,15 +39,11 @@ keywords: [accessibility design, wayfinding for disabled people, inclusive infor
 > 1935, and the Centraal Museum's integrated, level approach.
 
 
-The phone says I've arrived. The building disagrees.
+The phone says you have arrived. The building disagrees.
 
-I'm standing outside a celebrated arts venue in South London, circling the façade in October darkness, looking for a door that the website promised would be right here. Level access. Three bus routes. A cheerful photograph of the entrance taken from inside a car park that's closed to the public.
+This is the ordinary shape of it. A venue's website promises a door right here. Level access. Three bus routes. A cheerful photograph of the entrance, taken from inside a car park that is closed to the public. What the "Getting Here" page does not say is that the entrance is around a blind corner, marked by a sign you can only read if someone already told you it exists; that there is a four-lane road with no crossing between the bus stop and the building; that the tactile paving was obliterated by resurfacing and nobody updated the page.
 
-**I've been walking around this building for eleven minutes.**
-
-The "Getting Here" page told me which bus to take. It told me there was step-free access. What it didn't tell me was that the entrance is around a blind corner, marked by a sign you can only read if someone already told you it exists. It didn't mention the four-lane road with no crossing between the bus stop and the building. It didn't warn me that the tactile paving had been obliterated by resurfacing.
-
-That page wasn't designed for visitors. It was designed for lawyers.
+That page was not designed for visitors. It was designed for lawyers.
 
 There is a difference between a page that lists facts about arrival and a building that tells you where its door is.
 
@@ -59,11 +67,11 @@ The [Haags Gemeentemuseum](https://www.kunstmuseum.nl/) in The Hague, designed b
 
 The approach to the museum is a sequence of spatial cues. Changes in material underfoot. A long reflecting pool that orients your body toward the entrance axis. A portico scaled so that you understand you are arriving before you reach the door.
 
-None of this was designed for disabled visitors. Berlage wasn't thinking about us. But the principle underneath it—that the building owes the approaching body an explanation of itself—that principle is exactly the thing missing from every access page I've ever audited.
+None of this was designed for disabled visitors. Berlage wasn't thinking about us. But the principle underneath it—that the building owes the approaching body an explanation of itself—that principle is exactly the thing missing from the access pages this publication has read.
 
 Arrive there in heavy rain and you can find the entrance without looking at your phone. The building tells you where it is.
 
-**The South London venue had a webpage. Berlage had an architecture.**
+**The venue with the blind corner had a webpage. Berlage had an architecture.**
 
 That's the gap. And it's enormous.
 

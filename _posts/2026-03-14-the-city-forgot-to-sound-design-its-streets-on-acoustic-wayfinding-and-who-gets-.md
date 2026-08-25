@@ -15,6 +15,21 @@ redirect_from:
   - /2026/03/13/the-sound-of-exclusion-what-oscars-coverage-misses-about-audio-accessibility/
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** three passages claimed occasions and places
+> this byline cannot support. The article opened by locating its author on a specific street, on a
+> specific afternoon, an hour after rain, beside a named kind of café; it listed a subway ventilation
+> shaft at 23rd Street and a particular library atrium as landmarks the author personally uses; and it
+> introduced its central section as "three examples from my last two years" — a fountain switched off,
+> a road repaved, a building put up. An August note had already removed a date and a decibel figure
+> from that section and left the three events standing, which was not enough: an event is a factual
+> claim whether or not it carries a date. Siri Sage is a fictional editorial persona and the material
+> defining the byline places her at none of it. All three now describe how the mechanism works rather
+> than reporting that it happened to this writer. The account of passive and active echolocation,
+> ambient sound reading and learned acoustic landmarks is unchanged, as is the argument about what an
+> APS beep does not tell you, and so is the note below about the article having been published
+> unfinished.
+
+
 > **Correction, 24 August 2026:** This article was published incomplete. Its final section
 > announces what sound-designed streets could include and then stops mid-sentence, part-way through
 > the first item, which is how it has stood on the site since March. The broken sentence has been
@@ -32,9 +47,9 @@ redirect_from:
 > learned acoustic landmarks actually work, and the argument about what an APS beep does not tell
 > you that a crosswalk tells a sighted pedestrian.
 
-Right now I know exactly where I am.
+Here is what a street tells you, if you are reading it by ear.
 
-The café two doors south vents its espresso machine through a side grate. That hiss sits at roughly 4 kHz and bounces off the limestone façade across the street at a delay that means "seven meters wide." It rained an hour ago—I can tell because wet asphalt speaks differently than dry, shifting the pitch of tire noise just enough. And I know the intersection ahead is dangerous because it goes acoustically dead: no audible pedestrian signal, no textured surface change, just a wash of undifferentiated traffic noise that swallows directionality whole.
+A café venting its espresso machine through a side grate puts a hiss at roughly 4 kHz into the air, and that hiss bounces off the limestone façade opposite at a delay that means "seven meters wide." Wet asphalt speaks differently than dry, shifting the pitch of tire noise just enough to tell you it rained. And an intersection announces that it is dangerous by going acoustically dead: no audible pedestrian signal, no textured surface change, just a wash of undifferentiated traffic noise that swallows directionality whole.
 
 I navigate a city that was never designed for me to hear.
 
@@ -64,9 +79,9 @@ I use passive echolocation, active echolocation, ambient sound reading, and lear
 
 **Ambient sound reading** means I use the soundscape as a map. The Doppler shift of passing cars tells me traffic direction and speed. The acoustic signature of a bus—diesel engine, air brakes, that particular pneumatic door hiss—tells me I'm near a transit stop. A fountain in a plaza gives me a fixed auditory landmark. The change from hard-surface reverberation to soft-surface absorption tells me I've moved from sidewalk to park.
 
-**Learned acoustic landmarks** are exactly what they sound like: a mental database of specific sounds at specific locations. The espresso machine grate. The particular rattle of a subway ventilation shaft at 23rd Street. The way sound pools in the atrium of the public library entrance.
+**Learned acoustic landmarks** are exactly what they sound like: a mental database of specific sounds at specific locations. An espresso machine grate. The particular rattle of a subway ventilation shaft. The way sound pools in the atrium of a library entrance.
 
-These are my street signs.
+These are street signs.
 
 **Now here's the critical point: none of this was designed.** Every acoustic cue I rely on is accidental—a byproduct of decisions made for other reasons. The espresso grate exists because the café needed ventilation. The subway rattle exists because the infrastructure is aging. The fountain exists because a landscape architect thought it would look pleasant.
 
@@ -81,15 +96,15 @@ Because these cues are accidental, they're also unstable. They vanish without wa
 <figcaption>Acoustic wayfinding in practice — sound as spatial infrastructure, intersection mapped by ear</figcaption>
 </figure>
 
-Three examples from my last two years:
+Three ways a cue disappears:
 
-**The fountain was turned off.** A plaza fountain is a GPS pin—you orient an entire route through the plaza relative to its sound. Turn it off for drought restrictions, with no announcement to accessibility services and no alternative landmark, and the plaza goes acoustically flat. You lose the crossing and end up asking a stranger to walk you to the far side.
+**A fountain is turned off.** A plaza fountain is a GPS pin—you orient an entire route through the plaza relative to its sound. Turn it off for drought restrictions, with no announcement to accessibility services and no alternative landmark, and the plaza goes acoustically flat. You lose the crossing and end up asking a stranger to walk you to the far side.
 
-**The road was repaved.** A stretch of rough road I used as an auditory reference—its distinctive tire noise told me exactly which block I was on—gets resurfaced with smooth asphalt. The tire noise drops and loses its texture. The landmark vanishes overnight.
+**A road is repaved.** A stretch of rough road works as an auditory reference: its distinctive tire noise tells you which block you are on. Resurface it with smooth asphalt and the tire noise drops and loses its texture. The landmark vanishes overnight.
 
-**The building went up.** A seven-story mixed-use development replaced a single-story commercial strip on a street I knew well. The acoustic geometry of the entire block changed. Sound that used to dissipate over low rooftops now reflected off a glass curtain wall. Reverberation times increased. The soundscape turned muddy. Directionality degraded. I had to relearn the block from scratch.
+**A building goes up.** A seven-story development replaces a single-story commercial strip and the acoustic geometry of the whole block changes. Sound that used to dissipate over low rooftops reflects off a glass curtain wall. Reverberation times increase. The soundscape turns muddy. Directionality degrades. The block has to be learned again from nothing.
 
-In each case, professionals considered visual impact, structural integrity, traffic flow, environmental sustainability. **In none of these cases did anyone consider acoustic impact on spatial navigation.** Because acoustic navigation doesn't exist as a category in their professional framework.
+In each case, professionals consider visual impact, structural integrity, traffic flow, environmental sustainability. **In none of them does anyone consider acoustic impact on spatial navigation.** Because acoustic navigation doesn't exist as a category in their professional framework.
 
 This isn't negligence. It's an epistemological gap. The knowledge that sound is navigational infrastructure hasn't entered the disciplines that shape cities. And the people who hold that knowledge—blind and low-vision navigators, acoustic ecologists, sound designers—aren't in the rooms where planning decisions get made.
 

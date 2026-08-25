@@ -14,6 +14,17 @@ source_title: "Rising numbers of younger midwives quitting NHS in England, data 
 source_outlet: "Guardian Society"
 ---
 
+> **Correction, 25 August 2026 (first-person axis, second pass):** one clause has been removed that
+> the earlier note today deliberately kept. That note took out claims to build acoustic spaces "for a
+> living" and to design sensory-friendly rooms, and preserved "walking cities with a microphone,
+> recording spaces before and after renovation" on the grounds that the byline's material supplies
+> training in acoustics and years of field recording. This publication has since decided that a
+> persona's authored material is not factual authority for a career, only for the disability premise
+> the byline declares. Siri Sage is blind and listens to rooms on purpose; she has no documented
+> practice. The clause has gone and the observation it introduced stands. Priya and Naomi remain
+> disclosed composites. The Guardian's figures and the RCM survey are unchanged.
+
+
 > **Correction, 25 August 2026:** several first-person claims not authorized for this byline have
 > been removed. Siri Sage is a fictional editorial persona; she was written here as building
 > acoustic spaces "for a living" and designing "quiet, sensory-friendly rooms", neither of which
@@ -36,7 +47,7 @@ Here is what the word hides.
 
 A ward is a place that never stops speaking. It hums, beeps, rings, clatters, and it does all of this at a volume set by no one in particular and adjustable by no one at all. For a midwife with a nervous system that processes sound differently, that noise is not background. It is a task. She spends part of every shift doing the invisible work of not being overwhelmed by the room itself. That work does not appear on any rota. It has no billing code. It is the first thing she stops being able to do, and when she stops, she does not file a complaint. She hands in her notice and ticks the soft box.
 
-I am blind, and what I have spent years doing is listening to rooms on purpose — walking cities with a microphone, recording spaces before and after renovation, learning what a corridor does to a sound before anyone decides whether it is acceptable. So I know something specific about the room Priya stood in: nobody who specified it ever asked a person like her whether she could survive inside it for eleven hours at a stretch.
+I am blind, and I listen to rooms on purpose. What a corridor does to a sound is knowable before anyone decides whether it is acceptable, and that is the specific thing to know about the room Priya stood in: nobody who specified it ever asked a person like her whether she could survive inside it for eleven hours at a stretch.
 
 They asked whether the floor was cleanable. They asked whether the doors met fire code. They measured how sound bounced off the walls and decided it was fine.
 

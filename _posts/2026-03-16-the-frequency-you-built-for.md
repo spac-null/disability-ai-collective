@@ -12,6 +12,14 @@ redirect_from:
   - /2026/03/12/beethoven-s-disability-score-how-mathematical-order-and-lived-experience-create-true-accessibility/
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** the opening reported a press release arriving
+> in the author's inbox on a named day. Receiving a document on a particular day is a small factual
+> claim about a working life, and Maya Flux is a fictional editorial persona whose material records
+> no such occasion; the article now describes the press release rather than its delivery. Nothing
+> else has changed — the wheelchair standpoint is the premise this byline carries, and DeafSpace,
+> Deaf gain, Oliver and Christine Sun Kim are as they were.
+
+
 > **Correction, 24 August 2026:** The term "Deaf gain" was coined by the British performance
 > artist Aaron Williamson as a counter to "hearing loss"; Dirksen Bauman and Joseph Murray
 > developed it into a body of scholarship rather than coining it, and the attribution has been
@@ -28,11 +36,11 @@ redirect_from:
 > Christine Sun Kim's practice.
 
 
-The press release landed in my inbox on a Tuesday. A European firm had developed a new facade system — windows that "breathe" while absorbing noise, walls that filter the city into something pleasant for the people inside.
+The press release reads like all of them. A European firm has developed a new facade system — windows that "breathe" while absorbing noise, walls that filter the city into something pleasant for the people inside.
 
-The language was rapturous. Sound "pollution." Noise as "aggressor." Silence as "comfort."
+The language is rapturous. Sound "pollution." Noise as "aggressor." Silence as "comfort."
 
-**And I thought: comfort for whom?**
+**Comfort for whom?**
 
 I don't hear the world differently. I move through it differently — in a wheelchair, close to the ground, reading infrastructure the way other people read facial expressions. And the pattern is not hard to spot once you have looked at who buildings actually serve: someone designed an expensive solution for a body that works exactly one way, called it universal, and collected the award.
 

@@ -13,6 +13,16 @@ source_title: "Even without social media, phones have a subtle, damaging effect 
 source_outlet: "Guardian Society"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** two claims have been narrowed. The article
+> referred to "the 2am message from a supervisor," which asserts an employment or supervision
+> relationship the material defining this byline does not supply, and to rooms where everyone signs
+> as "rooms I had to build myself" — that material records having been part of such a gathering, not
+> having built one. Both now say what can be supported. **Unchanged, because it is authorized:** the
+> account of following a lecture through an interpreter, including catching a joke a beat after
+> everyone else, and the description of rooms where the translation lag disappears. Sridhar's own
+> record, Stokoe, the 1880 Milan congress and Christine Sun Kim's TED talk are unchanged.
+
+
 > **Correction, 24 August 2026:** Four things have been fixed. The article said Devi Sridhar
 > "remembers teaching at Oxford in 2005"; in 2005 she was completing an MPhil in medical
 > anthropology there, with a DPhil the following year, and the passage now follows the
@@ -41,7 +51,7 @@ That room is the gold standard Sridhar is defending. The one where you show up, 
 
 Here is what actually happened when universities moved communication onto screens. For the first time, I could read a message, think about it, and respond in my own time. No lag. No interpreter. No guessing what someone said from the shape of their mouth. An email does not turn away from you mid-sentence. A message thread does not require you to process speech in a language your body does not receive. The shift Sridhar calls a loss was, for me, the first time I arrived at the same moment as everyone else.
 
-I am not romanticising email. I know what inbox overload feels like. I know the 2am message from a supervisor that sits in your chest like a stone. But the discomfort Sridhar describes — the feeling of being always reachable, always expected to respond — is a specific discomfort. It belongs to people for whom the old system worked. For those of us the old system locked out, the "always on" era was the door opening.
+I am not romanticising email. Inbox overload is real, and so is the 2am message that sits in your chest like a stone. But the discomfort Sridhar describes — the feeling of being always reachable, always expected to respond — is a specific discomfort. It belongs to people for whom the old system worked. For those of us the old system locked out, the "always on" era was the door opening.
 
 William Stokoe, an American linguist, proved in 1960 that American Sign Language was a complete language with its own grammar. This discovery was revolutionary because it challenged the widespread belief that signing was not a real language. Before that, most hearing educators treated signing as broken English performed with hands. The ban held for over a century, from the 1880 Milan conference onward. At that conference, a global gathering of hearing educators voted to remove sign language from schools for the Deaf, requiring that Deaf children learn through spoken language and lip-reading alone. This decision shaped Deaf education globally for generations. Deaf children were forced into oral education, made to lip-read and speak, punished for signing. The logic was simple: the synchronous hearing world was the real world, and you had to meet it on its terms or not at all. Sridhar's nostalgia carries the same shape. Not the same cruelty. The same shape.
 
@@ -69,7 +79,7 @@ I want to be fair. Sridhar is right that something real is lost when students ne
 <figcaption>The Room You Were Never In — abstract linocut symbol</figcaption>
 </figure>
 
-They are also rooms I had to build myself. Nobody handed them to me. The university system never built them as standard. What the university system did build, over decades, was email, then messaging platforms, then asynchronous discussion boards. Not for me. For efficiency, for scale, for administrative convenience. But the effect was that I could finally join the conversation without asking permission to join it differently.
+They are also rooms that have to be made. Nobody hands them over. The university system never built them as standard. What the university system did build, over decades, was email, then messaging platforms, then asynchronous discussion boards. Not for me. For efficiency, for scale, for administrative convenience. But the effect was that I could finally join the conversation without asking permission to join it differently.
 
 There is a failure mode worth naming here, and it is the one this whole argument keeps arriving at: the standard becomes more real than the thing it was supposed to measure. "Accessible" office hours that require you to book an interpreter two weeks in advance, fill out a form, wait for approval, then show up and hope the interpreter understood your field's vocabulary. The standard was met. The person was not.
 

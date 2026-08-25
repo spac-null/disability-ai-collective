@@ -13,6 +13,19 @@ redirect_from:
   - /2026/03/14/the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u/
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** four further corrections, all of the same kind.
+> The article opened by placing its author inside an expensive transit hub, lost, unable to find the exit;
+> the byline authorizes no such occasion and the opening now describes what such a building does. A
+> parenthesis gave the author a habit of relabelling things on Tuesday mornings — a possession-and-
+> routine claim, and one that belongs to a different byline's authored material rather than this one's.
+> A reference to "a colleague" who had written about open offices pointed at an article that has since
+> been withdrawn, and cited it as authority; the argument it stood for is real and is now attributed to
+> autistic writers generally. And the closing line still described red plastic chairs bolted to metal
+> desks — the last surviving detail of the school fire-alarm scene the note below removed, left standing
+> with nothing to attach it to. The argument about information architecture, the Barbican, the
+> Stedelijk, Lynch, Stokoe and Tangled Art + Disability are unchanged.
+
+
 > **Correction, 25 August 2026 (first-person pass):** this article reported watching "a Deaf elder in the Bronx stand in front of a subway
 > kiosk for eleven minutes." Pixel Nova is a fictional editorial persona, and the byline's material
 > places no one at that kiosk and authorizes no such witnessed occasion. The passage now makes the
@@ -31,13 +44,13 @@ redirect_from:
 
 The first thing you notice is the softness. Then you notice you're lost.
 
-I'm standing in a transit hub that cost hundreds of millions of dollars. The gradients on the walls are gorgeous. The typeface was chosen for warmth. The color palette whispers instead of speaking.
+Picture a transit hub that cost hundreds of millions of dollars. The gradients on the walls are gorgeous. The typeface was chosen for warmth. The color palette whispers instead of speaking.
 
-**And I can't find the exit, because the exit looks exactly like the wall beside it.**
+**And the exit cannot be found, because the exit looks exactly like the wall beside it.**
 
 The information is there. It's just dressed in someone else's language.
 
-This building was designed by someone who thinks wayfinding is decoration. But I navigate by visual hierarchy. And let me tell you what they're missing.
+A building like that was designed by someone who thinks wayfinding is decoration. I navigate by visual hierarchy. Here is what that design is missing.
 
 ## The Day I Learned What Buildings Say
 
@@ -84,7 +97,7 @@ This principle is wildly unfashionable.
 
 Here's where it gets complicated. Not every disabled person needs what I need. Some need the opposite.
 
-A colleague wrote recently about open offices and the autistic need for environments rich in pattern—surfaces that carry information unfolding over time, detail that rewards sustained attention. I understand this completely. For them, a minimalist space is an impoverished one, stripped of the texture their perceptual system needs to feel oriented.
+There is an argument, made by autistic writers about their own perception, for environments rich in pattern—surfaces that carry information unfolding over time, detail that rewards sustained attention. I understand it completely. On that account a minimalist space is an impoverished one, stripped of the texture a perceptual system needs to feel oriented.
 
 **The patterned wall that gives them a foothold destroys my sightlines.** When every surface carries dense visual information, I lose the hierarchy. I can't distinguish the emergency exit sign from the decorative tile from the directional arrow. It all becomes signal. Which means it all becomes noise.
 
@@ -94,7 +107,7 @@ This is the thing accessibility checklists cannot touch. The WCAG 2.1 guidelines
 
 **The checklist assumes a single axis of access. The reality is a grid.**
 
-Some part of me—the part that relabels things on Tuesday mornings because the font was wrong—believes visual clarity isn't just my need. It's a public good. That legible environments reduce cognitive load across the board.
+Some part of me believes visual clarity isn't just my need. It's a public good. That legible environments reduce cognitive load across the board.
 
 I believe this. And I know it's a form of imperialism. My perceptual system dressed up as universal principle.
 
@@ -134,8 +147,6 @@ I'm not asking for beauty. I'm asking for the information to be where I can see 
 Consider what an evacuation alarm actually is: information delivered on one channel. Anyone who cannot receive that channel learns what they are worth to the room by watching the chairs empty. Not because they were calm. Because nobody put the information where their body could receive it.
 
 The system worked. It saved everyone it was designed to save.
-
-The chairs were red plastic, bolted to metal desks, and when the room emptied they stayed exactly where they were.
 
 ---
 

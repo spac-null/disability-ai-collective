@@ -13,6 +13,14 @@ source_title: "The playful world of British painter Rose Wylie exhibited for the
 source_outlet: "Le Monde English"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** the closing sentence had the author standing
+> in a community pool doorway at 5:45 the following morning. Siri Sage is a fictional editorial
+> persona and the byline's material records no such routine; the same pool doorway recurs across
+> articles under this byline, which makes it a stock scene rather than a remembered one. The close
+> now states the idea it was standing in for. Rose Wylie's exhibition and career dates, Alison
+> Knowles, and the argument about market-detectable frequency are unchanged.
+
+
 > **Correction, 24 August 2026:** This article said Alison Knowles "is still making work at
 > ninety-one." She died in 2025, aged ninety-two. Describing a living artist who has died is a
 > straightforward error of fact about a real person and it has been corrected. The claim that she
@@ -59,4 +67,4 @@ Wylie's paintings carry room tone. Decades of it. That is what the critics are h
 
 The word they never use is "early." Nobody at Zwirner is calling these paintings early. But look at the trajectory: Wylie took a postgraduate degree at the Royal College of Art in 1979, graduating at forty-six, and the solo exhibitions arrived decades later — the Jerwood in 2012, Tate Britain in 2013, the Serpentine in 2017. The work didn't change on that schedule. The frequency the market could detect changed.
 
-At 5:45 tomorrow morning I will stand in the doorway of the community pool and listen to the water before anyone arrives. Forty seconds of a room hearing itself back, uninterrupted, on nobody's schedule.
+A room hearing itself back, uninterrupted, on nobody's schedule: that is what room tone is, and it is the thing a market tuned to eighteen-month cycles has no instrument for.

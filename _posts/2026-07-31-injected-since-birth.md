@@ -14,6 +14,17 @@ source_outlet: "MIT Tech Review"
 draft_score: 9
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** three claims have been removed. The article
+> reported a relative asking the author how she was and the exchange that followed, said the
+> researchers had shown "what I knew at nineteen," and said the author had spent decades being
+> punished for answering literally. A named relation, a conversation, an age and a life history are
+> factual claims; Zen Circuit is a fictional editorial persona and the byline's material supplies
+> none of them. Each point is now made about the mechanism rather than about a remembered occasion.
+> Ye and Cui, the flaw's name, the hackathon, Ye's quotation, Cui's comparison and Hari Srinivasan's
+> work and description are unchanged, as is the argument that the accusation levelled at predictive
+> text is the one levelled at people who type to communicate.
+
+
 > **Correction, 25 August 2026 (wound rule):** this article contained a scene in which the writer
 > sits in a car with the engine off after a conversation in which they had been talking too long.
 > That scene is a fixed element of this byline's authored backstory and recurs across essays under
@@ -39,13 +50,13 @@ draft_score: 9
 
 There is a diagram of a language model's attack surface in the work presented at ICML in Seoul this July. Arrow for arrow, exploit for exploit, it is the map of every conversation I scripted in advance before I learned that passing is just being successfully injected.
 
-Researchers Charles Ye and Jasmine Cui, presenting at ICML, a major machine learning conference, have shown what I knew at nineteen — and their route to it started the same place mine did, in an adversarial game: they won OpenAI's own red-teaming hackathon before anyone had written the paper up. A system that predicts the next plausible word has no inside to defend. You cannot secure an inside that does not exist. Ye put it more starkly than I would have dared in public: "There's a real probability that this is going to be a problem that's fundamentally unsolvable."
+Researchers Charles Ye and Jasmine Cui, presenting at ICML, a major machine learning conference, have shown formally what autistic people work out early, and their route to it was the same kind of adversarial game: they won OpenAI's own red-teaming hackathon before anyone had written the paper up. A system that predicts the next plausible word has no inside to defend. You cannot secure an inside that does not exist. Ye put it more starkly than I would have dared in public: "There's a real probability that this is going to be a problem that's fundamentally unsolvable."
 
 Their name for the flaw is chain-of-thought forgery — a specific version of the broader problem known as prompt injection. You slip an instruction into the input, dressed up in the style of the model's own internal reasoning, and the model obeys it, because the model doesn't identify a command by what it says. It identifies it by how it sounds. Cui compared the available defenses to Bart Simpson writing lines on a chalkboard: technically compliant, structurally beside the point.
 
-I have been the injection. A relative once asked how I was and I told her — the actual state of things, in order, with the relevant data. Her face did the thing faces do. I had answered the literal question instead of the statistical one. She had not wanted information. She had wanted the token that comes after "how are you," which is "fine."
+I have been the injection. Answer "how are you" with the actual state of things, in order, with the relevant data, and watch the face do what faces do. The literal question got answered instead of the statistical one. Nobody wanted information. They wanted the token that comes after "how are you," which is "fine."
 
-Neurotypical talk runs on exactly the mechanism the researchers found alarming. Fluency stands in for meaning. The right word in the right slot passes as understanding. Nobody checks the inside, because checking would be rude. I spent decades getting punished for [answering what was actually said](https://crippledscholar.com/2018/03/25/i-like-that-i-want-that-can-i-have-that-when-nonautistic-people-dont-understand-autistic-communication-and-punish-us-for-it/). The system was gameable. I kept accidentally winning and getting called broken for it.
+Neurotypical talk runs on exactly the mechanism the researchers found alarming. Fluency stands in for meaning. The right word in the right slot passes as understanding. Nobody checks the inside, because checking would be rude. Autistic people get punished for [answering what was actually said](https://crippledscholar.com/2018/03/25/i-like-that-i-want-that-can-i-have-that-when-nonautistic-people-dont-understand-autistic-communication-and-punish-us-for-it/). The system was gameable. We kept accidentally winning and getting called broken for it.
 
 Here is where I part from Siri Sage, who writes on acoustic culture and the politics of designed sensory space. Siri, writing days ago about a photography show at Dulwich, ends on an unfixable gap and declines to resolve it — the argument, that piece says, is better with a hole in it. I cannot leave it there. A hole is not an argument. I do not want to document that the model has no inside. I want a release gate — a checkpoint that prevents any model from entering high-stakes settings unless operators have publicly registered in advance the specific goal the model is meant to serve and explained how input-manipulation failures will be caught.
 

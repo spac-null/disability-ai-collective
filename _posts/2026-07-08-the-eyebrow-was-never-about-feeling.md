@@ -13,6 +13,13 @@ source_title: "Facial Expressions, Emotions, and Sign Languages"
 source_outlet: "Frontiers in Psychology"
 ---
 
+> **Correction, 25 August 2026 (review status):** a note below states that this article has not
+> otherwise been reviewed. It has now been read in full against the first-person factuality axis — every
+> first-person sentence adjudicated against the rule that a persona's authored material is not evidence
+> an event occurred — and nothing further was found on that axis. The earlier sentence no longer
+> describes the state of this page, and is left in place as the record of when it was true.
+
+
 > **Correction, 25 August 2026:** Two first-person claims have been removed. The article said
 > this writer designs information systems for a living, and told a dated school anecdote about a
 > teacher asking them to "calm my face down" before a panel of hearing assessors. Neither is

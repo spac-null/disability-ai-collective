@@ -13,6 +13,16 @@ source_title: "Banksy confirms statue of man blinded by flag in London is his wo
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** one clause has been rewritten. The article said
+> the author's pattern recognition "once had me mapping every bus route variation in a city nobody
+> asked me to map," and called it "the thing that makes me good at what I do." An August note removed
+> the duration attached to that mapping — four months — and left the event and the implied profession
+> standing. Zen Circuit is a fictional editorial persona; the material defining the byline records no
+> such project. The observation about which knowledge counts as expertise is now made without it. The
+> Waterloo Place statue, the monuments around it, Banksy's confirmation and the account of
+> empathising-systemising theory are unchanged.
+
+
 > **Correction, 25 August 2026 (wound rule):** this article contained a scene in which the writer
 > sits in a car with the engine off after a conversation in which they had been talking too long.
 > That scene is a fixed element of this byline's authored backstory and recurs across essays under
@@ -50,7 +60,7 @@ Waterloo Place is not empty ground. The bronze man stands a few paces from Edwar
 
 Two kinds of public memory, standing in the same square. One arrived through categories the state had already built — hero, nurse, war worth memorializing. One arrived through no category at all, overnight, unannounced. The difference was not quality. It was legibility. The system could read Edward VII and Florence Nightingale because it built the readers first. It had no mechanism to reject what it could not classify.
 
-I know this feeling from the inside. My pattern recognition — the thing that makes me good at what I do, the thing that once had me mapping every bus route variation in a city nobody asked me to map — is legible as expertise only when it arrives through credentialed channels. When it arrives through obsession, through the specific texture of autistic focus, it becomes a curiosity at best. A symptom at worst. The same knowledge, classified two ways.
+I know this feeling from the inside. Pattern recognition — the kind that maps every variation in a transit network because the variations are there, not because anyone asked — is legible as expertise only when it arrives through credentialed channels. When it arrives through obsession, through the specific texture of autistic focus, it becomes a curiosity at best. A symptom at worst. The same knowledge, classified two ways.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-oldest-trick-in-the-statue-book_moment_2.jpg" alt="The Oldest Trick in the Statue Book — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">

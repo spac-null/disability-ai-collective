@@ -13,6 +13,15 @@ source_title: "Algorithms don\u2019t care: how AI worsens the double burden for 
 source_outlet: "The Conversation"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** one clause has been removed — "I have stared
+> at enough admin panels to know" — which claims professional access to the kind of system the
+> article is describing. The note below records that a claim to design information systems for a
+> living, and a claim to have been called an edge case in four countries and two languages, were
+> removed from this page in August; this clause is the same claim in a different form and survived
+> that pass. The observation it introduced stands on its own. Lia's quotation, the Conversation's
+> reporting, Flusser, Neurath and Astra Taylor on fauxtomation are unchanged.
+
+
 > **Correction, 24 August 2026:** Three claims drawn from the cited article were stated more
 > strongly or more specifically than the source supports. It attached "13-hour shifts" to Yanti
 > by name; the source gives that figure for gig workers generally during COVID-19, not for her.
@@ -50,7 +59,7 @@ Vilém Flusser, a media theorist, wrote in 1983 that technical images do not rep
 
 You might say: but this is just optimisation. Platforms need to predict supply. Fair. Prediction is not neutral, though. Every prediction model contains a silhouette of the body it expects. Otto Neurath, a statistician and social theorist, understood this in the 1930s when he built the [Isotype system](https://isotyperevisited.org) — pictorial statistics meant to make social data clear and understandable to anyone. His collaborator Marie Neurath was the transformer — the one who decided how data became figures, which is to say which figures existed at all. That is where the politics sat. The figure standing in for "worker" was always upright, always symmetrical. The figures that didn't fit the template weren't distorted. They were simply absent.
 
-The gig platform does the same thing at scale. It doesn't reject you. It just stops showing you shifts. The interface looks identical whether you are deactivated or simply unseen. I have stared at enough admin panels to know: the visual language of exclusion is silence. No red banner. No error message. The row just goes blank.
+The gig platform does the same thing at scale. It doesn't reject you. It just stops showing you shifts. The interface looks identical whether you are deactivated or simply unseen. The visual language of exclusion is silence. No red banner. No error message. The row just goes blank.
 
 ---
 

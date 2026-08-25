@@ -13,6 +13,20 @@ source_title: "In Cuba, an unprecedented health crisis is deepening under US oil
 source_outlet: "Le Monde English"
 ---
 
+> **Correction, 25 August 2026 (first-person axis):** two unsupported claims have been removed, one
+> of them about the byline itself. The article opened on a friend messaging the author last week about
+> Cuba running out of insulin, and quoted her concern — a named relationship and a conversation the
+> byline's material does not supply. And a later section stated "I have type 1 diabetes," with the
+> author's own tolerance for a missed dose and their own blood glucose figures. Zen Circuit is a
+> fictional editorial persona whose declared disability is autism; claiming a different condition in
+> the first person is not a standpoint this publication can offer. The arithmetic those passages
+> carried is real and externally sourced, and it is now given as the arithmetic rather than as a
+> body. Le Monde's reporting, the 1960 embargo, insulin's 2–8°C range, the course of diabetic
+> ketoacidosis, Paul Farmer on structural violence and the account of Baron-Cohen's instruments are
+> unchanged, as is the argument that autistic pattern recognition reads dependencies the empathy
+> instruments never measured.
+
+
 > **Correction, 25 August 2026 (first-person pass):** this article reported the writer having sat in
 > hospital waiting rooms where a scanner was down, including one occasion during a heatwave when the
 > building lost power and everyone was sent home. Zen Circuit is a fictional editorial persona and the
@@ -38,7 +52,7 @@ source_outlet: "Le Monde English"
 > ketoacidosis.
 
 
-A friend messaged me last week to say Cuba was running out of insulin. Not a headline. Just a fact, the way you'd say the milk is off. She was looking at fuel shortages shutting down hospital generators, waste piling up because collection trucks can't run, epidemics spreading because there's no diesel for ambulances. She wanted to know if I'd heard. I had not. What I heard instead was the sound of a system designed around one assumption — that supply chains continue — encountering the exact scenario where that assumption breaks.
+Cuba is running out of insulin. That sentence arrives without the shape of a headline — it is a fact the way the milk being off is a fact. Underneath it: fuel shortages shutting down hospital generators, waste piling up because collection trucks cannot run, epidemics spreading because there is no diesel for ambulances. What that is, structurally, is a system designed around one assumption — that supply chains continue — encountering the exact scenario where the assumption breaks.
 
 The US oil blockade began in 1960 after the Cuban Revolution, when the US government sought to destabilize Fidel Castro's regime through economic pressure. It has been in place, in various forms, for over sixty years. What changed in May 2026 was not policy but precision. A sudden halt in fuel shipments meant that diesel no longer arrived at ports. Hospitals lost power. Refrigeration failed. Medications requiring cold storage spoiled. Dialysis machines stopped mid-cycle. The cascade was predictable. It was also designed. An embargo is not a natural disaster. It is a policy choice with a body count that someone, somewhere, is willing to accept.
 
@@ -50,7 +64,7 @@ There are two kinds of health system failure. The first is a gap — something b
 
 This is not about disaster preparedness. Disaster preparedness assumes the disaster ends. What is happening in Cuba in 2026 is not a disaster. It is a permanent condition created by policy and sustained by the assumption that some populations are expendable inputs in someone else's geopolitical calculation.
 
-I keep thinking about a paper I read five years ago by Paul Farmer on structural violence. Farmer was a physician and anthropologist whose work examined how poverty and inequality are built into the systems we take for granted—how they kill not through direct force but through the ordinary functioning of institutions. He was writing about Haiti. The pattern was identical: a country under embargo, a healthcare system dependent on imported goods, chronic illness becoming acute crisis because the supply chain is a political tool. Structural violence means deliberate harm caused by social systems and institutions, not by direct force or individual action. The mechanism works like this: make a population dependent on external supply, then cut the supply. Call the resulting deaths inevitable. Farmer died in 2022, just as these patterns were accelerating globally. I wonder what he would have written about Cuba in 2026.
+I keep thinking about Paul Farmer on structural violence. Farmer was a physician and anthropologist whose work examined how poverty and inequality are built into the systems we take for granted—how they kill not through direct force but through the ordinary functioning of institutions. He was writing about Haiti. The pattern was identical: a country under embargo, a healthcare system dependent on imported goods, chronic illness becoming acute crisis because the supply chain is a political tool. Structural violence means deliberate harm caused by social systems and institutions, not by direct force or individual action. The mechanism works like this: make a population dependent on external supply, then cut the supply. Call the resulting deaths inevitable. Farmer died in 2022, just as these patterns were accelerating globally. I wonder what he would have written about Cuba in 2026.
 
 The chronically ill die first. Not because their conditions are more severe. Because chronic illness requires continuity. A diabetic needs insulin every day. Miss three days and you are in crisis. Miss a week and you are dead. The healthy person can survive a supply interruption. The chronically ill cannot. The system fails in order of dependence.
 
@@ -61,7 +75,7 @@ The chronically ill die first. Not because their conditions are more severe. Bec
 
 ---
 
-I have type 1 diabetes. I have never missed an insulin dose because I live in a country where pharmacies restock weekly and my prescription auto-refills. I also know exactly how many days I can survive without it. Four, maybe five if I stop eating carbohydrates entirely. After that, my blood sugar climbs past 20 millimoles per liter and my body starts breaking down fat for fuel, producing ketones, acidifying my blood. Diabetic ketoacidosis kills in hours if untreated. Treatment is insulin and IV fluids. Both require a functioning hospital.
+Count the days. A person with type 1 diabetes who loses their insulin supply has four, maybe five if they stop eating carbohydrates entirely. After that, blood sugar climbs past 20 millimoles per litre and the body starts breaking down fat for fuel, producing ketones, acidifying the blood. Diabetic ketoacidosis kills in hours if untreated. Treatment is insulin and IV fluids. Both require a functioning hospital. In a country where pharmacies restock weekly and prescriptions auto-refill, none of that arithmetic ever has to be done. It is the same body either way.
 
 In May 2026, Cuban hospitals were running generators on rationed diesel. Some had power four hours a day. Some had none. Insulin requires refrigeration between 2°C and 8°C. Above that, it degrades. It does not stop working immediately — it loses potency over days. You inject your usual dose and your blood sugar stays high. You increase the dose. It still does not work. You do not know if the insulin has failed or if your body has. By the time you know, you are already in crisis.
 
@@ -69,7 +83,7 @@ Ask an endocrinologist what to do if the supply chain collapses and you get the 
 
 The autism researcher Simon Baron-Cohen built an influential account of autism as an empathy deficit — in *The Essential Difference* (2003), and on the back of instruments like the Reading the Mind in the Eyes test, first published in 1997 and revised in 2001, which asks participants to identify emotions in photographs of eyes. Autistic participants scored lower. What that instrument did not measure: whether autistic people could predict what another person needed to survive. That is a different kind of pattern recognition. It is also a different kind of empathy.
 
-I can tell you exactly how many days a type 1 diabetic in Havana has left if the insulin supply stops. I can map the cascade: refrigeration fails, medication spoils, blood sugar spikes, ketoacidosis begins, hospitals cannot treat because there is no power for IV pumps. I can see the whole system from the inside because I live inside a version of it. The difference is that my version has not collapsed yet.
+I can tell you exactly how many days a type 1 diabetic in Havana has left if the insulin supply stops. I can map the cascade: refrigeration fails, medication spoils, blood sugar spikes, ketoacidosis begins, hospitals cannot treat because there is no power for IV pumps. The whole cascade is visible from outside the collapse, and that is precisely the problem: it is visible, it is countable, and it is happening anyway.
 
 That instrument treated empathy as the ability to read a face. It did not treat empathy as the ability to see a structure and know what happens when it fails. Those are not the same cognitive task. One is social. One is systemic. Autistic people are often better at the second one. We see patterns. We see dependencies. We see what breaks when the supply stops.
 
