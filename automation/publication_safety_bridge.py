@@ -44,6 +44,11 @@ from new_engine_v1 import contracts as C          # noqa: E402
 from new_engine_v1 import invariants as INV       # noqa: E402
 
 SAFETY_PROFILE = "CURRENT_ENGINE_V1"
+
+# Strict fact-check contract (orchestrator.fact_check). Kept as literals so this
+# module still imports no legacy orchestrator code; a test asserts they agree.
+FC_EXTRACTION_OK = "ok"
+FC_EXTRACTION_ERROR = "error"
 # The selector's existing numeric gate. Imported rather than hardcoded so the two
 # cannot drift apart silently.
 try:
@@ -71,6 +76,12 @@ class BridgeResult:
     def __init__(self):
         self.checks: list[dict] = []
         self.eligible = False
+        # Strict world-relative fact-check evidence (check 9). Defaults are the
+        # fail-closed values: nothing extracted, nothing checked, nothing proven.
+        self.fact_check_evidence: dict = {
+            "extraction_status": None, "claims_extracted": 0,
+            "fact_check_completed": False,
+        }
 
     def add(self, name: str, ok: bool, detail: str, blocking: bool = True):
         self.checks.append({"check": name, "ok": bool(ok), "blocking": blocking,
@@ -84,6 +95,7 @@ class BridgeResult:
     def summary(self) -> dict:
         return {"eligible": self.eligible, "profile": SAFETY_PROFILE,
                 "safety_version": SAFETY_VERSION, "checks": self.checks,
+                "fact_check_evidence": self.fact_check_evidence,
                 "failures": [c["check"] for c in self.failures]}
 
 
@@ -193,17 +205,61 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
               "check unavailable (%s)" % str(e)[:120])
 
     # 9. world-relative fact check
+    #
+    # STRICT (2026-08-25). This is the ONLY check that reaches outside the
+    # source-relative editorial/provenance chain into the world -- checks 1-8 can all
+    # pass while a source faithfully contains a claim that is false about the world.
+    # It therefore may not infer success from an ABSENCE of contradictions; it must see
+    # positive evidence that world-relative checking actually executed.
+    #
+    # The first natural CURRENT_ENGINE run (production-20260825T070003Z-5a5f17d6) is
+    # why: claim extraction raised, the legacy path swallowed it and returned [], so
+    # this check read "contradicted=0 advisory=0 unverifiable=0" and passed a draft on
+    # which no world-relative check had run at all. Required now:
+    #     extraction_status == ok  AND  claims_extracted > 0  AND  completed
+    #     AND the existing contradiction policy passes
+    # Anything else -- extraction error, zero claims, unfinished verification, or a
+    # non-strict result that cannot prove any of it -- fails closed.
     if fact_check_fn is None:
         r.add("world_relative_fact_check", False,
               "no fact-check function supplied; fail-closed, never assumed verified")
     else:
         try:
             fc = fact_check_fn(article) or {}
+            status = fc.get("extraction_status")
+            try:
+                claims_n = int(fc.get("claims_extracted") or 0)
+            except (TypeError, ValueError):
+                claims_n = 0
+            completed = bool(fc.get("fact_check_completed"))
             contradicted = fc.get("contradicted") or []
-            r.add("world_relative_fact_check", not contradicted,
-                  "contradicted=%d advisory=%d unverifiable=%d"
-                  % (len(contradicted), len(fc.get("advisory") or []),
-                     fc.get("unverifiable_count", 0)))
+            r.fact_check_evidence = {"extraction_status": status,
+                                     "claims_extracted": claims_n,
+                                     "fact_check_completed": completed}
+            if status is None:
+                r.add("world_relative_fact_check", False,
+                      "NON_STRICT_FACT_CHECK: result carries no extraction_status, so it "
+                      "cannot prove extraction ran; CURRENT_ENGINE requires the strict "
+                      "contract; fail-closed")
+            elif status != FC_EXTRACTION_OK:
+                r.add("world_relative_fact_check", False,
+                      "EXTRACTION_ERROR: verifiable-claim extraction failed (%s); no "
+                      "world-relative check ran; fail-closed"
+                      % str(fc.get("extraction_error") or status)[:120])
+            elif claims_n <= 0:
+                r.add("world_relative_fact_check", False,
+                      "NO_VERIFIABLE_CLAIMS: extraction ok but 0 claims extracted, so "
+                      "nothing was checked against the world; fail-closed")
+            elif not completed:
+                r.add("world_relative_fact_check", False,
+                      "FACT_CHECK_INCOMPLETE: extraction ok (%d claims) but verification "
+                      "did not run to completion; fail-closed" % claims_n)
+            else:
+                r.add("world_relative_fact_check", not contradicted,
+                      "extraction=ok claims_extracted=%d contradicted=%d advisory=%d "
+                      "unverifiable=%d"
+                      % (claims_n, len(contradicted), len(fc.get("advisory") or []),
+                         fc.get("unverifiable_count", 0)))
         except Exception as e:
             r.add("world_relative_fact_check", False,
                   "fact check errored (%s); fail-closed" % str(e)[:120])
@@ -219,14 +275,23 @@ def stamp_fields(result: BridgeResult) -> dict:
     `publication_safety_profile` records that this is a CURRENT_ENGINE stamp and not a
     copied legacy one. `fact_check_status: verified` is written ONLY when check 9 really
     passed -- it is the selector's own gate and must never be asserted on faith.
+
+    `fact_check_extraction_status` / `fact_check_claims_extracted` carry check 9's strict
+    evidence onto the candidate itself, so the selector can re-validate the claim without
+    re-running any fact check (defense in depth -- publish_best). They are written from
+    the recorded evidence, never from a constant: a stamp must not be able to assert an
+    execution that did not happen.
     """
     if not result.eligible:
         return {"publication_eligible": False,
                 "publication_safety_profile": SAFETY_PROFILE,
                 "publication_safety_blocked_by": ",".join(c["check"] for c in result.failures)}
+    ev = getattr(result, "fact_check_evidence", None) or {}
     return {
         "publication_eligible": True,
         "publication_safety_profile": SAFETY_PROFILE,
         "publication_safety_version": SAFETY_VERSION,
         "fact_check_status": "verified",
+        "fact_check_extraction_status": ev.get("extraction_status") or "",
+        "fact_check_claims_extracted": int(ev.get("claims_extracted") or 0),
     }

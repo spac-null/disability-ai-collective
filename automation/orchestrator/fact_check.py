@@ -18,9 +18,27 @@ import urllib.request
 from .config import CLIPROXY_URL, CLIPROXY_KEY, _AGENT_SLUG
 
 
+# ── strict CURRENT_ENGINE fact-check contract ──────────────────────────────────
+# The legacy path swallows an extraction failure and returns [], which makes
+# "extraction blew up" indistinguishable from "checked the world, found nothing
+# contradicted". That collapse is exactly what let the 2026-08-25 first natural
+# CURRENT_ENGINE run stamp fact_check_status: verified on an article whose claim
+# extraction had raised `Extra data: line 15 column 1 (char 394)` moments earlier.
+# CURRENT_ENGINE therefore uses the strict variant below, which reports extraction
+# status and claim count explicitly so the publication-safety bridge can fail closed.
+EXTRACTION_OK = "ok"
+EXTRACTION_ERROR = "error"
+
+
 class FactCheckMixin:
-    def _extract_verifiable_claims(self, content):
-        """Cheap extraction pass covering all four categories the (advisory-only,
+    def _extract_verifiable_claims_raw(self, content):
+        """Strict extraction: RAISES on provider/parse failure instead of returning [].
+
+        Body is the legacy extraction verbatim; the only difference is that the
+        exception is allowed to escape. `_extract_verifiable_claims` keeps the
+        historical swallow-and-return-empty behaviour for legacy/advisory callers.
+
+        Cheap extraction pass covering all four categories the (advisory-only,
         LLM-self-report) citation check flags: QUOTE, STUDY, STAT, EVENT. Feeds
         _web_verify_quote (QUOTE) and _web_verify_claim (STUDY/STAT/EVENT) — the
         citation check has no way to know if a claim is real, only whether the
@@ -50,19 +68,30 @@ class FactCheckMixin:
             '{"claims": [{"type": "QUOTE|STUDY|STAT|EVENT", "subject": "...", "claim": "..."}]}\n'
             'If none: {"claims": []}'
         )
+        raw = self._call_openai_compat_api(
+            url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
+            system_prompt=SYSTEM, user_prompt=content,
+            model="openrouter/claude-haiku-4.5",
+            max_tokens=900, timeout=30, no_think=True,
+        )
+        match = re.search(r'\{.*\}', raw or "", re.DOTALL)
+        data = _json.loads(match.group(0)) if match else {}
+        return [
+            c for c in data.get("claims", [])
+            if c.get("claim") and c.get("type") in ("QUOTE", "STUDY", "STAT", "EVENT")
+        ]
+
+    def _extract_verifiable_claims(self, content):
+        """LEGACY/ADVISORY wrapper. Unchanged semantics: an extraction failure is
+        logged and reported as "no claims found".
+
+        This is safe ONLY for advisory callers, where an empty result downgrades a
+        diagnostic. It is NOT safe as publication evidence, because the caller cannot
+        tell an empty article from a failed extractor. CURRENT_ENGINE publication
+        safety must call `_run_web_fact_check(..., strict=True)` instead.
+        """
         try:
-            raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
-                system_prompt=SYSTEM, user_prompt=content,
-                model="openrouter/claude-haiku-4.5",
-                max_tokens=900, timeout=30, no_think=True,
-            )
-            match = re.search(r'\{.*\}', raw or "", re.DOTALL)
-            data = _json.loads(match.group(0)) if match else {}
-            return [
-                c for c in data.get("claims", [])
-                if c.get("claim") and c.get("type") in ("QUOTE", "STUDY", "STAT", "EVENT")
-            ]
+            return self._extract_verifiable_claims_raw(content)
         except Exception as e:
             self.logger.warning("Verifiable-claim extraction failed: %s", e)
             return []
@@ -222,10 +251,26 @@ class FactCheckMixin:
             self.logger.warning("Web verify failed for %s claim (%s): %s", claim_type, subject, e)
             return "UNVERIFIABLE", f"search failed: {e}"
 
-    def _run_web_fact_check(self, content, claim_cap=4):
+    def _run_web_fact_check(self, content, claim_cap=4, strict=False):
         """Extract verifiable claims from content and check each against live web
         search. Used both for the initial pass and to re-verify after a repair
         attempt, so the two runs stay identical in method.
+
+        strict=False (default, LEGACY/ADVISORY) is byte-for-byte the historical
+        behaviour, including the returned key set.
+
+        strict=True is the CURRENT_ENGINE publication-safety contract. It adds four
+        keys that let a caller distinguish outcomes the legacy shape collapses:
+          extraction_status     "ok" | "error"
+          extraction_error      provider/parse error string, when status is "error"
+          claims_extracted      how many verifiable claims extraction actually yielded
+          fact_check_completed  True only when verification ran to completion
+        A failed extraction returns extraction_status="error" and does NOT masquerade
+        as a clean check. A successful extraction that yields zero claims returns
+        extraction_status="ok" with claims_extracted=0 -- also not a pass, because
+        nothing was checked against the world. Deciding what those mean for publication
+        is the bridge's job (publication_safety_bridge check 9); this method's job is
+        to report them truthfully rather than erase them.
 
         claim_cap limits how many claims per category get checked (cost/latency
         for the common case). Confirmed live 2026-08-08: a repair pass grounding
@@ -246,9 +291,31 @@ class FactCheckMixin:
             "lines": ["(no verifiable claims found)"], "contradicted": [], "advisory": [],
             "unverifiable_count": 0, "soft_contradicted_count": 0,
         }
+        if strict:
+            result.update({"extraction_status": None, "extraction_error": None,
+                           "claims_extracted": 0, "fact_check_completed": False})
         try:
-            claims = self._extract_verifiable_claims(content)
+            if strict:
+                try:
+                    claims = self._extract_verifiable_claims_raw(content)
+                except Exception as e:
+                    # Explicit failure state. Never [] -- see EXTRACTION_ERROR above.
+                    self.logger.warning(
+                        "Verifiable-claim extraction failed (strict, fail-closed): %s", e)
+                    result["extraction_status"] = EXTRACTION_ERROR
+                    result["extraction_error"] = str(e)[:300]
+                    result["lines"] = ["EXTRACTION_FAILED: %s" % str(e)[:200]]
+                    return result
+                result["extraction_status"] = EXTRACTION_OK
+                result["claims_extracted"] = len(claims)
+            else:
+                claims = self._extract_verifiable_claims(content)
             if not claims:
+                if strict:
+                    # Extraction worked and found nothing. Reported honestly; the
+                    # bridge treats it as NO_VERIFIABLE_CLAIMS and fails closed.
+                    result["lines"] = ["NO_VERIFIABLE_CLAIMS"]
+                    result["fact_check_completed"] = True
                 return result
             result["lines"] = []
             quote_claims = [c for c in claims if c["type"] == "QUOTE"][:claim_cap]
@@ -271,9 +338,14 @@ class FactCheckMixin:
                         result["soft_contradicted_count"] += 1
                 elif verdict == "UNVERIFIABLE":
                     result["unverifiable_count"] += 1
+            if strict:
+                result["fact_check_completed"] = True
         except Exception as e:
             self.logger.warning("Web fact-check failed: %s", e)
             result["lines"] = [f"CHECK_FAILED: {e}"]
+            if strict:
+                # Verification itself broke; completion is not asserted.
+                result["fact_check_completed"] = False
         return result
 
     _FIGURE_BLOCK_RE = re.compile(r'<figure class="article-figure">.*?</figure>\n?', re.DOTALL)

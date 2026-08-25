@@ -44,11 +44,19 @@ def _accept_run(**kw):
                      mode=R.MODE_LIVE)
 
 
+# Strict-contract stubs (2026-08-25). A "clean" fact check is no longer merely an
+# absence of contradictions -- it must also show that extraction ran and that real
+# claims were checked, or the bridge fails closed. See
+# current_engine_strict_fact_check_test.py for the failure-side cases.
 CLEAN_FACT_CHECK = lambda text: {"contradicted": [], "advisory": [],
-                                 "unverifiable_count": 0, "soft_contradicted_count": 0}
+                                 "unverifiable_count": 0, "soft_contradicted_count": 0,
+                                 "extraction_status": "ok", "extraction_error": None,
+                                 "claims_extracted": 3, "fact_check_completed": True}
 DIRTY_FACT_CHECK = lambda text: {"contradicted": [{"claim": "a fabricated quote"}],
                                  "advisory": [], "unverifiable_count": 0,
-                                 "soft_contradicted_count": 0}
+                                 "soft_contradicted_count": 0,
+                                 "extraction_status": "ok", "extraction_error": None,
+                                 "claims_extracted": 3, "fact_check_completed": True}
 
 
 # ── engine switch / rollback ───────────────────────────────────────────────────
