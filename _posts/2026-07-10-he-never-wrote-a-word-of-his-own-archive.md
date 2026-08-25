@@ -12,6 +12,17 @@ source_url: "https://bombmagazine.org/articles/2025/12/15/joseph-grigely-by-ayde
 source_title: "Joseph Grigely by Ayden LeRoux"
 source_outlet: "BOMB Magazine"
 ---
+
+> **Correction, 25 August 2026:** two descriptions of *White Noise* were wrong. The pages were
+> said to be "arranged in a grid"; they are of every size and are pinned so that they cluster,
+> which is what produces the work's effect. And the title was called "a joke with teeth, since
+> the room is the opposite of white noise." That reverses the work's own logic: white noise
+> contains every frequency, and the room is described — by the artist and by the institutions
+> that have shown it — as justifying the comparison directly, indistinguishable from a distance
+> and legible only up close. Verified and unchanged: the fall at ten, that he does not lip-read,
+> the origin of the archive after a dinner with a friend, over 120,000 sheets as of summer 2025,
+> more than a hundred exhibitions, a new selection curated each time, and the Whitney show
+> (28 June – 9 September 2001, curated by Debra Singer).
 Joseph Grigely was deafened at ten, after a fall. He does not lip-read. When a hearing stranger wants to talk to him, he hands them a pen. For decades he discarded the resulting scraps without thinking about it — small courtesies, used and binned, the way you'd treat a parking receipt. Then one night, after dinner with a friend, he looked at the pile of paper left on the table between them and didn't throw it away. That pile became *Conversations with the Hearing*, an archive he has kept growing since the early 1990s. As of last year it held more than 120,000 individual sheets.
 
 Here is the fact that takes a moment to land. Not one word of that archive is in Grigely's handwriting. He has never authored a line of his own work, in the sense that matters for who held the pen. The artist's contribution is the act of keeping. Every sentence on every page was written by someone else — a waiter, a date, a museum guard, a stranger at a bar — reaching toward him in the only channel he gave them access to.
@@ -25,7 +36,7 @@ This is an inversion worth sitting with. The standard record of a disabled perso
 
 Read enough of the pages and a pattern shows up that has nothing to do with deafness and everything to do with fluency. People who are quick and charming in speech often go stiff on paper. Handwriting hurries, second-guesses itself, draws a small picture instead of finishing a sentence because the writer panicked at having to spell out something they'd normally just say with a tone of voice. Spoken fluency is a performance most hearing people have never had to notice they're giving, because the channel it runs through disappears the moment the sound stops. Force that performance onto paper and it leaves a residue. Grigely's strangers didn't know they were leaving evidence. They thought they were doing him a small kindness. They were also, every time, being studied.
 
-In 2001 he built an oval room at the Whitney and filled it floor to ceiling with twenty-five hundred of these pages, arranged in a grid. *White noise* is the title — a joke with teeth, since the room is the opposite of white noise: every scrap in it is a discrete, legible signal, just not one anyone before Grigely thought worth keeping. You stand inside it and the accumulated weight of "just write it down" becomes a physical fact about the room, the way the steam in a sauna is a physical fact you can't reason your way out of. It is not an accusation aimed at any single person in it. It's a measurement of what decades of a small courtesy add up to when somebody finally keeps the receipts.
+In the summer of 2001 the Whitney gave him a room, and *White Noise* is what he built in it: two conjoining oval rooms, the first of them twenty-six feet by nineteen, covered floor to ceiling with about twenty-five hundred pieces of paper of every size — tablecloths, notecards, hotel stationery, scraps — pinned so that the corners lift and the text clusters into dark blurs. The oval was deliberate; he has said he thinks of these conversations as having no real beginning or end. The title is not ironic. White noise contains every frequency, and from across the room this one resolves into nothing you can pick out. What the piece does is make you walk closer, at which point the mass turns back into twenty-five hundred discrete legible signals — none of which anyone before Grigely thought worth keeping. You stand inside it and the accumulated weight of "just write it down" becomes a physical fact about the room, the way the steam in a sauna is a physical fact you can't reason your way out of. It is not an accusation aimed at any single person in it. It's a measurement of what decades of a small courtesy add up to when somebody finally keeps the receipts.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/he-never-wrote-a-word-of-his-own-archive_symbol_3.jpg" alt="He Never Wrote a Word of His Own Archive — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">

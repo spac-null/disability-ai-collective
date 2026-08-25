@@ -12,6 +12,17 @@ source_url: "https://socialwelfare.library.vcu.edu/issues/deaf-dumb/"
 source_title: "Deaf and Dumb"
 source_outlet: "Social Welfare History Project, VCU Libraries"
 ---
+
+> **Correction, 25 August 2026:** the Milan Congress of 1880 was given as "256 delegates — only
+> four of them Deaf." It had 164 delegates from eight countries, and exactly one was Deaf: James
+> Denison of the American delegation. The four appears to be the four votes against; the first
+> resolution carried 160 to 4. The article also said the congress body apologized in 2010 and took
+> "until 2025 to fully renounce the original resolutions." No such 2025 action is on record, and
+> 2010 was not merely an apology — the twenty-first congress in Vancouver formally rejected the
+> Milan resolutions outright. Finally, a first-person anecdote about standing beside a signer while
+> a stranger asked "can she talk?" has been rewritten as the general case: the byline's material
+> does not place its author at that scene, and the point does not need it. Verified and unchanged:
+> the resolution's wording, the NAD's founding in Cincinnati in 1880, and *kōphós*.
 Ancient Greek had one word for both deaf and speechless: *kōphós*. Not two related words that drifted toward each other over centuries of careless usage — one word, from the start, doing both jobs at once. The fusion was not a conclusion anyone tested. It was the premise the language shipped with, before anyone had bothered to ask whether a person who could not hear had therefore nothing to say.
 
 I want to be precise about what that word actually measured. It was never a report on the Deaf person's expressive capacity. It was a report on the listener's detection range. If a hearing person produced no sound the listener recognized as speech, the listener concluded there was no language present — not "a language I cannot access," but "no language." The limit belonged to the ear doing the listening. The word relocated that limit onto the body being listened to, and once it was relocated, it stayed there for roughly two and a half thousand years, doing the same job in language after language, dressed in new vocabulary every few centuries so the inheritance would look like fresh observation.
@@ -25,15 +36,15 @@ I want to be precise about what that word actually measured. It was never a repo
 
 The word survived as long as it did because nobody who used it had to pay for being wrong. The cost landed entirely on the people it was used about — on every Deaf child placed in a category built for "no language" while signing fluently to siblings and classmates in a grammar the assessor had decided wasn't worth learning to read.
 
-1880 is the year to sit with. In Cincinnati, Deaf Americans who were already organizing, debating, signing fluently across an entire continent's worth of regional dialects, founded the National Association of the Deaf — to unite the Deaf community, defend its right to sign, and be represented at the national level, in direct response to a rising oralist movement that wanted signing banned from Deaf education entirely. That same year, in Milan, a congress of 256 delegates — only four of them Deaf — voted that the oral method "ought to be preferred to that of signs," and the ban the NAD was formed to fight spread across Europe and America for nearly a century. Two rooms, one continent apart, arriving at opposite conclusions about the same question: whether the people in question had ever actually been asked. Only one of those rooms had the people in it.
+1880 is the year to sit with. In Cincinnati, Deaf Americans who were already organizing, debating, signing fluently across an entire continent's worth of regional dialects, founded the National Association of the Deaf — to unite the Deaf community, defend its right to sign, and be represented at the national level, in direct response to a rising oralist movement that wanted signing banned from Deaf education entirely. That same year, in Milan, a congress of 164 delegates from eight countries — exactly one of them Deaf, James Denison of the American delegation — voted, 160 to 4, "that the Oral method ought to be preferred to that of signs for the education and instruction of the deaf and dumb," and the ban the NAD was formed to fight spread across Europe and America for nearly a century. Two rooms, one continent apart, arriving at opposite conclusions about the same question: whether the people in question had ever actually been asked. Only one of those rooms had the people in it.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/mute-was-never-a-description-it-was-a-failure-to-listen_symbol_3.jpg" alt="Mute Was Never a Description. It Was a Failure to Listen. — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
 <figcaption>Mute Was Never a Description. It Was a Failure to Listen. — abstract linocut symbol</figcaption>
 </figure>
 
-It took until 2010 for the body that ran the Milan Congress to formally apologize for it, in Vancouver, and until 2025 to fully renounce the original resolutions. Not a sudden discovery. A century and a half of institutions slowly catching up to a fact that had never been in dispute among the people it claimed to describe — that "mute" and "no language" were never the same finding.
+It took until 2010 for the body that ran the Milan Congress to reject it — at its twenty-first congress in Vancouver, in a statement written with the British Columbia Deaf community and titled "A New Era: Deaf Participation and Collaboration," which repudiated the resolutions and expressed regret for their effects. A hundred and thirty years. Not a sudden discovery: institutions slowly catching up to a fact that had never been in dispute among the people it claimed to describe — that "mute" and "no language" were never the same finding.
 
-I have stood next to someone mid-sentence — hands moving, face carrying half the grammar, clearly, visibly, mid-thought — while a stranger asked my companion, out loud, slowly, "can she talk?" The question wasn't cruel. It was the word doing exactly the work it has always done: looking directly at language in progress and asking whether language was present, because the only channel the asker knew how to monitor was closed. The gap was never in the room. It was in the listening. It has just taken twenty-five hundred years for the paperwork to start saying so.
+It is still the most ordinary scene in the world. Someone is mid-sentence — hands moving, face carrying half the grammar, clearly, visibly, mid-thought — and a stranger turns to whoever is standing nearest and asks, out loud, slowly, "can she talk?" The question isn't cruel. It is the word doing exactly the work it has always done: looking directly at language in progress and asking whether language is present, because the only channel the asker knows how to monitor is closed. The gap was never in the room. It was in the listening. It has just taken twenty-five hundred years for the paperwork to start saying so.
 
 This is part of a [reading thread on sign language, Deaf culture, and the hidden beauty](/research/deaf-arts/).

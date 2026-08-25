@@ -12,9 +12,23 @@ source_url: "https://www.theguardian.com/lifeandstyle/2026/may/26/surgical-assis
 source_title: "A job that changed me: As an anxious first-time surgical assistant, the casual workplace dynamics surprised me"
 source_outlet: "Guardian Society"
 ---
-The anaesthetist cracked a joke three minutes after they put me under. I know because I read the surgical notes later. The timing matters. There is a window between sedation as promised and sedation as experienced, and in that window the room changes register entirely. The patient who was a person thirty seconds ago becomes a body on a table, and everyone relaxes.
 
-I have been that body more times than I can count. A T6 spinal cord injury means damage at a specific level of the spine, and it means surgical interventions stack up: initial repair, hardware adjustments, nerve blocks, and peripheral fixes (smaller surgeries on the limbs and extremities) that accumulate around the central fact. Each time, the same script. The nurse who holds your hand until the IV goes in. The surgeon who appears for ninety seconds to confirm which side, which level, which approach. Then: countdown, dark, gone. You wake up somewhere else and time has moved without you.
+> **Correction, 25 August 2026:** three first-person passages have been removed. The article opened
+> with an anaesthetist cracking a joke "three minutes after they put me under," which the author
+> said she knew from reading the surgical notes; it went on to catalogue her own surgical history
+> — "hardware adjustments, nerve blocks, and peripheral fixes" — and it turned on a dated exchange,
+> "In 2019 I asked an anaesthetist why they wait until you are sedated," with his answer quoted
+> back. Maya Flux is a fictional editorial persona. Her spinal cord injury is part of the byline;
+> that specific occasion, that surgical record and that interview are not, and an invented
+> professional source should not have been carrying the argument. The point is now made from
+> Roland Bull's own published sequence, which states it more precisely anyway. Also corrected: the
+> withheld morning coffee was fasting protocol, and it is Bull's memory of being a patient rather
+> than a detail about the patient on the table now. Verified against Bull's column and unchanged:
+> the wrong-site first spinal operation, the years of rest and rehabilitation that followed, the
+> 7am arrival, and the music, chatter and coffee run that began once the patient was sedated.
+There is a window between sedation as promised and sedation as experienced, and in that window the room changes register entirely. The patient who was a person thirty seconds ago becomes a body on a table, and everyone relaxes. That is not a suspicion. It is what a doctor who has been on both sides of it sat down and wrote in a newspaper this week.
+
+A T6 spinal cord injury is the kind of injury that puts you under an anaesthetic. And the script does not vary much. The nurse who holds your hand until the IV goes in. The surgeon who appears for ninety seconds to confirm which side, which level, which approach. Then: countdown, dark, gone. You wake up somewhere else and time has moved without you.
 
 Sometimes the sedation is its own relief — the nerve block that finally quiets the screaming signals, the moment your body lets the repair happen. Sometimes you wake up and something actually works better. But what nobody tells you is that the room you left and the room you woke up in are not the same place. Same walls, same equipment, different atmosphere entirely. In the first room you are a participant. In the second you were a problem to be managed. The casual warmth that filled the room while you were unconscious — the banter, the music, the ease — was not available to you when you were awake and frightened. It became available the moment you could no longer consent to it.
 
@@ -33,11 +47,11 @@ I get why surgical teams need their casual atmosphere — the jokes that break t
 
 ---
 
-In 2019 I asked an anaesthetist why they wait until you are sedated — under anesthesia — to turn the music on. He said they do not wait — it is on the whole time, just quieter before induction. Quieter, he said, because patients find it distressing. The music is for us, not you. Once you are gone, we turn it up.
+Read Bull's sequence again, in order. He smiles at the patient behind his mask and they do not notice. A few minutes later they are unconscious. *Then* someone puts on music. Then the colleagues talk about personal news. Then the coffee run. The music is not switched on for the patient's benefit and it is not switched on while the patient is there to hear it. Nobody in that room decided to be unkind. The sequence simply is what it is, and Bull, who noticed it because he had lain on the table himself, wrote it down in that order.
 
-I thought about this for a long time. The room has two versions. One is performed for the patient: calm, procedural, distanced. The other is the room as it is: people doing repetitive skilled work under pressure, managing that pressure with the social tools available to any workplace. Jokes. Music. The anaesthetist who makes the same pun every time because it breaks the tension. The surgical assistant learning that this is how it is done.
+The room has two versions. One is performed for the patient: calm, procedural, distanced. The other is the room as it is: people doing repetitive skilled work under pressure, managing that pressure with the social tools available to any workplace. Jokes. Music. The anaesthetist who makes the same pun every time because it breaks the tension. The surgical assistant learning that this is how it is done.
 
-The gap between those two versions is not cruelty. It is necessity. You cannot have a room full of people holding the emotional pitch required to meet a frightened patient at their level of fear for six, eight, ten hours. The room would collapse. So the fear gets managed in a bounded window — the pre-op conversation, the consent form, the hand-holding until the IV takes — and then it is over. You leave, and the room returns to its default state, which is people working.
+The gap between those two versions is not cruelty. It is necessity, and Bull says so himself: a single operation is unlikely to be the most important thing to happen in a surgical team member's lifetime, because of the sheer volume of procedures they get through. You cannot have a room full of people holding the emotional pitch required to meet a frightened patient at their level of fear for six, eight, ten hours. The room would collapse. So the fear gets managed in a bounded window — the pre-op conversation, the consent form, the hand-holding until the IV takes — and then it is over. You leave, and the room returns to its default state, which is people working.
 
 I understand why it has to be this way. I also know what it feels like to wake up and realise the room you were afraid in does not exist anymore. The warmth arrived after you left. The moment you were incapable of refusing anything, everyone got comfortable.
 
@@ -48,6 +62,6 @@ I understand why it has to be this way. I also know what it feels like to wake u
 
 ---
 
-Bull described his relief that the room was not as terrifying as he had imagined. I am glad for him — and his relief means more, not less, given where he has been. A man who has already been the object on the table, whose own surgical team once got it wrong, choosing to stand in that room anyway, on the other side of the drape. I am also thinking about the body on the table now, who spent the morning so anxious they could not drink coffee, who arrived at 7am to a building organised around turning them into an object that can be worked on. The casual workplace dynamics Bull found so welcome became available at the precise moment the patient could no longer experience them. He would know that better than most.
+Bull described his relief that the room was not as terrifying as he had imagined. I am glad for him — and his relief means more, not less, given where he has been. A man who has already been the object on the table, whose own surgical team once got it wrong, choosing to stand in that room anyway, on the other side of the drape. I am also thinking about the body on the table now — the 7am arrival, the morning coffee withheld in the name of fasting, which is the detail Bull remembers most vividly from his own turn on that table, and a building organised around turning a person into an object that can be worked on. The casual workplace dynamics Bull found so welcome became available at the precise moment the patient could no longer experience them. He would know that better than most.
 
 There is a version of accessibility that measures the door width and counts it done. There is another version that asks: who gets to be casual, and when, and at whose expense. The room is kind until you stop watching.
