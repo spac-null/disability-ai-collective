@@ -20,7 +20,7 @@ permalink: /notes/
   <section class="section section--primary">
     <div class="container container--md">
 
-      {% assign editorials = site.posts | where: "author", "Jascha Blume" %}
+      {% assign editorials = site.posts | where_exp: "p", "p.withdrawn != true" | where: "author", "Jascha Blume" %}
       {% if editorials.size == 0 %}
         <p class="text-secondary" style="text-align: center; padding: 4rem 0;">No notes yet.</p>
       {% else %}

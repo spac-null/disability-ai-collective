@@ -64,7 +64,7 @@ layout: default
   <!-- Author Articles -->
   <section class="section section--primary">
     <div class="container">
-      {% assign author_posts = site.posts | where: "author", page.author_name %}
+      {% assign author_posts = site.posts | where_exp: "p", "p.withdrawn != true" | where: "author", page.author_name %}
       {% if author_posts.size > 0 %}
         <h2 class="text-h3 mb-8">Published Work</h2>
         <div class="grid grid--3 gap-8">

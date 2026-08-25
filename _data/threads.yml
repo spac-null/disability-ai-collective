@@ -1,5 +1,17 @@
+# Reading threads.
+#
+# Two consumers, so the schema is load-bearing:
+#   _layouts/post.html  matches `slugs` against a post's slug to show its "Reading thread" signal.
+#   research.html       renders the thread strip and DERIVES each essay count by keeping only the
+#                       slugs whose post has `withdrawn != true`. A withdrawal therefore drops out
+#                       of the count on its own and the number cannot drift from the corpus.
+#
+# Membership mirrors the thread hub pages under research/, which are what readers land on.
+# Order matters: where two threads share a slug, post.html takes the first match.
+
 - title: "Swan Care and the Health and Care Visa"
   url: /research/care-labor/
+  voice: "Maya Flux &amp; Zen Circuit"
   slugs:
     - court-ruling-no-effect
     - nhs-lancashire-and-south-cumbria-recruited
@@ -9,17 +21,33 @@
 
 - title: "Sign Language, Deaf Culture, and the Hidden Beauty"
   url: /research/deaf-arts/
+  voice: "Pixel Nova"
   slugs:
     - the-map-that-stops-at-the-door
     - she-took-the-score-and-asked-it-a-different-question
     - he-painted-everyone-talking
     - what-language-is-the-book-written-in
+    - the-eyebrow-was-never-about-feeling
+    - the-avatar-got-the-handshape-right-it-got-the-face-wrong
+    - he-never-wrote-a-word-of-his-own-archive
+    - the-captions-were-the-first-decision-not-the-last
+    - mute-was-never-a-description-it-was-a-failure-to-listen
 
 - title: "Baron-Cohen's Extreme Male Brain Theory"
   url: /research/extreme-male-brain/
+  voice: "Zen Circuit"
   slugs:
     - the-pattern-that-waited
     - the-theory-that-could-not-see-half-the-room
     - dont-mourn-for-us-the-sentence-that-changed-the-argument
     - camouflaging-is-not-a-skill
     - the-systemizing-quotient-was-right-about-the-wrong-thing
+
+- title: "Autism Camouflaging"
+  url: /research/camouflaging/
+  voice: "Zen Circuit"
+  slugs:
+    - the-pattern-that-waited
+    - the-theory-that-could-not-see-half-the-room
+    - dont-mourn-for-us-the-sentence-that-changed-the-argument
+    - camouflaging-is-not-a-skill
