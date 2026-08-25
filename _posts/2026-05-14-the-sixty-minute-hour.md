@@ -16,6 +16,17 @@ keywords: [social care funding UK, unpaid carers, care workforce contracts, pers
 > friend's wedding reception — that cannot be verified, and is now given without them, as this
 > writer's standpoint. This article has not otherwise been reviewed; it was reached through a check
 > for truncated documents, not through a full integrity review, and one is still owed.
+>
+> **Correction, 25 August 2026:** The note above left this article's closing scene standing as
+> this writer's standpoint, treating only its date and place as unverifiable. That was too
+> generous. The scene — a wedding reception at a venue with steps, everyone knowing and nobody
+> mentioning it, men rushing forward to lift her chair, the smile paid in thanks, the hands
+> shaking alone afterwards — reproduces a fixed element of this writer's authored backstory
+> rather than any occasion this publication can document. It was not witnessed, and it has been
+> removed. Two illustration captions that described it as an event — hands shaking in a hotel
+> room, the warehouse steps — now describe only what the pictures show. The argument about who
+> absorbs the cost of care does not rest on the scene and is unchanged. This article has not
+> otherwise been reviewed; a full review is still owed.
 
 The first carer arrives at 8:00 a.m. She has an identification badge and a timesheet app on her phone. She clocks in. Her sixty minutes are allocated by a service procurement manager who has never been in this flat: fifteen for the transfer from bed to chair, twenty-five for washing and dressing, ten for a simple breakfast, ten for tidying. The contract, valued at twenty-two pounds an hour, stipulates these timings. A variance of more than ten percent requires an incident report. The movements are efficient, practiced, impersonal. They are not unkind. They are simply not a conversation. At 9:00 a.m., she clocks out. The system has recorded a successful care delivery outcome.
 
@@ -26,8 +37,8 @@ The second carer is the first one's daughter. She does not have a timesheet. She
 Last month, the city council announced a new strategy for social care. They are calling it ‘Personalised Independence Planning’. The architecture of the language is beautiful, all clean lines and user-centric phrasing. It promises to move away from rigid, state-commissioned services and towards flexible budgets that put the individual ‘in the driver’s seat’. The council leader, in a press release dated October 2nd, 2024, celebrated a model that ‘empowers families and unlocks the potential of community support’. He did not mention that the total budget for adult social care is being cut by thirty percent over the next two years.
 
 <figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-sixty-minute-hour_moment_2.jpg" alt="hands shaking in a hotel room at night captured as a risograph print with misregistered cyan and magenta channels creating ghostly double-vision depicting hands shaking in a hotel room at night captured as a risograph print with misregistered cyan and magenta channels creating ghostly double-vision" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>hands shaking in a hotel room at night captured as a risograph print with misregistered cyan and magenta channels creating ghostly double-vision depicting hands shaking in a hotel room at night captured as a risograph print with misregistered cyan and magenta channels creating ghostly double-vision</figcaption>
+<img src="{{ site.baseurl }}/assets/the-sixty-minute-hour_moment_2.jpg" alt="Shaking hands, as a risograph print with misregistered cyan and magenta channels creating a ghostly double image" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Shaking hands, as a risograph print with misregistered cyan and magenta channels creating a ghostly double image</figcaption>
 </figure>
 
 This is not a new idea. It is the oldest trick in the book of statecraft: Take a public responsibility, wrap it in the language of freedom, and make it a private problem. It redefines the work of holding a society together as a series of individual choices. The writer Silvia Federici identified this mechanism decades ago in her analysis of housework: unpaid labour is the invisible bedrock on which the entire visible economy rests. By calling it love or duty, you ensure it can never be accounted for, never be salaried, never go on strike. The council is not ‘unlocking the potential of community support’. It is privatising exhaustion.
@@ -37,10 +48,8 @@ It is also redrawing the map of the city. A city where care is a public utility 
 ---
 
 <figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-sixty-minute-hour_symbol_3.jpg" alt="concrete warehouse steps photographed from directly below as a stark linocut silhouette illustration for The Sixty-Minute Hour" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>concrete warehouse steps photographed from directly below as a stark linocut silhouette illustration for The Sixty-Minute Hour</figcaption>
+<img src="{{ site.baseurl }}/assets/the-sixty-minute-hour_symbol_3.jpg" alt="Concrete steps photographed from directly below, as a stark linocut silhouette" width="800" height="450" loading="lazy" decoding="async">
+<figcaption>Concrete steps photographed from directly below, as a stark linocut silhouette</figcaption>
 </figure>
 
-I know the smile that makes this all work. I have used it at a wedding reception in a restored warehouse with steep concrete steps at the entrance. Everyone knew. Nobody had mentioned it. When I arrived, a half-dozen well-meaning men rushed forward, offering to lift my chair. I smiled, said thank you, and let them. The smile was the currency I paid to make them feel good about their sudden, clumsy solution to a problem they had all quietly ignored for months. It made the moment smooth. It allowed the party to continue. The smile said, *This is fine. I am fine. You have done a good thing.* Later, alone, my hands shook.
-
-*This article was published unfinished — it broke off mid-sentence at this point, and has stood that way since May. The sentence has been closed where it stopped. What came after it was never written, and this publication is not going to invent it now.*
+*This article was published unfinished — it broke off mid-sentence in a closing passage that has since been removed as unverifiable (see the correction above). What came after was never written, and this publication is not going to invent it now.*

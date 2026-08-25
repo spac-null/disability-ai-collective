@@ -71,3 +71,8 @@ reader-lab-worker/.export-token
 # file by file against sha256 before removal. The writer is unaffected — it still mkdirs
 # and writes locally; this only keeps new sidecars from re-entering git.
 _reviews/
+
+# Internal persona-soul / persona-wound seed records are private evidence.
+# Preserved under /srv/data/cripminds-lc1/ — never re-add to this repo.
+.claude/persona-souls*
+PersonaSouls*
