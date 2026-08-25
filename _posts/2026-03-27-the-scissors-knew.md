@@ -23,11 +23,23 @@ keywords: [art history, disability erasure, adaptive technique, art criticism]
 > "disabled" at all, because the review is not accessible to us. Checked and unchanged: the 1941
 > cancer surgery, the thirteen years that followed, the gouache-painted paper, *The Snail* and
 > *Blue Nude IV*, and Delectorskaya's role as his assistant.
+>
+> **Correction, 25 August 2026:** the note above disclosed that one claim could not be checked
+> either way — that the Guardian's review of the Grand Palais retrospective "uses the word
+> transcendent four times" and "does not use the word disabled once." Disclosing it was not enough.
+> The claim named no review, gave no link, and no such review could be located; a specific word
+> count attributed to a real publication cannot stand on an article's say-so, and it was the
+> opening move the rest of the essay was built on. It has been removed. What replaces it claims
+> only what can be supported: that *Matisse 1941-1954* ran at the Grand Palais from March 2026 and
+> covers the thirteen years in question, and that the critical vocabulary around late Matisse
+> reaches for transcendence more readily than for adaptation — which is the argument this essay
+> then makes on its own evidence, and makes without needing a tally. Nothing else has changed.
+
 
 
 [Henri Matisse](https://www.matisse.org/) was explicit about what the cut-outs were, and art criticism has spent seventy-five years softening it. He called the method drawing with scissors, and cutting directly into colour, and he wrote that there was "no gap" between his earlier pictures and the cut-outs — that he had only "reached a form reduced to the essential." Not a substitute. Not a compensation. A new way.
 
-The Guardian review of the [Grand Palais retrospective](https://www.grandpalais.fr/)—the Paris exhibition hall's show of Matisse's final works—published March 2026, uses the word transcendent four times. It does not use the word disabled once.
+*Matisse 1941-1954* opened at the [Grand Palais](https://www.grandpalais.fr/) in Paris in March 2026, covering exactly the thirteen years this essay is about. The vocabulary that gathers around those years is the thing I want to look at: late style, final flowering, transcendence. What it reaches for far less often is adaptation.
 
 ---
 

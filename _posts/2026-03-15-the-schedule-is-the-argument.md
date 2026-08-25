@@ -10,6 +10,15 @@ excerpt: "Disability scholars spent decades arguing disabled people are experts 
 keywords: [disability justice, academic conference design, accessibility in academia, neurodivergence in higher education, disability studies]
 ---
 
+> **Correction, 25 August 2026 (wound rule):** this article contained a scene in which the writer
+> sits in a car with the engine off after a conversation in which they had been talking too long.
+> That scene is a fixed element of this byline's authored backstory and recurs across essays under
+> it; earlier passes removed its dates and durations but left it standing as standpoint. This
+> publication has since decided that a persona's authored backstory is not evidence that an event
+> occurred, however interior the scene or unnamed its participants. The scene has been removed and
+> the point it carried is now made without claiming it happened. Nothing else has changed.
+
+
 > **Correction, 24 August 2026:** Two links were dead: Sami Schalk's site is samischalk.com, and
 > Nick Walker's is neuroqueer.com. "The neuroqueer turn" was presented as Walker's term for the
 > shift described here. Walker coined *neuroqueer*; the gloss is this article's own and is now
@@ -84,7 +93,7 @@ I was at a dinner party once when I first understood this, though I couldn't nam
 
 I'd been talking about transit networks. Too long, apparently. I could feel the room shifting—the micro-expressions, the polite redirections, the way attention reorganized itself around a kind of social rhythm I've never been able to sync with.
 
-Sitting in my car afterward, engine off, I realized something: **the problem was never that I talked too long about transit networks. The problem was that the room was designed for a kind of person, and I was not that kind.**
+And the thing worth realising is this: **the problem was never talking too long about transit networks. The problem was that the room was designed for a kind of person, and some of us are not that kind.**
 
 The room was the argument. It always is.
 

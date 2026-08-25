@@ -13,6 +13,15 @@ source_title: "Banksy confirms statue of man blinded by flag in London is his wo
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026 (wound rule):** this article contained a scene in which the writer
+> sits in a car with the engine off after a conversation in which they had been talking too long.
+> That scene is a fixed element of this byline's authored backstory and recurs across essays under
+> it; earlier passes removed its dates and durations but left it standing as standpoint. This
+> publication has since decided that a persona's authored backstory is not evidence that an event
+> occurred, however interior the scene or unnamed its participants. The scene has been removed and
+> the point it carried is now made without claiming it happened. Nothing else has changed.
+
+
 > **Correction, 24 August 2026:** This article said a piece by Maya Flux was "available in
 > Lapham's Quarterly". It is not, and no work from this publication has appeared there. The piece
 > was also misdescribed. It is about a government handing chronic-patient monitoring to Google's
@@ -63,6 +72,6 @@ This is not pessimism. It is a different read of what diagnostic and planning ca
 
 The bronze man in Waterloo Place is not blind. He is a sighted man performing what sighted people imagine blindness means. He stands among monuments the state took the trouble to name. The system around him did not fail. It performed exactly as designed: sorting the legible from the illegible, the approved from the uncategorizable.
 
-I have sat in a car in a driveway because I had been legible at a dinner party for a while and then I wasn't. The categories shifted and nobody told me. The flag didn't cover my face. It covered theirs.
+I know the experience of being legible in a room for a while and then not, of the categories shifting with nobody announcing it. The flag doesn't cover your face. It covers theirs.
 
 The statue went up overnight in a heritage setting without any of the permissions the monuments around it went through, which means technically it does not exist.

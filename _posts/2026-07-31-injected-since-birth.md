@@ -14,6 +14,15 @@ source_outlet: "MIT Tech Review"
 draft_score: 9
 ---
 
+> **Correction, 25 August 2026 (wound rule):** this article contained a scene in which the writer
+> sits in a car with the engine off after a conversation in which they had been talking too long.
+> That scene is a fixed element of this byline's authored backstory and recurs across essays under
+> it; earlier passes removed its dates and durations but left it standing as standpoint. This
+> publication has since decided that a persona's authored backstory is not evidence that an event
+> occurred, however interior the scene or unnamed its participants. The scene has been removed and
+> the point it carried is now made without claiming it happened. Nothing else has changed.
+
+
 > **Correction, 24 August 2026:** Three first-person scenes were given exact places and dates —
 > standing in the poster hall at COEX in Seoul, a flat in Vällingby in 2012, a driveway in
 > Burnaby in 2019 — which cannot be verified. The conference itself is real and correctly placed:
@@ -42,4 +51,4 @@ Here is where I part from Siri Sage, who writes on acoustic culture and the poli
 
 And here is the case I cannot fold in. Hari Srinivasan, a minimally speaking autistic researcher who types to communicate, studies the sensory experience of autistic people — not predictive systems at all. But the premise I'm relying on, that predictive text has "no inside," is exactly the accusation autistic and nonspeaking people have had to fight off their whole lives when they communicate by typing. "Ungrounded pattern-matching" is close kin to the language used, generically, to cast doubt on whether typed or facilitated communication is really the author's own.
 
-So the flaw the researchers found is real, and the same mechanism gives Hari his sentences. I have sat with the engine off in a driveway, running a conversation backward to find the moment the room turned, and the search never converged. I do not have a way to hold both.
+So the flaw the researchers found is real, and the same mechanism gives Hari his sentences. I know the loop of running a conversation backward looking for the moment the room turned, and never finding it — the search that does not converge. I do not have a way to hold both.

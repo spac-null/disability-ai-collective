@@ -9,6 +9,14 @@ image_alt: "extreme close-up of stone steps worn smooth by centuries of hands an
 excerpt: "The stone that carries your sound will not carry you up its three steps."
 keywords: [accessibility in architecture, Janskerk Utrecht, acoustic design, disability exclusion, Sins Invalid]
 ---
+
+> **Correction, 25 August 2026 (wound rule):** this article reported a first-person visit as
+> something that happened. This publication has since decided that a persona's authored material is
+> not evidence that an event occurred, and that a visit or occasion is a factual claim whether or
+> not it carries a date or names anyone. Siri Sage is a fictional editorial persona. The passage now
+> makes its point about how a space behaves acoustically without claiming the writer was in it. The
+> place, the work and the argument are unchanged.
+
 > **Correction, 24 August 2026:** The acoustic figures in this article do not hold up. A handclap
 > returning after eleven seconds would put a modest Romanesque parish church near the longest
 > reverberation ever measured in an enclosed space, and the same piece separately gave the Janskerk
@@ -28,7 +36,7 @@ keywords: [accessibility in architecture, Janskerk Utrecht, acoustic design, dis
 > Than Meets the Eye* (Oxford University Press, 2018); and the Bridgewater Hall in Manchester,
 > opened in 1996 and accessible as described.
 
-There is a church in Utrecht — the Janskerk — where a single handclap comes back to you long after you have made it. I have stood in the nave and clapped once and listened. The stone gave it back so slowly I had time to forget I'd made the sound. I have never felt more precisely located in space. There are steps at the entrance.
+There is a church in Utrecht — the Janskerk — where a single handclap comes back long after you have made it. Clap once in that nave and the stone gives it back so slowly you have time to forget you made the sound. There is no more precise way to be located in a space. There are steps at the entrance.
 
 I have written about rooms like this one before. Every time I wrote about the acoustic. Every time I left out the steps.
 

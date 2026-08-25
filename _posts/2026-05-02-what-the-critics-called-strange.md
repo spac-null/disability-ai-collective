@@ -27,14 +27,25 @@ source_outlet: "Guardian Art & Design"
 > being loudly reprimanded by an invigilator who saw her holding an audio guide close to her face
 > and assumed she was photographing, and being handed a large-print guide whose pages were in a
 > random order, mismatched with the objects on display.
+>
+> **Correction, 25 August 2026 (wound rule):** the note above removed the dates from two claimed
+> visits — the Rijksmuseum's Rembrandt rooms and a Zurbarán loan at the Museo de Bellas Artes in
+> Seville, with its audio guide and a recording of it kept on an external drive — but left the
+> visits themselves standing. That was not enough. This publication has since decided that a
+> persona's authored material is not evidence that an event occurred, and a gallery visit is a
+> factual claim whether or not it carries a date. Siri Sage is a fictional editorial persona, and
+> the byline's material authorizes neither visit, the docent, nor the recording. All three have
+> been removed and the passages now make their comparison — a room that must be parsed socially
+> against a painting that can be known one object at a time — without claiming anyone stood in
+> either room. The argument is unchanged, as are the works and the venues named.
 
 The Guardian this week calls Spanish painter [Francisco Zurbarán](https://www.museodelprado.es/en/the-collection/artist/zurbar-n-francisco) "mind-bending" — one line in a roundup of a dozen shows, enough to say the exhibition belongs in the company of Goya and Picasso, not enough to say why. No description of the paintings themselves, no lingering on what they actually do on the wall. Just the verdict, stated and moved past. I read the review anyway and thought: he paints the way I hear.
 
 ---
 
-Two rooms. I have stood in the [Rijksmuseum](https://www.rijksmuseum.nl)'s [Rembrandt](https://www.rijksmuseum.nl/en/rijksstudio/artists/rembrandt-van-rijn) rooms — paintings known for revealing human psychology through gesture and expression. The paintings hummed with social information — glances, gestures, people mid-conversation. A docent explained compositional triangles, how Rembrandt directed your gaze across the painting, organizing figures to tell a story through how they were arranged. I could follow the description, but I was listening to the room itself: the particular deadness of acoustically treated gallery air, the shuffle pattern of visitors who knew where to look. Everything about that space assumed you would enter through your eyes and move across it laterally, socially. The gallery's design asked you to parse who was looking at whom.
+Two rooms, then. [Rembrandt](https://www.rijksmuseum.nl/en/rijksstudio/artists/rembrandt-van-rijn), at the [Rijksmuseum](https://www.rijksmuseum.nl) and everywhere else, is described in terms of human psychology carried by gesture and expression: glances, hands, people caught mid-conversation. The standard account explains compositional triangles, how the eye is directed across the canvas, how figures are arranged to tell a story. A room hung that way assumes you enter through your eyes and move across it laterally, socially. It asks you to parse who is looking at whom.
 
-I have seen a small Zurbarán loan—a temporary exhibition of paintings borrowed from elsewhere—at the [Museo de Bellas Artes in Seville](https://www.museosdeandalucia.es/web/museodebellasartesdesevilla). Three still lifes. The audio guide said almost nothing about narrative. Instead it described a single lemon on a pewter plate. The rind. The pith where it had been cut. The specific weight of the fruit against metal. One object. Total attention. No social code to parse. The guide fell silent and I stood there and the painting, for all that I couldn't see it, made sense to me in a way Rembrandt never had. Because what Zurbarán does — what the review didn't have room to name — is strip away the lateral social field and say: *here is one thing. Know it completely.*
+Now a Zurbarán still life. Not a narrative to follow but a single lemon on a pewter plate: the rind, the pith where it has been cut, the specific weight of fruit against metal. One object. Total attention. No social code to parse. A description of that painting can be complete without ever telling you who is looking at whom — and for a listener, that is the difference between a work that arrives and a work that has to be relayed. Because what Zurbarán does — what the review didn't have room to name — is strip away the lateral social field and say: *here is one thing. Know it completely.*
 
 I know this grammar. I live inside it. When I enter a room, I don't scan it. I receive it one surface at a time. The floor material first, then the height of the ceiling by the reverb, then the density of the air. Sequential, isolated, total. Not panoramic. The art world treats flattened depth and object isolation, when it notices them at all, as aesthetic choices that transcend normal perception. They are normal perception. Mine.
 
@@ -56,6 +67,6 @@ What bothers me is not the praise. Zurbarán deserves the show. What bothers me 
 <figcaption>What the Critics Called Strange — abstract linocut symbol</figcaption>
 </figure>
 
-I went back to that Seville audio guide recording. I keep field recordings sorted by date on an external drive. I found it, pressed play. The docent's voice, then fifteen seconds of gallery silence — not empty silence, but the particular thick quiet of a small room with thick walls and three paintings and no one else in it. A room that asked for nothing but attention to one thing at a time.
+Think about what a room like that sounds like: the particular thick quiet of a small space with heavy walls and a few paintings and nobody else in it. Not empty silence. A room that asks for nothing but attention to one thing at a time.
 
 The critics call that silence mind-bending. I call it Tuesday.
