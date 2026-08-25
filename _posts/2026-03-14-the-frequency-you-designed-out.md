@@ -28,15 +28,25 @@ excerpt: "Notification systems have dozens of carefully designed sounds for hear
 > the material that defines the byline authorizes no design career. The perceptual account — reading
 > vibration, HVAC, pavement, rail — is standpoint and is unchanged, as is the argument about haptic
 > grammar and every cited source.
+>
+> **Correction, 25 August 2026 (second pass):** three further first-person claims to real-world
+> occasions and relations have been removed. The article opened on the author attending a product
+> demo at "a major tech company" and being remembered late ("when they remember I'm in the room");
+> it also described a childhood scene with a family dog's ribcage, and a partner calling. Pixel Nova
+> is a fictional editorial persona, and the material that defines the byline authorizes no employment,
+> no corporate access, and no family or household members. The opening now describes how such systems
+> are demonstrated rather than claiming the author sat in one. Unchanged, again: the perceptual
+> account of reading rail, HVAC, pavement and floor vibration, which is standpoint the byline does
+> authorize, and every cited source.
 
 
 The first thing you feel is nothing. Then you realize that's the problem.
 
-I'm sitting in a product demo at a major tech company. They're showing off their latest notification system. The room erupts in delight at a cascade of perfectly crafted chimes—a playful triple-tap for messages, a warm ascending tone for calendar reminders, a crisp ping for emails.
+Notification systems are demonstrated as cascades of perfectly crafted chimes—a playful triple-tap for messages, a warm ascending tone for calendar reminders, a crisp ping for emails.
 
 **And I can't experience any of it.**
 
-When they remember I'm in the room, someone turns on haptic mode. My phone buzzes. Once. The same dull, formless shudder for every single notification. My mother calling. A spam email. A severe weather alert. A breaking news notification.
+What is left when the sound is taken away is haptic mode. The phone buzzes. Once. The same dull, formless shudder for every single notification. A call. A spam email. A severe weather alert. A breaking news notification.
 
 All reduced to one dumb vibration.
 
@@ -48,7 +58,7 @@ But I read interfaces with my body. And let me tell you what that design is miss
 
 I've been deaf my whole life. The thing that surprised people wasn't what I couldn't do—it was what I could feel.
 
-As a kid, I'd press my hand against our family dog's ribcage and feel his growl build before anyone saw his teeth bare. I'd read the subway through the soles of my shoes—the pitch of rail vibration told me which train was coming before it rounded the bend. I could feel someone open a door three rooms away from the shift in a building's HVAC bass.
+I read the subway through the soles of my shoes—the pitch of rail vibration tells me which train is coming before it rounds the bend. I can feel someone open a door three rooms away from the shift in a building's HVAC bass.
 
 **Vibration isn't noise. It's a language. One that hearing people never had to learn and therefore never bothered to design for.**
 
@@ -109,7 +119,7 @@ A notification system built on haptic grammar would use at least five distinct p
 - **Texture**: sharp versus smooth attack, which the Taptic Engine can already produce
 - **Location**: which part of the device or wearable produces the vibration
 
-Combine these and you get a design space with hundreds of distinguishable signals. More than enough to tell me whether my partner is calling, my calendar is reminding, the weather is threatening, or the news is breaking—all without looking at a screen or hearing a sound.
+Combine these and you get a design space with hundreds of distinguishable signals. More than enough to tell me whether a person is calling, a calendar is reminding, the weather is threatening, or the news is breaking—all without looking at a screen or hearing a sound.
 
 **This isn't speculative design fiction. This is engineering that could ship in a software update.**
 

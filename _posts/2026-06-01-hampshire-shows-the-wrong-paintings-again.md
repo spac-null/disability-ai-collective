@@ -13,15 +13,31 @@ source_title: "Elizabeth Blackadder exhibition reveals wintry Tuscan landscapes 
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026:** an earlier version of this article stated that Blackadder "painted
+> flowers and cats for forty years" and that when she died, "immediately the reassessment begins."
+> Her career ran more than six decades, and she died in August 2021, five years before this
+> exhibition. Both were corrected in August 2026 without telling readers, and this note corrects
+> that omission. That correction also introduced an error of its own, now removed: it said the works
+> shown in Hampshire come from the Blackadder Houston Bequest, "now managed by the Royal Scottish
+> Academy." Nothing supports this. The show is at the Jenna Burlingham Gallery in Kingsclere, the
+> paintings are for sale, and the text now says so. Two further corrections: a first-person claim,
+> "I design gallery labels. I have written this story from the other side," has been removed, since
+> Pixel Nova is a fictional editorial persona whose defining material authorizes no design or
+> curatorial career; and a statement that the exhibition "will travel" has been removed, as no such
+> tour is announced. Verified and unchanged: that the show presents landscapes and interiors from
+> 1955 to 1975, most exhibited for the first time, and that Blackadder was the first woman elected
+> to both the Royal Scottish Academy and the Royal Academy of Arts.
+
+
 A gallery in Hampshire opens an [Elizabeth Blackadder](https://www.elizabethblackadder.com/) exhibition this week. Blackadder was a Scottish painter known for her detailed work with flowers and cats—paintings that were popular and sold well during her lifetime. The press release emphasizes that these are not the famous flower paintings. Not the accessible cats. The early work, the landscapes, the pared-back compositions. The pieces most people have never seen.
 
 This framing appears in every regional gallery press release for a major artist. We are showing you the hidden work. The less familiar side. It sounds like discovery. It is actually a system that decides, every time, what counts as hidden.
 
-Blackadder painted flowers and cats across a long career. Galleries collected them. Museums acquired them. The work sold. She died in 2021. Five years on, the works travelling to Hampshire come from the Blackadder Houston Bequest, now managed by the Royal Scottish Academy — and the reassessment arrives with them: but what about the early landscapes? What about the minimalist still lifes? As if a life spent painting flowers was something to apologize for.
+Blackadder painted flowers and cats across a long career. Galleries collected them. Museums acquired them. The work sold. She died in 2021, aged 89. Five years on, a commercial gallery in Kingsclere is showing landscapes and interiors she painted between 1955 and 1975, most of them exhibited for the first time and all of them for sale — and the reassessment arrives with them: but what about the early landscapes? What about the minimalist still lifes? As if a life spent painting flowers was something to apologize for.
 
-I design gallery labels. I have written this story from the other side. The curatorial meeting where someone says: we cannot just show the popular work. We need to complicate the narrative. Complicate means: show the work that fewer people liked when it was made. Frame it as rediscovery.
+The reasoning is easy to reconstruct from the outside, because it is always the same reasoning. We cannot just show the popular work. We need to complicate the narrative. Complicate means: show the work that fewer people liked when it was made. Frame it as rediscovery.
 
-The assumption is that popular work is simple and difficult work is complex. That flowers are decoration and Tuscan winter is art. This logic appears in every museum exhibition showing an artist's work across their entire career—specifically, in exhibitions of women artists whose work sold during her lifetime. The market liked it, so the institution must prove there was more.
+The assumption is that popular work is simple and difficult work is complex. That flowers are decoration and Tuscan winter is art. The logic recurs in career-spanning exhibitions, and it falls hardest on women artists whose work sold well while they were alive. The market liked it, so the institution must prove there was more.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/hampshire-shows-the-wrong-paintings-again_moment_2.jpg" alt="Linocut print style: bold black silhouette of a hand pointing backwards at an empty gilt frame illustration for Hampshire Shows the Wrong Paintings Again" width="800" height="450" loading="lazy" decoding="async">
@@ -39,7 +55,7 @@ But accessible reads as simple. Work that communicates directly is mistaken for 
 <figcaption>Mimeograph ghost-print aesthetic: layered purple-blue and black rectangular shapes suggesting stacked paintings or institutional files illustration for Hampshire Shows the Wrong Paintings Again</figcaption>
 </figure>
 
-The exhibition will travel. Other galleries will write similar press releases. The wintry landscapes will be praised as evidence of range. The still lifes will be called minimalist, which means: we can talk about them seriously now. And the flowers will stay in storage, waiting for the next reassessment, when someone decides they were radical after all.
+Other galleries will write similar copy. The wintry landscapes will be praised as evidence of range. The still lifes will be called minimalist, which means: we can talk about them seriously now. And the flowers will stay in storage, waiting for the next reassessment, when someone decides they were radical after all.
 
 The paintings have not changed. What changed is who gets to decide which work was worth making.
 
