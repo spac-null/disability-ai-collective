@@ -21,8 +21,12 @@ checkout's `main` branch was canonical. **That assumption no longer holds** — 
 
 ## Canonical repository — CORRECTED MODEL
 
-- **Canonical branch: `origin/main`** (GitHub `spac-null/disability-ai-collective`, PRIVATE repo),
-  currently `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf` (PR #26 merge).
+- **Canonical branch: `origin/main`** (GitHub `spac-null/disability-ai-collective`, PRIVATE repo).
+  `RECONCILED_AGAINST_SHA` for this pass: `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf` (PR #26
+  merge) — **a snapshot marker for when this reconciliation ran, not a claim that this is still
+  `origin/main` HEAD.** Run `git rev-parse origin/main` before trusting it as current; this
+  document (and `project-manifest.json`'s `generated_at` timestamp) will fall behind the moment
+  ordinary work resumes, including the moment this reconciliation's own PR merges.
 - **`~/code/disability-collective-ai` (local checkout, `main` branch) is NOT canonical.** Its
   `main` diverged from `origin/main` at merge-base `9f9bf35` (2026-08-19/20) and carries 38
   commits never pushed. Do not treat this checkout's `main` or its `.claude/` trackers as current
@@ -59,7 +63,7 @@ Programmatically classified against `origin/main` this pass (`git merge-base --i
 | Worktree | Branch | Ahead of origin/main | Classification |
 |---|---|---|---|
 | `disability-collective-ai-ia-redesign` | `ia-redesign/main-site-2026-08-25` | 1 commit ("Main-site IA redesign: work-first hierarchy, withdrawal-safe listings") | **SUPERSEDED** — an earlier IA-redesign iteration; PR #26's "v2" shipped instead. Preserve, don't delete. |
-| `disability-collective-ai-production-observability` | `production-observability-2026-08-20` | 2 commits ("fix: capture sidecar catches Exception, not BaseException" + 1 more) | **GENUINELY UNMERGED — real outstanding work.** No corresponding PR found. Owner decision needed: land it or explicitly park it. |
+| `disability-collective-ai-production-observability` | `production-observability-2026-08-20` | 2 commits ("feat: passive OFF-by-default production capture for phase-2 comparison," "fix: capture sidecar catches Exception, not BaseException") | **SUPERSEDED, corrected from an earlier "genuinely unmerged" mislabel.** Both commit messages are identical to two commits that DID land on `origin/main` (`b54dd70`, `82ec110` — independently authored, same fix, different session). `origin/main`'s `shadow_capture.py` is strictly more advanced: it also carries the `56eba2b` v0.1 capture-contract fix this worktree lacks, and already uses `except Exception` (not `BaseException`) throughout. Diffed this pass — nothing in this worktree is missing from `origin/main` in a less-complete form. Not a current blocker. |
 | `disability-collective-ai-static-audit-completion` | `static-audit-completion-2026-08-20` | 1 commit ("evidence: complete static site integrity audit coverage") | **Likely SUPERSEDED** — `origin/main` already carries a more complete version of the same static-site-integrity-audit (`COMPLETION-SUPPLEMENT-SEVEN-SURFACES.md`, `CLOSEOUT-2026-08-20.md`), landed independently. Not byte-diffed this pass; treat as probably-redundant, not confirmed-redundant. |
 | `disability-collective-ai-reconcile` | `reconcile/project-state-2026-08-25` | this reconciliation itself | **ACTIVE**, not yet merged, awaiting owner review. |
 | `disability-collective-ai-story-rejection-release` | `release/story-rejection-v1` | (cherry-picked, not a literal ancestor) | **RELEASED via cherry-pick**, already documented in the 2026-08-16 map — expected false-negative from the ancestor check, not a new gap. |
@@ -101,10 +105,12 @@ scope for this reconciliation (tracker docs only, no code changes authorized).
 
 - Database backup for `disability_findings.db` / `automation/engagement.db` — still no
   SQLite-safe snapshot method; unchanged, not re-verified this pass (no Trident access used).
-- `production-observability-2026-08-20` — see table above, genuinely unmerged, needs an owner
-  decision.
-- Legacy prompt/rule inventory (4 must-fix / 24 consolidate items) — needs re-triage against
-  `NEW_ENGINE_V1`; see `.claude/WORK.md` BLOCKED/OUTSTANDING.
+- `production-observability-2026-08-20` — **corrected this pass**: SUPERSEDED, not an open item.
+  See table above.
+- Legacy prompt/rule inventory (4 must-fix / 24 consolidate items) — UNRESOLVED, re-triage
+  required before default-cutover; see `.claude/WORK.md` BLOCKED/OUTSTANDING.
+- Phase-2 passive-capture gate — STILL OPEN, current sample count unknown without Trident access;
+  see `.claude/WORK.md` BLOCKED/OUTSTANDING.
 - Local checkout's own 38-commit divergence — preserved (Stage A), but the checkout itself
   remains diverged. It should either be reset to track `origin/main` for future canonical work,
   or explicitly retired in favor of a fresh clone — owner decision, not performed this pass.

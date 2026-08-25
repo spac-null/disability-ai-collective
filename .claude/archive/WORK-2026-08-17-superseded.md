@@ -3,15 +3,18 @@
 > during the 2026-08-25 project-state reconciliation, which found this file had drifted into a
 > diary (550 lines) despite its own maintenance rule against that. **The safety-gate mechanics
 > described here (AP1, APE2, PS1, LPF1, Persona Brief↔Writer Reconciliation, Story Rejection
-> V1.1) predate the reconciliation's fork point and were not found to be contradicted or reverted
-> by anything on current `origin/main` — treat them as still-accurate technical documentation of
-> shipped mechanisms, just no longer duplicated at the top-level state page.** The conceptual-
-> architecture debate (`## 2`), persona-architecture Phase 3 backlog (`## 5` item 5), and CJ-2/L2
-> parked status (`## 6`) below were NOT reverified during the 2026-08-25 pass — carried forward
-> as last-known-state, not re-confirmed against current `origin/main`. See `.claude/WORK.md` for
-> what the 2026-08-25 reconciliation actually re-verified (LC1 closure, engine-switch semantics,
-> writer-grounding/production-migration disposition, the legacy prompt-rule inventory, Siri Sage
-> wound-cluster status, Sofa/Form ratification status).
+> V1.1), the conceptual-architecture debate (`## 2`), the persona-architecture Phase 3 backlog
+> (`## 5` item 5), and CJ-2/L2 parked status (`## 6`) were NOT independently re-verified against
+> current code during the 2026-08-25 reconciliation — "not found reverted in a targeted pass" is
+> not the same claim as "verified current behavior."** Treat this file as historical / last-known
+> technical documentation only. Do not infer current operational state from it — consult current
+> code and `.claude/WORK.md` before acting on anything described here. `.claude/WORK.md` lists
+> exactly what the 2026-08-25 reconciliation (and its 2026-08-25 correction pass) actually did
+> independently re-verify: LC1 closure and its corpus-wide first-person-axis scope, engine-switch
+> semantics, two specific `NEW_ENGINE_V1` contract findings, writer-grounding/production-migration
+> disposition, the legacy prompt-rule inventory's status, the Phase-2 passive-capture gate's actual
+> status, and Sofa/Form ratification evidence (G-009). Everything else in this archived file is
+> last-known-state only.
 
 # WORK — Canonical Current State (2026-08-17 snapshot — SUPERSEDED, see banner above)
 

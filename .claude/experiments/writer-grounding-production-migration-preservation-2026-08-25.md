@@ -78,6 +78,16 @@ engine is still `LEGACY`. This branch's Phase 0–2 evidence is historical
 record of the shadow work that preceded the real cutover, not a parallel or
 competing implementation to reconcile.
 
+**Clarification added in the 2026-08-25 same-day correction pass:** "superseded" above refers
+only to this branch's own passive-capture *code line* being superseded as the production
+candidate by `NEW_ENGINE_V1`'s implementation. It does **not** mean the underlying Phase-2
+passive-capture *requirement* (3 real samples of the legacy pipeline, captured for later
+comparison against the target architecture) has been satisfied or retired — that requirement is
+tracked separately on `origin/main` (`automation/shadow_capture.py`, still being actively
+engineered as of `56eba2b`/2026-08-24) and remains **STILL OPEN**, current sample count unknown
+without Trident access. See `.claude/WORK.md` BLOCKED/OUTSTANDING for the current, re-verified
+status — do not infer from this note that the P2 gate is closed.
+
 ## Preservation completeness
 
 All primary evidence for writer grounding, production migration, the legacy
