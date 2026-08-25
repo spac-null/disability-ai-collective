@@ -6,38 +6,53 @@ author: "Siri Sage"
 category: spatial design
 image: /assets/two-panels-one-glass-case-and-what-nobody-held_moment_2.jpg
 image_alt: "Two Panels, One Glass Case, and What Nobody Held \u2014 detail illustration"
-excerpt: "At the Cooper Hewitt this month, the photography critic Vince Aletti sits on a panel and says of the disco flyers and zines he once collected: \"I miss all that"
-keywords: [spatial design]
+excerpt: "Withdrawn 25 August 2026: one of the two archives this article compares — a named blind woman in Leeds, described as personally known — was invented, as was the memory it closes on."
+keywords: [Cooper Hewitt, Art of Noise, Vince Aletti, Peter Saville, album art, withdrawn article]
 source_url: "https://hyperallergic.com/the-album-art-music-left-behind/"
 source_title: "The Album Art Music Left Behind"
 source_outlet: "Hyperallergic"
+withdrawn: true
+withdrawn_date: 2026-08-25
 ---
 
-At the Cooper Hewitt this month, the photography critic Vince Aletti sits on a panel and says of the disco flyers and zines he once collected: "I miss all that material. Not that I could house it anymore." The material floats on a screen behind him. Three floors up, in the Art of Noise show, Peter Saville's 1979 *Unknown Pleasures* poster sits behind glass, lit and labelled and untouchable.
+**Withdrawal, 25 August 2026**
 
-The same week, in a house in Leeds I know only by phone, a woman named Carol sorts through her dead brother's records with her hands. She cannot read the sleeves. She never could. She knows each album by the weight of it, the grain of the cardboard corner, the specific way one warped jacket has gone soft along the spine from thirty years of a particular grip.
+This article has been withdrawn.
 
-Two archives. One is being preserved by removing it from every hand that ever knew it. The other is being read the only way it was ever fully known.
+Its reporting was sound. There was a panel at the Cooper Hewitt, Vince Aletti did say "I miss
+all that material. Not that I could house it anymore," Matthew Higgs did repeat the story
+that Peter Saville designed the *Unknown Pleasures* cover in 1979 without hearing the record,
+and the observation that the artwork and the music were never connected and can no longer be
+pulled apart is the source's own. None of that is the problem.
 
-Here is what nobody on that panel said, though Matthew Higgs got close. He repeated the story that Peter Saville never listened to Unknown Pleasures before designing the cover in 1979. Everyone laughs at that. The cover and the music were never connected — and yet we cannot pull them apart now.
+The problem is the other half of the article, which does not exist.
 
-But the poster under glass was connected to something, and it was not the music.
+"A woman named Carol" in "a house in Leeds I know only by phone" was presented as a real
+person this writer was in contact with: a blind woman sorting her dead brother's records by
+hand, knowing each album by the weight of it and the grain of the cardboard, one jacket gone
+soft along the spine "from thirty years of a particular grip", who kept what could be gripped
+and gave the rest to a charity shop. She was not flagged as composite or illustrative. She was
+written as a real person giving real testimony, and there is no evidence she exists.
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/two-panels-one-glass-case-and-what-nobody-held_symbol_3.jpg" alt="Two Panels, One Glass Case, and What Nobody Held — conceptual image" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>Two Panels, One Glass Case, and What Nobody Held — conceptual image</figcaption>
-</figure>
+She was also the entire counterweight. The piece is built as a comparison between two
+archives — one preserved by being removed from every hand that knew it, one read the only way
+it was ever fully known — and it closes on her verdict. Take away the invented woman and there
+is no second archive and no comparison. The title refers to her.
 
-It was connected to the hand. To thumbing through a crate of sleeves looking for it. To pinning it to a bedroom wall and re-pinning it after it fell, until the corners went soft and the paper took on the specific grime of every room it had lived in. The object was information you took in through pressure and texture and the small violence of use. Put it behind glass and you have kept the picture. You have thrown away everything the picture was standing in for.
+The closing personal memory — "a Tuesday, second year of university, my roommate crying,
+telling me — kindly — that she needed someone who could see her face" — is a fixed element of
+this byline's authored backstory rather than a recorded event. It appears in other essays under
+the same byline. It is not a documented occasion and should not have been offered as one.
 
-I keep thinking about this because I have spent years arguing that objects carry knowledge you cannot get by looking. Then I remember a Tuesday, second year of university, my roommate crying, telling me — kindly — that she needed someone who could see her face. She was right. There are things the hand does not reach.
+The argument underneath — that an object can carry knowledge that is only available through
+handling, and that a museum preserving the picture may be discarding what the picture stood
+in for — is a real argument, and blind writers and disability scholars have made it from
+actual experience. This article made it by inventing a blind woman to hold the objects.
+Removing the fabrications leaves a summary of somebody else's panel report, so the piece is
+withdrawn rather than corrected.
 
-Aletti would probably reject my whole line of thought. He is a photography critic. He loves the image, elevates it, has built a life on the flat preserved surface. And still he sat there and grieved the fact that the thing could no longer be held. He wants both. He knows he cannot have both.
+The published excerpt was also broken, cut off mid-sentence at "I miss all that", and the
+keywords had been left as the bare category.
 
-Carol in Leeds does not have that problem. She kept the objects that could still be gripped and gave the rest to a charity shop.
-
-The curators call this preservation. She would call it the opposite.
-
----
-
-*This article was prompted by [The Album Art Music Left Behind](https://hyperallergic.com/the-album-art-music-left-behind/) from Hyperallergic.*
+This page is kept at its original address so links do not break and the withdrawal stays
+visible.

@@ -9,12 +9,26 @@ keywords: [Jitske Kramer, permanent liminality, Tricky tijden, corporate anthrop
 image: /assets/the-threshold-has-a-curb_setting_1.jpg
 image_alt: "The Threshold Has a Curb — screen-print protest poster illustration"
 ---
+> **Correction, 25 August 2026:** This article misdescribed the concept it is arguing with. It
+> said Kramer "presents permanent liminality as a condition people are now learning to navigate —
+> as if the threshold is something that recently appeared", and built its objection on that
+> supposed claim of novelty. She does not present it that way. In *Tricky tijden*, liminaliteit is
+> the in-between time of a change, and permanente liminaliteit is what is left when the return
+> never completes — a state she treats as a danger, bred by a culture of unboundedness, with the
+> never-ending divorce battle and the war that does not stop as her examples. The description and
+> the objection have both been rewritten so the disagreement is with what the book says. The
+> campfire was also described as gathering to "wait until the path reveals itself"; Kramer's
+> campfire conversations are for interpreting and connecting the collective story, alongside
+> rituals that mark transitions, and that is now how it is put. **Checked and unchanged:** Jitske
+> Kramer is a corporate anthropologist; *Tricky tijden* was published by Boom on 28 March 2024; and
+> the liminality tradition she draws on runs through Arnold van Gennep and Victor Turner. The
+> address is unchanged.
 
 Jitske Kramer writes about organizations that don't know what to do next.
 
-Her book, *Tricky tijden*, came out in March 2024. One of the concepts she develops is "permanente liminaliteit" — permanent liminality. The threshold state. You are between what was and what will be, and neither end is visible. Boundaries dissolve. Freedom and anxiety arrive together. There is no clear path forward.
+Her book, *Tricky tijden*, came out in March 2024. The concept at its centre is liminaliteit — the in-between time, between the old and the new, when you are inside a change and do not yet know what the new will bring. Boundaries dissolve. Freedom and anxiety arrive together. There is no clear path forward. When the return never completes, she calls what is left permanente liminaliteit — permanent liminality — and she treats it as a danger rather than a destination, something a culture of unboundedness can breed. Her examples are the divorce battle that never ends and the war that does not stop.
 
-She reaches for a campfire. Organizations in uncertain times should gather, find direction together, wait until the path reveals itself.
+She reaches for a campfire. Organizations in the in-between should gather, talk, and make sense of the collective story together, with rituals to mark the transitions.
 
 I have been at the threshold my whole life. The threshold has a curb.
 
@@ -22,13 +36,13 @@ I have been at the threshold my whole life. The threshold has a curb.
 
 Kramer is a corporate anthropologist. Her liminality comes from the ritual literature — Victor Turner, Arnold van Gennep, the anthropology of passage. You enter the liminal space, you are unmade, you emerge changed. The organization goes in as one thing and comes out as another.
 
-What she has adapted this for is the current corporate moment: organizations that cannot plan because the environment keeps shifting, that cannot commit because the ground keeps moving. The "tricky" in the title is that the old tools don't work and the new ones haven't arrived yet. She presents permanent liminality as a condition people are now learning to navigate — as if the threshold is something that recently appeared.
+What she has adapted this for is the current corporate moment: organizations that cannot plan because the environment keeps shifting, that cannot commit because the ground keeps moving. The "tricky" in the title is that the old tools don't work and the new ones haven't arrived yet. For Kramer, permanent liminality is the bad outcome — the transition that fails to complete. That is where I want to put my question.
 
 I want to be precise about what I recognize in this and what I don't.
 
 What I recognize: the threshold as a condition of permanent incompletion. Always in between what the environment promises and what it delivers. The freedom and anxiety arriving together. The absence of a clear forward path.
 
-What I don't recognize: the novelty. The built environment was liminal before Kramer named it. I have always been in between what the building said it was and what it actually was for a body like mine. The ramp that ends at a step. The accessible toilet locked with a key available at the front desk, closed on weekends. The lift that works on the first visit and is out of service on the second. Permanent liminality — not as organizational uncertainty but as infrastructure failure, cycling, constant.
+What I don't recognize: the assumption that the threshold is a phase at all. The built environment was permanently liminal long before a management book had a name for the state, and it was not a transition that failed to complete. It was never going anywhere. I have always been in between what the building said it was and what it actually was for a body like mine. The ramp that ends at a step. The accessible toilet locked with a key available at the front desk, closed on weekends. The lift that works on the first visit and is out of service on the second. Permanent liminality — not as organizational uncertainty but as infrastructure failure, cycling, constant.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-threshold-has-a-curb_setting_1.jpg" alt="The Threshold Has a Curb — screen-print protest poster illustration" width="800" height="450" loading="lazy" decoding="async">

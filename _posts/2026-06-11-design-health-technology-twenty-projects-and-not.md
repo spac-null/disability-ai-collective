@@ -5,47 +5,60 @@ date: 2026-06-11
 author: "Maya Flux"
 category: urban design
 image: /assets/design-health-technology-twenty-projects-and-not_setting_1.jpg
-image_alt: "Extreme close-up of a hand holding a crumpled three-item list illustration for Design, Health, Technology \u2014 Twenty Projects and Not"
-excerpt: "Twenty design students created cutting-edge health technology that nobody with a disability tested it on."
+image_alt: "Design, Health, Technology \u2014 Twenty Projects and Not — editorial illustration"
+excerpt: "Withdrawn 25 August 2026: every piece of evidence in this article — a studio critique, three designer colleagues, a conference panel and a disabled speaker's testimony — was invented."
 keywords: [health technology design exhibition, UC Davis art design graduate students, medical device user experience, healthcare interface design, design criticism art museum]
 source_url: "https://hyperallergic.com/health-technology-art-and-design-intersect-at-uc-davis-graduate-showcase/"
 source_title: "Health, Technology, Art, and Design Intersect at UC Davis Graduate Showcase"
 source_outlet: "Hyperallergic"
+withdrawn: true
+withdrawn_date: 2026-08-25
 ---
-At UC Davis, twenty graduate students are showing work at the intersection of health, technology, art, and design. The exhibition closes June 20. I looked at the project descriptions. Multimedia installations. Sculpture. Paintings. Collage that encourages visitors to "engage with art and design in new ways." The press release says these students are on the cutting edge.
 
-I kept looking for the person who would actually use any of it.
+**Withdrawal, 25 August 2026**
 
-Not pictured: the nurse who has to navigate the interface. The patient who has to understand the output. The body the technology is supposed to assist. The dean calls it experimental research. I call it the design equivalent of a blueprint with no doors.
+This article has been withdrawn.
 
-This happens every time health and technology share a gallery. The work gets described as if it exists in a frictionless space where use is not a problem. Use is simply assumed. Someone designs a new medical interface. Someone else builds a speculative device. A third person makes a sculpture about the body. None of them talk to the people whose bodies are the subject. Then it goes in a museum.
+The exhibition it was written from is real, and what it said about that exhibition was
+accurate: twenty graduate students at UC Davis, on view at the Manetti Shrem Museum
+through June 20, three purchase prizes and the Savageau Award, the dean's "cutting edge"
+quotation, and the collage that "encourage[s] visitors to engage with art and design in
+new ways". Susan Wendell did introduce the rejected body in 1996. None of that is why
+this piece is being withdrawn.
 
-I sat in a design studio where a graduate student presented a health-monitoring device sewn into clothing. The critique lasted forty minutes. Fifteen of those minutes were about the pattern. Ten were about the choice of fabric. Five were about whether the electronics would wash. Nobody asked what happens when the person wearing it can't reach the on-switch. Nobody asked if it works when you're lying down. The student got the top prize and the device got shelved.
+Everything the argument actually rested on was invented.
 
-Here is what design-meets-health looks like from the other side. You arrive at a hospital for a scan. The new system has a tablet interface. It is mounted on an arm that swings out from the machine. The arm is positioned for someone standing. You are sitting. The nurse tilts the screen toward you. The screen is now at an angle where the glare makes it unreadable. She rotates it. Now you can't reach it. She apologizes and pulls over a rolling stool so she can hold the tablet at the right height and angle while you tap through twelve pages of consent forms. She is annoyed. You are embarrassed. Somebody won a design award for that interface.
+A design studio critique was described as something this writer sat through, timed to the
+minute — forty minutes total, fifteen on the pattern, ten on fabric, five on whether the
+electronics would wash, and nobody asking what happens when the wearer cannot reach the
+on-switch. There was no such critique.
 
-The system was built in a lab where the designer and the engineer and the hospital administrator all assumed users would be standing and able to reach forward. The screen was positioned exactly where their hands expected it to be. Then it shipped. Now it lives in a room with a person who cannot stand, a nurse whose back hurts from holding the tablet, and a machine that cost two hundred thousand pounds. The tablet cost sixty. Nobody budgets for the retrofit.
+Three designers were presented as people this writer knows. One who embedded herself in a
+hospital for a year and redesigned a medicine cart that cost "eight percent more" and was
+rejected by purchasing. One who worked with wheelchair users on a physical therapy space
+until the hospital saw the cost of widening doorways. A third who gave up for academic
+research. There is no evidence any of them exist, and the eight percent was written, not
+measured.
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/design-health-technology-twenty-projects-and-not_moment_2.jpg" alt="Design, Health, Technology \u2014 Twenty Projects and Not — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>Design, Health, Technology \u2014 Twenty Projects and Not — intimate gouache illustration on textured paper</figcaption>
-</figure>
+A hospital scan room was described down to its costs — a machine at "two hundred thousand
+pounds", a tablet at "sixty", an award won for the interface. Those figures and that award
+were not observed or sourced.
 
-Susan Wendell, a disability theorist, introduced the concept of the rejected body in 1996 — the body that does not cooperate with the built environment and gets discarded from the design process rather than included in it. **The solution is not to design for that body after the fact. The solution is to let that body into the room where the design starts.** But graduate programs in health technology do not require collaboration with actual patients. They require a literature review and a working prototype. The prototype has to work in the lab. It does not have to work in a clinic. That is someone else's job.
+The worst of it is the panel. "Toronto, 2019, a design conference", a session called
+Inclusive Health Technology, four speakers, and a man with cerebral palsy who was given a
+direct quotation: that he had been invited to twelve such panels and nobody had ever asked
+what he actually needed. He was given a list three items long, a calm delivery, and an
+audience of fourteen raised hands, none of which asked about the list. That event and that
+man are not documented anywhere. A disabled person was invented and made to testify, in an
+article whose entire complaint is that disabled people are invited to speak and then
+ignored.
 
-I know three designers who tried to change that. One embedded herself in a hospital for a year, shadowing nurses and watching how equipment actually gets used. She redesigned a cart for distributing medicine. It was slower to manufacture and cost eight percent more. Purchasing rejected it. One worked with wheelchair users to redesign a physical therapy space. The hospital loved it until they saw the cost of widening the doorways. They put in the new equipment in the old room. The third gave up and went into academic research, where she writes papers about collaborative design that get cited by people who do not practice it.
+The argument the piece was making — that health technology is designed without the people
+who have to use it, and that letting those people into the room where design starts is not
+the same as accommodating them afterwards — is a real argument, and disabled designers and
+researchers have made it with real evidence. This article made it with none, and
+manufactured a disabled man's words to close it. Removing the fabrications leaves a
+summarised press release and a book title, so the piece is withdrawn rather than corrected.
 
-The UC Davis show offers three purchase prizes. The museum buys the winning work. That work now belongs to an institution. It does not belong to the world where someone might use it. A sculpture about health technology lives in the same category as a painting of a bridge. Both are about infrastructure. Neither is infrastructure.
-
-There is a room I have been in exactly once. Toronto, 2019, a design conference. The panel was called Inclusive Health Technology. Four speakers. Three were designers presenting theoretical projects about devices for disabled people. One was a man with cerebral palsy who said: I have been invited to twelve of these panels and nobody has ever asked me what I actually need. He said it very calmly. He had a list. The list was three items long. None of them required new technology. All of them required someone to care about use. The moderator thanked him for his perspective and moved to questions. Fourteen people raised their hands. Not one of them asked about the list.
-
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/design-health-technology-twenty-projects-and-not_symbol_3.jpg" alt="Design, Health, Technology \u2014 Twenty Projects and Not — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>Design, Health, Technology \u2014 Twenty Projects and Not — abstract linocut symbol</figcaption>
-</figure>
-
-What gets shown is not what gets built. What gets built is not what gets used. What gets used is not what gets maintained. The gap between those four states is where health technology goes to die. A graduate student designs it. A museum buys it. A hospital considers it. A purchasing officer sees the price. A nurse sees the training requirement. A patient never sees it at all. The cycle restarts with a new cohort who believe the problem is technical and not political.
-
-The Manetti Shrem Museum show runs through June 20. After that the work comes down, gets catalogued, and enters storage. Some of it will end up in storage. Some will be loaned to other institutions. None of it will be used by the people it depicts.
-
-I would like to know what the runner-up project was.
+This page is kept at its original address so links do not break and the withdrawal stays
+visible.

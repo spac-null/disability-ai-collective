@@ -9,6 +9,17 @@ keywords: [Jennifer Kanary, LABYRINTH psychotica, psychosis, AUTONOMOUS exhibiti
 image: /assets/she-built-the-room-so-you-could-hear-what-she-hears_setting_1.jpg
 image_alt: "She Built the Room So You Could Hear What She Hears — screen-print protest poster illustration"
 ---
+> **Correction, 25 August 2026:** This article described the visitor's time inside the
+> installation as "an hour", and built its closing section — originally headed "The Second Hour" —
+> on that figure. No published account of the work supports it; the project's wearable version runs
+> around twelve minutes, and the duration of the version shown at BRUTUS is not documented. The
+> article no longer asserts a length, and the closing question is now about what comes after rather
+> than about a second hour. **Checked and unchanged:** Jennifer Kanary's sister-in-law died by
+> suicide during a psychotic episode in 2005, and that is what sent her into the research and the
+> practice-based PhD behind the project; the project has been developed since 2010; it appeared in
+> AUTONOMOUS, curated by Ine Gevers, at BRUTUS Rotterdam, which ran 25 March to 14 June 2026; and
+> it has been shown at FACT Liverpool and at TodaysArt in The Hague in 2013. The address is
+> unchanged.
 
 The first thing LABYRINTH psychotica does is give you voices that have no body attached to them.
 
@@ -55,7 +66,7 @@ Kanary is working from inside. She is building the account of the experience fro
 
 That counter-authority matters. What I keep asking is: what happens at the threshold.
 
-## The Second Hour
+## After the Room
 
 The installation ends. You exit. The condition does not.
 
@@ -64,13 +75,13 @@ The installation ends. You exit. The condition does not.
 <figcaption>She Built the Room So You Could Hear What She Hears — abstract linocut symbol</figcaption>
 </figure>
 
-Understanding what a psychotic episode sounds like from inside — for an hour, in a designed environment, with the knowledge that you will leave — is not the same as understanding what it means to navigate a psychiatric system from inside that experience. The housing situation. The employment situation. The relationship to medication and its effects. The experience of being asked to describe your inner states to people whose job is to assess whether you are dangerous. The way time works when the episode is not installed and then exited but lived in indefinitely.
+Understanding what a psychotic episode sounds like from inside — for the length of the piece, in a designed environment, with the knowledge that you will leave — is not the same as understanding what it means to navigate a psychiatric system from inside that experience. The housing situation. The employment situation. The relationship to medication and its effects. The experience of being asked to describe your inner states to people whose job is to assess whether you are dangerous. The way time works when the episode is not installed and then exited but lived in indefinitely.
 
 I don't say this to argue that Kanary's work is insufficient. I say it because the work itself seems to know this limit — or at least not to claim otherwise.
 
 What the room offers is real: proximity, something of the inside, experience that no clinical description can give. What the room cannot offer is what comes after the room.
 
-I keep thinking: what would it mean to design the second hour? Not the simulation of psychosis, but the experience of the weeks after the diagnosis, the months inside the system, the years of negotiation?
+I keep thinking: what would it mean to design the part that comes after? Not the simulation of psychosis, but the experience of the weeks after the diagnosis, the months inside the system, the years of negotiation?
 
 That would be a different kind of installation. I don't know if it can be built.
 

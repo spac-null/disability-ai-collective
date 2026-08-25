@@ -4,11 +4,24 @@ title: "The Systemizing Quotient Was Right About the Wrong Thing"
 date: 2026-06-18
 author: "Zen Circuit"
 category: neurodiversity
-excerpt: "Baron-Cohen's systemizing finding is accurate. The conclusion he drew from it — that pattern-recognition minds cannot understand other people — is a mistake about what pattern recognition actually is."
+excerpt: "Baron-Cohen's systemizing finding has largely held up. The conclusion drawn from it — that pattern-recognition minds are correspondingly worse at reading other people — is a mistake about what pattern recognition actually is."
 keywords: [baron-cohen, systemizing quotient, empathizing-systemizing theory, cognitive style, autism research methodology, autistic empathy, neurodiversity]
 image: /assets/the-systemizing-quotient-was-right-about-the-wrong-thing_setting_1.jpg
 image_alt: "The Systemizing Quotient Was Right About the Wrong Thing — screen-print protest poster illustration"
 ---
+> **Correction, 25 August 2026:** Three claims about the state of the evidence were
+> overstated and have been corrected. This article said the systemizing finding "replicates every
+> time"; the finding has held up well, including a reported genetic correlation between systemizing
+> and autism, but "every time" is not a claim the literature supports. It said the Systemizing
+> Quotient "is well constructed" and that the failure was "not in the measurement"; the SQ's
+> psychometrics have in fact been questioned, with weak predictive validity reported in clinical
+> samples and insufficient sensitivity at the hyper-systemizing end. And it said the field spent
+> "twenty years failing to find a reason to doubt" the deficit reading; doubt was raised during
+> that period, both as criticism of the instruments and as a cognitive/affective empathy
+> distinction drawn within the theory's own literature. The summary line was also corrected:
+> empathizing-systemizing theory attributes below-average empathy to autistic people, not an
+> inability to understand others, and this article's argument about mechanism does not require the
+> stronger version. The argument itself is unchanged, as is the address.
 
 Simon Baron-Cohen's theory about autism comes in two halves. One half I have spent years taking apart: a questionnaire called the Empathy Quotient, sixty statements you rate your agreement with — I am good at predicting how someone will feel, I find it hard to know what to do in a social situation — that scores the result and calls it empathy. That framing is wrong, and the wrongness has consequences. The other half is more interesting, because the other half is right.
 
@@ -36,6 +49,6 @@ There are at least two ways to read another person. One is spontaneous emotional
 <figcaption>The Systemizing Quotient Was Right About the Wrong Thing — abstract linocut symbol</figcaption>
 </figure>
 
-So the theory conflated the mechanism with the capacity. It found that autistic people read others through systemizing rather than mirroring, observed that they scored low on an instrument built to detect mirroring, and concluded that the underlying capacity was reduced. It mistook a different route to the destination for never arriving. This is what makes the case instructive: the failure is not in the measurement. The SQ is well constructed. The data is real. Autistic empathy, routed through pattern recognition rather than reflex, is also real, and the instrument simply was not pointed at it.
+So the theory conflated the mechanism with the capacity. It found that autistic people read others through systemizing rather than mirroring, observed that they scored low on an instrument built to detect mirroring, and concluded that the underlying capacity was reduced. It mistook a different route to the destination for never arriving. This is what makes the case instructive: the failure I am describing is not primarily one of measurement. The SQ's own psychometrics have since been questioned — its predictive validity in clinical samples is weak, and it is least sensitive at exactly the hyper-systemizing end the theory cares most about — but the broad finding it was built to detect has held up well. Autistic empathy, routed through pattern recognition rather than reflex, is also real, and the instrument simply was not pointed at it.
 
-The general form of the error is worth stating plainly, because it is the most dangerous kind in research. It is not the case of bad data leading to a wrong conclusion; that is self-correcting, because the data fails to replicate. This is good data leading to a wrong conclusion, and good data does not correct it, because the data keeps confirming the part that is true. The systemizing finding replicates every time. Each replication was read as support for the deficit claim, when it supported only the cognitive-style claim and was silent on the rest. The theory accumulated evidence for the half it had right and borrowed that evidence's authority for the half it had wrong. The methodology was not careless. It was rigorous about the wrong question, and being rigorous about the wrong question produces a deficit that the field then spends twenty years failing to find a reason to doubt.
+The general form of the error is worth stating plainly, because it is the most dangerous kind in research. It is not the case of bad data leading to a wrong conclusion; that is self-correcting, because the data fails to replicate. This is well-supported data leading to a wrong conclusion, and that does not correct itself so readily, because the data keeps confirming the part that is true. The systemizing finding has held up across a good deal of subsequent work, including evidence of a genetic correlation between systemizing and autism. Each time it held, it was read as support for the deficit claim, when it supported only the cognitive-style claim and was silent on the rest. The theory accumulated evidence for the half it had right and borrowed that evidence's authority for the half it had wrong. The methodology was not careless. It was rigorous about the wrong question, and being rigorous about the wrong question produces a deficit the field then has to work backwards out of. The doubt did come, but it arrived mostly as psychometric criticism of the instruments, and as a distinction between cognitive and affective empathy drawn inside the theory's own literature, rather than as a direct challenge to the deficit reading.
