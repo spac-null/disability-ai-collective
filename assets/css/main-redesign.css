@@ -1466,6 +1466,161 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   }
 }
 
+/* Typographic archive: the bulk of 100+ essays, after the first few featured
+   cards — rows, not image cards, so the page stays scannable instead of a
+   100-card catalogue. Reuses the existing persona/category filter JS via
+   the same data-categories/data-persona attributes as .card. */
+.archive-list {
+  border-top: 1px solid var(--color-border-primary);
+}
+
+.archive-row {
+  display: block;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.archive-row__meta {
+  margin: 0 0 0.3rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.archive-row__title {
+  margin: 0 0 0.3rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.archive-row__title a {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.archive-row__title a:hover {
+  color: var(--color-text-brand);
+  text-decoration: underline;
+}
+
+.archive-row__excerpt {
+  margin: 0;
+  max-width: 68ch;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+/* Two columns at desktop widths so the archive uses the row width instead of
+   leaving half of it empty. Plain CSS Grid with no reordering: DOM order is
+   already newest-first, and grid auto-placement fills left-to-right then
+   wraps, so column 1 / column 2 / next row stays chronological. */
+@media (min-width: 860px) {
+  .archive-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 3rem;
+  }
+}
+
+/* Reading threads as a compact strip — deliberately lighter than a card grid
+   so it reads as secondary navigation between Latest and the full archive,
+   not another block of boxes competing for attention. */
+.thread-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 2rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--color-border-primary);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.thread-strip__item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.thread-strip__title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.thread-strip__item:hover .thread-strip__title {
+  color: var(--color-text-brand);
+  text-decoration: underline;
+}
+
+.thread-strip__count {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* Works: deliberately not the threads grid — dashed border + inline badge
+   reads as "object" rather than a fourth row of identical card rectangles. */
+.works-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.work-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--color-background-elevated);
+  border: 1px dashed var(--color-border-primary);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.work-card:hover {
+  border-color: var(--color-border-brand);
+  background: var(--color-background-accent, rgba(124,106,247,0.06));
+}
+
+.work-card__badge {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-brand);
+  border: 1px solid var(--color-border-brand, var(--color-text-brand));
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+}
+
+.work-card__title {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.work-card__cta {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-brand);
+}
+
+@media (max-width: 640px) {
+  .work-card {
+    flex-wrap: wrap;
+  }
+}
+
 /* ========================================
    START HERE LIST (about.html)
 ========================================= */
@@ -1774,6 +1929,12 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   }
 
   .home-intro__quote {
+    /* Desktop's `flex: 0 1 320px` sets a 320px flex-basis meant as a WIDTH
+       for the row layout above. In this column layout that basis applies to
+       height instead, stretching the border-left far past the quote's own
+       text and leaving a large gap before the next section. Reset it so the
+       block sizes to its content. */
+    flex: 0 1 auto;
     margin-top: var(--space-8);
     padding-left: var(--space-6);
     max-width: 100%;
@@ -3535,6 +3696,88 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   font-family: var(--font-family-base, sans-serif);
 }
 
+/* Compact prose: a 1-2 sentence teaser block reads oddly with the long-form
+   lead-in size and drop cap tuned for multi-paragraph sections. Opt out
+   locally rather than disabling the treatment everywhere. */
+.prose--compact > p:first-of-type {
+  font-size: inherit !important;
+  line-height: inherit !important;
+  font-weight: inherit !important;
+  color: inherit !important;
+  font-family: inherit !important;
+}
+
+.prose--compact > p:first-of-type::first-letter {
+  all: unset;
+}
+
+/* Home's compact voice introduction — icon, name, one-line identity, link.
+   About keeps the full .agent-card treatment (image/bio/focus/button); Home
+   only needs to introduce the four voices, not explain them. */
+.voice-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 2.5rem;
+}
+
+.voice-strip__item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1 1 220px;
+  text-decoration: none;
+}
+
+.voice-strip__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.voice-strip__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.voice-strip__name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+}
+
+.voice-strip__identity {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.voice-strip__item:hover .voice-strip__name {
+  color: var(--color-text-brand);
+  text-decoration: underline;
+}
+
+/* Start Here — a deliberate small reader-navigation module, not a footnote. */
+.start-here-mini {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-secondary);
+}
+
+.start-here-mini__list {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.start-here-mini__list a {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 /* ── Section breaks: H2 ── */
 .prose h2 {
   font-size: clamp(1.45rem, 2.8vw, 1.9rem) !important;
@@ -3893,6 +4136,37 @@ article[data-categories].hidden {
   background: var(--color-background-primary);
   padding-top: var(--space-4);
   margin-bottom: var(--space-8);
+}
+
+/* top:80px assumes the desktop single-line header. Below 768px the header
+   wraps to two (or more) lines once mobile nav takes over and grows taller
+   than that offset, which let the sticky filter bar overlap the search
+   label — so it isn't sticky on mobile. */
+@media (max-width: 768px) {
+  .research-filters {
+    position: static;
+  }
+}
+
+.research-search {
+  margin-bottom: var(--space-4);
+}
+
+.research-search__input {
+  width: 100%;
+  max-width: 360px;
+  padding: 0.55rem 0.9rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--color-text-primary);
+  background: var(--color-background-elevated);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 999px;
+}
+
+.research-search__input:focus {
+  outline: 2px solid var(--color-border-brand, var(--color-text-brand));
+  outline-offset: 1px;
 }
 
 .research-filters .category-filter {
@@ -4525,6 +4799,35 @@ article[data-categories].hidden {
 }
 
 /* ── Press pages ──────────────────────────────────────────────────────────── */
+.press-quickbio {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+}
+
+.press-quickbio__photo {
+  width: 140px;
+  height: 105px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .press-quickbio {
+    flex-direction: column;
+  }
+  .press-quickbio__photo {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+}
+
 .press-section {
   border-top: 1px solid var(--color-border-primary);
   padding-top: 2.5rem;
@@ -4554,6 +4857,516 @@ article[data-categories].hidden {
   .press-voices-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ========================================================================
+   VISUAL LANGUAGE — D 1.1 "Highlighter / Markup"
+   Owner-selected final direction after an A/B/C/D visual study (see
+   .claude/ session history). Material reference: drawing paper + canvas
+   white + black ink, annotated with two fluorescent marker colors used
+   sparingly and semantically. Explicitly NOT the brown/sepia direction
+   studied and rejected in Variant B — every surface here is neutral.
+   No new fonts, no remote dependencies added.
+========================================================================= */
+
+:root {
+  /* Two light neutrals — verified free of tan/ochre/coffee bias (R/G/B
+     channels are near-equal, unlike a warm/sepia palette). */
+  --paper: #efeee7;   /* drawing paper — base surface */
+  --canvas: #fffdf8;  /* canvas white — cleaner, for featured/elevated sheets */
+  --ink: #121210;
+  --ink-muted: #5a5851;
+  --rule: #d3cfc3;
+
+  /* Marker colors: annotations only — never body text, never a button
+     fill. See .marker below. */
+  --marker-lime: #d6ff3f;
+  --marker-pink: #ff4fb8;
+  --marker-text: #121210; /* text on a marker is always this dark ink, in both themes */
+
+  --color-background-primary: var(--paper);
+  --color-background-secondary: var(--canvas);
+  --color-background-elevated: var(--canvas);
+  --color-background-muted: var(--canvas);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--ink-muted);
+  --color-text-muted: #656358; /* 5.33:1 on --paper */
+  --color-border-primary: var(--rule);
+  --color-border-secondary: var(--rule);
+  --color-border-muted: var(--rule);
+
+  /* Teal removed from the dominant-accent role by design: buttons/links/
+     borders are ink-on-paper, not brand-colored. The marker colors carry
+     the site's visual personality instead. */
+  --color-accent: var(--ink);
+  --color-text-brand: var(--ink);
+  --color-border-brand: var(--ink);
+  --color-background-brand: var(--ink);
+  --color-on-brand: var(--canvas);
+  --color-on-accent: var(--canvas);
+}
+
+.dark-theme {
+  /* Neutral graphite/charcoal — explicitly not brown-black or espresso. */
+  --paper: #171819;
+  --canvas: #222326;
+  --ink: #f4f2eb;
+  --ink-muted: #b9b6ae;
+  --rule: #3a3b3d;
+
+  /* Marker hues held constant across themes — --marker-text forces dark
+     ink on top of them either way, so their own values don't need to
+     change per theme to stay legible. */
+  --marker-lime: #d6ff3f;
+  --marker-pink: #ff4fb8;
+  --marker-text: #121210;
+
+  --color-background-primary: var(--paper);
+  --color-background-secondary: var(--canvas);
+  --color-background-elevated: var(--canvas);
+  --color-background-muted: var(--canvas);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--ink-muted);
+  --color-text-muted: #9d9a90;
+  --color-border-primary: var(--rule);
+  --color-border-secondary: var(--rule);
+  --color-border-muted: var(--rule);
+
+  --color-accent: var(--ink);
+  --color-text-brand: var(--ink);
+  --color-border-brand: var(--ink);
+  --color-background-brand: var(--ink);
+  --color-on-brand: var(--canvas);
+  --color-on-accent: var(--paper);
+}
+
+/* ---- Typography roles: sans=structural, serif=editorial, mono=metadata */
+
+h1, .text-h1 { font-weight: 800; letter-spacing: -0.02em; }
+
+.home-hero__title,
+.card__header .text-h4 a,
+.archive-row__title a,
+.agent-name {
+  font-family: var(--font-family-serif);
+  font-weight: 700;
+}
+.archive-row__title { font-weight: 400; }
+
+.prose p,
+.article-card__excerpt,
+.archive-row__excerpt,
+.home-hero__excerpt,
+.press-quickbio__text > p:not(.text-small) {
+  font-family: var(--font-family-serif);
+}
+.home-hero__excerpt { font-style: italic; }
+
+.article-card__meta,
+.archive-row__meta,
+.home-hero__meta,
+.research-thread__voice,
+.research-thread__count,
+.thread-strip__count {
+  font-family: var(--font-family-mono);
+  letter-spacing: 0.03em;
+}
+
+/* ---- The highlighter device (v1.2) ------------------------------------
+   Rebuilt from a positioned ::before rectangle to a background-image +
+   box-decoration-break: clone technique, for two reasons found in review:
+
+   1. DARK-MODE BUG (confirmed, not just contrast-calculated): .marker text
+      is forced to a fixed dark ink regardless of theme. In light mode that
+      text also sits on the light page outside the marker field, so it's
+      readable everywhere. In dark mode the page itself is dark, so any part
+      of a glyph NOT covered by the fluorescent field is dark-ink-on-dark-
+      page and disappears — confirmed on "LATEST" and "READY TO USE", where
+      only fragments of letters survived. An isolated ink-on-lime contrast
+      ratio cannot catch this because it never checks the uncovered area.
+      Fix: in dark mode the fluorescent field must rise to cover essentially
+      the whole glyph (not just the lower half), so 100% of the forced-dark
+      text sits on a bright field. See the .dark-theme rule below.
+
+   2. WRAP SAFETY: the old technique used an absolutely-positioned ::before
+      sized to an inline-block's total box, which does not split correctly
+      if the marked phrase wraps onto two lines. background-image with
+      box-decoration-break: clone gives each wrapped line its own
+      independent copy of the stripe automatically — required once a
+      multi-word phrase (the new Home hero mark) can wrap on narrow
+      viewports. No nowrap anywhere.
+
+   Trade-off taken deliberately: the earlier per-mark rotation is dropped.
+   Rotating each cloned line fragment independently after a wrap would
+   look chaotic, not hand-marked, so flat rectangular ends now carry the
+   "physical highlighter" read on their own (flat ends were explicitly
+   requested; only the rotation is gone). */
+.marker {
+  display: inline;
+  color: var(--marker-text);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 55%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0 0.08em;
+  margin: 0 -0.08em;
+}
+
+.marker--lime { background-image: linear-gradient(var(--marker-lime), var(--marker-lime)); }
+.marker--pink {
+  background-image: linear-gradient(var(--marker-pink), var(--marker-pink));
+  background-size: 100% 64%; /* pink is rare — sized a little more decisively than lime's default */
+}
+
+/* Start Here is the clearest small annotation on Home. */
+.marker--strong { background-size: 100% 72%; }
+
+/* The one large editorial gesture on Home (the H1's second clause). */
+.marker--hero { background-size: 100% 62%; }
+
+/* DARK-MODE FIX: uniform near-full-height coverage for every marker
+   variant, so the forced-dark text is never composited against the dark
+   page itself. Centered (not bottom-anchored) so descenders like the "y"
+   in "ready" stay covered too. */
+.dark-theme .marker {
+  background-position: 0 50%;
+  background-size: 100% 98%;
+}
+
+/* ---- Focus: lime alone measures ~1:1 against --paper/--canvas (both are
+   light) — fails the 3:1 non-text UI-boundary requirement. Pair it with
+   an ink ring rather than darken it into a non-fluorescent color: the
+   ink ring carries accessibility, the lime halo carries identity. Do not
+   revert to a bare lime outline. */
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--marker-lime);
+  border-radius: 2px;
+}
+
+/* ---- Search + voice filters (v1.2): the rounded capsule field and pill
+   row read as generic web-app controls, which fights the editorial/markup
+   language everywhere else. Restyled as an index/search instrument printed
+   on the page — flat rule, no radius, no fill — with NO functional/markup
+   change (same input, same buttons, same JS). ---- */
+.research-search__input {
+  max-width: 320px;
+  padding: 0.5rem 0.15rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--ink-muted);
+  border-radius: 0;
+}
+
+.research-search__input:focus {
+  outline: none; /* the global :focus-visible ink+lime ring below covers this */
+}
+
+.category-filter--persona {
+  gap: var(--space-6);
+}
+
+.category-filter__btn--persona {
+  padding: 0.15rem 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-muted);
+}
+
+.category-filter__btn--persona:hover {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink);
+}
+
+/* Active voice filter: plain ink text + a lime registration underline is
+   the "selected" signal — no black pill. Kept clearly distinct from the
+   global ink+lime focus ring so selection state and keyboard focus never
+   read as the same thing. */
+.category-filter__btn--persona.active {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink);
+  font-weight: 700;
+  box-shadow: inset 0 -3px 0 var(--marker-lime);
+}
+
+.category-filter__btn--persona.active .filter-persona-icon,
+.category-filter__btn--persona:hover .filter-persona-icon {
+  opacity: 1;
+  filter: none; /* the invert() from the old black-pill design is no longer needed on a transparent control */
+}
+
+/* ---- Card reduction: Press facts/bio and persona details read as
+   editorial sheets/rules, not rounded web widgets. Featured/Latest essay
+   cards keep their card treatment — they earn it. ---- */
+
+.press-quickfacts {
+  border: none !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--rule) !important;
+  border-bottom: 1px solid var(--rule) !important;
+  background: transparent !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.press-quickfacts > div {
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--rule);
+}
+.press-quickfacts > div:first-child {
+  padding-left: 0;
+  border-left: none;
+}
+
+.press-quickbio {
+  border: none;
+  border-radius: 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: transparent;
+}
+.press-quickbio__photo {
+  border-radius: 2px;
+}
+
+.agent-card {
+  background: transparent;
+  border: none;
+  border-top: 2px solid var(--rule);
+  border-radius: 0;
+  box-shadow: none;
+  padding: var(--space-5) 0 var(--space-6);
+}
+.agent-card[data-persona="pixel-nova"]  { border-top-color: #7c6af7; }
+.agent-card[data-persona="siri-sage"]   { border-top-color: #5c7a31; }
+.agent-card[data-persona="maya-flux"]   { border-top-color: #3f5f89; }
+.agent-card[data-persona="zen-circuit"] { border-top-color: #b05a3a; }
+.agent-card:hover {
+  border-color: var(--rule);
+  box-shadow: none;
+  transform: none;
+}
+.agent-card[data-persona="pixel-nova"]:hover  { border-top-color: #7c6af7; }
+.agent-card[data-persona="siri-sage"]:hover   { border-top-color: #5c7a31; }
+.agent-card[data-persona="maya-flux"]:hover   { border-top-color: #3f5f89; }
+.agent-card[data-persona="zen-circuit"]:hover { border-top-color: #b05a3a; }
+
+.agent-card__image {
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+}
+.agent-identity {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-family: var(--font-family-mono);
+  font-weight: 600;
+}
+.agent-card .btn.btn--outline {
+  border: none;
+  background: none;
+  padding: 0;
+  height: auto;
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Featured/Latest essay: sits on canvas-white against the paper page —
+   "a sheet placed on another sheet", not a floating card. No shadow. */
+.home-hero__card,
+.dark-theme .home-hero__card {
+  box-shadow: none;
+}
+
+/* ========================================================================
+   VISUAL LANGUAGE — D 1.2 polish pass
+   Bugfix (dark-mode marker) and confidence pass on top of D 1.1. See the
+   comment above .marker for the dark-mode fix itself; this block covers
+   the remaining owner-requested refinements.
+========================================================================= */
+
+/* Latest/Recent essay objects: reduce generic "app card" chrome (12px
+   radius, drop shadow, hover-lift) toward a printed-object read. The
+   persona-colored top edge (registration mark) and the border already do
+   the identity work — they don't need a floating shadow on top. */
+.card {
+  border-radius: 3px;
+  box-shadow: none;
+}
+.card:hover {
+  box-shadow: none;
+  transform: none;
+}
+.card--elevated {
+  box-shadow: none;
+}
+.card--elevated:hover {
+  box-shadow: none;
+}
+
+/* Home Collective: exactly one strengthening move (larger icon), per
+   instruction not to stack multiple emphasis changes on a secondary band. */
+.voice-strip__icon {
+  width: 56px;
+  height: 56px;
+}
+
+/* Typographic-grammar consistency: Press's fact labels and the bio
+   eyebrow were plain text-small, unlike every other eyebrow/metadata
+   label on the site (Home/Articles eyebrows, archive metadata, and
+   .agent-identity all use mono). Brought in line — same semantic class
+   (an index/label), same typographic grammar. */
+.press-quickfacts > div > p:first-child,
+.press-quickbio__text > p.text-small {
+  font-family: var(--font-family-mono);
+}
+
+/* ========================================================================
+   VISUAL LANGUAGE — D 1.3 finishing pass
+   Marker geometry, search/filter finish, footer/button de-genericization,
+   Home Collective density. No IA change, no functional change.
+========================================================================= */
+
+/* ---- Marker geometry: layered gradient instead of a flat solid rectangle,
+   so the fill has a soft (not hard-mathematical) top/bottom edge — reads as
+   ink settling into paper rather than a <mark> background. Rotation is
+   still not used (would not survive box-decoration-break: clone cleanly);
+   this is the "irregularity via the background itself" approach. Small
+   marks get a barely-there fade (they're only a few px tall — anything
+   bigger would just look weak); the large hero mark gets more visible
+   roughness plus a slightly unequal left/right overshoot, per instruction
+   that the big stroke may read rougher than tiny metadata strokes. */
+.marker--lime {
+  background-image: linear-gradient(179deg,
+    transparent 0%,
+    var(--marker-lime) 4%,
+    var(--marker-lime) 96%,
+    transparent 100%);
+}
+.marker--pink {
+  background-image: linear-gradient(179deg,
+    transparent 0%,
+    var(--marker-pink) 4%,
+    var(--marker-pink) 96%,
+    transparent 100%);
+}
+.marker--hero {
+  background-image: linear-gradient(177deg,
+    transparent 0%,
+    var(--marker-lime) 9%,
+    var(--marker-lime) 94%,
+    transparent 100%);
+  padding-left: 0.05em;
+  padding-right: 0.14em;
+  margin-left: -0.05em;
+  margin-right: -0.14em;
+}
+
+/* ---- Articles search: a visible mono "Search" label (replacing the
+   sr-only one — this is a styling change to an existing, still-correctly-
+   `for`-associated label, not a functional change) above a flat rule,
+   reading as an index heading rather than an unlabeled floating line.
+   width:100% was missing before, so the input was rendering at its
+   browser-default intrinsic width regardless of max-width — fixed, so it
+   now properly fills up to 320px desktop / the available width on mobile. */
+.research-search__label {
+  display: block;
+  font-family: var(--font-family-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 0.35rem;
+}
+.research-search__input {
+  width: 100%;
+}
+
+/* ---- Voice filter strip: baseline-align "All voices" (text-only) against
+   the icon-bearing persona buttons, so the row reads as one line of
+   typography instead of separately-aligned controls. */
+.category-filter--persona {
+  align-items: baseline;
+}
+
+/* ---- Home Collective: same content, ~25% less vertical padding (space-24
+   vs the default section's space-32) so it reads as a compact roster
+   rather than a sparse feature band. Scoped to Home only — About's
+   Four Voices section keeps its current spacing untouched. */
+.home-collective {
+  padding-top: var(--space-24);
+  padding-bottom: var(--space-24);
+}
+
+/* ---- Buttons: the base .btn:hover state (and the secondary/outline hover
+   variants) still referenced the raw brand-blue color directly and added
+   a lift + colored shadow — both leftover from before the ink/canvas
+   system existed on this page set, missed in earlier passes because they
+   don't show up in a static screenshot, only on interaction. Fixed to the
+   same restrained ink/canvas language as everything else; radius reduced
+   to match the 0-3px scale used everywhere else (cards, search, chips). */
+.btn {
+  border-radius: 3px;
+}
+.btn:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--canvas);
+  transform: none;
+  box-shadow: none;
+}
+.btn:active {
+  transform: none;
+  box-shadow: none;
+}
+.btn--secondary:hover,
+.btn--outline:hover {
+  background: var(--canvas);
+  border-color: var(--ink);
+  color: var(--ink);
+}
+
+.newsletter-form input[type="email"],
+.newsletter-form button[type="submit"] {
+  border-radius: 2px;
+}
+/* The pre-existing rule removed the focus outline unconditionally on
+   :focus (not :focus-visible) with no replacement indicator — a real
+   keyboard-accessibility gap, not something D 1.x introduced but worth
+   fixing while auditing this control. Falls through to the global
+   ink+lime :focus-visible ring instead. */
+.newsletter-form input[type="email"]:focus {
+  outline: revert;
+  border-color: var(--ink-muted);
+}
+
+/* ---- Footer: same four groups, same links, tightened into something
+   closer to a publication colophon than a template footer. Headings
+   become small mono labels (matching every other eyebrow/index label
+   site-wide) instead of a plain bold sans heading — this is also the
+   typographic-consistency fix called for in the audit. */
+.site-footer {
+  padding: var(--space-24) 0 var(--space-10);
+}
+.site-footer__section h3 {
+  font-family: var(--font-family-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: var(--space-4);
+}
+.site-footer__links li {
+  margin-bottom: 0.4rem;
 }
 
 @media print {
