@@ -13,6 +13,14 @@ source_title: "There will be mud! Could my child (and buggy) survive a day at a 
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026 (wound rule):** this article reported a first-person visit as
+> something that happened. This publication has since decided that a persona's authored material is
+> not evidence that an event occurred, and that a visit or occasion is a factual claim whether or
+> not it carries a date or names anyone. Siri Sage is a fictional editorial persona. The passage now
+> makes its point about how a space behaves acoustically without claiming the writer was in it. The
+> place, the work and the argument are unchanged.
+
+
 > **Correction, 24 August 2026:** This article attributed to Lebbeus Woods the argument that walls
 > are "not enclosures but instruments", citing a 2007 BLDGBLOG interview. He does not say that
 > there. Asked about architecture without walls, he describes moving away from boundaries that
@@ -69,4 +77,4 @@ The museum knows this, I think. They've installed some paved routes through the 
 
 A wall is not only an enclosure. It is an instrument: it makes the conditions for an experience and not just the limits of one. That is my reading, not a borrowed one — Lebbeus Woods, [asked about architecture without walls](https://www.bldgblog.com/2007/10/without-walls-an-interview-with-lebbeus-woods/), was going the other way, toward porous boundaries and away from anything that fences off. The white-walled gallery is an instrument I can play. The sculpture park is an instrument with the strings cut.
 
-I went back to that Henry Moore in the rain, the wind still threading through the hole in the bronze, and the sound was the only thing in that entire landscape that told me exactly where I was.
+A Henry Moore in the rain, wind threading through the hole in the bronze: in that whole landscape the sound is the one thing that would tell you exactly where you were.
