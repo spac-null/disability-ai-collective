@@ -23,7 +23,7 @@ description: "Accessibility at Crip Minds — built by a profoundly Deaf editor 
           Accessibility on this site isn&rsquo;t a compliance checklist I work through at the end. It&rsquo;s something I think about from the beginning, because I navigate digital space as a Deaf person and I understand what it means when a site assumes you can hear or see.
         </p>
         <p class="mb-0">
-          The publication is grounded in disability justice. It would be a contradiction to build it on infrastructure that excludes people. The toggles below are real features, not gestures. The WCAG compliance is a floor, not a ceiling. And if something doesn&rsquo;t work for you, I want to know.
+          The publication is grounded in disability justice. It would be a contradiction to build it on infrastructure that excludes people. The toggles below are real features, not gestures. WCAG 2.1 AA is treated as a floor, not a ceiling. And if something doesn&rsquo;t work for you, I want to know.
         </p>
       </div>
     </div>
@@ -45,7 +45,7 @@ description: "Accessibility at Crip Minds — built by a profoundly Deaf editor 
         <div class="card card--brand p-8 accessibility-card">
           <h3 class="text-h4 mb-4 text-brand">Dyslexia-Friendly Font</h3>
           <p class="text-body text-secondary mb-4">Switches to OpenDyslexic with increased letter spacing.</p>
-          <p class="text-small text-muted">Designed to reduce letter confusion and improve reading flow.</p>
+          <p class="text-small text-muted">For readers who prefer it. Whether it helps is a matter of personal preference, not a claim made here.</p>
         </div>
       </div>
     </div>
@@ -54,17 +54,18 @@ description: "Accessibility at Crip Minds — built by a profoundly Deaf editor 
   <!-- WCAG -->
   <section class="section section--secondary">
     <div class="container container--md">
-      <h2 class="text-h2 text-center mb-8">WCAG 2.1 AA Compliance</h2>
+      <h2 class="text-h2 text-center mb-8">Built and Tested Toward WCAG 2.1 AA</h2>
       <div class="card card--brand p-8">
         <ul class="list-disc pl-5 text-body text-secondary">
-          <li class="mb-2">4.5:1 minimum color contrast (I exceed this)</li>
-          <li class="mb-2">Text resizes to 200% without losing functionality</li>
-          <li class="mb-2">All images have descriptive alt text</li>
-          <li class="mb-2">Keyboard navigation for all interactive elements</li>
+          <li class="mb-2">Color contrast meets the 4.5:1 minimum, verified with axe-core in both light and dark themes</li>
+          <li class="mb-2">Text scales without a fixed pixel ceiling; the layout is built to reflow rather than clip</li>
+          <li class="mb-2">Meaningful images carry descriptive alt text; decorative images are hidden from assistive technology</li>
+          <li class="mb-2">Interactive elements are reachable and operable by keyboard</li>
           <li class="mb-2">Skip links for efficient navigation</li>
-          <li class="mb-2">Screen reader optimized structure</li>
-          <li>48px minimum touch targets on mobile</li>
+          <li class="mb-2">Semantic headings and landmark regions throughout</li>
+          <li>44px minimum touch targets on mobile</li>
         </ul>
+        <p class="text-small text-muted" style="margin-top: 1.5rem;">Testing so far is automated (axe-core, <code>wcag2a</code> and <code>wcag2aa</code>, both themes) plus manual review. No independent third-party conformance audit has been carried out, so this page describes what the site is built and tested toward rather than certified against.</p>
       </div>
     </div>
   </section>
@@ -97,7 +98,7 @@ description: "Accessibility at Crip Minds — built by a profoundly Deaf editor 
         </details>
       </div>
       <p class="text-body text-muted text-center mt-8">
-        Last updated: August 12, 2026. Standards: WCAG 2.1 AA
+        Last updated: August 25, 2026. Standard followed: WCAG 2.1 AA
       </p>
     </div>
   </section>

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: "Articles — Crip Minds"
-description: "Essays using disabled ways of seeing to uncover what culture, science, technology, institutions, and ordinary objects are really doing."
+description: "Essays using disabled ways of seeing to ask different questions of culture, science, technology, institutions, and ordinary objects."
 ---
 {% comment %} Readable population: posts that are not withdrawal notices. Single source of truth is the post's own `withdrawn` frontmatter. {% endcomment %}
 {% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
@@ -17,7 +17,7 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
     <div class="container">
       <h1 class="text-h1 mb-4">Articles</h1>
       <p class="text-lead text-secondary max-w-2xl mx-auto">
-        Essays that use disabled ways of seeing to uncover what culture, science, technology, institutions, and ordinary objects are really doing.
+        Essays that use disabled ways of seeing to ask different questions of culture, science, technology, institutions, and ordinary objects &mdash; and to surface the assumptions the usual account leaves unexamined.
       </p>
       <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em;"><span class="marker marker--lime">{{ readable_posts.size }}</span> essays available to read</p>
     </div>
