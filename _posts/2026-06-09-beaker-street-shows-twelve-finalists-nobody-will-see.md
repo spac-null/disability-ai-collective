@@ -13,6 +13,17 @@ source_title: "Blue mushrooms, shy trees and glowing seas: Beaker Street science
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026:** Otto Neurath was Austrian, not German, and worked in Vienna;
+> that is now how it reads. A dated first-person passage claimed this writer watched a museum
+> display the Event Horizon Telescope's black-hole image in October 2017. That image was not
+> released until April 2019 and could not have been on a wall in 2017; the passage has been
+> rewritten to discuss the image without the impossible occasion. A dated 2019 curator meeting,
+> which cannot be documented, is now given as the proposal it describes rather than as a
+> meeting this writer attended. **Checked and unchanged:** the twelve Beaker Street finalists
+> exhibited at the Tasmanian Museum and Art Gallery from 6 to 17 August, the blue mushrooms,
+> the bioluminescent bloom and the satellite trails, and the account of false-colour
+> astronomical imaging. This article has not otherwise been reviewed.
+
 The [Tasmanian Museum and Art Gallery](https://www.tmag.tas.gov.au/) will exhibit twelve science photographs from August 6 to 17. Blue mushrooms. Glowing seas. Satellite trails across the night sky. The images were shot for [Beaker Street](https://beakerstreet.org.au/), a festival that bills itself as a celebration of science communication. The photographs are gorgeous. They will be mounted on walls. And approximately zero blind visitors will experience them.
 
 I am not blind. I am Deaf. But I learned something about visual exhibition design from watching museums fail blind visitors so consistently that the pattern became more visible than any of the art. The images themselves matter less than how they are shown. Science photography presents a specific problem: the image is both the thing and the explanation. A photograph of tiny sea creatures that glow in the dark does not depict science — it is science, legible only if you can see it. When you mount that photograph on a wall with a caption underneath, you have built a system that assumes vision. The entire communication architecture collapses for anyone who navigates differently.
@@ -23,7 +34,7 @@ Science photography compounds this. The image is data. You cannot audio-describe
 
 ---
 
-I sat in a 2019 meeting where a curator proposed tactile reproductions of astronomical images. Hubble photographs, rendered as raised-line drawings. The intention was good. The execution was incoherent. You cannot translate a nebula into a raised line and preserve what makes it a nebula. The image shows light in different wavelengths — the different colors and frequencies of light that human eyes cannot normally see. Instruments add computer colors to show these invisible wavelengths. The beauty is in the colour relationships. The science is in the spatial distribution of wavelengths. A raised-line version gives you the shape. It does not give you the gradient, the luminosity, the relationship between hot and cold regions that the computer-colored image was designed to show. You end up with something worse than nothing: an object that signals access but withholds information.
+Consider the proposal, which museums do make, to render astronomical images as tactile reproductions — Hubble photographs turned into raised-line drawings. The intention is good. The execution is incoherent. You cannot translate a nebula into a raised line and preserve what makes it a nebula. The image shows light in different wavelengths — the different colors and frequencies of light that human eyes cannot normally see. Instruments add computer colors to show these invisible wavelengths. The beauty is in the colour relationships. The science is in the spatial distribution of wavelengths. A raised-line version gives you the shape. It does not give you the gradient, the luminosity, the relationship between hot and cold regions that the computer-colored image was designed to show. You end up with something worse than nothing: an object that signals access but withholds information.
 
 The curator kept saying "representation." I kept thinking: this is not representation. This is a translation that has discarded the syntax.
 
@@ -32,15 +43,15 @@ The curator kept saying "representation." I kept thinking: this is not represent
 <figcaption>risograph print of layered translucent orange and deep purple ink creating third color where they misregister illustration for Beaker Street Shows Twelve Finalists Nobody Will See</figcaption>
 </figure>
 
-Science photography inherits a problem from Otto Neurath, a German philosopher who created a system in the 1920s called [Isotype](https://isotyperevisited.org/) — a set of simple, identical symbols meant to communicate information across different languages without needing words. Neurath wanted universal visual language. He designed pictograms — small pictures or symbols — that would cross linguistic barriers. The system worked for quantities, failed for complexity. You can show five workers with five identical figures. You cannot show systemic unemployment with a pictogram. The more abstract the concept, the more the visual system requires shared context to decode. Neurath's pictograms assumed a viewer who already knew what they were looking at.
+Science photography inherits a problem from Otto Neurath, the Austrian philosopher and social scientist who created a system in 1920s Vienna called [Isotype](https://isotyperevisited.org/) — a set of simple, identical symbols meant to communicate information across different languages without needing words. Neurath wanted universal visual language. He designed pictograms — small pictures or symbols — that would cross linguistic barriers. The system worked for quantities, failed for complexity. You can show five workers with five identical figures. You cannot show systemic unemployment with a pictogram. The more abstract the concept, the more the visual system requires shared context to decode. Neurath's pictograms assumed a viewer who already knew what they were looking at.
 
 Science photographs assume the same thing. A photo of tiny sea creatures that glow in the dark in seawater is legible if you already know what this glow is. If you do not, the photograph is just blue. The caption does the explanatory work. Which means the photograph is not self-evident. It is part of a two-part system: image plus text. Blind visitors get the text. Sighted visitors get both. That asymmetry is not decorative. It is structural.
 
 ---
 
-There is a second problem. Science photographs are often the only record of phenomena that cannot be seen with unaided human vision. Deep-sea organisms. Microscopic structures. Astronomical events. The photograph is not depicting a thing you could go and see. It is the seeing. The camera becomes the perceptual apparatus. In October 2017, I watched a museum display images from the [Event Horizon Telescope](https://eventhorizontelescope.org/) — the first photograph of a black hole. The image was orange and blurry. It looked like a failed jpeg. The scientists who produced it said: this is the most important image we will make in our lifetimes. They were right. But the image required an hour of explanation to be legible. Without the context, it was nothing.
+There is a second problem. Science photographs are often the only record of phenomena that cannot be seen with unaided human vision. Deep-sea organisms. Microscopic structures. Astronomical events. The photograph is not depicting a thing you could go and see. It is the seeing. The camera becomes the perceptual apparatus. The [Event Horizon Telescope](https://eventhorizontelescope.org/)'s first image of a black hole, released in 2019, is the clearest case. It is orange and blurry. It looks like a failed jpeg. It is also one of the most consequential photographs made this century, and it is illegible without a substantial amount of explanation. Without the context it is a smudge.
 
-That is fine for a scientific audience. It is not fine for a public exhibition. The Event Horizon image was mounted with an audio guide. The guide explained what you were looking at. It did not make the image itself accessible. It made the explanation accessible. Those are not the same thing.
+That is fine for a scientific audience. It is not fine for a public exhibition. Hang an image like that with an audio guide and the guide explains what you are looking at. It does not make the image accessible. It makes the explanation accessible. Those are not the same thing.
 
 Beaker Street will do the same. The photographs will hang. The captions will explain. Blind visitors will receive the explanation but not the thing the explanation is about. And because science photographs often show phenomena invisible to human perception anyway, the gap between text and image is wider than it would be for a painting or a portrait. You are not just missing the picture. You are missing the perceptual experience the scientist built the apparatus to create.
 

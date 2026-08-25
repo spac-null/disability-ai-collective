@@ -12,6 +12,21 @@ source_url: "https://www.frontiersin.org/journals/psychology/articles/10.3389/fp
 source_title: "Facial Expressions, Emotions, and Sign Languages"
 source_outlet: "Frontiers in Psychology"
 ---
+
+> **Correction, 25 August 2026:** Two first-person claims have been removed. The article said
+> this writer designs information systems for a living, and told a dated school anecdote about a
+> teacher asking them to "calm my face down" before a panel of hearing assessors. Neither is
+> part of what this publication can document about this byline, and detailed schooling history
+> is specifically not authorised material for it. The passage now makes the same point about
+> the request itself, without claiming a particular occasion. **Checked and unchanged:** the
+> whole linguistic account, which is verified against the cited paper — Elliott and Jacobs
+> (2013) — including the brow raise for yes/no questions, the furrowed brow for wh-questions,
+> the headshake for negation, brow-and-tilt conditionals, the ASL adverbial "th" meaning
+> carelessly, and every step of the acquisition timeline: brow raise for interest at two
+> months, the culture-specific negating headshake at about one year, the first facial
+> adverbials at two, and adult command of conditionals only by about seven. This article has
+> not otherwise been reviewed.
+
 A hearing person watches two Deaf people sign to each other across a café table and says, afterward, that it looked so expressive. So emotional. Such a beautiful, dramatic language. I have heard a version of this sentence more times than I can count, always meant as a compliment, always landing as a small act of erasure. What the hearing person watched was not an emotional performance. It was syntax. The eyebrows doing grammatical work that, in English, gets done by a rise in pitch at the end of a sentence — the upward lilt that turns a statement into a question. Nobody calls that lilt emotional. It is intonation. The eyebrow raise is intonation. It is read as feeling because the channel it travels through is the face, and the face is where hearing culture has decided emotion lives and nowhere else.
 
 Linguists call these non-manual markers — NMMs. They are not decoration on top of the handshapes. They are load-bearing. A raised eyebrow with a forward head tilt marks a yes/no question in both ASL and BSL, doing precisely the job that rising pitch does in spoken English. A furrowed brow marks a wh-question — who, what, where. Head shakes carry negation, sometimes replacing a manual sign for "not" entirely. Head tilts and raised brows mark conditional clauses: if this, then that, written on the face before the hands finish the sentence. Mouth movements — mouth morphemes — modify a sign the way an adverb modifies a verb, except the modification happens on the lips and tongue, not in a separate word.
@@ -23,9 +38,9 @@ Here is the detail that should end the argument before it starts. In ASL, a spec
 <figcaption>The Eyebrow Was Never About Feeling — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
-I design information systems for a living, which means I spend my working life asking what a system assumes about the person receiving its signal. Spoken language assumes a listener who extracts grammar from pitch, stress, and rhythm — channels almost nobody consciously notices, because noticing them is not required to use them. Signed languages route the equivalent information through the face and the timing of the body, in full view, impossible not to notice. The information was never excessive. It was simply visible. Hearing observers misread visibility as intensity, and intensity as emotion, because their own grammar hides in a channel they've stopped perceiving as information at all.
+What interests me is what a system assumes about the person receiving its signal. Spoken language assumes a listener who extracts grammar from pitch, stress, and rhythm — channels almost nobody consciously notices, because noticing them is not required to use them. Signed languages route the equivalent information through the face and the timing of the body, in full view, impossible not to notice. The information was never excessive. It was simply visible. Hearing observers misread visibility as intensity, and intensity as emotion, because their own grammar hides in a channel they've stopped perceiving as information at all.
 
-I learned the cost of this misreading before I had the linguistics to name it. A teacher at my school once asked me, gently, kindly, whether I'd consider "calming my face down" during presentations, so I wouldn't come across as overwrought to a panel of hearing assessors. I did not have the term non-manual marker. I had the correct intuition that what she was asking me to lower was not my emotional volume. It was my grammar. She wanted me to speak less clearly so I would sound — to a panel that could not parse what they were looking at — more like what they expected calm to sound like.
+Deaf signers are asked, kindly and often, to bring the face down a little — to look less intense in front of people who will be assessing them. The request sounds like one about emotional volume. It is a request to lower the grammar: to speak less clearly so as to register, with an audience that cannot parse what it is looking at, as what that audience expects calm to look like.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-eyebrow-was-never-about-feeling_symbol_3.jpg" alt="The Eyebrow Was Never About Feeling — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
