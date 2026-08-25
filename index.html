@@ -31,14 +31,8 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
         <span class="home-intro__eyebrow">What this is</span>
         <h1 class="home-intro__headline">Not writing about disability &mdash; seeing the world through it.</h1>
         <div class="home-intro__body">
-          <p>Crip Minds is an experimental editorial publication created by Deaf artist Jascha Blume. It can begin with a mycelial network, a deep-sea ecosystem, a cut in a film, or a bottle of water on a supermarket shelf &mdash; then ask what a disabled way of seeing reveals about how the thing itself works.</p>
-          <p>Its four recurring voices are fictional editorial personas, not autonomous disabled people. Jascha designs the voices, source rules, fact checks, and editorial process. AI works within that design.</p>
+          <p>Crip Minds is an experimental editorial publication by Deaf artist Jascha Blume. It can begin with a mycelial network, a deep-sea ecosystem, a cut in a film, or a bottle of water on a supermarket shelf &mdash; then ask what a disabled way of seeing reveals about how the thing itself works.</p>
         </div>
-        <nav class="home-intro__nav" aria-label="About this publication">
-          <a href="{{ '/about/' | relative_url }}" class="home-intro__link">About the project &rarr;</a>
-          <span class="home-intro__sep" aria-hidden="true">&middot;</span>
-          <a href="{{ '/jascha/' | relative_url }}" class="home-intro__link">About Jascha &rarr;</a>
-        </nav>
       </div>
       <aside class="home-intro__quote" aria-label="From the editor">
         <blockquote class="home-intro__quote-text">The source provides the floor. The way of seeing provides the leap.</blockquote>
@@ -145,9 +139,16 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
 
       <div class="text-center mt-10">
         <a href="{{ '/research/' | relative_url }}" class="btn btn--secondary">
-          All essays &rarr;
+          All {{ readable_posts.size }} essays &rarr;
         </a>
       </div>
+
+      <p class="text-small text-secondary text-center mt-6">
+        New here? Start with
+        <a href="/2026/03/16/the-map-that-stops-at-the-door/" class="text-primary">The Map That Stops at the Door</a>,
+        <a href="/2026/06/24/the-disorder-is-a-system-property/" class="text-primary">The Disorder Is a System Property</a>,
+        or <a href="/2026/03/14/the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets/" class="text-primary">The City Forgot to Sound-Design Its Streets</a>.
+      </p>
     {% else %}
       <!-- Empty State -->
       <div class="card text-center p-16">
@@ -160,6 +161,21 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
         <a href="{{ '/about/' | relative_url }}" class="btn btn--primary">Learn About Our Process</a>
       </div>
     {% endif %}
+    </div>
+  </section>
+
+  <!-- ── What Crip Minds is (compact, deeper explanation lives on /about/) ── -->
+  <section id="what-this-is" class="section section--secondary">
+    <div class="container container--md">
+      <p class="home-section-label">About the project</p>
+      <div class="prose prose--compact text-secondary" style="max-width: 640px;">
+        <p class="mb-6">Its four recurring voices are fictional editorial personas, not autonomous disabled people. Jascha designs the voices, source rules, fact checks, and editorial process &mdash; AI works within that design.</p>
+      </div>
+      <nav class="home-intro__nav" aria-label="About this publication">
+        <a href="{{ '/about/' | relative_url }}" class="home-intro__link">About the project &rarr;</a>
+        <span class="home-intro__sep" aria-hidden="true">&middot;</span>
+        <a href="{{ '/jascha/' | relative_url }}" class="home-intro__link">About Jascha &rarr;</a>
+      </nav>
     </div>
   </section>
 

@@ -1466,6 +1466,111 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   }
 }
 
+/* Typographic archive: the bulk of 100+ essays, after the first few featured
+   cards — rows, not image cards, so the page stays scannable instead of a
+   100-card catalogue. Reuses the existing persona/category filter JS via
+   the same data-categories/data-persona attributes as .card. */
+.archive-list {
+  border-top: 1px solid var(--color-border-primary);
+}
+
+.archive-row {
+  display: block;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.archive-row__meta {
+  margin: 0 0 0.3rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.archive-row__title {
+  margin: 0 0 0.3rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.archive-row__title a {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.archive-row__title a:hover {
+  color: var(--color-text-brand);
+  text-decoration: underline;
+}
+
+.archive-row__excerpt {
+  margin: 0;
+  max-width: 68ch;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--color-text-secondary);
+}
+
+/* Works: deliberately not the threads grid — dashed border + inline badge
+   reads as "object" rather than a fourth row of identical card rectangles. */
+.works-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.work-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  background: var(--color-background-elevated);
+  border: 1px dashed var(--color-border-primary);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.work-card:hover {
+  border-color: var(--color-border-brand);
+  background: var(--color-background-accent, rgba(124,106,247,0.06));
+}
+
+.work-card__badge {
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-brand);
+  border: 1px solid var(--color-border-brand, var(--color-text-brand));
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+}
+
+.work-card__title {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.work-card__cta {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-brand);
+}
+
+@media (max-width: 640px) {
+  .work-card {
+    flex-wrap: wrap;
+  }
+}
+
 /* ========================================
    START HERE LIST (about.html)
 ========================================= */
@@ -3533,6 +3638,21 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   margin-top: 0.08em;
   color: var(--color-text-primary);
   font-family: var(--font-family-base, sans-serif);
+}
+
+/* Compact prose: a 1-2 sentence teaser block reads oddly with the long-form
+   lead-in size and drop cap tuned for multi-paragraph sections. Opt out
+   locally rather than disabling the treatment everywhere. */
+.prose--compact > p:first-of-type {
+  font-size: inherit !important;
+  line-height: inherit !important;
+  font-weight: inherit !important;
+  color: inherit !important;
+  font-family: inherit !important;
+}
+
+.prose--compact > p:first-of-type::first-letter {
+  all: unset;
 }
 
 /* ── Section breaks: H2 ── */

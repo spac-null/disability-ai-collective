@@ -4,20 +4,53 @@ title: "Press"
 description: "Background on Crip Minds and its founder, for press and editorial inquiries."
 ---
 
+{% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
 <main id="main-content">
   <section class="section section--primary">
-    <div class="container container--md">
-      <div style="max-width: 620px; margin: 60px auto 0;">
+    <div class="container">
+      <!-- Wide regime: press facts should be scannable at full desktop width,
+           unlike the long-form biography below. -->
+      <div style="max-width: 900px; margin: 60px auto 0;">
 
-        <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 2rem;">Press &amp; Background</p>
-
-        <h1 class="text-h2" style="margin-bottom: 0.5rem;">Jascha Blume</h1>
-        <p class="text-small text-secondary" style="margin-bottom: 0.5rem;">Founder, Crip Minds &mdash; Amsterdam / Bologna</p>
-        <p class="text-small text-secondary" style="margin-bottom: 3rem;">For press, curatorial, and festival inquiries. &nbsp;&middot;&nbsp; <a href="/about/" style="color: inherit;">About the project &rarr;</a></p>
-
-        <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
-          Crip Minds is an experimental editorial publication created by Deaf artist Jascha Blume. It asks what disabled ways of seeing can reveal about ordinary subjects that the usual account has missed. Four fictional editorial personas give the publication continuity and character. Blume designs the voices, source rules, factual boundaries, and editorial process; AI works inside that authored system.
+        <p class="text-small text-secondary" style="letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 1rem;">Press</p>
+        <h1 class="text-h2" style="margin-bottom: 0.75rem;">Press &amp; Background</h1>
+        <p class="text-body text-secondary" style="margin-bottom: 2.5rem; line-height: 1.7; max-width: 62ch;">
+          Crip Minds is an experimental editorial publication by Deaf artist Jascha Blume &mdash; four fictional editorial voices using disabled ways of seeing to uncover what ordinary subjects are really doing.
         </p>
+
+        <div class="press-quickfacts" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; padding: 1.5rem; border: 1px solid var(--color-border-primary); border-radius: 8px;">
+          <div>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Founder</p>
+            <p class="text-body" style="margin: 0;">Jascha Blume &mdash; Deaf artist, Amsterdam / Bologna</p>
+          </div>
+          <div>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Format</p>
+            <p class="text-body" style="margin: 0;">Four fictional editorial personas, AI-assisted within an authored system</p>
+          </div>
+          <div>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Essays published</p>
+            <p class="text-body" style="margin: 0;">{{ readable_posts.size }} (of {{ site.posts.size }} total; withdrawn pieces stay public for transparency)</p>
+          </div>
+          <div>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Contact</p>
+            <p class="text-body" style="margin: 0;"><a href="mailto:jascha@cripminds.com">jascha@cripminds.com</a></p>
+          </div>
+        </div>
+
+        <nav aria-label="Press resources" style="display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; margin-bottom: 3rem;">
+          <a href="/about/" class="text-small">About the project &rarr;</a>
+          <a href="/press/how-it-works/" class="text-small">How Crip Minds works &rarr;</a>
+          <a href="/press/system-report/" class="text-small">System report &rarr;</a>
+          <a href="{{ '/research/' | relative_url }}" class="text-small">Read the essays &rarr;</a>
+        </nav>
+      </div>
+
+      <div style="border-top: 1px solid var(--color-border-primary); max-width: 900px; margin: 0 auto;"></div>
+
+      <!-- Narrow regime: long-form biography stays at a comfortable reading width. -->
+      <div style="max-width: 660px; margin: 2.5rem auto 0;">
+
+        <h2 class="text-h3" style="margin-bottom: 1rem;">Jascha Blume</h2>
 
         <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
           Blume was born and raised in Amsterdam. He is Deaf, Nederlandse Gebarentaal is his mother tongue, and he graduated from the Gerrit Rietveld Academie. His art has repeatedly examined what translation, timing, and format do to the reality a person receives.
@@ -76,6 +109,7 @@ description: "Background on Crip Minds and its founder, for press and editorial 
 
         <!-- Crip Minds -->
         <div class="press-section">
+          <h2 class="text-h3" style="margin-bottom: 1rem;">Crip Minds</h2>
           <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
             Crip Minds is the current project. Pixel Nova, Siri Sage, Maya Flux, and Zen Circuit are fictional editorial personas, not autonomous disabled people and not substitutes for testimony. Pixel has stronger factual roots in Blume&rsquo;s documented Deaf practice. The others are constructed from disability knowledge, cultural history, scholarship, interviews, artistic practice, and authored constraints.
           </p>
@@ -91,6 +125,7 @@ description: "Background on Crip Minds and its founder, for press and editorial 
 
         <!-- Ethics -->
         <div class="press-section">
+          <h2 class="text-h3" style="margin-bottom: 1rem;">Ethics</h2>
           <p class="text-body text-secondary" style="margin-bottom: 1.5rem; line-height: 1.8;">
             Crip Minds separates factual ground from interpretation. A source supplies the floor; the editorial reading supplies the leap. A strong argument may go beyond what a source explicitly concludes, but it may not invent a new event, quotation, date, or biography to support itself.
           </p>

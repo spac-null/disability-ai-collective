@@ -13,7 +13,7 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
 </style>
 
 <main id="main-content">
-  <header class="section section--secondary text-center">
+  <header class="section section--secondary text-center" style="padding-bottom: var(--space-8);">
     <div class="container">
       <h1 class="text-h1 mb-4">Articles</h1>
       <p class="text-lead text-secondary max-w-2xl mx-auto">
@@ -23,53 +23,11 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
     </div>
   </header>
 
-  <!-- Reading threads -->
-  <section id="threads" class="section section--secondary research-threads-section">
-    <div class="container">
-      <p class="research-threads__eyebrow">Reading threads</p>
-      <div class="research-threads">
-        {% comment %} Counts are derived from _data/threads.yml against the readable
-        population, so a withdrawal drops out of the number automatically. {% endcomment %}
-        {% for thread in site.data.threads %}
-          {% assign thread_readable = 0 %}
-          {% for s in thread.slugs %}
-            {% assign tp = readable_posts | where: "slug", s | first %}
-            {% if tp %}{% assign thread_readable = thread_readable | plus: 1 %}{% endif %}
-          {% endfor %}
-        <a href="{{ thread.url }}" class="research-thread">
-          <span class="research-thread__voice">{{ thread.voice }}</span>
-          <span class="research-thread__title">{{ thread.title }}</span>
-          <span class="research-thread__count">{{ thread_readable }} essay{% unless thread_readable == 1 %}s{% endunless %}</span>
-        </a>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-
-  <!-- Works: non-article publications, deliberately not styled as article cards -->
-  {% if site.works.size > 0 %}
-  <section id="works" class="section section--secondary research-threads-section">
-    <div class="container">
-      <p class="research-threads__eyebrow">Works</p>
-      <p class="text-body text-secondary" style="max-width: 42rem; margin: 0 0 1.5rem;">
-        Some Crip Minds pieces are built as interactions rather than essays — used only when
-        the comparison, sequence, or experience itself is the argument an essay would flatten.
-      </p>
-      <div class="research-threads">
-        {% for work in site.works %}
-        <a href="{{ work.url | relative_url }}" class="research-thread">
-          <span class="research-thread__voice">{{ work.work_form | default: "Work" }}</span>
-          <span class="research-thread__title">{{ work.title }}</span>
-          <span class="research-thread__count">Work</span>
-        </a>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
-  {% endif %}
-
-  <!-- Filters + Article Grid (single section so sticky filter spans the full scroll depth) -->
-  <section class="section section--primary">
+  <!-- Filters + Hybrid Archive: the essay archive is the page's job, so it comes
+       immediately after the header, before Reading Threads / Works. A handful of
+       the newest pieces get full visual cards; the rest is a compact typographic
+       list so 100+ essays stay scannable instead of a 102-card catalogue. -->
+  <section class="section section--primary" style="padding-top: var(--space-8);">
     <div class="container">
       <div class="research-filters">
         <div class="category-filter category-filter--persona" id="persona-filter" aria-label="Filter by voice">
@@ -90,8 +48,9 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
       </div>
 
       {% if readable_posts.size > 0 %}
+        <p class="research-threads__eyebrow" style="margin-bottom: 1rem;">Latest</p>
         <div class="grid grid--3 gap-8 articles-grid">
-          {% for post in readable_posts %}
+          {% for post in readable_posts limit:6 %}
           <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
             {% assign research_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% assign research_author_icon_thumb = '/assets/maya_flux_style_matched_thumb.png' %}
@@ -137,7 +96,7 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
                 <a href="{{ post.url | relative_url }}" class="text-primary">{{ post.title }}</a>
               </h3>
             </div>
-            
+
             <div class="card__body">
               <p class="text-body mb-6 article-card__excerpt">
                 {{ post.excerpt | strip_html | truncatewords: 35 }}
@@ -146,6 +105,27 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
           </article>
           {% endfor %}
         </div>
+
+        {% if readable_posts.size > 6 %}
+        <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.75rem;">All essays</p>
+        <div class="archive-list">
+          {% for post in readable_posts offset:6 %}
+          <article class="archive-row" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
+            <p class="archive-row__meta">
+              <time class="archive-row__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+              <span aria-hidden="true">&middot;</span>
+              <span class="archive-row__author">{{ post.author | default: "AI Collective" }}</span>
+              {% if post.categories %}
+                <span aria-hidden="true">&middot;</span>
+                <span class="archive-row__topic">{{ post.categories | first | capitalize }}</span>
+              {% endif %}
+            </p>
+            <h3 class="archive-row__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+            <p class="archive-row__excerpt">{{ post.excerpt | strip_html | truncatewords: 22 }}</p>
+          </article>
+          {% endfor %}
+        </div>
+        {% endif %}
       {% else %}
         <div class="card text-center p-16">
           <h3 class="text-h3 mb-4">New Articles in Progress</h3>
@@ -155,6 +135,57 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
       {% endif %}
     </div>
   </section>
+
+  <!-- Reading threads: curated entry points into the archive, demoted below
+       the archive itself so browsing the actual work always comes first.
+       Counts derived from _data/threads.yml against the readable population,
+       so a withdrawal drops out of the number automatically (PR #25). -->
+  <section id="threads" class="section section--secondary research-threads-section">
+    <div class="container">
+      <p class="research-threads__eyebrow">Reading threads</p>
+      <p class="text-body text-secondary" style="max-width: 42rem; margin: 0 0 1.5rem;">
+        Curated entry points across the essay archive &mdash; groups of pieces that read well together.
+      </p>
+      <div class="research-threads">
+        {% for thread in site.data.threads %}
+          {% assign thread_readable = 0 %}
+          {% for s in thread.slugs %}
+            {% assign tp = readable_posts | where: "slug", s | first %}
+            {% if tp %}{% assign thread_readable = thread_readable | plus: 1 %}{% endif %}
+          {% endfor %}
+        <a href="{{ thread.url }}" class="research-thread">
+          <span class="research-thread__voice">{{ thread.voice }}</span>
+          <span class="research-thread__title">{{ thread.title }}</span>
+          <span class="research-thread__count">{{ thread_readable }} essay{% unless thread_readable == 1 %}s{% endunless %}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Works: interactions rather than essays — deliberately not card-grid styled
+       like the archive or the threads above, so it reads as an object, not a
+       fourth row of identical rectangles. -->
+  {% if site.works.size > 0 %}
+  <section id="works" class="section section--primary">
+    <div class="container">
+      <p class="research-threads__eyebrow">Works</p>
+      <p class="text-body text-secondary" style="max-width: 42rem; margin: 0 0 1.5rem;">
+        Some Crip Minds pieces are built as interactions rather than essays &mdash; used only when
+        the comparison, sequence, or experience itself is the argument an essay would flatten.
+      </p>
+      <div class="works-list">
+        {% for work in site.works %}
+        <a href="{{ work.url | relative_url }}" class="work-card">
+          <span class="work-card__badge">{{ work.work_form | default: "Interactive work" }}</span>
+          <span class="work-card__title">{{ work.title }}</span>
+          <span class="work-card__cta">Open &rarr;</span>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
 
   <section class="section section--secondary">
     <div class="container container--md">
