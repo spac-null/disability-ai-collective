@@ -9,12 +9,26 @@ keywords: [hendrick avercamp, deaf art history, dutch painting, golden age, legi
 image: /assets/he-painted-everyone-talking_setting_1.jpg
 image_alt: "He Painted Everyone Talking. He Could Hear None of It. — screen-print protest poster illustration"
 ---
+> **Correction, 25 August 2026:** Three corrections, none of them to the article's account of
+> Avercamp. The quotation from his mother's will was drawn too wide: the 1633 document calls him
+> her "mute and miserable" son — *haeren stommen ende miserabelen soene* — and "unmarried"
+> describes him but is not inside the quoted phrase. It is now given as the document has it. The
+> section on reading a city claimed that "the placement of a gendarm" dates an Amsterdam street
+> plan; there is no such feature, and the passage now refers to the Amsterdammertje bollards and
+> the three Saint Andrew's crosses they actually carry. And that section was written as this
+> writer's own childhood and career — "I grew up in Amsterdam", "I have spent my career asking" —
+> which this publication cannot support; it is now put as the question rather than the
+> autobiography. **Checked and unchanged:** *Winter Landscape with Ice Skaters*, c. 1608, is in the
+> Rijksmuseum and on display in room 2.6; the roughly two hundred figures; the amorous couple by
+> the hay; Avercamp's dates, 1585–1634; *de Stomme van Kampen* as his contemporary identifier; and
+> that no surviving document confirms deafness or its onset, which the article already said. The
+> address is unchanged.
 
 There's a painting in the Rijksmuseum. *Winter Landscape with Ice Skaters*, around 1608. A frozen canal, grey sky, two hundred figures in various states of motion. People are skating. People are fishing through holes in the ice. People are arguing, embracing, falling, selling things. A man is kissing a woman behind a hay wagon. A child has fallen and three adults are looking at something else entirely.
 
 Hendrick Avercamp painted this from observation. He was standing somewhere near the canal — at the edge, probably, or on the ice itself — watching. Making notes. Returning to his studio to compose.
 
-He likely could not hear much of it. Contemporary records call him "Hendrick Avercamp de Stomme" — mute — and his mother's will describes her "unmarried, mute and miserable" son. Deafness is the plausible, widely assumed reading of that muteness, though no surviving document confirms it, or says whether it was there from birth.
+He likely could not hear much of it. Contemporary records call him "Hendrick Avercamp de Stomme" — mute — and his mother's will, drawn up in 1633, provides for her unmarried son, "haeren stommen ende miserabelen soene", her mute and miserable son, with an extra annual allowance for life. Deafness is the plausible, widely assumed reading of that muteness, though no surviving document confirms it, or says whether it was there from birth.
 
 I didn't know this the first time I stood in front of this painting. I had looked at it for years in reproduction — the swarm of figures, the extraordinary density of social information compressed into a single frame — and nobody had told me. It's not in the standard art history accounts. It's noted in specialist literature and then set aside.
 
@@ -51,11 +65,11 @@ The answer is on the canvas. Two hundred figures, every one of them readable by 
 
 ## Legibility and Who Gets It
 
-I grew up in Amsterdam. I learned to read the city the way Avercamp learned to read the ice — by watching, in silence, what bodies do when they think no one is tracking them at that resolution.
+A city can be read the way Avercamp read the ice — by watching, in silence, what bodies do when they think no one is tracking them at that resolution.
 
-The city has a visual grammar that most people navigate without naming. The width of a canal signals its age. The placement of a gendarm tells you which century the street plan dates from. The difference between a Jordaan façade and a Bijlmer tower is a complete argument about who Amsterdam decided to make room for, and when.
+Amsterdam has a visual grammar most people navigate without naming. The Amsterdammertjes, the bollards separating pavement from street, carry the three Saint Andrew's crosses of the city's arms, repeated at knee height across the whole centre. The difference between a Jordaan façade and a Bijlmer tower is a complete argument about who the city decided to make room for, and when.
 
-I have spent my career asking: who does this information system assume will receive it? The transit map, the museum label, the "Getting Here" page — all of them encode an expected receiver, and the expected receiver is almost never me.
+The question worth asking of any of it is: who does this information system assume will receive it? The transit map, the museum label, the "Getting Here" page — all of them encode an expected receiver, and the expected receiver is almost never a deaf one.
 
 Avercamp built his entire career encoding a different receiver into a visual system. He painted for the eye, exclusively, in a culture that primarily transacted through the voice. The canvases he left are legible to anyone who can see them. The conversations in them are available to me in a way they were not available to the people standing next to him on the ice.
 

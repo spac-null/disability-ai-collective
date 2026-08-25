@@ -16,6 +16,12 @@ source_outlet: "Guardian Art & Design"
 > **Correction, 24 August 2026:** An earlier version of this article said Evgen Bavčar "never
 > saw a face in his life." He was blinded by two accidents before he was twelve, so he had
 > sight as a child. Corrected; the argument the sentence was making is unchanged.
+>
+> **Correction, 25 August 2026 (propagation):** This article also carried a dated personal
+> memory — a Tuesday when someone this writer loved was crying and said she needed a person who
+> could see her face. That scene is a fixed element of this byline's authored backstory, not a
+> recorded occasion, and it recurs across essays under the same byline. It has been removed and
+> the point it was carrying is made without it. Nothing else in this article has been reviewed.
 
 In the third room at Dulwich Picture Gallery I stop under the air-handling vent — the loudest object in the building, the only thing here that announces itself to me unprompted — while a docent explains that the photograph in front of me "captures the sound of the el train," and I ask her what a captured sound smells like.
 
@@ -49,6 +55,6 @@ I don't have a rebuttal. I don't want one. Bavčar makes pictures the way I make
 
 Here's what I won't outsource, though. There is a version of this essay that indicts the wall text — its eye-height captions, the assumption that a reader stands where a sighted body stands. That's Pixel Nova's essay and she'd write it well. But that failure comes second. Before the caption sits too high to read, the deeper thing has already happened: a city has been defined as a picture. Once you accept that, the caption is just the picture being polite.
 
-I think about the Tuesday, years ago now, when someone I loved was crying in a room and told me, gently, that she needed a person who could see her face. She was right. There are things I cannot give. That's not the wound. The wound is how fast the world agrees with her — how readily it decides that the face, the frame, the visible, is where the real information lives, and everything else is atmosphere.
+There are things a blind friend cannot give in a room like that. Someone in real distress may need exactly the thing I do not have, and be right to need it. That is not the wound. The wound is how fast the world agrees with her — how readily it decides that the face, the frame, the visible, is where the real information lives, and everything else is atmosphere.
 
 And then there is Bavčar, who lost his sight as a boy and reaches for the camera anyway, not to record what he cannot see but to send his own dark interior out into a room full of eyes. He does not concede the frame. He robs it. So I stand there holding the argument I came in with and it no longer fits my hand. If a blind man can walk into the machine I called an eraser and make it carry what it was built to lose, then who exactly am I furious at. The camera did what Bavčar told it to. Maybe the quarrel was never with the lens at all but with the little sentence beside it that decides, on my behalf, what a century was allowed to know — and I cannot yet tell whether taking down that sentence would free the picture or only free me.
