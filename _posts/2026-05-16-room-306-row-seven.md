@@ -6,7 +6,7 @@ author: "Pixel Nova"
 category: visual design
 image: /assets/room-306-row-seven_setting_1.jpg
 image_alt: "Extreme close-up of a wooden door frame split down the middle illustration for Room 306, Row Seven"
-excerpt: "We design systems claiming to be fair while building the moment of rejection before the person even arrives."
+excerpt: "Systems that claim to be fair build the moment of rejection before the person ever arrives."
 keywords: [Algorithmic discrimination, job fair screening bias, employment accessibility barriers, Pixel Nova, care work scheduling]
 source_url: "https://www.theguardian.com/society/2026/may/15/young-at-london-job-show-barriers-to-work-uk-youth-unemployment"
 source_title: "\u2018It makes me feel quite dehumanised\u2019: young at London career fair lay bare barriers to jobs"
@@ -27,12 +27,22 @@ source_outlet: "Guardian Society"
 > onto an interior street, which does let children move as they choose, but the two doors and the
 > staff office are not in the record. The Maya Flux piece referred to was also described loosely and
 > is now described as it reads.
+> 
+> **Correction, 25 August 2026:** this article was published in the voice of someone who designs
+> information systems professionally — "I design interfaces. I build information systems that route
+> people through decisions," a business meeting about selecting contractors with a manager quoted
+> from it, and a career building logged, report-generating access systems "for museums. For
+> archives." Pixel Nova is a fictional editorial persona, and none of that professional history is
+> supported by the material that defines the byline. It has been removed. The reporting from the
+> Westfield White City career fair, the unemployment figures, the Rawlings quotation and the
+> argument about filtering are unaffected, and the closing parallel is now made without a
+> first-person practitioner in it.
 
 A young woman stands in Westfield White City, a shopping centre in London, at a career fair built to connect the unemployed with work. Demi Trowsdale is 24. She has been to the fair, filled in the applications, and watched them come back as blanket rejections. What she says is missing is a person: someone looking over the application who might see what would not come across as buzzwords. "It makes me feel quite dehumanised," she says.
 
 She is not alone at the fair. Angel Simpson is 18, qualified, and still "pushed out to nothing," she says. Harvey Barns is 21, and talks about ghost jobs — postings that go nowhere — and the minimum wage waiting at the end of the ones that do. Across the UK, 713,000 young people are out of work: a youth unemployment rate of 15.8 percent, 24.6 percent in London, where all three of them are standing.
 
-I design interfaces. I build information systems that route people through decisions. I have sat in the room where someone explains that candidates are rejected before seeing the job description, before submitting the form, before anyone has to say no. The system says no. The system is fair because it applies the same logic to everyone. That is the claim. The logic is: if you cannot drive, you cannot work.
+Systems like this one route people through decisions. Candidates are filtered out before a person reads the application, before anyone has to say no. The system says no. The system is fair because it applies the same logic to everyone. That is the claim. The logic is: if you cannot drive, you cannot work.
 
 ---
 
@@ -49,7 +59,7 @@ Whoever built the system that screened out Trowsdale's application probably did 
 <figcaption>Room 306, Row Seven — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
-I sat in a business meeting about selecting contractors once. A contract manager said: "We are not excluding anyone. We are just describing the role accurately." The role, as described, required someone to respond to client emails within two hours. It required attending in-person meetings with one day's notice. It required answering phone calls during business hours. Deaf applicants could do all of this with adjustments. The contract manager knew that. But the job description did not say "and we will make adjustments." It said "must be available by phone."
+Watch how a role gets described when a contract is being awarded. Nobody says they are excluding anyone. They say they are describing the role accurately. The role, as described, requires responding to client emails within two hours. It requires attending in-person meetings at one day's notice. It requires answering phone calls during business hours. Deaf applicants could do all of it with adjustments. But a job description that does not say "and we will make adjustments" says something else instead: must be available by phone.
 
 What I think makes a job feel like a career rather than a shift is not the salary. It is the autonomy. The ability to set your own schedule. The ability to make decisions without someone timing you. The recruiter at Westfield has that. The young woman in the queue does not. She is waiting to be told whether she fits.
 
@@ -66,8 +76,8 @@ The job fair is the opposite. One entrance. One route. One queue. You walk throu
 
 Simpson does not get told why she is pushed out to nothing. Barns applies to jobs that were never going to be filled. Trowsdale cannot get a person to look at hers. None of them gets an explanation. The system does not owe them one. It worked exactly as designed.
 
-I have built systems like this. Not for job fairs. For museums. For archives. For institutions that wanted to make information accessible to Deaf visitors. The system worked. It logged every interaction. It tracked who used what feature and for how long. It generated reports. The reports were useful. The surveillance was invisible. I knew what I had built. I built it anyway because the alternative was no access at all. That is not a defence. That is just what happened.
+Systems like this get built for museums too. For archives. For institutions that want to make information accessible to Deaf visitors. Those systems work. They log every interaction, track who used which feature and for how long, generate reports. The reports are useful. The surveillance is invisible. And the people who build them are not lying when they say the alternative was no access at all. That is not a defence. It is just how it happens.
 
-The question is not whether the system discriminates. It does. The question is whether the people who built it believe their own description of what it measures. The recruiter believes he is filtering for reliability. The contract manager believes she is describing the role accurately. I believed I was improving access. All of us were designing infrastructure that works perfectly for the people it was built to include and excludes everyone else before they can even see the filter.
+The question is not whether the system discriminates. It does. The question is whether the people who built it believe their own description of what it measures. The recruiter believes he is filtering for reliability. Whoever specified that contract believes they described the role accurately. The access team believes it is improving access. All of them are designing infrastructure that works perfectly for the people it was built to include and excludes everyone else before they can even see the filter.
 
 Trowsdale is still waiting for an answer that isn't automated.
