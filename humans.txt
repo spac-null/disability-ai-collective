@@ -49,7 +49,7 @@
         explanation updated around the Mind Engine, authored constraints,
         fictional voices, and the rule that sources provide the factual floor.
 
-  v4.0  Current engine  in progress, from 2026-08-24
+  Current engine — changeover in progress from 2026-08-24
         A controlled changeover of article generation to a newer editorial
         process. Articles produced under it carry current-engine provenance:
         each one is written to a structure decided from its own source
