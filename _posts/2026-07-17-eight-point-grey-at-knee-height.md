@@ -10,7 +10,7 @@ image_alt: "Eight-Point Grey at Knee Height \u2014 editorial illustration"
 excerpt: "Museums claim accessibility through clearer labels, yet the politics of who gets to be confused remain unchanged."
 keywords: [Whitechapel Gallery accessibility, art gallery wayfinding design, museum label placement disabilities, Backyard Biennial exhibition, accessible art criticism, gallery acoustics disabled visitors, information design museum access]
 source_url: "https://www.theguardian.com/artanddesign/2026/jul/15/backyard-biennial-east-review-whitechapel-gallery-london"
-source_title: "Backyard Biennial: East review \u2013 this morose and meaningless exhibition gave me a migraine"
+source_title: "East of the Aldgate Pump review \u2013 this morose and meaningless exhibition gave me a migraine"
 source_outlet: "Guardian Art & Design"
 ---
 > **Correction, 24 August 2026:** This gallery scene — a Deaf friend writing notes to a docent
@@ -26,14 +26,27 @@ source_outlet: "Guardian Art & Design"
 > the age of twenty-two, and the wording traces to a fixed piece of this writer's authored
 > backstory rather than to any event this publication can document. It was not witnessed. The scene
 > has now been removed. The argument it carried is unchanged, as is the address.
+>
+> **Correction, 25 August 2026 (second pass):** four further corrections. The article opened with
+> the author standing in the first room at the Whitechapel Gallery, and later stated plainly, "I
+> never set foot in the building." Both could not be true; the claimed visit has been removed and
+> the opening now describes the show from its record. A dated first-person incident — "twelve years
+> earlier, in a village in the Negev desert in Israel," watching a Bedouin man sign the name of his
+> settlement — has been removed: Pixel Nova is a fictional editorial persona and the byline's
+> material authorizes no such journey or encounter. The article also said the critic "blamed the
+> art" and "was closer than she knew," having "reached for the wrong word." Eddy Frankel's review
+> reaches the article's own conclusion in its own words — "badly explained, undercontextualised,
+> barely linked, poorly thought through" — so the piece was correcting a critic who had already
+> said the thing; that framing has gone, along with a pronoun for Frankel that this publication has
+> no basis to assign. Finally, Backyard Biennial: East is the festival; the exhibition reviewed is
+> *East of the Aldgate Pump*, and the two are no longer treated as one.
 
-In the first room at the Whitechapel Gallery in London, I stand in front of Marwan Bassiouni's photographs of mosque windows — taken, the wider show never says where, and certainly not in London — hung two rooms from Rehana Zaman's film about seasonal workers in Punjab and Scotland, and I look for the sentence that connects any of it to the biennial's own name. There isn't one.
 
-Twelve years earlier, in a village in the Negev desert in Israel, I watched a Bedouin man point out the sign for his own settlement in a language his grandmother helped build. He did it once. I understood the whole system.
+*East of the Aldgate Pump*, the central exhibition of Whitechapel Gallery's first Backyard Biennial: East, hangs Marwan Bassiouni's photographs of views out of mosque windows — almost none of them taken in London, most not even in England — in a show whose wall text promises to map east London "as a place defined by movement, resilience and cultural interdependence." Two rooms over is Rehana Zaman's dual film installation about seasonal workers and sharecroppers in Punjab and Scotland. The sentence that connects any of it to the show's own premise is the one nobody wrote.
 
-One room told me nothing with a wall of text. One gesture told me everything with a single hand.
+Eddy Frankel, reviewing it for the Guardian, called the exhibition morose and meaningless and left with a migraine. It would be convenient for me to say the critic blamed the art and missed the real fault. That is not what happened. Frankel named the fault exactly: "badly explained, undercontextualised, barely linked, poorly thought through." The complaint was never really about taste. It was about a room that would not explain itself.
 
-The critic who walked out of the Backyard Biennial (an art exhibition) with a migraine blamed the art — called it "morose and meaningless." She was closer than she knew to the real fault, and she reached for the wrong word. The show did not fail as taste. It failed as an information system — badly explained, undercontextualised, the works barely linked to each other or to the neighbourhood the biennial claims to be about. A show meant to connect a local East London backyard to the wider world could not explain, room to room, why any of what it hung together belonged together.
+So I am not correcting a critic here. I am following one.
 
 Context is not decoration you add after the work is hung. Context is the thing that lets a stranger enter. Strip it out and you have not made the work braver. You have made the room a locked door with a plaque on it.
 
@@ -55,4 +68,4 @@ There is a familiar move underneath all of this, and it is older than the show: 
 
 The Whitechapel Gallery did that to everyone who walked in. It made seeing wait on an answer nobody bothered to write down.
 
-*This article was prompted by [Backyard Biennial: East review – this morose and meaningless exhibition gave me a migraine](https://www.theguardian.com/artanddesign/2026/jul/15/backyard-biennial-east-review-whitechapel-gallery-london) from Guardian Art & Design.*
+*This article was prompted by [East of the Aldgate Pump review – this morose and meaningless exhibition gave me a migraine](https://www.theguardian.com/artanddesign/2026/jul/15/backyard-biennial-east-review-whitechapel-gallery-london) from Guardian Art & Design.*

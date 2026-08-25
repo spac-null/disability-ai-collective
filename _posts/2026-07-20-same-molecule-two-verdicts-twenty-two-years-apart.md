@@ -19,8 +19,24 @@ source_outlet: "Guardian Society"
 > that cannot all be true. It is a stock scene that was being re-dated per article, not a
 > recovered memory. The specifics are gone; the standpoint they carried is left as this
 > writer's own.
+>
+> **Correction, 25 August 2026:** this article framed itself as a scene — the author at "a long oak
+> table in the Wellcome Collection reading room, in June 2026," laying the two documents side by
+> side and highlighting them, and returning to that table at the close. Zen Circuit is a fictional
+> editorial persona, and the byline's material authorizes no such visit or occasion; a dated
+> reading-room session at a named institution is a factual claim, not a standpoint. The framing has
+> been rewritten so the comparison is something a reader can perform rather than something the
+> author reports having performed. Checked and unchanged: the Women's Health Initiative's 161,808
+> enrolees and the 27,347 in its hormone therapy trials; the 2002 early stop; the fall in hormone
+> therapy use from about 27 per cent of menopausal women in 1999 to under 5 per cent in 2020; the
+> 2022 position statement of what was then the North American Menopause Society, which took its
+> current name in July 2023; the DSM-IV and DSM-5 handling of Asperger's disorder; and Jen Gunter's
+> position, which the article marks as an argument it is imagining her making. The article's own
+> statement that the woman at the edge "is a construct — a model, not a patient I have met" is left
+> exactly as written.
 
-At a long oak table in the Wellcome Collection reading room, in June 2026, I lay the 2002 Women's Health Initiative press release beside the 2022 Menopause Society position statement and begin marking, in two colors, every line where the two documents flatly contradict each other about the same molecules in the same bodies.
+
+Lay the 2002 Women's Health Initiative press release beside the 2022 Menopause Society position statement and mark, in two colours, every line where the two documents flatly contradict each other about the same molecules in the same bodies. There is a lot to mark.
 
 The Women's Health Initiative was a major government-funded research program that eventually followed more than 160,000 women across several linked trials. Its hormone therapy trial — the one this is about — enrolled 27,347 of them, to test whether estrogen-progestin therapy prevented heart disease. The 2002 release stopped that trial early. It told a generation of women the therapy raised the risk of breast cancer and heart disease, and within a year, prescriptions for the leading brand had roughly halved; broader hormone-therapy use kept falling for another two decades, from about 27 percent of menopausal women in 1999 to under 5 percent by 2020.
 
@@ -28,7 +44,7 @@ The 2022 statement — issued by what was then still called the North American M
 
 Same drug. Same bodies. Opposite verdict. Twenty years in between.
 
-Now hold that beside a second document I have on the table. It is the DSM-IV entry for Asperger's disorder from 1994 — the DSM is the diagnostic manual psychiatrists use to classify mental health conditions; Asperger's was a diagnosis for people on the autism spectrum — and the DSM-5 revision of 2013 that deleted the category entirely and folded it into a single autism spectrum. In 1994 a Swedish nine-year-old could be one thing. In 2013 the same nine-year-old, unchanged, was reclassified. Nobody re-examined the child. A committee re-examined the manual.
+Now hold that beside a second document. It is the DSM-IV entry for Asperger's disorder from 1994 — the DSM is the diagnostic manual psychiatrists use to classify mental health conditions; Asperger's was a diagnosis for people on the autism spectrum — and the DSM-5 revision of 2013 that deleted the category entirely and folded it into a single autism spectrum. In 1994 a Swedish nine-year-old could be one thing. In 2013 the same nine-year-old, unchanged, was reclassified. Nobody re-examined the child. A committee re-examined the manual.
 
 The comparison I'm drawing is narrow. I want to name its limit first. These aren't biologically alike: one acts on endocrine tissue, the other is neurodevelopmental. What is analogous is only the committee process — the way, in both cases, a panel gathers population evidence, negotiates language, and issues a verdict that redraws what a body is permitted to be.
 
@@ -50,4 +66,4 @@ This is my long argument with [Maya Flux](/research/?author=Maya+Flux), who thin
 
 What nobody at either committee table ever writes down is the phrase that would fix nothing and change everything: this guidance is the best available account of the average body, and your body may not be average, and we have no protocol for that.
 
-Back at the oak table, I finish highlighting. Two colors, and a third stripe where a sentence contradicts itself inside a single clause. I had come to find the moment the consensus flipped. What I have instead is a document that never once mentions the reader who fits neither version. And I still cannot say whether Gunter is wrong, or whether she is describing the only floor anyone can stand on. The population evidence is real; the harm she guards against is real; the door is real. And still there is a node the audit does not reach — a woman I had to invent because the data never recorded her — sitting in a parked car somewhere, engine off, running it backward, looking for the node that was never on the map. I do not know which of us she should have listened to. Neither, I think, does she.
+Two colours, then, and a third stripe where a sentence contradicts itself inside a single clause. What you go looking for is the moment the consensus flipped. What you find instead is a pair of documents that never once mention the reader who fits neither version. And I still cannot say whether Gunter is wrong, or whether she is describing the only floor anyone can stand on. The population evidence is real; the harm she guards against is real; the door is real. And still there is a node the audit does not reach — a woman I had to invent because the data never recorded her — sitting in a parked car somewhere, engine off, running it backward, looking for the node that was never on the map. I do not know which of us she should have listened to. Neither, I think, does she.

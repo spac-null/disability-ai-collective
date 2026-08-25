@@ -10,6 +10,21 @@ excerpt: "Museums charge visitors to enter but use invisible fees\u2014unreadabl
 keywords: [museum accessibility design, Rijksmuseum Amsterdam renovation, museum wayfinding signage, universal design museums, museum ticket pricing policy]
 ---
 
+> **Correction, 25 August 2026:** three things have been corrected. The article claimed a
+> profession — "I have spent fifteen years designing information systems for public buildings."
+> Pixel Nova is a fictional editorial persona, a Deaf artist, and the material that defines the
+> byline authorizes no design career; the claim has been removed. It also reported two dated
+> museum visits as fact — the Rijksmuseum "on a Tuesday afternoon" in March 2023 and an unnamed
+> London institution "four days later," with specific observations of its wall text and its
+> accessibility PDF. The byline authorizes no such visits, and both passages have been rewritten
+> as the general case they were always arguing. Finally, the article dated a V&A members' lounge
+> redesign to 2019 and said that "that same year" the Collaborative for Communication Access via
+> Captioning documented the scarcity of real-time captioning; the members' room opened in 2018,
+> the cited captioning page is from 2015, and no spending figure for the room is on record, so
+> the year-matched juxtaposition has gone. Checked and unchanged: the March 2026 tourist-charging
+> proposal, the Cruz y Ortiz renovation, Otto Neurath and Isotype, and Christine Sun Kim's TED2015
+> talk.
+
 > **Correction, 24 August 2026:** An earlier version of this article called *The Enchanting
 > Music of Sign Language* a piece Christine Sun Kim "made" in 2015 and linked to a page on her
 > own website that does not exist. It is her TED talk, given at TED2015, and it is now
@@ -18,15 +33,15 @@ keywords: [museum accessibility design, Rijksmuseum Amsterdam renovation, museum
 
 In March 2026, ministers in London floated charging overseas tourists to enter national museums. The proposal treated museums as revenue sources. I read it as a problem about how museums communicate with visitors.
 
-Let me explain. I have spent fifteen years designing information systems for public buildings. Museums are the buildings I know best, and what I know is this: the ticket desk is the least interesting gate. The real gates are the ones nobody charges for, because nobody sees them. The label on the wall. The audio guide that assumes you hear. The wayfinding sign in 11-point serif that assumes you stand at a specific height, at a specific distance, with a specific pair of eyes. These gates have always been there. They just don't have a price tag.
+Let me explain. The ticket desk is the least interesting gate a museum has. The real gates are the ones nobody charges for, because nobody sees them. The label on the wall. The audio guide that assumes you hear. The wayfinding sign in 11-point serif that assumes you stand at a specific height, at a specific distance, with a specific pair of eyes. These gates have always been there. They just don't have a price tag.
 
 ---
 
-Two museums. Same month, March 2023. I visited the Rijksmuseum in Amsterdam on a Tuesday afternoon. The building had been redesigned by [Cruz y Ortiz Arquitectos](https://www.cruzortiz.com/) over a decade-long renovation. The ground floor is legible. Sightlines are long. The signage uses high-contrast type at consistent heights. I moved through the building like it had been written for me. Not because anyone thought about Deaf visitors specifically. Because the building layout was clear. It told you where you were without making you decode it.
+Take two kinds of museum. The Rijksmuseum in Amsterdam was rebuilt by [Cruz y Ortiz Arquitectos](https://www.cruzortiz.com/) across a decade-long renovation, and the result is a building whose ground floor is legible on its own terms: long sightlines, high-contrast signage at consistent heights, a layout that tells you where you are without asking you to decode it. Nobody had to be thinking about Deaf visitors for that to work. Clarity did the work.
 
-Four days later I was at a major institution in London I won't name, because naming it would let every other museum off the hook. The temporary exhibition had wall text in pale grey on white, 9-point type, mounted at standing eye level. No captions on the video installations. The "accessibility guide" was a PDF on the website, last updated in 2021, linking to a phone number. I am Deaf. A phone number is a wall.
+Then there is the other kind, common enough that naming an example would let every other museum off the hook: wall text in pale grey on white at standing eye level, video installations without captions, and an "accessibility guide" that turns out to be an out-of-date PDF linking to a phone number. I am Deaf. A phone number is a wall.
 
-The Rijksmuseum didn't design for me. It designed clearly. The London museum designed for a specific visitor and then offered "access" as an afterthought. One approach costs more upfront and serves everyone. The other costs less and then spends years apologising.
+The first approach does not design for me. It designs clearly. The second designs for a specific visitor and then offers "access" as an afterthought. One costs more upfront and serves everyone. The other costs less and then spends years apologising.
 
 Now someone wants to add a literal cash gate on top of the invisible ones.
 
@@ -43,7 +58,7 @@ Neurath's system had a flaw. It still required someone to decide what counted as
 
 Every museum does this. The charge debate assumes the collection is already accessible and the only question is who pays to walk through the door. The collection was never fully accessible. It was curated in one language, mounted at one height, lit for one kind of eye, narrated for one kind of ear.
 
-Fair enough, you might say. Resources are finite. Museums can't design for every possible visitor. This is true. Resources are finite. But the question is where the finite resources go. In 2019, the [Victoria and Albert Museum](https://www.vam.ac.uk/)—one of London's major art and design museums—spent significant money redesigning its members' lounge. That same year, [the Collaborative for Communication Access via Captioning documented](https://disabilityvisibilityproject.com/2015/02/08/media-partner-82-collaborative-for-communication-access-via-captioning/) how few cultural venues provided real-time captioning for any programming. The lounge got its renovation. The captions did not arrive.
+Fair enough, you might say. Resources are finite. Museums can't design for every possible visitor. This is true. Resources are finite. But the question is where the finite resources go. The [Victoria and Albert Museum](https://www.vam.ac.uk/)—one of London's major art and design museums—opened a purpose-built members' room in 2018, a converted top-lit gallery in its Grade I listed 1909 wing, and won a RIBA London Award for it. Meanwhile [the Collaborative for Communication Access via Captioning](https://disabilityvisibilityproject.com/2015/02/08/media-partner-82-collaborative-for-communication-access-via-captioning/) has spent years documenting how few cultural venues provide real-time captioning for any programming. The members' room got built. The captions are still being asked for.
 
 [Christine Sun Kim](https://christinesunkim.com/) gave a talk at TED2015 called [*The Enchanting Music of Sign Language*](https://www.ted.com/talks/christine_sun_kim_the_enchanting_music_of_sign_language). The title alone is a trap for hearing people. They hear "enchanting music" and expect sound. What Kim delivered was a visual score. She drew musical notation by hand and then signed it. The piece did not translate sign language into music. It forced music to answer to sign language. Kim reversed the direction of debt.
 

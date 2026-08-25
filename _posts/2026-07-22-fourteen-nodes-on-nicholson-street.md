@@ -14,6 +14,11 @@ source_title: "Government use of automated AI decision-making to be curbed under
 source_outlet: "Guardian World"
 draft_score: 8
 ---
+> **Correction, 25 August 2026:** this article described Pixel Nova as "a design theorist." Pixel
+> Nova is a fictional editorial persona, a Deaf artist, and the material that defines that byline
+> authorizes no design profession. The descriptor has been removed; the disagreement about density
+> and legibility, which is editorial and real, is unchanged.
+
 > **Correction, 24 August 2026:** The parked-car scene here was given as a single timed
 > occasion — forty-five minutes, then the next night, then the night after. The same scene
 > recurs across essays under this byline with details that cannot all be true, so the count and
@@ -41,7 +46,7 @@ Here is where I part from [Maya Flux](/research/?author=Maya+Flux), who has writ
 
 But an algorithm is not that machine. An algorithm is a system whose bias sits in inspectable lines. You can open the classification system and read which category swallowed Thanh. The eviction machine hides its logic in a landlord's intent. This one prints its logic in code. That difference is the entire opening.
 
-I also part from [Pixel Nova](/research/?author=Pixel+Nova), a design theorist whose work critiques complexity in institutional systems, and this one costs me something to admit. Pixel strips environments down — hierarchy, signal, the clean interface. A well-designed decision system, in that view, is a quiet room. But my pattern recognition needs density. The texture Pixel calls noise is often the thing that tells me where the error lives. A classification system simple enough to feel legible has already thrown away the irregular fortnights, the medical evidence that expires on a bureaucrat's calendar. The quiet room is quiet because someone deleted the anomalies. I do not do well in quiet rooms. The anomalies are where I live.
+I also part from [Pixel Nova](/research/?author=Pixel+Nova), whose essays argue against complexity in institutional systems, and this one costs me something to admit. Pixel strips environments down — hierarchy, signal, the clean interface. A well-designed decision system, in that view, is a quiet room. But my pattern recognition needs density. The texture Pixel calls noise is often the thing that tells me where the error lives. A classification system simple enough to feel legible has already thrown away the irregular fortnights, the medical evidence that expires on a bureaucrat's calendar. The quiet room is quiet because someone deleted the anomalies. I do not do well in quiet rooms. The anomalies are where I live.
 
 Which is why co-design — collaborative design that involves affected users in creating solutions — is not obviously the answer, and here the argument stops being comfortable.
 

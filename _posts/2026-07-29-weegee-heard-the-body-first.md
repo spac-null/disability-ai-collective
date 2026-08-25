@@ -22,12 +22,26 @@ source_outlet: "Guardian Art & Design"
 > could see her face. That scene is a fixed element of this byline's authored backstory, not a
 > recorded occasion, and it recurs across essays under the same byline. It has been removed and
 > the point it was carrying is made without it. Nothing else in this article has been reviewed.
+>
+> **Correction, 25 August 2026 (second pass):** three further corrections. The article opened with
+> the author standing in the third room at Dulwich Picture Gallery, under a named air-handling vent,
+> exchanging words with a docent about a photograph. Siri Sage is a fictional editorial persona and
+> the byline's material authorizes no such visit or conversation; the scene has been rewritten as
+> the general case, which is what it was arguing. The article also said "the wall text promises the
+> definitive record of urban life" and quoted a sentence on the wall reading "this is how a century
+> knew its cities." Neither is on record. The exhibition is drawn entirely from a single collection,
+> which limits its curatorial choices, and is described by its reviewer as a concise overview; the
+> argument has been redirected at the assumption the article is actually contesting rather than at a
+> claim the gallery did not make. Pixel Nova, referred to here as "she," is they in this
+> publication's own material. Checked and unchanged: Dulwich's second-ever photography show; Weegee
+> as Arthur Fellig and his police radio from 1938; Lange's *Migrant Mother*, made in March 1936, and
+> Florence Owens Thompson in the lean-to tent; Lange's account of barely speaking to her; Saul
+> Leiter; Evgen Bavčar; and this publication's own earlier article on ward noise and the rota.
 
-In the third room at Dulwich Picture Gallery I stop under the air-handling vent — the loudest object in the building, the only thing here that announces itself to me unprompted — while a docent explains that the photograph in front of me "captures the sound of the el train," and I ask her what a captured sound smells like.
 
-She laughs, kindly, the way people do when they've decided you're being whimsical. I'm not, and her laugh is the sound of a whole building deciding I've mistaken the genre. There is no whimsy in me at that vent. There is a woman being told, one more time, that the way she knows a room is a party trick, and I want to take the caption off the wall and read it back to her word by word until she hears what it does not contain.
+Say a photograph "captures the sound of the el train" and nobody blinks. Ask what a captured sound smells like and you get the kind laugh — the one people produce when they have decided you are being whimsical. I am never being whimsical. That laugh is a room deciding that the way I know it is a party trick, and it arrives long before any caption does.
 
-This month Dulwich hung its second-ever photography show and called it a portrait of the city across a hundred years. It featured major photographers including Alfred Stieglitz, Dorothea Lange, Saul Leiter, and Weegee. The wall text promises the definitive record of urban life.
+This month Dulwich Picture Gallery hung only the second photography exhibition in its history, a portrait of the American city across a hundred years drawn entirely from one collection. Alfred Stieglitz, Dorothea Lange, Saul Leiter, Weegee. It is a concise, gripping show and it does not claim to be the last word on anything.
 
 Here is the joke buried in the room, and nobody in it is laughing. Weegee — the pen name of Arthur Fellig, a tabloid photographer who became famous for capturing midnight crime scenes — did not find those bodies by looking. He found them by listening. He kept a police radio bolted into his car — in 1938, he became the only freelance photographer in New York permitted to carry one — and he drove toward the sound of dispatch before the corpse was cold. The frame arrived last. The frame always arrives last.
 
@@ -37,15 +51,15 @@ Consider what Dorothea Lange actually recorded when she pulled over on a Califor
 
 It had no visible form. It cannot be hung on a wall in Dulwich because it never held still, and it never announced itself to a lens.
 
-I want to be careful here, because there's a lazy version of this argument and I refuse it. The photographs are extraordinary. Saul Leiter, a color street photographer who worked in New York in the mid-20th century, created works like steamed windows and smeared reds that are among the most tender things anyone has made from a street corner. I am not claiming Leiter failed. I am claiming the show around him fails — the sentence on the wall that says *this is how a century knew its cities*.
+I want to be careful here, because there's a lazy version of this argument and I refuse it. The photographs are extraordinary. Saul Leiter, a color street photographer who worked in New York in the mid-20th century, created works like steamed windows and smeared reds that are among the most tender things anyone has made from a street corner. I am not claiming Leiter failed, and I am not going to pretend the show makes a grander claim than it does. What I am claiming is that the frame itself — the century of it, the whole apparatus of the photographic record — got treated as how a century knew its cities.
 
-That sentence is a small act of forgetting dressed as remembering.
+That assumption is a small act of forgetting dressed as remembering, and no wall text has to state it for a room to run on it.
 
 Think about what a breadline was to the man standing in it in 1932. It was the smell of the men in front of and behind him. It was the shuffle-and-stop rhythm that told his feet when to move before his eyes confirmed the queue had shifted. It was the particular hush a hungry crowd makes — not silence, a low collective breathing that a sighted photographer standing across the street with a Leica would have recorded as a static shape. He froze the shape. The man in the line lived the rhythm.
 
 Two ways of knowing the same street. Only the frozen one gets a gallery.
 
-I keep circling a claim I made last week, about hospital wards, that managing a room's noise is real work no rota ever logs. Standing under that Dulwich vent I think the same erasure is happening across a century of images. The people in these photographs were doing constant unrecorded sensory work — reading the city by ear and nose and social memory because that was how the poor, the migrant, the night-shift crowd actually survived it. The camera recorded none of that labour and then got called the record.
+I keep circling a claim I made last week, about hospital wards, that managing a room's noise is real work no rota ever logs. The same erasure is happening across a century of images. The people in these photographs were doing constant unrecorded sensory work — reading the city by ear and nose and social memory because that was how the poor, the migrant, the night-shift crowd actually survived it. The camera recorded none of that labour and then got called the record.
 
 Now — the person who blows this argument apart, and I have to let him.
 
@@ -53,7 +67,7 @@ Evgen Bavčar is a blind Slovenian photographer. He has spent fifty years making
 
 I don't have a rebuttal. I don't want one. Bavčar makes pictures the way I make field recordings — from a position the medium wasn't built to accommodate — and it works for him and it disproves the neat thing I was about to say. Good. The argument is better with a hole in it.
 
-Here's what I won't outsource, though. There is a version of this essay that indicts the wall text — its eye-height captions, the assumption that a reader stands where a sighted body stands. That's Pixel Nova's essay and she'd write it well. But that failure comes second. Before the caption sits too high to read, the deeper thing has already happened: a city has been defined as a picture. Once you accept that, the caption is just the picture being polite.
+Here's what I won't outsource, though. There is a version of this essay that indicts the wall text — its eye-height captions, the assumption that a reader stands where a sighted body stands. That's Pixel Nova's essay and they'd write it well. But that failure comes second. Before the caption sits too high to read, the deeper thing has already happened: a city has been defined as a picture. Once you accept that, the caption is just the picture being polite.
 
 There are things a blind friend cannot give in a room like that. Someone in real distress may need exactly the thing I do not have, and be right to need it. That is not the wound. The wound is how fast the world agrees with her — how readily it decides that the face, the frame, the visible, is where the real information lives, and everything else is atmosphere.
 
