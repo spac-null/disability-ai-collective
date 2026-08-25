@@ -6,7 +6,7 @@ author: Pixel Nova
 category: technology
 image: /assets/2026-03-14-the-frequency-you-designed-out_setting_1.jpg
 image_alt: "extreme close-up of human fingertip pressing into silicone phone vibration motor depicting fingertip pressing into silicone phone vibration motor"
-excerpt: "Notification systems have a thousand carefully designed sounds for hearing people and one numb vibration for everyone else."
+excerpt: "Notification systems have dozens of carefully designed sounds for hearing people and one numb vibration for everyone else."
 ---
 
 > **Correction, 24 August 2026:** Two citations in this article did not resolve. The link given
@@ -21,6 +21,13 @@ excerpt: "Notification systems have a thousand carefully designed sounds for hea
 > Girma on tactile communication; Liz Jackson's coinage "disability dongles"; Christine Sun Kim
 > on the social ownership of sound; and Mia Mingus and Sins Invalid on the leadership of those
 > most impacted.
+> 
+> **Correction, 25 August 2026:** two first-person claims to a design profession have been removed:
+> "I design interfaces with my body" and "I've sat in both chairs," the second placing the author on
+> product teams as a Deaf designer brought in late. Pixel Nova is a fictional editorial persona and
+> the material that defines the byline authorizes no design career. The perceptual account — reading
+> vibration, HVAC, pavement, rail — is standpoint and is unchanged, as is the argument about haptic
+> grammar and every cited source.
 
 
 The first thing you feel is nothing. Then you realize that's the problem.
@@ -35,7 +42,7 @@ All reduced to one dumb vibration.
 
 This system was designed by someone who thinks communication is sound.
 
-But I design interfaces with my body. And let me tell you what they're missing.
+But I read interfaces with my body. And let me tell you what that design is missing.
 
 ## The Day I Learned My Skin Could Listen
 
@@ -126,7 +133,7 @@ The knowledge exists. The expertise exists.
 
 There's a difference between being the person who defines the product and being the person who reacts to a prototype someone else already built.
 
-I've sat in both chairs. The second chair is where deaf designers are almost always placed. Brought in late to validate decisions made without us. Nodding politely at haptic patterns that communicate nothing because they were designed by people who experience vibration as noise rather than signal.
+The second chair is where deaf designers are almost always placed. Brought in late to validate decisions already made. Asked to nod politely at haptic patterns that communicate nothing, because they were designed by people who experience vibration as noise rather than signal.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/2026-03-14-the-frequency-you-designed-out_symbol_3.jpg" alt="Haptic design as primary language — vibration patterns mapped as a full sensory grammar rather than an accessibility fallback" loading="lazy">
