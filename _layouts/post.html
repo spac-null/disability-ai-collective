@@ -331,7 +331,8 @@ layout: default
         {% else %}
         {% assign current_cats = page.categories %}
         {% assign related_posts = "" | split: "" %}
-        {% for post in site.posts %}
+        {% assign related_pool = site.posts | where_exp: "p", "p.withdrawn != true" %}
+        {% for post in related_pool %}
           {% if post.url != page.url %}
             {% for cat in post.categories %}
               {% if current_cats contains cat %}
@@ -344,7 +345,7 @@ layout: default
         {% endfor %}
         {% if related_posts.size < 3 %}
           {% assign fallback_posts = "" | split: "" %}
-          {% for post in site.posts %}
+          {% for post in related_pool %}
             {% if post.url != page.url %}
               {% assign already_included = false %}
               {% for rp in related_posts %}{% if rp.url == post.url %}{% assign already_included = true %}{% endif %}{% endfor %}

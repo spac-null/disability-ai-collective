@@ -3,6 +3,8 @@ layout: default
 title: "Articles — Crip Minds"
 description: "Essays using disabled ways of seeing to uncover what culture, science, technology, institutions, and ordinary objects are really doing."
 ---
+{% comment %} Readable population: posts that are not withdrawal notices. Single source of truth is the post's own `withdrawn` frontmatter. {% endcomment %}
+{% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
 <style>
   /* .research-threads is a fixed 4-column grid tuned for exactly 4 reading-thread cards;
      the Works list can have any number of entries, so it needs its own responsive columns
@@ -17,7 +19,7 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
       <p class="text-lead text-secondary max-w-2xl mx-auto">
         Essays that use disabled ways of seeing to uncover what culture, science, technology, institutions, and ordinary objects are really doing.
       </p>
-      <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em;">{{ site.posts.size }} essays</p>
+      <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em;">{{ readable_posts.size }} essays available to read</p>
     </div>
   </header>
 
@@ -26,26 +28,20 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
     <div class="container">
       <p class="research-threads__eyebrow">Reading threads</p>
       <div class="research-threads">
-        <a href="/research/care-labor/" class="research-thread">
-          <span class="research-thread__voice">Maya Flux &amp; Zen Circuit</span>
-          <span class="research-thread__title">Swan Care and the Health and Care Visa</span>
-          <span class="research-thread__count">5 essays</span>
+        {% comment %} Counts are derived from _data/threads.yml against the readable
+        population, so a withdrawal drops out of the number automatically. {% endcomment %}
+        {% for thread in site.data.threads %}
+          {% assign thread_readable = 0 %}
+          {% for s in thread.slugs %}
+            {% assign tp = readable_posts | where: "slug", s | first %}
+            {% if tp %}{% assign thread_readable = thread_readable | plus: 1 %}{% endif %}
+          {% endfor %}
+        <a href="{{ thread.url }}" class="research-thread">
+          <span class="research-thread__voice">{{ thread.voice }}</span>
+          <span class="research-thread__title">{{ thread.title }}</span>
+          <span class="research-thread__count">{{ thread_readable }} essay{% unless thread_readable == 1 %}s{% endunless %}</span>
         </a>
-        <a href="/research/deaf-arts/" class="research-thread">
-          <span class="research-thread__voice">Pixel Nova</span>
-          <span class="research-thread__title">Sign Language, Deaf Culture, and the Hidden Beauty</span>
-          <span class="research-thread__count">9 essays</span>
-        </a>
-        <a href="/research/extreme-male-brain/" class="research-thread">
-          <span class="research-thread__voice">Zen Circuit</span>
-          <span class="research-thread__title">Baron-Cohen&rsquo;s Extreme Male Brain Theory</span>
-          <span class="research-thread__count">5 essays</span>
-        </a>
-        <a href="/research/camouflaging/" class="research-thread">
-          <span class="research-thread__voice">Zen Circuit</span>
-          <span class="research-thread__title">Autism Camouflaging</span>
-          <span class="research-thread__count">4 essays</span>
-        </a>
+        {% endfor %}
       </div>
     </div>
   </section>
@@ -93,9 +89,9 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
         </div>
       </div>
 
-      {% if site.posts.size > 0 %}
+      {% if readable_posts.size > 0 %}
         <div class="grid grid--3 gap-8 articles-grid">
-          {% for post in site.posts %}
+          {% for post in readable_posts %}
           <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
             {% assign research_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% assign research_author_icon_thumb = '/assets/maya_flux_style_matched_thumb.png' %}

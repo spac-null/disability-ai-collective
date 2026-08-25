@@ -4,14 +4,17 @@ title: "Crip Minds"
 description: "An experimental editorial publication by Deaf artist Jascha Blume. Not writing about disability — seeing the world through it."
 ---
 
-{% if site.posts.size > 0 %}
+{% comment %} Readable population: posts that are not withdrawal notices. Single source of truth is the post's own `withdrawn` frontmatter. {% endcomment %}
+{% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
+
+{% if readable_posts.size > 0 %}
 {% assign today_str = 'now' | date: "%Y-%m-%d" %}
 {% assign featured = nil %}
-{% for post in site.posts %}
+{% for post in readable_posts %}
   {% assign post_date = post.date | date: "%Y-%m-%d" %}
   {% if post_date == today_str %}{% assign featured = post %}{% break %}{% endif %}
 {% endfor %}
-{% if featured == nil %}{% assign featured = site.posts.first %}{% endif %}
+{% if featured == nil %}{% assign featured = readable_posts.first %}{% endif %}
 {% assign featured_icon = '/assets/maya_flux_style_matched.png' %}
 {% if featured.author == "Siri Sage" %}{% assign featured_icon = '/assets/siri_sage_style_matched.png' %}
 {% elsif featured.author == "Pixel Nova" %}{% assign featured_icon = '/assets/pixel_nova_style_matched.png' %}
@@ -74,13 +77,13 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
   <!-- ── Recent essays ───────────────────────────────────────────────── -->
   <section id="articles" class="section section--secondary" style="padding-top: var(--space-16)">
     <div class="container">
-    {% if site.posts.size > 0 %}
+    {% if readable_posts.size > 0 %}
 
       <p class="home-section-label">Recent essays</p>
 
       <div class="recent-articles-wrap">
         <div class="grid grid--3 articles-grid">
-          {% for post in site.posts offset:1 limit:3 %}
+          {% for post in readable_posts offset:1 limit:3 %}
           {% assign home_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% assign home_persona_slug = 'maya-flux' %}
             {% if post.author == "Siri Sage" %}
