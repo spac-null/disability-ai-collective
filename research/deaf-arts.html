@@ -17,61 +17,29 @@ permalink: /research/deaf-arts/
     "name": "Crip Minds",
     "url": "https://cripminds.com"
   },
+  {%- comment -%}
+    hasPart advertises only the readable members of this collection. The single source
+    of truth for withdrawal is the post's own `withdrawn` frontmatter, the same rule
+    index.html and research.html use. Withdrawn pages stay live, keep their canonical
+    URL and their visible withdrawal notice; they are simply not presented to machines
+    as active Article members of the collection.
+  {%- endcomment -%}
+  {%- assign member_slugs = "she-took-the-score-and-asked-it-a-different-question,he-painted-everyone-talking,what-language-is-the-book-written-in,the-map-that-stops-at-the-door,the-eyebrow-was-never-about-feeling,the-avatar-got-the-handshape-right-it-got-the-face-wrong,he-never-wrote-a-word-of-his-own-archive,the-captions-were-the-first-decision-not-the-last,mute-was-never-a-description-it-was-a-failure-to-listen" | split: "," -%}
   "hasPart": [
+{%- assign emitted = 0 -%}
+{%- for member_slug in member_slugs -%}
+{%- assign member = site.posts | where: "slug", member_slug | first -%}
+{%- if member and member.withdrawn != true -%}
+{%- if emitted > 0 -%},{%- endif -%}
+{%- assign emitted = emitted | plus: 1 %}
     {
       "@type": "Article",
-      "name": "She Took the Score and Asked It a Different Question",
-      "url": "https://cripminds.com/2026/06/21/she-took-the-score-and-asked-it-a-different-question/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "He Painted Everyone Talking. He Could Hear None of It.",
-      "url": "https://cripminds.com/2026/06/22/he-painted-everyone-talking/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "What Language Is the Book Written In?",
-      "url": "https://cripminds.com/2026/06/23/what-language-is-the-book-written-in/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "The Map That Stops at the Door",
-      "url": "https://cripminds.com/2026/03/16/the-map-that-stops-at-the-door/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "The Eyebrow Was Never About Feeling",
-      "url": "https://cripminds.com/2026/07/08/the-eyebrow-was-never-about-feeling/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "The Avatar Got the Handshape Right. It Got the Face Wrong.",
-      "url": "https://cripminds.com/2026/07/09/the-avatar-got-the-handshape-right-it-got-the-face-wrong/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "He Never Wrote a Word of His Own Archive",
-      "url": "https://cripminds.com/2026/07/10/he-never-wrote-a-word-of-his-own-archive/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "The Captions Were the First Decision, Not the Last",
-      "url": "https://cripminds.com/2026/07/11/the-captions-were-the-first-decision-not-the-last/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "Mute Was Never a Description. It Was a Failure to Listen.",
-      "url": "https://cripminds.com/2026/07/12/mute-was-never-a-description-it-was-a-failure-to-listen/",
+      "name": {{ member.title | jsonify }},
+      "url": {{ member.url | absolute_url | jsonify }},
       "author": { "@type": "Organization", "name": "Crip Minds" }
     }
+{%- endif -%}
+{%- endfor %}
   ]
 }
 </script>

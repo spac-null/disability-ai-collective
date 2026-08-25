@@ -17,37 +17,29 @@ permalink: /research/care-labor/
     "name": "Crip Minds",
     "url": "https://cripminds.com"
   },
+  {%- comment -%}
+    hasPart advertises only the readable members of this collection. The single source
+    of truth for withdrawal is the post's own `withdrawn` frontmatter, the same rule
+    index.html and research.html use. Withdrawn pages stay live, keep their canonical
+    URL and their visible withdrawal notice; they are simply not presented to machines
+    as active Article members of the collection.
+  {%- endcomment -%}
+  {%- assign member_slugs = "swan-care-solutions-ltd-classified-someone-as-equipment,swan-care-is-appealing-the-appeal-is-the-mechanism,i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions,nhs-lancashire-and-south-cumbria-recruited,court-ruling-no-effect" | split: "," -%}
   "hasPart": [
+{%- assign emitted = 0 -%}
+{%- for member_slug in member_slugs -%}
+{%- assign member = site.posts | where: "slug", member_slug | first -%}
+{%- if member and member.withdrawn != true -%}
+{%- if emitted > 0 -%},{%- endif -%}
+{%- assign emitted = emitted | plus: 1 %}
     {
       "@type": "Article",
-      "name": "Swan Care Solutions Ltd Classified Someone as Equipment",
-      "url": "https://cripminds.com/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "Winning the Case Does Not Turn Off the Clock",
-      "url": "https://cripminds.com/2026/06/19/swan-care-is-appealing-the-appeal-is-the-mechanism/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "Both Ends of the Care Contract Are Tied to the Same Post",
-      "url": "https://cripminds.com/2026/06/20/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "NHS Lancashire and South Cumbria Recruited",
-      "url": "https://cripminds.com/2026/05/30/nhs-lancashire-and-south-cumbria-recruited/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "Court Ruling, No Effect",
-      "url": "https://cripminds.com/2026/05/22/court-ruling-no-effect/",
+      "name": {{ member.title | jsonify }},
+      "url": {{ member.url | absolute_url | jsonify }},
       "author": { "@type": "Organization", "name": "Crip Minds" }
     }
+{%- endif -%}
+{%- endfor %}
   ]
 }
 </script>
