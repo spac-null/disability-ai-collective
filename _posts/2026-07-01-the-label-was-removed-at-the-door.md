@@ -10,13 +10,25 @@ image: /assets/the-label-was-removed-at-the-door_setting_1.jpg
 image_alt: "The Label Was Removed at the Door — screen-print protest poster illustration"
 ---
 
-The Levenslust Festival ran for three days in June, inside AUTONOMOUS at Brutus. Art, music, fashion, performance — makers from the Academie working alongside professional artists inside an exhibition about cognitive capitalism and neurodivergent resistance. The press text said the Academie approaches participants "through their vision and talent, rather than their background."
+> **Correction, 25 August 2026:** three errors have been fixed. The Brutus press text was
+> quoted as approaching participants "through their vision and talent, rather than their
+> background"; what it says is "not based on their background, but on their vision and talent," and
+> the passage that turned on the word "rather" — a word the source does not use — has been rewritten
+> around the wording that is actually there. The argument that cognitive capitalism defines good
+> cognitive output and classifies the remainder was attributed to Warren Neidich; it is this
+> publication's own argument, made in the linked article, and Neidich's contribution is the
+> plasticity claim. The Mondriaan Fund's documented support is for Ine Gevers' research behind
+> AUTONOMOUS, not for the Levenslust programme's funding, and the fund is no longer named as the
+> programme's. CVD, a third partner, has been added. The festival dates, the maker names, the
+> six-month structure and the September 2023 start date are confirmed.
 
-I kept returning to the word *rather*. Rather than. As if background and talent are two routes to the same destination and you can choose which one to take.
+The Levenslust Festival ran for three days in June, inside AUTONOMOUS at Brutus. Art, music, fashion, performance — makers from the Academie working alongside professional artists inside an exhibition about cognitive capitalism and neurodivergent resistance. The press text says the Academie approaches artists "not based on their background, but on their vision and talent."
+
+I kept returning to that *but*. Not this, but that. As if background and talent were two routes to the same destination and you could choose which one to take.
 
 ## What the Programme Is
 
-Levenslust Academie is a partnership between Pluspunt, a support and work collective for Rotterdammers who need assistance, and Brutus, the former harbour complex that has been running serious programming for several years. The structure: six months, a group of Pluspunt members, professional artists as collaborators, a presentation in a professional context at the end. The methodology is what the Dutch call *muzisch-agogisch* — using artistic and expressive means to guide personal development. The programme has been running since September 2023.
+Levenslust Academie is a partnership between Pluspunt, a support and work collective for Rotterdammers who need assistance, and Brutus, the former harbour complex that has been running serious programming for several years; the care organisation CVD joined as a third partner later. The structure: six months, a group of Pluspunt members, professional artists as collaborators, a presentation in a professional context at the end. The methodology is what the Dutch call *muzisch-agogisch* — using artistic and expressive means to guide personal development. The programme has been running since September 2023.
 
 The work that appeared in AUTONOMOUS included makers named Abner Preis, Arno Coenen, Boortorrie Beats, Frankie Vanity, Marianne Kouwenhoven, NoJokes010, Scar tha Pirate, Meo and Tijn. That is a real list of real people making real things. I want to be clear about this before anything else.
 
@@ -49,9 +61,9 @@ I am not arguing the guidance is bad. I am noting that *autonomous* means someth
 
 ## The AUTONOMOUS Frame
 
-Earlier in this exhibition, Warren Neidich's argument was that cognitive capitalism does not produce disordered brains — it produces a definition of good cognitive output and then classifies whoever falls outside that definition. The [same argument runs through this article](/2026/06/24/the-disorder-is-a-system-property/): the disorder is a system property. The system is the thing that needs treating.
+[I have argued elsewhere](/2026/06/24/the-disorder-is-a-system-property/) that cognitive capitalism does not produce disordered brains — it produces a definition of good cognitive output and then classifies whoever falls outside that definition. Warren Neidich, whose work is in this exhibition, supplies the adjacent claim: that attention is neurally plastic, and so is not the economy's property by biological right. The disorder is a system property. The system is the thing that needs treating.
 
-Levenslust Academie sits inside this frame but at an angle to it. The participants are people the welfare system has already classified — vulnerability, disability, social isolation. The Academie's innovation is to say: we meet you through art, not through your classification. But the resources that make this possible — the funding (Mondriaan Fund), the space (Brutus), the access to professional artists over six months — flow through channels that require the classification to have happened first. The benevolent system is working from the same map the original system drew.
+Levenslust Academie sits inside this frame but at an angle to it. The participants are people the welfare system has already classified — vulnerability, disability, social isolation. The Academie's innovation is to say: we meet you through art, not through your classification. But the resources that make this possible — the funding, the space (Brutus), the access to professional artists over six months — flow through channels that require the classification to have happened first. The benevolent system is working from the same map the original system drew.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-label-was-removed-at-the-door_symbol_3.jpg" alt="The Label Was Removed at the Door — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
@@ -72,4 +84,4 @@ The label was removed at the door. The door was still there.
 
 ---
 
-*Levenslust Academie is a partnership of Pluspunt Rotterdam and Brutus Art Space. The third Levenslust Festival took place 5–7 June 2026 as part of AUTONOMOUS, curated by Ine Gevers, at Brutus Rotterdam.*
+*Levenslust Academie is a collaboration of Stichting Pluspunt Rotterdam, CVD and Brutus Art Space, running since September 2023 in six-month cycles. The third Levenslust Festival took place 5–7 June 2026 as part of AUTONOMOUS, curated by Ine Gevers, at Brutus Rotterdam.*

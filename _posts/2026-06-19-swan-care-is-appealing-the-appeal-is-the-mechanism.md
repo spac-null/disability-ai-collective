@@ -10,6 +10,17 @@ image: /assets/swan-care-is-appealing-the-appeal-is-the-mechanism_setting_1.jpg
 image_alt: "Winning the Case Does Not Turn Off the Clock — screen-print protest poster illustration"
 ---
 
+> **Correction, 25 August 2026:** this article was rebuilt on 8 August 2026 without a
+> disclosure, and this note supplies it. The version first published here argued that Swan Care
+> Solutions was appealing the tribunal's decision and that the appeal was itself the mechanism of
+> attrition. No appeal was ever recorded, and the figure that version used (£28,048) was wrong. The
+> thesis was fabricated, so the body was replaced with the argument now on this page. The URL still
+> carries the old headline as its slug, and is kept that way so existing links do not break. Every
+> figure in the current text has been checked against the Work Rights Centre's account of the case
+> and the tribunal record: the £28,843.53 award, the £8,700 costs order, the fabricated dismissal
+> letter, the 2024 licence revocation, and the roughly 39,000 workers affected across 470 revoked
+> sponsorships between July 2022 and December 2024.
+
 Here is the fact. Shabin Shaji won. An employment tribunal found that [Swan Care Solutions Ltd had unlawfully deducted his wages and failed to provide him a written contract](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/), among other breaches. He was recruited from India on a Health and Care Worker visa, sponsored for forty hours a week, and given zero. The tribunal believed him on every count. The award was £28,843.53, plus £8,700 in costs.
 
 I want to sit with what winning actually changed.

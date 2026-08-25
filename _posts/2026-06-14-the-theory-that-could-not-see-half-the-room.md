@@ -10,7 +10,17 @@ image: /assets/the-theory-that-could-not-see-half-the-room_setting_1.jpg
 image_alt: "The Theory That Could Not See Half the Room — screen-print protest poster illustration"
 ---
 
-The instrument was sixty questions. You read each one and marked how strongly you agreed: strongly, slightly, slightly not, strongly not. I try to solve my own problems rather than discussing them with others. I am good at predicting how someone will feel. I don't find social situations confusing. When I talk to people, I tend to talk about their experiences rather than my own.
+> **Correction, 25 August 2026:** two errors have been fixed. The fourth Empathy Quotient item
+> quoted at the top is item 35, and it reads "I don't tend to find social situations confusing" —
+> an earlier version dropped "tend to" in both places the item appears. And Lorna Wing's
+> observation about autistic girls was described as appearing "in her clinical notes," with the
+> girls said to have "developed social imitation strategies that masked their difficulties."
+> Wing published the observation, in her 1981 clinical account of Asperger's syndrome, and what
+> she reported was how the girls appeared, not a strategy she attributed to them; her own words
+> are now quoted instead. The three other quoted items are verbatim, and the account of the
+> instrument, its sample and the diagnostic history is unchanged.
+
+The instrument was sixty questions. You read each one and marked how strongly you agreed: strongly, slightly, slightly not, strongly not. I try to solve my own problems rather than discussing them with others. I am good at predicting how someone will feel. I don't tend to find social situations confusing. When I talk to people, I tend to talk about their experiences rather than my own.
 
 The instrument was the Empathy Quotient, developed by Simon Baron-Cohen's team at Cambridge. A low score indicated difficulty with empathy. A corresponding high score on the Systemizing Quotient — its companion measure — indicated a preference for recognizing patterns, rules, and predictable sequences.
 
@@ -41,9 +51,9 @@ Baron-Cohen's early research populations skewed heavily male. This was partly be
 
 The pattern that the research missed has since been named. Autistic women frequently develop what researchers now call camouflaging: a practiced set of social behaviors — mirrored body language, scripted conversational responses, performed interest in topics not genuinely held — that allow an autistic person to appear neurotypical. Camouflaging develops early, tends to be more pronounced in women, and is metabolically expensive. It produces burnout. It also produces scores on empathy questionnaires that do not reflect the underlying experience.
 
-A woman who has spent fifteen years rehearsing which expression to make in response to which emotional disclosure will mark I don't find social situations confusing as slightly agree. Not because they aren't confusing. Because she has built an elaborate system for getting through them without the confusion showing. The Empathy Quotient cannot distinguish between ease and studied competence. Both score the same.
+A woman who has spent fifteen years rehearsing which expression to make in response to which emotional disclosure will mark I don't tend to find social situations confusing as slightly agree. Not because they aren't confusing. Because she has built an elaborate system for getting through them without the confusion showing. The Empathy Quotient cannot distinguish between ease and studied competence. Both score the same.
 
-Lorna Wing, who introduced the concept of the autistic spectrum in the 1980s, described in her clinical notes presentations that differed from the pattern Baron-Cohen's model would later formalize. The girls in her clinic developed social imitation strategies that masked their difficulties in ways the boys did not. Wing noted this. The notes did not become the model. Baron-Cohen's framework did.
+Lorna Wing, who introduced the concept of the autistic spectrum in the 1980s, recorded a presentation that differed from the pattern Baron-Cohen's model would later formalize. Writing up her own case series in 1981, she noted that the girls "tended to appear superficially more sociable than the boys, but closer observation showed that they had the same problems of two-way social interaction." She published the observation. It did not become the model. Baron-Cohen's framework did.
 
 The diagnostic consequence has been documented steadily in the years since: autistic women receive diagnoses significantly later than autistic men. In the interval, they accumulate other diagnoses — anxiety, depression, eating disorders, borderline personality disorder — that describe the symptoms of unrecognized autism without addressing its source. A system built to find one profile finds the adaptations of people who don't match it and treats those adaptations as the condition.
 

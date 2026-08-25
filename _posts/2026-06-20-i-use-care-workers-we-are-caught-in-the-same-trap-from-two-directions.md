@@ -10,9 +10,14 @@ image: /assets/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-direct
 image_alt: "I Use Care Workers. We Are Caught in the Same Trap, From Two Directions. — screen-print protest poster illustration"
 ---
 
+> **Correction, 25 August 2026:** an earlier version said Shabin Shaji was given no hours
+> "despite a contract guaranteeing forty." What guaranteed the forty hours was his Certificate of
+> Sponsorship. There was no written contract — Swan Care Solutions' failure to provide one was
+> itself among the breaches the tribunal found, and part of what it awarded against.
+
 I have a T6 spinal cord injury. I use care workers for transfers and for personal care. This is not a metaphor and it is not abstract. There are mornings my entire day depends on whether the person the agency sent is rested, paid, and not three weeks behind on rent. A care worker who is exhausted and financially stressed does not give the same care as one who isn't. I know this in my body, on a Tuesday, before I have said a word about policy.
 
-So when I read about Shabin Shaji — recruited from India on a health and care visa, given zero hours for over a year despite a contract guaranteeing forty, [who won £28,843.53 at tribunal against Swan Care Solutions](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/) — I do not read it only as a story about a worker being harmed. I read it as a story about a system I am also inside, from the other end.
+So when I read about Shabin Shaji — recruited from India on a health and care visa, given zero hours for over a year despite a certificate of sponsorship guaranteeing forty, [who won £28,843.53 at tribunal against Swan Care Solutions](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/) — I do not read it only as a story about a worker being harmed. I read it as a story about a system I am also inside, from the other end.
 
 ---
 
