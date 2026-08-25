@@ -4862,7 +4862,7 @@ article[data-categories].hidden {
 :root {
   /* Two light neutrals — verified free of tan/ochre/coffee bias (R/G/B
      channels are near-equal, unlike a warm/sepia palette). */
-  --paper: #f3f1e8;   /* drawing paper — base surface */
+  --paper: #efeee7;   /* drawing paper — base surface */
   --canvas: #fffdf8;  /* canvas white — cleaner, for featured/elevated sheets */
   --ink: #121210;
   --ink-muted: #5a5851;
@@ -4958,47 +4958,66 @@ h1, .text-h1 { font-weight: 800; letter-spacing: -0.02em; }
   letter-spacing: 0.03em;
 }
 
-/* ---- The highlighter device: a flat-ended stripe behind the lower half
-   of a marked word/phrase, overshooting its edges slightly, with a small
-   rotation so it reads as drawn rather than a UI chip. Sized at the top
-   of the 45-55% range and with a bit more overshoot than the first pass
-   so it reads unmistakably as a highlighter stroke at normal scale, not
-   a colored underline. Text keeps normal ink color; only .marker itself
-   forces the always-dark --marker-text so it stays legible on the bright
-   fill in both themes. No border-radius (pill shapes were rejected), no
-   glow, no full-height fill (that reads as a badge). */
+/* ---- The highlighter device (v1.2) ------------------------------------
+   Rebuilt from a positioned ::before rectangle to a background-image +
+   box-decoration-break: clone technique, for two reasons found in review:
+
+   1. DARK-MODE BUG (confirmed, not just contrast-calculated): .marker text
+      is forced to a fixed dark ink regardless of theme. In light mode that
+      text also sits on the light page outside the marker field, so it's
+      readable everywhere. In dark mode the page itself is dark, so any part
+      of a glyph NOT covered by the fluorescent field is dark-ink-on-dark-
+      page and disappears — confirmed on "LATEST" and "READY TO USE", where
+      only fragments of letters survived. An isolated ink-on-lime contrast
+      ratio cannot catch this because it never checks the uncovered area.
+      Fix: in dark mode the fluorescent field must rise to cover essentially
+      the whole glyph (not just the lower half), so 100% of the forced-dark
+      text sits on a bright field. See the .dark-theme rule below.
+
+   2. WRAP SAFETY: the old technique used an absolutely-positioned ::before
+      sized to an inline-block's total box, which does not split correctly
+      if the marked phrase wraps onto two lines. background-image with
+      box-decoration-break: clone gives each wrapped line its own
+      independent copy of the stripe automatically — required once a
+      multi-word phrase (the new Home hero mark) can wrap on narrow
+      viewports. No nowrap anywhere.
+
+   Trade-off taken deliberately: the earlier per-mark rotation is dropped.
+   Rotating each cloned line fragment independently after a wrap would
+   look chaotic, not hand-marked, so flat rectangular ends now carry the
+   "physical highlighter" read on their own (flat ends were explicitly
+   requested; only the rotation is gone). */
 .marker {
-  position: relative;
-  display: inline-block;
+  display: inline;
   color: var(--marker-text);
-  z-index: 0;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 55%;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0 0.08em;
+  margin: 0 -0.08em;
 }
 
-.marker::before {
-  content: "";
-  position: absolute;
-  left: -0.14em;
-  right: -0.16em;
-  bottom: 0.02em;
-  height: 0.52em;
-  z-index: -1;
-  transform: rotate(-0.7deg);
+.marker--lime { background-image: linear-gradient(var(--marker-lime), var(--marker-lime)); }
+.marker--pink {
+  background-image: linear-gradient(var(--marker-pink), var(--marker-pink));
+  background-size: 100% 64%; /* pink is rare — sized a little more decisively than lime's default */
 }
 
-.marker--lime::before { background: var(--marker-lime); }
-.marker--pink::before {
-  background: var(--marker-pink);
-  transform: rotate(0.6deg); /* opposite tilt from lime — reads as a second, different pen */
-}
+/* Start Here is the clearest small annotation on Home. */
+.marker--strong { background-size: 100% 72%; }
 
-/* Start Here is the clearest editorial instruction on Home — its mark
-   runs slightly taller/wider than the rest of the inventory so it reads
-   as the strongest annotation on the page without adding another color
-   or another marker moment. */
-.marker--strong::before {
-  height: 0.62em;
-  left: -0.18em;
-  right: -0.2em;
+/* The one large editorial gesture on Home (the H1's second clause). */
+.marker--hero { background-size: 100% 62%; }
+
+/* DARK-MODE FIX: uniform near-full-height coverage for every marker
+   variant, so the forced-dark text is never composited against the dark
+   page itself. Centered (not bottom-anchored) so descenders like the "y"
+   in "ready" stay covered too. */
+.dark-theme .marker {
+  background-position: 0 50%;
+  background-size: 100% 98%;
 }
 
 /* ---- Focus: lime alone measures ~1:1 against --paper/--canvas (both are
@@ -5013,17 +5032,58 @@ h1, .text-h1 { font-weight: 800; letter-spacing: -0.02em; }
   border-radius: 2px;
 }
 
-/* Real form-control boundary — strengthen beyond the decorative --rule
-   token used elsewhere for hairline dividers. */
+/* ---- Search + voice filters (v1.2): the rounded capsule field and pill
+   row read as generic web-app controls, which fights the editorial/markup
+   language everywhere else. Restyled as an index/search instrument printed
+   on the page — flat rule, no radius, no fill — with NO functional/markup
+   change (same input, same buttons, same JS). ---- */
 .research-search__input {
-  border-color: var(--ink-muted);
+  max-width: 320px;
+  padding: 0.5rem 0.15rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--ink-muted);
+  border-radius: 0;
 }
 
-/* Active voice filter: stays an ink pill (inherits --color-text-primary/
-   --color-background-primary) — a lime underline is the "selected" signal
-   instead of recoloring the whole control lime. */
+.research-search__input:focus {
+  outline: none; /* the global :focus-visible ink+lime ring below covers this */
+}
+
+.category-filter--persona {
+  gap: var(--space-6);
+}
+
+.category-filter__btn--persona {
+  padding: 0.15rem 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink-muted);
+}
+
+.category-filter__btn--persona:hover {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink);
+}
+
+/* Active voice filter: plain ink text + a lime registration underline is
+   the "selected" signal — no black pill. Kept clearly distinct from the
+   global ink+lime focus ring so selection state and keyboard focus never
+   read as the same thing. */
 .category-filter__btn--persona.active {
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink);
+  font-weight: 700;
   box-shadow: inset 0 -3px 0 var(--marker-lime);
+}
+
+.category-filter__btn--persona.active .filter-persona-icon,
+.category-filter__btn--persona:hover .filter-persona-icon {
+  opacity: 1;
+  filter: none; /* the invert() from the old black-pill design is no longer needed on a transparent control */
 }
 
 /* ---- Card reduction: Press facts/bio and persona details read as
@@ -5110,6 +5170,49 @@ h1, .text-h1 { font-weight: 800; letter-spacing: -0.02em; }
 .home-hero__card,
 .dark-theme .home-hero__card {
   box-shadow: none;
+}
+
+/* ========================================================================
+   VISUAL LANGUAGE — D 1.2 polish pass
+   Bugfix (dark-mode marker) and confidence pass on top of D 1.1. See the
+   comment above .marker for the dark-mode fix itself; this block covers
+   the remaining owner-requested refinements.
+========================================================================= */
+
+/* Latest/Recent essay objects: reduce generic "app card" chrome (12px
+   radius, drop shadow, hover-lift) toward a printed-object read. The
+   persona-colored top edge (registration mark) and the border already do
+   the identity work — they don't need a floating shadow on top. */
+.card {
+  border-radius: 3px;
+  box-shadow: none;
+}
+.card:hover {
+  box-shadow: none;
+  transform: none;
+}
+.card--elevated {
+  box-shadow: none;
+}
+.card--elevated:hover {
+  box-shadow: none;
+}
+
+/* Home Collective: exactly one strengthening move (larger icon), per
+   instruction not to stack multiple emphasis changes on a secondary band. */
+.voice-strip__icon {
+  width: 56px;
+  height: 56px;
+}
+
+/* Typographic-grammar consistency: Press's fact labels and the bio
+   eyebrow were plain text-small, unlike every other eyebrow/metadata
+   label on the site (Home/Articles eyebrows, archive metadata, and
+   .agent-identity all use mono). Brought in line — same semantic class
+   (an index/label), same typographic grammar. */
+.press-quickfacts > div > p:first-child,
+.press-quickbio__text > p.text-small {
+  font-family: var(--font-family-mono);
 }
 
 @media print {
