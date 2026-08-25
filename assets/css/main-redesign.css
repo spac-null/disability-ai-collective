@@ -4849,6 +4849,269 @@ article[data-categories].hidden {
   }
 }
 
+/* ========================================================================
+   VISUAL LANGUAGE — D 1.1 "Highlighter / Markup"
+   Owner-selected final direction after an A/B/C/D visual study (see
+   .claude/ session history). Material reference: drawing paper + canvas
+   white + black ink, annotated with two fluorescent marker colors used
+   sparingly and semantically. Explicitly NOT the brown/sepia direction
+   studied and rejected in Variant B — every surface here is neutral.
+   No new fonts, no remote dependencies added.
+========================================================================= */
+
+:root {
+  /* Two light neutrals — verified free of tan/ochre/coffee bias (R/G/B
+     channels are near-equal, unlike a warm/sepia palette). */
+  --paper: #f3f1e8;   /* drawing paper — base surface */
+  --canvas: #fffdf8;  /* canvas white — cleaner, for featured/elevated sheets */
+  --ink: #121210;
+  --ink-muted: #5a5851;
+  --rule: #d3cfc3;
+
+  /* Marker colors: annotations only — never body text, never a button
+     fill. See .marker below. */
+  --marker-lime: #d6ff3f;
+  --marker-pink: #ff4fb8;
+  --marker-text: #121210; /* text on a marker is always this dark ink, in both themes */
+
+  --color-background-primary: var(--paper);
+  --color-background-secondary: var(--canvas);
+  --color-background-elevated: var(--canvas);
+  --color-background-muted: var(--canvas);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--ink-muted);
+  --color-text-muted: #656358; /* 5.33:1 on --paper */
+  --color-border-primary: var(--rule);
+  --color-border-secondary: var(--rule);
+  --color-border-muted: var(--rule);
+
+  /* Teal removed from the dominant-accent role by design: buttons/links/
+     borders are ink-on-paper, not brand-colored. The marker colors carry
+     the site's visual personality instead. */
+  --color-accent: var(--ink);
+  --color-text-brand: var(--ink);
+  --color-border-brand: var(--ink);
+  --color-on-accent: var(--canvas);
+}
+
+.dark-theme {
+  /* Neutral graphite/charcoal — explicitly not brown-black or espresso. */
+  --paper: #171819;
+  --canvas: #222326;
+  --ink: #f4f2eb;
+  --ink-muted: #b9b6ae;
+  --rule: #3a3b3d;
+
+  /* Marker hues held constant across themes — --marker-text forces dark
+     ink on top of them either way, so their own values don't need to
+     change per theme to stay legible. */
+  --marker-lime: #d6ff3f;
+  --marker-pink: #ff4fb8;
+  --marker-text: #121210;
+
+  --color-background-primary: var(--paper);
+  --color-background-secondary: var(--canvas);
+  --color-background-elevated: var(--canvas);
+  --color-background-muted: var(--canvas);
+  --color-text-primary: var(--ink);
+  --color-text-secondary: var(--ink-muted);
+  --color-text-muted: #9d9a90;
+  --color-border-primary: var(--rule);
+  --color-border-secondary: var(--rule);
+  --color-border-muted: var(--rule);
+
+  --color-accent: var(--ink);
+  --color-text-brand: var(--ink);
+  --color-border-brand: var(--ink);
+  --color-on-accent: var(--paper);
+}
+
+/* ---- Typography roles: sans=structural, serif=editorial, mono=metadata */
+
+h1, .text-h1 { font-weight: 800; letter-spacing: -0.02em; }
+
+.home-hero__title,
+.card__header .text-h4 a,
+.archive-row__title a,
+.agent-name {
+  font-family: var(--font-family-serif);
+  font-weight: 700;
+}
+.archive-row__title { font-weight: 400; }
+
+.prose p,
+.article-card__excerpt,
+.archive-row__excerpt,
+.home-hero__excerpt,
+.press-quickbio__text > p:not(.text-small) {
+  font-family: var(--font-family-serif);
+}
+.home-hero__excerpt { font-style: italic; }
+
+.article-card__meta,
+.archive-row__meta,
+.home-hero__meta,
+.research-thread__voice,
+.research-thread__count,
+.thread-strip__count {
+  font-family: var(--font-family-mono);
+  letter-spacing: 0.03em;
+}
+
+/* ---- The highlighter device: a flat-ended stripe behind the lower half
+   of a marked word/phrase, overshooting its edges slightly, with a small
+   rotation so it reads as drawn rather than a UI chip. Sized at the top
+   of the 45-55% range and with a bit more overshoot than the first pass
+   so it reads unmistakably as a highlighter stroke at normal scale, not
+   a colored underline. Text keeps normal ink color; only .marker itself
+   forces the always-dark --marker-text so it stays legible on the bright
+   fill in both themes. No border-radius (pill shapes were rejected), no
+   glow, no full-height fill (that reads as a badge). */
+.marker {
+  position: relative;
+  display: inline-block;
+  color: var(--marker-text);
+  z-index: 0;
+}
+
+.marker::before {
+  content: "";
+  position: absolute;
+  left: -0.14em;
+  right: -0.16em;
+  bottom: 0.02em;
+  height: 0.52em;
+  z-index: -1;
+  transform: rotate(-0.7deg);
+}
+
+.marker--lime::before { background: var(--marker-lime); }
+.marker--pink::before {
+  background: var(--marker-pink);
+  transform: rotate(0.6deg); /* opposite tilt from lime — reads as a second, different pen */
+}
+
+/* Start Here is the clearest editorial instruction on Home — its mark
+   runs slightly taller/wider than the rest of the inventory so it reads
+   as the strongest annotation on the page without adding another color
+   or another marker moment. */
+.marker--strong::before {
+  height: 0.62em;
+  left: -0.18em;
+  right: -0.2em;
+}
+
+/* ---- Focus: lime alone measures ~1:1 against --paper/--canvas (both are
+   light) — fails the 3:1 non-text UI-boundary requirement. Pair it with
+   an ink ring rather than darken it into a non-fluorescent color: the
+   ink ring carries accessibility, the lime halo carries identity. Do not
+   revert to a bare lime outline. */
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--marker-lime);
+  border-radius: 2px;
+}
+
+/* Real form-control boundary — strengthen beyond the decorative --rule
+   token used elsewhere for hairline dividers. */
+.research-search__input {
+  border-color: var(--ink-muted);
+}
+
+/* Active voice filter: stays an ink pill (inherits --color-text-primary/
+   --color-background-primary) — a lime underline is the "selected" signal
+   instead of recoloring the whole control lime. */
+.category-filter__btn--persona.active {
+  box-shadow: inset 0 -3px 0 var(--marker-lime);
+}
+
+/* ---- Card reduction: Press facts/bio and persona details read as
+   editorial sheets/rules, not rounded web widgets. Featured/Latest essay
+   cards keep their card treatment — they earn it. ---- */
+
+.press-quickfacts {
+  border: none !important;
+  border-radius: 0 !important;
+  border-top: 1px solid var(--rule) !important;
+  border-bottom: 1px solid var(--rule) !important;
+  background: transparent !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+.press-quickfacts > div {
+  padding-left: 1.5rem;
+  border-left: 1px solid var(--rule);
+}
+.press-quickfacts > div:first-child {
+  padding-left: 0;
+  border-left: none;
+}
+
+.press-quickbio {
+  border: none;
+  border-radius: 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  background: transparent;
+}
+.press-quickbio__photo {
+  border-radius: 2px;
+}
+
+.agent-card {
+  background: transparent;
+  border: none;
+  border-top: 2px solid var(--rule);
+  border-radius: 0;
+  box-shadow: none;
+  padding: var(--space-5) 0 var(--space-6);
+}
+.agent-card[data-persona="pixel-nova"]  { border-top-color: #7c6af7; }
+.agent-card[data-persona="siri-sage"]   { border-top-color: #5c7a31; }
+.agent-card[data-persona="maya-flux"]   { border-top-color: #3f5f89; }
+.agent-card[data-persona="zen-circuit"] { border-top-color: #b05a3a; }
+.agent-card:hover {
+  border-color: var(--rule);
+  box-shadow: none;
+  transform: none;
+}
+.agent-card[data-persona="pixel-nova"]:hover  { border-top-color: #7c6af7; }
+.agent-card[data-persona="siri-sage"]:hover   { border-top-color: #5c7a31; }
+.agent-card[data-persona="maya-flux"]:hover   { border-top-color: #3f5f89; }
+.agent-card[data-persona="zen-circuit"]:hover { border-top-color: #b05a3a; }
+
+.agent-card__image {
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+}
+.agent-identity {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  font-family: var(--font-family-mono);
+  font-weight: 600;
+}
+.agent-card .btn.btn--outline {
+  border: none;
+  background: none;
+  padding: 0;
+  height: auto;
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Featured/Latest essay: sits on canvas-white against the paper page —
+   "a sheet placed on another sheet", not a floating card. No shadow. */
+.home-hero__card,
+.dark-theme .home-hero__card {
+  box-shadow: none;
+}
+
 @media print {
   .site-header, .site-footer, button { display: none !important; }
   main { margin: 0; padding: 0; }

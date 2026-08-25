@@ -19,7 +19,7 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
       <p class="text-lead text-secondary max-w-2xl mx-auto">
         Essays that use disabled ways of seeing to uncover what culture, science, technology, institutions, and ordinary objects are really doing.
       </p>
-      <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em;">{{ readable_posts.size }} essays available to read</p>
+      <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em;"><span class="marker marker--lime">{{ readable_posts.size }}</span> essays available to read</p>
     </div>
   </header>
 
@@ -53,7 +53,7 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
       <p id="article-filter-status" class="text-small text-secondary" aria-live="polite" style="min-height: 1.2em; margin: 0.5rem 0 1rem;"></p>
 
       {% if readable_posts.size > 0 %}
-        <p class="research-threads__eyebrow" style="margin-bottom: 1rem;">Latest</p>
+        <p class="research-threads__eyebrow" style="margin-bottom: 1rem;"><span class="marker marker--lime">Latest</span></p>
         <div class="grid grid--3 gap-8 articles-grid">
           {% for post in readable_posts limit:3 %}
           <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
@@ -118,7 +118,7 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
              against the readable population (PR #25); a withdrawal drops out
              of the number automatically. -->
         <div id="threads" class="thread-strip-wrap">
-          <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.35rem;">Collections</p>
+          <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.35rem;"><span class="marker marker--pink">Collections</span></p>
           <p class="text-small text-secondary" style="margin: 0 0 0.5rem;">Curated routes through recurring subjects.</p>
           <div class="thread-strip">
             {% for thread in site.data.threads %}

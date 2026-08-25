@@ -45,7 +45,7 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
   {% if featured %}
   <section class="home-hero">
     <div class="container">
-      <p class="home-section-label">Latest essay</p>
+      <p class="home-section-label"><span class="marker marker--lime">Latest</span> essay</p>
       <a href="{{ featured.url | relative_url }}" class="home-hero__card" aria-label="Read: {{ featured.title }}">
         {% if featured.image %}
         <div class="home-hero__image">
@@ -139,12 +139,12 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
 
       <div class="text-center mt-10">
         <a href="{{ '/research/' | relative_url }}" class="btn btn--secondary">
-          All {{ readable_posts.size }} essays &rarr;
+          All <span class="marker marker--lime">{{ readable_posts.size }}</span> essays &rarr;
         </a>
       </div>
 
       <div class="start-here-mini">
-        <p class="home-section-label text-center">Start here</p>
+        <p class="home-section-label text-center">Start <span class="marker marker--lime marker--strong">here</span></p>
         <ul class="start-here-mini__list">
           <li><a href="/2026/03/16/the-map-that-stops-at-the-door/" class="text-primary">The Map That Stops at the Door &rarr;</a></li>
           <li><a href="/2026/06/24/the-disorder-is-a-system-property/" class="text-primary">The Disorder Is a System Property &rarr;</a></li>
