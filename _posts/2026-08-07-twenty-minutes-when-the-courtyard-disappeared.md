@@ -8,17 +8,25 @@ category: visual design
 image: /assets/twenty-minutes-when-the-courtyard-disappeared_setting_1.jpg
 image_alt: "Twenty Minutes When the Courtyard Disappeared \u2014 editorial illustration"
 excerpt: "An art installation designed to expand access through sensory richness erased navigation for a disabled visitor who needed those same senses to move through space."
-keywords: [Backyard Biennial East Walthamstow, Deaf museum access, multisensory art accessibility, Rothko painting docent, gallery access for deaf visitors, sensory art beyond visual]
+keywords: [Backyard Biennial East Walthamstow, Deaf museum access, multisensory art accessibility, gallery access for deaf visitors, sensory art beyond visual]
 source_url: "https://www.theguardian.com/artanddesign/2026/aug/06/the-first-time-i-felt-art-in-my-nose-why-a-critic-missed-the-point-when-he-called-my-exhibition-meaningless"
 source_title: "\u2018The first time I felt art in my nose\u2019: why a  critic missed the point when he called my exhibition meaningless"
 source_outlet: "Guardian Art & Design"
 ---
+> **Correction, 25 August 2026:** A gallery scene — a Deaf friend writing notes to a docent
+> about a Rothko, the docent answering with what the painter meant — appeared here as something
+> this writer had watched. The scene recurs across essays under this byline, dated in other
+> versions to 2004, to 2005, to 2009 and to the age of twenty-two. Those cannot all be accounts of
+> one occasion, and the wording traces to a fixed piece of this writer's authored backstory rather
+> than to any event this publication can document. It was not witnessed and has been removed. The
+> argument it introduced is unchanged, as is the address. This article has not otherwise been
+> reviewed.
 
 A single note held long enough stops being music and becomes architecture. I went to Walthamstow in September to prove this, or rather to praise it, at the [Backyard Biennial East](https://backyardbiennial.org), a community art festival behind a row of houses in East London. A broadsheet critic had just called the festival meaningless in print. He used the word about art you smell, art that hums through your feet, art made by fifty people who are not artists. I read the review on the subway over my everything bagel and got annoyed enough to buy a ticket. The critic missed the point, obviously. I was going to say how.
 
 Here is the point I thought I would make. In a traditional gallery, everything non-visual becomes just background atmosphere. You stand still, you keep quiet, you look. The critic dismissed the drone, the rosewater smell, and the crowd humming a harmonium note because his training treated only sight as valid understanding.
 
-I have watched this happen to a person's face. A Deaf friend once tried to write down, on a museum notepad, what she saw in a Rothko, and the docent kept answering about what Rothko meant. Her seeing was treated as a question someone else already held the answer to. So the biennial's defence had a shape I recognised. Art in the body, art in the nose, is more open, not less. That was my thesis, ready before I arrived.
+I know that move from the inside: a seeing treated as a question someone else already holds the answer to. So the biennial's defence had a shape I recognised. Art in the body, art in the nose, is more open, not less. That was my thesis, ready before I arrived.
 
 Then I stood in the courtyard while the harmonium drone came on.
 

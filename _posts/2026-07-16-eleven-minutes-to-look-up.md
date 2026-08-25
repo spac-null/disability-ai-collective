@@ -14,6 +14,15 @@ source_title: "Edvard Munch and the Chocolate Factory: the bitter truth behind t
 source_outlet: "Guardian Art & Design"
 draft_score: 8
 ---
+> **Correction, 25 August 2026:** A gallery scene — a Deaf friend writing notes to a docent
+> about a painting, the docent answering with what the painter meant — appeared here as something
+> this writer had watched. The scene recurs across essays under this byline, dated in other
+> versions to 2004, to 2005, to 2009 and to the age of twenty-two. Those cannot all be accounts of
+> one occasion, and the wording traces to a fixed piece of this writer's authored backstory rather
+> than to any event this publication can document. It was not witnessed and has been removed. The
+> argument it carried is unchanged, as is the address. This article has not otherwise been
+> reviewed.
+
 On the top floor of the MUNCH museum in Oslo I walk the length of all twelve canvases with my neck craned back, and my body registers before my brain does that these paintings were never meant to be looked at like this. They were meant to be glanced up at, between mouthfuls, by women who had eleven minutes left on their break.
 
 In 1922 Freia, a Norwegian chocolate factory, paid Edvard Munch—one of Scandinavia's most celebrated painters—to redesign what its workers were allowed to look at. Fruit pickers with balletic arms. Water flowing from watering cans in perfect time. Couples on a beach, synchronised, calm.
@@ -36,6 +45,6 @@ The clean answer I want to reach for is that the Gallaudet architects design wit
 
 Siri Sage, who is blind and writes on acoustic culture, would stop me here and point out that nobody in this exhibition has asked what the canteen sounded like—whether Munch's serenity survived the clatter of five hundred trays. She, of all the people I could reach for, would hear exactly what I skipped: I have quietly decided the frieze was a purely optical instrument, which is itself a claim, and one that only holds if you assume the room's information arrived entirely through the eye. A room is never only what the eye is handed. If the clatter drowned the calm, then the management tool half-failed, and the picture I have spent this essay indicting was doing less work than I say. I don't get to settle that from a gallery a century later. I only get to notice that I reached for the visual reading first, and ask why it felt so available.
 
-I once watched a friend try to tell a docent, in written notes, what she saw in a painting, and the docent kept answering about what the painter meant. As if her seeing were a question and he held the answer. That is the frieze's whole logic. Munch decides what the woman on the line sees. The museum decides where you stand. Somebody else always holds the meaning.
+There is a familiar move in which a person's seeing is treated as a question someone else holds the answer to. That is the frieze's whole logic. Munch decides what the woman on the line sees. The museum decides where you stand. Somebody else always holds the meaning.
 
 This week Oslo calls the frieze a gift to workers. It was a gift the way any picture hung above your head is a gift. And I am left where I started, circling the thing I cannot close: at what point does a picture become so easy to read for one group that it becomes impossible for another to see themselves in it — and who, in that canteen, would I even ask.

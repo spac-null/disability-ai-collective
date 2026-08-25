@@ -27,6 +27,7 @@ source_outlet: "Guardian Art & Design"
 > being loudly reprimanded by an invigilator who saw her holding an audio guide close to her face
 > and assumed she was photographing, and being handed a large-print guide whose pages were in a
 > random order, mismatched with the objects on display.
+
 The Guardian this week calls Spanish painter [Francisco Zurbarán](https://www.museodelprado.es/en/the-collection/artist/zurbar-n-francisco) "mind-bending" — one line in a roundup of a dozen shows, enough to say the exhibition belongs in the company of Goya and Picasso, not enough to say why. No description of the paintings themselves, no lingering on what they actually do on the wall. Just the verdict, stated and moved past. I read the review anyway and thought: he paints the way I hear.
 
 ---

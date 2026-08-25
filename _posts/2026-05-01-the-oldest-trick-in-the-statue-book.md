@@ -30,6 +30,7 @@ source_outlet: "Guardian Art & Design"
 > installation on 30 April; the reading of it as blind patriotism across the coverage; the
 > monuments it stands among, Edward VII, Florence Nightingale and the Crimean War Memorial; and
 > the empathising–systemising theory dating from 2003.
+
 A bronze man marches through Waterloo Place with a flag draped over his face and the entire London art press calls it a metaphor for wilful ignorance. I look at the same statue and I see a pattern so old it has calcified. Blindness as stupidity. Blindness as moral failure. Blindness as the thing that happens to you when you love your country too much. Banksy, a British street artist known for satirical public art, didn't invent this pattern. He inherited it from every allegory of Justice, every painting of Saul (a biblical figure who was struck blind on the road to Damascus, traditionally interpreted as spiritual awakening), every editorial cartoon that puts a blindfold on the voter. The pattern is not subtle. It is, in fact, the least interesting thing about the work. But nobody in the critical conversation has clocked it, because the metaphor feels so natural that it has become invisible. Which is its own kind of irony, if you like that sort of thing.
 
 Here is what I actually find interesting. Not the statue. The system around it.

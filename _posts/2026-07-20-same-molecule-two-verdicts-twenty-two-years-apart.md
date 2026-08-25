@@ -19,6 +19,7 @@ source_outlet: "Guardian Society"
 > that cannot all be true. It is a stock scene that was being re-dated per article, not a
 > recovered memory. The specifics are gone; the standpoint they carried is left as this
 > writer's own.
+
 At a long oak table in the Wellcome Collection reading room, in June 2026, I lay the 2002 Women's Health Initiative press release beside the 2022 Menopause Society position statement and begin marking, in two colors, every line where the two documents flatly contradict each other about the same molecules in the same bodies.
 
 The Women's Health Initiative was a major government-funded research program that eventually followed more than 160,000 women across several linked trials. Its hormone therapy trial — the one this is about — enrolled 27,347 of them, to test whether estrogen-progestin therapy prevented heart disease. The 2002 release stopped that trial early. It told a generation of women the therapy raised the risk of breast cancer and heart disease, and within a year, prescriptions for the leading brand had roughly halved; broader hormone-therapy use kept falling for another two decades, from about 27 percent of menopausal women in 1999 to under 5 percent by 2020.

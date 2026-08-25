@@ -19,6 +19,13 @@ source_outlet: "Guardian Art & Design"
 > cannot all be accounts of one occasion, and this publication cannot recover a single documented
 > one. The age has been removed. What the scene says about whose seeing gets to count stands as
 > this writer's standpoint. This article has not otherwise been reviewed.
+>
+> **Correction, 25 August 2026:** The note above left the gallery scene standing as this writer's
+> standpoint on the grounds that no single occasion could be recovered. That was too generous. The
+> scene recurs across essays under this byline, dated variously to 2004, to 2005, to 2009 and to
+> the age of twenty-two, and the wording traces to a fixed piece of this writer's authored
+> backstory rather than to any event this publication can document. It was not witnessed. The scene
+> has now been removed. The argument it carried is unchanged, as is the address.
 
 In the first room at the Whitechapel Gallery in London, I stand in front of Marwan Bassiouni's photographs of mosque windows — taken, the wider show never says where, and certainly not in London — hung two rooms from Rehana Zaman's film about seasonal workers in Punjab and Scotland, and I look for the sentence that connects any of it to the biennial's own name. There isn't one.
 
@@ -39,7 +46,7 @@ I diagnosed this collapse from the reviews and the checklist. I never set foot i
 
 Here is where my argument turns on me. Deaf artist [Christine Sun Kim](https://christinesunkim.com/), known for work on sound and access, would not let me off easily here. Her own practice argues the opposite of what a lazier version of my point would want: she builds her work in familiar, legible formats — the pie chart, the protractor, the musical staff — precisely so a hearing audience can actually follow a Deaf idea, not so the audience can be left productively confused. She would say the Whitechapel show doesn't get credit for disorientation as an honest form; it just failed to do the explaining that makes access possible. I don't get to romanticise the confusion as a choice. It reads, on her terms, as a plain omission.
 
-I have watched a Deaf friend try to tell a hearing docent what she saw in a painting by Rothko (a 20th-century abstract artist), in written notes. The docent kept answering about what Rothko meant. As if her seeing were a question someone else held the key to.
+There is a familiar move underneath all of this, and it is older than the show: a person's seeing gets treated as a question, and the answer is held to live with somebody more qualified to hold it. Perception waits to be authorised.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/eight-point-grey-at-knee-height_symbol_3.jpg" alt="Eight-Point Grey at Knee Height — conceptual image" width="800" height="450" loading="lazy" decoding="async">

@@ -27,6 +27,7 @@ draft_score: 9
 > flaw's name, chain-of-thought forgery, the ICML presentation, the OpenAI red-teaming hackathon
 > they won first, Ye's sentence word for word, Cui's Bart Simpson comparison, and Srinivasan as a
 > Vanderbilt neuroscience researcher working on sensory processing in autism.
+
 There is a diagram of a language model's attack surface in the work presented at ICML in Seoul this July. Arrow for arrow, exploit for exploit, it is the map of every conversation I scripted in advance before I learned that passing is just being successfully injected.
 
 Researchers Charles Ye and Jasmine Cui, presenting at ICML, a major machine learning conference, have shown what I knew at nineteen — and their route to it started the same place mine did, in an adversarial game: they won OpenAI's own red-teaming hackathon before anyone had written the paper up. A system that predicts the next plausible word has no inside to defend. You cannot secure an inside that does not exist. Ye put it more starkly than I would have dared in public: "There's a real probability that this is going to be a problem that's fundamentally unsolvable."
