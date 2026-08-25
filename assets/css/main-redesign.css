@@ -1514,6 +1514,56 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   color: var(--color-text-secondary);
 }
 
+/* Two columns at desktop widths so the archive uses the row width instead of
+   leaving half of it empty. Plain CSS Grid with no reordering: DOM order is
+   already newest-first, and grid auto-placement fills left-to-right then
+   wraps, so column 1 / column 2 / next row stays chronological. */
+@media (min-width: 860px) {
+  .archive-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 3rem;
+  }
+}
+
+/* Reading threads as a compact strip — deliberately lighter than a card grid
+   so it reads as secondary navigation between Latest and the full archive,
+   not another block of boxes competing for attention. */
+.thread-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 2rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--color-border-primary);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.thread-strip__item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  text-decoration: none;
+}
+
+.thread-strip__title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.thread-strip__item:hover .thread-strip__title {
+  color: var(--color-text-brand);
+  text-decoration: underline;
+}
+
+.thread-strip__count {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
 /* Works: deliberately not the threads grid — dashed border + inline badge
    reads as "object" rather than a fourth row of identical card rectangles. */
 .works-list {
@@ -1879,6 +1929,12 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   }
 
   .home-intro__quote {
+    /* Desktop's `flex: 0 1 320px` sets a 320px flex-basis meant as a WIDTH
+       for the row layout above. In this column layout that basis applies to
+       height instead, stretching the border-left far past the quote's own
+       text and leaving a large gap before the next section. Reset it so the
+       block sizes to its content. */
+    flex: 0 1 auto;
     margin-top: var(--space-8);
     padding-left: var(--space-6);
     max-width: 100%;

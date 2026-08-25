@@ -50,7 +50,7 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
       {% if readable_posts.size > 0 %}
         <p class="research-threads__eyebrow" style="margin-bottom: 1rem;">Latest</p>
         <div class="grid grid--3 gap-8 articles-grid">
-          {% for post in readable_posts limit:6 %}
+          {% for post in readable_posts limit:3 %}
           <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
             {% assign research_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% assign research_author_icon_thumb = '/assets/maya_flux_style_matched_thumb.png' %}
@@ -106,10 +106,33 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
           {% endfor %}
         </div>
 
-        {% if readable_posts.size > 6 %}
+        <!-- Reading threads: curated entry points, deliberately secondary — a
+             compact strip rather than a boxed card grid, sitting between the
+             newest work and the full archive so it stays discoverable without
+             competing with either. Counts derived from _data/threads.yml
+             against the readable population (PR #25); a withdrawal drops out
+             of the number automatically. -->
+        <div id="threads" class="thread-strip-wrap">
+          <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.5rem;">Reading threads</p>
+          <div class="thread-strip">
+            {% for thread in site.data.threads %}
+              {% assign thread_readable = 0 %}
+              {% for s in thread.slugs %}
+                {% assign tp = readable_posts | where: "slug", s | first %}
+                {% if tp %}{% assign thread_readable = thread_readable | plus: 1 %}{% endif %}
+              {% endfor %}
+            <a href="{{ thread.url }}" class="thread-strip__item">
+              <span class="thread-strip__title">{{ thread.title }}</span>
+              <span class="thread-strip__count">{{ thread_readable }} essay{% unless thread_readable == 1 %}s{% endunless %}</span>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% if readable_posts.size > 3 %}
         <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.75rem;">All essays</p>
         <div class="archive-list">
-          {% for post in readable_posts offset:6 %}
+          {% for post in readable_posts offset:3 %}
           <article class="archive-row" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
             <p class="archive-row__meta">
               <time class="archive-row__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
@@ -133,33 +156,6 @@ description: "Essays using disabled ways of seeing to uncover what culture, scie
           <a href="{{ '/about/' | relative_url }}" class="btn btn--primary">Learn About Our Process</a>
         </div>
       {% endif %}
-    </div>
-  </section>
-
-  <!-- Reading threads: curated entry points into the archive, demoted below
-       the archive itself so browsing the actual work always comes first.
-       Counts derived from _data/threads.yml against the readable population,
-       so a withdrawal drops out of the number automatically (PR #25). -->
-  <section id="threads" class="section section--secondary research-threads-section">
-    <div class="container">
-      <p class="research-threads__eyebrow">Reading threads</p>
-      <p class="text-body text-secondary" style="max-width: 42rem; margin: 0 0 1.5rem;">
-        Curated entry points across the essay archive &mdash; groups of pieces that read well together.
-      </p>
-      <div class="research-threads">
-        {% for thread in site.data.threads %}
-          {% assign thread_readable = 0 %}
-          {% for s in thread.slugs %}
-            {% assign tp = readable_posts | where: "slug", s | first %}
-            {% if tp %}{% assign thread_readable = thread_readable | plus: 1 %}{% endif %}
-          {% endfor %}
-        <a href="{{ thread.url }}" class="research-thread">
-          <span class="research-thread__voice">{{ thread.voice }}</span>
-          <span class="research-thread__title">{{ thread.title }}</span>
-          <span class="research-thread__count">{{ thread_readable }} essay{% unless thread_readable == 1 %}s{% endunless %}</span>
-        </a>
-        {% endfor %}
-      </div>
     </div>
   </section>
 
