@@ -12,15 +12,31 @@ source_url: "https://www.wired.com/story/meta-smart-glasses-face-recognition-nam
 source_title: "Meta Silently Added Face-Recognition Code for Its Smart Glasses to Millions of Phones"
 source_outlet: "Wired"
 ---
-Meta embedded face-recognition code, named NameTag, inside the Meta AI app already installed on more than fifty million phones. Not as a feature you toggle on. As infrastructure. The code sits there, dormant, waiting for activation. Wired found it this week not by reviewing some backend system but by digging through the app itself — client-side, sitting on the phone in your pocket — work a security researcher did first and Wired then verified. Meta has not exactly hidden this: the New York Times reported on the underlying effort back in February, and Meta has said publicly it is "exploring these types of features." But downplayed is not the same as disclosed. They built the road before deciding where it goes.
 
-I design information systems. I know what infrastructure means. It means the decision has already been made. You are arguing about the guardrails while someone else poured the foundation.
+> **Correction, 25 August 2026:** The account of the International Symbol of Access was wrong
+> in most of its particulars and has been rewritten. The icon was a wheelchair without a person
+> for one year, not sixty: Karl Montan added a head in 1969, for stated aesthetic reasons rather
+> than in response to disabled people objecting that the symbol showed equipment. The head was
+> added, not turned from profile to forward-facing. And the gap between the 1968 design and the
+> first adjustment was one year, not the "forty-seven years" the article gave. The article also
+> credited the discovery of Meta's code to a security researcher whom Wired then verified; it
+> was Wired's own analysis, independently reproduced by outside experts. A claim that this
+> writer designs information systems for a living has been removed as undocumented.
+> **Checked and unchanged:** NameTag as the internal name, the Meta AI app downloaded over 50
+> million times, core components present as early as January, the New York Times publishing
+> internal documents in February, the three-model pipeline, Ryan Daniels's quotation word for
+> word, Otto Neurath and Isotype in 1920s Vienna, William Stokoe's 1960 finding, and
+> Buolamwini's 2018 error rates. This article has not otherwise been reviewed.
+
+Meta embedded face-recognition code, named NameTag, inside the Meta AI app already installed on more than fifty million phones. Not as a feature you toggle on. As infrastructure. The code sits there, dormant, waiting for activation. Wired found it this week not by reviewing some backend system but by digging through the app itself — client-side, sitting on the phone in your pocket — an analysis outside experts then reproduced independently. Meta has not exactly hidden this: the New York Times reported on the underlying effort back in February, and Meta has said publicly it is "exploring these types of features." But downplayed is not the same as disclosed. They built the road before deciding where it goes.
+
+I know what infrastructure means. It means the decision has already been made. You are arguing about the guardrails while someone else poured the foundation.
 
 ---
 
 There is a type of sign that appears in train stations across Europe. It shows a stick figure, a direction arrow, an exit symbol. Simple. You glance, you know. These signs descend from Otto Neurath, a social scientist in 1920s Vienna who created the Isotype project — a visual language meant to transcend literacy, transcend borders. Neurath believed images could carry information more democratically than text. He was wrong about democracy, but he was right about speed. You process the icon before you process the word beneath it.
 
-Here is what Neurath did not account for: someone decides which icons get made. Someone decides what counts as worth translating into image. For sixty years, the icon for 'accessible entrance' was a wheelchair. Not a person. A chair. Designer Susanne Koefoed created the International Symbol of Access in 1968, and it has been revised twice — once to make the figure more active, once to give it a head that faces forward instead of in profile. Both revisions happened because disabled people said: that is not us, that is equipment. It took until 2015 for the second revision to circulate widely. Forty-seven years between design and adjustment.
+Here is what Neurath did not account for: someone decides which icons get made. Someone decides what counts as worth translating into image. Take the icon for an accessible entrance. The Danish design student Susanne Koefoed drew the International Symbol of Access in 1968, and what she drew was a wheelchair with nobody in it. A head was added the following year by Karl Montan, who chaired the committee — a change made to humanise the figure, on the committee's own aesthetic judgement, not because disabled people had been asked. The seated figure then stood unchanged for four decades, until the Accessible Icon Project redrew it between 2009 and 2011 as a person in forward motion, propelling their own chair. That revision did come out of disability-led work, and it reached the Museum of Modern Art's collection and state adoption only after years of circulating as something close to guerrilla activism.
 
 Icons look neutral. They are not. Someone drew them. Someone chose what to include and what to leave out.
 
