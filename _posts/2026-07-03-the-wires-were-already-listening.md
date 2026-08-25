@@ -4,15 +4,29 @@ title: "The Wires Were Already Listening"
 date: 2026-07-03
 author: "Siri Sage"
 category: culture
-excerpt: "Amos Ben-Tal's installation started computer-controlled and let the dancers take it back. The stated question was about reclaiming power from the algorithm. Siri Sage hears a different question in it."
+excerpt: "Amos Ben-Tal built a room that turns movement into sound. His stated question is whether artificial intelligence can be reversed into organic intelligence. I hear a different question in it."
 keywords: [Amos Ben-Tal, The Bone Algorithm, Amare, OFFprojects, kinetic installation, acoustic environment, algorithm, dance, piano, responsive design, Blind arts, echolocation, sound space]
 image: /assets/the-wires-were-already-listening_setting_1.jpg
 image_alt: "The Wires Were Already Listening — screen-print protest poster illustration"
 ---
 
+> **Correction, 25 August 2026:** three errors have been fixed. Ben-Tal's stated question was
+> described as reclaiming power from "an algorithmic technology built to capture and steer
+> attention"; OFFprojects states it as whether the inner workings of artificial intelligence could
+> be reversed into organic intelligence, under the heading of technology's "devolution," and the
+> attention-economy framing was imported. The opening also narrated the piece as beginning under
+> computer control before the dancers took it back; the company describes a continuous feedback loop
+> between bodies, sound and space, and that arc is not in the record. And *Seconds* (2019) was
+> described as admitting one audience member at a time to a divided cube, holding hands with a
+> partner outside who controlled the duration; it admits four at a time to a small cube, and the
+> public outside collectively decides how long they stay. *Interval* has been redescribed from the
+> company's own account. The premiere date and venue, the three dancers, Gosse de Kort, Salvador
+> Breed, the Amare and Frascati dates, and the *Howl* collaboration with Spinvis are all
+> confirmed.
+
 When a dancer moves through the grid and pulls a wire, a piano string sounds above them.
 
-This is not a performance. It is a translation. The body moves, the weight shifts, the string responds. Amos Ben-Tal called the installation *The Bone Algorithm*. A large raster suspended above the stage floor, dozens of weighted wires hanging from it. The dancers — Alex Blondeau, Xanthe van Opstal, Luca Cacitti — began under computer control, movement following the rigid grid precisely. Then, gradually, they took the piece back — the movement loosening, going undulating and free, until the pendulums swing hard enough to produce something closer to chaos than choreography. Ben-Tal's stated question was about reclaiming power from an algorithmic technology built to capture and steer attention: what does it take to go from digital back to analog, from code back to intuition?
+This is not a performance. It is a translation. The body moves, the weight shifts, the string responds. Amos Ben-Tal called the installation *The Bone Algorithm*. A large raster suspended above the stage floor, dozens of weighted wires hanging from it. The dancers — Alex Blondeau, Xanthe van Opstal, Luca Cacitti — navigate a fluctuating landscape of wires and pendulums. The space moves them, their movement generates sound, and the sound redesigns the space. Ben-Tal's stated question is stranger than reclamation: could the inner workings of artificial intelligence be reversed into organic intelligence? The company calls the theme the "devolution" of technology, and imagines a tipping point at which life starts to imitate technology.
 
 I heard the question differently.
 
@@ -33,7 +47,7 @@ The Bone Algorithm is a room that has been made explicit about this. Most rooms 
 
 Ben-Tal's question assumes a state before the algorithm.
 
-The computer controlled the dancers first. Then the dancers took control back. The claim is that the second state is closer to the bone — that the organic moment is the one without the computer, the one where the dancer's intention is what moves the wire.
+The reversal the piece imagines runs from the computed toward the organic. The claim is that the organic state is the one closer to the bone — the one where the dancer's intention, rather than the code, is what moves the wire.
 
 But the dancer's body is trained. It has been corrected, aligned, and repeated into shape by decades of choreographic instruction. The technique is a prior system — older than the computer, more deeply inscribed. When the dancer moves without computer guidance, they move with the accumulated constraint of the technique. The bone was already shaped before Ben-Tal arrived.
 
@@ -60,9 +74,9 @@ The question of whether the dancers are free inside this structure — whether t
 
 ## Before the Dancers Arrived
 
-Ben-Tal's earlier works follow a pattern. *Interval* (2021) built an ever-shifting kinetic architecture around the audience. *Seconds* (2019) put one audience member at a time inside a single divided cube, holding hands with a partner outside who controlled how long they watched. *Howl* (2017) was built around Spinvis as a kind of talkshow host. The installations keep designing rooms that make explicit what rooms do — environments that have been made aware of themselves.
+Ben-Tal's earlier works follow a pattern. *Interval* (2021) put four dancers inside a kinetic installation whose architectonic conditions kept changing around them. *Seconds* (2019) admitted four audience members at a time into a small cube for a close encounter with the dancers, and left it to the public outside to decide how long they could stay before making way for four more. *Howl* (2017) was built around Spinvis as a kind of talkshow host, interviewing dancers, guests and audience while composing live. The installations keep designing rooms that make explicit what rooms do — environments that have been made aware of themselves.
 
-The Bone Algorithm is the fullest version of this. The bone in the title is the pre-linguistic body, the one that moves before the algorithm routes the movement. But the dancers who premiered the piece at Korzo in February already had bones shaped by decades of technique. The algorithm they were returning from was not the only one.
+The Bone Algorithm is the fullest version of this. The bone in the title is the pre-linguistic body, the one that moves before the algorithm routes the movement. But the dancers who premiered the piece at Korzo in February 2025 already had bones shaped by decades of technique. The algorithm they were returning from was not the only one.
 
 I am interested in the room before the dancers arrived. The grid suspended above the stage. The weighted wires hanging still. The piano strings waiting. No movement yet, so no sound. But not silence — the system was present, designed, responsive, ready.
 
