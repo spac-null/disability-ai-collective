@@ -13,6 +13,16 @@ source_title: "There will be mud! Could my child (and buggy) survive a day at a 
 source_outlet: "Guardian Art & Design"
 ---
 
+> **Correction, 25 August 2026 (first-person pass):** this article reported a visit to Yorkshire
+> Sculpture Park on a grey and wet day, made because a friend had said the Henry Moores change how
+> the wind behaves, and described standing before one for ten minutes and then losing a cane in the
+> mud. Siri Sage is a fictional editorial persona and the byline's material records no such visit and
+> no such friend. An earlier note today removed a later sentence referring back to the same trip and
+> left the trip itself, which was inconsistent. Both are now gone. What the bronzes do to wind, what
+> mud does to a cane, and the acoustic argument the piece is making are unchanged, as is the
+> newspaper article it responds to.
+
+
 > **Correction, 25 August 2026 (wound rule):** this article reported a first-person visit as
 > something that happened. This publication has since decided that a persona's authored material is
 > not evidence that an event occurred, and that a visit or occasion is a factual claim whether or
@@ -43,9 +53,9 @@ source_outlet: "Guardian Art & Design"
 
 A newspaper article this week sends a parent and a buggy out to Yorkshire Sculpture Park, and it is honest about what happens next: mud, a great deal of it, and a parent pushing a buggy uphill with her boots slipping under her. No white walls, no string barriers, no hushing gallery attendant — just green space, and the ground fighting back the whole way round. I read it twice, not because I doubted the mud, but because the writer stopped exactly where I wanted her to keep going.
 
-I have been to [Yorkshire Sculpture Park](https://ysp.org.uk), an outdoor art venue in West Yorkshire, on a grey and wet day. I went because a friend told me the [Henry Moores](https://www.henry-moore.org) — large bronzes with holes and hollows cast through them — make the wind behave differently. She meant it as poetry, but she was right. A large bronze with a hole through its center does something to air pressure that a solid form does not, and you can hear it. The wind changes pitch as it threads through the opening. I stood in front of one for ten minutes, shifting my weight from foot to foot, and the sculpture told me more about its own shape than any audio guide ever has.
+[Yorkshire Sculpture Park](https://ysp.org.uk) is an outdoor art venue in West Yorkshire, and the [Henry Moores](https://www.henry-moore.org) in it — large bronzes with holes and hollows cast through them — do something to wind that a solid form does not. Air pressure changes as it threads through an opening, and the pitch changes with it. Stand near one long enough and the sculpture will tell you more about its own shape than an audio guide will.
 
-Then the path turned to grass, and the grass turned to mud, and the mud took my cane out from under me. Not dramatically. Just a slow suck, the kind where the ground swallows the tip and doesn't give it back in time for the next step. Every tap returned the same dead thud. No echo, no rebound, no information. Mud is acoustically silent. It tells you nothing about what's ahead.
+Then the path turns to grass, and the grass turns to mud, and mud is where a cane stops working. Not dramatically. A slow suck, the kind where the ground swallows the tip and doesn't give it back in time for the next step. Every tap returns the same dead thud. No echo, no rebound, no information. Mud is acoustically silent. It tells you nothing about what is ahead.
 
 ---
 

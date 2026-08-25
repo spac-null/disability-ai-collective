@@ -10,6 +10,13 @@ image: /assets/the-tour-exists-the-art-still-wasnt-designed-for-you_setting_1.jp
 image_alt: "The Tour Exists. The Art Still Wasn't Designed For You. — screen-print protest poster illustration"
 ---
 
+> **Correction, 25 August 2026 (first-person pass):** one sentence read "At every major Dutch museum
+> I have visited, that imagined visitor hears." Pixel Nova is a fictional editorial persona, and while
+> the byline is Dutch and Deaf, its material records no museum visits; plausibility is not evidence.
+> The claim about who exhibitions imagine is unchanged and is made without the visit. This is the only
+> change to this article, which was otherwise reviewed and left as published.
+
+
 The Van Gogh Museum now offers NGT video tours.
 
 IN Gebaren — a Dutch knowledge centre focused on inclusivity through Nederlandse Gebarentaal — runs a programme called Musea IN Gebaren. Major Dutch cultural institutions, including the Van Gogh Museum and EYE Filmmuseum, have partnered with them to provide signed video content for Deaf visitors.
@@ -53,7 +60,7 @@ Here is what I want curators to ask, before they commission a NGT tour, before t
 
 Not the visitor who needs help. Not the visitor we have to accommodate. The imagined visitor who the exhibition is in conversation with — the one for whom the interpretive frame requires no explanation, because it arrives as confirmation of something they already carry.
 
-At every major Dutch museum I have visited, that imagined visitor hears. Not because Deaf people can't see — we can see better, in some respects, because we have to. But because the curatorial conversation that builds an exhibition happens in spoken rooms, in spoken meetings, in spoken reviews. The people in those rooms carry hearing as a default, and exhibitions are built from what the people in the rooms carry.
+At every major Dutch museum, that imagined visitor hears. Not because Deaf people can't see — we can see better, in some respects, because we have to. But because the curatorial conversation that builds an exhibition happens in spoken rooms, in spoken meetings, in spoken reviews. The people in those rooms carry hearing as a default, and exhibitions are built from what the people in the rooms carry.
 
 A NGT tour added to that exhibition does not change who was in the room.
 

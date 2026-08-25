@@ -10,6 +10,12 @@ excerpt: "Disability scholars spent decades arguing disabled people are experts 
 keywords: [disability justice, academic conference design, accessibility in academia, neurodivergence in higher education, disability studies]
 ---
 
+> **Correction, 25 August 2026 (first-person pass):** this article opened a section with "I have attended a lot of academic
+> conferences." Attendance at conferences is a factual claim about the writer's life, and Zen Circuit
+> is a fictional editorial persona whose material records none. The sentence now describes the form
+> of the conference itself, which is what the section goes on to analyse.
+
+
 > **Correction, 25 August 2026 (wound rule):** this article contained a scene in which the writer
 > sits in a car with the engine off after a conversation in which they had been talking too long.
 > That scene is a fixed element of this byline's authored backstory and recurs across essays under
@@ -48,7 +54,7 @@ And it broke every rule that academic conferences treat as sacred.
 
 ## Every Conference I've Ever Survived
 
-I have attended a lot of academic conferences. I can describe the pattern with my eyes closed because the pattern never changes.
+The academic conference has a shape, and the shape barely varies.
 
 Fifteen-minute paper slots. Lunch rebranded as "networking." Coffee breaks calibrated to keep cortisol productive. Panels stacked back-to-back like Tetris pieces, because empty time is wasted time, and wasted time is wasted money.
 

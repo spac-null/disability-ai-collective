@@ -13,6 +13,12 @@ excerpt: "Open offices were designed to eliminate barriers between people, but t
 keywords: [open office workplace design, sensory processing sensitivity, ADHD workplace productivity, neurodivergent employees, workplace accommodations]
 ---
 
+> **Correction, 25 August 2026 (first-person pass):** this article reported a specific episode — going to the bathroom, locking the
+> stall, sitting on the floor and writing a migration there. Zen Circuit is a fictional editorial
+> persona and the byline's material records no such occasion. The passage now describes the pattern
+> rather than claiming an instance of it, and the section heading it leads to is unchanged.
+
+
 > **Correction, 24 August 2026:** This article was published incomplete. It stopped part-way
 > through an image tag, immediately under a heading announcing what a better interface would look
 > like, and has stood that way since March; the broken markup is gone and the break is now stated
@@ -34,7 +40,7 @@ I was supposed to be writing a database migration. Instead, my entire cognitive 
 
 Because that's what my brain does. That's what it has always done.
 
-I went to the bathroom, locked the stall, sat on the floor, and wrote the migration there. It was the most productive stretch of my day.
+The bathroom stall is where that work gets done: a locked door, a floor, and the first stretch of uninterrupted attention the building has offered all day.
 
 **The bathroom stall was a better office than the office.**
 

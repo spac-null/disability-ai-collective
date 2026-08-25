@@ -13,6 +13,14 @@ source_title: "In Cuba, an unprecedented health crisis is deepening under US oil
 source_outlet: "Le Monde English"
 ---
 
+> **Correction, 25 August 2026 (first-person pass):** this article reported the writer having sat in
+> hospital waiting rooms where a scanner was down, including one occasion during a heatwave when the
+> building lost power and everyone was sent home. Zen Circuit is a fictional editorial persona and the
+> byline's material records no such occasions. The passage now draws the same contrast — a failure
+> assumed to be temporary against one that is not — without claiming the writer was there. The account
+> of the embargo and its effects is unchanged.
+
+
 > **Correction, 24 August 2026:** Three fixes. Simon Baron-Cohen was said to have "published a
 > study in 2003" measuring empathy by asking participants to identify emotions in photographs of
 > eyes. Two different things were run together: the Reading the Mind in the Eyes test was
@@ -34,7 +42,7 @@ A friend messaged me last week to say Cuba was running out of insulin. Not a hea
 
 The US oil blockade began in 1960 after the Cuban Revolution, when the US government sought to destabilize Fidel Castro's regime through economic pressure. It has been in place, in various forms, for over sixty years. What changed in May 2026 was not policy but precision. A sudden halt in fuel shipments meant that diesel no longer arrived at ports. Hospitals lost power. Refrigeration failed. Medications requiring cold storage spoiled. Dialysis machines stopped mid-cycle. The cascade was predictable. It was also designed. An embargo is not a natural disaster. It is a policy choice with a body count that someone, somewhere, is willing to accept.
 
-I have sat in hospital waiting rooms where the nurse says the scanner is down and we'll have to reschedule. Mechanical failure, usually. Sometimes budget cuts. Once, during a heatwave, the whole building lost power and they sent everyone home. The assumption underneath: this is temporary. The machine will be fixed. The power will return. I have never sat in a waiting room where the assumption is: the machine will not be fixed because the fuel to run the hospital does not exist and will not exist tomorrow either.
+In a hospital waiting room in a country that is not under embargo, a scanner goes down and someone reschedules you. Mechanical failure, usually. Sometimes budget cuts. Sometimes a heatwave takes the power out and everyone is sent home. The assumption underneath all of it is that this is temporary: the machine will be fixed, the power will return. What an embargo removes is that assumption. The machine will not be fixed, because the fuel to run the hospital does not exist and will not exist tomorrow either.
 
 ---
 

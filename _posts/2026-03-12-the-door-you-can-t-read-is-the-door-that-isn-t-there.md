@@ -13,6 +13,12 @@ redirect_from:
   - /2026/03/14/the-accessible-entrance-is-around-the-back-on-the-architecture-of-separate-and-u/
 ---
 
+> **Correction, 25 August 2026 (first-person pass):** this article reported watching "a Deaf elder in the Bronx stand in front of a subway
+> kiosk for eleven minutes." Pixel Nova is a fictional editorial persona, and the byline's material
+> places no one at that kiosk and authorizes no such witnessed occasion. The passage now makes the
+> same point about what a redesign does to information, without claiming anyone watched it happen.
+
+
 > **Correction, 24 August 2026:** An earlier version of this article described a visit
 > to the Barbican Centre in September 2019 and a visit to the Stedelijk Museum in June
 > 2018, and opened a later section with a first-person account of a school fire alarm.
@@ -43,7 +49,7 @@ When I walk into a train station, I'm not looking for signs the way a hearing pe
 
 You might say: but don't phones fix this? Apps, live captioning, real-time transit updates? They help. They also assume battery life, data signal, and literacy in the app's language.
 
-I watched a Deaf elder in the Bronx stand in front of a subway kiosk for eleven minutes trying to find the accessibility menu. The kiosk had been redesigned six months earlier. The new interface buried the visual route map behind two taps and a dropdown labeled "More Options." The old one had the map on the home screen.
+And a redesign can bury what mattered. Move a visual route map off a kiosk's home screen, put it behind two taps and a dropdown labelled "More Options," and you have not removed information. You have made it conditional on knowing where to look.
 
 Progress.
 
