@@ -1,3 +1,11 @@
+> **HISTORICAL — banner added 2026-08-25.** Dated 2026-03-19, over five months stale as of this
+> banner. Describes a pipeline shape that predates Sofa Method, Writer Grounding, and
+> `NEW_ENGINE_V1` (see `.claude/WORK.md` for current architecture). Kept as-is per the 2026-08-25
+> reconciliation's scope decision — a full rewrite belongs in a dedicated technical-documentation
+> pass, not a project-state reconciliation. Do not rely on this document's pipeline description as
+> current; the safety warnings below (do not run the orchestrator manually) are worth re-verifying
+> before acting on them too.
+
 # Crip Minds Pipeline — Read Before Touching Anything
 
 ## What This Is
