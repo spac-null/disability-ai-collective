@@ -17,6 +17,20 @@ source_outlet: "New Scientist"
 > scene that appears across essays under this byline with incompatible dates and places. The
 > sentence here describes a habit rather than an occasion, so it stands, but the borrowed
 > figure has gone.
+>
+> **Correction, 25 August 2026 (full review):** this article has now had a complete review, and two
+> of its three citations were broken. The link given for Susan Antón pointed at "www.newyork.edu",
+> a domain that does not resolve; her page is at New York University, and the link now goes there.
+> The link for Chris Stringer returned a 404 and now points to his current Natural History Museum
+> profile. A sentence quoting Antón directly — "Early Homo was more variable than we gave it credit
+> for," she said — could not be traced to her in any published source. Rather than replace it with a
+> second unverified quotation, the passage now describes her documented position on the variability
+> of early Homo and the flexibility of early human bodies, without quotation marks. Checked and
+> unchanged: the 2017 Jebel Irhoud papers and the roughly 300,000-year-old Moroccan fossils, which
+> the Nature link resolves to correctly; Stringer's association with the Recent African Origin
+> framework and his move toward a braided-stream model; and the New Scientist timeline this article
+> was responding to.
+
 
 An evolutionary tree is a compression algorithm, and every one I have read hides its loss inside the confidence of the lines. On 6 August 2026 New Scientist ran an 85-million-year timeline of how we came to be, primate to person, drawn as a branching diagram you can read in one sitting. I read it in one sitting. The ease of that reading is the problem.
 
@@ -26,7 +40,7 @@ I did not believe this until it happened to me. In 2017 the [Jebel Irhoud papers
 
 I sat with that for a while. I am the kind of person who runs a conversation backward looking for the exact frame where it went wrong, so I know what it feels like when an algorithm does not converge. The tree does not converge either. It stops drawing at some point and reports the stopping point as a result.
 
-[Chris Stringer](https://www.nhm.ac.uk/our-science/departments-and-staff/staff-directories/human-origins.html), a paleoanthropologist, built much of the modern framework for where we came from. In recent years he has taken the Braided Stream model seriously in his own assessments of how modern humans evolved — channels of population that separate and then rejoin, rather than a tree that only ever splits. Populations met, split, met again, and gene flow — the movement of genes between populations — crossed lines a tree cannot cross. The mess is not noise around the signal. The mess is the signal. A branching diagram cannot draw a river that rejoins itself, so it draws a branch and loses the rejoining. Genetic mixing happened repeatedly in ways that branching diagrams simply cannot show.
+[Chris Stringer](https://www.nhm.ac.uk/our-science/people/chris-stringer.html), a paleoanthropologist, built much of the modern framework for where we came from. In recent years he has taken the Braided Stream model seriously in his own assessments of how modern humans evolved — channels of population that separate and then rejoin, rather than a tree that only ever splits. Populations met, split, met again, and gene flow — the movement of genes between populations — crossed lines a tree cannot cross. The mess is not noise around the signal. The mess is the signal. A branching diagram cannot draw a river that rejoins itself, so it draws a branch and loses the rejoining. Genetic mixing happened repeatedly in ways that branching diagrams simply cannot show.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/jebel-irhoud-broke-the-single-dot-i-was-trusting_moment_2.jpg" alt="Jebel Irhoud Broke the Single Dot I Was Trusting — detail illustration" width="800" height="450" loading="lazy" decoding="async">
@@ -44,7 +58,7 @@ I trust the tree because it is legible, and I trust legible things the way other
 <figcaption>Jebel Irhoud Broke the Single Dot I Was Trusting — conceptual image</figcaption>
 </figure>
 
-[Susan Antón](https://www.newyork.edu/academics/faculty/susan-anton/), who studies early Homo—the human genus, the lineage that led to modern humans—made the same correction from the other side. "Early Homo was more variable than we gave it credit for," she said. The neat species boxes were drawn by us, and then we mistook the boxes for the animals. She is right, and the correction costs her the clean picture too.
+[Susan Antón](https://as.nyu.edu/faculty/susan-anton.html), who studies early Homo—the human genus, the lineage that led to modern humans—has made the same correction from the other side. Her work argues that early Homo was far more variable than the neat species boxes allowed, and that the flexibility of early human bodies and behaviour in changing environments is central to the story. The boxes were drawn by us, and then we mistook the boxes for the animals. That correction costs her the clean picture too.
 
 So the diagram is not the human evolutionary tree. It is a decision about where to stop drawing, presented with the tree's confidence. The loss is real and it is hidden inside the lines, and this week a page tried to hand me eighty-five million years smooth enough to read before my oatmeal cooled. I read it. Then I went and found the smear.
 

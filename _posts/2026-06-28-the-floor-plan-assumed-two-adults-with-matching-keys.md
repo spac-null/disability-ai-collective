@@ -13,6 +13,21 @@ image_alt: "The Floor Plan Assumed Two Adults With Matching Keys — screen-prin
 > **Correction, 24 August 2026:** An earlier version of this article said Mirthe Berentsen is
 > "based in Berlin." She is based in Amsterdam; Berlin is where her co-author Christine Sun
 > Kim lives. Corrected.
+>
+> **Correction, 25 August 2026 (full review):** this article has now had a complete review. Its
+> citations check out: *Beyond the Nuclear Family* is Mirthe Berentsen's long-term interdisciplinary
+> touring project, beginning in 2025 and running across Dutch venues as separately titled exhibitions
+> and events, documented at the address given; Berentsen is a writer, artist and curator based in
+> Amsterdam; and the forthcoming book with Christine Sun Kim on motherhood, Deafness and language is
+> real. Three sentences overstated what could be supported and have been hedged to what can. The
+> article said the arrangements left out of the blueprint are "how the majority of people have
+> actually organized care, across most of history" — a claim about all of human history that nothing
+> here establishes. It stated as settled fact that the nuclear family "was designed" by postwar
+> European policy; that is an argument this article is following, and now says so. And it described
+> the isolation of Deaf children in hearing families as "documented" without citing documentation;
+> it is now described as well attested within the community, which is what the article can speak to.
+> The argument is otherwise unchanged.
+
 
 
 There is an icon on every form.
@@ -25,13 +40,13 @@ Mirthe Berentsen's *beyond the nuclear family* — a long-term touring research 
 
 ## What the Blueprint Assumed
 
-The nuclear family was not discovered. It was designed — by a specific moment in postwar European history when tax codes, housing policy, and social insurance systems were being built simultaneously, and the people building them assumed a particular domestic unit as the baseline.
+The nuclear family, as an administrative object, was not discovered so much as assumed. The argument I am following here is that it hardened into a default in a specific stretch of postwar European history, when tax codes, housing policy and social insurance systems were being built at the same time and the people building them took a particular domestic unit as the baseline.
 
 The assumption was not neutral. It produced houses with one large bedroom and smaller ones. It produced benefit systems that calculated entitlement based on the household unit as defined. It produced legal categories — inheritance, medical decision-making, parental rights — that named one configuration as primary and everything else as edge case.
 
 What the blueprint didn't have room for: the grandmother who has been the primary carer for fifteen years. The non-biological parent. The chosen family of people who have lived together through a crisis. The Deaf household where the structure of communication is radically different from the hearing family next door.
 
-What gets left out of the blueprint is not a small category. It is how the majority of people have actually organized care, across most of history.
+What gets left out of the blueprint is not a small category. Households built around extended kin, chosen family and shared care are ordinary, and were ordinary long before the icon was drawn.
 
 ## What Information Design Does
 
@@ -54,7 +69,7 @@ I want to name something specific.
 
 The Deaf community has always organized itself, in part, through structures that are not nuclear in the postwar administrative sense. Residential school bonds — the people you grew up alongside, separated from your hearing family, who became your first fluent conversation partners — are real relationships that the nuclear family model has no category for. The concept of "Deaf family" — community as kin — is a structure that has existed for as long as there have been Deaf communities, and it has never fit on the form.
 
-For Deaf people who grew up in hearing families, the isolation this can produce is specific and documented: the family that could not sign, the dinner table where conversation moved too fast to follow, the structure of care that was built around a communication system that didn't include you. The nuclear family, as a unit, sometimes contained Deaf children while failing to include them. The inclusion and the exclusion were simultaneous.
+For Deaf people who grew up in hearing families, the isolation this can produce is specific and well attested within the community: the family that could not sign, the dinner table where conversation moved too fast to follow, the structure of care built around a communication system that didn't include you. The nuclear family, as a unit, sometimes contained Deaf children while failing to include them. The inclusion and the exclusion were simultaneous.
 
 What "beyond the nuclear family" opens, in this context, is the question of what it means to design a kinship structure that does not assume shared hearing as its communication architecture. That is not a small redesign — and it's a question Berentsen is pursuing further in a forthcoming book co-written with Deaf artist Christine Sun Kim, on motherhood, Deafness, and the reinvention of language.
 
