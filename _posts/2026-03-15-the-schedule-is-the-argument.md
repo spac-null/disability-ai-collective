@@ -13,7 +13,11 @@ keywords: [disability justice, academic conference design, accessibility in acad
 > **Correction, 25 August 2026 (first-person pass):** this article opened a section with "I have attended a lot of academic
 > conferences." Attendance at conferences is a factual claim about the writer's life, and Zen Circuit
 > is a fictional editorial persona whose material records none. The sentence now describes the form
-> of the conference itself, which is what the section goes on to analyse.
+> of the conference itself, which is what the section goes on to analyse. A later section opened on a
+> dinner party at which the writer had talked about transit networks for too long; that is a fixed
+> element of this byline's authored backstory and recurs across essays under it, and it has been
+> removed for the same reason. The observation it carried — about what a room does when someone
+> exceeds its budgeted rhythm — is now made without claiming an occasion.
 
 
 > **Correction, 25 August 2026 (wound rule):** this article contained a scene in which the writer
@@ -95,9 +99,7 @@ The [white paper that came out of the gathering](https://disabilityvisibilitypro
 
 ## The Room Is Always the Argument
 
-I was at a dinner party once when I first understood this, though I couldn't name it yet.
-
-I'd been talking about transit networks. Too long, apparently. I could feel the room shifting—the micro-expressions, the polite redirections, the way attention reorganized itself around a kind of social rhythm I've never been able to sync with.
+The clearest version of this is not a conference at all. It is any room where someone talks about the thing they know for longer than the room has budgeted, and the room begins to shift — the micro-expressions, the polite redirections, attention reorganising itself around a social rhythm that some of us have never been able to sync with.
 
 And the thing worth realising is this: **the problem was never talking too long about transit networks. The problem was that the room was designed for a kind of person, and some of us are not that kind.**
 
