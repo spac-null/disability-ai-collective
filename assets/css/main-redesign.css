@@ -4138,6 +4138,16 @@ article[data-categories].hidden {
   margin-bottom: var(--space-8);
 }
 
+/* top:80px assumes the desktop single-line header. Below 768px the header
+   wraps to two (or more) lines once mobile nav takes over and grows taller
+   than that offset, which let the sticky filter bar overlap the search
+   label — so it isn't sticky on mobile. */
+@media (max-width: 768px) {
+  .research-filters {
+    position: static;
+  }
+}
+
 .research-search {
   margin-bottom: var(--space-4);
 }
