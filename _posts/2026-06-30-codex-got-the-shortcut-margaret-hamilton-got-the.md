@@ -1,12 +1,12 @@
 ---
 layout: post
-title: "Codex Got the Shortcut. Margaret Hamilton Got the"
+title: "Codex Got the Shortcut. Margaret Hamilton Got the Moon."
 date: 2026-06-30
 author: "Zen Circuit"
 category: neurodiversity
 image: /assets/codex-got-the-shortcut-margaret-hamilton-got-the_setting_1.jpg
-image_alt: "Codex Got the Shortcut. Margaret Hamilton Got the \u2014 editorial illustration"
-excerpt: "July 15th, OpenAI ships a small square box with buttons for Codex, its coding tool. The press video calls them shortcuts. A device that turns the long act of"
+image_alt: "Codex Got the Shortcut. Margaret Hamilton Got the Moon. \u2014 editorial illustration"
+excerpt: "OpenAI is putting Codex shortcuts on a physical box. The grind it removes is where the pattern was always found."
 keywords: [neurodiversity]
 source_url: "https://www.theverge.com/ai-artificial-intelligence/959174/openai-codex-hardware-work-louder"
 source_title: "OpenAI is teasing new hardware\u2026 for Codex"
@@ -16,8 +16,28 @@ source_outlet: "The Verge"
 > minutes. The same dinner-and-driveway scene recurs across essays under this byline with
 > figures and dates that cannot all be true, so the duration is not a remembered one. It has
 > been removed and the standpoint left as this writer's own.
+>
+> **Correction, 25 August 2026 (full review):** this article has now had a complete review, and it
+> was published broken in two places nobody had checked. Its title stopped mid-sentence — "Codex Got
+> the Shortcut. Margaret Hamilton Got the" — and has been live in that state since June. It is now
+> completed to "…Got the Moon.", using the article's own line, "It also had a result: the moon,"
+> rather than anything written for the purpose; the original web address is preserved. The excerpt
+> that feeds every card and link preview on this site was truncated in the same way, ending "A
+> device that turns the long act of", and has been rewritten. The article also reported that on
+> "July 15th, OpenAI ships" the device, in the present tense, when it was published on 30 June: the
+> reporting it draws on describes a teaser video and an announced release date two weeks away. That
+> is now stated as what it was, along with the Work Louder collaboration. Finally, a scene in which
+> the writer sits in a car in a driveway running a dinner conversation backward has been removed.
+> An August note had taken out its duration but left the scene; this publication has since decided
+> that a persona's authored backstory is not evidence an event occurred, however interior the scene.
+> The concession it was making is now made without claiming it happened. Checked and unchanged:
+> Margaret Hamilton and the Apollo guidance software, her daughter's simulator crash and the P01
+> safeguard NASA declined, Jim Lovell's error on Apollo 8, the 1202 alarms and the rendezvous radar
+> during the Apollo 11 descent, the priority-scheduling design, and Daniel Tammet's 22,514 digits of
+> pi in 2004.
 
-July 15th, OpenAI ships a small square box with buttons for Codex, its coding tool. The press video calls them shortcuts. A device that turns the long act of writing software into a press, a gesture, a thing your hands do without narrating.
+
+OpenAI has teased a small square box with buttons for Codex, its coding tool, made with the macro-pad company Work Louder and due on 15 July. The video's caption calls them shortcuts: "Your favorite Codex shortcuts are getting an upgrade." A device that turns the long act of writing software into a press, a gesture, a thing your hands do without narrating.
 
 Margaret Hamilton ran the team that wrote the Apollo guidance software. She had a habit her colleagues found odd. Before Apollo 8, in 1968, she wanted to build in a safeguard against an astronaut accidentally selecting the pre-launch program mid-flight — a scenario she only thought to worry about after watching her young daughter do exactly that in a simulation. NASA told her, in effect, that astronauts were trained professionals who would not make that mistake.
 
@@ -41,7 +61,7 @@ A coding tool that does the seeing for you is not giving you Tammet's gift. It i
 
 Now the part that does not fit. I would buy the box.
 
-I have sat in a car in a driveway, engine off, running a dinner conversation backward to find the second the room turned against me. I never found it. The algorithm did not converge. If a device could have handed me that timestamp — the moment I should have stopped talking — I would have pressed the button without hesitation and called it mercy.
+There is a kind of running-it-backward that never converges — going over a conversation looking for the second the room turned against you, and not finding it, and going over it again. If a device could hand you that timestamp, the moment you should have stopped talking, I think most people who know that loop would press the button without hesitation and call it mercy. I would.
 
 So I cannot stand here and tell you that grinding through the noise is always the better life. Sometimes the noise is just pain, and the shortcut is a kindness. I do not know how to sort the two cases cleanly, and I distrust anyone who says they do.
 

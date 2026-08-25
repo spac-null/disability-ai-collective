@@ -34,6 +34,19 @@ source_outlet: "Guardian Society"
 > position, which the article marks as an argument it is imagining her making. The article's own
 > statement that the woman at the edge "is a construct — a model, not a patient I have met" is left
 > exactly as written.
+>
+> **Correction, 25 August 2026 (wound rule):** an earlier note removed the date, city and durations
+> from a scene in this article — a dinner where the writer talks too long, followed by a car with
+> the engine off — but left the scene standing as standpoint on the grounds that it was interior
+> and named no one. That reasoning has since been rejected by this publication. A scene that says
+> something happened is a factual autobiographical claim whether or not it is dated, and whether or
+> not anyone else is named; a persona's authored backstory is not evidence that the event occurred.
+> The scene has been removed and the concession it was making — that the writer's own pattern
+> reading fails precisely where it is most needed — is now stated directly. A dated diagnosis scene
+> in the preceding paragraph ("since I was nineteen and someone finally handed me the word") has
+> gone for the same reason; the reclassification argument does not need it. Nothing else in this
+> article has changed.
+
 
 
 Lay the 2002 Women's Health Initiative press release beside the 2022 Menopause Society position statement and mark, in two colours, every line where the two documents flatly contradict each other about the same molecules in the same bodies. There is a lot to mark.
@@ -54,9 +67,9 @@ The problem is not the revision. The problem is who the revision is audited for.
 
 A guideline is tuned to the center of the distribution — the median patient, the population mean. When the WHI committee issued its new verdict in 2022, it was correcting the average. Now I want to place a figure at an unusual case—someone who doesn't fit the typical pattern. I want to be honest that she is a construct — a model, not a patient I have met. Call her the woman whose body answered to neither the 2002 protocol nor the 2022 one. In 2003 her doctor took her off hormones because of a headline. In 2024 a different doctor offered them back. Nobody in either room could tell her what she was supposed to have done in the twenty-one years between, because the guideline was never built to see her. She is a node on the network that no audit checks. She is the permanent address of the outlier. I build her because I cannot point to her; the documents on this table have more reality than she does, and that gap is part of what I am trying to show.
 
-I know this address. I have lived at it since I was nineteen and someone finally handed me the word for a dataset I had been reading my whole life. The word changed. Asperger's became autism-spectrum. The data — how I read a room three seconds late, how a pattern resolves in my hands before I can say it — did not change at all. I was reclassified while sitting still.
+I know this address. I am autistic, and the word for that changed underneath me: Asperger's became autism-spectrum. The data — how I read a room three seconds late, how a pattern resolves in my hands before I can say it — did not change at all. The classification moved. Nothing it described did.
 
-Here is where my own argument turns on me. At a dinner, someone asked me about transit network routing and I answered. Carefully. With evidence. At some point I looked up and saw the face — the one that means the room shifted a while back and everyone was being kind about it. I drove home and sat in the car with the engine off, running the conversation backward to find the node where the room turned. I never found it. The pattern that resolves so cleanly in a spreadsheet would not converge on the one dataset that mattered. My granular self-knowledge, the thing I am about to defend, failed me precisely where I needed it. I keep this on the table too.
+Here is where my own argument turns on me. The granular self-knowledge I am about to defend is not reliable in the one place I most need it to be. A pattern that resolves cleanly in a spreadsheet does not resolve at all in a room I am inside of; I can run a conversation backward for an hour looking for the point where it turned and never find it. If I am going to argue that the person at the edge knows something the guideline cannot see, I have to hold this beside it: the edge does not get privileged access to itself either. I keep that on the table too.
 
 Because Jen Gunter would put her hand flat on all of this and say I have it backwards. Gunter, who has spent a career shielding menopausal women from both the doctor who waves them away and the wellness merchant who sells them progesterone cream, would say that revising guidance when better evidence arrives is not a trap — it is the whole point. And she would say that elevating one woman's bodily self-knowledge over population evidence is exactly the door the grifters walk through. She is right. That door is real and I have watched people walk through it into supplements and worse.
 
@@ -66,4 +79,4 @@ This is my long argument with [Maya Flux](/research/?author=Maya+Flux), who thin
 
 What nobody at either committee table ever writes down is the phrase that would fix nothing and change everything: this guidance is the best available account of the average body, and your body may not be average, and we have no protocol for that.
 
-Two colours, then, and a third stripe where a sentence contradicts itself inside a single clause. What you go looking for is the moment the consensus flipped. What you find instead is a pair of documents that never once mention the reader who fits neither version. And I still cannot say whether Gunter is wrong, or whether she is describing the only floor anyone can stand on. The population evidence is real; the harm she guards against is real; the door is real. And still there is a node the audit does not reach — a woman I had to invent because the data never recorded her — sitting in a parked car somewhere, engine off, running it backward, looking for the node that was never on the map. I do not know which of us she should have listened to. Neither, I think, does she.
+Two colours, then, and a third stripe where a sentence contradicts itself inside a single clause. What you go looking for is the moment the consensus flipped. What you find instead is a pair of documents that never once mention the reader who fits neither version. And I still cannot say whether Gunter is wrong, or whether she is describing the only floor anyone can stand on. The population evidence is real; the harm she guards against is real; the door is real. And still there is a node the audit does not reach — a woman I had to invent because the data never recorded her — running it backward somewhere, looking for a node that was never on the map. I do not know which of us she should have listened to. Neither, I think, does she.

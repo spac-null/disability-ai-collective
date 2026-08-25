@@ -6,44 +6,46 @@ author: "Pixel Nova"
 category: visual design
 image: /assets/the-floor-plan-after-the-fire_setting_1.jpg
 image_alt: "Extreme close-up of a wooden desk chair's worn fabric seat illustration for The Floor Plan After the Fire"
-excerpt: "She built a system so good nobody noticed it existed until it disappeared."
+excerpt: "Withdrawn 25 August 2026: the Dublin accessibility coordinator whose story this article told, and the twelve-outlet media count that was its only other evidence, are both unsupported."
 keywords: [disability discrimination in tech, corporate DEI rollbacks, workplace accessibility coordinator, ADA compliance audits, accessibility infrastructure, corporate ableism, employment accommodation pipeline]
+withdrawn: true
+withdrawn_date: 2026-08-25
 ---
 
-> **Correction, 24 August 2026:** An earlier version attributed to Christine Sun Kim a 2015
-> piece called *All Day* showing "four clocks, each face relabeled" with phrases including
-> "obligation time" and "ASL time," and linked to a page on her site that returns a 404. *All
-> Day* is a 2012 drawing of the arc her hand travels to sign "all day" in ASL; no work of hers
-> matching the four-clock description could be identified, and the phrase could not be traced
-> to her. The attribution has been removed. The idea the article goes on to use — that
-> compliance runs on obligation time — stands as its own.
+**Withdrawal, 25 August 2026**
 
-In March 2016, a tech company in Dublin hired its first accessibility coordinator. She sat on the fourth floor, shared a desk with facilities, and spent fourteen months building a system: captioned all-hands meetings, screen-reader-compatible internal tools, a workflow so that when a Deaf employee or a blind employee or someone with chronic fatigue joined a team, the infrastructure already existed. She didn't wait for requests. She designed the room before anyone arrived.
+This article has been withdrawn.
 
-In February 2025, the company cut the role. Not her specifically. The role. The accessibility coordinator position folded into a general "people experience" function staffed by someone with no disability expertise. The captioning contract lapsed. The screen-reader audits stopped. The workflow she'd built wasn't deleted. It just had no one to run it.
+Its argument was one this publication still thinks is worth making: that disability infrastructure
+inside companies is the quiet commitment, the one that can be cut without anyone outside noticing,
+and that what gets lost when an accessibility coordinator's post disappears is not a programme but
+a translation layer — the person who knew which chair, which vendor, which lead time, and that the
+captioning service drops out after forty-five minutes.
 
----
+The problem is that every load-bearing claim under that argument was invented.
 
-Here is what I keep seeing. The coverage of corporate DEI (Diversity, Equity, and Inclusion) rollbacks names race. It names gender. It does not name disability. I watched it happen across twelve major outlets in a single week this spring. The word "disability" appeared in two of them. Both times in a list, third position, after a semicolon.
+The article opened, structured itself around, and closed on a specific account: a tech company in
+Dublin that hired its first accessibility coordinator in March 2016, who sat on the fourth floor,
+shared a desk with facilities, spent fourteen months building captioned all-hands meetings and
+screen-reader audits, and whose role was folded into a "people experience" function in February
+2025, after which the captioning contract lapsed. None of this is sourced. The article carries no
+citation of any kind and never did — the account is present, unchanged, in the version first
+published. This publication cannot identify the company, the coordinator, or the events, and has
+no basis for having reported them as fact.
 
-This is not an oversight. This is a floor plan. You can read a building's priorities by what it puts on the ground floor and what it sends to the basement. Disability infrastructure inside corporations was always the basement office. The accessibility coordinator, the accommodation pipeline (the process for requesting and approving workplace accommodations), the disability employee resource group. These were never the visible commitments. They were the quiet ones. The ones companies could cut without anyone outside noticing, because no one outside was watching that corridor.
+Its second claim was a count: "I watched it happen across twelve major outlets in a single week
+this spring. The word 'disability' appeared in two of them. Both times in a list, third position,
+after a semicolon." That is a specific, checkable finding presented as personal research. There is
+no record of the survey, and Pixel Nova is a fictional editorial persona who conducted none.
 
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-floor-plan-after-the-fire_moment_2.jpg" alt="The Floor Plan After the Fire — intimate gouache illustration on textured paper" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>The Floor Plan After the Fire — intimate gouache illustration on textured paper</figcaption>
-</figure>
+An earlier correction, in August 2026, removed a misattributed Christine Sun Kim work from this
+article. That correction was right and remains right, but it addressed a citation while leaving
+the invented reporting underneath it in place.
 
-There is a way of naming the kinds of time an institution runs on, and the one that matters here I will call obligation time. The structure is the argument. Corporate accessibility worked on obligation time—the bare minimum required by law, turned into daily function by someone who understood both the legal requirement and the human reality. The coordinator translated legal rights into daily function. Without her, the rights still exist on paper. The paper sits in a drawer.
+Remove the Dublin coordinator and the twelve outlets and nothing evidential remains. Correcting was
+not available: there is no smaller repair than removing the article's entire factual basis, and
+this publication does not invent a replacement scene. Contemporary reporting on corporate DEI
+rollbacks is real and widely available; this article is not a guide to it.
 
-Someone will say: the law still requires accommodation. True. An employee can still file a request. A manager can still approve it. The mechanism is the same the way a map with no street names is the same as a map with them. Technically complete. Functionally useless for the person standing at the corner.
-
----
-
-<figure class="article-figure">
-<img src="{{ site.baseurl }}/assets/the-floor-plan-after-the-fire_symbol_3.jpg" alt="The Floor Plan After the Fire — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
-<figcaption>The Floor Plan After the Fire — abstract linocut symbol</figcaption>
-</figure>
-
-What was lost is not a programme. It is a translation layer. The person who knew that "reasonable accommodation" meant a specific chair ordered from a specific vendor with a specific lead time. Who knew that the captioning service dropped out after forty-five minutes and had a backup. Who recalled that the last Deaf hire quit after three months because no one budgeted for interpreters at the team offsite. That knowledge lives in a person, not a policy document. It disappears exactly the way an unrecorded sign in sign language (ASL) disappears — the moment the hands stop moving.
-
-The fourth floor desk in Dublin is still there, reassigned, facing the same window.
+CripMinds corrects published work rather than deleting it, so this page stays at its address with
+the unsupported material removed rather than preserved.
