@@ -27,6 +27,7 @@ source_outlet: "Guardian Society"
 > onto an interior street, which does let children move as they choose, but the two doors and the
 > staff office are not in the record. The Maya Flux piece referred to was also described loosely and
 > is now described as it reads.
+
 A young woman stands in Westfield White City, a shopping centre in London, at a career fair built to connect the unemployed with work. Demi Trowsdale is 24. She has been to the fair, filled in the applications, and watched them come back as blanket rejections. What she says is missing is a person: someone looking over the application who might see what would not come across as buzzwords. "It makes me feel quite dehumanised," she says.
 
 She is not alone at the fair. Angel Simpson is 18, qualified, and still "pushed out to nothing," she says. Harvey Barns is 21, and talks about ghost jobs — postings that go nowhere — and the minimum wage waiting at the end of the ones that do. Across the UK, 713,000 young people are out of work: a youth unemployment rate of 15.8 percent, 24.6 percent in London, where all three of them are standing.

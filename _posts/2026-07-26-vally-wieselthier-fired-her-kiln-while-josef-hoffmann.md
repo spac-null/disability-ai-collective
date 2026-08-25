@@ -27,6 +27,14 @@ source_outlet: "NYT Arts"
 > Josef Hoffmann" — and has been trimmed to a complete one. The address is unchanged. **Not
 > checked:** the New York Times piece this was written from is behind a paywall that refuses
 > automated readers, so this article's characterisation of it could not be confirmed either way.
+>
+> **Correction, 25 August 2026:** The note above left the gallery scene standing as this writer's
+> standpoint on the grounds that no single occasion could be recovered. That was too generous. The
+> scene recurs across essays under this byline, dated variously to 2004, to 2005, to 2009 and to
+> the age of twenty-two, and the wording traces to a fixed piece of this writer's authored
+> backstory rather than to any event this publication can document. It was not witnessed. The scene
+> has now been removed. The argument it carried is unchanged, as is the address.
+
 Vally Wieselthier joined the Wiener Werkstätte, an influential Austrian design workshop, in 1917, left in 1922 to run a ceramics workshop of her own, and returned in 1927 to head the Werkstätte's ceramics department — hands in clay, across two decades. Late in the 1930s, by then settled in New York and finding American critics filing her work under "decorative," she wrote to President Franklin D. Roosevelt. Her demand: tell these people who I am. Josef Hoffmann, the workshop's co-founder and two floors of hierarchy away, drew a building he would never touch, in ink that erased his hand entirely, and put his name on the letterhead of the whole enterprise. Nobody needed to write to Roosevelt on his behalf.
 
 One of them is in the canon. Guess which.
@@ -39,7 +47,7 @@ I know this by a different route. I make design systems, and the fastest way to 
 
 There is a word for the thing they threw away. Haptic knowledge—understanding gained through touch and motion—rather than visual information read from a plan. Wieselthier's ceramics carry years of information her hands encoded at the kiln that no drawing can hold. Ella Mae Lentz, a Deaf poet, encoded meaning through signed poems the same way. The meaning is not translatable out of the hand because the hand is not delivering the meaning. The hand is the meaning.
 
-Watching a friend look at a Mark Rothko painting, I learned how violent the drop gets. She was reading the painting with her whole attention, and a docent kept writing back what Rothko *meant* — as if her looking were a question and he held the key. Her seeing did not count until it was routed through his knowing.
+The drop gets violent at exactly this point: a person reads the work with her whole attention, and is answered with what it *meant* — as if her looking were a question and the answer lived with somebody more qualified to hold it. Her seeing does not count until it has been routed through someone else's knowing.
 
 Wieselthier eventually left Vienna, came to New York, and kept firing ceramics that critics filed under "decorative." She would not have signed onto my argument. She wanted to be a great artist, full stop, not a witness for a theory about hands. The category that trapped her is the one I am asking you to honor. I do not have a clean answer for that.
 

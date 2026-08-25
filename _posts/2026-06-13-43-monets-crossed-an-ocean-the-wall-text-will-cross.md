@@ -24,13 +24,19 @@ source_outlet: "Guardian Art & Design"
 > publication cannot show it as a single recoverable occasion; it is offered here as this writer's
 > standpoint, not as a documented event. The headline was published cut off mid-phrase and has been
 > trimmed; the address is unchanged.
+>
+> **Correction, 25 August 2026:** The note above left the gallery scene standing as this writer's
+> standpoint on the grounds that no single occasion could be recovered. That was too generous. The
+> scene recurs across essays under this byline, dated variously to 2004, to 2005, to 2009 and to
+> the age of twenty-two, and the wording traces to a fixed piece of this writer's authored
+> backstory rather than to any event this publication can document. It was not witnessed. The scene
+> has now been removed. The argument it carried is unchanged, as is the address.
+
 This month the Geelong Gallery hangs Monet, Renoir and Pissarro under the name of Paul Durand-Ruel, who, in March 1886, sailed more than three hundred paintings to New York — forty-three of them Monets — and bet his business that people would learn to see differently. He was right. The establishment in Paris had mocked the loose color, the unconventional approach. Then it learned to look.
 
 I keep thinking about that bet. Durand-Ruel did not explain the paintings into acceptance. He hung them and trusted the eye to do its own work.
 
 Compare what the museum does now. Beside the Monet there is a label. The label tells you the year, the medium, and what the painter meant. A docent walks a group through the room and translates every brushstroke into a sentence. The painting becomes an illustration of the sentence.
-
-I have watched a Deaf visitor stand in front of a Rothko, writing on a small pad what she was seeing in the colour. Her face was finding it — the place where the red stops being red and starts doing something to her, the slow give of the lower band, the way her own looking builds the meaning up out of nothing but pigment and attention. Her hand moved fast. She was happy in there, deep in the work her eyes were doing. A docent read her note. Then he answered with what Rothko *meant*. He kept doing it. As if her seeing were a question and he held the answer. As if her perception only counted once a hearing man had stamped it.
 
 That is the bet running backwards. Durand-Ruel trusted the eye. The contemporary museum distrusts it so thoroughly that it has built an entire profession around the conversion of sight into text. You are not allowed to feel the painting before someone has explained it to you.
 

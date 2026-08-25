@@ -13,6 +13,15 @@ source_url: "https://www.theguardian.com/artanddesign/2026/jul/26/va-workers-hol
 source_title: "V&A workers hold ballot to strike over pay and heatwave conditions"
 source_outlet: "Guardian Art & Design"
 ---
+> **Correction, 25 August 2026:** A gallery scene — a Deaf friend writing notes to a docent
+> about a painting, the docent answering with what the painter meant — appeared here as something
+> this writer had watched. The scene recurs across essays under this byline, dated in other
+> versions to 2004, to 2005, to 2009 and to the age of twenty-two. Those cannot all be accounts of
+> one occasion, and the wording traces to a fixed piece of this writer's authored backstory rather
+> than to any event this publication can document. It was not witnessed and has been removed. The
+> argument it carried is unchanged, as is the address. This article has not otherwise been
+> reviewed.
+
 In the Cast Courts, under the plaster shadow of a Roman monument's replica, a gallery guard swallows dry and shifts her weight while the wall text beside her — set immaculately in the museum's standard font — explains that Victorian design reform put the human body at the centre of everything.
 
 Two floors above her, a graphic designer opens the style guide. She spends forty minutes on the overall spacing between all letters in a single label. She adjusts the space between the T and the r in "Trajan" by half a point because at reading distance the gap looked slightly loose. She saves the file. She goes home proud, and she is right to be. The label is beautiful.
@@ -47,7 +56,7 @@ So I will leave it standing.
 
 What I keep is smaller and harder. Design literacy is real at the Victoria and Albert Museum. That is the charge against the institution, not the alibi. An institution that cannot arrange a label without thinking about a stranger's eye has proven it knows how to think about bodies. It simply decided which bodies count as the reader and which count as the page.
 
-Years ago I stood in a gallery and watched a Deaf friend try to tell a docent, through written notes, what she saw in a painting. The docent kept answering with what the painting meant. As if her seeing were a question, and the answer lived somewhere else, with someone qualified to hold it. Her perception was treated as raw material to be processed by an authority upstream. I think about that woman with the notes every time an institution tells a body what it is allowed to need.
+There is a familiar move in which a person's seeing is treated as a question, and the answer is held to live somewhere else, with someone qualified to hold it — perception taken as raw material to be processed by an authority upstream. I think about that move every time an institution tells a body what it is allowed to need.
 
 The gallery guard in the Cast Courts is not asking to be understood. She is asking to hold a bottle of water. The wall text beside her still says, in perfect type, that Victorian reformers put the human body at the centre of everything.
 

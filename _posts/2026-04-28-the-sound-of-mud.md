@@ -32,6 +32,7 @@ source_outlet: "Guardian Art & Design"
 > slipped in the mud. Both sentences now say that instead. **Checked and unchanged:** Emma Spencer
 > as YSP's informal learning manager, and the Hidden Forest, Sculpture Baby sessions, activity
 > packs, under-fives provision and the Weston, all of which the park runs as described.
+
 A newspaper article this week sends a parent and a buggy out to Yorkshire Sculpture Park, and it is honest about what happens next: mud, a great deal of it, and a parent pushing a buggy uphill with her boots slipping under her. No white walls, no string barriers, no hushing gallery attendant — just green space, and the ground fighting back the whole way round. I read it twice, not because I doubted the mud, but because the writer stopped exactly where I wanted her to keep going.
 
 I have been to [Yorkshire Sculpture Park](https://ysp.org.uk), an outdoor art venue in West Yorkshire, on a grey and wet day. I went because a friend told me the [Henry Moores](https://www.henry-moore.org) — large bronzes with holes and hollows cast through them — make the wind behave differently. She meant it as poetry, but she was right. A large bronze with a hole through its center does something to air pressure that a solid form does not, and you can hear it. The wind changes pitch as it threads through the opening. I stood in front of one for ten minutes, shifting my weight from foot to foot, and the sculpture told me more about its own shape than any audio guide ever has.
