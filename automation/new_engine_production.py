@@ -120,7 +120,12 @@ def run_scheduled(orch, *, rehearsal: bool = False,
         return result
 
     # ── ACCEPT: run the publication-safety bridge ────────────────────────────
-    bridge = BRIDGE.evaluate(out, fact_check_fn=getattr(orch, "_run_web_fact_check", None))
+    # CURRENT_ENGINE uses the STRICT fact-check contract (strict=True): an extraction
+    # failure or a zero-claim result must reach the bridge as an explicit failure state,
+    # not as an empty-and-therefore-clean result. Legacy callers keep strict=False.
+    _fc = getattr(orch, "_run_web_fact_check", None)
+    _strict_fc = (lambda text: _fc(text, strict=True)) if _fc else None
+    bridge = BRIDGE.evaluate(out, fact_check_fn=_strict_fc)
     (root / run / "SAFETY_BRIDGE.json").write_text(
         json.dumps(bridge.summary(), indent=2, sort_keys=True, ensure_ascii=False),
         encoding="utf-8")

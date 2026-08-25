@@ -215,6 +215,43 @@ def _current_engine_ineligible(fm):
                   "granted by the publication-safety bridge)" % (v,))
 
 
+def _current_engine_strict_fact_check_missing(fm):
+    """CURRENT_ENGINE-only defense in depth (2026-08-25). Metadata validation only --
+    this re-runs NO fact check, it just refuses to trust an unsupported claim.
+
+    The bridge already refuses to stamp publication_eligible/fact_check_status without a
+    real strict world-relative fact check. This is the second lock on the same door: a
+    CURRENT_ENGINE candidate must ALSO carry the strict evidence itself --
+    fact_check_extraction_status: ok and fact_check_claims_extracted > 0. A candidate
+    written by an older/unfixed bridge, hand-edited, or copied from another run cannot
+    satisfy that, so `verified` alone can no longer buy selection.
+
+    Why it exists: on 2026-08-25 a candidate carried publication_eligible: true and
+    fact_check_status: verified while its claim extraction had actually raised. Both of
+    those fields were true-looking and unearned. The selector had no way to tell.
+
+    Legacy candidates (no engine_generation) are untouched -- they return (False, "")
+    before any field here is read, and keep their existing eligibility semantics exactly.
+    """
+    if str(fm.get("engine_generation", "")).strip() != "CURRENT_ENGINE":
+        return False, ""
+    raw_status = fm.get("fact_check_extraction_status")
+    if str(raw_status or "").strip().lower() != "ok":
+        return True, ("fact_check_extraction_status=%r (CURRENT_ENGINE requires \"ok\" -- "
+                      "positive proof the strict world-relative claim extraction actually "
+                      "succeeded; an extraction failure must never read as verified)"
+                      % (raw_status,))
+    raw_n = fm.get("fact_check_claims_extracted")
+    try:
+        n = int(raw_n)
+    except (TypeError, ValueError):
+        n = 0
+    if n <= 0:
+        return True, ("fact_check_claims_extracted=%r (CURRENT_ENGINE requires > 0 -- zero "
+                      "claims means nothing was checked against the world)" % (raw_n,))
+    return False, ""
+
+
 def _interlocked(fm):
     """True if a draft is explicitly withheld from publication by the cutover interlock.
 
@@ -322,6 +359,17 @@ def main(dry_run=False):
             print(f"  {draft.name}: SKIPPED (CURRENT_ENGINE_NOT_ELIGIBLE) — {_ce_why}; "
                   f"engine={fm.get('editorial_engine')} "
                   f"profile={fm.get('publication_safety_profile')}")
+            continue
+        # CURRENT_ENGINE strict fact-check evidence (defense in depth, 2026-08-25).
+        # Checked here rather than folded into _current_engine_ineligible so the skip
+        # reason names WHICH claim was unsupported. Legacy candidates fall straight
+        # through. No fact check is re-run; this reads metadata only.
+        _fc_bad, _fc_why = _current_engine_strict_fact_check_missing(fm)
+        if _fc_bad:
+            print(f"  {draft.name}: SKIPPED (CURRENT_ENGINE_FACT_CHECK_UNPROVEN) — {_fc_why}; "
+                  f"fact_check_status={fm.get('fact_check_status')!r} and "
+                  f"publication_eligible={fm.get('publication_eligible')!r} are NOT sufficient "
+                  f"without strict extraction evidence")
             continue
         if _interlocked(fm):
             print(f"  {draft.name}: SKIPPED (PUBLICATION_INTERLOCK) — "
