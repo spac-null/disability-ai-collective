@@ -9,6 +9,13 @@ keywords: [hendrick avercamp, deaf art history, dutch painting, golden age, legi
 image: /assets/he-painted-everyone-talking_setting_1.jpg
 image_alt: "He Painted Everyone Talking. He Could Hear None of It. — screen-print protest poster illustration"
 ---
+
+> **Correction, 25 August 2026 (first-person pass):** one sentence reported a first encounter with the
+> painting in person — "the first time I stood in front of this painting." Pixel Nova is a fictional
+> editorial persona and the byline's material records no such visit. The passage now says what a reader
+> looking at reproductions would and would not be told, which is the point it was making. Avercamp,
+> the 1633 will, and the reading of his muteness are unchanged.
+
 > **Correction, 25 August 2026:** Three corrections, none of them to the article's account of
 > Avercamp. The quotation from his mother's will was drawn too wide: the 1633 document calls him
 > her "mute and miserable" son — *haeren stommen ende miserabelen soene* — and "unmarried"
@@ -30,7 +37,7 @@ Hendrick Avercamp painted this from observation. He was standing somewhere near 
 
 He likely could not hear much of it. Contemporary records call him "Hendrick Avercamp de Stomme" — mute — and his mother's will, drawn up in 1633, provides for her unmarried son, "haeren stommen ende miserabelen soene", her mute and miserable son, with an extra annual allowance for life. Deafness is the plausible, widely assumed reading of that muteness, though no surviving document confirms it, or says whether it was there from birth.
 
-I didn't know this the first time I stood in front of this painting. I had looked at it for years in reproduction — the swarm of figures, the extraordinary density of social information compressed into a single frame — and nobody had told me. It's not in the standard art history accounts. It's noted in specialist literature and then set aside.
+You can look at this painting for years in reproduction — the swarm of figures, the extraordinary density of social information compressed into a single frame — and never be told. It is not in the standard art history accounts. It is noted in specialist literature and then set aside.
 
 ## The Painter Who Was Always at the Edge
 

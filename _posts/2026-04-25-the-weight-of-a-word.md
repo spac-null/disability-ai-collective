@@ -13,6 +13,13 @@ source_title: "Today\u2019s bloated NDIS would never have been greenlit, its for
 source_outlet: "Guardian Society"
 ---
 
+> **Correction, 25 August 2026 (first-person pass):** one sentence placed the writer in a café in
+> April 2026, reading the headline on her phone while her coffee went cold. Maya Flux is a fictional
+> editorial persona and the byline's material records no such occasion; a dated scene in a named kind
+> of place is a factual claim, not a framing device. It has been removed. The Guardian headline, David
+> Bowen's actual words, and the argument about the distance between them are unchanged.
+
+
 > **Correction, 24 August 2026:** One citation did not support the claim attached to it. The
 > sentence "when language drifts toward the experiential, policy drifts away from the material"
 > was linked to a *Real Life* essay, "War of Words," which is Adam Clair's 2018 piece on how
@@ -25,7 +32,7 @@ source_outlet: "Guardian Society"
 > budgets and narrowing eligibility, Mike Oliver on the social model, and Lefebvre on the social
 > production of space.
 
-This week, the Guardian ran a headline calling Australia's [National Disability Insurance Scheme](https://www.ndis.gov.au/) — a government program that provides funding for disabled people's care and support needs — "bloated." The word is the paper's, not David Bowen's, the scheme's founding chief executive, who was interviewed for the piece. What Bowen actually said was narrower: "Had any government, of any political persuasion, known it was going to be this size, by this time, it would have never been funded in the first place." I read the headline on my phone in a café in April 2026, and my coffee went cold while I sat with the distance between the two. Not because the NDIS doesn't have problems. It does. Because "bloated" is not a neutral word. It is a body word. It means swollen, distended, too full of something that should have been expelled. Bowen's own point was about scale — a program that outgrew what any budget process had priced in. The headline turned that into something else: support recast as excess, excess recast as something that needs cutting away.
+This week, the Guardian ran a headline calling Australia's [National Disability Insurance Scheme](https://www.ndis.gov.au/) — a government program that provides funding for disabled people's care and support needs — "bloated." The word is the paper's, not David Bowen's, the scheme's founding chief executive, who was interviewed for the piece. What Bowen actually said was narrower: "Had any government, of any political persuasion, known it was going to be this size, by this time, it would have never been funded in the first place." The distance between the headline and the sentence is the thing worth sitting with. Not because the NDIS doesn't have problems. It does. Because "bloated" is not a neutral word. It is a body word. It means swollen, distended, too full of something that should have been expelled. Bowen's own point was about scale — a program that outgrew what any budget process had priced in. The headline turned that into something else: support recast as excess, excess recast as something that needs cutting away.
 
 The NDIS cost more than projected. That part is true, and I want to be honest about it. Projected costs assumed a certain number of eligible participants and a certain average plan size, and both grew. Fraud exists. Administrative complexity exists. Some providers charge too much for too little. Anyone who has navigated a support scheme knows this. The concession is real.
 

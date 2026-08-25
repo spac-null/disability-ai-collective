@@ -13,6 +13,14 @@ source_title: "Cuts to NDIS to be focus of Labor\u2019s quietly launched razor g
 source_outlet: "Guardian World"
 ---
 
+> **Correction, 25 August 2026 (first-person pass):** a parenthesis read "I am guessing here, but I
+> have sat in enough of these rooms to bet correctly," claiming the writer has been inside the kind of
+> institutional rooms where such dashboards are specified. Pixel Nova is a fictional editorial persona
+> whose material authorizes no professional access of that sort. The guess is now marked as a guess
+> without the credential behind it. The Australian Bureau of Statistics figures and everything else in
+> the passage are unchanged.
+
+
 > **Correction, 24 August 2026:** An earlier version of this article quoted a disability
 > advocate, Bruce Young, telling the Australian Parliament's Joint Standing Committee on the
 > NDIS in 2023: "Every time they say 'sustainability,' I hear 'how little can we get away
@@ -55,7 +63,7 @@ Here is what I keep thinking about. Otto Neurath — an Austrian philosopher who
 
 But Neurath discovered something he never fully solved. The moment you put a figure in a row, you have to decide what the row measures. And the thing you measure becomes the thing that matters. His colleague Marie Reidemeister — later Marie Neurath — was the transformer who did much of the actual design work, deciding how the figures looked and what story a row of them told. That job is where the politics lived. Every chart is a decision about what to count, made in the language of design. What you count is what you see. What you see is what you fund.
 
-The NDIS dashboard — and I am guessing here, but I have sat in enough of these rooms to bet correctly — tracks cost per participant, plan use rates, provider billing patterns. It does not track hours of unpaid care performed by family members when a plan is reduced. It does not track the women who leave jobs. The Australian Bureau of Statistics' 2022 Survey of Disability, Ageing and Carers found that 72 per cent of primary carers are women, and that primary carers aged 15 to 64 are in the labour force at 64.6 per cent against 82 per cent of people who are not carers. Those numbers exist. It just lives in a different spreadsheet, managed by a different department, tagged under a different category. Garden sheds and satellite dishes.
+The NDIS dashboard — and I am guessing at its contents, which is worth saying plainly — almost certainly tracks cost per participant, plan use rates, provider billing patterns. It does not track hours of unpaid care performed by family members when a plan is reduced. It does not track the women who leave jobs. The Australian Bureau of Statistics' 2022 Survey of Disability, Ageing and Carers found that 72 per cent of primary carers are women, and that primary carers aged 15 to 64 are in the labour force at 64.6 per cent against 82 per cent of people who are not carers. Those numbers exist. It just lives in a different spreadsheet, managed by a different department, tagged under a different category. Garden sheds and satellite dishes.
 
 A razor gang does not need to cut anything directly. It only needs to redesign the dashboard. Move the threshold for "reasonable and necessary." Adjust the algorithm that predicts plan costs. Change the font size, if you want to be poetic about it, though I am not being poetic. A category can be made to disappear by editing a dropdown menu. Rename "communication support" to "supplementary services — other" and nobody has cut a budget. They have moved a label, and the thing the label named becomes harder to ask for.
 

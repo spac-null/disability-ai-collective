@@ -10,6 +10,16 @@ excerpt: "The stone that carries your sound will not carry you up its three step
 keywords: [accessibility in architecture, Janskerk Utrecht, acoustic design, disability exclusion, Sins Invalid]
 ---
 
+> **Correction, 25 August 2026 (first-person pass):** this article reported attending both buildings
+> it compares — being guided up the Janskerk's steps "every time I have gone," sitting through four
+> hours of Feldman's *For Philip Guston* at the Bridgewater Hall, and a later visit to the Janskerk
+> after a ramp was installed. Siri Sage is a fictional editorial persona and the byline's material
+> records none of these occasions. An earlier note today removed one such claim from this article and
+> left the others, which was inconsistent; all are now gone. The two buildings, their acoustics, their
+> access arrangements and the trade-off between them are unchanged, and so is the listening standpoint
+> the argument is made from.
+
+
 > **Correction, 25 August 2026 (wound rule):** this article reported a first-person visit as
 > something that happened. This publication has since decided that a persona's authored material is
 > not evidence that an event occurred, and that a visit or occasion is a factual claim whether or
@@ -48,9 +58,9 @@ What nobody names is that the pleasure and the injury arrive together. Not one a
 
 ---
 
-Two buildings. The first: the Janskerk in Utrecht, a Romanesque church founded shortly after 1040. A long reverberation at middle frequencies. A choir singing there produces overtones the singers cannot control. The building finishes the music. Every time I have gone, someone has guided me up the steps. Every time I said thank you like it was nothing.
+Two buildings. The first: the Janskerk in Utrecht, a Romanesque church founded shortly after 1040. A long reverberation at middle frequencies. A choir singing there produces overtones the singers cannot control. The building finishes the music. It is also reached by steps, which means the way in for a lot of people runs through someone else's arm, and through the thank-you that follows.
 
-The second: the [Bridgewater Hall](https://www.bridgewater-hall.co.uk/) in Manchester, opened in 1996. Accessible from every entrance — level access, hearing loops, tactile wayfinding on every floor. I have sat through Feldman's *For Philip Guston* there — four hours of it. A seat easy to reach. A hall built to include me.
+The second: the [Bridgewater Hall](https://www.bridgewater-hall.co.uk/) in Manchester, opened in 1996. Accessible from every entrance — level access, hearing loops, tactile wayfinding on every floor. It is a hall you could sit in for the four hours of Feldman's *For Philip Guston* and reach your seat without asking anyone for anything. A hall built to include me.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-room-that-sings-and-the-three-steps-that-stop-me_moment_2.jpg" alt="architectural cross-section diagram torn and reassembled like Dada collage illustration for The Room That Sings and the Three Steps That Stop Me" width="800" height="450" loading="lazy" decoding="async">
@@ -82,6 +92,6 @@ What neither of us says: acoustic engineers know how to preserve reverberation t
 
 [Mia Mingus](https://leavingevidence.wordpress.com/) writes about [access as a practice of love](https://leavingevidence.wordpress.com/2018/11/03/disability-justice-is-simply-another-term-for-love/), not a checklist. Love names the full weight of what it costs.
 
-The last time I went to the Janskerk there was a ramp at the door. I walked in alone. I clapped once, and the stone gave it back, and I was inside the room on my own terms and still listening to what the room does.
+Put a ramp at the door of the Janskerk and the arithmetic changes. You walk in alone. You clap once, and the stone gives it back, and you are inside the room on your own terms and still listening to what the room does.
 
 *This article was inspired by [Support Disability Justice! (Campaign Update)](https://sinsinvalid.org/support-disability-justice-campaign-update/) from sinsinvalid.org.*
