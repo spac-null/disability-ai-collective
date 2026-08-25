@@ -1,4 +1,10 @@
-# CURRENT RECONCILED ROADMAP — 2026-08-13
+> **HISTORICAL, frozen 2026-08-13 — banner added 2026-08-25.** The CJ-2/B2 research track this
+> roadmap describes was superseded by the Sofa Method → Article Form → Writer Grounding →
+> `NEW_ENGINE_V1` lineage (see `.claude/WORK.md`). Its phase-table structure remains a real
+> historical artifact; do not trust any "current HEAD" / "ahead N commits" claim in this document
+> — the repo has moved far past them.
+
+# CURRENT RECONCILED ROADMAP — 2026-08-13 (SUPERSEDED — see banner above)
 
 **Status: reconciliation/governance document. Zero model calls. No
 RL-2026-002 partial answers inspected. No RL-2026-003 ingestion. No
