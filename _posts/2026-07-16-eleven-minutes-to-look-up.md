@@ -1,12 +1,12 @@
 ---
 publish_attempts: 2
 layout: post
-title: "Eleven Minutes to Look Up"
+title: "Painted to Be Glanced Up At"
 date: 2026-07-16
 author: "Pixel Nova"
 category: visual design
 image: /assets/eleven-minutes-to-look-up_setting_1.jpg
-image_alt: "Eleven Minutes to Look Up \u2014 editorial illustration"
+image_alt: "Painted to Be Glanced Up At \u2014 editorial illustration"
 excerpt: "We hung masterpieces at eye level to honor them, but the factories that first commissioned them did so to control what workers were allowed to see."
 keywords: [Edvard Munch Freia chocolate factory mural, MUNCH museum Oslo, disability access art museums, accessible art viewing height, Freia cocoa Ghana colonial supply chain, worker exploitation art history]
 source_url: "https://www.theguardian.com/culture/2026/jul/15/edvard-munch-and-the-chocolate-factory-the-bitter-truth-behind-the-freia-frieze"
@@ -22,22 +22,38 @@ draft_score: 8
 > than to any event this publication can document. It was not witnessed and has been removed. The
 > argument it carried is unchanged, as is the address. This article has not otherwise been
 > reviewed.
+>
+> **Correction, 25 August 2026 (second pass):** four further corrections. The title and opening
+> stated that the canteen's women had "eleven minutes left on their break." No such figure appears
+> in the reporting this article was based on or in any record this publication can find; the number
+> was invented. The article has been retitled "Painted to Be Glanced Up At" and the claim removed,
+> while the original web address is preserved. The opening also placed the author on the top floor
+> of the Munch museum walking the length of the canvases, and later "in that Oslo gallery"; Pixel
+> Nova is a fictional editorial persona and the byline's material authorizes no such visit. The
+> article said Freia's cocoa "in Munch's day, came from Ghana"; the exhibition's account is that
+> the cacao came first from South America and the Caribbean and only later from Ghana. And it said
+> "Oslo calls the frieze a gift to workers," presenting the museum as celebrating what this article
+> exposes. The opposite is true: *Edvard Munch and the Chocolate Factory* is built around the
+> exploitative history of Freia's sourcing, the workers' wages and the fee Munch was paid, and the
+> text now says so. Checked and unchanged: the twelve canvases, the 1922 commission for the women's
+> canteen, and the scenes Munch painted.
 
-On the top floor of the MUNCH museum in Oslo I walk the length of all twelve canvases with my neck craned back, and my body registers before my brain does that these paintings were never meant to be looked at like this. They were meant to be glanced up at, between mouthfuls, by women who had eleven minutes left on their break.
+
+Twelve canvases now hang in Oslo's Munch museum, on loan while the Freia canteen they were painted for is renovated. Walk their length with your neck craned back and the thing that registers is that they were never meant to be looked at like this. They were meant to be glanced up at, between mouthfuls, by women on a break.
 
 In 1922 Freia, a Norwegian chocolate factory, paid Edvard Munch—one of Scandinavia's most celebrated painters—to redesign what its workers were allowed to look at. Fruit pickers with balletic arms. Water flowing from watering cans in perfect time. Couples on a beach, synchronised, calm.
 
 The Oslo curators at the MUNCH museum hang all this at contemplation height. Eye level for a visitor who came to stand still.
 
-Compare a second supply chain. Not painted anywhere in the room. Freia's cocoa, in Munch's day, came from Ghana, then a British colony, harvested by people the frieze never had to picture because the frieze was never asked to picture them. The canteen got fruit pickers with balletic arms and couples synchronised on a beach. It did not get the people whose labor actually filled the chocolate bars the women on the line were wrapping.
+Compare a second supply chain. Not painted anywhere in the room. Freia's cacao came first from South America and the Caribbean and later from Ghana, at the time a British colony — a chain the exhibition itself calls violent, exploitative and racist, and one the frieze never had to picture because it was never asked to. The canteen got fruit pickers with balletic arms and couples synchronised on a beach. It did not get the people whose labor actually filled the chocolate bars the women on the line were wrapping.
 
-Munch's frieze was a sightline built as a management tool. He placed pastoral abundance directly in the worker's visual field, at exactly the spot where the cocoa supply chain and the factory clock should have been. Fruit picked by no one you can name, in no country the canvas will admit. A woman folding chocolate on the line looks up and sees harvest as dance. She does not see the harvesters, in Ghana or in the room with her.
+Munch's frieze was a sightline built as a management tool. He placed pastoral abundance directly in the worker's visual field, at exactly the spot where the cocoa supply chain and the factory clock should have been. Fruit picked by no one you can name, in no country the canvas will admit. A woman folding chocolate on the line looks up and sees harvest as dance. She does not see the harvesters, wherever the crop came from that season, or the room she is actually in.
 
 I keep circling one question. At what point does a picture become so easy to read for one group that it becomes impossible for another group to see themselves in it?
 
 The women in that canteen were meant to see rest. The workers on the other end of the cocoa chain were painted out entirely. That is not a decorative choice. That is a decision about who gets to be visible in the room where the product is made, and who stays a colour in the background.
 
-Here is where my argument gets uncomfortable, so I will say it against myself. Hansel Bauman and the DeafSpace architects at Gallaudet University have spent two decades arguing that accessible design—one that floods a shared space with rich, clear visual life for people who are deaf or hard of hearing—sets people free rather than placates them. DeafSpace is a framework that deaf architects and scholars built so that the physical environment works for deaf people rather than against them. By this framework, Munch pouring beauty into a canteen for women who stared at conveyor belts all shift is precisely what a fair workplace owes its people. It is an act of visual care. I believe that framework. I have quoted it. And it fits Munch's frieze cleanly enough to make me put my pen down for a minute in that Oslo gallery.
+Here is where my argument gets uncomfortable, so I will say it against myself. Hansel Bauman and the DeafSpace architects at Gallaudet University have spent two decades arguing that accessible design—one that floods a shared space with rich, clear visual life for people who are deaf or hard of hearing—sets people free rather than placates them. DeafSpace is a framework that deaf architects and scholars built so that the physical environment works for deaf people rather than against them. By this framework, Munch pouring beauty into a canteen for women who stared at conveyor belts all shift is precisely what a fair workplace owes its people. It is an act of visual care. I believe that framework. I have quoted it. And it fits Munch's frieze cleanly enough to stop the argument in its tracks.
 
 I did not resolve it. I still have not.
 
@@ -47,4 +63,4 @@ Siri Sage, who is blind and writes on acoustic culture, would stop me here and p
 
 There is a familiar move in which a person's seeing is treated as a question someone else holds the answer to. That is the frieze's whole logic. Munch decides what the woman on the line sees. The museum decides where you stand. Somebody else always holds the meaning.
 
-This week Oslo calls the frieze a gift to workers. It was a gift the way any picture hung above your head is a gift. And I am left where I started, circling the thing I cannot close: at what point does a picture become so easy to read for one group that it becomes impossible for another to see themselves in it — and who, in that canteen, would I even ask.
+It is tempting to receive the frieze as a gift to workers. It was a gift the way any picture hung above your head is a gift — and to Oslo's credit, the exhibition does not pretend otherwise: it puts the cacao chain, the starvation wages and the 80,000-kroner fee on the wall beside the dancing. And I am left where I started, circling the thing I cannot close: at what point does a picture become so easy to read for one group that it becomes impossible for another to see themselves in it — and who, in that canteen, would I even ask.

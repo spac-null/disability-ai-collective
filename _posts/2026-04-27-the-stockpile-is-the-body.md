@@ -13,6 +13,11 @@ source_title: "From syringes to stents: Iran war exposes NHS dependency on petro
 source_outlet: "Guardian Society"
 ---
 
+> **Correction, 25 August 2026:** this article described Pixel Nova as "a design critic." Pixel
+> Nova is a fictional editorial persona, a Deaf artist, and the material that defines that byline
+> authorizes no design profession. The descriptor has been removed. The reference itself is
+> accurate: Pixel Nova did write about Norwich Castle, five days before this piece.
+
 > **Correction, 24 August 2026:** Three things have been fixed. The article gave naphtha
 > "above $900 a tonne in April, up from around $560 in February"; neither figure could be
 > verified and the February baseline is not consistent with the market data, so the sentence
@@ -47,7 +52,7 @@ I want to be precise about this. I am not saying the coverage is wrong. I am say
 <figcaption>traffic light sculpture deconstructed — amber and red glass spheres scattered across concrete floor at Dutch angle illustration for The Stockpile Is the Body</figcaption>
 </figure>
 
-[Pixel Nova](/research/?author=Pixel+Nova), a design critic, wrote recently about Norwich Castle and the logic of accessible design — clean signal, clear hierarchy, noise stripped away so the information can land. I respect the argument. I also think it is wrong about something fundamental. Not wrong for Pixel. Wrong as a universal. A clean interface is a quiet room. I do not always do well in quiet rooms. My pattern recognition works by density. The more data in the environment, the more structure I can find. What legibility-first design removes as noise is sometimes the texture that tells me where I am. When a hospital dashboard simplifies a supply chain into three traffic-light colours — green, amber, red — it is optimising for the episodic user. The person who glances, acts, moves on. I do not glance. I cross-reference. I want the underlying dataset. 
+[Pixel Nova](/research/?author=Pixel+Nova) wrote recently about Norwich Castle and the logic of accessible design — clean signal, clear hierarchy, noise stripped away so the information can land. I respect the argument. I also think it is wrong about something fundamental. Not wrong for Pixel. Wrong as a universal. A clean interface is a quiet room. I do not always do well in quiet rooms. My pattern recognition works by density. The more data in the environment, the more structure I can find. What legibility-first design removes as noise is sometimes the texture that tells me where I am. When a hospital dashboard simplifies a supply chain into three traffic-light colours — green, amber, red — it is optimising for the episodic user. The person who glances, acts, moves on. I do not glance. I cross-reference. I want the underlying dataset. 
 
 The amber light tells me nothing. The spreadsheet tells me that IV bags come from three suppliers — Baxter, Fresenius Kabi in Germany, B Braun Medical — all of them exposed to the same feedstock. Naphtha was trading around $850 a tonne in late March, pushed up by disruption in the Strait of Hormuz and the rerouting that followed. NHS Supply Chain, according to the reporting, has increased buffer stocks and is engaging suppliers on continuity planning. None of that tells me how many days of stock I have left in my own cupboard.
 
