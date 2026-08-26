@@ -10,18 +10,6 @@ image: /assets/she-took-the-score-and-asked-it-a-different-question_setting_1.jp
 image_alt: "She Took the Score and Asked It a Different Question — screen-print protest poster illustration"
 ---
 
-> **Correction, 25 August 2026:** several errors have been fixed. The number 126,144,000 in
-> *All Day* was glossed as "the seconds in four years"; MoMA's catalogue entry for the drawing
-> records it as an approximate count of rest bars adding up to the thirty-two years of silence Kim
-> had lived when she made it, and the medium is ink, not marker. *Shit Hearing People Say to Me* was
-> called a series of infographic pie charts; it is one hand-drawn chart of fourteen equal wedges.
-> The claim that oralism "ensured that signing left no record, no score, no archival trace" is false
-> — the National Association of the Deaf's *Preservation of the Sign Language* films, begun in 1913,
-> were made precisely to leave one. Two first-person claims not authorized for this byline have been
-> removed: a profession ("I design information systems") and a gallery visit. An unexplained claim
-> about a nineteenth-century writing reform has gone, and the closing note's mangled italics are
-> fixed. The account of *Degrees of Deaf Rage*, the works' dates and Kim's biography are unchanged.
-
 The piece is called *Degrees of Deaf Rage*.
 
 It's a series of drawings. Each one uses the notation from a protractor — the arc, the degree markings, the clean geometry of measured angles — to calibrate anger. Ten degrees. Forty-five. A hundred and twenty. The visual language says: this is a measurement system. The content says: the thing being measured is what hearing culture does to Deaf people, catalogued and quantified in the same notation used for geometry homework.
@@ -80,7 +68,7 @@ The first question worth asking of an information system is: what does it assume
 
 Every system has an answer. Most systems don't know they're answering.
 
-Musical notation assumes pitched sound produced at a pace that can be captured in standard note values. The alphabet assumes a body that can hear phonemes. The "Getting Here" page assumes a visitor who navigates through hearing — who can ask directions, hear announcements, orient by audio cues.
+Musical notation assumes pitched sound produced at a pace that can be captured in standard note values. The alphabet assumes a body that can hear phonemes. A gallery's "Getting Here" page assumes a visitor who navigates through hearing — who can ask directions, hear announcements, orient by audio cues.
 
 Christine Sun Kim's work makes the assumption visible and asks it to step aside.
 
@@ -89,3 +77,5 @@ Not permanently. Not by destroying the notation. By using it to record what it w
 ---
 
 *Christine Sun Kim (b. 1980, Orange County) is a Deaf Korean American artist working across drawing, video, and performance. Her work includes the* Degrees of Deaf Rage *drawings,* Time Owes Me Rest Again *(2022),* Cues On Point *(2022), and* All Day *(2012). She lives and works in Berlin.*
+
+_**Revision note, 26 August 2026:** An earlier version glossed the number 126,144,000 in All Day as the seconds in four years. MoMA's catalogue entry records it as an approximate count of how many rest bars would add up to the thirty-two years of silence Kim had lived when she made the drawing, whose medium is ink, pastel and charcoal rather than marker. Shit Hearing People Say to Me was called a series of infographic pie charts; it is one hand-drawn chart of fourteen equal wedges. An earlier version also claimed that oralism ensured signing left no record, no score and no archival trace. That is false, and the article now says so: the National Association of the Deaf's Preservation of the Sign Language films, begun in 1913, were made precisely to leave one. Two first-person claims this publication cannot document about this byline have been removed, a profession and a gallery visit, along with an unexplained claim about a nineteenth-century writing reform._

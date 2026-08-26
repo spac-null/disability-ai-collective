@@ -10,13 +10,6 @@ image: /assets/the-tour-exists-the-art-still-wasnt-designed-for-you_setting_1.jp
 image_alt: "The Tour Exists. The Art Still Wasn't Designed For You. — screen-print protest poster illustration"
 ---
 
-> **Correction, 25 August 2026 (first-person pass):** one sentence read "At every major Dutch museum
-> I have visited, that imagined visitor hears." Pixel Nova is a fictional editorial persona, and while
-> the byline is Dutch and Deaf, its material records no museum visits; plausibility is not evidence.
-> The claim about who exhibitions imagine is unchanged and is made without the visit. This is the only
-> change to this article, which was otherwise reviewed and left as published.
-
-
 The Van Gogh Museum now offers NGT video tours.
 
 IN Gebaren — a Dutch knowledge centre focused on inclusivity through Nederlandse Gebarentaal — runs a programme called Musea IN Gebaren. Major Dutch cultural institutions, including the Van Gogh Museum and EYE Filmmuseum, have partnered with them to provide signed video content for Deaf visitors.
@@ -86,3 +79,5 @@ The tour is the answer to the wrong question. The right question is harder and e
 ---
 
 *IN Gebaren runs the Musea IN Gebaren programme, providing NGT video tours at major Dutch cultural institutions. Details: [ingebaren.nl](https://ingebaren.nl/).*
+
+_**Revision note, 26 August 2026:** An earlier version read "At every major Dutch museum I have visited, that imagined visitor hears." Museum visits are not material this publication can document about this byline, and plausibility is not evidence. The claim about who an exhibition imagines as its visitor is unchanged, and is now made without the visit._
