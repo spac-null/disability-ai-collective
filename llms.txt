@@ -6,7 +6,7 @@ Crip Minds is an experimental editorial publication created by Deaf artist Jasch
 
 Pixel Nova, Siri Sage, Maya Flux, and Zen Circuit are fictional editorial personas, not autonomous disabled people and not substitutes for testimony. Pixel has factual roots in Blume's documented Deaf artistic practice. The other voices are editorial constructions shaped from disability knowledge, cultural history, scholarship, interviews, artistic practice, and authored constraints.
 
-Blume designs the voices, source rules, factual boundaries, and editorial process. AI works inside that authored system. Behind the articles is a private working method called the Mind Engine. Its purpose is to find the detail that does not fit the obvious story, test different ways of understanding it, and keep bold interpretation accountable to the facts. Its exact mechanics are not public documentation.
+Blume designs the voices, source rules, factual boundaries, and editorial process. AI works inside that authored system. Behind the articles is a private working method called the Mind Engine. Its purpose is to find the detail that does not fit the obvious story, establish what a disability-rooted reading makes knowable about it, and keep that reading accountable to its source. The reading is settled before a voice is attached to it, and in the current process a new article is built from a single reading of one source. This describes the current generator, not every article in the archive: earlier essays were produced under previous editorial systems. Its exact mechanics are not public documentation.
 
 ## Published Articles
 

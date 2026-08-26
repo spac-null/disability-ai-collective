@@ -17,31 +17,29 @@ permalink: /research/camouflaging/
     "name": "Crip Minds",
     "url": "https://cripminds.com"
   },
+  {%- comment -%}
+    hasPart advertises only the readable members of this collection. The single source
+    of truth for withdrawal is the post's own `withdrawn` frontmatter, the same rule
+    index.html and research.html use. Withdrawn pages stay live, keep their canonical
+    URL and their visible withdrawal notice; they are simply not presented to machines
+    as active Article members of the collection.
+  {%- endcomment -%}
+  {%- assign member_slugs = "camouflaging-is-not-a-skill,the-theory-that-could-not-see-half-the-room,the-pattern-that-waited,dont-mourn-for-us-the-sentence-that-changed-the-argument" | split: "," -%}
   "hasPart": [
+{%- assign emitted = 0 -%}
+{%- for member_slug in member_slugs -%}
+{%- assign member = site.posts | where: "slug", member_slug | first -%}
+{%- if member and member.withdrawn != true -%}
+{%- if emitted > 0 -%},{%- endif -%}
+{%- assign emitted = emitted | plus: 1 %}
     {
       "@type": "Article",
-      "name": "Camouflaging Is Not a Skill",
-      "url": "https://cripminds.com/2026/06/17/camouflaging-is-not-a-skill/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "The Theory That Could Not See Half the Room",
-      "url": "https://cripminds.com/2026/06/14/the-theory-that-could-not-see-half-the-room/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "The Pattern That Waited",
-      "url": "https://cripminds.com/2026/04/02/the-pattern-that-waited/",
-      "author": { "@type": "Organization", "name": "Crip Minds" }
-    },
-    {
-      "@type": "Article",
-      "name": "Don't Mourn for Us: The Sentence That Changed the Argument",
-      "url": "https://cripminds.com/2026/06/16/dont-mourn-for-us-the-sentence-that-changed-the-argument/",
+      "name": {{ member.title | jsonify }},
+      "url": {{ member.url | absolute_url | jsonify }},
       "author": { "@type": "Organization", "name": "Crip Minds" }
     }
+{%- endif -%}
+{%- endfor %}
   ]
 }
 </script>
@@ -50,7 +48,7 @@ permalink: /research/camouflaging/
 
   <header class="section section--secondary text-center">
     <div class="container">
-      <div class="post-category-label" style="margin-bottom: 1rem;">Zen Circuit · Research Thread</div>
+      <div class="post-category-label" style="margin-bottom: 1rem;">Zen Circuit · Collection</div>
       <h1 class="text-h1 mb-4">Autism Camouflaging</h1>
       <p class="text-lead text-secondary max-w-2xl mx-auto">
         Camouflaging is not a social skill. The clinical literature largely agrees —
@@ -132,11 +130,11 @@ permalink: /research/camouflaging/
         <p class="text-small text-muted mb-1">About the voice</p>
         <p class="text-body mb-2">
           <a href="/collective/zen-circuit/" class="text-primary font-weight-semibold">Zen Circuit</a>
-          is a fictional Neurodivergent-rooted editorial persona. This thread examines what
+          is a fictional Neurodivergent-rooted editorial persona. This collection examines what
           camouflaging research chose to measure, what it treated as success, and which costs disappeared.
         </p>
         <p class="text-small text-muted mb-0">
-          <a href="/research/" class="text-primary">All research threads →</a>
+          <a href="/research/" class="text-primary">All Collections →</a>
         </p>
       </div>
 

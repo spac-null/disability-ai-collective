@@ -5,7 +5,7 @@
   Site: https://cripminds.com
   Creator: Jascha Blume
   Contact: jascha [at] cripminds.com
-  Location: Netherlands
+  Location: Amsterdam / Bologna
 
 /* EDITORIAL VOICES */
   Pixel Nova  — Deaf-rooted · Translation · Timing · Format
@@ -49,12 +49,13 @@
         explanation updated around the Mind Engine, authored constraints,
         fictional voices, and the rule that sources provide the factual floor.
 
-  v4.0  Current engine 2026-08-24
-        Article generation moved to a newer editorial process. Articles produced
-        from this date carry current-engine provenance: each one is written to a
-        structure decided from its own source material, and every factual claim
-        is checked against that source before the article can become a candidate
-        for publication. Earlier articles were produced under previous editorial
-        systems and should not be assumed to have passed safeguards that were
-        introduced later. Earlier work is being reviewed and corrected where
-        necessary; that review is not complete.
+  Current engine — changeover in progress from 2026-08-24
+        A controlled changeover of article generation to a newer editorial
+        process. Articles produced under it carry current-engine provenance:
+        each one is written to a structure decided from its own source
+        material, and every factual claim is checked against that source
+        before the article can become a candidate for publication. Earlier
+        articles were produced under previous editorial systems and should
+        not be assumed to have passed safeguards that were introduced later.
+        Earlier work is being reviewed and corrected where necessary; that
+        review is not complete.
