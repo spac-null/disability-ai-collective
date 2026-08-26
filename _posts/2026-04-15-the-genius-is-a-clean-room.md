@@ -13,19 +13,6 @@ source_title: "V&A East collection review \u2013 a dazzling wealth of inspiratio
 source_outlet: "Guardian Art & Design"
 ---
 
-> **Correction, 24 August 2026:** The "Cyborg Manifesto" was published in 1985; it was
-> collected in Donna Haraway's 1991 book *Simians, Cyborgs, and Women*, which this article
-> conflated with the essay itself. Two links did not resolve — the one given for Haraway and
-> the one given for V&A East — and have been removed. Thomas J Price's sculpture is named here
-> now: *A Place Beyond* (2026), eighteen feet tall, his largest, built from an amalgamation of
-> images, 3D scans and observations rather than specifically from local faces. A dated
-> first-person passage — three weeks in May 2023 building a spreadsheet that revealed a
-> 90-minute energy cycle, and a colleague who adopted it and called it a productivity hack —
-> was written as fact, is not supported, and has been removed; the point it carried is now made
-> directly. Checked and unchanged: Aalto's Paimio Sanatorium as a "medical instrument," and the
-> Paimio chair's reclining angle designed to ease a tuberculosis patient's breathing.
-
-
 A new museum opened in east London this month and a reviewer called it a place to "fire up the geniuses of the future." I read that sentence three times. Not because it was wrong. Because I recognised the shape of it. The genius is always singular, always future-tense, always about to arrive. The genius has no process, only spark. The genius does not need accommodations because the genius transcends the room.
 
 I have been the wrong kind of smart in enough rooms to know what that sentence is actually doing.
@@ -71,3 +58,5 @@ The chair sits in the gallery reclined at exactly the angle Aalto calculated, ad
 ---
 
 *This article was prompted by [V&A East collection review – a dazzling wealth of inspiration to fire up the geniuses of the future](https://www.theguardian.com/artanddesign/2026/apr/15/v-and-a-east-collection-review-london-the-music-is-black-a-british-story) from Guardian Art & Design.*
+
+_**Revision note, 26 August 2026:** An earlier version placed the "Cyborg Manifesto" in Donna Haraway's 1991 collection *Simians, Cyborgs, and Women*, conflating the book with the essay, which was published in 1985. Thomas J Price's sculpture outside V&A East is now named — *A Place Beyond* (2026), eighteen feet tall, his largest, built from an amalgamation of images, 3D scans and observations rather than from any one person — and two links that did not resolve have been removed. A dated first-person passage, three weeks in May 2023 spent building a spreadsheet that revealed a 90-minute energy cycle, was written as fact and is not supported; the point it carried is now made directly. Aalto's Paimio Sanatorium as a "medical instrument" and the Paimio chair's reclining angle are unchanged._

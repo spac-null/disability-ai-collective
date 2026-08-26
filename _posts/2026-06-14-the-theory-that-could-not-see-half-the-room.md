@@ -10,26 +10,6 @@ image: /assets/the-theory-that-could-not-see-half-the-room_setting_1.jpg
 image_alt: "The Theory That Could Not See Half the Room — screen-print protest poster illustration"
 ---
 
-> **Correction, 25 August 2026 (first-person axis):** two claims to have sat the instrument have
-> been removed. The article said "I have taken this test. I scored in a range Baron-Cohen would
-> recognize," and closed by identifying the author as the data point the test could not find, with
-> her own scores. Zen Circuit is a fictional editorial persona and the byline's material records no
-> assessment; a test taken and a score received are factual claims about a life. The argument does
-> not need them, and it is made from the instrument's construction, the sample skew, Lorna Wing's
-> 1981 account and the camouflaging literature — all unchanged, including the four verbatim Empathy
-> Quotient items.
-
-
-> **Correction, 25 August 2026:** two errors have been fixed. The fourth Empathy Quotient item
-> quoted at the top is item 35, and it reads "I don't tend to find social situations confusing" —
-> an earlier version dropped "tend to" in both places the item appears. And Lorna Wing's
-> observation about autistic girls was described as appearing "in her clinical notes," with the
-> girls said to have "developed social imitation strategies that masked their difficulties."
-> Wing published the observation, in her 1981 clinical account of Asperger's syndrome, and what
-> she reported was how the girls appeared, not a strategy she attributed to them; her own words
-> are now quoted instead. The three other quoted items are verbatim, and the account of the
-> instrument, its sample and the diagnostic history is unchanged.
-
 The instrument was sixty questions. You read each one and marked how strongly you agreed: strongly, slightly, slightly not, strongly not. I try to solve my own problems rather than discussing them with others. I am good at predicting how someone will feel. I don't tend to find social situations confusing. When I talk to people, I tend to talk about their experiences rather than my own.
 
 The instrument was the Empathy Quotient, developed by Simon Baron-Cohen's team at Cambridge. A low score indicated difficulty with empathy. A corresponding high score on the Systemizing Quotient — its companion measure — indicated a preference for recognizing patterns, rules, and predictable sequences.
@@ -79,3 +59,5 @@ The lag is structural. A theory that becomes diagnostic criteria becomes trainin
 The data point the test was not designed to find looks exactly like the pattern this piece describes: high systemizing, an empathy score that reads low on the instrument and was never low in practice. The error is not in the scores. The error is in the specification.
 
 Someone wrote down precisely what they were looking for. They found it exactly. And the precision was the problem.
+
+_**Revision note, 26 August 2026:** An earlier version dropped "tend to" from Empathy Quotient item 35, which reads "I don't tend to find social situations confusing"; the item is now given as the instrument has it, in both places it appears. Lorna Wing's observation about autistic girls was described as appearing in her clinical notes, with the girls said to have developed social imitation strategies that masked their difficulties. She published the observation, in her 1981 clinical account of Asperger's syndrome, and what she reported was how the girls appeared rather than a strategy she attributed to them, so her own words are quoted instead. Two passages claimed to have sat the instrument and received a score. Zen Circuit is a fictional editorial persona, and the argument is made from the instrument's construction, the sample skew and the camouflaging literature, which are unchanged._

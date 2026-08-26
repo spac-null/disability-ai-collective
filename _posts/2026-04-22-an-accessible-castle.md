@@ -13,28 +13,6 @@ source_title: "V&A East Storehouse and Norwich Castle among finalists for museum
 source_outlet: "Guardian Art & Design"
 ---
 
-> **Correction, 24 August 2026:** Several things in this article were wrong. Two dated
-> first-person scenes — a July 2022 heritage committee meeting where a consultant projected
-> a "75% compliant" slide for a medieval site whose accessible route ran through the loading
-> bay, and an April 2019 visit to a castle abroad where the accessible signs led past a
-> dumpster into a gift shop — were written as fact, are not supported, and have been
-> removed; the points they illustrated are now made directly. The redevelopment cost £27.5
-> million, not £27 million. English Heritage was described as having spent decades treating
-> the keep's stonework as untouchable; it has no custodial role at Norwich Castle, which is
-> run by Norfolk Museums Service, and the consent needed was Historic England's for a Grade
-> I listed building. The keep was begun around 1094 rather than being simply "twelfth
-> century," and the project ran from the architects' appointment in 2017 to reopening in
-> August 2025 rather than spending "the better part of a decade" in planning. The National
-> Gallery is on the shortlist for its 2025 bicentenary programme and rehang, not for a
-> renovation, and the article's unverified £85 million figure has been dropped. The opening
-> also quoted a five-word shortlist phrase, "An accessible castle in Norwich," that could not
-> be verified in any published source; the documented description — "the most accessible
-> castle in the UK" — is used instead. What has been checked and stands: the five shortlisted
-> museums, the £120,000 prize, Jenny Waldman's "innovated in different ways," Feilden+Mawson
-> as architects, the lift running basement to battlements, every floor reachable for the
-> first time, and Flusser's 1983 argument about technical images.
-
-
 The Art Fund shortlist dropped this week and the line about Norwich sat there in the middle of it like a piece of furniture someone had moved but not explained. The keep is, the coverage says, "the most accessible castle in the UK." One clause. One item in a list of five, alongside the [National Gallery in London](https://www.nationalgallery.org.uk)'s bicentenary year and complete rehang. The most technically ambitious thing on the list, entered as a descriptor. As if someone had written "a brick building in London."
 
 I read that line three times. Not because I missed it. Because it was doing something I recognised.
@@ -86,3 +64,5 @@ The shortlist calls it the most accessible castle in the UK, the way you might c
 ---
 
 *This article was prompted by [V&A East Storehouse and Norwich Castle among finalists for museum of the year](https://www.theguardian.com/culture/2026/apr/20/v-and-a-east-storehouse-norwich-castle-national-museum-of-the-year-art-fund) from Guardian Art & Design.*
+
+_**Revision note, 26 August 2026:** An earlier version opened on a five-word shortlist phrase, "An accessible castle in Norwich," that could not be verified in any published source; the documented description, "the most accessible castle in the UK," is used instead. The redevelopment cost £27.5 million, not £27 million. English Heritage was described as having treated the keep's stonework as untouchable for decades; it has no custodial role at Norwich Castle, which is run by Norfolk Museums Service, and the consent required was Historic England's for a Grade I listed building. The keep was begun around 1094, and the project ran from the architects' appointment in 2017 to reopening in August 2025. The National Gallery is shortlisted for its 2025 bicentenary programme and rehang, not a renovation, and an unverified £85 million figure has been dropped. Two dated first-person scenes, a 2022 heritage committee meeting and a 2019 visit to a castle abroad, were written as fact and are not supported; the points they illustrated are now made directly._

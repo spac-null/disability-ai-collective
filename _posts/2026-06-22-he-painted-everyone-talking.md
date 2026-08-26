@@ -10,27 +10,6 @@ image: /assets/he-painted-everyone-talking_setting_1.jpg
 image_alt: "He Painted Everyone Talking. He Could Hear None of It. — screen-print protest poster illustration"
 ---
 
-> **Correction, 25 August 2026 (first-person pass):** one sentence reported a first encounter with the
-> painting in person — "the first time I stood in front of this painting." Pixel Nova is a fictional
-> editorial persona and the byline's material records no such visit. The passage now says what a reader
-> looking at reproductions would and would not be told, which is the point it was making. Avercamp,
-> the 1633 will, and the reading of his muteness are unchanged.
-
-> **Correction, 25 August 2026:** Three corrections, none of them to the article's account of
-> Avercamp. The quotation from his mother's will was drawn too wide: the 1633 document calls him
-> her "mute and miserable" son — *haeren stommen ende miserabelen soene* — and "unmarried"
-> describes him but is not inside the quoted phrase. It is now given as the document has it. The
-> section on reading a city claimed that "the placement of a gendarm" dates an Amsterdam street
-> plan; there is no such feature, and the passage now refers to the Amsterdammertje bollards and
-> the three Saint Andrew's crosses they actually carry. And that section was written as this
-> writer's own childhood and career — "I grew up in Amsterdam", "I have spent my career asking" —
-> which this publication cannot support; it is now put as the question rather than the
-> autobiography. **Checked and unchanged:** *Winter Landscape with Ice Skaters*, c. 1608, is in the
-> Rijksmuseum and on display in room 2.6; the roughly two hundred figures; the amorous couple by
-> the hay; Avercamp's dates, 1585–1634; *de Stomme van Kampen* as his contemporary identifier; and
-> that no surviving document confirms deafness or its onset, which the article already said. The
-> address is unchanged.
-
 There's a painting in the Rijksmuseum. *Winter Landscape with Ice Skaters*, around 1608. A frozen canal, grey sky, two hundred figures in various states of motion. People are skating. People are fishing through holes in the ice. People are arguing, embracing, falling, selling things. A man is kissing a woman behind a hay wagon. A child has fallen and three adults are looking at something else entirely.
 
 Hendrick Avercamp painted this from observation. He was standing somewhere near the canal — at the edge, probably, or on the ice itself — watching. Making notes. Returning to his studio to compose.
@@ -106,3 +85,5 @@ I hope you know who painted them now.
 ---
 
 *Hendrick Avercamp (1585–1634) was a Dutch Golden Age painter, documented in his own lifetime as mute and widely believed to have been deaf, known for his densely populated winter landscapes. He spent most of his career in Kampen, in the eastern Netherlands. The Rijksmuseum holds several of his works.*
+
+_**Revision note, 26 August 2026:** An earlier version quoted the 1633 will of Avercamp's mother more widely than the document supports. It calls him her "mute and miserable" son — *haeren stommen ende miserabelen soene* — and "unmarried" describes him without sitting inside the quoted phrase; the quotation is now given as the will has it. The section on reading a city dated an Amsterdam street plan by "the placement of a gendarm," a feature that does not exist, and now refers to the Amsterdammertje bollards and the three Saint Andrew's crosses they carry. That section, and a sentence reporting a first encounter with the painting in person, were written as this writer's own childhood, career and gallery visit. Pixel Nova is a fictional editorial persona, and both passages are now put as the question they were asking rather than as autobiography. The painting, its date and room, the roughly two hundred figures, Avercamp's dates and *de Stomme van Kampen* are unchanged._
