@@ -8,6 +8,8 @@ excerpt: "The visa ties the care worker to the employer. The absence of alternat
 keywords: [health and care visa, care workers, disability care, care labor, captive market, migrant care workers, disability infrastructure]
 image: /assets/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions_setting_1.jpg
 image_alt: "Both Ends of the Care Contract Are Tied to the Same Post — screen-print protest poster illustration"
+redirect_from:
+  - /2026/06/20/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions/
 ---
 
 > **Correction, 25 August 2026:** this article has been corrected twice on the same day.

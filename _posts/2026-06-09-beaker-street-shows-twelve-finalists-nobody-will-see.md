@@ -32,7 +32,8 @@ source_outlet: "Guardian Art & Design"
 > meeting this writer attended. **Checked and unchanged:** the twelve Beaker Street finalists
 > exhibited at the Tasmanian Museum and Art Gallery from 6 to 17 August, the blue mushrooms,
 > the bioluminescent bloom and the satellite trails, and the account of false-colour
-> astronomical imaging. This article has not otherwise been reviewed.
+> astronomical imaging. At the time of this correction, this article had not otherwise been
+> fully reviewed.
 
 The [Tasmanian Museum and Art Gallery](https://www.tmag.tas.gov.au/) will exhibit twelve science photographs from August 6 to 17. Blue mushrooms. Glowing seas. Satellite trails across the night sky. The images were shot for [Beaker Street](https://beakerstreet.org.au/), a festival that bills itself as a celebration of science communication. The photographs are gorgeous. They will be mounted on walls. And approximately zero blind visitors will experience them.
 

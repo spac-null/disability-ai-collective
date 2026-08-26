@@ -13,6 +13,8 @@ source_url: "https://www.theguardian.com/australia-news/2026/jul/19/national-ai-
 source_title: "Government use of automated AI decision-making to be curbed under new Australian rules"
 source_outlet: "Guardian World"
 draft_score: 8
+redirect_from:
+  - /2026/07/22/fourteen-nodes-on-nicholson-street/
 ---
 > **Correction, 25 August 2026:** this article was built on a scene that did not happen and an
 > opponent that did not exist. It opened in "the Centrelink office on Moore Street in Footscray, in

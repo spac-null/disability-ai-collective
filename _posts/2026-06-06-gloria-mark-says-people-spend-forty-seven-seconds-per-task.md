@@ -11,6 +11,8 @@ keywords: [Gloria Mark, attention span research, 47-second attention span, scree
 source_url: "https://www.technologyreview.com/2026/06/05/1138427/are-ai-chatbots-making-us-lose-control-of-our-brains/"
 source_title: "Are AI chatbots making us lose control of our brains?"
 source_outlet: "MIT Tech Review"
+redirect_from:
+  - /2026/06/06/gloria-mark-says-people-spend-three-minutes-per-task/
 ---
 
 > **Correction, 25 August 2026 (first-person axis):** two passages have been rewritten. The article

@@ -13,6 +13,8 @@ source_url: "https://www.theguardian.com/culture/2026/jul/15/edvard-munch-and-th
 source_title: "Edvard Munch and the Chocolate Factory: the bitter truth behind the Freia frieze"
 source_outlet: "Guardian Art & Design"
 draft_score: 8
+redirect_from:
+  - /2026/07/16/eleven-minutes-to-look-up/
 ---
 
 > **Correction, 25 August 2026 (review status):** a note below states that this article has not

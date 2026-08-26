@@ -8,6 +8,8 @@ excerpt: "A migrant care worker won £28,843.53 at tribunal. It changed nothing 
 keywords: [swan care solutions, employment tribunal, health and care visa, sponsored workers, visa curtailment, migrant care workers]
 image: /assets/swan-care-is-appealing-the-appeal-is-the-mechanism_setting_1.jpg
 image_alt: "Winning the Case Does Not Turn Off the Clock — screen-print protest poster illustration"
+redirect_from:
+  - /2026/06/19/swan-care-is-appealing-the-appeal-is-the-mechanism/
 ---
 
 > **Correction, 25 August 2026:** this article was rebuilt on 8 August 2026 without a

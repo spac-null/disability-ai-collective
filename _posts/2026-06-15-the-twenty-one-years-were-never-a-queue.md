@@ -11,6 +11,8 @@ keywords: [Ehlers-Danlos syndrome, hypermobility diagnosis delay, Kathryn Berg, 
 source_url: "https://www.theguardian.com/society/2026/jun/15/uk-hypermobility-sufferers-wait-diagnosis-study-ehlers-danlos"
 source_title: "UK hypermobility sufferers wait up to 21 years for diagnosis, study suggests"
 source_outlet: "Guardian Society"
+redirect_from:
+  - /2026/06/15/jane-green-counted-the-doctors-not-the-years/
 ---
 
 > **Correction, 24 August 2026:** This article's URL still carries an earlier headline naming
