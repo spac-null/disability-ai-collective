@@ -9,20 +9,6 @@ keywords: [Jitske Kramer, permanent liminality, Tricky tijden, corporate anthrop
 image: /assets/the-threshold-has-a-curb_setting_1.jpg
 image_alt: "The Threshold Has a Curb — screen-print protest poster illustration"
 ---
-> **Correction, 25 August 2026:** This article misdescribed the concept it is arguing with. It
-> said Kramer "presents permanent liminality as a condition people are now learning to navigate —
-> as if the threshold is something that recently appeared", and built its objection on that
-> supposed claim of novelty. She does not present it that way. In *Tricky tijden*, liminaliteit is
-> the in-between time of a change, and permanente liminaliteit is what is left when the return
-> never completes — a state she treats as a danger, bred by a culture of unboundedness, with the
-> never-ending divorce battle and the war that does not stop as her examples. The description and
-> the objection have both been rewritten so the disagreement is with what the book says. The
-> campfire was also described as gathering to "wait until the path reveals itself"; Kramer's
-> campfire conversations are for interpreting and connecting the collective story, alongside
-> rituals that mark transitions, and that is now how it is put. **Checked and unchanged:** Jitske
-> Kramer is a corporate anthropologist; *Tricky tijden* was published by Boom on 28 March 2024; and
-> the liminality tradition she draws on runs through Arnold van Gennep and Victor Turner. The
-> address is unchanged.
 
 Jitske Kramer writes about organizations that don't know what to do next.
 
@@ -68,7 +54,7 @@ Permanent liminality in the organizational sense is shared. Permanent liminality
 
 Kramer's liminality is epistemological. The organization cannot see the path forward. The uncertainty is in the knowledge, or the absence of it.
 
-What I live in is different in kind. The city knows what to do. The building code specifies what an accessible entrance looks like. The architect knew, the planning department knew, the building owner knows. The retrofit that would fix the step at the entrance costs less than the annual maintenance budget for the lift that doesn't work. None of this is unknown.
+What I live in is different in kind. The city knows what to do. The building code specifies what an accessible entrance looks like. The architect knew, the planning department knew, the building owner knows. The retrofit that would fix the step at the entrance is a costed, specifiable job. None of this is unknown.
 
 The threshold I'm at is not produced by uncertainty. It is produced by decisions — made with full knowledge of the consequences, made by people with the resources to act differently. The campfire is accessible in principle. It has not been made accessible in practice.
 
@@ -88,3 +74,5 @@ The campfire is warm. The path to it is cold and has steps.
 ---
 
 *Jitske Kramer is a corporate anthropologist. Her book Tricky tijden was published by Boom in March 2024.*
+
+_**Revision note, 26 August 2026:** An earlier version said Jitske Kramer presents permanent liminality as a condition that recently appeared and that people are now learning to navigate, and built its objection on that supposed claim of novelty. In *Tricky tijden*, liminaliteit is the in-between time of a change and permanente liminaliteit is what is left when the return never completes — a state she treats as a danger, bred by a culture of unboundedness, with the never-ending divorce battle and the war that does not stop as her examples. The description and the objection have both been rewritten so the disagreement is with what the book says, and her campfire is now given as a place for interpreting and connecting the collective story, alongside rituals that mark transitions. A sentence asserting that the retrofit fixing an entrance step costs less than the annual maintenance budget for a broken lift was an unsupported comparison and no longer makes the claim. Kramer as a corporate anthropologist, *Tricky tijden* from Boom in March 2024, and the Van Gennep and Turner lineage are unchanged._
