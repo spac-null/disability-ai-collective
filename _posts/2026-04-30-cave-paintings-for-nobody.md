@@ -13,24 +13,6 @@ source_title: "Co-Working Meets Art at Brooklyn\u2019s Newest Experimental Space
 source_outlet: "Hyperallergic"
 ---
 
-> **Correction, 24 August 2026:** The reporting this article is built on checks out in full —
-> Florian Meisenberg as curator, 1000 Dean Street, the departed guitar-string manufacturer
-> D'Addario, more than forty artists, the "cave paintings" comparison, both of his quoted
-> remarks, and the one-in-five commercial vacancy figure are all in the cited Hyperallergic
-> piece. The comparison built around it does not. A three-day exercise in October 2023 mapping
-> fourteen decision points in a converted Rotterdam warehouse, with counts of how many relied on
-> small grey text, was written as first-hand research and is not supported. A May 2022 visit to
-> De Appel "after they moved into a former garage on the Scheldeplein" is wrong on the facts: De
-> Appel has occupied the Brouwersgracht, Prinseneiland, Nieuwe Spiegelstraat, Prins Hendrikkade
-> and Broedplaats Lely, and the Scheldeplein garage is an unrelated building. The claim that the
-> Rotterdam warehouse drew coverage in three design magazines while De Appel's renovation drew
-> none went with it. A conversation with an unnamed architect in Ghent in March 2024, quoted at
-> length admitting to signing off egress he knew was wrong, is also unsupported and has been
-> removed; the point it made is now made directly. A quotation attributed to Lebbeus Woods at a
-> 2009 Cooper Union lecture could not be found and is now presented as this article's reading of
-> his work; he built little but not nothing, so "never built" has gone too. The link given for
-> Meisenberg does not resolve and has been removed.
-
 A fourth-floor office in Prospect Heights, repurposed as a gallery this April. Cubicle walls still standing. Art hung on HVAC systems, tucked into utility closets, slotted into a metal recycling bin. The curator, Florian Meisenberg, called the leftover whiteboard scrawls from a previous tenant "cave paintings." He told [Hyperallergic](https://hyperallergic.com): "I didn't change anything, I love it."
 
 I believe him. That's the problem.
@@ -72,3 +54,5 @@ And there is a mechanism underneath that, which is duller than aesthetics and do
 Meisenberg's whiteboards still carry motivational slogans from the previous tenants. He preserved them. He finds them dystopic. I find them precise: they are instructions for navigating a space that was built for one purpose and is now being used for another, and nobody updated the instructions.
 
 The signs still say what they always said. Nobody changed the room they point to.
+
+_**Revision note, 26 August 2026:** The reporting this article is built on checks out in full — Florian Meisenberg as curator, 1000 Dean Street, the departed guitar-string manufacturer, more than forty artists, the "cave paintings" comparison, both quoted remarks and the one-in-five commercial vacancy figure are all in the cited Hyperallergic piece. The comparison built around it did not. A three-day exercise mapping fourteen decision points in a converted Rotterdam warehouse was written as first-hand research and is not supported; a described 2022 visit to De Appel "after they moved into a former garage on the Scheldeplein" was wrong on the facts, since De Appel has never occupied that building; and a claim that the warehouse drew coverage in three design magazines while De Appel's renovation drew none went with them. A conversation with an unnamed architect in Ghent, quoted at length admitting to signing off egress he knew was wrong, is also unsupported and has been removed; the point it made is now made directly. A quotation attributed to Lebbeus Woods at a 2009 lecture could not be found and is now given as this article's reading of his work, and "never built" has become the accurate "built very little." A link for Meisenberg that does not resolve has been removed._

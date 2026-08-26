@@ -10,35 +10,6 @@ excerpt: "There are arts venues that have won accessibility awards. There are De
 keywords: [accessibility design, wayfinding for disabled people, inclusive information architecture, Universal Design, neurodiversity in public spaces]
 ---
 
-> **Correction, 25 August 2026 (first-person axis):** two claims have been removed. The article
-> opened on its author circling a celebrated South London arts venue in October darkness for eleven
-> minutes, looking for the entrance. Pixel Nova is a fictional editorial persona and the byline's
-> material places no one at that building on that evening; a located, timed visit is a factual claim
-> however unnamed the venue. The opening now describes the pattern, which is what the section goes
-> on to analyse. The article also referred to "every access page I've ever audited" — a profession.
-> The note below records that a claim to be hired to audit information systems was removed from this
-> page in August; this phrase survived that removal and has now gone the same way. Berlage's
-> Gemeentemuseum, the Centraal Museum, Christine Sun Kim's *All. Day.* and the argument about
-> wayfinding are unchanged.
-
-
-> **Correction, 24 August 2026:** This article's authority rested on claims that are not
-> supported. It stated that the author designs information systems for a living and has been
-> hired by institutions to audit their information systems, and it opened with a section
-> describing a fire alarm at age nine that "defined my entire career," including an unnamed
-> venue director quoted saying "we update it when someone complains." None of that is
-> supported; all of it has been removed, and the arguments it carried are now made directly.
-> Christine Sun Kim's *All. Day.* (2012) was described as charting "the volume levels of her
-> daily life as perceived by hearing people around her." The work is real but is a drawing of
-> the arc her hand travels to sign "all day" in ASL, annotated with a musical rest bar and the
-> number of seconds in a day; the description has been corrected and the link, which returned
-> a 404, replaced. The Centraal Museum's entrance works ran across the 2010s rather than in
-> 2019 alone, and Berlage's design principle is now presented as this article's reading rather
-> than his stated position. The published text also broke off mid-sentence in its final line;
-> that sentence has been completed. Checked and unchanged: Berlage's Gemeentemuseum, completed
-> 1935, and the Centraal Museum's integrated, level approach.
-
-
 The phone says you have arrived. The building disagrees.
 
 This is the ordinary shape of it. A venue's website promises a door right here. Level access. Three bus routes. A cheerful photograph of the entrance, taken from inside a car park that is closed to the public. What the "Getting Here" page does not say is that the entrance is around a blind corner, marked by a sign you can only read if someone already told you it exists; that there is a four-lane road with no crossing between the bus stop and the building; that the tactile paving was obliterated by resurfacing and nobody updated the page.
@@ -140,3 +111,5 @@ One is logistical. One is architectural. One tells you what to do before you arr
 The "Getting Here" page does the opposite. It flattens a power structure into a uniform list so the hierarchy disappears. The bus route and the wheelchair ramp occupy the same visual weight. But they're not the same. One is infrastructure that exists for everyone. The other is an accommodation that was fought for, legislated, and maintained only as long as someone checks.
 
 Typographic hierarchy could be used to make that power visible. Bold for what the institution controls. Regular weight for what the visitor controls. Italic for what no one controls—the construction on the corner, the broken lift, the weather. This isn't a gimmick. **It's an admission that access is distributed across actors, and the institution is only one of them.**
+
+_**Revision note, 26 August 2026:** An earlier version rested on claims this publication cannot support: that its author designs information systems for a living and had been hired by institutions to audit them, and an opening scene describing a fire alarm at the age of nine that "defined my entire career," including an unnamed venue director quoted on updating access pages when someone complains. All of it has been removed and the arguments it carried are made directly. A timed visit circling a South London arts venue has gone the same way; the opening now describes the pattern the section goes on to analyse. Christine Sun Kim's *All. Day.* (2012) was described as charting the volume of her daily life as perceived by hearing people; it is a drawing of the arc her hand travels to sign "all day" in ASL, annotated with a musical rest bar and the number of seconds in a day, and the description and link are corrected. The Centraal Museum's entrance works ran across the 2010s rather than in 2019 alone, Berlage's design principle is now given as this article's reading rather than his stated position, and a final line that broke off mid-sentence has been completed. Berlage's Gemeentemuseum, completed 1935, is unchanged._

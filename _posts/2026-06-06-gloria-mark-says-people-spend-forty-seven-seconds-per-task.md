@@ -15,29 +15,6 @@ redirect_from:
   - /2026/06/06/gloria-mark-says-people-spend-three-minutes-per-task/
 ---
 
-> **Correction, 25 August 2026 (first-person axis):** two passages have been rewritten. The article
-> described the author listening to articles at 2.8x speed while making breakfast, with her hands
-> chopping vegetables, and closed on wind chimes ringing in her kitchen. Screen-reader use follows
-> from the premise this byline carries; the domestic scene, the speed figure and the wind chimes do
-> not — a possession and a household are factual claims, and the same wind chimes appear in another
-> article under this byline, which is what borrowed material looks like. Both now make their point
-> without the scene. Gloria Mark's figures and the period they come from, and Schafer's argument as
-> the note below restates it, are unchanged.
-
-
-> **Correction, 24 August 2026:** Two attributions in this article were wrong. It said
-> office workers "now" switch tasks every forty-seven seconds; that figure comes from
-> research Gloria Mark conducted between 2014 and 2020, and the article now says so. It also
-> credited R. Murray Schafer with revealing that "sighted people do not notice most of what
-> they hear." Schafer argued that acoustic overload had left people in general less able to
-> hear nuance; the narrowing to sighted people was this article's own extension and is now
-> presented as such. Everything else has been checked against the cited MIT Technology
-> Review piece and stands: Mark spoke with the magazine at SXSW London, and her figures —
-> two and a half minutes in 2003, about seventy-five seconds in 2012, forty-seven seconds in
-> the 2014–2020 research — are reported accurately. At the time of this correction, this article's URL still
-> contained an earlier headline's "three minutes per task"; it has since been replaced with a
-> corrected canonical URL.
-
 Gloria Mark has been studying attention spans for thirty years. At SXSW London last week, she sat down with MIT Tech Review, a technology publication, and went through the numbers: in 2003 the average user held attention on a task for around two and a half minutes; by 2012 that had shrunk to about seventy-five seconds; in research she conducted between 2014 and 2020 it was down to forty-seven seconds. The number gets repeated. People worry about their focus. They wonder if AI chatbots are making them lose control of their brains.
 
 I keep thinking about what that forty-seven-second figure actually measures. Time on screen. Cursor movement. Application switching. Click patterns. All visual proxies for attention. The study design assumes that what you are looking at is what you are attending to. This does not hold for everyone.
@@ -79,3 +56,5 @@ But blind people have been navigating information differently for as long as the
 What the panic about AI and attention misses is that the baseline it wants to return to was never universal. The forty-seven-second figure, the screen-time guilt, the fear of fractured focus — all of it assumes there is a right way to take in the world, and deviation is decline. But I have never had the luxury of thinking my way of processing information is the default. I have always had to translate. The tools that sighted people worry are breaking their brains are tools I already use to build mine.
 
 The instrument decided what counted as attention, and then the finding was the instrument's.
+
+_**Revision note, 26 August 2026:** An earlier version said office workers "now" switch tasks every forty-seven seconds; the figure comes from research Gloria Mark conducted between 2014 and 2020, and the article says so. It credited R. Murray Schafer with finding that sighted people do not notice most of what they hear; Schafer argued that acoustic overload had left people in general less able to hear nuance, and the narrowing is now marked as this article's own extension. A domestic scene — listening at 2.8x speed while chopping vegetables, closing on wind chimes in a kitchen — was removed: screen-reader use follows from this byline's premise, but a household and its contents are factual claims, and the same wind chimes appeared in another article under the same byline. Mark's figures, reported at SXSW London to MIT Technology Review, are unchanged: two and a half minutes in 2003, about seventy-five seconds in 2012, forty-seven seconds in the 2014–2020 research. This article's URL previously carried an earlier headline's "three minutes per task" and was replaced with a corrected canonical._
