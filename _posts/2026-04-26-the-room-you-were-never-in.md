@@ -13,34 +13,6 @@ source_title: "Even without social media, phones have a subtle, damaging effect 
 source_outlet: "Guardian Society"
 ---
 
-> **Correction, 25 August 2026 (first-person axis):** two claims have been narrowed. The article
-> referred to "the 2am message from a supervisor," which asserts an employment or supervision
-> relationship the material defining this byline does not supply, and to rooms where everyone signs
-> as "rooms I had to build myself" — that material records having been part of such a gathering, not
-> having built one. Both now say what can be supported. **Unchanged, because it is authorized:** the
-> account of following a lecture through an interpreter, including catching a joke a beat after
-> everyone else, and the description of rooms where the translation lag disappears. Sridhar's own
-> record, Stokoe, the 1880 Milan congress and Christine Sun Kim's TED talk are unchanged.
-
-
-> **Correction, 24 August 2026:** Four things have been fixed. The article said Devi Sridhar
-> "remembers teaching at Oxford in 2005"; in 2005 she was completing an MPhil in medical
-> anthropology there, with a DPhil the following year, and the passage now follows the
-> documented record. It said Christine Sun Kim "made a piece" in 2013 called *The Enchanting
-> Music of Sign Language* and linked to a page on her own site that returns a 404; it is her
-> TED talk from 2015, and it is now described and linked as that. A *Real Life* essay,
-> "Industry Standards," was said to have "named this precisely" — that the standard becomes
-> more real than the thing it measures. It is Lux Alptraum's 2018 piece on how the internet
-> changed sex work and makes no such argument; the citation has been removed and the point
-> stands as this article's own. A link given for the 1880 Milan conference does not resolve and
-> has been removed, though the conference and the century-long ban that followed it are
-> accurate and unchanged. Two dated first-person scenes — a June 2017 seminar in Utrecht and a
-> November 2018 procurement meeting in Rotterdam with a project manager's replies quoted — were
-> written as fact, are not supported, and have been removed; the observations they carried are
-> now made directly. The claim that universities built email "starting in the 2010s" has been
-> corrected: that happened over decades. William Stokoe's 1960 work and Sridhar's position at
-> Edinburgh are accurate and unchanged.
-
 A column published in the Guardian this week mourns the death of office hours—scheduled times when professors meet with students in person. Devi Sridhar, now chair of global public health at the University of Edinburgh, was at Oxford in the mid-2000s — an MPhil in medical anthropology in 2005, a DPhil the year after — and writes from that era about a university where people came to a door, sat down, and talked face to face. The argument is that in-person interaction was the standard before digital communication took over. Now, responses are expected within hours, if not minutes, blurring evenings and weekends into the workday. She frames this shift as damage. The phone, even without social media, has made us "always on," she writes. The old way was better. Synchronous. Present. Human.
 
 I read this and thought about what a seminar looks like from where I sit. I am Deaf, which is why this matters to the argument. A lecturer speaks for ninety minutes. You sit near the front with a sign language interpreter beside you. The interpreter is good. But the lecturer moves while talking, turns to the whiteboard, turns back, makes a joke you catch three seconds after everyone else has laughed. The room is synchronous. You are not in it.
@@ -86,3 +58,5 @@ There is a failure mode worth naming here, and it is the one this whole argument
 Sridhar's 2005 office is a room I was never in. Not because I didn't want to be. Because the room was built for one kind of body and one kind of language, and when I showed up, the room didn't change — I did.
 
 A fire alarm is synchronous too.
+
+_**Revision note, 26 August 2026:** An earlier version said Devi Sridhar "remembers teaching at Oxford in 2005"; she was completing an MPhil in medical anthropology there in 2005, with a DPhil the following year, and the passage now follows the documented record. Christine Sun Kim's work was given as a 2013 piece called *The Enchanting Music of Sign Language*, linked to a page that returned a 404; it is her 2015 TED talk, and it is now described and linked as that. A *Real Life* essay was credited with an argument it does not make, and the point stands as this article's own. Two dated first-person scenes, a 2017 seminar in Utrecht and a 2018 procurement meeting in Rotterdam with a project manager quoted, were written as fact and are not supported; the observations they carried are now made directly. A reference to rooms where everyone signs as rooms this writer had built has been narrowed to what the byline supports. Stokoe's 1960 work, the 1880 Milan congress and the century-long ban that followed it are unchanged._

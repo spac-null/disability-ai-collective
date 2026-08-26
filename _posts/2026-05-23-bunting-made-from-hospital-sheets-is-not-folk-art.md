@@ -13,22 +13,6 @@ source_title: "Near death experiences, \u2018crip memes\u2019 and the tyranny of
 source_outlet: "Guardian Art & Design"
 ---
 
-> **Correction, 25 August 2026:** this article credited two artists who are not in *Flare Up* and
-> do not appear in the reporting it was based on. It described "the tremor in Sarah Chen's linework"
-> and "the forced interruptions in Marcus Williams' paintings"; no such artists were shown, and both
-> names have been removed, along with a passage describing paintings that "stop mid-gesture, resume
-> days later in slightly different paint," which describes no work in the exhibition. The artists
-> actually shown include Benoît Piéron, whose bunting is cut from hospital sheets, Bella Milroy,
-> who draws on DWP envelopes, Avril Corroon, Derek Jarman, Racheal Crowther, Abi Palmer and Lizzy
-> Rose, and the article now cites real work. Three other corrections: the phrase "art powered by
-> illness and disability" was attributed to the exhibition's press release and used to argue that
-> the curators chose it for Arts Council England funding applications — the phrase is the Guardian's
-> own description of the show, not the curators', and that funding claim, which nothing supports,
-> has been removed. Mariana Lemos was quoted as saying the phrase is common "in the disabled
-> community"; she said the "'crip' community," and she is now quoted exactly. And the DWP's refusal
-> to publish its internal reviews into benefit-related deaths was credited to The Independent in
-> 2021; it was reported by Disability News Service in December 2020.
-
 An exhibition is on at CCA Goldsmiths in London, called *Flare Up*. The Guardian introduced it as a show of "art powered by illness, chronic conditions, disability, neurodivergence and deafness." Powered is the wrong verb. A turbine is powered. A generator is powered. Art made while dying from DWP sanctions is not powered by anything. It is made despite, or because there is nothing else left to do with your hands while you wait for the appeal letter.
 
 That verb does a particular kind of work. It turns a condition into a supply. And once constraint reads as fuel, the specific thing a body did to the work becomes hard to describe: Benoît Piéron's bunting is cut from hospital sheets, and Bella Milroy's drawings are made on the brown A5 envelopes the Department for Work and Pensions sends. Those are not conditions that powered anything. They are the materials that were within reach.
@@ -56,3 +40,5 @@ Piéron's hospital-sheet bunting is beautiful. I mean that without irony. But ca
 The DWP refuses to publish information from its secret internal reviews into benefit-related deaths. Disability News Service reported that refusal in December 2020, and the department has gone on contesting disclosure since. The letters keep arriving. The artists keep drawing on them.
 
 What else would you do with the evidence?
+
+_**Revision note, 26 August 2026:** An earlier version credited two artists who are not in *Flare Up* and do not appear in the reporting it was based on, describing "the tremor in Sarah Chen's linework" and "the forced interruptions in Marcus Williams' paintings." No such artists were shown; both names have been removed, along with a passage describing paintings that stop mid-gesture and resume days later, which describes no work in the exhibition. The artists actually shown include Benoît Piéron, whose bunting is cut from hospital sheets, and Bella Milroy, who draws on DWP envelopes, and the article now cites real work. The phrase "art powered by illness and disability" was attributed to the exhibition's press release and used to argue that the curators chose it for Arts Council England funding applications; the phrase is the Guardian's own description of the show, and that funding claim, which nothing supports, has been removed. Mariana Lemos was quoted as saying the phrase is common "in the disabled community"; she said the "'crip' community," and she is quoted exactly. The DWP's refusal to publish its internal reviews into benefit-related deaths was credited to The Independent in 2021; it was reported by Disability News Service in December 2020._

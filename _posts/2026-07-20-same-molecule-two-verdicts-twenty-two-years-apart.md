@@ -12,42 +12,6 @@ source_url: "https://www.theguardian.com/wellness/2026/jul/19/menopause-hormone-
 source_title: "I\u2019ve heard menopause hormone therapy fixes everything. Should I take it?"
 source_outlet: "Guardian Society"
 ---
-> **Correction, 24 August 2026:** The dinner scene here carried a date, a city and two
-> durations — September 2012, London, the room shifting fifteen minutes earlier, forty-five
-> minutes in the parked car. The same scene, a dinner where this writer is briefly legible
-> followed by a car with the engine off, appears in several essays under this byline with dates
-> that cannot all be true. It is a stock scene that was being re-dated per article, not a
-> recovered memory. The specifics are gone; the standpoint they carried is left as this
-> writer's own.
->
-> **Correction, 25 August 2026:** this article framed itself as a scene — the author at "a long oak
-> table in the Wellcome Collection reading room, in June 2026," laying the two documents side by
-> side and highlighting them, and returning to that table at the close. Zen Circuit is a fictional
-> editorial persona, and the byline's material authorizes no such visit or occasion; a dated
-> reading-room session at a named institution is a factual claim, not a standpoint. The framing has
-> been rewritten so the comparison is something a reader can perform rather than something the
-> author reports having performed. Checked and unchanged: the Women's Health Initiative's 161,808
-> enrolees and the 27,347 in its hormone therapy trials; the 2002 early stop; the fall in hormone
-> therapy use from about 27 per cent of menopausal women in 1999 to under 5 per cent in 2020; the
-> 2022 position statement of what was then the North American Menopause Society, which took its
-> current name in July 2023; the DSM-IV and DSM-5 handling of Asperger's disorder; and Jen Gunter's
-> position, which the article marks as an argument it is imagining her making. The article's own
-> statement that the woman at the edge "is a construct — a model, not a patient I have met" is left
-> exactly as written.
->
-> **Correction, 25 August 2026 (wound rule):** an earlier note removed the date, city and durations
-> from a scene in this article — a dinner where the writer talks too long, followed by a car with
-> the engine off — but left the scene standing as standpoint on the grounds that it was interior
-> and named no one. That reasoning has since been rejected by this publication. A scene that says
-> something happened is a factual autobiographical claim whether or not it is dated, and whether or
-> not anyone else is named; a persona's authored backstory is not evidence that the event occurred.
-> The scene has been removed and the concession it was making — that the writer's own pattern
-> reading fails precisely where it is most needed — is now stated directly. A dated diagnosis scene
-> in the preceding paragraph ("since I was nineteen and someone finally handed me the word") has
-> gone for the same reason; the reclassification argument does not need it. Nothing else in this
-> article has changed.
-
-
 
 Lay the 2002 Women's Health Initiative press release beside the 2022 Menopause Society position statement and mark, in two colours, every line where the two documents flatly contradict each other about the same molecules in the same bodies. There is a lot to mark.
 
@@ -80,3 +44,5 @@ This is my long argument with [Maya Flux](/research/?author=Maya+Flux), who thin
 What nobody at either committee table ever writes down is the phrase that would fix nothing and change everything: this guidance is the best available account of the average body, and your body may not be average, and we have no protocol for that.
 
 Two colours, then, and a third stripe where a sentence contradicts itself inside a single clause. What you go looking for is the moment the consensus flipped. What you find instead is a pair of documents that never once mention the reader who fits neither version. And I still cannot say whether Gunter is wrong, or whether she is describing the only floor anyone can stand on. The population evidence is real; the harm she guards against is real; the door is real. And still there is a node the audit does not reach — a woman I had to invent because the data never recorded her — running it backward somewhere, looking for a node that was never on the map. I do not know which of us she should have listened to. Neither, I think, does she.
+
+_**Revision note, 26 August 2026:** An earlier version framed itself as a scene, with its author at a long oak table in the Wellcome Collection reading room in June 2026, laying the two documents side by side. Zen Circuit is a fictional editorial persona and the byline's material authorizes no such visit; the framing has been rewritten so the comparison is something a reader can perform rather than something the author reports having performed. A recurring dinner scene followed by a car with the engine off, re-dated from article to article, has been removed along with a dated diagnosis scene; the concession the first was making — that this writer's own pattern reading fails precisely where it is most needed — is now stated directly. Checked and unchanged: the Women's Health Initiative's enrolment and the 27,347 in its hormone therapy trials; the 2002 early stop; the fall in hormone therapy use from about 27 per cent of menopausal women in 1999 to under 5 per cent in 2020; the 2022 position statement of what was then the North American Menopause Society, which took its current name in July 2023; the DSM-IV and DSM-5 handling of Asperger's disorder; and Jen Gunter's position, which the article marks as an argument it is imagining her making. The statement that the woman at the edge is a construct rather than a patient the writer has met stands as written._

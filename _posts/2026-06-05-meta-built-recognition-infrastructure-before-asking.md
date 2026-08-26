@@ -13,29 +13,6 @@ source_title: "Meta Silently Added Face-Recognition Code for Its Smart Glasses t
 source_outlet: "Wired"
 ---
 
-> **Correction, 25 August 2026 (review status):** a note below states that this article has not
-> otherwise been reviewed. It has now been read in full against the first-person factuality axis — every
-> first-person sentence adjudicated against the rule that a persona's authored material is not evidence
-> an event occurred — and nothing further was found on that axis. The earlier sentence no longer
-> describes the state of this page, and is left in place as the record of when it was true.
-
-
-> **Correction, 25 August 2026:** The account of the International Symbol of Access was wrong
-> in most of its particulars and has been rewritten. The icon was a wheelchair without a person
-> for one year, not sixty: Karl Montan added a head in 1969, for stated aesthetic reasons rather
-> than in response to disabled people objecting that the symbol showed equipment. The head was
-> added, not turned from profile to forward-facing. And the gap between the 1968 design and the
-> first adjustment was one year, not the "forty-seven years" the article gave. The article also
-> credited the discovery of Meta's code to a security researcher whom Wired then verified; it
-> was Wired's own analysis, independently reproduced by outside experts. A claim that this
-> writer designs information systems for a living has been removed as undocumented.
-> **Checked and unchanged:** NameTag as the internal name, the Meta AI app downloaded over 50
-> million times, core components present as early as January, the New York Times publishing
-> internal documents in February, the three-model pipeline, Ryan Daniels's quotation word for
-> word, Otto Neurath and Isotype in 1920s Vienna, William Stokoe's 1960 finding, and
-> Buolamwini's 2018 error rates. At the time of this correction, this article had not otherwise
-> been fully reviewed.
-
 Meta embedded face-recognition code, named NameTag, inside the Meta AI app already installed on more than fifty million phones. Not as a feature you toggle on. As infrastructure. The code sits there, dormant, waiting for activation. Wired found it this week not by reviewing some backend system but by digging through the app itself — client-side, sitting on the phone in your pocket — an analysis outside experts then reproduced independently. Meta has not exactly hidden this: the New York Times reported on the underlying effort back in February, and Meta has said publicly it is "exploring these types of features." But downplayed is not the same as disclosed. They built the road before deciding where it goes.
 
 I know what infrastructure means. It means the decision has already been made. You are arguing about the guardrails while someone else poured the foundation.
@@ -85,3 +62,5 @@ Meta's code is the same shape. The evidence that face-recognition systems encode
 Someone at Meta wrote that code. Someone reviewed it. Someone approved deployment. Those are people, not algorithms. They made a choice.
 
 The choice was not whether to build face recognition. The choice was whether to install it first and ask later.
+
+_**Revision note, 26 August 2026:** The account of the International Symbol of Access was wrong in most of its particulars and has been rewritten. Susanne Koefoed's 1968 design was a wheelchair without a person for one year, not sixty: Karl Montan added a head in 1969, on the committee's own aesthetic judgement rather than in response to disabled people objecting that the symbol showed equipment, and the head was added rather than turned from profile to forward-facing. The gap between the 1968 design and the first adjustment was one year, not the "forty-seven years" given. The discovery of Meta's code was credited to a security researcher whom Wired then verified; it was Wired's own analysis, independently reproduced by outside experts. A claim that this writer designs information systems for a living has been removed as undocumented. Checked and unchanged: NameTag as the internal name, the Meta AI app downloaded over 50 million times, core components present as early as January, the New York Times publishing internal documents in February, the three-model pipeline, Ryan Daniels's quotation word for word, Otto Neurath and Isotype in 1920s Vienna, Stokoe's 1960 finding and Buolamwini's 2018 error rates._
