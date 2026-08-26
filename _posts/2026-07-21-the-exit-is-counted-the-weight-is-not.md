@@ -16,7 +16,7 @@ redirect_from:
   - /2026/07/21/priya-left-at-5-52-a-m-and-the-report-called-it/
 ---
 
-Priya is invented. The Guardian's reporting names no midwife who left, and she is drawn from no one in it; what is real is the figures that follow. She finished a night shift on a maternity ward in a large city hospital after eleven hours under lights she could not dim, in a corridor where the alarms, the monitors, and the double doors slamming ran together into one continuous wall of noise she had learned to hold at bay by clenching. She resigned that afternoon. Her exit form asked her to tick a box. She ticked "burnout."
+Priya is invented. The Guardian's reporting names no midwife who left, and she is drawn from no one in it; what is real is the figures that follow. She finished a night shift on a maternity ward in a large city hospital after eleven hours under lights she could not dim, in a corridor where the alarms, the monitors, and the double doors slamming ran together into one continuous wall of noise she had learned to hold at bay by clenching. She resigned that afternoon. The word for it was burnout.
 
 Naomi is invented on the same terms. A midwife on the same ward, she left three months later with a bad knee and a manager who let her sit during handover. Her exit was recorded as a mobility issue, referred to occupational health, logged, counted.
 
@@ -26,7 +26,7 @@ The Guardian ran that story on 20 July 2026, and its numbers are real: 1,669 mid
 
 Here is what the word hides.
 
-A ward is a place that never stops speaking. It hums, beeps, rings, clatters, and it does all of this at a volume set by no one in particular and adjustable by no one at all. For a midwife with a nervous system that processes sound differently, that noise is not background. It is a task. She spends part of every shift doing the invisible work of not being overwhelmed by the room itself. That work does not appear on any rota. It has no billing code. It is the first thing she stops being able to do, and when she stops, she does not file a complaint. She hands in her notice and ticks the soft box.
+A ward is a place that never stops speaking. It hums, beeps, rings, clatters, and it does all of this at a volume set by no one in particular and adjustable by no one at all. For a midwife with a nervous system that processes sound differently, that noise is not background. It is a task. She spends part of every shift doing the invisible work of not being overwhelmed by the room itself. That work does not appear on any rota. It has no billing code. It is the first thing she stops being able to do, and when she stops, she does not file a complaint. She hands in her notice, and burnout covers it.
 
 I am blind. Here, sound is part of the evidence. What a corridor does to a sound is knowable before anyone decides whether it is acceptable, and that is the specific thing to know about the room Priya stood in: nobody who specified it ever asked a person like her whether she could survive inside it for eleven hours at a stretch.
 
@@ -44,12 +44,12 @@ I will grant the strongest version of the burnout story. It is real. The shifts 
 
 But when everyone is drowning, the people who were already carrying an extra weight go under first.
 
-The Royal College of Midwives' own survey doesn't break its numbers down by sensory processing or neurotype, so there's no clean statistic for what I'm describing — only the shape of it, visible in the gap between "three-quarters have considered leaving" and the single flattening word the exit form gives them to say why. I have not stopped thinking about how much of that three-quarters the form has no category for.
+The Royal College of Midwives' own survey doesn't break its numbers down by sensory processing or neurotype, so there's no clean statistic for what I'm describing — only the shape of it, visible in the gap between "three-quarters have considered leaving" and the single flattening word the coverage reaches for to explain them. I have not stopped thinking about how much of that three-quarters that one word cannot distinguish.
 
 Here is the part that complicates my own argument, and I am not going to smooth it over. Some disabled clinicians would reject everything I have just written, and the objection deserves stating in full. For some people the loud ward is the one place the disability disappears: nobody is watching, nobody is managing them, they are simply competent among the machines — and a quiet, sensory-friendly room designed for their benefit reads as being marked fragile again, a room that announces who it was built for. That is a real position and it is not a lesser one. It does not want a quieter world. It wants to disappear into the loud one on its own terms.
 
 I do not know how to hold both of those at once. The midwife who leaves because the room speaks too loudly, and the one who stays because it does.
 
-The report has room for neither. It has one word, and the word is burnout, and this week another ward will run the numbers and reach for it again — the soft box, ticked, filed, counted, and the specific woman who ticked it gone before anyone thought to ask which weight she had been carrying that the rest of us never had to lift.
+The report has room for neither. It has one word, and the word is burnout, and this week another ward will run the numbers and reach for it again — the soft word, counted, and the specific woman behind it gone before anyone thought to ask which weight she had been carrying that the rest of us never had to lift.
 
 _**Revision note, 26 August 2026:** Priya and Naomi are inventions, used to illustrate the argument. The first version of this article presented them as though they were reported people, with nothing to say otherwise; a later version added a disclosure several paragraphs in that called them composites, which they are not, since the reporting cited here contains no individual accounts from which they could have been drawn. Also removed from earlier versions: a named academic and an unverifiable quotation, an interviewee the article claimed to have spoken to, and career claims the byline does not support. The article previously ran as "Priya Left at 5:52 a.m. and the Report Called It", at a web address built on that invented name and time; both have been replaced, and the old address still works. The Guardian's 20 July 2026 figures and the Royal College of Midwives survey have been rechecked against those sources and are unchanged._
