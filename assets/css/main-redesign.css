@@ -5373,3 +5373,72 @@ h1, .text-h1 { font-weight: 800; letter-spacing: -0.02em; }
   .site-header, .site-footer, button { display: none !important; }
   main { margin: 0; padding: 0; }
 }
+
+/* ---------------------------------------------------------------------------
+   Selected backlist vs legacy archive.
+
+   The archive is earlier published work retained with its correction history —
+   not withdrawn work. Both surfaces below therefore stay deliberately quiet:
+   a muted rule and muted type, never a warning colour, so nothing reads as a
+   caution about the material.
+   --------------------------------------------------------------------------- */
+
+/* The route out of /research/ into the archive. A rule and a block of muted
+   text rather than a card, so it does not become a fifth rectangle competing
+   with the essay list it sits under. */
+.legacy-archive-route {
+  margin-top: var(--space-16);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-border-primary);
+  max-width: 42rem;
+}
+
+.legacy-archive-route__label {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 0.5rem;
+}
+
+.legacy-archive-route__body {
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  margin: 0 0 0.75rem;
+}
+
+.legacy-archive-route__link {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-brand);
+}
+
+/* Marks a collection member that sits in the archive. Inline with the card's
+   category label so it reads as one more fact about the piece. */
+.related-articles__archived {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-normal, 400);
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.related-articles__archived::before {
+  content: "\00b7";
+  margin: 0 0.4em;
+}
+
+/* The one-line explanation of that marker, at the head of a collection list. */
+.collection-archive-note {
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--color-border-primary);
+  max-width: 42rem;
+  margin: 0 0 2rem;
+}

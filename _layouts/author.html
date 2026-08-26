@@ -64,11 +64,24 @@ layout: default
   <!-- Author Articles -->
   <section class="section section--primary">
     <div class="container">
+      {% comment %} This voice's work, split the same way the rest of the site splits it:
+           actively carried pieces get the cards, archived ones get a compact list underneath
+           so they stay reachable without reading as equal current recommendations. Predicate
+           and counts come from _includes/backlist.html. {% endcomment %}
+      {% include backlist.html %}
       {% assign author_posts = site.posts | where_exp: "p", "p.withdrawn != true" | where: "author", page.author_name %}
-      {% if author_posts.size > 0 %}
+      {% assign author_active = 0 %}
+      {% assign author_archived = 0 %}
+      {% for post in author_posts %}
+        {% capture ak %}|{{ post.slug }}|{% endcapture %}
+        {% if backlist_active_slugs contains ak %}{% assign author_active = author_active | plus: 1 %}{% else %}{% assign author_archived = author_archived | plus: 1 %}{% endif %}
+      {% endfor %}
+      {% if author_active > 0 %}
         <h2 class="text-h3 mb-8">Published Work</h2>
         <div class="grid grid--3 gap-8">
           {% for post in author_posts %}
+          {% capture ak %}|{{ post.slug }}|{% endcapture %}
+          {% unless backlist_active_slugs contains ak %}{% continue %}{% endunless %}
           <article class="card card--elevated" data-persona="{{ page.slug }}">
             {% if post.image %}
             <img class="card__media" src="{{ post.image | relative_url }}" alt="Article image for {{ post.title }}" width="800" height="450" loading="lazy" decoding="async">
@@ -96,6 +109,32 @@ layout: default
       {% else %}
         <div class="card text-center p-16">
           <p class="text-body text-secondary">Articles coming soon.</p>
+        </div>
+      {% endif %}
+
+      {% if author_archived > 0 %}
+        <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.5rem;">Also in the legacy archive</p>
+        <p class="text-small text-secondary" style="max-width: 42rem; margin: 0 0 1.25rem;">
+          Earlier work under this byline, retained with its correction history and still readable
+          in full. It is not part of what this publication currently puts forward.
+          <a href="{{ '/archive/' | relative_url }}">The whole archive &rarr;</a>
+        </p>
+        <div class="archive-list">
+          {% for post in author_posts %}
+          {% capture ak %}|{{ post.slug }}|{% endcapture %}
+          {% if backlist_active_slugs contains ak %}{% continue %}{% endif %}
+          <article class="archive-row">
+            <p class="archive-row__meta">
+              <time class="archive-row__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+              {% if post.categories %}
+                <span aria-hidden="true">&middot;</span>
+                <span class="archive-row__topic">{{ post.categories | first | capitalize }}</span>
+              {% endif %}
+            </p>
+            <h3 class="archive-row__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+            <p class="archive-row__excerpt">{{ post.excerpt | strip_html | truncatewords: 20 }}</p>
+          </article>
+          {% endfor %}
         </div>
       {% endif %}
     </div>

@@ -1,0 +1,95 @@
+---
+layout: default
+title: "Legacy archive — Crip Minds"
+description: "Earlier published work, retained with its correction history. Still online, still readable, no longer part of the current selection."
+permalink: /archive/
+---
+{% comment %}
+  The legacy archive: readable essays that are not in the active backlist. Membership is
+  derived, never stored on the articles themselves — see _includes/backlist.html and
+  _data/backlist.yml. Nothing here is withdrawn; withdrawal is a separate state with its own
+  behaviour, governed by a post's `withdrawn` front matter, and withdrawn pages are not listed
+  on this page. Indexing behaviour is deliberately left exactly as it was.
+{% endcomment %}
+{% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
+{% include backlist.html %}
+
+<main id="main-content">
+  <header class="section section--secondary text-center" style="padding-bottom: var(--space-8);">
+    <div class="container">
+      <p class="text-small text-secondary mb-4" style="letter-spacing: 0.15em; text-transform: uppercase;">Crip Minds</p>
+      <h1 class="text-h1 mb-4">Legacy archive</h1>
+      <p class="text-lead text-secondary max-w-2xl mx-auto">
+        Earlier published work, retained with its correction history.
+      </p>
+      <p class="text-body text-secondary max-w-2xl mx-auto mt-4">
+        These essays are still online and still readable at their original addresses. They are
+        not withdrawn and nothing here has been taken back. They sit outside the current
+        selection because they have not been through the editorial pass that the essays on the
+        <a href="{{ '/research/' | relative_url }}">Articles</a> page have. Where an essay was
+        corrected, the correction is still on the page, where it was published.
+      </p>
+      <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em;"><span class="marker marker--lime">{{ backlist_archive_count }}</span> essays in the archive</p>
+    </div>
+  </header>
+
+  <section class="section section--primary" style="padding-top: var(--space-8);">
+    <div class="container">
+      {% comment %}
+        Search is scoped to this page's own DOM. The shared filter script in the default layout
+        matches on [data-categories] elements, of which this page renders only archive rows, so
+        searching here cannot surface an active essay and searching the Articles page cannot
+        surface an archived one.
+      {% endcomment %}
+      <div class="research-filters">
+        <div class="research-search">
+          <label for="article-search" class="research-search__label">Search the archive</label>
+          <input type="search" id="article-search" class="research-search__input" placeholder="Search archived essays&hellip;" autocomplete="off">
+        </div>
+      </div>
+      <p id="article-filter-status" class="text-small text-secondary" aria-live="polite" style="min-height: 1.2em; margin: 0.5rem 0 1rem;"></p>
+
+      {% if backlist_archive_count > 0 %}
+      <div class="archive-list">
+        {% for post in readable_posts %}
+        {% capture bk %}|{{ post.slug }}|{% endcapture %}
+        {% if backlist_active_slugs contains bk %}{% continue %}{% endif %}
+        <article class="archive-row" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
+          <p class="archive-row__meta">
+            <time class="archive-row__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
+            <span aria-hidden="true">&middot;</span>
+            <span class="archive-row__author">{{ post.author | default: "Crip Minds" }}</span>
+            {% if post.categories %}
+              <span aria-hidden="true">&middot;</span>
+              <span class="archive-row__topic">{{ post.categories | first | capitalize }}</span>
+            {% endif %}
+          </p>
+          <h2 class="archive-row__title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+          <p class="archive-row__excerpt">{{ post.excerpt | strip_html | truncatewords: 22 }}</p>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-secondary" style="text-align: center; padding: 4rem 0;">The archive is empty.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="section section--secondary">
+    <div class="container container--md">
+      <p class="research-threads__eyebrow" style="margin-bottom: 0.75rem;">What the numbers are</p>
+      <p class="text-body text-secondary">
+        Crip Minds has published <strong>{{ backlist_total_count }}</strong> pieces. Of those,
+        <strong>{{ backlist_withdrawn_count }}</strong> have been withdrawn and now stand as
+        withdrawal notices at their original addresses, and <strong>{{ backlist_readable_count }}</strong>
+        remain readable in full. Those {{ backlist_readable_count }} are
+        <strong>{{ backlist_article_count }}</strong> articles the publication actively carries,
+        <strong>{{ backlist_note_count }}</strong> <a href="{{ '/notes/' | relative_url }}">editor&rsquo;s note</a>,
+        and the <strong>{{ backlist_archive_count }}</strong> archived here.
+      </p>
+      <p class="text-small text-secondary mt-4">
+        <a href="{{ '/research/' | relative_url }}">Back to Articles &rarr;</a>
+      </p>
+    </div>
+  </section>
+</main>
