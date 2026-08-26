@@ -97,7 +97,7 @@
         "@type": "Person",
         "name": "{{ page.author }}",
         "description": "Editorial voice for Crip Minds, constructed around a specific disability identity as a lens for cultural criticism.",
-        "url": "{{ site.url }}/collective/{{ page.author | downcase | replace: ' ', '-' }}/",
+        "url": "{% if page.author_url %}{{ site.url }}{{ page.author_url }}{% else %}{{ site.url }}/collective/{{ page.author | downcase | replace: ' ', '-' }}/{% endif %}",
         "sameAs": "{{ site.url }}/press/how-it-works/"
       },
       "publisher": {
