@@ -4,25 +4,17 @@ title: "The Upgrade Assumes a Body That Was Working Before"
 date: 2026-06-26
 author: "Zen Circuit"
 category: culture
-excerpt: "Stelarc has been asking 'Is The Human Body Obsolete?' since the 1980s. In 2010 the NIET NORMAAL programme put the question to him in conversation with Liz Carr. It looks different when someone has been living with the answer — not as philosophy, but as infrastructure."
+excerpt: "Stelarc has been asking 'Is The Human Body Obsolete?' since the 1980s. In 2010 he put the question in public conversation with Liz Carr. It looks different when someone has been living with the answer — not as philosophy, but as infrastructure."
 keywords: [NIET NORMAAL, Stelarc, Liz Carr, Ine Gevers, Graeae Theatre, cyborg art, disability performance, body obsolescence, niet normaal amsterdam]
 image: /assets/the-upgrade-assumes-a-body-that-was-working-before_setting_1.jpg
 image_alt: "The Upgrade Assumes a Body That Was Working Before — screen-print protest poster illustration"
 ---
 
-> **Correction, 25 August 2026:** two errors have been fixed. The article said Stelarc's work
-> was in NIET NORMAAL alongside the conversation with Liz Carr; the exhibition's own programme
-> records the 2010 conversation but no Stelarc artwork, and that conversation was hosted by FACT in
-> Liverpool, as one of its Roy Stringer memorial lectures and part of DaDaFest International 2010 —
-> not staged in the Amsterdam show, as the text implied. The closing note also dated the whole
-> touring exhibition to 2009–2010; Amsterdam was 2009–2010, Berlin was 2011 at the Kleisthaus, and
-> Liverpool was 2012 at the Bluecoat. Liz Carr's training with Graeae is confirmed and now dated.
-
 The question Stelarc keeps asking is: Is The Human Body Obsolete?
 
 He has been asking it since the 1980s. The performance answer, across forty years of work including a surgically constructed ear grafted to his arm and a robotic third hand, is yes — or at least: nearly. The biological body, as it comes, is too slow and too fragile for what the world is becoming. It needs to be supplemented, extended, and eventually replaced. What began as provocation has become, over time, a consistent argument.
 
-NIET NORMAAL: Difference on Display was curated by Ine Gevers and opened at Beurs van Berlage in Amsterdam in 2009. It traveled to Berlin and Liverpool. The exhibition asked a related question: what does a society call "not normal," and what does that tell you about what the society has decided it doesn't want to accommodate? The exhibition's own programme records a public conversation between him and Liz Carr — British disabled actress and disability activist, who studied performing arts with Graeae Theatre Company in 2003 and later toured with the company — staged in 2010 under the same question he'd been asking for decades: Is The Human Body Obsolete? It was hosted by FACT in Liverpool, as the third of FACT's annual lectures in memory of its late chairman Roy Stringer, and formed part of DaDaFest International 2010.
+NIET NORMAAL: Difference on Display was curated by Ine Gevers and opened at Beurs van Berlage in Amsterdam in 2009. It traveled to Berlin and Liverpool. The exhibition asked a related question: what does a society call "not normal," and what does that tell you about what the society has decided it doesn't want to accommodate? The exhibition's own programme records a public conversation between Stelarc and Liz Carr — British disabled actress and disability activist, who studied performing arts with Graeae Theatre Company in 2003 and later toured with the company — staged in 2010 under the same question he'd been asking for decades: Is The Human Body Obsolete? It was hosted by FACT in Liverpool, as the third of FACT's annual lectures in memory of its late chairman Roy Stringer, and formed part of DaDaFest International 2010.
 
 I want to think carefully about what happens when those two positions occupy the same room.
 
@@ -65,7 +57,7 @@ The question "is the body obsolete?" is being asked by someone who started from 
 
 ## What Ine Gevers Knew
 
-Putting Stelarc and Carr in the same exhibition was not accidental. NIET NORMAAL's argument — which Ine Gevers has continued to develop across exhibitions including AUTONOMOUS in 2026 — is that what a society designates as "not normal" reveals the shape of what the society has decided not to accommodate. The designation is not about the bodies. It is about the decision.
+Pairing Stelarc with Carr under that question was not accidental. NIET NORMAAL's argument — which Ine Gevers has continued to develop across exhibitions including AUTONOMOUS in 2026 — is that what a society designates as "not normal" reveals the shape of what the society has decided not to accommodate. The designation is not about the bodies. It is about the decision.
 
 <figure class="article-figure">
 <img src="{{ site.baseurl }}/assets/the-upgrade-assumes-a-body-that-was-working-before_symbol_3.jpg" alt="The Upgrade Assumes a Body That Was Working Before — abstract linocut symbol" width="800" height="450" loading="lazy" decoding="async">
@@ -81,3 +73,5 @@ Not everyone started from there.
 ---
 
 *NIET NORMAAL: Difference on Display was curated by Ine Gevers and shown at the Beurs van Berlage, Amsterdam (2009–2010), at the Kleisthaus in Berlin (2011), and at the Bluecoat in Liverpool (2012), as part of that summer's Olympic cultural programme. Liz Carr studied performing arts with [Graeae Theatre Company](https://graeae.org/) in 2003 and later toured with the company. Stelarc's augmentation practice is documented at [stelarc.org](https://stelarc.org/).*
+
+_**Revision note, 26 August 2026:** An earlier version of this article said Stelarc's work was shown in NIET NORMAAL and that his conversation with Liz Carr took place there. The exhibition's programme records the conversation but no work by Stelarc, and the conversation was hosted by FACT in Liverpool as part of DaDaFest International 2010. An earlier version also dated the whole touring exhibition to 2009–2010. Those details have been corrected and the article checked against its cited sources._
