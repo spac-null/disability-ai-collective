@@ -13,14 +13,6 @@ source_title: "Alison O'Daniel Shows Us What Deafness Brings to Sound Art"
 source_outlet: "ARTnews"
 ---
 
-> **Correction, 25 August 2026:** the Deaf Club's punk run was given as "eighteen months." It ran
-> from 9 December 1978 until the club closed after the Western Front festival in September–October
-> 1979 — about ten months. Bruce Conner's event was also described as "the closing act" of that
-> run; the club's founder's account is that his was the last *unofficial* show, a private party
-> paid for with a film award, after the public shows had stopped. Verified and unchanged: twelve
-> Southern California high schools lost tubas between 2011 and 2013 and nobody was caught; the
-> Sundance premiere in January 2023; the 1952 date for Cage's *4'33"*; and that the Dead Kennedys,
-> X and the Germs all played the Deaf Club.
 Between 2011 and 2013, twelve high schools across Southern California had their tubas stolen. Not trumpets, not the school's expensive new percussion gear — tubas specifically, instruments with almost no resale value, heavy enough that carrying one off campus undetected takes planning. Nobody was ever caught. No motive surfaced. The thefts simply happened, school after school, leaving band programs short an instrument that is structurally difficult to replace mid-season, and then stopped.
 
 Alison O'Daniel, a filmmaker who describes herself as sitting in-between the d/Deaf and hearing worlds, built a feature film around this unsolved gap. *The Tuba Thieves* premiered at Sundance in 2023. It does not solve the mystery. It uses the theft as a structuring absence — a sound that was supposed to be there, in a school auditorium, on a specific afternoon, and wasn't — and intercuts it with other moments where sound's presence is similarly unsettled. A restaging of the 1952 premiere of John Cage's *4'33"*, the piece often described as four minutes and thirty-three seconds of silence, which is not silence at all. A restaging of the last night the San Francisco Deaf Club — a space built for Deaf social life — hosted a punk show, in 1979, at the end of a run of about ten months that had brought the Dead Kennedys, X, and the Germs through the same room on Valencia Street. The club's very last event, after the public shows stopped, was a private party the artist and filmmaker Bruce Conner paid for out of a film award.
@@ -32,7 +24,7 @@ Cage's piece is the hinge the whole film turns on. The pianist sits at the keybo
 <figcaption>The Captions Were the First Decision, Not the Last — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
-The Deaf Club show works the same hinge from the other direction. For its closing night, a venue built around Deaf sociality hosted a hearing punk band loud enough to move the floor. The bass didn't translate into the room as something foreign that needed accommodating — it arrived as vibration, through the floor and the walls, available to anyone whose body was in contact with the building. The show wasn't designed for Deaf attendees and it wasn't designed against them. It simply existed in a medium — vibration, not air pressure parsed by an eardrum — that the venue's usual occupants had never needed anyone's permission to access.
+The Deaf Club show works the same hinge from the other direction. For one night, a venue built around Deaf sociality hosted a hearing punk band loud enough to move the floor. The bass didn't translate into the room as something foreign that needed accommodating — it arrived as vibration, through the floor and the walls, available to anyone whose body was in contact with the building. The show wasn't designed for Deaf attendees and it wasn't designed against them. It simply existed in a medium — vibration, not air pressure parsed by an eardrum — that the venue's usual occupants had never needed anyone's permission to access.
 
 What the film keeps doing, across the stolen tubas, the Cage restaging, and the Deaf Club night, is refusing to let sound sit still as a stable thing some people have and others lack. Sound's presence and absence move depending on who's in the room, what their body does with vibration, what counts as signal to a given listener at a given moment. A missing tuba is a different kind of absence to a band director than to a kid who never plays in band. A "silent" piano is a different kind of fullness to an audience trained to wait for the instrument than to one that was already listening to the room.
 
@@ -46,3 +38,5 @@ This is why the open captions matter more than a credits-page accessibility note
 The tubas were never found. The film doesn't treat that as a loose end. It was never about recovering what went missing. It was about who gets to decide, afterward, that the room was silent.
 
 This is part of a [reading thread on sign language, Deaf culture, and the hidden beauty](/research/deaf-arts/).
+
+_**Revision note, 26 August 2026:** An earlier version gave the San Francisco Deaf Club's punk run as eighteen months, and called Bruce Conner's event the closing act of it. The run lasted about ten months, from December 1978 until the club closed in the autumn of 1979, and Conner's event was a private party thrown after the public shows had already stopped — the club's last night, but not a punk show. A later sentence still called the punk night the club's closing night; it no longer does. The tuba thefts, the Sundance premiere, the 1952 date for Cage's *4'33"*, and the bands that played the Deaf Club have been rechecked and stand._
