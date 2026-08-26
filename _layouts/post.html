@@ -325,7 +325,7 @@ layout: default
           </div>
           <div class="text-center mt-6">
             {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
-            <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" class="btn btn--outline btn--sm persona-more-btn" data-persona="{{ author_slug }}">More by {{ page.author }} →</a>
+            <a href="{% if _author_url != '' %}{{ _author_url | relative_url }}{% else %}{{ '/collective/' | relative_url }}{{ author_slug }}/{% endif %}" class="btn btn--outline btn--sm persona-more-btn" data-persona="{{ author_slug }}">More by {{ page.author }} →</a>
           </div>
         </section>
         {% else %}
@@ -389,7 +389,7 @@ layout: default
           </div>
           <div class="text-center mt-6">
             {% assign author_slug = page.author | downcase | replace: ' ', '-' %}
-            <a href="{{ '/collective/' | relative_url }}{{ author_slug }}/" class="btn btn--outline btn--sm persona-more-btn" data-persona="{{ author_slug }}">More by {{ page.author }} →</a>
+            <a href="{% if _author_url != '' %}{{ _author_url | relative_url }}{% else %}{{ '/collective/' | relative_url }}{{ author_slug }}/{% endif %}" class="btn btn--outline btn--sm persona-more-btn" data-persona="{{ author_slug }}">More by {{ page.author }} →</a>
           </div>
         </section>
         {% endif %}
