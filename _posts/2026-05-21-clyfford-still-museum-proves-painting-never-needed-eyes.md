@@ -13,19 +13,6 @@ source_title: "Still in Sound"
 source_outlet: "Hyperallergic"
 ---
 
-> **Correction, 24 August 2026:** An earlier version said the exhibition opened in May 2027 —
-> a year out, and impossible alongside the article's own statement that it closes in February
-> 2027. It opened in May 2026. The article also implied the museum's rollout of never-before-seen
-> works begins after Still in Sound ends; the two run concurrently, with one new work unveiled
-> each month in the first gallery through September 2027. Bailey Placzek is one of two
-> co-curators, alongside Ben Coleman, and both are now named. Two unsupported first-person
-> claims have been removed: fifteen years of making this argument, and six years working in
-> museum acoustics; so has a dated 2019 gallery visit standing in front of a Rothko with an
-> audio-description headset. The points they carried are now made directly. Checked and
-> unchanged: the five sound artists — Maria Chávez, Maya Dunietz, Kalyn Heffernan, Matana
-> Roberts and Michael Schumacher — the February 2027 closing date, and Phillip David Stearns's
-> interactive commission responding to Still's pastel drawings.
-
 The Clyfford Still Museum in Denver opened a sound exhibition in May 2026. Clyfford Still was an abstract painter whose work is held in this museum, which preserves and exhibits his paintings. Five sound artists — Maria Chávez, Maya Dunietz, Kalyn Heffernan, Matana Roberts, and Michael Schumacher — each selected an abstract painting from Still's work and composed a sonic interpretation. The pieces play in shuffled order across the museum's largest galleries. Visitors move through rooms where sound, not light, sets the tone. The museum calls this Still in Sound. They call it access programming.
 
 That is not what this is.
@@ -45,7 +32,7 @@ Museums treat looking as neutral. That the eye is a camera. That the viewer walk
 <figcaption>Clyfford Still Museum Proves Painting Never Needed Eyes — intimate gouache illustration on textured paper</figcaption>
 </figure>
 
-I know what that room sounds like. Museum acoustics — how sound behaves in a gallery — gets treated as an accessibility problem to be solved. It is better read as a record of how much information a gallery destroys by privileging the eye. A marble floor does not only look expensive. It reflects high frequencies and absorbs low ones. You hear wealth before you see it. When a museum puts tactile labels on bronze sculpture but leaves the floor untreated, they are not meeting access needs. They are just telling you where the sculpture is. They are not telling you what the room is doing to your body while you stand there.
+Museum acoustics — how sound behaves in a gallery — gets treated as an accessibility problem to be solved. It is better read as a record of how much information a gallery destroys by privileging the eye. A marble floor does not only look expensive. It reflects high frequencies and absorbs low ones. You hear wealth before you see it. When a museum puts tactile labels on bronze sculpture but leaves the floor untreated, they are not meeting access needs. They are just telling you where the sculpture is. They are not telling you what the room is doing to your body while you stand there.
 
 The Clyfford Still Museum hired Phillip David Stearns, a sound artist who works with electromagnetic fields and digital noise, to design an interactive sound experience in response to Still's pastel drawings. Stearns creates sounds that resemble the hum and interference of machines and electrical systems — the sonic texture of infrastructure itself. Which is what a drawing is — infrastructure for looking. The pastel sits on paper because paper holds pigment in a way air does not. Stearns made that visible by making it audible. Not a metaphor. A structural correspondence.
 
@@ -65,3 +52,5 @@ The Clyfford Still Museum accidentally built that. Then it gave the thing an end
 Running alongside it, the museum is unveiling one never-before-seen Still work each month in its first gallery, through September 2027. Standard chronological display. No sound. The sound is the temporary programme. The chronology is the permanent one. That ordering is the argument the museum is making without saying it.
 
 Sound told the museum what the paintings were doing.
+
+_**Revision note, 26 August 2026:** An earlier version dated the opening of Still in Sound to May 2027 — a year late, and impossible beside the article's own February 2027 closing date. It opened in May 2026. That version also implied the museum's monthly unveiling of never-before-seen works begins only after the sound exhibition ends; the two run concurrently, the unveiling continuing through September 2027. Bailey Placzek is one of two co-curators, alongside Ben Coleman, and both are now named. An earlier version further credited this writer with fifteen years of making this argument, six years working in museum acoustics, and a dated gallery visit spent in front of a Rothko wearing an audio-description headset. None of that is material this publication can document about this byline, and the points those passages carried are now made directly._

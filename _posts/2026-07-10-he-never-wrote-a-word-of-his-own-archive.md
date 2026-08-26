@@ -13,26 +13,6 @@ source_title: "Joseph Grigely by Ayden LeRoux"
 source_outlet: "BOMB Magazine"
 ---
 
-> **Correction, 25 August 2026 (first-person axis):** two things have been fixed. A paragraph gave
-> the author a habit of saving text messages where the writer's second thoughts are visible — a
-> habitual practice this byline's material does not supply — and it is now written as something
-> available to any reader. And a phrase in the list of institutional records, "the years of a face
-> trained to perform calm for a hearing panel," asserted and linked to a school anecdote that was
-> removed from the linked article earlier today as unsupported; keeping it here kept the claim alive
-> by citation. It now points at what that article actually argues. Grigely's biography, the archive's
-> size, *White Noise* at the Whitney and the account of the work are unchanged.
-
-
-> **Correction, 25 August 2026:** two descriptions of *White Noise* were wrong. The pages were
-> said to be "arranged in a grid"; they are of every size and are pinned so that they cluster,
-> which is what produces the work's effect. And the title was called "a joke with teeth, since
-> the room is the opposite of white noise." That reverses the work's own logic: white noise
-> contains every frequency, and the room is described — by the artist and by the institutions
-> that have shown it — as justifying the comparison directly, indistinguishable from a distance
-> and legible only up close. Verified and unchanged: the fall at ten, that he does not lip-read,
-> the origin of the archive after a dinner with a friend, over 120,000 sheets as of summer 2025,
-> more than a hundred exhibitions, a new selection curated each time, and the Whitney show
-> (28 June – 9 September 2001, curated by Debra Singer).
 Joseph Grigely was deafened at ten, after a fall. He does not lip-read. When a hearing stranger wants to talk to him, he hands them a pen. For decades he discarded the resulting scraps without thinking about it — small courtesies, used and binned, the way you'd treat a parking receipt. Then one night, after dinner with a friend, he looked at the pile of paper left on the table between them and didn't throw it away. That pile became *Conversations with the Hearing*, an archive he has kept growing since the early 1990s. As of last year it held more than 120,000 individual sheets.
 
 Here is the fact that takes a moment to land. Not one word of that archive is in Grigely's handwriting. He has never authored a line of his own work, in the sense that matters for who held the pen. The artist's contribution is the act of keeping. Every sentence on every page was written by someone else — a waiter, a date, a museum guard, a stranger at a bar — reaching toward him in the only channel he gave them access to.
@@ -58,3 +38,5 @@ There is a much smaller version of this available to anyone. A text message wher
 *Conversations with the Hearing* has been shown in more than a hundred exhibitions. Every selection is new — Grigely curates a different cut of the same hoard each time, deciding which strangers' handwriting gets walked past this year. He is, in this sense, the only editor his archive has ever had. The voice in the room is not his. The decisions are.
 
 This is part of a [reading thread on sign language, Deaf culture, and the hidden beauty](/research/deaf-arts/).
+
+_**Revision note, 26 August 2026:** An earlier version described the pages of *White Noise* as arranged in a grid, and read the title as ironic on the grounds that the room is the opposite of white noise. Both reversed the work: the sheets are of every size and are pinned so that they cluster, and white noise contains every frequency, which is the comparison the room is built to earn. An earlier version also gave this writer a habit of saving text messages in which a sender's second thoughts are visible. That is not material this publication can document about this byline, and the passage now describes something available to any reader. A phrase in the list of institutional records has been repointed at what the linked article argues, rather than at a school anecdote since removed from it._

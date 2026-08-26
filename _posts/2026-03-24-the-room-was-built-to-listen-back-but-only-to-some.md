@@ -10,24 +10,6 @@ excerpt: "A building spent 16 years and \u20ac866 million proving sound moves th
 keywords: [Elbphilharmonie Hamburg, DeafSpace Gallaudet University, Yasuhisa Toyota acoustician, Hansel Bauman architect, accessible architecture design, universal design principles]
 ---
 
-> **Correction, 24 August 2026:** This article's summary line described Hansel Bauman as "the
-> Deaf architect." He is Gallaudet's campus architect and he is hearing; DeafSpace came out of
-> his collaboration with the university's ASL and Deaf Studies department, and the body of the
-> article already described him correctly. The summary has been fixed. It also placed Gallaudet
-> "five thousand kilometres east" of Hamburg; Washington DC is about six thousand kilometres
-> west. A quotation attributed to Yasuhisa Toyota — that he told *The Guardian* in 2017 he
-> wanted the room to feel "like being inside an instrument" — could not be found, and has been
-> replaced with what he has actually said about how that surface was arrived at. Two dated
-> first-person scenes were written as fact and are not supported: an August 2023 panel on
-> inclusive venue design in Rotterdam, at which an acoustician was quoted saying Deaf people
-> "wouldn't really be the target demographic, would they?", and a December 2022 performance in
-> a Brixton community hall. Both have been removed and the points they carried are now made
-> directly. Checked and unchanged: Herzog & de Meuron and Toyota, the roughly 10,000
-> individually milled panels, the €866 million cost at about ten times budget, DeafSpace,
-> Dirksen Bauman and Joseph Murray on Deaf Gain, Mike Oliver's 1983 distinction, and Sunaura
-> Taylor.
-
-
 The [Elbphilharmonie in Hamburg](https://www.elbphilharmonie.de/) is celebrated, routinely and rightly, for its acoustics. The concert hall, designed by [Herzog & de Meuron](https://www.herzogdemeuron.com/) with acoustician [Yasuhisa Toyota](https://www.nagata-i.com/1977/01/01/dr-yasuhisa-toyota/), uses 10,000 individually milled gypsum fibre panels to shape how sound moves through the room. Each panel is unique. The building cost €866 million — roughly ten times its original budget — and took sixteen years. Every surface was calculated to deliver sound to a hearing ear with extraordinary precision. Toyota has described that panelled surface as the result of a negotiation with the architects: his team supplied the acoustical conditions — the scale of the roughness, the degree of irregularity — and the architects supplied the form. Which is to say the whole surface exists because sound behaves differently depending on what it meets. Anyone who has felt a neighbour's bass come up through the floorboards already knows that. The building knows it too. It just chose to optimize for one receptor.
 
 Six thousand kilometres west, in a different room, [Hansel Bauman](https://www.hanselbauman.online/about) was working on something that starts from the opposite premise. Bauman, the architect behind [DeafSpace at Gallaudet University](https://www.gallaudet.edu/deafspace), designed spaces where light, vibration, and sightlines carry meaning. The hallways are wider so signers can walk and talk. The walls use colours that contrast with skin tone. The floors transmit footsteps you feel before you see anyone approach. Bauman didn't build for the absence of hearing. He built for the presence of everything else.
@@ -45,7 +27,7 @@ Here is what I mean. Consider how the sonic environment of a new performing arts
 <figcaption>Architectural section drawing rendered as mimeograph ghost-print in purple-blue illustration for The Room Was Built to Listen Back — But Only to Some</figcaption>
 </figure>
 
-The phrase doing the work is *target demographic*. A venue can be publicly funded, built on public land and marketed as a civic space, and still have a sonic brief in which Deaf people are not the audience being designed for. Not out of cruelty. Because nothing in the brief or the contract asked for it, and the accessibility review checked for hearing loops and wheelchair spaces and called it done.
+*Target demographic* is the phrase that does the work. A venue can be publicly funded, built on public land and marketed as a civic space, and still have a sonic brief in which Deaf people are not the audience being designed for. Not out of cruelty. Because nothing in the brief or the contract asked for it, and the accessibility review checked for hearing loops and wheelchair spaces and called it done.
 
 This is where the economics matter. Toyota's gypsum panels for the Elbphilharmonie cost millions in custom milling. Nobody questioned whether shaping sound for hearing audiences was worth the budget. Bauman's work at Gallaudet — wider corridors, considered lighting, vibrational flooring — costs a fraction of that. [Dirksen Bauman](https://www.deafgain.org/) and Joseph Murray — Gallaudet academics, not the architect — developed the concept of [Deaf Gain](https://www.deafgain.org/), which reframes deafness not as loss but as a different way of perceiving the world. One that produces knowledge hearing culture never develops. Spatial knowledge. Vibrational literacy. Visual acuity that hearing people never need to build.
 
@@ -69,3 +51,5 @@ Toyota's 10,000 panels face outward, each one a different shape, tuned to the sa
 ---
 
 *This article was inspired by [Building for Sound: The Acoustics of the New Hop - Dartmouth](https://news.google.com/rss/articles/CBMifEFVX3lxTE9aMllpeFVqbVEzM2Q5cmVvQWhsaDZmeVUwUkdNNXFnRHktUlhmV1FCSGNGSVFoMmJ6Z1dsb2NyUXRKQzFzbmVuSUhRVTBLbXlQbUdGYlBVNnZwS3diY3JGS1RGbm5GVldFeTB1RHRKYjNLZ0Y1MG9wU1NSR0w?oc=5) from news.google.com.*
+
+_**Revision note, 26 August 2026:** An earlier version's summary line described Hansel Bauman as "the Deaf architect." He is Gallaudet's campus architect and he is hearing; DeafSpace came out of his collaboration with the university's ASL and Deaf Studies department, as the body of the article always said. The same line placed Gallaudet five thousand kilometres east of Hamburg, where Washington DC is about six thousand kilometres west. A quotation attributed to Yasuhisa Toyota — that he told The Guardian in 2017 he wanted the room to feel "like being inside an instrument" — could not be found, and has been replaced with what he has actually said about how that surface was arrived at. Two dated first-person scenes were written as fact and are not supported: a 2023 panel on inclusive venue design in Rotterdam, at which an acoustician was quoted on who the target demographic would be, and a 2022 performance in a Brixton community hall. Both have been removed and the points they carried are now made directly._
