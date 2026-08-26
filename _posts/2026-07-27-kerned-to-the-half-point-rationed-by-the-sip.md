@@ -27,8 +27,8 @@ source_outlet: "Guardian Art & Design"
 > versions to 2004, to 2005, to 2009 and to the age of twenty-two. Those cannot all be accounts of
 > one occasion, and the wording traces to a fixed piece of this writer's authored backstory rather
 > than to any event this publication can document. It was not witnessed and has been removed. The
-> argument it carried is unchanged, as is the address. This article has not otherwise been
-> reviewed.
+> argument it carried is unchanged, as is the address. At the time of this correction, this article
+> had not otherwise been fully reviewed.
 >
 > **Correction, 25 August 2026 (second pass):** three further corrections. The article's second half
 > was carried by "a conservator I would trust with anything" who "told me" the water rule should not

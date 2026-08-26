@@ -15,12 +15,12 @@ redirect_from:
   - /2026/06/15/jane-green-counted-the-doctors-not-the-years/
 ---
 
-> **Correction, 24 August 2026:** This article's URL still carries an earlier headline naming
-> Jane Green — a real and prominent UK advocate on hypermobility and neurodiversity who has
-> nothing to do with the research described here, and who is not mentioned anywhere in the text.
-> The study is Kathryn Berg and Dervil Dockrell's at the University of Edinburgh. The URL is left
-> in place so existing links do not break, but it should not be read as attributing this work to
-> her. A claim that the author researches how cities decide what to build has also been removed;
+> **Correction, 24 August 2026:** At the time of this correction, this article's URL still carried
+> an earlier headline naming Jane Green — a real and prominent UK advocate on hypermobility and
+> neurodiversity who has nothing to do with the research described here, and who is not mentioned
+> anywhere in the text. The study is Kathryn Berg and Dervil Dockrell's at the University of
+> Edinburgh. That URL has since been replaced with a corrected canonical URL, and it should not be
+> read as attributing this work to her. A claim that the author researches how cities decide what to build has also been removed;
 > the analogy it introduced stands on its own. Checked and unchanged, because it is accurate:
 > more than 2,000 respondents, an average wait of nineteen to 21.7 years with the longest delays
 > in Wales, and Kathryn Berg as a trial and research manager at Edinburgh's Institute of Genetics

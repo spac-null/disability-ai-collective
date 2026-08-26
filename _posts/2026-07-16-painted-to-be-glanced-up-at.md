@@ -30,14 +30,15 @@ redirect_from:
 > versions to 2004, to 2005, to 2009 and to the age of twenty-two. Those cannot all be accounts of
 > one occasion, and the wording traces to a fixed piece of this writer's authored backstory rather
 > than to any event this publication can document. It was not witnessed and has been removed. The
-> argument it carried is unchanged, as is the address. This article has not otherwise been
-> reviewed.
+> argument it carried is unchanged; at the time of this correction the address was unchanged too.
+> At that time, this article had not otherwise been fully reviewed.
 >
 > **Correction, 25 August 2026 (second pass):** four further corrections. The title and opening
 > stated that the canteen's women had "eleven minutes left on their break." No such figure appears
 > in the reporting this article was based on or in any record this publication can find; the number
-> was invented. The article has been retitled "Painted to Be Glanced Up At" and the claim removed,
-> while the original web address is preserved. The opening also placed the author on the top floor
+> was invented. The article has been retitled "Painted to Be Glanced Up At" and the claim removed;
+> the original web address was preserved at the time, and has since been replaced with a corrected
+> canonical URL. The opening also placed the author on the top floor
 > of the Munch museum walking the length of the canvases, and later "in that Oslo gallery"; Pixel
 > Nova is a fictional editorial persona and the byline's material authorizes no such visit. The
 > article said Freia's cocoa "in Munch's day, came from Ghana"; the exhibition's account is that

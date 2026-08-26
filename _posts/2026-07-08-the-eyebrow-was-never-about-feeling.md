@@ -31,8 +31,8 @@ source_outlet: "Frontiers in Psychology"
 > the headshake for negation, brow-and-tilt conditionals, the ASL adverbial "th" meaning
 > carelessly, and every step of the acquisition timeline: brow raise for interest at two
 > months, the culture-specific negating headshake at about one year, the first facial
-> adverbials at two, and adult command of conditionals only by about seven. This article has
-> not otherwise been reviewed.
+> adverbials at two, and adult command of conditionals only by about seven. At the time of
+> this correction, this article had not otherwise been fully reviewed.
 
 A hearing person watches two Deaf people sign to each other across a café table and says, afterward, that it looked so expressive. So emotional. Such a beautiful, dramatic language. I have heard a version of this sentence more times than I can count, always meant as a compliment, always landing as a small act of erasure. What the hearing person watched was not an emotional performance. It was syntax. The eyebrows doing grammatical work that, in English, gets done by a rise in pitch at the end of a sentence — the upward lilt that turns a statement into a question. Nobody calls that lilt emotional. It is intonation. The eyebrow raise is intonation. It is read as feeling because the channel it travels through is the face, and the face is where hearing culture has decided emotion lives and nowhere else.
 

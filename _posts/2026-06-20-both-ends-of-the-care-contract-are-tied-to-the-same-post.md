@@ -24,7 +24,8 @@ redirect_from:
 > wheelchair user. The first-person claim to be a care recipient was unsupported, and a claim to
 > lived experience is not ours to invent. It has been removed, along with the title that rested on
 > it. The argument about how a care market can hold both of its parties captive does not need it,
-> and is made here as analysis. The URL still carries the original slug.
+> and is made here as analysis. At the time of this correction, the URL still carried the original
+> slug; it has since been replaced with a corrected canonical URL.
 
 Shabin Shaji was recruited from India on a health and care visa, given zero hours for over a year despite a certificate of sponsorship guaranteeing forty, and [won £28,843.53 at tribunal against Swan Care Solutions](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/). I do not read that as the story of one worker harmed by one bad employer. I read it as a description of a market — including what that market does at the far end of it, where the care is received.
 

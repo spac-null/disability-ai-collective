@@ -25,7 +25,8 @@ redirect_from:
 > situation on the page. The scene is gone, and with it the title, which named Nicholson Street —
 > the Footscray service centre is on Moore Street — and a count of nodes that came from the same
 > invented visit. The article is now titled "The Classification Decided Before Anyone Leaned In";
-> its original web address is preserved. It also said the national AI plan "promises" a human will
+> its original web address was preserved at the time, and has since been replaced with a corrected
+> canonical URL. It also said the national AI plan "promises" a human will
 > be placed in the loop and "will audit individual automated decisions," then argued against that
 > promise. The reporting describes no such commitment: the plan sets rules for automated
 > decision-making inside government prioritising fairness, accuracy and transparency, led by the

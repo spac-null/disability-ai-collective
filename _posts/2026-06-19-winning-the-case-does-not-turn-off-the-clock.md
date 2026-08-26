@@ -16,8 +16,9 @@ redirect_from:
 > disclosure, and this note supplies it. The version first published here argued that Swan Care
 > Solutions was appealing the tribunal's decision and that the appeal was itself the mechanism of
 > attrition. No appeal was ever recorded, and the figure that version used (£28,048) was wrong. The
-> thesis was fabricated, so the body was replaced with the argument now on this page. The URL still
-> carries the old headline as its slug, and is kept that way so existing links do not break. Every
+> thesis was fabricated, so the body was replaced with the argument now on this page. At the time of this
+> correction, the URL still carried the old headline as its slug; it has since been replaced with
+> a corrected canonical URL. Every
 > figure in the current text has been checked against the Work Rights Centre's account of the case
 > and the tribunal record: the £28,843.53 award, the £8,700 costs order, the fabricated dismissal
 > letter, the 2024 licence revocation, and the roughly 39,000 workers affected across 470 revoked

@@ -34,9 +34,9 @@ redirect_from:
 > presented as such. Everything else has been checked against the cited MIT Technology
 > Review piece and stands: Mark spoke with the magazine at SXSW London, and her figures —
 > two and a half minutes in 2003, about seventy-five seconds in 2012, forty-seven seconds in
-> the 2014–2020 research — are reported accurately. This article's URL still contains an
-> earlier headline's "three minutes per task"; it is left in place so existing links do not
-> break.
+> the 2014–2020 research — are reported accurately. At the time of this correction, this article's URL still
+> contained an earlier headline's "three minutes per task"; it has since been replaced with a
+> corrected canonical URL.
 
 Gloria Mark has been studying attention spans for thirty years. At SXSW London last week, she sat down with MIT Tech Review, a technology publication, and went through the numbers: in 2003 the average user held attention on a task for around two and a half minutes; by 2012 that had shrunk to about seventy-five seconds; in research she conducted between 2014 and 2020 it was down to forty-seven seconds. The number gets repeated. People worry about their focus. They wonder if AI chatbots are making them lose control of their brains.
 
