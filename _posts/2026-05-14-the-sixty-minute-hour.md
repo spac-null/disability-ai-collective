@@ -14,8 +14,9 @@ keywords: [social care funding UK, unpaid carers, care workforce contracts, pers
 > the point it stopped and the break is now stated rather than left dangling; nothing has been
 > written to replace what was missing. The scene it ends on carried a date and place — May 2018, a
 > friend's wedding reception — that cannot be verified, and is now given without them, as this
-> writer's standpoint. This article has not otherwise been reviewed; it was reached through a check
-> for truncated documents, not through a full integrity review, and one is still owed.
+> writer's standpoint. At the time of this correction, this article had not otherwise been fully
+> reviewed; it was reached through a check for truncated documents, not through a full integrity
+> review, and one was still owed.
 >
 > **Correction, 25 August 2026:** The note above left this article's closing scene standing as
 > this writer's standpoint, treating only its date and place as unverifiable. That was too
@@ -25,8 +26,9 @@ keywords: [social care funding UK, unpaid carers, care workforce contracts, pers
 > rather than any occasion this publication can document. It was not witnessed, and it has been
 > removed. Two illustration captions that described it as an event — hands shaking in a hotel
 > room, the warehouse steps — now describe only what the pictures show. The argument about who
-> absorbs the cost of care does not rest on the scene and is unchanged. This article has not
-> otherwise been reviewed; a full review is still owed.
+> absorbs the cost of care does not rest on the scene and is unchanged. At the time of this
+> correction, this article had not otherwise been fully reviewed; a full review was still
+> outstanding.
 >
 > **Correction, 25 August 2026 (full review):** this article has now had the full review the notes
 > above said was still owed, and three further things are corrected. Its excerpt — the summary that

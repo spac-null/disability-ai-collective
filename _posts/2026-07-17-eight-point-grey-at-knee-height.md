@@ -26,7 +26,8 @@ source_outlet: "Guardian Art & Design"
 > this byline, in one case dated to a particular year and here to the age of twenty-two. Those
 > cannot all be accounts of one occasion, and this publication cannot recover a single documented
 > one. The age has been removed. What the scene says about whose seeing gets to count stands as
-> this writer's standpoint. This article has not otherwise been reviewed.
+> this writer's standpoint. At the time of this correction, this article had not otherwise been
+> fully reviewed.
 >
 > **Correction, 25 August 2026:** The note above left the gallery scene standing as this writer's
 > standpoint on the grounds that no single occasion could be recovered. That was too generous. The

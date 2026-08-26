@@ -33,7 +33,8 @@ source_outlet: "Wired"
 > million times, core components present as early as January, the New York Times publishing
 > internal documents in February, the three-model pipeline, Ryan Daniels's quotation word for
 > word, Otto Neurath and Isotype in 1920s Vienna, William Stokoe's 1960 finding, and
-> Buolamwini's 2018 error rates. This article has not otherwise been reviewed.
+> Buolamwini's 2018 error rates. At the time of this correction, this article had not otherwise
+> been fully reviewed.
 
 Meta embedded face-recognition code, named NameTag, inside the Meta AI app already installed on more than fifty million phones. Not as a feature you toggle on. As infrastructure. The code sits there, dormant, waiting for activation. Wired found it this week not by reviewing some backend system but by digging through the app itself — client-side, sitting on the phone in your pocket — an analysis outside experts then reproduced independently. Meta has not exactly hidden this: the New York Times reported on the underlying effort back in February, and Meta has said publicly it is "exploring these types of features." But downplayed is not the same as disclosed. They built the road before deciding where it goes.
 

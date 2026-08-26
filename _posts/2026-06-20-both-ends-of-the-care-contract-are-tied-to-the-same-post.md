@@ -8,6 +8,8 @@ excerpt: "The visa ties the care worker to the employer. The absence of alternat
 keywords: [health and care visa, care workers, disability care, care labor, captive market, migrant care workers, disability infrastructure]
 image: /assets/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions_setting_1.jpg
 image_alt: "Both Ends of the Care Contract Are Tied to the Same Post — screen-print protest poster illustration"
+redirect_from:
+  - /2026/06/20/i-use-care-workers-we-are-caught-in-the-same-trap-from-two-directions/
 ---
 
 > **Correction, 25 August 2026:** this article has been corrected twice on the same day.
@@ -22,7 +24,8 @@ image_alt: "Both Ends of the Care Contract Are Tied to the Same Post — screen-
 > wheelchair user. The first-person claim to be a care recipient was unsupported, and a claim to
 > lived experience is not ours to invent. It has been removed, along with the title that rested on
 > it. The argument about how a care market can hold both of its parties captive does not need it,
-> and is made here as analysis. The URL still carries the original slug.
+> and is made here as analysis. At the time of this correction, the URL still carried the original
+> slug; it has since been replaced with a corrected canonical URL.
 
 Shabin Shaji was recruited from India on a health and care visa, given zero hours for over a year despite a certificate of sponsorship guaranteeing forty, and [won £28,843.53 at tribunal against Swan Care Solutions](/2026/06/04/swan-care-solutions-ltd-classified-someone-as-equipment/). I do not read that as the story of one worker harmed by one bad employer. I read it as a description of a market — including what that market does at the far end of it, where the care is received.
 

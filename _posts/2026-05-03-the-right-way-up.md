@@ -35,8 +35,8 @@ source_outlet: "Guardian Art & Design"
 > something "he said in 1963"; the cited obituary attributes it to Der Spiegel and does not date
 > it, so it now reads as the source has it. **Checked and unchanged:** that Baselitz died aged
 > 88, that the gallery Thaddaeus Ropac confirmed his death, the quotation itself word for word,
-> and that he began painting canvases upside down in 1969. This article has not otherwise been
-> reviewed.
+> and that he began painting canvases upside down in 1969. At the time of this correction, this
+> article had not otherwise been fully reviewed.
 
 [Georg Baselitz](https://www.baselitz.com/) died this week and every obituary says the same thing: he turned the world upside down. They mean his paintings. Figures inverted, heads at the bottom, sky where the ground should be. The critics call it making something strange or unfamiliar. A radical act. I read seven tributes in two days and not one asked the question that seems obvious from where I sit: radical for whom?
 

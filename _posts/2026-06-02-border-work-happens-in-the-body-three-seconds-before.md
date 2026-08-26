@@ -41,7 +41,8 @@ source_outlet: "Guardian World"
 > InterTalent Rights Group, Kate Nash's £26,000 tour loss and OnlyFans account, performing-arts
 > exports to the EU falling from £1.15bn in 2016 to £929m in 2023 per the ONS, the 12–22% social
 > security deduction, the 90-days-in-180 limit, and the National Theatre halting mainland
-> European tours in 2021. This article has not otherwise been reviewed.
+> European tours in 2021. At the time of this correction, this article had not otherwise been
+> fully reviewed.
 
 Consider how a TV commercial gets cast. The brief moves the way commercial casting always moves — fast, with the shoot date fixed before the offer goes out. Somewhere in the exchange of emails about visas and permits, the timeline runs out. In written evidence to a culture select committee inquiry, Spotlight said jobs on TV commercials are now "almost completely unavailable to UK performers"; one casting director told the Guardian that a TV campaign which pre-Brexit employed 45 UK-based people is now cast from Spain or another EU country, because the paperwork and the quick turnaround make it easier not to bother auditioning UK talent. Nobody auditioned worse. The performers simply could not produce, in time, an object that did not yet exist.
 
