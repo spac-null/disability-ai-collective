@@ -1,0 +1,55 @@
+{%- comment -%}
+  Derives the active/archive split from _data/backlist.yml. The membership predicate is
+  written once, here, so no page re-states it and no article body carries selection state.
+
+  Include once near the top of a page, then test a post with:
+
+      {% capture bk %}|{{ post.slug }}|{% endcapture %}
+      {% if backlist_active_slugs contains bk %} ... active ... {% else %} ... archive ... {% endif %}
+
+  Slugs are pipe-delimited on both sides so `contains` cannot match a slug that is merely a
+  substring of another one.
+
+  Provides:
+    backlist_active_slugs     "|slug||slug|…" for every readable post that is actively carried
+    backlist_active_count     how many those are
+    backlist_archive_count    readable posts that are not active
+    backlist_selected_count   entries in _data/backlist.yml (the legacy selection: 30)
+    backlist_total_count      every post URL, withdrawn included
+    backlist_withdrawn_count  withdrawal notices
+    backlist_readable_count   posts that are not withdrawal notices
+
+  Withdrawal is untouched by any of this and stays governed solely by `withdrawn` front matter.
+{%- endcomment -%}
+
+{%- capture backlist_selected_slugs -%}|{% for s in site.data.backlist.selected %}{{ s }}|{% endfor %}{%- endcapture -%}
+{%- assign backlist_cutoff = site.data.backlist.legacy_through | date: "%Y%m%d" | plus: 0 -%}
+{%- assign backlist_selected_count = site.data.backlist.selected | size -%}
+
+{%- capture backlist_active_slugs -%}
+{%- for p in site.posts -%}
+{%- unless p.withdrawn -%}
+{%- capture bl_key -%}|{{ p.slug }}|{%- endcapture -%}
+{%- assign bl_date = p.date | date: "%Y%m%d" | plus: 0 -%}
+{%- if backlist_selected_slugs contains bl_key or p.pipeline_version or bl_date > backlist_cutoff or p.author == site.data.backlist.editor_byline -%}|{{ p.slug }}|{%- endif -%}
+{%- endunless -%}
+{%- endfor -%}
+{%- endcapture -%}
+
+{%- assign backlist_active_count = 0 -%}
+{%- assign backlist_archive_count = 0 -%}
+{%- assign backlist_withdrawn_count = 0 -%}
+{%- for p in site.posts -%}
+{%- if p.withdrawn -%}
+{%- assign backlist_withdrawn_count = backlist_withdrawn_count | plus: 1 -%}
+{%- else -%}
+{%- capture bl_key -%}|{{ p.slug }}|{%- endcapture -%}
+{%- if backlist_active_slugs contains bl_key -%}
+{%- assign backlist_active_count = backlist_active_count | plus: 1 -%}
+{%- else -%}
+{%- assign backlist_archive_count = backlist_archive_count | plus: 1 -%}
+{%- endif -%}
+{%- endif -%}
+{%- endfor -%}
+{%- assign backlist_total_count = site.posts | size -%}
+{%- assign backlist_readable_count = backlist_total_count | minus: backlist_withdrawn_count -%}

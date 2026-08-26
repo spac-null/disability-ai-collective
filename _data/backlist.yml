@@ -1,0 +1,79 @@
+# Selected backlist — the single source of truth for what Crip Minds actively carries.
+#
+# The distinction this file draws is editorial, not archival. Everything published stays
+# published: the archive is earlier work retained with its correction history, not work
+# that was withdrawn. Withdrawal is a separate thing entirely and is still governed only
+# by a post's own `withdrawn` front matter.
+#
+# Consumers (all read the derived values from _includes/backlist.html, never this file
+# directly, so the predicate lives in exactly one place):
+#   index.html        featured essay and the Latest row
+#   research.html     the active backlist, Collections counts, the route to the archive
+#   archive.html      everything readable that is not active
+#   research/*.html   marks collection members that sit in the archive
+#   press/index.html  the selected figure alongside the corpus figures
+#
+# A readable post is ACTIVE when any of these holds:
+#
+#   1. its slug appears under `selected` below;
+#   2. it carries `pipeline_version` front matter — the marker the current editorial
+#      process stamps on what it publishes, which is what separates current work from
+#      the legacy cohort in repository history;
+#   3. it was published after `legacy_through` — a backstop so that new work can never
+#      be archived by default if the marker in (2) is ever missing;
+#   4. its author is `editor_byline` — the editor's notes are not essays and were never
+#      part of the legacy cohort the selection was drawn from.
+#
+# Everything else readable is legacy archive.
+#
+# `selected` holds the 30 legacy essays the reissue programme finished: the 28 reissued
+# across the two pilots and four waves, plus the 2 that were already final and carried no
+# correction apparatus to retire. Adding a slug here promotes an essay into the active
+# backlist; removing one returns it to the archive. Nothing else needs editing, and no
+# article body carries any selection state.
+
+legacy_through: 2026-08-13
+editor_byline: "Jascha Blume"
+
+selected:
+  # Already final — no correction apparatus, nothing to reissue.
+  - the-disorder-is-a-system-property
+  - the-avatar-got-the-handshape-right-it-got-the-face-wrong
+
+  # Reissued — pilots 1 and 2.
+  - the-upgrade-assumes-a-body-that-was-working-before
+  - the-exit-is-counted-the-weight-is-not
+
+  # Reissued — wave 1.
+  - the-probation-period-did-not-test-what-capgemini-said-it-was-testing
+  - the-four-point-rule-did-not-describe-disability-it-described-a-budget
+  - the-eyebrow-was-never-about-feeling
+  - the-captions-were-the-first-decision-not-the-last
+  - mute-was-never-a-description-it-was-a-failure-to-listen
+
+  # Reissued — wave 2.
+  - the-room-was-built-to-listen-back-but-only-to-some
+  - clyfford-still-museum-proves-painting-never-needed-eyes
+  - she-took-the-score-and-asked-it-a-different-question
+  - the-tour-exists-the-art-still-wasnt-designed-for-you
+  - the-label-was-removed-at-the-door
+  - he-never-wrote-a-word-of-his-own-archive
+
+  # Reissued — wave 3.
+  - the-genius-is-a-clean-room
+  - an-accessible-castle
+  - the-escape-pod
+  - the-theory-that-could-not-see-half-the-room
+  - he-painted-everyone-talking
+  - the-threshold-has-a-curb
+
+  # Reissued — wave 4.
+  - the-map-that-stops-at-the-door
+  - the-room-you-were-never-in
+  - cave-paintings-for-nobody
+  - bunting-made-from-hospital-sheets-is-not-folk-art
+  - meta-built-recognition-infrastructure-before-asking
+  - gloria-mark-says-people-spend-forty-seven-seconds-per-task
+  - body-mass-index-was-never-measuring-health
+  - same-molecule-two-verdicts-twenty-two-years-apart
+  - jebel-irhoud-broke-the-single-dot-i-was-trusting

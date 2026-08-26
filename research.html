@@ -5,6 +5,9 @@ description: "Essays using disabled ways of seeing to ask different questions of
 ---
 {% comment %} Readable population: posts that are not withdrawal notices. Single source of truth is the post's own `withdrawn` frontmatter. {% endcomment %}
 {% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
+{% comment %} Active backlist vs legacy archive. Membership predicate lives in
+   _includes/backlist.html, reading _data/backlist.yml. {% endcomment %}
+{% include backlist.html %}
 <style>
   /* .research-threads is a fixed 4-column grid tuned for exactly 4 reading-thread cards;
      the Works list can have any number of entries, so it needs its own responsive columns
@@ -19,7 +22,11 @@ description: "Essays using disabled ways of seeing to ask different questions of
       <p class="text-lead text-secondary max-w-2xl mx-auto">
         Essays that use disabled ways of seeing to ask different questions of culture, science, technology, institutions, and ordinary objects &mdash; and to surface the assumptions the usual account leaves unexamined.
       </p>
-      <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em;"><span class="marker marker--lime">{{ readable_posts.size }}</span> essays available to read</p>
+      <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em;"><span class="marker marker--lime">{{ backlist_active_count }}</span> essays currently carried</p>
+      <p class="text-small text-secondary mt-2" style="max-width: 34rem; margin-left: auto; margin-right: auto;">
+        Earlier published work stays online in the <a href="{{ '/archive/' | relative_url }}">legacy archive</a>,
+        retained with its correction history.
+      </p>
     </div>
   </header>
 
@@ -52,10 +59,15 @@ description: "Essays using disabled ways of seeing to ask different questions of
       </div>
       <p id="article-filter-status" class="text-small text-secondary" aria-live="polite" style="min-height: 1.2em; margin: 0.5rem 0 1rem;"></p>
 
-      {% if readable_posts.size > 0 %}
+      {% if backlist_active_count > 0 %}
         <p class="research-threads__eyebrow" style="margin-bottom: 1rem;"><span class="marker marker--lime">Latest</span></p>
         <div class="grid grid--3 gap-8 articles-grid">
-          {% for post in readable_posts limit:3 %}
+          {% assign latest_shown = 0 %}
+          {% for post in readable_posts %}
+          {% capture bk %}|{{ post.slug }}|{% endcapture %}
+          {% unless backlist_active_slugs contains bk %}{% continue %}{% endunless %}
+          {% if latest_shown >= 3 %}{% break %}{% endif %}
+          {% assign latest_shown = latest_shown | plus: 1 %}
           <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
             {% assign research_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% assign research_author_icon_thumb = '/assets/maya_flux_style_matched_thumb.png' %}
@@ -121,24 +133,37 @@ description: "Essays using disabled ways of seeing to ask different questions of
           <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.35rem;"><span class="marker marker--pink">Collections</span></p>
           <p class="text-small text-secondary" style="margin: 0 0 0.5rem;">Curated routes through recurring subjects.</p>
           <div class="thread-strip">
+            {% comment %} Counts are of the members this publication actively carries, so a
+                 collection cannot present archived pieces as current recommendations. Membership
+                 itself is unchanged: every member is still listed on the collection's own page,
+                 and a collection whose members are all archived is still linked, labelled as
+                 such rather than shown with a count of zero. {% endcomment %}
             {% for thread in site.data.threads %}
-              {% assign thread_readable = 0 %}
+              {% assign thread_active = 0 %}
               {% for s in thread.slugs %}
                 {% assign tp = readable_posts | where: "slug", s | first %}
-                {% if tp %}{% assign thread_readable = thread_readable | plus: 1 %}{% endif %}
+                {% if tp %}
+                  {% capture bk %}|{{ tp.slug }}|{% endcapture %}
+                  {% if backlist_active_slugs contains bk %}{% assign thread_active = thread_active | plus: 1 %}{% endif %}
+                {% endif %}
               {% endfor %}
             <a href="{{ thread.url }}" class="thread-strip__item">
               <span class="thread-strip__title">{{ thread.title }}</span>
-              <span class="thread-strip__count">{{ thread_readable }} essay{% unless thread_readable == 1 %}s{% endunless %}</span>
+              <span class="thread-strip__count">{% if thread_active == 0 %}Archive collection{% else %}{{ thread_active }} essay{% unless thread_active == 1 %}s{% endunless %}{% endif %}</span>
             </a>
             {% endfor %}
           </div>
         </div>
 
-        {% if readable_posts.size > 3 %}
+        {% if backlist_active_count > 3 %}
         <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.75rem;">All essays</p>
         <div class="archive-list">
-          {% for post in readable_posts offset:3 %}
+          {% assign listed = 0 %}
+          {% for post in readable_posts %}
+          {% capture bk %}|{{ post.slug }}|{% endcapture %}
+          {% unless backlist_active_slugs contains bk %}{% continue %}{% endunless %}
+          {% assign listed = listed | plus: 1 %}
+          {% if listed <= 3 %}{% continue %}{% endif %}
           <article class="archive-row" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
             <p class="archive-row__meta">
               <time class="archive-row__date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %-d, %Y" }}</time>
@@ -155,6 +180,15 @@ description: "Essays using disabled ways of seeing to ask different questions of
           {% endfor %}
         </div>
         {% endif %}
+
+        <aside class="legacy-archive-route">
+          <p class="legacy-archive-route__label">Legacy archive</p>
+          <p class="legacy-archive-route__body">
+            Earlier published work, retained with its correction history. It is still online and
+            still readable &mdash; it is simply no longer part of what this publication puts forward.
+          </p>
+          <a href="{{ '/archive/' | relative_url }}" class="legacy-archive-route__link">Browse the {{ backlist_archive_count }} archived essays &rarr;</a>
+        </aside>
       {% else %}
         <div class="card text-center p-16">
           <h3 class="text-h3 mb-4">New Articles in Progress</h3>

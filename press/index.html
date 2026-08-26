@@ -6,6 +6,9 @@ description: "Background on Crip Minds and its founder, for press and editorial 
 
 {% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
 {% assign withdrawn_count = site.posts.size | minus: readable_posts.size %}
+{% comment %} Corpus figures below describe the complete publication and stay as they are.
+   The selection figure is a separate, editorial count. {% endcomment %}
+{% include backlist.html %}
 <main id="main-content">
   <section class="section section--primary">
     <div class="container">
@@ -44,7 +47,11 @@ description: "Background on Crip Minds and its founder, for press and editorial 
             <p class="text-body" style="margin: 0;">{{ readable_posts.size }} available to read</p>
           </div>
           <div>
-            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Archive</p>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Currently carried</p>
+            <p class="text-body" style="margin: 0;">{{ backlist_active_count }} in the <a href="{{ '/research/' | relative_url }}">current selection</a>; the rest stay readable in the <a href="{{ '/archive/' | relative_url }}">legacy archive</a></p>
+          </div>
+          <div>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Withdrawn</p>
             <p class="text-body" style="margin: 0;">{{ withdrawn_count }} withdrawn pages preserved for transparency</p>
           </div>
           <div>

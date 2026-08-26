@@ -6,15 +6,26 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
 
 {% comment %} Readable population: posts that are not withdrawal notices. Single source of truth is the post's own `withdrawn` frontmatter. {% endcomment %}
 {% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
+{% comment %} The homepage recommends; it therefore draws only on what the publication actively
+   carries, never on the legacy archive. The split is derived in _includes/backlist.html from
+   _data/backlist.yml. {% endcomment %}
+{% include backlist.html %}
 
-{% if readable_posts.size > 0 %}
+{% if backlist_active_count > 0 %}
 {% assign today_str = 'now' | date: "%Y-%m-%d" %}
 {% assign featured = nil %}
 {% for post in readable_posts %}
+  {% capture bk %}|{{ post.slug }}|{% endcapture %}
+  {% unless backlist_active_slugs contains bk %}{% continue %}{% endunless %}
   {% assign post_date = post.date | date: "%Y-%m-%d" %}
   {% if post_date == today_str %}{% assign featured = post %}{% break %}{% endif %}
 {% endfor %}
-{% if featured == nil %}{% assign featured = readable_posts.first %}{% endif %}
+{% if featured == nil %}
+  {% for post in readable_posts %}
+    {% capture bk %}|{{ post.slug }}|{% endcapture %}
+    {% if backlist_active_slugs contains bk %}{% assign featured = post %}{% break %}{% endif %}
+  {% endfor %}
+{% endif %}
 {% assign featured_icon = '/assets/maya_flux_style_matched.png' %}
 {% if featured.author == "Siri Sage" %}{% assign featured_icon = '/assets/siri_sage_style_matched.png' %}
 {% elsif featured.author == "Pixel Nova" %}{% assign featured_icon = '/assets/pixel_nova_style_matched.png' %}
@@ -67,13 +78,19 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
   <!-- ── Recent essays ───────────────────────────────────────────────── -->
   <section id="articles" class="section section--secondary" style="padding-top: var(--space-16)">
     <div class="container">
-    {% if readable_posts.size > 0 %}
+    {% if backlist_active_count > 0 %}
 
       <p class="home-section-label">Recent essays</p>
 
       <div class="recent-articles-wrap">
         <div class="grid grid--3 articles-grid">
-          {% for post in readable_posts offset:1 limit:3 %}
+          {% assign recent_shown = 0 %}
+          {% for post in readable_posts %}
+          {% capture bk %}|{{ post.slug }}|{% endcapture %}
+          {% unless backlist_active_slugs contains bk %}{% continue %}{% endunless %}
+          {% if post.slug == featured.slug %}{% continue %}{% endif %}
+          {% if recent_shown >= 3 %}{% break %}{% endif %}
+          {% assign recent_shown = recent_shown | plus: 1 %}
           {% assign home_author_icon = '/assets/maya_flux_style_matched.png' %}
             {% assign home_persona_slug = 'maya-flux' %}
             {% if post.author == "Siri Sage" %}
@@ -135,16 +152,19 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
 
       <div class="text-center mt-10">
         <a href="{{ '/research/' | relative_url }}" class="btn btn--secondary">
-          All <span class="marker marker--lime">{{ readable_posts.size }}</span> essays &rarr;
+          All <span class="marker marker--lime">{{ backlist_active_count }}</span> essays &rarr;
         </a>
       </div>
 
       <div class="start-here-mini">
         <p class="home-section-label text-center">Start <span class="marker marker--lime marker--strong">here</span></p>
+        {% comment %} Hand-picked, so it has to be kept inside the active backlist by hand:
+             every entry must be listed in _data/backlist.yml. A third pick used to point at
+             The City Forgot to Sound-Design Its Streets, which is now legacy archive. {% endcomment %}
         <ul class="start-here-mini__list">
           <li><a href="/2026/03/16/the-map-that-stops-at-the-door/" class="text-primary">The Map That Stops at the Door &rarr;</a></li>
           <li><a href="/2026/06/24/the-disorder-is-a-system-property/" class="text-primary">The Disorder Is a System Property &rarr;</a></li>
-          <li><a href="/2026/03/14/the-city-forgot-to-sound-design-its-streets-on-acoustic-wayfinding-and-who-gets/" class="text-primary">The City Forgot to Sound-Design Its Streets &rarr;</a></li>
+          <li><a href="/2026/07/06/the-four-point-rule-did-not-describe-disability-it-described-a-budget/" class="text-primary">The Four-Point Rule Did Not Describe Disability &rarr;</a></li>
         </ul>
       </div>
     {% else %}

@@ -291,6 +291,15 @@ layout: default
         {% endif %}
 
         <!-- Related Articles -->
+        {% comment %} "More to Read" recommends, so it observes the active/archive split:
+             an actively carried essay recommends only actively carried essays, while an
+             archived essay keeps its archive neighbours, which is where its context is.
+             Curated entries are never dropped — an archived one is labelled instead, so
+             _data/related.yml keeps its meaning. {% endcomment %}
+        {% include backlist.html %}
+        {% capture page_key %}|{{ page.slug }}|{% endcapture %}
+        {% assign page_is_active = false %}
+        {% if backlist_active_slugs contains page_key %}{% assign page_is_active = true %}{% endif %}
         {% assign curated = site.data.related[page.slug] %}
         {% if curated and curated.size > 0 %}
         <section class="related-articles" aria-label="Related articles">
@@ -310,7 +319,9 @@ layout: default
               </div>
               {% endif %}
               <div class="related-articles__body">
-                {% if item.category %}<span class="related-articles__cat">{{ item.category }}</span>{% endif %}
+                {% assign item_archived = false %}
+                {% if item_post %}{% capture item_key %}|{{ item_post.slug }}|{% endcapture %}{% unless backlist_active_slugs contains item_key or item_post.withdrawn %}{% assign item_archived = true %}{% endunless %}{% endif %}
+                {% if item.category or item_archived %}<span class="related-articles__cat">{{ item.category }}{% if item_archived %}<span class="related-articles__archived">Archive</span>{% endif %}</span>{% endif %}
                 <h3 class="related-articles__title">{{ item.title | truncate: 80 }}</h3>
                 {% if item_post.excerpt %}<p class="related-articles__excerpt">{{ item_post.excerpt | strip_html | truncatewords: 18 }}</p>{% endif %}
                 {% if item_post.author %}
@@ -332,6 +343,14 @@ layout: default
         {% assign current_cats = page.categories %}
         {% assign related_posts = "" | split: "" %}
         {% assign related_pool = site.posts | where_exp: "p", "p.withdrawn != true" %}
+        {% if page_is_active %}
+          {% assign active_pool = "" | split: "" %}
+          {% for p in related_pool %}
+            {% capture pool_key %}|{{ p.slug }}|{% endcapture %}
+            {% if backlist_active_slugs contains pool_key %}{% assign active_pool = active_pool | push: p %}{% endif %}
+          {% endfor %}
+          {% if active_pool.size > 3 %}{% assign related_pool = active_pool %}{% endif %}
+        {% endif %}
         {% for post in related_pool %}
           {% if post.url != page.url %}
             {% for cat in post.categories %}
