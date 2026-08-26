@@ -18,9 +18,9 @@ redirect_from:
 
 Priya is invented. The Guardian's reporting names no midwife who left, and she is drawn from no one in it; what is real is the figures that follow. She finished a night shift on a maternity ward in a large city hospital after eleven hours under lights she could not dim, in a corridor where the alarms, the monitors, and the double doors slamming ran together into one continuous wall of noise she had learned to hold at bay by clenching. She resigned that afternoon. The word for it was burnout.
 
-Naomi is invented on the same terms. A midwife on the same ward, she left three months later with a bad knee and a manager who let her sit during handover. Her exit was recorded as a mobility issue, referred to occupational health, logged, counted.
+Naomi is invented on the same terms. A midwife on the same ward, she left three months later with a bad knee and a manager who let her sit during handover.
 
-One of these women became a case. The other became a statistic in a story about tired young people leaving the NHS, Britain's National Health Service.
+One of these women left with a difficulty the system already has a name for. The other is read as a statistic in a story about tired young people leaving the NHS, Britain's National Health Service.
 
 The Guardian ran that story on 20 July 2026, and its numbers are real: 1,669 midwives aged thirty-four or under left NHS England in 2025-26, more than half of all departures that year, up 59 percent on a decade earlier. Nearly a quarter of the students who started midwifery training in 2021 didn't finish it by 2024. Three-quarters of practising midwives told their own college they'd considered leaving in the past year. The word doing all the work in that story, and in most of the coverage of it, is burnout. It is a soft word. It suggests a person who ran out of a resource everyone has, the way a phone runs down. It flattens everyone who leaves into the same shape.
 
