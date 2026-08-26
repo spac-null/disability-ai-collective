@@ -13,23 +13,6 @@ source_title: "ADHD Discrimination Ruling: What the Khorram v Capgemini Case Mea
 source_outlet: "Swinburne Maddison"
 ---
 
-> **Correction, 25 August 2026:** an earlier version of this article listed the five reasonable
-> adjustments the tribunal found Capgemini had failed to make, and got them wrong. It gave
-> "coaching sessions and ADHD training for her manager and colleagues; realistic task-setting to
-> prevent overwhelm; time management training; coping strategy support; and feedback processes
-> adapted to her needs." The tribunal's liability judgment of 14 July 2025 identified a different
-> list: achievable and realistic tasks, a neurodiversity awareness webinar for her colleagues, an
-> ADHD awareness webinar for her wider team, six two-hour coaching sessions on time management and
-> coping strategies, and coaching for her line manager on communication and collaboration. The
-> article also concluded that the probation "tested whether she could pass an assessment designed
-> for a different cognitive architecture" — a claim the tribunal rejected, having found there were
-> good reasons to think Khorram would not have passed probation even with the adjustments in place,
-> for reasons it did not attribute to her ADHD or to discrimination. And it merged the liability
-> judgment with the remedy judgment issued five months later, presenting the £10,000 injury-to-
-> feelings award and the further sums for lost income, interest and pension as a single ruling.
-> All of this was corrected in August 2026 without telling readers, and this note corrects that
-> omission. The current text was re-checked against the tribunal's own judgments and stands.
-
 Bahar Khorram joined Capgemini UK in summer 2023 as a pre-sales lead in cloud infrastructure services. She had twenty-five years of experience as a cloud technologist. Shortly after starting, she disclosed her ADHD diagnosis. Her probation ended in dismissal.
 
 The employment tribunal found, in its liability judgment of 14 July 2025, that Capgemini had failed to make five reasonable adjustments. They are worth reading as a list, because the list is a description of what a functional working environment for an ADHD employee requires: setting achievable, realistic tasks; a neurodiversity awareness webinar for her colleagues; an ADHD awareness webinar for her wider team; six two-hour coaching sessions on time management and coping strategies; and coaching sessions with her line manager on communication and collaboration. None were provided. Capgemini ran its standard probation. The standard probation was not designed for her.
@@ -53,3 +36,5 @@ The ruling still established something beyond Khorram's own case. Neurodiversity
 </figure>
 
 Neurodiversity-related employment tribunal claims nearly doubled between 2020 and 2025 — reaching 517, with ADHD cases at a record 118. The majority do not arise from deliberate hostility. They arise from workplaces that ran the standard process and then recorded the result as a performance failure. The office environment was not designed for a neurodivergent brain. The standard probation was not either. The Khorram ruling does not describe an exception. It describes the rule, made visible.
+
+_**Revision note, 26 August 2026:** An earlier version of this article listed the five reasonable adjustments the tribunal found Capgemini had failed to make, and listed the wrong five. The tribunal's liability judgment identifies achievable and realistic tasks, a neurodiversity awareness webinar for her colleagues, an ADHD awareness webinar for her wider team, six two-hour coaching sessions on time management and coping strategies, and coaching for her line manager on communication and collaboration. That version also concluded that the probation had tested whether Khorram could pass an assessment built for a different kind of mind. The tribunal made no such finding; it found there were good reasons to think she would not have passed even with the adjustments in place, for reasons it did not attribute to her ADHD. It also presented the liability and remedy judgments as a single ruling, when the award came five months after the finding. The text has been rechecked against the tribunal's judgments._

@@ -13,16 +13,6 @@ source_title: "Pathways to Poverty: How planned cuts to disability benefits will
 source_outlet: "Citizens Advice"
 ---
 
-> **Correction, 24 August 2026:** An earlier version of this article said the four-point rule
-> was dropped from the "Welfare Reform Bill." It was clause 5 of the Universal Credit and
-> Personal Independence Payment Bill, which passed without it as the Universal Credit Act
-> 2025; the Welfare Reform Act is separate legislation. The article also asserted personal
-> acquaintance with claimants ("I know people who qualify…") as support for a point the
-> points arithmetic already makes; that claim has been removed. The projection figures have
-> been checked against the government's impact assessment and are accurate — 370,000 existing
-> recipients and 430,000 future claimants, about 800,000 in total by 2029/30 — and the
-> assessment is now cited directly rather than left to the article's single listed source.
-
 The Personal Independence Payment assesses disability through ten daily living activities: preparing food, eating and drinking, managing treatments, washing, managing toilet needs, dressing, communicating verbally, reading signs, engaging with other people, and making decisions about money. Each activity has descriptors. Each descriptor is worth points. Eight to eleven points qualifies for the standard daily living rate. Twelve or more qualifies for the enhanced rate.
 
 The key feature of this system is that points accumulate across activities. You can qualify without any single activity being severely impaired — because disability often works that way. Two points for difficulty preparing food. Two for bathing. Two for dressing. Two for managing toilet needs. Eight total, standard rate. A life that requires daily support, distributed across the ordinary tasks of a day, with no single task severe enough on its own to register.
@@ -44,3 +34,5 @@ That instrument never made it into law. Under political pressure — including a
 </figure>
 
 The Timms review, due to report in Autumn 2026, will assess PIP activities and descriptors and may redesign the instrument. What it cannot redesign, unless explicitly asked, is the logic behind the four-point rule: that disability must concentrate in one place to count, that cumulative difficulty does not qualify, that distributed impairment is not real impairment. That logic will not appear in the review's terms of reference. [It rarely does.](/2026/05/22/court-ruling-no-effect/) The state has many mechanisms for recording decisions it cannot see as decisions. The assessment form is one of them.
+
+_**Revision note, 26 August 2026:** An earlier version said the four-point rule was dropped from the "Welfare Reform Bill". It was clause 5 of the Universal Credit and Personal Independence Payment Bill, which became the Universal Credit Act 2025 without it; the Welfare Reform Act is separate legislation. That version also offered the writer's personal acquaintance with claimants as support for a point the points arithmetic already makes, and the claim has been removed. The projection figures have been rechecked against the government's own impact assessment, which is now cited directly._
