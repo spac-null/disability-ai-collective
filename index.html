@@ -6,24 +6,25 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
 
 {% comment %} Readable population: posts that are not withdrawal notices. Single source of truth is the post's own `withdrawn` frontmatter. {% endcomment %}
 {% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
-{% comment %} The homepage recommends; it therefore draws only on what the publication actively
-   carries, never on the legacy archive. The split is derived in _includes/backlist.html from
-   _data/backlist.yml. {% endcomment %}
+{% comment %} The homepage recommends articles; it draws only on what the publication actively
+   carries, never on the legacy archive, and never on the editor's notes, which are not articles.
+   The split is derived in _includes/backlist.html from _data/backlist.yml. {% endcomment %}
 {% include backlist.html %}
 
-{% if backlist_active_count > 0 %}
+{% if backlist_article_count > 0 %}
 {% assign today_str = 'now' | date: "%Y-%m-%d" %}
 {% assign featured = nil %}
 {% for post in readable_posts %}
   {% capture bk %}|{{ post.slug }}|{% endcapture %}
   {% unless backlist_active_slugs contains bk %}{% continue %}{% endunless %}
+  {% if backlist_note_slugs contains bk %}{% continue %}{% endif %}
   {% assign post_date = post.date | date: "%Y-%m-%d" %}
   {% if post_date == today_str %}{% assign featured = post %}{% break %}{% endif %}
 {% endfor %}
 {% if featured == nil %}
   {% for post in readable_posts %}
     {% capture bk %}|{{ post.slug }}|{% endcapture %}
-    {% if backlist_active_slugs contains bk %}{% assign featured = post %}{% break %}{% endif %}
+    {% if backlist_active_slugs contains bk %}{% unless backlist_note_slugs contains bk %}{% assign featured = post %}{% break %}{% endunless %}{% endif %}
   {% endfor %}
 {% endif %}
 {% assign featured_icon = '/assets/maya_flux_style_matched.png' %}
@@ -78,7 +79,7 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
   <!-- ── Recent essays ───────────────────────────────────────────────── -->
   <section id="articles" class="section section--secondary" style="padding-top: var(--space-16)">
     <div class="container">
-    {% if backlist_active_count > 0 %}
+    {% if backlist_article_count > 0 %}
 
       <p class="home-section-label">Recent essays</p>
 
@@ -88,6 +89,7 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
           {% for post in readable_posts %}
           {% capture bk %}|{{ post.slug }}|{% endcapture %}
           {% unless backlist_active_slugs contains bk %}{% continue %}{% endunless %}
+          {% if backlist_note_slugs contains bk %}{% continue %}{% endif %}
           {% if post.slug == featured.slug %}{% continue %}{% endif %}
           {% if recent_shown >= 3 %}{% break %}{% endif %}
           {% assign recent_shown = recent_shown | plus: 1 %}
@@ -152,7 +154,7 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
 
       <div class="text-center mt-10">
         <a href="{{ '/research/' | relative_url }}" class="btn btn--secondary">
-          All <span class="marker marker--lime">{{ backlist_active_count }}</span> essays &rarr;
+          All <span class="marker marker--lime">{{ backlist_article_count }}</span> essays &rarr;
         </a>
       </div>
 

@@ -347,7 +347,7 @@ layout: default
           {% assign active_pool = "" | split: "" %}
           {% for p in related_pool %}
             {% capture pool_key %}|{{ p.slug }}|{% endcapture %}
-            {% if backlist_active_slugs contains pool_key %}{% assign active_pool = active_pool | push: p %}{% endif %}
+            {% if backlist_active_slugs contains pool_key %}{% unless backlist_note_slugs contains pool_key %}{% assign active_pool = active_pool | push: p %}{% endunless %}{% endif %}
           {% endfor %}
           {% if active_pool.size > 3 %}{% assign related_pool = active_pool %}{% endif %}
         {% endif %}

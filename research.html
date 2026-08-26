@@ -6,7 +6,9 @@ description: "Essays using disabled ways of seeing to ask different questions of
 {% comment %} Readable population: posts that are not withdrawal notices. Single source of truth is the post's own `withdrawn` frontmatter. {% endcomment %}
 {% assign readable_posts = site.posts | where_exp: "p", "p.withdrawn != true" %}
 {% comment %} Active backlist vs legacy archive. Membership predicate lives in
-   _includes/backlist.html, reading _data/backlist.yml. {% endcomment %}
+   _includes/backlist.html, reading _data/backlist.yml. This page is the ARTICLE
+   catalogue, so the editor's notes are excluded from the list, from search and from
+   the count; they are live and unarchived, and live at /notes/. {% endcomment %}
 {% include backlist.html %}
 <style>
   /* .research-threads is a fixed 4-column grid tuned for exactly 4 reading-thread cards;
@@ -22,7 +24,7 @@ description: "Essays using disabled ways of seeing to ask different questions of
       <p class="text-lead text-secondary max-w-2xl mx-auto">
         Essays that use disabled ways of seeing to ask different questions of culture, science, technology, institutions, and ordinary objects &mdash; and to surface the assumptions the usual account leaves unexamined.
       </p>
-      <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em;"><span class="marker marker--lime">{{ backlist_active_count }}</span> essays currently carried</p>
+      <p class="text-small text-secondary mt-4" style="font-family: var(--font-family-mono); letter-spacing: 0.08em;"><span class="marker marker--lime">{{ backlist_article_count }}</span> essays currently carried</p>
       <p class="text-small text-secondary mt-2" style="max-width: 34rem; margin-left: auto; margin-right: auto;">
         Earlier published work stays online in the <a href="{{ '/archive/' | relative_url }}">legacy archive</a>,
         retained with its correction history.
@@ -59,13 +61,14 @@ description: "Essays using disabled ways of seeing to ask different questions of
       </div>
       <p id="article-filter-status" class="text-small text-secondary" aria-live="polite" style="min-height: 1.2em; margin: 0.5rem 0 1rem;"></p>
 
-      {% if backlist_active_count > 0 %}
+      {% if backlist_article_count > 0 %}
         <p class="research-threads__eyebrow" style="margin-bottom: 1rem;"><span class="marker marker--lime">Latest</span></p>
         <div class="grid grid--3 gap-8 articles-grid">
           {% assign latest_shown = 0 %}
           {% for post in readable_posts %}
           {% capture bk %}|{{ post.slug }}|{% endcapture %}
           {% unless backlist_active_slugs contains bk %}{% continue %}{% endunless %}
+          {% if backlist_note_slugs contains bk %}{% continue %}{% endif %}
           {% if latest_shown >= 3 %}{% break %}{% endif %}
           {% assign latest_shown = latest_shown | plus: 1 %}
           <article class="card card--elevated" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">
@@ -144,7 +147,7 @@ description: "Essays using disabled ways of seeing to ask different questions of
                 {% assign tp = readable_posts | where: "slug", s | first %}
                 {% if tp %}
                   {% capture bk %}|{{ tp.slug }}|{% endcapture %}
-                  {% if backlist_active_slugs contains bk %}{% assign thread_active = thread_active | plus: 1 %}{% endif %}
+                  {% if backlist_active_slugs contains bk %}{% unless backlist_note_slugs contains bk %}{% assign thread_active = thread_active | plus: 1 %}{% endunless %}{% endif %}
                 {% endif %}
               {% endfor %}
             <a href="{{ thread.url }}" class="thread-strip__item">
@@ -155,13 +158,14 @@ description: "Essays using disabled ways of seeing to ask different questions of
           </div>
         </div>
 
-        {% if backlist_active_count > 3 %}
+        {% if backlist_article_count > 3 %}
         <p class="research-threads__eyebrow" style="margin: var(--space-16) 0 0.75rem;">All essays</p>
         <div class="archive-list">
           {% assign listed = 0 %}
           {% for post in readable_posts %}
           {% capture bk %}|{{ post.slug }}|{% endcapture %}
           {% unless backlist_active_slugs contains bk %}{% continue %}{% endunless %}
+          {% if backlist_note_slugs contains bk %}{% continue %}{% endif %}
           {% assign listed = listed | plus: 1 %}
           {% if listed <= 3 %}{% continue %}{% endif %}
           <article class="archive-row" data-categories="{{ post.categories | join: "," | downcase }}" data-persona="{{ post.author }}">

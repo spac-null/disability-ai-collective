@@ -10,9 +10,17 @@
   Slugs are pipe-delimited on both sides so `contains` cannot match a slug that is merely a
   substring of another one.
 
+  Editor's notes are live and never archived, but they are not articles: they are excluded
+  from the article catalogue, from article search and from every article count. Test with
+  backlist_note_slugs the same way.
+
   Provides:
-    backlist_active_slugs     "|slug||slug|…" for every readable post that is actively carried
-    backlist_active_count     how many those are
+    backlist_active_slugs     "|slug||slug|…" for every readable post that is actively carried,
+                              notes included — use it to answer "is this archived?"
+    backlist_note_slugs       "|slug|…" for the editor's notes among those
+    backlist_article_count    active ARTICLES: 30 selected legacy + current-process work
+    backlist_note_count       editor's notes
+    backlist_active_count     articles + notes
     backlist_archive_count    readable posts that are not active
     backlist_selected_count   entries in _data/backlist.yml (the legacy selection: 30)
     backlist_total_count      every post URL, withdrawn included
@@ -36,7 +44,17 @@
 {%- endfor -%}
 {%- endcapture -%}
 
+{%- capture backlist_note_slugs -%}
+{%- for p in site.posts -%}
+{%- unless p.withdrawn -%}
+{%- if p.author == site.data.backlist.editor_byline -%}|{{ p.slug }}|{%- endif -%}
+{%- endunless -%}
+{%- endfor -%}
+{%- endcapture -%}
+
 {%- assign backlist_active_count = 0 -%}
+{%- assign backlist_article_count = 0 -%}
+{%- assign backlist_note_count = 0 -%}
 {%- assign backlist_archive_count = 0 -%}
 {%- assign backlist_withdrawn_count = 0 -%}
 {%- for p in site.posts -%}
@@ -46,6 +64,11 @@
 {%- capture bl_key -%}|{{ p.slug }}|{%- endcapture -%}
 {%- if backlist_active_slugs contains bl_key -%}
 {%- assign backlist_active_count = backlist_active_count | plus: 1 -%}
+{%- if backlist_note_slugs contains bl_key -%}
+{%- assign backlist_note_count = backlist_note_count | plus: 1 -%}
+{%- else -%}
+{%- assign backlist_article_count = backlist_article_count | plus: 1 -%}
+{%- endif -%}
 {%- else -%}
 {%- assign backlist_archive_count = backlist_archive_count | plus: 1 -%}
 {%- endif -%}

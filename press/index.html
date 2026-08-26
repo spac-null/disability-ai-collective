@@ -43,16 +43,16 @@ description: "Background on Crip Minds and its founder, for press and editorial 
             <p class="text-body" style="margin: 0;">Four fictional editorial personas, AI-assisted within an authored system</p>
           </div>
           <div>
-            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Essays</p>
-            <p class="text-body" style="margin: 0;">{{ readable_posts.size }} available to read</p>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Articles</p>
+            <p class="text-body" style="margin: 0;">{{ backlist_article_count }} currently carried, in the <a href="{{ '/research/' | relative_url }}">current selection</a></p>
           </div>
           <div>
-            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Currently carried</p>
-            <p class="text-body" style="margin: 0;">{{ backlist_active_count }} in the <a href="{{ '/research/' | relative_url }}">current selection</a>; the rest stay readable in the <a href="{{ '/archive/' | relative_url }}">legacy archive</a></p>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Legacy archive</p>
+            <p class="text-body" style="margin: 0;">{{ backlist_archive_count }} earlier articles, <a href="{{ '/archive/' | relative_url }}">still readable</a> with their correction history</p>
           </div>
           <div>
-            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Withdrawn</p>
-            <p class="text-body" style="margin: 0;">{{ withdrawn_count }} withdrawn pages preserved for transparency</p>
+            <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Published in total</p>
+            <p class="text-body" style="margin: 0;">{{ backlist_total_count }} pages &mdash; {{ readable_posts.size }} readable ({{ backlist_article_count }} carried, {{ backlist_archive_count }} archived, {{ backlist_note_count }} <a href="{{ '/notes/' | relative_url }}">editor&rsquo;s note</a>), {{ withdrawn_count }} withdrawn and preserved</p>
           </div>
           <div>
             <p class="text-small text-secondary" style="text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem;">Contact</p>
