@@ -61,14 +61,17 @@ DIRTY_FACT_CHECK = lambda text: {"contradicted": [{"claim": "a fabricated quote"
 
 # ── engine switch / rollback ───────────────────────────────────────────────────
 def test_engine_default_and_rollback():
+    # Formal cutover 2026-08-27. Rollback is now the explicit value `legacy`; unsetting
+    # the variable selects the new engine rather than reverting.
     os.environ.pop(ES.ENV_VAR, None)
-    check("code default is legacy", ES.resolve_engine() == ES.LEGACY)
+    check("code default is new_engine_v1", ES.resolve_engine() == ES.NEW_ENGINE_V1)
     os.environ[ES.ENV_VAR] = "new_engine_v1"
     check("explicit new_engine_v1 resolves", ES.resolve_engine() == ES.NEW_ENGINE_V1)
     os.environ[ES.ENV_VAR] = "legacy"
-    check("rollback via value resolves to legacy", ES.resolve_engine() == ES.LEGACY)
+    check("rollback via explicit value resolves to legacy", ES.resolve_engine() == ES.LEGACY)
     os.environ.pop(ES.ENV_VAR, None)
-    check("rollback via unset resolves to legacy", ES.resolve_engine() == ES.LEGACY)
+    check("unset resolves to the new default, not legacy",
+          ES.resolve_engine() == ES.NEW_ENGINE_V1)
     for bad in ("new_engine", "current_engine", "v1", "yes"):
         try:
             ES.resolve_engine(bad)

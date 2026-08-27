@@ -110,11 +110,23 @@ work from a worktree based on current `origin/main`.**
   conflate them.** See BLOCKED/OUTSTANDING for its own re-verified status; a controlled acceptance
   run explicitly disclaims counting as a P2 sample (`automation/new_engine_v1_acceptance.py`:
   "NOT_PUBLICATION. NOT_P2_SAMPLE.").
-- **Engine default remains `LEGACY`.** `automation/engine_switch.py`: `DEFAULT = LEGACY`; an
-  unset `CRIPMINDS_ENGINE` env var changes nothing. `CRIPMINDS_ENGINE=new_engine_v1` is opt-in
-  only. Unknown values fail closed (raise, never silently default). No post-start fallback — once
-  `new_engine_v1` begins a run, it owns that run; a HOLD is a result, not a reason to re-run on
-  legacy. Rollback = remove the env var from the cron line; no data migration involved.
+- **Engine default is `NEW_ENGINE_V1` (formal cutover 2026-08-27).** `automation/engine_switch.py`:
+  `DEFAULT = NEW_ENGINE_V1`; an unset `CRIPMINDS_ENGINE` env var now selects the new engine.
+  Until 2026-08-27 the default was `LEGACY` and `new_engine_v1` was opt-in; the 09:00 scheduler had
+  been passing it explicitly since 2026-08-24, so the cutover aligned the code default with the
+  engine already running in production rather than migrating the scheduler. It waited on the
+  2026-08-27 natural run (`production-20260827T070010Z-fd846f06`), which reached a legitimate
+  ACCEPT, executed the strict publication-safety bridge, and failed closed on
+  `world_relative_fact_check` (0 claims extracted) with `publication_eligible: false` and nothing
+  published — the corrected form of the 2026-08-25 fail-open defect. Unknown values still fail
+  closed (raise, never silently default). Still no post-start fallback — once `new_engine_v1`
+  begins a run, it owns that run; a HOLD is a result, not a reason to re-run on legacy. Rollback =
+  set `CRIPMINDS_ENGINE=legacy` on the cron line; the legacy engine is untouched and that value
+  still dispatches to it, and no data migration is involved. Note the one rollback semantic the
+  cutover changed: UNSETTING the variable no longer reverts to legacy, so rollback is now an
+  explicit value rather than a deletion. The 09:00 cron keeps its explicit
+  `CRIPMINDS_ENGINE=new_engine_v1` override — the formal default and the scheduler are separate
+  controls and were deliberately not changed together.
 - **Do not conflate "implemented / live-capable" with "default production engine."** They are
   different facts.
 
