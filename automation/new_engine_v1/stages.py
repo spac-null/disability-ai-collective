@@ -22,6 +22,8 @@ wearing the authority of fact.
 """
 from __future__ import annotations
 
+import re
+
 from .provider import parse_json_object
 
 # ── Shared doctrine ────────────────────────────────────────────────────────────
@@ -29,7 +31,24 @@ from .provider import parse_json_object
 PROSE_DOCTRINE = (
     "Make the thinking sophisticated; make the reading easy. Plain vocabulary. One "
     "modifier where one will do. Short sentences carry the hard turns. Do not announce "
-    "a thesis, do not summarise at the end, and do not explain the point after making it."
+    "a thesis, do not summarise at the end, and do not explain the point after making it.\n"
+    "  Concrete before abstract. Name the thing -- the object, the project, the person, "
+    "what was made or done -- and say what it is before you say what it means. By the end "
+    "of the first paragraph the reader knows what the subject is and why it is worth their "
+    "attention. No framing device standing in front of the subject, no throat-clearing.\n"
+    "  Say the point once, and say it well. The argument gets one clear statement. "
+    "Restating it in different abstract vocabulary is not development: a paragraph earns "
+    "its place by adding evidence, a new implication, a necessary qualification, or a real "
+    "step forward, and by nothing else.\n"
+    "  Keep one idea moving at a time. Do not stack several layers of abstraction before "
+    "coming back to the thing itself.\n"
+    "  Get from evidence to meaning with a plain sentence that does the explaining. Do not "
+    "jump the gap and leave the reader to reconstruct it.\n"
+    "  No sentence should need rereading before its main claim is clear. Vary sentence "
+    "length; keep the syntax straight. Use the ordinary word wherever it carries the same "
+    "meaning as the specialist or theoretical one.\n"
+    "  Metaphor and personality belong here, used sparingly, and never after the point has "
+    "already landed."
 )
 
 _NO_FABRICATION = (
@@ -120,7 +139,18 @@ FORM_SYSTEM = (
     "  - The arrival is TERMINAL. The article stops there.\n"
     "  - No post-arrival explanation. Nothing after the arrival unless genuinely new "
     "material changes what the arrival means.\n"
-    "  - The burden is carried by the material in sequence, not by assertion."
+    "  - The burden is carried by the material in sequence, not by assertion.\n"
+    "  - Every movement does work no other movement does. If two movements would make "
+    "the same point in different words, they are one movement. A route that circles a "
+    "single insight several times is a route with one movement in it, not several, and "
+    "the writer downstream cannot fix that -- it must follow the shape you decide, so "
+    "restatement you build in is restatement that gets written.\n"
+    "  - The article opens on the thing itself. The first movement establishes what the "
+    "concrete subject is -- the object, the project, the person, what was made or done -- "
+    "before any movement interprets it.\n"
+    "  - target_words is the smallest range in which this argument actually completes, "
+    "not a house length. Judge it from the material: a claim that resolves in six hundred "
+    "words gets six hundred. Never widen it to make room for restatement."
 )
 
 
@@ -151,7 +181,7 @@ def form_prompt(discovery: dict, source_text: str, sha: str) -> str:
         'here.",\n'
         '  "burden": "what carries the argument, and what is deliberately excluded "'
         '(no remedy, no second arrival, no persona voice, and so on)",\n'
-        '  "target_words": [min, max]\n'
+        '  "target_words": [min, max]  // smallest range in which this argument completes; do not pad\n'
         '}\n'
     )
 
@@ -200,8 +230,19 @@ def build_writer_input(article_form: dict, discovery: dict,
         "its register. It is not a person with a biography, and you must not give it "
         "lived experience, memories, or a body.\n" % byline +
         "\nPROSE\n  %s\n" % PROSE_DOCTRINE +
-        "\nArrive at the arrival and stop. Output the article body only: no title, no "
-        "frontmatter, no notes.\n"
+        "\nHEADLINE\n"
+        "  Begin your output with one line in exactly this form:\n"
+        "    TITLE: <headline>\n"
+        "  It names what THIS article is about -- the subject given to you above, the one "
+        "you are actually writing on. The source may be a roundup or list covering several "
+        "unrelated items, and its own headline may name a different one; that headline is "
+        "provenance metadata, not yours. Do not copy it. Ordinary words, and no padded "
+        "subtitle after a colon.\n"
+        "\nArrive at the arrival and stop. Stop when the argument is complete: the word "
+        "range above is the form's estimate and an upper bound, never a quota. A shorter "
+        "article that has finished beats a longer one that restates itself, and no "
+        "paragraph is ever added to reach a number. After the TITLE line and one blank "
+        "line, output the article body only: no frontmatter, no notes.\n"
     )
     from .contracts import sha256_text
     return {"prompt_text": prompt, "prompt_sha256": sha256_text(prompt),
@@ -215,6 +256,31 @@ WRITER_SYSTEM = (
 )
 
 
+# Case-insensitive: the instruction asks for "TITLE:", but a model that returns
+# "Title:" has still complied, and treating that as prose would put the headline
+# into the article body.
+_TITLE_LINE = re.compile(r"^\s*TITLE\s*:\s*(.+?)\s*$", re.IGNORECASE)
+
+
+def split_title(text: str) -> tuple[str, str]:
+    """Split a leading `TITLE: ...` line off a completion.
+
+    The title is REMOVED from the returned body, so grounding, the invariants and the
+    candidate all see exactly the prose they saw before the writer was asked for a
+    headline -- this adds a field, it does not change what the article text is. A
+    completion without the line is returned unchanged with an empty title, which keeps
+    an older or non-compliant model reply a valid WRITER_OUTPUT rather than a failure.
+    """
+    stripped = text.lstrip("\n")
+    lines = stripped.splitlines()
+    if not lines:
+        return "", text
+    m = _TITLE_LINE.match(lines[0])
+    if not m:
+        return "", text
+    return m.group(1).strip(), "\n".join(lines[1:]).lstrip("\n")
+
+
 def write(provider, writer_input: dict) -> dict:
     from .contracts import sha256_text
     try:
@@ -222,8 +288,9 @@ def write(provider, writer_input: dict) -> dict:
     except Exception as e:                                   # provider failure HOLDs
         return {"article_text": "", "article_sha256": sha256_text(""),
                 "provider_status": "failed", "provider_error": str(e)[:300]}
-    return {"article_text": c.text, "article_sha256": sha256_text(c.text),
-            "provider_status": "ok", "_provider": c.identity()}
+    title, body = split_title(c.text)
+    return {"article_text": body, "article_sha256": sha256_text(body),
+            "title": title, "provider_status": "ok", "_provider": c.identity()}
 
 
 # ── WRITER GROUNDING ───────────────────────────────────────────────────────────
