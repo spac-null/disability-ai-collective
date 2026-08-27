@@ -146,12 +146,15 @@ def test_3_provider_failure_artifact():
 
 
 # ── 4, 5, 6, 16: engine switch + rollback ─────────────────────────────────────
-def test_4_default_engine_is_legacy():
+def test_4_default_engine_is_new_engine_v1():
+    # Formal cutover 2026-08-27: the default moved from legacy to new_engine_v1. An unset
+    # or blank variable now selects the new engine; explicit legacy remains the rollback.
     os.environ.pop(ES.ENV_VAR, None)
-    check("default engine is legacy", ES.resolve_engine() == ES.LEGACY)
-    check("is_new_engine() false by default", ES.is_new_engine() is False)
-    check("empty value is legacy", ES.resolve_engine("") == ES.LEGACY)
-    check("whitespace value is legacy", ES.resolve_engine("   ") == ES.LEGACY)
+    check("default engine is new_engine_v1", ES.resolve_engine() == ES.NEW_ENGINE_V1)
+    check("is_new_engine() true by default", ES.is_new_engine() is True)
+    check("empty value is new_engine_v1", ES.resolve_engine("") == ES.NEW_ENGINE_V1)
+    check("whitespace value is new_engine_v1", ES.resolve_engine("   ") == ES.NEW_ENGINE_V1)
+    check("explicit legacy is still selectable", ES.resolve_engine("legacy") == ES.LEGACY)
 
 
 def test_5_explicit_new_engine():
@@ -178,8 +181,11 @@ def test_16_rollback_is_one_config_change():
     check("new engine selected", ES.resolve_engine() == ES.NEW_ENGINE_V1)
     os.environ[ES.ENV_VAR] = "legacy"                     # the rollback
     check("rollback to legacy needs only the env value", ES.resolve_engine() == ES.LEGACY)
-    os.environ.pop(ES.ENV_VAR, None)                      # or unsetting it
-    check("unsetting also restores legacy", ES.resolve_engine() == ES.LEGACY)
+    # Since the 2026-08-27 cutover, rollback is an explicit value, NOT a deletion:
+    # unsetting now selects the new engine. Asserted so the change cannot regress silently.
+    os.environ.pop(ES.ENV_VAR, None)
+    check("unsetting no longer rolls back -- it selects the new default",
+          ES.resolve_engine() == ES.NEW_ENGINE_V1)
     # code-only: the docstring legitimately says "no database restore, no migration",
     # so scan imports and executable strings rather than prose (the recurring trap).
     import ast
@@ -364,7 +370,7 @@ def main():
                test_2_anchor_absent_holds_before_writer,
                test_2b_bounded_repair_can_succeed,
                test_3_provider_failure_artifact,
-               test_4_default_engine_is_legacy,
+               test_4_default_engine_is_new_engine_v1,
                test_5_explicit_new_engine,
                test_6_unknown_engine_fails_closed,
                test_16_rollback_is_one_config_change,

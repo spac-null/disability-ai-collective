@@ -2,23 +2,29 @@
 """
 engine_switch.py -- the ONE engine-selection boundary for article generation.
 
-    CRIPMINDS_ENGINE=legacy          (default)
-    CRIPMINDS_ENGINE=new_engine_v1
+    CRIPMINDS_ENGINE=new_engine_v1   (default)
+    CRIPMINDS_ENGINE=legacy
 
 Follows the project's existing convention: an explicit environment variable supplied by
 the cron line, exactly like SHADOW_CAPTURE=1 and NEW_ENGINE_V1_MODE.
 
 RULES
-  * Default is legacy. An unset variable changes nothing about today's behaviour.
+  * Default is new_engine_v1 (formal cutover, 2026-08-27). An unset variable selects the
+    new engine. Before the cutover the default was legacy and new_engine_v1 was opt-in;
+    the scheduler had already been running it explicitly, and the 2026-08-27 natural
+    production run demonstrated the strict publication-safety bridge failing closed on a
+    real ACCEPT, which is what the cutover waited for.
   * An UNKNOWN value FAILS CLOSED -- it raises rather than guessing, because a typo in a
     cron line must not silently pick an engine.
   * There is no post-start fallback. Once NEW_ENGINE_V1 has begun an editorial run it
     owns that run: a HOLD is a result, not a reason to re-run on legacy. Provider-level
     fallback INSIDE the approved provider adapter is unaffected.
 
-ROLLBACK is this file's whole point: switching back is removing `CRIPMINDS_ENGINE=
-new_engine_v1` from the cron line (or setting it to `legacy`). No database restore, no
-migration, no history rewrite, no source-state repair.
+ROLLBACK is this file's whole point: set `CRIPMINDS_ENGINE=legacy` on the cron line. The
+legacy engine is untouched and that value still dispatches to it. No database restore, no
+migration, no history rewrite, no source-state repair. Note the one thing the cutover
+changed about rollback: UNSETTING the variable no longer means legacy, so a rollback is
+now an explicit value rather than a deletion.
 """
 from __future__ import annotations
 
@@ -28,7 +34,7 @@ ENV_VAR = "CRIPMINDS_ENGINE"
 LEGACY = "legacy"
 NEW_ENGINE_V1 = "new_engine_v1"
 KNOWN = (LEGACY, NEW_ENGINE_V1)
-DEFAULT = LEGACY
+DEFAULT = NEW_ENGINE_V1
 
 
 class UnknownEngine(Exception):
