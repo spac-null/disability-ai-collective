@@ -159,6 +159,31 @@ def test_form_forbids_restatement_movements():
           "smallest range in which this argument actually completes" in f)
 
 
+def test_interpretation_may_not_widen_into_a_general_claim():
+    """A reading of a design must not silently become an empirical claim about the
+    world. The 27 Aug regression article said the booklet sequences composition then
+    detail (grounded) and then that sight runs that same sequence too fast to notice
+    (a claim about everyone, which the source cannot support)."""
+    n = S._NO_FABRICATION
+    check("boundary separates a reading from a finding about the world",
+          "is not a finding about how the world works" in n)
+    check("boundary names the widening failure mode",
+          "widen" in n and "general truth" in n)
+    check("boundary enumerates the domains it covers",
+          all(w in n for w in ("cognition", "perception", "behaviour",
+                               "institutions", "outcomes")))
+    check("boundary gives the three permitted dispositions",
+          "the source must support it" in n and "mark it as a reading" in n
+          and "it must go" in n)
+    for site in (S.WRITER_SYSTEM, S.build_writer_input(
+            {"motion": "m", "route": ["r"], "arrival": "a", "burden": "b",
+             "target_words": [650, 800]},
+            {"source_anchor_quote": "q", "what_becomes_knowable": "k",
+             "grounding_boundaries": "g"},
+            "source text", "0" * 64, "Maya Flux")["prompt_text"]):
+        check("rule reaches the writer", "is not a finding about how the world works" in site)
+
+
 def test_writer_may_come_in_short():
     wi = S.build_writer_input(
         {"motion": "m", "route": ["r"], "arrival": "a", "burden": "b",
@@ -194,6 +219,7 @@ def main() -> None:
                test_prompt_carries_no_legacy_surface,
                test_readability_doctrine_is_operational,
                test_form_forbids_restatement_movements,
+               test_interpretation_may_not_widen_into_a_general_claim,
                test_writer_may_come_in_short,
                test_title_is_split_off_the_body):
         print("\n" + fn.__name__)

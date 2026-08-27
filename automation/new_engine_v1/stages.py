@@ -60,7 +60,17 @@ _NO_FABRICATION = (
     "You may not invent a factual state about the world, a person, the source, or an "
     "event. You may not write first-person lived experience, testimony, or biography for "
     "anyone. Interpretation may go beyond what the source concludes; it may never add "
-    "facts the source does not contain."
+    "facts the source does not contain.\n"
+    "  A reading of how something works is not a finding about how the world works. When "
+    "you say what a design, an object or an arrangement makes visible, keep the claim "
+    "about that thing. Do not let it widen, in the next sentence, into a general truth "
+    "about cognition, perception, behaviour, institutions or outcomes -- that the mind "
+    "does X, that people generally do Y, that an institution always Z. Watch the grammar: "
+    "\"this design sequences composition then detail\" is a claim about the design, and "
+    "\"perception runs that sequence too fast to notice\" is a claim about everyone, and "
+    "the second does not follow from the first. Where such a general claim is doing real "
+    "work in the argument, the source must support it, or you must mark it as a reading "
+    "rather than an established fact, or it must go."
 )
 
 
