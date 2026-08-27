@@ -33,6 +33,7 @@ if str(HERE) not in sys.path:
 
 import new_engine_candidate as CAND                      # noqa: E402
 import publication_safety_bridge as BRIDGE               # noqa: E402
+import title_coherence as TC                             # noqa: E402
 from new_engine_v1 import contracts as C                 # noqa: E402
 from new_engine_v1 import runner as R                    # noqa: E402
 from new_engine_v1.provider import Provider, DEFAULT_MODEL  # noqa: E402
@@ -46,12 +47,32 @@ def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", (text or "candidate").lower()).strip("-")[:70]
 
 
-def _title_from(body: str, fallback: str) -> str:
-    for line in body.strip().splitlines():
+def _title_from(body: str, fallback: str, writer_title: str = "") -> str:
+    """The candidate's headline.
+
+    Order: the writer's own TITLE line; then a short heading the body opens with; then
+    the source headline, but ONLY if it actually describes this article; then nothing.
+
+    The coherence gate exists because of production-20260827T070010Z-fd846f06, where a
+    roundup source was headlined for one project, Discovery selected a different project
+    from the same roundup, and the candidate inherited the source headline unchecked --
+    shipping an article about a tactile exhibition system titled for a mountain trike it
+    never mentions. An honestly untitled candidate is better than a confidently wrong
+    headline, and a candidate is not published from here anyway.
+    """
+    t = (writer_title or "").strip()
+    if t:
+        return t[:110]
+    for line in (body or "").strip().splitlines():
         line = line.strip().lstrip("#").strip()
         if line:
-            return line[:110] if len(line.split()) <= 18 else fallback
-    return fallback
+            if len(line.split()) <= 18 and TC.is_coherent(line, body):
+                return line[:110]
+            break
+    fb = (fallback or "").strip()
+    if fb and fb != "Untitled" and TC.is_coherent(fb, body):
+        return fb[:110]
+    return "Untitled"
 
 
 def run_scheduled(orch, *, rehearsal: bool = False,
@@ -143,7 +164,14 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     meta = CAND.engine_meta_from_run(out, run=run, generated_at=now.isoformat(),
                                      source_url=payload["provenance"]["url"],
                                      provider_model=model)
-    title = _title_from(body, payload["provenance"].get("title") or "Untitled")
+    _wo = out["artifacts"][C.WRITER_OUTPUT].payload if C.WRITER_OUTPUT in out["artifacts"] else {}
+    _src_headline = payload["provenance"].get("title") or "Untitled"
+    title = _title_from(body, _src_headline, writer_title=_wo.get("title", ""))
+    if title == "Untitled":
+        orch.logger.warning(
+            "CURRENT_ENGINE %s: no usable headline -- writer supplied none and the source "
+            "headline does not describe this article (%s)",
+            run, TC.describe(_src_headline, body))
     path = CAND.persist_candidate(
         drafts_dir=orch.drafts_dir, slug=_slug(title), body=body, title=title,
         author=R.DEFAULT_BYLINE, engine_meta=meta, rehearsal=rehearsal,
