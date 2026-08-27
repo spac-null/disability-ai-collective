@@ -14,12 +14,16 @@ every material production release, safety-invariant change, or architectural dec
 `LOGBOOK.md`, and this file if current state changed, in the same or an adjacent commit. If a
 section here is about to become a narrative, it belongs in a linked document instead.
 
-**`RECONCILED_AGAINST_SHA` = `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf`** (PR #26 merge,
-2026-08-25). This is the `origin/main` HEAD this reconciliation was performed against — **it is a
-snapshot marker, not a claim that this is still the current `origin/main` HEAD.** `origin/main`
-will move past this SHA the moment normal work resumes, including the moment this file's own PR
-merges. Before trusting anything in this file as current, run `git rev-parse origin/main` and
-compare — do not assume `RECONCILED_AGAINST_SHA` is still HEAD.
+**`STATE_SYNC_SHA` = `ad4beccb18d79d0119293625af0867abec629b42`** (PR #41 merge,
+2026-08-27). This is the `origin/main` HEAD this file was last synced against — **a snapshot
+marker, not a claim that this is still the current `origin/main` HEAD.** `origin/main` will move
+past this SHA the moment normal work resumes, including the moment this file's own PR merges.
+Before trusting anything here as current, run `git rev-parse origin/main` and compare.
+
+The earlier marker `RECONCILED_AGAINST_SHA` = `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf` (PR #26
+merge, 2026-08-25) is retained as history: it names the full project-state reconciliation pass, of
+which the 2026-08-27 sync is a narrower documentation-only follow-up (engine state, PRs #39–#41,
+current-phase pointer). Nothing outside those areas was re-verified on 2026-08-27.
 
 This reconciliation was triggered by discovering a local checkout (`~/code/disability-collective-ai`,
 HEAD `732c84f`) had diverged from `origin/main` at merge-base `9f9bf35` (2026-08-19/20) and
@@ -31,18 +35,68 @@ work from a worktree based on current `origin/main`.**
 
 ## PRODUCTION BASELINE
 
-- **`PR26_PRODUCTION_BASELINE` (== `RECONCILED_AGAINST_SHA`): `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf`.**
-  This names a specific fact (PR #26 is the production baseline as of this reconciliation) —
-  it does not mean this SHA is eternally "current `origin/main`." Re-check `git rev-parse
-  origin/main` before relying on it as HEAD.
+- **Current production baseline: `ad4beccb18d79d0119293625af0867abec629b42`** (PR #41 merge,
+  2026-08-27) — the `origin/main` HEAD the current engine state below describes. Re-check
+  `git rev-parse origin/main` before relying on it as HEAD.
+- **`PR26_PRODUCTION_BASELINE`: `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf`** — historical. Names
+  the main-site IA/visual-redesign baseline (below), not the current HEAD.
+- **PRs #28–#38 landed between those two baselines and are NOT individually recorded here or in
+  `LOGBOOK.md` — a known documentation gap, not a claim about their content.** From branch names
+  only (git truth, not audited in the 2026-08-27 sync): `#28` new-engine-v1 stage-failure
+  containment; `#29` static-page content audit; `#30` legacy public hygiene; `#31` jascha link;
+  `#32`/`#33` reissue pilots 1–2; `#34`–`#37` backlist reissue waves 1–4; `#38` selected-backlist
+  IA. Anyone needing their detail must read the diffs — do not assume this list is complete or
+  that these PRs left no state worth tracking.
 - **PR #26 (main-site IA + visual-language redesign v2): COMPLETE and DEPLOYED.** GitHub Pages
   run `32879430779`, deployed SHA matches `origin/main`. Live-verified 2026-08-25: Home, Articles,
   About, Press, Articles search/count all PASS.
-- Current publication counts (live-verified): **143 total, 41 withdrawn, 102 readable**
-  (3 Latest / 99 archive; collection counts 4/9/4/3).
+- Current publication counts: **143 total, 41 withdrawn, 102 readable** — live-verified
+  2026-08-25 and re-confirmed against the tree at `ad4becc` on 2026-08-27 (`_posts/*.md` = 143,
+  `withdrawn: true` = 41). The 2026-08-25 breakdown (3 Latest / 99 archive; collection counts
+  4/9/4/3) was NOT re-verified after PRs #34–#38 touched backlist/IA — treat the totals as
+  current and the breakdown as last-known.
 - Do not reopen D1.x visual design unless a concrete production regression is found.
 
 ## COMPLETED
+
+- **`NEW_ENGINE_V1` default cutover — COMPLETE.** PR #39, merge `b1f568c`, 2026-08-27.
+  `NEW_ENGINE_V1` became the formal code default. Full state: ENGINE STATE table above. No
+  cutover blocker remains; do not reopen cutover auditing.
+
+- **Readability / title coherence / evidence-boundary tightening — COMPLETE.** PR #40, merge
+  `423bb80`, 2026-08-27. **The "hard to read" problem is no longer an open engineering task.**
+  What shipped, in `automation/new_engine_v1/stages.py` (ARTICLE FORM + WRITER prompts),
+  `automation/title_coherence.py` (new), `automation/new_engine_production.py`:
+  - *Reduced repetition:* the argument gets one clear statement; a paragraph earns its place only
+    by adding evidence, a new implication, a necessary qualification, or a real step forward.
+    Enforced at the Form stage too — a route that circles one insight has one movement, not
+    several, and no movement may exist to preview or reprise the arrival.
+  - *Concrete-first:* the article opens on the thing itself — object, project, person, what was
+    made or done — before any movement interprets it. No framing device in front of the subject.
+  - *Easier reading:* one idea moving at a time, no stacked abstraction, ordinary word over the
+    specialist one, no sentence needing a reread before its main claim is clear, plain sentences
+    across the evidence→meaning gap.
+  - *Length:* `target_words` is the smallest range in which the argument completes — an upper
+    bound, never a quota. Coming in under it is a good outcome.
+  - *Title coherence:* the writer must now emit `TITLE: <headline>`, and a dependency-free,
+    model-free check counts headline content words absent from the body. Origin: the real
+    2026-08-27 run `production-20260827T070010Z-fd846f06`, where a writer emitted no headline, the
+    candidate silently inherited the Dezeen roundup's, and an article about a tactile exhibition
+    system sat under a headline about a mountain trike. This check **reports; it does not gate
+    publication** and is not part of the publication-safety bridge.
+  - *Evidence boundary:* a reading of how something works is not a finding about how the world
+    works. A claim about a design may not widen into a general truth about cognition, perception,
+    behaviour or institutions unless the source supports it or it is marked as a reading.
+  - **Further readability work should be driven by actual reader feedback on new output, not
+    speculative prompt tuning.** No open readability task exists to pick up.
+
+- **Strict claim-extraction robustness — COMPLETE.** PR #41, merge `ad4becc`, 2026-08-27.
+  `automation/orchestrator/fact_check.py`: strict extraction now distinguishes a **genuine zero
+  claims** result (reaches the publication-safety bridge as `NO_VERIFIABLE_CLAIMS`) from an
+  **empty, truncated, prose-only, malformed or ambiguous provider reply** (`EXTRACTION_ERROR`).
+  Extraction runs at `temperature=0`. **Both statuses fail closed** — a failure is never returned
+  as `[]`, so an extraction failure can no longer read as an absence of contradictions. **No
+  taxonomy expansion was made**; the two states above are the whole change.
 
 - **LC1 legacy-corpus integrity programme — COMPLETE.** 142/142 articles reviewed (PRs #1–24,
   2026-08-24/25). First-person factuality axis closed: 40 corrections, 2 withdrawals (`b7492a5`,
@@ -74,7 +128,29 @@ work from a worktree based on current `origin/main`.**
   `origin/main`. Not independently reverified in this pass; no contrary evidence found. Full
   mechanics: `.claude/archive/WORK-2026-08-17-superseded.md` `## 3`.
 
-## LIVE / CURRENT BUT NOT FULLY CUT OVER
+## ENGINE STATE — DEFAULT CUTOVER COMPLETE (2026-08-27)
+
+Read this block first; the bullets under it are the supporting detail.
+
+| Fact | State |
+|---|---|
+| `NEW_ENGINE_V1` default cutover | **COMPLETE** (2026-08-27, PR #39, `b1f568c`) |
+| Default engine | **`NEW_ENGINE_V1`** — `automation/engine_switch.py`: `DEFAULT = NEW_ENGINE_V1`; unset `CRIPMINDS_ENGINE` selects it |
+| Production cron | **unchanged — still explicitly `CRIPMINDS_ENGINE=new_engine_v1` on the 09:00 line, LIVE** |
+| Scheduler migration/change | **NONE.** The cutover aligned the code default with the engine the scheduler had already been passing explicitly since 2026-08-24. Default and scheduler are separate controls and were deliberately not changed together |
+| Explicit legacy rollback | **AVAILABLE** — set `CRIPMINDS_ENGINE=legacy` on the cron line. No data migration. Note: *unsetting* the variable no longer means legacy, so rollback is an explicit value, not a deletion |
+| Unknown `CRIPMINDS_ENGINE` value | fails closed (raises, never guesses) |
+| Post-start fallback | **NONE by design.** Once `new_engine_v1` begins a run it owns that run; a HOLD is a result, not a reason to re-run on legacy |
+| Cutover blockers | **NONE.** Do not reopen cutover auditing |
+
+*Provenance (2026-08-27 sync): the default-engine, rollback and fail-closed rows were verified
+directly against `automation/engine_switch.py` at `ad4becc`. The **production cron** row was NOT
+re-verified on Trident this pass — it is carried forward from the PR #39 cutover record. If it
+matters to a decision, check the live crontab before relying on it.*
+
+**Legacy is rollback debt, not current production work.** It remains available and untouched as the
+rollback target. Its known unresolved prompt/rule items (see BLOCKED / OUTSTANDING) stay outstanding
+and are **not** cutover blockers — they never blocked the completed default cutover.
 
 - **`NEW_ENGINE_V1` exists and has run successfully.** Implements
   `DISCOVERY → ARTICLE FORM → WRITER → WRITER GROUNDING`, explicitly built on the frozen
@@ -127,8 +203,9 @@ work from a worktree based on current `origin/main`.**
   explicit value rather than a deletion. The 09:00 cron keeps its explicit
   `CRIPMINDS_ENGINE=new_engine_v1` override — the formal default and the scheduler are separate
   controls and were deliberately not changed together.
-- **Do not conflate "implemented / live-capable" with "default production engine."** They are
-  different facts.
+- **"Implemented / live-capable" and "default production engine" remain different facts in
+  general — but for `NEW_ENGINE_V1` they now coincide.** It is both, as of 2026-08-27. Keep the
+  distinction in mind for any *future* engine or stage, not as a live caveat about this one.
 
 ## INTENTIONALLY DEFERRED
 
@@ -161,8 +238,13 @@ work from a worktree based on current `origin/main`.**
 ## BLOCKED / OUTSTANDING
 
 - **Legacy prompt/rule inventory's 4 `MUST_FIX_BEFORE_PRODUCTION_MIGRATION` + 24
-  `CONSOLIDATE_BEFORE_PRODUCTION` items — UNRESOLVED, RE-TRIAGE REQUIRED BEFORE
-  DEFAULT-CUTOVER DECISION.** The only proven facts: this inventory
+  `CONSOLIDATE_BEFORE_PRODUCTION` items — UNRESOLVED, and RECLASSIFIED 2026-08-27 as LEGACY
+  ROLLBACK DEBT, NOT A CUTOVER BLOCKER.** These items belong to the legacy engine, which is now
+  the rollback target rather than the production default. They did **not** block the completed
+  default cutover and must not be re-cited as if they did. They also remain genuinely unresolved —
+  **do not mark them resolved, obsolete, or satisfied.** Their practical weight is now: if a
+  rollback to `CRIPMINDS_ENGINE=legacy` ever happens, this is known debt on the engine being
+  rolled back to. The only proven facts: this inventory
   (`.claude/experiments/legacy-prompt-rule-inventory-2026-08-20/OWNER-TRIAGE.md`) exists on
   `archive/writer-grounding-production-migration-2026-08-20`; the `MUST_FIX`/`CONSOLIDATE` labels
   were assigned against the historical (pre-`NEW_ENGINE_V1`) architecture; `NEW_ENGINE_V1`'s code
@@ -172,8 +254,13 @@ work from a worktree based on current `origin/main`.**
   invariant absent from `NEW_ENGINE_V1`, (B) an equivalent invariant already implemented
   differently, (C) obsolete because the new architecture removed the failure mode, (D)
   documentation/consolidation only, or (E) genuinely blocking. Do not port legacy rules into
-  `NEW_ENGINE_V1` and do not treat this list as either satisfied or blocking until that triage runs.
-- **Phase-2 passive-capture requirement — STILL OPEN, current sample count UNKNOWN.** Re-examined
+  `NEW_ENGINE_V1` and do not treat this list as either satisfied or blocking until that triage
+  runs. That triage is no longer gated on anything and is no longer urgent — it is not the
+  current phase and should not be started as a side effect of reading this entry.
+- **Phase-2 passive-capture requirement — STILL OPEN, current sample count UNKNOWN; NOT a cutover
+  blocker (clarified 2026-08-27).** It observes the **legacy** pipeline so a later comparison has
+  frozen evidence; the default cutover completed without it and did not depend on it. Still open,
+  still not satisfied — do not mark it resolved. Re-examined
   this pass; the earlier "SUPERSEDED" conclusion was unsupported and is withdrawn. What P2 actually
   validates (per `.claude/experiments/production-migration-phase2-prep-2026-08-20/PHASE2-CAPTURE-DESIGN.md`,
   archive branch): passive, `SHADOW_CAPTURE`-gated observation of the **legacy** pipeline's
@@ -224,17 +311,57 @@ work from a worktree based on current `origin/main`.**
   covers on `origin/main`. None of this was archived, deleted, or committed this pass — it remains
   exactly where it was, and its risk is stated here rather than assumed away.
 
-## PROPOSED NEXT PHASE (not started, not authorized by this document)
+## CURRENT PHASE
 
-**`DEFAULT-CUTOVER READINESS RECONCILIATION`** — establish the finite set of actual blockers (or
-prove none remain) to making `NEW_ENGINE_V1`/`CURRENT_ENGINE` the default, by reconciling in one
-pass: the historical 4+24 legacy prompt-rule inventory (triage per the A–E taxonomy above), the
-Phase-2 passive-capture gate's actual current sample count (requires Trident access this pass
-didn't use), whether any further `NEW_ENGINE_V1` contract findings exist beyond the two already
-resolved, and any other still-open production validation gate. Explicitly NOT this phase: no new
-engine architecture, no calibration, no WG-7, no automatic porting of legacy rules into
-`NEW_ENGINE_V1`. Output should be a small, evidence-backed blocker list (or a clean bill), not more
-architecture.
+**`POST-CUTOVER NATURAL-RUN VALIDATION`**
+
+**CURRENT ACTION:** Observe the next natural scheduled `NEW_ENGINE_V1` production run (the 09:00
+CEST cron) on the current `main` baseline `ad4becc`. Classify the actual outcome before making
+further engine changes.
+
+**No manual LIVE run is requested, and a manual run must not be used to replace the natural run.**
+The first natural scheduled run after the combined PR #39/#40/#41 changes is the validation point;
+a hand-triggered execution is not that evidence.
+
+Once the run has happened, follow only the branch that actually occurred:
+
+1. **A candidate is produced** — review the resulting article **as a reader first**, before
+   reading any log. Specifically assess whether the earlier "hard to read" problem is *materially*
+   improved: does it open on the concrete thing, does it say its point once, can each paragraph be
+   named for what it adds. Only then look at the run artifacts.
+2. **HOLD** — inspect only the concrete HOLD reason. Do not re-audit the pipeline around it.
+3. **`EXTRACTION_ERROR`** — inspect the concrete provider/extractor evidence for that run. This is
+   now a distinct, fail-closed state (PR #41) and is real information, not a mystery.
+4. **Another failure** — investigate only that path.
+
+Explicitly NOT this phase: new engine architecture, calibration, WG-7, cutover re-auditing,
+porting legacy rules into `NEW_ENGINE_V1`, speculative readability tuning, or the legacy
+prompt-rule re-triage.
+
+### FOLLOW-UP AFTER THE NATURAL RUN — historical "BIC pen" issue
+
+Not started, and **deliberately not investigated during the 2026-08-27 documentation sync.** Do not
+start it before the natural-run validation above is classified.
+
+Task: locate the original finding and classify it as **FIXED BY CURRENT CONTRACT / STILL POSSIBLE /
+OBSOLETE**.
+
+Where to start looking (located, not analysed, in the 2026-08-27 sync):
+- `.claude/experiments/why-we-write-2026-08-10.md` — records that `llm.py`'s `PUBLICATION LENS` /
+  `INTELLECTUAL FORMATION` founder-biography blocks (Van Abbemuseum / Exploded City / **bic pen** /
+  Tussenruimte) were deleted and replaced by the short WHY WE WRITE doctrine in isolated commit
+  `01339ce` (2026-08-10). This is the nearest thing to an origin record found.
+- `editorial-lens.md` (repo root) — still carries the "He draws in Bic pen" text. `git grep` found
+  **no automation reference to it**, which is a lead, not a conclusion.
+- `automation/compare_models.py:122` and `automation/probe_out/**` — historical prompt copies that
+  still embed the lens text; these are fixtures/probe records, not live prompts.
+- The failure family to check it against is the one LC1 closed on the corpus:
+  personas presenting authored/absorbed biographical material as lived first-person testimony
+  (see COMPLETED → persona "Wound" clusters, and
+  `.claude/legacy-corpus-integrity-phase1-2026-08-16.md`).
+
+The open question is whether `NEW_ENGINE_V1`'s current prompt contract structurally prevents
+owner-biography leakage into persona voice, or merely no longer feeds it in one path.
 
 ## DOCUMENT INDEX
 
@@ -243,12 +370,13 @@ architecture.
 | `.claude/WORK.md` | **CURRENT** | this file |
 | `.claude/LOGBOOK.md` | **CURRENT** | chronological history, compact entries |
 | `.claude/PROJECT-MAP.md` | **CURRENT** | repository/worktree/branch topology |
+| `automation/engine_switch.py` | **CURRENT (code, authoritative)** | the one engine-selection boundary — the real answer to "which engine is default" and how rollback works; its module docstring is kept in sync with the ENGINE STATE table above |
 | `.claude/project-manifest.json` | **CURRENT (machine-generated)** | same, machine-readable |
 | `.claude/archive/WORK-2026-08-17-superseded.md` | **HISTORICAL** | full pre-fork state: doctrine, conceptual architecture, safety-gate mechanics (AP1/APE2/PS1/LPF1), persona-architecture Phase 3 backlog — not reverified 2026-08-25, not contradicted either |
 | `.claude/experiments/writer-grounding-production-migration-preservation-2026-08-25.md` | **CURRENT (disposition record)** | writer-grounding/production-migration archive-branch disposition |
 | `archive/writer-grounding-production-migration-2026-08-20` (git branch) | **HISTORICAL, preserved** | 38-commit writer-grounding/production-migration/Sofa evidence line, owner-stopped, not production code |
-| `.claude/experiments/legacy-prompt-rule-inventory-2026-08-20/OWNER-TRIAGE.md` (on archive branch) | **UNRESOLVED — RE-TRIAGE REQUIRED BEFORE DEFAULT-CUTOVER** | 4 must-fix / 24 consolidate items, not proven blocking or resolved either way |
-| `.claude/experiments/production-migration-phase2-prep-2026-08-20/PHASE2-CAPTURE-DESIGN.md` (on archive branch) | **STILL OPEN, sample count UNKNOWN** | defines what the P2 passive-capture gate actually validates (legacy-side observation, not `NEW_ENGINE_V1` validation) |
+| `.claude/experiments/legacy-prompt-rule-inventory-2026-08-20/OWNER-TRIAGE.md` (on archive branch) | **UNRESOLVED — LEGACY ROLLBACK DEBT, NOT A CUTOVER BLOCKER** | 4 must-fix / 24 consolidate items, still unresolved; reclassified 2026-08-27 — the default cutover completed without them and they must not be re-cited as blocking it |
+| `.claude/experiments/production-migration-phase2-prep-2026-08-20/PHASE2-CAPTURE-DESIGN.md` (on archive branch) | **STILL OPEN, sample count UNKNOWN — not a cutover blocker** | defines what the P2 passive-capture gate actually validates (legacy-side observation, not `NEW_ENGINE_V1` validation) |
 | `.claude/experiments/sofa-method-reconciliation-2026-08-19/PRESERVATION-MANIFEST.md` (on archive branch) | **UNRATIFIED (G-009, explicit open decision)** | Sofa Method ratification evidence |
 | `.claude/current-work.md` | **SUPERSEDED (self-marked)** | pre-2026-08-16 historical log |
 | `.claude/master-roadmap-2026-08-13.md` | **HISTORICAL, frozen 2026-08-13** | CJ-2/B2 phase table, superseded by Sofa Method → `NEW_ENGINE_V1` lineage |
