@@ -2,6 +2,12 @@ READ CURRENT STATE FIRST: `.claude/WORK.md` — doctrine, current production saf
 exact SHA), active/next work, parked work, historical corrections, document index. An older
 research/audit document is NOT current authority when WORK.md marks its conclusion superseded.
 
+Inside `WORK.md`, two sections answer "where are we": **`## ENGINE STATE`** (which engine is
+default, what the cron runs, what legacy means, what rollback is) and **`## CURRENT PHASE`** (the
+one thing being worked on, and the next action). Read both before starting anything. Note that the
+resume prompt further down THIS file is older background — where it and `WORK.md` disagree,
+`WORK.md` wins.
+
 FOR HISTORY: `.claude/LOGBOOK.md` — chronological, compact entries (what changed, when, why,
 commit SHA, what it superseded).
 

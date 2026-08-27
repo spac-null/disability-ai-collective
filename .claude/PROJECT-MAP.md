@@ -22,9 +22,12 @@ checkout's `main` branch was canonical. **That assumption no longer holds** — 
 ## Canonical repository — CORRECTED MODEL
 
 - **Canonical branch: `origin/main`** (GitHub `spac-null/disability-ai-collective`, PRIVATE repo).
-  `RECONCILED_AGAINST_SHA` for this pass: `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf` (PR #26
-  merge) — **a snapshot marker for when this reconciliation ran, not a claim that this is still
-  `origin/main` HEAD.** Run `git rev-parse origin/main` before trusting it as current; this
+  `RECONCILED_AGAINST_SHA` for this topology pass: `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf`
+  (PR #26 merge) — **a snapshot marker for when this reconciliation ran, not a claim that this is
+  still `origin/main` HEAD.** `origin/main` has since moved to at least
+  `ad4beccb18d79d0119293625af0867abec629b42` (PR #41, 2026-08-27); the topology below was not
+  re-derived at that SHA — only the cutover wording was corrected. Current-state authority is
+  `.claude/WORK.md`. Run `git rev-parse origin/main` before trusting it as current; this
   document (and `project-manifest.json`'s `generated_at` timestamp) will fall behind the moment
   ordinary work resumes, including the moment this reconciliation's own PR merges.
 - **`~/code/disability-collective-ai` (local checkout, `main` branch) is NOT canonical.** Its
@@ -107,8 +110,9 @@ scope for this reconciliation (tracker docs only, no code changes authorized).
   SQLite-safe snapshot method; unchanged, not re-verified this pass (no Trident access used).
 - `production-observability-2026-08-20` — **corrected this pass**: SUPERSEDED, not an open item.
   See table above.
-- Legacy prompt/rule inventory (4 must-fix / 24 consolidate items) — UNRESOLVED, re-triage
-  required before default-cutover; see `.claude/WORK.md` BLOCKED/OUTSTANDING.
+- Legacy prompt/rule inventory (4 must-fix / 24 consolidate items) — UNRESOLVED, but reclassified
+  2026-08-27 as **legacy rollback debt, not a cutover blocker** (the `NEW_ENGINE_V1` default
+  cutover completed on 2026-08-27 without it); see `.claude/WORK.md` BLOCKED/OUTSTANDING.
 - Phase-2 passive-capture gate — STILL OPEN, current sample count unknown without Trident access;
   see `.claude/WORK.md` BLOCKED/OUTSTANDING.
 - Local checkout's own 38-commit divergence — preserved (Stage A), but the checkout itself
