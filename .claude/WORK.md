@@ -14,10 +14,23 @@ every material production release, safety-invariant change, or architectural dec
 `LOGBOOK.md`, and this file if current state changed, in the same or an adjacent commit. If a
 section here is about to become a narrative, it belongs in a linked document instead.
 
-**`STATE_SYNC_SHA` = `ad4beccb18d79d0119293625af0867abec629b42`** (PR #41 merge,
-2026-08-27). This is the `origin/main` HEAD this file was last synced against — **a snapshot
-marker, not a claim that this is still the current `origin/main` HEAD.** `origin/main` will move
-past this SHA the moment normal work resumes, including the moment this file's own PR merges.
+**Two different SHA facts, kept deliberately separate — do not collapse them:**
+
+- **`CURRENT_MAIN` — not recorded in this file, by design.** No document can hold it durably. Get
+  it with `git rev-parse origin/main`. Any SHA written here is a marker of when something was
+  checked, never a claim about present HEAD.
+- **`LAST_RUNTIME_CHANGING_BASELINE` = `ad4beccb18d79d0119293625af0867abec629b42`** (PR #41 merge,
+  2026-08-27). The most recent commit on `main` that changed **runtime behaviour** — engine,
+  prompts, Writer/Form, fact-check. This is the engine behaviour currently in production and the
+  behaviour the next natural run validates. It stays correct as `origin/main` advances, and is
+  only superseded when another runtime/code change lands.
+- **`STATE_SYNC_SHA` = `ad4beccb18d79d0119293625af0867abec629b42`** — the `origin/main` HEAD this
+  file was last synced against (same commit as the runtime baseline, because the sync immediately
+  followed PR #41; the two are separate facts that merely coincide right now).
+
+**Documentation-only commits do not move `LAST_RUNTIME_CHANGING_BASELINE`.** This file's own PR
+(#42, docs-only) advances `origin/main` past `ad4becc` without altering runtime behaviour, so it
+does not invalidate the natural-run validation below. Same for any other docs-only descendant.
 Before trusting anything here as current, run `git rev-parse origin/main` and compare.
 
 The earlier marker `RECONCILED_AGAINST_SHA` = `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf` (PR #26
@@ -35,9 +48,10 @@ work from a worktree based on current `origin/main`.**
 
 ## PRODUCTION BASELINE
 
-- **Current production baseline: `ad4beccb18d79d0119293625af0867abec629b42`** (PR #41 merge,
-  2026-08-27) — the `origin/main` HEAD the current engine state below describes. Re-check
-  `git rev-parse origin/main` before relying on it as HEAD.
+- **`LAST_RUNTIME_CHANGING_BASELINE`: `ad4beccb18d79d0119293625af0867abec629b42`** (PR #41 merge,
+  2026-08-27) — the runtime behaviour the engine state below describes. This is **not** a claim
+  about current `origin/main`, which moves independently (docs-only commits included); run
+  `git rev-parse origin/main` for that.
 - **`PR26_PRODUCTION_BASELINE`: `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf`** — historical. Names
   the main-site IA/visual-redesign baseline (below), not the current HEAD.
 - **PRs #28–#38 landed between those two baselines and are NOT individually recorded here or in
@@ -316,8 +330,16 @@ and are **not** cutover blockers — they never blocked the completed default cu
 **`POST-CUTOVER NATURAL-RUN VALIDATION`**
 
 **CURRENT ACTION:** Observe the next natural scheduled `NEW_ENGINE_V1` production run (the 09:00
-CEST cron) on the current `main` baseline `ad4becc`. Classify the actual outcome before making
-further engine changes.
+CEST cron) from the then-current `origin/main`. Classify the actual outcome before making further
+engine changes.
+
+For engine-behaviour comparison the run is validating `LAST_RUNTIME_CHANGING_BASELINE` =
+`ad4becc` (PR #41) — **unless another runtime/code change lands on `main` before the run**, in
+which case that becomes the baseline and this pointer needs updating. The run does not have to
+execute at that exact SHA, and it will not: documentation-only commits after `ad4becc` (this
+sync's own PR #42 among them) advance `origin/main` without changing runtime behaviour, so the
+comparison still holds. Check `git log ad4becc..origin/main` for runtime-touching commits before
+assuming the baseline is unchanged.
 
 **No manual LIVE run is requested, and a manual run must not be used to replace the natural run.**
 The first natural scheduled run after the combined PR #39/#40/#41 changes is the validation point;
