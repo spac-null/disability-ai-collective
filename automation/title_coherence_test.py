@@ -136,6 +136,41 @@ def test_readability_doctrine_is_operational():
                           ("metaphor kept selective", "used sparingly")):
         check("doctrine states: %s" % label, needle in d)
     check("doctrine keeps the no-end-summary rule", "do not summarise at the end" in d)
+    check("doctrine gives a concrete deletion test for echo paragraphs",
+          "delete it" in d and "makes the same point in different words" in d)
+    check("doctrine forbids a preview of the arrival", "preview of it" in d)
+    check("doctrine forbids a reprise after the arrival", "reprise" in d)
+    check("doctrine bans stacked conceptual nouns and metaphors",
+          "conceptual nouns and metaphors" in d)
+
+
+def test_form_forbids_restatement_movements():
+    f = S.FORM_SYSTEM
+    check("form: no movement exists to restate the arrival",
+          "No movement exists to restate the arrival" in f)
+    check("form: names the jobs a route has to do",
+          "establish the concrete subject" in f and "show how it works" in f
+          and "mark what the source does and does not establish" in f)
+    check("form: the jobs are NOT imposed as a template",
+          "NOT a template" in f and "form follows material" in f)
+    check("form: still says there is no house structure",
+          "no house structure" in f)
+    check("form: target_words is the smallest completing range",
+          "smallest range in which this argument actually completes" in f)
+
+
+def test_writer_may_come_in_short():
+    wi = S.build_writer_input(
+        {"motion": "m", "route": ["r"], "arrival": "a", "burden": "b",
+         "target_words": [750, 950]},
+        {"source_anchor_quote": "q", "what_becomes_knowable": "k",
+         "grounding_boundaries": "g"},
+        "source text", "0" * 64, "Maya Flux")
+    p = wi["prompt_text"]
+    check("under the range is stated to be a good outcome",
+          "coming in under the range is a good outcome" in p)
+    check("a shorter finished article is preferred to a longer repeating one",
+          "beats a longer one that restates itself" in p)
 
 
 def test_title_is_split_off_the_body():
@@ -158,6 +193,8 @@ def main() -> None:
                test_writer_is_asked_for_a_headline,
                test_prompt_carries_no_legacy_surface,
                test_readability_doctrine_is_operational,
+               test_form_forbids_restatement_movements,
+               test_writer_may_come_in_short,
                test_title_is_split_off_the_body):
         print("\n" + fn.__name__)
         fn()
