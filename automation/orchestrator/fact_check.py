@@ -30,6 +30,91 @@ EXTRACTION_OK = "ok"
 EXTRACTION_ERROR = "error"
 
 
+class ClaimExtractionError(ValueError):
+    """A provider reply that cannot be read as exactly one claims payload.
+
+    Distinct from "the extractor read the reply and it contained no claims". That
+    distinction is the whole point: `{"claims": []}` is a successful extraction of
+    zero claims and must reach the bridge as NO_VERIFIABLE_CLAIMS, while an empty,
+    truncated, prose-only, malformed or ambiguous reply is an EXTRACTION_ERROR
+    because nothing was actually read.
+    """
+
+
+def _scan_json_objects(text: str):
+    """Balanced-brace scan for top-level JSON objects. String-literal aware.
+
+    Returns (objects, truncated): the balanced `{...}` regions in order, and whether
+    the text ends inside an unclosed one. Braces and quotes inside JSON strings do
+    not affect depth, so a claim whose text contains a brace cannot corrupt the scan.
+    """
+    objs, depth, start = [], 0, None
+    in_str = esc = False
+    for i, ch in enumerate(text):
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == "\\":
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            if depth > 0:                      # a quote in surrounding prose is not JSON
+                in_str = True
+            continue
+        if ch == "{":
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == "}" and depth > 0:
+            depth -= 1
+            if depth == 0 and start is not None:
+                objs.append(text[start:i + 1])
+                start = None
+    return objs, depth > 0
+
+
+def parse_claims_payload(raw) -> dict:
+    r"""Read ONE claims payload out of a provider reply, or raise. Deterministic.
+
+    Replaces a greedy `\{.*\}` match that ran from the first brace to the last. That
+    match had two failure modes, both observed:
+      * two JSON objects -- the shape a self-correcting model actually returns -- were
+        spanned as one string, so json.loads raised `Extra data` (the 2026-08-25 first
+        natural CURRENT_ENGINE run);
+      * prose after a single valid object that merely contained a later `}` was
+        swallowed into the match, corrupting a reply that was fine.
+
+    Fails closed instead of guessing. It never concatenates objects and never merges
+    claims from more than one payload: if the reply carries more than one top-level
+    object there is no principled way to know which one the model meant, so that is
+    an error, not a choice to be made here.
+    """
+    if not isinstance(raw, str) or not raw.strip():
+        raise ClaimExtractionError(
+            "empty provider response (type=%s)" % type(raw).__name__)
+    objs, truncated = _scan_json_objects(raw)
+    if truncated:
+        raise ClaimExtractionError(
+            "truncated provider response: unterminated JSON object (%d chars)" % len(raw))
+    if not objs:
+        raise ClaimExtractionError(
+            "no JSON object in provider response (%d chars)" % len(raw))
+    if len(objs) > 1:
+        raise ClaimExtractionError(
+            "ambiguous provider response: %d top-level JSON objects; refusing to "
+            "guess which one is the claims payload" % len(objs))
+    try:
+        data = json.loads(objs[0])
+    except ValueError as e:
+        raise ClaimExtractionError("malformed JSON payload: %s" % e)
+    if not isinstance(data, dict) or not isinstance(data.get("claims"), list):
+        raise ClaimExtractionError(
+            "provider response carries no 'claims' list")
+    return data
+
+
 class FactCheckMixin:
     def _extract_verifiable_claims_raw(self, content):
         """Strict extraction: RAISES on provider/parse failure instead of returning [].
@@ -44,10 +129,10 @@ class FactCheckMixin:
         citation check has no way to know if a claim is real, only whether the
         article names a source for it; these are the steps that actually check.
 
-        Superset of the old _extract_named_quotes (QUOTE-only) — kept the same
-        JSON-in-text extraction pattern, just widened the categories.
+        Superset of the old _extract_named_quotes (QUOTE-only) — same categories as
+        before; the reply is now read by `parse_claims_payload`, which fails closed on
+        an unreadable reply instead of letting it look like zero claims.
         """
-        import json as _json
         SYSTEM = (
             "Extract every claim from this article that could be independently "
             "verified against real sources, categorized by type:\n"
@@ -73,9 +158,13 @@ class FactCheckMixin:
             system_prompt=SYSTEM, user_prompt=content,
             model="openrouter/claude-haiku-4.5",
             max_tokens=900, timeout=30, no_think=True,
+            # Extraction, not composition. Left unpinned this ran at the provider
+            # default (1.0), and the same article returned different claim counts
+            # from one call to the next -- which put a publication gate downstream of
+            # sampling noise.
+            temperature=0,
         )
-        match = re.search(r'\{.*\}', raw or "", re.DOTALL)
-        data = _json.loads(match.group(0)) if match else {}
+        data = parse_claims_payload(raw)
         return [
             c for c in data.get("claims", [])
             if c.get("claim") and c.get("type") in ("QUOTE", "STUDY", "STAT", "EVENT")

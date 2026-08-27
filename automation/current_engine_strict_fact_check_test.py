@@ -29,6 +29,18 @@ WHAT IS ASSERTED (A-H)
   G  CURRENT_ENGINE candidate, claims_extracted 0                        -> SKIP
   H  legacy candidate behaviour unchanged
 
+Added 2026-08-27 (strict claim-extraction robustness). The 08-25 defect above was
+only half of the collapse: an extraction failure that RAISED became visible, but a
+provider reply that came back empty, truncated, prose-only or malformed did not
+raise at all -- the greedy `\{.*\}` match simply found nothing and the extractor
+returned [], so the bridge recorded extraction_status=ok / claims_extracted=0, which
+is byte-identical to a model that read the article and honestly found no claims.
+  I  unreadable reply (empty/None/whitespace/prose/truncated/malformed) -> EXTRACTION_ERROR
+  J  genuine {"claims": []}                    -> extraction OK, still NO_VERIFIABLE_CLAIMS
+  K  direct / fenced / prose-wrapped payloads  -> extracted normally
+  L  two competing claims payloads             -> EXTRACTION_ERROR, never guessed or merged
+  M  the extraction call is pinned temperature=0
+
 No network, no model calls, no publication.
 
 Run (from repo root):
@@ -85,8 +97,10 @@ class StubFactChecker(FactCheckMixin):
         self._raw = raw
         self._boom = boom
         self._verdicts = verdicts or {}
+        self.calls = []                      # kwargs of every extraction call made
 
     def _call_openai_compat_api(self, **kw):
+        self.calls.append(kw)
         if self._boom is not None:
             raise self._boom
         return self._raw
@@ -156,8 +170,13 @@ def test_A_extraction_exception_fails_closed():
 def test_B_multi_object_extra_data_fails_closed():
     fc = StubFactChecker(raw=MULTI_OBJECT_RAW)
     res = fc._run_web_fact_check("body", strict=True)
-    check("B: multi-object response really does raise 'Extra data'",
-          "Extra data" in (res.get("extraction_error") or ""), res)
+    # This assertion used to require the literal string "Extra data" -- the symptom
+    # of the greedy `\{.*\}` match, which spanned both objects and handed a
+    # two-object string to json.loads. The deterministic parser no longer produces
+    # that error; it refuses the reply for the real reason instead. The outcome the
+    # test exists to protect -- EXTRACTION_ERROR, never a silent zero -- is unchanged.
+    check("B: multi-object response is refused as ambiguous, not parsed",
+          "ambiguous" in (res.get("extraction_error") or ""), res)
     check("B: reported as EXTRACTION_ERROR, not as zero claims",
           res["extraction_status"] == EXTRACTION_ERROR, res)
     r = _bridge_with(res)
@@ -340,6 +359,132 @@ def test_H2_bridge_and_fact_check_constants_agree():
           BRIDGE.FC_EXTRACTION_ERROR == EXTRACTION_ERROR)
 
 
+
+
+# ── I. an unreadable provider reply is an EXTRACTION_ERROR, never a zero ──────
+# The 2026-08-27 natural run (production-20260827T070010Z-fd846f06) recorded
+# extraction_status=ok / claims_extracted=0 and was blocked as NO_VERIFIABLE_CLAIMS.
+# Read-only replay of that exact article returned 1-3 claims in 25/25 attempts and
+# never 0, while CLIProxy logged four 502s inside the same 61-second window. The
+# recorded evidence could not tell "the model read the article and found nothing"
+# apart from "the model returned nothing readable", because every unreadable shape
+# below reached the bridge as a successful extraction of zero claims.
+_UNREADABLE = [
+    ("empty string", ""),
+    ("None", None),
+    ("whitespace only", "   \n\t "),
+    ("prose with no JSON payload", "I could not analyse this article."),
+    ("truncated JSON", '```json\n{"claims": [{"type": "QUOTE"'),
+    ("malformed JSON", '{"claims": [oops]}'),
+    ("JSON without a claims list", '{"result": "none"}'),
+]
+
+
+def test_I_unreadable_provider_reply_is_extraction_error():
+    for label, raw in _UNREADABLE:
+        fc = StubFactChecker(raw=raw)
+        res = fc._run_web_fact_check("body", strict=True)
+        check("I[%s]: EXTRACTION_ERROR, not ok" % label,
+              res["extraction_status"] == EXTRACTION_ERROR, res)
+        check("I[%s]: not reported as NO_VERIFIABLE_CLAIMS" % label,
+              res["lines"] != ["NO_VERIFIABLE_CLAIMS"], res)
+        check("I[%s]: completion is not asserted" % label,
+              res["fact_check_completed"] is False, res)
+        check("I[%s]: an error string is recorded" % label,
+              bool(res.get("extraction_error")), res)
+        r = _bridge_with(res)
+        check("I[%s]: bridge check 9 FAILS" % label, _check9(r)["ok"] is False, _check9(r))
+        check("I[%s]: bridge names EXTRACTION_ERROR" % label,
+              "EXTRACTION_ERROR" in _check9(r)["detail"], _check9(r)["detail"])
+        check("I[%s]: candidate is not eligible" % label, r.eligible is False)
+        check("I[%s]: no verified stamp" % label,
+              BRIDGE.stamp_fields(r).get("fact_check_status") != "verified")
+
+
+# ── J. a genuine empty claim list is still a SUCCESSFUL extraction ────────────
+def test_J_genuine_zero_is_not_an_extraction_error():
+    fc = StubFactChecker(raw='{"claims": []}')
+    res = fc._run_web_fact_check("body", strict=True)
+    check("J: genuine zero extracts successfully", res["extraction_status"] == EXTRACTION_OK, res)
+    check("J: zero claims", res["claims_extracted"] == 0, res)
+    check("J: no error string recorded", not res.get("extraction_error"), res)
+    check("J: still fails closed as NO_VERIFIABLE_CLAIMS",
+          res["lines"] == ["NO_VERIFIABLE_CLAIMS"], res)
+    check("J: extraction did run to completion", res["fact_check_completed"] is True, res)
+    r = _bridge_with(res)
+    check("J: bridge check 9 FAILS", _check9(r)["ok"] is False, _check9(r))
+    check("J: bridge names NO_VERIFIABLE_CLAIMS, not EXTRACTION_ERROR",
+          "NO_VERIFIABLE_CLAIMS" in _check9(r)["detail"]
+          and "EXTRACTION_ERROR" not in _check9(r)["detail"], _check9(r)["detail"])
+    check("J: candidate is not eligible", r.eligible is False)
+
+    # the distinction the fix exists for: same claim count, different status
+    bad = StubFactChecker(raw="")._run_web_fact_check("body", strict=True)
+    check("J: genuine zero and unreadable reply are distinguishable",
+          res["extraction_status"] != bad["extraction_status"]
+          and res["claims_extracted"] == bad["claims_extracted"] == 0,
+          (res["extraction_status"], bad["extraction_status"]))
+
+
+# ── K. the reply shapes a compliant model actually returns still work ─────────
+_READABLE = [
+    ("direct valid JSON", _claims_json(2), 2),
+    ("one fenced payload", "```json\n" + _claims_json(3) + "\n```", 3),
+    ("fenced payload wrapped in prose",
+     "Here you go:\n```json\n" + _claims_json(1) + "\n```\nHope that helps.", 1),
+    # greedy `\{.*\}` ran to the LAST brace in the reply, so a closing brace in
+    # trailing prose corrupted an otherwise valid payload.
+    ("valid payload then prose containing a stray brace",
+     _claims_json(2) + "\nNote: see item 3} for detail", 2),
+    ("a brace inside a claim string",
+     '{"claims": [{"type": "STAT", "subject": "A", "claim": "uses {braces} inside"}]}', 1),
+]
+
+
+def test_K_valid_payload_shapes_extract_normally():
+    for label, raw, n in _READABLE:
+        fc = StubFactChecker(raw=raw)
+        res = fc._run_web_fact_check("body", strict=True)
+        check("K[%s]: extraction ok" % label, res["extraction_status"] == EXTRACTION_OK, res)
+        check("K[%s]: %d claim(s) extracted" % (label, n), res["claims_extracted"] == n, res)
+        check("K[%s]: verification completed" % label, res["fact_check_completed"] is True, res)
+
+
+# ── L. competing payloads fail closed rather than being guessed at ────────────
+_AMBIGUOUS = [
+    ("two claims payloads (self-correcting model)",
+     "```json\n" + _claims_json(1) + "\n```\nActually, on review:\n```json\n"
+     + _claims_json(3) + "\n```"),
+    ("claims payload plus a trailing object", MULTI_OBJECT_RAW),
+]
+
+
+def test_L_ambiguous_payloads_fail_closed():
+    for label, raw in _AMBIGUOUS:
+        fc = StubFactChecker(raw=raw)
+        res = fc._run_web_fact_check("body", strict=True)
+        check("L[%s]: EXTRACTION_ERROR" % label,
+              res["extraction_status"] == EXTRACTION_ERROR, res)
+        check("L[%s]: refused as ambiguous" % label,
+              "ambiguous" in (res.get("extraction_error") or ""), res)
+        check("L[%s]: no claims were guessed at or merged" % label,
+              res["claims_extracted"] == 0, res)
+        r = _bridge_with(res)
+        check("L[%s]: candidate is not eligible" % label, r.eligible is False)
+
+
+# ── M. extraction is pinned to temperature=0 ──────────────────────────────────
+def test_M_extraction_is_pinned_to_temperature_zero():
+    fc = StubFactChecker(raw=_claims_json(1))
+    fc._run_web_fact_check("body", strict=True)
+    check("M: the extraction call was made", len(fc.calls) >= 1, fc.calls)
+    kw = fc.calls[0]
+    check("M: temperature is passed explicitly", "temperature" in kw, kw)
+    check("M: temperature is 0", kw.get("temperature") == 0, kw)
+    check("M: still the cheap extraction model",
+          kw.get("model") == "openrouter/claude-haiku-4.5", kw)
+
+
 def main():
     for fn in [test_A_extraction_exception_fails_closed,
                test_B_multi_object_extra_data_fails_closed,
@@ -351,7 +496,12 @@ def main():
                test_G_current_engine_zero_claims_is_skipped,
                test_G2_guard_is_actually_wired_into_the_selector,
                test_H_legacy_candidate_behaviour_unchanged,
-               test_H2_bridge_and_fact_check_constants_agree]:
+               test_H2_bridge_and_fact_check_constants_agree,
+               test_I_unreadable_provider_reply_is_extraction_error,
+               test_J_genuine_zero_is_not_an_extraction_error,
+               test_K_valid_payload_shapes_extract_normally,
+               test_L_ambiguous_payloads_fail_closed,
+               test_M_extraction_is_pinned_to_temperature_zero]:
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)
