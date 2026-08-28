@@ -302,6 +302,35 @@ def test_context_only_material_cannot_buy_an_article():
     check("and the verdict is HOLD", pack["sufficiency"]["verdict"] == RS.HOLD)
 
 
+def test_one_publisher_cannot_corroborate_itself():
+    """From the live Minnie Evans regression: two Whitney pages and two High Museum
+    pages are four documents, four duplicate clusters -- and two institutions."""
+    anchor_in = {"url": "https://paper.example/feature", "text": "feature text",
+                 "title": "", "accessed_at": AT}
+    texts = ["The exhibition gathers ninety drawings made after 1940.",
+             "Press release: the exhibition opens in October and tours next year.",
+             "The organising museum describes the artist's decades at the gardens.",
+             "Season announcement listing the artist's show among others."]
+    pubs = ["whitney.example", "whitney.example", "high.example", "high.example"]
+    fetched = [dict(source_id="S%d" % (i + 1), url="https://%s/p%d" % (pubs[i], i),
+                    publisher=pubs[i], status="ok", accessed_at=AT, title="",
+                    canonical_url="", text=texts[i]) for i in range(4)]
+    assessment = {"sources": [{"source_id": s["source_id"], "role": "PRIMARY",
+                               "relation": "corroborates", "excerpts": [t]}
+                              for s, t in zip(fetched, texts)]}
+    pack = RS.build_pack(anchor=anchor_in,
+                         scoped={"subject": "the exhibition", "anchor_kind": "feature",
+                                 "anchor_subject_words": 900, "subject_span": ""},
+                         fetched=fetched, assessment=assessment,
+                         searched={"queries": [], "candidates": [], "failures": []})
+    cov = pack["coverage"]
+    check("four documents are four duplicate clusters", cov["independent_clusters"] == 4)
+    check("but only two publishers", cov["independent_publishers"] == 2, cov)
+    check("sufficiency counts the smaller of the two",
+          "independent=2" in pack["sufficiency"]["reasons"][0],
+          pack["sufficiency"]["reasons"][0])
+
+
 def test_insufficient_research_holds_the_run_before_discovery():
     import new_engine_v1_test as T
 
@@ -627,6 +656,7 @@ def main() -> None:
                test_duplicates_collapse_and_cannot_buy_independence,
                test_sufficiency_rules,
                test_context_only_material_cannot_buy_an_article,
+               test_one_publisher_cannot_corroborate_itself,
                test_insufficient_research_holds_the_run_before_discovery,
                test_research_failure_fails_closed,
                test_tertiary_carries_material_but_buys_no_independence,

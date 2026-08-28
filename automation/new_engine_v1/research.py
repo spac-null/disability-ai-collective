@@ -428,6 +428,12 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
     supporting = [s for s in sources[1:] if _usable(s, SUPPORTING_ROLES)]
     material = [s for s in sources[1:] if _usable(s, MATERIAL_ROLES)]
     independent_clusters = sorted({s["duplicate_cluster"] for s in supporting})
+    # Independence is counted per PUBLISHER, not per page. The live Minnie Evans
+    # regression returned two Whitney pages and two High Museum pages: four distinct
+    # documents, four duplicate clusters, and two institutions. Counting pages would
+    # let one institution corroborate itself, which is the syndication failure wearing
+    # a different hat.
+    independent_publishers = sorted({s["publisher"] for s in supporting})
     srm_words = sum(len(" ".join(s["excerpts"]).split()) for s in material)
     tertiary_words = sum(len(" ".join(s["excerpts"]).split())
                          for s in material if s["role"] == ROLE_TERTIARY)
@@ -452,6 +458,7 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
             "distinct_publishers": len({s["publisher"] for s in sources}),
             "duplicate_clusters": len(clusters),
             "independent_clusters": len(independent_clusters),
+            "independent_publishers": len(independent_publishers),
             "subject_relevant_words": srm_words,
             "tertiary_words": tertiary_words,
             "context_only_words": context_words,
@@ -472,7 +479,11 @@ def sufficiency(pack: dict) -> dict:
     primary anchor can carry a narrow piece with no support at all.
     """
     cov = pack["coverage"]
-    ind = cov["independent_clusters"]
+    # The binding number is whichever is smaller: distinct duplicate clusters (a
+    # syndicated story is one source) and distinct publishers (one institution's two
+    # pages are one source). Both failure modes have been seen live.
+    ind = min(cov["independent_clusters"],
+              cov.get("independent_publishers", cov["independent_clusters"]))
     srm = cov["subject_relevant_words"]
     roles = set(cov["roles_present"])
     # PRIMARY means first-party. No other role substitutes for it, and no publisher or
@@ -483,7 +494,9 @@ def sufficiency(pack: dict) -> dict:
     anchor_rich = (pack.get("anchor_subject_words", 0) >= ANCHOR_RICH_WORDS
                    and pack.get("anchor_kind") in
                    ("paper", "report", "judgment", "dataset", "interview", "archive"))
-    reasons = ["independent_clusters=%d" % ind, "subject_relevant_words=%d" % srm,
+    reasons = ["independent=%d (clusters=%d, publishers=%s)"
+               % (ind, cov["independent_clusters"],
+                  cov.get("independent_publishers", "?")), "subject_relevant_words=%d" % srm,
                "roles=%s" % ",".join(sorted(roles)),
                "anchor_kind=%s(%d subject words)" % (pack.get("anchor_kind"),
                                                      pack.get("anchor_subject_words", 0))]
