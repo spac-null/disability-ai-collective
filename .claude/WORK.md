@@ -355,6 +355,17 @@ and are **not** cutover blockers — they never blocked the completed default cu
     The 28 August Ljubljana anchor reaches **HOLD_INSUFFICIENT_RESEARCH**; a richer
     single-subject anchor (Guardian on Minnie Evans) reaches **ARTICLE** with a PRIMARY
     museum source and two independent ones. Neither run wrote an article.
+  - Second increment (2026-08-28, same PR): `TERTIARY` role — carries verified material,
+    buys no independence, substitutes for no first-party source; independence counted per
+    publisher as well as per duplicate cluster; `subject_span` binds Discovery to the
+    subject the pack was built for, so a roundup cannot be researched for one item and
+    written about another (`DISCOVERY_SUBJECT_OUTSIDE_RESEARCHED_SCOPE`, HOLD, one pass).
+  - Live end-to-end (isolated `/tmp`, nothing in `_drafts/`): pack `ARTICLE` — 5 fetched
+    sources, 3 independent publishers, 755 verified subject words, scope verified,
+    624-word article, grounding settled — then **HOLD on the pre-existing V0 policy**
+    (2 unadjudicated `TRUE_UNCERTAIN` findings). `decision.py` untouched. **Open
+    question for deployment: a richer pack produces more checkable specifics, so V0's
+    HOLD-on-any-uncertain rule may fire more often than it did on single-source runs.**
   - **Not production-ready on unit tests alone. Not merged, not deployed.**
 - **28 August candidate — HELD.** `_drafts/_archive/2026-08-28-the-order-in-which-you-meet-a-picture.md`,
   outside `publish_best.py`'s top-level `_drafts/*.md` glob, byte-identical, evidence

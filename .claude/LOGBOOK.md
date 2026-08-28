@@ -486,3 +486,33 @@ INDEPENDENT) should be a role of its own; and what research should scope when th
 is a roundup covering several unrelated subjects -- the NARROW verdict currently carries
 that, unresolved.
 
+---
+
+## 2026-08-28 — Research Pack, second increment: tertiary sources and roundup scoping
+
+WHAT: `TERTIARY` became a role of its own (material yes, independence no, primary-source
+substitute no); independence is now the smaller of distinct duplicate clusters and
+distinct publishers; and a `subject_span` verified verbatim against the anchor binds
+Discovery to the subject the pack was built for.
+
+WHY: the first Minnie Evans regression counted a Wikipedia biography as a second witness,
+and a later one counted two Whitney pages and two High Museum pages as four independent
+sources. The 28 August failure was the other half: research scoped the mountain trike and
+Discovery wrote about the tactile exhibition system.
+
+EVIDENCE: 28 August anchor still HOLDs, now with all four queries serving one subject
+instead of wandering to unrelated roundup items. One live end-to-end on the Guardian
+Minnie Evans feature reached `ARTICLE` (5 sources, 3 independent publishers, 755 verified
+subject words), wrote a 624-word article, settled grounding, and then HOLDed on the
+pre-existing V0 rule about unadjudicated `TRUE_UNCERTAIN` findings. Two live defects were
+caught by the runs rather than the tests: the assessor's reply budget was too small for
+five sources (fail-closed, correctly), and one institution's two pages counted twice.
+
+CODE: `automation/new_engine_v1/{research,contracts,invariants,runner,stages}.py`,
+`automation/research_pack_test.py`. `decision.py`, the orchestrator, cron and
+`publish_best.py` untouched. **MERGED: NO.**
+
+FOLLOW-UP: whether V0's HOLD-on-any-unadjudicated-`TRUE_UNCERTAIN` policy is still the
+right rule once articles are written from multi-source packs. Not changed here; it is a
+decision, not a defect.
+
