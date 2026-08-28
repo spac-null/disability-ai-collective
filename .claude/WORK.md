@@ -389,6 +389,12 @@ and are **not** cutover blockers — they never blocked the completed default cu
     ceiling today is 48 model calls per article (≤8 typing + ≤40 classification),
     measured at ~$0.85–1.10 and 65–85s per article at a 12-claim cap. Too expensive to
     gate on; deliberately not optimised in this PR, which stays opt-in and OFF.
+  - **WATCH, non-blocking — focused-classifier explanations may overstate.** The booklet
+    per-layer elaboration is correctly `UNSUPPORTED`, but its residue reads "the entire
+    claim ... has no basis in the evidence" where part of a compound claim can in fact be
+    grounded. The verdict is right; the explanation is broader than the evidence warrants.
+    Not fixed in PR #45, not a gating blocker, worth watching when V2 output is next
+    reviewed.
   Details in the PR.
 
 - **FOLLOW-UP — GROUNDER STABILITY. Read-only investigation required, after the Research
