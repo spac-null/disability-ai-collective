@@ -211,6 +211,187 @@ def test_title_is_split_off_the_body():
     check("body still clean", b3 == "Body.", repr(b3))
 
 
+
+def test_opening_states_why_this_is_worth_reading():
+    """Owner reader review, 28 Aug: the article opened on a correct concrete
+    description and still gave no reason to keep reading until paragraph three. The
+    doctrine had the job buried inside the concrete-before-abstract rule; it is now
+    its own instruction, with the three jobs named and no template attached."""
+    d = S.PROSE_DOCTRINE
+    check("opening names the concrete subject", "names the concrete subject" in d)
+    check("opening says what is unusual about it",
+          "what is unusual or particular about it" in d)
+    check("opening says why the article is looking at it",
+          "why this article is looking at it" in d)
+    check("the jobs have a stated budget, not a pattern",
+          "first two to four sentences" in d and "no set pattern" in d)
+    check("reader must not wait until paragraph three or four",
+          "third or fourth paragraph" in d)
+
+
+def test_doctrine_attacks_sentence_density():
+    """The dense sentences that still passed carried two or three abstractions each.
+    The rule now names the construction to prefer and the one to break up."""
+    d = S.PROSE_DOCTRINE
+    check("one claim to a sentence", "One claim to a sentence" in d)
+    check("concrete noun + active verb is the default build",
+          "concrete noun and an active verb" in d)
+    check("two ideas that both matter become two sentences",
+          "write two sentences" in d)
+    check("long multi-clause sentences are actively questioned",
+          "Distrust any long sentence" in d)
+    check("abstract nouns are replaced by the thing itself",
+          "replaced by the thing itself" in d)
+    check("no explanatory clause after the point is understood",
+          "already understood" in d)
+    check("no crude universal sentence-length limit is imposed",
+          "words per sentence" not in d and "maximum of" not in d)
+
+
+def test_doctrine_keeps_naming_the_object():
+    """Repeated abstractions (sequence / encounter / reading order / variable) were
+    the density's other half: the article stopped naming the booklet."""
+    d = S.PROSE_DOCTRINE
+    check("the object comes back with the argument", "bring the object back with it" in d)
+    check("a conceptual noun may not stand in for it",
+          "conceptual noun standing in for it" in d)
+    check("drifting off the material is named as the failure",
+          "drifted off the material" in d)
+
+
+def test_qualification_stays_local_and_plain():
+    """The evidence boundary must survive; the academic disclaimer paragraph should
+    not. 28 Aug spent a six-sentence paragraph explaining what it was not claiming."""
+    d = S.PROSE_DOCTRINE
+    check("a limit is marked where the claim is made",
+          "Mark a limit where the claim is made" in d)
+    check("one plain statement, not a paragraph",
+          "one plain statement" in d and "not worth a paragraph" in d)
+    check("state the boundary, do not perform it", "do not perform it" in d)
+    # The boundary itself is untouched: still binding, still reaching the writer.
+    check("evidence boundary is still in force",
+          "is not a finding about how the world works" in S._NO_FABRICATION)
+
+
+def test_ending_stops_instead_of_reprising():
+    """28 Aug stated its arrival in the penultimate paragraph and again as the last
+    line. The doctrine said the arrival is stated once; nothing told the writer what
+    to do INSTEAD of a closing paragraph."""
+    d = S.PROSE_DOCTRINE
+    check("when the point lands, the article is over", "the article is over" in d)
+    check("the permitted alternative is genuinely new material",
+          "add one genuinely new thing" in d)
+    check("no closing paragraph written out of habit",
+          "because articles are expected to have one" in d)
+    check("never end by restating the arrival",
+          "saying the arrival again in other words" in d)
+    check("the original once-only rule is still there", "arrival is stated once" in d.lower()
+          or "The arrival is stated once" in d)
+
+
+def test_form_owns_the_vocabulary_the_writer_inherits():
+    """Root cause of the abstract register: the writer is told to follow the form
+    exactly, and the form arrived written in conceptual nouns."""
+    f = S.FORM_SYSTEM
+    check("form must be written in plain concrete language",
+          "plain, concrete language" in f)
+    check("form names what the writer inherits",
+          "inherits your vocabulary" in f)
+    check("the last movement IS the arrival", "the route IS the arrival" in f)
+    check("no movement after the arrival", "Do not place a movement after it" in f)
+    check("single-source honest default range is stated",
+          "500 to 650 words" in f)
+    check("a longer range still requires real material",
+          "material you actually have" in f)
+
+
+def test_writer_prompt_says_the_arrival_once():
+    wi = S.build_writer_input(
+        {"motion": "m", "route": ["establish", "develop", "arrive"], "arrival": "a",
+         "burden": "b", "target_words": [500, 650]},
+        {"source_anchor_quote": "q", "what_becomes_knowable": "k",
+         "grounding_boundaries": "g"},
+        "source text", "0" * 64, "Maya Flux")
+    p = wi["prompt_text"]
+    check("route-end and arrival are stated to be one act",
+          "the same act, not two" in p)
+    check("the writer is told to write it once and stop",
+          "write it once, there, and stop" in p)
+    check("the prompt still carries no legacy surface",
+          not [m for m in C.LEGACY_PROMPT_MARKERS if m in p])
+
+
+
+def test_popular_nonfiction_contract():
+    """Owner decision, 28 Aug: accessible research-first popular nonfiction. These are
+    the qualities that belong to the writing contract; the research pack that supplies
+    the facts they ask for is a separate architectural decision, not this file's."""
+    d = S.PROSE_DOCTRINE
+    check("facts, people, objects and examples carry the argument",
+          "Let the facts do the arguing" in d)
+    check("names the kinds of concrete material to use",
+          all(w in d for w in ("a person", "a date", "a number", "a real example")))
+    check("a detail beats a sentence about the detail",
+          "worth more than a sentence about what the detail means" in d)
+    check("active verbs", "Active verbs" in d)
+    check("cuts conceptual nouns that only rename", "only renames" in d)
+    check("one job to a paragraph", "One job to a paragraph" in d)
+    check("transitions are obvious", "why a paragraph follows the one" in d)
+    check("necessary ideas are explained at once, in ordinary words",
+          "Explain what the reader needs, at once, in ordinary words" in d)
+    check("the reader is never sent back over a sentence",
+          "send the reader back over a sentence" in d)
+    # No imitation of any living writer, and no named-author instruction may enter the
+    # prompt surface -- the legacy marker list exists because that failed before.
+    check("no named writer to imitate", "Bregman" not in d and "write like" not in d.lower())
+
+
+def test_thin_material_may_not_be_inflated():
+    """The 28 Aug article was built from 118 words of source blurb. The contract now
+    says what to do about that at the writing stage; what to do about it at the
+    research stage is a separate decision."""
+    d = S.PROSE_DOCTRINE
+    check("short piece when the material is thin",
+          "If the material will not carry the length, write a shorter piece" in d)
+    check("names the depth-manufacturing failure directly",
+          "manufacture" in d and "one fact read three ways is one fact" in d)
+    f = S.FORM_SYSTEM
+    check("form: a re-reading is not a movement",
+          "is not a movement" in f)
+    check("form: movements are separated by material, not by angle",
+          "separated by material" in f)
+    check("form: target_words follows the material's actual extent",
+          "set target_words to match" in f)
+
+
+def test_writer_performs_a_deletion_pass():
+    d = S.PROSE_DOCTRINE
+    check("a final pass is required before returning output",
+          "Before you finish" in d and "and cut" in d)
+    check("the pass is read from a reader's position",
+          "not yet decided to keep reading" in d)
+    check("the four questions are asked of every paragraph",
+          all(q in d for q in ("add information or movement",
+                               "concrete fact do the work",
+                               "already clear", "read it twice")))
+    check("delete rather than explain twice", "Delete rather than explain twice" in d)
+
+
+def test_safety_is_not_traded_for_readability():
+    """Popular-nonfiction qualities may not import popular-nonfiction weaknesses."""
+    n = S._NO_FABRICATION
+    check("no invented factual state", "may not invent a factual state" in n)
+    check("no fabricated first-person experience",
+          "may not write first-person lived experience" in n)
+    check("interpretation may not add facts",
+          "never add facts the source does not contain" in n)
+    check("reading vs finding about the world still separated",
+          "is not a finding about how the world works" in n)
+    d = S.PROSE_DOCTRINE
+    check("the doctrine invents no licence to dramatise",
+          "anecdote" not in d.lower() and "scene" not in d.lower())
+
+
 def main() -> None:
     for fn in (test_aug27_source_headline_is_rejected,
                test_a_title_about_the_actual_subject_is_accepted,
@@ -221,6 +402,17 @@ def main() -> None:
                test_form_forbids_restatement_movements,
                test_interpretation_may_not_widen_into_a_general_claim,
                test_writer_may_come_in_short,
+               test_opening_states_why_this_is_worth_reading,
+               test_doctrine_attacks_sentence_density,
+               test_doctrine_keeps_naming_the_object,
+               test_qualification_stays_local_and_plain,
+               test_ending_stops_instead_of_reprising,
+               test_form_owns_the_vocabulary_the_writer_inherits,
+               test_writer_prompt_says_the_arrival_once,
+               test_popular_nonfiction_contract,
+               test_thin_material_may_not_be_inflated,
+               test_writer_performs_a_deletion_pass,
+               test_safety_is_not_traded_for_readability,
                test_title_is_split_off_the_body):
         print("\n" + fn.__name__)
         fn()
