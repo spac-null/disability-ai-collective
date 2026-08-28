@@ -366,6 +366,23 @@ and are **not** cutover blockers — they never blocked the completed default cu
     (2 unadjudicated `TRUE_UNCERTAIN` findings). `decision.py` untouched. **Open
     question for deployment: a richer pack produces more checkable specifics, so V0's
     HOLD-on-any-uncertain rule may fire more often than it did on single-source runs.**
+  - Third increment (2026-08-28): bounded **uncertainty adjudication**.
+    `decision.py` is NOT modified — it already read `uncertain_adjudicated`, and nothing
+    could set it. Now `GROUNDING → adjudication (one pass, pack-only) → re-grounding →
+    existing decision/fact-check/bridge` can, and only when the second grounding finds
+    nothing unresolved. Audit per finding in `GROUNDING_FINDINGS.uncertainty_adjudication`.
+  - **Live result: still HOLD, for a different and now-diagnosable reason.** Run
+    `production-20260828T185627Z`: pack `ARTICLE` (646 verified subject words, 2
+    independent publishers), adjudication rewrote one over-specific claim citing S1+S3
+    and it verified — then the second grounding produced four new findings, three of
+    them classified `TRUE_UNSUPPORTED` with `why` text that says the claim IS grounded
+    in the anchor, plus one genuine source conflict (anchor "nearly 100 pieces" vs High
+    Museum "more than 100").
+  - **OPEN, and now the binding constraint: grounder classification is unstable across
+    passes on the same text.** It has twice contradicted itself between groundings, and
+    once labelled a finding `TRUE_UNSUPPORTED` while explaining that the anchor
+    establishes it. Fail-closed means every such wobble HOLDs. This is a grounder
+    policy/prompt question, deliberately not touched here.
   - **Not production-ready on unit tests alone. Not merged, not deployed.**
 - **28 August candidate — HELD.** `_drafts/_archive/2026-08-28-the-order-in-which-you-meet-a-picture.md`,
   outside `publish_best.py`'s top-level `_drafts/*.md` glob, byte-identical, evidence
