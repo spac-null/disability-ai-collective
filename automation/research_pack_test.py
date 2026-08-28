@@ -437,6 +437,187 @@ def test_bridge_checks_pack_provenance():
     check("and the run is not publication-eligible", not res2.eligible)
 
 
+
+# ── TERTIARY ──────────────────────────────────────────────────────────────────
+def test_tertiary_carries_material_but_buys_no_independence():
+    """An encyclopaedia entry summarises other people's reporting. It is often accurate
+    and worth writing from, and it is not a second witness. The Minnie Evans pack is the
+    real case: Wikipedia was carried as INDEPENDENT and counted toward the ARTICLE
+    threshold alongside two museum sources."""
+    anchor = _src("anchor about the artist", "S0", role="ANCHOR")
+    tert = _pack([anchor, _src("x", "S1", role="TERTIARY")],
+                 independent_clusters=0, subject_relevant_words=300, tertiary_words=300)
+    check("TERTIARY alone does not reach SHORT_ARTICLE",
+          tert["sufficiency"]["verdict"] == RS.HOLD, tert["sufficiency"])
+
+    with_primary = _pack([anchor, _src("x", "S1", role="PRIMARY"),
+                          _src("y", "S2", role="TERTIARY")],
+                         independent_clusters=1, subject_relevant_words=500,
+                         tertiary_words=250)
+    check("TERTIARY does not supply the second independent cluster",
+          with_primary["sufficiency"]["verdict"] == RS.SHORT_ARTICLE,
+          with_primary["sufficiency"])
+
+    check("TERTIARY is not a substitute for a PRIMARY source",
+          RS.ROLE_TERTIARY not in RS.SUPPORTING_ROLES
+          and RS.ROLE_TERTIARY in RS.MATERIAL_ROLES)
+
+    # build_pack must classify the counting, not the domain
+    anchor_in = {"url": "https://paper.example/feature", "text": "feature text",
+                 "title": "", "accessed_at": AT}
+    fetched = [dict(source_id="S1", url="https://encyclopaedia.example/subject",
+                    publisher="encyclopaedia.example", status="ok", accessed_at=AT,
+                    title="", canonical_url="",
+                    text="The artist worked at the gardens from 1948 until 1974."),
+               dict(source_id="S2", url="https://museum.example/exhibition",
+                    publisher="museum.example", status="ok", accessed_at=AT,
+                    title="", canonical_url="",
+                    text="The museum's exhibition gathers ninety drawings made after 1940.")]
+    assessment = {"sources": [
+        {"source_id": "S1", "role": "TERTIARY", "relation": "corroborates",
+         "excerpts": ["The artist worked at the gardens from 1948 until 1974."]},
+        {"source_id": "S2", "role": "PRIMARY", "relation": "extends",
+         "excerpts": ["The museum's exhibition gathers ninety drawings made after 1940."]}]}
+    pack = RS.build_pack(anchor=anchor_in,
+                         scoped={"subject": "the artist", "anchor_kind": "feature",
+                                 "anchor_subject_words": 900, "subject_span": ""},
+                         fetched=fetched, assessment=assessment,
+                         searched={"queries": [], "candidates": [], "failures": []})
+    cov = pack["coverage"]
+    check("a tertiary source contributes verified subject words",
+          cov["tertiary_words"] > 0 and cov["subject_relevant_words"] > cov["tertiary_words"],
+          cov)
+    check("only the non-tertiary source counts as an independent cluster",
+          cov["independent_clusters"] == 1, cov)
+    check("no publisher or domain is named in the sufficiency rule",
+          "wikipedia" not in
+          (HERE / "new_engine_v1" / "research.py").read_text().lower().split(
+              "def sufficiency")[1])
+    _validate(pack)
+    check("a pack carrying a TERTIARY role validates", True)
+
+
+# ── ROUNDUP SUBJECT SCOPING ───────────────────────────────────────────────────
+ROUNDUP = """Design School Shows: projects from the Academy
+
+Cargo Bench by Ada Moreno
+"Cargo Bench is a public seat that folds into a delivery trolley for market traders.
+"It was developed with three market cooperatives and tested over one winter season."
+Student: Ada Moreno
+
+Reading Rail by Bo Lindqvist
+"Reading Rail is a tactile handrail that carries route information in raised profile.
+"It was developed through workshops with blind and partially sighted commuters."
+Student: Bo Lindqvist
+"""
+CARGO_SPAN = ('Cargo Bench by Ada Moreno\n"Cargo Bench is a public seat that folds into '
+              'a delivery trolley for market traders.\n"It was developed with three '
+              'market cooperatives and tested over one winter season."')
+CARGO_QUOTE = ("It was developed with three market cooperatives and tested over one "
+               "winter season.")
+RAIL_QUOTE = ("It was developed through workshops with blind and partially sighted "
+              "commuters.")
+
+
+def test_roundup_subject_span_binds_discovery():
+    """Two unrelated projects in one anchor. Researching the bench and then writing
+    about the handrail is the 28 August failure exactly, and it must not be reachable."""
+    from new_engine_v1 import invariants as INV
+    ok, code, detail = INV.check_subject_scope({"source_anchor_quote": CARGO_QUOTE},
+                                               CARGO_SPAN, ROUNDUP)
+    check("an anchor quote inside the researched subject passes", ok, (code, detail))
+
+    ok, code, detail = INV.check_subject_scope({"source_anchor_quote": RAIL_QUOTE},
+                                               CARGO_SPAN, ROUNDUP)
+    check("an anchor quote from the OTHER roundup item is rejected", not ok, detail)
+    check("the rejection has a deterministic reason code",
+          code == INV.SUBJECT_SCOPE_MISMATCH, code)
+
+    ok, _, _ = INV.check_subject_scope({"source_anchor_quote": RAIL_QUOTE}, "", ROUNDUP)
+    check("a single-subject anchor (no span) is not constrained", ok)
+    ok, _, _ = INV.check_subject_scope({"source_anchor_quote": RAIL_QUOTE},
+                                       "a span that was never in the anchor", ROUNDUP)
+    check("an unverifiable span binds nothing rather than binding the wrong region", ok)
+
+
+def test_researched_and_written_subject_cannot_diverge():
+    """End to end through the runner: the pack is built for the bench, Discovery
+    grounds itself in the handrail, and the run HOLDs before Article Form."""
+    import copy
+    import new_engine_v1_test as T
+
+    def roundup_pack(_p, *, anchor, now_iso, **_k):
+        support = ("The cooperative reported that the bench carried 40kg loads across "
+                   "the market square through the winter trial.")
+        pack = {
+            "subject": "Cargo Bench by Ada Moreno", "questions": [],
+            "queries": ["Cargo Bench Ada Moreno market cooperative"],
+            "candidates_considered": [], "anchor_kind": "roundup_entry",
+            "anchor_subject_words": 40, "subject_span": CARGO_SPAN,
+            "narrower_subject": "",
+            "sources": [_src(anchor["text"], "S0", role="ANCHOR", url=anchor["url"]),
+                        _src(support, "S1", role="INDEPENDENT",
+                             excerpts=["The cooperative reported that the bench carried "
+                                       "40kg loads across the market square"])],
+            "coverage": {"fetched_ok": 1, "fetch_failures": [], "budget_dropped": [],
+                         "roles_present": ["ANCHOR", "INDEPENDENT"],
+                         "distinct_publishers": 2, "duplicate_clusters": 2,
+                         "independent_clusters": 1, "subject_relevant_words": 200,
+                         "tertiary_words": 0, "context_only_words": 0},
+            "pack_sha256": "x"}
+        pack["sufficiency"] = RS.sufficiency(pack)
+        return pack
+
+    payload = {"source_text": ROUNDUP, "source_sha256": C.sha256_text(ROUNDUP),
+               "provenance": {"origin": "fetched_article",
+                              "url": "https://example.org/roundup"}}
+
+    def _provider_quoting(quote):
+        disc = dict(T.DISCOVERY_REPLY, source_anchor_quote=quote)
+        return T.StubProvider(discovery=disc)
+
+    with tempfile.TemporaryDirectory() as d:
+        out = R.run(copy.deepcopy(payload), pathlib.Path(d), _provider_quoting(RAIL_QUOTE),
+                    "diverge", AT, mode=R.MODE_LIVE, research_fn=roundup_pack)
+    check("a run that switches roundup item HOLDs", out["decision"] == "HOLD", out["reasons"])
+    check("the reason names the scope mismatch",
+          out.get("reason_code") == "DISCOVERY_SUBJECT_OUTSIDE_RESEARCHED_SCOPE",
+          out.get("reason_code"))
+    check("no Article Form was built", C.ARTICLE_FORM not in out["artifacts"])
+    check("no article was written", C.WRITER_OUTPUT not in out["artifacts"])
+    check("the pack that was actually built is still on record",
+          out["artifacts"][C.RESEARCH_PACK].payload["subject"] == "Cargo Bench by Ada Moreno")
+
+    with tempfile.TemporaryDirectory() as d:
+        out2 = R.run(copy.deepcopy(payload), pathlib.Path(d),
+                     _provider_quoting(CARGO_QUOTE), "aligned", AT,
+                     mode=R.MODE_LIVE, research_fn=roundup_pack)
+    check("staying on the researched subject proceeds normally",
+          out2["decision"] == "ACCEPT", out2["reasons"])
+    check("Discovery records that the scope was verified",
+          out2["artifacts"][C.DISCOVERY].payload.get("subject_scope_verified") is True)
+    prompt = out2["artifacts"][C.WRITER_INPUT].payload["prompt_text"]
+    check("the writer is told which subject was researched",
+          "SUBJECT RESEARCHED: Cargo Bench by Ada Moreno" in prompt)
+    check("and is told the other roundup items have no research behind them",
+          "is not on offer" in prompt)
+
+
+def test_subject_span_must_be_verbatim_in_the_anchor():
+    anchor = _src(ROUNDUP, "S0", role="ANCHOR")
+    good = _pack([anchor, _src("support", "S1")])
+    good["subject_span"] = CARGO_SPAN
+    _validate(good)
+    check("a verbatim subject span validates", True)
+    bad = _pack([anchor, _src("support", "S1")])
+    bad["subject_span"] = "Cargo Bench, a folding public seat for market traders"
+    try:
+        _validate(bad)
+        check("a paraphrased subject span is rejected", False)
+    except C.ContractViolation as e:
+        check("a paraphrased subject span is rejected", "verbatim" in str(e))
+
+
 def main() -> None:
     for fn in (test_pack_contract,
                test_excerpt_must_be_verbatim_span_of_fetched_bytes,
@@ -448,6 +629,10 @@ def main() -> None:
                test_context_only_material_cannot_buy_an_article,
                test_insufficient_research_holds_the_run_before_discovery,
                test_research_failure_fails_closed,
+               test_tertiary_carries_material_but_buys_no_independence,
+               test_roundup_subject_span_binds_discovery,
+               test_researched_and_written_subject_cannot_diverge,
+               test_subject_span_must_be_verbatim_in_the_anchor,
                test_bounds_are_finite,
                test_writer_still_has_no_network,
                test_grounding_sees_authorised_material_only,

@@ -141,6 +141,15 @@ def pack_material_block(pack: dict | None, per_source_chars: int = PACK_SOURCE_C
                 "is the only authorised material.\n")
     suff = (pack.get("sufficiency") or {}).get("verdict", "")
     out = ["\nRESEARCH PACK -- authorised material, each span traceable to fetched bytes"]
+    if pack.get("subject"):
+        out.append("  SUBJECT RESEARCHED: %s" % pack["subject"])
+    if pack.get("subject_span"):
+        out.append("  The anchor covers more than one subject. Only the subject above "
+                   "was researched, and it is the only one available: this passage of "
+                   "the anchor, and nothing around it --\n    \"%s\"\n  Ground the "
+                   "reading inside that passage. Another item in the same source may "
+                   "look more promising; it has no research behind it and is not on "
+                   "offer." % pack["subject_span"][:600])
     if suff in ("SHORT_ARTICLE", "NARROW"):
         out.append("  RESEARCH VERDICT: %s -- the material supports a short, narrow "
                    "piece. Keep the route small and the target range low; do not reach "

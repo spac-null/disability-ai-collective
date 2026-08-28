@@ -65,9 +65,21 @@ HOLD = "HOLD_INSUFFICIENT_RESEARCH"
 ROLE_ANCHOR = "ANCHOR"
 ROLE_PRIMARY = "PRIMARY"
 ROLE_INDEPENDENT = "INDEPENDENT"
+ROLE_TERTIARY = "TERTIARY"
 ROLE_CONTEXT = "CONTEXT"
 ROLE_COUNTERWEIGHT = "COUNTERWEIGHT"
-ROLES = (ROLE_ANCHOR, ROLE_PRIMARY, ROLE_INDEPENDENT, ROLE_CONTEXT, ROLE_COUNTERWEIGHT)
+ROLES = (ROLE_ANCHOR, ROLE_PRIMARY, ROLE_INDEPENDENT, ROLE_TERTIARY,
+         ROLE_CONTEXT, ROLE_COUNTERWEIGHT)
+
+# Roles that can establish independence. TERTIARY is excluded on purpose: an
+# encyclopaedia entry, a database record or an aggregated profile summarises other
+# people's reporting, so counting it as an independent account would let one underlying
+# story appear twice. It may still carry real subject material -- and does -- which is
+# why it contributes verified words while buying no independence and satisfying no
+# requirement for a first-party source.
+SUPPORTING_ROLES = (ROLE_PRIMARY, ROLE_INDEPENDENT, ROLE_COUNTERWEIGHT)
+# Roles whose verified excerpts count as subject-relevant material.
+MATERIAL_ROLES = SUPPORTING_ROLES + (ROLE_TERTIARY,)
 
 
 class ResearchError(ProviderError):
@@ -226,7 +238,14 @@ SCOPE_SYSTEM = (
     "concretely there and what would have to be read to understand it.\n"
     "Judge the anchor honestly: a roundup entry or a press blurb is thin no matter how "
     "interesting it sounds, and a paper, report, judgment, dataset or long interview is "
-    "rich even when it is dull."
+    "rich even when it is dull.\n"
+    "If the anchor covers SEVERAL unrelated subjects -- a roundup, a school show, a list, "
+    "a digest -- choose exactly ONE and scope everything to it. Every query you write "
+    "must serve that one subject; a query about another item on the list is wasted, and "
+    "the article will not be about it. Mark the chosen subject with `subject_span`: a "
+    "span copied CHARACTER-FOR-CHARACTER from the anchor covering that subject and "
+    "nothing else, from where it starts to where it ends. It is checked against the "
+    "anchor programmatically, and the article that follows is confined to it."
 )
 
 
@@ -247,6 +266,9 @@ def scope_prompt(anchor_text: str, sha: str) -> str:
         'judgment|dataset|interview|archive|other",\n'
         '  "anchor_subject_words": integer  // words in the anchor that are ABOUT the '
         'subject, not about neighbouring items,\n'
+        '  "subject_span": "verbatim span of the anchor covering the chosen subject '
+        'only -- REQUIRED when the anchor covers several unrelated subjects, empty '
+        'string when the whole anchor is about one subject",\n'
         '  "narrower_subject": "" or a narrower subject the anchor actually supports\n'
         "}\n" % (sha[:16], anchor_text[:20_000], MAX_QUERIES))
 
@@ -254,6 +276,14 @@ def scope_prompt(anchor_text: str, sha: str) -> str:
 def scope(provider, anchor_text: str, sha: str) -> dict:
     c = provider.complete(SCOPE_SYSTEM, scope_prompt(anchor_text, sha), max_tokens=1200)
     p = parse_json_object(c.text)
+    # The span is only worth anything if it is really in the anchor. A paraphrased or
+    # invented span is dropped rather than carried, exactly like an excerpt -- and a
+    # dropped span means the scope invariant downstream simply does not bind, never
+    # that a wrong region does.
+    span = p.get("subject_span")
+    if not (isinstance(span, str) and span.strip()
+            and _norm(span) in _norm(anchor_text)):
+        p["subject_span"] = ""
     p["queries"] = [q for q in (p.get("queries") or []) if isinstance(q, str)][:MAX_QUERIES]
     try:
         p["anchor_subject_words"] = int(p.get("anchor_subject_words") or 0)
@@ -271,7 +301,17 @@ ASSESS_SYSTEM = (
     "given. Excerpts are checked programmatically and silently dropped if they are not "
     "exact spans, so do not paraphrase, do not merge two places, do not tidy anything.\n"
     "A source that is a copy, syndication or reprint of the anchor is not independent; "
-    "say so in `relation`."
+    "say so in `relation`.\n"
+    "Roles: PRIMARY is first-party -- the project, institution, author, paper, report, "
+    "judgment or archive itself. INDEPENDENT is reporting, scholarship or criticism by "
+    "someone else. TERTIARY is an encyclopaedia entry, database record, directory or "
+    "aggregated profile: useful, often accurate, but a summary of other people's work "
+    "rather than an account of its own. CONTEXT is background about a venue, school, "
+    "publisher or field rather than about the subject. COUNTERWEIGHT complicates or "
+    "bounds the reading.\n"
+    "Only the subject named above is the subject. Material about the school, the venue, "
+    "the publisher, the programme or another item in the same roundup is CONTEXT, "
+    "however much vocabulary it shares with the subject."
 )
 
 
@@ -380,15 +420,17 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
     # independent of the publisher, and about the SCHOOL rather than the subject. Under
     # a role-blind count that boilerplate would have bought a short article about a
     # tactile booklet. Support means PRIMARY, INDEPENDENT or COUNTERWEIGHT material.
-    supporting_roles = (ROLE_PRIMARY, ROLE_INDEPENDENT, ROLE_COUNTERWEIGHT)
-    supporting = [s for s in sources[1:]
-                  if s["role"] in supporting_roles
-                  and s["duplicate_cluster"] != 0
-                  and s["publisher"] != anchor_reg
-                  and s["relation"] != "duplicate_of_anchor"
-                  and s["excerpts"]]
+    def _usable(s, roles):
+        return (s["role"] in roles and s["duplicate_cluster"] != 0
+                and s["publisher"] != anchor_reg
+                and s["relation"] != "duplicate_of_anchor" and s["excerpts"])
+
+    supporting = [s for s in sources[1:] if _usable(s, SUPPORTING_ROLES)]
+    material = [s for s in sources[1:] if _usable(s, MATERIAL_ROLES)]
     independent_clusters = sorted({s["duplicate_cluster"] for s in supporting})
-    srm_words = sum(len(" ".join(s["excerpts"]).split()) for s in supporting)
+    srm_words = sum(len(" ".join(s["excerpts"]).split()) for s in material)
+    tertiary_words = sum(len(" ".join(s["excerpts"]).split())
+                         for s in material if s["role"] == ROLE_TERTIARY)
     context_words = sum(len(" ".join(s["excerpts"]).split())
                         for s in sources[1:] if s["role"] == ROLE_CONTEXT)
 
@@ -399,6 +441,7 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
         "candidates_considered": searched.get("candidates", []),
         "anchor_kind": scoped.get("anchor_kind", "other"),
         "anchor_subject_words": scoped.get("anchor_subject_words", 0),
+        "subject_span": scoped.get("subject_span", "") or "",
         "narrower_subject": scoped.get("narrower_subject", "") or "",
         "sources": sources,
         "coverage": {
@@ -410,6 +453,7 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
             "duplicate_clusters": len(clusters),
             "independent_clusters": len(independent_clusters),
             "subject_relevant_words": srm_words,
+            "tertiary_words": tertiary_words,
             "context_only_words": context_words,
         },
     }
@@ -431,6 +475,9 @@ def sufficiency(pack: dict) -> dict:
     ind = cov["independent_clusters"]
     srm = cov["subject_relevant_words"]
     roles = set(cov["roles_present"])
+    # PRIMARY means first-party. No other role substitutes for it, and no publisher or
+    # domain is named anywhere in this function: classification assigns the role,
+    # sufficiency reads it.
     primary = ROLE_PRIMARY in roles
     counterweight = ROLE_COUNTERWEIGHT in roles
     anchor_rich = (pack.get("anchor_subject_words", 0) >= ANCHOR_RICH_WORDS

@@ -49,7 +49,8 @@ REQUIRED_STAGES = [s for s in STAGE_ORDER if s not in OPTIONAL_STAGES]
 
 # Roles a pack source may carry. ANCHOR is the source that caused the subject to be
 # discovered; everything else had to be found, fetched and hashed to exist here.
-SOURCE_ROLES = ("ANCHOR", "PRIMARY", "INDEPENDENT", "CONTEXT", "COUNTERWEIGHT")
+SOURCE_ROLES = ("ANCHOR", "PRIMARY", "INDEPENDENT", "TERTIARY", "CONTEXT",
+                "COUNTERWEIGHT")
 SUFFICIENCY_VERDICTS = ("ARTICLE", "SHORT_ARTICLE", "NARROW", "HOLD_INSUFFICIENT_RESEARCH")
 
 # Markers from the legacy production prompt surface. WRITER_INPUT is checked against
@@ -135,6 +136,17 @@ def validate(artifact: Artifact) -> None:
             raise ContractViolation("RESEARCH_PACK: sufficiency.verdict %r is not one of %s"
                                     % ((p["sufficiency"] or {}).get("verdict"),
                                        ", ".join(SUFFICIENCY_VERDICTS)))
+        # A subject span, where one exists, must be a verbatim region of the anchor: it
+        # is what binds Discovery to the subject that was actually researched, so a
+        # paraphrase of it would bind nothing while looking as if it did.
+        span = p.get("subject_span") or ""
+        if span:
+            anchor_src = next((x for x in p["sources"] if x.get("role") == "ANCHOR"), None)
+            hay = " ".join((anchor_src or {}).get("text", "").split()).lower()
+            if " ".join(str(span).split()).lower() not in hay:
+                raise ContractViolation(
+                    "RESEARCH_PACK: subject_span is not a verbatim region of the anchor: %r"
+                    % str(span)[:80])
         anchors = [x for x in p["sources"] if x.get("role") == "ANCHOR"]
         if len(anchors) != 1:
             raise ContractViolation("RESEARCH_PACK: exactly one ANCHOR source required, got %d"

@@ -218,6 +218,30 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
                 return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
                         "provider": prov, "reason_code": code}
             ok, code, anchor_note = INV.check_anchor(d, src)
+        # SUBJECT SCOPE (2026-08-28). Discovery may read the whole anchor, but it may
+        # not ground its reading in a part of it nobody researched. Offsets only, over
+        # the text check_anchor already validated the quote against. A run that trips
+        # this HOLDs; it does not re-research, and it does not quietly switch subject.
+        ok_scope, scope_code, scope_detail = INV.check_subject_scope(
+            d, pack.get("subject_span", ""), src)
+        if not ok_scope:
+            reasons = ["%s: %s" % (scope_code, scope_detail),
+                       "research subject: %s" % str(pack.get("subject", ""))[:160],
+                       "HOLD before Article Form -- the researched subject and the "
+                       "written subject must be the same subject"]
+            A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
+                                   {"source": A[C.SOURCE_SNAPSHOT],
+                                    "research_pack": A[C.RESEARCH_PACK]})
+            A[C.SHADOW_DECISION] = _emit(
+                C.SHADOW_DECISION, at,
+                {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
+                 "reason_code": scope_code,
+                 "policy": "ACCEPT = eligible for the candidate pool; never publication"},
+                {"discovery": A[C.DISCOVERY], "research_pack": A[C.RESEARCH_PACK]})
+            _persist(A, run_root, name, mode, prov, "HOLD", reasons)
+            return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
+                    "provider": prov, "reason_code": scope_code}
+        d["subject_scope_verified"] = True
         d["source_anchor_verified"] = True
         A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
                                {"source": A[C.SOURCE_SNAPSHOT],
