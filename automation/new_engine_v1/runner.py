@@ -393,13 +393,21 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
                               if f.get("classification") == "TRUE_UNCERTAIN"]
         residual_unsupported = [f for f in after["findings"]
                                 if f.get("classification") == "TRUE_UNSUPPORTED"]
-        still = {(f.get("quote") or "").strip() for f in residual_uncertain}
+        def _n(s):
+            return " ".join((s or "").split()).lower()
+
+        still = [_n(f.get("quote")) for f in residual_uncertain]
         for rec in adj["records"]:
             if rec["action"] == "MATERIAL_UNRESOLVED":
                 rec["verified_by_regrounding"] = False
                 continue
-            text_now = rec["replacement"] if rec["applied"] else rec["claim"]
-            rec["verified_by_regrounding"] = (text_now or "").strip() not in still
+            # Containment either way, not string equality: the second grounder quotes
+            # the span it doubts, which is rarely the exact clause the adjudicator
+            # touched. Equality made a record read "verified" while the run was HOLDing
+            # on that very claim -- seen in the 28 August live run.
+            now = _n(rec["replacement"] if rec["applied"] else rec["claim"])
+            rec["verified_by_regrounding"] = not any(
+                now and (now in s or s in now) for s in still)
 
         clean = not (residual_uncertain or residual_unsupported
                      or adj["material_unresolved"])
@@ -413,6 +421,10 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
             "residual_unsupported": len(residual_unsupported),
             "patches_applied": len(adj["patches"]),
             "regrounding_status": after.get("status"),
+            # Persisted even when nothing was patched: without it, a HOLD caused by the
+            # second grounding is unanswerable after the fact -- which is exactly what
+            # happened on the first live run of this stage.
+            "regrounding_findings": after.get("findings", []),
             "passes": 1,
         }
         if adj["patches"]:

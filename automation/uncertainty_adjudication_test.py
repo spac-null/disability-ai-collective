@@ -182,6 +182,15 @@ def test_material_unresolved_claim_still_holds():
     check("uncertainty surviving the second grounding HOLDs", out2["decision"] == "HOLD",
           out2["reasons"])
     check("the residual is recorded", _audit(out2)["residual_uncertain"] == 1)
+    check("the second grounding's own findings are persisted for diagnosis",
+          len(_audit(out2)["regrounding_findings"]) == 1,
+          _audit(out2).get("regrounding_findings"))
+    check("a record is not marked verified while the run HOLDs on that same claim",
+          all(r["verified_by_regrounding"] is not True
+              for r in _audit(out2)["records"]
+              if r["claim"] in " ".join(f["quote"] for f
+                                        in _audit(out2)["regrounding_findings"])),
+          _audit(out2)["records"])
 
     # an adjudicator that simply ignores a finding resolves nothing
     p3 = ScriptedProvider(groundings=[{"findings": [_finding("F1", quote)]},
