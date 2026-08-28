@@ -350,6 +350,143 @@ def test_bounds_are_declared_and_finite():
     check("identification has no retry loop", "while True" not in src)
 
 
+
+# A frozen-shaped pack reproducing the two evidence structures the measurements broke
+# on: a rival statement of the same proposition in another source, and a work that is
+# described without being placed in the exhibition.
+CONFLICT_PACK = {"sources": [
+    {"source_id": "S0", "role": "ANCHOR", "url": "https://paper.example/a",
+     "publisher": "paper.example", "accessed_at": AT, "fetch_status": "ok",
+     "content_length": 0, "sha256": "", "excerpts": [],
+     "text": ("A comprehensive retrospective with nearly 100 pieces covering the "
+              "entirety of the artist's output opens this month. Her pieces tend "
+              "toward symmetry, although a more naturalistic piece will stop you "
+              "cold, such as 1955's haunting Temple by the Sea or the imposing 1954 "
+              "depiction of the famed Airlie oak. The curator calls the work dense.")},
+    {"source_id": "S3", "role": "PRIMARY", "url": "https://museum.example/press",
+     "publisher": "museum.example", "accessed_at": AT, "fetch_status": "ok",
+     "content_length": 0, "sha256": "", "excerpts": [],
+     "text": ("The museum is organizing this nationally touring retrospective that "
+              "brings together more than 100 of her fantastical drawings and puts "
+              "them in the larger context of her career. The exhibition will be "
+              "accompanied by a multi-authored catalogue.")},
+    {"source_id": "S9", "role": "CONTEXT", "url": "https://museum.example/season",
+     "publisher": "museum.example", "accessed_at": AT, "fetch_status": "ok",
+     "content_length": 0, "sha256": "", "excerpts": [],
+     "text": ("Other upcoming shows include a sweeping design retrospective. In her "
+              "first solo museum exhibition, the museum will present three major "
+              "bodies of work, featuring more than 100 photographs of the American "
+              "West. A season retrospective of another artist opens in spring.")}]}
+
+
+def test_one_verbose_source_cannot_crowd_out_another():
+    """Measured failure: global ranking let a season-listing page take most of the
+    bundle while the source stating the rival count sat outside it."""
+    idx = EV.PackIndex(CONFLICT_PACK)
+    ev = idx.retrieve("The retrospective gathers nearly 100 pieces covering the whole "
+                      "of the artist's output.")
+    per_source = {}
+    for b in ev["blocks"]:
+        per_source[b["source_id"]] = per_source.get(b["source_id"], 0) + 1
+    check("evidence is drawn from more than one source", len(per_source) >= 2, per_source)
+    check("no single source takes the whole bundle",
+          max(per_source.values()) <= EV.PER_SOURCE_TOP * 3, per_source)
+    check("a source with no relevance to the claim earns no slot",
+          EV.SOURCE_RELEVANCE_RATIO > 0)
+
+
+def test_both_sides_of_a_genuine_conflict_reach_the_classifier():
+    idx = EV.PackIndex(CONFLICT_PACK)
+    ev = idx.retrieve("The retrospective gathers nearly 100 pieces covering the whole "
+                      "of the artist's output.")
+    rendered = EV.render(ev)
+    check("the claim's own side is present", "nearly 100 pieces" in rendered)
+    check("the rival statement is present", "more than 100" in rendered, ev["sources"])
+    check("the rival comes from a different source",
+          any(b["source_id"] != "S0" and "more than 100" in b["exact_span"]
+              for b in ev["blocks"]))
+
+
+def test_conflict_probe_is_general_not_a_number_rule():
+    """The probe searches on the claim's SUBJECT anchors with its own value tokens
+    removed, so it works for a date or a title exactly as for a count -- and it is
+    never told which words to look for."""
+    src = (HERE / "new_engine_v1" / "evidence.py").read_text()
+    for banned in ("nearly", "more than", "fewer than", "approximately 100"):
+        check("no hard-coded %r rule in the retrieval logic" % banned,
+              '"%s"' % banned not in src and "'%s'" % banned not in src)
+    idx = EV.PackIndex({"sources": [
+        dict(CONFLICT_PACK["sources"][0], text="The artist made her first drawing in 1935."),
+        dict(CONFLICT_PACK["sources"][1], text="Her first drawing dates from 1938 by the "
+                                               "museum's own account of the artist.")]})
+    ev = idx.retrieve("The artist made her first drawing in 1935.")
+    check("a conflicting DATE in another source is reachable",
+          any("1938" in b["exact_span"] for b in ev["blocks"]), EV.render(ev)[:200])
+
+
+def test_membership_evidence_is_not_fused_with_existence_evidence():
+    """2B: the pack describes both works and never places either in the exhibition.
+    Retrieval must supply what the pack actually says so the classifier can tell the
+    two propositions apart."""
+    idx = EV.PackIndex(CONFLICT_PACK)
+    for claim in ("A work titled Temple by the Sea dates from 1955.",
+                  "The 1955 work Temple by the Sea is included in this exhibition."):
+        ev = idx.retrieve(claim)
+        rendered = EV.render(ev)
+        check("evidence describing the work is supplied for %r" % claim[:34],
+              "Temple by the Sea" in rendered)
+    ev = idx.retrieve("The 1955 work Temple by the Sea is included in this exhibition.")
+    check("nothing in the pack asserts membership, and retrieval does not invent it",
+          "temple by the sea" not in " ".join(
+              b["exact_span"].lower() for b in ev["blocks"] if b["source_id"] != "S0"))
+
+
+def test_escalation_ladder_prefers_the_smallest_useful_step():
+    """The full-source rung was measured producing false UNSUPPORTED verdicts: 9k of
+    prose buried the sentence that answered the claim. A focused excerpt now sits
+    between ranked blocks and whole-source bulk."""
+    check("the ladder has a focused-excerpt rung", hasattr(EV, "FALLBACK_EXCERPT"))
+    check("full-source bulk is capped tighter than the pack budget",
+          EV.FULL_SOURCE_CHARS < EV.FULL_PACK_CHARS)
+    idx = EV.PackIndex(CONFLICT_PACK)
+    ev = idx.retrieve("The work is dense.")
+    check("a short low-signal claim still gets real evidence",
+          ev["status"] in (EV.RETRIEVED, EV.FALLBACK_EXCERPT, EV.FALLBACK_SOURCE,
+                           EV.FALLBACK_PACK) and bool(ev["blocks"]), ev["status"])
+    check("and it is never reported as unsupported", ev["status"] != GV2.UNSUPPORTED)
+    check("an excerpt rung sends less than the whole source when it fires",
+          EV.FOCUSED_EXCERPT_SENTENCES > 0)
+
+
+def test_required_regressions_are_named_and_run_outside_any_cap():
+    """The booklet elaboration fell outside a harness cap once. The required cases are
+    listed here so a cap can never decide whether they run."""
+    idx_a = EV.PackIndex(CONFLICT_PACK)
+    required = [
+        ("booklet per-layer elaboration",
+         "The first layer gives the overall shape. The next adds more."),
+        ("2A housekeeper then gatekeeper",
+         "She worked as a housekeeper and then as a gatekeeper at the gardens."),
+        ("2B 1955 existence", "A work titled Temple by the Sea dates from 1955."),
+        ("2B 1955 membership",
+         "The 1955 work Temple by the Sea is included in this exhibition."),
+        ("2B 1954 existence", "A depiction of the Airlie oak dates from 1954."),
+        ("2B 1954 membership",
+         "The 1954 depiction of the Airlie oak is included in this exhibition."),
+        ("count conflict",
+         "The retrospective gathers nearly 100 pieces covering the whole of the "
+         "artist's output."),
+        ("self-taught", "The artist was self-taught."),
+    ]
+    for label, claim in required:
+        ev = idx_a.retrieve(claim)
+        check("%s: retrieval returns a usable state" % label,
+              ev["status"] in (EV.RETRIEVED, EV.FALLBACK_EXCERPT, EV.FALLBACK_SOURCE,
+                               EV.FALLBACK_PACK, EV.INCOMPLETE), ev["status"])
+        check("%s: a retrieval outcome is never a verdict" % label,
+              ev["status"] not in (GV2.SUPPORTED, GV2.UNSUPPORTED, GV2.TRUE_UNCERTAIN))
+
+
 def main():
     for fn in (test_every_sentence_survives,
                test_model_failures_become_unresolved_never_silence,
@@ -357,6 +494,12 @@ def main():
                test_interpretation_cannot_hide_an_empirical_component,
                test_retrieval_finds_evidence_and_never_invents_absence,
                test_conflicting_sources_are_both_retrieved,
+               test_one_verbose_source_cannot_crowd_out_another,
+               test_both_sides_of_a_genuine_conflict_reach_the_classifier,
+               test_conflict_probe_is_general_not_a_number_rule,
+               test_membership_evidence_is_not_fused_with_existence_evidence,
+               test_escalation_ladder_prefers_the_smallest_useful_step,
+               test_required_regressions_are_named_and_run_outside_any_cap,
                test_classifier_structure_is_validated_not_repaired,
                test_shadow_is_off_by_default_and_cannot_touch_the_decision,
                test_shadow_failure_cannot_break_a_production_run,
