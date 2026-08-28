@@ -321,6 +321,77 @@ def test_writer_prompt_says_the_arrival_once():
           not [m for m in C.LEGACY_PROMPT_MARKERS if m in p])
 
 
+
+def test_popular_nonfiction_contract():
+    """Owner decision, 28 Aug: accessible research-first popular nonfiction. These are
+    the qualities that belong to the writing contract; the research pack that supplies
+    the facts they ask for is a separate architectural decision, not this file's."""
+    d = S.PROSE_DOCTRINE
+    check("facts, people, objects and examples carry the argument",
+          "Let the facts do the arguing" in d)
+    check("names the kinds of concrete material to use",
+          all(w in d for w in ("a person", "a date", "a number", "a real example")))
+    check("a detail beats a sentence about the detail",
+          "worth more than a sentence about what the detail means" in d)
+    check("active verbs", "Active verbs" in d)
+    check("cuts conceptual nouns that only rename", "only renames" in d)
+    check("one job to a paragraph", "One job to a paragraph" in d)
+    check("transitions are obvious", "why a paragraph follows the one" in d)
+    check("necessary ideas are explained at once, in ordinary words",
+          "Explain what the reader needs, at once, in ordinary words" in d)
+    check("the reader is never sent back over a sentence",
+          "send the reader back over a sentence" in d)
+    # No imitation of any living writer, and no named-author instruction may enter the
+    # prompt surface -- the legacy marker list exists because that failed before.
+    check("no named writer to imitate", "Bregman" not in d and "write like" not in d.lower())
+
+
+def test_thin_material_may_not_be_inflated():
+    """The 28 Aug article was built from 118 words of source blurb. The contract now
+    says what to do about that at the writing stage; what to do about it at the
+    research stage is a separate decision."""
+    d = S.PROSE_DOCTRINE
+    check("short piece when the material is thin",
+          "If the material will not carry the length, write a shorter piece" in d)
+    check("names the depth-manufacturing failure directly",
+          "manufacture" in d and "one fact read three ways is one fact" in d)
+    f = S.FORM_SYSTEM
+    check("form: a re-reading is not a movement",
+          "is not a movement" in f)
+    check("form: movements are separated by material, not by angle",
+          "separated by material" in f)
+    check("form: target_words follows the material's actual extent",
+          "set target_words to match" in f)
+
+
+def test_writer_performs_a_deletion_pass():
+    d = S.PROSE_DOCTRINE
+    check("a final pass is required before returning output",
+          "Before you finish" in d and "and cut" in d)
+    check("the pass is read from a reader's position",
+          "not yet decided to keep reading" in d)
+    check("the four questions are asked of every paragraph",
+          all(q in d for q in ("add information or movement",
+                               "concrete fact do the work",
+                               "already clear", "read it twice")))
+    check("delete rather than explain twice", "Delete rather than explain twice" in d)
+
+
+def test_safety_is_not_traded_for_readability():
+    """Popular-nonfiction qualities may not import popular-nonfiction weaknesses."""
+    n = S._NO_FABRICATION
+    check("no invented factual state", "may not invent a factual state" in n)
+    check("no fabricated first-person experience",
+          "may not write first-person lived experience" in n)
+    check("interpretation may not add facts",
+          "never add facts the source does not contain" in n)
+    check("reading vs finding about the world still separated",
+          "is not a finding about how the world works" in n)
+    d = S.PROSE_DOCTRINE
+    check("the doctrine invents no licence to dramatise",
+          "anecdote" not in d.lower() and "scene" not in d.lower())
+
+
 def main() -> None:
     for fn in (test_aug27_source_headline_is_rejected,
                test_a_title_about_the_actual_subject_is_accepted,
@@ -338,6 +409,10 @@ def main() -> None:
                test_ending_stops_instead_of_reprising,
                test_form_owns_the_vocabulary_the_writer_inherits,
                test_writer_prompt_says_the_arrival_once,
+               test_popular_nonfiction_contract,
+               test_thin_material_may_not_be_inflated,
+               test_writer_performs_a_deletion_pass,
+               test_safety_is_not_traded_for_readability,
                test_title_is_split_off_the_body):
         print("\n" + fn.__name__)
         fn()
