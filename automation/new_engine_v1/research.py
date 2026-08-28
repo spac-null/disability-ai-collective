@@ -300,6 +300,9 @@ ASSESS_SYSTEM = (
     "Every excerpt must be copied CHARACTER-FOR-CHARACTER from the source text you were "
     "given. Excerpts are checked programmatically and silently dropped if they are not "
     "exact spans, so do not paraphrase, do not merge two places, do not tidy anything.\n"
+    "Give at most 6 excerpts per source, each one to three sentences. The pack is a "
+    "working corpus, not a transcript: quote the spans that carry facts, dates, names, "
+    "numbers, mechanisms or a document's own wording, and stop.\n"
     "A source that is a copy, syndication or reprint of the anchor is not independent; "
     "say so in `relation`.\n"
     "Roles: PRIMARY is first-party -- the project, institution, author, paper, report, "
@@ -333,8 +336,11 @@ def assess_prompt(subject: str, anchor_text: str, sources: list) -> str:
 def assess(provider, subject: str, anchor_text: str, sources: list) -> dict:
     if not sources:
         return {"sources": []}
+    # Sized against the real bound: at most MAX_FETCHED_SOURCES sources x 6 excerpts.
+    # A truncated reply is not valid JSON and correctly HOLDs the run as a provider
+    # error -- which is what happened on the first live end-to-end at 3000 tokens.
     c = provider.complete(ASSESS_SYSTEM, assess_prompt(subject, anchor_text, sources),
-                          max_tokens=3000)
+                          max_tokens=6000)
     p = parse_json_object(c.text)
     p["_provider"] = c.identity()
     return p
