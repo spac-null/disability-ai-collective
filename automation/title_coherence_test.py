@@ -211,6 +211,116 @@ def test_title_is_split_off_the_body():
     check("body still clean", b3 == "Body.", repr(b3))
 
 
+
+def test_opening_states_why_this_is_worth_reading():
+    """Owner reader review, 28 Aug: the article opened on a correct concrete
+    description and still gave no reason to keep reading until paragraph three. The
+    doctrine had the job buried inside the concrete-before-abstract rule; it is now
+    its own instruction, with the three jobs named and no template attached."""
+    d = S.PROSE_DOCTRINE
+    check("opening names the concrete subject", "names the concrete subject" in d)
+    check("opening says what is unusual about it",
+          "what is unusual or particular about it" in d)
+    check("opening says why the article is looking at it",
+          "why this article is looking at it" in d)
+    check("the jobs have a stated budget, not a pattern",
+          "first two to four sentences" in d and "no set pattern" in d)
+    check("reader must not wait until paragraph three or four",
+          "third or fourth paragraph" in d)
+
+
+def test_doctrine_attacks_sentence_density():
+    """The dense sentences that still passed carried two or three abstractions each.
+    The rule now names the construction to prefer and the one to break up."""
+    d = S.PROSE_DOCTRINE
+    check("one claim to a sentence", "One claim to a sentence" in d)
+    check("concrete noun + active verb is the default build",
+          "concrete noun and an active verb" in d)
+    check("two ideas that both matter become two sentences",
+          "write two sentences" in d)
+    check("long multi-clause sentences are actively questioned",
+          "Distrust any long sentence" in d)
+    check("abstract nouns are replaced by the thing itself",
+          "replaced by the thing itself" in d)
+    check("no explanatory clause after the point is understood",
+          "already understood" in d)
+    check("no crude universal sentence-length limit is imposed",
+          "words per sentence" not in d and "maximum of" not in d)
+
+
+def test_doctrine_keeps_naming_the_object():
+    """Repeated abstractions (sequence / encounter / reading order / variable) were
+    the density's other half: the article stopped naming the booklet."""
+    d = S.PROSE_DOCTRINE
+    check("the object comes back with the argument", "bring the object back with it" in d)
+    check("a conceptual noun may not stand in for it",
+          "conceptual noun standing in for it" in d)
+    check("drifting off the material is named as the failure",
+          "drifted off the material" in d)
+
+
+def test_qualification_stays_local_and_plain():
+    """The evidence boundary must survive; the academic disclaimer paragraph should
+    not. 28 Aug spent a six-sentence paragraph explaining what it was not claiming."""
+    d = S.PROSE_DOCTRINE
+    check("a limit is marked where the claim is made",
+          "Mark a limit where the claim is made" in d)
+    check("one plain statement, not a paragraph",
+          "one plain statement" in d and "not worth a paragraph" in d)
+    check("state the boundary, do not perform it", "do not perform it" in d)
+    # The boundary itself is untouched: still binding, still reaching the writer.
+    check("evidence boundary is still in force",
+          "is not a finding about how the world works" in S._NO_FABRICATION)
+
+
+def test_ending_stops_instead_of_reprising():
+    """28 Aug stated its arrival in the penultimate paragraph and again as the last
+    line. The doctrine said the arrival is stated once; nothing told the writer what
+    to do INSTEAD of a closing paragraph."""
+    d = S.PROSE_DOCTRINE
+    check("when the point lands, the article is over", "the article is over" in d)
+    check("the permitted alternative is genuinely new material",
+          "add one genuinely new thing" in d)
+    check("no closing paragraph written out of habit",
+          "because articles are expected to have one" in d)
+    check("never end by restating the arrival",
+          "saying the arrival again in other words" in d)
+    check("the original once-only rule is still there", "arrival is stated once" in d.lower()
+          or "The arrival is stated once" in d)
+
+
+def test_form_owns_the_vocabulary_the_writer_inherits():
+    """Root cause of the abstract register: the writer is told to follow the form
+    exactly, and the form arrived written in conceptual nouns."""
+    f = S.FORM_SYSTEM
+    check("form must be written in plain concrete language",
+          "plain, concrete language" in f)
+    check("form names what the writer inherits",
+          "inherits your vocabulary" in f)
+    check("the last movement IS the arrival", "the route IS the arrival" in f)
+    check("no movement after the arrival", "Do not place a movement after it" in f)
+    check("single-source honest default range is stated",
+          "500 to 650 words" in f)
+    check("a longer range still requires real material",
+          "material you actually have" in f)
+
+
+def test_writer_prompt_says_the_arrival_once():
+    wi = S.build_writer_input(
+        {"motion": "m", "route": ["establish", "develop", "arrive"], "arrival": "a",
+         "burden": "b", "target_words": [500, 650]},
+        {"source_anchor_quote": "q", "what_becomes_knowable": "k",
+         "grounding_boundaries": "g"},
+        "source text", "0" * 64, "Maya Flux")
+    p = wi["prompt_text"]
+    check("route-end and arrival are stated to be one act",
+          "the same act, not two" in p)
+    check("the writer is told to write it once and stop",
+          "write it once, there, and stop" in p)
+    check("the prompt still carries no legacy surface",
+          not [m for m in C.LEGACY_PROMPT_MARKERS if m in p])
+
+
 def main() -> None:
     for fn in (test_aug27_source_headline_is_rejected,
                test_a_title_about_the_actual_subject_is_accepted,
@@ -221,6 +331,13 @@ def main() -> None:
                test_form_forbids_restatement_movements,
                test_interpretation_may_not_widen_into_a_general_claim,
                test_writer_may_come_in_short,
+               test_opening_states_why_this_is_worth_reading,
+               test_doctrine_attacks_sentence_density,
+               test_doctrine_keeps_naming_the_object,
+               test_qualification_stays_local_and_plain,
+               test_ending_stops_instead_of_reprising,
+               test_form_owns_the_vocabulary_the_writer_inherits,
+               test_writer_prompt_says_the_arrival_once,
                test_title_is_split_off_the_body):
         print("\n" + fn.__name__)
         fn()
