@@ -75,6 +75,33 @@ def _title_from(body: str, fallback: str, writer_title: str = "") -> str:
     return "Untitled"
 
 
+def _record_seed_attempt(orch, seed: dict, run: str, out: dict, result: dict) -> None:
+    """Tell the seed pool that CURRENT_ENGINE tried this anchor, and how it went.
+
+    Without this the pool never learned: `used` is set only by the legacy path on
+    commit_success, which this engine never reaches, so the 09:00 selector kept
+    re-choosing the same top-scoring seed. Live evidence: 25+26 August ran one MIT
+    Tech Review seed, 27+28 August one Dezeen roundup -- four runs, two anchors.
+
+    Terminal/retryable is decided by the orchestrator's own classifier from structured
+    run fields, and the Research Pack's verdict is recorded where the run reached it.
+    Recorded, not yet ranked on: how a verdict should influence future selection is a
+    NEWS/POOL V2 decision, not this one. A failure to write this back must never fail a
+    run that has otherwise completed.
+    """
+    try:
+        pack = (out.get("artifacts") or {}).get(C.RESEARCH_PACK)
+        payload = pack.payload if pack is not None else {}
+        klass, outcome = orch.classify_current_engine_attempt(result)
+        orch.mark_news_seed_current_engine_attempt(
+            seed["id"], run=run, klass=klass, outcome=outcome,
+            pack_verdict=(payload.get("sufficiency") or {}).get("verdict"),
+            pack_subject_words=payload.get("anchor_subject_words"))
+    except Exception as e:                                  # never reaches the caller
+        orch.logger.warning("CURRENT_ENGINE %s: seed attempt write-back failed: %s",
+                            run, e)
+
+
 def run_scheduled(orch, *, rehearsal: bool = False,
                   evidence_root: str | None = None,
                   model: str = DEFAULT_MODEL, research_fn=None) -> dict:
@@ -144,6 +171,7 @@ def run_scheduled(orch, *, rehearsal: bool = False,
 
     if out["decision"] != "ACCEPT":
         orch.logger.warning("CURRENT_ENGINE %s: HOLD — %s", run, "; ".join(out["reasons"])[:300])
+        _record_seed_attempt(orch, seed, run, out, result)
         return result
 
     # ── ACCEPT: run the publication-safety bridge ────────────────────────────
@@ -183,6 +211,7 @@ def run_scheduled(orch, *, rehearsal: bool = False,
         {"path": str(path), "engine_meta": meta, "body_sha256": C.sha256_text(body),
          "publication_eligible": result["publication_eligible"]},
         indent=2, sort_keys=True), encoding="utf-8")
+    _record_seed_attempt(orch, seed, run, out, result)
     orch.logger.info("CURRENT_ENGINE %s: ACCEPT — candidate %s (publication_eligible=%s)",
                      run, path.name, result["publication_eligible"])
     return result

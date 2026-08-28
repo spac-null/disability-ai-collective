@@ -1468,6 +1468,26 @@ class DiscoveryMixin:
             ("source_unusable", "INTEGER DEFAULT 0"),
             ("source_unusable_reason", "TEXT"),
             ("source_unusable_date", "TEXT"),
+            # CURRENT_ENGINE attempt write-back (2026-08-28). NEW_ENGINE_V1 never
+            # recorded that it had tried a seed -- `used` is set only by the legacy
+            # path's commit_success, which the new engine never reaches by design --
+            # so the 09:00 cron re-selected the same top-scoring anchor the next day.
+            # Observed live: 25+26 Aug ran one MIT Tech Review seed, 27+28 Aug one
+            # Dezeen roundup. Deliberately separate from `used` and from the decline
+            # and source_unusable columns: "the current engine tried this and reached
+            # an outcome" is a third fact, and folding it into any of the others would
+            # corrupt evidence those columns exist to carry.
+            ("ce_attempted_date", "TEXT"),
+            ("ce_attempt_run", "TEXT"),
+            ("ce_attempt_outcome", "TEXT"),
+            ("ce_attempt_terminal", "INTEGER DEFAULT 0"),
+            ("ce_pack_verdict", "TEXT"),
+            ("ce_pack_subject_words", "INTEGER"),
+            # When this seed may be considered again. Written at attempt time from the
+            # outcome's class, so selection is one timestamp comparison rather than
+            # per-class logic in SQL. NULL on every historical row, and on a terminal
+            # attempt, where ce_attempt_terminal is what retires the seed.
+            ("ce_retry_after", "TEXT"),
         ):
             try:
                 conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
@@ -1497,6 +1517,15 @@ class DiscoveryMixin:
             self._init_news_seeds_table(conn)
             self._ensure_decline_columns(conn)
             cutoff = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
+            # CURRENT_ENGINE repeat-prevention (2026-08-28). Two clauses saying two
+            # different things. `ce_attempt_terminal IS NOT 1` retires a seed whose
+            # outcome cannot change on a rerun -- an accepted candidate, a research
+            # HOLD, a deterministic anchor/scope failure. `ce_retry_after` covers
+            # everything else: an outage rests the seed until tomorrow, a model-judgment
+            # HOLD rests it for two days, and neither consumes it. `IS NOT 1` and
+            # `IS NULL` rather than `= 0` on purpose -- historical rows carry NULL in
+            # both columns and must behave exactly as they did before.
+            ce_now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
             # Parameterised NOT IN: never string-interpolate the ids themselves.
             # "" is a placeholder that matches no real seed id, so the clause is
             # a harmless no-op when nothing is excluded.
@@ -1520,10 +1549,13 @@ class DiscoveryMixin:
                 FROM news_seeds
                 WHERE used = 0 AND pub_date >= ? AND disability_angle IS NOT NULL
                   AND NOT (declined = 1 AND decline_schema_version = ?)
+                  AND ce_attempt_terminal IS NOT 1
+                  AND (ce_retry_after IS NULL OR ce_retry_after <= ?)
                   AND id NOT IN (%s)
                 ORDER BY relevance_score DESC, pub_date DESC
                 LIMIT 1
-            """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, *_excl)).fetchone()
+            """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, ce_now,
+                              *_excl)).fetchone()
 
             # Priority 2: high relevance score, no angle yet
             if not row:
@@ -1533,10 +1565,13 @@ class DiscoveryMixin:
                     FROM news_seeds
                     WHERE used = 0 AND pub_date >= ? AND relevance_score >= 0.4
                       AND NOT (declined = 1 AND decline_schema_version = ?)
+                      AND ce_attempt_terminal IS NOT 1
+                      AND (ce_retry_after IS NULL OR ce_retry_after <= ?)
                       AND id NOT IN (%s)
                     ORDER BY relevance_score DESC, pub_date DESC
                     LIMIT 1
-                """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, *_excl)).fetchone()
+                """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, ce_now,
+                                  *_excl)).fetchone()
 
             conn.close()
             if not row:
@@ -1744,6 +1779,112 @@ class DiscoveryMixin:
             self.logger.info("Marked news seed %s as used", seed_id)
         except Exception as e:
             self.logger.warning("Could not mark news seed as used: %s", e)
+
+    # ── CURRENT_ENGINE attempt write-back ────────────────────────────────────
+    # Retry cooldown for a transient failure. One natural article run happens per
+    # day, so "not again today" is the whole rule: a provider or infrastructure
+    # failure frees the seed for the next natural run rather than consuming it,
+    # and no scheduler, backoff curve or retry queue is introduced.
+    CE_RETRY_COOLDOWN_HOURS = 20          # transient/operational failure
+    # A Grounding-derived or otherwise unnamed HOLD is NOT proven to be a property of
+    # the seed. The authoritative whole-article grounder is measured non-deterministic
+    # on byte-identical input -- a classification flipped 1 in 10 trials at the provider
+    # default AND at temperature 0, findings appeared and vanished between passes, and
+    # some carried reasons contradicting their own labels. Retiring a seed on one such
+    # verdict would let a classifier wobble delete a story permanently. So it rests for
+    # two days instead of one, and comes back if it is still otherwise eligible.
+    CE_REVIEWABLE_COOLDOWN_HOURS = 48
+
+    CE_TERMINAL = "TERMINAL"
+    CE_TRANSIENT = "TRANSIENT_FAILURE"
+    CE_REVIEWABLE = "NONDETERMINISTIC_OR_REVIEWABLE_HOLD"
+
+    # Reason codes whose truth follows from the unchanged source and research material
+    # rather than from a model's classification of prose. These are the only HOLDs that
+    # retire a seed.
+    CE_DETERMINISTIC_HOLD_CODES = (
+        "HOLD_INSUFFICIENT_RESEARCH",                    # the pack looked and found nothing
+        "DISCOVERY_SUBJECT_OUTSIDE_RESEARCHED_SCOPE",    # researched A, wrote about B
+        "DISCOVERY_SOURCE_ANCHOR_MISSING",
+        "DISCOVERY_SOURCE_ANCHOR_NOT_IN_SOURCE",
+        "DISCOVERY_SOURCE_ANCHOR_TOO_SHORT",
+    )
+
+    @staticmethod
+    def classify_current_engine_attempt(result: dict) -> tuple[bool, str]:
+        """(terminal, outcome) for one CURRENT_ENGINE run against one seed.
+
+        Read from the run's STRUCTURED fields -- `run_status.status`, `reason_code`,
+        `decision` -- never by pattern-matching prose. Terminal means: running this
+        same unchanged source again tomorrow has no principled reason to come out
+        differently. Retryable means the run failed for an operational reason that
+        says nothing about the material.
+
+        Anything unrecognised is RETRYABLE. Wrongly retrying a seed costs one run;
+        wrongly consuming one loses a story permanently, and the failure mode this
+        method exists to fix was itself invisible for days.
+        """
+        status = ((result or {}).get("run_status") or {}).get("status")
+        if status:
+            # PROVIDER_FAILURE / CONTRACT_FAILURE: transport, truncation, or a reply
+            # that did not satisfy a stage contract. Infrastructure, not evidence.
+            return DiscoveryMixin.CE_TRANSIENT, "%s:%s" % (DiscoveryMixin.CE_TRANSIENT, status)
+        decision = (result or {}).get("decision")
+        reason = (result or {}).get("reason_code") or ""
+        if decision == "ACCEPT":
+            return DiscoveryMixin.CE_TERMINAL, "TERMINAL:ACCEPT"
+        if decision == "HOLD":
+            if reason in DiscoveryMixin.CE_DETERMINISTIC_HOLD_CODES:
+                return DiscoveryMixin.CE_TERMINAL, "TERMINAL:%s" % reason
+            if reason:
+                # A named code we do not yet know to be deterministic. Rest it, do not
+                # retire it: the conservative direction costs a day, the other costs
+                # the seed.
+                return (DiscoveryMixin.CE_REVIEWABLE,
+                        "%s:%s" % (DiscoveryMixin.CE_REVIEWABLE, reason))
+            # An unnamed HOLD is a model judgement -- the grounder's uncertainty and
+            # unsupported policies both arrive here with no reason code -- and the
+            # grounder is measured unstable on identical input. Reviewable, never
+            # terminal.
+            return DiscoveryMixin.CE_REVIEWABLE, "%s:HOLD" % DiscoveryMixin.CE_REVIEWABLE
+        return (DiscoveryMixin.CE_TRANSIENT,
+                "%s:UNCLASSIFIED:%s" % (DiscoveryMixin.CE_TRANSIENT, decision or "none"))
+
+    def mark_news_seed_current_engine_attempt(self, seed_id: str, *, run: str,
+                                              klass: str, outcome: str,
+                                              pack_verdict: str | None = None,
+                                              pack_subject_words=None) -> None:
+        """Record that CURRENT_ENGINE attempted this seed, and what came of it.
+
+        Records only what the run already produced: its own id, the classified
+        outcome, and -- where the Research Pack stage was reached -- that pack's own
+        verdict and subject-relevant word count. `used` is untouched: it still means
+        exactly what it meant, an article was committed by the legacy path.
+        """
+        hours = {self.CE_TRANSIENT: self.CE_RETRY_COOLDOWN_HOURS,
+                 self.CE_REVIEWABLE: self.CE_REVIEWABLE_COOLDOWN_HOURS}.get(klass)
+        retry_after = ((datetime.now() + timedelta(hours=hours)).strftime("%Y-%m-%dT%H:%M:%S")
+                       if hours else None)
+        try:
+            conn = sqlite3.connect(str(self.discovery_db))
+            self._ensure_decline_columns(conn)
+            conn.execute(
+                "UPDATE news_seeds SET ce_attempted_date = ?, ce_attempt_run = ?, "
+                "ce_attempt_outcome = ?, ce_attempt_terminal = ?, ce_retry_after = ?, "
+                "ce_pack_verdict = COALESCE(?, ce_pack_verdict), "
+                "ce_pack_subject_words = COALESCE(?, ce_pack_subject_words) "
+                "WHERE id = ?",
+                (datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), run, outcome,
+                 1 if klass == self.CE_TERMINAL else 0, retry_after,
+                 pack_verdict, pack_subject_words, seed_id))
+            conn.commit()
+            conn.close()
+            self.logger.info("CURRENT_ENGINE attempt recorded on seed %s: %s "
+                             "(class=%s, retry_after=%s, pack=%s)",
+                             seed_id, outcome, klass, retry_after or "never", pack_verdict)
+        except Exception as e:
+            self.logger.warning("Could not record CURRENT_ENGINE attempt on seed %s: %s",
+                                seed_id, e)
 
     def mark_news_seed_declined(self, seed_id: str, decline_record: dict):
         """Story Rejection V1 (DSR2): persist an authoritative Layer-1 decline.

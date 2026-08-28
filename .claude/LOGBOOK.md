@@ -541,3 +541,37 @@ not from the pack.
 CODE: revert commit on `research/pack-2026-08-28`. `decision.py` untouched throughout.
 **MERGED: NO.**
 
+---
+
+## 2026-08-28 — The seed pool learns that the engine tried
+
+WHAT: NEW_ENGINE_V1 now records its attempt on the seed it used — run id, a
+terminal/retryable outcome classified from structured run fields, and the Research
+Pack's own verdict and subject-word count where the run reached that stage. Selection
+skips a terminally-attempted seed and holds a transiently-failed one for one natural run.
+
+WHY: `used` is set only by the legacy path on commit_success, which this engine never
+reaches by design, so the pool never learned anything. The selector kept picking the same
+top-scoring anchor until it aged out of the 3-day window: 25+26 August ran one MIT Tech
+Review seed, 27+28 August one Dezeen roundup. Four natural runs, two anchors.
+
+DECISION: three classes, read from `run_status.status`, `reason_code` and `decision`,
+never from prose. TERMINAL only where the outcome follows from unchanged material
+(ACCEPT, HOLD_INSUFFICIENT_RESEARCH, researched-scope violation, anchor-invariant
+failure). TRANSIENT_FAILURE for any run_status, 20h. NONDETERMINISTIC_OR_REVIEWABLE_HOLD
+for a Grounding-derived or unnamed HOLD, 48h — the authoritative grounder is measured
+non-deterministic on byte-identical input (a classification flipped 1 in 10 trials at
+temperature 0), so such a HOLD is not proven to be a property of the seed and must rest
+it rather than retire it. Unrecognised stays retryable. `used` is NOT redefined. Pack
+verdicts are recorded and not yet used for ranking.
+
+DOCTRINE: the owner's source and article doctrine is recorded durably at
+`.claude/source-and-article-doctrine.md` — anchors may come from anywhere, no
+disability-led quota, source type shapes the article, research precedes the idea,
+difficult ideas with very easy reading, narrative momentum without fiction, freshness
+contextual rather than universal, one broad intake with metadata rather than four silos.
+It constrains future NEWS/POOL work; nothing in it is implemented here.
+
+CODE: `automation/orchestrator/discovery.py`, `automation/new_engine_production.py`,
+`automation/seed_attempt_writeback_test.py` (new). No feed, weight, ranking-order, cron,
+Grounder, Research Pack or publish change. **MERGED: NO.**
