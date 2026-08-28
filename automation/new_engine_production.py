@@ -92,9 +92,9 @@ def _record_seed_attempt(orch, seed: dict, run: str, out: dict, result: dict) ->
     try:
         pack = (out.get("artifacts") or {}).get(C.RESEARCH_PACK)
         payload = pack.payload if pack is not None else {}
-        terminal, outcome = orch.classify_current_engine_attempt(result)
+        klass, outcome = orch.classify_current_engine_attempt(result)
         orch.mark_news_seed_current_engine_attempt(
-            seed["id"], run=run, terminal=terminal, outcome=outcome,
+            seed["id"], run=run, klass=klass, outcome=outcome,
             pack_verdict=(payload.get("sufficiency") or {}).get("verdict"),
             pack_subject_words=payload.get("anchor_subject_words"))
     except Exception as e:                                  # never reaches the caller

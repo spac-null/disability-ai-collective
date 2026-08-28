@@ -417,6 +417,16 @@ and are **not** cutover blockers — they never blocked the completed default cu
   outside `publish_best.py`'s top-level `_drafts/*.md` glob, byte-identical, evidence
   directory intact. Owner read it and did not approve it for publication.
 
+- **OWNER DOCTRINE — `.claude/source-and-article-doctrine.md` (2026-08-28).** The
+  editorial constraint future NEWS/POOL and engine work must satisfy: find material worth
+  investigating rather than "disability news"; **no disability-led quota**; news, essay,
+  research, culture and evergreen are all valid anchors and make different articles;
+  research before writing, with `SHORT_ARTICLE` / `NARROW` / `HOLD_INSUFFICIENT_RESEARCH`
+  counted as success; **difficult ideas, very easy reading**; narrative momentum with no
+  invented scene, quote, motive or chronology; freshness contextual, so **the universal
+  3-day window is not the desired final model**; one broad intake with source metadata,
+  not four silos. Doctrine only — nothing in it is implemented by PR #46.
+
 - **PR #46 — CURRENT_ENGINE seed attempt write-back: OPEN, NOT MERGED.** Closes the one
   live bug from the NEWS/POOL audit: `mark_news_seed_used` fires only on the legacy
   path's `commit_success`, which NEW_ENGINE_V1 never reaches, so nothing recorded that a
@@ -424,8 +434,12 @@ and are **not** cutover blockers — they never blocked the completed default cu
   25+26 Aug ran one MIT Tech Review seed, 27+28 Aug one Dezeen roundup — four natural
   runs, two anchors. Adds six additive `news_seeds` columns (`ce_attempted_date`,
   `ce_attempt_run`, `ce_attempt_outcome`, `ce_attempt_terminal`, `ce_pack_verdict`,
-  `ce_pack_subject_words`), a structured terminal/retryable classifier, and a 20-hour
-  cooldown so an outage costs a day rather than a story. `used` keeps its exact meaning.
+  `ce_pack_subject_words`, `ce_retry_after`), a three-class outcome classifier and two
+  cooldowns: 20h for an operational failure, **48h for a Grounding-derived or otherwise
+  unproven HOLD, which rests a seed rather than retiring it** — the authoritative
+  grounder is measured non-deterministic on identical bytes, so one wobble must not
+  delete a story. Only deterministic outcomes (ACCEPT, `HOLD_INSUFFICIENT_RESEARCH`,
+  scope/anchor invariant failures) are terminal. `used` keeps its exact meaning.
   Pack verdicts are RECORDED and deliberately not ranked on — that is NEWS/POOL V2.
   Feeds, weights, ranking order, cron and the publish path are untouched.
 

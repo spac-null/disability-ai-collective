@@ -1483,6 +1483,11 @@ class DiscoveryMixin:
             ("ce_attempt_terminal", "INTEGER DEFAULT 0"),
             ("ce_pack_verdict", "TEXT"),
             ("ce_pack_subject_words", "INTEGER"),
+            # When this seed may be considered again. Written at attempt time from the
+            # outcome's class, so selection is one timestamp comparison rather than
+            # per-class logic in SQL. NULL on every historical row, and on a terminal
+            # attempt, where ce_attempt_terminal is what retires the seed.
+            ("ce_retry_after", "TEXT"),
         ):
             try:
                 conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
@@ -1512,17 +1517,15 @@ class DiscoveryMixin:
             self._init_news_seeds_table(conn)
             self._ensure_decline_columns(conn)
             cutoff = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
-            # CURRENT_ENGINE repeat-prevention (2026-08-28). Two clauses, and they say
+            # CURRENT_ENGINE repeat-prevention (2026-08-28). Two clauses saying two
             # different things. `ce_attempt_terminal IS NOT 1` retires a seed whose
-            # outcome would not change on a rerun -- an accepted candidate, a research
-            # HOLD, a named editorial outcome on unchanged material. The cooldown
-            # clause covers the other case: a transient failure frees the seed for the
-            # NEXT natural run rather than the same one, so an outage costs a day
-            # instead of a story. `IS NOT 1` rather than `= 0` on purpose: historical
-            # rows carry NULL here and must keep behaving exactly as before.
-            ce_cooldown = (datetime.now()
-                           - timedelta(hours=self.CE_RETRY_COOLDOWN_HOURS)
-                           ).strftime("%Y-%m-%dT%H:%M:%S")
+            # outcome cannot change on a rerun -- an accepted candidate, a research
+            # HOLD, a deterministic anchor/scope failure. `ce_retry_after` covers
+            # everything else: an outage rests the seed until tomorrow, a model-judgment
+            # HOLD rests it for two days, and neither consumes it. `IS NOT 1` and
+            # `IS NULL` rather than `= 0` on purpose -- historical rows carry NULL in
+            # both columns and must behave exactly as they did before.
+            ce_now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
             # Parameterised NOT IN: never string-interpolate the ids themselves.
             # "" is a placeholder that matches no real seed id, so the clause is
             # a harmless no-op when nothing is excluded.
@@ -1547,11 +1550,11 @@ class DiscoveryMixin:
                 WHERE used = 0 AND pub_date >= ? AND disability_angle IS NOT NULL
                   AND NOT (declined = 1 AND decline_schema_version = ?)
                   AND ce_attempt_terminal IS NOT 1
-                  AND (ce_attempted_date IS NULL OR ce_attempted_date < ?)
+                  AND (ce_retry_after IS NULL OR ce_retry_after <= ?)
                   AND id NOT IN (%s)
                 ORDER BY relevance_score DESC, pub_date DESC
                 LIMIT 1
-            """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, ce_cooldown,
+            """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, ce_now,
                               *_excl)).fetchone()
 
             # Priority 2: high relevance score, no angle yet
@@ -1563,11 +1566,11 @@ class DiscoveryMixin:
                     WHERE used = 0 AND pub_date >= ? AND relevance_score >= 0.4
                       AND NOT (declined = 1 AND decline_schema_version = ?)
                       AND ce_attempt_terminal IS NOT 1
-                      AND (ce_attempted_date IS NULL OR ce_attempted_date < ?)
+                      AND (ce_retry_after IS NULL OR ce_retry_after <= ?)
                       AND id NOT IN (%s)
                     ORDER BY relevance_score DESC, pub_date DESC
                     LIMIT 1
-                """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, ce_cooldown,
+                """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, ce_now,
                                   *_excl)).fetchone()
 
             conn.close()
@@ -1782,7 +1785,30 @@ class DiscoveryMixin:
     # day, so "not again today" is the whole rule: a provider or infrastructure
     # failure frees the seed for the next natural run rather than consuming it,
     # and no scheduler, backoff curve or retry queue is introduced.
-    CE_RETRY_COOLDOWN_HOURS = 20
+    CE_RETRY_COOLDOWN_HOURS = 20          # transient/operational failure
+    # A Grounding-derived or otherwise unnamed HOLD is NOT proven to be a property of
+    # the seed. The authoritative whole-article grounder is measured non-deterministic
+    # on byte-identical input -- a classification flipped 1 in 10 trials at the provider
+    # default AND at temperature 0, findings appeared and vanished between passes, and
+    # some carried reasons contradicting their own labels. Retiring a seed on one such
+    # verdict would let a classifier wobble delete a story permanently. So it rests for
+    # two days instead of one, and comes back if it is still otherwise eligible.
+    CE_REVIEWABLE_COOLDOWN_HOURS = 48
+
+    CE_TERMINAL = "TERMINAL"
+    CE_TRANSIENT = "TRANSIENT_FAILURE"
+    CE_REVIEWABLE = "NONDETERMINISTIC_OR_REVIEWABLE_HOLD"
+
+    # Reason codes whose truth follows from the unchanged source and research material
+    # rather than from a model's classification of prose. These are the only HOLDs that
+    # retire a seed.
+    CE_DETERMINISTIC_HOLD_CODES = (
+        "HOLD_INSUFFICIENT_RESEARCH",                    # the pack looked and found nothing
+        "DISCOVERY_SUBJECT_OUTSIDE_RESEARCHED_SCOPE",    # researched A, wrote about B
+        "DISCOVERY_SOURCE_ANCHOR_MISSING",
+        "DISCOVERY_SOURCE_ANCHOR_NOT_IN_SOURCE",
+        "DISCOVERY_SOURCE_ANCHOR_TOO_SHORT",
+    )
 
     @staticmethod
     def classify_current_engine_attempt(result: dict) -> tuple[bool, str]:
@@ -1802,28 +1828,30 @@ class DiscoveryMixin:
         if status:
             # PROVIDER_FAILURE / CONTRACT_FAILURE: transport, truncation, or a reply
             # that did not satisfy a stage contract. Infrastructure, not evidence.
-            return False, "RETRYABLE:%s" % status
+            return DiscoveryMixin.CE_TRANSIENT, "%s:%s" % (DiscoveryMixin.CE_TRANSIENT, status)
         decision = (result or {}).get("decision")
         reason = (result or {}).get("reason_code") or ""
         if decision == "ACCEPT":
-            return True, "TERMINAL:ACCEPT"
+            return DiscoveryMixin.CE_TERMINAL, "TERMINAL:ACCEPT"
         if decision == "HOLD":
-            if reason == "HOLD_INSUFFICIENT_RESEARCH":
-                # The pack looked and found nothing. Tomorrow's pack would look at the
-                # same anchor with the same bounds. Terminal for THIS snapshot.
-                return True, "TERMINAL:HOLD_INSUFFICIENT_RESEARCH"
+            if reason in DiscoveryMixin.CE_DETERMINISTIC_HOLD_CODES:
+                return DiscoveryMixin.CE_TERMINAL, "TERMINAL:%s" % reason
             if reason:
-                # A named editorial/safety outcome on unchanged material -- a failed
-                # anchor invariant, a subject-scope mismatch, a non-commissionable
-                # source. Deterministic enough to be terminal, and named in the row.
-                return True, "TERMINAL:%s" % reason
-            # An unnamed HOLD (e.g. the V0 uncertainty policy) still reflects a
-            # judgement about this material rather than an outage.
-            return True, "TERMINAL:HOLD"
-        return False, "RETRYABLE:UNCLASSIFIED:%s" % (decision or "none")
+                # A named code we do not yet know to be deterministic. Rest it, do not
+                # retire it: the conservative direction costs a day, the other costs
+                # the seed.
+                return (DiscoveryMixin.CE_REVIEWABLE,
+                        "%s:%s" % (DiscoveryMixin.CE_REVIEWABLE, reason))
+            # An unnamed HOLD is a model judgement -- the grounder's uncertainty and
+            # unsupported policies both arrive here with no reason code -- and the
+            # grounder is measured unstable on identical input. Reviewable, never
+            # terminal.
+            return DiscoveryMixin.CE_REVIEWABLE, "%s:HOLD" % DiscoveryMixin.CE_REVIEWABLE
+        return (DiscoveryMixin.CE_TRANSIENT,
+                "%s:UNCLASSIFIED:%s" % (DiscoveryMixin.CE_TRANSIENT, decision or "none"))
 
     def mark_news_seed_current_engine_attempt(self, seed_id: str, *, run: str,
-                                              terminal: bool, outcome: str,
+                                              klass: str, outcome: str,
                                               pack_verdict: str | None = None,
                                               pack_subject_words=None) -> None:
         """Record that CURRENT_ENGINE attempted this seed, and what came of it.
@@ -1833,21 +1861,27 @@ class DiscoveryMixin:
         verdict and subject-relevant word count. `used` is untouched: it still means
         exactly what it meant, an article was committed by the legacy path.
         """
+        hours = {self.CE_TRANSIENT: self.CE_RETRY_COOLDOWN_HOURS,
+                 self.CE_REVIEWABLE: self.CE_REVIEWABLE_COOLDOWN_HOURS}.get(klass)
+        retry_after = ((datetime.now() + timedelta(hours=hours)).strftime("%Y-%m-%dT%H:%M:%S")
+                       if hours else None)
         try:
             conn = sqlite3.connect(str(self.discovery_db))
             self._ensure_decline_columns(conn)
             conn.execute(
                 "UPDATE news_seeds SET ce_attempted_date = ?, ce_attempt_run = ?, "
-                "ce_attempt_outcome = ?, ce_attempt_terminal = ?, "
+                "ce_attempt_outcome = ?, ce_attempt_terminal = ?, ce_retry_after = ?, "
                 "ce_pack_verdict = COALESCE(?, ce_pack_verdict), "
                 "ce_pack_subject_words = COALESCE(?, ce_pack_subject_words) "
                 "WHERE id = ?",
                 (datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), run, outcome,
-                 1 if terminal else 0, pack_verdict, pack_subject_words, seed_id))
+                 1 if klass == self.CE_TERMINAL else 0, retry_after,
+                 pack_verdict, pack_subject_words, seed_id))
             conn.commit()
             conn.close()
-            self.logger.info("CURRENT_ENGINE attempt recorded on seed %s: %s (terminal=%s, "
-                             "pack=%s)", seed_id, outcome, terminal, pack_verdict)
+            self.logger.info("CURRENT_ENGINE attempt recorded on seed %s: %s "
+                             "(class=%s, retry_after=%s, pack=%s)",
+                             seed_id, outcome, klass, retry_after or "never", pack_verdict)
         except Exception as e:
             self.logger.warning("Could not record CURRENT_ENGINE attempt on seed %s: %s",
                                 seed_id, e)

@@ -81,11 +81,26 @@ def test_fresh_seed_is_selectable_and_ranking_is_unchanged():
 
 # ── 2-4: terminal outcomes retire the seed ────────────────────────────────────
 def _attempt(o, seed_id, result, run="run-1", pack=None, words=None):
-    terminal, outcome = o.classify_current_engine_attempt(result)
-    o.mark_news_seed_current_engine_attempt(seed_id, run=run, terminal=terminal,
+    klass, outcome = o.classify_current_engine_attempt(result)
+    o.mark_news_seed_current_engine_attempt(seed_id, run=run, klass=klass,
                                             outcome=outcome, pack_verdict=pack,
                                             pack_subject_words=words)
-    return terminal, outcome
+    return klass, outcome
+
+
+def _age(o, seed_id, hours):
+    """Advance the clock by `hours` for one seed, by moving its retry gate back that
+    far. Only touches a gate that exists -- a terminal attempt has none, and inventing
+    one would test the opposite of what it claims."""
+    conn = sqlite3.connect(str(o.discovery_db))
+    row = conn.execute("SELECT ce_retry_after FROM news_seeds WHERE id = ?",
+                       (seed_id,)).fetchone()
+    if row and row[0]:
+        gate = datetime.strptime(row[0], "%Y-%m-%dT%H:%M:%S") - timedelta(hours=hours)
+        conn.execute("UPDATE news_seeds SET ce_retry_after = ? WHERE id = ?",
+                     (gate.strftime("%Y-%m-%dT%H:%M:%S"), seed_id))
+        conn.commit()
+    conn.close()
 
 
 def test_terminal_outcomes_are_recorded_and_not_repeated():
@@ -95,21 +110,24 @@ def test_terminal_outcomes_are_recorded_and_not_repeated():
             ("HOLD_INSUFFICIENT_RESEARCH",
              {"decision": "HOLD", "reason_code": "HOLD_INSUFFICIENT_RESEARCH"},
              "TERMINAL:HOLD_INSUFFICIENT_RESEARCH"),
-            ("named editorial HOLD on unchanged material",
+            ("deterministic researched-scope violation",
              {"decision": "HOLD",
               "reason_code": "DISCOVERY_SUBJECT_OUTSIDE_RESEARCHED_SCOPE"},
              "TERMINAL:DISCOVERY_SUBJECT_OUTSIDE_RESEARCHED_SCOPE"),
-            ("unnamed substantive HOLD",
-             {"decision": "HOLD", "reason_code": None}, "TERMINAL:HOLD")):
+            ("deterministic anchor-invariant failure",
+             {"decision": "HOLD", "reason_code": "DISCOVERY_SOURCE_ANCHOR_NOT_IN_SOURCE"},
+             "TERMINAL:DISCOVERY_SOURCE_ANCHOR_NOT_IN_SOURCE")):
         o = _fresh_db([("A", 0.9, "angle A"), ("B", 0.7, "angle B")])
         check("%s: seed A wins first" % label, _pick(o) == "A")
-        terminal, outcome = _attempt(o, "A", result)
-        check("%s: classified terminal" % label, terminal is True)
+        klass, outcome = _attempt(o, "A", result)
+        check("%s: classified terminal" % label, klass == Orch.CE_TERMINAL, klass)
         check("%s: outcome recorded as %s" % (label, expect_outcome),
               outcome == expect_outcome, outcome)
         row = sqlite3.connect(str(o.discovery_db)).execute(
             "SELECT ce_attempted_date, ce_attempt_run, ce_attempt_outcome, "
-            "ce_attempt_terminal, used FROM news_seeds WHERE id='A'").fetchone()
+            "ce_attempt_terminal, used, ce_retry_after FROM news_seeds WHERE id='A'"
+        ).fetchone()
+        check("%s: a terminal attempt sets no retry gate" % label, row[5] is None, row)
         check("%s: attempt row written" % label,
               row[0] and row[1] == "run-1" and row[2] == outcome and row[3] == 1, row)
         check("%s: legacy `used` is NOT touched" % label, row[4] == 0, row)
@@ -128,18 +146,13 @@ def test_transient_failures_stay_retryable():
             ("unclassifiable result",
              {"decision": "SOMETHING_NEW"})):
         o = _fresh_db([("A", 0.9, "angle A"), ("B", 0.7, "angle B")])
-        terminal, outcome = _attempt(o, "A", result)
-        check("%s: not terminal" % label, terminal is False, outcome)
-        check("%s: outcome names it retryable" % label, outcome.startswith("RETRYABLE:"),
-              outcome)
+        klass, outcome = _attempt(o, "A", result)
+        check("%s: not terminal" % label, klass == Orch.CE_TRANSIENT, (klass, outcome))
+        check("%s: outcome names the class" % label,
+              outcome.startswith(Orch.CE_TRANSIENT), outcome)
         check("%s: within the cooldown the seed steps aside" % label,
               _pick(o) == "B", _pick(o))
-        # after the cooldown the same seed is eligible again -- no scheduler, just time
-        conn = sqlite3.connect(str(o.discovery_db))
-        conn.execute("UPDATE news_seeds SET ce_attempted_date = ? WHERE id='A'",
-                     ((datetime.now() - timedelta(hours=Orch.CE_RETRY_COOLDOWN_HOURS + 1))
-                      .strftime("%Y-%m-%dT%H:%M:%S"),))
-        conn.commit(); conn.close()
+        _age(o, "A", Orch.CE_RETRY_COOLDOWN_HOURS + 1)      # the gate has passed
         check("%s: eligible again after the cooldown" % label, _pick(o) == "A", _pick(o))
 
 
@@ -204,7 +217,8 @@ def test_old_rows_stay_valid_and_used_is_not_redefined():
     cols = {r[1] for r in c.execute("PRAGMA table_info(news_seeds)")}
     check("migration added the attempt columns",
           {"ce_attempted_date", "ce_attempt_run", "ce_attempt_outcome",
-           "ce_attempt_terminal", "ce_pack_verdict", "ce_pack_subject_words"} <= cols,
+           "ce_attempt_terminal", "ce_pack_verdict", "ce_pack_subject_words",
+           "ce_retry_after"} <= cols,
           sorted(cols))
     row = c.execute("SELECT ce_attempt_terminal, ce_attempted_date, used FROM news_seeds "
                     "WHERE id='OLD'").fetchone()
@@ -255,13 +269,57 @@ def test_transient_failure_regression():
     _attempt(o, "A", {"decision": "HOLD", "run_status": {"status": "PROVIDER_FAILURE"}},
              run="day1")
     check("the same day, A steps aside rather than looping", _pick(o) == "B")
-    conn = sqlite3.connect(str(o.discovery_db))
-    conn.execute("UPDATE news_seeds SET ce_attempted_date = ? WHERE id='A'",
-                 ((datetime.now() - timedelta(hours=Orch.CE_RETRY_COOLDOWN_HOURS + 1))
-                  .strftime("%Y-%m-%dT%H:%M:%S"),))
-    conn.commit(); conn.close()
+    _age(o, "A", Orch.CE_RETRY_COOLDOWN_HOURS + 1)
     check("the next natural run may try A again", _pick(o) == "A", _pick(o))
     check("an outage costs a day, not a story", True)
+
+
+def test_grounder_hold_is_reviewable_not_terminal():
+    """The authoritative grounder is measured non-deterministic on identical bytes: a
+    classification flipped 1 in 10 trials at temperature 0, and findings appeared and
+    vanished between passes. A HOLD it produced is therefore not proven to be a
+    property of the seed, and must not delete the seed.
+
+    DAY 1  A -> grounding HOLD (TRUE_UNCERTAIN / TRUE_UNSUPPORTED reach here with no
+           reason code, straight from decision.py)
+    DAY 2  B wins
+    DAY 3  A is eligible again if it is otherwise still eligible."""
+    for label, result in (
+            ("unadjudicated TRUE_UNCERTAIN", {"decision": "HOLD", "reason_code": None}),
+            ("unresolved TRUE_UNSUPPORTED", {"decision": "HOLD", "reason_code": None}),
+            ("a named code not known to be deterministic",
+             {"decision": "HOLD", "reason_code": "SOME_FUTURE_POLICY_CODE"})):
+        o = _fresh_db([("A", 0.9, "angle A"), ("B", 0.7, "angle B")])
+        check("%s: day 1 selects A" % label, _pick(o) == "A")
+        klass, outcome = _attempt(o, "A", result, run="day1")
+        check("%s: classified reviewable, not terminal" % label,
+              klass == Orch.CE_REVIEWABLE, (klass, outcome))
+        row = sqlite3.connect(str(o.discovery_db)).execute(
+            "SELECT ce_attempt_terminal, ce_retry_after, ce_attempt_outcome "
+            "FROM news_seeds WHERE id='A'").fetchone()
+        check("%s: the seed is NOT retired" % label, row[0] == 0, row)
+        check("%s: a retry gate is set instead" % label, bool(row[1]), row)
+        check("%s: the outcome names the class" % label,
+              row[2].startswith(Orch.CE_REVIEWABLE), row[2])
+        check("%s: day 2 selects B" % label, _pick(o) == "B", _pick(o))
+        _age(o, "A", 24)         # a day later: still gated, because the gate is 48h
+        check("%s: still gated one day later" % label, _pick(o) == "B", _pick(o))
+        _age(o, "A", Orch.CE_REVIEWABLE_COOLDOWN_HOURS + 1)
+        check("%s: day 3 A is eligible again" % label, _pick(o) == "A", _pick(o))
+
+
+def test_research_hold_stays_terminal_alongside_reviewable_holds():
+    """The distinction that matters: the pack looked and found nothing (terminal), vs
+    a model judged the prose and might judge it differently tomorrow (reviewable)."""
+    o = _fresh_db([("A", 0.9, "angle A"), ("B", 0.7, "angle B")])
+    klass, _ = _attempt(o, "A", {"decision": "HOLD",
+                                 "reason_code": "HOLD_INSUFFICIENT_RESEARCH"})
+    check("HOLD_INSUFFICIENT_RESEARCH is terminal", klass == Orch.CE_TERMINAL, klass)
+    check("its retry gate was never set",
+          sqlite3.connect(str(o.discovery_db)).execute(
+              "SELECT ce_retry_after FROM news_seeds WHERE id='A'").fetchone()[0] is None)
+    _age(o, "A", 1000)           # no amount of time revives a terminal attempt
+    check("no cooldown revives it", _pick(o) == "B", _pick(o))
 
 
 def main():
@@ -272,6 +330,8 @@ def main():
                test_pack_verdict_and_subject_words_are_recorded,
                test_old_rows_stay_valid_and_used_is_not_redefined,
                test_nothing_else_was_touched,
+               test_grounder_hold_is_reviewable_not_terminal,
+               test_research_hold_stays_terminal_alongside_reviewable_holds,
                test_repeat_anchor_regression,
                test_transient_failure_regression):
         print("\n" + fn.__name__)
