@@ -368,6 +368,35 @@ and are **not** cutover blockers — they never blocked the completed default cu
     HOLD-on-any-uncertain rule may fire more often than it did on single-source runs.**
   - **Not production-ready on unit tests alone. Not merged, not deployed.**
 
+- **GROUNDER V2 SHADOW — PR #45, OPEN, NOT MERGED, DEFAULT OFF.** Claim-focused
+  grounding as a comparison artifact only: deterministic sentence backbone →
+  narrow type/atomicity pass → deterministic TF-IDF retrieval over the frozen pack →
+  focused source-relative classifier → `GROUNDING_V2_SHADOW.json`. It cannot set
+  `GROUNDING_FINDINGS`, move a decision, trigger repair, reach the fact check or the
+  bridge, and it does not run unless `CRIPMINDS_GROUNDING_V2_SHADOW` is set. Natural
+  production behaviour after merge is unchanged. Frozen-set result: 113/113 sentences
+  covered, 0 unresolved boundaries, 32/32 gold assertions represented, 11/13 compound
+  claims separated — and **not ready to gate**: the "nearly 100" vs "more than 100"
+  conflict was lost when retrieval failed to surface both sides, and two claims were
+  wrongly called UNSUPPORTED. **Retrieval closure pass (2026-08-28): all three closed** —
+  source-aware ranking with a per-source relevance gate, a deterministic conflict probe
+  (subject anchors minus the claim's own value tokens, plus a rival value; general to
+  counts, dates, titles and institutions, with no hard-coded word pair), and a focused
+  excerpt rung before whole-source bulk. Direct frozen regressions now run outside any
+  harness cap: **8/8**, evidence recall 11/11 after fallback.
+  - **FOLLOW-UP BEFORE ANY PRODUCTION SHADOW OR CUTOVER: reduce or batch
+    focused-classification cost and latency without weakening claim coverage.** The
+    ceiling today is 48 model calls per article (≤8 typing + ≤40 classification),
+    measured at ~$0.85–1.10 and 65–85s per article at a 12-claim cap. Too expensive to
+    gate on; deliberately not optimised in this PR, which stays opt-in and OFF.
+  - **WATCH, non-blocking — focused-classifier explanations may overstate.** The booklet
+    per-layer elaboration is correctly `UNSUPPORTED`, but its residue reads "the entire
+    claim ... has no basis in the evidence" where part of a compound claim can in fact be
+    grounded. The verdict is right; the explanation is broader than the evidence warrants.
+    Not fixed in PR #45, not a gating blocker, worth watching when V2 output is next
+    reviewed.
+  Details in the PR.
+
 - **FOLLOW-UP — GROUNDER STABILITY. Read-only investigation required, after the Research
   Pack merges, before any repair layer is built on grounder output.** Observed twice
   during PR #44's live runs: (a) materially identical supported text changed
