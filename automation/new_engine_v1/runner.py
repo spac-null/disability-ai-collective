@@ -334,6 +334,10 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
     try:
         gf = S.ground(provider, wo["article_text"], src, sha, pack)
         prov["grounding"] = gf.get("_provider", {})
+        A[C.GROUNDING_FINDINGS] = _emit(C.GROUNDING_FINDINGS, at, _strip_provider(gf),
+                                        {"writer_output": A[C.WRITER_OUTPUT],
+                                         "source": A[C.SOURCE_SNAPSHOT],
+                                         "research_pack": A[C.RESEARCH_PACK]})
     except (ProviderError, C.ContractViolation) as e:
         return _stage_failure(
             C.GROUNDING_FINDINGS,
@@ -341,8 +345,6 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
             e, at, A, run_root, name, mode, prov)
 
     # --- PATCH-ONLY REPAIR, then a real re-check of the affected findings -----
-    findings_now = gf["findings"]
-    current_text = wo["article_text"]
     rp = S.repair(wo["article_text"], gf["findings"])
     if rp is not None:
         try:
@@ -364,91 +366,6 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
         rp["verification"]["introduced"] = len([f_ for f_ in after
                                                 if f_.get("quote") not in before])
         rp["recheck_findings"] = recheck["findings"]
-        current_text = rp["article_text"]
-        findings_now = recheck["findings"]
-
-    # --- UNCERTAINTY ADJUDICATION: one pass, pack-only, then one re-grounding --
-    # decision.py's V0 rule is unchanged and still fail-closed: an uncertain finding
-    # HOLDs unless the grounding payload says it was adjudicated. What is new is that
-    # something can now do the adjudicating, because the writer no longer had one
-    # source. The adjudicator sees the article and the frozen pack, may only keep,
-    # weaken or remove a claim, and is believed about nothing: the re-grounding below
-    # decides, and any uncertainty that survives it still HOLDs.
-    uncertain = [f for f in findings_now
-                 if f.get("classification") == "TRUE_UNCERTAIN"]
-    if uncertain:
-        try:
-            raw = S.adjudicate(provider, current_text, src, sha, uncertain, pack)
-            prov["uncertainty_adjudication"] = raw.get("_provider", {})
-            adj = S.apply_adjudication(current_text, uncertain, raw, pack)
-            after = S.ground(provider, adj["article_text"], src, sha, pack)
-            prov["grounding_after_adjudication"] = after.get("_provider", {})
-        except (ProviderError, C.ContractViolation) as e:
-            return _stage_failure(
-                C.GROUNDING_FINDINGS,
-                "provider_error" if isinstance(e, ProviderError) else "invalid_response_shape",
-                e, at, A, run_root, name, mode, prov)
-
-        residual_uncertain = [f for f in after["findings"]
-                              if f.get("classification") == "TRUE_UNCERTAIN"]
-        residual_unsupported = [f for f in after["findings"]
-                                if f.get("classification") == "TRUE_UNSUPPORTED"]
-        def _n(s):
-            return " ".join((s or "").split()).lower()
-
-        still = [_n(f.get("quote")) for f in residual_uncertain]
-        for rec in adj["records"]:
-            if rec["action"] == "MATERIAL_UNRESOLVED":
-                rec["verified_by_regrounding"] = False
-                continue
-            # Containment either way, not string equality: the second grounder quotes
-            # the span it doubts, which is rarely the exact clause the adjudicator
-            # touched. Equality made a record read "verified" while the run was HOLDing
-            # on that very claim -- seen in the 28 August live run.
-            now = _n(rec["replacement"] if rec["applied"] else rec["claim"])
-            rec["verified_by_regrounding"] = not any(
-                now and (now in s or s in now) for s in still)
-
-        clean = not (residual_uncertain or residual_unsupported
-                     or adj["material_unresolved"])
-        # The flag decision.py reads. Set only when the SECOND grounding found nothing
-        # unresolved -- never because the adjudicator said so.
-        gf["uncertain_adjudicated"] = bool(clean)
-        gf["uncertainty_adjudication"] = {
-            "records": adj["records"],
-            "material_unresolved": adj["material_unresolved"],
-            "residual_uncertain": len(residual_uncertain),
-            "residual_unsupported": len(residual_unsupported),
-            "patches_applied": len(adj["patches"]),
-            "regrounding_status": after.get("status"),
-            # Persisted even when nothing was patched: without it, a HOLD caused by the
-            # second grounding is unanswerable after the fact -- which is exactly what
-            # happened on the first live run of this stage.
-            "regrounding_findings": after.get("findings", []),
-            "passes": 1,
-        }
-        if adj["patches"]:
-            before_unsupported = {f_.get("quote") for f_ in gf["findings"]
-                                  if f_.get("classification") == "TRUE_UNSUPPORTED"}
-            if rp is None:
-                rp = {"mode": "patch_only", "patches": [], "unpatched_finding_ids": [],
-                      "verification": {"residual": 0, "introduced": 0,
-                                       "unrelated_edits": 0}}
-            rp["patches"] = list(rp["patches"]) + adj["patches"]
-            rp["article_text"] = adj["article_text"]
-            rp["article_sha256"] = adj["article_sha256"]
-            rp["recheck_findings"] = after["findings"]
-            rp["verification"]["residual"] = len(
-                [f_ for f_ in residual_unsupported if f_.get("quote") in before_unsupported])
-            rp["verification"]["introduced"] = len(
-                [f_ for f_ in residual_unsupported
-                 if f_.get("quote") not in before_unsupported])
-
-    A[C.GROUNDING_FINDINGS] = _emit(C.GROUNDING_FINDINGS, at, _strip_provider(gf),
-                                    {"writer_output": A[C.WRITER_OUTPUT],
-                                     "source": A[C.SOURCE_SNAPSHOT],
-                                     "research_pack": A[C.RESEARCH_PACK]})
-    if rp is not None:
         A[C.GROUNDING_REPAIR] = _emit(C.GROUNDING_REPAIR, at, rp,
                                       {"findings": A[C.GROUNDING_FINDINGS],
                                        "writer_output": A[C.WRITER_OUTPUT]})

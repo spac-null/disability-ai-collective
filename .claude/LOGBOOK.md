@@ -516,32 +516,3 @@ FOLLOW-UP: whether V0's HOLD-on-any-unadjudicated-`TRUE_UNCERTAIN` policy is sti
 right rule once articles are written from multi-source packs. Not changed here; it is a
 decision, not a defect.
 
----
-
-## 2026-08-28 — Uncertainty adjudication, and what it revealed about the grounder
-
-WHAT: a bounded adjudication pass between grounding and the decision. It sees the article
-and the frozen pack, may keep / weaken / remove a claim, and is believed about nothing:
-application is deterministic clause substitution, a record that cites a source outside the
-pack or whose quote is not in the draft becomes MATERIAL_UNRESOLVED, and the flag
-`decision.py` reads is set only when the second grounding finds nothing unresolved.
-
-WHY: `decision.py` already read `uncertain_adjudicated` and nothing could ever set it, so
-every article carrying an uncertain claim died. That was correct with one source and
-wrong with a pack — the live Minnie Evans run lost a grounded 624-word article over two
-specifics the pack could have weakened.
-
-EVIDENCE: run `production-20260828T185627Z` — pack ARTICLE, adjudication rewrote "a few
-days after her grandmother died" to what S1 and S3 support, verified by re-grounding, and
-the run still HOLDed because the second grounding returned four fresh findings. Three of
-those are labelled TRUE_UNSUPPORTED with reasoning that says the anchor establishes them;
-one is a real conflict between the anchor and a museum source over a work count.
-
-CODE: `automation/new_engine_v1/{stages,runner}.py`, `publication_safety_bridge.py`
-(provenance of adjudicated claims), `automation/uncertainty_adjudication_test.py` (new).
-`decision.py` untouched. **MERGED: NO.**
-
-FOLLOW-UP: grounder classification instability across passes is now the binding
-constraint on ever reaching ACCEPT with a rich pack. Not a defect introduced here, and
-not addressed here.
-
