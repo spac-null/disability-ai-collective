@@ -35,6 +35,7 @@ ANCHOR_FIELD = "source_anchor_quote"
 ANCHOR_MISSING = "DISCOVERY_SOURCE_ANCHOR_MISSING"
 ANCHOR_NOT_IN_SOURCE = "DISCOVERY_SOURCE_ANCHOR_NOT_IN_SOURCE"
 ANCHOR_TOO_SHORT = "DISCOVERY_SOURCE_ANCHOR_TOO_SHORT"
+SUBJECT_SCOPE_MISMATCH = "DISCOVERY_SUBJECT_OUTSIDE_RESEARCHED_SCOPE"
 
 # An anchor shorter than this is not a clause and cannot ground a mechanism; it would
 # also make the containment test meaningless (any short string matches something).
@@ -127,3 +128,49 @@ def repair_anchor(provider, discovery_payload: dict, source_text: str) -> tuple[
     discovery_payload[ANCHOR_FIELD] = span
     discovery_payload["source_anchor_repaired"] = True
     return True, "anchor repaired to an exact source span (%d chars)" % len(normalize(span))
+
+
+def check_subject_scope(discovery_payload: dict, subject_span: str,
+                        source_text: str) -> tuple[bool, str, str]:
+    """(ok, reason_code, detail). Did Discovery write about the subject that was researched?
+
+    The failure this closes is specific and was live on 28 August 2026: the anchor was a
+    roundup covering seven unrelated projects, research scoped and searched for one of
+    them, and Discovery then built its reading on a different one. Both stages were
+    individually correct and the pack was provenance-valid; the article was simply
+    grounded in material nobody had researched.
+
+    The test is deterministic and uses the anchor invariant's own machinery: Discovery's
+    verbatim `source_anchor_quote` must fall INSIDE the span of the anchor that the
+    research pack was built for. No model call, no similarity score, no keyword overlap
+    -- an offset comparison over the same normalised text `check_anchor` already
+    validated the quote against.
+
+    An empty or unverifiable subject span means the anchor was not partitioned into
+    subjects (an ordinary single-subject article), and the check passes: it exists to
+    stop a heterogeneous anchor being researched for A and written about B, not to
+    narrow a source that only has one subject in it.
+    """
+    if not isinstance(subject_span, str) or not subject_span.strip():
+        return True, "", "no subject span recorded; anchor is single-subject"
+    src = normalize(source_text)
+    span = normalize(subject_span)
+    start = src.find(span)
+    if start < 0:
+        return True, "", "subject span is not a verbatim region of the anchor; not enforced"
+    if len(span) >= len(src) - 1:
+        return True, "", "subject span covers the whole anchor"
+    anchor = normalize(discovery_payload.get(ANCHOR_FIELD) or "").strip('"\'')
+    if not anchor:
+        return False, ANCHOR_MISSING, "%s absent or empty" % ANCHOR_FIELD
+    at = src.find(anchor)
+    if at < 0:
+        return False, ANCHOR_NOT_IN_SOURCE, "anchor is not a span of the source"
+    end = start + len(span)
+    if start <= at and at + len(anchor) <= end:
+        return True, "", "anchor lies inside the researched subject (chars %d-%d)" % (start, end)
+    return (False, SUBJECT_SCOPE_MISMATCH,
+            "the research pack was built for the subject at chars %d-%d of the anchor, "
+            "but Discovery grounded its reading at char %d -- outside it. Researching one "
+            "item of a roundup and writing about another is the failure this blocks."
+            % (start, end, at))

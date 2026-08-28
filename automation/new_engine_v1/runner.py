@@ -1,8 +1,14 @@
 """
 runner.py -- NEW_ENGINE_V1 live orchestration.
 
-    WORLD / SOURCE -> DISCOVERY -> ARTICLE FORM -> WRITER -> WRITER GROUNDING
-                   -> ACCEPT / HOLD -> (accepted candidate pool)
+    WORLD / SOURCE -> RESEARCH PACK -> SUFFICIENCY -> DISCOVERY -> ARTICLE FORM
+                   -> WRITER -> WRITER GROUNDING -> ACCEPT / HOLD
+                   -> (accepted candidate pool)
+
+RESEARCH runs BEFORE Discovery, on purpose: evidence is supposed to produce the idea,
+not be recruited to defend one Discovery already had. Everything downstream reads the
+frozen pack. The Writer still has no network of its own -- it writes from bytes that
+were fetched, hashed and persisted before it was asked for a word.
 
 This is the production CANDIDATE. It is not wired to any cron, any selector, or any
 publication path, and it cannot publish: there is no `_posts`/`_drafts` write, no git
@@ -28,6 +34,7 @@ import pathlib
 
 from . import contracts as C
 from . import invariants as INV
+from . import research as RS
 from . import stages as S
 from .decision import decide
 from .provider import ProviderError
@@ -101,7 +108,7 @@ def _stage_failure(stage: str, category: str, exc: Exception, at: str, A: dict,
 
 def run(source_payload: dict, run_root: pathlib.Path, provider,
         name: str, created_at: str, byline: str = DEFAULT_BYLINE,
-        mode: str | None = None) -> dict:
+        mode: str | None = None, research_fn=None) -> dict:
     """Execute the target path once against real material.
 
     `source_payload` must already satisfy the SOURCE_SNAPSHOT contract -- acquisition is
@@ -124,14 +131,57 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
     src = source_payload["source_text"]
     sha = source_payload["source_sha256"]
 
-    # --- DISCOVERY: consumes source only -------------------------------------
+    # --- RESEARCH: bounded, before any idea exists ---------------------------
+    # Injected so a test can supply a pack without a network, exactly as the safety
+    # bridge injects its fact check. A research failure is a HOLD, never a thin pack:
+    # "we could not read enough" and "there was not enough to read" are different
+    # answers, and neither is permission to write anyway.
+    prov_anchor = source_payload.get("provenance") or {}
     try:
-        d = S.discover(provider, src, sha)
+        pack = (research_fn or RS.research)(
+            provider,
+            anchor={"url": prov_anchor.get("url", ""), "text": src,
+                    "title": prov_anchor.get("title", ""),
+                    "canonical_url": prov_anchor.get("canonical_url", ""),
+                    "accessed_at": at},
+            now_iso=at)
+    except (RS.ResearchError, ProviderError, C.ContractViolation) as e:
+        return _stage_failure(
+            C.RESEARCH_PACK,
+            "provider_error" if isinstance(e, (ProviderError, RS.ResearchError))
+            else "invalid_response_shape",
+            e, at, A, run_root, name, mode, prov)
+    prov["research"] = pack.pop("_provider", {})
+    A[C.RESEARCH_PACK] = _emit(C.RESEARCH_PACK, at, pack, {"source": A[C.SOURCE_SNAPSHOT]})
+    verdict = pack["sufficiency"]["verdict"]
+
+    if verdict == RS.HOLD:
+        # A successful fail-closed outcome, not an engine error. The pack is persisted
+        # with it, so "what did research actually find" is answerable afterwards.
+        reasons = ["research: %s" % RS.HOLD,
+                   "; ".join(pack["sufficiency"]["reasons"])[:300],
+                   "; ".join(pack["sufficiency"]["what_is_missing"])[:200],
+                   "HOLD before Discovery -- there is not enough material to write from"]
+        A[C.SHADOW_DECISION] = _emit(
+            C.SHADOW_DECISION, at,
+            {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
+             "reason_code": RS.HOLD,
+             "policy": "ACCEPT = eligible for the candidate pool; never publication"},
+            {"research_pack": A[C.RESEARCH_PACK]})
+        _persist(A, run_root, name, mode, prov, "HOLD", reasons)
+        return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
+                "provider": prov, "reason_code": RS.HOLD}
+
+    # --- DISCOVERY: consumes the anchor and the frozen pack ------------------
+    try:
+        d = S.discover(provider, src, sha, pack)
         prov["discovery"] = d.get("_provider", {})
         if d.get("commissionable") is False:
             # A grounded refusal. Recorded as a first-class outcome, not an error: the
             # source carries no mechanism this reading can reach.
-            disc = _emit(C.DISCOVERY, at, _strip_provider(d), {"source": A[C.SOURCE_SNAPSHOT]})
+            disc = _emit(C.DISCOVERY, at, _strip_provider(d),
+                         {"source": A[C.SOURCE_SNAPSHOT],
+                          "research_pack": A[C.RESEARCH_PACK]})
             A[C.DISCOVERY] = disc
             _persist(A, run_root, name, mode, prov,
                      decision="HOLD", reasons=["discovery: source not commissionable"])
@@ -156,7 +206,8 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
                 reasons = ["%s: %s" % (code, detail), "anchor repair: %s" % rdetail,
                            "HOLD before writer -- Discovery is not source-grounded"]
                 A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
-                                       {"source": A[C.SOURCE_SNAPSHOT]})
+                                       {"source": A[C.SOURCE_SNAPSHOT],
+                                        "research_pack": A[C.RESEARCH_PACK]})
                 A[C.SHADOW_DECISION] = _emit(
                     C.SHADOW_DECISION, at,
                     {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
@@ -167,9 +218,34 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
                 return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
                         "provider": prov, "reason_code": code}
             ok, code, anchor_note = INV.check_anchor(d, src)
+        # SUBJECT SCOPE (2026-08-28). Discovery may read the whole anchor, but it may
+        # not ground its reading in a part of it nobody researched. Offsets only, over
+        # the text check_anchor already validated the quote against. A run that trips
+        # this HOLDs; it does not re-research, and it does not quietly switch subject.
+        ok_scope, scope_code, scope_detail = INV.check_subject_scope(
+            d, pack.get("subject_span", ""), src)
+        if not ok_scope:
+            reasons = ["%s: %s" % (scope_code, scope_detail),
+                       "research subject: %s" % str(pack.get("subject", ""))[:160],
+                       "HOLD before Article Form -- the researched subject and the "
+                       "written subject must be the same subject"]
+            A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
+                                   {"source": A[C.SOURCE_SNAPSHOT],
+                                    "research_pack": A[C.RESEARCH_PACK]})
+            A[C.SHADOW_DECISION] = _emit(
+                C.SHADOW_DECISION, at,
+                {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
+                 "reason_code": scope_code,
+                 "policy": "ACCEPT = eligible for the candidate pool; never publication"},
+                {"discovery": A[C.DISCOVERY], "research_pack": A[C.RESEARCH_PACK]})
+            _persist(A, run_root, name, mode, prov, "HOLD", reasons)
+            return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
+                    "provider": prov, "reason_code": scope_code}
+        d["subject_scope_verified"] = True
         d["source_anchor_verified"] = True
         A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
-                               {"source": A[C.SOURCE_SNAPSHOT]})
+                               {"source": A[C.SOURCE_SNAPSHOT],
+                                "research_pack": A[C.RESEARCH_PACK]})
     except (ProviderError, C.ContractViolation) as e:
         return _stage_failure(
             C.DISCOVERY,
@@ -178,10 +254,12 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
 
     # --- ARTICLE FORM: consumes discovery + source ---------------------------
     try:
-        f = S.make_form(provider, d, src, sha)
+        f = S.make_form(provider, d, src, sha, pack)
         prov["article_form"] = f.get("_provider", {})
         A[C.ARTICLE_FORM] = _emit(C.ARTICLE_FORM, at, _strip_provider(f),
-                                  {"discovery": A[C.DISCOVERY], "source": A[C.SOURCE_SNAPSHOT]})
+                                  {"discovery": A[C.DISCOVERY],
+                                   "source": A[C.SOURCE_SNAPSHOT],
+                                   "research_pack": A[C.RESEARCH_PACK]})
     except (ProviderError, C.ContractViolation) as e:
         return _stage_failure(
             C.ARTICLE_FORM,
@@ -189,10 +267,11 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
             e, at, A, run_root, name, mode, prov)
 
     # --- WRITER INPUT: derived from the Form. Deterministic, no model. --------
-    wi = S.build_writer_input(f, d, src, sha, byline)
+    wi = S.build_writer_input(f, d, src, sha, byline, pack)
     A[C.WRITER_INPUT] = _emit(C.WRITER_INPUT, at, wi,
                               {"article_form": A[C.ARTICLE_FORM],
-                               "source": A[C.SOURCE_SNAPSHOT]})
+                               "source": A[C.SOURCE_SNAPSHOT],
+                               "research_pack": A[C.RESEARCH_PACK]})
 
     # --- WRITER: prose only --------------------------------------------------
     wo = S.write(provider, wi)
@@ -253,11 +332,12 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
 
     # --- WRITER GROUNDING: writer output + source ONLY (never the Form) -------
     try:
-        gf = S.ground(provider, wo["article_text"], src, sha)
+        gf = S.ground(provider, wo["article_text"], src, sha, pack)
         prov["grounding"] = gf.get("_provider", {})
         A[C.GROUNDING_FINDINGS] = _emit(C.GROUNDING_FINDINGS, at, _strip_provider(gf),
                                         {"writer_output": A[C.WRITER_OUTPUT],
-                                         "source": A[C.SOURCE_SNAPSHOT]})
+                                         "source": A[C.SOURCE_SNAPSHOT],
+                                         "research_pack": A[C.RESEARCH_PACK]})
     except (ProviderError, C.ContractViolation) as e:
         return _stage_failure(
             C.GROUNDING_FINDINGS,
@@ -268,7 +348,7 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
     rp = S.repair(wo["article_text"], gf["findings"])
     if rp is not None:
         try:
-            recheck = S.ground(provider, rp["article_text"], src, sha)
+            recheck = S.ground(provider, rp["article_text"], src, sha, pack)
         except ProviderError as e:
             # The recheck's own parsed findings never reach a separate _emit -- only
             # `rp`'s deterministic shape does -- so ProviderError is the only risk here.

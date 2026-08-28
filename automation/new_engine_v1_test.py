@@ -22,7 +22,8 @@ import tempfile
 HERE = pathlib.Path(__file__).parent
 sys.path.insert(0, str(HERE))
 
-from new_engine_v1 import contracts as C            # noqa: E402
+from new_engine_v1 import contracts as C
+from research_pack_fixture import stub_pack            # noqa: E402
 from new_engine_v1 import runner as R               # noqa: E402
 from new_engine_v1 import stages as S               # noqa: E402
 from new_engine_v1.decision import decide, ACCEPT, HOLD  # noqa: E402
@@ -137,9 +138,9 @@ class StubProvider:
                           provider_label="StubProvider")
 
 
-def _run(provider, tmp, name="t", byline="Maya Flux"):
+def _run(provider, tmp, name="t", byline="Maya Flux", research_fn=stub_pack):
     return R.run(_source_payload(), pathlib.Path(tmp), provider, name, AT,
-                 byline=byline, mode=R.MODE_LIVE)
+                 byline=byline, mode=R.MODE_LIVE, research_fn=research_fn)
 
 
 # --------------------------------------------------------------------------- #
@@ -166,7 +167,8 @@ def test_full_path_and_provenance():
     with tempfile.TemporaryDirectory() as d:
         out = _run(StubProvider(), d)
         A = out["artifacts"]
-        for stage in (C.SOURCE_SNAPSHOT, C.DISCOVERY, C.ARTICLE_FORM, C.WRITER_INPUT,
+        for stage in (C.SOURCE_SNAPSHOT, C.RESEARCH_PACK, C.DISCOVERY,
+                      C.ARTICLE_FORM, C.WRITER_INPUT,
                       C.WRITER_OUTPUT, C.GROUNDING_FINDINGS, C.SHADOW_DECISION):
             check("stage present: %s" % stage, stage in A)
         check("decision is ACCEPT on a clean draft", out["decision"] == ACCEPT, out["reasons"])
@@ -179,10 +181,19 @@ def test_full_path_and_provenance():
               C.sha256_text(A[C.SOURCE_SNAPSHOT].payload["source_text"]) == SHA)
         check("source provenance origin preserved",
               A[C.SOURCE_SNAPSHOT].payload["provenance"]["origin"] == "fetched_article")
-        check("DISCOVERY declares the source as its only input",
-              list(A[C.DISCOVERY].input_hashes) == ["source"], A[C.DISCOVERY].input_hashes)
-        check("ARTICLE_FORM consumes discovery + source",
-              sorted(A[C.ARTICLE_FORM].input_hashes) == ["discovery", "source"])
+        # Lineage widened with the Research Pack (2026-08-28): Discovery now reads the
+        # anchor AND the frozen pack, and every downstream stage declares the exact pack
+        # it used. The property under test is unchanged -- declared lineage must match
+        # the artifacts actually supplied -- only the expected set grew.
+        check("DISCOVERY declares the source and the research pack",
+              sorted(A[C.DISCOVERY].input_hashes) == ["research_pack", "source"],
+              A[C.DISCOVERY].input_hashes)
+        check("ARTICLE_FORM consumes discovery + source + pack",
+              sorted(A[C.ARTICLE_FORM].input_hashes) ==
+              ["discovery", "research_pack", "source"])
+        check("RESEARCH_PACK is emitted from the source snapshot",
+              C.RESEARCH_PACK in A and
+              list(A[C.RESEARCH_PACK].input_hashes) == ["source"])
 
         man = json.loads((pathlib.Path(d) / "t" / "MANIFEST.json").read_text())
         check("manifest records every stage hash",
@@ -216,9 +227,9 @@ def test_grounding_receives_exactly_source_and_draft():
         check("grounding did NOT receive the Form's motion", FORM_REPLY["motion"] not in u)
         check("grounding did NOT receive discovery's boundaries",
               DISCOVERY_REPLY["grounding_boundaries"] not in u)
-        check("GROUNDING_FINDINGS declares only writer_output + source",
+        check("GROUNDING_FINDINGS declares writer_output + source + pack",
               sorted(out["artifacts"][C.GROUNDING_FINDINGS].input_hashes)
-              == ["source", "writer_output"])
+              == ["research_pack", "source", "writer_output"])
 
 
 def test_writer_input_has_no_legacy_or_persona_authority():
@@ -611,7 +622,8 @@ def test_infra_failure_stays_operator_visible():
         for label, (kwargs, expect_infra_failure) in CASES.items():
             NEP.Provider = lambda model=None, _k=kwargs, **kw: StubProvider(**_k)
             out = NEP.run_scheduled(_FakeOrch(),
-                                    evidence_root=tempfile.mkdtemp())
+                                    evidence_root=tempfile.mkdtemp(),
+                                    research_fn=stub_pack)
             got = PO._is_infra_or_contract_failure(out)
             check("_is_infra_or_contract_failure(%s) == %s" % (label, expect_infra_failure),
                   got == expect_infra_failure,

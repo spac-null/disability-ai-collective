@@ -115,8 +115,61 @@ _NO_FABRICATION = (
 
 
 def _source_block(source_text: str, sha: str) -> str:
-    return ("SOURCE SNAPSHOT (sha256 %s) -- the ONLY authorised material:\n"
+    """The anchor. Before the Research Pack this was the whole authorised corpus; it is
+    now the first source in it, and the one Discovery's anchor quote must come from."""
+    return ("ANCHOR SOURCE (sha256 %s):\n"
             "<<<SOURCE\n%s\nSOURCE>>>\n" % (sha[:16], source_text))
+
+
+PACK_SOURCE_CHARS = 3000        # per non-anchor source, per prompt
+
+
+def pack_material_block(pack: dict | None, per_source_chars: int = PACK_SOURCE_CHARS) -> str:
+    """Render the authorised material a pack adds beyond the anchor.
+
+    ONE renderer on purpose: the Writer and the grounder are given the same spans, so
+    the grounder can never mark as unsupported a fact it was not shown. Every block
+    carries its source_id, role, publisher and URL, so a claim in the finished article
+    can be traced to bytes that were fetched and hashed. Verified excerpts come first
+    because they are the spans the pack vouches for; the window after them is context.
+    """
+    if not pack:
+        return ""
+    others = [s for s in pack.get("sources", []) if s.get("role") != "ANCHOR"]
+    if not others:
+        return ("\nRESEARCH PACK\n  No source beyond the anchor was fetched. The anchor "
+                "is the only authorised material.\n")
+    suff = (pack.get("sufficiency") or {}).get("verdict", "")
+    out = ["\nRESEARCH PACK -- authorised material, each span traceable to fetched bytes"]
+    if pack.get("subject"):
+        out.append("  SUBJECT RESEARCHED: %s" % pack["subject"])
+    if pack.get("subject_span"):
+        out.append("  The anchor covers more than one subject. Only the subject above "
+                   "was researched, and it is the only one available: this passage of "
+                   "the anchor, and nothing around it --\n    \"%s\"\n  Ground the "
+                   "reading inside that passage. Another item in the same source may "
+                   "look more promising; it has no research behind it and is not on "
+                   "offer." % pack["subject_span"][:600])
+    if suff in ("SHORT_ARTICLE", "NARROW"):
+        out.append("  RESEARCH VERDICT: %s -- the material supports a short, narrow "
+                   "piece. Keep the route small and the target range low; do not reach "
+                   "for the length a fuller pack would have earned." % suff)
+    elif suff:
+        out.append("  RESEARCH VERDICT: %s" % suff)
+    for s in others:
+        out.append("\n[%s] role=%s  publisher=%s  url=%s\n  %s"
+                   % (s["source_id"], s["role"], s.get("publisher", ""), s["url"],
+                      s.get("why_relevant", "")))
+        for ex in (s.get("excerpts") or []):
+            out.append("  EXCERPT [%s]: %s" % (s["source_id"], ex))
+        text = (s.get("text") or "")[:per_source_chars]
+        if text:
+            out.append("  <<<%s\n%s\n%s>>>" % (s["source_id"], text, s["source_id"]))
+    out.append("\nA fact may come from the anchor or from any source above, and must "
+               "carry its source's identity in your reasoning. Nothing outside these "
+               "blocks is authorised material: not a search result, not a summary, not "
+               "your own knowledge of the subject.")
+    return "\n".join(out) + "\n"
 
 
 # ── DISCOVERY ──────────────────────────────────────────────────────────────────
@@ -137,9 +190,10 @@ DISCOVERY_SYSTEM = (
 )
 
 
-def discovery_prompt(source_text: str, sha: str) -> str:
+def discovery_prompt(source_text: str, sha: str, pack: dict | None = None) -> str:
     return (
         _source_block(source_text, sha) +
+        pack_material_block(pack) +
         "\nReply with JSON only:\n"
         '{\n'
         '  "commissionable": true|false,\n'
@@ -169,8 +223,8 @@ def discovery_prompt(source_text: str, sha: str) -> str:
     )
 
 
-def discover(provider, source_text: str, sha: str) -> dict:
-    c = provider.complete(DISCOVERY_SYSTEM, discovery_prompt(source_text, sha),
+def discover(provider, source_text: str, sha: str, pack: dict | None = None) -> dict:
+    c = provider.complete(DISCOVERY_SYSTEM, discovery_prompt(source_text, sha, pack),
                           max_tokens=2200)
     p = parse_json_object(c.text)
     p["_provider"] = c.identity()
@@ -233,9 +287,11 @@ FORM_SYSTEM = (
 )
 
 
-def form_prompt(discovery: dict, source_text: str, sha: str) -> str:
+def form_prompt(discovery: dict, source_text: str, sha: str,
+                pack: dict | None = None) -> str:
     return (
         _source_block(source_text, sha) +
+        pack_material_block(pack) +
         "\nMATERIAL FROM DISCOVERY:\n"
         "  dominant reading   : %s\n"
         "  source anchor      : %s\n"
@@ -265,8 +321,9 @@ def form_prompt(discovery: dict, source_text: str, sha: str) -> str:
     )
 
 
-def make_form(provider, discovery: dict, source_text: str, sha: str) -> dict:
-    c = provider.complete(FORM_SYSTEM, form_prompt(discovery, source_text, sha),
+def make_form(provider, discovery: dict, source_text: str, sha: str,
+              pack: dict | None = None) -> dict:
+    c = provider.complete(FORM_SYSTEM, form_prompt(discovery, source_text, sha, pack),
                           max_tokens=1800)
     p = parse_json_object(c.text)
     if isinstance(p.get("target_words"), list) and len(p["target_words"]) == 2:
@@ -277,7 +334,8 @@ def make_form(provider, discovery: dict, source_text: str, sha: str) -> dict:
 
 # ── WRITER INPUT ───────────────────────────────────────────────────────────────
 def build_writer_input(article_form: dict, discovery: dict,
-                       source_text: str, sha: str, byline: str) -> dict:
+                       source_text: str, sha: str, byline: str,
+                       pack: dict | None = None) -> dict:
     """Assemble the writer's instruction. Deterministic -- no model call.
 
     Contains ONLY: the source, the Form, the grounding boundaries, the byline, and the
@@ -288,7 +346,7 @@ def build_writer_input(article_form: dict, discovery: dict,
     route = "\n".join("  %d. %s" % (i, m) for i, m in enumerate(article_form["route"], 1))
     prompt = (
         "Write one article. Follow the form exactly; the shape is already decided.\n\n"
-        + _source_block(source_text, sha) +
+        + _source_block(source_text, sha) + pack_material_block(pack) +
         "\nFORM\n"
         "  motion : %s\n"
         "  route  :\n%s\n"
@@ -310,6 +368,14 @@ def build_writer_input(article_form: dict, discovery: dict,
         "\n\nBYLINE\n  %s -- a recurring editorial voice of this publication. Write in "
         "its register. It is not a person with a biography, and you must not give it "
         "lived experience, memories, or a body.\n" % byline +
+        "\nUSING THE MATERIAL\n"
+        "  Write from the material above and from nothing else. Where a source gives you "
+        "a person, a date, a number, a mechanism, a decision or its own wording, use it: "
+        "that is what the material is for, and an article carried by facts is the point "
+        "of having gathered them. Do not name a source in the prose merely to show it "
+        "was read, and do not add a fact you happen to know that is not in these blocks. "
+        "If the material does not establish something the argument needs, the argument "
+        "changes -- the material does not.\n"
         "\nPROSE\n  %s\n" % PROSE_DOCTRINE +
         "\nHEADLINE\n"
         "  Begin your output with one line in exactly this form:\n"
@@ -394,9 +460,11 @@ GROUNDING_SYSTEM = (
 )
 
 
-def ground_prompt(article_text: str, source_text: str, sha: str) -> str:
+def ground_prompt(article_text: str, source_text: str, sha: str,
+                  pack: dict | None = None) -> str:
     return (
         _source_block(source_text, sha) +
+        pack_material_block(pack) +
         "\nDRAFT UNDER REVIEW:\n<<<DRAFT\n%s\nDRAFT>>>\n" % article_text +
         "\nReply with JSON only:\n"
         '{\n'
@@ -416,8 +484,9 @@ def ground_prompt(article_text: str, source_text: str, sha: str) -> str:
     )
 
 
-def ground(provider, article_text: str, source_text: str, sha: str) -> dict:
-    c = provider.complete(GROUNDING_SYSTEM, ground_prompt(article_text, source_text, sha),
+def ground(provider, article_text: str, source_text: str, sha: str,
+           pack: dict | None = None) -> dict:
+    c = provider.complete(GROUNDING_SYSTEM, ground_prompt(article_text, source_text, sha, pack),
                           max_tokens=2600)
     p = parse_json_object(c.text)
     findings = p.get("findings") or []

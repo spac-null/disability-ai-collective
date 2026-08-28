@@ -452,3 +452,92 @@ EVIDENCE: `.claude/WORK.md`; `.claude/PROJECT-MAP.md`; this entry
 CODE: branch `docs/post-cutover-state-sync-2026-08-27`, based on `ad4becc`.
 SUPERSEDES: the `DEFAULT-CUTOVER READINESS RECONCILIATION` proposed phase; all "before default-cutover" task-state wording in the canonical trackers.
 FOLLOW-UP: (1) observe the next natural scheduled `NEW_ENGINE_V1` production run from the then-current `origin/main` and classify the outcome — the run validates `LAST_RUNTIME_CHANGING_BASELINE` = `ad4becc` (PR #41), not that exact HEAD, since docs-only commits after it (this PR included) do not change runtime behaviour; no manual LIVE run substitutes for it; (2) AFTER that, classify the historical "BIC pen" issue as FIXED BY CURRENT CONTRACT / STILL POSSIBLE / OBSOLETE (start points recorded in `.claude/WORK.md` CURRENT PHASE — deliberately not investigated in this sync); (3) unaddressed documentation debt: PRs #28–#38 have no LOGBOOK entries.
+
+---
+
+## 2026-08-28 — Readability contract merged; Research Pack opened for review
+
+WHAT: PR #43 (merged, `16068cc`) rewrote the writing contract after an owner reader
+review of the 28 August natural run: the opening now has to say why the article exists,
+sentences carry one claim, facts carry the argument where they exist, the arrival is
+written once, and thin material must produce a shorter piece rather than a longer one.
+PR #44 (open) adds the RESEARCH_PACK stage the second half of that contract needs.
+
+WHY: the 28 August run wrote 637 words from 118 words of promotional copy inside a
+1,245-word roundup, and its strict fact check found exactly one verifiable claim. Better
+prose does not fix a corpus of one fact. Research had to move in front of Discovery.
+
+EVIDENCE: run `production-20260828T070009Z-fd846f06` (ACCEPT, 9/9 bridge checks, held
+rather than published). Isolated NON-LIVE regressions: the same anchor now reaches
+HOLD_INSUFFICIENT_RESEARCH; a Guardian feature on Minnie Evans reaches ARTICLE with a
+Whitney primary source and two independent ones. Two defects were found by the live runs
+rather than by unit tests -- excerpts verified against fetched instead of carried text,
+and a source carried with no text once the budget ran out -- and one by the first
+regression itself: four university programme pages, genuinely independent of the
+publisher and entirely about the school, briefly bought a publishable verdict. CONTEXT
+now counts as context.
+
+CODE: `automation/new_engine_v1/research.py` (new), `contracts.py` (additive stage, no
+schema bump), `runner.py`, `stages.py`, `decision.py` untouched, `publication_safety_bridge.py`
+(one new blocking check), tests. **MERGED: NO** -- awaiting owner review.
+
+FOLLOW-UP: whether a tertiary source (the Minnie Evans pack counted Wikipedia as
+INDEPENDENT) should be a role of its own; and what research should scope when the anchor
+is a roundup covering several unrelated subjects -- the NARROW verdict currently carries
+that, unresolved.
+
+---
+
+## 2026-08-28 — Research Pack, second increment: tertiary sources and roundup scoping
+
+WHAT: `TERTIARY` became a role of its own (material yes, independence no, primary-source
+substitute no); independence is now the smaller of distinct duplicate clusters and
+distinct publishers; and a `subject_span` verified verbatim against the anchor binds
+Discovery to the subject the pack was built for.
+
+WHY: the first Minnie Evans regression counted a Wikipedia biography as a second witness,
+and a later one counted two Whitney pages and two High Museum pages as four independent
+sources. The 28 August failure was the other half: research scoped the mountain trike and
+Discovery wrote about the tactile exhibition system.
+
+EVIDENCE: 28 August anchor still HOLDs, now with all four queries serving one subject
+instead of wandering to unrelated roundup items. One live end-to-end on the Guardian
+Minnie Evans feature reached `ARTICLE` (5 sources, 3 independent publishers, 755 verified
+subject words), wrote a 624-word article, settled grounding, and then HOLDed on the
+pre-existing V0 rule about unadjudicated `TRUE_UNCERTAIN` findings. Two live defects were
+caught by the runs rather than the tests: the assessor's reply budget was too small for
+five sources (fail-closed, correctly), and one institution's two pages counted twice.
+
+CODE: `automation/new_engine_v1/{research,contracts,invariants,runner,stages}.py`,
+`automation/research_pack_test.py`. `decision.py`, the orchestrator, cron and
+`publish_best.py` untouched. **MERGED: NO.**
+
+FOLLOW-UP: whether V0's HOLD-on-any-unadjudicated-`TRUE_UNCERTAIN` policy is still the
+right rule once articles are written from multi-source packs. Not changed here; it is a
+decision, not a defect.
+
+---
+
+## 2026-08-28 — PR #44 split back to Research Pack only
+
+WHAT: reverted `d91d34a`, `6426010`, `96d1631` from `research/pack-2026-08-28`. Every
+Research Pack implementation file now matches the confirmed research-only boundary
+`656e752`. Append-only: a revert commit, no reset, no force-push.
+
+WHY: three concerns had accumulated on one branch — the Research Pack, TRUE_UNCERTAIN
+adjudication, and a grounder-stability defect found while testing the second. Only the
+first was PR #44's scope. Adjudication consumes grounder classifications, and those have
+contradicted themselves across passes, so grounder stability is characterised first.
+
+PRESERVED: `backup/uncertainty-adjudication-2026-08-28` = `d91d34a`, pushed before the
+revert, verified to resolve to that exact SHA. Nothing was lost.
+
+EVIDENCE unchanged and still standing: 28 August Ljubljana anchor →
+`HOLD_INSUFFICIENT_RESEARCH`; Guardian/Minnie Evans anchor → provenance-valid `ARTICLE`
+pack (646–755 verified subject words, 2–3 independent publishers). Downstream HOLDs in
+those runs came from `decision.py`'s V0 uncertainty rule and from grounder classification,
+not from the pack.
+
+CODE: revert commit on `research/pack-2026-08-28`. `decision.py` untouched throughout.
+**MERGED: NO.**
+

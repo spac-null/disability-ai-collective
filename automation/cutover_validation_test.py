@@ -26,6 +26,7 @@ import new_engine_candidate as CAND                          # noqa: E402
 import publication_safety_bridge as BRIDGE                   # noqa: E402
 import publish_best as PB                                    # noqa: E402
 from new_engine_v1 import contracts as C                     # noqa: E402
+from research_pack_fixture import stub_pack             # noqa: E402
 from new_engine_v1 import runner as R                        # noqa: E402
 from new_engine_v1_test import StubProvider, _source_payload, AT, SOURCE  # noqa: E402
 
@@ -41,7 +42,7 @@ def check(name, cond, detail=""):
 def _accept_run(**kw):
     with tempfile.TemporaryDirectory() as d:
         return R.run(_source_payload(), pathlib.Path(d), StubProvider(**kw), "v", AT,
-                     mode=R.MODE_LIVE)
+                     mode=R.MODE_LIVE, research_fn=stub_pack)
 
 
 # Strict-contract stubs (2026-08-25). A "clean" fact check is no longer merely an
