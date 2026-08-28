@@ -417,6 +417,18 @@ and are **not** cutover blockers — they never blocked the completed default cu
   outside `publish_best.py`'s top-level `_drafts/*.md` glob, byte-identical, evidence
   directory intact. Owner read it and did not approve it for publication.
 
+- **PR #46 — CURRENT_ENGINE seed attempt write-back: OPEN, NOT MERGED.** Closes the one
+  live bug from the NEWS/POOL audit: `mark_news_seed_used` fires only on the legacy
+  path's `commit_success`, which NEW_ENGINE_V1 never reaches, so nothing recorded that a
+  seed had been tried and the 09:00 selector re-chose the same anchor. Live evidence:
+  25+26 Aug ran one MIT Tech Review seed, 27+28 Aug one Dezeen roundup — four natural
+  runs, two anchors. Adds six additive `news_seeds` columns (`ce_attempted_date`,
+  `ce_attempt_run`, `ce_attempt_outcome`, `ce_attempt_terminal`, `ce_pack_verdict`,
+  `ce_pack_subject_words`), a structured terminal/retryable classifier, and a 20-hour
+  cooldown so an outage costs a day rather than a story. `used` keeps its exact meaning.
+  Pack verdicts are RECORDED and deliberately not ranked on — that is NEWS/POOL V2.
+  Feeds, weights, ranking order, cron and the publish path are untouched.
+
 ## CURRENT PHASE
 
 **`POST-CUTOVER NATURAL-RUN VALIDATION`**

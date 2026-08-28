@@ -541,3 +541,26 @@ not from the pack.
 CODE: revert commit on `research/pack-2026-08-28`. `decision.py` untouched throughout.
 **MERGED: NO.**
 
+---
+
+## 2026-08-28 — The seed pool learns that the engine tried
+
+WHAT: NEW_ENGINE_V1 now records its attempt on the seed it used — run id, a
+terminal/retryable outcome classified from structured run fields, and the Research
+Pack's own verdict and subject-word count where the run reached that stage. Selection
+skips a terminally-attempted seed and holds a transiently-failed one for one natural run.
+
+WHY: `used` is set only by the legacy path on commit_success, which this engine never
+reaches by design, so the pool never learned anything. The selector kept picking the same
+top-scoring anchor until it aged out of the 3-day window: 25+26 August ran one MIT Tech
+Review seed, 27+28 August one Dezeen roundup. Four natural runs, two anchors.
+
+DECISION: terminal and retryable are read from `run_status.status`, `reason_code` and
+`decision`, never from prose, and anything unrecognised is RETRYABLE — wrongly retrying
+costs one run, wrongly consuming loses a story. `used` is NOT redefined. Pack verdicts
+are recorded and not yet used for ranking.
+
+CODE: `automation/orchestrator/discovery.py`, `automation/new_engine_production.py`,
+`automation/seed_attempt_writeback_test.py` (new). No feed, weight, ranking-order, cron,
+Grounder, Research Pack or publish change. **MERGED: NO.**
+
