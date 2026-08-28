@@ -516,3 +516,28 @@ FOLLOW-UP: whether V0's HOLD-on-any-unadjudicated-`TRUE_UNCERTAIN` policy is sti
 right rule once articles are written from multi-source packs. Not changed here; it is a
 decision, not a defect.
 
+---
+
+## 2026-08-28 — PR #44 split back to Research Pack only
+
+WHAT: reverted `d91d34a`, `6426010`, `96d1631` from `research/pack-2026-08-28`. Every
+Research Pack implementation file now matches the confirmed research-only boundary
+`656e752`. Append-only: a revert commit, no reset, no force-push.
+
+WHY: three concerns had accumulated on one branch — the Research Pack, TRUE_UNCERTAIN
+adjudication, and a grounder-stability defect found while testing the second. Only the
+first was PR #44's scope. Adjudication consumes grounder classifications, and those have
+contradicted themselves across passes, so grounder stability is characterised first.
+
+PRESERVED: `backup/uncertainty-adjudication-2026-08-28` = `d91d34a`, pushed before the
+revert, verified to resolve to that exact SHA. Nothing was lost.
+
+EVIDENCE unchanged and still standing: 28 August Ljubljana anchor →
+`HOLD_INSUFFICIENT_RESEARCH`; Guardian/Minnie Evans anchor → provenance-valid `ARTICLE`
+pack (646–755 verified subject words, 2–3 independent publishers). Downstream HOLDs in
+those runs came from `decision.py`'s V0 uncertainty rule and from grounder classification,
+not from the pack.
+
+CODE: revert commit on `research/pack-2026-08-28`. `decision.py` untouched throughout.
+**MERGED: NO.**
+

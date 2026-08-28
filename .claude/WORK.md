@@ -367,6 +367,23 @@ and are **not** cutover blockers — they never blocked the completed default cu
     question for deployment: a richer pack produces more checkable specifics, so V0's
     HOLD-on-any-uncertain rule may fire more often than it did on single-source runs.**
   - **Not production-ready on unit tests alone. Not merged, not deployed.**
+
+- **FOLLOW-UP — GROUNDER STABILITY. Read-only investigation required, after the Research
+  Pack merges, before any repair layer is built on grounder output.** Observed twice
+  during PR #44's live runs: (a) materially identical supported text changed
+  classification between grounding passes (`LEGITIMATE_INTERPRETATION` → `TRUE_UNSUPPORTED`,
+  same sentence, same source); (b) run `production-20260828T185627Z` returned three
+  `TRUE_UNSUPPORTED` findings whose own `why` text says the claim IS grounded in the
+  anchor. Distinct from a genuine source conflict, which the same run also produced and
+  which is correct behaviour: the anchor says "nearly 100 pieces", the High Museum source
+  says "more than 100". Not investigated, not fixed, no grounder prompt or policy touched.
+
+- **FOLLOW-UP — UNCERTAINTY ADJUDICATION. Implementation preserved at
+  `backup/uncertainty-adjudication-2026-08-28` (`d91d34adf31b4c6c8db3f3b95575fdf4f8dbaf12`).
+  NOT part of PR #44, NOT approved for merge, decision deferred until the grounder-stability
+  investigation has run.** It consumes grounder classifications, so it must not be built on
+  top of classifications whose consistency is unproven. `decision.py`'s dormant
+  `uncertain_adjudicated` flag remains dormant and untouched.
 - **28 August candidate — HELD.** `_drafts/_archive/2026-08-28-the-order-in-which-you-meet-a-picture.md`,
   outside `publish_best.py`'s top-level `_drafts/*.md` glob, byte-identical, evidence
   directory intact. Owner read it and did not approve it for publication.
