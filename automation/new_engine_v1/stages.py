@@ -22,6 +22,7 @@ wearing the authority of fact.
 """
 from __future__ import annotations
 
+import json
 import re
 
 from .provider import parse_json_object
@@ -496,6 +497,157 @@ def ground(provider, article_text: str, source_text: str, sha: str,
 
 
 # ── PATCH-ONLY REPAIR ──────────────────────────────────────────────────────────
+# ── UNCERTAINTY ADJUDICATION ───────────────────────────────────────────────────
+# V0 held any article carrying a TRUE_UNCERTAIN finding, and that was right while the
+# writer had one source: an uncertain claim there was unresolvable by definition. With a
+# research pack the question changed. The live Minnie Evans run wrote "nearly 100 works
+# made between 1935 and 1981" and a 1935 date; the grounder could not confirm either
+# from the material, and the whole article died for two specifics that could have been
+# weakened to what the pack does support.
+#
+# This stage adjudicates those findings ONCE, against the frozen pack and nothing else.
+# It cannot research, browse, add a source, or introduce evidence the writer did not
+# have. It may keep a claim, weaken it to what the material supports, or remove it -- and
+# nothing it says is taken on trust: the re-grounding that follows is what decides, and
+# any surviving uncertainty still HOLDs.
+ADJUDICATION_SYSTEM = (
+    "You adjudicate uncertain factual claims in a finished draft against the material "
+    "that was authorised for it. You are not a writer, a researcher or a fact-checker.\n\n"
+    "For each finding you may do exactly one of three things:\n"
+    "  RETAIN_SUPPORTED -- the authorised material DOES establish the claim as written. "
+    "Name the source ids that establish it. Do not use this because the claim sounds "
+    "right or is probably true; use it only when you can point at the material.\n"
+    "  REWRITE -- the material supports something weaker. Replace the clause with the "
+    "most specific wording the material actually supports, and name the source ids. "
+    "\"1,200 works\" where the material says \"more than a thousand\" becomes \"more than a "
+    "thousand\". Never replace one invented specific with another.\n"
+    "  REMOVE -- the claim cannot be supported at any specificity and the sentence "
+    "survives without it. Give the exact replacement text for the clause, which may be "
+    "empty.\n"
+    "  MATERIAL_UNRESOLVED -- the claim is load-bearing for the argument and the material "
+    "does not settle it. Say so. This stops the article, which is the correct outcome: "
+    "an article that needs a fact nobody established is not ready.\n\n"
+    "You may not invent a fact, a number, a date, a name or an event. You may not soften "
+    "a claim into vagueness that implies knowledge nobody has. You may not use your own "
+    "knowledge of the subject: if it is not in the material below, it does not exist."
+)
+
+
+def adjudicate_prompt(article_text: str, source_text: str, sha: str,
+                      findings: list, pack: dict | None = None) -> str:
+    items = "\n".join(
+        '  {"id": "%s", "claim": %s, "grounding_reason": %s}'
+        % (f.get("id", "?"), json.dumps(f.get("quote", "")), json.dumps(f.get("why", "")))
+        for f in findings)
+    return (
+        _source_block(source_text, sha) +
+        pack_material_block(pack) +
+        "\nDRAFT AS WRITTEN:\n<<<DRAFT\n%s\nDRAFT>>>\n" % article_text +
+        "\nUNCERTAIN FINDINGS TO ADJUDICATE:\n%s\n" % items +
+        "\nReply with JSON only:\n"
+        '{\n'
+        '  "records": [\n'
+        '    {"id": "F1",\n'
+        '     "action": "RETAIN_SUPPORTED" | "REWRITE" | "REMOVE" | "MATERIAL_UNRESOLVED",\n'
+        '     "quote": "the exact clause from the DRAFT, verbatim -- it is matched '
+        'literally and the record is dropped if it does not match",\n'
+        '     "replacement": "the new text for that clause (REWRITE), or the text that '
+        'should stand in its place (REMOVE, may be empty), or empty for the others",\n'
+        '     "supporting_source_ids": ["S1"],\n'
+        '     "why": "which material settles this, or why nothing does"}\n'
+        '  ]\n'
+        '}\n')
+
+
+def adjudicate(provider, article_text: str, source_text: str, sha: str,
+               findings: list, pack: dict | None = None) -> dict:
+    c = provider.complete(ADJUDICATION_SYSTEM,
+                          adjudicate_prompt(article_text, source_text, sha, findings, pack),
+                          max_tokens=2500)
+    p = parse_json_object(c.text)
+    p["_provider"] = c.identity()
+    return p
+
+
+ADJ_ACTIONS = ("RETAIN_SUPPORTED", "REWRITE", "REMOVE", "MATERIAL_UNRESOLVED")
+
+
+def apply_adjudication(article_text: str, findings: list, adjudication: dict,
+                       pack: dict | None = None) -> dict:
+    """Deterministic. Applies clause substitutions and builds the audit record.
+
+    Patch-only, exactly like `repair`: each edit replaces one verbatim clause. A record
+    whose quote is not literally in the draft is not applied -- it is recorded as
+    unapplied and its finding stays unresolved, because an edit that cannot be located
+    cannot be trusted to have removed anything. A record citing a source id that is not
+    in the pack is treated the same way: nothing outside the frozen pack may justify a
+    retained claim.
+    """
+    from .contracts import sha256_text
+    known = {s.get("source_id") for s in (pack or {}).get("sources", [])}
+    by_id = {f.get("id"): f for f in findings}
+    records, patches, text = [], [], article_text
+    seen = set()
+    for r in (adjudication.get("records") or []):
+        fid = r.get("id")
+        action = r.get("action")
+        finding = by_id.get(fid)
+        if finding is None or fid in seen or action not in ADJ_ACTIONS:
+            continue
+        seen.add(fid)
+        cited = [s for s in (r.get("supporting_source_ids") or []) if s in known]
+        bad_cites = [s for s in (r.get("supporting_source_ids") or []) if s not in known]
+        quote = r.get("quote") or finding.get("quote") or ""
+        rec = {"id": fid, "claim": finding.get("quote", ""),
+               "grounding_reason": finding.get("why", ""), "action": action,
+               "replacement": "", "supporting_source_ids": cited,
+               "unauthorised_source_ids": bad_cites, "applied": False,
+               "why": str(r.get("why", ""))[:400], "verified_by_regrounding": None}
+        if action in ("RETAIN_SUPPORTED",):
+            # No edit. Whether the material really supports it is decided by the second
+            # grounding, never by this record.
+            if bad_cites or not cited:
+                rec["action"] = "MATERIAL_UNRESOLVED"
+                rec["why"] = ("retained without an authorised source id; treated as "
+                              "unresolved. " + rec["why"])[:400]
+            records.append(rec)
+            continue
+        if action == "MATERIAL_UNRESOLVED":
+            records.append(rec)
+            continue
+        replacement = r.get("replacement") or ""
+        if action == "REWRITE" and (not replacement.strip() or bad_cites or not cited):
+            rec["action"] = "MATERIAL_UNRESOLVED"
+            rec["why"] = ("rewrite without authorised support or without replacement "
+                          "text; treated as unresolved. " + rec["why"])[:400]
+            records.append(rec)
+            continue
+        if quote and quote in text:
+            text = text.replace(quote, replacement, 1)
+            rec["replacement"] = replacement
+            rec["applied"] = True
+            patches.append({"finding_id": "U:%s" % fid, "removed": quote,
+                            "inserted": replacement})
+        else:
+            rec["action"] = "MATERIAL_UNRESOLVED"
+            rec["why"] = ("the clause to edit was not found verbatim in the draft; "
+                          "treated as unresolved. " + rec["why"])[:400]
+        records.append(rec)
+    # A finding the adjudicator simply ignored is unresolved, not resolved by silence.
+    for f in findings:
+        if f.get("id") not in seen:
+            records.append({"id": f.get("id"), "claim": f.get("quote", ""),
+                            "grounding_reason": f.get("why", ""),
+                            "action": "MATERIAL_UNRESOLVED", "replacement": "",
+                            "supporting_source_ids": [], "unauthorised_source_ids": [],
+                            "applied": False, "verified_by_regrounding": None,
+                            "why": "not adjudicated; unresolved by default"})
+    return {"records": records, "patches": patches, "article_text": text,
+            "article_sha256": sha256_text(text),
+            "material_unresolved": [r["id"] for r in records
+                                    if r["action"] == "MATERIAL_UNRESOLVED"]}
+
+
 def repair(article_text: str, findings: list) -> dict | None:
     """Apply suggested patches by exact clause substitution. Deterministic, no model.
 

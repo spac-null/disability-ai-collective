@@ -168,9 +168,30 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
             if stray:
                 problems.append("writer prompt carries unauthorised source(s): %s"
                                 % ", ".join(sorted(stray)[:3]))
+        # Uncertainty adjudication, where it ran: every claim kept or weakened must
+        # name material from THIS pack. An adjudicated claim citing an unknown source
+        # id would be a factual assertion justified by something nobody fetched.
+        gfp = A[C.GROUNDING_FINDINGS].payload if C.GROUNDING_FINDINGS in A else {}
+        adj = (gfp.get("uncertainty_adjudication") or {})
+        known_ids = {s.get("source_id") for s in pk.get("sources", [])}
+        for rec in adj.get("records", []):
+            if rec.get("unauthorised_source_ids"):
+                problems.append("adjudication record %s cites source(s) outside the pack: %s"
+                                % (rec.get("id"), ", ".join(rec["unauthorised_source_ids"][:3])))
+            stray = [s for s in (rec.get("supporting_source_ids") or [])
+                     if s not in known_ids]
+            if stray:
+                problems.append("adjudication record %s cites unknown source(s): %s"
+                                % (rec.get("id"), ", ".join(sorted(stray)[:3])))
+            if rec.get("action") in ("RETAIN_SUPPORTED", "REWRITE") \
+                    and not rec.get("supporting_source_ids"):
+                problems.append("adjudication record %s kept a claim with no source"
+                                % rec.get("id"))
         r.add("research_pack_provenance", not problems,
-              "%d source(s), all fetched, hashed and declared by every downstream stage"
-              % len(pk.get("sources", [])) if not problems else "; ".join(problems[:4]))
+              "%d source(s), all fetched, hashed and declared by every downstream stage%s"
+              % (len(pk.get("sources", [])),
+                 ("; %d adjudicated claim(s) traced to pack sources"
+                  % len(adj.get("records", []))) if adj else "") if not problems else "; ".join(problems[:4]))
         authorised_text = "\n\n".join([source_text] +
                                        [s.get("text", "") for s in pk.get("sources", [])
                                         if s.get("role") != "ANCHOR"])
