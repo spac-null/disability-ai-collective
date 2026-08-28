@@ -77,7 +77,7 @@ def _title_from(body: str, fallback: str, writer_title: str = "") -> str:
 
 def run_scheduled(orch, *, rehearsal: bool = False,
                   evidence_root: str | None = None,
-                  model: str = DEFAULT_MODEL) -> dict:
+                  model: str = DEFAULT_MODEL, research_fn=None) -> dict:
     """One scheduled CURRENT_ENGINE run. `orch` is the production orchestrator.
 
     Source acquisition reuses the stabilised upstream path; no legacy commission or Fable
@@ -123,7 +123,8 @@ def run_scheduled(orch, *, rehearsal: bool = False,
                      run, payload["provenance"]["url"],
                      payload["provenance"]["original_length_chars"])
 
-    out = R.run(payload, root, Provider(model=model), run, now.isoformat())
+    out = R.run(payload, root, Provider(model=model), run, now.isoformat(),
+                research_fn=research_fn)
     (root / run / "ACQUISITION.json").write_text(json.dumps(
         {"seed_id": seed["id"],
          "attempts": getattr(orch, "_source_acquisition_attempts", []),

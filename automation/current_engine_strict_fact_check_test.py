@@ -58,6 +58,7 @@ sys.path.insert(0, str(HERE))
 import publication_safety_bridge as BRIDGE                   # noqa: E402
 import publish_best as PB                                    # noqa: E402
 from new_engine_v1 import runner as R                        # noqa: E402
+from research_pack_fixture import stub_pack             # noqa: E402
 from new_engine_v1_test import StubProvider, _source_payload, AT   # noqa: E402
 
 sys.path.insert(0, str(HERE / "orchestrator"))
@@ -125,7 +126,7 @@ MULTI_OBJECT_RAW = '{"claims": [{"type": "STAT", "subject": "A", "claim": "x"}]}
 def _accept_run():
     with tempfile.TemporaryDirectory() as d:
         return R.run(_source_payload(), pathlib.Path(d), StubProvider(), "v", AT,
-                     mode=R.MODE_LIVE)
+                     mode=R.MODE_LIVE, research_fn=stub_pack)
 
 
 def _bridge_with(fc_result):

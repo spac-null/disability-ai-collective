@@ -137,6 +137,49 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
         r.add("source_provenance_intact", False, "SOURCE_SNAPSHOT artifact absent")
         source_text = ""
 
+    # 2b. Research Pack provenance (2026-08-28). Narrow and explicit: it does not
+    # judge whether the research was GOOD -- the engine's sufficiency verdict already
+    # decided that before a word was written -- only that the material the article was
+    # written from is the material on disk. A run with no pack (an engine build that
+    # predates the stage) is not silently waved through: the check states that plainly
+    # and stays non-blocking there, while any pack that IS present must be intact.
+    if C.RESEARCH_PACK in A:
+        rp = A[C.RESEARCH_PACK]
+        pk = rp.payload
+        problems = []
+        for s in pk.get("sources", []):
+            if not all(s.get(k) for k in ("source_id", "role", "url", "accessed_at",
+                                          "sha256", "fetch_status")):
+                problems.append("%s: incomplete provenance" % s.get("source_id"))
+            elif s.get("fetch_status") != "ok":
+                problems.append("%s: fetch_status=%s" % (s["source_id"], s["fetch_status"]))
+            elif C.sha256_text(s.get("text", "")) != s["sha256"]:
+                problems.append("%s: text does not match its hash" % s["source_id"])
+        # the pack the writer actually used must be THIS pack, by hash, not another
+        for stage in (C.DISCOVERY, C.ARTICLE_FORM, C.WRITER_INPUT):
+            if stage in A and A[stage].input_hashes.get("research_pack") != rp.content_hash():
+                problems.append("%s did not declare this pack" % stage)
+        # and no source may appear in the writer prompt that is not in the pack
+        if C.WRITER_INPUT in A:
+            prompt = A[C.WRITER_INPUT].payload.get("prompt_text", "")
+            known = {s.get("url") for s in pk.get("sources", [])}
+            cited = set(re.findall(r"url=(\S+)", prompt))
+            stray = [u for u in cited - known if u]
+            if stray:
+                problems.append("writer prompt carries unauthorised source(s): %s"
+                                % ", ".join(sorted(stray)[:3]))
+        r.add("research_pack_provenance", not problems,
+              "%d source(s), all fetched, hashed and declared by every downstream stage"
+              % len(pk.get("sources", [])) if not problems else "; ".join(problems[:4]))
+        authorised_text = "\n\n".join([source_text] +
+                                       [s.get("text", "") for s in pk.get("sources", [])
+                                        if s.get("role") != "ANCHOR"])
+    else:
+        r.add("research_pack_provenance", True,
+              "no RESEARCH_PACK artifact in this run -- anchor-only provenance applies",
+              blocking=False)
+        authorised_text = source_text
+
     # 3. Discovery source-anchor invariant
     if C.DISCOVERY in A:
         ok, code, detail = INV.check_anchor(A[C.DISCOVERY].payload, source_text)
@@ -189,7 +232,11 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
     try:
         from orchestrator.human_detail_provenance import (
             check_provenance, REASON_GROUNDED_QUOTE)
-        hd = check_provenance(article, source_text) or []
+        # Authorised material, not just the anchor: with a Research Pack a personal
+        # detail can be grounded in a fetched source. Passing the anchor alone would
+        # block a correctly grounded claim. It cannot loosen the check -- unfetched,
+        # unhashed material never reaches `authorised_text`.
+        hd = check_provenance(article, authorised_text) or []
         # The module classifies every personal-contact claim it finds; a
         # GROUNDED_QUOTE is fine. Only the ungrounded classifications block --
         # treating any entry as a failure would block a correctly grounded claim.

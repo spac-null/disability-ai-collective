@@ -26,6 +26,7 @@ import engine_switch as ES                                  # noqa: E402
 import new_engine_candidate as CAND                          # noqa: E402
 import publish_best as PB                                    # noqa: E402
 from new_engine_v1 import contracts as C                     # noqa: E402
+from research_pack_fixture import stub_pack             # noqa: E402
 from new_engine_v1 import invariants as INV                  # noqa: E402
 from new_engine_v1 import runner as R                        # noqa: E402
 from new_engine_v1_test import (StubProvider, DISCOVERY_REPLY, FORM_REPLY,  # noqa: E402
@@ -42,7 +43,7 @@ def check(name, cond, detail=""):
 
 def _run(provider, tmp, name="t"):
     return R.run(_source_payload(), pathlib.Path(tmp), provider, name, AT,
-                 mode=R.MODE_LIVE)
+                 mode=R.MODE_LIVE, research_fn=stub_pack)
 
 
 # ── 1 + 2: Discovery source-anchor invariant ──────────────────────────────────
@@ -111,7 +112,8 @@ def test_2b_bounded_repair_can_succeed():
 
     with tempfile.TemporaryDirectory() as d:
         out = R.run(_source_payload(), pathlib.Path(d),
-                    RepairProvider(discovery=bad), "rp", AT, mode=R.MODE_LIVE)
+                    RepairProvider(discovery=bad), "rp", AT, mode=R.MODE_LIVE,
+                    research_fn=stub_pack)
         check("a successful bounded repair lets the run continue",
               out["decision"] == "ACCEPT", out["reasons"])
         dp = out["artifacts"][C.DISCOVERY].payload

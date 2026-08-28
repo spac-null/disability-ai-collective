@@ -19,6 +19,14 @@ SCHEMA_VERSION = "shadow-v0.1"
 
 # Stage identities, in pipeline order.
 SOURCE_SNAPSHOT = "SOURCE_SNAPSHOT"
+# ADDITIVE EXTENSION (2026-08-28), deliberately not a schema-version bump. The eight
+# frozen stages keep their payload shapes, their validation and therefore their hashes,
+# so a frozen shadow run still validates and still compares byte-for-byte. RESEARCH_PACK
+# is OPTIONAL in REQUIRED_STAGES for exactly that reason: a run recorded before this
+# stage existed is not retroactively invalid. What is NOT optional is its content --
+# where a pack is present, every source in it must carry provenance and every excerpt
+# must be a verbatim span of fetched bytes, checked below.
+RESEARCH_PACK = "RESEARCH_PACK"
 DISCOVERY = "DISCOVERY"
 ARTICLE_FORM = "ARTICLE_FORM"
 WRITER_INPUT = "WRITER_INPUT"
@@ -28,13 +36,21 @@ GROUNDING_REPAIR = "GROUNDING_REPAIR"
 SHADOW_DECISION = "SHADOW_DECISION"
 
 STAGE_ORDER = [
-    SOURCE_SNAPSHOT, DISCOVERY, ARTICLE_FORM, WRITER_INPUT,
+    SOURCE_SNAPSHOT, RESEARCH_PACK, DISCOVERY, ARTICLE_FORM, WRITER_INPUT,
     WRITER_OUTPUT, GROUNDING_FINDINGS, GROUNDING_REPAIR, SHADOW_DECISION,
 ]
 
 # Stages whose absence is fatal. GROUNDING_REPAIR is optional: a draft with no
-# unsupported findings legitimately has nothing to repair.
-REQUIRED_STAGES = [s for s in STAGE_ORDER if s != GROUNDING_REPAIR]
+# unsupported findings legitimately has nothing to repair. RESEARCH_PACK is optional
+# for the compatibility reason stated at its definition, not because a production run
+# may skip research -- the runner decides that, and fails closed when it cannot.
+OPTIONAL_STAGES = (GROUNDING_REPAIR, RESEARCH_PACK)
+REQUIRED_STAGES = [s for s in STAGE_ORDER if s not in OPTIONAL_STAGES]
+
+# Roles a pack source may carry. ANCHOR is the source that caused the subject to be
+# discovered; everything else had to be found, fetched and hashed to exist here.
+SOURCE_ROLES = ("ANCHOR", "PRIMARY", "INDEPENDENT", "CONTEXT", "COUNTERWEIGHT")
+SUFFICIENCY_VERDICTS = ("ARTICLE", "SHORT_ARTICLE", "NARROW", "HOLD_INSUFFICIENT_RESEARCH")
 
 # Markers from the legacy production prompt surface. WRITER_INPUT is checked against
 # these so a legacy prompt cannot enter the new architecture unnoticed. Sourced from
@@ -111,6 +127,47 @@ def validate(artifact: Artifact) -> None:
         if sha256_text(p["source_text"]) != p["source_sha256"]:
             raise ContractViolation("SOURCE_SNAPSHOT: source_sha256 does not match source_text")
         _require(p["provenance"], ["origin"], "SOURCE_SNAPSHOT.provenance")
+    elif s == RESEARCH_PACK:
+        _require(p, ["subject", "sources", "coverage", "sufficiency", "pack_sha256"], s)
+        if not isinstance(p["sources"], list) or not p["sources"]:
+            raise ContractViolation("RESEARCH_PACK: sources must be a non-empty list")
+        if (p["sufficiency"] or {}).get("verdict") not in SUFFICIENCY_VERDICTS:
+            raise ContractViolation("RESEARCH_PACK: sufficiency.verdict %r is not one of %s"
+                                    % ((p["sufficiency"] or {}).get("verdict"),
+                                       ", ".join(SUFFICIENCY_VERDICTS)))
+        anchors = [x for x in p["sources"] if x.get("role") == "ANCHOR"]
+        if len(anchors) != 1:
+            raise ContractViolation("RESEARCH_PACK: exactly one ANCHOR source required, got %d"
+                                    % len(anchors))
+        ids = set()
+        for src in p["sources"]:
+            _require(src, ["source_id", "role", "url", "accessed_at", "sha256",
+                           "fetch_status", "content_length", "text"],
+                     "RESEARCH_PACK.source")
+            if src["source_id"] in ids:
+                raise ContractViolation("RESEARCH_PACK: duplicate source_id %r" % src["source_id"])
+            ids.add(src["source_id"])
+            if src["role"] not in SOURCE_ROLES:
+                raise ContractViolation("RESEARCH_PACK: %s has role %r, not one of %s"
+                                        % (src["source_id"], src["role"], ", ".join(SOURCE_ROLES)))
+            if src["fetch_status"] != "ok":
+                raise ContractViolation(
+                    "RESEARCH_PACK: %s has fetch_status %r -- a source that was not "
+                    "successfully fetched supplies no material and may not be in the pack"
+                    % (src["source_id"], src["fetch_status"]))
+            if sha256_text(src["text"]) != src["sha256"]:
+                raise ContractViolation("RESEARCH_PACK: %s sha256 does not match its text"
+                                        % src["source_id"])
+            # Every excerpt the pack offers downstream must really be in the bytes it
+            # was taken from. This is the search-result-is-not-a-source rule made
+            # structural: a model-written span that is not in the fetched text cannot
+            # be carried, whatever produced it.
+            hay = " ".join(src["text"].split()).lower()
+            for ex in (src.get("excerpts") or []):
+                if " ".join(str(ex).split()).lower() not in hay:
+                    raise ContractViolation(
+                        "RESEARCH_PACK: %s carries an excerpt that is not a verbatim span "
+                        "of its own fetched text: %r" % (src["source_id"], str(ex)[:80]))
     elif s == DISCOVERY:
         _require(p, ["dominant_reading", "disturbance", "perceptual_instrument",
                      "what_becomes_knowable", "grounding_boundaries"], s)

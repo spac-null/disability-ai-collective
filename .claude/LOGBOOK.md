@@ -452,3 +452,37 @@ EVIDENCE: `.claude/WORK.md`; `.claude/PROJECT-MAP.md`; this entry
 CODE: branch `docs/post-cutover-state-sync-2026-08-27`, based on `ad4becc`.
 SUPERSEDES: the `DEFAULT-CUTOVER READINESS RECONCILIATION` proposed phase; all "before default-cutover" task-state wording in the canonical trackers.
 FOLLOW-UP: (1) observe the next natural scheduled `NEW_ENGINE_V1` production run from the then-current `origin/main` and classify the outcome — the run validates `LAST_RUNTIME_CHANGING_BASELINE` = `ad4becc` (PR #41), not that exact HEAD, since docs-only commits after it (this PR included) do not change runtime behaviour; no manual LIVE run substitutes for it; (2) AFTER that, classify the historical "BIC pen" issue as FIXED BY CURRENT CONTRACT / STILL POSSIBLE / OBSOLETE (start points recorded in `.claude/WORK.md` CURRENT PHASE — deliberately not investigated in this sync); (3) unaddressed documentation debt: PRs #28–#38 have no LOGBOOK entries.
+
+---
+
+## 2026-08-28 — Readability contract merged; Research Pack opened for review
+
+WHAT: PR #43 (merged, `16068cc`) rewrote the writing contract after an owner reader
+review of the 28 August natural run: the opening now has to say why the article exists,
+sentences carry one claim, facts carry the argument where they exist, the arrival is
+written once, and thin material must produce a shorter piece rather than a longer one.
+PR #44 (open) adds the RESEARCH_PACK stage the second half of that contract needs.
+
+WHY: the 28 August run wrote 637 words from 118 words of promotional copy inside a
+1,245-word roundup, and its strict fact check found exactly one verifiable claim. Better
+prose does not fix a corpus of one fact. Research had to move in front of Discovery.
+
+EVIDENCE: run `production-20260828T070009Z-fd846f06` (ACCEPT, 9/9 bridge checks, held
+rather than published). Isolated NON-LIVE regressions: the same anchor now reaches
+HOLD_INSUFFICIENT_RESEARCH; a Guardian feature on Minnie Evans reaches ARTICLE with a
+Whitney primary source and two independent ones. Two defects were found by the live runs
+rather than by unit tests -- excerpts verified against fetched instead of carried text,
+and a source carried with no text once the budget ran out -- and one by the first
+regression itself: four university programme pages, genuinely independent of the
+publisher and entirely about the school, briefly bought a publishable verdict. CONTEXT
+now counts as context.
+
+CODE: `automation/new_engine_v1/research.py` (new), `contracts.py` (additive stage, no
+schema bump), `runner.py`, `stages.py`, `decision.py` untouched, `publication_safety_bridge.py`
+(one new blocking check), tests. **MERGED: NO** -- awaiting owner review.
+
+FOLLOW-UP: whether a tertiary source (the Minnie Evans pack counted Wikipedia as
+INDEPENDENT) should be a role of its own; and what research should scope when the anchor
+is a roundup covering several unrelated subjects -- the NARROW verdict currently carries
+that, unresolved.
+

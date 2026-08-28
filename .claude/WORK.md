@@ -325,6 +325,41 @@ and are **not** cutover blockers — they never blocked the completed default cu
   covers on `origin/main`. None of this was archived, deleted, or committed this pass — it remains
   exactly where it was, and its risk is stated here rather than assumed away.
 
+## IN REVIEW — NOT MERGED
+
+- **PR #43 — readability / popular-nonfiction writing contract: MERGED** 2026-08-28,
+  merge `16068cc`. `PROSE_DOCTRINE`, `FORM_SYSTEM` and one line of `build_writer_input`
+  only; no research, network, source-selection, fact-check, bridge, cron or publishing
+  change. What it fixed and what it explicitly could not fix without better input is in
+  its own PR body.
+- **PR #44 — RESEARCH PACK: OPEN, NOT MERGED.** Adds a bounded pre-writing research
+  stage between the anchor snapshot and Discovery, so an article is written from
+  material rather than from one fact read five ways.
+  - New artifact `RESEARCH_PACK` (`automation/new_engine_v1/research.py`), additive in
+    `contracts.py` — **`SCHEMA_VERSION` deliberately unchanged** and the stage is
+    OPTIONAL in `REQUIRED_STAGES`, so the eight frozen stages keep their payloads and
+    hashes and a pre-existing shadow run still validates.
+  - Pipeline: `SOURCE_SNAPSHOT → RESEARCH_PACK → sufficiency → DISCOVERY → ARTICLE_FORM
+    → WRITER_INPUT → WRITER_OUTPUT → GROUNDING (over the pack) → fact check → bridge`.
+  - Bounds: 4 queries, 12 candidate URLs, 5 fetched sources, 12k chars/source, 40k pack
+    budget, 20s per fetch, no retry loop.
+  - A search result is not a source: material enters only from bytes fetched, hashed and
+    persisted, and every excerpt must be a verbatim span of the text the pack carries —
+    enforced in `contracts.validate`, not by convention.
+  - Sufficiency: `ARTICLE` / `SHORT_ARTICLE` / `NARROW` / `HOLD_INSUFFICIENT_RESEARCH`,
+    model-free, judged on roles and independence rather than a URL count.
+  - Bridge gains one narrow blocking check, `research_pack_provenance`. No existing
+    check was weakened; the strict fact check and claim taxonomy are untouched.
+  - Evidence: two isolated NON-LIVE regressions (`automation/research_pack_test.py` for
+    the contract; run records under `/tmp/research-regress-out/` on Trident).
+    The 28 August Ljubljana anchor reaches **HOLD_INSUFFICIENT_RESEARCH**; a richer
+    single-subject anchor (Guardian on Minnie Evans) reaches **ARTICLE** with a PRIMARY
+    museum source and two independent ones. Neither run wrote an article.
+  - **Not production-ready on unit tests alone. Not merged, not deployed.**
+- **28 August candidate — HELD.** `_drafts/_archive/2026-08-28-the-order-in-which-you-meet-a-picture.md`,
+  outside `publish_best.py`'s top-level `_drafts/*.md` glob, byte-identical, evidence
+  directory intact. Owner read it and did not approve it for publication.
+
 ## CURRENT PHASE
 
 **`POST-CUTOVER NATURAL-RUN VALIDATION`**
