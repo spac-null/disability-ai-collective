@@ -368,6 +368,18 @@ and are **not** cutover blockers — they never blocked the completed default cu
     HOLD-on-any-uncertain rule may fire more often than it did on single-source runs.**
   - **Not production-ready on unit tests alone. Not merged, not deployed.**
 
+- **GROUNDER V2 SHADOW — PR #45, OPEN, NOT MERGED, DEFAULT OFF.** Claim-focused
+  grounding as a comparison artifact only: deterministic sentence backbone →
+  narrow type/atomicity pass → deterministic TF-IDF retrieval over the frozen pack →
+  focused source-relative classifier → `GROUNDING_V2_SHADOW.json`. It cannot set
+  `GROUNDING_FINDINGS`, move a decision, trigger repair, reach the fact check or the
+  bridge, and it does not run unless `CRIPMINDS_GROUNDING_V2_SHADOW` is set. Natural
+  production behaviour after merge is unchanged. Frozen-set result: 113/113 sentences
+  covered, 0 unresolved boundaries, 32/32 gold assertions represented, 11/13 compound
+  claims separated — and **not ready to gate**: the "nearly 100" vs "more than 100"
+  conflict was lost when retrieval failed to surface both sides, and two claims were
+  wrongly called UNSUPPORTED. Details in the PR.
+
 - **FOLLOW-UP — GROUNDER STABILITY. Read-only investigation required, after the Research
   Pack merges, before any repair layer is built on grounder output.** Observed twice
   during PR #44's live runs: (a) materially identical supported text changed
