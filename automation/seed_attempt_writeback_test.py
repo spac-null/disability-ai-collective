@@ -249,7 +249,11 @@ def test_nothing_else_was_touched():
         check("the seed write-back code does not reach into %s" % foreign,
               foreign not in seed_code)
     prod = (HERE / "new_engine_production.py").read_text()
-    writeback = prod[prod.index("def _record_seed_attempt"):prod.index("def run_scheduled")]
+    # The write-back's OWN body, not everything between it and run_scheduled: other
+    # functions have since been defined in that gap, and a guard on this feature's reach
+    # must not fail on a neighbour's docstring.
+    _from = prod.index("def _record_seed_attempt")
+    writeback = prod[_from:prod.index("\ndef ", _from + 1)]
     check("the write-back only calls the orchestrator's own seed methods",
           "mark_news_seed_current_engine_attempt" in writeback
           and "classify_current_engine_attempt" in writeback

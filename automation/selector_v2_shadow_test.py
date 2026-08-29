@@ -442,7 +442,10 @@ def test_no_production_global_is_mutated_even_transiently():
 def test_cache_hash_covers_the_whole_source_not_the_model_slice():
     """If a source changes past the 1,100 words the assessor sees, the cache must still
     know the source changed."""
-    long_body = RICH_BODY + ("\n\nTail section. " * 40)
+    # Deliberately past BODY_WORDS_TO_MODEL: the point of the test is a change the
+    # assessor's window cannot see, so the body has to be longer than that window.
+    long_body = RICH_BODY + ("\n\nTail section beyond the assessor's window. "
+                             * (SV.BODY_WORDS_TO_MODEL // 2))
     BODIES["https://x.example/long"] = long_body
     try:
         conn = _db([("a", "https://x.example/long", "one", MP.CULTURE, 1, 0.5, None, "P1")])
@@ -500,7 +503,10 @@ def main():
                test_unchanged_source_is_not_reassessed_and_changed_source_is,
                test_ordering_is_material_first_and_explainable,
                test_shadow_cannot_touch_production,
-               test_bounds_are_declared):
+               test_bounds_are_declared,
+               test_no_production_global_is_mutated_even_transiently,
+               test_cache_hash_covers_the_whole_source_not_the_model_slice,
+               test_flag_off_means_nothing_happens):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)

@@ -24,6 +24,7 @@ import datetime
 import json
 import os
 import pathlib
+import sqlite3
 import re
 import sys
 
@@ -32,6 +33,8 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 import new_engine_candidate as CAND                      # noqa: E402
+import news_fetcher as NF                                # noqa: E402
+import selector_v2 as SV                                 # noqa: E402
 import publication_safety_bridge as BRIDGE               # noqa: E402
 import title_coherence as TC                             # noqa: E402
 from new_engine_v1 import contracts as C                 # noqa: E402
@@ -100,6 +103,66 @@ def _record_seed_attempt(orch, seed: dict, run: str, out: dict, result: dict) ->
     except Exception as e:                                  # never reaches the caller
         orch.logger.warning("CURRENT_ENGINE %s: seed attempt write-back failed: %s",
                             run, e)
+
+
+def _selector_v2_shadow(orch, seed: dict, run: str, model: str) -> None:
+    """SELECTOR V2, shadow only. OFF unless CRIPMINDS_SELECTOR_V2_SHADOW is set.
+
+    Runs at the very end of a run -- once on the HOLD path, once on the ACCEPT path,
+    both after the seed-attempt write-back and after every artefact has been persisted.
+    By then the anchor is a fact: it was selected, fetched and carried through the whole
+    engine before this function existed to the run. All it does is record what a
+    different selector would have picked from the same eligible pool, alongside what the
+    authoritative selector actually picked.
+
+    It reuses the PRODUCTION acquisition path (`get_source_text` plus the orchestrator's
+    own classification), because a second weaker fetcher would mark whole publishers
+    unreadable and make the comparison a lie.
+
+    Every failure is contained. An experiment must never be able to break a run that has
+    already finished its real work -- not by raising, not by leaving a connection open on
+    the seed database, and not by being slow enough to matter. The exception is logged as
+    a SELECTOR_V2 warning rather than swallowed silently: an experiment that quietly
+    stops running is worse than one that visibly fails.
+    """
+    if not SV.enabled():
+        return
+    conn = None
+    try:
+        conn = sqlite3.connect(str(orch.discovery_db))
+
+        def acquire(url):
+            text = orch.get_source_text(url)
+            status, _reason = orch.classify_source_acquisition(
+                text or "", orch.get_source_origin(url),
+                orch.get_source_paragraph_count(url))
+            return (text or ""), status
+
+        report = SV.run_shadow(
+            conn, Provider(model=model), acquire=acquire,
+            score_item=NF.score_item, boosters=NF.DISABILITY_BOOSTERS,
+            keyword_matches=NF._keyword_matches,
+            old_winner={"id": seed["id"], "title": seed.get("title"),
+                        "source_name": seed.get("source_name"),
+                        "relevance_score": seed.get("relevance_score")})
+        SV.record_comparison(conn, run, report)
+        w = report.get("shadow_winner") or {}
+        orch.logger.info(
+            "SELECTOR_V2 shadow %s: old=%s | shadow=%s (%s) | same=%s | "
+            "candidates=%d fetched=%d calls=%d",
+            run, (seed.get("title") or "")[:60], (w.get("title") or "none")[:60],
+            w.get("assessment"), report.get("same_winner"),
+            report["metrics"]["candidates"], report["metrics"]["fetched"],
+            report["metrics"]["model_calls"])
+    except Exception as e:                                # never reaches the caller
+        orch.logger.warning("SELECTOR_V2 shadow failed (ignored, run unaffected): %s: %s",
+                            type(e).__name__, str(e)[:300])
+    finally:
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 
 def run_scheduled(orch, *, rehearsal: bool = False,
@@ -172,6 +235,7 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     if out["decision"] != "ACCEPT":
         orch.logger.warning("CURRENT_ENGINE %s: HOLD — %s", run, "; ".join(out["reasons"])[:300])
         _record_seed_attempt(orch, seed, run, out, result)
+        _selector_v2_shadow(orch, seed, run, model)
         return result
 
     # ── ACCEPT: run the publication-safety bridge ────────────────────────────
@@ -214,4 +278,5 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     _record_seed_attempt(orch, seed, run, out, result)
     orch.logger.info("CURRENT_ENGINE %s: ACCEPT — candidate %s (publication_eligible=%s)",
                      run, path.name, result["publication_eligible"])
+    _selector_v2_shadow(orch, seed, run, model)
     return result

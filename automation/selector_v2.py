@@ -22,11 +22,19 @@ So this stage stops guessing from headlines. It reads the source and asks one qu
 is there enough here to justify researching it?
 
 WHAT IT IS NOT
-Not authoritative. It writes its own table and its own report; it cannot change which
+Not authoritative. It writes its own tables and its own report; it cannot change which
 seed CURRENT_ENGINE receives, cannot touch disability_angle, cannot invoke Research Pack,
 Discovery, Form or the Writer, and does not run at all unless CRIPMINDS_SELECTOR_V2_SHADOW
 is explicitly set. The old selector stays exactly as it is until a cutover is separately
 decided.
+
+WHERE IT RUNS
+new_engine_production._selector_v2_shadow, at the very end of a scheduled run -- after
+the authoritative seed has been selected, fetched, carried through the whole engine and
+written back. One comparison per run lands in 'selector_v2_shadow_runs': what the
+authoritative selector chose, what this one would have chosen, whether they agreed.
+Any failure inside it is logged as a SELECTOR_V2 warning and goes no further; a run that has already finished its real
+work cannot be broken by an experiment.
 """
 from __future__ import annotations
 
@@ -43,6 +51,7 @@ from new_engine_v1.provider import parse_json_object
 
 SHADOW_ENV = "CRIPMINDS_SELECTOR_V2_SHADOW"
 TABLE = "seed_material_assessments"
+RUNS_TABLE = "selector_v2_shadow_runs"
 
 # ── bounds, all reported ──────────────────────────────────────────────────────
 STREAM_THEME = 6                 # A: legacy theme signal, booster removed
@@ -105,6 +114,61 @@ def ensure_schema(conn) -> None:
         errors TEXT,
         PRIMARY KEY (seed_id, source_sha256)
     )""" % TABLE)
+    conn.commit()
+
+
+def ensure_runs_schema(conn) -> None:
+    """One row per natural run: what the authoritative selector chose, what the shadow
+    would have chosen, and why. Accumulating these as they happen is the whole point --
+    reconstructing old-vs-new pairs after the fact is not possible once the pool moves."""
+    conn.execute("""CREATE TABLE IF NOT EXISTS %s (
+        run_id TEXT PRIMARY KEY,
+        run_at TEXT,
+        old_seed_id TEXT,
+        old_title TEXT,
+        old_source_name TEXT,
+        old_relevance_score REAL,
+        shadow_seed_id TEXT,
+        shadow_title TEXT,
+        shadow_source_name TEXT,
+        shadow_assessment TEXT,
+        shadow_richness TEXT,
+        shadow_researchability TEXT,
+        shadow_exposed_via TEXT,
+        shadow_rank INTEGER,
+        shadow_explanation TEXT,
+        same_winner INTEGER,
+        candidates INTEGER,
+        fetched INTEGER,
+        acquisition_failed INTEGER,
+        model_calls INTEGER,
+        status TEXT
+    )""" % RUNS_TABLE)
+    conn.commit()
+
+
+def record_comparison(conn, run_id: str, report: dict) -> None:
+    """Persist one side-by-side result in the shadow's own table. Never news_seeds."""
+    ensure_runs_schema(conn)
+    old = report.get("old_authoritative_winner") or {}
+    w = report.get("shadow_winner") or {}
+    m = report.get("metrics", {})
+    conn.execute(
+        "INSERT OR REPLACE INTO %s VALUES (%s)" % (RUNS_TABLE, ",".join("?" * 21)),
+        (run_id, report.get("run_at"), old.get("id"), old.get("title"),
+         old.get("source_name"), old.get("relevance_score"),
+         w.get("seed_id"), w.get("title"), w.get("source_name"), w.get("assessment"),
+         w.get("material_richness"), w.get("researchability"), w.get("exposed_via"),
+         w.get("shadow_rank"),
+         json.dumps({k: w.get(k) for k in
+                     ("concrete_subject", "investigable_question", "reason",
+                      "theme_signal", "publisher_penalty", "publisher_penalty_detail",
+                      "legacy_relevance_score", "legacy_disability_angle",
+                      "body_words", "det_roundup", "det_promotional")},
+                    ensure_ascii=False),
+         1 if report.get("same_winner") else 0, m.get("candidates"), m.get("fetched"),
+         m.get("acquisition_failed"), m.get("model_calls"),
+         "OK" if w else "NO_SHADOW_WINNER"))
     conn.commit()
 
 
