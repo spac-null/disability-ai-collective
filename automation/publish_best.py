@@ -408,6 +408,12 @@ def main(dry_run=False):
 
     published = False
     dest = None
+    # Every path this run intentionally changes, recorded as it changes. Staging is
+    # built from THIS list and nothing else. The alternative -- staging a directory and
+    # trusting that only intended files live in it -- is what put a declined candidate
+    # into a public commit on 2026-08-29 (ab322bb): `git add -A _drafts` swept two
+    # untracked drafts the publisher had never touched into an archive commit.
+    mutated: list[str] = []
     if candidates:
         candidates.sort(key=lambda x: x[0], reverse=True)
         best_score, best_draft, editorial, fresh, prot, title, persona, _fm = candidates[0]
@@ -429,10 +435,12 @@ def main(dry_run=False):
             shutil.move(str(best_draft), str(dest))
             set_publish_date(dest, now)
             published = True
+            mutated += [str(dest), str(best_draft)]      # created, and moved out of
 
             # Every other in-window candidate just lost this cycle — bump its aging counter.
             for _score, draft, *_rest, fm in candidates[1:]:
                 bump_attempts(draft, fm)
+                mutated.append(str(draft))               # front matter rewritten
     else:
         print("No scoreable drafts in the last %d days." % AGE_WINDOW_DAYS)
 
@@ -443,6 +451,7 @@ def main(dry_run=False):
         if not dry_run:
             archive_draft(draft)
             archived.append(draft.name)
+            mutated += [str(draft), str(ARCHIVE / draft.name)]   # moved out of, moved into
 
     if dry_run:
         return 0
@@ -451,13 +460,14 @@ def main(dry_run=False):
         return 0
 
     try:
-        if dest:
-            subprocess.run(["git", "add", str(dest)], cwd=str(REPO), check=True)
-        if archived:
-            subprocess.run(["git", "add", str(ARCHIVE)], cwd=str(REPO), check=True)
-        # Stage deletions/moves in _drafts (moved-out files show as deletes) and
-        # the publish_attempts bumps on any remaining drafts.
-        subprocess.run(["git", "add", "-A", str(DRAFTS)], cwd=str(REPO), check=False)
+        # Stage exactly the paths this run mutated -- never a directory. `-A` is kept
+        # because a move shows up as a deletion at the old path and only `-A` stages
+        # that, but every pathspec after `--` is a file this run wrote, moved or
+        # deleted itself. Nothing else under _drafts, _drafts/_archive or _posts can
+        # enter the commit, tracked or untracked.
+        if mutated:
+            subprocess.run(["git", "add", "-A", "--", *sorted(set(mutated))],
+                           cwd=str(REPO), check=True)
 
         msg_parts = []
         if published:
