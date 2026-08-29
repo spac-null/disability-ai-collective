@@ -452,14 +452,26 @@ and are **not** cutover blockers — they never blocked the completed default cu
      unrelated candidates — and that verdict is the primary ordering key. **One
      candidate per call now** (`BATCH_SIZE = 1`); contract, model, temperature 0,
      validation, 1,100-word window and cache key all unchanged.
-  Plus two budgets that record what they did not do and never call it weak material: a
-  shadow-owned **75s acquisition budget** checked between candidates
-  (`NOT_ATTEMPTED_ACQUISITION_BUDGET`, slots never refilled) and the existing **10-call**
-  ceiling made explicit (`NOT_ASSESSED_CALL_BUDGET`). Max shadow acquisition wall clock
-  **115s** (75s budget + one already-started 40s candidate).
+  4. **The shadow run as a whole was not bounded.** Acquisition was, assessment was not:
+     `provider.complete` tries CLIProxy then OpenRouter and each leg would otherwise get
+     a fresh `timeout`, over `_post`'s `urlopen` — the same socket-vs-transfer flaw.
+     There is now **one total budget with a hierarchy inside it**, never three that sum:
+     **`RUN_BUDGET_SECONDS = 120`** contains the 75s acquisition sub-budget (clamped to
+     the run deadline, not added to it) plus assessment. A call is not started without
+     12s left, and a started call carries the run deadline into the provider, where
+     **both fallback legs share it**. `bounded_http` is now the single definition of
+     "read under a deadline", imported by acquisition and provider alike; the provider's
+     `deadline` is optional and off by default, so the authoritative pipeline is
+     untouched.
+  Three budgets record what they did not do and none is a material verdict:
+  `NOT_ATTEMPTED_ACQUISITION_BUDGET` (slots never refilled),
+  `NOT_ASSESSED_CALL_BUDGET`, `NOT_ASSESSED_RUN_BUDGET`.
+  **Enforced worst-case total shadow wall clock: 120s** (acquisition alone ≤115s).
   Measured on the frozen #49 pool, cache cleared: 12 exposed, **10 acquired** (was 9 —
   Le Monde recovered), 2 acquisition failures (Space.com, Nature), **10 single-candidate
-  model calls, 59.8s, ~$0.21**, 10/10 assessments valid.
+  model calls, 62.8s (4.9s acquisition), ~$0.21**, 9/10 assessments valid — the one
+  invalid is the known `assessment`-field omission on long roundup material, which fails
+  visibly and cannot rank.
 
 - **NEXT OPERATIONAL STEP, once PR #50 merges: enable the Selector V2 shadow for 4
   natural CURRENT_ENGINE runs** (`CRIPMINDS_SELECTOR_V2_SHADOW=1` on the 09:00 cron

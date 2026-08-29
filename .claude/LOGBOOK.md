@@ -699,17 +699,27 @@ Guardian gallery read POSSIBLE five times out of five alone and WEAK in a batch 
 three; the verdict is Selector V2's primary ordering key, so rank depended on which
 unrelated stories were exposed the same day.
 
+FOURTH, added after review: acquisition was bounded and the RUN was not. Assessment is
+sequential provider calls, each of which tries two legs that would otherwise get their
+own fresh timeout, over a urlopen with the same socket-vs-transfer flaw. One total
+budget now -- 120s -- with the 75s acquisition sub-budget clamped inside it rather than
+added to it, no call started without 12s left, and a started call carrying the run
+deadline into the provider so both fallback legs share it. The deadline machinery moved
+to `bounded_http`, shared by acquisition and provider, because two copies would drift.
+
 MEASURED (frozen #49 pool, assessment cache cleared, no live article): 12 exposed, 10
-acquired (was 9), 2 acquisition failures, 10 single-candidate calls, 59.8s, ~$0.21,
-10/10 valid. Le Monde recovered and ranked. Space.com and Nature still fail, as
-predicted. Drip regressions: body drip and header drip both stopped at 25.0s against a
-25s deadline.
+acquired (was 9), 2 acquisition failures, 10 single-candidate calls, 62.8s (4.9s
+acquisition), ~$0.21, 9/10 valid. Le Monde recovered and ranked. Space.com and Nature
+still fail, as predicted. Drip regressions: body drip and header drip both stopped at
+25.0s against a 25s deadline; a slow model and a single overlong call both stopped
+inside the run budget.
 
 NOT DONE HERE: no cron change, no cutover, no new sources, no prompt tuning, no retry
 taxonomy, and no fix for Space.com's 500KB raw-cap failure — recorded as a source-
 acquisition follow-up rather than broadened into scraper engineering.
 
-CODE: `automation/orchestrator/discovery.py`, `automation/selector_v2.py`,
+CODE: `automation/bounded_http.py` (new), `automation/orchestrator/discovery.py`,
+`automation/new_engine_v1/provider.py`, `automation/selector_v2.py`,
 `automation/source_acquisition_bounds_test.py` (new),
 `automation/selector_v2_shadow_test.py`.
 **MERGED: NO.**
