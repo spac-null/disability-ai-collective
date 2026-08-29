@@ -417,6 +417,20 @@ and are **not** cutover blockers — they never blocked the completed default cu
   outside `publish_best.py`'s top-level `_drafts/*.md` glob, byte-identical, evidence
   directory intact. Owner read it and did not approve it for publication.
 
+- **PR #49 — SELECTOR V2 SHADOW: OPEN, NOT MERGED, DEFAULT OFF.** Broad bounded exposure
+  → read the source through the **production** acquisition path → `MATERIAL_ASSESSMENT`
+  ("is there enough concrete reality here to research?") → transparent ordering. Three
+  deterministic exposure streams (theme signal with the disability booster excluded 6 /
+  eligibility urgency 4 / day-stable exploration 2, ~12 candidates), a soft decaying
+  publisher-repetition term (max 0.30, zero after 7 days, never a ban or quota),
+  assessments cached by `(seed_id, source_sha256)` in their own
+  `seed_material_assessments` table. **`disability_angle` and `angle_checked` are not
+  read at all** — shown in diagnostics only. The old selector stays authoritative;
+  the shadow cannot change the anchor CURRENT_ENGINE receives and invokes no Research
+  Pack, Discovery, Form or Writer. Measured run on a copy of production: 12 candidates,
+  9 fetched, 3 acquisition failures, **4 model calls, 51s**, 9/9 assessments valid;
+  old winner NYT Science vs shadow winner Smithsonian (STRONG/RICH/HIGH) — different.
+
 - **PR #48 — NEWS/POOL V2 foundation: OPEN, NOT MERGED.** Contextual temporal
   eligibility **only**. One pool, one selector; each feed declares a `material_class`
   (`CURRENT_NEWS` / `ESSAY_OPINION` / `RESEARCH_REPORT` / `CULTURE` / `EVERGREEN` /
