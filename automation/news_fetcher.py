@@ -14,6 +14,9 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from email.utils import parsedate_to_datetime
 
+sys.path.insert(0, str(Path(__file__).parent))
+import material_policy as MP                                        # noqa: E402
+
 # ── Env / paths ───────────────────────────────────────────────────────────────
 
 REPO = Path(__file__).parent.parent
@@ -46,21 +49,21 @@ MODEL   = "openrouter/claude-sonnet-4.6"
 
 QUALITY_FEEDS = [
     # ── Science & nature ──────────────────────────────────────────────────────
-    {"url": "https://www.nature.com/nature.rss",                        "name": "Nature",                "tier": 1},
-    {"url": "https://www.newscientist.com/feed/home/",                  "name": "New Scientist",         "tier": 1},
-    {"url": "https://nautil.us/feed/",                                  "name": "Nautilus",              "tier": 1},
-    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml", "name": "NYT Science",           "tier": 1},
+    {"url": "https://www.nature.com/nature.rss",                        "name": "Nature",                    "class": "RESEARCH_REPORT", "tier": 1},
+    {"url": "https://www.newscientist.com/feed/home/",                  "name": "New Scientist",             "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://nautil.us/feed/",                                  "name": "Nautilus",                  "class": "ESSAY_OPINION", "tier": 1},
+    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Science.xml", "name": "NYT Science",               "class": "CURRENT_NEWS", "tier": 1},
 
     # ── Technology & design ───────────────────────────────────────────────────
-    {"url": "https://www.technologyreview.com/feed/",                   "name": "MIT Tech Review",       "tier": 1},
+    {"url": "https://www.technologyreview.com/feed/",                   "name": "MIT Tech Review",           "class": "CURRENT_NEWS", "tier": 1},
     # Hacker News re-added 2026-08-09 continuation, explicit request, despite the
     # original removal reasoning below (link aggregator, arbitrary/clickbait-prone
     # titles) -- kept for visibility, not endorsement; expect noisier candidates
     # out of this feed than the curated journalism sources around it.
-    {"url": "https://news.ycombinator.com/rss",                         "name": "Hacker News",           "tier": 2},
-    {"url": "https://www.techmeme.com/feed.xml",                        "name": "Techmeme",              "tier": 2},
-    {"url": "https://restofworld.org/feed/latest/full",                 "name": "Rest of World",         "tier": 1},
-    {"url": "https://www.wired.com/feed/rss",                           "name": "Wired",                 "tier": 2},
+    {"url": "https://news.ycombinator.com/rss",                         "name": "Hacker News",               "class": "OTHER", "tier": 2},
+    {"url": "https://www.techmeme.com/feed.xml",                        "name": "Techmeme",                  "class": "CURRENT_NEWS", "tier": 2},
+    {"url": "https://restofworld.org/feed/latest/full",                 "name": "Rest of World",             "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://www.wired.com/feed/rss",                           "name": "Wired",                     "class": "CURRENT_NEWS", "tier": 2},
     # 404 Media re-added 2026-08-10 -- the "network-level block" from its prior
     # removal was actually DNS poisoning on trident's WiFi/default-route
     # resolver (192.168.1.1, router/ISP-side Whalebone filtering), not a real
@@ -70,33 +73,33 @@ QUALITY_FEEDS = [
     # level (systemd-resolved + NetworkManager profile now point wlo1 at
     # 1.1.1.1/8.8.8.8), not with a third-party proxy service -- verified real
     # cert (Certainly CA), HTTP 200, valid RSS content post-fix.
-    {"url": "https://www.404media.co/rss/",                             "name": "404 Media",             "tier": 1},
-    {"url": "https://www.theverge.com/rss/index.xml",                   "name": "The Verge",             "tier": 2},
+    {"url": "https://www.404media.co/rss/",                             "name": "404 Media",                 "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://www.theverge.com/rss/index.xml",                   "name": "The Verge",                 "class": "CURRENT_NEWS", "tier": 2},
 
     # ── Art, design & architecture ────────────────────────────────────────────
-    {"url": "https://hyperallergic.com/feed/",                          "name": "Hyperallergic",         "tier": 1},
-    {"url": "https://www.dezeen.com/feed/",                             "name": "Dezeen",                "tier": 1},
-    {"url": "https://www.theguardian.com/artanddesign/rss",             "name": "Guardian Art & Design", "tier": 1},
-    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml",    "name": "NYT Arts",              "tier": 2},
-    {"url": "https://www.creativeboom.com/feed/",                       "name": "Creative Boom",         "tier": 1},
-    {"url": "https://thecreativeindependent.com/feed.xml",              "name": "The Creative Independent","tier": 1},
-    {"url": "https://www.lemonde.fr/en/arts/rss_full.xml",              "name": "Le Monde Arts",         "tier": 2},
+    {"url": "https://hyperallergic.com/feed/",                          "name": "Hyperallergic",             "class": "CULTURE", "tier": 1},
+    {"url": "https://www.dezeen.com/feed/",                             "name": "Dezeen",                    "class": "CULTURE", "tier": 1},
+    {"url": "https://www.theguardian.com/artanddesign/rss",             "name": "Guardian Art & Design",     "class": "CULTURE", "tier": 1},
+    {"url": "https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml",    "name": "NYT Arts",                  "class": "CULTURE", "tier": 2},
+    {"url": "https://www.creativeboom.com/feed/",                       "name": "Creative Boom",             "class": "CULTURE", "tier": 1},
+    {"url": "https://thecreativeindependent.com/feed.xml",              "name": "The Creative Independent",  "class": "CULTURE", "tier": 1},
+    {"url": "https://www.lemonde.fr/en/arts/rss_full.xml",              "name": "Le Monde Arts",             "class": "CULTURE", "tier": 2},
 
     # ── Society, disability & cities ──────────────────────────────────────────
-    {"url": "https://www.theguardian.com/society/rss",                  "name": "Guardian Society",      "tier": 1},
-    {"url": "https://www.theguardian.com/cities/rss",                   "name": "Guardian Cities",       "tier": 1},
-    {"url": "https://www.disabilitynewsservice.com/feed/",              "name": "Disability News Service","tier": 1},
-    {"url": "https://jacobin.com/feed/",                                "name": "Jacobin",               "tier": 2},
-    {"url": "https://disabilityarts.online/feed/",                      "name": "Disability Arts Online", "tier": 1},
-    {"url": "https://cripnews.substack.com/feed",                       "name": "Crip News",             "tier": 1},
-    {"url": "https://www.disabilitydebrief.org/feed",                   "name": "Disability Debrief",    "tier": 2},
-    {"url": "https://rootedinrights.org/feed/",                         "name": "Rooted in Rights",      "tier": 2},
+    {"url": "https://www.theguardian.com/society/rss",                  "name": "Guardian Society",          "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://www.theguardian.com/cities/rss",                   "name": "Guardian Cities",           "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://www.disabilitynewsservice.com/feed/",              "name": "Disability News Service",   "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://jacobin.com/feed/",                                "name": "Jacobin",                   "class": "ESSAY_OPINION", "tier": 2},
+    {"url": "https://disabilityarts.online/feed/",                      "name": "Disability Arts Online",    "class": "CULTURE", "tier": 1},
+    {"url": "https://cripnews.substack.com/feed",                       "name": "Crip News",                 "class": "ESSAY_OPINION", "tier": 1},
+    {"url": "https://www.disabilitydebrief.org/feed",                   "name": "Disability Debrief",        "class": "ESSAY_OPINION", "tier": 2},
+    {"url": "https://rootedinrights.org/feed/",                         "name": "Rooted in Rights",          "class": "ESSAY_OPINION", "tier": 2},
     # Two added 2026-08-09 continuation -- Deaf-specific and disability-culture-
     # specific respectively, filling a real gap: nothing above covers Deaf
     # community writing directly, and DVP is disability CULTURE/politics/media,
     # a different register than the policy/admin-heavy DNS/Guardian Society beat.
-    {"url": "https://limpingchicken.com/feed/",                         "name": "The Limping Chicken",   "tier": 1},
-    {"url": "https://disabilityvisibilityproject.com/feed/",            "name": "Disability Visibility Project","tier": 1},
+    {"url": "https://limpingchicken.com/feed/",                         "name": "The Limping Chicken",       "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://disabilityvisibilityproject.com/feed/",            "name": "Disability Visibility Project", "class": "ESSAY_OPINION", "tier": 1},
 
     # ── Behavioural science, progress & historical reassessment ───────────────
     # Bregman-vein material: counterintuitive social science, archival reappraisal,
@@ -105,42 +108,42 @@ QUALITY_FEEDS = [
     # Paired with the behavioral_science/history_archive THEME_KEYWORDS buckets added
     # 2026-08-07 — without those, items from these feeds score 0.0 and are silently
     # discarded before angle-extraction ever sees them (verified live).
-    {"url": "https://psyche.co/feed.rss",                               "name": "Psyche",                "tier": 1},
-    {"url": "https://www.worksinprogress.news/feed",                    "name": "Works in Progress",     "tier": 1},
-    {"url": "https://asteriskmag.com/feed",                             "name": "Asterisk",              "tier": 1},
-    {"url": "https://behavioralscientist.org/feed/",                    "name": "Behavioral Scientist",  "tier": 1},
-    {"url": "https://www.nature.com/nathumbehav.rss",                   "name": "Nature Human Behaviour","tier": 1},
-    {"url": "https://daily.jstor.org/feed/",                            "name": "JSTOR Daily",           "tier": 1},
-    {"url": "https://publicdomainreview.org/rss.xml",                   "name": "Public Domain Review",  "tier": 2},
-    {"url": "https://www.vox.com/rss/future-perfect/index.xml",         "name": "Vox Future Perfect",    "tier": 2},
-    {"url": "https://www.smithsonianmag.com/rss/latest_articles/",      "name": "Smithsonian Magazine",  "tier": 2},
-    {"url": "https://www.atlasobscura.com/feeds/latest",                "name": "Atlas Obscura",         "tier": 2},
+    {"url": "https://psyche.co/feed.rss",                               "name": "Psyche",                    "class": "ESSAY_OPINION", "tier": 1},
+    {"url": "https://www.worksinprogress.news/feed",                    "name": "Works in Progress",         "class": "RESEARCH_REPORT", "tier": 1},
+    {"url": "https://asteriskmag.com/feed",                             "name": "Asterisk",                  "class": "RESEARCH_REPORT", "tier": 1},
+    {"url": "https://behavioralscientist.org/feed/",                    "name": "Behavioral Scientist",      "class": "ESSAY_OPINION", "tier": 1},
+    {"url": "https://www.nature.com/nathumbehav.rss",                   "name": "Nature Human Behaviour",    "class": "RESEARCH_REPORT", "tier": 1},
+    {"url": "https://daily.jstor.org/feed/",                            "name": "JSTOR Daily",               "class": "EVERGREEN", "tier": 1},
+    {"url": "https://publicdomainreview.org/rss.xml",                   "name": "Public Domain Review",      "class": "EVERGREEN", "tier": 2},
+    {"url": "https://www.vox.com/rss/future-perfect/index.xml",         "name": "Vox Future Perfect",        "class": "ESSAY_OPINION", "tier": 2},
+    {"url": "https://www.smithsonianmag.com/rss/latest_articles/",      "name": "Smithsonian Magazine",      "class": "EVERGREEN", "tier": 2},
+    {"url": "https://www.atlasobscura.com/feeds/latest",                "name": "Atlas Obscura",             "class": "EVERGREEN", "tier": 2},
     # Very low cadence (roughly monthly) but genuinely active and right register —
     # narrative true-story pieces, not trivia lists. Real feed is on FeedBurner; the
     # site's own /feeds/ path returns the HTML homepage, not XML.
-    {"url": "https://feeds.feedburner.com/damninteresting/all",         "name": "Damn Interesting",      "tier": 2},
+    {"url": "https://feeds.feedburner.com/damninteresting/all",         "name": "Damn Interesting",          "class": "EVERGREEN", "tier": 2},
 
     # ── Culture & longform ────────────────────────────────────────────────────
-    {"url": "https://aeon.co/feed.rss",                                 "name": "Aeon",                  "tier": 1},
-    {"url": "https://theconversation.com/articles.atom",                "name": "The Conversation",      "tier": 1},
-    {"url": "https://www.theatlantic.com/feed/all/",                    "name": "The Atlantic",          "tier": 1},
+    {"url": "https://aeon.co/feed.rss",                                 "name": "Aeon",                      "class": "ESSAY_OPINION", "tier": 1},
+    {"url": "https://theconversation.com/articles.atom",                "name": "The Conversation",          "class": "ESSAY_OPINION", "tier": 1},
+    {"url": "https://www.theatlantic.com/feed/all/",                    "name": "The Atlantic",              "class": "ESSAY_OPINION", "tier": 1},
     # New Statesman removed — 403 to both the crawler UA and a browser UA since
     # at least 2026-07-30, live-reconfirmed 2026-08-06.
-    {"url": "https://www.economist.com/science-and-technology/rss.xml", "name": "Economist Sci-Tech",    "tier": 1},
-    {"url": "https://www.economist.com/culture/rss.xml",                "name": "Economist Culture",     "tier": 1},
-    {"url": "https://www.groene.nl/rss.xml",                            "name": "De Groene Amsterdammer","tier": 2},
+    {"url": "https://www.economist.com/science-and-technology/rss.xml", "name": "Economist Sci-Tech",        "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://www.economist.com/culture/rss.xml",                "name": "Economist Culture",         "class": "CULTURE", "tier": 1},
+    {"url": "https://www.groene.nl/rss.xml",                            "name": "De Groene Amsterdammer",    "class": "ESSAY_OPINION", "tier": 2},
 
     # ── International quality ─────────────────────────────────────────────────
-    {"url": "https://www.nrc.nl/rss/",                                  "name": "NRC Handelsblad",       "tier": 1},
-    {"url": "https://www.lemonde.fr/en/rss/une.xml",                    "name": "Le Monde English",      "tier": 1},
-    {"url": "https://www.lemonde.fr/en/europe/rss_full.xml",            "name": "Le Monde Europe",       "tier": 2},
-    {"url": "https://dutchnews.nl/feed/",                               "name": "DutchNews",             "tier": 2},
-    {"url": "https://www.ansa.it/emiliaromagna/notizie/emiliaromagna_rss.xml", "name": "ANSA Emilia-Romagna", "tier": 2},
-    {"url": "https://www.ansa.it/english/news/english_nr_rss.xml",      "name": "ANSA English",          "tier": 2},
+    {"url": "https://www.nrc.nl/rss/",                                  "name": "NRC Handelsblad",           "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://www.lemonde.fr/en/rss/une.xml",                    "name": "Le Monde English",          "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://www.lemonde.fr/en/europe/rss_full.xml",            "name": "Le Monde Europe",           "class": "CURRENT_NEWS", "tier": 2},
+    {"url": "https://dutchnews.nl/feed/",                               "name": "DutchNews",                 "class": "CURRENT_NEWS", "tier": 2},
+    {"url": "https://www.ansa.it/emiliaromagna/notizie/emiliaromagna_rss.xml", "name": "ANSA Emilia-Romagna",       "class": "CURRENT_NEWS", "tier": 2},
+    {"url": "https://www.ansa.it/english/news/english_nr_rss.xml",      "name": "ANSA English",              "class": "CURRENT_NEWS", "tier": 2},
     # El Pais English removed — feed is live (200) but frozen: live-verified
     # 2026-08-06, all 62 items dated January-April 2020, so every fetch always
     # falls outside the 7-day cutoff and silently yields zero.
-    {"url": "https://www.theguardian.com/world/rss",                    "name": "Guardian World",        "tier": 2},
+    {"url": "https://www.theguardian.com/world/rss",                    "name": "Guardian World",            "class": "CURRENT_NEWS", "tier": 2},
 
     # ── Space, economy, philosophy, ecology, anthropology ─────────────────────
     # Added 2026-08-09 per an explicit editorial-direction request: more weight
@@ -152,11 +155,11 @@ QUALITY_FEEDS = [
     # buckets below — without matching keyword buckets, items from these feeds
     # would score against the wrong themes or 0.0 and be silently discarded
     # (same failure mode already documented above for the 2026-08-07 feed batch).
-    {"url": "https://www.space.com/feeds/all",                          "name": "Space.com",             "tier": 2},
-    {"url": "https://www.sapiens.org/feed/",                            "name": "SAPIENS (anthropology)","tier": 1},
-    {"url": "https://www.economist.com/finance-and-economics/rss.xml",  "name": "Economist Finance",     "tier": 1},
-    {"url": "https://dailynous.com/feed/",                              "name": "Daily Nous (philosophy)","tier": 2},
-    {"url": "https://www.theguardian.com/environment/rss",              "name": "Guardian Environment",  "tier": 1},
+    {"url": "https://www.space.com/feeds/all",                          "name": "Space.com",                 "class": "CURRENT_NEWS", "tier": 2},
+    {"url": "https://www.sapiens.org/feed/",                            "name": "SAPIENS (anthropology)",    "class": "ESSAY_OPINION", "tier": 1},
+    {"url": "https://www.economist.com/finance-and-economics/rss.xml",  "name": "Economist Finance",         "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://dailynous.com/feed/",                              "name": "Daily Nous (philosophy)",   "class": "ESSAY_OPINION", "tier": 2},
+    {"url": "https://www.theguardian.com/environment/rss",              "name": "Guardian Environment",      "class": "CURRENT_NEWS", "tier": 1},
 ]
 
 # ── Relevance scoring ─────────────────────────────────────────────────────────
@@ -347,12 +350,17 @@ def init_db(conn):
         ("decline_schema_version", "TEXT"),
         ("declined_source_hash", "TEXT"),
         ("underlying_article_url", "TEXT"),
+        # NEWS/POOL V2 (2026-08-29): what KIND of material this seed is, so eligibility
+        # and retention can follow the material instead of one universal news clock.
+        # Additive; a NULL here means OTHER, which is the legacy clock exactly.
+        ("material_class", "TEXT"),
     ):
         try:
             conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
         except sqlite3.OperationalError:
             pass
     conn.commit()
+    backfill_material_class(conn)
     # disability_angle IS NULL means both "not yet attempted" and "attempted, model
     # said none exists" — a seed the model correctly rejects stays NULL forever and
     # gets re-selected by extract_top_angles' ORDER BY relevance_score DESC every
@@ -374,6 +382,26 @@ def url_id(url: str) -> str:
     return hashlib.md5(url.encode()).hexdigest()
 
 
+def backfill_material_class(conn) -> int:
+    """Give historical rows the class their own feed is configured with.
+
+    Deterministic and safe: the mapping is source_name -> the class declared on that
+    feed in QUALITY_FEEDS, and a row whose source_name matches no configured feed is
+    left NULL, which means OTHER, which is the behaviour it already had. Nothing is
+    guessed from a title, a URL or a date, and no row's class is ever overwritten.
+    """
+    by_name = {f["name"]: MP.normalise(f.get("class")) for f in QUALITY_FEEDS}
+    updated = 0
+    for name, cls in by_name.items():
+        cur = conn.execute(
+            "UPDATE news_seeds SET material_class = ? "
+            "WHERE material_class IS NULL AND source_name = ?", (cls, name))
+        updated += cur.rowcount or 0
+    if updated:
+        conn.commit()
+    return updated
+
+
 def store_seed(conn, item: dict) -> bool:
     """Store a scored item. Returns True if new, False if duplicate."""
     try:
@@ -381,8 +409,8 @@ def store_seed(conn, item: dict) -> bool:
             INSERT INTO news_seeds
               (id, url, title, summary, source_name, source_tier, pub_date,
                fetched_date, relevance_score, themes, disability_angle, used,
-               underlying_article_url)
-            VALUES (?,?,?,?,?,?,?,?,?,?,NULL,0,?)
+               underlying_article_url, material_class)
+            VALUES (?,?,?,?,?,?,?,?,?,?,NULL,0,?,?)
         """, (
             url_id(item["url"]),
             item["url"],
@@ -395,6 +423,7 @@ def store_seed(conn, item: dict) -> bool:
             item["relevance_score"],
             json.dumps(item.get("themes", [])),
             item.get("underlying_url") or None,
+            MP.normalise(item.get("material_class")),
         ))
         conn.commit()
         return True
@@ -402,14 +431,40 @@ def store_seed(conn, item: dict) -> bool:
         return False
 
 
-def prune_old(conn, days: int = 14):
-    cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
-    cur = conn.execute(
-        "DELETE FROM news_seeds WHERE fetched_date < ? AND used = 0", (cutoff,)
-    )
+def prune_old(conn, days: int | None = None):
+    """Delete unused seeds past their class's retention.
+
+    `days` forces one universal window (tests, ad-hoc callers). Left unset -- the
+    production path -- each class keeps its own: news for 14 days, essays and culture
+    for 45, research for 120, evergreen for 210. The invariant that matters is asserted
+    in material_policy and by test: retention always exceeds eligibility, so a seed can
+    never be deleted while its own class still considers it selectable. Under the old
+    single 14-day rule a research seed would have been eligible for 90 days and deleted
+    after 14.
+    """
+    if days is not None:
+        cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
+        cur = conn.execute(
+            "DELETE FROM news_seeds WHERE fetched_date < ? AND used = 0", (cutoff,))
+        conn.commit()
+        if cur.rowcount:
+            log(f"Pruned {cur.rowcount} old unused seeds (>{days}d)")
+        return cur.rowcount or 0
+
+    removed = 0
+    for cls in MP.CLASSES:
+        cutoff = (datetime.now()
+                  - timedelta(days=MP.retention_days(cls))).strftime("%Y-%m-%d")
+        where_class = ("material_class IS NULL OR material_class = ?"
+                       if cls == MP.OTHER else "material_class = ?")
+        cur = conn.execute(
+            "DELETE FROM news_seeds WHERE fetched_date < ? AND used = 0 AND (%s)"
+            % where_class, (cutoff, cls))
+        removed += cur.rowcount or 0
     conn.commit()
-    if cur.rowcount:
-        log(f"Pruned {cur.rowcount} old unused seeds (>{days}d)")
+    if removed:
+        log(f"Pruned {removed} unused seeds past their class retention")
+    return removed
 
 
 # ── RSS fetch ─────────────────────────────────────────────────────────────────
@@ -476,10 +531,18 @@ def _local(el, name, default=""):
     return default
 
 
-def fetch_feed(feed: dict, days: int = 7) -> list[dict]:
-    """Fetch one RSS/Atom feed, return items newer than `days`."""
+def fetch_feed(feed: dict, days: int | None = None) -> list[dict]:
+    """Fetch one RSS/Atom feed, return items newer than this feed's own lookback.
+
+    `days` overrides the feed's material-class default, which is what the tests and any
+    ad-hoc caller use. Left unset -- the production path -- a news feed still looks back
+    7 days while a research or evergreen feed looks back as far as its class allows, so
+    a paper published three weeks ago can enter the pool at all. The window is per class;
+    the volume is capped regardless, below.
+    """
     url = feed["url"]
-    cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+    lookback = days if days is not None else MP.ingest_lookback_days(feed.get("class"))
+    cutoff = datetime.now(timezone.utc) - timedelta(days=lookback)
     ATOM_NS = "http://www.w3.org/2005/Atom"
     items = []
     try:
@@ -563,11 +626,24 @@ def fetch_feed(feed: dict, days: int = 7) -> list[dict]:
     except Exception as e:
         log(f"  Feed skipped ({feed['name']}): {e}")
 
+    # A long lookback must not turn one feed into a historical crawler. Newest first,
+    # capped -- a feed offering more simply contributes its newest, and the cap binds
+    # whatever the window is.
+    items.sort(key=lambda i: i.get("pub_date") or "", reverse=True)
+    if len(items) > MP.MAX_ITEMS_PER_FEED_PER_FETCH:
+        log(f"  {feed.get('name', url)}: {len(items)} items in window, taking newest "
+            f"{MP.MAX_ITEMS_PER_FEED_PER_FETCH}")
+        items = items[:MP.MAX_ITEMS_PER_FEED_PER_FETCH]
+    for it in items:
+        it["material_class"] = MP.normalise(feed.get("class"))
     return items
 
 
-def fetch_all_feeds(days: int = 7) -> list[dict]:
-    """Fetch all QUALITY_FEEDS, deduplicate by URL, return flat list."""
+def fetch_all_feeds(days: int | None = None) -> list[dict]:
+    """Fetch all QUALITY_FEEDS, deduplicate by URL, return flat list.
+
+    `days=None` (production) lets each feed use its own material-class lookback.
+    """
     seen_urls = set()
     all_items = []
     for feed in QUALITY_FEEDS:
@@ -1197,7 +1273,12 @@ def extract_top_angles(conn, n: int = 10):
     # already be outside get_news_seed's selection window by the time anything looked
     # for it. Measured live: 31 unused angled seeds in the DB, only 3 actually
     # reachable by get_news_seed's cutoff.
-    cutoff = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
+    # Contextual, not universal (2026-08-29). This cutoff exists to stop paying for an
+    # angle on a seed that selection can no longer reach; with per-class eligibility
+    # that boundary is per class too. Keeping 3 days here would have quietly undone the
+    # whole change: a research seed eligible for 90 days would never be angled, and
+    # Priority 1 selection requires an angle.
+    cutoffs = MP.eligibility_cutoffs(datetime.now())
     top_n = max(n - EXPLORATION_SLOTS, 0)
     # NOT (declined = 1 AND decline_schema_version = current) -- a currently-valid
     # decline is excluded from re-extraction (no wasted paid call, must not
@@ -1208,10 +1289,16 @@ def extract_top_angles(conn, n: int = 10):
         SELECT id, url, title, summary FROM news_seeds
         WHERE disability_angle IS NULL AND angle_checked IS NULL AND used = 0
               AND NOT (declined = 1 AND decline_schema_version = ?)
-              AND pub_date >= ?
+              AND pub_date >= CASE COALESCE(material_class, 'OTHER')
+                                WHEN 'CURRENT_NEWS' THEN ? WHEN 'ESSAY_OPINION' THEN ?
+                                WHEN 'RESEARCH_REPORT' THEN ? WHEN 'CULTURE' THEN ?
+                                WHEN 'EVERGREEN' THEN ? ELSE ? END
         ORDER BY relevance_score DESC
         LIMIT ?
-    """, (STORY_REJECTION_CONTRACT_VERSION, cutoff, top_n)).fetchall()
+    """, (STORY_REJECTION_CONTRACT_VERSION,
+          cutoffs[MP.CURRENT_NEWS], cutoffs[MP.ESSAY_OPINION],
+          cutoffs[MP.RESEARCH_REPORT], cutoffs[MP.CULTURE],
+          cutoffs[MP.EVERGREEN], cutoffs[MP.OTHER], top_n)).fetchall()
 
     # Exploration slots, added 2026-08-10 -- mitigation for the discovery
     # scorer's structural blind spot, not a fix for it (the real fix is an
@@ -1234,10 +1321,18 @@ def extract_top_angles(conn, n: int = 10):
             SELECT id, url, title, summary FROM news_seeds
             WHERE disability_angle IS NULL AND angle_checked IS NULL AND used = 0
                   AND NOT (declined = 1 AND decline_schema_version = ?)
-                  AND pub_date >= ? AND id NOT IN ({placeholders})
+                  AND pub_date >= CASE COALESCE(material_class, 'OTHER')
+                                    WHEN 'CURRENT_NEWS' THEN ? WHEN 'ESSAY_OPINION' THEN ?
+                                    WHEN 'RESEARCH_REPORT' THEN ? WHEN 'CULTURE' THEN ?
+                                    WHEN 'EVERGREEN' THEN ? ELSE ? END
+                  AND id NOT IN ({placeholders})
             ORDER BY RANDOM()
             LIMIT ?
-        """, (STORY_REJECTION_CONTRACT_VERSION, cutoff, *top_ids, EXPLORATION_SLOTS)).fetchall()
+        """, (STORY_REJECTION_CONTRACT_VERSION,
+              cutoffs[MP.CURRENT_NEWS], cutoffs[MP.ESSAY_OPINION],
+              cutoffs[MP.RESEARCH_REPORT], cutoffs[MP.CULTURE],
+              cutoffs[MP.EVERGREEN], cutoffs[MP.OTHER],
+              *top_ids, EXPLORATION_SLOTS)).fetchall()
 
     rows = top_rows + explore_rows
     # Story Rejection V1 (DSR2): a currently-valid decline (current contract,
@@ -1283,7 +1378,7 @@ def main():
     init_db(conn)
 
     # 1. Fetch all feeds
-    raw_items = fetch_all_feeds(days=7)
+    raw_items = fetch_all_feeds()
 
     # 2. Score, deduplicate, store items above threshold
     stored = skipped_score = skipped_dupe = skipped_blocked = 0
@@ -1361,7 +1456,7 @@ def main():
     run_category_jump_shadow(conn, n=10)
 
     # 4. Prune old unused seeds
-    prune_old(conn, days=14)
+    prune_old(conn)
 
     # Summary
     total, unused, with_angle = conn.execute(
