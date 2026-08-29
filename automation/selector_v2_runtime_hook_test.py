@@ -85,8 +85,11 @@ class _AssessmentProvider:
         self.raise_on_call = raise_on_call
         self.prefer = prefer            # the body marker that reads RICH
         self.calls = 0
+        self.deadlines = []
 
-    def complete(self, system, user, max_tokens=3000, timeout=180, temperature=None):
+    def complete(self, system, user, max_tokens=3000, timeout=180,
+                 temperature=None, deadline=None):
+        self.deadlines.append(deadline)
         self.calls += 1
         if self.raise_on_call:
             raise RuntimeError("stub: assessment provider failure")
@@ -583,7 +586,10 @@ def test_the_flag_is_not_enabled_anywhere_in_the_repository():
     root = HERE.parent
     setters = []
     for p in root.rglob("*"):
-        if not p.is_file() or ".git/" in str(p) or p.suffix in (".png", ".jpg", ".db"):
+        # Prose is allowed to name the flag -- documenting how an operator would turn
+        # it on is the opposite of turning it on. This guards code and config.
+        if (not p.is_file() or ".git/" in str(p)
+                or p.suffix in (".png", ".jpg", ".db", ".md")):
             continue
         try:
             text = p.read_text(errors="ignore")

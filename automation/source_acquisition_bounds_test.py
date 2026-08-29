@@ -32,6 +32,7 @@ HERE = pathlib.Path(__file__).parent
 if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
+import bounded_http as BH                                     # noqa: E402
 from orchestrator import discovery as D                       # noqa: E402
 
 FAILURES: list = []
@@ -110,7 +111,7 @@ def test_a_slow_drip_response_cannot_run_past_the_deadline():
             elapsed = time.monotonic() - t0
             check("the drip was stopped by a timeout, not by completing", False,
                   "returned after %.1fs" % elapsed)
-        except D.SourceAcquisitionTimeout as e:
+        except BH.DeadlineExceeded as e:
             elapsed = time.monotonic() - t0
             check("a slow drip raises SourceAcquisitionTimeout", True)
             check("it says how far it got", "bytes" in str(e), str(e))
@@ -179,37 +180,41 @@ def test_the_bound_is_a_total_not_a_per_read_timeout():
     would trip the old socket timeout too. The drip server sends continuously, so
     passing the test above is only possible with a real total deadline."""
     src = (HERE / "orchestrator" / "discovery.py").read_text()
+    shared = (HERE / "bounded_http.py").read_text()
     fn = src.split("def _fetch_url_html(self")[1].split("\n    def ")[0]
     check("the deadline is taken before the request", "deadline = time.monotonic()" in fn)
     check("the connection reads through a deadline-budgeted socket",
           "_bounded_opener(deadline)" in fn)
     check("the body is read with read1, so one underlying read returns control",
-          "resp.read1(min(_SOURCE_READ_CHUNK" in fn)
+          "resp.read1(" in shared)
     check("and not with read(), whose internal loop would reset the socket timeout "
           "on every byte that arrives",
-          "resp.read(" not in fn)
-    wrapper = src.split("class _DeadlineSocket:")[1].split("\ndef _bounded_opener")[0]
+          "resp.read(" not in shared and "resp.read(" not in fn)
+    check("the cap is honoured by the shared reader",
+          "read_capped(" in fn and "cap=500000" in fn)
+    wrapper = shared.split("class DeadlineSocket:")[1].split("\ndef bounded_opener")[0]
     check("every read is budgeted before it can block",
           all(("self._budget()" in wrapper.split("def %s" % m)[1][:120])
               for m in ("recv(", "recv_into(", "send(", "sendall(")), wrapper[:0])
     check("the budget shrinks the timeout to what is left",
-          "settimeout(min(remaining, _SOURCE_SOCKET_TIMEOUT))" in wrapper)
+          "settimeout(min(remaining, self._op_timeout))" in wrapper)
     check("and refuses outright once the deadline has passed",
-          "raise SourceAcquisitionTimeout" in wrapper)
+          "raise DeadlineExceeded" in wrapper)
     check("makefile reads through the wrapper, so headers are budgeted too",
           "socket.SocketIO(self" in wrapper)
     check("no global socket state is mutated",
-          "setdefaulttimeout" not in src)
-    region = src.split("class _DeadlineSocket:")[1].split("class DiscoveryMixin")[0]
+          "setdefaulttimeout" not in src and "setdefaulttimeout" not in shared)
     check("no thread or process is spawned to do the bounding",
-          "Thread(" not in region and "subprocess" not in region and "Thread(" not in fn)
+          "Thread(" not in shared and "subprocess" not in shared and "Thread(" not in fn)
     check("the deadline is carried per opener, never in module state",
-          "def _bounded_opener(deadline)" in src)
+          "def bounded_opener(deadline" in shared)
+    check("one definition of the bound, shared with the model provider",
+          "import bounded_http" in (HERE / "new_engine_v1" / "provider.py").read_text())
     check("redirects are bounded below urllib's default of 10",
-          D._BoundedRedirectHandler.max_redirections == D._SOURCE_MAX_REDIRECTS
-          and D._SOURCE_MAX_REDIRECTS < 10)
+          D._SOURCE_MAX_REDIRECTS == 3)
     check("the redirect bound is per-opener, not a global class mutation",
-          "build_opener(_BoundedRedirectHandler()" in src
+          "max_redirections = max_redirects" in shared
+          and "urllib.request.HTTPRedirectHandler.max_redirections =" not in shared
           and "urllib.request.HTTPRedirectHandler.max_redirections =" not in src)
     check("the 500K response cap survives", "500000" in fn)
     check("the content-type check survives", 'text/html" not in content_type' in fn)

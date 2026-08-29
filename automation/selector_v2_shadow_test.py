@@ -98,9 +98,12 @@ class StubProvider:
         self.bad_enum = bad_enum
         self.drop_ids = drop_ids
         self.calls = 0
+        self.deadlines = []
         self.prompts = []
 
-    def complete(self, system, user, max_tokens=3000, timeout=180, temperature=None):
+    def complete(self, system, user, max_tokens=3000, timeout=180,
+                 temperature=None, deadline=None):
+        self.deadlines.append(deadline)
         self.calls += 1
         self.prompts.append(user)
         if self.raise_on_call:
@@ -643,6 +646,124 @@ def test_flag_off_leaves_authoritative_selection_untouched():
                   for l in v2.splitlines()))
 
 
+def test_a_slow_model_stops_the_run_instead_of_overrunning_it():
+    """Acquisition being bounded is not enough. Assessment is sequential provider
+    calls, and provider.complete tries two legs that would each otherwise get a fresh
+    timeout -- so ten candidates could cost an hour while the real 09:00 pipeline
+    waits. The run budget has to cover the model work too."""
+    seeds = [("s%d" % i, "https://x.example/rich?%d" % i, "t%d" % i, MP.CULTURE, 1,
+              0.5, None, "P%d" % i) for i in range(6)]
+    conn = _db(seeds)
+
+    class _SlowProvider(StubProvider):
+        def complete(self, *a, **kw):
+            time.sleep(0.5)
+            return super().complete(*a, **kw)
+
+    p = _SlowProvider({"Phreatichthys": "STRONG_CANDIDATE"})
+    real_run, real_min = SV.RUN_BUDGET_SECONDS, SV.MIN_ASSESSMENT_SECONDS
+    SV.RUN_BUDGET_SECONDS, SV.MIN_ASSESSMENT_SECONDS = 2.0, 0.6
+    t0 = time.monotonic()
+    try:
+        out = _run(conn, p)
+    finally:
+        SV.RUN_BUDGET_SECONDS, SV.MIN_ASSESSMENT_SECONDS = real_run, real_min
+    elapsed = time.monotonic() - t0
+    check("it stopped starting calls before the end of the set",
+          0 < p.calls < 6, p.calls)
+    check("the run stayed inside its budget plus slack (%.1fs <= 2.0s + 1.5s)" % elapsed,
+          elapsed <= 3.5, elapsed)
+    skipped = [r for r in out["records"]
+               if r["assessment_status"] == SV.NOT_ASSESSED_RUN_BUDGET]
+    check("the rest are recorded against the run budget",
+          len(skipped) == 6 - p.calls, (len(skipped), p.calls))
+    check("and the metric says so", out["metrics"]["over_run_budget"] == len(skipped),
+          out["metrics"])
+    check("a run-budget skip is not a material verdict",
+          all(r.get("assessment") is None and r.get("shadow_rank") is None
+              for r in skipped))
+    check("what was assessed still ranked", out["shadow_winner"] is not None)
+
+
+def test_one_overlong_call_cannot_outlive_the_remaining_budget():
+    """The half that matters. Checking the clock BETWEEN calls is useless if the call
+    about to start can run for six minutes on its own, so the run deadline is handed
+    to the provider and both of its fallback legs share it."""
+    conn = _db([("a", "https://x.example/rich", "one", MP.CULTURE, 1, 0.5, None, "P1")])
+
+    class _HangingProvider(StubProvider):
+        def complete(self, *a, deadline=None, **kw):
+            self.deadlines.append(deadline)
+            self.calls += 1
+            # behave like a provider that would run far past the budget, but honour
+            # the deadline it was handed -- which is exactly the contract under test
+            if deadline is None:
+                time.sleep(30)
+            time.sleep(max(0.0, min(30.0, deadline - time.monotonic())))
+            raise TimeoutError("provider exceeded the shadow deadline")
+
+    p = _HangingProvider()
+    real_run, real_min = SV.RUN_BUDGET_SECONDS, SV.MIN_ASSESSMENT_SECONDS
+    # low enough that the call IS started -- the point is what happens to a call that
+    # has begun, not the between-calls check the previous test covers
+    SV.RUN_BUDGET_SECONDS, SV.MIN_ASSESSMENT_SECONDS = 1.5, 0.2
+    t0 = time.monotonic()
+    try:
+        out = _run(conn, p)
+    finally:
+        SV.RUN_BUDGET_SECONDS, SV.MIN_ASSESSMENT_SECONDS = real_run, real_min
+    elapsed = time.monotonic() - t0
+    check("the call was actually started", p.calls == 1, p.calls)
+    check("and was given an absolute deadline, not a static timeout",
+          p.deadlines and p.deadlines[0] is not None, p.deadlines)
+    check("the run ended within its budget plus slack (%.1fs <= 1.5s + 1.5s)" % elapsed,
+          elapsed <= 3.0, elapsed)
+    check("the failure is an assessment error, not a material verdict",
+          out["records"][0]["assessment_status"] == SV.ASSESSMENT_ERROR,
+          out["records"][0]["assessment_status"])
+    check("nothing ranked on a failed call", out["shadow_winner"] is None)
+
+
+def test_the_provider_shares_one_deadline_across_both_fallback_legs():
+    """CLIProxy then OpenRouter, each of which used to get its own fresh timeout, so
+    one complete() could cost twice its argument. A deadline cannot be spent twice."""
+    import inspect
+    from new_engine_v1 import provider as P
+    src = inspect.getsource(P)
+    check("complete accepts an absolute deadline", "deadline: float | None = None" in src)
+    check("it is off by default, so the authoritative pipeline is untouched",
+          "deadline=None" in src or "deadline: float | None = None" in src)
+    body = src.split("def complete(")[1].split("\ndef ")[0]
+    check("each leg is sized from what is LEFT, not from the static timeout",
+          "remaining = deadline - time.monotonic()" in body
+          and "leg_timeout = max(1, int(min(timeout, remaining)))" in body)
+    check("a leg is not started once the deadline has passed",
+          "deadline reached before the attempt" in body)
+    check("and the deadline itself is handed down to the transport",
+          "_post(url, key, payload, leg_timeout, deadline)" in body)
+    post = src.split("def _post(")[1].split("\ndef ")[0]
+    check("the transport reads under the deadline, not merely a socket timeout",
+          "bounded_http.bounded_opener(" in post)
+    check("with no deadline the old path is byte-for-byte the old path",
+          "urllib.request.urlopen(req, timeout=timeout)" in post)
+
+
+def test_the_budget_hierarchy_never_sums_past_the_total():
+    check("acquisition sub-budget fits inside the run budget",
+          SV.ACQUISITION_BUDGET_SECONDS < SV.RUN_BUDGET_SECONDS,
+          (SV.ACQUISITION_BUDGET_SECONDS, SV.RUN_BUDGET_SECONDS))
+    from orchestrator import discovery as D
+    candidate_max = D._SOURCE_LEG_DEADLINE + D._SOURCE_IMPERSONATED_TIMEOUT
+    check("acquisition plus one in-flight candidate still fits (%d + %d <= %d)"
+          % (SV.ACQUISITION_BUDGET_SECONDS, candidate_max, SV.RUN_BUDGET_SECONDS),
+          SV.ACQUISITION_BUDGET_SECONDS + candidate_max <= SV.RUN_BUDGET_SECONDS)
+    src = (HERE / "selector_v2.py").read_text()
+    check("the acquisition deadline is clamped to the run deadline, not added to it",
+          "min(time.monotonic() + ACQUISITION_BUDGET_SECONDS, run_deadline)" in src)
+    check("assessment is bounded by the run deadline",
+          "assess(provider, prepared, deadline=run_deadline)" in src)
+
+
 def main():
     for fn in (test_shadow_is_off_by_default,
                test_exposure_is_three_streams_not_the_score,
@@ -663,7 +784,11 @@ def main():
                test_the_assessment_contract_is_untouched,
                test_the_acquisition_budget_stops_fetching_and_says_so,
                test_no_budget_state_is_ever_a_material_verdict,
-               test_flag_off_leaves_authoritative_selection_untouched):
+               test_flag_off_leaves_authoritative_selection_untouched,
+               test_a_slow_model_stops_the_run_instead_of_overrunning_it,
+               test_one_overlong_call_cannot_outlive_the_remaining_budget,
+               test_the_provider_shares_one_deadline_across_both_fallback_legs,
+               test_the_budget_hierarchy_never_sums_past_the_total):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)

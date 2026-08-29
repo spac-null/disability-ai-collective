@@ -74,7 +74,22 @@ BATCH_SIZE = 1                   # candidates per assessment call
 BATCH_MAX_CHARS = 22_000
 BATCH_MAX_TOKENS = 1_800
 MAX_CALLS_PER_RUN = 10           # absolute ceiling
-ACQUISITION_BUDGET_SECONDS = 75  # shadow-owned, checked between candidates
+
+# ONE total wall-clock budget for the whole shadow run, and a strict hierarchy inside
+# it -- the sub-budgets are contained by the total, never added to it:
+#
+#     RUN_BUDGET_SECONDS  (120)
+#       contains  ACQUISITION_BUDGET_SECONDS (75) + one 40s hard-bounded candidate
+#       contains  assessment work, each call bounded by what is LEFT of the run
+#
+# This exists because the shadow runs before the authoritative article pipeline. A
+# healthy run measures ~60s; anything approaching two minutes is an experiment holding
+# up production, and it must stop rather than finish. Bounding acquisition alone was
+# not enough: assessment is sequential provider calls, and provider.complete tries two
+# legs, each of which would otherwise get its own fresh timeout.
+RUN_BUDGET_SECONDS = 120
+ACQUISITION_BUDGET_SECONDS = 75  # sub-budget, clamped to the run deadline
+MIN_ASSESSMENT_SECONDS = 12      # do not start a call that cannot plausibly finish
 BODY_WORDS_TO_MODEL = 1_100
 PUBLISHER_PENALTY_DAYS = 7       # decays to zero across a week
 PUBLISHER_PENALTY_MAX = 0.30
@@ -86,6 +101,7 @@ ASSESSMENT_ERROR = "ASSESSMENT_ERROR"
 # Two shadow-only budget states. Both mean "we did not look", never "we looked and it
 # was thin" -- nothing that ran out of time or money may be recorded as weak material.
 NOT_ASSESSED_CALL_BUDGET = "NOT_ASSESSED_CALL_BUDGET"
+NOT_ASSESSED_RUN_BUDGET = "NOT_ASSESSED_RUN_BUDGET"
 NOT_ATTEMPTED_ACQUISITION_BUDGET = "NOT_ATTEMPTED_ACQUISITION_BUDGET"
 
 RICHNESS = ("RICH", "MODERATE", "THIN")
@@ -394,9 +410,17 @@ def validate(a: dict, body: str) -> list:
     return errs
 
 
-def assess(provider, candidates: list) -> tuple:
-    """Batched, temperature 0. Returns (results_by_key, calls). A batch that fails as a
-    whole marks its candidates ASSESSMENT_ERROR; nothing is inferred from silence."""
+def assess(provider, candidates: list, deadline=None) -> tuple:
+    """Batched at one candidate per call, temperature 0. Returns (results_by_key,
+    calls). A batch that fails as a whole marks its candidates ASSESSMENT_ERROR;
+    nothing is inferred from silence.
+
+    `deadline` is an absolute time.monotonic() value. A call is not STARTED unless
+    MIN_ASSESSMENT_SECONDS remain, and one that is started carries the same deadline
+    into the provider, so both of its fallback legs together cannot outlive it. That
+    second half matters more than the first: checking the clock only between calls is
+    useless if the call about to start can run for six minutes on its own.
+    """
     results, calls = {}, 0
     batches, cur, size = [], [], 0
     for c in candidates:
@@ -406,11 +430,24 @@ def assess(provider, candidates: list) -> tuple:
         cur.append(c); size += chars
     if cur:
         batches.append(cur)
-    for batch in batches[:MAX_CALLS_PER_RUN]:
+    for i, batch in enumerate(batches):
+        remaining = None if deadline is None else deadline - time.monotonic()
+        if i >= MAX_CALLS_PER_RUN or (remaining is not None
+                                      and remaining < MIN_ASSESSMENT_SECONDS):
+            status = (NOT_ASSESSED_CALL_BUDGET if i >= MAX_CALLS_PER_RUN
+                      else NOT_ASSESSED_RUN_BUDGET)
+            for cand in batch:
+                results[cand["key"]] = {
+                    "status": status,
+                    "errors": ["call budget %d exhausted" % MAX_CALLS_PER_RUN
+                               if status == NOT_ASSESSED_CALL_BUDGET
+                               else "run budget %ss exhausted" % RUN_BUDGET_SECONDS]}
+            continue
         calls += 1
         try:
+            kw = {} if deadline is None else {"deadline": deadline}
             c = provider.complete(ASSESSMENT_SYSTEM, assessment_prompt(batch),
-                                  max_tokens=BATCH_MAX_TOKENS, temperature=0)
+                                  max_tokens=BATCH_MAX_TOKENS, temperature=0, **kw)
             payload = parse_json_object(c.text)
             got = {a.get("id"): a for a in (payload.get("assessments") or [])}
         except Exception as e:
@@ -508,7 +545,9 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
     # left unattempted are recorded as such and their slots are NOT refilled: topping
     # up on a slow day would make the exposure set depend on network weather, which is
     # exactly the determinism the three streams exist to provide.
-    acq_deadline = time.monotonic() + ACQUISITION_BUDGET_SECONDS
+    run_deadline = time.monotonic() + RUN_BUDGET_SECONDS
+    # Contained by the run deadline, never added to it.
+    acq_deadline = min(time.monotonic() + ACQUISITION_BUDGET_SECONDS, run_deadline)
     for c in candidates:
         row = c["row"]
         if time.monotonic() >= acq_deadline:
@@ -535,15 +574,11 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
         (cached if hit else prepared).append(c)
         if hit:
             c["cached"] = hit
-    # Call budget, spent in the fixed exposure order. Cached candidates cost nothing,
-    # so only uncached ones draw on it. Anything past the ceiling is recorded as
-    # unassessed rather than quietly assessed anyway or quietly dropped.
-    assessable, over_budget = prepared[:MAX_CALLS_PER_RUN], prepared[MAX_CALLS_PER_RUN:]
-    results, calls = assess(provider, assessable) if assessable else ({}, 0)
-    for c in over_budget:
-        results[c["key"]] = {"status": NOT_ASSESSED_CALL_BUDGET,
-                             "errors": ["assessment call budget %d exhausted"
-                                        % MAX_CALLS_PER_RUN]}
+    # Both budgets are spent in the fixed exposure order and both are enforced inside
+    # assess(), which knows how to stop: a call is not started without time to finish,
+    # and a call that IS started carries the run deadline into the provider.
+    results, calls = (assess(provider, prepared, deadline=run_deadline)
+                      if prepared else ({}, 0))
 
     records = []
     for c in cached + prepared:
@@ -598,6 +633,7 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
         "authority": "NONE -- comparison only; cannot change the anchor CURRENT_ENGINE "
                      "receives, and invokes no Research Pack, Discovery, Form or Writer",
         "run_at": now.strftime("%Y-%m-%dT%H:%M:%S"),
+        "run_budget_seconds": RUN_BUDGET_SECONDS,
         "eligible_pool": len(pool),
         "candidates": [{"seed_id": c["row"]["id"], "exposed_via": c["exposed_via"],
                         "source_name": c["row"]["source_name"]} for c in candidates],
@@ -609,9 +645,15 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
         "same_winner": bool(old_winner and winner
                             and old_winner.get("id") == winner["seed_id"]),
         "metrics": {"candidates": len(candidates), "fetched": len(cached) + len(prepared),
-                    "cached": len(cached), "assessed": len(assessable),
+                    "cached": len(cached), "assessed": calls,
                     "acquisition_failed": len(failed),
-                    "not_attempted": len(skipped), "over_call_budget": len(over_budget),
+                    "not_attempted": len(skipped),
+                    "over_call_budget": sum(
+                        1 for r in results.values()
+                        if r.get("status") == NOT_ASSESSED_CALL_BUDGET),
+                    "over_run_budget": sum(
+                        1 for r in results.values()
+                        if r.get("status") == NOT_ASSESSED_RUN_BUDGET),
                     "model_calls": calls,
                     "valid": sum(1 for r in records if r["assessment_status"] == OK),
                     "invalid": sum(1 for r in records
