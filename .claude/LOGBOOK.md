@@ -723,3 +723,27 @@ CODE: `automation/bounded_http.py` (new), `automation/orchestrator/discovery.py`
 `automation/source_acquisition_bounds_test.py` (new),
 `automation/selector_v2_shadow_test.py`.
 **MERGED: NO.**
+
+---
+
+## 2026-08-29 — Selector V2 shadow enabled for observation
+
+STATUS: PR #50 merged (766656d). Production checkout fast-forwarded to origin/main,
+held 28 Aug candidate preserved untracked and byte-identical.
+
+DECISION: `CRIPMINDS_SELECTOR_V2_SHADOW=1` added to the 09:00 article cron line only.
+Nothing else on that line changed; no other cron entry touched; Grounder V2 stays off.
+
+WHY NOW: the run is bounded end to end (120s hard, ~62s measured), a failure inside it
+cannot reach the authoritative pipeline, acquisition failures are recorded as
+acquisition failures rather than as weak material, and the one measurable source of
+contamination in the assessment -- batch composition -- is gone. That is the bar for
+observation, not for cutover.
+
+WHAT THIS IS: four natural runs with one unchanged implementation, to answer whether V2
+surfaces materially better raw material than the keyword selector. It is NOT a test of
+whether V2 would have produced better articles; no Research Pack is run for the shadow
+winner. Disagreement between the two selectors is the measurement, not a fault.
+
+NOT DONE: no manual run, no cutover, no source expansion, no publication.
+**RUNS COMPLETED: 0/4.**
