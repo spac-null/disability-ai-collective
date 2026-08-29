@@ -133,6 +133,47 @@ def test_a_slow_drip_response_cannot_run_past_the_deadline():
         srv.server_close()
 
 
+class _HeaderDripHandler(socketserver.BaseRequestHandler):
+    """A status line, then response HEADERS one byte at a time. getresponse() blocks
+    reading them, so the caller never receives a response object at all -- a deadline
+    that only guards the body loop is still running when this test's clock runs out.
+    Measured before the fix: past 120s against a 25s body deadline."""
+    GAP = 0.3
+
+    def handle(self):
+        self.request.recv(4096)
+        self.request.sendall(b"HTTP/1.0 200 OK\r\n")
+        try:
+            for b in (b"X-Pad: " + b"y" * 100000):
+                self.request.sendall(bytes([b]))
+                time.sleep(self.GAP)
+        except Exception:
+            pass
+
+
+def test_a_header_drip_cannot_run_past_the_deadline_either():
+    srv, url = _serve(_HeaderDripHandler)
+    try:
+        o = _Orch()
+        t0 = time.monotonic()
+        try:
+            o._fetch_url_html(url)
+            check("a header drip is stopped", False, "it returned")
+        except Exception:
+            check("a header drip is stopped by the deadline", True)
+        elapsed = time.monotonic() - t0
+        check("the header gap is inside the socket timeout, so only a total deadline "
+              "can end this", _HeaderDripHandler.GAP < D._SOURCE_SOCKET_TIMEOUT)
+        check("bounded by the deadline plus scheduling slack (%.1fs <= %ds + 3s)"
+              % (elapsed, D._SOURCE_LEG_DEADLINE),
+              elapsed <= D._SOURCE_LEG_DEADLINE + 3, elapsed)
+        check("every phase is budgeted, not just the body",
+              elapsed >= D._SOURCE_LEG_DEADLINE - 1, elapsed)
+    finally:
+        srv.shutdown()
+        srv.server_close()
+
+
 def test_the_bound_is_a_total_not_a_per_read_timeout():
     """A read-by-read timeout is not what is being tested; a server sending NOTHING
     would trip the old socket timeout too. The drip server sends continuously, so
@@ -140,24 +181,35 @@ def test_the_bound_is_a_total_not_a_per_read_timeout():
     src = (HERE / "orchestrator" / "discovery.py").read_text()
     fn = src.split("def _fetch_url_html(self")[1].split("\n    def ")[0]
     check("the deadline is taken before the request", "deadline = time.monotonic()" in fn)
-    check("each read shrinks the socket timeout to what is left",
-          "sock.settimeout(min(remaining" in fn, fn[:0])
+    check("the connection reads through a deadline-budgeted socket",
+          "_bounded_opener(deadline)" in fn)
     check("the body is read with read1, so one underlying read returns control",
           "resp.read1(min(_SOURCE_READ_CHUNK" in fn)
     check("and not with read(), whose internal loop would reset the socket timeout "
           "on every byte that arrives",
           "resp.read(" not in fn)
-    check("an unreachable socket refuses instead of reading unbounded",
-          "if sock is None:" in fn and "raise SourceAcquisitionTimeout" in fn)
+    wrapper = src.split("class _DeadlineSocket:")[1].split("\ndef _bounded_opener")[0]
+    check("every read is budgeted before it can block",
+          all(("self._budget()" in wrapper.split("def %s" % m)[1][:120])
+              for m in ("recv(", "recv_into(", "send(", "sendall(")), wrapper[:0])
+    check("the budget shrinks the timeout to what is left",
+          "settimeout(min(remaining, _SOURCE_SOCKET_TIMEOUT))" in wrapper)
+    check("and refuses outright once the deadline has passed",
+          "raise SourceAcquisitionTimeout" in wrapper)
+    check("makefile reads through the wrapper, so headers are budgeted too",
+          "socket.SocketIO(self" in wrapper)
     check("no global socket state is mutated",
           "setdefaulttimeout" not in src)
+    region = src.split("class _DeadlineSocket:")[1].split("class DiscoveryMixin")[0]
     check("no thread or process is spawned to do the bounding",
-          "Thread(" not in fn and "subprocess" not in fn)
+          "Thread(" not in region and "subprocess" not in region and "Thread(" not in fn)
+    check("the deadline is carried per opener, never in module state",
+          "def _bounded_opener(deadline)" in src)
     check("redirects are bounded below urllib's default of 10",
           D._BoundedRedirectHandler.max_redirections == D._SOURCE_MAX_REDIRECTS
           and D._SOURCE_MAX_REDIRECTS < 10)
     check("the redirect bound is per-opener, not a global class mutation",
-          "build_opener(_BoundedRedirectHandler())" in src
+          "build_opener(_BoundedRedirectHandler()" in src
           and "urllib.request.HTTPRedirectHandler.max_redirections =" not in src)
     check("the 500K response cap survives", "500000" in fn)
     check("the content-type check survives", 'text/html" not in content_type' in fn)
@@ -291,6 +343,7 @@ def test_E_the_existing_failure_semantics_are_untouched():
 
 def main():
     for fn in (test_a_slow_drip_response_cannot_run_past_the_deadline,
+               test_a_header_drip_cannot_run_past_the_deadline_either,
                test_the_bound_is_a_total_not_a_per_read_timeout,
                test_no_socket_is_left_open_by_a_timeout,
                test_A_a_usable_primary_is_never_refetched,

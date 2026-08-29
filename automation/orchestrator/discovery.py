@@ -11,6 +11,8 @@ small methods. Zero behavior change -- bodies copied verbatim, confirmed via
 direct substring containment against git HEAD.
 """
 import html as _html_entities
+import http.client
+import io
 import json
 import random
 import re
@@ -107,16 +109,99 @@ class SourceAcquisitionTimeout(Exception):
 
 
 class _BoundedRedirectHandler(urllib.request.HTTPRedirectHandler):
-    """urllib follows up to 10 redirects, each restarting the socket timeout, so the
-    header phase alone could run to 10x it before a single byte of body arrives."""
+    """urllib follows up to 10 redirects, each a fresh request. Fewer hops means less
+    surface for a hostile server, and the deadline covers all of them either way."""
     max_redirections = _SOURCE_MAX_REDIRECTS
 
 
-def _bounded_opener():
-    """Built per call. An opener carries per-connection state; a module-level one
-    shared across threads would be a different class of bug than the one being
-    fixed here, and building it costs microseconds against a network fetch."""
-    return urllib.request.build_opener(_BoundedRedirectHandler())
+class _DeadlineSocket:
+    """A socket that cannot be read past a wall-clock deadline.
+
+    Every read is budgeted, not merely the body reads: the response HEADERS are read
+    by http.client with the same trickle-resettable timeout, and a server dripping
+    bytes inside a header line stalls getresponse() before a caller ever sees a
+    response object to bound. Measured: a header drip ran past a 25s body deadline
+    without stopping, because the body loop had not started yet.
+
+    Budgeting here instead means the bound holds over connect, request, headers,
+    redirects and body alike -- there is no phase left that reads unbudgeted. Reads
+    still go through io.BufferedReader, whose read(n) loops until it has n bytes, but
+    each of those underlying reads now passes through _budget() and cannot outlive
+    what is left. No global socket state is touched, and no thread or process exists
+    to be left behind: the deadline is checked by the very call that would block.
+    """
+
+    def __init__(self, sock, deadline):
+        self._sock = sock
+        self._deadline = deadline
+
+    def _budget(self):
+        remaining = self._deadline - time.monotonic()
+        if remaining <= 0:
+            raise SourceAcquisitionTimeout("acquisition deadline of %ss reached"
+                                           % _SOURCE_LEG_DEADLINE)
+        self._sock.settimeout(min(remaining, _SOURCE_SOCKET_TIMEOUT))
+
+    def recv(self, *a, **kw):
+        self._budget()
+        return self._sock.recv(*a, **kw)
+
+    def recv_into(self, *a, **kw):
+        self._budget()
+        return self._sock.recv_into(*a, **kw)
+
+    def send(self, *a, **kw):
+        self._budget()
+        return self._sock.send(*a, **kw)
+
+    def sendall(self, *a, **kw):
+        self._budget()
+        return self._sock.sendall(*a, **kw)
+
+    def makefile(self, mode="rb", buffering=None, **kw):
+        # SocketIO reads through THIS object, so http.client's header and body reads
+        # are budgeted too. That is the whole point of the wrapper.
+        #
+        # The _io_refs bookkeeping is socket.makefile's, reproduced because we are
+        # standing in for it: urllib closes the connection socket as soon as it has a
+        # response and relies on this count to keep the descriptor alive for whoever
+        # still holds the file object. Skip it and the first body read fails with
+        # "Bad file descriptor" -- which it did, before this line existed.
+        self._sock._io_refs += 1
+        raw = socket.SocketIO(self, "rb")
+        return raw if buffering == 0 else io.BufferedReader(raw)
+
+    def __getattr__(self, name):
+        return getattr(self._sock, name)
+
+
+def _bounded_opener(deadline):
+    """Built per call, carrying this fetch's deadline into the connection classes.
+    Per-opener rather than module-level so nothing global is mutated and two
+    concurrent fetches cannot inherit each other's deadline."""
+
+    def _wrap(conn):
+        conn.sock = _DeadlineSocket(conn.sock, deadline)
+
+    class _Conn(http.client.HTTPConnection):
+        def connect(self):
+            super().connect()
+            _wrap(self)
+
+    class _SConn(http.client.HTTPSConnection):
+        def connect(self):
+            super().connect()
+            _wrap(self)
+
+    class _H(urllib.request.HTTPHandler):
+        def http_open(self, req):
+            return self.do_open(_Conn, req)
+
+    class _SH(urllib.request.HTTPSHandler):
+        def https_open(self, req):
+            return self.do_open(_SConn, req)
+
+    return urllib.request.build_opener(_BoundedRedirectHandler(), _H(), _SH())
 
 
 def _response_socket(resp):
@@ -1204,7 +1289,7 @@ class DiscoveryMixin:
         })
         # A private opener, so bounding redirects does not mutate urllib's global
         # default for every other caller in the process.
-        with _bounded_opener().open(req, timeout=_SOURCE_SOCKET_TIMEOUT) as resp:
+        with _bounded_opener(deadline).open(req, timeout=_SOURCE_SOCKET_TIMEOUT) as resp:
             if resp.status != 200:
                 return None
             content_type = resp.headers.get("Content-Type", "")
@@ -1221,29 +1306,13 @@ class DiscoveryMixin:
             # SOURCE MATERIAL block to draw from and invented a person and a quote
             # to fill the gap instead. Root cause of that fabrication incident, not
             # a downstream symptom of it.
-            sock = _response_socket(resp)
-            if sock is None:
-                # Cannot bound the reads on this response. Refuse rather than read
-                # unbounded: fetch_source_article falls through to the impersonated
-                # leg, whose total-transfer timeout is enforced by libcurl itself.
-                raise SourceAcquisitionTimeout(
-                    "cannot bound reads on this response (no socket handle); "
-                    "deferring to the impersonated leg")
             chunks, size = [], 0
             while size < 500000:
-                remaining = deadline - time.monotonic()
-                if remaining <= 0:
-                    raise SourceAcquisitionTimeout(
-                        "total transfer exceeded %ss after %d bytes"
-                        % (_SOURCE_LEG_DEADLINE, size))
-                sock.settimeout(min(remaining, _SOURCE_SOCKET_TIMEOUT))
                 try:
                     # read1, not read: read(n) is a BufferedReader loop that keeps
-                    # calling recv until it has n bytes, and every byte that arrives
-                    # resets the socket timeout -- the same bug one level up, and the
-                    # reason a shrinking socket timeout alone does not bound a drip.
-                    # read1 performs ONE underlying read, so control returns here and
-                    # the deadline is re-checked no matter how little data arrived.
+                    # calling recv until it has n bytes. Both are budgeted by
+                    # _DeadlineSocket, but read1 returns control here, so the 500K cap
+                    # is honoured chunk by chunk instead of in one enormous request.
                     chunk = resp.read1(min(_SOURCE_READ_CHUNK, 500000 - size))
                 except (TimeoutError, socket.timeout) as e:
                     raise SourceAcquisitionTimeout(
