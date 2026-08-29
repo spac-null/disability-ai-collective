@@ -24,6 +24,7 @@ import datetime
 import json
 import os
 import pathlib
+import sqlite3
 import re
 import sys
 
@@ -32,6 +33,8 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 import new_engine_candidate as CAND                      # noqa: E402
+import news_fetcher as NF                                # noqa: E402
+import selector_v2 as SV                                 # noqa: E402
 import publication_safety_bridge as BRIDGE               # noqa: E402
 import title_coherence as TC                             # noqa: E402
 from new_engine_v1 import contracts as C                 # noqa: E402
@@ -102,6 +105,75 @@ def _record_seed_attempt(orch, seed: dict, run: str, out: dict, result: dict) ->
                             run, e)
 
 
+def _selector_v2_shadow(orch, seed: dict, run: str, model: str) -> None:
+    """SELECTOR V2, shadow only. OFF unless CRIPMINDS_SELECTOR_V2_SHADOW is set.
+
+    Runs ONCE per run, at one point only: after the authoritative selector has chosen
+    its anchor and that anchor's source has been acquired, and before the engine, the
+    Research Pack, or any seed write-back has touched anything.
+
+    That position is the whole comparison. _record_seed_attempt retires or rests the
+    seed it is given -- ce_attempt_terminal on a terminal outcome, ce_retry_after on a
+    retryable one -- and both are eligibility filters in the pool this reads. Run the
+    shadow after that write-back and the authoritative winner may already have been
+    removed from the universe the shadow ranks, which does not merely bias the result:
+    it makes agreement unreachable, so every comparison would report a disagreement
+    that never happened. The two selectors must see one pool.
+
+    Running here costs the acquisition of up to a day's candidates before the article
+    work starts. That is the price of a comparison that means anything, and it is only
+    ever paid when the flag is set.
+
+    It reuses the PRODUCTION acquisition path (`get_source_text` plus the orchestrator's
+    own classification), because a second weaker fetcher would mark whole publishers
+    unreadable and make the comparison a lie.
+
+    Every failure is contained. An experiment must never be able to break a run -- not by
+    raising, not by leaving a connection open on the seed database that production is
+    about to write to. The exception is logged as a SELECTOR_V2 warning rather than
+    swallowed silently: an experiment that quietly stops running is worse than one that
+    visibly fails.
+    """
+    if not SV.enabled():
+        return
+    conn = None
+    try:
+        conn = sqlite3.connect(str(orch.discovery_db))
+
+        def acquire(url):
+            text = orch.get_source_text(url)
+            status, _reason = orch.classify_source_acquisition(
+                text or "", orch.get_source_origin(url),
+                orch.get_source_paragraph_count(url))
+            return (text or ""), status
+
+        report = SV.run_shadow(
+            conn, Provider(model=model), acquire=acquire,
+            score_item=NF.score_item, boosters=NF.DISABILITY_BOOSTERS,
+            keyword_matches=NF._keyword_matches,
+            old_winner={"id": seed["id"], "title": seed.get("title"),
+                        "source_name": seed.get("source_name"),
+                        "relevance_score": seed.get("relevance_score")})
+        SV.record_comparison(conn, run, report)
+        w = report.get("shadow_winner") or {}
+        orch.logger.info(
+            "SELECTOR_V2 shadow %s: old=%s | shadow=%s (%s) | same=%s | "
+            "candidates=%d fetched=%d calls=%d",
+            run, (seed.get("title") or "")[:60], (w.get("title") or "none")[:60],
+            w.get("assessment"), report.get("same_winner"),
+            report["metrics"]["candidates"], report["metrics"]["fetched"],
+            report["metrics"]["model_calls"])
+    except Exception as e:                                # never reaches the caller
+        orch.logger.warning("SELECTOR_V2 shadow failed (ignored, run unaffected): %s: %s",
+                            type(e).__name__, str(e)[:300])
+    finally:
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:
+                pass
+
+
 def run_scheduled(orch, *, rehearsal: bool = False,
                   evidence_root: str | None = None,
                   model: str = DEFAULT_MODEL, research_fn=None) -> dict:
@@ -149,6 +221,11 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     orch.logger.info("CURRENT_ENGINE run %s — source %s (%s chars)",
                      run, payload["provenance"]["url"],
                      payload["provenance"]["original_length_chars"])
+
+    # The anchor is now fixed and its source is in hand, and nothing has yet written
+    # back to the seed pool. This is the only moment at which the two selectors can be
+    # compared honestly -- see _selector_v2_shadow.
+    _selector_v2_shadow(orch, seed, run, model)
 
     out = R.run(payload, root, Provider(model=model), run, now.isoformat(),
                 research_fn=research_fn)

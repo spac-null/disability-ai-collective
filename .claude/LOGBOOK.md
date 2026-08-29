@@ -646,3 +646,36 @@ maps to exactly one configured feed, so the backfill is unambiguous.
 
 CODE: `automation/material_policy.py` (new), `news_fetcher.py`, `orchestrator/discovery.py`,
 `automation/material_class_policy_test.py` (new). **MERGED: NO.**
+
+---
+
+## 2026-08-29 — Selector V2 reads the source before judging it (shadow)
+
+WHAT: a non-authoritative selector that exposes ~12 eligible seeds a day through three
+deterministic streams, acquires them with the production fetcher, computes cheap source
+features, asks one bounded question -- is there enough concrete reality here to research
+this? -- and orders the answers with a readable sort. Its own table, its own report, its
+own opt-in flag, default OFF.
+
+WHY: the authoritative path spends its whole daily budget asking a model to invent a
+disability angle from a headline and an RSS summary, then treats that invention as the
+ticket into Priority 1. Measured on 24 read sources: relevance_score, which orders
+everything, was uncorrelated with material quality (47% strong above 0.55, 43% below
+0.4); the angle approved weak material in 5 of 8 cases; the two highest-scoring
+candidates were an award announcement and a page of navigation markup; and a Nautilus
+piece about a blind cave fish scored 0.150 and read RICH.
+
+MEASURED (copy of production, nothing mutated): 687 eligible, 12 candidates (6 theme /
+4 urgency / 2 exploration), 9 acquired, 3 acquisition failures recorded as such and NOT
+as weak material, 4 model calls, 51 seconds, 9/9 assessments structurally valid. A second
+run cost 0 calls -- every source unchanged, every assessment served from cache. Old
+authoritative winner: NYT Science. Shadow winner: Smithsonian, STRONG/RICH/HIGH, with
+three Dezeen entries carrying a 0.30 repetition penalty and ranking last on their own
+material.
+
+NOT DONE HERE: no cutover, no change to Priority 1/2, no removal of disability_angle or
+the disability booster from the production scorer, no feed changes, no cron change.
+
+CODE: `automation/selector_v2.py` (new), `automation/selector_v2_shadow_test.py` (new).
+**MERGED: NO.**
+
