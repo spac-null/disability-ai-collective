@@ -442,14 +442,30 @@ def prune_old(conn, days: int | None = None):
     single 14-day rule a research seed would have been eligible for 90 days and deleted
     after 14.
     """
+    has_terminal_override = any(r[1] == "ce_attempt_terminal"
+                                for r in conn.execute("PRAGMA table_info(news_seeds)"))
     if days is not None:
         cutoff = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
         cur = conn.execute(
-            "DELETE FROM news_seeds WHERE fetched_date < ? AND used = 0", (cutoff,))
+            "DELETE FROM news_seeds WHERE fetched_date < ? AND used = 0%s"
+            % (" AND ce_attempt_terminal IS NOT 1" if has_terminal_override else ""),
+            (cutoff,))
         conn.commit()
         if cur.rowcount:
             log(f"Pruned {cur.rowcount} old unused seeds (>{days}d)")
         return cur.rowcount or 0
+
+    # Never prune a seed the engine has already judged terminally. The URL primary key
+    # (`url_id`) is what stops a feed re-offering the same item, and it can only do that
+    # while the row exists -- so deleting a terminally-attempted row hands the pool
+    # amnesia: a long-lookback feed still carries that item months later, it re-enters as
+    # new, and a seed already judged HOLD_INSUFFICIENT_RESEARCH gets attempted again.
+    # Reproduced deterministically before this guard existed. Bounded growth: at most one
+    # such row per production run. The column belongs to discovery.py's migration, so its
+    # absence is tolerated rather than assumed.
+    has_terminal = any(r[1] == "ce_attempt_terminal"
+                       for r in conn.execute("PRAGMA table_info(news_seeds)"))
+    keep_terminal = " AND ce_attempt_terminal IS NOT 1" if has_terminal else ""
 
     removed = 0
     for cls in MP.CLASSES:
@@ -458,8 +474,8 @@ def prune_old(conn, days: int | None = None):
         where_class = ("material_class IS NULL OR material_class = ?"
                        if cls == MP.OTHER else "material_class = ?")
         cur = conn.execute(
-            "DELETE FROM news_seeds WHERE fetched_date < ? AND used = 0 AND (%s)"
-            % where_class, (cutoff, cls))
+            "DELETE FROM news_seeds WHERE fetched_date < ? AND used = 0%s AND (%s)"
+            % (keep_terminal, where_class), (cutoff, cls))
         removed += cur.rowcount or 0
     conn.commit()
     if removed:

@@ -634,6 +634,15 @@ rather than production: the angle-extraction pass had its own hard 3-day cutoff,
 would have left research seeds eligible but never angled and therefore unreachable by
 Priority 1; and the exploration-slot query shared that cutoff.
 
+DEDUP, checked before merge: while a seed row exists the URL primary key (`url_id`)
+refuses the same item at any age, so a long lookback cannot duplicate anything on its
+own -- verified for essay, research and evergreen. The real hazard was retention:
+pruning a terminally-judged row deleted the memory that stopped it returning, so a seed
+already judged HOLD_INSUFFICIENT_RESEARCH could re-enter as new once its class retention
+passed. Reproduced deterministically, then closed by never pruning a row carrying
+`ce_attempt_terminal = 1`. Bounded: at most one such row per production run. Production
+DB inspected read-only -- 0 duplicate URL groups in 1,321 rows, and every `source_name`
+maps to exactly one configured feed, so the backfill is unambiguous.
+
 CODE: `automation/material_policy.py` (new), `news_fetcher.py`, `orchestrator/discovery.py`,
 `automation/material_class_policy_test.py` (new). **MERGED: NO.**
-

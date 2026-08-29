@@ -270,6 +270,99 @@ def test_every_configured_feed_has_a_class():
     check("all 57 feeds are classified", len(NF.QUALITY_FEEDS) == 57, len(NF.QUALITY_FEEDS))
 
 
+
+# ── dedup across a long lookback ──────────────────────────────────────────────
+def test_same_item_cannot_re_enter_while_its_row_exists():
+    """A long-lookback feed offers the same item for months. The URL primary key
+    (`url_id`) is what stops it re-entering, and it works at any age -- but only while
+    the row is there, which is what the next test is about."""
+    for cls in (MP.ESSAY_OPINION, MP.RESEARCH_REPORT, MP.EVERGREEN):
+        d = pathlib.Path(tempfile.mkdtemp()) / "t.db"
+        conn = sqlite3.connect(str(d))
+        NF.init_db(conn)
+        item = {"url": "https://feed.example/%s-piece" % cls.lower(),
+                "title": "A piece from %s" % cls, "summary": "s",
+                "source_name": "Aeon", "source_tier": 1, "pub_date": "2026-04-01",
+                "relevance_score": 0.7, "themes": [], "material_class": cls}
+        check("%s: first offer is stored" % cls, NF.store_seed(conn, item) is True)
+        for _ in range(4):                      # the feed keeps offering it, day after day
+            again = NF.store_seed(conn, item)
+        check("%s: repeated offers are refused by URL identity" % cls, again is False)
+        n = conn.execute("SELECT COUNT(*) FROM news_seeds").fetchone()[0]
+        check("%s: exactly one retained row" % cls, n == 1, n)
+        other = dict(item, url=item["url"] + "-part-two", title="A second piece")
+        check("%s: a genuinely different URL is still accepted" % cls,
+              NF.store_seed(conn, other) is True)
+        check("%s: two distinct rows" % cls,
+              conn.execute("SELECT COUNT(*) FROM news_seeds").fetchone()[0] == 2)
+        conn.close()
+
+
+def test_a_terminally_judged_seed_is_never_pruned_back_into_the_pool():
+    """Reproduced before the guard existed: prune deleted the row, the feed still
+    carried the item, and a seed already judged HOLD_INSUFFICIENT_RESEARCH re-entered as
+    new. Deleting the row hands the pool amnesia, because the row IS the memory."""
+    for cls in (MP.ESSAY_OPINION, MP.RESEARCH_REPORT, MP.EVERGREEN):
+        o = _db([])
+        conn = sqlite3.connect(str(o.discovery_db))
+        item = {"url": "https://feed.example/%s-judged" % cls.lower(),
+                "title": "Already judged (%s)" % cls, "summary": "s",
+                "source_name": "Aeon", "source_tier": 1, "pub_date": "2026-04-01",
+                "relevance_score": 0.7, "themes": [], "material_class": cls}
+        NF.store_seed(conn, item)
+        expired = (datetime.now()
+                   - timedelta(days=MP.retention_days(cls) + 1)).strftime("%Y-%m-%d")
+        conn.execute("UPDATE news_seeds SET fetched_date = ?, ce_attempt_terminal = 1, "
+                     "ce_attempt_outcome = 'TERMINAL:HOLD_INSUFFICIENT_RESEARCH'",
+                     (expired,))
+        conn.commit()
+        NF.prune_old(conn)
+        kept = conn.execute("SELECT COUNT(*) FROM news_seeds").fetchone()[0]
+        check("%s: a terminally-judged seed survives its retention" % cls, kept == 1, kept)
+        check("%s: and the same URL still cannot re-enter" % cls,
+              NF.store_seed(conn, item) is False)
+        check("%s: the judgment itself is intact" % cls,
+              conn.execute("SELECT ce_attempt_outcome FROM news_seeds").fetchone()[0]
+              == "TERMINAL:HOLD_INSUFFICIENT_RESEARCH")
+        check("%s: and it is not selectable" % cls, _pick(o) is None, _pick(o))
+
+        # an ordinary expired seed is still pruned -- the guard is narrow
+        conn.execute("UPDATE news_seeds SET ce_attempt_terminal = 0")
+        conn.commit()
+        NF.prune_old(conn)
+        check("%s: an expired seed with no terminal judgment is still pruned" % cls,
+              conn.execute("SELECT COUNT(*) FROM news_seeds").fetchone()[0] == 0)
+        conn.close()
+
+
+def test_pruning_guard_tolerates_a_db_without_the_attempt_columns():
+    """news_fetcher owns its own migration; the ce_* columns come from discovery's.
+    A DB that has only the former must still prune rather than raise."""
+    d = pathlib.Path(tempfile.mkdtemp()) / "t.db"
+    conn = sqlite3.connect(str(d))
+    NF.init_db(conn)                                    # no ce_* columns here
+    old = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
+    conn.execute("INSERT INTO news_seeds (id, url, title, source_name, pub_date, "
+                 "fetched_date, relevance_score, used, material_class) "
+                 "VALUES ('x','u','t','Aeon',?,?,0.5,0,'CURRENT_NEWS')", (old, old))
+    conn.commit()
+    NF.prune_old(conn)
+    check("pruning works without the attempt columns",
+          conn.execute("SELECT COUNT(*) FROM news_seeds").fetchone()[0] == 0)
+    conn.close()
+
+
+def test_feed_names_map_unambiguously_to_one_class():
+    names = [f["name"] for f in NF.QUALITY_FEEDS]
+    dupes = {n for n in names if names.count(n) > 1}
+    check("no two configured feeds share a name", not dupes, dupes)
+    by_name = {}
+    for f in NF.QUALITY_FEEDS:
+        by_name.setdefault(f["name"], set()).add(f.get("class"))
+    ambiguous = {n: c for n, c in by_name.items() if len(c) > 1}
+    check("every source_name maps to exactly one class", not ambiguous, ambiguous)
+
+
 def main():
     for fn in (test_current_news_keeps_the_old_window,
                test_essay_culture_and_research_get_their_own_horizons,
