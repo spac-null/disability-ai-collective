@@ -575,3 +575,35 @@ It constrains future NEWS/POOL work; nothing in it is implemented here.
 CODE: `automation/orchestrator/discovery.py`, `automation/new_engine_production.py`,
 `automation/seed_attempt_writeback_test.py` (new). No feed, weight, ranking-order, cron,
 Grounder, Research Pack or publish change. **MERGED: NO.**
+
+---
+
+## 2026-08-29 — The publisher committed two files it never touched
+
+WHAT: `publish_best.py` staged `git add -A _drafts` at the end of its commit block, so
+any untracked or modified file under `_drafts` joined whatever the run happened to be
+committing. Staging is now assembled from a `mutated` list built as the run acts —
+promotion destination and vacated draft path, each archived source and destination, each
+losing draft whose aging counter was bumped — and `git add -A -- <paths>` stages exactly
+those. No directory is staged.
+
+WHY IT MATTERED: on 2026-08-29 at 08:00 the publisher archived one stale draft and, in
+the same commit `ab322bb`, tracked the 27 August trike draft and the **declined, held
+28 August candidate**. Nothing was published — `_drafts` is not built by Jekyll and the
+held file sits outside the selector's glob — but an article the owner had declined
+entered a public repository.
+
+DISPOSITION: both files were swept in, neither was a mutation of that run, and neither is
+a canonical artifact under the current engine, which never commits candidates
+(`new_engine_v1_test::test_no_publication_side_effect`). Both are removed from the current
+tree by ordinary forward deletion and preserved outside git at
+`/srv/data/cripminds-held/` on Trident (sha256 `8a260cf4…` and `abe00065…`).
+
+PUBLIC HISTORY: `ab322bb` still contains both files and this PR does not change that. No
+rewrite, no force-push, no amend — erasing a commit from a public repository is an owner
+decision that has not been made.
+
+CODE: `automation/publish_best.py`, `automation/publish_best_staging_test.py` (new). No
+selection, ranking, feed, seed-logic, Research Pack, Grounder, Writer or cadence change.
+**MERGED: NO.**
+

@@ -417,6 +417,25 @@ and are **not** cutover blockers — they never blocked the completed default cu
   outside `publish_best.py`'s top-level `_drafts/*.md` glob, byte-identical, evidence
   directory intact. Owner read it and did not approve it for publication.
 
+- **PR #47 — publisher staging hygiene: OPEN, NOT MERGED.** `publish_best.py` ended its
+  commit with `git add -A _drafts`, so on 2026-08-29 (`ab322bb`) an archive run also
+  committed two files it had never touched: the 27 Aug trike draft and the **declined,
+  held 28 Aug candidate**. Neither was published — Jekyll does not build `_drafts` — but
+  a declined article entered the public repository. Staging is now built from a recorded
+  set of the paths each run actually mutated; no directory is ever staged. Both files are
+  removed from the current tree by ordinary forward deletion, and preserved outside git
+  at `/srv/data/cripminds-held/` on Trident.
+  **Public history: `ab322bb` still contains both files and this PR does not change that.**
+  Erasing them from history would require a rewrite and force-push of a public repository
+  and is NOT authorised — a separate owner decision if it is ever wanted.
+
+- **PR #46 production observation — CLOSED, successful.** 2026-08-29 natural run
+  `production-20260829T070004Z-fd846f06`: the same Dezeen seed was selected once more
+  (its earlier attempts predate the `ce_*` metadata), Research Pack returned
+  `HOLD_INSUFFICIENT_RESEARCH` (56 subject-relevant words, floor 150), and the
+  write-back recorded `TERMINAL:HOLD_INSUFFICIENT_RESEARCH, retry_after=never`. That
+  seed is now permanently excluded; tomorrow must select a different anchor.
+
 - **OWNER DOCTRINE — `.claude/source-and-article-doctrine.md` (2026-08-28).** The
   editorial constraint future NEWS/POOL and engine work must satisfy: find material worth
   investigating rather than "disability news"; **no disability-led quota**; news, essay,

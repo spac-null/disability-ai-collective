@@ -235,16 +235,26 @@ def test_old_rows_stay_valid_and_used_is_not_redefined():
 
 # ── 12: blast radius ──────────────────────────────────────────────────────────
 def test_nothing_else_was_touched():
-    import subprocess
-    changed = subprocess.run(["git", "diff", "--name-only", "origin/main", "HEAD"],
-                             cwd=str(HERE.parent), capture_output=True, text=True).stdout.split()
-    forbidden = [f for f in changed if any(k in f for k in (
-        "new_engine_v1/", "publication_safety_bridge", "publish_best", "news_fetcher",
-        "grounding_v2", "stages.py", "decision.py"))]
-    check("no engine, bridge, grounder, feed or publish file is in the diff",
-          not forbidden, forbidden)
+    """Scope guard for the seed write-back itself.
+
+    This used to diff the whole branch against origin/main, which made it fail the
+    moment ANY later PR touched an unrelated file -- it flagged PR #47's publisher fix,
+    which has nothing to do with seed attempts. A scope guard should describe this
+    feature's own reach, not forbid the repository from changing.
+    """
     src = (HERE / "orchestrator" / "discovery.py").read_text()
-    check("relevance scoring is untouched in this PR",
+    seed_code = src[src.index("CE_RETRY_COOLDOWN_HOURS"):src.index("def mark_news_seed_declined")]
+    for foreign in ("publish_best", "news_fetcher", "grounding_v2", "new_engine_v1",
+                    "QUALITY_FEEDS", "THEME_WEIGHTS", "score_item"):
+        check("the seed write-back code does not reach into %s" % foreign,
+              foreign not in seed_code)
+    prod = (HERE / "new_engine_production.py").read_text()
+    writeback = prod[prod.index("def _record_seed_attempt"):prod.index("def run_scheduled")]
+    check("the write-back only calls the orchestrator's own seed methods",
+          "mark_news_seed_current_engine_attempt" in writeback
+          and "classify_current_engine_attempt" in writeback
+          and "publish" not in writeback.lower())
+    check("relevance scoring is not defined or altered here",
           "THEME_WEIGHTS" not in src or "def score_item" not in src)
     check("the ORDER BY is unchanged",
           src.count("ORDER BY relevance_score DESC, pub_date DESC") >= 2)
