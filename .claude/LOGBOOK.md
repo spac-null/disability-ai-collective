@@ -607,3 +607,42 @@ CODE: `automation/publish_best.py`, `automation/publish_best_staging_test.py` (n
 selection, ranking, feed, seed-logic, Research Pack, Grounder, Writer or cadence change.
 **MERGED: NO.**
 
+---
+
+## 2026-08-29 — The pool stops running on one clock
+
+WHAT: every feed now declares what kind of material it supplies, and that class decides
+how far back ingestion looks, how long a seed stays selectable, and how long it is kept.
+`automation/material_policy.py` holds the vocabulary and the numbers; `news_seeds` gains
+a `material_class` column, backfilled deterministically from each feed's own declared
+class and left NULL where no configured feed matches.
+
+WHY: intake ran on a news wire's clock -- ingest 7 days, consider 3, delete at 14 -- so a
+paper published three weeks ago could not enter the pool at all, and one published today
+stopped being selectable on its fourth day. That is why the low-cadence feeds in the
+configuration have produced nothing that ever reached selection, and it contradicts the
+owner doctrine's "freshness is contextual, not universal".
+
+SCOPE: eligibility only. Ranking is untouched, no class earns points, no quota exists,
+disability-led provenance carries no weight in either direction, and no source was added,
+removed or repaired. Selection quality, richness and repetition-diversity are PR #49.
+
+EVIDENCE (read-only, on a copy of the production DB): eligible pool 313 -> 687; angled
+Priority-1 pool 19 -> 51; by class CULTURE 237, ESSAY_OPINION 185, CURRENT_NEWS 161,
+EVERGREEN 75, RESEARCH_REPORT 23, OTHER 6. Two defects were caught by the test suite
+rather than production: the angle-extraction pass had its own hard 3-day cutoff, which
+would have left research seeds eligible but never angled and therefore unreachable by
+Priority 1; and the exploration-slot query shared that cutoff.
+
+DEDUP, checked before merge: while a seed row exists the URL primary key (`url_id`)
+refuses the same item at any age, so a long lookback cannot duplicate anything on its
+own -- verified for essay, research and evergreen. The real hazard was retention:
+pruning a terminally-judged row deleted the memory that stopped it returning, so a seed
+already judged HOLD_INSUFFICIENT_RESEARCH could re-enter as new once its class retention
+passed. Reproduced deterministically, then closed by never pruning a row carrying
+`ce_attempt_terminal = 1`. Bounded: at most one such row per production run. Production
+DB inspected read-only -- 0 duplicate URL groups in 1,321 rows, and every `source_name`
+maps to exactly one configured feed, so the backfill is unambiguous.
+
+CODE: `automation/material_policy.py` (new), `news_fetcher.py`, `orchestrator/discovery.py`,
+`automation/material_class_policy_test.py` (new). **MERGED: NO.**

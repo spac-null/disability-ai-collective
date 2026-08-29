@@ -15,6 +15,8 @@ import json
 import random
 import re
 import sqlite3
+import sys
+from pathlib import Path
 import time
 import urllib.request
 from datetime import datetime, timedelta, timezone
@@ -150,6 +152,10 @@ def _extract_paragraphs_regex(html: str, max_paras: int = 12) -> str:
         if len(text) > 80 and not _looks_like_nav(text):
             clean.append(text)
     return "\n\n".join(clean[:max_paras])
+
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+import material_policy as MP                                          # noqa: E402
 
 
 class DiscoveryMixin:
@@ -1488,6 +1494,9 @@ class DiscoveryMixin:
             # per-class logic in SQL. NULL on every historical row, and on a terminal
             # attempt, where ce_attempt_terminal is what retires the seed.
             ("ce_retry_after", "TEXT"),
+            # NEWS/POOL V2 (2026-08-29): the material class this seed's feed supplies.
+            # NULL means OTHER, which is the legacy news clock exactly.
+            ("material_class", "TEXT"),
         ):
             try:
                 conn.execute(f"ALTER TABLE news_seeds ADD COLUMN {_col} {_def}")
@@ -1516,7 +1525,19 @@ class DiscoveryMixin:
             conn = sqlite3.connect(str(self.discovery_db))
             self._init_news_seeds_table(conn)
             self._ensure_decline_columns(conn)
-            cutoff = (datetime.now() - timedelta(days=3)).strftime("%Y-%m-%d")
+            # CONTEXTUAL FRESHNESS (2026-08-29). The universal `pub_date >= now-3d`
+            # was the right clock for a news wire and the wrong one for everything
+            # else: a paper, a report or an archival piece is not less interesting on
+            # its fourth day, and under one 3-day window the low-cadence feeds in the
+            # configuration could only ever be missed. Each class now carries its own
+            # horizon, computed here and passed as parameters so the rule is readable
+            # in one place. This answers "can this still be considered?" and nothing
+            # else -- ranking below is untouched, and a 90-day-old paper does not
+            # outrank today's news for being eligible.
+            ce_cutoffs = MP.eligibility_cutoffs(datetime.now())
+            cutoff_args = (ce_cutoffs[MP.CURRENT_NEWS], ce_cutoffs[MP.ESSAY_OPINION],
+                           ce_cutoffs[MP.RESEARCH_REPORT], ce_cutoffs[MP.CULTURE],
+                           ce_cutoffs[MP.EVERGREEN], ce_cutoffs[MP.OTHER])
             # CURRENT_ENGINE repeat-prevention (2026-08-28). Two clauses saying two
             # different things. `ce_attempt_terminal IS NOT 1` retires a seed whose
             # outcome cannot change on a rerun -- an accepted candidate, a research
@@ -1547,14 +1568,18 @@ class DiscoveryMixin:
                 SELECT id, url, title, summary, source_name, relevance_score,
                        themes, disability_angle, pub_date, underlying_article_url
                 FROM news_seeds
-                WHERE used = 0 AND pub_date >= ? AND disability_angle IS NOT NULL
+                WHERE used = 0 AND disability_angle IS NOT NULL
+                  AND pub_date >= CASE COALESCE(material_class, 'OTHER')
+                                  WHEN 'CURRENT_NEWS' THEN ? WHEN 'ESSAY_OPINION' THEN ?
+                                  WHEN 'RESEARCH_REPORT' THEN ? WHEN 'CULTURE' THEN ?
+                                  WHEN 'EVERGREEN' THEN ? ELSE ? END
                   AND NOT (declined = 1 AND decline_schema_version = ?)
                   AND ce_attempt_terminal IS NOT 1
                   AND (ce_retry_after IS NULL OR ce_retry_after <= ?)
                   AND id NOT IN (%s)
                 ORDER BY relevance_score DESC, pub_date DESC
                 LIMIT 1
-            """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, ce_now,
+            """ % _excl_sql, (*cutoff_args, STORY_REJECTION_CONTRACT_VERSION, ce_now,
                               *_excl)).fetchone()
 
             # Priority 2: high relevance score, no angle yet
@@ -1563,14 +1588,18 @@ class DiscoveryMixin:
                     SELECT id, url, title, summary, source_name, relevance_score,
                            themes, disability_angle, pub_date, underlying_article_url
                     FROM news_seeds
-                    WHERE used = 0 AND pub_date >= ? AND relevance_score >= 0.4
+                    WHERE used = 0 AND relevance_score >= 0.4
+                      AND pub_date >= CASE COALESCE(material_class, 'OTHER')
+                                  WHEN 'CURRENT_NEWS' THEN ? WHEN 'ESSAY_OPINION' THEN ?
+                                  WHEN 'RESEARCH_REPORT' THEN ? WHEN 'CULTURE' THEN ?
+                                  WHEN 'EVERGREEN' THEN ? ELSE ? END
                       AND NOT (declined = 1 AND decline_schema_version = ?)
                       AND ce_attempt_terminal IS NOT 1
                       AND (ce_retry_after IS NULL OR ce_retry_after <= ?)
                       AND id NOT IN (%s)
                     ORDER BY relevance_score DESC, pub_date DESC
                     LIMIT 1
-                """ % _excl_sql, (cutoff, STORY_REJECTION_CONTRACT_VERSION, ce_now,
+                """ % _excl_sql, (*cutoff_args, STORY_REJECTION_CONTRACT_VERSION, ce_now,
                                   *_excl)).fetchone()
 
             conn.close()

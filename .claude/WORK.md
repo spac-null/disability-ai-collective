@@ -417,6 +417,22 @@ and are **not** cutover blockers — they never blocked the completed default cu
   outside `publish_best.py`'s top-level `_drafts/*.md` glob, byte-identical, evidence
   directory intact. Owner read it and did not approve it for publication.
 
+- **PR #48 — NEWS/POOL V2 foundation: OPEN, NOT MERGED.** Contextual temporal
+  eligibility **only**. One pool, one selector; each feed declares a `material_class`
+  (`CURRENT_NEWS` / `ESSAY_OPINION` / `RESEARCH_REPORT` / `CULTURE` / `EVERGREEN` /
+  `OTHER`), and that class sets ingest lookback, selection eligibility and retention —
+  policy in `automation/material_policy.py`, invariant `retention > eligibility`. The
+  universal `pub_date >= now-3d`, `fetch_all_feeds(days=7)` and `prune_old(14)` are gone;
+  `OTHER` and every NULL row keep the legacy clock exactly. Per-feed fetch cap 40 items,
+  newest first, so a 180-day evergreen window is not a crawler.
+  **It does NOT implement better editorial ranking, source expansion, quotas or
+  diversity rotation — that is PR #49.** Ranking is untouched
+  (`relevance_score DESC, pub_date DESC`), no class earns points, and disability-led
+  provenance carries no weight in either direction (a disability-led news feed is
+  `CURRENT_NEWS`, an arts one `CULTURE`, an essay one `ESSAY_OPINION`).
+  Read-only preview on a copy of the production DB: eligible pool 313 → 687, angled
+  Priority-1 pool 19 → 51.
+
 - **PR #47 — publisher staging hygiene: OPEN, NOT MERGED.** `publish_best.py` ended its
   commit with `git add -A _drafts`, so on 2026-08-29 (`ab322bb`) an archive run also
   committed two files it had never touched: the 27 Aug trike draft and the **declined,
