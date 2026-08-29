@@ -48,6 +48,7 @@ import json
 import os
 import re
 import sqlite3
+import time
 from datetime import datetime, timedelta
 
 import material_policy as MP
@@ -62,10 +63,18 @@ STREAM_THEME = 6                 # A: legacy theme signal, booster removed
 STREAM_URGENCY = 4               # B: least eligibility time remaining
 STREAM_EXPLORE = 2               # C: deterministic day-stable exploration
 DAILY_CANDIDATES = 12
-BATCH_SIZE = 3                   # candidates per assessment call
+# ONE candidate per assessment call. It was three, which was cheaper and wrong:
+# measured on frozen bytes, a Guardian gallery read POSSIBLE 5/5 assessed alone and
+# WEAK when it shared a prompt with two unrelated candidates. The model was comparing
+# within the batch rather than judging against the contract, so a seed's verdict
+# depended on which unrelated stories happened to be exposed the same day -- and the
+# verdict is this selector's primary ordering key. Each seed is now judged against the
+# same fixed bar, at the cost of one call per candidate instead of one per three.
+BATCH_SIZE = 1                   # candidates per assessment call
 BATCH_MAX_CHARS = 22_000
 BATCH_MAX_TOKENS = 1_800
 MAX_CALLS_PER_RUN = 10           # absolute ceiling
+ACQUISITION_BUDGET_SECONDS = 75  # shadow-owned, checked between candidates
 BODY_WORDS_TO_MODEL = 1_100
 PUBLISHER_PENALTY_DAYS = 7       # decays to zero across a week
 PUBLISHER_PENALTY_MAX = 0.30
@@ -74,6 +83,10 @@ OK = "OK"
 ACQUISITION_FAILED = "SOURCE_ACQUISITION_FAILED"
 ASSESSMENT_INVALID = "ASSESSMENT_INVALID"
 ASSESSMENT_ERROR = "ASSESSMENT_ERROR"
+# Two shadow-only budget states. Both mean "we did not look", never "we looked and it
+# was thin" -- nothing that ran out of time or money may be recorded as weak material.
+NOT_ASSESSED_CALL_BUDGET = "NOT_ASSESSED_CALL_BUDGET"
+NOT_ATTEMPTED_ACQUISITION_BUDGET = "NOT_ATTEMPTED_ACQUISITION_BUDGET"
 
 RICHNESS = ("RICH", "MODERATE", "THIN")
 LEVELS = ("HIGH", "MEDIUM", "LOW")
@@ -488,9 +501,24 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
     candidates = select_candidates(pool, now=now, score_item=score_item,
                                    boosters=boosters, keyword_matches=keyword_matches)
 
-    prepared, cached, failed = [], [], []
+    prepared, cached, failed, skipped = [], [], [], []
+    # Shadow-owned acquisition budget, checked BETWEEN candidates. One fetch is now
+    # hard-bounded on its own (ACQUISITION_HARD_BOUND_V1), but twelve of them in a row
+    # still add up, and this runs before the authoritative article work. Candidates
+    # left unattempted are recorded as such and their slots are NOT refilled: topping
+    # up on a slow day would make the exposure set depend on network weather, which is
+    # exactly the determinism the three streams exist to provide.
+    acq_deadline = time.monotonic() + ACQUISITION_BUDGET_SECONDS
     for c in candidates:
         row = c["row"]
+        if time.monotonic() >= acq_deadline:
+            skipped.append({"seed_id": row["id"], "source_name": row["source_name"],
+                            "url": row["url"],
+                            "assessment_status": NOT_ATTEMPTED_ACQUISITION_BUDGET,
+                            "detail": "acquisition budget %ss exhausted"
+                                      % ACQUISITION_BUDGET_SECONDS,
+                            "exposed_via": c["exposed_via"]})
+            continue
         text, status = acquire(row["url"])
         if status != "USABLE" or not text:
             failed.append({"seed_id": row["id"], "source_name": row["source_name"],
@@ -507,7 +535,15 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
         (cached if hit else prepared).append(c)
         if hit:
             c["cached"] = hit
-    results, calls = assess(provider, prepared) if prepared else ({}, 0)
+    # Call budget, spent in the fixed exposure order. Cached candidates cost nothing,
+    # so only uncached ones draw on it. Anything past the ceiling is recorded as
+    # unassessed rather than quietly assessed anyway or quietly dropped.
+    assessable, over_budget = prepared[:MAX_CALLS_PER_RUN], prepared[MAX_CALLS_PER_RUN:]
+    results, calls = assess(provider, assessable) if assessable else ({}, 0)
+    for c in over_budget:
+        results[c["key"]] = {"status": NOT_ASSESSED_CALL_BUDGET,
+                             "errors": ["assessment call budget %d exhausted"
+                                        % MAX_CALLS_PER_RUN]}
 
     records = []
     for c in cached + prepared:
@@ -566,14 +602,17 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
         "candidates": [{"seed_id": c["row"]["id"], "exposed_via": c["exposed_via"],
                         "source_name": c["row"]["source_name"]} for c in candidates],
         "acquisition_failures": failed,
+        "not_attempted": skipped,
         "records": ranked,
         "old_authoritative_winner": old_winner,
         "shadow_winner": winner,
         "same_winner": bool(old_winner and winner
                             and old_winner.get("id") == winner["seed_id"]),
         "metrics": {"candidates": len(candidates), "fetched": len(cached) + len(prepared),
-                    "cached": len(cached), "assessed": len(prepared),
-                    "acquisition_failed": len(failed), "model_calls": calls,
+                    "cached": len(cached), "assessed": len(assessable),
+                    "acquisition_failed": len(failed),
+                    "not_attempted": len(skipped), "over_call_budget": len(over_budget),
+                    "model_calls": calls,
                     "valid": sum(1 for r in records if r["assessment_status"] == OK),
                     "invalid": sum(1 for r in records
                                    if r["assessment_status"] == ASSESSMENT_INVALID),

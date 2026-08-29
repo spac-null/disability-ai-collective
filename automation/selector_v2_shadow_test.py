@@ -20,6 +20,7 @@ import pathlib
 import sqlite3
 import sys
 import tempfile
+import time
 from datetime import datetime, timedelta
 
 HERE = pathlib.Path(__file__).parent
@@ -413,9 +414,19 @@ def test_bounds_are_declared():
                  "P%d" % i) for i in range(12)])
     p = StubProvider({"Phreatichthys": "POSSIBLE_CANDIDATE"})
     out = _run(conn, p)
-    check("12 candidates cost at most 4 calls at batch size 3", p.calls <= 4, p.calls)
-    check("and never more than the ceiling", p.calls <= SV.MAX_CALLS_PER_RUN)
+    check("one candidate per call, so 12 candidates want 12 calls",
+          out["metrics"]["candidates"] == 12)
+    check("but the run stops at the ceiling", p.calls == SV.MAX_CALLS_PER_RUN, p.calls)
     check("metrics report the spend", out["metrics"]["model_calls"] == p.calls)
+    check("the surplus is recorded, not silently dropped",
+          out["metrics"]["over_call_budget"] == 2, out["metrics"])
+    over = [r for r in out["records"]
+            if r["assessment_status"] == SV.NOT_ASSESSED_CALL_BUDGET]
+    check("and recorded as unassessed, never as weak material", len(over) == 2, over)
+    check("nothing over budget can win",
+          all(r.get("shadow_rank") is None for r in over))
+    check("the winner came from within budget",
+          out["shadow_winner"]["assessment_status"] == SV.OK)
 
 
 
@@ -491,6 +502,147 @@ def test_flag_off_means_nothing_happens():
     check("no shadow table was even created", SV.TABLE not in tables, tables)
 
 
+
+# ── enablement safety (PR #50) ────────────────────────────────────────────────
+def test_one_candidate_per_assessment_call():
+    """Measured on frozen bytes: a Guardian gallery read POSSIBLE five times out of
+    five assessed alone, and WEAK when it shared a prompt with two unrelated
+    candidates. The verdict is this selector's primary ordering key, so a seed's rank
+    must not depend on which unrelated stories happened to be exposed the same day."""
+    check("BATCH_SIZE is 1", SV.BATCH_SIZE == 1, SV.BATCH_SIZE)
+    conn = _db([("a", "https://x.example/rich", "one", MP.CULTURE, 1, 0.5, None, "P1"),
+                ("b", "https://x.example/thin", "two", MP.CULTURE, 1, 0.5, None, "P2"),
+                ("c", "https://x.example/roundup", "three", MP.CULTURE, 1, 0.5, None, "P3")])
+    p = StubProvider({"Phreatichthys": "STRONG_CANDIDATE", "Lebowitz": "WEAK_CANDIDATE"})
+    out = _run(conn, p)
+    check("three candidates cost three calls", p.calls == 3, p.calls)
+    for i, prompt in enumerate(p.prompts):
+        check("prompt %d carries exactly one candidate" % i,
+              prompt.count("ID: ") == 1, prompt.count("ID: "))
+        check("prompt %d carries exactly one body" % i,
+              prompt.count("<<<BODY") == 1)
+
+    # and the same seed produces the same prompt whatever else is exposed
+    conn2 = _db([("a", "https://x.example/rich", "one", MP.CULTURE, 1, 0.5, None, "P1")])
+    p2 = StubProvider({"Phreatichthys": "STRONG_CANDIDATE"})
+    _run(conn2, p2)
+    alone = p2.prompts[0]
+    with_others = [q for q in p.prompts if "ID: a" in q.split("\n")[0]][0]
+    check("a seed's prompt is identical alone and alongside others",
+          alone == with_others, (len(alone), len(with_others)))
+
+
+def test_the_assessment_contract_is_untouched():
+    """Only the batching changed. The question, the schema, the validation, the model
+    window and the cache key are the same, or the stability measurements taken before
+    this PR would no longer describe what runs after it."""
+    src = (HERE / "selector_v2.py").read_text()
+    check("model window unchanged", SV.BODY_WORDS_TO_MODEL == 1_100)
+    check("temperature 0 is still explicit", "temperature=0" in src)
+    check("the schema still names all eleven fields",
+          all(f in src for f in ("concrete_subject", "subject_anchor_quote",
+                                 "investigable_question", "question_basis_quote",
+                                 "material_richness", "researchability",
+                                 "narrative_material", "source_shape", "specificity",
+                                 "assessment", "reason")))
+    check("validation still requires both quotes verbatim",
+          "not verbatim in the source body" in src)
+    check("the cache key is still (seed_id, full-source sha256)",
+          "PRIMARY KEY (seed_id, source_sha256)" in src
+          and 'sha = hashlib.sha256(text.encode("utf-8")).hexdigest()' in src)
+    check("the assessment question is unchanged",
+          "is there enough concrete reality in this source to justify researching" in src)
+
+
+def test_the_acquisition_budget_stops_fetching_and_says_so():
+    """One fetch is hard-bounded now, but twelve in a row still add up, and this runs
+    before the authoritative article work."""
+    seeds = [("s%d" % i, "https://x.example/rich?%d" % i, "t%d" % i, MP.CULTURE, 1,
+              0.5, None, "P%d" % i) for i in range(6)]
+    conn = _db(seeds)
+    fetched = []
+
+    def slow(url):
+        fetched.append(url)
+        time.sleep(0.4)
+        return acquire(url)
+
+    real = SV.ACQUISITION_BUDGET_SECONDS
+    SV.ACQUISITION_BUDGET_SECONDS = 1.0
+    try:
+        out = SV.run_shadow(conn, StubProvider({"Phreatichthys": "STRONG_CANDIDATE"}),
+                            acquire=slow, score_item=NF.score_item,
+                            boosters=NF.DISABILITY_BOOSTERS,
+                            keyword_matches=NF._keyword_matches, now=NOW)
+    finally:
+        SV.ACQUISITION_BUDGET_SECONDS = real
+    check("it stopped fetching before the end of the exposure set",
+          0 < len(fetched) < 6, len(fetched))
+    check("the exposure set itself is unchanged", out["metrics"]["candidates"] == 6)
+    check("the unattempted candidates are recorded",
+          out["metrics"]["not_attempted"] == 6 - len(fetched), out["metrics"])
+    check("with an explicit budget status, never a material verdict",
+          all(r["assessment_status"] == SV.NOT_ATTEMPTED_ACQUISITION_BUDGET
+              for r in out["not_attempted"]), out["not_attempted"][:1])
+    check("their slots were NOT refilled with fresh candidates",
+          len(fetched) + out["metrics"]["not_attempted"] == 6)
+    check("nothing unattempted can rank",
+          all(r["seed_id"] not in {x["seed_id"] for x in out["not_attempted"]}
+              for r in out["records"] if r.get("shadow_rank")))
+    check("a winner was still found from what was read",
+          out["shadow_winner"] is not None)
+
+
+def test_no_budget_state_is_ever_a_material_verdict():
+    """Running out of time or money is not evidence about a source."""
+    for status in (SV.NOT_ATTEMPTED_ACQUISITION_BUDGET, SV.NOT_ASSESSED_CALL_BUDGET,
+                   SV.ACQUISITION_FAILED):
+        check("%s is not a verdict" % status, status not in SV.VERDICTS)
+        check("%s is not a richness level" % status, status not in SV.RICHNESS)
+    src = (HERE / "selector_v2.py").read_text()
+    bad = [l.strip() for l in src.splitlines()
+           if "WEAK_CANDIDATE" in l and ("status" in l or "assessment_status" in l)]
+    check("no line ever assigns WEAK_CANDIDATE alongside a status", not bad, bad)
+    check("only OK assessments are ranked", 'r["assessment_status"] == OK' in src)
+
+
+def test_flag_off_leaves_authoritative_selection_untouched():
+    """Shared acquisition code changed in this PR, so separate the two claims: source
+    acquisition may become MORE RELIABLE (that is the point), but which seed the old
+    selector reaches for, and in what order, must be bit-identical."""
+    disc = (HERE / "orchestrator" / "discovery.py").read_text()
+    check("the Priority 1/2 ordering is unchanged",
+          disc.count("ORDER BY relevance_score DESC, pub_date DESC") == 2,
+          disc.count("ORDER BY relevance_score DESC, pub_date DESC"))
+    check("the acquisition retry budget is unchanged",
+          "MAX_SOURCE_ACQUISITION_ATTEMPTS = 3" in disc)
+    check("the source-usability definition is unchanged",
+          "_SOURCE_MIN_USABLE_CHARS = 600" in disc
+          and "_SOURCE_MIN_USABLE_PARAGRAPHS = 3" in disc)
+    check("relevance scoring is not defined or altered in discovery.py",
+          "def score_item" not in disc and "THEME_WEIGHTS = " not in disc)
+    check("the production disability booster is still in the production scorer",
+          len(NF.DISABILITY_BOOSTERS) > 0)
+    # ordering is decided by SQL, before a single byte is fetched -- so a change to
+    # acquisition can only change WHETHER a seed's source is usable, never its rank
+    # get_news_seed() runs the ordered SQL and returns a seed; only then is anything
+    # fetched. So acquisition can change WHETHER that seed's source is usable, and
+    # therefore whether the loop moves on, but never the order it considers them in.
+    sel = disc.split("def get_news_seed_with_usable_source(")[1].split("\n    def ")[0]
+    check("the ordered SQL picks the seed before any fetch",
+          sel.index("self.get_news_seed(") < sel.index("text = self.get_source_text("),
+          (sel.index("self.get_news_seed("), sel.index("text = self.get_source_text(")))
+    check("and the ordering lives in get_news_seed, which this PR did not touch",
+          "ORDER BY relevance_score DESC, pub_date DESC" in
+          disc.split("def get_news_seed(")[1].split("\n    def ")[0])
+    check("discovery.py does not import or enable the shadow",
+          "selector_v2" not in disc and SV.SHADOW_ENV not in disc)
+    v2 = (HERE / "selector_v2.py").read_text()
+    check("the shadow still writes no SQL against news_seeds",
+          not any(("UPDATE news_seeds" in l or "INSERT INTO news_seeds" in l)
+                  for l in v2.splitlines()))
+
+
 def main():
     for fn in (test_shadow_is_off_by_default,
                test_exposure_is_three_streams_not_the_score,
@@ -506,7 +658,12 @@ def main():
                test_bounds_are_declared,
                test_no_production_global_is_mutated_even_transiently,
                test_cache_hash_covers_the_whole_source_not_the_model_slice,
-               test_flag_off_means_nothing_happens):
+               test_flag_off_means_nothing_happens,
+               test_one_candidate_per_assessment_call,
+               test_the_assessment_contract_is_untouched,
+               test_the_acquisition_budget_stops_fetching_and_says_so,
+               test_no_budget_state_is_ever_a_material_verdict,
+               test_flag_off_leaves_authoritative_selection_untouched):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)
