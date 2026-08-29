@@ -417,19 +417,73 @@ and are **not** cutover blockers — they never blocked the completed default cu
   outside `publish_best.py`'s top-level `_drafts/*.md` glob, byte-identical, evidence
   directory intact. Owner read it and did not approve it for publication.
 
-- **PR #49 — SELECTOR V2 SHADOW: OPEN, NOT MERGED, DEFAULT OFF.** Broad bounded exposure
-  → read the source through the **production** acquisition path → `MATERIAL_ASSESSMENT`
-  ("is there enough concrete reality here to research?") → transparent ordering. Three
-  deterministic exposure streams (theme signal with the disability booster excluded 6 /
-  eligibility urgency 4 / day-stable exploration 2, ~12 candidates), a soft decaying
-  publisher-repetition term (max 0.30, zero after 7 days, never a ban or quota),
-  assessments cached by `(seed_id, source_sha256)` in their own
+- **SELECTOR V2 SHADOW — MERGED (PR #49), STILL OFF, STILL NON-AUTHORITATIVE.** Broad
+  bounded exposure → read the source through the **production** acquisition path →
+  `MATERIAL_ASSESSMENT` ("is there enough concrete reality here to research?") →
+  transparent ordering. Three deterministic exposure streams (theme signal with the
+  disability booster excluded 6 / eligibility urgency 4 / day-stable exploration 2, ~12
+  candidates), a soft decaying publisher-repetition term (max 0.30, zero after 7 days,
+  never a ban or quota), assessments cached by `(seed_id, source_sha256)` in their own
   `seed_material_assessments` table. **`disability_angle` and `angle_checked` are not
-  read at all** — shown in diagnostics only. The old selector stays authoritative;
-  the shadow cannot change the anchor CURRENT_ENGINE receives and invokes no Research
-  Pack, Discovery, Form or Writer. Measured run on a copy of production: 12 candidates,
-  9 fetched, 3 acquisition failures, **4 model calls, 51s**, 9/9 assessments valid;
-  old winner NYT Science vs shadow winner Smithsonian (STRONG/RICH/HIGH) — different.
+  read at all** — shown in diagnostics only. The old selector stays authoritative; the
+  shadow cannot change the anchor CURRENT_ENGINE receives and invokes no Research Pack,
+  Discovery, Form or Writer. Its one runtime hook runs once per run, after the
+  authoritative anchor and its source are settled and **before** any seed write-back, so
+  both selectors rank the same pre-attempt pool.
+
+- **PR #50 — SELECTOR V2 ENABLEMENT SAFETY: OPEN, NOT MERGED.** Three measured problems
+  found while deciding whether the shadow was safe to switch on.
+  1. **Acquisition could not time out.** `urlopen(timeout=N)` bounds one socket
+     operation, not the transfer, and every byte that arrives resets it. Now every
+     socket read is budgeted against a wall-clock deadline (`_DeadlineSocket`), which
+     covers connect, request, headers, redirects and body alike — the first version
+     bounded only the body and a header drip walked past it at 120s+. Two local drip
+     servers now both stop at 25.0s. **Per leg: urllib 25s hard, curl_cffi 15s hard
+     (libcurl `CURLOPT_TIMEOUT_MS`). Per candidate: 2 attempts, 40s hard.**
+  2. **The impersonated fallback never fired where it was needed.** It ran only on
+     transport failure, but the sites it exists for answer 200 with a JavaScript shell.
+     Verified on lemonde.fr. The fallback now asks whether a usable *article* was
+     obtained, via `classify_source_acquisition` — one definition of the word, not two.
+     Representation only: a thin, promotional or roundup article is usable and is never
+     refetched. **This also fixes the authoritative pipeline, which was losing the same
+     sources.**
+  3. **`MATERIAL_ASSESSMENT` was batch-composition sensitive.** On identical frozen
+     bytes a Guardian gallery read POSSIBLE 5/5 alone and WEAK sharing a prompt with two
+     unrelated candidates — and that verdict is the primary ordering key. **One
+     candidate per call now** (`BATCH_SIZE = 1`); contract, model, temperature 0,
+     validation, 1,100-word window and cache key all unchanged.
+  4. **The shadow run as a whole was not bounded.** Acquisition was, assessment was not:
+     `provider.complete` tries CLIProxy then OpenRouter and each leg would otherwise get
+     a fresh `timeout`, over `_post`'s `urlopen` — the same socket-vs-transfer flaw.
+     There is now **one total budget with a hierarchy inside it**, never three that sum:
+     **`RUN_BUDGET_SECONDS = 120`** contains the 75s acquisition sub-budget (clamped to
+     the run deadline, not added to it) plus assessment. A call is not started without
+     12s left, and a started call carries the run deadline into the provider, where
+     **both fallback legs share it**. `bounded_http` is now the single definition of
+     "read under a deadline", imported by acquisition and provider alike; the provider's
+     `deadline` is optional and off by default, so the authoritative pipeline is
+     untouched.
+  Three budgets record what they did not do and none is a material verdict:
+  `NOT_ATTEMPTED_ACQUISITION_BUDGET` (slots never refilled),
+  `NOT_ASSESSED_CALL_BUDGET`, `NOT_ASSESSED_RUN_BUDGET`.
+  **Enforced worst-case total shadow wall clock: 120s** (acquisition alone ≤115s).
+  Measured on the frozen #49 pool, cache cleared: 12 exposed, **10 acquired** (was 9 —
+  Le Monde recovered), 2 acquisition failures (Space.com, Nature), **10 single-candidate
+  model calls, 62.8s (4.9s acquisition), ~$0.21**, 9/10 assessments valid — the one
+  invalid is the known `assessment`-field omission on long roundup material, which fails
+  visibly and cannot rank.
+
+- **NEXT OPERATIONAL STEP, once PR #50 merges: enable the Selector V2 shadow for 4
+  natural CURRENT_ENGINE runs** (`CRIPMINDS_SELECTOR_V2_SHADOW=1` on the 09:00 cron
+  article line only). Old selector stays authoritative throughout; Grounding V2 stays
+  off; nothing else changes. **Not cutover-ready.** Cutover blockers, unchanged by
+  PR #50: borderline WEAK↔POSSIBLE instability (one step, ~2/5 of trials on borderline
+  sources, and two identical measurement runs re-ordered ranks 3–8); investigable-
+  question drift on borderline material (five materially different questions from one
+  2.3KB source); acquisition coverage (Space.com's 500KB raw-cap failure is an open
+  follow-up, Nature's registration wall is structural); no natural comparison corpus
+  yet (N=1 old-vs-new pair); and no evidence connecting a STRONG assessment to an
+  article that turned out well.
 
 - **PR #48 — NEWS/POOL V2 foundation: OPEN, NOT MERGED.** Contextual temporal
   eligibility **only**. One pool, one selector; each feed declares a `material_class`

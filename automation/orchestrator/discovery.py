@@ -21,6 +21,7 @@ import time
 import urllib.request
 from datetime import datetime, timedelta, timezone
 
+import bounded_http as _bounded_http
 from .grounding import STORY_REJECTION_CONTRACT_VERSION
 from .config import (
     _REGISTERS, _LENGTHS, _ARTICLE_TYPES, _THEME_CLUSTERS, _AGENT_BEATS,
@@ -71,6 +72,32 @@ _SOURCE_TEXT_CACHE_MAX_CHARS = 20000
 # signals are structured/structural -- the fetch's own origin state and the
 # absence of an article body (paragraph count) -- with markers and a length
 # floor only as backstops. See classify_source_acquisition.
+# ACQUISITION_HARD_BOUND_V1 (2026-08-29).
+#
+# urlopen(timeout=N) is a SOCKET-OPERATION timeout, not a total-transfer one: it
+# bounds each individual blocking recv, and every recv that returns data resets it.
+# A server returning one byte every N-1 seconds therefore keeps a fetch alive
+# indefinitely -- 500,000 bytes at 1 byte per 9.9s is roughly 57 days -- and no
+# exception is ever raised, so no amount of exception handling upstream helps.
+# Nothing outside Python bounds it either: the cron line has no timeout(1) wrapper.
+#
+# That mattered little while acquisition happened once per run for one anchor. It
+# matters now: Selector V2's shadow acquires up to a day's candidates BEFORE the
+# authoritative article pipeline, so one stalled read would stall the daily run.
+#
+# The bound below is a real wall-clock deadline, enforced by shrinking the socket
+# timeout to the time remaining before each read. Each individual read is therefore
+# itself bounded by what is left of the budget, which is what makes the total a
+# hard maximum rather than a hopeful one. If the underlying socket cannot be
+# reached to do that, the leg REFUSES rather than proceeding unbounded -- the
+# impersonated leg below has a genuine total-transfer timeout of its own and takes
+# over. No global socket state is touched and no thread or process is left behind.
+_SOURCE_SOCKET_TIMEOUT = 10               # one blocking socket operation
+_SOURCE_MAX_REDIRECTS = 3                 # urllib's own default is 10
+_SOURCE_LEG_DEADLINE = 25                 # total wall clock for one urllib leg
+_SOURCE_READ_CHUNK = 65536
+_SOURCE_IMPERSONATED_TIMEOUT = 15         # libcurl CURLOPT_TIMEOUT_MS, total transfer
+
 _SOURCE_MIN_USABLE_CHARS = 600            # backstop, not the primary signal
 _SOURCE_MIN_USABLE_PARAGRAPHS = 3         # structural: an article has a body
 
@@ -101,6 +128,16 @@ MAX_SOURCE_ACQUISITION_ATTEMPTS = 3
 # `fetched_article` material for ITSELF -- see fetch_source_article's
 # aggregator branch below.
 _AGGREGATOR_DOMAINS = {"techmeme.com", "www.techmeme.com"}
+
+# One definition of "read under a deadline", shared with the model provider so the two
+# cannot drift. See bounded_http for why the deadline lives on the socket.
+SourceAcquisitionTimeout = _bounded_http.DeadlineExceeded
+
+
+def _bounded_opener(deadline):
+    return _bounded_http.bounded_opener(
+        deadline, op_timeout=_SOURCE_SOCKET_TIMEOUT,
+        max_redirects=_SOURCE_MAX_REDIRECTS)
 
 
 def _url_domain(url: str) -> str:
@@ -1130,11 +1167,21 @@ class DiscoveryMixin:
         return text
 
     def _fetch_url_html(self, url: str) -> str | None:
-        """Plain urllib GET. Returns decoded HTML or None (bad status/content-type)."""
+        """Plain urllib GET under a hard wall-clock deadline. Returns decoded HTML or
+        None (bad status/content-type). Raises on timeout, like any other fetch failure.
+
+        See ACQUISITION_HARD_BOUND_V1 above for why the deadline exists and why it is
+        enforced per read rather than merely checked between reads: a check between
+        reads is useless if the read it is about to make can block past the deadline
+        on its own.
+        """
+        deadline = time.monotonic() + _SOURCE_LEG_DEADLINE
         req = urllib.request.Request(url, headers={
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36"
         })
-        with urllib.request.urlopen(req, timeout=10) as resp:
+        # A private opener, so bounding redirects does not mutate urllib's global
+        # default for every other caller in the process.
+        with _bounded_opener(deadline).open(req, timeout=_SOURCE_SOCKET_TIMEOUT) as resp:
             if resp.status != 200:
                 return None
             content_type = resp.headers.get("Content-Type", "")
@@ -1151,7 +1198,9 @@ class DiscoveryMixin:
             # SOURCE MATERIAL block to draw from and invented a person and a quote
             # to fill the gap instead. Root cause of that fabrication incident, not
             # a downstream symptom of it.
-            return resp.read().decode("utf-8", errors="replace")[:500000]
+            return _bounded_http.read_capped(
+                resp, cap=500000, chunk=_SOURCE_READ_CHUNK
+            ).decode("utf-8", errors="replace")
 
     def _fetch_url_html_impersonated(self, url: str) -> str | None:
         """curl_cffi GET impersonating a real browser's TLS fingerprint.
@@ -1167,7 +1216,8 @@ class DiscoveryMixin:
         urllib attempt if this also fails or curl_cffi isn't installed."""
         if _curl_cffi_requests is None:
             return None
-        r = _curl_cffi_requests.get(url, impersonate="chrome124", timeout=15)
+        r = _curl_cffi_requests.get(url, impersonate="chrome124",
+                                    timeout=_SOURCE_IMPERSONATED_TIMEOUT)
         if r.status_code != 200:
             return None
         content_type = r.headers.get("Content-Type", "")
@@ -1234,19 +1284,54 @@ class DiscoveryMixin:
             self._last_fetch_original_length = len(fallback_text) if fallback_text else None
             return fallback_text[:max_chars] if fallback_text else None
 
-        html = None
+        html, impersonated_tried = None, False
         try:
             html = self._fetch_url_html(url)
         except Exception as e:
             self.logger.debug("fetch_source_article: urllib attempt failed for %s: %s", url, e)
 
         if html is None:
+            impersonated_tried = True
             try:
                 html = self._fetch_url_html_impersonated(url)
                 if html is not None:
                     self.logger.info("fetch_source_article: urllib blocked, curl_cffi impersonation succeeded for %s", url)
             except Exception as e:
                 self.logger.debug("fetch_source_article: curl_cffi attempt failed for %s: %s", url, e)
+
+        # REPRESENTATION_AWARE_FALLBACK_V1 (2026-08-29).
+        #
+        # The impersonation leg above only ran because the transport FAILED. But the
+        # thing it exists to defeat does not fail the transport: a site that dislikes
+        # our TLS fingerprint answers 200 with a JavaScript shell, which is a perfectly
+        # successful HTTP request carrying no article. Verified live on lemonde.fr:
+        # urllib got 200 and 3,036 bytes of shell, so the fallback was never reached,
+        # while curl_cffi on the same URL returned the real 247KB article that
+        # classifies USABLE. The fallback was gated on the wrong question and had been
+        # dead code for exactly the sites it was written for.
+        #
+        # So ask the question that matters -- did we obtain a usable ARTICLE? -- using
+        # classify_source_acquisition, the acquisition classifier that already owns
+        # that definition. This is about representation only. A short, promotional or
+        # roundup article is a usable representation and is never refetched: whether
+        # material is any good is a different question, asked elsewhere, by something
+        # else.
+        text = self._extract_paragraphs(html) if html else ""
+        if html is not None and not impersonated_tried and not self._is_usable_article(text):
+            try:
+                alt = self._fetch_url_html_impersonated(url)
+            except Exception as e:
+                alt = None
+                self.logger.debug("fetch_source_article: curl_cffi attempt failed for %s: %s", url, e)
+            if alt is not None:
+                alt_text = self._extract_paragraphs(alt)
+                if self._is_usable_article(alt_text):
+                    self.logger.info(
+                        "fetch_source_article: urllib returned a 200 with no usable "
+                        "article (%d chars extracted), curl_cffi impersonation "
+                        "recovered one (%d chars) for %s",
+                        len(text or ""), len(alt_text), url)
+                    html, text = alt, alt_text
 
         if html is None:
             if fallback_text:
@@ -1262,7 +1347,6 @@ class DiscoveryMixin:
             self._last_fetch_paragraph_count = 0
             return None
 
-        text = self._extract_paragraphs(html)
         if not text or len(text) < 200:
             self.logger.warning(
                 "fetch_source_article: extracted %s chars (<200) from %s -- "
@@ -1622,6 +1706,16 @@ class DiscoveryMixin:
         """Body-paragraph count for the last fetch of this url, or None if
         unknown. Cached per-url by get_source_text, same as origin/length."""
         return getattr(self, "_source_paragraph_count_cache", {}).get(url)
+
+    def _is_usable_article(self, text) -> bool:
+        """Did this representation yield a usable ARTICLE? One definition only --
+        classify_source_acquisition's -- so the fallback decision and the acquisition
+        gate can never drift apart into two different ideas of the same word."""
+        if not text:
+            return False
+        paras = len([ln for ln in text.splitlines() if ln.strip()])
+        status, _reason = self.classify_source_acquisition(text, "fetched_article", paras)
+        return status == "USABLE"
 
     @staticmethod
     def classify_source_acquisition(text, origin, paragraph_count=None):

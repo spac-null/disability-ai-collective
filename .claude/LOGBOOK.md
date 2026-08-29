@@ -679,3 +679,47 @@ the disability booster from the production scorer, no feed changes, no cron chan
 CODE: `automation/selector_v2.py` (new), `automation/selector_v2_shadow_test.py` (new).
 **MERGED: NO.**
 
+---
+
+## 2026-08-29 — Selector V2 enablement safety (PR #50)
+
+WHAT: the three things that had to be true before the shadow could be switched on, and
+were not. A hard wall-clock bound on source acquisition; an impersonated fallback that
+asks whether an article was obtained rather than whether a socket answered; and one
+candidate per assessment call.
+
+WHY EACH: (1) `urlopen(timeout=N)` is a socket-operation timeout, so a drip keeps a
+fetch alive indefinitely without ever raising — and the shadow acquires a day's
+candidates before the authoritative pipeline, on a cron line with no timeout wrapper.
+(2) curl_cffi impersonation ran only when the transport failed, but the sites it was
+written for answer 200 with a JS shell; measured on lemonde.fr, where impersonation
+returns the real article. It had been dead code for exactly its own use case, and the
+authoritative pipeline was losing those sources too. (3) On identical frozen bytes a
+Guardian gallery read POSSIBLE five times out of five alone and WEAK in a batch of
+three; the verdict is Selector V2's primary ordering key, so rank depended on which
+unrelated stories were exposed the same day.
+
+FOURTH, added after review: acquisition was bounded and the RUN was not. Assessment is
+sequential provider calls, each of which tries two legs that would otherwise get their
+own fresh timeout, over a urlopen with the same socket-vs-transfer flaw. One total
+budget now -- 120s -- with the 75s acquisition sub-budget clamped inside it rather than
+added to it, no call started without 12s left, and a started call carrying the run
+deadline into the provider so both fallback legs share it. The deadline machinery moved
+to `bounded_http`, shared by acquisition and provider, because two copies would drift.
+
+MEASURED (frozen #49 pool, assessment cache cleared, no live article): 12 exposed, 10
+acquired (was 9), 2 acquisition failures, 10 single-candidate calls, 62.8s (4.9s
+acquisition), ~$0.21, 9/10 valid. Le Monde recovered and ranked. Space.com and Nature
+still fail, as predicted. Drip regressions: body drip and header drip both stopped at
+25.0s against a 25s deadline; a slow model and a single overlong call both stopped
+inside the run budget.
+
+NOT DONE HERE: no cron change, no cutover, no new sources, no prompt tuning, no retry
+taxonomy, and no fix for Space.com's 500KB raw-cap failure — recorded as a source-
+acquisition follow-up rather than broadened into scraper engineering.
+
+CODE: `automation/bounded_http.py` (new), `automation/orchestrator/discovery.py`,
+`automation/new_engine_v1/provider.py`, `automation/selector_v2.py`,
+`automation/source_acquisition_bounds_test.py` (new),
+`automation/selector_v2_shadow_test.py`.
+**MERGED: NO.**

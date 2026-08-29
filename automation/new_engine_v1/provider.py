@@ -23,9 +23,12 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass, field
+
+import bounded_http
 
 # Production's own values (orchestrator/config.py). Read at call time, not import
 # time, so a test can point them somewhere harmless.
@@ -59,7 +62,8 @@ class Completion:
         }
 
 
-def _post(url: str, key: str, payload: dict, timeout: int) -> dict:
+def _post(url: str, key: str, payload: dict, timeout: int,
+          deadline: float | None = None) -> dict:
     req = urllib.request.Request(
         url.rstrip("/") + "/chat/completions",
         data=json.dumps(payload).encode("utf-8"),
@@ -68,7 +72,17 @@ def _post(url: str, key: str, payload: dict, timeout: int) -> dict:
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as r:
+        if deadline is None:
+            response = urllib.request.urlopen(req, timeout=timeout)
+        else:
+            # urlopen's timeout bounds one socket operation, not the transfer, so a
+            # trickling response is unbounded. Callers that must finish by a wall clock
+            # -- the Selector V2 shadow, which runs before the real article pipeline --
+            # pass a deadline and get a real one. Every read below is budgeted against
+            # it, so read() cannot outlive it either. See bounded_http.
+            response = bounded_http.bounded_opener(
+                deadline, op_timeout=timeout, max_redirects=3).open(req, timeout=timeout)
+        with response as r:
             return json.loads(r.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
         raise ProviderError("HTTP %s from %s: %s"
@@ -97,7 +111,17 @@ class Provider:
             "NEW_ENGINE_CLIPROXY_URL", DEFAULT_CLIPROXY_URL)
 
     def complete(self, system: str, user: str, max_tokens: int = 3000,
-                 timeout: int = 180, temperature: float | None = None) -> Completion:
+                 timeout: int = 180, temperature: float | None = None,
+                 deadline: float | None = None) -> Completion:
+        """`deadline` is an absolute time.monotonic() value, optional and off by
+        default so the authoritative pipeline is untouched.
+
+        It matters because of how the fallback works: CLIProxy and OpenRouter are tried
+        in sequence and each would otherwise get its own fresh `timeout`, so one call
+        can cost twice what its argument suggests. A deadline is SHARED by both legs --
+        whatever the first spends, the second inherits what is left -- so the total for
+        one complete() cannot outlive it however the legs divide the time between them.
+        """
         payload = {
             "model": self.model,
             "messages": [{"role": "system", "content": system},
@@ -115,7 +139,15 @@ class Provider:
             if not url:
                 continue
             try:
-                body = _post(url, key, payload, timeout)
+                if deadline is not None:
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        attempts.append("%s: deadline reached before the attempt" % label)
+                        continue
+                    leg_timeout = max(1, int(min(timeout, remaining)))
+                else:
+                    leg_timeout = timeout
+                body = _post(url, key, payload, leg_timeout, deadline)
                 text, actual, usage = _extract(body)
                 return Completion(text=text, requested_model=self.model,
                                   actual_model=actual or self.model,
