@@ -679,3 +679,37 @@ the disability booster from the production scorer, no feed changes, no cron chan
 CODE: `automation/selector_v2.py` (new), `automation/selector_v2_shadow_test.py` (new).
 **MERGED: NO.**
 
+---
+
+## 2026-08-29 — Selector V2 enablement safety (PR #50)
+
+WHAT: the three things that had to be true before the shadow could be switched on, and
+were not. A hard wall-clock bound on source acquisition; an impersonated fallback that
+asks whether an article was obtained rather than whether a socket answered; and one
+candidate per assessment call.
+
+WHY EACH: (1) `urlopen(timeout=N)` is a socket-operation timeout, so a drip keeps a
+fetch alive indefinitely without ever raising — and the shadow acquires a day's
+candidates before the authoritative pipeline, on a cron line with no timeout wrapper.
+(2) curl_cffi impersonation ran only when the transport failed, but the sites it was
+written for answer 200 with a JS shell; measured on lemonde.fr, where impersonation
+returns the real article. It had been dead code for exactly its own use case, and the
+authoritative pipeline was losing those sources too. (3) On identical frozen bytes a
+Guardian gallery read POSSIBLE five times out of five alone and WEAK in a batch of
+three; the verdict is Selector V2's primary ordering key, so rank depended on which
+unrelated stories were exposed the same day.
+
+MEASURED (frozen #49 pool, assessment cache cleared, no live article): 12 exposed, 10
+acquired (was 9), 2 acquisition failures, 10 single-candidate calls, 59.8s, ~$0.21,
+10/10 valid. Le Monde recovered and ranked. Space.com and Nature still fail, as
+predicted. Drip regressions: body drip and header drip both stopped at 25.0s against a
+25s deadline.
+
+NOT DONE HERE: no cron change, no cutover, no new sources, no prompt tuning, no retry
+taxonomy, and no fix for Space.com's 500KB raw-cap failure — recorded as a source-
+acquisition follow-up rather than broadened into scraper engineering.
+
+CODE: `automation/orchestrator/discovery.py`, `automation/selector_v2.py`,
+`automation/source_acquisition_bounds_test.py` (new),
+`automation/selector_v2_shadow_test.py`.
+**MERGED: NO.**
