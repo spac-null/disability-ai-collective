@@ -29,12 +29,16 @@ is explicitly set. The old selector stays exactly as it is until a cutover is se
 decided.
 
 WHERE IT RUNS
-new_engine_production._selector_v2_shadow, at the very end of a scheduled run -- after
-the authoritative seed has been selected, fetched, carried through the whole engine and
-written back. One comparison per run lands in 'selector_v2_shadow_runs': what the
-authoritative selector chose, what this one would have chosen, whether they agreed.
-Any failure inside it is logged as a SELECTOR_V2 warning and goes no further; a run that has already finished its real
-work cannot be broken by an experiment.
+new_engine_production._selector_v2_shadow, once per scheduled run, at exactly one point:
+after the authoritative selector has chosen its anchor and that anchor's source has been
+acquired, and BEFORE the engine, the Research Pack, or any seed write-back. The position
+is not incidental. The write-back retires or rests the anchor, and those are the same
+eligibility columns eligible_pool() filters on -- so a shadow running after it would rank
+a pool the authoritative winner had already left, and could never report agreement.
+
+One comparison per run lands in 'selector_v2_shadow_runs': what the authoritative
+selector chose, what this one would have chosen, whether they agreed. Any failure inside
+it is logged as a SELECTOR_V2 warning and goes no further.
 """
 from __future__ import annotations
 

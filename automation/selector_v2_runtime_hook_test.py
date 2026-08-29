@@ -16,6 +16,13 @@ than anything the shadow decides:
     shadow's disagreement is recorded rather than acted on, and any failure inside the
     shadow leaves the authoritative run exactly as it would have been.
 
+And one property that is easy to get wrong and impossible to notice afterwards: BOTH
+selectors must rank the SAME eligible pool. The seed write-back retires or rests the
+anchor it is given, and those are eligibility filters -- so a shadow that runs after it
+ranks a universe the authoritative winner has already been removed from, and can never
+report agreement. A comparison that cannot say "the same" is not a comparison. The
+same-winner regression below exists precisely to fail if the hook drifts back.
+
 No network, no live article: the engine provider, the research pack and source
 acquisition are all injected.
 """
@@ -74,8 +81,9 @@ class _AssessmentProvider:
     """Stands in for the assessor the shadow calls. Answers every candidate, so the
     shadow reaches a winner and the comparison is a real one."""
 
-    def __init__(self, raise_on_call=False):
+    def __init__(self, raise_on_call=False, prefer="Phreatichthys"):
         self.raise_on_call = raise_on_call
+        self.prefer = prefer            # the body marker that reads RICH
         self.calls = 0
 
     def complete(self, system, user, max_tokens=3000, timeout=180, temperature=None):
@@ -87,7 +95,7 @@ class _AssessmentProvider:
             cid = block.split("\n", 1)[0].strip()
             body = block.split("<<<BODY\n", 1)[1].split("\nBODY>>>")[0]
             quote = " ".join(body.split()[:9])
-            rich = "RICH" if "Phreatichthys" in body else "THIN"
+            rich = "RICH" if self.prefer in body else "THIN"
             verdict = ("STRONG_CANDIDATE" if rich == "RICH" else "WEAK_CANDIDATE")
             out.append({"id": cid, "concrete_subject": "the thing itself",
                         "subject_anchor_quote": quote,
@@ -102,9 +110,11 @@ class _AssessmentProvider:
 
 
 # ── a seed database the shadow can read ───────────────────────────────────────
-def _seed_db(path: pathlib.Path):
-    """Two eligible seeds. The authoritative one is the thin council report the fake
-    orchestrator hands to the engine; the other is richer, so the shadow disagrees."""
+def _seed_db(path: pathlib.Path, competitor=True):
+    """Two eligible seeds by default: the authoritative one the fake orchestrator hands
+    to the engine, and a second one the assessor is told to prefer, so the shadow
+    disagrees. With competitor=False only the authoritative seed is eligible, so the
+    shadow can only agree -- if it is looking at the pool at the right moment."""
     conn = sqlite3.connect(str(path))
     NF.init_db(conn)
     for col in ("ce_attempt_terminal INTEGER DEFAULT 0", "ce_retry_after TEXT",
@@ -118,6 +128,8 @@ def _seed_db(path: pathlib.Path):
              0.90),
             ("shadow-seed", SHADOW_URL, "A blind cave fish filmed near Lugh", "Nautilus",
              0.15)]
+    if not competitor:
+        rows = rows[:1]
     for sid, url, title, pub, score in rows:
         conn.execute(
             "INSERT INTO news_seeds (id,url,title,summary,source_name,source_tier,"
@@ -178,7 +190,17 @@ class FakeOrch:
         return ("editorial", result.get("decision", "HOLD"))
 
     def mark_news_seed_current_engine_attempt(self, seed_id, **kw):
+        """Production retires or rests the seed here (PR #46). Modelled honestly rather
+        than merely recorded: the whole point of the hook's position is that this write
+        happens AFTER the shadow has read the pool, so a fixture that only appended to a
+        list could not tell the two orderings apart."""
         self.seed_attempts.append(seed_id)
+        conn = sqlite3.connect(str(self.discovery_db))
+        conn.execute("UPDATE news_seeds SET ce_attempt_terminal = 1, "
+                     "ce_attempted_date = ? WHERE id = ?",
+                     (datetime.now().strftime("%Y-%m-%d"), seed_id))
+        conn.commit()
+        conn.close()
 
 
 class _ResearchRecorder:
@@ -193,10 +215,12 @@ class _ResearchRecorder:
         return stub_pack(provider, anchor=anchor, now_iso=now_iso, **kw)
 
 
-def _run(flag: str | None, *, assessor=None, hook_raises=False, engine_kwargs=None):
+def _run(flag: str | None, *, assessor=None, hook_raises=False, engine_kwargs=None,
+         competitor=True, on_shadow=None):
     """One full run_scheduled, with the engine provider and the shadow's assessor both
     injected. Returns (result, orch, db, assessor, research recorder)."""
-    db = _seed_db(pathlib.Path(tempfile.mkdtemp()) / "disability_findings.db")
+    db = _seed_db(pathlib.Path(tempfile.mkdtemp()) / "disability_findings.db",
+                  competitor=competitor)
     orch = FakeOrch(db)
     research = _ResearchRecorder()
     assessor = assessor or _AssessmentProvider()
@@ -217,6 +241,8 @@ def _run(flag: str | None, *, assessor=None, hook_raises=False, engine_kwargs=No
 
     def hook(*a, **kw):
         NEP._in_shadow = True
+        if on_shadow is not None:
+            on_shadow(db)                 # observe the pool AS THE SHADOW SEES IT
         try:
             return real_hook(*a, **kw)
         finally:
@@ -299,26 +325,105 @@ def test_flag_on_runs_the_shadow_exactly_once():
           {SV.TABLE, SV.RUNS_TABLE} <= _tables(db), _tables(db))
 
 
-def test_a_hold_run_also_gets_exactly_one_shadow():
-    """A HOLD returns early on a different branch. The hook must be on that branch too,
-    and still only once -- a HOLD is the common production outcome, so a comparison that
-    only happens on ACCEPT would collect almost nothing."""
-    calls = []
+def test_the_hook_runs_once_whatever_the_outcome():
+    """The hook sits before the ACCEPT/HOLD branch, so the outcome cannot change how
+    often it runs. It used to sit on both terminal paths -- one call each, never both,
+    but two call sites is one more than the invariant needs, and the HOLD site was the
+    one that ran after the write-back."""
+    counts = {}
     real = SV.run_shadow
+    for label, kwargs in (("accept", {}), ("hold", {"article": ""})):
+        calls = []
 
-    def counting(*a, **kw):
-        calls.append(1)
-        return real(*a, **kw)
-    SV.run_shadow = counting
-    try:
-        result, orch, db, assessor, research = _run(
-            "1", engine_kwargs={"article": ""})           # writer contract failure -> HOLD
-    finally:
-        SV.run_shadow = real
-    check("the run held", result["status"] == "hold", result.get("status"))
-    check("the shadow still ran exactly once on the HOLD path", len(calls) == 1, len(calls))
-    check("the comparison was recorded for the held run",
-          len(_shadow_runs(db) or []) == 1, _shadow_runs(db))
+        def counting(*a, _c=calls, **kw):
+            _c.append(1)
+            return real(*a, **kw)
+        SV.run_shadow = counting
+        try:
+            result, orch, db, assessor, research = _run("1", engine_kwargs=kwargs)
+        finally:
+            SV.run_shadow = real
+        counts[label] = (len(calls), result["status"], len(_shadow_runs(db) or []))
+    check("an ACCEPT run shadows exactly once", counts["accept"][0] == 1, counts["accept"])
+    check("a HOLD run shadows exactly once", counts["hold"][0] == 1, counts["hold"])
+    check("the two outcomes really were different",
+          counts["accept"][1] == "accept" and counts["hold"][1] == "hold", counts)
+    check("each recorded exactly one comparison",
+          counts["accept"][2] == 1 and counts["hold"][2] == 1, counts)
+    src = (HERE / "new_engine_production.py").read_text()
+    body = src.split("def run_scheduled(")[1]
+    check("there is exactly one call site in run_scheduled",
+          body.count("_selector_v2_shadow(") == 1, body.count("_selector_v2_shadow("))
+
+
+# ── the pool ──────────────────────────────────────────────────────────────────
+def test_both_selectors_rank_the_same_pool_and_can_agree():
+    """The regression for the timing bug.
+
+    _record_seed_attempt sets ce_attempt_terminal (or ce_retry_after) on the anchor, and
+    selector_v2.eligible_pool filters on exactly those columns. Run the shadow after that
+    write-back and the authoritative winner is gone from the pool before the shadow ever
+    looks -- so same_winner could never be 1, and every comparison would report a
+    disagreement that did not happen.
+
+    Here the authoritative seed is the only eligible one and the assessor reads it as
+    strong material, so agreement is the only honest answer. If the hook drifts back
+    behind the write-back, the shadow finds an empty pool and this fails.
+    """
+    seen = {}
+
+    def observe(db):
+        conn = sqlite3.connect(str(db))
+        conn.row_factory = sqlite3.Row
+        seen["pool"] = [r["id"] for r in SV.eligible_pool(conn, datetime.now())]
+        seen["terminal"] = [tuple(r) for r in conn.execute(
+            "SELECT id, ce_attempt_terminal, ce_retry_after, ce_attempted_date "
+            "FROM news_seeds ORDER BY id")]
+        conn.close()
+
+    result, orch, db, assessor, research = _run(
+        "1", competitor=False, assessor=_AssessmentProvider(prefer="crossing"),
+        on_shadow=observe)
+
+    # 1. at shadow time the anchor is still eligible, and untouched
+    check("the authoritative seed is in the pool the shadow ranks",
+          seen.get("pool") == ["auth-seed"], seen.get("pool"))
+    check("no attempt write-back had happened yet",
+          all(r[1] in (0, None) and r[2] is None and r[3] is None
+              for r in seen.get("terminal", [])), seen.get("terminal"))
+
+    # 2. the comparison can therefore say "the same"
+    rows = _shadow_runs(db)
+    check("exactly one comparison row", rows is not None and len(rows) == 1, rows)
+    row = (rows or [{}])[0]
+    check("old and shadow winner are the same seed",
+          row.get("old_seed_id") == row.get("shadow_seed_id") == "auth-seed",
+          (row.get("old_seed_id"), row.get("shadow_seed_id")))
+    check("same_winner is recorded as 1", row.get("same_winner") == 1,
+          row.get("same_winner"))
+    check("agreement is a real assessment, not an empty pool",
+          row.get("shadow_assessment") == "STRONG_CANDIDATE" and row.get("candidates") == 1,
+          (row.get("shadow_assessment"), row.get("candidates")))
+
+    # 3. the real pipeline continued with that same seed
+    check("the pipeline still ran on the authoritative anchor",
+          result["source_url"] == AUTHORITATIVE_URL, result["source_url"])
+
+    # 4. the write-back still retires the seed afterwards, and that later mutation
+    #    does not reach back into the comparison already written
+    conn = sqlite3.connect(str(db))
+    terminal = conn.execute(
+        "SELECT ce_attempt_terminal FROM news_seeds WHERE id='auth-seed'").fetchone()[0]
+    conn.row_factory = sqlite3.Row
+    after_pool = [r["id"] for r in SV.eligible_pool(conn, datetime.now())]
+    conn.close()
+    check("the attempt write-back still happened, after the shadow",
+          orch.seed_attempts == ["auth-seed"] and terminal == 1,
+          (orch.seed_attempts, terminal))
+    check("and it did remove the seed from the pool -- which is why order matters",
+          after_pool == [], after_pool)
+    check("the recorded comparison is unchanged by that later mutation",
+          _shadow_runs(db) == rows)
 
 
 # ── 3 & 4. authority ──────────────────────────────────────────────────────────
@@ -374,30 +479,38 @@ def test_the_shadow_never_commissions_research_discovery_or_a_writer():
 
 
 def test_the_shadow_writes_nothing_to_news_seeds():
-    db_before = None
+    """Bracketed tightly around the shadow itself. Comparing end-of-run against
+    start-of-run would fold in the seed write-back, which is production's own legitimate
+    write and happens after -- this has to isolate the shadow, not the run."""
+    COLS = ("SELECT id, disability_angle, angle_checked, used, relevance_score, "
+            "ce_attempt_terminal, ce_retry_after, ce_attempted_date "
+            "FROM news_seeds ORDER BY id")
+    seen = {}
     real = SV.run_shadow
 
-    def snapshotting(conn, *a, **kw):
-        nonlocal db_before
-        db_before = [tuple(r) for r in conn.execute(
-            "SELECT id, disability_angle, angle_checked, used, relevance_score, "
-            "ce_attempted_date FROM news_seeds ORDER BY id")]
-        return real(conn, *a, **kw)
-    SV.run_shadow = snapshotting
+    def bracketing(conn, *a, **kw):
+        seen["before"] = [tuple(r) for r in conn.execute(COLS)]
+        try:
+            return real(conn, *a, **kw)
+        finally:
+            seen["after"] = [tuple(r) for r in conn.execute(COLS)]
+    SV.run_shadow = bracketing
     try:
         result, orch, db, assessor, research = _run("1")
     finally:
         SV.run_shadow = real
-    conn = sqlite3.connect(str(db))
-    after = [tuple(r) for r in conn.execute(
-        "SELECT id, disability_angle, angle_checked, used, relevance_score, "
-        "ce_attempted_date FROM news_seeds ORDER BY id")]
-    conn.close()
-    check("news_seeds is identical across the shadow", db_before == after,
-          (db_before, after))
+    check("the shadow actually ran", "before" in seen and "after" in seen)
+    check("news_seeds is identical across the shadow",
+          seen.get("before") == seen.get("after"),
+          (seen.get("before"), seen.get("after")))
     check("disability_angle stayed NULL for both seeds",
-          all(r[1] is None for r in after), after)
-    cols = {r[1] for r in sqlite3.connect(str(db)).execute("PRAGMA table_info(news_seeds)")}
+          all(r[1] is None for r in seen.get("after", [])), seen.get("after"))
+    check("no seed was marked used, retired or rested by the shadow",
+          all(r[3] in (0, None) and r[5] in (0, None) and r[6] is None
+              for r in seen.get("after", [])), seen.get("after"))
+    conn = sqlite3.connect(str(db))
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(news_seeds)")}
+    conn.close()
     for banned in ("shadow_seed_id", "same_winner", "shadow_rank", "shadow_assessment"):
         check("no comparison column was added to news_seeds: %s" % banned,
               banned not in cols)
@@ -452,9 +565,15 @@ def test_the_hook_is_fail_open_by_construction():
     body = src.split("def run_scheduled(")[1]
     check("the hook is never assigned to anything in run_scheduled",
           "= _selector_v2_shadow" not in body)
-    check("run_scheduled calls it on both terminal paths, and only there",
-          body.count("_selector_v2_shadow(orch, seed, run, model)") == 2,
-          body.count("_selector_v2_shadow(orch, seed, run, model)"))
+    check("run_scheduled calls it exactly once",
+          body.count("_selector_v2_shadow(") == 1, body.count("_selector_v2_shadow("))
+    call = body.index("_selector_v2_shadow(")
+    check("the call is before the engine runs", call < body.index("out = R.run("))
+    check("the call is before any seed write-back",
+          call < body.index("_record_seed_attempt(orch"))
+    check("the call is after the anchor and its source are settled",
+          body.index("seed = orch.get_news_seed_with_usable_source()") < call
+          and body.index('payload = {') < call)
 
 
 # ── 8. cron ───────────────────────────────────────────────────────────────────
@@ -496,7 +615,8 @@ def test_the_flag_is_not_enabled_anywhere_in_the_repository():
 def main():
     for fn in (test_flag_off_the_hook_does_nothing,
                test_flag_on_runs_the_shadow_exactly_once,
-               test_a_hold_run_also_gets_exactly_one_shadow,
+               test_the_hook_runs_once_whatever_the_outcome,
+               test_both_selectors_rank_the_same_pool_and_can_agree,
                test_the_authoritative_seed_is_untouched_and_only_recorded,
                test_the_shadow_never_commissions_research_discovery_or_a_writer,
                test_the_shadow_writes_nothing_to_news_seeds,

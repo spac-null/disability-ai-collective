@@ -108,22 +108,31 @@ def _record_seed_attempt(orch, seed: dict, run: str, out: dict, result: dict) ->
 def _selector_v2_shadow(orch, seed: dict, run: str, model: str) -> None:
     """SELECTOR V2, shadow only. OFF unless CRIPMINDS_SELECTOR_V2_SHADOW is set.
 
-    Runs at the very end of a run -- once on the HOLD path, once on the ACCEPT path,
-    both after the seed-attempt write-back and after every artefact has been persisted.
-    By then the anchor is a fact: it was selected, fetched and carried through the whole
-    engine before this function existed to the run. All it does is record what a
-    different selector would have picked from the same eligible pool, alongside what the
-    authoritative selector actually picked.
+    Runs ONCE per run, at one point only: after the authoritative selector has chosen
+    its anchor and that anchor's source has been acquired, and before the engine, the
+    Research Pack, or any seed write-back has touched anything.
+
+    That position is the whole comparison. _record_seed_attempt retires or rests the
+    seed it is given -- ce_attempt_terminal on a terminal outcome, ce_retry_after on a
+    retryable one -- and both are eligibility filters in the pool this reads. Run the
+    shadow after that write-back and the authoritative winner may already have been
+    removed from the universe the shadow ranks, which does not merely bias the result:
+    it makes agreement unreachable, so every comparison would report a disagreement
+    that never happened. The two selectors must see one pool.
+
+    Running here costs the acquisition of up to a day's candidates before the article
+    work starts. That is the price of a comparison that means anything, and it is only
+    ever paid when the flag is set.
 
     It reuses the PRODUCTION acquisition path (`get_source_text` plus the orchestrator's
     own classification), because a second weaker fetcher would mark whole publishers
     unreadable and make the comparison a lie.
 
-    Every failure is contained. An experiment must never be able to break a run that has
-    already finished its real work -- not by raising, not by leaving a connection open on
-    the seed database, and not by being slow enough to matter. The exception is logged as
-    a SELECTOR_V2 warning rather than swallowed silently: an experiment that quietly
-    stops running is worse than one that visibly fails.
+    Every failure is contained. An experiment must never be able to break a run -- not by
+    raising, not by leaving a connection open on the seed database that production is
+    about to write to. The exception is logged as a SELECTOR_V2 warning rather than
+    swallowed silently: an experiment that quietly stops running is worse than one that
+    visibly fails.
     """
     if not SV.enabled():
         return
@@ -213,6 +222,11 @@ def run_scheduled(orch, *, rehearsal: bool = False,
                      run, payload["provenance"]["url"],
                      payload["provenance"]["original_length_chars"])
 
+    # The anchor is now fixed and its source is in hand, and nothing has yet written
+    # back to the seed pool. This is the only moment at which the two selectors can be
+    # compared honestly -- see _selector_v2_shadow.
+    _selector_v2_shadow(orch, seed, run, model)
+
     out = R.run(payload, root, Provider(model=model), run, now.isoformat(),
                 research_fn=research_fn)
     (root / run / "ACQUISITION.json").write_text(json.dumps(
@@ -235,7 +249,6 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     if out["decision"] != "ACCEPT":
         orch.logger.warning("CURRENT_ENGINE %s: HOLD — %s", run, "; ".join(out["reasons"])[:300])
         _record_seed_attempt(orch, seed, run, out, result)
-        _selector_v2_shadow(orch, seed, run, model)
         return result
 
     # ── ACCEPT: run the publication-safety bridge ────────────────────────────
@@ -278,5 +291,4 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     _record_seed_attempt(orch, seed, run, out, result)
     orch.logger.info("CURRENT_ENGINE %s: ACCEPT — candidate %s (publication_eligible=%s)",
                      run, path.name, result["publication_eligible"])
-    _selector_v2_shadow(orch, seed, run, model)
     return result
