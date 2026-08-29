@@ -149,7 +149,8 @@ def _db(seeds):
 
 def _run(conn, provider, **kw):
     return SV.run_shadow(conn, provider, acquire=acquire, score_item=NF.score_item,
-                         boosters=NF.DISABILITY_BOOSTERS, now=NOW, **kw)
+                         boosters=NF.DISABILITY_BOOSTERS,
+                         keyword_matches=NF._keyword_matches, now=NOW, **kw)
 
 
 # ── flag ──────────────────────────────────────────────────────────────────────
@@ -175,7 +176,8 @@ def test_exposure_is_three_streams_not_the_score():
     conn = _db(seeds)
     pool = SV.eligible_pool(conn, NOW)
     picked = SV.select_candidates(pool, now=NOW, score_item=NF.score_item,
-                                  boosters=NF.DISABILITY_BOOSTERS)
+                                  boosters=NF.DISABILITY_BOOSTERS,
+                                  keyword_matches=NF._keyword_matches)
     via = {p["row"]["id"]: p["exposed_via"] for p in picked}
     check("about a dozen candidates, bounded", len(picked) <= SV.DAILY_CANDIDATES)
     check("the near-expiry news item is exposed", "urgent" in via, via)
@@ -184,7 +186,8 @@ def test_exposure_is_three_streams_not_the_score():
     check("exploration is deterministic across runs",
           [p["row"]["id"] for p in picked]
           == [p["row"]["id"] for p in SV.select_candidates(
-              pool, now=NOW, score_item=NF.score_item, boosters=NF.DISABILITY_BOOSTERS)])
+              pool, now=NOW, score_item=NF.score_item, boosters=NF.DISABILITY_BOOSTERS,
+              keyword_matches=NF._keyword_matches)])
     check("no material-class quota exists in the module",
           "quota" not in (HERE / "selector_v2.py").read_text().lower().replace(
               "no material-class quotas", "").replace("no quota", ""))
@@ -197,15 +200,21 @@ def test_v2_ignores_disability_angle_and_the_keyword_booster():
         check("exposure and ranking never read %s" % banned, banned not in body)
     # the booster is neutralised in the theme signal, and production is left alone
     before = list(NF.DISABILITY_BOOSTERS)
-    plain = SV.theme_signal("a study of cities", "urban policy", NF.score_item,
-                            NF.DISABILITY_BOOSTERS)
+    before_weights = dict(NF.THEME_WEIGHTS)
+    sig = lambda ti, su: SV.theme_signal(ti, su, NF.score_item, NF.DISABILITY_BOOSTERS,
+                                         NF._keyword_matches)
     boosted_title = "an accessible wheelchair braille study of cities"
-    with_terms = SV.theme_signal(boosted_title, "urban policy", NF.score_item,
-                                 NF.DISABILITY_BOOSTERS)
+    with_terms = sig(boosted_title, "urban policy")
     real, _ = NF.score_item({"title": boosted_title, "summary": "urban policy"})
-    check("the production scorer still applies its booster", real > with_terms, (real, with_terms))
-    check("the shadow theme signal does not", with_terms <= plain + 0.001, (plain, with_terms))
-    check("the production booster list is restored", NF.DISABILITY_BOOSTERS == before)
+    check("the production scorer still applies its booster",
+          abs(real - with_terms - SV.BOOSTER_CONTRIBUTION) < 1e-9, (real, with_terms))
+    check("the shadow signal is the unboosted value", with_terms < real, (with_terms, real))
+    plain_title = "a study of cities"
+    plain_real, _ = NF.score_item({"title": plain_title, "summary": "urban policy"})
+    check("a text with no booster term is unchanged by the shadow signal",
+          abs(sig(plain_title, "urban policy") - plain_real) < 1e-9)
+    check("the production booster list was never mutated", NF.DISABILITY_BOOSTERS == before)
+    check("no production scoring global was mutated", NF.THEME_WEIGHTS == before_weights)
 
 
 # ── publisher repetition ──────────────────────────────────────────────────────
@@ -407,6 +416,76 @@ def test_bounds_are_declared():
     check("12 candidates cost at most 4 calls at batch size 3", p.calls <= 4, p.calls)
     check("and never more than the ceiling", p.calls <= SV.MAX_CALLS_PER_RUN)
     check("metrics report the spend", out["metrics"]["model_calls"] == p.calls)
+
+
+
+def test_no_production_global_is_mutated_even_transiently():
+    """A shadow that clears a production list and restores it in a finally block is not
+    observationally isolated -- a raise or a concurrent caller between those two lines
+    would be a real production bug caused by an experiment. The theme signal is pure."""
+    src = (HERE / "selector_v2.py").read_text()
+    for pattern in (".clear()", ".extend(", ".append(", ".pop(", "setattr(", "globals()"):
+        offenders = [ln.strip() for ln in src.splitlines()
+                     if pattern in ln and "booster" in ln.lower()]
+        check("no %s on the booster list anywhere" % pattern, not offenders, offenders)
+    # and behaviourally: a scoring call inside the shadow leaves the globals identical
+    before_b, before_w = list(NF.DISABILITY_BOOSTERS), dict(NF.THEME_WEIGHTS)
+    conn = _db([("a", "https://x.example/rich", "an accessible wheelchair study",
+                 MP.CULTURE, 1, 0.5, None, "P1")])
+    _run(conn, StubProvider({"Phreatichthys": "STRONG_CANDIDATE"}))
+    check("boosters unchanged after a full shadow run", NF.DISABILITY_BOOSTERS == before_b)
+    check("theme weights unchanged after a full shadow run", NF.THEME_WEIGHTS == before_w)
+    check("the shadow never reassigns a production module attribute",
+          "NF." not in src and "news_fetcher" not in src)
+
+
+def test_cache_hash_covers_the_whole_source_not_the_model_slice():
+    """If a source changes past the 1,100 words the assessor sees, the cache must still
+    know the source changed."""
+    long_body = RICH_BODY + ("\n\nTail section. " * 40)
+    BODIES["https://x.example/long"] = long_body
+    try:
+        conn = _db([("a", "https://x.example/long", "one", MP.CULTURE, 1, 0.5, None, "P1")])
+        p1 = StubProvider({"Phreatichthys": "STRONG_CANDIDATE"})
+        out1 = _run(conn, p1)
+        sha1 = out1["records"][0]["source_sha256"]
+        prompt_words = len(p1.prompts[0].split())
+        check("the model saw a truncated slice",
+              prompt_words < len(long_body.split()), prompt_words)
+        # change ONLY the tail, far beyond the model's window
+        BODIES["https://x.example/long"] = long_body + "\n\nA correction was appended."
+        p2 = StubProvider({"Phreatichthys": "POSSIBLE_CANDIDATE"})
+        out2 = _run(conn, p2)
+        check("a change outside the model window changes the cache hash",
+              out2["records"][0]["source_sha256"] != sha1)
+        check("and it is reassessed rather than served from cache", p2.calls == 1, p2.calls)
+        check("the hash is of the acquired body, not of the prompt or the title",
+              sha1 == __import__("hashlib").sha256(long_body.encode()).hexdigest())
+    finally:
+        BODIES.pop("https://x.example/long", None)
+
+
+def test_flag_off_means_nothing_happens():
+    """The runtime hook is the flag; with it off there is no fetch, no call, no write."""
+    os.environ.pop(SV.SHADOW_ENV, None)
+    check("enabled() is the only gate and it is off", SV.enabled() is False)
+    fetches = []
+
+    def counting_acquire(url):
+        fetches.append(url)
+        return acquire(url)
+
+    conn = _db([("a", "https://x.example/rich", "one", MP.CULTURE, 1, 0.5, None, "P1")])
+    p = StubProvider({"Phreatichthys": "STRONG_CANDIDATE"})
+    if SV.enabled():                      # exactly what a caller must do
+        SV.run_shadow(conn, p, acquire=counting_acquire, score_item=NF.score_item,
+                      boosters=NF.DISABILITY_BOOSTERS,
+                      keyword_matches=NF._keyword_matches, now=NOW)
+    check("no fetch happened", fetches == [])
+    check("no model call happened", p.calls == 0)
+    tables = {r[0] for r in conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table'")}
+    check("no shadow table was even created", SV.TABLE not in tables, tables)
 
 
 def main():

@@ -119,22 +119,39 @@ def cached_assessment(conn, seed_id: str, source_sha256: str):
 
 
 # ── exposure: three bounded deterministic streams ─────────────────────────────
-def theme_signal(title: str, summary: str, score_item, boosters) -> float:
-    """Legacy theme relevance with the disability booster contribution removed.
+# The disability booster's value inside the production scorer. Named here so the
+# subtraction below is explicit rather than a magic number; a test asserts it still
+# matches what score_item actually adds, so a change there fails loudly instead of
+# silently skewing the shadow signal.
+BOOSTER_CONTRIBUTION = 0.15
 
-    The booster fires on ~2.5% of the eligible pool and moved one slot in a top-10
-    counterfactual, so removing it here costs nothing measurable -- and keeping it would
-    carry a keyword advantage the doctrine has retired into the replacement's own
-    ranking. The production scorer is NOT modified; this recomputes without it.
+
+def theme_signal(title, summary, score_item, boosters, keyword_matches) -> float:
+    """Legacy theme relevance MINUS the disability-booster contribution. Pure.
+
+    Earlier this cleared the production booster list around a score_item() call and
+    restored it in a finally block. That worked and was still wrong: a shadow that
+    mutates production-global state, however briefly, is not observationally isolated,
+    and a raise or a concurrent caller between the two lines would have been a real
+    production bug caused by an experiment. So nothing is mutated. The production score
+    is computed exactly as production computes it, and the booster is subtracted
+    arithmetically.
+
+    Exact, not approximate: score_item's base term is capped at 0.7 before the 0.15
+    booster is added, so the sum can never reach the 1.0 clamp and the subtraction
+    always recovers the unboosted value.
+
+    Why subtract at all: the booster fires on ~2.5% of the eligible pool and moved one
+    slot in a top-10 counterfactual, so it buys nothing -- and carrying a disability
+    keyword advantage into the replacement's own ranking is precisely what the doctrine
+    retired. The production scorer is not touched here or anywhere in this module.
     """
     item = {"title": title or "", "summary": summary or ""}
-    original = list(boosters)
-    try:
-        boosters.clear()
-        score, _ = score_item(item)
-    finally:
-        boosters.extend(original)
-    return score
+    score, _themes = score_item(item)
+    text = ("%s %s" % (item["title"], item["summary"])).lower()
+    words = set(re.findall(r"\b\w+\b", text))
+    boosted = any(keyword_matches(text, words, kw) for kw in boosters)
+    return round(max(0.0, score - (BOOSTER_CONTRIBUTION if boosted else 0.0)), 3)
 
 
 def _remaining_eligibility_days(row, now) -> float:
@@ -150,13 +167,14 @@ def _explore_key(row, day: str) -> str:
     return hashlib.sha256(("%s|%s" % (day, row["id"])).encode()).hexdigest()
 
 
-def select_candidates(rows, *, now, score_item, boosters,
+def select_candidates(rows, *, now, score_item, boosters, keyword_matches,
                       already_assessed=frozenset()) -> list:
     """Union of three streams, deduplicated, ~12/day. Each candidate records which
     stream exposed it, so 'why was this even looked at?' is answerable afterwards."""
     pool = [r for r in rows if r["id"] not in already_assessed]
     day = now.strftime("%Y-%m-%d")
-    signals = {r["id"]: theme_signal(r["title"], r["summary"], score_item, boosters)
+    signals = {r["id"]: theme_signal(r["title"], r["summary"], score_item, boosters,
+                                     keyword_matches)
                for r in pool}
     picked, seen = [], set()
 
@@ -385,8 +403,8 @@ def recent_selections(conn, limit: int = 12) -> list:
     return [(r[0], r[1]) for r in rows]
 
 
-def run_shadow(conn, provider, *, acquire, score_item, boosters, now=None,
-               old_winner=None) -> dict:
+def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches,
+               now=None, old_winner=None) -> dict:
     """One shadow run. `acquire(url) -> (text, status)` MUST be the production
     acquisition path -- a second, weaker fetcher would mark whole publishers unreadable
     (the probe's stdlib fetch got HTTP 403 from Dezeen, NYT Arts and the Economist while
@@ -399,7 +417,8 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, now=None,
     ensure_schema(conn)
     pool = eligible_pool(conn, now)
     recent = recent_selections(conn)
-    candidates = select_candidates(pool, now=now, score_item=score_item, boosters=boosters)
+    candidates = select_candidates(pool, now=now, score_item=score_item,
+                                   boosters=boosters, keyword_matches=keyword_matches)
 
     prepared, cached, failed = [], [], []
     for c in candidates:
@@ -410,6 +429,9 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, now=None,
                            "url": row["url"], "assessment_status": ACQUISITION_FAILED,
                            "detail": status, "exposed_via": c["exposed_via"]})
             continue
+        # Hash of the FULL acquired source, before any truncation for the model
+        # prompt. If the source changes past the 1,100 words the assessor sees, the
+        # cache must still know the source changed.
         sha = hashlib.sha256(text.encode("utf-8")).hexdigest()
         c.update(body=text, sha=sha, features=source_features(text),
                  key=row["id"][:8])
