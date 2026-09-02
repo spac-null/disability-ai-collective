@@ -473,29 +473,27 @@ and are **not** cutover blockers — they never blocked the completed default cu
   invalid is the known `assessment`-field omission on long roundup material, which fails
   visibly and cannot rank.
 
-- **CURRENT PHASE — SELECTOR V2: FOUR-RUN NATURAL SHADOW OBSERVATION.** Selector V2 is
-  **ENABLED AS A SHADOW** on the 09:00 article cron only
-  (`CRIPMINDS_SELECTOR_V2_SHADOW=1`, added 2026-08-29 after PR #50 merged). The old
-  selector remains **AUTHORITATIVE**; Grounder V2 remains **OFF**; the 08:00 publisher
-  cron and the cadence are unchanged. The shadow records a comparison and nothing else:
-  it cannot replace the anchor, invoke Research Pack / Discovery / Form / Writer, write
-  `ce_attempt_*` for its own winner, or publish. Its whole run is bounded at 120s.
+- **SELECTOR V2 — FOUR-RUN NATURAL SHADOW OBSERVATION: COMPLETE, 4/4 valid**
+  (2026-08-30 to 09-02). Status OK 4/4; elapsed 54s / 29.6s / 29.8s / 20s against a
+  120s bound; 0 invalid assessments, 0 model errors, 0 budget skips, 0 escaped
+  failures, 0 unexpected DB side effects; authoritative pipeline unaffected 4/4.
+  Ranking: `same_winner = NO` on all four days, and the legacy winner scored 0.7 every
+  time, so the legacy ordering key separated nothing on any day. On run 4 V2 chose
+  material the legacy scorer rated 0.375 with no `disability_angle`, after the
+  repetition term decayed a three-day cached incumbent. Caveat recorded: the ranking
+  was exercised four times, the top assessment computed once (30 Aug) and cache-served
+  until repetition pressure displaced it.
 
-  **Observation target: 4 natural 09:00 runs. Completed: 0/4.** Do not trigger runs
-  manually to accelerate this, and do not change Selector V2 mid-series unless it breaks
-  authoritative production, violates the 120s bound, or causes an unexpected production
-  side effect. Assessment disagreement, invalid shadow assessments, acquisition failures
-  and old/new winner disagreement are **data, not defects** — a clean series needs one
-  unchanged implementation. Per-run records land in `selector_v2_shadow_runs` and
-  `seed_material_assessments` in `disability_findings.db`.
-
-  Frozen during the series: no new feeds, no material-class policy change, no V2 ranking
-  change, no retirement of production `disability_angle` or the disability booster, no
-  Grounder V2, no cadence, no BIC, no PDFs. **Not cutover-ready** — blockers unchanged:
-  borderline WEAK↔POSSIBLE instability (one step); investigable-question drift on
-  borderline material; acquisition coverage (Space.com raw-cap open, Nature structural);
-  no natural comparison corpus yet; no evidence linking a STRONG assessment to a good
-  article.
+- **PR #51 — SELECTOR V2 AUTHORITATIVE CUTOVER: OPEN, NOT MERGED.** `CRIPMINDS_SELECTOR`
+  defaults to `v2`; `CRIPMINDS_SELECTOR=legacy` on the cron line rolls back to
+  `get_news_seed_with_usable_source`, which is untouched. An unknown value raises
+  rather than guessing, and a technical selector failure HOLDs as a
+  `PROVIDER_FAILURE` — it never silently falls back to the other selector. The
+  authoritative computation is the same function that ran in shadow, so the four
+  observed runs describe what now runs live. No cron change is required for the
+  cutover to take effect. **The claim is not that four runs prove article quality** —
+  it is that V2 is operationally safe and better aligned with the material-selection
+  contract than title/summary/disability-angle ranking.
 
 - **PR #48 — NEWS/POOL V2 foundation: OPEN, NOT MERGED.** Contextual temporal
   eligibility **only**. One pool, one selector; each feed declares a `material_class`
