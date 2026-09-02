@@ -204,8 +204,28 @@ def _select_seed(orch, model: str) -> tuple:
             conn.close()
     except Exception as e:
         raise SV.SelectorFailure("%s: %s" % (type(e).__name__, str(e)[:300])) from e
+    m = report["metrics"]
     winner = report.get("shadow_winner")
     if not winner:
+        # Two very different silences, and they must not be reported as one.
+        #
+        # Nothing acquired -- an empty pool, or every candidate's source unreadable --
+        # is an ordinary day with no usable material, and the pipeline already has a
+        # word for it.
+        #
+        # Material acquired but not one assessment came back valid is the opposite: we
+        # HAD the pool and could not judge it, because the provider failed, timed out,
+        # returned output that broke its own contract, or the run budget ran out
+        # before anything was assessed. Saying "no usable source" there would report
+        # an infrastructure outage as an editorial finding, and the day would look
+        # like a quiet one instead of a broken one.
+        if m["fetched"] > 0:
+            raise SV.SelectorFailure(
+                "acquired %d source(s) and produced no valid assessment "
+                "(invalid=%d errored=%d over_run_budget=%d over_call_budget=%d): "
+                "the pool could not be judged"
+                % (m["fetched"], m["invalid"], m["errored"],
+                   m.get("over_run_budget", 0), m.get("over_call_budget", 0)))
         return None, report
     seed = _seed_dict(orch, winner["seed_id"])
     if seed is None:

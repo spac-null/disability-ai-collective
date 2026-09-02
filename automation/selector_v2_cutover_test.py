@@ -136,6 +136,7 @@ class FakeOrch:
         self.seed_attempts: list = []
         self.legacy_calls = 0
         self.get_news_seed_calls = 0
+        self.dead_sources = False
 
     # -- legacy selector, untouched and still reachable --
     def get_news_seed(self, exclude_ids=None):
@@ -155,6 +156,8 @@ class FakeOrch:
     # -- acquisition --
     def get_source_text(self, url, fallback_text=None, underlying_url=None):
         self.fetched.append(url)
+        if self.dead_sources:
+            return ""
         return BODIES.get(url, THIN)
 
     def get_source_origin(self, url):
@@ -187,9 +190,11 @@ class FakeOrch:
         conn.close()
 
 
-def _run(selector=None, *, assessor=None, engine_kwargs=None, seeds=SEEDS, db=None):
+def _run(selector=None, *, assessor=None, engine_kwargs=None, seeds=SEEDS, db=None,
+         dead_sources=False):
     db = db or _db(pathlib.Path(tempfile.mkdtemp()) / "disability_findings.db", seeds)
     orch = FakeOrch(db)
+    orch.dead_sources = dead_sources
     assessor = assessor or Assessor()
     for k in (SV.SELECTOR_ENV, SV.SHADOW_ENV):
         os.environ.pop(k, None)
@@ -339,14 +344,6 @@ def test_legacy_rollback_selects_through_the_old_path():
 
 # ── F: fail closed ───────────────────────────────────────────────────────────
 def test_a_selector_failure_holds_and_does_not_fall_back():
-    result, orch, db, assessor = _run(assessor=Assessor(raise_on_call=True))
-    # a provider that raises is caught inside assess() and yields no winner, which is
-    # an editorial no-usable-source day, not a technical failure
-    check("an assessor failure is not treated as a broken selector",
-          result["status"] in ("no_usable_source", "hold"), result["status"])
-    check("it did not quietly fall back to the legacy selector",
-          orch.legacy_calls == 0, orch.legacy_calls)
-
     # a genuine technical failure
     real = SV.run_selection
     SV.run_selection = lambda *a, **kw: (_ for _ in ()).throw(RuntimeError("db is gone"))
@@ -507,6 +504,93 @@ def test_authoritative_mode_never_runs_the_legacy_selector():
               r["old_seed_id"])
 
 
+
+# ── the silence that is an outage, not a quiet day ───────────────────────────
+def test_a_total_assessment_failure_is_an_infrastructure_failure():
+    """assess() catches provider errors per batch and records ASSESSMENT_ERROR, so a
+    complete assessment outage produces no winner and looks, from outside, exactly
+    like a day with nothing worth writing about. It is not. We had the pool and could
+    not judge it, and reporting that as no-usable-source would make a broken day look
+    like a quiet one."""
+    result, orch, db, assessor = _run(assessor=Assessor(raise_on_call=True))
+    check("every assessment call failed", assessor.calls >= 1, assessor.calls)
+    check("sources WERE acquired", len(orch.fetched) >= 1, orch.fetched)
+    check("the run HOLDs", result["status"] == "hold", result["status"])
+    check("as SELECTOR_FAILURE, not no_usable_source",
+          result.get("reason_code") == "SELECTOR_FAILURE", result.get("reason_code"))
+    check("the reason says the pool could not be judged",
+          "could not be judged" in " ".join(result.get("reasons") or []),
+          result.get("reasons"))
+    check("visible to the wrapper as an infrastructure failure",
+          (result.get("run_status") or {}).get("status") == "PROVIDER_FAILURE",
+          result.get("run_status"))
+    import production_orchestrator as PO
+    check("the scheduled wrapper exits non-zero",
+          PO._is_infra_or_contract_failure(result) is True)
+    check("no legacy selector call", orch.legacy_calls == 0 and orch.get_news_seed_calls == 0,
+          (orch.legacy_calls, orch.get_news_seed_calls))
+    check("no seed attempt write-back", orch.seed_attempts == [], orch.seed_attempts)
+
+
+def test_an_invalid_assessment_contract_is_also_technical():
+    """Not only a raising provider: output that breaks its own contract leaves the same
+    silence and must be classified the same way."""
+
+    class Malformed(Assessor):
+        def complete(self, system, user, max_tokens=3000, timeout=180,
+                     temperature=None, deadline=None):
+            self.calls += 1
+            return Completion(text="not json at all", requested_model="m",
+                              actual_model="m", provider_label="stub")
+
+    result, orch, db, _ = _run(assessor=Malformed())
+    check("malformed model output HOLDs as SELECTOR_FAILURE",
+          result.get("reason_code") == "SELECTOR_FAILURE", result.get("reason_code"))
+    check("no legacy fallback", orch.legacy_calls == 0 and orch.get_news_seed_calls == 0)
+
+
+def test_no_material_at_all_is_an_ordinary_day():
+    """The other side of the same rule: when nothing was acquired there is nothing to
+    judge, and that IS an editorial no-usable-source day."""
+    # every source unreadable
+    result, orch, db, assessor = _run(dead_sources=True)
+    check("acquisition was attempted", len(orch.fetched) >= 1, orch.fetched)
+    check("no assessment was spent on unusable material", assessor.calls == 0,
+          assessor.calls)
+    check("all-acquisitions-unusable is no_usable_source",
+          result["status"] == "no_usable_source", result["status"])
+    check("not an infrastructure failure", "run_status" not in result, result.keys())
+
+    # empty eligible pool: every seed already terminal
+    db2 = _db(pathlib.Path(tempfile.mkdtemp()) / "disability_findings.db", SEEDS)
+    conn = sqlite3.connect(str(db2))
+    conn.execute("UPDATE news_seeds SET ce_attempt_terminal = 1")
+    conn.commit()
+    conn.close()
+    result2, orch2, _, assessor2 = _run(db=db2)
+    check("an empty pool is no_usable_source",
+          result2["status"] == "no_usable_source", result2["status"])
+    check("nothing was fetched", orch2.fetched == [], orch2.fetched)
+    check("nothing was assessed", assessor2.calls == 0, assessor2.calls)
+    check("still no infrastructure failure", "run_status" not in result2, result2.keys())
+
+
+def test_a_valid_assessment_always_yields_a_winner():
+    """'Valid assessments complete but no winner' is impossible by contract: rank()
+    orders every OK record ahead of the rest and the winner is the first OK record, so
+    one valid assessment is one winner. This is asserted so the claim cannot rot."""
+    src = (HERE / "selector_v2.py").read_text()
+    check("the winner is simply the first OK record",
+          'winner = next((r for r in ranked if r["assessment_status"] == OK), None)'
+          in src)
+    check("rank puts every OK record first",
+          'ok = [r for r in records if r["assessment_status"] == OK]' in src
+          and 'return ok + [r for r in records if r["assessment_status"] != OK]' in src)
+    result, orch, db, assessor = _run()
+    check("a run with valid assessments has a winner",
+          result.get("source_url") == RICH_URL, result.get("source_url"))
+
+
 def main():
     for fn in (test_the_v2_winner_is_the_seed_passed_downstream,
                test_the_selected_seed_goes_through_the_existing_write_back,
@@ -517,6 +601,10 @@ def main():
                test_the_hard_budgets_are_unchanged_by_the_cutover,
                test_the_cache_still_works_authoritatively,
                test_publisher_repetition_is_still_soft,
+               test_a_total_assessment_failure_is_an_infrastructure_failure,
+               test_an_invalid_assessment_contract_is_also_technical,
+               test_no_material_at_all_is_an_ordinary_day,
+               test_a_valid_assessment_always_yields_a_winner,
                test_authoritative_mode_never_runs_the_legacy_selector,
                test_no_downstream_stage_changed):
         print("\n" + fn.__name__)
