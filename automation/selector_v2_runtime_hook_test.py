@@ -232,6 +232,10 @@ def _run(flag: str | None, *, assessor=None, hook_raises=False, engine_kwargs=No
     if flag is not None:
         os.environ[SV.SHADOW_ENV] = flag
     os.environ["NEW_ENGINE_V1_MODE"] = "LIVE"
+    # The shadow hook exists only while the legacy selector is authoritative. Once
+    # V2 selects, the hook self-disables rather than running a second selection --
+    # see selector_v2_cutover_test.py for that. These tests describe the hook.
+    os.environ["CRIPMINDS_SELECTOR"] = "legacy"
 
     real_provider, real_run_shadow = NEP.Provider, SV.run_shadow
     NEP.Provider = lambda model=None, **kw: (
@@ -265,6 +269,7 @@ def _run(flag: str | None, *, assessor=None, hook_raises=False, engine_kwargs=No
         NEP._in_shadow = False
         os.environ.pop(SV.SHADOW_ENV, None)
         os.environ.pop("NEW_ENGINE_V1_MODE", None)
+        os.environ.pop("CRIPMINDS_SELECTOR", None)
     return result, orch, db, assessor, research
 
 
@@ -575,7 +580,7 @@ def test_the_hook_is_fail_open_by_construction():
     check("the call is before any seed write-back",
           call < body.index("_record_seed_attempt(orch"))
     check("the call is after the anchor and its source are settled",
-          body.index("seed = orch.get_news_seed_with_usable_source()") < call
+          body.index("seed, selection = _select_seed(orch, model)") < call
           and body.index('payload = {') < call)
 
 

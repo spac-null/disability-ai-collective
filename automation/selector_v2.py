@@ -55,6 +55,57 @@ import material_policy as MP
 from new_engine_v1.provider import parse_json_object
 
 SHADOW_ENV = "CRIPMINDS_SELECTOR_V2_SHADOW"
+
+# ── the selector switch (authoritative cutover, 2026-09-02) ───────────────────
+#
+# Follows engine_switch.py exactly, because that file already settled how this
+# project rolls a component back: an explicit environment value on the cron line,
+# an unknown value that raises rather than guessing, and NO post-start fallback.
+#
+# The default is V2. The four natural shadow runs of 30 Aug - 2 Sep did not show
+# that V2 writes better articles -- four runs cannot show that. They showed that it
+# is operationally safe (status OK 4/4, 20-54s against a 120s bound, 0 invalid
+# assessments, 0 errors, 0 budget skips, 0 escaped failures, 0 side effects) and
+# that it selects on the contract this publication actually wants: on all four days
+# the legacy winner scored 0.7 and the ordering key separated nothing, while V2
+# separated candidates by reading them. On the fourth day it chose material the
+# legacy scorer rated 0.375 with no disability_angle at all.
+#
+# ROLLBACK is this switch's whole point: CRIPMINDS_SELECTOR=legacy on the cron line
+# restores get_news_seed_with_usable_source untouched. The legacy selector is not
+# deleted and not modified.
+SELECTOR_ENV = "CRIPMINDS_SELECTOR"
+SELECTOR_V2 = "v2"
+SELECTOR_LEGACY = "legacy"
+SELECTORS = (SELECTOR_V2, SELECTOR_LEGACY)
+SELECTOR_DEFAULT = SELECTOR_V2
+
+
+class UnknownSelector(Exception):
+    """Raised on an unrecognised CRIPMINDS_SELECTOR value. Never defaulted away --
+    a typo in a cron line must not silently pick a selector."""
+
+
+class SelectorFailure(Exception):
+    """A TECHNICAL failure of the authoritative selector: provider error, database
+    error, unexpected exception. Never raised for an empty pool or for candidates
+    that failed acquisition or assessment -- those are ordinary editorial outcomes
+    and are reported as no-usable-source, not as a broken run."""
+
+
+def resolve_selector(value: str | None = None) -> str:
+    v = (value if value is not None else os.environ.get(SELECTOR_ENV, "")).strip().lower()
+    if not v:
+        return SELECTOR_DEFAULT
+    if v not in SELECTORS:
+        raise UnknownSelector(
+            "%s=%r is not a known selector (%s). Refusing to guess."
+            % (SELECTOR_ENV, v, "/".join(SELECTORS)))
+    return v
+
+
+def v2_is_authoritative(value: str | None = None) -> bool:
+    return resolve_selector(value) == SELECTOR_V2
 TABLE = "seed_material_assessments"
 RUNS_TABLE = "selector_v2_shadow_runs"
 
@@ -663,3 +714,11 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
                     "exposed_via": dict(collections.Counter(
                         c["exposed_via"] for c in candidates))},
     }
+
+
+# The authoritative selection and the shadow observation are the SAME computation,
+# deliberately: what ran for four natural runs under observation is byte-for-byte
+# what runs now that the caller treats its winner as authoritative. Only the
+# caller's use of the result changed at cutover, which is why the observation
+# describes the live behaviour rather than an ancestor of it.
+run_selection = run_shadow

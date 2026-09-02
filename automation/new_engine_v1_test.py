@@ -606,6 +606,10 @@ def test_infra_failure_stays_operator_visible():
             return 2
 
     os.environ["NEW_ENGINE_V1_MODE"] = "LIVE"
+    # Selection is not what this test is about. Pinning the legacy selector keeps
+    # the fake orchestrator's single stubbed seed method sufficient, and exercises
+    # the documented rollback at the same time.
+    os.environ["CRIPMINDS_SELECTOR"] = "legacy"
     CASES = {
         "discovery_provider": (dict(fail_discovery=True), True),
         "discovery_contract": (dict(discovery={k: v for k, v in DISCOVERY_REPLY.items()
@@ -631,6 +635,7 @@ def test_infra_failure_stays_operator_visible():
     finally:
         NEP.Provider = real_provider
     os.environ.pop("NEW_ENGINE_V1_MODE", None)
+    os.environ.pop("CRIPMINDS_SELECTOR", None)
 
 
 def test_legacy_scheduled_path_unchanged():

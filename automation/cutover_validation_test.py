@@ -96,8 +96,12 @@ def test_dispatch_is_wired_and_locked():
     prod = (HERE / "new_engine_production.py").read_text()
     check("new-engine path requires NEW_ENGINE_V1_MODE=LIVE too, no implicit run",
           "MODE_LIVE" in prod and "refusing to run implicitly" in prod)
+    # Call sites, not mentions: the selector switch's docstring names the legacy
+    # function while describing the rollback, and prose must not fail a scope guard.
     check("new-engine path does not rotate candidates on HOLD",
-          prod.count("get_news_seed_with_usable_source") == 1)
+          prod.count("orch.get_news_seed_with_usable_source(") == 1)
+    check("the authoritative selector does not rotate either -- it chooses once",
+          prod.count("SV.run_selection(") == 1)
 
 
 # ── CURRENT_ENGINE selector rule ──────────────────────────────────────────────

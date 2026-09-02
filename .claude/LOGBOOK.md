@@ -747,3 +747,38 @@ winner. Disagreement between the two selectors is the measurement, not a fault.
 
 NOT DONE: no manual run, no cutover, no source expansion, no publication.
 **RUNS COMPLETED: 0/4.**
+
+---
+
+## 2026-09-02 — Selector V2 becomes authoritative (PR #51)
+
+WHAT: the seed selector for NEW_ENGINE_V1 switches from `relevance_score DESC,
+pub_date DESC` over title-and-summary signals to Selector V2, which reads the source
+before choosing. `CRIPMINDS_SELECTOR=legacy` rolls it back; nothing in the legacy
+selector was modified or deleted.
+
+WHY NOW: four natural shadow runs, all valid. What they showed is narrow and worth
+stating precisely. They did NOT show that V2 writes better articles -- four runs
+cannot show that. They showed it is operationally safe (OK 4/4, 20-54s against a 120s
+bound, zero invalid assessments, zero errors, zero budget skips, zero side effects,
+zero escaped failures), and that the legacy ordering key was not doing the job it
+appears to do: every authoritative winner across four days scored exactly 0.7, so the
+sort separated nothing. V2 separated candidates by reading them, and on the last day
+chose material the legacy scorer rated 0.375 with no angle at all.
+
+WHAT SHADOW COULD NOT TEST, and this PR does: nothing ever consumed a shadow winner,
+so day-two behaviour was unexercised. The eligible pool filters on the same columns
+the existing write-back sets, so a consumed seed should leave the pool automatically.
+That is now proven by a two-day test rather than assumed.
+
+FAIL-CLOSED: following engine_switch's rule that there is no post-start fallback, a
+technical selector failure HOLDs the run and surfaces as PROVIDER_FAILURE so the
+wrapper exits non-zero. It does not hand the day to the other selector. A silent
+selector swap is the kind of change nobody notices for a week.
+
+NOT DONE HERE: no Research Pack, Discovery, Form, Writer, Grounder, bridge, cadence or
+feed change; no PDF work; no cron change; no cleanup of the now-coexisting selectors.
+
+CODE: `automation/selector_v2.py`, `automation/new_engine_production.py`,
+`automation/selector_v2_cutover_test.py` (new).
+**MERGED: NO.**

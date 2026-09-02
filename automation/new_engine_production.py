@@ -105,6 +105,135 @@ def _record_seed_attempt(orch, seed: dict, run: str, out: dict, result: dict) ->
                             run, e)
 
 
+def _record_selection(orch, run: str, report: dict) -> None:
+    """Persist the side-by-side record for an AUTHORITATIVE V2 run. Same table and
+    same shape the shadow wrote, so the four observed runs and the first live ones
+    can be read as one series. Never allowed to break a run that has already chosen
+    its anchor."""
+    try:
+        conn = sqlite3.connect(str(orch.discovery_db))
+        try:
+            SV.record_comparison(conn, run, report)
+        finally:
+            conn.close()
+        w = report.get("shadow_winner") or {}
+        m = report["metrics"]
+        orch.logger.info(
+            "SELECTOR_V2 authoritative %s: chose=%s (%s/%s/%s) via %s | candidates=%d "
+            "fetched=%d assessed=%d calls=%d acq_failed=%d",
+            run, (w.get("title") or "")[:60], w.get("assessment"),
+            w.get("material_richness"), w.get("researchability"), w.get("exposed_via"),
+            m["candidates"], m["fetched"], m["assessed"], m["model_calls"],
+            m["acquisition_failed"])
+    except Exception as e:
+        orch.logger.warning("SELECTOR_V2 diagnostics write failed (ignored): %s: %s",
+                            type(e).__name__, str(e)[:200])
+
+
+def _acquire_for_selector(orch):
+    """The production acquisition path, as a closure for the selector.
+
+    Deliberately the same closure the shadow used: `get_source_text` memoises per
+    url, so the seed the selector returns has ALREADY been fetched, and the real
+    acquisition below is a cache hit rather than a second request. A selector
+    winner is therefore known-acquirable before it is chosen, which is a property
+    the legacy path had to discover by retrying up to three seeds.
+    """
+    def acquire(url):
+        text = orch.get_source_text(url)
+        status, _reason = orch.classify_source_acquisition(
+            text or "", orch.get_source_origin(url),
+            orch.get_source_paragraph_count(url))
+        return (text or ""), status
+    return acquire
+
+
+def _seed_dict(orch, seed_id: str) -> dict | None:
+    """The seed row in exactly the shape get_news_seed returns, so nothing
+    downstream can tell which selector chose it."""
+    conn = sqlite3.connect(str(orch.discovery_db))
+    try:
+        row = conn.execute(
+            "SELECT id, url, title, summary, source_name, relevance_score, themes,"
+            " disability_angle, pub_date, underlying_article_url"
+            " FROM news_seeds WHERE id = ?", (seed_id,)).fetchone()
+    finally:
+        conn.close()
+    if not row:
+        return None
+    return {"id": row[0], "url": row[1], "title": row[2], "summary": row[3],
+            "source_name": row[4], "relevance_score": row[5],
+            "themes": json.loads(row[6] or "[]"), "disability_angle": row[7],
+            "pub_date": row[8], "underlying_article_url": row[9]}
+
+
+def _select_seed(orch, model: str) -> tuple:
+    """Choose the anchor. Returns (seed | None, report | None).
+
+    SELECTOR V2 is authoritative by default; CRIPMINDS_SELECTOR=legacy rolls back to
+    get_news_seed_with_usable_source, which is untouched.
+
+    Fail-closed, following engine_switch's rule that there is no post-start
+    fallback: a TECHNICAL selector failure raises SelectorFailure and the run HOLDs
+    as an infrastructure failure. It does NOT quietly fall through to the legacy
+    selector, because a silent selector swap is exactly the kind of change nobody
+    would notice for a week. Rolling back is an operator decision, on the cron line.
+
+    An empty pool, or candidates that all failed acquisition or assessment, is NOT a
+    failure -- it is an ordinary no-usable-source day and is reported as one.
+    """
+    if not SV.v2_is_authoritative():
+        return orch.get_news_seed_with_usable_source(), None
+    try:
+        conn = sqlite3.connect(str(orch.discovery_db))
+        try:
+            report = SV.run_selection(
+                conn, Provider(model=model), acquire=_acquire_for_selector(orch),
+                score_item=NF.score_item, boosters=NF.DISABILITY_BOOSTERS,
+                keyword_matches=NF._keyword_matches,
+                # No legacy counterfactual. Recording "what the old selector would
+                # have picked" means running the old selector, and get_news_seed --
+                # while it acquires nothing and changes no row -- opens a writable
+                # connection and commits idempotent schema DDL. The authoritative
+                # path must not execute the selector it replaced merely to fill in a
+                # diagnostic column. The comparison belonged to the shadow phase,
+                # which is over; under CRIPMINDS_SELECTOR=legacy the shadow hook
+                # still records it, and there it means something.
+                old_winner=None)
+        finally:
+            conn.close()
+    except Exception as e:
+        raise SV.SelectorFailure("%s: %s" % (type(e).__name__, str(e)[:300])) from e
+    m = report["metrics"]
+    winner = report.get("shadow_winner")
+    if not winner:
+        # Two very different silences, and they must not be reported as one.
+        #
+        # Nothing acquired -- an empty pool, or every candidate's source unreadable --
+        # is an ordinary day with no usable material, and the pipeline already has a
+        # word for it.
+        #
+        # Material acquired but not one assessment came back valid is the opposite: we
+        # HAD the pool and could not judge it, because the provider failed, timed out,
+        # returned output that broke its own contract, or the run budget ran out
+        # before anything was assessed. Saying "no usable source" there would report
+        # an infrastructure outage as an editorial finding, and the day would look
+        # like a quiet one instead of a broken one.
+        if m["fetched"] > 0:
+            raise SV.SelectorFailure(
+                "acquired %d source(s) and produced no valid assessment "
+                "(invalid=%d errored=%d over_run_budget=%d over_call_budget=%d): "
+                "the pool could not be judged"
+                % (m["fetched"], m["invalid"], m["errored"],
+                   m.get("over_run_budget", 0), m.get("over_call_budget", 0)))
+        return None, report
+    seed = _seed_dict(orch, winner["seed_id"])
+    if seed is None:
+        raise SV.SelectorFailure("selected seed %s vanished from news_seeds"
+                                 % winner["seed_id"])
+    return seed, report
+
+
 def _selector_v2_shadow(orch, seed: dict, run: str, model: str) -> None:
     """SELECTOR V2, shadow only. OFF unless CRIPMINDS_SELECTOR_V2_SHADOW is set.
 
@@ -134,6 +263,11 @@ def _selector_v2_shadow(orch, seed: dict, run: str, model: str) -> None:
     swallowed silently: an experiment that quietly stops running is worse than one that
     visibly fails.
     """
+    if SV.v2_is_authoritative():
+        # V2 already ran, authoritatively, before the anchor existed.
+        # Running it again here would spend a second selection and
+        # overwrite the comparison row with a meaningless self-match.
+        return
     if not SV.enabled():
         return
     conn = None
@@ -189,13 +323,25 @@ def run_scheduled(orch, *, rehearsal: bool = False,
                 "message": "CRIPMINDS_ENGINE=new_engine_v1 but NEW_ENGINE_V1_MODE=%r; "
                            "refusing to run implicitly" % R.current_mode()}
 
-    seed = orch.get_news_seed_with_usable_source()
+    try:
+        seed, selection = _select_seed(orch, model)
+    except (SV.SelectorFailure, SV.UnknownSelector) as e:
+        orch.logger.error("SELECTOR failed, run held: %s: %s", type(e).__name__, e)
+        return {"status": "hold", "engine": "new_engine_v1", "decision": "HOLD",
+                "reasons": ["selector failure: %s" % e],
+                "reason_code": "SELECTOR_FAILURE", "commit_success": False,
+                # Surfaces to production_orchestrator._is_infra_or_contract_failure,
+                # so the wrapper exits non-zero and an operator is told. A selector
+                # that cannot select is not an ordinary editorial HOLD.
+                "run_status": {"status": "PROVIDER_FAILURE", "stage": "SELECTOR",
+                               "detail": str(e)[:300]}}
     if not seed:
         attempts = getattr(orch, "_source_acquisition_attempts", [])
         exhausted = getattr(orch, "_source_acquisition_exhausted", False)
         return {"status": ("no_article_source_acquisition_exhausted" if exhausted
                            else "no_usable_source"),
                 "engine": "new_engine_v1", "attempts": attempts,
+                "selector": SV.resolve_selector(),
                 "message": "no usable source; NEW_ENGINE_V1 not run"}
 
     text = orch.get_source_text(seed["url"], fallback_text=seed.get("summary"),
@@ -221,6 +367,13 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     orch.logger.info("CURRENT_ENGINE run %s — source %s (%s chars)",
                      run, payload["provenance"]["url"],
                      payload["provenance"]["original_length_chars"])
+
+    # Diagnostics for the first authoritative runs. The row is written here rather
+    # than inside the selector because the run id is only known once the source has
+    # been acquired and hashed, and a comparison filed under the wrong run is worse
+    # than none.
+    if selection is not None:
+        _record_selection(orch, run, selection)
 
     # The anchor is now fixed and its source is in hand, and nothing has yet written
     # back to the seed pool. This is the only moment at which the two selectors can be
