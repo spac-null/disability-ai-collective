@@ -117,14 +117,14 @@ def _record_selection(orch, run: str, report: dict) -> None:
         finally:
             conn.close()
         w = report.get("shadow_winner") or {}
-        old = report.get("old_authoritative_winner") or {}
         m = report["metrics"]
         orch.logger.info(
-            "SELECTOR_V2 authoritative %s: chose=%s (%s) | legacy would have chosen=%s "
-            "| same=%s | candidates=%d fetched=%d calls=%d",
+            "SELECTOR_V2 authoritative %s: chose=%s (%s/%s/%s) via %s | candidates=%d "
+            "fetched=%d assessed=%d calls=%d acq_failed=%d",
             run, (w.get("title") or "")[:60], w.get("assessment"),
-            (old.get("title") or "none")[:60], report.get("same_winner"),
-            m["candidates"], m["fetched"], m["model_calls"])
+            w.get("material_richness"), w.get("researchability"), w.get("exposed_via"),
+            m["candidates"], m["fetched"], m["assessed"], m["model_calls"],
+            m["acquisition_failed"])
     except Exception as e:
         orch.logger.warning("SELECTOR_V2 diagnostics write failed (ignored): %s: %s",
                             type(e).__name__, str(e)[:200])
@@ -191,10 +191,15 @@ def _select_seed(orch, model: str) -> tuple:
                 conn, Provider(model=model), acquire=_acquire_for_selector(orch),
                 score_item=NF.score_item, boosters=NF.DISABILITY_BOOSTERS,
                 keyword_matches=NF._keyword_matches,
-                # Recorded for comparison only, and read-only on purpose: plain
-                # get_news_seed runs the legacy SQL without acquiring anything, so
-                # the inverse shadow cannot mark a seed source_unusable.
-                old_winner=_legacy_would_have_chosen(orch))
+                # No legacy counterfactual. Recording "what the old selector would
+                # have picked" means running the old selector, and get_news_seed --
+                # while it acquires nothing and changes no row -- opens a writable
+                # connection and commits idempotent schema DDL. The authoritative
+                # path must not execute the selector it replaced merely to fill in a
+                # diagnostic column. The comparison belonged to the shadow phase,
+                # which is over; under CRIPMINDS_SELECTOR=legacy the shadow hook
+                # still records it, and there it means something.
+                old_winner=None)
         finally:
             conn.close()
     except Exception as e:
@@ -207,17 +212,6 @@ def _select_seed(orch, model: str) -> tuple:
         raise SV.SelectorFailure("selected seed %s vanished from news_seeds"
                                  % winner["seed_id"])
     return seed, report
-
-
-def _legacy_would_have_chosen(orch) -> dict | None:
-    """Read-only. For the comparison record only; never acquires, never writes."""
-    try:
-        s = orch.get_news_seed()
-        return None if not s else {"id": s["id"], "title": s.get("title"),
-                                   "source_name": s.get("source_name"),
-                                   "relevance_score": s.get("relevance_score")}
-    except Exception:
-        return None
 
 
 def _selector_v2_shadow(orch, seed: dict, run: str, model: str) -> None:

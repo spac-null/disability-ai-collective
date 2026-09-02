@@ -135,9 +135,11 @@ class FakeOrch:
         self.fetched: list = []
         self.seed_attempts: list = []
         self.legacy_calls = 0
+        self.get_news_seed_calls = 0
 
     # -- legacy selector, untouched and still reachable --
     def get_news_seed(self, exclude_ids=None):
+        self.get_news_seed_calls += 1
         conn = sqlite3.connect(str(self.discovery_db))
         conn.row_factory = sqlite3.Row
         r = conn.execute(
@@ -459,6 +461,52 @@ def test_no_downstream_stage_changed():
     check("the bridge call is unchanged", "bridge = BRIDGE.evaluate(out, fact_check_fn=_strict_fc)" in body)
 
 
+
+# ── the authoritative path must not run the selector it replaced ─────────────
+def test_authoritative_mode_never_runs_the_legacy_selector():
+    """Not even to fill in a diagnostic. get_news_seed acquires nothing and changes no
+    row, but it opens a writable connection and commits idempotent schema DDL, and the
+    replaced selector has no business executing in the path that replaced it."""
+    result, orch, db, assessor = _run()
+    check("get_news_seed_with_usable_source was not called", orch.legacy_calls == 0,
+          orch.legacy_calls)
+    check("plain get_news_seed was not called either", orch.get_news_seed_calls == 0,
+          orch.get_news_seed_calls)
+    check("only the V2 winner's source was ever fetched",
+          set(orch.fetched) <= set(BODIES), orch.fetched)
+    prod = (HERE / "new_engine_production.py").read_text()
+    sel = prod.split("def _select_seed")[1].split("\ndef ")[0]
+    auth = sel.split("if not SV.v2_is_authoritative():")[1].split("return orch.get_news_seed_with_usable_source(), None")[1]
+    # Code, not prose: the branch carries a comment explaining why it does not call
+    # get_news_seed, and a scan that fails on its own explanation tests nothing.
+    auth_code = "\n".join(l for l in auth.splitlines() if not l.strip().startswith("#"))
+    for banned in ("get_news_seed", "mark_news_seed", "source_unusable", "acquire("):
+        check("the authoritative branch never calls %r" % banned,
+              banned not in auth_code, [l.strip() for l in auth_code.splitlines()
+                                        if banned in l])
+    check("no legacy counterfactual helper remains",
+          "_legacy_would_have_chosen" not in prod)
+    check("the authoritative selection records no old winner", "old_winner=None" in sel)
+
+    # and the row it does write is still useful for inspecting the first live runs
+    conn = sqlite3.connect(str(db))
+    conn.row_factory = sqlite3.Row
+    rows = [dict(r) for r in conn.execute("SELECT * FROM %s" % SV.RUNS_TABLE)]
+    conn.close()
+    check("one diagnostic row for the run", len(rows) == 1, len(rows))
+    if rows:
+        r = rows[0]
+        check("it names the run", r["run_id"] == result["engine_run"])
+        check("it records what V2 chose and why",
+              r["shadow_seed_id"] == "rich-seed" and r["shadow_assessment"]
+              and r["shadow_explanation"], r["shadow_seed_id"])
+        check("it records the work done",
+              r["candidates"] and r["fetched"] is not None
+              and r["model_calls"] is not None, r["candidates"])
+        check("and no legacy counterfactual is claimed", r["old_seed_id"] is None,
+              r["old_seed_id"])
+
+
 def main():
     for fn in (test_the_v2_winner_is_the_seed_passed_downstream,
                test_the_selected_seed_goes_through_the_existing_write_back,
@@ -469,6 +517,7 @@ def main():
                test_the_hard_budgets_are_unchanged_by_the_cutover,
                test_the_cache_still_works_authoritatively,
                test_publisher_repetition_is_still_soft,
+               test_authoritative_mode_never_runs_the_legacy_selector,
                test_no_downstream_stage_changed):
         print("\n" + fn.__name__)
         fn()
