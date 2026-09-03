@@ -115,12 +115,20 @@ def test_A_full_coverage_and_clean_passes():
 
 
 # ── B ─────────────────────────────────────────────────────────────────────────
-def test_B_cap_skipped_claims_no_longer_pass():
-    """The 2026-09-01 shape exactly: 13 extracted, 8 checked, 5 capped, none of the
-    eight contradicted. This used to pass and publish."""
-    fc, r = via_engine(quotes(5) + stats(8))
+def test_B_a_partially_checked_record_does_not_pass():
+    """The 2026-09-01 shape: 13 extracted, 8 checked, 5 unchecked, none of the eight
+    contradicted. That used to pass and publish.
+
+    PR #57 removed the per-category caps from the publication path, so the STRICT
+    checker no longer produces this state by truncation -- 13 claims are now all
+    checked, or the article holds. The GATE still has to hold the line for every other
+    way a record can arrive partial (a deadline, a malformed result, a future caller),
+    so it is exercised here directly on the record shape rather than through the caps
+    that used to make it.
+    """
+    r = via_literal(literal(13, 8, 5))
     check("B: 13 extracted", ev(r)["claims_extracted"] == 13, ev(r))
-    check("B: only 8 checked (caps unchanged)", ev(r)["claims_checked"] == 8, ev(r))
+    check("B: 8 checked", ev(r)["claims_checked"] == 8, ev(r))
     check("B: 5 not checked", ev(r)["claims_not_checked"] == 5, ev(r))
     check("B: nothing among the checked was contradicted",
           ev(r)["contradicted_count"] == 0, ev(r))
@@ -132,31 +140,35 @@ def test_B_cap_skipped_claims_no_longer_pass():
     check("B: the reason is FACT_CHECK_COVERAGE_INCOMPLETE",
           reason_of(r) == "FACT_CHECK_COVERAGE_INCOMPLETE", _check9(r)["detail"])
     d = _check9(r)["detail"]
-    check("B: the detail names the counts",
-          "8 of 13" in d and "5 were not" in d, d)
-    check("B: and the skip reason", "claim_cap=4 per category" in d, d)
-    check("B: the skipped claims are still individually recorded",
-          len(fc["not_checked"]) == 5
-          and all(x["claim_text"] for x in fc["not_checked"]), fc["not_checked"])
+    check("B: the detail names the counts", "8 of 13" in d and "5 were not" in d, d)
+
+    # and the strict path's own behaviour on the same 13 claims, after #57
+    fc, r2 = via_engine(quotes(5) + stats(8))
+    check("B: the strict checker now checks all 13 instead",
+          ev(r2)["claims_checked"] == 13 and ev(r2)["coverage_complete"] is True,
+          ev(r2))
 
 
 # ── C ─────────────────────────────────────────────────────────────────────────
-def test_C_category_skew_is_caught_even_under_eight_total():
-    """The regression that a naive `claims_extracted <= 8` shortcut would miss: six
-    claims, all one category, so the cap of four skips two."""
-    fc, r = via_engine(stats(6))
-    check("C: 6 extracted, under the 8 total ceiling",
-          ev(r)["claims_extracted"] == 6, ev(r))
-    check("C: only 4 checked, because one category's cap bound",
-          ev(r)["claims_checked"] == 4, ev(r))
-    check("C: 2 not checked", ev(r)["claims_not_checked"] == 2, ev(r))
-    check("C: coverage_complete is FALSE", ev(r)["coverage_complete"] is False, ev(r))
-    check("C: check 9 FAILS", _check9(r)["ok"] is False, _check9(r))
-    check("C: with the coverage reason",
-          reason_of(r) == "FACT_CHECK_COVERAGE_INCOMPLETE", _check9(r)["detail"])
+def test_C_no_total_count_shortcut_is_used():
+    """The regression a naive `claims_extracted <= 8` shortcut would have introduced.
+    Six claims of one category used to be truncated to four; after PR #57 they are all
+    checked, so the shortcut is untestable through the caps -- but the gate must still
+    never conclude coverage from a total alone.
+    """
+    for extracted, checked, skipped in ((6, 4, 2), (5, 3, 2), (8, 6, 2), (3, 1, 2)):
+        r = via_literal(literal(extracted, checked, skipped))
+        check("C: %d extracted / %d checked is incomplete regardless of the total"
+              % (extracted, checked), ev(r)["coverage_complete"] is False, ev(r))
+        check("C:   and FAILS", _check9(r)["ok"] is False)
+    brg = (HERE / "publication_safety_bridge.py").read_text()
     check("C: no total-count shortcut exists in the gate",
-          "<= 8" not in (HERE / "publication_safety_bridge.py").read_text()
-          and "claims_n <= 8" not in (HERE / "publication_safety_bridge.py").read_text())
+          "<= 8" not in brg and "claims_n <= 8" not in brg and "> 8" not in brg)
+    # six claims of one category are now fully covered by the strict checker
+    fc, r2 = via_engine(stats(6))
+    check("C: six same-category claims are all checked after #57",
+          ev(r2)["claims_checked"] == 6 and ev(r2)["coverage_complete"] is True, ev(r2))
+    check("C: and none recorded as skipped", fc["not_checked"] == [], fc["not_checked"])
 
 
 # ── D ─────────────────────────────────────────────────────────────────────────
@@ -264,8 +276,7 @@ def test_the_four_outcomes_are_distinguishable_without_network():
     cases = {}
     _, r = via_engine(quotes(2) + stats(2))
     cases["CLEAN_FULL_COVERAGE_PASS"] = r
-    _, r = via_engine(quotes(5) + stats(8))
-    cases["COVERAGE_INCOMPLETE"] = r
+    cases["COVERAGE_INCOMPLETE"] = via_literal(literal(13, 8, 5))
     _, r = via_engine([{"type": "STUDY", "subject": "X", "claim": "bad"}] + stats(2),
                       {"bad": ("CONTRADICTED", "no such study")})
     cases["BLOCKING_CONTRADICTION"] = r
@@ -304,12 +315,13 @@ def test_the_four_outcomes_are_distinguishable_without_network():
 def test_the_caps_and_the_policies_are_untouched():
     fcs = (HERE / "orchestrator" / "fact_check.py").read_text()
     brg = (HERE / "publication_safety_bridge.py").read_text()
-    check("caps unchanged", "claim_cap=4" in fcs)
-    check("QUOTE cap slice unchanged",
+    check("the legacy advisory path keeps its per-category caps", "claim_cap=4" in fcs)
+    check("legacy QUOTE cap slice intact",
           'quote_claims = [c for c in claims if c["type"] == "QUOTE"][:claim_cap]' in fcs)
-    check("other cap slice unchanged",
-          'other_claims = [c for c in claims if c["type"] in ("STUDY", "STAT", "EVENT")]'
-          '[:claim_cap]' in fcs)
+    check("legacy other cap slice intact", '[:claim_cap]' in fcs)
+    strict_block = fcs.split("if strict:\n                max_claims")[1].split("else:")[0]
+    check("the publication path truncates by NO category (PR #57)",
+          "[:claim_cap]" not in strict_block, strict_block[:200])
     check("model unchanged", 'model="perplexity/sonar"' in fcs)
     check("extraction prompt unchanged",
           "Extract every claim from this article that could be independently " in fcs)
@@ -329,8 +341,8 @@ def test_the_caps_and_the_policies_are_untouched():
 
 def main() -> None:
     for fn in (test_A_full_coverage_and_clean_passes,
-               test_B_cap_skipped_claims_no_longer_pass,
-               test_C_category_skew_is_caught_even_under_eight_total,
+               test_B_a_partially_checked_record_does_not_pass,
+               test_C_no_total_count_shortcut_is_used,
                test_D_exactly_at_the_caps_is_full_coverage,
                test_E_technical_failure_is_still_fail_closed_and_still_distinct,
                test_F_a_blocking_contradiction_still_blocks_under_full_coverage,
