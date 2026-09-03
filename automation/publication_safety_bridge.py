@@ -324,9 +324,29 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
                 claims_n = 0
             completed = bool(fc.get("fact_check_completed"))
             contradicted = fc.get("contradicted") or []
+            # The aggregate three are unchanged and still first, because callers and
+            # the stamp read them. What is new is only that the per-claim record the
+            # fact checker already produced is no longer dropped here.
+            #
+            # This is the exact line where it used to be. Twice on 2026-09-03 the
+            # bridge blocked an article on contradicted=1 and left nothing anywhere
+            # saying which claim or why, so the gate was fail-closed and its decision
+            # was not diagnosable afterwards. Reporting more does not decide more:
+            # every verdict below is read from the same result, and the branches that
+            # follow are untouched.
             r.fact_check_evidence = {"extraction_status": status,
                                      "claims_extracted": claims_n,
-                                     "fact_check_completed": completed}
+                                     "fact_check_completed": completed,
+                                     "extraction_error": fc.get("extraction_error"),
+                                     "claims_checked": len(fc.get("findings") or []),
+                                     "contradicted_count": len(contradicted),
+                                     "advisory_count": len(fc.get("advisory") or []),
+                                     "unverifiable_count": fc.get("unverifiable_count", 0),
+                                     "soft_contradicted_count":
+                                         fc.get("soft_contradicted_count", 0),
+                                     "findings": list(fc.get("findings") or []),
+                                     "not_checked": list(fc.get("not_checked") or []),
+                                     "review_lines": list(fc.get("lines") or [])}
             if status is None:
                 r.add("world_relative_fact_check", False,
                       "NON_STRICT_FACT_CHECK: result carries no extraction_status, so it "
