@@ -4,11 +4,11 @@ On a beach in Bali, someone built a room out of salt.
 
 It was built from Himalayan salt brick, and set partway into the ground, so it belonged to the beach rather than standing on it. The Jakarta practice Spatial Sonata designed it to be a contemplative space, shaped by the landscape and by sensory design.
 
-That is an odd building to make. Salt is a material most people meet in a shaker or in the sea, not holding up a wall. And once it is a wall, it raises the obvious question: what was the room for?
+That is an odd building to make. Salt is a material most people meet in a shaker or in the sea, not holding up a building. And once it is a building, it raises the obvious question: what was the room for?
 
 The answer was mostly things you cannot look at.
 
-Inside, the pavilion held fragrances and botanical drinks. The stated aim was to engage all the senses. So the content of this room was smell and taste, inside mineral, on a beach.
+Inside, the pavilion held fragrances and botanical drinks. The stated aim was to engage all the senses. So the content of this room was smell and taste, held inside mineral, on a beach.
 
 Other pavilions worked the same way. In one, sand on the ground embodied both strength and fragility, and water fell from rain chains. In another, a perforated timber facade let air move freely through the space, trees pushed up through the roof, and rocks served as seating.
 
