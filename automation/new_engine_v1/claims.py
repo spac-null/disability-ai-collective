@@ -26,10 +26,33 @@ from .contracts import sha256_text
 from .provider import parse_json_object
 
 # ── bounds (reported, not implicit) ───────────────────────────────────────────
-MAX_SENTENCES_PER_BATCH = 8      # a whole-article pass truncated 2 of 5 times in probe D
+# ── identification batching (2026-09-03) ─────────────────────────────────────
+#
+# 8 sentences a batch was 5 calls and 48.5s on the frozen Langrug article -- after PR
+# #59 batched the classifier, identification became the slower half (48.5s in 5 calls
+# against 56.9s in 8). So the same trick, on the measured numbers rather than by
+# analogy.
+#
+# 16, from the frozen backbone: 40 sentences average 90 chars and peak at 256, so a
+# 16-sentence batch on that article is at most 1,460 characters -- a quarter of the
+# char cap. Batching is bounded by SENTENCE count here, not by prompt size.
+MAX_SENTENCES_PER_BATCH = 16     # was 8; a whole-article pass truncated 2 of 5 times
+                                 # in probe D, so this is still far from one pass
+# Unchanged, deliberately. The measured 16-sentence batch uses 1,460 of it, so raising
+# it would buy nothing -- and it is the safety valve that splits a batch early when
+# sentences are unusually long, which is the one thing a sentence-count bound cannot do.
 MAX_BATCH_CHARS = 6_000
-BATCH_MAX_TOKENS = 1_600
-MAX_BATCHES_PER_ARTICLE = 8      # hard ceiling: 64 sentences typed per article
+# Capacity plumbing, not a new margin: identification emits a measured 122 output tokens
+# per sentence, and 1,600 for 8 sentences was 200 per sentence -- a 1.64x headroom over
+# what is actually produced. 3,200 for 16 keeps exactly that headroom. Left at 1,600 a
+# 16-sentence batch would need ~1,946 and truncate, and a truncated reply arrives as
+# UNRESOLVED_BOUNDARY, i.e. truncation wearing the costume of a quality failure.
+BATCH_MAX_TOKENS = 3_200
+# Halved so the COVERAGE CEILING does not move: 8 x 8 was 64 sentences an article, and
+# 16 x 4 is the same 64. Doubling the batch without this would have quietly widened what
+# the shadow will look at from 64 sentences to 128, which is a change to coverage
+# semantics dressed up as an optimisation.
+MAX_BATCHES_PER_ARTICLE = 4      # hard ceiling: 64 sentences typed per article
 
 EMPIRICAL = "EMPIRICAL"
 INTERPRETIVE = "INTERPRETIVE"
