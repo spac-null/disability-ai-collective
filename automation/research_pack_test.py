@@ -444,6 +444,13 @@ def test_bridge_checks_pack_provenance():
                     mode=R.MODE_LIVE, research_fn=stub_pack)
     res = B.evaluate(out, fact_check_fn=lambda a: {
         "status": "verified", "extraction_status": "ok", "claims_extracted": 2,
+        "findings": [{"claim_id": "C01", "type": "STAT", "subject": "S",
+                      "claim_text": "c1", "verdict": "VERIFIED", "reason": "found",
+                      "blocking": False},
+                     {"claim_id": "C02", "type": "STAT", "subject": "S",
+                      "claim_text": "c2", "verdict": "VERIFIED", "reason": "found",
+                      "blocking": False}],
+        "not_checked": [],
         "contradicted": [], "advisory": [], "unverifiable": []})
     names = {c["check"]: c for c in res.summary()["checks"]}
     check("the bridge runs a research-pack provenance check",
@@ -458,6 +465,13 @@ def test_bridge_checks_pack_provenance():
     out["artifacts"][C.RESEARCH_PACK].payload["sources"][1]["text"] += " tampered"
     res2 = B.evaluate(out, fact_check_fn=lambda a: {
         "status": "verified", "extraction_status": "ok", "claims_extracted": 2,
+        "findings": [{"claim_id": "C01", "type": "STAT", "subject": "S",
+                      "claim_text": "c1", "verdict": "VERIFIED", "reason": "found",
+                      "blocking": False},
+                     {"claim_id": "C02", "type": "STAT", "subject": "S",
+                      "claim_text": "c2", "verdict": "VERIFIED", "reason": "found",
+                      "blocking": False}],
+        "not_checked": [],
         "contradicted": [], "advisory": [], "unverifiable": []})
     n2 = {c["check"]: c for c in res2.summary()["checks"]}
     check("a tampered pack source fails the check",
@@ -532,6 +546,15 @@ def test_a_citation_inside_a_source_is_not_a_declared_source():
     res = B.evaluate(out, fact_check_fn=lambda a: {
         "status": "verified", "extraction_status": "ok", "claims_extracted": 2,
         "fact_check_completed": True,
+        # coverage: both extracted claims were checked (bridge requires it since
+        # 2026-09-03; a count with no per-claim record is zero coverage)
+        "findings": [{"claim_id": "C01", "type": "STAT", "subject": "S",
+                      "claim_text": "c1", "verdict": "VERIFIED", "reason": "found",
+                      "blocking": False},
+                     {"claim_id": "C02", "type": "STAT", "subject": "S",
+                      "claim_text": "c2", "verdict": "VERIFIED", "reason": "found",
+                      "blocking": False}],
+        "not_checked": [],
         "contradicted": [], "advisory": [], "unverifiable": []})
     names = {c["check"]: c for c in res.summary()["checks"]}
     check("research_pack_provenance passes", 
@@ -564,6 +587,15 @@ def test_a_source_declared_to_the_writer_but_absent_from_the_pack_still_fails():
     res = B.evaluate(out, fact_check_fn=lambda a: {
         "status": "verified", "extraction_status": "ok", "claims_extracted": 2,
         "fact_check_completed": True,
+        # coverage: both extracted claims were checked (bridge requires it since
+        # 2026-09-03; a count with no per-claim record is zero coverage)
+        "findings": [{"claim_id": "C01", "type": "STAT", "subject": "S",
+                      "claim_text": "c1", "verdict": "VERIFIED", "reason": "found",
+                      "blocking": False},
+                     {"claim_id": "C02", "type": "STAT", "subject": "S",
+                      "claim_text": "c2", "verdict": "VERIFIED", "reason": "found",
+                      "blocking": False}],
+        "not_checked": [],
         "contradicted": [], "advisory": [], "unverifiable": []})
     names = {c["check"]: c for c in res.summary()["checks"]}
     rp = names["research_pack_provenance"]

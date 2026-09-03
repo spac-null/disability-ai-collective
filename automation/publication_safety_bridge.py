@@ -81,6 +81,8 @@ class BridgeResult:
         self.fact_check_evidence: dict = {
             "extraction_status": None, "claims_extracted": 0,
             "fact_check_completed": False,
+            # Nothing extracted, nothing checked, and coverage therefore not proven.
+            "coverage_complete": False, "claims_checked": 0, "claims_not_checked": 0,
         }
 
     def add(self, name: str, ok: bool, detail: str, blocking: bool = True):
@@ -151,6 +153,42 @@ def declared_prompt_sources(prompt_text: str) -> set:
     """
     scaffolding = _FENCED_BODY.sub("", prompt_text or "")
     return set(_SOURCE_HEADER.findall(scaffolding))
+
+
+# ── fact-check COVERAGE, as distinct from fact-check EXECUTION (2026-09-03) ───
+#
+# `fact_check_completed` means the two bounded verify loops finished without raising.
+# It has never meant that every extracted claim was checked, and on 2026-09-01 an
+# article was published on a PASS that had examined at most 8 of its 13 verifiable
+# claims: the per-category cap of 4 skipped the rest, and no branch of this check
+# could see it. The cap is a cost and latency bound. It is not a publication pass.
+#
+# So coverage is now its own prerequisite, and it is read from BOTH sides of the
+# invariant rather than either alone -- a count that agrees with itself is not the
+# same as a count that agrees with the record. Where they disagree, coverage is
+# incomplete: a result whose arithmetic does not close is not evidence of anything.
+def coverage_state(claims_extracted: int, claims_checked: int, not_checked) -> dict:
+    """What fraction of the extracted claim set was actually put to the world.
+
+    coverage_complete requires all of:
+      * as many claims checked as were extracted
+      * nothing recorded as skipped
+      * and those two agreeing with each other
+
+    Never infers a missing skip record away. `counts_consistent` is reported
+    separately so a malformed result is diagnosable as malformed rather than merely
+    incomplete.
+    """
+    rows = list(not_checked or [])
+    n_not = len(rows)
+    consistent = (claims_checked + n_not) == claims_extracted
+    complete = (claims_checked == claims_extracted) and n_not == 0 and consistent
+    return {"claims_checked": claims_checked,
+            "claims_not_checked": n_not,
+            "coverage_complete": bool(complete),
+            "counts_consistent": bool(consistent),
+            "skipped_reasons": sorted({str(x.get("skipped_reason") or "unstated")
+                                       for x in rows})}
 
 
 def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
@@ -334,11 +372,18 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
             # was not diagnosable afterwards. Reporting more does not decide more:
             # every verdict below is read from the same result, and the branches that
             # follow are untouched.
+            cov = coverage_state(claims_n, len(fc.get("findings") or []),
+                                 fc.get("not_checked"))
             r.fact_check_evidence = {"extraction_status": status,
                                      "claims_extracted": claims_n,
                                      "fact_check_completed": completed,
+                                     # execution completed != coverage complete
+                                     "coverage_complete": cov["coverage_complete"],
+                                     "claims_not_checked": cov["claims_not_checked"],
+                                     "counts_consistent": cov["counts_consistent"],
+                                     "skipped_reasons": cov["skipped_reasons"],
                                      "extraction_error": fc.get("extraction_error"),
-                                     "claims_checked": len(fc.get("findings") or []),
+                                     "claims_checked": cov["claims_checked"],
                                      "contradicted_count": len(contradicted),
                                      "advisory_count": len(fc.get("advisory") or []),
                                      "unverifiable_count": fc.get("unverifiable_count", 0),
@@ -365,11 +410,28 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
                 r.add("world_relative_fact_check", False,
                       "FACT_CHECK_INCOMPLETE: extraction ok (%d claims) but verification "
                       "did not run to completion; fail-closed" % claims_n)
+            elif not cov["coverage_complete"]:
+                # Execution finished; coverage did not. Distinct from
+                # FACT_CHECK_INCOMPLETE, which is a technical failure of the run --
+                # this one ran correctly and simply did not look at every claim.
+                r.add("world_relative_fact_check", False,
+                      "FACT_CHECK_COVERAGE_INCOMPLETE: extraction ok and verification "
+                      "completed, but %d of %d extracted claim(s) were checked and %d "
+                      "were not%s%s; the claim cap is a cost bound, not a publication "
+                      "pass; fail-closed"
+                      % (cov["claims_checked"], claims_n, cov["claims_not_checked"],
+                         (" [%s]" % "; ".join(cov["skipped_reasons"])
+                          if cov["skipped_reasons"] else ""),
+                         ("" if cov["counts_consistent"] else
+                          " (counts do not close: %d checked + %d not checked != %d "
+                          "extracted)" % (cov["claims_checked"],
+                                          cov["claims_not_checked"], claims_n))))
             else:
                 r.add("world_relative_fact_check", not contradicted,
-                      "extraction=ok claims_extracted=%d contradicted=%d advisory=%d "
-                      "unverifiable=%d"
-                      % (claims_n, len(contradicted), len(fc.get("advisory") or []),
+                      "extraction=ok claims_extracted=%d claims_checked=%d "
+                      "coverage=complete contradicted=%d advisory=%d unverifiable=%d"
+                      % (claims_n, cov["claims_checked"], len(contradicted),
+                         len(fc.get("advisory") or []),
                          fc.get("unverifiable_count", 0)))
         except Exception as e:
             r.add("world_relative_fact_check", False,
