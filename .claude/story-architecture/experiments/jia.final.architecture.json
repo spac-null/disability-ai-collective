@@ -1,0 +1,182 @@
+{
+  "case": "jia-curated-2026-final",
+  "ledger": "jia.ledger.json",
+  "worth_gate": {
+    "verdict": "STRONG_INTERPRETIVE_LENS",
+    "lens_claim": "A record decides which kinds of perception it is able to carry, and then whatever it carried becomes the thing that gets judged: a written account can preserve what a material was meant to symbolise while losing what it was like to be near, so the work is assessed on the portion of itself that translated.",
+    "changes_meaning_how": "It turns the published ranking from a judgement about design into a judgement about transferability, and turns the account's habit of reporting symbolism instead of sensation into the mechanism rather than a stylistic quirk.",
+    "evidence_ids": [
+      "F03",
+      "F04",
+      "F06",
+      "F09"
+    ]
+  },
+  "final_lens": {
+    "lens_claim": "The record kept what the materials were said to mean and lost what they were like, and the ranking was made from the record.",
+    "evidence_basis": [
+      "F06",
+      "F09",
+      "F03"
+    ],
+    "what_changes_for_the_reader": "Having read the sand as a nice symbolic touch, the reader now understands that symbolism is what survived translation, and that the salt room was judged on the part of itself a written and photographed record could hold.",
+    "story_beat_before": "B3",
+    "crip_turn": "Go back to the sand. The account says it embodied strength and fragility - what it stood for, not what it was like underfoot. That is the shape of the whole record: it holds what the materials were said to mean, and drops what it was to be in the room with them. And the eight were ranked from the record.",
+    "story_beat_after": "B5"
+  },
+  "architecture": {
+    "article_type": "SHORT_NARRATIVE",
+    "story_spine": "A room built out of salt bricks was named one of a design festival's eight best, by a record that could keep what its materials meant but not what they were like.",
+    "opening_object_or_event": "A wall of Himalayan salt brick, in a room set partway into the ground on a Bali beach.",
+    "reader_initial_state": "That a room was made of salt, and that people went inside it.",
+    "crip_turn_rereads": "B3",
+    "beats": [
+      {
+        "beat_id": "B1",
+        "happens": "The room: what it was made of, and that it sat partway below the ground.",
+        "concrete_carrier": "the salt-brick walls",
+        "facts_allowed": [
+          "F01",
+          "F02",
+          "F05"
+        ],
+        "concept_introduced": "",
+        "why_reader_wants_next": "A room made of salt is strange enough that the reader wants to know what it was for.",
+        "must_not_say_yet": "anything about records, photographs or rankings"
+      },
+      {
+        "beat_id": "B2",
+        "happens": "What was inside it, and the stated aim.",
+        "concrete_carrier": "fragrance and drink, inside walls of mineral",
+        "facts_allowed": [
+          "F03",
+          "F04"
+        ],
+        "concept_introduced": "",
+        "why_reader_wants_next": "The content turns out to be things that cannot be looked at, which raises how anyone else would know.",
+        "must_not_say_yet": "the turn"
+      },
+      {
+        "beat_id": "B3",
+        "happens": "Other pavilions did comparable things - and the account describes what those materials stood for rather than what they were like.",
+        "concrete_carrier": "sand on the ground, and water off the rain chains",
+        "facts_allowed": [
+          "F06",
+          "F07"
+        ],
+        "concept_introduced": "",
+        "why_reader_wants_next": "The symbolic register is doing a lot of work, and the reader has not yet been told why that matters.",
+        "must_not_say_yet": "that symbolism is what survived translation"
+      },
+      {
+        "beat_id": "B4",
+        "happens": "The festival ran five days and then existed as a written account and a list of eight, which none of the eight descriptions supplements with what anyone perceived.",
+        "concrete_carrier": "the five dates, and the published list of eight",
+        "facts_allowed": [
+          "F08",
+          "F09",
+          "F11"
+        ],
+        "concept_introduced": "a selection presented as the most interesting is a selection, not a count",
+        "why_reader_wants_next": "If that is the whole record, the reader wants to know what it left out.",
+        "must_not_say_yet": "the full turn"
+      },
+      {
+        "beat_id": "B5",
+        "happens": "The ranking, re-read: it was made from what transferred.",
+        "concrete_carrier": "the list of eight, and the salt walls",
+        "facts_allowed": [
+          "F10"
+        ],
+        "concept_introduced": "",
+        "why_reader_wants_next": "",
+        "must_not_say_yet": ""
+      }
+    ],
+    "turn": "Five days end and the pavilions come down. What is left is an account and a list of eight.",
+    "crip_turn": "Go back to the sand. The account says it embodied strength and fragility - what it stood for, not what it was like underfoot. That is the shape of the whole record: it holds what the materials were said to mean, and drops what it was to be in the room with them. And the eight were ranked from the record.",
+    "ending_move": "Return to the salt walls: a surface someone could have put a tongue to, and found out what a wall tasted of.",
+    "use_facts": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F08",
+      "F09",
+      "F10",
+      "F11"
+    ],
+    "use_quotes": [],
+    "definitions": {},
+    "prohibitions": [
+      "Do not say or imply that any pavilion was designed for, tested with, or reached by disabled, blind or low-vision visitors.",
+      "Do not invent what anything smelled, tasted, sounded or felt like, and do not write any visitor's experience as if observed.",
+      "Do not treat an aim of engaging the senses as an accessibility feature or credential.",
+      "Do not name any brand, sponsor, collaborator or manufacturer.",
+      "Do not state the colour of any material.",
+      "Do not describe the floor level, depth, steps or interior layout.",
+      "Do not claim anything was never done, never tested or does not exist.",
+      "Do not attribute a motive or intention beyond a stated design aim.",
+      "Never use the first person.",
+      "Do not state or imply how the eight were selected, or that any pavilion placed higher or lower than another.",
+      "Do not state the size, depth, floor level or layout of any pavilion, and do not call any material edible."
+    ],
+    "cut_evidence": [
+      {
+        "evidence_id": "Q_ONG_SPONTANEOUS_ENCOUNTERS",
+        "reason": "BREAKS_STORY_MOMENTUM"
+      },
+      {
+        "evidence_id": "GOTONG_ROYONG_PRINCIPLE",
+        "reason": "BACKGROUND_NOT_NEEDED"
+      },
+      {
+        "evidence_id": "PARTICIPANTS_PHILIPPINES_JAPAN_TAIWAN",
+        "reason": "BACKGROUND_NOT_NEEDED"
+      },
+      {
+        "evidence_id": "THEME_NATURE_WEAVE",
+        "reason": "BACKGROUND_NOT_NEEDED"
+      },
+      {
+        "evidence_id": "TUSCANY_STONE_BOUTIQUE",
+        "reason": "NAME_OVERLOAD"
+      },
+      {
+        "evidence_id": "STILLROOM_BOTANICAL_BRAND",
+        "reason": "NAME_OVERLOAD"
+      },
+      {
+        "evidence_id": "TOPENG_BUDUH_MASK_COUNT",
+        "reason": "CONCEPT_OVERLOAD"
+      },
+      {
+        "evidence_id": "DDAP_ORIGAMI_FRAMING",
+        "reason": "SECOND_EXAMPLE_SAME_POINT"
+      },
+      {
+        "evidence_id": "LAMITAK_LAMINATE_CLIENT",
+        "reason": "NAME_OVERLOAD"
+      },
+      {
+        "evidence_id": "ALUNAN_PESISIR_ACOUSTIC",
+        "reason": "SECOND_EXAMPLE_SAME_POINT"
+      },
+      {
+        "evidence_id": "EVIDENCE_GAPS_ALL",
+        "reason": "MACHINE_BOUNDARY_ONLY"
+      },
+      {
+        "evidence_id": "SOURCE_ROLE_TAXONOMY",
+        "reason": "PROVENANCE_ONLY"
+      },
+      {
+        "evidence_id": "PREVIOUS_EDITIONS_2024_2025",
+        "reason": "INTERESTING_BUT_WRONG_STORY"
+      }
+    ]
+  }
+}

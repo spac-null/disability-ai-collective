@@ -355,9 +355,19 @@ def validate_packet(packet: dict) -> list:
     if not (packet.get("ending_move") or "").strip():
         errs.append("packet has no ending move")
     for p in (packet.get("prohibitions") or []):
-        if re.search(r"\bdoes not\b|\bno such\b|\bcontains no\b", p, re.I):
+        # The defect is a prohibition that DESCRIBES THE EVIDENCE STATE ("the source
+        # does not establish X"), because that is the sentence shape the Writer copies.
+        # An imperative is allowed to quote the construction it forbids -- "Do not claim
+        # anything was never tested" is a constraint, not a description, and an earlier
+        # version of this check rejected it.
+        if re.search(r"\b(?:the (?:source|anchor|evidence|material|pack|brief))\s+"
+                     r"(?:does not|do not|gives no|contains no|says nothing|is silent)",
+                     p, re.I):
             errs.append("prohibition %r is phrased as a description of the evidence, "
                         "which is what becomes a caveat sentence" % p[:60])
+        elif not re.match(r"\s*(?:do not|never|avoid|do NOT)\b", p, re.I):
+            errs.append("prohibition %r is not phrased as an instruction to the "
+                        "generator" % p[:60])
     return errs
 
 
@@ -463,9 +473,19 @@ SENSORY_RISK = ("pink", "red", "blue", "green", "yellow", "white", "black", "gre
                 "hard", "sweet", "bitter", "salty", "sour", "fragrant", "acrid")
 
 
-def _content_words(text: str) -> set:
+def _stem(w: str) -> str:
+    for suf in ("edly", "ings", "ing", "edness", "ers", "er", "est", "ed", "es", "s"):
+        if len(w) - len(suf) >= 4 and w.endswith(suf):
+            return w[: -len(suf)]
+    return w
+
+
+def _content_words(text: str, fold: bool = False) -> set:
     words = re.findall(r"[A-Za-z][A-Za-z'-]{3,}", text.lower())
-    return {w for w in words if w not in _FUNCTION_WORDS}
+    out = {w for w in words if w not in _FUNCTION_WORDS}
+    if fold:
+        out |= {_stem(w) for w in out}
+    return out
 
 
 def _numbers(text: str) -> set:
@@ -500,7 +520,7 @@ def factual_surface_audit(article_text: str, packet: dict) -> dict:
       sensory   -- the subset of those that assert a perceivable property
     """
     approved = render(packet)
-    a_words, a_nums, a_ents = (_content_words(approved), _numbers(approved),
+    a_words, a_nums, a_ents = (_content_words(approved, fold=True), _numbers(approved),
                                _entities(approved, skip_sentence_initial=False))
     body = article_text.split("---", 2)[2] if article_text.startswith("---") else article_text
     body = re.sub(r"^#\s+.*\n", "", body.strip(), count=1)
@@ -510,13 +530,16 @@ def factual_surface_audit(article_text: str, packet: dict) -> dict:
     terms = sorted(_content_words(body) - a_words)
     sensory = sorted(t for t in terms if t in SENSORY_RISK)
     scene = sorted(t for t in terms if t in SCENE_RISK)
+    spatial = sorted(t for t in terms if t in SPATIAL_RISK)
     return {"unapproved_numbers": nums,
             "unapproved_entities": ents,
             "unapproved_sensory": sensory,
             "unapproved_scene": scene,
+            "unapproved_spatial": spatial,
             "unapproved_terms_count": len(terms),
             "unapproved_terms_sample": terms[:25],
-            "hard_ok": not nums and not ents and not sensory and not scene,
+            "hard_ok": not nums and not ents and not sensory and not scene
+                       and not spatial,
             "note": "terms are candidates for review, not violations; numbers, entities "
                     "sensory assertion and scene vocabulary are hard signals"}
 
@@ -544,6 +567,11 @@ def factual_surface_audit(article_text: str, packet: dict) -> dict:
 # therefore promoted to a hard signal in the factual surface audit, alongside sensory
 # assertion. The screen had surfaced "laptop", "room", "somewhere", "waiting" as
 # candidates; nobody looked. A signal nobody looks at is not a control.
+SPATIAL_RISK = ("floor", "upper", "lower", "storey", "basement", "ceiling",
+                "metres", "meters", "deep", "depth", "sunk", "sunken",
+                "small", "tiny", "huge", "narrow", "step", "steps",
+                "layout", "edible")
+
 SCENE_RISK = ("laptop", "desk", "chair", "classroom", "kitchen",
               "window", "screen", "phone", "queue", "corridor", "doorway", "armchair",
               "sofa", "bedroom", "office")
@@ -632,7 +660,7 @@ def architect_prose_audit(arch: dict, facts: dict, quotes: dict | None = None) -
     """
     quotes = quotes or {}
     evidence = " ".join(list(facts.values()) + list(quotes.values()))
-    e_words, e_nums = _content_words(evidence), _numbers(evidence)
+    e_words, e_nums = _content_words(evidence, fold=True), _numbers(evidence)
     e_ents = _entities(evidence, skip_sentence_initial=False)
     prose = " ".join(str(arch.get(k) or "") for k in
                      ("story_spine", "opening_object_or_event", "reader_initial_state",
@@ -640,15 +668,18 @@ def architect_prose_audit(arch: dict, facts: dict, quotes: dict | None = None) -
     for b in (arch.get("beats") or []):
         prose += " " + " ".join(str(b.get(k) or "") for k in
                                 ("happens", "concrete_carrier", "concept_introduced"))
-    terms = _content_words(prose) - e_words
+    terms = {w for w in _content_words(prose)
+             if w not in e_words and _stem(w) not in e_words}
     return {"unapproved_numbers": sorted(_numbers(prose) - e_nums),
             "unapproved_entities": sorted(_entities(prose) - e_ents),
             "unapproved_sensory": sorted(t for t in terms if t in SENSORY_RISK),
             "unapproved_scene": sorted(t for t in terms if t in SCENE_RISK),
+            "unapproved_spatial": sorted(t for t in terms if t in SPATIAL_RISK),
             "hard_ok": not (sorted(_numbers(prose) - e_nums)
                             or sorted(_entities(prose) - e_ents)
                             or [t for t in terms if t in SENSORY_RISK]
-                            or [t for t in terms if t in SCENE_RISK])}
+                            or [t for t in terms if t in SCENE_RISK]
+                            or [t for t in terms if t in SPATIAL_RISK])}
 
 
 # ── the blind spot the Roman ending exposed ───────────────────────────────────
@@ -673,6 +704,13 @@ NEGATIVE_SHAPES = [
     (r"\bnothing (?:in|about|on)\b", "ABSENCE"),
     (r"\bonly\b(?=[^.]*\b(?:one|two|first|single|way|thing|part)\b)", "EXCLUSIVITY"),
     (r"\bnone of\b", "EXCLUSIVITY"),
+    # "none reports", "none mentions" -- an absence claim without the word "of". The
+    # final Jia draft contained exactly this and the first version of the scanner read it
+    # as clean, which is the same shape of miss as the Roman ending.
+    (r"\bnone\s+(?:\w+s|report|mention|describe|record|say|show)\b", "ABSENCE"),
+    (r"\bnot once\b", "ABSENCE"),
+    (r"\bnot in the (?:file|record|account|list)\b", "ABSENCE"),
+    (r"\bno (?:one|body) (?:reports?|mentions?|describes?|records?)\b", "ABSENCE"),
     (r"\bthe (?:first|last|only) (?:ever|time|one|person|instrument)\b", "FIRST_LAST"),
     (r"\b(?:unlike|whereas) [^,.]{3,40}, [^.]{0,40}\b(?:did not|does not|had no)\b", "COMPARATIVE_NEGATION"),
     (r"\bno box on the form\b", "ABSENCE"),

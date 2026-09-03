@@ -148,5 +148,23 @@
     "scope": "WORLD",
     "corpus_size": 0,
     "prohibited_extensions": []
+  },
+  "F11": {
+    "fact_id": "F11",
+    "proposition": "The Oaken Tiltroom is one of the eight pavilions the published account lists as the top eight.",
+    "claim_type": "POSITIVE_FACT",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "Oaken Tiltroom, by Spatial Sonata",
+    "entities": [
+      "Oaken Tiltroom"
+    ],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": [
+      "its rank or placing within the eight",
+      "the basis on which the eight were chosen"
+    ]
   }
 }

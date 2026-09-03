@@ -1,0 +1,20 @@
+{
+  "case": "roman-final",
+  "worth_gate": {
+    "verdict": "WEAK_ANALOGY",
+    "lens_claim": "",
+    "changes_meaning_how": "",
+    "evidence_ids": []
+  },
+  "decision": "HOLD",
+  "why": [
+    "The intended ending is a WORLD-scoped NEGATIVE_EXISTENCE claim and the frozen evidence contains no negative evidence about the receiving end: archive 0, tool 0, storage 0, bandwidth 0, 'not engineered/built/provided' 0.",
+    "The audited-corpus rewording is admissible as a fact but forbidden as prose, because the four research sources are not part of the story.",
+    "Removing the claim removes the argument: what remains is the press release.",
+    "Two independent blind readers scored its Crip Minds fit 2/5 and 3/5 and said a reader without context files it as open-data or digital-divide criticism.",
+    "Section 9: a beautifully written wrong-publication story is still HOLD."
+  ],
+  "attempted_negative_fact_rejected_because": [
+    "F20: a WORLD negative claim needs evidence that states the negative; the span quoted is not negative, and silence is not evidence of absence"
+  ]
+}

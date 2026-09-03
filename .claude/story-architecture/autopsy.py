@@ -22,7 +22,11 @@ LEAK = [
     r"\bthe source\b", r"\baccording to the source\b", r"\bthe brief\b",
     r"\bthis reading\b", r"\bthe evidence\b", r"\bdoes not establish\b",
     r"\bdoes not say\b", r"\bdoes not tell us\b", r"\bdoes not report\b",
-    r"\bdoes not describe\b", r"\bnothing in the source\b", r"\bthe material\b",
+    r"\bdoes not describe\b", r"\bnothing in the source\b",
+    # "the material" alone is ordinary English (a pavilion is made of materials); only
+    # the auditing construction is a leak. Aligned with story.PROVENANCE_FRAMES after
+    # this fired on "what the material stood for".
+    r"\bthe material (?:does not|gives|establishes|shows|says|contains)\b",
     r"\bon its own wording\b", r"\bI am not claiming\b", r"\bshould be marked as one\b",
 ]
 # Essay-machinery verbs: the "argument visible instead of story movement" symptom.
