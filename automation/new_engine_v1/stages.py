@@ -25,6 +25,7 @@ from __future__ import annotations
 import re
 
 from .provider import parse_json_object
+from . import anchors as AN
 
 # ── Shared doctrine ────────────────────────────────────────────────────────────
 # The prose principle the project has settled on, stated once, in plain terms.
@@ -190,23 +191,25 @@ DISCOVERY_SYSTEM = (
 )
 
 
-def discovery_prompt(source_text: str, sha: str, pack: dict | None = None) -> str:
+def discovery_prompt(source_text: str, sha: str, pack: dict | None = None,
+                     anchor_candidates: list | None = None) -> str:
     return (
         _source_block(source_text, sha) +
         pack_material_block(pack) +
+        AN.render(anchor_candidates or []) +
         "\nReply with JSON only:\n"
         '{\n'
         '  "commissionable": true|false,\n'
         '  "dominant_reading": "how this subject is normally understood -- the framing a '
         'general reader would arrive with",\n'
-        '  "source_anchor_quote": "ONE clause or sentence copied CHARACTER-FOR-CHARACTER '
-        'from the source above -- the exact span this whole reading rests on. It is '
-        'checked against the source programmatically and the run is rejected if it is '
-        'not an exact span, so do not paraphrase, do not merge two places, and do not '
-        'tidy the punctuation.",\n'
+        '  "source_anchor_id": "the id of the ONE anchor candidate listed below '
+        'that this whole reading rests on -- for example \\"A007\\". Return the id and '
+        'nothing else: the system supplies the span text for the id you choose, so do not '
+        'retype it, trim it or tidy its punctuation. If no candidate can carry the reading, '
+        'return \\"NONE\\".",\n'
         '  "disturbance": "the specific detail IN THE SOURCE where that reading stops '
         'holding, in your own words. This is prose and may paraphrase -- the exact span '
-        'lives in source_anchor_quote.",\n'
+        'is the candidate you select by id.",\n'
         '  "perceptual_instrument": "the disability-informed way of perceiving used as an '
         'instrument here -- what it is tuned to notice. Name a capacity, not a persona '
         'and not an identity claim.",\n'
@@ -223,11 +226,22 @@ def discovery_prompt(source_text: str, sha: str, pack: dict | None = None) -> st
     )
 
 
-def discover(provider, source_text: str, sha: str, pack: dict | None = None) -> dict:
-    c = provider.complete(DISCOVERY_SYSTEM, discovery_prompt(source_text, sha, pack),
+def discover(provider, source_text: str, sha: str, pack: dict | None = None,
+             anchor_candidates: list | None = None) -> dict:
+    """Discovery reads; it does not write the anchor.
+
+    The anchor arrives as an id chosen from `anchor_candidates` and is resolved here
+    against that mapping, so `source_anchor_quote` always holds source bytes the system
+    supplied. `_anchor` carries the resolution outcome for the caller to hold on.
+    """
+    cands = anchor_candidates or []
+    c = provider.complete(DISCOVERY_SYSTEM,
+                          discovery_prompt(source_text, sha, pack, cands),
                           max_tokens=2200)
     p = parse_json_object(c.text)
     p["_provider"] = c.identity()
+    ok, code, detail = AN.resolve(p, cands)
+    p["_anchor"] = {"ok": ok, "code": code, "detail": detail, "candidates": len(cands)}
     return p
 
 

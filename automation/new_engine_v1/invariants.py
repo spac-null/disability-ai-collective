@@ -36,6 +36,13 @@ ANCHOR_MISSING = "DISCOVERY_SOURCE_ANCHOR_MISSING"
 ANCHOR_NOT_IN_SOURCE = "DISCOVERY_SOURCE_ANCHOR_NOT_IN_SOURCE"
 ANCHOR_TOO_SHORT = "DISCOVERY_SOURCE_ANCHOR_TOO_SHORT"
 SUBJECT_SCOPE_MISMATCH = "DISCOVERY_SUBJECT_OUTSIDE_RESEARCHED_SCOPE"
+# Anchor SELECTION (2026-09-03, PR #61). The anchor is chosen by id from deterministic
+# candidates, so the ways it can fail are now the ways a choice can fail -- each an
+# explicit HOLD, never a fallback to model-written text.
+ANCHOR_ID_MISSING = "DISCOVERY_SOURCE_ANCHOR_ID_MISSING"
+ANCHOR_ID_UNKNOWN = "DISCOVERY_SOURCE_ANCHOR_ID_UNKNOWN"
+NO_ANCHOR_CANDIDATES = "DISCOVERY_NO_ANCHOR_CANDIDATES"
+NO_VALID_ANCHOR = "DISCOVERY_NO_VALID_SOURCE_ANCHOR"
 
 # An anchor shorter than this is not a clause and cannot ground a mechanism; it would
 # also make the containment test meaningless (any short string matches something).
@@ -84,50 +91,10 @@ def check_anchor(discovery_payload: dict, source_text: str) -> tuple[bool, str, 
     return True, "ok", "anchor verified verbatim in source (%d chars)" % len(anchor)
 
 
-# ── ONE bounded repair, for exactness only ────────────────────────────────────
-REPAIR_SYSTEM = (
-    "You are correcting ONE field. You are given a source text and a claimed quotation "
-    "that is not an exact span of it. Return the exact span of the source that the "
-    "claim was reaching for, copied character-for-character from the source.\n\n"
-    "You may not paraphrase, shorten below one clause, merge two separate places, or "
-    "invent wording. If no single exact span carries that meaning, say so."
-)
-
-
-def repair_prompt(source_text: str, bad_anchor: str) -> str:
-    return (
-        "SOURCE:\n<<<SOURCE\n%s\nSOURCE>>>\n\n"
-        "CLAIMED QUOTATION (not exact):\n%s\n\n"
-        "Reply with JSON only:\n"
-        '{"exact_span": "the verbatim span copied from SOURCE, or empty string if none '
-        'exists"}\n' % (source_text, bad_anchor)
-    )
-
-
-def repair_anchor(provider, discovery_payload: dict, source_text: str) -> tuple[bool, str]:
-    """ONE constrained attempt. Changes only the designated anchor field.
-
-    No retry loop, no wholesale Discovery regeneration. Returns (repaired, detail); the
-    result is re-validated by check_anchor, so a repair that is still not exact fails.
-    """
-    from .provider import parse_json_object
-    bad = str(discovery_payload.get(ANCHOR_FIELD, ""))
-    try:
-        c = provider.complete(REPAIR_SYSTEM, repair_prompt(source_text, bad),
-                              max_tokens=600)
-        span = str(parse_json_object(c.text).get("exact_span", "")).strip()
-    except Exception as e:
-        return False, "anchor repair attempt failed: %s" % str(e)[:160]
-    if not span:
-        return False, "repair returned no exact span"
-    candidate = dict(discovery_payload)
-    candidate[ANCHOR_FIELD] = span
-    ok, code, detail = check_anchor(candidate, source_text)
-    if not ok:
-        return False, "repaired anchor still invalid (%s): %s" % (code, detail)
-    discovery_payload[ANCHOR_FIELD] = span
-    discovery_payload["source_anchor_repaired"] = True
-    return True, "anchor repaired to an exact source span (%d chars)" % len(normalize(span))
+# The generative anchor repair that used to live here was removed by PR #61. It was
+# handed only the anchor source and asked to find a span carrying a meaning that was in a
+# DIFFERENT source, so it returned nothing and the run held anyway -- and keeping it would
+# leave a model-written anchor one call away from authority. Selection replaces it.
 
 
 def check_subject_scope(discovery_payload: dict, subject_span: str,
