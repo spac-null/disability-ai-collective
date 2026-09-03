@@ -1,0 +1,9 @@
+{
+  "prompt_words": 5840,
+  "prompt_chars": 38762,
+  "source_mentions": 22,
+  "source_id_markers": 31,
+  "role_taxonomy_words": 7,
+  "excerpt_blocks": 16,
+  "_note": "Prompt body removed before commit (embeds third-party source text). Counts retained as the baseline measurement."
+}

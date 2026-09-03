@@ -1,0 +1,28 @@
+{
+  "content_hash": "a947c4b57e2456885811ac8286aff82117ac818ff7366c2bc113953fdb69c203",
+  "created_at": "2026-09-03T07:00:32.416331+00:00",
+  "input_hashes": {
+    "discovery": "aaf5452fb8585f93be4dc89f693f33dcfb1f13164594793e0a9b48210bd2f5ef",
+    "research_pack": "4103da4ea7451c9471a3af26aec7cc5fa28f7cc6135bc4fe248617ae828eff32",
+    "source": "0b1ff603cc180fdac22b8cba759bc7c03e60ca7cf382a9b412350be36e38fec8"
+  },
+  "payload": {
+    "arrival": "The theory's fate has tracked not its truth but which discipline's trained reading it landed in front of; the JWST predictions worked less as confirmation than as the form that finally made an unparsed argument legible across the boundary it had been stuck behind.",
+    "burden": "Carried by the sequence of who read the theory and how -- the 25-year neglect, Gough's routing diagnosis, the biologists who found it legible, the physicists who did not -- with the JWST episode as the pivot that changed the audience. Counter-material (Alexander's caution, 'circumstantial evidence', the reported-not-proven status of the routing claim) is placed in the second-to-last movement where it constrains what the arrival can say. Excluded: any verdict on whether the theory is true, any remedy for the disciplinary gap, any second arrival restating the routing insight in other words, no persona voice. The S3 neutron-star falsification is not in the anchor and is not load-bearing here; leave it out.",
+    "motion": "establishes -> tracks reception -> reroutes",
+    "route": [
+      "Establish the concrete subject: cosmological natural selection as Smolin proposed it in his 1992 paper 'Did the Universe Evolve?' and the 1997 book The Life of the Cosmos (S1, S3, anchor) -- the mechanism itself: black holes bounce into new universes that inherit slightly varied physics, so universes selected for making the most black holes come to dominate. State it plainly as a claim on the table.",
+      "Show the theory's fate: it was not falsified but, in the anchor's own words, 'hasn't been engaged with properly at all' -- academic cosmologists largely ignored it. Use Kevin Kelly's 'crackpot thing at first' and the 25-year silence Gough found to fix that neglect as the fact needing explaining.",
+      "Name what the anchor offers as the explanation for that neglect and locate it as a reported claim, not an adjudicated one: Gough's argument that physicists lack fluency in evolutionary reasoning so the Darwinian logic reads as noise, while the evolutionary biologists equipped to parse it never encountered the idea -- plus the 'poor P.R.' that physicists were the ones explaining it. The theory's reception tracks which discipline's trained reading it landed in front of.",
+      "Develop this through the JWST episode as the event that changed the routing: Gough's July 8 2022 Substack predictions of early supermassive black holes and rapid galaxy formation within ~100 million years, and Webb's finding of exactly that (anchor, NASA). Show the function -- the prediction gave the argument a form (a testable claim, a public timestamp) that crossed the disciplinary boundary the argument alone could not, drawing in Jäger and Levin who found the logic legible.",
+      "Mark what the source does and does not establish, placing the counter-material where it does its work: Alexander's point that standard models may also account for early black holes and that the theory must still be embedded in known physics; the anchor's own 'circumstantial evidence'; and that the routing account is Gough's characterisation, reported not proven -- only a handful of named individuals, not a field, find it worth exploring.",
+      "Arrive: what the account actually demonstrates is not that the theory is right but that its trajectory has been governed by interpretive routing -- whether the same claim reads as noise or as signal has depended on whose trained equipment it reached, and the JWST predictions mattered less as evidence than as the thing that finally made the argument parseable to a wider audience."
+    ],
+    "target_words": [
+      600,
+      720
+    ]
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "ARTICLE_FORM"
+}

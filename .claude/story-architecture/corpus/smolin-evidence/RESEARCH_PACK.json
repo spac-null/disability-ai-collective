@@ -1,0 +1,47 @@
+{
+  "subject": "Cosmological natural selection (the theory that universes evolve like organisms) and Julian Gough's advocacy of it, including his James Webb Space Telescope predictions",
+  "subject_span_present": false,
+  "sources": [
+    {
+      "source_id": "S0",
+      "role": "ANCHOR",
+      "url": "https://www.smithsonianmag.com/science-nature/earths-organisms-developed-via-evolution-some-theorists-wonder-what-if-the-entire-cosmos-did-too-180989338/",
+      "publisher": "smithsonianmag.com",
+      "chars": 15944,
+      "excerpt_count": 0
+    },
+    {
+      "source_id": "S1",
+      "role": "PRIMARY",
+      "url": "https://iopscience.iop.org/article/10.1088/0264-9381/9/1/016",
+      "publisher": "iop.org",
+      "chars": 5598,
+      "excerpt_count": 5
+    },
+    {
+      "source_id": "S2",
+      "role": "PRIMARY",
+      "url": "https://arxiv.org/abs/hep-th/0612185",
+      "publisher": "arxiv.org",
+      "chars": 4531,
+      "excerpt_count": 3
+    },
+    {
+      "source_id": "S3",
+      "role": "TERTIARY",
+      "url": "https://en.wikipedia.org/wiki/Cosmological_natural_selection",
+      "publisher": "wikipedia.org",
+      "chars": 7067,
+      "excerpt_count": 6
+    },
+    {
+      "source_id": "S4",
+      "role": "TERTIARY",
+      "url": "https://en.wikipedia.org/wiki/Lee_Smolin",
+      "publisher": "wikipedia.org",
+      "chars": 6860,
+      "excerpt_count": 2
+    }
+  ],
+  "_note": "Source bodies removed before commit: third-party article text is not committed to this repo. Regenerate from the named evidence run if needed."
+}

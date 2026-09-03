@@ -1,0 +1,26 @@
+{
+  "content_hash": "0a9e3306019afd819e21cdfeac911b441c45e49077bbbf6513aeee6ee32f5910",
+  "created_at": "2026-09-03T21:24:59.448937+00:00",
+  "input_hashes": {
+    "discovery": "bd36dd8d6a7582e1351370c14f73d7b5ef1e9965ef0851e21e1e0853112b48ba",
+    "research_pack": "46b29f08c5d13002844ed5a0b57f4592faf252db6e7b5b20227b0d077651bacd",
+    "source": "02d31dc554b74960966876cf8b17d3d8308bfef7265493def714d3f987b411ef"
+  },
+  "payload": {
+    "arrival": "Where a pavilion is built to be smelled, tasted, heard and felt, the photographable walkthrough that defines festival consumption records the surface and misses the design — but this holds only as far as the designers' own stated intent, which is all the source gives.",
+    "burden": "Carried by the source's own descriptions of specific pavilions and their non-visual materials, sequenced so the Oaken Tiltroom lands as the case the others were building toward. Excludes any remedy, any accessibility reading (the source supports none), any observed visitor behaviour, and any second arrival about the festival's success or the theme's merit. The limit-marking is part of the arrival, not a separate movement.",
+    "motion": "names -> accumulates -> displaces",
+    "route": [
+      "Establish the concrete subject: Jia Curated 2026's fifth edition at Pengembak Beach, Sanur, theme Nature Weave, eight pavilions each built to engage with the surrounding landscape. Name the actual structures and materials — rice husks, salt bricks, teak offcuts — as physical things before any interpretation.",
+      "Show how the pavilions work by naming the non-visual channels the source itself describes: the perforated timber facade of DDAP's The Intelligence of Surfaces routing air through the space and rocks used as seating; sand underfoot and water falling from rain chains in Nawangseta's Bhumi Lingsir; rattan and recycled acoustic panels shaping sound in Alunan Pesisir. Establish that these are stated design logic, not decoration.",
+      "Bring the sharpest case forward as the thing that makes the pattern visible: Spatial Sonata's Oaken Tiltroom, built from Himalayan salt bricks, partly embedded in the ground, delivering its content through Oaken's fragrances and Stillroom's botanical drinks. Name what this means — a pavilion whose core is smelled, tasted and felt, where a photograph carries almost nothing of what it does.",
+      "Arrive: several of these pavilions locate their content in channels sight does not carry, so the walkthrough-and-photograph — the standard way a design festival is consumed — registers the packaging and misses the mechanism. Mark the limit the source imposes: these are the designers' stated intentions, not observed visitor experience, and nothing here is an accessibility claim."
+    ],
+    "target_words": [
+      520,
+      640
+    ]
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "ARTICLE_FORM"
+}

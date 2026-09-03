@@ -1,0 +1,36 @@
+{
+  "content_hash": "bd36dd8d6a7582e1351370c14f73d7b5ef1e9965ef0851e21e1e0853112b48ba",
+  "created_at": "2026-09-03T21:24:59.448937+00:00",
+  "input_hashes": {
+    "research_pack": "46b29f08c5d13002844ed5a0b57f4592faf252db6e7b5b20227b0d077651bacd",
+    "source": "02d31dc554b74960966876cf8b17d3d8308bfef7265493def714d3f987b411ef"
+  },
+  "payload": {
+    "commissionable": true,
+    "disturbance": "Across the eight pavilions, the source repeatedly describes experience organised around channels other than the visual, and sometimes against the visual: fragrance and drink inside a salt-brick room partly buried underground; air flowing through a perforated facade; sand underfoot and water falling from rain chains; acoustic panels shaping sound; rocks that function as seating. These are not decorative flourishes described in passing — they are the stated design logic of how a visitor is meant to move, rest and register the space. The Oaken Tiltroom is the sharpest case: a contemplative interior built to be smelled, tasted and felt in a partly sunken, dim space, where the photograph would tell a reader almost nothing about what the pavilion actually does.",
+    "dominant_reading": "A design festival's pavilions are understood as showcases: environments to be walked through and looked at, judged by visual impact and how convincingly they 'engage with nature'. The reader arrives expecting a beauty parade of eight photogenic structures, where 'engaging all the senses' is festival marketing rather than a design decision with consequences.",
+    "evidence_gaps": [
+      "The source does not describe how any visitor actually perceived or navigated these spaces — no testimony, no observed behaviour, only stated design intentions.",
+      "The source does not state that any pavilion was designed with disabled visitors, blind or low-vision visitors, or accessibility in mind; 'engaging all senses' is a design aim, not an access claim.",
+      "The source gives no information about lighting levels, contrast, tactile guidance, step-free access or any accessibility feature of any pavilion.",
+      "The source does not establish whether the multi-sensory elements were central or incidental to the visitor's route, beyond the phrasing the designers themselves used.",
+      "The source does not compare these pavilions to how design festivals generally work, so any claim about 'standard festival consumption' is the writer's framing, not a sourced fact."
+    ],
+    "grounding_boundaries": "Do not assert or imply that any pavilion was designed for, tested with, or accessible to disabled, blind or low-vision visitors — the source contains no such claim. Do not stage lived experience: no invented account of what it felt like to walk through, smell or hear a pavilion, and no first-person testimony from any visitor, designer or blind person. Do not convert 'engaging all senses' into an accessibility credential. The multi-sensory reading is EDITORIAL INTERPRETATION applied as an instrument; it may not be presented as the designers' or festival's stated intent. Do not generalise from these pavilions to claims about how perception, cognition, sight or attention work for people in general — keep every claim about the specific designs described. Do not assert that the photographs fail to capture the pavilions as a documented fact; frame it as a reading. Names, materials, dimensions, dates, venue and studios must match the source exactly (e.g. Oaken Tiltroom uses Himalayan salt bricks from Tuscany Stone Boutique; do not alter). Do not treat the 2025 or 2024 editions' participant lists as facts about the 2026 pavilions.",
+    "perceptual_instrument": "Attention to non-visual and multi-channel wayfinding — the capacity to read a space through smell, air movement, sound, temperature, texture underfoot and level changes rather than through the single dominant channel of sight. This is the orientation practice of someone who navigates by what the eyes do not carry.",
+    "source_anchor_quote": "Inside, the pavilion featured Oaken's fragrances as well as Stillroom's botanical drinks, with the aim of engaging all senses.",
+    "source_anchor_verified": true,
+    "source_facts": [
+      "The Oaken Tiltroom by Spatial Sonata was constructed from Himalayan salt bricks and was partially embedded into the ground, aiming to create a contemplative environment shaped by landscape and sensory design.",
+      "Inside the Oaken Tiltroom, the pavilion featured Oaken's fragrances and Stillroom's botanical drinks, with the aim of engaging all senses.",
+      "The Intelligence of Surfaces pavilion had a perforated timber facade that allowed free flow of air within the space, with natural rocks used as seating.",
+      "Bhumi Lingsir by Nawangseta used sand on the ground and water falling from rain chains as symbolic elements within a sequenced journey of spaces.",
+      "Alunan Pesisir by Vivere Group and Eugenio Hendro used a combination of natural rattan and acoustic panels made from recycled materials to form side barriers, described in terms of the interplay of light and shadow and movement.",
+      "The festival's theme was Nature Weave, and pavilions were described as creating experiences allowing materials, objects and structures to actively engage with the surrounding environment."
+    ],
+    "subject_scope_verified": true,
+    "what_becomes_knowable": "Several of these pavilions are designed so that their core content is delivered through non-visual channels, which means the standard mode of festival consumption — the walkthrough-and-photograph — systematically fails to register what the design is doing. When a room is partly embedded in the ground and built to be experienced through fragrance, taste and the feel of salt, or when a pavilion routes air, sand, sound and water into the sequence of movement, the design is making a claim about how attention should be distributed across the senses. Reading these as visual objects mistakes the packaging for the mechanism."
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "DISCOVERY"
+}

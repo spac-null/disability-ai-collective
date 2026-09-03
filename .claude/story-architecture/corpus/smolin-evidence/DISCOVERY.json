@@ -1,0 +1,40 @@
+{
+  "content_hash": "aaf5452fb8585f93be4dc89f693f33dcfb1f13164594793e0a9b48210bd2f5ef",
+  "created_at": "2026-09-03T07:00:32.416331+00:00",
+  "input_hashes": {
+    "research_pack": "4103da4ea7451c9471a3af26aec7cc5fa28f7cc6135bc4fe248617ae828eff32",
+    "source": "0b1ff603cc180fdac22b8cba759bc7c03e60ca7cf382a9b412350be36e38fec8"
+  },
+  "payload": {
+    "commissionable": true,
+    "disturbance": "The source repeatedly explains the theory's neglect not by whether it is right or wrong but by who has been positioned to read it. Physicists lack fluency in evolutionary reasoning; evolutionary biologists have never encountered the idea; the theory suffered from 'poor P.R.' because physicists were the ones explaining it. The claim that it 'hasn't been falsified' but also 'hasn't been engaged with properly at all' locates the problem in the distribution of who is equipped to perceive the argument, not in the argument's content.",
+    "dominant_reading": "Cosmological natural selection is a fringe physics idea that got a boost partly because an amateur outsider (a poet-novelist) made a lucky prediction that the James Webb telescope seemed to confirm. The story is usually read as: intriguing underdog theory, plus a striking confirmation, equals a theory worth taking more seriously.",
+    "evidence_gaps": [
+      "The source does not establish that disciplinary routing (rather than the theory's actual merits or testability) is the reason for neglect -- this is Gough's characterisation, reported, not adjudicated.",
+      "The source does not establish that the JWST observations confirm the theory; Alexander notes standard models may also account for early black holes and galaxies, and the piece calls it 'circumstantial evidence.'",
+      "The source does not show that evolutionary biologists as a field endorse the theory -- only that a small number of named individuals find it worth exploring.",
+      "The source does not establish the theory's predictions were quantitatively specific or that Gough's prediction was distinguishable from standard expectations in a rigorous way.",
+      "S3 records that a prediction Smolin made (no neutron star above ~1.6 solar masses) was contradicted by 2019 and 2022 discoveries, and that Silk argued our universe falls short of maximal black-hole production -- the anchor does not mention these challenges.",
+      "The source does not establish general claims about how disciplines process ideas or how perception works; the routing account is specific to this case as reported."
+    ],
+    "grounding_boundaries": "Do not assert that the theory is correct, confirmed, or falsified -- the source presents JWST results as 'circumstantial' and quotes Alexander that consistency with established physics is unresolved. Do not present the disciplinary-routing explanation as an established fact about why the theory was neglected; it is Gough's argument as reported and must be attributed to him. Do not generalise the routing reading into a universal claim about how science, disciplines, minds or perception work -- keep every claim about legibility scoped to this specific case and mark it as editorial interpretation, not as a law of how ideas travel. Do not stage Gough's outsider status as a lived-experience narrative or attribute motives, feelings or biography beyond the quoted statements. Do not import the neutron-star falsification or Silk's black-hole shortfall (from S3) as if the anchor discussed them; if used at all, mark them as coming from a separate encyclopaedia source that complicates, and note the anchor omits them. Do not claim evolutionary biologists as a field endorse the theory -- name only the specific individuals quoted. Do not treat 'evolution is always the best explanation' as the source's conclusion; it is Gough's quoted view and Dennett's framing, not a finding.",
+    "perceptual_instrument": "attention to how legibility depends on match between an argument's form and a reader's trained modes of processing -- the capacity to notice when a claim fails to register not because it is weak but because it is routed to audiences whose interpretive equipment cannot parse it, and to notice the boundary conditions under which the same claim becomes readable to a differently-equipped reader",
+    "source_anchor_quote": "Gough argues that their unfamiliarity with evolutionary theory has led to a misunderstanding of Smolin’s idea. Meanwhile, evolutionary biologists, the people best equipped to assess its Darwinian logic, have barely encountered it.",
+    "source_anchor_verified": true,
+    "source_facts": [
+      "Smolin proposed the theory in a 1992 paper 'Did the Universe Evolve?' and a 1997 book, The Life of the Cosmos (anchor; S1; S3).",
+      "The anchor states academic cosmologists 'had largely ignored Smolin's theory' and that it 'hasn't been engaged with properly at all.'",
+      "Gough argues physicists' unfamiliarity with evolutionary theory led to misunderstanding Smolin's idea, while evolutionary biologists have barely encountered it.",
+      "Kevin Kelly says the theory 'might look like kind of a crackpot thing at first.'",
+      "The anchor attributes some of the neglect to 'poor P.R.' because physicists had typically been the ones explaining the concepts.",
+      "Gough is an Irish poet, novelist and musician who published predictions on Substack on July 8, 2022, four days before Webb released its first data.",
+      "Webb found galaxies forming earlier and faster than standard models anticipated; NASA reported some galaxies assembling ~100 million years after the Big Bang.",
+      "Johannes Jäger, an evolutionary systems biologist, says Gough 'actually predicted' the early structures and that peer-reviewed engagement could get the idea deserved attention.",
+      "Stephon Alexander calls it 'a beautiful idea' but cautions the main challenge is making it consistent with established physics and that standard models also don't yet offer 'a complete story.'"
+    ],
+    "subject_scope_verified": true,
+    "what_becomes_knowable": "The account works less as a story about evidence than as a story about interpretive routing: the theory's fate tracks which discipline's processing style it lands in front of. Framed for physicists, its Darwinian logic reads as noise; the people whose training makes that logic legible (evolutionary biologists like Jäger, systems theorists like Levin) are the ones who find it worth engaging. On this reading, the JWST 'confirmation' functions inside the piece as the event that finally converts an unparsed argument into a parseable one for a wider audience -- the predictions gave the idea a form (a testable claim, a public timestamp) that could cross disciplinary boundaries the argument alone could not."
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "DISCOVERY"
+}

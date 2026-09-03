@@ -1,0 +1,26 @@
+{
+  "content_hash": "e6e9a2fb7879a1347af019f8d1837096a63c5c85311ec42dfef80baebdec0db2",
+  "created_at": "2026-09-03T21:09:46.643906+00:00",
+  "input_hashes": {
+    "discovery": "982d90126aa75fc5dd18d06284563ef104a6453d2e309128b7bf557e535f7fb2",
+    "research_pack": "c0d0bd6fd79d784dd90ee0e61f69c573e1e2860fb6856028a3ff0dbb4e95c30e",
+    "source": "329748e7cb7efb893a39bbdbb5a89f9860061023b7118c4f08811bd43a81927d"
+  },
+  "payload": {
+    "arrival": "On the evidence the source gives, 'Anguilla' shifts the job of a conservation centre from displaying the eel's plight to organising itself around an obstructed migration -- treating architecture as the thing that reconnects an interrupted route rather than a container for information about it; what that looks like as a building the source does not say.",
+    "burden": "Carried by the anchor's own wording -- 'the barriers', 'ecological infrastructure', 'reconnecting habitats, communities and waterways' -- read against the conservation record in S1/S2 that names barriers as the principal threat and passage-restoration as the key action. Deliberately excluded: any description of the building's form or site (source gives none); any claim the project contains eel passes or connects to ZSL/the Thames (that data is the conservation programmes', not the proposal's); any judgement of outcome or effectiveness; no second arrival, no remedy, no persona.",
+    "motion": "establishes -> resists -> reorganises",
+    "route": [
+      "Establish the concrete subject: 'Anguilla', Lily-Grace Conradie's student proposal at Nottingham, described as a landscape-led environmental project responding to the critical decline of the European eel and reimagining conservation as a public experience -- name it as a conservation-and-education centre before interpreting it (anchor).",
+      "Show the ordinary reading and where the material resists it: such a centre is normally read as a building that raises awareness through exhibition and learning. But the anchor states the project is informed by the eel's lifecycle AND the barriers that threaten its migration -- its brief takes its cue from movement that gets stopped, not from a static fact to be displayed.",
+      "Develop what that reframing makes visible, grounding the barriers theme in the conservation record: the eel's lifecycle is a long migration and barriers in freshwater are named as a principal threat preventing recovery, the key action being to restore migratory pathways (S1, S2). Read this way the design problem is continuity of passage, and 'operates as ecological infrastructure' / 'reconnecting habitats, communities and waterways' (anchor) reads as the organising logic, with education subordinate to it.",
+      "Mark the limit of what the source establishes: the anchor names barriers only as the informing theme and stops there; it does not describe the building's form, site, or any actual migration-restoring device, and the eel-pass and Thames data belong to ZSL's own programmes, not to the proposal. Arrive: what the source lets us say is that the project reframes the centre's job from informing the public about the eel to organising itself around a migration that must be able to complete -- the reading holds at the level of brief, not built form."
+    ],
+    "target_words": [
+      500,
+      620
+    ]
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "ARTICLE_FORM"
+}

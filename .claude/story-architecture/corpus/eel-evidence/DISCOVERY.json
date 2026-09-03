@@ -1,0 +1,40 @@
+{
+  "content_hash": "982d90126aa75fc5dd18d06284563ef104a6453d2e309128b7bf557e535f7fb2",
+  "created_at": "2026-09-03T21:09:46.643906+00:00",
+  "input_hashes": {
+    "research_pack": "c0d0bd6fd79d784dd90ee0e61f69c573e1e2860fb6856028a3ff0dbb4e95c30e",
+    "source": "329748e7cb7efb893a39bbdbb5a89f9860061023b7118c4f08811bd43a81927d"
+  },
+  "payload": {
+    "commissionable": true,
+    "disturbance": "The project takes its brief not from a static ecological fact but from movement that gets stopped: the eel's lifecycle is a long migration, and the design responds to the barriers that interrupt it. The organising problem is not ignorance to be corrected by display but passage that has been obstructed. That reframes the building's job from informing about the eel to mediating the conditions of getting through.",
+    "dominant_reading": "A conservation-and-education centre for a threatened species is normally read as a building that raises awareness: it puts an ecological problem in front of the public through exhibition, signage and learning spaces, so visitors leave better informed and more sympathetic to the eel's plight.",
+    "evidence_gaps": [
+      "The anchor does not describe the physical form of the building, its site, or how it is arranged spatially",
+      "The anchor does not state that the project itself includes eel passes, barrier removal, or any specific migration-restoring device -- 'barriers' is named only as the informing theme (the anchor excerpt is truncated at 'the barriers')",
+      "The research pack facts about eel passes, hectares of habitat and the Thames come from ZSL/Thames21 conservation programmes, not from the student project; the source does not establish the project is connected to ZSL or the Thames",
+      "The source does not describe what visitors actually see or do, beyond generic phrases like 'community interaction' and 'public experience'",
+      "The source does not establish any outcome, effectiveness, or built status -- it is a student proposal"
+    ],
+    "grounding_boundaries": "Do not describe the building's appearance, materials, plan, or specific spatial devices -- the anchor gives none. Do not claim the project incorporates eel passes, removes barriers, or connects to ZSL's Thames programme; the eel-pass and Thames facts belong to S1/S2/S3 conservation work, not to Conradie's proposal, and may be used only as background context on why eel migration is obstructed, explicitly attributed. Do not assert the project was built, tested, or has any real-world ecological effect. Do not generalise the 'obstructed passage' reading into claims about how migration, perception, institutions or people work in general -- keep every claim about how this proposal is organised. The word 'barriers' in the anchor is truncated; treat it as the eel-migration theme the project is informed by, not as a description of a feature the project contains. Do not invent any lived experience or testimony for the student or for eels.",
+    "perceptual_instrument": "attention tuned to obstructed passage -- the capacity to notice where a route is designed to be traversed, where it is blocked, and what mitigations restore movement rather than remove the barrier",
+    "source_anchor_quote": "Informed by the eel's extraordinary lifecycle and the barriers ",
+    "source_anchor_verified": true,
+    "source_facts": [
+      "The project is titled 'Anguilla: European Eel Conservation and Education Centre' by Lily-Grace Conradie (anchor)",
+      "The proposal responds to the critical decline of the European eel (anchor)",
+      "It is described as a landscape-led environmental project that reimagines conservation as a public experience (anchor)",
+      "It is 'Informed by the eel's extraordinary lifecycle and the barriers' (anchor)",
+      "It aims to reveal the hidden complexities of the river system and to reconnect habitats, communities and waterways (anchor)",
+      "It operates as ecological infrastructure (anchor)",
+      "The European eel is Critically Endangered on the IUCN Red List since 2008 (S1, S3)",
+      "Barriers to migration in freshwater are highlighted as one of the principal threats preventing species recovery, and a principal conservation action is restoring migratory pathways by removing barriers or installing eel passes (S1, S2)",
+      "Young eels have poor swimming capabilities and cannot jump over even small structures and barriers (S2)",
+      "Eel recruitment has reduced by 90-95% since the 1980s (S1, S2)"
+    ],
+    "subject_scope_verified": true,
+    "what_becomes_knowable": "Read through obstructed passage, the project works as ecological infrastructure whose central design problem is continuity of movement: it treats the river system as a route punctuated by barriers, and positions architecture as the thing that reconnects the interrupted stages rather than as a container for information about them. The 'education' and 'public experience' functions are subordinate to, and organised around, the logic of a migration that must be able to complete."
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "DISCOVERY"
+}
