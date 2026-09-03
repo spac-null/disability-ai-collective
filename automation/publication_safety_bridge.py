@@ -109,6 +109,50 @@ def check_persona_leakage(article_text: str) -> tuple[bool, str]:
     return True, "no first-person biographical or testimony claim for the byline"
 
 
+# ── which sources the writer was DECLARED (not merely shown) ──────────────────
+#
+# The writer prompt is scaffolding wrapped around whole source bodies, and the two
+# must not be read as one string. stages.pack_material_block emits one header line
+# per non-anchor source --
+#
+#     [S4] role=TERTIARY  publisher=wikipedia.org  url=https://en.wikipedia.org/...
+#
+# -- and then embeds that source's text inside a fence, `  <<<S4 ... S4>>>`, exactly
+# as _source_block fences the anchor as `<<<SOURCE ... SOURCE>>>`. A header is a
+# statement BY this pipeline that a source is authorised. Bytes inside a fence are
+# quoted third-party material and assert nothing.
+#
+# Scanning the whole prompt for `url=` conflated the two, and on 2026-09-03 held a
+# sound article: a packed Wikipedia source carried MediaWiki citation markup,
+# `{{Webarchive|url=https://web.archive.org/...pdf |date=...}}`, in its BODY. The
+# `|url=` satisfied the pattern, so a footnote inside an authorised source was
+# reported as an undeclared source. Nothing had been fetched; nothing had entered
+# the pack. Any Wikipedia page with an archived citation reproduces it.
+#
+# So: drop the fenced bodies, then read only whole header lines from what is left.
+# The rule itself is unchanged -- a URL declared to the writer and absent from the
+# pack still fails, and still blocks.
+_FENCED_BODY = re.compile(r"^[ ]*<<<(\S+)\n.*?\n\1>>>", re.MULTILINE | re.DOTALL)
+_SOURCE_HEADER = re.compile(
+    r"^\[[^\]\n]+\] role=\S*\s+publisher=\S*\s+url=(\S+)$", re.MULTILINE)
+
+
+def declared_prompt_sources(prompt_text: str) -> set:
+    """The set of source URLs the writer prompt DECLARES as authorised material.
+
+    Fenced source bodies are removed first, so untrusted source text cannot pose as
+    scaffolding: a body may contain `url=https://x`, `role=PRIMARY`, `[S99]` or a
+    line-for-line forgery of a header, and none of it is read as a declaration.
+
+    The strip is non-greedy and closes on the first matching end fence, which is the
+    fail-closed direction: a source body that forged its own end fence would leak its
+    tail back into the scaffolding and could only ADD a spurious failure, never hide a
+    real one. Headers are emitted before their own body and are never inside a fence.
+    """
+    scaffolding = _FENCED_BODY.sub("", prompt_text or "")
+    return set(_SOURCE_HEADER.findall(scaffolding))
+
+
 def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
     """Run every required CURRENT_ENGINE check against a finished engine run.
 
@@ -159,14 +203,14 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
         for stage in (C.DISCOVERY, C.ARTICLE_FORM, C.WRITER_INPUT):
             if stage in A and A[stage].input_hashes.get("research_pack") != rp.content_hash():
                 problems.append("%s did not declare this pack" % stage)
-        # and no source may appear in the writer prompt that is not in the pack
+        # and no source may be DECLARED to the writer that is not in the pack
         if C.WRITER_INPUT in A:
-            prompt = A[C.WRITER_INPUT].payload.get("prompt_text", "")
             known = {s.get("url") for s in pk.get("sources", [])}
-            cited = set(re.findall(r"url=(\S+)", prompt))
+            cited = declared_prompt_sources(
+                A[C.WRITER_INPUT].payload.get("prompt_text", ""))
             stray = [u for u in cited - known if u]
             if stray:
-                problems.append("writer prompt carries unauthorised source(s): %s"
+                problems.append("writer prompt declares unauthorised source(s): %s"
                                 % ", ".join(sorted(stray)[:3]))
         r.add("research_pack_provenance", not problems,
               "%d source(s), all fetched, hashed and declared by every downstream stage"

@@ -437,19 +437,31 @@ def test_no_downstream_stage_changed():
     out = subprocess.run(["git", "diff", "--name-only", "origin/main"],
                          cwd=str(HERE.parent), capture_output=True, text=True).stdout
     changed = [f for f in out.split() if f.strip()]
+    # NOTE (2026-09-03): this is a WORKING-TREE scope guard, not an engine invariant --
+    # it diffs against a moving origin/main, so every PR after the cutover has to declare
+    # its own files here or the check fires. That makes it self-invalidating, and it is
+    # the reason this file appears in a provenance-bugfix PR at all. Left in place rather
+    # than deleted, because whether the guard should become per-PR or go away is the
+    # owner's call; see the PR description.
     allowed = {"automation/selector_v2.py", "automation/new_engine_production.py",
                "automation/selector_v2_cutover_test.py",
                "automation/selector_v2_runtime_hook_test.py",
                "automation/cutover_validation_test.py",
                "automation/new_engine_v1_test.py",
-               ".claude/WORK.md", ".claude/LOGBOOK.md"}
+               ".claude/WORK.md", ".claude/LOGBOOK.md",
+               # the research_pack_provenance false-positive fix (2026-09-03): the
+               # stray-source detector read whole source bodies as scaffolding.
+               "automation/publication_safety_bridge.py",
+               "automation/research_pack_test.py"}
     stray = [f for f in changed if f not in allowed]
-    check("only the selector and its tests changed", not stray, stray)
+    check("only the selector and declared bugfix scope changed", not stray, stray)
+    # The engine STAGES the cutover must never have touched. The bridge is no longer in
+    # this list: it is deliberately changed by the provenance bugfix, and its call site
+    # invariance is asserted below instead.
     for untouched in ("automation/new_engine_v1/research.py",
                       "automation/new_engine_v1/stages.py",
                       "automation/new_engine_v1/decision.py",
                       "automation/new_engine_v1/runner.py",
-                      "automation/publication_safety_bridge.py",
                       "automation/orchestrator/discovery.py"):
         check("unchanged: %s" % untouched.split("/")[-1], untouched not in changed)
     src = (HERE / "new_engine_production.py").read_text()
