@@ -42,6 +42,7 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 import impersonated_fetch as IMP                                      # noqa: E402
 
+from . import documents as DOC
 from .contracts import sha256_text
 from .provider import ProviderError, parse_json_object
 
@@ -252,6 +253,8 @@ class FallbackBudget:
 
 
 def _blank(url: str) -> dict:
+    # No `document` key. It appears only on a source that IS one, so an HTML-only
+    # pack's serialisation is not rewritten with empty document fields.
     return {"url": url, "status": "", "text": "", "title": "", "canonical_url": "",
             "content_length": 0, "sha256": "", "route": "", "attempts": 0}
 
@@ -270,8 +273,22 @@ def _from_html(rec: dict, html: str) -> dict:
     return rec
 
 
-def _fetch_ordinary(url: str, timeout: int) -> dict:
-    """The original attempt, unchanged. Still the only one most sources need."""
+def _texty(ctype: str) -> bool:
+    return "html" in ctype or "text" in ctype
+
+
+def _unsupported(ctype: str) -> str:
+    return "unsupported_content_type:%s" % (ctype.split(";")[0] or "?")
+
+
+def _fetch_ordinary(url: str, timeout: int, terms=None) -> dict:
+    """The original attempt. For an HTML or text response it is unchanged, down to the
+    two-megabyte read.
+
+    What is new is only what happens to a response that is NOT texty. That used to be
+    read and thrown away; now its first bytes decide whether it is a document this
+    pipeline can read. Nothing about the HTML path depends on that branch.
+    """
     rec = _blank(url)
     rec["route"], rec["attempts"] = "ordinary", 1
     try:
@@ -279,10 +296,17 @@ def _fetch_ordinary(url: str, timeout: int) -> dict:
             "User-Agent": UA, "Accept": "text/html,application/xhtml+xml"})
         with urllib.request.urlopen(req, timeout=timeout) as r:
             ctype = (r.headers.get("Content-Type") or "").lower()
-            raw = r.read(2_000_000)
-        if "html" not in ctype and "text" not in ctype:
-            rec["status"] = "unsupported_content_type:%s" % (ctype.split(";")[0] or "?")
-            return rec
+            if _texty(ctype):
+                raw = r.read(2_000_000)
+            elif DOC.enabled():
+                # One byte past the bound, so an oversize document is detectable
+                # without ever holding the whole of it.
+                raw = r.read(DOC.DOC_MAX_BYTES + 1)
+            else:
+                rec["status"] = _unsupported(ctype)
+                return rec
+        if not _texty(ctype):
+            return _as_document(rec, raw, ctype, terms)
         html = raw.decode(r.headers.get_content_charset() or "utf-8", "replace")
         return _from_html(rec, html)
     except urllib.error.HTTPError as e:
@@ -292,8 +316,51 @@ def _fetch_ordinary(url: str, timeout: int) -> dict:
     return rec
 
 
+def _as_document(rec: dict, raw: bytes, ctype: str, terms) -> dict:
+    """Route a non-texty response by its BYTES, never by its Content-Type or its path.
+
+    A Content-Type is a claim by the server and a `.pdf` suffix is a claim by a link.
+    The first five bytes are the file. So: HTML served as application/pdf is a
+    type_mismatch and is never parsed, and a PDF served as octet-stream or with no type
+    at all is still a PDF.
+    """
+    head = raw[:1024]
+    if not DOC.looks_like_pdf(head):
+        # A response that CLAIMED to be a document and is not is a different fact from
+        # a content type this pipeline simply does not read, and worth distinguishing.
+        rec["status"] = (DOC.TYPE_MISMATCH if "pdf" in ctype else _unsupported(ctype))
+        return rec
+    if len(raw) > DOC.DOC_MAX_BYTES:
+        rec["status"] = DOC.PDF_TOO_LARGE
+        return rec
+    parsed = DOC.parse(raw)
+    if "status" in parsed:
+        rec["status"] = parsed["status"]
+        return rec
+    sel = DOC.select_pages(parsed["pages"], terms or [])
+    if not sel["text"].strip():
+        rec["status"] = DOC.PDF_NO_TEXT_LAYER
+        return rec
+    rec.update(status="ok", route="document", text=sel["text"],
+               content_length=len(sel["text"]), sha256=sha256_text(sel["text"]),
+               document={
+                   "media_type": "application/pdf",
+                   "file_sha256": DOC.file_sha256(raw),
+                   "extractor": {"name": DOC.EXTRACTOR_NAME,
+                                 "version": DOC.extractor_version()},
+                   "selection": {"pages_available": parsed.get("pages_available",
+                                                               sel["pages_available"]),
+                                 "pages_selected": sel["pages_selected"],
+                                 "pages_omitted_for_budget":
+                                     sel["pages_omitted_for_budget"],
+                                 "truncated": sel["truncated"]},
+                   "locators": sel["locators"]})
+    return rec
+
+
 def fetch_source(url: str, *, timeout: int = FETCH_TIMEOUT,
-                 fallback_budget: "FallbackBudget | None" = None) -> dict:
+                 fallback_budget: "FallbackBudget | None" = None,
+                 terms=None) -> dict:
     """At most two attempts. Returns a record whose `status` decides whether it may
     contribute.
 
@@ -306,7 +373,7 @@ def fetch_source(url: str, *, timeout: int = FETCH_TIMEOUT,
     and only while the run's shared budget can pay for it. There is no third attempt
     and no loop: this function's whole contract is MAX_ATTEMPTS_PER_SOURCE.
     """
-    rec = _fetch_ordinary(url, timeout)
+    rec = _fetch_ordinary(url, timeout, terms)
     if rec["status"] not in FALLBACK_STATUSES:
         return rec
     if not IMP.available():
@@ -328,13 +395,17 @@ def fetch_source(url: str, *, timeout: int = FETCH_TIMEOUT,
     if got is None or got["status"] != 200:
         return rec                      # failure remains failure, with the first answer
     ctype = got["content_type"]
-    if "html" not in ctype and "text" not in ctype:
-        # A PDF reached through impersonation is still a PDF. Document ingestion is a
-        # separate piece of work; reporting it accurately is this function's whole job.
-        rec["status"] = "unsupported_content_type:%s" % (ctype.split(";")[0] or "?")
-        return rec
     alt = _blank(url)
-    alt["route"], alt["attempts"] = "impersonated", MAX_ATTEMPTS_PER_SOURCE
+    alt["attempts"] = MAX_ATTEMPTS_PER_SOURCE
+    if not _texty(ctype):
+        # Same acquisition response, routed by its bytes. NOT another fetch: this is
+        # the body the one permitted fallback already returned.
+        alt["route"] = "impersonated"
+        # The UNDECODED body. A PDF does not survive a round trip through str, and a
+        # hash of mojibake is not the file's hash.
+        alt = _as_document(alt, got.get("content") or b"", ctype, terms)
+        return alt if alt["status"] == "ok" else rec
+    alt["route"] = "impersonated"
     alt = _from_html(alt, got["text"])
     # If the impersonated page is no better, keep the ordinary answer: the honest
     # status for a source we still have not read is the one we already had.
@@ -517,7 +588,7 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
         # verifying against the longer one would ship a span nothing downstream can see
         # -- found by the contract check on the first live run, which is what it is for.
         kept, dropped = verified_excerpts(lab.get("excerpts"), text)
-        sources.append({
+        src = {
             "source_id": s["source_id"], "role": role, "url": s["url"],
             "canonical_url": s.get("canonical_url", ""), "publisher": s["publisher"],
             "title": s.get("title", ""), "accessed_at": s["accessed_at"],
@@ -527,7 +598,24 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
             "duplicate_cluster": cluster,
             "why_relevant": (lab.get("why_relevant") or "")[:300],
             "text": text, "excerpts": kept, "excerpts_dropped": dropped,
-        })
+        }
+        # Document provenance rides along ONLY on a source that is a document, so an
+        # HTML-only pack serialises exactly as it did before this existed.
+        if s.get("document"):
+            doc = dict(s["document"])
+            # The pack's own text budget can truncate any source AFTER extraction, and
+            # a locator pointing past the carried text would look like provenance while
+            # grounding nothing -- the same failure the excerpt verifier exists for. So
+            # locators are clipped to what the pack actually carries, and a clip is
+            # recorded as a truncation.
+            locs, clipped = DOC.clip_locators(doc.get("locators") or [], len(text))
+            doc["locators"] = locs
+            sel = dict(doc.get("selection") or {})
+            sel["pages_selected"] = [l["page_no"] for l in locs]
+            sel["truncated"] = bool(sel.get("truncated")) or clipped
+            doc["selection"] = sel
+            src["document"] = doc
+        sources.append(src)
 
     anchor_reg = registrable(anchor["url"])
     # CONTEXT is background and cannot, on its own, make an article possible. The live
@@ -668,10 +756,15 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
 
     fetched = []
     fallback_budget = FallbackBudget()
+    # Deterministic, model-free, and built from context this run already has: the
+    # subject it scoped and the queries it searched. Targeted research does not exist
+    # yet, and a model call here would be a second one nobody asked for.
+    doc_terms = DOC.selection_terms(scoped.get("subject", ""), queries,
+                                    scoped.get("named_entities") or [])
     for i, url in enumerate(candidates, 1):
         if len(fetched) >= MAX_FETCHED_SOURCES:
             break
-        rec = fetch_source(url, fallback_budget=fallback_budget)
+        rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms)
         if rec["status"] != "ok":
             failures.append({"url": url, "status": rec["status"]})
             continue

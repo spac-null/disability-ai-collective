@@ -9,6 +9,11 @@ python-dateutil==2.8.2
 curl_cffi==0.13.0
 trafilatura==2.2.0
 
+# Bounded text-layer PDF extraction for the Research Pack (2026-09-03).
+# Pure Python: no external binary, no OCR. Already present on the production host
+# at 6.7.4; declared here so it is not an undeclared runtime dependency.
+pypdf==6.7.4
+
 # Git automation
 gitpython==3.1.41
 

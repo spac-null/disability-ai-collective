@@ -49,8 +49,8 @@ def _article_html(marker="ordinary"):
 class _Resp:
     """Minimal urlopen response: context manager, headers, capped read."""
 
-    def __init__(self, body: str, ctype="text/html; charset=utf-8"):
-        self._body = body.encode()
+    def __init__(self, body, ctype="text/html; charset=utf-8"):
+        self._body = body if isinstance(body, bytes) else body.encode()
         self.headers = _Headers(ctype)
 
     def __enter__(self):
@@ -89,6 +89,8 @@ class Wire:
         if isinstance(spec, Exception):
             raise spec
         return _Resp(spec[0], spec[1])
+
+    # bytes bodies are supported so a non-texty response can be described honestly
 
     # the fallback leg, standing in for impersonated_fetch.get
     def get(self, url, *, timeout, cap):
@@ -189,26 +191,48 @@ def test_an_unusable_representation_is_refetched():
 
 
 # ── E ─────────────────────────────────────────────────────────────────────────
-def test_a_pdf_reached_by_fallback_is_still_unsupported():
-    """Trial 3 lost OpenAI's and METR's technical reports this way. Document ingestion
-    is separate work; this only has to report the content type truthfully."""
-    wire = Wire(ordinary=_http_error(403),
-                impersonated={"status": 200, "content_type": "application/pdf",
-                              "text": "%PDF-1.7 ..."})
-    rec = run_fetch(wire)
-    check("status is PDF_UNSUPPORTED",
-          rec["status"] == "unsupported_content_type:application/pdf", rec["status"])
-    check("no PDF text entered the record", rec["text"] == "")
-    check("nothing tried to parse it", rec["sha256"] == "")
+def test_a_pdf_is_never_a_reason_for_a_second_fetch():
+    """PR #54 gave the Research Pack a document path, so a PDF is no longer simply
+    unsupported. What #53 owns here is narrower and still holds: a PDF is not a
+    fallback TRIGGER, so it never costs an extra request, and under the documents
+    rollback the pre-#54 answer comes back exactly.
 
-    # and an ordinary PDF never triggers a refetch at all: it is a successful
-    # representation, so asking again cannot change the answer
-    wire2 = Wire(ordinary=("%PDF-1.7", "application/pdf"),
-                 impersonated=AssertionError("a PDF must not be refetched"))
-    rec2 = run_fetch(wire2)
-    check("an ordinary PDF is not refetched", wire2.impersonated_calls == [])
-    check("and reports PDF_UNSUPPORTED",
-          rec2["status"] == "unsupported_content_type:application/pdf", rec2["status"])
+    Depth of coverage for the document path itself is document_ingestion_test.
+    """
+    import os
+    from new_engine_v1 import documents as DOC
+
+    # an ordinary PDF response is a successful representation: asking again cannot
+    # change it, so no second attempt is ever spent on one
+    wire = Wire(ordinary=("%PDF-1.7", "application/pdf"),
+                impersonated=AssertionError("a PDF must not be refetched"))
+    rec = run_fetch(wire)
+    check("an ordinary PDF is not refetched", wire.impersonated_calls == [])
+    check("one attempt only", wire.attempts() == 1, wire.attempts())
+    check("a PDF content type is not in the trigger set",
+          not any("pdf" in s for s in RS.FALLBACK_STATUSES))
+
+    # with documents switched off, the pre-#54 behaviour is restored exactly
+    prev = os.environ.get(DOC.DOCUMENTS_ENV)
+    os.environ[DOC.DOCUMENTS_ENV] = "0"
+    try:
+        off = run_fetch(Wire(ordinary=("%PDF-1.7 ...", "application/pdf"),
+                             impersonated=AssertionError("no refetch")))
+        check("rollback restores unsupported_content_type",
+              off["status"] == "unsupported_content_type:application/pdf", off["status"])
+        check("and carries nothing", off["text"] == "" and "document" not in off)
+        fb = Wire(ordinary=_http_error(403),
+                  impersonated={"status": 200, "content_type": "application/pdf",
+                                "text": "%PDF-1.7 ...", "content": b"%PDF-1.7 ..."})
+        rec_fb = run_fetch(fb)
+        check("a fallback PDF under rollback stays the ordinary failure",
+              rec_fb["status"] == "http_403", rec_fb["status"])
+        check("and still cost only the two attempts", fb.attempts() == 2, fb.attempts())
+    finally:
+        if prev is None:
+            os.environ.pop(DOC.DOCUMENTS_ENV, None)
+        else:
+            os.environ[DOC.DOCUMENTS_ENV] = prev
 
 
 # ── F ─────────────────────────────────────────────────────────────────────────
@@ -258,7 +282,7 @@ def test_the_fallback_cannot_escape_the_run_budget():
     src = (HERE / "new_engine_v1" / "research.py").read_text()
     check("the run builds one shared budget", "fallback_budget = FallbackBudget()" in src)
     check("and passes it into every fetch",
-          "fetch_source(url, fallback_budget=fallback_budget)" in src)
+          "fetch_source(url, fallback_budget=fallback_budget" in src)
 
 
 # ── H ─────────────────────────────────────────────────────────────────────────
@@ -287,7 +311,8 @@ def test_no_behavioural_change_for_pages_that_already_worked():
     cases = [(_http_error(404), "http_404"), (_http_error(500), "http_500"),
              (_http_error(401), "http_401"), (_http_error(429), "http_429"),
              (TimeoutError("slow"), "TimeoutError"),
-             (("%PDF", "application/pdf"), "unsupported_content_type:application/pdf")]
+             # a non-texty body that is NOT a document keeps its old answer
+             ((b"\x89PNG\r\n", "image/png"), "unsupported_content_type:image/png")]
     for spec, expected in cases:
         wire = Wire(ordinary=spec,
                     impersonated=AssertionError("must not refetch %s" % expected))
@@ -383,7 +408,7 @@ def main() -> None:
                test_a_403_is_recovered_by_one_impersonated_attempt,
                test_a_403_whose_fallback_also_fails_stays_failed,
                test_an_unusable_representation_is_refetched,
-               test_a_pdf_reached_by_fallback_is_still_unsupported,
+               test_a_pdf_is_never_a_reason_for_a_second_fetch,
                test_two_network_attempts_is_the_hard_maximum,
                test_the_fallback_cannot_escape_the_run_budget,
                test_fallback_acquired_text_has_ordinary_provenance,
