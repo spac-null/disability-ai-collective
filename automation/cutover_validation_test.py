@@ -49,15 +49,33 @@ def _accept_run(**kw):
 # absence of contradictions -- it must also show that extraction ran and that real
 # claims were checked, or the bridge fails closed. See
 # current_engine_strict_fact_check_test.py for the failure-side cases.
+# A stub has to state its COVERAGE now, not only its verdicts: since 2026-09-03 the
+# bridge requires every extracted claim to have been checked, so "3 extracted" with no
+# per-claim record reads as three claims nobody looked at -- which is exactly the state
+# that used to publish. These say what they mean.
+def _checked(n, verdict="VERIFIED"):
+    return [{"claim_id": "C%02d" % (i + 1), "type": "STAT", "subject": "S",
+             "claim_text": "claim %d" % i, "verdict": verdict, "reason": "found",
+             "blocking": False} for i in range(n)]
+
+
 CLEAN_FACT_CHECK = lambda text: {"contradicted": [], "advisory": [],
                                  "unverifiable_count": 0, "soft_contradicted_count": 0,
                                  "extraction_status": "ok", "extraction_error": None,
-                                 "claims_extracted": 3, "fact_check_completed": True}
+                                 "claims_extracted": 3, "fact_check_completed": True,
+                                 "findings": _checked(3), "not_checked": []}
 DIRTY_FACT_CHECK = lambda text: {"contradicted": [{"claim": "a fabricated quote"}],
                                  "advisory": [], "unverifiable_count": 0,
                                  "soft_contradicted_count": 0,
                                  "extraction_status": "ok", "extraction_error": None,
-                                 "claims_extracted": 3, "fact_check_completed": True}
+                                 "claims_extracted": 3, "fact_check_completed": True,
+                                 "findings": _checked(2) + [
+                                     {"claim_id": "C03", "type": "QUOTE",
+                                      "subject": "Someone",
+                                      "claim_text": "a fabricated quote",
+                                      "verdict": "CONTRADICTED",
+                                      "reason": "no such quote", "blocking": True}],
+                                 "not_checked": []}
 
 
 # ── engine switch / rollback ───────────────────────────────────────────────────
