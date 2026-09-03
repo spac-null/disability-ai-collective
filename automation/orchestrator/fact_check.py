@@ -13,6 +13,7 @@ containment against git HEAD.
 """
 import json
 import re
+import time
 import urllib.request
 
 from .config import CLIPROXY_URL, CLIPROXY_KEY, _AGENT_SLUG
@@ -115,8 +116,45 @@ def parse_claims_payload(raw) -> dict:
     return data
 
 
+# ── the publication fact-check budget (2026-09-03) ────────────────────────────
+#
+# Until PR #56 the strict path truncated to four claims per category and let the
+# unchecked remainder pass. #56 stopped the pass; this sets a bound the checker can
+# actually meet, and makes exceeding it an explicit outcome rather than a silent one.
+#
+# 16, from measurement, not preference. Seven production runs with recorded extraction
+# counts came in at 0, 1, 5, 8, 13, 13 and 13 claims -- median 8, maximum 13, nothing
+# above it. A bound of 12 would have held three otherwise ordinary articles for being
+# one claim over; 16 covers every run observed with room above the maximum.
+#
+# Cost is one call per claim plus one for extraction. Measured across those runs, a
+# call takes 2.4-4.9 seconds wall clock, so 17 calls is roughly 65-85 seconds against
+# the 30-45 seconds nine calls take today. On a daily 09:00 cron with no competing
+# deadline that is affordable, and it needs no batching -- which would have changed
+# prompts, response shape, failure coupling and per-claim evidence identity all at
+# once, for an article that fits comfortably without it.
+FACT_CHECK_MAX_CLAIMS = 16
+# The tail, which the per-call timeout alone does not bound: seventeen calls each
+# allowed 30 seconds is eight and a half minutes, and before this there was no total
+# bound at all. 180s is a little over twice the slowest observed full pass, so a normal
+# run never meets it and a stalling provider cannot run the stage indefinitely.
+# Exhausting it is a TECHNICAL incomplete, never a partial pass.
+FACT_CHECK_TOTAL_SECONDS = 180
+# The per-call timeout this stage has always used. Still the ceiling for any one call;
+# the total deadline can only ever lower it.
+PER_CALL_TIMEOUT = 30
+# A call is not STARTED with less than this left. Two reasons, and the second is the
+# one that matters: a call given a fraction of a second will fail, and its failure is
+# reported as UNVERIFIABLE -- a VERDICT, which does not block, and which would let a
+# claim nobody could check contribute to a PASS. Deadline exhaustion has to stay a
+# failure to check. Observed calls take 2.4-4.9s, so 5 is the measured floor.
+FACT_CHECK_MIN_CALL_SECONDS = 5
+MAX_CLAIMS_EXCEEDED = "max_claims_exceeded"
+TOTAL_DEADLINE_EXHAUSTED = "total_deadline_exhausted"
+
+
 class FactCheckMixin:
-    def _extract_verifiable_claims_raw(self, content):
+    def _extract_verifiable_claims_raw(self, content, timeout=PER_CALL_TIMEOUT):
         """Strict extraction: RAISES on provider/parse failure instead of returning [].
 
         Body is the legacy extraction verbatim; the only difference is that the
@@ -157,7 +195,7 @@ class FactCheckMixin:
             url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
             system_prompt=SYSTEM, user_prompt=content,
             model="openrouter/claude-haiku-4.5",
-            max_tokens=900, timeout=30, no_think=True,
+            max_tokens=900, timeout=timeout, no_think=True,
             # Extraction, not composition. Left unpinned this ran at the provider
             # default (1.0), and the same article returned different claim counts
             # from one call to the next -- which put a publication gate downstream of
@@ -185,7 +223,7 @@ class FactCheckMixin:
             self.logger.warning("Verifiable-claim extraction failed: %s", e)
             return []
 
-    def _web_verify_quote(self, person, quote):
+    def _web_verify_quote(self, person, quote, timeout=PER_CALL_TIMEOUT):
         """Verify one quote against live web sources via Perplexity Sonar.
 
         Direct OpenRouter call, bypassing CLIProxyAPI — confirmed empirically that
@@ -246,7 +284,7 @@ class FactCheckMixin:
                 system_prompt="You are a fact-checker with live web search access.",
                 user_prompt=prompt,
                 model="perplexity/sonar",
-                max_tokens=250, timeout=30,
+                max_tokens=250, timeout=timeout,
             )
             m = re.search(r"VERDICT:\s*(VERIFIED|UNVERIFIABLE|CONTRADICTED)", raw or "", re.IGNORECASE)
             verdict = m.group(1).upper() if m else "UNVERIFIABLE"
@@ -257,7 +295,8 @@ class FactCheckMixin:
             self.logger.warning("Web verify failed for %s: %s", person, e)
             return "UNVERIFIABLE", f"search failed: {e}"
 
-    def _web_verify_claim(self, claim_type, subject, claim_text):
+    def _web_verify_claim(self, claim_type, subject, claim_text,
+                          timeout=PER_CALL_TIMEOUT):
         """Verify a STUDY, STAT, or EVENT claim against live web sources via
         Perplexity Sonar. Same direct-OpenRouter mechanism as _web_verify_quote,
         but a distinct, more lenient standard per type — quotes are a verbatim
@@ -329,7 +368,7 @@ class FactCheckMixin:
                 system_prompt="You are a fact-checker with live web search access.",
                 user_prompt=prompt,
                 model="perplexity/sonar",
-                max_tokens=250, timeout=30,
+                max_tokens=250, timeout=timeout,
             )
             m = re.search(r"VERDICT:\s*(VERIFIED|UNVERIFIABLE|CONTRADICTED)", raw or "", re.IGNORECASE)
             verdict = m.group(1).upper() if m else "UNVERIFIABLE"
@@ -340,7 +379,9 @@ class FactCheckMixin:
             self.logger.warning("Web verify failed for %s claim (%s): %s", claim_type, subject, e)
             return "UNVERIFIABLE", f"search failed: {e}"
 
-    def _run_web_fact_check(self, content, claim_cap=4, strict=False):
+    def _run_web_fact_check(self, content, claim_cap=4, strict=False,
+                            max_claims=None, total_seconds=None,
+                            min_call_seconds=None):
         """Extract verifiable claims from content and check each against live web
         search. Used both for the initial pass and to re-verify after a repair
         attempt, so the two runs stay identical in method.
@@ -394,13 +435,31 @@ class FactCheckMixin:
             # extracted and 8 are checked.
             "not_checked": [],
         }
+        # ── the total wall clock, taken at ENTRY ─────────────────────────────
+        # Before extraction, not after: extraction is a provider call like any other,
+        # and a deadline that starts once it returns is a deadline the stage can
+        # already have overrun by 30 seconds before it begins.
+        deadline = None
+        min_call = (FACT_CHECK_MIN_CALL_SECONDS if min_call_seconds is None
+                    else min_call_seconds)
         if strict:
+            deadline = time.monotonic() + (FACT_CHECK_TOTAL_SECONDS
+                                           if total_seconds is None else total_seconds)
             result.update({"extraction_status": None, "extraction_error": None,
                            "claims_extracted": 0, "fact_check_completed": False})
+
+        def call_budget():
+            """What any one call may be given: its ordinary ceiling, or whatever is
+            left of the total, whichever is smaller. The total can only lower it."""
+            if deadline is None:
+                return PER_CALL_TIMEOUT
+            return min(PER_CALL_TIMEOUT, deadline - time.monotonic())
+
         try:
             if strict:
                 try:
-                    claims = self._extract_verifiable_claims_raw(content)
+                    claims = self._extract_verifiable_claims_raw(
+                        content, timeout=max(0.0, call_budget()))
                 except Exception as e:
                     # Explicit failure state. Never [] -- see EXTRACTION_ERROR above.
                     self.logger.warning(
@@ -421,9 +480,49 @@ class FactCheckMixin:
                     result["fact_check_completed"] = True
                 return result
             result["lines"] = []
-            quote_claims = [c for c in claims if c["type"] == "QUOTE"][:claim_cap]
-            other_claims = [c for c in claims if c["type"] in ("STUDY", "STAT", "EVENT")][:claim_cap]
+            # ── which claims get checked ─────────────────────────────────────
+            # STRICT (the publication contract) checks EVERY extracted claim, or
+            # refuses the article. There is no per-category truncation here any more:
+            # under the old scheme a fifth quote went unchecked while a fourth
+            # statistic was checked, purely because of the category it landed in and
+            # the order it was emitted in, and #56 turned that into a hold rather than
+            # a pass. All supported types now compete against one total bound.
+            #
+            # LEGACY (strict=False) is untouched, per-category caps and all. It is the
+            # advisory reviewer path in orchestrator/review.py, which is not a
+            # publication gate and whose historical shape this module promises.
+            if strict:
+                max_claims = (FACT_CHECK_MAX_CLAIMS if max_claims is None
+                              else max_claims)
+                result["max_claims"] = max_claims
+                if len(claims) > max_claims:
+                    # Refused BEFORE any verification call: an article this far over
+                    # the budget gets no partial check, because a partial check is
+                    # exactly what would look like coverage later. Extraction has
+                    # already happened; nothing further is spent.
+                    result["max_claims_exceeded"] = True
+                    result["not_checked"] = [
+                        {"type": c.get("type", ""), "subject": c.get("subject") or "",
+                         "claim_text": c.get("claim", ""),
+                         "skipped_reason": MAX_CLAIMS_EXCEEDED}
+                        for c in claims]
+                    result["lines"] = [
+                        "MAX_CLAIMS_EXCEEDED: %d verifiable claims extracted, more than "
+                        "the %d this stage will check; no partial check performed"
+                        % (len(claims), max_claims)]
+                    # Execution did not fail -- it declined. The bridge decides.
+                    result["fact_check_completed"] = True
+                    return result
+                quote_claims = [c for c in claims if c["type"] == "QUOTE"]
+                other_claims = [c for c in claims
+                                if c["type"] in ("STUDY", "STAT", "EVENT")]
+            else:
+                quote_claims = [c for c in claims if c["type"] == "QUOTE"][:claim_cap]
+                other_claims = [c for c in claims
+                                if c["type"] in ("STUDY", "STAT", "EVENT")][:claim_cap]
             checked_n = 0
+            out_of_time = False
+            checked_ids = set()
 
             def _record(c, verdict, reason, blocking):
                 """One structured row per claim actually checked. Identity is the
@@ -431,6 +530,7 @@ class FactCheckMixin:
                 two rows and the one that blocked can be named."""
                 nonlocal checked_n
                 checked_n += 1
+                checked_ids.add(id(c))
                 result["findings"].append({
                     "claim_id": "C%02d" % checked_n,
                     "type": c.get("type", ""),
@@ -441,8 +541,15 @@ class FactCheckMixin:
                     "blocking": bool(blocking),
                 })
 
-            for c in quote_claims:  # default cap covers rule 33's "2-3 named people"
-                verdict, reason = self._web_verify_quote(c["subject"], c["claim"])
+            for c in quote_claims:
+                budget = call_budget()
+                if deadline is not None and budget < min_call:
+                    # Not started. An unfinishable call would come back UNVERIFIABLE,
+                    # and that is a verdict, not a skip.
+                    out_of_time = True
+                    break
+                verdict, reason = self._web_verify_quote(c["subject"], c["claim"],
+                                                         timeout=budget)
                 result["lines"].append(f"[{verdict}] QUOTE — {c['subject']}: \"{c['claim'][:80]}\" — {reason}")
                 if verdict == "CONTRADICTED":
                     result["contradicted"].append(c)
@@ -452,8 +559,13 @@ class FactCheckMixin:
                     _record(c, verdict, reason, False)
                 else:
                     _record(c, verdict, reason, False)
-            for c in other_claims:  # default cap — cost/latency
-                verdict, reason = self._web_verify_claim(c["type"], c.get("subject", ""), c["claim"])
+            for c in other_claims:
+                budget = call_budget()
+                if deadline is not None and budget < min_call:
+                    out_of_time = True
+                    break
+                verdict, reason = self._web_verify_claim(
+                    c["type"], c.get("subject", ""), c["claim"], timeout=budget)
                 result["lines"].append(f"[{verdict}] {c['type']} — {c.get('subject') or '(unnamed)'}: \"{c['claim'][:80]}\" — {reason}")
                 if verdict == "CONTRADICTED":
                     if c["type"] == "STUDY":
@@ -468,19 +580,24 @@ class FactCheckMixin:
                     _record(c, verdict, reason, False)
                 else:
                     _record(c, verdict, reason, False)
-            # What the cap did not reach. Recorded because "13 extracted, 8 checked" is
-            # invisible otherwise, and the difference is not a pass.
-            _checked = {id(c) for c in quote_claims} | {id(c) for c in other_claims}
+            # Whatever was not reached, and why. Recorded because "13 extracted, 8
+            # checked" is invisible otherwise, and the difference is not a pass.
             for c in claims:
-                if id(c) not in _checked:
-                    result["not_checked"].append({
-                        "type": c.get("type", ""),
-                        "subject": c.get("subject") or "",
-                        "claim_text": c.get("claim", ""),
-                        "skipped_reason": "claim_cap=%d per category" % claim_cap,
-                    })
+                if id(c) in checked_ids:
+                    continue
+                result["not_checked"].append({
+                    "type": c.get("type", ""),
+                    "subject": c.get("subject") or "",
+                    "claim_text": c.get("claim", ""),
+                    "skipped_reason": (TOTAL_DEADLINE_EXHAUSTED if out_of_time
+                                       else "claim_cap=%d per category" % claim_cap),
+                })
             if strict:
-                result["fact_check_completed"] = True
+                # A run that ran out of time did NOT complete. It falls to the
+                # bridge's existing technical-incomplete branch, never to a partial
+                # pass -- the whole point of a deadline is that exhausting it is a
+                # failure to check, not a decision about the claims.
+                result["fact_check_completed"] = not out_of_time
         except Exception as e:
             self.logger.warning("Web fact-check failed: %s", e)
             result["lines"] = [f"CHECK_FAILED: {e}"]

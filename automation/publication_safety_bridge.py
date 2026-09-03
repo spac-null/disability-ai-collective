@@ -382,6 +382,9 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
                                      "claims_not_checked": cov["claims_not_checked"],
                                      "counts_consistent": cov["counts_consistent"],
                                      "skipped_reasons": cov["skipped_reasons"],
+                                     "max_claims": fc.get("max_claims"),
+                                     "max_claims_exceeded":
+                                         bool(fc.get("max_claims_exceeded")),
                                      "extraction_error": fc.get("extraction_error"),
                                      "claims_checked": cov["claims_checked"],
                                      "contradicted_count": len(contradicted),
@@ -410,6 +413,16 @@ def evaluate(out: dict, *, fact_check_fn=None) -> BridgeResult:
                 r.add("world_relative_fact_check", False,
                       "FACT_CHECK_INCOMPLETE: extraction ok (%d claims) but verification "
                       "did not run to completion; fail-closed" % claims_n)
+            elif fc.get("max_claims_exceeded"):
+                # An article with more verifiable claims than this stage will check.
+                # Distinct from ordinary incomplete coverage: nothing was skipped by
+                # accident or by category, the whole set was declined up front, and no
+                # partial check was performed that could later be mistaken for one.
+                r.add("world_relative_fact_check", False,
+                      "FACT_CHECK_TOO_MANY_CLAIMS: %d verifiable claims extracted, more "
+                      "than the %s this stage will check; no partial check was "
+                      "performed and no coverage is claimed; fail-closed"
+                      % (claims_n, fc.get("max_claims")))
             elif not cov["coverage_complete"]:
                 # Execution finished; coverage did not. Distinct from
                 # FACT_CHECK_INCOMPLETE, which is a technical failure of the run --

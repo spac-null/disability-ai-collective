@@ -46,10 +46,10 @@ class PerClaimChecker(StubFactChecker):
         super().__init__(raw=json.dumps({"claims": claims}))
         self._per_claim = per_claim
 
-    def _web_verify_quote(self, person, quote):
+    def _web_verify_quote(self, person, quote, timeout=None):
         return self._per_claim.get(quote, ("VERIFIED", "found in two sources"))
 
-    def _web_verify_claim(self, ctype, subject, claim):
+    def _web_verify_claim(self, ctype, subject, claim, timeout=None):
         return self._per_claim.get(claim, ("VERIFIED", "found in two sources"))
 
 
@@ -171,7 +171,7 @@ def test_D_identity_survives_duplicate_claim_text():
               {"type": "STAT", "subject": "Third", "claim": "a different one"}]
 
     class Positional(PerClaimChecker):
-        def _web_verify_claim(self, ctype, subject, claim):
+        def _web_verify_claim(self, ctype, subject, claim, timeout=None):
             return (("CONTRADICTED", "the second one is wrong")
                     if subject == "Second" else ("VERIFIED", "fine"))
 
