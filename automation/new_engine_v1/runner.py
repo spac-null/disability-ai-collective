@@ -35,6 +35,7 @@ import pathlib
 from . import contracts as C
 from . import invariants as INV
 from . import grounding_v2 as GV2
+from . import repair_identity as RI
 from . import research as RS
 from . import stages as S
 from .decision import decide
@@ -356,16 +357,22 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
             return _stage_failure(C.GROUNDING_FINDINGS, "provider_error", e, at, A,
                                   run_root, name, mode, prov)
         prov["grounding_recheck"] = recheck.get("_provider", {})
-        before = {f_.get("quote") for f_ in gf["findings"]
-                  if f_.get("classification") == "TRUE_UNSUPPORTED"}
-        after = [f_ for f_ in recheck["findings"]
-                 if f_.get("classification") == "TRUE_UNSUPPORTED"]
-        # residual: an unsupported claim that survived. introduced: one the repair
-        # itself created. Measured, not assumed.
-        rp["verification"]["residual"] = len([f_ for f_ in after
-                                              if f_.get("quote") in before])
-        rp["verification"]["introduced"] = len([f_ for f_ in after
-                                                if f_.get("quote") not in before])
+        # Attribution comes from the ARTICLE, not from pass 1's classifications.
+        #
+        # This used to be a set difference over pass-1 TRUE_UNSUPPORTED quote strings,
+        # which answered a question nobody asked: "was this exact string already called
+        # unsupported?" A sentence the repair never touched, reclassified on the second
+        # pass, came out labelled as a claim the repair created -- measured on
+        # production-20260903T135702Z-3ea6156a, where one clause was patched and two
+        # untouched sentences were blamed on it.
+        #
+        # The repair is a deterministic clause substitution, so its changed regions are
+        # computable and each pass-2 finding either overlaps text the repair wrote or
+        # does not. All four resulting states still HOLD; only the sentence the run
+        # writes about itself changes.
+        acct = RI.account(wo["article_text"], rp["article_text"], rp.get("patches"),
+                          gf["findings"], recheck["findings"])
+        rp["verification"].update(acct)
         rp["recheck_findings"] = recheck["findings"]
         A[C.GROUNDING_REPAIR] = _emit(C.GROUNDING_REPAIR, at, rp,
                                       {"findings": A[C.GROUNDING_FINDINGS],

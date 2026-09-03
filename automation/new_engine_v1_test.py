@@ -309,9 +309,14 @@ def test_patch_only_repair_and_recheck():
         check("untouched prose is byte-identical",
               "A channel almost always silent teaches that silence is information."
               in rp["article_text"])
-        check("re-check ran against the PATCHED text (residual measured, not assumed)",
-              rp["verification"]["residual"] == 0 and "recheck_findings" in rp)
-        check("no introduced findings", rp["verification"]["introduced"] == 0)
+        check("re-check ran against the PATCHED text (measured, not assumed)",
+              rp["verification"]["repair_affected_unsupported"] == 0
+              and "recheck_findings" in rp)
+        check("nothing the repair touched came back unsupported",
+              rp["verification"]["repair_affected_unsupported"] == 0)
+        check("and nothing unchanged was reclassified",
+              rp["verification"]["reclassified_unsupported"] == 0
+              and rp["verification"]["unresolved_repair_identity"] == 0)
         check("decision is ACCEPT after a verified repair", out["decision"] == ACCEPT,
               out["reasons"])
 
