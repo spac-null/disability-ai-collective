@@ -134,9 +134,154 @@ adherence, on provenance frames and on scaffold leakage.
 9. *Does the ending land?* Yes — six words, returning to the salt.
 10. *Would I keep reading in a book?* Yes.
 
-## Verdict
+## CONTINUATION (phases 2-10)
+
+See the appended section below. The n=1 limitation recorded above was resolved.
+
+## Verdict (superseded -- see continuation)
 
 The root cause is identified and measured, one article is materially better, and the
 worth gate refuses three cases it would have been easy to force. But prose improvement
 is **n = 1**, the Writer demonstrated it will fabricate when the packet is thin, and
 nothing is integrated into production. That is not a breakthrough yet.
+
+
+---
+
+# CONTINUATION: phases 2-10
+
+## Phase 2 -- a second legitimate prose case
+
+- **map-that-stops CANNOT be regenerated.** Published 2026-03-16; the earliest
+  new-engine evidence root is 2026-08-26. It carries **0** engine metadata fields and no
+  `source_url`, and appears in `/srv/data/cripminds-held` only inside audit documents.
+  There is no research pack, no anchor, no discovery. Phase 9 outcome **B**. It was not
+  reconstructed.
+- **Second control found and used: `roman-launches-with-its-data-pipeline-built-in`.**
+  Published (so its lens was human-accepted at the time), new-engine era, 14 frozen
+  artefacts, and a different subject from jia. Its baseline exhibits the same defect:
+  6 paragraphs at 104 words, median sentence 19, 12 numbers, and a full provenance-audit
+  paragraph ("Here the source's evidence ends, and the limit should be marked once").
+
+## Phase 3 -- independent blind evaluation: 4 passes, 4/4 for the new architecture
+
+Each evaluator ran in a separate context, received only article text, and was told
+nothing about architectures, labels or my prior judgements. Orders counterbalanced.
+
+| pair | evaluator | preferred | margin |
+|---|---|---|---|
+| jia baseline vs new | reader | **NEW** | decisive |
+| jia baseline vs new | editor | **NEW** | decisive |
+| roman baseline vs new | reader | **NEW** | decisive |
+| roman baseline vs new | editor | **NEW** | decisive |
+
+Mean of the 11 rubric scores: jia baseline **2.0** vs new **4.5**; roman baseline
+**1.9** vs new **3.9**.
+
+They independently identified the exact leak sentences the diagnosis predicted, unprompted
+-- "Here the source's evidence ends, and the limit should be marked once" was called
+"an instruction to itself, verbatim", and "This is a reading, and it should be marked as
+one" was called "the sound of a piece arguing with its own fact-checker in public".
+
+### Their convergent criticism of the NEW output, which drove loop 3
+
+All four, on two unrelated subjects, said the same thing about the crip turn:
+
+- "written in the passive-universal -- no body, no name, no incident. It is the thesis
+  paragraph and it is the only paragraph with nobody in it."
+- "a single late, abstract aside ... should be seeded earlier and in something as
+  physical as the salt."
+- "nothing in the piece is written from disability experience. The teacher is a
+  placeholder where a person should be." (crip fit **2/5**)
+- "because the lens never surfaces, an editor could reasonably file this as a smart
+  access-policy column. Fit is earned, not asserted." (crip fit **3/5**)
+
+One reader also caught a factual liability I had not: **"The teacher is invented -- an
+unreported, unnamed hypothetical carrying the entire payload of the piece."**
+
+## Phase 4/5 -- factual containment without restoring the research memo
+
+Three screens, at three stages, none of which puts source bodies back in the packet:
+
+| screen | stage | catches |
+|---|---|---|
+| `validate_packet` | pre-writer | the auditing frame, scaffold names, description-shaped prohibitions |
+| `cut_adherence` | post-writer | declared CUT material reappearing, and its own blind spots |
+| `factual_surface_audit` | post-writer | numbers, names, sensory and scene vocabulary the packet never granted |
+| `architect_prose_audit` | pre-writer | the same three channels in the architect's OWN prose |
+
+## Phase 5 -- three of my own checks were broken, and only testing found it
+
+1. `cut_adherence` returned **OK on an article containing a cut term**, because a
+   sentinel-length threshold silently dropped the 3-character term "ear". It now reports
+   skipped terms and unwatched cut items and cannot claim success while either exists.
+2. The entity channel flagged `Curated` and `Jakarta` as unapproved when both were in
+   the packet -- possessive and hyphen token mismatch (`Curated's`, `Jakarta-based`).
+3. `the material` and the scene words `room` / `standing` / `somewhere` fired on ordinary
+   prose ("a hundred times the material", "it has to go somewhere", a building
+   "standing"). Narrowed, with the over-breadth kept as regression tests.
+
+## The most important correction: "pink" was NOT a Writer fabrication
+
+Checkpoint 1 reported it as one. It was not. **"pink" had been written into the
+architecture's own `turn` field by hand**, so the packet had already legitimised it, and
+`factual_surface_audit` -- which compares prose to the packet -- structurally could not
+see it. An audit whose ground truth is itself generated cannot detect a fabrication
+introduced upstream of it. Hence `architect_prose_audit`, which applies the same three
+hard channels one stage earlier and does catch it. Of checkpoint 1's four reported
+defects, **three were the Writer's ("ears", the relocation contradiction, the invented
+floor) and one was mine.**
+
+## Phase 6 -- grounding, deterministic half only
+
+The V1 Grounder and V2 classifier both require model calls through the production
+provider route, which was forbidden. What ran, on trident against the full frozen packs:
+
+| article | sentences | backbone errors | sentences with retrievable evidence | top_score med/min/max |
+|---|---|---|---|---|
+| jia loop3 | 35 | **0** | **35 / 35** | 4.5 / 0.0 / 35.2 |
+| roman loop3 | 35 | **0** | **35 / 35** | 6.6 / 0.0 / 38.2 |
+
+Segmentation and offset/hash backbone verify cleanly, and every sentence retrieves
+evidence from its own pack. **Classification was not run** -- so no SUPPORTED /
+UNSUPPORTED / LEGITIMATE_INTERPRETATION counts exist, and none are claimed.
+
+## Phase 7 -- fact-check compatibility, proxy only
+
+Claim extraction is model-gated (`model="openrouter/claude-haiku-4.5"`), so it was not
+run. Deterministic proxy on what an extractor keys on:
+
+| case | version | numbers | named entities | quoted spans | recorded claims |
+|---|---|---|---|---|---|
+| jia | baseline | 3 | 42 | 1 | 2 |
+| jia | **new** | **2** | **12** | 0 | not run |
+| roman | baseline | 10 | 32 | 1 | 13 |
+| roman | **new** | **7** | **24** | 1 | not run |
+
+Verification load falls on every channel in both cases. `FACT_CHECK_MAX_CLAIMS` is
+unchanged at 16; roman's baseline was already at 13, and the new version reduces every
+input to extraction, so a `TOO_MANY_CLAIMS` hold is less likely, not more.
+
+## Phase 8 -- the final improvement loop (3 of 3)
+
+One generalized change, motivated by two cases and four evaluators, not by jia:
+**a lens claim must be embodied in a beat the reader has already been shown.**
+
+The architect now declares `crip_turn_rereads: <beat_id>`, and the turn must name
+something from that beat's own concrete carrier. This was made a *declared* relation
+only after a first version that *inferred* it from token overlap passed both
+architectures the readers had criticised -- matching on the word "named". A proxy that
+lenient is not a check.
+
+Scene vocabulary was promoted to a hard signal in the same loop, because of the invented
+teacher. The screen had already surfaced `laptop`, `room`, `somewhere`, `waiting` as
+candidates and **nobody looked**. A signal nobody inspects is not a control.
+
+## Phase 10 -- integration: NOT done, and why
+
+`story.py` makes **zero** provider calls; it validates and renders. But the three stages
+it defines contracts for -- finder, worth gate, architect -- each require a model call to
+*produce* their output, and that route is OpenRouter, which was forbidden tonight.
+Wiring them into `runner.py` would ship a production path I could not execute even once.
+That is a technical blocker, not a judgement, so no `#63` was opened and nothing imports
+`story.py`.

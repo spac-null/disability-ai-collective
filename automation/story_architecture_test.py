@@ -321,6 +321,130 @@ def test_the_frozen_jia_experiment_holds_its_contract():
         check("and uses no cut evidence", r["clean_prose"], r["violations"])
 
 
+
+# ── loop 3: the lens must be embodied, and the audits must reach the architect ──
+def test_the_crip_turn_must_declare_what_it_rereads():
+    """Four blind readers, two unrelated subjects, one shared criticism: the turn was
+    'a late abstract aside', 'the only paragraph with nobody in it'. A first version of
+    this check inferred embodiment from token overlap and passed both architectures they
+    had criticised, matching on the word "named". So the relation is declared now."""
+    a = arch()
+    check("a turn with no declared antecedent is refused",
+          any("crip_turn_rereads missing" in e
+              for e in ST.validate_lens_embodiment(a, LENS)))
+    a2 = arch(crip_turn_rereads="B9")
+    check("a turn pointing at a non-existent beat is refused",
+          any("not a beat" in e for e in ST.validate_lens_embodiment(a2, LENS)))
+    a3 = arch(crip_turn_rereads="B2")
+    check("a turn re-reading the FINAL beat is refused",
+          any("reader has had time" in e for e in ST.validate_lens_embodiment(a3, LENS)))
+    a4 = arch(crip_turn_rereads="B1",
+              crip_turn="Anyone who is measured by the wrong instrument knows this.")
+    errs = ST.validate_lens_embodiment(a4, LENS)
+    check("a turn naming nothing from the beat it claims is refused",
+          any("does not name anything from B1" in e for e in errs), errs)
+    a5 = arch(crip_turn_rereads="B1",
+              crip_turn="Read the salt walls again and they mean something else.")
+    check("a turn that names the beat's own carrier is accepted",
+          ST.validate_lens_embodiment(a5, LENS) == [],
+          ST.validate_lens_embodiment(a5, LENS))
+    check("a refused lens is exempt (there is no turn to embody)",
+          ST.validate_lens_embodiment(arch(), {"verdict": ST.WRONG_PUBLICATION}) == [])
+
+
+def test_the_factual_surface_audit_catches_additions_the_packet_never_granted():
+    pk = ST.build_packet(arch(), LENS, FACTS)
+    clean = "A room of salt brick, set partway into the ground, held fragrances."
+    r = ST.factual_surface_audit(clean, pk)
+    check("prose within the packet is hard-clean", r["hard_ok"], r)
+    for label, text, channel in (
+            ("an invented number", "The room was 12 metres across.", "unapproved_numbers"),
+            ("an invented name", "It was funded by the Tuscany Boutique.", "unapproved_entities"),
+            ("an invented colour", "The walls were pink and warm.", "unapproved_sensory"),
+            ("an invented scene", "A teacher sat at a desk with a laptop.", "unapproved_scene")):
+        r = ST.factual_surface_audit(text, pk)
+        check("%s is caught in %s" % (label, channel), bool(r[channel]) and not r["hard_ok"],
+              r[channel])
+    # the false positives found while running the campaign, kept as regressions
+    pos = ST.build_packet(arch(story_spine="Jia Curated's fifth edition, a Jakarta-based studio."),
+                          LENS, FACTS)
+    r = ST.factual_surface_audit("The show was Jia Curated, run by a Jakarta studio.", pos)
+    check("a possessive in the packet still approves the bare name (Curated's -> Curated)",
+          "Curated" not in r["unapproved_entities"], r["unapproved_entities"])
+    check("a hyphenated compound still approves its parts (Jakarta-based -> Jakarta)",
+          "Jakarta" not in r["unapproved_entities"], r["unapproved_entities"])
+    check("an ordinary word is not treated as a scene prop",
+          ST.factual_surface_audit("It has to go somewhere, and a room is a room.",
+                                   pk)["unapproved_scene"] == [],
+          ST.factual_surface_audit("It has to go somewhere.", pk)["unapproved_scene"])
+
+
+def test_the_architect_stage_is_audited_too():
+    """The campaign reported "pink" as a Writer fabrication. It was not: it had been
+    written into the architecture's own `turn` field, so the packet had already approved
+    it. An audit whose ground truth is generated cannot see upstream of itself."""
+    bad = arch(turn="A picture holds a pink wall and a low ceiling.")
+    r = ST.architect_prose_audit(bad, FACTS)
+    check("an attribute invented in the architect's prose is caught",
+          "pink" in r["unapproved_sensory"] and not r["hard_ok"], r)
+    ok = arch(turn="A picture holds the walls and the low ceiling.")
+    check("the same field without the invented attribute passes",
+          ST.architect_prose_audit(ok, FACTS)["hard_ok"],
+          ST.architect_prose_audit(ok, FACTS))
+    check("a packet built from the bad architecture looks CLEAN to the later audit",
+          ST.factual_surface_audit("A pink wall.",
+                                   ST.build_packet(bad, LENS, FACTS))["hard_ok"],
+          "this is the laundering the architect audit exists to stop")
+    num = arch(turn="The room was 12 metres across and cost 40,000 dollars.")
+    rn = ST.architect_prose_audit(num, FACTS)
+    check("an invented NUMBER in the architect's prose is caught",
+          rn["unapproved_numbers"] and not rn["hard_ok"], rn["unapproved_numbers"])
+    ent = arch(turn="It was funded by the Tuscany Stone Boutique.")
+    re_ = ST.architect_prose_audit(ent, FACTS)
+    check("an invented NAME in the architect's prose is caught",
+          re_["unapproved_entities"] and not re_["hard_ok"], re_["unapproved_entities"])
+    scene = arch(beats=[dict(arch()["beats"][0],
+                            concrete_carrier="a teacher at a desk with a laptop"),
+                        arch()["beats"][1]])
+    check("an invented scene in a beat carrier is caught",
+          bool(ST.architect_prose_audit(scene, FACTS)["unapproved_scene"]),
+          ST.architect_prose_audit(scene, FACTS)["unapproved_scene"])
+
+
+def test_the_frozen_loop3_articles_are_clean_on_every_screen():
+    import json as _json
+    for case in ("jia", "roman"):
+        af = EXP / ("%s.architecture.json" % case)
+        art = EXP / ("%s.NEW.loop3.md" % case)
+        if not (af.exists() and art.exists()):
+            check("frozen loop3 %s present" % case, False, "missing")
+            continue
+        d = _json.loads(af.read_text())
+        a, lens, facts = d["architecture"], d["lens"], d["facts"]
+        body = art.read_text()
+        pk = ST.build_packet(a, lens, facts, d.get("quotes") or {})
+        check("%-6s architecture validates" % case,
+              ST.validate_architecture(a, set(facts)) == [],
+              ST.validate_architecture(a, set(facts)))
+        check("%-6s lens is embodied" % case,
+              ST.validate_lens_embodiment(a, lens) == [],
+              ST.validate_lens_embodiment(a, lens))
+        check("%-6s architect prose is clean" % case,
+              ST.architect_prose_audit(a, facts, d.get("quotes") or {})["hard_ok"],
+              ST.architect_prose_audit(a, facts, d.get("quotes") or {}))
+        check("%-6s packet validates" % case, ST.validate_packet(pk) == [],
+              ST.validate_packet(pk))
+        check("%-6s prose carries no provenance frame" % case,
+              ST.prose_leaks(body)["ok"], ST.prose_leaks(body)["frames"])
+        check("%-6s prose factual surface is clean" % case,
+              ST.factual_surface_audit(body, pk)["hard_ok"],
+              ST.factual_surface_audit(body, pk))
+        ct = EXP / ("%s.cut_terms.json" % case)
+        if ct.exists():
+            r = ST.cut_adherence(body, a, _json.loads(ct.read_text()))
+            check("%-6s uses no cut evidence" % case, r["clean_prose"], r["violations"])
+
+
 def main() -> None:
     for fn in (test_a_packet_carrying_the_auditing_frame_is_refused,
                test_a_prohibition_phrased_as_a_description_is_refused,
@@ -333,7 +457,11 @@ def main() -> None:
                test_narrative_yield_penalises_an_argument_with_no_carrier,
                test_the_cut_check_reports_its_own_blind_spots,
                test_prose_and_scaffold_screens_work_on_finished_articles,
-               test_the_frozen_jia_experiment_holds_its_contract):
+               test_the_frozen_jia_experiment_holds_its_contract,
+               test_the_crip_turn_must_declare_what_it_rereads,
+               test_the_factual_surface_audit_catches_additions_the_packet_never_granted,
+               test_the_architect_stage_is_audited_too,
+               test_the_frozen_loop3_articles_are_clean_on_every_screen):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)

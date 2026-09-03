@@ -1,0 +1,5 @@
+counterbalanced, disclosed after evaluation
+case1: A=baseline(jia)   B=new(jia)
+case2: A=new(roman)      B=baseline(roman)
+case3: A=jia loop3 (post-improvement)   B=jia loop2 (pre-improvement)
+case4: A=roman loop1 (pre-improvement)  B=roman loop3 (post-improvement)

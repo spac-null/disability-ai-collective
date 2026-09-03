@@ -1,0 +1,156 @@
+{
+  "case": "roman-telescope-2026",
+  "facts": {
+    "F01": "The Nancy Grace Roman Space Telescope lifted off on 30 August at 7:26 a.m. Eastern time, on a Falcon Heavy from Kennedy Space Center.",
+    "F02": "It is an 18,000-pound observatory, roughly 42 feet by 14 feet - about the size of a tour bus.",
+    "F03": "It is bound for the second Lagrange point, a million miles from Earth, a trip of a little more than three months.",
+    "F06": "Its Wide Field Instrument is a 300-megapixel infrared camera with the sharpness of Hubble but a field of view at least 100 times larger.",
+    "F07": "It can survey the sky about 1,000 times faster than Hubble.",
+    "F10": "It is built to send about one terabyte of data to the ground every day.",
+    "F11": "A NASA scientist compared that daily volume to streaming a million songs from a million miles away.",
+    "F12": "NASA states the observations will be made public immediately, allowing researchers, teachers and science enthusiasts alike to have access.",
+    "F13": "It was built to sit alongside the Vera C. Rubin Observatory, which began its own survey from Chile in June; Rubin sees in bluer visible light and Roman sees sharper and in infrared."
+  },
+  "quotes": {
+    "Q01": "will be made public immediately, allowing researchers, teachers and science enthusiasts alike to have access"
+  },
+  "lens": {
+    "verdict": "STRONG_INTERPRETIVE_LENS",
+    "lens_claim": "Access built into a system at the design stage behaves differently from access added to a finished one: the first shapes what the thing is for, while the second can only be an intention laid over choices already made - and 'available immediately' describes a pipe, not whether anyone at the far end can carry what comes down it.",
+    "changes_meaning_how": "It moves the measure of the instrument's reach from how much sky it catches to how many independent parties can act on the same output, and it turns the missing detail about format, cost and computing from an omission into the actual open question.",
+    "evidence_ids": [
+      "F10",
+      "F12",
+      "F13"
+    ]
+  },
+  "architecture": {
+    "article_type": "SHORT_NARRATIVE",
+    "story_spine": "A telescope was built to give its pictures away the same day it takes them, and the giving-away was engineered into the machine rather than added afterwards.",
+    "opening_object_or_event": "A terabyte of data falling to Earth every day from a million miles away.",
+    "reader_initial_state": "That a very large camera has just left Earth and will send down an enormous amount of material daily.",
+    "beats": [
+      {
+        "beat_id": "B1",
+        "happens": "The launch and the object: a tour-bus-sized observatory heading a million miles out.",
+        "concrete_carrier": "the machine itself, and where it is going",
+        "facts_allowed": [
+          "F01",
+          "F02",
+          "F03"
+        ],
+        "concept_introduced": "",
+        "why_reader_wants_next": "An object that size going that far invites the question of what it sends back.",
+        "must_not_say_yet": "anything about who receives the data"
+      },
+      {
+        "beat_id": "B2",
+        "happens": "Why it produces so much: the wide field and the survey speed.",
+        "concrete_carrier": "a camera as sharp as Hubble but seeing a hundred times more at once",
+        "facts_allowed": [
+          "F06",
+          "F07"
+        ],
+        "concept_introduced": "",
+        "why_reader_wants_next": "A hundred times the field means a flood of material, which has to go somewhere.",
+        "must_not_say_yet": "the access argument"
+      },
+      {
+        "beat_id": "B3",
+        "happens": "The daily terabyte, and what NASA says will happen to it.",
+        "concrete_carrier": "the download itself, and the named list of people meant to receive it",
+        "facts_allowed": [
+          "F10",
+          "F11",
+          "F12"
+        ],
+        "concept_introduced": "",
+        "why_reader_wants_next": "Naming teachers alongside researchers is a design decision, not a courtesy.",
+        "must_not_say_yet": "that immediate is not the same as usable"
+      },
+      {
+        "beat_id": "B4",
+        "happens": "It was also built to be combined with another observatory that sees differently.",
+        "concrete_carrier": "two telescopes tuned to different light, working the same sky",
+        "facts_allowed": [
+          "F13"
+        ],
+        "concept_introduced": "a system designed to be used by people who did not build it",
+        "why_reader_wants_next": "The pattern is now unmistakable: the output was meant to leave.",
+        "must_not_say_yet": "the limits of that intention"
+      }
+    ],
+    "turn": "Read as an instrument, this telescope is measured by how much sky it catches. Read as a pipe, it is measured by how many separate parties are meant to act on the same output - and that second measure was designed in, not bolted on.",
+    "crip_turn": "But immediate and public describe the download, not the people named to receive it. A terabyte lands every day whether or not a teacher on that list has the format, the storage or the machine to open it. Access built into a design is a different object from access announced once the design is finished, and the announcement is the cheap half.",
+    "ending_move": "Return to the download: it arrives tomorrow, and every day for years, addressed to a list that includes teachers.",
+    "use_facts": [
+      "F01",
+      "F02",
+      "F03",
+      "F06",
+      "F07",
+      "F10",
+      "F11",
+      "F12",
+      "F13"
+    ],
+    "use_quotes": [
+      "Q01"
+    ],
+    "definitions": {
+      "the second Lagrange point": "a spot a million miles out where a spacecraft can hold station relative to the Earth and the Sun"
+    },
+    "prohibitions": [
+      "Do not state or imply that Roman was designed for disabled users, or that accessibility was among its stated goals.",
+      "Do not compare Roman's data release to Hubble's or Webb's release practices.",
+      "Do not claim any actual user has or has not obtained or used the data.",
+      "Do not assert what format, cost, persistence or computing the data requires.",
+      "Do not name any individual scientist.",
+      "Never use the first person.",
+      "Do not place any named user in a room, at a desk, or with a device: no scene may be built around a person who was only listed."
+    ],
+    "cut_evidence": [
+      {
+        "evidence_id": "F04_NAMESAKE_BIOGRAPHY",
+        "reason": "BACKGROUND_NOT_NEEDED"
+      },
+      {
+        "evidence_id": "F05_THREE_SURVEYS_LIST",
+        "reason": "CONCEPT_OVERLOAD"
+      },
+      {
+        "evidence_id": "F08_HUBBLE_CENTURY_COMPARISON",
+        "reason": "SECOND_EXAMPLE_SAME_POINT"
+      },
+      {
+        "evidence_id": "F09_CORONAGRAPH",
+        "reason": "INTERESTING_BUT_WRONG_STORY"
+      },
+      {
+        "evidence_id": "F14_COMMUNITY_INPUT_ON_SURVEYS",
+        "reason": "REDUNDANT_PROOF"
+      },
+      {
+        "evidence_id": "MCENERY_SIBLINGS_QUOTE",
+        "reason": "NAME_OVERLOAD"
+      },
+      {
+        "evidence_id": "PERKINS_NAMED_ATTRIBUTION",
+        "reason": "NAME_OVERLOAD"
+      },
+      {
+        "evidence_id": "DARK_MATTER_DARK_ENERGY_FRAMING",
+        "reason": "BACKGROUND_NOT_NEEDED"
+      },
+      {
+        "evidence_id": "EVIDENCE_GAPS_AS_PROSE",
+        "reason": "MACHINE_BOUNDARY_ONLY"
+      },
+      {
+        "evidence_id": "SOURCE_COMPARISON_DISCLAIMER",
+        "reason": "PROVENANCE_ONLY"
+      }
+    ],
+    "crip_turn_rereads": "B3"
+  }
+}

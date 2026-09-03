@@ -16,7 +16,12 @@
     "verdict": "STRONG_INTERPRETIVE_LENS",
     "lens_claim": "A festival travels in the medium it is documented in, and that medium quietly decides which work can travel at all: when the medium is the photograph, a design whose content is smell, weight or the temperature of a wall arrives with its content removed, and is then ranked against work that photographs well.",
     "changes_meaning_how": "It converts 'the eight most interesting pavilions' from a judgement about design into a judgement about photographability, and makes the salt room's selection into evidence of what the medium cannot carry.",
-    "evidence_ids": ["F01", "F02", "F03", "F06"]
+    "evidence_ids": [
+      "F01",
+      "F02",
+      "F03",
+      "F06"
+    ]
   },
   "architecture": {
     "article_type": "SHORT_NARRATIVE",
@@ -24,39 +29,68 @@
     "opening_object_or_event": "A wall of Himalayan salt bricks, in a room dug partway into the ground on a Bali beach.",
     "reader_initial_state": "That there was a small room made of salt, and that people went inside it.",
     "beats": [
-      {"beat_id": "B1",
-       "happens": "The room itself: what it was made of, and that it sat partly below ground level.",
-       "concrete_carrier": "the salt-brick walls, and the floor being lower than the sand outside",
-       "facts_allowed": ["F01", "F02", "F04"],
-       "concept_introduced": "",
-       "why_reader_wants_next": "A room made of salt is strange enough that the reader wants to know what it was for.",
-       "must_not_say_yet": "anything about photographs, or about what the room proves"},
-      {"beat_id": "B2",
-       "happens": "What was actually inside it - the fragrances and the drinks, and the stated aim of engaging all the senses.",
-       "concrete_carrier": "smell and taste, in a room whose walls are edible mineral",
-       "facts_allowed": ["F03"],
-       "concept_introduced": "",
-       "why_reader_wants_next": "The room's content turns out to be things you cannot see, which raises the question of how anyone else would ever know.",
-       "must_not_say_yet": "the ranking, and the word photograph"},
-      {"beat_id": "B3",
-       "happens": "The other pavilions were doing comparable things: sand underfoot, falling water, rattan and acoustic panels, air moving through a perforated wall.",
-       "concrete_carrier": "sand, water, air",
-       "facts_allowed": ["F07", "F09"],
-       "concept_introduced": "",
-       "why_reader_wants_next": "It was not one eccentric room; it was a pattern across the festival.",
-       "must_not_say_yet": "the interpretive turn"},
-      {"beat_id": "B4",
-       "happens": "The festival ran for five days on a beach, and then existed as a set of images and a list of eight.",
-       "concrete_carrier": "the five dates, and the published list of eight",
-       "facts_allowed": ["F05", "F06"],
-       "concept_introduced": "a selection presented as the most interesting is also a selection made through a medium",
-       "why_reader_wants_next": "If the record is pictures, what happened to the smell?",
-       "must_not_say_yet": "the full argument about ocularcentrism"}
+      {
+        "beat_id": "B1",
+        "happens": "The room itself: what it was made of, and that it sat partly below ground level.",
+        "concrete_carrier": "the salt-brick walls, and the floor being lower than the sand outside",
+        "facts_allowed": [
+          "F01",
+          "F02",
+          "F04"
+        ],
+        "concept_introduced": "",
+        "why_reader_wants_next": "A room made of salt is strange enough that the reader wants to know what it was for.",
+        "must_not_say_yet": "anything about photographs, or about what the room proves"
+      },
+      {
+        "beat_id": "B2",
+        "happens": "What was actually inside it - the fragrances and the drinks, and the stated aim of engaging all the senses.",
+        "concrete_carrier": "smell and taste, in a room whose walls are edible mineral",
+        "facts_allowed": [
+          "F03"
+        ],
+        "concept_introduced": "",
+        "why_reader_wants_next": "The room's content turns out to be things you cannot see, which raises the question of how anyone else would ever know.",
+        "must_not_say_yet": "the ranking, and the word photograph"
+      },
+      {
+        "beat_id": "B3",
+        "happens": "The other pavilions were doing comparable things: sand underfoot, falling water, rattan and acoustic panels, air moving through a perforated wall.",
+        "concrete_carrier": "sand, water, air",
+        "facts_allowed": [
+          "F07",
+          "F09"
+        ],
+        "concept_introduced": "",
+        "why_reader_wants_next": "It was not one eccentric room; it was a pattern across the festival.",
+        "must_not_say_yet": "the interpretive turn"
+      },
+      {
+        "beat_id": "B4",
+        "happens": "The festival ran for five days on a beach, and then existed as a set of images and a list of eight.",
+        "concrete_carrier": "the five dates, and the published list of eight",
+        "facts_allowed": [
+          "F05",
+          "F06"
+        ],
+        "concept_introduced": "a selection presented as the most interesting is also a selection made through a medium",
+        "why_reader_wants_next": "If the record is pictures, what happened to the smell?",
+        "must_not_say_yet": "the full argument about ocularcentrism"
+      }
     ],
-    "turn": "Five days end and the pavilions come down; what survives is a photograph and a ranking. A picture of the salt room holds a pink wall and a low ceiling, and none of what the room was for.",
-    "crip_turn": "Read the list again with that in mind and 'the eight most interesting' stops being a claim about design and becomes a claim about what a camera can hold. The room made of salt was chosen by a process that could not perceive most of it - and this is what it is like to be assessed through a channel that does not carry you.",
-    "ending_move": "Return to the salt wall: a surface you could have put your tongue to, which in every surviving image is simply pink stone.",
-    "use_facts": ["F01", "F02", "F03", "F04", "F05", "F06", "F07", "F09"],
+    "turn": "Five days end and the pavilions come down; what survives is a photograph and a ranking. A picture of the salt room holds the walls and the low ceiling, and none of what the room was for.",
+    "crip_turn": "Read the list again and the salt walls change meaning. They photograph well, which is why the room is on it. What the walls were for does not photograph at all. The room placed among the eight most interesting on the strength of the one part of itself a camera could hold - and being measured accurately on the wrong sense is a familiar result to anyone who has been assessed by an instrument built for a different body.",
+    "ending_move": "Return to the salt walls: a surface someone could have put a tongue to, and found out what a wall tasted of.",
+    "use_facts": [
+      "F01",
+      "F02",
+      "F03",
+      "F04",
+      "F05",
+      "F06",
+      "F07",
+      "F09"
+    ],
     "use_quotes": [],
     "definitions": {},
     "prohibitions": [
@@ -68,19 +102,59 @@
       "Never use the first person."
     ],
     "cut_evidence": [
-      {"evidence_id": "F08", "reason": "SECOND_EXAMPLE_SAME_POINT"},
-      {"evidence_id": "Q_ONG_SPONTANEOUS_ENCOUNTERS", "reason": "BREAKS_STORY_MOMENTUM"},
-      {"evidence_id": "GOTONG_ROYONG_PRINCIPLE", "reason": "BACKGROUND_NOT_NEEDED"},
-      {"evidence_id": "PARTICIPANTS_PHILIPPINES_JAPAN_TAIWAN", "reason": "BACKGROUND_NOT_NEEDED"},
-      {"evidence_id": "THEME_NATURE_WEAVE", "reason": "BACKGROUND_NOT_NEEDED"},
-      {"evidence_id": "TUSCANY_STONE_BOUTIQUE", "reason": "NAME_OVERLOAD"},
-      {"evidence_id": "STILLROOM_BOTANICAL_BRAND", "reason": "NAME_OVERLOAD"},
-      {"evidence_id": "TOPENG_BUDUH_MASK_COUNT", "reason": "CONCEPT_OVERLOAD"},
-      {"evidence_id": "DDAP_ORIGAMI_FRAMING", "reason": "SECOND_EXAMPLE_SAME_POINT"},
-      {"evidence_id": "LAMITAK_LAMINATE_CLIENT", "reason": "NAME_OVERLOAD"},
-      {"evidence_id": "EVIDENCE_GAPS_ALL", "reason": "MACHINE_BOUNDARY_ONLY"},
-      {"evidence_id": "SOURCE_ROLE_TAXONOMY", "reason": "PROVENANCE_ONLY"},
-      {"evidence_id": "PREVIOUS_EDITIONS_2024_2025", "reason": "INTERESTING_BUT_WRONG_STORY"}
-    ]
+      {
+        "evidence_id": "F08",
+        "reason": "SECOND_EXAMPLE_SAME_POINT"
+      },
+      {
+        "evidence_id": "Q_ONG_SPONTANEOUS_ENCOUNTERS",
+        "reason": "BREAKS_STORY_MOMENTUM"
+      },
+      {
+        "evidence_id": "GOTONG_ROYONG_PRINCIPLE",
+        "reason": "BACKGROUND_NOT_NEEDED"
+      },
+      {
+        "evidence_id": "PARTICIPANTS_PHILIPPINES_JAPAN_TAIWAN",
+        "reason": "BACKGROUND_NOT_NEEDED"
+      },
+      {
+        "evidence_id": "THEME_NATURE_WEAVE",
+        "reason": "BACKGROUND_NOT_NEEDED"
+      },
+      {
+        "evidence_id": "TUSCANY_STONE_BOUTIQUE",
+        "reason": "NAME_OVERLOAD"
+      },
+      {
+        "evidence_id": "STILLROOM_BOTANICAL_BRAND",
+        "reason": "NAME_OVERLOAD"
+      },
+      {
+        "evidence_id": "TOPENG_BUDUH_MASK_COUNT",
+        "reason": "CONCEPT_OVERLOAD"
+      },
+      {
+        "evidence_id": "DDAP_ORIGAMI_FRAMING",
+        "reason": "SECOND_EXAMPLE_SAME_POINT"
+      },
+      {
+        "evidence_id": "LAMITAK_LAMINATE_CLIENT",
+        "reason": "NAME_OVERLOAD"
+      },
+      {
+        "evidence_id": "EVIDENCE_GAPS_ALL",
+        "reason": "MACHINE_BOUNDARY_ONLY"
+      },
+      {
+        "evidence_id": "SOURCE_ROLE_TAXONOMY",
+        "reason": "PROVENANCE_ONLY"
+      },
+      {
+        "evidence_id": "PREVIOUS_EDITIONS_2024_2025",
+        "reason": "INTERESTING_BUT_WRONG_STORY"
+      }
+    ],
+    "crip_turn_rereads": "B1"
   }
 }

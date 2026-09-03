@@ -1,0 +1,33 @@
+{
+ "subject": "The launch and mission of NASA's Nancy Grace Roman Space Telescope",
+ "sources": [
+  {
+   "source_id": "S0",
+   "role": "ANCHOR",
+   "url": "https://www.smithsonianmag.com/smart-news/nasas-nancy-grace-roman-space-telescope-launches-to-find-exoplanets-and-unravel-mysteries-of-dark-matter-and-dark-energy-180989268/",
+   "chars": 7614,
+   "excerpt_count": 0
+  },
+  {
+   "source_id": "S1",
+   "role": "PRIMARY",
+   "url": "https://science.nasa.gov/mission/roman-space-telescope/",
+   "chars": 11885,
+   "excerpt_count": 3
+  },
+  {
+   "source_id": "S2",
+   "role": "PRIMARY",
+   "url": "https://www.nasa.gov/event/nancy-grace-roman-space-telescope/",
+   "chars": 12000,
+   "excerpt_count": 2
+  },
+  {
+   "source_id": "S3",
+   "role": "PRIMARY",
+   "url": "https://science.nasa.gov/blogs/roman/2026/08/25/nasas-nancy-grace-roman-space-telescope-arrives-at-hangar/",
+   "chars": 8501,
+   "excerpt_count": 3
+  }
+ ]
+}

@@ -1,0 +1,48 @@
+{
+  "content_hash": "751627e018125c5f34a485bdbd5b4d37970b4035e9a59f7322e1f996b8f05b26",
+  "created_at": "2026-09-01T07:00:04.517384+00:00",
+  "input_hashes": {
+    "research_pack": "5ba55aa9eaadd2e5fdcf24ddb767db44208af972ef954c641ef8993e3334c82b",
+    "source": "b0cc88fd5bf523db3841464973744bd4a48814bf9b08a4e57036eced06b1d632",
+    "writer_output": "42245308949683cb74ed5a16e85eaa8625e99c061199ce1f0e76cb45564b754b"
+  },
+  "payload": {
+    "findings": [
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F1",
+        "quote": "It carries the name of Nancy Grace Roman, NASA's first chief of astronomy, who died in 2018.",
+        "repairable": true,
+        "suggested_patch": "",
+        "why": "The source says she was NASA's first chief of astronomy and female executive, who died in 2018. The draft omits 'female executive' but adds no new fact. Fully supported and worth noting only for the trimming."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F2",
+        "quote": "That instrument is untested and its results are still to come.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The source states Roman 'will also test a coronagraph' and that 'it will look at previously detected exoplanets to uncover new details' — implying it has not yet done so. Characterizing it as 'untested' with results forthcoming is a reasonable reading, not a new factual state."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F3",
+        "quote": "Distribution is engineered into Roman, not bolted on after the fact.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "This is the author's synthesizing gloss on facts the source does establish (daily terabyte download, immediate public release, complementary pairing). It invents no new factual state about the telescope; it is an interpretive framing."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F4",
+        "quote": "the wide field that trades one deep stare for coverage many can query",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The source establishes the wide field of view and the large-area survey, but the 'trades one deep stare for coverage many can query' characterization is the author's interpretive framing, not an invented fact about the instrument."
+      }
+    ],
+    "status": "settled"
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "GROUNDING_FINDINGS"
+}
