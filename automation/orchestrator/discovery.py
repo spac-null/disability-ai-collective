@@ -28,10 +28,7 @@ from .config import (
     _PERSONA_CONFLICTS, _STRUCTURAL_SHAPES, _SCRIPT_DIR,
 )
 
-try:
-    from curl_cffi import requests as _curl_cffi_requests
-except ImportError:
-    _curl_cffi_requests = None
+import impersonated_fetch as _impersonated_fetch
 
 try:
     import trafilatura as _trafilatura
@@ -1211,19 +1208,17 @@ class DiscoveryMixin:
         confirmed live: stock curl on the trident host got a 403 on
         dezeen.com, but curl_cffi impersonating chrome124/safari17_0/
         firefox133 got a clean 200 with the full article on the same URL.
-        chrome110's fingerprint specifically stays blocked -- excluded below.
+        chrome110's fingerprint specifically stays blocked.
         Never the sole path: falls through to fallback_text like the
-        urllib attempt if this also fails or curl_cffi isn't installed."""
-        if _curl_cffi_requests is None:
-            return None
-        r = _curl_cffi_requests.get(url, impersonate="chrome124",
-                                    timeout=_SOURCE_IMPERSONATED_TIMEOUT)
-        if r.status_code != 200:
-            return None
-        content_type = r.headers.get("Content-Type", "")
-        if "text/html" not in content_type:
-            return None
-        return r.text[:500000]
+        urllib attempt if this also fails or curl_cffi isn't installed.
+
+        The request itself moved to impersonated_fetch on 2026-09-03, when the
+        Research Pack needed the same thing and a second copy of it would have
+        drifted from this one. Semantics here are unchanged: HTML on a 200, else
+        None. The method and _SOURCE_IMPERSONATED_TIMEOUT stay because callers
+        and tests hold both."""
+        return _impersonated_fetch.html_or_none(
+            url, timeout=_SOURCE_IMPERSONATED_TIMEOUT)
 
     def fetch_source_article(self, url: str, max_chars: int = _SOURCE_TEXT_CACHE_MAX_CHARS,
                               fallback_text: str = None, underlying_url: str = None) -> str | None:

@@ -31,9 +31,16 @@ from __future__ import annotations
 import json
 import os
 import re
+import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
+
+_HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _HERE not in sys.path:
+    sys.path.insert(0, _HERE)
+import impersonated_fetch as IMP                                      # noqa: E402
 
 from .contracts import sha256_text
 from .provider import ProviderError, parse_json_object
@@ -44,7 +51,32 @@ MAX_CANDIDATE_URLS = 12       # distinct URLs considered for fetching
 MAX_FETCHED_SOURCES = 5       # successful fetches kept, excluding the anchor
 PER_SOURCE_CHARS = 12_000     # text kept per fetched source
 PACK_TEXT_BUDGET = 40_000     # total pack text across all sources
-FETCH_TIMEOUT = 20            # seconds; one attempt per URL, no retry loop
+FETCH_TIMEOUT = 20            # seconds; the ordinary attempt, per URL
+
+# ── the one permitted fallback (2026-09-03) ───────────────────────────────────
+# Three manual production trials died or were degraded at acquisition, not at search:
+# the queries found the right documents and the transport could not read them. Six
+# HTTP_403s across the trials, and a live probe of the exact URLs afterwards showed all
+# six returning 200 with 646-1,702 usable words through browser impersonation. Trial 2
+# held with subject_relevant_words=0 while four first-party University of Michigan
+# policy pages sat behind a fingerprint check.
+#
+# So: one impersonated attempt, and only where the ordinary attempt gave an answer that
+# is about the REPRESENTATION rather than about the material -- a 403, or a 200 whose
+# body carries no article. Never on a 404, a timeout, or an unsupported content type: a
+# missing page stays missing, and a PDF is a successful representation this pipeline
+# does not read yet.
+#
+# Bounds are explicit because the loop below has up to MAX_CANDIDATE_URLS candidates.
+# Per source: two network attempts, ever. Per run: every fallback shares ONE total
+# budget, so the added worst case is FALLBACK_TOTAL_SECONDS and not
+# MAX_CANDIDATE_URLS x FALLBACK_TIMEOUT.
+FALLBACK_TIMEOUT = 15         # seconds; the impersonated attempt, per source
+FALLBACK_TOTAL_SECONDS = 60   # seconds; ALL impersonated attempts in one run, together
+FALLBACK_CAP = 500_000        # bytes of HTML, matching the shared module's default
+MAX_ATTEMPTS_PER_SOURCE = 2   # one ordinary, at most one fallback. Never a loop.
+# The only two answers that mean "we may not have seen the real page".
+FALLBACK_STATUSES = ("http_403", "empty_or_blocked")
 SEARCH_MODEL = "perplexity/sonar"
 OPENROUTER_URL = "https://openrouter.ai/api/v1"
 UA = "Mozilla/5.0 (compatible; CripMinds/1.0; +editorial research)"
@@ -198,15 +230,50 @@ def search_urls(query: str, *, api_key: str = "", timeout: int = 60) -> list:
     return out
 
 
-def fetch_source(url: str, *, timeout: int = FETCH_TIMEOUT) -> dict:
-    """One attempt. Returns a record whose `status` decides whether it may contribute.
+class FallbackBudget:
+    """The wall clock ALL of one run's impersonated attempts may spend, together.
 
-    Anything other than status 'ok' with non-empty text supplies NO material: a
-    paywall, a 403, a timeout and an empty body are all the same answer here, which
-    is that nothing was read.
+    Held by the caller and passed down, so the fallback's cost is bounded by the RUN
+    and not by how many candidates it happens to have. Once the budget cannot afford
+    another attempt, sources simply keep the answer the ordinary attempt gave them.
     """
-    rec = {"url": url, "status": "", "text": "", "title": "", "canonical_url": "",
-           "content_length": 0, "sha256": ""}
+
+    def __init__(self, total: float = FALLBACK_TOTAL_SECONDS):
+        self.total = total
+        self.spent = 0.0
+        self.attempts = 0
+
+    def can_afford(self, seconds: float) -> bool:
+        return (self.total - self.spent) >= seconds
+
+    def spend(self, seconds: float) -> None:
+        self.spent += max(0.0, seconds)
+        self.attempts += 1
+
+
+def _blank(url: str) -> dict:
+    return {"url": url, "status": "", "text": "", "title": "", "canonical_url": "",
+            "content_length": 0, "sha256": "", "route": "", "attempts": 0}
+
+
+def _from_html(rec: dict, html: str) -> dict:
+    """The single definition of what a fetched page yields. Both legs parse here, so
+    an impersonated page cannot enter the pack by a different rule than an ordinary
+    one -- same extraction, same 60-word floor, same hash over the same text."""
+    text = strip_html(html)[:PER_SOURCE_CHARS]
+    if len(text.split()) < 60:
+        rec["status"] = "empty_or_blocked"
+        return rec
+    rec.update(status="ok", text=text, title=_title_from_html(html),
+               canonical_url=_canonical_from_html(html),
+               content_length=len(text), sha256=sha256_text(text))
+    return rec
+
+
+def _fetch_ordinary(url: str, timeout: int) -> dict:
+    """The original attempt, unchanged. Still the only one most sources need."""
+    rec = _blank(url)
+    rec["route"], rec["attempts"] = "ordinary", 1
     try:
         req = urllib.request.Request(url, headers={
             "User-Agent": UA, "Accept": "text/html,application/xhtml+xml"})
@@ -217,18 +284,61 @@ def fetch_source(url: str, *, timeout: int = FETCH_TIMEOUT) -> dict:
             rec["status"] = "unsupported_content_type:%s" % (ctype.split(";")[0] or "?")
             return rec
         html = raw.decode(r.headers.get_content_charset() or "utf-8", "replace")
-        text = strip_html(html)[:PER_SOURCE_CHARS]
-        if len(text.split()) < 60:
-            rec["status"] = "empty_or_blocked"
-            return rec
-        rec.update(status="ok", text=text, title=_title_from_html(html),
-                   canonical_url=_canonical_from_html(html),
-                   content_length=len(text), sha256=sha256_text(text))
+        return _from_html(rec, html)
     except urllib.error.HTTPError as e:
         rec["status"] = "http_%s" % e.code
     except Exception as e:
         rec["status"] = "%s" % type(e).__name__
     return rec
+
+
+def fetch_source(url: str, *, timeout: int = FETCH_TIMEOUT,
+                 fallback_budget: "FallbackBudget | None" = None) -> dict:
+    """At most two attempts. Returns a record whose `status` decides whether it may
+    contribute.
+
+    Anything other than status 'ok' with non-empty text supplies NO material: a
+    paywall, a 403, a timeout and an empty body are all the same answer here, which
+    is that nothing was read.
+
+    The second attempt is permitted only when the first returned one of
+    FALLBACK_STATUSES -- an answer about the representation, not about the material --
+    and only while the run's shared budget can pay for it. There is no third attempt
+    and no loop: this function's whole contract is MAX_ATTEMPTS_PER_SOURCE.
+    """
+    rec = _fetch_ordinary(url, timeout)
+    if rec["status"] not in FALLBACK_STATUSES:
+        return rec
+    if not IMP.available():
+        return rec
+    if fallback_budget is not None and not fallback_budget.can_afford(FALLBACK_TIMEOUT):
+        return rec
+
+    started = time.monotonic()
+    got = None
+    try:
+        got = IMP.get(url, timeout=FALLBACK_TIMEOUT, cap=FALLBACK_CAP)
+    except Exception:
+        got = None                      # a raised fallback is a failed fallback
+    finally:
+        if fallback_budget is not None:
+            fallback_budget.spend(time.monotonic() - started)
+
+    rec["attempts"] = MAX_ATTEMPTS_PER_SOURCE
+    if got is None or got["status"] != 200:
+        return rec                      # failure remains failure, with the first answer
+    ctype = got["content_type"]
+    if "html" not in ctype and "text" not in ctype:
+        # A PDF reached through impersonation is still a PDF. Document ingestion is a
+        # separate piece of work; reporting it accurately is this function's whole job.
+        rec["status"] = "unsupported_content_type:%s" % (ctype.split(";")[0] or "?")
+        return rec
+    alt = _blank(url)
+    alt["route"], alt["attempts"] = "impersonated", MAX_ATTEMPTS_PER_SOURCE
+    alt = _from_html(alt, got["text"])
+    # If the impersonated page is no better, keep the ordinary answer: the honest
+    # status for a source we still have not read is the one we already had.
+    return alt if alt["status"] == "ok" else rec
 
 
 # ── model-assisted stages (both bounded to one call each) ─────────────────────
@@ -557,10 +667,11 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
             candidates.append(u)
 
     fetched = []
+    fallback_budget = FallbackBudget()
     for i, url in enumerate(candidates, 1):
         if len(fetched) >= MAX_FETCHED_SOURCES:
             break
-        rec = fetch_source(url)
+        rec = fetch_source(url, fallback_budget=fallback_budget)
         if rec["status"] != "ok":
             failures.append({"url": url, "status": rec["status"]})
             continue
