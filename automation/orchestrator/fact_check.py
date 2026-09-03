@@ -379,6 +379,20 @@ class FactCheckMixin:
         result = {
             "lines": ["(no verifiable claims found)"], "contradicted": [], "advisory": [],
             "unverifiable_count": 0, "soft_contradicted_count": 0,
+            # ── per-claim record (2026-09-03) ─────────────────────────────────
+            # Twice on 2026-09-03 the publication-safety bridge blocked an article on
+            # contradicted=1 and nothing anywhere recorded WHICH claim, or why. The
+            # verdict and the reason existed here, in the formatted `lines` and in the
+            # claim dicts, and were thrown away one layer up. So they are recorded
+            # structurally as well, in the order they were checked.
+            #
+            # Nothing here decides anything. The blocking lists above are still what
+            # the bridge reads, built by the same code from the same verdicts.
+            "findings": [],
+            # Claims extraction found and the cap did not check. Not a verdict --
+            # they were never asked -- but a real thing to know when 13 claims are
+            # extracted and 8 are checked.
+            "not_checked": [],
         }
         if strict:
             result.update({"extraction_status": None, "extraction_error": None,
@@ -409,24 +423,62 @@ class FactCheckMixin:
             result["lines"] = []
             quote_claims = [c for c in claims if c["type"] == "QUOTE"][:claim_cap]
             other_claims = [c for c in claims if c["type"] in ("STUDY", "STAT", "EVENT")][:claim_cap]
+            checked_n = 0
+
+            def _record(c, verdict, reason, blocking):
+                """One structured row per claim actually checked. Identity is the
+                position in check order, so two claims with identical text are still
+                two rows and the one that blocked can be named."""
+                nonlocal checked_n
+                checked_n += 1
+                result["findings"].append({
+                    "claim_id": "C%02d" % checked_n,
+                    "type": c.get("type", ""),
+                    "subject": c.get("subject") or "",
+                    "claim_text": c.get("claim", ""),
+                    "verdict": verdict,
+                    "reason": reason,
+                    "blocking": bool(blocking),
+                })
+
             for c in quote_claims:  # default cap covers rule 33's "2-3 named people"
                 verdict, reason = self._web_verify_quote(c["subject"], c["claim"])
                 result["lines"].append(f"[{verdict}] QUOTE — {c['subject']}: \"{c['claim'][:80]}\" — {reason}")
                 if verdict == "CONTRADICTED":
                     result["contradicted"].append(c)
+                    _record(c, verdict, reason, True)
                 elif verdict == "UNVERIFIABLE":
                     result["unverifiable_count"] += 1
+                    _record(c, verdict, reason, False)
+                else:
+                    _record(c, verdict, reason, False)
             for c in other_claims:  # default cap — cost/latency
                 verdict, reason = self._web_verify_claim(c["type"], c.get("subject", ""), c["claim"])
                 result["lines"].append(f"[{verdict}] {c['type']} — {c.get('subject') or '(unnamed)'}: \"{c['claim'][:80]}\" — {reason}")
                 if verdict == "CONTRADICTED":
                     if c["type"] == "STUDY":
                         result["contradicted"].append(c)
+                        _record(c, verdict, reason, True)
                     else:
                         result["advisory"].append(c)
                         result["soft_contradicted_count"] += 1
+                        _record(c, verdict, reason, False)
                 elif verdict == "UNVERIFIABLE":
                     result["unverifiable_count"] += 1
+                    _record(c, verdict, reason, False)
+                else:
+                    _record(c, verdict, reason, False)
+            # What the cap did not reach. Recorded because "13 extracted, 8 checked" is
+            # invisible otherwise, and the difference is not a pass.
+            _checked = {id(c) for c in quote_claims} | {id(c) for c in other_claims}
+            for c in claims:
+                if id(c) not in _checked:
+                    result["not_checked"].append({
+                        "type": c.get("type", ""),
+                        "subject": c.get("subject") or "",
+                        "claim_text": c.get("claim", ""),
+                        "skipped_reason": "claim_cap=%d per category" % claim_cap,
+                    })
             if strict:
                 result["fact_check_completed"] = True
         except Exception as e:

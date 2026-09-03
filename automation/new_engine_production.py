@@ -414,10 +414,33 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     (root / run / "SAFETY_BRIDGE.json").write_text(
         json.dumps(bridge.summary(), indent=2, sort_keys=True, ensure_ascii=False),
         encoding="utf-8")
+    # FACT_CHECK.json (2026-09-03): the per-claim record, beside the verdict that used
+    # it. Written the same plain way SAFETY_BRIDGE.json is -- no new artefact framework.
+    #
+    # Two runs earlier today held on contradicted=1 with nothing recorded but the
+    # count, so a frozen run directory could not answer which claim failed or why
+    # without going back to the network. It can now. Never allowed to break a run
+    # whose verdict is already decided: this is evidence, and the decision is made.
+    try:
+        (root / run / "FACT_CHECK.json").write_text(
+            json.dumps(bridge.fact_check_evidence, indent=2, sort_keys=True,
+                       ensure_ascii=False), encoding="utf-8")
+    except Exception as e:
+        orch.logger.warning("FACT_CHECK.json write failed (ignored): %s: %s",
+                            type(e).__name__, str(e)[:200])
     result["safety_bridge"] = bridge.summary()
     for c in bridge.checks:
         orch.logger.info("CURRENT_ENGINE safety %-32s %s  %s",
                          c["check"], "PASS" if c["ok"] else "FAIL", c["detail"][:120])
+    # A blocking fact-check finding is named in the log too. The count alone sent an
+    # operator to the network twice today to learn something the run already knew.
+    for f in (bridge.fact_check_evidence.get("findings") or []):
+        if f.get("verdict") == "CONTRADICTED":
+            orch.logger.warning(
+                "CURRENT_ENGINE fact-check %s %s [%s] %s: %r -- %s",
+                f.get("claim_id"), f.get("verdict"),
+                "BLOCKING" if f.get("blocking") else "advisory", f.get("type"),
+                (f.get("claim_text") or "")[:160], (f.get("reason") or "")[:200])
 
     body = CAND.final_body(out)
     meta = CAND.engine_meta_from_run(out, run=run, generated_at=now.isoformat(),
