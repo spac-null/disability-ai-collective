@@ -245,15 +245,39 @@ def test_an_oversize_pdf_is_never_parsed():
 
 # ── 7 ────────────────────────────────────────────────────────────────────────
 def test_a_document_over_the_page_limit_is_rejected_whole():
-    pages = [FILLER] * DOC.DOC_MAX_PAGES + [SUBJECT_PAGE]
-    rec, _ = fetch(make_pdf(pages), "application/pdf")
-    check("status is pdf_page_limit", rec["status"] == DOC.PDF_PAGE_LIMIT, rec["status"])
-    check("NO partial evidence was trusted", rec["text"] == "" and "document" not in rec)
-    check("the page limit is explicit", DOC.DOC_MAX_PAGES == 40)
-    at_limit, _ = fetch(make_pdf([SUBJECT_PAGE] + [FILLER] * (DOC.DOC_MAX_PAGES - 1)),
-                        "application/pdf")
-    check("a document exactly at the limit is still read", at_limit["status"] == "ok",
-          at_limit["status"])
+    """The bound is a cliff, not a truncation: a document past it is refused entire,
+    because parsing its first hundred pages and calling that the document would be a
+    quieter kind of wrong than refusing it.
+
+    The limit is 100 because the four documents the production trials lost are 16, 38,
+    80 and 91 pages. At 40 the last two were refused for being long, and length is not
+    what makes a report untrustworthy.
+    """
+    check("the page limit is explicit", DOC.DOC_MAX_PAGES == 100, DOC.DOC_MAX_PAGES)
+
+    # exactly at the limit: read
+    at_limit, calls = fetch(
+        make_pdf([SUBJECT_PAGE] + [FILLER] * (DOC.DOC_MAX_PAGES - 1)), "application/pdf")
+    check("a document of exactly %d pages is read" % DOC.DOC_MAX_PAGES,
+          at_limit["status"] == "ok", at_limit["status"])
+    check("   it reports its true length",
+          at_limit["document"]["selection"]["pages_available"] == DOC.DOC_MAX_PAGES,
+          at_limit["document"]["selection"]["pages_available"])
+    check("   and its subject page is found", "covered pass no-credit" in at_limit["text"])
+    check("   the parser ran", calls["parse"] == 1)
+
+    # one page past it: refused whole
+    over, _ = fetch(make_pdf([FILLER] * DOC.DOC_MAX_PAGES + [SUBJECT_PAGE]),
+                    "application/pdf")
+    check("a document of %d pages is pdf_page_limit" % (DOC.DOC_MAX_PAGES + 1),
+          over["status"] == DOC.PDF_PAGE_LIMIT, over["status"])
+    check("   NO partial evidence was trusted",
+          over["text"] == "" and over["sha256"] == "" and "document" not in over)
+    check("   and the other bounds did not move to pay for it",
+          (DOC.DOC_MAX_BYTES, DOC.DOC_MAX_PAGES_CARRIED, DOC.DOC_MAX_CHARS_CARRIED,
+           DOC.DOC_PARSE_TIMEOUT) == (8 * 1024 * 1024, 6, 18_000, 15),
+          (DOC.DOC_MAX_BYTES, DOC.DOC_MAX_PAGES_CARRIED, DOC.DOC_MAX_CHARS_CARRIED,
+           DOC.DOC_PARSE_TIMEOUT))
 
 
 # ── 8 ────────────────────────────────────────────────────────────────────────

@@ -38,8 +38,19 @@ if _ROOT not in sys.path:
 import pdf_extract as PDFX                                            # noqa: E402
 
 # ── hard bounds ───────────────────────────────────────────────────────────────
+# DOC_MAX_PAGES was 40 in the first draft and refused half the evidence this module was
+# written for. The four documents the production trials actually lost are 16, 38, 80 and
+# 91 pages, all with real text layers -- so a 40-page bound fixed two of four failures
+# and called the other two untrustworthy for being long, which is not what length means.
+# 100 is set from those measurements and nothing else.
+#
+# Length is the weakest of the five bounds anyway. Bytes cap what is read, the worker
+# deadline caps how long any of it may take, and the carry bounds cap what reaches the
+# pack -- and none of those moved. A long document costs parse time, and parse time is
+# already bounded by something that kills it.
 DOC_MAX_BYTES = 8 * 1024 * 1024      # 8 MiB; never read or parse beyond this
-DOC_MAX_PAGES = 40                   # never TRUST a document longer than this
+DOC_MAX_PAGES = 100                  # never TRUST a document longer than this;
+                                     # raised from 40 on the evidence below
 DOC_MAX_PAGES_CARRIED = 6            # pages that may enter the pack
 DOC_MAX_CHARS_CARRIED = 18_000       # characters of document text in the pack
 DOC_PARSE_TIMEOUT = 15               # seconds, wall clock, enforced by killing
