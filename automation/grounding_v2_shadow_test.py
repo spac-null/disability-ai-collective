@@ -69,7 +69,8 @@ class StubProvider:
         self.fail_typing, self.fail_classify = fail_typing, fail_classify
         self.typing_calls = self.classify_calls = 0
 
-    def complete(self, system, user, max_tokens=3000, timeout=180, temperature=None):
+    def complete(self, system, user, max_tokens=3000, timeout=180,
+                 temperature=None, deadline=None):
         if "label sentences" in system:
             self.typing_calls += 1
             if self.fail_typing:

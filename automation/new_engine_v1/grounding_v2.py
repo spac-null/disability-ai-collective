@@ -68,12 +68,26 @@ MAX_CLASSIFY_BATCHES = 10        # ceil(MAX_CLAIMS_CLASSIFIED / CLASSIFY_BATCH_S
 # every provider call as a shared deadline -- provider.complete already clamps each leg
 # to min(timeout, remaining) and refuses a leg with nothing left, so the total cannot be
 # outlived by an ordinary per-call timeout. Exhausting it is recorded, never a verdict.
-GROUNDING_V2_TOTAL_SECONDS = 90
+# 120, not the 90 first proposed, and the difference is measured. A real 40-sentence
+# article -- the frozen Langrug draft -- takes 105.4s end to end at batch 4: 5
+# identification calls in 48.5s and 8 classification batches in 56.9s, 8.1s per call.
+# 90s exhausted at 88.1s with 16 of 36 claims unclassified. 120s fits that article with
+# ~14% headroom and is the ceiling this work may set without owner review.
+#
+# It does NOT fit the structural worst case: 18 calls at 8.1s is ~146s. A worst-case
+# article will therefore exhaust the deadline, and that is recorded as
+# SHADOW_DEADLINE_EXHAUSTED rather than hidden -- never a verdict, never a coverage
+# claim, and never able to reach a production decision.
+GROUNDING_V2_TOTAL_SECONDS = 120
 # A classification call given less than this has no useful chance of returning a valid
 # structured reply, and an invalid reply is a recorded error rather than a verdict --
 # so not starting is both cheaper and more honest. Set from the measured per-call
 # latency of the optimised path.
-MIN_CALL_SECONDS = 8
+# Measured per-call: 7.1s for a classification batch, 9.7s for an identification batch.
+# 10 sits just above the slower of the two, so a call is never started without a
+# realistic chance of returning a valid structured reply -- and an invalid reply is a
+# recorded error, not a verdict, which is why not starting is the honest choice.
+MIN_CALL_SECONDS = 10
 
 
 def enabled() -> bool:
@@ -192,7 +206,8 @@ def validate(reply: dict, ev: dict) -> list:
     return errs
 
 
-def classify(provider, claim: str, ev: dict) -> dict:
+def classify(provider, claim: str, ev: dict,
+             deadline: float | None = None) -> dict:
     """One claim, one call. A retrieval that could not assemble evidence is NOT sent to
     the classifier and is NOT a verdict -- the claim is recorded as
     EVIDENCE_RETRIEVAL_INCOMPLETE, which is a coverage state, not a finding."""
@@ -203,7 +218,8 @@ def classify(provider, claim: str, ev: dict) -> dict:
     try:
         c = provider.complete(CLASSIFIER_SYSTEM,
                               classifier_prompt(claim, EV.render(ev)),
-                              max_tokens=CLASSIFIER_MAX_TOKENS, temperature=0)
+                              max_tokens=CLASSIFIER_MAX_TOKENS, temperature=0,
+                              deadline=deadline)
         reply = parse_json_object(c.text)
     except Exception as e:
         return {"classification": CLASSIFIER_ERROR, "retrieval_status": ev.get("status"),
@@ -334,8 +350,12 @@ def run_shadow(provider, *, article_text: str, pack: dict,
     index = EV.PackIndex(pack)
 
     findings, calls, class_calls = [], ident["calls"], 0
-    deadline_exhausted = False
     all_claims = CL.claims_for_classification(ident["records"])[:MAX_CLAIMS_CLASSIFIED]
+    # Out of time is out of time whether or not there was anything left to classify.
+    # An earlier draft only set this inside the batch loop, so a run whose budget was
+    # gone before the loop began reported deadline_exhausted=False -- true of the loop,
+    # false of the run.
+    deadline_exhausted = (deadline - time.monotonic()) < min_call
 
     for group in batches(all_claims, size)[:MAX_CLASSIFY_BATCHES]:
         evs = {c["atomic_id"]: index.retrieve(c["atomic_claim"]) for c in group}
