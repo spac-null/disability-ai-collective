@@ -106,10 +106,10 @@ class StubFactChecker(FactCheckMixin):
             raise self._boom
         return self._raw
 
-    def _web_verify_quote(self, person, quote):
+    def _web_verify_quote(self, person, quote, timeout=None):
         return self._verdicts.get("QUOTE", ("VERIFIED", "found"))
 
-    def _web_verify_claim(self, ctype, subject, claim):
+    def _web_verify_claim(self, ctype, subject, claim, timeout=None):
         return self._verdicts.get(ctype, ("VERIFIED", "found"))
 
 

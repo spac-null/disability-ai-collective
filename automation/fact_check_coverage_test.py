@@ -49,10 +49,10 @@ class Checker(StubFactChecker):
         super().__init__(raw=json.dumps({"claims": claims}))
         self._by_claim = verdicts or {}
 
-    def _web_verify_quote(self, person, quote):
+    def _web_verify_quote(self, person, quote, timeout=None):
         return self._by_claim.get(quote, ("VERIFIED", "found in two sources"))
 
-    def _web_verify_claim(self, ctype, subject, claim):
+    def _web_verify_claim(self, ctype, subject, claim, timeout=None):
         return self._by_claim.get(claim, ("VERIFIED", "found in two sources"))
 
 

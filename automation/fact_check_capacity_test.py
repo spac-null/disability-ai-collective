@@ -58,12 +58,12 @@ class Checker(StubFactChecker):
             import time
             time.sleep(0.05)
 
-    def _web_verify_quote(self, person, quote):
+    def _web_verify_quote(self, person, quote, timeout=None):
         self.verify_calls.append(("QUOTE", quote))
         self._maybe_stall()
         return self._v.get(quote, ("VERIFIED", "found in two sources"))
 
-    def _web_verify_claim(self, ctype, subject, claim):
+    def _web_verify_claim(self, ctype, subject, claim, timeout=None):
         self.verify_calls.append((ctype, claim))
         self._maybe_stall()
         return self._v.get(claim, ("VERIFIED", "found in two sources"))
@@ -239,7 +239,7 @@ def test_H_deadline_exhaustion_is_a_technical_failure_never_a_pass():
 # ── I ─────────────────────────────────────────────────────────────────────────
 def test_I_provider_failure_midway_fails_closed():
     class Boom(Checker):
-        def _web_verify_claim(self, ctype, subject, claim):
+        def _web_verify_claim(self, ctype, subject, claim, timeout=None):
             self.verify_calls.append((ctype, claim))
             if len(self.verify_calls) == 3:
                 raise RuntimeError("provider died mid-pass")
@@ -305,7 +305,9 @@ def test_M_prompts_model_and_type_policy_are_unchanged():
           "Extract every claim from this article that could be independently " in fcs)
     check("M: verification model unchanged", 'model="perplexity/sonar"' in fcs)
     check("M: extraction model unchanged", 'model="openrouter/claude-haiku-4.5"' in fcs)
-    check("M: per-call timeout unchanged", "max_tokens=250, timeout=30," in fcs)
+    check("M: the per-call ceiling is still 30s", FC.PER_CALL_TIMEOUT == 30)
+    check("M: and it is still what a call gets when time is not short",
+          "timeout=PER_CALL_TIMEOUT" in fcs and "max_tokens=250, timeout=timeout," in fcs)
     check("M: QUOTE/STUDY still block, STAT/EVENT still advisory",
           'if c["type"] == "STUDY":' in fcs and 'result["advisory"].append(c)' in fcs)
     check("M: UNVERIFIABLE still counted, still non-blocking",
@@ -314,9 +316,8 @@ def test_M_prompts_model_and_type_policy_are_unchanged():
     # the call count behaviourally; this pins the shape that produces it.
     code = "\n".join(l for l in fcs.splitlines() if not l.strip().startswith("#"))
     check("M: verification is still one claim per call",
-          'self._web_verify_quote(c["subject"], c["claim"])' in code
-          and 'self._web_verify_claim(c["type"], c.get("subject", ""), c["claim"])'
-          in code)
+          'self._web_verify_quote(c["subject"], c["claim"],' in code
+          and 'c["type"], c.get("subject", ""), c["claim"], timeout=budget' in code)
     # (Not a text scan for the word "batch": parse_claims_payload is the pre-existing
     # EXTRACTION parser and matches any such pattern. The guarantee that matters is the
     # call count, and test L measures it.)
@@ -335,6 +336,167 @@ def test_M_prompts_model_and_type_policy_are_unchanged():
           "claim_cap=8" in (HERE / "orchestrator" / "review.py").read_text())
 
 
+
+# ── the total deadline must be a REAL end-to-end bound ───────────────────────
+class Timed(StubFactChecker):
+    """Records the timeout every provider call was actually given, and can consume
+    wall clock so a deadline can expire mid-sequence."""
+
+    def __init__(self, claims, extract_cost=0.0, verify_cost=0.0):
+        super().__init__(raw=json.dumps({"claims": claims}))
+        self.extract_timeouts = []
+        self.verify_timeouts = []
+        self._ec, self._vc = extract_cost, verify_cost
+
+    def _call_openai_compat_api(self, **kw):
+        # extraction goes through the real helper, so capture its timeout here
+        self.extract_timeouts.append(kw.get("timeout"))
+        if self._ec:
+            import time as _t
+            _t.sleep(self._ec)
+        return self._raw
+
+    def _web_verify_quote(self, person, quote, timeout=None):
+        self.verify_timeouts.append(timeout)
+        if self._vc:
+            import time as _t
+            _t.sleep(self._vc)
+        return ("VERIFIED", "found")
+
+    def _web_verify_claim(self, ctype, subject, claim, timeout=None):
+        self.verify_timeouts.append(timeout)
+        if self._vc:
+            import time as _t
+            _t.sleep(self._vc)
+        return ("VERIFIED", "found")
+
+
+def test_N_every_call_is_bounded_by_the_remaining_total():
+    """1. With one second left, a call whose ordinary ceiling is 30s gets <= 1s."""
+    t = Timed(of("STAT", 3))
+    # min_call_seconds=0 isolates the CLAMP from the do-not-start floor
+    t._run_web_fact_check("body", strict=True, total_seconds=1.0, min_call_seconds=0)
+    check("N1: extraction was clamped to the remaining total",
+          t.extract_timeouts and t.extract_timeouts[0] <= 1.0,
+          t.extract_timeouts)
+    check("N1: every verification call was clamped too",
+          t.verify_timeouts and all(v <= 1.0 for v in t.verify_timeouts),
+          t.verify_timeouts)
+    check("N1: and none was given the ordinary 30s",
+          all(v < FC.PER_CALL_TIMEOUT for v in t.verify_timeouts), t.verify_timeouts)
+
+    # and with the full budget, calls get their ordinary ceiling
+    t2 = Timed(of("STAT", 3))
+    t2._run_web_fact_check("body", strict=True)
+    check("N1: a normal run still gives calls the ordinary ceiling",
+          all(abs(v - FC.PER_CALL_TIMEOUT) < 1.0 for v in t2.verify_timeouts),
+          t2.verify_timeouts)
+    check("N1: extraction too",
+          abs(t2.extract_timeouts[0] - FC.PER_CALL_TIMEOUT) < 1.0, t2.extract_timeouts)
+
+
+def test_N_extraction_is_inside_the_total_not_outside_it():
+    """The hole this verification found: a deadline taken AFTER extraction is one the
+    stage can already have overrun by 30 seconds before the first claim."""
+    src = (HERE / "orchestrator" / "fact_check.py").read_text()
+    body = src.split("def _run_web_fact_check")[1]
+    i_deadline = body.index("deadline = time.monotonic()")
+    i_extract = body.index("self._extract_verifiable_claims_raw(")
+    check("N2: the deadline is taken BEFORE extraction runs", i_deadline < i_extract,
+          (i_deadline, i_extract))
+    check("N2: extraction receives the budget, not a constant",
+          "self._extract_verifiable_claims_raw(\n                        content, "
+          "timeout=max(0.0, call_budget()))" in src)
+    check("N2: no provider call in this stage carries a hardcoded timeout",
+          "timeout=30" not in body)
+
+
+def test_N_a_mid_sequence_deadline_holds_the_run():
+    """2 and 3: the deadline expires part way through; no call starts after it, the
+    run does not claim completion, and the rest are recorded as unreached."""
+    t = Timed(of("STAT", 10), verify_cost=0.06)
+    fc = t._run_web_fact_check("body", strict=True, total_seconds=0.25,
+                               min_call_seconds=0.05)
+    r = BRIDGE.evaluate(_accept_run(), fact_check_fn=lambda x: fc)
+    check("N3: some claims were checked", 0 < len(t.verify_timeouts) < 10,
+          len(t.verify_timeouts))
+    check("N3: no call was given a budget past the deadline",
+          all(v is not None and v > 0 for v in t.verify_timeouts), t.verify_timeouts)
+    check("N3: fact_check_completed is FALSE", fc["fact_check_completed"] is False, fc)
+    check("N3: the unreached claims say total_deadline_exhausted",
+          {x["skipped_reason"] for x in fc["not_checked"]}
+          == {FC.TOTAL_DEADLINE_EXHAUSTED}, fc["not_checked"][:2])
+    check("N3: every extracted claim is accounted for",
+          len(fc["findings"]) + len(fc["not_checked"]) == fc["claims_extracted"],
+          (len(fc["findings"]), len(fc["not_checked"]), fc["claims_extracted"]))
+    check("N3: publication HOLD", r.eligible is False)
+    check("N3: as a technical incomplete", _check9(r)["detail"]
+          .startswith("FACT_CHECK_INCOMPLETE"), _check9(r)["detail"])
+
+
+def test_N_the_stage_cannot_outlive_its_total():
+    """The end-to-end invariant, measured: entry to return, with a provider that
+    always burns its whole allowance."""
+    import time as _t
+
+    class Slow(StubFactChecker):
+        def __init__(self, claims):
+            super().__init__(raw=json.dumps({"claims": claims}))
+            self.calls_made = 0
+
+        def _call_openai_compat_api(self, **kw):
+            _t.sleep(min(kw.get("timeout") or 0, 0.08))
+            return self._raw
+
+        def _web_verify_quote(self, person, quote, timeout=None):
+            self.calls_made += 1
+            _t.sleep(min(timeout or 0, 0.08))
+            return ("VERIFIED", "found")
+
+        def _web_verify_claim(self, ctype, subject, claim, timeout=None):
+            self.calls_made += 1
+            _t.sleep(min(timeout or 0, 0.08))
+            return ("VERIFIED", "found")
+
+    total = 0.30
+    s = Slow(of("STAT", 16))
+    t0 = _t.monotonic()
+    fc = s._run_web_fact_check("body", strict=True, total_seconds=total,
+                               min_call_seconds=0.05)
+    elapsed = _t.monotonic() - t0
+    check("N4: the stage returned inside its total (+ local overhead)",
+          elapsed <= total + 0.20, (elapsed, total))
+    check("N4: it stopped early rather than running all 16",
+          s.calls_made < 16, s.calls_made)
+    check("N4: and held rather than claiming coverage",
+          fc["fact_check_completed"] is False, fc)
+    check("N4: the ceiling is min(per-call, remaining), never the sum",
+          FC.PER_CALL_TIMEOUT == 30 and FC.FACT_CHECK_TOTAL_SECONDS == 180)
+
+
+def test_N_the_thirteen_claim_normal_case_is_unchanged():
+    """4: nothing about an ordinary run moved."""
+    claims = of("QUOTE", 5) + of("STUDY", 2) + of("STAT", 4) + of("EVENT", 2)
+    c, fc, r = run(claims)
+    check("N5: 13 extracted, 13 checked", ev(r)["claims_extracted"] == 13
+          and ev(r)["claims_checked"] == 13, ev(r))
+    check("N5: 13 verification calls", len(c.verify_calls) == 13, len(c.verify_calls))
+    check("N5: coverage complete", ev(r)["coverage_complete"] is True)
+    check("N5: check 9 PASSES", _check9(r)["ok"] is True, _check9(r))
+    check("N5: eligible", r.eligible is True)
+    check("N5: claim order is unchanged (quotes first, then the rest, in emission order)",
+          [f["claim_text"] for f in ev(r)["findings"]]
+          == [x["claim"] for x in claims if x["type"] == "QUOTE"]
+          + [x["claim"] for x in claims if x["type"] in ("STUDY", "STAT", "EVENT")],
+          [f["claim_text"] for f in ev(r)["findings"]])
+    check("N5: the legacy advisory path still gets its ordinary 30s",
+          Timed(of("STAT", 2))._run_web_fact_check("body") is not None)
+    lt = Timed(of("STAT", 2))
+    lt._run_web_fact_check("body")                     # strict=False
+    check("N5: legacy calls are unbounded by any total",
+          lt.extract_timeouts == [FC.PER_CALL_TIMEOUT], lt.extract_timeouts)
+
+
 def main() -> None:
     for fn in (test_A_six_stats_are_all_checked,
                test_B_five_quotes_and_five_stats_are_all_checked,
@@ -347,7 +509,12 @@ def main() -> None:
                test_I_provider_failure_midway_fails_closed,
                test_J_and_K_the_previous_two_prs_still_hold,
                test_L_the_network_call_bound_is_exact,
-               test_M_prompts_model_and_type_policy_are_unchanged):
+               test_M_prompts_model_and_type_policy_are_unchanged,
+               test_N_every_call_is_bounded_by_the_remaining_total,
+               test_N_extraction_is_inside_the_total_not_outside_it,
+               test_N_a_mid_sequence_deadline_holds_the_run,
+               test_N_the_stage_cannot_outlive_its_total,
+               test_N_the_thirteen_claim_normal_case_is_unchanged):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)
