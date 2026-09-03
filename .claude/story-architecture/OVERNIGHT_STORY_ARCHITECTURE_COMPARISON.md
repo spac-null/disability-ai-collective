@@ -285,3 +285,42 @@ it defines contracts for -- finder, worth gate, architect -- each require a mode
 Wiring them into `runner.py` would ship a production path I could not execute even once.
 That is a technical blocker, not a judgement, so no `#63` was opened and nothing imports
 `story.py`.
+
+## Loop 3 re-evaluated blind: confirmed on both cases
+
+Two further independent evaluators, counterbalanced (jia: revised = A; roman: revised = B),
+told only that the drafts were close variants.
+
+| case | preferred | margin | concreteness of turn | crip fit | ending | factual restraint |
+|---|---|---|---|---|---|---|
+| jia loop2 -> loop3 | **loop3** | clear | 2 -> **4** | 2 -> **4** | 4 -> **5** | -- |
+| roman loop1 -> loop3 | **loop3** | clear | 2 -> **4** | 3 -> **4** | 2 -> **4** | 2 -> **4** |
+
+Asked directly whether the pre-loop turn read as "the only paragraph with nobody in it":
+**yes** for the pre-loop version, **no** for the revised one. On the invented teacher:
+"Removing it costs A almost nothing and gains it a lot ... Trading an invented laptop for
+the phrase 'addressed to a list' is a straight upgrade: the list is a real document, and
+pointing at a real document is more damning than staging a scene."
+
+Six blind preferences in total, all favouring the newer architecture, none closer than
+"clear".
+
+## The residual defect, which the new screens CANNOT catch
+
+The roman evaluator found a factual problem I had not, and that none of the three screens
+can see:
+
+> "The last clause is an unverified factual assertion doing the whole load: *'the part
+> that was not engineered.'* The article never checks it. NASA runs data archives and
+> access tooling; if any of that exists for Roman, 'was not engineered' is simply false."
+
+This is an **unsupported negative claim about the world** -- not an unapproved number,
+name, sensory word or scene prop, so `factual_surface_audit` is structurally blind to it.
+It is the same class Grounding V2 flags as negative-existence claims, which is the third
+time tonight that this one defect class has surfaced from a different direction.
+
+Both final articles also share a second residual, named independently by two evaluators:
+the lens is never surfaced, so a reader without context can file jia as media criticism
+and roman as open-data criticism. "Fit is earned, not asserted."
+
+Improvement loops are exhausted at 3 of 3, so neither was fixed.
