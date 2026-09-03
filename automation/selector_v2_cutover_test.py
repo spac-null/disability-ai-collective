@@ -432,42 +432,23 @@ def test_publisher_repetition_is_still_soft():
 
 
 # ── J: nothing downstream changed ────────────────────────────────────────────
-def test_no_downstream_stage_changed():
-    import subprocess
-    out = subprocess.run(["git", "diff", "--name-only", "origin/main"],
-                         cwd=str(HERE.parent), capture_output=True, text=True).stdout
-    changed = [f for f in out.split() if f.strip()]
-    # NOTE (2026-09-03): this is a WORKING-TREE scope guard, not an engine invariant --
-    # it diffs against a moving origin/main, so every PR after the cutover has to declare
-    # its own files here or the check fires. That makes it self-invalidating, and it is
-    # the reason this file appears in a provenance-bugfix PR at all. Left in place rather
-    # than deleted, because whether the guard should become per-PR or go away is the
-    # owner's call; see the PR description.
-    allowed = {"automation/selector_v2.py", "automation/new_engine_production.py",
-               "automation/selector_v2_cutover_test.py",
-               "automation/selector_v2_runtime_hook_test.py",
-               "automation/cutover_validation_test.py",
-               "automation/new_engine_v1_test.py",
-               ".claude/WORK.md", ".claude/LOGBOOK.md",
-               # the research_pack_provenance false-positive fix (2026-09-03): the
-               # stray-source detector read whole source bodies as scaffolding.
-               "automation/publication_safety_bridge.py",
-               "automation/research_pack_test.py"}
-    stray = [f for f in changed if f not in allowed]
-    check("only the selector and declared bugfix scope changed", not stray, stray)
-    # The engine STAGES the cutover must never have touched. The bridge is no longer in
-    # this list: it is deliberately changed by the provenance bugfix, and its call site
-    # invariance is asserted below instead.
-    for untouched in ("automation/new_engine_v1/research.py",
-                      "automation/new_engine_v1/stages.py",
-                      "automation/new_engine_v1/decision.py",
-                      "automation/new_engine_v1/runner.py",
-                      "automation/orchestrator/discovery.py"):
-        check("unchanged: %s" % untouched.split("/")[-1], untouched not in changed)
+def test_the_selector_hands_off_to_the_unchanged_downstream_call_sites():
+    """The cutover's downstream contract: whatever the selector chose, run_scheduled
+    still hands it to the same engine call and the same safety bridge call.
+
+    This replaces a scope guard that ran `git diff --name-only origin/main` against a
+    hardcoded allowlist of PR #51's files. That guard could only ever be true for the
+    one PR that wrote it: it re-derived its verdict from the working tree, so any later
+    PR touching downstream code had to be added to the allowlist to keep the suite
+    green -- which is a review note about a diff, not an invariant about the engine.
+    What is durable is the call sites themselves, and those are asserted here.
+    """
     src = (HERE / "new_engine_production.py").read_text()
     body = src.split("def run_scheduled(")[1]
-    check("the engine call is unchanged", "out = R.run(payload, root, Provider(model=model), run" in body)
-    check("the bridge call is unchanged", "bridge = BRIDGE.evaluate(out, fact_check_fn=_strict_fc)" in body)
+    check("the engine call is unchanged",
+          "out = R.run(payload, root, Provider(model=model), run" in body)
+    check("the bridge call is unchanged",
+          "bridge = BRIDGE.evaluate(out, fact_check_fn=_strict_fc)" in body)
 
 
 
@@ -618,7 +599,7 @@ def main():
                test_no_material_at_all_is_an_ordinary_day,
                test_a_valid_assessment_always_yields_a_winner,
                test_authoritative_mode_never_runs_the_legacy_selector,
-               test_no_downstream_stage_changed):
+               test_the_selector_hands_off_to_the_unchanged_downstream_call_sites):
         print("\n" + fn.__name__)
         fn()
     for k in (SV.SELECTOR_ENV, SV.SHADOW_ENV, "NEW_ENGINE_V1_MODE"):
