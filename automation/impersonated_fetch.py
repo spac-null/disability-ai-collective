@@ -47,7 +47,12 @@ def get(url: str, *, timeout: float, cap: int = DEFAULT_CAP) -> dict | None:
     """One impersonated GET.
 
     None when curl_cffi is unavailable -- distinct from a request that ran and failed.
-    Otherwise {"status": int, "content_type": str (lowercased), "text": str}, capped.
+    Otherwise {"status": int, "content_type": str (lowercased), "text": str,
+    "content": bytes}, both bodies capped.
+
+    `content` is the UNDECODED body, added 2026-09-03 for document ingestion: a PDF
+    survives `.text` as mojibake and re-encoding that back to bytes reproduces neither
+    the file nor its hash, so a caller that needs the file needs the bytes.
 
     The status and content type are REPORTED rather than judged, because callers do not
     agree about them: the orchestrator wants HTML or nothing, while the Research Pack
@@ -61,7 +66,8 @@ def get(url: str, *, timeout: float, cap: int = DEFAULT_CAP) -> dict | None:
     r = _requests.get(url, impersonate=IMPERSONATE, timeout=timeout)
     return {"status": r.status_code,
             "content_type": (r.headers.get("Content-Type") or "").lower(),
-            "text": (r.text or "")[:cap]}
+            "text": (r.text or "")[:cap],
+            "content": (r.content or b"")[:cap]}
 
 
 def html_or_none(url: str, *, timeout: float, cap: int = DEFAULT_CAP) -> str | None:
