@@ -649,3 +649,146 @@ def architect_prose_audit(arch: dict, facts: dict, quotes: dict | None = None) -
                             or sorted(_entities(prose) - e_ents)
                             or [t for t in terms if t in SENSORY_RISK]
                             or [t for t in terms if t in SCENE_RISK])}
+
+
+# ── the blind spot the Roman ending exposed ───────────────────────────────────
+# "the part that was not engineered" survived every screen. It is not an unapproved
+# number, name, colour or scene prop -- it is a claim that something does not exist. No
+# evidence can support an absence unless the evidence states the absence, and Grounding
+# V2 had independently been reporting this same class as negative-existence findings it
+# could not support.
+#
+# So negative shape is detected deterministically here, and each hit must then be matched
+# to a ledger fact of the corresponding type. Detection is mechanical; the decision about
+# whether a given sentence IS a claim stays with a reader or an evaluator, because regex
+# cannot settle semantics. What this guarantees is that no such sentence passes unseen.
+NEGATIVE_SHAPES = [
+    (r"\bwas not (?:engineered|built|designed|tested|intended|planned)\b", "NEGATIVE_EXISTENCE"),
+    (r"\b(?:nobody|no one|nothing) (?:had |has |was |is )?(?:built|made|designed|tested|engineered|written)\b", "NEGATIVE_EXISTENCE"),
+    (r"\bthere (?:was|is|were|are) no\b", "NEGATIVE_EXISTENCE"),
+    (r"\bno (?:such|way|means|method|record|evidence|provision)\b", "NEGATIVE_EXISTENCE"),
+    (r"\bhas (?:never|not yet) been\b", "NEGATIVE_EXISTENCE"),
+    (r"\bnever (?:happened|existed|been|occurred|tested)\b", "NEGATIVE_EXISTENCE"),
+    (r"\bdoes not (?:exist|contain|include|mention|describe|show|address)\b", "ABSENCE"),
+    (r"\bnothing (?:in|about|on)\b", "ABSENCE"),
+    (r"\bonly\b(?=[^.]*\b(?:one|two|first|single|way|thing|part)\b)", "EXCLUSIVITY"),
+    (r"\bnone of\b", "EXCLUSIVITY"),
+    (r"\bthe (?:first|last|only) (?:ever|time|one|person|instrument)\b", "FIRST_LAST"),
+    (r"\b(?:unlike|whereas) [^,.]{3,40}, [^.]{0,40}\b(?:did not|does not|had no)\b", "COMPARATIVE_NEGATION"),
+    (r"\bno box on the form\b", "ABSENCE"),
+]
+# Intent, motive and causal assertions: the other classes a story is tempted to invent.
+INTENT_SHAPES = [
+    (r"\b(?:wanted|intended|hoped|meant) to\b", "INTENT"),
+    (r"\bin order to\b", "INTENT"),
+    (r"\bdecided(?: ,|,)? (?:early|late|that|to)\b", "INTENT"),
+    (r"\bbecause (?:of )?(?:it|they|he|she|nobody|no one)\b", "CAUSAL"),
+    (r"\bso that\b", "CAUSAL"),
+    (r"\bwhich is why\b", "CAUSAL"),
+]
+
+
+def _sentences_of(text: str) -> list:
+    body = text.split("---", 2)[2] if text.startswith("---") else text
+    body = re.sub(r"^#\s+.*\n", "", body.strip(), count=1)
+    return [s.strip() for s in re.split(r"(?<=[.!?])\s+", body.strip()) if s.strip()]
+
+
+def negative_claim_scan(article_text: str) -> list:
+    """Every sentence whose SHAPE asserts an absence, exclusivity or first/last."""
+    out = []
+    for s in _sentences_of(article_text):
+        for pat, kind in NEGATIVE_SHAPES:
+            if re.search(pat, s, re.I):
+                out.append({"sentence": s, "kind": kind,
+                            "pattern": pat.replace(r"\b", "")[:44]})
+                break
+    return out
+
+
+def intent_causal_scan(article_text: str) -> list:
+    out = []
+    for s in _sentences_of(article_text):
+        for pat, kind in INTENT_SHAPES:
+            if re.search(pat, s, re.I):
+                out.append({"sentence": s, "kind": kind})
+                break
+    return out
+
+
+def negative_admission_audit(article_text: str, ledger: dict) -> dict:
+    """A negative-shaped sentence needs a ledger fact of a negative type behind it.
+
+    The pairing is reported, not inferred: each hit is matched against negative facts
+    whose proposition shares substantial wording. Anything unmatched is a HOLD, and the
+    prescribed repair is REMOVAL, never a caveat -- a caveat is how the research memo got
+    into the prose in the first place.
+    """
+    from . import ledger as LG
+    negs = {fid: f for fid, f in ledger.items()
+            if f.get("claim_type") in LG.NEGATIVE_TYPES}
+    hits = negative_claim_scan(article_text)
+    unmatched = []
+    for h in hits:
+        sl = " ".join(h["sentence"].lower().split())
+        ok = False
+        for f in negs.values():
+            key = [w for w in re.findall(r"[a-z]{5,}", f["proposition"].lower())
+                   if w not in _FUNCTION_WORDS]
+            if key and sum(1 for w in key if w in sl) >= max(2, len(key) // 3):
+                ok = True
+                break
+        if not ok:
+            unmatched.append(h)
+    return {"negative_sentences": len(hits), "unmatched": unmatched,
+            "ok": not unmatched,
+            "negative_facts_available": sorted(negs)}
+
+
+# ── FINAL LENS CONTRACT ───────────────────────────────────────────────────────
+def validate_final_lens(final_lens: dict, arch: dict, ledger: dict) -> list:
+    """The lens must change the meaning of material the reader already has.
+
+    Independent readers said of the previous version: "the only paragraph with nobody in
+    it", "a placeholder where a person should be", "fit is earned, not asserted". So the
+    contract now names the beat BEFORE, the turn, and the beat AFTER, and requires the
+    turn to say what the reader understands differently -- not where disability is
+    mentioned.
+    """
+    errs = []
+    need = ("lens_claim", "evidence_basis", "what_changes_for_the_reader",
+            "story_beat_before", "crip_turn", "story_beat_after")
+    for k in need:
+        if not str(final_lens.get(k) or "").strip():
+            errs.append("final lens missing %s" % k)
+    if errs:
+        return errs
+    beat_ids = [b.get("beat_id") for b in (arch.get("beats") or [])]
+    before, after = final_lens["story_beat_before"], final_lens["story_beat_after"]
+    if before not in beat_ids:
+        errs.append("story_beat_before %r is not a beat" % before)
+    if after not in beat_ids:
+        errs.append("story_beat_after %r is not a beat" % after)
+    if before in beat_ids and after in beat_ids:
+        if beat_ids.index(before) >= beat_ids.index(after):
+            errs.append("the turn must sit between an earlier and a later beat "
+                        "(%s then %s)" % (before, after))
+    basis = set(final_lens.get("evidence_basis") or [])
+    if isinstance(final_lens.get("evidence_basis"), str):
+        basis = {final_lens["evidence_basis"]}
+    unknown = basis - set(ledger)
+    if unknown:
+        errs.append("lens evidence_basis cites unknown facts: %s" % sorted(unknown))
+    # the turn must re-read the BEFORE beat's carrier, not float
+    tgt = [b for b in (arch.get("beats") or []) if b.get("beat_id") == before]
+    if tgt:
+        nouns = {w for w in re.findall(r"[a-z]{4,}",
+                                       (tgt[0].get("concrete_carrier") or "").lower())
+                 if w not in _FUNCTION_WORDS}
+        if nouns and not any(n in final_lens["crip_turn"].lower() for n in nouns):
+            errs.append("the crip turn names nothing from %s, the beat it re-reads" % before)
+    if not re.search(r"\bunderstand|read|mean|see\b",
+                     final_lens["what_changes_for_the_reader"], re.I):
+        errs.append("what_changes_for_the_reader does not describe a change in "
+                    "understanding")
+    return errs
