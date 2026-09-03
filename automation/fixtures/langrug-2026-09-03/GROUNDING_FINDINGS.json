@@ -1,0 +1,48 @@
+{
+  "content_hash": "9e8d0c8b4373214d1278a4910a551d6665017ded3045dc46bdd5273a0a83035b",
+  "created_at": "2026-09-03T13:57:02.409324+00:00",
+  "input_hashes": {
+    "research_pack": "55761fe7e29b6837c75ab18666512af1192859539bcea022c80032e4d4483433",
+    "source": "5d16f759fa2f008f02e5d248a513d480e161267ab7105e45916ad23a09affecf",
+    "writer_output": "5c9b8097b6a36931da12dc5ea8f24cb850757949ff5865dde91d50af91a9bf3b"
+  },
+  "payload": {
+    "findings": [
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F1",
+        "quote": "where spinach, beetroot, onions and sweet potatoes grow",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The anchor source does not name these specific crops, but S3 establishes the vegetable gardens grow 'spinach, beetroot, onions and sweet potatoes.' Supported by the research pack, so no invented fact."
+      },
+      {
+        "classification": "TRUE_UNSUPPORTED",
+        "id": "F2",
+        "quote": "The rest — some 33,000 litres — goes back into the river.",
+        "repairable": true,
+        "suggested_patch": "The rest — most of it — goes back into the river.",
+        "why": "The source says 36,000 litres are treated daily and about 3,000 litres are held back. The draft derives 33,000 litres by subtraction, but the source says 'most of the water is released back into the river' without giving a figure. The precise 33,000 figure is a calculated assertion the source does not state; the source never says the entire non-retained portion (all 33,000) reaches the river, only 'most.'"
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F3",
+        "quote": "It is meant to serve rural communities.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The anchor states Winter says the system 'does provide clean water for rural communities' and is not designed to replace conventional plants. The draft's paraphrase is consistent with the source."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F4",
+        "quote": "and the first useful one taking seven years to reach",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The source says the project was established in 2018 and 'only this year' reached the irrigation threshold. The draft infers seven years; this is an arithmetic interpretation of the source's stated timeline rather than an invented fact, though the exact year of the article is not stated in the anchor."
+      }
+    ],
+    "status": "settled"
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "GROUNDING_FINDINGS"
+}

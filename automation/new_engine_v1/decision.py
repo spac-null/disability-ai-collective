@@ -70,9 +70,16 @@ def decide(artifacts: dict) -> tuple[str, list[str]]:
     if C.GROUNDING_REPAIR in artifacts:
         rp = artifacts[C.GROUNDING_REPAIR].payload
         v = rp.get("verification", {})
-        for key in ("residual", "introduced", "unrelated_edits"):
+        # Every unsafe or unestablished repair state holds, including the two the old
+        # arithmetic could not name. `reclassified` is a pre-existing claim the second
+        # pass judged differently -- the repair did not cause it, and it blocks anyway,
+        # because whether the claim is supported is a separate question from who wrote
+        # it. `unresolved` is "we could not tell", which is never a pass.
+        for key in ("residual", "introduced", "reclassified", "unresolved",
+                    "unrelated_edits"):
             if v.get(key, 1) != 0:
                 return HOLD, ["repair verification failed: %s=%r" % (key, v.get(key))]
-        reasons.append("repair verified: 0 residual, 0 introduced, 0 unrelated edits")
+        reasons.append("repair verified: 0 residual, 0 introduced, 0 reclassified, "
+                       "0 unresolved, 0 unrelated edits")
 
     return ACCEPT, reasons

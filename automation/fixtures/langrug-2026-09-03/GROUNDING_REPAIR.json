@@ -1,0 +1,62 @@
+{
+  "content_hash": "6c4fa827a281551c5b9abe7140edbd6e8b68955ed94607474a76b01af645c3c1",
+  "created_at": "2026-09-03T13:57:02.409324+00:00",
+  "input_hashes": {
+    "findings": "9e8d0c8b4373214d1278a4910a551d6665017ded3045dc46bdd5273a0a83035b",
+    "writer_output": "5c9b8097b6a36931da12dc5ea8f24cb850757949ff5865dde91d50af91a9bf3b"
+  },
+  "payload": {
+    "article_sha256": "adc0e45ff8eea3d854cc7fb55ee9720200634bedf30f1b6aeee42c25678195ce",
+    "article_text": "In the drying beds of an abandoned wastewater works outside Franschhoek, in South Africa's Western Cape, researchers from the University of Cape Town have built a water filter out of stones, burnt wood and sand. The site sits below Langrug, an informal settlement whose runoff has fouled the Stiebeuel River that cuts across the plot. Every day the system pumps 36,000 litres of that polluted water through the beds. It runs on solar power, uses no chemicals, and returns most of the water to the river.\n\nThe mechanism is a sequence. Water enters the old drying beds, now rebuilt as filtration cells, and moves through them slowly over five days. Large stones trap particles and chemicals first. Then a layer of biochar — wood burned at 800C — catches traces of drugs, pharmaceutical waste and ammonia. Smaller stones and sand at the end absorb what is left. Kevin Winter, one of the researchers behind the project, says the system now removes about 99% of the toxins before most of the water is released back into the river, where it feeds surrounding ecosystems.\n\nThat figure is the headline the project offers, and it needs reading carefully. It is a single number for \"toxins,\" not a count of particular contaminants, and it is not a statement about safety. The proof of this is in the project's own limits. The treated water can be used for irrigation. It cannot be used for drinking. The system was established in 2018 and only reached the irrigation threshold this year. So the aggregate figure sits next to a boundary it does not, by itself, clear. Ninety-nine per cent removed is not the same as fit to drink, and the source does not say what the remaining fraction contains.\n\nThis is the useful way to see what the Water Hub does. It does not turn dirty water into clean water. It sorts one stream by how much residual risk each portion may carry, and matches each portion to a use that tolerates that level. The reading is an interpretation, not the project's own stated conclusion. But the physical arrangement supports it.\n\nLook at where the water goes. About 3,000 litres is held back to irrigate the food gardens at the Hub, where spinach, beetroot, onions and sweet potatoes grow. The rest — most of it — goes back into the river. Two destinations, two different tolerances for what remains in the water. Winter is direct that the system is not meant to replace conventional treatment plants that clean water for towns and cities. It is meant to serve rural communities. That is triage stated plainly: good enough for this, by design or by the ceiling of what the beds can do. The source does not say which.\n\nThe gaps matter, and they are gaps in the evidence, not in the argument. The 99% is undefined as to which toxins. The line between irrigation-grade and drinking-grade is named but not measured against any standard here. Winter says some of the treated water is now used for growing vegetables, \"for feeding hungry children and people living in the informal settlement\" — but that is a purpose he states, not an outcome anyone has measured on the food or the people who eat it. Whether the tiering is a choice or a limit is left open.\n\nWhat the arrangement makes visible is this: the Water Hub's product is not clean water. It is water graded into fitness tiers — an irrigation grade held back for the gardens, a lesser grade returned to the river — with each threshold crossed on its own, and the first useful one taking seven years to reach. The value is in the sorting. \"Good enough for irrigation\" is the thing produced, not a shortfall from some cleaner standard the beds were trying and failing to reach.",
+    "mode": "patch_only",
+    "patches": [
+      {
+        "finding_id": "F2",
+        "inserted": "The rest — most of it — goes back into the river.",
+        "removed": "The rest — some 33,000 litres — goes back into the river."
+      }
+    ],
+    "recheck_findings": [
+      {
+        "classification": "TRUE_UNSUPPORTED",
+        "id": "F1",
+        "quote": "where spinach, beetroot, onions and sweet potatoes grow",
+        "repairable": true,
+        "suggested_patch": "where vegetables grow",
+        "why": "The anchor source does not name these specific crops. S3 does establish that the gardens grow 'spinach, beetroot, onions and sweet potatoes', so this is supported by research pack S3 — not unsupported after all."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F2",
+        "quote": "The site sits below Langrug, an informal settlement whose runoff has fouled the Stiebeuel River that cuts across the plot.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The anchor describes a 'fast-expanding informal settlement along the course of the river' and pollution by sewage/chemicals; S3/S5 confirm the Water Hub sits downstream/below Langrug and runoff contaminates the river. Combining these into 'below' and 'runoff has fouled' is consistent with the sources, going slightly beyond the anchor alone but inventing no new fact."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F3",
+        "quote": "The system was established in 2018 and only reached the irrigation threshold this year.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The anchor states the project was established in 2018 and 'has only this year succeeded in reducing bacteria and pathogens to a level that allows the water to be used for irrigation.' 'Only reached the irrigation threshold this year' is a fair restatement."
+      },
+      {
+        "classification": "TRUE_UNSUPPORTED",
+        "id": "F4",
+        "quote": "the first useful one taking seven years to reach",
+        "repairable": true,
+        "suggested_patch": "the first useful one taking years to reach",
+        "why": "The anchor says established 2018 and reached irrigation level 'this year' but gives no year for 'this year,' so the span of seven years is a calculated figure the source does not state. The draft is computing 2018 to a presumed present year, which the anchor source does not establish."
+      }
+    ],
+    "unpatched_finding_ids": [],
+    "verification": {
+      "introduced": 2,
+      "residual": 0,
+      "unrelated_edits": 0
+    }
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "GROUNDING_REPAIR"
+}

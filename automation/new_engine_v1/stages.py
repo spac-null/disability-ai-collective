@@ -529,10 +529,14 @@ def repair(article_text: str, findings: list) -> dict | None:
         "article_text": text,
         "article_sha256": sha256_text(text),
         "unpatched_finding_ids": failed,
+        # Placeholder only. runner.py replaces this wholesale with the measured
+        # account once the recheck has run; the defaults here are the fail-closed
+        # shape for a repair whose verification never happened.
         "verification": {
             "residual": residual,
-            # a clause substitution introduces no new unsupported claim of its own
             "introduced": 0,
+            "reclassified": 0,
+            "unresolved": 0,
             # every edit is one recorded substitution; nothing else was touched
             "unrelated_edits": 0,
         },
