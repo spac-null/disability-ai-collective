@@ -53,6 +53,9 @@ def _source_payload():
 
 DISCOVERY_REPLY = {
     "commissionable": True,
+    # PR #61: Discovery SELECTS its anchor by id from deterministic candidates cut from
+    # SOURCE. A003 is the sentence carrying the four-of-nine clause these tests read.
+    "source_anchor_id": "A003",
     # exact span of SOURCE -- the anchor invariant (Part A) requires this
     "source_anchor_quote": "the audible warning was sounded on four of the nine "
                            "occasions logged",

@@ -32,6 +32,9 @@ from new_engine_v1 import runner as R                        # noqa: E402
 from new_engine_v1_test import (StubProvider, DISCOVERY_REPLY, FORM_REPLY,  # noqa: E402
                                 SOURCE, SHA, AT, _source_payload, ARTICLE)
 
+DISCOVERY_REPLY_ANCHOR_TEXT = ("the audible warning was sounded on four of "
+                               "the nine occasions logged")
+
 FAILURES = []
 
 
@@ -76,53 +79,95 @@ def test_1_valid_anchor_passes():
           INV.check_anchor(missing, SOURCE)[1] == INV.ANCHOR_MISSING)
 
 
-def test_2_anchor_absent_holds_before_writer():
-    bad = dict(DISCOVERY_REPLY, source_anchor_quote="a clause that is nowhere in the source text")
+def test_2_bad_anchor_selection_fails_closed_with_no_repair_call():
+    """PR #61 replaced the bounded generative repair with fail-closed selection.
+
+    The old test here proved that a non-verbatim anchor triggered exactly ONE repair
+    call and then held. That path is deliberately gone: it was handed only the anchor
+    source and asked to find a span carrying a meaning that lived in a different source,
+    so it could not succeed, and keeping it left a model-written anchor one call from
+    authority. The safety property is now stronger and is what is asserted below --
+    a bad selection HOLDS, and no repair is attempted at all.
+    """
+    from new_engine_v1 import anchors as AN
+
+    def anchor_repair_calls(p):
+        return sum(1 for c in p.calls if "correcting ONE field" in c["system"])
+
+    def discovery_calls(p):
+        return sum(1 for c in p.calls if "source_anchor_id" in c["user"])
+
+    for label, reply, want in (
+            ("an unknown id", dict(DISCOVERY_REPLY, source_anchor_id="A999"),
+             INV.ANCHOR_ID_UNKNOWN),
+            ("a missing id",
+             {k: v for k, v in DISCOVERY_REPLY.items() if k != "source_anchor_id"},
+             INV.ANCHOR_ID_MISSING),
+            ("an empty id", dict(DISCOVERY_REPLY, source_anchor_id="  "),
+             INV.ANCHOR_ID_MISSING),
+            ("an explicit NONE", dict(DISCOVERY_REPLY, source_anchor_id="NONE"),
+             INV.NO_VALID_ANCHOR)):
+        with tempfile.TemporaryDirectory() as d:
+            pr = StubProvider(discovery=reply)
+            out = _run(pr, d, name="a")
+            check("%s -> HOLD" % label, out["decision"] == "HOLD", out["reasons"])
+            check("  deterministic reason code %s" % want,
+                  out.get("reason_code") == want, out.get("reason_code"))
+            check("  HOLD before the writer -- no WRITER_INPUT",
+                  C.WRITER_INPUT not in out["artifacts"])
+            check("  ...and no WRITER_OUTPUT", C.WRITER_OUTPUT not in out["artifacts"])
+            check("  no article file written",
+                  not (pathlib.Path(d) / "a" / "article.md").exists())
+            check("  NO anchor-repair call was made",
+                  anchor_repair_calls(pr) == 0, anchor_repair_calls(pr))
+            check("  exactly one Discovery call carried the candidate menu",
+                  discovery_calls(pr) == 1, discovery_calls(pr))
+
+    # free-text prose in the authoritative field cannot become the anchor
     with tempfile.TemporaryDirectory() as d:
-        # repair also fails: the stub returns no exact span
-        p = StubProvider(discovery=bad)
-        out = _run(p, d, name="a")
-        check("anchor not in source -> HOLD", out["decision"] == "HOLD", out["reasons"])
-        check("deterministic reason code",
-              out.get("reason_code") == INV.ANCHOR_NOT_IN_SOURCE, out.get("reason_code"))
-        check("HOLD happens BEFORE the writer -- no WRITER_INPUT",
-              C.WRITER_INPUT not in out["artifacts"])
-        check("...and no WRITER_OUTPUT", C.WRITER_OUTPUT not in out["artifacts"])
-        check("no article file written",
-              not (pathlib.Path(d) / "a" / "article.md").exists())
-        check("exactly one bounded repair attempt was made, not a loop",
-              p.calls and sum(1 for c in p.calls if "correcting ONE field" in c["system"]) == 1,
-              sum(1 for c in p.calls if "correcting ONE field" in c["system"]))
+        prose = dict(DISCOVERY_REPLY, source_anchor_id="A999",
+                     source_anchor_quote="a clause that is nowhere in the source text")
+        pr = StubProvider(discovery=prose)
+        out = _run(pr, d, name="b")
+        check("volunteered prose alongside a bad id still HOLDs",
+              out["decision"] == "HOLD", out["reasons"])
+        dp = out["artifacts"][C.DISCOVERY].payload
+        check("  and the prose did not survive into the anchor field",
+              dp.get(INV.ANCHOR_FIELD) is None, dp.get(INV.ANCHOR_FIELD))
+        check("  with no repair attempted", anchor_repair_calls(pr) == 0)
 
-
-def test_2b_bounded_repair_can_succeed():
-    """ONE constrained repair, anchor field only."""
-    bad = dict(DISCOVERY_REPLY, source_anchor_quote="warning sounded four times of nine")
-
-    class RepairProvider(StubProvider):
-        def complete(self, system, user, max_tokens=3000, timeout=180, temperature=None):
-            if "correcting ONE field" in system:
-                from new_engine_v1.provider import Completion
-                self.calls.append({"system": system, "user": user})
-                return Completion(
-                    text=json.dumps({"exact_span": "the audible warning was sounded on "
-                                                   "four of the nine occasions logged"}),
-                    requested_model="m", actual_model="m", provider_label="Stub")
-            return super().complete(system, user, max_tokens, timeout, temperature)
-
+    # a GOOD id plus contradicting prose: the mapping wins, and the run proceeds
     with tempfile.TemporaryDirectory() as d:
-        out = R.run(_source_payload(), pathlib.Path(d),
-                    RepairProvider(discovery=bad), "rp", AT, mode=R.MODE_LIVE,
-                    research_fn=stub_pack)
-        check("a successful bounded repair lets the run continue",
+        cands = AN.candidates(SOURCE)
+        good = dict(DISCOVERY_REPLY, source_anchor_id="A003",
+                    source_anchor_quote="warning sounded four times of nine")
+        out = _run(StubProvider(discovery=good), d, name="c")
+        check("a valid id with contradicting prose still ACCEPTs",
               out["decision"] == "ACCEPT", out["reasons"])
         dp = out["artifacts"][C.DISCOVERY].payload
-        check("only the anchor field changed",
-              dp["source_anchor_repaired"] is True
-              and dp["dominant_reading"] == DISCOVERY_REPLY["dominant_reading"]
-              and dp["what_becomes_knowable"] == DISCOVERY_REPLY["what_becomes_knowable"])
-        check("the repaired anchor is an exact source span",
+        want = [c["exact_span"] for c in cands if c["anchor_id"] == "A003"][0]
+        check("  the anchor is the MAPPED span, not the model's prose",
+              dp[INV.ANCHOR_FIELD] == want, dp[INV.ANCHOR_FIELD][:70])
+        check("  and check_anchor still verifies it against the anchor source",
               INV.check_anchor(dp, SOURCE)[0] is True)
+
+
+def test_2b_no_generative_anchor_fallback_remains():
+    """No route back to the old contract: not in the module, not in the pipeline."""
+    check("invariants no longer exposes repair_anchor",
+          not hasattr(INV, "repair_anchor"))
+    check("no REPAIR_SYSTEM prompt remains", not hasattr(INV, "REPAIR_SYSTEM"))
+    rsrc = (HERE / "new_engine_v1" / "runner.py").read_text()
+    check("the runner makes no repair call", "repair_anchor(" not in rsrc)
+    # behavioural: a quote-only reply (the OLD contract) is not accepted any more
+    with tempfile.TemporaryDirectory() as d:
+        legacy = {k: v for k, v in DISCOVERY_REPLY.items() if k != "source_anchor_id"}
+        legacy["source_anchor_quote"] = DISCOVERY_REPLY_ANCHOR_TEXT
+        out = _run(StubProvider(discovery=legacy), d, name="lg")
+        check("an exact-span quote WITHOUT an id no longer passes",
+              out["decision"] == "HOLD", out["reasons"])
+        check("  it fails as a missing id, not as a bad quote",
+              out.get("reason_code") == INV.ANCHOR_ID_MISSING, out.get("reason_code"))
 
 
 # ── 3: writer/provider failure ────────────────────────────────────────────────
@@ -369,8 +414,8 @@ def test_legacy_path_and_cadence_unchanged():
 
 def main():
     for fn in [test_1_valid_anchor_passes,
-               test_2_anchor_absent_holds_before_writer,
-               test_2b_bounded_repair_can_succeed,
+               test_2_bad_anchor_selection_fails_closed_with_no_repair_call,
+               test_2b_no_generative_anchor_fallback_remains,
                test_3_provider_failure_artifact,
                test_4_default_engine_is_new_engine_v1,
                test_5_explicit_new_engine,

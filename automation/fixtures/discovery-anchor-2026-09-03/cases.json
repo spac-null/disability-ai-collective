@@ -1,0 +1,30 @@
+{
+  "guardian-gallery": {
+    "run": "41c42b46",
+    "anchor_source_chars": 702,
+    "old_model_anchor": "The exhibition is divided into five thematic sections informed by governmental processes and community organizing: Remarks, Organize, Records, Dissents, and Petitions.",
+    "subject_span": "",
+    "held_with": "DISCOVERY_SOURCE_ANCHOR_NOT_IN_SOURCE"
+  },
+  "rice-moody": {
+    "run": "c5ec09c7",
+    "anchor_source_chars": 2684,
+    "old_model_anchor": "Rather than treating geometry as an abstract system of forms, the exhibition presents it as a spatial practice through which correspondences between land, sky, time, and community are observed, nurtured, and carried forward.",
+    "subject_span": "",
+    "held_with": "DISCOVERY_SOURCE_ANCHOR_NOT_IN_SOURCE"
+  },
+  "nasa-link": {
+    "run": "58039ea9",
+    "anchor_source_chars": 4338,
+    "old_model_anchor": "This does not mean LINK’s mission is over.",
+    "subject_span": "",
+    "held_with": "DISCOVERY_SOURCE_ANCHOR_NOT_IN_SOURCE"
+  },
+  "merlin-caroline": {
+    "run": "cd623f10",
+    "anchor_source_chars": 7608,
+    "old_model_anchor": "1. Merlin at a table with c onjuring books and mathematical \ninstruments, taken from the head of Mr Ernest, page to \nthe Prince of Wales.",
+    "subject_span": "",
+    "held_with": "DISCOVERY_SOURCE_ANCHOR_NOT_IN_SOURCE"
+  }
+}

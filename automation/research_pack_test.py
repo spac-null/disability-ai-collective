@@ -767,25 +767,58 @@ def test_researched_and_written_subject_cannot_diverge():
                "provenance": {"origin": "fetched_article",
                               "url": "https://example.org/roundup"}}
 
-    def _provider_quoting(quote):
-        disc = dict(T.DISCOVERY_REPLY, source_anchor_quote=quote)
+    # PR #61: the subject switch this test was written for is now impossible to express.
+    # Discovery no longer writes the anchor; it picks an id from candidates cut from the
+    # anchor source and NARROWED to the researched subject span. The old proof was "the
+    # post-hoc offset guard fires"; the stronger proof is that no out-of-subject span is
+    # ever on the menu, so there is nothing for the guard to catch. check_anchor and
+    # check_subject_scope both still run behind it.
+    from new_engine_v1 import anchors as AN
+    from new_engine_v1 import invariants as INV
+    subject_span = CARGO_SPAN            # what roundup_pack scopes the pack to
+
+    menu = AN.candidates(ROUNDUP, subject_span)
+    check("a researched subject yields a menu", bool(menu), len(menu))
+    check("every candidate lies inside the researched subject",
+          all(c["exact_span"] in INV.normalize(subject_span) for c in menu),
+          [c["anchor_id"] for c in menu
+           if c["exact_span"] not in INV.normalize(subject_span)])
+    rail = INV.normalize(RAIL_QUOTE)
+    check("the OTHER roundup item cannot be selected -- it is not on the menu",
+          not any(rail in c["exact_span"] or c["exact_span"] in rail for c in menu))
+    check("every candidate is literal anchor-source text",
+          all(c["exact_span"] in INV.normalize(ROUNDUP) for c in menu))
+    check("and every candidate passes the post-hoc scope guard too",
+          all(INV.check_subject_scope({INV.ANCHOR_FIELD: c["exact_span"]},
+                                      subject_span, ROUNDUP)[0] for c in menu))
+
+    def _provider_selecting(anchor_id, quote=None):
+        disc = dict(T.DISCOVERY_REPLY, source_anchor_id=anchor_id)
+        disc.pop(INV.ANCHOR_FIELD, None)
+        if quote is not None:                     # model tries to smuggle prose in
+            disc[INV.ANCHOR_FIELD] = quote
         return T.StubProvider(discovery=disc)
 
+    # a model that WANTS the other roundup item cannot get there: the id is unknown,
+    # and prose naming it is discarded before the id is read.
     with tempfile.TemporaryDirectory() as d:
-        out = R.run(copy.deepcopy(payload), pathlib.Path(d), _provider_quoting(RAIL_QUOTE),
+        out = R.run(copy.deepcopy(payload), pathlib.Path(d),
+                    _provider_selecting("A999", quote=RAIL_QUOTE),
                     "diverge", AT, mode=R.MODE_LIVE, research_fn=roundup_pack)
-    check("a run that switches roundup item HOLDs", out["decision"] == "HOLD", out["reasons"])
-    check("the reason names the scope mismatch",
-          out.get("reason_code") == "DISCOVERY_SUBJECT_OUTSIDE_RESEARCHED_SCOPE",
-          out.get("reason_code"))
+    check("reaching for an off-menu subject HOLDs", out["decision"] == "HOLD",
+          out["reasons"])
+    check("the reason is the unknown id, caught before any scope question",
+          out.get("reason_code") == INV.ANCHOR_ID_UNKNOWN, out.get("reason_code"))
     check("no Article Form was built", C.ARTICLE_FORM not in out["artifacts"])
     check("no article was written", C.WRITER_OUTPUT not in out["artifacts"])
+    check("the other item's text never became the anchor",
+          out["artifacts"][C.DISCOVERY].payload.get(INV.ANCHOR_FIELD) is None)
     check("the pack that was actually built is still on record",
           out["artifacts"][C.RESEARCH_PACK].payload["subject"] == "Cargo Bench by Ada Moreno")
 
     with tempfile.TemporaryDirectory() as d:
         out2 = R.run(copy.deepcopy(payload), pathlib.Path(d),
-                     _provider_quoting(CARGO_QUOTE), "aligned", AT,
+                     _provider_selecting(menu[0]["anchor_id"]), "aligned", AT,
                      mode=R.MODE_LIVE, research_fn=roundup_pack)
     check("staying on the researched subject proceeds normally",
           out2["decision"] == "ACCEPT", out2["reasons"])

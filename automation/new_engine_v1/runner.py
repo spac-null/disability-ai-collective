@@ -32,6 +32,7 @@ import json
 import os
 import pathlib
 
+from . import anchors as AN
 from . import contracts as C
 from . import invariants as INV
 from . import grounding_v2 as GV2
@@ -175,8 +176,27 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
                 "provider": prov, "reason_code": RS.HOLD}
 
     # --- DISCOVERY: consumes the anchor and the frozen pack ------------------
+    # The anchor is SELECTED, not written (PR #61). Candidates are cut deterministically
+    # from the anchor source -- narrowed to the researched subject when the pack recorded
+    # one -- so the span Discovery picks is source bytes by construction and cannot come
+    # from the research pack, which is where all four of the 3 September anchor holds
+    # actually took their (verbatim, correctly copied) quotes from.
+    anchor_cands = AN.candidates(src, pack.get("subject_span", ""))
+    if not anchor_cands:
+        reasons = ["%s: the anchor source yielded no bounded span of at least %d chars"
+                   % (INV.NO_ANCHOR_CANDIDATES, INV.MIN_ANCHOR_CHARS),
+                   "HOLD before Discovery -- there is nothing to anchor a reading in"]
+        A[C.SHADOW_DECISION] = _emit(
+            C.SHADOW_DECISION, at,
+            {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
+             "reason_code": INV.NO_ANCHOR_CANDIDATES,
+             "policy": "ACCEPT = eligible for the candidate pool; never publication"},
+            {"research_pack": A[C.RESEARCH_PACK]})
+        _persist(A, run_root, name, mode, prov, "HOLD", reasons)
+        return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
+                "provider": prov, "reason_code": INV.NO_ANCHOR_CANDIDATES}
     try:
-        d = S.discover(provider, src, sha, pack)
+        d = S.discover(provider, src, sha, pack, anchor_cands)
         prov["discovery"] = d.get("_provider", {})
         if d.get("commissionable") is False:
             # A grounded refusal. Recorded as a first-class outcome, not an error: the
@@ -195,31 +215,34 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
         # exact span of the snapshot. Enforced BEFORE Article Form and before the writer, so
         # an ungrounded Discovery can never reach prose. Only mechanically harmless
         # differences are normalised away -- a paraphrase still fails. See invariants.py.
+        # Selection outcome first: a missing, unknown or explicitly-NONE id is a HOLD,
+        # never a fallback to model-written text. check_anchor then still runs as the
+        # final guarantee -- with selection it should be unfailable, and if it ever does
+        # fail the mapping is wrong and holding is the only safe answer.
+        sel = d.get("_anchor") or {}
         ok, code, detail = INV.check_anchor(d, src)
+        if not sel.get("ok"):
+            ok, code, detail = False, sel.get("code") or INV.ANCHOR_ID_MISSING, \
+                sel.get("detail") or "anchor selection did not resolve"
         anchor_note = detail
+        prov["anchor_selection"] = {"candidates": sel.get("candidates", 0),
+                                    "resolved": bool(sel.get("ok")),
+                                    "detail": sel.get("detail", "")}
         if not ok:
-            # ONE bounded repair, exactness only, changing only the anchor field. No loop.
-            # (repair_anchor already catches its own provider call internally and
-            # degrades to "repair failed" rather than raising -- not re-caught here.)
-            repaired, rdetail = INV.repair_anchor(provider, d, src)
-            prov["anchor_repair"] = {"attempted": True, "succeeded": repaired,
-                                     "detail": rdetail}
-            if not repaired:
-                reasons = ["%s: %s" % (code, detail), "anchor repair: %s" % rdetail,
-                           "HOLD before writer -- Discovery is not source-grounded"]
-                A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
-                                       {"source": A[C.SOURCE_SNAPSHOT],
-                                        "research_pack": A[C.RESEARCH_PACK]})
-                A[C.SHADOW_DECISION] = _emit(
-                    C.SHADOW_DECISION, at,
-                    {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
-                     "reason_code": code,
-                     "policy": "ACCEPT = eligible for the candidate pool; never publication"},
-                    {"discovery": A[C.DISCOVERY]})
-                _persist(A, run_root, name, mode, prov, "HOLD", reasons)
-                return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
-                        "provider": prov, "reason_code": code}
-            ok, code, anchor_note = INV.check_anchor(d, src)
+            reasons = ["%s: %s" % (code, detail),
+                       "HOLD before writer -- Discovery is not source-grounded"]
+            A[C.DISCOVERY] = _emit(C.DISCOVERY, at, _strip_provider(d),
+                                   {"source": A[C.SOURCE_SNAPSHOT],
+                                    "research_pack": A[C.RESEARCH_PACK]})
+            A[C.SHADOW_DECISION] = _emit(
+                C.SHADOW_DECISION, at,
+                {"decision": "HOLD", "reasons": reasons, "engine": ENGINE,
+                 "reason_code": code,
+                 "policy": "ACCEPT = eligible for the candidate pool; never publication"},
+                {"discovery": A[C.DISCOVERY]})
+            _persist(A, run_root, name, mode, prov, "HOLD", reasons)
+            return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
+                    "provider": prov, "reason_code": code}
         # SUBJECT SCOPE (2026-08-28). Discovery may read the whole anchor, but it may
         # not ground its reading in a part of it nobody researched. Offsets only, over
         # the text check_anchor already validated the quote against. A run that trips
