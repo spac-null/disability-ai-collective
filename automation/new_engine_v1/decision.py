@@ -75,11 +75,11 @@ def decide(artifacts: dict) -> tuple[str, list[str]]:
         # pass judged differently -- the repair did not cause it, and it blocks anyway,
         # because whether the claim is supported is a separate question from who wrote
         # it. `unresolved` is "we could not tell", which is never a pass.
-        for key in ("residual", "introduced", "reclassified", "unresolved",
-                    "unrelated_edits"):
+        for key in ("repair_affected_unsupported", "reclassified_unsupported",
+                    "unresolved_repair_identity", "unrelated_edits"):
             if v.get(key, 1) != 0:
                 return HOLD, ["repair verification failed: %s=%r" % (key, v.get(key))]
-        reasons.append("repair verified: 0 residual, 0 introduced, 0 reclassified, "
+        reasons.append("repair verified: 0 repair-affected, 0 reclassified, "
                        "0 unresolved, 0 unrelated edits")
 
     return ACCEPT, reasons

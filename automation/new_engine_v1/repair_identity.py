@@ -26,24 +26,24 @@ from __future__ import annotations
 
 import re
 
-# ── the four states. Every one of them HOLDs. ────────────────────────────────
-RESIDUAL = "RESIDUAL_UNSUPPORTED"
-INTRODUCED = "INTRODUCED_UNSUPPORTED"
+# ── the three states. Every one of them HOLDs. ───────────────────────────────
+#
+# There is no residual-versus-introduced distinction here, and an earlier draft of this
+# file was wrong to attempt one. It separated them by whether the repaired text carried a
+# number or proper noun the article had not contained -- which claims semantic
+# proposition identity from a lexical token class, and is false in both directions.
+# "the water is suitable for irrigation" becoming "the water is safe to drink" introduces
+# an entirely new factual claim and adds neither a number nor a name; and a target
+# reworded with a new figure has not necessarily become a different proposition.
+#
+# From an article diff alone, three things are provable and no more: the repair touched
+# this unsupported text, it did not touch it, or we cannot establish which.
+REPAIR_AFFECTED = "REPAIR_AFFECTED_UNSUPPORTED"
 RECLASSIFIED = "RECLASSIFIED_UNSUPPORTED"
 UNRESOLVED = "UNRESOLVED_REPAIR_IDENTITY"
-STATES = (RESIDUAL, INTRODUCED, RECLASSIFIED, UNRESOLVED)
+STATES = (REPAIR_AFFECTED, RECLASSIFIED, UNRESOLVED)
 
-# A "new fact" for attribution purposes: a number, or a capitalised word that is not the
-# first word of a sentence. Deterministic, and the same shape the grounding tests already
-# use for new-number/new-quote guards. It never decides a VERDICT -- only whether text the
-# repair wrote carries factual material the article did not previously contain.
-_NUMBER = re.compile(r"\d[\d,.]*")
-_PROPER = re.compile(r"(?<![.!?]\s)(?<!^)\b[A-Z][a-z]{2,}\b")
 _SENT_END = re.compile(r"(?<=[.!?])\s+")
-
-
-def _factual_tokens(text: str) -> set:
-    return set(_NUMBER.findall(text or "")) | set(_PROPER.findall(text or ""))
 
 
 def changed_spans(before: str, after: str, patches: list) -> dict:
@@ -119,13 +119,37 @@ def _sentence_bounds(text: str, start: int, end: int) -> tuple:
     return (left, max(right, end))
 
 
+def _normalise_with_map(text: str) -> tuple:
+    """Whitespace-collapsed text plus, for every character in it, the offset it came
+    from. The map is what makes the fallback safe: a match is mapped back to the exact
+    original range it was found at, never re-derived from word anchors that could land
+    on a different occurrence."""
+    out, idx, prev_space = [], [], False
+    for i, ch in enumerate(text):
+        if ch.isspace():
+            if prev_space or not out:
+                continue
+            out.append(" ")
+            idx.append(i)
+            prev_space = True
+        else:
+            out.append(ch)
+            idx.append(i)
+            prev_space = False
+    return "".join(out), idx
+
+
 def locate(quote: str, text: str) -> dict:
     """Where a finding's quote sits in the article. Exact, and unique or nothing.
 
     A quote that appears more than once cannot be attributed to one occurrence, and
     choosing one to get a tidier category is exactly the guess this module exists to
-    refuse. Whitespace is normalised for the search only -- never to match a DIFFERENT
-    string -- because a grounder may re-wrap a quote it copied verbatim.
+    refuse.
+
+    The fallback exists because a grounder may re-wrap a quote it copied verbatim. It
+    matches the COMPLETE normalised quote against the COMPLETE normalised article,
+    requires exactly one occurrence, and maps that one range back through the index map.
+    No fuzzy matching, no partial anchors, no similarity.
     """
     q = (quote or "").strip()
     if not q:
@@ -136,23 +160,19 @@ def locate(quote: str, text: str) -> dict:
         return {"ok": True, "start": i, "end": i + len(q), "basis": "exact"}
     if n > 1:
         return {"ok": False, "reason": "quote occurs %d times; no unique span" % n}
-    # one collapsed-whitespace attempt, on the same characters
+    flat_t, imap = _normalise_with_map(text)
     flat_q = " ".join(q.split())
-    flat_t = " ".join(text.split())
+    if not flat_q:
+        return {"ok": False, "reason": "finding carries no quote"}
     n2 = flat_t.count(flat_q)
     if n2 == 1:
-        # Map back conservatively: locate the first and last words in the real text.
-        words = flat_q.split()
-        if words:
-            first, last = re.escape(words[0]), re.escape(words[-1])
-            m = re.search(first + r"[\s\S]{0,%d}?" % (len(q) + 80) + last, text)
-            if m:
-                return {"ok": True, "start": m.start(), "end": m.end(),
-                        "basis": "whitespace_normalised"}
-        return {"ok": False, "reason": "quote matches only after re-wrapping and its "
-                                       "span could not be mapped back"}
+        s0 = flat_t.index(flat_q)
+        e0 = s0 + len(flat_q)
+        return {"ok": True, "start": imap[s0], "end": imap[e0 - 1] + 1,
+                "basis": "whitespace_normalised"}
     if n2 > 1:
-        return {"ok": False, "reason": "quote occurs %d times after re-wrapping" % n2}
+        return {"ok": False,
+                "reason": "quote occurs %d times after re-wrapping; no unique span" % n2}
     return {"ok": False, "reason": "quote is not present in the repaired article"}
 
 
@@ -161,34 +181,25 @@ def _overlaps(a: tuple, spans: list) -> bool:
 
 
 def classify_finding(quote: str, before: str, after: str, spans: dict) -> dict:
-    """One pass-2 TRUE_UNSUPPORTED finding → exactly one repair state."""
+    """One pass-2 TRUE_UNSUPPORTED finding -> exactly one provable repair state."""
     if not spans.get("ok"):
         return {"state": UNRESOLVED, "why": spans.get("reason", "changed spans unknown")}
     loc = locate(quote, after)
     if not loc["ok"]:
         return {"state": UNRESOLVED, "why": loc["reason"]}
     span = (loc["start"], loc["end"])
-    text = after[span[0]:span[1]]
-    if _overlaps(span, spans["inserted"]):
-        # The unsupported content sits in text the repair itself wrote. Whether that is
-        # the target's proposition reworded or a fresh one is not decidable from the
-        # characters -- but a factual token the article did not previously contain is.
-        new_facts = sorted(_factual_tokens(text) - _factual_tokens(before))
-        if new_facts:
-            return {"state": INTRODUCED, "why": "in text the repair wrote, carrying "
-                                                "factual material absent from the "
-                                                "pre-repair article: %s"
-                                                % ", ".join(new_facts[:4]),
-                    "span": span, "new_factual_tokens": new_facts[:8]}
-        return {"state": RESIDUAL, "why": "in the repair target's own rewritten span, "
-                                          "still unsupported", "span": span}
-    if _overlaps(span, spans["sentences"]):
-        return {"state": INTRODUCED,
-                "why": "in a sentence the repair materially changed", "span": span}
+    if _overlaps(span, spans["inserted"]) or _overlaps(span, spans["sentences"]):
+        # The repair touched this text. Whether the unsupported content is the old
+        # target still unsupported, the target reworded, or a proposition the repair
+        # created is NOT decidable from a diff, and this state deliberately does not
+        # say. It holds either way.
+        return {"state": REPAIR_AFFECTED,
+                "why": "overlaps text the repair changed", "span": span,
+                "basis": loc["basis"]}
     if quote_unchanged(quote, before, after, span):
         return {"state": RECLASSIFIED,
                 "why": "wholly in article text that existed before the repair and was "
-                       "not changed by it", "span": span}
+                       "not changed by it", "span": span, "basis": loc["basis"]}
     return {"state": UNRESOLVED,
             "why": "outside every changed span, but the same text could not be found "
                    "unchanged in the pre-repair article"}
@@ -212,11 +223,10 @@ def quote_unchanged(quote: str, before: str, after: str, span: tuple) -> bool:
 def account(before: str, after: str, patches: list, pass1: list, pass2: list) -> dict:
     """The repair verification record.
 
-    `residual` keeps its name and its blocking power but now means only what it says:
-    the repair target's own span, still unsupported. `introduced` likewise means text the
-    repair actually wrote. Everything the old arithmetic mislabelled lands in
-    `reclassified`, and anything that cannot be established lands in `unresolved`.
-    All four hold.
+    Three counts, each of them something the article diff actually establishes. The
+    pre-#58 `residual` and `introduced` keys are deliberately NOT carried forward: they
+    named a distinction this layer cannot prove, and the only thing that ever read them
+    was this engine's own decision layer and one of its tests.
     """
     spans = changed_spans(before, after, patches)
     target_quotes = {f.get("quote") for f in (pass1 or [])
@@ -232,16 +242,16 @@ def account(before: str, after: str, patches: list, pass1: list, pass2: list) ->
             "state": r["state"],
             "why": r["why"],
             "span": list(r.get("span") or []),
+            "span_basis": r.get("basis", ""),
+            # Recorded because it is a fact about pass 1, not because it decides
+            # anything: attribution comes from the article, never from a classification.
             "was_pass1_unsupported": (f.get("quote") in target_quotes),
-            **({"new_factual_tokens": r["new_factual_tokens"]}
-               if r.get("new_factual_tokens") else {}),
         })
     counts = {s: sum(1 for r in records if r["state"] == s) for s in STATES}
     return {
-        "residual": counts[RESIDUAL],
-        "introduced": counts[INTRODUCED],
-        "reclassified": counts[RECLASSIFIED],
-        "unresolved": counts[UNRESOLVED],
+        "repair_affected_unsupported": counts[REPAIR_AFFECTED],
+        "reclassified_unsupported": counts[RECLASSIFIED],
+        "unresolved_repair_identity": counts[UNRESOLVED],
         "unrelated_edits": 0 if spans.get("ok") else 1,
         "changed_spans_ok": bool(spans.get("ok")),
         "changed_spans_reason": spans.get("reason", ""),

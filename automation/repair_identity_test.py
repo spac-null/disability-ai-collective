@@ -102,16 +102,16 @@ def test_the_frozen_langrug_run_reclassifies_and_still_holds():
     acct = RI.account(before, after, rp["patches"], gf, rp["recheck_findings"])
     check("the patch replay reproduces the repaired article",
           acct["changed_spans_ok"] is True, acct["changed_spans_reason"])
-    check("residual = 0", acct["residual"] == 0, acct["residual"])
-    check("introduced = 0  (the old code said 2)", acct["introduced"] == 0,
-          acct["introduced"])
-    check("reclassified = 2", acct["reclassified"] == 2, acct["reclassified"])
-    check("unresolved = 0", acct["unresolved"] == 0, acct["unresolved"])
+    check("repair_affected = 0", acct["repair_affected_unsupported"] == 0, acct)
+    check("reclassified = 2  (the old code called these 2 introduced)",
+          acct["reclassified_unsupported"] == 2, acct)
+    check("unresolved = 0", acct["unresolved_repair_identity"] == 0, acct)
 
     st = states(acct)
     check("F1 (crops) is RECLASSIFIED", st.get("F1") == RI.RECLASSIFIED, st)
     check("F4 (seven years) is RECLASSIFIED", st.get("F4") == RI.RECLASSIFIED, st)
-    check("neither is INTRODUCED", RI.INTRODUCED not in st.values(), st)
+    check("neither is attributed to the repair",
+          RI.REPAIR_AFFECTED not in st.values(), st)
     for r in acct["findings"]:
         check("%s records why, from the article not the prose" % r["id"],
               "existed before the repair" in r["why"], r["why"])
@@ -125,42 +125,55 @@ def test_the_frozen_langrug_run_reclassifies_and_still_holds():
     check("the article is not made publishable", decision != "ACCEPT")
 
 
-# ── 7. a repair that genuinely writes an unsupported fact ────────────────────
-def test_a_fact_the_repair_wrote_is_introduced():
-    before = ("The plant opened in 2018. It treats water for the gardens. "
-              "The council reviewed the scheme.")
-    after = ("The plant opened in 2018. It treats 45,000 litres a day for the gardens. "
-              "The council reviewed the scheme.")
-    ps = [patch("F1", "It treats water for the gardens.",
-                "It treats 45,000 litres a day for the gardens.")]
-    acct = RI.account(before, after, ps,
-                      [finding("F1", "It treats water for the gardens.")],
-                      [finding("F9", "It treats 45,000 litres a day for the gardens.")])
-    check("replay ok", acct["changed_spans_ok"], acct["changed_spans_reason"])
-    check("INTRODUCED = 1", acct["introduced"] == 1, acct)
-    check("not reclassified", acct["reclassified"] == 0, acct)
-    r = acct["findings"][0]
-    check("state is INTRODUCED", r["state"] == RI.INTRODUCED, r)
-    check("and it names the new factual token",
-          "45,000" in (r.get("new_factual_tokens") or []), r)
-    check("engine HOLDs", held(acct)[0] == "HOLD")
+# ── 5/6. anything the repair touched, without claiming which kind ────────────
+def test_unsupported_text_the_repair_touched_is_repair_affected():
+    """Two shapes that an earlier draft of this module split on a token heuristic. It
+    does not split them any more, because a diff cannot: both are simply text the
+    repair changed, and both hold."""
+    # (a) the repaired target, reworded, still unsupported
+    before_a = "The rest, some 33,000 litres, returns to the river. Winter is direct."
+    after_a = "The rest, most of it, returns to the river. Winter is direct."
+    acct_a = RI.account(before_a, after_a,
+                        [patch("F2", "some 33,000 litres", "most of it")],
+                        [finding("F2", "some 33,000 litres")],
+                        [finding("F2", "most of it")])
+    check("(a) reworded target: REPAIR_AFFECTED = 1",
+          acct_a["repair_affected_unsupported"] == 1, acct_a)
+    check("(a) not reclassified", acct_a["reclassified_unsupported"] == 0, acct_a)
+    check("(a) engine HOLDs", held(acct_a)[0] == "HOLD")
 
+    # (b) a new figure written by the repair
+    before_b = "The plant opened in 2018. It treats water for the gardens."
+    after_b = "The plant opened in 2018. It treats 45,000 litres a day for the gardens."
+    acct_b = RI.account(before_b, after_b,
+                        [patch("F1", "It treats water for the gardens.",
+                               "It treats 45,000 litres a day for the gardens.")],
+                        [finding("F1", "It treats water for the gardens.")],
+                        [finding("F9", "It treats 45,000 litres a day for the gardens.")])
+    check("(b) new figure: REPAIR_AFFECTED = 1",
+          acct_b["repair_affected_unsupported"] == 1, acct_b)
+    check("(b) engine HOLDs", held(acct_b)[0] == "HOLD")
 
-# ── 8. the target reworded, still unsupported ────────────────────────────────
-def test_a_reworded_target_that_is_still_unsupported_is_residual():
-    before = "The rest, some 33,000 litres, returns to the river. Winter is direct."
-    after = "The rest, most of it, returns to the river. Winter is direct."
-    ps = [patch("F2", "some 33,000 litres", "most of it")]
-    acct = RI.account(before, after, ps,
-                      [finding("F2", "some 33,000 litres")],
-                      [finding("F2", "most of it")])
-    check("replay ok", acct["changed_spans_ok"], acct["changed_spans_reason"])
-    check("RESIDUAL = 1", acct["residual"] == 1, acct)
-    check("not INTRODUCED merely because the wording changed",
-          acct["introduced"] == 0, acct)
-    check("state is RESIDUAL", acct["findings"][0]["state"] == RI.RESIDUAL,
-          acct["findings"][0])
-    check("engine HOLDs", held(acct)[0] == "HOLD")
+    # (c) THE case that killed the heuristic: a materially new factual claim with no
+    #     number and no proper noun anywhere in it
+    before_c = ("The beds clean the flow. The water is suitable for irrigation. "
+                "The gardens are watered from it.")
+    after_c = ("The beds clean the flow. The water is safe to drink. "
+               "The gardens are watered from it.")
+    acct_c = RI.account(before_c, after_c,
+                        [patch("F3", "The water is suitable for irrigation.",
+                               "The water is safe to drink.")],
+                        [finding("F3", "The water is suitable for irrigation.")],
+                        [finding("F3", "The water is safe to drink.")])
+    check("(c) REPAIR_AFFECTED = 1 with no new number or name",
+          acct_c["repair_affected_unsupported"] == 1, acct_c)
+    check("(c) engine HOLDs", held(acct_c)[0] == "HOLD")
+    ri = (HERE / "new_engine_v1" / "repair_identity.py").read_text()
+    for banned in ("_factual_tokens", "isupper", "[A-Z]", r"\\d[\\d,.]*",
+                   "new_factual_tokens", "proper noun detection"):
+        check("no lexical-token heuristic remains: %r" % banned, banned not in ri)
+    check("no residual/introduced semantics are claimed",
+          "RESIDUAL_UNSUPPORTED" not in ri and "INTRODUCED_UNSUPPORTED" not in ri)
 
 
 # ── 9. an unchanged sentence reclassified ────────────────────────────────────
@@ -176,8 +189,9 @@ def test_an_unchanged_sentence_reclassified_is_not_the_repairs_doing():
                  cls="LEGITIMATE_INTERPRETATION"),
          finding("F2", "some 33,000 litres")],
         [finding("F1", "The gardens grow spinach and beetroot.")])
-    check("RECLASSIFIED = 1", acct["reclassified"] == 1, acct)
-    check("INTRODUCED = 0", acct["introduced"] == 0, acct)
+    check("RECLASSIFIED = 1", acct["reclassified_unsupported"] == 1, acct)
+    check("not attributed to the repair",
+          acct["repair_affected_unsupported"] == 0, acct)
     check("engine HOLDs", held(acct)[0] == "HOLD")
 
 
@@ -191,9 +205,9 @@ def test_a_claim_pass_one_never_surfaced_is_still_not_repair_introduced():
     acct = RI.account(before, after, ps,
                       [finding("F2", "some 33,000 litres")],          # pass 1: only F2
                       [finding("F7", "The scheme serves rural communities.")])
-    check("RECLASSIFIED = 1", acct["reclassified"] == 1, acct)
-    check("INTRODUCED = 0 — discovery instability is not the writer's repair",
-          acct["introduced"] == 0, acct)
+    check("RECLASSIFIED = 1", acct["reclassified_unsupported"] == 1, acct)
+    check("not repair-affected — discovery instability is not the writer's repair",
+          acct["repair_affected_unsupported"] == 0, acct)
     check("recorded as absent from pass 1's unsupported set",
           acct["findings"][0]["was_pass1_unsupported"] is False)
     check("engine HOLDs", held(acct)[0] == "HOLD")
@@ -215,8 +229,8 @@ def test_quote_boundary_drift_does_not_create_false_identity():
          finding("F2", "some 33,000 litres")],
         [finding("F4", "the first useful one taking seven years to reach")])
     check("RECLASSIFIED = 1 despite the boundary drift",
-          acct["reclassified"] == 1, acct)
-    check("INTRODUCED = 0", acct["introduced"] == 0, acct)
+          acct["reclassified_unsupported"] == 1, acct)
+    check("not repair-affected", acct["repair_affected_unsupported"] == 0, acct)
     check("no fuzzy or semantic matching is used",
           "difflib" not in (HERE / "new_engine_v1" / "repair_identity.py").read_text()
           and "embedding" not in
@@ -233,9 +247,10 @@ def test_a_quote_that_occurs_twice_is_unresolved_never_guessed():
     acct = RI.account(before, after, ps,
                       [finding("F2", "some 33,000 litres")],
                       [finding("F5", repeated)])
-    check("UNRESOLVED = 1", acct["unresolved"] == 1, acct)
+    check("UNRESOLVED = 1", acct["unresolved_repair_identity"] == 1, acct)
     check("no category was guessed",
-          acct["residual"] == acct["introduced"] == acct["reclassified"] == 0, acct)
+          acct["repair_affected_unsupported"] == acct["reclassified_unsupported"] == 0,
+          acct)
     check("and it says why", "occurs 2 times" in acct["findings"][0]["why"],
           acct["findings"][0]["why"])
     check("engine HOLDs fail-closed", held(acct)[0] == "HOLD")
@@ -243,31 +258,33 @@ def test_a_quote_that_occurs_twice_is_unresolved_never_guessed():
     # a quote absent from the repaired article is also unresolved, never a pass
     acct2 = RI.account(before, after, ps, [finding("F2", "some 33,000 litres")],
                        [finding("F6", "a sentence that is not in the article")])
-    check("a quote not present at all is UNRESOLVED", acct2["unresolved"] == 1, acct2)
+    check("a quote not present at all is UNRESOLVED",
+          acct2["unresolved_repair_identity"] == 1, acct2)
     check("engine HOLDs", held(acct2)[0] == "HOLD")
 
     # a patch whose recorded removal does not replay is unresolved for EVERY finding
     acct3 = RI.account(before, after, [patch("FX", "text that was never there", "y")],
                        [], [finding("F5", repeated)])
     check("an unreplayable patch makes attribution unresolved",
-          acct3["unresolved"] == 1 and acct3["changed_spans_ok"] is False, acct3)
+          acct3["unresolved_repair_identity"] == 1
+          and acct3["changed_spans_ok"] is False, acct3)
     check("and it is recorded as an unrelated edit", acct3["unrelated_edits"] == 1)
     check("engine HOLDs", held(acct3)[0] == "HOLD")
 
 
 # ── 14. decision layer: every state fails closed ─────────────────────────────
 def test_every_state_holds_and_missing_keys_fail_closed():
-    clean = {"residual": 0, "introduced": 0, "reclassified": 0, "unresolved": 0,
-             "unrelated_edits": 0}
+    clean = {"repair_affected_unsupported": 0, "reclassified_unsupported": 0,
+             "unresolved_repair_identity": 0, "unrelated_edits": 0}
     d, reasons = held(clean)
     check("a genuinely clean repair still ACCEPTs", d == "ACCEPT", (d, reasons))
-    for key in ("residual", "introduced", "reclassified", "unresolved",
-                "unrelated_edits"):
+    for key in ("repair_affected_unsupported", "reclassified_unsupported",
+                "unresolved_repair_identity", "unrelated_edits"):
         d, reasons = held(dict(clean, **{key: 1}))
         check("%s=1 HOLDs" % key, d == "HOLD", (d, reasons))
         check("  and names it", any(key in x for x in reasons), reasons)
-    for key in ("residual", "introduced", "reclassified", "unresolved",
-                "unrelated_edits"):
+    for key in ("repair_affected_unsupported", "reclassified_unsupported",
+                "unresolved_repair_identity", "unrelated_edits"):
         missing = {k: v for k, v in clean.items() if k != key}
         check("a MISSING %s fails closed" % key, held(missing)[0] == "HOLD")
     check("an empty verification fails closed", held({})[0] == "HOLD")
@@ -304,8 +321,7 @@ def test_nothing_about_the_grounder_or_v2_changed():
 
 def main() -> None:
     for fn in (test_the_frozen_langrug_run_reclassifies_and_still_holds,
-               test_a_fact_the_repair_wrote_is_introduced,
-               test_a_reworded_target_that_is_still_unsupported_is_residual,
+               test_unsupported_text_the_repair_touched_is_repair_affected,
                test_an_unchanged_sentence_reclassified_is_not_the_repairs_doing,
                test_a_claim_pass_one_never_surfaced_is_still_not_repair_introduced,
                test_quote_boundary_drift_does_not_create_false_identity,

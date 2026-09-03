@@ -530,13 +530,15 @@ def repair(article_text: str, findings: list) -> dict | None:
         "article_sha256": sha256_text(text),
         "unpatched_finding_ids": failed,
         # Placeholder only. runner.py replaces this wholesale with the measured
-        # account once the recheck has run; the defaults here are the fail-closed
-        # shape for a repair whose verification never happened.
+        # account once the recheck has run. The shape here is fail-closed for a repair
+        # whose verification never happened: `target_quote_survived` is a fact this
+        # function does know -- the patch did not remove its target -- and it is named
+        # for what it is rather than as a claim about propositions.
         "verification": {
-            "residual": residual,
-            "introduced": 0,
-            "reclassified": 0,
-            "unresolved": 0,
+            "target_quote_survived": residual,
+            "repair_affected_unsupported": 1 if residual else 0,
+            "reclassified_unsupported": 0,
+            "unresolved_repair_identity": 0,
             # every edit is one recorded substitution; nothing else was touched
             "unrelated_edits": 0,
         },
