@@ -139,12 +139,19 @@ def _unresolved(sentence: dict, why: str) -> dict:
             "type": UNRESOLVED, "atoms": [], "unresolved_reason": why}
 
 
-def identify(provider, article_text: str, sentences: list | None = None) -> dict:
+def identify(provider, article_text: str, sentences: list | None = None,
+             deadline: float | None = None) -> dict:
     """Type and (where needed) split every sentence. Coverage is guaranteed by
     construction: the result has exactly one record per sentence_id, and a batch that
     fails for ANY reason -- provider error, truncation, invalid schema, a missing or
     unknown sentence_id, an atom that cannot be tied to its parent -- yields
-    UNRESOLVED_BOUNDARY records rather than absent ones."""
+    UNRESOLVED_BOUNDARY records rather than absent ones.
+
+    `deadline` (2026-09-03) is plumbing only, optional and None by default so nothing
+    about this function's behaviour changes when it is absent: provider.complete clamps
+    each leg to what is left of it. It exists so identification counts toward the
+    shadow's total wall clock rather than sitting outside it. Typing model, prompt,
+    batching, atomicity and coverage semantics are untouched."""
     sentences = sentences if sentences is not None else segment(article_text)
     by_id = {s["sentence_id"]: s for s in sentences}
     records, calls, provider_ids = {}, 0, []
@@ -152,7 +159,8 @@ def identify(provider, article_text: str, sentences: list | None = None) -> dict
         calls += 1
         try:
             c = provider.complete(TYPING_SYSTEM, typing_prompt(batch),
-                                  max_tokens=BATCH_MAX_TOKENS, temperature=0)
+                                  max_tokens=BATCH_MAX_TOKENS, temperature=0,
+                                  deadline=deadline)
             provider_ids.append(c.identity())
             payload = parse_json_object(c.text)
             seen = {}
