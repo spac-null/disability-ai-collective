@@ -342,9 +342,15 @@ def test_the_shadow_still_has_no_authority_and_no_calls_when_off():
 
 
 def test_the_call_ceiling_is_structural():
-    check("identification <= 8", CL.MAX_BATCHES_PER_ARTICLE == 8)
+    # PR #60 halved the identification ceiling to 4 while DOUBLING the batch to 16, so
+    # the sentence coverage ceiling this test was written to protect is the same 64
+    # (8x8 then, 16x4 now) and the call bound is strictly lower: 14, was 18.
+    check("identification <= 4", CL.MAX_BATCHES_PER_ARTICLE == 4)
     check("classification <= 10", GV2.MAX_CLASSIFY_BATCHES == 10)
-    check("total <= 18", CL.MAX_BATCHES_PER_ARTICLE + GV2.MAX_CLASSIFY_BATCHES == 18)
+    check("total <= 14", CL.MAX_BATCHES_PER_ARTICLE + GV2.MAX_CLASSIFY_BATCHES == 14)
+    check("the sentence coverage ceiling is unchanged at 64",
+          CL.MAX_SENTENCES_PER_BATCH * CL.MAX_BATCHES_PER_ARTICLE == 64,
+          CL.MAX_SENTENCES_PER_BATCH * CL.MAX_BATCHES_PER_ARTICLE)
     src = (HERE / "new_engine_v1" / "grounding_v2.py").read_text()
     body = src.split("def run_shadow(")[1]
     check("the batch loop is sliced by the ceiling",
