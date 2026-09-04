@@ -2006,7 +2006,8 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
 # reference; it is not imported, because it carries the held-out article's own paths,
 # hardcoded source ids and a hand-written F10 fallback.
 def ground_candidate(provider, article_text: str, source_text: str, source_sha: str,
-                     pack: dict) -> dict:
+                     pack: dict, arch: dict | None = None,
+                     packet: dict | None = None) -> dict:
     """STAGE 8. The authoritative Grounder, called unmodified.
 
     `stages.ground` is the same function the legacy path runs, with the same arguments:
@@ -2039,15 +2040,54 @@ def ground_candidate(provider, article_text: str, source_text: str, source_sha: 
     # the POLICY is unchanged, and no classification is reinterpreted.
     unsupported = [f for f in findings if f.get("classification") == "TRUE_UNSUPPORTED"]
     uncertain = [f for f in findings if f.get("classification") == "TRUE_UNCERTAIN"]
+
+    # ADJUDICATING A DEFINITIONAL GLOSS, deterministically, through the escape hatch
+    # decision.py already provides for exactly this ("TRUE_UNCERTAIN ... not
+    # adjudicated; V0 policy is HOLD").
+    #
+    # The architecture may declare `definitions`, and `render()` instructs the Writer to
+    # EXPLAIN AT FIRST USE. The Grounder does not see the architecture -- by design -- so
+    # it meets a sentence like "A servo is a small motor that turns to a commanded angle
+    # and holds there." and correctly reports that the sources do not establish it. They
+    # do not: it is a general-knowledge gloss the packet asked for, not a claim about
+    # this subject. Left unadjudicated it blocks every run whose architecture uses a
+    # definition, which is a packet feature the architect is expected to use.
+    #
+    # THE BOUNDS ARE TIGHT. Only TRUE_UNCERTAIN is eligible -- never TRUE_UNSUPPORTED.
+    # The flagged sentence must name a term the architecture actually declared, and it
+    # must add no factual surface the packet does not already carry, which is the same
+    # test factual_surface_audit applies. Anything else still blocks.
+    defs = {k.lower() for k in ((arch or {}).get("definitions") or {})}
+    approved_words = ST._content_words(ST.render(packet), fold=True) if packet else set()
+    adjudicated = []
+    if defs and approved_words:
+        for f in uncertain:
+            q = str(f.get("quote") or "")
+            if not q.strip():
+                continue
+            names_a_defined_term = any(
+                term in " ".join(q.lower().split()) for term in defs)
+            adds_surface = bool(ST._content_words(q) - approved_words) \
+                or bool(ST._numbers(q) - ST._numbers(ST.render(packet))) \
+                or bool(ST._entities(q) - ST._entities(ST.render(packet),
+                                                       skip_sentence_initial=False))
+            if names_a_defined_term and not adds_surface:
+                adjudicated.append({"id": f.get("id"), "quote": q[:160],
+                                    "why": "a gloss on a term the architecture declared "
+                                           "in `definitions`, adding no factual surface "
+                                           "the packet does not carry"})
+
+    adjudicated_ids = {a["id"] for a in adjudicated}
     blocking = list(unsupported)
-    if uncertain and not gf.get("uncertain_adjudicated", False):
-        blocking += uncertain
+    if not gf.get("uncertain_adjudicated", False):
+        blocking += [f for f in uncertain if f.get("id") not in adjudicated_ids]
     settled = gf.get("status") == "settled"
     return {"status": PASS if (settled and not blocking) else HOLD,
             "grounding": {k: v for k, v in gf.items() if k != "_provider"},
             "findings": findings,
             "unsupported": unsupported,
             "uncertain": uncertain,
+            "uncertain_adjudicated_as_definitions": adjudicated,
             "blocking": blocking,
             "grounding_status": gf.get("status"),
             "provider": gf.get("_provider", {}),
@@ -2300,7 +2340,8 @@ def run_story_architecture_composition(
                        "either: %s" % ("; ".join(str(e) for e in delta_errs)[:200], why))
             return out(SAFETY, why, SAFETY_HOLD, final)
 
-        g = record(GROUNDING, ground_candidate(P, final, source_text, source_sha, pack))
+        g = record(GROUNDING, ground_candidate(P, final, source_text, source_sha, pack,
+                                               arch, wr["packet"]))
         if g["status"] != PASS:
             return out(GROUNDING,
                        "grounding status %r; %d blocking finding(s): %s"

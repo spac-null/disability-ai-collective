@@ -1670,6 +1670,87 @@ def test_the_grounder_sees_what_the_ledger_was_frozen_from():
           seen.get("per_source_chars") == CP.FREEZE_SOURCE_CHARS, seen)
 
 
+def test_a_definitional_gloss_is_adjudicated_but_nothing_else_is():
+    """With the Grounder's truncation fixed, one finding remained and it blocks every run
+    whose architecture uses a definition:
+
+        TRUE_UNCERTAIN  "A servo is a small motor that turns to a commanded angle
+                         and holds there."
+
+    The architecture may declare `definitions` and render() tells the Writer to EXPLAIN
+    AT FIRST USE. The Grounder does not see the architecture, so it correctly reports
+    that the sources do not establish the gloss -- they do not; it is general knowledge
+    the packet asked for. decision.py already provides the escape hatch
+    (`uncertain_adjudicated`); this uses it deterministically.
+
+    THE BOUNDS ARE THE POINT. Only TRUE_UNCERTAIN is eligible, the sentence must name a
+    term the architecture actually declared, and it must add no factual surface the
+    packet does not carry."""
+    arch = copy.deepcopy(ARCH)
+    arch["definitions"] = {"servo": "a small motor that turns to a commanded angle"}
+    packet, _ = CP.writer_packet(arch, LEDGER)
+    import new_engine_v1.stages as S
+    real = S.ground
+
+    def run_ground(findings):
+        S.ground = lambda *a, **k: {"status": "settled", "findings": findings}
+        try:
+            return CP.ground_candidate(object(), "# t\n\nprose", S0, "sha", PACK,
+                                       arch, packet)
+        finally:
+            S.ground = real
+
+    gloss = {"id": "G1", "classification": "TRUE_UNCERTAIN",
+             "quote": "A servo is a small motor that turns to a commanded angle."}
+    out = run_ground([gloss])
+    check("a gloss on a DECLARED term is adjudicated", out["status"] == CP.PASS,
+          out["blocking"])
+    check("and the adjudication is recorded with its reason",
+          out["uncertain_adjudicated_as_definitions"][0]["id"] == "G1",
+          out["uncertain_adjudicated_as_definitions"])
+
+    # An undeclared term is NOT adjudicated.
+    other = {"id": "G2", "classification": "TRUE_UNCERTAIN",
+             "quote": "A gyroscope is a spinning wheel that resists a change of axis."}
+    check("a gloss on an UNDECLARED term still blocks",
+          run_ground([other])["status"] == CP.HOLD)
+
+    # A gloss that smuggles in new factual surface is NOT adjudicated.
+    smuggle = {"id": "G3", "classification": "TRUE_UNCERTAIN",
+               "quote": "A servo is a small motor built in Rotterdam in 1974."}
+    r = run_ground([smuggle])
+    check("a gloss that adds a new entity or number still blocks",
+          r["status"] == CP.HOLD, r["uncertain_adjudicated_as_definitions"])
+
+    # TRUE_UNSUPPORTED is never eligible, whatever it names.
+    unsup = {"id": "G4", "classification": "TRUE_UNSUPPORTED",
+             "quote": "A servo is a small motor that turns to a commanded angle."}
+    check("TRUE_UNSUPPORTED is never adjudicated",
+          run_ground([unsup])["status"] == CP.HOLD)
+    check("and it is not recorded as adjudicated either",
+          not run_ground([unsup])["uncertain_adjudicated_as_definitions"])
+
+    # With no definitions declared at all, nothing is adjudicated.
+    arch2 = copy.deepcopy(ARCH); arch2["definitions"] = {}
+    packet2, _ = CP.writer_packet(arch2, LEDGER)
+    S.ground = lambda *a, **k: {"status": "settled", "findings": [gloss]}
+    try:
+        out2 = CP.ground_candidate(object(), "# t\n\nprose", S0, "sha", PACK,
+                                   arch2, packet2)
+    finally:
+        S.ground = real
+    check("no declared definitions means no adjudication",
+          out2["status"] == CP.HOLD, out2["blocking"])
+    # And an unsettled grounder is still never a pass.
+    S.ground = lambda *a, **k: {"status": "unresolved", "findings": []}
+    try:
+        out3 = CP.ground_candidate(object(), "# t\n\nprose", S0, "sha", PACK,
+                                   arch, packet)
+    finally:
+        S.ground = real
+    check("an unresolved grounding status still holds", out3["status"] == CP.HOLD)
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
