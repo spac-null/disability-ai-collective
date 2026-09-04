@@ -567,6 +567,64 @@ def test_the_interpretive_verdict_is_not_defined_out_of_existence():
                "changes_meaning_how": "x", "evidence_ids": ["F01"]})))
 
 
+def test_the_repair_prompt_teaches_the_carrier_rule_the_detector_actually_applies():
+    """CARRIER_INSTANCE_NOT_SUPPORTED is the failure the merged detector produces most,
+    and the Ground Truth canary spent its single architecture repair on one -- offering
+    "the no-reading state where the survey is blank", which still contains a verb. The
+    detector is GRAMMATICAL, so the repair has to be told that, in those terms.
+
+    The examples in the prompt are asserted against the real detector here, so the
+    prompt cannot drift into teaching a shape the gate would refuse."""
+    check("the repair prompt names the code",
+          "CARRIER_INSTANCE_NOT_SUPPORTED" in CP.REPAIR_ARCH_SYSTEM)
+    check("and says the check is grammatical",
+          "GRAMMATICAL" in CP.REPAIR_ARCH_SYSTEM)
+    check("and forbids a verb of any kind",
+          "NO VERB OF ANY KIND" in CP.REPAIR_ARCH_SYSTEM)
+    check("and warns that rewording keeps the verb",
+          "rewording keeps the verb" in CP.REPAIR_ARCH_SYSTEM)
+    check("and says where the cut clause belongs instead",
+          "happens" in CP.REPAIR_ARCH_SYSTEM)
+
+    good = ["the block group with no published figure", "the blank cell on the score card",
+            "the brake arm"]
+    bad = ["the block group where no figure is published",
+           "the state that shows no reading", "the servo pulling the brake arm",
+           "the no-reading state where the survey is blank"]
+    for c in good:
+        check("the prompt's GOOD example passes the merged detector: %r" % c,
+              not ST.carrier_asserts_instance(c)["asserts"],
+              ST.carrier_asserts_instance(c))
+        check("and it really is in the prompt: %r" % c, c in CP.REPAIR_ARCH_SYSTEM)
+    for c in bad[:3]:
+        check("the prompt's BAD example is refused by the merged detector: %r" % c,
+              ST.carrier_asserts_instance(c)["asserts"], ST.carrier_asserts_instance(c))
+        check("and it really is in the prompt: %r" % c, c in CP.REPAIR_ARCH_SYSTEM)
+    check("the carrier the canary actually failed on is refused",
+          ST.carrier_asserts_instance(bad[3])["asserts"])
+
+
+def test_an_architecture_hold_persists_what_it_refused():
+    """The canary's ARCHITECTURE_HOLD wrote no architecture, so the artifacts said which
+    carrier failed but not what the rest of the architecture looked like. Same lesson as
+    the ledger hold: "it failed" is not actionable, "here is what it emitted" is."""
+    bad = copy.deepcopy(ARCH)
+    bad["beats"][1]["concrete_carrier"] = ("the eight entries, and the visitor who "
+                                           "therefore heard nothing")
+    prov, out = run([{"facts": list(LEDGER.values())}, WORTH, bad, bad])
+    det = out["detail"][CP.ARCHITECTURE]
+    check("the hold is at the architecture", out["failure_stage"] == CP.ARCHITECTURE)
+    check("the refused architecture is carried", "architecture" in det, list(det))
+    check("so is the pre-repair one", "architecture_before_repair" in det)
+    check("and the exact failures", any("CARRIER" in e for e in det["failures"]),
+          det.get("failures"))
+    check("and the repair count", det.get("repairs") == 1, det.get("repairs"))
+    check("a reply with no beats at all is a shape failure, not a repair target",
+          run([{"facts": list(LEDGER.values())}, WORTH,
+               {"article_type": "NARRATIVE_ARTICLE"}])[1]["failure_reason"]
+          .startswith("the reply is not an architecture"))
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,

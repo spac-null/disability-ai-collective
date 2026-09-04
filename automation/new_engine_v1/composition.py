@@ -867,6 +867,22 @@ REPAIR_ARCH_SYSTEM = (
     "becomes a plain noun phrase. A turn that fuses two true facts into a relation loses "
     "the relation and keeps the facts. A lens that reaches past its evidence gets smaller "
     "and truer. Narrower and true beats wider and refused.\n"
+    "\n"
+    "CARRIER_INSTANCE_NOT_SUPPORTED is the commonest one, and the check for it is "
+    "GRAMMATICAL, not a judgement about meaning. It reads the carrier for a verb. So a "
+    "carrier must be a bare noun phrase containing NO VERB OF ANY KIND: no finite verb, "
+    "no relative clause, no participle. Adjectives, prepositions and possessives are "
+    "fine.\n"
+    "  Not this  : the block group where no figure is published\n"
+    "  Not this  : the state that shows no reading\n"
+    "  Not this  : the servo pulling the brake arm\n"
+    "  This      : the block group with no published figure\n"
+    "  This      : the blank cell on the score card\n"
+    "  This      : the brake arm\n"
+    "Cut the clause and keep the THING. Whatever the clause was saying either belongs in "
+    "the beat's `happens` field, where a disposition may be described, or it was an event "
+    "the ledger does not hold and must go entirely. Do not try to rescue the clause by "
+    "rewording it -- rewording keeps the verb, and the check will refuse it again.\n"
     "Return the COMPLETE corrected architecture object, same schema."
 )
 
@@ -898,6 +914,14 @@ def architect(provider, ledger: dict, worth: dict, subject: str) -> dict:
                       ARCHITECTURE_HOLD)
     errs = check_architecture(obj, ledger)
     calls, repairs = 1, 0
+    if errs and not (obj.get("beats") or []):
+        # Nothing to repair toward: a reply with no beats is a shape failure, not an
+        # architecture that reached too far.
+        raise CompositionHold(
+            ARCHITECTURE, ARCHITECTURE_HOLD,
+            ["the reply is not an architecture"] + errs[:6],
+            {"architecture": obj, "failures": errs, "provider": ident,
+             "model_calls": calls, "repairs": repairs})
 
     if errs:
         ru = "\n".join([
@@ -919,7 +943,10 @@ def architect(provider, ledger: dict, worth: dict, subject: str) -> dict:
         if errs2:
             raise CompositionHold(
                 ARCHITECTURE, ARCHITECTURE_HOLD,
-                ["still invalid after one repair (%d failure(s))" % len(errs2)] + errs2[:10])
+                ["still invalid after one repair (%d failure(s))" % len(errs2)] + errs2[:10],
+                {"architecture": obj2, "architecture_before_repair": obj,
+                 "failures": errs2, "failures_before_repair": errs,
+                 "provider": ident, "model_calls": calls, "repairs": repairs})
         obj = obj2
 
     return {"status": PASS, "architecture": obj, "provider": ident,
