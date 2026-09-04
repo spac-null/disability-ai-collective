@@ -105,10 +105,16 @@ def _extract(body: dict) -> tuple[str, str, dict]:
 class Provider:
     """CLIProxy first, direct OpenRouter as fallback. Raises rather than degrading."""
 
-    def __init__(self, model: str = DEFAULT_MODEL, cliproxy_url: str | None = None):
+    def __init__(self, model: str = DEFAULT_MODEL, cliproxy_url: str | None = None,
+                 allow_fallback: bool = True):
         self.model = model
         self.cliproxy_url = cliproxy_url or os.environ.get(
             "NEW_ENGINE_CLIPROXY_URL", DEFAULT_CLIPROXY_URL)
+        # The composition path is a subscription-path workload and sets this False, so a
+        # Writer or Continuity call cannot silently land on OpenRouter -- which would
+        # change both who wrote the article and what the run cost, invisibly. OpenRouter
+        # stays where it already is: behind the authoritative external Fact Check.
+        self.allow_fallback = allow_fallback
 
     def complete(self, system: str, user: str, max_tokens: int = 3000,
                  timeout: int = 180, temperature: float | None = None,
@@ -132,10 +138,11 @@ class Provider:
             payload["temperature"] = temperature
 
         attempts = []
-        for label, url, key in (
-            ("CLIProxy", self.cliproxy_url, os.environ.get("CLIPROXY_KEY", "")),
-            ("OpenRouter", OPENROUTER_URL, os.environ.get("OPENROUTER_API_KEY", "")),
-        ):
+        legs = [("CLIProxy", self.cliproxy_url, os.environ.get("CLIPROXY_KEY", ""))]
+        if self.allow_fallback:
+            legs.append(("OpenRouter", OPENROUTER_URL,
+                         os.environ.get("OPENROUTER_API_KEY", "")))
+        for label, url, key in legs:
             if not url:
                 continue
             try:
