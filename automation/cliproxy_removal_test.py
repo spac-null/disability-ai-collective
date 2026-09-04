@@ -198,6 +198,11 @@ check("normalisation is gated on the transport, not on the model",
       "transport.classify(url) == transport.OPENROUTER_DIRECT" in llm_src)
 check("the chokepoint emits a provenance line",
       "transport.line(transport.record(" in llm_src)
+check("a prefix rewrite is not reported as a model fallback",
+      "requested_model=wire_model," in llm_src,
+      "requested_model must be the wire model, or normalisation fakes fallback_used")
+check("the rewrite is still recorded, in detail",
+      "normalised proxy-only model name" in llm_src)
 
 live_model_names = []
 for name, path in sorted(LIVE.items()):

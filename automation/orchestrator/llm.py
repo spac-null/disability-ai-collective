@@ -224,12 +224,18 @@ class LLMMixin:
         # this, a CLIProxy call and a direct OpenRouter call logged identically, which is
         # why a proxy hop with a dead credential went unnoticed for weeks.
         try:
+            # requested_model is the WIRE model, so a proxy-prefix rewrite does not
+            # masquerade as a Fable->Opus style fallback. The rewrite, when it happened,
+            # is recorded in `detail` instead -- it is transport bookkeeping, not lineage.
             self.logger.info(transport.line(transport.record(
-                url, requested_model=model, actual_model=data.get("model", wire_model),
+                url, requested_model=wire_model,
+                actual_model=data.get("model", wire_model),
                 credential_env=("OPENROUTER_API_KEY"
                                 if transport.classify(url) == transport.OPENROUTER_DIRECT
                                 else ""),
-                ok=True)))
+                ok=True,
+                detail=("normalised proxy-only model name %s" % model)
+                       if wire_model != model else "")))
         except Exception:
             pass
         if return_model:
