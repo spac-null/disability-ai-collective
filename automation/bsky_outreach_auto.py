@@ -17,6 +17,8 @@ Run via cron (weekly, e.g. Saturday 10:00):
 """
 import json, os, re, logging, subprocess, urllib.request as ureq, urllib.parse
 from pathlib import Path
+
+import claude_cli_provider
 from datetime import datetime, timezone, timedelta
 
 REPO      = Path(__file__).parent.parent
@@ -24,8 +26,10 @@ TARGETS_F = Path(__file__).parent / "targets.json"
 LOG_F     = Path(__file__).parent / "bsky_outreach.log"
 POSTS_DIR = REPO / "_posts"
 API       = "https://bsky.social/xrpc"
-CLAUDE    = os.environ.get("CLAUDE_API_URL", "https://openrouter.ai/api/v1")
-CLAUDE_KEY= os.environ.get("CLAUDE_API_KEY") or os.environ.get("OPENROUTER_API_KEY", "")
+# Claude-family outreach runs on the subscription (Phase 2B). The id keeps its
+# OpenRouter-era spelling because it is what this script ASKS for; the adapter derives the
+# tier-preserving subscription model and records both.
+OUTREACH_MODEL = "anthropic/claude-haiku-4.5"
 
 logging.basicConfig(
     filename=str(LOG_F), level=logging.INFO,
@@ -126,27 +130,21 @@ def generate_post_text(target: dict, article: dict, max_chars: int) -> str | Non
         max_chars=max_chars,
     )
 
-    payload = {
-        "model":      "anthropic/claude-haiku-4.5",
-        "max_tokens": 300,
-        "messages":   [{"role": "user", "content": prompt}],
-    }
+    # PHASE 2B (2026-09-05): this weekly cron was a live Claude-family OpenRouter caller.
+    # It now runs on the owner's Claude subscription through the shared adapter. There is
+    # no OpenRouter fallback: a refusal means no outreach post this week, which is the
+    # correct outcome -- silently buying the same completion is what this phase removes.
     try:
-        req = ureq.Request(
-            f"{CLAUDE}/chat/completions",
-            data=json.dumps(payload).encode(),
-            headers={
-                "Content-Type":  "application/json",
-                "Authorization": f"Bearer {CLAUDE_KEY}",
-            },
-            method="POST",
-        )
-        with ureq.urlopen(req, timeout=30) as r:
-            data = json.loads(r.read())
-        text = data["choices"][0]["message"]["content"].strip()
-        # Strip any quotes the model might wrap around the output
-        text = text.strip('"\'')
-        return text
+        completion = claude_cli_provider.complete_via_subscription(
+            "You write short, specific Bluesky outreach posts.", prompt,
+            OUTREACH_MODEL, timeout=120)
+        log.info(claude_cli_provider.provenance_line(claude_cli_provider.provenance(
+            completion.requested_model, completion.actual_model, ok=True)))
+        return completion.text.strip().strip('"\'')
+    except claude_cli_provider.ClaudeCLIError as e:
+        log.error("LLM generation failed on the Claude subscription [%s]: %s",
+                  getattr(e, "code", "ERROR"), e)
+        return None
     except Exception as e:
         log.error("LLM generation failed: %s", e)
         return None

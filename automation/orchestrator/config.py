@@ -12,7 +12,7 @@ import os
 from pathlib import Path
 
 __all__ = [
-    "CANONICAL_DISABILITY_LINKS", "_nous_key", "CLIPROXY_URL", "CLIPROXY_KEY",
+    "CANONICAL_DISABILITY_LINKS", "_nous_key", "OPENROUTER_URL", "OPENROUTER_API_KEY",
     "PERSONA_CANON_DIR", "PERSONA_STATE_DIR", "_RELATIONSHIPS_FILE", "_AGENT_SLUG",
     "_REGISTERS", "_LENGTHS", "_ARTICLE_TYPES", "_INDEFENSIBLE_PROMPTS",
     "_SOCIAL_PROMPTS", "_AGENT_BEATS", "_THEME_CLUSTERS", "_PERSONA_CONFLICTS",
@@ -87,8 +87,15 @@ def _nous_key():
         return ''
 
 
-CLIPROXY_URL = 'http://127.0.0.1:8317/v1'
-CLIPROXY_KEY = os.environ.get('CLIPROXY_KEY', '')
+# Editorial transport. Was the local CLIProxyAPI on :8317 until 2026-09-04, when a live
+# probe showed the proxy's own Claude OAuth credential had expired and every "claude"
+# model it still served was a plain OpenRouter passthrough under a translated name. The
+# proxy was therefore a hop that could fail but could not add anything, so the pipeline
+# now calls OpenRouter itself. Model names lose the `openrouter/` prefix that existed
+# only for the proxy's benefit -- see llm._call_openai_compat_api, which normalises any
+# survivor so no call site can quietly reintroduce a proxy-only name.
+OPENROUTER_URL = 'https://openrouter.ai/api/v1'
+OPENROUTER_API_KEY = os.environ.get('OPENROUTER_API_KEY', '')
 
 # This file lives one level below automation/ (automation/orchestrator/config.py),
 # so _SCRIPT_DIR must go up two parents, not one, to land on automation/ itself —

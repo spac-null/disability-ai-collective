@@ -19,9 +19,13 @@ import time
 import urllib.request
 
 from .config import (
-    CLIPROXY_URL, CLIPROXY_KEY, PERSONA_CANON_DIR, PERSONA_STATE_DIR,
+    OPENROUTER_URL, OPENROUTER_API_KEY, PERSONA_CANON_DIR, PERSONA_STATE_DIR,
     _RELATIONSHIPS_FILE, _AGENT_SLUG, _nous_key, _REGISTERS,
 )
+from . import transport
+from . import provider_policy
+
+import claude_cli_provider
 from .grounding import (
     build_evidence_packet, validate_brief, validate_source_decision,
     find_new_unsupported_specifics,
@@ -133,6 +137,56 @@ def _executor_persona_history_block(persona_factual_context):
 
 
 class LLMMixin:
+    def _call_claude_subscription(self, system_prompt, user_prompt, wire_model,
+                                  timeout=120, temperature=None, return_model=False,
+                                  max_tokens=None, check_truncation=False):
+        """Serve one Claude-family request on the claude.ai subscription.
+
+        WHAT IS DELIBERATELY NOT FORWARDED, and why saying so matters more than pretending:
+
+          max_tokens          The CLI exposes no output cap. Stage length is governed by
+                              the prompts, which is where it was actually governed anyway --
+                              every call site's number was a ceiling, not a target.
+          check_truncation    Existed because Fable's mandatory extended thinking counted
+                              against OpenRouter's max_tokens and truncated JSON payloads
+                              mid-string. With no max_tokens there is no such cut, so the
+                              check has nothing to detect. It is accepted and ignored
+                              rather than removed, so the ~dozen callers that opt in keep
+                              working; the failure it guarded against cannot occur here.
+          reasoning_max_tokens Same cause, same reason.
+
+        A subscription failure is TERMINAL for this request. It raises, carrying an
+        explicit code, and no handler in this module answers it by buying the same
+        completion from OpenRouter. See claude_cli_provider.NO_PAID_CLAUDE_FALLBACK.
+        """
+        try:
+            completion = claude_cli_provider.complete_via_subscription(
+                system_prompt, user_prompt, wire_model,
+                timeout=timeout, temperature=temperature)
+        except claude_cli_provider.ClaudeCLIError as exc:
+            try:
+                self.logger.warning(claude_cli_provider.provenance_line(
+                    claude_cli_provider.provenance(
+                        wire_model, "", ok=False,
+                        detail="%s: %s" % (getattr(exc, "code", "ERROR"), exc))))
+            except Exception:
+                pass
+            raise
+        text = re.sub(r"<think>.*?</think>", "", completion.text,
+                      flags=re.DOTALL).strip()
+        try:
+            self.logger.info(claude_cli_provider.provenance_line(
+                claude_cli_provider.provenance(
+                    completion.requested_model, completion.actual_model, ok=True,
+                    detail=("tier-preserving subscription substitution"
+                            if completion.actual_model != completion.requested_model
+                            else ""))))
+        except Exception:
+            pass
+        if return_model:
+            return text, completion.actual_model
+        return text
+
     def _call_openai_compat_api(self, url, api_key, system_prompt, user_prompt,
                                    model, max_tokens=3500, timeout=120, no_think=False,
                                    return_model=False, reasoning_max_tokens=None,
@@ -170,9 +224,37 @@ class LLMMixin:
         silently accepted or caught only by a caller's own ad hoc length check.
         """
         import json, urllib.request
+        # The `openrouter/` model prefix existed only so CLIProxyAPI knew which upstream
+        # to translate to. Direct OpenRouter rejects it. Normalising here rather than at
+        # the ~87 call sites means no future caller can reintroduce a proxy-only name and
+        # get an opaque "unknown provider" 500 far from the line that caused it.
+        wire_model = model
+        if transport.classify(url) == transport.OPENROUTER_DIRECT \
+                and isinstance(model, str) and model.startswith("openrouter/"):
+            wire_model = "anthropic/" + model[len("openrouter/"):]
         content = ("/no_think " if no_think else "") + user_prompt
+
+        # PHASE 2B -- CLAUDE-FAMILY WORK RUNS ON THE SUBSCRIPTION, NOT ON PAID TOKENS.
+        #
+        # The decision is made HERE, at the one transport boundary the whole orchestrator
+        # package shares, rather than at the ~87 call sites that reach it. content_checks,
+        # debate, gate, review, social and every other imported module therefore migrate by
+        # ROUTING, with no edit of their own -- which is also why they cannot drift back:
+        # there is no second way out of this package.
+        #
+        # The test is the model FAMILY, and the endpoint must ALREADY be OpenRouter. So
+        # perplexity/sonar keeps its authoritative direct OpenRouter path, recraft keeps
+        # its own, the local Qwen gateway keeps its own, and the Nous rung -- a different
+        # first-party provider on a different account -- is not swept up by a rule about
+        # OpenRouter. Nothing becomes a Claude call merely because this boundary changed.
+        if transport.classify(url) == transport.OPENROUTER_DIRECT \
+                and claude_cli_provider.is_claude_family(wire_model):
+            return self._call_claude_subscription(
+                system_prompt, content, wire_model, timeout=timeout,
+                temperature=temperature, return_model=return_model,
+                max_tokens=max_tokens, check_truncation=check_truncation)
         body = {
-            "model": model,
+            "model": wire_model,
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user",   "content": content},
@@ -211,21 +293,46 @@ class LLMMixin:
                 )
         raw_text = choices[0]["message"]["content"]
         text = re.sub(r"<think>.*?</think>", "", raw_text, flags=re.DOTALL).strip()
+        # Transport provenance: derived from the URL, never from the model name. Before
+        # this, a CLIProxy call and a direct OpenRouter call logged identically, which is
+        # why a proxy hop with a dead credential went unnoticed for weeks.
+        try:
+            # requested_model is the WIRE model, so a proxy-prefix rewrite does not
+            # masquerade as a Fable->Opus style fallback. The rewrite, when it happened,
+            # is recorded in `detail` instead -- it is transport bookkeeping, not lineage.
+            self.logger.info(transport.line(transport.record(
+                url, requested_model=wire_model,
+                actual_model=data.get("model", wire_model),
+                credential_env=("OPENROUTER_API_KEY"
+                                if transport.classify(url) == transport.OPENROUTER_DIRECT
+                                else ""),
+                ok=True,
+                detail=("normalised proxy-only model name %s" % model)
+                       if wire_model != model else "")))
+        except Exception:
+            pass
         if return_model:
-            return text, data.get("model", model)
+            return text, data.get("model", wire_model)
         return text
 
     def call_llm_via_openclaw_session(self, prompt, model_priority=None):
         """Generate article content using cascading LLM provider fallback.
 
         Provider order:
-          1. Claude Opus 4.8 (OpenRouter)  — primary, best quality for this publication
-          2. Claude Sonnet 4.6 (OpenRouter) — strong fallback, same account
-          3. GPT-5.2 (CLIProxy)           — strong long-form fallback
-          4. Gemini 2.5 Pro               — capable, generous free tier
-          5. Qwen 3.5:9b (local)          — zero cost, last resort
+          1. Claude Opus 4.8 (subscription) — primary, best quality for this publication
+          2. Claude Sonnet 4.6 (subscription) — strong fallback, same subscription
+          3. Claude Opus 4.6 (Nous)         — separate account, paid Claude tokens
+          4. Qwen 3.5:9b (local)            — zero cost, last resort
 
-        Note: calls CLIProxy directly (HTTP) — OpenClaw never involved.
+        The Gemini 2.5 Pro rung was removed 2026-09-04 (Jascha is off Gemini) and
+        deliberately not replaced; the CLIProxyAPI hop in front of rungs 1-2 was removed
+        the same day.
+
+        PHASE 2B: rungs 1-2 name an OpenRouter URL and an OpenRouter-era model id, and
+        _call_openai_compat_api routes exactly that pair onto the Claude subscription. Rung
+        3 is a different endpoint and is not swept up by a rule about OpenRouter -- but it
+        IS paid Claude, so it is skipped once the subscription has refused, leaving rung 4
+        (free, local, not Claude) as the only fallback. See the loop below.
         """
         import os
 
@@ -269,19 +376,19 @@ class LLMMixin:
 
         PROVIDERS = [
             {
-                "name":      "Claude Opus 4.8 (OpenRouter/CLIProxy)",
-                "url":       CLIPROXY_URL,
-                "key":       CLIPROXY_KEY,
-                "model":     "openrouter/claude-opus-4.8",
+                "name":      "Claude Opus 4.8 (Claude subscription)",
+                "url":       OPENROUTER_URL,
+                "key":       OPENROUTER_API_KEY,
+                "model":     "anthropic/claude-opus-4.8",
                 "max_tokens": 5000,
                 "timeout":   180,
                 "no_think":  False,
             },
             {
-                "name":      "Claude Sonnet 4.6 (OpenRouter/CLIProxy)",
-                "url":       CLIPROXY_URL,
-                "key":       CLIPROXY_KEY,
-                "model":     "openrouter/claude-sonnet-4.6",
+                "name":      "Claude Sonnet 4.6 (Claude subscription)",
+                "url":       OPENROUTER_URL,
+                "key":       OPENROUTER_API_KEY,
+                "model":     "anthropic/claude-sonnet-4.6",
                 "max_tokens": 5000,
                 "timeout":   120,
                 "no_think":  False,
@@ -296,15 +403,6 @@ class LLMMixin:
                 "no_think":  False,
             },
             {
-                "name":      "Gemini 2.5 Pro",
-                "url":       "https://generativelanguage.googleapis.com/v1beta/openai",
-                "key":       os.environ.get("GEMINI_API_KEY", ""),
-                "model":     "gemini-2.5-pro",
-                "max_tokens": 5000,
-                "timeout":   120,
-                "no_think":  False,
-            },
-            {
                 "name":      "Qwen (local)",
                 "url":       "http://vision-gateway:8080/v1",
                 "key":       "local",
@@ -315,9 +413,47 @@ class LLMMixin:
             },
         ]
 
+        # PHASE 2B. Rungs 1-2 are Claude-family at OpenRouter, so the shared boundary
+        # serves them on the subscription. Once the subscription has refused a request,
+        # every remaining CLAUDE-FAMILY rung is skipped -- including the Nous one, which is
+        # a different account but still paid Claude tokens for a completion the owner's
+        # plan is supposed to cover. Trying Sonnet after Opus has failed on the same
+        # subscription is retry gambling; trying Nous after that is the silent paid
+        # fallback this phase exists to remove. The free local rung is NOT Claude-family
+        # and still runs, so composition keeps a last resort that costs nothing.
+        subscription_refused = False
+        attempted = []
+        self._last_provider_attempts = attempted
+
         for provider in PROVIDERS:
-            if not provider["key"]:
+            # A rung the subscription serves needs no API key. Gating it on
+            # OPENROUTER_API_KEY would silently skip composition's two best models on a
+            # host that no longer needs that key for them at all.
+            _on_subscription = (
+                transport.classify(provider["url"]) == transport.OPENROUTER_DIRECT
+                and claude_cli_provider.is_claude_family(provider["model"]))
+            if not provider["key"] and not _on_subscription:
                 self.logger.debug("Skipping %s — no API key", provider["name"])
+                continue
+            if subscription_refused and claude_cli_provider.is_claude_family(provider["model"]):
+                self.logger.warning(
+                    "Skipping %s — the Claude subscription refused this request and no "
+                    "paid Claude fallback is permitted", provider["name"])
+                attempted.append("%s: skipped (no paid Claude fallback)" % provider["name"])
+                continue
+            # OWNER POLICY 2026-09-05: a non-Claude rung may not answer a Claude-family
+            # request automatically in LIVE. Phase 2B stopped the PAID Claude rungs but
+            # this one is not Claude-family, so it was still catching every refusal and
+            # quietly writing the day's article on a 9B local model under the same persona
+            # byline -- a model-family switch no downstream gate could see, because none of
+            # them reads the provider label. See orchestrator/provider_policy.py.
+            if not claude_cli_provider.is_claude_family(provider["model"]) \
+                    and not provider_policy.local_fallback_allowed():
+                self.logger.warning(
+                    "Skipping %s — a non-Claude model may not answer a Claude-family "
+                    "request in LIVE; set %s=1 for a dev run or manual recovery",
+                    provider["name"], provider_policy.LOCAL_FALLBACK_ENV)
+                attempted.append("%s: skipped (live fail-closed)" % provider["name"])
                 continue
             try:
                 self.logger.info("Generating article with %s...", provider["name"])
@@ -333,10 +469,18 @@ class LLMMixin:
                     return text, provider["name"], actual_model
                 self.logger.warning("%s returned short response (%d chars)",
                                     provider["name"], len(text) if text else 0)
+                attempted.append("%s: short response" % provider["name"])
+            except claude_cli_provider.ClaudeCLIError as exc:
+                subscription_refused = True
+                self.logger.error("%s failed on the Claude subscription [%s]: %s",
+                                  provider["name"], getattr(exc, "code", "ERROR"), exc)
+                attempted.append("%s: %s" % (provider["name"], getattr(exc, "code", "ERROR")))
             except Exception as exc:
                 self.logger.warning("%s failed: %s", provider["name"], exc)
+                attempted.append("%s: %s" % (provider["name"], type(exc).__name__))
 
-        self.logger.error("All providers failed — using enhanced fallback")
+        self.logger.error("No permitted provider produced an article: %s",
+                          "; ".join(attempted) or "none attempted")
         return None, None, None
 
 
@@ -495,11 +639,11 @@ class LLMMixin:
         try:
             self.logger.info("Rewriting with Opus for quality improvement...")
             rewritten = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=SYSTEM,
                 user_prompt=user_msg,
-                model="openrouter/claude-opus-4.8",
+                model="anthropic/claude-opus-4.8",
                 max_tokens=5000,
                 timeout=240,
                 check_truncation=True,
@@ -672,10 +816,13 @@ class LLMMixin:
         path.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
 
     def _call_editorial_model(self, system, user, max_tokens=1200, timeout=60, prefer_opus=False):
-        """Try Fable 5 → Opus 4.8 via CLIProxy, then bypass CLIProxy and call OpenRouter directly.
+        """Try Fable 5 → Opus 4.8, both on the owner's Claude subscription.
 
-        CLIProxy is a thin proxy to OpenRouter — if it's down, calling OpenRouter directly
-        is equivalent. Requires OPENROUTER_API_KEY in environment for the direct fallback.
+        PHASE 2B: the URLs below are still OPENROUTER_URL and the model ids are still the
+        OpenRouter-era ones, because that pair is what _call_openai_compat_api routes ON.
+        It sees a Claude-family model at an OpenRouter endpoint and serves it from the
+        subscription instead, substituting the tier-preserving subscription model. Nothing
+        here reaches openrouter.ai. OPENROUTER_API_KEY is passed and unused.
 
         claude-fable-5 has mandatory extended thinking on this endpoint (reasoning cannot
         be disabled) and reasoning tokens count against max_tokens. Left unbounded, thinking
@@ -694,26 +841,26 @@ class LLMMixin:
         tried first -- Fable stays in the chain as a last-resort fallback rather than being
         removed outright, since a Fable response still beats no response if Opus is down.
 
-        Attempt order also puts Opus/OpenRouter-direct ahead of Fable/OpenRouter-direct
-        (fixed 2026-08-10): if Fable truncated on CLIProxy for token-budget reasons, it will
-        truncate identically via direct OpenRouter -- that attempt was previously
-        guaranteed-wasted whenever CLIProxy failed for an unrelated transport reason.
+        (The 2026-08-10 ordering fix that put Opus's direct rung ahead of Fable's is now
+        moot: removing the CLIProxy hop on 2026-09-04 left each model with a single rung,
+        so there is no longer a second Fable attempt to order.)
         """
         FABLE_REASONING_BUDGET = 1024
         FABLE_OUTPUT_HEADROOM = 1600
         fable_max_tokens = max(max_tokens, FABLE_REASONING_BUDGET + FABLE_OUTPUT_HEADROOM)
         fable_timeout = max(timeout, 90)
 
-        _or_key = os.environ.get("OPENROUTER_API_KEY", "")
-        _or_url = "https://openrouter.ai/api/v1"
+        # Until 2026-09-04 each model had two rungs -- CLIProxy, then the same model
+        # again direct -- because the proxy was an unreliable hop in front of the very
+        # provider the second rung called. With the proxy gone the duplicate rung would
+        # just retry an identical request against an identical endpoint, so each model
+        # is tried once.
+        fable_attempts = [(OPENROUTER_URL, OPENROUTER_API_KEY,
+                           "anthropic/claude-fable-5", "Fable/subscription")]
+        opus_attempts = [(OPENROUTER_URL, OPENROUTER_API_KEY,
+                          "anthropic/claude-opus-4.8", "Opus/subscription")]
 
-        fable_attempts = [(CLIPROXY_URL, CLIPROXY_KEY, "openrouter/claude-fable-5", "Fable/CLIProxy")]
-        opus_attempts = [(CLIPROXY_URL, CLIPROXY_KEY, "openrouter/claude-opus-4.8", "Opus/CLIProxy")]
-        if _or_key:
-            opus_attempts.append((_or_url, _or_key, "anthropic/claude-opus-4.8", "Opus/OpenRouter-direct"))
-            fable_attempts.append((_or_url, _or_key, "anthropic/claude-fable-5", "Fable/OpenRouter-direct"))
-
-        attempts = (opus_attempts + fable_attempts) if prefer_opus else (fable_attempts[:1] + opus_attempts + fable_attempts[1:])
+        attempts = (opus_attempts + fable_attempts) if prefer_opus else (fable_attempts + opus_attempts)
 
         # Provider-lineage logging (V1.1, 2026-08-17 -- SRF3 forensic audit
         # follow-up): the audit had to reconstruct which model actually
@@ -739,19 +886,26 @@ class LLMMixin:
                     check_truncation=True,
                 )
                 _fallback_used = _idx > 0
-                if "direct" in label:
-                    self.logger.warning("Editorial model: CLIProxy bypassed — %s active", label)
-                elif "Opus" in label:
+                if "Opus" in label and not prefer_opus:
                     self.logger.warning("Editorial model: Fable unavailable — %s active", label)
                 self.logger.info(
                     "Editorial model lineage: requested_model=%s actual_model=%s label=%s fallback_used=%s",
                     requested_model, model, label, _fallback_used,
                 )
                 return raw
+            except claude_cli_provider.ClaudeCLIError as e:
+                # PHASE 2B: both rungs are the same subscription, so a refusal of one is a
+                # refusal of the other. Stop rather than spend a second call proving it,
+                # and never answer it by buying the completion from OpenRouter.
+                self.logger.error(
+                    "Editorial model %s refused by the Claude subscription [%s]: %s "
+                    "— no paid Claude fallback is permitted",
+                    label, getattr(e, "code", "ERROR"), e)
+                break
             except Exception as e:
                 self.logger.warning("Editorial model %s failed: %s", label, e)
 
-        self.logger.error("Editorial model: all attempts failed (CLIProxy + direct OpenRouter)")
+        self.logger.error("Editorial model: all attempts failed (Claude subscription)")
         self.logger.info(
             "Editorial model lineage: requested_model=%s actual_model=None label=None fallback_used=True (all failed)",
             requested_model,
@@ -1707,8 +1861,8 @@ class LLMMixin:
         try:
             self.logger.info("Opus targeted revision: applying %d editorial notes...", len(editorial_notes))
             revised = self._call_openai_compat_api(
-                CLIPROXY_URL, CLIPROXY_KEY, system, user,
-                model="openrouter/claude-opus-4.8", max_tokens=5000, timeout=180,
+                OPENROUTER_URL, OPENROUTER_API_KEY, system, user,
+                model="anthropic/claude-opus-4.8", max_tokens=5000, timeout=180,
                 check_truncation=True,
             )
             if revised and len(revised) > 400:

@@ -724,7 +724,7 @@ def preflight(po=None):
     """
     po = po or _import_orchestrator()
     orch = po.ProductionOrchestrator()
-    from orchestrator.config import CLIPROXY_URL, CLIPROXY_KEY
+    from orchestrator.config import OPENROUTER_URL, OPENROUTER_API_KEY
 
     # Fable has mandatory extended thinking that counts against max_tokens
     # (see llm.py's _call_editorial_model docstring) -- give it real headroom
@@ -738,7 +738,7 @@ def preflight(po=None):
     for label, model, reasoning_cap in routes:
         try:
             raw = orch._call_openai_compat_api(
-                url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL, api_key=OPENROUTER_API_KEY,
                 system_prompt="Reply with exactly one word.",
                 user_prompt="Say OK.",
                 model=model, max_tokens=2000, timeout=30,

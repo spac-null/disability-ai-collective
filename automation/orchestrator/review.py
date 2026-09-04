@@ -14,7 +14,7 @@ import re
 import urllib.request as ureq
 from datetime import datetime as dt
 
-from .config import CLIPROXY_URL, CLIPROXY_KEY, _ARTICLE_TYPES
+from .config import OPENROUTER_URL, OPENROUTER_API_KEY, _ARTICLE_TYPES
 from .grounding import evidence_text
 from .human_detail_provenance import check_provenance as _check_human_detail_provenance
 from .opening_template_detector import normalize_opening, find_template_match
@@ -56,8 +56,8 @@ class ReviewMixin:
         max_tokens now raises instead of silently returning a partial read."""
         try:
             raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=(
                     "You are a sharp, busy reader scrolling on your phone. You have no "
                     "obligation to finish anything. You've read a lot of good essays and "
@@ -132,7 +132,7 @@ class ReviewMixin:
                     "attention, the way you'd judge anything you read outside of work."
                 ),
                 user_prompt=f"Title: {title}\nAuthor persona: {agent_name}\n\n{content}",
-                model="openrouter/claude-sonnet-4.6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=600,  # was 400 -- bumped 2026-08-14 (opening-quality shadow pass)
                                  # when AUTHOR_PRESENCE/QUESTION_TIMING were added to the same
                                  # call/response; keep ahead of VERDICT+HOOK+DRAG+STOP_RISK+
@@ -795,8 +795,8 @@ class ReviewMixin:
             return "CORRECTION: N/A\nRESISTING: N/A\nOPENING_SHAPE: N/A\n(no plan recorded for this article -- not evaluated)"
         try:
             raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=(
                     "Before this article was written, an editor committed the writer to "
                     "specific things. You are checking, strictly, whether each one actually "
@@ -834,7 +834,7 @@ class ReviewMixin:
                     "Anything marked '(none committed...)' is N/A — do not invent a commitment.\n\n"
                     f"THE FINISHED ARTICLE:\n{content[:20000]}"
                 ),
-                model="openrouter/claude-sonnet-4.6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=700,  # 300 wasn't enough -- confirmed via a real positive-control
                                  # calibration run 2026-08-09: the model second-guessed itself
                                  # on one field (emitted two lines before settling), burning
@@ -891,11 +891,11 @@ class ReviewMixin:
         citation_text = "CLEAN"
         try:
             raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=CITATION_SYSTEM,
                 user_prompt=content,
-                model="openrouter/claude-sonnet-4.6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=600,
                 timeout=60,
             )
@@ -1293,11 +1293,11 @@ class ReviewMixin:
         rules_fails = []
         try:
             raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=RULES_SYSTEM,
                 user_prompt=content,
-                model="openrouter/claude-sonnet-4.6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=1110,  # bumped from 1000->1060 when R17 was added, now ->1110 for
                                   # R18/R19 — same truncation risk noted at the GATE_SYSTEM call site.
                 timeout=90,

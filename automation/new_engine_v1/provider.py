@@ -2,12 +2,26 @@
 provider.py -- the model transport for NEW_ENGINE_V1.
 
 PRODUCTION FIDELITY, deliberately
-Same endpoint, same auth and the same model identifiers the legacy editorial path
-uses: the local CLIProxy (`http://127.0.0.1:8317/v1`, production's own proxy in front
-of OpenRouter) with a direct-OpenRouter fallback. Reimplemented here as a ~40-line
-stdlib POST rather than imported from `orchestrator.llm`, for one reason only: this
-package must carry NO legacy prompt surface, and a test asserts that by scanning
-imports. The transport is identical; the prompt machinery is not inherited.
+Same transport, same auth and the same model identifiers the legacy editorial path uses.
+That target has moved twice. Until 2026-09-04 both paths went through the local
+CLIProxyAPI first; a live probe showed that hop returned 500 "unknown provider" for this
+module's own DEFAULT_MODEL, so the rung could never succeed and every call paid for it
+before falling through. Phase 2A removed it, leaving direct OpenRouter. Phase 2B
+(2026-09-05) moved the CLAUDE-FAMILY half onto the owner's claude.ai subscription, which
+is where the legacy path now goes too -- so fidelity is preserved by following it.
+
+The split is by MODEL FAMILY, not by call site. A Claude-family model goes to the shared
+subscription adapter; anything else keeps the direct OpenRouter POST below. That matters
+because this package is also how a non-Claude model would be reached if one were ever
+configured here, and a blanket cutover would have quietly turned it into a Claude call.
+
+The OpenRouter POST is still a ~40-line stdlib implementation rather than an import from
+`orchestrator.llm`, for one reason only: this package must carry NO legacy prompt surface,
+and a test asserts that by scanning imports. `claude_cli_provider` is the single permitted
+transport import -- it carries no prompt machinery, only a subprocess. It is imported
+LAZILY inside complete(), because the package may not import `subprocess` itself and a
+module-level import would put a shelling-out dependency in the package's import graph for
+every consumer, including the ones that never make a call.
 
 It sends exactly the system and user strings it is given. There is no prompt assembly
 here, no persona canon, no style-rule pile, no register selector -- those live in the
@@ -30,13 +44,15 @@ from dataclasses import dataclass, field
 
 import bounded_http
 
-# Production's own values (orchestrator/config.py). Read at call time, not import
-# time, so a test can point them somewhere harmless.
-DEFAULT_CLIPROXY_URL = "http://127.0.0.1:8317/v1"
+# Production's own value (orchestrator/config.py). Read at call time, not import
+# time, so a test can point it somewhere harmless.
 OPENROUTER_URL = "https://openrouter.ai/api/v1"
 
 # The model the migration targets for editorial reasoning and prose. Same family the
-# legacy path lands on today after its Fable fallback.
+# legacy path lands on today after its Fable fallback. Kept in its OpenRouter-era spelling
+# because it is what this module ASKS for; claude_cli_provider derives the tier-preserving
+# subscription id (claude-opus-5) and Completion keeps requested_model and actual_model
+# apart, so the substitution is recorded rather than assumed.
 DEFAULT_MODEL = "anthropic/claude-opus-4.8"
 
 
@@ -103,12 +119,12 @@ def _extract(body: dict) -> tuple[str, str, dict]:
 
 
 class Provider:
-    """CLIProxy first, direct OpenRouter as fallback. Raises rather than degrading."""
+    """Claude subscription for Claude-family models, direct OpenRouter otherwise.
+    Raises rather than degrading."""
 
-    def __init__(self, model: str = DEFAULT_MODEL, cliproxy_url: str | None = None):
+    def __init__(self, model: str = DEFAULT_MODEL, url: str | None = None):
         self.model = model
-        self.cliproxy_url = cliproxy_url or os.environ.get(
-            "NEW_ENGINE_CLIPROXY_URL", DEFAULT_CLIPROXY_URL)
+        self.url = url or os.environ.get("NEW_ENGINE_PROVIDER_URL", OPENROUTER_URL)
 
     def complete(self, system: str, user: str, max_tokens: int = 3000,
                  timeout: int = 180, temperature: float | None = None,
@@ -116,12 +132,29 @@ class Provider:
         """`deadline` is an absolute time.monotonic() value, optional and off by
         default so the authoritative pipeline is untouched.
 
-        It matters because of how the fallback works: CLIProxy and OpenRouter are tried
-        in sequence and each would otherwise get its own fresh `timeout`, so one call
-        can cost twice what its argument suggests. A deadline is SHARED by both legs --
-        whatever the first spends, the second inherits what is left -- so the total for
-        one complete() cannot outlive it however the legs divide the time between them.
+        It was introduced when this method had two rungs (CLIProxy, then OpenRouter),
+        each of which got its own fresh `timeout`, so one call could cost twice what its
+        argument suggested. Only the OpenRouter rung remains, but the deadline is kept:
+        it is the caller's own upper bound on a complete(), independent of how many rungs
+        happen to exist, and dropping it would silently loosen every caller that passes it.
         """
+        # PHASE 2B. Claude-family work runs on the subscription; everything else keeps the
+        # direct OpenRouter POST below. A subscription refusal is TERMINAL -- it raises a
+        # ProviderError carrying the explicit subscription code, and is never answered by
+        # buying the same completion from OpenRouter.
+        import claude_cli_provider                                   # lazy: see docstring
+        if claude_cli_provider.is_claude_family(self.model):
+            if deadline is not None:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise ProviderError("deadline reached before the attempt")
+                timeout = max(1, int(min(timeout, remaining)))
+            try:
+                return claude_cli_provider.complete_via_subscription(
+                    system, user, self.model, timeout=timeout, temperature=temperature)
+            except claude_cli_provider.ClaudeCLIError as e:
+                raise ProviderError("%s: %s" % (getattr(e, "code", "CLAUDE_SUBSCRIPTION_ERROR"), e))
+
         payload = {
             "model": self.model,
             "messages": [{"role": "system", "content": system},
@@ -133,8 +166,7 @@ class Provider:
 
         attempts = []
         for label, url, key in (
-            ("CLIProxy", self.cliproxy_url, os.environ.get("CLIPROXY_KEY", "")),
-            ("OpenRouter", OPENROUTER_URL, os.environ.get("OPENROUTER_API_KEY", "")),
+            ("OpenRouter", self.url, os.environ.get("OPENROUTER_API_KEY", "")),
         ):
             if not url:
                 continue

@@ -188,33 +188,35 @@ def verify_f10_fallback() -> dict:
 # ── FACT CHECK ───────────────────────────────────────────────────────────────
 # The authoritative component, called unmodified. It needs two credentials that live in
 # /srv/secrets/openclaw.env on trident (orchestrator/config.py:57):
-#   CLIPROXY_KEY   + a reachable CLIProxyAPI on 127.0.0.1:8317   (claim extraction)
-#   OPENROUTER_API_KEY                                            (Perplexity Sonar checks)
+#   OPENROUTER_API_KEY   + a reachable openrouter.ai   (claim extraction + Sonar checks)
+# (Until 2026-09-04 claim extraction went through a local CLIProxyAPI on :8317 and needed
+# its own CLIPROXY_KEY; that hop is gone, so one credential now covers both.)
 # Missing either is reported as NOT RUN. It is never stubbed: a stub here would be a
 # publication gate answering a question nobody asked it.
 def run_fact_check(article: str) -> dict:
     import os
     import urllib.error
     from orchestrator.fact_check import FactCheckMixin
-    from orchestrator.config import CLIPROXY_URL, CLIPROXY_KEY
+    from orchestrator.config import OPENROUTER_URL, OPENROUTER_API_KEY
     from orchestrator.llm import LLMMixin
 
     missing = []
-    if not CLIPROXY_KEY:
-        missing.append("CLIPROXY_KEY")
+    if not OPENROUTER_API_KEY:
+        missing.append("OPENROUTER_API_KEY")
     if not os.environ.get("OPENROUTER_API_KEY"):
         missing.append("OPENROUTER_API_KEY")
-    # An HTTP reply -- 401 included -- means the proxy is up and asking for the key. Only
-    # a transport failure means it is not there. The first version of this check treated
-    # 401 as unreachable and reported the stage NOT RUN on a host where it could have run.
+    # An HTTP reply -- 401 included -- means the endpoint is up and asking for the key.
+    # Only a transport failure means it is not reachable. The first version of this check
+    # treated 401 as unreachable and reported the stage NOT RUN on a host where it could
+    # have run.
     try:
-        req = urllib.request.Request(CLIPROXY_URL + "/models",
-                                     headers={"Authorization": "Bearer " + CLIPROXY_KEY})
+        req = urllib.request.Request(OPENROUTER_URL + "/models",
+                                     headers={"Authorization": "Bearer " + OPENROUTER_API_KEY})
         urllib.request.urlopen(req, timeout=6)
     except urllib.error.HTTPError:
         pass
     except Exception as e:                                  # noqa: BLE001
-        missing.append("CLIProxyAPI at %s (%s)" % (CLIPROXY_URL, type(e).__name__))
+        missing.append("OpenRouter at %s (%s)" % (OPENROUTER_URL, type(e).__name__))
     if missing:
         print("  NOT RUN -- missing: %s" % ", ".join(missing))
         return {"status": "NOT_RUN", "missing": missing}

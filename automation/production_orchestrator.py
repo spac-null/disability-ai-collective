@@ -18,7 +18,7 @@ import urllib.request
 
 # Module-split, Stage 2 (2026-08-09): the pure-data constants that used to live here
 # now live in orchestrator/config.py, imported via * + __all__ below so every
-# existing unqualified reference (CLIPROXY_URL, _REGISTERS, etc.) keeps working
+# existing unqualified reference (OPENROUTER_URL, _REGISTERS, etc.) keeps working
 # unchanged. sys.path insert makes `orchestrator` importable when this file is run
 # directly as a script (python3 automation/production_orchestrator.py), which is
 # how it's always invoked in production — see automation/README.md.

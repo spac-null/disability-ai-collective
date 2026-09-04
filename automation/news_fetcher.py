@@ -19,11 +19,13 @@ import material_policy as MP                                        # noqa: E402
 
 # ── Env / paths ───────────────────────────────────────────────────────────────
 
+import claude_cli_provider
+
 REPO = Path(__file__).parent.parent
 DB   = REPO / "disability_findings.db"
 LOG  = REPO / "automation" / "news_fetcher.log"
 
-# Load CLIPROXY_KEY from the same secrets file production_orchestrator.py uses
+# Load OPENROUTER_API_KEY from the same secrets file production_orchestrator.py uses
 # (no export statements — parse manually, same pattern as that file).
 _ENV_FILE = Path("/srv/secrets/openclaw.env")
 if _ENV_FILE.exists():
@@ -33,14 +35,46 @@ if _ENV_FILE.exists():
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
 
-# CLIProxy — same endpoint production_orchestrator.py uses for all editorial LLM
+# OpenRouter — same endpoint production_orchestrator.py uses for all editorial LLM
 # calls. news_fetcher previously called Nous Portal directly via a Hermes-managed
 # OAuth agent_key (/srv/data/hermes/auth.json); that key stopped being refreshed
-# on 2026-05-16 when the rest of the pipeline migrated to OpenRouter/CLIProxy,
-# leaving angle extraction silently 401ing for two months.
-API_URL = "http://127.0.0.1:8317/v1/chat/completions"
-API_KEY = os.environ.get("CLIPROXY_KEY", "")
-MODEL   = "openrouter/claude-sonnet-4.6"
+# on 2026-05-16 when the rest of the pipeline migrated to OpenRouter, leaving angle
+# extraction silently 401ing for two months. It then spent 2026-05-16 to 2026-09-04
+# reaching OpenRouter through the local CLIProxyAPI on :8317, which turned out to be
+# a passthrough with its own expiring credential -- removed, this now calls OpenRouter
+# itself. The `openrouter/` model prefix went with it: it was the proxy's translation
+# key, and direct OpenRouter names the same model `anthropic/claude-sonnet-4.6`.
+# PHASE 2B (2026-09-05): the Claude-family reasoning here now runs on the owner's
+# claude.ai subscription through the shared adapter, not on paid OpenRouter tokens.
+# MODEL keeps the OpenRouter-era id because that is what the caller ASKS for; the adapter
+# derives the tier-preserving subscription id (claude-sonnet-5) and records both, so the
+# substitution is visible rather than asserted. Nothing in this file reaches openrouter.ai.
+MODEL   = "anthropic/claude-sonnet-4.6"
+LLM_TIMEOUT = 120        # seconds per call; the CLI adds process startup to inference
+
+# Retained, and no longer a gate on Claude work. OPENROUTER_API_KEY is irrelevant to a
+# subscription call, so guarding angle extraction on it would silently skip the whole
+# stage on a host that needs no such key. Kept as a module attribute because
+# story_rejection_v1_test.py sets it, and because the key itself is still required
+# elsewhere in the pipeline (Perplexity/Sonar, Recraft).
+API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+
+
+def _llm(system: str, user: str, timeout: int = LLM_TIMEOUT) -> str:
+    """One Claude-family call on the Claude subscription. Raises on any failure.
+
+    Raising rather than returning a sentinel is the contract extract_angle already
+    depends on: a transport failure and a genuine "no angle" verdict must never be the
+    same value. That lesson cost ~10 seeds/day when a CLIProxy outage was being recorded
+    as "the model said NONE".
+    """
+    completion = claude_cli_provider.complete_via_subscription(
+        system, user, MODEL, timeout=timeout)
+    log(claude_cli_provider.provenance_line(claude_cli_provider.provenance(
+        completion.requested_model, completion.actual_model, ok=True,
+        detail=("tier-preserving subscription substitution"
+                if completion.actual_model != completion.requested_model else ""))))
+    return completion.text
 
 # ── Feed list ─────────────────────────────────────────────────────────────────
 # Tier 1 = quality longform journalism / science. Tier 2 = broad quality.
@@ -812,9 +846,6 @@ def extract_angle(title: str, summary: str, url: str) -> str | None:
     that seed. ~10 seeds/day were being permanently lost this way to
     ordinary transient failures. Callers must catch and retry, not treat an
     exception as a verdict."""
-    if not API_KEY:
-        return None
-
     system = (
         "You find hidden disability angles in mainstream journalism. "
         "Your job: read a mainstream article and identify what a disabled person "
@@ -836,23 +867,7 @@ def extract_angle(title: str, summary: str, url: str) -> str | None:
         f"Article: {title}\nSource: {url}\nSummary: {summary}\n\n"
         "What is the hidden disability angle in this mainstream article?"
     )
-    payload = json.dumps({
-        "model": MODEL,
-        "max_tokens": 120,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user",   "content": user},
-        ],
-        "stream": False,
-    }).encode()
-    req = urllib.request.Request(
-        API_URL, data=payload,
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"},
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=30) as r:
-        resp = json.loads(r.read())
-    angle = resp["choices"][0]["message"]["content"].strip()
+    angle = _llm(system, user).strip()
     angle = re.sub(r"<think>.*?</think>", "", angle, flags=re.DOTALL).strip()
     angle = re.sub(r"\*\*Pitch:\*\*\s*", "", angle).strip()
     angle = re.sub(r"^\*\*", "", angle).strip()
@@ -1045,45 +1060,24 @@ def category_jump_judge(title: str, summary: str) -> tuple[dict | None, str]:
       "empty_response" -- API returned no usable content
       "invalid_json"  -- content didn't parse as the expected JSON shape
     """
-    if not API_KEY:
-        return None, "no_api_key"
     user = f"TITLE:\n{title}\n\nSUMMARY:\n{summary}"
-    payload = json.dumps({
-        "model": MODEL,
-        # 500 wasn't enough -- confirmed via a real failure 2026-08-10 on the
-        # Alzheimer's-drug seed: a verbose-but-valid response (7 populated
-        # fields including a full "reason" paragraph) came within a few
-        # dozen tokens of this cap on a successful run, and a less lucky
-        # generation hit it mid-string, producing invalid JSON that silently
-        # returned None -- losing exactly the strongest positive calibration
-        # example from the first real batch. Same failure class already
-        # diagnosed and fixed elsewhere in this pipeline for the same reason
-        # (see _plan_follow_read's max_tokens history on the generation side).
-        "max_tokens": 900,
-        "messages": [
-            {"role": "system", "content": _CATEGORY_JUMP_SYSTEM_PROMPT},
-            {"role": "user", "content": user},
-        ],
-        "stream": False,
-    }).encode()
     try:
-        req = urllib.request.Request(
-            API_URL, data=payload,
-            headers={"Content-Type": "application/json", "Authorization": f"Bearer {API_KEY}"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=30) as r:
-            resp = json.loads(r.read())
+        raw = _llm(_CATEGORY_JUMP_SYSTEM_PROMPT, user)
+    except claude_cli_provider.SubscriptionAuthFailure as e:
+        # Same meaning the name always had: the provider had no usable credential. It is
+        # now the subscription login rather than an OpenRouter key, so the shadow data
+        # keeps one status for "could not authenticate" instead of gaining a synonym.
+        log(f"  category-jump judge no_api_key: {e}")
+        return None, "no_api_key"
+    except claude_cli_provider.SubscriptionTimeout as e:
+        log(f"  category-jump judge timeout: {e}")
+        return None, "timeout"
     except Exception as e:
         status = "timeout" if "timed out" in str(e).lower() else "model_error"
         log(f"  category-jump judge {status}: {e}")
         return None, status
 
-    try:
-        raw = resp["choices"][0]["message"]["content"].strip()
-    except (KeyError, IndexError, AttributeError):
-        log("  category-jump judge: empty/malformed API response")
-        return None, "empty_response"
+    raw = (raw or "").strip()
     if not raw:
         return None, "empty_response"
 
@@ -1191,9 +1185,8 @@ def run_category_jump_shadow(conn, n: int = 10):
     """Drives Stage 1 shadow judging on its own independent candidate pool
     -- see sample_shadow_candidates's docstring. Never affects real
     selection/generation; writes only to category_jump_shadow."""
-    if not API_KEY:
-        log("CLIProxy API key not set — skipping category-jump shadow judging")
-        return
+    # No key gate: this stage runs on the Claude subscription, which needs none. A
+    # failure is reported per-candidate through category_jump_judge's status field.
     candidates = sample_shadow_candidates(conn, n=n)
     judged = failed = 0
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -1280,9 +1273,8 @@ EXPLORATION_SLOTS = 2
 
 def extract_top_angles(conn, n: int = 10):
     """Fetch top-N unprocessed seeds by score and extract disability angles."""
-    if not API_KEY:
-        log("CLIProxy API key not set — skipping angle extraction")
-        return
+    # No key gate: angle extraction runs on the Claude subscription, which needs no
+    # OPENROUTER_API_KEY. Gating it on one would silently skip the whole stage.
     # Match get_news_seed's own 3-day pub_date window (production_orchestrator.py) —
     # this used to select purely by relevance_score with no age filter, so it could
     # (and did) spend a paid Sonnet call extracting an angle for a seed that would
@@ -1464,7 +1456,7 @@ def main():
     if API_KEY:
         extract_top_angles(conn, n=10)
     else:
-        log("CLIProxy API key not set — skipping angle extraction")
+        log("OPENROUTER_API_KEY not set — skipping angle extraction")
 
     # 3b. Category-jump judge, SHADOW MODE ONLY -- independent candidate
     # pool, writes only to category_jump_shadow, never touches news_seeds.

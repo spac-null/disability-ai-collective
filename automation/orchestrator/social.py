@@ -18,7 +18,7 @@ import sqlite3
 import time
 import urllib.request
 
-from .config import CLIPROXY_URL, CLIPROXY_KEY, _SOCIAL_PROMPTS
+from .config import OPENROUTER_URL, OPENROUTER_API_KEY, _SOCIAL_PROMPTS
 
 
 class SocialMixin:
@@ -31,11 +31,11 @@ class SocialMixin:
         try:
             prompt = template.format(title=title, excerpt=body[:1500])
             raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt="Return only the post text. No quotes around it. Maximum 250 characters.",
                 user_prompt=prompt,
-                model="openrouter/claude-sonnet-4.6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=80,
                 timeout=30,
             )
@@ -55,8 +55,8 @@ class SocialMixin:
         budget = max_chars - 15  # safety buffer
         try:
             raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=(
                     f"Write ONE complete sentence (strictly under {budget} characters, hard limit) "
                     "as a Bluesky post for a disability culture article. "
@@ -66,7 +66,7 @@ class SocialMixin:
                     "Must end with a period. No hashtags. No ellipsis. Do NOT start with the article title."
                 ),
                 user_prompt=f"Title: {title}\n\nOpening:\n{body[:600]}",
-                model="openrouter/claude-sonnet-4.6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=60,
                 timeout=30,
             )

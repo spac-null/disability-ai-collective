@@ -11,9 +11,13 @@ import re, sys, os, time
 from pathlib import Path
 import urllib.request, urllib.error, json
 
+import claude_cli_provider
+
 POSTS_DIR = Path(__file__).parent.parent / "_posts"
-CLIPROXY_URL = os.environ.get("CLIPROXY_URL", "http://127.0.0.1:8317/v1")
-CLIPROXY_KEY = os.environ.get("CLIPROXY_KEY", "local")
+# Was the local CLIProxyAPI on :8317 until 2026-09-04, then direct OpenRouter, and since
+# 2026-09-05 the owner's Claude subscription. The id keeps its OpenRouter-era spelling
+# because it is what this script ASKS for; the adapter derives the subscription model.
+KEYWORD_MODEL = "anthropic/claude-haiku-4.5"
 
 # Keywords that indicate a bad/generic auto-generated set
 GENERIC_SIGNALS = [
@@ -57,39 +61,34 @@ def is_bad_keywords(kw_line: str) -> bool:
 
 
 def call_llm(title: str, content: str, author: str) -> list:
+    """PHASE 2B: the Claude subscription, not OpenRouter.
+
+    Standalone maintenance tooling with no cron entry, migrated with the live callers for
+    the same reason bsky_engage was: it is runnable, not frozen, and a Claude/OpenRouter
+    path left in a script someone runs by hand is still a path.
+    """
     body_preview = content[:1500]
-    payload = {
-        "model": "claude-haiku-4-5-20251001",
-        "max_tokens": 120,
-        "messages": [{"role": "user", "content": (
-            f"Title: {title}\nAuthor: {author}\n\nArticle excerpt:\n{body_preview}\n\n"
-            "Return 5-7 comma-separated SEO keywords. Specific > generic. "
-            "Include proper nouns, named theories, named people, legislation, events. "
-            "Think: what would someone type into Google the day they read this article in a newspaper? "
-            "No explanation, no numbering, no quotes. Just the comma-separated list."
-        )}],
-        "system": (
-            "You generate SEO keywords for Crip Minds, a disability culture publication. "
-            "Return 5-7 keywords as a comma-separated list. No explanation, no numbering, no quotes. "
-            "Include specific proper nouns (people, institutions, named theories, artworks, legislation); "
-            "include exact phrases people would type into Google; "
-            "do NOT use generic filler like 'disability culture', 'neurodiversity', 'urban design' "
-            "unless the article is specifically about that concept."
-        ),
-    }
-    data = json.dumps(payload).encode()
-    req = urllib.request.Request(
-        f"{CLIPROXY_URL}/chat/completions",
-        data=data,
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {CLIPROXY_KEY}"},
-        method="POST",
+    system = (
+        "You generate SEO keywords for Crip Minds, a disability culture publication. "
+        "Return 5-7 keywords as a comma-separated list. No explanation, no numbering, no quotes. "
+        "Include specific proper nouns (people, institutions, named theories, artworks, legislation); "
+        "include exact phrases people would type into Google; "
+        "do NOT use generic filler like 'disability culture', 'neurodiversity', 'urban design' "
+        "unless the article is specifically about that concept."
+    )
+    user = (
+        f"Title: {title}\nAuthor: {author}\n\nArticle excerpt:\n{body_preview}\n\n"
+        "Return 5-7 comma-separated SEO keywords. Specific > generic. "
+        "Include proper nouns, named theories, named people, legislation, events. "
+        "Think: what would someone type into Google the day they read this article in a newspaper? "
+        "No explanation, no numbering, no quotes. Just the comma-separated list."
     )
     try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            result = json.loads(resp.read())
-            raw = result["choices"][0]["message"]["content"].strip()
-            kws = [k.strip().strip('"').strip("'") for k in raw.split(",") if k.strip()]
-            return kws[:7]
+        completion = claude_cli_provider.complete_via_subscription(
+            system, user, KEYWORD_MODEL, timeout=120)
+        raw = completion.text.strip()
+        kws = [k.strip().strip('"').strip("'") for k in raw.split(",") if k.strip()]
+        return kws[:7]
     except Exception as e:
         print(f"  LLM error: {e}")
         return []
