@@ -198,12 +198,17 @@ def _arch():
 
 
 def _lens(**over):
+    # The three trailing fields were added by the lens-realization contract: the machine
+    # must be able to explain why a piece belongs here even when the prose never says it.
     d = {"lens_claim": "The record keeps what materials meant and loses what they were like.",
          "evidence_basis": ["F01"],
          "what_changes_for_the_reader": "The reader now understands the ranking as a "
                                         "judgement about what transferred.",
          "story_beat_before": "B1", "crip_turn": "Go back to the salt walls.",
-         "story_beat_after": "B3"}
+         "story_beat_after": "B3",
+         "before_reading": "The ranking reads as a judgement of quality.",
+         "after_reading": "The ranking reads as a record of writable parts.",
+         "crip_turn_carrier": "the salt walls"}
     d.update(over)
     return d
 
