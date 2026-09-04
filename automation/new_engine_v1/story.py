@@ -300,6 +300,39 @@ _CONDITIONAL = re.compile(r"\b(?:if|when|whenever|wherever|would|should the|were
 _ADJECTIVAL = {"housing", "published", "printing", "existing", "remaining", "outstanding",
                "building", "willing", "missing", "living", "ongoing", "underlying"}
 
+# AN -ing WORD IN A NOUN SLOT IS A GERUND, NOT A PARTICIPLE.
+#
+# The hand-maintained list above cannot keep up, and the Ground Truth canary died twice on
+# words it does not contain. The last one refused
+#
+#   "a measure with no field for eviction risk, overcrowding or harassment"
+#
+# for the participle "overcrowding" -- a pure noun phrase, which is exactly the shape the
+# carrier rule asks for. "the building's cladding" and "notes on wayfinding" fail the same
+# way.
+#
+# The grammar that separates them is what a participle needs and a gerund does not: a
+# SUBJECT. "the servo pulling the brake arm" and "the bike coasting through the block
+# group" put a noun immediately before the -ing word, and that noun is what is being said
+# to act. A gerund sits in a noun slot instead, introduced by a preposition, a determiner,
+# a conjunction, a comma or a possessive -- and something introduced that way is being
+# NAMED, not narrated.
+#
+# So the token before the -ing word decides it. This subsumes most of _ADJECTIVAL, which
+# is kept anyway: two cheap checks are better than one, and removing it would be a change
+# to behaviour nobody asked for.
+_NOUN_SLOT_BEFORE = re.compile(
+    r"(?:^|[,;:(]\s*|\b(?:of|for|on|in|at|to|from|with|without|about|into|onto"
+    r"|over|under|through|between|among|against|by|as|than|and|or|nor|but|the|a"
+    r"|an|any|no|its|his|her|their|our|your|my|this|that|these|those|such|more"
+    r"|less|most|least|both|either|neither)\s+|’s\s+|\'s\s+)$",
+    re.I)
+
+
+def _is_gerund_noun(carrier: str, word: str, at: int) -> bool:
+    """Is the -ing word at `at` occupying a noun slot rather than acting as a verb?"""
+    return bool(_NOUN_SLOT_BEFORE.search(carrier[:at]))
+
 
 def carrier_asserts_instance(carrier: str) -> dict:
     """Does this carrier claim that something happened, rather than naming a thing?"""
@@ -315,10 +348,12 @@ def carrier_asserts_instance(carrier: str) -> dict:
         hits.append("finite verb %r" % m.group(0))
     if _CONSEQUENCE.search(c):
         hits.append("consequence connective %r" % _CONSEQUENCE.search(c).group(0))
-    for w in _PARTICIPLE.findall(c):
-        if w.lower() not in _ADJECTIVAL:
-            hits.append("participle %r" % w)
-            break
+    for m in _PARTICIPLE.finditer(c):
+        w = m.group(0)
+        if w.lower() in _ADJECTIVAL or _is_gerund_noun(c, w, m.start()):
+            continue
+        hits.append("participle %r" % w)
+        break
     return {"asserts": bool(hits), "why": "; ".join(hits) or "names things only"}
 
 

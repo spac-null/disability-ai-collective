@@ -915,6 +915,59 @@ def test_continuity_is_fail_safe_and_never_destroys_a_safe_article():
           [prov3.stage_of(i) for i in range(len(prov3.calls))].count("WRITER") == 1)
 
 
+def test_a_gerund_in_a_noun_slot_is_not_a_participle():
+    """The Ground Truth canary died twice at the architecture stage on this, the second
+    time refusing
+
+        "a measure with no field for eviction risk, overcrowding or harassment"
+
+    for the participle "overcrowding" -- a pure noun phrase, which is exactly the shape
+    the carrier rule asks for. _PARTICIPLE matches any -ing word and was exempted only by
+    a hand-maintained twelve-word list that cannot keep up.
+
+    What separates them is what a participle needs and a gerund does not: a SUBJECT.
+    "the servo pulling the brake arm" puts a noun immediately before the -ing word, and
+    that noun is what is said to act. A gerund sits in a noun slot instead, after a
+    preposition, determiner, conjunction, comma or possessive -- named, not narrated.
+
+    Asserted in BOTH directions, because a rule that only stops false positives would
+    quietly stop true ones too."""
+    gerunds = [
+        "a measure with no field for eviction risk, overcrowding or harassment",
+        "a measure with no field for overcrowding",
+        "the building's cladding",
+        "notes on wayfinding and signage",
+        "records of flooding in the basement",
+        "the published figure for the housing complexes",
+    ]
+    participles = [
+        "the bike coasting through the block group",
+        "the bike speeding up alongside the complexes",
+        "the servo pulling the brake arm",
+        "a rider stopping at the kerb",
+    ]
+    for c in gerunds:
+        check("gerund noun is NOT an occurrence: %r" % c[:44],
+              not ST.carrier_asserts_instance(c)["asserts"],
+              ST.carrier_asserts_instance(c))
+    for c in participles:
+        check("participle with a subject IS an occurrence: %r" % c[:44],
+              ST.carrier_asserts_instance(c)["asserts"],
+              ST.carrier_asserts_instance(c))
+    # The other two channels are untouched.
+    for c, why in (("the brake that does not move", "finite verb"),
+                   ("a block group, and therefore a slack cable", "consequence")):
+        check("%s still refuses: %r" % (why, c[:40]),
+              ST.carrier_asserts_instance(c)["asserts"])
+    check("an explicitly conditional carrier is still exempt",
+          not ST.carrier_asserts_instance(
+              "a block group where the survey publishes no figure, and the brake that "
+              "would not move")["asserts"])
+    # The hand list is kept as a second cheap check rather than removed.
+    check("the adjectival list is still consulted",
+          "housing" in ST._ADJECTIVAL)
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
