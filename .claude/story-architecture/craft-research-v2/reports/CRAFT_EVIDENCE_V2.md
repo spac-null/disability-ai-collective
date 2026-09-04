@@ -6,6 +6,13 @@ professional teaching material rather than from this project's prior assumptions
 Campaign date: 2026-09-04. No implementation code was read until the craft work was
 finished, and no implementation code was changed.
 
+**Revised 2026-09-04 after V1 seed artifacts were supplied.** Nine findings changed or were
+added; one — D3/F-13 on transitions — was materially revised against a source the V1 pass had
+and this pass had missed. Every change is cited to an original this pass fetched and read, not
+to V1's paraphrase. Adjudication of all 48 V1 claims: `V1_V2_COMPARISON.md`. Sample sizes
+grew to 18 Bregman texts (43,115 words) and 31 Scientias articles (19,829 words); no headline
+number moved materially.
+
 ## 0. Reading order
 
 1. This file — what we believed, what survived, what did not.
@@ -176,18 +183,36 @@ supports: **the idea should be stated when the reader needs the statement.** In 
 thesis lands at 83% of the way through and is then repeated as the last line. It is neither
 early nor absent. It is late and doubled.
 
-**D3. Visible signpost transitions are a genre marker, not a defect.** Belief 3 and H8 are
-**disproved for the essay forms**. Bregman signposts constantly and explicitly: *"Let me
+**D3. The visible/invisible distinction is the wrong axis. Content transitions are taught
+craft; outline transitions are genre-bound.** Belief 3 and H8 are **disproved**, and this
+finding was itself revised once a source this pass had missed was read (see §5, X7).
+
+The Open Notebook's *Good Transitions* teaches four **visible** devices approvingly: the
+head-to-tail echo (repeat a word or concept from the previous paragraph's last sentence),
+the contrast turn, the "But wait" reversal, and a dated launch-pad sentence after a section
+break. It uses the word *signpost* as praise — *"The short, declarative sentence that begins
+the next paragraph acts like a signpost for readers, signaling in uncomplicated language…"* —
+and Robin Lloyd describes head-to-tail transitions as a deliberate control mechanism:
+*"grabbing the reader and saying, 'Look, we're going to keep talking about this topic…'
+You're controlling the reader's train of thought even more intentionally, more aggressively."*
+Her caution is *use sparingly*, not delete-first.
+
+So the axis is not visibility. It is what the transition points at:
+
+- **Content transitions** point at the material. Visible, taught, used throughout narrative
+  features.
+- **Outline transitions** point at the article's own structure. Genre-bound to argument. Bregman signposts constantly and explicitly: *"Let me
 show you why." "First, look at user growth." "Next, let's look at revenue." "Let me give you
 three data points. One… Two… Three…" "So let's look for an analogy." "Three things, at
 minimum. One:… Two:… Three:…"* The prestige narrative control group uses almost none of this;
 its annotators praise the opposite — head-to-tail transitions that repeat a word from the
 previous paragraph, and transitions so quiet that *"good braiding is almost unnoticeable"*.
 
-Both are correct within their form. The brief's hypothesis — *if a transition announces the
-outline, delete before rewriting* — holds for narrative features and fails for the
-argumentative essay, where announcing the outline is how the reader is carried through an
-argument. Crip Minds should decide which of those it is publishing, per article.
+Bregman's outline signposting (*"First, look at user growth." "Next, let's look at revenue."
+"Three things, at minimum."*) runs at 0.051 per paragraph against 0.005 in the narrative
+control group — a real 10× genre difference. The brief's hypothesis — *if a transition
+announces the outline, delete before rewriting* — survives only for **outline** transitions in
+narrative forms. Applied to content transitions it would delete the craft.
 
 **D4. "Short sentences are clearer" is incomplete.** Belief 4 is **complicated**. Mean
 sentence length does separate the samples (Bregman 15.3, Scientias 15.8, control exemplars
@@ -243,6 +268,17 @@ exactly the right target. Its ban on the bare phrase `the evidence` is broader t
 evidence warrants — flagged, not to be fixed in this campaign.
 
 ## 5. What the research complicated
+
+**X7. Our own transitions finding was too strong, and the V1 seed caught it.** The first pass
+measured signpost-opener rates and concluded that visible signposting was near-absent from
+narrative features. The measurement was right and the inference was too broad: the detector
+was counting outline-announcing openers, and narrative features carry visible *content*
+transitions the detector does not see. The Open Notebook source that settles this was in the
+V1 seed list and not in ours. Recorded because a research pass that cannot find its own
+over-reach is not worth much — and because the correction *strengthens* the gap analysis:
+PR #62's `SIGNPOST_SHAPES` flags exactly the class of short declarative reader-directing
+sentence this source teaches as good craft, so it needs a baseline rather than a threshold at
+zero.
 
 **X1. Question density is Bregman-specific, not a general accessibility trait.** This
 corrects a mistake I made mid-campaign. A first pass showed Scientias asking 3.6 questions
@@ -319,6 +355,41 @@ hedging vocabulary: the patients were not typical brains, the electrode placemen
 clinical not experimental, the direction of causation is open, the subjects were at rest, the
 application is a plan. This is how a 650-word piece can be honest about uncertainty without
 sounding evasive: uncertainty gets a section, not an adverb.
+
+**N7. Scene provenance has three named tiers, and one of them is ours.** Lauren Kessler works
+the taxonomy through a single published article: direct observation (*"I sat quietly in the
+corner and took notes"*); a **debriefed observer** — a scene that *"reads like the product of
+direct observation, but was not"*, built from a doctor's second-by-second notes read aloud,
+follow-up questions, prior sight of the room, conversations with the daughter, having met the
+dog; and recorded material (*"after I watched and rewatched the tape"*). The governing rule:
+*"A scene can be written only if the journalist has the material, however that material is
+ever-so-carefully gathered."* Sebastian Junger's *The Perfect Storm* feature was reported
+*"entirely through second-hand accounts and materials"* — a canonical narrative built with zero
+direct observation. Tier 2 is where Crip Minds actually operates, because it works from
+documents that are themselves observer records. Operational form: **a scene may be written when
+a ledger fact is an observer record of that moment, at the granularity being written.**
+
+**N8. The harder the material, the simpler the structure should be.** Tom French: *"What you
+want is for the structure to be as simple as it can be so that the reader has the best chance
+possible to think about the complexity of what you're trying to get across. The more complex
+the material, the simpler the structure should be."* Sarah Scoles independently: *"it's good
+for the reader, if you're writing about complicated things, to go with a chronological
+structure."* And New Yorker writers reportedly *"can use any structure they want, but at the
+end of the day they will change it back to chronological."* This argues against elaborating
+the Story Architect for difficult material.
+
+**N9. Explanation can be replaced by the story of the explanation.** Carl Zimmer: *"it's often
+a good move to disperse pieces of the explanation throughout your story… Tell the story of the
+explanation, rather than giving the explanation itself."* Also from Zimmer, the sharpest
+statement of the failure mode: *"If you spend all your time explaining rather than telling a
+story or advancing an argument, the structure of your writing will collapse under that
+explanatory weight."*
+
+**N10. The more dramatic the material, the plainer the telling.** Two independent
+professionals: Kessler — *"unadorned by adjectives, adverbs, metaphors, whatever. The moments
+themselves were dramatic; I did not want to force more drama into the retelling"* — and the
+ProPublica annotator: *"The more intrinsically dramatic the scene you're describing, the more
+plainly and simply you're required to tell it."*
 
 **N6. Reconstruction is a licensed technique with an explicit ethical boundary.** Maxmen's
 Ebola narrative reads as witnessed and is not: *"it's important to not try to 'trick' readers

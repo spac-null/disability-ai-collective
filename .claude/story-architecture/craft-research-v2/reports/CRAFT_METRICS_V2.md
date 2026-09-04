@@ -11,14 +11,35 @@ stored in this repository).
 
 | sample | texts sought | fetched 200 | usable full text | partial | unavailable | body words |
 |---|---|---|---|---|---|---|
-| Bregman public texts | 16 | 16 | 14 | 1 (`BR-15`, 417 w short-form extract) | 1 (`BR-16`, navigation page) | 31,502 |
-| Scientias | 26 | 26 | 25 | 0 | 1 (`SC` physics podcast page, 47 w) | 15,652 |
+| Bregman public texts | 19 | 19 | 17 | 1 (`BR-15`, 417 w short-form extract) | 1 (`BR-16`, navigation page) | 43,115 |
+| Scientias | 32 | 32 | 31 | 0 | 1 (podcast landing page, 47 w) | 19,829 |
 | Control exemplars | 12 | 12 | 12 | 10 with merged paragraphs | 0 | 50,033 |
-| Craft teaching sources | 20 | 18 | 18 | 0 | 2 (Poynter, HTTP 403) | — |
-| **Total analysed texts** | | | **51** | | **4** | **97,187** |
+| Craft teaching sources | 31 | 28 | 28 | 0 | 3 (2× Poynter, 1× Harvard; HTTP 403) | — |
+| **Total analysed texts** | | | **60** | | **5** | **112,977** |
+
+Nine texts (3 Bregman, 6 Scientias) were added from the V1 seed after independent verification
+and are flagged `added_from_v1_seed` in `../sources/`. **Extending the samples changed no
+headline number**, which is the most useful thing the seed did for the quantitative layer:
 
 Plus 421 professional annotations extracted from 12 Open Notebook / CASW Storygrams, paired to
 the exact story span each comments on.
+
+| measure | first pass | extended | direction |
+|---|---|---|---|
+| Bregman mean sentence length | 15.31 (n=15) | 15.62 (n=18) | stable |
+| Bregman single-clause share | 0.60 | 0.59 | stable |
+| Bregman commas per sentence | 0.88 | 0.92 | stable |
+| Bregman questions per 1,000 words | 5.06 | 4.86 | stable |
+| Bregman paragraphs ≤15 words | 0.08 | 0.09 | stable |
+| Bregman paragraph-length SD | 25.07 | 25.63 | stable |
+| Scientias single-clause share | 0.48 | 0.46 | stable |
+| Scientias questions per 1,000 words | 0.91 | 0.96 | stable |
+| Scientias paragraphs ≤15 words | **0.00** | **0.00 across 31 texts** | strengthened |
+| Scientias paragraph-length SD | 15.91 | 16.47 | stable |
+
+The Bregman-vs-Scientias question-density ratio is 5.1× on the extended samples (4.86 vs 0.96)
+against 5.6× on the first pass, and the pivot-paragraph contrast is now 0.09 against 0.00 over
+49 texts. Both load-bearing separations survive a roughly 25% larger corpus.
 
 **Extraction caveats, stated because they change what may be concluded:**
 

@@ -16,6 +16,11 @@ local main                         732c84f9 — DIVERGED from origin/main, not t
 Format per component: current behaviour · craft evidence · match/mismatch/unknown · risk ·
 minimal future change · confidence.
 
+**Revised after V1 seed artifacts were supplied.** Three sections changed: §10(d) on the
+signpost detector is now better supported, §13 gains two items, and §14 gains a ninth
+protected item. One new section (§17) records what the seed changed. Full adjudication:
+`V1_V2_COMPARISON.md`.
+
 ---
 
 ## 0. The calibration result
@@ -347,12 +352,33 @@ And `solo_ratio` cannot tell Jia from published work: 0.33 against a published r
 `solo_ratio: 0.33` will drive it down. That would remove the device rather than the defect,
 and the result would be flatter prose that scores better.
 
-**(d) One further calibration.** `SIGNPOST_SHAPES` flags openers beginning
-*read / look at / notice / consider / remember / go back / return*. Bregman opens paragraphs
-with *"Look at the first line of this graph"* and *"Remember: the models of today are the worst
-models we will ever have."* Those would be flagged. The detector is nevertheless the good one:
-at 0.051 signposts per paragraph Bregman is 10× the narrative control group, and Jia is 6.6×
-Bregman. **Keep it and give it a baseline.**
+**(d) One further calibration, now better supported.** `SIGNPOST_SHAPES` flags openers
+beginning *read / look at / notice / consider / remember / go back / return*. Bregman opens
+paragraphs with *"Look at the first line of this graph"* and *"Remember: the models of today
+are the worst models we will ever have."* Those would be flagged.
+
+And so would taught craft. The Open Notebook's *Good Transitions* uses the word **signpost as
+praise** — *"The short, declarative sentence that begins the next paragraph acts like a
+signpost for readers, signaling in uncomplicated language…"* — and teaches four visible
+transition devices: head-to-tail echo, the contrast turn, "But wait", and a dated launch-pad
+sentence after a section break. Douglas Fox describes building a *"launch pad"* with an exact
+date, time of day and city so the reader lands oriented. Robin Lloyd calls head-to-tail
+transitions a deliberate control mechanism used *"more intentionally, more aggressively"* for
+clarity.
+
+So the detector is measuring two different things under one name. **Content** transitions point
+at the material and are good craft in every form. **Outline** transitions point at the
+article's own structure and belong to argument. The detector is still the good one — Jia is at
+0.333 per paragraph, 6.6× Bregman and 66× the narrative exemplars — but it needs a **published
+baseline and a content/outline split**, not a threshold at zero.
+
+**(f) Section breaks are missing entirely.** *Good Transitions* calls the judicious use of
+section breaks *"perhaps the most critical tool for creating transitions in longer stories"*,
+and notes that what makes them work is not the break but **the sentences that bracket it**.
+Fox uses them deliberately as pacing: *"create a little bit of a speed bump — to jar the reader
+just a tiny, tiny bit… The intention of the break is to slow things back down again."* PR #62
+has no concept of a section break, and it is a paragraph-level pacing device — Continuity
+Editor territory.
 
 **(e) What Continuity does not do: information pacing.** No stage measures facts per sentence,
 clause load, or new-concept rate. This is the owner's actual complaint, and there is now a
@@ -446,7 +472,16 @@ Ranked by evidential strength. **These are hypotheses about what to test, not a 
 6. **Number handling declared per fact.** F-08. Six-way coding, cheap, and the one move that
    generalises across Bregman, the control exemplars and Scientias alike.
 
-7. **The reader's objection as a distinct beat role.** F-24, argument forms only, and absent
+7. **A section-break concept with bracketing sentences.** F-13 revised, §10(f). Named by the
+   craft literature as the most critical transition tool in long stories, and it is a pacing
+   instrument rather than a typographic one.
+
+8. **A scene-provenance check against the ledger.** F-27. The operational form —
+   *a scene may be written when a ledger fact is an observer record of that moment, at the
+   granularity being written* — is checkable, and it is a more accurate contract than a blanket
+   prohibition on scene. This is the item that would most improve the craft/safety boundary.
+
+9. **The reader's objection as a distinct beat role.** F-24, argument forms only, and absent
    from all twelve control exemplars — so this is the weakest item here.
 
 ---
@@ -467,6 +502,13 @@ Stated explicitly because the campaign's job is partly to protect what is right.
    per seventeen paragraphs. It must not become a gate. §9.
 7. **The `crip_turn_carrier` presence check.** §11.
 8. **`CARRIERS` permitting object, event, place and process.** §2, F-15.
+9. **The four-level separation of architecture / paragraph pacing / sentence rhythm / word
+   choice.** The Berkeley reported-narrative syllabus states it directly — *"We'll emphasize
+   structure, and on all levels. We'll work on overall story architecture… We will also
+   scrutinize the sequencing, shaping, and pacing of paragraphs; sentence construction,
+   rhythm, and clarity; word choice; even punctuation."* PR #62's Architect / Writer /
+   Continuity staging is that model. This is a stronger endorsement of the PR's shape than
+   anything in the first pass, and it arrived from the V1 seed.
 
 ---
 
@@ -499,3 +541,31 @@ distinguish Jia from published work.
 - Whether the low-clause-load target is achievable by a generator without producing the flat,
   choppy prose that "short sentences" instructions usually produce. Untested.
 - Whether any of this improves output. Nothing here was tested against a generation.
+
+
+---
+
+## 17. What the V1 seed changed here
+
+Three things, none of which reverse a conclusion.
+
+**Better support for the signpost split (§10(d), §10(f)).** The first pass argued from
+measurement alone that signposting is genre-bound. The transitions source — which the V1 pass
+had listed and this pass had missed — shows the measurement was counting only one of two kinds.
+The recommendation moves from *give the detector a baseline* to *give it a baseline and split
+content from outline*, and a missing section-break concept is added.
+
+**A ninth protected item (§14).** The Berkeley syllabus endorses PR #62's stage separation
+explicitly and at four levels. Worth protecting precisely because the pressure from this
+campaign is all in the direction of adding fields to the Architect.
+
+**A new missing item, now ranked second (§13.8).** F-27's three-tier scene provenance is the
+single most useful thing either pass found for reconciling craft with the safety invariants,
+because it converts "no invented scenes" into a positive, ledger-checkable permission.
+
+**One thing the seed argued for and the evidence does not.** V1 recommended that production
+integration wait until an Article Form Gate exists. Rejected as sequencing: a form field with
+no consequences is scaffolding, and the first change the evidence actually supports is the
+writtenness re-baseline — the only recommendation in this document measured against PR #62's
+own code. Tom French's rule cuts the same way: *"The more complex the material, the simpler the
+structure should be."* The pressure on this architecture should be downward.

@@ -4,7 +4,8 @@ Empirical reverse engineering of accessible nonfiction, done before any further 
 Architecture design. Research artifacts only: **no implementation code was changed, no
 production behaviour was touched, no OpenRouter spend, nothing published.**
 
-Campaign date: 2026-09-04.
+Campaign date: 2026-09-04. Revised the same day after V1 seed artifacts were supplied
+(`seed/`), which added 22 verified sources and revised one V2 finding.
 
 ## State at time of research
 
@@ -21,11 +22,16 @@ local main                       732c84f9 — DIVERGED from origin/main in both 
 
 | sample | n analysed | body words | notes |
 |---|---|---|---|
-| Bregman public texts | 15 (+1 unavailable) | 31,502 | 6 article forms; 6 texts translated or translation-unconfirmed |
-| Scientias.nl | 25 (+1 unavailable) | 15,652 | 8 domains |
+| Bregman public texts | 18 (+1 unavailable) | 43,115 | 6 article forms; 3 added from the V1 seed and verified |
+| Scientias.nl | 31 (+1 unavailable) | 19,829 | 8 domains; 6 added from the V1 seed and verified |
 | Control exemplars | 12 | 50,033 | all professionally annotated as teaching examples |
-| Craft teaching sources | 18 (+2 HTTP 403) | — | Open Notebook, Nieman Storyboard, Poynter, university writing centres |
+| Craft teaching sources | 28 (+3 HTTP 403) | — | Open Notebook, Nieman Storyboard, Berkeley, Creative Nonfiction, writing centres |
 | Professional annotations | 421 | — | Open Notebook / CASW Storygrams, each paired to the exact story span |
+
+The two passes' samples were largely disjoint: 8 of 12 Bregman texts shared, **0 of 20**
+Scientias articles shared, 4 of 16 craft sources shared. Extending the samples moved no
+headline number — Bregman single-clause share 0.60 → 0.59, Scientias question density 0.91 →
+0.96, Scientias paragraphs ≤15 words still **0.00 across 31 texts**.
 
 **No copyrighted article or book bodies are stored in this repository.** What is committed is
 metadata, structural annotations, derived statistics, findings, and short quotations where
@@ -50,7 +56,14 @@ metrics/
                                       published prose, plus the three Jia drafts
 reverse-outlines/
   reverse_outlines_v2.jsonl           83 coded units: primary mode + abstraction level
+seed/
+  README.md                           V1 status, verification performed, independence guarantee
+  CRIP_MINDS_CRAFT_CORPUS_V1.md       supplied V1 artifact — NON-AUTHORITATIVE
+  cripminds_craft_corpus_v1.json      supplied V1 artifact — NON-AUTHORITATIVE
+  v1_v2_adjudication.jsonl            48 adjudications: 31 confirm, 11 revise, 3 reject,
+                                      2 unverified (403), 2 untested
 reports/
+  V1_V2_COMPARISON.md                 the comparison table and what the seed changed
   CRAFT_EVIDENCE_V2.md                believed / confirmed / disproved / complicated /
                                       new / unknown  ← read first
   craft_evidence_table_v2.jsonl       25 findings with evidence type, sources, confidence,
@@ -85,6 +98,25 @@ placement and nut-graf necessity all change with form. Every article currently g
 narrative column, and the hard requirement that openings be concrete forecloses the rest before
 anything else is consulted.
 
+## What the V1 seed changed
+
+One V2 finding was materially revised: the transitions result. The first pass concluded from
+measurement that visible signposting is near-absent from narrative features. A source the V1
+pass had listed and this pass had missed — The Open Notebook's *Good Transitions* — shows the
+measurement was counting only outline-announcing openers, while narrative features carry
+visible **content** transitions constantly and the literature calls them good craft. The
+correction strengthens the gap analysis rather than weakening it.
+
+Three findings were added from V1-listed sources this pass had not read: the three-tier scene
+provenance taxonomy (F-27, the most useful item either pass found for reconciling craft with
+the safety invariants), "tell the story of the explanation" (F-26), and "the more complex the
+material, the simpler the structure should be" (F-30). Two further additions (F-28, F-29) and
+one new instance in F-08.
+
+V1 was wrong in one way that would have mattered: its transitions principle and exercise, which
+its own cited source contradicts. If inherited, it would have pushed the engine toward deleting
+taught craft.
+
 ## What this campaign did not do
 
 No architecture verdict. No Writer or Continuity prompt change. No Jia rewrite. No merge. No
@@ -99,6 +131,11 @@ obvious next campaign and is not this one.
 - Dutch and English passive/nominalisation/modal measures are not cross-comparable.
 - The abstraction coding is one unblinded coder with no second rater.
 - Two Poynter sources returned HTTP 403 and are recorded as unavailable rather than substituted.
-- Two mid-campaign corrections are documented rather than quietly fixed: Scientias' question
-  density was initially fourfold overstated by site boilerplate, and Guardian standfirsts were
-  initially being read as opening paragraphs.
+- Three corrections are documented rather than quietly fixed: Scientias' question density was
+  initially fourfold overstated by site boilerplate; Guardian standfirsts were initially being
+  read as opening paragraphs; and the transitions finding was too strong until a missed source
+  was read.
+- Three V1 sources return HTTP 403 to us (Harvard, two Poynter pages). V1 attributes principles
+  to them; V2 uses none of them and records them unavailable.
+- Ten V1 titles differ from the live page. Eight are Scientias headline rotations confirmed by
+  the URL slugs; one (`B09`) is a genuine title change; one is a minor truncation.

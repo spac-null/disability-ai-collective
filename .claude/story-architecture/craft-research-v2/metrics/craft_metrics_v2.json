@@ -1,593 +1,446 @@
 {
  "BREGMAN": {
-  "SENTENCE / COMPRESSION": {
-   "sent_mean": [
-    15,
-    15.31,
-    15.37,
-    12.78,
-    18.24
-   ],
-   "sent_median": [
-    15,
-    13.9,
-    14,
-    11.0,
-    19
-   ],
-   "sent_p25": [
-    15,
-    8.96,
-    9.0,
-    6.0,
-    11.0
-   ],
-   "sent_p75": [
-    15,
-    19.84,
-    19.2,
-    15.8,
-    24.0
-   ],
-   "sent_p90": [
-    15,
-    26.18,
-    26.1,
-    22.6,
-    29.0
-   ],
-   "sent_sd": [
-    15,
-    8.29,
-    8.49,
-    6.82,
-    9.77
-   ],
-   "short_share_le10": [
-    15,
-    0.34,
-    0.31,
-    0.16,
-    0.46
-   ],
-   "long_share_ge30": [
-    15,
-    0.06,
-    0.06,
-    0.02,
-    0.1
-   ],
-   "clauses_per_sent": [
-    15,
-    1.58,
-    1.54,
-    1.42,
-    1.91
-   ],
-   "commas_per_sent": [
-    15,
-    0.88,
-    0.92,
-    0.44,
-    1.2
-   ],
-   "share_clauses_ge4": [
-    15,
-    0.04,
-    0.03,
-    0.0,
-    0.1
-   ],
-   "share_1clause": [
-    15,
-    0.6,
-    0.58,
-    0.47,
-    0.69
-   ],
-   "share_short_simple": [
-    15,
-    0.36,
-    0.34,
-    0.24,
-    0.49
-   ]
-  },
-  "PARAGRAPH": {
-   "para_words_mean": [
-    15,
-    58.15,
-    59.57,
-    32.52,
-    100.19
-   ],
-   "para_sents_mean": [
-    15,
-    3.85,
-    3.57,
-    2.26,
-    7.27
-   ],
-   "one_sent_para_share": [
-    15,
-    0.11,
-    0.06,
-    0.0,
-    0.37
-   ],
-   "share_para_le15w": [
-    15,
-    0.08,
-    0.06,
-    0.0,
-    0.33
-   ],
-   "share_para_ge100w": [
-    15,
-    0.11,
-    0.04,
-    0.0,
-    0.58
-   ],
-   "para_w_sd": [
-    15,
-    25.07,
-    25.1,
-    13.1,
-    33.4
-   ]
-  },
-  "DENSITY (per 1,000 words)": {
-   "questions_per_1k": [
-    15,
-    5.06,
-    4.09,
-    2.24,
-    14.39
-   ],
-   "direct_address_per_1k": [
-    15,
-    20.88,
-    20.09,
-    8.06,
-    37.64
-   ],
-   "numbers_per_1k": [
-    15,
-    11.76,
-    12.73,
-    2.4,
-    21.28
-   ],
-   "proper_per_1k": [
-    15,
-    96.59,
-    97.23,
-    66.07,
-    119.1
-   ],
-   "passive_per_1k": [
-    15,
-    4.91,
-    4.43,
-    0.0,
-    9.59
-   ],
-   "nominalisation_per_1k": [
-    15,
-    20.31,
-    21.28,
-    5.7,
-    37.1
-   ],
-   "modal_per_1k": [
-    15,
-    10.26,
-    9.09,
-    5.62,
-    16.8
-   ],
-   "quote_para_share": [
-    15,
-    0.25,
-    0.29,
-    0.0,
-    0.62
-   ]
+  "n_texts": 18,
+  "n_from_v1_seed": 3,
+  "total_words": 43115,
+  "n_paragraph_reliable": 18,
+  "metrics": {
+   "sent_mean": {
+    "n": 18,
+    "mean": 15.62,
+    "median": 16.18,
+    "min": 12.78,
+    "max": 18.24
+   },
+   "sent_sd": {
+    "n": 18,
+    "mean": 8.57,
+    "median": 8.75,
+    "min": 6.82,
+    "max": 10.35
+   },
+   "short_share_le10": {
+    "n": 18,
+    "mean": 0.33,
+    "median": 0.29,
+    "min": 0.19,
+    "max": 0.46
+   },
+   "long_share_ge30": {
+    "n": 18,
+    "mean": 0.07,
+    "median": 0.07,
+    "min": 0.02,
+    "max": 0.12
+   },
+   "clauses_per_sent": {
+    "n": 18,
+    "mean": 1.59,
+    "median": 1.56,
+    "min": 1.42,
+    "max": 1.91
+   },
+   "commas_per_sent": {
+    "n": 18,
+    "mean": 0.92,
+    "median": 0.94,
+    "min": 0.44,
+    "max": 1.24
+   },
+   "share_clauses_ge4": {
+    "n": 18,
+    "mean": 0.04,
+    "median": 0.03,
+    "min": 0.0,
+    "max": 0.1
+   },
+   "share_1clause": {
+    "n": 18,
+    "mean": 0.59,
+    "median": 0.59,
+    "min": 0.47,
+    "max": 0.69
+   },
+   "share_short_simple": {
+    "n": 18,
+    "mean": 0.35,
+    "median": 0.31,
+    "min": 0.24,
+    "max": 0.49
+   },
+   "questions_per_1k": {
+    "n": 18,
+    "mean": 4.86,
+    "median": 4.0,
+    "min": 2.18,
+    "max": 13.7
+   },
+   "direct_address_per_1k": {
+    "n": 18,
+    "mean": 19.77,
+    "median": 17.75,
+    "min": 7.99,
+    "max": 37.64
+   },
+   "numbers_per_1k": {
+    "n": 18,
+    "mean": 12.46,
+    "median": 13.63,
+    "min": 2.28,
+    "max": 20.67
+   },
+   "proper_per_1k": {
+    "n": 18,
+    "mean": 99.05,
+    "median": 100.26,
+    "min": 66.38,
+    "max": 120.14
+   },
+   "nominalisation_per_1k": {
+    "n": 18,
+    "mean": 21.97,
+    "median": 22.07,
+    "min": 5.7,
+    "max": 37.1
+   },
+   "quote_para_share": {
+    "n": 18,
+    "mean": 0.27,
+    "median": 0.29,
+    "min": 0.0,
+    "max": 0.59
+   },
+   "para_words_mean": {
+    "n": 18,
+    "mean": 56.43,
+    "median": 52.84,
+    "min": 32.52,
+    "max": 97.33
+   },
+   "one_sent_para_share": {
+    "n": 18,
+    "mean": 0.13,
+    "median": 0.1,
+    "min": 0.0,
+    "max": 0.37
+   },
+   "share_para_le15w": {
+    "n": 18,
+    "mean": 0.09,
+    "median": 0.06,
+    "min": 0.0,
+    "max": 0.33
+   },
+   "para_w_sd": {
+    "n": 18,
+    "mean": 25.63,
+    "median": 25.2,
+    "min": 13.1,
+    "max": 36.5
+   }
   }
  },
  "CONTROL_EXEMPLAR": {
-  "SENTENCE / COMPRESSION": {
-   "sent_mean": [
-    12,
-    19.66,
-    19.91,
-    16.5,
-    23.17
-   ],
-   "sent_median": [
-    12,
-    18.21,
-    18.0,
-    15.0,
-    23
-   ],
-   "sent_p25": [
-    12,
-    12.08,
-    11.5,
-    10.0,
-    17.0
-   ],
-   "sent_p75": [
-    12,
-    25.57,
-    25.5,
-    22.8,
-    29.0
-   ],
-   "sent_p90": [
-    12,
-    33.23,
-    33.4,
-    29.9,
-    38.3
-   ],
-   "sent_sd": [
-    12,
-    10.15,
-    10.07,
-    8.65,
-    12.15
-   ],
-   "short_share_le10": [
-    12,
-    0.2,
-    0.21,
-    0.06,
-    0.28
-   ],
-   "long_share_ge30": [
-    12,
-    0.17,
-    0.17,
-    0.1,
-    0.24
-   ],
-   "clauses_per_sent": [
-    12,
-    1.9,
-    1.94,
-    1.62,
-    2.16
-   ],
-   "commas_per_sent": [
-    12,
-    1.35,
-    1.35,
-    1.05,
-    1.61
-   ],
-   "share_clauses_ge4": [
-    12,
-    0.08,
-    0.09,
-    0.03,
-    0.11
-   ],
-   "share_1clause": [
-    12,
-    0.44,
-    0.46,
-    0.29,
-    0.56
-   ],
-   "share_short_simple": [
-    12,
-    0.22,
-    0.23,
-    0.07,
-    0.31
-   ]
-  },
-  "PARAGRAPH": {
-   "para_words_mean": [
-    2,
-    67.82,
-    67.82,
-    59.88,
-    75.76
-   ],
-   "para_sents_mean": [
-    2,
-    3.7,
-    3.7,
-    2.81,
-    4.59
-   ],
-   "one_sent_para_share": [
-    2,
-    0.15,
-    0.15,
-    0.06,
-    0.25
-   ],
-   "share_para_le15w": [
-    2,
-    0.03,
-    0.03,
-    0.0,
-    0.06
-   ],
-   "share_para_ge100w": [
-    2,
-    0.15,
-    0.15,
-    0.12,
-    0.18
-   ],
-   "para_w_sd": [
-    2,
-    28.15,
-    28.15,
-    24.4,
-    31.9
-   ]
-  },
-  "DENSITY (per 1,000 words)": {
-   "questions_per_1k": [
-    12,
-    0.87,
-    0.9,
-    0.0,
-    1.89
-   ],
-   "direct_address_per_1k": [
-    12,
-    8.02,
-    7.12,
-    3.4,
-    21.11
-   ],
-   "numbers_per_1k": [
-    12,
-    11.9,
-    9.61,
-    2.74,
-    31.32
-   ],
-   "proper_per_1k": [
-    12,
-    97.4,
-    101.36,
-    68.19,
-    120.04
-   ],
-   "passive_per_1k": [
-    12,
-    6.71,
-    6.27,
-    1.84,
-    12.42
-   ],
-   "nominalisation_per_1k": [
-    12,
-    20.19,
-    19.42,
-    13.2,
-    32.36
-   ],
-   "modal_per_1k": [
-    12,
-    7.66,
-    7.53,
-    4.3,
-    10.96
-   ],
-   "quote_para_share": [
-    12,
-    0.48,
-    0.51,
-    0.19,
-    0.75
-   ]
+  "n_texts": 12,
+  "n_from_v1_seed": 0,
+  "total_words": 50033,
+  "n_paragraph_reliable": 2,
+  "metrics": {
+   "sent_mean": {
+    "n": 12,
+    "mean": 19.66,
+    "median": 19.91,
+    "min": 16.5,
+    "max": 23.17
+   },
+   "sent_sd": {
+    "n": 12,
+    "mean": 10.15,
+    "median": 10.07,
+    "min": 8.65,
+    "max": 12.15
+   },
+   "short_share_le10": {
+    "n": 12,
+    "mean": 0.2,
+    "median": 0.21,
+    "min": 0.06,
+    "max": 0.28
+   },
+   "long_share_ge30": {
+    "n": 12,
+    "mean": 0.17,
+    "median": 0.17,
+    "min": 0.1,
+    "max": 0.24
+   },
+   "clauses_per_sent": {
+    "n": 12,
+    "mean": 1.9,
+    "median": 1.94,
+    "min": 1.62,
+    "max": 2.16
+   },
+   "commas_per_sent": {
+    "n": 12,
+    "mean": 1.35,
+    "median": 1.35,
+    "min": 1.05,
+    "max": 1.61
+   },
+   "share_clauses_ge4": {
+    "n": 12,
+    "mean": 0.08,
+    "median": 0.09,
+    "min": 0.03,
+    "max": 0.11
+   },
+   "share_1clause": {
+    "n": 12,
+    "mean": 0.44,
+    "median": 0.46,
+    "min": 0.29,
+    "max": 0.56
+   },
+   "share_short_simple": {
+    "n": 12,
+    "mean": 0.22,
+    "median": 0.23,
+    "min": 0.07,
+    "max": 0.31
+   },
+   "questions_per_1k": {
+    "n": 12,
+    "mean": 0.87,
+    "median": 0.9,
+    "min": 0.0,
+    "max": 1.89
+   },
+   "direct_address_per_1k": {
+    "n": 12,
+    "mean": 8.02,
+    "median": 7.12,
+    "min": 3.4,
+    "max": 21.11
+   },
+   "numbers_per_1k": {
+    "n": 12,
+    "mean": 11.9,
+    "median": 9.61,
+    "min": 2.74,
+    "max": 31.32
+   },
+   "proper_per_1k": {
+    "n": 12,
+    "mean": 97.4,
+    "median": 101.36,
+    "min": 68.19,
+    "max": 120.04
+   },
+   "nominalisation_per_1k": {
+    "n": 12,
+    "mean": 20.19,
+    "median": 19.42,
+    "min": 13.2,
+    "max": 32.36
+   },
+   "quote_para_share": {
+    "n": 12,
+    "mean": 0.48,
+    "median": 0.51,
+    "min": 0.19,
+    "max": 0.75
+   },
+   "para_words_mean": {
+    "n": 2,
+    "mean": 67.82,
+    "median": 67.82,
+    "min": 59.88,
+    "max": 75.76,
+    "WARNING": "paragraph boundaries unreliable for 10 of 12 control exemplars (Storygram reprints merge paragraphs); n=2 supports nothing"
+   },
+   "one_sent_para_share": {
+    "n": 2,
+    "mean": 0.15,
+    "median": 0.15,
+    "min": 0.06,
+    "max": 0.25,
+    "WARNING": "paragraph boundaries unreliable for 10 of 12 control exemplars (Storygram reprints merge paragraphs); n=2 supports nothing"
+   },
+   "share_para_le15w": {
+    "n": 2,
+    "mean": 0.03,
+    "median": 0.03,
+    "min": 0.0,
+    "max": 0.06,
+    "WARNING": "paragraph boundaries unreliable for 10 of 12 control exemplars (Storygram reprints merge paragraphs); n=2 supports nothing"
+   },
+   "para_w_sd": {
+    "n": 2,
+    "mean": 28.15,
+    "median": 28.15,
+    "min": 24.4,
+    "max": 31.9,
+    "WARNING": "paragraph boundaries unreliable for 10 of 12 control exemplars (Storygram reprints merge paragraphs); n=2 supports nothing"
+   },
+   "share_para_ge100w": {
+    "n": 2,
+    "mean": 0.15,
+    "median": 0.15,
+    "min": 0.12,
+    "max": 0.18,
+    "WARNING": "paragraph boundaries unreliable for 10 of 12 control exemplars (Storygram reprints merge paragraphs); n=2 supports nothing"
+   },
+   "para_sents_mean": {
+    "n": 2,
+    "mean": 3.7,
+    "median": 3.7,
+    "min": 2.81,
+    "max": 4.59,
+    "WARNING": "paragraph boundaries unreliable for 10 of 12 control exemplars (Storygram reprints merge paragraphs); n=2 supports nothing"
+   }
   }
  },
  "SCIENTIAS": {
-  "SENTENCE / COMPRESSION": {
-   "sent_mean": [
-    25,
-    15.8,
-    15.08,
-    12.24,
-    22.84
-   ],
-   "sent_median": [
-    25,
-    15.22,
-    14,
-    12,
-    25
-   ],
-   "sent_p25": [
-    25,
-    10.69,
-    10.0,
-    8.0,
-    16.0
-   ],
-   "sent_p75": [
-    25,
-    19.96,
-    19.0,
-    15.0,
-    28.0
-   ],
-   "sent_p90": [
-    25,
-    23.92,
-    24.8,
-    18.0,
-    32.6
-   ],
-   "sent_sd": [
-    25,
-    6.7,
-    6.61,
-    4.18,
-    9.55
-   ],
-   "short_share_le10": [
-    25,
-    0.26,
-    0.27,
-    0.06,
-    0.44
-   ],
-   "long_share_ge30": [
-    25,
-    0.05,
-    0.04,
-    0.0,
-    0.2
-   ],
-   "clauses_per_sent": [
-    25,
-    1.77,
-    1.77,
-    1.37,
-    2.25
-   ],
-   "commas_per_sent": [
-    25,
-    0.54,
-    0.51,
-    0.24,
-    0.94
-   ],
-   "share_clauses_ge4": [
-    25,
-    0.05,
-    0.04,
-    0.0,
-    0.18
-   ],
-   "share_1clause": [
-    25,
-    0.48,
-    0.46,
-    0.33,
-    0.7
-   ],
-   "share_short_simple": [
-    25,
-    0.25,
-    0.26,
-    0.09,
-    0.4
-   ]
-  },
-  "PARAGRAPH": {
-   "para_words_mean": [
-    25,
-    54.03,
-    55.31,
-    39.47,
-    74.88
-   ],
-   "para_sents_mean": [
-    25,
-    3.46,
-    3.42,
-    2.54,
-    4.67
-   ],
-   "one_sent_para_share": [
-    25,
-    0.03,
-    0.0,
-    0.0,
-    0.15
-   ],
-   "share_para_le15w": [
-    25,
-    0.0,
-    0.0,
-    0.0,
-    0.0
-   ],
-   "share_para_ge100w": [
-    25,
-    0.03,
-    0.0,
-    0.0,
-    0.13
-   ],
-   "para_w_sd": [
-    25,
-    15.91,
-    14.4,
-    8.9,
-    26.0
-   ]
-  },
-  "DENSITY (per 1,000 words)": {
-   "questions_per_1k": [
-    25,
-    0.91,
-    0.0,
-    0.0,
-    4.63
-   ],
-   "direct_address_per_1k": [
-    25,
-    9.89,
-    8.71,
-    0.0,
-    24.31
-   ],
-   "numbers_per_1k": [
-    25,
-    9.94,
-    8.71,
-    0.0,
-    28.67
-   ],
-   "proper_per_1k": [
-    25,
-    74.99,
-    70.9,
-    51.42,
-    128.55
-   ],
-   "passive_per_1k": [
-    25,
-    5.84,
-    6.13,
-    1.69,
-    13.46
-   ],
-   "nominalisation_per_1k": [
-    25,
-    11.45,
-    9.26,
-    0.0,
-    35.29
-   ],
-   "modal_per_1k": [
-    25,
-    9.85,
-    9.85,
-    1.67,
-    19.2
-   ],
-   "quote_para_share": [
-    25,
-    0.23,
-    0.2,
-    0.0,
-    0.89
-   ]
+  "n_texts": 31,
+  "n_from_v1_seed": 6,
+  "total_words": 19829,
+  "n_paragraph_reliable": 31,
+  "metrics": {
+   "sent_mean": {
+    "n": 31,
+    "mean": 16.1,
+    "median": 15.57,
+    "min": 12.24,
+    "max": 22.84
+   },
+   "sent_sd": {
+    "n": 31,
+    "mean": 6.79,
+    "median": 6.72,
+    "min": 4.18,
+    "max": 9.55
+   },
+   "short_share_le10": {
+    "n": 31,
+    "mean": 0.25,
+    "median": 0.27,
+    "min": 0.06,
+    "max": 0.44
+   },
+   "long_share_ge30": {
+    "n": 31,
+    "mean": 0.05,
+    "median": 0.05,
+    "min": 0.0,
+    "max": 0.2
+   },
+   "clauses_per_sent": {
+    "n": 31,
+    "mean": 1.79,
+    "median": 1.81,
+    "min": 1.37,
+    "max": 2.25
+   },
+   "commas_per_sent": {
+    "n": 31,
+    "mean": 0.55,
+    "median": 0.52,
+    "min": 0.24,
+    "max": 1.03
+   },
+   "share_clauses_ge4": {
+    "n": 31,
+    "mean": 0.05,
+    "median": 0.05,
+    "min": 0.0,
+    "max": 0.18
+   },
+   "share_1clause": {
+    "n": 31,
+    "mean": 0.46,
+    "median": 0.45,
+    "min": 0.28,
+    "max": 0.7
+   },
+   "share_short_simple": {
+    "n": 31,
+    "mean": 0.23,
+    "median": 0.26,
+    "min": 0.06,
+    "max": 0.4
+   },
+   "questions_per_1k": {
+    "n": 31,
+    "mean": 0.96,
+    "median": 0.0,
+    "min": 0.0,
+    "max": 4.63
+   },
+   "direct_address_per_1k": {
+    "n": 31,
+    "mean": 10.36,
+    "median": 8.87,
+    "min": 0.0,
+    "max": 27.69
+   },
+   "numbers_per_1k": {
+    "n": 31,
+    "mean": 9.39,
+    "median": 8.71,
+    "min": 0.0,
+    "max": 28.67
+   },
+   "proper_per_1k": {
+    "n": 31,
+    "mean": 74.07,
+    "median": 70.9,
+    "min": 51.42,
+    "max": 128.55
+   },
+   "nominalisation_per_1k": {
+    "n": 31,
+    "mean": 11.46,
+    "median": 9.26,
+    "min": 0.0,
+    "max": 35.29
+   },
+   "quote_para_share": {
+    "n": 31,
+    "mean": 0.22,
+    "median": 0.2,
+    "min": 0.0,
+    "max": 0.89
+   },
+   "para_words_mean": {
+    "n": 31,
+    "mean": 54.86,
+    "median": 55.31,
+    "min": 39.47,
+    "max": 74.88
+   },
+   "one_sent_para_share": {
+    "n": 31,
+    "mean": 0.04,
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.18
+   },
+   "share_para_le15w": {
+    "n": 31,
+    "mean": 0.0,
+    "median": 0.0,
+    "min": 0.0,
+    "max": 0.09
+   },
+   "para_w_sd": {
+    "n": 31,
+    "mean": 16.47,
+    "median": 14.5,
+    "min": 8.9,
+    "max": 33.5
+   }
   }
- }
+ },
+ "_note": "Bregman and Scientias samples extended with texts verified from the V1 seed. Control exemplars unchanged. Paragraph metrics for CONTROL_EXEMPLAR remain n=2 and unusable."
 }
