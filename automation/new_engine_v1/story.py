@@ -76,7 +76,23 @@ PROVENANCE_FRAMES = [
     r"\bthe material (?:does not|gives|establishes|shows|says|contains)\b",
     r"\bthe research pack\b", r"\bthis reading\b",
     r"\baccording to the source\b",
-    r"\bdoes not (?:establish|say|state|tell|report|describe|show|prove)\b",
+    # SUBJECT-ANCHORED, for the same reason "the material" above is. The bare verb
+    # phrase matched anything that "does not tell", and the Ground Truth canary was held
+    # by
+    #     "Rent alone does not tell you whether housing is affordable, and neither
+    #      does income"
+    # which is a claim about a MEASURE, not about the research apparatus -- the very
+    # distinction this list already draws for "material".
+    #
+    # The anchor is an apparatus noun OR A BARE PRONOUN, and the pronoun half is not
+    # optional: story_architecture_test asserts that "It does not describe the building's
+    # form." is caught, which is a deliberate contract and correct -- a subjectless
+    # auditing sentence is exactly the shape that leaks. What separates the two is that
+    # the flagged canary sentence has a CONCRETE subject ("Rent alone", "the survey", "a
+    # photograph") and the leak has none worth naming.
+    r"(?:\bthe (?:source|anchor|brief|evidence|material|research pack|reading)s?\b"
+    r"[^.]{0,30}?|\b(?:it|this|that|there)\s+)"
+    r"does not (?:establish|say|state|tell|report|describe|show|prove)\b",
     r"\bno such claim\b", r"\bnothing in the (?:source|anchor|evidence)\b",
     r"\bcontains no\b", r"\bgives none\b", r"\bis not supported by\b",
     r"\bS\d+\b",                                  # source-id markers

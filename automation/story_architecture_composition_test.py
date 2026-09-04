@@ -1579,6 +1579,57 @@ def test_cut_prohibitions_are_relative_boundaries_not_absolute_bans():
           "beyond those the article facts above explicitly approve" in prompt)
 
 
+def test_a_provenance_frame_needs_an_apparatus_SUBJECT():
+    """The Ground Truth canary reached the safety stage clean of CUT leakage and
+    negatives, and was then held by
+
+        "Rent alone does not tell you whether housing is affordable, and neither
+         does income"
+
+    which is a claim about a MEASURE, not about the research apparatus. The bare verb
+    phrase matched anything that "does not tell".
+
+    story.py already draws this distinction for "the material" -- "a telescope's data is
+    material, and a pavilion is made of materials. Only the auditing construction is a
+    leak." The same anchoring now applies to the verb frame."""
+    clean = [
+        "Rent alone does not tell you whether housing is affordable, and neither does "
+        "income.",
+        "The survey does not say what anyone heard.",
+        "A photograph does not show the weight of the thing.",
+        "The catalogue does not describe the acoustics of any room.",
+        "A measure does not tell you what it cannot hold.",
+    ]
+    leaky = [
+        "It does not describe the building's form.",
+        "This does not establish who built it.",
+        "The source does not establish that anyone rode it.",
+        "The evidence does not say who built it.",
+        "The brief does not describe the funder.",
+        "The research pack does not report a price.",
+        "The material does not give a date.",
+        "Nothing in the source names the mason.",
+        "This reading is not supported by the anchor.",
+    ]
+    for s in clean:
+        check("a world claim is not machine language: %r" % s[:52],
+              not ST.leaks(s), ST.leaks(s))
+    for s in leaky:
+        check("an auditing construction is still caught: %r" % s[:52],
+              ST.leaks(s), s)
+    check("and the article-level screen agrees",
+          ST.prose_leaks(" ".join(clean))["ok"]
+          and not ST.prose_leaks(" ".join(leaky))["ok"])
+    # PR #62's own contract: a subjectless auditing sentence IS a leak, and the pronoun
+    # half of the anchor exists to keep it one. Asserted here so a future narrowing
+    # cannot quietly drop it.
+    check("a subjectless auditing sentence is still a leak",
+          ST.prose_leaks("It does not describe the building's form.")["total"] > 0)
+    check("and a bare mention of a document still is not",
+          ST.prose_leaks("The newspaper printed a correction the next "
+                         "morning.")["ok"])
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
