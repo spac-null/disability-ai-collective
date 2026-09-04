@@ -285,6 +285,10 @@ _MIN_PARAS_FOR_READING = 10
 # more. Three is therefore the smallest count the corpus will not vouch for.
 _MIN_SIGNPOSTS_FOR_TOP_BAND = 3
 
+# The published solo_ratio span, kept as a named constant so reports cannot quietly imply
+# that a value outside it is a finding. Nothing reads this to make a decision.
+_SOLO_PUBLISHED_RANGE = (0.00, 0.37)
+
 ARGUMENT_FORMS = ("ARGUMENTATIVE_ESSAY", "REPORTED_ESSAY", "POLEMIC", "ESSAY", "COMMENT")
 
 
@@ -299,8 +303,8 @@ def signpost_reading(rate: float, paragraphs_n: int, form: str | None = None,
     not the same finding as a high rate sustained across an article.
     """
     if paragraphs_n < _MIN_PARAS_FOR_READING:
-        return {"band": "INSUFFICIENT_PARAGRAPHS", "rate": round(rate, 4),
-                "ordinary_max_for_form": None,
+        return {"band": "INSUFFICIENT_PARAGRAPHS", "applies_to": "SIGNPOST_OPENER_RATE_ONLY",
+                "rate": round(rate, 4), "ordinary_max_for_form": None,
                 "form_assumed": (form or "NARRATIVE_DEFAULT"),
                 "note": "under %d paragraphs a single opener swings the rate; no reading given"
                         % _MIN_PARAS_FOR_READING}
@@ -321,7 +325,8 @@ def signpost_reading(rate: float, paragraphs_n: int, form: str | None = None,
                       "above every published text in the calibration corpus, argument "
                       "included, and sustained across enough paragraphs to mean it; the "
                       "paragraphs are announcing their structural job")
-    return {"band": band, "rate": round(rate, 4), "ordinary_max_for_form": ordinary_max,
+    return {"band": band, "applies_to": "SIGNPOST_OPENER_RATE_ONLY",
+            "rate": round(rate, 4), "ordinary_max_for_form": ordinary_max,
             "signpost_count": count, "note": note,
             "form_assumed": (form or "NARRATIVE_DEFAULT")}
 
@@ -358,10 +363,15 @@ def writtenness(text: str, form: str | None = None) -> dict:
             "solo_paragraphs": len(solo),
             "solo_ratio": round(len(solo) / n, 2),
             "solo_texts": [s for p in solo for s in sentences(p)],
+            "solo_ratio_interpretation": "TELEMETRY_ONLY",
             "solo_ratio_is_a_defect_signal": False,
-            "solo_ratio_published_range": (
-                WRITTENNESS_CALIBRATION["solo_ratio"]["narrative_exemplars"]["min"],
-                WRITTENNESS_CALIBRATION["solo_ratio"]["argument_essay_bregman"]["max"]),
+            "solo_ratio_published_range": _SOLO_PUBLISHED_RANGE,
+            # Whether the value sits inside the published range is worth SAYING, because a
+            # value above it is still not a defect and the label must not imply otherwise.
+            "solo_ratio_vs_published": (
+                "WITHIN_PUBLISHED_RANGE_TELEMETRY_ONLY"
+                if _SOLO_PUBLISHED_RANGE[0] <= round(len(solo) / n, 2) <= _SOLO_PUBLISHED_RANGE[1]
+                else "ABOVE_PUBLISHED_RANGE_STILL_NOT_A_DEFECT"),
             "pivot_paragraph_candidates": pivot_paragraph_candidates(text),
             # --- the signal --------------------------------------------------------------
             "signpost_openers": signposts,
@@ -371,10 +381,12 @@ def writtenness(text: str, form: str | None = None) -> dict:
             "sentences_per_paragraph": L,
             "sentence_len_median": sorted(sl)[len(sl) // 2] if sl else 0,
             "sentence_len_spread": (max(sl) - min(sl)) if sl else 0,
-            "interpretation": "signposting %s (%.3f/para, form=%s); solo_ratio %.2f is "
-                              "descriptive only" % (reading["band"], rate,
-                                                    reading["form_assumed"],
-                                                    round(len(solo) / n, 2))}
+            # Two readings, named so neither can be mistaken for the other. The band name
+            # belongs to SIGNPOSTING; solo_ratio has no band and never gets one.
+            "interpretation": "signpost_reading=%s (%.3f/para, form=%s) | "
+                              "solo_ratio=%.2f interpretation=TELEMETRY_ONLY"
+                              % (reading["band"], rate, reading["form_assumed"],
+                                 round(len(solo) / n, 2))}
 
 
 # ── pivot paragraphs: research terminology, telemetry only ───────────────────

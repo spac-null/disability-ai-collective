@@ -256,15 +256,31 @@ def test_solo_paragraphs_alone_are_not_a_writtenness_defect():
         "He was buried in an unmarked grave, beside Sarah.",
     ])
     w = CE.writtenness(published_like)
-    check("this prose is solo-heavy (%.2f, inside the published 0.00-0.37)"
-          % w["solo_ratio"], w["solo_ratio"] >= 0.30, w["solo_ratio"])
-    check("  solo_ratio is flagged as telemetry, not a defect signal",
-          w["solo_ratio_is_a_defect_signal"] is False)
-    check("  the published range is carried with it", w["solo_ratio_published_range"] == (0.0, 0.37))
-    check("  and the signpost reading is clean despite the solo paragraphs (%s)"
+    # This fixture is deliberately MORE solo-heavy than any real text in the corpus, to
+    # prove the point at the extreme. Saying it is "inside the published range" would be
+    # false -- 0.83 is well above 0.37 -- and the diagnostic must say so without turning
+    # it into a defect.
+    check("this fixture is solo-heavy (%.2f)" % w["solo_ratio"],
+          w["solo_ratio"] >= 0.30, w["solo_ratio"])
+    check("  solo_ratio is labelled TELEMETRY_ONLY",
+          w["solo_ratio_interpretation"] == "TELEMETRY_ONLY")
+    check("  and is not a defect signal", w["solo_ratio_is_a_defect_signal"] is False)
+    check("  the published range is carried with it",
+          w["solo_ratio_published_range"] == (0.0, 0.37))
+    check("  above the published range is reported honestly, and still not a defect (%s)"
+          % w["solo_ratio_vs_published"],
+          w["solo_ratio_vs_published"] == "ABOVE_PUBLISHED_RANGE_STILL_NOT_A_DEFECT",
+          w["solo_ratio_vs_published"])
+    check("  the SIGNPOST band is clean despite the solo paragraphs (%s)"
           % w["signpost_reading"]["band"],
           w["signpost_reading"]["band"] == "WITHIN_PUBLISHED_RANGE",
           w["signpost_reading"])
+    check("  and that band declares it applies to the signpost rate only",
+          w["signpost_reading"]["applies_to"] == "SIGNPOST_OPENER_RATE_ONLY")
+    check("  the two readings are named separately in the summary line",
+          "signpost_reading=" in w["interpretation"]
+          and "solo_ratio=" in w["interpretation"]
+          and "TELEMETRY_ONLY" in w["interpretation"], w["interpretation"])
     check("  nothing in the diagnostic asserts a defect",
           "defect" not in w["interpretation"].lower(), w["interpretation"])
 

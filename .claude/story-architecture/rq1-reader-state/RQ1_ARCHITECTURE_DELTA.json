@@ -1,0 +1,37 @@
+[
+ {
+  "material": "F08 festival dates + F10 selection-not-count + F11 room is on the list",
+  "A_order": "beats 4-5 (last)",
+  "B_order": "section 1 (first)",
+  "why_B_moved_it": "B opens on the account and its list of eight instead of on the salt wall",
+  "reader_state_basis": "reader_knows_entering at S1 is empty, so nothing can register until a place and a frame exist; making the frame first means every later material arrives already understood as coming through a written selection"
+ },
+ {
+  "material": "F01 F02 F05 (room, embedded, designer) + F03 F04 (inside, stated aim)",
+  "A_order": "two separate beats B1 then B2",
+  "B_order": "one section S2",
+  "why_B_moved_it": "merged into a single delivery at full density",
+  "reader_state_basis": "the single pressure the article depends on ('what did the sensory material amount to for anyone standing inside it') is strongest when all of it lands at once; split across two beats it is created and half-discharged"
+ },
+ {
+  "material": "F07 timber facade, roof-piercing trees, rock seating",
+  "A_order": "beat 3, second of the pair",
+  "B_order": "section 3, first of the pair",
+  "why_B_moved_it": "order of the two comparison pavilions reversed",
+  "reader_state_basis": "S3 leaves reader_now_wonders = NONE with relation CONTINUES; it holds the S2 pressure without deflating it, which a bodily material would not do"
+ },
+ {
+  "material": "F06 sand embodying strength and fragility, water off rain chains",
+  "A_order": "beat 3, first of the pair",
+  "B_order": "section 4, immediately before the turn",
+  "why_B_moved_it": "moved to sit directly against the account's limit",
+  "reader_state_basis": "sand is the most bodily fact available, so placing it last of the comparisons makes 'what was the sand like to stand on' sharpest at the moment the record's silence is disclosed"
+ },
+ {
+  "material": "F09 none of the eight descriptions reports what any visitor perceived",
+  "A_order": "beat 4, mid-article",
+  "B_order": "section 5, final, paired with an F01 callback",
+  "why_B_moved_it": "the disclosure became the closing move rather than a mid-article fact",
+  "reader_state_basis": "stated mid-article it is information; stated after two withheld sensations it converts them retroactively into a limit of the record, which is the crip turn arriving through material rather than assertion"
+ }
+]

@@ -1,0 +1,76 @@
+{
+ "A": {
+  "words": 615,
+  "paragraphs": 12,
+  "HARD_factual_ok": false,
+  "unapproved_scene": [
+   "screen"
+  ],
+  "unapproved_sensory": [],
+  "unapproved_numbers": [],
+  "unapproved_entities": [],
+  "cut_violations": [],
+  "cut_clean_prose": true,
+  "negative_admission_ok": false,
+  "negative_unmatched": [
+   {
+    "sentence": "Those two statements sit at different distances from the thing itself, and only the first arrives intact.",
+    "kind": "EXCLUSIVITY",
+    "pattern": "only(?=[^.]*(?:one|two|first|single|way|thin"
+   }
+  ],
+  "provenance_leaks": [],
+  "scaffold_leaks": [],
+  "intent_causal": 0,
+  "question_serialization": 0,
+  "question_marks": 0,
+  "signpost_count": 0,
+  "signpost_rate": 0.0,
+  "signpost_band": "WITHIN_PUBLISHED_RANGE",
+  "signpost_texts": [],
+  "solo_ratio": 0.0,
+  "pivot_candidates": 1,
+  "pacing": {
+   "sentences": 43,
+   "sent_mean": 14.3,
+   "sent_iqr": 10,
+   "share_1clause": 0.581,
+   "commas_per_sent": 0.74,
+   "share_clauses_ge4": 0.047
+  }
+ },
+ "B": {
+  "words": 609,
+  "paragraphs": 9,
+  "HARD_factual_ok": true,
+  "unapproved_scene": [],
+  "unapproved_sensory": [],
+  "unapproved_numbers": [],
+  "unapproved_entities": [],
+  "cut_violations": [],
+  "cut_clean_prose": true,
+  "negative_admission_ok": true,
+  "negative_unmatched": [],
+  "provenance_leaks": [],
+  "scaffold_leaks": [],
+  "intent_causal": 1,
+  "question_serialization": 0,
+  "question_marks": 0,
+  "signpost_count": 1,
+  "signpost_rate": 0.1111,
+  "signpost_band": "INSUFFICIENT_PARAGRAPHS",
+  "signpost_texts": [
+   "Read across all eight of the entries, a pattern in what they contain b"
+  ],
+  "solo_ratio": 0.0,
+  "pivot_candidates": 0,
+  "pacing": {
+   "sentences": 41,
+   "sent_mean": 14.85,
+   "sent_iqr": 11,
+   "share_1clause": 0.659,
+   "commas_per_sent": 0.68,
+   "share_clauses_ge4": 0.049
+  }
+ }
+}
