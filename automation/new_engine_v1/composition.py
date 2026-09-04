@@ -1977,9 +1977,33 @@ def continuity_pass(provider, article_text: str, arch: dict) -> dict:
 # it destroys that evidence and buys a second draft with an unknown defect.
 def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
                  ledger: dict, cut_terms: dict, cut_report: dict | None = None,
-                 negative_lineage: dict | None = None) -> dict:
+                 negative_lineage: dict | None = None,
+                 repair: dict | None = None) -> dict:
     """The merged post-writer stack, on both the draft and the final."""
-    approved_entities = ST._entities(ST.render(packet), skip_sentence_initial=False)
+    # AFTER A FACTUAL REPAIR THE BASELINES MOVE, and getting that wrong made the repair
+    # unpassable. The repair's authority comes from the LEDGER FACTS IT CITED and from the
+    # grounder finding that authorised it -- not from the packet, and not from the
+    # pre-repair prose. Audited against the old baselines, an authorised correction reads
+    # twice as an invention: once as unapproved surface, once as the editor adding
+    # material the editor never touched.
+    #
+    # So the approved surface gains what the accepted edits cited, and the relation
+    # classes those edits introduced are passed to validate_semantic_delta's own
+    # allow_relation_growth -- the parameter that exists for exactly this. Every one of
+    # them was already checked per edit, against its cited facts, by the repair guard.
+    # Nothing else moves: the CUT audit, the negative gate and the machine-language
+    # screen are unchanged, and a repair that touched nothing changes no baseline at all.
+    repair_text, allow_rel = "", ()
+    if repair:
+        cited = {f for e in (repair.get("edits") or []) for f in (e.get("fact_ids") or [])}
+        repair_text = " ".join(
+            "%s %s" % ((ledger.get(f) or {}).get("proposition", ""),
+                       (ledger.get(f) or {}).get("support_span", "")) for f in cited)
+        allow_rel = tuple({k for e in (repair.get("edits") or [])
+                           for k in CE.relations(e.get("repaired") or "")})
+
+    approved_render = ST.render(packet) + " " + repair_text
+    approved_entities = ST._entities(approved_render, skip_sentence_initial=False)
 
     def _possessive_of_approved(e: str) -> bool:
         """"Survey's" is not a new entity when the packet grants "Survey".
@@ -1995,6 +2019,18 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
 
     def screens(text):
         surface = ST.factual_surface_audit(text, packet)
+        if repair_text:
+            lic_n, lic_e = _numbers_of(repair_text), ST._entities(
+                repair_text, skip_sentence_initial=False)
+            lic_w = ST._content_words(repair_text, fold=True)
+            surface = dict(
+                surface,
+                unapproved_numbers=[x for x in surface["unapproved_numbers"]
+                                    if x not in lic_n],
+                unapproved_entities=[x for x in surface["unapproved_entities"]
+                                     if x not in lic_e],
+                unapproved_sensory=[x for x in surface["unapproved_sensory"]
+                                    if x not in lic_w])
         ents = [e for e in surface["unapproved_entities"]
                 if not _possessive_of_approved(e)]
         # SCENE AND SPATIAL TOKENS ARE ADVISORY. A bare word cannot decide its own sense:
@@ -2026,7 +2062,20 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
 
     a = {"writer_draft": screens(draft_text), "continuity_final": screens(final_text)}
     f = a["continuity_final"]
-    delta_errs = CE.validate_semantic_delta(draft_text, final_text)
+    delta_errs = CE.validate_semantic_delta(draft_text, final_text,
+                                            allow_relation_growth=allow_rel)
+    if repair_text:
+        # Surface the repair introduced from its cited facts is not the editor adding
+        # material; it is the correction the grounder asked for.
+        lic_n = _numbers_of(repair_text)
+        lic_e = ST._entities(repair_text, skip_sentence_initial=False)
+        delta_errs = [e for e in delta_errs
+                      if not (("added numbers" in e and all(
+                                  x.strip("[]' ") in lic_n
+                                  for x in e.split(":")[-1].strip(" []").split(",")))
+                              or ("added entities" in e and all(
+                                  x.strip("[]' ") in lic_e
+                                  for x in e.split(":")[-1].strip(" []").split(","))))]
 
     blocking = []
     if not f["hard_factual_ok"]:
@@ -2819,7 +2868,8 @@ def run_story_architecture_composition(
                 # The complete stack, against the REPAIRED article. A factual correction
                 # is still prose the Writer did not write, and it is audited as such.
                 sa2 = record(SAFETY, safety_audit(draft, final, wr["packet"], arch,
-                                                  ledger, cut["terms"], cut, lineage))
+                                                  ledger, cut["terms"], cut, lineage,
+                                                  repair=rep))
                 sa2["after_factual_repair"] = True
                 if sa2["status"] != PASS:
                     return out(SAFETY,

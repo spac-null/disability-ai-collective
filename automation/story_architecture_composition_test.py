@@ -2132,6 +2132,53 @@ def test_the_factual_repair_can_only_subtract():
                {"id": "B", "classification": "TRUE_UNCERTAIN", "quote": "y"}])) == 2)
 
 
+def test_the_post_repair_audit_uses_the_repairs_own_baselines():
+    """A repair was ACCEPTED and then failed the safety stack twice over -- once as
+    unapproved surface, once as "editing added numbers ['27'], entities ['Labour']" --
+    for corrections the editor never made. The repair's authority comes from the ledger
+    facts it cited, not from the packet or the pre-repair prose, so audited against the
+    old baselines an authorised correction reads as an invention."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    led = dict(LEDGER)
+    led["F20"] = F("F20", "The catalogue was published on 27th August 2026 by Kunsthalle.",
+                   "The pavilion closed after the Kunsthalle season ended", ev=("S1",))
+    before = DRAFT
+    after = DRAFT + "\n\nThe catalogue was published on 27 August 2026 by Kunsthalle."
+    rep = {"edits": [{"finding_id": "G1", "operation": "CORRECT_DATE",
+                      "original": "x", "repaired": after.rsplit("\n\n", 1)[1],
+                      "fact_ids": ["F20"]}]}
+
+    without = CP.safety_audit(before, after, packet, ARCH, led, {},
+                              {"cut_without_distinctive_terms": ["F07"]})
+    check("without the repair context it is refused twice over",
+          any("NEW_UNSUPPORTED_FACTS" in b for b in without["blocking"])
+          or any("CONTINUITY_ADDED" in b for b in without["blocking"]),
+          without["blocking"])
+
+    with_rep = CP.safety_audit(before, after, packet, ARCH, led, {},
+                               {"cut_without_distinctive_terms": ["F07"]},
+                               repair=rep)
+    check("with it, the cited date and name are licensed",
+          not any("NEW_UNSUPPORTED_FACTS" in b for b in with_rep["blocking"]),
+          with_rep["blocking"])
+    check("and the repair is not blamed on the editor",
+          not any("CONTINUITY_ADDED" in b for b in with_rep["blocking"]),
+          with_rep["blocking"])
+
+    # NOTHING ELSE MOVES. Surface the repair did NOT cite is still refused.
+    rogue = DRAFT + "\n\nThe catalogue was published in Rotterdam in 1974."
+    rr = {"edits": [{"finding_id": "G1", "operation": "CORRECT_DATE", "original": "x",
+                     "repaired": rogue.rsplit("\n\n", 1)[1], "fact_ids": ["F20"]}]}
+    out = CP.safety_audit(before, rogue, packet, ARCH, led, {},
+                          {"cut_without_distinctive_terms": ["F07"]}, repair=rr)
+    check("a number no cited fact carries still holds the article",
+          any("NEW_UNSUPPORTED_FACTS" in b for b in out["blocking"]), out["blocking"])
+    check("a run with NO repair has unchanged baselines",
+          CP.safety_audit(DRAFT, DRAFT, packet, ARCH, LEDGER, {},
+                          {"cut_without_distinctive_terms": ["F07"]})["status"]
+          == CP.PASS)
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
