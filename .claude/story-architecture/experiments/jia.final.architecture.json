@@ -58,14 +58,14 @@
       },
       {
         "beat_id": "B3",
-        "happens": "Other pavilions did comparable things - and the account describes what those materials stood for rather than what they were like.",
+        "happens": "Comparable pavilions, described in the same register: what their materials stood for rather than what they were like.",
         "concrete_carrier": "sand on the ground, and water off the rain chains",
         "facts_allowed": [
           "F06",
           "F07"
         ],
         "concept_introduced": "",
-        "why_reader_wants_next": "The symbolic register is doing a lot of work, and the reader has not yet been told why that matters.",
+        "why_reader_wants_next": "The symbolic register is doing the work and its cost is not yet apparent.",
         "must_not_say_yet": "that symbolism is what survived translation"
       },
       {
@@ -83,7 +83,7 @@
       },
       {
         "beat_id": "B5",
-        "happens": "The ranking, re-read: it was made from what transferred.",
+        "happens": "The listing is re-read against what the record can hold.",
         "concrete_carrier": "the list of eight, and the salt walls",
         "facts_allowed": [
           "F10"
@@ -93,9 +93,9 @@
         "must_not_say_yet": ""
       }
     ],
-    "turn": "Five days end and the pavilions come down. What is left is an account and a list of eight.",
-    "crip_turn": "Go back to the sand. The account says it embodied strength and fragility - what it stood for, not what it was like underfoot. That is the shape of the whole record: it holds what the materials were said to mean, and drops what it was to be in the room with them. And the eight were ranked from the record.",
-    "ending_move": "Return to the salt walls: a surface someone could have put a tongue to, and found out what a wall tasted of.",
+    "turn": "The festival ends and the account is what persists, so what the account can hold becomes what is downstream.",
+    "crip_turn": "The sand's symbolic description is re-read as the record's own mechanism: it preserves what a material was said to mean and loses what it was to encounter, and the salt room's listing runs through that same record.",
+    "ending_move": "Close on the salt as a material with a property the record does not carry.",
     "use_facts": [
       "F01",
       "F02",

@@ -1,0 +1,275 @@
+[
+  {
+    "id": "E001",
+    "parents": [
+      "D001"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "On a beach in Bali, someone built a room out of salt."
+  },
+  {
+    "id": "E002",
+    "parents": [
+      "D002"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "It was built from Himalayan salt brick, and set partway into the ground, so it belonged to the beach rather than standing on it."
+  },
+  {
+    "id": "E003",
+    "parents": [
+      "D003"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "The Jakarta practice Spatial Sonata designed it to be a contemplative space, shaped by the landscape and by sensory design.",
+    "paragraph_break": true
+  },
+  {
+    "id": "E004",
+    "parents": [
+      "D004"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "That is an odd building to make."
+  },
+  {
+    "id": "E005",
+    "parents": [
+      "D005"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "Salt is a material most people meet in a shaker or in the sea, not holding up a building."
+  },
+  {
+    "id": "E006",
+    "parents": [
+      "D006"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "And once it is a building, it raises the obvious question: what was the room for?",
+    "paragraph_break": true
+  },
+  {
+    "id": "E007",
+    "parents": [
+      "D007"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "The answer was mostly things you cannot look at."
+  },
+  {
+    "id": "E008",
+    "parents": [
+      "D008"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "Inside, the pavilion held fragrances and botanical drinks."
+  },
+  {
+    "id": "E009",
+    "parents": [
+      "D009"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "The stated aim was to engage all the senses."
+  },
+  {
+    "id": "E010",
+    "parents": [
+      "D010"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "So the content of this room was smell and taste, held inside mineral, on a beach.",
+    "paragraph_break": true
+  },
+  {
+    "id": "E011",
+    "parents": [
+      "D011"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "Other pavilions worked the same way."
+  },
+  {
+    "id": "E012",
+    "parents": [
+      "D012"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "In one, sand on the ground embodied both strength and fragility, and water fell from rain chains."
+  },
+  {
+    "id": "E013",
+    "parents": [
+      "D013"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "In another, a perforated timber facade let air move freely through the space, trees pushed up through the roof, and rocks served as seating.",
+    "paragraph_break": true
+  },
+  {
+    "id": "X014",
+    "parents": [
+      "D014"
+    ],
+    "operation": "DELETE"
+  },
+  {
+    "id": "E015",
+    "parents": [
+      "D015"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "The sand *embodied strength and fragility*."
+  },
+  {
+    "id": "E016",
+    "parents": [
+      "D016"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "Not: the sand gave underfoot, or held the heat, or made a sound when you crossed it."
+  },
+  {
+    "id": "E017",
+    "parents": [
+      "D017"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "What the material stood for, rather than what it was like.",
+    "paragraph_break": true
+  },
+  {
+    "id": "E018",
+    "parents": [
+      "D018"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "The festival ran five days, from 13 to 17 August, at Pengembak Beach in Sanur on Bali's eastern shoreline."
+  },
+  {
+    "id": "E019",
+    "parents": [
+      "D019"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "Then it was over.",
+    "paragraph_break": true
+  },
+  {
+    "id": "E020",
+    "parents": [
+      "D020"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "The published account gathers eight pavilions and calls them the most interesting \u2014 the top eight."
+  },
+  {
+    "id": "E021",
+    "parents": [
+      "D021"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "Across all eight of those descriptions, none reports what any visitor perceived.",
+    "paragraph_break": true
+  },
+  {
+    "id": "X022",
+    "parents": [
+      "D022"
+    ],
+    "operation": "DELETE"
+  },
+  {
+    "id": "E023",
+    "parents": [
+      "D023"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "The account keeps what the sand was said to mean and loses what it was to stand on it."
+  },
+  {
+    "id": "E024",
+    "parents": [
+      "D024"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "That is the shape of the whole record."
+  },
+  {
+    "id": "E025",
+    "parents": [
+      "D025"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "It holds the meanings and drops the encounters.",
+    "paragraph_break": true
+  },
+  {
+    "id": "E026",
+    "parents": [
+      "D026"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "Which puts the salt room in an odd position."
+  },
+  {
+    "id": "E027",
+    "parents": [
+      "D027"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "Its material translates: it can be described in writing."
+  },
+  {
+    "id": "E028",
+    "parents": [
+      "D028"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "Its content does not."
+  },
+  {
+    "id": "E029",
+    "parents": [
+      "D029"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "It sits on the list of the most interesting, described in terms of the part of itself that made it into writing.",
+    "paragraph_break": true
+  },
+  {
+    "id": "E030",
+    "parents": [
+      "D030"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "A record decides what kind of perceiving it can carry."
+  },
+  {
+    "id": "E031",
+    "parents": [
+      "D031"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "Then whatever it carried becomes the thing anyone downstream can weigh.",
+    "paragraph_break": true
+  },
+  {
+    "id": "E032",
+    "parents": [
+      "D032"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "The salt was a surface someone could have put a tongue to, and found out what it tasted of.",
+    "paragraph_break": true
+  },
+  {
+    "id": "E033",
+    "parents": [
+      "D033"
+    ],
+    "operation": "NO_CHANGE",
+    "text": "The account has it as brick."
+  }
+]

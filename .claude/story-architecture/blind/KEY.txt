@@ -4,3 +4,7 @@ case2: A=new(roman)      B=baseline(roman)
 case3: A=jia loop3 (post-improvement)   B=jia loop2 (pre-improvement)
 case4: A=roman loop1 (pre-improvement)  B=roman loop3 (post-improvement)
 case5: A=jia FINAL (new architecture)  B=jia held production draft
+case6: A=#62 jia.NEW.final   B=jia.NEW.continuity.final (NEW)
+case7: jia.NEW.continuity.final alone (lens survival + writtenness)
+case8: A=continuity.final(v3)  B=continuity.minimal (evaluator-recommended)
+case9: continuity.minimal alone (lens survival)
