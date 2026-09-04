@@ -76,7 +76,23 @@ PROVENANCE_FRAMES = [
     r"\bthe material (?:does not|gives|establishes|shows|says|contains)\b",
     r"\bthe research pack\b", r"\bthis reading\b",
     r"\baccording to the source\b",
-    r"\bdoes not (?:establish|say|state|tell|report|describe|show|prove)\b",
+    # SUBJECT-ANCHORED, for the same reason "the material" above is. The bare verb
+    # phrase matched anything that "does not tell", and the Ground Truth canary was held
+    # by
+    #     "Rent alone does not tell you whether housing is affordable, and neither
+    #      does income"
+    # which is a claim about a MEASURE, not about the research apparatus -- the very
+    # distinction this list already draws for "material".
+    #
+    # The anchor is an apparatus noun OR A BARE PRONOUN, and the pronoun half is not
+    # optional: story_architecture_test asserts that "It does not describe the building's
+    # form." is caught, which is a deliberate contract and correct -- a subjectless
+    # auditing sentence is exactly the shape that leaks. What separates the two is that
+    # the flagged canary sentence has a CONCRETE subject ("Rent alone", "the survey", "a
+    # photograph") and the leak has none worth naming.
+    r"(?:\bthe (?:source|anchor|brief|evidence|material|research pack|reading)s?\b"
+    r"[^.]{0,30}?|\b(?:it|this|that|there)\s+)"
+    r"does not (?:establish|say|state|tell|report|describe|show|prove)\b",
     r"\bno such claim\b", r"\bnothing in the (?:source|anchor|evidence)\b",
     r"\bcontains no\b", r"\bgives none\b", r"\bis not supported by\b",
     r"\bS\d+\b",                                  # source-id markers
@@ -300,6 +316,62 @@ _CONDITIONAL = re.compile(r"\b(?:if|when|whenever|wherever|would|should the|were
 _ADJECTIVAL = {"housing", "published", "printing", "existing", "remaining", "outstanding",
                "building", "willing", "missing", "living", "ongoing", "underlying"}
 
+# AN -ing WORD IN A NOUN SLOT IS A GERUND, NOT A PARTICIPLE.
+#
+# The hand-maintained list above cannot keep up, and the Ground Truth canary died twice on
+# words it does not contain. The last one refused
+#
+#   "a measure with no field for eviction risk, overcrowding or harassment"
+#
+# for the participle "overcrowding" -- a pure noun phrase, which is exactly the shape the
+# carrier rule asks for. "the building's cladding" and "notes on wayfinding" fail the same
+# way.
+#
+# The grammar that separates them is what a participle needs and a gerund does not: a
+# SUBJECT. "the servo pulling the brake arm" and "the bike coasting through the block
+# group" put a noun immediately before the -ing word, and that noun is what is being said
+# to act. A gerund sits in a noun slot instead, introduced by a preposition, a determiner,
+# a conjunction, a comma or a possessive -- and something introduced that way is being
+# NAMED, not narrated.
+#
+# So the token before the -ing word decides it. This subsumes most of _ADJECTIVAL, which
+# is kept anyway: two cheap checks are better than one, and removing it would be a change
+# to behaviour nobody asked for.
+_NOUN_SLOT_BEFORE = re.compile(
+    r"(?:^|[,;:(]\s*|\b(?:of|for|on|in|at|to|from|with|without|about|into|onto"
+    r"|over|under|through|between|among|against|by|as|than|and|or|nor|but|the|a"
+    r"|an|any|no|its|his|her|their|our|your|my|this|that|these|those|such|more"
+    r"|less|most|least|both|either|neither)\s+|’s\s+|\'s\s+)$",
+    re.I)
+
+
+# AN -ing WORD DIRECTLY FOLLOWED BY A BARE NOUN IS A COMPOUND MODIFIER.
+#
+# "the Academic Integrity Board hearing space" -- a space where hearings are held. The
+# noun-slot rule above cannot see it: the token before "hearing" is "Board", a noun, and
+# a participle's subject is also a noun. What separates them is what comes AFTER. A
+# participle doing a verb's work takes a determiner or a preposition next -- "pulling THE
+# brake arm", "coasting THROUGH the block group", "speeding UP alongside" -- while a
+# modifier sits directly against the noun it modifies: "hearing space", "reading room",
+# "housing target", "training day".
+#
+# Found by the second fresh-subject candidate, which spent both architecture repairs and
+# still could not get past it.
+_FOLLOWED_BY_BARE_NOUN = re.compile(
+    r"^\s+(?!the\b|a\b|an\b|its\b|his\b|her\b|their\b|this\b|that\b|these\b"
+    r"|those\b|through\b|over\b|under\b|into\b|onto\b|across\b|along\b|up\b"
+    r"|down\b|out\b|alongside\b|past\b|toward\b|towards\b|at\b|to\b|on\b|in\b"
+    r"|from\b|with\b|by\b|and\b|or\b|but\b|,|\.|$)[a-z]+", re.I)
+
+
+def _is_compound_modifier(carrier: str, end: int) -> bool:
+    return bool(_FOLLOWED_BY_BARE_NOUN.match(carrier[end:]))
+
+
+def _is_gerund_noun(carrier: str, word: str, at: int) -> bool:
+    """Is the -ing word at `at` occupying a noun slot rather than acting as a verb?"""
+    return bool(_NOUN_SLOT_BEFORE.search(carrier[:at]))
+
 
 def carrier_asserts_instance(carrier: str) -> dict:
     """Does this carrier claim that something happened, rather than naming a thing?"""
@@ -315,10 +387,13 @@ def carrier_asserts_instance(carrier: str) -> dict:
         hits.append("finite verb %r" % m.group(0))
     if _CONSEQUENCE.search(c):
         hits.append("consequence connective %r" % _CONSEQUENCE.search(c).group(0))
-    for w in _PARTICIPLE.findall(c):
-        if w.lower() not in _ADJECTIVAL:
-            hits.append("participle %r" % w)
-            break
+    for m in _PARTICIPLE.finditer(c):
+        w = m.group(0)
+        if w.lower() in _ADJECTIVAL or _is_gerund_noun(c, w, m.start()) \
+                or _is_compound_modifier(c, m.end()):
+            continue
+        hits.append("participle %r" % w)
+        break
     return {"asserts": bool(hits), "why": "; ".join(hits) or "names things only"}
 
 
