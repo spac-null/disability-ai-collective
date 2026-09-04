@@ -1,0 +1,206 @@
+{
+ "case": "held-out-real-article-1",
+ "ledger": "FINAL_EVIDENCE_MANIFEST.json",
+ "article_type": "NARRATIVE_ARTICLE",
+ "story_spine": "A device that turns a census score into brake pressure ends up easing over public housing and going blank where nobody was counted.",
+ "opening_object_or_event": "A 3D-printed box clamped to the front fork of a docked Citi Bike, with a wire running down to the brake arm.",
+ "reader_initial_state": "That someone built a small machine which decides how hard a public hire bike is to pedal.",
+ "lens_realization": "IMPLICIT",
+ "crip_turn_rereads": "B5",
+ "turn": "",
+ "crip_turn": "The easing over public housing and the unreadable block group are re-read as the same fact: the instrument can only pass on what the measure holds, so it is quietest where the pressure is least counted.",
+ "ending_move": "The loose front-brake cables, found by hand on one bike in four, are the one thing the device turned up that no measure had a field for.",
+ "beats": [
+  {
+   "beat_id": "B1",
+   "happens": "The device: where it sits on the bike, what it grips, and what a rider's legs feel.",
+   "concrete_carrier": "the box on the fork and the wire to the brake arm",
+   "facts_allowed": [
+    "F01",
+    "F03"
+   ],
+   "concept_introduced": "",
+   "why_reader_wants_next": "A box that decides how hard a bike is to pedal raises what it is deciding from.",
+   "must_not_say_yet": "anything about census data, neighbourhoods or what the resistance means"
+  },
+  {
+   "beat_id": "B2",
+   "happens": "What it reads: satellite position, a card of block-group scores, a servo angle, and the measure those scores come from.",
+   "concrete_carrier": "the card of scores and the servo arm pulling the brake",
+   "facts_allowed": [
+    "F02",
+    "F06",
+    "F07",
+    "F09"
+   ],
+   "concept_introduced": "rent burden: the share of a household's income that goes on rent and utilities, counted as a burden above thirty percent",
+   "why_reader_wants_next": "The threshold doing the work is a round number and the reader has not been told where it came from.",
+   "must_not_say_yet": "that the measure eases over public housing"
+  },
+  {
+   "beat_id": "B3",
+   "happens": "Where the thirty percent came from.",
+   "concrete_carrier": "the figure itself, and the dates it changed",
+   "facts_allowed": [
+    "F10"
+   ],
+   "concept_introduced": "",
+   "why_reader_wants_next": "A number with a legislative history is now pulling on a brake cable, and the reader has not yet been on a ride.",
+   "must_not_say_yet": "the Windsor Terrace figures"
+  },
+  {
+   "beat_id": "B4",
+   "happens": "The ride around Prospect Park, and then the income and rent figures for where the brake bit hardest.",
+   "concrete_carrier": "Prospect Park West, then Windsor Terrace, then two rent figures five years apart",
+   "facts_allowed": [
+    "F11",
+    "F12",
+    "F13",
+    "F16"
+   ],
+   "concept_introduced": "",
+   "why_reader_wants_next": "The brake bit hardest in a neighbourhood with a six-figure median income, which is not where a reader would have put it.",
+   "must_not_say_yet": "the public housing result"
+  },
+  {
+   "beat_id": "B5",
+   "happens": "Near public housing the resistance let go, and what the maker takes that to show.",
+   "concrete_carrier": "the bike speeding up alongside the complexes",
+   "facts_allowed": [
+    "F14",
+    "F15"
+   ],
+   "concept_introduced": "",
+   "why_reader_wants_next": "If the bike loosens where a subsidy is working, the reader wants to know what else the measure cannot separate.",
+   "must_not_say_yet": "the suppressed block groups"
+  },
+  {
+   "beat_id": "B6",
+   "happens": "What the measure does not hold, and the places where it holds nothing at all.",
+   "concrete_carrier": "a block group with no published figure, and the brake that therefore does not move",
+   "facts_allowed": [
+    "F17",
+    "F19",
+    "F20",
+    "F21",
+    "F22"
+   ],
+   "concept_introduced": "",
+   "why_reader_wants_next": "A rider cannot feel the difference between a place under no pressure and a place nobody measured.",
+   "must_not_say_yet": "the brake cables"
+  },
+  {
+   "beat_id": "B7",
+   "happens": "What the maker found with his hands while fitting the devices, and what he says the ride does not convey.",
+   "concrete_carrier": "the loose front-brake cables on one bike in four",
+   "facts_allowed": [
+    "F23",
+    "F25",
+    "F28",
+    "F29"
+   ],
+   "concept_introduced": "",
+   "why_reader_wants_next": "",
+   "must_not_say_yet": ""
+  }
+ ],
+ "use_facts": [
+  "F01",
+  "F02",
+  "F03",
+  "F06",
+  "F07",
+  "F09",
+  "F10",
+  "F11",
+  "F12",
+  "F13",
+  "F14",
+  "F15",
+  "F16",
+  "F17",
+  "F19",
+  "F20",
+  "F21",
+  "F22",
+  "F23",
+  "F25",
+  "F28",
+  "F29"
+ ],
+ "use_quotes": [],
+ "definitions": {
+  "rent burden": "the share of a household's income that goes on rent and utilities",
+  "block group": "the smallest area the survey publishes figures for"
+ },
+ "cut_evidence": [
+  {
+   "evidence_id": "F04",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F05",
+   "reason": "BREAKS_STORY_MOMENTUM"
+  },
+  {
+   "evidence_id": "F08",
+   "reason": "CONCEPT_OVERLOAD"
+  },
+  {
+   "evidence_id": "F18",
+   "reason": "SECOND_EXAMPLE_SAME_POINT"
+  },
+  {
+   "evidence_id": "F24",
+   "reason": "REDUNDANT_PROOF"
+  },
+  {
+   "evidence_id": "F26",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F27",
+   "reason": "INTERESTING_BUT_WRONG_STORY"
+  },
+  {
+   "evidence_id": "F30",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F31",
+   "reason": "BACKGROUND_NOT_NEEDED"
+  },
+  {
+   "evidence_id": "F32",
+   "reason": "BREAKS_STORY_MOMENTUM"
+  }
+ ],
+ "prohibitions": [
+  "Do not describe what any rider other than the maker saw, felt, thought or noticed.",
+  "Do not say or imply that any disabled person has used, tested, encountered or been consulted about this device.",
+  "Do not claim the resistance corresponds to any particular household's circumstances, or that the device measures hardship.",
+  "Do not say the device was ridden anywhere other than the places named.",
+  "Do not describe any neighbourhood as poor, rich, gentrifying or declining beyond the figures given.",
+  "Do not claim anything was never done, never tested, never measured or does not exist.",
+  "Do not state or imply that Citi Bike, Lyft or the Census Bureau responded, objected, approved or were consulted.",
+  "Do not attribute a motive or intention beyond a stated aim.",
+  "Do not invent or paraphrase a quotation as if it were spoken.",
+  "Do not name the funder, the award, the sum of money, or Citi Bike's prices or ownership.",
+  "Do not list every electronic component.",
+  "Never use the first person.",
+  "Do not state the colour, size or weight of the device."
+ ],
+ "final_lens": {
+  "lens_claim": "An instrument that converts a classification into a force on the body can only transmit what the classification already carries: it eases where a remedy has already absorbed the pressure, and it has nothing to say at all about the places and people the survey never counted, so the ride is least informative exactly where the need is most acute.",
+  "evidence_basis": [
+   "F14",
+   "F15",
+   "F19",
+   "F20",
+   "F22"
+  ],
+  "before_reading": "A device that makes you feel the rent crisis in your legs.",
+  "after_reading": "A device that can only pass on what the measure holds, and is quietest where the pressure is least counted.",
+  "crip_turn_carrier": "the block group with no published figure, and the brake that therefore does not move"
+ }
+}

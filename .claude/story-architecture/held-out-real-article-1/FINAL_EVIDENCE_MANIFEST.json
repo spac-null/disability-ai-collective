@@ -1,0 +1,369 @@
+{
+ "subject": "Justin Blinder, Ground Truth: a device that converts census rent-burden data into physical brake resistance on a Citi Bike",
+ "frozen_at": "2026-09-04",
+ "sources": {
+  "S0": {
+   "role": "ANCHOR",
+   "name": "Ground Truth project site (primary, artist-authored)",
+   "url": "https://groundtruth.justin.work/",
+   "retrieved": "2026-09-04",
+   "words": 1973
+  },
+  "S1": {
+   "role": "INDEPENDENT",
+   "name": "Gothamist, Stephen Nessen",
+   "url": "https://gothamist.com/news/nyc-artist-creates-device-that-slows-citi-bikes-passing-through-rent-burdened-areas",
+   "retrieved": "2026-09-04",
+   "published": "2026-09-01",
+   "words": 885
+  },
+  "S2": {
+   "role": "TERTIARY",
+   "name": "US Census Bureau ACS margins-of-error training material",
+   "url": "https://www2.census.gov/about/training-workshops/2026/2026-03-11-using-acs-estimates-margins-of-error-presentation.pdf",
+   "retrieved": "2026-09-04"
+  },
+  "S3": {
+   "role": "TERTIARY",
+   "name": "HUD USER / CRS on the 30 percent cost-burden standard",
+   "url": "https://www.huduser.gov/portal/pdredge/pdr_edge_featd_article_092214.html",
+   "retrieved": "2026-09-04"
+  },
+  "S4": {
+   "role": "TERTIARY",
+   "name": "Dezeen (headline/listing only; article body 403 to us)",
+   "url": "https://www.dezeen.com/2026/09/03/justin-blinder-citibike-ground-truth-new-york-city-housing/",
+   "retrieved": "2026-09-04",
+   "note": "NOT USED as evidence; recorded as the feed item that surfaced the subject"
+  }
+ },
+ "facts": {
+  "F01": {
+   "fact_id": "F01",
+   "proposition": "A device made by the artist Justin Blinder attaches to the front fork of a docked Citi Bike and overrides the front brake to change how hard the bike is to pedal.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "attaches to the front fork of a docked Citi Bike and overrides the front-brake, to adjust pedal resistance",
+   "scope": "WORLD"
+  },
+  "F02": {
+   "fact_id": "F02",
+   "proposition": "The device was built from a GPS module, an ESP32S3 microcontroller, a high-torque servo motor, an SD card reader, an OLED display and a custom circuit board, in a 3D-printed enclosure.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0",
+    "S1"
+   ],
+   "support_span": "GPS module, ESP32S3 microcontroller, high-torque servo motor, and an SD card reader",
+   "scope": "WORLD"
+  },
+  "F03": {
+   "fact_id": "F03",
+   "proposition": "The servo pulls the existing front brake arm along the same axis as the rider's own brake cable; the rider's levers stay functional and always override, and the device can be removed by hand in seconds.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "The mechanism pulls the existing brake arm along the axis its own lever cable uses. The rider's own brake levers remain fully functional and always override.",
+   "scope": "WORLD"
+  },
+  "F04": {
+   "fact_id": "F04",
+   "proposition": "The device holds no internet connection and saves no location data; the dataset is stored on an SD card and read locally.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "The device does not connect to the internet or collect data. The dataset it reads is stored on the device.",
+   "scope": "WORLD"
+  },
+  "F05": {
+   "fact_id": "F05",
+   "proposition": "The enclosure was modelled from a photogrammetry scan of an electric Citi Bike's front fork and drum brake hub.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "Scan of the electric Citi Bike front fork and drum brake hub, used to model the enclosure.",
+   "scope": "WORLD"
+  },
+  "F06": {
+   "fact_id": "F06",
+   "proposition": "The data is the American Community Survey five-year estimates at block-group level, covering 2020 through 2024.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "American Community Survey (ACS) data at the block-group level ... The five-year estimates describe 2020 through 2024.",
+   "scope": "WORLD"
+  },
+  "F07": {
+   "fact_id": "F07",
+   "proposition": "Two indicators were blended into one score: the median share of income spent on rent, and the share of renter households spending at least half their income on housing.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "the median share of income spent on rent, and the percentage of renter households spending at least half of their income on housing",
+   "scope": "WORLD"
+  },
+  "F08": {
+   "fact_id": "F08",
+   "proposition": "The top quantile was removed from the dataset, because a high-income household may spend heavily on housing without strain and would inflate an area's median burden.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "the top quantile was removed from the final dataset",
+   "scope": "WORLD"
+  },
+  "F09": {
+   "fact_id": "F09",
+   "proposition": "The measure follows the US Department of Housing and Urban Development's 30 percent standard, under which a household spending more than 30 percent of income on rent and utilities is counted as cost-burdened.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0",
+    "S3"
+   ],
+   "support_span": "This follows HUD's longstanding 30 percent standard",
+   "scope": "WORLD"
+  },
+  "F10": {
+   "fact_id": "F10",
+   "proposition": "HUD adopted the 30 percent figure in 1981; earlier public-housing programmes had used 25 percent, and the threshold is traced to a 1969 amendment by Senator Edward Brooke.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S3"
+   ],
+   "support_span": "HUD adopted the 30% standard in 1981, evolving from a 25% threshold used in earlier public housing programs",
+   "scope": "WORLD"
+  },
+  "F11": {
+   "fact_id": "F11",
+   "proposition": "On a ride around Prospect Park the bike rolled easily along Prospect Park West and then the brake engaged in Windsor Terrace, nearly stopping it.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S1"
+   ],
+   "support_span": "Blinder cruised easily down Prospect Park West until he hit Windsor Terrace. Then the brake kicked in, and the bike was nearly frozen.",
+   "scope": "WORLD"
+  },
+  "F12": {
+   "fact_id": "F12",
+   "proposition": "Median household income in the community district covering Windsor Terrace and Sunset Park was about $97,000 in 2024, per a NYU Furman Center analysis.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S1"
+   ],
+   "support_span": "about $97,000 in 2024, according to an analysis by NYU's Furman Center",
+   "scope": "WORLD"
+  },
+  "F13": {
+   "fact_id": "F13",
+   "proposition": "Median asking rent in that area was $2,250 in 2021, when Citi Bike docks arrived, and $3,800 five years later, per StreetEasy - a rise far exceeding inflation.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S1"
+   ],
+   "support_span": "the median asking rent was $2,250 ... that figure grew to $3,800, far exceeding the rate of inflation",
+   "scope": "WORLD"
+  },
+  "F14": {
+   "fact_id": "F14",
+   "proposition": "Riding near NYCHA public-housing complexes, the device released resistance.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S1"
+   ],
+   "support_span": "As Blinder rode near NYCHA complexes in Brooklyn, the device let up some resistance",
+   "scope": "WORLD"
+  },
+  "F15": {
+   "fact_id": "F15",
+   "proposition": "Blinder said that easing over public housing shows public housing is working and offsetting the burden, but does not mean residents' lives are more affordable as such.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S1"
+   ],
+   "support_span": "it's really just showing that public housing is working ... but it doesn't necessarily mean their lives are more affordable per se",
+   "scope": "WORLD"
+  },
+  "F16": {
+   "fact_id": "F16",
+   "proposition": "Areas registering a higher rent burden are often not low-income neighbourhoods but corridors where housing costs have risen rapidly.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S1"
+   ],
+   "support_span": "Many areas that have a higher rent burden aren't low-income neighborhoods, but corridors that have seen a rapid rise in housing costs in recent years.",
+   "scope": "WORLD"
+  },
+  "F17": {
+   "fact_id": "F17",
+   "proposition": "The ACS is a sample rather than a census, and at block-group level the sample in any one area is small with correspondingly wide margins of error.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0",
+    "S2"
+   ],
+   "support_span": "The American Community Survey is a sample, not a census. At the block-group level ... the margins of error are correspondingly wide",
+   "scope": "WORLD"
+  },
+  "F18": {
+   "fact_id": "F18",
+   "proposition": "At small geographies an ACS margin of error can exceed the estimate itself; one published example gives an estimate of 28 with a margin of error of plus or minus 33.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S2"
+   ],
+   "support_span": "the 2012-2016 ACS 5-Year Estimate for the population of females under 5 years old is 28 with a MOE of +/- 33",
+   "scope": "WORLD"
+  },
+  "F19": {
+   "fact_id": "F19",
+   "proposition": "Where a block group's sample is too small or unreliable, the ACS publishes no estimate, and both the device and the map render this as no reading rather than as zero.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "The device and the map both show these as no reading rather than as zero",
+   "scope": "WORLD"
+  },
+  "F20": {
+   "fact_id": "F20",
+   "proposition": "Blinder wrote that an absence of data is not an absence of pressure, and that showing it as flat ground would be a lie told by the visualization rather than by the data.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "an absence of data is not an absence of pressure, and rendering it as flat ground would be a lie told by the visualization rather than by the data",
+   "scope": "WORLD"
+  },
+  "F21": {
+   "fact_id": "F21",
+   "proposition": "Rent burden does not measure overcrowding, housing quality, eviction risk, informal tenancy, security of a lease, harassment, feelings of safety, or how long a household has been holding on.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "It does not measure overcrowding, housing quality, eviction risk, informal or unrecorded tenancy, the security of a lease, surveillance, harassment, feelings of safety, or how long a household has been holding on.",
+   "scope": "WORLD"
+  },
+  "F22": {
+   "fact_id": "F22",
+   "proposition": "The survey covers households, so people with no housing at all are absent from it by construction.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "nothing about people with no housing at all - who are, by construction, absent from a survey of households",
+   "scope": "WORLD"
+  },
+  "F23": {
+   "fact_id": "F23",
+   "proposition": "Blinder wrote that the difficulty a rider feels does not translate to the lived experiences and hardships of the people represented in the data.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "That difficulty does not translate to the lived experiences and hardships of those represented in the data.",
+   "scope": "WORLD"
+  },
+  "F24": {
+   "fact_id": "F24",
+   "proposition": "Blinder described the work as creating a physical glitch rather than simulating housing insecurity.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "Instead of simulating housing insecurity, Ground Truth creates a physical glitch",
+   "scope": "WORLD"
+  },
+  "F25": {
+   "fact_id": "F25",
+   "proposition": "Across dozens of Citi Bikes handled during installation and removal, roughly one in four had a loose front-brake cable that made the front brake ineffective, and Blinder corrected them.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "roughly one in four had a loose front-brake cable that rendered the front brake ineffective. I corrected these issues during the installation and removal process.",
+   "scope": "WORLD"
+  },
+  "F26": {
+   "fact_id": "F26",
+   "proposition": "Citi Bike is the largest bike-share system in the United States, is owned and operated by Lyft, and unlike other major US systems receives no public operating subsidy.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0"
+   ],
+   "support_span": "owned and operated by Lyft and, unlike other major U.S. systems, receives no public operating subsidy",
+   "scope": "WORLD"
+  },
+  "F27": {
+   "fact_id": "F27",
+   "proposition": "Citi Bike raised prices for five consecutive years; by 2026 annual membership was $239 and a 45-minute e-bike ride could cost a member $12.15, close to three times the 2020 price.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0",
+    "S1"
+   ],
+   "support_span": "annual membership had reached $239, while a 45-minute e-bike ride could cost a member $12.15",
+   "scope": "WORLD"
+  },
+  "F28": {
+   "fact_id": "F28",
+   "proposition": "Blinder is 41, lost his job during the pandemic and began earning money as a delivery worker, and had the idea then.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S1"
+   ],
+   "support_span": "came up with the idea during the pandemic, when he lost his job and started making money as a delivery worker",
+   "scope": "WORLD"
+  },
+  "F29": {
+   "fact_id": "F29",
+   "proposition": "Blinder said the experience of moving through the city showed him how much its economic and psychological qualities differed block by block.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S1"
+   ],
+   "support_span": "seeing, just how much the, income, economic and psychological qualities of the city differed so much on a block-by-block basis",
+   "scope": "WORLD"
+  },
+  "F30": {
+   "fact_id": "F30",
+   "proposition": "The project was funded by a $10,000 award from Idle Hands.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S0",
+    "S1"
+   ],
+   "support_span": "funded with a $10,000 award from the group Idle Hands",
+   "scope": "WORLD"
+  },
+  "F31": {
+   "fact_id": "F31",
+   "proposition": "More than half of New York City residents spend at least 30 percent of income on rent, and about three in ten spend more than half.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S1"
+   ],
+   "support_span": "More than half the city's residents spend at least 30% of their income on rent ... About three out of 10 spend more than half",
+   "scope": "WORLD"
+  },
+  "F32": {
+   "fact_id": "F32",
+   "proposition": "Blinder built the enclosure on a 3D printer and said he hopes people in other cities with bike-share systems will download the specifications and build their own.",
+   "claim_type": "ATTRIBUTION",
+   "evidence_ids": [
+    "S1"
+   ],
+   "support_span": "He made the device on a 3D printer, and said he hopes people in other cities with bike share programs will download the specs",
+   "scope": "WORLD"
+  }
+ },
+ "fact_count": 32,
+ "freeze_rule": "After this freeze no stage may mint a fact. No possibility to fact, no association to causation, no description to visitor experience, no design intent to actual effect, no absence in sources to absence in world."
+}

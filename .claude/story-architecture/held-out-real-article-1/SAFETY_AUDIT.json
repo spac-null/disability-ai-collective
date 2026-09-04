@@ -1,0 +1,50 @@
+{
+ "writer_draft": {
+  "words": 848,
+  "paragraphs": 12,
+  "HARD_factual_ok": false,
+  "unapproved_entities": [],
+  "unapproved_numbers": [],
+  "unapproved_sensory": [],
+  "unapproved_scene": [],
+  "unapproved_spatial": [
+   "narrow"
+  ],
+  "negative_admission_ok": true,
+  "negative_unmatched": 0,
+  "negative_shape_sentences": 0,
+  "intent_causal": 0,
+  "provenance_leaks": [],
+  "scaffold_leaks": [],
+  "signposts": 0,
+  "signpost_band": "WITHIN_PUBLISHED_RANGE",
+  "solo_ratio": 0.0
+ },
+ "continuity_final": {
+  "words": 771,
+  "paragraphs": 12,
+  "HARD_factual_ok": true,
+  "unapproved_entities": [],
+  "unapproved_numbers": [],
+  "unapproved_sensory": [],
+  "unapproved_scene": [],
+  "unapproved_spatial": [],
+  "negative_admission_ok": true,
+  "negative_unmatched": 0,
+  "negative_shape_sentences": 0,
+  "intent_causal": 0,
+  "provenance_leaks": [],
+  "scaffold_leaks": [],
+  "signposts": 0,
+  "signpost_band": "WITHIN_PUBLISHED_RANGE",
+  "solo_ratio": 0.0
+ },
+ "semantic_delta": {},
+ "added_relation_classes": {},
+ "validate_semantic_delta": [],
+ "cut_adherence": {
+  "violations": [],
+  "clean_prose": true,
+  "cut_declared": 10
+ }
+}
