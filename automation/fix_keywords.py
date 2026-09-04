@@ -12,8 +12,10 @@ from pathlib import Path
 import urllib.request, urllib.error, json
 
 POSTS_DIR = Path(__file__).parent.parent / "_posts"
-CLIPROXY_URL = os.environ.get("CLIPROXY_URL", "http://127.0.0.1:8317/v1")
-CLIPROXY_KEY = os.environ.get("CLIPROXY_KEY", "local")
+# Was the local CLIProxyAPI on :8317 until 2026-09-04. The proxy resolved bare Anthropic
+# model ids like "claude-haiku-4-5-20251001"; direct OpenRouter needs the vendor prefix.
+OPENROUTER_URL = os.environ.get("OPENROUTER_URL", "https://openrouter.ai/api/v1")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 
 # Keywords that indicate a bad/generic auto-generated set
 GENERIC_SIGNALS = [
@@ -59,7 +61,7 @@ def is_bad_keywords(kw_line: str) -> bool:
 def call_llm(title: str, content: str, author: str) -> list:
     body_preview = content[:1500]
     payload = {
-        "model": "claude-haiku-4-5-20251001",
+        "model": "anthropic/claude-haiku-4.5",
         "max_tokens": 120,
         "messages": [{"role": "user", "content": (
             f"Title: {title}\nAuthor: {author}\n\nArticle excerpt:\n{body_preview}\n\n"
@@ -79,9 +81,9 @@ def call_llm(title: str, content: str, author: str) -> list:
     }
     data = json.dumps(payload).encode()
     req = urllib.request.Request(
-        f"{CLIPROXY_URL}/chat/completions",
+        f"{OPENROUTER_URL}/chat/completions",
         data=data,
-        headers={"Content-Type": "application/json", "Authorization": f"Bearer {CLIPROXY_KEY}"},
+        headers={"Content-Type": "application/json", "Authorization": f"Bearer {OPENROUTER_API_KEY}"},
         method="POST",
     )
     try:

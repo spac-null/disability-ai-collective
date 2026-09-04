@@ -16,7 +16,7 @@ import re
 import time
 import urllib.request
 
-from .config import CLIPROXY_URL, CLIPROXY_KEY, _AGENT_SLUG
+from .config import OPENROUTER_URL, OPENROUTER_API_KEY, _AGENT_SLUG
 
 
 # ── strict CURRENT_ENGINE fact-check contract ──────────────────────────────────
@@ -192,9 +192,9 @@ class FactCheckMixin:
             'If none: {"claims": []}'
         )
         raw = self._call_openai_compat_api(
-            url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
+            url=OPENROUTER_URL, api_key=OPENROUTER_API_KEY,
             system_prompt=SYSTEM, user_prompt=content,
-            model="openrouter/claude-haiku-4.5",
+            model="anthropic/claude-haiku-4.5",
             max_tokens=900, timeout=timeout, no_think=True,
             # Extraction, not composition. Left unpinned this ran at the provider
             # default (1.0), and the same article returned different claim counts

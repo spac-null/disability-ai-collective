@@ -23,7 +23,7 @@ REPO = Path(__file__).parent.parent
 DB   = REPO / "disability_findings.db"
 LOG  = REPO / "automation" / "news_fetcher.log"
 
-# Load CLIPROXY_KEY from the same secrets file production_orchestrator.py uses
+# Load OPENROUTER_API_KEY from the same secrets file production_orchestrator.py uses
 # (no export statements — parse manually, same pattern as that file).
 _ENV_FILE = Path("/srv/secrets/openclaw.env")
 if _ENV_FILE.exists():
@@ -33,14 +33,18 @@ if _ENV_FILE.exists():
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
 
-# CLIProxy — same endpoint production_orchestrator.py uses for all editorial LLM
+# OpenRouter — same endpoint production_orchestrator.py uses for all editorial LLM
 # calls. news_fetcher previously called Nous Portal directly via a Hermes-managed
 # OAuth agent_key (/srv/data/hermes/auth.json); that key stopped being refreshed
-# on 2026-05-16 when the rest of the pipeline migrated to OpenRouter/CLIProxy,
-# leaving angle extraction silently 401ing for two months.
-API_URL = "http://127.0.0.1:8317/v1/chat/completions"
-API_KEY = os.environ.get("CLIPROXY_KEY", "")
-MODEL   = "openrouter/claude-sonnet-4.6"
+# on 2026-05-16 when the rest of the pipeline migrated to OpenRouter, leaving angle
+# extraction silently 401ing for two months. It then spent 2026-05-16 to 2026-09-04
+# reaching OpenRouter through the local CLIProxyAPI on :8317, which turned out to be
+# a passthrough with its own expiring credential -- removed, this now calls OpenRouter
+# itself. The `openrouter/` model prefix went with it: it was the proxy's translation
+# key, and direct OpenRouter names the same model `anthropic/claude-sonnet-4.6`.
+API_URL = "https://openrouter.ai/api/v1/chat/completions"
+API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+MODEL   = "anthropic/claude-sonnet-4.6"
 
 # ── Feed list ─────────────────────────────────────────────────────────────────
 # Tier 1 = quality longform journalism / science. Tier 2 = broad quality.
@@ -1192,7 +1196,7 @@ def run_category_jump_shadow(conn, n: int = 10):
     -- see sample_shadow_candidates's docstring. Never affects real
     selection/generation; writes only to category_jump_shadow."""
     if not API_KEY:
-        log("CLIProxy API key not set — skipping category-jump shadow judging")
+        log("OPENROUTER_API_KEY not set — skipping category-jump shadow judging")
         return
     candidates = sample_shadow_candidates(conn, n=n)
     judged = failed = 0
@@ -1281,7 +1285,7 @@ EXPLORATION_SLOTS = 2
 def extract_top_angles(conn, n: int = 10):
     """Fetch top-N unprocessed seeds by score and extract disability angles."""
     if not API_KEY:
-        log("CLIProxy API key not set — skipping angle extraction")
+        log("OPENROUTER_API_KEY not set — skipping angle extraction")
         return
     # Match get_news_seed's own 3-day pub_date window (production_orchestrator.py) —
     # this used to select purely by relevance_score with no age filter, so it could
@@ -1464,7 +1468,7 @@ def main():
     if API_KEY:
         extract_top_angles(conn, n=10)
     else:
-        log("CLIProxy API key not set — skipping angle extraction")
+        log("OPENROUTER_API_KEY not set — skipping angle extraction")
 
     # 3b. Category-jump judge, SHADOW MODE ONLY -- independent candidate
     # pool, writes only to category_jump_shadow, never touches news_seeds.

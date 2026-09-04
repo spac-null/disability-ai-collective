@@ -19,9 +19,10 @@ import time
 import urllib.request
 
 from .config import (
-    CLIPROXY_URL, CLIPROXY_KEY, PERSONA_CANON_DIR, PERSONA_STATE_DIR,
+    OPENROUTER_URL, OPENROUTER_API_KEY, PERSONA_CANON_DIR, PERSONA_STATE_DIR,
     _RELATIONSHIPS_FILE, _AGENT_SLUG, _nous_key, _REGISTERS,
 )
+from . import transport
 from .grounding import (
     build_evidence_packet, validate_brief, validate_source_decision,
     find_new_unsupported_specifics,
@@ -170,9 +171,17 @@ class LLMMixin:
         silently accepted or caught only by a caller's own ad hoc length check.
         """
         import json, urllib.request
+        # The `openrouter/` model prefix existed only so CLIProxyAPI knew which upstream
+        # to translate to. Direct OpenRouter rejects it. Normalising here rather than at
+        # the ~87 call sites means no future caller can reintroduce a proxy-only name and
+        # get an opaque "unknown provider" 500 far from the line that caused it.
+        wire_model = model
+        if transport.classify(url) == transport.OPENROUTER_DIRECT \
+                and isinstance(model, str) and model.startswith("openrouter/"):
+            wire_model = "anthropic/" + model[len("openrouter/"):]
         content = ("/no_think " if no_think else "") + user_prompt
         body = {
-            "model": model,
+            "model": wire_model,
             "messages": [
                 {"role": "system", "content": system_prompt},
                 {"role": "user",   "content": content},
@@ -211,21 +220,40 @@ class LLMMixin:
                 )
         raw_text = choices[0]["message"]["content"]
         text = re.sub(r"<think>.*?</think>", "", raw_text, flags=re.DOTALL).strip()
+        # Transport provenance: derived from the URL, never from the model name. Before
+        # this, a CLIProxy call and a direct OpenRouter call logged identically, which is
+        # why a proxy hop with a dead credential went unnoticed for weeks.
+        try:
+            # requested_model is the WIRE model, so a proxy-prefix rewrite does not
+            # masquerade as a Fable->Opus style fallback. The rewrite, when it happened,
+            # is recorded in `detail` instead -- it is transport bookkeeping, not lineage.
+            self.logger.info(transport.line(transport.record(
+                url, requested_model=wire_model,
+                actual_model=data.get("model", wire_model),
+                credential_env=("OPENROUTER_API_KEY"
+                                if transport.classify(url) == transport.OPENROUTER_DIRECT
+                                else ""),
+                ok=True,
+                detail=("normalised proxy-only model name %s" % model)
+                       if wire_model != model else "")))
+        except Exception:
+            pass
         if return_model:
-            return text, data.get("model", model)
+            return text, data.get("model", wire_model)
         return text
 
     def call_llm_via_openclaw_session(self, prompt, model_priority=None):
         """Generate article content using cascading LLM provider fallback.
 
         Provider order:
-          1. Claude Opus 4.8 (OpenRouter)  — primary, best quality for this publication
+          1. Claude Opus 4.8 (OpenRouter)   — primary, best quality for this publication
           2. Claude Sonnet 4.6 (OpenRouter) — strong fallback, same account
-          3. GPT-5.2 (CLIProxy)           — strong long-form fallback
-          4. Gemini 2.5 Pro               — capable, generous free tier
-          5. Qwen 3.5:9b (local)          — zero cost, last resort
+          3. Claude Opus 4.6 (Nous)         — separate account, survives an OpenRouter outage
+          4. Qwen 3.5:9b (local)            — zero cost, last resort
 
-        Note: calls CLIProxy directly (HTTP) — OpenClaw never involved.
+        Every rung is a direct call to the named provider. The Gemini 2.5 Pro rung was
+        removed 2026-09-04 (Jascha is off Gemini) and deliberately not replaced; the
+        CLIProxyAPI hop in front of rungs 1-2 was removed the same day.
         """
         import os
 
@@ -269,19 +297,19 @@ class LLMMixin:
 
         PROVIDERS = [
             {
-                "name":      "Claude Opus 4.8 (OpenRouter/CLIProxy)",
-                "url":       CLIPROXY_URL,
-                "key":       CLIPROXY_KEY,
-                "model":     "openrouter/claude-opus-4.8",
+                "name":      "Claude Opus 4.8 (OpenRouter)",
+                "url":       OPENROUTER_URL,
+                "key":       OPENROUTER_API_KEY,
+                "model":     "anthropic/claude-opus-4.8",
                 "max_tokens": 5000,
                 "timeout":   180,
                 "no_think":  False,
             },
             {
-                "name":      "Claude Sonnet 4.6 (OpenRouter/CLIProxy)",
-                "url":       CLIPROXY_URL,
-                "key":       CLIPROXY_KEY,
-                "model":     "openrouter/claude-sonnet-4.6",
+                "name":      "Claude Sonnet 4.6 (OpenRouter)",
+                "url":       OPENROUTER_URL,
+                "key":       OPENROUTER_API_KEY,
+                "model":     "anthropic/claude-sonnet-4.6",
                 "max_tokens": 5000,
                 "timeout":   120,
                 "no_think":  False,
@@ -293,15 +321,6 @@ class LLMMixin:
                 "model":     "anthropic/claude-opus-4.6",
                 "max_tokens": 5000,
                 "timeout":   180,
-                "no_think":  False,
-            },
-            {
-                "name":      "Gemini 2.5 Pro",
-                "url":       "https://generativelanguage.googleapis.com/v1beta/openai",
-                "key":       os.environ.get("GEMINI_API_KEY", ""),
-                "model":     "gemini-2.5-pro",
-                "max_tokens": 5000,
-                "timeout":   120,
                 "no_think":  False,
             },
             {
@@ -495,11 +514,11 @@ class LLMMixin:
         try:
             self.logger.info("Rewriting with Opus for quality improvement...")
             rewritten = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=SYSTEM,
                 user_prompt=user_msg,
-                model="openrouter/claude-opus-4.8",
+                model="anthropic/claude-opus-4.8",
                 max_tokens=5000,
                 timeout=240,
                 check_truncation=True,
@@ -672,10 +691,7 @@ class LLMMixin:
         path.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
 
     def _call_editorial_model(self, system, user, max_tokens=1200, timeout=60, prefer_opus=False):
-        """Try Fable 5 → Opus 4.8 via CLIProxy, then bypass CLIProxy and call OpenRouter directly.
-
-        CLIProxy is a thin proxy to OpenRouter — if it's down, calling OpenRouter directly
-        is equivalent. Requires OPENROUTER_API_KEY in environment for the direct fallback.
+        """Try Fable 5 → Opus 4.8, both direct to OpenRouter. Requires OPENROUTER_API_KEY.
 
         claude-fable-5 has mandatory extended thinking on this endpoint (reasoning cannot
         be disabled) and reasoning tokens count against max_tokens. Left unbounded, thinking
@@ -694,26 +710,26 @@ class LLMMixin:
         tried first -- Fable stays in the chain as a last-resort fallback rather than being
         removed outright, since a Fable response still beats no response if Opus is down.
 
-        Attempt order also puts Opus/OpenRouter-direct ahead of Fable/OpenRouter-direct
-        (fixed 2026-08-10): if Fable truncated on CLIProxy for token-budget reasons, it will
-        truncate identically via direct OpenRouter -- that attempt was previously
-        guaranteed-wasted whenever CLIProxy failed for an unrelated transport reason.
+        (The 2026-08-10 ordering fix that put Opus's direct rung ahead of Fable's is now
+        moot: removing the CLIProxy hop on 2026-09-04 left each model with a single rung,
+        so there is no longer a second Fable attempt to order.)
         """
         FABLE_REASONING_BUDGET = 1024
         FABLE_OUTPUT_HEADROOM = 1600
         fable_max_tokens = max(max_tokens, FABLE_REASONING_BUDGET + FABLE_OUTPUT_HEADROOM)
         fable_timeout = max(timeout, 90)
 
-        _or_key = os.environ.get("OPENROUTER_API_KEY", "")
-        _or_url = "https://openrouter.ai/api/v1"
+        # Until 2026-09-04 each model had two rungs -- CLIProxy, then the same model
+        # again direct -- because the proxy was an unreliable hop in front of the very
+        # provider the second rung called. With the proxy gone the duplicate rung would
+        # just retry an identical request against an identical endpoint, so each model
+        # is tried once.
+        fable_attempts = [(OPENROUTER_URL, OPENROUTER_API_KEY,
+                           "anthropic/claude-fable-5", "Fable/OpenRouter")]
+        opus_attempts = [(OPENROUTER_URL, OPENROUTER_API_KEY,
+                          "anthropic/claude-opus-4.8", "Opus/OpenRouter")]
 
-        fable_attempts = [(CLIPROXY_URL, CLIPROXY_KEY, "openrouter/claude-fable-5", "Fable/CLIProxy")]
-        opus_attempts = [(CLIPROXY_URL, CLIPROXY_KEY, "openrouter/claude-opus-4.8", "Opus/CLIProxy")]
-        if _or_key:
-            opus_attempts.append((_or_url, _or_key, "anthropic/claude-opus-4.8", "Opus/OpenRouter-direct"))
-            fable_attempts.append((_or_url, _or_key, "anthropic/claude-fable-5", "Fable/OpenRouter-direct"))
-
-        attempts = (opus_attempts + fable_attempts) if prefer_opus else (fable_attempts[:1] + opus_attempts + fable_attempts[1:])
+        attempts = (opus_attempts + fable_attempts) if prefer_opus else (fable_attempts + opus_attempts)
 
         # Provider-lineage logging (V1.1, 2026-08-17 -- SRF3 forensic audit
         # follow-up): the audit had to reconstruct which model actually
@@ -739,9 +755,7 @@ class LLMMixin:
                     check_truncation=True,
                 )
                 _fallback_used = _idx > 0
-                if "direct" in label:
-                    self.logger.warning("Editorial model: CLIProxy bypassed — %s active", label)
-                elif "Opus" in label:
+                if "Opus" in label and not prefer_opus:
                     self.logger.warning("Editorial model: Fable unavailable — %s active", label)
                 self.logger.info(
                     "Editorial model lineage: requested_model=%s actual_model=%s label=%s fallback_used=%s",
@@ -751,7 +765,7 @@ class LLMMixin:
             except Exception as e:
                 self.logger.warning("Editorial model %s failed: %s", label, e)
 
-        self.logger.error("Editorial model: all attempts failed (CLIProxy + direct OpenRouter)")
+        self.logger.error("Editorial model: all attempts failed (direct OpenRouter)")
         self.logger.info(
             "Editorial model lineage: requested_model=%s actual_model=None label=None fallback_used=True (all failed)",
             requested_model,
@@ -1707,8 +1721,8 @@ class LLMMixin:
         try:
             self.logger.info("Opus targeted revision: applying %d editorial notes...", len(editorial_notes))
             revised = self._call_openai_compat_api(
-                CLIPROXY_URL, CLIPROXY_KEY, system, user,
-                model="openrouter/claude-opus-4.8", max_tokens=5000, timeout=180,
+                OPENROUTER_URL, OPENROUTER_API_KEY, system, user,
+                model="anthropic/claude-opus-4.8", max_tokens=5000, timeout=180,
                 check_truncation=True,
             )
             if revised and len(revised) > 400:

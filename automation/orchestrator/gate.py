@@ -20,7 +20,7 @@ not done as part of this extraction, which is a pure relocation.
 """
 import re
 
-from .config import CLIPROXY_URL, CLIPROXY_KEY
+from .config import OPENROUTER_URL, OPENROUTER_API_KEY
 
 
 class GateMixin:
@@ -61,9 +61,9 @@ class GateMixin:
             )
             try:
                 verdict = self._call_openai_compat_api(
-                    url=CLIPROXY_URL, api_key=CLIPROXY_KEY,
+                    url=OPENROUTER_URL, api_key=OPENROUTER_API_KEY,
                     system_prompt=SUBJECT_SYSTEM, user_prompt=content,
-                    model="openrouter/claude-opus-4.8", max_tokens=100, timeout=60,
+                    model="anthropic/claude-opus-4.8", max_tokens=100, timeout=60,
                 )
                 if verdict.strip().upper().startswith("FAIL"):
                     violations.append(f"SUSTAINED SUBJECT — {verdict.strip()}")
@@ -345,11 +345,11 @@ class GateMixin:
         gate_llm_ok = True
         try:
             raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=GATE_SYSTEM,
                 user_prompt=content,
-                model="openrouter/claude-sonnet-4.6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=1010,  # was 400 — a rule-verdict list at ~25+ tokens/rule plus
                                  # preamble routinely truncated before the tail rules, and
                                  # truncation was indistinguishable from "passed" to the
@@ -548,11 +548,11 @@ class GateMixin:
 
         try:
             fixed = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=FIX_SYSTEM,
                 user_prompt=fix_prompt,
-                model="openrouter/claude-sonnet-4.6",
+                model="anthropic/claude-sonnet-4.6",
                 max_tokens=5000,
                 timeout=120,
             )

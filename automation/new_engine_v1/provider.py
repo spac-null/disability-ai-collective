@@ -3,8 +3,10 @@ provider.py -- the model transport for NEW_ENGINE_V1.
 
 PRODUCTION FIDELITY, deliberately
 Same endpoint, same auth and the same model identifiers the legacy editorial path
-uses: the local CLIProxy (`http://127.0.0.1:8317/v1`, production's own proxy in front
-of OpenRouter) with a direct-OpenRouter fallback. Reimplemented here as a ~40-line
+uses: direct OpenRouter. (Until 2026-09-04 both paths went through the local
+CLIProxyAPI first; a live probe showed that hop returned 500 "unknown provider" for
+this module's own DEFAULT_MODEL, so the rung could never succeed and every call paid
+for it before falling through.) Reimplemented here as a ~40-line
 stdlib POST rather than imported from `orchestrator.llm`, for one reason only: this
 package must carry NO legacy prompt surface, and a test asserts that by scanning
 imports. The transport is identical; the prompt machinery is not inherited.
@@ -30,9 +32,8 @@ from dataclasses import dataclass, field
 
 import bounded_http
 
-# Production's own values (orchestrator/config.py). Read at call time, not import
-# time, so a test can point them somewhere harmless.
-DEFAULT_CLIPROXY_URL = "http://127.0.0.1:8317/v1"
+# Production's own value (orchestrator/config.py). Read at call time, not import
+# time, so a test can point it somewhere harmless.
 OPENROUTER_URL = "https://openrouter.ai/api/v1"
 
 # The model the migration targets for editorial reasoning and prose. Same family the
@@ -103,12 +104,11 @@ def _extract(body: dict) -> tuple[str, str, dict]:
 
 
 class Provider:
-    """CLIProxy first, direct OpenRouter as fallback. Raises rather than degrading."""
+    """Direct OpenRouter. Raises rather than degrading."""
 
-    def __init__(self, model: str = DEFAULT_MODEL, cliproxy_url: str | None = None):
+    def __init__(self, model: str = DEFAULT_MODEL, url: str | None = None):
         self.model = model
-        self.cliproxy_url = cliproxy_url or os.environ.get(
-            "NEW_ENGINE_CLIPROXY_URL", DEFAULT_CLIPROXY_URL)
+        self.url = url or os.environ.get("NEW_ENGINE_PROVIDER_URL", OPENROUTER_URL)
 
     def complete(self, system: str, user: str, max_tokens: int = 3000,
                  timeout: int = 180, temperature: float | None = None,
@@ -116,11 +116,11 @@ class Provider:
         """`deadline` is an absolute time.monotonic() value, optional and off by
         default so the authoritative pipeline is untouched.
 
-        It matters because of how the fallback works: CLIProxy and OpenRouter are tried
-        in sequence and each would otherwise get its own fresh `timeout`, so one call
-        can cost twice what its argument suggests. A deadline is SHARED by both legs --
-        whatever the first spends, the second inherits what is left -- so the total for
-        one complete() cannot outlive it however the legs divide the time between them.
+        It was introduced when this method had two rungs (CLIProxy, then OpenRouter),
+        each of which got its own fresh `timeout`, so one call could cost twice what its
+        argument suggested. Only the OpenRouter rung remains, but the deadline is kept:
+        it is the caller's own upper bound on a complete(), independent of how many rungs
+        happen to exist, and dropping it would silently loosen every caller that passes it.
         """
         payload = {
             "model": self.model,
@@ -133,8 +133,7 @@ class Provider:
 
         attempts = []
         for label, url, key in (
-            ("CLIProxy", self.cliproxy_url, os.environ.get("CLIPROXY_KEY", "")),
-            ("OpenRouter", OPENROUTER_URL, os.environ.get("OPENROUTER_API_KEY", "")),
+            ("OpenRouter", self.url, os.environ.get("OPENROUTER_API_KEY", "")),
         ):
             if not url:
                 continue
