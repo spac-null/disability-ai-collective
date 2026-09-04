@@ -1798,9 +1798,14 @@ def test_cut_confidence_tiers_and_what_still_holds_an_article():
     low = audit("The usual channels carried the assembled argument.")
     check("a bare everyday token does NOT hold the article",
           not any("CUT_LEAKAGE" in b for b in low["blocking"]), low["blocking"])
-    check("but it IS recorded as telemetry",
-          any(x["term"].lower() in ("channel", "assembled")
-              for x in low["cut_telemetry"]), low["cut_telemetry"])
+    check("but it IS recorded as a CUT_ADVISORY, never discarded",
+          any(x["token"].lower() in ("channel", "assembled")
+              and x["kind"] == CP.CUT_ADVISORY for x in low["advisories"]),
+          low["advisories"])
+    adv = next(x for x in low["advisories"] if x["kind"] == CP.CUT_ADVISORY)
+    for field in ("token", "sentence", "rule", "why_not_hard"):
+        check("   the advisory carries its %s" % field, adv.get(field), adv)
+    check("   and names the originating cut fact", "cut fact F09" in adv["rule"], adv)
 
     # A HIGH-confidence shape still holds.
     for extra, why in (("The board cost $412.90.", "a price"),
@@ -1820,6 +1825,63 @@ def test_cut_confidence_tiers_and_what_still_holds_an_article():
           any(CP.cut_term_confidence(x) == CP.CUT_HIGH
               for x in r["high_confidence_terms"].get("F09", [])),
           r.get("high_confidence_terms"))
+
+
+def test_spatial_and_scene_tokens_are_advisory_and_reach_the_reader():
+    """"upper limit" is a range, not a storey, and the canary was held by exactly that
+    while the packet licensed the idea. A bare SPATIAL_RISK or SCENE_RISK token cannot
+    decide its own sense, so it is advisory -- but SENSORY stays HARD, because a colour
+    the evidence never mentions is the "pink" incident and there is no abstract reading
+    of it."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+
+    def audit(extra):
+        return CP.safety_audit(DRAFT, DRAFT + "\n\n" + extra, packet, ARCH, LEDGER,
+                               {}, {"cut_without_distinctive_terms": ["F07"]})
+
+    sp = audit("The upper limit of what a visitor hears was set by hand.")
+    check("a bare spatial token does not hold the article",
+          not any("NEW_UNSUPPORTED_FACTS" in b for b in sp["blocking"]), sp["blocking"])
+    check("it is reported as SPATIAL_ADVISORY",
+          any(a["kind"] == CP.SPATIAL_ADVISORY and a["token"] == "upper"
+              for a in sp["advisories"]), sp["advisories"])
+    a = next(x for x in sp["advisories"] if x["kind"] == CP.SPATIAL_ADVISORY)
+    check("   with the article sentence", "upper limit" in a["sentence"], a)
+    check("   and the originating rule", a["rule"] == "story.SPATIAL_RISK", a)
+    check("   and why it was not hard", "cannot decide" in a["why_not_hard"], a)
+
+    sc = audit("A laptop sat open on the desk.")
+    check("a bare scene token does not hold either",
+          not any("NEW_UNSUPPORTED_FACTS" in b for b in sc["blocking"]), sc["blocking"])
+    check("it is reported as SCENE_ADVISORY",
+          any(x["kind"] == CP.SCENE_ADVISORY for x in sc["advisories"]),
+          sc["advisories"])
+
+    # SENSORY, NUMBERS and ENTITIES stay HARD.
+    for extra, why in (("The bricks were pink.", "an invented colour"),
+                       ("It cost 4,200 euros.", "an unlicensed number"),
+                       # NOT sentence-initial: _entities skips a leading capital,
+                       # because a capital there carries no information.
+                       ("The plinth was paid for by Rotterdam.",
+                        "an unlicensed entity")):
+        out = audit(extra)
+        check("%s STILL holds the article" % why,
+              any("NEW_UNSUPPORTED_FACTS" in b for b in out["blocking"]),
+              (extra, out["blocking"]))
+
+    # And the advisories reach the Reader as questions, not verdicts.
+    block = CP.advisory_block(sp["advisories"])
+    check("the reader is shown the advisory", "upper" in block)
+    check("and told it is not a finding",
+          "Not findings" in block and "Settle each one" in block, block[:200])
+    check("an empty advisory list adds nothing to the prompt",
+          CP.advisory_block([]) == "")
+    prov = Scripted([READER_OK])
+    out = CP.reader_gate(prov, DRAFT, sp["advisories"])
+    check("the reader gate accepts them and records how many",
+          out["advisories_shown"] == len(sp["advisories"]), out)
+    check("and they appear in its prompt",
+          "ADVISORY FLAGS" in prov.calls[0]["user"])
 
 
 def test_a_worth_hold_stops_the_article_before_composition():

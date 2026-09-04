@@ -1252,6 +1252,25 @@ def _is_distinctive(term: str, df: dict) -> bool:
 CUT_HIGH = "HIGH"
 CUT_LOW = "LOW"
 
+# Advisory kinds. A low-confidence lexical hit is surfaced, never silently discarded, and
+# travels to the Reader and the human review that can read a sense rather than a string.
+CUT_ADVISORY = "CUT_ADVISORY"
+SPATIAL_ADVISORY = "SPATIAL_ADVISORY"
+SCENE_ADVISORY = "SCENE_ADVISORY"
+
+_WHY_ADVISORY = ("the only evidence is the token itself, and a single lexical match "
+                 "cannot decide a physical sense from an abstract one; structural "
+                 "safety still holds this sentence if it violates a hard contract")
+
+
+def _sentence_containing(text: str, token: str) -> str:
+    """The article sentence a token appears in, so an advisory is readable."""
+    low = token.lower()
+    for s in CE.sentences(text):
+        if low in s.lower():
+            return s.strip()
+    return ""
+
 _ALNUM_ID = re.compile(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9][A-Za-z0-9.\-/]*$")
 # The same shape, found inside running text.
 _IDENTIFIER = re.compile(
@@ -1958,16 +1977,19 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
         surface = ST.factual_surface_audit(text, packet)
         ents = [e for e in surface["unapproved_entities"]
                 if not _possessive_of_approved(e)]
-        if ents != surface["unapproved_entities"]:
-            surface = dict(surface,
-                           unapproved_entities=ents,
-                           possessives_forgiven=[
-                               e for e in surface["unapproved_entities"]
-                               if _possessive_of_approved(e)],
-                           hard_ok=not (surface["unapproved_numbers"] or ents
-                                        or surface["unapproved_sensory"]
-                                        or surface["unapproved_scene"]
-                                        or surface["unapproved_spatial"]))
+        # SCENE AND SPATIAL TOKENS ARE ADVISORY. A bare word cannot decide its own sense:
+        # "upper limit" is a range, not a storey, and the canary was held by exactly that
+        # while the packet licensed the idea. Numbers, named entities and SENSORY
+        # assertions stay HARD -- a colour the evidence never mentions is the "pink"
+        # incident, and there is no abstract reading of it.
+        surface = dict(surface,
+                       unapproved_entities=ents,
+                       possessives_forgiven=[e for e in surface["unapproved_entities"]
+                                             if _possessive_of_approved(e)],
+                       advisory_scene=list(surface["unapproved_scene"]),
+                       advisory_spatial=list(surface["unapproved_spatial"]),
+                       hard_ok=not (surface["unapproved_numbers"] or ents
+                                    or surface["unapproved_sensory"]))
         neg = ST.negative_admission_audit(text, ledger)
         return {
             "words": len(text.split()),
@@ -1991,9 +2013,9 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
         s = f["factual_surface"]
         blocking.append(
             "NEW_UNSUPPORTED_FACTS: the final prose carries factual surface the packet "
-            "never granted -- numbers=%s entities=%s sensory=%s scene=%s spatial=%s"
-            % (s["unapproved_numbers"], s["unapproved_entities"], s["unapproved_sensory"],
-               s["unapproved_scene"], s["unapproved_spatial"]))
+            "never granted -- numbers=%s entities=%s sensory=%s"
+            % (s["unapproved_numbers"], s["unapproved_entities"],
+               s["unapproved_sensory"]))
     # THE LEXICAL AUDIT IS THE FAST PATH. Anything it already licenses passes without
     # provenance being consulted at all. Only what it CANNOT see -- a faithful sentence
     # narrower than the fact it renders -- may be admitted by a verified Writer
@@ -2057,13 +2079,33 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
             "terms below the length floor %s -- the audit would report clean prose "
             "without having looked" % (unexplained, ca["skipped_too_short"]))
 
+    # ── ADVISORIES, surfaced and never discarded ─────────────────────────────
+    advisories = []
+    for v in soft:
+        advisories.append({
+            "kind": CUT_ADVISORY, "token": v["term"],
+            "sentence": _sentence_containing(final_text, v["term"]),
+            "rule": "cut fact %s (%s), matched %s"
+                    % (v["evidence_id"], v.get("reason"), v.get("match")),
+            "why_not_hard": _WHY_ADVISORY})
+    for tok in f["factual_surface"].get("advisory_spatial") or []:
+        advisories.append({
+            "kind": SPATIAL_ADVISORY, "token": tok,
+            "sentence": _sentence_containing(final_text, tok),
+            "rule": "story.SPATIAL_RISK",
+            "why_not_hard": _WHY_ADVISORY})
+    for tok in f["factual_surface"].get("advisory_scene") or []:
+        advisories.append({
+            "kind": SCENE_ADVISORY, "token": tok,
+            "sentence": _sentence_containing(final_text, tok),
+            "rule": "story.SCENE_RISK",
+            "why_not_hard": _WHY_ADVISORY})
+
     return {"status": HOLD if blocking else PASS,
             "blocking": blocking,
             "audits": a,
             "cut_terms_without_a_sentinel": sorted(explained),
-            "cut_telemetry": [{"evidence_id": v["evidence_id"], "term": v["term"],
-                               "match": v["match"], "confidence": CUT_LOW}
-                              for v in soft],
+            "advisories": advisories,
             "negatives_admitted_by_provenance": admitted,
             "negatives_licensed_lexically":
                 f["negative_admission"]["negative_sentences"]
@@ -2247,10 +2289,32 @@ READER_SCHEMA = (
 )
 
 
-def reader_gate(provider, article_text: str) -> dict:
+def advisory_block(advisories: list) -> str:
+    """Low-confidence lexical findings, handed to the stage that can read a sense.
+
+    They are NOT verdicts and are not presented as ones: each says which token matched,
+    which rule matched it, and why the machine declined to decide. The reader is asked to
+    settle them, which is exactly what a screen keyed on a bare word cannot do.
+    """
+    if not advisories:
+        return ""
+    L = ["", "", "ADVISORY FLAGS -- machine screens that matched a WORD and could not "
+                 "decide its sense. Not findings. Settle each one as a reader:"]
+    for a in advisories[:12]:
+        L.append("  [%s] %r in: %s"
+                 % (a["kind"], a["token"], (a.get("sentence") or "")[:180]))
+    L.append("  If any of these sentences asserts something the article has not earned, "
+             "say so under the dimension it damages. If it reads as ordinary English, "
+             "ignore it.")
+    return "\n".join(L) + "\n"
+
+
+def reader_gate(provider, article_text: str, advisories: list | None = None) -> dict:
     """STAGE 10. Nine dimensions. Exact passages on a HOLD. No auto-rewrite."""
     obj, ident = _ask(provider, READER_SYSTEM,
-                      "THE ARTICLE\n\n" + article_text + "\n\n" + READER_SCHEMA,
+                      "THE ARTICLE\n\n" + article_text
+                      + advisory_block(advisories or [])
+                      + "\n\n" + READER_SCHEMA,
                       4_000, READER, READER_HOLD)
     dims = obj.get("dimensions") or {}
     missing = [d for d in READER_DIMENSIONS if d not in dims]
@@ -2264,6 +2328,7 @@ def reader_gate(provider, article_text: str) -> dict:
             "held": held,
             "passages": {d: (v or {}).get("passages") or [] for d, v in held.items()},
             "one_line": obj.get("one_line", ""),
+            "advisories_shown": len(advisories or []),
             "provider": ident, "model_calls": 1}
 
 
@@ -2330,6 +2395,7 @@ def run_story_architecture_composition(
             "model_calls_by_stage": dict(calls),
             "model_calls_total": sum(calls.values()),
             "repairs_by_stage": {k: v for k, v in repairs.items() if v},
+            "advisories": (st.get(SAFETY) or {}).get("advisories") or [],
             "runtime_by_stage": dict(elapsed),
             "replay": bool(replay),
             "replayed_stages": sorted(s for s in STAGES
@@ -2442,7 +2508,7 @@ def run_story_architecture_composition(
             st[FACT_CHECK] = {"status": SKIPPED}
 
         if reader:
-            rg = record(READER, reader_gate(P, final))
+            rg = record(READER, reader_gate(P, final, sa.get("advisories")))
             if rg["status"] != PASS:
                 return out(READER,
                            "reader HOLD on %s" % ", ".join(sorted(rg["held"])),
