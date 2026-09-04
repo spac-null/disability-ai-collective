@@ -830,3 +830,176 @@ def validate_final_lens(final_lens: dict, arch: dict, ledger: dict) -> list:
         errs.append("what_changes_for_the_reader does not describe a change in "
                     "understanding")
     return errs
+
+
+# ── ONE IDEA, ONE SEMANTIC OWNER ─────────────────────────────────────────────
+# The last defect two independent readers found in the Jia final was not prose. The
+# article stated one insight five times, climbing:
+#
+#   "The account keeps what the sand was said to mean and loses what it was to stand on it."
+#   "That is the shape of the whole record."
+#   "It holds the meanings and drops the encounters."
+#   "A record decides what kind of perceiving it can carry."
+#   "Then whatever it carried becomes the thing anyone downstream can weigh."
+#
+# The Continuity Editor could not remove any of them, because each was a declared beat.
+# Deleting a beat is a semantic decision, and this stage is where semantic decisions
+# live. So redundancy is removed HERE, before the packet exists.
+#
+# A field in the architecture does not earn a paragraph. A beat does not earn a sentence
+# because it exists in JSON. Schema completeness is not article completeness.
+EVIDENCE = "EVIDENCE"
+STORY_EVENT = "STORY_EVENT"
+COMPLICATION = "COMPLICATION"
+LENS_OWNER = "LENS_OWNER"
+CONSEQUENCE = "CONSEQUENCE"
+CALLBACK = "CALLBACK"
+PROP_ROLES = (EVIDENCE, STORY_EVENT, COMPLICATION, LENS_OWNER, CONSEQUENCE, CALLBACK)
+
+# Roles that state the insight in the abstract. Only one proposition may do that.
+ABSTRACTING_ROLES = (LENS_OWNER,)
+
+
+def _prop_key(text: str) -> set:
+    return {w for w in re.findall(r"[a-z]{4,}", (text or "").lower())
+            if w not in _FUNCTION_WORDS}
+
+
+def restates(a: str, b: str, threshold: float = 0.5) -> float:
+    """Overlap of content words, as a redundancy SIGNAL.
+
+    Deliberately crude and deliberately reported: the campaign's four Jia restatements
+    are not lexically identical, so a similarity number cannot settle the question. It
+    says which pairs a human or an evaluator should look at, and the role contract -- not
+    this number -- is what actually forbids a second abstraction.
+    """
+    ka, kb = _prop_key(a), _prop_key(b)
+    if not ka or not kb:
+        return 0.0
+    return len(ka & kb) / min(len(ka), len(kb))
+
+
+def validate_propositions(props: list) -> list:
+    """Exactly one owner of the explicit lens claim; everything else must add something."""
+    errs = []
+    ids = [p.get("proposition_id") for p in props]
+    if len(ids) != len(set(ids)):
+        errs.append("duplicate proposition_id")
+    owners = [p for p in props if p.get("role") == LENS_OWNER]
+    if len(owners) > 1:
+        errs.append("%d propositions claim LENS_OWNER; the lens has exactly one semantic "
+                    "owner: %s" % (len(owners), [p.get("proposition_id") for p in owners]))
+    if not owners:
+        errs.append("no LENS_OWNER: the lens needs one explicit articulation, not zero")
+    for p in props:
+        pid = p.get("proposition_id") or "<no id>"
+        if p.get("role") not in PROP_ROLES:
+            errs.append("%s: role %r not in %s" % (pid, p.get("role"), PROP_ROLES))
+            continue
+        if not (p.get("proposition") or "").strip():
+            errs.append("%s: empty proposition" % pid)
+        # every non-owner must say what it ADDS, or it is repetition with a job title
+        if p["role"] in (CONSEQUENCE, COMPLICATION) and not (p.get("adds") or "").strip():
+            errs.append("%s: a %s must state what is new in it, or it is a paraphrase "
+                        "wearing a role" % (pid, p["role"]))
+        if p["role"] == CALLBACK and not (p.get("returns_to") or "").strip():
+            errs.append("%s: a CALLBACK must name the concrete carrier it returns to" % pid)
+        for f in (p.get("supported_by") or []):
+            if not str(f).startswith("F"):
+                errs.append("%s: supported_by %r is not a fact id" % (pid, f))
+    return errs
+
+
+# A proposition is ABSTRACT when it names no concrete carrier and rests on no fact -- it
+# is a claim about how things work rather than about what happened. Two abstractions of
+# one insight are the redundancy this gate exists for.
+def is_abstract(prop: dict, carriers: set | None = None) -> bool:
+    text = (prop.get("proposition") or "").lower()
+    if prop.get("supported_by"):
+        return False
+    for n in (carriers or set()):
+        if n and n.lower() in text:
+            return False
+    return True
+
+
+def semantic_redundancy(props: list, threshold: float = 0.5,
+                        carriers: set | None = None) -> dict:
+    """Which propositions climb the same ladder?
+
+    Word overlap is a weak signal here and the campaign proved it: the two Jia
+    abstractions -- "it holds meanings and drops encounters" and "a record decides what
+    kind of perceiving it can carry" -- are the same idea with ZERO shared content words,
+    and an overlap test scored them 0.00. So the load-bearing check is structural: more
+    than one ABSTRACT proposition means the article explains itself twice, whatever
+    vocabulary each one uses. Overlap is still reported, for the cases where it does fire.
+
+    Evidence is exempt. An EVIDENCE proposition sharing vocabulary with the insight it
+    feeds is the article working, not repeating.
+    """
+    flagged, abstracts = [], []
+    for p in props:
+        if p.get("role") != EVIDENCE and is_abstract(p, carriers):
+            abstracts.append(p)
+    if len(abstracts) > 1:
+        flagged.append({"kind": "MULTIPLE_ABSTRACTIONS",
+                        "ids": [p.get("proposition_id") for p in abstracts],
+                        "roles": [p.get("role") for p in abstracts],
+                        "detail": "each states the insight in the abstract; one owner only"})
+    for i, a in enumerate(props):
+        for b in props[i + 1:]:
+            if a.get("role") == EVIDENCE or b.get("role") == EVIDENCE:
+                continue
+            r = restates(a.get("proposition", ""), b.get("proposition", ""))
+            if r >= threshold:
+                flagged.append({"kind": "WORD_OVERLAP",
+                                "pair": [a.get("proposition_id"), b.get("proposition_id")],
+                                "roles": [a.get("role"), b.get("role")],
+                                "overlap": round(r, 2)})
+    return {"flagged": flagged, "ok": not flagged,
+            "abstract_count": len(abstracts)}
+
+
+def validate_ending_does_not_restate(arch: dict, props: list) -> list:
+    """The ending may EMBODY the insight. It may not explain it again."""
+    errs = []
+    ending = (arch.get("ending_move") or "").strip()
+    if not ending:
+        return ["ending_move missing"]
+    owner = next((p for p in props if p.get("role") == LENS_OWNER), None)
+    if owner:
+        r = restates(ending, owner.get("proposition", ""))
+        if r >= 0.4:
+            errs.append("ending_move restates the lens proposition (overlap %.2f); it "
+                        "may embody the insight but not explain it again" % r)
+    for pat in (r"\btherefore\b", r"\bin the end\b", r"\bwhat this (?:means|shows)\b",
+                r"\bthe lesson\b", r"\bwhich is to say\b", r"\bin other words\b"):
+        if re.search(pat, ending, re.I):
+            errs.append("ending_move uses a summarising construction (%s)"
+                         % pat.replace(r"\b", ""))
+    return errs
+
+
+def collapse_turn_and_crip_turn(arch: dict, props: list, threshold: float = 0.5,
+                                carriers: set | None = None) -> dict:
+    """If `turn` and `crip_turn` encode the same movement they must not both be prose.
+
+    Schema cardinality is not an editorial requirement. Returns the advice rather than
+    editing the architecture, so the collapse is a recorded decision.
+    """
+    t, c = (arch.get("turn") or "").strip(), (arch.get("crip_turn") or "").strip()
+    if not t or not c:
+        return {"collapse": False, "reason": "only one of the two is present"}
+    r = restates(t, c)
+    # Word overlap alone said "distinct" for the two Jia beats that plainly encoded one
+    # movement, so the structural test decides: if BOTH are abstractions of the insight,
+    # they are one movement however differently they are worded.
+    both_abstract = (is_abstract({"proposition": t}, carriers)
+                     and is_abstract({"proposition": c}, carriers))
+    collapse = bool(r >= threshold or both_abstract)
+    return {"collapse": collapse, "overlap": round(r, 2),
+            "both_abstract": both_abstract,
+            "reason": ("turn and crip_turn are both abstractions of the same insight; "
+                       "one prose beat" if both_abstract else
+                       "high word overlap; one prose beat" if r >= threshold else
+                       "distinct movements")}

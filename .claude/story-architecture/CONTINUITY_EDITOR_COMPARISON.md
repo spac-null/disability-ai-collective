@@ -110,3 +110,73 @@ Every published post was checked for a complete new-engine evidence run. Exactly
 one — Roman — and Roman is correctly HELD (`WEAK_ANALOGY`; its intended ending is a
 world-scoped negative-existence claim the evidence cannot support). No Worth Gate was
 weakened to manufacture a sample. Per §49 this caps the classification.
+
+---
+
+# Semantic compression (final iteration)
+
+Owner ruling: the Story Architect may not require multiple restatements of one lens
+proposition. The defect was upstream, not a Continuity Editor failure.
+
+## What changed in the architecture
+
+Propositions now carry a **role** — EVIDENCE, STORY_EVENT, COMPLICATION, LENS_OWNER,
+CONSEQUENCE, CALLBACK — and **exactly one** may be LENS_OWNER. `turn` collapsed into
+`crip_turn` (recorded as `turn_collapsed_into`), and `ending_move` is now checked against
+the lens so it may embody the insight without explaining it again.
+
+**A finding worth keeping:** word overlap is nearly useless for this job. The two Jia
+abstractions — *"it holds the meanings and drops the encounters"* and *"a record decides
+what kind of perceiving it can carry"* — are the same idea with **zero shared content
+words**, and an overlap test scores them **0.00**. The load-bearing check had to be
+structural: more than one *abstract* proposition means the article explains itself twice,
+whatever words each uses. The role contract, not the similarity number, is the control.
+
+Also honest: the collapse of `turn` and `crip_turn` in the Jia case was **my editorial
+judgement**, not the gate's. Both beats named a carrier, so the abstraction test correctly
+said "distinct". The gate catches duplicate *abstractions*; it cannot detect two
+concrete-anchored beats encoding one movement.
+
+## Result
+
+| | continuity final | compression final |
+|---|---|---|
+| words / paragraphs | 403 / 12 | **323 / 8** |
+| distinct statements of the central idea | **5–7** | **2–3** |
+| signpost openers | 3 | **0** |
+| lens articulated | 5 ways | **once** |
+| semantic delta | — | **0 on every channel** |
+
+**Blind reader: compression, clear.** Non-repetition 2→4, visible scaffolding 2→4,
+momentum 2→4, ending 3→5. **Blind editor: compression, clear.** Asked directly whether
+saying it once cost anything: *"Almost nothing, and what it cost is not the insight — it
+is two beats of rhythm."*
+
+Both editors independently required one further deletion — the abstract clause
+*"described by the part of itself that could be written down"* immediately followed by its
+own concrete restatement. Applied; the paragraph now runs "The salt room is on that list.
+Its mineral is in the record; its content is not."
+
+## Why this is a HOLD, not a PASS
+
+The **solo** reader — article only, no comparison — still returns
+**VISIBLE_SCAFFOLDING**, and on the lens says the piece reads *"about 60% media
+criticism, 40% something sharper it declines to say out loud."* That is weaker than the
+earlier minimal variant, where the same test recovered the lens cleanly.
+
+The mechanism is precise and it is a genuine tension in the brief. §14 requires **one**
+explicit lens articulation, not zero. But the solo reader experiences that single
+articulation as the one place the article stops trusting them:
+
+> "A record decides what kind of perceiving it can carry… I understood that at ¶7 and had
+> it confirmed by the last sentence of ¶9. This sentence tells me the moral of a story I
+> had already finished reading. It's the one place the article stops trusting me."
+
+So the remaining defect is not repetition any more — it is that **a standalone abstract
+articulation reads as thesis-announcement however few times it appears**. Cutting it
+satisfies the writtenness gate and violates the lens gate; keeping it satisfies the lens
+gate and fails the writtenness gate. That is the one mechanism left, and it is an owner
+decision about which gate yields.
+
+Second, unchanged and named by every solo reader: the article contains no perceiver. It
+prosecutes a record for reporting no perception while itself reporting none.
