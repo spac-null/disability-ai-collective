@@ -865,12 +865,20 @@ def test_the_derived_cut_terms_are_clean_on_the_frozen_manual_ARTICLE():
     # The words that caused the false positives are now refused outright.
     df = CP._document_frequency(led)
     for junk in ("change", "moves", "form", "tell", "There", "Another", "visual",
-                 "real", "unit", "figure", "without", "reached", "options", "press"):
+                 "real", "unit", "figure", "without", "reached", "options", "press",
+                 # Multi-sense ordinary nouns. Each of these collided in a real run or
+                 # is the same shape as one that did: cut F33 described the device's
+                 # "curved rear channel", a physical groove, and the article wrote "the
+                 # usual channels", meaning media. Same string, unrelated senses, and a
+                 # substring matcher cannot tell them apart.
+                 "channel", "channels", "surface", "reading", "record", "field",
+                 "layer", "frame", "account", "margin", "position", "instrument"):
         check("%r is refused as a sentinel" % junk,
               not CP._is_distinctive(junk, df), junk)
     # And the specific ones are still accepted.
     for good in ("photogrammetry", "quantile", "12.15", "Idle Hands", "specifications",
-                 "10,000", "inflate", "subsidy"):
+                 "10,000", "inflate", "subsidy", "capture", "circuit", "ESP32S3",
+                 "Reality Capture", "download", "override"):
         check("%r is accepted as a sentinel" % good,
               CP._is_distinctive(good, df), good)
 

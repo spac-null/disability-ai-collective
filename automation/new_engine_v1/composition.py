@@ -1121,6 +1121,16 @@ upon used useful using usual usually value various very view visual want water w
 what when where whether which while whole will with within without work would year
 because project correspond corresponding correspondingly across
 continuous continuously contiguous
+channel channels surface surfaces edge edges layer layers band bands frame frames
+field fields ground grounds body bodies scale scales weight weights measure measures
+reading readings signal signals pattern patterns picture pictures window windows
+account accounts figure figures margin margins register registers record records
+release releases pressure pressures distance distances position positions angle angles
+range ranges gradient gradients threshold thresholds standard standards
+condition conditions quality qualities property properties feature features
+element elements object objects material materials structure structures
+version versions method methods practice practices sector sectors
+resistance instrument instruments device devices display displays
 """.split()} | {ST._stem(w) for w in ST._FUNCTION_WORDS}
 
 _WORD = re.compile(r"[A-Za-z0-9][A-Za-z0-9.,'-]*")
