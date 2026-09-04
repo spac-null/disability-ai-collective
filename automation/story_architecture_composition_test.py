@@ -858,6 +858,63 @@ def test_the_derived_cut_terms_are_clean_on_the_frozen_manual_ARTICLE():
               CP._is_distinctive(good, df), good)
 
 
+def test_continuity_is_fail_safe_and_never_destroys_a_safe_article():
+    """Continuity is an OPTIONAL linguistic improvement over prose that is already
+    correct, so it is not allowed to destroy one. The Ground Truth canary lost an
+    otherwise-clean article to a single COMPARISON relation the editor added.
+
+    The validator is NOT weakened. The edit is discarded whole and the Writer draft
+    carries on -- deterministically, with no second Continuity call, no Writer
+    regeneration and no repair prose."""
+    # An editor that invents a causal relation while naming a real parent.
+    edits = _edits_from(DRAFT)
+    edits["edits"][3]["text"] = ("The catalogue records eight rooms because each entry "
+                                 "was written to a fixed form.")
+    prov, out = run(full_script()[:4] + [edits, READER_OK])
+    cont = out["detail"][CP.CONTINUITY]
+    check("the run still completes", out["status"] == CP.PASS,
+          out.get("failure_reason"))
+    check("continuity was discarded", cont.get("discarded") is True)
+    check("and the reason is recorded",
+          any("relation" in str(e) for e in cont.get("discard_reason") or []),
+          cont.get("discard_reason"))
+    check("the WRITER DRAFT is what carried", cont["carried_text"] == "writer_draft")
+    check("the article returned is the draft, not the edit",
+          out["article_text"].strip() == DRAFT.strip())
+    check("safety records which text it audited",
+          out["detail"][CP.SAFETY]["carried_text"] == "writer_draft")
+    stages = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("NO SECOND CONTINUITY CALL", stages.count("CONTINUITY") == 1, stages)
+    check("NO WRITER REGENERATION", stages.count("WRITER") == 1, stages)
+    check("and the run went on to the reader gate",
+          out["stages"][CP.READER] == CP.PASS, out["stages"])
+
+    # A clean editor is still used, and its text is what carries.
+    prov2, out2 = run(full_script())
+    cont2 = out2["detail"][CP.CONTINUITY]
+    check("a clean continuity pass is not discarded",
+          not cont2.get("discarded"), cont2.get("discard_reason"))
+    check("and its text carries", cont2["carried_text"] == "continuity_final")
+
+    # If the DRAFT is also unsafe, the run HOLDs -- the fallback is not an escape hatch.
+    bad = DRAFT.replace("The room was built from Himalayan salt bricks",
+                        "The room was built from pink Himalayan salt bricks")
+    e2 = _edits_from(bad)
+    e2["edits"][3]["text"] = ("The catalogue records eight rooms because each entry was "
+                              "written to a fixed form.")
+    prov3, out3 = run(full_script()[:3] + [bad, e2, READER_OK])
+    check("a discarded edit over an unsafe draft HOLDS",
+          out3["failure_stage"] == CP.SAFETY, out3.get("failure_stage"))
+    check("and says both things happened",
+          "continuity was discarded" in out3["failure_reason"]
+          and "did not pass either" in out3["failure_reason"],
+          out3["failure_reason"][:200])
+    check("the grounder was never reached",
+          out3["stages"][CP.GROUNDING] == CP.NOT_RUN)
+    check("still no regeneration",
+          [prov3.stage_of(i) for i in range(len(prov3.calls))].count("WRITER") == 1)
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
@@ -1081,11 +1138,13 @@ def test_continuity_runs_exactly_once():
 
 
 def test_a_failed_safety_audit_does_not_regenerate_anything():
-    # An invented colour: approved by nothing in the packet.
-    edits = _edits_from(DRAFT)
-    edits["edits"][0]["text"] = ("The room was built from pink Himalayan salt bricks, "
-                                 "and the pavilion was dug partway into the ground.")
-    prov, out = run(full_script()[:4] + [edits, READER_OK])
+    # An invented colour, in the WRITER's own draft. It has to originate there rather
+    # than in the editor: an editor that invents something is discarded by the continuity
+    # fail-safe, so a continuity-introduced defect never reaches the safety stack. This
+    # test is about what happens when the ARTICLE ITSELF is unsafe.
+    bad_draft = DRAFT.replace("The room was built from Himalayan salt bricks",
+                              "The room was built from pink Himalayan salt bricks")
+    prov, out = run(full_script()[:3] + [bad_draft, _edits_from(bad_draft), READER_OK])
     check("the run holds at safety", out["failure_stage"] == CP.SAFETY,
           out.get("failure_stage"))
     check("the unapproved surface is named",
@@ -1099,6 +1158,8 @@ def test_a_failed_safety_audit_does_not_regenerate_anything():
           stages_called)
     check("the held article is still returned for a human to read",
           bool(out["article_text"]))
+    check("and continuity was NOT discarded -- the editor did nothing wrong",
+          not out["detail"][CP.CONTINUITY].get("discarded"))
     check("the safety audit is reported for both draft and final",
           set(out["detail"][CP.SAFETY]["audits"]) == {"writer_draft",
                                                       "continuity_final"})
@@ -1111,9 +1172,10 @@ def test_the_grounder_and_fact_check_run_only_after_safety():
         seen.append("FACT_CHECK")
         return dict(FC_CLEAN)
 
-    edits = _edits_from(DRAFT)
-    edits["edits"][0]["text"] = "The room was built from pink salt bricks."
-    prov, out = run(full_script()[:4] + [edits, READER_OK], fact_check_fn=fc)
+    bad_draft = DRAFT.replace("The room was built from Himalayan salt bricks",
+                              "The room was built from pink Himalayan salt bricks")
+    prov, out = run(full_script()[:3] + [bad_draft, _edits_from(bad_draft), READER_OK],
+                    fact_check_fn=fc)
     check("safety held the run", out["failure_stage"] == CP.SAFETY)
     check("THE GROUNDER WAS NEVER REACHED",
           out["stages"][CP.GROUNDING] == CP.NOT_RUN, out["stages"])
@@ -1259,9 +1321,10 @@ def test_a_held_run_still_persists_what_it_reached(tmp=None):
     import tempfile
     with tempfile.TemporaryDirectory() as d:
         out_dir = pathlib.Path(d) / "run"
-        edits = _edits_from(DRAFT)
-        edits["edits"][0]["text"] = "The salt bricks were pink."
-        run(full_script()[:4] + [edits, READER_OK], out_dir=out_dir)
+        bad_draft = DRAFT.replace("The room was built from Himalayan salt bricks",
+                                  "The room was built from pink Himalayan salt bricks")
+        run(full_script()[:3] + [bad_draft, _edits_from(bad_draft), READER_OK],
+            out_dir=out_dir)
         names = sorted(p.name for p in out_dir.iterdir())
         for want in ("COMPOSITION_RESULT.json", "FINAL_EVIDENCE_MANIFEST.json",
                      "WORTH_AND_CANDIDATE.json", "ARCHITECTURE.json",

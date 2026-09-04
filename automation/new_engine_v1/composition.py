@@ -1777,12 +1777,38 @@ def run_story_architecture_composition(
         draft = wr["article_text"]
 
         cont = record(CONTINUITY, continuity_pass(P, draft, arch))
-        final = cont["article_text"]
+
+        # CONTINUITY IS FAIL-SAFE, and this is the whole point of the stage's position in
+        # the ladder. It is an OPTIONAL linguistic improvement over an article that is
+        # already correct, so it is not allowed to destroy one. If its delta is clean the
+        # edited prose is used; if it added a fact, event, relation or negative the edit
+        # is DISCARDED WHOLE and the Writer draft carries on in its place.
+        #
+        # Deterministic: no second Continuity call, no Writer regeneration, no repair
+        # prose. The fallback is the draft the Writer already produced, and the full
+        # post-writer safety stack then runs on whichever text was chosen -- so nothing
+        # reaches the Grounder on the strength of an audit performed against other prose.
+        delta_errs = cont["semantic_delta_errors"]
+        if delta_errs:
+            final = draft
+            carried = "writer_draft"
+            cont["discarded"] = True
+            cont["discard_reason"] = delta_errs
+        else:
+            final = cont["article_text"]
+            carried = "continuity_final"
+        cont["carried_text"] = carried
 
         sa = record(SAFETY, safety_audit(draft, final, wr["packet"], arch, ledger,
                                          cut["terms"], cut))
+        sa["carried_text"] = carried
+        sa["continuity_discarded"] = bool(delta_errs)
         if sa["status"] != PASS:
-            return out(SAFETY, "; ".join(sa["blocking"])[:600], SAFETY_HOLD, final)
+            why = "; ".join(sa["blocking"])[:600]
+            if delta_errs:
+                why = ("continuity was discarded (%s) and the Writer draft did not pass "
+                       "either: %s" % ("; ".join(str(e) for e in delta_errs)[:200], why))
+            return out(SAFETY, why, SAFETY_HOLD, final)
 
         g = record(GROUNDING, ground_candidate(P, final, source_text, source_sha, pack))
         if g["status"] != PASS:
