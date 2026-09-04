@@ -2337,6 +2337,17 @@ def repairable_findings(findings: list) -> list:
             and str(f.get("quote") or "").strip()]
 
 
+# "27th" and "27" are the same day. ST._numbers reads the second and not the first, so a
+# fact saying "published on 27th August 2026" licenses "2026" and not "27" -- and a
+# repair restoring that date reads as an addition. Same class as the decimal split:
+# the two sides must extract the same way or the comparison is between different things.
+_ORDINAL = re.compile(r"(\d)(?:st|nd|rd|th)\b", re.I)
+
+
+def _numbers_of(text: str) -> set:
+    return ST._numbers(_ORDINAL.sub(r"\1", text or ""))
+
+
 _DATEISH = re.compile(r"\b(?:\d{1,2}(?:st|nd|rd|th)?\s+)?(?:January|February|March|April"
                       r"|May|June|July|August|September|October|November|December)\b"
                       r"|\b(?:19|20)\d{2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b", re.I)
@@ -2411,7 +2422,7 @@ def apply_grounding_repair(article_text: str, edits: list, findings: list,
     """
     ids = {str(f.get("id")) for f in findings}
     approved = ST.render(packet)
-    a_nums, a_ents = ST._numbers(approved), ST._entities(approved,
+    a_nums, a_ents = _numbers_of(approved), ST._entities(approved,
                                                          skip_sentence_initial=False)
     out, prov, errs = article_text, [], []
     for i, e in enumerate(edits or [], 1):
@@ -2448,9 +2459,9 @@ def apply_grounding_repair(article_text: str, edits: list, findings: list,
         lic_text = " ".join(
             "%s %s" % ((ledger[f] or {}).get("proposition", ""),
                        (ledger[f] or {}).get("support_span", "")) for f in lic)
-        allowed_nums = a_nums | ST._numbers(lic_text)
+        allowed_nums = a_nums | _numbers_of(lic_text)
         allowed_ents = a_ents | ST._entities(lic_text, skip_sentence_initial=False)
-        new_nums = sorted(ST._numbers(rep) - ST._numbers(orig) - allowed_nums)
+        new_nums = sorted(_numbers_of(rep) - _numbers_of(orig) - allowed_nums)
         new_ents = sorted(ST._entities(rep) - ST._entities(orig) - allowed_ents)
         # A time correction necessarily changes temporal content; that is the operation.
         # Every other relation class is still refused.

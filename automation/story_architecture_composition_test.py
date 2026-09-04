@@ -2103,6 +2103,25 @@ def test_the_factual_repair_can_only_subtract():
     check("and told to remove an unresolvable reference rather than resolve it",
           "remove the reference rather than resolve it" in CP.REPAIR_GROUNDING_SYSTEM)
 
+    # "27th" and "27" are the same day, and ST._numbers reads only the second. A fact
+    # saying "published on 27th August 2026" licensed "2026" and not "27", so a repair
+    # restoring that date read as an addition -- the same class as the decimal split.
+    check("an ordinal in the evidence licenses the cardinal in the repair",
+          "27" in CP._numbers_of("published on 27th August 2026"))
+    check("and the plain form still works",
+          "27" in CP._numbers_of("published on 27 August 2026"))
+    check("while an unrelated number is still not licensed",
+          "31" not in CP._numbers_of("published on 27th August 2026"))
+    dated2 = dict(LEDGER)
+    dated2["F20"] = F("F20", "The catalogue was published on 27th August 2026.",
+                      "The pavilion closed after the Kunsthalle season ended", ev=("S1",))
+    _, prov6, e6 = CP.apply_grounding_repair(
+        DRAFT, [{"finding_id": "G1", "operation": "CORRECT_DATE", "original": orig,
+                 "repaired": "No entry published on 27 August 2026 describes what any "
+                             "visitor heard.", "fact_ids": ["F05", "F20"]}],
+        findings, dated2, packet)
+    check("so a date restored from an ordinal fact is accepted", not e6 and prov6, e6)
+
     check("LEGITIMATE_INTERPRETATION is not repairable",
           not CP.repairable_findings(
               [{"id": "L1", "classification": "LEGITIMATE_INTERPRETATION",
