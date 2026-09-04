@@ -1336,6 +1336,77 @@ def test_the_architecture_repair_budget_is_two():
           out["stages"][CP.ARCHITECTURE] == CP.PASS)
 
 
+def test_packet_licensing_survives_the_stemmer_being_asymmetric():
+    """Three canary runs died on this. story.py's `_stem` is a suffix stripper, not a
+    canonicaliser, so two variants of ONE word can stem differently:
+
+        packet "overrides"       -> "overrid"          candidate "override"      -> "override"
+        packet "correspondingly" -> "correspondingly"  candidate "corresponding" -> "correspond"
+        packet "continuously"    -> "continuously"     candidate "continuous"    -> "continuou"
+
+    Every pair is the same word and every pair failed an equality test, so the CUT audit
+    watched vocabulary the Writer had been handed and reported leaks on prose that leaked
+    nothing. Licensing compares by prefix containment in both directions instead."""
+    words = CP._words("the device overrides the front brake correspondingly, the reading "
+                      "updates continuously on a Citi Bike, the map is down, the top "
+                      "quantile was removed, covering 2020 through 2024")
+    for w in ("override", "overrides", "corresponding", "continuous", "continuously",
+              "Bikes", "quantile", "2020"):
+        check("%r is recognised as licensed" % w, CP._licensed_by(w, words), w)
+    for w in ("photogrammetry", "circuit", "capture", "servo", "12.15"):
+        check("%r is NOT licensed by that packet" % w,
+              not CP._licensed_by(w, words), w)
+    # The difference is the signal, not the absolute length. A floor on the shorter form
+    # rejected down/download correctly and then also rejected bike/bikes.
+    check("'down' does not license 'download' -- a spelling coincidence",
+          not CP._licensed_by("download", words))
+    check("but 'Bike' does license 'Bikes' -- one character of inflection",
+          CP._licensed_by("Bikes", words))
+    check("and the rule is stated as a difference",
+          CP.LICENSE_MORPH_DIFF == 3)
+    # A number has no morphology: exact appearance only.
+    check("a number is licensed only by its exact appearance",
+          CP._licensed_by("2020", words) and not CP._licensed_by("202", words)
+          and not CP._licensed_by("20241", words))
+    # A multi-word term is licensed only as a PHRASE. Checking its words separately
+    # licensed "Idle Hands" because the packet contained both words elsewhere, and a
+    # name is exactly the thing a phrase rather than its parts identifies.
+    arch = copy.deepcopy(ARCH)
+    led = copy.deepcopy(LEDGER)
+    led["F07"]["proposition"] = ("The Kunsthalle Salt Room closed after the season, "
+                                 "and the room was full of brick.")
+    r = CP.derive_cut_watch_terms(arch, led)
+    check("a multi-word name survives even when its words appear separately",
+          any(" " in x for x in r["terms"]["F07"]), r["terms"]["F07"])
+
+
+def test_the_frozen_baseline_stays_at_zero_after_every_licensing_change():
+    """The known-clean anchor for all of this. The manual run recorded 0 CUT violations
+    on the held-out article against 31 hand-picked terms, so anything the automated
+    derivation flags there is a false positive by construction. Re-asserted separately
+    from the derivation tests because every licensing change risks it."""
+    art = HERE.parent / ".claude" / "story-architecture" / "held-out-real-article-1"
+    if not art.exists():
+        check("frozen held-out artifacts are present", False, str(art))
+        return
+    arch = json.loads((art / "ARCHITECTURE.json").read_text())
+    led = json.loads((art / "FINAL_EVIDENCE_MANIFEST.json").read_text())["facts"]
+    r = CP.derive_cut_watch_terms(arch, led)
+    for name in ("CONTINUITY_FINAL.v3.md", "WRITER_DRAFT.v3.md"):
+        f = art / name
+        if not f.exists():
+            continue
+        ca = ST.cut_adherence(f.read_text(), arch, r["terms"])
+        check("ZERO violations on the known-clean %s" % name,
+              not ca["violations"],
+              [(v["evidence_id"], v["term"]) for v in ca["violations"]])
+    check("and the specific vocabulary is still recovered",
+          all(any(g in x.lower() for x in
+                  [y.lower() for v in r["terms"].values() for y in v])
+              for g in ("photogrammetry", "quantile", "12.15", "download")),
+          {k: v for k, v in r["terms"].items() if v})
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,

@@ -1064,6 +1064,19 @@ CUT_TERM_MAX_DF = 2
 # Below this length, a lowercase single word is almost always ordinary English. Proper
 # nouns and numbers are exempt: "Lyft" is four characters and identifies one fact.
 CUT_TERM_DISTINCTIVE_LEN = 7
+# A prefix match counts as a morphological relation only if the two forms differ by at
+# most this many characters -- the length of an inflectional suffix. Chosen against the
+# cases, not guessed:
+#     bike / bikes                  1   accept
+#     override / overrides          1   accept
+#     continuous / continuously     2   accept
+#     corresponding/correspondingly 2   accept
+#     down / download               4   REJECT -- a spelling coincidence, not morphology
+#     specific / specifications     6   REJECT
+# An earlier attempt used a floor on the SHORTER form instead. It rejected down/download
+# correctly and then also rejected bike/bikes, because "bike" is four characters. The
+# difference is the signal; the absolute length is not.
+LICENSE_MORPH_DIFF = 3
 
 # Ordinary English, which cannot betray a fact whatever its frequency in this corpus.
 #
@@ -1107,6 +1120,7 @@ time today together took total toward turn type under understand unit units unle
 upon used useful using usual usually value various very view visual want water well were
 what when where whether which while whole will with within without work would year
 because project correspond corresponding correspondingly across
+continuous continuously contiguous
 """.split()} | {ST._stem(w) for w in ST._FUNCTION_WORDS}
 
 _WORD = re.compile(r"[A-Za-z0-9][A-Za-z0-9.,'-]*")
@@ -1116,6 +1130,51 @@ _PROPER = re.compile(r"\b[A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+)*\b")
 
 def _stems(text: str) -> set:
     return {ST._stem(w) for w in re.findall(r"[a-z0-9]+", (text or "").lower())}
+
+
+def _words(text: str) -> set:
+    return set(re.findall(r"[a-z0-9]+", (text or "").lower()))
+
+
+def _licensed_by(term: str, words: set) -> bool:      # noqa: C901
+    """Is `term` a morphological variant of a word the packet already carries?
+
+    STEM EQUALITY CANNOT ANSWER THIS, and three canary runs died proving it. story.py's
+    `_stem` is a suffix stripper, not a canonicaliser, so two variants of one word can
+    stem differently:
+
+        packet "overrides"      -> "overrid"        candidate "override"      -> "override"
+        packet "correspondingly"-> "correspondingly" candidate "corresponding" -> "correspond"
+        packet "continuously"   -> "continuously"   candidate "continuous"    -> "continuou"
+
+    Every one of those pairs is the same word and every one failed an equality test, so
+    the CUT audit watched vocabulary the Writer had been handed and reported leaks on
+    prose that leaked nothing.
+
+    Prefix containment answers it in both directions: a candidate is licensed if a packet
+    word extends its root, or if the candidate extends a packet word's root. `_stem` is
+    still used to find the roots -- the merged inflection logic is unchanged -- it is
+    only the COMPARISON that stops being equality.
+
+    This trades a little sensitivity for correctness, and knowingly: an unrelated packet
+    word sharing a four-character root would license a term it should not, costing a
+    sentinel. That direction loses a watch rather than inventing a violation, which is
+    the right way round for a screen whose false positives block real articles.
+    """
+    # A NUMBER HAS NO MORPHOLOGY. It is licensed by its exact appearance and by nothing
+    # else: prefix logic would make "2020" unlicensable under the length floor while also
+    # letting "20" license "2024". The known-clean baseline flagged "2020" the moment the
+    # floor was introduced, on a packet that says "covering 2020 through 2024".
+    if _NUMBERISH.search(term):
+        return term.strip().lower() in words
+    roots = {r for r in ({term.lower()} | _stems(term)) if len(r) >= CUT_TERM_MIN}
+    for w in words:
+        for r in roots:
+            if abs(len(w) - len(r)) > LICENSE_MORPH_DIFF:
+                continue
+            if w.startswith(r) or r.startswith(w):
+                return True
+    return False
 
 
 def _document_frequency(ledger: dict) -> dict:
@@ -1185,7 +1244,8 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
     except Exception:                                             # noqa: BLE001
         packet_text = " ".join((ledger.get(f) or {}).get("proposition") or ""
                                for f in (arch.get("use_facts") or []))
-    licensed = _stems(packet_text)
+    licensed_words = _words(packet_text)
+    packet_norm = normalize_span(packet_text)
     df = _document_frequency(ledger)
 
     terms: dict[str, list] = {}
@@ -1201,8 +1261,12 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
             continue
         kept, rejected = [], []
         for cand in _candidate_terms(fact):
-            stems = _stems(cand)
-            if stems and stems <= licensed:
+            # A MULTI-WORD TERM IS LICENSED ONLY AS A PHRASE. Checking its words
+            # separately licensed "Idle Hands" because the packet happened to contain
+            # both words elsewhere -- and a name is exactly the thing a phrase, not its
+            # parts, identifies.
+            if (normalize_span(cand) in packet_norm if " " in cand.strip()
+                    else _licensed_by(cand, licensed_words)):
                 rejected.append((cand, "licensed by the packet"))
                 continue
             if not _is_distinctive(cand, df):
