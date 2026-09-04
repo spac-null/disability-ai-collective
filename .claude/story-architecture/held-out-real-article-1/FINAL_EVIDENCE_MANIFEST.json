@@ -35,6 +35,30 @@
    "url": "https://www.dezeen.com/2026/09/03/justin-blinder-citibike-ground-truth-new-york-city-housing/",
    "retrieved": "2026-09-04",
    "note": "NOT USED as evidence; recorded as the feed item that surfaced the subject"
+  },
+  "S5": {
+   "role": "PRIMARY_LAW",
+   "name": "US Statutes at Large vol. 83 -- Housing and Urban Development Act of 1969 (Public Law 91-152)",
+   "url": "https://www.govinfo.gov/content/pkg/STATUTE-83/pdf/STATUTE-83-Pg379.pdf",
+   "kind": "pdf",
+   "retrieved": "2026-09-04",
+   "publisher": "US Government Publishing Office"
+  },
+  "S6": {
+   "role": "PRIMARY_LAW",
+   "name": "42 U.S.C. 1437a with amendment notes",
+   "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap8-subchapI-sec1437a.htm",
+   "kind": "html",
+   "retrieved": "2026-09-04",
+   "publisher": "Office of the Law Revision Counsel, via GPO"
+  },
+  "S7": {
+   "role": "OFFICIAL",
+   "name": "Federal Register, FHFA, 2025-2027 Enterprise Housing Goals (29 Aug 2024), footnote 13",
+   "url": "https://www.federalregister.gov/documents/full_text/text/2024/08/29/2024-19261.txt",
+   "kind": "text",
+   "retrieved": "2026-09-04",
+   "publisher": "Office of the Federal Register"
   }
  },
  "facts": {
@@ -139,16 +163,60 @@
    "scope": "WORLD",
    "claim_kind": "DISPOSITION"
   },
-  "F10": {
-   "fact_id": "F10",
-   "proposition": "HUD adopted the 30 percent figure in 1981; earlier public-housing programmes had used 25 percent, and the threshold is traced to a 1969 amendment by Senator Edward Brooke.",
+  "F10a": {
+   "fact_id": "F10a",
+   "proposition": "The rent standard in the United States Housing Act is 30 per centum of a family's monthly adjusted income.",
    "claim_type": "POSITIVE_FACT",
    "evidence_ids": [
-    "S3"
+    "S6"
    ],
-   "support_span": "HUD adopted the 30% standard in 1981, evolving from a 25% threshold used in earlier public housing programs",
+   "support_span": "30 per centum of the family's monthly adjusted income",
    "scope": "WORLD",
-   "claim_kind": "OCCURRENCE"
+   "claim_kind": "DISPOSITION"
+  },
+  "F10b": {
+   "fact_id": "F10b",
+   "proposition": "Public Law 97-35 added that rent subsection in 1981.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S6"
+   ],
+   "support_span": "1981 -Pub. L. 97-35 added subsecs. (a) and (c)",
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
+  },
+  "F10c": {
+   "fact_id": "F10c",
+   "proposition": "Rents fixed by public housing agencies may not exceed one-fourth of a low-rent housing tenant's income.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S5"
+   ],
+   "support_span": "the rents fixed by public housing agencies may not exceed one-fourth of a low-rent housing tenant's income",
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
+  },
+  "F10d": {
+   "fact_id": "F10d",
+   "proposition": "That public-housing rent cap is known as the Brooke Amendment, enacted in Public Law 91-152.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S7"
+   ],
+   "support_span": "``Brooke Amendment,'' which amended the United States Housing Act of 1937 to cap public housing rents (Pub. L. 91-152)",
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
+  },
+  "F10e": {
+   "fact_id": "F10e",
+   "proposition": "Public Law 91-152 was enacted on 24 December 1969.",
+   "claim_type": "POSITIVE_FACT",
+   "evidence_ids": [
+    "S5"
+   ],
+   "support_span": "PUBLIC LAW 91-152-DEC. 24, 1969",
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F11": {
    "fact_id": "F11",
@@ -396,7 +464,7 @@
    "claim_kind": "DISPOSITION"
   }
  },
- "fact_count": 32,
+ "fact_count": 36,
  "freeze_rule": "After this freeze no stage may mint a fact. No possibility to fact, no association to causation, no description to visitor experience, no design intent to actual effect, no absence in sources to absence in world.",
  "claim_kind_annotation": {
   "added": "2026-09-04 safety repair 1",
@@ -418,5 +486,6 @@
    "F30"
   ],
   "disposition_count": 20
- }
+ },
+ "_f10_repair_note": "F10 was a LEDGER FREEZE defect: its proposition appended 'and the threshold is traced to a 1969 amendment by Senator Edward Brooke', a clause absent from its own support_span. Read naturally the article sentence made the THIRTY percent threshold date from 1969, which the authoritative Fact Check contradicted (C04) and primary law refutes: 1969 capped rent at one-fourth; 30 per centum arrived in 1981. Split into five atomic facts, each with its own verbatim span in an official source. OLD F10 proposition: 'HUD adopted the 30 percent figure in 1981; earlier public-housing programmes had used 25 percent, and the threshold is traced to a 1969 amendment by Senator Edward Brooke.' / OLD support_span: 'HUD adopted the 30% standard in 1981, evolving from a 25% threshold used in earlier public housing programs'"
 }

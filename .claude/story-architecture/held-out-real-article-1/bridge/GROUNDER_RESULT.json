@@ -1,8 +1,8 @@
 {
  "article": "CONTINUITY_FINAL.v3.md",
- "words": 688,
- "facts_checked": 22,
- "grounded": 22,
+ "words": 685,
+ "facts_checked": 26,
+ "grounded": 26,
  "ungrounded": [],
  "unfetched": [],
  "rows": [
@@ -49,18 +49,39 @@
    "elided": false
   },
   {
-   "fact_id": "F10",
-   "result": "GROUNDED_VIA_OFFICIAL_FALLBACK",
-   "sources": [
-    "S3"
-   ],
-   "fallback": [
-    "G1",
-    "G1",
-    "G1",
-    "G2",
-    "G2"
-   ]
+   "fact_id": "F10a",
+   "result": "GROUNDED",
+   "source": "S6",
+   "segments": 1,
+   "elided": false
+  },
+  {
+   "fact_id": "F10b",
+   "result": "GROUNDED",
+   "source": "S6",
+   "segments": 1,
+   "elided": false
+  },
+  {
+   "fact_id": "F10c",
+   "result": "GROUNDED",
+   "source": "S5",
+   "segments": 1,
+   "elided": false
+  },
+  {
+   "fact_id": "F10d",
+   "result": "GROUNDED",
+   "source": "S7",
+   "segments": 1,
+   "elided": false
+  },
+  {
+   "fact_id": "F10e",
+   "result": "GROUNDED",
+   "source": "S5",
+   "segments": 1,
+   "elided": false
   },
   {
    "fact_id": "F11",
@@ -183,74 +204,29 @@
    "hash": "ccea68a396d49c073e798d1eab4376a014fb0493a12ded54e68b37c6bb8e59aa",
    "chars": 0,
    "origin": "none"
+  },
+  "S5": {
+   "hash": "5d94e13e79432733f148022826dc2a59cb31f5e13d18a9f7db2b1c7f4bcabe79",
+   "chars": 77091,
+   "origin": "fetched_article"
+  },
+  "S6": {
+   "hash": "a3c712712fe7503f73827dd51e912953c762c3e4b281856f273f7786b0313842",
+   "chars": 103112,
+   "origin": "fetched_article"
+  },
+  "S7": {
+   "hash": "0bef5cb014fcd02d2bdb71393f0b78b7346c94e5240369a3be3ca04e2396bd81",
+   "chars": 104107,
+   "origin": "fetched_article"
   }
  },
  "prose_scan": {
   "possible_named_entity_not_in_source": [
    "possible named entity 'US Department' not found in source",
-   "possible named entity 'Senator Edward Brooke' not found in source",
    "possible named entity 'NYU Furman Center' not found in source"
-  ],
-  "possible_number_not_in_source": [
-   "number '1981' not found in source",
-   "number '1969' not found in source"
   ]
  },
- "f10_fallback": {
-  "components": [
-   {
-    "component": "Brooke Amendment enacted 1969",
-    "source": "G1",
-    "verified": true,
-    "needle": "Public Law 91-152"
-   },
-   {
-    "component": "1969 date on the enacting statute",
-    "source": "G1",
-    "verified": true,
-    "needle": "DEC. 24, 1969"
-   },
-   {
-    "component": "initial public-housing rent cap was one quarter of income",
-    "source": "G1",
-    "verified": true,
-    "needle": "one-fourth of a low-rent housing tenant's income"
-   },
-   {
-    "component": "the cap now stands at 30 per centum",
-    "source": "G2",
-    "verified": true,
-    "needle": "30 per centum of the family's monthly adjusted income"
-   },
-   {
-    "component": "the 30 per centum subsection was enacted in 1981",
-    "source": "G2",
-    "verified": true,
-    "needle": "Pub. L. 97-35, title III, 322(a), Aug. 13, 1981"
-   }
-  ],
-  "all_verified": true,
-  "sources": [
-   {
-    "id": "G1",
-    "name": "US Statutes at Large vol. 83 -- Housing and Urban Development Act of 1969 (Pub. L. 91-152), the Brooke Amendment",
-    "url": "https://www.govinfo.gov/content/pkg/STATUTE-83/pdf/STATUTE-83-Pg379.pdf",
-    "kind": "pdf"
-   },
-   {
-    "id": "G2",
-    "name": "42 U.S.C. 1437a, with amendment notes (Office of the Law Revision Counsel, via GPO)",
-    "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap8-subchapI-sec1437a.htm",
-    "kind": "html"
-   }
-  ]
- },
- "fact_check": {
-  "status": "NOT_RUN",
-  "missing": [
-   "CLIPROXY_KEY",
-   "OPENROUTER_API_KEY",
-   "CLIProxyAPI at http://127.0.0.1:8317/v1 (URLError)"
-  ]
- }
+ "f10_fallback": null,
+ "fact_check": null
 }

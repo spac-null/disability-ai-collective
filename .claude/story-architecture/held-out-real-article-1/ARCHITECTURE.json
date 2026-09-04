@@ -42,7 +42,11 @@
    "happens": "Where the thirty percent came from.",
    "concrete_carrier": "the figure itself, and the dates it changed",
    "facts_allowed": [
-    "F10"
+    "F10a",
+    "F10b",
+    "F10c",
+    "F10d",
+    "F10e"
    ],
    "concept_introduced": "",
    "why_reader_wants_next": "A number with a legislative history is now pulling on a brake cable, and the reader has not yet been on a ride.",
@@ -111,7 +115,11 @@
   "F06",
   "F07",
   "F09",
-  "F10",
+  "F10a",
+  "F10b",
+  "F10c",
+  "F10d",
+  "F10e",
   "F11",
   "F12",
   "F13",
@@ -204,5 +212,6 @@
   "crip_turn_carrier": "the block group with no published figure"
  },
  "_carrier_repair_note": "B6, B2 and final_lens.crip_turn_carrier reworded to pure noun phrases after CARRIER_INSTANCE_NOT_SUPPORTED. B6 and the crip turn carrier both lost the clause 'and the brake that therefore does not move', which was the architect asserting an occurrence inside a carrier: the ledger holds only what the device DOES when a block group has no published figure (F19, DISPOSITION), never a documented ride through one. facts_allowed, use_facts, cut_evidence, lens_claim, evidence_basis, Worth result and prohibitions are byte-identical to the held-out run; only carrier wording changed, and only where the validator forced it.",
- "_turn_repair_note": "REPAIR 2, architecture only. The declared turn asserted an EQUIVALENCE and a SUPERLATIVE the ledger does not license -- 'the easing ... and the unreadable block group are re-read as the same fact ... quietest where the pressure is least counted' -- fusing a LOW reading (F14, F15) with an ABSENT one (F19, F20). F19 says the device shows no reading RATHER THAN a zero and F20 calls flat ground a lie, so the ledger does not merely fail to support the fusion, it refuses it. crip_turn, final_lens.after_reading and final_lens.lens_claim were rewritten to the distinction the ledger does hold: a measured low value is not an absent one. Evidence, ledger, use_facts, cut_evidence, prohibitions, beats and Worth inputs are unchanged. OLD crip_turn, for the record: 'The easing over public housing and the unreadable block group are re-read as the same fact: the instrument can only pass on what the measure holds, so it is quietest where the pressure is least counted.'"
+ "_turn_repair_note": "REPAIR 2, architecture only. The declared turn asserted an EQUIVALENCE and a SUPERLATIVE the ledger does not license -- 'the easing ... and the unreadable block group are re-read as the same fact ... quietest where the pressure is least counted' -- fusing a LOW reading (F14, F15) with an ABSENT one (F19, F20). F19 says the device shows no reading RATHER THAN a zero and F20 calls flat ground a lie, so the ledger does not merely fail to support the fusion, it refuses it. crip_turn, final_lens.after_reading and final_lens.lens_claim were rewritten to the distinction the ledger does hold: a measured low value is not an absent one. Evidence, ledger, use_facts, cut_evidence, prohibitions, beats and Worth inputs are unchanged. OLD crip_turn, for the record: 'The easing over public housing and the unreadable block group are re-read as the same fact: the instrument can only pass on what the measure holds, so it is quietest where the pressure is least counted.'",
+ "_f10_split_note": "use_facts and B3.facts_allowed re-point F10 -> F10a..F10e. Mechanical consequence of the ledger split; no beat, carrier, turn, lens, cut or prohibition changed."
 }

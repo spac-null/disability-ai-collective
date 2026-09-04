@@ -729,6 +729,69 @@ def test_the_turn_is_refused_before_the_packet_is_built():
                      for e in ST.validate_architecture(a, set(FACTS))))
 
 
+# ── a proposition may not exceed its own support span ───────────────────────
+# The authoritative Fact Check contradicted the held-out article on C04, and the cause was
+# the ledger, not any composition stage: F10's proposition appended a Brooke/1969 clause
+# that its span did not carry, and every stage downstream takes a proposition as given.
+def test_a_proposition_may_not_reach_past_its_own_span():
+    # THE SHAPE THE OWNER SPECIFIED
+    ex = ST.proposition_exceeds_span(
+        "A happened in 1981, and B was created by Senator Brooke in 1969",
+        "A happened in 1981, evolving from earlier B")
+    kinds = sorted(e["kind"] for e in ex)
+    check("an appended date and person are both caught",
+          kinds == ["named_person", "year"], ex)
+    check("  the year is named", any(e["value"] == "1969" for e in ex), ex)
+    check("  the person is named",
+          any(e["value"] == "Senator Brooke" for e in ex), ex)
+
+    # THE ACTUAL DEFECT, verbatim
+    real = ST.proposition_exceeds_span(
+        "HUD adopted the 30 percent figure in 1981; earlier public-housing programmes had "
+        "used 25 percent, and the threshold is traced to a 1969 amendment by Senator "
+        "Edward Brooke.",
+        "HUD adopted the 30% standard in 1981, evolving from a 25% threshold used in "
+        "earlier public housing programs")
+    check("the real F10 defect is caught", len(real) == 2, real)
+    check("  and 1981, which IS in the span, is not flagged",
+          not any(e["value"] == "1981" for e in real), real)
+
+    # THE REPAIR
+    for prop, span in [
+        ("Rents fixed by public housing agencies may not exceed one-fourth of a low-rent "
+         "housing tenant's income.",
+         "the rents fixed by public housing agencies may not exceed one-fourth of a "
+         "low-rent housing tenant's income"),
+        ("Public Law 91-152 was enacted on 24 December 1969.",
+         "PUBLIC LAW 91-152-DEC. 24, 1969"),
+        ("Public Law 97-35 added that rent subsection in 1981.",
+         "1981 -Pub. L. 97-35 added subsecs. (a) and (c)"),
+    ]:
+        check("a proposition inside its span passes: %s" % prop[:44],
+              ST.proposition_exceeds_span(prop, span) == [],
+              ST.proposition_exceeds_span(prop, span))
+
+    # WHAT IT MUST NOT DO: a proposition naming its own subject where the span says "he",
+    # or writing an acronym the span spells out, is ordinary and must stay silent.
+    check("naming the subject the span refers to obliquely is not a defect",
+          ST.proposition_exceeds_span(
+              "Blinder came up with the idea during the pandemic.",
+              "came up with the idea during the pandemic, when he lost his job") == [])
+    check("an acronym for a spelled-out name is not a defect",
+          ST.proposition_exceeds_span(
+              "The measure follows HUD's 30 percent standard.",
+              "follows the Department of Housing and Urban Development's longstanding "
+              "30 percent standard") == [])
+
+    a = ST.proposition_span_audit({
+        "X1": {"proposition": "It happened in 1999.", "support_span": "it happened"},
+        "X2": {"proposition": "It happened.", "support_span": "it happened"}})
+    check("the audit reports the offender and only the offender",
+          [f["fact_id"] for f in a["findings"]] == ["X1"], a)
+    check("  and counts what it looked at", a["facts_audited"] == 2, a)
+    check("  and a clean ledger reports clean", ST.proposition_span_audit({})["clean"])
+
+
 def main() -> None:
     for fn in (test_a_packet_carrying_the_auditing_frame_is_refused,
                test_a_prohibition_phrased_as_a_description_is_refused,
@@ -751,7 +814,8 @@ def main() -> None:
                test_inflection_does_not_defeat_a_cut_watch_term,
                test_a_turn_cannot_mint_a_relation_from_two_true_facts,
                test_the_turn_check_is_precise_about_what_it_refuses,
-               test_the_turn_is_refused_before_the_packet_is_built):
+               test_the_turn_is_refused_before_the_packet_is_built,
+               test_a_proposition_may_not_reach_past_its_own_span):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)

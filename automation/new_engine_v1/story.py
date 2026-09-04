@@ -365,6 +365,60 @@ def validate_carrier_occurrence(arch: dict, ledger: dict) -> list:
     return errs
 
 
+# ── A PROPOSITION MAY NOT EXCEED ITS OWN SUPPORT SPAN ────────────────────────
+# The authoritative Fact Check contradicted one claim in the held-out article (C04), and
+# the cause was neither the Writer, the carrier nor the turn. It was the LEDGER. F10 read
+#
+#   proposition:   "HUD adopted the 30 percent figure in 1981; earlier public-housing
+#                   programmes had used 25 percent, AND THE THRESHOLD IS TRACED TO A 1969
+#                   AMENDMENT BY SENATOR EDWARD BROOKE."
+#   support_span:  "HUD adopted the 30% standard in 1981, evolving from a 25% threshold
+#                   used in earlier public housing programs"
+#
+# The final clause is not in the span. It was appended at freeze time, and every stage
+# downstream takes a proposition as given -- so a Writer obeying the ledger perfectly
+# reproduced a claim no evidence carried. Primary law refutes it: the 1969 Brooke
+# Amendment capped rent at one-fourth; 30 per centum arrived with Pub. L. 97-35 in 1981.
+#
+# AUDIT, NOT A GATE, and the distinction is deliberate. The obvious general form of this
+# check -- every proper name and number in the proposition must appear in the span --
+# flags 18 of 36 facts in a real frozen ledger, nearly all of them legitimate: a
+# proposition names its subject where the span says "he", or writes "HUD" where the span
+# spells the department out. A screen that cries wolf half the time is one people learn
+# to skip. So this looks for only the two shapes the actual defect was made of, a DATE
+# and a TITLED PERSON appearing from nowhere, and on the same ledger it flags 2.
+_AUDIT_YEAR = re.compile(r"\b(1[89]\d{2}|20\d{2})\b")
+_AUDIT_TITLED = re.compile(
+    r"\b(?:Senator|Sen\.|Representative|Rep\.|President|Governor|Mayor|Justice"
+    r"|Dr|Mr|Ms|Mrs)\.?\s+(?:[A-Z][a-z]+\s+){0,2}[A-Z][a-z]+")
+
+
+def proposition_exceeds_span(proposition: str, support_span: str) -> list:
+    """Dates and titled persons the proposition asserts and its own span does not carry."""
+    prop, span = proposition or "", support_span or ""
+    out = []
+    for y in sorted(set(_AUDIT_YEAR.findall(prop))):
+        if y not in span:
+            out.append({"kind": "year", "value": y})
+    for n in sorted(set(_AUDIT_TITLED.findall(prop))):
+        if n not in span:
+            out.append({"kind": "named_person", "value": n})
+    return out
+
+
+def proposition_span_audit(ledger: dict) -> dict:
+    """Every fact whose proposition reaches past its span. Reported, never enforced."""
+    findings = []
+    for fid, f in (ledger or {}).items():
+        ex = proposition_exceeds_span(f.get("proposition"), f.get("support_span"))
+        if ex:
+            findings.append({"fact_id": fid, "exceeds": ex,
+                             "proposition": f.get("proposition"),
+                             "support_span": f.get("support_span")})
+    return {"findings": findings, "clean": not findings,
+            "facts_audited": len(ledger or {})}
+
+
 # ── THE TURN MAY NOT MINT A RELATION ─────────────────────────────────────────
 # Repair 1 stopped a carrier asserting an occurrence the ledger holds only as a rule. The
 # article was then still HELD, because the same invention had simply moved up a level: the

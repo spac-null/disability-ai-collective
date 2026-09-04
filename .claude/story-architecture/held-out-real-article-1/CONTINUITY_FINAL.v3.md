@@ -6,7 +6,7 @@ A GPS module tells the box where it is. A card inside holds one score for every 
 
 The scores come from the survey's five-year estimates, covering 2020 through 2024. Two indicators are blended into one: the median share of income spent on rent, and the share of renter households spending at least half their income on housing. Both are ways of counting rent burden, the share of a household's income that goes on rent and utilities. Past thirty percent, under the standard set by the US Department of Housing and Urban Development, a household counts as cost-burdened.
 
-HUD adopted the thirty percent figure in 1981. Earlier public-housing programmes had used twenty-five percent. The threshold is traced to a 1969 amendment by Senator Edward Brooke.
+HUD adopted the thirty percent figure in 1981. Earlier public-housing programmes had used twenty-five percent. That earlier limit dates to the 1969 Brooke Amendment.
 
 On a ride around Prospect Park the bike rolled easily along Prospect Park West. Then it crossed into Windsor Terrace, and the brake engaged hard enough to nearly stop it.
 

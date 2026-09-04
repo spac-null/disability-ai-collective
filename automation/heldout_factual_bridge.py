@@ -46,7 +46,7 @@ OUT = ART / "bridge"
 
 # The article's own sources, from the frozen manifest. Everything reachable as HTML is
 # fetched; S2 is a PDF and its facts report UNFETCHED rather than being silently passed.
-FETCHABLE = {"S0", "S1", "S3"}          # S2 is a PDF; its facts report UNFETCHED
+FETCHABLE = {"S0", "S1", "S3", "S5", "S6", "S7"}   # S2 is a scanned PDF deck
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/120.0 Safari/537.36")
 
@@ -268,7 +268,7 @@ def main() -> int:
             print("  %-3s SKIPPED (%s)" % (sid, s.get("role")))
             continue
         t0 = time.time()
-        t = fetch(s["url"])
+        t = fetch_pdf_text(s["url"]) if s.get("kind") == "pdf" else fetch(s["url"])
         texts[sid] = norm(t) if t else None
         packets[sid] = build_evidence_packet(
             texts[sid], source_max_chars=None,
@@ -324,19 +324,9 @@ def main() -> int:
                                "support_span": f.get("support_span")})
             rows.append({"fact_id": fid, "result": "UNGROUNDED", "source": last[0],
                          "code": last[1]})
-    # F10's own source is blocked; the owner directed an official fallback. Run it, and
-    # only upgrade the row if every component assertion actually verifies.
+    # The F10 special case is gone: the primary-law sources it used are frozen in the
+    # manifest now (S5, S6, S7) and F10a..F10e ground through the ordinary path.
     f10 = None
-    if any(r["fact_id"] == "F10" and r["result"] == "UNFETCHED_SOURCE" for r in rows):
-        print("\n  F10 FALLBACK  (S3 unreachable -- official primary law)")
-        f10 = verify_f10_fallback()
-        if f10["all_verified"]:
-            for r in rows:
-                if r["fact_id"] == "F10":
-                    r["result"] = "GROUNDED_VIA_OFFICIAL_FALLBACK"
-                    r["fallback"] = [c["source"] for c in f10["components"]]
-            unfetched = [u for u in unfetched if u != "F10"]
-
     grounded = sum(1 for r in rows if r["result"].startswith("GROUNDED"))
     print("  checked   %d" % len(rows))
     print("  GROUNDED  %d" % grounded)
