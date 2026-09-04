@@ -464,6 +464,136 @@ def test_the_frozen_loop3_articles_are_clean_on_every_screen():
             check("%-6s uses no cut evidence" % case, r["clean_prose"], r["violations"])
 
 
+# ── a carrier may not mint a happening the ledger holds only as a rule ───────
+# Measured on the held-out Justin Blinder run, 4 September 2026. Beat B6's carrier read
+# "a block group with no published figure, and the brake that therefore does not move",
+# and the article duly said the bike "coasted through the block group with no published
+# figure". Every noun was approved. No source reports a ride through such a block group:
+# the ledger holds only what the device DOES when it meets one. Novelty checks pass this
+# -- nothing is new -- because the invention is in the recombination.
+LEDGER = {
+    "D1": {"claim_kind": ST.DISPOSITION,
+           "proposition": "Where a block group's sample is too small, the ACS publishes "
+                          "no estimate, and the device renders this as no reading."},
+    "D2": {"claim_kind": ST.DISPOSITION,
+           "proposition": "The servo pulls the existing front brake arm."},
+    "O1": {"claim_kind": ST.OCCURRENCE,
+           "proposition": "Riding near NYCHA complexes, the device released resistance."},
+    "U1": {"proposition": "A fact whose claim_kind nobody declared."},
+}
+
+
+def _beat(carrier, facts):
+    return {"beat_id": "B6", "happens": "what the measure does not hold",
+            "concrete_carrier": carrier, "facts_allowed": facts,
+            "concept_introduced": "", "why_reader_wants_next": "the cables",
+            "must_not_say_yet": ""}
+
+
+def _reject(carrier, facts):
+    return ST.validate_carrier_occurrence({"beats": [_beat(carrier, facts)]}, LEDGER)
+
+
+def test_a_carrier_cannot_mint_an_occurrence_from_a_disposition():
+    bug = _reject("a block group with no published figure, and the brake that therefore "
+                  "does not move", ["D1", "D2"])
+    check("the exact held-out carrier is refused", len(bug) == 1, bug)
+    if bug:
+        check("  and is refused as an unsupported instance",
+              bug[0]["code"] == "CARRIER_INSTANCE_NOT_SUPPORTED", bug[0])
+        check("  and says which claim kinds it actually had",
+              bug[0]["supporting_claim_kinds"] == {"D1": ST.DISPOSITION,
+                                                   "D2": ST.DISPOSITION},
+              bug[0]["supporting_claim_kinds"])
+    # the repair the run actually shipped
+    check("the repaired carrier names the thing and passes",
+          _reject("a block group with no published figure", ["D1", "D2"]) == [], "")
+
+    # MUTATIONS: each is the same beat with one thing changed.
+    check("a finite verb alone is enough to refuse",
+          len(_reject("the brake that does not move", ["D1"])) == 1)
+    check("a consequence connective is enough to refuse",
+          len(_reject("a block group, and therefore a slack cable", ["D1"])) == 1)
+    check("a participle doing a verb's work is enough to refuse",
+          len(_reject("the bike coasting through the block group", ["D1"])) == 1)
+    check("an undeclared claim_kind is read as a disposition, not waved through",
+          len(_reject("the brake that does not move", ["U1"])) == 1)
+    check("no allowed facts at all cannot license an occurrence",
+          len(_reject("the brake that does not move", [])) == 1)
+
+    # AND THE OTHER DIRECTION: valid language must survive.
+    check("an occurrence carrier backed by an OCCURRENCE fact passes",
+          _reject("the bike speeding up alongside the complexes", ["O1"]) == [], "")
+    check("an occurrence fact anywhere in the beat is enough",
+          _reject("the bike speeding up alongside the complexes",
+                  ["D1", "O1"]) == [], "")
+    check("an explicitly conditional carrier stays available to dispositions",
+          _reject("a block group where the survey publishes no figure, and the brake "
+                  "that would not move", ["D1"]) == [], "")
+    check("adjectival participles are not events",
+          _reject("the published figure for the housing complexes", ["D1"]) == [], "")
+    check("a plain noun phrase passes with nothing but dispositions",
+          _reject("the card of scores and the servo arm on the brake cable",
+                  ["D1", "D2"]) == [], "")
+
+
+def test_the_carrier_check_is_off_unless_a_ledger_is_supplied():
+    a = arch()
+    a["beats"][0]["concrete_carrier"] = "the salt walls that were built into the ground"
+    check("without a ledger the architecture validates exactly as before",
+          not any("CARRIER_INSTANCE" in e for e in ST.validate_architecture(a, set(FACTS))))
+    withl = ST.validate_architecture(a, set(FACTS),
+                                     {"F01": {"claim_kind": ST.DISPOSITION},
+                                      "F02": {"claim_kind": ST.DISPOSITION}})
+    check("with a ledger the same architecture is refused",
+          any("CARRIER_INSTANCE_NOT_SUPPORTED" in e for e in withl), withl)
+    check("  and the message names the carrier and the kinds it had",
+          any("salt walls" in e and ST.DISPOSITION in e for e in withl), withl)
+
+
+def test_inflection_does_not_defeat_a_cut_watch_term():
+    a = arch(cut_evidence=[{"evidence_id": "F04", "reason": "BACKGROUND_NOT_NEEDED"}])
+    # The watch term is written in one form and the prose reaches for another. The
+    # literal test cannot see it; before this, the screen reported clean prose.
+    hit = ST.cut_adherence("The studio had already designed two of them.", a,
+                           {"F04": ["designs"]})
+    check("an inflected form of a watch term is a violation",
+          [v["term"] for v in hit["violations"]] == ["designs"], hit["violations"])
+    check("  and is reported as inflected, so a reviewer can see why it fired",
+          hit["violations"] and hit["violations"][0]["match"] == "inflected",
+          hit["violations"])
+    check("the reverse inflection is caught too",
+          not ST.cut_adherence("Two scans of the fork.", a,
+                               {"F04": ["scan"]})["clean_prose"])
+    lit = ST.cut_adherence("A contemplative space.", a, {"F04": ["contemplative"]})
+    check("a literal hit is still reported as literal",
+          lit["violations"] and lit["violations"][0]["match"] == "literal",
+          lit["violations"])
+    # STATED LIMIT, not a fixed one: the pre-existing literal pass is a raw substring
+    # test, so a longer unrelated word containing the term still fires. That predates
+    # this patch and is unchanged by it. It over-reports a CUT rather than under-reports
+    # one, which is the safe direction, and narrowing it is a separate change.
+    check("a longer word merely containing the term still fires, literally, as before",
+          [v["match"] for v in
+           ST.cut_adherence("It caused a scandal.", a,
+                            {"F04": ["scan"]})["violations"]] == ["literal"])
+    check("  and the stem pass is not what fired there",
+          [v["match"] for v in
+           ST.cut_adherence("It left a footprint.", a,
+                            {"F04": ["print"]})["violations"]] == ["literal"])
+    # what the stem pass must NOT do: match a longer word by prefix. Only whole tokens.
+    check("the stem pass does not match a longer token by prefix",
+          ST.cut_adherence("A scanner was mentioned once.", a,
+                           {"F04": ["scans"]})["clean_prose"],
+          ST.cut_adherence("A scanner was mentioned once.", a,
+                           {"F04": ["scans"]})["violations"])
+    check("multi-word watch terms are matched literally and only literally",
+          ST.cut_adherence("Other cites were mentioned.", a,
+                           {"F04": ["other cities"]})["clean_prose"])
+    check("an unrelated body is still clean",
+          ST.cut_adherence("A room of salt.", a, {"F04": ["design"]})["clean_prose"])
+
+
 def main() -> None:
     for fn in (test_a_packet_carrying_the_auditing_frame_is_refused,
                test_a_prohibition_phrased_as_a_description_is_refused,
@@ -480,7 +610,10 @@ def main() -> None:
                test_the_crip_turn_must_declare_what_it_rereads,
                test_the_factual_surface_audit_catches_additions_the_packet_never_granted,
                test_the_architect_stage_is_audited_too,
-               test_the_frozen_loop3_articles_are_clean_on_every_screen):
+               test_the_frozen_loop3_articles_are_clean_on_every_screen,
+               test_a_carrier_cannot_mint_an_occurrence_from_a_disposition,
+               test_the_carrier_check_is_off_unless_a_ledger_is_supplied,
+               test_inflection_does_not_defeat_a_cut_watch_term):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)

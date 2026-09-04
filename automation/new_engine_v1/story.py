@@ -185,7 +185,7 @@ def validate_lens(lens: dict) -> list:
 
 
 # ── STORY ARCHITECT ───────────────────────────────────────────────────────────
-def validate_architecture(arch: dict, evidence_ids: set) -> list:
+def validate_architecture(arch: dict, evidence_ids: set, ledger: dict | None = None) -> list:
     """The architecture is the reader's path. Checked for shape and for honesty about
     which evidence it intends to use -- and to CUT."""
     errs = []
@@ -238,6 +238,114 @@ def validate_architecture(arch: dict, evidence_ids: set) -> list:
         for f in (b.get("facts_allowed") or []):
             if f not in use:
                 errs.append("%s uses %s which is not in use_facts" % (b.get("beat_id"), f))
+    # Carriers may not assert an occurrence the ledger holds only as a rule. Runs only when a
+    # ledger is supplied, so existing callers are unaffected.
+    if ledger:
+        for e in validate_carrier_occurrence(arch, ledger):
+            errs.append("%s: %s -- carrier %r asserts an occurrence (%s) but its allowed "
+                        "facts are %s" % (e["code"], e["beat_id"], e["carrier"],
+                                          e["why_it_asserts"], e["supporting_claim_kinds"]))
+    return errs
+
+
+# ── CARRIERS MAY NOT ASSERT AN OCCURRENCE THE LEDGER DOES NOT HOLD ───────────
+# The held-out article said "the bike ... coasted through the block group with no published
+# figure". Nothing reports a ride through such a block group. The ledger holds only what the
+# device DOES when it meets one -- a rule, not a happening.
+#
+# The contributory field was the beat's `concrete_carrier`, which read "a block group with no
+# published figure, and the brake that therefore does not move". Every noun in it was
+# approved; what was not approved was the event. So the check is on the carrier, before the
+# packet is built, and it is deliberately about grammar rather than meaning: a carrier is
+# supposed to NAME the thing the reader holds onto. The moment it contains a clause it is
+# asserting that something happened, and that needs an OCCURRENCE fact behind it.
+#
+# This does not ban dispositions. An explicitly conditional carrier is hypothetical, not
+# asserted, and passes with dispositional facts alone.
+OCCURRENCE = "OCCURRENCE"       # something that happened, at a time, on the record
+DISPOSITION = "DISPOSITION"     # what happens under a condition; a rule, not an instance
+CLAIM_KINDS = (OCCURRENCE, DISPOSITION)
+
+# Finite verb phrases: the carrier has stopped naming and started asserting.
+_FINITE = re.compile(
+    r"\b(?:is|are|was|were|has|have|had|does|do|did|goes|went|comes|came|shows|showed"
+    r"|moves|moved|stops|stopped|runs|ran|falls|fell|holds|held|becomes|became"
+    r"|passes|passed|enters|entered|leaves|left|reads|read|gives|gave|takes|took)\b",
+    re.I)
+# Participles doing the work of a verb ("the bike speeding up", "the servo pulling the brake").
+_PARTICIPLE = re.compile(r"\b\w{4,}ing\b", re.I)
+# A consequence connective asserts that one thing followed from another.
+_CONSEQUENCE = re.compile(r"\b(?:therefore|consequently|as a result|so that|which then"
+                          r"|and so|thereby)\b", re.I)
+# An explicitly conditional carrier is not claiming the case occurred.
+_CONDITIONAL = re.compile(r"\b(?:if|when|whenever|wherever|would|should the|were the)\b",
+                          re.I)
+# Participles that are ordinary adjectives on a noun, not events.
+_ADJECTIVAL = {"housing", "published", "printing", "existing", "remaining", "outstanding",
+               "building", "willing", "missing", "living", "ongoing", "underlying"}
+
+
+def carrier_asserts_instance(carrier: str) -> dict:
+    """Does this carrier claim that something happened, rather than naming a thing?"""
+    c = (carrier or "").strip()
+    if not c:
+        return {"asserts": False, "why": "empty carrier"}
+    if _CONDITIONAL.search(c):
+        return {"asserts": False, "why": "explicitly conditional, so nothing is claimed to "
+                                         "have occurred"}
+    hits = []
+    m = _FINITE.search(c)
+    if m:
+        hits.append("finite verb %r" % m.group(0))
+    if _CONSEQUENCE.search(c):
+        hits.append("consequence connective %r" % _CONSEQUENCE.search(c).group(0))
+    for w in _PARTICIPLE.findall(c):
+        if w.lower() not in _ADJECTIVAL:
+            hits.append("participle %r" % w)
+            break
+    return {"asserts": bool(hits), "why": "; ".join(hits) or "names things only"}
+
+
+def validate_carrier_occurrence(arch: dict, ledger: dict) -> list:
+    """A carrier that asserts an occurrence needs an allowed OCCURRENCE fact behind it.
+
+    `ledger` maps fact_id to a record carrying `claim_kind` and `proposition`. A fact with no
+    declared `claim_kind` is treated as a DISPOSITION -- the conservative reading, because an
+    unlabelled fact is exactly the case that produced the bug.
+
+    KNOWN LIMIT, stated rather than hidden: this asks only whether SOME occurrence is
+    allowed at the beat, not whether it is the occurrence the carrier asserts. A beat
+    holding one unrelated occurrence fact would pass a carrier asserting a different
+    happening. It catches the case that produced the bug -- a carrier asserting an event at
+    a beat whose facts are dispositional throughout -- and no more. Matching an asserted
+    event to the fact that reports it is a semantic job, not this one.
+
+    It is deliberately confined to beats. `final_lens.crip_turn_carrier` is a carrier too
+    and can hold the same bug, but its evidence_basis nearly always contains some
+    occurrence, so the same test there would pass whatever it was given: a green light
+    meaning nothing is worse than no light.
+    """
+    errs = []
+    for b in (arch.get("beats") or []):
+        carrier = b.get("concrete_carrier") or ""
+        verdict = carrier_asserts_instance(carrier)
+        if not verdict["asserts"]:
+            continue
+        allowed = list(b.get("facts_allowed") or [])
+        occ = [f for f in allowed
+               if (ledger.get(f) or {}).get("claim_kind") == OCCURRENCE]
+        if not occ:
+            errs.append({
+                "code": "CARRIER_INSTANCE_NOT_SUPPORTED",
+                "beat_id": b.get("beat_id"),
+                "carrier": carrier,
+                "why_it_asserts": verdict["why"],
+                "supporting_fact_ids": allowed,
+                "supporting_claim_kinds": {f: (ledger.get(f) or {}).get("claim_kind",
+                                                                        "UNDECLARED")
+                                           for f in allowed},
+                "missing": "an OCCURRENCE fact reporting that this actually happened",
+            })
     return errs
 
 
@@ -398,6 +506,12 @@ def validate_packet(packet: dict) -> list:
 CUT_SENTINEL_MIN = 4          # ignore very short tokens; they collide with ordinary words
 
 
+def _body_stems(body_lower: str) -> set:
+    """Stemmed tokens of the prose. Only CUT watch terms are compared this way; no other
+    screen in this module stems, deliberately."""
+    return {_stem(w) for w in re.findall(r"[a-z0-9]+", body_lower)}
+
+
 def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None) -> dict:
     """Which CUT items show up in the finished prose anyway?
 
@@ -425,7 +539,31 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None) 
                 continue
             if t in body:
                 violations.append({"evidence_id": cid, "reason": c.get("reason"),
-                                   "term": term})
+                                   "term": term, "match": "literal"})
+                continue
+            # Inflection must not defeat a CUT. A watch term is written in one form and
+            # the prose reaches for another: a term "subsidy" against "subsidised", a
+            # term "scan" against "scans", a term "simulating" against "simulated". The
+            # literal test above misses every one of them and reports clean prose.
+            #
+            # Compared TOKEN-WISE on stems, never as a substring: "scans" -> "scan"
+            # matches the term, while "scandal" stays "scandal" and does not. A
+            # substring test on stems would flag the scandal.
+            #
+            # This is a robustness fix, not a repair of a known escape. No CUT fact is
+            # known to have reached prose this way; the screen simply could not have
+            # seen it if one had.
+            #
+            # The literal pass above stays a raw substring test, so a longer unrelated
+            # word containing the term ("scandal" for "scan") still fires. Left alone:
+            # it over-reports a CUT rather than under-reports one, which is the safe
+            # direction, and narrowing it is a change to a screen that is working.
+            if " " not in t:
+                st = _stem(t)
+                if len(st) >= CUT_SENTINEL_MIN and st in _body_stems(body):
+                    violations.append({"evidence_id": cid, "reason": c.get("reason"),
+                                       "term": term, "match": "inflected",
+                                       "stem": st})
     return {"violations": violations,
             "ok": not violations and not skipped and not unwatched,
             "clean_prose": not violations,

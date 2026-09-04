@@ -26,7 +26,7 @@
   {
    "beat_id": "B2",
    "happens": "What it reads: satellite position, a card of block-group scores, a servo angle, and the measure those scores come from.",
-   "concrete_carrier": "the card of scores and the servo arm pulling the brake",
+   "concrete_carrier": "the card of scores and the servo arm on the brake cable",
    "facts_allowed": [
     "F02",
     "F06",
@@ -77,7 +77,7 @@
   {
    "beat_id": "B6",
    "happens": "What the measure does not hold, and the places where it holds nothing at all.",
-   "concrete_carrier": "a block group with no published figure, and the brake that therefore does not move",
+   "concrete_carrier": "a block group with no published figure",
    "facts_allowed": [
     "F17",
     "F19",
@@ -201,6 +201,7 @@
   ],
   "before_reading": "A device that makes you feel the rent crisis in your legs.",
   "after_reading": "A device that can only pass on what the measure holds, and is quietest where the pressure is least counted.",
-  "crip_turn_carrier": "the block group with no published figure, and the brake that therefore does not move"
- }
+  "crip_turn_carrier": "the block group with no published figure"
+ },
+ "_carrier_repair_note": "B6, B2 and final_lens.crip_turn_carrier reworded to pure noun phrases after CARRIER_INSTANCE_NOT_SUPPORTED. B6 and the crip turn carrier both lost the clause 'and the brake that therefore does not move', which was the architect asserting an occurrence inside a carrier: the ledger holds only what the device DOES when a block group has no published figure (F19, DISPOSITION), never a documented ride through one. facts_allowed, use_facts, cut_evidence, lens_claim, evidence_basis, Worth result and prohibitions are byte-identical to the held-out run; only carrier wording changed, and only where the validator forced it."
 }

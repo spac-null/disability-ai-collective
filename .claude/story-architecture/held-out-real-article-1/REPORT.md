@@ -84,7 +84,15 @@ there is none. Nothing screens for whether a stated event exists in the ledger a
 The blind reader did not flag it either. It reads perfectly naturally, which is what makes it
 the dangerous class.
 
-## Second defect
+## Second defect — WITHDRAWN 2026-09-04, see REPAIR_1.md
+
+> **This section is wrong.** `F02` is a USED fact and reads "... in a 3D-printed
+> enclosure". The opening's "3D-printed box" is licensed by used evidence, so no cut
+> fact reached the prose. The `cut_adherence` finding below is also unsound: the audit
+> passed the function a structure it did not expect and measured nothing. Re-measured
+> with watch terms derived per cut fact, actual CUT leakage on this article is **0**.
+> The text below is left in place unedited as the record of what was claimed.
+
 
 The article opens on a "3D-printed box". The 3D printer is in the frozen manifest (`F32`) but
 `F32` was declared **CUT**, and the architect then wrote "A 3D-printed box" into

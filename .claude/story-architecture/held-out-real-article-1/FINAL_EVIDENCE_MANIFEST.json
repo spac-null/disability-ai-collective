@@ -46,7 +46,8 @@
     "S0"
    ],
    "support_span": "attaches to the front fork of a docked Citi Bike and overrides the front-brake, to adjust pedal resistance",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F02": {
    "fact_id": "F02",
@@ -57,7 +58,8 @@
     "S1"
    ],
    "support_span": "GPS module, ESP32S3 microcontroller, high-torque servo motor, and an SD card reader",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F03": {
    "fact_id": "F03",
@@ -67,7 +69,8 @@
     "S0"
    ],
    "support_span": "The mechanism pulls the existing brake arm along the axis its own lever cable uses. The rider's own brake levers remain fully functional and always override.",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F04": {
    "fact_id": "F04",
@@ -77,7 +80,8 @@
     "S0"
    ],
    "support_span": "The device does not connect to the internet or collect data. The dataset it reads is stored on the device.",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F05": {
    "fact_id": "F05",
@@ -87,7 +91,8 @@
     "S0"
    ],
    "support_span": "Scan of the electric Citi Bike front fork and drum brake hub, used to model the enclosure.",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F06": {
    "fact_id": "F06",
@@ -97,7 +102,8 @@
     "S0"
    ],
    "support_span": "American Community Survey (ACS) data at the block-group level ... The five-year estimates describe 2020 through 2024.",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F07": {
    "fact_id": "F07",
@@ -107,7 +113,8 @@
     "S0"
    ],
    "support_span": "the median share of income spent on rent, and the percentage of renter households spending at least half of their income on housing",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F08": {
    "fact_id": "F08",
@@ -117,7 +124,8 @@
     "S0"
    ],
    "support_span": "the top quantile was removed from the final dataset",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F09": {
    "fact_id": "F09",
@@ -128,7 +136,8 @@
     "S3"
    ],
    "support_span": "This follows HUD's longstanding 30 percent standard",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F10": {
    "fact_id": "F10",
@@ -138,7 +147,8 @@
     "S3"
    ],
    "support_span": "HUD adopted the 30% standard in 1981, evolving from a 25% threshold used in earlier public housing programs",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F11": {
    "fact_id": "F11",
@@ -148,7 +158,8 @@
     "S1"
    ],
    "support_span": "Blinder cruised easily down Prospect Park West until he hit Windsor Terrace. Then the brake kicked in, and the bike was nearly frozen.",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F12": {
    "fact_id": "F12",
@@ -158,7 +169,8 @@
     "S1"
    ],
    "support_span": "about $97,000 in 2024, according to an analysis by NYU's Furman Center",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F13": {
    "fact_id": "F13",
@@ -168,7 +180,8 @@
     "S1"
    ],
    "support_span": "the median asking rent was $2,250 ... that figure grew to $3,800, far exceeding the rate of inflation",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F14": {
    "fact_id": "F14",
@@ -178,7 +191,8 @@
     "S1"
    ],
    "support_span": "As Blinder rode near NYCHA complexes in Brooklyn, the device let up some resistance",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F15": {
    "fact_id": "F15",
@@ -188,7 +202,8 @@
     "S1"
    ],
    "support_span": "it's really just showing that public housing is working ... but it doesn't necessarily mean their lives are more affordable per se",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F16": {
    "fact_id": "F16",
@@ -198,7 +213,8 @@
     "S1"
    ],
    "support_span": "Many areas that have a higher rent burden aren't low-income neighborhoods, but corridors that have seen a rapid rise in housing costs in recent years.",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F17": {
    "fact_id": "F17",
@@ -209,7 +225,8 @@
     "S2"
    ],
    "support_span": "The American Community Survey is a sample, not a census. At the block-group level ... the margins of error are correspondingly wide",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F18": {
    "fact_id": "F18",
@@ -219,7 +236,8 @@
     "S2"
    ],
    "support_span": "the 2012-2016 ACS 5-Year Estimate for the population of females under 5 years old is 28 with a MOE of +/- 33",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F19": {
    "fact_id": "F19",
@@ -229,7 +247,8 @@
     "S0"
    ],
    "support_span": "The device and the map both show these as no reading rather than as zero",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F20": {
    "fact_id": "F20",
@@ -239,7 +258,8 @@
     "S0"
    ],
    "support_span": "an absence of data is not an absence of pressure, and rendering it as flat ground would be a lie told by the visualization rather than by the data",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F21": {
    "fact_id": "F21",
@@ -249,7 +269,8 @@
     "S0"
    ],
    "support_span": "It does not measure overcrowding, housing quality, eviction risk, informal or unrecorded tenancy, the security of a lease, surveillance, harassment, feelings of safety, or how long a household has been holding on.",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F22": {
    "fact_id": "F22",
@@ -259,7 +280,8 @@
     "S0"
    ],
    "support_span": "nothing about people with no housing at all - who are, by construction, absent from a survey of households",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F23": {
    "fact_id": "F23",
@@ -269,7 +291,8 @@
     "S0"
    ],
    "support_span": "That difficulty does not translate to the lived experiences and hardships of those represented in the data.",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F24": {
    "fact_id": "F24",
@@ -279,7 +302,8 @@
     "S0"
    ],
    "support_span": "Instead of simulating housing insecurity, Ground Truth creates a physical glitch",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F25": {
    "fact_id": "F25",
@@ -289,7 +313,8 @@
     "S0"
    ],
    "support_span": "roughly one in four had a loose front-brake cable that rendered the front brake ineffective. I corrected these issues during the installation and removal process.",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F26": {
    "fact_id": "F26",
@@ -299,7 +324,8 @@
     "S0"
    ],
    "support_span": "owned and operated by Lyft and, unlike other major U.S. systems, receives no public operating subsidy",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F27": {
    "fact_id": "F27",
@@ -310,7 +336,8 @@
     "S1"
    ],
    "support_span": "annual membership had reached $239, while a 45-minute e-bike ride could cost a member $12.15",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F28": {
    "fact_id": "F28",
@@ -320,7 +347,8 @@
     "S1"
    ],
    "support_span": "came up with the idea during the pandemic, when he lost his job and started making money as a delivery worker",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F29": {
    "fact_id": "F29",
@@ -330,7 +358,8 @@
     "S1"
    ],
    "support_span": "seeing, just how much the, income, economic and psychological qualities of the city differed so much on a block-by-block basis",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F30": {
    "fact_id": "F30",
@@ -341,7 +370,8 @@
     "S1"
    ],
    "support_span": "funded with a $10,000 award from the group Idle Hands",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "OCCURRENCE"
   },
   "F31": {
    "fact_id": "F31",
@@ -351,7 +381,8 @@
     "S1"
    ],
    "support_span": "More than half the city's residents spend at least 30% of their income on rent ... About three out of 10 spend more than half",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   },
   "F32": {
    "fact_id": "F32",
@@ -361,9 +392,31 @@
     "S1"
    ],
    "support_span": "He made the device on a 3D printer, and said he hopes people in other cities with bike share programs will download the specs",
-   "scope": "WORLD"
+   "scope": "WORLD",
+   "claim_kind": "DISPOSITION"
   }
  },
  "fact_count": 32,
- "freeze_rule": "After this freeze no stage may mint a fact. No possibility to fact, no association to causation, no description to visitor experience, no design intent to actual effect, no absence in sources to absence in world."
+ "freeze_rule": "After this freeze no stage may mint a fact. No possibility to fact, no association to causation, no description to visitor experience, no design intent to actual effect, no absence in sources to absence in world.",
+ "claim_kind_annotation": {
+  "added": "2026-09-04 safety repair 1",
+  "rule": "OCCURRENCE = a documented happening or documented particular action, decision or measurement. DISPOSITION = a rule, a conditional, a property, or an attributed statement. Every ATTRIBUTION is DISPOSITION: it licenses reporting that someone said a thing, not asserting a world event.",
+  "propositions_unchanged": true,
+  "evidence_unchanged": true,
+  "occurrence_ids": [
+   "F02",
+   "F05",
+   "F08",
+   "F10",
+   "F11",
+   "F12",
+   "F13",
+   "F14",
+   "F25",
+   "F27",
+   "F28",
+   "F30"
+  ],
+  "disposition_count": 20
+ }
 }

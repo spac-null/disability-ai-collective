@@ -14,7 +14,7 @@ THE PATH, IN ORDER
      - The servo pulls the existing front brake arm along the same axis as the rider's own brake cable; the rider's levers stay functional and always override, and the device can be removed by hand in seconds.
      not yet: anything about census data, neighbourhoods or what the resistance means
   2. What it reads: satellite position, a card of block-group scores, a servo angle, and the measure those scores come from.
-     carried by: the card of scores and the servo arm pulling the brake
+     carried by: the card of scores and the servo arm on the brake cable
      - The device was built from a GPS module, an ESP32S3 microcontroller, a high-torque servo motor, an SD card reader, an OLED display and a custom circuit board, in a 3D-printed enclosure.
      - The data is the American Community Survey five-year estimates at block-group level, covering 2020 through 2024.
      - Two indicators were blended into one score: the median share of income spent on rent, and the share of renter households spending at least half their income on housing.
@@ -38,7 +38,7 @@ THE PATH, IN ORDER
      - Blinder said that easing over public housing shows public housing is working and offsetting the burden, but does not mean residents' lives are more affordable as such.
      not yet: the suppressed block groups
   6. What the measure does not hold, and the places where it holds nothing at all.
-     carried by: a block group with no published figure, and the brake that therefore does not move
+     carried by: a block group with no published figure
      - The ACS is a sample rather than a census, and at block-group level the sample in any one area is small with correspondingly wide margins of error.
      - Where a block group's sample is too small or unreliable, the ACS publishes no estimate, and both the device and the map render this as no reading rather than as zero.
      - Blinder wrote that an absence of data is not an absence of pressure, and that showing it as flat ground would be a lie told by the visualization rather than by the data.
