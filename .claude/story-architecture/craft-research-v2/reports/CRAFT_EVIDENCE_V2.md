@@ -275,10 +275,15 @@ narrative features. The measurement was right and the inference was too broad: t
 was counting outline-announcing openers, and narrative features carry visible *content*
 transitions the detector does not see. The Open Notebook source that settles this was in the
 V1 seed list and not in ours. Recorded because a research pass that cannot find its own
-over-reach is not worth much — and because the correction *strengthens* the gap analysis:
-PR #62's `SIGNPOST_SHAPES` flags exactly the class of short declarative reader-directing
-sentence this source teaches as good craft, so it needs a baseline rather than a threshold at
-zero.
+over-reach is not worth much.
+
+**And then the correction itself needed correcting.** A first revision of this section claimed
+PR #62's `SIGNPOST_SHAPES` "flags exactly the class this source teaches as good craft." Tested
+directly, that is false: of six devices the source praises, the detector flags zero; of the
+four sentences the owner flagged in Jia, it flags four. The detector was better aimed than the
+correction gave it credit for. What it did need was a published baseline instead of a threshold
+at zero, because it does flag legitimate reader instruction in argument forms — and that has
+now been implemented (`PR62_CRAFT_GAP_ANALYSIS.md` §18).
 
 **X1. Question density is Bregman-specific, not a general accessibility trait.** This
 corrects a mistake I made mid-campaign. A first pass showed Scientias asking 3.6 questions

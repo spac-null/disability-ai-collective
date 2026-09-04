@@ -357,20 +357,21 @@ beginning *read / look at / notice / consider / remember / go back / return*. Br
 paragraphs with *"Look at the first line of this graph"* and *"Remember: the models of today
 are the worst models we will ever have."* Those would be flagged.
 
-And so would taught craft. The Open Notebook's *Good Transitions* uses the word **signpost as
-praise** — *"The short, declarative sentence that begins the next paragraph acts like a
-signpost for readers, signaling in uncomplicated language…"* — and teaches four visible
-transition devices: head-to-tail echo, the contrast turn, "But wait", and a dated launch-pad
-sentence after a section break. Douglas Fox describes building a *"launch pad"* with an exact
-date, time of day and city so the reader lands oriented. Robin Lloyd calls head-to-tail
-transitions a deliberate control mechanism used *"more intentionally, more aggressively"* for
-clarity.
+**CORRECTION, 2026-09-04.** An earlier revision of this section claimed the detector "flags
+exactly the class *Good Transitions* teaches as good craft." That was wrong, and testing it
+settled the matter. Of six devices praised in that source — head-to-tail echo (*"If they
+begin."*), the contrast turn, the "But wait" reversal (*"Or so scientists thought."*), a dated
+launch-pad sentence, a bridge clause, and the short declarative content opener the source
+actually calls a signpost (*"Phages are viruses."*) — `SIGNPOST_SHAPES` flags **zero**. Of the
+four sentences the owner flagged in the Jia draft, it flags **four**.
 
-So the detector is measuring two different things under one name. **Content** transitions point
-at the material and are good craft in every form. **Outline** transitions point at the
-article's own structure and belong to argument. The detector is still the good one — Jia is at
-0.333 per paragraph, 6.6× Bregman and 66× the narrative exemplars — but it needs a **published
-baseline and a content/outline split**, not a threshold at zero.
+So no content/outline split is needed in the patterns: they are already aimed at openers that
+point at the article rather than at the material. What the detector genuinely catches by
+accident is legitimate reader instruction in argument and newsletter forms — Bregman's *"Look
+at the first line of this graph."* and *"Remember: the models of today are the worst models we
+will ever have."* are both flagged.
+
+That is a baseline problem, not a taxonomy problem, and it has now been fixed — see §18.
 
 **(f) Section breaks are missing entirely.** *Good Transitions* calls the judicious use of
 section breaks *"perhaps the most critical tool for creating transitions in longer stories"*,
@@ -387,10 +388,10 @@ share below 0.05, sentence-length IQR at least 8 words. `writtenness` already re
 `sentence_len_median` and `sentence_len_spread`, so the module is one small step from
 measuring the right thing.
 
-**Minimal future change:** re-baseline or retire `solo_ratio` as a defect signal; keep the
-signpost signal and give it a published baseline; consider adding the clause-load diagnostic
-next to the sentence-length ones already reported. **Confidence:** HIGH on (b), (c) and (d);
-MEDIUM on (e).
+**Minimal future change: DONE, 2026-09-04 — see §18.** `solo_ratio` demoted to declared
+telemetry; the signpost rate banded against the published corpus with a form parameter and a
+small-n floor. The clause-load diagnostic (e) remains unimplemented. **Confidence:** HIGH on
+(b), (c) and (d); MEDIUM on (e).
 
 ---
 
@@ -569,3 +570,57 @@ no consequences is scaffolding, and the first change the evidence actually suppo
 writtenness re-baseline — the only recommendation in this document measured against PR #62's
 own code. Tom French's rule cuts the same way: *"The more complex the material, the simpler the
 structure should be."* The pressure on this architecture should be downward.
+
+
+---
+
+## 18. Calibration pass 1 — implemented 2026-09-04
+
+The only recommendation from this campaign that has been acted on. Diagnostics only: no
+generation behaviour changed, and `writtenness()` is called from nowhere outside the tests.
+
+**What changed in `continuity.py`.**
+
+- The module docstring's second mechanism no longer blames the one-sentence paragraph. It
+  records both falsified hypotheses — beats-to-paragraphs, and performance slots — so neither
+  is re-proposed.
+- `WRITTENNESS_CALIBRATION` now carries the published-corpus evidence next to the code, with
+  its provenance, its `n`, and an explicit statement that the detector is English-only so a
+  near-zero rate on Dutch prose is a language artefact.
+- `solo_ratio` returns unchanged and gained two companions: `solo_ratio_is_a_defect_signal:
+  False` and `solo_ratio_published_range: (0.00, 0.37)`.
+- `signpost_reading()` bands the rate against observed maxima — 0.025 for narrative, 0.125 for
+  argument — with an optional `form`, and returns `INSUFFICIENT_PARAGRAPHS` under ten
+  paragraphs.
+- `pivot_paragraph_candidates()` counts short standalone paragraphs as telemetry. There is no
+  target, no generator rule and no Writer instruction, and a test asserts their absence.
+- `SIGNPOST_SHAPES` itself is **byte-identical**, so historic counts stay comparable.
+
+**One design flaw found and fixed during implementation.** A rate alone over-reads short texts:
+two legitimate transitions in twelve paragraphs is 0.167, which the bands called abnormal. The
+brief is explicit that one or two transitions must not produce an exaggerated diagnosis, so the
+top band now also requires an absolute count. The floor is corpus-derived: no narrative
+exemplar exceeds **one** opener in a whole article, and every flagged Jia draft has **three or
+more**.
+
+**Re-run against the same corpus, corrected diagnostic:**
+
+| corpus | n | solo_ratio | signpost rate | bands |
+|---|---|---|---|---|
+| narrative/explanatory exemplars | 12 | 0.00–0.32 | 0.000–0.025 | `WITHIN_PUBLISHED_RANGE` 12 |
+| Bregman | 18 | 0.00–0.37 | 0.000–0.125 | `WITHIN_PUBLISHED_RANGE` 13 · `ELEVATED_FOR_FORM` 4 · `INSUFFICIENT_PARAGRAPHS` 1 |
+| Scientias *(language artefact)* | 31 | 0.00–0.18 | 0.000 | `WITHIN_PUBLISHED_RANGE` 26 · `INSUFFICIENT_PARAGRAPHS` 5 |
+| Jia drafts | 6 | 0.25–0.44 | 0.000–0.333 | `ARCHITECTURE_VISIBLE` 4 · `INSUFFICIENT_PARAGRAPHS` 2 |
+
+**Zero false positives across 61 published texts. Four of four on the full Jia drafts.** The
+two 8-paragraph continuity finals are declined rather than declared clean, which is the honest
+answer at that length.
+
+The diagnosis now reads correctly: Jia's abnormality was never that it contained one-sentence
+paragraphs — published prose contains more of them than Jia does. It is that three to five of
+its fifteen paragraphs opened by announcing their structural job, at two to three times the
+rate of the most heavily signposting published author in the corpus.
+
+**What was deliberately not done.** No hold threshold, no production gate, no Article Form
+Gate, no `reader_now_wonders`, no abstraction planning, no pivot-paragraph generator rule, no
+Jia rewrite. Suite: 58/61, the same three pre-existing failures as before the change.

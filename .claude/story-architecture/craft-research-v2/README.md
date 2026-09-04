@@ -117,6 +117,17 @@ V1 was wrong in one way that would have mattered: its transitions principle and 
 its own cited source contradicts. If inherited, it would have pushed the engine toward deleting
 taught craft.
 
+## Calibration pass 1 (2026-09-04)
+
+The first and so far only recommendation acted on. `continuity.writtenness()` now tells the
+truth about its two signals: `solo_ratio` is declared telemetry (published range 0.00–0.37,
+which contains Jia's 0.33), and the signpost rate is banded against the published corpus with
+a form parameter, a short-text abstention and a corpus-derived count floor. `SIGNPOST_SHAPES`
+is byte-identical, so historic counts remain comparable. Diagnostics only — the function is
+called from nowhere outside the tests, no hold threshold was added, and no generator rule for
+pivot paragraphs exists. Re-run: zero false positives across 61 published texts, four of four
+on the full Jia drafts. Details in `reports/PR62_CRAFT_GAP_ANALYSIS.md` §18.
+
 ## What this campaign did not do
 
 No architecture verdict. No Writer or Continuity prompt change. No Jia rewrite. No merge. No

@@ -9,12 +9,20 @@ through the prose. Two mechanisms were measured:
   it: crip_turn "Go back to the sand." -> "So go back to the sand." at 0.93 similarity;
   ending_move "Return to the salt walls..." -> the closing sentence at 0.90.
 
-  PERFORMANCE SLOTS -- 5 of 15 paragraphs were a single sentence (33%), and they were
-  almost exactly the sentences the owner flagged. A one-sentence paragraph is a slot that
-  forces its sentence to perform, which is why rewriting the sentences never fixed it.
+  SENTENCES ANNOUNCING THEIR STRUCTURAL JOB -- "The answer was mostly things you cannot
+  look at.", "So go back to the sand.", "Read that list again and notice...". Each tells
+  the reader what it is doing rather than telling them about the world.
 
-What was NOT the cause: beats becoming paragraphs one for one. The measured ratio was
-3.0. That hypothesis was wrong and is recorded here so it is not re-proposed.
+What was NOT the cause, on two counts now:
+
+  Beats becoming paragraphs one for one. The measured ratio was 3.0.
+
+  The one-sentence paragraph. This file previously called it "a slot that forces its
+  sentence to perform" (5 of 15, 33%). Calibrated against 1,181 paragraphs of published
+  nonfiction, solo_ratio runs 0.00-0.37 and Jia's 0.33 is inside it -- two Bregman texts
+  and a ProPublica investigation match or beat it. The signpost rate does separate them:
+  0.005/para in narrative exemplars, 0.046 in Bregman, 0.333 in the flagged draft. Both
+  wrong hypotheses are recorded so neither is re-proposed.
 
 The gates below exist because lineage alone is not enough: an editor can invent a
 proposition while truthfully naming a parent. Relations are the dangerous channel -- a
@@ -206,7 +214,11 @@ def test_writtenness_finds_performance_slots_and_signposts():
                    "The answer was mostly things you cannot look at.\n\n"
                    "So go back to the sand.\n\nThe account has it as brick.")
     w = CE.writtenness(constructed)
-    check("solo paragraphs are counted", w["solo_paragraphs"] == 5, w["solo_paragraphs"])
+    # counted, and reported as telemetry only -- see the calibration tests below
+    check("solo paragraphs are counted (descriptively)",
+          w["solo_paragraphs"] == 5, w["solo_paragraphs"])
+    check("  and solo_ratio does not claim to be a defect signal",
+          w["solo_ratio_is_a_defect_signal"] is False)
     check("signpost openers are found, including one behind a connective",
           len(w["signpost_openers"]) >= 3,
           w["signpost_openers"])
@@ -216,6 +228,192 @@ def test_writtenness_finds_performance_slots_and_signposts():
     w2 = CE.writtenness(flowing)
     check("flowing prose has no solo paragraphs", w2["solo_paragraphs"] == 0)
     check("  and no signpost openers", w2["signpost_openers"] == [])
+
+
+# ── calibration: what these numbers are allowed to mean ──────────────────────
+# Added 2026-09-04 from craft-research-v2. The point of these tests is that the diagnostic
+# reports the truth about its two signals: one separates the known defect, the other does not.
+def test_solo_paragraphs_alone_are_not_a_writtenness_defect():
+    """A: published-shaped prose with several one-sentence paragraphs is not condemned."""
+    # Bregman's argument essays run 0.20-0.37 solo_ratio with pivot paragraphs at the hinges.
+    published_like = "\n\n".join([
+        "On 17 September 1738, in the American village of Burlington, a small, hunchbacked "
+        "man came storming into a church service, wearing a long coat with something "
+        "hidden underneath it.",
+        "Everyone present belonged to the Religious Society of Friends.",
+        "The service had been going on for a while when the little man finally rose to his "
+        "feet, threw off his coat, and drove a sword through a hollowed-out book.",
+        "The deniers are us.",
+        "In 1738 slavery was normal across great swaths of the world, and the men in that "
+        "room owned people themselves, which is what made the gesture unbearable to them.",
+        "Genes cannot be undone. Poverty can.",
+        "He was expelled from four congregations in his life, and each time he came back.",
+        "Physically, Benjamin was a dwarf. Mentally, he was a giant.",
+        "By the time he died the Quakers of Philadelphia had resolved to expel every slave "
+        "trader from their community, which is not a coincidence anyone recorded at the time.",
+        "It is high time we told his story again.",
+        "The record of what he did survives only because a printer thought it worth keeping.",
+        "He was buried in an unmarked grave, beside Sarah.",
+    ])
+    w = CE.writtenness(published_like)
+    check("this prose is solo-heavy (%.2f, inside the published 0.00-0.37)"
+          % w["solo_ratio"], w["solo_ratio"] >= 0.30, w["solo_ratio"])
+    check("  solo_ratio is flagged as telemetry, not a defect signal",
+          w["solo_ratio_is_a_defect_signal"] is False)
+    check("  the published range is carried with it", w["solo_ratio_published_range"] == (0.0, 0.37))
+    check("  and the signpost reading is clean despite the solo paragraphs (%s)"
+          % w["signpost_reading"]["band"],
+          w["signpost_reading"]["band"] == "WITHIN_PUBLISHED_RANGE",
+          w["signpost_reading"])
+    check("  nothing in the diagnostic asserts a defect",
+          "defect" not in w["interpretation"].lower(), w["interpretation"])
+
+
+def test_repeated_structural_openers_are_detected():
+    """B: prose whose paragraphs announce their structural job is caught."""
+    heavy = "\n\n".join([
+        "The room was built of salt brick and set partway into the ground.",
+        "So now the question is what the record could carry.",
+        "But first, the list itself.",
+        "Go back to the sand for a moment.",
+        "Read that again and notice what kind of description it is.",
+        "Which brings us to the ranking.",
+        "The point is that the account kept what the materials meant.",
+        "That is an odd building to make.",
+        "The answer was mostly things you cannot look at.",
+        "Now consider the eight items one at a time.",
+        "And then it was over, and the pavilions came down.",
+        "This is a familiar shape to anyone who has read a citation.",
+    ])
+    w = CE.writtenness(heavy)
+    check("most paragraphs are caught as structural openers (%d of %d)"
+          % (len(w["signpost_openers"]), w["paragraphs"]),
+          len(w["signpost_openers"]) >= 8, w["signpost_openers"])
+    check("  the rate is above every published text measured (%.3f > 0.125)"
+          % w["signpost_rate"], w["signpost_rate"] > 0.125, w["signpost_rate"])
+    check("  and the band says so", w["signpost_reading"]["band"] == "ARCHITECTURE_VISIBLE",
+          w["signpost_reading"])
+    check("  even when told it is an argument essay, the rate is still too high",
+          CE.writtenness(heavy, form="ARGUMENTATIVE_ESSAY")["signpost_reading"]["band"]
+          == "ARCHITECTURE_VISIBLE")
+
+
+def test_one_or_two_transitions_do_not_produce_an_exaggerated_diagnosis():
+    """C: an occasional legitimate transition is not an indictment."""
+    mostly_clean = "\n\n".join([
+        "The detector registered a strange event on 16 June 2023, and the nucleus of a "
+        "xenon atom appeared to have taken a hard knock.",
+        "The team examined every background process it could name and found none that "
+        "would account for what the instrument had recorded that night.",
+        "Now look at the statistics, because they are where the claim thins out.",
+        "The strongest models reach a local significance of 3.4 sigma, and after "
+        "correction for the number of models tried, 2.6 remains.",
+        "Particle physics conventionally wants five before anyone calls something a "
+        "discovery, and the paper has not yet been through peer review.",
+        "A theoretical physicist in Melbourne who was not involved called it an "
+        "interesting observation and said it was very early.",
+        "The experiment runs until at least 2028, and a second event of the same shape "
+        "would change the arithmetic considerably.",
+        "For now the tank of ultrapure liquid xenon sits a mile underground, waiting.",
+        "Twenty years of similar hints have come and gone in this field.",
+        "The collaboration published the anomaly anyway, which is itself a choice.",
+        "It asked other physicists what they made of it.",
+        "That is where the matter rests.",
+    ])
+    w = CE.writtenness(mostly_clean)
+    check("only a couple of openers are caught (%d of %d)"
+          % (len(w["signpost_openers"]), w["paragraphs"]),
+          1 <= len(w["signpost_openers"]) <= 3, w["signpost_openers"])
+    check("  the diagnosis is not ARCHITECTURE_VISIBLE (%s)"
+          % w["signpost_reading"]["band"],
+          w["signpost_reading"]["band"] != "ARCHITECTURE_VISIBLE", w["signpost_reading"])
+    check("  and the reason given is the small absolute count, not the rate",
+          "too few" in w["signpost_reading"]["note"], w["signpost_reading"]["note"])
+
+
+def test_argument_forms_may_signpost_more_than_narrative():
+    """D: the band is form-sensitive, because the corpus says it must be."""
+    essay = "\n\n".join([
+        "Twenty years ago climate denial was a problem of the right, and today something "
+        "similar is happening on the left about artificial intelligence.",
+        "Now look at what the capability curve has actually done since 2022.",
+        "In 2022 the answer was about thirty seconds. In 2023 it was four minutes. In "
+        "2024 it was forty minutes. In 2025 it was six hours.",
+        "The people building these systems expect the line to keep climbing, and several "
+        "of them have said so on the record.",
+        "A microbiologist hired to pressure-test one model was shaken enough by what it "
+        "told him that he went for a walk to clear his head.",
+        "Two countries lead this race, and inside them a handful of corporations are "
+        "building the most powerful tools in the history of the species.",
+        "Political scientists have a name for what happens to countries that strike oil, "
+        "and the mechanism is about who the ruler needs.",
+        "Rulers have always needed money, and the only place to get it was their subjects.",
+        "So what does work, if shutting it down does not?",
+        "State capacity, international coordination, and building in the free world.",
+        "None of it happens automatically, and the eight-hour day was taken rather than given.",
+        "The models of today are the worst models we will ever have.",
+    ])
+    as_narrative = CE.writtenness(essay)
+    as_argument = CE.writtenness(essay, form="ARGUMENTATIVE_ESSAY")
+    check("the same text signposts at a Bregman-like rate (%.3f)"
+          % as_narrative["signpost_rate"],
+          0.02 <= as_narrative["signpost_rate"] <= 0.20, as_narrative["signpost_rate"])
+    check("  read as narrative it is flagged as elevated (%s)"
+          % as_narrative["signpost_reading"]["band"],
+          as_narrative["signpost_reading"]["band"] in ("ELEVATED_FOR_FORM",
+                                                       "ARCHITECTURE_VISIBLE"))
+    check("  read as argument it is ordinary (%s)"
+          % as_argument["signpost_reading"]["band"],
+          as_argument["signpost_reading"]["band"] == "WITHIN_PUBLISHED_RANGE",
+          as_argument["signpost_reading"])
+    check("  and the form used is reported either way",
+          as_argument["signpost_reading"]["form_assumed"] == "ARGUMENTATIVE_ESSAY")
+
+
+def test_short_texts_get_no_band_at_all():
+    """The rate is unstable under ten paragraphs, so no reading is offered."""
+    tiny = "A room was built of salt.\n\nSo go back to the sand.\n\nIt was brick."
+    w = CE.writtenness(tiny)
+    check("a 3-paragraph text gets INSUFFICIENT_PARAGRAPHS",
+          w["signpost_reading"]["band"] == "INSUFFICIENT_PARAGRAPHS", w["signpost_reading"])
+
+
+def test_pivot_paragraphs_are_telemetry_and_nothing_asks_for_them():
+    """E-adjacent: the pivot finding is counted, never requested."""
+    text = ("The room was built of salt brick and set partway into the ground, which is "
+            "an unusual thing to do with a building on a beach.\n\n"
+            "Genes cannot be undone. Poverty can.\n\n"
+            "But what was it for?\n\n"
+            "The account records the brick and not the room.")
+    piv = CE.pivot_paragraph_candidates(text)
+    # three: the verdict, the question, and the nine-word closing line. All are short
+    # standalone paragraphs, which is exactly what the category describes.
+    check("short standalone paragraphs are counted", len(piv) == 3, piv)
+    check("  a question pivot is labelled", any(p["shape"] == "QUESTION" for p in piv), piv)
+    check("  a verdict pivot is labelled", any(p["shape"] == "STATEMENT" for p in piv), piv)
+    src = pathlib.Path(CE.__file__).read_text()
+    check("no generator rule, target or instruction for pivots exists in the module",
+          "PIVOT_TARGET" not in src and "require_pivot" not in src
+          and "produce a pivot" not in src.lower())
+    check("  and the module says so in words",
+          "COUNTED, NEVER REQUESTED" in src)
+
+
+def test_the_calibration_evidence_is_carried_with_the_code():
+    cal = CE.WRITTENNESS_CALIBRATION
+    check("the corpus is named", "Bregman" in cal["corpus"] and "exemplars" in cal["corpus"])
+    check("narrative and argument signpost maxima are both recorded",
+          cal["signpost_per_paragraph"]["narrative_exemplars"]["max"] == 0.025
+          and cal["signpost_per_paragraph"]["argument_essay_bregman"]["max"] == 0.125)
+    check("the Jia pre-audit rate is recorded",
+          cal["signpost_per_paragraph"]["jia_pre_audit"] == 0.333)
+    check("solo_ratio carries its own DESCRIPTIVE_ONLY verdict",
+          cal["solo_ratio"]["verdict"].startswith("DESCRIPTIVE_ONLY"))
+    check("the published solo range contains the Jia value",
+          cal["solo_ratio"]["narrative_exemplars"]["min"]
+          <= cal["solo_ratio"]["jia_pre_audit"]
+          <= cal["solo_ratio"]["argument_essay_bregman"]["max"])
+    check("the language limitation is stated", "English-only" in cal["not_calibrated_for"])
 
 
 def test_the_architect_rhetoric_detector_finds_the_transcription_channel():
@@ -269,7 +467,9 @@ def test_the_frozen_continuity_final_holds_every_gate():
     # ("The sand *embodied strength and fragility*") and a solo lens reader could no
     # longer recover the Crip insight from the aggressive text. Naturalness and lens
     # legibility traded against each other, and the lens won.
-    check("solo paragraphs were reduced (%d -> %d)"
+    # Descriptive: this is what the selected edit did to the fixture. It is NOT a claim
+    # that fewer solo paragraphs is better -- see the calibration tests above.
+    check("solo paragraphs changed as this fixture records (%d -> %d)"
           % (w0["solo_paragraphs"], w1["solo_paragraphs"]),
           w1["solo_paragraphs"] < w0["solo_paragraphs"], w1["solo_paragraphs"])
     check("signpost openers were reduced (%d -> %d)"
@@ -294,7 +494,7 @@ def test_the_frozen_continuity_final_holds_every_gate():
     check("the aggressive variant is kept for comparison", agg.exists())
     if agg.exists():
         wa = CE.writtenness(agg.read_text())
-        check("  it did reach zero solo paragraphs and zero signposts",
+        check("  it did reach zero solo paragraphs and zero signposts (and lost anyway)",
               wa["solo_paragraphs"] == 0 and not wa["signpost_openers"])
         check("  but it lost the quoted specimen",
               "embodied strength and fragility*" not in agg.read_text())
@@ -307,6 +507,13 @@ def main() -> None:
                test_cut_material_and_the_crip_turn,
                test_paragraph_boundaries_are_not_dictated_by_beats,
                test_writtenness_finds_performance_slots_and_signposts,
+               test_solo_paragraphs_alone_are_not_a_writtenness_defect,
+               test_repeated_structural_openers_are_detected,
+               test_one_or_two_transitions_do_not_produce_an_exaggerated_diagnosis,
+               test_argument_forms_may_signpost_more_than_narrative,
+               test_short_texts_get_no_band_at_all,
+               test_pivot_paragraphs_are_telemetry_and_nothing_asks_for_them,
+               test_the_calibration_evidence_is_carried_with_the_code,
                test_the_architect_rhetoric_detector_finds_the_transcription_channel,
                test_the_frozen_continuity_final_holds_every_gate):
         print("\n" + fn.__name__)
