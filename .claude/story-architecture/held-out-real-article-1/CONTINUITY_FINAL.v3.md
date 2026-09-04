@@ -1,4 +1,4 @@
-Clamped to the front fork of a docked Citi Bike is a 3D-printed box, with a wire running down from it to the brake arm. The artist Justin Blinder built it. It overrides the front brake and changes how hard the bike is to pedal.
+Clamped to the front fork of a docked Citi Bike is a 3D-printed box. The artist Justin Blinder built it. It overrides the front brake and changes how hard the bike is to pedal.
 
 A servo inside pulls the existing front brake arm along the same axis the rider's own brake cable pulls it. The rider's levers stay functional and always override the box, and the whole thing comes off the fork by hand in seconds. What reaches the legs is resistance that arrives without being asked for, and then eases off again.
 
