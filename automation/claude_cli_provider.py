@@ -55,7 +55,11 @@ import time
 # The three the pipeline's own environment would otherwise inject. See module docstring.
 OVERRIDE_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_BASE_URL", "ANTHROPIC_AUTH_TOKEN")
 
-DEFAULT_MODEL = "claude-opus-4-5-20251101"
+# Pinned to an explicit id rather than left to the CLI's own default. The default
+# currently resolves to claude-opus-5[1m], the 1M-context variant, and a moving default
+# is the reproducibility hazard provider.py already separates requested_model from
+# actual_model to expose. Both are still recorded on every call.
+DEFAULT_MODEL = "claude-opus-5"
 DEFAULT_TIMEOUT = 600
 
 CLAUDE_SUBSCRIPTION_LIMIT = "CLAUDE_SUBSCRIPTION_LIMIT"
