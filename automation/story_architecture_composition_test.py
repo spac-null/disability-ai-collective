@@ -352,17 +352,21 @@ def test_a_span_that_is_not_in_the_evidence_is_rejected():
     check("the invented span is caught by the machine check",
           "F02" in CP.check_ledger(bad, CP.source_texts(PACK)))
 
-    # The repair returns the same unsupported fact: still invalid, so the stage HOLDS.
+    # The repair returns the same unsupported fact, so the FACT is rejected -- and the
+    # rejection, not the run, is what the campaign prescribes for support that cannot be
+    # verified. The other seven facts are verified and the run goes on without it.
     prov, out = run([{"facts": list(bad.values())},
-                     {"facts": [copy.deepcopy(bad["F02"])]}])
-    check("the run holds at the ledger", out["failure_stage"] == CP.LEDGER)
-    reasons = out["detail"][CP.LEDGER]["reasons"]
-    check("the rejected fact is named", any("F02" in r for r in reasons), reasons)
+                     {"facts": [copy.deepcopy(bad["F02"])]}, WORTH, "-", "-"])
+    led = out["detail"][CP.LEDGER]
+    check("the ledger stage passes on the verified remainder",
+          led["status"] == CP.PASS, led.get("reasons"))
+    check("the fact with the invented span is rejected", "F02" in led["rejected"])
     check("the reason says the span is not verbatim",
-          any("not verbatim" in r for r in reasons), reasons)
-    check("nothing downstream ran",
-          out["stages"][CP.WORTH] == CP.NOT_RUN
-          and out["stages"][CP.WRITER] == CP.NOT_RUN, out["stages"])
+          any("not verbatim" in m for m in led["rejected"]["F02"]),
+          led["rejected"]["F02"])
+    check("it is not in the frozen ledger", "F02" not in led["ledger"])
+    check("it is not offered to any later stage",
+          "F02" not in CP.ledger_block(led["ledger"]))
 
     # DROPPING a fact the evidence does not carry is a legitimate repair, and the run
     # continues on the facts that survived. An omitted fact costs the article a detail;
@@ -418,13 +422,19 @@ def test_the_ledger_repairs_at_most_once_and_may_not_broaden():
     check("the second call is the repair prompt", order == ["LEDGER", "LEDGER_REPAIR"],
           order)
 
-    # Two bad replies: one repair, then HOLD. No loop.
+    # A repair that fixes nothing buys no second repair. The budget is the point here:
+    # the fact is then rejected (see
+    # test_an_unsupportable_fact_is_rejected_and_the_run_survives_it), and what must not
+    # happen is a third attempt at it.
     prov2, out2 = run([{"facts": list(bad.values())},
-                       {"facts": [copy.deepcopy(bad["F02"])]}])
-    check("a still-invalid repair holds", out2["failure_stage"] == CP.LEDGER)
-    check("and does not try a third time", len(prov2.calls) == 2, len(prov2.calls))
-    check("the reason says one repair was spent",
-          "after one repair" in out2["failure_reason"], out2["failure_reason"])
+                       {"facts": [copy.deepcopy(bad["F02"])]}, WORTH, "-", "-"])
+    ledger_calls = [i for i in range(len(prov2.calls))
+                    if prov2.stage_of(i) in ("LEDGER", "LEDGER_REPAIR")]
+    check("EXACTLY ONE REPAIR, NEVER A LOOP", len(ledger_calls) == 2, len(ledger_calls))
+    check("the ledger stage reports one repair",
+          out2["detail"][CP.LEDGER]["repairs"] == 1)
+    check("the unrepaired fact is rejected rather than retried",
+          "F02" in out2["detail"][CP.LEDGER]["rejected"])
 
     # A repair that rewrites a fact which already validated is refused outright.
     broad = copy.deepcopy(LEDGER["F01"])
@@ -434,6 +444,46 @@ def test_the_ledger_repairs_at_most_once_and_may_not_broaden():
           out3["failure_stage"] == CP.LEDGER
           and "already validated" in out3["failure_reason"],
           out3.get("failure_reason"))
+
+
+def test_an_unsupportable_fact_is_rejected_and_the_run_survives_it():
+    """Found by the Ground Truth canary: two WORLD negatives out of sixty-odd facts,
+    still invalid after their one repair, killed a ledger whose other facts were all
+    verified. Rejecting the FACT is the campaign's own rule for unverifiable support,
+    and it is the safe direction -- a rejected fact reaches no later stage either way."""
+    bad = copy.deepcopy(LEDGER)
+    # A WORLD negative whose span does not state the negative: the exact canary failure.
+    bad["F09"] = F("F09", "No catalogue entry names the mason who laid the salt.",
+                   "laid by two masons over eleven days", ct=LG.NEGATIVE_EXISTENCE,
+                   kind="DISPOSITION")
+    # The repair returns it unchanged, which is what the model did twice on the canary.
+    prov, out = run([{"facts": list(bad.values())},
+                     {"facts": [copy.deepcopy(bad["F09"])]}, WORTH, "-", "-"])
+    led = out["detail"][CP.LEDGER]
+    check("the ledger stage still passes", led["status"] == CP.PASS,
+          led.get("reasons"))
+    check("the unsupportable fact is rejected", "F09" in led["rejected"], led["rejected"])
+    check("it is gone from the frozen ledger", "F09" not in led["ledger"])
+    check("the reason is recorded, not just the id",
+          any("silence is not evidence" in m for m in led["rejected"]["F09"]),
+          led["rejected"]["F09"])
+    check("the surviving facts are all verified",
+          not CP.check_ledger(led["ledger"], CP.source_texts(PACK)))
+    check("the run continues", out["stages"][CP.WORTH] == CP.PASS, out["stages"])
+    check("A REJECTED FACT IS NOT AVAILABLE TO THE ARCHITECT",
+          "F09" not in CP.ledger_block(led["ledger"]))
+
+    # But too little verified material left IS a hold, and says so honestly.
+    thin = {"F01": copy.deepcopy(LEDGER["F01"]),
+            "F09": copy.deepcopy(bad["F09"])}
+    _, out2 = run([{"facts": list(thin.values())}, {"facts": []}])
+    check("a ledger too thin to write from holds",
+          out2["failure_stage"] == CP.LEDGER, out2.get("failure_stage"))
+    check("and the reason is the thinness, not the one bad fact",
+          "not enough verified material" in out2["failure_reason"],
+          out2["failure_reason"])
+    check("the hold still carries the ledger it built",
+          "ledger" in out2["detail"][CP.LEDGER])
 
 
 def test_a_worth_hold_stops_the_article_before_composition():

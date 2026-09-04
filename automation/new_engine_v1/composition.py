@@ -119,14 +119,23 @@ READER_HOLD = "READER_HOLD"
 FREEZE_SOURCE_CHARS = 14_000
 
 
+# Below this there is not enough verified material to select a story from, and the
+# honest failure is that rather than a complaint about one fact.
+MIN_VERIFIED_FACTS = 4
+
+
 class CompositionHold(Exception):
     """A stage refused. Carries the code and the validator's own reasons."""
 
-    def __init__(self, stage: str, code: str, reasons: list):
+    def __init__(self, stage: str, code: str, reasons: list, payload: dict | None = None):
         super().__init__("%s: %s" % (code, "; ".join(str(r) for r in reasons)[:400]))
         self.stage = stage
         self.code = code
         self.reasons = [str(r) for r in reasons]
+        # What the stage had produced when it refused. A LEDGER_HOLD that discards the
+        # ledger it built answers "it failed" and not "here is what it emitted", and the
+        # second is the only one anybody can act on.
+        self.payload = payload or {}
 
 
 # ── PROVIDER: composition is a subscription-path workload ────────────────────
@@ -271,9 +280,18 @@ FREEZE_SYSTEM = (
     "that the span itself does not state -- that is the single most common way this stage "
     "fails. If the span carries a mechanism but not the year, the proposition has no year "
     "in it.\n"
-    "Do not write a negative claim -- nothing exists, was never built, does not mention, "
-    "only, the first -- unless a source STATES the negative in the span you quote. "
-    "Silence is not evidence of absence.\n"
+    "NEGATIVES ARE THE STAGE'S COMMONEST FAILURE, so read this twice. A claim that "
+    "something does not exist, was never built, is not mentioned, is the only one, or is "
+    "the first, is checked against the WORDS OF YOUR OWN SPAN: the span must itself say "
+    "no, not, never, none, without, nothing, lacks, absent, or has yet to. Noticing that "
+    "the sources never mention a thing is NOT evidence, and a span that merely fails to "
+    "mention it will be rejected. Silence is not evidence of absence.\n"
+    "  You have two honest options and one wrong one. If a source states the negative, "
+    "quote that sentence and use scope WORLD. If you counted a bounded set yourself, use "
+    "scope AUDITED_CORPUS, give corpus_size, and word the proposition as a claim about "
+    "THAT SET -- \"none of the eight entries describes...\" -- not about the world. If "
+    "neither is true, DO NOT EMIT THE FACT. Leaving it out costs the article a detail; "
+    "asserting it costs the article its grounding.\n"
     "Include the unglamorous facts and the ones that cut against the obvious story. "
     "Selection happens later and cannot select what you did not freeze."
 )
@@ -402,6 +420,11 @@ REPAIR_LEDGER_SYSTEM = (
     "             span. Number them after the highest existing id.\n"
     "  NARROW  -- keep it but remove what its span does not carry, or requote the span\n"
     "             verbatim from the source it actually came from.\n"
+    "A REJECTED NEGATIVE IS ALMOST ALWAYS A DROP. If the failure says a WORLD negative "
+    "needs evidence that states the negative, then no rewording will save it: either "
+    "quote a span that actually contains the negative, or re-scope it to AUDITED_CORPUS "
+    "with a corpus_size and word it as a claim about that set, or DROP IT. Emitting the "
+    "same claim again in different words will simply be rejected again.\n"
     "You may NOT broaden a fact, add a claim, or restate a rejected fact in wording that "
     "asserts the same unsupported thing. If the evidence does not carry it, DROP it: an "
     "omitted fact costs the article a detail, and a wrong one costs it its grounding.\n"
@@ -453,17 +476,45 @@ def freeze_ledger(provider, pack: dict, subject: str) -> dict:
         ledger = dict(kept)
         ledger.update(replacements)
         failures = check_ledger(ledger, srcs)
-        if failures:
+
+    # A fact that is still unsupportable after its one repair is REJECTED. That is the
+    # campaign's own rule for a fact whose support cannot be verified -- reject the FACT
+    # -- and it is the safe direction: nothing invalid reaches any later stage either
+    # way, and the alternative is that one stubborn fact out of sixty destroys an
+    # article whose other fifty-nine are verified.
+    #
+    # This is not a relaxed gate. No rejected fact is available to the architect, so it
+    # cannot be selected, cannot carry a beat and cannot license a turn. What changes is
+    # only whether the RUN dies with it. The rejections are recorded on the result, and
+    # the stage still HOLDS when too little verified material survives -- which is the
+    # honest failure: "there is not enough here to write from", not "fact 61 was wrong".
+    rejected = {}
+    if failures:
+        rejected = {fid: msgs for fid, msgs in failures.items() if fid in ledger}
+        for fid in rejected:
+            ledger.pop(fid, None)
+        orphaned = sorted(failures.keys() - set(rejected))
+        if orphaned:
             raise CompositionHold(
                 LEDGER, LEDGER_HOLD,
-                ["%d fact(s) still invalid after one repair" % len(failures)]
-                + ["%s: %s" % (f, "; ".join(m)) for f, m in sorted(failures.items())][:8])
+                ["the ledger is invalid in a way no single fact owns: %s" % orphaned]
+                + ["%s" % "; ".join(failures[o]) for o in orphaned][:4],
+                {"ledger": ledger, "rejected": rejected})
+        still = check_ledger(ledger, srcs)
+        if still:
+            raise CompositionHold(
+                LEDGER, LEDGER_HOLD,
+                ["rejecting the invalid facts did not leave a valid ledger"]
+                + ["%s: %s" % (f, "; ".join(m)) for f, m in sorted(still.items())][:6],
+                {"ledger": ledger, "rejected": rejected})
 
-    if len(ledger) < 4:
+    if len(ledger) < MIN_VERIFIED_FACTS:
         raise CompositionHold(
             LEDGER, LEDGER_HOLD,
             ["only %d fact(s) survived the freeze; there is not enough verified material "
-             "to select a story from" % len(ledger)])
+             "to select a story from" % len(ledger)]
+            + (["rejected as unsupportable: %s" % sorted(rejected)] if rejected else []),
+            {"ledger": ledger, "rejected": rejected})
 
     kinds = {}
     for f in ledger.values():
@@ -471,6 +522,8 @@ def freeze_ledger(provider, pack: dict, subject: str) -> dict:
     return {"status": PASS, "ledger": ledger, "provider": ident,
             "model_calls": calls, "repairs": repairs,
             "facts": len(ledger), "claim_kinds": kinds,
+            "rejected": rejected,
+            "rejected_count": len(rejected),
             "span_verified": True,
             "sources": sorted(srcs),
             "freeze_rule": "After this freeze no stage may mint a fact. No possibility "
@@ -1488,7 +1541,7 @@ def run_story_architecture_composition(
         return out(article=final)
 
     except CompositionHold as e:
-        st[e.stage] = {"status": HOLD, "code": e.code, "reasons": e.reasons}
+        st[e.stage] = dict(e.payload, status=HOLD, code=e.code, reasons=e.reasons)
         return out(e.stage, "; ".join(e.reasons)[:600], e.code,
                    st.get(CONTINUITY, {}).get("article_text")
                    or st.get(WRITER, {}).get("article_text"))
