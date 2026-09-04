@@ -22,7 +22,10 @@
     "what_changes_for_the_reader": "The reader now understands the eight-item list as a record of what could be written down, so the salt room's presence on it means something different than it did.",
     "story_beat_before": "B3",
     "crip_turn": "The sand's description is re-read as the record's own limit: it carries what a material was said to mean rather than what it was to stand on, and what it carried is what anyone downstream can weigh.",
-    "story_beat_after": "B5"
+    "story_beat_after": "B5",
+    "before_reading": "The eight-item list reads as a judgement about which pavilions were most interesting.",
+    "after_reading": "The list reads as a record of the pavilions' writable parts.",
+    "crip_turn_carrier": "the salt brick, and the sand described by what it embodied"
   },
   "architecture": {
     "article_type": "SHORT_NARRATIVE",
