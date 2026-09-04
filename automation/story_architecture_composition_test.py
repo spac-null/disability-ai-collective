@@ -1630,6 +1630,46 @@ def test_a_provenance_frame_needs_an_apparatus_SUBJECT():
                          "morning.")["ok"])
 
 
+def test_the_grounder_sees_what_the_ledger_was_frozen_from():
+    """The first canary run to reach the Grounder held with three TRUE_UNSUPPORTED
+    findings, and the Grounder explained why in its own words:
+
+        "The S1 excerpt breaks off mid-quotation at 'If you're going through NY'.
+         The remainder of what Blinder said is not in the fetched..."
+
+    S1 was 7,390 characters and it was shown 3,000. PACK_SOURCE_CHARS is sized to stop a
+    supporting source crowding out the anchor in a READING prompt; grounding is not a
+    reading prompt, and the ledger is frozen from far more. A grounder shown less
+    material than the article was written from reports the shortfall as invention."""
+    import new_engine_v1.stages as S
+    check("the legacy default is unchanged",
+          __import__("inspect").signature(S.ground)
+          .parameters["per_source_chars"].default == S.PACK_SOURCE_CHARS)
+    pack = {"sources": [{"source_id": "S1", "role": "INDEPENDENT", "url": "u",
+                         "text": "word " * 3000}]}
+    legacy = S.pack_material_block(pack)
+    wide = S.pack_material_block(pack, CP.FREEZE_SOURCE_CHARS)
+    check("the composition budget shows strictly more", len(wide) > len(legacy))
+    check("and it is the same budget the freeze used",
+          CP.FREEZE_SOURCE_CHARS > S.PACK_SOURCE_CHARS)
+
+    # The bridge really passes it, observed at the boundary rather than assumed.
+    seen = {}
+    real = S.ground
+
+    def spy(provider, article, src, sha, pk=None, per_source_chars=S.PACK_SOURCE_CHARS):
+        seen["per_source_chars"] = per_source_chars
+        return dict(GROUND_CLEAN)
+
+    S.ground = spy
+    try:
+        CP.ground_candidate(object(), "# t\n\nprose", S0, "sha", PACK)
+    finally:
+        S.ground = real
+    check("ground_candidate passes the freeze budget",
+          seen.get("per_source_chars") == CP.FREEZE_SOURCE_CHARS, seen)
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,

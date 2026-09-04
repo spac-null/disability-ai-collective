@@ -475,10 +475,15 @@ GROUNDING_SYSTEM = (
 
 
 def ground_prompt(article_text: str, source_text: str, sha: str,
-                  pack: dict | None = None) -> str:
+                  pack: dict | None = None,
+                  per_source_chars: int = PACK_SOURCE_CHARS) -> str:
+    """`per_source_chars` defaults to PACK_SOURCE_CHARS, so the legacy path is
+    unchanged. A caller whose ledger was frozen from more of a source than that must
+    raise it: a grounder shown less material than the article was written from reports
+    the shortfall as unsupported prose. See stages.ground."""
     return (
         _source_block(source_text, sha) +
-        pack_material_block(pack) +
+        pack_material_block(pack, per_source_chars) +
         "\nDRAFT UNDER REVIEW:\n<<<DRAFT\n%s\nDRAFT>>>\n" % article_text +
         "\nReply with JSON only:\n"
         '{\n'
@@ -499,8 +504,25 @@ def ground_prompt(article_text: str, source_text: str, sha: str,
 
 
 def ground(provider, article_text: str, source_text: str, sha: str,
-           pack: dict | None = None) -> dict:
-    c = provider.complete(GROUNDING_SYSTEM, ground_prompt(article_text, source_text, sha, pack),
+           pack: dict | None = None,
+           per_source_chars: int = PACK_SOURCE_CHARS) -> dict:
+    """THE GROUNDER MUST NOT SEE LESS THAN THE ARTICLE WAS WRITTEN FROM.
+
+    PACK_SOURCE_CHARS is 3,000, chosen to stop a supporting source crowding out the
+    anchor in a READING prompt. Grounding is not a reading prompt, and the composition
+    path freezes its ledger from far more of each source, so the default left the
+    grounder blind to support that existed. Measured on the Ground Truth canary: S1 is
+    7,390 characters, the grounder saw 3,000, and it said so in its own findings --
+    "The S1 excerpt breaks off mid-quotation at 'If you're going through NY'. The
+    remainder of what Blinder said is not in the fetched" -- then classified three
+    claims TRUE_UNSUPPORTED for want of the rest.
+
+    The default is unchanged, so the legacy path is byte-identical. Only a caller that
+    knows its ledger came from more raises it.
+    """
+    c = provider.complete(GROUNDING_SYSTEM,
+                          ground_prompt(article_text, source_text, sha, pack,
+                                        per_source_chars),
                           max_tokens=2600)
     p = parse_json_object(c.text)
     findings = p.get("findings") or []

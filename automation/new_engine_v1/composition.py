@@ -2015,7 +2015,11 @@ def ground_candidate(provider, article_text: str, source_text: str, source_sha: 
     the machine's own approval record is how a grounder starts agreeing with the engine.
     """
     try:
-        gf = S.ground(provider, article_text, source_text, source_sha, pack)
+        # The grounder is shown the same amount of each source the LEDGER was frozen
+        # from. Anything less and it reports the shortfall as unsupported prose -- which
+        # it did, and said so, on the first canary run to reach this stage.
+        gf = S.ground(provider, article_text, source_text, source_sha, pack,
+                      per_source_chars=FREEZE_SOURCE_CHARS)
     except Exception as e:
         if _is_subscription_limit(e):
             raise CompositionHold(GROUNDING, CLAUDE_SUBSCRIPTION_LIMIT,
