@@ -783,7 +783,16 @@ def test_composition_is_pinned_to_the_subscription_path():
     from new_engine_v1.provider import Provider
     p = CP.composition_provider(Provider(model="m", cliproxy_url="http://x/v1"))
     check("openrouter fallback is off for composition", p.allow_fallback is False)
-    check("the model is unchanged", p.model == "m")
+    check("the cliproxy url is inherited", p.cliproxy_url == "http://x/v1")
+    # NOT provider.model. Production's DEFAULT_MODEL is an id CLIProxy answers with a
+    # 502, and with the fallback off that is a dead path rather than a silent OpenRouter
+    # call. Measured on the host, 2026-09-04.
+    check("composition asks for a CLIProxy-native model",
+          p.model == CP.DEFAULT_COMPOSITION_MODEL, p.model)
+    check("the native id does not route out to openrouter",
+          not CP.DEFAULT_COMPOSITION_MODEL.startswith("openrouter/"))
+    check("it is overridable by env",
+          CP.COMPOSITION_MODEL_ENV == "COMPOSITION_MODEL")
     check("a real Provider still allows fallback by default",
           Provider(model="m").allow_fallback is True)
     check("a test double is passed through", CP.composition_provider(37) == 37)

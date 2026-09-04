@@ -130,8 +130,30 @@ class CompositionHold(Exception):
 
 
 # ── PROVIDER: composition is a subscription-path workload ────────────────────
+# The model composition asks CLIProxy for. It must be an id the proxy serves NATIVELY,
+# because composition runs with the OpenRouter fallback switched off.
+#
+# This cannot just inherit `provider.model`. Production's DEFAULT_MODEL is
+# "anthropic/claude-opus-4.8", and CLIProxy answers that id with
+#   502 {"message":"unknown provider for model anthropic/claude-opus-4.8"}
+# -- measured on the host, 2026-09-04. The legacy path survives it by falling through to
+# direct OpenRouter, which is exactly what provider.py's own docstring describes as
+# production "silently falling back for days". Composition may not do that, so it asks
+# for an id the proxy actually has. The proxy also serves "openrouter/claude-opus-4.8",
+# which is a different thing: that id routes OUT to OpenRouter, and choosing it would
+# defeat the provider policy while appearing to satisfy it.
+DEFAULT_COMPOSITION_MODEL = "claude-opus-4-6"
+COMPOSITION_MODEL_ENV = "COMPOSITION_MODEL"
+
+
+def composition_model() -> str:
+    import os
+    return (os.environ.get(COMPOSITION_MODEL_ENV) or "").strip() \
+        or DEFAULT_COMPOSITION_MODEL
+
+
 def composition_provider(provider):
-    """A CLIProxy-only view of the provider.
+    """A CLIProxy-only view of the provider, on a CLIProxy-native model.
 
     The composition stages run on the Claude subscription path. OpenRouter is not a
     composition provider: it serves the authoritative external Fact Check, and letting a
@@ -139,7 +161,8 @@ def composition_provider(provider):
     article and what the run cost, invisibly. A test double is passed through unchanged.
     """
     if isinstance(provider, Provider):
-        return Provider(model=provider.model, cliproxy_url=provider.cliproxy_url,
+        return Provider(model=composition_model(),
+                        cliproxy_url=provider.cliproxy_url,
                         allow_fallback=False)
     return provider
 
