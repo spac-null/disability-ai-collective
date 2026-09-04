@@ -51,25 +51,38 @@ class _Log:
 
 
 def credentials_missing() -> list:
-    """What is absent that the authoritative check needs. Reported, never worked around."""
-    from orchestrator.config import CLIPROXY_URL, CLIPROXY_KEY
+    """What is absent that the authoritative check needs. Reported, never worked around.
 
+    Rewritten 2026-09-05. This used to require the old local proxy's key and probe its
+    /models endpoint. Both are gone: Phase 2A removed that hop from every live path and
+    the service is stopped and disabled, so the probe could only ever add a false NOT RUN
+    on a host where the stage runs perfectly well. The env-var names are deliberately not
+    written out here -- cliproxy_removal_test scans live modules for them.
+
+    What STAGE 9 actually needs now is two different things, because the fact check is
+    two different kinds of call:
+
+      OPENROUTER_API_KEY   the authoritative Perplexity/Sonar web verification, which is
+                           not a Claude model and cannot come from a Claude subscription.
+      Claude subscription  the claim-extraction reasoning, which Phase 2B moved onto the
+                           owner's plan.
+
+    The subscription is READ from the CLI rather than assumed from a successful call --
+    an API key in the environment still produces completions, just billed elsewhere.
+    """
     missing = []
-    if not CLIPROXY_KEY:
-        missing.append("CLIPROXY_KEY")
     if not os.environ.get("OPENROUTER_API_KEY"):
-        missing.append("OPENROUTER_API_KEY")
-    # An HTTP reply -- 401 included -- means the proxy is up and asking for a key. Only a
-    # transport failure means it is not there. An earlier version of this check treated
-    # 401 as unreachable and reported the stage NOT RUN on a host where it could have run.
+        try:
+            from orchestrator.config import OPENROUTER_API_KEY
+        except Exception:                                         # noqa: BLE001
+            OPENROUTER_API_KEY = ""
+        if not OPENROUTER_API_KEY:
+            missing.append("OPENROUTER_API_KEY (Perplexity/Sonar web verification)")
     try:
-        req = urllib.request.Request(CLIPROXY_URL + "/models",
-                                     headers={"Authorization": "Bearer " + CLIPROXY_KEY})
-        urllib.request.urlopen(req, timeout=6)
-    except urllib.error.HTTPError:
-        pass
+        import claude_cli_provider
+        claude_cli_provider.assert_subscription()
     except Exception as e:                                        # noqa: BLE001
-        missing.append("CLIProxyAPI at %s (%s)" % (CLIPROXY_URL, type(e).__name__))
+        missing.append("Claude subscription (%s: %s)" % (type(e).__name__, str(e)[:120]))
     return missing
 
 

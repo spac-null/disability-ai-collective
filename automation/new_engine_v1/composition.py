@@ -202,7 +202,7 @@ def composition_provider(provider):
     """
     want = composition_model(getattr(provider, "model", ""))
     if isinstance(provider, Provider) and want != provider.model:
-        return Provider(model=want, cliproxy_url=provider.cliproxy_url)
+        return Provider(model=want, url=provider.url)
     return provider
 
 

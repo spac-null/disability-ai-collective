@@ -218,11 +218,11 @@ class Reply:
 
 
 class Scripted:
-    """Answers in order, and records every call. `model` and `cliproxy_url` exist so
+    """Answers in order, and records every call. `model` and `url` exist so
     `composition_provider` treats it as a test double and passes it through."""
 
     model = "test"
-    cliproxy_url = "http://127.0.0.1:0/v1"
+    url = "http://127.0.0.1:0/v1"
 
     def __init__(self, replies):
         self.replies = list(replies)
@@ -655,7 +655,7 @@ def test_the_subscription_limit_is_an_outcome_not_a_fallback():
 
     class Limited:
         model = "m"
-        cliproxy_url = "http://x/v1"
+        url = "http://x/v1"
 
         def __init__(self):
             self.calls = 0
@@ -2540,14 +2540,17 @@ def test_the_reader_gate_runs_last_and_returns_passages():
 
 
 def test_composition_reuses_the_existing_provider_abstraction():
-    """The brief asked for CLIProxy and not OpenRouter. That premise was false: CLIProxy
-    has no Claude auth at all (401 on every native claude-* route, invalid refresh
-    token), OpenRouter serves anthropic/claude-opus-4.8, and the owner confirmed they no
-    longer reach Claude through CLIProxy. So OpenRouter is not an alternative to the
-    Claude path, it IS the Claude path, and composition uses the existing Provider
-    exactly as the legacy path does."""
+    """Composition introduces no provider framework of its own; it reuses Provider.
+
+    The original brief asked for CLIProxy and not OpenRouter, and that premise was false:
+    CLIProxy had no Claude auth at all. The correction recorded here -- "OpenRouter IS the
+    Claude path" -- has since been overtaken in turn. Phase 2A removed the proxy and Phase
+    2B moved every live Claude-family call onto the owner's subscription, so OpenRouter is
+    now the SONAR and RECRAFT path and Claude composition runs through
+    claude_cli_provider. What survives all three states is the point this test makes:
+    composition reuses whatever provider it is handed, unchanged."""
     from new_engine_v1.provider import Provider
-    p = Provider(model="m", cliproxy_url="http://x/v1")
+    p = Provider(model="m", url="http://x/v1")
     got = CP.composition_provider(p)
     check("the provider is reused unchanged", got is p)
     check("no second provider framework is introduced",
@@ -2563,7 +2566,7 @@ def test_composition_reuses_the_existing_provider_abstraction():
     try:
         over = CP.composition_provider(p)
         check("an override changes the model and nothing else",
-              over.model == "other-model" and over.cliproxy_url == p.cliproxy_url)
+              over.model == "other-model" and over.url == p.url)
     finally:
         del os.environ[CP.COMPOSITION_MODEL_ENV]
     check("provider identity keeps requested and actual apart, so the serving leg is "

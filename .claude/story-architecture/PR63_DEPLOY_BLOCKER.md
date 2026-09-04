@@ -30,4 +30,31 @@ blocker is on the deploy path, not the flag.
 
 ## Status
 
-NOT BUILT. Nothing in PR #63 addresses it, and PR #63 must not be read as having done so.
+**CLEARED 2026-09-05.** Nothing in PR #63 addressed it, and PR #63 must still not be read
+as having done so — it was built separately, on the deploy path, exactly where the blocker
+said it belonged.
+
+`/srv/scripts/ops/cripminds-deploy-guard.sh` now resolves the intended SHA before anything
+runs, and `cripminds-daily.sh` aborts the run and alerts when the guard exits non-zero
+instead of logging a warning and carrying on. Each condition, and how it was verified:
+
+1. **A failed code update aborts production.** The guard's failure path prints
+   `DEPLOY_STATUS=FAIL` with a `DEPLOY_ERROR` code; `run_article` exits 1 without
+   reaching the pipeline.
+2. **Untracked collisions abort loudly.** `DEPLOY_COLLISION` names the exact paths. The
+   guard never stashes, resets or cleans — a person decides.
+3. **Stale code cannot continue running.** A fetch failure is fatal rather than a reason
+   to use what is on disk: a deploy that cannot name what it is deploying is not a deploy.
+4. **`CODE_SHA` is explicitly verified.** The guard prints both `EXPECTED_CODE_SHA` and
+   `LIVE_CODE_SHA`, and the run logs `DEPLOY_STATUS=PASS` only when they match.
+
+Demonstrated live twice on 2026-09-05, deploying PR #65 and PR #66:
+
+```
+EXPECTED_CODE_SHA=e8b63788bb93b0f02c63ec3c7047bd21ecdb17e5
+LIVE_CODE_SHA=e8b63788bb93b0f02c63ec3c7047bd21ecdb17e5
+DEPLOY_STATUS=PASS
+```
+
+The rest of the document stands as written, including the reason it is not theoretical.
+A green canary is still not permission to deploy.

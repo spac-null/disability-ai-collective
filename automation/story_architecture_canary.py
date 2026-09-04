@@ -19,8 +19,11 @@ TWO MODES
                    without a human touching an intermediate.
   --url URL        A fresh subject, fetched as the anchor and researched normally.
 
-Needs CLIPROXY_KEY and a reachable CLIProxy for composition, and OPENROUTER_API_KEY for
-the authoritative Fact Check. It reports what is missing rather than stubbing anything.
+Needs the owner's Claude subscription for composition (Phase 2B: composition runs on
+/usr/bin/claude, not on a proxy or a paid API key -- the earlier requirement here named a
+local proxy that Phase 2A removed and that is now stopped and disabled), and
+OPENROUTER_API_KEY for the authoritative Perplexity/Sonar Fact Check, which is not a
+Claude model. It reports what is missing rather than stubbing anything.
 """
 from __future__ import annotations
 
