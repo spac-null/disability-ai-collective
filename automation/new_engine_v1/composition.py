@@ -888,6 +888,26 @@ def check_architecture(arch: dict, ledger: dict) -> list:
         if vals:
             errs.append("ARCHITECT_PROSE: the architecture's own prose asserts %s no "
                         "approved fact carries: %s" % (channel[11:], vals[:6]))
+    # THE PACKET GATE BELONGS HERE, not after the architecture has been accepted.
+    #
+    # validate_packet refuses a packet carrying a provenance frame or a scaffold name,
+    # and it was only ever run inside writer_packet -- i.e. AFTER check_architecture had
+    # passed and the repair budget was spent. So a packet-level defect was terminal, with
+    # no path to the repair that could have fixed it in one line. The first fresh-subject
+    # run died exactly there: beat B4's `must_not_say_yet` read "Do not yet give the
+    # evidence about existing local requirements", the frame fired on "the evidence", and
+    # a run that had passed Ledger, Worth, Architecture and CUT could not continue.
+    #
+    # The gate is unchanged and its acceptance is unchanged. It is the same function on
+    # the same packet; it now runs where a repair can still answer it. writer_packet
+    # keeps its own call as a final assertion, so nothing can reach the Writer unchecked.
+    try:
+        errs += ["PACKET: " + e for e in ST.validate_packet(
+            ST.build_packet(arch, arch.get("final_lens") or {},
+                            LG.propositions(ledger)))]
+    except Exception as e:                                        # noqa: BLE001
+        errs.append("PACKET: could not be built from this architecture: %s" % e)
+
     # Optional semantic-ownership representation. The held-out baseline did not carry it,
     # so it is validated where present and never required -- requiring it would be a new
     # architecture feature, which this campaign is explicitly not adding.

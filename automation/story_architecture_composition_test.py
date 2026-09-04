@@ -1884,6 +1884,55 @@ def test_spatial_and_scene_tokens_are_advisory_and_reach_the_reader():
           "ADVISORY FLAGS" in prov.calls[0]["user"])
 
 
+def test_a_packet_defect_is_repairable_because_it_is_seen_in_time():
+    """The first fresh-subject run passed Ledger, Worth, Architecture and CUT, then died
+    with no way forward: beat B4's `must_not_say_yet` read
+
+        "Do not yet give the evidence about existing local requirements."
+
+    and validate_packet refuses a packet carrying a provenance frame. The gate was right
+    -- that text reaches the Writer through render() as "not yet: ..." and apparatus
+    register transcribes. What was wrong is WHEN it ran: inside writer_packet, after the
+    architecture had been accepted and its repair budget spent, so a one-line fault was
+    terminal."""
+    bad = copy.deepcopy(ARCH)
+    bad["beats"][1]["must_not_say_yet"] = ("Do not yet give the evidence about the "
+                                           "eight entries.")
+    errs = CP.check_architecture(bad, LEDGER)
+    check("a packet defect is now an ARCHITECTURE failure",
+          any(e.startswith("PACKET:") for e in errs), errs[:4])
+    check("and it names the frame", any("provenance frame" in e for e in errs), errs[:4])
+    check("a clean architecture still validates",
+          not [e for e in CP.check_architecture(ARCH, LEDGER)
+               if e.startswith("PACKET:")])
+
+    # Which means the repair loop can answer it, on the same budget as anything else.
+    prov, out = run([{"facts": list(LEDGER.values())}, WORTH, bad, ARCH]
+                    + full_script()[3:])
+    check("the repair fixes it and the run continues", out["status"] == CP.PASS,
+          out.get("failure_reason"))
+    check("it cost one architecture repair",
+          out["detail"][CP.ARCHITECTURE]["repairs"] == 1)
+    check("and the repair was answering the packet failure",
+          "PACKET" in str(out["detail"][CP.ARCHITECTURE]["repair_history"]),
+          out["detail"][CP.ARCHITECTURE]["repair_history"])
+
+    # writer_packet keeps its own check, so nothing reaches the Writer unchecked.
+    held = False
+    try:
+        CP.writer_packet(bad, LEDGER)
+    except CP.CompositionHold as e:
+        held = any("provenance frame" in r for r in e.reasons)
+    check("the final assertion in writer_packet is still there", held)
+
+    # A scaffold name in a prose field is caught the same way.
+    scaf = copy.deepcopy(ARCH)
+    scaf["beats"][0]["happens"] = "In CRIP_TURN the salt is re-read."
+    check("a scaffold name is an architecture failure too",
+          any("scaffold" in e.lower() for e in CP.check_architecture(scaf, LEDGER)),
+          CP.check_architecture(scaf, LEDGER)[:3])
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
