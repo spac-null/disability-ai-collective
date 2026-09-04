@@ -1,0 +1,189 @@
+"""
+story_architecture_canary.py -- run a subject through the automated composition path.
+
+WHY THIS IS A COMMITTED SCRIPT and not an ad-hoc session. The held-out Ground Truth
+article was produced by a person driving the stages by hand, which is precisely why it
+could not be repeated. A canary that proves autonomy has to be a thing anyone can run
+again, so the harness is code and its output is written to disk.
+
+WHAT IT DOES NOT DO. It builds no ledger, performs no Worth judgement, writes no
+architecture, derives no CUT terms, composes no Writer prompt and makes no Continuity
+edit. If any of that appears here, the canary is testing the author rather than the
+engine. All it does is assemble the frozen source material into a RESEARCH_PACK and hand
+it to `composition.run_story_architecture_composition`.
+
+TWO MODES
+  --ground-truth   The held-out subject, from the source URLs its frozen manifest
+                   records. Same subject, same sources. NOT byte-identical prose: the
+                   question is whether the autonomous stages reach a valid result
+                   without a human touching an intermediate.
+  --url URL        A fresh subject, fetched as the anchor and researched normally.
+
+Needs CLIPROXY_KEY and a reachable CLIProxy for composition, and OPENROUTER_API_KEY for
+the authoritative Fact Check. It reports what is missing rather than stubbing anything.
+"""
+from __future__ import annotations
+
+import argparse
+import datetime
+import json
+import pathlib
+import sys
+import urllib.request
+
+HERE = pathlib.Path(__file__).parent
+sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE / "orchestrator"))
+
+from new_engine_v1 import composition as CP            # noqa: E402
+from new_engine_v1 import contracts as C               # noqa: E402
+from new_engine_v1 import research as RS               # noqa: E402
+from new_engine_v1.provider import Provider            # noqa: E402
+import composition_factual_bridge as FCB               # noqa: E402
+
+UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
+      "(KHTML, like Gecko) Chrome/120.0 Safari/537.36")
+
+# The held-out article's own sources, as its frozen manifest records them. Roles and ids
+# are copied from the manifest so the canary's pack is the same corpus, not a new one.
+# S2 is a scanned PDF deck and S3/S4 answer 403 to every request shape tried; they are
+# attempted and recorded as unfetched rather than quietly omitted.
+GROUND_TRUTH_SUBJECT = ("Justin Blinder, Ground Truth: a device that converts census "
+                        "rent-burden data into physical brake resistance on a Citi Bike")
+GROUND_TRUTH_SOURCES = [
+    ("S0", "ANCHOR", "https://groundtruth.justin.work/"),
+    ("S1", "INDEPENDENT",
+     "https://gothamist.com/news/nyc-artist-creates-device-that-slows-citi-bikes-"
+     "passing-through-rent-burdened-areas"),
+    ("S3", "TERTIARY",
+     "https://www.huduser.gov/portal/pdredge/pdr_edge_featd_article_092214.html"),
+    ("S6", "PRIMARY",
+     "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/"
+     "USCODE-2023-title42-chap8-subchapI-sec1437a.htm"),
+    ("S7", "PRIMARY",
+     "https://www.federalregister.gov/documents/2024/01/17/2024-00849/"
+     "annual-adjustment-factors-and-annual-adjustment-factor-percentage-"
+     "increases-for-fiscal-year-2024"),
+]
+
+
+def fetch(url: str, timeout: int = 30) -> tuple:
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            raw = r.read().decode("utf-8", "replace")
+    except Exception as e:                                        # noqa: BLE001
+        return "", "%s: %s" % (type(e).__name__, str(e)[:120])
+    text = RS.strip_html(raw) if "<" in raw[:2000] else raw
+    return text, "" if text.strip() else "empty after markup strip"
+
+
+def build_pack(subject: str, sources: list, now: str) -> tuple:
+    """A RESEARCH_PACK from already-known source URLs. Model-free."""
+    out, failed = [], []
+    for sid, role, url in sources:
+        text, err = fetch(url)
+        if err or len(text.split()) < 80:
+            failed.append({"source_id": sid, "url": url,
+                           "reason": err or "%d words" % len(text.split())})
+            continue
+        out.append({"source_id": sid, "role": role, "url": url,
+                    "accessed_at": now, "sha256": C.sha256_text(text),
+                    "fetch_status": "ok", "content_length": len(text),
+                    "text": text[:RS.PER_SOURCE_CHARS]})
+    if not any(s["role"] == "ANCHOR" for s in out):
+        raise SystemExit("the anchor source could not be fetched; nothing to run on: %s"
+                         % failed)
+    anchor = next(s for s in out if s["role"] == "ANCHOR")
+    for s in out:
+        s["sha256"] = C.sha256_text(s["text"])
+        s["content_length"] = len(s["text"])
+    pack = {"subject": subject,
+            "sources": out,
+            "coverage": {"fetched": len(out), "failed": failed},
+            "sufficiency": {"verdict": RS.ARTICLE,
+                            "reasons": ["canary: sources supplied from the frozen "
+                                        "manifest, not searched"],
+                            "what_is_missing": []},
+            "pack_sha256": C.sha256_text(json.dumps(
+                [s["sha256"] for s in out], sort_keys=True))}
+    C.validate(C.Artifact(stage=C.RESEARCH_PACK, created_at=now, payload=pack))
+    return pack, anchor, failed
+
+
+def report(result: dict, out_dir: pathlib.Path) -> None:
+    L = ["STORY ARCHITECTURE AUTOMATED CANARY", "",
+         "subject : %s" % result["subject"],
+         "status  : %s" % result["status"],
+         "runtime : %ss" % result["runtime_seconds"],
+         "words   : %s" % result["words"], "", "STAGES"]
+    for s in CP.STAGES:
+        L.append("  %-13s %-8s  calls=%s%s"
+                 % (s, result["stages"][s],
+                    result["model_calls_by_stage"].get(s, 0),
+                    "  repairs=%s" % result["repairs_by_stage"][s]
+                    if result["repairs_by_stage"].get(s) else ""))
+    L += ["", "model calls total : %s" % result["model_calls_total"]]
+    if result["failure_stage"]:
+        L += ["", "FAILURE STAGE : %s" % result["failure_stage"],
+              "REASON CODE   : %s" % result["reason_code"],
+              "REASON        : %s" % result["failure_reason"]]
+    det = result.get("detail") or {}
+    if (det.get(CP.READER) or {}).get("one_line"):
+        L += ["", "reader: %s" % det[CP.READER]["one_line"]]
+    text = "\n".join(L)
+    print("\n" + text)
+    (out_dir / "CANARY_REPORT.txt").write_text(text)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--ground-truth", action="store_true")
+    ap.add_argument("--url", default="")
+    ap.add_argument("--subject", default="")
+    ap.add_argument("--out", default="")
+    ap.add_argument("--model", default="")
+    ap.add_argument("--no-fact-check", action="store_true")
+    a = ap.parse_args()
+
+    now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    tag = "ground-truth" if a.ground_truth else "fresh"
+    out_dir = pathlib.Path(a.out or (
+        HERE.parent / ".claude" / "story-architecture"
+        / ("automated-canary-%s-%s" % (tag, now[:19].replace(":", "")))))
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    missing = FCB.credentials_missing() if not a.no_fact_check else []
+    if missing:
+        print("NOTE: fact check cannot run -- missing %s" % ", ".join(missing))
+
+    if a.ground_truth:
+        print("assembling the frozen Ground Truth corpus ...")
+        pack, anchor, failed = build_pack(GROUND_TRUTH_SUBJECT, GROUND_TRUTH_SOURCES, now)
+    else:
+        if not a.url:
+            raise SystemExit("--url is required without --ground-truth")
+        print("fetching the anchor ...")
+        pack, anchor, failed = build_pack(
+            a.subject or a.url, [("S0", "ANCHOR", a.url)], now)
+    for s in pack["sources"]:
+        print("  %-4s %-12s %6d words  %s" % (s["source_id"], s["role"],
+                                              len(s["text"].split()), s["url"][:60]))
+    for f in failed:
+        print("  %-4s UNFETCHED    %s" % (f["source_id"], f["reason"]))
+    (out_dir / "RESEARCH_PACK.json").write_text(json.dumps(pack, indent=1))
+
+    provider = Provider(**({"model": a.model} if a.model else {}))
+    print("\nrunning the automated composition path (no manual stage construction) ...")
+    result = CP.run_story_architecture_composition(
+        provider, pack=pack, source_text=anchor["text"],
+        source_sha=anchor["sha256"], subject=pack["subject"],
+        fact_check=not a.no_fact_check,
+        fact_check_fn=FCB.fact_check, out_dir=out_dir)
+    report(result, out_dir)
+    print("\nartifacts: %s" % out_dir)
+    return 0 if result["status"] == CP.PASS else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
