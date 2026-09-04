@@ -204,8 +204,15 @@ def run_fact_check(article: str) -> dict:
         missing.append("CLIPROXY_KEY")
     if not os.environ.get("OPENROUTER_API_KEY"):
         missing.append("OPENROUTER_API_KEY")
+    # An HTTP reply -- 401 included -- means the proxy is up and asking for the key. Only
+    # a transport failure means it is not there. The first version of this check treated
+    # 401 as unreachable and reported the stage NOT RUN on a host where it could have run.
     try:
-        urllib.request.urlopen(CLIPROXY_URL + "/models", timeout=4)
+        req = urllib.request.Request(CLIPROXY_URL + "/models",
+                                     headers={"Authorization": "Bearer " + CLIPROXY_KEY})
+        urllib.request.urlopen(req, timeout=6)
+    except urllib.error.HTTPError:
+        pass
     except Exception as e:                                  # noqa: BLE001
         missing.append("CLIProxyAPI at %s (%s)" % (CLIPROXY_URL, type(e).__name__))
     if missing:
