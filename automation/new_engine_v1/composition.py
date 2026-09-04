@@ -2399,15 +2399,35 @@ def apply_grounding_repair(article_text: str, edits: list, findings: list,
             errs.append("edit %d: the original is not in the article: %r"
                         % (i, orig[:80]))
             continue
-        # THE REPAIR MAY ONLY SUBTRACT. New surface is refused outright.
-        new_nums = sorted(ST._numbers(rep) - ST._numbers(orig) - a_nums)
-        new_ents = sorted(ST._entities(rep) - ST._entities(orig) - a_ents)
+        # THE REPAIR MAY ONLY SUBTRACT -- but a correction is measured against the
+        # EVIDENCE IT CITES, not against the packet alone.
+        #
+        # The first real repair was refused for adding the number "27" and a TEMPORAL
+        # relation, on edits doing exactly what CORRECT_DATE and CORRECT_TIME are for:
+        # restoring a date the article had left ambiguous, and putting a draft
+        # consultation quote back in its own tense. A guard that refuses those refuses
+        # the permission it was written to enforce. So new surface is allowed only when a
+        # CITED LEDGER FACT carries it, in its proposition or its support span, and
+        # nowhere else.
         lic = [f for f in (e.get("fact_ids") or []) if f in ledger]
-        new_rel = ST.validate_turn_support(rep, lic, ledger) if rep and lic else []
+        lic_text = " ".join(
+            "%s %s" % ((ledger[f] or {}).get("proposition", ""),
+                       (ledger[f] or {}).get("support_span", "")) for f in lic)
+        allowed_nums = a_nums | ST._numbers(lic_text)
+        allowed_ents = a_ents | ST._entities(lic_text, skip_sentence_initial=False)
+        new_nums = sorted(ST._numbers(rep) - ST._numbers(orig) - allowed_nums)
+        new_ents = sorted(ST._entities(rep) - ST._entities(orig) - allowed_ents)
+        # A time correction necessarily changes temporal content; that is the operation.
+        # Every other relation class is still refused.
+        new_rel = [x for x in (ST.validate_turn_support(rep, lic, ledger)
+                               if rep and lic else [])
+                   if not (x["relation"] == ST.TEMPORAL
+                           and op in ("CORRECT_TIME", "CORRECT_DATE"))]
         if new_nums or new_ents or new_rel:
             errs.append("edit %d ADDS rather than subtracts -- numbers=%s entities=%s "
-                        "relations=%s" % (i, new_nums, new_ents,
-                                          [x["relation"] for x in new_rel]))
+                        "relations=%s (allowed only what the cited facts %s carry)"
+                        % (i, new_nums, new_ents,
+                           [x["relation"] for x in new_rel], lic))
             continue
         unknown = sorted(set(e.get("fact_ids") or []) - set(ledger))
         if unknown:

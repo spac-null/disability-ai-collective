@@ -2046,6 +2046,28 @@ def test_the_factual_repair_can_only_subtract():
         _, _, e = apply(rep)
         check("%s is refused" % why, e, (rep, e))
 
+    # BUT A CORRECTION IS MEASURED AGAINST THE EVIDENCE IT CITES. The first real repair
+    # was refused for adding the number "27" and a TEMPORAL relation on edits doing
+    # exactly what CORRECT_DATE and CORRECT_TIME are for. A guard that refuses those
+    # refuses the permission it exists to enforce.
+    _, prov2, e2 = apply("No entry of the eight describes what any visitor heard.",
+                         fact_ids=("F04", "F05"))
+    check("a number carried by a CITED fact is allowed",
+          not e2 and prov2, e2)
+    _, _, e3 = apply("No entry of the eight describes what any visitor heard.",
+                     fact_ids=("F01",))
+    check("but the same number is refused when no cited fact carries it", e3, e3)
+    # Isolate the TEMPORAL case: the negation is carried by the cited F05, so the only
+    # relation in question is the time reference the correction exists to fix.
+    timed = "No entry described what any visitor heard before the season ended."
+    _, prov4, e4 = apply(timed, fact_ids=("F05",), op="CORRECT_TIME")
+    check("a time correction may change temporal content", not e4, e4)
+    _, _, e5 = apply(timed, fact_ids=("F05",), op="NARROW")
+    check("while the SAME edit under NARROW is refused for the same relation",
+          any("TEMPORAL" in str(x) for x in e5), e5)
+    check("   so the exemption is tied to the operation, not the wording",
+          bool(e5) and not e4)
+
     _, _, e = apply("Anything.", fid="G9")
     check("an edit citing a finding the grounder never made is refused", e, e)
     _, _, e = apply("Anything.", op="IMPROVE")
