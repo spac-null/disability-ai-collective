@@ -105,6 +105,143 @@ def as_evidence_field(fact: dict) -> dict:
     }
 
 
+# ── F10 OFFICIAL FALLBACK ────────────────────────────────────────────────────
+# F10's only cited source (huduser.gov, S3) answers 403/202 to every request shape tried.
+# The owner supplied external confirmation and directed that an official HUD source be
+# used as the fallback. www.hud.gov and www.huduser.gov are both bot-blocked from here,
+# so the fallback goes one level DEEPER than HUD's own summary page: to the statutes and
+# codified law that HUD page is itself a summary OF, published by GPO and the Office of
+# the Law Revision Counsel. That is a stronger source, not a weaker substitute, and the
+# substitution is recorded rather than quietly made.
+#
+# This is NOT verbatim span grounding and is not reported as such: a different document
+# cannot contain S3's sentence. Each COMPONENT assertion of F10 is checked separately.
+F10_FALLBACK_SOURCES = [
+    {"id": "G1",
+     "name": "US Statutes at Large vol. 83 -- Housing and Urban Development Act of 1969 "
+             "(Pub. L. 91-152), the Brooke Amendment",
+     "url": "https://www.govinfo.gov/content/pkg/STATUTE-83/pdf/STATUTE-83-Pg379.pdf",
+     "kind": "pdf"},
+    {"id": "G2",
+     "name": "42 U.S.C. 1437a, with amendment notes (Office of the Law Revision Counsel, "
+             "via GPO)",
+     "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/"
+            "USCODE-2023-title42-chap8-subchapI-sec1437a.htm",
+     "kind": "html"},
+]
+# Each component of F10, and the literal string that settles it in one of those sources.
+F10_COMPONENTS = [
+    ("Brooke Amendment enacted 1969",
+     ["Public Law 91-152", "Housing and Urban Development Act of 1969"], "G1"),
+    ("1969 date on the enacting statute", ["DEC. 24, 1969"], "G1"),
+    ("initial public-housing rent cap was one quarter of income",
+     ["one-fourth of a low-rent housing tenant's income"], "G1"),
+    ("the cap now stands at 30 per centum",
+     ["30 per centum of the family's monthly adjusted income"], "G2"),
+    ("the 30 per centum subsection was enacted in 1981",
+     ["Pub. L. 97-35, title III, 322(a), Aug. 13, 1981",
+      "1981 -Pub. L. 97-35 added subsecs. (a)"], "G2"),
+]
+
+
+def fetch_pdf_text(url: str) -> str | None:
+    import subprocess, tempfile
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    try:
+        with urllib.request.urlopen(req, timeout=90) as r:
+            raw = r.read()
+    except Exception as e:                                  # noqa: BLE001
+        print("  FETCH FAILED %s: %s" % (url, e))
+        return None
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as fh:
+        fh.write(raw)
+        path = fh.name
+    try:
+        out = subprocess.run(["pdftotext", path, "-"], capture_output=True, timeout=300)
+        return norm(out.stdout.decode("utf-8", "replace"))
+    except Exception as e:                                  # noqa: BLE001
+        print("  PDF EXTRACT FAILED: %s" % e)
+        return None
+
+
+def verify_f10_fallback() -> dict:
+    """Check each component assertion of F10 against official primary law."""
+    texts = {}
+    for src in F10_FALLBACK_SOURCES:
+        t = fetch_pdf_text(src["url"]) if src["kind"] == "pdf" else norm(fetch(src["url"]) or "")
+        texts[src["id"]] = t or ""
+        print("  %-3s %7s chars  %s" % (src["id"], len(texts[src["id"]]), src["name"][:58]))
+    results = []
+    for label, needles, sid in F10_COMPONENTS:
+        hay = texts.get(sid, "")
+        # en dashes and section signs vary by renderer; compare on a folded form.
+        fold = lambda x: re.sub(r"[^a-z0-9]+", " ", x.lower()).strip()
+        ok = any(fold(n) in fold(hay) for n in needles)
+        results.append({"component": label, "source": sid, "verified": bool(ok),
+                        "needle": needles[0]})
+        print("     %s  %s  [%s]" % ("VERIFIED  " if ok else "NOT FOUND ", label, sid))
+    return {"components": results,
+            "all_verified": all(r["verified"] for r in results),
+            "sources": F10_FALLBACK_SOURCES}
+
+
+# ── FACT CHECK ───────────────────────────────────────────────────────────────
+# The authoritative component, called unmodified. It needs two credentials that live in
+# /srv/secrets/openclaw.env on trident (orchestrator/config.py:57):
+#   CLIPROXY_KEY   + a reachable CLIProxyAPI on 127.0.0.1:8317   (claim extraction)
+#   OPENROUTER_API_KEY                                            (Perplexity Sonar checks)
+# Missing either is reported as NOT RUN. It is never stubbed: a stub here would be a
+# publication gate answering a question nobody asked it.
+def run_fact_check(article: str) -> dict:
+    import os
+    import urllib.error
+    from orchestrator.fact_check import FactCheckMixin
+    from orchestrator.config import CLIPROXY_URL, CLIPROXY_KEY
+    from orchestrator.llm import LLMMixin
+
+    missing = []
+    if not CLIPROXY_KEY:
+        missing.append("CLIPROXY_KEY")
+    if not os.environ.get("OPENROUTER_API_KEY"):
+        missing.append("OPENROUTER_API_KEY")
+    try:
+        urllib.request.urlopen(CLIPROXY_URL + "/models", timeout=4)
+    except Exception as e:                                  # noqa: BLE001
+        missing.append("CLIProxyAPI at %s (%s)" % (CLIPROXY_URL, type(e).__name__))
+    if missing:
+        print("  NOT RUN -- missing: %s" % ", ".join(missing))
+        return {"status": "NOT_RUN", "missing": missing}
+
+    class _Log:
+        def _p(self, m, *a):
+            print("    " + (m % a if a else str(m)))
+        info = debug = warning = error = _p
+
+    class Runner(LLMMixin, FactCheckMixin):
+        def __init__(self):
+            self.logger = _Log()
+
+    t0 = time.time()
+    r = Runner()._run_web_fact_check(article, claim_cap=8, strict=True)
+    r["runtime_seconds"] = round(time.time() - t0, 1)
+    print("  extraction        %s" % r.get("extraction_status"))
+    print("  claims extracted  %s" % r.get("claims_extracted"))
+    print("  completed         %s" % r.get("fact_check_completed"))
+    print("  contradicted      %d  %s" % (len(r.get("contradicted") or []),
+                                          r.get("contradicted") or ""))
+    print("  advisory          %d" % len(r.get("advisory") or []))
+    print("  unverifiable      %s" % r.get("unverifiable_count"))
+    print("  not checked       %d" % len(r.get("not_checked") or []))
+    print("  runtime           %ss" % r["runtime_seconds"])
+    for f in (r.get("findings") or []):
+        print("    - %s" % str(f)[:160])
+    r["status"] = ("HOLD" if (r.get("contradicted")
+                              or r.get("extraction_status") == "error"
+                              or not r.get("fact_check_completed")) else "PASS")
+    print("  STATUS            %s" % r["status"])
+    return r
+
+
 def main() -> int:
     arch = json.loads((ART / "ARCHITECTURE.json").read_text())
     man = json.loads((ART / "FINAL_EVIDENCE_MANIFEST.json").read_text())
@@ -180,7 +317,20 @@ def main() -> int:
                                "support_span": f.get("support_span")})
             rows.append({"fact_id": fid, "result": "UNGROUNDED", "source": last[0],
                          "code": last[1]})
-    grounded = sum(1 for r in rows if r["result"] == "GROUNDED")
+    # F10's own source is blocked; the owner directed an official fallback. Run it, and
+    # only upgrade the row if every component assertion actually verifies.
+    f10 = None
+    if any(r["fact_id"] == "F10" and r["result"] == "UNFETCHED_SOURCE" for r in rows):
+        print("\n  F10 FALLBACK  (S3 unreachable -- official primary law)")
+        f10 = verify_f10_fallback()
+        if f10["all_verified"]:
+            for r in rows:
+                if r["fact_id"] == "F10":
+                    r["result"] = "GROUNDED_VIA_OFFICIAL_FALLBACK"
+                    r["fallback"] = [c["source"] for c in f10["components"]]
+            unfetched = [u for u in unfetched if u != "F10"]
+
+    grounded = sum(1 for r in rows if r["result"].startswith("GROUNDED"))
     print("  checked   %d" % len(rows))
     print("  GROUNDED  %d" % grounded)
     print("  UNGROUNDED %d" % len(ungrounded))
@@ -200,6 +350,12 @@ def main() -> int:
         for w in whys[:12]:
             print("      %s" % w[:100])
 
+    # ── Fact Check, the authoritative component, unmodified ─────────────────
+    fc = None
+    if "--fact-check" in sys.argv:
+        print("\nFACT CHECK  (orchestrator.fact_check.FactCheckMixin, strict=True)")
+        fc = run_fact_check(article)
+
     OUT.mkdir(exist_ok=True)
     (OUT / "GROUNDER_RESULT.json").write_text(json.dumps({
         "article": "CONTINUITY_FINAL.v3.md",
@@ -213,6 +369,8 @@ def main() -> int:
                         "chars": v.get("source_length_chars"),
                         "origin": v.get("source_origin")} for k, v in packets.items()},
         "prose_scan": {k: v for k, v in seen.items()},
+        "f10_fallback": f10,
+        "fact_check": fc,
     }, indent=1))
     print("\nwrote %s" % (OUT / "GROUNDER_RESULT.json"))
     return 0 if not ungrounded else 1

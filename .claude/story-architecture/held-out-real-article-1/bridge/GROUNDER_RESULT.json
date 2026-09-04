@@ -2,11 +2,9 @@
  "article": "CONTINUITY_FINAL.v3.md",
  "words": 688,
  "facts_checked": 22,
- "grounded": 21,
+ "grounded": 22,
  "ungrounded": [],
- "unfetched": [
-  "F10"
- ],
+ "unfetched": [],
  "rows": [
   {
    "fact_id": "F01",
@@ -52,9 +50,16 @@
   },
   {
    "fact_id": "F10",
-   "result": "UNFETCHED_SOURCE",
+   "result": "GROUNDED_VIA_OFFICIAL_FALLBACK",
    "sources": [
     "S3"
+   ],
+   "fallback": [
+    "G1",
+    "G1",
+    "G1",
+    "G2",
+    "G2"
    ]
   },
   {
@@ -189,6 +194,63 @@
   "possible_number_not_in_source": [
    "number '1981' not found in source",
    "number '1969' not found in source"
+  ]
+ },
+ "f10_fallback": {
+  "components": [
+   {
+    "component": "Brooke Amendment enacted 1969",
+    "source": "G1",
+    "verified": true,
+    "needle": "Public Law 91-152"
+   },
+   {
+    "component": "1969 date on the enacting statute",
+    "source": "G1",
+    "verified": true,
+    "needle": "DEC. 24, 1969"
+   },
+   {
+    "component": "initial public-housing rent cap was one quarter of income",
+    "source": "G1",
+    "verified": true,
+    "needle": "one-fourth of a low-rent housing tenant's income"
+   },
+   {
+    "component": "the cap now stands at 30 per centum",
+    "source": "G2",
+    "verified": true,
+    "needle": "30 per centum of the family's monthly adjusted income"
+   },
+   {
+    "component": "the 30 per centum subsection was enacted in 1981",
+    "source": "G2",
+    "verified": true,
+    "needle": "Pub. L. 97-35, title III, 322(a), Aug. 13, 1981"
+   }
+  ],
+  "all_verified": true,
+  "sources": [
+   {
+    "id": "G1",
+    "name": "US Statutes at Large vol. 83 -- Housing and Urban Development Act of 1969 (Pub. L. 91-152), the Brooke Amendment",
+    "url": "https://www.govinfo.gov/content/pkg/STATUTE-83/pdf/STATUTE-83-Pg379.pdf",
+    "kind": "pdf"
+   },
+   {
+    "id": "G2",
+    "name": "42 U.S.C. 1437a, with amendment notes (Office of the Law Revision Counsel, via GPO)",
+    "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap8-subchapI-sec1437a.htm",
+    "kind": "html"
+   }
+  ]
+ },
+ "fact_check": {
+  "status": "NOT_RUN",
+  "missing": [
+   "CLIPROXY_KEY",
+   "OPENROUTER_API_KEY",
+   "CLIProxyAPI at http://127.0.0.1:8317/v1 (URLError)"
   ]
  }
 }
