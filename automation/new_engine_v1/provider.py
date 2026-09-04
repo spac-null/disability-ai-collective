@@ -2,14 +2,26 @@
 provider.py -- the model transport for NEW_ENGINE_V1.
 
 PRODUCTION FIDELITY, deliberately
-Same endpoint, same auth and the same model identifiers the legacy editorial path
-uses: direct OpenRouter. (Until 2026-09-04 both paths went through the local
-CLIProxyAPI first; a live probe showed that hop returned 500 "unknown provider" for
-this module's own DEFAULT_MODEL, so the rung could never succeed and every call paid
-for it before falling through.) Reimplemented here as a ~40-line
-stdlib POST rather than imported from `orchestrator.llm`, for one reason only: this
-package must carry NO legacy prompt surface, and a test asserts that by scanning
-imports. The transport is identical; the prompt machinery is not inherited.
+Same transport, same auth and the same model identifiers the legacy editorial path uses.
+That target has moved twice. Until 2026-09-04 both paths went through the local
+CLIProxyAPI first; a live probe showed that hop returned 500 "unknown provider" for this
+module's own DEFAULT_MODEL, so the rung could never succeed and every call paid for it
+before falling through. Phase 2A removed it, leaving direct OpenRouter. Phase 2B
+(2026-09-05) moved the CLAUDE-FAMILY half onto the owner's claude.ai subscription, which
+is where the legacy path now goes too -- so fidelity is preserved by following it.
+
+The split is by MODEL FAMILY, not by call site. A Claude-family model goes to the shared
+subscription adapter; anything else keeps the direct OpenRouter POST below. That matters
+because this package is also how a non-Claude model would be reached if one were ever
+configured here, and a blanket cutover would have quietly turned it into a Claude call.
+
+The OpenRouter POST is still a ~40-line stdlib implementation rather than an import from
+`orchestrator.llm`, for one reason only: this package must carry NO legacy prompt surface,
+and a test asserts that by scanning imports. `claude_cli_provider` is the single permitted
+transport import -- it carries no prompt machinery, only a subprocess. It is imported
+LAZILY inside complete(), because the package may not import `subprocess` itself and a
+module-level import would put a shelling-out dependency in the package's import graph for
+every consumer, including the ones that never make a call.
 
 It sends exactly the system and user strings it is given. There is no prompt assembly
 here, no persona canon, no style-rule pile, no register selector -- those live in the
@@ -37,7 +49,10 @@ import bounded_http
 OPENROUTER_URL = "https://openrouter.ai/api/v1"
 
 # The model the migration targets for editorial reasoning and prose. Same family the
-# legacy path lands on today after its Fable fallback.
+# legacy path lands on today after its Fable fallback. Kept in its OpenRouter-era spelling
+# because it is what this module ASKS for; claude_cli_provider derives the tier-preserving
+# subscription id (claude-opus-5) and Completion keeps requested_model and actual_model
+# apart, so the substitution is recorded rather than assumed.
 DEFAULT_MODEL = "anthropic/claude-opus-4.8"
 
 
@@ -104,7 +119,8 @@ def _extract(body: dict) -> tuple[str, str, dict]:
 
 
 class Provider:
-    """Direct OpenRouter. Raises rather than degrading."""
+    """Claude subscription for Claude-family models, direct OpenRouter otherwise.
+    Raises rather than degrading."""
 
     def __init__(self, model: str = DEFAULT_MODEL, url: str | None = None):
         self.model = model
@@ -122,6 +138,23 @@ class Provider:
         it is the caller's own upper bound on a complete(), independent of how many rungs
         happen to exist, and dropping it would silently loosen every caller that passes it.
         """
+        # PHASE 2B. Claude-family work runs on the subscription; everything else keeps the
+        # direct OpenRouter POST below. A subscription refusal is TERMINAL -- it raises a
+        # ProviderError carrying the explicit subscription code, and is never answered by
+        # buying the same completion from OpenRouter.
+        import claude_cli_provider                                   # lazy: see docstring
+        if claude_cli_provider.is_claude_family(self.model):
+            if deadline is not None:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise ProviderError("deadline reached before the attempt")
+                timeout = max(1, int(min(timeout, remaining)))
+            try:
+                return claude_cli_provider.complete_via_subscription(
+                    system, user, self.model, timeout=timeout, temperature=temperature)
+            except claude_cli_provider.ClaudeCLIError as e:
+                raise ProviderError("%s: %s" % (getattr(e, "code", "CLAUDE_SUBSCRIPTION_ERROR"), e))
+
         payload = {
             "model": self.model,
             "messages": [{"role": "system", "content": system},
