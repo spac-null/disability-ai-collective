@@ -45,7 +45,7 @@ S0 = ("The Oaken Tiltroom was constructed from Himalayan salt bricks from Tuscan
       "records eight rooms. No entry describes what any visitor heard. The salt was "
       "supplied in nine tonne pallets and laid by two masons over eleven days.")
 S1 = ("A reviewer wrote that the catalogue keeps the intention of each room and drops the "
-      "encounter. The pavilion closed after the season ended.")
+      "encounter. The pavilion closed after the Kunsthalle season ended.")
 
 PACK = {"subject": "The Oaken Tiltroom catalogue",
         "sources": [{"source_id": "S0", "role": "ANCHOR", "url": "http://a", "text": S0},
@@ -77,8 +77,10 @@ LEDGER = {
                     "drops the encounter.",
              "the catalogue keeps the intention of each room and drops the encounter",
              ct=LG.ATTRIBUTION, kind="DISPOSITION", ev=("S1",)),
-    "F07": F("F07", "The pavilion closed after the season ended.",
-             "The pavilion closed after the season ended", ev=("S1",)),
+    # A cut fact needs vocabulary that could actually betray it. "Kunsthalle" is a
+    # proper noun the packet never carries, which is what a real sentinel looks like.
+    "F07": F("F07", "The pavilion closed after the Kunsthalle season ended.",
+             "The pavilion closed after the Kunsthalle season ended", ev=("S1",)),
     "F08": F("F08", "The room was fitted with fragrances intended to engage all the "
                     "senses.",
              "featured fragrances, with the aim of engaging all senses", kind="DISPOSITION"),
@@ -803,6 +805,59 @@ def test_runtime_is_recorded_per_stage():
           held["runtime_by_stage"])
 
 
+def test_the_derived_cut_terms_are_clean_on_the_frozen_manual_ARTICLE():
+    """The strongest available regression: the held-out article is KNOWN CLEAN -- the
+    manual run recorded 0 CUT violations against 31 hand-picked terms. So the automated
+    derivation must also report 0 on it. Anything it flags there is a false positive by
+    construction.
+
+    This is the test the first safety-stage canary needed and did not have. That run
+    reported 26 CUT violations on prose that had leaked nothing, because the derivation
+    was emitting `change`, `moves`, `form`, `tell`, `There`, `Another`, `visual`, `real`,
+    `unit` and `figure` as sentinels. Ordinary English cannot betray a fact."""
+    art = HERE.parent / ".claude" / "story-architecture" / "held-out-real-article-1"
+    if not art.exists():
+        check("frozen held-out artifacts are present", False, str(art))
+        return
+    arch = json.loads((art / "ARCHITECTURE.json").read_text())
+    led = json.loads((art / "FINAL_EVIDENCE_MANIFEST.json").read_text())["facts"]
+    article = (art / "CONTINUITY_FINAL.v3.md").read_text()
+    hand = json.loads((art / "CUT_WATCH_TERMS.json").read_text())
+
+    r = CP.derive_cut_watch_terms(arch, led)
+    ca = ST.cut_adherence(article, arch, r["terms"])
+    check("ZERO CUT VIOLATIONS on the known-clean manual article",
+          not ca["violations"], [(v["evidence_id"], v["term"]) for v in ca["violations"]])
+    check("and no blind spot: every cut fact is watched",
+          not ca["cut_without_watch_terms"], ca["cut_without_watch_terms"])
+    check("and no term is silently skipped as too short",
+          not ca["skipped_too_short"], ca["skipped_too_short"])
+    check("every cut fact the manual run watched is still watched",
+          set(hand) <= set(r["terms"]), sorted(set(hand) - set(r["terms"])))
+
+    # The specific vocabulary the manual run picked by hand is largely recovered.
+    recovered = {k: [x for x in hand[k]
+                     if any(x.lower() in d.lower() or d.lower() in x.lower()
+                            for d in r["terms"].get(k, []))]
+                 for k in hand}
+    hit = sum(len(v) for v in recovered.values())
+    check("most hand-picked terms are recovered automatically (%d of %d)"
+          % (hit, sum(len(v) for v in hand.values())),
+          hit >= sum(len(v) for v in hand.values()) // 2, recovered)
+
+    # The words that caused the false positives are now refused outright.
+    df = CP._document_frequency(led)
+    for junk in ("change", "moves", "form", "tell", "There", "Another", "visual",
+                 "real", "unit", "figure", "without", "reached", "options", "press"):
+        check("%r is refused as a sentinel" % junk,
+              not CP._is_distinctive(junk, df), junk)
+    # And the specific ones are still accepted.
+    for good in ("photogrammetry", "quantile", "12.15", "Idle Hands", "specifications",
+                 "10,000", "inflate", "subsidy"):
+        check("%r is accepted as a sentinel" % good,
+              CP._is_distinctive(good, df), good)
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
@@ -922,26 +977,27 @@ def test_cut_watch_terms_are_derived_deterministically_and_licensed():
     # A term a USED fact already licenses must not be watched, or the audit reports a
     # violation every time the article says something it is allowed to say.
     lic = copy.deepcopy(LEDGER)
-    lic["F07"]["proposition"] = "The pavilion of salt brick closed after the season."
+    lic["F07"]["proposition"] = ("The pavilion of salt brick closed after the "
+                                 "Kunsthalle season.")
     t2 = CP.derive_cut_watch_terms(ARCH, lic)
-    check("'pavilion' is not watched: used facts license it",
+    check("'pavilion' is not watched: the packet licenses it",
           not any(x.lower() == "pavilion" for x in t2["terms"]["F07"]),
           t2["terms"]["F07"])
     check("'salt' is not watched either",
           not any(x.lower() == "salt" for x in t2["terms"]["F07"]))
-    check("the distinctive words are still watched",
-          any(x.lower() in ("closed", "season") for x in t2["terms"]["F07"]),
+    check("the distinctive proper noun is still watched",
+          any("kunsthalle" in x.lower() for x in t2["terms"]["F07"]),
           t2["terms"]["F07"])
 
     # The shapes that made the CUT audit vacuous.
     check("a str value is refused",
           any("iterates wrongly" in e
-              for e in CP.validate_cut_terms({"F07": "closed"}, ARCH)))
+              for e in CP.validate_cut_terms({"F07": "Kunsthalle"}, ARCH)))
     check("a dict value is refused",
           any("iterates wrongly" in e
-              for e in CP.validate_cut_terms({"F07": {"closed": 1}}, ARCH)))
+              for e in CP.validate_cut_terms({"F07": {"Kunsthalle": 1}}, ARCH)))
     check("a whole non-dict is refused",
-          any("must be a dict" in e for e in CP.validate_cut_terms(["closed"], ARCH)))
+          any("must be a dict" in e for e in CP.validate_cut_terms(["Kunsthalle"], ARCH)))
     check("a cut fact with no entry at all is refused",
           any("nothing would watch it" in e for e in CP.validate_cut_terms({}, ARCH)))
     check("a term below the floor is refused, not silently skipped",
@@ -950,12 +1006,15 @@ def test_cut_watch_terms_are_derived_deterministically_and_licensed():
           CP.validate_cut_terms({"F07": ["ok"]}, ARCH))
 
     # And the audit it feeds actually sees a leak.
-    leak = DRAFT + "\n\nThe pavilion closed once the season had ended."
+    leak = DRAFT + "\n\nThe pavilion closed once the Kunsthalle season had ended."
     ca = ST.cut_adherence(leak, ARCH, terms["terms"])
     check("a real CUT leak is caught by the derived terms",
           bool(ca["violations"]), ca)
-    check("the derived terms leave the audit no blind spot",
-          not ST.cut_adherence(DRAFT, ARCH, terms["terms"])["cut_without_watch_terms"])
+    # F07's own words are either licensed by the packet or ordinary English, so nothing
+    # distinctive survives -- and the derivation SAYS so rather than leaving a silent gap.
+    check("a cut fact with no distinctive term is named, not hidden",
+          terms["cut_without_distinctive_terms"] in ([], ["F07"]),
+          terms["cut_without_distinctive_terms"])
 
 
 def test_the_writer_gets_the_minimal_packet_and_the_craft_doctrine():

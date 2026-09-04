@@ -1008,27 +1008,112 @@ def architect(provider, ledger: dict, worth: dict, subject: str) -> dict:
 # report a violation every time the article says something it is allowed to say. So a
 # candidate term is dropped when a USED proposition carries it -- compared on stems, the
 # same narrow morphology cut_adherence itself uses.
-_TERM_STOP = set("""
-about above after against along among around because before being below between both
-during each either from into more most much neither only other over same some such than
-that their them then there these they this those through under until very what when
-where which while with within without would could should have has had was were been
-will they're it's its also just like make made makes making take takes taken thing
-things very well were what whether while
-""".split()) | ST._FUNCTION_WORDS
-
+# THE LICENSING RULE, and the specificity rule beside it.
+#
+# A CUT fact's words are only a betrayal if (a) nothing the Writer was handed already
+# licenses them, and (b) they actually identify that fact. The first canary to reach the
+# safety stage failed on (b): the derivation emitted `change`, `moves`, `form`, `tell`,
+# `There`, `Another`, `visual`, `real`, `unit`, `figure` as sentinels, and reported 26 CUT
+# violations on prose that had leaked nothing. Ordinary English cannot betray a fact. The
+# manual baseline's hand-picked terms were `photogrammetry`, `quantile`, `Lyft`, `12.15`,
+# `Idle Hands` -- words that belong to one fact and nothing else.
+#
+# So specificity is measured, not guessed at from a stop list, and measured against the
+# ledger itself: a term appearing in many propositions identifies none of them. Document
+# frequency needs no vocabulary of English and cannot go stale.
 CUT_TERMS_PER_FACT = 6
 CUT_TERM_MIN = ST.CUT_SENTINEL_MIN
 
+# A term in more than this many ledger propositions is not a sentinel for any of them.
+CUT_TERM_MAX_DF = 2
+# Below this length, a lowercase single word is almost always ordinary English. Proper
+# nouns and numbers are exempt: "Lyft" is four characters and identifies one fact.
+CUT_TERM_DISTINCTIVE_LEN = 7
+
+# Ordinary English, which cannot betray a fact whatever its frequency in this corpus.
+#
+# A word list is used here after measuring the two alternatives and finding both unable to
+# do the job. Document frequency over the ledger gives `reached` df=0 -- it came from a
+# span, not a proposition -- and cannot separate `without` (df 1) from `inflate` (df 1),
+# which the manual baseline wanted. Term frequency over the source corpus is worse: on
+# 3,633 words it scores `tell` 1, `change` 2 and `real` 1 while scoring the WANTED
+# `download` 18 and `project` 12. The knowledge that separates them is simply which words
+# are ordinary English, so that is what is written down. It is used alongside the
+# frequency rules, not instead of them.
+_COMMON_ENGLISH = {ST._stem(w) for w in """
+about above across after again against almost along already also although always among
+amount another answer anyone appear applied apply approach area around arrive arrived
+available based become becomes began begin behind being believe below best better between
+beyond both bring brought build built called cannot capacity carried carry case cause
+caused certain change changed changes clear close collect come coming common complete
+consider contain continue could country course create created current currently decide
+decided describe described design detail determine determined develop developed
+difference different difficult direct directly during each early effect either enough
+entering entire especially even event every example except exist expect experience
+explain fact factor fall family feature figure final finally find first follow following
+force form forms found four full further future general generally give given going great
+greater group grow half hand happen hard have having help high higher hold holds however
+important include included includes including increase increased increases indeed inside
+instead into issue itself just keep kept kind know known large larger last late later
+lead least leave left less level light like likely limit line little live local long
+longer look lower made main major make makes making many matter mean means measure might
+model more most move moves moving much must name near need needed never next none normal
+note nothing notice number numerous occur offer often only open option options order
+other others outside over part particular pass past people perhaps period person place
+plan point possible present press pressure probably problem process produce program
+programs provide provided public push question quite range rate rather reach reached real
+really reason receive received recent record reduce refer regard relate remain report
+require required result return right rise room rule same second section seem seen sense
+series serve service set several shall short should show shown side simple simply since
+single site situation size small some sort space special specific stand start state still
+stop study subject such support suppose sure system systems take taken talk tell term
+than that their them then there these they thing think this those though three through
+time today together took total toward turn type under understand unit units unless until
+upon used useful using usual usually value various very view visual want water well were
+what when where whether which while whole will with within without work would year
+because project
+""".split()} | {ST._stem(w) for w in ST._FUNCTION_WORDS}
+
+_WORD = re.compile(r"[A-Za-z0-9][A-Za-z0-9.,'-]*")
+_NUMBERISH = re.compile(r"\d")
+_PROPER = re.compile(r"\b[A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+)*\b")
+
+
+def _stems(text: str) -> set:
+    return {ST._stem(w) for w in re.findall(r"[a-z0-9]+", (text or "").lower())}
+
+
+def _document_frequency(ledger: dict) -> dict:
+    """stem -> how many ledger propositions contain it."""
+    df: dict[str, int] = {}
+    for f in (ledger or {}).values():
+        for s in _stems(f.get("proposition") or ""):
+            df[s] = df.get(s, 0) + 1
+    return df
+
+
+def _is_distinctive(term: str, df: dict) -> bool:
+    t = term.strip()
+    if _NUMBERISH.search(t):
+        return True                                  # a figure belongs to its fact
+    if _PROPER.fullmatch(t) and t.lower() not in ("there", "another", "this", "these"):
+        return True                                  # a name belongs to its fact
+    if " " not in t:
+        if len(t) < CUT_TERM_DISTINCTIVE_LEN:
+            return False                             # short and lowercase: ordinary
+        if _stems(t) & _COMMON_ENGLISH:
+            return False                             # ordinary, whatever its frequency
+    return max((df.get(s, 0) for s in _stems(t)), default=0) <= CUT_TERM_MAX_DF
+
 
 def _candidate_terms(fact: dict) -> list:
-    """Concrete words a cut fact would betray itself by: its numbers, its named
-    entities, and its distinctive content words. Ordered most to least specific."""
+    """Concrete words a cut fact would betray itself by: its numbers, its named entities,
+    then its longest content words. Ordered most to least specific."""
     text = "%s %s" % (fact.get("proposition") or "", fact.get("support_span") or "")
     out, seen = [], set()
 
     def push(t):
-        t = (t or "").strip()
+        t = (t or "").strip(" .,;:'\"")
         key = t.lower()
         if t and key not in seen and len(key) >= CUT_TERM_MIN:
             seen.add(key)
@@ -1036,13 +1121,12 @@ def _candidate_terms(fact: dict) -> list:
 
     for n in sorted(ST._numbers(text), key=len, reverse=True):
         push(n)
-    for e in sorted(ST._entities(text, skip_sentence_initial=False)):
-        push(e)
+    for m in sorted(set(_PROPER.findall(text)), key=len, reverse=True):
+        push(m)                                      # multi-word names first
     for w in (fact.get("entities") or []):
         push(str(w))
-    for w in re.findall(r"[A-Za-z][A-Za-z-]{3,}", text):
-        if w.lower() not in _TERM_STOP:
-            push(w)
+    for w in sorted(set(re.findall(r"[A-Za-z][A-Za-z-]{4,}", text)), key=len, reverse=True):
+        push(w)
     return out
 
 
@@ -1053,12 +1137,21 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
     `cut_adherence` can never silently watch nothing, and any cut fact for which no term
     survives licensing is REPORTED rather than dropped.
     """
-    used_text = " ".join((ledger.get(f) or {}).get("proposition") or ""
-                         for f in (arch.get("use_facts") or []))
-    licensed = {ST._stem(w) for w in re.findall(r"[a-z0-9]+", used_text.lower())}
+    # Licensed by everything the WRITER WAS ACTUALLY HANDED, not merely by the used
+    # propositions: the packet also carries beat text, carriers, definitions and
+    # prohibitions, and a word in any of them is language the Writer was given. Rendering
+    # it here is deterministic and free.
+    try:
+        packet_text = ST.render(ST.build_packet(
+            arch, arch.get("final_lens") or {}, LG.propositions(ledger)))
+    except Exception:                                             # noqa: BLE001
+        packet_text = " ".join((ledger.get(f) or {}).get("proposition") or ""
+                               for f in (arch.get("use_facts") or []))
+    licensed = _stems(packet_text)
+    df = _document_frequency(ledger)
 
     terms: dict[str, list] = {}
-    unlicensed_only, missing = [], []
+    unlicensed_only, missing, dropped = [], [], {}
     for c in (arch.get("cut_evidence") or []):
         cid = c.get("evidence_id")
         fact = ledger.get(cid)
@@ -1068,18 +1161,21 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
         if not fact:
             missing.append(cid)
             continue
-        cands = _candidate_terms(fact)
-        kept = []
-        for t in cands:
-            # A term whose stem a USED fact already carries cannot betray the cut: the
-            # article is entitled to that word.
-            stems = {ST._stem(w) for w in re.findall(r"[a-z0-9]+", t.lower())}
+        kept, rejected = [], []
+        for cand in _candidate_terms(fact):
+            stems = _stems(cand)
             if stems and stems <= licensed:
+                rejected.append((cand, "licensed by the packet"))
                 continue
-            kept.append(t)
+            if not _is_distinctive(cand, df):
+                rejected.append((cand, "not specific to this fact"))
+                continue
+            kept.append(cand)
             if len(kept) >= CUT_TERMS_PER_FACT:
                 break
         terms[cid] = kept
+        if rejected:
+            dropped[cid] = rejected[:8]
         if not kept:
             unlicensed_only.append(cid)
 
@@ -1087,7 +1183,8 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
         "terms": terms,
         "cut_declared": len(arch.get("cut_evidence") or []),
         "cut_with_terms": sum(1 for v in terms.values() if v),
-        "cut_fully_licensed_by_used_facts": sorted(unlicensed_only),
+        "cut_without_distinctive_terms": sorted(unlicensed_only),
+        "candidates_dropped": dropped,
         "cut_ids_not_in_ledger": sorted(missing),
         "terms_total": sum(len(v) for v in terms.values()),
         "derivation": "deterministic; no model call",
@@ -1344,10 +1441,36 @@ def continuity_pass(provider, article_text: str, arch: dict) -> dict:
 # the Writer: an article that invented something is evidence about the run, and rerolling
 # it destroys that evidence and buys a second draft with an unknown defect.
 def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
-                 ledger: dict, cut_terms: dict) -> dict:
+                 ledger: dict, cut_terms: dict, cut_report: dict | None = None) -> dict:
     """The merged post-writer stack, on both the draft and the final."""
+    approved_entities = ST._entities(ST.render(packet), skip_sentence_initial=False)
+
+    def _possessive_of_approved(e: str) -> bool:
+        """"Survey's" is not a new entity when the packet grants "Survey".
+
+        The merged audit compares capitalised tokens, so a possessive reads as an
+        addition. It adds no factual surface -- the noun is approved and the apostrophe
+        is grammar -- and the first canary to reach this stage was held by exactly this,
+        on a packet containing "Survey" six times. Only the possessive is forgiven;
+        every other unapproved entity still blocks.
+        """
+        base = re.sub(r"['\u2019]s$", "", e)
+        return base != e and base in approved_entities
+
     def screens(text):
         surface = ST.factual_surface_audit(text, packet)
+        ents = [e for e in surface["unapproved_entities"]
+                if not _possessive_of_approved(e)]
+        if ents != surface["unapproved_entities"]:
+            surface = dict(surface,
+                           unapproved_entities=ents,
+                           possessives_forgiven=[
+                               e for e in surface["unapproved_entities"]
+                               if _possessive_of_approved(e)],
+                           hard_ok=not (surface["unapproved_numbers"] or ents
+                                        or surface["unapproved_sensory"]
+                                        or surface["unapproved_scene"]
+                                        or surface["unapproved_spatial"]))
         neg = ST.negative_admission_audit(text, ledger)
         return {
             "words": len(text.split()),
@@ -1399,18 +1522,26 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
     # where an unsupported motive is a thing a reader can actually settle.
     if delta_errs:
         blocking.append("CONTINUITY_ADDED_MATERIAL: %s" % delta_errs[:6])
-    # The CUT audit reporting its own blind spots is a failure of the derivation, which is
-    # deterministic and therefore a bug rather than a judgement.
+    # The CUT audit reporting a blind spot is a derivation bug, EXCEPT where the
+    # derivation already explains it. A cut fact whose every candidate term was either
+    # licensed by the packet or ordinary English has nothing that could betray it: the
+    # article is entitled to those words whether the fact was cut or not, and watching
+    # them is what produced 26 false positives on prose that had leaked nothing. So an
+    # EXPLAINED empty entry is telemetry; an unexplained missing entry still blocks,
+    # because that is the state in which the audit reports clean prose without looking.
     ca = f["cut_adherence"]
-    if ca["cut_without_watch_terms"] or ca["skipped_too_short"]:
+    explained = set((cut_report or {}).get("cut_without_distinctive_terms") or [])
+    unexplained = [c for c in ca["cut_without_watch_terms"] if c not in explained]
+    if unexplained or ca["skipped_too_short"]:
         blocking.append(
-            "CUT_AUDIT_BLIND: cut facts with no watch term %s; terms below the length "
-            "floor %s -- the audit would report clean prose without having looked"
-            % (ca["cut_without_watch_terms"], ca["skipped_too_short"]))
+            "CUT_AUDIT_BLIND: cut facts with no watch term and no reason given %s; "
+            "terms below the length floor %s -- the audit would report clean prose "
+            "without having looked" % (unexplained, ca["skipped_too_short"]))
 
     return {"status": HOLD if blocking else PASS,
             "blocking": blocking,
             "audits": a,
+            "cut_terms_without_a_sentinel": sorted(explained),
             "semantic_delta": CE.semantic_delta(draft_text, final_text),
             "semantic_delta_errors": delta_errs,
             "lens_serialized": ST.lens_is_serialized(final_text,
@@ -1649,7 +1780,7 @@ def run_story_architecture_composition(
         final = cont["article_text"]
 
         sa = record(SAFETY, safety_audit(draft, final, wr["packet"], arch, ledger,
-                                         cut["terms"]))
+                                         cut["terms"], cut))
         if sa["status"] != PASS:
             return out(SAFETY, "; ".join(sa["blocking"])[:600], SAFETY_HOLD, final)
 
