@@ -40,6 +40,7 @@ from new_engine_v1 import contracts as C               # noqa: E402
 from new_engine_v1 import research as RS               # noqa: E402
 from new_engine_v1.provider import Provider            # noqa: E402
 import composition_factual_bridge as FCB               # noqa: E402
+import claude_cli_provider as CCP                      # noqa: E402
 
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/120.0 Safari/537.36")
@@ -150,6 +151,11 @@ def main() -> int:
     ap.add_argument("--out", default="")
     ap.add_argument("--model", default="")
     ap.add_argument("--no-fact-check", action="store_true")
+    # Claude-family composition runs on the owner's subscription. `http` is the old
+    # OpenRouter path and is kept only so the two can be compared deliberately; it is
+    # not a fallback and nothing selects it automatically.
+    ap.add_argument("--transport", choices=("subscription", "http"),
+                    default="subscription")
     a = ap.parse_args()
 
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -182,7 +188,16 @@ def main() -> int:
               % (tr["source_id"], tr["chars"], tr["shown"], tr["lost"]))
     (out_dir / "RESEARCH_PACK.json").write_text(json.dumps(pack, indent=1))
 
-    provider = Provider(**({"model": a.model} if a.model else {}))
+    if a.transport == "subscription":
+        provider = CCP.ClaudeCLIProvider(**({"model": a.model} if a.model else {}))
+        st = provider.auth
+        print("\ntransport: Claude Code CLI on the %s subscription (%s, %s)"
+              % (st.get("subscriptionType"), st.get("orgName"), st.get("apiProvider")))
+        print("           model %s | OpenRouter: not used for composition"
+              % provider.model)
+    else:
+        provider = Provider(**({"model": a.model} if a.model else {}))
+        print("\ntransport: HTTP provider (CLIProxy then OpenRouter) -- PAID PATH")
     print("\nrunning the automated composition path (no manual stage construction) ...")
     result = CP.run_story_architecture_composition(
         provider, pack=pack, source_text=anchor["text"],
@@ -190,6 +205,9 @@ def main() -> int:
         fact_check=not a.no_fact_check,
         fact_check_fn=FCB.fact_check, out_dir=out_dir)
     report(result, out_dir)
+    if isinstance(provider, CCP.ClaudeCLIProvider):
+        print("\nsubscription calls: %d | cost equivalent (not billed): $%.4f"
+              % (provider.calls, provider.cost_usd))
     print("\nartifacts: %s" % out_dir)
     return 0 if result["status"] == CP.PASS else 1
 

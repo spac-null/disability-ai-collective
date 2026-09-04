@@ -112,12 +112,20 @@ def _stage_failure(stage: str, category: str, exc: Exception, at: str, A: dict,
 
 def run(source_payload: dict, run_root: pathlib.Path, provider,
         name: str, created_at: str, byline: str = DEFAULT_BYLINE,
-        mode: str | None = None, research_fn=None, fact_check_fn=None) -> dict:
+        mode: str | None = None, research_fn=None, fact_check_fn=None,
+        composition_provider=None) -> dict:
     """Execute the target path once against real material.
 
     `source_payload` must already satisfy the SOURCE_SNAPSHOT contract -- acquisition is
     upstream production's job, not this engine's, and passing it in keeps this package
     free of any legacy import.
+
+    `composition_provider` is injected for the same reason and used only by the
+    story-architecture path: the Claude-family stages run on the owner's Claude
+    subscription through the locally installed Claude Code CLI, and a provider that
+    shells out cannot live in this package -- `subprocess` is banned here by the same
+    purity test that bans the legacy orchestrator. When it is None the path uses the
+    provider it was given, so nothing changes for a caller that does not set it.
 
     `fact_check_fn` is injected for the same reason and used only by the
     story-architecture composition path: the authoritative Fact Check is part of the
@@ -203,7 +211,8 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
         raise EngineDisabled(str(e))
     if engine == CP.COMPOSITION_STORY_ARCHITECTURE:
         return _run_story_architecture(
-            provider, A, prov, pack, src, sha, at, run_root, name, mode, fact_check_fn)
+            composition_provider or provider,
+            A, prov, pack, src, sha, at, run_root, name, mode, fact_check_fn)
 
     # --- DISCOVERY: consumes the anchor and the frozen pack ------------------
     # The anchor is SELECTED, not written (PR #61). Candidates are cut deterministically

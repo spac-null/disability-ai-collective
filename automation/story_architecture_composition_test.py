@@ -625,6 +625,120 @@ def test_an_architecture_hold_persists_what_it_refused():
           .startswith("the reply is not an architecture"))
 
 
+def test_the_subscription_limit_is_an_outcome_not_a_fallback():
+    """An automatic fallback to a paid provider is exactly the surprise this campaign
+    exists to avoid: the previous run died at $268.12 of $269 on OpenRouter. So a
+    subscription limit stops the run, is reported under its own code, and is never
+    retried -- a second attempt cannot succeed and the only thing it can do is look
+    like one."""
+    class SubscriptionLimit(Exception):
+        pass
+
+    class Limited:
+        model = "m"
+        cliproxy_url = "http://x/v1"
+
+        def __init__(self):
+            self.calls = 0
+
+        def complete(self, system, user, **kw):
+            self.calls += 1
+            raise SubscriptionLimit("You've reached your usage limit. Resets at 3pm.")
+
+    prov = Limited()
+    out = CP.run_story_architecture_composition(
+        prov, pack=PACK, source_text=S0, source_sha="x", subject="s",
+        fact_check_fn=lambda a: dict(FC_CLEAN))
+    check("the run holds", out["status"] == CP.HOLD)
+    check("under the subscription-limit code",
+          out["reason_code"] == CP.CLAUDE_SUBSCRIPTION_LIMIT, out["reason_code"])
+    check("at the stage that hit it", out["failure_stage"] == CP.LEDGER)
+    check("NOT RETRIED -- exactly one call", prov.calls == 1, prov.calls)
+    check("and it says no paid fallback was attempted",
+          "no paid fallback" in out["failure_reason"], out["failure_reason"])
+    check("the code is recognised by duck type, so the package imports no adapter",
+          CP._is_subscription_limit(SubscriptionLimit("x"))
+          and not CP._is_subscription_limit(ValueError("x")))
+
+
+def test_the_cli_provider_refuses_a_hijacked_environment():
+    """Every failure mode here is silent. An API key in the environment still produces
+    successful completions -- just billed to a Console account instead of the
+    subscription -- and authMethod still reads claude.ai either way. Measured on the
+    host, the tell is apiKeySource, which appears only when a key is overriding the
+    login. So the adapter checks rather than assumes."""
+    import claude_cli_provider as CCP
+    check("the three overriding variables are named",
+          set(CCP.OVERRIDE_VARS) == {"ANTHROPIC_API_KEY", "ANTHROPIC_BASE_URL",
+                                     "ANTHROPIC_AUTH_TOKEN"}, CCP.OVERRIDE_VARS)
+    import os
+    os.environ["ANTHROPIC_API_KEY"] = "sk-should-not-propagate"
+    os.environ["ANTHROPIC_BASE_URL"] = "http://127.0.0.1:8317"
+    try:
+        env = CCP.scrubbed_env()
+        check("a scrubbed child environment carries none of them",
+              not [v for v in CCP.OVERRIDE_VARS if v in env],
+              [v for v in CCP.OVERRIDE_VARS if v in env])
+        check("but the parent process is untouched -- other services still need them",
+              os.environ.get("ANTHROPIC_API_KEY") == "sk-should-not-propagate")
+    finally:
+        del os.environ["ANTHROPIC_API_KEY"], os.environ["ANTHROPIC_BASE_URL"]
+
+    for bad, why in (({"loggedIn": False}, "not logged in"),
+                     ({"loggedIn": True, "apiProvider": "console",
+                       "authMethod": "claude.ai", "subscriptionType": "team"},
+                      "not firstParty"),
+                     ({"loggedIn": True, "apiProvider": "firstParty",
+                       "authMethod": "apiKey", "subscriptionType": "team"},
+                      "not claude.ai"),
+                     ({"loggedIn": True, "apiProvider": "firstParty",
+                       "authMethod": "claude.ai", "apiKeySource": "ANTHROPIC_API_KEY",
+                       "subscriptionType": "team"}, "a key is overriding"),
+                     ({"loggedIn": True, "apiProvider": "firstParty",
+                       "authMethod": "claude.ai"}, "no subscriptionType")):
+        real = CCP.auth_status
+        CCP.auth_status = lambda b="claude", _s=bad: _s
+        try:
+            refused = False
+            try:
+                CCP.assert_subscription()
+            except CCP.ClaudeCLIError:
+                refused = True
+            check("assert_subscription refuses: %s" % why, refused, bad)
+        finally:
+            CCP.auth_status = real
+
+    ok = {"loggedIn": True, "apiProvider": "firstParty", "authMethod": "claude.ai",
+          "subscriptionType": "team", "orgName": "Altro Spazio"}
+    real = CCP.auth_status
+    CCP.auth_status = lambda b="claude", _s=ok: _s
+    try:
+        check("and accepts a genuine subscription login",
+              CCP.assert_subscription()["subscriptionType"] == "team")
+    finally:
+        CCP.auth_status = real
+
+    check("a limit notice is recognised in the CLI's own words",
+          all(CCP._looks_like_a_limit(s) for s in
+              ("You've reached your usage limit", "rate limit exceeded",
+               "Claude usage limit reached; resets at 4pm", "quota exhausted")))
+    check("and ordinary prose is not mistaken for one",
+          not CCP._looks_like_a_limit(
+              "The device converts a published rent-burden figure into brake pressure."))
+
+    p = CP.composition_provider(CCP.ClaudeCLIProvider(verify_auth=False))
+    check("composition passes an injected CLI provider through untouched",
+          isinstance(p, CCP.ClaudeCLIProvider))
+    argv = CCP.ClaudeCLIProvider(verify_auth=False)._argv("SYS", "mod")
+    for flag in ("--system-prompt", "--tools", "--strict-mcp-config",
+                 "--no-session-persistence", "--output-format"):
+        check("the invocation carries %s" % flag, flag in argv, argv)
+    check("the system prompt REPLACES the agent preamble rather than appending",
+          "--append-system-prompt" not in argv)
+    check("and it runs outside the repo so no CLAUDE.md is prepended",
+          CCP.ClaudeCLIProvider(verify_auth=False).cwd == "/tmp")
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,

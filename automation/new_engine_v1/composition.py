@@ -113,6 +113,17 @@ GROUNDING_HOLD = "GROUNDING_HOLD"
 FACT_CHECK_HOLD = "FACT_CHECK_HOLD"
 READER_HOLD = "READER_HOLD"
 
+# The provider said the subscription cannot serve this call. A first-class outcome, not a
+# retry and not a reason to start spending money elsewhere: an automatic fallback to a paid
+# provider is exactly the surprise this code exists to avoid, so the run stops and says so.
+# Raised by the injected provider (see claude_cli_provider.SubscriptionLimit) and recognised
+# here by duck type, because this package may not import the CLI adapter.
+CLAUDE_SUBSCRIPTION_LIMIT = "CLAUDE_SUBSCRIPTION_LIMIT"
+
+
+def _is_subscription_limit(exc: BaseException) -> bool:
+    return type(exc).__name__ == "SubscriptionLimit"
+
 # Text budget per source inside a composition prompt. The evidence freeze must see the
 # source bytes it is quoting from, so this is far larger than stages.PACK_SOURCE_CHARS,
 # which exists to keep a source from crowding out an anchor in a reading prompt.
@@ -205,7 +216,16 @@ def _ask(provider, system: str, user: str, max_tokens: int, stage: str,
         try:
             comp = provider.complete(system=system, user=user, max_tokens=max_tokens,
                                      temperature=temperature)
-        except ProviderError as e:
+        except Exception as e:
+            # A limit is not a transport failure and must not be retried: the second
+            # attempt cannot succeed and the only thing it can do is look like one.
+            if _is_subscription_limit(e):
+                raise CompositionHold(stage, CLAUDE_SUBSCRIPTION_LIMIT,
+                                      ["the Claude subscription cannot serve this call: "
+                                       "%s" % str(e)[:300],
+                                       "stopping; no paid fallback was attempted"])
+            if not isinstance(e, ProviderError) and type(e).__name__ != "ClaudeCLIError":
+                raise
             raise CompositionHold(stage, code, ["provider unavailable: %s" % e])
         try:
             return parse_json_object(comp.text), _identity(comp, attempt)
@@ -1171,7 +1191,14 @@ def write_article(provider, arch: dict, ledger: dict) -> dict:
         try:
             comp = provider.complete(system=WRITER_SYSTEM, user=prompt,
                                      max_tokens=6_000)
-        except ProviderError as e:
+        except Exception as e:
+            if _is_subscription_limit(e):
+                raise CompositionHold(WRITER, CLAUDE_SUBSCRIPTION_LIMIT,
+                                      ["the Claude subscription cannot serve this call: "
+                                       "%s" % str(e)[:300],
+                                       "stopping; no paid fallback was attempted"])
+            if not isinstance(e, ProviderError) and type(e).__name__ != "ClaudeCLIError":
+                raise
             raise CompositionHold(WRITER, WRITER_HOLD, ["provider unavailable: %s" % e])
         article = _clean_article(comp.text)
         # Mechanically unusable, not "not good enough": empty, missing its title line, or
@@ -1394,7 +1421,14 @@ def ground_candidate(provider, article_text: str, source_text: str, source_sha: 
     """
     try:
         gf = S.ground(provider, article_text, source_text, source_sha, pack)
-    except ProviderError as e:
+    except Exception as e:
+        if _is_subscription_limit(e):
+            raise CompositionHold(GROUNDING, CLAUDE_SUBSCRIPTION_LIMIT,
+                                  ["the Claude subscription cannot serve this call: %s"
+                                   % str(e)[:300],
+                                   "stopping; no paid fallback was attempted"])
+        if not isinstance(e, ProviderError) and type(e).__name__ != "ClaudeCLIError":
+            raise
         raise CompositionHold(GROUNDING, GROUNDING_HOLD,
                               ["grounder provider unavailable: %s" % e])
     findings = gf.get("findings") or []
