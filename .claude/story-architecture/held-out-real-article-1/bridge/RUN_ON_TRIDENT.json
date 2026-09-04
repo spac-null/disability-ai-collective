@@ -1,8 +1,8 @@
 {
  "article": "CONTINUITY_FINAL.v3.md",
- "words": 688,
- "facts_checked": 22,
- "grounded": 22,
+ "words": 685,
+ "facts_checked": 26,
+ "grounded": 26,
  "ungrounded": [],
  "unfetched": [],
  "rows": [
@@ -49,18 +49,39 @@
    "elided": false
   },
   {
-   "fact_id": "F10",
-   "result": "GROUNDED_VIA_OFFICIAL_FALLBACK",
-   "sources": [
-    "S3"
-   ],
-   "fallback": [
-    "G1",
-    "G1",
-    "G1",
-    "G2",
-    "G2"
-   ]
+   "fact_id": "F10a",
+   "result": "GROUNDED",
+   "source": "S6",
+   "segments": 1,
+   "elided": false
+  },
+  {
+   "fact_id": "F10b",
+   "result": "GROUNDED",
+   "source": "S6",
+   "segments": 1,
+   "elided": false
+  },
+  {
+   "fact_id": "F10c",
+   "result": "GROUNDED",
+   "source": "S5",
+   "segments": 1,
+   "elided": false
+  },
+  {
+   "fact_id": "F10d",
+   "result": "GROUNDED",
+   "source": "S7",
+   "segments": 1,
+   "elided": false
+  },
+  {
+   "fact_id": "F10e",
+   "result": "GROUNDED",
+   "source": "S5",
+   "segments": 1,
+   "elided": false
   },
   {
    "fact_id": "F11",
@@ -183,175 +204,122 @@
    "hash": "ccea68a396d49c073e798d1eab4376a014fb0493a12ded54e68b37c6bb8e59aa",
    "chars": 0,
    "origin": "none"
+  },
+  "S5": {
+   "hash": "3d5fcf58a9fa6fcc717e32b0a0f2bdf6065c5bf03c72ede8621f3e7be879ff58",
+   "chars": 77096,
+   "origin": "fetched_article"
+  },
+  "S6": {
+   "hash": "a3c712712fe7503f73827dd51e912953c762c3e4b281856f273f7786b0313842",
+   "chars": 103112,
+   "origin": "fetched_article"
+  },
+  "S7": {
+   "hash": "0bef5cb014fcd02d2bdb71393f0b78b7346c94e5240369a3be3ca04e2396bd81",
+   "chars": 104107,
+   "origin": "fetched_article"
   }
  },
  "prose_scan": {
   "possible_named_entity_not_in_source": [
    "possible named entity 'US Department' not found in source",
-   "possible named entity 'Senator Edward Brooke' not found in source",
    "possible named entity 'NYU Furman Center' not found in source"
-  ],
-  "possible_number_not_in_source": [
-   "number '1981' not found in source",
-   "number '1969' not found in source"
   ]
  },
- "f10_fallback": {
-  "components": [
-   {
-    "component": "Brooke Amendment enacted 1969",
-    "source": "G1",
-    "verified": true,
-    "needle": "Public Law 91-152"
-   },
-   {
-    "component": "1969 date on the enacting statute",
-    "source": "G1",
-    "verified": true,
-    "needle": "DEC. 24, 1969"
-   },
-   {
-    "component": "initial public-housing rent cap was one quarter of income",
-    "source": "G1",
-    "verified": true,
-    "needle": "one-fourth of a low-rent housing tenant's income"
-   },
-   {
-    "component": "the cap now stands at 30 per centum",
-    "source": "G2",
-    "verified": true,
-    "needle": "30 per centum of the family's monthly adjusted income"
-   },
-   {
-    "component": "the 30 per centum subsection was enacted in 1981",
-    "source": "G2",
-    "verified": true,
-    "needle": "Pub. L. 97-35, title III, 322(a), Aug. 13, 1981"
-   }
-  ],
-  "all_verified": true,
-  "sources": [
-   {
-    "id": "G1",
-    "name": "US Statutes at Large vol. 83 -- Housing and Urban Development Act of 1969 (Pub. L. 91-152), the Brooke Amendment",
-    "url": "https://www.govinfo.gov/content/pkg/STATUTE-83/pdf/STATUTE-83-Pg379.pdf",
-    "kind": "pdf"
-   },
-   {
-    "id": "G2",
-    "name": "42 U.S.C. 1437a, with amendment notes (Office of the Law Revision Counsel, via GPO)",
-    "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap8-subchapI-sec1437a.htm",
-    "kind": "html"
-   }
-  ]
- },
+ "f10_fallback": null,
  "fact_check": {
   "lines": [
-   "[VERIFIED] STAT \u2014 US Department of Housing and Urban Development: \"Past thirty percent of income spent on housing, a household counts as cost-burde\" \u2014 HUD states that housing cost burden means monthly housing costs exceeding 30% of monthly income, and HUD-aligned sources repeat the same threshold[1][6].",
-   "[VERIFIED] EVENT \u2014 US Department of Housing and Urban Development: \"HUD adopted the thirty percent figure in 1981\" \u2014 HUD\u2019s 1985\u20132005 trends paper says the 30-percent standard \u201cprobably originates\u201d in federally assisted housing rules and that \u201cin 1981, Congress changed the minimum payment to 30 percent of income,\u201d which supports the cla",
-   "[UNVERIFIABLE] EVENT \u2014 (unnamed): \"Earlier public-housing programmes had used twenty-five percent\" \u2014 The retrieved sources discuss public-housing policy but do not clearly establish that \u201cearlier public-housing programmes had used twenty-five percent,\u201d so the claim could not be confirmed or contradicted from the availab",
-   "[CONTRADICTED] EVENT \u2014 Senator Edward Brooke: \"The thirty percent threshold is traced to a 1969 amendment by Senator Edward Bro\" \u2014 The sources found say Senator Edward Brooke\u2019s 1969 amendment set public-housing rent at 25%, and that the 30% threshold was raised later in 1981, so tracing the 30% threshold directly to the 1969 amendment is inaccurate[",
-   "[UNVERIFIABLE] STAT \u2014 NYU Furman Center: \"Median household income in the community district covering Windsor Terrace and S\" \u2014 The search results confirm NYU Furman Center has community-profile data for Brooklyn and related districts, but they do not show a source stating that the Windsor Terrace/Sunset Park community district\u2019s median household",
-   "[CONTRADICTED] STAT \u2014 StreetEasy: \"Median asking rent in the area was $2,250 in 2021\" \u2014 StreetEasy\u2019s 2021 reports show materially different 2021 median asking rent figures, including $2,700 citywide in Q1 2021 and Q4 2021, and $2,699 in Q3 2021, so the claim that the median asking rent in the area was $2,25",
-   "[UNVERIFIABLE] STAT \u2014 StreetEasy: \"Median asking rent in the area was $3,800 five years later\" \u2014 StreetEasy sources show median asking rent reaching $3,800 in specific NYC contexts and dates, but the exact claim that it was \u201c$3,800 five years later\u201d is not directly confirmed from the available source material[1].",
-   "[UNVERIFIABLE] EVENT \u2014 (unnamed): \"Citi Bike docks arrived in 2021\" \u2014 A NYC DOT press release from April 7, 2021 says Citi Bike expanded with new stations and \u201cbike docks,\u201d and a December 2021 news report also describes new Citi Bike docking stations arriving in 2021, supporting the claim "
+   "[VERIFIED] STAT \u2014 US Department of Housing and Urban Development: \"Past thirty percent of household income spent on housing, a household counts as \" \u2014 HUD materials define households as cost-burdened when they spend more than 30% of income on housing costs, including a HUD-user glossary page stating \u201cCost burden \u2013 Monthly housing costs (including utilities) exceeding 3",
+   "[VERIFIED] EVENT \u2014 HUD: \"HUD adopted the thirty percent figure in 1981\" \u2014 Sources indicate the 30% benchmark was raised in 1981 by Congress and then used by HUD as the affordability standard, so the claim matches the historical record[3][10].",
+   "[VERIFIED] EVENT \u2014 (unnamed): \"The Brooke Amendment dates to 1969\" \u2014 Multiple sources state that the Brooke Amendment was enacted in 1969 as part of the Housing and Urban Development Act of 1969, so the claim is accurate[1][3][15].",
+   "[CONTRADICTED] STAT \u2014 NYU Furman Center: \"Median household income in the community district covering Windsor Terrace and S\" \u2014 NYC Planning\u2019s Community Profiles for Brooklyn Community District 7 (Sunset Park/Windsor Terrace) lists median household income at $55,816, which is materially different from about $97,000[https://communityprofiles.plann",
+   "[VERIFIED] STAT \u2014 StreetEasy: \"Median asking rent in the area was $2,250 in 2021\" \u2014 StreetEasy reported that in Queens, \u201cthe median asking rent was $2,250 in Q4 2021,\u201d which matches the claim\u2019s 2021 figure[1].",
+   "[UNVERIFIABLE] STAT \u2014 StreetEasy: \"Median asking rent in the area was $3,800 five years later\" \u2014 The search results show StreetEasy reporting median asking rent at $3,800 for NYC in August 2024 and in June 2024, but they do not establish the specific \u201cfive years later\u201d claim or identify the exact area/date pairing n",
+   "[VERIFIED] EVENT \u2014 (unnamed): \"Citi Bike docks arrived in the area in 2021\" \u2014 NYC DOT said in January 2021 that Citi Bike expansion was launching in Inwood and Washington Heights, extending the service area in 2021[1]."
   ],
   "contradicted": [],
   "advisory": [
    {
-    "type": "EVENT",
-    "subject": "Senator Edward Brooke",
-    "claim": "The thirty percent threshold is traced to a 1969 amendment by Senator Edward Brooke"
-   },
-   {
     "type": "STAT",
-    "subject": "StreetEasy",
-    "claim": "Median asking rent in the area was $2,250 in 2021"
+    "subject": "NYU Furman Center",
+    "claim": "Median household income in the community district covering Windsor Terrace and Sunset Park was about $97,000 in 2024"
    }
   ],
-  "unverifiable_count": 4,
-  "soft_contradicted_count": 2,
+  "unverifiable_count": 1,
+  "soft_contradicted_count": 1,
   "findings": [
    {
     "claim_id": "C01",
     "type": "STAT",
     "subject": "US Department of Housing and Urban Development",
-    "claim_text": "Past thirty percent of income spent on housing, a household counts as cost-burdened",
+    "claim_text": "Past thirty percent of household income spent on housing, a household counts as cost-burdened",
     "verdict": "VERIFIED",
-    "reason": "HUD states that housing cost burden means monthly housing costs exceeding 30% of monthly income, and HUD-aligned sources repeat the same threshold[1][6].",
+    "reason": "HUD materials define households as cost-burdened when they spend more than 30% of income on housing costs, including a HUD-user glossary page stating \u201cCost burden \u2013 Monthly housing costs (including utilities) exceeding 3",
     "blocking": false
    },
    {
     "claim_id": "C02",
     "type": "EVENT",
-    "subject": "US Department of Housing and Urban Development",
+    "subject": "HUD",
     "claim_text": "HUD adopted the thirty percent figure in 1981",
     "verdict": "VERIFIED",
-    "reason": "HUD\u2019s 1985\u20132005 trends paper says the 30-percent standard \u201cprobably originates\u201d in federally assisted housing rules and that \u201cin 1981, Congress changed the minimum payment to 30 percent of income,\u201d which supports the cla",
+    "reason": "Sources indicate the 30% benchmark was raised in 1981 by Congress and then used by HUD as the affordability standard, so the claim matches the historical record[3][10].",
     "blocking": false
    },
    {
     "claim_id": "C03",
     "type": "EVENT",
     "subject": "",
-    "claim_text": "Earlier public-housing programmes had used twenty-five percent",
-    "verdict": "UNVERIFIABLE",
-    "reason": "The retrieved sources discuss public-housing policy but do not clearly establish that \u201cearlier public-housing programmes had used twenty-five percent,\u201d so the claim could not be confirmed or contradicted from the availab",
+    "claim_text": "The Brooke Amendment dates to 1969",
+    "verdict": "VERIFIED",
+    "reason": "Multiple sources state that the Brooke Amendment was enacted in 1969 as part of the Housing and Urban Development Act of 1969, so the claim is accurate[1][3][15].",
     "blocking": false
    },
    {
     "claim_id": "C04",
-    "type": "EVENT",
-    "subject": "Senator Edward Brooke",
-    "claim_text": "The thirty percent threshold is traced to a 1969 amendment by Senator Edward Brooke",
+    "type": "STAT",
+    "subject": "NYU Furman Center",
+    "claim_text": "Median household income in the community district covering Windsor Terrace and Sunset Park was about $97,000 in 2024",
     "verdict": "CONTRADICTED",
-    "reason": "The sources found say Senator Edward Brooke\u2019s 1969 amendment set public-housing rent at 25%, and that the 30% threshold was raised later in 1981, so tracing the 30% threshold directly to the 1969 amendment is inaccurate[",
+    "reason": "NYC Planning\u2019s Community Profiles for Brooklyn Community District 7 (Sunset Park/Windsor Terrace) lists median household income at $55,816, which is materially different from about $97,000[https://communityprofiles.plann",
     "blocking": false
    },
    {
     "claim_id": "C05",
     "type": "STAT",
-    "subject": "NYU Furman Center",
-    "claim_text": "Median household income in the community district covering Windsor Terrace and Sunset Park was about $97,000 in 2024",
-    "verdict": "UNVERIFIABLE",
-    "reason": "The search results confirm NYU Furman Center has community-profile data for Brooklyn and related districts, but they do not show a source stating that the Windsor Terrace/Sunset Park community district\u2019s median household",
+    "subject": "StreetEasy",
+    "claim_text": "Median asking rent in the area was $2,250 in 2021",
+    "verdict": "VERIFIED",
+    "reason": "StreetEasy reported that in Queens, \u201cthe median asking rent was $2,250 in Q4 2021,\u201d which matches the claim\u2019s 2021 figure[1].",
     "blocking": false
    },
    {
     "claim_id": "C06",
     "type": "STAT",
     "subject": "StreetEasy",
-    "claim_text": "Median asking rent in the area was $2,250 in 2021",
-    "verdict": "CONTRADICTED",
-    "reason": "StreetEasy\u2019s 2021 reports show materially different 2021 median asking rent figures, including $2,700 citywide in Q1 2021 and Q4 2021, and $2,699 in Q3 2021, so the claim that the median asking rent in the area was $2,25",
+    "claim_text": "Median asking rent in the area was $3,800 five years later",
+    "verdict": "UNVERIFIABLE",
+    "reason": "The search results show StreetEasy reporting median asking rent at $3,800 for NYC in August 2024 and in June 2024, but they do not establish the specific \u201cfive years later\u201d claim or identify the exact area/date pairing n",
     "blocking": false
    },
    {
     "claim_id": "C07",
-    "type": "STAT",
-    "subject": "StreetEasy",
-    "claim_text": "Median asking rent in the area was $3,800 five years later",
-    "verdict": "UNVERIFIABLE",
-    "reason": "StreetEasy sources show median asking rent reaching $3,800 in specific NYC contexts and dates, but the exact claim that it was \u201c$3,800 five years later\u201d is not directly confirmed from the available source material[1].",
-    "blocking": false
-   },
-   {
-    "claim_id": "C08",
     "type": "EVENT",
     "subject": "",
-    "claim_text": "Citi Bike docks arrived in 2021",
-    "verdict": "UNVERIFIABLE",
-    "reason": "A NYC DOT press release from April 7, 2021 says Citi Bike expanded with new stations and \u201cbike docks,\u201d and a December 2021 news report also describes new Citi Bike docking stations arriving in 2021, supporting the claim ",
+    "claim_text": "Citi Bike docks arrived in the area in 2021",
+    "verdict": "VERIFIED",
+    "reason": "NYC DOT said in January 2021 that Citi Bike expansion was launching in Inwood and Washington Heights, extending the service area in 2021[1].",
     "blocking": false
    }
   ],
   "not_checked": [],
   "extraction_status": "ok",
   "extraction_error": null,
-  "claims_extracted": 8,
+  "claims_extracted": 7,
   "fact_check_completed": true,
   "max_claims": 16,
-  "runtime_seconds": 40.7,
+  "runtime_seconds": 36.2,
   "status": "PASS"
  }
 }
