@@ -1187,9 +1187,12 @@ def test_cut_is_compiled_into_prohibitions_the_writer_can_act_on():
     check("1. the electronics category is emitted from the cut fact",
           any("electronic components" in p for p in r["prohibitions"]),
           r["prohibitions"])
+    check("   and it is phrased as a boundary, not a ban",
+          all("beyond" in p for p in r["prohibitions"]), r["prohibitions"])
     _, prompt = CP.writer_packet(arch, led, r["prohibitions"])
-    check("   and it reaches the Writer as an imperative",
-          "Do not name or describe the electronic components" in prompt)
+    check("   and it reaches the Writer as a relative boundary",
+          "Do not add electronic components, hardware or assembly detail beyond"
+          in prompt, [l for l in prompt.splitlines() if "electronic" in l])
     check("   the distinctive cut vocabulary is watched",
           any(x.lower() in ("microcontroller", "enclosure", "lighting", "esp")
               or "circuit" in x.lower() for x in r["terms"]["F09"]),
@@ -1478,6 +1481,102 @@ def test_exact_cut_vocabulary_stays_machine_side():
           not any(x.lower() in ("salt", "brick", "bricks", "himalayan", "pavilion")
                   for v in r["terms"].values() for x in v),
           {k: v for k, v in r["terms"].items() if v})
+
+
+def test_cut_prohibitions_are_relative_boundaries_not_absolute_bans():
+    """An absolute "Do not name electronic components" contradicted the packet: the
+    run-D architecture USED a components fact, so the Writer was handed the ESP32S3, the
+    PCB and the GPS module and told not to name them. Each line now forbids EXPANSION
+    BEYOND the approved facts, so USED material stays fully available while the boundary
+    is stated without naming what lies past it."""
+    check("no compiled line is an absolute ban",
+          all("beyond" in s for _, s in CP.CUT_CATEGORIES),
+          [s for _, s in CP.CUT_CATEGORIES if "beyond" not in s])
+    check("and every line points at the approved facts",
+          all("article facts above" in s for _, s in CP.CUT_CATEGORIES))
+
+    def setup(used_extra=None, cut_props=None):
+        arch = copy.deepcopy(ARCH)
+        led = copy.deepcopy(LEDGER)
+        n = 20
+        for prop, span in (used_extra or []):
+            fid = "F%02d" % n; n += 1
+            led[fid] = F(fid, prop, span)
+            arch["use_facts"] = arch["use_facts"] + [fid]
+            arch["beats"][0]["facts_allowed"] = \
+                arch["beats"][0]["facts_allowed"] + [fid]
+        for prop, span in (cut_props or []):
+            fid = "F%02d" % n; n += 1
+            led[fid] = F(fid, prop, span, ev=("S1",))
+            arch["cut_evidence"] = arch["cut_evidence"] + [
+                {"evidence_id": fid, "reason": "BACKGROUND_NOT_NEEDED"}]
+        r = CP.derive_cut_watch_terms(arch, led)
+        _, prompt = CP.writer_packet(arch, led, r["prohibitions"])
+        return arch, led, r, prompt
+
+    # 1. USED ESP32S3 + an unrelated CUT electronics detail: the approved part stays.
+    arch, led, r, prompt = setup(
+        used_extra=[("The room was lit by an ESP32S3 microcontroller.",
+                     "constructed from Himalayan salt bricks")],
+        cut_props=[("A custom circuit board and a servo sat in the plinth.",
+                    "The pavilion closed after the Kunsthalle season ended")])
+    check("1. the approved ESP32S3 reaches the Writer", "ESP32S3" in prompt)
+    check("   the relative electronics boundary reaches it too",
+          "Do not add electronic components, hardware or assembly detail beyond"
+          in prompt)
+    ok = DRAFT + "\n\nAn ESP32S3 microcontroller sat in the room."
+    check("   and using the APPROVED part is not a violation",
+          not ST.cut_adherence(ok, arch, r["terms"])["violations"],
+          ST.cut_adherence(ok, arch, r["terms"])["violations"])
+
+    # 2. the Writer adds "circuit board", which the packet does not license
+    bad = DRAFT + "\n\nA custom circuit board sat under the floor."
+    v = ST.cut_adherence(bad, arch, r["terms"])["violations"]
+    check("2. an UNAPPROVED circuit board is still blocked",
+          any("circuit" in x["term"].lower() for x in v), v)
+    check("   and the exact cut vocabulary never reached the Writer",
+          "circuit board" not in prompt.lower()
+          and "servo" not in prompt.lower(),
+          [l for l in prompt.splitlines() if "circuit" in l.lower()])
+
+    # 3. no approved software + a CUT software fact: generic line reaches the Writer,
+    #    the exact tool name does not.
+    arch, led, r, prompt = setup(
+        cut_props=[("The room was modelled in Reality Capture from a photogrammetry "
+                    "scan.", "The pavilion closed after the Kunsthalle season ended")])
+    check("3. the relative software boundary reaches the Writer",
+          "Do not name software, tools, file formats or technical specifications beyond"
+          in prompt)
+    check("   the exact cut tool name does NOT",
+          "reality capture" not in prompt.lower()
+          and "photogrammetry" not in prompt.lower(),
+          [l for l in prompt.splitlines() if "capture" in l.lower()])
+    check("   but it is retained machine-side for the audit",
+          any("reality capture" in x.lower() or "photogrammetry" in x.lower()
+              for v2 in r["terms"].values() for x in v2),
+          r["terms"])
+    leak = DRAFT + "\n\nThe room was modelled in Reality Capture."
+    check("   and a leak of it is caught",
+          ST.cut_adherence(leak, arch, r["terms"])["violations"],
+          ST.cut_adherence(leak, arch, r["terms"]))
+
+    # 4. USED software/tool: the approved tool is allowed, an extra one is not.
+    arch, led, r, prompt = setup(
+        used_extra=[("The catalogue was typeset in Blender.",
+                     "constructed from Himalayan salt bricks")],
+        cut_props=[("The room was modelled in Reality Capture.",
+                    "The pavilion closed after the Kunsthalle season ended")])
+    check("4. the approved tool reaches the Writer", "Blender" in prompt)
+    ok4 = DRAFT + "\n\nThe catalogue was typeset in Blender."
+    check("   and using it is not a violation",
+          not ST.cut_adherence(ok4, arch, r["terms"])["violations"],
+          ST.cut_adherence(ok4, arch, r["terms"])["violations"])
+    bad4 = DRAFT + "\n\nThe room was modelled in Reality Capture."
+    check("   while an UNAPPROVED tool is still blocked",
+          ST.cut_adherence(bad4, arch, r["terms"])["violations"],
+          ST.cut_adherence(bad4, arch, r["terms"]))
+    check("   and the boundary line is present alongside the approved tool",
+          "beyond those the article facts above explicitly approve" in prompt)
 
 
 def test_a_worth_hold_stops_the_article_before_composition():

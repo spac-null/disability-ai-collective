@@ -1295,7 +1295,7 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
 
     report = {
         "terms": terms,
-        "prohibitions": compile_cut_prohibitions(arch, ledger, terms, packet_text),
+        "prohibitions": compile_cut_prohibitions(arch, ledger, terms),
         "cut_declared": len(arch.get("cut_evidence") or []),
         "cut_with_terms": sum(1 for v in terms.values() if v),
         "cut_without_distinctive_terms": sorted(unlicensed_only),
@@ -1332,61 +1332,64 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
 # Categories are matched on the cut fact's own proposition and span. This is a classifier
 # over cut material, not a vocabulary ban on the article: nothing here forbids a word the
 # packet grants.
+# The wording is RELATIVE, not absolute, and that is the whole design.
+#
+# An absolute "Do not name electronic components" contradicted the packet: the run-D
+# architecture USED a components fact, so the Writer was handed the ESP32S3, the PCB and
+# the GPS module and told not to name them. A prohibition that argues with the approved
+# material suppresses licensed detail and teaches the Writer to discount the rules.
+#
+# Suppressing such a category instead was tried and is worse: the markers are broad
+# enough that a rich packet touches every one, and it silenced all six prohibitions on
+# run D -- including the two that demonstrably stopped "circuit" and "Reality Capture".
+#
+# So each line forbids EXPANSION BEYOND the approved facts. USED material stays fully
+# available, the boundary is stated without naming what lies past it, and exact
+# enforcement stays with the deterministic post-Writer audit. No cut number, name,
+# quotation or proposition appears here, so the Writer is never handed a forbidden value
+# merely to be told not to repeat it.
 CUT_CATEGORIES = [
     (("microcontroller", "servo", "circuit", "board", "module", "sensor", "gps", "oled",
       "sd card", "wiring", "enclosure", "solder", "3d print", "printer", "firmware",
       "battery", "motor", "chassis"),
-     "Do not name or describe the electronic components, boards, modules, wiring or how "
-     "the device was physically assembled."),
+     "Do not add electronic components, hardware or assembly detail beyond what the "
+     "article facts above explicitly approve."),
     (("software", "app ", "package", "library", "toolkit", "photogrammetry", "scan",
       "capture", "render", "model file", "mesh", "geometry", "specification",
       "download", "repository", "code"),
-     "Do not name the software, tools, file formats or technical specifications used to "
-     "make it, and do not describe how it was produced."),
+     "Do not name software, tools, file formats or technical specifications beyond those "
+     "the article facts above explicitly approve, and do not add detail about how the "
+     "work was produced."),
     (("award", "grant", "funded", "funding", "prize", "fellowship", "residency",
       "commission", "sponsor", "donation"),
-     "Do not name the funder, the award, the prize or any sum of money attached to the "
-     "work."),
+     "Do not add funders, awards, prizes or sums of money beyond what the article facts "
+     "above explicitly approve."),
     (("price", "prices", "fee", "membership", "subscription", "cost", "revenue",
       "owned", "operated", "acquisition", "shareholder", "company", "corporation"),
-     "Do not describe the operating company, its ownership, its commercial arrangements "
-     "or any price, fee or membership cost."),
+     "Do not add prices, fees, membership costs, ownership or commercial arrangements "
+     "beyond what the article facts above explicitly approve."),
     (("quantile", "margin of error", "sample", "weighting", "estimate period",
       "correction", "inflate", "standard error", "confidence", "methodology"),
-     "Do not describe the statistical method, the sampling, the weighting or the margins "
-     "of error."),
+     "Do not add detail about statistical method, sampling, weighting or margins of "
+     "error beyond what the article facts above explicitly approve."),
     (("hopes", "plans", "intends", "other cities", "replicate", "roll out", "expand",
       "future", "next version"),
-     "Do not describe future plans, replication elsewhere, or how anyone else might "
-     "build or use one."),
+     "Do not add plans, future intentions or replication elsewhere beyond what the "
+     "article facts above explicitly approve."),
     (("interview", "told", "spokesperson", "statement", "press", "newsroom",
       "publication", "reporter", "podcast", "broadcast"),
-     "Do not describe the reporting, the interviews, the outlets or who said something "
-     "to whom."),
+     "Do not add reporting, interviews, outlets or attributions of who said something "
+     "to whom beyond what the article facts above explicitly approve."),
 ]
 
 
-def compile_cut_prohibitions(arch: dict, ledger: dict, terms: dict,
-                             packet_text: str = "") -> list:
+def compile_cut_prohibitions(arch: dict, ledger: dict, terms: dict) -> list:
     """Generic prohibitions whose CONTENT comes only from the cut facts.
 
     One line per category actually present in the cut material, deduplicated and in a
     fixed order so the packet is stable across runs. Nothing article-specific is written
     here and no model is asked anything.
     """
-    # KNOWN LIMITATION, recorded rather than papered over. A category can contradict the
-    # packet: the run-D architecture USED a components fact, so the Writer was handed the
-    # ESP32S3, the PCB and the GPS module AND told not to name components, because a
-    # different cut fact matched the electronics category. The audit is unaffected --
-    # those terms are packet-licensed and are not watched -- so the cost is an incoherent
-    # instruction rather than a blocked article.
-    #
-    # Suppressing a category whose vocabulary appears in the packet was tried and is too
-    # blunt: the markers are broad enough that a rich packet touches every category, and
-    # it silenced all six prohibitions on the run-D architecture -- including the two
-    # that demonstrably stopped "circuit" and "Reality Capture". Losing a working control
-    # to fix a wording clash is the wrong trade, so the clash stands until someone decides
-    # otherwise.
     out = []
     for markers, sentence in CUT_CATEGORIES:
         for c in (arch.get("cut_evidence") or []):
