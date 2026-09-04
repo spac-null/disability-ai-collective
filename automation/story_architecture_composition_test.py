@@ -1119,6 +1119,50 @@ def test_the_writer_is_shown_negative_ids_and_nothing_else():
           in CP.negative_permissions_block({}))
 
 
+def test_a_replay_can_never_look_like_an_autonomous_run():
+    """Replaying a frozen ledger/worth/architecture makes testing a later stage cheap --
+    the two heavy stages cost about six minutes between them. The risk is that a replay
+    gets reported as autonomy, so the stages report REPLAYED rather than PASS and the
+    result is flagged."""
+    frozen = {"ledger": LEDGER, "worth": WORTH, "architecture": ARCH}
+    prov = Scripted([envelope(DRAFT), _edits_from(DRAFT), READER_OK])
+    import new_engine_v1.stages as S
+    real = S.ground
+    S.ground = lambda *a, **k: dict(GROUND_CLEAN)
+    try:
+        out = CP.run_story_architecture_composition(
+            prov, pack=PACK, source_text=S0, source_sha="x", subject=PACK["subject"],
+            fact_check_fn=lambda a: dict(FC_CLEAN), frozen=frozen)
+    finally:
+        S.ground = real
+    check("the run completes", out["status"] == CP.PASS, out.get("failure_reason"))
+    check("it is flagged as a replay", out["replay"] is True)
+    check("and names exactly which stages were replayed",
+          out["replayed_stages"] == [CP.ARCHITECTURE, CP.LEDGER, CP.WORTH],
+          out["replayed_stages"])
+    for s in (CP.LEDGER, CP.WORTH, CP.ARCHITECTURE):
+        check("%s reports REPLAYED, not PASS" % s, out["stages"][s] == CP.REPLAYED)
+    check("no model call was spent on them",
+          all(out["model_calls_by_stage"].get(s, 0) == 0
+              for s in (CP.LEDGER, CP.WORTH, CP.ARCHITECTURE)))
+    check("only the Writer onward ran", len(prov.calls) == 3, len(prov.calls))
+    check("a normal run is not flagged",
+          run(full_script())[1]["replay"] is False)
+
+    # A replayed architecture is still validated against the replayed ledger: a frozen
+    # artifact is not a licence to skip the gate it originally passed.
+    bad = copy.deepcopy(ARCH)
+    bad["use_facts"] = bad["use_facts"] + ["F99"]
+    prov2 = Scripted([envelope(DRAFT)])
+    out2 = CP.run_story_architecture_composition(
+        prov2, pack=PACK, source_text=S0, source_sha="x", subject="s",
+        fact_check_fn=lambda a: dict(FC_CLEAN),
+        frozen={"ledger": LEDGER, "worth": WORTH, "architecture": bad})
+    check("an invalid replayed architecture still HOLDS",
+          out2["failure_stage"] == CP.ARCHITECTURE, out2.get("failure_stage"))
+    check("and the writer is never called", not prov2.calls, prov2.calls)
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,

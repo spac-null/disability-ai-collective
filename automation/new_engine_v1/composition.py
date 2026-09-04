@@ -100,6 +100,10 @@ PASS = "PASS"
 HOLD = "HOLD"
 SKIPPED = "SKIPPED"
 NOT_RUN = "NOT_RUN"
+# A stage supplied from a previous run's frozen artifacts rather than executed. Marked
+# distinctly on purpose: a replay is a cheap way to test a later stage, and it must be
+# impossible to mistake one for an autonomous run. `replay` is set on the result too.
+REPLAYED = "REPLAYED"
 
 # Per-stage HOLD codes. One per stage, so a failure is answerable without reading prose.
 LEDGER_HOLD = "LEDGER_HOLD"
@@ -1929,7 +1933,7 @@ def reader_gate(provider, article_text: str) -> dict:
 def run_story_architecture_composition(
         provider, *, pack: dict, source_text: str, source_sha: str,
         subject: str = "", fact_check: bool = True, reader: bool = True,
-        fact_check_fn=None, out_dir=None) -> dict:
+        fact_check_fn=None, out_dir=None, frozen: dict | None = None) -> dict:
     """Approved research material in; a final article candidate out, or a HOLD.
 
     Ten stages, each one either PASS or the stage that stopped the run. There is no
@@ -1939,6 +1943,12 @@ def run_story_architecture_composition(
     `fact_check_fn` is injected the same way `runner.run` injects research: the
     authoritative Fact Check lives outside this package (see `fact_check_unavailable`),
     and a test can exercise the orchestration without two live credentials.
+
+    `frozen` replays a previous run's LEDGER, WORTH and ARCHITECTURE from its artifacts
+    instead of executing them, so a change to a later stage can be tested without paying
+    seven minutes for two stages that already produced a valid result. Those stages then
+    report REPLAYED rather than PASS and the result carries `replay: True` -- a replay is
+    not evidence of autonomy and must never be able to look like it.
     """
     P = composition_provider(provider)
     subject = subject or pack.get("subject") or ""
@@ -1981,6 +1991,9 @@ def run_story_architecture_composition(
             "model_calls_total": sum(calls.values()),
             "repairs_by_stage": {k: v for k, v in repairs.items() if v},
             "runtime_by_stage": dict(elapsed),
+            "replay": bool(replay),
+            "replayed_stages": sorted(s for s in STAGES
+                                      if st[s].get("status") == REPLAYED),
             "runtime_seconds": round(time.time() - t0, 1),
             "subject": subject,
         }
@@ -1988,14 +2001,39 @@ def run_story_architecture_composition(
             persist(out_dir, result)
         return result
 
+    replay = frozen or {}
     try:
-        led = record(LEDGER, freeze_ledger(P, pack, subject))
-        ledger = led["ledger"]
+        if replay.get("ledger"):
+            ledger = replay["ledger"]
+            st[LEDGER] = {"status": REPLAYED, "ledger": ledger, "facts": len(ledger),
+                          "model_calls": 0, "repairs": 0}
+            calls[LEDGER] = repairs[LEDGER] = 0
+        else:
+            led = record(LEDGER, freeze_ledger(P, pack, subject))
+            ledger = led["ledger"]
 
-        w = record(WORTH, worth_gate(P, ledger, subject))
+        if replay.get("worth"):
+            w = replay["worth"]
+            st[WORTH] = dict(w, status=REPLAYED, model_calls=0, repairs=0)
+            calls[WORTH] = repairs[WORTH] = 0
+        else:
+            w = record(WORTH, worth_gate(P, ledger, subject))
 
-        a = record(ARCHITECTURE, architect(P, ledger, w, subject))
-        arch = a["architecture"]
+        if replay.get("architecture"):
+            arch = replay["architecture"]
+            errs = check_architecture(arch, ledger)
+            if errs:
+                raise CompositionHold(
+                    ARCHITECTURE, ARCHITECTURE_HOLD,
+                    ["the replayed architecture does not validate against the replayed "
+                     "ledger"] + errs[:8], {"architecture": arch, "failures": errs})
+            st[ARCHITECTURE] = {"status": REPLAYED, "architecture": arch,
+                                "beats": len(arch.get("beats") or []),
+                                "model_calls": 0, "repairs": 0}
+            calls[ARCHITECTURE] = repairs[ARCHITECTURE] = 0
+        else:
+            a = record(ARCHITECTURE, architect(P, ledger, w, subject))
+            arch = a["architecture"]
 
         cut = record(CUT_TERMS, derive_cut_watch_terms(arch, ledger))
 

@@ -124,7 +124,11 @@ def report(result: dict, out_dir: pathlib.Path) -> None:
          "subject : %s" % result["subject"],
          "status  : %s" % result["status"],
          "runtime : %ss" % result["runtime_seconds"],
-         "words   : %s" % result["words"], "", "STAGES"]
+         "words   : %s" % result["words"]]
+    if result.get("replay"):
+        L.append("REPLAY  : %s came from frozen artifacts -- not an autonomy proof"
+                 % ", ".join(result["replayed_stages"]))
+    L += ["", "STAGES"]
     rt = result.get("runtime_by_stage") or {}
     for s in CP.STAGES:
         L.append("  %-13s %-8s  calls=%-2s %7s%s"
@@ -168,6 +172,12 @@ def main() -> int:
     # same shape of pack a scheduled run would hand it. Its Sonar search is OpenRouter,
     # which is correct policy: Sonar is not a Claude model.
     ap.add_argument("--research", action="store_true")
+    # Replay a previous run's frozen LEDGER/WORTH/ARCHITECTURE so a change to a later
+    # stage can be tested without paying for two stages that already validated. The
+    # replayed stages report REPLAYED and the result is marked replay:True -- this is a
+    # test cycle, never an autonomy proof.
+    ap.add_argument("--replay-from", default="",
+                    help="artifact directory of a previous run")
     a = ap.parse_args()
 
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -227,6 +237,20 @@ def main() -> int:
               % (tr["source_id"], tr["chars"], tr["shown"], tr["lost"]))
     (out_dir / "RESEARCH_PACK.json").write_text(json.dumps(pack, indent=1))
 
+    frozen = None
+    if a.replay_from:
+        R = pathlib.Path(a.replay_from)
+        frozen = {
+            "ledger": json.loads((R / "FINAL_EVIDENCE_MANIFEST.json").read_text())["facts"],
+            "architecture": json.loads((R / "ARCHITECTURE.json").read_text()),
+        }
+        wj = R / "WORTH_AND_CANDIDATE.json"
+        if wj.exists():
+            frozen["worth"] = json.loads(wj.read_text())
+        print("\nREPLAY: ledger (%d facts), worth and architecture come from %s"
+              % (len(frozen["ledger"]), R.name))
+        print("        this is a Writer-onward test cycle, NOT an autonomy proof")
+
     if a.transport == "subscription":
         provider = CCP.ClaudeCLIProvider(**({"model": a.model} if a.model else {}))
         st = provider.auth
@@ -242,7 +266,7 @@ def main() -> int:
         provider, pack=pack, source_text=anchor["text"],
         source_sha=anchor["sha256"], subject=pack["subject"],
         fact_check=not a.no_fact_check,
-        fact_check_fn=FCB.fact_check, out_dir=out_dir)
+        fact_check_fn=FCB.fact_check, out_dir=out_dir, frozen=frozen)
     report(result, out_dir)
     if isinstance(provider, CCP.ClaudeCLIProvider):
         print("\nsubscription calls: %d | cost equivalent (not billed): $%.4f"
