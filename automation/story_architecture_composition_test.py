@@ -486,6 +486,57 @@ def test_an_unsupportable_fact_is_rejected_and_the_run_survives_it():
           "ledger" in out2["detail"][CP.LEDGER])
 
 
+def test_a_truncated_source_is_reported_not_silent():
+    """The Ground Truth canary's NO_PLAUSIBLE_LENS was a truncation, not a judgement:
+    the four facts carrying the lens sat past the char limit the pack applied, so the
+    freeze was never shown them. A source cut short fails nothing -- it just makes a
+    class of fact invisible, and that looks identical to a subject with no such material
+    in it. So it is named."""
+    long_pack = {"subject": "x", "sources": [
+        {"source_id": "S0", "role": "ANCHOR", "url": "u", "text": "w " * 20_000},
+        {"source_id": "S1", "role": "INDEPENDENT", "url": "v", "text": "short"}]}
+    tr = CP.truncated_sources(long_pack)
+    check("an oversized source is reported", [x["source_id"] for x in tr] == ["S0"], tr)
+    check("the report says how much was unseen",
+          tr[0]["lost"] == 40_000 - CP.FREEZE_SOURCE_CHARS, tr[0])
+    check("a source within budget is not reported",
+          not CP.truncated_sources({"sources": [long_pack["sources"][1]]}))
+    check("the freeze budget is bigger than the research stage's per-source budget",
+          CP.FREEZE_SOURCE_CHARS > 12_000, CP.FREEZE_SOURCE_CHARS)
+    prov, out = run(full_script())
+    check("a clean run reports no truncation",
+          out["detail"][CP.LEDGER]["sources_truncated"] == [])
+    check("the prompt really does carry the whole source",
+          S0[-40:] in prov.calls[0]["user"])
+
+
+def test_a_stated_negative_is_capturable_and_the_freeze_is_told_to_capture_it():
+    """The other half of the negative rule. The held-out article's lens rested entirely
+    on four facts whose spans are the source's OWN negatives -- "it does not measure
+    overcrowding...", "no reading rather than as zero", "absent from a survey of
+    households". An earlier version of the freeze prompt said only when to refuse a
+    negative, and the stage duly refused the whole class."""
+    fact = F("F09", "The catalogue describes nothing that any visitor heard.",
+             "No entry describes what any visitor heard",
+             ct=LG.ABSENCE, kind="DISPOSITION")
+    check("a source's own stated negative validates as a negative claim",
+          not CP.check_ledger({"F09": fact}, CP.source_texts(PACK)),
+          CP.check_ledger({"F09": fact}, CP.source_texts(PACK)))
+    unstated = F("F09", "No catalogue entry names a mason.",
+                 "laid by two masons over eleven days",
+                 ct=LG.ABSENCE, kind="DISPOSITION")
+    check("an unstated negative does not",
+          "F09" in CP.check_ledger({"F09": unstated}, CP.source_texts(PACK)))
+    check("the prompt tells the freeze to CAPTURE a stated negative",
+          "CAPTURE IT" in CP.FREEZE_SYSTEM)
+    check("and says why that material matters most",
+          "CANNOT hold" in CP.FREEZE_SYSTEM)
+    check("and warns against skipping such a passage",
+          "Do not skip a passage" in CP.FREEZE_SYSTEM)
+    check("while still refusing silence as evidence",
+          "Silence is not evidence of absence" in CP.FREEZE_SYSTEM)
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,

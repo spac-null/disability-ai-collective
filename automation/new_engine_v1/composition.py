@@ -116,7 +116,14 @@ READER_HOLD = "READER_HOLD"
 # Text budget per source inside a composition prompt. The evidence freeze must see the
 # source bytes it is quoting from, so this is far larger than stages.PACK_SOURCE_CHARS,
 # which exists to keep a source from crowding out an anchor in a reading prompt.
-FREEZE_SOURCE_CHARS = 14_000
+#
+# SET FROM A MEASURED FAILURE. The first Ground Truth canary to reach Worth was refused
+# NO_PLAUSIBLE_LENS, and the cause was not judgement: the four facts carrying the lens
+# sit at chars 12,438-13,163 of a 15,744-char anchor, and the pack handed the freeze the
+# first 12,000. The stage cannot select what it was never shown, and a truncation that
+# removes the last third of an essay removes exactly the part where a writer says what
+# their measure cannot see.
+FREEZE_SOURCE_CHARS = 24_000
 
 
 # Below this there is not enough verified material to select a story from, and the
@@ -292,6 +299,18 @@ FREEZE_SYSTEM = (
     "THAT SET -- \"none of the eight entries describes...\" -- not about the world. If "
     "neither is true, DO NOT EMIT THE FACT. Leaving it out costs the article a detail; "
     "asserting it costs the article its grounding.\n"
+    "  NOW THE OTHER HALF OF THAT RULE, which matters just as much. When a source DOES "
+    "state a negative in its own words -- \"it does not measure overcrowding, housing "
+    "quality or eviction risk\", \"shows these as no reading rather than as zero\", "
+    "\"people with no housing at all, absent by construction from a survey of "
+    "households\" -- that is not something to avoid. It is evidence, it is quotable, and "
+    "it is frequently the most valuable material in the whole source, because what a "
+    "measure or a record CANNOT hold is usually the thing nobody else has written down. "
+    "CAPTURE IT. Quote the source's own negative sentence as the span, give the fact its "
+    "negative claim_type, and leave the scope WORLD -- the span's own words are what "
+    "licenses it. Do not skip a passage of what something does not do, does not cover or "
+    "cannot see because it looks like a negative claim: a stated negative is a fact, and "
+    "only an UNstated one is a fabrication.\n"
     "Include the unglamorous facts and the ones that cut against the obvious story. "
     "Selection happens later and cannot select what you did not freeze."
 )
@@ -320,6 +339,22 @@ FREEZE_SCHEMA = (
     "}]}\n"
     "No prose outside the JSON." % ", ".join(LG.CLAIM_TYPES)
 )
+
+
+def truncated_sources(pack: dict, per_source_chars: int = FREEZE_SOURCE_CHARS) -> list:
+    """Which sources the freeze will not see the whole of.
+
+    Reported, never silent. A source cut short does not fail anything -- it just makes a
+    class of fact invisible, and an invisible fact class looks exactly like a subject
+    that had no such material in it. That is the failure this function exists to name.
+    """
+    out = []
+    for s in (pack.get("sources") or []):
+        n = len(s.get("text") or "")
+        if n > per_source_chars:
+            out.append({"source_id": s.get("source_id"), "chars": n,
+                        "shown": per_source_chars, "lost": n - per_source_chars})
+    return out
 
 
 def freeze_prompt(pack: dict, subject: str, per_source_chars: int = FREEZE_SOURCE_CHARS) -> str:
@@ -521,6 +556,7 @@ def freeze_ledger(provider, pack: dict, subject: str) -> dict:
         kinds[f.get("claim_kind")] = kinds.get(f.get("claim_kind"), 0) + 1
     return {"status": PASS, "ledger": ledger, "provider": ident,
             "model_calls": calls, "repairs": repairs,
+            "sources_truncated": truncated_sources(pack),
             "facts": len(ledger), "claim_kinds": kinds,
             "rejected": rejected,
             "rejected_count": len(rejected),

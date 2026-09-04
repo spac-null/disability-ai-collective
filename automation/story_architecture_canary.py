@@ -90,7 +90,13 @@ def build_pack(subject: str, sources: list, now: str) -> tuple:
         out.append({"source_id": sid, "role": role, "url": url,
                     "accessed_at": now, "sha256": C.sha256_text(text),
                     "fetch_status": "ok", "content_length": len(text),
-                    "text": text[:RS.PER_SOURCE_CHARS]})
+                    # NOT RS.PER_SOURCE_CHARS. That is the research stage's per-source
+                    # budget, and applying it here cut the last third off a 15,744-char
+                    # anchor -- taking all four of the facts that carried the held-out
+                    # article's lens with it, and turning a strong subject into
+                    # NO_PLAUSIBLE_LENS. The freeze's own budget is the only one that
+                    # belongs here.
+                    "text": text[:CP.FREEZE_SOURCE_CHARS]})
     if not any(s["role"] == "ANCHOR" for s in out):
         raise SystemExit("the anchor source could not be fetched; nothing to run on: %s"
                          % failed)
@@ -171,6 +177,9 @@ def main() -> int:
                                               len(s["text"].split()), s["url"][:60]))
     for f in failed:
         print("  %-4s UNFETCHED    %s" % (f["source_id"], f["reason"]))
+    for tr in CP.truncated_sources(pack):
+        print("  %-4s TRUNCATED    %d chars, %d shown to the freeze, %d unseen"
+              % (tr["source_id"], tr["chars"], tr["shown"], tr["lost"]))
     (out_dir / "RESEARCH_PACK.json").write_text(json.dumps(pack, indent=1))
 
     provider = Provider(**({"model": a.model} if a.model else {}))
