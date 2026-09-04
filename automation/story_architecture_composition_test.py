@@ -537,6 +537,36 @@ def test_a_stated_negative_is_capturable_and_the_freeze_is_told_to_capture_it():
           "Silence is not evidence of absence" in CP.FREEZE_SYSTEM)
 
 
+def test_the_interpretive_verdict_is_not_defined_out_of_existence():
+    """The Ground Truth canary refused a STRONG_INTERPRETIVE_LENS subject on the grounds
+    that "nothing in the ledger names embodied cognition, access, impairment". That test
+    is the DIRECT criterion, and applying it to the interpretive question makes one of
+    the five verdicts unreachable: the whole category exists for subjects that never say
+    the word. This is the specification the prompt was missing, not a preference."""
+    check("the prompt says the interpretive lens needs no mention of disability",
+          "does NOT require the material to mention disability" in CP.WORTH_SYSTEM)
+    check("and names the category error explicitly",
+          "it is deleting the verdict" in CP.WORTH_SYSTEM)
+    check("and says what an interpretive reading actually asks",
+          "can and cannot register about a body" in CP.WORTH_SYSTEM)
+    check("while keeping the bar at a mechanism",
+          "The bar is still real, and it is a MECHANISM" in CP.WORTH_SYSTEM)
+    check("and still refusing a resemblance",
+          "A resemblance is not a mechanism" in CP.WORTH_SYSTEM)
+    check("the publishable verdicts are unchanged",
+          ST.LENS_PUBLISHABLE == (ST.STRONG_DIRECT_LENS, ST.STRONG_INTERPRETIVE_LENS))
+    check("and the refusals are still first-class outcomes",
+          all(v in ST.LENS_VERDICTS for v in
+              (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION)))
+    # An empty formulation is still refused by the merged validator, unchanged.
+    check("the merged empty-lens screen is untouched",
+          any("empty formulation" in e for e in ST.validate_lens(
+              {"verdict": ST.STRONG_INTERPRETIVE_LENS,
+               "lens_claim": "It reminds us that disabled people face barriers in a "
+                             "world not built for them at all, everywhere.",
+               "changes_meaning_how": "x", "evidence_ids": ["F01"]})))
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
