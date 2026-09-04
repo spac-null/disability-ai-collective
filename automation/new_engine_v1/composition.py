@@ -388,6 +388,17 @@ def freeze_prompt(pack: dict, subject: str, per_source_chars: int = FREEZE_SOURC
     return "\n".join(L)
 
 
+def highest_fact_number(ledger: dict) -> int:
+    """The largest N among F<N> ids, compared as integers.
+
+    Exists because the obvious `max(ledger)` is a lexicographic comparison, and every
+    ledger over 99 facts makes it wrong in the one direction that causes a collision.
+    """
+    nums = [int(m.group(1)) for m in
+            (re.match(r"^F(\d+)", str(k)) for k in (ledger or {})) if m]
+    return max(nums) if nums else 0
+
+
 def _as_ledger(facts) -> dict:
     """The model emits a list; the ledger is keyed by fact_id. Shape errors are refused
     here rather than producing a ledger with a None key."""
@@ -514,7 +525,14 @@ def freeze_ledger(provider, pack: dict, subject: str) -> dict:
                 ru.append("    cited: %s" % (ledger[fid].get("evidence_ids") or []))
             for msg in failures[fid]:
                 ru.append("    FAILED: %s" % msg)
-        ru += ["", "Highest existing fact id: %s" % (max(ledger) if ledger else "F00"),
+        # NUMERICALLY, not lexicographically. `max()` over strings returns "F99" for a
+        # ledger containing F100..F103, because "F9" sorts above "F1". The repair was
+        # then told to number its splits from F99, minted F100-F102 on top of three
+        # facts that had already validated, and the anti-rewrite guard refused the whole
+        # ledger. Measured on the Ground Truth canary at 103 facts.
+        ru += ["", "Highest existing fact id: F%d -- number any new fact from F%d upward, "
+                   "and never reuse an id that is not in the rejected list above."
+                   % (highest_fact_number(ledger), highest_fact_number(ledger) + 1),
                "", FREEZE_SCHEMA]
         obj2, ident2 = _ask(provider, REPAIR_LEDGER_SYSTEM, "\n".join(ru), 8_000,
                             LEDGER, LEDGER_HOLD)

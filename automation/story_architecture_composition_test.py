@@ -739,6 +739,50 @@ def test_the_cli_provider_refuses_a_hijacked_environment():
           CCP.ClaudeCLIProvider(verify_auth=False).cwd == "/tmp")
 
 
+def test_the_repair_is_told_the_highest_fact_id_numerically():
+    """The Ground Truth canary froze 103 facts and then held on
+    "the repair rewrote facts that had already validated: ['F100','F101','F102']".
+
+    Nothing was wrong with the guard. `max()` over fact-id STRINGS returns "F99" for a
+    ledger containing F100-F103, because "F9" sorts above "F1", so the repair was told
+    to number its splits from F99 and minted three ids that already belonged to
+    validated facts. Every ledger over 99 facts hits this, and it fails in the one
+    direction that causes a collision."""
+    big = {"F%02d" % i: {} for i in range(1, 104)}
+    check("string max is wrong, which is the whole point", max(big) == "F99")
+    check("highest_fact_number is numeric", CP.highest_fact_number(big) == 103,
+          CP.highest_fact_number(big))
+    check("an empty ledger is 0", CP.highest_fact_number({}) == 0)
+    check("a suffixed id does not crash it",
+          CP.highest_fact_number({"F10a": {}, "F7": {}}) == 10)
+
+    # And the repair prompt carries the corrected number, with the collision rule.
+    bad = copy.deepcopy(LEDGER)
+    bad["F09"] = F("F09", "No entry names a mason.", "laid by two masons over eleven days",
+                   ct=LG.ABSENCE, kind="DISPOSITION")
+    prov, _ = run([{"facts": list(bad.values())},
+                   {"facts": [copy.deepcopy(bad["F09"])]}, WORTH, "-", "-"])
+    repair_prompt = [prov.calls[i]["user"] for i in range(len(prov.calls))
+                     if prov.stage_of(i) == "LEDGER_REPAIR"][0]
+    check("the repair is given the true highest id",
+          "Highest existing fact id: F9" in repair_prompt,
+          [l for l in repair_prompt.splitlines() if "Highest" in l])
+    check("and told where to start numbering",
+          "number any new fact from F10 upward" in repair_prompt)
+    check("and told not to reuse a non-rejected id",
+          "never reuse an id that is not in the rejected list" in repair_prompt)
+
+    # The guard itself is unchanged: a genuine rewrite is still refused.
+    fixed = copy.deepcopy(bad["F09"]); fixed["claim_type"] = LG.POSITIVE
+    fixed["proposition"] = "Two masons laid the salt over eleven days."
+    rewrite = copy.deepcopy(LEDGER["F01"])
+    rewrite["proposition"] = "The room was built entirely of salt and nothing else."
+    _, out = run([{"facts": list(bad.values())}, {"facts": [fixed, rewrite]}])
+    check("A GENUINE REWRITE OF A VALIDATED FACT IS STILL REFUSED",
+          out["failure_stage"] == CP.LEDGER
+          and "already validated" in out["failure_reason"], out.get("failure_reason"))
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
