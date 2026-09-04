@@ -625,14 +625,19 @@ def test_an_architecture_hold_persists_what_it_refused():
     bad = copy.deepcopy(ARCH)
     bad["beats"][1]["concrete_carrier"] = ("the eight entries, and the visitor who "
                                            "therefore heard nothing")
-    prov, out = run([{"facts": list(LEDGER.values())}, WORTH, bad, bad])
+    prov, out = run([{"facts": list(LEDGER.values())}, WORTH, bad, bad, bad])
     det = out["detail"][CP.ARCHITECTURE]
     check("the hold is at the architecture", out["failure_stage"] == CP.ARCHITECTURE)
     check("the refused architecture is carried", "architecture" in det, list(det))
-    check("so is the pre-repair one", "architecture_before_repair" in det)
+    check("so are the failures it started with",
+          "failures_at_first_attempt" in det, list(det))
     check("and the exact failures", any("CARRIER" in e for e in det["failures"]),
           det.get("failures"))
-    check("and the repair count", det.get("repairs") == 1, det.get("repairs"))
+    check("and the repair count, which is the full budget",
+          det.get("repairs") == CP.MAX_ARCHITECTURE_REPAIRS, det.get("repairs"))
+    check("and what each repair was answering",
+          [h["attempt"] for h in det.get("repair_history") or []] == [1, 2],
+          det.get("repair_history"))
     check("a reply with no beats at all is a shape failure, not a repair target",
           run([{"facts": list(LEDGER.values())}, WORTH,
                {"article_type": "NARRATIVE_ARTICLE"}])[1]["failure_reason"]
@@ -1163,6 +1168,174 @@ def test_a_replay_can_never_look_like_an_autonomous_run():
     check("and the writer is never called", not prov2.calls, prov2.calls)
 
 
+def test_cut_is_compiled_into_prohibitions_the_writer_can_act_on():
+    """The packet carried the CUT decision as a COUNT, not as anything the Writer could
+    act on -- so it named a circuit board, Reality Capture and an override, all from cut
+    facts. The cut material is now compiled into explicit prohibitions: generic fixed
+    wording, with WHICH categories appear coming only from the cut facts."""
+    arch = copy.deepcopy(ARCH)
+    led = copy.deepcopy(LEDGER)
+    # A cut fact about electronics, with vocabulary the packet does not license.
+    led["F09"] = F("F09", "The pavilion's lighting ran from a custom circuit board and "
+                          "an ESP32 microcontroller in a 3D-printed enclosure.",
+                   "The pavilion closed after the Kunsthalle season ended", ev=("S1",))
+    arch["cut_evidence"] = arch["cut_evidence"] + [
+        {"evidence_id": "F09", "reason": "BACKGROUND_NOT_NEEDED"}]
+    r = CP.derive_cut_watch_terms(arch, led)
+
+    # 1. a genuine CUT term is blocked
+    check("1. the electronics category is emitted from the cut fact",
+          any("electronic components" in p for p in r["prohibitions"]),
+          r["prohibitions"])
+    _, prompt = CP.writer_packet(arch, led, r["prohibitions"])
+    check("   and it reaches the Writer as an imperative",
+          "Do not name or describe the electronic components" in prompt)
+    check("   the distinctive cut vocabulary is watched",
+          any(x.lower() in ("microcontroller", "enclosure", "lighting", "esp")
+              or "circuit" in x.lower() for x in r["terms"]["F09"]),
+          r["terms"]["F09"])
+    leak = DRAFT + "\n\nA custom circuit board sat under the floor."
+    check("   and a real leak is caught",
+          [v["term"] for v in ST.cut_adherence(leak, arch, r["terms"])["violations"]],
+          ST.cut_adherence(leak, arch, r["terms"]))
+
+    # 2. ordinary English is unaffected
+    for junk in ("Across", "There", "change", "form", "without", "corresponding"):
+        check("2. %r is never a sentinel" % junk,
+              not CP._is_distinctive(junk, CP._document_frequency(led)), junk)
+    check("   and clean prose stays clean",
+          not ST.cut_adherence(DRAFT, arch, r["terms"])["violations"],
+          ST.cut_adherence(DRAFT, arch, r["terms"])["violations"])
+
+    # 3. a packet-licensed overlapping term is allowed, exactly as the CUT logic does it
+    led2 = copy.deepcopy(led)
+    led2["F09"]["proposition"] = ("The pavilion's Himalayan salt brick lighting ran from "
+                                  "a board.")
+    r2 = CP.derive_cut_watch_terms(arch, led2)
+    check("3. 'Himalayan' is not watched: the packet licenses it",
+          not any("himalayan" in x.lower() for x in r2["terms"]["F09"]),
+          r2["terms"]["F09"])
+    check("   nor 'salt', nor 'brick'",
+          not any(x.lower() in ("salt", "brick", "bricks") for x in r2["terms"]["F09"]))
+
+    # 4. no prohibition is invented beyond the CUT facts
+    for pr in r["prohibitions"]:
+        markers = next(m for m, s in CP.CUT_CATEGORIES if s == pr)
+        hay = " ".join(
+            ("%s %s" % ((led.get(c["evidence_id"]) or {}).get("proposition", ""),
+                        (led.get(c["evidence_id"]) or {}).get("support_span", ""))).lower()
+            for c in arch["cut_evidence"] if r["terms"].get(c["evidence_id"]))
+        check("4. %r is backed by a cut fact" % pr[:46],
+              any(m in hay for m in markers), pr)
+    bare = copy.deepcopy(ARCH)
+    check("   a cut list with no matching category invents nothing",
+          CP.derive_cut_watch_terms(bare, LEDGER)["prohibitions"] == [],
+          CP.derive_cut_watch_terms(bare, LEDGER)["prohibitions"])
+    check("   a cut fact whose vocabulary is wholly licensed produces no prohibition",
+          not CP.compile_cut_prohibitions(arch, led, {}),
+          CP.compile_cut_prohibitions(arch, led, {}))
+    check("   the wording is fixed and generic, never article-specific",
+          all(s == next(x for m, x in CP.CUT_CATEGORIES if x == s)
+              for s in r["prohibitions"]))
+    check("   and the compiled lines survive validate_packet",
+          ST.validate_packet(CP.writer_packet(arch, led, r["prohibitions"])[0]) == [],
+          ST.validate_packet(CP.writer_packet(arch, led, r["prohibitions"])[0]))
+    check("   no model call is spent", "no model call" in r["derivation"])
+    check("   the architecture object itself is not mutated",
+          "Do not name or describe the electronic components, boards, modules, wiring "
+          "or how the device was physically assembled." not in
+          (arch.get("prohibitions") or []))
+
+
+def test_the_architecture_repair_budget_is_two():
+    """Measured, not chosen: the architecture stage held in three of five subscription
+    canary runs, two of them on legitimate mints one repair could not clear. The manual
+    baseline needed exactly two, in order -- REPAIR_1 a carrier asserting an occurrence,
+    REPAIR_2 a turn minting a relation.
+
+    Acceptance is unchanged. The full validator set runs after EVERY repair."""
+    check("the budget is two", CP.MAX_ARCHITECTURE_REPAIRS == 2)
+
+    carrier_bad = copy.deepcopy(ARCH)
+    carrier_bad["beats"][1]["concrete_carrier"] = (
+        "the eight entries, and the visitor who therefore heard nothing")
+    turn_bad = copy.deepcopy(ARCH)
+    turn_bad["crip_turn"] = ("The catalogue is quietest exactly where the encounter was "
+                             "loudest, because only the intention could be written.")
+
+    def arch_run(replies):
+        return run([{"facts": list(LEDGER.values())}, WORTH] + replies
+                   + full_script()[3:])
+
+    # 1. a valid initial architecture spends no repair
+    prov, out = arch_run([ARCH])
+    check("1. valid initial architecture -> 0 repairs",
+          out["detail"][CP.ARCHITECTURE]["repairs"] == 0
+          and out["status"] == CP.PASS, out.get("failure_reason"))
+    check("   and one architect call",
+          out["model_calls_by_stage"][CP.ARCHITECTURE] == 1)
+
+    # 2. invalid, repaired on the first attempt
+    prov, out = arch_run([carrier_bad, ARCH])
+    check("2. repaired on the first attempt -> 1 repair",
+          out["detail"][CP.ARCHITECTURE]["repairs"] == 1
+          and out["status"] == CP.PASS, out.get("failure_reason"))
+
+    # 3. first repair still invalid, second valid
+    prov, out = arch_run([carrier_bad, turn_bad, ARCH])
+    check("3. second repair rescues it -> 2 repairs",
+          out["detail"][CP.ARCHITECTURE]["repairs"] == 2
+          and out["status"] == CP.PASS, out.get("failure_reason"))
+    check("   three architecture calls in total",
+          out["model_calls_by_stage"][CP.ARCHITECTURE] == 3)
+    hist = out["detail"][CP.ARCHITECTURE]["repair_history"]
+    check("   and each repair answered its OWN failures, not the first ones",
+          [h["attempt"] for h in hist] == [1, 2]
+          and "CARRIER" in str(hist[0]["failures_answered"])
+          and "TURN" in str(hist[1]["failures_answered"]), hist)
+
+    # 4. second repair still invalid -> HOLD, and no third attempt
+    prov, out = arch_run([carrier_bad, turn_bad, carrier_bad])
+    check("4. still invalid after two -> HOLD",
+          out["failure_stage"] == CP.ARCHITECTURE, out.get("failure_stage"))
+    check("   the reason names the budget",
+          "maximum 2" in out["failure_reason"], out["failure_reason"][:120])
+    check("   NO THIRD REPAIR",
+          [prov.stage_of(i) for i in range(len(prov.calls))].count("ARCH_REPAIR") == 2,
+          [prov.stage_of(i) for i in range(len(prov.calls))])
+    check("   and the Writer was never called",
+          "WRITER" not in [prov.stage_of(i) for i in range(len(prov.calls))])
+
+    # 5. a repair cannot introduce a new fact id
+    minted = copy.deepcopy(ARCH)
+    minted["use_facts"] = minted["use_facts"] + ["F99"]
+    prov, out = arch_run([carrier_bad, minted, minted])
+    check("5. a repair cannot mint a fact id",
+          out["failure_stage"] == CP.ARCHITECTURE
+          and "F99" in out["failure_reason"], out.get("failure_reason"))
+
+    # 6. a repair cannot bypass the occurrence/relation validators
+    prov, out = arch_run([ARCH if False else carrier_bad, carrier_bad, carrier_bad])
+    check("6a. a repair cannot bypass the carrier check",
+          out["failure_stage"] == CP.ARCHITECTURE
+          and "CARRIER" in out["failure_reason"], out.get("failure_reason"))
+    prov, out = arch_run([turn_bad, turn_bad, turn_bad])
+    check("6b. a repair cannot bypass the turn-relation check",
+          out["failure_stage"] == CP.ARCHITECTURE
+          and "TURN" in out["failure_reason"], out.get("failure_reason"))
+
+    # 7. the exact count and status are exposed in run metadata
+    prov, out = arch_run([carrier_bad, turn_bad, ARCH])
+    d = out["detail"][CP.ARCHITECTURE]
+    check("7. metadata carries the repair count", d["repairs"] == 2)
+    check("   and the budget", d["repair_budget"] == 2)
+    check("   and the run-level map", out["repairs_by_stage"][CP.ARCHITECTURE] == 2)
+    check("   and the first failures are kept for comparison",
+          d["failures_at_first_attempt"], d.get("failures_at_first_attempt"))
+    check("   and the stage still reports PASS",
+          out["stages"][CP.ARCHITECTURE] == CP.PASS)
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
@@ -1198,7 +1371,8 @@ def test_worth_reasoning_does_not_reach_the_writer():
 def test_an_invalid_architecture_never_reaches_the_writer():
     minted = copy.deepcopy(ARCH)
     minted["use_facts"] = minted["use_facts"] + ["F99"]
-    prov, out = run([{"facts": list(LEDGER.values())}, WORTH, minted, minted])
+    prov, out = run([{"facts": list(LEDGER.values())}, WORTH, minted,
+                     minted, minted])
     check("the run holds at the architecture", out["failure_stage"] == CP.ARCHITECTURE)
     check("the minted fact is named", "F99" in out["failure_reason"],
           out["failure_reason"])
@@ -1257,13 +1431,16 @@ def test_the_architecture_repairs_at_most_once():
     check("the third call is the architect and the fourth is its repair",
           order[2:] == ["ARCHITECTURE", "ARCH_REPAIR"], order)
 
-    prov2, out2 = run([{"facts": list(LEDGER.values())}, WORTH, bad, bad])
+    prov2, out2 = run([{"facts": list(LEDGER.values())}, WORTH, bad, bad, bad])
     check("a still-invalid architecture holds", out2["failure_stage"] == CP.ARCHITECTURE)
-    check("and is not attempted a third time",
+    check("and is attempted no more than the budget allows",
           sum(1 for i in range(len(prov2.calls))
-              if prov2.stage_of(i) in ("ARCHITECTURE", "ARCH_REPAIR")) == 2)
-    check("the reason says one repair was spent",
-          "after one repair" in out2["failure_reason"], out2["failure_reason"])
+              if prov2.stage_of(i) in ("ARCHITECTURE", "ARCH_REPAIR"))
+          == 1 + CP.MAX_ARCHITECTURE_REPAIRS,
+          [prov2.stage_of(i) for i in range(len(prov2.calls))])
+    check("the reason says the budget was spent",
+          "of a maximum %d" % CP.MAX_ARCHITECTURE_REPAIRS in out2["failure_reason"],
+          out2["failure_reason"][:140])
 
 
 def test_cut_watch_terms_are_derived_deterministically_and_licensed():

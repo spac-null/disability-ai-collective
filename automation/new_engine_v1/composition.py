@@ -899,11 +899,27 @@ def check_architecture(arch: dict, ledger: dict) -> list:
     return errs
 
 
+# Two, and the reason is measured rather than chosen. The architecture stage held in
+# three of five subscription canary runs, and two of those were legitimate mints its
+# single repair could not clear -- a carrier asserting an occurrence, then a turn minting
+# a relation. The manual baseline that produced the held-out article needed exactly those
+# two repairs, in that order (REPAIR_1 carrier, REPAIR_2 turn). One repair cannot
+# reproduce the article this canary exists to reproduce.
+#
+# THIS IS NOT A VALIDATOR RELAXATION. Acceptance is unchanged: the full architecture
+# validator set runs after every repair and nothing reaches the Writer until it passes
+# clean. What changes is only how many chances the architect gets to narrow its own
+# output, and every chance is judged by the same gate as the first.
+MAX_ARCHITECTURE_REPAIRS = 2
+
 REPAIR_ARCH_SYSTEM = (
     "You are repairing a story architecture that failed validation. The exact failures "
     "are given, and the ledger is unchanged.\n"
-    "You may NARROW, REORDER or REMOVE. You may not add a fact, and you may not reach for "
-    "a fact id that is not in the ledger.\n"
+    "You may NARROW, REORDER or REMOVE, and you may REPLACE an unsupported relation or "
+    "carrier with a supported one that is ALREADY AVAILABLE IN THE LEDGER. You may not "
+    "add a fact, mint an occurrence or a relation, broaden a proposition, or reach for a "
+    "fact id that is not in the ledger. The ledger is frozen and the approved lens does "
+    "not change.\n"
     "Most of these failures are one of three things, and the fix is the same each time: "
     "something asserted more than the evidence carries. A carrier that narrates an event "
     "becomes a plain noun phrase. A turn that fuses two true facts into a relation loses "
@@ -965,7 +981,13 @@ def architect(provider, ledger: dict, worth: dict, subject: str) -> dict:
             {"architecture": obj, "failures": errs, "provider": ident,
              "model_calls": calls, "repairs": repairs})
 
-    if errs:
+    # Each repair sees the CURRENT invalid architecture and the failures it actually has
+    # now -- not the original ones -- so repair 2 answers repair 1's output rather than
+    # re-answering a question that has already been partly fixed.
+    idents = {"architect": ident}
+    history = []
+    first_errs = list(errs)
+    while errs and repairs < MAX_ARCHITECTURE_REPAIRS:
         ru = "\n".join([
             "THE ARCHITECTURE YOU PRODUCED",
             json.dumps(obj, indent=1),
@@ -976,23 +998,32 @@ def architect(provider, ledger: dict, worth: dict, subject: str) -> dict:
             "THE FROZEN LEDGER -- unchanged",
             ledger_block(ledger),
             "", ARCHITECT_SCHEMA])
-        obj2, ident2 = _ask(provider, REPAIR_ARCH_SYSTEM, ru, 8_000, ARCHITECTURE,
+        nxt, ident_r = _ask(provider, REPAIR_ARCH_SYSTEM, ru, 8_000, ARCHITECTURE,
                             ARCHITECTURE_HOLD)
         calls += 1
-        repairs = 1
-        ident = {"architect": ident, "repair": ident2}
-        errs2 = check_architecture(obj2, ledger)
-        if errs2:
-            raise CompositionHold(
-                ARCHITECTURE, ARCHITECTURE_HOLD,
-                ["still invalid after one repair (%d failure(s))" % len(errs2)] + errs2[:10],
-                {"architecture": obj2, "architecture_before_repair": obj,
-                 "failures": errs2, "failures_before_repair": errs,
-                 "provider": ident, "model_calls": calls, "repairs": repairs})
-        obj = obj2
+        repairs += 1
+        idents["repair_%d" % repairs] = ident_r
+        history.append({"attempt": repairs, "failure_count": len(errs),
+                        "failures_answered": errs[:10]})
+        obj = nxt
+        # The full validator set, again, after every repair. Acceptance never moves.
+        errs = check_architecture(obj, ledger)
 
-    return {"status": PASS, "architecture": obj, "provider": ident,
+    if errs:
+        raise CompositionHold(
+            ARCHITECTURE, ARCHITECTURE_HOLD,
+            ["still invalid after %d repair(s) of a maximum %d (%d failure(s))"
+             % (repairs, MAX_ARCHITECTURE_REPAIRS, len(errs))] + errs[:10],
+            {"architecture": obj, "failures": errs,
+             "failures_at_first_attempt": first_errs, "repair_history": history,
+             "provider": idents, "model_calls": calls, "repairs": repairs,
+             "repair_budget": MAX_ARCHITECTURE_REPAIRS})
+
+    return {"status": PASS, "architecture": obj, "provider": idents,
             "model_calls": calls, "repairs": repairs,
+            "repair_budget": MAX_ARCHITECTURE_REPAIRS,
+            "repair_history": history,
+            "failures_at_first_attempt": first_errs,
             "beats": len(obj.get("beats") or []),
             "used": len(obj.get("use_facts") or []),
             "cut": len(obj.get("cut_evidence") or [])}
@@ -1075,7 +1106,7 @@ than that their them then there these they thing think this those though three t
 time today together took total toward turn type under understand unit units unless until
 upon used useful using usual usually value various very view visual want water well were
 what when where whether which while whole will with within without work would year
-because project correspond corresponding correspondingly
+because project correspond corresponding correspondingly across
 """.split()} | {ST._stem(w) for w in ST._FUNCTION_WORDS}
 
 _WORD = re.compile(r"[A-Za-z0-9][A-Za-z0-9.,'-]*")
@@ -1100,13 +1131,16 @@ def _is_distinctive(term: str, df: dict) -> bool:
     t = term.strip()
     if _NUMBERISH.search(t):
         return True                                  # a figure belongs to its fact
-    if _PROPER.fullmatch(t) and t.lower() not in ("there", "another", "this", "these"):
+    # ORDINARY ENGLISH FIRST, before the proper-noun shortcut. A capitalised word at the
+    # start of a sentence looks exactly like a name to a regex: the canary watched
+    # "Across" as a sentinel for F71 and duly reported a violation on the word "Across".
+    # A single ordinary word is never a name, however it is capitalised.
+    if " " not in t and _stems(t) & _COMMON_ENGLISH:
+        return False
+    if _PROPER.fullmatch(t):
         return True                                  # a name belongs to its fact
-    if " " not in t:
-        if len(t) < CUT_TERM_DISTINCTIVE_LEN:
-            return False                             # short and lowercase: ordinary
-        if _stems(t) & _COMMON_ENGLISH:
-            return False                             # ordinary, whatever its frequency
+    if " " not in t and len(t) < CUT_TERM_DISTINCTIVE_LEN:
+        return False                                 # short and lowercase: ordinary
     return max((df.get(s, 0) for s in _stems(t)), default=0) <= CUT_TERM_MAX_DF
 
 
@@ -1185,6 +1219,7 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
 
     report = {
         "terms": terms,
+        "prohibitions": compile_cut_prohibitions(arch, ledger, terms),
         "cut_declared": len(arch.get("cut_evidence") or []),
         "cut_with_terms": sum(1 for v in terms.values() if v),
         "cut_without_distinctive_terms": sorted(unlicensed_only),
@@ -1200,6 +1235,84 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
         raise CompositionHold(CUT_TERMS, CUT_TERMS_HOLD, errs)
     report["status"] = PASS
     return report
+
+
+# ── CUT COMPILED INTO PROHIBITIONS ───────────────────────────────────────────
+# The packet already carries the architect's own prohibitions and a CUT list, and the
+# Writer still named a circuit board, Reality Capture and an override -- all from facts
+# the architecture had CUT. The CUT decision was in the packet as a count, not as
+# something the Writer could act on.
+#
+# So the cut material is compiled into explicit prohibitions. Deterministically, with no
+# model call, and with no article-specific sentence written by hand: the CATEGORY WORDING
+# below is generic and fixed, while WHICH categories appear comes only from the cut facts
+# themselves.
+#
+# The licensing rule is preserved exactly as the CUT audit applies it: a category is
+# emitted only for a cut fact that still has at least one surviving watch term, and a
+# term survives only if the packet does not license it. So a cut fact whose whole
+# vocabulary the Writer was legitimately handed produces no prohibition, and cannot.
+#
+# Categories are matched on the cut fact's own proposition and span. This is a classifier
+# over cut material, not a vocabulary ban on the article: nothing here forbids a word the
+# packet grants.
+CUT_CATEGORIES = [
+    (("microcontroller", "servo", "circuit", "board", "module", "sensor", "gps", "oled",
+      "sd card", "wiring", "enclosure", "solder", "3d print", "printer", "firmware",
+      "battery", "motor", "chassis"),
+     "Do not name or describe the electronic components, boards, modules, wiring or how "
+     "the device was physically assembled."),
+    (("software", "app ", "package", "library", "toolkit", "photogrammetry", "scan",
+      "capture", "render", "model file", "mesh", "geometry", "specification",
+      "download", "repository", "code"),
+     "Do not name the software, tools, file formats or technical specifications used to "
+     "make it, and do not describe how it was produced."),
+    (("award", "grant", "funded", "funding", "prize", "fellowship", "residency",
+      "commission", "sponsor", "donation"),
+     "Do not name the funder, the award, the prize or any sum of money attached to the "
+     "work."),
+    (("price", "prices", "fee", "membership", "subscription", "cost", "revenue",
+      "owned", "operated", "acquisition", "shareholder", "company", "corporation"),
+     "Do not describe the operating company, its ownership, its commercial arrangements "
+     "or any price, fee or membership cost."),
+    (("quantile", "margin of error", "sample", "weighting", "estimate period",
+      "correction", "inflate", "standard error", "confidence", "methodology"),
+     "Do not describe the statistical method, the sampling, the weighting or the margins "
+     "of error."),
+    (("hopes", "plans", "intends", "other cities", "replicate", "roll out", "expand",
+      "future", "next version"),
+     "Do not describe future plans, replication elsewhere, or how anyone else might "
+     "build or use one."),
+    (("interview", "told", "spokesperson", "statement", "press", "newsroom",
+      "publication", "reporter", "podcast", "broadcast"),
+     "Do not describe the reporting, the interviews, the outlets or who said something "
+     "to whom."),
+]
+
+
+def compile_cut_prohibitions(arch: dict, ledger: dict, terms: dict) -> list:
+    """Generic prohibitions whose CONTENT comes only from the cut facts.
+
+    One line per category actually present in the cut material, deduplicated and in a
+    fixed order so the packet is stable across runs. Nothing article-specific is written
+    here and no model is asked anything.
+    """
+    out = []
+    for markers, sentence in CUT_CATEGORIES:
+        for c in (arch.get("cut_evidence") or []):
+            cid = c.get("evidence_id")
+            # Only a cut fact that still HAS a sentinel: if every candidate term was
+            # licensed by the packet, the Writer was handed that vocabulary legitimately
+            # and there is nothing to forbid.
+            if not (terms or {}).get(cid):
+                continue
+            f = (ledger or {}).get(cid) or {}
+            hay = ("%s %s" % (f.get("proposition") or "",
+                              f.get("support_span") or "")).lower()
+            if any(m in hay for m in markers):
+                out.append(sentence)
+                break
+    return out
 
 
 def validate_cut_terms(terms, arch: dict) -> list:
@@ -1424,8 +1537,18 @@ def negative_permissions_block(perms: dict) -> str:
     return "\n".join(L) + "\n"
 
 
-def writer_packet(arch: dict, ledger: dict) -> tuple:
-    """The packet and its rendered prompt. Refused if it carries the auditing frame."""
+def writer_packet(arch: dict, ledger: dict, cut_prohibitions=None) -> tuple:
+    """The packet and its rendered prompt. Refused if it carries the auditing frame.
+
+    `cut_prohibitions` are the compiled CUT lines, added to the architect's own so that
+    `render()` turns them into imperatives alongside everything else. They are appended
+    rather than merged into the architecture: the architecture is a record of what the
+    architect decided, and this is a deterministic consequence of its CUT list.
+    """
+    if cut_prohibitions:
+        arch = dict(arch, prohibitions=list(arch.get("prohibitions") or [])
+                    + [p for p in cut_prohibitions
+                       if p not in (arch.get("prohibitions") or [])])
     packet = ST.build_packet(arch, arch.get("final_lens") or {},
                              LG.propositions(ledger))
     errs = ST.validate_packet(packet)
@@ -1445,9 +1568,9 @@ def _clean_article(text: str) -> str:
     return t.strip()
 
 
-def write_article(provider, arch: dict, ledger: dict) -> dict:
+def write_article(provider, arch: dict, ledger: dict, cut_prohibitions=None) -> dict:
     """STAGE 5. ONE Writer call. A retry only when the output is mechanically unusable."""
-    packet, prompt = writer_packet(arch, ledger)
+    packet, prompt = writer_packet(arch, ledger, cut_prohibitions)
     perms = negative_permissions(arch, ledger)
     last = ""
     for attempt in (1, 2):
@@ -2037,7 +2160,7 @@ def run_story_architecture_composition(
 
         cut = record(CUT_TERMS, derive_cut_watch_terms(arch, ledger))
 
-        wr = record(WRITER, write_article(P, arch, ledger))
+        wr = record(WRITER, write_article(P, arch, ledger, cut.get("prohibitions")))
         draft = wr["article_text"]
 
         cont = record(CONTINUITY, continuity_pass(P, draft, arch))
