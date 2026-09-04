@@ -1211,6 +1211,9 @@ def _is_distinctive(term: str, df: dict) -> bool:
     t = term.strip()
     if _PURE_NUMBER.match(t):
         return True                                  # a figure belongs to its fact
+    if _ALNUM_ID.match(t):
+        return True                                  # a part name belongs to its fact,
+                                                     # and "ESP32" is five characters
     # ORDINARY ENGLISH FIRST, before the proper-noun shortcut. A capitalised word at the
     # start of a sentence looks exactly like a name to a regex: the canary watched
     # "Across" as a sentinel for F71 and duly reported a violation on the word "Across".
@@ -1222,6 +1225,53 @@ def _is_distinctive(term: str, df: dict) -> bool:
     if " " not in t and len(t) < CUT_TERM_DISTINCTIVE_LEN:
         return False                                 # short and lowercase: ordinary
     return max((df.get(s, 0) for s in _stems(t)), default=0) <= CUT_TERM_MAX_DF
+
+
+# ── CUT CONFIDENCE TIERS ─────────────────────────────────────────────────────
+# Single-token lexical CUT detection has a precision ceiling, established over five
+# downstream replays on one frozen architecture. Each produced a different collision
+# between a cut fact's word and an unrelated sense of the same word in the prose:
+#
+#   channel     cut: "a curved rear channel" (a groove)
+#               art: "the usual channels" (media)
+#   assembled   cut: "the assembled device"
+#               art: "torque assembled out of what a survey published" (metaphor)
+#
+# No frequency measure separates these -- both senses are equally rare in the corpus --
+# and a hand-maintained allowlist cannot be closed by enumeration.
+#
+# So a term is tiered by its SHAPE, which is decidable, rather than by a judgement about
+# its senses, which is not. HIGH-confidence shapes are fact-bearing and cannot plausibly
+# be sense collisions: a figure, an alphanumeric part name, a proper noun, a multi-word
+# phrase. A bare everyday token cannot HOLD an article by itself.
+#
+# WHAT STILL CATCHES AN ACTUAL EXCLUDED FACT: the factual-surface audit on numbers and
+# entities, the negative-admission gate, the occurrence and relation validators, the
+# authoritative Grounder and the authoritative Fact Check. CUT was never the only
+# control, and it is the weakest of them on ambiguous vocabulary.
+CUT_HIGH = "HIGH"
+CUT_LOW = "LOW"
+
+_ALNUM_ID = re.compile(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9][A-Za-z0-9.\-/]*$")
+# The same shape, found inside running text.
+_IDENTIFIER = re.compile(
+    r"\b(?=[A-Za-z0-9\-]*[A-Za-z])(?=[A-Za-z0-9\-]*\d)[A-Za-z][A-Za-z0-9\-]{2,}\b")
+
+
+def cut_term_confidence(term: str) -> str:
+    """HIGH if the term's shape is fact-bearing; LOW if it is a bare everyday token."""
+    s = (term or "").strip()
+    if not s:
+        return CUT_LOW
+    if " " in s:
+        return CUT_HIGH                      # a distinctive multi-word phrase
+    if _PURE_NUMBER.match(s):
+        return CUT_HIGH                      # a figure, price or date
+    if _ALNUM_ID.match(s):
+        return CUT_HIGH                      # an identifier or part name
+    if _PROPER.fullmatch(s) and not (_stems(s) & _COMMON_ENGLISH):
+        return CUT_HIGH                      # a named entity, product or tool
+    return CUT_LOW
 
 
 def _candidate_terms(fact: dict) -> list:
@@ -1239,6 +1289,13 @@ def _candidate_terms(fact: dict) -> list:
 
     for n in sorted(ST._numbers(text), key=len, reverse=True):
         push(n)
+    # ALPHANUMERIC IDENTIFIERS AND PART NAMES. Extracted explicitly because nothing else
+    # here reaches them: ST._numbers wants digits only, _PROPER wants an initial capital
+    # followed by lower-case, and the content-word scan excludes digits. So "ESP32S3" was
+    # never a candidate at all, and a part name is exactly the high-confidence shape a
+    # CUT sentinel is for.
+    for m in sorted(set(_IDENTIFIER.findall(text)), key=len, reverse=True):
+        push(m)
     for m in sorted(set(_PROPER.findall(text)), key=len, reverse=True):
         push(m)                                      # multi-word names first
     for w in (fact.get("entities") or []):
@@ -1303,8 +1360,13 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
         if not kept:
             unlicensed_only.append(cid)
 
+    high = {cid: [x for x in v if cut_term_confidence(x) == CUT_HIGH]
+            for cid, v in terms.items()}
     report = {
         "terms": terms,
+        "high_confidence_terms": {k: v for k, v in high.items() if v},
+        "confidence": {x: cut_term_confidence(x)
+                       for v in terms.values() for x in v},
         "prohibitions": compile_cut_prohibitions(arch, ledger, terms),
         "cut_declared": len(arch.get("cut_evidence") or []),
         "cut_with_terms": sum(1 for v in terms.values() if v),
@@ -1955,11 +2017,16 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
             "UNSUPPORTED_NEGATIVES: %d negative-shaped sentence(s) with no negative fact "
             "behind them: %s"
             % (len(unadmitted), [h["sentence"][:90] for h in unadmitted][:4]))
-    if f["cut_adherence"]["violations"]:
+    # Only a HIGH-confidence shape blocks. A bare everyday token that happens to occur
+    # in a cut fact is recorded as telemetry and settled by the controls that can read a
+    # claim rather than a string.
+    viol = f["cut_adherence"]["violations"]
+    hard = [v for v in viol if cut_term_confidence(v["term"]) == CUT_HIGH]
+    soft = [v for v in viol if cut_term_confidence(v["term"]) != CUT_HIGH]
+    if hard:
         blocking.append(
             "CUT_LEAKAGE: %s"
-            % [(v["evidence_id"], v["term"], v["match"])
-               for v in f["cut_adherence"]["violations"]][:6])
+            % [(v["evidence_id"], v["term"], v["match"]) for v in hard][:6])
     if not f["prose_leaks"]["ok"] or not f["scaffold"]["ok"]:
         blocking.append("MACHINE_LANGUAGE: provenance frames %s, scaffold names %s"
                         % (f["prose_leaks"]["frames"], f["scaffold"]["leaked"]))
@@ -1994,6 +2061,9 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
             "blocking": blocking,
             "audits": a,
             "cut_terms_without_a_sentinel": sorted(explained),
+            "cut_telemetry": [{"evidence_id": v["evidence_id"], "term": v["term"],
+                               "match": v["match"], "confidence": CUT_LOW}
+                              for v in soft],
             "negatives_admitted_by_provenance": admitted,
             "negatives_licensed_lexically":
                 f["negative_admission"]["negative_sentences"]

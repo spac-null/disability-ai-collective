@@ -1759,6 +1759,69 @@ def test_a_definitional_gloss_is_adjudicated_but_nothing_else_is():
     check("an unresolved grounding status still holds", out3["status"] == CP.HOLD)
 
 
+def test_cut_confidence_tiers_and_what_still_holds_an_article():
+    """Single-token lexical CUT detection has a precision ceiling, established over five
+    downstream replays on one frozen architecture -- each produced a different collision
+    between a cut fact's word and an unrelated sense of the same word:
+
+        channel     cut "a curved rear channel" (groove) / art "the usual channels"
+        assembled   cut "the assembled device"  / art "torque assembled out of..."
+
+    No frequency measure separates those and no allowlist closes by enumeration. A term
+    is tiered by SHAPE, which is decidable, not by its senses, which are not."""
+    for term in ("12.15", "$239", "2020", "ESP32S3", "Reality Capture", "Idle Hands",
+                 "Lyft", "New York City"):
+        check("HIGH confidence: %r" % term,
+              CP.cut_term_confidence(term) == CP.CUT_HIGH, term)
+    for term in ("channel", "assembled", "surface", "capture", "circuit",
+                 "photogrammetry", "download", "reading"):
+        check("LOW confidence: %r" % term,
+              CP.cut_term_confidence(term) == CP.CUT_LOW, term)
+    check("an ordinary word capitalised at a sentence start is not a name",
+          CP.cut_term_confidence("Across") == CP.CUT_LOW)
+
+    arch = copy.deepcopy(ARCH)
+    led = copy.deepcopy(LEDGER)
+    led["F09"] = F("F09", "The plinth held an ESP32 board bought for $412.90 from "
+                          "Kunsthalle Supplies, and the assembled unit has a channel.",
+                   "The pavilion closed after the Kunsthalle season ended", ev=("S1",))
+    arch["cut_evidence"] = arch["cut_evidence"] + [
+        {"evidence_id": "F09", "reason": "BACKGROUND_NOT_NEEDED"}]
+    r = CP.derive_cut_watch_terms(arch, led)
+    packet, _ = CP.writer_packet(arch, led, r["prohibitions"])
+
+    def audit(extra):
+        return CP.safety_audit(DRAFT, DRAFT + "\n\n" + extra, packet, arch, led,
+                               r["terms"], r)
+
+    # A LOW-confidence collision is telemetry and does not HOLD.
+    low = audit("The usual channels carried the assembled argument.")
+    check("a bare everyday token does NOT hold the article",
+          not any("CUT_LEAKAGE" in b for b in low["blocking"]), low["blocking"])
+    check("but it IS recorded as telemetry",
+          any(x["term"].lower() in ("channel", "assembled")
+              for x in low["cut_telemetry"]), low["cut_telemetry"])
+
+    # A HIGH-confidence shape still holds.
+    for extra, why in (("The board cost $412.90.", "a price"),
+                       ("An ESP32 sat in the plinth.", "a part name"),
+                       ("It came from Kunsthalle Supplies.", "a named supplier")):
+        out = audit(extra)
+        check("%s STILL holds the article" % why,
+              any("CUT_LEAKAGE" in b for b in out["blocking"]), (extra, out["blocking"]))
+
+    # The other controls remain authoritative on actual excluded content.
+    ent = audit("Rotterdam paid for the plinth in 1974.")
+    check("an unapproved entity and number still hold, via the factual surface audit",
+          any("NEW_UNSUPPORTED_FACTS" in b for b in ent["blocking"]), ent["blocking"])
+    check("and the CUT audit still sees everything, blocking or not",
+          r["terms"]["F09"], r["terms"]["F09"])
+    check("high-confidence terms are reported separately",
+          any(CP.cut_term_confidence(x) == CP.CUT_HIGH
+              for x in r["high_confidence_terms"].get("F09", [])),
+          r.get("high_confidence_terms"))
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
