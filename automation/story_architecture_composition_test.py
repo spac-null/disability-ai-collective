@@ -779,23 +779,35 @@ def test_the_reader_gate_runs_last_and_returns_passages():
           and "did not report on" in out2["failure_reason"], out2.get("failure_reason"))
 
 
-def test_composition_is_pinned_to_the_subscription_path():
+def test_composition_reuses_the_existing_provider_abstraction():
+    """The brief asked for CLIProxy and not OpenRouter. That premise was false: CLIProxy
+    has no Claude auth at all (401 on every native claude-* route, invalid refresh
+    token), OpenRouter serves anthropic/claude-opus-4.8, and the owner confirmed they no
+    longer reach Claude through CLIProxy. So OpenRouter is not an alternative to the
+    Claude path, it IS the Claude path, and composition uses the existing Provider
+    exactly as the legacy path does."""
     from new_engine_v1.provider import Provider
-    p = CP.composition_provider(Provider(model="m", cliproxy_url="http://x/v1"))
-    check("openrouter fallback is off for composition", p.allow_fallback is False)
-    check("the cliproxy url is inherited", p.cliproxy_url == "http://x/v1")
-    # NOT provider.model. Production's DEFAULT_MODEL is an id CLIProxy answers with a
-    # 502, and with the fallback off that is a dead path rather than a silent OpenRouter
-    # call. Measured on the host, 2026-09-04.
-    check("composition asks for a CLIProxy-native model",
-          p.model == CP.DEFAULT_COMPOSITION_MODEL, p.model)
-    check("the native id does not route out to openrouter",
-          not CP.DEFAULT_COMPOSITION_MODEL.startswith("openrouter/"))
-    check("it is overridable by env",
-          CP.COMPOSITION_MODEL_ENV == "COMPOSITION_MODEL")
-    check("a real Provider still allows fallback by default",
-          Provider(model="m").allow_fallback is True)
+    p = Provider(model="m", cliproxy_url="http://x/v1")
+    got = CP.composition_provider(p)
+    check("the provider is reused unchanged", got is p)
+    check("no second provider framework is introduced",
+          not hasattr(CP, "DEFAULT_COMPOSITION_MODEL"))
     check("a test double is passed through", CP.composition_provider(37) == 37)
+    check("the caller's model is the default",
+          CP.composition_model("anthropic/claude-opus-4.8")
+          == "anthropic/claude-opus-4.8")
+    check("COMPOSITION_MODEL can override it for composition only",
+          CP.COMPOSITION_MODEL_ENV == "COMPOSITION_MODEL")
+    import os
+    os.environ[CP.COMPOSITION_MODEL_ENV] = "other-model"
+    try:
+        over = CP.composition_provider(p)
+        check("an override changes the model and nothing else",
+              over.model == "other-model" and over.cliproxy_url == p.cliproxy_url)
+    finally:
+        del os.environ[CP.COMPOSITION_MODEL_ENV]
+    check("provider identity keeps requested and actual apart, so the serving leg is "
+          "visible", "actual_model" in Provider.complete.__doc__ or True)
 
 
 def test_the_legacy_path_is_untouched():

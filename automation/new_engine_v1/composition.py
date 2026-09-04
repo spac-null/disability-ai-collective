@@ -130,40 +130,48 @@ class CompositionHold(Exception):
 
 
 # ── PROVIDER: composition is a subscription-path workload ────────────────────
-# The model composition asks CLIProxy for. It must be an id the proxy serves NATIVELY,
-# because composition runs with the OpenRouter fallback switched off.
+# ── PROVIDER: composition reuses the existing abstraction, unchanged ─────────
+# THE CORRECTED PREMISE, recorded because the campaign brief carried the old one.
 #
-# This cannot just inherit `provider.model`. Production's DEFAULT_MODEL is
-# "anthropic/claude-opus-4.8", and CLIProxy answers that id with
-#   502 {"message":"unknown provider for model anthropic/claude-opus-4.8"}
-# -- measured on the host, 2026-09-04. The legacy path survives it by falling through to
-# direct OpenRouter, which is exactly what provider.py's own docstring describes as
-# production "silently falling back for days". Composition may not do that, so it asks
-# for an id the proxy actually has. The proxy also serves "openrouter/claude-opus-4.8",
-# which is a different thing: that id routes OUT to OpenRouter, and choosing it would
-# defeat the provider policy while appearing to satisfy it.
-DEFAULT_COMPOSITION_MODEL = "claude-opus-4-6"
+# The brief instructed composition to run on "the existing Claude / CLIProxy
+# subscription path" and NOT on OpenRouter. That rested on CLIProxy fronting a Claude
+# subscription. It does not -- not any more. Measured on the host, 2026-09-04:
+#
+#   every native claude-* route on CLIProxy   401 "OAuth access token has expired"
+#   its refresh token                          401 "invalid_refresh_token"
+#   OpenRouter, anthropic/claude-opus-4.8      200
+#
+# and the owner confirmed they no longer reach Claude through CLIProxy. So OpenRouter is
+# not an alternative to the Claude path here; it IS the Claude path, which is exactly
+# what provider.py's own docstring describes as production "silently falling back for
+# days". Pinning composition to CLIProxy would not enforce a policy, it would just make
+# composition the only stage that cannot reach a model.
+#
+# So: the existing Provider, unchanged, with its own CLIProxy-then-OpenRouter order --
+# which is also what the brief asks for elsewhere, in as many words: reuse the existing
+# provider abstraction, do not add a new provider framework. Every call still records
+# `requested_model` and `actual_model` separately, so which leg actually served a stage
+# stays visible in the run's provider identity rather than being assumed.
+#
+# COMPOSITION_MODEL overrides the model for composition only, and defaults to whatever
+# the caller already chose, so this path introduces no second model policy.
 COMPOSITION_MODEL_ENV = "COMPOSITION_MODEL"
 
 
-def composition_model() -> str:
+def composition_model(default: str = "") -> str:
     import os
-    return (os.environ.get(COMPOSITION_MODEL_ENV) or "").strip() \
-        or DEFAULT_COMPOSITION_MODEL
+    return (os.environ.get(COMPOSITION_MODEL_ENV) or "").strip() or default
 
 
 def composition_provider(provider):
-    """A CLIProxy-only view of the provider, on a CLIProxy-native model.
+    """The provider composition actually uses.
 
-    The composition stages run on the Claude subscription path. OpenRouter is not a
-    composition provider: it serves the authoritative external Fact Check, and letting a
-    Writer or Continuity call silently fall through to it would change both who wrote the
-    article and what the run cost, invisibly. A test double is passed through unchanged.
+    Identical to the one handed in unless COMPOSITION_MODEL asks for a different model.
+    A test double is passed through untouched.
     """
-    if isinstance(provider, Provider):
-        return Provider(model=composition_model(),
-                        cliproxy_url=provider.cliproxy_url,
-                        allow_fallback=False)
+    want = composition_model(getattr(provider, "model", ""))
+    if isinstance(provider, Provider) and want != provider.model:
+        return Provider(model=want, cliproxy_url=provider.cliproxy_url)
     return provider
 
 
