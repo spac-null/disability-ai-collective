@@ -1943,6 +1943,135 @@ def test_a_packet_defect_is_repairable_because_it_is_seen_in_time():
           CP.check_architecture(scaf, LEDGER)[:3])
 
 
+GROUND_DIRTY = {"status": "settled", "findings": [
+    {"id": "G1", "classification": "TRUE_UNSUPPORTED",
+     "quote": "No entry describes what any visitor heard.",
+     "why": "the exclusivity is not carried by the evidence"}]}
+
+
+def test_one_grounded_factual_repair_then_the_full_stack_again():
+    """Two independent fresh subjects reproduced the same failure class: every
+    deterministic screen passed and the Grounder still found genuine over-reach --
+    manufactured exclusivity, a draft quote relocated to the present tense, an ambiguous
+    date. The screens cover added SURFACE; they do not cover added SCOPE, and "X is the
+    single Y" is an exclusivity in POSITIVE shape that negative_claim_scan never sees.
+
+    So the Grounder is the semantic authority and the repair only subtracts."""
+    fixed = "No catalogue entry in the eight describes what any visitor heard."
+    repair = {"edits": [{"finding_id": "G1", "operation": "NARROW",
+                         "original": "No entry describes what any visitor heard.",
+                         "repaired": fixed, "fact_ids": ["F05"],
+                         "what_was_removed": "the unbounded scope"}]}
+
+    def run_g(ground_seq, extra=None):
+        """ground_seq: results returned by successive S.ground calls."""
+        import new_engine_v1.stages as S
+        real = S.ground
+        seq = list(ground_seq)
+        calls = {"n": 0}
+
+        def fake(*a, **k):
+            calls["n"] += 1
+            return dict(seq.pop(0) if seq else GROUND_CLEAN)
+
+        S.ground = fake
+        # The repair call sits between Continuity and the Reader, so its reply belongs
+        # there: [ledger, worth, arch, writer, continuity] + [repair] + [reader].
+        script = full_script()[:5] + list(extra or []) + [READER_OK]
+        prov = Scripted(script)
+        try:
+            return prov, calls, CP.run_story_architecture_composition(
+                prov, pack=PACK, source_text=S0, source_sha="x",
+                subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+        finally:
+            S.ground = real
+
+    # 1. Grounder PASS -> no repair call at all.
+    prov, calls, out = run_g([GROUND_CLEAN])
+    check("1. a clean grounder spends no repair", out["status"] == CP.PASS
+          and calls["n"] == 1, (out.get("failure_reason"), calls))
+    check("   and no repair is recorded",
+          not out["detail"][CP.GROUNDING].get("repair"))
+
+    # 2. A repairable HOLD -> exactly one repair, then safety, then Grounder again.
+    prov, calls, out = run_g([GROUND_DIRTY, GROUND_CLEAN], [repair])
+    check("2. one repair rescues the article", out["status"] == CP.PASS,
+          out.get("failure_reason"))
+    check("   the grounder ran TWICE", calls["n"] == 2, calls)
+    check("   exactly one repair", out["repairs_by_stage"].get(CP.GROUNDING) == 1)
+    check("   the repaired wording is what carries", fixed in out["article_text"])
+    check("   and it reached the reader", out["stages"][CP.READER] == CP.PASS)
+
+    # 6. Provenance: every edit auditable.
+    ed = out["detail"][CP.GROUNDING]["repair"]["edits"][0]
+    for field in ("finding_id", "operation", "original", "repaired",
+                  "what_was_removed", "fact_ids", "support_spans",
+                  "authorising_finding"):
+        check("   provenance carries %s" % field, ed.get(field) is not None, ed)
+    check("   and names the authorising finding", ed["finding_id"] == "G1")
+
+    # 7. A second grounding failure is the end.
+    prov, calls, out = run_g([GROUND_DIRTY, GROUND_DIRTY], [repair])
+    check("7. a second grounder HOLD ends the article",
+          out["failure_stage"] == CP.GROUNDING, out.get("failure_stage"))
+    check("   and says it was after a repair",
+          "AFTER one factual repair" in out["failure_reason"], out["failure_reason"])
+    check("   NEVER a second repair", calls["n"] == 2, calls)
+    stages = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("   no Writer regeneration", stages.count("WRITER") == 1, stages)
+    check("   the fact check is not reached",
+          out["stages"][CP.FACT_CHECK] == CP.NOT_RUN)
+
+
+def test_the_factual_repair_can_only_subtract():
+    """A declaration of intent is not a permission. Every edit is checked mechanically."""
+    packet, _ = CP.writer_packet(ARCH, LEDGER)
+    findings = GROUND_DIRTY["findings"]
+    orig = "No entry describes what any visitor heard."
+
+    def apply(rep, fact_ids=("F05",), op="NARROW", fid="G1"):
+        return CP.apply_grounding_repair(
+            DRAFT, [{"finding_id": fid, "operation": op, "original": orig,
+                     "repaired": rep, "fact_ids": list(fact_ids)}],
+            findings, LEDGER, packet)
+
+    _, prov, errs = apply("No catalogue entry describes what any visitor heard.")
+    check("a narrowing is applied", not errs and prov, errs)
+
+    for rep, why in (
+        ("No entry describes what any of the 47 visitors heard.", "a new number"),
+        ("No entry by the curator Anneke Mertens describes it.", "a new entity"),
+        ("No entry describes it, because the salt absorbed the sound.", "a new relation"),
+    ):
+        _, _, e = apply(rep)
+        check("%s is refused" % why, e, (rep, e))
+
+    _, _, e = apply("Anything.", fid="G9")
+    check("an edit citing a finding the grounder never made is refused", e, e)
+    _, _, e = apply("Anything.", op="IMPROVE")
+    check("an undeclared operation is refused", e, e)
+    _, _, e = apply("Anything.", fact_ids=("F99",))
+    check("an edit citing an unknown fact id is refused", e, e)
+    _, _, e = CP.apply_grounding_repair(
+        DRAFT, [{"finding_id": "G1", "operation": "NARROW",
+                 "original": "a sentence that is not in the article at all",
+                 "repaired": "x", "fact_ids": ["F05"]}], findings, LEDGER, packet)
+    check("an edit whose original is not in the article is refused", e, e)
+
+    # DELETE is always available.
+    text, prov, errs = apply("", op="DELETE")
+    check("a deletion is permitted", not errs and orig not in text, errs)
+
+    check("LEGITIMATE_INTERPRETATION is not repairable",
+          not CP.repairable_findings(
+              [{"id": "L1", "classification": "LEGITIMATE_INTERPRETATION",
+                "quote": "x"}]))
+    check("but TRUE_UNSUPPORTED and TRUE_UNCERTAIN are",
+          len(CP.repairable_findings(
+              [{"id": "A", "classification": "TRUE_UNSUPPORTED", "quote": "x"},
+               {"id": "B", "classification": "TRUE_UNCERTAIN", "quote": "y"}])) == 2)
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
@@ -2220,20 +2349,24 @@ def test_the_grounder_and_fact_check_run_only_after_safety():
     dirty = {"status": "settled",
              "findings": [{"id": "G1", "classification": "TRUE_UNSUPPORTED",
                            "quote": "the salt was pink"}]}
+    # An unsupported finding now attempts ONE factual repair first (see
+    # test_one_grounded_factual_repair_then_the_full_stack_again). With no usable repair
+    # reply scripted, the stage still HOLDS -- which is what this test is about: nothing
+    # downstream runs on a grounding failure, repair attempt or not.
     prov2, out2 = run(full_script(), ground=dirty, fact_check_fn=fc)
     check("an unsupported grounder finding holds", out2["failure_stage"] == CP.GROUNDING)
-    check("the classification is reported",
-          "TRUE_UNSUPPORTED" in out2["failure_reason"], out2["failure_reason"])
     check("the fact check is not reached after a grounding hold", seen == [], seen)
     check("and the writer is not regenerated",
           [prov2.stage_of(i) for i in range(len(prov2.calls))].count("WRITER") == 1)
+    check("the reader is not reached either",
+          out2["stages"][CP.READER] == CP.NOT_RUN)
 
     # An unadjudicated uncertain finding holds too: the frozen policy, unchanged.
     unc = {"status": "settled",
            "findings": [{"id": "G2", "classification": "TRUE_UNCERTAIN", "quote": "x"}]}
     _, out3 = run(full_script(), ground=unc)
     check("an unadjudicated TRUE_UNCERTAIN finding holds",
-          out3["failure_stage"] == CP.GROUNDING)
+          out3["failure_stage"] == CP.GROUNDING, out3.get("failure_reason"))
     adj = dict(unc, uncertain_adjudicated=True)
     _, out4 = run(full_script(), ground=adj)
     check("an adjudicated one passes", out4["status"] == CP.PASS,

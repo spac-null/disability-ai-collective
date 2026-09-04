@@ -2254,6 +2254,215 @@ def fact_check_unavailable(article_text: str) -> dict:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# STAGE 8b -- ONE GROUNDED FACTUAL REPAIR
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY. Two independent fresh subjects reproduced the same failure class: every
+# deterministic screen passed and the Grounder still found genuine over-reach.
+#
+#   "Where M4(3) does appear in the final framework, it is in Policy HO9"
+#       -- an exclusivity the same source refutes
+#   "Yellow is the single label under which a tool a student needs can be allowed"
+#       -- green permits it too
+#   a minister's draft-consultation quote placed in the present tense beside final policy
+#   "confident mistakes called hallucinations" where the source says only "can make mistakes"
+#
+# The deterministic screens cover added SURFACE -- a number, a name, a colour. They do not
+# cover added SCOPE, and "X is the single Y" is an exclusivity assertion in positive shape,
+# so negative_claim_scan never sees it. The Grounder does. So the Grounder is the semantic
+# authority for this repair; nothing new is built to detect the class.
+#
+# THE REPAIR SUBTRACTS. It may delete unsupported scope, narrow a claim, remove an
+# exclusivity, correct a tense or an ambiguous date, restore attribution, replace an
+# unsupported characterisation with the supported wording, or delete the sentence. It may
+# not add a fact, source, entity, occurrence or relation, broaden scope, strengthen
+# certainty, or improve style anywhere else.
+REPAIR_GROUNDING_SYSTEM = (
+    "You are correcting specific factual over-reach in a finished article. A grounder has "
+    "named the exact passages and said what the evidence does and does not carry. The "
+    "evidence is frozen and is the same evidence the article was written from.\n"
+    "\n"
+    "YOU MAY ONLY SUBTRACT. For each flagged passage:\n"
+    "  - delete scope the evidence does not carry;\n"
+    "  - narrow a claim to what is supported;\n"
+    "  - remove an exclusivity -- 'the single', 'the only', 'where X appears it is in Y' "
+    "-- unless a fact explicitly licenses it;\n"
+    "  - correct a tense or time placement, so a quote from a draft consultation is not "
+    "written as though it were said of the final thing;\n"
+    "  - correct an ambiguous date reference so it points where the evidence points;\n"
+    "  - restore explicit attribution the sentence dropped;\n"
+    "  - replace an unsupported characterisation with the narrower wording actually "
+    "supported;\n"
+    "  - delete the sentence, which is always available and often correct.\n"
+    "\n"
+    "YOU MAY NOT add a fact, a source, an entity, a number, an occurrence or a relation. "
+    "You may not broaden scope or strengthen certainty. You may not touch a sentence that "
+    "was not flagged, and you may not improve the style of anything. This is a factual "
+    "correction, not a rewrite: every edit must be traceable to a finding.\n"
+    "\n"
+    "If a flagged passage cannot be corrected by subtraction, delete it."
+)
+
+REPAIR_GROUNDING_SCHEMA = (
+    "Reply with ONE JSON object:\n"
+    '{"edits": [{"finding_id": "F1",\n'
+    '            "original": "the flagged sentence, verbatim from the article",\n'
+    '            "repaired": "the corrected sentence, or \"\" to delete it",\n'
+    '            "operation": "NARROW",   NARROW | REMOVE_EXCLUSIVITY | CORRECT_TIME |\n'
+    "                                     CORRECT_DATE | RESTORE_ATTRIBUTION |\n"
+    "                                     NARROW_CHARACTERISATION | DELETE\n"
+    '            "fact_ids": ["F.."],     the ledger facts the repaired wording rests on\n'
+    '            "what_was_removed": "the scope, exclusivity or certainty taken out"}]}\n'
+    "No prose outside the JSON."
+)
+
+REPAIR_OPS = ("NARROW", "REMOVE_EXCLUSIVITY", "CORRECT_TIME", "CORRECT_DATE",
+              "RESTORE_ATTRIBUTION", "NARROW_CHARACTERISATION", "DELETE")
+
+
+def repairable_findings(findings: list) -> list:
+    """The findings a subtractive repair can answer: a claim the article makes and the
+    evidence does not carry. LEGITIMATE_INTERPRETATION is not one."""
+    return [f for f in (findings or [])
+            if f.get("classification") in ("TRUE_UNSUPPORTED", "TRUE_UNCERTAIN")
+            and str(f.get("quote") or "").strip()]
+
+
+def _relevant_facts(quote: str, ledger: dict, limit: int = 12) -> list:
+    """Ledger facts whose wording overlaps the flagged passage, with their spans.
+
+    Deliberately narrow: the repair is given the evidence for the passages it must fix
+    and nothing else. It receives no research, no pack, no source bodies.
+    """
+    key = {w for w in re.findall(r"[a-z]{5,}", (quote or "").lower())
+           if w not in ST._FUNCTION_WORDS}
+    scored = []
+    for fid, f in (ledger or {}).items():
+        prop = (f.get("proposition") or "").lower()
+        hits = sum(1 for w in key if w in prop)
+        if hits:
+            scored.append((hits, fid, f))
+    scored.sort(key=lambda x: -x[0])
+    return [(fid, f) for _, fid, f in scored[:limit]]
+
+
+def repair_prompt(article_text: str, findings: list, ledger: dict) -> str:
+    L = ["THE ARTICLE", article_text, "", "WHAT THE GROUNDER FOUND"]
+    for f in findings:
+        L += ["", "FINDING %s  [%s]" % (f.get("id"), f.get("classification")),
+              "  passage : %s" % str(f.get("quote"))[:400],
+              "  why     : %s" % str(f.get("why"))[:600]]
+        if f.get("suggested_patch"):
+            L.append("  a narrower wording the grounder believes is supported: %s"
+                     % str(f["suggested_patch"])[:300])
+        rel = _relevant_facts(str(f.get("quote") or ""), ledger)
+        if rel:
+            L.append("  THE FROZEN EVIDENCE FOR THIS PASSAGE:")
+            for fid, fact in rel:
+                L.append("    %s  %s" % (fid, fact.get("proposition", "")[:220]))
+                if fact.get("support_span"):
+                    L.append("        span: %r" % fact["support_span"][:200])
+    L += ["", REPAIR_GROUNDING_SCHEMA]
+    return "\n".join(L)
+
+
+def apply_grounding_repair(article_text: str, edits: list, findings: list,
+                           ledger: dict, packet: dict) -> tuple:
+    """Apply the subtractive edits and verify each one. Returns (text, provenance, errs).
+
+    Every edit is checked mechanically: it must answer a real finding, its original must
+    be in the article, and its repaired wording may introduce no number, entity or
+    relation the original and the licensing facts did not already carry. A repair that
+    adds is refused, not applied.
+    """
+    ids = {str(f.get("id")) for f in findings}
+    approved = ST.render(packet)
+    a_nums, a_ents = ST._numbers(approved), ST._entities(approved,
+                                                         skip_sentence_initial=False)
+    out, prov, errs = article_text, [], []
+    for i, e in enumerate(edits or [], 1):
+        if not isinstance(e, dict):
+            errs.append("edit %d is not an object" % i)
+            continue
+        fid = str(e.get("finding_id") or "")
+        orig = (e.get("original") or "").strip()
+        rep = (e.get("repaired") or "").strip()
+        op = e.get("operation")
+        if fid not in ids:
+            errs.append("edit %d cites finding %r, which the grounder did not report"
+                        % (i, fid))
+            continue
+        if op not in REPAIR_OPS:
+            errs.append("edit %d has operation %r, not one of %s"
+                        % (i, op, ", ".join(REPAIR_OPS)))
+            continue
+        if not orig or normalize_span(orig) not in normalize_span(out):
+            errs.append("edit %d: the original is not in the article: %r"
+                        % (i, orig[:80]))
+            continue
+        # THE REPAIR MAY ONLY SUBTRACT. New surface is refused outright.
+        new_nums = sorted(ST._numbers(rep) - ST._numbers(orig) - a_nums)
+        new_ents = sorted(ST._entities(rep) - ST._entities(orig) - a_ents)
+        lic = [f for f in (e.get("fact_ids") or []) if f in ledger]
+        new_rel = ST.validate_turn_support(rep, lic, ledger) if rep and lic else []
+        if new_nums or new_ents or new_rel:
+            errs.append("edit %d ADDS rather than subtracts -- numbers=%s entities=%s "
+                        "relations=%s" % (i, new_nums, new_ents,
+                                          [x["relation"] for x in new_rel]))
+            continue
+        unknown = sorted(set(e.get("fact_ids") or []) - set(ledger))
+        if unknown:
+            errs.append("edit %d cites fact ids not in the ledger: %s" % (i, unknown))
+            continue
+        idx = normalize_span(out).find(normalize_span(orig))
+        # Replace on the raw text by locating the sentence it belongs to.
+        target = next((s for s in CE.sentences(out)
+                       if normalize_span(orig) in normalize_span(s)
+                       or normalize_span(s) in normalize_span(orig)), None)
+        if target is None:
+            errs.append("edit %d: could not locate the sentence to replace" % i)
+            continue
+        out = out.replace(target, rep, 1) if rep else out.replace(target, "", 1)
+        out = re.sub(r"[ \t]{2,}", " ", out)
+        prov.append({"finding_id": fid, "operation": op,
+                     "original": target.strip(), "repaired": rep,
+                     "what_was_removed": e.get("what_was_removed", ""),
+                     "fact_ids": lic,
+                     "support_spans": [ (ledger.get(f) or {}).get("support_span", "")
+                                        for f in lic ][:4],
+                     "authorising_finding": next(
+                         (str(x.get("why"))[:300] for x in findings
+                          if str(x.get("id")) == fid), "")})
+    return out.strip(), prov, errs
+
+
+def grounding_repair(provider, article_text: str, findings: list, ledger: dict,
+                     packet: dict) -> dict:
+    """STAGE 8b. Exactly one call. Subtractive, audited, and never repeated."""
+    target = repairable_findings(findings)
+    if not target:
+        return {"status": SKIPPED, "reason": "no repairable finding", "model_calls": 0}
+    obj, ident = _ask(provider, REPAIR_GROUNDING_SYSTEM,
+                      repair_prompt(article_text, target, ledger),
+                      6_000, GROUNDING, GROUNDING_HOLD)
+    edits = obj.get("edits")
+    if not isinstance(edits, list) or not edits:
+        raise CompositionHold(GROUNDING, GROUNDING_HOLD,
+                              ["the factual repair returned no edits"])
+    text, prov, errs = apply_grounding_repair(article_text, edits, target, ledger, packet)
+    if errs:
+        raise CompositionHold(
+            GROUNDING, GROUNDING_HOLD,
+            ["the factual repair did not stay within its permissions"] + errs[:6],
+            {"attempted_edits": edits, "failures": errs})
+    if not text.strip():
+        raise CompositionHold(GROUNDING, GROUNDING_HOLD,
+                              ["the factual repair deleted the whole article"])
+    return {"status": PASS, "article_text": text, "edits": prov,
+            "findings_answered": [f.get("id") for f in target],
+            "provider": ident, "model_calls": 1, "repairs": 1}
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # STAGE 10 -- READER GATE
 # ══════════════════════════════════════════════════════════════════════════════
 # Runs LAST, after factual safety, because a reader verdict on an article that turns out
@@ -2445,6 +2654,7 @@ def run_story_architecture_composition(
         else:
             w = record(WORTH, worth_gate(P, ledger, subject))
 
+        frozen_article = replay.get("article")
         if replay.get("architecture"):
             arch = replay["architecture"]
             errs = check_architecture(arch, ledger)
@@ -2463,10 +2673,30 @@ def run_story_architecture_composition(
 
         cut = record(CUT_TERMS, derive_cut_watch_terms(arch, ledger))
 
-        wr = record(WRITER, write_article(P, arch, ledger, cut.get("prohibitions")))
-        draft = wr["article_text"]
+        if frozen_article:
+            # Resume at the grounder/repair boundary on prose that already passed the
+            # Writer, Continuity and the safety stack. The packet is rebuilt from the
+            # same architecture and ledger, deterministically, so nothing is guessed.
+            packet_r, prompt_r = writer_packet(arch, ledger, cut.get("prohibitions"))
+            wr = {"status": REPLAYED, "article_text": frozen_article,
+                  "packet": packet_r, "prompt": prompt_r, "model_calls": 0, "repairs": 0,
+                  "words": len(frozen_article.split()),
+                  "negative_lineage_verified": replay.get("negative_lineage") or {}}
+            st[WRITER] = wr
+            calls[WRITER] = repairs[WRITER] = 0
+            draft = frozen_article
+        else:
+            wr = record(WRITER, write_article(P, arch, ledger, cut.get("prohibitions")))
+            draft = wr["article_text"]
 
-        cont = record(CONTINUITY, continuity_pass(P, draft, arch))
+        if frozen_article:
+            cont = {"status": REPLAYED, "article_text": frozen_article, "edits": [],
+                    "semantic_delta_errors": [], "model_calls": 0, "repairs": 0,
+                    "words": len(frozen_article.split())}
+            st[CONTINUITY] = cont
+            calls[CONTINUITY] = repairs[CONTINUITY] = 0
+        else:
+            cont = record(CONTINUITY, continuity_pass(P, draft, arch))
 
         # CONTINUITY IS FAIL-SAFE, and this is the whole point of the stage's position in
         # the ladder. It is an OPTIONAL linguistic improvement over an article that is
@@ -2508,10 +2738,43 @@ def run_story_architecture_composition(
 
         g = record(GROUNDING, ground_candidate(P, final, source_text, source_sha, pack,
                                                arch, wr["packet"]))
+
+        # ONE GROUNDED FACTUAL REPAIR, then the FULL hard safety stack again, then the
+        # Grounder again. A second grounding failure is the end of the article: no second
+        # repair, no Writer regeneration, no architecture rerun, no new research.
+        if g["status"] != PASS and repairable_findings(g["blocking"]):
+            rep = grounding_repair(P, final, g["blocking"], ledger, wr["packet"])
+            if rep["status"] == PASS:
+                g["repair"] = {k: v for k, v in rep.items() if k != "article_text"}
+                calls[GROUNDING] = calls.get(GROUNDING, 0) + rep["model_calls"]
+                repairs[GROUNDING] = 1
+                final = rep["article_text"]
+
+                # The complete stack, against the REPAIRED article. A factual correction
+                # is still prose the Writer did not write, and it is audited as such.
+                sa2 = record(SAFETY, safety_audit(draft, final, wr["packet"], arch,
+                                                  ledger, cut["terms"], cut, lineage))
+                sa2["after_factual_repair"] = True
+                if sa2["status"] != PASS:
+                    return out(SAFETY,
+                               "the factual repair did not survive the safety stack: %s"
+                               % "; ".join(sa2["blocking"])[:400],
+                               SAFETY_HOLD, final)
+
+                g2 = record(GROUNDING, ground_candidate(P, final, source_text,
+                                                        source_sha, pack, arch,
+                                                        wr["packet"]))
+                g2["repair"] = g["repair"]
+                g2["attempt"] = 2
+                calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
+                repairs[GROUNDING] = 1
+                g = g2
+
         if g["status"] != PASS:
             return out(GROUNDING,
-                       "grounding status %r; %d blocking finding(s): %s"
+                       "grounding status %r; %d blocking finding(s)%s: %s"
                        % (g["grounding_status"], len(g["blocking"]),
+                          " AFTER one factual repair" if g.get("attempt") == 2 else "",
                           [("%s %s" % (f.get("classification"),
                                        str(f.get("quote") or f.get("claim") or "")[:70]))
                            for f in g["blocking"]][:4]),
@@ -2586,6 +2849,9 @@ def persist(out_dir, result: dict) -> None:
                                    if k != "status"})
     if det.get(GROUNDING, {}).get("grounding"):
         dump("GROUNDING_FINDINGS.json", det[GROUNDING]["grounding"])
+    if det.get(GROUNDING, {}).get("repair"):
+        # Auditable by construction: every edit, what authorised it, and what it removed.
+        dump("FACTUAL_REPAIR.json", det[GROUNDING]["repair"])
     if det.get(FACT_CHECK, {}).get("status") not in (None, NOT_RUN, SKIPPED):
         dump("FACT_CHECK.json", det[FACT_CHECK])
     if det.get(READER, {}).get("dimensions"):

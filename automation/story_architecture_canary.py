@@ -178,6 +178,10 @@ def main() -> int:
     # test cycle, never an autonomy proof.
     ap.add_argument("--replay-from", default="",
                     help="artifact directory of a previous run")
+    # Resume at the grounder/factual-repair boundary on prose that already passed the
+    # Writer, Continuity and the safety stack. Used to test the factual repair without
+    # paying for research, ledger, architecture, Writer and Continuity again.
+    ap.add_argument("--replay-article", action="store_true")
     a = ap.parse_args()
 
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -191,7 +195,15 @@ def main() -> int:
     if missing:
         print("NOTE: fact check cannot run -- missing %s" % ", ".join(missing))
 
-    if a.ground_truth:
+    if a.replay_from and (pathlib.Path(a.replay_from) / "RESEARCH_PACK.json").exists() \
+            and not a.ground_truth:
+        R = pathlib.Path(a.replay_from)
+        pack = json.loads((R / "RESEARCH_PACK.json").read_text())
+        anchor = next(s for s in pack["sources"] if s.get("role") == "ANCHOR")
+        failed = (pack.get("coverage") or {}).get("failed") or []
+        print("REPLAY: research pack reused from %s (%d sources) -- research NOT rerun"
+              % (R.name, len(pack["sources"])))
+    elif a.ground_truth:
         print("assembling the frozen Ground Truth corpus ...")
         pack, anchor, failed = build_pack(GROUND_TRUTH_SUBJECT, GROUND_TRUTH_SOURCES, now)
     elif a.research:
@@ -247,6 +259,14 @@ def main() -> int:
         wj = R / "WORTH_AND_CANDIDATE.json"
         if wj.exists():
             frozen["worth"] = json.loads(wj.read_text())
+        if a.replay_article:
+            art = R / "CONTINUITY_FINAL.md"
+            if not art.exists():
+                art = R / "WRITER_DRAFT.md"
+            frozen["article"] = art.read_text()
+            print("        AND the finished article (%s, %d words) -- resuming at the "
+                  "grounder/repair boundary"
+                  % (art.name, len(frozen["article"].split())))
         print("\nREPLAY: ledger (%d facts), worth and architecture come from %s"
               % (len(frozen["ledger"]), R.name))
         print("        this is a Writer-onward test cycle, NOT an autonomy proof")
