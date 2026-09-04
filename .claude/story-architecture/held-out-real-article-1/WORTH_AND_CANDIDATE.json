@@ -1,15 +1,16 @@
 {
  "worth_gate": {
   "verdict": "STRONG_INTERPRETIVE_LENS",
-  "lens_claim": "An instrument that converts a classification into a force on the body can only transmit what the classification already carries: it eases where a remedy has already absorbed the pressure, and it has nothing to say at all about the places and people the survey never counted, so the ride is least informative exactly where the need is most acute.",
-  "changes_meaning_how": "It moves the work from a device that makes inequality feelable to a demonstration of what a dataset cannot hand to a body. The easing over public housing and the unreadable block group stop being caveats appended to the project and become its actual finding.",
+  "lens_claim": "An instrument that converts a published classification into force on the body can only transmit what has been published: where the survey publishes a figure it can ease or resist on it, and where the survey publishes none the honest output is not an easier ride but no reading at all.",
+  "changes_meaning_how": "It moves the work from a device that makes inequality feelable to a demonstration of what a published measure can and cannot hand to a body. The easing over public housing, and the refusal to draw an unpublished block group as flat ground, stop being caveats appended to the project and become its finding.",
   "evidence_ids": [
    "F14",
    "F15",
    "F19",
    "F20",
    "F22"
-  ]
+  ],
+  "_repair_2_note": "Verdict RE-DERIVED after the unsupported equivalence was removed, not inherited. The prior claim's second half ('least informative exactly where the need is most acute') was refused by F19 and F20 and is gone. What remains still names a mechanism and still changes the story's meaning: an instrument that converts a published classification into force on the body, and that answers an absent figure with no reading rather than an easier ride. The Crip Minds warrant is narrower and now rests on what a measure structurally cannot hold about a life (F21) and on who is absent from it by construction (F22), rather than on a claim that the ride goes quiet where suffering is greatest. Narrower, and true. OLD lens_claim: 'An instrument that converts a classification into a force on the body can only transmit what the classification already carries: it eases where a remedy has already absorbed the pressure, and it has nothing to say at all about the places and people the survey never counted, so the ride is least informative exactly where the need is most acute.'"
  },
  "story_candidate": {
   "story_id": "ground-truth-2026",

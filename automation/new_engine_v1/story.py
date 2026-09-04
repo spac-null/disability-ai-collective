@@ -245,6 +245,22 @@ def validate_architecture(arch: dict, evidence_ids: set, ledger: dict | None = N
             errs.append("%s: %s -- carrier %r asserts an occurrence (%s) but its allowed "
                         "facts are %s" % (e["code"], e["beat_id"], e["carrier"],
                                           e["why_it_asserts"], e["supporting_claim_kinds"]))
+        # The turn is checked HERE, before build_packet, so an unsupported relation never
+        # reaches the Writer to be "tried". A Writer handed an unlicensed turn writes it.
+        basis = (arch.get("final_lens") or {}).get("evidence_basis") or arch.get("use_facts")
+        if isinstance(basis, str):
+            basis = [basis]
+        # crip_turn is what actually reaches the Writer. lens_claim and after_reading are
+        # the machine-side record of the SAME claim, and in the held-out run all three
+        # carried the same invented superlative -- so all three are checked, or the record
+        # goes on asserting what the packet was stopped from saying.
+        fl = arch.get("final_lens") or {}
+        for field, text in (("crip_turn", arch.get("crip_turn")),
+                            ("final_lens.lens_claim", fl.get("lens_claim")),
+                            ("final_lens.after_reading", fl.get("after_reading"))):
+            for e in validate_turn_support(text, basis, ledger):
+                errs.append("%s: %s asserts %s (%r) -- %s"
+                            % (e["code"], field, e["relation"], e["carried_by"], e["why"]))
     return errs
 
 
@@ -345,6 +361,171 @@ def validate_carrier_occurrence(arch: dict, ledger: dict) -> list:
                                                                         "UNDECLARED")
                                            for f in allowed},
                 "missing": "an OCCURRENCE fact reporting that this actually happened",
+            })
+    return errs
+
+
+# ── THE TURN MAY NOT MINT A RELATION ─────────────────────────────────────────
+# Repair 1 stopped a carrier asserting an occurrence the ledger holds only as a rule. The
+# article was then still HELD, because the same invention had simply moved up a level: the
+# declared crip turn read
+#
+#   "... the instrument can only pass on what the measure holds, so it is QUIETEST where
+#    the pressure is LEAST COUNTED."
+#
+# Every fact under it is true. The RELATION is not. The ledger keeps two cases apart:
+#
+#   F14  near public housing the device released resistance          -- a LOW reading
+#   F19  where no estimate is published the device and the map show
+#        "no reading RATHER THAN as zero"                            -- an ABSENT reading
+#   F20  Blinder: showing it as flat ground "would be a LIE told by
+#        the visualization rather than by the data"
+#
+# So the evidence does not merely fail to license low == absent. It refuses it, twice, in
+# as many words. A turn that fuses them is minting a relation, and every screen upstream
+# passes it because no new noun, number or occurrence appears.
+#
+# Two checks, both fail-closed, and no more ontology than the failure needs.
+TURN_RELATION_NOT_SUPPORTED = "TURN_RELATION_NOT_SUPPORTED"
+TURN_ABSENCE_GIVEN_A_MAGNITUDE = "TURN_ABSENCE_GIVEN_A_MAGNITUDE"
+
+# Deliberately NOT continuity.RELATION_SHAPES, and deliberately not merged with it. That
+# list answers "did EDITING add a relation class", by counting before against after; this
+# one answers "is this relation LICENSED", which needs classes that list does not carry --
+# equivalence and the superlative, the two the failing turn was actually built from.
+# Widening the continuity list to serve both would tighten a gate that is working.
+EQUIVALENCE = "EQUIVALENCE"
+COMPARISON = "COMPARISON"
+SUPERLATIVE = "SUPERLATIVE"
+CAUSE = "CAUSE"
+CONSEQUENCE = "CONSEQUENCE"
+GENERALIZATION = "GENERALIZATION"
+NEGATION = "NEGATION"
+ABSENCE = "ABSENCE"
+TEMPORAL = "TEMPORAL"
+
+TURN_RELATION_SHAPES = [
+    (EQUIVALENCE, r"\bthe same\b|\bre-?read as\b|\bamounts? to\b|\bequivalent\b"
+                  r"|\bidentical\b|\bno different\b|\bis really\b|\bboth are\b"
+                  r"|\bare both\b|\bone and the same\b"),
+    (COMPARISON, r"\bmore\b|\bless\b|\bfewer\b|\bgreater\b|\bthan\b|\bunlike\b"
+                 r"|\bwhereas\b|\bcompared\b"),
+    (SUPERLATIVE, r"\b(?:most|least|best|worst)\b|\b\w{4,}est\b"),
+    (CAUSE, r"\bbecause\b|\bsince\b|\bcauses?\b|\bcaused\b|\bled to\b"
+            r"|\bproduces?\b|\bmakes? it\b|\bdue to\b"),
+    (CONSEQUENCE, r"\bso\b|\btherefore\b|\bthus\b|\bas a result\b|\bhence\b"
+                  r"|\bconsequently\b|\bwhich is why\b|\bmeans that\b|\bso that\b"),
+    (GENERALIZATION, r"\balways\b|\bevery\b|\ball \w+\b|\bany\b|\bin general\b"
+                     r"|\bwherever\b|\bwhenever\b|\bnever\b"),
+    (NEGATION, r"\bno\b|\bnot\b|\bnothing\b|\bnone\b|\bwithout\b|\bcannot\b"
+               r"|\bcan only\b|\bfails? to\b"),
+    (ABSENCE, r"\babsence\b|\bmissing\b|\bunpublished\b|\bunreadable\b"
+              r"|\buncounted\b|\bno (?:estimate|reading|figure|score|value|data)\b"
+              r"|\bnot (?:published|counted)\b|\bleast counted\b"),
+    (TEMPORAL, r"\bbefore\b|\bafter\b|\bthen\b|\buntil\b|\bonce\b"
+               r"|\bby the time\b"),
+]
+# Ordinary words that merely end in -est and assert no superlative.
+_NOT_SUPERLATIVE = {"interest", "interests", "protest", "honest", "earnest", "request",
+                    "contest", "forest", "modest", "arrest", "invest", "suggest",
+                    "digest", "harvest", "manifest", "conquest", "priest", "wrest"}
+
+
+def turn_relations(text: str) -> dict:
+    """Relation classes a turn asserts. Class -> the phrase that carried it."""
+    out = {}
+    for kind, pat in TURN_RELATION_SHAPES:
+        for m in re.finditer(pat, text or "", re.I):
+            w = m.group(0)
+            if kind == SUPERLATIVE and w.lower() in _NOT_SUPERLATIVE:
+                continue
+            out.setdefault(kind, w)
+            break
+    return out
+
+
+# A value the survey did not publish is ABSENT. It is not a small value, and it is not a
+# zero. These are the words that turn an absence into a magnitude.
+_ABSENCE_IN_TURN = re.compile(
+    r"\b(?:no|without|absent|absence of)\s+(?:published\s+)?"
+    r"(?:estimate|estimates|reading|readings|figure|figures|score|scores|value|values|"
+    r"data|count)\b|\bunpublished\b|\bunreadable\b|\buncounted\b"
+    r"|\bnot published\b|\b(?:least|never|not) counted\b", re.I)
+_MAGNITUDE = re.compile(
+    r"\bzero\b|\bflat\b|\blow(?:er|est)?\b|\bless\b|\bleast\b|\bquiet(?:er|est)?\b"
+    r"|\bslack\b|\beas(?:e|es|ed|ier|ing)\b|\blight(?:er|est)?\b|\bweak(?:er|est)?\b"
+    r"|\bsoft(?:er|est)?\b|\bsame sensation\b|\bless pressure\b", re.I)
+# A fact that says "X rather than Y", "not Y", or "would be a lie" is REFUSING the pairing,
+# not licensing it. Refusal beats everything: it is the ledger saying no on the record.
+_REFUSES = re.compile(
+    r"rather than(?: as)?(?: a| an)? \w+|would be a lie|is not an? \w+|does not mean",
+    re.I)
+
+
+def turn_pairs_absence_with_magnitude(text: str) -> dict:
+    """Does one sentence of the turn give an absent value a size?"""
+    for sent in _sentences_of(text or ""):
+        a, m = _ABSENCE_IN_TURN.search(sent), _MAGNITUDE.search(sent)
+        if not (a and m):
+            continue
+        # A turn is allowed to say what the ledger says: "no reading RATHER THAN a zero"
+        # names both an absence and a magnitude in order to keep them apart. Denying the
+        # pairing is the opposite of asserting it, and the same reasoning as the carrier
+        # check's conditional escape.
+        if _REFUSES.search(sent):
+            continue
+        return {"pairs": True, "sentence": sent,
+                "absence": a.group(0), "magnitude": m.group(0)}
+    return {"pairs": False}
+
+
+def validate_turn_support(turn: str, fact_ids, ledger: dict) -> list:
+    """Every relation the turn asserts must be one the licensing facts already assert.
+
+    Fail-closed by construction: a relation class present in the turn and absent from every
+    licensing proposition is refused. It is a COARSE licence -- it asks whether a class is
+    available, not whether it holds between these particular terms -- and that is on purpose,
+    because the precise version is a semantic model and this is a gate. The one place it is
+    not coarse is the absence/magnitude pairing, which is the shape that produced the bug.
+    """
+    errs = []
+    turn = (turn or "").strip()
+    if not turn:
+        return errs
+    props = [(f, (ledger.get(f) or {}).get("proposition") or "") for f in (fact_ids or [])]
+    licensed = {}
+    for fid, prop in props:
+        for kind in turn_relations(prop):
+            licensed.setdefault(kind, fid)
+    for kind, phrase in turn_relations(turn).items():
+        if kind not in licensed:
+            errs.append({
+                "code": TURN_RELATION_NOT_SUPPORTED,
+                "turn": turn,
+                "fact_ids": [f for f, _ in props],
+                "relation": kind,
+                "carried_by": phrase,
+                "why": "the turn asserts a %s relation (%r); no licensing fact asserts "
+                       "one, so the relation is the turn's own invention"
+                       % (kind, phrase),
+            })
+    pair = turn_pairs_absence_with_magnitude(turn)
+    if pair["pairs"]:
+        refusing = [f for f, prop in props
+                    if _ABSENCE_IN_TURN.search(prop) and _REFUSES.search(prop)]
+        affirming = [f for f, prop in props
+                     if _ABSENCE_IN_TURN.search(prop) and _MAGNITUDE.search(prop)
+                     and not _REFUSES.search(prop)]
+        if refusing or not affirming:
+            errs.append({
+                "code": TURN_ABSENCE_GIVEN_A_MAGNITUDE,
+                "turn": pair["sentence"],
+                "fact_ids": [f for f, _ in props],
+                "relation": "%s -> %s" % (pair["absence"], pair["magnitude"]),
+                "carried_by": pair["magnitude"],
+                "why": ("the ledger refuses this pairing in %s" % refusing) if refusing
+                       else ("no licensing fact gives an absent value a size; an "
+                             "unpublished figure is not a small one"),
             })
     return errs
 

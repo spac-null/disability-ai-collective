@@ -8,7 +8,7 @@
  "lens_realization": "IMPLICIT",
  "crip_turn_rereads": "B5",
  "turn": "",
- "crip_turn": "The easing over public housing and the unreadable block group are re-read as the same fact: the instrument can only pass on what the measure holds, so it is quietest where the pressure is least counted.",
+ "crip_turn": "Near the complexes the brake eased on a figure the survey had published and measured lower. Where the survey publishes no figure, the device shows no reading rather than a zero, and Blinder wrote that an absence of data is not an absence of pressure.",
  "ending_move": "The loose front-brake cables, found by hand on one bike in four, are the one thing the device turned up that no measure had a field for.",
  "beats": [
   {
@@ -191,7 +191,7 @@
   "Do not state the colour, size or weight of the device."
  ],
  "final_lens": {
-  "lens_claim": "An instrument that converts a classification into a force on the body can only transmit what the classification already carries: it eases where a remedy has already absorbed the pressure, and it has nothing to say at all about the places and people the survey never counted, so the ride is least informative exactly where the need is most acute.",
+  "lens_claim": "An instrument that converts a published classification into force on the body can only transmit what has been published: where the survey publishes a figure it can ease or resist on it, and where the survey publishes none the honest output is not an easier ride but no reading at all.",
   "evidence_basis": [
    "F14",
    "F15",
@@ -200,8 +200,9 @@
    "F22"
   ],
   "before_reading": "A device that makes you feel the rent crisis in your legs.",
-  "after_reading": "A device that can only pass on what the measure holds, and is quietest where the pressure is least counted.",
+  "after_reading": "A device that can turn a published rent-burden figure into resistance in the legs, and that shows no reading rather than a zero where the survey publishes no figure.",
   "crip_turn_carrier": "the block group with no published figure"
  },
- "_carrier_repair_note": "B6, B2 and final_lens.crip_turn_carrier reworded to pure noun phrases after CARRIER_INSTANCE_NOT_SUPPORTED. B6 and the crip turn carrier both lost the clause 'and the brake that therefore does not move', which was the architect asserting an occurrence inside a carrier: the ledger holds only what the device DOES when a block group has no published figure (F19, DISPOSITION), never a documented ride through one. facts_allowed, use_facts, cut_evidence, lens_claim, evidence_basis, Worth result and prohibitions are byte-identical to the held-out run; only carrier wording changed, and only where the validator forced it."
+ "_carrier_repair_note": "B6, B2 and final_lens.crip_turn_carrier reworded to pure noun phrases after CARRIER_INSTANCE_NOT_SUPPORTED. B6 and the crip turn carrier both lost the clause 'and the brake that therefore does not move', which was the architect asserting an occurrence inside a carrier: the ledger holds only what the device DOES when a block group has no published figure (F19, DISPOSITION), never a documented ride through one. facts_allowed, use_facts, cut_evidence, lens_claim, evidence_basis, Worth result and prohibitions are byte-identical to the held-out run; only carrier wording changed, and only where the validator forced it.",
+ "_turn_repair_note": "REPAIR 2, architecture only. The declared turn asserted an EQUIVALENCE and a SUPERLATIVE the ledger does not license -- 'the easing ... and the unreadable block group are re-read as the same fact ... quietest where the pressure is least counted' -- fusing a LOW reading (F14, F15) with an ABSENT one (F19, F20). F19 says the device shows no reading RATHER THAN a zero and F20 calls flat ground a lie, so the ledger does not merely fail to support the fusion, it refuses it. crip_turn, final_lens.after_reading and final_lens.lens_claim were rewritten to the distinction the ledger does hold: a measured low value is not an absent one. Evidence, ledger, use_facts, cut_evidence, prohibitions, beats and Worth inputs are unchanged. OLD crip_turn, for the record: 'The easing over public housing and the unreadable block group are re-read as the same fact: the instrument can only pass on what the measure holds, so it is quietest where the pressure is least counted.'"
 }

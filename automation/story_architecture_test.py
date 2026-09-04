@@ -594,6 +594,141 @@ def test_inflection_does_not_defeat_a_cut_watch_term():
           ST.cut_adherence("A room of salt.", a, {"F04": ["design"]})["clean_prose"])
 
 
+# ── the turn may not mint a relation ────────────────────────────────────────
+# Repair 1 fixed the carrier and the article was still HELD, because the invention had
+# moved up a level. The declared turn read "... so it is QUIETEST where the pressure is
+# LEAST COUNTED", fusing a LOW reading over public housing with an ABSENT reading in an
+# unpublished block group. Both underlying facts are true. The ledger refuses the fusion
+# in as many words -- "no reading rather than as zero", "showing it as flat ground would
+# be a lie" -- and no screen looked at the relation, only at the nouns.
+TURN_LEDGER = {
+    "A1": {"claim_kind": ST.OCCURRENCE,
+           "proposition": "Riding near the public-housing complexes, the device released "
+                          "resistance."},
+    "A2": {"claim_kind": ST.DISPOSITION,
+           "proposition": "Where a block group's sample is too small, the survey publishes "
+                          "no estimate, and the device shows no reading rather than a zero."},
+    "A3": {"claim_kind": ST.DISPOSITION,
+           "proposition": "Blinder wrote that an absence of data is not an absence of "
+                          "pressure, and that showing it as flat ground would be a lie "
+                          "told by the visualization rather than by the data."},
+    "A4": {"claim_kind": ST.DISPOSITION,
+           "proposition": "The survey covers households, so people with no housing at all "
+                          "are absent from it by construction."},
+    # a ledger that DOES license the fusion, for the accept cases
+    "S1": {"claim_kind": ST.DISPOSITION,
+           "proposition": "In an unpublished block group the device eases the brake to the "
+                          "same low resistance it gives a block group whose measured "
+                          "burden is low; the two are identical at the lever."},
+}
+
+
+def _turn(text, ids):
+    return ST.validate_turn_support(text, ids, TURN_LEDGER)
+
+
+def _codes(errs):
+    return sorted({e["code"] for e in errs})
+
+
+def test_a_turn_cannot_mint_a_relation_from_two_true_facts():
+    # THE EXACT FAILURE
+    real = _turn("The easing over public housing and the unreadable block group are "
+                 "re-read as the same fact: the instrument can only pass on what the "
+                 "measure holds, so it is quietest where the pressure is least counted.",
+                 ["A1", "A2", "A3"])
+    check("the held-out turn is refused", real != [], real)
+    check("  and the equivalence is named",
+          any(e["relation"] == ST.EQUIVALENCE for e in real), _codes(real))
+    check("  and the superlative is named",
+          any(e["relation"] == ST.SUPERLATIVE for e in real), _codes(real))
+    check("  and the ledger's own refusal is cited, not merely an absence of support",
+          any(e["code"] == ST.TURN_ABSENCE_GIVEN_A_MAGNITUDE and "refuses" in e["why"]
+              for e in real), [e["why"] for e in real])
+
+    # A. two facts, no relation between them; the turn asserts one
+    a = _turn("The easing near the complexes and the unpublished block group are the "
+              "same thing.", ["A1", "A2"])
+    check("A  fact + fact does not license 'the same'",
+          ST.TURN_RELATION_NOT_SUPPORTED in _codes(a), a)
+
+    # B. a fact that states the equivalence licenses it
+    b = _turn("The easing near the complexes and the unpublished block group are the "
+              "same at the lever.", ["A1", "S1"])
+    check("B  a fact that states the equivalence licenses the turn", b == [], b)
+
+    # C. an absent value given a size
+    c = _turn("Where the survey publishes no figure, the resistance is low.",
+              ["A1", "A2", "A3"])
+    check("C  an unpublished figure may not be called a low one",
+          ST.TURN_ABSENCE_GIVEN_A_MAGNITUDE in _codes(c), c)
+    check("  and 'zero' is refused the same way",
+          ST.TURN_ABSENCE_GIVEN_A_MAGNITUDE in
+          _codes(_turn("Where the survey publishes no figure, the score is zero.",
+                       ["A2"])))
+    check("  and 'flat ground' is refused the same way",
+          ST.TURN_ABSENCE_GIVEN_A_MAGNITUDE in
+          _codes(_turn("A block group with no estimate is flat ground to the rider.",
+                       ["A2", "A3"])))
+
+    # D. the absence stated AS an absence
+    d = _turn("Where the survey publishes no estimate, the device shows no reading.",
+              ["A2"])
+    check("D  an absence stated as an absence passes", d == [], d)
+
+    # E. comparatives and consequence need a licensing fact
+    e1 = _turn("The resistance near the complexes is less than it is elsewhere.",
+               ["A1"])
+    check("E  a comparison needs a fact that compares",
+          any(er["relation"] == ST.COMPARISON for er in e1), e1)
+    e2 = _turn("The survey covers households, so a person with no housing is outside it.",
+               ["A4"])
+    check("  a consequence licensed by a fact that carries one passes",
+          e2 == [], e2)
+    # a turn that RESTATES the ledger's refusal is not asserting the pairing
+    e3 = _turn("The device shows no reading rather than a zero.", ["A2"])
+    check("  restating the ledger's own refusal is not minting the pairing", e3 == [], e3)
+    check("  'therefore' with no causal or consequential fact behind it is refused",
+          any(er["relation"] == ST.CONSEQUENCE
+              for er in _turn("The sample is small; therefore the estimate is withheld.",
+                              ["A1"])))
+
+
+def test_the_turn_check_is_precise_about_what_it_refuses():
+    check("an empty turn is not an error", _turn("", ["A1"]) == [], "")
+    check("a turn asserting nothing relational passes",
+          _turn("A card of block-group scores sits inside the box.", ["A1"]) == [], "")
+    # -est words that are not superlatives must not trip the screen
+    for w in ("interest", "protest", "honest", "forest", "request"):
+        check("  %r is not read as a superlative" % w,
+              ST.SUPERLATIVE not in ST.turn_relations("It was a matter of %s." % w))
+    check("but a real superlative is",
+          ST.turn_relations("the quietest stretch")["SUPERLATIVE"] == "quietest")
+    # the absence/magnitude check must not fire on a magnitude with no absence
+    check("a low value that was actually published is not an absent one",
+          _turn("The measured burden there is low.", ["A1"]) == [],
+          _turn("The measured burden there is low.", ["A1"]))
+    # and the refusal must dominate an affirming fact if the ledger refuses
+    mixed = _turn("Where the survey publishes no figure, the brake is slack.",
+                  ["A2", "A3", "S1"])
+    check("a ledger refusal outweighs a fact that would otherwise license it",
+          ST.TURN_ABSENCE_GIVEN_A_MAGNITUDE in _codes(mixed), mixed)
+
+
+def test_the_turn_is_refused_before_the_packet_is_built():
+    a = arch()
+    a["crip_turn"] = "The salt walls and the empty ground are the same thing."
+    a["final_lens"] = {"evidence_basis": ["F01"]}
+    led = {"F01": {"claim_kind": ST.DISPOSITION, "proposition": FACTS["F01"]}}
+    errs = ST.validate_architecture(a, set(FACTS), led)
+    check("an unlicensed turn fails architecture validation",
+          any(ST.TURN_RELATION_NOT_SUPPORTED in e for e in errs), errs)
+    check("  which is the stage BEFORE build_packet, so the Writer never sees it",
+          ST.validate_architecture(a, set(FACTS)) == []
+          or not any(ST.TURN_RELATION_NOT_SUPPORTED in e
+                     for e in ST.validate_architecture(a, set(FACTS))))
+
+
 def main() -> None:
     for fn in (test_a_packet_carrying_the_auditing_frame_is_refused,
                test_a_prohibition_phrased_as_a_description_is_refused,
@@ -613,7 +748,10 @@ def main() -> None:
                test_the_frozen_loop3_articles_are_clean_on_every_screen,
                test_a_carrier_cannot_mint_an_occurrence_from_a_disposition,
                test_the_carrier_check_is_off_unless_a_ledger_is_supplied,
-               test_inflection_does_not_defeat_a_cut_watch_term):
+               test_inflection_does_not_defeat_a_cut_watch_term,
+               test_a_turn_cannot_mint_a_relation_from_two_true_facts,
+               test_the_turn_check_is_precise_about_what_it_refuses,
+               test_the_turn_is_refused_before_the_packet_is_built):
         print("\n" + fn.__name__)
         fn()
     print("\n" + "-" * 60)
