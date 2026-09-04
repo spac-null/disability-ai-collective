@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
+import os
 import pathlib
 import sys
 import urllib.request
@@ -156,6 +157,12 @@ def main() -> int:
     # not a fallback and nothing selects it automatically.
     ap.add_argument("--transport", choices=("subscription", "http"),
                     default="subscription")
+    # A fresh subject needs a real pack, not just its anchor: the ledger's whole job is
+    # to select across sources. --research runs the production research stage
+    # (new_engine_v1.research.research) unmodified, so the live canary composes from the
+    # same shape of pack a scheduled run would hand it. Its Sonar search is OpenRouter,
+    # which is correct policy: Sonar is not a Claude model.
+    ap.add_argument("--research", action="store_true")
     a = ap.parse_args()
 
     now = datetime.datetime.now(datetime.timezone.utc).isoformat()
@@ -172,6 +179,33 @@ def main() -> int:
     if a.ground_truth:
         print("assembling the frozen Ground Truth corpus ...")
         pack, anchor, failed = build_pack(GROUND_TRUTH_SUBJECT, GROUND_TRUTH_SOURCES, now)
+    elif a.research:
+        if not a.url:
+            raise SystemExit("--url is required with --research")
+        print("fetching the anchor ...")
+        seed, anchor, failed = build_pack(a.subject or a.url,
+                                          [("S0", "ANCHOR", a.url)], now)
+        print("running the PRODUCTION research stage (unmodified) ...")
+        prov_for_research = (CCP.ClaudeCLIProvider(**({"model": a.model} if a.model else {}))
+                             if a.transport == "subscription"
+                             else Provider(**({"model": a.model} if a.model else {})))
+        pack = RS.research(prov_for_research,
+                           anchor={"url": a.url, "text": anchor["text"],
+                                   "title": a.subject or "", "canonical_url": a.url,
+                                   "accessed_at": now},
+                           now_iso=now,
+                           api_key=os.environ.get("OPENROUTER_API_KEY", ""))
+        pack.pop("_provider", None)
+        verdict = (pack.get("sufficiency") or {}).get("verdict")
+        print("  research verdict: %s" % verdict)
+        if verdict == RS.HOLD:
+            print("  HOLD before composition -- not enough material to write from:")
+            for r in (pack["sufficiency"].get("reasons") or [])[:4]:
+                print("    - %s" % r)
+            (out_dir / "RESEARCH_PACK.json").write_text(json.dumps(pack, indent=1))
+            return 1
+        anchor = next(s for s in pack["sources"] if s.get("role") == "ANCHOR")
+        failed = (pack.get("coverage") or {}).get("failed") or []
     else:
         if not a.url:
             raise SystemExit("--url is required without --ground-truth")
