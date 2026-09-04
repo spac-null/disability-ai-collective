@@ -2299,6 +2299,16 @@ REPAIR_GROUNDING_SYSTEM = (
     "was not flagged, and you may not improve the style of anything. This is a factual "
     "correction, not a rewrite: every edit must be traceable to a finding.\n"
     "\n"
+    "CITE EVERY FACT YOUR REPAIRED WORDING RESTS ON, not only the one the passage was "
+    "already about. If you restore a date, a name or an attribution, the fact that "
+    "carries it must be in your fact_ids -- otherwise the correction reads as an "
+    "addition and is refused.\n"
+    "\n"
+    "THE GROUNDER'S EXPLANATION IS NOT EVIDENCE. It may name a date or a fact to help you "
+    "see the problem; you may only use what the LISTED FACTS carry. If a reference is "
+    "ambiguous and no listed fact resolves it, remove the reference rather than resolve "
+    "it from the explanation.\n"
+    "\n"
     "If a flagged passage cannot be corrected by subtraction, delete it."
 )
 
@@ -2327,22 +2337,46 @@ def repairable_findings(findings: list) -> list:
             and str(f.get("quote") or "").strip()]
 
 
-def _relevant_facts(quote: str, ledger: dict, limit: int = 12) -> list:
-    """Ledger facts whose wording overlaps the flagged passage, with their spans.
+_DATEISH = re.compile(r"\b(?:\d{1,2}(?:st|nd|rd|th)?\s+)?(?:January|February|March|April"
+                      r"|May|June|July|August|September|October|November|December)\b"
+                      r"|\b(?:19|20)\d{2}\b|\b\d{1,2}/\d{1,2}/\d{2,4}\b", re.I)
 
-    Deliberately narrow: the repair is given the evidence for the passages it must fix
-    and nothing else. It receives no research, no pack, no source bodies.
+
+def _relevant_facts(quote: str, ledger: dict, why: str = "", limit: int = 14) -> list:
+    """The evidence for the passages this repair must fix, and nothing else.
+
+    Overlap by wording, PLUS every date-bearing fact when the finding concerns a date.
+    That second half is not a convenience: a date-bearing fact shares no vocabulary with
+    the sentence whose date is wrong. The Ground Truth of this stage was a repair asked
+    to fix "had not responded by noon that day" while F35 -- "The DNS article was written
+    by Hannah Sharland and published on 27th August 2026" -- scored zero on overlap and
+    was never shown to it. The repair then reached for the date in the grounder's own
+    explanation, which is not evidence, and was refused. Correctly, and uselessly.
+
+    Still no research, no pack, no source bodies.
     """
     key = {w for w in re.findall(r"[a-z]{5,}", (quote or "").lower())
            if w not in ST._FUNCTION_WORDS}
-    scored = []
+    scored, picked = [], set()
     for fid, f in (ledger or {}).items():
         prop = (f.get("proposition") or "").lower()
         hits = sum(1 for w in key if w in prop)
         if hits:
             scored.append((hits, fid, f))
     scored.sort(key=lambda x: -x[0])
-    return [(fid, f) for _, fid, f in scored[:limit]]
+    out = []
+    for _, fid, f in scored[:limit]:
+        out.append((fid, f)); picked.add(fid)
+    if _DATEISH.search("%s %s" % (quote or "", why or "")):
+        for fid, f in sorted((ledger or {}).items()):
+            if fid in picked:
+                continue
+            if _DATEISH.search("%s %s" % (f.get("proposition", ""),
+                                          f.get("support_span", ""))):
+                out.append((fid, f)); picked.add(fid)
+                if len(out) >= limit + 8:
+                    break
+    return out
 
 
 def repair_prompt(article_text: str, findings: list, ledger: dict) -> str:
@@ -2354,7 +2388,8 @@ def repair_prompt(article_text: str, findings: list, ledger: dict) -> str:
         if f.get("suggested_patch"):
             L.append("  a narrower wording the grounder believes is supported: %s"
                      % str(f["suggested_patch"])[:300])
-        rel = _relevant_facts(str(f.get("quote") or ""), ledger)
+        rel = _relevant_facts(str(f.get("quote") or ""), ledger,
+                              str(f.get("why") or ""))
         if rel:
             L.append("  THE FROZEN EVIDENCE FOR THIS PASSAGE:")
             for fid, fact in rel:

@@ -2084,6 +2084,25 @@ def test_the_factual_repair_can_only_subtract():
     text, prov, errs = apply("", op="DELETE")
     check("a deletion is permitted", not errs and orig not in text, errs)
 
+    # THE REPAIR MUST BE SHOWN THE FACT IT NEEDS. A date-bearing fact shares no
+    # vocabulary with the sentence whose date is wrong, so overlap alone never selects
+    # it -- and a repair that cannot see the evidence reaches for the grounder's
+    # explanation instead, which is not evidence.
+    dated = dict(LEDGER)
+    dated["F20"] = F("F20", "The catalogue was published on 27th August 2026.",
+                     "The pavilion closed after the Kunsthalle season ended", ev=("S1",))
+    q = "No entry describes what any visitor heard by noon that day."
+    plain = [fid for fid, _ in CP._relevant_facts(q, dated)]
+    withdate = [fid for fid, _ in CP._relevant_facts(q, dated, "published on 27 August 2026")]
+    check("overlap alone does not surface the date-bearing fact", "F20" not in plain, plain)
+    check("but a date-shaped finding does", "F20" in withdate, withdate)
+    check("and the repair is told to cite every fact its wording rests on",
+          "CITE EVERY FACT YOUR REPAIRED WORDING RESTS ON" in CP.REPAIR_GROUNDING_SYSTEM)
+    check("and told the grounder's explanation is not evidence",
+          "THE GROUNDER'S EXPLANATION IS NOT EVIDENCE" in CP.REPAIR_GROUNDING_SYSTEM)
+    check("and told to remove an unresolvable reference rather than resolve it",
+          "remove the reference rather than resolve it" in CP.REPAIR_GROUNDING_SYSTEM)
+
     check("LEGITIMATE_INTERPRETATION is not repairable",
           not CP.repairable_findings(
               [{"id": "L1", "classification": "LEGITIMATE_INTERPRETATION",
