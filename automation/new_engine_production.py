@@ -36,6 +36,7 @@ import new_engine_candidate as CAND                      # noqa: E402
 import news_fetcher as NF                                # noqa: E402
 import selector_v2 as SV                                 # noqa: E402
 import publication_safety_bridge as BRIDGE               # noqa: E402
+import composition_factual_bridge as FCB                # noqa: E402
 import title_coherence as TC                             # noqa: E402
 from new_engine_v1 import contracts as C                 # noqa: E402
 from new_engine_v1 import runner as R                    # noqa: E402
@@ -380,8 +381,11 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     # compared honestly -- see _selector_v2_shadow.
     _selector_v2_shadow(orch, seed, run, model)
 
+    # The authoritative Fact Check is injected rather than imported by the engine: it is
+    # part of the legacy orchestrator, and new_engine_v1 may import no part of that. Used
+    # only by the story-architecture composition path; the legacy path ignores it.
     out = R.run(payload, root, Provider(model=model), run, now.isoformat(),
-                research_fn=research_fn)
+                research_fn=research_fn, fact_check_fn=FCB.fact_check)
     (root / run / "ACQUISITION.json").write_text(json.dumps(
         {"seed_id": seed["id"],
          "attempts": getattr(orch, "_source_acquisition_attempts", []),

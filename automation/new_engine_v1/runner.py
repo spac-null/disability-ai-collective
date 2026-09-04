@@ -41,6 +41,7 @@ from . import research as RS
 from . import stages as S
 from .decision import decide
 from .provider import ProviderError
+from . import composition as CP
 
 ENGINE = "NEW_ENGINE_V1"
 MODE_OFF = "OFF"
@@ -111,12 +112,18 @@ def _stage_failure(stage: str, category: str, exc: Exception, at: str, A: dict,
 
 def run(source_payload: dict, run_root: pathlib.Path, provider,
         name: str, created_at: str, byline: str = DEFAULT_BYLINE,
-        mode: str | None = None, research_fn=None) -> dict:
+        mode: str | None = None, research_fn=None, fact_check_fn=None) -> dict:
     """Execute the target path once against real material.
 
     `source_payload` must already satisfy the SOURCE_SNAPSHOT contract -- acquisition is
     upstream production's job, not this engine's, and passing it in keeps this package
     free of any legacy import.
+
+    `fact_check_fn` is injected for the same reason and used only by the
+    story-architecture composition path: the authoritative Fact Check is part of the
+    legacy orchestrator, which this package may not import. Production supplies
+    `composition_factual_bridge.fact_check`; a test supplies its own, and an absent
+    callable is reported NOT_RUN rather than passed.
     """
     mode = (mode or current_mode()).upper()
     if mode == MODE_OFF:
@@ -174,6 +181,29 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
         _persist(A, run_root, name, mode, prov, "HOLD", reasons)
         return {"artifacts": A, "decision": "HOLD", "reasons": reasons,
                 "provider": prov, "reason_code": RS.HOLD}
+
+    # --- COMPOSITION SELECTOR ------------------------------------------------
+    # Two engines share everything up to here: acquisition, research and the sufficiency
+    # verdict are the same work whichever path composes the article. They diverge on what
+    # happens to approved material.
+    #
+    #   legacy             Discovery -> Article Form -> Writer Input -> Writer -> Ground
+    #   story_architecture Ledger -> Worth -> Architect -> CUT -> Writer -> Continuity
+    #                      -> safety -> Ground -> Fact Check -> Reader
+    #
+    # Default is legacy. The story-architecture path emits the three artifacts it really
+    # produces -- WRITER_OUTPUT, GROUNDING_FINDINGS, SHADOW_DECISION -- and writes its own
+    # stage artifacts beside them. It does NOT call decide(): that function requires the
+    # legacy Discovery/Article Form/Writer Input lineage, which this path does not have,
+    # and it is a frozen verbatim port that must not be adapted. The composition ladder is
+    # this path's decision, and it is the stricter of the two.
+    try:
+        engine = CP.current_composition_engine()
+    except CP.UnknownCompositionEngine as e:
+        raise EngineDisabled(str(e))
+    if engine == CP.COMPOSITION_STORY_ARCHITECTURE:
+        return _run_story_architecture(
+            provider, A, prov, pack, src, sha, at, run_root, name, mode, fact_check_fn)
 
     # --- DISCOVERY: consumes the anchor and the frozen pack ------------------
     # The anchor is SELECTED, not written (PR #61). Candidates are cut deterministically
@@ -415,6 +445,80 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
     _persist(A, run_root, name, mode, prov, decision, reasons)
     _shadow_grounding_v2(provider, run_root / name, wo, src, pack)
     return {"artifacts": A, "decision": decision, "reasons": reasons, "provider": prov}
+
+
+def _run_story_architecture(provider, A: dict, prov: dict, pack: dict, src: str,
+                            sha: str, at: str, run_root: pathlib.Path, name: str,
+                            mode: str, fact_check_fn=None) -> dict:
+    """The story-architecture composition path, from the frozen research pack onwards."""
+    out_dir = run_root / name
+    result = CP.run_story_architecture_composition(
+        provider, pack=pack, source_text=src, source_sha=sha,
+        subject=pack.get("subject", ""), out_dir=out_dir,
+        fact_check_fn=fact_check_fn)
+    prov["composition"] = {s: (d or {}).get("provider", {})
+                           for s, d in (result.get("detail") or {}).items()
+                           if isinstance(d, dict) and d.get("provider")}
+    prov["composition_engine"] = CP.COMPOSITION_STORY_ARCHITECTURE
+
+    article = result.get("article_text") or ""
+    det = result.get("detail") or {}
+    passed = result["status"] == CP.PASS
+
+    # A candidate that reached prose gets a real WRITER_OUTPUT, whether or not a later
+    # gate held it. A run that never reached prose emits none, for the same reason the
+    # legacy writer-failure path emits none: nothing downstream may mistake a failure for
+    # a draft.
+    if article.strip():
+        wo = {"article_text": article,
+              "article_sha256": C.sha256_text(article),
+              "provider_status": "ok"}
+        try:
+            A[C.WRITER_OUTPUT] = _emit(C.WRITER_OUTPUT, at, wo,
+                                       {"research_pack": A[C.RESEARCH_PACK]})
+        except C.ContractViolation as e:
+            return _stage_failure(C.WRITER_OUTPUT, "invalid_response_shape", e, at, A,
+                                  run_root, name, mode, prov)
+    gf = (det.get(CP.GROUNDING) or {}).get("grounding")
+    if gf and C.WRITER_OUTPUT in A:
+        try:
+            A[C.GROUNDING_FINDINGS] = _emit(C.GROUNDING_FINDINGS, at, gf,
+                                            {"writer_output": A[C.WRITER_OUTPUT],
+                                             "source": A[C.SOURCE_SNAPSHOT],
+                                             "research_pack": A[C.RESEARCH_PACK]})
+        except C.ContractViolation as e:
+            return _stage_failure(C.GROUNDING_FINDINGS, "invalid_response_shape", e, at,
+                                  A, run_root, name, mode, prov)
+
+    if passed:
+        decision = "ACCEPT"
+        reasons = ["story_architecture: all ten stages passed",
+                   "stages: %s" % ", ".join("%s=%s" % (s, result["stages"][s])
+                                            for s in CP.STAGES),
+                   "ACCEPT = eligible for the candidate pool; never publication"]
+    else:
+        decision = "HOLD"
+        reasons = ["story_architecture HOLD at %s (%s)"
+                   % (result["failure_stage"], result["reason_code"]),
+                   str(result["failure_reason"])[:400]]
+
+    dec_inputs = {"research_pack": A[C.RESEARCH_PACK]}
+    if C.WRITER_OUTPUT in A:
+        dec_inputs["writer_output"] = A[C.WRITER_OUTPUT]
+    if C.GROUNDING_FINDINGS in A:
+        dec_inputs["findings"] = A[C.GROUNDING_FINDINGS]
+    A[C.SHADOW_DECISION] = _emit(
+        C.SHADOW_DECISION, at,
+        {"decision": decision, "reasons": reasons, "engine": ENGINE,
+         "composition_engine": CP.COMPOSITION_STORY_ARCHITECTURE,
+         "reason_code": result.get("reason_code") or "",
+         "policy": "ACCEPT = eligible for the candidate pool; never publication"},
+        dec_inputs)
+
+    _persist(A, run_root, name, mode, prov, decision, reasons)
+    return {"artifacts": A, "decision": decision, "reasons": reasons,
+            "provider": prov, "composition": result,
+            "reason_code": result.get("reason_code")}
 
 
 def _shadow_grounding_v2(provider, out_dir: pathlib.Path, wo: dict, src: str,
