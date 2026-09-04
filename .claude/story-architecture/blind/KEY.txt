@@ -10,3 +10,5 @@ case8: A=continuity.final(v3)  B=continuity.minimal (evaluator-recommended)
 case9: continuity.minimal alone (lens survival)
 case10: A=continuity.final  B=semantic-compression.final (NEW)
 case11: semantic-compression.final alone
+case12: A=compression(explicit lens)  B=lens-realization(implicit, NEW)
+case13: lens-realization alone

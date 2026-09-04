@@ -307,10 +307,16 @@ def render(packet: dict) -> str:
         L.append("  " + packet["turn"])
         L.append("")
     if packet["crip_turn"]:
-        L.append("WHERE THE MEANING CHANGES")
+        # The reader must END UP understanding this. That is not the same as the article
+        # SAYING it. An earlier version handed the lens over as "the idea that does this
+        # work", and the Writer duly wrote it out as a sentence -- which independent
+        # readers then experienced as the one place the article stopped trusting them.
+        L.append("WHAT THE READER SHOULD UNDERSTAND DIFFERENTLY BY THE END")
         L.append("  " + packet["crip_turn"])
-        if packet["lens"]:
-            L.append("  The idea that does this work: " + packet["lens"])
+        L.append("  Realise this through the material: a juxtaposition, a consequence, a")
+        L.append("  contrast, or an earlier detail whose meaning has changed. Do not")
+        L.append("  state it as a general principle unless that is genuinely the most")
+        L.append("  natural sentence available. The reader should arrive at it.")
         L.append("")
     if packet["quotes"]:
         L.append("QUOTE EXACTLY, OR NOT AT ALL")
@@ -794,8 +800,13 @@ def validate_final_lens(final_lens: dict, arch: dict, ledger: dict) -> list:
     mentioned.
     """
     errs = []
+    # LENS REALIZATION (owner ruling): the ARCHITECTURE must know the lens explicitly;
+    # the ARTICLE need not announce it abstractly. Lens visibility and lens articulation
+    # were being treated as the same thing, and they are not. These fields are the
+    # machine-side record; none of them obliges a reader-facing sentence.
     need = ("lens_claim", "evidence_basis", "what_changes_for_the_reader",
-            "story_beat_before", "crip_turn", "story_beat_after")
+            "story_beat_before", "crip_turn", "story_beat_after",
+            "before_reading", "after_reading", "crip_turn_carrier")
     for k in need:
         if not str(final_lens.get(k) or "").strip():
             errs.append("final lens missing %s" % k)
@@ -1003,3 +1014,61 @@ def collapse_turn_and_crip_turn(arch: dict, props: list, threshold: float = 0.5,
                        "one prose beat" if both_abstract else
                        "high word overlap; one prose beat" if r >= threshold else
                        "distinct movements")}
+
+
+
+# ── LENS REALIZATION, not lens announcement ──────────────────────────────────
+# The apparent conflict -- "the lens must be visible" against "the scaffolding must be
+# invisible" -- came from equating visibility with articulation. One machine-side owner
+# is still required. A standalone abstract reader-facing sentence is not.
+#
+# The general rule: USE THE LEAST EXPLICIT FORM THAT STILL MAKES THE
+# PUBLICATION-SPECIFIC INSIGHT RECOVERABLE. Not a mandatory thesis sentence, not a
+# mandatory disability paragraph, and not a mandatory hidden lens either.
+IMPLICIT = "IMPLICIT"
+EXPLICIT = "EXPLICIT"
+EITHER = "EITHER"
+REALIZATIONS = (IMPLICIT, EXPLICIT, EITHER)
+
+
+def validate_lens_realization(arch: dict, final_lens: dict, article: str = "") -> list:
+    """The machine must be able to say why this belongs in Crip Minds. The prose need not.
+
+    Deliberately NOT a phrase check. Whether a reader recovers the insight is settled by
+    article-only readers, not by searching the text for the lens wording -- searching for
+    the wording is exactly the contract being replaced.
+    """
+    errs = []
+    for k in ("lens_claim", "evidence_basis", "before_reading", "after_reading",
+              "crip_turn_carrier"):
+        if not str(final_lens.get(k) or "").strip():
+            errs.append("machine-side lens record missing %s" % k)
+    mode = arch.get("lens_realization", EITHER)
+    if mode not in REALIZATIONS:
+        errs.append("lens_realization %r not in %s" % (mode, REALIZATIONS))
+    carrier = str(final_lens.get("crip_turn_carrier") or "")
+    if carrier and article:
+        nouns = {w for w in re.findall(r"[a-z]{4,}", carrier.lower())
+                 if w not in _FUNCTION_WORDS}
+        if nouns and not any(n in article.lower() for n in nouns):
+            errs.append("the declared crip_turn_carrier (%s) does not appear in the "
+                        "article at all, so nothing concrete can carry the turn"
+                        % carrier[:60])
+    return errs
+
+
+def lens_is_serialized(article: str, final_lens: dict, threshold: float = 0.45) -> dict:
+    """Is the machine-side lens claim written out in the prose as a sentence?
+
+    Reported, never required and never forbidden. It exists so a reviewer can see which
+    form a given article chose, and so a test can prove the Writer is not compelled
+    either way.
+    """
+    claim = str(final_lens.get("lens_claim") or "")
+    best, worst = 0.0, None
+    for sent in _sentences_of(article):
+        r = restates(sent, claim)
+        if r > best:
+            best, worst = r, sent
+    return {"serialized": best >= threshold, "closest": worst,
+            "overlap": round(best, 2)}

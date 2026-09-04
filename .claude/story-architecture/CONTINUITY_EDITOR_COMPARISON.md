@@ -180,3 +180,71 @@ decision about which gate yields.
 
 Second, unchanged and named by every solo reader: the article contains no perceiver. It
 prosecutes a record for reporting no perception while itself reporting none.
+
+---
+
+# Lens realization (final)
+
+Owner ruling: do not accept VISIBLE_SCAFFOLDING as the floor, and do not require one
+explicit abstract lens sentence. The conflict between "the lens must be visible" and "the
+scaffolding must be invisible" came from equating **visibility** with **articulation**.
+
+## Contract change
+
+The architecture still keeps one machine-side `LENS_OWNER`, plus `evidence_basis`,
+`before_reading`, `after_reading` and `crip_turn_carrier` — it must be able to say
+exactly why the piece belongs here. What changed is the packet. It used to hand the
+Writer "*the idea that does this work:* <lens_claim>", and the Writer duly wrote it out.
+It now asks for **what the reader should understand differently by the end**, and says
+in as many words: realise this through the material, and do not state it as a general
+principle unless that is the most natural sentence available.
+
+`lens_is_serialized()` reports which form an article chose. It never requires or forbids
+either. Nothing in the gate searches the prose for the lens wording — searching for the
+wording is the contract being replaced.
+
+## Result: the abstraction was not load-bearing
+
+One sentence deleted — *"A record decides what kind of perceiving it can carry, and what
+it carried is what anyone downstream can weigh."* — with no replacement.
+
+| | with explicit lens | without (final) |
+|---|---|---|
+| words / paragraphs | 329 / 8 | **303 / 8** |
+| naturalness (reader) | 3 | **4** |
+| visible scaffolding (reader) | 2 | **4** |
+| momentum (reader) | 3 | **5** |
+| ending (reader) | 4 | **5** |
+| **lens recovery** | 4 / 3 | **4 / 3 — unchanged** |
+| solo writtenness class | VISIBLE_SCAFFOLDING | **MOSTLY_NATURAL** |
+
+**Blind reader: clear preference.** *"Does the one without the general principle still
+deliver the insight? Yes, completely. Removing that sentence costs nothing… The principle
+was never load-bearing; it was a summary of load already carried."*
+
+**Blind editor: clear preference.** *"A's sentence is not what makes the difference…
+'a record decides what kind of perceiving it can carry' is a claim about archives, not
+about bodies. It is the most generic sentence in either draft. So A does not buy lens
+with it; A buys abstraction and pays in momentum."*
+
+**Article-only lens recovery — PASS.** *"the article's whole method is knowing that a
+description can be complete-looking and still contain nothing you could have perceived.
+That's a way of reading that comes from being on the wrong side of a channel."* Asked
+whether it states a thesis: *"No."* Asked whether it trusts the reader: *"Yes,
+considerably. It never says 'this is about ableism'… The restraint is the technique."*
+Asked whether it would sit in a good nonfiction book: *"Yes — as a short chapter."*
+
+No evaluator called it generic media criticism. The editor: *"Neither draft is generic
+design criticism."*
+
+## What remains, and it is not the lens
+
+Both blind evaluators, independently, name the same residual: **there is no perceiver in
+the piece.** The strongest sensory moment is a conditional — "could have put a tongue
+to." The article indicts a record for containing no perception while containing none
+itself. The editor's required change is one sentence of actual perceiving, from a person
+who was there or any first-hand account.
+
+The frozen evidence contains no documented encounter, and inventing one is forbidden. So
+this is a **research** limit, not an architecture limit: the fix is a source, not a
+sentence.
