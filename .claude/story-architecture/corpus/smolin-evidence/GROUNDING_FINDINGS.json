@@ -1,0 +1,56 @@
+{
+  "content_hash": "db02a21d300f9e5fa1cebeec71b6dd1496c41e00bc98d3ddf7de0570399f0551",
+  "created_at": "2026-09-03T07:00:32.416331+00:00",
+  "input_hashes": {
+    "research_pack": "4103da4ea7451c9471a3af26aec7cc5fa28f7cc6135bc4fe248617ae828eff32",
+    "source": "0b1ff603cc180fdac22b8cba759bc7c03e60ca7cf382a9b412350be36e38fec8",
+    "writer_output": "ef806b84e99c51817205178639d1f49127f849dfdc22cdfe26a1f41573f669aa"
+  },
+  "payload": {
+    "findings": [
+      {
+        "classification": "TRUE_UNSUPPORTED",
+        "id": "F1",
+        "quote": "found the theory had \"hasn't been engaged with properly at all.\"",
+        "repairable": true,
+        "suggested_patch": "found that the theory \"hasn't been engaged with properly at all.\"",
+        "why": "The anchor quotes Gough saying \"it hasn't been falsified. It just hasn't been engaged with properly at all.\" The draft misquotes this by grafting \"had\" onto \"hasn't\", producing an ungrammatical construction that misrepresents the verbatim quotation."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F2",
+        "quote": "Webb found galaxies forming earlier, faster and more orderly than standard models expected.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The anchor says Webb found galaxies forming \"earlier, faster and in a more orderly manner than standard physics models had anticipated.\" The draft's paraphrase is faithful; no new factual state is introduced."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F3",
+        "quote": "and the biologist Michael Levin, who says it is \"worth exploring.\"",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The anchor identifies Levin as a \"Tufts biological theorist\" and quotes him saying \"it's worth exploring this idea.\" \"Biologist\" is a reasonable compression of \"biological theorist\"; the quote is truncated but not distorted."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F4",
+        "quote": "It gave the argument a testable claim and a public timestamp—something that could cross a disciplinary boundary the reasoning alone had not.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "This is the draft's analytical framing of the significance of the prediction. It invents no new factual state about the world; it interprets facts the anchor supplies (the July 8 Substack post, the disciplinary-routing argument attributed to Gough)."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F5",
+        "quote": "Afterward the people who found the logic legible were the ones Gough's routing account would predict",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "This is the writer's synthesis connecting the named supporters (Jäger, Levin) to Gough's disciplinary argument. It draws an inference not stated in the source but invents no new fact; the individuals and their fields are supported by the anchor."
+      }
+    ],
+    "status": "settled"
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "GROUNDING_FINDINGS"
+}

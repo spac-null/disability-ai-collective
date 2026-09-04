@@ -1,0 +1,543 @@
+{
+  "version": "v1",
+  "date": "2026-09-04",
+  "method": "Qualitative structural coding of public web texts/snippets plus journalism-craft teaching materials. No full copyrighted texts redistributed.",
+  "bregman": [
+    {
+      "id": "B01",
+      "title": "Why do the poor make such poor decisions?",
+      "year": 2016,
+      "url": "https://thecorrespondent.com/4664/why-do-the-poor-make-such-poor-decisions/179307480-39a74caf",
+      "form": "reported explanatory essay",
+      "opening": "dated concrete event: Cherokee casino opening",
+      "carrier": "casino + Jane Costello's natural experiment",
+      "movement": "event → causal question → theory → analogy → experiments → policy",
+      "craft": "abstract claim repeatedly returns to concrete cases; technical concept ('mental bandwidth') appears after reader already sees the problem",
+      "cripminds_use": "model for concrete↔abstract alternation and causal discovery",
+      "caution": "uses more rhetorical questions/fragments than owner preference"
+    },
+    {
+      "id": "B02",
+      "title": "Has the time finally come for universal basic income?",
+      "year": 2020,
+      "url": "https://thecorrespondent.com/386/has-the-time-finally-come-for-universal-basic-income",
+      "form": "book-derived reported argument",
+      "opening": "current crisis preface, then London 2009 experiment",
+      "carrier": "13 homeless men; later Omondi, Mincome, US experiments",
+      "movement": "case → result → hard data → new case → history → politics",
+      "craft": "multiple concrete cases spaced through long argument; research is selected into narrative units rather than presented as source audit",
+      "cripminds_use": "model for 'gold coins along the path' and alternating cognitive registers",
+      "caution": "long-form permits more examples than a short Crip Minds article should carry"
+    },
+    {
+      "id": "B03",
+      "title": "Look at the phone in your hand – you can thank the state for that",
+      "year": 2017,
+      "url": "https://www.theguardian.com/commentisfree/2017/jul/12/phone-state-private-sector-products-investment-innovation",
+      "form": "argumentative popular nonfiction",
+      "opening": "abstract rhetorical question about who drives progress",
+      "carrier": "ASML + smartphone technologies",
+      "movement": "myth → concrete industrial story → evidence → larger policy claim",
+      "craft": "does not require a scene-first lede; turns abstraction into a concrete company, shed, machines and technologies quickly",
+      "cripminds_use": "evidence that 'always open with scene' would be overfitting",
+      "caution": "opinion form tolerates explicit thesis"
+    },
+    {
+      "id": "B04",
+      "title": "No, wealth isn’t created at the top. It is merely devoured there",
+      "year": 2017,
+      "url": "https://www.theguardian.com/commentisfree/2017/mar/30/wealth-banks-google-facebook-society-economy-parasites",
+      "form": "argument essay",
+      "opening": "explicit thesis / taboo framing",
+      "carrier": "rentier mechanism + concrete sectors and occupations",
+      "movement": "claim → language critique → definition → examples → political conclusion",
+      "craft": "explicit thesis can work when the form is argumentative; concrete occupations keep the economics legible",
+      "cripminds_use": "counterexample to 'never state thesis'",
+      "caution": "not a narrative-feature template"
+    },
+    {
+      "id": "B05",
+      "title": "The neoliberal era is ending. What comes next?",
+      "year": 2020,
+      "url": "https://thecorrespondent.com/466/the-neoliberal-era-is-ending-what-comes-next",
+      "form": "historical reported essay",
+      "opening": "broad political claim, then a Financial Times editorial as concrete artefact",
+      "carrier": "ideas + institutions + named historical actors",
+      "movement": "present rupture → artefact → intellectual history → policy possibilities",
+      "craft": "an object/document can carry an intellectual history; alternates current event with larger context",
+      "cripminds_use": "model for reported essay when there is no single protagonist",
+      "caution": "high abstraction load requires more room than short feature"
+    },
+    {
+      "id": "B06",
+      "title": "The real Lord of the Flies",
+      "year": 2020,
+      "url": "https://www.theguardian.com/books/2020/may/09/the-real-lord-of-the-flies-what-happened-when-six-boys-were-shipwrecked-for-15-months",
+      "form": "narrative history / research quest",
+      "opening": "abstract human-nature frame → fictional Golding story",
+      "carrier": "Bregman's research quest + six Tongan boys + Peter Warner",
+      "movement": "received story → doubt → search → archive discovery → real story → changed meaning",
+      "craft": "research process becomes story only because searching itself contains events, false leads and discovery",
+      "cripminds_use": "excellent model for evidence-driven progressive discovery",
+      "caution": "do not make source-hunting itself visible unless it genuinely functions as story"
+    },
+    {
+      "id": "B07",
+      "title": "What if we give children the freedom to play and learn on their own?",
+      "year": 2020,
+      "url": "https://www.theguardian.com/lifeandstyle/2020/aug/15/rutger-bregman-what-if-we-give-children-the-freedom-to-play-and-learn-on-their-own",
+      "form": "short reported argument",
+      "opening": "general critique/question about schooling",
+      "carrier": "Agora school",
+      "movement": "problem → alternative place → evidence/context → wider implication",
+      "craft": "concrete institution arrives quickly after broad question; short form does not pretend to be full narrative",
+      "cripminds_use": "model for SHORT_FEATURE / reported essay",
+      "caution": "explicit moral conclusion is stronger than owner typically prefers"
+    },
+    {
+      "id": "B08",
+      "title": "An Inconvenient Truth About AI",
+      "year": 2026,
+      "url": "https://rutgerbregman.substack.com/p/an-inconvenient-truth-about-ai",
+      "form": "long argumentative essay with narrative anchors",
+      "opening": "Al Gore scene, 2006",
+      "carrier": "Gore's chart/lift; AI capability graph; author's own use",
+      "movement": "historical scene → analogy → evidence → counterarguments → policy",
+      "craft": "converts abstract capability growth to human time; alternates charts, examples, personal experience and political argument",
+      "cripminds_use": "model for making quantitative change mentally graspable",
+      "caution": "heavy polemic and repeated rhetorical pressure are not owner target"
+    },
+    {
+      "id": "B09",
+      "title": "Abolish the Tobacco Industry",
+      "year": 2026,
+      "url": "https://rutgerbregman.substack.com/p/how-i-finally-woke-up-to-the-sheer",
+      "form": "argumentative historical essay",
+      "opening": "scale claim followed by jumbo-jet analogy",
+      "carrier": "cigarette as artefact + tobacco industry",
+      "movement": "scale → familiar analogy → invention/history → industry mechanism → call to action",
+      "craft": "makes enormous statistics concrete before expanding the history",
+      "cripminds_use": "model for scale translation",
+      "caution": "highly declarative opening is form-specific"
+    },
+    {
+      "id": "B10",
+      "title": "The incredible story of Benjamin Lay",
+      "year": 2026,
+      "url": "https://rutgerbregman.substack.com/p/the-incredible-story-of-benjamin",
+      "form": "narrative history / chapter",
+      "opening": "precise dated action scene in a Quaker meeting",
+      "carrier": "Benjamin Lay",
+      "movement": "scene/action → biography/context → moral conflict → consequences",
+      "craft": "classic character-led narrative built from documented historical action",
+      "cripminds_use": "model for NARRATIVE_FEATURE when evidence supports scenes",
+      "caution": "scene richness depends on source material; cannot be fabricated"
+    },
+    {
+      "id": "B11",
+      "title": "No, you’re not fine just the way you are",
+      "year": 2025,
+      "url": "https://www.theguardian.com/lifeandstyle/2025/apr/19/no-youre-not-fine-just-the-way-you-are-time-to-quit-your-pointless-job-become-morally-ambitious-and-change-the-world",
+      "form": "book-derived manifesto / reported essay",
+      "opening": "direct challenge to reader",
+      "carrier": "career categories + historical moral actors",
+      "movement": "provocation → framework → examples/history → call to action",
+      "craft": "explicit framework can carry a chapter when reader knows the argument is the product",
+      "cripminds_use": "model for explanatory/reportorial essay, not default narrative",
+      "caution": "direct exhortation is more forceful than Crip Minds owner preference"
+    },
+    {
+      "id": "B12",
+      "title": "Quit ChatGPT: right now!",
+      "year": 2026,
+      "url": "https://www.theguardian.com/commentisfree/2026/mar/04/quit-chatgpt-subscription-boycott-silicon-valley",
+      "form": "short polemical opinion",
+      "opening": "direct imperative / campaign premise",
+      "carrier": "boycott as action",
+      "movement": "call → evidence → historical boycott logic → action",
+      "craft": "clear single-purpose short form",
+      "cripminds_use": "evidence for ARTICLE_FORM selection; not every piece should simulate narrative nonfiction",
+      "caution": "not suitable as prose model for normal Crip Minds features"
+    }
+  ],
+  "scientias": [
+    {
+      "id": "S01",
+      "title": "Sporten vermindert angst en verbetert je humeur: zo werkt dat",
+      "year": 2026,
+      "url": "https://scientias.nl/sporten-vermindert-angst-en-verbetert-je-humeur-zo-werkt-dat/",
+      "domain": "health",
+      "opening": "familiar benefit → mechanism",
+      "explanation_move": "exerkines introduced, then AEA/2-AG/BDNF immediately glossed",
+      "craft_use": "strong just-in-time mechanism explanation"
+    },
+    {
+      "id": "S02",
+      "title": "Helft van de synapsen verdwijnt tijdens winterslaap en toch weten muizen alles nog",
+      "year": 2026,
+      "url": "https://scientias.nl/helft-van-de-synapsen-verdwijnt-tijdens-winterslaap-en-toch-weten-muizen-alles-nog/",
+      "domain": "neuroscience",
+      "opening": "surprising experiment/result",
+      "explanation_move": "defines synapse in ordinary language before structural detail; question emerges from contradiction",
+      "craft_use": "excellent concrete→term→question→experiment sequence"
+    },
+    {
+      "id": "S03",
+      "title": "Een blik in de toekomst van ons zonnestelsel: exoplaneet overleeft dood van zijn ster",
+      "year": 2026,
+      "url": "https://scientias.nl/een-blik-in-de-toekomst-van-ons-zonnestelsel-exoplaneet-overleeft-dood-van-zijn-ster/",
+      "domain": "astronomy",
+      "opening": "big question + new result",
+      "explanation_move": "links white-dwarf system to future of solar system",
+      "craft_use": "good relevance framing, more newsy than narrative"
+    },
+    {
+      "id": "S04",
+      "title": "Voor het eerst atmosfeer ontdekt in bewoonbare zone van rotsplaneet",
+      "year": 2026,
+      "url": "https://scientias.nl/voor-het-eerst-atmosfeer-ontdekt-in-bewoonbare-zone-van-rotsplaneet/",
+      "domain": "astronomy",
+      "opening": "novelty claim",
+      "explanation_move": "atmosphere importance first, helium detection mechanism after reason-to-care",
+      "craft_use": "strong term/mechanism timing"
+    },
+    {
+      "id": "S05",
+      "title": "Voor het eerst radiostraling ontdekt die afkomstig lijkt te zijn van een exoplaneet",
+      "year": 2020,
+      "url": "https://scientias.nl/voor-het-eerst-radiostraling-ontdekt-die-afkomstig-lijkt-te-zijn-van-een-exoplaneet/",
+      "domain": "astronomy",
+      "opening": "novelty claim",
+      "explanation_move": "explains electron/magnetic-field mechanism immediately after finding",
+      "craft_use": "classic explanatory news"
+    },
+    {
+      "id": "S06",
+      "title": "Voor het eerst ooit ontdekt: een planeet die in een loodrechte baan om twee sterren draait",
+      "year": 2025,
+      "url": "https://scientias.nl/voor-het-eerst-ooit-ontdekt-een-planeet-die-in-een-loodrechte-baan-om-twee-sterren-draait/",
+      "domain": "astronomy",
+      "opening": "visual oddity",
+      "explanation_move": "uses plain spatial picture before terminology ('polaire planeet')",
+      "craft_use": "good concrete-before-label"
+    },
+    {
+      "id": "S07",
+      "title": "Nieuwe gasreus ontdekt bij nabije ster: ‘Het mooiste is dat we hem al die tijd over het hoofd zagen’",
+      "year": 2026,
+      "url": "https://scientias.nl/nieuwe-gasreus-ontdekt-bij-nabije-ster-het-mooiste-is-dat-we-hem-al-die-tijd-over-het-hoofd-zagen/",
+      "domain": "astronomy",
+      "opening": "discovery",
+      "explanation_move": "old/new observations and archive surprise",
+      "craft_use": "useful for explaining method from concrete discovery"
+    },
+    {
+      "id": "S08",
+      "title": "Zo ontstaat een gewoonte in onze hersenen",
+      "year": 2026,
+      "url": "https://scientias.nl/zo-ontstaat-een-gewoonte-in-onze-hersenen-en-daar-kunnen-we-ons-voordeel-mee-doen/",
+      "domain": "neuroscience",
+      "opening": "everyday examples",
+      "explanation_move": "coffee/gym/nail-biting before brain circuits",
+      "craft_use": "very strong familiar→question→technical mechanism pattern"
+    },
+    {
+      "id": "S09",
+      "title": "Deze bijzondere exoplaneet kan ons nieuwe inzichten geven over hoe het leven ontstaan is",
+      "year": 2025,
+      "url": "https://scientias.nl/exoplaneet-buitenaards-leven-ontstaan/",
+      "domain": "astronomy",
+      "opening": "significance claim → nearby object",
+      "explanation_move": "defines super-Earth and why proximity matters",
+      "craft_use": "clear but somewhat press-release-shaped"
+    },
+    {
+      "id": "S10",
+      "title": "Voor het eerst zien natuurkundigen lang voorspeld zwaartekrachteffect in de kwantumwereld",
+      "year": 2026,
+      "url": "https://scientias.nl/voor-het-eerst-zien-natuurkundigen-lang-voorspeld-zwaartekrachteffect-in-de-kwantumwereld/",
+      "domain": "physics",
+      "opening": "novelty claim",
+      "explanation_move": "first explains two theories in plain language, then experiment at their boundary",
+      "craft_use": "strong complexity decomposition"
+    },
+    {
+      "id": "S11",
+      "title": "Hoe een 40.000-jarige cyclus ervoor zorgt dat het ijs op Antarctica invloed heeft op het klimaat rond de evenaar",
+      "year": 2026,
+      "url": "https://scientias.nl/hoe-een-40-000-jarige-cyclus-ervoor-zorgt-dat-het-ijs-op-antarctica-invloed-heeft-op-het-klimaat-rond-de-evenaar/",
+      "domain": "climate",
+      "opening": "surprising connection",
+      "explanation_move": "large-scale relation stated first, mechanism follows",
+      "craft_use": "good for causal explanation; not narrative"
+    },
+    {
+      "id": "S12",
+      "title": "Ster in doodsstrijd gefotografeerd: de adembenemende Leeuwennevel in nieuw licht",
+      "year": 2026,
+      "url": "https://scientias.nl/webb-foto-ngc-2392/",
+      "domain": "astronomy",
+      "opening": "image/novelty",
+      "explanation_move": "moves from familiar object to instruments and interpretation",
+      "craft_use": "visual-accessible, somewhat promotional language"
+    },
+    {
+      "id": "S13",
+      "title": "Vaak bewegen is belangrijker dan hard bewegen voor je mentale gezondheid",
+      "year": 2026,
+      "url": "https://scientias.nl/vaak-bewegen-is-belangrijker-dan-hard-bewegen-voor-je-mentale-gezondheid/",
+      "domain": "health",
+      "opening": "finding first",
+      "explanation_move": "explains why prior studies cannot establish sequence before new design",
+      "craft_use": "excellent methods clarification in ordinary language"
+    },
+    {
+      "id": "S14",
+      "title": "Fossiel dat in 1948 bij de Noordpool werd achtergelaten blijkt van gigantisch onbekend dier",
+      "year": 2026,
+      "url": "https://scientias.nl/fossiel-dat-in-1948-in-de-buurt-van-de-noordpool-werd-achtergelaten-blijkt-van-gigantisch-onbekend-dier/",
+      "domain": "paleontology",
+      "opening": "historical mini-narrative",
+      "explanation_move": "1948 discovery → abandonment → 1984 rediscovery → modern analysis",
+      "craft_use": "closest Scientias sample to narrative-feature craft"
+    },
+    {
+      "id": "S15",
+      "title": "Stadsdieren worden brutaler",
+      "year": 2026,
+      "url": "https://scientias.nl/stadsdieren-worden-brutaler-wereldwijd-onderzoek-laat-zien-hoe-de-stad-dieren-verandert/",
+      "domain": "biology",
+      "opening": "everyday observation",
+      "explanation_move": "ducks/pigeons/rats perception → meta-analysis",
+      "craft_use": "good familiar-world lede"
+    },
+    {
+      "id": "S16",
+      "title": "Deze AI-arts stelt vaker de juiste diagnose dan een doorgewinterde dokter",
+      "year": 2026,
+      "url": "https://scientias.nl/deze-ai-arts-stelt-vaker-de-juiste-diagnose-dan-een-doorgewinterde-dokter/",
+      "domain": "AI/medicine",
+      "opening": "concrete simulated scenario",
+      "explanation_move": "what system does before model/agent terminology",
+      "craft_use": "good function-before-jargon"
+    },
+    {
+      "id": "S17",
+      "title": "Seks in de ruimte: waarom wetenschappers zich nu al zorgen maken",
+      "year": 2026,
+      "url": "https://scientias.nl/seks-in-de-ruimte-waarom-wetenschappers-zich-nu-al-zorgen-maken/",
+      "domain": "space/biology",
+      "opening": "human-body premise + practical question",
+      "explanation_move": "science-fiction expectation → real reproductive constraints",
+      "craft_use": "good reason-to-care before mechanism"
+    },
+    {
+      "id": "S18",
+      "title": "Waarom het brein van de inktvis verschrompelt in de oceaan van de toekomst",
+      "year": 2026,
+      "url": "https://scientias.nl/waarom-het-brein-van-de-inktvis-verschrompelt-in-de-oceaan-van-de-toekomst/",
+      "domain": "biology/climate",
+      "opening": "known effect → surprising new risk",
+      "explanation_move": "context first, then unexpected discovery and experimental origin",
+      "craft_use": "good question/novelty layering"
+    },
+    {
+      "id": "S19",
+      "title": "Blinde vlek in de oceaan? Deze negentien haaien doen wat boeien en satellieten niet kunnen",
+      "year": 2026,
+      "url": "https://scientias.nl/blinde-vlek-in-de-oceaan-deze-negentien-haaien-doen-wat-boeien-en-satellieten-niet-kunnen/",
+      "domain": "climate/ocean",
+      "opening": "problem → surprising tool",
+      "explanation_move": "satellites/buoys limitation → tagged sharks → model improvement",
+      "craft_use": "excellent mechanism/problem-solution explainer"
+    },
+    {
+      "id": "S20",
+      "title": "Belangrijk kantelpunt bereikt: voedselketen in Noordelijke IJszee blijvend verstoord",
+      "year": 2026,
+      "url": "https://scientias.nl/belangrijk-kantelpunt-bereikt-voedselketen-in-noordelijke-ijszee-blijvend-verstoord/",
+      "domain": "climate",
+      "opening": "concept + current finding",
+      "explanation_move": "defines tipping point in plain Dutch then causal chain ice→sunlight→nitrate→food web",
+      "craft_use": "strong causal-chain clarity"
+    }
+  ],
+  "craft_sources": [
+    {
+      "id": "C01",
+      "source": "UC Berkeley Journalism — Introduction to Reported Narrative",
+      "url": "https://journalism.berkeley.edu/course-section/j298-introduction-reported-narrative-2/",
+      "principles": [
+        "separate story architecture, paragraph pacing, sentence rhythm and word choice",
+        "character, scenes, tension, transitions and narrative line are distinct tools",
+        "narrative techniques must remain reported nonfiction"
+      ],
+      "exercise": "Annotate one feature at four levels: whole-story structure, paragraph pacing, sentence rhythm, word choice."
+    },
+    {
+      "id": "C02",
+      "source": "UC Berkeley Journalism — Intro to Narrative Writing",
+      "url": "https://journalism.berkeley.edu/course-section/j298-intro-to-narrative-writing-sp23/",
+      "principles": [
+        "report for narrative",
+        "keep narrative true to reporting",
+        "scene/dialogue/tension/background depend on reporting"
+      ],
+      "exercise": "For a candidate story, list what scene material is actually reported versus merely desired."
+    },
+    {
+      "id": "C03",
+      "source": "Harvard — Narrative Journalism",
+      "url": "https://english.fas.harvard.edu/english-cnfj-narrative-journalism-0",
+      "principles": [
+        "facts are the building blocks of literary nonfiction",
+        "scene-by-scene construction can be used in journalism",
+        "multiple forms: profile, investigative, magazine feature"
+      ],
+      "exercise": "Convert the same reporting into a short profile outline and an explanatory feature outline; compare fit."
+    },
+    {
+      "id": "C04",
+      "source": "The Open Notebook — Naming the Dog: The Art of Narrative Structure",
+      "url": "https://www.theopennotebook.com/2011/09/14/art-of-narrative-structure/",
+      "principles": [
+        "the hardest choice is often which story to tell from a large research pile",
+        "structure can be planned or discovered; no single method",
+        "complex science often benefits from alternating hard material with easier narrative"
+      ],
+      "exercise": "From one research pack, outline 3 genuinely different possible stories before selecting one."
+    },
+    {
+      "id": "C05",
+      "source": "The Open Notebook — Writing Elegant Background",
+      "url": "https://www.theopennotebook.com/2016/03/29/writing-elegant-background/",
+      "principles": [
+        "background can be block or braided/zipper",
+        "answer reader questions when they arise",
+        "jargon should be introduced slowly and from familiar ideas"
+      ],
+      "exercise": "Mark every background paragraph: needed now / needed later / unnecessary."
+    },
+    {
+      "id": "C06",
+      "source": "The Open Notebook — Explaining Complexity",
+      "url": "https://www.theopennotebook.com/2015/07/07/explaining-complexity/",
+      "principles": [
+        "too much explanation collapses story structure",
+        "give neither too little nor a semester-long lecture",
+        "disperse massive explanations or tell the story of how an explanation was discovered"
+      ],
+      "exercise": "Delete explanation until a nonexpert first becomes confused; restore only that missing layer."
+    },
+    {
+      "id": "C07",
+      "source": "The Open Notebook — Nailing the Nut Graf",
+      "url": "https://www.theopennotebook.com/2014/04/29/nailing-the-nut-graf/",
+      "principles": [
+        "orientation can be explicit without being banal",
+        "no single position/length formula",
+        "move between narrow anecdote and wider meaning"
+      ],
+      "exercise": "Write three orientation strategies for the same story: immediate nut, delayed nut, no separate nut."
+    },
+    {
+      "id": "C08",
+      "source": "The Open Notebook — Good Transitions",
+      "url": "https://www.theopennotebook.com/2018/09/25/good-transitions-a-guide-to-cementing-stories-together/",
+      "principles": [
+        "transitions connect ideas but should not become afterthoughts",
+        "transition type should follow logical relation",
+        "visible formulaic transitions expose scaffolding"
+      ],
+      "exercise": "Remove every explicit signpost from a draft; add back only the transitions whose absence causes a real jump."
+    },
+    {
+      "id": "C09",
+      "source": "The Open Notebook — Good Endings",
+      "url": "https://www.theopennotebook.com/2015/11/24/good-endings-how-to-write-a-kicker-your-editor-and-your-readers-will-love/",
+      "principles": [
+        "ending deserves as much care as lede",
+        "callbacks and new moments can work when earned",
+        "sometimes the best ending is already a paragraph or two earlier"
+      ],
+      "exercise": "Test the draft ending, then versions cut one and two paragraphs earlier."
+    },
+    {
+      "id": "C10",
+      "source": "Poynter — Show and Tell / Ladder of Abstraction",
+      "url": "https://www.poynter.org/reporting-editing/2004/writing-tool-13-show-and-tell/",
+      "principles": [
+        "move deliberately between concrete and abstract",
+        "bureaucratic middle abstraction is dangerous",
+        "meaning needs concrete exemplification"
+      ],
+      "exercise": "Label each paragraph low/mid/high on abstraction ladder; inspect stretches stuck in the middle."
+    },
+    {
+      "id": "C11",
+      "source": "Poynter — Tools of the Writer",
+      "url": "https://www.poynter.org/archive/2002/if-i-were-a-carpenter-the-tools-of-the-writer/",
+      "principles": [
+        "slow information pace for clarity",
+        "vary sentence length for pacing",
+        "space strong material through story rather than front-loading it"
+      ],
+      "exercise": "Mark 'gold coins' in a feature and test whether strong material is distributed or front-loaded."
+    },
+    {
+      "id": "C12",
+      "source": "Creative Nonfiction — Scene & Summary",
+      "url": "https://creativenonfiction.org/syllabus/scene-summary/",
+      "principles": [
+        "scene and summary are different modes",
+        "both are necessary; overreliance on either weakens nonfiction",
+        "reflection is a third mode"
+      ],
+      "exercise": "Label passages SCENE / SUMMARY / REFLECTION; identify accidental hybrids doing too much at once."
+    },
+    {
+      "id": "C13",
+      "source": "Nieman Storyboard — Reporting and Writing Scenes",
+      "url": "https://niemanstoryboard.org/2023/04/20/narrative-journalism-reporting-writing-scenes/",
+      "principles": [
+        "scenes are reporting products, not prose inventions",
+        "raw scenic detail must be collected deliberately",
+        "specific moments/actions support immersive narrative"
+      ],
+      "exercise": "For every proposed scene, require a 'scene-capable evidence' checklist before writing."
+    },
+    {
+      "id": "C14",
+      "source": "Nieman Storyboard — Reverse Engineering and Story Construction",
+      "url": "https://niemanstoryboard.org/2024/04/02/story-construction-narrative-nonfiction-writing-journalism-education/",
+      "principles": [
+        "reverse engineer strong stories into parts and purposes",
+        "different sections use different tools",
+        "story building can be decomposed without becoming formulaic"
+      ],
+      "exercise": "Take a strong feature and write one sentence describing the job of every section."
+    },
+    {
+      "id": "C15",
+      "source": "Nieman Storyboard — How 5 Journalists Structured Their Stories",
+      "url": "https://niemanstoryboard.org/2026/06/04/how-5-journalists-structured-stories-to-hook-readers/",
+      "principles": [
+        "structure follows reporting material and purpose",
+        "chronology is often best for complicated subject matter",
+        "mood/character/argument may demand different structures"
+      ],
+      "exercise": "Try chronological versus braided ordering on the same evidence and blind-compare comprehension."
+    },
+    {
+      "id": "C16",
+      "source": "Nieman Storyboard — Sequencing / scene-summary-exposition",
+      "url": "https://niemanstoryboard.org/2024/07/25/interviews-narrative-nonfiction-cinematic-scenes-details/",
+      "principles": [
+        "scene, summary and exposition are distinct narrative functions",
+        "summary compresses time; exposition pauses to explain",
+        "sequencing these modes is a central design choice"
+      ],
+      "exercise": "Represent a draft as a necklace of S(scene), M(summary), E(exposition); inspect long unbroken runs."
+    }
+  ]
+}

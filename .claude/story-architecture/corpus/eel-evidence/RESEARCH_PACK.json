@@ -1,0 +1,39 @@
+{
+  "subject": "Anguilla: European Eel Conservation and Education Centre, a student architecture project by Lily-Grace Conradie at the University of Nottingham responding to European eel decline",
+  "subject_span_present": true,
+  "sources": [
+    {
+      "source_id": "S0",
+      "role": "ANCHOR",
+      "url": "https://www.dezeen.com/2026/08/19/proposal-tackling-european-eel-decline-among-projects-from-university-of-nottingham-schoolshows/",
+      "publisher": "dezeen.com",
+      "chars": 11310,
+      "excerpt_count": 0
+    },
+    {
+      "source_id": "S1",
+      "role": "PRIMARY",
+      "url": "https://www.zsl.org/what-we-do/projects/european-eel-conservation",
+      "publisher": "zsl.org",
+      "chars": 11837,
+      "excerpt_count": 5
+    },
+    {
+      "source_id": "S2",
+      "role": "CONTEXT",
+      "url": "https://www.thames21.org.uk/wp-content/uploads/2021/06/App-Guide-Final.pdf",
+      "publisher": "org.uk",
+      "chars": 10649,
+      "excerpt_count": 3
+    },
+    {
+      "source_id": "S3",
+      "role": "PRIMARY",
+      "url": "https://cms.zsl.org/sites/default/files/2023-02/The%20Thames%20European%20Eel%20Project%20Report%202022%20.pdf",
+      "publisher": "zsl.org",
+      "chars": 6204,
+      "excerpt_count": 3
+    }
+  ],
+  "_note": "Source bodies removed before commit: third-party article text is not committed to this repo. Regenerate from the named evidence run if needed."
+}

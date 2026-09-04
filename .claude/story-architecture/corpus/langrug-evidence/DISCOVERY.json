@@ -1,0 +1,38 @@
+{
+  "content_hash": "38ffd23a0bcb40b61f85072c09599a60866723d37ee4b27dc69b1765a2d6fd2e",
+  "created_at": "2026-09-03T13:57:02.409324+00:00",
+  "input_hashes": {
+    "research_pack": "55761fe7e29b6837c75ab18666512af1192859539bcea022c80032e4d4483433",
+    "source": "5d16f759fa2f008f02e5d248a513d480e161267ab7105e45916ad23a09affecf"
+  },
+  "payload": {
+    "commissionable": true,
+    "disturbance": "The headline achievement is stated as a near-total removal figure, but the same passage immediately qualifies it: the water reaches a threshold that permits irrigation but not drinking, and the system took from 2018 until this year to reach even that graded level. The '99%' sits beside a set of thresholds it does not by itself satisfy. What the system produces is not clean-or-dirty water but water sorted into use-tiers, each defined by what remaining risk a use can tolerate.",
+    "dominant_reading": "A clever low-tech, chemical-free filtration system turns polluted river water into irrigation water, and it stands as a hopeful model for food security and climate adaptation. The story is read as a triumph of ingenuity over scarcity.",
+    "evidence_gaps": [
+      "The source does not specify which toxins the '99%' figure covers, nor whether it applies equally to bacteria, pathogens, pharmaceutical traces and chemicals.",
+      "It does not define the specific standard or thresholds distinguishing irrigation-grade from drinking-grade water.",
+      "It does not establish measured outcomes for the food grown or for the people who eat it, only that some water is used for growing vegetables.",
+      "It does not quantify the residual 1% or state what it contains.",
+      "It does not establish that the tier-sorting is a deliberate design intent versus an outcome of the technology's limits."
+    ],
+    "grounding_boundaries": "Do not state that the irrigation water is safe, healthy, or harmless -- the source establishes only that it meets a threshold for irrigation, not drinking, and does not detail the residual content. Do not treat the '99%' as a claim about all contaminants or as proof of safety for any use. Do not generalise from this design into claims about how filtration, ecosystems, or human health work in general, or about what people or institutions generally do. Do not assert measured benefits to children or residents who eat the food; the source says the water is 'now being used' for growing vegetables and cites a researcher's aim of 'feeding hungry children' -- keep that as stated purpose, not established outcome. Do not present the tier-sorting reading as the source's own conclusion; it is editorial interpretation. Do not invent any lived experience or testimony of Langrug residents; the source contains none.",
+    "perceptual_instrument": "an attentiveness to graded thresholds and conditional fitness -- the capacity, familiar from managing bodies and environments under permanent constraint, to read a resource not as safe/unsafe but as safe-for-this-and-not-for-that, and to track the gap between a reassuring aggregate number and the specific tolerances that actually govern use.",
+    "source_anchor_quote": "the system now removes about 99% of the toxins before most of the water is released back into the river",
+    "source_anchor_verified": true,
+    "source_facts": [
+      "The system removes about 99% of the toxins before most of the water is released back into the river (anchor).",
+      "The water reaches a level usable for irrigation but not for drinking (anchor).",
+      "The project, established in 2018, only this year succeeded in reducing bacteria and pathogens to a level allowing irrigation use (anchor).",
+      "About 3,000 litres is held back to irrigate gardens while most water is returned to the river; roughly 36,000 litres are treated daily (anchor).",
+      "Water filters slowly through the cells over five days, passing large stones, then biochar (wood burned at 800C), then smaller stones and sand (anchor).",
+      "The system is off-grid, using solar power to pump water from the river into filtration cells built in old drying beds of an abandoned wastewater site (anchor).",
+      "Winter says the system is not designed to replace conventional plants cleaning industrial-level water for towns and cities but provides clean water for rural communities (anchor).",
+      "Government partner statement gives an objective of treating water to remove chemicals and microplastics at a constant flow of around 1250 litres per hour [S4]."
+    ],
+    "subject_scope_verified": true,
+    "what_becomes_knowable": "The Water Hub does not 'clean' water in a binary sense; it operates by sorting a single stream into distinct fitness tiers matched to distinct uses. The five-day slow filtration through stones, biochar and sand, and the split between water returned to the river and water held back for gardens, are arrangements that assign different residual-risk levels to different destinations. The design's value lies in this triage -- producing 'good enough for irrigation' rather than pursuing a universal standard -- and the years between establishment and irrigation-readiness show that each tier is crossed as a separate, hard-won threshold, not achieved all at once."
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "DISCOVERY"
+}

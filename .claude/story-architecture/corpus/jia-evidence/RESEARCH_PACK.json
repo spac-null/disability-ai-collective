@@ -1,0 +1,55 @@
+{
+  "subject": "Jia Curated 2026 design festival in Bali",
+  "subject_span_present": false,
+  "sources": [
+    {
+      "source_id": "S0",
+      "role": "ANCHOR",
+      "url": "https://www.dezeen.com/2026/08/18/jia-curated-pavilions/",
+      "publisher": "dezeen.com",
+      "chars": 7653,
+      "excerpt_count": 0
+    },
+    {
+      "source_id": "S1",
+      "role": "PRIMARY",
+      "url": "https://www.jiacurated.com/",
+      "publisher": "jiacurated.com",
+      "chars": 10006,
+      "excerpt_count": 6
+    },
+    {
+      "source_id": "S2",
+      "role": "PRIMARY",
+      "url": "https://www.jiacurated.com/about",
+      "publisher": "jiacurated.com",
+      "chars": 3733,
+      "excerpt_count": 4
+    },
+    {
+      "source_id": "S3",
+      "role": "PRIMARY",
+      "url": "https://www.jiacurated.com/plan-your-visit",
+      "publisher": "jiacurated.com",
+      "chars": 6172,
+      "excerpt_count": 4
+    },
+    {
+      "source_id": "S4",
+      "role": "CONTEXT",
+      "url": "https://www.jiacurated.com/previous-events/jia-curated-2025",
+      "publisher": "jiacurated.com",
+      "chars": 8100,
+      "excerpt_count": 1
+    },
+    {
+      "source_id": "S5",
+      "role": "CONTEXT",
+      "url": "https://www.jiacurated.com/previous-events/jia-curated-2024",
+      "publisher": "jiacurated.com",
+      "chars": 4336,
+      "excerpt_count": 1
+    }
+  ],
+  "_note": "Source bodies removed before commit: third-party article text is not committed to this repo. Regenerate from the named evidence run if needed."
+}

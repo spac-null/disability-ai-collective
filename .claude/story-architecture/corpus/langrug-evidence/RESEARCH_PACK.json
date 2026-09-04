@@ -1,0 +1,55 @@
+{
+  "subject": "The Water Hub project in Langrug, a nature-based water filtration system cleaning polluted river water for irrigation",
+  "subject_span_present": false,
+  "sources": [
+    {
+      "source_id": "S0",
+      "role": "ANCHOR",
+      "url": "https://www.theguardian.com/global-development/2026/aug/31/south-africa-river-pollution-water-treatment-food-security-climate",
+      "publisher": "theguardian.com",
+      "chars": 3502,
+      "excerpt_count": 0
+    },
+    {
+      "source_id": "S1",
+      "role": "PRIMARY",
+      "url": "https://futurewater.uct.ac.za/water-hub-0",
+      "publisher": "ac.za",
+      "chars": 9636,
+      "excerpt_count": 5
+    },
+    {
+      "source_id": "S2",
+      "role": "PRIMARY",
+      "url": "https://futurewater.uct.ac.za/water-hub",
+      "publisher": "ac.za",
+      "chars": 2124,
+      "excerpt_count": 2
+    },
+    {
+      "source_id": "S3",
+      "role": "PRIMARY",
+      "url": "https://www.news.uct.ac.za/features/climatechange/-article/2026-06-02-where-polluted-rivers-meet-possibility",
+      "publisher": "ac.za",
+      "chars": 12000,
+      "excerpt_count": 5
+    },
+    {
+      "source_id": "S4",
+      "role": "PRIMARY",
+      "url": "https://www.westerncape.gov.za/local-government/article/wcg-supports-water-research-together-bavarian-government-and-academic-institutions",
+      "publisher": "gov.za",
+      "chars": 3172,
+      "excerpt_count": 4
+    },
+    {
+      "source_id": "S5",
+      "role": "INDEPENDENT",
+      "url": "https://groundup.org.za/article/researchers-test-nifty-way-save-water-informal-settlement/",
+      "publisher": "org.za",
+      "chars": 7210,
+      "excerpt_count": 4
+    }
+  ],
+  "_note": "Source bodies removed before commit: third-party article text is not committed to this repo. Regenerate from the named evidence run if needed."
+}

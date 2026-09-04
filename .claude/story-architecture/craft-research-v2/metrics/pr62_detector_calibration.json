@@ -1,0 +1,791 @@
+{
+ "what": "writtenness() re-calibration after the 2026-09-04 correction",
+ "detector": "calibrated (solo_ratio demoted to telemetry; signpost rate banded against corpus)",
+ "implementation_changed": "diagnostics only; no generation behaviour",
+ "scientias_caveat": "English-only regex; near-zero rate is a language artefact",
+ "calibration_constants": {
+  "measured": "2026-09-04",
+  "corpus": "18 Rutger Bregman public texts (43,115 w); 12 professionally annotated narrative/explanatory exemplars (50,033 w); 3-6 frozen Jia drafts",
+  "signpost_per_paragraph": {
+   "narrative_exemplars": {
+    "n": 12,
+    "mean": 0.005,
+    "median": 0.0,
+    "max": 0.025
+   },
+   "argument_essay_bregman": {
+    "n": 18,
+    "mean": 0.046,
+    "median": 0.041,
+    "max": 0.125
+   },
+   "jia_pre_audit": 0.333,
+   "absolute_count_max": {
+    "narrative_exemplars": 1,
+    "argument_essay_bregman": 6,
+    "jia_drafts_flagged": [
+     3,
+     4,
+     4,
+     5
+    ]
+   }
+  },
+  "solo_ratio": {
+   "narrative_exemplars": {
+    "n": 12,
+    "mean": 0.088,
+    "min": 0.0,
+    "max": 0.32
+   },
+   "argument_essay_bregman": {
+    "n": 18,
+    "mean": 0.127,
+    "min": 0.0,
+    "max": 0.37
+   },
+   "jia_pre_audit": 0.33,
+   "verdict": "DESCRIPTIVE_ONLY -- the published range contains Jia's value, so this measure carries no defect information."
+  },
+  "not_calibrated_for": "Dutch or other non-English prose: SIGNPOST_SHAPES is English-only, so a near-zero rate on non-English text is a language artefact, not a finding."
+ },
+ "rows": [
+  {
+   "id": "BR-01",
+   "corpus": "BREGMAN",
+   "form": "NARRATIVE_HISTORY",
+   "paragraphs": 68,
+   "solo_ratio": 0.06,
+   "signpost_count": 1,
+   "signpost_rate": 0.0147,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 3
+  },
+  {
+   "id": "BR-02",
+   "corpus": "BREGMAN",
+   "form": "ARGUMENTATIVE_ESSAY",
+   "paragraphs": 105,
+   "solo_ratio": 0.2,
+   "signpost_count": 6,
+   "signpost_rate": 0.0571,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 16
+  },
+  {
+   "id": "BR-03",
+   "corpus": "BREGMAN",
+   "form": "REPORTED_ESSAY",
+   "paragraphs": 51,
+   "solo_ratio": 0.12,
+   "signpost_count": 3,
+   "signpost_rate": 0.0588,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 4
+  },
+  {
+   "id": "BR-04",
+   "corpus": "BREGMAN",
+   "form": "ARGUMENTATIVE_ESSAY",
+   "paragraphs": 35,
+   "solo_ratio": 0.09,
+   "signpost_count": 3,
+   "signpost_rate": 0.0857,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 2
+  },
+  {
+   "id": "BR-05",
+   "corpus": "BREGMAN",
+   "form": "SHORT_FEATURE",
+   "paragraphs": 24,
+   "solo_ratio": 0.33,
+   "signpost_count": 1,
+   "signpost_rate": 0.0417,
+   "band": "ELEVATED_FOR_FORM",
+   "pivot_candidates": 3
+  },
+  {
+   "id": "BR-06",
+   "corpus": "BREGMAN",
+   "form": "SHORT_FEATURE",
+   "paragraphs": 27,
+   "solo_ratio": 0.37,
+   "signpost_count": 1,
+   "signpost_rate": 0.037,
+   "band": "ELEVATED_FOR_FORM",
+   "pivot_candidates": 9
+  },
+  {
+   "id": "BR-07",
+   "corpus": "BREGMAN",
+   "form": "POLEMIC",
+   "paragraphs": 18,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 1
+  },
+  {
+   "id": "BR-08",
+   "corpus": "BREGMAN",
+   "form": "NARRATIVE_HISTORY",
+   "paragraphs": 27,
+   "solo_ratio": 0.04,
+   "signpost_count": 1,
+   "signpost_rate": 0.037,
+   "band": "ELEVATED_FOR_FORM",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "BR-09",
+   "corpus": "BREGMAN",
+   "form": "REPORTED_ESSAY",
+   "paragraphs": 56,
+   "solo_ratio": 0.05,
+   "signpost_count": 3,
+   "signpost_rate": 0.0536,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 3
+  },
+  {
+   "id": "BR-10",
+   "corpus": "BREGMAN",
+   "form": "POLEMIC",
+   "paragraphs": 18,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "BR-11",
+   "corpus": "BREGMAN",
+   "form": "ARGUMENTATIVE_ESSAY",
+   "paragraphs": 18,
+   "solo_ratio": 0.0,
+   "signpost_count": 2,
+   "signpost_rate": 0.1111,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "BR-12",
+   "corpus": "BREGMAN",
+   "form": "POLEMIC",
+   "paragraphs": 15,
+   "solo_ratio": 0.13,
+   "signpost_count": 1,
+   "signpost_rate": 0.0667,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 1
+  },
+  {
+   "id": "BR-13",
+   "corpus": "BREGMAN",
+   "form": "ARGUMENTATIVE_ESSAY",
+   "paragraphs": 41,
+   "solo_ratio": 0.05,
+   "signpost_count": 3,
+   "signpost_rate": 0.0732,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "BR-14",
+   "corpus": "BREGMAN",
+   "form": "EXPLANATORY_FEATURE",
+   "paragraphs": 50,
+   "solo_ratio": 0.24,
+   "signpost_count": 2,
+   "signpost_rate": 0.04,
+   "band": "ELEVATED_FOR_FORM",
+   "pivot_candidates": 11
+  },
+  {
+   "id": "BR-15",
+   "corpus": "BREGMAN",
+   "form": "SHORT_FEATURE",
+   "paragraphs": 8,
+   "solo_ratio": 0.12,
+   "signpost_count": 1,
+   "signpost_rate": 0.125,
+   "band": "INSUFFICIENT_PARAGRAPHS",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "CX-01",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 40,
+   "solo_ratio": 0.03,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "CX-02",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 17,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "CX-03",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 45,
+   "solo_ratio": 0.16,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 4
+  },
+  {
+   "id": "CX-04",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 80,
+   "solo_ratio": 0.07,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 4
+  },
+  {
+   "id": "CX-05",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 78,
+   "solo_ratio": 0.04,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "CX-06",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 47,
+   "solo_ratio": 0.04,
+   "signpost_count": 1,
+   "signpost_rate": 0.0213,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 3
+  },
+  {
+   "id": "CX-07",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 47,
+   "solo_ratio": 0.06,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "CX-08",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 68,
+   "solo_ratio": 0.06,
+   "signpost_count": 1,
+   "signpost_rate": 0.0147,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 2
+  },
+  {
+   "id": "CX-09",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 54,
+   "solo_ratio": 0.06,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 1
+  },
+  {
+   "id": "CX-10",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 95,
+   "solo_ratio": 0.32,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 8
+  },
+  {
+   "id": "CX-11",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 40,
+   "solo_ratio": 0.03,
+   "signpost_count": 1,
+   "signpost_rate": 0.025,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "CX-12",
+   "corpus": "CONTROL_EXEMPLAR",
+   "form": "",
+   "paragraphs": 16,
+   "solo_ratio": 0.19,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 1
+  },
+  {
+   "id": "BR-17",
+   "corpus": "BREGMAN",
+   "form": "REPORTED_ESSAY",
+   "paragraphs": 92,
+   "solo_ratio": 0.22,
+   "signpost_count": 1,
+   "signpost_rate": 0.0109,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 17
+  },
+  {
+   "id": "BR-18",
+   "corpus": "BREGMAN",
+   "form": "ARGUMENTATIVE_ESSAY",
+   "paragraphs": 23,
+   "solo_ratio": 0.09,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 2
+  },
+  {
+   "id": "BR-19",
+   "corpus": "BREGMAN",
+   "form": "REPORTED_ESSAY",
+   "paragraphs": 98,
+   "solo_ratio": 0.17,
+   "signpost_count": 2,
+   "signpost_rate": 0.0204,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 7
+  },
+  {
+   "id": "SC-01",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 10,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-02",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 9,
+   "solo_ratio": 0.11,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "INSUFFICIENT_PARAGRAPHS",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-03",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 15,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-04",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 9,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "INSUFFICIENT_PARAGRAPHS",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-05",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 15,
+   "solo_ratio": 0.13,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-06",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 13,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-07",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 13,
+   "solo_ratio": 0.15,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-08",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 10,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-09",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 15,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-10",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 11,
+   "solo_ratio": 0.09,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-11",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 14,
+   "solo_ratio": 0.07,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-12",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 12,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-13",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 8,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "INSUFFICIENT_PARAGRAPHS",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-14",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 10,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-15",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 12,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-16",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 13,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-17",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 12,
+   "solo_ratio": 0.08,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-18",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 10,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-19",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 11,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-20",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 11,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-21",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 12,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-22",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 9,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "INSUFFICIENT_PARAGRAPHS",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-23",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 15,
+   "solo_ratio": 0.07,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-24",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 13,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-25",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 14,
+   "solo_ratio": 0.14,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-26",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 12,
+   "solo_ratio": 0.08,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-27",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 13,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-28",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 11,
+   "solo_ratio": 0.18,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 1
+  },
+  {
+   "id": "SC-29",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 16,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-30",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 9,
+   "solo_ratio": 0.0,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "INSUFFICIENT_PARAGRAPHS",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "SC-31",
+   "corpus": "SCIENTIAS",
+   "form": "",
+   "paragraphs": 12,
+   "solo_ratio": 0.08,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "WITHIN_PUBLISHED_RANGE",
+   "pivot_candidates": 0
+  },
+  {
+   "id": "jia.NEW.md",
+   "corpus": "JIA",
+   "form": "SHORT_NARRATIVE",
+   "paragraphs": 15,
+   "solo_ratio": 0.33,
+   "signpost_count": 4,
+   "signpost_rate": 0.2667,
+   "band": "ARCHITECTURE_VISIBLE",
+   "pivot_candidates": 5
+  },
+  {
+   "id": "jia.NEW.loop2.md",
+   "corpus": "JIA",
+   "form": "SHORT_NARRATIVE",
+   "paragraphs": 15,
+   "solo_ratio": 0.4,
+   "signpost_count": 4,
+   "signpost_rate": 0.2667,
+   "band": "ARCHITECTURE_VISIBLE",
+   "pivot_candidates": 5
+  },
+  {
+   "id": "jia.NEW.loop3.md",
+   "corpus": "JIA",
+   "form": "SHORT_NARRATIVE",
+   "paragraphs": 16,
+   "solo_ratio": 0.44,
+   "signpost_count": 3,
+   "signpost_rate": 0.1875,
+   "band": "ARCHITECTURE_VISIBLE",
+   "pivot_candidates": 6
+  },
+  {
+   "id": "jia.NEW.final.pre-audit.md",
+   "corpus": "JIA",
+   "form": "SHORT_NARRATIVE",
+   "paragraphs": 15,
+   "solo_ratio": 0.33,
+   "signpost_count": 5,
+   "signpost_rate": 0.3333,
+   "band": "ARCHITECTURE_VISIBLE",
+   "pivot_candidates": 4
+  },
+  {
+   "id": "jia.NEW.lens-realization.final.md",
+   "corpus": "JIA",
+   "form": "SHORT_NARRATIVE",
+   "paragraphs": 8,
+   "solo_ratio": 0.25,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "INSUFFICIENT_PARAGRAPHS",
+   "pivot_candidates": 1
+  },
+  {
+   "id": "jia.NEW.semantic-compression.final.md",
+   "corpus": "JIA",
+   "form": "SHORT_NARRATIVE",
+   "paragraphs": 8,
+   "solo_ratio": 0.25,
+   "signpost_count": 0,
+   "signpost_rate": 0.0,
+   "band": "INSUFFICIENT_PARAGRAPHS",
+   "pivot_candidates": 1
+  }
+ ]
+}

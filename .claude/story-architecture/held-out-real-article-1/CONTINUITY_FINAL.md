@@ -1,0 +1,23 @@
+Clamped to the front fork of a docked Citi Bike is a 3D-printed box, with a wire running down from it to the brake arm. The box was built by the artist Justin Blinder. It overrides the front brake to change how hard the bike is to pedal.
+
+Blinder is 41. He lost his job during the pandemic and began earning money as a delivery worker. The idea came to him then. Moving through the city that way, he said, showed him how much its economic and psychological qualities differed block by block.
+
+A servo inside pulls the existing front brake arm along the same axis the rider's own brake cable pulls it. The rider's levers stay functional and always override the device. The whole thing comes off the fork by hand in seconds. What a rider's legs get is resistance that arrives without being asked for, and then goes away again.
+
+Three parts decide the resistance: a GPS module, a microcontroller and a high-torque servo. A set of scores is stored on a card, one score for each block group, the smallest area the American Community Survey publishes figures for. The device finds its position by satellite and looks up the score for the ground beneath it. That number becomes a servo angle, which is to say brake pressure.
+
+The scores come from the survey's five-year estimates for 2020 through 2024. They blend two indicators: the median share of income spent on rent, and the share of renter households spending at least half of their income on housing. Both are ways of counting rent burden, the share of a household's income that goes on rent and utilities. The US Department of Housing and Urban Development counts a household as cost-burdened once that share passes thirty percent.
+
+HUD adopted the thirty percent figure in 1981. Earlier public-housing programmes had used twenty-five percent. The threshold is traced to a 1969 amendment by Senator Edward Brooke.
+
+On a ride around Prospect Park the bike rolled easily along Prospect Park West. Then, in Windsor Terrace, the brake engaged hard enough to nearly stop it. Median household income in the community district covering Windsor Terrace and Sunset Park was about $97,000 in 2024, according to a NYU Furman Center analysis. Median asking rent in the area was $2,250 in 2021, the year Citi Bike docks arrived. Five years later it was $3,800, according to StreetEasy, a rise far exceeding inflation. Areas that register a high rent burden are often not low-income neighbourhoods at all, but corridors where housing costs have climbed fast.
+
+Riding near NYCHA public-housing complexes, the device let go and the bike sped up. Blinder said that the easing over public housing shows public housing is working and offsetting the burden, though it does not mean residents' lives are more affordable as such.
+
+There are also stretches where the brake does not move at all, and for a different reason. The American Community Survey is a sample rather than a census. At block-group level the sample in any one area is small, with margins of error to match. Where a block group's sample is too small or too unreliable, the survey publishes no estimate. Both the device and the map that accompanies it render this as no reading rather than as zero. Blinder wrote that an absence of data is not an absence of pressure, and that showing it as flat ground would be a lie told by the visualisation rather than by the data.
+
+The measure leaves out a great deal that no amount of resistance can express. Rent burden does not measure overcrowding, or housing quality, or eviction risk, or informal tenancy, or the security of a lease, or harassment, or whether a place feels safe, or how long a household has been holding on. The survey counts households, so people with no housing at all are absent from it by construction. Blinder wrote that the difficulty a rider feels does not translate to the lived experiences and hardships of the people represented in the data.
+
+The bike coasted past the housing complexes, and it coasted through the block group with no published figure. In both cases the servo was passing on what the measure held. The instrument goes slack where the pressure is least counted.
+
+Something else came from the fitting. Across dozens of Citi Bikes handled during installation and removal, roughly one in four had a loose front-brake cable, which made the front brake ineffective. Blinder corrected them by hand as he went. It is the one thing the device turned up that no measure had a field for.

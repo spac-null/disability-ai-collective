@@ -1,0 +1,48 @@
+{
+  "content_hash": "83930580bde432a7b721f782bc60dbeea5cb279f49e361486937bcdbc3d5f5a2",
+  "created_at": "2026-09-03T21:09:46.643906+00:00",
+  "input_hashes": {
+    "research_pack": "c0d0bd6fd79d784dd90ee0e61f69c573e1e2860fb6856028a3ff0dbb4e95c30e",
+    "source": "329748e7cb7efb893a39bbdbb5a89f9860061023b7118c4f08811bd43a81927d",
+    "writer_output": "06f57ca7f350b896c065f962ca31c083edc333c13a217f4f5f0f62856e3d0db8"
+  },
+  "payload": {
+    "findings": [
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F1",
+        "quote": "reaches European rivers as a transparent glass eel only 8cm long, having already travelled 6,500km, according to ZSL",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "S1 supports the 8cm, transparent, 6,500km figures and the Sargasso Sea hatching. Correctly attributed to ZSL. This is a supported factual restatement, borderline; noted for record only."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F2",
+        "quote": "It then has to move upstream to feed and grow.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "S1 describes elvers travelling up rivers to find a home where they feed and grow. Supported; noted as borderline interpretive phrasing but grounded."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F3",
+        "quote": "both put the fall in recruitment since the 1980s at 90 to 95 per cent",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "S1 and S2 both state 90-95% reduction in recruitment since the 1980s. Fully supported; recorded only for the dual attribution claim, which is accurate."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F4",
+        "quote": "\"Anguilla\" shifts the job of a conservation centre from displaying the eel's plight to organising itself around an obstructed migration — treating architecture as the thing that reconnects an interrupted route rather than a container for information about it",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The source says the project is 'informed by the eel's extraordinary lifecycle and the barriers that threaten its migration' and describes it as 'ecological infrastructure — reconnecting habitats, communities and waterways.' The draft's reading is an interpretation built on these words, invents no new factual state, and explicitly flags its limits. Allowed."
+      }
+    ],
+    "status": "settled"
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "GROUNDING_FINDINGS"
+}

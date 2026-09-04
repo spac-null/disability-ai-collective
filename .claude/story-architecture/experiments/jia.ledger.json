@@ -1,0 +1,170 @@
+{
+  "F01": {
+    "fact_id": "F01",
+    "proposition": "The Oaken Tiltroom was constructed from Himalayan salt bricks.",
+    "claim_type": "POSITIVE_FACT",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "Constructed from Himalayan salt bricks",
+    "entities": [
+      "Oaken Tiltroom"
+    ],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": [
+      "colour of the brick",
+      "how the brick was laid"
+    ]
+  },
+  "F02": {
+    "fact_id": "F02",
+    "proposition": "The pavilion was partially embedded into the ground.",
+    "claim_type": "POSITIVE_FACT",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "partially embedded into the ground",
+    "entities": [],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": [
+      "floor level relative to the sand",
+      "depth",
+      "steps"
+    ]
+  },
+  "F03": {
+    "fact_id": "F03",
+    "proposition": "Inside, the pavilion featured fragrances and botanical drinks.",
+    "claim_type": "POSITIVE_FACT",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "featured Oaken's fragrances",
+    "entities": [],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": [
+      "brand names",
+      "what anything smelled or tasted like"
+    ]
+  },
+  "F04": {
+    "fact_id": "F04",
+    "proposition": "The stated aim was engaging all senses.",
+    "claim_type": "ATTRIBUTION",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "engaging all senses",
+    "entities": [],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": [
+      "that this is an accessibility feature or credential"
+    ]
+  },
+  "F05": {
+    "fact_id": "F05",
+    "proposition": "The Jakarta practice Spatial Sonata designed it, aiming to create a contemplative environment shaped by landscape and sensory design.",
+    "claim_type": "ATTRIBUTION",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "contemplative environment shaped by landscape and sensory design",
+    "entities": [
+      "Spatial Sonata"
+    ],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": []
+  },
+  "F06": {
+    "fact_id": "F06",
+    "proposition": "In another pavilion, sand on the ground embodied both strength and fragility, and water fell from rain chains.",
+    "claim_type": "POSITIVE_FACT",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "sand on the ground embodied both strength and fragility; and water falling from the rain chains",
+    "entities": [],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": []
+  },
+  "F07": {
+    "fact_id": "F07",
+    "proposition": "In another, a perforated timber facade allowed free flow of air, trees punctured the roof, and natural rocks became seating.",
+    "claim_type": "POSITIVE_FACT",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "free flow of air within the space",
+    "entities": [],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": []
+  },
+  "F08": {
+    "fact_id": "F08",
+    "proposition": "The festival ran from 13 to 17 August at Pengembak Beach in Sanur, on Bali's eastern shoreline.",
+    "claim_type": "POSITIVE_FACT",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "Pengembak Beach in Sanur on Bali's eastern shoreline",
+    "entities": [],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": []
+  },
+  "F09": {
+    "fact_id": "F09",
+    "proposition": "The published account presents these as eight of the most interesting, the top eight, and none of the eight descriptions reports what any visitor perceived.",
+    "claim_type": "ABSENCE",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "Here are eight of the most interesting",
+    "entities": [],
+    "scope": "AUDITED_CORPUS",
+    "corpus_size": 8,
+    "prohibited_extensions": [
+      "that no visitor perceived anything",
+      "that no testing or accessibility work happened"
+    ]
+  },
+  "F10": {
+    "fact_id": "F10",
+    "proposition": "A selection of eight presented as the most interesting is a selection, not a count of everything shown.",
+    "claim_type": "INTERPRETATION",
+    "evidence_ids": [
+      "S0",
+      "F09"
+    ],
+    "support_span": "",
+    "entities": [],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": []
+  },
+  "F11": {
+    "fact_id": "F11",
+    "proposition": "The Oaken Tiltroom is one of the eight pavilions the published account lists as the top eight.",
+    "claim_type": "POSITIVE_FACT",
+    "evidence_ids": [
+      "S0"
+    ],
+    "support_span": "Oaken Tiltroom, by Spatial Sonata",
+    "entities": [
+      "Oaken Tiltroom"
+    ],
+    "scope": "WORLD",
+    "corpus_size": 0,
+    "prohibited_extensions": [
+      "its rank or placing within the eight",
+      "the basis on which the eight were chosen"
+    ]
+  }
+}

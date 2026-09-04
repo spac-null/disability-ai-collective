@@ -1,0 +1,57 @@
+{
+ "worth_gate": {
+  "verdict": "STRONG_INTERPRETIVE_LENS",
+  "lens_claim": "An instrument that converts a published classification into force on the body can only transmit what has been published: where the survey publishes a figure it can ease or resist on it, and where the survey publishes none the honest output is not an easier ride but no reading at all.",
+  "changes_meaning_how": "It moves the work from a device that makes inequality feelable to a demonstration of what a published measure can and cannot hand to a body. The easing over public housing, and the refusal to draw an unpublished block group as flat ground, stop being caveats appended to the project and become its finding.",
+  "evidence_ids": [
+   "F14",
+   "F15",
+   "F19",
+   "F20",
+   "F22"
+  ],
+  "_repair_2_note": "Verdict RE-DERIVED after the unsupported equivalence was removed, not inherited. The prior claim's second half ('least informative exactly where the need is most acute') was refused by F19 and F20 and is gone. What remains still names a mechanism and still changes the story's meaning: an instrument that converts a published classification into force on the body, and that answers an absent figure with no reading rather than an easier ride. The Crip Minds warrant is narrower and now rests on what a measure structurally cannot hold about a life (F21) and on who is absent from it by construction (F22), rather than on a claim that the ride goes quiet where suffering is greatest. Narrower, and true. OLD lens_claim: 'An instrument that converts a classification into a force on the body can only transmit what the classification already carries: it eases where a remedy has already absorbed the pressure, and it has nothing to say at all about the places and people the survey never counted, so the ride is least informative exactly where the need is most acute.'"
+ },
+ "story_candidate": {
+  "story_id": "ground-truth-2026",
+  "carrier_type": "object",
+  "opening_possibility": "a 3D-printed box clamped to the front fork of a docked Citi Bike, a wire running to the brake arm",
+  "real_event_or_change": "on a ride around Prospect Park the bike rolled freely, then the brake engaged in Windsor Terrace and nearly stopped it",
+  "tension": "the brake bit hardest in a neighbourhood with a roughly $97,000 median household income, and eased over public housing",
+  "causal_chain": [
+   {
+    "kind": "SUPPORTED_CAUSAL",
+    "link": "GPS position selects a block-group score, which the microcontroller maps to a servo angle, which tensions the front brake",
+    "evidence_ids": [
+     "F01",
+     "F02",
+     "F03",
+     "F06"
+    ]
+   }
+  ],
+  "reader_first_sees": "a device that makes a bike harder to pedal in expensive places",
+  "reader_later_discovers": "the measure eases where a subsidy is working and is blank where nobody was counted",
+  "evidence_ids": [
+   "F01",
+   "F11",
+   "F14",
+   "F19",
+   "F22"
+  ]
+ },
+ "narrative_yield": {
+  "components": {
+   "carrier": 2,
+   "concrete_opening": 2,
+   "real_change": 2,
+   "causal": 2,
+   "tension": 2,
+   "discovery": 1,
+   "concept_only_penalty": 0,
+   "no_evidence_penalty": 0
+  },
+  "score": 11,
+  "max": 11
+ }
+}

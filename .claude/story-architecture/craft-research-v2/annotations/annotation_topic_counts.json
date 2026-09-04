@@ -1,0 +1,21 @@
+{
+ "n_annotations": 421,
+ "topic_counts": {
+  "OPENING": 27,
+  "SCENE": 26,
+  "PACING": 12,
+  "PEOPLE_SOURCES": 72,
+  "READER_QUESTION": 12,
+  "OTHER": 190,
+  "OMISSION": 17,
+  "NUMBERS": 28,
+  "BACKGROUND_TIMING": 22,
+  "ABSTRACTION": 28,
+  "NUT_GRAF": 9,
+  "CRITIQUE": 12,
+  "ENDING": 17,
+  "TRANSITION": 14,
+  "SUMMARY_EXPOSITION": 19
+ },
+ "n_critiques": 12
+}

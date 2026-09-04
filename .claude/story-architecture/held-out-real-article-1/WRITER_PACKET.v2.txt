@@ -1,0 +1,89 @@
+You are writing one finished article. Everything you need is below.
+
+WHAT THE STORY IS
+  A device that turns a census score into brake pressure ends up easing over public housing and going blank where nobody was counted.
+
+OPEN ON
+  A 3D-printed box clamped to the front fork of a docked Citi Bike, with a wire running down to the brake arm.
+  The reader should first understand only this: That someone built a small machine which decides how hard a public hire bike is to pedal.
+
+THE PATH, IN ORDER
+  1. The device: where it sits on the bike, what it grips, and what a rider's legs feel.
+     carried by: the box on the fork and the wire to the brake arm
+     - A device made by the artist Justin Blinder attaches to the front fork of a docked Citi Bike and overrides the front brake to change how hard the bike is to pedal.
+     - The servo pulls the existing front brake arm along the same axis as the rider's own brake cable; the rider's levers stay functional and always override, and the device can be removed by hand in seconds.
+     not yet: anything about census data, neighbourhoods or what the resistance means
+  2. What it reads: satellite position, a card of block-group scores, a servo angle, and the measure those scores come from.
+     carried by: the card of scores and the servo arm on the brake cable
+     - The device was built from a GPS module, an ESP32S3 microcontroller, a high-torque servo motor, an SD card reader, an OLED display and a custom circuit board, in a 3D-printed enclosure.
+     - The data is the American Community Survey five-year estimates at block-group level, covering 2020 through 2024.
+     - Two indicators were blended into one score: the median share of income spent on rent, and the share of renter households spending at least half their income on housing.
+     - The measure follows the US Department of Housing and Urban Development's 30 percent standard, under which a household spending more than 30 percent of income on rent and utilities is counted as cost-burdened.
+     explain plainly, once, here: rent burden: the share of a household's income that goes on rent and utilities, counted as a burden above thirty percent
+     not yet: that the measure eases over public housing
+  3. Where the thirty percent came from.
+     carried by: the figure itself, and the dates it changed
+     - HUD adopted the 30 percent figure in 1981; earlier public-housing programmes had used 25 percent, and the threshold is traced to a 1969 amendment by Senator Edward Brooke.
+     not yet: the Windsor Terrace figures
+  4. The ride around Prospect Park, and then the income and rent figures for where the brake bit hardest.
+     carried by: Prospect Park West, then Windsor Terrace, then two rent figures five years apart
+     - On a ride around Prospect Park the bike rolled easily along Prospect Park West and then the brake engaged in Windsor Terrace, nearly stopping it.
+     - Median household income in the community district covering Windsor Terrace and Sunset Park was about $97,000 in 2024, per a NYU Furman Center analysis.
+     - Median asking rent in that area was $2,250 in 2021, when Citi Bike docks arrived, and $3,800 five years later, per StreetEasy - a rise far exceeding inflation.
+     - Areas registering a higher rent burden are often not low-income neighbourhoods but corridors where housing costs have risen rapidly.
+     not yet: the public housing result
+  5. Near public housing the resistance let go, and what the maker takes that to show.
+     carried by: the bike speeding up alongside the complexes
+     - Riding near NYCHA public-housing complexes, the device released resistance.
+     - Blinder said that easing over public housing shows public housing is working and offsetting the burden, but does not mean residents' lives are more affordable as such.
+     not yet: the suppressed block groups
+  6. What the measure does not hold, and the places where it holds nothing at all.
+     carried by: a block group with no published figure
+     - The ACS is a sample rather than a census, and at block-group level the sample in any one area is small with correspondingly wide margins of error.
+     - Where a block group's sample is too small or unreliable, the ACS publishes no estimate, and both the device and the map render this as no reading rather than as zero.
+     - Blinder wrote that an absence of data is not an absence of pressure, and that showing it as flat ground would be a lie told by the visualization rather than by the data.
+     - Rent burden does not measure overcrowding, housing quality, eviction risk, informal tenancy, security of a lease, harassment, feelings of safety, or how long a household has been holding on.
+     - The survey covers households, so people with no housing at all are absent from it by construction.
+     not yet: the brake cables
+  7. What the maker found with his hands while fitting the devices, and what he says the ride does not convey.
+     carried by: the loose front-brake cables on one bike in four
+     - Blinder wrote that the difficulty a rider feels does not translate to the lived experiences and hardships of the people represented in the data.
+     - Across dozens of Citi Bikes handled during installation and removal, roughly one in four had a loose front-brake cable that made the front brake ineffective, and Blinder corrected them.
+     - Blinder is 41, lost his job during the pandemic and began earning money as a delivery worker, and had the idea then.
+     - Blinder said the experience of moving through the city showed him how much its economic and psychological qualities differed block by block.
+
+WHAT THE READER SHOULD UNDERSTAND DIFFERENTLY BY THE END
+  Near the complexes the brake eased on a figure the survey had published and measured lower. Where the survey publishes no figure, the device shows no reading rather than a zero, and Blinder wrote that an absence of data is not an absence of pressure.
+  Realise this through the material: a juxtaposition, a consequence, a
+  contrast, or an earlier detail whose meaning has changed. Do not
+  state it as a general principle unless that is genuinely the most
+  natural sentence available. The reader should arrive at it.
+
+EXPLAIN AT FIRST USE
+  rent burden -- the share of a household's income that goes on rent and utilities
+  block group -- the smallest area the survey publishes figures for
+
+END ON
+  The loose front-brake cables, found by hand on one bike in four, are the one thing the device turned up that no measure had a field for.
+
+RULES
+  Write only what is above. Do not add facts, names, numbers, dates,
+  places or quotations that do not appear here.
+  Do not discuss what is known or unknown about this story, and do not
+  qualify it. If something is not above, it simply does not appear.
+  Do not write about documents or reporting unless a document is itself
+  part of what happens.
+  One difficult idea at a time. Give each paragraph one job.
+  Do not describe what any rider other than the maker saw, felt, thought or noticed.
+  Do not say or imply that any disabled person has used, tested, encountered or been consulted about this device.
+  Do not claim the resistance corresponds to any particular household's circumstances, or that the device measures hardship.
+  Do not say the device was ridden anywhere other than the places named.
+  Do not describe any neighbourhood as poor, rich, gentrifying or declining beyond the figures given.
+  Do not claim anything was never done, never tested, never measured or does not exist.
+  Do not state or imply that Citi Bike, Lyft or the Census Bureau responded, objected, approved or were consulted.
+  Do not attribute a motive or intention beyond a stated aim.
+  Do not invent or paraphrase a quotation as if it were spoken.
+  Do not name the funder, the award, the sum of money, or Citi Bike's prices or ownership.
+  Do not list every electronic component.
+  Never use the first person.
+  Do not state the colour, size or weight of the device.

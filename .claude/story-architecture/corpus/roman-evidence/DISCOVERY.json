@@ -1,0 +1,36 @@
+{
+  "content_hash": "fe59aa4940152046300674931a67909b80735dbfce59a63fdcd4dd0a61736ce8",
+  "created_at": "2026-09-01T07:00:04.517384+00:00",
+  "input_hashes": {
+    "research_pack": "5ba55aa9eaadd2e5fdcf24ddb767db44208af972ef954c641ef8993e3334c82b",
+    "source": "b0cc88fd5bf523db3841464973744bd4a48814bf9b08a4e57036eced06b1d632"
+  },
+  "payload": {
+    "commissionable": true,
+    "disturbance": "The mission is not designed simply to gather data privately for its builders and beam a finished product to the public. The source describes a pipeline in which roughly a terabyte a day is sent down and released immediately, to a named range of users — researchers, teachers, enthusiasts — with the coronagraph and Rubin pairing framed as complementary rather than singular. The value described is not just how much the instrument sees, but how the seeing is distributed and shared among differently-positioned observers.",
+    "dominant_reading": "The Roman telescope is a triumph of scale and sensitivity — a machine that sees more sky, faster, than Hubble, and whose value is measured by the sheer volume and reach of what it captures. The story is about acquiring more data, more galaxies, more of the universe.",
+    "evidence_gaps": [
+      "The source does not describe the format, tooling, or usability of the released data — 'made public immediately' does not establish that non-specialists can actually work with a terabyte a day.",
+      "The source does not say the data is free of cost, nor how long access persists, nor what infrastructure is required to receive or process it.",
+      "The source does not establish any comparison with the release policies of Hubble, Webb or other missions, so no claim that Roman is more open than its peers is supported.",
+      "The source gives no evidence about who among 'teachers and science enthusiasts' has, in practice, the means to use the data — the naming of these groups is an intention stated by NASA, not a demonstrated outcome."
+    ],
+    "grounding_boundaries": "Do not claim the data release is free, permanent, or practically usable by non-experts — the source says only that it will be 'made public immediately' with named intended audiences. Do not assert Roman is more open than other telescopes; no comparison of access policies appears in the source. Do not generalise from this one mission's design to how science, institutions, or 'open data' work in general — keep every claim about Roman's own arrangement. Do not stage the immediate-release policy as a settled achievement of equitable access; it is an intended design feature, and the source provides no evidence of its effect on any actual user. Do not build biography or lived experience around Nancy Grace Roman, the named scientists, or the imagined 'next Dr. Roman' — those figures may be named only as the source names them. The coronagraph and Habitable Worlds Observatory are described as untested and future; do not present their success as fact.",
+    "perceptual_instrument": "attention to access architecture — the capacity, sharpened by living with barriers to information, to notice whether a system is built to route its outputs to many kinds of users on equal terms or to hold them behind a threshold. It notices the difference between 'the instrument sees' and 'others can use what it sees.'",
+    "source_anchor_quote": "Those observations will be made public immediately, allowing researchers, teachers and science enthusiasts alike to have access.",
+    "source_anchor_verified": true,
+    "source_facts": [
+      "Observations will be made public immediately, with access named for researchers, teachers and science enthusiasts.",
+      "Roman sends about one terabyte of data to the ground every day (Jeremy Perkins).",
+      "Roman was made to capture data complementary to the Vera C. Rubin Observatory; Rubin sees in visible/bluer light, Roman has better resolution and sees in infrared.",
+      "The Wide Field Instrument has a field of view at least 100 times larger than Hubble's and can observe the sky about 1,000 times faster.",
+      "The coronagraph is designed to be 100 to 1,000 times more powerful than any previous space-based coronagraph and will look at previously detected exoplanets.",
+      "Roman's surveys were designed with input from the global scientific community.",
+      "The telescope is named after Nancy Grace Roman, NASA's first chief of astronomy and female executive."
+    ],
+    "subject_scope_verified": true,
+    "what_becomes_knowable": "Roman's design treats distribution as part of the instrument, not an afterthought to it. The immediate public release, the deliberate complementarity with a differently-tuned observatory (Rubin sees bluer, Roman sees sharper), and the wide field that trades singular deep focus for coverage many can query — together these show a system engineered so that its perception is legible and reusable by observers who did not build it. The reach of the telescope is not only spatial (how much sky) but relational (how many independent parties can act on the same output)."
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "DISCOVERY"
+}

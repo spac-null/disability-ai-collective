@@ -1,0 +1,40 @@
+{
+  "content_hash": "8a7f5115c251cd999130e7c74e2be6ddb7a3879be3ba7a8ce799b3e0d8ee07cf",
+  "created_at": "2026-09-03T21:24:59.448937+00:00",
+  "input_hashes": {
+    "research_pack": "46b29f08c5d13002844ed5a0b57f4592faf252db6e7b5b20227b0d077651bacd",
+    "source": "02d31dc554b74960966876cf8b17d3d8308bfef7265493def714d3f987b411ef",
+    "writer_output": "5c8cff33fb2e36d1c8184ff5934609a636f1555676e8b6f6287c302504a18dd4"
+  },
+  "payload": {
+    "findings": [
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F1",
+        "quote": "The fifth edition of Jia Curated ran from 13 to 17 August 2026 at Pengembak Beach in Sanur, on Bali's eastern shoreline.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The anchor source states it is the fifth edition, the dates, Sanur and eastern shoreline. However, the sources S2/S4/S5 describe the festival as introduced in 2022, evolved in 2025 — casting some doubt on the 'fifth edition' count, but this claim comes directly from the anchor source and no invented fact is added."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F2",
+        "quote": "A festival like this is consumed by walking through and photographing — that is the standard way its work travels afterward.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The source notes photography by David Wilson but does not establish how the festival is 'consumed' or how its work 'travels afterward'. This is the writer's framing/argument, not a new factual state about a person or event."
+      },
+      {
+        "classification": "LEGITIMATE_INTERPRETATION",
+        "id": "F3",
+        "quote": "The salt is under your hands. The room is sunk into the earth.",
+        "repairable": false,
+        "suggested_patch": "",
+        "why": "The source says the pavilion was built from salt bricks and partially embedded in the ground; the rhetorical rephrasing ('under your hands', 'sunk into the earth') is interpretive elaboration, not a new fact."
+      }
+    ],
+    "status": "settled"
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "GROUNDING_FINDINGS"
+}

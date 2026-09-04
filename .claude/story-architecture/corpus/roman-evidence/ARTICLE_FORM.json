@@ -1,0 +1,26 @@
+{
+  "content_hash": "a1104048b398fdf77516d4e87fcc228eac80f6b5c3daabdc0b59bf4d53ac5b24",
+  "created_at": "2026-09-01T07:00:04.517384+00:00",
+  "input_hashes": {
+    "discovery": "fe59aa4940152046300674931a67909b80735dbfce59a63fdcd4dd0a61736ce8",
+    "research_pack": "5ba55aa9eaadd2e5fdcf24ddb767db44208af972ef954c641ef8993e3334c82b",
+    "source": "b0cc88fd5bf523db3841464973744bd4a48814bf9b08a4e57036eced06b1d632"
+  },
+  "payload": {
+    "arrival": "Roman's design treats distribution as part of the instrument — its reach is relational as well as spatial — but the source establishes this as NASA's stated intention, not a demonstrated capacity for the named users to act on the data.",
+    "burden": "Carried by the source's own facts in sequence — the instrument specs, the terabyte-a-day pipeline, the immediate-release policy, the Rubin pairing — set against the explicit evidence gaps the source leaves open. Excluded: any remedy or recommendation, any claim Roman is more open than peer missions (unsupported), any second arrival celebrating scale, any persona voice.",
+    "motion": "establishes -> accumulates -> reframes -> qualifies",
+    "route": [
+      "Establish the concrete object: the Roman Space Telescope launched August 30 atop a Falcon Heavy, an 18,000-pound observatory the size of a tour bus, bound for the second Lagrange point a million miles out, named for Nancy Grace Roman. State its stated purpose — three surveys of exoplanets, dark matter, dark energy.",
+      "Show how it works at the level of scale and sensitivity — the dominant reading: the Wide Field Instrument's field of view at least 100 times Hubble's, observing 1,000 times faster, the coronagraph designed 100 to 1,000 times more powerful than any prior space-based one. This is the machine measured by how much sky it catches.",
+      "Turn on the second half of the design that the scale reading passes over: roughly a terabyte a day beamed down and released immediately to a named range of users — researchers, teachers, enthusiasts — plus the deliberate complementarity with Rubin (Rubin bluer, Roman sharper) and surveys designed with global scientific input. Name what this makes visible: distribution is engineered into the instrument, not appended to it.",
+      "Mark precisely what the source does and does not establish about that architecture: NASA states an intention to route outputs to many parties on equal terms, but the source says nothing about data format, cost, persistence, required infrastructure, or whether a teacher can actually work with a terabyte a day — and offers no comparison to Hubble or Webb release policy. Arrive: what Roman demonstrably enlarges is not only how much sky one instrument sees but how many independent parties are meant to act on the same output — with the reach of that intention still unproven."
+    ],
+    "target_words": [
+      550,
+      680
+    ]
+  },
+  "schema_version": "shadow-v0.1",
+  "stage": "ARTICLE_FORM"
+}
