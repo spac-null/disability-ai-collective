@@ -10,6 +10,8 @@ Log:   automation/bsky_engage.log
 """
 import json, os, re, logging, urllib.request as ureq, urllib.error
 from pathlib import Path
+
+import claude_cli_provider
 from datetime import datetime, timezone
 
 # ── Paths ─────────────────────────────────────────────────────────────────────
@@ -18,7 +20,7 @@ SOCIAL   = REPO / "_social"
 STATE_F  = Path(__file__).parent / "bsky_engage_seen.json"
 LOG_F    = Path(__file__).parent / "bsky_engage.log"
 API      = "https://bsky.social/xrpc"
-CLAUDE   = "https://openrouter.ai/api/v1"
+REPLY_MODEL = "anthropic/claude-haiku-4.5"   # served by the Claude subscription
 
 logging.basicConfig(
     filename=str(LOG_F), level=logging.INFO,
@@ -129,26 +131,15 @@ def build_uri_map():
 
 # ── Claude call ────────────────────────────────────────────────────────────────
 def generate_reply(system, prompt):
-    api_key = os.environ.get("OPENROUTER_API_KEY", "")
-    req = ureq.Request(
-        f"{CLAUDE}/chat/completions",
-        data=json.dumps({
-            "model": "anthropic/claude-haiku-4.5",
-            "max_tokens": 100,
-            "messages": [
-                {"role": "system", "content": system},
-                {"role": "user", "content": prompt},
-            ],
-        }).encode(),
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {api_key}",
-        },
-        method="POST",
-    )
-    with ureq.urlopen(req, timeout=30) as r:
-        data = json.loads(r.read())
-    text = data["choices"][0]["message"]["content"].strip().strip('"').strip("'")
+    # PHASE 2B: Claude subscription, not OpenRouter. This script has no cron entry today,
+    # but it is runnable production tooling rather than a frozen fixture, so it is
+    # migrated with the live callers -- leaving it would keep a Claude/OpenRouter path one
+    # crontab line away from being live again.
+    completion = claude_cli_provider.complete_via_subscription(
+        system, prompt, REPLY_MODEL, timeout=120)
+    log.info(claude_cli_provider.provenance_line(claude_cli_provider.provenance(
+        completion.requested_model, completion.actual_model, ok=True)))
+    text = completion.text.strip().strip('"').strip("'")
     # Hard cap 220 chars, break at word boundary
     if len(text) > 220:
         cut = text[:220].rfind(" ")
