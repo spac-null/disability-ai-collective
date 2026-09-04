@@ -958,6 +958,16 @@ def test_a_gerund_in_a_noun_slot_is_not_a_participle():
     Asserted in BOTH directions, because a rule that only stops false positives would
     quietly stop true ones too."""
     gerunds = [
+        # Compound modifiers: an -ing word directly against the noun it modifies. The
+        # second fresh-subject candidate spent both architecture repairs and still could
+        # not get past "the Academic Integrity Board hearing space" -- a space where
+        # hearings are held. The noun-slot rule cannot see it, because the token before
+        # is "Board" and a participle's subject is also a noun. What separates them is
+        # what comes AFTER: a working participle takes a determiner or preposition next.
+        "the Academic Integrity Board hearing space, without phone, parent or lawyer",
+        "the reading room on the second floor",
+        "the housing target for new homes",
+        "the training day in September",
         "a measure with no field for eviction risk, overcrowding or harassment",
         "a measure with no field for overcrowding",
         "the building's cladding",

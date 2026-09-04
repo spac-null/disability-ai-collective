@@ -345,6 +345,29 @@ _NOUN_SLOT_BEFORE = re.compile(
     re.I)
 
 
+# AN -ing WORD DIRECTLY FOLLOWED BY A BARE NOUN IS A COMPOUND MODIFIER.
+#
+# "the Academic Integrity Board hearing space" -- a space where hearings are held. The
+# noun-slot rule above cannot see it: the token before "hearing" is "Board", a noun, and
+# a participle's subject is also a noun. What separates them is what comes AFTER. A
+# participle doing a verb's work takes a determiner or a preposition next -- "pulling THE
+# brake arm", "coasting THROUGH the block group", "speeding UP alongside" -- while a
+# modifier sits directly against the noun it modifies: "hearing space", "reading room",
+# "housing target", "training day".
+#
+# Found by the second fresh-subject candidate, which spent both architecture repairs and
+# still could not get past it.
+_FOLLOWED_BY_BARE_NOUN = re.compile(
+    r"^\s+(?!the\b|a\b|an\b|its\b|his\b|her\b|their\b|this\b|that\b|these\b"
+    r"|those\b|through\b|over\b|under\b|into\b|onto\b|across\b|along\b|up\b"
+    r"|down\b|out\b|alongside\b|past\b|toward\b|towards\b|at\b|to\b|on\b|in\b"
+    r"|from\b|with\b|by\b|and\b|or\b|but\b|,|\.|$)[a-z]+", re.I)
+
+
+def _is_compound_modifier(carrier: str, end: int) -> bool:
+    return bool(_FOLLOWED_BY_BARE_NOUN.match(carrier[end:]))
+
+
 def _is_gerund_noun(carrier: str, word: str, at: int) -> bool:
     """Is the -ing word at `at` occupying a noun slot rather than acting as a verb?"""
     return bool(_NOUN_SLOT_BEFORE.search(carrier[:at]))
@@ -366,7 +389,8 @@ def carrier_asserts_instance(carrier: str) -> dict:
         hits.append("consequence connective %r" % _CONSEQUENCE.search(c).group(0))
     for m in _PARTICIPLE.finditer(c):
         w = m.group(0)
-        if w.lower() in _ADJECTIVAL or _is_gerund_noun(c, w, m.start()):
+        if w.lower() in _ADJECTIVAL or _is_gerund_noun(c, w, m.start()) \
+                or _is_compound_modifier(c, m.end()):
             continue
         hits.append("participle %r" % w)
         break
