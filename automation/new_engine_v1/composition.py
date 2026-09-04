@@ -972,6 +972,11 @@ WRITER_SYSTEM = (
 )
 
 
+# Not a length policy. A reply below this is not an article at all, and BRIEF is a real
+# article_type whose length this gate must not second-guess.
+WRITER_MIN_WORDS = 50
+
+
 def writer_packet(arch: dict, ledger: dict) -> tuple:
     """The packet and its rendered prompt. Refused if it carries the auditing frame."""
     packet = ST.build_packet(arch, arch.get("final_lens") or {},
@@ -1003,9 +1008,12 @@ def write_article(provider, arch: dict, ledger: dict) -> dict:
         except ProviderError as e:
             raise CompositionHold(WRITER, WRITER_HOLD, ["provider unavailable: %s" % e])
         article = _clean_article(comp.text)
-        # Mechanically unusable, not "not good enough": empty, or no title line, or too
-        # short to be an article. There is no quality-regeneration loop here.
-        if len(article.split()) >= 120 and article.lstrip().startswith("#"):
+        # Mechanically unusable, not "not good enough": empty, missing its title line, or
+        # too short to be prose at all. The floor is deliberately very low, because BRIEF
+        # is a legitimate article_type and a length judgement is not this gate's business
+        # -- it exists to catch a reply that is not an article, not a reply that is a
+        # short one. There is no quality-regeneration loop here.
+        if len(article.split()) >= WRITER_MIN_WORDS and article.lstrip().startswith("#"):
             return {"status": PASS, "article_text": article, "packet": packet,
                     "prompt": prompt, "prompt_sha256": C.sha256_text(prompt),
                     "provider": _identity(comp, attempt),
@@ -1169,10 +1177,15 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
     if not f["prose_leaks"]["ok"] or not f["scaffold"]["ok"]:
         blocking.append("MACHINE_LANGUAGE: provenance frames %s, scaffold names %s"
                         % (f["prose_leaks"]["frames"], f["scaffold"]["leaked"]))
-    if f["intent_causal"]:
-        blocking.append("UNSUPPORTED_INTENT_OR_CAUSALITY: %d assertion(s): %s"
-                        % (len(f["intent_causal"]),
-                           [h.get("sentence", "")[:90] for h in f["intent_causal"]][:3]))
+    # intent_causal_scan is TELEMETRY, and deliberately so. Unlike
+    # negative_admission_audit it pairs nothing against the ledger -- it is a pure text
+    # scan -- so it fires on intent the ledger explicitly grants: an ATTRIBUTION fact
+    # reading "fitted with fragrances INTENDED to engage all the senses" licenses the
+    # article to say exactly that, and the scan flags it anyway. Blocking on it would
+    # refuse approved material, and giving it a ledger-pairing pass would be a new
+    # validator, which this campaign is not adding. It is also absent from the required
+    # zeroes the campaign specifies. So it is counted and surfaced to the human gate,
+    # where an unsupported motive is a thing a reader can actually settle.
     if delta_errs:
         blocking.append("CONTINUITY_ADDED_MATERIAL: %s" % delta_errs[:6])
     # The CUT audit reporting its own blind spots is a failure of the derivation, which is
@@ -1366,7 +1379,11 @@ def run_story_architecture_composition(
         return payload
 
     def out(failure_stage=None, failure_reason=None, code=None, article=None):
-        return {
+        """Build the result AND persist it. Persisting here rather than at each return
+        is the point: a HOLD at safety, grounding, fact check or the reader gate is
+        exactly the run whose intermediate artifacts someone needs to read, and four
+        separate returns is four chances to forget one."""
+        result = {
             "engine": COMPOSITION_STORY_ARCHITECTURE,
             "status": PASS if failure_stage is None else HOLD,
             "stages": {s: st[s].get("status", NOT_RUN) for s in STAGES},
@@ -1382,6 +1399,9 @@ def run_story_architecture_composition(
             "runtime_seconds": round(time.time() - t0, 1),
             "subject": subject,
         }
+        if out_dir is not None:
+            persist(out_dir, result)
+        return result
 
     try:
         led = record(LEDGER, freeze_ledger(P, pack, subject))
@@ -1434,19 +1454,13 @@ def run_story_architecture_composition(
         else:
             st[READER] = {"status": SKIPPED}
 
-        result = out(article=final)
-        if out_dir is not None:
-            persist(out_dir, result)
-        return result
+        return out(article=final)
 
     except CompositionHold as e:
         st[e.stage] = {"status": HOLD, "code": e.code, "reasons": e.reasons}
-        result = out(e.stage, "; ".join(e.reasons)[:600], e.code,
-                     st.get(CONTINUITY, {}).get("article_text")
-                     or st.get(WRITER, {}).get("article_text"))
-        if out_dir is not None:
-            persist(out_dir, result)
-        return result
+        return out(e.stage, "; ".join(e.reasons)[:600], e.code,
+                   st.get(CONTINUITY, {}).get("article_text")
+                   or st.get(WRITER, {}).get("article_text"))
 
 
 def persist(out_dir, result: dict) -> None:
