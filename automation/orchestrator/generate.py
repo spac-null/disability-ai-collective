@@ -24,6 +24,7 @@ import re
 import time
 from datetime import datetime
 
+from . import provider_policy
 from .config import _INDEFENSIBLE_PROMPTS, _REGISTERS, _THEME_CLUSTERS
 from .discovery import MAX_SOURCE_ACQUISITION_ATTEMPTS
 from .grounding import (
@@ -1241,7 +1242,21 @@ class GenerateMixin:
             raw_content, used_provider, actual_model = None, "fallback", "fallback"
 
         if not raw_content:
-            self.logger.info("Using high-quality fallback article")
+            # OWNER POLICY 2026-09-05: in LIVE, a run that Claude could not serve HOLDs.
+            # It does NOT fall back to generate_fallback_article, which is a canned
+            # template -- rotating openings picked by a hash of the title, `##` headers the
+            # writer system prompt forbids -- published under the persona's byline as
+            # though it were written. A truthful HOLD is a valid production outcome; a
+            # fabricated one is not. See orchestrator/provider_policy.py.
+            if not provider_policy.local_fallback_allowed():
+                detail = "; ".join(getattr(self, "_last_provider_attempts", [])) \
+                    or "no provider attempted"
+                self.logger.error("Composition HOLD — no permitted provider: %s", detail)
+                return provider_policy.provider_hold(
+                    detail, getattr(self, "_last_provider_attempts", []))
+            self.logger.warning("Using the canned fallback article — %s is set, so this is "
+                                "a dev/recovery run and NOT publishable output",
+                                provider_policy.LOCAL_FALLBACK_ENV)
             raw_content = self.generate_fallback_article(title, agent_name, agent_info)
             used_provider = "fallback"
             actual_model = "fallback"
