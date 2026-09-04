@@ -9,14 +9,14 @@ smallest-blast-radius method in the file, chosen to prove the mixin pattern
 before moving anything the daily cron path depends on.
 
 Zero behavior change: method body copied verbatim. Every self.* and module-level
-reference (self.agents, self.drafts_dir, self._call_openai_compat_api, CLIPROXY_URL,
+reference (self.agents, self.drafts_dir, self._call_openai_compat_api, OPENROUTER_URL,
 _SCRIPT_DIR, etc.) still resolves the same way once DebateMixin is one of
 ProductionOrchestrator's base classes — nothing about how Python resolves `self.x`
 cares which file defines the method.
 """
 import re
 
-from .config import CLIPROXY_URL, CLIPROXY_KEY, _SCRIPT_DIR
+from .config import OPENROUTER_URL, OPENROUTER_API_KEY, _SCRIPT_DIR
 
 
 class DebateMixin:
@@ -78,8 +78,8 @@ class DebateMixin:
             f"Return only the essay body — no title, no byline."
         )
         voice_a_raw = self._call_openai_compat_api(
-            CLIPROXY_URL, CLIPROXY_KEY, system_a, prompt_a,
-            model="openrouter/claude-opus-4.8", max_tokens=900, timeout=90,
+            OPENROUTER_URL, OPENROUTER_API_KEY, system_a, prompt_a,
+            model="anthropic/claude-opus-4.8", max_tokens=900, timeout=90,
         )
 
         # Generate voice B
@@ -102,8 +102,8 @@ class DebateMixin:
             f"Return only the essay body — no title, no byline."
         )
         voice_b_raw = self._call_openai_compat_api(
-            CLIPROXY_URL, CLIPROXY_KEY, system_b, prompt_b,
-            model="openrouter/claude-opus-4.8", max_tokens=900, timeout=90,
+            OPENROUTER_URL, OPENROUTER_API_KEY, system_b, prompt_b,
+            model="anthropic/claude-opus-4.8", max_tokens=900, timeout=90,
         )
 
         # Generate debate title via Fable

@@ -483,7 +483,7 @@ def _generate_raw_draft(po, topic, sample_idx):
 
 
 def _run_one_branch(case_dir, label, raw_draft, agent_name, verdict, notes, status,
-                     cliproxy_url, cliproxy_key):
+                     provider_url, provider_key):
     """label: 'fable_review' or 'opus_review'. Writing review_<label> is
     done by the caller; this only handles the execution half + final
     output. Three distinct outcomes, never conflated:
@@ -499,7 +499,7 @@ def _run_one_branch(case_dir, label, raw_draft, agent_name, verdict, notes, stat
     elif verdict == "revise" and notes:
         sys_e, user_e = _execution_prompts(raw_draft, notes, agent_name)
         final_text, usage, lat, finish, err = _direct_call(
-            cliproxy_url, cliproxy_key, sys_e, user_e,
+            provider_url, provider_key, sys_e, user_e,
             model="openrouter/claude-opus-4.8", max_tokens=5000, timeout=180,
             temperature=EXECUTOR_TEMPERATURE,
         )
@@ -515,7 +515,7 @@ def _run_one_branch(case_dir, label, raw_draft, agent_name, verdict, notes, stat
 
 
 def _process_case(case_id, topic_key, sample_idx, raw_draft, agent_name, agent_perspective,
-                   brief_angle, cliproxy_url, cliproxy_key):
+                   brief_angle, provider_url, provider_key):
     """Everything from 'have a raw draft' to 'provenance.json written' --
     factored out of run() so the mocked offline test (--test-mock) can
     drive this exact logic with a fake _direct_call, with no orchestrator
@@ -531,7 +531,7 @@ def _process_case(case_id, topic_key, sample_idx, raw_draft, agent_name, agent_p
     # mandatory extended thinking needs a sub-budget so it doesn't eat the
     # whole response), not a sampling-setting asymmetry.
     fable_raw, fable_usage, fable_lat, fable_finish, fable_err = _direct_call(
-        cliproxy_url, cliproxy_key, sys_r, user_r,
+        provider_url, provider_key, sys_r, user_r,
         model="openrouter/claude-fable-5", max_tokens=3200, timeout=90,
         reasoning_max_tokens=1024, temperature=REVIEW_TEMPERATURE,
     )
@@ -540,7 +540,7 @@ def _process_case(case_id, topic_key, sample_idx, raw_draft, agent_name, agent_p
 
     print("  Opus review (forced)...", end=" ", flush=True)
     opus_raw, opus_usage, opus_lat, opus_finish, opus_err = _direct_call(
-        cliproxy_url, cliproxy_key, sys_r, user_r,
+        provider_url, provider_key, sys_r, user_r,
         model="openrouter/claude-opus-4.8", max_tokens=3200, timeout=60,
         temperature=REVIEW_TEMPERATURE,
     )
@@ -561,12 +561,12 @@ def _process_case(case_id, topic_key, sample_idx, raw_draft, agent_name, agent_p
 
     print(f"  -> executing Fable's review outcome...", end=" ", flush=True)
     fable_exec = _run_one_branch(case_dir, "fable_review", raw_draft, agent_name,
-                                  f_verdict, f_notes, f_status, cliproxy_url, cliproxy_key)
+                                  f_verdict, f_notes, f_status, provider_url, provider_key)
     print(f"executed={fable_exec['executed']}")
 
     print(f"  -> executing Opus's review outcome...", end=" ", flush=True)
     opus_exec = _run_one_branch(case_dir, "opus_review", raw_draft, agent_name,
-                                 o_verdict, o_notes, o_status, cliproxy_url, cliproxy_key)
+                                 o_verdict, o_notes, o_status, provider_url, provider_key)
     print(f"executed={opus_exec['executed']}")
 
     provenance = {
@@ -600,7 +600,7 @@ def _process_case(case_id, topic_key, sample_idx, raw_draft, agent_name, agent_p
 
 def run():
     po = _import_orchestrator()
-    from orchestrator.config import CLIPROXY_URL, CLIPROXY_KEY
+    from orchestrator.config import OPENROUTER_URL, OPENROUTER_API_KEY
 
     ROI_OUT_DIR.mkdir(parents=True, exist_ok=True)
     cases = []
@@ -616,7 +616,7 @@ def run():
                 print(f"  SKIP (generation failed): {gen_err}")
                 continue
             _process_case(case_id, topic["key"], sample_idx, raw_draft, agent_name,
-                           agent_perspective, brief_angle, CLIPROXY_URL, CLIPROXY_KEY)
+                           agent_perspective, brief_angle, OPENROUTER_URL, OPENROUTER_API_KEY)
             cases.append(case_id)
 
     print(f"\n{len(cases)}/{len(ROI_TOPICS) * CASES_PER_TOPIC} cases collected -> {ROI_OUT_DIR}/")

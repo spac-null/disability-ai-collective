@@ -35,7 +35,7 @@ OUT_DIR.mkdir(exist_ok=True)
 
 # ---------------------------------------------------------------------------
 # Personal, non-production credential (user's own ~/.hermes/.env, NOT Trident's
-# CLIProxyAPI secret). CLIPROXY_URL (127.0.0.1:8317) only exists on Trident and
+# provider secret). OPENROUTER_API_KEY only exists on Trident and
 # is unreachable from this machine; OPENROUTER_API_KEY here is a direct,
 # separate credential the user already has on this Mac for their own use.
 # ---------------------------------------------------------------------------

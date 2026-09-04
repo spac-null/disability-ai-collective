@@ -16,7 +16,7 @@ import sqlite3
 import time
 import urllib.request
 
-from .config import CLIPROXY_URL, CLIPROXY_KEY, CANONICAL_DISABILITY_LINKS
+from .config import OPENROUTER_URL, OPENROUTER_API_KEY, CANONICAL_DISABILITY_LINKS
 
 
 class ContentChecksMixin:
@@ -127,8 +127,8 @@ class ContentChecksMixin:
         import os, json as _json
         try:
             response = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=(
                     "You are a curious reader with no disability background. "
                     "You found this article via Google. You follow any interesting argument "
@@ -142,7 +142,7 @@ class ContentChecksMixin:
                     "Return ONLY valid JSON. If no issues: {\"issues\": []}"
                 ),
                 user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:18000]}",
-                model="openrouter/claude-haiku-4.5",
+                model="anthropic/claude-haiku-4.5",
                 max_tokens=1200,
                 timeout=30,
                 no_think=True,
@@ -160,8 +160,8 @@ class ContentChecksMixin:
                 for i in issues
             )
             fixed = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=(
                     "You are editing an article for plain-language accessibility. "
                     "Fix ONLY the flagged issues below — do not change anything else. "
@@ -169,7 +169,7 @@ class ContentChecksMixin:
                     "Return the complete article body only, no commentary."
                 ),
                 user_prompt=f"Article:\n\n{content}\n\nFix these issues:\n{issues_text}",
-                model="openrouter/claude-haiku-4.5",
+                model="anthropic/claude-haiku-4.5",
                 max_tokens=4000,
                 timeout=60,
                 no_think=True,
@@ -197,8 +197,8 @@ class ContentChecksMixin:
         import os, json as _json
         try:
             response = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=(
                     "You are an editorial reviewer for Crip Minds, a disability culture publication. "
                     "Check this article for four structural problems:\n\n"
@@ -216,7 +216,7 @@ class ContentChecksMixin:
                     "Return ONLY valid JSON."
                 ),
                 user_prompt=f"Title: {title}\nAuthor: {agent}\n\n{content[:18000]}",
-                model="openrouter/claude-opus-4.8",
+                model="anthropic/claude-opus-4.8",
                 max_tokens=800,
                 timeout=90,
             )
@@ -234,8 +234,8 @@ class ContentChecksMixin:
                 for i in issues
             )
             fixed = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=(
                     "You are editing an article for Crip Minds. Fix ONLY the flagged editorial issues. "
                     "Protect: the opening scene, argument structure, persona voice, all concrete examples. "
@@ -246,7 +246,7 @@ class ContentChecksMixin:
                     f"Article:\n\n{content}\n\n"
                     f"Fix these editorial issues (score was {score}/10):\n{issues_text}"
                 ),
-                model="openrouter/claude-opus-4.8",
+                model="anthropic/claude-opus-4.8",
                 max_tokens=4500,
                 timeout=90,
             )
@@ -414,11 +414,11 @@ The question isn't whether {title.lower()} matters. The question is whether the 
 
         try:
             raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=SYSTEM,
                 user_prompt=body,
-                model="openrouter/claude-haiku-4.5",
+                model="anthropic/claude-haiku-4.5",
                 max_tokens=800,
                 timeout=45,
             )
@@ -483,8 +483,8 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         body_preview = content[:1500]
         try:
             raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=(
                     "You generate SEO keywords for Crip Minds, a disability culture publication. "
                     "Return 5-7 keywords as a comma-separated list. No explanation, no numbering, no quotes. "
@@ -499,7 +499,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                     f"Title: {title}\n\nArticle excerpt:\n{body_preview}\n\n"
                     "Return 5-7 comma-separated SEO keywords. Specific > generic. Proper nouns welcome."
                 ),
-                model="openrouter/claude-haiku-4.5",
+                model="anthropic/claude-haiku-4.5",
                 max_tokens=120,
                 timeout=30,
                 no_think=True,
@@ -517,8 +517,8 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         body_preview = content[:2000]
         try:
             return self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=(
                     "You write article card excerpts for Crip Minds, a disability culture publication. "
                     "The card sits on the /research page beside other articles. The reader is already on the site — "
@@ -533,7 +533,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                     f"Title: {title}\nAuthor: {author}\n\nArticle body:\n{body_preview}\n\n"
                     "Write one card excerpt: the structural tension this article lives inside. Two things that should not both be true, but are."
                 ),
-                model="openrouter/claude-haiku-4.5",
+                model="anthropic/claude-haiku-4.5",
                 max_tokens=80,
                 timeout=30,
                 no_think=True,
@@ -573,8 +573,8 @@ The question isn't whether {title.lower()} matters. The question is whether the 
         body_preview = content[:3000]
         try:
             raw = self._call_openai_compat_api(
-                url=CLIPROXY_URL,
-                api_key=CLIPROXY_KEY,
+                url=OPENROUTER_URL,
+                api_key=OPENROUTER_API_KEY,
                 system_prompt=(
                     "You extract concrete visual material from an article for an image "
                     "generator. Return exactly one JSON object with three keys: "
@@ -596,7 +596,7 @@ The question isn't whether {title.lower()} matters. The question is whether the 
                     "Return ONLY the JSON object, no commentary."
                 ),
                 user_prompt=f"Title: {title}\n\nArticle:\n{body_preview}",
-                model="openrouter/claude-haiku-4.5",
+                model="anthropic/claude-haiku-4.5",
                 max_tokens=250,
                 timeout=30,
                 no_think=True,
