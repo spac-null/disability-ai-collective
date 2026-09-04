@@ -125,12 +125,17 @@ def report(result: dict, out_dir: pathlib.Path) -> None:
          "status  : %s" % result["status"],
          "runtime : %ss" % result["runtime_seconds"],
          "words   : %s" % result["words"], "", "STAGES"]
+    rt = result.get("runtime_by_stage") or {}
     for s in CP.STAGES:
-        L.append("  %-13s %-8s  calls=%s%s"
+        L.append("  %-13s %-8s  calls=%-2s %7s%s"
                  % (s, result["stages"][s],
                     result["model_calls_by_stage"].get(s, 0),
+                    ("%.1fs" % rt[s]) if s in rt else "-",
                     "  repairs=%s" % result["repairs_by_stage"][s]
                     if result["repairs_by_stage"].get(s) else ""))
+    if rt:
+        slow = sorted(rt.items(), key=lambda kv: -kv[1])[:3]
+        L.append("  slowest: " + ", ".join("%s %.1fs" % (k, v) for k, v in slow))
     L += ["", "model calls total : %s" % result["model_calls_total"]]
     if result["failure_stage"]:
         L += ["", "FAILURE STAGE : %s" % result["failure_stage"],

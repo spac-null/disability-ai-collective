@@ -1590,7 +1590,16 @@ def run_story_architecture_composition(
     repairs: dict[str, int] = {}
     t0 = time.time()
 
+    # Wall-clock per stage, measured rather than inferred from provider durations: a
+    # stage's own validators, span checks and deterministic derivations do not appear in
+    # any model call's duration_ms, and on a hundred-fact ledger they are not free.
+    elapsed: dict[str, float] = {}
+    marks = {"_last": time.time()}
+
     def record(stage, payload):
+        now = time.time()
+        elapsed[stage] = round(now - marks["_last"], 1)
+        marks["_last"] = now
         st[stage] = payload
         calls[stage] = payload.get("model_calls", 0)
         repairs[stage] = payload.get("repairs", 0)
@@ -1614,6 +1623,7 @@ def run_story_architecture_composition(
             "model_calls_by_stage": dict(calls),
             "model_calls_total": sum(calls.values()),
             "repairs_by_stage": {k: v for k, v in repairs.items() if v},
+            "runtime_by_stage": dict(elapsed),
             "runtime_seconds": round(time.time() - t0, 1),
             "subject": subject,
         }
@@ -1675,6 +1685,7 @@ def run_story_architecture_composition(
         return out(article=final)
 
     except CompositionHold as e:
+        elapsed[e.stage] = round(time.time() - marks["_last"], 1)
         st[e.stage] = dict(e.payload, status=HOLD, code=e.code, reasons=e.reasons)
         return out(e.stage, "; ".join(e.reasons)[:600], e.code,
                    st.get(CONTINUITY, {}).get("article_text")

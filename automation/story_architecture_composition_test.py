@@ -783,6 +783,26 @@ def test_the_repair_is_told_the_highest_fact_id_numerically():
           and "already validated" in out["failure_reason"], out.get("failure_reason"))
 
 
+def test_runtime_is_recorded_per_stage():
+    """Measured, not inferred from provider durations: a stage's validators, span checks
+    and deterministic derivations appear in no model call's duration_ms, and on a
+    hundred-fact ledger they are not free. Recorded only -- nothing here optimises."""
+    _, out = run(full_script())
+    rt = out["runtime_by_stage"]
+    check("every stage that ran reports a time",
+          all(s in rt for s in CP.STAGES if out["stages"][s] == CP.PASS), rt)
+    check("the deterministic CUT stage is timed too, though it makes no model call",
+          CP.CUT_TERMS in rt and out["model_calls_by_stage"][CP.CUT_TERMS] == 0)
+    check("the per-stage times do not exceed the total",
+          sum(rt.values()) <= out["runtime_seconds"] + 1.0,
+          (sum(rt.values()), out["runtime_seconds"]))
+
+    # A held stage still reports the time it spent getting there.
+    _, held = run(["not json", "still not json"])
+    check("a HOLDing stage is timed", CP.LEDGER in held["runtime_by_stage"],
+          held["runtime_by_stage"])
+
+
 def test_a_worth_hold_stops_the_article_before_composition():
     for verdict in (ST.WEAK_ANALOGY, ST.NO_PLAUSIBLE_LENS, ST.WRONG_PUBLICATION):
         refusal = {"worth_gate": {"verdict": verdict,
