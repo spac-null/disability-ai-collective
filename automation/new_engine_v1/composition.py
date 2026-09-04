@@ -1125,6 +1125,10 @@ continuous continuously contiguous
 
 _WORD = re.compile(r"[A-Za-z0-9][A-Za-z0-9.,'-]*")
 _NUMBERISH = re.compile(r"\d")
+# A term that IS a number, as opposed to one that merely contains a digit. "ESP32S3" is a
+# part name and belongs on the word path: sent down the number path it could never match,
+# because ST._numbers does not read it as a number either.
+_PURE_NUMBER = re.compile(r"^[$\u00a3\u20ac]?\d[\d,.:/-]*%?$")
 _PROPER = re.compile(r"\b[A-Z][a-z]{2,}(?:\s+[A-Z][a-z]+)*\b")
 
 
@@ -1136,7 +1140,7 @@ def _words(text: str) -> set:
     return set(re.findall(r"[a-z0-9]+", (text or "").lower()))
 
 
-def _licensed_by(term: str, words: set) -> bool:      # noqa: C901
+def _licensed_by(term: str, words: set, numbers: set | None = None) -> bool:
     """Is `term` a morphological variant of a word the packet already carries?
 
     STEM EQUALITY CANNOT ANSWER THIS, and three canary runs died proving it. story.py's
@@ -1162,11 +1166,18 @@ def _licensed_by(term: str, words: set) -> bool:      # noqa: C901
     the right way round for a screen whose false positives block real articles.
     """
     # A NUMBER HAS NO MORPHOLOGY. It is licensed by its exact appearance and by nothing
-    # else: prefix logic would make "2020" unlicensable under the length floor while also
-    # letting "20" license "2024". The known-clean baseline flagged "2020" the moment the
-    # floor was introduced, on a packet that says "covering 2020 through 2024".
-    if _NUMBERISH.search(term):
-        return term.strip().lower() in words
+    # else: prefix logic would make "2020" unlicensable under a length floor while also
+    # letting "20" license "2024".
+    #
+    # AND IT MUST BE EXTRACTED THE SAME WAY ON BOTH SIDES. Candidates come from
+    # ST._numbers, which reads "$12.15" as one token; `words` came from a [a-z0-9]+ scan,
+    # which splits it into "12" and "15". So a decimal could never match, and the CUT
+    # audit reported "$12.15" as leaked from cut F100 while USED fact F15 -- "A 45-minute
+    # e-bike ride could cost a Citi Bike member $12.15" -- was sitting in the Writer's
+    # own packet granting it. Same extractor on both sides, or the comparison is between
+    # two different things.
+    if _PURE_NUMBER.match(term.strip()):
+        return term.strip().lower() in (numbers or set())
     roots = {r for r in ({term.lower()} | _stems(term)) if len(r) >= CUT_TERM_MIN}
     for w in words:
         for r in roots:
@@ -1188,7 +1199,7 @@ def _document_frequency(ledger: dict) -> dict:
 
 def _is_distinctive(term: str, df: dict) -> bool:
     t = term.strip()
-    if _NUMBERISH.search(t):
+    if _PURE_NUMBER.match(t):
         return True                                  # a figure belongs to its fact
     # ORDINARY ENGLISH FIRST, before the proper-noun shortcut. A capitalised word at the
     # start of a sentence looks exactly like a name to a regex: the canary watched
@@ -1245,6 +1256,7 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
         packet_text = " ".join((ledger.get(f) or {}).get("proposition") or ""
                                for f in (arch.get("use_facts") or []))
     licensed_words = _words(packet_text)
+    licensed_numbers = {n.strip().lower() for n in ST._numbers(packet_text)}
     packet_norm = normalize_span(packet_text)
     df = _document_frequency(ledger)
 
@@ -1266,7 +1278,7 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
             # both words elsewhere -- and a name is exactly the thing a phrase, not its
             # parts, identifies.
             if (normalize_span(cand) in packet_norm if " " in cand.strip()
-                    else _licensed_by(cand, licensed_words)):
+                    else _licensed_by(cand, licensed_words, licensed_numbers)):
                 rejected.append((cand, "licensed by the packet"))
                 continue
             if not _is_distinctive(cand, df):
@@ -1283,7 +1295,7 @@ def derive_cut_watch_terms(arch: dict, ledger: dict) -> dict:
 
     report = {
         "terms": terms,
-        "prohibitions": compile_cut_prohibitions(arch, ledger, terms),
+        "prohibitions": compile_cut_prohibitions(arch, ledger, terms, packet_text),
         "cut_declared": len(arch.get("cut_evidence") or []),
         "cut_with_terms": sum(1 for v in terms.values() if v),
         "cut_without_distinctive_terms": sorted(unlicensed_only),
@@ -1354,13 +1366,27 @@ CUT_CATEGORIES = [
 ]
 
 
-def compile_cut_prohibitions(arch: dict, ledger: dict, terms: dict) -> list:
+def compile_cut_prohibitions(arch: dict, ledger: dict, terms: dict,
+                             packet_text: str = "") -> list:
     """Generic prohibitions whose CONTENT comes only from the cut facts.
 
     One line per category actually present in the cut material, deduplicated and in a
     fixed order so the packet is stable across runs. Nothing article-specific is written
     here and no model is asked anything.
     """
+    # KNOWN LIMITATION, recorded rather than papered over. A category can contradict the
+    # packet: the run-D architecture USED a components fact, so the Writer was handed the
+    # ESP32S3, the PCB and the GPS module AND told not to name components, because a
+    # different cut fact matched the electronics category. The audit is unaffected --
+    # those terms are packet-licensed and are not watched -- so the cost is an incoherent
+    # instruction rather than a blocked article.
+    #
+    # Suppressing a category whose vocabulary appears in the packet was tried and is too
+    # blunt: the markers are broad enough that a rich packet touches every category, and
+    # it silenced all six prohibitions on the run-D architecture -- including the two
+    # that demonstrably stopped "circuit" and "Reality Capture". Losing a working control
+    # to fix a wording clash is the wrong trade, so the clash stands until someone decides
+    # otherwise.
     out = []
     for markers, sentence in CUT_CATEGORIES:
         for c in (arch.get("cut_evidence") or []):

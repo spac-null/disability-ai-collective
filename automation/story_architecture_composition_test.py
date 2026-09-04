@@ -1347,27 +1347,48 @@ def test_packet_licensing_survives_the_stemmer_being_asymmetric():
     Every pair is the same word and every pair failed an equality test, so the CUT audit
     watched vocabulary the Writer had been handed and reported leaks on prose that leaked
     nothing. Licensing compares by prefix containment in both directions instead."""
-    words = CP._words("the device overrides the front brake correspondingly, the reading "
-                      "updates continuously on a Citi Bike, the map is down, the top "
-                      "quantile was removed, covering 2020 through 2024")
+    _pk = ("the device overrides the front brake correspondingly, the reading updates "
+           "continuously on a Citi Bike, the map is down, the top quantile was removed, "
+           "covering 2020 through 2024, and an ESP32S3 sits inside")
+    words = CP._words(_pk)
+    nums = {n.strip().lower() for n in ST._numbers(_pk)}
     for w in ("override", "overrides", "corresponding", "continuous", "continuously",
-              "Bikes", "quantile", "2020"):
-        check("%r is recognised as licensed" % w, CP._licensed_by(w, words), w)
+              "Bikes", "quantile", "2020", "ESP32S3"):
+        check("%r is recognised as licensed" % w,
+              CP._licensed_by(w, words, nums), w)
     for w in ("photogrammetry", "circuit", "capture", "servo", "12.15"):
         check("%r is NOT licensed by that packet" % w,
-              not CP._licensed_by(w, words), w)
+              not CP._licensed_by(w, words, nums), w)
+    # An alphanumeric part name is NOT a number and must take the word path: sent down
+    # the number path it could never match, because ST._numbers does not read it as one.
+    check("a part name goes down the word path",
+          not CP._PURE_NUMBER.match("ESP32S3") and CP._PURE_NUMBER.match("12.15")
+          and CP._PURE_NUMBER.match("$12.15") and CP._PURE_NUMBER.match("2020"))
     # The difference is the signal, not the absolute length. A floor on the shorter form
     # rejected down/download correctly and then also rejected bike/bikes.
     check("'down' does not license 'download' -- a spelling coincidence",
-          not CP._licensed_by("download", words))
+          not CP._licensed_by("download", words, nums))
     check("but 'Bike' does license 'Bikes' -- one character of inflection",
-          CP._licensed_by("Bikes", words))
+          CP._licensed_by("Bikes", words, nums))
     check("and the rule is stated as a difference",
           CP.LICENSE_MORPH_DIFF == 3)
     # A number has no morphology: exact appearance only.
+    # A DECIMAL MUST BE EXTRACTED THE SAME WAY ON BOTH SIDES. Candidates come from
+    # ST._numbers, which reads "$12.15" as one token; a [a-z0-9]+ scan splits it into
+    # "12" and "15", so a decimal could never match. That is how the CUT audit reported
+    # "$12.15" as leaked from cut F100 while USED fact F15 was granting it in the
+    # Writer's own packet.
     check("a number is licensed only by its exact appearance",
-          CP._licensed_by("2020", words) and not CP._licensed_by("202", words)
-          and not CP._licensed_by("20241", words))
+          CP._licensed_by("2020", words, nums)
+          and not CP._licensed_by("202", words, nums)
+          and not CP._licensed_by("20241", words, nums))
+    dec = "a 45-minute e-bike ride could cost a member $12.15"
+    check("a decimal in the packet licenses the same decimal",
+          CP._licensed_by("12.15", CP._words(dec),
+                          {n.strip().lower() for n in ST._numbers(dec)}))
+    check("and a different decimal is still watched",
+          not CP._licensed_by("12.55", CP._words(dec),
+                              {n.strip().lower() for n in ST._numbers(dec)}))
     # A multi-word term is licensed only as a PHRASE. Checking its words separately
     # licensed "Idle Hands" because the packet contained both words elsewhere, and a
     # name is exactly the thing a phrase rather than its parts identifies.
@@ -1404,6 +1425,58 @@ def test_the_frozen_baseline_stays_at_zero_after_every_licensing_change():
           all(any(g in x.lower() for x in
                   [y.lower() for v in r["terms"].values() for y in v])
               for g in ("photogrammetry", "quantile", "12.15", "download")),
+          {k: v for k, v in r["terms"].items() if v})
+
+
+def test_exact_cut_vocabulary_stays_machine_side():
+    """The CUT boundary the campaign wants: the Writer never receives the forbidden value
+    merely so it can be told not to repeat it. The compiled prohibitions are fixed
+    generic sentences, so they carry no number, name, quotation or proposition -- and
+    the exact vocabulary stays with the deterministic post-Writer audit."""
+    arch = copy.deepcopy(ARCH)
+    led = copy.deepcopy(LEDGER)
+    led["F09"] = F("F09", "The pavilion's lighting ran from a custom circuit board and "
+                          "an ESP32 microcontroller costing $412.90.",
+                   "The pavilion closed after the Kunsthalle season ended", ev=("S1",))
+    arch["cut_evidence"] = arch["cut_evidence"] + [
+        {"evidence_id": "F09", "reason": "BACKGROUND_NOT_NEEDED"}]
+    r = CP.derive_cut_watch_terms(arch, led)
+
+    check("a prohibition is emitted for the cut fact",
+          r["prohibitions"], r["prohibitions"])
+    joined = " ".join(r["prohibitions"])
+    check("no compiled prohibition carries a number",
+          not ST._numbers(joined), sorted(ST._numbers(joined)))
+    check("nor the cut value", "412.90" not in joined)
+    check("nor a part name", "ESP32" not in joined and "circuit board" not in joined)
+    check("nor a quotation", '"' not in joined and "'" not in joined)
+    check("nor any cut proposition verbatim",
+          CP.normalize_span(led["F09"]["proposition"]) not in CP.normalize_span(joined))
+    check("the wording is generic and fixed",
+          all(any(s == fixed for _, fixed in CP.CUT_CATEGORIES)
+              for s in r["prohibitions"]))
+
+    _, prompt = CP.writer_packet(arch, led, r["prohibitions"])
+    check("and the cut value never reaches the rendered Writer prompt",
+          "412.90" not in prompt, [l for l in prompt.splitlines() if "412" in l])
+    check("nor does the cut proposition",
+          CP.normalize_span(led["F09"]["proposition"]) not in CP.normalize_span(prompt))
+
+    # BUT the exact vocabulary is still available to the machine-side audit.
+    check("the exact cut value is retained for the CUT audit",
+          any("412.90" in x for v in r["terms"].values() for x in v),
+          r["terms"].get("F09"))
+    leak = DRAFT + "\n\nThe board cost $412.90."
+    check("and a leak of it is caught",
+          any(v["term"] == "412.90"
+              for v in ST.cut_adherence(leak, arch, r["terms"])["violations"]),
+          ST.cut_adherence(leak, arch, r["terms"])["violations"])
+
+    # A USED fact with overlapping vocabulary is unaffected: the article may still use
+    # the words it was granted.
+    check("used vocabulary is never watched",
+          not any(x.lower() in ("salt", "brick", "bricks", "himalayan", "pavilion")
+                  for v in r["terms"].values() for x in v),
           {k: v for k, v in r["terms"].items() if v})
 
 
