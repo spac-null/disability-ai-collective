@@ -70,7 +70,12 @@ LEDGER = {
              "supplied in nine tonne pallets and laid by two masons over eleven days"),
     "F04": F("F04", "The catalogue records eight rooms.",
              "The catalogue records eight rooms", kind="DISPOSITION"),
-    "F05": F("F05", "No catalogue entry describes what any visitor heard.",
+    # Deliberately LONG. The lexical audit needs max(2, len(key)//3) of THIS fact's
+    # content words, so a faithful but narrower sentence rendering only its first clause
+    # cannot match enough -- the exact shape that blocked the Ground Truth canary on F59.
+    "F05": F("F05", "No catalogue entry describes what any visitor heard, and none "
+                    "records the acoustics of any room, so the register holds nothing "
+                    "about listening at all.",
              "No entry describes what any visitor heard", ct=LG.ABSENCE,
              kind="DISPOSITION"),
     "F06": F("F06", "A reviewer wrote that the catalogue keeps each room's intention and "
@@ -250,11 +255,18 @@ class Scripted:
         return "?"
 
 
-def full_script(ledger=None, worth=None, arch=None, draft=DRAFT, reader=READER_OK):
+def envelope(article, negative_lineage=None):
+    """The Writer's reply shape: markdown inside a JSON envelope, plus the negative
+    provenance sidecar. The visible article format is unchanged."""
+    return {"article": article, "negative_lineage": negative_lineage or []}
+
+
+def full_script(ledger=None, worth=None, arch=None, draft=DRAFT, reader=READER_OK,
+                negative_lineage=None):
     return [{"facts": list((ledger or LEDGER).values())},
             worth or WORTH,
             arch or ARCH,
-            draft,
+            envelope(draft, negative_lineage),
             _edits_from(draft),
             reader]
 
@@ -902,7 +914,7 @@ def test_continuity_is_fail_safe_and_never_destroys_a_safe_article():
     e2 = _edits_from(bad)
     e2["edits"][3]["text"] = ("The catalogue records eight rooms because each entry was "
                               "written to a fixed form.")
-    prov3, out3 = run(full_script()[:3] + [bad, e2, READER_OK])
+    prov3, out3 = run(full_script()[:3] + [envelope(bad), e2, READER_OK])
     check("a discarded edit over an unsafe draft HOLDS",
           out3["failure_stage"] == CP.SAFETY, out3.get("failure_stage"))
     check("and says both things happened",
@@ -966,6 +978,145 @@ def test_a_gerund_in_a_noun_slot_is_not_a_participle():
     # The hand list is kept as a second cheap check rather than removed.
     check("the adjectival list is still consulted",
           "housing" in ST._ADJECTIVAL)
+
+
+NEG_SENTENCE = "The register says nothing about listening."
+
+
+def _draft_with_negative(extra=""):
+    """The draft, with a negative sentence that renders F05 faithfully but narrowly."""
+    return DRAFT.replace(
+        "No entry describes what any visitor heard.",
+        NEG_SENTENCE + (" " + extra if extra else ""))
+
+
+def test_a_faithful_narrow_negative_needs_provenance_the_lexical_audit_cannot_see():
+    """The blocker, and the six cases that define the fix.
+
+    F05 is an approved ABSENCE the architecture uses. The prose renders its first clause
+    faithfully and narrowly, so the word-overlap audit -- whose threshold scales with the
+    FACT's length -- cannot pair them. Measured equivalently on the canary: fact F59 has
+    9 key words and needs 3; "It says nothing about homeowners." supplies 1.
+
+    A declaration is a claim about ORIGIN. It never makes unsupported content valid."""
+    draft = _draft_with_negative()
+    # First: confirm the lexical audit really cannot see it, or this tests nothing.
+    audit = ST.negative_admission_audit(draft, LEDGER)
+    check("the lexical audit cannot pair the faithful paraphrase",
+          any(NEG_SENTENCE in h["sentence"] for h in audit["unmatched"]),
+          [h["sentence"] for h in audit["unmatched"]])
+
+    good = [{"sentence_id": "S007", "fact_ids": ["F05"]}]
+
+    def run_with(lineage, d=None):
+        d = d or draft
+        return run([{"facts": list(LEDGER.values())}, WORTH, ARCH,
+                    envelope(d, lineage), _edits_from(d), READER_OK])
+
+    # 1. approved negative paraphrase + valid Writer lineage -> PASS
+    sid = next(k for k, v in CP.label_sentences(draft).items()
+               if "nothing about listening" in v)
+    _, ok = run_with([{"sentence_id": sid, "fact_ids": ["F05"]}])
+    check("1. valid Writer lineage admits the paraphrase",
+          ok["status"] == CP.PASS, ok.get("failure_reason"))
+    adm = ok["detail"][CP.SAFETY]["negatives_admitted_by_provenance"]
+    check("   and the admission is recorded with its fact id",
+          adm and adm[0]["fact_ids"] == ["F05"], adm)
+
+    # 2. identical prose WITHOUT Writer lineage -> FAIL
+    _, no_lin = run_with([])
+    check("2. the same prose with no lineage HOLDS",
+          no_lin["failure_stage"] == CP.SAFETY
+          and "UNSUPPORTED_NEGATIVES" in no_lin["failure_reason"],
+          no_lin.get("failure_reason"))
+
+    # 3. lineage to a POSITIVE fact -> FAIL
+    _, pos = run_with([{"sentence_id": sid, "fact_ids": ["F01"]}])
+    check("3. lineage to a positive fact is refused",
+          pos["failure_stage"] == CP.SAFETY, pos.get("failure_stage"))
+    rej = pos["detail"][CP.WRITER]["negative_lineage_rejected"]
+    check("   and the rejection says why",
+          any("not an approved negative" in str(r["why"]) for r in rej), rej)
+
+    # 4. valid negative lineage + new unsupported entity -> FAIL
+    d4 = _draft_with_negative("The Rijksmuseum says nothing about it either.")
+    sid4 = next(k for k, v in CP.label_sentences(d4).items()
+                if "Rijksmuseum" in v)
+    _, ent = run_with([{"sentence_id": sid4, "fact_ids": ["F05"]}], d4)
+    check("4a. a declaration does not license a new entity",
+          ent["failure_stage"] == CP.SAFETY, ent.get("failure_stage"))
+    rej4 = ent["detail"][CP.WRITER]["negative_lineage_rejected"]
+    check("    and the verifier names the new entity",
+          any("new entit" in str(r["why"]) for r in rej4), rej4)
+
+    # 4b. valid negative lineage + a relation the fact does not assert -> FAIL
+    d4b = DRAFT.replace(
+        "No entry describes what any visitor heard.",
+        "The register says nothing about listening, because the catalogue was the "
+        "quietest record of the eight.")
+    sid4b = next(k for k, v in CP.label_sentences(d4b).items()
+                 if "quietest" in v)
+    verified, rejected = CP.verify_negative_lineage(
+        d4b, [{"sentence_id": sid4b, "fact_ids": ["F05"]}], LEDGER,
+        CP.writer_packet(ARCH, LEDGER)[0], set(CP.negative_permissions(ARCH, LEDGER)))
+    check("4b. a declaration does not license an unasserted relation",
+          not verified and rejected, (verified, rejected))
+
+    # 5. Continuity CANNOT invent a declaration for a parent that lacked one.
+    edits = _edits_from(draft)
+    for e in edits["edits"]:
+        e["negative_fact"] = "F05"          # ignored: no fact id is ever read from here
+        e["fact_ids"] = ["F05"]
+    _, inv = run([{"facts": list(LEDGER.values())}, WORTH, ARCH,
+                  envelope(draft, []), edits, READER_OK])
+    check("5. Continuity cannot mint provenance the Writer never declared",
+          inv["failure_stage"] == CP.SAFETY
+          and "UNSUPPORTED_NEGATIVES" in inv["failure_reason"],
+          inv.get("failure_reason"))
+
+    # 6. A DISCARDED Continuity output cannot retroactively license anything.
+    bad_edits = _edits_from(draft)
+    bad_edits["edits"][2]["text"] = ("The catalogue records eight rooms because each "
+                                     "entry was written to a fixed form.")
+    for e in bad_edits["edits"]:
+        e["negative_fact"] = "F05"
+    _, disc = run([{"facts": list(LEDGER.values())}, WORTH, ARCH,
+                   envelope(draft, []), bad_edits, READER_OK])
+    check("6. a discarded edit licenses nothing retroactively",
+          disc["failure_stage"] == CP.SAFETY, disc.get("failure_stage"))
+    check("   the edit was discarded",
+          disc["detail"][CP.CONTINUITY].get("discarded") is True)
+    check("   and the Writer draft's own (absent) lineage is what applied",
+          disc["detail"][CP.CONTINUITY]["negative_lineage_carried"] == {},
+          disc["detail"][CP.CONTINUITY].get("negative_lineage_carried"))
+
+    # Forward inheritance DOES work when the parent had provenance and the edit is clean.
+    _, fwd = run_with([{"sentence_id": sid, "fact_ids": ["F05"]}])
+    check("provenance flows FORWARD onto a clean edited descendant",
+          fwd["detail"][CP.CONTINUITY]["negative_lineage_carried"],
+          fwd["detail"][CP.CONTINUITY].get("negative_lineage_carried"))
+
+
+def test_the_writer_is_shown_negative_ids_and_nothing_else():
+    """The packet still carries no fact ids -- ids are machine identity and prose has no
+    use for them. The one exception is the negative-permissions block, which exists so a
+    negative sentence can NAME its permission, and whose propositions are already in the
+    packet as used facts."""
+    perms = CP.negative_permissions(ARCH, LEDGER)
+    check("only negative claim types are admissible",
+          all(LEDGER[f]["claim_type"] in LG.NEGATIVE_TYPES for f in perms), sorted(perms))
+    check("and only facts the architecture actually uses",
+          set(perms) <= set(ARCH["use_facts"]), sorted(perms))
+    check("F05 is a permission", "F05" in perms, sorted(perms))
+    packet, prompt = CP.writer_packet(ARCH, LEDGER)
+    check("the negative permission id is shown", "F05" in prompt)
+    for pos in ("F01", "F02", "F03", "F04", "F06", "F08"):
+        check("the positive fact id %s is still withheld" % pos, pos not in prompt)
+    check("the packet body itself still carries no ids",
+          "F05" not in ST.render(packet))
+    check("with no negatives in use, the Writer is told so",
+          "Do not write any sentence saying"
+          in CP.negative_permissions_block({}))
 
 
 def test_a_worth_hold_stops_the_article_before_composition():
@@ -1197,7 +1348,7 @@ def test_a_failed_safety_audit_does_not_regenerate_anything():
     # test is about what happens when the ARTICLE ITSELF is unsafe.
     bad_draft = DRAFT.replace("The room was built from Himalayan salt bricks",
                               "The room was built from pink Himalayan salt bricks")
-    prov, out = run(full_script()[:3] + [bad_draft, _edits_from(bad_draft), READER_OK])
+    prov, out = run(full_script()[:3] + [envelope(bad_draft), _edits_from(bad_draft), READER_OK])
     check("the run holds at safety", out["failure_stage"] == CP.SAFETY,
           out.get("failure_stage"))
     check("the unapproved surface is named",
@@ -1227,8 +1378,8 @@ def test_the_grounder_and_fact_check_run_only_after_safety():
 
     bad_draft = DRAFT.replace("The room was built from Himalayan salt bricks",
                               "The room was built from pink Himalayan salt bricks")
-    prov, out = run(full_script()[:3] + [bad_draft, _edits_from(bad_draft), READER_OK],
-                    fact_check_fn=fc)
+    prov, out = run(full_script()[:3] + [envelope(bad_draft), _edits_from(bad_draft),
+                                     READER_OK], fact_check_fn=fc)
     check("safety held the run", out["failure_stage"] == CP.SAFETY)
     check("THE GROUNDER WAS NEVER REACHED",
           out["stages"][CP.GROUNDING] == CP.NOT_RUN, out["stages"])
@@ -1376,8 +1527,8 @@ def test_a_held_run_still_persists_what_it_reached(tmp=None):
         out_dir = pathlib.Path(d) / "run"
         bad_draft = DRAFT.replace("The room was built from Himalayan salt bricks",
                                   "The room was built from pink Himalayan salt bricks")
-        run(full_script()[:3] + [bad_draft, _edits_from(bad_draft), READER_OK],
-            out_dir=out_dir)
+        run(full_script()[:3] + [envelope(bad_draft), _edits_from(bad_draft),
+                                 READER_OK], out_dir=out_dir)
         names = sorted(p.name for p in out_dir.iterdir())
         for want in ("COMPOSITION_RESULT.json", "FINAL_EVIDENCE_MANIFEST.json",
                      "WORTH_AND_CANDIDATE.json", "ARCHITECTURE.json",

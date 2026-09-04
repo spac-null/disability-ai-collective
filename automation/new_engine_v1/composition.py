@@ -1071,7 +1071,7 @@ than that their them then there these they thing think this those though three t
 time today together took total toward turn type under understand unit units unless until
 upon used useful using usual usually value various very view visual want water well were
 what when where whether which while whole will with within without work would year
-because project
+because project correspond corresponding correspondingly
 """.split()} | {ST._stem(w) for w in ST._FUNCTION_WORDS}
 
 _WORD = re.compile(r"[A-Za-z0-9][A-Za-z0-9.,'-]*")
@@ -1235,6 +1235,114 @@ def validate_cut_terms(terms, arch: dict) -> list:
     return errs
 
 
+# ── NEGATIVE PROVENANCE ───────────────────────────────────────────────────────
+# WHY THIS EXISTS. `negative_admission_audit` pairs a negative-shaped sentence with an
+# approved negative fact by WORD OVERLAP, and its threshold scales with the FACT's
+# length: it needs max(2, len(key)//3) of the fact's content words. So a faithful but
+# NARROWER sentence can never match enough. Measured on the Ground Truth canary:
+#
+#   fact F59  NEGATIVE_EXISTENCE  "The rent burden measure says nothing about
+#                                  homeowners, and nothing about people with no housing
+#                                  at all, who are by construction absent from a survey
+#                                  of households."   -> 9 key words, needs 3
+#   prose                         "It says nothing about homeowners."
+#                                                    -> supplies 1
+#
+# The prose is a correct rendering of the fact's first clause and the audit cannot see
+# it. That is a defect of lexical matching, not of the article.
+#
+# The fix is PROVENANCE, not semantics. The Writer -- the only stage that turns a
+# permission into a sentence -- declares which negative fact each negative sentence
+# rests on, and the machine then verifies every constraint mechanically. A declaration
+# is a claim about ORIGIN. It never makes unsupported content valid.
+#
+# PROVENANCE FLOWS FORWARD ONLY. A Continuity edit may inherit its parent's verified
+# declaration; it may never mint one, and a declaration can never be inferred backwards
+# from a later model edit onto the prose that preceded it. If Continuity output is
+# discarded, its inheritance is discarded with it and only the Writer's own verified
+# lineage applies. Nothing here reads a fact id from Continuity at all -- the strongest
+# available form of that guarantee.
+def label_sentences(article_text: str) -> dict:
+    """S001.. over the article. Deterministic, and the ids the Writer must refer to."""
+    return {"S%03d" % (i + 1): s
+            for i, s in enumerate(CE.sentences(article_text))}
+
+
+def negative_permissions(arch: dict, ledger: dict) -> dict:
+    """The negative facts the architecture actually USES, by id.
+
+    Only these ids are admissible in a declaration, and every one of their propositions
+    is already in the packet as a used fact, so naming them exposes no new evidence.
+    """
+    use = set(arch.get("use_facts") or [])
+    return {fid: f.get("proposition", "")
+            for fid, f in (ledger or {}).items()
+            if fid in use and f.get("claim_type") in LG.NEGATIVE_TYPES}
+
+
+def verify_negative_lineage(article_text: str, declared, ledger: dict, packet: dict,
+                            allowed_ids: set) -> tuple:
+    """Which declarations survive machine verification, and why the others do not.
+
+    Returns ({sentence_id: [fact_ids]}, [rejections]). Every check is deterministic and
+    reuses a merged validator; none of them asks a model anything.
+    """
+    sentences = label_sentences(article_text)
+    approved = ST.render(packet)
+    a_words = ST._content_words(approved, fold=True)
+    a_nums, a_ents = ST._numbers(approved), ST._entities(approved,
+                                                         skip_sentence_initial=False)
+    verified, rejected = {}, []
+
+    for d in (declared or []):
+        if not isinstance(d, dict):
+            rejected.append({"declaration": str(d)[:80], "why": "not an object"})
+            continue
+        sid = str(d.get("sentence_id") or "").strip()
+        fids = [str(f).strip() for f in (d.get("fact_ids") or [])]
+        text = sentences.get(sid)
+        if not text:
+            rejected.append({"sentence_id": sid, "why": "no such sentence in the article"})
+            continue
+        bad = []
+        for fid in fids:
+            if fid not in ledger:
+                bad.append("%s is not in the ledger" % fid)
+            elif fid not in allowed_ids:
+                # Either not a negative claim type, or not a fact the architecture used.
+                ct = (ledger[fid] or {}).get("claim_type")
+                bad.append("%s is %s, not an approved negative the architecture uses"
+                           % (fid, ct))
+        if not fids:
+            bad.append("no fact_ids declared")
+        if bad:
+            rejected.append({"sentence_id": sid, "sentence": text[:120], "why": bad})
+            continue
+
+        # The negative RELATION comes from the fact. Every other relation the sentence
+        # asserts must also be one the licensing facts assert -- the merged check.
+        rel = ST.validate_turn_support(text, fids, ledger)
+        # The rest of the sentence must stay packet-licensed: no new number, no new
+        # entity, no unapproved sensory, scene or spatial assertion.
+        nums = sorted(ST._numbers(text) - a_nums)
+        ents = sorted(ST._entities(text) - a_ents)
+        terms = ST._content_words(text) - a_words
+        hard = sorted(x for x in terms
+                      if x in ST.SENSORY_RISK or x in ST.SCENE_RISK
+                      or x in ST.SPATIAL_RISK)
+        if rel or nums or ents or hard:
+            rejected.append({
+                "sentence_id": sid, "sentence": text[:120], "fact_ids": fids,
+                "why": (["relation the licensing facts do not assert: %s"
+                         % [e["relation"] for e in rel]] if rel else [])
+                       + (["new number(s) %s" % nums] if nums else [])
+                       + (["new entit(y/ies) %s" % ents] if ents else [])
+                       + (["unapproved concrete material %s" % hard] if hard else [])})
+            continue
+        verified[sid] = fids
+    return verified, rejected
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # STAGE 5 -- WRITER
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1267,15 +1375,49 @@ WRITER_CRAFT_DELTA = (
 WRITER_SYSTEM = (
     "You are writing one finished article from an approved packet.\n\n"
     + S.PROSE_DOCTRINE + "\n" + WRITER_CRAFT_DELTA + "\n\n" + S._NO_FABRICATION
-    + "\n\nOutput the article as markdown: a single `# ` title line, then the prose. No "
-      "front matter, no notes to the editor, no headings inside the body, no commentary "
-      "about what you did."
+    + "\n\nOUTPUT. Reply with ONE JSON object:\n"
+      '{"article": "the finished article as markdown: a single # title line, then the\n'
+      "            prose. No front matter, no notes to the editor, no headings inside\n"
+      '            the body, no commentary about what you did.",\n'
+      ' "negative_lineage": [{"sentence_id": "S007", "fact_ids": ["F59"]}]}\n'
+      "\n"
+      "ABOUT negative_lineage. If you write a sentence that says something does NOT "
+      "happen, does not exist, is not measured, is absent, is the only one or is the "
+      "first -- name the approved permission it rests on. The permissions are listed "
+      "below with their ids; only those ids are admissible, and only for a sentence that "
+      "genuinely makes that negative claim.\n"
+      "  Number your own sentences S001, S002, ... in reading order, counting every "
+      "sentence of the article body from the start, and give the id of the sentence "
+      "making the claim.\n"
+      "  This is a statement about where a sentence came from. It licenses nothing else: "
+      "the rest of the sentence must still contain no number, name or concrete detail "
+      "that is not already above, and no relation the permission does not carry. If you "
+      "have no negative sentences, return an empty list.\n"
+      "  Do not write a negative claim you cannot point at a permission for. There is no "
+      "permission for silence."
 )
 
 
 # Not a length policy. A reply below this is not an article at all, and BRIEF is a real
 # article_type whose length this gate must not second-guess.
 WRITER_MIN_WORDS = 50
+
+
+def negative_permissions_block(perms: dict) -> str:
+    """The only place a fact id is shown to the Writer, and only for negatives.
+
+    The packet itself still carries no ids -- ids are machine identity and prose has no
+    use for them. These exist so a negative sentence can NAME its permission, and every
+    proposition here is already in the packet as a used fact.
+    """
+    if not perms:
+        return ("\n\nNEGATIVE PERMISSIONS\n  None. Do not write any sentence saying "
+                "that something does not happen, does not exist or is absent.\n")
+    L = ["", "", "NEGATIVE PERMISSIONS -- the only negatives you may write, by id"]
+    for fid, prop in sorted(perms.items()):
+        L.append("  %s  %s" % (fid, prop))
+    L.append("  Nothing else. A negative claim with no id here has no permission.")
+    return "\n".join(L) + "\n"
 
 
 def writer_packet(arch: dict, ledger: dict) -> tuple:
@@ -1286,7 +1428,8 @@ def writer_packet(arch: dict, ledger: dict) -> tuple:
     if errs:
         raise CompositionHold(WRITER, WRITER_HOLD,
                               ["the writer packet is not clean"] + errs)
-    return packet, ST.render(packet)
+    perms = negative_permissions(arch, ledger)
+    return packet, ST.render(packet) + negative_permissions_block(perms)
 
 
 def _clean_article(text: str) -> str:
@@ -1301,11 +1444,12 @@ def _clean_article(text: str) -> str:
 def write_article(provider, arch: dict, ledger: dict) -> dict:
     """STAGE 5. ONE Writer call. A retry only when the output is mechanically unusable."""
     packet, prompt = writer_packet(arch, ledger)
+    perms = negative_permissions(arch, ledger)
     last = ""
     for attempt in (1, 2):
         try:
             comp = provider.complete(system=WRITER_SYSTEM, user=prompt,
-                                     max_tokens=6_000)
+                                     max_tokens=8_000)
         except Exception as e:
             if _is_subscription_limit(e):
                 raise CompositionHold(WRITER, CLAUDE_SUBSCRIPTION_LIMIT,
@@ -1315,22 +1459,35 @@ def write_article(provider, arch: dict, ledger: dict) -> dict:
             if not isinstance(e, ProviderError) and type(e).__name__ != "ClaudeCLIError":
                 raise
             raise CompositionHold(WRITER, WRITER_HOLD, ["provider unavailable: %s" % e])
-        article = _clean_article(comp.text)
+        try:
+            obj = parse_json_object(comp.text)
+            article = _clean_article(obj.get("article") or "")
+            declared = obj.get("negative_lineage")
+        except ProviderError as e:
+            article, declared, obj = "", None, {}
+            last = "reply was not one JSON object (%s)" % e
         # Mechanically unusable, not "not good enough": empty, missing its title line, or
         # too short to be prose at all. The floor is deliberately very low, because BRIEF
         # is a legitimate article_type and a length judgement is not this gate's business
         # -- it exists to catch a reply that is not an article, not a reply that is a
         # short one. There is no quality-regeneration loop here.
         if len(article.split()) >= WRITER_MIN_WORDS and article.lstrip().startswith("#"):
+            verified, rejected = verify_negative_lineage(
+                article, declared, ledger, packet, set(perms))
             return {"status": PASS, "article_text": article, "packet": packet,
                     "prompt": prompt, "prompt_sha256": C.sha256_text(prompt),
                     "provider": _identity(comp, attempt),
                     "model_calls": attempt, "repairs": 0,
-                    "words": len(article.split())}
-        last = ("empty reply" if not article else
-                "%d words, title line %s" % (len(article.split()),
-                                             "present" if article.lstrip().startswith("#")
-                                             else "missing"))
+                    "words": len(article.split()),
+                    "negative_permissions": sorted(perms),
+                    "negative_lineage_declared": declared or [],
+                    "negative_lineage_verified": verified,
+                    "negative_lineage_rejected": rejected}
+        if not last:
+            last = ("empty reply" if not article else
+                    "%d words, title line %s"
+                    % (len(article.split()),
+                       "present" if article.lstrip().startswith("#") else "missing"))
     raise CompositionHold(WRITER, WRITER_HOLD,
                           ["the Writer produced nothing usable after one mechanical "
                            "retry (%s)" % last])
@@ -1382,6 +1539,53 @@ CONTINUITY_SCHEMA = (
     "Emit edits in READING ORDER, covering the whole article.\n"
     "No prose outside the JSON." % ", ".join(CE.OPERATIONS)
 )
+
+
+def carry_negative_lineage(edits: list, draft_text: str, final_text: str,
+                           writer_verified: dict) -> dict:
+    """Inherit the Writer's verified declarations onto the edited descendants.
+
+    FORWARD ONLY. An output sentence inherits its PARENTS' verified provenance and
+    nothing else. Continuity cannot mint a declaration -- no fact id is ever read from
+    its reply, which is the strongest form of that guarantee -- and nothing flows
+    backwards onto the draft.
+
+    The caller applies this only when the edit passed the zero-factual-freedom delta
+    checks; a discarded edit inherits nothing, because it does not exist.
+    """
+    draft_ids = label_sentences(draft_text)          # D-order == S-order, both from
+    final_ids = label_sentences(final_text)          # CE.sentences over the body
+    # Writer ids are over the draft; Continuity parents are CE.label_draft ids, which
+    # enumerate the same sentences in the same order. Map one to the other by position.
+    draft_labels = CE.label_draft(draft_text)
+    pos_of = {did: i for i, did in enumerate(sorted(draft_labels))}
+    writer_by_pos = {}
+    for sid, fids in (writer_verified or {}).items():
+        try:
+            writer_by_pos[int(sid[1:]) - 1] = fids
+        except ValueError:
+            continue
+
+    out, seen = {}, 0
+    for e in edits:
+        if e.get("operation") == CE.DELETE:
+            continue
+        seen += 1
+        inherited = []
+        for parent in (e.get("parents") or []):
+            i = pos_of.get(parent)
+            if i is not None:
+                inherited += writer_by_pos.get(i, [])
+        if inherited:
+            # The nth surviving edit is the nth sentence of the rendered output only when
+            # each edit contributes exactly one sentence, which is the contract; where it
+            # does not, the id simply fails to resolve and the sentence keeps no
+            # provenance. Failing closed is correct: an unresolved inheritance must not
+            # license anything.
+            sid = "S%03d" % seen
+            if sid in final_ids:
+                out[sid] = sorted(set(inherited))
+    return out
 
 
 def continuity_pass(provider, article_text: str, arch: dict) -> dict:
@@ -1441,7 +1645,8 @@ def continuity_pass(provider, article_text: str, arch: dict) -> dict:
 # the Writer: an article that invented something is evidence about the run, and rerolling
 # it destroys that evidence and buys a second draft with an unknown defect.
 def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
-                 ledger: dict, cut_terms: dict, cut_report: dict | None = None) -> dict:
+                 ledger: dict, cut_terms: dict, cut_report: dict | None = None,
+                 negative_lineage: dict | None = None) -> dict:
     """The merged post-writer stack, on both the draft and the final."""
     approved_entities = ST._entities(ST.render(packet), skip_sentence_initial=False)
 
@@ -1497,12 +1702,29 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
             "never granted -- numbers=%s entities=%s sensory=%s scene=%s spatial=%s"
             % (s["unapproved_numbers"], s["unapproved_entities"], s["unapproved_sensory"],
                s["unapproved_scene"], s["unapproved_spatial"]))
-    if not f["negative_admission_ok"]:
+    # THE LEXICAL AUDIT IS THE FAST PATH. Anything it already licenses passes without
+    # provenance being consulted at all. Only what it CANNOT see -- a faithful sentence
+    # narrower than the fact it renders -- may be admitted by a verified Writer
+    # declaration, and that declaration has already had every constraint checked
+    # mechanically. See verify_negative_lineage.
+    admitted, unadmitted = [], []
+    by_id = label_sentences(final_text)
+    lineage = negative_lineage or {}
+    for h in f["negative_admission"]["unmatched"]:
+        sent = " ".join(h["sentence"].split())
+        sid = next((k for k, v in by_id.items()
+                    if " ".join(v.split()) == sent), None)
+        fids = lineage.get(sid) if sid else None
+        if fids:
+            admitted.append({"sentence_id": sid, "sentence": h["sentence"][:120],
+                             "fact_ids": fids})
+        else:
+            unadmitted.append(h)
+    if unadmitted:
         blocking.append(
             "UNSUPPORTED_NEGATIVES: %d negative-shaped sentence(s) with no negative fact "
             "behind them: %s"
-            % (len(f["negative_admission"]["unmatched"]),
-               [h["sentence"][:90] for h in f["negative_admission"]["unmatched"]][:4]))
+            % (len(unadmitted), [h["sentence"][:90] for h in unadmitted][:4]))
     if f["cut_adherence"]["violations"]:
         blocking.append(
             "CUT_LEAKAGE: %s"
@@ -1542,6 +1764,10 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
             "blocking": blocking,
             "audits": a,
             "cut_terms_without_a_sentinel": sorted(explained),
+            "negatives_admitted_by_provenance": admitted,
+            "negatives_licensed_lexically":
+                f["negative_admission"]["negative_sentences"]
+                - len(f["negative_admission"]["unmatched"]),
             "semantic_delta": CE.semantic_delta(draft_text, final_text),
             "semantic_delta_errors": delta_errs,
             "lens_serialized": ST.lens_is_serialized(final_text,
@@ -1794,13 +2020,19 @@ def run_story_architecture_composition(
             carried = "writer_draft"
             cont["discarded"] = True
             cont["discard_reason"] = delta_errs
+            # A discarded edit inherits nothing. Only the Writer's own verified lineage
+            # over its own sentences applies, which is what forward-only means.
+            lineage = wr["negative_lineage_verified"]
         else:
             final = cont["article_text"]
             carried = "continuity_final"
+            lineage = carry_negative_lineage(
+                cont["edits"], draft, final, wr["negative_lineage_verified"])
         cont["carried_text"] = carried
+        cont["negative_lineage_carried"] = lineage
 
         sa = record(SAFETY, safety_audit(draft, final, wr["packet"], arch, ledger,
-                                         cut["terms"], cut))
+                                         cut["terms"], cut, lineage))
         sa["carried_text"] = carried
         sa["continuity_discarded"] = bool(delta_errs)
         if sa["status"] != PASS:
