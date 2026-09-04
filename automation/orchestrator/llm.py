@@ -23,6 +23,7 @@ from .config import (
     _RELATIONSHIPS_FILE, _AGENT_SLUG, _nous_key, _REGISTERS,
 )
 from . import transport
+from . import provider_policy
 
 import claude_cli_provider
 from .grounding import (
@@ -421,6 +422,8 @@ class LLMMixin:
         # fallback this phase exists to remove. The free local rung is NOT Claude-family
         # and still runs, so composition keeps a last resort that costs nothing.
         subscription_refused = False
+        attempted = []
+        self._last_provider_attempts = attempted
 
         for provider in PROVIDERS:
             # A rung the subscription serves needs no API key. Gating it on
@@ -436,6 +439,21 @@ class LLMMixin:
                 self.logger.warning(
                     "Skipping %s — the Claude subscription refused this request and no "
                     "paid Claude fallback is permitted", provider["name"])
+                attempted.append("%s: skipped (no paid Claude fallback)" % provider["name"])
+                continue
+            # OWNER POLICY 2026-09-05: a non-Claude rung may not answer a Claude-family
+            # request automatically in LIVE. Phase 2B stopped the PAID Claude rungs but
+            # this one is not Claude-family, so it was still catching every refusal and
+            # quietly writing the day's article on a 9B local model under the same persona
+            # byline -- a model-family switch no downstream gate could see, because none of
+            # them reads the provider label. See orchestrator/provider_policy.py.
+            if not claude_cli_provider.is_claude_family(provider["model"]) \
+                    and not provider_policy.local_fallback_allowed():
+                self.logger.warning(
+                    "Skipping %s — a non-Claude model may not answer a Claude-family "
+                    "request in LIVE; set %s=1 for a dev run or manual recovery",
+                    provider["name"], provider_policy.LOCAL_FALLBACK_ENV)
+                attempted.append("%s: skipped (live fail-closed)" % provider["name"])
                 continue
             try:
                 self.logger.info("Generating article with %s...", provider["name"])
@@ -451,14 +469,18 @@ class LLMMixin:
                     return text, provider["name"], actual_model
                 self.logger.warning("%s returned short response (%d chars)",
                                     provider["name"], len(text) if text else 0)
+                attempted.append("%s: short response" % provider["name"])
             except claude_cli_provider.ClaudeCLIError as exc:
                 subscription_refused = True
                 self.logger.error("%s failed on the Claude subscription [%s]: %s",
                                   provider["name"], getattr(exc, "code", "ERROR"), exc)
+                attempted.append("%s: %s" % (provider["name"], getattr(exc, "code", "ERROR")))
             except Exception as exc:
                 self.logger.warning("%s failed: %s", provider["name"], exc)
+                attempted.append("%s: %s" % (provider["name"], type(exc).__name__))
 
-        self.logger.error("All providers failed — using enhanced fallback")
+        self.logger.error("No permitted provider produced an article: %s",
+                          "; ".join(attempted) or "none attempted")
         return None, None, None
 
 
