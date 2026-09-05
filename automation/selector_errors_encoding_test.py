@@ -91,8 +91,11 @@ check("undecodable text is captured, not re-wrapped forever",
       json.loads(SV._errors_json("not json at all")) == ["not json at all"])
 check("an over-long undecodable string is truncated",
       len(json.loads(SV._errors_json("x" * 5000))[0]) <= 500)
-check("a non-list decoded value is wrapped once",
-      json.loads(SV._errors_json(json.dumps({"a": 1}))) == [{"a": 1}])
+# The guard coerces every item to a BOUNDED string on purpose: an error list holds error
+# text, and letting arbitrary structures through is how an unbounded value gets in.
+check("a non-list decoded value is wrapped once, as bounded text",
+      json.loads(SV._errors_json(json.dumps({"a": 1}))) == ['{"a": 1}'],
+      SV._errors_json(json.dumps({"a": 1})))
 # 20 layers, not 200: each layer roughly doubles, so this is already ~1 MB and 200 would
 # be 2**200 characters. Building that is how the production bug killed the database, and
 # an earlier draft of this test OOM-killed itself proving the point.
@@ -102,6 +105,90 @@ for _ in range(20):
 check("the deep reconstruction is genuinely large", len(deep) > 100_000, str(len(deep)))
 out = SV._errors_json(deep)
 check("a pathologically deep value terminates and stays small", len(out) < 600, str(len(out)))
+
+
+print("\ntest_D_an_oversized_errors_value_fails_explicitly_BEFORE_sqlite")
+try:
+    SV._errors_json(["x" * 900] * 200)
+    raised = None
+except SV.SelectorCacheError as e:
+    raised = str(e)
+check("an error list far over the bound raises SelectorCacheError", raised is not None)
+check("the error names the size and the bound",
+      raised and "bytes" in raised and str(SV.MAX_ERRORS_JSON_BYTES) in raised,
+      (raised or "")[:160])
+check("the bound is generous for real error lists",
+      len(SV._errors_json(["ValueError: bad reply from provider"] * 20)) < SV.MAX_ERRORS_JSON_BYTES)
+check("a doubling loop trips the bound early, not at half a gigabyte",
+      SV.MAX_ERRORS_JSON_BYTES < 100_000, str(SV.MAX_ERRORS_JSON_BYTES))
+check("individual items are truncated rather than stored whole",
+      len(json.loads(SV._errors_json(["y" * 9000]))[0]) <= 1000)
+
+
+print("\ntest_F_the_driver_cannot_attribute_a_stale_run_to_a_failed_attempt")
+import campaign_driver as CD
+import tempfile, pathlib as _pl
+tmp = _pl.Path(tempfile.mkdtemp(prefix="drv-"))
+# Attempt A: a real run that produced a directory and a Grounding HOLD.
+runA = "production-20260905T010101Z-aaaa1111"
+(tmp / runA).mkdir()
+(tmp / runA / "COMPOSITION_RESULT.json").write_text(json.dumps({
+    "subject": "Candidate A", "failure_stage": "GROUNDING", "reason_code": "GROUNDING_HOLD",
+    "failure_reason": "1 blocking finding after one factual repair",
+    "stages": {"GROUNDING": "HOLD", "WORTH": "PASS"}}))
+stdout_A = ('noise\n{"status": "hold", "engine_run": "%s", '
+            '"reason_code": "GROUNDING_HOLD"}\n' % runA)
+oA = CD.outcome(stdout_A, str(tmp))
+check("attempt A is attributed to its own run", oA["run"] == runA and oA["attributed"])
+check("attempt A reports its Grounding HOLD", oA["stage"] == "GROUNDING")
+
+# Attempt B: selector died before any run directory existed. THE REGRESSION.
+stdout_B = ('CURRENT_ENGINE PROVIDER_FAILURE at stage SELECTOR\n'
+            '{"status": "hold", "reason_code": "SELECTOR_FAILURE", '
+            '"run_status": {"status": "PROVIDER_FAILURE", "stage": "SELECTOR", '
+            '"detail": "DataError: string or blob too big"}}\n')
+oB = CD.outcome(stdout_B, str(tmp))
+check("attempt B is NOT attributed to any run", oB["attributed"] is False)
+check("attempt B has no run id", oB["run"] is None)
+check("attempt B has no run directory", oB["run_dir"] is None)
+check("attempt B reports SELECTOR, not GROUNDING", oB["stage"] == "SELECTOR", oB["stage"])
+check("attempt B reports the real reason", oB["reason_code"] == "SELECTOR_FAILURE",
+      oB["reason_code"])
+check("attempt B surfaces the underlying error",
+      "string or blob too big" in oB["detail"], oB["detail"][:120])
+check("attempt B did NOT inherit A's subject", "Candidate A" not in (oB["subject"] or ""))
+check("attempt B did NOT inherit A's finding",
+      "blocking finding" not in (oB["detail"] or ""))
+# Check the EXECUTABLE code, not the module docstring -- which quotes the old broken
+# `ls -td ... | head -1` on purpose, to record what went wrong.
+import ast as _ast
+_drv = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                         "campaign_driver.py")).read()
+_tree = _ast.parse(_drv)
+# RAW docstring constants, not ast.get_docstring() -- that returns a CLEANED, dedented
+# string which never equals the raw Constant value, so filtering on it silently keeps the
+# docstring in. The repo's own package-purity test records this same trap.
+_docs = set()
+for _n in _ast.walk(_tree):
+    _body = getattr(_n, "body", None)
+    if isinstance(_n, (_ast.Module, _ast.FunctionDef, _ast.ClassDef)) and _body \
+            and isinstance(_body[0], _ast.Expr) \
+            and isinstance(_body[0].value, _ast.Constant) \
+            and isinstance(_body[0].value.value, str):
+        _docs.add(_body[0].value.value)
+_code_strings = [n.value for n in _ast.walk(_tree)
+                 if isinstance(n, _ast.Constant) and isinstance(n.value, str)
+                 and n.value not in _docs]
+check("no executable string reaches for the newest directory",
+      not any("ls -td" in v or "head -1" in v for v in _code_strings),
+      str([v[:60] for v in _code_strings if "ls -td" in v or "head -1" in v]))
+check("the driver selects the evidence dir by the run id it was given",
+      'pathlib.Path(evidence_root) / run' in _drv)
+
+# A limit stops the campaign rather than substituting a model.
+oL = CD.outcome('{"status":"hold","run_status":{"stage":"RESEARCH_PACK",'
+                '"error":"CLAUDE_SUBSCRIPTION_LIMIT: session limit"}}', str(tmp))
+check("a subscription limit is detected as a stop condition", oL["limit"] is True)
 
 
 print("\ntest_the_write_site_uses_it")
