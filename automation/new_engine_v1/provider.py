@@ -150,8 +150,21 @@ class Provider:
                     raise ProviderError("deadline reached before the attempt")
                 timeout = max(1, int(min(timeout, remaining)))
             try:
+                # temperature_required=False: every caller of THIS seam that pins a
+                # temperature -- selector_v2, grounding_v2, claims, the composition
+                # stages -- pins 0 to make a JSON reply stable, not to control an
+                # experiment. The CLI cannot apply it, so the pin is recorded as
+                # unhonoured on the completion rather than either silently dropped or
+                # turned into a hard failure that stops production for no one's benefit.
+                # ClaudeCLIProvider, which composition injects directly, has always
+                # accepted and ignored temperature; this makes the two agree.
+                #
+                # The STRICT default still applies everywhere else, so phase_probe --
+                # which reaches Claude through orchestrator/llm.py and IS measuring
+                # something -- keeps failing loudly, as the owner directed.
                 return claude_cli_provider.complete_via_subscription(
-                    system, user, self.model, timeout=timeout, temperature=temperature)
+                    system, user, self.model, timeout=timeout, temperature=temperature,
+                    temperature_required=False)
             except claude_cli_provider.ClaudeCLIError as e:
                 raise ProviderError("%s: %s" % (getattr(e, "code", "CLAUDE_SUBSCRIPTION_ERROR"), e))
 

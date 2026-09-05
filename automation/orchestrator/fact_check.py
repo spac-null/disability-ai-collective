@@ -201,6 +201,11 @@ class FactCheckMixin:
             # from one call to the next -- which put a publication gate downstream of
             # sampling noise.
             temperature=0,
+            # A determinism preference for the JSON reply, not an experimental control:
+            # the Claude subscription CLI cannot pin temperature, and refusing this call
+            # would stop claim extraction without protecting any measurement. The
+            # unhonoured pin is recorded in the call's provenance.
+            temperature_required=False,
         )
         data = parse_claims_payload(raw)
         return [
