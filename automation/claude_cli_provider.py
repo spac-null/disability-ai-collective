@@ -194,6 +194,10 @@ class Completion:
         self.cost_usd = cost_usd
         self.duration_ms = duration_ms
         self.session_id = session_id
+        # Set by complete_via_subscription when a caller asked for a temperature the CLI
+        # cannot apply. None means none was asked for.
+        self.temperature_requested = None
+        self.temperature_honoured = None
 
     def identity(self) -> dict:
         return {
@@ -207,6 +211,8 @@ class Completion:
             "subscription_cost_equivalent_usd": self.cost_usd,
             "duration_ms": self.duration_ms,
             "session_id": self.session_id,
+            "temperature_requested": self.temperature_requested,
+            "temperature_honoured": self.temperature_honoured,
         }
 
 
@@ -396,27 +402,47 @@ def reset_providers() -> None:
 
 def complete_via_subscription(system: str, user: str, requested_model: str,
                               timeout: int = DEFAULT_TIMEOUT, binary: str = "claude",
-                              temperature: float | None = None):
+                              temperature: float | None = None,
+                              temperature_required: bool = True):
     """Serve one Claude-family request on the subscription.
 
     `requested_model` is the id the CALLER asked for, in whatever prefix shape that call
     site carries. The tier-preserving subscription id is derived from it here, and the
     returned Completion keeps both apart.
 
-    `temperature` is REJECTED rather than ignored. The CLI cannot pin it, and only
-    phase_probe.py ever sets it -- for controlled before/after comparisons whose entire
-    validity rests on the temperature actually being pinned. Silently dropping it would
-    turn a probe result into a number that looks controlled and is not. A loud failure in
-    a dev harness beats invalid evidence.
+    `temperature` cannot be honoured -- the CLI exposes no such knob -- so what happens to
+    a pinned value depends on WHY it was pinned, and the caller is the only thing that
+    knows. Hence two behaviours and no silent third:
+
+      temperature_required=True (default)
+          RAISE. This is for a controlled experiment whose validity rests on the pin being
+          real -- phase_probe.py's before/after comparisons. Silently dropping it there
+          turns a probe result into a number that looks controlled and is not, which is
+          worse than no result. The owner has confirmed that loud failure is correct and
+          phase_probe stays parked.
+
+      temperature_required=False
+          PROCEED, and RECORD the unhonoured pin on the completion and in provenance. This
+          is for the live stages that pin temperature=0 as a determinism preference for
+          JSON output -- selector_v2, grounding_v2, claims, fact_check. They are not
+          measuring anything; they want a stable reply. Refusing them outright does not
+          protect any experiment, it just stops production.
+
+    The distinction is declared at the call site, never inferred here, and the outcome is
+    always visible: an unhonoured pin appears in the provenance `detail`.
     """
-    if temperature is not None:
+    if temperature is not None and temperature_required:
         raise ClaudeCLIError(
             "the Claude subscription CLI cannot pin temperature=%r; this call would be an "
-            "uncontrolled comparison. Run it against a provider that accepts temperature, "
-            "or drop the pin deliberately." % (temperature,))
+            "uncontrolled comparison. Pass temperature_required=False if this pin is a "
+            "determinism preference rather than an experimental control." % (temperature,))
     model = subscription_model_for(requested_model)
     provider = get_provider(model, binary=binary, timeout=timeout)
     completion = provider.complete(system, user, timeout=timeout)
+    # Recorded, not swallowed. Anything reading a completion can see that a pin was asked
+    # for and not applied.
+    completion.temperature_requested = temperature
+    completion.temperature_honoured = False if temperature is not None else None
     # requested_model on the Completion is the SUBSCRIPTION id the CLI was given. The
     # caller's original id is what the substitution is measured against, so restore it
     # here: `fallback_used` in the provenance record then means "a different model

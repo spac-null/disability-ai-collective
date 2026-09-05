@@ -139,7 +139,8 @@ def _executor_persona_history_block(persona_factual_context):
 class LLMMixin:
     def _call_claude_subscription(self, system_prompt, user_prompt, wire_model,
                                   timeout=120, temperature=None, return_model=False,
-                                  max_tokens=None, check_truncation=False):
+                                  max_tokens=None, check_truncation=False,
+                                  temperature_required=True):
         """Serve one Claude-family request on the claude.ai subscription.
 
         WHAT IS DELIBERATELY NOT FORWARDED, and why saying so matters more than pretending:
@@ -162,7 +163,8 @@ class LLMMixin:
         try:
             completion = claude_cli_provider.complete_via_subscription(
                 system_prompt, user_prompt, wire_model,
-                timeout=timeout, temperature=temperature)
+                timeout=timeout, temperature=temperature,
+                temperature_required=temperature_required)
         except claude_cli_provider.ClaudeCLIError as exc:
             try:
                 self.logger.warning(claude_cli_provider.provenance_line(
@@ -178,9 +180,11 @@ class LLMMixin:
             self.logger.info(claude_cli_provider.provenance_line(
                 claude_cli_provider.provenance(
                     completion.requested_model, completion.actual_model, ok=True,
-                    detail=("tier-preserving subscription substitution"
-                            if completion.actual_model != completion.requested_model
-                            else ""))))
+                    detail="; ".join(filter(None, [
+                        ("tier-preserving subscription substitution"
+                         if completion.actual_model != completion.requested_model else ""),
+                        ("temperature=%r requested, not applied by the subscription CLI"
+                         % temperature) if temperature is not None else ""])))))
         except Exception:
             pass
         if return_model:
@@ -190,7 +194,8 @@ class LLMMixin:
     def _call_openai_compat_api(self, url, api_key, system_prompt, user_prompt,
                                    model, max_tokens=3500, timeout=120, no_think=False,
                                    return_model=False, reasoning_max_tokens=None,
-                                   check_truncation=False, temperature=None):
+                                   check_truncation=False, temperature=None,
+                                   temperature_required=True):
         """OpenAI-compatible API call — stdlib only, no requests dependency.
 
         temperature: added 2026-08-10 for phase_probe.py's controlled-comparison
@@ -252,7 +257,8 @@ class LLMMixin:
             return self._call_claude_subscription(
                 system_prompt, content, wire_model, timeout=timeout,
                 temperature=temperature, return_model=return_model,
-                max_tokens=max_tokens, check_truncation=check_truncation)
+                max_tokens=max_tokens, check_truncation=check_truncation,
+                temperature_required=temperature_required)
         body = {
             "model": wire_model,
             "messages": [
