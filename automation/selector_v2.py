@@ -256,6 +256,48 @@ def record_comparison(conn, run_id: str, report: dict) -> None:
     conn.commit()
 
 
+def _errors_json(value) -> str:
+    """Encode the error list ONCE.
+
+    THE BUG THIS EXISTS TO KILL. `errors` is written as JSON text and read back as JSON
+    text, and this record is rebuilt from EITHER a fresh assessment (a real list) OR a
+    cached row (already-encoded text). The old code called json.dumps() on both, so every
+    selector run that re-read a cached row wrapped the previous encoding in another layer
+    of escaping. Each pass roughly doubles the string.
+
+    Measured live on 2026-09-05, lengths in seed_material_assessments.errors were exact
+    powers of two -- 512, 1024, 4096, 8192, 65536, 33554432, 67108864, 134217728 and
+    536870912 -- and the content was nothing but escaped quotes and backslashes. The next
+    doubling crossed SQLite's SQLITE_MAX_LENGTH and every run then died with
+    "DataError: string or blob too big" at the SELECTOR stage, which stops production
+    entirely: no candidate can be chosen, so nothing downstream runs at all.
+
+    It grew from `[]`. An empty error list is still a string once encoded, so rows with
+    nothing wrong with them doubled just as fast as rows with real errors; it simply took
+    until today to cross the limit. The database had reached 881 MB.
+    """
+    if value is None:
+        return "[]"
+    if isinstance(value, str):
+        # A cached row. Decode it back to the list before re-encoding, and unwrap any
+        # layers a previous run already added.
+        for _ in range(64):
+            try:
+                decoded = json.loads(value)
+            except (ValueError, TypeError):
+                return json.dumps([value[:500]])
+            if isinstance(decoded, str):
+                value = decoded
+                continue
+            value = decoded
+            break
+        else:
+            return "[]"
+    if not isinstance(value, list):
+        value = [value]
+    return json.dumps(value)
+
+
 def cached_assessment(conn, seed_id: str, source_sha256: str):
     """Cache key is (seed_id, source_sha256): the same seed AND the same bytes. A source
     that materially changed hashes differently and is reassessed; a failed or invalid
@@ -647,7 +689,7 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
                "legacy_relevance_score": row["relevance_score"],
                "legacy_disability_angle": bool(row["disability_angle"]),
                "cached": bool(c.get("cached")),
-               "errors": json.dumps(a.get("errors") or [])}
+               "errors": _errors_json(a.get("errors"))}
         rec.update({k: a.get(k) for k in
                     ("concrete_subject", "subject_anchor_quote", "investigable_question",
                      "question_basis_quote", "material_richness", "researchability",
