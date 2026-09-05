@@ -285,7 +285,7 @@ def _errors_json(value) -> str:
             try:
                 decoded = json.loads(value)
             except (ValueError, TypeError):
-                return json.dumps([value[:500]])
+                return _bounded_errors_json([value[:500]])
             if isinstance(decoded, str):
                 value = decoded
                 continue
@@ -295,7 +295,41 @@ def _errors_json(value) -> str:
             return "[]"
     if not isinstance(value, list):
         value = [value]
-    return json.dumps(value)
+    return _bounded_errors_json(value)
+
+
+# An error list is a handful of short strings. Anything approaching this is not an error
+# list any more -- it is a cache defect in progress, and the whole point of the incident
+# was that nothing noticed until SQLite refused the write at half a gigabyte. The bound is
+# generous enough that no real error list can reach it and small enough that a doubling
+# loop trips it on the first pass rather than the twenty-ninth.
+MAX_ERRORS_JSON_BYTES = 16_384
+
+
+class SelectorCacheError(Exception):
+    """A value bound for the assessment cache is not the shape the cache stores."""
+
+
+def _bounded_errors_json(items: list) -> str:
+    """Serialize an error list ONCE, refusing anything that is not one.
+
+    Fails loudly and before SQLite, so a defect surfaces as a named selector-cache error
+    naming the offending size rather than as `DataError: string or blob too big` from a
+    driver layer with no idea what it was writing.
+    """
+    flat = []
+    for it in items:
+        if isinstance(it, str):
+            flat.append(it[:1000])
+        else:
+            flat.append(json.dumps(it, default=str)[:1000])
+    out = json.dumps(flat)
+    if len(out.encode("utf-8")) > MAX_ERRORS_JSON_BYTES:
+        raise SelectorCacheError(
+            "assessment errors serialize to %d bytes, over the %d byte bound; refusing to "
+            "write it. An error list this size is a cache defect, not an error list."
+            % (len(out.encode("utf-8")), MAX_ERRORS_JSON_BYTES))
+    return out
 
 
 def cached_assessment(conn, seed_id: str, source_sha256: str):
