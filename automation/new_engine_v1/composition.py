@@ -2326,39 +2326,85 @@ def fact_check_unavailable(article_text: str) -> dict:
 # not add a fact, source, entity, occurrence or relation, broaden scope, strengthen
 # certainty, or improve style anywhere else.
 REPAIR_GROUNDING_SYSTEM = (
-    "You are correcting specific factual over-reach in a finished article. A grounder has "
+    "You are removing specific factual over-reach from a finished article. A grounder has "
     "named the exact passages and said what the evidence does and does not carry. The "
     "evidence is frozen and is the same evidence the article was written from.\n"
     "\n"
-    "YOU MAY ONLY SUBTRACT. For each flagged passage:\n"
-    "  - delete scope the evidence does not carry;\n"
-    "  - narrow a claim to what is supported;\n"
-    "  - remove an exclusivity -- 'the single', 'the only', 'where X appears it is in Y' "
-    "-- unless a fact explicitly licenses it;\n"
-    "  - correct a tense or time placement, so a quote from a draft consultation is not "
-    "written as though it were said of the final thing;\n"
-    "  - correct an ambiguous date reference so it points where the evidence points;\n"
-    "  - restore explicit attribution the sentence dropped;\n"
-    "  - replace an unsupported characterisation with the narrower wording actually "
-    "supported;\n"
-    "  - delete the sentence, which is always available and often correct.\n"
+    "YOU ARE AN EXCISING EDITOR, NOT A WRITER. You take words OUT of a sentence that is "
+    "already there. You do not compose a better sentence and put it back. This is the "
+    "whole contract, and every rule below follows from it.\n"
     "\n"
-    "YOU MAY NOT add a fact, a source, an entity, a number, an occurrence or a relation. "
-    "You may not broaden scope or strengthen certainty. You may not touch a sentence that "
-    "was not flagged, and you may not improve the style of anything. This is a factual "
-    "correction, not a rewrite: every edit must be traceable to a finding.\n"
+    "PREFER DELETION OVER REPLACEMENT. In order: cut the offending words and leave the "
+    "rest of the sentence untouched; if that will not do, cut the clause; if that will "
+    "not do, delete the sentence. Re-writing the sentence around the problem is the one "
+    "move that is never available.\n"
+    "\n"
+    "COPY `original` VERBATIM. Character for character from the article, including "
+    "punctuation and capitalisation. Do not summarise the passage, do not tidy it, do not "
+    "quote the grounder's description of it. An `original` that is not found in the "
+    "article word for word is refused and the finding goes unanswered.\n"
+    "\n"
+    "THE REPAIRED SENTENCE MUST BE WEAKER THAN THE ORIGINAL, NEVER STRONGER. It may not "
+    "become more causal, more exclusive, more comparative, more temporally specific, more "
+    "interpretive or more certain. If your repaired wording says anything the original did "
+    "not, it is an addition however true it is.\n"
+    "\n"
+    "RELATIONS ARE FACTUAL CLAIMS, AND CONNECTIVES CREATE THEM. This is the rule that is "
+    "most often broken, because the words look like grammar rather than assertion. When "
+    "you re-join the surviving halves of a cut sentence you will reach for a connective, "
+    "and that connective is a new claim:\n"
+    "  CAUSE / CONSEQUENCE   because, so, therefore, as a result, which meant, leading "
+    "to, forcing, allowing, this is why\n"
+    "  EQUIVALENCE / COMPARISON   the same as, like, just as, echoes, mirrors, amounts "
+    "to, is effectively, in other words\n"
+    "  TEMPORAL   after, once, when, by then, still, no longer, already, subsequently, "
+    "at the time\n"
+    "  EXCLUSIVITY   only, single, alone, the first, the last, nothing else\n"
+    "None of these may appear in your repaired wording unless it is already in the "
+    "original sentence, or a fact you cite carries it. Join the halves with a full stop "
+    "instead of a connective, or delete one of them.\n"
+    "\n"
+    "TIME IS LICENSED ONLY BY THE TIME OPERATIONS. A repair may change what a sentence "
+    "says about when something happened ONLY when its operation is CORRECT_TIME or "
+    "CORRECT_DATE. Under any other operation, added temporal content is refused. So if a "
+    "passage is wrong about time, say so with the operation -- do not slip a tense or a "
+    "date fix into a NARROW.\n"
+    "\n"
+    "DO NOT INTRODUCE A NAME. No new person, work, place, institution or title, including "
+    "one you are confident about and one that appears in the article elsewhere. Naming the "
+    "thing a pronoun referred to is an addition unless a cited fact carries that name. If "
+    "a reference is unclear, cut the reference.\n"
+    "\n"
+    "THE OPERATIONS, and what each one is for:\n"
+    "  DELETE                  drop the whole sentence. Always available, often the right "
+    "answer, never a failure.\n"
+    "  NARROW                  cut scope, certainty, causal or comparative language.\n"
+    "  REMOVE_EXCLUSIVITY      cut 'the only', 'the single', 'the first'.\n"
+    "  NARROW_CHARACTERISATION cut an unsupported description down to the supported part. "
+    "Cut it down -- do not swap in a different description.\n"
+    "  RESTORE_ATTRIBUTION     put back 'according to X' that the sentence dropped, where "
+    "a cited fact carries X.\n"
+    "  CORRECT_TIME            fix a tense or time placement, so a draft-stage quote is "
+    "not written as though it were said of the finished thing.\n"
+    "  CORRECT_DATE            fix an ambiguous date reference so it points where the "
+    "cited facts point.\n"
     "\n"
     "CITE EVERY FACT YOUR REPAIRED WORDING RESTS ON, not only the one the passage was "
-    "already about. If you restore a date, a name or an attribution, the fact that "
-    "carries it must be in your fact_ids -- otherwise the correction reads as an "
-    "addition and is refused.\n"
+    "already about. If you keep a date, a name or an attribution, the fact that carries it "
+    "must be in your fact_ids -- otherwise the wording reads as an addition and is "
+    "refused.\n"
     "\n"
     "THE GROUNDER'S EXPLANATION IS NOT EVIDENCE. It may name a date or a fact to help you "
     "see the problem; you may only use what the LISTED FACTS carry. If a reference is "
     "ambiguous and no listed fact resolves it, remove the reference rather than resolve "
     "it from the explanation.\n"
     "\n"
-    "If a flagged passage cannot be corrected by subtraction, delete it."
+    "You may not touch a sentence that was not flagged, and you may not improve the style "
+    "of anything. Every edit must be traceable to a finding.\n"
+    "\n"
+    "IF A FLAGGED PASSAGE CANNOT BE FIXED BY REMOVING WORDS, DELETE IT. A deleted "
+    "sentence costs the article a sentence. An invented one costs it the run: the machine "
+    "check refuses the edit, and there is no second repair."
 )
 
 REPAIR_GROUNDING_SCHEMA = (
@@ -2564,7 +2610,20 @@ def grounding_repair(provider, article_text: str, findings: list, ledger: dict,
         raise CompositionHold(GROUNDING, GROUNDING_HOLD,
                               ["the factual repair returned no edits"])
     text, prov, errs = apply_grounding_repair(article_text, edits, target, ledger, packet)
-    if errs:
+    # PARTIAL ACCEPTANCE. apply_grounding_repair already validates each edit on its own and
+    # skips the ones that fail, so the accepted set is exactly the set that passed the
+    # guard -- nothing here relaxes it, and no rejected edit is applied.
+    #
+    # What changed on 2026-09-05 is only what happens NEXT. A single bad edit used to
+    # discard the whole repair: measured across four independent subjects, six edits were
+    # refused and every valid edit beside them was thrown away with them, ending the run.
+    # Now the valid edits stand and the run continues to Safety and the second Grounder,
+    # which is authoritative and will still HOLD on anything the repair failed to answer.
+    #
+    # This is NOT a second repair. It is still one repair call, one set of edits, and one
+    # authoritative Grounder after it. If every edit was refused, nothing was repaired and
+    # re-running the Grounder would only rediscover the same findings, so that stays a HOLD.
+    if errs and not prov:
         raise CompositionHold(
             GROUNDING, GROUNDING_HOLD,
             ["the factual repair did not stay within its permissions"] + errs[:6],
@@ -2574,6 +2633,10 @@ def grounding_repair(provider, article_text: str, findings: list, ledger: dict,
                               ["the factual repair deleted the whole article"])
     return {"status": PASS, "article_text": text, "edits": prov,
             "findings_answered": [f.get("id") for f in target],
+            "rejected_edits": errs,
+            "findings_left_unanswered": sorted(
+                {str(f.get("id")) for f in target}
+                - {str(e.get("finding_id")) for e in prov}),
             "provider": ident, "model_calls": 1, "repairs": 1}
 
 
