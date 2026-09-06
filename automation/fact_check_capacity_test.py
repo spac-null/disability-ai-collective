@@ -229,8 +229,15 @@ def test_H_deadline_exhaustion_is_a_technical_failure_never_a_pass():
     check("H: with completion false", ev(r2)["fact_check_completed"] is False, ev(r2))
     check("H: partial findings are recorded but claim no coverage",
           ev(r2)["coverage_complete"] is False, ev(r2))
+    # The contract is that the bound EXISTS and is explicit, not that it is any
+    # particular number. It rose from 180 to 600 on 2026-09-06 because extraction moved
+    # from an HTTP call of a second or two to a subprocess measured at 87s.
     check("H: the total bound is an explicit constant",
-          FC.FACT_CHECK_TOTAL_SECONDS == 180)
+          isinstance(FC.FACT_CHECK_TOTAL_SECONDS, int)
+          and FC.FACT_CHECK_TOTAL_SECONDS > 0)
+    check("H: and it still bounds the largest single call",
+          FC.FACT_CHECK_TOTAL_SECONDS > FC.EXTRACTION_TIMEOUT,
+          (FC.FACT_CHECK_TOTAL_SECONDS, FC.EXTRACTION_TIMEOUT))
     check("H: no retry was added",
           "for attempt in range" not in
           (HERE / "orchestrator" / "fact_check.py").read_text())
@@ -483,8 +490,12 @@ def test_N_the_stage_cannot_outlive_its_total():
           s.calls_made < 16, s.calls_made)
     check("N4: and held rather than claiming coverage",
           fc["fact_check_completed"] is False, fc)
+    # The contract is the FORMULA -- one call may have its ordinary ceiling or whatever
+    # is left of the total, whichever is smaller -- not the specific constants.
     check("N4: the ceiling is min(per-call, remaining), never the sum",
-          FC.PER_CALL_TIMEOUT == 30 and FC.FACT_CHECK_TOTAL_SECONDS == 180)
+          FC.PER_CALL_TIMEOUT < FC.FACT_CHECK_TOTAL_SECONDS
+          and FC.EXTRACTION_TIMEOUT < FC.FACT_CHECK_TOTAL_SECONDS,
+          (FC.PER_CALL_TIMEOUT, FC.EXTRACTION_TIMEOUT, FC.FACT_CHECK_TOTAL_SECONDS))
 
 
 def test_N_the_thirteen_claim_normal_case_is_unchanged():
