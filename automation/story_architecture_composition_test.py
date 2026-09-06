@@ -2713,6 +2713,27 @@ def test_a_grounding_failure_in_the_furniture_rewrites_the_furniture():
           out["publication_ready"] is True and bool(out["package"]))
 
 
+def test_the_writer_is_told_not_to_tidy_away_a_qualifier():
+    """Two fresh articles were refused by the Grounder on 2026-09-06 for the same move: a
+    supported fact with one condition removed. "flush-pointed", which describes how mortar
+    joints are finished, became "laid flush"; and "from 57% to 88% as team size increased
+    from 2 to 16" became "from 57% to 88%", handing the gain to the mechanism the article
+    was about. Both were true of a smaller claim and false of the one written."""
+    for surface, text in (("the writer", CP.WRITER_SYSTEM),
+                          ("the prose finish", CP.PROSE_FINISH_SYSTEM)):
+        low = text.lower()
+        check("%s is told to keep the condition that makes a claim true" % surface,
+              "qualifier" in low)
+        check("%s names the conditions it must not drop" % surface,
+              all(w in low for w in ("scope", "attribution", "time window"))
+              and ("team size" in low or "sample" in low), surface)
+        check("%s carries the flush-pointed failure" % surface, "flush-pointed" in low)
+        check("%s carries the team-size failure" % surface,
+              "57%" in text and "team size increased from 2 to 16" in text)
+    check("and elegance is named as no excuse",
+          "cleaner than its evidence" in CP.WRITER_SYSTEM)
+
+
 def test_cheap_triage_stops_after_worth_and_is_not_a_hold():
     prov, out = run(full_script()[:2], stop_after=CP.WORTH)
     check("the run does not hold", out["status"] == CP.PASS, out.get("failure_reason"))
