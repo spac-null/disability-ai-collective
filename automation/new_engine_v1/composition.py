@@ -2961,6 +2961,19 @@ def run_story_architecture_composition(
 
         if fact_check:
             fc = record(FACT_CHECK, (fact_check_fn or fact_check_unavailable)(final))
+            # A fact check that COULD NOT RUN is deliberately not blocked here: it flows on
+            # to the Reader carrying its own status, so an infrastructure failure is never
+            # recorded as an editorial rejection. Publication is refused elsewhere, twice --
+            # publication_safety_bridge will not stamp publication_eligible or
+            # fact_check_status without a real strict check, and publish_best additionally
+            # requires fact_check_extraction_status "ok" with claims_extracted > 0 (added
+            # 2026-08-25, after a candidate carried publication_eligible true while its
+            # extraction had raised).
+            #
+            # What was wrong was the BRIDGE calling an extraction failure HOLD, making it
+            # indistinguishable from a found contradiction: the only candidate ever to reach
+            # this stage produced "FACT_CHECK HOLD, blocking contradiction(s): []" on an
+            # article nothing had checked. Fixed in the bridge's status taxonomy.
             if fc.get("status") == HOLD:
                 return out(FACT_CHECK,
                            "blocking contradiction(s): %s"
