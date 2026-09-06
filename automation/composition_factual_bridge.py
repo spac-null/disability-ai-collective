@@ -35,6 +35,11 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 NOT_RUN = "NOT_RUN"
+# A technical outcome, distinct from an editorial one. The stage RAN and could not finish:
+# extraction returned nothing parseable, so no claim was ever checked. Reported separately
+# because "we could not check" and "we checked and found a contradiction" are different
+# answers, and only one of them says anything about the article.
+EXTRACTION_ERROR = "FACT_CHECK_EXTRACTION_ERROR"
 PASS = "PASS"
 HOLD = "HOLD"
 
@@ -105,8 +110,18 @@ def fact_check(article_text: str, claim_cap: int = DEFAULT_CLAIM_CAP) -> dict:
         def __init__(self):
             self.logger = _Log()
 
+    # ONE bounded retry, and only for a failure that is plausibly transient. The observed
+    # failure was "no JSON object in provider response (26 chars)" -- a formatting accident
+    # of the kind a second identical request usually settles. Nothing here retries for a
+    # better verdict; a contradiction found on the first pass stands.
     try:
         r = _Runner()._run_web_fact_check(article_text, claim_cap=claim_cap, strict=True)
+        if r.get("extraction_status") == "error":
+            r2 = _Runner()._run_web_fact_check(article_text, claim_cap=claim_cap,
+                                               strict=True)
+            r2["extraction_retried"] = True
+            r2["first_extraction_error"] = str(r.get("extraction_error"))[:200]
+            r = r2
     except Exception as e:                                        # noqa: BLE001
         # A transport or provider failure is NOT_RUN, not PASS. The distinction matters:
         # "we could not check" and "we checked and found nothing" are different answers
@@ -122,7 +137,26 @@ def fact_check(article_text: str, claim_cap: int = DEFAULT_CLAIM_CAP) -> dict:
     r["claims_checked"] = r.get("claims_extracted")
     r["provider_calls"] = r.get("provider_calls")
     r["completed"] = bool(r.get("fact_check_completed"))
-    r["status"] = (HOLD if (r["blocking_contradictions"]
-                            or r.get("extraction_status") == "error"
-                            or not r["completed"]) else PASS)
+    # THE STATE MODEL. Three outcomes, never conflated:
+    #
+    #   PASS              the check ran, and nothing blocking came back.
+    #   HOLD              the check ran, and it found a contradiction. Editorial.
+    #   EXTRACTION_ERROR  the check could not run. Technical. Fail-closed, but it says
+    #                     nothing about the article and must not be counted as one.
+    #
+    # The only candidate ever to reach this stage in production returned
+    # `FACT_CHECK HOLD, blocking contradiction(s): []` -- an editorial-looking rejection
+    # of an article that had never been fact-checked at all (claims_extracted 0,
+    # completed false, extraction_error "no JSON object in provider response (26 chars)").
+    # Conflating the two was deliberate at the time, because only HOLD stopped the run;
+    # the caller now stops on this status too, so the conflation is no longer needed.
+    if r.get("extraction_status") == "error" or not r["completed"]:
+        r["status"] = EXTRACTION_ERROR
+        r["technical_failure"] = True
+        r["missing"] = ["extraction did not complete: %s"
+                        % str(r.get("extraction_error") or "unknown")[:200]]
+    elif r["blocking_contradictions"]:
+        r["status"] = HOLD
+    else:
+        r["status"] = PASS
     return r

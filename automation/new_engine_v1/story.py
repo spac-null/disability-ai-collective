@@ -116,6 +116,67 @@ def leaks(text: str) -> list:
     return sorted(out, key=lambda x: -x[1])
 
 
+def leak_hits(text: str, where: str = "") -> list:
+    """The same scan, but reporting WHAT MATCHED rather than the regex that matched it.
+
+    The old reporting printed the pattern source, so a hold read
+    "packet carries a provenance frame '(ANCHOR|PRIMARY|INDEPENDENT|TERTIARY)' x1" --
+    which names the detector and not the offending text, and took an artifact dig to
+    resolve into "the phrase 'Senate primary' appears in a fact". Each hit now carries
+    the matched string, a little context and the field it came from.
+    """
+    hits = []
+    for p in PROVENANCE_FRAMES:
+        for m in re.finditer(p, text, re.I):
+            a, b = max(0, m.start() - 40), min(len(text), m.end() + 40)
+            hits.append({"matched": m.group(0),
+                         "context": " ".join(text[a:b].split()),
+                         "field": where,
+                         "pattern": p.replace(r"\b", "").replace(r"(?:", "(")})
+    return hits
+
+
+# WHAT THE ENGINE-LANGUAGE SCAN IS FOR, and therefore where it may look. It catches
+# MACHINE PROVENANCE LANGUAGE that a MODEL WROTE -- "the source does not establish", role
+# taxonomy, sha256, scaffold names. Frozen evidence is not model-written and the architect
+# cannot edit a word of it, so scanning it produces holds that are unrepairable by
+# construction. Measured across four independent production runs, every ARCHITECTURE hold
+# of this kind was ordinary domain vocabulary inside a ledger fact:
+#
+#   "lack secure geological provenance"     a palaeontology term
+#   "Democratic U.S. Senate primary"        the subject of the article, 8 matches
+#   "the primary funder" / "an anchor institution"
+#   "ESP32-S3 microcontroller"              matched the \bS\d+\b source-id marker
+#
+# So the scan is scoped to the fields the ARCHITECT GENERATED. `facts` and `quotes` carry
+# verbatim evidence and are excluded. The vocabulary is unchanged, and the same scan still
+# runs over the finished article in the safety stack, where the prose IS model-written.
+_GENERATED_PACKET_FIELDS = ("story_spine", "opening", "reader_initial_state", "turn",
+                            "crip_turn", "lens", "ending_move")
+_GENERATED_BEAT_FIELDS = ("happens", "carrier", "concept", "withhold")
+
+
+def generated_packet_text(packet: dict) -> list:
+    """(field, text) for everything in the packet a model wrote. Evidence excluded."""
+    out = []
+    for k in _GENERATED_PACKET_FIELDS:
+        v = packet.get(k)
+        if isinstance(v, str) and v.strip():
+            out.append((k, v))
+    for i, b in enumerate(packet.get("beats") or [], 1):
+        for k in _GENERATED_BEAT_FIELDS:
+            v = (b or {}).get(k)
+            if isinstance(v, str) and v.strip():
+                out.append(("beats[%d].%s" % (i, k), v))
+    for k, v in (packet.get("definitions") or {}).items():
+        if isinstance(v, str) and v.strip():
+            out.append(("definitions[%s]" % k, v))
+    for i, v in enumerate(packet.get("prohibitions") or [], 1):
+        if isinstance(v, str) and v.strip():
+            out.append(("prohibitions[%d]" % i, v))
+    return out
+
+
 def scaffold_leaks(text: str) -> list:
     return sorted({n for n in SCAFFOLD_NAMES if n.lower() in text.lower()})
 
@@ -767,11 +828,13 @@ def validate_packet(packet: dict) -> list:
     """Fail closed. A packet carrying the auditing frame would reintroduce the very
     defect this module exists to remove, so it is refused rather than cleaned."""
     errs = []
-    text = render(packet)
-    for frame, n in leaks(text):
-        errs.append("packet carries a provenance frame %r x%d" % (frame, n))
-    for s in scaffold_leaks(text):
-        errs.append("packet exposes the scaffold name %r" % s)
+    # Generated fields only -- see generated_packet_text. Frozen evidence is not scanned.
+    for field, text in generated_packet_text(packet):
+        for h in leak_hits(text, field):
+            errs.append("packet carries a provenance frame %r in %s -- %r"
+                        % (h["matched"], h["field"], h["context"]))
+        for s in scaffold_leaks(text):
+            errs.append("packet exposes the scaffold name %r in %s" % (s, field))
     if not (packet.get("story_spine") or "").strip():
         errs.append("packet has no story spine")
     if not (packet.get("beats") or []):
