@@ -69,6 +69,15 @@ REPACKAGEABLE = ("title", "dek", "homepage_excerpt", "meta_description", "social
 # it and is not copied onto a derivative. `translation_of` is the link back to it.
 CARRY_FROM_ENGLISH = ("date", "author", "category", "image", "keywords")
 
+# `sources` is deliberately NOT in that list, and adding it would be the wrong fix.
+# The Go deeper block ("Verder lezen" in Dutch) is rendered from `sources`, and an
+# edition's copy of it carries a reader annotation the English does not have: four of
+# WildSumaco's five entries read "Dezeen, Engelstalig" where the English reads "Dezeen",
+# and the fifth -- the architects' own Spanish-language site -- correctly carries no such
+# note. Carrying the English list forward verbatim would delete that per-source language
+# annotation on every re-derivation, silently. So the list is RECONCILED instead; see
+# carry_sources.
+
 
 TRANSLATE_SYSTEM = (
     "You are the editor of the %(name)s edition of a magazine. An article has been "
@@ -425,6 +434,60 @@ def translation_path(lang: str, en_path: pathlib.Path) -> pathlib.Path:
     return REPO / LANGUAGES[lang]["collection"] / ("%s.md" % slug_of(en_path))
 
 
+def carry_sources(lang: str, en_path: pathlib.Path, fm: dict) -> list:
+    """The edition's Go deeper block, reconciled against the edition already on disk.
+
+    THE BUG THIS FIXES. `write_translation` emitted no `sources` at all, so re-deriving an
+    existing edition deleted its whole Go deeper block -- five curated entries on
+    WildSumaco, restored by hand after the fact and lost again on the next run. Nothing
+    warned; the section simply stopped rendering.
+
+    THE RULE. English is authoritative for WHICH sources appear, in WHAT ORDER, with what
+    URL and title: the edition is derivative and does not curate its own reading list.
+    Only the `publisher` label is taken from the existing edition, and only where that
+    exact URL is already in it -- because that label is where a language annotation lives,
+    and it was written by someone who knew which sources were English and which were not.
+
+    Nothing here fetches, ranks, invents a URL, or translates a title. A source the
+    English has dropped is dropped; a source it has added arrives with its English label
+    and is reported, because that is the one case where a human may want to add the
+    annotation by hand.
+    """
+    en_sources = [s for s in (fm.get("sources") or []) if isinstance(s, dict) and s.get("url")]
+    if not en_sources:
+        # Presence and absence both carry forward: an article with no Go deeper block
+        # keeps none, and an edition does not acquire one its English never had.
+        return []
+    existing = translation_path(lang, en_path)
+    labels = {}
+    if existing.is_file():
+        try:
+            prev_fm, _ = read_post(existing)
+            labels = {s["url"]: s.get("publisher")
+                      for s in (prev_fm.get("sources") or [])
+                      if isinstance(s, dict) and s.get("url") and s.get("publisher")}
+        except Exception as e:                    # a malformed edition must not lose the block
+            print("NOTE: could not read the existing %s edition's sources (%s: %s); "
+                  "carrying the English labels" % (lang, type(e).__name__, str(e)[:120]))
+    out, fresh = [], []
+    for src in en_sources:
+        entry = {"title": src.get("title", ""), "url": src["url"]}
+        label = labels.get(src["url"])
+        if label:
+            entry["publisher"] = label
+        else:
+            if src.get("publisher"):
+                entry["publisher"] = src["publisher"]
+            if labels:
+                fresh.append(src["url"])
+        out.append(entry)
+    if fresh:
+        print("NOTE: %d source(s) new to the %s edition carry the English publisher "
+              "label unchanged, with no language annotation: %s"
+              % (len(fresh), lang, ", ".join(fresh)))
+    return out
+
+
 def write_translation(lang: str, en_path: pathlib.Path, en: dict, tr: dict) -> pathlib.Path:
     """One file in the language collection. No engine provenance is copied."""
     fm = en["front_matter"]
@@ -447,6 +510,15 @@ def write_translation(lang: str, en_path: pathlib.Path, en: dict, tr: dict) -> p
     # reader of the file needs: which English article, in which state, it renders.
     lines.append('translation_source_bundle_sha256: "%s"' % bundle_sha256(en))
     lines = [x for x in lines if x]
+    # LAST, because it is the only block field: a mapping key after a block sequence
+    # would read as one of its items.
+    for i, src in enumerate(carry_sources(lang, en_path, fm)):
+        if i == 0:
+            lines.append("sources:")
+        lines.append("  - title: %s" % json.dumps(src.get("title", "")))
+        lines.append("    url: %s" % json.dumps(src["url"]))
+        if src.get("publisher"):
+            lines.append("    publisher: %s" % json.dumps(src["publisher"]))
     lines.append("---")
     out.write_text("\n".join(lines) + "\n\n" + tr["article"].strip() + "\n",
                    encoding="utf-8")
