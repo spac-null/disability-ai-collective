@@ -111,7 +111,20 @@ _NO_FABRICATION = (
     "\"perception runs that sequence too fast to notice\" is a claim about everyone, and "
     "the second does not follow from the first. Where such a general claim is doing real "
     "work in the argument, the source must support it, or you must mark it as a reading "
-    "rather than an established fact, or it must go."
+    "rather than an established fact, or it must go.\n"
+    "  QUALIFIER FIDELITY. A supported fact usually arrives with a condition attached, and "
+    "the condition is part of what makes it true. Never drop or compress one to make a "
+    "sentence cleaner: scope, comparison conditions, sample or team size, time window, "
+    "place, subject and object, may or can against does, the attribution -- who says it, "
+    "who found it, who did it -- a technical distinction, and any dependency of the form \"as X increased from A to B\". "
+    "Two real articles were refused this week for exactly this. A source said a wall was "
+    "\"flush-pointed\", which describes how the mortar joints are finished, and the draft "
+    "wrote that the bricks were \"laid flush\" -- a laying method no source states. A paper "
+    "said accuracy rose \"from 57% to 88% as team size increased from 2 to 16\", and the "
+    "draft wrote \"accuracy climbs from 57% to 88%\", handing the gain to the mechanism the "
+    "article was about. Both readings were true of a smaller claim and false of the one "
+    "written. Elegant prose is not permission to make a fact cleaner than its evidence: if "
+    "the qualifier will not fit the sentence, write a different sentence."
 )
 
 
