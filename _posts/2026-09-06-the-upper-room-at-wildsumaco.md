@@ -27,7 +27,7 @@ publication_safety_version: 1
 image: /assets/the-upper-room-at-wildsumaco_setting_1.jpg
 image_alt: "The Upper Room at WildSumaco — editorial illustration"
 translation_nl: "/nl/the-upper-room-at-wildsumaco/"
-dek: "The architects describe the classroom and bird observatory on the pavilion's upper level as open to all. The biological station that hosts it is recorded as not open to the public, and its accessibility field reads No."
+dek: "The architects describe the classroom and bird observatory on the pavilion's upper level as open to all. The WildSumaco Biological Station is recorded as not open to the public, and its accessibility field reads No."
 excerpt: "A teaching pavilion at Pacto Sumaco, in Ecuador's Napo Province, is lifted clear of the forest floor so water, moisture and small fauna carry on beneath it. The room the architects call open to all sits on the upper level."
 sources:
   - title: "WildSumaco Biological Station — Francis Marion University"
@@ -58,7 +58,7 @@ The construction was run as a workshop rather than a conventional site, with the
 <figcaption>The Upper Room at WildSumaco — editorial illustration</figcaption>
 </figure>
 
-Guadua bamboo, along with structural timber, fibers and stone, was harvested or purchased nearby under sustainability criteria. Most of what the building is made of comes from the territory itself. The walls are bahareque: soil combined with fiber and lime over woven guadua cane. All the soil in them came from the same excavation dug for the foundations. The building is made in part of the hole it stands in, and the result is an envelope with a low environmental footprint and high thermal performance.
+Guadua bamboo, along with structural timber, fibers and stone, was harvested or purchased nearby under sustainability criteria. Most of what the building is made of comes from the territory itself. The walls are bahareque: soil combined with fiber and lime over woven guadua cane. All the soil in them came from the same excavation dug for the biodigester and the foundations. The building is made in part of the hole it stands in, and the result is an envelope with a low environmental footprint and high thermal performance.
 
 The structural timber stays exposed across six-metre spans, and the woven bahareque is left visible in certain sections. The team left those portions exposed so that the construction explains itself and the building can serve as a teaching tool. Floor-to-ceiling glass and mesh enclosures fitted with bird-safe protection open the interior to the landscape without turning transparency into a naive gesture or putting local wildlife at risk. Each opening is measured against the body it might meet. As the second level rises to the canopy, the observatory makes the changing relationships between understory and treetops part of the learning experience.
 
@@ -69,4 +69,4 @@ The WildSumaco Biological Station is a collaborative initiative of Francis Mario
 <figcaption>The Upper Room at WildSumaco — editorial illustration</figcaption>
 </figure>
 
-A room on the top level with no locks. Glass fitted with bird-safe protection. Ground left under the floor so that water, moisture and small fauna carry on across it. Each of those is a decision about which bodies pass. The directory entry for the biological station that hosts the pavilion contains an accessibility field labelled 'ADA accessibility', and the entry reads No. The room the architects call open to all sits on the upper level of a building lifted off the ground.
+A room on the top level with no locks. Glass fitted with bird-safe protection. Ground left under the floor so that water, moisture and small fauna carry on across it. Each of those is a decision about which bodies pass. The WildSumaco Biological Station's directory entry contains an accessibility field labelled 'ADA accessibility', and the entry reads No. The room the architects call open to all sits on the upper level of a building lifted off the ground.
