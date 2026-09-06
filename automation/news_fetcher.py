@@ -339,6 +339,9 @@ THEME_KEYWORDS = {
 # events, papers and institutional material can REACH the judge, not that they flood it.
 EXPLORATION_QUOTA = 14
 EXPLORATION_PER_SOURCE = 1
+# How many low-score candidates to OFFER per quota slot. Duplicates should cost a
+# candidate, not a slot -- see the store loop.
+EXPLORATION_POOL_FACTOR = 4
 
 DISABILITY_BOOSTERS = [
     "accessible","accessibility","wheelchair","deaf","blind",
@@ -1487,10 +1490,16 @@ def main():
     # are what keep the run cheap, and they are unchanged.
     low_scored.sort(key=lambda it: (it.get("published_date") or it.get("pub_date") or ""),
                     reverse=True)
+    # A POOL, NOT A QUOTA-SIZED LIST. The quota is spent in the store loop below, after
+    # near-duplicate removal, because spending it here starved the lane: the second ingest
+    # cycle of 2026-09-06 picked fourteen low-score items and stored none of them -- every
+    # one was a near-duplicate of what the cycle twenty minutes earlier had already taken,
+    # and the slots went with them. Offering several times the quota, still one per source
+    # and newest first, means duplicates cost a candidate rather than a slot.
     per_source, exploration = {}, []
     for item in low_scored:
         src = item.get("source_name", "")
-        if len(exploration) >= EXPLORATION_QUOTA:
+        if len(exploration) >= EXPLORATION_QUOTA * EXPLORATION_POOL_FACTOR:
             break
         if per_source.get(src, 0) >= EXPLORATION_PER_SOURCE:
             continue
@@ -1500,6 +1509,8 @@ def main():
     source_counts: dict[str, int] = {}
     explored = 0
     for item in scored_items + exploration:
+        if item["relevance_score"] < MIN_SCORE and explored >= EXPLORATION_QUOTA:
+            continue
         src = item["source_name"]
         if source_counts.get(src, 0) >= MAX_PER_SOURCE:
             skipped_score += 1
