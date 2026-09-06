@@ -4005,6 +4005,56 @@ main[data-persona="zen-circuit"] .post-category-label { color: #9d5034; border-b
   color: var(--color-accent);
 }
 
+/* Go deeper — the sources a reader can follow, at the end of the article */
+.post-sources {
+  margin: var(--space-10) 0 var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border-primary);
+}
+
+.post-sources__heading {
+  font-size: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  margin: 0 0 0.9rem;
+}
+
+.post-sources__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-sources__item {
+  margin: 0 0 0.6rem;
+  line-height: 1.5;
+}
+
+.post-sources__item:last-child {
+  margin-bottom: 0;
+}
+
+.post-sources__link {
+  font-size: 0.95rem;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.post-sources__link:hover {
+  color: var(--color-accent);
+}
+
+.post-sources__publisher {
+  display: inline-block;
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
 /* Prev/Next article nav */
 .post-nav {
   display: grid;

@@ -495,10 +495,21 @@ def run_scheduled(orch, *, rehearsal: bool = False,
             "CURRENT_ENGINE %s: article passed every gate but has no editorial package "
             "(%s) -- candidate written, publication withheld for owner review",
             run, _pkg_status or "MISSING")
+    # The public source list, taken from the run's own frozen RESEARCH_PACK. Reading it
+    # is not allowed to cost a run that is already decided: a pack that is missing or
+    # malformed yields no list, and the article publishes with no public source block --
+    # the site renders one only from this list. Nothing here searches, ranks or re-fetches.
+    try:
+        _pack = (out.get("artifacts") or {}).get(C.RESEARCH_PACK)
+        _sources = CAND.public_sources(_pack.payload if _pack is not None else {})
+    except Exception as e:
+        orch.logger.warning("CURRENT_ENGINE %s: public source list unavailable "
+                            "(ignored): %s: %s", run, type(e).__name__, str(e)[:200])
+        _sources = []
     path = CAND.persist_candidate(
         drafts_dir=orch.drafts_dir, slug=_slug(title), body=body, title=title,
         author=R.DEFAULT_BYLINE, engine_meta=meta, rehearsal=rehearsal,
-        safety=_stamp, package=_pkg)
+        safety=_stamp, package=_pkg, sources=_sources)
     result["candidate"] = str(path)
     result["publication_eligible"] = bool(bridge.eligible and not rehearsal
                                           and not _pkg_missing)

@@ -68,7 +68,14 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
             <time class="home-hero__date" datetime="{{ featured.date | date_to_xmlschema }}">{{ featured.date | date: "%B %-d, %Y" }}</time>
           </div>
           <h2 class="home-hero__title">{{ featured.title }}</h2>
-          <p class="home-hero__excerpt">{{ featured.excerpt | strip_html | truncatewords: 45 }}</p>
+          {% comment %} The card text is the publication's own, when the article carries one.
+             A packaged `excerpt` is a plain string written for exactly this card; Jekyll's
+             automatic excerpt is the article's first paragraph wrapped in <p>, written to be
+             read second, and it truncates mid-sentence. Where the package is absent, the dek
+             stands in; where neither exists, the legacy fallback is unchanged. {% endcomment %}
+          {% assign featured_card_text = featured.excerpt %}
+          {% if featured_card_text contains '<p' %}{% assign featured_card_text = featured.dek | default: featured.excerpt %}{% endif %}
+          <p class="home-hero__excerpt">{{ featured_card_text | strip_html | truncatewords: 45 }}</p>
           <span class="home-hero__cta">Read essay &rarr;</span>
         </div>
       </a>
@@ -143,8 +150,10 @@ description: "An experimental editorial publication by Deaf artist Jascha Blume.
             </div>
 
             <div class="card__body">
+              {% assign card_text = post.excerpt %}
+              {% if card_text contains '<p' %}{% assign card_text = post.dek | default: post.excerpt %}{% endif %}
               <p class="text-body mb-6 article-card__excerpt">
-                {{ post.excerpt | strip_html | truncatewords: 55 }}
+                {{ card_text | strip_html | truncatewords: 55 }}
               </p>
             </div>
           </article>
