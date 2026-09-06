@@ -2,6 +2,12 @@
 layout: default
 ---
 
+{% comment %} A Dutch edition is the same article in another language, not another article.
+   Everything the layout says in its own voice -- labels, breadcrumbs, footer navigation --
+   follows the page it is on, so a Dutch reader is never handed an English route out. {% endcomment %}
+{% assign _is_nl = false %}
+{% if page.lang == 'nl' %}{% assign _is_nl = true %}{% endif %}
+
 {% assign _author_url = '' %}
 {% if page.author == "Pixel Nova" %}{% assign _author_url = '/collective/pixel-nova/' %}
 {% elsif page.author == "Siri Sage" %}{% assign _author_url = '/collective/siri-sage/' %}
@@ -98,7 +104,8 @@ layout: default
 
         <!-- Breadcrumb -->
         <nav class="post-breadcrumb" aria-label="Breadcrumb">
-          <a href="{{ '/research/' | relative_url }}" class="post-breadcrumb__link">← Articles</a>
+          {% if _is_nl %}<a href="{{ '/nl/' | relative_url }}" class="post-breadcrumb__link">← Artikelen</a>
+          {% else %}<a href="{{ '/research/' | relative_url }}" class="post-breadcrumb__link">← Articles</a>{% endif %}
         </nav>
 
         <!-- Category badge -->
@@ -174,6 +181,35 @@ layout: default
         <a href="{{ matched_thread.url }}" class="post-thread-signal__link">{{ matched_thread.title }} &rarr;</a>
       </div>
       {% assign matched_thread = nil %}
+      {% endif %}
+
+      {% comment %} GO DEEPER. The article already tells a reader its sources were checked; this
+         is where that claim becomes something they can follow. `sources` is a short, ordered,
+         editorial list -- primary and authoritative first, five at most -- carried in front
+         matter and drawn from material the publication actually fetched and read. No hashes,
+         no run ids, no evidence ids, no research dump. Where an article carries no list, the
+         nothing renders. A Dutch edition points at the same documents under Dutch labels.
+
+         Deliberately NOT driven by `source_url`. Almost every article in the corpus carries
+         one, including the whole legacy cohort, and a bare anchor URL from an earlier
+         editorial system is not the checked, chosen evidence this block claims to offer.
+         Rendering it would have put an unvetted outbound link at the foot of roughly a
+         hundred archived essays on the strength of a front-matter field nobody reviewed
+         for this purpose. No list, no block. {% endcomment %}
+      {% if page.sources and page.sources.size > 0 %}
+      <aside class="post-sources" aria-labelledby="post-sources-heading">
+        <h2 class="post-sources__heading" id="post-sources-heading">{% if _is_nl %}Verder lezen{% else %}Go deeper{% endif %}</h2>
+        <ul class="post-sources__list">
+          {% for src in page.sources limit: 5 %}
+          {% if src.url and src.title %}
+          <li class="post-sources__item">
+            <a class="post-sources__link" href="{{ src.url }}" rel="noopener nofollow" target="_blank">{{ src.title }}</a>
+            {% if src.publisher %}<span class="post-sources__publisher">{{ src.publisher }}</span>{% endif %}
+          </li>
+          {% endif %}
+          {% endfor %}
+        </ul>
+      </aside>
       {% endif %}
 
       <!-- Article Footer -->
@@ -304,6 +340,11 @@ layout: default
         {% endif %}
 
         <!-- Related Articles -->
+        {% comment %} English recommendations are suppressed on a Dutch edition: every entry
+             here resolves to an English article, and the fallback pool would happily offer a
+             Dutch reader the English original of the piece they are already reading. A Dutch
+             page gets a Dutch route instead, below. {% endcomment %}
+        {% unless _is_nl %}
         {% comment %} "More to Read" recommends, so it observes the active/archive split:
              an actively carried essay recommends only actively carried essays, while an
              archived essay keeps its archive neighbours, which is where its context is.
@@ -427,6 +468,23 @@ layout: default
         {% endif %}
         {% endif %}
 
+        {% endunless %}
+
+        {% if _is_nl %}
+        <section class="related-articles" aria-label="Meer lezen">
+          <h2 class="related-articles__heading">Meer lezen</h2>
+          <p class="text-body text-secondary" style="margin-bottom: 1.25rem;">
+            Crip Minds verschijnt in het Engels; een deel van de artikelen verschijnt ook in het Nederlands.
+          </p>
+          <div class="text-center">
+            <a href="{{ '/nl/' | relative_url }}" class="btn btn--outline btn--sm">Alle Nederlandse artikelen &rarr;</a>
+            {% if page.translation_of %}
+            <a href="{{ page.translation_of | relative_url }}" hreflang="en" lang="en" class="btn btn--outline btn--sm">Read this article in English &rarr;</a>
+            {% endif %}
+          </div>
+        </section>
+        {% endif %}
+
         <!-- Prev/Next Navigation -->
         {% if page.previous or page.next %}
         <nav class="post-nav" aria-label="Article navigation">
@@ -434,7 +492,7 @@ layout: default
           <a href="{{ page.previous.url | relative_url }}" class="post-nav__link">
             {% if page.previous.image %}<div class="post-nav__img"><img src="{{ page.previous.image | relative_url }}" alt="" loading="lazy" decoding="async"></div>{% endif %}
             <div class="post-nav__text">
-              <span class="post-nav__label">← Older</span>
+              <span class="post-nav__label">{% if _is_nl %}← Ouder{% else %}← Older{% endif %}</span>
               <span class="post-nav__title">{{ page.previous.title | truncate: 60 }}</span>
             </div>
           </a>
@@ -443,7 +501,7 @@ layout: default
           <a href="{{ page.next.url | relative_url }}" class="post-nav__link post-nav__link--next">
             {% if page.next.image %}<div class="post-nav__img"><img src="{{ page.next.image | relative_url }}" alt="" loading="lazy" decoding="async"></div>{% endif %}
             <div class="post-nav__text">
-              <span class="post-nav__label">Newer →</span>
+              <span class="post-nav__label">{% if _is_nl %}Nieuwer →{% else %}Newer →{% endif %}</span>
               <span class="post-nav__title">{{ page.next.title | truncate: 60 }}</span>
             </div>
           </a>
@@ -451,7 +509,8 @@ layout: default
         </nav>
         {% endif %}
         <div class="flex justify-center mt-6">
-          <a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← Articles</a>
+          {% if _is_nl %}<a href="{{ '/nl/' | relative_url }}" class="btn btn--outline">← Artikelen</a>
+          {% else %}<a href="{{ '/research/' | relative_url }}" class="btn btn--outline">← Articles</a>{% endif %}
         </div>
 
       </footer>

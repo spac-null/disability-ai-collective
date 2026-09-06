@@ -48,9 +48,74 @@ def _yaml_scalar(v) -> str:
     return '"%s"' % s
 
 
+# ── PUBLIC SOURCES ────────────────────────────────────────────────────────────
+# The reader-facing "Go deeper" list, and nothing else. It is a projection of material
+# the RESEARCH_PACK already fetched, hashed and kept -- this selects and formats, it does
+# not search, rank, score or reach the network, and it has no vote in any gate.
+#
+# It carries no evidence id, no hash, no run id and no pack internals: those are machine
+# identity and a reader has no use for them. An entry that cannot be shown honestly --
+# no title, or a URL that is not a plain public http(s) address -- is dropped rather than
+# repaired, and a pack that yields nothing clean yields no field at all. There is no
+# fallback URL anywhere in here: an invented link would be worse than an absent one.
+PUBLIC_SOURCES_MAX = 5
+
+# A fetched page's <title> usually ends in the site's own name -- "... | ArchDaily",
+# "... - Francis Marion University". On a page that already prints the publisher beside
+# the link, that tail is said twice. Trimming it is typography, not editing: the tail
+# comes off ONLY when it is the publisher the entry already carries, so no title can
+# lose a word that was telling the reader something.
+_TITLE_SEPARATORS = ("|", "-", "\u2013", "\u2014", "\u00b7", "\u2022")
+
+
+def _squash(s: str) -> str:
+    return "".join(c for c in s.lower() if c.isalnum())
+
+
+def _tidy_title(title: str, publisher: str) -> str:
+    pub = _squash(publisher).removeprefix("www.")
+    if not pub:
+        return title
+    for _ in range(2):                      # at most two tails; never a whole title
+        for sep in _TITLE_SEPARATORS:
+            head, found, tail = title.rpartition(" %s " % sep)
+            if not found or not head.strip():
+                continue
+            t = _squash(tail)
+            if t and (t in pub or pub in t):
+                title = head.strip()
+                break
+        else:
+            break
+    return title
+
+
+def public_sources(pack_payload: dict | None) -> list:
+    """The publishable source list from a frozen RESEARCH_PACK payload, in pack order."""
+    out, seen = [], set()
+    for src in ((pack_payload or {}).get("sources") or []):
+        if not isinstance(src, dict):
+            continue
+        url = str(src.get("url") or "").strip()
+        title = " ".join(str(src.get("title") or "").split())
+        if not title or not (url.startswith("http://") or url.startswith("https://")):
+            continue
+        if url in seen:
+            continue
+        seen.add(url)
+        publisher = " ".join(str(src.get("publisher") or "").split())
+        entry = {"title": _tidy_title(title, publisher), "url": url}
+        if publisher:
+            entry["publisher"] = publisher
+        out.append(entry)
+        if len(out) >= PUBLIC_SOURCES_MAX:
+            break
+    return out
+
+
 def build_frontmatter(*, title: str, author: str, engine_meta: dict,
                       rehearsal: bool = True, safety: dict | None = None,
-                      package: dict | None = None) -> str:
+                      package: dict | None = None, sources: list | None = None) -> str:
     """Frontmatter for a new-engine candidate.
 
     Deliberately absent: `fact_check_status: verified` and `publication_safety_version`.
@@ -107,6 +172,15 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
     fields += sorted(stamp.items())
     lines = ["---"]
     lines += ["%s: %s" % (k, _yaml_scalar(v)) for k, v in fields]
+    # The reader-facing source list, last, because it is the only block field here.
+    # Absent entirely when there is nothing clean to show.
+    for i, src in enumerate(sources or []):
+        if i == 0:
+            lines.append("sources:")
+        lines.append("  - title: %s" % _yaml_scalar(src["title"]))
+        lines.append("    url: %s" % _yaml_scalar(src["url"]))
+        if src.get("publisher"):
+            lines.append("    publisher: %s" % _yaml_scalar(src["publisher"]))
     lines.append("---")
     return "\n".join(lines) + "\n\n"
 
@@ -114,13 +188,14 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
 def persist_candidate(*, drafts_dir: pathlib.Path, slug: str, body: str,
                       title: str, author: str, engine_meta: dict,
                       rehearsal: bool = True, safety: dict | None = None,
-                      package: dict | None = None) -> pathlib.Path:
+                      package: dict | None = None,
+                      sources: list | None = None) -> pathlib.Path:
     """Write ONE accepted candidate into the normal draft location. No git, no publish."""
     drafts_dir.mkdir(parents=True, exist_ok=True)
     path = drafts_dir / ("%s-%s.md" % (engine_meta["generated_at"][:10], slug))
     path.write_text(build_frontmatter(title=title, author=author,
                                       engine_meta=engine_meta, rehearsal=rehearsal,
-                                      safety=safety, package=package)
+                                      safety=safety, package=package, sources=sources)
                     + body.rstrip() + "\n", encoding="utf-8")
     return path
 

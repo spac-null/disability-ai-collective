@@ -27,9 +27,27 @@ publication_safety_version: 1
 image: /assets/the-upper-room-at-wildsumaco_setting_1.jpg
 image_alt: "The Upper Room at WildSumaco — editorial illustration"
 translation_nl: "/nl/the-upper-room-at-wildsumaco/"
+dek: "The architects describe the classroom and bird observatory on the pavilion's upper level as open to all. The biological station that hosts it is recorded as not open to the public, and its accessibility field reads No."
+excerpt: "A teaching pavilion at Pacto Sumaco, in Ecuador's Napo Province, is lifted clear of the forest floor so water, moisture and small fauna carry on beneath it. The room the architects call open to all sits on the upper level."
+sources:
+  - title: "WildSumaco Biological Station — Francis Marion University"
+    url: "https://www.fmarion.edu/internationalprograms/wildsumaco/"
+    publisher: "fmarion.edu"
+  - title: "WildSumaco Biological Station — Organization of Biological Field Stations"
+    url: "https://obfs.org/field-station/wildsumaco-biological-station/"
+    publisher: "obfs.org"
+  - title: "Caá Porá Arquitectura"
+    url: "https://www.caaporarq.com/"
+    publisher: "caaporarq.com"
+  - title: "WildSumaco Research Pavilion / Caá Porá Arquitectura"
+    url: "https://www.archdaily.com/1043000/wildsumaco-research-pavilion-caa-pora-arquitectura"
+    publisher: "ArchDaily"
+  - title: "Caá Porá Arquitectura creates teaching pavilion in the Amazon rainforest"
+    url: "https://www.dezeen.com/2026/08/26/wild-sumaco-research-pavilion-ecuador-caa-pora-arquitectura/"
+    publisher: "Dezeen"
 ---
 
-The classroom and bird observatory on the upper level of the WildSumaco Research Pavilion have no locks, and the architects describe them as open to all. The lower level holds the research and analysis spaces. The pavilion is 280 square metres, completed in 2025, on the outskirts of the community of Pacto Sumaco, at the foot of the Sumaco volcano and the first core zone of Sumaco Napo Galeras National Park, where the Andean slope meets the high Amazon. Francis Marion University commissioned it to expand research operations it had been running in the area for more than twenty years, and the completed building allowed the university to launch intensive courses in which students will train alongside local families.
+The classroom and bird observatory on the upper level of the WildSumaco Research Pavilion have no locks, and the architects describe them as open to all. The lower level holds the research and analysis spaces. The pavilion is 280 square metres, completed in 2025, on the outskirts of the community of Pacto Sumaco, in Ecuador, at the foot of the Sumaco volcano and the first core zone of Sumaco Napo Galeras National Park, where the Andean slope meets the high Amazon. Francis Marion University commissioned it to expand research operations it had been running in the area for more than twenty years, and the completed building allowed the university to launch intensive courses in which students will train alongside local families.
 
 The two-level pavilion follows an ethic of minimal intervention. It adapts to the existing topography and sits among the trees, avoiding logging almost entirely. It does not open a void in the forest; it uses an existing clearing within the vegetation. Its floor is lifted clear of the natural ground. That lift keeps the terrain active, lets water circulate and moisture breathe, and lets small fauna stay in place, while the vegetation continues around the building. The decision about the ground is a decision about what passes under the floor: the building's permeability is calibrated to the bodies of the forest.
 

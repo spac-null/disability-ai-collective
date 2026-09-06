@@ -24,11 +24,24 @@ social_hook: "A house on a steep County Down riverbank splits into six blocks on
 image: /assets/at-tollymore-getting-to-bed-means-crossing-a-courtyard_setting_1.jpg
 image_alt: "At Tollymore, getting to bed means crossing a courtyard — editorial illustration"
 translation_nl: "/nl/at-tollymore-getting-to-bed-means-crossing-a-courtyard/"
+sources:
+  - title: "Tollymore — McGonigle McGrath"
+    url: "https://mcgoniglemcgrath.com/works/tollymore"
+    publisher: "mcgoniglemcgrath.com"
+  - title: "Tollymore — Architecture Today"
+    url: "https://architecturetoday.co.uk/tollymore/"
+    publisher: "Architecture Today"
+  - title: "Awards — McGonigle McGrath"
+    url: "https://mcgoniglemcgrath.com/office/awards"
+    publisher: "mcgoniglemcgrath.com"
+  - title: "Tollymore, a rural Irish house of rock-like volumes by McGonigle McGrath"
+    url: "https://www.dezeen.com/2026/09/05/tollymore-mcgonigle-mcgrath/"
+    publisher: "Dezeen"
 ---
 
 At Tollymore, the journey to bed means stepping outdoors. The bedrooms sit apart from the main living areas, so getting from one to the other means leaving a building, crossing a courtyard and entering another volume. The Belfast practice McGonigle McGrath, founded by Kieran McGonigle and Aidan McGrath, describes this as a ritual experience of the views and sounds of river, mountains and sky, whatever the weather.
 
-The house stands on the steep north bank of the Shimna river at Newcastle, County Down, on a triangular site; the practice dates the project 2014 to 2025. A stepped concrete plinth — the raised base the buildings stand on, cast against timber boards that leave their grain in the surface — meanders down from a narrow road to the water. Six rectangular forms stand on it. Above the concrete the walls are silver-grey brick with the mortar joints finished flush to the face; locally quarried granite gravel caps the roofs. Seen from the lane the house appears in fragments through the trees, brick and concrete and gravel giving the blocks a rocky, mineral character against the Mourne Mountains. They are meant to read as the glacial stones that line the river's edge — this is a spate river, one whose level rises fast and hard after rain.
+The house stands on the steep north bank of the Shimna river at Newcastle, County Down, in Northern Ireland, on a triangular site; the practice dates the project 2014 to 2025. A stepped concrete plinth — the raised base the buildings stand on, cast against timber boards that leave their grain in the surface — meanders down from a narrow road to the water. Six rectangular forms stand on it. Above the concrete the walls are silver-grey brick with the mortar joints finished flush to the face; locally quarried granite gravel caps the roofs. Seen from the lane the house appears in fragments through the trees, brick and concrete and gravel giving the blocks a rocky, mineral character against the Mourne Mountains. They are meant to read as the glacial stones that line the river's edge — this is a spate river, one whose level rises fast and hard after rain.
 
 The arrangement, the studio says, helps make the house part of the landscape. In 2026 it took a RIBA National Award. The architects worked with the site's contours rather than flattening them, limiting the impact on local ecology and accommodating the risk of river flooding.
 
