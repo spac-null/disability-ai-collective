@@ -105,6 +105,15 @@ check("title case is not an addition",
 check("a possessive is not an addition",
       CP.package_additions("WildSumaco's upper room", ARTICLE) == [])
 
+print("\ntest_the_package_is_told_to_keep_the_qualifier")
+low = CP.PACKAGE_SYSTEM.lower()
+check("attribution, counts, spans and modality are named",
+      all(w in low for w in ("attribution", "count", "time span", "modality",
+                             "quoted language")), )
+check("and the three real card refusals are carried",
+      "eleven years" in low and "five honours" in low and "its architects" in low)
+
+
 print("\ntest_an_unsupported_RELATION_survives_the_screen_and_must_be_caught_downstream")
 # Every word is in the article. The relation is not: the article says the entry records
 # accessibility as No and that the architects call the room open to all. It never says one
