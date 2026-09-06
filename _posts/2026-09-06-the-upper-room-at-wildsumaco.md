@@ -26,6 +26,7 @@ publication_safety_profile: "CURRENT_ENGINE_V1"
 publication_safety_version: 1
 image: /assets/the-upper-room-at-wildsumaco_setting_1.jpg
 image_alt: "The Upper Room at WildSumaco — editorial illustration"
+translation_nl: "/nl/the-upper-room-at-wildsumaco/"
 ---
 
 The classroom and bird observatory on the upper level of the WildSumaco Research Pavilion have no locks, and the architects describe them as open to all. The lower level holds the research and analysis spaces. The pavilion is 280 square metres, completed in 2025, on the outskirts of the community of Pacto Sumaco, at the foot of the Sumaco volcano and the first core zone of Sumaco Napo Galeras National Park, where the Andean slope meets the high Amazon. Francis Marion University commissioned it to expand research operations it had been running in the area for more than twenty years, and the completed building allowed the university to launch intensive courses in which students will train alongside local families.
