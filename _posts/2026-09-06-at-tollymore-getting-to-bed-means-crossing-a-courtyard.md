@@ -23,6 +23,7 @@ meta_description: "Tollymore, a six-block house on the Shimna river in County Do
 social_hook: "A house on a steep County Down riverbank splits into six blocks on a stepped concrete plinth. The bedrooms are in different buildings from the living rooms, so going to bed means going outside. It took a RIBA National Award in 2026."
 image: /assets/at-tollymore-getting-to-bed-means-crossing-a-courtyard_setting_1.jpg
 image_alt: "At Tollymore, getting to bed means crossing a courtyard — editorial illustration"
+translation_nl: "/nl/at-tollymore-getting-to-bed-means-crossing-a-courtyard/"
 ---
 
 At Tollymore, the journey to bed means stepping outdoors. The bedrooms sit apart from the main living areas, so getting from one to the other means leaving a building, crossing a courtyard and entering another volume. The Belfast practice McGonigle McGrath, founded by Kieran McGonigle and Aidan McGrath, describes this as a ritual experience of the views and sounds of river, mountains and sky, whatever the weather.
