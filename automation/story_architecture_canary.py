@@ -72,7 +72,36 @@ GROUND_TRUTH_SOURCES = [
 ]
 
 
+_ORCH = []
+
+
+def _production_fetch(url: str) -> str:
+    """The acquisition production actually uses, borrowed rather than reimplemented.
+
+    A plain urllib GET is refused by the sites this publication reads most: Dezeen
+    answers it 403, and Dezeen is where WildSumaco came from. Triaging ten candidates
+    and losing three of them to a fetch the scheduled run performs without difficulty
+    makes the tool report an editorial silence that is really a header. So the first
+    attempt is `get_source_text`, the same memoised path `_acquire_for_selector` hands
+    the selector, and urllib stays as the fallback for anything it cannot do.
+
+    Imported lazily and instantiated once: the canary must not need an orchestrator to
+    run a replay, and nothing here writes to the discovery database.
+    """
+    if not _ORCH:
+        from production_orchestrator import ProductionOrchestrator
+        _ORCH.append(ProductionOrchestrator())
+    return _ORCH[0].get_source_text(url) or ""
+
+
 def fetch(url: str, timeout: int = 30) -> tuple:
+    try:
+        text = _production_fetch(url)
+        if len(text.split()) >= 80:
+            return text, ""
+    except Exception as e:                                        # noqa: BLE001
+        print("  production acquisition unavailable (%s: %s); falling back to urllib"
+              % (type(e).__name__, str(e)[:120]))
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     try:
         with urllib.request.urlopen(req, timeout=timeout) as r:
