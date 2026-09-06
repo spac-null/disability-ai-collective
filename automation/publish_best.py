@@ -45,6 +45,14 @@ Usage:
 import argparse, pathlib, re, shutil, subprocess, sys
 from datetime import datetime, timedelta
 
+HERE = pathlib.Path(__file__).resolve().parent
+if str(HERE) not in sys.path:
+    sys.path.insert(0, str(HERE))
+
+# The publication audit store. A sibling module in this same directory, imported the
+# way this standalone script imports gen_images: no orchestrator dependency.
+import publication_audit as PA                                       # noqa: E402
+
 REPO = pathlib.Path(__file__).parent.parent
 DRAFTS = REPO / "_drafts"
 POSTS = REPO / "_posts"
@@ -298,6 +306,24 @@ def _current_safety_contract_ok(fm):
     return version >= REQUIRED_SAFETY_VERSION
 
 
+def _retention_ok(fm):
+    """Bullet (C) of the promotion gate (published run retention, 2026-09-06, issue #91).
+
+    A CURRENT_ENGINE draft may only be promoted if the run that produced it still exists
+    and still carries the inputs `composition.safety_audit` takes. Two live articles had
+    already been published without that, and neither could have its safety stage re-run
+    afterwards -- by anyone, ever. A published article whose safety check cannot be
+    reconstructed is a state this publisher refuses to enter.
+
+    Held, not archived and not rewritten, exactly like the two bullets above it: the
+    draft stays in _drafts/ and an operator can see why. Legacy drafts -- no
+    `engine_generation: CURRENT_ENGINE` -- pass straight through, because the era they
+    were written in genuinely had no run to retain and inventing one would be worse than
+    admitting it.
+    """
+    return PA.retention_feasible(fm)
+
+
 def set_publish_date(path, when):
     """Rewrite the front matter `date:` field to the actual promotion date.
 
@@ -388,6 +414,11 @@ def main(dry_run=False):
                   f"generated before, or not fully checked under, the current publication-safety "
                   f"contract; remains in _drafts/ for later remediation, not archived or altered")
             continue
+        _ret_ok, _ret_why = _retention_ok(fm)
+        if not _ret_ok:
+            print(f"  {draft.name}: HELD (NEEDS_AUDIT_RETENTION) — {_ret_why}; remains in "
+                  f"_drafts/ for later remediation, not archived or altered")
+            continue
         try:
             editorial = float(fm.get("draft_score", DEFAULT_SCORE))
         except (ValueError, TypeError):
@@ -411,6 +442,8 @@ def main(dry_run=False):
     # after that block would reset the flag and lose the failure it records.
     image_failure = None
     dest = None
+    # Written by this run and removable if the publication has to be rolled back.
+    generated_assets: list[str] = []
     # Every path this run intentionally changes, recorded as it changes. Staging is
     # built from THIS list and nothing else. The alternative -- staging a directory and
     # trusting that only intended files live in it -- is what put a declined candidate
@@ -461,6 +494,7 @@ def main(dry_run=False):
                         print("  images: %d generated, %d placed in body"
                               % (len(res["assets"]), res["figures"]))
                         mutated += res["assets"]
+                        generated_assets += res["assets"]
                     else:
                         # NEVER SILENT. Illustrations are part of the normal publication
                         # contract, so an article going out without them is reported here
@@ -474,6 +508,39 @@ def main(dry_run=False):
                 print("  images: FAILED — %s" % image_failure)
                 print("PUBLISHING WITHOUT ILLUSTRATIONS: %s (%s)"
                       % (dest.name, image_failure), file=sys.stderr)
+
+            # ── PUBLISHED RUN RETENTION, AT THE BOUNDARY ────────────────────────
+            # Here, and not earlier: the bundle must be assembled from the bytes that
+            # actually publish, which means after the date rewrite and after the
+            # illustrations went into the body. The promotion gate has already proved
+            # the run exists and carries what Safety takes, so this is the copy, not
+            # the decision.
+            #
+            # FAIL CLOSED. If the bundle cannot be written, the publication is UNDONE:
+            # the post goes back to _drafts/, the assets this run generated are
+            # removed, nothing is committed and nothing is pushed. An article on the
+            # site whose factual path cannot be re-audited is the failure this exists
+            # to prevent, and publishing one anyway because the copy step broke would
+            # be that failure with a log line attached.
+            try:
+                man = PA.retain(dest)
+                print("  audit: retained %s (%s) — safety re-audit: %s"
+                      % (man["bundle_id"], man["class"],
+                         man["reaudit"]["SAFETY"]["kind"]))
+                mutated.append(str(dest))       # the pointer was stamped into it
+            except Exception as e:                                    # noqa: BLE001
+                print("  audit: RETENTION FAILED — %s: %s"
+                      % (type(e).__name__, str(e)[:300]), file=sys.stderr)
+                shutil.move(str(dest), str(best_draft))
+                for a in generated_assets:
+                    try:
+                        pathlib.Path(a).unlink()
+                    except OSError:
+                        pass
+                print("PUBLICATION ROLLED BACK: %s returned to _drafts/ — an article "
+                      "whose audit inputs cannot be retained is not published."
+                      % best_draft.name, file=sys.stderr)
+                return 1
 
             # Every other in-window candidate just lost this cycle — bump its aging counter.
             for _score, draft, *_rest, fm in candidates[1:]:

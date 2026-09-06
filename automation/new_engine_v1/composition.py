@@ -3595,8 +3595,16 @@ def run_story_architecture_composition(
                 P, text, arch, (w or {}).get("worth_gate"), refusals)).get("package")
 
         def audit(text, pkg_, **kw):
-            return safety_audit(draft, text, wr["packet"], arch, ledger, cut["terms"],
-                                cut, lineage, package=pkg_, **kw)
+            # The lineage this call actually saw is recorded ON the result, because it is
+            # the one Safety input that is REBOUND during the run -- Continuity may carry
+            # it forward, a discarded polish resets it to the Writer's own. Persisting
+            # `cont["negative_lineage_carried"]` instead would file a value Safety may
+            # never have been given, and a re-audit built on it would not be a re-audit.
+            r = safety_audit(draft, text, wr["packet"], arch, ledger, cut["terms"],
+                             cut, lineage, package=pkg_, **kw)
+            r["negative_lineage_used"] = lineage
+            r["audited_text_sha256"] = C.sha256_text(text or "")
+            return r
 
         pkg = make_package(final)
         pkg_ref = [pkg]
@@ -3800,6 +3808,67 @@ def persist(out_dir, result: dict) -> None:
         dump("CUT_WATCH_TERMS.json", det[CUT_TERMS]["terms"])
     if det.get(WRITER, {}).get("prompt"):
         (d / "WRITER_PACKET.txt").write_text(det[WRITER]["prompt"])
+
+    # ── THE SAFETY STAGE'S OWN INPUTS, AS DATA (2026-09-06, issue #91) ──────────────
+    # WRITER_PACKET.txt is the RENDERED PROMPT. It is the right thing to read and the
+    # wrong thing to re-run: `safety_audit` takes the packet DICT, the ledger DICT and
+    # the WHOLE cut report -- `cut_without_distinctive_terms` decides which cut material
+    # is explained rather than blocking. None of those three was ever written, so a
+    # published article could be re-grounded and re-fact-checked but never re-audited
+    # for safety. That is what a live article turned out not to be able to prove.
+    #
+    # Written beside the artifacts that already exist, in the same plain way, and
+    # additive: no existing file changes name, shape or content.
+    if det.get(WRITER, {}).get("packet"):
+        dump("WRITER_PACKET.json", det[WRITER]["packet"])
+    if det.get(LEDGER, {}).get("ledger"):
+        # First-class, not nested inside FINAL_EVIDENCE_MANIFEST. The manifest is an
+        # evidence record for a reader; this is the argument the function takes.
+        dump("LEDGER.json", det[LEDGER]["ledger"])
+    if det.get(CUT_TERMS, {}).get("terms") is not None:
+        dump("CUT_REPORT.json", {k: v for k, v in det[CUT_TERMS].items()
+                                 if k != "status"})
+    if det.get(SAFETY, {}).get("negative_lineage_used") is not None:
+        dump("NEGATIVE_LINEAGE.json", det[SAFETY]["negative_lineage_used"])
+    if result.get("article_text"):
+        # The exact bytes Safety last audited, written here rather than relied upon from
+        # runner.py's article.md: this file must exist for a HOLD too, and a bundle that
+        # depends on a caller having written its final text is not a bundle.
+        (d / "ARTICLE_FINAL.md").write_text(result["article_text"])
+    if det.get(FACT_CHECK, {}).get("status") not in (None, NOT_RUN, SKIPPED):
+        # UNDER ITS OWN NAME. new_engine_production writes the publication-safety
+        # bridge's FACT_CHECK.json into this same directory AFTER the run returns, so
+        # the composition stage's own record was overwritten on every ACCEPT and no
+        # error was raised. Both are wanted; only one may be called FACT_CHECK.json.
+        dump("COMPOSITION_FACT_CHECK.json", det[FACT_CHECK])
+    if det.get(SAFETY, {}).get("audits"):
+        _sd = det[SAFETY]
+        dump("SAFETY_REPLAY.json", {
+            "function": "new_engine_v1.composition.safety_audit",
+            "retention_contract": "publication-audit-v1",
+            "deterministic": True,
+            "note": ("safety_audit makes no model call and reaches no network. Given the "
+                     "files named below it reproduces its verdict exactly. Grounding and "
+                     "Fact Check do NOT have this property."),
+            "inputs": {
+                "draft_text": "WRITER_DRAFT.md",
+                "final_text": "ARTICLE_FINAL.md",
+                "packet": "WRITER_PACKET.json",
+                "arch": "ARCHITECTURE.json",
+                "ledger": "LEDGER.json",
+                "cut_terms": "CUT_REPORT.json#terms",
+                "cut_report": "CUT_REPORT.json",
+                "negative_lineage": "NEGATIVE_LINEAGE.json",
+                "package": "EDITORIAL_PACKAGE.json",
+                "repair": "FACTUAL_REPAIR.json",
+            },
+            "draft_sha256": C.sha256_text(det.get(WRITER, {}).get("article_text") or ""),
+            "final_sha256": C.sha256_text(result.get("article_text") or ""),
+            "audited_text_sha256": _sd.get("audited_text_sha256", ""),
+            "repair_applied": bool((det.get(GROUNDING) or {}).get("repair")),
+            "package_present": bool((det.get(PACKAGE) or {}).get("package")),
+            "status": _sd.get("status", ""),
+        })
     if det.get(WRITER, {}).get("article_text"):
         (d / "WRITER_DRAFT.md").write_text(det[WRITER]["article_text"])
     if det.get(CONTINUITY, {}).get("article_text"):
