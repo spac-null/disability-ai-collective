@@ -358,6 +358,16 @@ def run_scheduled(orch, *, rehearsal: bool = False,
             "source_name": seed.get("source_name"), "title": seed.get("title"),
             "original_length_chars": orch.get_source_original_length(seed["url"]),
             "paragraph_count": orch.get_source_paragraph_count(seed["url"]),
+            # Harvested from the anchor's own markup during the fetch above -- no extra
+            # request. DATA AVAILABLE, NOT EVIDENCE CONSUMED: it rides to the
+            # RESEARCH_PACK and stops there.
+            #
+            # getattr, not a plain call: an orchestrator that predates get_source_figures
+            # -- a probe's stub, a replay harness, anything duck-typed -- must still be
+            # able to acquire a source. Caught by new_engine_v1_test's _FakeOrch, and the
+            # right fix is here rather than in the fake: a caption is never worth failing
+            # an acquisition for, which is the same rule the harvest itself follows.
+            "figures": getattr(orch, "get_source_figures", lambda _u: [])(seed["url"]),
             "acquired_via": "SOURCE_ACQUISITION_RETRY_V1 (normal upstream mechanism)",
             "legacy_commission_used": False,
         },

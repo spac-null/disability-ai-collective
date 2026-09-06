@@ -44,6 +44,7 @@ import time
 
 from . import contracts as C
 from . import continuity as CE
+from . import jurisdiction as JU
 from . import ledger as LG
 from . import stages as S
 from . import story as ST
@@ -353,6 +354,19 @@ FREEZE_SYSTEM = (
     "licenses it. Do not skip a passage of what something does not do, does not cover or "
     "cannot see because it looks like a negative claim: a stated negative is a fact, and "
     "only an UNstated one is a fabrication.\n"
+    "NO DEFAULT NATIONAL FRAMEWORK. When a source names a legal standard, a code or an "
+    "accessibility classification -- the ADA, Section 508, the Equality Act, a building "
+    "code, a directory's own access field -- what you have evidence of is THAT RECORD "
+    "SAYING THAT THING. You do not have evidence that the standard applies to your "
+    "subject, and you may not word the proposition as though it does. Write it as what "
+    "it is: 'the directory entry for X records ADA accessibility as No', not 'X is not "
+    "ADA accessible', and never 'X is not accessible'. This is the single most common "
+    "way a foreign framework gets imported into a story it has no business in: English-"
+    "language research turns up American standards for subjects anywhere on earth, "
+    "because American material is what is written down in English. Being the only "
+    "standard anybody wrote down does not make a standard local. A later check will "
+    "restrict such a fact to attribution automatically -- write it correctly and there "
+    "is nothing to restrict.\n"
     "Include the unglamorous facts and the ones that cut against the obvious story. "
     "Selection happens later and cannot select what you did not freeze."
 )
@@ -611,11 +625,21 @@ def freeze_ledger(provider, pack: dict, subject: str) -> dict:
             + (["rejected as unsupportable: %s" % sorted(rejected)] if rejected else []),
             {"ledger": ledger, "rejected": rejected})
 
+    # NO DEFAULT NATIONAL FRAMEWORK (2026-09-06). Deterministic, no model call, and it
+    # runs LAST -- on the ledger that already passed span verification -- because it
+    # changes what a fact PERMITS, never whether the fact is supported. See
+    # jurisdiction.py: a standard that is not the law where the subject is becomes an
+    # ATTRIBUTION about the record that states it, and nothing is deleted.
+    ledger, jurisdiction_report = JU.apply(ledger, pack)
+
     kinds = {}
     for f in ledger.values():
         kinds[f.get("claim_kind")] = kinds.get(f.get("claim_kind"), 0) + 1
     return {"status": PASS, "ledger": ledger, "provider": ident,
             "model_calls": calls, "repairs": repairs,
+            "jurisdiction": jurisdiction_report,
+            "subject_place": JU.subject_place(pack),
+            "subject_country": jurisdiction_report["subject_country"],
             "sources_truncated": truncated_sources(pack),
             "facts": len(ledger), "claim_kinds": kinds,
             "rejected": rejected,
@@ -699,17 +723,31 @@ WORTH_SYSTEM = (
     "event belonging to the thing you are reading. A fact that states something general "
     "about a category cannot carry an article, however true it is and however much it "
     "mentions disability.\n"
-    "  Two real examples, both from ledgers this gate passed:\n"
-    "    PARTICULAR  'The field station directory entry for WildSumaco Biological Station "
-    "records ADA accessibility as No.' That is this station's own record. An article can "
-    "stand on it, because it says something no other station's entry says.\n"
+    "  Three real examples, all from ledgers this gate passed. One is a particular. The "
+    "other two are the two different ways a fact can look like one and not be:\n"
+    "    PARTICULAR  'McGonigle says the house's flexibility means the clients can close "
+    "down three of the six blocks.' That is this house's own design decision, in its "
+    "architect's own account of it. An article can stand on it, because it says something "
+    "no other house's account says, and the reading stays inside it.\n"
     "    GENERAL     'Cochlear implants restore hearing in people with profound hearing "
     "loss and are a form of neuroprosthesis.' True, and a textbook definition. It would "
     "appear in any article about neurotechnology, so it can only ever be a passing clause "
     "and the piece will read as legitimation rather than argument.\n"
+    "    NOT THIS SUBJECT  'The field station directory entry for WildSumaco Biological "
+    "Station records ADA accessibility as No.' Specific, sourced, about a named place -- "
+    "and still not a particular about the 2025 pavilion the article was about. It is a US "
+    "directory's classification of the STATION, under the legal framework of a country the "
+    "building is not in, and nothing in that ledger tied the record to the pavilion. A "
+    "record about a neighbouring, parent or broader entity is not automatically a "
+    "particular about your subject, and a foreign legal framework does not become the "
+    "local one by being the only standard anybody wrote down. Placing such a record beside "
+    "a claim about the subject is worse than useless: both sentences can be accurate and "
+    "the adjacency still invites a third conclusion no source supports.\n"
     "  The second example was passed as STRONG_DIRECT_LENS on the strength of two such "
     "definitions. A whole article was written and correctly rejected as wrong for this "
-    "publication. That is the error this field exists to stop.\n"
+    "publication. The third carried a published article's argument until the claim had to "
+    "be withdrawn from the live piece. Those are the two errors this field exists to "
+    "stop, and the third is the more dangerous because it looks specific.\n"
     "  Then answer whether that evidence can CARRY the article. One particular is enough "
     "only if the story can be built on it. Name it in `lens_carrier`: the concrete "
     "subject-specific fact or tension the Crip Minds reading actually stands on, in a "
@@ -785,10 +823,23 @@ def worth_gate(provider, ledger: dict, subject: str) -> dict:
     # passed identically: WildSumaco cited ONE disability-bearing fact and published;
     # Meta/neurotech cited TWO and was correctly rejected by the Reader as wrong for the
     # publication. Neither density nor citation count separates them -- 3 facts of 85
-    # against 2 of 84, and both verdicts were STRONG_DIRECT_LENS. What separates them is
-    # that WildSumaco's fact was that station's own ADA record, and Meta's two were
-    # textbook definitions of cochlear implants and brain-machine interfaces, which would
-    # appear in any article on the subject and can only ever be a passing clause.
+    # against 2 of 84, and both verdicts were STRONG_DIRECT_LENS.
+    #
+    # This gate originally read that pair as particular-vs-definition and taught
+    # WildSumaco's ADA record as the model PARTICULAR. That reading was wrong, and the
+    # correction (2026-09-06) came from the published article rather than from this file:
+    # the record is a US directory's classification of the STATION, the building is in
+    # Ecuador, and nothing in the ledger tied the two. Grounding objected on five of seven
+    # runs, latterly to the ADJACENCY rather than to any wording -- two accurate sentences
+    # placed so a reader draws a third conclusion the sources cannot support. The claim was
+    # removed from the live piece. So the prompt above now carries THREE examples, and the
+    # third failure mode -- a specific, sourced record about a neighbouring or broader
+    # entity, under a framework foreign to the subject -- is named as its own error rather
+    # than held up as the standard.
+    #
+    # The particular requirement itself is UNCHANGED and deliberately not relaxed: a lens
+    # still needs >= 1 subject-specific fact it can stand on. What changed is only which
+    # facts qualify as subject-specific.
     #
     # The cost of getting this wrong is the whole article: Meta ran nine model calls
     # through Writer, Continuity, Safety, Grounding and Fact Check before anything noticed.

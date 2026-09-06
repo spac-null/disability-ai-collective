@@ -55,7 +55,7 @@ PERSONA_STYLES = {
                 "Contemporary art publication cover. Risograph or silkscreen print. "
                 "Gallery poster energy — striking, culturally specific, no text. "
                 "Subject: {summary}. "
-                "References: Dutch graphic design, Werkplaats Typografie aesthetic without the typography. "
+                "Asymmetric grid discipline, restrained palette, generous negative space, no typography. "
                 "Color as argument, not decoration."
             ),
             "INTIMATE": (
@@ -75,7 +75,7 @@ PERSONA_STYLES = {
             "CONFRONTING": (
                 "Photographic collage, magazine cut-up aesthetic. Bold, layered, no text. "
                 "Subject: {summary}. "
-                "References: Barbara Kruger without the words, Dadaist photomontage energy. "
+                "Photomontage energy — cut edges, abrupt scale shifts, declarative framing, no words. "
                 "High contrast fragments assembled into argument."
             ),
             "INTIMATE": (
@@ -94,7 +94,7 @@ PERSONA_STYLES = {
             "CONFRONTING": (
                 "Two-colour screen print. Bold flat graphic, high contrast, no text. "
                 "Subject: {summary}. "
-                "Corita Kent energy — joyful and political at once. "
+                "Joyful and political at once. "
                 "Strong silhouette, unexpected colour pairing."
             ),
             "INTIMATE": (
@@ -131,7 +131,8 @@ PERSONA_STYLES = {
             "CONFRONTING": (
                 "Soviet constructivist poster aesthetic — diagonal geometry, stark contrast, "
                 "no text, no typography. Subject: {summary}. "
-                "El Lissitzky or Rodchenko visual language applied to contemporary systems critique. "
+                "Diagonal axes, flat planes, photographic fragment against geometry, applied to "
+                "contemporary systems critique. "
                 "Strong geometric composition."
             ),
             "INTIMATE": (
@@ -172,7 +173,7 @@ PERSONA_STYLES = {
             "CONFRONTING": (
                 "Natural history illustration — detailed, observational, but the subject is social. "
                 "No text. Subject: {summary}. "
-                "Anna Atkins, specimen illustration aesthetics. "
+                "Specimen-illustration aesthetics — the single subject isolated and catalogued. "
                 "Unexpected colour relationships. Careful and disturbing at once."
             ),
             "INTIMATE": (
@@ -192,7 +193,8 @@ PERSONA_STYLES = {
                 "Medical or anatomical illustration style — cross-section, diagram, "
                 "but charged with the thing it's depicting. No text, no labels. "
                 "Subject: {summary}. "
-                "Vesalius or Gray's Anatomy visual language applied to a contemporary argument."
+                "Historical anatomical-atlas visual language — engraved line, the composition of a "
+                "labelled plate with no labels — applied to a contemporary argument."
             ),
             "INTIMATE": (
                 "Microscopy aesthetic — the view through a lens, grain included. "
@@ -202,7 +204,7 @@ PERSONA_STYLES = {
             "ABSTRACT": (
                 "Cyanotype or photogram aesthetic — white forms on deep blue or dark ground. "
                 "Botanical or structural silhouette, no text. Concept: {summary}. "
-                "Anna Atkins's method: the object pressed against the surface and exposed."
+                "The photogram method: the object pressed against the surface and exposed."
             ),
         },
         {   # sub-style 2: acoustic / sensory diagram

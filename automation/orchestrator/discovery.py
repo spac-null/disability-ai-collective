@@ -1336,10 +1336,12 @@ class DiscoveryMixin:
                 )
                 self._last_fetch_origin = "fallback_summary"
                 self._last_fetch_original_length = len(fallback_text)
+                self._last_fetch_figures = []
                 return fallback_text[:max_chars]
             self._last_fetch_origin = "none"
             self._last_fetch_original_length = None
             self._last_fetch_paragraph_count = 0
+            self._last_fetch_figures = []
             return None
 
         if not text or len(text) < 200:
@@ -1351,9 +1353,24 @@ class DiscoveryMixin:
             self._last_fetch_origin = "fallback_summary" if fallback_text else "none"
             self._last_fetch_original_length = len(fallback_text) if fallback_text else None
             self._last_fetch_paragraph_count = 0
+            self._last_fetch_figures = []
             return fallback_text[:max_chars] if fallback_text else None
         self.logger.info("fetch_source_article: extracted %d chars from %s", len(text), url)
         self._last_fetch_origin = "fetched_article"
+        # Side channel (2026-09-06), same pattern as origin/length/paragraph_count above.
+        # `html` is the anchor's markup and this is the LAST place it exists -- one line
+        # further down it is discarded and only extracted text survives, which is why the
+        # anchor's publisher captions were the one gap the figures harvest could not
+        # reach from research.py. No fetch of any kind happens here: the bytes are
+        # already in hand, the parser is the same deterministic one the research sources
+        # use, and its bounds are its own. Wrapped because a caption is never worth
+        # failing an article acquisition for.
+        try:
+            import figure_harvest as _figures
+            self._last_fetch_figures = _figures.harvest(html, url)
+        except Exception as e:                                        # noqa: BLE001
+            self.logger.debug("figure harvest skipped for %s: %s", url, e)
+            self._last_fetch_figures = []
         # Side channel (SOURCE_ACQUISITION_RETRY_V1): how many real body
         # paragraphs the extractor kept. _extract_paragraphs already drops nav
         # chrome and anything under 80 chars, so this counts article body, not
@@ -1421,6 +1438,8 @@ class DiscoveryMixin:
             self._source_original_length_cache = {}
         if not hasattr(self, "_source_paragraph_count_cache"):
             self._source_paragraph_count_cache = {}
+        if not hasattr(self, "_source_figures_cache"):
+            self._source_figures_cache = {}
         if url not in self._source_text_cache:
             self._source_text_cache[url] = self.fetch_source_article(
                 url, max_chars=_SOURCE_TEXT_CACHE_MAX_CHARS, fallback_text=fallback_text,
@@ -1429,6 +1448,7 @@ class DiscoveryMixin:
             self._source_origin_cache[url] = getattr(self, "_last_fetch_origin", "none")
             self._source_original_length_cache[url] = getattr(self, "_last_fetch_original_length", None)
             self._source_paragraph_count_cache[url] = getattr(self, "_last_fetch_paragraph_count", None)
+            self._source_figures_cache[url] = list(getattr(self, "_last_fetch_figures", []) or [])
         cached = self._source_text_cache[url]
         return cached[:max_chars] if cached else cached
 
@@ -1696,6 +1716,18 @@ class DiscoveryMixin:
         except Exception as e:
             self.logger.warning("get_news_seed failed: %s", e)
             return None
+
+    def get_source_figures(self, url: str) -> list:
+        """Publisher-written captions and alt text harvested from the anchor's own
+        markup during the fetch this run already made. [] when nothing was harvested,
+        when the fetch fell back to an RSS summary, or when get_source_text was never
+        called for this url. Cached per-url, same as origin/length/paragraph_count.
+
+        DATA AVAILABLE, NOT EVIDENCE CONSUMED. This reaches the RESEARCH_PACK and stops
+        there: no composition stage reads it, and no fact may rest on it. Whether
+        captions become editorial evidence is a separate decision, to be taken after
+        real packs have been inspected."""
+        return getattr(self, "_source_figures_cache", {}).get(url, [])
 
     def get_source_paragraph_count(self, url: str):
         """Body-paragraph count for the last fetch of this url, or None if
