@@ -177,6 +177,19 @@ def _canonical_from_html(html: str) -> str:
     return m.group(1).strip() if m else ""
 
 
+def canonical_url(u: str) -> str:
+    """URL identity for the already-seen set. Exact-string comparison let one Dezeen page
+    be fetched twice inside a single run -- once as the anchor and once as a search result
+    differing only in its fragment. Identity ignores the fragment, a trailing slash and
+    host case; nothing else is stripped, because a query string can change the page."""
+    u = (u or "").strip()
+    u = re.sub(r"#.*$", "", u)
+    m = re.match(r"(?i)^(https?://)([^/]+)(.*)$", u)
+    if m:
+        u = m.group(1).lower() + m.group(2).lower() + m.group(3)
+    return u.rstrip("/")
+
+
 def _norm(s: str) -> str:
     return re.sub(r"\s+", " ", (s or "")).strip().lower()
 
@@ -772,41 +785,46 @@ LENS_PROBE_MAX_SOURCES = 2
 LENS_PROBE_ENV = "CRIPMINDS_LENS_PROBE"
 
 LENS_PROBE_SYSTEM = (
-    "You find the assumption a story is making, and then the document that records it "
-    "operating.\n"
+    "TWO STEPS, IN THIS ORDER, AND THE ORDER IS THE WHOLE METHOD.\n"
     "\n"
-    "THE QUESTION, and it is a way of seeing rather than a subject to look for. Every "
-    "system, building, study, product, rule and institution assumes something about "
-    "bodies, perception, communication, independence, assistance, timing, navigation, "
-    "cognition, sensory processing, endurance, participation, or what counts as normal "
-    "functioning. The assumption is usually invisible to the people who made it, because "
-    "it is simply what they took a person to be. Name the one this subject is making.\n"
+    "STEP ONE, from the subject alone. You have not searched for anything and you may not. "
+    "Read what is in front of you and ask: what does this subject ASSUME about bodies, "
+    "perception, communication, independence, assistance, timing, navigation, cognition, "
+    "sensory processing, endurance, participation, classification, or what counts as "
+    "normal functioning? Every system, building, study, product, rule and institution "
+    "assumes something, and the assumption is invisible to the people who made it because "
+    "it is simply what they took a person to be. Name that. It is a QUESTION about this "
+    "subject, not a fact about disability.\n"
     "\n"
-    "Then find where that assumption is WRITTEN DOWN OPERATING, in this exact subject. "
-    "That is what you search for -- not a disability fact, and not the word disability, "
-    "which need not appear anywhere. What you want is one of:\n"
-    "  an accessibility or condition record, a design decision and its stated reason, an "
-    "exception or carve-out in a policy, a measurement method, a user or input "
-    "requirement, a documented failure mode, a timing or duration assumption, a sensory "
-    "assumption about what counts as signal and what as noise, a dependency between a "
-    "person and a thing, an interface requirement, a classification boundary, an "
-    "institutional rule meeting a physical reality, or a first-person account by someone "
-    "who actually used it.\n"
+    "STEP TWO, and only now. Where would that assumption be caught in the act, in writing, "
+    "about THIS subject and no other? Name where to look.\n"
     "\n"
-    "Two real examples of the move:\n"
-    "  A museum exhibits work that was made in its own basement workshop. The assumption "
-    "is that a visitor can get to where the work was done. The document is the museum's "
-    "own visitor page: not step free, basement stairs very steep and narrow, a tablet tour "
-    "offered instead of the room.\n"
-    "  A rooftop paving system is sold on how precisely its heights can be tuned. The "
-    "assumption is about which thresholds a body crosses without noticing. The document is "
-    "the manufacturer's own guidance on building a ramp with it.\n"
+    "REVERSING THE ORDER PRODUCES A FAKE. A search that turns up the words wheelchair, "
+    "ADA, stairs, accessible or disabled user, with a reading built backwards to fit them, "
+    "is not a perspective -- it is vocabulary with a rationale attached. If you cannot "
+    "state the assumption before knowing what a search would return, there is no reading "
+    "here and the answer is none.\n"
     "\n"
-    "WHAT THIS IS NOT. Not 'this building has stairs, therefore.' Not 'this paper mentions "
-    "disabled users, therefore.' Not 'this product has accessibility features, therefore.' "
-    "Those are vocabulary. The question is what the subject takes a person to BE, and the "
-    "evidence is that assumption caught in the act, in writing, about this subject and no "
-    "other.\n"
+    "WORKED EXAMPLE. A museum shows work in the Georgian house where it was made.\n"
+    "  BAD:    'the museum is not wheelchair accessible' -- that is a fact, not a "
+    "question, and it is where a keyword search stops.\n"
+    "  BETTER: 'what kind of visitor does preserving this house as it was assume, when the "
+    "rooms where the work happened can be reached only one way?'\n"
+    "  The stairs, the basement and the tablet substitute are then EVIDENCE FOR OR AGAINST "
+    "that reading. They are not the reading.\n"
+    "\n"
+    "THE EVIDENCE CAN BE ANYTHING THAT RECORDS THE ASSUMPTION OPERATING: a measurement "
+    "protocol, an exception in a rule, a classification boundary, a timing requirement, an "
+    "interface or input assumption, a physical design choice and its stated reason, a "
+    "dependency between a person and a thing, an institutional procedure, a documented "
+    "failure mode, a condition or access record, a first-person account by someone who "
+    "used it. The word disability need not appear in any of it.\n"
+    "\n"
+    "NO PROXIES. Another marginalised group is not a stand-in. A story about LGBTQ+ "
+    "people, race, gender or poverty needs its own independent answer to step one -- about "
+    "bodies, perception, timing, dependence or classification -- and if it has none, the "
+    "answer is none. Borrowing one group's injustice to license a reading about another is "
+    "the same failure as an analogy, in better clothes.\n"
     "\n"
     "ANSWER NOTHING IF THERE IS NOTHING. Some subjects assume nothing about anybody: a "
     "mineral survey, a market report, a prize announcement. Say so and stop. That is the "
@@ -870,6 +888,10 @@ def lens_probe(provider, subject: str, anchor_text: str, sources: list) -> dict:
             # question the run asked, and a reader of the artifacts should be able to see
             # that it was asked and answered "none" rather than never asked.
             "assumption": str(obj.get("assumption") or "").strip(),
+            # Structurally true, and recorded so an artifact reader can CHECK the order
+            # rather than trust it: this call returns before any probe search runs, so the
+            # question cannot have been reverse-engineered from what a search returned.
+            "hypothesis_before_search": True,
             "carrier_hypothesis": "" if none else hyp,
             "queries": [] if none else
                        [str(q) for q in (obj.get("queries") or [])][:LENS_PROBE_MAX_QUERIES],
@@ -885,9 +907,16 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
     provider/transport failure so the caller can fail closed; it never returns a
     pack it could not actually build."""
     scoped = scope(provider, anchor["text"], sha256_text(anchor["text"]))
-    candidates, failures, seen = [], [], set()
-    queries = scoped.get("queries", [])[:MAX_QUERIES]
+    candidates, failures = [], []
+    # Identity, not string equality, and the anchor is in it from the start: a search that
+    # returns the page we are already reading does not fetch it a second time.
+    seen = {canonical_url(anchor["url"])}
+    searched = set()
+    # Order preserved, an exactly repeated query dropped. Scope has never emitted one;
+    # this costs nothing and means it cannot.
+    queries = list(dict.fromkeys(scoped.get("queries", [])))[:MAX_QUERIES]
     for q in queries:
+        searched.add(_norm(q))
         try:
             found = search_urls(q, api_key=api_key)
         except ResearchError as e:
@@ -896,9 +925,9 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
         for u in found:
             if len(candidates) >= MAX_CANDIDATE_URLS:
                 break
-            if u in seen or u == anchor["url"]:
+            if canonical_url(u) in seen:
                 continue
-            seen.add(u)
+            seen.add(canonical_url(u))
             candidates.append(u)
 
     fetched = []
@@ -932,18 +961,21 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
         for q in (probe.get("queries") or []):
             if len(probe_urls) >= LENS_PROBE_MAX_URLS + LENS_PROBE_MAX_QUERIES:
                 break
+            if _norm(q) in searched:                    # the scope already asked this
+                continue
+            searched.add(_norm(q))
             try:
                 probe_urls += [u for u in search_urls(q, api_key=api_key)[:4]
-                               if u not in seen and u != anchor["url"]]
+                               if canonical_url(u) not in seen]
             except ResearchError as e:
                 failures.append({"query": q, "error": str(e)[:200], "lens_probe": True})
         kept = 0
         for url in probe_urls:
             if kept >= LENS_PROBE_MAX_SOURCES:
                 break
-            if url in seen:
+            if canonical_url(url) in seen:
                 continue
-            seen.add(url)
+            seen.add(canonical_url(url))
             rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms)
             if rec["status"] != "ok":
                 failures.append({"url": url, "status": rec["status"], "lens_probe": True})

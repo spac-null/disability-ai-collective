@@ -61,7 +61,7 @@ class Prov:
             body = {"subject": "the Herschel Museum exhibition", "queries": ["q1"],
                     "anchor_kind": "news_report", "anchor_subject_words": 120,
                     "questions": [], "named_entities": ["Herschel"]}
-        elif "you find the assumption a story is making" in system.lower():
+        elif "what does this subject assume about" in system.lower():
             body = self.probe_reply
         else:
             body = {"sources": [
@@ -130,7 +130,7 @@ check("it searched nothing of its own", SEARCHED == ["q1"], SEARCHED)
 check("it fetched nothing beyond the ordinary pass",
       not any("access" in u for u in FETCHED), FETCHED)
 check("exactly one probe call", sum(1 for s in prov.calls
-                                    if "assumption a story is making" in s) == 1)
+                                    if "what does this subject ASSUME about" in s) == 1)
 check("the pack is still a pack", pack["pack_sha256"] and pack["sources"])
 
 print("\ntest_a_named_url_is_fetched_and_becomes_ordinary_material")
@@ -171,9 +171,9 @@ check("at most two sources are kept",
 check("at most two queries of its own are searched",
       len(SEARCHED) - 1 <= RS.LENS_PROBE_MAX_QUERIES, SEARCHED)
 check("still exactly one probe call -- there is no loop",
-      sum(1 for s in prov.calls if "assumption a story is making" in s) == 1)
+      sum(1 for s in prov.calls if "what does this subject ASSUME about" in s) == 1)
 check("the probe never runs the writer or any gate",
-      all("assumption a story is making" in s or "scope research" in s.lower()
+      all("what does this subject ASSUME about" in s or "scope research" in s.lower()
           or "SUBJECT:" in s or True for s in prov.calls))
 
 print("\ntest_it_can_be_taken_out_of_the_path_without_a_deploy")
@@ -184,13 +184,13 @@ ASSESSED[0] = []
 prov, pack = run_research({"carrier_hypothesis": "x", "queries": ["q"], "urls": []},
                           env={RS.LENS_PROBE_ENV: "0"})
 check("disabled means no probe call at all",
-      not any("assumption a story is making" in s for s in prov.calls))
+      not any("what does this subject ASSUME about" in s for s in prov.calls))
 check("and the pack says so", pack["lens_probe"]["enabled"] is False)
 
 print("\ntest_a_probe_failure_cannot_fail_the_research")
 class Boom(Prov):
     def complete(self, system, user, **k):
-        if "you find the assumption a story is making" in system.lower():
+        if "what does this subject assume about" in system.lower():
             raise RuntimeError("provider exploded")
         return super().complete(system, user, **k)
 
