@@ -61,6 +61,19 @@ f = TP.mechanical_findings(EN, nl("Het paviljoen is 280 vierkante meter uit 2025
                                   "1400000 euro. WildSumaco vermeldt No."))
 check("an added number is caught",
       any(x["category"] == "NUMBERS" and x["translated"] for x in f), f)
+check("an inflected demonym is not a dropped name",
+      not [x for x in TP.mechanical_findings(
+          {"article": "The Ecuadorian studio worked on the Andean slope with WildSumaco."},
+          {"article": "De Ecuadoriaanse studio werkte op de Andes-helling met WildSumaco."})
+          if x["category"] == "NAMES"],
+      TP.mechanical_findings(
+          {"article": "The Ecuadorian studio worked on the Andean slope with WildSumaco."},
+          {"article": "De Ecuadoriaanse studio werkte op de Andes-helling met WildSumaco."}))
+check("a name that is genuinely nowhere is still caught",
+      [x for x in TP.mechanical_findings(
+          {"article": "The Ecuadorian studio Caa Pora worked on the slope."},
+          {"article": "De Ecuadoriaanse studio werkte op de helling."})
+       if x["category"] == "NAMES"])
 check("Dutch decimal and thousand separators are not a changed number",
       TP._numbers("3.5 and 1,000") == TP._numbers("3,5 en 1.000"),
       (TP._numbers("3.5 and 1,000"), TP._numbers("3,5 en 1.000")))

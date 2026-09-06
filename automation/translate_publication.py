@@ -230,7 +230,19 @@ def mechanical_findings(en: dict, tr: dict) -> list:
                     "what_changed": "figure count changed"})
     for tok in sorted(named):
         base = re.sub(r"['’]s$", "", tok)
-        if base.lower() in low or base.lower() in ST._FUNCTION_WORDS:
+        # A NAME CAN CHANGE SHAPE WITHOUT GOING MISSING. Demonyms and adjectival forms are
+        # inflected differently in every language -- "Andean" is "Andes-", "Ecuadorian" is
+        # "Ecuadoriaanse" -- and the first Dutch edition was held on exactly those two,
+        # both of which were present and correct. A stem match keeps the check where it
+        # belongs, on a name that is NOWHERE; the model pass reads the rest.
+        # Four characters, deliberately loose: "Andean" becomes "Andes-", which shares
+        # only "Ande". This pass exists to catch a name that is NOWHERE, and a false HOLD
+        # costs a correction pass on prose that was right -- the model pass reads for the
+        # subtler NAMES failures.
+        stem = base.lower()[:4]
+        if base.lower() in low or (len(base) >= 5 and stem in low):
+            continue
+        if base.lower() in ST._FUNCTION_WORDS:
             continue
         if ST._stem(base.lower()) in CP._COMMON_ENGLISH:      # ordinary word, capitalised
             continue
