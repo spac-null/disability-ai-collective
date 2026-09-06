@@ -428,6 +428,20 @@ def test_the_run_stops_acquiring_once_it_has_enough_to_compare():
     check("and a winner is named", bool(out["shadow_winner"]))
 
 
+def test_acquisition_spans_the_streams_it_exposed():
+    """Stopping at a target made the exposure ORDER decide the comparison: the first run
+    after six primary-research feeds landed acquired five theme-stream arXiv abstracts and
+    assessed nothing else."""
+    conn = _db([("s%d" % i, "https://x.example/rich?%d" % i, "t%d" % i, MP.CULTURE, 1,
+                 0.9 - i * 0.05, None, "P%d" % i) for i in range(12)])
+    p = StubProvider({"Phreatichthys": "POSSIBLE_CANDIDATE"})
+    out = _run(conn, p)
+    acquired = {r["exposed_via"] for r in out["records"]}
+    check("the acquired set spans more than one stream", len(acquired) > 1, acquired)
+    check("and still stops at the target",
+          out["metrics"]["acquisition_ok"] == SV.TARGET_ACQUIRED)
+
+
 def test_bounds_are_declared():
     for name, v, ceiling in (("DAILY_CANDIDATES", SV.DAILY_CANDIDATES, 20),
                              ("BATCH_SIZE", SV.BATCH_SIZE, 6),
