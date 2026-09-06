@@ -164,6 +164,10 @@ def main() -> int:
     ap.add_argument("--out", default="")
     ap.add_argument("--model", default="")
     ap.add_argument("--no-fact-check", action="store_true")
+    ap.add_argument("--worth-only", action="store_true",
+                    help="cheap triage: stop after WORTH (two model calls) and report the "
+                         "verdict, the lens carrier and why -- for deciding which "
+                         "candidates deserve a composition at all")
     # Claude-family composition runs on the owner's subscription. `http` is the old
     # OpenRouter path and is kept only so the two can be compared deliberately; it is
     # not a fallback and nothing selects it automatically.
@@ -289,7 +293,8 @@ def main() -> int:
         provider, pack=pack, source_text=anchor["text"],
         source_sha=anchor["sha256"], subject=pack["subject"],
         fact_check=not a.no_fact_check,
-        fact_check_fn=FCB.fact_check, out_dir=out_dir, frozen=frozen)
+        fact_check_fn=FCB.fact_check, out_dir=out_dir, frozen=frozen,
+        stop_after=CP.WORTH if a.worth_only else "")
     report(result, out_dir)
     if isinstance(provider, CCP.ClaudeCLIProvider):
         print("\nsubscription calls: %d | cost equivalent (not billed): $%.4f"

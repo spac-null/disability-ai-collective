@@ -109,6 +109,12 @@ layout: default
         <!-- Title -->
         <h1 class="post-title">{{ page.title }}</h1>
 
+        <!-- Dek: the standfirst written by the composition's editorial package, when
+             there is one. Uses the existing .post-excerpt rule. -->
+        {% if page.dek %}
+        <p class="post-excerpt">{{ page.dek }}</p>
+        {% endif %}
+
 
         <!-- Meta bar: date | author | reading time -->
         <div class="post-meta">

@@ -61,9 +61,10 @@ SAFETY = "SAFETY"
 GROUNDING = "GROUNDING"
 FACT_CHECK = "FACT_CHECK"
 READER = "READER"
+PACKAGE = "PACKAGE"
 
 STAGES = (LEDGER, WORTH, ARCHITECTURE, CUT_TERMS, WRITER, CONTINUITY,
-          PROSE_FINISH, SAFETY,
+          PROSE_FINISH, PACKAGE, SAFETY,
           GROUNDING, FACT_CHECK, READER)
 
 # ── the composition selector ──────────────────────────────────────────────────
@@ -118,6 +119,21 @@ SAFETY_HOLD = "SAFETY_HOLD"
 GROUNDING_HOLD = "GROUNDING_HOLD"
 FACT_CHECK_HOLD = "FACT_CHECK_HOLD"
 READER_HOLD = "READER_HOLD"
+# NOT a HOLD code. The package stage cannot stop an article; this names the transport or
+# validation failure that made it skip, so a run can still say why it published without one.
+PACKAGE_SKIPPED = "PACKAGE_SKIPPED"
+# The package's own outcome, kept apart from the run's editorial verdict. A package that
+# could not be PRODUCED is a fault in the machinery; a package that was produced and
+# refused is a fault in the writing. Neither is a reason to call the article bad, and
+# neither publishes: the candidate goes to the owner instead.
+PACKAGE_OK = "OK"
+PACKAGE_REFUSED = "REFUSED"
+PACKAGE_TECHNICAL_FAILURE = "TECHNICAL_FAILURE"
+
+# WHICH SURFACE PUBLISHED. Recorded because the two are different articles: the package,
+# the hashes and every gate verdict belong to one of them and never to a mixture.
+SURFACE_PROSE_FINISH = "PROSE_FINISH"
+PRE_POLISH_FALLBACK = "PRE_POLISH_FALLBACK"
 
 # The provider said the subscription cannot serve this call. A first-class outcome, not a
 # retry and not a reason to start spending money elsewhere: an automatic fallback to a paid
@@ -2060,6 +2076,98 @@ def continuity_pass(provider, article_text: str, arch: dict) -> dict:
 
 # ══════════════════════════════════════════════════════════════════════════════
 # STAGE 7 -- POST-CONTINUITY SAFETY
+# ── THE PUBLICATION BUNDLE ───────────────────────────────────────────────────
+# The package is not metadata. A title, a dek and a homepage card are the first prose a
+# reader meets, they are quoted onward by search engines and social clients, and they can
+# be wrong in exactly the way an article can be wrong -- not by using a word that is not
+# in the evidence, but by putting two words the evidence does grant into a relation it
+# never asserted. A station-level accessibility record becomes a claim about a building; an
+# adjacency becomes a contradiction; a hedge becomes a finding.
+#
+# So the unit that is checked is the whole thing a reader will see:
+#
+#     PUBLICATION_BUNDLE = article + title + dek + excerpt + meta description + hook
+#
+# and it is checked by the gates that already exist, on one delimited text, rather than by
+# a second factual pipeline built for metadata. What the surfaces below buy is diagnosis: a
+# finding says DEK or TITLE instead of "the article", so the failure is actionable.
+ARTICLE_SURFACE = "ARTICLE"
+PACKAGE_SURFACE_LABELS = (("title", "TITLE"), ("dek", "DEK"),
+                          ("homepage_excerpt", "EXCERPT"),
+                          ("meta_description", "META_DESCRIPTION"),
+                          ("social_hook", "SOCIAL_HOOK"))
+PACKAGE_SURFACES = tuple(label for _, label in PACKAGE_SURFACE_LABELS)
+
+BUNDLE_HEADER = (
+    "THE PUBLICATION FURNITURE -- the title, standfirst and cards this article is "
+    "published behind. This is public editorial prose, read before the article and often "
+    "instead of it, and it is checked exactly like the article: every claim in it has to "
+    "be carried by the same evidence.")
+
+
+def package_prose(package: dict | None) -> str:
+    """The package's five lines as one plain text, or "" when there is no package."""
+    if not package:
+        return ""
+    lines = []
+    for field, label in PACKAGE_SURFACE_LABELS:
+        v = str((package or {}).get(field) or "").strip()
+        if v:
+            lines.append(v)
+    return "\n\n".join(lines)
+
+
+def bundle_text(article_text: str, package: dict | None) -> str:
+    """The exact public surface, in one text, delimited so a grounder reads the furniture
+    as sentences to check rather than as part of the article's argument."""
+    if not package:
+        return article_text or ""
+    block = "\n".join("%s: %s" % (label, str(package.get(field) or "").strip())
+                      for field, label in PACKAGE_SURFACE_LABELS
+                      if str(package.get(field) or "").strip())
+    return "%s\n\n---\n\n%s\n\n%s\n" % ((article_text or "").rstrip(),
+                                        BUNDLE_HEADER, block)
+
+
+def surface_of(text: str, package: dict | None) -> str:
+    """Which surface does this quote come from? ARTICLE unless a package line carries it."""
+    q = normalize_span(text or "")
+    if not q or not package:
+        return ARTICLE_SURFACE
+    for field, label in PACKAGE_SURFACE_LABELS:
+        v = normalize_span(str(package.get(field) or ""))
+        # Long enough to be a quotation rather than a coincidence, in either direction: a
+        # grounder may quote a whole dek or a clause of one.
+        if len(v) >= 12 and len(q) >= 12 and (q in v or v in q):
+            return label
+    return ARTICLE_SURFACE
+
+
+def surfaces_carrying(package: dict | None, tokens) -> list:
+    """The surfaces that contain any of these tokens, for a diagnostic line."""
+    out = []
+    for field, label in PACKAGE_SURFACE_LABELS:
+        v = normalize_span(str((package or {}).get(field) or "")).lower()
+        if v and any(re.search(r"\b%s\b" % re.escape(normalize_span(str(t)).lower()), v)
+                     for t in tokens if len(str(t).strip()) > 1):
+            out.append(label)
+    return out or ["PACKAGE"]
+
+
+def split_by_surface(findings, package: dict | None) -> tuple:
+    """(article findings, package findings), each stamped with its surface."""
+    art, pkg = [], []
+    for f in findings or []:
+        if not isinstance(f, dict):
+            art.append(f)
+            continue
+        where = surface_of(f.get("quote") or f.get("claim") or f.get("claim_text") or "",
+                           package)
+        f = dict(f, surface=where)
+        (art if where == ARTICLE_SURFACE else pkg).append(f)
+    return art, pkg
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # Every merged screen, on the finished candidate. A failure HOLDS. It does not regenerate
 # the Writer: an article that invented something is evidence about the run, and rerolling
@@ -2067,7 +2175,7 @@ def continuity_pass(provider, article_text: str, arch: dict) -> dict:
 def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
                  ledger: dict, cut_terms: dict, cut_report: dict | None = None,
                  negative_lineage: dict | None = None,
-                 repair: dict | None = None) -> dict:
+                 repair: dict | None = None, package: dict | None = None) -> dict:
     """The merged post-writer stack, on both the draft and the final."""
     # AFTER A FACTUAL REPAIR THE BASELINES MOVE, and getting that wrong made the repair
     # unpassable. The repair's authority comes from the LEDGER FACTS IT CITED and from the
@@ -2150,6 +2258,43 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
         }
 
     a = {"writer_draft": screens(draft_text), "continuity_final": screens(final_text)}
+    # THE PACKAGE IS PUBLIC PROSE and is screened by the same functions, on its own text.
+    # It is a third surface, not part of the article: the semantic delta below compares the
+    # draft with the final and a title has no draft to differ from. What it does share is
+    # every screen that asks whether prose carries factual surface the evidence never
+    # granted -- which is the only question a title can get wrong.
+    pkg_text = package_prose(package)
+    if pkg_text:
+        ps = screens(pkg_text)
+        # WHAT THE PACKAGE IS ALLOWED TO USE is the packet AND the article, because the
+        # article has already passed this same screen -- a word the prose was cleared to
+        # print cannot be an invention when a dek repeats it. Case is ignored here and
+        # only here: a title is title-cased and a packet is not, so "The Upper Room" would
+        # otherwise report three unapproved entities on every article ever published.
+        #
+        # What survives this filter is the thing that matters: a NAME OR NUMBER THAT IS
+        # NOWHERE, which is the one addition a five-line package can make lexically. The
+        # additions it makes by RELATION -- adjacency sold as cause, a station's record
+        # sold as a building's -- are invisible to any word-level screen and are caught by
+        # the Grounder and the Fact Check, which read the package inside the bundle.
+        licensed = (approved_render + " " + final_text).lower()
+        sf = ps["factual_surface"]
+        ents = [e for e in sf["unapproved_entities"]
+                if re.sub(r"['\u2019]s$", "", e).lower() not in licensed]
+        nums = [n for n in sf["unapproved_numbers"] if n not in _numbers_of(final_text)]
+        sens = [t for t in sf["unapproved_sensory"] if str(t).lower() not in licensed]
+        ps["factual_surface"] = dict(sf, unapproved_entities=ents,
+                                     unapproved_numbers=nums, unapproved_sensory=sens)
+        ps["hard_factual_ok"] = not (ents or nums or sens)
+        # A negative the ARTICLE already carries is not a new negative when the dek
+        # repeats it; one the article does not carry has to be licensed by the ledger like
+        # any other, and nothing declared provenance for a title.
+        art_norm = normalize_span(final_text)
+        ps["negative_admission"] = dict(
+            ps["negative_admission"],
+            unmatched=[h for h in ps["negative_admission"]["unmatched"]
+                       if normalize_span(h["sentence"]) not in art_norm])
+        a["publication_package"] = ps
     f = a["continuity_final"]
     delta_errs = CE.validate_semantic_delta(draft_text, final_text,
                                             allow_relation_growth=allow_rel)
@@ -2236,6 +2381,39 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
             "CUT_AUDIT_BLIND: cut facts with no watch term and no reason given %s; "
             "terms below the length floor %s -- the audit would report clean prose "
             "without having looked" % (unexplained, ca["skipped_too_short"]))
+
+    # THE PACKAGE'S OWN FAILURES, named by the surface they are on, so a hold reads
+    # "DEK" rather than "the article" and the owner knows which line to look at. The
+    # negative gate is applied without lineage: nothing declared provenance for a title,
+    # so a negative-shaped dek must be licensed by a negative fact in the ledger or not
+    # written at all.
+    if pkg_text:
+        ps = a["publication_package"]
+        if not ps["hard_factual_ok"]:
+            sf = ps["factual_surface"]
+            blocking.append(
+                "PACKAGE_UNSUPPORTED_FACTS on %s: numbers=%s entities=%s sensory=%s"
+                % (surfaces_carrying(package, sf["unapproved_numbers"]
+                                     + sf["unapproved_entities"]
+                                     + list(sf["unapproved_sensory"])),
+                   sf["unapproved_numbers"], sf["unapproved_entities"],
+                   sf["unapproved_sensory"]))
+        un = ps["negative_admission"]["unmatched"]
+        if un:
+            blocking.append(
+                "PACKAGE_UNSUPPORTED_NEGATIVES on %s: %s"
+                % (surfaces_carrying(package, [h["sentence"] for h in un]),
+                   [h["sentence"][:90] for h in un][:3]))
+        phard = [v for v in ps["cut_adherence"]["violations"]
+                 if cut_term_confidence(v["term"]) == CUT_HIGH]
+        if phard:
+            blocking.append(
+                "PACKAGE_CUT_LEAKAGE on %s: %s"
+                % (surfaces_carrying(package, [v["term"] for v in phard]),
+                   [(v["evidence_id"], v["term"]) for v in phard][:4]))
+        if not ps["prose_leaks"]["ok"] or not ps["scaffold"]["ok"]:
+            blocking.append("PACKAGE_MACHINE_LANGUAGE: frames %s, scaffold %s"
+                            % (ps["prose_leaks"]["frames"], ps["scaffold"]["leaked"]))
 
     # ── ADVISORIES, surfaced and never discarded ─────────────────────────────
     advisories = []
@@ -2932,9 +3110,250 @@ def prose_finish(provider, article_text: str, arch: dict) -> dict:
             "model_calls": 1, "repairs": 0}
 
 
+# ── EDITORIAL PACKAGE ────────────────────────────────────────────────────────
+PACKAGE_SYSTEM = (
+    "You are the editor who decides how a finished article is presented. The article "
+    "below is done: checked, grounded, and going out as it stands. You are not editing "
+    "it. You are writing the five short things a reader meets BEFORE it.\n"
+    "\n"
+    "THE READER YOU ARE WRITING FOR has never heard of this person, place, paper, "
+    "building or device, and has no reason to care yet. They are looking at a card on a "
+    "homepage among other cards. Your job is to give them a reason to spend five minutes, "
+    "and the reason has to be true.\n"
+    "\n"
+    "ADD NOTHING. Every name, number, date, place and claim you use must already be in "
+    "the article. You may not quote anything the article does not quote. This is checked "
+    "mechanically afterwards and a package that adds material is thrown away.\n"
+    "\n"
+    "AND THE HARDER RULE, WHICH NO WORD-LEVEL CHECK CATCHES. You may use only the "
+    "RELATIONS the article already asserts, not new ones between words it happens to "
+    "contain. Specifically, you may not:\n"
+    "  - turn two facts that sit next to each other into cause and effect\n"
+    "  - turn adjacency into contradiction, or a difference into a scandal\n"
+    "  - widen scope: a record about one station is not a claim about buildings, a "
+    "measure of one year is not a trend, one person is not a group\n"
+    "  - harden a hedge. If the article says a thing may be so, the card may not say it "
+    "is so, and 'no record of X' is not 'there is no X'\n"
+    "  - manufacture relevance to disability, access or the body that the article does "
+    "not itself establish\n"
+    "The article you are given has been through a factual stack; your five lines go "
+    "through the same one, and they hold the article back when they fail.\n"
+    "\n"
+    "TITLE. Curiosity, tension or recognition, from a reader who does not know the "
+    "subject. Not a label for the topic, not a summary, not a question you do not answer, "
+    "and not clickbait. It may name the concrete thing the piece stands on. Under twelve "
+    "words, no trailing full stop.\n"
+    "\n"
+    "DEK. One or two sentences answering WHY SHOULD I READ THIS. Name the concrete "
+    "tension, surprise or contradiction. Do not exhaust the story: the dek sets up what "
+    "the article then does. Fifteen to forty words.\n"
+    "\n"
+    "HOMEPAGE_EXCERPT. The hardest one. Two or three sentences on a card, and by the end "
+    "of the first the reader should know what is strange here, what changes when you look "
+    "closer, or what is unexpectedly at stake. It is NOT the article's first paragraph "
+    "unless that paragraph happens to do this job, and it usually does not -- an opening "
+    "written to be read second is rarely written to be read first. Twenty-five to sixty "
+    "words.\n"
+    "\n"
+    "META_DESCRIPTION. Plain, factual, for a search result. Under 160 characters.\n"
+    "\n"
+    "SOCIAL_HOOK. One or two sentences for a post, no hashtags, no emoji, no 'thread', no "
+    "'here is why'. Under 240 characters.\n"
+    "\n"
+    "REGISTER. Calm and specific. No 'in a world where', no 'this raises questions', no "
+    "'a fascinating look at', no 'we are all'. Say the concrete thing."
+)
+
+PACKAGE_SCHEMA = (
+    "Reply with ONE JSON object:\n"
+    '{"package": {"title": "...", "dek": "...", "homepage_excerpt": "...",\n'
+    '             "meta_description": "...", "social_hook": "..."}}\n'
+    "No prose outside the JSON."
+)
+
+PACKAGE_FIELDS = ("title", "dek", "homepage_excerpt", "meta_description", "social_hook")
+
+# Bounds are a shape check, not a taste check: a title that runs to thirty words or an
+# excerpt of four is not a judgement call, it is a stage that misunderstood its job.
+PACKAGE_BOUNDS = {
+    "title": (2, 14, 110),
+    "dek": (10, 45, 320),
+    "homepage_excerpt": (20, 70, 460),
+    "meta_description": (10, 34, 160),
+    "social_hook": (8, 45, 240),
+}
+
+_QUOTED = re.compile(r"[\"“]([^\"”]{12,})[\"”]")
+
+_PACKAGE_BANNED = (
+    "in a world where", "raises questions", "fascinating look", "we are all",
+    "a must-read", "here's why", "here is why", "dives into", "unpacks", "explores what",
+)
+
+
+def package_additions(field_text: str, article_text: str, title_case: bool = False) -> list:
+    """What does this line assert that the article does not already carry?
+
+    Three channels, the same ones the safety stack trusts, applied to five short lines:
+    a NUMBER the article does not contain, a NAME the article does not contain, and a
+    QUOTATION that is not a span of the article.
+
+    THE NAME CHANNEL IS OFF FOR THE TITLE, deliberately. A title is title-cased, so
+    capitalisation stops carrying information -- "The Upper Room With No Lock" offers four
+    capitals and not one of them is a name. Applying the screen there would refuse every
+    ordinary title and teach the stage to write worse ones. In the prose fields capitals
+    mean what they usually mean, so a mid-sentence capital that the article does not
+    contain is what it looks like.
+
+    AND THIS IS A SCREEN, NOT VALIDATION. It sees words. The additions that matter most in
+    a package are made out of words the article already contains -- a cause invented
+    between two facts, a station's record widened into a claim about a building -- and it
+    cannot see any of them. Those are the Grounder's and the Fact Check's, on the bundle.
+    """
+    low = (article_text or "").lower()
+    out = []
+    if not title_case:
+        for tok in sorted(ST._entities(field_text or "", skip_sentence_initial=True)):
+            t = re.sub(r"['\u2019]s$", "", tok).lower().strip(".,")
+            if len(t) > 2 and t not in low and t not in ST._FUNCTION_WORDS \
+                    and ST._stem(t) not in _COMMON_ENGLISH:
+                out.append("name not in the article: %r" % tok)
+    for n in sorted(ST._numbers(field_text or "") - ST._numbers(article_text or "")):
+        out.append("number not in the article: %r" % n)
+    art = normalize_span(article_text or "")
+    for q in _QUOTED.findall(field_text or ""):
+        if normalize_span(q) not in art:
+            out.append("quotation not in the article: %r" % q[:60])
+    return out
+
+
+def check_package(pkg: dict, article_text: str) -> list:
+    """Deterministic. No model reviews this; the failures below are the whole contract."""
+    errs = []
+    if not isinstance(pkg, dict):
+        return ["package is not an object"]
+    for f in PACKAGE_FIELDS:
+        v = pkg.get(f)
+        if not isinstance(v, str) or not v.strip():
+            errs.append("%s is missing or empty" % f)
+            continue
+        v = v.strip()
+        lo, hi, chars = PACKAGE_BOUNDS[f]
+        n = len(v.split())
+        if n < lo:
+            errs.append("%s is %d words, under the %d-word minimum" % (f, n, lo))
+        if n > hi:
+            errs.append("%s is %d words, over the %d-word maximum" % (f, n, hi))
+        if len(v) > chars:
+            errs.append("%s is %d characters, over the %d-character maximum"
+                        % (f, len(v), chars))
+        errs += ["%s: %s" % (f, a)
+                 for a in package_additions(v, article_text, title_case=(f == "title"))]
+        lowv = v.lower()
+        for b in _PACKAGE_BANNED:
+            if b in lowv:
+                errs.append("%s uses %r, which is packaging language rather than the "
+                            "story" % (f, b))
+        if "\n" in v:
+            errs.append("%s spans more than one line" % f)
+    t = str(pkg.get("title") or "").strip()
+    if t.endswith("."):
+        errs.append("title ends in a full stop")
+    return errs
+
+
+def editorial_package(provider, article_text: str, arch: dict, worth: dict,
+                      refusals: list | None = None) -> dict:
+    """The five lines a reader meets before the article, written from the exact bytes that
+    publish and then checked as part of the same publication bundle.
+
+    WHERE IT SITS. After Prose Finish, before Safety. The package is public prose, so the
+    factual stack has to see it -- Safety screens its surface, and the Grounder and the
+    Fact Check read it inside the bundle with the article. It is written last among the
+    writing stages for the same reason the polish is: the text it sells has to be the text
+    that ships.
+
+    WHAT KEEPS IT HONEST is two things, and only the second one is real validation.
+    `check_package` is a cheap deterministic screen that refuses a name, number or
+    quotation the article does not carry -- it costs nothing and catches the obvious. It
+    is NOT factual validation: the same words the article grants can still be arranged
+    into a proposition it never made, which is the failure mode a title is most prone to.
+    That one is caught downstream, by the gates, on the bundle.
+
+    TECHNICAL FAILURE IS NOT AN EDITORIAL REJECTION. A provider or parser failure returns
+    TECHNICAL_FAILURE and leaves the article intact and unpublished, for an owner to look
+    at. A package that was written and refused returns REFUSED. Neither is a HOLD: the
+    article did nothing wrong, and saying it did would put a technical fault into the
+    editorial record.
+    """
+    ctx = "\n".join([
+        "THE STORY THIS ARTICLE TELLS",
+        "  " + str((arch or {}).get("story_spine") or "")[:400],
+        "WHAT THIS PUBLICATION SEES IN IT",
+        "  " + str((worth or {}).get("lens_claim") or "")[:300],
+        "  it stands on: " + str((worth or {}).get("lens_carrier") or "")[:200],
+        "",
+        "THE FINISHED ARTICLE",
+        article_text or "",
+        "",
+        PACKAGE_SCHEMA])
+    if refusals:
+        # A regeneration after a GATE refused the previous package. It is told exactly what
+        # was found and on which line, and nothing else changes.
+        ctx = "\n".join([
+            "A PREVIOUS PACKAGE FOR THIS ARTICLE WAS REFUSED BY THE FACTUAL GATES. Write a "
+            "new one that does not make these claims. The article is unchanged.",
+            *["  - " + str(r)[:300] for r in refusals[:8]], "", ctx])
+
+    def _fail(status, reason, calls, repairs=0, failures=None):
+        return {"status": SKIPPED, "package": None, "applied": False,
+                "package_status": status, "reason": reason[:300],
+                "failures": (failures or [])[:10], "model_calls": calls,
+                "repairs": repairs}
+
+    calls = 0
+    try:
+        obj, ident = _ask(provider, PACKAGE_SYSTEM, ctx, 1_500, PACKAGE, PACKAGE_SKIPPED)
+        calls = 1
+    except CompositionHold as e:
+        return _fail(PACKAGE_TECHNICAL_FAILURE,
+                     "the package could not be produced: %s" % "; ".join(e.reasons), 1)
+    pkg = obj.get("package") or {}
+    errs = check_package(pkg, article_text)
+    if not errs:
+        return {"status": PASS, "package": _clean_package(pkg), "applied": True,
+                "package_status": PACKAGE_OK, "repaired": False, "provider": ident,
+                "model_calls": calls, "repairs": 0}
+    # ONE repair, on the exact failures and the same article. No second one.
+    try:
+        fix = "\n".join(["Your package was refused. Fix exactly these and change nothing "
+                         "else. Use only what the article already says.",
+                         *["  - " + e for e in errs[:10]], "", ctx])
+        obj2, ident = _ask(provider, PACKAGE_SYSTEM, fix, 1_500, PACKAGE, PACKAGE_SKIPPED)
+        calls = 2
+    except CompositionHold as e:
+        return _fail(PACKAGE_TECHNICAL_FAILURE,
+                     "the package repair could not be produced: %s" % "; ".join(e.reasons),
+                     2, 1, errs)
+    pkg2 = obj2.get("package") or {}
+    errs2 = check_package(pkg2, article_text)
+    if not errs2:
+        return {"status": PASS, "package": _clean_package(pkg2), "applied": True,
+                "package_status": PACKAGE_OK, "repaired": True,
+                "first_attempt_failures": errs[:10], "provider": ident,
+                "model_calls": calls, "repairs": 1}
+    return _fail(PACKAGE_REFUSED,
+                 "package refused after one repair: %s" % "; ".join(errs2), calls, 1, errs2)
+
+
+def _clean_package(pkg: dict) -> dict:
+    return {f: str(pkg.get(f) or "").strip() for f in PACKAGE_FIELDS}
+
+
 def run_story_architecture_composition(
         provider, *, pack: dict, source_text: str, source_sha: str,
         subject: str = "", fact_check: bool = True, reader: bool = True,
+        package: bool = True, stop_after: str = "",
         fact_check_fn=None, out_dir=None, frozen: dict | None = None) -> dict:
     """Approved research material in; a final article candidate out, or a HOLD.
 
@@ -2974,7 +3393,8 @@ def run_story_architecture_composition(
         repairs[stage] = payload.get("repairs", 0)
         return payload
 
-    def out(failure_stage=None, failure_reason=None, code=None, article=None):
+    def out(failure_stage=None, failure_reason=None, code=None, article=None,
+            package_out=None, article_surface=SURFACE_PROSE_FINISH):
         """Build the result AND persist it. Persisting here rather than at each return
         is the point: a HOLD at safety, grounding, fact check or the reader gate is
         exactly the run whose intermediate artifacts someone needs to read, and four
@@ -2988,6 +3408,22 @@ def run_story_architecture_composition(
             "failure_reason": failure_reason,
             "reason_code": code,
             "article_text": article,
+            # THE PUBLICATION BUNDLE, and the two facts that make it verifiable: which
+            # surface it belongs to, and the hash of each half. A consumer can prove the
+            # package it is about to publish was written from the article it is about to
+            # publish, which is the whole point of discarding a package with a polish.
+            "package": package_out,
+            "package_status": (st.get(PACKAGE) or {}).get("package_status", NOT_RUN),
+            "article_surface": article_surface,
+            "article_sha256": C.sha256_text(article or ""),
+            "bundle_sha256": C.sha256_text(bundle_text(article or "", package_out)),
+            # Publication needs an article AND the furniture it publishes behind. A
+            # missing package is not an editorial rejection and never reads as one: the
+            # article stands, and the candidate goes to the owner instead of to the site.
+            "stopped_after": stop_after or "",
+            "publication_ready": bool(failure_stage is None and package_out
+                                      and not stop_after),
+            "owner_review": bool(failure_stage is None and not package_out),
             "words": len((article or "").split()),
             "model_calls_by_stage": dict(calls),
             "model_calls_total": sum(calls.values()),
@@ -3005,6 +3441,8 @@ def run_story_architecture_composition(
         return result
 
     replay = frozen or {}
+    surface = SURFACE_PROSE_FINISH
+    pkg = None
     try:
         if replay.get("ledger"):
             ledger = replay["ledger"]
@@ -3021,6 +3459,13 @@ def run_story_architecture_composition(
             calls[WORTH] = repairs[WORTH] = 0
         else:
             w = record(WORTH, worth_gate(P, ledger, subject))
+
+        # CHEAP TRIAGE. Two model calls answer "does this subject belong here, and what
+        # does the reading stand on" -- and that is the whole question a selector needs
+        # before deciding which candidates deserve a composition. Stopping here is not a
+        # HOLD and is never recorded as one: the run did what it was asked to do.
+        if stop_after == WORTH:
+            return out(article=None, package_out=None, article_surface=surface)
 
         frozen_article = replay.get("article")
         if replay.get("architecture"):
@@ -3097,6 +3542,7 @@ def run_story_architecture_composition(
         # exact bytes Safety, Grounding and Fact Check read are the bytes that publish.
         # Fail-safe like Continuity: a discarded polish carries the incoming text forward
         # and costs the run nothing. Skipped on a replay, where the article is frozen.
+        pre_polish = None
         if frozen_article:
             st[PROSE_FINISH] = {"status": REPLAYED, "article_text": final,
                                 "applied": False, "reason": "replay: article is frozen",
@@ -3105,6 +3551,7 @@ def run_story_architecture_composition(
         else:
             pf = record(PROSE_FINISH, prose_finish(P, final, arch))
             if pf.get("applied"):
+                pre_polish = final
                 final = pf["article_text"]
                 # The polish rewrote sentences, so the Writer's per-sentence negative
                 # lineage no longer maps onto them. Safety re-derives what it needs from
@@ -3112,19 +3559,83 @@ def run_story_architecture_composition(
                 # than carrying none.
                 lineage = wr["negative_lineage_verified"]
 
-        sa = record(SAFETY, safety_audit(draft, final, wr["packet"], arch, ledger,
-                                         cut["terms"], cut, lineage))
+        # THE PACKAGE, written from the bytes that publish and checked with them. It is
+        # public prose, so it goes into the same bundle the gates read; it is written here
+        # rather than after the Reader because a title can be factually wrong and the only
+        # honest place to find that out is the factual stack.
+        def make_package(text, refusals=None):
+            if not package:
+                st[PACKAGE] = {"status": SKIPPED, "package": None,
+                               "package_status": SKIPPED, "model_calls": 0, "repairs": 0}
+                calls[PACKAGE] = repairs[PACKAGE] = 0
+                return None
+            return record(PACKAGE, editorial_package(
+                P, text, arch, (w or {}).get("worth_gate"), refusals)).get("package")
+
+        def audit(text, pkg_, **kw):
+            return safety_audit(draft, text, wr["packet"], arch, ledger, cut["terms"],
+                                cut, lineage, package=pkg_, **kw)
+
+        pkg = make_package(final)
+        sa = record(SAFETY, audit(final, pkg))
         sa["carried_text"] = carried
+
+        # A POLISH MAY NOT COST A RUN THE UNPOLISHED TEXT WOULD HAVE WON. Prose Finish is
+        # an optional improvement over an article that was already publishable, and this
+        # audit is deterministic and free -- so when the polished surface fails, ask
+        # whether the text that went into it is clean before losing the article to an
+        # optional stage. No second polish and no rewrite: the incoming text is the same
+        # fallback Continuity already uses one stage above.
+        #
+        # AND THE FALLBACK IS VERSION-COHERENT. The package was written from the polished
+        # prose; if the polish is discarded, that package describes text that will not
+        # publish, and publishing the two together would be a mixed-version bundle. So the
+        # package is discarded with the polish and rewritten from the surface that is
+        # actually shipping, and the whole bundle is audited again.
+        if sa["status"] != PASS and pre_polish is not None:
+            probe = audit(pre_polish, None)
+            if probe["status"] == PASS:
+                st[PROSE_FINISH]["discarded_at_safety"] = sa["blocking"][:6]
+                st[PROSE_FINISH]["applied"] = False
+                final, surface = pre_polish, PRE_POLISH_FALLBACK
+                pkg = make_package(final)
+                sa = record(SAFETY, audit(final, pkg))
+                sa["carried_text"] = carried
+                sa["polish_discarded_at_safety"] = True
         sa["continuity_discarded"] = bool(delta_errs)
         if sa["status"] != PASS:
             why = "; ".join(sa["blocking"])[:600]
             if delta_errs:
                 why = ("continuity was discarded (%s) and the Writer draft did not pass "
                        "either: %s" % ("; ".join(str(e) for e in delta_errs)[:200], why))
-            return out(SAFETY, why, SAFETY_HOLD, final)
+            return out(SAFETY, why, SAFETY_HOLD, final, pkg, surface)
 
-        g = record(GROUNDING, ground_candidate(P, final, source_text, source_sha, pack,
-                                               arch, wr["packet"]))
+        g = record(GROUNDING, ground_candidate(P, bundle_text(final, pkg), source_text,
+                                               source_sha, pack, arch, wr["packet"]))
+
+        # A GROUNDING FAILURE THAT IS ENTIRELY IN THE FURNITURE is repaired by rewriting
+        # the furniture, not the article -- once, on the exact findings. The article did
+        # nothing wrong and rewriting it would be the expensive way to fix a dek.
+        if g["status"] != PASS and pkg:
+            art_bad, pkg_bad = split_by_surface(g["blocking"], pkg)
+            if pkg_bad and not art_bad:
+                pkg = make_package(final, refusals=[
+                    "%s on %s: %s" % (f.get("classification"), f.get("surface"),
+                                      str(f.get("quote") or f.get("claim") or "")[:200])
+                    for f in pkg_bad])
+                sa_p = record(SAFETY, audit(final, pkg))
+                sa_p["after_repackage"] = True
+                if sa_p["status"] != PASS:
+                    return out(SAFETY, "the rewritten package did not pass: %s"
+                               % "; ".join(sa_p["blocking"])[:400], SAFETY_HOLD, final,
+                               pkg, surface)
+                sa = sa_p
+                g2 = record(GROUNDING, ground_candidate(P, bundle_text(final, pkg),
+                                                        source_text, source_sha, pack,
+                                                        arch, wr["packet"]))
+                g2["after_repackage"] = True
+                calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
+                g = g2
 
         # ONE GROUNDED FACTUAL REPAIR, then the FULL hard safety stack again, then the
         # Grounder again. A second grounding failure is the end of the article: no second
@@ -3139,19 +3650,17 @@ def run_story_architecture_composition(
 
                 # The complete stack, against the REPAIRED article. A factual correction
                 # is still prose the Writer did not write, and it is audited as such.
-                sa2 = record(SAFETY, safety_audit(draft, final, wr["packet"], arch,
-                                                  ledger, cut["terms"], cut, lineage,
-                                                  repair=rep))
+                sa2 = record(SAFETY, audit(final, pkg, repair=rep))
                 sa2["after_factual_repair"] = True
                 if sa2["status"] != PASS:
                     return out(SAFETY,
                                "the factual repair did not survive the safety stack: %s"
                                % "; ".join(sa2["blocking"])[:400],
-                               SAFETY_HOLD, final)
+                               SAFETY_HOLD, final, pkg, surface)
 
-                g2 = record(GROUNDING, ground_candidate(P, final, source_text,
-                                                        source_sha, pack, arch,
-                                                        wr["packet"]))
+                g2 = record(GROUNDING, ground_candidate(P, bundle_text(final, pkg),
+                                                        source_text, source_sha, pack,
+                                                        arch, wr["packet"]))
                 g2["repair"] = g["repair"]
                 g2["attempt"] = 2
                 calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
@@ -3163,13 +3672,15 @@ def run_story_architecture_composition(
                        "grounding status %r; %d blocking finding(s)%s: %s"
                        % (g["grounding_status"], len(g["blocking"]),
                           " AFTER one factual repair" if g.get("attempt") == 2 else "",
-                          [("%s %s" % (f.get("classification"),
-                                       str(f.get("quote") or f.get("claim") or "")[:70]))
+                          [("%s %s %s" % (f.get("classification"),
+                                          surface_of(str(f.get("quote") or ""), pkg),
+                                          str(f.get("quote") or f.get("claim") or "")[:70]))
                            for f in g["blocking"]][:4]),
-                       GROUNDING_HOLD, final)
+                       GROUNDING_HOLD, final, pkg, surface)
 
         if fact_check:
-            fc = record(FACT_CHECK, (fact_check_fn or fact_check_unavailable)(final))
+            fc = record(FACT_CHECK,
+                        (fact_check_fn or fact_check_unavailable)(bundle_text(final, pkg)))
             # A fact check that COULD NOT RUN is deliberately not blocked here: it flows on
             # to the Reader carrying its own status, so an infrastructure failure is never
             # recorded as an editorial rejection. Publication is refused elsewhere, twice --
@@ -3184,10 +3695,12 @@ def run_story_architecture_composition(
             # this stage produced "FACT_CHECK HOLD, blocking contradiction(s): []" on an
             # article nothing had checked. Fixed in the bridge's status taxonomy.
             if fc.get("status") == HOLD:
+                bad = fc.get("blocking_contradictions") or []
+                fc["surfaces"] = sorted({surface_of(str(c), pkg) for c in bad})
                 return out(FACT_CHECK,
-                           "blocking contradiction(s): %s"
-                           % (fc.get("blocking_contradictions") or [])[:4],
-                           FACT_CHECK_HOLD, final)
+                           "blocking contradiction(s) on %s: %s"
+                           % (", ".join(fc["surfaces"]) or ARTICLE_SURFACE, bad[:4]),
+                           FACT_CHECK_HOLD, final, pkg, surface)
         else:
             st[FACT_CHECK] = {"status": SKIPPED}
 
@@ -3196,18 +3709,19 @@ def run_story_architecture_composition(
             if rg["status"] != PASS:
                 return out(READER,
                            "reader HOLD on %s" % ", ".join(sorted(rg["held"])),
-                           READER_HOLD, final)
+                           READER_HOLD, final, pkg, surface)
         else:
             st[READER] = {"status": SKIPPED}
 
-        return out(article=final)
+        return out(article=final, package_out=pkg, article_surface=surface)
 
     except CompositionHold as e:
         elapsed[e.stage] = round(time.time() - marks["_last"], 1)
         st[e.stage] = dict(e.payload, status=HOLD, code=e.code, reasons=e.reasons)
         return out(e.stage, "; ".join(e.reasons)[:600], e.code,
                    st.get(CONTINUITY, {}).get("article_text")
-                   or st.get(WRITER, {}).get("article_text"))
+                   or st.get(WRITER, {}).get("article_text"),
+                   package_out=pkg, article_surface=surface)
 
 
 def persist(out_dir, result: dict) -> None:
@@ -3255,6 +3769,8 @@ def persist(out_dir, result: dict) -> None:
         dump("FACTUAL_REPAIR.json", det[GROUNDING]["repair"])
     if det.get(FACT_CHECK, {}).get("status") not in (None, NOT_RUN, SKIPPED):
         dump("FACT_CHECK.json", det[FACT_CHECK])
+    if det.get(PACKAGE, {}).get("package"):
+        dump("EDITORIAL_PACKAGE.json", det[PACKAGE]["package"])
     if det.get(READER, {}).get("dimensions"):
         dump("READER_AUDIT.json", {k: det[READER].get(k)
                                    for k in ("dimensions", "held", "one_line", "status")})

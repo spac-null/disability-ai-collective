@@ -49,7 +49,8 @@ def _yaml_scalar(v) -> str:
 
 
 def build_frontmatter(*, title: str, author: str, engine_meta: dict,
-                      rehearsal: bool = True, safety: dict | None = None) -> str:
+                      rehearsal: bool = True, safety: dict | None = None,
+                      package: dict | None = None) -> str:
     """Frontmatter for a new-engine candidate.
 
     Deliberately absent: `fact_check_status: verified` and `publication_safety_version`.
@@ -77,6 +78,21 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
         ("writer_grounding_unsupported", engine_meta["grounding_unsupported"]),
         ("provider_model", engine_meta.get("provider_model", "")),
     ]
+    # THE EDITORIAL PACKAGE. Written by the composition's last stage from the exact bytes
+    # that publish, and absent when that stage skipped -- in which case the site falls back
+    # to Jekyll's automatic excerpt, which is the article's first paragraph. That fallback
+    # is what shipped for the first Story Architecture publication and it is why this field
+    # exists: an opening written to be read second is rarely a homepage card.
+    #
+    # `excerpt` is the field the templates already consume (index.html, the author and
+    # archive layouts, and every description meta tag). The other three are recorded
+    # beside it: `dek` renders as the article's standfirst, and the last two are handed
+    # to whatever posts the piece.
+    pkg = {k: str(v).strip() for k, v in (package or {}).items() if str(v or "").strip()}
+    for k in ("excerpt", "dek", "meta_description", "social_hook"):
+        src = "homepage_excerpt" if k == "excerpt" else k
+        if pkg.get(src):
+            fields.append((k, pkg[src]))
     # Publication-safety stamp from the CURRENT_ENGINE bridge, when it granted
     # eligibility. Absent stamp => not eligible. A rehearsal candidate is NEVER
     # eligible regardless of what the bridge said.
@@ -97,13 +113,14 @@ def build_frontmatter(*, title: str, author: str, engine_meta: dict,
 
 def persist_candidate(*, drafts_dir: pathlib.Path, slug: str, body: str,
                       title: str, author: str, engine_meta: dict,
-                      rehearsal: bool = True, safety: dict | None = None) -> pathlib.Path:
+                      rehearsal: bool = True, safety: dict | None = None,
+                      package: dict | None = None) -> pathlib.Path:
     """Write ONE accepted candidate into the normal draft location. No git, no publish."""
     drafts_dir.mkdir(parents=True, exist_ok=True)
     path = drafts_dir / ("%s-%s.md" % (engine_meta["generated_at"][:10], slug))
     path.write_text(build_frontmatter(title=title, author=author,
                                       engine_meta=engine_meta, rehearsal=rehearsal,
-                                      safety=safety)
+                                      safety=safety, package=package)
                     + body.rstrip() + "\n", encoding="utf-8")
     return path
 
