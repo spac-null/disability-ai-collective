@@ -161,6 +161,10 @@ def run(source_payload: dict, run_root: pathlib.Path, provider,
             anchor={"url": prov_anchor.get("url", ""), "text": src,
                     "title": prov_anchor.get("title", ""),
                     "canonical_url": prov_anchor.get("canonical_url", ""),
+                    # Acquisition harvested these from the anchor's markup before the
+                    # extractor discarded it; build_pack already had the seam for them.
+                    # Absent on any snapshot recorded before 2026-09-06, hence .get().
+                    "figures": prov_anchor.get("figures") or [],
                     "accessed_at": at},
             now_iso=at)
     except (RS.ResearchError, ProviderError, C.ContractViolation) as e:

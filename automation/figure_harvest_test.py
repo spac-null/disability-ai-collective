@@ -19,7 +19,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from new_engine_v1 import contracts as C
-from new_engine_v1 import figures as F
+import figure_harvest as F
 
 FAILURES = []
 CHECKS = [0]
@@ -317,7 +317,7 @@ for name, frag in (("figcaption", FIXTURE_FIGCAPTION), ("alt", FIXTURE_ALT),
 # ── 11. the promises this phase makes ─────────────────────────────────────────
 print("\ntest_phase_1_promises")
 HERE = os.path.dirname(os.path.abspath(__file__))
-fig_src = open(os.path.join(HERE, "new_engine_v1", "figures.py")).read()
+fig_src = open(os.path.join(HERE, "figure_harvest.py")).read()
 res_src = open(os.path.join(HERE, "new_engine_v1", "research.py")).read()
 
 def code_only(path):
@@ -340,7 +340,7 @@ def code_only(path):
     return " ".join(out)
 
 
-FIG_CODE = code_only(os.path.join(HERE, "new_engine_v1", "figures.py"))
+FIG_CODE = code_only(os.path.join(HERE, "figure_harvest.py"))
 RES_CODE = code_only(os.path.join(HERE, "new_engine_v1", "research.py"))
 
 check("figures.py opens no socket",
@@ -384,6 +384,67 @@ check("no composition stage reads the pack's figures field",
       and '.get("figures")' not in comp_src,
       "retention only in this phase; feeding the ledger is a separate decision "
       "taken on its own evidence")
+
+# ── 12. the anchor ────────────────────────────────────────────────────────────
+print("\ntest_the_anchor_carries_figures_too")
+# The gap this closes: the anchor reaches research.py as EXTRACTED TEXT, so its captions
+# could not be harvested there. They are harvested at acquisition instead, from the
+# markup that fetch already had, and ride through provenance -> runner -> build_pack.
+from new_engine_v1 import research as RS
+
+ANCHOR_FIGS = [{"image_url": "https://example.org/u.jpg",
+                "caption": "The upper level contains a bird observatory",
+                "caption_source": "figcaption", "alt": "", "credit": "",
+                "type_hint": "OTHER"}]
+ANCHOR_TEXT = "The pavilion stands at Pacto Sumaco. " * 20
+pack = RS.build_pack(
+    anchor={"url": "https://example.org/a", "text": ANCHOR_TEXT, "title": "t",
+            "canonical_url": "", "figures": ANCHOR_FIGS,
+            "accessed_at": "2026-09-06T00:00:00Z"},
+    scoped={}, fetched=[], assessment={"sources": []}, searched={})
+s0 = pack["sources"][0]
+check("the anchor source carries its figures", len(s0.get("figures", [])) == 1, s0.keys())
+check("the caption is the publisher's own",
+      s0["figures"][0]["caption"] == "The upper level contains a bird observatory")
+check("the anchor's text is untouched by the harvest", s0["text"] == ANCHOR_TEXT)
+check("the anchor's hash is untouched",
+      s0["sha256"] == C.sha256_text(ANCHOR_TEXT))
+check("an anchor with no figures serialises exactly as before",
+      "figures" not in RS.build_pack(
+          anchor={"url": "https://example.org/a", "text": ANCHOR_TEXT, "title": "t",
+                  "canonical_url": "", "accessed_at": "2026-09-06T00:00:00Z"},
+          scoped={}, fetched=[], assessment={"sources": []},
+          searched={})["sources"][0])
+
+print("\ntest_the_acquisition_hop_is_wired_and_costs_nothing")
+disc = open(os.path.join(HERE, "orchestrator", "discovery.py")).read()
+prod = open(os.path.join(HERE, "new_engine_production.py")).read()
+run_src = open(os.path.join(HERE, "new_engine_v1", "runner.py")).read()
+DISC_CODE = code_only(os.path.join(HERE, "orchestrator", "discovery.py"))
+
+check("the harvest happens where the html already is",
+      "self._last_fetch_figures = _figures.harvest(html, url)" in disc)
+check("it is cached per url like origin and paragraph_count",
+      "self._source_figures_cache[url]" in disc)
+check("there is an accessor", "def get_source_figures(" in disc)
+check("acquisition puts them on the snapshot's provenance",
+      '"figures": getattr(orch, "get_source_figures", lambda _u: [])(seed["url"])' in prod)
+check("an orchestrator without the accessor can still acquire a source",
+      'getattr(orch, "get_source_figures"' in prod,
+      "duck-typed stubs and replay harnesses must not break on a caption")
+check("the runner threads them into the anchor",
+      'prov_anchor.get("figures") or []' in run_src)
+check("a snapshot recorded before this exists still works",
+      '.get("figures") or []' in run_src, "absent key must not raise")
+check("no new fetch was added to acquisition",
+      DISC_CODE.count("urlopen") == 1,
+      "one at HEAD, one after -- measured; got %d" % DISC_CODE.count("urlopen"))
+check("the harvest can never fail an acquisition",
+      "except Exception as e:" in disc.split("_figures.harvest")[1][:300])
+check("acquisition makes no model call for this",
+      "_call_openai_compat_api" not in disc.split("_last_fetch_origin = \"fetched_article\"")[1][:900])
+check("the accessor says data available, not evidence consumed",
+      "DATA AVAILABLE, NOT EVIDENCE CONSUMED" in disc)
 
 print("\n" + "=" * 62)
 if FAILURES:

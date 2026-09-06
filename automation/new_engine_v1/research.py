@@ -41,9 +41,9 @@ _HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 import impersonated_fetch as IMP                                      # noqa: E402
+import figure_harvest as FIG                                          # noqa: E402
 
 from . import documents as DOC
-from . import figures as FIG
 from .contracts import sha256_text
 from .provider import ProviderError, parse_json_object
 
