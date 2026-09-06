@@ -2666,6 +2666,53 @@ def test_a_held_run_still_persists_what_it_reached(tmp=None):
               == CP.derive_cut_watch_terms(ARCH, LEDGER)["terms"])
 
 
+def test_a_grounding_failure_in_the_furniture_rewrites_the_furniture():
+    """The first live run held here: the article took its one factual repair, passed, and
+    the run then died on two findings that were both in the META_DESCRIPTION and the
+    EXCERPT. A clean article lost to its own homepage card is the waste this prevents."""
+    _, clean = run(full_script())
+    dek = (clean["package"] or {})["dek"]
+
+    calls = {"n": 0}
+
+    def staged_ground(*a, **k):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return {"status": "settled",
+                    "findings": [{"classification": "TRUE_UNSUPPORTED",
+                                  "quote": dek[:80], "why": "not in the sources"}]}
+        return dict(GROUND_CLEAN)
+
+    prov = Scripted(full_script())
+    import new_engine_v1.stages as S
+    real = S.ground
+    S.ground = staged_ground
+    try:
+        out = CP.run_story_architecture_composition(
+            prov, pack=PACK, source_text=S0, source_sha="deadbeef",
+            subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+    finally:
+        S.ground = real
+    check("the article is not lost to its own dek", out["status"] == CP.PASS,
+          out.get("failure_reason"))
+    stages_called = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("the package was rewritten, once", stages_called.count("PACKAGE") == 2,
+          stages_called)
+    check("the WRITER was not re-run", stages_called.count("WRITER") == 1)
+    check("and no factual repair was attempted on the article",
+          not out["repairs_by_stage"].get(CP.GROUNDING), out["repairs_by_stage"])
+    check("the grounder ran twice", calls["n"] == 2)
+    # The test double writes every field out of the same article words, so which of the
+    # five surfaces claims the quote is an artifact of the fixture. What matters is that
+    # the finding was attributed to the furniture and not to the article.
+    check("the run says the furniture was what failed",
+          (out["detail"][CP.GROUNDING].get("repackage_findings") or [None])[0]
+          in CP.PACKAGE_SURFACES,
+          out["detail"][CP.GROUNDING].get("repackage_findings"))
+    check("and it publishes with the rewritten package",
+          out["publication_ready"] is True and bool(out["package"]))
+
+
 def test_cheap_triage_stops_after_worth_and_is_not_a_hold():
     prov, out = run(full_script()[:2], stop_after=CP.WORTH)
     check("the run does not hold", out["status"] == CP.PASS, out.get("failure_reason"))
