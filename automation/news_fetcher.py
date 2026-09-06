@@ -83,6 +83,29 @@ def _llm(system: str, user: str, timeout: int = LLM_TIMEOUT) -> str:
 # independently for persistence; no live-at-generation race condition.
 
 QUALITY_FEEDS = [
+    # ── Primary research and primary institutional records ────────────────────
+    # Added 2026-09-06. The 30-day audit found two whole classes at 0% of the pool:
+    # papers themselves (only secondary science press was present) and institutional or
+    # regulatory records. The second one matters most -- the only two real Crip Minds
+    # carriers found this week were a museum's own visitor page and a manufacturer's own
+    # guidance, i.e. exactly this kind of document. All six were fetched and checked
+    # before being added here.
+    #
+    # NOTE FOR THE NEXT PERSON: feeds.json is NOT the live list. This one is. They were
+    # both updated, and this is the one news_fetcher reads.
+    {"url": "http://export.arxiv.org/api/query?search_query=cat:cs.HC&sortBy=submittedDate&sortOrder=descending&max_results=30",
+     "name": "arXiv cs.HC", "class": "RESEARCH_REPORT", "tier": 1},
+    {"url": "http://export.arxiv.org/api/query?search_query=cat:q-bio.NC&sortBy=submittedDate&sortOrder=descending&max_results=30",
+     "name": "arXiv q-bio.NC", "class": "RESEARCH_REPORT", "tier": 1},
+    {"url": "https://connect.biorxiv.org/biorxiv_xml.php?subject=neuroscience",
+     "name": "bioRxiv Neuroscience", "class": "RESEARCH_REPORT", "tier": 1},
+    {"url": "https://www.gov.uk/government/organisations/rail-accident-investigation-branch.atom",
+     "name": "Rail Accident Investigation Branch", "class": "RESEARCH_REPORT", "tier": 1},
+    {"url": "https://press.hse.gov.uk/feed/",
+     "name": "Health and Safety Executive", "class": "CURRENT_NEWS", "tier": 1},
+    {"url": "https://hackneycitizen.co.uk/feed/",
+     "name": "Hackney Citizen", "class": "CURRENT_NEWS", "tier": 2},
+
     # ── Science & nature ──────────────────────────────────────────────────────
     {"url": "https://www.nature.com/nature.rss",                        "name": "Nature",                    "class": "RESEARCH_REPORT", "tier": 1},
     {"url": "https://www.newscientist.com/feed/home/",                  "name": "New Scientist",             "class": "CURRENT_NEWS", "tier": 1},

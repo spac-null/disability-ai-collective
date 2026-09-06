@@ -1,5 +1,5 @@
 {
- "_comment": "All personas get 'general' feeds. Persona keys add depth, not replacement. Edit freely. | 2026-09-06: six sources added for the two classes discovery had none of -- primary research (arXiv cs.HC and q-bio.NC, bioRxiv neuroscience: the papers, not the write-ups) and primary institutional records (RAIB reports, HSE enforcement, one local paper). These are where subject-specific carriers are actually written down; the audit found 0% of the pool came from either class.",
+ "_comment": "All personas get 'general' feeds. Persona keys add depth, not replacement. Edit freely. | 2026-09-06: six sources added for the two classes discovery had none of -- primary research (arXiv cs.HC and q-bio.NC, bioRxiv neuroscience: the papers, not the write-ups) and primary institutional records (RAIB reports, HSE enforcement, one local paper). These are where subject-specific carriers are actually written down; the audit found 0% of the pool came from either class. NOTE: news_fetcher.QUALITY_FEEDS is the list news_fetcher actually reads; this file is kept in sync but is not the live source.",
  "general": [
   {
    "url": "https://feeds.bbci.co.uk/news/rss.xml",
@@ -147,11 +147,11 @@
   },
   {
    "url": "http://export.arxiv.org/api/query?search_query=cat:cs.HC&sortBy=submittedDate&sortOrder=descending&max_results=30",
-   "name": "arXiv cs.HC (human-computer interaction)"
+   "name": "arXiv cs.HC"
   },
   {
    "url": "http://export.arxiv.org/api/query?search_query=cat:q-bio.NC&sortBy=submittedDate&sortOrder=descending&max_results=30",
-   "name": "arXiv q-bio.NC (neurons and cognition)"
+   "name": "arXiv q-bio.NC"
   },
   {
    "url": "https://connect.biorxiv.org/biorxiv_xml.php?subject=neuroscience",
@@ -167,7 +167,7 @@
   },
   {
    "url": "https://hackneycitizen.co.uk/feed/",
-   "name": "Hackney Citizen (local)"
+   "name": "Hackney Citizen"
   }
  ],
  "Pixel Nova": [
