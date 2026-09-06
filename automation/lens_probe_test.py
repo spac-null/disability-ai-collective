@@ -61,7 +61,7 @@ class Prov:
             body = {"subject": "the Herschel Museum exhibition", "queries": ["q1"],
                     "anchor_kind": "news_report", "anchor_subject_words": 120,
                     "questions": [], "named_entities": ["Herschel"]}
-        elif "find the document nobody thought to look for" in system.lower():
+        elif "you find the assumption a story is making" in system.lower():
             body = self.probe_reply
         else:
             body = {"sources": [
@@ -130,13 +130,14 @@ check("it searched nothing of its own", SEARCHED == ["q1"], SEARCHED)
 check("it fetched nothing beyond the ordinary pass",
       not any("access" in u for u in FETCHED), FETCHED)
 check("exactly one probe call", sum(1 for s in prov.calls
-                                    if "nobody thought to look for" in s) == 1)
+                                    if "assumption a story is making" in s) == 1)
 check("the pack is still a pack", pack["pack_sha256"] and pack["sources"])
 
 print("\ntest_a_named_url_is_fetched_and_becomes_ordinary_material")
 ASSESSED[0] = ["S1", "S2"]
 prov, pack = run_research(
-    {"carrier_hypothesis": "the museum's own page records that the basement workshop "
+    {"assumption": "that a visitor can reach the workshop",
+     "carrier_hypothesis": "the museum's own page records that the basement workshop "
                            "cannot be reached",
      "queries": [], "urls": ["https://herschelmuseum.org.uk/visit/access/"]},
     pages=PAGES)
@@ -147,6 +148,9 @@ check("it is marked as the probe's", pack["lens_probe"]["kept"] == ["S2"],
       pack["lens_probe"]["kept"])
 check("the hypothesis is recorded for the audit",
       "basement workshop" in pack["lens_probe"]["carrier_hypothesis"])
+check("and so is the assumption the run asked about",
+      pack["lens_probe"]["assumption"] == "that a visitor can reach the workshop",
+      pack["lens_probe"].get("assumption"))
 check("its excerpt is a verbatim span of the fetched bytes",
       any(e in PROBE_PAGE for s in pack["sources"] for e in s.get("excerpts", [])),
       [s.get("excerpts") for s in pack["sources"]])
@@ -167,9 +171,9 @@ check("at most two sources are kept",
 check("at most two queries of its own are searched",
       len(SEARCHED) - 1 <= RS.LENS_PROBE_MAX_QUERIES, SEARCHED)
 check("still exactly one probe call -- there is no loop",
-      sum(1 for s in prov.calls if "nobody thought to look for" in s) == 1)
+      sum(1 for s in prov.calls if "assumption a story is making" in s) == 1)
 check("the probe never runs the writer or any gate",
-      all("nobody thought to look for" in s or "scope research" in s.lower()
+      all("assumption a story is making" in s or "scope research" in s.lower()
           or "SUBJECT:" in s or True for s in prov.calls))
 
 print("\ntest_it_can_be_taken_out_of_the_path_without_a_deploy")
@@ -180,13 +184,13 @@ ASSESSED[0] = []
 prov, pack = run_research({"carrier_hypothesis": "x", "queries": ["q"], "urls": []},
                           env={RS.LENS_PROBE_ENV: "0"})
 check("disabled means no probe call at all",
-      not any("nobody thought to look for" in s for s in prov.calls))
+      not any("assumption a story is making" in s for s in prov.calls))
 check("and the pack says so", pack["lens_probe"]["enabled"] is False)
 
 print("\ntest_a_probe_failure_cannot_fail_the_research")
 class Boom(Prov):
     def complete(self, system, user, **k):
-        if "find the document nobody thought to look for" in system.lower():
+        if "you find the assumption a story is making" in system.lower():
             raise RuntimeError("provider exploded")
         return super().complete(system, user, **k)
 

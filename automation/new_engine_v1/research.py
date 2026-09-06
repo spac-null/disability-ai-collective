@@ -772,38 +772,49 @@ LENS_PROBE_MAX_SOURCES = 2
 LENS_PROBE_ENV = "CRIPMINDS_LENS_PROBE"
 
 LENS_PROBE_SYSTEM = (
-    "You find the document nobody thought to look for.\n"
+    "You find the assumption a story is making, and then the document that records it "
+    "operating.\n"
     "\n"
-    "A publication is about to decide whether it can read this subject through what its "
-    "editors call the lens: access, bodies, sensory perception, dependence and assistance, "
-    "interface design, adaptation, participation, exclusion, navigation, communication, "
-    "bodily variation, and institutional rules meeting physical reality. It is NOT looking "
-    "for disability news and it will not accept an analogy. It needs ONE FACT ABOUT THIS "
-    "EXACT SUBJECT -- a record, a rule, a measurement, a field on a form, a design "
-    "decision, a documented consequence -- of the kind that is usually written down "
-    "somewhere dull and specific.\n"
+    "THE QUESTION, and it is a way of seeing rather than a subject to look for. Every "
+    "system, building, study, product, rule and institution assumes something about "
+    "bodies, perception, communication, independence, assistance, timing, navigation, "
+    "cognition, sensory processing, endurance, participation, or what counts as normal "
+    "functioning. The assumption is usually invisible to the people who made it, because "
+    "it is simply what they took a person to be. Name the one this subject is making.\n"
     "\n"
-    "Two real examples of what you are looking for:\n"
-    "  A museum's own visitor page saying the building is not step free and that the "
-    "basement workshop, where the work being exhibited was actually done, cannot be "
-    "reached -- offered instead as a tablet tour.\n"
-    "  A manufacturer's own article on building a ramp with the product a story is about, "
-    "when every page anyone fetched was a datasheet.\n"
+    "Then find where that assumption is WRITTEN DOWN OPERATING, in this exact subject. "
+    "That is what you search for -- not a disability fact, and not the word disability, "
+    "which need not appear anywhere. What you want is one of:\n"
+    "  an accessibility or condition record, a design decision and its stated reason, an "
+    "exception or carve-out in a policy, a measurement method, a user or input "
+    "requirement, a documented failure mode, a timing or duration assumption, a sensory "
+    "assumption about what counts as signal and what as noise, a dependency between a "
+    "person and a thing, an interface requirement, a classification boundary, an "
+    "institutional rule meeting a physical reality, or a first-person account by someone "
+    "who actually used it.\n"
     "\n"
-    "Where such things live: an institution's access or visit page, a venue's conditions "
-    "page, a directory entry, a building regulation or standard the product must meet, a "
-    "planning or inspection document, a manufacturer's guidance, an accessibility "
-    "statement, a user or operator manual, a complaints or consultation record, a "
-    "first-person account by someone who actually used the thing.\n"
+    "Two real examples of the move:\n"
+    "  A museum exhibits work that was made in its own basement workshop. The assumption "
+    "is that a visitor can get to where the work was done. The document is the museum's "
+    "own visitor page: not step free, basement stairs very steep and narrow, a tablet tour "
+    "offered instead of the room.\n"
+    "  A rooftop paving system is sold on how precisely its heights can be tuned. The "
+    "assumption is about which thresholds a body crosses without noticing. The document is "
+    "the manufacturer's own guidance on building a ramp with it.\n"
     "\n"
-    "ANSWER NOTHING IF THERE IS NOTHING. A subject with no body, no user, no building, no "
-    "institution and no rule -- a mineral survey, a market report, a prize announcement -- "
-    "has no such document, and inventing a search for one wastes a fetch and teaches the "
-    "gate to accept an analogy. Say so and stop. That is the expected answer more often "
-    "than not, and it costs nothing.\n"
+    "WHAT THIS IS NOT. Not 'this building has stairs, therefore.' Not 'this paper mentions "
+    "disabled users, therefore.' Not 'this product has accessibility features, therefore.' "
+    "Those are vocabulary. The question is what the subject takes a person to BE, and the "
+    "evidence is that assumption caught in the act, in writing, about this subject and no "
+    "other.\n"
     "\n"
-    "Say nothing too if the material you are shown ALREADY carries such a fact. You are "
-    "here for the gap, not for more of the same."
+    "ANSWER NOTHING IF THERE IS NOTHING. Some subjects assume nothing about anybody: a "
+    "mineral survey, a market report, a prize announcement. Say so and stop. That is the "
+    "expected answer more often than not and it costs nothing, whereas inventing a search "
+    "wastes a fetch and teaches the gate downstream to accept an analogy.\n"
+    "\n"
+    "Say nothing too if the material you are shown ALREADY records the assumption "
+    "operating. You are here for the gap, not for more of the same."
 )
 
 
@@ -815,12 +826,18 @@ def lens_probe_prompt(subject: str, anchor_text: str, sources: list) -> str:
         "SUBJECT: %s\n\nWHAT THE ANCHOR SAYS:\n<<<ANCHOR\n%s\nANCHOR>>>\n\n"
         "MATERIAL ALREADY COLLECTED:\n%s\n\n"
         "Reply with JSON only:\n"
-        '{"carrier_hypothesis": "one sentence naming the subject-specific fact you think\n'
-        '                        exists and would carry the reading, or \\"none\\"",\n'
+        '{"assumption": "one sentence: what does this subject take a person to be --\n'
+        '                about bodies, perception, communication, independence,\n'
+        '                assistance, timing, navigation, cognition, sensory processing,\n'
+        '                endurance, participation or normal functioning",\n'
+        ' "carrier_hypothesis": "one sentence naming the subject-specific record you\n'
+        '                        believe exists and would show that assumption\n'
+        '                        operating, or \\"none\\"",\n'
         ' "queries": ["at most %d search queries, each naming this subject"],\n'
         ' "urls": ["at most %d exact URLs you believe record it"]}\n'
         "If there is nothing to look for, reply "
-        '{"carrier_hypothesis": "none", "queries": [], "urls": []} and nothing else.'
+        '{"assumption": "none", "carrier_hypothesis": "none", "queries": [], '
+        '"urls": []} and nothing else.'
         % (subject, anchor_text[:4000], have, LENS_PROBE_MAX_QUERIES,
            LENS_PROBE_MAX_URLS))
 
@@ -849,6 +866,10 @@ def lens_probe(provider, subject: str, anchor_text: str, sources: list) -> dict:
     hyp = str(obj.get("carrier_hypothesis") or "").strip()
     none = hyp.lower() in ("", "none", "no", "n/a")
     return {"ran": True,
+            # The assumption is recorded even when nothing is searched for: it is the
+            # question the run asked, and a reader of the artifacts should be able to see
+            # that it was asked and answered "none" rather than never asked.
+            "assumption": str(obj.get("assumption") or "").strip(),
             "carrier_hypothesis": "" if none else hyp,
             "queries": [] if none else
                        [str(q) for q in (obj.get("queries") or [])][:LENS_PROBE_MAX_QUERIES],
