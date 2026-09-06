@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import copy
 import json
+import re
 import pathlib
 import sys
 
@@ -24,6 +25,7 @@ HERE = pathlib.Path(__file__).parent
 sys.path.insert(0, str(HERE))
 
 from new_engine_v1 import composition as CP           # noqa: E402
+from new_engine_v1 import contracts as C              # noqa: E402
 from new_engine_v1 import continuity as CE            # noqa: E402
 from new_engine_v1 import ledger as LG                # noqa: E402
 from new_engine_v1 import story as ST                 # noqa: E402
@@ -246,6 +248,15 @@ class Scripted:
         # appears in the call sequence.
         if "the last writer to touch a finished" in system.lower():
             return Reply(user.split("THE ARTICLE\n", 1)[-1].strip())
+        # THE PACKAGE is answered here for the same reason PROSE FINISH is: it is a
+        # fail-safe stage that writes no article text, and scripting a title/dek/excerpt
+        # into every call list would change no test's subject. A package built out of the
+        # article's own words passes the deterministic validator by construction, which is
+        # what these tests want to see -- editorial_package_test.py is where the validator
+        # itself is put under pressure.
+        if "editor who decides how a finished article is presented" in system.lower():
+            return Reply(json.dumps({"package": package_from(
+                user.split("THE FINISHED ARTICLE\n", 1)[-1])}))
         if not self.replies:
             raise AssertionError("the run made more model calls than the script allows "
                                  "(%d so far)" % len(self.calls))
@@ -263,12 +274,27 @@ class Scripted:
                              ("WRITER", "writing one finished article from an approved"),
                              ("CONTINUITY", "the continuity editor"),
                              ("PROSE_FINISH", "the last writer to touch a finished"),
+                             ("PACKAGE", "editor who decides how a finished"),
                              ("GROUNDING", "GROUND")):
             if marker.lower() in s.lower():
                 return name
         if "ordinary intelligent reader" in s:
             return "READER"
         return "?"
+
+
+def package_from(article: str) -> dict:
+    """A valid package made only of the article's own words."""
+    w = [x for x in re.findall(r"[A-Za-z]{2,}", article)] or ["the", "article"]
+
+    def take(n):
+        out = []
+        while len(out) < n:
+            out += w
+        return " ".join(out[:n])
+
+    return {"title": take(6), "dek": take(20), "homepage_excerpt": take(30),
+            "meta_description": take(14), "social_hook": take(12)}
 
 
 def envelope(article, negative_lineage=None):
@@ -345,13 +371,14 @@ def test_the_ten_stages_run_in_order_and_pass():
           out["stages"])
     check("an article comes out", (out["article_text"] or "").startswith("# "))
     order = [prov.stage_of(i) for i in range(len(prov.calls))]
-    check("the model calls are ledger, worth, architecture, writer, continuity, prose finish, reader",
+    check("the model calls are ledger, worth, architecture, writer, continuity, prose "
+          "finish, package, reader",
           order == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY",
-                            "PROSE_FINISH", "READER"],
+                            "PROSE_FINISH", "PACKAGE", "READER"],
           order)
-    check("eight model calls for a clean article: seven composition, one grounder",
-          out["model_calls_total"] == 8, out["model_calls_by_stage"])
-    check("seven of them are composition calls", len(prov.calls) == 7, len(prov.calls))
+    check("nine model calls for a clean article: eight composition, one grounder",
+          out["model_calls_total"] == 9, out["model_calls_by_stage"])
+    check("eight of them are composition calls", len(prov.calls) == 8, len(prov.calls))
     check("the deterministic stages cost nothing",
           all(out["model_calls_by_stage"][s] == 0
               for s in (CP.CUT_TERMS, CP.SAFETY)), out["model_calls_by_stage"])
@@ -1185,8 +1212,9 @@ def test_a_replay_can_never_look_like_an_autonomous_run():
     check("no model call was spent on them",
           all(out["model_calls_by_stage"].get(s, 0) == 0
               for s in (CP.LEDGER, CP.WORTH, CP.ARCHITECTURE)))
-    # Writer, Continuity, Prose Finish, Reader -- the polish is a composition call too.
-    check("only the Writer onward ran", len(prov.calls) == 4, len(prov.calls))
+    # Writer, Continuity, Prose Finish, Reader, Package -- the polish and the package are
+    # composition calls too.
+    check("only the Writer onward ran", len(prov.calls) == 5, len(prov.calls))
     check("a normal run is not flagged",
           run(full_script())[1]["replay"] is False)
 
@@ -2441,15 +2469,16 @@ def test_a_failed_safety_audit_does_not_regenerate_anything():
     check("continuity ran exactly once", stages_called.count("CONTINUITY") == 1)
     check("NO REGENERATION OF ANY KIND",
           stages_called == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY",
-                            "PROSE_FINISH"],
+                            "PROSE_FINISH", "PACKAGE"],
           stages_called)
     check("the held article is still returned for a human to read",
           bool(out["article_text"]))
     check("and continuity was NOT discarded -- the editor did nothing wrong",
           not out["detail"][CP.CONTINUITY].get("discarded"))
-    check("the safety audit is reported for both draft and final",
-          set(out["detail"][CP.SAFETY]["audits"]) == {"writer_draft",
-                                                      "continuity_final"})
+    check("the safety audit is reported for the draft, the final and the package",
+          set(out["detail"][CP.SAFETY]["audits"]) == {"writer_draft", "continuity_final",
+                                                      "publication_package"},
+          sorted(out["detail"][CP.SAFETY]["audits"]))
 
 
 def test_the_grounder_and_fact_check_run_only_after_safety():
@@ -2547,7 +2576,7 @@ def test_the_reader_gate_runs_last_and_returns_passages():
     check("NO AUTO-REWRITE FOLLOWS",
           [prov.stage_of(i) for i in range(len(prov.calls))]
           == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY",
-                            "PROSE_FINISH", "READER"])
+                            "PROSE_FINISH", "PACKAGE", "READER"])
     check("the reader ran after grounding and fact check",
           out["stages"][CP.GROUNDING] == CP.PASS
           and out["stages"][CP.FACT_CHECK] == CP.PASS)
@@ -2635,6 +2664,61 @@ def test_a_held_run_still_persists_what_it_reached(tmp=None):
         check("the persisted cut terms are the derived ones",
               json.loads((out_dir / "CUT_WATCH_TERMS.json").read_text())
               == CP.derive_cut_watch_terms(ARCH, LEDGER)["terms"])
+
+
+def test_a_discarded_polish_takes_its_package_with_it():
+    """VERSION COHERENCE. The package sells the text it was written from, so a run may
+    never publish a package written from one surface beside an article that is another.
+
+    Here the polish inserts an invented colour. Safety refuses the polished surface, the
+    unpolished text is deterministically clean, and the run continues on it -- with a NEW
+    package, because the one it had described prose that is not going out."""
+
+    class PolishInvents(Scripted):
+        def complete(self, system, user, max_tokens=3000, timeout=180, temperature=None,
+                     deadline=None):
+            if "the last writer to touch a finished" in system.lower():
+                self.calls.append({"system": system, "user": user})
+                art = user.split("THE ARTICLE\n", 1)[-1].strip()
+                return Reply(art.replace("Himalayan salt bricks",
+                                         "pink Himalayan salt bricks"))
+            return super().complete(system, user, max_tokens, timeout, temperature,
+                                    deadline)
+
+    prov = PolishInvents(full_script())
+    import new_engine_v1.stages as S
+    real = S.ground
+    S.ground = lambda *a, **k: dict(GROUND_CLEAN)
+    try:
+        out = CP.run_story_architecture_composition(
+            prov, pack=PACK, source_text=S0, source_sha="deadbeef",
+            subject=PACK["subject"], fact_check_fn=lambda a: dict(FC_CLEAN))
+    finally:
+        S.ground = real
+    check("the run survives a bad polish", out["status"] == CP.PASS,
+          out.get("failure_reason"))
+    check("the unpolished surface is what published",
+          out["article_surface"] == CP.PRE_POLISH_FALLBACK, out["article_surface"])
+    check("and the invented colour is not in it",
+          "pink" not in (out["article_text"] or "").lower())
+    pf = out["detail"][CP.PROSE_FINISH]
+    check("the polish is recorded as discarded", pf["applied"] is False)
+    check("...naming what refused it",
+          any("pink" in b.lower() for b in pf.get("discarded_at_safety") or []),
+          pf.get("discarded_at_safety"))
+    stages_called = [prov.stage_of(i) for i in range(len(prov.calls))]
+    check("THE PACKAGE IS WRITTEN TWICE, once per surface",
+          stages_called.count("PACKAGE") == 2, stages_called)
+    check("the polish itself is NOT re-run", stages_called.count("PROSE_FINISH") == 1)
+    check("the writer is not re-run either", stages_called.count("WRITER") == 1)
+    check("the bundle hash is of the article that published and the package it published "
+          "with",
+          out["bundle_sha256"]
+          == C.sha256_text(CP.bundle_text(out["article_text"], out["package"])))
+    check("the article hash is of that same article",
+          out["article_sha256"] == C.sha256_text(out["article_text"]))
+    check("and the run is publication ready", out["publication_ready"] is True
+          and out["owner_review"] is False)
 
 
 def main() -> None:

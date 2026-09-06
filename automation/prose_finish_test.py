@@ -60,12 +60,14 @@ src = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         "new_engine_v1", "composition.py")).read()
 i_cont = src.index("cont[\"negative_lineage_carried\"] = lineage")
 i_pf = src.index("pf = record(PROSE_FINISH, prose_finish(P, final, arch))")
-i_safety = src.index("sa = record(SAFETY, safety_audit(")
+i_safety = src.index("sa = record(SAFETY, audit(final, pkg))")
 i_fc = src.index("fc = record(FACT_CHECK,")
 check("it runs after Continuity", i_cont < i_pf)
 check("it runs BEFORE Safety", i_pf < i_safety)
 check("it runs BEFORE Fact Check", i_pf < i_fc)
-check("the polished text is what Safety audits", "safety_audit(draft, final," in src)
+check("the polished text is what Safety audits",
+      "sa = record(SAFETY, audit(final, pkg))" in src
+      and "return safety_audit(draft, text, wr[\"packet\"]" in src)
 check("the stage is in the declared stage list", CP.PROSE_FINISH in CP.STAGES)
 check("it sits between Continuity and Safety in that list",
       CP.STAGES.index(CP.CONTINUITY) < CP.STAGES.index(CP.PROSE_FINISH)

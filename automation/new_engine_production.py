@@ -461,18 +461,49 @@ def run_scheduled(orch, *, rehearsal: bool = False,
                                      provider_model=model)
     _wo = out["artifacts"][C.WRITER_OUTPUT].payload if C.WRITER_OUTPUT in out["artifacts"] else {}
     _src_headline = payload["provenance"].get("title") or "Untitled"
-    title = _title_from(body, _src_headline, writer_title=_wo.get("title", ""))
+    # The editorial package titles the article when the composition produced one: it is
+    # written last, from the published bytes, by the stage whose whole job is the reader
+    # who has never heard of this subject. Absent (legacy composition, or a package that
+    # skipped) the existing order stands -- writer title, body heading, coherent source
+    # headline, nothing.
+    _comp = out.get("composition") or {}
+    _pkg = _comp.get("package") or {}
+    # A STORY ARCHITECTURE ARTICLE PUBLISHES WITH ITS FURNITURE OR IT DOES NOT PUBLISH.
+    # The first one shipped with no excerpt at all, so the homepage card fell back to
+    # Jekyll's automatic excerpt -- the article's first paragraph, written to be read
+    # second. Silently taking that fallback again is the failure this refuses.
+    #
+    # It is NOT an editorial rejection and is never recorded as one. The article passed
+    # every gate; what failed is the packaging, technically (provider, parser) or
+    # editorially (refused by the gates). Either way the candidate is written, marked
+    # ineligible, and left for the owner.
+    _pkg_status = _comp.get("package_status") or ""
+    _pkg_missing = bool(_comp) and not _pkg
+    title = (_pkg.get("title") or "").strip()[:110] or _title_from(
+        body, _src_headline, writer_title=_wo.get("title", ""))
     if title == "Untitled":
         orch.logger.warning(
             "CURRENT_ENGINE %s: no usable headline -- writer supplied none and the source "
             "headline does not describe this article (%s)",
             run, TC.describe(_src_headline, body))
+    _stamp = BRIDGE.stamp_fields(bridge)
+    if _pkg_status:
+        _stamp = dict(_stamp, package_status=_pkg_status)
+    if _pkg_missing:
+        _stamp = dict(_stamp, publication_eligible=False)
+        orch.logger.warning(
+            "CURRENT_ENGINE %s: article passed every gate but has no editorial package "
+            "(%s) -- candidate written, publication withheld for owner review",
+            run, _pkg_status or "MISSING")
     path = CAND.persist_candidate(
         drafts_dir=orch.drafts_dir, slug=_slug(title), body=body, title=title,
         author=R.DEFAULT_BYLINE, engine_meta=meta, rehearsal=rehearsal,
-        safety=BRIDGE.stamp_fields(bridge))
+        safety=_stamp, package=_pkg)
     result["candidate"] = str(path)
-    result["publication_eligible"] = bool(bridge.eligible and not rehearsal)
+    result["publication_eligible"] = bool(bridge.eligible and not rehearsal
+                                          and not _pkg_missing)
+    result["package_status"] = _pkg_status or ("OK" if _pkg else "")
+    result["owner_review"] = _pkg_missing
     (root / run / "CANDIDATE.json").write_text(json.dumps(
         {"path": str(path), "engine_meta": meta, "body_sha256": C.sha256_text(body),
          "publication_eligible": result["publication_eligible"]},
