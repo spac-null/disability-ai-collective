@@ -3353,7 +3353,7 @@ def _clean_package(pkg: dict) -> dict:
 def run_story_architecture_composition(
         provider, *, pack: dict, source_text: str, source_sha: str,
         subject: str = "", fact_check: bool = True, reader: bool = True,
-        package: bool = True,
+        package: bool = True, stop_after: str = "",
         fact_check_fn=None, out_dir=None, frozen: dict | None = None) -> dict:
     """Approved research material in; a final article candidate out, or a HOLD.
 
@@ -3420,7 +3420,9 @@ def run_story_architecture_composition(
             # Publication needs an article AND the furniture it publishes behind. A
             # missing package is not an editorial rejection and never reads as one: the
             # article stands, and the candidate goes to the owner instead of to the site.
-            "publication_ready": bool(failure_stage is None and package_out),
+            "stopped_after": stop_after or "",
+            "publication_ready": bool(failure_stage is None and package_out
+                                      and not stop_after),
             "owner_review": bool(failure_stage is None and not package_out),
             "words": len((article or "").split()),
             "model_calls_by_stage": dict(calls),
@@ -3457,6 +3459,13 @@ def run_story_architecture_composition(
             calls[WORTH] = repairs[WORTH] = 0
         else:
             w = record(WORTH, worth_gate(P, ledger, subject))
+
+        # CHEAP TRIAGE. Two model calls answer "does this subject belong here, and what
+        # does the reading stand on" -- and that is the whole question a selector needs
+        # before deciding which candidates deserve a composition. Stopping here is not a
+        # HOLD and is never recorded as one: the run did what it was asked to do.
+        if stop_after == WORTH:
+            return out(article=None, package_out=None, article_surface=surface)
 
         frozen_article = replay.get("article")
         if replay.get("architecture"):

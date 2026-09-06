@@ -2666,6 +2666,18 @@ def test_a_held_run_still_persists_what_it_reached(tmp=None):
               == CP.derive_cut_watch_terms(ARCH, LEDGER)["terms"])
 
 
+def test_cheap_triage_stops_after_worth_and_is_not_a_hold():
+    prov, out = run(full_script()[:2], stop_after=CP.WORTH)
+    check("the run does not hold", out["status"] == CP.PASS, out.get("failure_reason"))
+    check("it says where it stopped", out["stopped_after"] == CP.WORTH)
+    check("two model calls, ledger and worth", len(prov.calls) == 2,
+          [prov.stage_of(i) for i in range(len(prov.calls))])
+    check("no article was written", not out["article_text"])
+    check("and nothing is publishable from it", out["publication_ready"] is False)
+    check("the worth verdict is on the result",
+          out["detail"][CP.WORTH]["worth_gate"]["lens_carrier"] is not None)
+
+
 def test_a_discarded_polish_takes_its_package_with_it():
     """VERSION COHERENCE. The package sells the text it was written from, so a run may
     never publish a package written from one surface beside an article that is another.
