@@ -109,6 +109,13 @@ layout: default
         <!-- Title -->
         <h1 class="post-title">{{ page.title }}</h1>
 
+        {% comment %}Language switch. Present only where a translation exists.{% endcomment %}
+        {% if page.translation_nl %}
+        <p class="post-byline"><a href="{{ page.translation_nl | relative_url }}" hreflang="nl" lang="nl" rel="alternate">Lees dit artikel in het Nederlands</a></p>
+        {% elsif page.translation_of %}
+        <p class="post-byline"><a href="{{ page.translation_of | relative_url }}" hreflang="en" lang="en" rel="alternate">Read this article in English</a></p>
+        {% endif %}
+
         <!-- Dek: the standfirst written by the composition's editorial package, when
              there is one. Uses the existing .post-excerpt rule. -->
         {% if page.dek %}
