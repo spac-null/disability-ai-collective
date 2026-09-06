@@ -138,7 +138,18 @@ FIDELITY_SYSTEM = (
     "  IMAGES         alt text that describes a different picture than the English does\n"
     "\n"
     "A finding must quote both sides. If the two texts say the same thing in different "
-    "words, that is not a finding -- it is a translation."
+    "words, that is not a finding -- it is a translation.\n"
+    "\n"
+    "THE PACKAGING IS REWRITTEN BY DESIGN, and this is the one place where difference is "
+    "not evidence of anything. The title, dek, homepage excerpt, meta description and "
+    "social hook -- and the alt text and captions that quote the title -- exist to make a "
+    "reader who has never heard of the subject want the piece, which is a job each "
+    "language does differently. A Dutch title that is not the English title translated is "
+    "CORRECT, including when it becomes a question, and it is not a changed NAME. Judge "
+    "those fields on one thing only: do they assert a fact, a relationship or a certainty "
+    "the article does not carry? If not, they pass.\n"
+    "\n"
+    "The ARTICLE is judged as described above, in full."
 )
 
 FIDELITY_SCHEMA = (

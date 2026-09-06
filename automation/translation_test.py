@@ -163,6 +163,14 @@ check("and a field the English lacks is dropped from the result, not trusted",
       'if f in present else ""' in src)
 
 
+print("\ntest_the_checker_knows_the_packaging_is_rewritten")
+check("the fidelity prompt says a retitle is not a changed name",
+      "THE PACKAGING IS REWRITTEN BY DESIGN" in TP.FIDELITY_SYSTEM
+      and "is not a changed NAME" in TP.FIDELITY_SYSTEM)
+check("and still holds packaging to the no-new-claim rule",
+      "a fact, a relationship or a certainty" in TP.FIDELITY_SYSTEM)
+
+
 print("\ntest_the_language_registry_is_the_whole_configuration")
 check("Dutch is configured", "nl" in TP.LANGUAGES)
 check("the collection file is named for the slug the permalink renders",
