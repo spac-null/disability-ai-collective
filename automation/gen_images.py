@@ -555,6 +555,72 @@ def process_post(post_path: pathlib.Path, model: str, api_key: str, dry_run: boo
     return success
 
 
+def illustrate_post(post_path: pathlib.Path, model: str = DEFAULT_MODEL,
+                   api_key: str | None = None, force: bool = False) -> dict:
+    """Generate the house image set for one post AND insert the body figures.
+
+    THE ONE ENTRY POINT BOTH ENGINES USE. Illustration used to happen inside the legacy
+    composition path -- orchestrator/generate.py called generate_images(), and
+    orchestrator/publish.py called _insert_images_balanced(). Story Architecture has
+    neither call, so from the 2026-09-05 cutover every CURRENT_ENGINE article published
+    unillustrated and nothing reported it: no gate checks for images, and a route that is
+    healthy but has no caller looks exactly like a working system from the outside.
+
+    Nothing here is a new image subsystem. Generation is process_post(), unchanged. Body
+    placement is the legacy ImagesMixin._insert_images_balanced, imported and called --
+    hero at _setting_1 in frontmatter, _moment_2 at ~40%, _symbol_3 at ~75%.
+
+    Returns {"ok", "assets", "figures", "reason"}. Never raises for an image failure: the
+    caller decides what a missing illustration means, and must not be silent about it.
+    """
+    api_key = api_key or os.environ.get("OPENROUTER_API_KEY", "")
+    if not api_key:
+        return {"ok": False, "assets": [], "figures": 0,
+                "reason": "OPENROUTER_API_KEY is not set"}
+    try:
+        ok = process_post(post_path, model, api_key, dry_run=False, force=force)
+    except Exception as e:                                        # noqa: BLE001
+        return {"ok": False, "assets": [], "figures": 0,
+                "reason": "%s: %s" % (type(e).__name__, str(e)[:200])}
+    if not ok:
+        return {"ok": False, "assets": [], "figures": 0,
+                "reason": "image generation reported failure"}
+
+    slug = slug_from_path(post_path)
+    text = post_path.read_text()
+    fm = parse_frontmatter(text)
+    title = fm.get("title", slug)
+    alt = ALT_TEMPLATES["CONFRONTING"].format(title=title)
+    names, assets = [], []
+    for suffix, _ratio, _style in IMAGE_TYPES:
+        f = ASSETS_DIR / ("%s_%s.jpg" % (slug, suffix))
+        if f.exists():
+            names.append(f.name)
+            assets.append(str(f))
+
+    # Body placement: the legacy implementation, reused rather than reimplemented.
+    try:
+        sys.path.insert(0, str(pathlib.Path(__file__).parent))
+        from orchestrator.images import ImagesMixin
+
+        class _Placer(ImagesMixin):
+            def __init__(self):
+                self.assets_dir = ASSETS_DIR
+
+        head, fmtext, body = text.split("---", 2)
+        if "article-figure" in body:
+            figures = body.count("article-figure")          # already placed; do not repeat
+        else:
+            new_body = _Placer()._insert_images_balanced(
+                body.strip(), names, [alt] * len(names))
+            post_path.write_text(head + "---" + fmtext + "---\n\n" + new_body + "\n")
+            figures = new_body.count("article-figure")
+    except Exception as e:                                        # noqa: BLE001
+        return {"ok": False, "assets": assets, "figures": 0,
+                "reason": "body insertion failed: %s: %s" % (type(e).__name__, str(e)[:160])}
+    return {"ok": True, "assets": assets, "figures": figures, "reason": ""}
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------

@@ -323,7 +323,17 @@ def test_9_candidate_carries_current_engine_metadata():
 
 def test_10_legacy_article_metadata_untouched():
     posts = HERE.parent / "_posts"
-    sample = sorted(posts.glob("*.md"))[-3:]
+    # SAMPLE LEGACY POSTS, NOT "THE NEWEST THREE". This took the last three files by name
+    # and asserted they carried no engine metadata, which was true only while every
+    # published post predated the engine. The first CURRENT_ENGINE article to be committed
+    # (2026-09-06, The Upper Room at WildSumaco) made the newest post an engine-era one, so
+    # the sample inverted the assertion and the check failed on a correctly-stamped post.
+    # The intent is unchanged and now says what it means: a post WITHOUT engine metadata
+    # must not acquire any, and must not read as interlocked.
+    legacy = [q for q in sorted(posts.glob("*.md"))
+              if "engine_generation" not in PB.parse_frontmatter(q.read_text(errors="replace"))]
+    sample = legacy[-3:]
+    check("there are legacy posts to check", bool(sample), str(len(legacy)))
     for p in sample:
         fm = PB.parse_frontmatter(p.read_text(errors="replace"))
         check("legacy post %s has no engine-era metadata" % p.name[:28],
