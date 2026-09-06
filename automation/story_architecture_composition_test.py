@@ -156,7 +156,14 @@ WORTH = {"worth_gate": {
              "lens_claim": ARCH["final_lens"]["lens_claim"],
              "changes_meaning_how": "It moves the catalogue from a description of rooms "
                                     "to a record of which senses could be written down.",
-             "evidence_ids": ["F04", "F05", "F06"]},
+             "evidence_ids": ["F04", "F05", "F06"],
+             # Worth now also asks WHICH cited facts are particulars about this subject,
+             # what the reading stands on, and whether that can carry an article. F04/F05
+             # are this catalogue's own entries, not statements about catalogues.
+             "lens_particulars": ["F04", "F05"],
+             "lens_carrier": "the eight catalogue entries and the kind of description "
+                             "none of them contains",
+             "can_carry_article": "YES"},
          "story_candidate": {
              "story_id": "oaken-tiltroom-catalogue", "carrier_type": "object",
              "opening_possibility": "a pavilion of salt brick dug into the ground",
@@ -231,6 +238,14 @@ class Scripted:
     def complete(self, system, user, max_tokens=3000, timeout=180, temperature=None,
                  deadline=None):
         self.calls.append({"system": system, "user": user})
+        # PROSE FINISH is answered here rather than scripted into ~20 call lists. It is a
+        # fail-safe surface pass between Continuity and Safety, and returning the incoming
+        # article unchanged IS a valid polish -- so every downstream stage sees exactly the
+        # bytes it saw before this stage existed, and no test's subject changes. The stage
+        # is still observable: stage_of() names it, and the no-regeneration test asserts it
+        # appears in the call sequence.
+        if "the last writer to touch a finished" in system.lower():
+            return Reply(user.split("THE ARTICLE\n", 1)[-1].strip())
         if not self.replies:
             raise AssertionError("the run made more model calls than the script allows "
                                  "(%d so far)" % len(self.calls))
@@ -247,6 +262,7 @@ class Scripted:
                              ("ARCH_REPAIR", "repairing a story architecture"),
                              ("WRITER", "writing one finished article from an approved"),
                              ("CONTINUITY", "the continuity editor"),
+                             ("PROSE_FINISH", "the last writer to touch a finished"),
                              ("GROUNDING", "GROUND")):
             if marker.lower() in s.lower():
                 return name
@@ -329,12 +345,13 @@ def test_the_ten_stages_run_in_order_and_pass():
           out["stages"])
     check("an article comes out", (out["article_text"] or "").startswith("# "))
     order = [prov.stage_of(i) for i in range(len(prov.calls))]
-    check("the model calls are ledger, worth, architecture, writer, continuity, reader",
-          order == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY", "READER"],
+    check("the model calls are ledger, worth, architecture, writer, continuity, prose finish, reader",
+          order == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY",
+                            "PROSE_FINISH", "READER"],
           order)
-    check("seven model calls for a clean article: six composition, one grounder",
-          out["model_calls_total"] == 7, out["model_calls_by_stage"])
-    check("six of them are composition calls", len(prov.calls) == 6, len(prov.calls))
+    check("eight model calls for a clean article: seven composition, one grounder",
+          out["model_calls_total"] == 8, out["model_calls_by_stage"])
+    check("seven of them are composition calls", len(prov.calls) == 7, len(prov.calls))
     check("the deterministic stages cost nothing",
           all(out["model_calls_by_stage"][s] == 0
               for s in (CP.CUT_TERMS, CP.SAFETY)), out["model_calls_by_stage"])
@@ -1168,7 +1185,8 @@ def test_a_replay_can_never_look_like_an_autonomous_run():
     check("no model call was spent on them",
           all(out["model_calls_by_stage"].get(s, 0) == 0
               for s in (CP.LEDGER, CP.WORTH, CP.ARCHITECTURE)))
-    check("only the Writer onward ran", len(prov.calls) == 3, len(prov.calls))
+    # Writer, Continuity, Prose Finish, Reader -- the polish is a composition call too.
+    check("only the Writer onward ran", len(prov.calls) == 4, len(prov.calls))
     check("a normal run is not flagged",
           run(full_script())[1]["replay"] is False)
 
@@ -2422,7 +2440,8 @@ def test_a_failed_safety_audit_does_not_regenerate_anything():
     check("the writer ran exactly once", stages_called.count("WRITER") == 1)
     check("continuity ran exactly once", stages_called.count("CONTINUITY") == 1)
     check("NO REGENERATION OF ANY KIND",
-          stages_called == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY"],
+          stages_called == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY",
+                            "PROSE_FINISH"],
           stages_called)
     check("the held article is still returned for a human to read",
           bool(out["article_text"]))
@@ -2527,7 +2546,8 @@ def test_the_reader_gate_runs_last_and_returns_passages():
           ["The room was built from Himalayan salt"])
     check("NO AUTO-REWRITE FOLLOWS",
           [prov.stage_of(i) for i in range(len(prov.calls))]
-          == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY", "READER"])
+          == ["LEDGER", "WORTH", "ARCHITECTURE", "WRITER", "CONTINUITY",
+                            "PROSE_FINISH", "READER"])
     check("the reader ran after grounding and fact check",
           out["stages"][CP.GROUNDING] == CP.PASS
           and out["stages"][CP.FACT_CHECK] == CP.PASS)

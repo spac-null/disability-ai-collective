@@ -56,12 +56,14 @@ ARCHITECTURE = "ARCHITECTURE"
 CUT_TERMS = "CUT_TERMS"
 WRITER = "WRITER"
 CONTINUITY = "CONTINUITY"
+PROSE_FINISH = "PROSE_FINISH"
 SAFETY = "SAFETY"
 GROUNDING = "GROUNDING"
 FACT_CHECK = "FACT_CHECK"
 READER = "READER"
 
-STAGES = (LEDGER, WORTH, ARCHITECTURE, CUT_TERMS, WRITER, CONTINUITY, SAFETY,
+STAGES = (LEDGER, WORTH, ARCHITECTURE, CUT_TERMS, WRITER, CONTINUITY,
+          PROSE_FINISH, SAFETY,
           GROUNDING, FACT_CHECK, READER)
 
 # ── the composition selector ──────────────────────────────────────────────────
@@ -676,6 +678,36 @@ WORTH_SYSTEM = (
     "SUPPORTED_CAUSAL when a fact actually asserts the mechanism, otherwise it is "
     "CHRONOLOGICAL_ADJACENCY or CONTESTED.\n"
     "\n"
+    "3. PARTICULARS, NOT DEFINITIONS. A lens has to rest on at least one fact that is "
+    "ABOUT THIS SUBJECT -- a specific record, measure, field, number, decision, person or "
+    "event belonging to the thing you are reading. A fact that states something general "
+    "about a category cannot carry an article, however true it is and however much it "
+    "mentions disability.\n"
+    "  Two real examples, both from ledgers this gate passed:\n"
+    "    PARTICULAR  'The field station directory entry for WildSumaco Biological Station "
+    "records ADA accessibility as No.' That is this station's own record. An article can "
+    "stand on it, because it says something no other station's entry says.\n"
+    "    GENERAL     'Cochlear implants restore hearing in people with profound hearing "
+    "loss and are a form of neuroprosthesis.' True, and a textbook definition. It would "
+    "appear in any article about neurotechnology, so it can only ever be a passing clause "
+    "and the piece will read as legitimation rather than argument.\n"
+    "  The second example was passed as STRONG_DIRECT_LENS on the strength of two such "
+    "definitions. A whole article was written and correctly rejected as wrong for this "
+    "publication. That is the error this field exists to stop.\n"
+    "  Then answer whether that evidence can CARRY the article. One particular is enough "
+    "only if the story can be built on it. Name it in `lens_carrier`: the concrete "
+    "subject-specific fact or tension the Crip Minds reading actually stands on, in a "
+    "clause. Then say in `can_carry_article` whether it can hold more than one incidental "
+    "sentence -- whether a reader would still be inside that reading in the middle of the "
+    "piece, or whether it appears once and the article goes on to be about something "
+    "else. A particular that gets mentioned and dropped is the same failure as a "
+    "definition, arriving later.\n"
+    "  So list in `lens_particulars` the fact ids from your evidence_ids that are "
+    "particulars about this subject. Definitions, category statements and background "
+    "framing do not belong in that list even when they are the reason you saw the lens. "
+    "If NONE of your evidence is a particular, the honest verdict is not a publishable "
+    "one -- say WEAK_ANALOGY or GREAT_GENERAL_STORY_WRONG_PUBLICATION and cost nothing.\n"
+    "\n"
     "Cite fact ids for everything. You may not use a fact id that is not in the ledger."
 )
 
@@ -683,7 +715,14 @@ WORTH_SCHEMA = (
     "Reply with ONE JSON object:\n"
     '{"worth_gate": {"verdict": "...", "lens_claim": "one or two sentences naming the\n'
     '                 mechanism", "changes_meaning_how": "what a reader understands\n'
-    '                 differently", "evidence_ids": ["F.."]},\n'
+    '                 differently", "evidence_ids": ["F.."],\n'
+    '                 "lens_particulars": ["F.."],   the subset of evidence_ids that\n'
+    '                                     are particulars about THIS subject, not\n'
+    '                                     definitions or category statements\n'
+    '                 "lens_carrier": "the concrete subject-specific fact or tension\n'
+    '                                  the reading stands on",\n'
+    '                 "can_carry_article": "YES|NO"   can it hold more than one\n'
+    '                                     incidental sentence\n'
     ' "story_candidate": {"story_id": "kebab-slug", "carrier_type": "object",\n'
     '                 "opening_possibility": "the concrete thing to open on",\n'
     '                 "real_event_or_change": "what happens or changes",\n'
@@ -726,6 +765,56 @@ def worth_gate(provider, ledger: dict, subject: str) -> dict:
     unknown = sorted(set(cand.get("evidence_ids") or []) - set(ledger))
     if unknown:
         errs.append("story_candidate cites fact ids not in the ledger: %s" % unknown)
+    # THE LENS MUST REST ON A PARTICULAR. Measured on two real ledgers that this gate
+    # passed identically: WildSumaco cited ONE disability-bearing fact and published;
+    # Meta/neurotech cited TWO and was correctly rejected by the Reader as wrong for the
+    # publication. Neither density nor citation count separates them -- 3 facts of 85
+    # against 2 of 84, and both verdicts were STRONG_DIRECT_LENS. What separates them is
+    # that WildSumaco's fact was that station's own ADA record, and Meta's two were
+    # textbook definitions of cochlear implants and brain-machine interfaces, which would
+    # appear in any article on the subject and can only ever be a passing clause.
+    #
+    # The cost of getting this wrong is the whole article: Meta ran nine model calls
+    # through Writer, Continuity, Safety, Grounding and Fact Check before anything noticed.
+    # Refusing here costs two.
+    particulars = [f for f in (lens.get("lens_particulars") or []) if f in ledger]
+    stray = sorted(set(lens.get("lens_particulars") or [])
+                   - set(lens.get("evidence_ids") or []))
+    if stray:
+        errs.append("lens_particulars cites facts the lens does not rest on: %s" % stray)
+    carrier = str(lens.get("lens_carrier") or "").strip()
+    can_carry = str(lens.get("can_carry_article") or "").strip().upper() == "YES"
+    # >= 1 PARTICULAR IS NECESSARY AND NOT SUFFICIENT. A particular that gets named once
+    # and dropped fails the same way a definition does, only later and after the article
+    # has been written. So the gate also asks what the reading STANDS ON and whether that
+    # can hold more than an incidental sentence.
+    if particulars and not can_carry:
+        raise CompositionHold(
+            WORTH, WORTH_HOLD,
+            ["the lens has subject-specific evidence but it cannot carry the article -- "
+             "it would appear as one incidental sentence and the piece would be about "
+             "something else",
+             ("carrier: " + carrier)[:200] if carrier else "no carrier named",
+             (lens.get("lens_claim") or "")[:200]],
+            {"lens_particulars": particulars, "lens_carrier": carrier,
+             "can_carry_article": lens.get("can_carry_article")})
+    if particulars and not carrier:
+        raise CompositionHold(
+            WORTH, WORTH_HOLD,
+            ["the lens names no carrier -- there is no concrete subject-specific fact or "
+             "tension the reading stands on",
+             (lens.get("lens_claim") or "")[:300]],
+            {"lens_particulars": particulars})
+    if not particulars:
+        raise CompositionHold(
+            WORTH, WORTH_HOLD,
+            ["the lens rests on no particular about this subject -- every fact it cites "
+             "is a definition or a general statement about a category, which can carry a "
+             "clause but not an article",
+             (lens.get("lens_claim") or "")[:300]],
+            {"evidence_ids": lens.get("evidence_ids"),
+             "lens_particulars": lens.get("lens_particulars")})
+
     unknown_lens = sorted(set(lens.get("evidence_ids") or []) - set(ledger))
     if unknown_lens:
         errs.append("the lens cites fact ids not in the ledger: %s" % unknown_lens)
@@ -2742,6 +2831,107 @@ def reader_gate(provider, article_text: str, advisories: list | None = None) -> 
 # ══════════════════════════════════════════════════════════════════════════════
 # THE ENTRYPOINT
 # ══════════════════════════════════════════════════════════════════════════════
+PROSE_FINISH_SYSTEM = (
+    "You are the last writer to touch a finished article before it is checked. Your job is "
+    "to make it read as though one person wrote it from beginning to end. It is already "
+    "correct; you are not here to make it more correct, more interesting or more "
+    "important.\n"
+    "\n"
+    "ADD NOTHING. No fact, number, date, name, place, quotation, cause, consequence or "
+    "comparison that is not already in the text in front of you. No scene, no sensory "
+    "detail, no motive, no dialogue, no invented particular. If you find yourself needing "
+    "a fact to make a sentence land, the sentence does not land and you cut it instead. "
+    "Everything you write is checked against a frozen evidence ledger afterwards, and an "
+    "addition fails the article rather than improving it.\n"
+    "\n"
+    "DO NOT CHANGE THE ARGUMENT. Same thesis, same order of ideas, same conclusion, same "
+    "emphasis. You are working on the surface.\n"
+    "\n"
+    "WHAT TO FIX:\n"
+    "  - sentence rhythm: vary the lengths, let a short one land after a long one\n"
+    "  - paragraph flow: one job per paragraph, and a reason to move to the next\n"
+    "  - concrete before abstract: give the reader the thing before the idea about it\n"
+    "  - transitions that do not announce themselves. Cut 'this reveals', 'that is the "
+    "point', 'here is where', 'what this means is'\n"
+    "  - ordinary precise words. Anglo-Saxon over Latinate, short over long\n"
+    "  - breathing room: let a fact sit without a moral attached in the same breath\n"
+    "  - research-report cadence: cut 'the source says', 'the paper reports', 'the "
+    "evidence shows', 'the record states', 'according to'. Say the thing, or name who "
+    "said it if the naming matters\n"
+    "  - explanatory repetition: if a point is made twice, keep the better one\n"
+    "  - manufactured clinchers: an epigram at the end of a paragraph that summarises "
+    "what the paragraph just said is a tic. Cut it and let the paragraph end on its "
+    "material\n"
+    "\n"
+    "WHAT NOT TO DO. No literary decoration, no purple prose, no rhetorical questions, no "
+    "second-person address, no imitation of a particular writer, no formulaic ending. A "
+    "calm, confident magazine surface, not a performance. If a passage is already good, "
+    "leave it exactly as it is -- an unnecessary edit is a cost, not a contribution.\n"
+    "\n"
+    "Return ONLY the finished article body. No preamble, no notes, no explanation of what "
+    "you changed, no frontmatter, no headers."
+)
+
+
+def prose_finish(provider, article_text: str, arch: dict) -> dict:
+    """STAGE 6b. One pass for surface quality, BEFORE anything factual is checked.
+
+    WHY IT SITS HERE. Safety, Grounding and Fact Check must evaluate the exact bytes that
+    will publish. A polish applied after them would invalidate every stamp they issued, and
+    a polish applied after Fact Check would publish prose nothing had checked. So it runs
+    last among the writing stages and first among nothing -- the text it returns is the
+    text the whole factual stack then reads.
+
+    FAIL-SAFE, exactly like CONTINUITY above it. The article arriving here is already
+    publishable; this stage is an optional improvement over it and is not permitted to
+    cost the run. Any failure -- provider error, empty return, a reply that looks like
+    commentary rather than an article, a length that suggests the model rewrote rather
+    than polished -- discards the edit whole and carries the incoming text forward. There
+    is no retry and no second call: one pass, taken or dropped.
+
+    The additions it must not make are caught downstream anyway, by the same safety stack
+    that audits the Writer and Continuity. This stage's own guard is about not wasting the
+    run on an obviously bad edit, not about factual authority.
+    """
+    incoming = article_text
+    try:
+        intent = "\n".join([
+            "THE STORY THIS ARTICLE IS TELLING (do not change it)",
+            "  " + str(arch.get("story_spine") or "")[:400],
+            "  ending: " + str(arch.get("ending_move") or "")[:200], "",
+            "THE ARTICLE", incoming])
+        comp = provider.complete(system=PROSE_FINISH_SYSTEM, user=intent, max_tokens=6_000)
+        out = (getattr(comp, "text", "") or "").strip()
+        ident = comp.identity() if hasattr(comp, "identity") else {}
+    except Exception as e:                                        # noqa: BLE001
+        return {"status": SKIPPED, "article_text": incoming, "applied": False,
+                "reason": "provider failure: %s: %s" % (type(e).__name__, str(e)[:160]),
+                "model_calls": 1, "repairs": 0}
+
+    # PRESERVE THE TITLE, never strip it. An article legitimately opens with its H1, so a
+    # blanket "drop a leading # line" removed the real first line -- caught by the suite,
+    # which saw an empty article come back. If the polish dropped the heading, put the
+    # incoming one back; if it kept or rewrote one, leave it alone.
+    head = incoming.split("\n", 1)[0]
+    if head.startswith("# ") and out and not out.lstrip().startswith("#"):
+        out = head + "\n\n" + out.lstrip()
+    inw, outw = len(incoming.split()), len(out.split())
+    reason = ""
+    if not out:
+        reason = "returned nothing"
+    elif outw < inw * 0.75:
+        reason = "returned %d words from %d -- that is a cut, not a polish" % (outw, inw)
+    elif outw > inw * 1.25:
+        reason = "returned %d words from %d -- that is an expansion, not a polish" % (outw, inw)
+    if reason:
+        return {"status": SKIPPED, "article_text": incoming, "applied": False,
+                "reason": reason, "words_in": inw, "words_out": outw,
+                "provider": ident, "model_calls": 1, "repairs": 0}
+    return {"status": PASS, "article_text": out, "applied": True, "reason": "",
+            "words_in": inw, "words_out": outw, "provider": ident,
+            "model_calls": 1, "repairs": 0}
+
+
 def run_story_architecture_composition(
         provider, *, pack: dict, source_text: str, source_sha: str,
         subject: str = "", fact_check: bool = True, reader: bool = True,
@@ -2902,6 +3092,25 @@ def run_story_architecture_composition(
                 cont["edits"], draft, final, wr["negative_lineage_verified"])
         cont["carried_text"] = carried
         cont["negative_lineage_carried"] = lineage
+
+        # PROSE FINISH -- surface only, and BEFORE anything factual is checked, so the
+        # exact bytes Safety, Grounding and Fact Check read are the bytes that publish.
+        # Fail-safe like Continuity: a discarded polish carries the incoming text forward
+        # and costs the run nothing. Skipped on a replay, where the article is frozen.
+        if frozen_article:
+            st[PROSE_FINISH] = {"status": REPLAYED, "article_text": final,
+                                "applied": False, "reason": "replay: article is frozen",
+                                "model_calls": 0, "repairs": 0}
+            calls[PROSE_FINISH] = repairs[PROSE_FINISH] = 0
+        else:
+            pf = record(PROSE_FINISH, prose_finish(P, final, arch))
+            if pf.get("applied"):
+                final = pf["article_text"]
+                # The polish rewrote sentences, so the Writer's per-sentence negative
+                # lineage no longer maps onto them. Safety re-derives what it needs from
+                # the packet and the ledger; carrying a stale sentence map would be worse
+                # than carrying none.
+                lineage = wr["negative_lineage_verified"]
 
         sa = record(SAFETY, safety_audit(draft, final, wr["packet"], arch, ledger,
                                          cut["terms"], cut, lineage))
