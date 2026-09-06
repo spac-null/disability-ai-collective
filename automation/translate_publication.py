@@ -110,14 +110,13 @@ TRANSLATE_SYSTEM = (
     "figures in the same places."
 )
 
-TRANSLATE_SCHEMA = (
-    "Reply with ONE JSON object:\n"
-    '{"title": "...", "dek": "...", "homepage_excerpt": "...",\n'
-    ' "meta_description": "...", "social_hook": "...",\n'
-    ' "image_alt": "...",\n'
-    ' "article": "the complete article as markdown"}\n'
-    "No prose outside the JSON."
-)
+def translate_schema(present: list, with_alt: bool) -> str:
+    keys = ['"%s": "..."' % f for f in present]
+    if with_alt:
+        keys.append('"image_alt": "..."')
+    keys.append('"article": "the complete article as markdown"')
+    return ("Reply with ONE JSON object:\n{%s}\nNo prose outside the JSON, and no key "
+            "that is not listed here." % ", ".join(keys))
 
 FIDELITY_SYSTEM = (
     "You compare a published English article with its translated edition and report what "
@@ -255,13 +254,24 @@ def mechanical_findings(en: dict, tr: dict) -> list:
 def translate_bundle(provider, bundle: dict, lang: str, corrections: list | None = None,
                      previous: dict | None = None) -> dict:
     cfg = LANGUAGES[lang]
+    # ONLY THE FIELDS THE ENGLISH ACTUALLY HAS. Refusing to generate English packaging is
+    # not enough on its own: asked for a dek, the model wrote one, and a Dutch dek that no
+    # English sentence stands behind is the same unchecked claim entering through the same
+    # side door, in another language. The schema is built from what exists.
+    present = [f for f in BUNDLE_FIELDS if bundle.get(f)]
     user = ["THE PUBLISHED ENGLISH EDITION", ""]
-    for f in BUNDLE_FIELDS:
-        if bundle.get(f):
-            user.append("%s: %s" % (f.upper(), bundle[f]))
+    for f in present:
+        user.append("%s: %s" % (f.upper(), bundle[f]))
     if bundle.get("image_alt"):
         user.append("IMAGE_ALT: %s" % bundle["image_alt"])
-    user += ["", "ARTICLE", bundle["article"], "", TRANSLATE_SCHEMA]
+    absent = [f for f in BUNDLE_FIELDS if f not in present]
+    if absent:
+        user += ["",
+                 "THIS ARTICLE HAS NO %s. Do not write any. They are absent from the "
+                 "English edition and an edition may not carry a line the original does "
+                 "not." % ", ".join(f.upper() for f in absent)]
+    user += ["", "ARTICLE", bundle["article"], "",
+             translate_schema(present, bool(bundle.get("image_alt")))]
     if corrections:
         # AN EDIT, NOT A SECOND TRANSLATION. "Change nothing else" is only meaningful if
         # the thing to change is in front of the model, so the held edition is handed back
@@ -288,8 +298,13 @@ def translate_bundle(provider, bundle: dict, lang: str, corrections: list | None
     comp = provider.complete(system=TRANSLATE_SYSTEM % cfg,
                              user="\n".join(user), max_tokens=12_000)
     obj = parse_json_object(comp.text)
-    out = {f: str(obj.get(f) or "").strip() for f in BUNDLE_FIELDS}
-    out["image_alt"] = str(obj.get("image_alt") or "").strip()
+    # Dropped rather than trusted: a field the English does not have cannot arrive here,
+    # whatever the reply contains.
+    out = {f: (str(obj.get(f) or "").strip() if f in present else "")
+           for f in BUNDLE_FIELDS}
+    out["image_alt"] = (str(obj.get("image_alt") or "").strip()
+                        if bundle.get("image_alt") else "")
+    out["fields_present"] = present
     out["article"] = str(obj.get("article") or "").strip()
     out["lang"] = lang
     out["provider"] = comp.identity() if hasattr(comp, "identity") else {}

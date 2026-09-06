@@ -154,6 +154,15 @@ check("a renamed asset is a finding",
 check("no English packaging is generated for a pre-package article",
       "editorial_package" not in src and "fields_absent" in src)
 
+print("\ntest_an_edition_carries_no_line_the_original_lacks")
+src = pathlib.Path(TP.__file__).read_text()
+check("the schema is built from the fields that exist",
+      "def translate_schema(present" in src and "translate_schema(present," in src)
+check("the prompt says so explicitly", "THIS ARTICLE HAS NO %s" in src)
+check("and a field the English lacks is dropped from the result, not trusted",
+      'if f in present else ""' in src)
+
+
 print("\ntest_the_language_registry_is_the_whole_configuration")
 check("Dutch is configured", "nl" in TP.LANGUAGES)
 check("the collection file is named for the slug the permalink renders",
