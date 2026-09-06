@@ -193,7 +193,8 @@ check("NO ARTICLE REWRITE HAPPENS AFTER THE FACT CHECK",
       "prose_finish(" not in tail and "grounding_repair(" not in tail
       and "write_article(" not in tail and "continuity_pass(" not in tail)
 check("a discarded polish discards its package with it",
-      "pkg = make_package(final)" in comp.split("polish_discarded_at_safety")[0]
+      "pkg = pkg_ref[0] = make_package(final)"
+      in comp.split("polish_discarded_at_safety")[0]
       .split("st[PROSE_FINISH][\"discarded_at_safety\"]")[-1])
 check("and the surface that published is recorded",
       '"article_surface": article_surface' in comp

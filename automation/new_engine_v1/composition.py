@@ -3577,6 +3577,7 @@ def run_story_architecture_composition(
                                 cut, lineage, package=pkg_, **kw)
 
         pkg = make_package(final)
+        pkg_ref = [pkg]
         sa = record(SAFETY, audit(final, pkg))
         sa["carried_text"] = carried
 
@@ -3598,7 +3599,7 @@ def run_story_architecture_composition(
                 st[PROSE_FINISH]["discarded_at_safety"] = sa["blocking"][:6]
                 st[PROSE_FINISH]["applied"] = False
                 final, surface = pre_polish, PRE_POLISH_FALLBACK
-                pkg = make_package(final)
+                pkg = pkg_ref[0] = make_package(final)
                 sa = record(SAFETY, audit(final, pkg))
                 sa["carried_text"] = carried
                 sa["polish_discarded_at_safety"] = True
@@ -3614,28 +3615,46 @@ def run_story_architecture_composition(
                                                source_sha, pack, arch, wr["packet"]))
 
         # A GROUNDING FAILURE THAT IS ENTIRELY IN THE FURNITURE is repaired by rewriting
-        # the furniture, not the article -- once, on the exact findings. The article did
-        # nothing wrong and rewriting it would be the expensive way to fix a dek.
-        if g["status"] != PASS and pkg:
-            art_bad, pkg_bad = split_by_surface(g["blocking"], pkg)
-            if pkg_bad and not art_bad:
-                pkg = make_package(final, refusals=[
-                    "%s on %s: %s" % (f.get("classification"), f.get("surface"),
-                                      str(f.get("quote") or f.get("claim") or "")[:200])
-                    for f in pkg_bad])
-                sa_p = record(SAFETY, audit(final, pkg))
-                sa_p["after_repackage"] = True
-                if sa_p["status"] != PASS:
-                    return out(SAFETY, "the rewritten package did not pass: %s"
-                               % "; ".join(sa_p["blocking"])[:400], SAFETY_HOLD, final,
-                               pkg, surface)
-                sa = sa_p
-                g2 = record(GROUNDING, ground_candidate(P, bundle_text(final, pkg),
-                                                        source_text, source_sha, pack,
-                                                        arch, wr["packet"]))
-                g2["after_repackage"] = True
-                calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
-                g = g2
+        # the furniture, not the article -- ONCE per run, on the exact findings. The
+        # article did nothing wrong and regenerating it would be the expensive way to fix
+        # a dek.
+        #
+        # It is tried at BOTH grounding decision points, and the first live run is why:
+        # the article took its one factual repair, passed, and the run then died on two
+        # findings that were both in the META_DESCRIPTION and the EXCERPT. A clean article
+        # lost to its own homepage card is the exact waste this stage was added to prevent.
+        # The budget is one rewrite for the run, not one per decision point.
+        repackaged = [False]
+
+        def repackage_if_only_the_furniture_failed(gr):
+            """Returns a new grounding result, or the one it was given."""
+            if gr["status"] == PASS or not pkg_ref[0] or repackaged[0]:
+                return gr
+            art_bad, pkg_bad = split_by_surface(gr["blocking"], pkg_ref[0])
+            if art_bad or not pkg_bad:
+                return gr
+            repackaged[0] = True
+            pkg_ref[0] = make_package(final, refusals=[
+                "%s on %s: %s" % (f.get("classification"), f.get("surface"),
+                                  str(f.get("quote") or f.get("claim") or "")[:200])
+                for f in pkg_bad])
+            sa_p = record(SAFETY, audit(final, pkg_ref[0]))
+            sa_p["after_repackage"] = True
+            if sa_p["status"] != PASS:
+                raise CompositionHold(
+                    SAFETY, SAFETY_HOLD,
+                    ["the rewritten package did not pass the safety stack"]
+                    + sa_p["blocking"][:6])
+            g_new = record(GROUNDING, ground_candidate(P, bundle_text(final, pkg_ref[0]),
+                                                       source_text, source_sha, pack,
+                                                       arch, wr["packet"]))
+            g_new["after_repackage"] = True
+            g_new["repackage_findings"] = [f.get("surface") for f in pkg_bad]
+            calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
+            repairs[PACKAGE] = repairs.get(PACKAGE, 0) + 1
+            return g_new
+
+        g = repackage_if_only_the_furniture_failed(g)
 
         # ONE GROUNDED FACTUAL REPAIR, then the FULL hard safety stack again, then the
         # Grounder again. A second grounding failure is the end of the article: no second
@@ -3666,6 +3685,10 @@ def run_story_architecture_composition(
                 calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
                 repairs[GROUNDING] = 1
                 g = g2
+
+        pkg = pkg_ref[0]
+        g = repackage_if_only_the_furniture_failed(g)
+        pkg = pkg_ref[0]
 
         if g["status"] != PASS:
             return out(GROUNDING,
