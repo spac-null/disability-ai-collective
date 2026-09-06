@@ -304,7 +304,10 @@ def test_M_prompts_model_and_type_policy_are_unchanged():
     check("M: extraction prompt unchanged",
           "Extract every claim from this article that could be independently " in fcs)
     check("M: verification model unchanged", 'model="perplexity/sonar"' in fcs)
-    check("M: extraction model unchanged", 'model="openrouter/claude-haiku-4.5"' in fcs)
+    # The `openrouter/` prefix was CLIProxy's translation key and was removed in Phase 2A
+    # (PR #64); direct OpenRouter names the same model `anthropic/...`. This assertion has
+    # been failing since then, in the one file that watches this call.
+    check("M: extraction model unchanged", 'model="anthropic/claude-haiku-4.5"' in fcs)
     check("M: the per-call ceiling is still 30s", FC.PER_CALL_TIMEOUT == 30)
     check("M: and it is still what a call gets when time is not short",
           "timeout=PER_CALL_TIMEOUT" in fcs and "max_tokens=250, timeout=timeout," in fcs)
@@ -391,8 +394,17 @@ def test_N_every_call_is_bounded_by_the_remaining_total():
     check("N1: a normal run still gives calls the ordinary ceiling",
           all(abs(v - FC.PER_CALL_TIMEOUT) < 1.0 for v in t2.verify_timeouts),
           t2.verify_timeouts)
-    check("N1: extraction too",
-          abs(t2.extract_timeouts[0] - FC.PER_CALL_TIMEOUT) < 1.0, t2.extract_timeouts)
+    # Extraction no longer shares the verifications' ceiling, deliberately: it is the one
+    # call on a different transport. Since Phase 2B it runs through the Claude CLI -- a
+    # subprocess plus model latency over the whole article, measured at 18-26s against a
+    # 30s ceiling, which lost twice in production and reported "claude CLI timed out after
+    # 30s" as an extraction failure. It still receives a BUDGET, still lowered by the
+    # total; only its ceiling differs.
+    check("N1: extraction gets the extraction ceiling, not the verification one",
+          abs(t2.extract_timeouts[0] - FC.EXTRACTION_TIMEOUT) < 1.0, t2.extract_timeouts)
+    check("N1: and that ceiling is still bounded by the stage total",
+          FC.EXTRACTION_TIMEOUT < FC.FACT_CHECK_TOTAL_SECONDS,
+          (FC.EXTRACTION_TIMEOUT, FC.FACT_CHECK_TOTAL_SECONDS))
 
 
 def test_N_extraction_is_inside_the_total_not_outside_it():
@@ -406,7 +418,8 @@ def test_N_extraction_is_inside_the_total_not_outside_it():
           (i_deadline, i_extract))
     check("N2: extraction receives the budget, not a constant",
           "self._extract_verifiable_claims_raw(\n                        content, "
-          "timeout=max(0.0, call_budget()))" in src)
+          "timeout=max(0.0, call_budget(EXTRACTION_TIMEOUT)))" in src,
+          "call_budget(...) is still the budget -- the total can still lower it")
     check("N2: no provider call in this stage carries a hardcoded timeout",
           "timeout=30" not in body)
 
