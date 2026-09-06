@@ -51,6 +51,15 @@ REQUIRED_STAGES = [s for s in STAGE_ORDER if s not in OPTIONAL_STAGES]
 # discovered; everything else had to be found, fetched and hashed to exist here.
 SOURCE_ROLES = ("ANCHOR", "PRIMARY", "INDEPENDENT", "TERTIARY", "CONTEXT",
                 "COUNTERWEIGHT")
+
+# A pack source may carry `figures`: publisher-written captions and alt text harvested
+# from the same HTML the body text came from. OPTIONAL, exactly as RESEARCH_PACK itself
+# is optional among the frozen stages -- a pack recorded before this existed is not
+# retroactively invalid, and neither is a page that had no figures. See figures.py for
+# what may and may not be in one, and validate() below for what is enforced.
+FIGURE_FIELDS = ("image_url", "caption", "caption_source", "alt", "credit", "type_hint")
+FIGURE_TYPE_HINTS = ("PHOTO", "PLAN", "SECTION", "DIAGRAM", "MAP", "OTHER")
+FIGURE_CAPTION_SOURCES = ("figcaption", "alt", "")
 SUFFICIENCY_VERDICTS = ("ARTICLE", "SHORT_ARTICLE", "NARROW", "HOLD_INSUFFICIENT_RESEARCH")
 
 # Markers from the legacy production prompt surface. WRITER_INPUT is checked against
@@ -180,6 +189,50 @@ def validate(artifact: Artifact) -> None:
                     raise ContractViolation(
                         "RESEARCH_PACK: %s carries an excerpt that is not a verbatim span "
                         "of its own fetched text: %r" % (src["source_id"], str(ex)[:80]))
+            # FIGURES (2026-09-06), additive like RESEARCH_PACK itself: absent on every
+            # pack built before this existed and on any source whose page had none, so a
+            # frozen run still validates and still hashes the same.
+            #
+            # These are NOT checked as spans of `src["text"]`, and that is not an
+            # oversight to be tidied up later. A caption lives in a part of the page the
+            # text extractor never carried, so it is verbatim with respect to the HTML,
+            # not to the text -- and the verbatimness is guaranteed by construction, by a
+            # deterministic parser with no model in it (see figures.py). What IS checked
+            # here is that the record is structurally honest and that nothing but words a
+            # person wrote is being carried as words a person wrote.
+            for fg in (src.get("figures") or []):
+                if not isinstance(fg, dict):
+                    raise ContractViolation("RESEARCH_PACK: %s has a non-object figure"
+                                            % src["source_id"])
+                missing = [k for k in FIGURE_FIELDS if k not in fg]
+                if missing:
+                    raise ContractViolation(
+                        "RESEARCH_PACK: %s figure is missing field(s): %s"
+                        % (src["source_id"], ", ".join(missing)))
+                if fg["type_hint"] not in FIGURE_TYPE_HINTS:
+                    raise ContractViolation(
+                        "RESEARCH_PACK: %s figure has type_hint %r, not one of %s"
+                        % (src["source_id"], fg["type_hint"], ", ".join(FIGURE_TYPE_HINTS)))
+                if fg["caption_source"] not in FIGURE_CAPTION_SOURCES:
+                    raise ContractViolation(
+                        "RESEARCH_PACK: %s figure has caption_source %r, not one of %s"
+                        % (src["source_id"], fg["caption_source"],
+                           ", ".join(FIGURE_CAPTION_SOURCES)))
+                if not (str(fg["caption"]).strip() or str(fg["alt"]).strip()):
+                    raise ContractViolation(
+                        "RESEARCH_PACK: %s carries a figure with no caption and no alt "
+                        "-- a picture nobody wrote about is not text evidence"
+                        % src["source_id"])
+                # An image reference is a pointer, never a claim. A caption that IS the
+                # reference means a file name reached a field the pack treats as prose.
+                for field in ("caption", "alt"):
+                    v = str(fg[field] or "").strip()
+                    if v and (v == str(fg["image_url"]).strip()
+                              or v.lower().startswith(("http://", "https://", "//",
+                                                       "data:"))):
+                        raise ContractViolation(
+                            "RESEARCH_PACK: %s figure %s is an image reference, not text "
+                            "a publisher wrote: %r" % (src["source_id"], field, v[:80]))
     elif s == DISCOVERY:
         _require(p, ["dominant_reading", "disturbance", "perceptual_instrument",
                      "what_becomes_knowable", "grounding_boundaries"], s)

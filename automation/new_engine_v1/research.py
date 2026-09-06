@@ -43,6 +43,7 @@ if _HERE not in sys.path:
 import impersonated_fetch as IMP                                      # noqa: E402
 
 from . import documents as DOC
+from . import figures as FIG
 from .contracts import sha256_text
 from .provider import ProviderError, parse_json_object
 
@@ -275,7 +276,15 @@ def _blank(url: str) -> dict:
 def _from_html(rec: dict, html: str) -> dict:
     """The single definition of what a fetched page yields. Both legs parse here, so
     an impersonated page cannot enter the pack by a different rule than an ordinary
-    one -- same extraction, same 60-word floor, same hash over the same text."""
+    one -- same extraction, same 60-word floor, same hash over the same text.
+
+    Figures ride along from here for the same reason: this is the only place both legs
+    hold the HTML, so an impersonated page cannot acquire captions under a different
+    rule either. `text`, `content_length` and `sha256` are computed exactly as before --
+    the harvest reads the same string and writes to a separate key, so a pack built
+    before this existed and one built after are byte-identical in every field that was
+    already there. No image is fetched; see figures.py.
+    """
     text = strip_html(html)[:PER_SOURCE_CHARS]
     if len(text.split()) < 60:
         rec["status"] = "empty_or_blocked"
@@ -283,6 +292,9 @@ def _from_html(rec: dict, html: str) -> dict:
     rec.update(status="ok", text=text, title=_title_from_html(html),
                canonical_url=_canonical_from_html(html),
                content_length=len(text), sha256=sha256_text(text))
+    figs = FIG.harvest(html, rec.get("url", ""))
+    if figs:
+        rec["figures"] = figs
     return rec
 
 
@@ -568,6 +580,14 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
         "relation": "anchor", "duplicate_cluster": 0, "why_relevant": "anchor source",
         "text": anchor["text"], "excerpts": [], "excerpts_dropped": [],
     }
+    # The anchor arrives as EXTRACTED TEXT from SOURCE_SNAPSHOT, not as HTML, so this
+    # stage cannot harvest its figures itself -- there is no markup left to read by the
+    # time it gets here. The seam is here rather than absent so the acquisition path can
+    # supply them later without this function changing again. Today it never does, which
+    # means the anchor's captions are still lost: on the WildSumaco run that is the Dezeen
+    # page and its seven of them. Named, not hidden.
+    if anchor.get("figures"):
+        anchor_src["figures"] = list(anchor["figures"])[:FIG.MAX_FIGURES]
 
     sources, budget = [anchor_src], PACK_TEXT_BUDGET - len(anchor["text"])
     clusters = [[anchor_src]]
@@ -628,6 +648,13 @@ def build_pack(*, anchor: dict, scoped: dict, fetched: list, assessment: dict,
             sel["truncated"] = bool(sel.get("truncated")) or clipped
             doc["selection"] = sel
             src["document"] = doc
+        # Publisher captions ride along on the same terms: only where the page had any,
+        # so a figure-less source serialises exactly as it did before. Unlike document
+        # locators these need no clipping against the text budget -- a caption is not a
+        # span OF the carried text, it is text from a part of the page the extractor
+        # never carried, and it is stored whole or not at all.
+        if s.get("figures"):
+            src["figures"] = s["figures"][:FIG.MAX_FIGURES]
         sources.append(src)
 
     anchor_reg = registrable(anchor["url"])
