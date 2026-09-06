@@ -280,6 +280,16 @@ def _looks_like_a_limit(text: str) -> bool:
     return any(re.search(p, t) for p in _LIMIT_PATTERNS)
 
 
+def _neutralise_leading_slash(text: str) -> str:
+    """Stop the CLI reading the prompt as a slash command, without altering its content.
+
+    A single leading newline is enough: the command parser only looks at the first
+    character, and a newline in front of a prompt changes nothing a model reads.
+    """
+    t = text or ""
+    return ("\n" + t) if t.lstrip()[:1] == "/" else t
+
+
 class ClaudeCLIProvider:
     """One subprocess per stage call. Same `complete()` signature the engine already uses."""
 
@@ -319,6 +329,13 @@ class ClaudeCLIProvider:
         are not forwarded: the CLI exposes neither, and silently pretending otherwise
         would be worse than saying so. Stage output length is governed by the prompts."""
         model = self.model
+        # A PROMPT MAY NEVER BEGIN WITH "/". The CLI reads a leading slash as a slash
+        # command -- on the argument AND on stdin, both measured -- replies "Unknown
+        # command: ...", and exits 0. A caller cannot tell that from a real answer.
+        # This is not hypothetical: it silently broke Fact Check for every article. Any
+        # text can legitimately start with a slash (a path, a date, a fraction), so the
+        # guard is here at the boundary rather than left to each call site.
+        user = _neutralise_leading_slash(user)
         t0 = time.monotonic()
         try:
             p = subprocess.run(
