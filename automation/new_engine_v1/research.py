@@ -732,6 +732,132 @@ def sufficiency(pack: dict) -> dict:
     return {"verdict": v, "reasons": reasons, "what_is_missing": missing}
 
 
+# ── THE LENS PROBE (one, bounded) ─────────────────────────────────────────────
+# WHY IT EXISTS, measured rather than assumed. Thirteen fresh candidates were triaged
+# through Worth on 2026-09-06 and none proceeded. Five were audited by hand. Three were
+# subjects with nothing to see -- an art prize, a photo retrospective, a mineral-mapping
+# concept -- and Worth was right about all three. The other two had a carrier, and both
+# died here rather than at the gate:
+#
+#   The Herschel Museum of Astronomy. Research fetched herschelmuseum.org.uk. It did not
+#   fetch that site's own access page, which says museum access is not step free, that the
+#   basement stairs are very steep and narrow, and that the basement -- the workshop and
+#   kitchen where the Herschels ground their mirrors -- is among the rooms a visitor
+#   "unfortunately" misses, with a borrowed iPad tour offered instead. Worth: "the ledger
+#   contains no fact about" it. Correct, and the fact was one click from a page it held.
+#
+#   Ryno's rooftop rail system. Research fetched five Ryno and NBS product pages and not
+#   the manufacturer's own article on building ramps with that exact system. Worth: "in
+#   this ledger 'access' means access to rainwater outlets".
+#
+# Ordinary research answers "what is this story". It has no reason to ask the second
+# question, so nobody asks it, and the evidence freeze closes over a pack that cannot
+# support the only reading this publication has. The probe asks it once:
+#
+#   what subject-specific fact, rule, record, object, design decision or lived
+#   consequence could carry a reading of THIS subject through access, bodies, perception,
+#   dependence, interface, adaptation, participation, exclusion, navigation, communication,
+#   bodily variation, or an institutional rule meeting a physical reality
+#
+# and then names where such a thing would be recorded. It does not decide anything and it
+# authors nothing: what comes back is fetched, verified verbatim like every other source,
+# assessed by the same call, and handed to Worth, which decides exactly as it does now.
+#
+# BOUNDED, and the bound is the point -- this is one probe, not a research loop. One model
+# call, at most one extra search, at most LENS_PROBE_MAX_SOURCES kept. Nothing found means
+# the pack is what it was and the run holds cheaply, which is the outcome it already has.
+LENS_PROBE_MAX_QUERIES = 2
+LENS_PROBE_MAX_URLS = 3
+LENS_PROBE_MAX_SOURCES = 2
+LENS_PROBE_ENV = "CRIPMINDS_LENS_PROBE"
+
+LENS_PROBE_SYSTEM = (
+    "You find the document nobody thought to look for.\n"
+    "\n"
+    "A publication is about to decide whether it can read this subject through what its "
+    "editors call the lens: access, bodies, sensory perception, dependence and assistance, "
+    "interface design, adaptation, participation, exclusion, navigation, communication, "
+    "bodily variation, and institutional rules meeting physical reality. It is NOT looking "
+    "for disability news and it will not accept an analogy. It needs ONE FACT ABOUT THIS "
+    "EXACT SUBJECT -- a record, a rule, a measurement, a field on a form, a design "
+    "decision, a documented consequence -- of the kind that is usually written down "
+    "somewhere dull and specific.\n"
+    "\n"
+    "Two real examples of what you are looking for:\n"
+    "  A museum's own visitor page saying the building is not step free and that the "
+    "basement workshop, where the work being exhibited was actually done, cannot be "
+    "reached -- offered instead as a tablet tour.\n"
+    "  A manufacturer's own article on building a ramp with the product a story is about, "
+    "when every page anyone fetched was a datasheet.\n"
+    "\n"
+    "Where such things live: an institution's access or visit page, a venue's conditions "
+    "page, a directory entry, a building regulation or standard the product must meet, a "
+    "planning or inspection document, a manufacturer's guidance, an accessibility "
+    "statement, a user or operator manual, a complaints or consultation record, a "
+    "first-person account by someone who actually used the thing.\n"
+    "\n"
+    "ANSWER NOTHING IF THERE IS NOTHING. A subject with no body, no user, no building, no "
+    "institution and no rule -- a mineral survey, a market report, a prize announcement -- "
+    "has no such document, and inventing a search for one wastes a fetch and teaches the "
+    "gate to accept an analogy. Say so and stop. That is the expected answer more often "
+    "than not, and it costs nothing.\n"
+    "\n"
+    "Say nothing too if the material you are shown ALREADY carries such a fact. You are "
+    "here for the gap, not for more of the same."
+)
+
+
+def lens_probe_prompt(subject: str, anchor_text: str, sources: list) -> str:
+    have = "\n".join("  %s  %s  %s" % (s["source_id"], s.get("publisher", ""),
+                                       (s.get("title") or s["url"])[:110])
+                     for s in sources) or "  (nothing beyond the anchor)"
+    return (
+        "SUBJECT: %s\n\nWHAT THE ANCHOR SAYS:\n<<<ANCHOR\n%s\nANCHOR>>>\n\n"
+        "MATERIAL ALREADY COLLECTED:\n%s\n\n"
+        "Reply with JSON only:\n"
+        '{"carrier_hypothesis": "one sentence naming the subject-specific fact you think\n'
+        '                        exists and would carry the reading, or \\"none\\"",\n'
+        ' "queries": ["at most %d search queries, each naming this subject"],\n'
+        ' "urls": ["at most %d exact URLs you believe record it"]}\n'
+        "If there is nothing to look for, reply "
+        '{"carrier_hypothesis": "none", "queries": [], "urls": []} and nothing else.'
+        % (subject, anchor_text[:4000], have, LENS_PROBE_MAX_QUERIES,
+           LENS_PROBE_MAX_URLS))
+
+
+def lens_probe_enabled(env=None) -> bool:
+    """On by default. One environment variable turns it off for a run, the same way the
+    composition engine itself is selected -- an operator can take it out of the path
+    without a deploy."""
+    v = (env if env is not None else os.environ).get(LENS_PROBE_ENV, "").strip().lower()
+    return v not in ("0", "off", "false", "no")
+
+
+def lens_probe(provider, subject: str, anchor_text: str, sources: list) -> dict:
+    """ONE model call. Returns what to look for, never a fact."""
+    try:
+        comp = provider.complete(system=LENS_PROBE_SYSTEM,
+                                 user=lens_probe_prompt(subject, anchor_text, sources),
+                                 max_tokens=700)
+        obj = parse_json_object(comp.text)
+    except Exception as e:                                            # noqa: BLE001
+        # A probe that cannot run costs the run nothing. It is an addition to research,
+        # not a precondition of it, and a transport failure here must not turn a workable
+        # pack into a held one.
+        return {"ran": False, "error": "%s: %s" % (type(e).__name__, str(e)[:160]),
+                "carrier_hypothesis": "", "queries": [], "urls": []}
+    hyp = str(obj.get("carrier_hypothesis") or "").strip()
+    none = hyp.lower() in ("", "none", "no", "n/a")
+    return {"ran": True,
+            "carrier_hypothesis": "" if none else hyp,
+            "queries": [] if none else
+                       [str(q) for q in (obj.get("queries") or [])][:LENS_PROBE_MAX_QUERIES],
+            "urls": [] if none else
+                    [str(u) for u in (obj.get("urls") or []) if str(u).startswith("http")]
+                    [:LENS_PROBE_MAX_URLS],
+            "_provider": comp.identity() if hasattr(comp, "identity") else {}}
+
+
 # ── orchestration (one bounded pass) ──────────────────────────────────────────
 def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict:
     """Scope -> search -> fetch -> assess -> pack. Raises ResearchError on a
@@ -772,11 +898,48 @@ def research(provider, *, anchor: dict, now_iso: str, api_key: str = "") -> dict
                    publisher=registrable(url))
         fetched.append(rec)
 
+    # THE LENS PROBE, before the assessment and therefore before the freeze. Anything it
+    # brings back is assessed by the SAME call as everything else, gets a role from that
+    # assessment, and has its excerpts verified verbatim like any other source -- it enters
+    # the pack as material, never as an authority, and Worth reads it exactly as it reads
+    # the rest. See LENS_PROBE_SYSTEM for what it is looking for and why.
+    probe = {"ran": False, "enabled": lens_probe_enabled(), "kept": []}
+    if probe["enabled"]:
+        probe.update(lens_probe(provider, scoped.get("subject", ""), anchor["text"],
+                                fetched))
+        probe_urls = list(probe.get("urls") or [])
+        for q in (probe.get("queries") or []):
+            if len(probe_urls) >= LENS_PROBE_MAX_URLS + LENS_PROBE_MAX_QUERIES:
+                break
+            try:
+                probe_urls += [u for u in search_urls(q, api_key=api_key)[:4]
+                               if u not in seen and u != anchor["url"]]
+            except ResearchError as e:
+                failures.append({"query": q, "error": str(e)[:200], "lens_probe": True})
+        kept = 0
+        for url in probe_urls:
+            if kept >= LENS_PROBE_MAX_SOURCES:
+                break
+            if url in seen:
+                continue
+            seen.add(url)
+            rec = fetch_source(url, fallback_budget=fallback_budget, terms=doc_terms)
+            if rec["status"] != "ok":
+                failures.append({"url": url, "status": rec["status"], "lens_probe": True})
+                continue
+            rec.update(source_id="S%d" % (len(fetched) + 1), accessed_at=now_iso,
+                       publisher=registrable(url), lens_probe=True)
+            fetched.append(rec)
+            probe["kept"].append(rec["source_id"])
+            kept += 1
+
     assessment = assess(provider, scoped.get("subject", ""), anchor["text"], fetched)
     pack = build_pack(anchor=anchor, scoped=scoped, fetched=fetched,
                       assessment=assessment,
                       searched={"queries": queries, "candidates": candidates,
                                 "failures": failures})
+    pack["lens_probe"] = {k: v for k, v in probe.items() if k != "_provider"}
     pack["_provider"] = {"scope": scoped.get("_provider", {}),
-                         "assess": assessment.get("_provider", {})}
+                         "assess": assessment.get("_provider", {}),
+                         "lens_probe": probe.get("_provider", {})}
     return pack
