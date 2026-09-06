@@ -44,6 +44,7 @@ import time
 
 from . import contracts as C
 from . import continuity as CE
+from . import jurisdiction as JU
 from . import ledger as LG
 from . import stages as S
 from . import story as ST
@@ -353,6 +354,19 @@ FREEZE_SYSTEM = (
     "licenses it. Do not skip a passage of what something does not do, does not cover or "
     "cannot see because it looks like a negative claim: a stated negative is a fact, and "
     "only an UNstated one is a fabrication.\n"
+    "NO DEFAULT NATIONAL FRAMEWORK. When a source names a legal standard, a code or an "
+    "accessibility classification -- the ADA, Section 508, the Equality Act, a building "
+    "code, a directory's own access field -- what you have evidence of is THAT RECORD "
+    "SAYING THAT THING. You do not have evidence that the standard applies to your "
+    "subject, and you may not word the proposition as though it does. Write it as what "
+    "it is: 'the directory entry for X records ADA accessibility as No', not 'X is not "
+    "ADA accessible', and never 'X is not accessible'. This is the single most common "
+    "way a foreign framework gets imported into a story it has no business in: English-"
+    "language research turns up American standards for subjects anywhere on earth, "
+    "because American material is what is written down in English. Being the only "
+    "standard anybody wrote down does not make a standard local. A later check will "
+    "restrict such a fact to attribution automatically -- write it correctly and there "
+    "is nothing to restrict.\n"
     "Include the unglamorous facts and the ones that cut against the obvious story. "
     "Selection happens later and cannot select what you did not freeze."
 )
@@ -611,11 +625,21 @@ def freeze_ledger(provider, pack: dict, subject: str) -> dict:
             + (["rejected as unsupportable: %s" % sorted(rejected)] if rejected else []),
             {"ledger": ledger, "rejected": rejected})
 
+    # NO DEFAULT NATIONAL FRAMEWORK (2026-09-06). Deterministic, no model call, and it
+    # runs LAST -- on the ledger that already passed span verification -- because it
+    # changes what a fact PERMITS, never whether the fact is supported. See
+    # jurisdiction.py: a standard that is not the law where the subject is becomes an
+    # ATTRIBUTION about the record that states it, and nothing is deleted.
+    ledger, jurisdiction_report = JU.apply(ledger, pack)
+
     kinds = {}
     for f in ledger.values():
         kinds[f.get("claim_kind")] = kinds.get(f.get("claim_kind"), 0) + 1
     return {"status": PASS, "ledger": ledger, "provider": ident,
             "model_calls": calls, "repairs": repairs,
+            "jurisdiction": jurisdiction_report,
+            "subject_place": JU.subject_place(pack),
+            "subject_country": jurisdiction_report["subject_country"],
             "sources_truncated": truncated_sources(pack),
             "facts": len(ledger), "claim_kinds": kinds,
             "rejected": rejected,

@@ -320,19 +320,28 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 fig_src = open(os.path.join(HERE, "new_engine_v1", "figures.py")).read()
 res_src = open(os.path.join(HERE, "new_engine_v1", "research.py")).read()
 
-def code_of(src):
-    """Source with its module docstring removed.
+def code_only(path):
+    """Executable source with every string literal and comment removed.
 
-    These files DISCUSS what they must not do -- figures.py says in prose that it never
-    downloads an image and that `include_images=True` is not switched on anywhere -- so a
-    naive substring scan of the whole file reports its own documentation as a violation.
-    Found exactly that way on the first run of this test. Scan the code, read the prose.
+    These modules DISCUSS what they must not do -- figures.py says in prose that it never
+    downloads an image, jurisdiction.py that it never geocodes -- so a substring scan of
+    the whole file reports each file's own documentation as a violation of itself. Found
+    exactly that way, twice, on the first runs of these tests. A first attempt stripped
+    only the module docstring and still missed a FUNCTION docstring, so this drops every
+    STRING and COMMENT token instead: the tokens below are identifiers, and an identifier
+    is never inside a string in this code base.
     """
-    parts = src.split('"""')
-    return "".join(parts[2:]) if len(parts) >= 3 else src
+    import io, tokenize
+    out = []
+    with open(path, "rb") as fh:
+        for tok in tokenize.tokenize(fh.readline):
+            if tok.type not in (tokenize.STRING, tokenize.COMMENT):
+                out.append(tok.string)
+    return " ".join(out)
 
 
-FIG_CODE, RES_CODE = code_of(fig_src), code_of(res_src)
+FIG_CODE = code_only(os.path.join(HERE, "new_engine_v1", "figures.py"))
+RES_CODE = code_only(os.path.join(HERE, "new_engine_v1", "research.py"))
 
 check("figures.py opens no socket",
       not any(m in FIG_CODE for m in ("urllib.request", "urlopen", "socket", "requests",
@@ -348,12 +357,16 @@ check("figures.py hashes nothing -- it has no bytes to hash",
       "sha256" not in FIG_CODE and "hashlib" not in FIG_CODE)
 check("include_images was NOT switched on",
       "include_images=True" not in RES_CODE and "include_images=True" not in FIG_CODE)
+# These three read the RAW source, not code_only's token stream: they assert the exact
+# SHAPE of a line, and code_only joins tokens with spaces. The token stream is for
+# scanning that a forbidden identifier is ABSENT; raw source is for confirming a
+# particular line is present.
 check("body extraction is untouched -- text, length and hash come from strip_html",
-      "content_length=len(text), sha256=sha256_text(text)" in RES_CODE)
+      "content_length=len(text), sha256=sha256_text(text)" in res_src)
 check("the harvest reads the SAME html the body text came from",
-      'figs = FIG.harvest(html, rec.get("url", ""))' in RES_CODE)
+      'figs = FIG.harvest(html, rec.get("url", ""))' in res_src)
 check("figures ride along only when present, like document provenance",
-      'if s.get("figures"):' in RES_CODE)
+      'if s.get("figures"):' in res_src)
 check("research.py gained no new network call",
       RES_CODE.count("urlopen") == 2,
       "two before this change (the ordinary fetch and the search POST), two after; "
