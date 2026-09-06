@@ -497,8 +497,8 @@ def run_scheduled(orch, *, rehearsal: bool = False,
             run, _pkg_status or "MISSING")
     # The public source list, taken from the run's own frozen RESEARCH_PACK. Reading it
     # is not allowed to cost a run that is already decided: a pack that is missing or
-    # malformed yields no list, and the article publishes with only the source that
-    # prompted it. Nothing here searches, ranks or re-fetches anything.
+    # malformed yields no list, and the article publishes with no public source block --
+    # the site renders one only from this list. Nothing here searches, ranks or re-fetches.
     try:
         _pack = (out.get("artifacts") or {}).get(C.RESEARCH_PACK)
         _sources = CAND.public_sources(_pack.payload if _pack is not None else {})
