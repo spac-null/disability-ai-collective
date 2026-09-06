@@ -27,7 +27,7 @@ publication_safety_version: 1
 image: /assets/the-upper-room-at-wildsumaco_setting_1.jpg
 image_alt: "The Upper Room at WildSumaco — editorial illustration"
 translation_nl: "/nl/the-upper-room-at-wildsumaco/"
-dek: "The architects describe the classroom and bird observatory on the pavilion's upper level as open to all. The WildSumaco Biological Station is recorded as not open to the public, and its accessibility field reads No."
+dek: "The architects describe the classroom and bird observatory on the pavilion's upper level as open to all."
 excerpt: "A teaching pavilion at Pacto Sumaco, in Ecuador's Napo Province, is lifted clear of the forest floor so water, moisture and small fauna carry on beneath it. The room the architects call open to all sits on the upper level."
 sources:
   - title: "WildSumaco Biological Station — Francis Marion University"
@@ -47,7 +47,7 @@ sources:
     publisher: "Dezeen"
 ---
 
-The classroom and bird observatory on the upper level of the WildSumaco Research Pavilion have no locks, and the architects describe them as open to all. The lower level holds the research and analysis spaces. The pavilion is 280 square metres, completed in 2025, on the outskirts of the community of Pacto Sumaco, in Ecuador, at the foot of the Sumaco volcano and the first core zone of Sumaco Napo Galeras National Park, where the Andean slope meets the high Amazon. Francis Marion University commissioned it to expand research operations it had been running in the area for more than twenty years, and the completed building allowed the university to launch intensive courses in which students will train alongside local families.
+The classroom and bird observatory on the upper level of the WildSumaco Research Pavilion have no locks, and the architects describe them as open to all. The lower level holds the research and analysis spaces. The pavilion is 280 square metres, completed in 2025, on the outskirts of the community of Pacto Sumaco, in Ecuador, at the foot of the Sumaco volcano and the first core zone of Sumaco Napo Galeras National Park, where the Andean slope meets the high Amazon. Francis Marion University commissioned it to expand research operations reported to have been running in the area for more than twenty years, and the completed building allowed the university to launch intensive courses in which students will train alongside local families.
 
 The two-level pavilion follows an ethic of minimal intervention. It adapts to the existing topography and sits among the trees, avoiding logging almost entirely. It does not open a void in the forest; it uses an existing clearing within the vegetation. Its floor is lifted clear of the natural ground. That lift keeps the terrain active, lets water circulate and moisture breathe, and lets small fauna stay in place, while the vegetation continues around the building. The decision about the ground is a decision about what passes under the floor: the building's permeability is calibrated to the bodies of the forest.
 
@@ -69,4 +69,4 @@ The WildSumaco Biological Station is a collaborative initiative of Francis Mario
 <figcaption>The Upper Room at WildSumaco — editorial illustration</figcaption>
 </figure>
 
-A room on the top level with no locks. Glass fitted with bird-safe protection. Ground left under the floor so that water, moisture and small fauna carry on across it. Each of those is a decision about which bodies pass. The WildSumaco Biological Station's directory entry contains an accessibility field labelled 'ADA accessibility', and the entry reads No. The room the architects call open to all sits on the upper level of a building lifted off the ground.
+A room on the top level with no locks. Glass fitted with bird-safe protection. Ground left under the floor so that water, moisture and small fauna carry on across it. Each of those is a decision about which bodies pass. The room the architects call open to all sits on the upper level of a building lifted off the ground.
