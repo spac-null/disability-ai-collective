@@ -105,8 +105,10 @@ with tempfile.TemporaryDirectory() as d:
     check("it declares its language", 'lang: "nl"' in text)
     check("it links back to the English article",
           'translation_of: "/2026/09/06/the-upper-room-at-wildsumaco/"' in text, text[:400])
-    check("it names the exact English bytes it renders",
-          "translation_source_sha256" in text)
+    check("it names the exact frozen bundle it renders, not just the body",
+          "translation_source_bundle_sha256" in text, text[:500])
+    check("and that hash covers the packaging too",
+          TP.bundle_sha256(en) != TP.bundle_sha256(dict(en, dek="a new dek")))
     check("NO ENGINE PROVENANCE IS COPIED",
           all(k not in text for k in ("engine_run", "fact_check_text_sha256",
                                       "publication_eligible", "provider_model",
@@ -116,8 +118,34 @@ with tempfile.TemporaryDirectory() as d:
     check("and the image is not regenerated, only referenced",
           '"/assets/x.jpg"' in text)
 
+print("\ntest_the_four_correctness_rules")
+src = pathlib.Path(TP.__file__).read_text()
+check("the correction pass is handed the edition it corrects",
+      "previous=tr" in src and "a correction pass needs the edition it is correcting" in src)
+check("image alt text is inside both fidelity passes",
+      '("article", "image_alt") + BUNDLE_FIELDS' in src and 'IMAGE_ALT: %s" % en' in src)
+en_img = {"article": 'Text.\n<figure><img src="{{ site.baseurl }}/assets/a_moment_2.jpg" '
+                     'alt="x"></figure>\nMore.', "image_alt": "A caption"}
+tr_same = {"article": 'Tekst.\n<figure><img src="{{ site.baseurl }}/assets/a_moment_2.jpg" '
+                      'alt="y"></figure>\nMeer.', "image_alt": "Een onderschrift"}
+check("translated alt text alone is not a finding",
+      not [f for f in TP.mechanical_findings(en_img, tr_same) if f["category"] == "IMAGES"],
+      TP.mechanical_findings(en_img, tr_same))
+tr_moved = {"article": "Tekst. Meer.", "image_alt": "Een onderschrift"}
+check("a dropped figure is a finding",
+      [f for f in TP.mechanical_findings(en_img, tr_moved) if f["category"] == "IMAGES"])
+tr_renamed = {"article": 'Tekst.\n<figure><img src="{{ site.baseurl }}/assets/other.jpg" '
+                         'alt="y"></figure>\nMeer.', "image_alt": "x"}
+check("a renamed asset is a finding",
+      [f for f in TP.mechanical_findings(en_img, tr_renamed) if f["category"] == "IMAGES"])
+check("no English packaging is generated for a pre-package article",
+      "editorial_package" not in src and "fields_absent" in src)
+
 print("\ntest_the_language_registry_is_the_whole_configuration")
 check("Dutch is configured", "nl" in TP.LANGUAGES)
+check("the collection file is named for the slug the permalink renders",
+      TP.translation_path("nl", pathlib.Path("2026-09-06-the-upper-room.md")).name
+      == "the-upper-room.md")
 for k in ("name", "endonym", "collection", "url_prefix", "register"):
     check("nl declares %s" % k, k in TP.LANGUAGES["nl"])
 cfg = pathlib.Path(TP.__file__).parent.parent / "_config.yml"

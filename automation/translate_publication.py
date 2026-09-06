@@ -136,6 +136,7 @@ FIDELITY_SYSTEM = (
     "  CAUSAL         a correlation or adjacency that became a cause, or a cause lost\n"
     "  ATTRIBUTION    who says it, who found it, who did it\n"
     "  RELATIONS      subject and object swapped, or a relation reversed\n"
+    "  IMAGES         alt text that describes a different picture than the English does\n"
     "\n"
     "A finding must quote both sides. If the two texts say the same thing in different "
     "words, that is not a finding -- it is a translation."
@@ -145,7 +146,7 @@ FIDELITY_SCHEMA = (
     "Reply with ONE JSON object:\n"
     '{"verdict": "PASS|HOLD",\n'
     ' "findings": [{"category": "NAMES|NUMBERS|DATES|QUOTED_LABELS|NEGATION|MODALITY|\n'
-    '                            SCOPE|CAUSAL|ATTRIBUTION|RELATIONS",\n'
+    '                            SCOPE|CAUSAL|ATTRIBUTION|RELATIONS|IMAGES",\n'
     '               "english": "the exact English", "translated": "the exact translation",\n'
     '               "what_changed": "one sentence"}]}\n'
     "PASS means you found nothing. No prose outside the JSON."
@@ -156,6 +157,7 @@ FIDELITY_SCHEMA = (
 _FIG = re.compile(r"<figure.*?</figure>", re.S)
 _NUM = re.compile(r"\b\d[\d.,]*\b")
 _YEAR = re.compile(r"\b(?:1[6-9]|20)\d{2}\b")
+_ASSET = re.compile(r'(?:src=|!\[[^\]]*\]\()\s*"?\{?\{?[^"\')>]*?/assets/([^"\')\s>]+)')
 
 
 def _plain(text: str) -> str:
@@ -181,8 +183,9 @@ def mechanical_findings(en: dict, tr: dict) -> list:
     rendered -- "The Upper Room" offers three capitals and no names.
     """
     out = []
-    en_all = " ".join(str(en.get(k) or "") for k in ("article",) + BUNDLE_FIELDS)
-    tr_all = " ".join(str(tr.get(k) or "") for k in ("article",) + BUNDLE_FIELDS)
+    fields = ("article", "image_alt") + BUNDLE_FIELDS
+    en_all = " ".join(str(en.get(k) or "") for k in fields)
+    tr_all = " ".join(str(tr.get(k) or "") for k in fields)
     lost = sorted(_numbers(en_all) - _numbers(tr_all))
     added = sorted(_numbers(tr_all) - _numbers(en_all))
     if lost:
@@ -209,6 +212,22 @@ def mechanical_findings(en: dict, tr: dict) -> list:
     named = {t for t, n in counts.items() if n >= 2}
     named |= ST._entities(_plain(en.get("article") or ""), skip_sentence_initial=True)
     low = _plain(tr_all).lower()
+    # IMAGE IDENTITY AND PLACEMENT ARE NOT TRANSLATABLE. Alt text is prose and may be
+    # rewritten; the asset a figure points at, and how many figures the body carries, are
+    # structure. A translation that drops a figure or renames an asset has changed the
+    # article, not its language.
+    en_src = _ASSET.findall(en.get("article") or "")
+    tr_src = _ASSET.findall(tr.get("article") or "")
+    if en_src != tr_src:
+        out.append({"category": "IMAGES", "english": ", ".join(en_src)[:200],
+                    "translated": ", ".join(tr_src)[:200],
+                    "what_changed": "the body's image assets differ in identity or order"})
+    en_fig = (en.get("article") or "").count("<figure")
+    tr_fig = (tr.get("article") or "").count("<figure")
+    if en_fig != tr_fig:
+        out.append({"category": "IMAGES", "english": "%d figures" % en_fig,
+                    "translated": "%d figures" % tr_fig,
+                    "what_changed": "figure count changed"})
     for tok in sorted(named):
         base = re.sub(r"['’]s$", "", tok)
         if base.lower() in low or base.lower() in ST._FUNCTION_WORDS:
@@ -221,7 +240,8 @@ def mechanical_findings(en: dict, tr: dict) -> list:
 
 
 # ── the stage ─────────────────────────────────────────────────────────────────
-def translate_bundle(provider, bundle: dict, lang: str, corrections: list | None = None) -> dict:
+def translate_bundle(provider, bundle: dict, lang: str, corrections: list | None = None,
+                     previous: dict | None = None) -> dict:
     cfg = LANGUAGES[lang]
     user = ["THE PUBLISHED ENGLISH EDITION", ""]
     for f in BUNDLE_FIELDS:
@@ -231,12 +251,28 @@ def translate_bundle(provider, bundle: dict, lang: str, corrections: list | None
         user.append("IMAGE_ALT: %s" % bundle["image_alt"])
     user += ["", "ARTICLE", bundle["article"], "", TRANSLATE_SCHEMA]
     if corrections:
-        user = ["THE PREVIOUS EDITION WAS HELD BY THE FIDELITY CHECK. Fix exactly these "
-                "and change nothing else.",
-                *["  - [%s] %s -> %s : %s" % (c.get("category"), str(c.get("english"))[:120],
-                                              str(c.get("translated"))[:120],
-                                              c.get("what_changed", ""))
-                  for c in corrections[:10]], ""] + user
+        # AN EDIT, NOT A SECOND TRANSLATION. "Change nothing else" is only meaningful if
+        # the thing to change is in front of the model, so the held edition is handed back
+        # whole and the findings name what to touch. Regenerating from the English instead
+        # -- which this did until it was pointed out -- produces a different edition whose
+        # other sentences nobody has compared to anything.
+        if not previous:
+            raise ValueError("a correction pass needs the edition it is correcting")
+        prev = ["THE EDITION BELOW WAS HELD BY THE FIDELITY CHECK. Return it again with "
+                "ONLY these findings fixed. Every other sentence, including its wording "
+                "and its rhythm, comes back unchanged.", ""]
+        prev += ["  - [%s] English: %s | your edition: %s | %s"
+                 % (c.get("category"), str(c.get("english"))[:140],
+                    str(c.get("translated"))[:140], c.get("what_changed", ""))
+                 for c in corrections[:10]]
+        prev += ["", "YOUR PREVIOUS EDITION", ""]
+        for f in BUNDLE_FIELDS:
+            if previous.get(f):
+                prev.append("%s: %s" % (f.upper(), previous[f]))
+        if previous.get("image_alt"):
+            prev.append("IMAGE_ALT: %s" % previous["image_alt"])
+        prev += ["", previous.get("article") or "", "", "=" * 60, ""]
+        user = prev + user
     comp = provider.complete(system=TRANSLATE_SYSTEM % cfg,
                              user="\n".join(user), max_tokens=12_000)
     obj = parse_json_object(comp.text)
@@ -258,10 +294,14 @@ def fidelity_check(provider, en: dict, tr: dict) -> dict:
     for f in BUNDLE_FIELDS:
         if en.get(f):
             user.append("%s: %s" % (f.upper(), en[f]))
+    if en.get("image_alt"):
+        user.append("IMAGE_ALT: %s" % en["image_alt"])
     user += ["", en["article"], "", "=" * 60, "", "TRANSLATION", ""]
     for f in BUNDLE_FIELDS:
         if tr.get(f):
             user.append("%s: %s" % (f.upper(), tr[f]))
+    if tr.get("image_alt"):
+        user.append("IMAGE_ALT: %s" % tr["image_alt"])
     user += ["", tr["article"], "", FIDELITY_SCHEMA]
     comp = provider.complete(system=FIDELITY_SYSTEM, user="\n".join(user), max_tokens=3_000)
     obj = parse_json_object(comp.text)
@@ -276,39 +316,75 @@ def fidelity_check(provider, en: dict, tr: dict) -> dict:
 
 # ── reading the English edition, writing the derivative one ───────────────────
 def read_post(path: pathlib.Path) -> tuple:
+    """Front matter as YAML, body as text.
+
+    yaml.safe_load rather than a regex, so a value keeps its type: `keywords` is a flow
+    sequence and must come back a list, or the edition would re-emit it quoted as one
+    long string and every consumer of that field would silently see one keyword.
+    """
+    import yaml
     raw = path.read_text(encoding="utf-8")
     _, fm_text, body = raw.split("---", 2)
-    fm = {}
-    for m in re.finditer(r'(?m)^([a-z_]+):\s*(.+)$', fm_text):
-        v = m.group(2).strip()
-        if v.startswith('"') and v.endswith('"'):
-            v = v[1:-1]
-        fm[m.group(1)] = v
+    fm = yaml.safe_load(fm_text) or {}
     return fm, body.strip()
 
 
-def english_bundle(provider, path: pathlib.Path) -> dict:
-    """The frozen English bundle. Packaging fields come from the front matter when the
-    article was published with them; an article published before the packaging stage
-    existed has them generated from its own published bytes, which is the same call the
-    pipeline makes and reads the same text."""
+def _yaml_value(v) -> str:
+    """Emit a value in its own shape: a list stays a flow sequence, a date stays a date."""
+    if isinstance(v, list):
+        return "[%s]" % ", ".join(str(x) for x in v)
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    if isinstance(v, (int, float)):
+        return str(v)
+    if isinstance(v, (datetime.date, datetime.datetime)):
+        return v.isoformat()[:10] if isinstance(v, datetime.date) else v.isoformat()
+    return json.dumps(str(v))
+
+
+def english_bundle(path: pathlib.Path) -> dict:
+    """The frozen English bundle: the public fields the article ACTUALLY HAS.
+
+    An article published before the packaging stage existed has a title and an image alt
+    and nothing else, and that is what its edition gets. Generating a dek and a homepage
+    excerpt here and translating those would put two unchecked English claims into the
+    world through the side door -- they would never have passed Safety, the Grounder or
+    the Fact Check, which read the bundle, and the Dutch edition would be the first place
+    they appeared. If such an article should have packaging, it earns it in the pipeline
+    that checks it, and the edition is remade afterwards.
+
+    No model call. This function reads a file.
+    """
     fm, body = read_post(path)
     bundle = {"article": body, "title": fm.get("title", ""),
               "dek": fm.get("dek", ""), "homepage_excerpt": fm.get("excerpt", ""),
               "meta_description": fm.get("meta_description", ""),
               "social_hook": fm.get("social_hook", ""),
               "image_alt": fm.get("image_alt", ""), "front_matter": fm}
-    if not (bundle["dek"] and bundle["homepage_excerpt"]):
-        pk = CP.editorial_package(provider, _plain(body), {}, {})
-        if pk.get("package"):
-            for f in BUNDLE_FIELDS:
-                bundle[f] = bundle[f] or pk["package"].get(f, "")
-            bundle["packaging_generated"] = True
+    bundle["fields_present"] = [f for f in BUNDLE_FIELDS if bundle.get(f)]
+    bundle["fields_absent"] = [f for f in BUNDLE_FIELDS if not bundle.get(f)]
     return bundle
 
 
+def bundle_sha256(bundle: dict) -> str:
+    """The hash of the WHOLE frozen public bundle, not the article body: the edition is
+    made from the article AND its packaging, so the article's hash alone would not detect
+    a dek that changed under it."""
+    return sha256_text(json.dumps(
+        {k: bundle.get(k) or "" for k in ("article", "image_alt") + BUNDLE_FIELDS},
+        sort_keys=True, ensure_ascii=False))
+
+
+def slug_of(en_path: pathlib.Path) -> str:
+    return re.sub(r"^\d{4}-\d{2}-\d{2}-", "", en_path.stem)
+
+
 def translation_path(lang: str, en_path: pathlib.Path) -> pathlib.Path:
-    return REPO / LANGUAGES[lang]["collection"] / en_path.name
+    """WITHOUT the date prefix, and that is not cosmetic. The collection's permalink is
+    /nl/:name/, and :name is the filename stem -- a dated filename would publish the
+    edition at /nl/2026-09-06-the-upper-room/ while every link written for it points at
+    /nl/the-upper-room/. The date is in the front matter, where the collection reads it."""
+    return REPO / LANGUAGES[lang]["collection"] / ("%s.md" % slug_of(en_path))
 
 
 def write_translation(lang: str, en_path: pathlib.Path, en: dict, tr: dict) -> pathlib.Path:
@@ -320,7 +396,7 @@ def write_translation(lang: str, en_path: pathlib.Path, en: dict, tr: dict) -> p
              'lang: "%s"' % lang]
     for k in CARRY_FROM_ENGLISH:
         if fm.get(k):
-            lines.append("%s: %s" % (k, json.dumps(fm[k]) if k != "date" else fm[k]))
+            lines.append("%s: %s" % (k, _yaml_value(fm[k])))
     if tr.get("image_alt"):
         lines.append("image_alt: %s" % json.dumps(tr["image_alt"]))
     for field, key in (("dek", "dek"), ("homepage_excerpt", "excerpt"),
@@ -331,7 +407,7 @@ def write_translation(lang: str, en_path: pathlib.Path, en: dict, tr: dict) -> p
     lines.append('translation_of: "%s"' % english_url(en_path, fm))
     # The bytes this edition was made from. Not engine provenance -- the one fact a
     # reader of the file needs: which English article, in which state, it renders.
-    lines.append('translation_source_sha256: "%s"' % sha256_text(en["article"]))
+    lines.append('translation_source_bundle_sha256: "%s"' % bundle_sha256(en))
     lines = [x for x in lines if x]
     lines.append("---")
     out.write_text("\n".join(lines) + "\n\n" + tr["article"].strip() + "\n",
@@ -340,10 +416,18 @@ def write_translation(lang: str, en_path: pathlib.Path, en: dict, tr: dict) -> p
 
 
 def english_url(path: pathlib.Path, fm: dict) -> str:
-    m = re.match(r"(\d{4})-(\d{2})-(\d{2})-(.+)\.md$", path.name)
-    if not m:
-        return "/"
-    return "/%s/%s/%s/%s/" % (m.group(1), m.group(2), m.group(3), m.group(4))
+    """The URL Jekyll will actually render, which is built from the front-matter `date`
+    when there is one -- and there always is here, because publish_best rewrites it to the
+    real promotion date, which can differ from the date in the filename."""
+    d = fm.get("date")
+    if isinstance(d, (datetime.date, datetime.datetime)):
+        y, m_, dd = d.year, d.month, d.day
+    else:
+        m = re.match(r"(\d{4})-(\d{2})-(\d{2})", str(d or path.name))
+        if not m:
+            return "/"
+        y, m_, dd = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    return "/%04d/%02d/%02d/%s/" % (y, m_, dd, slug_of(path))
 
 
 def link_english(en_path: pathlib.Path, lang: str) -> None:
@@ -354,7 +438,7 @@ def link_english(en_path: pathlib.Path, lang: str) -> None:
     if key in raw.split("---", 2)[1]:
         return
     head, fm, body = raw.split("---", 2)
-    url = LANGUAGES[lang]["url_prefix"] + re.sub(r"^\d{4}-\d{2}-\d{2}-", "", en_path.stem) + "/"
+    url = LANGUAGES[lang]["url_prefix"] + slug_of(en_path) + "/"
     en_path.write_text("%s---%s%s: \"%s\"\n---%s" % (head, fm.rstrip("\n") + "\n", key, url, body),
                        encoding="utf-8")
 
@@ -372,12 +456,17 @@ def main(argv=None) -> int:
     import claude_cli_provider as CCP
     P = CCP.ClaudeCLIProvider()
     post = pathlib.Path(a.post)
-    en = english_bundle(P, post)
+    en = english_bundle(post)
+    if en["fields_absent"]:
+        print("NOTE: the English article carries no %s -- it predates the packaging "
+              "stage. The edition translates the public fields that exist; it does not "
+              "invent English packaging, which would enter the world unchecked."
+              % ", ".join(en["fields_absent"]))
     tr = translate_bundle(P, en, a.lang)
     fid = fidelity_check(P, en, tr)
     if fid["verdict"] == "HOLD":
         # ONE correction pass, on the named findings only.
-        tr = translate_bundle(P, en, a.lang, corrections=fid["findings"])
+        tr = translate_bundle(P, en, a.lang, corrections=fid["findings"], previous=tr)
         fid2 = fidelity_check(P, en, tr)
         fid2["after_correction"] = True
         fid2["first_pass_findings"] = fid["findings"]
