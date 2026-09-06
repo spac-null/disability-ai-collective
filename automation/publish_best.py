@@ -407,6 +407,9 @@ def main(dry_run=False):
               f"aging=+{aging_bonus:.2f} (attempts={attempts}) → {score:.2f}")
 
     published = False
+    # Declared before the promotion block that sets it: an assignment placed
+    # after that block would reset the flag and lose the failure it records.
+    image_failure = None
     dest = None
     # Every path this run intentionally changes, recorded as it changes. Staging is
     # built from THIS list and nothing else. The alternative -- staging a directory and
@@ -436,6 +439,41 @@ def main(dry_run=False):
             set_publish_date(dest, now)
             published = True
             mutated += [str(dest), str(best_draft)]      # created, and moved out of
+
+            # ILLUSTRATE HERE, AT THE ONE BOUNDARY BOTH ENGINES CROSS. Illustration used
+            # to live inside the legacy composition path (orchestrator/generate.py calls
+            # generate_images, orchestrator/publish.py calls _insert_images_balanced).
+            # Story Architecture has neither call, so from the 2026-09-05 cutover every
+            # CURRENT_ENGINE article published unillustrated and nothing said so.
+            #
+            # Doing it at promotion rather than inside either engine means one
+            # implementation serves both. It cannot double-generate: gen_images skips a
+            # post that already carries an `image:` field, and illustrate_post leaves a
+            # body that already has figures alone -- so a legacy article that illustrated
+            # itself upstream passes straight through untouched.
+            try:
+                import gen_images
+                if gen_images.has_image_field(dest.read_text()):
+                    print("  images: already illustrated upstream — leaving as is")
+                else:
+                    res = gen_images.illustrate_post(dest)
+                    if res["ok"]:
+                        print("  images: %d generated, %d placed in body"
+                              % (len(res["assets"]), res["figures"]))
+                        mutated += res["assets"]
+                    else:
+                        # NEVER SILENT. Illustrations are part of the normal publication
+                        # contract, so an article going out without them is reported here
+                        # and on stderr rather than discovered weeks later on the site.
+                        image_failure = res["reason"]
+                        print("  images: FAILED — %s" % image_failure)
+                        print("PUBLISHING WITHOUT ILLUSTRATIONS: %s (%s)"
+                              % (dest.name, image_failure), file=sys.stderr)
+            except Exception as e:                                # noqa: BLE001
+                image_failure = "%s: %s" % (type(e).__name__, str(e)[:160])
+                print("  images: FAILED — %s" % image_failure)
+                print("PUBLISHING WITHOUT ILLUSTRATIONS: %s (%s)"
+                      % (dest.name, image_failure), file=sys.stderr)
 
             # Every other in-window candidate just lost this cycle — bump its aging counter.
             for _score, draft, *_rest, fm in candidates[1:]:
@@ -474,6 +512,8 @@ def main(dry_run=False):
             msg_parts.append(f"publish: {dest.stem}")
         if archived:
             msg_parts.append(f"archive {len(archived)} draft(s) unpublished after {AGE_WINDOW_DAYS}d")
+        if image_failure:
+            msg_parts.append("published without illustrations: %s" % image_failure)
         subprocess.run(
             ["git", "commit", "-m", " | ".join(msg_parts)],
             cwd=str(REPO), check=True
