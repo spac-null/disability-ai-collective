@@ -143,6 +143,22 @@ FACT_CHECK_TOTAL_SECONDS = 180
 # The per-call timeout this stage has always used. Still the ceiling for any one call;
 # the total deadline can only ever lower it.
 PER_CALL_TIMEOUT = 30
+# EXTRACTION IS ON A DIFFERENT TRANSPORT FROM THE VERIFICATIONS, and needs its own ceiling.
+# The Sonar verifications are HTTP to OpenRouter and finish in the observed 2.4-4.9s. Claim
+# extraction is Claude-family, so since Phase 2B it runs through the local Claude CLI: a
+# subprocess spawn plus model latency, over the whole article.
+#
+# Measured on the host against a real 808-word article, twice: 26s and 18s. Against a 30s
+# ceiling that is not a margin, it is a coin toss -- and it lost twice during a rescue,
+# reporting "claude CLI timed out after 30s" as an extraction failure and taking the whole
+# run down as unverifiable. The number was never wrong; it was measured on another
+# transport.
+#
+# 90s is generous against 18-26s rather than tight to it, because extraction happens ONCE
+# per article so headroom is nearly free. It stays well under FACT_CHECK_TOTAL_SECONDS, and
+# call_budget() still lowers it to whatever is actually left: extraction cannot consume the
+# stage's whole budget and leave nothing for the verifications it exists to feed.
+EXTRACTION_TIMEOUT = 90
 # A call is not STARTED with less than this left. Two reasons, and the second is the
 # one that matters: a call given a fraction of a second will fail, and its failure is
 # reported as UNVERIFIABLE -- a VERDICT, which does not block, and which would let a
@@ -453,18 +469,23 @@ class FactCheckMixin:
             result.update({"extraction_status": None, "extraction_error": None,
                            "claims_extracted": 0, "fact_check_completed": False})
 
-        def call_budget():
+        def call_budget(ceiling=PER_CALL_TIMEOUT):
             """What any one call may be given: its ordinary ceiling, or whatever is
-            left of the total, whichever is smaller. The total can only lower it."""
+            left of the total, whichever is smaller. The total can only lower it.
+
+            `ceiling` is a parameter because the calls are not alike any more: the
+            verifications are HTTP and the extraction is a subprocess. It defaults to
+            PER_CALL_TIMEOUT, so every existing caller is unchanged.
+            """
             if deadline is None:
-                return PER_CALL_TIMEOUT
-            return min(PER_CALL_TIMEOUT, deadline - time.monotonic())
+                return ceiling
+            return min(ceiling, deadline - time.monotonic())
 
         try:
             if strict:
                 try:
                     claims = self._extract_verifiable_claims_raw(
-                        content, timeout=max(0.0, call_budget()))
+                        content, timeout=max(0.0, call_budget(EXTRACTION_TIMEOUT)))
                 except Exception as e:
                     # Explicit failure state. Never [] -- see EXTRACTION_ERROR above.
                     self.logger.warning(
