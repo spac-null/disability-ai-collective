@@ -405,6 +405,29 @@ def test_shadow_cannot_touch_production():
           "selector_v2" not in inspect.getsource(discovery))
 
 
+def test_the_run_stops_acquiring_once_it_has_enough_to_compare():
+    """The judge should see several readable subjects, not one. Live runs read
+    candidates=12 fetched=5 assessed=1: acquisition failures were recorded and skipped
+    correctly, and then the run budget left room for a single assessment call."""
+    conn = _db([("s%d" % i, "https://x.example/rich?%d" % i, "t%d" % i, MP.CULTURE, 1, 0.5,
+                 None, "P%d" % i) for i in range(12)])
+    p = StubProvider({"Phreatichthys": "POSSIBLE_CANDIDATE"})
+    out = _run(conn, p)
+    m = out["metrics"]
+    check("it acquires exactly what it targets", m["acquisition_ok"] == SV.TARGET_ACQUIRED,
+          m["acquisition_ok"])
+    check("and assesses every one of them", m["assessed_n"] == SV.TARGET_ACQUIRED,
+          m["assessed_n"])
+    check("so the judge compares several subjects, not one", m["assessed_n"] >= 3)
+    check("the five operator numbers are all reported",
+          all(k in m for k in ("candidates_considered", "acquisition_ok",
+                               "acquisition_failed_n", "assessed_n", "selected")), m)
+    untouched = [r for r in out["not_attempted"]
+                 if r["assessment_status"] == SV.NOT_ATTEMPTED_TARGET_REACHED]
+    check("the candidates it never needed say why", len(untouched) == 7, len(untouched))
+    check("and a winner is named", bool(out["shadow_winner"]))
+
+
 def test_bounds_are_declared():
     for name, v, ceiling in (("DAILY_CANDIDATES", SV.DAILY_CANDIDATES, 20),
                              ("BATCH_SIZE", SV.BATCH_SIZE, 6),
@@ -416,7 +439,15 @@ def test_bounds_are_declared():
     conn = _db([("s%d" % i, "https://x.example/rich?%d" % i, "t%d" % i, MP.CULTURE, 1, 0.5, None,
                  "P%d" % i) for i in range(12)])
     p = StubProvider({"Phreatichthys": "POSSIBLE_CANDIDATE"})
-    out = _run(conn, p)
+    # The call ceiling is only reachable when more candidates are acquired than the run
+    # targets, so the target is lifted here to keep this contract under test. Its own
+    # behaviour is covered by test_the_run_stops_acquiring_once_it_has_enough_to_compare.
+    _target = SV.TARGET_ACQUIRED
+    SV.TARGET_ACQUIRED = 12
+    try:
+        out = _run(conn, p)
+    finally:
+        SV.TARGET_ACQUIRED = _target
     check("one candidate per call, so 12 candidates want 12 calls",
           out["metrics"]["candidates"] == 12)
     check("but the run stops at the ceiling", p.calls == SV.MAX_CALLS_PER_RUN, p.calls)
@@ -670,13 +701,16 @@ def test_a_slow_model_stops_the_run_instead_of_overrunning_it():
         SV.RUN_BUDGET_SECONDS, SV.MIN_ASSESSMENT_SECONDS = real_run, real_min
     elapsed = time.monotonic() - t0
     check("it stopped starting calls before the end of the set",
-          0 < p.calls < 6, p.calls)
+          0 < p.calls < out["metrics"]["acquisition_ok"], p.calls)
     check("the run stayed inside its budget plus slack (%.1fs <= 2.0s + 1.5s)" % elapsed,
           elapsed <= 3.5, elapsed)
     skipped = [r for r in out["records"]
                if r["assessment_status"] == SV.NOT_ASSESSED_RUN_BUDGET]
+    # Against what was ACQUIRED, not against the seed count: the run stops acquiring at
+    # TARGET_ACQUIRED, so the ones it never fetched are not run-budget casualties.
     check("the rest are recorded against the run budget",
-          len(skipped) == 6 - p.calls, (len(skipped), p.calls))
+          len(skipped) == out["metrics"]["acquisition_ok"] - p.calls,
+          (len(skipped), p.calls, out["metrics"]["acquisition_ok"]))
     check("and the metric says so", out["metrics"]["over_run_budget"] == len(skipped),
           out["metrics"])
     check("a run-budget skip is not a material verdict",
