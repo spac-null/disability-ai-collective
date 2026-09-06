@@ -16,6 +16,7 @@ from email.utils import parsedate_to_datetime
 
 sys.path.insert(0, str(Path(__file__).parent))
 import material_policy as MP                                        # noqa: E402
+import selector_v2 as SV                                            # noqa: E402
 
 # ── Env / paths ───────────────────────────────────────────────────────────────
 
@@ -311,6 +312,11 @@ THEME_KEYWORDS = {
 # with the whole-word-vs-substring lesson already documented on
 # _keyword_matches. Boost also halved (0.3 -> 0.15) so a genuine lens-match no
 # longer single-handedly clears the 0.4 selection gate on its own.
+# The exploration lane's size. Small on purpose: the point is that ordinary current
+# events, papers and institutional material can REACH the judge, not that they flood it.
+EXPLORATION_QUOTA = 14
+EXPLORATION_PER_SOURCE = 1
+
 DISABILITY_BOOSTERS = [
     "accessible","accessibility","wheelchair","deaf","blind",
     "autistic","neurodivergent","chronic illness","inclusive design","universal design",
@@ -1421,7 +1427,7 @@ def main():
     # comparison, so a high-volume feed's 8 slots went to whatever was newest
     # regardless of score -- silently undoing tonight's weight/exclusion
     # retuning for exactly the feeds that publish enough to hit the cap.
-    scored_items = []
+    scored_items, low_scored = [], []
     for item in raw_items:
         title = item.get("title", "")
         if BLOCKED_TITLE_PATTERNS.search(title):
@@ -1430,15 +1436,47 @@ def main():
         score, themes = score_item(item)
         if score < MIN_SCORE:
             skipped_score += 1
+            item["relevance_score"] = score
+            item["themes"] = themes
+            low_scored.append(item)
             continue
         item["relevance_score"] = score
         item["themes"] = themes
         scored_items.append(item)
 
     scored_items.sort(key=lambda it: it["relevance_score"], reverse=True)
+    # THE EXPLORATION LANE. score_item measures topic-keyword density, and this gate was
+    # deciding what the world contains: 677 of 1,027 items on 2026-09-06, including every
+    # item from sixteen general news feeds that have never once produced a candidate --
+    # BBC, NYT, Al Jazeera, Le Monde, Spiegel, Volkskrant and the rest are fetched every
+    # morning and thrown away for lacking keywords. The same gate scores all four of this
+    # publication's own canonical anchor pieces 0.0, because real material is
+    # low-keyword-density by construction. That is a filter deciding editorial reality.
+    #
+    # It is now a PRIORITISER. The high-score lane is untouched; alongside it a small
+    # fixed quota of low-score material is admitted so it can reach selector_v2, which
+    # reads full bodies, is explicitly lens-blind, and is the intelligent judge. Blocking
+    # and near-duplicate removal still apply to everything.
+    #
+    # Chosen by freshness and source diversity, NEVER by disability vocabulary: one item
+    # per source, newest first, so the lane is a slice of the day rather than of a
+    # keyword. Deliberately small -- the selector's own bounded exposure and call budget
+    # are what keep the run cheap, and they are unchanged.
+    low_scored.sort(key=lambda it: (it.get("published_date") or it.get("pub_date") or ""),
+                    reverse=True)
+    per_source, exploration = {}, []
+    for item in low_scored:
+        src = item.get("source_name", "")
+        if len(exploration) >= EXPLORATION_QUOTA:
+            break
+        if per_source.get(src, 0) >= EXPLORATION_PER_SOURCE:
+            continue
+        per_source[src] = per_source.get(src, 0) + 1
+        exploration.append(item)
 
     source_counts: dict[str, int] = {}
-    for item in scored_items:
+    explored = 0
+    for item in scored_items + exploration:
         src = item["source_name"]
         if source_counts.get(src, 0) >= MAX_PER_SOURCE:
             skipped_score += 1
@@ -1448,12 +1486,34 @@ def main():
             continue
         if store_seed(conn, item):
             stored += 1
+            if item["relevance_score"] < MIN_SCORE:
+                explored += 1
             source_counts[src] = source_counts.get(src, 0) + 1
 
-    log(f"Stored {stored} new seeds | skipped {skipped_score} low-score | {skipped_dupe} near-dupe | {skipped_blocked} blocked")
+    log(f"Stored {stored} new seeds ({stored - explored} scored lane, {explored} "
+        f"exploration lane) | skipped {skipped_score} low-score | {skipped_dupe} "
+        f"near-dupe | {skipped_blocked} blocked")
 
     # 3. LLM angle extraction for top candidates
-    if API_KEY:
+    # ANGLE EXTRACTION IS OFF UNDER THE AUTHORITATIVE SELECTOR, and this is a removal of
+    # dead work rather than a change of policy. `disability_angle` has exactly one
+    # consumer -- the legacy `get_news_seed`, which selects on `disability_angle IS NOT
+    # NULL` -- and that selector is the rollback path, not the live one. selector_v2 has
+    # been authoritative since its cutover and never reads the column.
+    #
+    # What it was producing, from a headline and an RSS summary, before anything had been
+    # read: "a blind or low-vision wayfinding expert would flag...", "a wheelchair-using
+    # access consultant would ask why...", "a blind textile historian would note the
+    # delicious irony...". That is the lens worn as a costume -- an imagined disabled
+    # persona pasted onto a headline -- and it is the opposite of what the publication's
+    # own Worth gate spends four paragraphs insisting on. Ten Sonnet calls a morning,
+    # consumed by nothing.
+    #
+    # The function stays, and so does every angle already stored. Roll the selector back
+    # to legacy and this comes back with it, because legacy needs the column it fills.
+    if SV.v2_is_authoritative():
+        log("selector_v2 authoritative — skipping angle extraction (no live consumer)")
+    elif API_KEY:
         extract_top_angles(conn, n=10)
     else:
         log("OPENROUTER_API_KEY not set — skipping angle extraction")

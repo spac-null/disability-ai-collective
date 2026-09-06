@@ -138,8 +138,21 @@ MAX_CALLS_PER_RUN = 10           # absolute ceiling
 # up production, and it must stop rather than finish. Bounding acquisition alone was
 # not enough: assessment is sequential provider calls, and provider.complete tries two
 # legs, each of which would otherwise get its own fresh timeout.
-RUN_BUDGET_SECONDS = 120
-ACQUISITION_BUDGET_SECONDS = 75  # sub-budget, clamped to the run deadline
+RUN_BUDGET_SECONDS = 330
+ACQUISITION_BUDGET_SECONDS = 120  # sub-budget, clamped to the run deadline
+# HOW MANY READABLE SUBJECTS THE JUDGE SHOULD SEE. Live runs read
+# "candidates=12 fetched=5 assessed=1": seven of twelve candidates failed acquisition and
+# the 120-second run budget then had room for a single assessment call after acquisition,
+# so the authoritative selector was choosing from ONE subject and its ranking had nothing
+# to rank. Acquisition failures were never the problem -- they are recorded and the loop
+# already continues past them -- the budget was. It now stops acquiring as soon as this
+# many candidates are readable, which leaves the rest of the run for assessing them.
+#
+# NOT BATCHED, deliberately. One candidate per call is a measured contract: a Guardian
+# gallery read POSSIBLE assessed alone and WEAK sharing a prompt with two unrelated
+# candidates, because the model started comparing. Five calls of one are the right answer
+# here and the call ceiling already bounds them.
+TARGET_ACQUIRED = 5
 MIN_ASSESSMENT_SECONDS = 12      # do not start a call that cannot plausibly finish
 BODY_WORDS_TO_MODEL = 1_100
 PUBLISHER_PENALTY_DAYS = 7       # decays to zero across a week
@@ -154,6 +167,10 @@ ASSESSMENT_ERROR = "ASSESSMENT_ERROR"
 NOT_ASSESSED_CALL_BUDGET = "NOT_ASSESSED_CALL_BUDGET"
 NOT_ASSESSED_RUN_BUDGET = "NOT_ASSESSED_RUN_BUDGET"
 NOT_ATTEMPTED_ACQUISITION_BUDGET = "NOT_ATTEMPTED_ACQUISITION_BUDGET"
+# Not a failure and not a budget exhaustion: enough readable candidates were already in
+# hand, so this one was never attempted. Recorded like the others, because "why was this
+# not looked at" must always have an answer.
+NOT_ATTEMPTED_TARGET_REACHED = "NOT_ATTEMPTED_TARGET_REACHED"
 
 RICHNESS = ("RICH", "MODERATE", "THIN")
 LEVELS = ("HIGH", "MEDIUM", "LOW")
@@ -685,6 +702,14 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
                                       % ACQUISITION_BUDGET_SECONDS,
                             "exposed_via": c["exposed_via"]})
             continue
+        if len(prepared) + len(cached) >= TARGET_ACQUIRED:
+            skipped.append({"seed_id": row["id"], "source_name": row["source_name"],
+                            "url": row["url"],
+                            "assessment_status": NOT_ATTEMPTED_TARGET_REACHED,
+                            "detail": "%d readable candidates already acquired"
+                                      % TARGET_ACQUIRED,
+                            "exposed_via": c["exposed_via"]})
+            continue
         text, status = acquire(row["url"])
         if status != "USABLE" or not text:
             failed.append({"seed_id": row["id"], "source_name": row["source_name"],
@@ -771,7 +796,14 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
         "shadow_winner": winner,
         "same_winner": bool(old_winner and winner
                             and old_winner.get("id") == winner["seed_id"]),
-        "metrics": {"candidates": len(candidates), "fetched": len(cached) + len(prepared),
+        "metrics": {"candidates_considered": len(candidates),
+                    "acquisition_ok": len(cached) + len(prepared),
+                    "acquisition_failed_n": len(failed),
+                    "assessed_n": sum(1 for r in records
+                                      if r["assessment_status"] == OK),
+                    "selected": (winner or {}).get("seed_id"),
+                    "target_acquired": TARGET_ACQUIRED,
+                    "candidates": len(candidates), "fetched": len(cached) + len(prepared),
                     "cached": len(cached), "assessed": calls,
                     "acquisition_failed": len(failed),
                     "not_attempted": len(skipped),

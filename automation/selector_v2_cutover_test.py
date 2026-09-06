@@ -378,9 +378,16 @@ def test_a_selector_failure_holds_and_does_not_fall_back():
 
 
 # ── G, H, I: budgets, cache, repetition ──────────────────────────────────────
-def test_the_hard_budgets_are_unchanged_by_the_cutover():
-    check("run budget still 120s", SV.RUN_BUDGET_SECONDS == 120)
-    check("acquisition sub-budget still 75s", SV.ACQUISITION_BUDGET_SECONDS == 75)
+def test_the_hard_budgets_are_declared_and_contained():
+    # Raised 2026-09-06 from 120/75. Live runs read "candidates=12 fetched=5 assessed=1":
+    # after acquisition the old run budget had room for ONE assessment call, so the
+    # authoritative selector was choosing from one subject and its ranking had nothing to
+    # rank. The budgets are still hard, still declared, and still contain each other.
+    check("run budget 330s", SV.RUN_BUDGET_SECONDS == 330)
+    check("acquisition sub-budget 120s", SV.ACQUISITION_BUDGET_SECONDS == 120)
+    check("and it leaves room for the readable candidates it targets",
+          SV.RUN_BUDGET_SECONDS - SV.ACQUISITION_BUDGET_SECONDS
+          >= 40 * SV.TARGET_ACQUIRED)
     check("sub-budget still contained by the total",
           SV.ACQUISITION_BUDGET_SECONDS + 40 <= SV.RUN_BUDGET_SECONDS)
     check("call ceiling still 10", SV.MAX_CALLS_PER_RUN == 10)
@@ -591,7 +598,7 @@ def main():
                test_the_selector_writes_no_authoritative_state,
                test_legacy_rollback_selects_through_the_old_path,
                test_a_selector_failure_holds_and_does_not_fall_back,
-               test_the_hard_budgets_are_unchanged_by_the_cutover,
+               test_the_hard_budgets_are_declared_and_contained,
                test_the_cache_still_works_authoritatively,
                test_publisher_repetition_is_still_soft,
                test_a_total_assessment_failure_is_an_infrastructure_failure,
