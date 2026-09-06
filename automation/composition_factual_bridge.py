@@ -116,7 +116,14 @@ def fact_check(article_text: str, claim_cap: int = DEFAULT_CLAIM_CAP) -> dict:
     # better verdict; a contradiction found on the first pass stands.
     try:
         r = _Runner()._run_web_fact_check(article_text, claim_cap=claim_cap, strict=True)
-        if r.get("extraction_status") == "error":
+        # RETRY ONLY WHAT A RETRY CAN FIX. The failure this was written for is a
+        # formatting accident -- "no JSON object in provider response" -- which a second
+        # identical request usually settles. A TIMEOUT is not that: the call did not
+        # misformat, it ran out of clock, and a second attempt at the same cost cannot
+        # succeed where the first did not. Retrying one also spends the stage's whole
+        # total, turning a recoverable slow call into a guaranteed incomplete.
+        _err = str(r.get("extraction_error") or "").lower()
+        if r.get("extraction_status") == "error" and "timed out" not in _err:
             r2 = _Runner()._run_web_fact_check(article_text, claim_cap=claim_cap,
                                                strict=True)
             r2["extraction_retried"] = True

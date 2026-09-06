@@ -139,7 +139,13 @@ FACT_CHECK_MAX_CLAIMS = 16
 # bound at all. 180s is a little over twice the slowest observed full pass, so a normal
 # run never meets it and a stalling provider cannot run the stage indefinitely.
 # Exhausting it is a TECHNICAL incomplete, never a partial pass.
-FACT_CHECK_TOTAL_SECONDS = 180
+# Raised from 180 on 2026-09-06, for the transport reason recorded at EXTRACTION_TIMEOUT.
+# The budget was set when extraction was an HTTP call of a second or two. It is now a
+# subprocess measured at 87s, so the stage's floor rose by ~85s without anything being
+# wrong. 600 = worst-case extraction (300) + the verification calls it feeds (observed
+# 2.4-4.9s each, capped at 8 claims) + margin. Exhausting it remains a TECHNICAL incomplete
+# and never a partial pass.
+FACT_CHECK_TOTAL_SECONDS = 600
 # The per-call timeout this stage has always used. Still the ceiling for any one call;
 # the total deadline can only ever lower it.
 PER_CALL_TIMEOUT = 30
@@ -154,11 +160,17 @@ PER_CALL_TIMEOUT = 30
 # run down as unverifiable. The number was never wrong; it was measured on another
 # transport.
 #
-# 90s is generous against 18-26s rather than tight to it, because extraction happens ONCE
-# per article so headroom is nearly free. It stays well under FACT_CHECK_TOTAL_SECONDS, and
-# call_budget() still lowers it to whatever is actually left: extraction cannot consume the
-# stage's whole budget and leave nothing for the verifications it exists to feed.
-EXTRACTION_TIMEOUT = 90
+# 87 SECONDS, measured on the real call path against a real 808-word article, returning 8
+# claims. An earlier measurement of 18-26s was taken with a truncated system prompt and
+# undermeasured the work: the production prompt asks for typed, subject-attributed claims
+# over the whole article, and that is most of the cost. A 90s ceiling set from the bad
+# number timed out at 90s, twice.
+#
+# 300s is ~3.4x the observed cost. Extraction happens ONCE per article, so headroom is
+# nearly free, and the failure it prevents is the whole run reported as unverifiable.
+# call_budget() still lowers it to whatever is left of the total: extraction cannot consume
+# the stage's budget and leave nothing for the verifications it exists to feed.
+EXTRACTION_TIMEOUT = 300
 # A call is not STARTED with less than this left. Two reasons, and the second is the
 # one that matters: a call given a fraction of a second will fail, and its failure is
 # reported as UNVERIFIABLE -- a VERDICT, which does not block, and which would let a
