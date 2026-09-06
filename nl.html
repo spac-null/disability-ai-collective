@@ -1,0 +1,45 @@
+---
+layout: default
+title: "Crip Minds in het Nederlands"
+lang: nl
+permalink: /nl/
+description: "Nederlandstalige artikelen van Crip Minds. De Engelse uitgave blijft de bron."
+---
+
+<div class="page-shell">
+  <header class="page-header">
+    <h1 class="page-title">In het Nederlands</h1>
+    <p class="text-body">Een deel van Crip Minds verschijnt ook in het Nederlands. De Engelse
+    versie blijft het origineel: elke vertaling is gemaakt van het gepubliceerde Engelse
+    artikel en bevat geen feiten die daar niet in staan.</p>
+  </header>
+
+  {% assign nl_posts = site.nl | sort: "date" | reverse %}
+  {% if nl_posts.size == 0 %}
+    <p class="text-body">Er zijn nog geen Nederlandse artikelen.</p>
+  {% else %}
+  <div class="article-grid">
+    {% for post in nl_posts %}
+    <article class="article-card">
+      {% if post.image %}
+      <a href="{{ post.url | relative_url }}" tabindex="-1" aria-hidden="true">
+        <img class="article-card__image" src="{{ post.image | relative_url }}"
+             alt="" width="800" height="450" loading="lazy" decoding="async">
+      </a>
+      {% endif %}
+      <h2 class="article-card__title">
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      </h2>
+      {% if post.dek %}<p class="post-excerpt">{{ post.dek }}</p>{% endif %}
+      <p class="text-body mb-6 article-card__excerpt">
+        {{ post.excerpt | strip_html | truncatewords: 55 }}
+      </p>
+      <p class="article-card__meta">
+        {{ post.author }} · <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%-d %B %Y" }}</time>
+        {% if post.translation_of %} · <a href="{{ post.translation_of | relative_url }}" hreflang="en" lang="en">English</a>{% endif %}
+      </p>
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>

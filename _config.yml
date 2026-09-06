@@ -24,6 +24,12 @@ collections:
   works:
     output: true
     permalink: /works/:name/
+  # TRANSLATIONS. One collection per language, so the English site is untouched:
+  # site.posts still means the English publication and nothing filters it. A future
+  # language adds a collection here and a `lang` value below -- nothing else.
+  nl:
+    output: true
+    permalink: /nl/:name/
 
 # Plugins
 plugins:
@@ -74,3 +80,10 @@ defaults:
     values:
       layout: "post"
       author: "Crip Minds"
+  - scope:
+      path: ""
+      type: "nl"
+    values:
+      layout: "post"
+      author: "Crip Minds"
+      lang: "nl"
