@@ -692,7 +692,24 @@ def run_shadow(conn, provider, *, acquire, score_item, boosters, keyword_matches
     run_deadline = time.monotonic() + RUN_BUDGET_SECONDS
     # Contained by the run deadline, never added to it.
     acq_deadline = min(time.monotonic() + ACQUISITION_BUDGET_SECONDS, run_deadline)
+    # ROUND-ROBIN ACROSS THE STREAMS, because stopping at TARGET_ACQUIRED made the
+    # exposure ORDER decide the comparison. The three streams exist so that theme signal,
+    # urgency and exploration each get a path in; acquiring in a flat theme-first order
+    # spent all five slots on the strongest theme signal, and the first run after the six
+    # primary-research feeds landed assessed four arXiv abstracts and nothing else -- a
+    # ranking with nothing to rank. Each stream now offers its next candidate in turn.
+    #
+    # Deterministic: the streams keep their own order, only the interleaving is new, and
+    # every candidate is still recorded with the stream that exposed it.
+    by_stream = collections.OrderedDict()
     for c in candidates:
+        by_stream.setdefault(c["exposed_via"], []).append(c)
+    interleaved, queues = [], list(by_stream.values())
+    while any(queues):
+        for q in queues:
+            if q:
+                interleaved.append(q.pop(0))
+    for c in interleaved:
         row = c["row"]
         if time.monotonic() >= acq_deadline:
             skipped.append({"seed_id": row["id"], "source_name": row["source_name"],
