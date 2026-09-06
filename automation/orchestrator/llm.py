@@ -254,8 +254,20 @@ class LLMMixin:
         # OpenRouter. Nothing becomes a Claude call merely because this boundary changed.
         if transport.classify(url) == transport.OPENROUTER_DIRECT \
                 and claude_cli_provider.is_claude_family(wire_model):
+            # THE UNPREFIXED PROMPT. `content` may carry the "/no_think " marker, which is
+            # a Qwen directive: harmless over HTTP, where the model simply reads a token it
+            # does not recognise. The Claude CLI parses a leading "/" as a SLASH COMMAND,
+            # answers "Unknown command: /no_think" -- 26 characters, no JSON -- and exits
+            # 0, so the caller sees a successful call that returned nothing usable.
+            #
+            # That is exactly what broke Fact Check. Claim extraction passes no_think=True,
+            # so since the Phase 2B transport migration EVERY article's extraction returned
+            # that string, failed to parse, and was reported as a Fact Check failure. The
+            # one candidate that ever reached the stage was recorded as
+            # "FACT_CHECK HOLD, blocking contradiction(s): []" -- an article nothing had
+            # checked. Claude has no /no_think directive to send in the first place.
             return self._call_claude_subscription(
-                system_prompt, content, wire_model, timeout=timeout,
+                system_prompt, user_prompt, wire_model, timeout=timeout,
                 temperature=temperature, return_model=return_model,
                 max_tokens=max_tokens, check_truncation=check_truncation,
                 temperature_required=temperature_required)
