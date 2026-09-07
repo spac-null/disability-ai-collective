@@ -1121,8 +1121,192 @@ REPAIR_ARCH_SYSTEM = (
 )
 
 
-def architect(provider, ledger: dict, worth: dict, subject: str) -> dict:
-    """STAGE 3. Ledger plus an approved lens in; a validated architecture out."""
+# ══════════════════════════════════════════════════════════════════════════════
+# NON-CLAIM-BEARING VISUAL CONTEXT (Phase 2B)
+# ══════════════════════════════════════════════════════════════════════════════
+# `visual_observe.py` (Phase 2A) writes VISUAL_OBSERVATIONS.json beside a run when a
+# person manually observes source visuals. Until now nothing read it. This is the one
+# place that may: the architect chooses the story's ORDER and its CONCRETE OBJECTS, which
+# is exactly the work a picture can inform without any fact resting on it.
+#
+# WHAT REACHES THE ARCHITECT, and nothing else:
+#   printed word labels, numeral-free object/material vocabulary, broad spatial
+#   relationships, questions_raised, not_established.
+#
+# WHY THE GUARD IS REAPPLIED HERE, having already run in the utility. The sidecar is a
+# FILE ON DISK. It was written by a module with a guard; it can be edited by anything at
+# all afterwards, and a consuming stage that trusts an on-disk artifact because the
+# producer promised to be careful is trusting a promise, not a check. So every line is
+# re-tested at this boundary and a failing line is DROPPED, not repaired. Duplication of
+# the rule is the point.
+#
+# THIS PACKAGE MAY NOT IMPORT `visual_observe`: it carries a system prompt and a
+# urllib-based transport, and the architecture stage must not acquire either. The regexes
+# below are therefore local and deliberately re-stated.
+#
+# A PRINTED LABEL IS NOT A POSITION. The key entry "05 GUEST BEDROOM" tells the architect
+# that a space is called a guest bedroom. It does not say where that space sits, what
+# adjoins it, or how many there are -- so the index is dropped here and only the words
+# survive. The Tollymore proof measured why: the model read all eighteen key entries
+# correctly and misplaced a courtyard in the same breath.
+VISUAL_CONTEXT_OPEN = "<VISUAL_CONTEXT_NON_CLAIM_BEARING>"
+VISUAL_CONTEXT_CLOSE = "</VISUAL_CONTEXT_NON_CLAIM_BEARING>"
+VISUAL_SIDECAR_NAME = "VISUAL_OBSERVATIONS.json"
+
+MAX_VISUAL_LABELS = 24
+MAX_VISUAL_LINES = 8               # per field, across all visuals
+MAX_VISUAL_LINE_CHARS = 200
+MAX_VISUAL_BLOCK_CHARS = 3_000
+
+_VISUAL_DIGIT_RE = re.compile(r"\d")
+_VISUAL_MEASURE_RE = re.compile(
+    r"\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|dozen|half)"
+    r"[-\s]+(?:m|mm|cm|km|metres?|meters?|ft|feet|foot|inch(?:es)?|storeys?|stories)\b"
+    r"|\bscale\b|\bdimension|\bmeasurement|\blevel\s+heights?\b", re.I)
+_VISUAL_REFUSED_RE = re.compile(
+    r"\b(?:in)?accessib\w*|\bADA\b|\bcomplian\w*|\bwheelchair\w*|\bstep[-\s]free\b"
+    r"|\bonly\s+(?:route|way|entrance|access)\b|\bno\s+(?:other|alternative)\s+"
+    r"(?:route|way|entrance|access)\b|\bcannot\s+be\s+(?:reached|entered|accessed)\b"
+    r"|\bunreachable\b|\bdangerous\b|\bunsafe\b|\bintended\s+for\b", re.I)
+_VISUAL_UNKNOWN_FRAME_RE = re.compile(r"\b(?:whether|if)\b|\bnot\s+established\b", re.I)
+
+# The permission text. It is the whole reason this may be shown at all, so it travels
+# INSIDE the delimiters with the material it governs -- a reader of the prompt cannot
+# encounter the observations without it.
+VISUAL_CONTEXT_PREAMBLE = (
+    "THIS IS NON-CLAIM-BEARING VISUAL CONTEXT. A person looked at published source\n"
+    "pictures and a utility wrote down what was visible. It is NOT in the ledger, it is\n"
+    "NOT evidence, and it is NOT verifiable against the source text.\n"
+    "\n"
+    "YOU MAY use it to notice a concrete object, to understand a possible spatial\n"
+    "sequence, to choose a better order for the story, and to see a question the text\n"
+    "evidence ought to answer.\n"
+    "\n"
+    "YOU MAY NOT make a fact of any of it. Not a fact id, not a carrier's warrant, not a\n"
+    "lens particular, not a resolution of anything the ledger leaves open. Every beat\n"
+    "still stands on a ledger fact and on nothing else. Do not assert accessibility, that\n"
+    "a route is the only one, or any measurement, count or level. If a line here would\n"
+    "improve the story only by being true, the story does not get it.\n"
+    "\n"
+    "PRINTED LABELS say what a space or object is CALLED. They do not say where it sits,\n"
+    "what is next to it, or how many there are."
+)
+
+
+def _visual_line_ok(line: str, *, allow_unknown_frame: bool = False) -> bool:
+    """True when one observation may be shown to the architect."""
+    t = (line or "").strip()
+    if not t or len(t) > MAX_VISUAL_LINE_CHARS:
+        return False
+    if _VISUAL_REFUSED_RE.search(t):
+        # An unknown may be NAMED in the shapes the refusal list otherwise catches:
+        # "whether this is the only route is not established" is the disclaimer, not the
+        # claim, and dropping it would delete the caution while keeping what it qualifies.
+        if not (allow_unknown_frame and _VISUAL_UNKNOWN_FRAME_RE.search(t)):
+            return False
+    if allow_unknown_frame:
+        return True
+    return not _VISUAL_DIGIT_RE.search(t) and not _VISUAL_MEASURE_RE.search(t)
+
+
+def _visual_take(observations: list, field: str, *, unknowns: bool = False) -> list:
+    out, seen = [], set()
+    for o in observations or []:
+        for line in (o.get(field) or []):
+            t = " ".join(str(line).split())
+            if t.lower() in seen or not _visual_line_ok(t, allow_unknown_frame=unknowns):
+                continue
+            seen.add(t.lower())
+            out.append(t)
+            if len(out) >= MAX_VISUAL_LINES:
+                return out
+    return out
+
+
+def visual_context_block(sidecar: dict) -> str:
+    """A sidecar -> the compact delimited block, or "" when nothing survives.
+
+    Deterministic and offline. No model call, no network, no file write.
+    """
+    if not isinstance(sidecar, dict):
+        return ""
+    obs = sidecar.get("observations") or []
+    labels, seen = [], set()
+    for o in obs:
+        for l in (o.get("printed_labels") or []):
+            # The words only. The index is a position-flavoured identifier and this stage
+            # gets no positions.
+            w = " ".join(str(l.get("label") or "").split())
+            if w and w.lower() not in seen and _visual_line_ok(w):
+                seen.add(w.lower())
+                labels.append(w)
+            if len(labels) >= MAX_VISUAL_LABELS:
+                break
+    facts = _visual_take(obs, "observable_facts")
+    rels = _visual_take(obs, "spatial_relationships")
+    qs = _visual_take(obs, "questions_raised")
+    unk = _visual_take(obs, "not_established", unknowns=True)
+    if not (labels or facts or rels or qs or unk):
+        return ""
+    L = [VISUAL_CONTEXT_OPEN, VISUAL_CONTEXT_PREAMBLE, ""]
+    if labels:
+        L += ["PRINTED LABELS (what things are called, not where they are)",
+              "  " + " | ".join(labels), ""]
+    for title, lines in (("VISIBLE OBJECTS AND MATERIALS", facts),
+                         ("BROAD SPATIAL RELATIONSHIPS", rels),
+                         ("QUESTIONS THE TEXT EVIDENCE SHOULD ANSWER", qs),
+                         ("EXPLICITLY NOT ESTABLISHED", unk)):
+        if lines:
+            L.append(title)
+            L += ["  - " + x for x in lines]
+            L.append("")
+    L.append(VISUAL_CONTEXT_CLOSE)
+    block = "\n".join(L).rstrip()
+    if len(block) > MAX_VISUAL_BLOCK_CHARS:
+        block = block[:MAX_VISUAL_BLOCK_CHARS].rstrip() + "\n" + VISUAL_CONTEXT_CLOSE
+    return block
+
+
+def load_visual_context(out_dir) -> str:
+    """The block for this run, or "" -- which is the ordinary case.
+
+    A missing sidecar, an unreadable one and a malformed one are the same answer: no
+    visual context. This may never raise into a run, and it may never be the reason a
+    composition holds. Nothing here fetches or observes anything; the file either exists
+    because a person made it, or it does not.
+    """
+    if not out_dir:
+        return ""
+    import pathlib
+    p = pathlib.Path(out_dir) / VISUAL_SIDECAR_NAME
+    try:
+        if not p.exists():
+            return ""
+        data = json.loads(p.read_text())
+    except Exception:                                                 # noqa: BLE001
+        return ""
+    if not isinstance(data, dict):
+        # Valid JSON is not a valid sidecar. Found by this boundary's own test: a file
+        # containing a bare string parsed cleanly and then raised AttributeError into the
+        # middle of a composition run, which is the one thing this function may not do.
+        return ""
+    if data.get("status") != "NON_CLAIM_BEARING":
+        # The producer stamps this. An artifact that does not declare itself
+        # non-claim-bearing is not the artifact this boundary agreed to read.
+        return ""
+    return visual_context_block(data)
+
+
+def architect(provider, ledger: dict, worth: dict, subject: str,
+              visual_context: str = "") -> dict:
+    """STAGE 3. Ledger plus an approved lens in; a validated architecture out.
+
+    `visual_context` is the optional non-claim-bearing block from
+    `load_visual_context`. When it is "" -- the ordinary case, and every case before
+    Phase 2B -- the prompt this stage sends is byte-identical to what it sent before the
+    parameter existed. There is no other difference: no extra call, no schema change, and
+    no reader of this block anywhere else in the pipeline.
+    """
     cand = worth.get("story_candidate") or {}
     lens = worth.get("worth_gate") or {}
     # The lens VERDICT and its claim reach the architect because the architecture must
@@ -1143,6 +1327,10 @@ def architect(provider, ledger: dict, worth: dict, subject: str) -> dict:
         "THE FROZEN LEDGER -- the only facts that exist. You may use no other.",
         ledger_block(ledger),
         "", ARCHITECT_SCHEMA])
+    if visual_context:
+        # Appended, never interleaved: the ledger keeps its position as the last word on
+        # what exists, and an empty block leaves `user` exactly as it was.
+        user = user + "\n\n" + visual_context
 
     obj, ident = _ask(provider, ARCHITECT_SYSTEM, user, 8_000, ARCHITECTURE,
                       ARCHITECTURE_HOLD)
@@ -1155,7 +1343,8 @@ def architect(provider, ledger: dict, worth: dict, subject: str) -> dict:
             ARCHITECTURE, ARCHITECTURE_HOLD,
             ["the reply is not an architecture"] + errs[:6],
             {"architecture": obj, "failures": errs, "provider": ident,
-             "model_calls": calls, "repairs": repairs})
+             "model_calls": calls, "repairs": repairs,
+             "visual_context_chars": len(visual_context)})
 
     # Each repair sees the CURRENT invalid architecture and the failures it actually has
     # now -- not the original ones -- so repair 2 answers repair 1's output rather than
@@ -1174,6 +1363,9 @@ def architect(provider, ledger: dict, worth: dict, subject: str) -> dict:
             "THE FROZEN LEDGER -- unchanged",
             ledger_block(ledger),
             "", ARCHITECT_SCHEMA])
+        # `ru` deliberately carries NO visual context. A repair exists to narrow an
+        # architecture back onto the ledger; handing it fresh non-evidential material at
+        # exactly that moment is how a repair becomes a second draft.
         nxt, ident_r = _ask(provider, REPAIR_ARCH_SYSTEM, ru, 8_000, ARCHITECTURE,
                             ARCHITECTURE_HOLD)
         calls += 1
@@ -1200,6 +1392,9 @@ def architect(provider, ledger: dict, worth: dict, subject: str) -> dict:
             "repair_budget": MAX_ARCHITECTURE_REPAIRS,
             "repair_history": history,
             "failures_at_first_attempt": first_errs,
+            # Observability, on the stage payload only: ARCHITECTURE.json is still the
+            # architecture object and nothing else, so no artifact shape moves.
+            "visual_context_chars": len(visual_context),
             "beats": len(obj.get("beats") or []),
             "used": len(obj.get("use_facts") or []),
             "cut": len(obj.get("cut_evidence") or [])}
@@ -3554,7 +3749,9 @@ def run_story_architecture_composition(
                                 "model_calls": 0, "repairs": 0}
             calls[ARCHITECTURE] = repairs[ARCHITECTURE] = 0
         else:
-            a = record(ARCHITECTURE, architect(P, ledger, w, subject))
+            a = record(ARCHITECTURE, architect(
+                P, ledger, w, subject,
+                visual_context=load_visual_context(out_dir)))
             arch = a["architecture"]
 
         cut = record(CUT_TERMS, derive_cut_watch_terms(arch, ledger))

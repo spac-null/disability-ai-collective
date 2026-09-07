@@ -195,11 +195,28 @@ def test_module_is_unwired():
                       "from contracts", "import ledger", "from ledger",
                       "import pytesseract", "recraft/", "RESEARCH_PACK["):
         check("module does not call %s" % forbidden, forbidden not in code, forbidden)
+    # AST, not raw text. A raw scan failed the moment Phase 2B added a comment in
+    # composition.py saying that package may NOT import this module -- the same trap
+    # new_engine_v1_test's package-purity check hit from the other side and fixed the
+    # same way. A promise in prose must not read as a violation.
+    import ast
     repo = src.parent
-    importers = [p.name for p in repo.rglob("*.py")
-                 if p.name not in (src.name, pathlib.Path(__file__).name)
-                 and "visual_observe" in p.read_text()]
-    check("no other module imports it", not importers, str(importers))
+    importers = []
+    for p in repo.rglob("*.py"):
+        if p.name in (src.name, pathlib.Path(__file__).name):
+            continue
+        try:
+            tree = ast.parse(p.read_text())
+        except SyntaxError:
+            continue
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Import) and any(
+                    a.name.split(".")[0] == "visual_observe" for a in n.names):
+                importers.append(p.name)
+            elif isinstance(n, ast.ImportFrom) and (n.module or "").split(".")[0] \
+                    == "visual_observe":
+                importers.append(p.name)
+    check("no other module imports it", not importers, str(sorted(set(importers))))
 
 
 
