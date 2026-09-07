@@ -1,9 +1,30 @@
 #!/usr/bin/env python3
 """
-publish_best.py — promote the top-scoring draft to _posts/ every 2 days.
+publish_best.py — the deterministic publisher, and the legacy/manual backlog selector.
 
-Candidate pool: drafts dated within the last AGE_WINDOW_DAYS days that pass
-the promotion gate below. A draft that ages out of that window without ever
+TWO JOBS, AND THEY ARE NOT THE SAME JOB (2026-09-07).
+
+(1) PUBLICATION MECHANICS, for both engines. promote_candidate() moves one settled
+    article into _posts and does everything publication requires of it — date, art
+    direction, illustration, exact-run audit retention with its rollback — and
+    _commit_and_push() stages exactly what was mutated and pushes it. publish_candidate()
+    is the deterministic entry point: ONE named accepted CURRENT_ENGINE article, no pool,
+    no score, no comparison, called by new_engine_production the moment the engine
+    accepts it. Editorial eligibility is decided upstream and consumed here; see
+    terminal_authorization for the four assertions that is allowed to make.
+
+(2) THE LEGACY/MANUAL BACKLOG SELECTOR — main(), everything below, unchanged. Drafts
+    that predate the CURRENT_ENGINE bridge have no upstream verdict to consume, so for
+    them the pool, the promotion gate and the scoring below are still the only thing
+    standing between a stale draft and the public site. CURRENT_ENGINE articles are
+    excluded from all of it (CURRENT_ENGINE_DIRECT_PUBLISH_ONLY) — not scored, not aged,
+    not archived. Recovering the existing CURRENT_ENGINE backlog is a separate owner
+    decision and this cron does not take it.
+
+Everything from here down describes (2).
+
+Candidate pool: legacy/manual drafts dated within the last AGE_WINDOW_DAYS days that
+pass the promotion gate below. A draft that ages out of that window without ever
 being selected is archived to _drafts/_archive/ rather than left to compete
 forever.
 
@@ -249,6 +270,37 @@ def stageable_paths(mutated):
     return out
 
 
+def _current_engine_direct_publish_only(fm):
+    """CURRENT_ENGINE articles do not compete for publication (2026-09-07).
+
+    THE OWNERSHIP CHANGE. CURRENT_ENGINE decides editorial eligibility, and an ACCEPT
+    that the publication-safety bridge marked eligible is published directly by the
+    production run that composed it -- see publish_candidate, called from
+    new_engine_production. By the time such an article could appear in this pool, the
+    question this pool asks has already been answered by someone entitled to answer it.
+
+    WHY EXCLUSION AND NOT JUST "IT WILL NEVER GET HERE". Two reasons, both real. A
+    direct publication that failed mechanically leaves its candidate in _drafts/, and
+    that candidate must not be silently swept into a competition it was never meant to
+    enter -- a mechanical failure is not an editorial demotion. And the existing
+    CURRENT_ENGINE backlog, including whatever the thirteen blocked runs left behind,
+    must not start auto-publishing the moment the retention gate stops refusing it:
+    recovering those is a separate owner decision, deliberately not taken here.
+
+    So: skipped, named, and left completely alone. Not scored, not aged, not archived,
+    not rewritten. Legacy and manual drafts keep the pool exactly as it was.
+    """
+    if not PA.is_current_engine(fm):
+        return False, ""
+    return True, ("CURRENT_ENGINE articles are published directly by the run that "
+                  "composed them (engine_run=%r, engine_decision=%r, "
+                  "publication_eligible=%r); this selector is the legacy/manual "
+                  "backlog only and does not publish them"
+                  % (str(fm.get("engine_run", "") or ""),
+                     str(fm.get("engine_decision", "") or ""),
+                     fm.get("publication_eligible")))
+
+
 def _current_engine_ineligible(fm):
     """CURRENT_ENGINE candidates must carry an EXPLICIT publication_eligible: true.
 
@@ -483,6 +535,230 @@ def set_publish_date(path, when):
     path.write_text(text, encoding="utf-8")
 
 
+
+# ── THE DETERMINISTIC PUBLICATION MECHANICS, OWNED IN ONE PLACE ─────────────────────
+# Extracted verbatim from main()'s promotion branch (2026-09-07) so that a CURRENT_ENGINE
+# article, which no longer competes in any pool, reaches EXACTLY the same mechanics the
+# selector has always used. Not a reimplementation and deliberately not a second one:
+# the alternative is two publication paths that drift, and the site would then carry
+# articles published two different ways with no way to tell which.
+#
+# This function decides NOTHING editorial. It is handed one settled article and moves it.
+
+def promote_candidate(draft, dest, now):
+    """Move ONE named draft into _posts and do everything publication requires of it.
+
+    Returns {"ok", "dest", "mutated", "assets", "image_failure", "reason"}. On a
+    retention failure it performs the existing rollback -- the post goes back to
+    _drafts/, this run's generated assets are removed -- and returns ok False. It never
+    stages, never commits and never pushes: that is the caller's half, because the
+    caller is the one that knows what else belongs in the same commit.
+    """
+    generated_assets: list[str] = []
+    image_failure = None
+    mutated: list[str] = []
+    shutil.move(str(draft), str(dest))
+    set_publish_date(dest, now)
+    mutated += [str(dest), str(draft)]      # created, and moved out of
+
+    # ILLUSTRATE HERE, AT THE ONE BOUNDARY BOTH ENGINES CROSS. Illustration used
+    # to live inside the legacy composition path (orchestrator/generate.py calls
+    # generate_images, orchestrator/publish.py calls _insert_images_balanced).
+    # Story Architecture has neither call, so from the 2026-09-05 cutover every
+    # CURRENT_ENGINE article published unillustrated and nothing said so.
+    #
+    # Doing it at promotion rather than inside either engine means one
+    # implementation serves both. It cannot double-generate: gen_images skips a
+    # post that already carries an `image:` field, and illustrate_post leaves a
+    # body that already has figures alone -- so a legacy article that illustrated
+    # itself upstream passes straight through untouched.
+    try:
+        import gen_images
+        if gen_images.has_image_field(dest.read_text()):
+            print("  images: already illustrated upstream — leaving as is")
+        else:
+            # ONE art-direction call, and only for a resolvable CURRENT_ENGINE
+            # publication. No brief -- for any reason -- and the next line is the
+            # one that has always been here.
+            ad_brief, ad_arch, ad_note = art_direct_for(dest)
+            print("  art direction: %s" % ad_note)
+            if ad_brief is None:
+                res = gen_images.illustrate_post(dest)
+            else:
+                res = gen_images.illustrate_post(dest, brief=ad_brief, arch=ad_arch)
+            if res["ok"]:
+                print("  images: %d generated, %d placed in body"
+                      % (len(res["assets"]), res["figures"]))
+                mutated += res["assets"]
+                generated_assets += res["assets"]
+            else:
+                # NEVER SILENT. Illustrations are part of the normal publication
+                # contract, so an article going out without them is reported here
+                # and on stderr rather than discovered weeks later on the site.
+                image_failure = res["reason"]
+                print("  images: FAILED — %s" % image_failure)
+                print("PUBLISHING WITHOUT ILLUSTRATIONS: %s (%s)"
+                      % (dest.name, image_failure), file=sys.stderr)
+    except Exception as e:                                # noqa: BLE001
+        image_failure = "%s: %s" % (type(e).__name__, str(e)[:160])
+        print("  images: FAILED — %s" % image_failure)
+        print("PUBLISHING WITHOUT ILLUSTRATIONS: %s (%s)"
+              % (dest.name, image_failure), file=sys.stderr)
+
+    # ── PUBLISHED RUN RETENTION, AT THE BOUNDARY ────────────────────────
+    # Here, and not earlier: the bundle must be assembled from the bytes that
+    # actually publish, which means after the date rewrite and after the
+    # illustrations went into the body. The promotion gate has already proved
+    # the run exists and carries what Safety takes, so this is the copy, not
+    # the decision.
+    #
+    # FAIL CLOSED. If the bundle cannot be written, the publication is UNDONE:
+    # the post goes back to _drafts/, the assets this run generated are
+    # removed, nothing is committed and nothing is pushed. An article on the
+    # site whose factual path cannot be re-audited is the failure this exists
+    # to prevent, and publishing one anyway because the copy step broke would
+    # be that failure with a log line attached.
+    try:
+        man = PA.retain(dest)
+        print("  audit: retained %s (%s) — safety re-audit: %s"
+              % (man["bundle_id"], man["class"],
+                 man["reaudit"]["SAFETY"]["kind"]))
+        mutated.append(str(dest))       # the pointer was stamped into it
+    except Exception as e:                                    # noqa: BLE001
+        print("  audit: RETENTION FAILED — %s: %s"
+              % (type(e).__name__, str(e)[:300]), file=sys.stderr)
+        shutil.move(str(dest), str(draft))
+        for a in generated_assets:
+            try:
+                pathlib.Path(a).unlink()
+            except OSError:
+                pass
+        print("PUBLICATION ROLLED BACK: %s returned to _drafts/ — an article "
+              "whose audit inputs cannot be retained is not published."
+              % draft.name, file=sys.stderr)
+        return {"ok": False, "dest": None, "mutated": [], "assets": [],
+                "image_failure": image_failure,
+                "reason": "retention failed: %s: %s" % (type(e).__name__, str(e)[:300])}
+    return {"ok": True, "dest": dest, "mutated": mutated, "assets": generated_assets,
+            "image_failure": image_failure, "reason": ""}
+
+
+# ── TERMINAL AUTHORIZATION FOR A DIRECT CURRENT_ENGINE PUBLICATION ──────────────────
+# ONE OWNER OF EDITORIAL ELIGIBILITY, AND IT IS NOT THIS FILE. CURRENT_ENGINE decides
+# whether an article may be published; by the time a candidate reaches here that
+# decision is already made, recorded in the run, and stamped into the article's own
+# front matter. What this checks is that the object handed to the publisher IS that
+# decided object -- not whether the decision was correct.
+#
+# So the contract is four assertions and none of them re-derive editorial judgement:
+#
+#   this is a CURRENT_ENGINE article
+#   engine_decision is ACCEPT
+#   publication_eligible is an explicit true
+#   the exact engine_run resolves AND is retainable
+#
+# The last one is publication INTEGRITY, not editorial re-judgement: an article whose
+# producing run cannot be kept is one nobody can ever audit, and that is a property of
+# the filesystem, not of the article's quality.
+#
+# WHAT IS DELIBERATELY ABSENT. _ordinary_eligibility_ok, _current_safety_contract_ok,
+# _current_engine_strict_fact_check_missing and _interlocked are NOT consulted here.
+# Each of them reconstructs, from front-matter fields, a judgement an upstream stage
+# already made -- which is right for the legacy pool, where the drafts predate the
+# bridge and nothing upstream can be trusted to have run at all, and wrong here, where
+# a second jury reading the same evidence can only ever disagree with the first.
+# publication_eligible IS the bridge's verdict. Consuming it is the contract.
+
+def terminal_authorization(fm, *, roots=None):
+    """(ok, reason). The accepted object, or a refusal naming which assertion failed."""
+    if not PA.is_current_engine(fm):
+        return False, ("not a CURRENT_ENGINE article -- direct publication is the "
+                       "CURRENT_ENGINE path only; legacy/manual articles go through "
+                       "the backlog selector")
+    decision = str(fm.get("engine_decision", "") or "").strip()
+    if decision != "ACCEPT":
+        return False, "engine_decision=%r (direct publication requires ACCEPT)" % (decision,)
+    v = fm.get("publication_eligible")
+    if not (v is True or (isinstance(v, str) and v.strip().lower() == "true")):
+        return False, ("CURRENT_ENGINE_NOT_ELIGIBLE: publication_eligible=%r -- the "
+                       "publication-safety bridge did not grant eligibility" % (v,))
+    ok, why = PA.retention_feasible(fm, roots=roots)
+    if not ok:
+        return False, "NEEDS_AUDIT_RETENTION: %s" % (why,)
+    return True, "run %s: ACCEPT, eligible, retainable" % (fm.get("engine_run") or "?",)
+
+
+def _commit_and_push(mutated, msg_parts):
+    """Stage exactly what was mutated, commit, rebase, push. Shared by both callers so
+    the staging rule cannot be right in one path and wrong in the other."""
+    staged = stageable_paths(mutated)
+    for d in sorted(set(mutated) - set(staged)):
+        print("  staging: skipping %s (moved away, never tracked)" % (d,))
+    if staged:
+        subprocess.run(["git", "add", "-A", "--", *staged], cwd=str(REPO), check=True)
+    subprocess.run(["git", "commit", "-m", " | ".join(msg_parts)],
+                   cwd=str(REPO), check=True)
+    subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=str(REPO), check=True)
+    subprocess.run(["git", "push", "origin", "main"], cwd=str(REPO), check=True)
+    print("Pushed to GitHub — site building now.")
+
+
+def publish_candidate(draft_path, now=None, roots=None):
+    """Publish ONE exact accepted CURRENT_ENGINE candidate. Returns 0 on success.
+
+    THE WHOLE POINT: no pool, no score, no window, no comparison with another article,
+    no waiting for the every-two-days cron. The engine accepted this article; this
+    publishes THIS article. There is one attempt and there is no fallback -- a
+    mechanical failure is reported as a mechanical failure and the candidate is left
+    where it is. It is never quietly demoted into the backlog competition, and an
+    ACCEPT is never rewritten into an editorial HOLD by a filesystem error.
+    """
+    draft = pathlib.Path(draft_path)
+    now = now or datetime.now()
+    if not draft.is_file():
+        print("DIRECT PUBLISH REFUSED: %s does not exist" % (draft,), file=sys.stderr)
+        return 1
+
+    fm = parse_frontmatter(draft.read_text(encoding="utf-8", errors="replace"))
+    ok, why = terminal_authorization(fm, roots=roots)
+    if not ok:
+        print("DIRECT PUBLISH REFUSED: %s — %s" % (draft.name, why), file=sys.stderr)
+        return 1
+    print("\nPublishing (CURRENT_ENGINE, direct): %s" % (draft.name,))
+    print("  Title: %s" % (fm.get("title", draft.stem),))
+    print("  Persona: %s" % (fm.get("author", ""),))
+    print("  Authorization: %s" % (why,))
+
+    dest = POSTS / draft.name
+    if dest.exists():
+        print("DIRECT PUBLISH REFUSED: %s already exists in _posts/ — refusing to "
+              "overwrite." % (dest.name,), file=sys.stderr)
+        return 1
+    POSTS.mkdir(parents=True, exist_ok=True)
+
+    res = promote_candidate(draft, dest, now)
+    if not res["ok"]:
+        print("DIRECT PUBLISH FAILED: %s — %s" % (draft.name, res["reason"]),
+              file=sys.stderr)
+        return 1
+
+    msg_parts = ["publish: %s" % (dest.stem,)]
+    if res["image_failure"]:
+        msg_parts.append("published without illustrations: %s" % (res["image_failure"],))
+    try:
+        _commit_and_push(res["mutated"], msg_parts)
+    except subprocess.CalledProcessError as e:
+        print("DIRECT PUBLISH FAILED: git error after promotion: %s" % (e,),
+              file=sys.stderr)
+        print("The article is in _posts/ and was NOT committed. It is left exactly as "
+              "it is for an operator: undoing a retained, frozen publication bundle is "
+              "not a decision this path makes on its own.", file=sys.stderr)
+        return 1
+
+    _fire_pending_social(dest.stem, dest)
+    return 0
+
+
 def main(dry_run=False):
     if dry_run:
         print("[DRY RUN — no files will be moved, no git actions will run]\n")
@@ -495,6 +771,14 @@ def main(dry_run=False):
     now = datetime.now()
     in_window, expired = [], []
     for draft in drafts:
+        # A CURRENT_ENGINE draft is not this selector's to archive either. Ageing one
+        # out would quietly dispose of an article whose recovery is an open owner
+        # decision, and it would do it on a clock that no longer means anything for
+        # that engine.
+        if PA.is_current_engine(parse_frontmatter(
+                draft.read_text(encoding="utf-8", errors="replace"))):
+            in_window.append(draft)
+            continue
         age = draft_date(draft)
         # draft_date() is midnight, so a draft written exactly AGE_WINDOW_DAYS ago
         # yields .days == AGE_WINDOW_DAYS, which a strict > lets survive one extra
@@ -511,6 +795,14 @@ def main(dry_run=False):
     for draft in in_window:
         text = draft.read_text(encoding="utf-8", errors="replace")
         fm = parse_frontmatter(text)
+        # CURRENT_ENGINE LEAVES THIS COMPETITION (2026-09-07). Checked before every
+        # other predicate so that no CURRENT_ENGINE article is ever read for a
+        # draft_score, a freshness comparison, a persona rotation or an aging bump --
+        # not merely excluded from winning, but never entered.
+        _dp, _dp_why = _current_engine_direct_publish_only(fm)
+        if _dp:
+            print(f"  {draft.name}: SKIPPED (CURRENT_ENGINE_DIRECT_PUBLISH_ONLY) — {_dp_why}")
+            continue
         if fm.get("fact_check_status") == "blocked":
             print(f"  {draft.name}: SKIPPED — fact_check_status: blocked "
                   f"(quote attributed to a real person not found in any source; needs human review)")
@@ -584,8 +876,6 @@ def main(dry_run=False):
     # after that block would reset the flag and lose the failure it records.
     image_failure = None
     dest = None
-    # Written by this run and removable if the publication has to be rolled back.
-    generated_assets: list[str] = []
     # Every path this run intentionally changes, recorded as it changes. Staging is
     # built from THIS list and nothing else. The alternative -- staging a directory and
     # trusting that only intended files live in it -- is what put a declined candidate
@@ -610,87 +900,14 @@ def main(dry_run=False):
         if dry_run:
             print(f"  (dry-run: {len(candidates) - 1} other candidate(s) would have their aging counter bumped)")
         else:
-            shutil.move(str(best_draft), str(dest))
-            set_publish_date(dest, now)
-            published = True
-            mutated += [str(dest), str(best_draft)]      # created, and moved out of
-
-            # ILLUSTRATE HERE, AT THE ONE BOUNDARY BOTH ENGINES CROSS. Illustration used
-            # to live inside the legacy composition path (orchestrator/generate.py calls
-            # generate_images, orchestrator/publish.py calls _insert_images_balanced).
-            # Story Architecture has neither call, so from the 2026-09-05 cutover every
-            # CURRENT_ENGINE article published unillustrated and nothing said so.
-            #
-            # Doing it at promotion rather than inside either engine means one
-            # implementation serves both. It cannot double-generate: gen_images skips a
-            # post that already carries an `image:` field, and illustrate_post leaves a
-            # body that already has figures alone -- so a legacy article that illustrated
-            # itself upstream passes straight through untouched.
-            try:
-                import gen_images
-                if gen_images.has_image_field(dest.read_text()):
-                    print("  images: already illustrated upstream — leaving as is")
-                else:
-                    # ONE art-direction call, and only for a resolvable CURRENT_ENGINE
-                    # publication. No brief -- for any reason -- and the next line is the
-                    # one that has always been here.
-                    ad_brief, ad_arch, ad_note = art_direct_for(dest)
-                    print("  art direction: %s" % ad_note)
-                    if ad_brief is None:
-                        res = gen_images.illustrate_post(dest)
-                    else:
-                        res = gen_images.illustrate_post(dest, brief=ad_brief, arch=ad_arch)
-                    if res["ok"]:
-                        print("  images: %d generated, %d placed in body"
-                              % (len(res["assets"]), res["figures"]))
-                        mutated += res["assets"]
-                        generated_assets += res["assets"]
-                    else:
-                        # NEVER SILENT. Illustrations are part of the normal publication
-                        # contract, so an article going out without them is reported here
-                        # and on stderr rather than discovered weeks later on the site.
-                        image_failure = res["reason"]
-                        print("  images: FAILED — %s" % image_failure)
-                        print("PUBLISHING WITHOUT ILLUSTRATIONS: %s (%s)"
-                              % (dest.name, image_failure), file=sys.stderr)
-            except Exception as e:                                # noqa: BLE001
-                image_failure = "%s: %s" % (type(e).__name__, str(e)[:160])
-                print("  images: FAILED — %s" % image_failure)
-                print("PUBLISHING WITHOUT ILLUSTRATIONS: %s (%s)"
-                      % (dest.name, image_failure), file=sys.stderr)
-
-            # ── PUBLISHED RUN RETENTION, AT THE BOUNDARY ────────────────────────
-            # Here, and not earlier: the bundle must be assembled from the bytes that
-            # actually publish, which means after the date rewrite and after the
-            # illustrations went into the body. The promotion gate has already proved
-            # the run exists and carries what Safety takes, so this is the copy, not
-            # the decision.
-            #
-            # FAIL CLOSED. If the bundle cannot be written, the publication is UNDONE:
-            # the post goes back to _drafts/, the assets this run generated are
-            # removed, nothing is committed and nothing is pushed. An article on the
-            # site whose factual path cannot be re-audited is the failure this exists
-            # to prevent, and publishing one anyway because the copy step broke would
-            # be that failure with a log line attached.
-            try:
-                man = PA.retain(dest)
-                print("  audit: retained %s (%s) — safety re-audit: %s"
-                      % (man["bundle_id"], man["class"],
-                         man["reaudit"]["SAFETY"]["kind"]))
-                mutated.append(str(dest))       # the pointer was stamped into it
-            except Exception as e:                                    # noqa: BLE001
-                print("  audit: RETENTION FAILED — %s: %s"
-                      % (type(e).__name__, str(e)[:300]), file=sys.stderr)
-                shutil.move(str(dest), str(best_draft))
-                for a in generated_assets:
-                    try:
-                        pathlib.Path(a).unlink()
-                    except OSError:
-                        pass
-                print("PUBLICATION ROLLED BACK: %s returned to _drafts/ — an article "
-                      "whose audit inputs cannot be retained is not published."
-                      % best_draft.name, file=sys.stderr)
+            res = promote_candidate(best_draft, dest, now)
+            if not res["ok"]:
+                print("PUBLICATION FAILED: %s — %s" % (best_draft.name, res["reason"]),
+                      file=sys.stderr)
                 return 1
+            published = True
+            image_failure = res["image_failure"]
+            mutated += res["mutated"]
 
             # Every other in-window candidate just lost this cycle — bump its aging counter.
             for _score, draft, *_rest, fm in candidates[1:]:
@@ -714,37 +931,18 @@ def main(dry_run=False):
     if not published and not archived:
         return 0
 
+    msg_parts = []
+    if published:
+        msg_parts.append(f"publish: {dest.stem}")
+    if archived:
+        msg_parts.append(f"archive {len(archived)} draft(s) unpublished after {AGE_WINDOW_DAYS}d")
+    if image_failure:
+        msg_parts.append("published without illustrations: %s" % image_failure)
     try:
-        # Stage exactly the paths this run mutated -- never a directory. `-A` is kept
-        # because a move shows up as a deletion at the old path and only `-A` stages
-        # that, but every pathspec after `--` is a file this run wrote, moved or
-        # deleted itself. Nothing else under _drafts, _drafts/_archive or _posts can
-        # enter the commit, tracked or untracked. stageable_paths drops the one shape
-        # git cannot be handed -- a path that is gone AND was never tracked, which is
-        # every CURRENT_ENGINE draft's source path after promotion.
-        staged = stageable_paths(mutated)
-        dropped = sorted(set(mutated) - set(staged))
-        for d in dropped:
-            print("  staging: skipping %s (moved away, never tracked)" % d)
-        if staged:
-            subprocess.run(["git", "add", "-A", "--", *staged],
-                           cwd=str(REPO), check=True)
-
-        msg_parts = []
-        if published:
-            msg_parts.append(f"publish: {dest.stem}")
-        if archived:
-            msg_parts.append(f"archive {len(archived)} draft(s) unpublished after {AGE_WINDOW_DAYS}d")
-        if image_failure:
-            msg_parts.append("published without illustrations: %s" % image_failure)
-        subprocess.run(
-            ["git", "commit", "-m", " | ".join(msg_parts)],
-            cwd=str(REPO), check=True
-        )
-        # Pull --rebase then push
-        subprocess.run(["git", "pull", "--rebase", "origin", "main"], cwd=str(REPO), check=True)
-        subprocess.run(["git", "push", "origin", "main"], cwd=str(REPO), check=True)
-        print("Pushed to GitHub — site building now.")
+        # The SAME staging/commit/push the direct CURRENT_ENGINE path uses. Shared on
+        # purpose: the pathspec rule that got two articles stranded must not be able to
+        # be right in one publication path and wrong in the other.
+        _commit_and_push(mutated, msg_parts)
     except subprocess.CalledProcessError as e:
         print(f"Git error: {e}", file=sys.stderr)
         return 1

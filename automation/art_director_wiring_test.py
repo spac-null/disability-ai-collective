@@ -211,7 +211,15 @@ def publish_once(post_text, ad_result, *, sidecar=None, run_id=RUN_ID):
         os.environ["CRIPMINDS_PUBLICATION_AUDIT_ROOT"] = str(store)
         draft = PB.DRAFTS / "2026-09-06-a-pavilion.md"
         draft.write_text(post_text)
-        rc = PB.main()
+        # HOW AN ARTICLE PUBLISHES DEPENDS ON WHICH ENGINE WROTE IT (2026-09-07). A
+        # CURRENT_ENGINE article is published directly by the run that composed it, by
+        # path, with no pool; a legacy/manual one still goes through the backlog
+        # selector. The art-direction seam is the same for both -- promote_candidate --
+        # which is exactly what these tests are about.
+        if PB.PA.is_current_engine(PB.parse_frontmatter(post_text)):
+            rc = PB.publish_candidate(draft)
+        else:
+            rc = PB.main()
         published = (PB.POSTS / draft.name).is_file()
         return rc, ad, images, published
     finally:
@@ -308,8 +316,11 @@ def test_a_non_current_engine_publication_is_untouched():
         CURRENT_POST, {"ok": True, "brief": brief(1), "reason": ""},
         run_id=OTHER_RUN_ID)
     check("an unresolvable run is asked for no art direction", ad2.calls == [])
-    check("...and is held by the retention gate, not published unauditable",
-          rc2 == 0 and not images2.calls)
+    # The direct publisher REFUSES it rather than silently doing nothing: the exact run
+    # is part of the terminal contract, and a candidate that cannot name a retainable
+    # run is not publishable. rc 1, no images, nothing promoted.
+    check("...and is refused by the retention assertion, not published unauditable",
+          rc2 == 1 and not images2.calls)
 
 
 # ── 5 & 6. same run only, and optional ──────────────────────────────────────────────
@@ -413,9 +424,29 @@ def test_one_art_director_call_per_canonical_publication():
     check("art_direct_for makes one model call and does not retry", len(inner) == 1)
     check("...and no loop wraps it",
           not any(isinstance(n, (ast.For, ast.While)) for n in ast.walk(fn)))
-    # The publisher promotes ONE draft per run, so the call site above runs at most once.
-    check("the publisher promotes a single candidate per run",
-          src.count("shutil.move(str(best_draft), str(dest))") == 1)
+    # ONE mechanics function holds the move, and both callers -- the direct
+    # CURRENT_ENGINE publisher and the legacy backlog selector -- go through it once
+    # per run, so the call site above runs at most once either way.
+    check("the promotion move exists in exactly one place",
+          src.count("shutil.move(str(draft), str(dest))") == 1)
+    fn_promote = next(n for n in ast.walk(tree)
+                      if isinstance(n, ast.FunctionDef) and n.name == "promote_candidate")
+    check("the art-direction call site is inside that one function, exactly once",
+          len([n for n in ast.walk(fn_promote) if isinstance(n, ast.Call)
+               and getattr(n.func, "id", "") == "art_direct_for"]) == 1)
+    # The only loop in promote_candidate is the rollback that unlinks this run's own
+    # generated assets. Nothing loops over the art director or over candidates.
+    check("no loop in promote_candidate contains the art-direction call",
+          not any(any(isinstance(c, ast.Call) and getattr(c.func, "id", "") == "art_direct_for"
+                      for c in ast.walk(n))
+                  for n in ast.walk(fn_promote) if isinstance(n, (ast.For, ast.While))))
+    for caller in ("publish_candidate", "main"):
+        f = next(n for n in ast.walk(tree)
+                 if isinstance(n, ast.FunctionDef) and n.name == caller)
+        calls = [n for n in ast.walk(f) if isinstance(n, ast.Call)
+                 and getattr(n.func, "id", "") == "promote_candidate"]
+        check("%s promotes at most one candidate per run" % caller, len(calls) == 1,
+              "%d call(s)" % len(calls))
     check("no derivative edition generates its own images",
           "illustrate_post" not in (HERE / "translate_publication.py").read_text(),
           "a translation reuses the canonical asset set")

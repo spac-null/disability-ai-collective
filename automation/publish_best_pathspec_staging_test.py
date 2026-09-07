@@ -129,8 +129,13 @@ class _Recorder:
         return None
 
 
-def _publish(root, run_id_dirs):
-    """Run the real publisher over the temp repo with a temp evidence root and store."""
+def _publish(root, run_id_dirs, direct=None):
+    """Run the real publisher over the temp repo with a temp evidence root and store.
+
+    `direct` is the exact draft a CURRENT_ENGINE run hands to publish_candidate; without
+    it this drives the legacy backlog selector, main(). Both go through the same
+    promote_candidate and the same _commit_and_push, which is what these tests check.
+    """
     ev = root / ".evidence"
     store = root / ".store"
     for rid in run_id_dirs:
@@ -145,7 +150,7 @@ def _publish(root, run_id_dirs):
     saved_sp = PB.subprocess
     PB.subprocess = rec
     try:
-        rc = PB.main(dry_run=False)
+        rc = PB.publish_candidate(direct) if direct is not None else PB.main(dry_run=False)
     finally:
         PB.subprocess = saved_sp
         sys.modules.pop("gen_images", None)
@@ -205,7 +210,7 @@ def test_untracked_current_engine_draft_is_published():
     check("the candidate starts untracked, as persist_candidate leaves it",
           not _tracked(root, str(draft)))
 
-    rc, rec = _publish(root, [rid])
+    rc, rec = _publish(root, [rid], direct=draft)
     dest = root / "_posts" / draft.name
 
     check("the publisher returned success", rc == 0, "rc=%s" % rc)
@@ -232,7 +237,7 @@ def test_tracked_draft_move_still_stages_the_deletion():
     draft = _current_engine_draft(root, "a-tracked-candidate", rid, tracked=True)
     check("this candidate is tracked before the move", _tracked(root, str(draft)))
 
-    rc, rec = _publish(root, [rid])
+    rc, rec = _publish(root, [rid], direct=draft)
     dest = root / "_posts" / draft.name
     specs = rec.add_pathspecs()
 
@@ -309,7 +314,7 @@ def test_unrelated_untracked_files_are_never_swept_in():
                      'date: "2026-08-20"\n---\n\nNot this run\'s business.\n' % rel,
                      encoding="utf-8")
 
-    rc, rec = _publish(root, [rid])
+    rc, rec = _publish(root, [rid], direct=draft)
     specs = set(rec.add_pathspecs() or [])
     head = _out(root, "show", "--name-status", "--format=%s", "HEAD")
 

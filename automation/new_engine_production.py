@@ -10,13 +10,25 @@ production run, not a rehearsal:
       -> ACCEPT / HOLD
       -> on ACCEPT: CURRENT_ENGINE publication-safety bridge
       -> on bridge pass: candidate with publication_eligible: true
-      -> ordinary candidate pool -> existing periodic selector
+      -> published immediately, by this run, via publish_best.publish_candidate
 
-ACCEPT != PUBLISH. Nothing here publishes; the selector remains the publication owner and
-runs on its own unchanged cadence.
+WHO OWNS WHAT (2026-09-07). This file owns editorial eligibility. An ACCEPT that the
+publication-safety bridge marked publication_eligible is a finished editorial decision,
+and it is handed straight to the deterministic publisher. publish_best owns publication
+MECHANICS -- date, art direction, illustration, exact-run audit retention, staging,
+commit, push -- and no longer owns any editorial judgement about a CURRENT_ENGINE
+article. It does not re-score one, does not compare one against another, and does not
+make one wait for its every-two-days cron; that cron is the legacy/manual backlog only.
+
+This reverses the doctrine that used to be stated here -- that an ACCEPT was not a
+publication and that the periodic best-of-pool selector owned that decision. Under it,
+thirteen scheduled runs accepted articles which a pool then held, on gates that
+reconstructed decisions this file had already made, and produced zero publications.
 
 ONE usable story -> ONE editorial run -> ACCEPT or HOLD -> stop. No candidate rotation:
-a HOLD is a normal production outcome, not a reason to try another story.
+a HOLD is a normal production outcome, not a reason to try another story. And ONE
+publication attempt: a mechanical publishing failure is reported as one, never retried
+here, never turned back into an editorial HOLD, and never fed to the backlog selector.
 """
 from __future__ import annotations
 
@@ -311,6 +323,53 @@ def _selector_v2_shadow(orch, seed: dict, run: str, model: str) -> None:
                 pass
 
 
+
+def publish_if_eligible(orch, run: str, path, result: dict) -> dict:
+    """Hand ONE accepted candidate to the deterministic publisher. Exactly once.
+
+    THE OWNERSHIP BOUNDARY, in one function. Above it, this file has decided: the
+    article is ACCEPT and the publication-safety bridge granted publication_eligible.
+    Below it, publish_best does mechanics -- date, art direction, illustration,
+    exact-run audit retention, staging, commit, push -- and no editorial judgement
+    whatever. publish_candidate re-asserts the terminal contract (CURRENT_ENGINE,
+    ACCEPT, eligible, exact run retainable) before it touches anything, but those are
+    assertions that the right object arrived, not a second opinion about the article.
+
+    NOT ELIGIBLE MEANS NOTHING HAPPENS. A rehearsal, a bridge that withheld eligibility,
+    or an article with no editorial package all leave publication_eligible false, and
+    then this makes no call at all: the candidate stays in _drafts/ for the owner,
+    exactly as it did before direct publication existed.
+
+    A FAILURE HERE IS MECHANICAL. If the publisher refuses or breaks, the editorial
+    decision above still stands. `published` goes false, the concrete reason is logged
+    and recorded, and that is the end of it -- nothing retries, nothing composes another
+    story, nothing rewrites the ACCEPT into a HOLD, and nothing feeds the candidate into
+    the legacy backlog competition it is explicitly excluded from.
+    """
+    result["published"] = False
+    if not result.get("publication_eligible"):
+        return result
+    import publish_best as PUB
+    try:
+        rc = PUB.publish_candidate(path)
+    except Exception as e:                                            # noqa: BLE001
+        rc = 1
+        result["publication_error"] = "%s: %s" % (type(e).__name__, str(e)[:300])
+        orch.logger.exception("CURRENT_ENGINE %s: direct publication raised", run)
+    result["published"] = rc == 0
+    if result["published"]:
+        orch.logger.info("CURRENT_ENGINE %s: PUBLISHED %s", run,
+                         pathlib.Path(path).name)
+    else:
+        orch.logger.error(
+            "CURRENT_ENGINE %s: direct publication FAILED for %s (rc=%s%s) -- the "
+            "article remains an accepted candidate; this is a publishing failure, not "
+            "an editorial hold",
+            run, pathlib.Path(path).name, rc,
+            "; " + result["publication_error"] if result.get("publication_error") else "")
+    return result
+
+
 def run_scheduled(orch, *, rehearsal: bool = False,
                   evidence_root: str | None = None,
                   model: str = DEFAULT_MODEL, research_fn=None) -> dict:
@@ -532,4 +591,6 @@ def run_scheduled(orch, *, rehearsal: bool = False,
     _record_seed_attempt(orch, seed, run, out, result)
     orch.logger.info("CURRENT_ENGINE %s: ACCEPT — candidate %s (publication_eligible=%s)",
                      run, path.name, result["publication_eligible"])
+
+    publish_if_eligible(orch, run, path, result)
     return result

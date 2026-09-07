@@ -158,9 +158,12 @@ def promotion_boundary() -> None:
         os.environ["NEW_ENGINE_EVIDENCE_ROOT"] = str(ev)
         os.environ["CRIPMINDS_PUBLICATION_AUDIT_ROOT"] = str(store)
 
+        # A CURRENT_ENGINE article is published directly by the run that composed it
+        # (2026-09-07), by path, with no pool. The retention boundary is unchanged --
+        # it is the same promote_candidate the backlog selector uses.
         draft = PB.DRAFTS / "2026-09-06-a-pavilion-on-six-columns.md"
         draft.write_text(POST)
-        check("publish_best promoted the draft", PB.main() == 0)
+        check("the direct publisher promoted the draft", PB.publish_candidate(draft) == 0)
         promoted = PB.POSTS / draft.name
         check("the article is in _posts", promoted.is_file())
         check("a bundle was retained at the boundary",
@@ -172,8 +175,8 @@ def promotion_boundary() -> None:
         shutil.rmtree(ev)
         draft2 = PB.DRAFTS / "2026-09-06-a-second-pavilion.md"
         draft2.write_text(POST.replace("A pavilion on six columns", "A second pavilion"))
-        rc = PB.main()
-        check("a draft whose run has vanished is not published", rc == 0)
+        rc = PB.publish_candidate(draft2)
+        check("a draft whose run has vanished is refused, not published", rc == 1)
         check("it stays in _drafts, unarchived", draft2.is_file())
         check("and never reached _posts", not (PB.POSTS / draft2.name).exists())
         check("its bytes were not rewritten",
