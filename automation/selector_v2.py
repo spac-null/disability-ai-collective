@@ -364,7 +364,13 @@ def cached_assessment(conn, seed_id: str, source_sha256: str):
 # subtraction below is explicit rather than a magic number; a test asserts it still
 # matches what score_item actually adds, so a change there fails loudly instead of
 # silently skewing the shadow signal.
-BOOSTER_CONTRIBUTION = 0.15
+# 0.0 since 2026-09-07: score_item no longer ADDS a disability-vocabulary boost, so
+# there is nothing left to subtract. Left as a named constant rather than deleted
+# because theme_signal's contract -- "legacy theme relevance minus the booster
+# contribution" -- is still the right contract if a boost ever returns. Subtracting a
+# boost that is no longer added would turn the retired advantage into an active
+# PENALTY on disability vocabulary, which is not what the doctrine asked for.
+BOOSTER_CONTRIBUTION = 0.0
 
 
 def theme_signal(title, summary, score_item, boosters, keyword_matches) -> float:
