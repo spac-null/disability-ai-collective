@@ -1,7 +1,7 @@
 # Perspective Research — INDEX
 
 *Read this first. It should orient a fresh session in under two minutes.*
-*Last updated: 2026-09-07 — **PR001 first owner review complete.***
+*Last updated: 2026-09-08 — **PR002 opened; PR001 first owner review complete.***
 
 ---
 
@@ -20,6 +20,39 @@ this directory may be quoted in an article.
 ---
 
 ## ACTIVE RESEARCH CLUSTER
+
+**PR002 — Time, Simultaneity, Waiting & Pace** → `time-simultaneity-waiting-pace.md`
+
+**CLUSTER STATUS: WORKING RESEARCH — OWNER REVIEW PENDING.**
+**8 CANDIDATE · 1 NEEDS_RESEARCH · 0 APPROVED_DURABLE.** Nothing promoted.
+**No new axis proposed** — everything sits beneath Axes 4 and 9.
+
+| ID | Short name | Status | Axes | Minds |
+|---|---|---|---|---|
+| PR002-01 | Access can expire | CANDIDATE | 4, 3 | PINA / MAYA |
+| PR002-02 | Pace is part of the interface | CANDIDATE ★ strongest | 4, 3, 2 | PINA |
+| PR002-03 | Synchrony is a resource | CANDIDATE | 4, 2 | SIIRI / PINA |
+| PR002-04 | Waiting is an allocation | CANDIDATE | 9, 5, 10 | MAYA |
+| PR002-05 | Delay changes the state it waits on | CANDIDATE ★ new question | 9, 12 | MAYA / SIIRI |
+| PR002-06 | More time is not always different time | CANDIDATE | 4, 9, 8 | ZENO / MAYA |
+| PR002-07 | Recovery is part of the task | CANDIDATE | 9, 6, 5 | MAYA |
+| PR002-08 | A deadline can define the person | **NEEDS_RESEARCH** | 8, 11, 4 | ZENO |
+| PR002-09 | The accommodation preserves the schedule | CANDIDATE ✦ *not in the starting set* | 14, 9, 10 | MAYA / ZENO |
+| ME003 | Disconfirming shape | META-EDITORIAL CANDIDATE — **proposed protocol addition, not adopted** | — | — |
+
+**Two source cautions govern this cluster.** Samuels 2017 and Kafer 2013 — the two central
+crip-time texts — were **NOT ACCESSED**; only fragments, with their routes named. And the
+*Theory and Society* paper's **authors are UNKNOWN** and recorded as such. These are the
+entries a future session is most likely to fill in from memory. Do not.
+
+**Owner mechanisms:** M3 (the three-second lag) is sharpened and partly redirected — measured
+lag explains ~3% of variance while the speaker's ordinary rate moves accuracy 12 points, so
+reach for **rate** and **simultaneity** before **delay**. M5 (permission arrives last) is
+sharpened by PR002-04 (lateness as allocation) and PR002-05 (the wait changes the subject).
+
+---
+
+## FIRST-REVIEW-COMPLETE CLUSTER
 
 **PR001 — Measurement / Classification / Legibility / Normality**
 → `measurement-classification-legibility.md`
@@ -40,7 +73,10 @@ for asserting. The hard boundary is unchanged by any promotion.
 
 ---
 
-## SOURCE REGISTER
+## SOURCE REGISTER — PR001
+
+*PR002 keeps its own register, with its own verification levels, inside
+`time-simultaneity-waiting-pace.md`.*
 
 | # | Source | Type | Availability |
 |---|---|---|---|
@@ -76,7 +112,9 @@ and Technology · Practices of Democracy.
 
 ---
 
-## ENTRY INDEX
+## ENTRY INDEX — PR001
+
+*PR002's entry table is in the active-cluster section above.*
 
 | ID | Short name | Status | Axes extended | Minds |
 |---|---|---|---|---|
@@ -161,12 +199,7 @@ Full dated decision history — now ten entries — at the foot of the cluster f
 
 ## NEXT CLUSTER
 
-**PR002 — TIME / SIMULTANEITY / WAITING / PACE — ACTIVE NEXT.** *Not started; not researched
-in this task.*
-
-Would extend Axis 4 (timing & simultaneity) and Axis 9 (endurance, pace, accumulated cost),
-and is the natural home for the owner's M3 (the three-second lag) and M5 (permission arrives
-last). No sources identified yet.
+**PR002 — opened 2026-09-08.** See the active cluster above.
 
 **PR003 — CARE / ASSISTIVE TECHNOLOGY / AGENCY** — *not started, but it already has one
 deferred hypothesis waiting for it* (Moser's Dag case; see the cluster decision history).
