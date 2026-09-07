@@ -3366,6 +3366,164 @@ def grounding_repair(provider, article_text: str, findings: list, ledger: dict,
             "provider": ident, "model_calls": 1, "repairs": 1}
 
 
+
+# ══════════════════════════════════════════════════════════════════════════════
+# STAGE 8c -- ONE GROUNDING COMPLETION PASS
+# ══════════════════════════════════════════════════════════════════════════════
+# WHY THIS EXISTS, and why it is not "another repair". Two production runs showed the
+# same shape: the one repair was correct, applied cleanly, added nothing, and was still
+# incomplete, because the article made ONE unsupported claim in TWO places.
+#
+#   production-20260907T173433Z-ab65bb22 (Lubetkin)
+#       "for buildings of exceptional interest"          <- repaired
+#       "marks the building as of exceptional interest"  <- survived, same claim
+#
+#   production-20260907T191059Z-90687a49 (Daily Nous)
+#       "a single dial standing for how far a democracy falls short of fully
+#        transferring policy authority to the majority"  <- repaired
+#       "The dial the veto is mapped onto measures the arrangement: it records
+#        that redistributive authority can now be overridden"  <- survived
+#
+# The second pair shares almost no wording. Seeing them as one proposition is semantic
+# work, and instructing the first repair to "find every occurrence" did not achieve it --
+# #104 shipped that instruction and the Daily Nous run still left one behind. What DID
+# work, both times, is the recheck: it found the survivor precisely and described it.
+#
+# So the missing capability is not a better first repair. It is one more subtractive pass
+# aimed at a residue the Grounder has already located and named. That is a much smaller
+# problem than the first repair solves, and it is bounded accordingly.
+#
+# WHAT KEEPS THIS FROM BECOMING A RETRY LOOP. Completion runs at most once, only after a
+# first repair that actually applied edits, only on findings the Grounder itself marked
+# repairable, only when at most COMPLETION_MAX_FINDINGS of them survive, and its edits go
+# through the SAME apply_grounding_repair contract -- the same relation checks, the same
+# refusal to add. One final recheck follows, and whatever it says is final. There is no
+# third pass and the code has nowhere to put one.
+COMPLETION_MAX_FINDINGS = 2
+
+COMPLETION_GROUNDING_SYSTEM = (
+    "One correction pass has already run on this article and was accepted. The grounder "
+    "has read the corrected article and found that a claim it does not support is still "
+    "there -- usually because the article made the same claim twice and only one place "
+    "was fixed. Your job is to remove what is left.\n"
+    "\n"
+    "THIS IS THE LAST PASS. Nothing runs after it except the grounder, once. A claim you "
+    "leave standing is a claim that stays in the article or costs it publication.\n"
+    "\n"
+    "REMOVE, DO NOT REPHRASE. Prefer deleting the sentence. If the sentence carries "
+    "something the evidence does support, cut only the unsupported part and leave the "
+    "rest exactly as it is. Do not re-say the claim more carefully -- a more careful "
+    "version of an unsupported claim is an unsupported claim.\n"
+    "\n"
+    "COPY `original` VERBATIM, character for character from the article below. An "
+    "`original` that is not found word for word is refused and the finding goes "
+    "unanswered.\n"
+    "\n"
+    "THE SAME MACHINE CHECK APPLIES TO YOU. Your wording may introduce no number, no "
+    "name, and no relation the original sentence and your cited facts did not already "
+    "carry. Connectives are relations: cause, consequence, equivalence, comparison, "
+    "superlative, generalisation, negation, absence and time. Join surviving halves with "
+    "a full stop rather than a connective, or delete one of them.\n"
+    "\n"
+    "AND LOOK ONCE MORE FOR ANOTHER COPY. The reason you are here is that a claim was "
+    "made in more than one place. Before you finish, read the whole article again for the "
+    "same claim in different words. Emit one edit per place, all citing the same "
+    "finding_id.\n"
+    "\n"
+    "You may not touch a sentence that no finding names, and you may not improve style "
+    "anywhere. If a flagged passage cannot be fixed by removing words, delete it."
+)
+
+
+def completion_prompt(article_text: str, findings: list, ledger: dict) -> str:
+    """Deliberately thin. The corrected article, the surviving findings, and the facts
+    those findings cite -- nothing else. No architecture, no writer packet, no worth, no
+    research beyond the cited support, and none of the findings the first repair already
+    answered."""
+    L = ["THE ARTICLE, AS ALREADY CORRECTED ONCE", article_text, "",
+         "WHAT THE GROUNDER STILL FINDS UNSUPPORTED"]
+    for f in findings:
+        L += ["", "FINDING %s  [%s]" % (f.get("id"), f.get("classification")),
+              "  passage : %s" % str(f.get("quote"))[:400],
+              "  why     : %s" % str(f.get("why"))[:600]]
+        if f.get("suggested_patch"):
+            L.append("  a narrower wording the grounder believes is supported: %s"
+                     % str(f["suggested_patch"])[:300])
+        rel = _relevant_facts(str(f.get("quote") or ""), ledger,
+                              str(f.get("why") or ""))
+        if rel:
+            L.append("  THE FROZEN EVIDENCE FOR THIS PASSAGE:")
+            for fid, fact in rel:
+                L.append("    %s  %s" % (fid, fact.get("proposition", "")[:220]))
+                if fact.get("support_span"):
+                    L.append("        span: %r" % fact["support_span"][:200])
+    L += ["", REPAIR_GROUNDING_SCHEMA]
+    return "\n".join(L)
+
+
+def completion_eligible(grounding: dict, repair: dict | None) -> tuple:
+    """May the one completion pass run? (ok, reason, findings).
+
+    Every condition is a reason to NOT run it. Pure and side-effect free so the decision
+    can be tested without a provider.
+    """
+    if not isinstance(repair, dict) or repair.get("status") != PASS:
+        return False, "the first repair did not pass; there is nothing to complete", []
+    if not (repair.get("edits") or []):
+        # Nothing was actually corrected, so the residue is not residue -- it is the
+        # original problem, and a second call would only rediscover it.
+        return False, "the first repair applied no edit", []
+    if grounding.get("status") == PASS:
+        return False, "the recheck passed; no completion needed", []
+    blocking = grounding.get("blocking") or []
+    if not blocking:
+        return False, "no blocking finding survived the recheck", []
+    if len(blocking) > COMPLETION_MAX_FINDINGS:
+        return False, ("%d blocking findings survived, over the completion limit of %d -- "
+                       "that is a broken article, not a residue"
+                       % (len(blocking), COMPLETION_MAX_FINDINGS)), []
+    # The grounder's own verdict decides what is answerable by removing words. A finding
+    # it did not mark repairable needs evidence this pass does not have and will not get.
+    eligible = [f for f in repairable_findings(blocking) if f.get("repairable") is True]
+    if len(eligible) != len(blocking):
+        return False, ("%d of %d surviving findings are not repairable by subtraction"
+                       % (len(blocking) - len(eligible), len(blocking))), []
+    return True, "%d repairable finding(s) survived one accepted repair" % len(eligible), eligible
+
+
+def grounding_completion(provider, article_text: str, findings: list, ledger: dict,
+                         packet: dict) -> dict:
+    """STAGE 8c. Exactly one call, subtractive, validated by the SAME contract as 8b."""
+    if not findings:
+        return {"status": SKIPPED, "reason": "no completable finding", "model_calls": 0}
+    obj, ident = _ask(provider, COMPLETION_GROUNDING_SYSTEM,
+                      completion_prompt(article_text, findings, ledger),
+                      6_000, GROUNDING, GROUNDING_HOLD)
+    edits = obj.get("edits")
+    if not isinstance(edits, list) or not edits:
+        return {"status": SKIPPED, "reason": "the completion pass proposed no edit",
+                "model_calls": 1, "provider": ident}
+    # THE SAME VALIDATOR. Not a relaxed one, not a copy: the identical function the first
+    # repair goes through, so a completion edit that adds a relation is refused for the
+    # same reason and with the same message.
+    text, prov, errs = apply_grounding_repair(article_text, edits, findings, ledger, packet)
+    if errs and not prov:
+        # Every edit refused. The article is unchanged, so a further grounder call would
+        # only rediscover the same findings. Report and let the existing HOLD stand.
+        return {"status": SKIPPED, "reason": "every completion edit was refused",
+                "rejected_edits": errs, "model_calls": 1, "provider": ident}
+    if not text.strip():
+        raise CompositionHold(GROUNDING, GROUNDING_HOLD,
+                              ["the completion pass deleted the whole article"])
+    return {"status": PASS, "article_text": text, "edits": prov,
+            "findings_answered": [f.get("id") for f in findings],
+            "rejected_edits": errs,
+            "findings_left_unanswered": sorted(
+                {str(f.get("id")) for f in findings}
+                - {str(e.get("finding_id")) for e in prov}),
+            "provider": ident, "model_calls": 1, "repairs": 1}
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # STAGE 10 -- READER GATE
 # ══════════════════════════════════════════════════════════════════════════════
@@ -4177,6 +4335,51 @@ def run_story_architecture_composition(
                 repairs[GROUNDING] = 1
                 g = g2
 
+                # ── ONE COMPLETION PASS, AND ONLY FOR A RESIDUE ──────────────
+                # Not a retry. The first repair was accepted and applied; what is left is
+                # the same claim in a second place, which two production runs showed the
+                # first pass does not reliably reach (see STAGE 8c). It runs at most once,
+                # on at most COMPLETION_MAX_FINDINGS findings the Grounder itself marked
+                # repairable, through the SAME apply_grounding_repair contract, followed by
+                # one final Grounder call. Whatever that call says is final: there is no
+                # third pass, and this block is the only place completion is reachable.
+                _ok, _why, _comp_findings = completion_eligible(g, rep)
+                if _ok:
+                    comp = grounding_completion(P, final, _comp_findings, ledger,
+                                                wr["packet"])
+                    calls[GROUNDING] = calls.get(GROUNDING, 0) + comp.get("model_calls", 0)
+                    g["completion_considered"] = _why
+                    if comp["status"] == PASS:
+                        g["completion"] = {k: v for k, v in comp.items()
+                                           if k != "article_text"}
+                        final = comp["article_text"]
+
+                        # The full hard stack again, on the completed text. Deterministic,
+                        # no provider: a completion is prose the Writer did not write, and
+                        # it is audited exactly as the first repair's output is.
+                        sa3 = record(SAFETY, audit(final, pkg, repair=comp))
+                        sa3["after_completion_pass"] = True
+                        if sa3["status"] != PASS:
+                            return out(SAFETY,
+                                       "the completion pass did not survive the safety "
+                                       "stack: %s" % "; ".join(sa3["blocking"])[:400],
+                                       SAFETY_HOLD, final, pkg, surface)
+
+                        g3 = record(GROUNDING,
+                                    ground_candidate(P, bundle_text(final, pkg),
+                                                     source_text, source_sha, pack,
+                                                     arch, wr["packet"]))
+                        g3["repair"] = g["repair"]
+                        g3["completion"] = g["completion"]
+                        g3["attempt"] = 3
+                        calls[GROUNDING] = calls.get(GROUNDING, 0) + 1
+                        g = g3
+                    else:
+                        g["completion_skipped"] = comp.get("reason", "")
+                        g["completion_rejected_edits"] = comp.get("rejected_edits", [])
+                else:
+                    g["completion_considered"] = _why
+
         pkg = pkg_ref[0]
         g = repackage_if_only_the_furniture_failed(g)
         pkg = pkg_ref[0]
@@ -4185,7 +4388,9 @@ def run_story_architecture_composition(
             return out(GROUNDING,
                        "grounding status %r; %d blocking finding(s)%s: %s"
                        % (g["grounding_status"], len(g["blocking"]),
-                          " AFTER one factual repair" if g.get("attempt") == 2 else "",
+                          {2: " AFTER one factual repair",
+                           3: " AFTER one factual repair and one completion pass"}
+                          .get(g.get("attempt"), ""),
                           [("%s %s %s" % (f.get("classification"),
                                           surface_of(str(f.get("quote") or ""), pkg),
                                           str(f.get("quote") or f.get("claim") or "")[:70]))
@@ -4342,6 +4547,11 @@ def persist(out_dir, result: dict) -> None:
     if det.get(GROUNDING, {}).get("repair"):
         # Auditable by construction: every edit, what authorised it, and what it removed.
         dump("FACTUAL_REPAIR.json", det[GROUNDING]["repair"])
+    if det.get(GROUNDING, {}).get("completion"):
+        # The completion pass gets its own file rather than being merged into the repair:
+        # they are two different calls answering two different finding sets, and a later
+        # auditor must be able to tell which pass removed what.
+        dump("FACTUAL_COMPLETION.json", det[GROUNDING]["completion"])
     if det.get(FACT_CHECK, {}).get("status") not in (None, NOT_RUN, SKIPPED):
         dump("FACT_CHECK.json", det[FACT_CHECK])
     if det.get(PACKAGE, {}).get("package"):
