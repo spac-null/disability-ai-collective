@@ -2980,6 +2980,25 @@ def fact_check_unavailable(article_text: str) -> dict:
 # unsupported characterisation with the supported wording, or delete the sentence. It may
 # not add a fact, source, entity, occurrence or relation, broaden scope, strengthen
 # certainty, or improve style anywhere else.
+#
+# THE PROMPT NOW NAMES EVERY RELATION THE CHECK MEASURES (2026-09-07). Production run
+# production-20260907T154937Z-8556915b was lost at exactly this seam: the article reached
+# Grounding, the repair was attempted, and the validator refused it because
+#
+#     edit 1 ADDS relations=['EQUIVALENCE']    (cited facts F27, F25 carry neither)
+#     edit 2 ADDS relations=['GENERALIZATION'] (cited facts F18, F54 carry neither)
+#
+# The check reads nine relation classes out of story.TURN_RELATION_SHAPES. The prompt
+# warned about four of them. EQUIVALENCE was one of the four and the model did it anyway;
+# GENERALIZATION was not warned about at all, and neither were NEGATION, ABSENCE or the
+# superlative. An instruction that lists a subset of what the machine refuses is teaching
+# the model a different contract from the one it is graded on, so the list below is now
+# the same nine classes with the same trigger words, and generalisation -- retreating from
+# one unsupported specific to a safe-sounding general case -- gets its own paragraph
+# because it is the one that reads as caution while being an enlargement.
+#
+# Nothing about the validator, the permissions or the one-repair budget changes here.
+# This is the instruction catching up with the check.
 REPAIR_GROUNDING_SYSTEM = (
     "You are removing specific factual over-reach from a finished article. A grounder has "
     "named the exact passages and said what the evidence does and does not carry. The "
@@ -3007,17 +3026,34 @@ REPAIR_GROUNDING_SYSTEM = (
     "RELATIONS ARE FACTUAL CLAIMS, AND CONNECTIVES CREATE THEM. This is the rule that is "
     "most often broken, because the words look like grammar rather than assertion. When "
     "you re-join the surviving halves of a cut sentence you will reach for a connective, "
-    "and that connective is a new claim:\n"
-    "  CAUSE / CONSEQUENCE   because, so, therefore, as a result, which meant, leading "
-    "to, forcing, allowing, this is why\n"
-    "  EQUIVALENCE / COMPARISON   the same as, like, just as, echoes, mirrors, amounts "
-    "to, is effectively, in other words\n"
-    "  TEMPORAL   after, once, when, by then, still, no longer, already, subsequently, "
-    "at the time\n"
-    "  EXCLUSIVITY   only, single, alone, the first, the last, nothing else\n"
+    "and that connective is a new claim. These are the NINE classes the machine check "
+    "measures, with the words that trigger each one:\n"
+    "  CAUSE          because, since, causes, caused, led to, produces, makes it, due to\n"
+    "  CONSEQUENCE    so, therefore, thus, as a result, hence, consequently, which is "
+    "why, which meant, means that, so that, leading to, forcing, allowing\n"
+    "  EQUIVALENCE    the same as, the same, amounts to, equivalent, identical, no "
+    "different, is really, both are, are both, one and the same, re-read as\n"
+    "  COMPARISON     more, less, fewer, greater, than, unlike, whereas, compared\n"
+    "  SUPERLATIVE    most, least, best, worst, and any -est word\n"
+    "  GENERALIZATION always, every, all, any, in general, wherever, whenever, never\n"
+    "  NEGATION       no, not, nothing, none, without, cannot, can only, fails to\n"
+    "  ABSENCE        absence, missing, unpublished, unreadable, uncounted, no estimate, "
+    "not published, not counted\n"
+    "  TEMPORAL       before, after, then, until, once, by the time\n"
     "None of these may appear in your repaired wording unless it is already in the "
     "original sentence, or a fact you cite carries it. Join the halves with a full stop "
     "instead of a connective, or delete one of them.\n"
+    "\n"
+    "GENERALISING IS THE QUIETEST WAY TO BREAK THIS, and it is what cost a real run. "
+    "Cutting an unsupported specific and reaching for the general case in its place -- "
+    "one study becoming 'such studies', one device becoming 'these systems', one "
+    "occasion becoming 'whenever' -- feels like retreating to safer ground. It is the "
+    "opposite: the narrow claim was about one thing, the general one is about a class, "
+    "and a class is bigger. Cut the specific and stop. Say less about fewer things, "
+    "never a little about more of them.\n"
+    "\n"
+    "EXCLUSIVITY, likewise, is a relation and not a hedge: only, single, alone, the "
+    "first, the last, nothing else.\n"
     "\n"
     "TIME IS LICENSED ONLY BY THE TIME OPERATIONS. A repair may change what a sentence "
     "says about when something happened ONLY when its operation is CORRECT_TIME or "
