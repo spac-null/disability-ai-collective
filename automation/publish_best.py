@@ -608,9 +608,10 @@ def promote_candidate(draft, dest, now):
     # ── PUBLISHED RUN RETENTION, AT THE BOUNDARY ────────────────────────
     # Here, and not earlier: the bundle must be assembled from the bytes that
     # actually publish, which means after the date rewrite and after the
-    # illustrations went into the body. The promotion gate has already proved
-    # the run exists and carries what Safety takes, so this is the copy, not
-    # the decision.
+    # illustrations went into the body. Whichever caller got here has already
+    # proved the exact run resolves and is retainable -- terminal_authorization
+    # for a direct publication, the promotion gate for a backlog one -- so this
+    # is the copy, not the decision.
     #
     # FAIL CLOSED. If the bundle cannot be written, the publication is UNDONE:
     # the post goes back to _drafts/, the assets this run generated are
@@ -717,6 +718,33 @@ def publish_candidate(draft_path, now=None, roots=None):
     now = now or datetime.now()
     if not draft.is_file():
         print("DIRECT PUBLISH REFUSED: %s does not exist" % (draft,), file=sys.stderr)
+        return 1
+
+    # THIS PUBLISHER PUBLISHES FROM ITS OWN REPOSITORY, AND ONLY FROM IT.
+    #
+    # Everything below moves a file into REPO/_posts, retains a bundle against it and
+    # runs `git commit` and `git push origin main` in REPO. A candidate that does not
+    # live in REPO/_drafts did not come from the working copy this publisher is about
+    # to push, and moving it there would be importing a file from somewhere else into
+    # production and publishing it.
+    #
+    # WHY THIS IS NOT A TEST ACCOMMODATION. run_scheduled takes its drafts_dir from the
+    # orchestrator it is handed, and several harnesses hand it a temp directory while
+    # this module's REPO/POSTS still point at the real checkout. Before direct
+    # publication existed, run_scheduled ended at persist_candidate and that mismatch
+    # was harmless. It is not harmless now: an offline test suite that reaches
+    # ACCEPT + publication_eligible would otherwise publish to the live site and push.
+    # Relying on such a suite never quite reaching that state is exactly the kind of
+    # accidental safety this file refuses elsewhere -- an exclusion must not depend on
+    # a condition HAPPENING to hold.
+    try:
+        in_repo = draft.resolve().is_relative_to(DRAFTS.resolve())
+    except OSError:
+        in_repo = False
+    if not in_repo:
+        print("DIRECT PUBLISH REFUSED: %s is not in this publisher's own drafts "
+              "directory (%s). A candidate from another working copy is not published "
+              "here." % (draft, DRAFTS), file=sys.stderr)
         return 1
 
     fm = parse_frontmatter(draft.read_text(encoding="utf-8", errors="replace"))

@@ -439,6 +439,33 @@ def test_zero_images_is_a_successful_publication():
     shutil.rmtree(root, ignore_errors=True)
 
 
+# ── the publisher does not import candidates from other working copies ─────────────
+def test_a_candidate_outside_this_repo_is_refused():
+    """The hazard direct publication created: run_scheduled takes drafts_dir from the
+    orchestrator it is handed, and several offline harnesses hand it a temp directory
+    while publish_best's REPO/POSTS still point at the real checkout. Reaching ACCEPT
+    there must not publish to the live site."""
+    root = _repo()
+    rid = "production-20260907T090000Z-ffff6666"
+    with Env(root, [rid], ad_result=None):
+        elsewhere = pathlib.Path(tempfile.mkdtemp(prefix="another-working-copy-"))
+        (elsewhere / "_drafts").mkdir()
+        stray = elsewhere / "_drafts" / "2026-09-07-from-a-temp-dir.md"
+        stray.write_text(PAT.POST.replace(PAT.RUN_ID, rid), encoding="utf-8")
+
+        rc = PB.publish_candidate(stray)
+        check("a candidate outside this repo's _drafts is refused", rc == 1)
+        check("it was not moved into _posts",
+              not (root / "_posts" / stray.name).exists() and stray.is_file())
+        check("no bundle was retained for it",
+              not (root / ".store" / stray.stem).exists())
+        check("and nothing was committed",
+              _out(root, "log", "--format=%s", "-1") == "init",
+              _out(root, "log", "--format=%s", "-1"))
+        shutil.rmtree(elsewhere, ignore_errors=True)
+    shutil.rmtree(root, ignore_errors=True)
+
+
 def test_the_call_site_is_where_it_says_it_is():
     src = (HERE / "new_engine_production.py").read_text()
     tree = ast.parse(src)
@@ -478,6 +505,7 @@ def main():
                    test_legacy_pool_keeps_working_and_excludes_current_engine,
                    test_direct_publication_uses_the_existing_mechanics,
                    test_zero_images_is_a_successful_publication,
+                   test_a_candidate_outside_this_repo_is_refused,
                    test_the_call_site_is_where_it_says_it_is):
             print("\n" + fn.__name__)
             fn()
