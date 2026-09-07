@@ -2981,6 +2981,22 @@ def fact_check_unavailable(article_text: str) -> dict:
 # not add a fact, source, entity, occurrence or relation, broaden scope, strengthen
 # certainty, or improve style anywhere else.
 #
+# AND IT REQUIRES THE REPAIR TO BE COMPLETE (2026-09-07, second finding). The repair is
+# a single pass with no retry, so a flagged claim the model fixes in one place and leaves
+# standing in another is simply not repaired. That is not a hypothetical:
+# production-20260907T173433Z-ab65bb22 made the Grade I "exceptional interest" gloss
+# twice, in different words; the repair cut the quoted sentence and left the other, and
+# Grounding held the article on the claim it had just corrected. The same run edited the
+# sentence holding a second flagged phrase -- removing a different phrase from it -- and
+# left the flagged one in place.
+#
+# Nothing mechanical needed changing for this. `apply_grounding_repair` already accepts
+# several edits carrying the same finding_id, applies each in order, and computes
+# findings_left_unanswered as a set difference, so duplicates neither break it nor
+# double-count. `repair_prompt` already hands the model the entire article. The model was
+# simply never told the claim might appear twice, and the schema example showed one edit
+# per finding.
+#
 # THE PROMPT NOW NAMES EVERY RELATION THE CHECK MEASURES (2026-09-07). Production run
 # production-20260907T154937Z-8556915b was lost at exactly this seam: the article reached
 # Grounding, the repair was attempted, and the validator refused it because
@@ -3090,8 +3106,25 @@ REPAIR_GROUNDING_SYSTEM = (
     "ambiguous and no listed fact resolves it, remove the reference rather than resolve "
     "it from the explanation.\n"
     "\n"
-    "You may not touch a sentence that was not flagged, and you may not improve the style "
-    "of anything. Every edit must be traceable to a finding.\n"
+    "ONE REPAIR, EVERY OCCURRENCE. A flagged claim is often made more than once, and the "
+    "grounder quotes only one place it appears. You have the WHOLE ARTICLE above. Before "
+    "you write an edit, search it for the claim itself -- not the quoted wording, the "
+    "CLAIM -- and repair every place it is made. Emit one edit per occurrence, all citing "
+    "the same finding_id. Two edits for one finding is normal and correct.\n"
+    "\n"
+    "THIS IS THE COMMONEST WAY A REPAIR FAILS, and it cost a real run. The grounder "
+    "flagged that a Grade I listing had been glossed as marking a building 'of "
+    "exceptional interest'. The article said it twice, in different words, three "
+    "paragraphs apart. The repair fixed the sentence that was quoted, the other survived "
+    "untouched, and the article was held on the identical claim it had just been "
+    "corrected for. In the same run a second flagged phrase sat inside a sentence the "
+    "repair was editing for a different reason -- and was left in place while that other "
+    "phrase was cut. There is no second repair, so an occurrence you do not reach now is "
+    "an occurrence nobody reaches.\n"
+    "\n"
+    "You may not touch a sentence that was not flagged FOR SOME FINDING, and you may not "
+    "improve the style of anything. Every edit must be traceable to a finding -- but one "
+    "finding may legitimately require several edits.\n"
     "\n"
     "IF A FLAGGED PASSAGE CANNOT BE FIXED BY REMOVING WORDS, DELETE IT. A deleted "
     "sentence costs the article a sentence. An invented one costs it the run: the machine "
@@ -3108,6 +3141,8 @@ REPAIR_GROUNDING_SCHEMA = (
     "                                     NARROW_CHARACTERISATION | DELETE\n"
     '            "fact_ids": ["F.."],     the ledger facts the repaired wording rests on\n'
     '            "what_was_removed": "the scope, exclusivity or certainty taken out"}]}\n'
+    "One finding may have SEVERAL edits, one per place the claim is made. Repeat the "
+    "same finding_id on each; they are applied in order and all of them count.\n"
     "No prose outside the JSON."
 )
 
