@@ -14,6 +14,14 @@ import art_director as AD
 
 FAILURES, CHECKS = [], [0]
 
+# A settled-article stand-in that actually supports the default anchors. Reconciliation
+# measures a brief against the final prose, so a one-word body would legitimately strip
+# every anchor -- which is the fix working, not a test failing.
+ARTICLE = ("The pavilion stands on a cleared forest floor at the edge of the trees. "
+           "A raised timber structure sits above sloping ground, and the timber remains "
+           "exposed across the spans. The walls are bahareque, packed earth over woven "
+           "cane, and the upper level rises toward the canopy.")
+
 
 def check(label, cond, detail=""):
     CHECKS[0] += 1
@@ -146,17 +154,19 @@ def test_the_prompt_withholds_what_it_must():
                        "concrete_carrier": "the timber deck", "facts_allowed": ["F01"],
                        "must_not_say_yet": "the withheld thing"}],
             "lens": "THE WORTH LENS REASONING", "lens_claim": "worth reasoning here"}
-    u = AD.build_user_prompt("the settled article body", "T", "D", arch, "Maya Flux", None)
-    check("carries the article", "the settled article body" in u)
+    art = ARTICLE + " The timber deck is reached from the ground."
+    u = AD.build_user_prompt(art, "T", "D", arch, "Maya Flux", None)
+    check("carries the article", "cleared forest floor" in u)
     check("carries beat ids", "B1" in u)
     check("carries the carrier", "the timber deck" in u)
     check("withholds Worth reasoning", "WORTH LENS REASONING" not in u and "worth reasoning" not in u)
     check("withholds fact-permission ids", "F01" not in u)
     check("withholds pacing instructions", "the withheld thing" not in u)
     check("says persona is tone only", "tone only" in u)
-    d = AD.architecture_digest(arch)
+    d = AD.architecture_digest(arch, art)
     check("digest is a whitelist", set(d) <= {"article_type", "story_spine", "opening",
-                                              "turn", "ending_move", "beats"})
+                                              "turn", "ending_move", "beats",
+                                              "beats_omitted_as_unsupported_by_the_settled_article"})
 
 
 def test_alt_text_must_be_real():
@@ -203,22 +213,22 @@ def test_people_are_none_by_default():
 def test_one_model_call_maximum_and_a_safe_fallback():
     print("\ntest_one_model_call_maximum_and_a_safe_fallback")
     p = _P(_brief(2))
-    r = AD.art_direct(p, "article", "T", arch=None)
+    r = AD.art_direct(p, ARTICLE, "T", arch=None)
     check("exactly one model call", p.calls == 1, p.calls)
     check("ok", r["ok"] is True, r["reason"])
     check("brief returned", r["brief"]["image_count"] == 2)
 
     p2 = _P(None, raise_it=RuntimeError("subscription limit"))
-    r2 = AD.art_direct(p2, "article")
+    r2 = AD.art_direct(p2, ARTICLE)
     check("a provider failure does not raise", r2["ok"] is False)
     check("and names the reason", "subscription limit" in r2["reason"])
     check("still only one call attempted", p2.calls == 1)
 
-    r3 = AD.art_direct(_P("not json at all"), "article")
+    r3 = AD.art_direct(_P("not json at all"), ARTICLE)
     check("unparseable output does not raise", r3["ok"] is False and r3["brief"] is None)
 
     bad = _brief(1); bad["images"][0]["composition_note"] = "recreate the photo"
-    r4 = AD.art_direct(_P(bad), "article")
+    r4 = AD.art_direct(_P(bad), ARTICLE)
     check("an invalid brief is rejected, not used", r4["ok"] is False)
     check("and the reason is legible", "brief rejected" in r4["reason"])
 
@@ -263,6 +273,90 @@ def test_registers_and_functions_are_the_declared_set():
           "NEVER MORE CERTAIN THAN THE ARTICLE" in AD.ART_DIRECTOR_SYSTEM)
 
 
+def test_stale_architecture_cannot_become_a_factual_anchor():
+    """THE WILDSUMACO REGRESSION, deterministic and offline.
+
+    The run's ARCHITECTURE.json still argued from an ADA accessibility field. The settled
+    article contains "ADA" and "accessib" zero times, because that claim was withdrawn
+    from the live piece. Handed both, the art director spent one of two image slots on the
+    withdrawn argument. This proves it cannot happen again at three separate points.
+    """
+    print("\ntest_stale_architecture_cannot_become_a_factual_anchor")
+    settled = ("The pavilion floor is lifted above the natural ground and water passes "
+               "beneath it. The station has an entry in a field-station directory where "
+               "conditions are recorded field by field. The station is recorded as not "
+               "open to the public.")
+    check("the settled article really lacks the withdrawn terms",
+          "ADA" not in settled and "accessib" not in settled.lower())
+
+    stale = {"article_type": "FIELD_NOTE",
+             "story_spine": "a pavilion read against its ADA accessibility field",
+             "ending_move": "two records side by side, one of them the ADA field",
+             "beats": [
+                 {"beat_id": "B2", "concrete_carrier": "the pavilion floor above the natural ground",
+                  "happens": "the floor is lifted", "concept_introduced": "permeability"},
+                 {"beat_id": "B6", "concrete_carrier": "the ADA accessibility field on the "
+                                                       "station's directory entry",
+                  "happens": "the directory records accessibility as No",
+                  "concept_introduced": "a foreign legal framework"},
+             ]}
+
+    # 1. THE DIGEST NEVER OFFERS THE STALE BEAT.
+    d = AD.architecture_digest(stale, settled)
+    ids = [b["beat_id"] for b in d["beats"]]
+    check("the supported beat survives", "B2" in ids)
+    check("the withdrawn beat is omitted", "B6" not in ids, ids)
+    check("and the omission is recorded",
+          "B6" in d.get("beats_omitted_as_unsupported_by_the_settled_article", []))
+    check("architecture prose carrying the withdrawn term is dropped",
+          "story_spine" not in d and "ending_move" not in d, sorted(d))
+    blob = json.dumps(d)
+    check("no ADA anywhere in the digest", "ADA" not in blob)
+    check("no accessibility anywhere in the digest", "accessib" not in blob.lower())
+    check("beat argument prose is withheld when reconciling",
+          "happens" not in blob and "permeability" not in blob)
+
+    # 2. THE PROMPT NEVER CARRIES IT EITHER.
+    u = AD.build_user_prompt(settled, "The Upper Room", "", stale, "Maya Flux", None)
+    check("prompt carries no ADA", "ADA" not in u)
+    check("prompt carries no accessibility claim", "accessib" not in u.lower())
+    check("prompt still carries the usable beat", "B2" in u)
+    check("prompt states the article is authoritative",
+          "THE SETTLED ARTICLE IS AUTHORITATIVE" in u or
+          "THE SETTLED ARTICLE IS AUTHORITATIVE" in AD.ART_DIRECTOR_SYSTEM)
+
+    # 3. A BRIEF THAT REACHES PAST IT ANYWAY IS STRIPPED.
+    reaching = {"image_count": 2, "count_reasoning": "x", "images": [
+        _img(placement="AFTER_BEAT:B2",
+             factual_anchors=["the pavilion floor is lifted above the natural ground"]),
+        _img(function="CONCEPTUAL_COVER", register="CONCEPTUAL_SYSTEMIC",
+             placement="END",
+             factual_anchors=["the directory records ADA accessibility as No"],
+             alt_text="A record sheet with a row for accessibility marked No."),
+    ]}
+    rec, notes = AD.reconcile_brief(reaching, settled)
+    check("the withdrawn anchor is stripped", notes["anchors_dropped"] and
+          "ADA" in notes["anchors_dropped"][0])
+    check("the image left with no anchor is dropped", notes["images_dropped"] == 1)
+    check("image_count follows the drop", rec["image_count"] == 1, rec["image_count"])
+    check("the supported image survives", rec["images"][0]["placement"] == "AFTER_BEAT:B2")
+    check("no ADA survives reconciliation", "ADA" not in json.dumps(rec))
+
+    # 4. THE TOKEN TEST ITSELF: ALL, not most.
+    check("a majority overlap is not enough (the original bug)",
+          AD.text_supports("the ADA accessibility field on the station's directory entry",
+                           settled) is False)
+    check("acronyms are caught despite being short",
+          "ADA" in AD.content_tokens("the ADA field"))
+    check("a fully supported phrase passes",
+          AD.text_supports("the pavilion floor above the natural ground", settled) is True)
+    check("ordinary inflection is not read as drift",
+          AD.text_supports("conditions recorded field by field", settled) is True)
+    check("an empty phrase supports nothing", AD.text_supports("", settled) is False)
+    check("with no article text the digest is unfiltered",
+          "B6" in [b["beat_id"] for b in AD.architecture_digest(stale)["beats"]])
+
+
 def main():
     for fn in [test_image_count_is_the_first_decision,
                test_never_illustrate_disability,
@@ -275,7 +369,8 @@ def main():
                test_people_are_none_by_default,
                test_one_model_call_maximum_and_a_safe_fallback,
                test_recraft_receives_text_only,
-               test_registers_and_functions_are_the_declared_set]:
+               test_registers_and_functions_are_the_declared_set,
+               test_stale_architecture_cannot_become_a_factual_anchor]:
         fn()
     print("\n" + "-" * 60)
     if FAILURES:

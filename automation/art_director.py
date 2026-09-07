@@ -130,7 +130,7 @@ def visual_context_digest(sidecar: dict | None, max_lines: int = 24) -> dict:
     return out
 
 
-def architecture_digest(arch: dict | None) -> dict:
+def architecture_digest(arch: dict | None, article_text: str = "") -> dict:
     """Beat structure and spine only.
 
     WHITELIST, not a blacklist. The Architecture object also carries fact-permission
@@ -141,18 +141,178 @@ def architecture_digest(arch: dict | None) -> dict:
     """
     if not isinstance(arch, dict):
         return {}
-    beats = []
+
+    def ok(text):
+        """Structural guidance survives only if the settled article supports it."""
+        return (not article_text) or text_supports(text, article_text)
+
+    beats, dropped = [], []
     for b in (arch.get("beats") or [])[:12]:
-        beats.append({"beat_id": b.get("beat_id"),
-                      "happens": (b.get("happens") or "")[:300],
-                      "carrier": (b.get("concrete_carrier") or b.get("carrier") or "")[:200],
-                      "concept": (b.get("concept_introduced") or b.get("concept") or "")[:200]})
-    return {"article_type": arch.get("article_type"),
-            "story_spine": (arch.get("story_spine") or "")[:500],
-            "opening": (arch.get("opening_object_or_event") or arch.get("opening") or "")[:300],
-            "turn": (arch.get("turn") or "")[:300],
-            "ending_move": (arch.get("ending_move") or "")[:300],
-            "beats": beats}
+        carrier = (b.get("concrete_carrier") or b.get("carrier") or "")[:200]
+        bid = b.get("beat_id")
+        if not ok(carrier):
+            dropped.append(bid)
+            continue
+        # ORDER AND CARRIER ONLY when reconciling. `happens` and `concept` are the
+        # architecture's own prose about what a beat argues, and that is precisely where a
+        # superseded framing lives -- five of WildSumaco's seven beats carry the withdrawn
+        # ADA material in those fields while their carriers do not. A carrier the final
+        # prose fully supports is safe structural guidance; the argument around it is not.
+        beat = {"beat_id": bid, "carrier": carrier}
+        if not article_text:
+            beat.update({"happens": (b.get("happens") or "")[:300],
+                         "concept": (b.get("concept_introduced") or b.get("concept") or "")[:200]})
+        beats.append(beat)
+    out = {"article_type": arch.get("article_type"), "beats": beats}
+    if dropped:
+        out["beats_omitted_as_unsupported_by_the_settled_article"] = dropped
+    for key, src in (("story_spine", arch.get("story_spine")),
+                     ("opening", arch.get("opening_object_or_event") or arch.get("opening")),
+                     ("turn", arch.get("turn")),
+                     ("ending_move", arch.get("ending_move"))):
+        v = (src or "")[:500]
+        if v and ok(v):
+            out[key] = v
+    return out
+
+
+# ── the settled article is authoritative ─────────────────────────────────────
+# THE DRIFT THIS EXISTS TO STOP, measured on the WildSumaco retrospective. The run's
+# ARCHITECTURE.json still carried the ADA-accessibility-field argument -- story_spine,
+# crip_turn, ending_move and five of its seven beats mention it somewhere -- while the
+# SETTLED article contains the strings "ADA" and "accessib" exactly zero times, because
+# that claim was removed from the live piece after Grounding objected to the adjacency.
+# Handed both, the art director spent one of only two image slots on the withdrawn
+# argument. Nothing was factually wrong in its brief; it was illustrating an article that
+# no longer exists.
+#
+# THE PRINCIPLE: the settled article is authoritative. Architecture is an ORDERING AID --
+# beat order, relationships, possible placement, story movement -- and never a second
+# factual or editorial source. It may not reintroduce a withdrawn claim, a superseded
+# framing, abandoned factual material, or an old argument absent from the final prose.
+#
+# DETERMINISTIC, and deliberately not a model step or a factual gate. Nothing HOLDs here;
+# unrecoverable material is simply not passed on, and an art director that never sees the
+# stale beat cannot spend a slot on it.
+_TOKEN_RE = re.compile(r"[A-Z]{2,}(?![a-z])|[A-Za-z]{5,}")
+_STEM = 5
+
+# FUNCTION WORDS ARE NOT SUBJECT CONTENT. Found on the WildSumaco re-run: the beat "the
+# pavilion floor above the natural ground" -- one of the two beats genuinely worth
+# illustrating -- was omitted because the settled article says the floor is lifted "clear
+# of" the ground and never uses the word "above". A preposition's absence is a difference
+# in phrasing, not a withdrawn claim, and treating it as drift threw away good structural
+# guidance to catch nothing. Only these are exempted: every one is a preposition,
+# conjunction or determiner that happens to survive the 5-letter filter. Subject nouns are
+# never on this list, so "cabuya" -- a material the final prose does not name -- still
+# correctly omits its beat.
+_FUNCTION_WORDS = frozenset("""
+above below under over between through without within against across around during
+where which their there these those while would could should still being about after
+before because however though since among toward towards until unless whether other
+another every each both same than then when what whose whom that this with from into
+onto upon also more most less least such very just only than
+""".split())
+
+
+def content_tokens(text: str) -> list:
+    """Distinctive tokens: acronyms of 2+ capitals, and words of 5+ letters.
+
+    Acronyms are picked up separately and on purpose. "ADA" is three characters and would
+    fall straight through a 5-letter word filter, which is exactly how a withdrawn legal
+    framework gets back into an article's illustrations.
+    """
+    out, seen = [], set()
+    for t in _TOKEN_RE.findall(text or ""):
+        acronym = t.isupper() and len(t) <= 5
+        k = t if acronym else t.lower()
+        if not acronym and k in _FUNCTION_WORDS:
+            continue
+        if k not in seen:
+            seen.add(k)
+            out.append(k)
+    return out
+
+
+def text_supports(phrase: str, article_text: str) -> bool:
+    """True when EVERY distinctive token of `phrase` is recoverable from the article.
+
+    ALL, not most. A majority test is the wrong shape here: "the ADA accessibility field
+    on the station's directory entry" shares field, station, directory and entry with the
+    settled prose and would pass a half-overlap rule while smuggling back the one term the
+    article withdrew. What makes a phrase safe as structural guidance is that nothing in it
+    is foreign to the final prose.
+
+    Stem-tolerant by prefix so ordinary inflection (wall/walls, record/recorded) is not
+    read as drift. A phrase with no distinctive tokens at all is not evidence of anything
+    and is not treated as supported.
+    """
+    toks = content_tokens(phrase)
+    if not toks:
+        return False
+    hay = article_text or ""
+    low = hay.lower()
+    for t in toks:
+        if t.isupper() and len(t) <= 5:
+            if re.search(r"\b%s\b" % re.escape(t), hay):      # acronym: case-sensitive
+                continue
+            return False
+        if t[:_STEM] in low:
+            continue
+        return False
+    return True
+
+
+def reconcile_brief(brief: dict, article_text: str) -> tuple:
+    """Strip factual anchors the settled article does not support. Returns (brief, notes).
+
+    A BACKSTOP, not the primary defence -- architecture_digest already withholds
+    unrecoverable material, so a stripped anchor here means the art director reached past
+    what it was given. An image left with no supported anchor is dropped and image_count
+    follows, because an image with nothing behind it in the final prose is decoration and
+    the whole point of the count decision is that a slot is never filled for its own sake.
+
+    KNOWN AND ACCEPTED COST, measured on both retrospectives: an exact-token test cannot
+    see a synonym, so it strips a legitimate PARAPHRASE. Two anchors of roughly eighteen
+    went that way, and BOTH failed on an attribution verb while every substantive token
+    matched:
+
+      "... stone sourced nearby"            vs an article saying "harvested or purchased
+                                               nearby"
+      "a sponsorship certificate NAMING a   vs an article that has the certificate, the
+       job, a salary ... and forty hours"      salary, the hours -- but not "naming"
+
+    The tempting fix is to exempt verbs the way _FUNCTION_WORDS exempts prepositions. It
+    is NOT taken here, and the reason is that a verb is where a claim lives: recruited,
+    classified, withdrew, refused. Exempting the category to catch two participles would
+    open the hole this function exists to close. The other alternative is semantic
+    matching, which this design deliberately does not add.
+
+    So it degrades gracefully instead: an image is dropped only when ALL of its anchors
+    fail, so a stripped paraphrase costs an anchor and not an image -- 0 images dropped
+    across both runs. IF THIS EVER STARTS DROPPING IMAGES, that is the signal to revisit
+    it, and the fix then is a per-anchor tolerance measured against real briefs, not a
+    blanket verb exemption.
+    """
+    notes = {"anchors_dropped": [], "images_dropped": 0}
+    if not isinstance(brief, dict) or not article_text:
+        return brief, notes
+    kept = []
+    for im in (brief.get("images") or []):
+        if not isinstance(im, dict):
+            continue
+        good = [a for a in (im.get("factual_anchors") or [])
+                if text_supports(str(a), article_text)]
+        for a in (im.get("factual_anchors") or []):
+            if a not in good:
+                notes["anchors_dropped"].append(str(a)[:120])
+        if not good:
+            notes["images_dropped"] += 1
+            continue
+        im = dict(im, factual_anchors=good)
+        kept.append(im)
+    brief = dict(brief, images=kept, image_count=len(kept))
+    return brief, notes
 
 
 ART_DIRECTOR_SYSTEM = (
@@ -192,8 +352,16 @@ ART_DIRECTOR_SYSTEM = (
     "The persona informs TONE. It does not dictate a medium, a palette or a fixed look, and "
     "you may not name or imitate a living artist, studio or photographer.\n"
     "\n"
-    "FACTUAL ANCHORS come from the settled article and its architecture -- things the piece "
-    "actually establishes. VISUAL ANCHORS are optional and come only from the "
+    "THE SETTLED ARTICLE IS AUTHORITATIVE. The architecture you are shown is an ORDERING "
+    "AID -- beat order, relationships, possible placement, story movement -- and never a "
+    "second factual or editorial source. IF THE ARCHITECTURE AND THE SETTLED ARTICLE "
+    "DIVERGE, FOLLOW THE SETTLED ARTICLE. Do not resurrect material absent from the final "
+    "prose: an argument the piece once made and no longer makes, a claim that was "
+    "withdrawn, a superseded framing, or abandoned factual material. If you cannot find "
+    "something in the article in front of you, it is not in the article.\n"
+    "\n"
+    "FACTUAL ANCHORS come from the settled article -- things the piece itself establishes, "
+    "recoverable from its prose. VISUAL ANCHORS are optional and come only from the "
     "non-claim-bearing visual context, when it is supplied: object and material vocabulary, "
     "broad spatial relationships, printed labels, subject-specific visual character. A "
     "visual anchor may NEVER assert a dimension, a numeric level, an exact count, "
@@ -250,7 +418,7 @@ def build_user_prompt(article_text: str, title: str = "", dek: str = "",
     the sources are where an unsettled claim would come back in), internal provenance,
     factual gaps, and the Worth gate's reasoning.
     """
-    ad = architecture_digest(arch)
+    ad = architecture_digest(arch, article_text or "")
     vd = visual_context_digest(visual_sidecar)
     parts = ["TITLE", "  " + (title or "(none)").strip(), ""]
     if dek:
@@ -258,7 +426,8 @@ def build_user_prompt(article_text: str, title: str = "", dek: str = "",
     parts += ["PERSONA (tone only, never a fixed medium or palette)",
               "  " + (persona or "(none)"), ""]
     if ad:
-        parts += ["STORY ARCHITECTURE", json.dumps(ad, indent=1, ensure_ascii=False), ""]
+        parts += ["STORY ARCHITECTURE -- ORDERING AID ONLY, NOT A FACTUAL SOURCE",
+                  json.dumps(ad, indent=1, ensure_ascii=False), ""]
         ids = [b["beat_id"] for b in ad.get("beats") or [] if b.get("beat_id")]
         if ids:
             parts += ["BEAT IDS AVAILABLE FOR AFTER_BEAT PLACEMENT", "  " + ", ".join(ids), ""]
@@ -351,9 +520,11 @@ def art_direct(provider, article_text: str, title: str = "", dek: str = "",
     image path, and an article ships with the images it would have had before this module
     existed. That is why nothing in this function propagates an exception.
     """
-    ad = architecture_digest(arch)
+    ad = architecture_digest(arch, article_text or "")
     beat_ids = [b["beat_id"] for b in (ad.get("beats") or []) if b.get("beat_id")]
-    out = {"ok": False, "brief": None, "reason": "", "identity": {}}
+    out = {"ok": False, "brief": None, "reason": "", "identity": {},
+           "beats_omitted": ad.get("beats_omitted_as_unsupported_by_the_settled_article", []),
+           "reconciled": {}}
     try:
         user = build_user_prompt(article_text, title, dek, arch, persona,
                                  visual_sidecar, beat_ids)
@@ -366,6 +537,8 @@ def art_direct(provider, article_text: str, title: str = "", dek: str = "",
     except Exception as e:                                             # noqa: BLE001
         out["reason"] = "%s: %s" % (type(e).__name__, str(e)[:200])
         return out
+    brief, notes = reconcile_brief(brief, article_text or "")
+    out["reconciled"] = notes
     errs = validate_brief(brief, beat_ids)
     if errs:
         out["reason"] = "brief rejected: " + "; ".join(errs[:4])
