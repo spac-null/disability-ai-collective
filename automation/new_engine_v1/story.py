@@ -785,8 +785,41 @@ def render(packet: dict) -> str:
     L.append("OPEN ON")
     L.append("  " + packet["opening"])
     if packet["reader_initial_state"]:
-        L.append("  The reader should first understand only this: "
-                 + packet["reader_initial_state"])
+        # ARCHITECTURE OWNS ORDER; THE LEDGER OWNS FACTUAL PERMISSION (2026-09-07).
+        #
+        # This line used to hand the architect's own sentence to the Writer, as
+        # "The reader should first understand only this: <prose>". That made a
+        # generated sentence into a licence, because the approved surface every
+        # later screen measures the article against IS this render --
+        # `factual_surface_audit` compares prose to the packet, so anything the
+        # packet says is already permitted. `architect_prose_audit`'s docstring
+        # records the same mechanism from the other side: "an audit whose ground
+        # truth is itself generated cannot detect a fabrication introduced
+        # upstream of it".
+        #
+        # It cost a run. In production-20260907T160137Z-831b0d44 the architect
+        # wrote "nine blind teenagers" into reader_initial_state. The word appears
+        # 0 times in the research pack and 0 times in the ledger -- the sources say
+        # "kids" throughout, competitors run "from first grade through high
+        # school", and one of the three chosen filmmakers was ten. The Writer,
+        # which `continuity.architect_rhetoric` has measured transcribing these
+        # fields at 0.90-0.93 similarity, used it once; the package repeated it
+        # four times; and Grounding blocked the article on five findings that are
+        # all that single word.
+        #
+        # WHAT IS KEPT IS THE FUNCTION, NOT THE SENTENCE. The field's job is to say
+        # the reader starts from nothing -- a knowledge state, not a fact of the
+        # world -- and that is stated here directly. The order it was protecting is
+        # carried by the material around it: OPEN ON is the anchor, THE PATH is the
+        # sequence, and "not yet:" on each beat is the actual delayed-information
+        # mechanism. Nothing structural is lost.
+        #
+        # The field itself is untouched everywhere else. Architecture still emits
+        # it, `_GENERATED_PACKET_FIELDS` still leak-scans it, `architect_prose_audit`
+        # and `architect_rhetoric` still read it, and it stays in the packet dict
+        # for the audit bundle. It simply stops being a permission.
+        L.append("  The reader begins knowing nothing beyond what this opening puts")
+        L.append("  in front of them. Everything else arrives in the order below.")
     L.append("")
     L.append("THE PATH, IN ORDER")
     for i, b in enumerate(packet["beats"], 1):
