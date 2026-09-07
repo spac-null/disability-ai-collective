@@ -34,6 +34,15 @@ REGISTERS = ("SPATIAL_DIAGRAMMATIC", "MATERIAL_EDITORIAL",
 
 MAX_IMAGES = 3
 
+# AN INVALID PLACEMENT IS NOT AN EDITORIAL DECISION, so it does not become one. This
+# sentinel means "no usable editorial placement" and routes the figure to the existing
+# balanced insertion. Deliberately NOT rewritten to END: END is a real art-direction
+# choice ("this image belongs at the close"), and silently promoting a failed AFTER_BEAT
+# into it would fabricate an intent the art director never had, and put every unplaceable
+# figure at the bottom of the article.
+PLACEMENT_FALLBACK = "FALLBACK"
+_PLACEMENT_LITERALS = ("HERO", "END", "BREATHING", "END / BREATHING", PLACEMENT_FALLBACK)
+
 # Aspect ratio follows the image's FUNCTION, not a fixed slot in a three-image set.
 RATIO_BY_FUNCTION = {
     "ESTABLISH_PLACE": "16:9", "SHOW_MECHANISM": "1:1",
@@ -430,13 +439,24 @@ def build_user_prompt(article_text: str, title: str = "", dek: str = "",
                   json.dumps(ad, indent=1, ensure_ascii=False), ""]
         ids = [b["beat_id"] for b in ad.get("beats") or [] if b.get("beat_id")]
         if ids:
-            parts += ["BEAT IDS AVAILABLE FOR AFTER_BEAT PLACEMENT", "  " + ", ".join(ids), ""]
+            parts += ["BEAT IDS AVAILABLE FOR AFTER_BEAT PLACEMENT -- these exactly, no others",
+                      "  " + ", ".join(ids), ""]
+
     if vd["present"]:
         parts += ["NON_CLAIM_BEARING VISUAL CONTEXT -- vocabulary only, never an assertion",
                   json.dumps({k: vd[k] for k in _VISUAL_DIGEST_KEYS},
                              indent=1, ensure_ascii=False), ""]
     else:
         parts += ["NON_CLAIM_BEARING VISUAL CONTEXT", "  (none supplied)", ""]
+    # ONE notice, whether the architecture is absent or arrived with nothing that survived
+    # reconciliation. Both cases mean the same thing to the art director: there is no beat
+    # to place a figure after, so offering AFTER_BEAT would invite an invented beat id --
+    # which is exactly what the Swan Care retrospective produced.
+    if not (ad.get("beats") or []):
+        parts += ["AFTER_BEAT IS UNAVAILABLE FOR THIS ARTICLE",
+                  "  No architecture beat survived reconciliation against the settled "
+                  "article,", "  so there is no beat to place a figure after. Use HERO or "
+                  "END only.", ""]
     parts += ["THE SETTLED ARTICLE", "<<<ARTICLE", (article_text or "").strip(), "ARTICLE>>>",
               "", ART_DIRECTOR_SCHEMA]
     return "\n".join(parts)
@@ -499,16 +519,68 @@ def validate_brief(brief: dict, beat_ids: list | None = None) -> list:
                             "(%s): %r" % (tag, why, str(a)[:70]))
         pl = str(im.get("placement") or "")
         if pl.startswith("AFTER_BEAT:"):
+            # STRICT, and no longer conditional on beats being present. This used to read
+            # `if known and bid not in known`, so with no architecture at all every
+            # AFTER_BEAT passed unchecked -- the Swan Care retrospective invented
+            # AFTER_BEAT:fabricated_letter and nothing objected. An id is valid only when
+            # it is one the reconciled digest actually offered; when it offered none,
+            # AFTER_BEAT is not available at all.
             bid = pl.split(":", 1)[1].strip()
-            if known and bid not in known:
+            if not known:
+                errs.append("%s: placement targets beat %r but no architecture beat "
+                            "survived reconciliation, so AFTER_BEAT is unavailable"
+                            % (tag, bid))
+            elif bid not in known:
                 errs.append("%s: placement names beat %r which is not in the architecture"
                             % (tag, bid))
-        elif pl not in ("HERO", "END", "BREATHING", "END / BREATHING"):
+        elif pl not in _PLACEMENT_LITERALS:
             errs.append("%s: placement %r is not HERO, AFTER_BEAT:<beat_id> or END"
                         % (tag, pl))
         if re.search(r"\d+\s*%", pl):
             errs.append("%s: placement is a paragraph percentage" % tag)
     return errs
+
+
+def normalize_placements(brief: dict, beat_ids: list | None) -> tuple:
+    """Route an unusable AFTER_BEAT to the balanced-insertion fallback. Returns (brief, notes).
+
+    THE CONTRACT: AFTER_BEAT:<id> is valid only when that exact id exists in the
+    reconciled architecture digest the art director was actually shown. Three cases, one
+    outcome:
+
+      no architecture, or no beat survived   AFTER_BEAT is unavailable -> FALLBACK
+      a stale/filtered beat is targeted      indistinguishable from unknown -> FALLBACK
+      a surviving beat is targeted           preserved exactly
+
+    A BAD PLACEMENT MUST NOT COST THE BRIEF. The rest of an art direction -- the count,
+    the register, the anchors, the alt text -- is unaffected by a figure landing in the
+    balanced position instead of after a named beat, so this normalises rather than
+    rejects. validate_brief still refuses an unresolvable AFTER_BEAT when called directly,
+    which is what makes the contract testable; art_direct normalises first so the real
+    path degrades instead of falling back to three template images.
+    """
+    notes = {"placements_downgraded": []}
+    if not isinstance(brief, dict):
+        return brief, notes
+    known = set(beat_ids or [])
+    images = []
+    for im in (brief.get("images") or []):
+        if not isinstance(im, dict):
+            images.append(im)
+            continue
+        pl = str(im.get("placement") or "")
+        if pl.startswith("AFTER_BEAT:"):
+            bid = pl.split(":", 1)[1].strip()
+            if bid not in known:
+                notes["placements_downgraded"].append(
+                    {"requested": pl,
+                     "why": ("no architecture beat survived reconciliation"
+                             if not known else
+                             "beat %r was not offered to the art director" % bid),
+                     "routed_to": "balanced insertion"})
+                im = dict(im, placement=PLACEMENT_FALLBACK)
+        images.append(im)
+    return dict(brief, images=images), notes
 
 
 def art_direct(provider, article_text: str, title: str = "", dek: str = "",
@@ -538,6 +610,8 @@ def art_direct(provider, article_text: str, title: str = "", dek: str = "",
         out["reason"] = "%s: %s" % (type(e).__name__, str(e)[:200])
         return out
     brief, notes = reconcile_brief(brief, article_text or "")
+    brief, pnotes = normalize_placements(brief, beat_ids)
+    notes.update(pnotes)
     out["reconciled"] = notes
     errs = validate_brief(brief, beat_ids)
     if errs:

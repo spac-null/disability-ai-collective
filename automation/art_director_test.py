@@ -357,6 +357,96 @@ def test_stale_architecture_cannot_become_a_factual_anchor():
           "B6" in [b["beat_id"] for b in AD.architecture_digest(stale)["beats"]])
 
 
+def test_after_beat_is_valid_only_for_a_surviving_beat():
+    """AFTER_BEAT:<id> is valid ONLY if that exact id exists in the reconciled digest.
+
+    The gap this closes: validate_brief read `if known and bid not in known`, so with no
+    architecture at all every AFTER_BEAT passed unchecked. The Swan Care retrospective
+    invented AFTER_BEAT:fabricated_letter and nothing objected.
+    """
+    print("\ntest_after_beat_is_valid_only_for_a_surviving_beat")
+    settled = ("The pavilion floor is lifted above the natural ground and water passes "
+               "beneath it. The station has an entry in a field-station directory.")
+    stale = {"beats": [
+        {"beat_id": "B2", "concrete_carrier": "the pavilion floor above the natural ground"},
+        {"beat_id": "B6", "concrete_carrier": "the ADA accessibility field on the "
+                                              "station's directory entry"}]}
+
+    # ── 1. NO ARCHITECTURE + INVENTED AFTER_BEAT -> FALLBACK ──
+    b = _brief(1); b["images"][0]["placement"] = "AFTER_BEAT:fabricated_letter"
+    errs = AD.validate_brief(b, [])
+    check("no-arch: the validator refuses an invented beat",
+          any("AFTER_BEAT is unavailable" in e for e in errs), errs[:1])
+    check("no-arch: refused with no beat_ids argument at all",
+          any("AFTER_BEAT is unavailable" in e for e in AD.validate_brief(b)))
+    nb, notes = AD.normalize_placements(b, [])
+    check("no-arch: routed to the balanced fallback",
+          nb["images"][0]["placement"] == AD.PLACEMENT_FALLBACK)
+    check("no-arch: NOT forced to END", nb["images"][0]["placement"] != "END")
+    check("no-arch: the downgrade is recorded",
+          notes["placements_downgraded"][0]["requested"] == "AFTER_BEAT:fabricated_letter")
+    check("no-arch: and says why",
+          "no architecture beat survived" in notes["placements_downgraded"][0]["why"])
+    check("no-arch: the normalised brief then validates",
+          AD.validate_brief(nb, []) == [], AD.validate_brief(nb, []))
+    check("no-arch: the prompt says AFTER_BEAT is unavailable",
+          "AFTER_BEAT IS UNAVAILABLE FOR THIS ARTICLE" in
+          AD.build_user_prompt(settled, "T", "", None, "P", None))
+    check("no-arch: and offers HERO or END only",
+          "Use HERO or END only" in AD.build_user_prompt(settled, "T", "", None, "P", None))
+
+    # ── 2. VALID SURVIVING BEAT -> PRESERVED ──
+    ids = [x["beat_id"] for x in AD.architecture_digest(stale, settled)["beats"]]
+    check("B2 survived reconciliation", ids == ["B2"], ids)
+    b2 = _brief(1); b2["images"][0]["placement"] = "AFTER_BEAT:B2"
+    check("valid beat: accepted by the validator", AD.validate_brief(b2, ids) == [])
+    nb2, n2 = AD.normalize_placements(b2, ids)
+    check("valid beat: placement preserved exactly",
+          nb2["images"][0]["placement"] == "AFTER_BEAT:B2")
+    check("valid beat: nothing downgraded", n2["placements_downgraded"] == [])
+    check("valid beat: the prompt offers it",
+          "BEAT IDS AVAILABLE FOR AFTER_BEAT PLACEMENT" in
+          AD.build_user_prompt(settled, "T", "", stale, "P", None))
+
+    # ── 3. STALE / FILTERED BEAT -> FALLBACK, exactly like an unknown one ──
+    b3 = _brief(1); b3["images"][0]["placement"] = "AFTER_BEAT:B6"
+    check("stale beat: never offered to the art director", "B6" not in ids)
+    check("stale beat: refused by the validator",
+          any("not in the architecture" in e for e in AD.validate_brief(b3, ids)))
+    nb3, n3 = AD.normalize_placements(b3, ids)
+    check("stale beat: routed to the balanced fallback",
+          nb3["images"][0]["placement"] == AD.PLACEMENT_FALLBACK)
+    check("stale beat: NOT forced to END", nb3["images"][0]["placement"] != "END")
+    check("stale beat: reason names the beat",
+          "B6" in n3["placements_downgraded"][0]["why"])
+    check("stale beat: treated identically to an unknown id",
+          nb3["images"][0]["placement"] ==
+          AD.normalize_placements(b3, ["B2"])[0]["images"][0]["placement"])
+
+    # ── the fallback sentinel actually reaches balanced insertion ──
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import gen_images as GI
+    body = "Para one about the pavilion floor.\n\nPara two.\n\nPara three."
+    placed, pending = GI._insert_by_placement(
+        body, ["a.jpg"], ["A raised floor over sloping ground."],
+        [AD.PLACEMENT_FALLBACK], stale)
+    check("FALLBACK places no figure by beat", placed is None, placed)
+    check("FALLBACK is handed to the balanced fallback instead", len(pending) == 1)
+
+    # ── the whole brief is not lost to a bad placement ──
+    full = {"image_count": 2, "count_reasoning": "x", "images": [
+        _img(placement="AFTER_BEAT:B2"),
+        _img(placement="AFTER_BEAT:nonsense", function="BREATHING_ROOM")]}
+    nf, nn = AD.normalize_placements(full, ids)
+    check("a bad placement costs the placement, not the brief", nf["image_count"] == 2)
+    check("  the good one is untouched", nf["images"][0]["placement"] == "AFTER_BEAT:B2")
+    check("  the bad one falls back", nf["images"][1]["placement"] == AD.PLACEMENT_FALLBACK)
+    check("  and the normalised brief validates", AD.validate_brief(nf, ids) == [])
+    check("count, register and anchors are unaffected",
+          nf["images"][1]["register"] == full["images"][1]["register"]
+          and nf["images"][1]["factual_anchors"] == full["images"][1]["factual_anchors"])
+
+
 def main():
     for fn in [test_image_count_is_the_first_decision,
                test_never_illustrate_disability,
@@ -370,7 +460,8 @@ def main():
                test_one_model_call_maximum_and_a_safe_fallback,
                test_recraft_receives_text_only,
                test_registers_and_functions_are_the_declared_set,
-               test_stale_architecture_cannot_become_a_factual_anchor]:
+               test_stale_architecture_cannot_become_a_factual_anchor,
+               test_after_beat_is_valid_only_for_a_surviving_beat]:
         fn()
     print("\n" + "-" * 60)
     if FAILURES:
