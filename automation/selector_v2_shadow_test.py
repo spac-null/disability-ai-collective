@@ -210,9 +210,18 @@ def test_v2_ignores_disability_angle_and_the_keyword_booster():
     boosted_title = "an accessible wheelchair braille study of cities"
     with_terms = sig(boosted_title, "urban policy")
     real, _ = NF.score_item({"title": boosted_title, "summary": "urban policy"})
-    check("the production scorer still applies its booster",
+    # UPDATED 2026-09-07, editorial-balance patch. These two checks used to assert that
+    # score_item ADDS a disability-vocabulary boost and that theme_signal subtracts it
+    # back out (with_terms < real). The boost was removed at the source: it was deciding
+    # ingest ELIGIBILITY, since +0.15 is the whole of MIN_SCORE. So the invariant is now
+    # the stronger one -- the two values are EQUAL, because there is no advantage left to
+    # subtract, and BOOSTER_CONTRIBUTION is 0.0 so the shadow signal does not turn the
+    # retired advantage into a penalty.
+    check("theme_signal still equals production minus the booster contribution",
           abs(real - with_terms - SV.BOOSTER_CONTRIBUTION) < 1e-9, (real, with_terms))
-    check("the shadow signal is the unboosted value", with_terms < real, (with_terms, real))
+    check("disability vocabulary no longer buys an advantage at ingest",
+          abs(with_terms - real) < 1e-9, (with_terms, real))
+    check("and is not penalised either", with_terms >= real - 1e-9, (with_terms, real))
     plain_title = "a study of cities"
     plain_real, _ = NF.score_item({"title": plain_title, "summary": "urban policy"})
     check("a text with no booster term is unchanged by the shadow signal",

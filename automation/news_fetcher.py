@@ -785,8 +785,16 @@ POLICY_PROCESS_EXCLUDE = [
 # science_nature at once) could out-score a single-domain architecture or
 # mythology piece purely on vocabulary breadth. These multipliers apply
 # per-bucket, before the sum -- default 1.0 for any bucket not listed.
+#
+# architecture 1.5 -> 1.0, 2026-09-07 editorial-balance patch. Not a suppression:
+# architecture is now weighted exactly like any unlisted theme. The reason is that
+# architecture already carries an intrinsic DOWNSTREAM advantage no other theme has --
+# concrete objects, routes, levels, materials and physical relations, which is to say an
+# abundance of the subject-specific particulars Worth requires. It does not also need an
+# upstream Discovery multiplier. Dezeen is not banned, no source quota is added, and
+# neither Research nor Worth treats architecture differently.
 THEME_WEIGHTS = {
-    "architecture": 1.5, "history_archive": 1.5, "space_cosmos": 1.5,
+    "history_archive": 1.5, "space_cosmos": 1.5,
     "indigenous_tribal": 1.5, "philosophy": 1.5,
     "health_systems": 0.7, "business_labor": 0.7,
 }
@@ -838,9 +846,27 @@ def score_item(item: dict) -> tuple[float, list[str]]:
 
     weighted_sum = sum(hits * THEME_WEIGHTS.get(theme, 1.0) for theme, hits in theme_hits.items())
     base = min(weighted_sum / 8.0, 0.7) if theme_hits else 0.0
-    boost = 0.15 if any(_keyword_matches(text, words, kw) for kw in DISABILITY_BOOSTERS) else 0.0
+    # THE DISABILITY-VOCABULARY BOOST IS GONE (2026-09-07 editorial-balance patch).
+    #
+    # It was already subtracted back out by the authoritative selector during ordering
+    # (selector_v2.theme_signal), so it bought nothing there. What it still did was
+    # decide ELIGIBILITY: +0.15 is the whole of MIN_SCORE, so an item carrying the word
+    # "accessible" could cross the 0.15 gate and enter the candidate pool while an
+    # identical item without it did not enter at all. That is the topic-not-lens
+    # advantage the doctrine retired, operating one stage earlier than anyone was
+    # looking.
+    #
+    # CRIP MINDS SHOULD NOT REQUIRE DISABILITY VOCABULARY TO ENTER THE WORLD. A story
+    # whose interest is a hidden assumption about bodies, perception, timing or
+    # classification must have the same chance to enter as one that says "wheelchair".
+    #
+    # This is removal of a POSITIVE advantage, not the addition of a penalty:
+    # DISABILITY_BOOSTERS is retained (selector_v2 still imports it) and disability
+    # vocabulary is neither rewarded nor punished here. Low-score unusual material
+    # continues to reach the judge through the exploration lane, which is why removing
+    # the boost does not simply shrink the pool.
     matched = sorted(theme_hits, key=theme_hits.get, reverse=True)
-    return round(min(base + boost, 1.0), 3), matched
+    return round(min(base, 1.0), 3), matched
 
 
 def title_already_seen(conn, title: str, days: int = 7) -> bool:
