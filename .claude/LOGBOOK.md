@@ -782,3 +782,43 @@ feed change; no PDF work; no cron change; no cleanup of the now-coexisting selec
 CODE: `automation/selector_v2.py`, `automation/new_engine_production.py`,
 `automation/selector_v2_cutover_test.py` (new).
 **MERGED: NO.**
+
+---
+
+## 2026-09-06/07 — PRs #90, #92, #93, #94 + tracker state sync
+
+STATUS: all four MERGED on `origin/main`. Docs synced 2026-09-07.
+
+DECISION / WHAT LANDED:
+- #90 (`ba9f22d`) public site brought in line with the publication it now is.
+- #92 (`0b02312`) published-run retention: the artifacts `composition.safety_audit` actually
+  takes are now written, plus a publication audit bundle copied to a durable location at the
+  promotion boundary and bound to the exact published bytes. Safety is deterministically
+  replayable from a bundle. Before this, not one published article could have Safety re-run.
+- #93 (`59deac5`) a re-derived Dutch edition keeps its `sources` / "Verder lezen" block. Observed
+  on WildSumaco: five curated entries deleted by re-derivation, restored by hand.
+- #94 (`34b1607`) Visual Evidence & Jurisdiction **Phase 1**. Publisher figcaptions and alt text
+  harvested from HTML already held — on pack sources and on the **anchor**
+  (`provenance.figures`) — deterministic, bounded, no network, no model, no image byte.
+  `include_images` stays False; `text`/`content_length`/`sha256` byte-identical; `figures[]`
+  additive with no `SCHEMA_VERSION` bump. NO DEFAULT NATIONAL FRAMEWORK moves into the ledger; a
+  foreign-framework standard is restricted to ATTRIBUTION, never deleted. Worth's canonical
+  PARTICULAR example no longer teaches the WildSumaco ADA directory field; image prompts no
+  longer name living or estate-held artists.
+
+BOUNDARY (recorded so it is not misread later): caption harvest is DATA AVAILABLE, NOT EDITORIAL
+EVIDENCE CONSUMED — no stage reads `figures[]`, no fact may rest on a caption. Vision,
+`VISUAL_EVIDENCE_PACK` consumption and an Art Director are **NOT IMPLEMENTED**; no such name
+exists in `automation/` at `34b1607`. **There is no Phase 2.**
+
+DEFERRED, ACCEPTED: two jurisdiction limitations — directory-role not yet separated from
+legal-standard classification, and `subject_country` still on the deterministic mention heuristic.
+
+EVIDENCE: `.claude/WORK.md` STATE SYNC 2026-09-07; PR bodies of #90/#92/#93/#94.
+CODE: `ba9f22d`, `0b02312`, `59deac5`, `34b1607`.
+BASELINE: `LAST_RUNTIME_CHANGING_BASELINE` moved `ad4becc` (PR #41) → `34b1607` (PR #94).
+GAP (stated, not reconstructed): **PRs #52–#89 have no entry in this logbook and no record in
+`WORK.md`.** The entry above does not fill that gap, and the 2026-09-02 #51 entry's
+`MERGED: NO` line was left untouched rather than retro-edited.
+FOLLOW-UP: current phase is the bounded real-caption editorial-value check — decide whether any
+harvested caption carries value the prose does not, before anything consumes `figures[]`.

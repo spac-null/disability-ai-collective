@@ -21,6 +21,21 @@ checkout's `main` branch was canonical. **That assumption no longer holds** — 
 
 ## Canonical repository — CORRECTED MODEL
 
+**Topology sync 2026-09-07 (scope: canonical pointer + two worktrees only).**
+
+- `origin/main` HEAD at this sync: **`34b1607bb8d5c3acbe251b6c2efc2df0013e844b`** (PR #94,
+  2026-09-06). A check marker, not a durable claim — run `git rev-parse origin/main`.
+- **`~/code/dac-editorial-package` — PRESERVED, NOT CANONICAL.** It is a worktree on branch
+  `fix/package-qualifier-fidelity`, HEAD `39cc6e7` ("The card is short, so the qualifier is the
+  first thing to go"), which is **not an ancestor of `origin/main`**: 1 unpushed commit, and the
+  worktree is missing PRs #90–#94 entirely. Its `.claude/WORK.md` is **not authoritative** —
+  do not edit trackers there and do not read its state as current. Keep it until the unpushed
+  commit is dispositioned (merge, or record as superseded); do not delete it in a cleanup pass.
+- This sync's own worktree: branch `docs/state-sync-2026-09-07`, based on `34b1607`.
+- `.claude/project-manifest.json` `generated_at` is still **2026-08-25T18:14:11+00:00** — its
+  worktree inventory and `origin_main_head` predate PRs #42–#94. Regenerating it was out of scope
+  for this sync; treat it as stale, not as topology truth.
+
 - **Canonical branch: `origin/main`** (GitHub `spac-null/disability-ai-collective`, PRIVATE repo).
   `RECONCILED_AGAINST_SHA` for this topology pass: `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf`
   (PR #26 merge) — **a snapshot marker for when this reconciliation ran, not a claim that this is
