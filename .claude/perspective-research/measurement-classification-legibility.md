@@ -1,9 +1,21 @@
 # Perspective Research 001
 ## Measurement, Classification, Legibility & Normality
 
-**STATUS: WORKING RESEARCH — NOT PRODUCTION DOCTRINE.**
-Nothing in this file is in force. No entry may be quoted, cited, or used to establish
-anything about any subject. See `README.md` for the status model and the hard boundary.
+**CLUSTER STATUS: FIRST OWNER REVIEW COMPLETE — 2026-09-07.**
+Five entries APPROVED_DURABLE, four held at CANDIDATE, nothing rejected, nothing deleted.
+**Not permanently closed:** the candidates may be revisited by future evidence, and an
+approved entry may still be RETIRED if superseded.
+
+**APPROVED_DURABLE STILL GRANTS ZERO ARTICLE FACTUAL AUTHORITY.** No entry in this file — of
+any status — may be quoted, cited, or used to establish anything about any subject. Approval
+means an instrument is trusted for asking, never for asserting. See `README.md` for the
+status model and the hard boundary.
+
+**PR001 CREATED ZERO NEW DOCTRINE AXES, AND THAT IS THE SUCCESSFUL RESULT.**
+**Axes are stable. Library knowledge may grow beneath them.** The fourteen axes remain the
+conceptual spine; PR001 adds sharper instruments underneath — PR001-05 beneath Axis 5,
+PR001-07 beneath Axes 11 and 12, PR001-02/-03/-09 beneath Axis 11. A future cluster may
+justify a new axis, but novelty is not a goal.
 
 **PURPOSE.** Investigate what disability, art and science scholarship can teach Crip Minds
 to **ask about unrelated subjects**. Not a literature summary, and it must not become one.
@@ -69,7 +81,10 @@ democratie** / *Practices of Democracy*.
 
 ### PR001-01 — NORMALITY AS AN OPERATION
 
-**STATUS:** CANDIDATE
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-07.**
+*Owner reason: valuable but broad, with a high risk of becoming a pre-decided
+anti-normalisation reading. Needs another independent application or source before durable
+promotion.*
 
 **SOURCE BASIS:** *AUTONOMOUS* (Gevers), sections *Omgekeerde diagnose* and *Cognitive
 Capitalism* — **verified**. The text states that algorithms implicitly set the norm, and
@@ -123,7 +138,10 @@ not establish that norms are *always* productive.
 *Renamed 2026-09-07 (was "A NAME CAN BECOME A CAUSE") so the title matches the mechanism.
 The reification claim that name once carried is now **PR001-09**, deliberately separated.*
 
-**STATUS:** CANDIDATE
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-07.
+*Owner reason: a precise transferable mechanism — classification uptake can enter the
+measurement itself. Approval does not touch the boundary below: not every prevalence or
+counting system has a looping effect.*
 
 **SOURCE BASIS:** **Trudy Dehue, *Neurobiological Perfection / On the ADHD Movement*,
 source 1 pp. 96–101 — owner-session verified against the primary text.** The essay discusses
@@ -181,7 +199,10 @@ point: two of the three states were wrong in a way that only the source could co
 
 ### PR001-03 — CLASSIFICATION CHANGES THE AVAILABLE ACTION
 
-**STATUS:** CANDIDATE
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-07.
+*Owner reason: classification can alter jurisdiction, intervention, entitlement, obligation
+or authority. The durable question stays fixed on the concrete action unlocked or foreclosed
+— never the abstract claim that "labels have power".*
 
 **SOURCE BASIS:** **Repo-verified**, `automation/_corpus/insights.md`: a lifelong-invalidity
 assessment in which a doctor asks an albino man when he "became" albino, and a workplace
@@ -239,7 +260,10 @@ no frequency.
 
 ### PR001-04 — CONTROLLED DIFFERENCE / UNCONTROLLED DIFFERENCE
 
-**STATUS:** CANDIDATE
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-07.**
+*Owner reason: a strong hypothesis, but presently too easy to turn into a generic market or
+capitalism critique. Seek a second source, or a non-obvious subject where **both halves** can
+actually be shown.*
 
 **SOURCE BASIS:** *AUTONOMOUS*, *Omgekeerde diagnose* — **verified**: neurological
 differences are rapidly detected and then either **reduced to faults or exploited as a new
@@ -288,8 +312,13 @@ does this.
 
 ### PR001-05 — TECHNOLOGY PARTICIPATES IN MAKING ABILITY
 
-**STATUS:** CANDIDATE *(NEEDS_RESEARCH → CANDIDATE, 2026-09-07: the research gap this entry
-named has been settled by the primary source.)*
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-07.
+*Owner reason: Moser supplies direct primary support for ability and disability being enacted
+through arrangements of body, technology, practice and resources. Approved as an **EXTENSION
+and sharpening of existing Axis 5**, not as a new doctrine axis. The reverse-solutionism
+boundary below is preserved unchanged.*
+*(History: NEEDS_RESEARCH → CANDIDATE earlier the same day, when Moser settled the research
+gap this entry had named; then approved at owner review.)*
 
 **SOURCE BASIS:** **Ingunn Moser, *Making and Unmaking Difference: Agency and Interferences
 among Disability, Gender and Class*, source 1 pp. 258–265 — owner-session verified against
@@ -353,7 +382,10 @@ than as its own entry** — merge candidate at owner review.
 
 ### PR001-06 — SELF-NORMALISATION
 
-**STATUS:** CANDIDATE
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-07.**
+*Owner reason: likely overlaps existing Axis 13 ("the gaze migrates inward"). **Do not
+promote a duplicate instrument merely because a later source gives it new vocabulary.**
+Future task: decide whether it sharpens Axis 13 or is genuinely distinct.*
 
 **SOURCE BASIS:** *AUTONOMOUS*, *Y'All Got ADHD* — **verified, and the source's own term.**
 The text names *zelf-normalisatie* and *zelfkolonisatie* directly; describes a "soft
@@ -400,7 +432,11 @@ applicant writing to the scoring rubric before anyone applies it.
 
 ### PR001-07 — LEGIBILITY ENABLES AND CONSTRAINS
 
-**STATUS:** CANDIDATE
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-07.
+*Owner reason: the strongest mechanism in PR001. Becoming legible can open recognition,
+access and action while also fixing, narrowing or persisting a category. **Both halves are
+kept, and whether legibility is good or bad is never pre-decided.** Approved as a sharpening
+of Axes 11 and 12, not as a new axis.*
 
 **SOURCE BASIS:** *AUTONOMOUS*, *Y'All Got ADHD* — **verified, and close to verbatim in
 mechanism**: the paradox is called inescapable — naming **can liberate, reassure and give
@@ -449,7 +485,10 @@ candidate in the cluster, and still not promotable without that check.
 
 ### PR001-08 — EXPLANATION CAN BECOME CLOSURE
 
-**STATUS:** CANDIDATE
+**STATUS:** CANDIDATE — **held at candidate, owner review 2026-09-07. Not rejected.**
+*Owner reason: strongly supported for exhibition and catalogue mediation. Its transfer to
+captions, AI summaries, legal explanations, dashboards and the rest is still a hypothesis
+requiring additional mediation / access / translation research.*
 
 **SOURCE BASIS:** **Lewthwaite review — verified, and the review's own formulation.** The
 short texts accompanying each work "effectively identify/describe the work, but also fix it
@@ -502,7 +541,11 @@ ME001 below** — this is an instrument for reading subjects; that is a lesson a
 *Created 2026-09-07. Carries the reification claim PR001-02 was originally opened with, now
 separated because the primary source makes **both** arguments and they are not the same one.*
 
-**STATUS:** CANDIDATE
+**STATUS:** **APPROVED_DURABLE** — owner review 2026-09-07.
+*Owner reason: reification is distinct from category circulation — a descriptive category can
+later be used as if it were the explanation for the observations used to construct it.
+Preserved on approval: constructed does not mean false or arbitrary, and the circular
+explanatory move must be shown in the subject's own evidence.*
 
 **SOURCE BASIS:** **Trudy Dehue, *Neurobiological Perfection / On the ADHD Movement*,
 source 1 pp. 96–101 — owner-session verified against the primary text.** The essay explicitly
@@ -593,50 +636,59 @@ has reviewed it.**
 
 ### ME002 — PERSPECTIVE AS HYPOTHESIS GENERATION
 
-**STATUS:** META-EDITORIAL / ARCHITECTURE CANDIDATE
+**STATUS:** **OWNER-APPROVED META-EDITORIAL PRINCIPLE** — owner review 2026-09-07.
+
+*Note on vocabulary: this is **not** a sixth research-entry status. The five statuses in
+`README.md` (CANDIDATE, APPROVED_DURABLE, NEEDS_RESEARCH, REJECTED, RETIRED) are unchanged
+and apply to research entries only. ME002 stays inside this meta-editorial section, is not
+article perspective knowledge, and grants nothing to any article.*
 
 **PROVENANCE:** Owner framing, 2026-09-07 — found useful in discussion, recorded here rather
 than added to doctrine.
 
-**CORE IDEA.** Perspective knowledge must not tell an article what a subject means. It
-generates **falsifiable candidate hypotheses and questions**, which subject-specific research
-then tries to support or kill.
+**THE APPROVED PRINCIPLE, as owner-stated 2026-09-07.**
 
-**CONCEPTUAL CHAIN.**
+> Perspective knowledge does not tell an article what a subject means.
+> It generates falsifiable hypotheses and questions about **where** a meaningful reading
+> might exist.
+
+**CONCEPTUAL SEQUENCE.**
 
 ```
-INITIAL SUBJECT RESEARCH
-      ↓
-perspective knowledge generates candidate hypotheses
-      ↓
-each hypothesis identifies discriminating evidence and carriers
-      ↓
-targeted subject-specific research tries to SUPPORT or KILL it
-      ↓
-the LEDGER alone grants factual permission
-      ↓
-WORTH decides whether any surviving reading is publishable
+INITIAL SUBJECT UNDERSTANDING
+      → HYPOTHESIS
+      → PREDICTED CARRIER / DISCRIMINATING EVIDENCE
+      → TARGETED RESEARCH TRIES TO SUPPORT OR KILL IT
+      → LEDGER ALONE GRANTS FACTUAL PERMISSION
+      → WORTH DECIDES
 ```
 
-**A GOOD HYPOTHESIS.**
-- **can fail** — an entry that cannot come back negative is not a hypothesis, it is a frame
-- **predicts where the evidence should live** — which is what the CARRIERS field already is
-- **does not lower the factual bar** — nothing is easier to prove because perspective
-  suggested it
-- **does not become more true because several minds proposed it** — this is the doctrine's
-  existing convergence rule stated from the other side
-- **can end in NOTHING HERE**, and that is a completed hypothesis, not a failed one
+**A GOOD PERSPECTIVE HYPOTHESIS.**
+- **can fail**
+- **permits NOTHING HERE**
+- **predicts where discriminating evidence may exist**
+- **does not become factual evidence itself**
+- **is not strengthened merely because several minds generated it**
+- **does not lower Worth's evidentiary bar**
 
-**WHY IT MIGHT MATTER.** It names what this whole directory is *for*, and it gives a test for
+**DO NOT IMPLEMENT THIS YET.**
+
+*(The pre-approval draft of this section stated the same chain in different words and is
+superseded by the owner-stated version above. Two glosses from it are worth keeping: an entry
+that cannot come back negative is not a hypothesis but a frame; and ending in NOTHING HERE is
+a completed hypothesis, not a failed one.)*
+
+**WHY IT MATTERS.** It names what this whole directory is *for*, and it gives a test for
 whether an entry is written correctly: an entry that cannot generate a falsifiable hypothesis
 has been written as doctrine, not as instrumentation. Read that way, the four-field format
 (MECHANISM / QUESTION / CARRIERS / FALSE MOVE) is already a hypothesis template — mechanism
 is the claim, question is the test, carriers are the predicted evidence, false move is the
 disconfirming trap.
 
-**EXPLICITLY NOT DESIGNED HERE.** Provider call count. Prompt format. Scoring or ranking of
-hypotheses. Multi-agent implementation. Production wiring. Any of that would be a system, and
-this is a framing.
+**EXPLICITLY NOT DESIGNED HERE, AND NOT AUTHORISED BY THIS APPROVAL.** Provider call count.
+Prompt format. Scoring or ranking of hypotheses. Multi-agent implementation. Production
+wiring. Any of that would be a system, and this is a framing. Approval of the principle is
+not approval to build it.
 
 **NOT REQUIRED TERMINOLOGY.** "Hypothesis generator" is a working phrase for internal use.
 It is not proposed as public language and nothing depends on the term surviving.
@@ -859,4 +911,53 @@ WHY:                Verification is not promotion. Every entry now has a source 
                     question from the last update still stands and is now sharper: several
                     of these are probably extensions of Axes 11, 12 and 5 rather than new
                     axes, and the honest outcome may be that PR001 produces zero new axes.
+```
+
+```
+DATE:               2026-09-07
+ENTRY:              PR001 — FIRST OWNER REVIEW
+DECISION:           PROMOTED TO APPROVED_DURABLE: PR001-02, PR001-03, PR001-05, PR001-07,
+                    PR001-09.
+                    HELD AT CANDIDATE: PR001-01, PR001-04, PR001-06, PR001-08.
+                    REJECTED: none. RETIRED: none. DELETED: none.
+OWNER/REVIEW BASIS: Owner review of the cluster after the primary-source handoff.
+WHY:                Per-entry reasons are recorded on each entry's STATUS line. In summary:
+                    the five promoted entries each name a mechanism that is precise,
+                    transferable, and bounded by something the sources actually establish.
+                    The four held entries are not weaker ideas; each has a specific,
+                    nameable failure risk — PR001-01 could become a pre-decided
+                    anti-normalisation reading, PR001-04 a generic capitalism critique,
+                    PR001-06 a duplicate of Axis 13 wearing new vocabulary, and PR001-08 a
+                    transfer beyond the mediation case that actually supports it. Held is a
+                    research position, not a demotion, and PR001-08 in particular is
+                    explicitly NOT rejected.
+```
+
+```
+DATE:               2026-09-07
+ENTRY:              Axis stability
+DECISION:           PR001 CREATES ZERO NEW PERSPECTIVE DOCTRINE AXES. Recorded as a
+                    SUCCESSFUL research result.
+OWNER/REVIEW BASIS: Owner decision at first review.
+WHY:                The fourteen axes remain the stable conceptual spine and PR001 adds
+                    sharper instruments beneath them. PR001-05 is approved explicitly as an
+                    extension of Axis 5, PR001-07 as a sharpening of Axes 11 and 12. A
+                    future cluster may justify a new axis; novelty is not a goal, and a
+                    cluster that sharpens without expanding has done its job.
+                    STANDING FORM: AXES ARE STABLE. LIBRARY KNOWLEDGE MAY GROW BENEATH THEM.
+```
+
+```
+DATE:               2026-09-07
+ENTRY:              ME002 — Perspective as hypothesis generation
+DECISION:           OWNER-APPROVED META-EDITORIAL PRINCIPLE.
+OWNER/REVIEW BASIS: Owner review.
+WHY:                The owner asked for APPROVED_META. That value does not exist in the
+                    five-status model, and a sixth general entry status was NOT silently
+                    added — the request said not to. ME002 therefore stays inside the
+                    meta-editorial section under an explicit owner-decision label, the five
+                    research-entry statuses are unchanged, and the principle remains
+                    meta-editorial rather than article perspective knowledge. NOT
+                    IMPLEMENTED: no provider count, prompt format, scoring, agent design or
+                    production wiring follows from this approval.
 ```

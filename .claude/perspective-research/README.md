@@ -63,6 +63,16 @@ commonest honest status, and not a lesser one.
 its reason. Deleting it guarantees a future session rediscovers the same idea and pays for
 the same argument twice.
 
+**These five are the complete set, and they apply to research entries only.** Do not add a
+sixth. Meta-editorial items — lessons about how this publication works, rather than
+instruments for reading subjects — live in their own section of a cluster file and carry an
+explicit owner-decision label instead of a status; see ME002 in PR001 for the worked case.
+Keeping the two tracks apart is what stops a lesson about us from being mistaken for an
+instrument for reading the world.
+
+**APPROVED_DURABLE grants ZERO article factual authority.** It means an instrument is trusted
+for *asking*, never for *asserting*. The hard boundary above is unaffected by any promotion.
+
 ---
 
 ## Decision history
@@ -81,6 +91,23 @@ WHY:
 **Do not silently rewrite intellectual history.** If an entry's wording changes materially,
 leave a one-line change note saying what changed and why. An entry that quietly became a
 different claim is worse than no entry.
+
+---
+
+## Axes are stable
+
+**AXES ARE STABLE. LIBRARY KNOWLEDGE MAY GROW BENEATH THEM.**
+
+*Owner decision, 2026-09-07, at the first PR001 review.*
+
+The fourteen axes in the perspective doctrine are the conceptual spine. Research clusters add
+sharper instruments **beneath** them; they do not routinely add axes. PR001 produced five
+durable instruments and **zero new axes**, and that was recorded as a successful result, not
+a shortfall.
+
+A future cluster may justify a new axis. **Novelty is not a goal**, and a cluster that
+sharpens the existing spine without expanding it has done its job. A doctrine that grew every
+time a source was interesting would stop being a spine.
 
 ---
 

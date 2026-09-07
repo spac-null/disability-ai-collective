@@ -1,7 +1,7 @@
 # Perspective Research — INDEX
 
 *Read this first. It should orient a fresh session in under two minutes.*
-*Last updated: 2026-09-07 (primary-source handoff).*
+*Last updated: 2026-09-07 — **PR001 first owner review complete.***
 
 ---
 
@@ -24,8 +24,19 @@ this directory may be quoted in an article.
 **PR001 — Measurement / Classification / Legibility / Normality**
 → `measurement-classification-legibility.md`
 
-**CLUSTER STATUS:** working — **owner review pending.**
-**Nothing is APPROVED_DURABLE. Nothing has been added to the 14 axes.**
+**CLUSTER STATUS: FIRST OWNER REVIEW COMPLETE (2026-09-07).**
+**5 APPROVED_DURABLE · 4 CANDIDATE · 0 rejected · 0 deleted.**
+Not permanently closed — candidates may be revisited by future evidence.
+
+> **AXES ARE STABLE. LIBRARY KNOWLEDGE MAY GROW BENEATH THEM.**
+> **PR001 created ZERO new doctrine axes, and that is the successful result.** The fourteen
+> axes remain the spine; PR001 added five sharper instruments underneath. Novelty is not a
+> goal.
+
+**APPROVED_DURABLE still grants ZERO article factual authority** — trusted for asking, never
+for asserting. The hard boundary is unchanged by any promotion.
+
+**ACTIVE NEXT CLUSTER: PR002 — TIME / SIMULTANEITY / WAITING / PACE** (not started).
 
 ---
 
@@ -69,17 +80,17 @@ and Technology · Practices of Democracy.
 
 | ID | Short name | Status | Axes extended | Minds |
 |---|---|---|---|---|
-| PR001-01 | Normality as an operation | CANDIDATE | 1, 12 | ZENO / SHARED |
-| PR001-02 | **The category enters the measurement** *(renamed)* | CANDIDATE ⚠ split | 11 | ZENO |
-| PR001-03 | Classification changes the available action | CANDIDATE | 11, 5 | ZENO / MAYA |
-| PR001-04 | Controlled vs uncontrolled difference | CANDIDATE | 1, 11 | ZENO / SHARED |
-| PR001-05 | Technology participates in making ability | CANDIDATE ✓ *gap settled* | 5, 1, 12 | MAYA / ZENO |
-| PR001-06 | Self-normalisation | CANDIDATE ⚠ overlap | 1, 8, 13 | ZENO / SIIRI |
-| PR001-07 | Legibility enables and constrains | CANDIDATE ★ strongest | 12, 11, 10 | SIIRI / ZENO |
-| PR001-08 | Explanation can become closure | CANDIDATE | 3, 12 | PINA / SIIRI |
-| **PR001-09** | **The name becomes the explanation** *(new)* | CANDIDATE | 11 | ZENO |
+| PR001-01 | Normality as an operation | CANDIDATE — held | 1, 12 | ZENO / SHARED |
+| PR001-02 | **The category enters the measurement** | **APPROVED_DURABLE** | 11 | ZENO |
+| PR001-03 | Classification changes the available action | **APPROVED_DURABLE** | 11, 5 | ZENO / MAYA |
+| PR001-04 | Controlled vs uncontrolled difference | CANDIDATE — held | 1, 11 | ZENO / SHARED |
+| PR001-05 | Technology participates in making ability | **APPROVED_DURABLE** *(extension of Axis 5)* | 5, 1, 12 | MAYA / ZENO |
+| PR001-06 | Self-normalisation | CANDIDATE — held ⚠ overlap | 1, 8, 13 | ZENO / SIIRI |
+| PR001-07 | Legibility enables and constrains | **APPROVED_DURABLE** ★ *(sharpens Axes 11/12)* | 12, 11, 10 | SIIRI / ZENO |
+| PR001-08 | Explanation can become closure | CANDIDATE — held, **not rejected** | 3, 12 | PINA / SIIRI |
+| **PR001-09** | **The name becomes the explanation** | **APPROVED_DURABLE** | 11 | ZENO |
 | ME001 | Polyphony without closure | META-EDITORIAL CANDIDATE | — (about us) | — |
-| **ME002** | **Perspective as hypothesis generation** *(new)* | META-EDITORIAL / ARCHITECTURE CANDIDATE | — (about us) | — |
+| **ME002** | **Perspective as hypothesis generation** | **OWNER-APPROVED META-EDITORIAL PRINCIPLE** | — (about us) | — |
 | ST001 | Disability alongside other marginalised categories | **SOURCE TENSION / NOT ADOPTED** | — | — |
 | ST002 | Contemporary political claims in *AUTONOMOUS* | **SOURCE TENSION / NOT ADOPTED** | — | — |
 
@@ -99,13 +110,27 @@ Hypothesis and reason are preserved in the cluster's decision history.
 
 ## OWNER DECISIONS
 
-**None yet for PR001. APPROVED_DURABLE count: 0.** No entry has been promoted, and the 14
-doctrine axes are unchanged.
+**PR001 FIRST OWNER REVIEW — 2026-09-07. APPROVED_DURABLE count: 5.**
 
-**Verification is not promotion.** After the 2026-09-07 primary-source handoff every entry
-has a source basis good enough to argue about — 9 CANDIDATE, 0 NEEDS_RESEARCH — and none has
-been reviewed by an owner for durable status. Full dated decision history (seven entries) at
-the foot of the cluster file.
+**Promoted:** PR001-02 (uptake enters the measurement) · PR001-03 (classification changes the
+available action) · PR001-05 (technology participates in making ability — *as an extension of
+Axis 5*) · PR001-07 (legibility enables and constrains — *sharpens Axes 11/12*) · PR001-09
+(the name becomes the explanation).
+
+**Held at candidate, with a named failure risk each:** PR001-01 (could become a pre-decided
+anti-normalisation reading) · PR001-04 (could become a generic capitalism critique) ·
+PR001-06 (likely duplicates Axis 13 with new vocabulary) · PR001-08 (transfer beyond the
+mediation case is still hypothesis — **explicitly not rejected**).
+
+**Nothing rejected. Nothing retired. Nothing deleted.** Held is a research position, not a
+demotion.
+
+**ME002:** OWNER-APPROVED META-EDITORIAL PRINCIPLE. The owner asked for `APPROVED_META`; that
+value does not exist in the five-status model and **a sixth status was not added**, per the
+instruction. ME002 stays in the meta-editorial track with an explicit owner-decision label.
+It is not article perspective knowledge, and **no implementation is authorised by it.**
+
+Full dated decision history — now ten entries — at the foot of the cluster file.
 
 ---
 
@@ -136,7 +161,8 @@ the foot of the cluster file.
 
 ## NEXT CLUSTER
 
-**PR002 — TIME / SIMULTANEITY / WAITING / PACE** — *not started.*
+**PR002 — TIME / SIMULTANEITY / WAITING / PACE — ACTIVE NEXT.** *Not started; not researched
+in this task.*
 
 Would extend Axis 4 (timing & simultaneity) and Axis 9 (endurance, pace, accumulated cost),
 and is the natural home for the owner's M3 (the three-second lag) and M5 (permission arrives
