@@ -16,7 +16,7 @@ answered *nothing useful here*, and the places evidence for it would live.
 
 | # | Source | Status |
 |---|---|---|
-| 1 | *Difference on Display: Diversity in Art, Science and Society*, Ine Gevers (ed.), NAi Publishers, 2010 | **SOURCE_NOT_LOCALLY_AVAILABLE** (~6 MB, could not be transferred) |
+| 1 | *Difference on Display: Diversity in Art, Science and Society*, Ine Gevers (ed.), NAi Publishers / Niet Normaal Foundation, 2010, ISBN 9789056627157 | **REPO-HOST AVAILABILITY: NOT LOCALLY AVAILABLE.** **RESEARCH VERIFICATION: PRIMARY PDF VERIFIED VIA OWNER-SUPPLIED CHAT UPLOAD 2026-09-07** — the owner research session inspected the complete primary PDF directly. |
 | 2 | Sarah Lewthwaite, review of *Difference on Display* (author's draft) | **READ 2026-09-07** |
 | 3 | Ine Gevers, *AUTONOMOUS — Een neurospicy take-over van de computergestuurde samenleving* | **READ 2026-09-07** |
 | 4 | de Volkskrant exhibition overview (RECEPTION / CONTEXT) | **READ 2026-09-07** (image-only PDF, read visually) |
@@ -27,9 +27,23 @@ book's editors and all fifteen essayists, describes its four-part structure, and
 three passages with **exact page numbers**. It is the nearest thing to access to source 1
 currently available.
 
-A download link for source 1 was supplied and **could not be fetched** — the host failed TLS
-chain verification (`unable to verify the first certificate`). Source 1 therefore remains
-unread.
+**SOURCE 1 PROVENANCE, PRECISELY.** Two different things are true and must not be merged:
+
+- **Repo host:** the binary is **not locally available** and no session on this host has
+  opened it. Acquisition failed three times — direct upload (~6 MB); a `storage.to` link
+  (TLS chain verification failed, `unable to verify the first certificate`); a
+  `fileninja.io` link (landing page reachable, direct file URL `403 Forbidden` without a
+  browser session; file confirmed present, 6,063,668 bytes, link expiring 2026-10-02).
+  **That failure history is kept, not erased.**
+- **Research verification:** the owner supplied the complete primary PDF in the owner
+  research session, which inspected it directly. Findings from pp. 96–101 (Dehue) and
+  pp. 258–265 (Moser) below are **owner-session verified against the primary text**, handed
+  off on 2026-09-07.
+
+So an entry citing source 1 by page is resting on the primary text as read in the owner
+session — **not** on anything this host opened, and not on a review's paraphrase. Anyone
+extending those entries needs the same access; the reviews (sources 2 and 5) remain the only
+route available from here.
 
 **The primary book remains unread.** Everything below distinguishes what was verified in
 sources 2–4 from what is attributed to source 1 and therefore still unchecked. Source 1's
@@ -104,29 +118,31 @@ not establish that norms are *always* productive.
 
 ---
 
-### PR001-02 — A NAME CAN BECOME A CAUSE
+### PR001-02 — THE CATEGORY ENTERS THE MEASUREMENT
 
-**STATUS:** CANDIDATE — but see BOUNDARY; the mechanism shifted under the evidence.
+*Renamed 2026-09-07 (was "A NAME CAN BECOME A CAUSE") so the title matches the mechanism.
+The reification claim that name once carried is now **PR001-09**, deliberately separated.*
 
-**SOURCE BASIS:** **Source 5 (Houtepen), quoting Trudy Dehue, *Neurobiologische perfectie*,
-p. 99 — verified with an exact page.** Dehue's quoted argument is *nominalist*: in a country
+**STATUS:** CANDIDATE
+
+**SOURCE BASIS:** **Trudy Dehue, *Neurobiological Perfection / On the ADHD Movement*,
+source 1 pp. 96–101 — owner-session verified against the primary text.** The essay discusses
+**Ian Hacking's looping effect**: people may adopt or reject a classification, and the
+availability and uptake of the category may affect what subsequent prevalence research
+records. Corroborated independently at source 5 (Houtepen) quoting p. 99: in a country
 saturated with ADHD websites, songs and dedicated products, a prevalence survey largely
-measures **the popularity of the label**; and the label's availability, combined with a
-social emphasis on performing well, leads many respondents to **reinterpret their own
-disappointments as a disorder**. Source 5 places the essay in part 1, *Maakbaarheid &
-Perfectie*, alongside material on rising ADHD diagnosis. The original attribution came from
-owner discussion; the essay itself is unread beyond this quotation.
+measures **the popularity of the label**, and the label's availability combined with a social
+emphasis on performing well leads many respondents to reinterpret their own disappointments
+as a disorder.
 
-**MECHANISM.** *(Revised 2026-09-07 to follow the source rather than the owner's
-paraphrase.)* A measurement of how common a category is may partly measure **how available
-the category has become**. Once a classification circulates widely it supplies people with a
-description of themselves they did not previously have, and measured incidence stops being
-separable from circulation of the name. The reification the first draft described — a name
-that begins as shorthand for criteria and ends standing behind them as their cause — is the
-adjacent claim, and it is **not** what the quoted passage establishes.
+**MECHANISM.** A measurement of how common a category is may partly measure **how available
+and how taken-up the category has become**. Once a classification circulates, it supplies
+people with a description of themselves they did not previously have; uptake and rejection
+both feed back into what the next measurement finds, so incidence and circulation stop being
+cleanly separable.
 
-**QUESTION.** Does this figure measure how often the thing occurs, or how available its name
-has become?
+**QUESTION.** Does this figure measure only occurrence, or has circulation and uptake of the
+category entered the thing being measured?
 
 **CARRIERS.** A prevalence or incidence series spanning the period a term entered common
 use. A self-report instrument for a category with public circulation. A definition's history
@@ -149,14 +165,17 @@ not ask whether the category has silently changed job from description to explan
 **TRANSFER TEST.** (1) A credit or risk band used to explain a default it was defined by.
 (2) A type designation later used to account for the traits that defined it.
 
-**BOUNDARY.** What is verified is one quoted paragraph about ADHD prevalence, at p. 99, via
-a reviewer. That supports the *measurement-of-circulation* mechanism. It does **not**
-establish the stronger reification claim, and it does not establish that this holds for
-categories generally — Dehue's own scope and qualifications are unread. **This entry is a
-worked example of the failure the protocol exists to prevent:** the owner's paraphrase and
-the source's actual argument were adjacent but not identical, and only reading the source
-separated them. Research action: read Dehue's essay in source 1, or her own longer work,
-before promotion.
+**BOUNDARY.** **Not all prevalence figures work this way.** The looping effect is
+established here for a psychiatric classification with heavy public circulation; a measure of
+something people cannot adopt, reject or self-describe with has no obvious loop, and applying
+this to one would be a category error. Do not treat a rising figure as evidence of looping
+without showing the uptake.
+
+**This entry is the protocol's worked example.** It was opened from an owner paraphrase ("a
+name can become a cause"), narrowed once a reviewer's quotation was read, and then split in
+two once the primary text was verified — because Dehue makes **both** arguments and they are
+not the same argument. The reification half is now PR001-09. Recording the sequence is the
+point: two of the three states were wrong in a way that only the source could correct.
 
 ---
 
@@ -171,8 +190,14 @@ authority and consequence attached to a name. **Partially verified** in *AUTONOM
 (*Y'All Got ADHD*): naming can give "access to stories", and those who deviate are
 medicalised, corrected or excluded — different institutional consequences following from the
 designation. Live doctrine support: `WORTH_SYSTEM` treats material that converts a
-classification into something a body must live with as the publication's central mode. The
-Dehue attribution is **unverified**.
+classification into something a body must live with as the publication's central mode.
+
+**Primary source, now verified:** **Trudy Dehue, *Neurobiological Perfection / On the ADHD
+Movement*, source 1 pp. 96–101 — owner-session verified.** The essay states that introducing
+a medical name places an observed pattern into a **different institutional framework**: a
+medical diagnosis points toward treatment, and it creates **specific rights and obligations**.
+That is this entry's mechanism stated in the primary text, and it upgrades the entry's basis
+from corpus instances plus inference to a direct source statement.
 
 **MECHANISM.** Naming a condition or situation does more than describe it. The name can
 change which institution has jurisdiction, which interventions become available or
@@ -202,9 +227,13 @@ makes *possible* — the productive rather than the excluding side.
 transferring authority. (2) A software fault reclassified as a security incident, changing
 disclosure duties, timelines and ownership.
 
-**BOUNDARY.** The corpus instances evidence the mechanism in individual documented cases;
-they establish no frequency and no general theory. CANDIDATE on repo backing plus partial
-source support, not on the Dehue attribution.
+**BOUNDARY.** **Do not universalise beyond classification systems where concrete
+institutional consequences can be shown.** The source establishes the mechanism for medical
+diagnosis, where treatment pathways, rights and obligations are the consequences; a
+classification with no institutional apparatus behind it may change nothing at all. The
+reading must name the actual consequence, not assert that one exists because a name was
+applied. Corpus instances evidence the mechanism in individual documented cases and establish
+no frequency.
 
 ---
 
@@ -259,32 +288,44 @@ does this.
 
 ### PR001-05 — TECHNOLOGY PARTICIPATES IN MAKING ABILITY
 
-**STATUS:** NEEDS_RESEARCH
+**STATUS:** CANDIDATE *(NEEDS_RESEARCH → CANDIDATE, 2026-09-07: the research gap this entry
+named has been settled by the primary source.)*
 
-**SOURCE BASIS:** Owner discussion (2026-09-07). **Partial support only.** *AUTONOMOUS*
-verifies the adjacent claims that context massively shapes the brain, that the newest
-computational tools leave deep traces in a neuroplastic brain, and that the social model
-locates limitation in an environment that refuses to adapt — but it does **not** make the
-specific claim that technology changes the conditions under which a limitation exists.
-**Research pointer, now precise:** source 5 confirms that the book's part 3, *Mens &
-technologie*, is built around the cyborg and contains essays on Oscar Pistorius's running
-blades and on how physical disability relates to sex and class; **Ingunn Moser** and **Donna
-Haraway** are among its essayists, and Lewthwaite cites the "'leaky' distinction between
-human and machine". That part of source 1 is the locus, and reading it is the single action
-that would settle this entry.
+**SOURCE BASIS:** **Ingunn Moser, *Making and Unmaking Difference: Agency and Interferences
+among Disability, Gender and Class*, source 1 pp. 258–265 — owner-session verified against
+the primary text.** The essay treats disability and other differences as **enacted in
+concrete practices and relations rather than as fixed properties**, with material
+arrangements and technologies participating in those enactments. Two verified specifics: a
+communication device changes **more than the narrow functional channel it supports**; and in
+another case rehabilitation practices, a computer, writing, and a family's social, cultural
+and financial resources **jointly contribute to "unmaking" disability and enacting ability**.
 
-**MECHANISM.** Technology may not merely compensate for a fixed body. Body, environment and
-technology can jointly change the conditions under which something counts as ability or
-disability, making the limitation a property of the arrangement rather than of the person
-inside it.
+Prior partial support retained: *AUTONOMOUS* on context shaping the brain and on the social
+model locating limitation in an environment that refuses to adapt; source 5 placing the essay
+in part 3, *Mens & technologie*, built around the cyborg; Lewthwaite on the "'leaky'
+distinction between human and machine". Those were the pointer; Moser is the answer.
+
+**MECHANISM.** Technology may not merely compensate for a fixed body. Body, environment,
+technology and social resources jointly *enact* ability or disability in concrete practices,
+making the limitation a property of the whole arrangement rather than of the person inside
+it. Note the plural: in the verified case it is not the device alone but the device together
+with rehabilitation practice, a literacy, and family resources.
 
 **QUESTION.** Is this technology compensating for a fixed limitation, or changing the
 conditions under which the limitation exists?
 
+*Question kept, deliberately.* Moser's enactment framing suggests a broader phrasing — "what
+ability or disability is this whole arrangement producing?" — and it was **considered and not
+adopted**, because it presupposes that the arrangement produces one and so cannot be answered
+*nothing useful here*. The kept question is binary, discriminating, and refusable. Moser's
+framing is recorded in the MECHANISM instead, which is where a presupposition is harmless.
+
 **CARRIERS.** A design rationale stating what a device assumes about its user. A standard
 revised after a technology became common. A task description rewritten around a tool. An
 account of what the same person could do in two arrangements. A support model presuming the
-device is present.
+device is present. **The non-device parts of an arrangement**: a training practice, an
+acquired literacy, a family's or institution's resources, without which the device does
+less.
 
 **FALSE MOVE.** Solutionism in reverse — treating every limitation as merely arranged. Some
 are not, and the live doctrine already refuses technology offered as a solution to a
@@ -301,9 +342,12 @@ arrangement.
 **TRANSFER TEST.** (1) A profession whose competence definition changed once a tool became
 standard. (2) An examination whose difficulty is a property of its permitted equipment.
 
-**BOUNDARY.** Overlaps Axis 5 substantially and **may belong as an extension of it rather
-than as its own entry** — merge candidate. Not promotable until Moser/Haraway in source 1
-are read.
+**BOUNDARY.** **Technology does not make every limitation relational, and this must never
+become reverse solutionism.** Some limitations are not conditions of an arrangement, and the
+live doctrine already refuses technology offered as a solution to a political problem; that
+caution is unchanged by the upgrade and is the reason the entry is CANDIDATE rather than
+promoted. Still overlaps Axis 5 substantially and **may belong as an extension of it rather
+than as its own entry** — merge candidate at owner review.
 
 ---
 
@@ -453,6 +497,61 @@ ME001 below** — this is an instrument for reading subjects; that is a lesson a
 
 ---
 
+### PR001-09 — THE NAME BECOMES THE EXPLANATION
+
+*Created 2026-09-07. Carries the reification claim PR001-02 was originally opened with, now
+separated because the primary source makes **both** arguments and they are not the same one.*
+
+**STATUS:** CANDIDATE
+
+**SOURCE BASIS:** **Trudy Dehue, *Neurobiological Perfection / On the ADHD Movement*,
+source 1 pp. 96–101 — owner-session verified against the primary text.** The essay explicitly
+**warns against reifying labels**, distinguishing a label or standardised description from
+treating that label as though it were the **cause** of the behaviour or misery it describes.
+This is a different claim from the looping effect in PR001-02: one is about what a
+measurement measures, the other is about what an explanation explains.
+
+**MECHANISM.** A category can begin as a shorthand for observed criteria and later be used as
+though the category itself explains or causes the observations from which it was constructed.
+The name stops summarising the evidence and starts standing behind it as its reason, which is
+circular and usually invisible because the circle closes over years and across documents.
+
+**QUESTION.** Is this label describing the pattern, or has it started being used as the
+explanation for the pattern?
+
+**CARRIERS.** A definition or criteria document, and later causal language using the same
+term. A risk category. A diagnostic label. An administrative category. A model-generated
+class. A report in which a category explains the very variables that defined it. The shift
+from "meets criteria X" to "because of X".
+
+**FALSE MOVE.** "Categories are invented, therefore unreal." **Constructed does not mean
+arbitrary or false**, and the live doctrine already holds the correct form: categories are
+invented, which does not make them wrong, it makes them political. The circular or
+explanatory move has to be **demonstrated in the subject** — shown in its own documents,
+across its own usage — not inferred from the fact that somebody once defined the term.
+
+**EXISTING AXIS.** Extends Axis 11 (classification & diagnosis).
+
+**MINDS SHARPENED.** ZENO primarily.
+
+**WHAT THIS ADDS.** Axis 11 asks who invented a category and for whose convenience. Neither
+it nor PR001-02 asks whether the category has silently changed job from description to
+explanation. That is a checkable move with a documentary trail.
+
+**TRANSFER TEST.** Two non-disability domains. (1) **Credit and insurance:** a risk band
+defined by default rates, later cited as the reason for a default — the band explaining the
+data that constructed it. (2) **Software and security:** a severity class assigned from
+observed impact, later used to explain why an incident mattered, so the classification
+becomes the account of the harm rather than a summary of it. A third, if a check is wanted:
+a school performance band defined by attainment and later offered as the cause of attainment.
+
+**BOUNDARY.** **The primary source establishes this mechanism in psychiatric classification.**
+Transfer anywhere else is a hypothesis to test, not an established result — and the transfer
+tests above are illustrations of the shape, not findings. Nothing here licenses asserting
+circularity in a subject; it licenses looking for it.
+
+---
+
 ## META-EDITORIAL CANDIDATE
 
 **Not a Perspective Library entry. Not article perspective knowledge.**
@@ -489,6 +588,58 @@ Volkskrant contrast suggests a second, sharper question for us: whether Crip Min
 to be the plural kind or the vision-forward kind, and whether the four minds are currently
 producing plurality or a house voice with four labels. **Do not act on either until an owner
 has reviewed it.**
+
+---
+
+### ME002 — PERSPECTIVE AS HYPOTHESIS GENERATION
+
+**STATUS:** META-EDITORIAL / ARCHITECTURE CANDIDATE
+
+**PROVENANCE:** Owner framing, 2026-09-07 — found useful in discussion, recorded here rather
+than added to doctrine.
+
+**CORE IDEA.** Perspective knowledge must not tell an article what a subject means. It
+generates **falsifiable candidate hypotheses and questions**, which subject-specific research
+then tries to support or kill.
+
+**CONCEPTUAL CHAIN.**
+
+```
+INITIAL SUBJECT RESEARCH
+      ↓
+perspective knowledge generates candidate hypotheses
+      ↓
+each hypothesis identifies discriminating evidence and carriers
+      ↓
+targeted subject-specific research tries to SUPPORT or KILL it
+      ↓
+the LEDGER alone grants factual permission
+      ↓
+WORTH decides whether any surviving reading is publishable
+```
+
+**A GOOD HYPOTHESIS.**
+- **can fail** — an entry that cannot come back negative is not a hypothesis, it is a frame
+- **predicts where the evidence should live** — which is what the CARRIERS field already is
+- **does not lower the factual bar** — nothing is easier to prove because perspective
+  suggested it
+- **does not become more true because several minds proposed it** — this is the doctrine's
+  existing convergence rule stated from the other side
+- **can end in NOTHING HERE**, and that is a completed hypothesis, not a failed one
+
+**WHY IT MIGHT MATTER.** It names what this whole directory is *for*, and it gives a test for
+whether an entry is written correctly: an entry that cannot generate a falsifiable hypothesis
+has been written as doctrine, not as instrumentation. Read that way, the four-field format
+(MECHANISM / QUESTION / CARRIERS / FALSE MOVE) is already a hypothesis template — mechanism
+is the claim, question is the test, carriers are the predicted evidence, false move is the
+disconfirming trap.
+
+**EXPLICITLY NOT DESIGNED HERE.** Provider call count. Prompt format. Scoring or ranking of
+hypotheses. Multi-agent implementation. Production wiring. Any of that would be a system, and
+this is a framing.
+
+**NOT REQUIRED TERMINOLOGY.** "Hypothesis generator" is a working phrase for internal use.
+It is not proposed as public language and nothing depends on the term surviving.
 
 ---
 
@@ -594,4 +745,118 @@ WHY:                The quoted passage — the freakshow performer seen not as a
                     interview corpus records as "the applause is the violence", from an
                     unrelated source a century apart. Axis 13 already carries it; a second
                     independent instance strengthens the axis without needing an entry.
+```
+
+```
+DATE:               2026-09-07
+ENTRY:              Source 1 provenance
+DECISION:           Split into REPO-HOST AVAILABILITY (not locally available) and RESEARCH
+                    VERIFICATION (primary PDF verified via owner-supplied chat upload).
+OWNER/REVIEW BASIS: Owner research session inspected the complete primary PDF and handed
+                    off findings from pp. 96-101 and pp. 258-265.
+WHY:                "Read locally" would be false on this host and "not available" would
+                    now understate what has been verified. Both are recorded, with the
+                    three failed acquisition attempts kept, so who saw what stays exact.
+```
+
+```
+DATE:               2026-09-07
+ENTRY:              PR001-02 / PR001-09 split
+DECISION:           PR001-02 renamed THE CATEGORY ENTERS THE MEASUREMENT and rebased on
+                    Hacking's looping effect as discussed by Dehue. PR001-09 THE NAME
+                    BECOMES THE EXPLANATION created as a separate CANDIDATE carrying the
+                    reification claim.
+OWNER/REVIEW BASIS: Dehue, source 1 pp. 96-101, owner-session verified.
+WHY:                Dehue makes both arguments and they are not the same argument. One is
+                    about what a prevalence measurement measures; the other is about a
+                    label used as the cause of what it describes. They were conflated in
+                    this cluster's first two states, once from an owner paraphrase and once
+                    from a reviewer's single quotation. CHANGE NOTE: the conflation is
+                    recorded rather than tidied away, because a future session reading only
+                    the current text would otherwise see one clean entry and no sign that
+                    the distinction had to be paid for twice.
+```
+
+```
+DATE:               2026-09-07
+ENTRY:              PR001-03
+DECISION:           SOURCE BASIS strengthened; BOUNDARY tightened. Status unchanged
+                    (CANDIDATE).
+OWNER/REVIEW BASIS: Dehue, source 1 pp. 96-101, owner-session verified: introducing a
+                    medical name places an observed pattern into a different institutional
+                    framework; diagnosis points toward treatment and creates specific
+                    rights and obligations.
+WHY:                The entry previously rested on corpus instances plus inference. It now
+                    rests on a direct statement in the primary text. The boundary was
+                    tightened at the same time: do not universalise beyond classification
+                    systems where concrete institutional consequences can be shown.
+```
+
+```
+DATE:               2026-09-07
+ENTRY:              PR001-05
+DECISION:           NEEDS_RESEARCH -> CANDIDATE. QUESTION kept unchanged; MECHANISM
+                    broadened to the plural arrangement; CARRIERS extended to the
+                    non-device parts.
+OWNER/REVIEW BASIS: Moser, source 1 pp. 258-265, owner-session verified.
+WHY:                This entry named its own research gap and the primary source closed it:
+                    difference enacted in practices rather than fixed as a property,
+                    material arrangements participating, a communication device changing
+                    more than its functional channel, and rehabilitation practice plus a
+                    computer plus writing plus family resources jointly unmaking disability.
+                    A sharper-sounding Moser-derived question ("what ability or disability
+                    is this whole arrangement producing?") was CONSIDERED AND NOT ADOPTED:
+                    it presupposes that the arrangement produces one, so it cannot be
+                    answered "nothing useful here", which every question in this directory
+                    must permit. The reverse-solutionism caution is unchanged.
+```
+
+```
+DATE:               2026-09-07
+ENTRY:              Moser's Dag case — adjacent hypothesis (support technology making a
+                    social position available)
+DECISION:           NOT opened as a PR001 entry. DEFERRED to a future CARE / ASSISTIVE
+                    TECHNOLOGY / AGENCY cluster (provisionally PR003), and recorded here so
+                    it is not lost.
+OWNER/REVIEW BASIS: Owner handoff, flagged explicitly as do-not-auto-adopt.
+WHY:                Three reasons, any one sufficient. (1) It is a different subject from
+                    this cluster: PR001 is measurement, classification, legibility and
+                    normality; this is care, agency and institutional suppression of a
+                    social role, closer to Axes 5, 6 and 10. (2) It is currently N=1 — one
+                    case, however well documented. (3) Folding it into PR001-05 would blur
+                    the entry Moser just settled: PR001-05 is about the conditions under
+                    which a limitation exists; this is about a social position an
+                    institution had made unavailable and a technology reopening. Those are
+                    separable and worth keeping separate.
+                    THE HYPOTHESIS, PRESERVED: a support technology may not merely restore a
+                    missing function; it can make a social position, relation or recognised
+                    action possible that the surrounding institutional arrangement had
+                    suppressed. Question shape, for a future cluster: what did this
+                    arrangement previously make unavailable, that the technology is now
+                    being credited with restoring?
+```
+
+```
+DATE:               2026-09-07
+ENTRY:              ME002 — Perspective as hypothesis generation
+DECISION:           Added as META-EDITORIAL / ARCHITECTURE CANDIDATE. Not added to doctrine.
+OWNER/REVIEW BASIS: Owner framing, found useful in discussion.
+WHY:                It names what this directory is for and supplies a test for whether an
+                    entry is written correctly. No implementation is designed: no provider
+                    call count, prompt format, scoring or wiring. The term itself is
+                    internal and nothing depends on it surviving.
+```
+
+```
+DATE:               2026-09-07
+ENTRY:              Cluster status after primary-source handoff
+DECISION:           9 CANDIDATE, 0 NEEDS_RESEARCH, 2 meta-editorial candidates, 2 source
+                    tensions, 1 deferred hypothesis. APPROVED_DURABLE COUNT: 0.
+OWNER/REVIEW BASIS: n/a - no promotion has been requested or made.
+WHY:                Verification is not promotion. Every entry now has a source basis good
+                    enough to argue about; none has been reviewed by an owner for durable
+                    status, and the fourteen doctrine axes remain untouched. The open
+                    question from the last update still stands and is now sharper: several
+                    of these are probably extensions of Axes 11, 12 and 5 rather than new
+                    axes, and the honest outcome may be that PR001 produces zero new axes.
 ```

@@ -1,7 +1,7 @@
 # Perspective Research — INDEX
 
 *Read this first. It should orient a fresh session in under two minutes.*
-*Last updated: 2026-09-07.*
+*Last updated: 2026-09-07 (primary-source handoff).*
 
 ---
 
@@ -33,7 +33,7 @@ this directory may be quoted in an article.
 
 | # | Source | Type | Availability |
 |---|---|---|---|
-| 1 | *Difference on Display: Diversity in Art, Science and Society*, Ine Gevers (ed.), NAi Publishers 2010, 400 pp., ISBN 9789056627157. Dutch ed. *'Niet Normaal.' Diversiteit in Kunst, Wetenschap en Samenleving*, NAi Uitgevers with stichting Niet Normaal, Rotterdam 2009, ISBN 9789056627140. Co-editors: Bleeker, Blume, M'charek, van Rijsingen, Schoonheim | **PRIMARY THEORY** | **SOURCE_NOT_LOCALLY_AVAILABLE** — ~6 MB, upload failed; supplied download link failed TLS verification |
+| 1 | *Difference on Display: Diversity in Art, Science and Society*, Ine Gevers (ed.), NAi Publishers / Niet Normaal Foundation 2010, 400 pp., ISBN 9789056627157. Dutch ed. *'Niet Normaal.'*, NAi Uitgevers with stichting Niet Normaal, Rotterdam 2009, ISBN 9789056627140. Co-editors: Bleeker, Blume, M'charek, van Rijsingen, Schoonheim | **PRIMARY THEORY** | **REPO-HOST: NOT LOCALLY AVAILABLE.** **RESEARCH VERIFICATION: PRIMARY PDF VERIFIED VIA OWNER-SUPPLIED CHAT UPLOAD 2026-09-07** (owner research session inspected it directly; pp. 96–101 Dehue and pp. 258–265 Moser handed off) |
 | 2 | Sarah Lewthwaite (King's College London), review / author's draft of *Difference on Display* | REVIEW | READ 2026-09-07 |
 | 3 | Ine Gevers, *AUTONOMOUS — Een neurospicy take-over van de computergestuurde samenleving* (exhibition text, Brutus Rotterdam, 2026) | **PRIMARY THEORY** | READ 2026-09-07 |
 | 4 | de Volkskrant, "Gauw naar Rotterdam, Londen of Den Haag", Redactie, 25 March 2026 | **RECEPTION / CONTEXT** | READ 2026-09-07 (image-only PDF, read visually) |
@@ -50,10 +50,12 @@ host — `Niet_Normaal_Difference_on_Display.pdf`, 6,063,668 bytes, **link expir
 2026-10-02** — so a browser-session download or a local copy handed over directly would
 both work. Untried: driving a real browser session to complete the download.
 
-**Source 1 remains the gap.** Sources 2 and 5 are reviews *of* it and are the only route to
-it currently open. Getting source 1 read is the single highest-value action for this
-cluster: it holds Dehue's full essay (p. 99), Gevers' introduction (p. 23), Kuppers (p. 146),
-and the Moser/Haraway essays in part 3 that would settle PR001-05.
+**Source 1: partially closed, 2026-09-07.** The owner research session verified the primary
+PDF and handed off Dehue (pp. 96–101) and Moser (pp. 258–265), which settled PR001-05 and
+split PR001-02 from PR001-09. **The binary is still not on this host**, so a future session
+here cannot extend those entries without the same owner access, and the reviews (sources 2
+and 5) remain the only route available from here. Still unread from this side: Gevers'
+introduction (p. 23), Kuppers (p. 146), Haraway, Shakespeare, and the rest of parts 2 and 4.
 
 **Essayists in source 1** (per source 5): Addlahka · Callon · Cheu · **Dehue** · Devlieger ·
 Gevers · Goodley · **Haraway** · van Hilvoorde · Kuppers · Landeweerd · M'Charek · **Moser** ·
@@ -68,28 +70,42 @@ and Technology · Practices of Democracy.
 | ID | Short name | Status | Axes extended | Minds |
 |---|---|---|---|---|
 | PR001-01 | Normality as an operation | CANDIDATE | 1, 12 | ZENO / SHARED |
-| PR001-02 | A name can become a cause → *measurement of circulation* | CANDIDATE ⚠ reworded | 11 | ZENO |
+| PR001-02 | **The category enters the measurement** *(renamed)* | CANDIDATE ⚠ split | 11 | ZENO |
 | PR001-03 | Classification changes the available action | CANDIDATE | 11, 5 | ZENO / MAYA |
 | PR001-04 | Controlled vs uncontrolled difference | CANDIDATE | 1, 11 | ZENO / SHARED |
-| PR001-05 | Technology participates in making ability | **NEEDS_RESEARCH** | 5, 1, 12 | MAYA / ZENO |
+| PR001-05 | Technology participates in making ability | CANDIDATE ✓ *gap settled* | 5, 1, 12 | MAYA / ZENO |
 | PR001-06 | Self-normalisation | CANDIDATE ⚠ overlap | 1, 8, 13 | ZENO / SIIRI |
 | PR001-07 | Legibility enables and constrains | CANDIDATE ★ strongest | 12, 11, 10 | SIIRI / ZENO |
 | PR001-08 | Explanation can become closure | CANDIDATE | 3, 12 | PINA / SIIRI |
+| **PR001-09** | **The name becomes the explanation** *(new)* | CANDIDATE | 11 | ZENO |
 | ME001 | Polyphony without closure | META-EDITORIAL CANDIDATE | — (about us) | — |
+| **ME002** | **Perspective as hypothesis generation** *(new)* | META-EDITORIAL / ARCHITECTURE CANDIDATE | — (about us) | — |
 | ST001 | Disability alongside other marginalised categories | **SOURCE TENSION / NOT ADOPTED** | — | — |
 | ST002 | Contemporary political claims in *AUTONOMOUS* | **SOURCE TENSION / NOT ADOPTED** | — | — |
 
-⚠ **PR001-02** was reworded within its first day after the source was read; the change note
-is in the cluster's decision history. ⚠ **PR001-06** may be redundant against Axis 13's
-existing "the gaze migrates inward" — check before promoting. ★ **PR001-07** has the closest
-source match in the cluster.
+⚠ **PR001-02** was renamed and split: the primary text showed Dehue making **two** arguments
+that this cluster had conflated — what a prevalence measurement measures (PR001-02) and a
+label used as the cause of what it describes (**PR001-09**). Full change note in the
+cluster's decision history. ⚠ **PR001-06** may be redundant against Axis 13's existing "the
+gaze migrates inward" — check before promoting. ★ **PR001-07** has the closest source match
+in the cluster. ✓ **PR001-05** named its own research gap and Moser closed it.
+
+**DEFERRED, not lost:** Moser's Dag case suggests that a support technology may make a
+*social position* available that an institution had suppressed — not opened as an entry here
+(different subject, N=1, and it would blur PR001-05), deferred to a prospective **PR003**.
+Hypothesis and reason are preserved in the cluster's decision history.
 
 ---
 
 ## OWNER DECISIONS
 
-**None yet for PR001.** No entry has been promoted to APPROVED_DURABLE, and the 14 doctrine
-axes are unchanged. Full dated decision history lives at the foot of the cluster file.
+**None yet for PR001. APPROVED_DURABLE count: 0.** No entry has been promoted, and the 14
+doctrine axes are unchanged.
+
+**Verification is not promotion.** After the 2026-09-07 primary-source handoff every entry
+has a source basis good enough to argue about — 9 CANDIDATE, 0 NEEDS_RESEARCH — and none has
+been reviewed by an owner for durable status. Full dated decision history (seven entries) at
+the foot of the cluster file.
 
 ---
 
@@ -101,8 +117,10 @@ axes are unchanged. Full dated decision history lives at the foot of the cluster
    polemical and current. Both need checking against present-day scholarship before their
    mechanisms are treated as settled.
 3. **What is genuinely new versus already covered by Axis 11 or Axis 12?** The honest
-   suspicion is that PR001-01, -03 and -07 are *extensions* of existing axes rather than new
-   axes, and that PR001-06 may already be inside Axis 13.
+   suspicion, now sharper: PR001-01, -03, -07 and -09 are probably *extensions* of Axes 11
+   and 12 rather than new axes; PR001-05 is probably an extension of Axis 5; PR001-06 may
+   already be inside Axis 13. **The plausible outcome is that PR001 yields zero new axes and
+   several sharpened existing ones**, which would be a good result, not a disappointing one.
 4. **What should be merged rather than become another entry?** Likely merges: PR001-05 into
    Axis 5; PR001-06 into Axis 13; PR001-01 and PR001-07 as a paired extension of Axis 12
    (what an instrument *does*, and what registration *costs*).
@@ -123,6 +141,11 @@ axes are unchanged. Full dated decision history lives at the foot of the cluster
 Would extend Axis 4 (timing & simultaneity) and Axis 9 (endurance, pace, accumulated cost),
 and is the natural home for the owner's M3 (the three-second lag) and M5 (permission arrives
 last). No sources identified yet.
+
+**PR003 — CARE / ASSISTIVE TECHNOLOGY / AGENCY** — *not started, but it already has one
+deferred hypothesis waiting for it* (Moser's Dag case; see the cluster decision history).
+Would extend Axes 5, 6 and 10. Source 1 part 4, *Practices of Democracy*, and the
+self-advocacy material it contains are the obvious first place to look.
 
 ---
 
