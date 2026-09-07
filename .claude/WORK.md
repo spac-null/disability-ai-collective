@@ -19,14 +19,19 @@ section here is about to become a narrative, it belongs in a linked document ins
 - **`CURRENT_MAIN` — not recorded in this file, by design.** No document can hold it durably. Get
   it with `git rev-parse origin/main`. Any SHA written here is a marker of when something was
   checked, never a claim about present HEAD.
-- **`LAST_RUNTIME_CHANGING_BASELINE` = `ad4beccb18d79d0119293625af0867abec629b42`** (PR #41 merge,
-  2026-08-27). The most recent commit on `main` that changed **runtime behaviour** — engine,
+- **`LAST_RUNTIME_CHANGING_BASELINE` = `34b1607bb8d5c3acbe251b6c2efc2df0013e844b`** (PR #94 merge,
+  2026-09-06). The most recent commit on `main` that changed **runtime behaviour** — engine,
   prompts, Writer/Form, fact-check. This is the engine behaviour currently in production and the
   behaviour the next natural run validates. It stays correct as `origin/main` advances, and is
-  only superseded when another runtime/code change lands.
-- **`STATE_SYNC_SHA` = `ad4beccb18d79d0119293625af0867abec629b42`** — the `origin/main` HEAD this
-  file was last synced against (same commit as the runtime baseline, because the sync immediately
-  followed PR #41; the two are separate facts that merely coincide right now).
+  only superseded when another runtime/code change lands. *Moved 2026-09-07 from
+  `ad4beccb18d79d0119293625af0867abec629b42` (PR #41, 2026-08-27), which was the value while this
+  file was unsynced through PRs #42–#94; that SHA is now history, not a baseline.*
+- **`STATE_SYNC_SHA` = `34b1607bb8d5c3acbe251b6c2efc2df0013e844b`** — the `origin/main` HEAD this
+  file was last synced against (2026-09-07 sync; same commit as the runtime baseline, because #94
+  is itself the latest runtime change — the two are separate facts that coincide again).
+- **`CURRENT_MAIN` at the 2026-09-07 sync = `34b1607bb8d5c3acbe251b6c2efc2df0013e844b`**, recorded
+  here as a *check marker only*, per the rule above. Re-run `git rev-parse origin/main` before
+  trusting it.
 
 **Documentation-only commits do not move `LAST_RUNTIME_CHANGING_BASELINE`.** This file's own PR
 (#42, docs-only) advances `origin/main` past `ad4becc` without altering runtime behaviour, so it
@@ -48,10 +53,66 @@ work from a worktree based on current `origin/main`.**
 
 ## PRODUCTION BASELINE
 
-- **`LAST_RUNTIME_CHANGING_BASELINE`: `ad4beccb18d79d0119293625af0867abec629b42`** (PR #41 merge,
-  2026-08-27) — the runtime behaviour the engine state below describes. This is **not** a claim
-  about current `origin/main`, which moves independently (docs-only commits included); run
-  `git rev-parse origin/main` for that.
+- **`LAST_RUNTIME_CHANGING_BASELINE`: `34b1607bb8d5c3acbe251b6c2efc2df0013e844b`** (PR #94 merge,
+  2026-09-06) — the runtime behaviour in production now. This is **not** a claim about current
+  `origin/main`, which moves independently (docs-only commits included); run
+  `git rev-parse origin/main` for that. The previous value, `ad4becc` (PR #41, 2026-08-27), is
+  superseded and kept only as history.
+
+### STATE SYNC 2026-09-07 — PRs #90, #92, #93, #94
+
+Scope of this sync: the four PRs named below, the SHA fields above, the CURRENT PHASE pointer, and
+the not-implemented boundary around visual evidence. **Nothing else in this file was re-verified**,
+and no other section's staleness was repaired — see the documentation gap note directly below.
+
+- **PR #90 — public site brought in line with the publication it now is: MERGED** (`ba9f22d`).
+- **Published-run retention: DONE.** PR #92 (`0b02312`). A published article's Safety stage could
+  not be re-run: three of the four inputs `composition.safety_audit` takes were never written to
+  disk in the shape it takes, and the carried negative lineage was not written at all. #92 writes
+  the missing artifacts and copies a publication audit bundle to a durable location at the
+  promotion boundary, bound to the exact published bytes, with the article carrying a pointer to
+  it. Safety is now deterministically replayable from a bundle.
+- **NL source retention: DONE.** PR #93 (`59deac5`). `write_translation()` emitted no `sources`,
+  so re-deriving an existing Dutch edition deleted its whole "Verder lezen" block — observed on
+  WildSumaco, five curated entries lost and restored by hand. Fixed without adding `sources` to
+  `CARRY_FROM_ENGLISH`, because the Dutch labels carry per-source language notes the English ones
+  do not.
+- **Visual Evidence & Jurisdiction Phase 1: DONE.** PR #94 (`34b1607`), 2026-09-06.
+  - **Caption harvest is LIVE.** `automation/figure_harvest.py` — deterministic, bounded, no
+    network, no model, no image byte read. Wired in **two** places: pack sources
+    (`new_engine_v1/research.py`, `figures` on the source record) and the **anchor**
+    (`orchestrator/discovery.py`, threaded through `provenance.figures`, harvested at acquisition
+    where the markup still exists). `include_images` stays `False`; source `text`,
+    `content_length` and `sha256` are byte-identical to before. `figures[]` is optional and
+    additive — **no `SCHEMA_VERSION` bump**, and a page with no figures serialises as it did
+    before the module existed.
+  - **`figures[]` is DATA AVAILABLE, NOT EDITORIAL EVIDENCE CONSUMED.** The freeze prompt does not
+    see it, no composition stage reads it, and no fact may rest on a caption. Do not describe the
+    field as evidence anywhere until a phase decides otherwise on its own evidence.
+  - **No pack on disk carries `figures[]` yet** — Phase 1 landed 2026-09-06 23:02, after the last
+    run, so every existing `RESEARCH_PACK.json` predates it. Nothing downstream may assume the
+    field is present.
+  - **Jurisdiction Phase 1 is LIVE, owned by the ledger.** `new_engine_v1/jurisdiction.py`,
+    applied from `composition.py` (`JU.apply(ledger, pack)`): NO DEFAULT NATIONAL FRAMEWORK. A
+    foreign-framework standard is **restricted to ATTRIBUTION about the record that states it,
+    never deleted**. This is not a ban on the ADA — a US subject with US evidence is untouched.
+  - **Two jurisdiction limitations are KNOWN, ACCEPTED and DEFERRED** (do not re-file as bugs):
+    directory-role is not yet separated from legal-standard classification, and `subject_country`
+    still uses the deterministic mention heuristic.
+  - Also in #94: the Worth gate no longer teaches the WildSumaco ADA directory field as its
+    canonical PARTICULAR (three worked examples now); image prompts no longer name living or
+    estate-held artists as style targets. The particular requirement itself is unchanged.
+  - Suite at merge: 75/83, the same 8 pre-existing failures, zero regressions.
+- **NOT IMPLEMENTED — vision, `VISUAL_EVIDENCE_PACK` consumption, Art Director.** Verified by
+  absence at `34b1607`: no such name exists anywhere in `automation/`. No vision model, no OCR, no
+  image classifier, no image download, no new provider, no new network request, no new model call.
+  **There is no Phase 2.** Do not cite Phase 1 as partial vision support.
+- **Documentation gap, stated not repaired: PRs #52–#89 are not recorded in this file or in
+  `LOGBOOK.md`.** This file's last real sync was 2026-08-27 (PR #41) and its IN REVIEW section
+  still describes PRs #44–#51 as open; `LOGBOOK.md`'s last entry is 2026-09-02 (PR #51, still
+  marked `MERGED: NO`). Everything in this file outside the STATE SYNC block above and the CURRENT
+  PHASE section below should be read as **last-known-2026-08-27/09-02, not current**. Closing that
+  gap is a separate, deliberately unopened pass.
 - **`PR26_PRODUCTION_BASELINE`: `14997f07e23601f8fc7b920aed7ae15e2cb2e5cf`** — historical. Names
   the main-site IA/visual-redesign baseline (below), not the current HEAD.
 - **PRs #28–#38 landed between those two baselines and are NOT individually recorded here or in
@@ -156,6 +217,11 @@ Read this block first; the bullets under it are the supporting detail.
 | Unknown `CRIPMINDS_ENGINE` value | fails closed (raises, never guesses) |
 | Post-start fallback | **NONE by design.** Once `new_engine_v1` begins a run it owns that run; a HOLD is a result, not a reason to re-run on legacy |
 | Cutover blockers | **NONE.** Do not reopen cutover auditing |
+| Publisher caption harvest (`figures[]`) | **LIVE, RETAINED, UNREAD** (PR #94, `34b1607`, 2026-09-06) — harvested on pack sources *and* on the anchor (`provenance.figures`); no stage consumes it, no fact may rest on it |
+| Jurisdiction (no default national framework) | **LIVE, ledger-owned** (PR #94) — foreign-framework standards restricted to ATTRIBUTION, never deleted; two limitations deferred (see STATE SYNC 2026-09-07) |
+| Vision / `VISUAL_EVIDENCE_PACK` consumption / Art Director | **NOT IMPLEMENTED.** No such name exists in `automation/` at `34b1607`. No Phase 2 exists |
+| Published-run retention (Safety replay bundle) | **LIVE** (PR #92, `0b02312`) — Safety deterministically replayable from a bundle bound to the published bytes |
+| Dutch-edition `sources` retention | **FIXED** (PR #93, `59deac5`) — a re-derived edition keeps its "Verder lezen" block |
 
 *Provenance (2026-08-27 sync): the default-engine, rollback and fail-closed rows were verified
 directly against `automation/engine_switch.py` at `ad4becc`. The **production cron** row was NOT
@@ -558,7 +624,25 @@ and are **not** cutover blockers — they never blocked the completed default cu
 
 ## CURRENT PHASE
 
-**`POST-CUTOVER NATURAL-RUN VALIDATION`**
+**`BOUNDED REAL-CAPTION EDITORIAL-VALUE CHECK`** (set 2026-09-07, after PR #94)
+
+**CURRENT ACTION:** on real harvested captions from real source material, decide whether any
+caption carries editorial value the extracted prose does not already carry — and therefore whether
+`figures[]` should ever be consumed by a stage. Bounded: read-only, no vision, no image download,
+no prompt change, no code change, no new architecture. The output is a decision about wiring, not
+a wiring.
+
+**Standing constraint while this phase runs:** `figures[]` stays retained and unread. Phase 2 does
+not exist and must not be started as a side effect of this check.
+
+**Explicitly NOT this phase:** vision, `VISUAL_EVIDENCE_PACK`, an Art Director, feeding captions to
+the freeze, the two deferred jurisdiction limitations, and the PRs #52–#89 documentation gap.
+
+### CLOSED PHASE (kept one line, superseded 2026-09-07)
+
+`POST-CUTOVER NATURAL-RUN VALIDATION` — set 2026-08-27 against `ad4becc` (PR #41). Superseded:
+runs have happened since, and the baseline it named has moved to `34b1607`. The detail below is
+retained as the historical statement of that phase, not as current instruction.
 
 **CURRENT ACTION:** Observe the next natural scheduled `NEW_ENGINE_V1` production run (the 09:00
 CEST cron) from the then-current `origin/main`. Classify the actual outcome before making further
