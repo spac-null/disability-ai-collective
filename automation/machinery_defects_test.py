@@ -71,8 +71,26 @@ for label, evidence in REAL:
     check("%s: frozen evidence no longer trips the frame scan" % label, not frames,
           str(frames)[:150])
     # And the scan really would have caught it before -- proving the case is real.
-    check("%s: the same text DOES match the vocabulary" % label,
-          bool(ST.leaks(evidence)), "if this fails the fixture is wrong, not the fix")
+    #
+    # TWO OF THESE FOUR ARE NOW CLEAN FOR A SECOND, INDEPENDENT REASON (2026-09-07).
+    # "Florida's Democratic U.S. Senate primary" and "Durham Council is the primary
+    # funder" tripped the frame scan only because the role-taxonomy pattern banned the
+    # ordinary word "primary" in any casing. PR #102 made that pattern match the label
+    # the engine actually emits -- the capitalised role, or a labelled role: form -- so
+    # these two no longer match the vocabulary at all. The control below is exactly the
+    # assertion that comment warns about: "if this fails the fixture is wrong, not the
+    # fix". It was right, and the fixture is updated rather than the fix reverted.
+    #
+    # The defect this test exists for is unaffected: what it proves is that FROZEN
+    # EVIDENCE is excluded from the frame scan, and that assertion above still runs on
+    # all four cases. Only the control changes, and only where the vocabulary itself
+    # legitimately stopped matching.
+    if label in ("Florida primary", "Durham The Light"):
+        check("%s: the vocabulary no longer matches it at all (PR #102)" % label,
+              not ST.leaks(evidence), str(ST.leaks(evidence))[:150])
+    else:
+        check("%s: the same text DOES match the vocabulary" % label,
+              bool(ST.leaks(evidence)), "if this fails the fixture is wrong, not the fix")
 
 check("evidence text is excluded from the generated view",
       not any(f.startswith("facts") for f, _ in
