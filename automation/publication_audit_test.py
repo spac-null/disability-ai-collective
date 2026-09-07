@@ -158,9 +158,12 @@ def promotion_boundary() -> None:
         os.environ["NEW_ENGINE_EVIDENCE_ROOT"] = str(ev)
         os.environ["CRIPMINDS_PUBLICATION_AUDIT_ROOT"] = str(store)
 
+        # A CURRENT_ENGINE article is published directly by the run that composed it
+        # (2026-09-07), by path, with no pool. The retention boundary is unchanged --
+        # it is the same promote_candidate the backlog selector uses.
         draft = PB.DRAFTS / "2026-09-06-a-pavilion-on-six-columns.md"
         draft.write_text(POST)
-        check("publish_best promoted the draft", PB.main() == 0)
+        check("the direct publisher promoted the draft", PB.publish_candidate(draft) == 0)
         promoted = PB.POSTS / draft.name
         check("the article is in _posts", promoted.is_file())
         check("a bundle was retained at the boundary",
@@ -172,8 +175,8 @@ def promotion_boundary() -> None:
         shutil.rmtree(ev)
         draft2 = PB.DRAFTS / "2026-09-06-a-second-pavilion.md"
         draft2.write_text(POST.replace("A pavilion on six columns", "A second pavilion"))
-        rc = PB.main()
-        check("a draft whose run has vanished is not published", rc == 0)
+        rc = PB.publish_candidate(draft2)
+        check("a draft whose run has vanished is refused, not published", rc == 1)
         check("it stays in _drafts, unarchived", draft2.is_file())
         check("and never reached _posts", not (PB.POSTS / draft2.name).exists())
         check("its bytes were not rewritten",
@@ -209,10 +212,26 @@ def main() -> int:
         check("a CURRENT_ENGINE article with no engine_run is refused", not ok2, why2)
         ok3, _ = PA.retention_feasible({"title": "legacy"}, roots=[ev])
         check("a legacy article is NOT blocked and no run is invented", ok3)
+        # RETENTION FEASIBILITY IS NOT STAGE-SCHEMA COMPLETENESS (corrected 2026-09-07).
+        # This assertion used to read "a run missing the packet DICT is REFUSED". That
+        # doctrine was wrong and it was total: no recorded production run has ever
+        # carried WRITER_PACKET.json, CUT_REPORT.json and ARTICLE_FINAL.md, so the gate
+        # refused every CURRENT_ENGINE candidate that reached it and 13 scheduled runs
+        # produced 0 publications. The run is retainable; what the missing file costs is
+        # deterministic Safety REPLAY, and the manifest is required to say so plainly
+        # rather than the publisher pretending the article does not exist.
         (run_dir / "WRITER_PACKET.json").unlink()
         ok4, why4 = PA.retention_feasible(fm, roots=[ev])
-        check("a run missing the packet DICT is refused (the .txt does not count)",
-              not ok4 and "WRITER_PACKET.json" in why4, why4)
+        check("a run missing one composition-engine Safety file is still retainable",
+              ok4, why4)
+        check("and feasibility says which replay input is absent",
+              "WRITER_PACKET.json" in why4 and "INCOMPLETE" in why4, why4)
+        check("the .txt still does not count as the packet",
+              "WRITER_PACKET.json" in PA.missing_safety_inputs(run_dir)
+              and (run_dir / "WRITER_PACKET.txt").is_file())
+        check("that run's SAFETY replay is declared INCOMPLETE, not replayable",
+              PA._reaudit_report(run_dir)["SAFETY"]["kind"] == "INCOMPLETE"
+              and PA._reaudit_report(run_dir)["SAFETY"]["possible"] is False)
         (run_dir / "WRITER_PACKET.json").write_text(
             json.dumps(PACKET, indent=1, sort_keys=True))
 

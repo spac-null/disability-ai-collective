@@ -93,6 +93,19 @@ def evidence_roots() -> list:
 # WRITER_PACKET.txt is NOT on this list and never will be: it is the rendered prompt,
 # and a prompt is not a packet. EDITORIAL_PACKAGE.json and FACTUAL_REPAIR.json are
 # conditional -- a run without a package or without a repair passed neither.
+#
+# WHAT THIS LIST IS FOR, AND WHAT IT IS NOT FOR (2026-09-07). It describes ONE
+# composition engine's Safety implementation, and it is read in exactly one place that
+# matters: `_reaudit_report`, which states honestly whether deterministic Safety replay
+# is possible from a given bundle. It is NOT a publication precondition. It was one
+# until this date, and as a precondition it was impossible: across every recorded
+# production run, zero satisfied it -- WRITER_PACKET.json, CUT_REPORT.json and
+# ARTICLE_FINAL.md were emitted by none of them -- so every CURRENT_ENGINE article that
+# reached the promotion gate was refused with NEEDS_AUDIT_RETENTION regardless of its
+# editorial verdict. Retention feasibility asks whether the exact producing run can be
+# durably kept; it does not ask whether that run happened to use the filenames one
+# engine's Safety stage consumes. An older valid composition run must not be refused
+# publication merely for predating those names.
 SAFETY_REQUIRED = (
     "WRITER_PACKET.json", "ARCHITECTURE.json", "LEDGER.json", "CUT_REPORT.json",
     "WRITER_DRAFT.md", "ARTICLE_FINAL.md",
@@ -176,16 +189,63 @@ def find_run_dir(run_id: str, roots=None) -> pathlib.Path | None:
 
 
 def missing_safety_inputs(run_dir: pathlib.Path) -> list:
+    """Which of one engine's Safety inputs this run lacks. Diagnostic, and the basis of
+    the SAFETY replay claim in `_reaudit_report`. NOT a publication precondition -- see
+    SAFETY_REQUIRED's own comment for why it stopped being one."""
     return [n for n in SAFETY_REQUIRED if not (run_dir / n).is_file()]
 
 
+def run_retainable(run_dir: pathlib.Path) -> tuple:
+    """Can THIS EXACT run directory actually be copied, hashed and frozen?
+
+    The only question retention feasibility is entitled to ask before publication. Not
+    "does it contain the right filenames" -- that is a composition-engine schema
+    question and it belongs to `_reaudit_report`, which answers it honestly in the
+    manifest. This asks whether the retention mechanism could physically do its work:
+    the directory is there, it lists, everything in it reads, and there is at least one
+    file to keep. Anything else is a refusal, because a retention that cannot copy is a
+    publication without provenance and that is the state this module exists to prevent.
+    """
+    if run_dir is None:
+        return False, "no run directory"
+    if not run_dir.is_dir():
+        return False, "%s is not a directory" % run_dir
+    if not os.access(run_dir, os.R_OK | os.X_OK):
+        return False, "%s is not readable" % run_dir
+    files = 0
+    try:
+        for p in run_dir.rglob("*"):
+            if p.is_dir():
+                if not os.access(p, os.R_OK | os.X_OK):
+                    return False, "%s is not readable" % p
+                continue
+            if not p.is_file():
+                continue
+            files += 1
+            if not os.access(p, os.R_OK):
+                return False, "%s is not readable" % p
+    except OSError as e:
+        return False, "%s could not be walked: %s" % (run_dir, e)
+    if not files:
+        return False, "%s holds no files -- there is nothing to retain" % run_dir
+    return True, "%s is readable and holds %d file(s)" % (run_dir, files)
+
+
 def retention_feasible(fm: dict, *, roots=None) -> tuple:
-    """Could this article be published AND keep what a later auditor needs?
+    """Could this article be published AND have its exact producing run durably kept?
 
     Returns (ok, reason). A legacy or manual article -- one carrying no CURRENT_ENGINE
     generation marker -- returns ok with its reason named. It is not blocked and its
     history is not invented: the architecture already distinguishes the two eras by
     `engine_generation`, and this reads that distinction rather than inventing one.
+
+    For a CURRENT_ENGINE article the question is retention FEASIBILITY, and feasibility
+    is not stage-schema completeness. The article must name a run, that exact run must
+    resolve, and the resolved directory must genuinely be retainable. A run that lacks
+    one engine's Safety filenames is still retained in full; the bundle then says, in
+    `reaudit.SAFETY`, that deterministic replay is INCOMPLETE and which files are
+    missing. That is an honest record. Refusing publication over it was not: it refused
+    every run this pipeline has ever produced.
     """
     if not is_current_engine(fm):
         return True, "legacy/manual: no engine_generation: CURRENT_ENGINE to retain a run for"
@@ -199,12 +259,15 @@ def retention_feasible(fm: dict, *, roots=None) -> tuple:
                        % (run_id, ", ".join(str(r) for r in
                                             (roots if roots is not None
                                              else evidence_roots()))))
+    ok, why = run_retainable(run_dir)
+    if not ok:
+        return False, ("run %s cannot be retained: %s" % (run_id, why))
     missing = missing_safety_inputs(run_dir)
     if missing:
-        return False, ("run %s is missing the Safety stage's own inputs: %s -- Safety "
-                       "could not be re-audited after publication"
-                       % (run_id, ", ".join(missing)))
-    return True, "run %s carries every Safety input" % run_id
+        return True, ("run %s is retainable (%s); deterministic Safety replay from the "
+                      "bundle will be INCOMPLETE -- absent: %s -- and the manifest will "
+                      "say so" % (run_id, why, ", ".join(missing)))
+    return True, "run %s is retainable and carries every Safety input" % run_id
 
 
 # ── assembling the bundle ───────────────────────────────────────────────────────────
@@ -380,7 +443,7 @@ def retain(post_path, *, audit_root=None, roots=None, run_id=None,
         if not ok:
             raise RetentionError(
                 "%s is a CURRENT_ENGINE article and %s. Publishing it would put an "
-                "article on the site whose safety stage nobody can ever re-audit."
+                "article on the site whose producing run cannot be kept at all."
                 % (post_path.name, why))
 
     if tmp.exists():

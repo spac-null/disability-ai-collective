@@ -50,10 +50,18 @@ check("publish_best calls the shared entry point",
       "gen_images.illustrate_post(dest)" in PB)
 check("it does so at the promotion boundary, right after the post is dated",
       PB.index("set_publish_date(dest, now)") < PB.index("gen_images.illustrate_post(dest)")
-      < PB.index("archived = []"))
+      < PB.index("def main(dry_run=False):"))
+# The move now lives in promote_candidate (2026-09-07), which is the ONE mechanics
+# function both callers go through -- the direct CURRENT_ENGINE publisher and the
+# legacy backlog selector. That the boundary is shared matters more than which
+# function holds it, so this checks the sharing.
 check("promotion is the boundary BOTH engines cross",
-      "shutil.move(str(best_draft), str(dest))" in PB,
+      "shutil.move(str(draft), str(dest))" in PB
+      and "def promote_candidate(draft, dest, now):" in PB,
       "a Story Architecture draft becomes a post here, exactly as a legacy one does")
+check("and both callers reach it through that one function",
+      PB.count("promote_candidate(") >= 3,
+      "definition + the direct publisher + the legacy selector")
 check("the generated assets are staged for the commit",
       'mutated += res["assets"]' in PB,
       "images that are not staged never reach the site")

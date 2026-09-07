@@ -13,6 +13,7 @@ beyond the script's own, no production DB.
 """
 from __future__ import annotations
 
+import os
 import pathlib
 import subprocess
 import sys
@@ -81,6 +82,11 @@ def _repo(drafts=(), archived=(), posts=()):
         _git(root, "commit", "-q", "-m", "fixtures")
     PB.REPO, PB.DRAFTS, PB.POSTS, PB.ARCHIVE = (
         root, root / "_drafts", root / "_posts", root / "_drafts" / "_archive")
+    # The publication audit store, in the temp tree. Without this the retention step
+    # tries the production default (/srv/data/...), which does not exist on a
+    # developer machine, so every promotion in this file rolled back before reaching
+    # the staging behaviour these tests are about.
+    os.environ["CRIPMINDS_PUBLICATION_AUDIT_ROOT"] = str(root / ".store")
     return root
 
 
@@ -182,7 +188,12 @@ def test_no_broad_staging_remains():
                    '"git", "add", str(ARCHIVE)', '"git", "add", "."', '"add", "-A"]'):
         check("no broad staging: %s" % banned, banned not in src)
     check("staging is driven by a recorded mutation set",
-          "mutated" in src and 'subprocess.run(["git", "add", "-A", "--", *sorted(set(mutated))]' in src)
+          "mutated" in src and "staged = stageable_paths(mutated)" in src
+          and 'subprocess.run(["git", "add", "-A", "--", *staged]' in src)
+    # And the mutation set is filtered before git sees it -- see
+    # publish_best_pathspec_staging_test.py for why a raw mutation list is fatal.
+    check("the mutation set is filtered to paths git can actually be handed",
+          "def stageable_paths(" in src and "_git_tracked(" in src)
     check("every add call is path-scoped",
           all("--" in line for line in src.splitlines()
               if '"git", "add"' in line or '["git", "add"' in line))
