@@ -32,6 +32,11 @@ import urllib.error
 # Config
 # ---------------------------------------------------------------------------
 
+try:
+    import art_director as AD
+except ImportError:                                       # pragma: no cover
+    AD = None
+
 REPO_ROOT = pathlib.Path(__file__).parent.parent
 POSTS_DIR  = REPO_ROOT / "_posts"
 ASSETS_DIR = REPO_ROOT / "assets"
@@ -557,8 +562,118 @@ def process_post(post_path: pathlib.Path, model: str, api_key: str, dry_run: boo
     return success
 
 
+def _balanced(body: str, names: list, alts: list) -> str:
+    """The legacy balanced insertion, imported not reimplemented. Fallback for anything
+    the beat mapping could not place cleanly."""
+    sys.path.insert(0, str(pathlib.Path(__file__).parent))
+    from orchestrator.images import ImagesMixin
+
+    class _Placer(ImagesMixin):
+        def __init__(self):
+            self.assets_dir = ASSETS_DIR
+
+    return _Placer()._insert_images_balanced(body, names, alts)
+
+
+def generate_from_brief(post_path: pathlib.Path, brief: dict, model: str, api_key: str,
+                        dry_run: bool = False, force: bool = False) -> dict:
+    """Generate EXACTLY the images an art-direction brief asks for. Recraft gets text only.
+
+    The old path generated three images always, from title plus a ~150-character excerpt,
+    in a per-persona template picked by a hash of the slug. This one generates
+    image_count images -- including none -- from each image's function, register, factual
+    and visual anchors, must-not-invent list and composition note.
+
+    IMAGE_COUNT 0 IS A SUCCESS, not a failure to produce anything. An article the art
+    director judged wants no illustration gets none, and no filler is manufactured to
+    round a set up to three.
+    """
+    slug = slug_from_path(post_path)
+    persona = parse_frontmatter(post_path.read_text()).get("author", "")
+    images = brief.get("images") or []
+    out = {"ok": True, "generated": [], "alts": [], "placements": [], "reason": ""}
+    if not images:
+        out["reason"] = "image_count 0 -- the article was art-directed to no images"
+        return out
+    for i, im in enumerate(images, 1):
+        dest = ASSETS_DIR / ("%s_%s.jpg" % (slug, AD.asset_suffix(i, im)))
+        prompt = AD.build_image_prompt(im, persona)
+        ratio = AD.ratio_for(im)
+        if dry_run:
+            print("  would generate: %s (%s, %s/%s)"
+                  % (dest.name, ratio, im.get("function"), im.get("register")))
+            out["generated"].append(str(dest))
+            out["alts"].append(str(im.get("alt_text") or ""))
+            out["placements"].append(str(im.get("placement") or "END"))
+            continue
+        if dest.exists() and not force:
+            print("  skip (exists): %s" % dest.name)
+        else:
+            print("  generating %s (%s/%s) ..." % (dest.name, im.get("function"),
+                                                   im.get("register")), end=" ", flush=True)
+            t0 = time.time()
+            try:
+                save_image(call_openrouter(prompt, ratio, model, api_key), dest)
+                print("ok (%.1fs)" % (time.time() - t0))
+            except Exception as e:                                    # noqa: BLE001
+                print("FAILED: %s" % e, file=sys.stderr)
+                out["ok"] = False
+                continue
+            time.sleep(1.5)
+        out["generated"].append(str(dest))
+        out["alts"].append(str(im.get("alt_text") or ""))
+        out["placements"].append(str(im.get("placement") or "END"))
+    return out
+
+
+def _insert_by_placement(body: str, names: list, alts: list, placements: list,
+                         arch: dict | None) -> tuple:
+    """Place figures by architecture beat where a beat can be located in the prose.
+
+    NOT a layout engine, and deliberately not one. A beat is located by looking for its
+    concrete carrier's distinctive words in the body; the figure goes after the paragraph
+    that carries them. Anything that cannot be placed this way -- no architecture, no
+    match, an ambiguous match -- falls through to the existing balanced insertion for the
+    remaining images rather than guessing. HERO is not a body figure at all; it is the
+    frontmatter image.
+    """
+    beats = {b.get("beat_id"): b for b in ((arch or {}).get("beats") or [])}
+    paras = body.strip().split("\n\n")
+    pending, placed = [], {}
+    for name, alt, pl in zip(names, alts, placements):
+        if pl == "HERO":
+            continue
+        idx = None
+        if pl.startswith("AFTER_BEAT:") and beats:
+            b = beats.get(pl.split(":", 1)[1].strip()) or {}
+            carrier = str(b.get("concrete_carrier") or b.get("carrier") or "")
+            words = [w for w in re.findall(r"[A-Za-z]{5,}", carrier)][:4]
+            if words:
+                hits = [n for n, para in enumerate(paras)
+                        if sum(1 for w in words if w.lower() in para.lower()) >= max(2, len(words) // 2)]
+                if len(hits) >= 1:
+                    idx = hits[0]
+        if idx is None and pl in ("END", "BREATHING", "END / BREATHING"):
+            idx = len(paras) - 1
+        if idx is None:
+            pending.append((name, alt))
+        else:
+            placed.setdefault(idx, []).append((name, alt))
+    if not placed:
+        return None, pending
+    out = []
+    for n, para in enumerate(paras):
+        out.append(para)
+        for name, alt in placed.get(n, []):
+            out.append('<figure class="article-figure">\n'
+                       '<img src="/assets/%s" alt="%s" loading="lazy">\n</figure>'
+                       % (name, alt.replace('"', "&quot;")))
+    return "\n\n".join(out), pending
+
+
 def illustrate_post(post_path: pathlib.Path, model: str = DEFAULT_MODEL,
-                   api_key: str | None = None, force: bool = False) -> dict:
+                   api_key: str | None = None, force: bool = False,
+                   brief: dict | None = None, arch: dict | None = None) -> dict:
     """Generate the house image set for one post AND insert the body figures.
 
     THE ONE ENTRY POINT BOTH ENGINES USE. Illustration used to happen inside the legacy
@@ -579,6 +694,42 @@ def illustrate_post(post_path: pathlib.Path, model: str = DEFAULT_MODEL,
     if not api_key:
         return {"ok": False, "assets": [], "figures": 0,
                 "reason": "OPENROUTER_API_KEY is not set"}
+
+    # ART-DIRECTED PATH. Taken only when a validated brief was handed in. No brief means
+    # the path below is byte-for-byte what it was: three images from the persona template.
+    # That is the fallback contract -- art direction improves an image set, and its
+    # absence must never be the reason an article does not publish.
+    if brief is not None and AD is not None:
+        gen = generate_from_brief(post_path, brief, model, api_key, force=force)
+        if int(brief.get("image_count") or 0) == 0:
+            return {"ok": True, "assets": [], "figures": 0,
+                    "reason": gen.get("reason", ""), "art_directed": True}
+        if gen["generated"]:
+            text = post_path.read_text()
+            names = [pathlib.Path(g).name for g in gen["generated"]]
+            hero = [n for n, pl in zip(names, gen["placements"]) if pl == "HERO"]
+            hero_alt = next((a for a, pl in zip(gen["alts"], gen["placements"])
+                             if pl == "HERO"), gen["alts"][0] if gen["alts"] else "")
+            inject_image_fields(post_path, "/assets/%s" % (hero[0] if hero else names[0]),
+                                hero_alt)
+            text = post_path.read_text()
+            head, fmtext, body = text.split("---", 2)
+            figures = body.count("article-figure")
+            if not figures:
+                new_body, pending = _insert_by_placement(
+                    body.strip(), names, gen["alts"], gen["placements"], arch)
+                if new_body is None:
+                    new_body = _balanced(body.strip(), names, gen["alts"])
+                elif pending:
+                    new_body = _balanced(new_body, [n for n, _ in pending],
+                                         [a for _, a in pending])
+                post_path.write_text(head + "---" + fmtext + "---\n\n" + new_body + "\n")
+                figures = new_body.count("article-figure")
+            return {"ok": gen["ok"], "assets": gen["generated"], "figures": figures,
+                    "reason": gen.get("reason", ""), "art_directed": True}
+        # Generation failed outright: fall through to the existing path rather than
+        # publishing an article with no images because art direction was attempted.
+
     try:
         ok = process_post(post_path, model, api_key, dry_run=False, force=force)
     except Exception as e:                                        # noqa: BLE001
