@@ -96,7 +96,26 @@ PROVENANCE_FRAMES = [
     r"\bno such claim\b", r"\bnothing in the (?:source|anchor|evidence)\b",
     r"\bcontains no\b", r"\bgives none\b", r"\bis not supported by\b",
     r"\bS\d+\b",                                  # source-id markers
-    r"\b(?:ANCHOR|PRIMARY|INDEPENDENT|TERTIARY)\b",   # role taxonomy
+    # ROLE TAXONOMY, AS A FRAME AND NOT AS VOCABULARY (corrected 2026-09-07).
+    #
+    # `leaks()` applies re.I to every pattern in this list, so the old
+    # `\b(?:ANCHOR|PRIMARY|INDEPENDENT|TERTIARY)\b` banned four ordinary English words
+    # in any casing. "independent" is a common adjective, "anchor" is a news anchor and
+    # a boat's anchor, and on 2026-09-07 a finished article on Christine Sun Kim's Deaf
+    # Material was held -- in its prose AND in its meta description -- because its
+    # publisher is called Primary Information. `leak_hits`'s own docstring records the
+    # same collision happening earlier on the phrase "Senate primary"; that fix made the
+    # report legible without making the detector right.
+    #
+    # What actually leaks is the LABEL, and the engine writes labels in one shape: the
+    # bare role name in capitals, as RESEARCH_PACK emits it ("role": "ANCHOR"). So the
+    # capitalised token is matched case-sensitively via a scoped (?-i:...), which
+    # survives the re.I this list is scanned under, and the labelled forms a serialiser
+    # or a prompt echo would produce are matched in any casing.
+    r"(?-i:\b(?:ANCHOR|PRIMARY|INDEPENDENT|TERTIARY)\b)"
+    r"|\b(?:role|tier|rank)\s*[:=]\s*[\"\'\[]?(?:anchor|primary|independent|tertiary)\b"
+    r"|[\[<](?:anchor|primary|independent|tertiary)[\]>]"
+    r"|\b(?:anchor|primary|independent|tertiary)\s*(?:\||::)",
     r"\bsha256\b", r"\bprovenance\b", r"\bverified excerpt\b",
 ]
 # Scaffold names that must never reach prose (campaign brief section 39).
@@ -879,6 +898,70 @@ def validate_packet(packet: dict) -> list:
 CUT_SENTINEL_MIN = 4          # ignore very short tokens; they collide with ordinary words
 
 
+def _literal_cut_hit(term_lower: str, body_lower: str) -> bool:
+    """Does `term_lower` appear in `body_lower` AS A TOKEN, not as a substring?
+
+    THE DOCTRINE WAS ALREADY WRITTEN HERE, AND ONLY HALF OBEYED (corrected 2026-09-07).
+    The inflection branch below says, in its own comment, "Compared TOKEN-WISE on stems,
+    never as a substring... A substring test on stems would flag the scandal." The
+    literal branch above it did exactly that -- a raw `term in body` -- and the comment
+    defending it argued that over-reporting a CUT is the safe direction.
+
+    Three real production runs on 2026-09-07 refuted that. Over-reporting does not cost
+    a sentinel; it blocks the article:
+
+        cut term "Historic"  (from a headline)  fired on  "historically"
+        cut term "Ability"   (a book category)  fired on  "disability"
+
+    Neither article had leaked anything. The second is worse than an accident on this
+    site in particular: "-ability" sits inside the disability vocabulary every piece
+    here is written in, so any cut term ending that way is a permanent trap.
+
+    A token boundary is the whole fix. Alphanumeric lookarounds rather than \b, so that
+    ordinary punctuation, quotes and sentence ends still close a token while a hyphen
+    inside a term the architect wrote stays part of it. A multi-word term matches an
+    exact contiguous token sequence, `body` having already been whitespace-normalised.
+
+    The inflection branch is untouched and still catches what the literal one now
+    misses by design: "scan" against "scans" arrives there and matches on the stem,
+    while "scandal" stays "scandal" and does not.
+    """
+    return re.search(r"(?<![a-z0-9])%s(?![a-z0-9])" % re.escape(term_lower),
+                     body_lower) is not None
+
+
+def _regular_inflections(t: str) -> set:
+    """The ordinary English inflections of one lowercase word.
+
+    WHY THIS EXISTS. Narrowing the literal branch to token boundaries lost one thing the
+    substring test had been quietly covering: `_stem` mis-stems a regular plural whose
+    singular ends in a consonant plus -e, so the stem comparison below cannot see it.
+
+        plate   -> plate      plates   -> plat
+        theatre -> theatre    theatres -> theatr
+        city    -> city       cities   -> citi
+        box     -> box        boxes    -> boxe
+
+    A cut term "plate" against prose saying "plates" was caught before this change and
+    must still be. Generating the inflections ON THE TERM and matching each as a whole
+    token recovers exactly that, and cannot reach further: "plate" yields "plates", never
+    "platform". The stem comparison keeps its own cases ("scan"/"scans",
+    "simulating"/"simulated"), and neither route is a substring test.
+    """
+    out = {t}
+    if t.endswith(("s", "x", "z", "ch", "sh")):
+        out.add(t + "es")
+    else:
+        out.add(t + "s")
+    if len(t) > 3 and t.endswith("y") and t[-2] not in "aeiou":
+        out.add(t[:-1] + "ies")
+    if t.endswith("e"):
+        out |= {t + "d", t[:-1] + "ing"}
+    else:
+        out |= {t + "ed", t + "ing"}
+    return out
+
+
 def _body_stems(body_lower: str) -> set:
     """Stemmed tokens of the prose. Only CUT watch terms are compared this way; no other
     screen in this module stems, deliberately."""
@@ -910,7 +993,7 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None) 
                 # of itself is worse than no screen.
                 skipped.append({"evidence_id": cid, "term": term})
                 continue
-            if t in body:
+            if _literal_cut_hit(t, body):
                 violations.append({"evidence_id": cid, "reason": c.get("reason"),
                                    "term": term, "match": "literal"})
                 continue
@@ -927,16 +1010,25 @@ def cut_adherence(article_text: str, arch: dict, cut_terms: dict | None = None) 
             # known to have reached prose this way; the screen simply could not have
             # seen it if one had.
             #
-            # The literal pass above stays a raw substring test, so a longer unrelated
-            # word containing the term ("scandal" for "scan") still fires. Left alone:
-            # it over-reports a CUT rather than under-reports one, which is the safe
-            # direction, and narrowing it is a change to a screen that is working.
+            # The literal pass above is token-wise too, as of 2026-09-07 -- see
+            # _literal_cut_hit for the three production articles that were held by its
+            # old substring behaviour. Single-word sensitivity is unchanged, because a
+            # term whose token form is absent but whose stem is present arrives here.
             if " " not in t:
                 st = _stem(t)
                 if len(st) >= CUT_SENTINEL_MIN and st in _body_stems(body):
                     violations.append({"evidence_id": cid, "reason": c.get("reason"),
                                        "term": term, "match": "inflected",
                                        "stem": st})
+                    continue
+                # The regular inflections `_stem` cannot pair up -- see
+                # _regular_inflections for the four shapes and the coverage this keeps.
+                hit = next((f for f in sorted(_regular_inflections(t) - {t})
+                            if _literal_cut_hit(f, body)), None)
+                if hit:
+                    violations.append({"evidence_id": cid, "reason": c.get("reason"),
+                                       "term": term, "match": "inflected",
+                                       "stem": hit})
     return {"violations": violations,
             "ok": not violations and not skipped and not unwatched,
             "clean_prose": not violations,

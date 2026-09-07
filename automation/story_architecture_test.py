@@ -569,18 +569,32 @@ def test_inflection_does_not_defeat_a_cut_watch_term():
     check("a literal hit is still reported as literal",
           lit["violations"] and lit["violations"][0]["match"] == "literal",
           lit["violations"])
-    # STATED LIMIT, not a fixed one: the pre-existing literal pass is a raw substring
-    # test, so a longer unrelated word containing the term still fires. That predates
-    # this patch and is unchanged by it. It over-reports a CUT rather than under-reports
-    # one, which is the safe direction, and narrowing it is a separate change.
-    check("a longer word merely containing the term still fires, literally, as before",
+    # THE STATED LIMIT IS NOW FIXED (2026-09-07). This block used to assert the
+    # opposite -- that a longer unrelated word containing the term "still fires,
+    # literally, as before" -- on the reasoning that over-reporting a CUT is the safe
+    # direction. Three real production articles on 2026-09-07 showed it is not: the
+    # substring pass held a Cherry Lane piece on "Historic" inside "historically" and a
+    # Christine Sun Kim piece on "Ability" inside "disability", neither of which had
+    # leaked anything. Over-reporting does not cost a sentinel, it blocks the article.
+    check("a longer word merely containing the term no longer fires",
+          ST.cut_adherence("It caused a scandal.", a,
+                           {"F04": ["scan"]})["clean_prose"],
+          ST.cut_adherence("It caused a scandal.", a, {"F04": ["scan"]})["violations"])
+    check("  nor by the stem pass",
+          ST.cut_adherence("It left a footprint.", a,
+                           {"F04": ["print"]})["clean_prose"],
+          ST.cut_adherence("It left a footprint.", a, {"F04": ["print"]})["violations"])
+    check("  and the whole token still fires, literally",
           [v["match"] for v in
-           ST.cut_adherence("It caused a scandal.", a,
+           ST.cut_adherence("It caused a scan.", a,
                             {"F04": ["scan"]})["violations"]] == ["literal"])
-    check("  and the stem pass is not what fired there",
+    # Regular plurals the stemmer cannot pair up were the one thing the substring pass
+    # was quietly covering. They are covered explicitly now, as inflections.
+    check("  and a regular plural is still caught, as an inflection",
           [v["match"] for v in
-           ST.cut_adherence("It left a footprint.", a,
-                            {"F04": ["print"]})["violations"]] == ["literal"])
+           ST.cut_adherence("The ten plates were made.", a,
+                            {"F04": ["plate"]})["violations"]] == ["inflected"],
+          ST.cut_adherence("The ten plates were made.", a, {"F04": ["plate"]})["violations"])
     # what the stem pass must NOT do: match a longer word by prefix. Only whole tokens.
     check("the stem pass does not match a longer token by prefix",
           ST.cut_adherence("A scanner was mentioned once.", a,

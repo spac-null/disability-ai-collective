@@ -2382,6 +2382,65 @@ BUNDLE_HEADER = (
     "be carried by the same evidence.")
 
 
+# ── TITLE CASE IS TYPOGRAPHY, NOT ENTITY EVIDENCE ────────────────────────────────────
+# `ST._entities` reads a capital as a name, which is fair in running prose and worthless
+# in a title, where convention capitalises every content word. On 2026-09-07 the title
+# "One Room, Two Acoustics, Convertible in a Day" held a finished article by reporting
+# "Acoustics" and "Convertible" as unapproved ENTITIES. Both are ordinary vocabulary and
+# both claims were supported (F11, F14, F15).
+#
+# The demotion below is narrow on purpose. It does not license anything: a token it
+# demotes is still reported as an unapproved TERM, which the audit's own note calls "a
+# candidate for review, not a violation". What it removes is the token's standing in the
+# HARD entity channel, and only when three things all hold -- every package field the
+# token appears in is title-cased, the token carries no shape signal of its own, and it
+# is a single word.
+#
+# WHAT STILL BLOCKS. A shaped name in a title ("A24", "MoMA", "U.S.", an all-caps
+# acronym) has evidence beyond its capital and keeps it. Any name in the dek, excerpt,
+# meta description or hook is in sentence case, where a mid-sentence capital IS evidence,
+# and is untouched by this. Multi-word names keep the phrase test.
+#
+# WHAT THIS KNOWINGLY GIVES UP: a bare alphabetic invented name appearing ONLY in the
+# title, and nowhere in the packet, article or ledger, is no longer caught by this
+# lexical channel. Typography cannot separate that case from "Convertible" -- a rule that
+# forgives one forgives the other -- so it is left to the Grounder and the Fact Check,
+# which read the package inside the bundle. Recorded rather than hidden.
+_TITLE_MINOR = frozenset("""a an the and but or nor for so yet at by in of on to up via
+with from into onto over per as is it its this that than then when if not no""".split())
+_SHAPE_SIGNAL = re.compile(r"\d|[a-z][A-Z]|\.")
+
+
+def _is_title_cased(line: str) -> bool:
+    """Is this line written in title case? Judged on content words only, so that the
+    lowercase minor words a real title carries ("in a Day") do not defeat the test."""
+    toks = re.findall(r"[A-Za-z][A-Za-z'\u2019]*", line or "")
+    content = [t for t in toks if t.lower() not in _TITLE_MINOR]
+    if len(content) < 3:
+        return False
+    caps = sum(1 for t in content if t[0].isupper())
+    return caps >= max(2, round(0.8 * len(content)))
+
+
+def _has_shape_signal(tok: str) -> bool:
+    """Evidence of a name that does NOT come from being capitalised: a digit, an internal
+    capital, an embedded period, or an all-caps acronym."""
+    t = (tok or "").strip()
+    return bool(_SHAPE_SIGNAL.search(t)) or (len(t) >= 2 and t.isupper())
+
+
+def _title_case_only_token(tok: str, package: dict | None) -> bool:
+    """True when every package field carrying `tok` is title-cased and the token itself
+    offers no evidence of being a name beyond that capital."""
+    t = (tok or "").strip()
+    if not t or " " in t or _has_shape_signal(t):
+        return False
+    fields = [str((package or {}).get(f) or "") for f, _ in PACKAGE_SURFACE_LABELS]
+    carrying = [v for v in fields
+                if re.search(r"(?<![A-Za-z0-9])%s(?![A-Za-z0-9])" % re.escape(t), v)]
+    return bool(carrying) and all(_is_title_cased(v) for v in carrying)
+
+
 def package_prose(package: dict | None) -> str:
     """The package's five lines as one plain text, or "" when there is no package."""
     if not package:
@@ -2554,12 +2613,64 @@ def safety_audit(draft_text: str, final_text: str, packet: dict, arch: dict,
         # additions it makes by RELATION -- adjacency sold as cause, a station's record
         # sold as a building's -- are invisible to any word-level screen and are caught by
         # the Grounder and the Fact Check, which read the package inside the bundle.
-        licensed = (approved_render + " " + final_text).lower()
+        # TITLE CASE IS TYPOGRAPHY, NOT ENTITY EVIDENCE (2026-09-07).
+        #
+        # `_entities` reads a capital as a name. In running prose that is a fair
+        # heuristic; in a TITLE, where every content word is capitalised by convention,
+        # it is no evidence at all. On 2026-09-07 the title
+        #
+        #     "One Room, Two Acoustics, Convertible in a Day"
+        #
+        # held a finished article by reporting two unapproved ENTITIES, "Acoustics" and
+        # "Convertible" -- an ordinary noun and an ordinary adjective, and both claims
+        # supported (F11, F14, F15).
+        #
+        # The instinct is to make the detector title-aware, and typography cannot do it:
+        # a rule that forgives a bare capitalised word in a title forgives an invented
+        # "Rockefeller Foundation" in exactly the same breath. What separates the two is
+        # not how they are printed but whether the run's own evidence carries them. So
+        # the licence, and only the licence, is widened along two axes it should always
+        # have had:
+        #
+        #   MORPHOLOGY. `_licensed_by` already exists for this and its docstring is about
+        #   this exact failure -- stem equality cannot see that "acoustic" and
+        #   "Acoustics" are one word. Exact substring matching could not either.
+        #
+        #   THE LEDGER. The packet is a curated subset of the ledger, and a title is
+        #   written from the settled article and the run's facts. "conversion" is an
+        #   approved fact in this very run (F11, F15); "Convertible" being absent from
+        #   the writer's subset of it does not make the word an invention.
+        #
+        # A NAME THAT IS NOWHERE IS STILL A NAME THAT IS NOWHERE. Nothing here forgives a
+        # token the packet, the article and the ledger all lack, which is the one
+        # addition a five-line package can lexically make. Multi-word names keep their
+        # phrase check below. The relation-level additions -- adjacency sold as cause, a
+        # station's record sold as a building's -- remain invisible to any word-level
+        # screen and remain the Grounder's and the Fact Check's, which read the package
+        # inside the bundle.
+        ledger_text = " ".join(
+            "%s %s" % (str((v or {}).get("proposition", "")),
+                       str((v or {}).get("support_span", "")))
+            for v in (ledger or {}).values() if isinstance(v, dict))
+        licensed = (approved_render + " " + final_text + " " + ledger_text).lower()
+        licensed_pkg_words = _words(licensed)
+        licensed_pkg_numbers = {n.strip().lower() for n in ST._numbers(licensed)}
+
+        def _pkg_licensed(tok) -> bool:
+            base = re.sub(r"['\u2019]s$", "", str(tok)).strip()
+            if not base:
+                return True
+            if base.lower() in licensed:
+                return True
+            if " " in base:                 # a name is identified by the phrase, not its
+                return False                # parts -- unchanged from the exact test
+            return _licensed_by(base, licensed_pkg_words, licensed_pkg_numbers)
+
         sf = ps["factual_surface"]
         ents = [e for e in sf["unapproved_entities"]
-                if re.sub(r"['\u2019]s$", "", e).lower() not in licensed]
+                if not _pkg_licensed(e) and not _title_case_only_token(e, package)]
         nums = [n for n in sf["unapproved_numbers"] if n not in _numbers_of(final_text)]
-        sens = [t for t in sf["unapproved_sensory"] if str(t).lower() not in licensed]
+        sens = [t for t in sf["unapproved_sensory"] if not _pkg_licensed(t)]
         ps["factual_surface"] = dict(sf, unapproved_entities=ents,
                                      unapproved_numbers=nums, unapproved_sensory=sens)
         ps["hard_factual_ok"] = not (ents or nums or sens)
