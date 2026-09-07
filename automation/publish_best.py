@@ -42,7 +42,7 @@ Usage:
                               no git actions, no moves. Safe to run to inspect state.
 """
 
-import argparse, pathlib, re, shutil, subprocess, sys
+import argparse, json, pathlib, re, shutil, subprocess, sys
 from datetime import datetime, timedelta
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -324,6 +324,96 @@ def _retention_ok(fm):
     return PA.retention_feasible(fm)
 
 
+# ── ART DIRECTION, AT THIS SAME BOUNDARY ────────────────────────────────────────────
+# art_director.py shipped dormant: a validated module with no caller, which on this site
+# is indistinguishable from a module that does not work. This is the whole of its wiring.
+#
+# WHY HERE AND NOWHERE ELSE. Illustration already happens at promotion, for both engines,
+# in one place. Putting art direction anywhere upstream would make it a composition stage
+# -- something an article's text could depend on -- and it is not one. It reads the
+# settled article and returns a brief for the images that article is about to get.
+#
+# SAME RUN OR NOTHING. Architecture and the visual sidecar are read from the exact run
+# this article names in its own front matter, resolved through the publication-audit
+# resolver the promotion gate already used. There is no search for a latest run and no
+# scan of run history: an architecture borrowed from a different article is worse than no
+# architecture, because it is confidently about the wrong world.
+
+
+def _same_run_dir(fm):
+    """The one run that produced THIS article, or None. Never a nearest match."""
+    if not PA.is_current_engine(fm):
+        return None
+    run_id = str(fm.get("engine_run", "") or "").strip()
+    if not run_id:
+        return None
+    return PA.find_run_dir(run_id)
+
+
+def _run_json(run_dir, name):
+    """Optional context. Missing, unreadable and malformed are one answer: absent."""
+    if run_dir is None:
+        return None
+    try:
+        data = json.loads((run_dir / name).read_text(encoding="utf-8", errors="replace"))
+    except Exception:                                                 # noqa: BLE001
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def article_body(text):
+    """The settled prose, as published. Not reconstructed from the writer, the
+    architecture or any earlier draft -- the bytes that are about to go live."""
+    m = re.match(r"^---\n.*?\n---\n?", text, re.DOTALL)
+    return (text[m.end():] if m else text).strip()
+
+
+def art_direct_for(post_path, provider=None):
+    """ONE art-direction call for one canonical publication. Returns (brief, arch, note).
+
+    `brief is None` means the caller takes the legacy image path, which is byte-for-byte
+    what it was before this function existed. Art direction improves an image set; its
+    absence is never a reason an article does not publish, so every failure here -- no
+    run, no provider, a refused brief, a transport fault -- returns None and says why.
+
+    A brief with `image_count: 0` is NOT one of those failures. It is the art director
+    answering that this article wants no illustration, and it is returned as the brief it
+    is. Reading zero as failure would restore the fixed three-image recipe on exactly the
+    articles the module was built to spare.
+    """
+    text = post_path.read_text(encoding="utf-8", errors="replace")
+    fm = parse_frontmatter(text)
+    run_dir = _same_run_dir(fm)
+    if run_dir is None:
+        return None, None, "no resolvable CURRENT_ENGINE run — legacy image path"
+    arch = _run_json(run_dir, "ARCHITECTURE.json")
+    sidecar = _run_json(run_dir, "VISUAL_OBSERVATIONS.json")
+    try:
+        import art_director as AD
+        if provider is None:
+            from new_engine_v1 import provider as NEP
+            provider = NEP.Provider()
+        out = AD.art_direct(provider, article_body(text),
+                            title=fm.get("title", ""), dek=fm.get("dek", ""),
+                            arch=arch, persona=fm.get("author", ""),
+                            visual_sidecar=sidecar)
+    except Exception as e:                                            # noqa: BLE001
+        return None, None, "unavailable (%s: %s) — legacy image path" % (
+            type(e).__name__, str(e)[:120])
+    if not isinstance(out, dict) or not out.get("ok") \
+            or not isinstance(out.get("brief"), dict):
+        # `out` is checked for shape as well as verdict: an art director that returns
+        # None instead of its envelope must fall back here, not raise into the caller
+        # and cost the article its images on the way past.
+        reason = out.get("reason") if isinstance(out, dict) else None
+        return None, None, "no usable brief (%s) — legacy image path" % (
+            reason or "art director returned none")
+    brief = out["brief"]
+    return brief, arch, "run %s — %s image(s), architecture=%s visual_context=%s" % (
+        fm.get("engine_run", ""), brief.get("image_count"),
+        "yes" if arch else "no", "yes" if brief.get("visual_context_used") else "no")
+
+
 def set_publish_date(path, when):
     """Rewrite the front matter `date:` field to the actual promotion date.
 
@@ -489,7 +579,15 @@ def main(dry_run=False):
                 if gen_images.has_image_field(dest.read_text()):
                     print("  images: already illustrated upstream — leaving as is")
                 else:
-                    res = gen_images.illustrate_post(dest)
+                    # ONE art-direction call, and only for a resolvable CURRENT_ENGINE
+                    # publication. No brief -- for any reason -- and the next line is the
+                    # one that has always been here.
+                    ad_brief, ad_arch, ad_note = art_direct_for(dest)
+                    print("  art direction: %s" % ad_note)
+                    if ad_brief is None:
+                        res = gen_images.illustrate_post(dest)
+                    else:
+                        res = gen_images.illustrate_post(dest, brief=ad_brief, arch=ad_arch)
                     if res["ok"]:
                         print("  images: %d generated, %d placed in body"
                               % (len(res["assets"]), res["figures"]))
