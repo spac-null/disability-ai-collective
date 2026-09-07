@@ -563,10 +563,15 @@ that Deaf, blind, mobility-disabled, autistic, neurodivergent or any other disab
 think in one characteristic way. Disabled people do not share a cognitive style, and no
 mind here is a description of how anyone thinks.
 
-**No editorial mind represents a disability community.** It speaks for nobody, is
-accountable to no constituency's opinion, and its questions carry no authority derived from
-anyone's experience but the evidence they are tested against. A mind is a publication
-instrument informed by disability knowledge, not a simulated representative person.
+**No editorial mind represents or speaks for a disability community.** It speaks for
+nobody and is accountable to no constituency's opinion. A mind is a publication instrument
+informed by disability knowledge, not a simulated representative person.
+
+Its perspective **may** be informed by disability scholarship, carefully distilled lived
+knowledge, owner-derived editorial knowledge, and accumulated Crip Minds perspective
+knowledge. Any ARTICLE CLAIM receives factual authority from one place only:
+subject-specific research and the frozen Ledger. Being informed by a body of knowledge
+licenses a question; it never licenses an assertion.
 
 Rootedness supplies the instrument, not the subject list, and not a claim to speak for
 anyone.
@@ -888,9 +893,14 @@ the research, the honest verdict already exists in the live gate:
 Convergence among several minds may strengthen an **editorial signal** that a subject
 carries no worthwhile Crip Minds reading. It is **never factual evidence**: editorial
 perspectives are not independent observations, they share the same material and the same
-house doctrine, and agreement between them is correlation, not corroboration. And asking
-more questions may never manufacture a reading — a reading that took four attempts to find
-is a reading the evidence did not offer.
+house doctrine, and agreement between them is correlation, not corroboration.
+
+Asking more questions **may** reveal a reading an earlier perspective missed — that is the
+point of plurality, and a late reading is not disqualified by arriving late. What asking
+more may never do is lower the evidentiary bar, turn an unsupported reading into a
+supported one, or let convergence stand in for factual support. Worth and subject-specific
+evidence still decide, on exactly the same terms, whichever perspective raised the
+question.
 
 **"Several minds" is conceptual plurality.** It must not be read here as one provider or
 model call per mind. How plurality would be realised — sequentially, in one pass, in a
