@@ -209,10 +209,26 @@ def main() -> int:
         check("a CURRENT_ENGINE article with no engine_run is refused", not ok2, why2)
         ok3, _ = PA.retention_feasible({"title": "legacy"}, roots=[ev])
         check("a legacy article is NOT blocked and no run is invented", ok3)
+        # RETENTION FEASIBILITY IS NOT STAGE-SCHEMA COMPLETENESS (corrected 2026-09-07).
+        # This assertion used to read "a run missing the packet DICT is REFUSED". That
+        # doctrine was wrong and it was total: no recorded production run has ever
+        # carried WRITER_PACKET.json, CUT_REPORT.json and ARTICLE_FINAL.md, so the gate
+        # refused every CURRENT_ENGINE candidate that reached it and 13 scheduled runs
+        # produced 0 publications. The run is retainable; what the missing file costs is
+        # deterministic Safety REPLAY, and the manifest is required to say so plainly
+        # rather than the publisher pretending the article does not exist.
         (run_dir / "WRITER_PACKET.json").unlink()
         ok4, why4 = PA.retention_feasible(fm, roots=[ev])
-        check("a run missing the packet DICT is refused (the .txt does not count)",
-              not ok4 and "WRITER_PACKET.json" in why4, why4)
+        check("a run missing one composition-engine Safety file is still retainable",
+              ok4, why4)
+        check("and feasibility says which replay input is absent",
+              "WRITER_PACKET.json" in why4 and "INCOMPLETE" in why4, why4)
+        check("the .txt still does not count as the packet",
+              "WRITER_PACKET.json" in PA.missing_safety_inputs(run_dir)
+              and (run_dir / "WRITER_PACKET.txt").is_file())
+        check("that run's SAFETY replay is declared INCOMPLETE, not replayable",
+              PA._reaudit_report(run_dir)["SAFETY"]["kind"] == "INCOMPLETE"
+              and PA._reaudit_report(run_dir)["SAFETY"]["possible"] is False)
         (run_dir / "WRITER_PACKET.json").write_text(
             json.dumps(PACKET, indent=1, sort_keys=True))
 

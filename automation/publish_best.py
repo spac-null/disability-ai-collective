@@ -205,6 +205,50 @@ def archive_draft(path):
     shutil.move(str(path), str(ARCHIVE / path.name))
 
 
+# ── STAGING WHAT THIS RUN ACTUALLY MUTATED ──────────────────────────────────────────
+# Every path this run changes is recorded in `mutated` and staged from that list alone.
+# The list holds BOTH sides of every move: the destination that now exists, and the
+# source that no longer does. That is deliberate -- for a TRACKED source, git only
+# records the removal if the old path is named -- but it is also what crashed the
+# publisher (2026-09-07).
+#
+# CURRENT_ENGINE drafts are persisted UNTRACKED. After `shutil.move` the old _drafts
+# path is gone AND was never in the index, so `git add -A -- <that path>` is a pathspec
+# matching nothing on disk and nothing in the index: git exits 128, the commit never
+# happens, and the article is left sitting in _posts/ untracked. Two articles were
+# stranded that way.
+#
+# The rule below fixes it without going back to `git add -A _drafts`, which is the
+# other failure (2026-08-29, ab322bb: staging a directory swept two untracked drafts
+# the publisher had never touched into a public commit). Per path, exactly:
+#
+#   exists after the mutation            -> stage it
+#   gone, but WAS tracked                -> stage it, so the deletion/move is recorded
+#   gone, and was NEVER tracked          -> do not hand it to git at all
+#
+# So an untracked CURRENT_ENGINE move stages only its destination, a tracked legacy
+# move still stages its deletion, and nothing this run did not touch can enter the
+# commit either way.
+
+def _git_tracked(path):
+    """Is this path in git's index? A file that has just been moved away is still
+    tracked -- `ls-files` reads the index, not the working tree -- which is exactly the
+    distinction the staging rule needs."""
+    return subprocess.run(
+        ["git", "ls-files", "--error-unmatch", "--", str(path)],
+        cwd=str(REPO), capture_output=True,
+    ).returncode == 0
+
+
+def stageable_paths(mutated):
+    """The subset of `mutated` that git can be given as a pathspec without failing."""
+    out = []
+    for raw in sorted(set(mutated)):
+        if pathlib.Path(raw).exists() or _git_tracked(raw):
+            out.append(raw)
+    return out
+
+
 def _current_engine_ineligible(fm):
     """CURRENT_ENGINE candidates must carry an EXPLICIT publication_eligible: true.
 
@@ -310,10 +354,18 @@ def _retention_ok(fm):
     """Bullet (C) of the promotion gate (published run retention, 2026-09-06, issue #91).
 
     A CURRENT_ENGINE draft may only be promoted if the run that produced it still exists
-    and still carries the inputs `composition.safety_audit` takes. Two live articles had
-    already been published without that, and neither could have its safety stage re-run
-    afterwards -- by anyone, ever. A published article whose safety check cannot be
-    reconstructed is a state this publisher refuses to enter.
+    can genuinely be retained -- it resolves, it reads, there is something in it to keep.
+    Two live articles had already been published with no retainable run at all, and
+    neither could have its factual path reconstructed afterwards by anyone. A published
+    article whose producing run cannot be kept is a state this publisher refuses to
+    enter.
+
+    What it does NOT require (corrected 2026-09-07) is that the run carry one
+    composition engine's Safety filenames. As a precondition that was impossible: no
+    recorded production run has ever satisfied it, so this bullet refused every
+    CURRENT_ENGINE candidate that reached it. The run is retained in full either way and
+    the bundle manifest states plainly whether deterministic Safety replay is possible
+    from it.
 
     Held, not archived and not rewritten, exactly like the two bullets above it: the
     draft stays in _drafts/ and an operator can see why. Legacy drafts -- no
@@ -667,9 +719,15 @@ def main(dry_run=False):
         # because a move shows up as a deletion at the old path and only `-A` stages
         # that, but every pathspec after `--` is a file this run wrote, moved or
         # deleted itself. Nothing else under _drafts, _drafts/_archive or _posts can
-        # enter the commit, tracked or untracked.
-        if mutated:
-            subprocess.run(["git", "add", "-A", "--", *sorted(set(mutated))],
+        # enter the commit, tracked or untracked. stageable_paths drops the one shape
+        # git cannot be handed -- a path that is gone AND was never tracked, which is
+        # every CURRENT_ENGINE draft's source path after promotion.
+        staged = stageable_paths(mutated)
+        dropped = sorted(set(mutated) - set(staged))
+        for d in dropped:
+            print("  staging: skipping %s (moved away, never tracked)" % d)
+        if staged:
+            subprocess.run(["git", "add", "-A", "--", *staged],
                            cwd=str(REPO), check=True)
 
         msg_parts = []
