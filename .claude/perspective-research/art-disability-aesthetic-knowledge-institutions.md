@@ -41,6 +41,8 @@ headers. README unmodified.
 | S8 | MMK Frankfurt, *Crip Time* (18 Sept 2021–30 Jan 2022; curated Susanne Pfeffer with Anna Sailer, in conversation with Constantina Zavitsanos, Shannon Finnegan, Judith Hopf; 42 artists) | Institutional primary | **PARTIAL** — listings and reviews; the museum's own page and a disabled-perspective review (rekto:verso) both returned 403 |
 | S9 | Ine Gevers, *AUTONOMOUS* curatorial text, Brutus Rotterdam, 2026 | Curatorial primary | **READ IN FULL** — carried from PR001, where it is source S3 |
 | S10 | Hamraie & Fritsch, *Crip Technoscience Manifesto*, Catalyst 5(1), 2019 | Theory primary | **READ IN FULL** — carried from PR003; **not re-derived here** |
+| **S11** | **Amanda Cachia, "'Disabling' the museum: Curator as infrastructural activist", *Journal of Visual Art Practice* 12(3), 2013** | Curator primary | **READ IN FULL** (author's own PDF). *Added in the completion pass* |
+| **S12** | **Kinetic Light, company page for *DESCENT*** (Alice Sheppard & Laurel Lawson; ramp designed by Sara Hendren, Yevgeniya Zastavker and Olin College students; fabricated by Rooster Productions) | Artist/company primary | **READ.** *Added in the completion pass; it settles PR004-09* |
 
 **Not accessed, and named so they are not filled in from memory:** Tobin Siebers, *Disability
 Aesthetics*; Amanda Cachia's writing on access aesthetics and the curator as infrastructural
@@ -91,19 +93,35 @@ words and phrases "with their **Deaf English** (shorthand translations of ASL) c
 and she repurposes classical dynamics notation (p, pp, ppp) — a hearing discipline's own
 apparatus — to make quietness graphic.
 
+**Completion pass, added evidence — S11 (read in full).** Cachia, writing as a curator in 2013,
+poses the inversion directly: can "an audio description or sequence of captioning accompanying a
+film also be a work of art?"; and "how can subtitles and audio descriptions work together to
+create an interesting 'dialogue' about access that **renders a work of art or a film completely
+inaccessible for a 'normal' audience?** In other words, how can the tables be turned on access,
+and access for whom or for what?" She frames access as something to move "beyond a mere
+practical conundrum, often added as an afterthought once an exhibition has been installed" and
+into "a dynamic, critical and creative tool in art-making and curating".
+
+That inversion — **the provision reversing which audience is the default** — is this entry's
+sharpest form, and it is why the former PR004-06 is merged here (see that entry's record).
+
 **MECHANISM.** A work, institution or system can treat **one channel as the original and the
-others as translations of it**, without ever saying so. The hierarchy is not usually stated;
-it shows up in which version is authored first, which is corrected against which, and which
-one is allowed to be incomplete.
+others as translations of it**, without ever saying so. The hierarchy is not usually stated; it
+shows up in which version is authored first, which is corrected against which, which is allowed
+to be incomplete — and, at the limit, in which audience a work is *for* by default.
 
-**QUESTION.** Which channel here is being treated as the authoritative original, and what is
-positioned as a translation of it?
+**QUESTION.** Which channel here is being treated as the authoritative original, and what
+authority follows from that status?
 
-**CARRIERS.** Which version is produced first and which is derived. Which is corrected against
-which. Which is permitted to lag or abbreviate. Which one carries the byline. A caption
-generated from audio versus audio described from a caption. A label written to an object
-versus an object hung to a label. A screen-reader path derived from a visual layout. Notation
-that presumes a performance, or a performance that presumes notation.
+**CARRIERS** *(sharpened in the completion pass into documentary facts rather than
+impressions)*. Which version is **archived**. Which is **commissioned first**. Which **controls
+timing**. Which one **translators must follow**. Which **counts as the work** for catalogue or
+contract purposes. Which is **legally or administratively authoritative** in a dispute. Which
+**can change without permission**, and which requires sign-off. Which **receives author
+credit**. Then the softer set: a caption generated from audio versus audio described from a
+caption; a label written to an object versus an object hung to a label; a screen-reader path
+derived from a visual layout; notation presuming a performance, or a performance presuming
+notation.
 
 **FALSE MOVE.** "Vision or hearing is oppressive." The mechanism needs a **concrete hierarchy
 in the actual arrangement** — an order of production or authority — not a stance about senses.
@@ -118,8 +136,16 @@ either can be revised against the other.
 production. **Not assigned by the artist's deafness.**
 
 **WHAT THIS ADDS.** Axis 2 asks what perceptual **range** a system is defined over. This asks a
-different question — of two or more channels a system does provide, **which one is the
-source** — and it is answerable from a production workflow rather than from a specification.
+different question — of two or more channels a system does provide, **which one is the source**
+— and it is answerable from a production workflow rather than from a specification.
+
+**SEAM TEST vs AXIS 3 (completion pass): DISTINCT, both ways.** *Axis 3 fires and this does
+not:* a phone call degraded by a bad line — mediation changes what arrives, but there is no
+second channel and no original/derivative status to establish. *This fires and Axis 3 alone
+would not direct research there:* a bilingual statute where one language version is legally
+authoritative and the other is published "for information only". Axis 3 would ask what the
+translation changed; this sends research to **which version governs in a dispute**, which is a
+documentary fact stated in the instrument itself. Different archive, different document.
 
 **TRANSFER TEST.** (1) **Software localisation:** an English string file that all other
 languages are diffed against, so every other language is structurally a lagging translation.
@@ -142,13 +168,24 @@ to her as a claim she makes; it is our reading of what the described works do.
 And *Prolonged Echo* (2023) derives its imagery from the ASL sign for "echo", because "there is
 a delay in relaying information as ASL interpreters '**echo**' what she signs."
 
-**MECHANISM.** A mediating layer does not only delay, degrade or reframe content — it can
-**assign a voice, register or persona to the person it mediates**. The mediated party is heard
-in someone else's diction, at someone else's pace, with someone else's habits of emphasis, and
-is then judged on the result as though it were their own.
+**"REGISTER", DEFINED — completion pass, so the word cannot become theory fog.** Register here
+means the observable surface features of an utterance from which a listener infers social
+qualities of the speaker: **vocabulary, formality, fluency, rhythm, tone and conventional
+style.** Nothing more mystical than that, and all of it inspectable in a transcript.
 
-**QUESTION.** Whose register is the mediated person being heard in, and who is held responsible
-for it?
+**MECHANISM.** When one person or system represents another's communication, the mediator does
+not only carry semantic content. Choices of vocabulary, tone, formality, fluency and style can
+**assign social qualities to the represented person** — competence, credibility,
+professionalism, education — which are then attributed to them rather than to the mediation.
+
+**THE THREE-PART GATE (added in the completion pass so this does not fire on every summary).**
+The instrument applies only where all three hold: **(1)** a specific person is being
+represented; **(2)** a **socially consequential attribute** is inferred from the representation;
+and **(3)** that attribute is traceable to the **mediator's choices** rather than to the source.
+Committee minutes recording "the committee agreed X" fail (1) and (2) and the instrument
+correctly stays silent.
+
+**QUESTION.** What qualities of the apparent speaker were actually supplied by the mediator?
 
 **CARRIERS.** An interpreter or translator's own idiom, and whether the audience can tell.
 Automated transcription that normalises dialect. A summarising layer between a person and a
@@ -156,9 +193,11 @@ decision-maker — case notes, a recruiter's write-up, a triage note. A press of
 for someone. A model paraphrasing a user's request before it is acted on. Any record where the
 speaker's own words are not what the reader receives, and the reader does not know it.
 
-**FALSE MOVE.** "All translation is authorship." Too broad, and it makes the instrument fire
-everywhere. This requires a **register or persona** attributable to the mediator, and someone
-downstream forming a judgement of the *mediated person* on that basis.
+**FALSE MOVE.** **"All translation is authorship."** No. That makes the instrument fire on every
+mediated situation and gives it no discriminating power. The gate above is what keeps it
+narrow: a socially consequential attribute must have entered **through the mediation rather
+than from the source**, and someone downstream must be forming a judgement of the *mediated
+person* on that basis.
 
 **DISCONFIRMING SHAPE.** The mediating layer is transparent to the receiver — its authorship is
 visible and separable, or the mediated person controls the register and can correct it. Then
@@ -173,10 +212,16 @@ mediation is happening but no register is being assigned.
 **rate** does to what survives. **None of them asks whose voice the mediated person arrives
 in** — which is a question about attribution, not about fidelity or timing.
 
-**TRANSFER TEST.** (1) **Recruitment:** a candidate summarised by an agency in the agency's
-house style, then assessed on "communication skills". (2) **Clinical or legal records:** a
-patient's or claimant's account entered in a professional's summarising idiom and later read as
-that person's own account.
+**TRANSFER TEST** *(re-run in the completion pass with verdicts)*.
+(1) **Recruitment** — a candidate summarised by an agency in the agency's house style, then
+assessed on "communication skills": **CRIP_MINDS.** The attribute judged is precisely the one
+the mediator supplied, the artefact is inspectable, and no disability content is needed.
+(2) **Automated transcription in a disciplinary process** — speech-to-text that normalises
+dialect and disfluency, the transcript then read as the person's own words in a hearing:
+**CRIP_MINDS.** Same shape, and the mediator here is a system nobody thinks of as an author.
+(3) **Clinical or legal records** — a claimant's account entered in a professional's idiom and
+later read back as their own: **USEFUL**, slightly weaker only because the professional's
+authorship is more widely understood.
 
 **BOUNDARY.** Rests on a press release's characterisation of two works. Kim's own writing and
 the works themselves were not obtained. It is a strong reading of a thin evidence base and
@@ -230,8 +275,19 @@ removing a single firm, or merely loses an anecdote. (2) **Epidemiology or econo
 a published account of a trend still holds when one contributing variable is removed, or whether
 it was carrying the explanation.
 
-**BOUNDARY.** The evidence is **one review of one exhibition**, and the exhibition's own
-materials were read only partially. The mechanism is general; the support for it here is not.
+**TRANSFER RESULT (completion pass): USEFUL — but see the downgrade.** Tested against
+technology history: does the standard account of a standard's adoption survive removing one
+firm, or was that firm carrying the explanation? The test runs cleanly. **The problem is that it
+runs cleanly for any factor at all.** Counterfactual removal is ordinary historiographic method,
+practised long before and independently of disability; what disability supplied here is a
+striking *instance*, not the operation. On the criterion this library uses — a form of
+question-asking intelligence that disability knowledge produced — **this entry is the weakest of
+the survivors**, and it may be a general method wearing a disability example rather than a
+Perspective instrument.
+
+**BOUNDARY.** The evidence is **one review of one exhibition**, read at secondary level, and the
+exhibition's own materials only partially. The mechanism is general; the support for it here is
+not; and its generality is now a recorded concern rather than a strength.
 
 ---
 
@@ -284,16 +340,34 @@ entry answers the other's question, and together they cover both outcomes.
 ended. (2) A pilot programme in a health service or a school — did the practice enter standard
 operating procedure, or close with the funding?
 
-**BOUNDARY.** **Secondary provenance throughout**, reporting the museum's own claims; the
-museum's own inclusion page returned HTTP 500 and no staff member is quoted on disabled people's
-role in decision-making. The sequence is credible and **not independently verified.** This is
-stated institutional practice, not demonstrated practice.
+**BOUNDARY — tightened in the completion pass after a further attempt at primary sources.**
+Three Van Abbemuseum pages were requested (the inclusion page, the Special Guests / Unlimited Van
+Abbe research page, and the Multisensory Museum symposium page). **All three returned HTTP 500.
+No primary museum documentation was obtained**, and the entry rests on S6, a sector trade
+publication reporting the museum's own account.
+
+**What is actually proven, stated as the three claims separated:**
+- **A — access programming changed: PROVEN** (at the level of the museum's own account): separate
+  tours from 2014, deaf guides, sensory-friendly hours, a navigation app.
+- **B — collection display changed: PROVEN at the same level**: *Delinking and Relinking* as a
+  multisensory **permanent-collection** display with 25+ tools, plus the stated shift from an
+  "eyes-only space".
+- **C — the institution itself changed: NOT PROVEN.** No evidence of change to staffing, hiring,
+  governance, acquisition or curatorial decision-making, and **no disabled staff member or
+  collaborator is credited anywhere in the available material** as having decided anything.
+
+**What may be claimed is migration from a tour to one collection display. Nothing more.** The
+entry's mechanism is sound; this particular case evidences its first two steps and not its
+third, and that is the honest extent of it.
 
 ---
 
-### PR004-05 — WHICH ONE BENDS: THE PROJECT OR THE FRAME?
+### PR004-05 — WHEN IT DOESN'T FIT, WHICH ONE CHANGES?
 
-**STATUS:** CANDIDATE ✦ **new — not in the starting set; produced by reading S1.**
+*Renamed in the completion pass. Old name: "Which one bends: the project or the frame?" — 
+memorable but too compressed to state a proposition. The new name is the question itself.*
+
+**STATUS:** CANDIDATE ✦ *not in the starting set; produced by reading S1.*
 
 **SOURCE BASIS.** **S1 (read in full).** Lazard, on the structural difference between large and
 small arts organisations: "**Programs and exhibitions tend to bend to the frameworks presented
@@ -310,8 +384,14 @@ project is reshaped to fit the host's existing framework, or the host's framewor
 by the project. Which direction it runs is usually a function of the host's size and
 bureaucracy rather than of its stated values, and it is rarely acknowledged as a choice.
 
-**QUESTION.** In this arrangement, which side adapted — and what would have had to change for
-it to run the other way?
+**THE PROPOSITION, in plain language (completion pass).** When an activity does not fit an
+institution's standing format, one of two things is treated as fixed: the activity, or the
+template around it. Which one is treated as fixed is usually a structural fact about the host —
+its size, its approval chain, how far the person setting terms sits from the person doing the
+work — **not a matter of its stated values**. The adaptation is then borne, repeatedly and
+invisibly, by whichever side was not fixed.
+
+**QUESTION.** When this activity does not fit the frame, which one is expected to change?
 
 **CARRIERS.** A brief or template applied to every incoming project. A standard contract. An
 approvals chain and how many people sit in it. Whether a requirement was met by exception or by
@@ -319,9 +399,10 @@ revision. Fixed technical specifications for submissions. The distance between t
 setting the terms and the person doing the work — Lazard's own marker: at a small organisation
 "the person introducing the event might also be the person who set out the seats."
 
-**FALSE MOVE.** "Small is good, big is bad." Lazard says large institutions have more financial
-resources and is describing a structural tendency, not a moral ranking. The instrument asks
-which way the bending ran **here**, not which kind of organisation is better.
+**FALSE MOVE.** Two. **"Small is good, big is bad"** — Lazard notes large institutions have more
+financial resources and is describing a structural tendency, not a moral ranking. And
+**"institutions should be flexible"**, which is a value statement, not a mechanism. The
+instrument asks which way the adaptation ran **here**, and what it cost whom.
 
 **DISCONFIRMING SHAPE.** The host's framework demonstrably changed to accommodate the project —
 a template rewritten, a standard revised — or the project was unchanged and no adaptation was
@@ -336,6 +417,15 @@ architecture.
 question — **which party is the one that adapts** — and it applies where no option set is
 presented to anyone at all.
 
+**SEAM TEST vs PR003-08 (completion pass): DISTINCT, both ways.** *PR003-08 applies and this
+does not:* a leased office thermostat with a locked temperature range — an option set is defined
+for an actor, but nothing is being hosted and nothing is adapting. *This applies and PR003-08
+does not:* a touring exhibition reformatted to fit a venue's standard wall specification — no
+menu is presented to anyone, no option set exists, and the project bends. The predicted evidence
+differs accordingly: PR003-08 sends research to the menu; this sends it to **exception requests,
+rejected submissions, template revision histories and the count of adaptations borne by
+participants**.
+
 **TRANSFER TEST.** (1) **Platform and publisher:** a small publisher reshaping its books to a
 retailer's metadata schema, versus a retailer extending the schema. (2) **Enterprise
 procurement:** whether the supplier's product or the buyer's process changed to close the gap.
@@ -349,54 +439,31 @@ evidenced with cases. The generalisation beyond arts organisations is entirely o
 
 ### PR004-06 — ACCESS CAN BECOME FORM
 
-**STATUS:** CANDIDATE — **weak; heavy duplication risk; see BOUNDARY.**
-*From starting hypothesis A.*
+**STATUS:** **MERGED into PR004-01 (completion pass, 2026-09-08).** Retained, not deleted.
 
-**SOURCE BASIS.** **S3 (artist primary, read).** Finnegan Shannon's *Do you want us here or not*
-(2018–ongoing) is "a series of benches for museum spaces", installed at MUDAM, Van Abbemuseum,
-MMK Frankfurt, MCA Denver, Bundeskunsthalle Bonn, Arko Art Center Seoul and Carleton, carrying
-handwritten texts: "**This exhibition has asked me to stand for too long. Sit if you agree**";
-"Museum visits are hard on my body. Rest here if you agree"; "I wish this museum was more
-hospitable to my body's needs." The benches are simultaneously usable seating, artwork, and a
-statement about the room they stand in. **The artist's page carries no statement of intent**, so
-the tripling is observable in the object and not claimed by the maker.
+**WHY MERGED, after a targeted attempt to save it.** S11 (Cachia, read in full) was obtained
+specifically to test whether access can change artistic form rather than only who can encounter
+a work. It does **not** establish that. Cachia writes **programmatically**: she "challenges the
+museum to think about how access can move beyond a mere practical conundrum… to use as a
+dynamic, critical and creative tool", and poses her strongest formulations as **open questions**
+— can a caption sequence also be a work of art, is ASL a performance — while stating that she
+hopes "to begin this process of building a new vocabulary and methodology". A 2013 agenda is
+evidence of an agenda.
 
-**MECHANISM.** A provision made to enable participation can also **carry an argument about the
-arrangement it sits in** — functioning as accommodation and as commentary at once, without
-ceasing to work as either.
+Meanwhile the first pass's own disconfirming shape held against its best carrier: **remove
+Shannon's benches and the exhibition is unchanged** — which is close to their own point. Their
+sharpest content is that museum seating is a *curatorial choice*, and that is **PR003-08** on
+gallery furniture.
 
-**QUESTION.** Does this provision only enable participation, or does it also make a claim about
-the arrangement that required it?
+**What survived, and where it went.** One thing in S11 is genuinely distinct and not owned:
+Cachia's inversion — access provision that "renders a work of art or a film completely
+inaccessible for a 'normal' audience", turning "the tables on access". That is not about form;
+it is about **which audience a work is for by default**, which is PR004-01's mechanism seen from
+the audience side. It has been moved there and is now that entry's sharpest evidence. The
+Shannon material stays with PR004-07's Axis 1 carriers.
 
-**CARRIERS.** A provision that names the condition it answers. Signage that states why it
-exists. A workaround left visible rather than tidied away. An accommodation register that is
-published. An exception log.
-
-**FALSE MOVE.** "All accessibility is art." No. And a second: treating a provision as critique
-because an observer found it eloquent. The claim has to be **in the thing** — in its text, its
-placement or its form.
-
-**DISCONFIRMING SHAPE.** The underlying encounter is unchanged and the provision can be removed
-without altering the work's form, interpretation or organisation. **On the available evidence
-this may well be true of the benches themselves**: remove them and the exhibition is unchanged,
-which is close to their own point.
-
-**EXISTING AXIS.** Axis 14; reaches Axis 10.
-
-**MINDS SHARPENED.** None distinctively.
-
-**WHAT THIS ADDS.** Possibly little. The benches' sharpest content — that museum seating is a
-**curatorial choice** and not a fact of the building — is **PR003-08 (who defines the option
-set)** operating on gallery furniture. That is a duplicate, and it is named here rather than
-disguised.
-
-**TRANSFER TEST.** Weak. (1) A "temporary" ramp left in place with its work order attached.
-(2) A published exceptions register that doubles as a critique of the default. Neither is
-compelling, which is itself evidence about the entry.
-
-**BOUNDARY.** Kept as a candidate only because the double function is genuinely observable in
-S3. **Recommended for merge into PR003-08 at owner review unless a case is found where the
-provision changes the work's form rather than commenting on its absence.**
+**Not preserved as an entry**, because "access aesthetics" sounding central to the field is not
+a reason to keep an instrument the evidence does not support.
 
 ---
 
@@ -421,6 +488,12 @@ etiquette instructions · re-entry rules. Shannon's benches (S3) are the demonst
 
 **FALSE MOVE, preserved.** "Everything is secretly ableist." Requires a **concrete action
 demand** — a specific thing the arrangement requires a body to do.
+
+**OPERATIONAL CHECK (completion pass).** Confirmed operational, not generic. The sharpening
+reduces to one askable question — **what action does this supposedly neutral object require?** —
+which is answerable from the object without interpretation: how long standing, how far walking,
+what reach, what grip, what wait, what sightline. Shannon's benches remain the demonstration
+that seating is a decision. **No separate durable instrument; merge history preserved.**
 
 ---
 
@@ -454,35 +527,71 @@ instrument in another vocabulary. Recorded as a positive result: **art did not g
 
 ### PR004-09 — THE TOOL AS MOVEMENT VOCABULARY
 
-**STATUS:** **NEEDS_RESEARCH** — no evidence gathered in this pass.
-*From starting hypothesis C.*
+**STATUS:** CANDIDATE *(NEEDS_RESEARCH → CANDIDATE in the completion pass, on S12)*
+*From starting hypothesis C. The first pass gathered no evidence and said so; the narrow gap
+fill found it.*
 
-**SOURCE BASIS.** **None.** The obvious sources — Alice Sheppard / Kinetic Light, and
-choreographic practice built on wheelchair dynamics — were **not researched** within this pass's
-bounds. Nothing below is supported.
+**SOURCE BASIS.** **S12 (read) — the company's own page for *DESCENT*.** An evening-length duet
+by Alice Sheppard and Laurel Lawson performed on an architectural ramp of "hills, curves and
+peaks", designed by Sara Hendren with Yevgeniya Zastavker and Olin College students, engineered
+and fabricated by Rooster Productions. The company states plainly that **"the ramp creates a
+movement vocabulary that has never existed before"**, and describes the dancers working with
+gravity and momentum — spines softening "to taste the subtle pulls of gravity". Corroborated in
+company and press material: Sheppard and Lawson "learned to listen to what the ramp curves and
+gradients showed them, building new performance techniques and specific choreographic vocabulary
+all along the way."
 
-**MECHANISM (hypothesis, unsupported).** A tool, mobility device or architectural element may
-**generate forms of movement** rather than enable a pre-existing one.
+**MECHANISM.** An object's geometry can **generate a repertoire of action** rather than enable a
+pre-existing one. The relation between body, device and surface produces movements that did not
+exist before the relation did — so the object is not a means to an already-defined action but a
+condition of a new class of them.
 
-**QUESTION.** Is this tool assisting an existing action, or producing a movement relation that
-would not otherwise exist?
+**QUESTION.** Is this tool enabling an action that was already defined, or producing a repertoire
+that did not previously exist?
 
-**FALSE MOVE.** Romanticising assistive technology as automatically creative.
+**CARRIERS.** A geometry specified for something other than compliance — slope, curve, camber,
+surface — and the reason given. A technique or vocabulary documented as *learned from* the
+object. Training material that postdates the object. A practice that cannot be performed without
+this specific artefact. Rules or notation written after the object rather than before it. The
+negative carrier: an object built to a standard, where the standard's purpose is to make the
+action identical everywhere.
 
-**DISCONFIRMING SHAPE.** The device only restores or enables an already-defined action and
-produces no distinct movement relation.
+**FALSE MOVE.** Romanticising assistive technology as automatically creative — **"wheelchairs
+create new movement"** is exactly the sentence to refuse. The mechanism requires a *documented*
+repertoire traceable to a *specific* geometry. Note also that DESCENT's ramp is a purpose-built
+artwork, not an access ramp: nothing here transfers to mobility devices in general.
 
-**EXISTING AXIS.** Axis 1 and Axis 5; connects to **PR003-04** (a tool is incorporated by what it
-substitutes for) and to the **held Moser distinction** (function restored versus new action made
-possible).
+**DISCONFIRMING SHAPE.** The device only enables an already-defined action and produces no
+distinct repertoire — or the same repertoire appears without the object, on other equipment or
+other surfaces.
 
-**CARRIERS · MINDS SHARPENED · WHAT THIS ADDS · TRANSFER TEST · BOUNDARY — WITHHELD
-DELIBERATELY.** Following the precedent set by PR002-08: writing carriers and transfer tests for
-an unsupported mechanism is how a hypothesis starts to look established. They are absent because
-there is nothing to write them from, not by oversight.
+**EXISTING AXIS.** Axis 1 and Axis 5; touches Axis 7 (spatial dependence).
 
-**NOTE.** This is the cluster's clearest evidence gap, and it sits on the same fault line as the
-held Moser question. Worth one targeted retrieval; **not worth an instrument until then.**
+**MINDS SHARPENED.** MAYA on the body–tool–surface relation. **Not assigned by the device.**
+
+**WHAT THIS ADDS.** It is distinct from **PR001-05** and **PR003-04**, both ways. *PR001-05
+applies and this does not:* a hearing aid, audiology and family resources jointly enacting the
+ability to take part in a conversation — ability is enacted, and the repertoire of conversation
+is unchanged. *This applies and PR001-05 does not:* dancers whose mobility in their chairs was
+never in question, for whom the ramp generated movements that did not previously exist —
+capability was not the variable, **repertoire** was. PR003-04 asks what a device *substitutes
+for*; this asks what it *generates*.
+
+**TRANSFER TEST.** (1) **Sport:** the half-pipe, the climbing wall, the velodrome banking — built
+geometries whose specific curvature produced entire vocabularies of movement, and whose rules and
+notation were written afterwards. (2) **Instrument design:** the fretless bass or the prepared
+piano, where a material relation generated techniques that then had to be named.
+
+**BOUNDARY.** **A company describing its own work**, which is evidence of a claim, not an
+independent finding — and "a movement vocabulary that has never existed before" is a strong
+claim from an interested party. One work, one purpose-built object, one company. It does not
+license anything about mobility devices in ordinary use, and no dance-scholarship corroboration
+was sought.
+
+**NOTE, recorded but not acted on.** This is evidence of the *kind* the held Moser question
+needed — an object making an action possible rather than restoring a function. **The Moser lead
+is not reopened here**; it remains held, and this note exists so a future session sees that the
+evidence type now exists somewhere in the library.
 
 ---
 
@@ -652,4 +761,165 @@ WHY:                Siebers, Cachia, Kuppers, Park McArthur, I wanna be with you
                     rests on the library rather than on that exhibition. Fourteen famous
                     institutions were checked and produced nothing distinctive; none was
                     padded into the map.
+```
+
+---
+
+## OWNER-REVIEW PACK
+
+*Compiled at the end of the completion pass, 2026-09-08. **No APPROVED_DURABLE dispositions are
+proposed** — promotion is the owner's decision.*
+
+| ID | Current name | Recommended disposition |
+|---|---|---|
+| PR004-01 | Which channel is treated as the original | **STRONG_CANDIDATE** — strengthened by absorbing PR004-06's surviving inversion; carriers now documentary |
+| PR004-02 | The mediator assigns a register to the mediated | **STRONG_CANDIDATE** — register defined, three-part gate added, two CRIP_MINDS transfers |
+| PR004-03 | Does the explanation break without it? | **CANDIDATE** — weakest survivor; may be general historiographic method rather than a Perspective instrument |
+| PR004-04 | Did the practice migrate, or stay with the project? | **CANDIDATE** — mechanism sound, its only case evidences two of three steps |
+| PR004-05 | When it doesn't fit, which one changes? | **STRONG_CANDIDATE** — distinct from PR003-08 both ways; renamed |
+| PR004-06 | Access can become form | **MERGE** → **PR004-01** *(already done; record kept)* |
+| PR004-07 | Institutional objects encode a body model | **MERGE** → **Axis 1 sharpening** *(already done; record kept)* |
+| PR004-08 | Rest or pace as part of the medium | **REJECT** *(already done; record kept)* |
+| PR004-09 | The tool as movement vocabulary | **CANDIDATE** — upgraded from NEEDS_RESEARCH on primary evidence |
+
+**RENAMES IN THIS PASS.** PR004-05, *Which one bends: the project or the frame?* → **When it
+doesn't fit, which one changes?** — the old name was memorable but stated no proposition; the new
+one is the question itself.
+
+**TOP 3 FOR OWNER REVIEW.** **PR004-02** — the cluster's strongest, now gated so it cannot fire
+on every summary. **PR004-05** — the widest transfer; applies wherever anything is hosted by
+anything. **PR004-01** — strengthened, and its carriers are now documents rather than
+impressions.
+
+**TOP DUPLICATION RISK. PR004-03 against ordinary historiographic method**, not against another
+entry. Counterfactual removal is standard practice in history; disability supplied a striking
+instance of it, not the operation. That is a different and more serious kind of duplication than
+overlapping with a sibling instrument.
+
+**TOP EVIDENCE GAP.** Every institutional claim in this cluster rests on institutions describing
+themselves. Van Abbe's own site returned HTTP 500 on all three attempts; MMK's page and the
+disabled-perspective review of *Crip Time* both returned 403; MCASD was read through one review.
+**Nothing in PR004-04 has been independently verified.**
+
+**STRONGEST DISCONFIRMING SHAPE. PR004-06's — because it fired and killed its own entry.** Remove
+the benches and the exhibition is unchanged; that was written in the first pass as a risk and
+became the finding in the second.
+
+**BEST NON-ART TRANSFER.** PR004-02 → automated transcription normalising dialect, the transcript
+then read as the person's own words in a disciplinary hearing. **CRIP_MINDS**: the mediator is a
+system nobody considers an author, the artefact is inspectable, and no disability content is
+required to ask the question.
+
+**FIRST PASS MOST OVERSTATED.** Ranking **PR004-03** among the strongest three. Its mechanism is
+general historiographic practice; the exhibition is important, and importance was doing some of
+the work in that ranking.
+
+**FIRST PASS MOST MISSED.** **PR004-09.** It was filed NEEDS_RESEARCH with no evidence because the
+obvious carrier was not looked at — and the carrier turned out to state the mechanism outright:
+*"the ramp creates a movement vocabulary that has never existed before."* One page settled it. The
+first pass's own note called it the clearest evidence gap; it was also the cheapest to close.
+
+---
+
+## DECISION HISTORY — COMPLETION PASS
+
+*The first pass's decision history is above and is unchanged.*
+
+```
+DATE:               2026-09-08
+ENTRY:              PR004 COMPLETION PASS
+DECISION:           PR004-09 NEEDS_RESEARCH -> CANDIDATE on primary evidence. PR004-06
+                    MERGED into PR004-01. PR004-05 renamed and sealed against PR003-08.
+                    PR004-01 and PR004-02 pressure-tested and strengthened. PR004-03
+                    downgraded in assessment though not in status. PR004-04's boundary
+                    tightened. NO NEW ENTRIES. NO NEW AXIS. Nothing promoted.
+OWNER/REVIEW BASIS: Owner instruction for a bounded completion pass with five jobs and a
+                    default of NEW ENTRIES = NONE.
+WHY:                Two sources were newly obtained and both changed a disposition. Cachia
+                    (S11) was sought to save PR004-06 and instead confirmed its merge: she
+                    writes programmatically, posing access-as-artwork as open questions and
+                    stating she hopes to BEGIN building a vocabulary. A 2013 agenda is
+                    evidence of an agenda. Kinetic Light (S12) was sought to fill the one
+                    permitted gap and settled it in a sentence.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              PR004-06 — MERGED into PR004-01
+DECISION:           MERGED. Not rejected, because one component survived and moved.
+OWNER/REVIEW BASIS: Owner instruction not to rescue the hypothesis because "access
+                    aesthetics" is an attractive term, and to merge into PR004-01/-04/-05,
+                    PR003-08 or Axis 14 if the evidence showed access changing institutional
+                    choice rather than artistic form.
+WHY:                It showed exactly that. The first pass's own disconfirming shape held
+                    against its best carrier - remove the benches and the exhibition is
+                    unchanged - and the benches' sharpest content is that seating is a
+                    curatorial choice, which is PR003-08. What survived is Cachia's
+                    inversion: provision that renders a work inaccessible to a "normal"
+                    audience, turning the tables on access. That is not about form, it is
+                    about which audience a work is for by default, so it went to PR004-01
+                    and is now that entry's sharpest evidence.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              PR004-09 — upgraded on the one permitted gap fill
+DECISION:           NEEDS_RESEARCH -> CANDIDATE.
+OWNER/REVIEW BASIS: Owner instruction permitting exactly one new research lane, on Kinetic
+                    Light / DESCENT.
+WHY:                The company's own page states the mechanism outright: "the ramp creates a
+                    movement vocabulary that has never existed before", with the dancers
+                    learning from the ramp's curves and gradients and building technique
+                    accordingly. Checked both ways against PR001-05 and PR003-04 and distinct
+                    from both: PR001-05 concerns ability being enacted, this concerns
+                    REPERTOIRE being generated where ability was never in question; PR003-04
+                    asks what a device substitutes for, this asks what it generates.
+                    RECORDED, NOT ACTED ON: this is evidence of the kind the held Moser
+                    question needed. The Moser lead is NOT reopened.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              PR004-03 — assessment downgraded, status unchanged
+DECISION:           Remains CANDIDATE. Recorded as the weakest survivor.
+OWNER/REVIEW BASIS: Owner instruction to transfer-test it and not to promote it merely
+                    because For Dear Life is an important exhibition.
+WHY:                It transfers, and that is the problem. Counterfactual removal is ordinary
+                    historiographic method, practised independently of disability; the
+                    exhibition supplied a striking instance of the operation, not the
+                    operation. On this library's own criterion - a form of question-asking
+                    intelligence that disability knowledge produced - it may be a general
+                    method wearing a disability example. The first pass ranked it in the top
+                    three; importance was doing some of that work.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              Van Abbemuseum evidence boundary
+DECISION:           Claims A and B proven at the level of the museum's own account. Claim C
+                    NOT PROVEN. Entry unchanged; boundary tightened.
+OWNER/REVIEW BASIS: Owner instruction to attempt primary documentation and to separate the
+                    three claims.
+WHY:                Three museum pages were requested - inclusion, Special Guests / Unlimited
+                    Van Abbe, and the Multisensory Museum symposium - and ALL THREE RETURNED
+                    HTTP 500. No primary documentation was obtained. What may be claimed is
+                    migration from a tour to one collection display. Governance, staffing,
+                    acquisition and curatorial decision-making are undocumented, and no
+                    disabled staff member or collaborator is credited anywhere as having
+                    decided anything.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              Semantic seams sealed
+DECISION:           PR004-01 vs Axis 3 DISTINCT both ways. PR004-05 vs PR003-08 DISTINCT both
+                    ways. PR004-02 gated against firing on every summary.
+OWNER/REVIEW BASIS: Owner instruction to merge or weaken where a distinction cannot be
+                    maintained.
+WHY:                Each seam was tested with a case in both directions and the cases are
+                    recorded on the entries. PR004-02 additionally received a three-part gate
+                    - a person represented, a socially consequential attribute inferred, and
+                    that attribute traceable to the mediator - which committee minutes
+                    correctly fail. "Register" is now defined as observable surface features
+                    rather than left as theory fog.
 ```

@@ -24,32 +24,45 @@ this directory may be quoted in an article.
 **PR004 — Art, Disability, Aesthetic Knowledge & Institutions**
 → `art-disability-aesthetic-knowledge-institutions.md`
 
-**CLUSTER STATUS: WORKING RESEARCH — OWNER REVIEW PENDING.**
-**6 CANDIDATE · 1 merged as an Axis 1 sharpening · 1 REJECTED · 1 NEEDS_RESEARCH · 0
-APPROVED_DURABLE.** Nothing promoted. **No new axis** — fourth consecutive cluster.
+**CLUSTER STATUS: FIRST PASS + COMPLETION PASS DONE — OWNER REVIEW PENDING.**
+**6 CANDIDATE · 2 MERGED · 1 REJECTED · 0 NEEDS_RESEARCH · 0 APPROVED_DURABLE.** Nothing
+promoted. **No new axis** — fourth consecutive cluster. An **OWNER-REVIEW PACK** with per-entry
+dispositions sits in the cluster file.
 
 | ID | Short name | Status | Axes | Minds |
 |---|---|---|---|---|
-| PR004-01 | Which channel is treated as the original | CANDIDATE | 2, 3, 12 | SIIRI / PINA |
+| PR004-01 | Which channel is treated as the original | CANDIDATE ★ *(absorbs PR004-06)* | 2, 3, 12 | SIIRI / PINA |
 | PR004-02 | The mediator assigns a register to the mediated | CANDIDATE ★ strongest new | 3, 13 | PINA |
-| PR004-03 | Does the explanation break without it? | CANDIDATE | 10, 11 | SHARED |
+| PR004-03 | Does the explanation break without it? | CANDIDATE — *weakest survivor; may be general historiographic method* | 10, 11 | SHARED |
 | PR004-04 | Did the practice migrate, or stay with the project? | CANDIDATE | 14, 10 | MAYA |
-| PR004-05 | Which one bends: the project or the frame? | CANDIDATE ✦ *new* | 14, 10, 5 | MAYA / ZENO |
-| PR004-06 | Access can become form | CANDIDATE — **weak, merge candidate → PR003-08** | 14, 10 | — |
+| PR004-05 | **When it doesn't fit, which one changes?** *(renamed)* | CANDIDATE ★ | 14, 10, 5 | MAYA / ZENO |
+| PR004-06 | Access can become form | **MERGED → PR004-01** | — | — |
 | PR004-07 | Institutional objects encode a body model | **MERGED — AXIS 1 SHARPENING** | 1 | — |
 | PR004-08 | Rest or pace as part of the medium | **REJECTED — duplicate of PR002** | — | — |
-| PR004-09 | The tool as movement vocabulary | **NEEDS_RESEARCH** *(not researched)* | 1, 5 | — |
+| PR004-09 | The tool as movement vocabulary | CANDIDATE *(was NEEDS_RESEARCH; settled by Kinetic Light)* | 1, 5, 7 | MAYA |
 
 **Art did not grant novelty.** PR004-08 is the library's **second REJECTED entry** and the first
 rejected for being an existing instrument in another vocabulary — PR002-07 owns rest, PR002-02
 owns pace, PR002-01 owns expiry. Kept, not deleted; carriers donated to PR002.
 
+**Three hypotheses died or moved, all to evidence.** PR004-08 REJECTED as PR002 in gallery
+language. PR004-07 MERGED beneath Axis 1 as a carrier list. PR004-06 MERGED into PR004-01 after a
+targeted attempt to save it found Cachia writing programmatically rather than demonstrating a
+mechanism — its surviving component, access provision that reverses which audience is the
+default, went to PR004-01.
+
+**The completion pass changed the first pass twice.** PR004-09 went from *no evidence gathered*
+to CANDIDATE — the company's own page states the mechanism outright. And PR004-03, ranked in the
+first pass's top three, is downgraded in assessment: counterfactual removal is ordinary
+historiographic method, and disability supplied the instance rather than the operation.
+
 **Two boundary results worth reading before the entries.** **AUTONOMOUS / Brutus** = *important
 exhibition, weak perspective instrument* — its usable mechanisms were already extracted in PR001,
-and its thesis is already recorded there as ST002, NOT ADOPTED. **Van Abbemuseum** = a real and
-documented sequence from access programming to collection display, resting on the museum's own
-account, with **no evidence of change to staffing, governance or acquisition** and no disabled
-collaborator quoted on who decided.
+its thesis already recorded there as ST002, NOT ADOPTED. **Van Abbemuseum** — three museum pages
+requested, **all three HTTP 500**, no primary documentation obtained. Proven at the level of the
+museum's own account: access programming changed, and collection display changed. **Not proven:
+that the institution changed.** No disabled collaborator is credited anywhere as having decided
+anything.
 
 **Not accessed, and named so they are not filled in from memory:** Siebers, Cachia, Kuppers, Park
 McArthur's MoMA material, *I wanna be with you everywhere*, Serpentine/Clements, HKW. Fourteen
