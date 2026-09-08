@@ -41,12 +41,20 @@ was not modified: the ten are the instrumentation; STATUS and SOURCE BASIS are a
 | S6 | B. Phillips & H. Zhao, **"Predictors of assistive technology abandonment"**, *Assistive Technology* 5(1):36–45, **1993** | Primary, empirical | **ABSTRACT-LEVEL**, plus secondary citation. **33 years old — flagged wherever used** |
 | S7 | C. Papadimitriou, **"Becoming en-wheeled: the situated accomplishment of re-embodiment as a wheelchair user after spinal cord injury"**, *Disability & Society* 23(7):691–704, 2008 | Primary, phenomenology | **NOT ACCESSED.** Known only through secondary citation |
 | S8 | **"'It's not a part of me, but it is what it is': the struggle of becoming en-wheeled after spinal cord injury"**, *Disability and Rehabilitation* 43(17):2447–2453 (online 2019) | Primary, case study | **ABSTRACT-LEVEL.** Retained deliberately as the counter-case to S7 |
-| S9 | Ingunn Moser, *Making and Unmaking Difference* (the "Dag" case) | Primary | **NOT ACCESSED in this cluster.** Carried from PR001 owner-session verification |
+| S9 | Ingunn Moser, *Making and Unmaking Difference* (essay in source 1 of PR001), pp. 258–265 | Primary | **NOT ACCESSED in this cluster.** Carried from PR001 owner-session verification |
+| **S10** | **M. Pazzaglia, G. Galli, G. Scivoletto, M. Molinari, "A Functionally Relevant Tool for the Body following Spinal Cord Injury", *PLOS ONE*, 2013, doi:10.1371/journal.pone.0058312** | Primary, empirical | **READ IN FULL** (open access). *Added 2026-09-08 in the completion pass; it settles PR003-04* |
+| S11 | Ingunn Moser, "Sociotechnical Practices and Difference: On the Interferences between Disability, Gender, and Class", *Science, Technology & Human Values* 31(5):537–564, 2006 | Primary | **NOT ACCESSED** — publisher 403. *Identified in the completion pass as a likely home of the "Dag" material* |
+| S12 | Ingunn Moser, "Disability and the promises of technology: Technology, subjectivity and embodiment within an order of the normal", *Information, Communication & Society* 9(3):373–395, 2006 | Primary | **ABSTRACT-LEVEL ONLY.** Its claim that technologies working within an order of the normal are "implicated in the (re)production of the asymmetries that they and it seek to undo" is noted, not adopted |
 
-**Provenance caution.** The two sources that would most directly settle the body/tool question
-(S7, S9) were **not accessed**, and the abandonment literature's foundational study (S6) is
-from 1993. Those three are where a future session is most likely to fill in from memory.
-Do not.
+**Provenance caution.** S7 and S9 remain **NOT ACCESSED**, and the abandonment literature's
+foundational study (S6) is from 1993. Those three are where a future session is most likely to
+fill in from memory. Do not.
+
+**Papadimitriou acquisition attempt, 2026-09-08 (completion pass).** Sought by DOI
+(10.1080/09687590802469420) and by title; *Disability & Society* is subscription-only and no
+legitimate full text was reachable. **The paper was not read and nothing below rests on it.**
+The body/tool question was instead settled by **S10**, which is empirical, open access, and
+answers a sharper question than the phenomenological account would have.
 
 ---
 
@@ -54,8 +62,8 @@ Do not.
 
 ### PR003-01 — INDEPENDENCE IS CONTROL OVER SUPPORT
 
-**STATUS:** CANDIDATE — *and possibly a foundational orientation rather than a distinct
-instrument; flagged for owner review.*
+**STATUS:** CANDIDATE — **recommended to owner review as an AXIS 5 SHARPENING AND
+FOUNDATIONAL ORIENTATION, not as a standalone instrument.** See RECOMMENDATION below.
 
 **SOURCE BASIS.** **S1 (read in full), the definitive statement, ¶16(a):** independent living
 means being "provided with all necessary means to enable them to exercise choice and control
@@ -103,6 +111,26 @@ formulation.
 **TRANSFER TEST.** (1) A managed IT estate: the same laptop, one org where the user installs
 what they need, another where every change is a ticket — identical capability, different
 agency. (2) A tenancy where repairs are the landlord's to schedule.
+
+**RECOMMENDATION (completion pass, for owner review — not a promotion).** Of the four options
+tested, the answer is **B + C**: a foundational orientation that also sharpens Axis 5, rather
+than a distinct transferable instrument. The reasoning is that **the slogan carries nothing** —
+"independence is control over support" is a position, not a question — while the *operational
+variables* carry a great deal: **who · how · when · where · in what way** (S1 ¶16(d)), together
+with the concrete absence conditions of ¶16(c) — obligatory sharing of assistants, no influence
+over whom one accepts assistance from, lack of control over day-to-day decisions, rigidity of
+routine, paternalistic provision, supervision. Those variables are usable beneath PR003-05,
+-06, -07 and -08 alike, which is what a foundation looks like. Recommended disposition:
+**sharpen Axis 5 with the operational variables; do not carry the slogan as an instrument.**
+
+**SEAM TEST vs PR003-05 (completion pass): DISTINCT.** This entry governs an **ongoing**
+arrangement; PR003-05 concerns **participation in the original fit**. Each has a case the other
+misses. *01 without 05:* a personal-assistance arrangement with an allocated provider the
+person did not choose, but whose day-to-day direction the person holds — no authorship of the
+fit, full ongoing control. *05 without 01:* a custom-moulded seating system or socket the user
+helped specify, which then runs with nothing adjustable — high authorship, no ongoing control.
+Their evidence carriers differ accordingly: override, on/off, provider choice and who directs,
+against trial periods, who was in the room at specification, and abandonment data.
 
 **BOUNDARY.** S1 is a **normative human-rights instrument, not an empirical finding.** It
 establishes what independence *ought* to mean in law, not what produces agency in practice.
@@ -214,52 +242,86 @@ operation normally hides.
 
 ---
 
-### PR003-04 — THE TOOL CAN ENTER THE BODY MODEL
+### PR003-04 — A TOOL IS INCORPORATED BY WHAT IT SUBSTITUTES FOR, NOT BY FAMILIARITY
 
-**STATUS:** **NEEDS_RESEARCH**
+*Renamed and rewritten 2026-09-08 in the completion pass. Old name: "The tool can enter the
+body model". The rename is not cosmetic — **the evidence contradicted the original
+mechanism**, which claimed incorporation follows from skilled repeated use.*
 
-**SOURCE BASIS.** **S7 NOT ACCESSED** — Papadimitriou's argument is known only through
-secondary citation: that through learning to manoeuvre the chair a reversible relation is
-established between the moving body-subject and the wheelchair, which "becomes a part of the
-wheelchair user's habitual being-in-the-world". **S8 (abstract-level) is the counter-case and
-is why this entry is not a candidate:** an intrinsic case study of one man, Patrick, who
-underwent ableist rehabilitation to recover walking and to *break* his connection with the
-chair, and only "reluctantly assumed his cyborg or posthuman condition" — with enwheelment
-framed as a **continuum** and a **struggle** rather than an outcome of skilled use.
+**STATUS:** CANDIDATE *(NEEDS_RESEARCH → CANDIDATE, on S10)*
 
-**MECHANISM (hypothesis).** Through skilled repeated use, a device may cease to function
-experientially as an external object and become incorporated into how a person acts and
-perceives reachable space.
+**SOURCE BASIS.** **S10 (read in full)** — 55 wheelchair users with spinal cord injury
+(lesions C3–L1), using a chair around 13 hours a day, on average 92 months post-injury;
+an 11-item embodiment questionnaire reduced by principal component analysis, with multiple
+regression against lesion level, time since injury and wheelchair exposure. Findings:
 
-**QUESTION.** Is the system treating this device as external assistance after its user has
-learned to act through it as part of their ordinary bodily repertoire?
+- **67%** reported the wheelchair integrated with their body; **72%** visualised it within
+  their corporeal image. Real and common — **and not universal.**
+- The first component loaded **positively** on action, lower limb, substitution and affect,
+  and **negatively on "tool"** — the chair processed "as if it were a part of patients' limbs
+  as opposed to a tool". A genuine dissociation, not a metaphor.
+- **The predictor is lesion level, not use.** Low and high paraplegia rated the chair as a
+  body part (4.41, 4.11) significantly above tetraplegia (2.0); tetraplegic participants
+  rated it an external device (4.7 vs 2.6). Lower lesion predicted stronger functional
+  embodiment (β = 0.48, p = 0.004).
+- **The original mechanism fails here:** "neither the time since injury nor exposure to /
+  experience with the wheelchair predicted individual component scores." Duration and
+  familiarity had **no effect**.
+- Authors' conclusion: "The tool did not become an extension of the immobile limbs; rather,
+  it became an actual tangible **substitution of the functionality** of the affected body
+  part."
 
-**CARRIERS.** Reach and clearance assumptions in a design. A rule that treats the device as
-separable from the person (storage, transport, search, insurance). Training and skill
-acquisition records. Body-schema or peripersonal-space measures. Language in a document that
-locates capability in the person or in the pair.
+**S7 remains NOT ACCESSED** and nothing here rests on it. **S8 (abstract-level) is retained
+and is no longer read as a contradiction:** Patrick's reluctance concerns identity and social
+self after ableist rehabilitation aimed at breaking his connection with the chair — a
+different layer from the body-schema measure S10 reports. S10 separates those layers
+empirically; the first pass had them collapsed.
 
-**FALSE MOVE.** Claiming every assistive device becomes part of the body. S8 is the standing
-refutation of the universal version, and the romantic reading — the chair as liberating
-extension — is exactly what a single case of reluctant, contested enwheelment complicates.
+**MECHANISM.** A device may be processed as a substitution for a specific lost function
+rather than as an external tool — and what predicts that is **what the device functionally
+replaces**, not how long or how skilfully it has been used. Incorporation is a fact about the
+fit between device and function, not a reward for familiarity.
 
-**DISCONFIRMING SHAPE.** Experienced users continue to treat the device as a consciously
-external tool, or embodiment measures do not change with active use.
+**QUESTION.** Is this device replacing a specific function, or supplementing an intact one —
+and does the surrounding system's account match?
+
+**CARRIERS.** A rule treating the device as separable from the person — storage, transport,
+security search, insurance, "please remove your equipment". Reach and clearance assumptions.
+Whether a document locates capability in the person or in the person-plus-device. A
+substitution-versus-augmentation distinction written into a specification or a benefit rule.
+Body-schema or peripersonal-space measures where they exist.
+
+**FALSE MOVE.** Claiming every assistive device becomes part of the body — **a third of S10's
+participants did not report integration, and tetraplegic participants rated the chair an
+external device.** And the mirror error, which the first pass committed: assuming that long
+or skilled use is what produces incorporation. It is not; S10 tested that directly and found
+no effect.
+
+**DISCONFIRMING SHAPE.** Incorporation tracks exposure, training or duration rather than what
+the device substitutes for — or users of a function-substituting device continue to report it
+as an external tool at the same rate as users of a supplementary one.
 
 **EXISTING AXIS.** Axis 1 (bodies) and Axis 5; connects to PR001-05.
 
 **MINDS SHARPENED.** SIIRI on perception and reachable space; SHARED.
 
-**WHAT THIS ADDS.** *If it survives:* a boundary question — where a system draws the line
-between person and equipment, and whether that line matches how the action is actually
-performed. It has not survived yet.
+**WHAT THIS ADDS.** A boundary question the doctrine does not ask: where a system draws the
+line between person and equipment, whether that line matches how the action is performed, and
+— the increment from S10 — that the answer is predicted by **function replaced**, which is
+checkable from a specification rather than from a person's report.
 
-**TRANSFER TEST.** *(Held until the primaries are read. Writing transfer tests for an
-unsupported mechanism is how a hypothesis starts to look established.)*
+**TRANSFER TEST.** (1) Autopilot or driver assistance: a system that *substitutes* a
+continuous control function is related to differently from one that *supplements* an intact
+one, and regulation, training and liability often treat both identically. (2) A prosthetic
+control scheme or exoskeleton specified as an add-on to a working limb versus a replacement
+for a missing one.
 
-**BOUNDARY.** The two things needed are the same two things missing: **S7 in full**, and
-empirical body-schema work. Also, **do not generalise spinal-cord-injury experience to
-wheelchair users generally** — both S7 and S8 are SCI-specific, and S8 is N=1.
+**BOUNDARY.** S10 is **introspective questionnaire data reduced by PCA**, and the authors
+themselves say it "needs to include empirical measures" and cannot resolve whether the effect
+is central, peripheral or both. It is **spinal-cord-injury specific** — do not generalise to
+wheelchair users generally, still less to assistive technology generally. S7 is still unread,
+so the phenomenological account of *how* incorporation is learned remains outside this
+entry's evidence.
 
 ---
 
@@ -313,6 +375,10 @@ used.
 whatever the team actually uses. (2) A clinical pathway that is technically followed and
 routinely worked around.
 
+**SEAM TEST vs PR003-01 (completion pass): DISTINCT** — see the worked cases recorded under
+PR003-01. In one line: 01 is about steering something that is running; 05 is about who was
+present when it was specified.
+
 **BOUNDARY.** The foundational study is **33 years old**, from a different device generation,
 and the ninefold figure is secondary. The 8–75% spread means **no abandonment number should
 be cited as a fact about assistive technology in general.** What is durable is the direction
@@ -320,9 +386,13 @@ and the mechanism, not the magnitude.
 
 ---
 
-### PR003-06 — CALIBRATION IS A SITE OF AGENCY
+### PR003-06 — THE ROUTE TO A SETTING CHANGES WHETHER THE SUPPORT IS USED
 
-**STATUS:** CANDIDATE — **the strongest evidence in the cluster.**
+*Renamed and narrowed 2026-09-08 in the completion pass. Old name: "Calibration is a site of
+agency". **The first pass overstated this entry** — see the correction in SOURCE BASIS.*
+
+**STATUS:** CANDIDATE — strongest evidence in the cluster, **and materially narrower than the
+first pass claimed.**
 
 **SOURCE BASIS.** **S5 (read in full)** — a crossover clinical trial, N=28, mean age 60.2,
 adults with self-perceived mild-to-moderate hearing difficulty, comparing two ways of fitting
@@ -339,22 +409,34 @@ The authors' own conclusion: "Self-adjustment may produce higher satisfaction an
 daily use, highlighting the potential advantages of active user involvement in the fitting
 process."
 
-**MECHANISM.** A device may not have one objectively correct setting — and even where a
-technical measurement can be equalised, **who is permitted to adjust it** can still determine
-whether the support is used. The measurable output was the same; the relationship to it was
-not.
+**THE CORRECTION, made in the completion pass.** The first pass framed this as evidence about
+**professional versus user authority**. It is not. **Both arms of S5 are self-administered**:
+the comparison is between the user adjusting to their own preference and the device running
+in-situ audiometry and prescribing from the measurement. No clinician fitted either arm. So
+the trial says nothing about professional control, and the entry no longer claims it does.
 
-**QUESTION.** Who is permitted to decide when this device is correctly adjusted?
+What is left is narrower and cleaner: two routes to a setting on the same device, **equivalent
+on every technical measure**, differing in whether the support was worn.
+
+**MECHANISM.** A device can be calibrated to an equivalent technical standard by different
+routes, and the route can still change whether the support has a place in daily life. A
+setting derived from the user's expressed preference and a setting derived from a measurement
+can be indistinguishable on the measure and distinguishable in use.
+
+**QUESTION.** What is this setting derived from — and does the system treat that as a
+technical question only?
 
 **CARRIERS.** Hearing-aid fine tuning. Wheelchair seating and control settings. Prosthetic
 tuning. Screen-reader preferences. Adaptive UI. AI personalisation. Threshold settings. A
 locked configuration. A professional-only mode. A "reset to recommended" that cannot be
 overridden.
 
-**FALSE MOVE.** Assuming subjective preference should replace every technical measurement.
-S5 does **not** show that self-fitting is better — it shows equivalence on the technical
-measures and a difference in use and satisfaction. Writing "self-fitting is better" would be
-overstating the same paper that disciplines the claim.
+**FALSE MOVE.** Three, and the first pass walked into the third. (1) "Subjective outcomes
+matter more than objective ones" — not shown. (2) "Users should always set technology
+themselves" — not shown; both arms were self-administered and neither was a clinician.
+(3) **"Self-fitting beats professional fitting"** — the trial does not contain a professional
+arm at all. S5 disciplines the claim it is used to support, which is why it is the right
+source and why it must be read exactly.
 
 **DISCONFIRMING SHAPE.** User-adjustable settings produce no meaningful difference in use,
 satisfaction, performance or control — or introduce a demonstrated safety constraint that
@@ -366,18 +448,23 @@ outcome is not); reaches Axis 10.
 **MINDS SHARPENED.** ZENO on what the instrument treats as the correct value; PINA on a
 mediating device whose settings decide what arrives; SHARED. **Not assigned by device.**
 
-**WHAT THIS ADDS.** A precise and unusually clean instance of a general shape the doctrine
-lacks in this form: **an objective measure can be satisfied while the thing it was measuring
-for fails to happen.** Real-ear measurement equalised; daily use did not.
+**WHAT THIS ADDS.** A precise instance of a shape the doctrine lacks in this form: **a
+measure can be satisfied on its own terms while the thing it was measuring for fails to
+happen.** Real-ear measurement equalised across arms; daily use did not. Note the difference
+from Axis 12 — this is not a system failing to register something, it is a system registering
+exactly what it set out to and the outcome diverging anyway.
 
 **TRANSFER TEST.** (1) A thermostat or lighting system commissioned to a standard and then
 overridden daily by occupants. (2) A recommendation or safety threshold tuned centrally,
 where the locally adjustable version is the one that stays switched on.
 
-**BOUNDARY.** **N=28**, short-term, no washout period, pseudorandomised after an app
-malfunction compromised randomisation, and limited to self-perceived mild-to-moderate
-difficulty — all stated by the authors. Long-term outcomes were explicitly not assessable.
-One device category, one population.
+**BOUNDARY.** **N=28**, short-term, **no washout period**, **pseudorandomised** after an app
+malfunction compromised randomisation, and limited to adults with self-perceived
+mild-to-moderate hearing difficulty — all stated by the authors, who also say limited sample
+size hindered correlation analyses and the design prevented assessing long-term outcomes. The
+two differing outcomes are **subscales**, not the primary aggregates, which were equivalent.
+One device, one category, one population. **This entry is a well-evidenced instance, not a
+general finding about assistive technology, and not a finding about who should fit devices.**
 
 ---
 
@@ -411,11 +498,30 @@ dependency may be dramatically preferable** — a power chair that a vendor serv
 a life a manual chair did not. The question is what the trade actually was, not that a trade
 occurred.
 
+**THE TWO-SIDED GATE (added in the completion pass, so this does not reduce to "everything
+depends on something").** The instrument applies only when **both** halves can be named: a
+prior dependency that measurably decreased, **and** a materially different new one that
+appeared. One half alone is Axis 5, not this. S3 is the model case: manual-chair users more
+often repair at home themselves, power-chair users more often wait for a vendor — a named
+prior locus and a named new one, measured in the same population.
+
 **DISCONFIRMING SHAPE.** The new dependency is weak, substitutable and does not constrain
 meaningful choice or action — parts are generic, servicing is competitive, the account can be
-left.
+left. Or only one side of the gate can be named.
+
+**MERGE NOTE — PR003-09 is merged here (completion pass).** Its carriers are absorbed above:
+documentation and whether the user holds it, open versus proprietary design, who holds
+diagnostic access, whether adaptation voids support, the gap between who specified a thing and
+who must sustain it. Its Loomer material is already this entry's counter-position. **The
+causal claim in PR003-09's title — that authorship produces repairability — was tested and is
+not supported**; see PR003-09's retained record.
 
 **EXISTING AXIS.** Axis 5; reaches Axis 14 and Axis 10.
+
+**SEAM TEST vs Axis 5 (completion pass): DISTINCT, conditionally.** Axis 5 asks what
+assistance is hidden inside an action *now*. This asks what **moved**, and requires a before
+and an after. The condition is the two-sided gate above; without it the entry collapses into
+Axis 5 and should be merged.
 
 **MINDS SHARPENED.** MAYA on supply chains and procurement; ZENO on lock-in as a
 classification of who may act.
@@ -436,10 +542,14 @@ review is reasonable.
 
 ---
 
-### PR003-08 — BOUNDED CHOICE INSIDE A FIXED ARRANGEMENT
+### PR003-08 — WHO DEFINES THE OPTION SET
+
+*Renamed 2026-09-08 in the completion pass. Old name: "Bounded choice inside a fixed
+arrangement". The rename moves the entry off constraint, which is generic, and onto the
+authorship of the option set, which is the checkable part.*
 
 **STATUS:** CANDIDATE
-*New. Not in the starting set — produced by reading S1.*
+*Not in the starting set — produced by reading S1.*
 
 **SOURCE BASIS.** **S1 ¶16(c) (read in full)**, in the Committee's own words: "Institutional
 settings **may offer persons with disabilities a certain degree of choice and control;
@@ -456,13 +566,14 @@ cannot alter, and the offered choice can make the fixed frame harder to see — 
 is fake, but because it is genuine and satisfying at the level it operates. What is
 unavailable is the choice about the frame itself.
 
-**QUESTION.** What is genuinely choosable here, and what does the range of choices leave
-untouched?
+**QUESTION.** Who defined the set of options this person is choosing from, and what is
+absent from it?
 
-**CARRIERS.** A configurable menu with no exit. A tariff or plan selector. A consent
-interface offering preferences but not refusal. A rota one may express preferences about but
-not set. A "customise your experience" panel. A package that ties one service to another.
-The boundary between a setting and a term of service.
+**CARRIERS.** Preset adjustment ranges and their limits. Locked settings. An approved-device
+menu. Provider-defined options. Configuration permissions. Eligibility tiers. A professional
+override. The line between user-accessible and hidden parameters. A consent interface offering
+preferences but not refusal. A rota one may rank but not set. A package tying one service to
+another. The boundary between a setting and a term of service.
 
 **FALSE MOVE.** Concluding that offered choice is therefore a trick, or that bounded choice
 is worthless. S1 does not say the choices are unreal — it says they are **limited to specific
@@ -480,9 +591,17 @@ Axis 5.
 conditions.
 
 **WHAT THIS ADDS.** Axis 10 distinguishes being admitted to conditions from authoring them.
-This adds the **intermediate and commonest case**: being given genuine authority over the
-furniture and none over the room. It also pairs with PR002-09 — bounded choice, like an
-accommodation, can be what makes an unchanged arrangement tolerable enough to persist.
+This adds the **intermediate and commonest case**: genuine authority over the furniture, none
+over the room. It pairs with PR002-09 — an option set, like an accommodation, can be what
+makes an unchanged arrangement tolerable enough to persist.
+
+**SEAM TEST vs PR001-03 (completion pass): DISTINCT.** PR001-03 asks what becomes possible
+when a situation receives a *name* — jurisdiction, entitlement, obligation, authority. This
+asks who wrote the *menu*, and needs no classification of the person at all. A case where this
+works and PR001-03 does not: a thermostat in a leased office with a locked temperature range —
+nobody is classified, no entitlement changes, and the option set is still someone else's. A
+case where PR001-03 works and this does not: being designated a vulnerable adult, which moves
+authority without presenting anyone with a menu.
 
 **TRANSFER TEST.** (1) A cookie or privacy panel with granular toggles and no way to decline
 the underlying collection. (2) A shift-bidding system where staff rank preferences within a
@@ -497,65 +616,34 @@ not pull PR003 back toward institutional care as its default subject.**
 
 ### PR003-09 — WHAT YOU AUTHORED, YOU CAN KEEP WORKING
 
-**STATUS:** CANDIDATE
-*New. Not in the starting set — produced by reading S2 against S3.*
+**STATUS:** **MERGED into PR003-07 (completion pass, 2026-09-08).** Retained, not deleted.
 
-**SOURCE BASIS.** **S2 (read in full).** The disabled designer Alice Loomer, a wheelchair
-user, on her own repurposing and maintenance practices: "**I made it. So I know how to fix
-it…** I may have failed as often as I succeeded, but I have equipment that fits me" — and her
-claim that this tinkering "kept [her] away from nursing homes and attendants". Hamraie and
-Fritsch read her as turning "to maintenance practices as sites for examining the frictions,
-limitations, and failures inherent to technoscientific design processes". The manifesto's
-first commitment is that "disabled people are experts and designers of everyday life", and it
-notes the "widespread perception that access technologies are made for us by non-disabled
-experts" with "little recognition of our own practices of remaking the material world". Set
-against **S3's** finding that manual-chair users more often repair at home themselves while
-power-chair users more often wait for a vendor.
+**WHY MERGED.** The title carried a causal claim — *user authorship → greater continuity and
+repairability* — and the completion pass tested it directly, as instructed. **It is not
+supported.** The evidence was one practitioner (Loomer) quoted inside a manifesto, plus S3's
+manual-versus-power repair-locus difference, and that comparison is **confounded by
+complexity**: manual and power chairs differ in how repairable they are quite apart from who
+authored them. No source isolates authorship from complexity, so the causal core cannot be
+stated.
 
-**MECHANISM.** Authorship and maintainability are **the same capability, not two**. Whoever
-configured, adapted or built a thing generally retains the knowledge required to keep it
-working; whoever received it finished must summon someone else. So a decision about who
-authors a tool is also, silently, a decision about who can repair it and how fast.
+What remained after removing the unsupported causation was a **carrier set** — documentation,
+diagnostic access, whether adaptation voids support, the distance between specifier and
+sustainer — and that set belongs to **PR003-07**, which already holds the S3 evidence and the
+Loomer counter-position. Merging it there is the honest outcome; renaming it would have kept
+a slogan alive by rewording it.
 
-**QUESTION.** Does the person who has to keep this working know how it was put together?
+**Second hypothesis killed or merged in this cluster, and the second by evidence rather than
+by duplication.** Kept with its reason so it is not re-proposed.
 
-**CARRIERS.** Documentation and whether the user has it. Open versus proprietary design. Who
-holds diagnostic access. Whether adaptation is permitted or voids something. A build-versus-
-buy decision and its downstream service model. The gap between the people who specified a
-thing and the people who must sustain it. Handover records.
-
-**FALSE MOVE.** Romanticising DIY. Hamraie and Fritsch are explicit — they recognise these
-practices "**without glorifying do-it-yourself design practices**", and Loomer herself says
-she "failed as often as I succeeded". Self-built is not automatically better; it is
-differently *sustainable*, and often only because nothing else fit.
-
-**DISCONFIRMING SHAPE.** Users who authored the thing depend on external repair at the same
-rate and speed as those who received it finished — or the authored version proves *less*
-maintainable because it is unsupported and idiosyncratic.
-
-**EXISTING AXIS.** Axis 10 and Axis 14; reaches Axis 5.
-
-**MINDS SHARPENED.** MAYA on maintenance economics; ZENO on what a design forecloses;
-SHARED.
-
-**WHAT THIS ADDS.** It connects two instruments the cluster otherwise keeps apart — PR003-05
-(who authored the fit) and PR003-03 (the maintenance layer) — by proposing that the second is
-partly *determined by* the first. Neither entry alone makes that claim, and it is checkable.
-
-**TRANSFER TEST.** (1) A team that inherits a system it did not build and can only escalate.
-(2) A building whose facilities staff never saw the design decisions they now maintain.
-
-**BOUNDARY.** Loomer is a **single documented practitioner quoted inside a manifesto** — a
-strong illustration, not a finding, and S2 is an explicitly political text whose politics are
-not adopted here. The S3 pairing is suggestive but confounded: manual and power chairs differ
-in complexity as well as in authorship, so the comparison does not isolate the variable. This
-entry needs a case where authorship varies and complexity does not.
+*The original entry's SOURCE BASIS is preserved in PR003-07, which now carries the Loomer
+quotation and the S3 comparison together with the confound that defeated the causal reading.*
 
 ---
 
 ## THE MOSER / DAG LEAD
 
-**STATUS: HELD.** Not opened as an entry, not merged, not rejected.
+**STATUS: HELD** — *re-examined in the completion pass, source now precisely identified, and
+still held.* Not opened, not merged, not rejected.
 
 Carried from PR001: *can a support technology make a form of agency, social action or
 relation possible that the previous arrangement did not permit?* The instruction was to test
@@ -570,10 +658,25 @@ about the *governance* of support rather than about support **creating an action
 previously exist**, so folding it into either would blur a distinction the lead exists to
 make. Merging it into PR001-05 would do the same, for the reason PR001 already recorded.
 
+**COMPLETION PASS, 2026-09-08 — what changed.** The source is now **identified rather than
+vague**. The "Dag" material most plausibly sits in **S11** (Moser, *Sociotechnical Practices
+and Difference*, STHV 31(5), 2006) with **S12** (Moser, *Disability and the promises of
+technology*, ICS 9(3), 2006) as the companion argument. **Neither was accessible** — S11
+returned 403, S12 abstract-level only. S9 remains unread here.
+
+**And the available evidence leans against the distinction.** PR001's owner-session record of
+the Moser essay describes rehabilitation practices, a computer, writing and family resources
+**jointly contributing to "unmaking" disability and enacting ability** — that is *ability being
+enacted by an arrangement*, which is **PR001-05**, already APPROVED_DURABLE. It is not, on that
+description, a social position that did not previously exist. S12's abstract points somewhere
+else again: technologies within an order of the normal "implicated in the (re)production of the
+asymmetries that they and it seek to undo" — closer to PR003-07 than to a new-action claim.
+
 **Held, with the deciding question written down for whoever gets the source:** does the
 evidence show a capability returning, or a *position in a relationship* that was previously
-unavailable? Only the second justifies a separate instrument. **Do not let the institutional
-setting become the subject** — it is source context.
+unavailable? Only the second justifies a separate instrument. **Likely resolution if no primary
+appears: merge into PR001-05.** Recorded now so the next session does not re-open it hopefully.
+**Do not let the institutional setting become the subject** — it is source context.
 
 ---
 
@@ -584,13 +687,86 @@ tested. Two became entries — **PR003-08** (bounded choice, from S1 ¶16(c)) an
 (authorship and maintainability as one capability, from S2 against S3). A third did not, and
 is logged rather than developed:
 
-**The equal measure and the unequal outcome.** S5's shape — real-ear measurements equal
-across arms while daily use and satisfaction differed — is a specific and unusually clean
-instance of a general possibility: *an objective measure can be fully satisfied while the
-thing it was measuring for fails to happen.* It currently lives inside PR003-06's WHAT THIS
-ADDS. Whether it is a distinct instrument beneath Axis 12, or simply PR003-06 stated more
-abstractly, is an open question and deliberately not resolved here. **NEEDS_RESEARCH, no ID
-assigned** — assigning an ID would be the first step toward treating it as established.
+**The equal measure and the unequal outcome.** S5's shape — real-ear measurements equal across
+arms while daily use and satisfaction differed — is an instance of a general possibility: *a
+measure can be fully satisfied on its own terms while the thing it was measuring for fails to
+happen.*
+
+**Cross-checked in the completion pass, as instructed, and DELIBERATELY NOT MADE AN ENTRY.**
+Against Axis 12 it is *adjacent but not the same*: Axis 12 asks what a system **cannot
+register**, whereas this is a system registering exactly what it intended and the outcome
+diverging anyway. Against PR001-01 (normality as an operation) it is also distinct — that is a
+measure *producing* the preferred value, this is a measure being *satisfied and insufficient*.
+So it is not a duplicate. But it currently rests on **one trial, N=28, on two subscales**, and
+the default stands: **no new entry unless clearly distinct and adequately evidenced.** It is
+neither yet.
+
+**NEEDS_RESEARCH, no ID assigned** — assigning an ID would be the first step toward treating it
+as established. Flagged as the strongest candidate to open a future cluster with.
+
+---
+
+## OWNER-REVIEW PACK
+
+*Compiled at the end of the completion pass, 2026-09-08. **No APPROVED_DURABLE dispositions
+are proposed** — promotion is the owner's decision.*
+
+| ID | Current name | Recommended disposition |
+|---|---|---|
+| PR003-01 | Independence is control over support | **MERGE** → sharpen **Axis 5** with the operational variables (who · how · when · where · in what way) and the ¶16(c) absence conditions. Do not carry the slogan as an instrument |
+| PR003-02 | Support can disappear into independence | **REJECT** *(already done; kept as record)* |
+| PR003-03 | Autonomy has a maintenance layer | **STRONG_CANDIDATE** |
+| PR003-04 | A tool is incorporated by what it substitutes for, not by familiarity | **CANDIDATE** |
+| PR003-05 | Support works differently when the user authors it | **CANDIDATE** |
+| PR003-06 | The route to a setting changes whether the support is used | **STRONG_CANDIDATE** |
+| PR003-07 | A tool can move dependence rather than remove it | **CANDIDATE** — conditional on the two-sided gate holding in a second domain |
+| PR003-08 | Who defines the option set | **STRONG_CANDIDATE** |
+| PR003-09 | What you authored, you can keep working | **MERGE** → **PR003-07** *(already done; kept as record)* |
+| Moser lead | — | **HELD**; likely **MERGE → PR001-05** if no primary appears |
+
+**RENAMES IN THIS PASS.**
+
+| Old | New | Why |
+|---|---|---|
+| PR003-04 *The tool can enter the body model* | *A tool is incorporated by what it substitutes for, not by familiarity* | The evidence **contradicted** the original mechanism. Exposure and duration predicted nothing; lesion level and functional substitution did |
+| PR003-06 *Calibration is a site of agency* | *The route to a setting changes whether the support is used* | The trial contains **no professional arm**. "Agency" implied an authority contrast the source does not support |
+| PR003-08 *Bounded choice inside a fixed arrangement* | *Who defines the option set* | Constraint is generic; **authorship of the option set** is the checkable part |
+
+**TOP 3 FOR OWNER REVIEW.** **PR003-06** — the cleanest evidence in three clusters, now
+correctly bounded. **PR003-08** — the widest transfer, and it needs no disability content to
+operate. **PR003-03** — the best-evidenced, with a measurable failure surface.
+
+**TOP DUPLICATION RISK. PR003-07 against Axis 5.** It survives only on the two-sided gate — a
+named prior dependency that decreased *and* a named new one — and its only real instance is
+wheelchair repair. If a second domain does not produce a two-sided case, merge it into Axis 5.
+Second risk: **PR003-01 against Axis 5**, which is why it is recommended as a sharpening rather
+than an instrument.
+
+**TOP EVIDENCE GAP. Everything about authorship rests on a 1993 study.** PR003-05's spine is
+Phillips & Zhao, 33 years old, from a different device generation, with a widely-cited
+ninefold figure that is secondary and unverified, in a literature whose abandonment rates
+range 8–75%. Two sources remain unobtained (Papadimitriou, Moser), but this is the gap that
+actually weakens a live entry.
+
+**STRONGEST DISCONFIRMING SHAPE. PR003-04's**: *incorporation tracks exposure, training or
+duration rather than what the device substitutes for.* It is strongest because it is the one
+that **already fired** — that is precisely what S10 tested, and the first pass's mechanism
+died on it.
+
+**MOST USEFUL NON-DISABILITY TRANSFER. PR003-08 → a consent or preferences interface with
+granular toggles and no way to decline the underlying collection.** DISTINCTIVE: it needs no
+classification, no disability content and no metaphor, and the question — *who defined this
+menu, and what is absent from it* — is immediately answerable from the artefact. Runner-up:
+PR003-03 → an industrial or clinical system whose autonomy rests on one service contract.
+Weakest transfer: PR003-01 → managed IT estates, which is real but close to generic.
+
+**MOST IMPORTANT THING THE FIRST PASS GOT WRONG. PR003-06 was framed as evidence about
+professional versus user authority. It is not.** Both arms of the trial are self-administered
+— user self-adjustment against the device's own in-situ audiometry — so there is no clinician
+in either arm and no authority contrast in the data. The entry has been renamed and narrowed
+to what the trial actually shows. A close second: **PR003-04's original mechanism**, which
+asserted that skilled repeated use produces incorporation; the evidence says exposure and
+duration predict nothing.
 
 ---
 
@@ -692,4 +868,100 @@ WHY:                The evidence base is deliberately ordinary-life: hearing aid
                     that the entry must not pull the cluster back toward institutional care
                     as a subject. NO PROXIES check: no analogy to another marginalised group
                     was imported from any source.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              PR003 COMPLETION PASS — source gaps and semantic seams
+DECISION:           PR003-04 NEEDS_RESEARCH -> CANDIDATE, renamed and REWRITTEN on new
+                    evidence. PR003-06 narrowed, corrected and renamed. PR003-08 renamed.
+                    PR003-09 MERGED into PR003-07. PR003-01 recommended as an Axis 5
+                    sharpening rather than an instrument. Moser lead HELD. No promotions.
+OWNER/REVIEW BASIS: Owner instruction for a bounded completion pass - close source gaps,
+                    test seams, do not expand breadth, treat a killed entry as success.
+WHY:                Two sources could not be obtained (Papadimitriou, Moser) and both are
+                    recorded as attempted and failed rather than softened. One new source
+                    (S10, Pazzaglia et al. 2013, open access) settled PR003-04 and in doing
+                    so CONTRADICTED the first pass: incorporation was predicted by lesion
+                    level and by what the device functionally substitutes for, while time
+                    since injury and wheelchair exposure predicted NOTHING. The original
+                    mechanism - skilled repeated use produces incorporation - is not
+                    supported and has been replaced rather than softened.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              PR003-06 — stress test
+DECISION:           SURVIVES, NARROWED, and the first pass's framing CORRECTED.
+OWNER/REVIEW BASIS: Owner instruction to try to kill it rather than strengthen it.
+WHY:                The attempt to kill it found a real error. BOTH ARMS OF S5 ARE
+                    SELF-ADMINISTERED - user self-adjustment versus the device's own in-situ
+                    audiometry - so the trial contains NO professional-fitting arm and says
+                    nothing about professional versus user authority, which is what the
+                    first pass implied by naming the entry "calibration is a site of
+                    agency". The surviving claim is narrower and better: two routes to a
+                    setting, equivalent on every technical measure, differing in whether the
+                    support was worn. Renamed to match what the evidence supports. This is
+                    the single most important thing the first pass overstated.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              Semantic seams
+DECISION:           01 vs 05 DISTINCT. 03 vs 09 -> 09 MERGED into 07. 07 vs Axis 5 DISTINCT
+                    conditionally, gated. 08 vs PR001-03 DISTINCT, and 08 renamed.
+OWNER/REVIEW BASIS: Owner instruction to test four seams and merge or weaken where the
+                    distinction cannot be made cleanly.
+WHY:                01/05 each have a case the other misses, recorded under 01. 09's causal
+                    core - authorship produces repairability - was tested and is not
+                    supported: the only comparison available (manual versus power chairs) is
+                    confounded by complexity, so the claim cannot be isolated; its carriers
+                    went to 07 and the entry became a merge record. 07 survives against Axis
+                    5 only with a two-sided gate requiring BOTH a named prior dependency
+                    that decreased AND a named new one; without that it is Axis 5 and should
+                    be merged. 08 needed no classification of a person to operate, which
+                    PR001-03 does, and was renamed onto the checkable question - who defined
+                    the option set - because bounded choice on its own is generic.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              Moser lead — second examination
+DECISION:           HELD. Source identified (S11, S12); neither accessible.
+OWNER/REVIEW BASIS: Owner instruction to identify the exact work and not import a remembered
+                    thesis from model priors.
+WHY:                The lead is now attached to named works rather than to "Moser". Neither
+                    could be read - S11 403, S12 abstract-level - and the evidence that IS
+                    available leans against the distinction: PR001's owner-session record
+                    describes ability being ENACTED by an arrangement, which is PR001-05
+                    already. Likely resolution if no primary appears is a merge into
+                    PR001-05, recorded now so the lead is not re-opened hopefully.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              "Equal measure, unequal outcome" — cross-check
+DECISION:           NO NEW ENTRY. Remains logged without an ID.
+OWNER/REVIEW BASIS: Owner instruction to cross-check against PR001 and Axis 12 and to
+                    default to no new entry.
+WHY:                It is not a duplicate - Axis 12 concerns what a system cannot register,
+                    PR001-01 concerns a measure producing the preferred value, and this is a
+                    measure satisfied on its own terms and still insufficient. But it rests
+                    on one trial, N=28, on two subscales. Distinctness without evidence is
+                    not a reason to open an instrument. Flagged as a candidate to open a
+                    future cluster.
+```
+
+```
+DATE:               2026-09-08
+ENTRY:              Axis and schema checks, completion pass
+DECISION:           NO NEW AXIS. README NOT MODIFIED. Provenance levels unchanged except
+                    where a source was genuinely read for the first time.
+OWNER/REVIEW BASIS: Standing decisions; owner instruction not to seek Axis 15 and not to
+                    alter the canonical schema.
+WHY:                Nothing in the pass created a conceptual hole. S10 was newly read in
+                    full and is recorded as READ; every other level is unchanged, and the
+                    two failed acquisitions are recorded as attempts rather than as
+                    softened status. The rejected PR003-02 and the C/H merge history are
+                    untouched.
 ```

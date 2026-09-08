@@ -24,32 +24,45 @@ this directory may be quoted in an article.
 **PR003 — Assistive Technology, Everyday Agency & Independence**
 → `assistive-technology-everyday-agency-independence.md`
 
-**CLUSTER STATUS: WORKING RESEARCH — OWNER REVIEW PENDING.**
-**7 CANDIDATE · 1 NEEDS_RESEARCH · 1 REJECTED · 0 APPROVED_DURABLE.** Nothing promoted.
-**No new axis proposed** — concentrates beneath Axes 5 and 10, reaching 11, 12 and 14.
+**CLUSTER STATUS: FIRST PASS + COMPLETION PASS DONE — OWNER REVIEW PENDING.**
+**6 CANDIDATE · 1 REJECTED · 2 MERGED · 0 NEEDS_RESEARCH · 0 APPROVED_DURABLE.** Nothing
+promoted. **No new axis** — concentrates beneath Axes 5 and 10, reaching 11, 12 and 14.
+An **OWNER-REVIEW PACK** with per-entry dispositions sits in the cluster file.
 
 | ID | Short name | Status | Axes | Minds |
 |---|---|---|---|---|
-| PR003-01 | Independence is control over support | CANDIDATE *(may be foundational orientation)* | 5, 10, 6 | MAYA / SHARED |
+| PR003-01 | Independence is control over support | CANDIDATE — *recommended as an **Axis 5 sharpening**, not an instrument* | 5, 10, 6 | MAYA / SHARED |
 | PR003-02 | Support can disappear into independence | **REJECTED — already Axis 5** | — | — |
-| PR003-03 | Autonomy has a maintenance layer | CANDIDATE *(absorbs starting H)* | 5, 14, 9 | MAYA |
-| PR003-04 | The tool can enter the body model | **NEEDS_RESEARCH** | 1, 5 | SIIRI / SHARED |
+| PR003-03 | Autonomy has a maintenance layer | CANDIDATE ★ *(absorbs starting H)* | 5, 14, 9 | MAYA |
+| PR003-04 | **A tool is incorporated by what it substitutes for, not by familiarity** *(renamed)* | CANDIDATE *(was NEEDS_RESEARCH)* | 1, 5 | SIIRI / SHARED |
 | PR003-05 | Support works differently when the user authors it | CANDIDATE | 10, 5, 14 | MAYA / ZENO |
-| PR003-06 | Calibration is a site of agency | CANDIDATE ★ strongest evidence | 5, 12, 10 | ZENO / PINA |
-| PR003-07 | A tool can move dependence rather than remove it | CANDIDATE | 5, 14, 10 | MAYA / ZENO |
-| PR003-08 | Bounded choice inside a fixed arrangement | CANDIDATE ✦ *new* | 10, 11, 5 | ZENO / MAYA |
-| PR003-09 | What you authored, you can keep working | CANDIDATE ✦ *new* | 10, 14, 5 | MAYA / ZENO |
+| PR003-06 | **The route to a setting changes whether the support is used** *(renamed)* | CANDIDATE ★ *narrowed; first pass overstated it* | 5, 12, 10 | ZENO / PINA |
+| PR003-07 | A tool can move dependence rather than remove it | CANDIDATE — *conditional on a two-sided gate* | 5, 14, 10 | MAYA / ZENO |
+| PR003-08 | **Who defines the option set** *(renamed)* | CANDIDATE ★ | 10, 11, 5 | ZENO / MAYA |
+| PR003-09 | What you authored, you can keep working | **MERGED → PR003-07** | — | — |
 
-**First REJECTED entry in the library.** PR003-02 was killed by the canon check — Axis 5
-already states it almost verbatim. Recorded as a positive result and **not deleted**.
+**Three hypotheses died, two of them to evidence.** PR003-02 was killed by the canon check
+(Axis 5 already states it almost verbatim) — the library's **first REJECTED entry**, kept, not
+deleted. Starting hypothesis **H** merged into PR003-03 as a detection method rather than a
+mechanism. **PR003-09** merged into PR003-07 when its causal core — authorship produces
+repairability — was tested and found unsupported, the only available comparison being
+confounded by device complexity.
 
-**Starting hypothesis H was MERGED** into PR003-03 as a detection method rather than a second
-mechanism. **The Moser/Dag lead is HELD** — the function-restored versus new-action-made-
-possible distinction cannot be established from this cluster's sources.
+**The completion pass corrected the first pass twice.** PR003-06 was framed as evidence about
+professional versus user authority; **both arms of that trial are self-administered**, so it
+contains no such contrast, and the entry is renamed and narrowed. PR003-04's original mechanism
+claimed skilled repeated use produces incorporation; **exposure and duration predicted nothing**
+in the empirical study that settled it, while lesion level and functional substitution did.
 
-**Two source cautions.** Papadimitriou 2008 and Moser were **NOT ACCESSED**; the abandonment
-literature's foundational study is from **1993** and its widely-cited ninefold figure is
-secondary. Do not fill these in from memory.
+**The Moser/Dag lead is HELD**, with the source now identified (Moser 2006, STHV 31(5); and
+Moser 2006, ICS 9(3)) and neither accessible. Likely resolution if no primary appears: **merge
+into PR001-05**.
+
+**Source cautions.** Papadimitriou 2008 and both Moser papers are **NOT ACCESSED** — a
+documented acquisition attempt, not a softened status. The abandonment literature's foundational
+study is from **1993**, its widely-cited ninefold figure is secondary, and reported abandonment
+ranges 8–75%. **That 1993 dependency, not the unread sources, is the gap that weakens a live
+entry.** Do not fill any of it in from memory.
 
 ---
 
