@@ -1,8 +1,7 @@
 # Perspective Research — INDEX
 
 *Read this first. It should orient a fresh session in under two minutes.*
-*Last updated: 2026-09-08 — **PR002 first owner review complete; PR003 reframed before
-research.***
+*Last updated: 2026-09-08 — **PR003 opened; PR002 first owner review complete.***
 
 ---
 
@@ -21,6 +20,40 @@ this directory may be quoted in an article.
 ---
 
 ## ACTIVE RESEARCH CLUSTER
+
+**PR003 — Assistive Technology, Everyday Agency & Independence**
+→ `assistive-technology-everyday-agency-independence.md`
+
+**CLUSTER STATUS: WORKING RESEARCH — OWNER REVIEW PENDING.**
+**7 CANDIDATE · 1 NEEDS_RESEARCH · 1 REJECTED · 0 APPROVED_DURABLE.** Nothing promoted.
+**No new axis proposed** — concentrates beneath Axes 5 and 10, reaching 11, 12 and 14.
+
+| ID | Short name | Status | Axes | Minds |
+|---|---|---|---|---|
+| PR003-01 | Independence is control over support | CANDIDATE *(may be foundational orientation)* | 5, 10, 6 | MAYA / SHARED |
+| PR003-02 | Support can disappear into independence | **REJECTED — already Axis 5** | — | — |
+| PR003-03 | Autonomy has a maintenance layer | CANDIDATE *(absorbs starting H)* | 5, 14, 9 | MAYA |
+| PR003-04 | The tool can enter the body model | **NEEDS_RESEARCH** | 1, 5 | SIIRI / SHARED |
+| PR003-05 | Support works differently when the user authors it | CANDIDATE | 10, 5, 14 | MAYA / ZENO |
+| PR003-06 | Calibration is a site of agency | CANDIDATE ★ strongest evidence | 5, 12, 10 | ZENO / PINA |
+| PR003-07 | A tool can move dependence rather than remove it | CANDIDATE | 5, 14, 10 | MAYA / ZENO |
+| PR003-08 | Bounded choice inside a fixed arrangement | CANDIDATE ✦ *new* | 10, 11, 5 | ZENO / MAYA |
+| PR003-09 | What you authored, you can keep working | CANDIDATE ✦ *new* | 10, 14, 5 | MAYA / ZENO |
+
+**First REJECTED entry in the library.** PR003-02 was killed by the canon check — Axis 5
+already states it almost verbatim. Recorded as a positive result and **not deleted**.
+
+**Starting hypothesis H was MERGED** into PR003-03 as a detection method rather than a second
+mechanism. **The Moser/Dag lead is HELD** — the function-restored versus new-action-made-
+possible distinction cannot be established from this cluster's sources.
+
+**Two source cautions.** Papadimitriou 2008 and Moser were **NOT ACCESSED**; the abandonment
+literature's foundational study is from **1993** and its widely-cited ninefold figure is
+secondary. Do not fill these in from memory.
+
+---
+
+## PREVIOUS CLUSTER
 
 **PR002 — Time, Simultaneity, Waiting & Pace** → `time-simultaneity-waiting-pace.md`
 
@@ -256,10 +289,20 @@ settled rather than deleted.*
 
 ---
 
-## NEXT CLUSTER
+## CLUSTER BRIEFS AND NEXT
 
-**PR003 — ASSISTIVE TECHNOLOGY / EVERYDAY AGENCY / INDEPENDENCE — ACTIVE NEXT.**
-*Not started; not researched. Reframed by owner direction 2026-09-08 — see OWNER DECISIONS.*
+**PR003 — opened 2026-09-08.** See the active cluster above. The reframe that preceded it is
+recorded under OWNER DECISIONS and in the section below, which remains the cluster's brief.
+
+**PR004 — not yet chosen.** Candidate territories left standing by earlier clusters: the
+unread crip-time primaries (Samuels, Kafer) that hold PR002-06 at candidate; a second domain
+for PR002-09 and PR003-07; and the body-schema literature that would settle PR003-04.
+
+---
+
+### The brief PR003 was opened under
+
+*Retained as written, 2026-09-08.*
 
 ### The conceptual centre
 
@@ -308,7 +351,7 @@ calibration · interoperability · user control · proprietary dependence · sup
 invisible inside "independence" · where the boundaries between body, tool and infrastructure
 are drawn.
 
-### Starting lead — Moser, reframed
+### Starting lead — Moser, reframed *(status after PR003: HELD — see cluster file)*
 
 Moser's Dag case is kept, with its framing corrected. The transferable question is **not** an
 institutional-care story:
